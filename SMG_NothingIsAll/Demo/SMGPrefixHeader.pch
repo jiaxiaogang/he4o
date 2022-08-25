@@ -24,6 +24,7 @@
 #import "XGDebug.h"
 #import "XGDebugModel.h"
 #import "TCDebug.h"
+#import "XGConfig.h"
 #endif
 
 //MARK:===============================================================

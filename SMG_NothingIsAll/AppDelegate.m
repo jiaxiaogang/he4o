@@ -105,6 +105,9 @@
     //8. 工作记忆可视化
     self.tv = [[TOMVision2 alloc] init];
     [self.window addSubview:self.tv];
+    
+    //9. 初始化XGConfig
+    [XGConfig.instance initConfig];
     return YES;
 }
 

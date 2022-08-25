@@ -115,6 +115,7 @@
 		087E7FCB258053D90097E0B9 /* NSFile+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 087E7FCA258053D90097E0B9 /* NSFile+Extension.m */; };
 		0881965F21800F2B00D5DB36 /* BirdLivePage.m in Sources */ = {isa = PBXBuildFile; fileRef = 0881965D21800F2B00D5DB36 /* BirdLivePage.m */; };
 		0881966021800F2B00D5DB36 /* BirdLivePage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0881965E21800F2B00D5DB36 /* BirdLivePage.xib */; };
+		0881DC2228B798FD00408986 /* XGConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 0881DC2128B798FD00408986 /* XGConfig.m */; };
 		0886889E26479A7F00B7C75D /* AINoRepeatRun.m in Sources */ = {isa = PBXBuildFile; fileRef = 0886889D26479A7F00B7C75D /* AINoRepeatRun.m */; };
 		0887FE2A27DFEE60005EE691 /* TOMVision2.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0887FE2927DFEE60005EE691 /* TOMVision2.xib */; };
 		0889257F22B0702A00A0DBDD /* NVModuleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0889257E22B0702A00A0DBDD /* NVModuleView.m */; };
@@ -414,6 +415,15 @@
 		0881965C21800F2B00D5DB36 /* BirdLivePage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BirdLivePage.h; sourceTree = "<group>"; };
 		0881965D21800F2B00D5DB36 /* BirdLivePage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BirdLivePage.m; sourceTree = "<group>"; };
 		0881965E21800F2B00D5DB36 /* BirdLivePage.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BirdLivePage.xib; sourceTree = "<group>"; };
+		0881DC1928B7952300408986 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		0881DC1A28B795AA00408986 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		0881DC1B28B7963F00408986 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		0881DC1C28B7974000408986 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		0881DC1D28B7978100408986 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		0881DC1E28B797BD00408986 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		0881DC1F28B7980600408986 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		0881DC2028B798FD00408986 /* XGConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XGConfig.h; sourceTree = "<group>"; };
+		0881DC2128B798FD00408986 /* XGConfig.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XGConfig.m; sourceTree = "<group>"; };
 		088587DC26103F30001B9ADE /* ISubDemandDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ISubDemandDelegate.h; sourceTree = "<group>"; };
 		0886889C26479A7F00B7C75D /* AINoRepeatRun.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINoRepeatRun.h; sourceTree = "<group>"; };
 		0886889D26479A7F00B7C75D /* AINoRepeatRun.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINoRepeatRun.m; sourceTree = "<group>"; };
@@ -674,6 +684,7 @@
 			children = (
 				08250ADE228112C000FC497C /* XGWedis.h */,
 				08250ADF228112C000FC497C /* XGWedis.m */,
+				0881DC1D28B7978100408986 /* README.md */,
 			);
 			path = XGWedis;
 			sourceTree = "<group>";
@@ -900,6 +911,7 @@
 				0843AAE128142A49002B9AA9 /* XGDebugTV.m */,
 				0843AAE3281436EF002B9AA9 /* XGLabCell.h */,
 				0843AAE4281436EF002B9AA9 /* XGLabCell.m */,
+				0881DC1928B7952300408986 /* README.md */,
 			);
 			path = XGDebug;
 			sourceTree = "<group>";
@@ -1172,6 +1184,16 @@
 			path = TCOut;
 			sourceTree = "<group>";
 		};
+		0881DC1828B794B000408986 /* XGConfig */ = {
+			isa = PBXGroup;
+			children = (
+				0881DC1F28B7980600408986 /* README.md */,
+				0881DC2028B798FD00408986 /* XGConfig.h */,
+				0881DC2128B798FD00408986 /* XGConfig.m */,
+			);
+			path = XGConfig;
+			sourceTree = "<group>";
+		};
 		088A148227E1782B00FA1097 /* View */ = {
 			isa = PBXGroup;
 			children = (
@@ -1223,6 +1245,7 @@
 				0871C27526685D4800CB3889 /* TOModelVisionUtil.m */,
 				0871C27726685DA200CB3889 /* UnorderItemModel.h */,
 				0871C27826685DA200CB3889 /* UnorderItemModel.m */,
+				0881DC1C28B7974000408986 /* README.md */,
 			);
 			path = TOModelVision;
 			sourceTree = "<group>";
@@ -1428,6 +1451,7 @@
 			children = (
 				08E084A928B129000070B7F7 /* TCDebug.h */,
 				08E084AA28B129000070B7F7 /* TCDebug.m */,
+				0881DC1A28B795AA00408986 /* README.md */,
 			);
 			path = TCDebug;
 			sourceTree = "<group>";
@@ -1515,6 +1539,7 @@
 				08F5333E27DE3A8F0038812E /* TOMVision2.h */,
 				08F5333F27DE3A8F0038812E /* TOMVision2.m */,
 				0887FE2927DFEE60005EE691 /* TOMVision2.xib */,
+				0881DC1B28B7963F00408986 /* README.md */,
 			);
 			path = TOMVision2;
 			sourceTree = "<group>";
@@ -1635,6 +1660,7 @@
 		88BC09D320B4EAA70006ABEF /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
+				0881DC1828B794B000408986 /* XGConfig */,
 				08E084A828B128900070B7F7 /* TCDebug */,
 				0843AAD9281416D9002B9AA9 /* XGDebug */,
 				082A904B27F5E01E003D15BE /* RLTrainer */,
@@ -1659,6 +1685,7 @@
 				88BC09D920B4ECAB0006ABEF /* XGRedisUtil.m */,
 				88BC09DB20B4F67E0006ABEF /* XGRedisDictionary.h */,
 				88BC09DC20B4F67E0006ABEF /* XGRedisDictionary.m */,
+				0881DC1E28B797BD00408986 /* README.md */,
 			);
 			path = XGRedis;
 			sourceTree = "<group>";
@@ -1817,6 +1844,7 @@
 				0892BAED277808F80024B43C /* TCActYes.m in Sources */,
 				0810E50F236A637500B33226 /* AINetIndexUtils.m in Sources */,
 				88BC09DD20B4F67E0006ABEF /* XGRedisDictionary.m in Sources */,
+				0881DC2228B798FD00408986 /* XGConfig.m in Sources */,
 				0858C5D32194F8B000951BA5 /* View+MASAdditions.m in Sources */,
 				08E8CF5E25B2F64900AA18DB /* ImvBadModel.m in Sources */,
 				8868F6EE210AA00B000EAC9B /* AINetAbsCMVUtil.m in Sources */,

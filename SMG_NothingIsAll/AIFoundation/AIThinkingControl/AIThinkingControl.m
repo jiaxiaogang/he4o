@@ -250,6 +250,7 @@ static AIThinkingControl *_instance;
 //循环Id (参考26183);
 -(void) updateLoopId{
     self.loopId++;
+    [XGConfig.instance responseXGConfig2HE];
     [self.tcDebug updateLoopId];
 }
 -(long long) getLoopId{
