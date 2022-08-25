@@ -9,7 +9,7 @@
 #import "TCDebug.h"
 
 //判断卡了功能->开关
-#define TCDebugKaleSwitch true
+#define TCDebugKaleSwitch false
 
 //调试中的TC名称 (当前调试哪个,就改成哪个名称);
 #define DebugingTC @"TCRecognition.m"
@@ -18,7 +18,7 @@
 #define LogingTCs @[@"TCRecognition.m", @"TIUtils.m",@"AINetUtils.m",@"SMGUtils.m"]
 
 //对最后多少条时间汇总分析
-#define DebugLastOperesNum 1
+#define DebugLastOperesNum 3
 
 //判断为卡状态的阈值 (单位:ms)
 #define DebugKaleTime 1600

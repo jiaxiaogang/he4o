@@ -48,11 +48,13 @@ static id mInstance;
     //2. 更新配置导致的变化到系统;
     if (NUMTOOK([self.configDic objectForKey:xgConfigKeyZiWuMode]).boolValue) {
         theTC.stopThink = true;
+        NSLog(@"======> XGConfig响应: 进入植物模式");
     }
     
     //b. 暂停强化训练;
     if (NUMTOOK([self.configDic objectForKey:xgConfigKeyPauseRLT]).boolValue) {
         [theRT setPlaying:false];
+        NSLog(@"======> XGConfig响应: 暂停强化训练");
     }
 }
 
