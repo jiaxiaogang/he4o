@@ -94,7 +94,7 @@
     result.regroupFo = regroupFo;
     [theTC updateOperCount:kFILENAME];
     Debug();
-    OFTitleLog(@"反思时序识别", @"\n%@",Fo2FStr(regroupFo));
+    IFTitleLog(@"feedback时序识别", @"\n%@",Fo2FStr(regroupFo));
     
     AddTCDebug(@"FB0");
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)

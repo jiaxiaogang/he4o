@@ -15,6 +15,7 @@
 //MARK:                     < publicMethod >
 //MARK:===============================================================
 +(BOOL) refrection:(AISolutionModel*)checkCanset cansets:(NSArray*)cansets demand:(DemandModel*)demand{
+    OFTitleLog(@"TCRefrection反思", @"\n%@",Pit2FStr(checkCanset.cansetFo));
     //1. 反思识别
     NSDictionary *recogDic = [TCRefrection recognition4SRefrection:checkCanset cansets:cansets];
     
@@ -103,6 +104,10 @@
         }
         sumLazyScore += lazyScore;
         lazyScoreNum ++;
+        
+        //8. 日志
+        CGFloat frontNear = NUMTOOK([recogDic objectForKey:@(item.cansetFo.pointerId)]).floatValue;
+        NSLog(@"反思识别结果:%@\n\tCUT:%ld 前匹配度%.2f 后稳定性:%.2f 价值分:%.1f 懒分:%.1f",Pit2FStr(item.cansetFo),(long)item.cutIndex,frontNear,stabScore,mvScore,lazyScore);
     }
     
     //9. 根据sum和num累计,算出平均"方案评分"和"懒评分";
@@ -120,6 +125,7 @@
     //11. S评分PK: pk通过 = 任务评分 - 方案评分 - 懒评分 > 0;
     //12. 三个评分都是负的,所以公式为以下 (result = 收益(负任务分) + mv的负分 + lazy的负分 > 0);
     BOOL result = -averageDemandScore + averageMvScore + averageLazyScore > 0;
+    NSLog(@"反思评价结果:%d 任务分%.1f 价值分:%.2f 懒分:%.1f",result,averageDemandScore,averageMvScore,averageLazyScore);
     return result;
 }
 
