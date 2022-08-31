@@ -17,7 +17,14 @@
 @interface AIThinkingControl : NSObject
 
 +(AIThinkingControl*) shareInstance;
-@property (assign, nonatomic) BOOL stopThink;   //强行停止思维工作
+
+/**
+ *  MARK:--------------------植物模式--------------------
+ *  @desc 强行停止思维工作 (参考27084-TODO4);
+ *          1. TO通过energyValid返false阻断TCSolution来实现;
+ *          2. TI通过阻断Input感知来实现;
+ */
+@property (assign, nonatomic) BOOL stopThink;
 
 //MARK:===============================================================
 //MARK:                     < 数据输入 >

@@ -74,6 +74,8 @@ static AIThinkingControl *_instance;
  *  说明: 单model (普通算法模型 或 imv模型)
  */
 -(void) commitInput:(NSObject*)algsModel{
+    //1. 植物模式阻断感知;
+    if (self.stopThink) return;
     //0. 将algModel转为modelDic;
     NSDictionary *modelDic = [NSObject getDic:algsModel containParent:true];
     NSString *algsType = NSStringFromClass(algsModel.class);
@@ -111,6 +113,8 @@ static AIThinkingControl *_instance;
  *  1. 默认为按边缘(ios的view层级)分组,随后可扩展概念内类比,按别的维度分组; 参考: n16p7
  */
 -(void) commitInputWithModels:(NSArray*)dics algsType:(NSString*)algsType{
+    //1. 植物模式阻断感知;
+    if (self.stopThink) return;
     //1. 数据检查 (小鸟不能仅传入foodView,而要传入整个视角场景)
     dics = ARRTOOK(dics);
     ISTitleLog(@"皮层输入");
@@ -154,6 +158,8 @@ static AIThinkingControl *_instance;
  *      20200414 - 将输出参数集value_ps转到ThinkIn,去进行识别,保留ShortMatchModel,内类比等流程;
  */
 -(void) commitOutputLog:(NSArray*)outputModels{
+    //1. 植物模式阻断感知;
+    if (self.stopThink) return;
     //1. 数据
     NSMutableArray *value_ps = [[NSMutableArray alloc] init];
     for (OutputModel *model in ARRTOOK(outputModels)) {
