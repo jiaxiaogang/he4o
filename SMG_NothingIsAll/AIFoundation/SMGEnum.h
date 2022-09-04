@@ -134,13 +134,14 @@ typedef NS_ENUM(NSInteger, EffectStatus) {
 /**
  *  MARK:--------------------TIModelStatus--------------------
  *  @title 输入模型状态
+ *  @version
+ *      2022.09.04: 虚mv早已废弃:所以删除TIModelStatus_OutBackDiffDelta(4),//反馈反向delta (用于虚mv)
  */
 typedef NS_ENUM(NSInteger, TIModelStatus) {
     TIModelStatus_Default           = 0,//默认值
-    TIModelStatus_LastWait          = 1,//末位等待 (相当于TO的ActYes状态)
+    TIModelStatus_LastWait          = 1,//下帧等待(末位时即等待mv) (相当于TO的ActYes状态)
     TIModelStatus_OutBackReason     = 2,//反馈理性结果 (用于理性反馈)
     TIModelStatus_OutBackSameDelta  = 3,//反馈同向delta (用于实mv)
-    TIModelStatus_OutBackDiffDelta  = 4,//反馈反向delta (用于虚mv)
     TIModelStatus_OutBackNone       = 5,//无反馈
 };
 

@@ -51,8 +51,6 @@
         return @"理性反馈";
     }else if(status == TIModelStatus_OutBackSameDelta){
         return @"同向反馈";
-    }else if(status == TIModelStatus_OutBackDiffDelta){
-        return @"反向反馈";
     }else if(status == TIModelStatus_OutBackNone){
         return @"无反馈";
     }

@@ -22,6 +22,7 @@
 @property (assign, nonatomic) CGFloat matchFoValue;     //时序匹配度
 @property (assign, nonatomic) CGFloat colStableScore;   //衰减稳定性
 @property (assign, nonatomic) TIModelStatus status;     //状态
+@property (assign, nonatomic) BOOL isExpired;           //过期状态 (参考n27p09)
 
 /**
  *  MARK:--------------------匹配下标映射--------------------
