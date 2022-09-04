@@ -25,7 +25,7 @@
     double maxDeltaTime = 0;
     for (AIMatchFoModel *pFo in rDemand.pFos) {
         AIFoNodeBase *fo = [SMGUtils searchNode:pFo.matchFo];
-        double deltaTime = [TOUtils getSumDeltaTime2Mv:fo cutIndex:pFo.cutIndex2];
+        double deltaTime = [TOUtils getSumDeltaTime2Mv:fo cutIndex:pFo.cutIndex];
         maxDeltaTime = MAX(maxDeltaTime, deltaTime);
     }
     

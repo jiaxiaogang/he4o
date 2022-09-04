@@ -66,11 +66,11 @@
         //3. 非末位时,理性反省 (参考25031-2);
         AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
         NSInteger maxCutIndex = matchFo.count - 1;
-        if (item.cutIndex2 < maxCutIndex) {
+        if (item.cutIndex < maxCutIndex) {
             
             //4. 设为等待反馈状态 & 构建反省触发器;
             item.status = TIModelStatus_LastWait;
-            double deltaTime = [NUMTOOK(ARR_INDEX(matchFo.deltaTimes, item.cutIndex2 + 1)) doubleValue];
+            double deltaTime = [NUMTOOK(ARR_INDEX(matchFo.deltaTimes, item.cutIndex + 1)) doubleValue];
             
             NSLog(@"---//理性IRT触发器新增:%p %@ (%@ | useTime:%.2f)",matchFo,Fo2FStr(matchFo),TIStatus2Str(item.status),deltaTime);
             [AITime setTimeTrigger:deltaTime trigger:^{
@@ -81,6 +81,14 @@
                 [TCRethink reasonInRethink:item type:type];
                 NSLog(@"---//IR反省触发器执行:%p F%ld 状态:%@",matchFo,matchFo.pointer.pointerId,TIStatus2Str(item.status));
                 
+                //8. 失效判断;
+                if (item.status == TIModelStatus_LastWait) {
+                    //a. pFo任务失效 (参考27093-条件2 & 27095-2);
+                    item.isExpired = true;
+                }else{
+                    //b. pFo任务顺利;
+                    [item forwardFrame];
+                }
                 //7. 失败状态标记;
                 if (item.status == TIModelStatus_LastWait) item.status = TIModelStatus_OutBackNone;
             }];
@@ -123,6 +131,9 @@
             
             //12. 失败状态标记;
             if (item.status == TIModelStatus_LastWait) item.status = TIModelStatus_OutBackNone;
+            
+            //13. pFo任务失效 (参考27093-条件1 & 27095-1);
+            item.isExpired = true;
         }];
     }
 }

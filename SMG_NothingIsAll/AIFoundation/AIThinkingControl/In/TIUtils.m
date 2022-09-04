@@ -410,7 +410,7 @@
                 if (Log4MFo) NSLog(@"时序识别item SUCCESS 完成度:%f %@->%@",matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
                 NSInteger cutIndex = fromRegroup ? -1 : lastAssIndex;
                 AddTCDebug(@"时序识别24");
-                AIMatchFoModel *newMatchFo = [AIMatchFoModel newWithMatchFo:assFo.pointer maskFo:maskFo.pointer matchFoValue:matchValue colStableScore:0 indexDic:indexDic cutIndex:cutIndex];
+                AIMatchFoModel *newMatchFo = [AIMatchFoModel newWithMatchFo:assFo.pointer maskFo:maskFo.pointer matchFoValue:matchValue indexDic:indexDic cutIndex:cutIndex];
                 AddTCDebug(@"时序识别25");
                 
                 //8. 被引用强度;
@@ -449,13 +449,13 @@
     NSLog(@"\n=====> 时序识别Finish (PFos数:%lu)",(unsigned long)inModel.matchPFos.count);
     for (AIMatchFoModel *item in inModel.matchPFos) {
         AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
-        NSLog(@"强度:(%ld)\t> %@->%@ (衰后稳定性:%.2f from:%@)",item.matchFoStrong,Fo2FStr(matchFo), Mvp2Str(matchFo.cmvNode_p),item.colStableScore,CLEANSTR(matchFo.spDic));
+        NSLog(@"强度:(%ld)\t> %@->%@ (from:%@)",item.matchFoStrong,Fo2FStr(matchFo), Mvp2Str(matchFo.cmvNode_p),CLEANSTR(matchFo.spDic));
     }
         
     NSLog(@"\n=====> 时序识别Finish (RFos数:%lu)",(unsigned long)inModel.matchRFos.count);
     for (AIMatchFoModel *item in inModel.matchRFos){
         AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
-        NSLog(@"强度:(%ld)\t> %@ (衰后稳定性:%.2f from:%@)",item.matchFoStrong,Pit2FStr(item.matchFo),item.colStableScore,CLEANSTR(matchFo.spDic));
+        NSLog(@"强度:(%ld)\t> %@ (from:%@)",item.matchFoStrong,Pit2FStr(item.matchFo),CLEANSTR(matchFo.spDic));
     }
     AddTCDebug(@"时序识别32");
 }

@@ -43,8 +43,8 @@
             
             //5. 末位跳过,不需要反馈 (参考25031-2 & 25134-方案2);
             NSInteger maxCutIndex = matchFo.count - 1;
-            if (waitModel.cutIndex2 >= maxCutIndex) continue;
-            AIKVPointer *waitAlg_p = ARR_INDEX(matchFo.content_ps, waitModel.cutIndex2 + 1);
+            if (waitModel.cutIndex >= maxCutIndex) continue;
+            AIKVPointer *waitAlg_p = ARR_INDEX(matchFo.content_ps, waitModel.cutIndex + 1);
             
             //6. 判断protoAlg与waitAlg之间匹配,成立则OutBackYes;
             [AITest test11:model waitAlg_p:waitAlg_p];//测下2523c-此处是否会导致匹配不到;
@@ -100,7 +100,7 @@
             if (waitModel.status != TIModelStatus_LastWait) continue;
             
             //5. 非末位跳过 (参考25031-2);
-            if (waitModel.cutIndex2 < maxCutIndex) continue;
+            if (waitModel.cutIndex < maxCutIndex) continue;
             
             //6. 等待中的inModel_判断hope(wait)和real(new)之间是否相符 (仅标记同区同向反馈);
             if ([AIScore sameIdenSameScore:waitMatchFo.cmvNode_p mv2:cmvNode.pointer]) {

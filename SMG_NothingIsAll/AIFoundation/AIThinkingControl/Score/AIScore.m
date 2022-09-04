@@ -107,7 +107,7 @@
     //4. 取父任务能给的时间;
     AIMatchFoModel *firstPFo = ARR_INDEX(nearRDemand.pFos, 0);
     AIFoNodeBase *pFo = [SMGUtils searchNode:firstPFo.matchFo];
-    double giveTime = [TOUtils getSumDeltaTime2Mv:pFo cutIndex:firstPFo.cutIndex2];
+    double giveTime = [TOUtils getSumDeltaTime2Mv:pFo cutIndex:firstPFo.cutIndex];
     
     //5. 判断是否时间不急;
     BOOL timeIsEnough = needTime <= giveTime;
@@ -157,7 +157,7 @@
 +(CGFloat) score4MV_v2:(AIMatchFoModel*)inModel{
     AIFoNodeBase *mFo = [SMGUtils searchNode:inModel.matchFo];
     BOOL isBadMv = [ThinkingUtils havDemand:mFo.cmvNode_p];
-    CGFloat spScore = [TOUtils getSPScore:mFo startSPIndex:inModel.cutIndex2 + 1 endSPIndex:mFo.count];
+    CGFloat spScore = [TOUtils getSPScore:mFo startSPIndex:inModel.cutIndex + 1 endSPIndex:mFo.count];
     CGFloat ratio = isBadMv ? (1 - spScore) : spScore;
     return [AIScore score4MV:mFo.cmvNode_p ratio:ratio];//价值迫切度 * 匹配度
 }

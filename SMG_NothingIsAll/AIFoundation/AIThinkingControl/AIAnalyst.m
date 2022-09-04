@@ -32,7 +32,7 @@
     NSInteger pAleardayCount = 0;
     if (isRoot) {
         //a. 根R任务时 (参考26232-TODO5);
-        pAleardayCount = pFo.cutIndex2 + 1;
+        pAleardayCount = pFo.cutIndex + 1;
     }else{
         //b. 子R任务时 (参考26232-TODO6);
         pAleardayCount = [SMGUtils filterArr:pFo.indexDic.allValues checkValid:^BOOL(NSNumber *item) {

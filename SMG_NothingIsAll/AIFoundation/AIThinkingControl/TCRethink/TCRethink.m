@@ -14,8 +14,8 @@
     AIFoNodeBase *matchFo = [SMGUtils searchNode:model.matchFo];
     [theTC updateOperCount:kFILENAME];
     Debug();
-    IFTitleLog(@"IR反省", @"\n%@ spIndex:%ld -> (%@)",Fo2FStr(matchFo),model.cutIndex2 + 1,ATType2Str(type));
-    [matchFo updateSPStrong:model.cutIndex2 + 1 type:type];
+    IFTitleLog(@"IR反省", @"\n%@ spIndex:%ld -> (%@)",Fo2FStr(matchFo),model.cutIndex + 1,ATType2Str(type));
+    [matchFo updateSPStrong:model.cutIndex + 1 type:type];
     DebugE();
 }
 

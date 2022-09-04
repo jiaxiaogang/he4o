@@ -16,11 +16,10 @@
 @class AIFoNodeBase;
 @interface AIMatchFoModel : NSObject
 
-+(AIMatchFoModel*) newWithMatchFo:(AIKVPointer*)matchFo maskFo:(AIKVPointer*)maskFo matchFoValue:(CGFloat)matchFoValue colStableScore:(CGFloat)colStableScore indexDic:(NSDictionary*)indexDic cutIndex:(NSInteger)cutIndex;
++(AIMatchFoModel*) newWithMatchFo:(AIKVPointer*)matchFo maskFo:(AIKVPointer*)maskFo matchFoValue:(CGFloat)matchFoValue indexDic:(NSDictionary*)indexDic cutIndex:(NSInteger)cutIndex;
 @property (strong, nonatomic) AIKVPointer *matchFo;     //匹配时序
 @property (strong, nonatomic) AIKVPointer *maskFo;      //识别时为protoFo,反思时为regroupFo;
 @property (assign, nonatomic) CGFloat matchFoValue;     //时序匹配度
-@property (assign, nonatomic) CGFloat colStableScore;   //衰减稳定性
 @property (assign, nonatomic) TIModelStatus status;     //状态
 @property (assign, nonatomic) BOOL isExpired;           //过期状态 (参考n27p09)
 
@@ -41,7 +40,7 @@
  *          1. 识别时为indexDic的长度-1,即全已发生;
  *          2. 反思时为-1,无效数据 (反思要从foModel.actionIndex随变随取);
  */
-@property (assign, nonatomic) NSInteger cutIndex2;
+@property (assign, nonatomic) NSInteger cutIndex;
 
 @property (assign, nonatomic) NSInteger matchFoStrong;  //时序识别中被引用强度 (目前仅用于调试);
 
@@ -52,5 +51,7 @@
  *      2022.08.19: 初版,因为demand评分常慢(>1s),跑会训练就卡的很,所以加了这个评分缓存 (参考27065);
  */
 @property (assign, nonatomic) CGFloat scoreCache;
+
+-(void) forwardFrame;
 
 @end

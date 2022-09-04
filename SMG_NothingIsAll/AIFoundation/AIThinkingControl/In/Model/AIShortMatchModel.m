@@ -126,7 +126,7 @@
     //1. 筛选;
     NSArray *fullMatchs = [SMGUtils filterArr:matchs checkValid:^BOOL(AIMatchFoModel *item) {
         AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
-        return item.cutIndex2 >= matchFo.count - 1;
+        return item.cutIndex >= matchFo.count - 1;
     }];
     
     //2. 排序;
@@ -148,7 +148,7 @@
     //1. 筛选;
     NSArray *partMatchs = [SMGUtils filterArr:matchs checkValid:^BOOL(AIMatchFoModel *item) {
         AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
-        return item.cutIndex2 < matchFo.count - 1;
+        return item.cutIndex < matchFo.count - 1;
     }];
     
     //2. 返10条;
