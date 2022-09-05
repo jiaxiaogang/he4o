@@ -13,29 +13,35 @@
 /**
  *  MARK:--------------------"外层输入" 推进 "中层循环" 决策--------------------
  *  @title 外层输入对In短时记忆的影响处理 (参考22052-2);
+ *  @param model : 新帧的model;
  *  @version
  *      2021.01.24: 多时序识别支持,使之更全面的支持每个matchFo的status更新 (参考22073-todo6);
  *      2021.10.17: 支持IRT的理性失效,场景更新时,状态设为OutBackReason (参考24059&24061-方案2);
  *      2021.12.25: 针对理性IRT反省的支持 (判断非末位为理性预测中) (参考25021-②);
  *      2022.03.05: BUG_将仅末位才反馈,改成非末位才反馈 (原来逻辑写反了);
  *      2022.05.02: 用matchAlgs+partAlgs替代mIsC (参考25234-8);
+ *      2022.09.05: 将theTC.inModels改成roots.pFos (参考27096-方案2);
  *  @status
  *      xxxx.xx.xx: 非启动状态,因为时序识别中,未涵盖HNGL类型,所以并未对HNGL进行预测;
  *      2021.10.17: 启动,支持对IRT的理性失效 (参考24059&24061-方案2);
  */
 +(void) feedbackTIR:(AIShortMatchModel*)model{
     //1. 取所有lastWait模型,并与新输入的概念做mIsC判断;
-    NSArray *inModels = theTC.inModelManager.models;
     [theTC updateOperCount:kFILENAME];
     Debug();
     IFTitleLog(@"feedbackTIR", @"\n输入M:%@\n输入P:%@",Alg2FStr(model.matchAlg),Alg2FStr(model.protoAlg));
     NSArray *recognitionAlgs = [TIUtils getMatchAndPartAlgPsByModel:model];
     
-    //2. IRT理性失效 (旧有IRT触发器等待中的fo,在场景情况更新时,标记OutBackReason);
-    for (AIShortMatchModel *inModel in inModels) {
+    //1. fbTIR对roots进行反馈判断 (参考27096-方案2);
+    NSArray *roots = theTC.outModelManager.getAllDemand;
+    for (ReasonDemandModel *root in roots) {
         
-        //3. 对pFos+rFos都做理性反馈;
-        for (AIMatchFoModel *waitModel in inModel.fos4RForecast) {
+        //2. 仅支持ReasonDemandModel类型的反馈,因为PerceptDemandModel已经发生完毕,不需要反馈;
+        if (ISOK(root, ReasonDemandModel.class)) continue;
+        
+        //3. 对pFos做理性反馈;
+        for (AIMatchFoModel *waitModel in root.pFos) {
+            
             //4. 取出等待中的_非wait状态的,不处理;
             if (waitModel.status != TIModelStatus_LastWait) continue;
             AIFoNodeBase *matchFo = [SMGUtils searchNode:waitModel.matchFo];
@@ -72,24 +78,32 @@
 /**
  *  MARK:--------------------"外层输入" 推进 "中层循环" 认知--------------------
  *  @title 外层输入对In短时记忆的影响处理 (参考22052-2);
+ *  @param cmvNode : 新输入的mv;2
  *  @version
  *      2021.01.24: 对多时序识别结果支持,及时全面的改变status为OutBackYes (参考22073-todo5);
  *      2021.02.04: In反省支持虚mv,所以此处也要支持虚mv的OPush判断 (参考22108);
  *      2021.12.25: 废弃虚mv的代码 (因为虚mv早已不在时序识别的结果中,并且整个dsFo都已废弃掉了) (参考Note24);
  *      2021.12.25: 针对感性IRT反省的支持 (判断末位为感性预测中) (参考25022-②);
+ *      2022.09.05: 将theTC.inModels改成roots.pFos (参考27096-方案2);
  *  @bug
  *      2021.01.25: 修复witMatchFo.cmvNode_p空判断逻辑反了,导致无法执行修改状态为OutBackYes,从而反省类比永远为"逆";
  */
 +(void) feedbackTIP:(AICMVNode*)cmvNode{
     //1. 数据检查
-    NSArray *inModels = theTC.inModelManager.models;
     [theTC updateOperCount:kFILENAME];
     Debug();
     IFTitleLog(@"feedbackTIP", @"\n输入MV:%@",Mv2FStr(cmvNode));
     
-    //2. 判断最近一次input是否与等待中outModel相匹配 (匹配,比如吃,确定自己是否真吃了);
-    for (AIShortMatchModel *inModel in inModels) {
-        for (AIMatchFoModel *waitModel in inModel.fos4PForecast) {
+    //2. 判断最近一次input是否与等待中pFo感性结果相匹配 (匹配,比如吃,确定自己是否真吃了);
+    //2. fbTIP对roots进行反馈判断 (参考27096-方案2);
+    NSArray *roots = theTC.outModelManager.getAllDemand;
+    for (ReasonDemandModel *root in roots) {
+        
+        //2. 仅支持ReasonDemandModel类型的反馈,因为PerceptDemandModel已经发生完毕,不需要反馈;
+        if (ISOK(root, ReasonDemandModel.class)) continue;
+        
+        //3. 对pFos做理性反馈;
+        for (AIMatchFoModel *waitModel in root.pFos) {
             
             //3. 数据准备;
             AIFoNodeBase *waitMatchFo = [SMGUtils searchNode:waitModel.matchFo];
