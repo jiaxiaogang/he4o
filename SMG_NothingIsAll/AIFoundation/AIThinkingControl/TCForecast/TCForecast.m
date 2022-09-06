@@ -11,31 +11,9 @@
 @implementation TCForecast
 
 /**
- *  MARK:--------------------r预测--------------------
- */
-+(void) rForecast:(AIShortMatchModel*)model{
-    //6. 传给TOR,做下一步处理: R任务_预测mv价值变化;
-    [theTC updateOperCount:kFILENAME];
-    Debug();
-    DebugE();
-    [TCDemand rDemand:model];
-}
-
-+(void) pForecast:(AICMVNode*)cmvNode{
-    [theTC updateOperCount:kFILENAME];
-    Debug();
-    DebugE();
-    [TCDemand pDemand:cmvNode];
-}
-
-/**
- *  MARK:--------------------IRT预测--------------------
+ *  MARK:--------------------反省触发器--------------------
  *  @desc
- *      1. 对预测的处理,进行生物钟触发器;
- *      2. 支持:
- *          a.HNGL(因为时序识别处关闭,所以假启用状态);
- *          b.MV(启用);
- *      3. 等待feedbackTIR反馈;
+ *      1. 对任务下一帧预测的等待反馈 (触发器等待反省);
  *  @version
  *      2021.01.27: 非末位也支持mv触发器 (参考22074-BUG2);
  *      2021.02.01: 支持反向反馈外类比 (参考22107);
@@ -53,60 +31,68 @@
  *      1. 后半部分"有mv判断"生效中;
  *      2. 前半部分"HNGL末位判断"未启用 (因为matchFos中未涵盖HNGL类型);
  */
-+(void) forecastReasonIRT:(AIShortMatchModel*)model {
++(void) forecast_Multi:(NSArray*)newRoots{
     //1. 数据检查 (参考25031-1);
     [theTC updateOperCount:kFILENAME];
     Debug();
-    IFTitleLog(@"ReasonIRT预测",@"\nprotoFo:%@",Fo2FStr(model.protoFo));
-    NSArray *matchs = model.fos4RForecast;
-    
-    //2. 预测下一帧 (参考25031-2) ->feedbackTIR;
-    for (AIMatchFoModel *item in matchs) {
+    ISTitleLog(@"NewRoot预测");
+    newRoots = ARRTOOK(newRoots);
+    for (ReasonDemandModel *root in newRoots) {
+        NSLog(@"NewRoot from:%@",FoP2FStr(root.protoFo));
         
-        //3. 非末位时,理性反省 (参考25031-2);
-        AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
-        NSInteger maxCutIndex = matchFo.count - 1;
-        if (item.cutIndex < maxCutIndex) {
-            
-            //4. 设为等待反馈状态 & 构建反省触发器;
-            item.status = TIModelStatus_LastWait;
-            double deltaTime = [NUMTOOK(ARR_INDEX(matchFo.deltaTimes, item.cutIndex + 1)) doubleValue];
-            
-            NSLog(@"---//理性IRT触发器新增:%p %@ (%@ | useTime:%.2f)",matchFo,Fo2FStr(matchFo),TIStatus2Str(item.status),deltaTime);
-            [AITime setTimeTrigger:deltaTime trigger:^{
-                //5. 如果状态已改成OutBackReason,说明有反馈;
-                AnalogyType type = item.status == TIModelStatus_LastWait ? ATSub : ATPlus;
-                
-                //6. 则进行理性IRT反省;
-                [TCRethink reasonInRethink:item type:type];
-                NSLog(@"---//IR反省触发器执行:%p F%ld 状态:%@",matchFo,matchFo.pointer.pointerId,TIStatus2Str(item.status));
-                
-                //8. 失效判断;
-                if (item.status == TIModelStatus_LastWait) {
-                    //a. pFo任务失效 (参考27093-条件2 & 27095-2);
-                    item.isExpired = true;
-                }else{
-                    //b. pFo任务顺利;
-                    [item forwardFrame];
-                }
-                //7. 失败状态标记;
-                if (item.status == TIModelStatus_LastWait) item.status = TIModelStatus_OutBackNone;
-            }];
+        //2. 预测下一帧 (参考25031-2) ->feedbackTIR;
+        for (AIMatchFoModel *pFo in root.pFos) {
+            [self forecast_Single:pFo];
         }
     }
     DebugE();
 }
 
-+(void) forecastPerceptIRT:(AIShortMatchModel*)model {
-    //1. 数据检查 (参考25031-1);
-    IFTitleLog(@"PerceptIRT预测",@"\nprotoFo:%@",Fo2FStr(model.protoFo));
-    NSArray *matchs = model.fos4PForecast;
+/**
+ *  MARK:--------------------单条pFo处理--------------------
+ *  @desc 可自动根据cutIndex判断触发理性或感性: 反省触发器;
+ *  @callers : 1. 用于新root调用; 2. 用于反省顺利时推进到下一帧的触发器;
+ */
++(void) forecast_Single:(AIMatchFoModel*)item{
+    //1. 数据准备;
+    AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
+    NSInteger maxCutIndex = matchFo.count - 1;
     
-    //8. 末位且有mv时,感性反省 (参考25031-2) ->feedbackTIP;
-    for (AIMatchFoModel *item in matchs) {
+    //2. ========> 非末位时,理性反省 (参考25031-2);
+    if (item.cutIndex < maxCutIndex) {
+        
+        //4. 设为等待反馈状态 & 构建反省触发器;
+        item.status = TIModelStatus_LastWait;
+        double deltaTime = [NUMTOOK(ARR_INDEX(matchFo.deltaTimes, item.cutIndex + 1)) doubleValue];
+        
+        NSLog(@"---//理性IRT触发器新增:%p %@ (%@ | useTime:%.2f)",matchFo,Fo2FStr(matchFo),TIStatus2Str(item.status),deltaTime);
+        [AITime setTimeTrigger:deltaTime trigger:^{
+            //5. 如果状态已改成OutBackReason,说明有反馈;
+            AnalogyType type = item.status == TIModelStatus_LastWait ? ATSub : ATPlus;
+            
+            //6. 则进行理性IRT反省;
+            [TCRethink reasonInRethink:item type:type];
+            NSLog(@"---//IR反省触发器执行:%p F%ld 状态:%@",matchFo,matchFo.pointer.pointerId,TIStatus2Str(item.status));
+            
+            //8. 失效判断;
+            if (item.status == TIModelStatus_LastWait) {
+                //a. pFo任务失效 (参考27093-条件2 & 27095-2);
+                item.isExpired = true;
+            }else{
+                //b. pFo任务顺利;
+                [item forwardFrame];
+            }
+            //7. 失败状态标记;
+            if (item.status == TIModelStatus_LastWait) item.status = TIModelStatus_OutBackNone;
+        }];
+    }
+    //3. ========> 末位感性反省 (参考25031-2) ->feedbackTIP;
+    else if(item.cutIndex == maxCutIndex){
+        
+        //4. 有mv时才感性反省;
+        if (!matchFo.cmvNode_p) return;
         
         //9. 设为等待反馈状态 & 构建反省触发器;
-        AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
         item.status = TIModelStatus_LastWait;
         double deltaTime = matchFo.mvDeltaTime;
         
@@ -136,10 +122,6 @@
             item.isExpired = true;
         }];
     }
-}
-
-+(void) feedbackForecast:(AIShortMatchModel*)model foModel:(TOFoModel*)foModel{
-    [TCDemand feedbackDemand:model foModel:foModel];
 }
 
 @end

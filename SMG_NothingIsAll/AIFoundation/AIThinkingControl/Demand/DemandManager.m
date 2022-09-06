@@ -119,10 +119,12 @@
  *      2022.05.02: 未形成新需求时,也更新energy (参考2523a-方案1);
  *      2022.05.18: 多pFos形成单个任务 (参考26042-TODO1);
  *      2022.05.18: 废弃抵消和防重功能,现在root各自工作,共用R和P反馈即可各自工作;
+ *  @result 将新增的root任务收集返回;
  */
--(void) updateCMVCache_RMV:(AIShortMatchModel*)inModel{
+-(NSArray*) updateCMVCache_RMV:(AIShortMatchModel*)inModel{
     //1. 数据检查;
-    if (!inModel || !inModel.protoFo || !Switch4RS) return;
+    NSMutableArray *newRootsResult = [[NSMutableArray alloc] init];
+    if (!inModel || !inModel.protoFo || !Switch4RS) return newRootsResult;
     NSDictionary *fos4Demand = inModel.fos4Demand;
     
     //2. 多时序识别预测分别进行处理;
@@ -139,6 +141,7 @@
             //7. 有需求时,则加到需求序列中;
             ReasonDemandModel *newItem = [ReasonDemandModel newWithAlgsType:atKey pFos:pFosValue inModel:inModel baseFo:nil];
             [self.loopCache addObject:newItem];
+            [newRootsResult addObject:newItem];
             
             //8. 设活跃度_将最大的任务x2取负值,为当前活跃度 (参考25142-改进);;
             //2021.05.27: 为方便测试,所有imv都给20迫切度 (因为迫切度太低话,还没怎么思考就停了);
@@ -153,6 +156,7 @@
             NSLog(@"当前,预测mv未形成需求:%@ 评分:%f",atKey,score);
         }
     }
+    return newRootsResult;
 }
 
 /**

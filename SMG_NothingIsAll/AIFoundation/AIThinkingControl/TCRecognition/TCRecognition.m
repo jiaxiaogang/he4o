@@ -102,9 +102,9 @@
     //NSLog(@"反思时序: Finish >> %@",Fo2FStr(result.matchFo));
     AddTCDebug(@"FB1");
     
-    //3. 调用更新到短时记忆树;
+    //3. 调用更新到短时记忆树 (不用学习和反馈,直接构建子任务);
     DebugE();
-    [TCForecast feedbackForecast:result foModel:foModel];
+    [TCDemand feedbackDemand:result foModel:foModel];
 }
 
 @end

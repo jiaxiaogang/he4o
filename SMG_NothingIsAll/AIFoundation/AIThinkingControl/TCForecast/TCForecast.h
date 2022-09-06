@@ -9,14 +9,11 @@
 #import <Foundation/Foundation.h>
 
 /**
- *  MARK:--------------------反馈 & 预测--------------------
+ *  MARK:--------------------反省触发器--------------------
  */
 @interface TCForecast : NSObject
 
-+(void) rForecast:(AIShortMatchModel*)model;
-+(void) pForecast:(AICMVNode*)cmvNode;
-+(void) forecastReasonIRT:(AIShortMatchModel*)model;
-+(void) forecastPerceptIRT:(AIShortMatchModel*)model;
-+(void) feedbackForecast:(AIShortMatchModel*)model foModel:(TOFoModel*)foModel;
++(void) forecast_Multi:(NSArray*)newRoots;
++(void) forecast_Single:(AIMatchFoModel*)item;
 
 @end

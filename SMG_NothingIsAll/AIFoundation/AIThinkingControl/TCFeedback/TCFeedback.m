@@ -21,6 +21,7 @@
  *      2022.03.05: BUG_将仅末位才反馈,改成非末位才反馈 (原来逻辑写反了);
  *      2022.05.02: 用matchAlgs+partAlgs替代mIsC (参考25234-8);
  *      2022.09.05: 将theTC.inModels改成roots.pFos (参考27096-方案2);
+ *      2022.09.06: TC流程调整_直接调用TCDemand,将感理性反省预置都后置到Demand中 (参考27096-实践1);
  *  @status
  *      xxxx.xx.xx: 非启动状态,因为时序识别中,未涵盖HNGL类型,所以并未对HNGL进行预测;
  *      2021.10.17: 启动,支持对IRT的理性失效 (参考24059&24061-方案2);
@@ -68,17 +69,13 @@
     //2021.12.01: R任务(新架构应在forecastIRT之后,调用rForecastBack.rDemand,但旧架构在前面,先不动,等测没影响再改后面);
     //2021.12.05: 将tor移到概念识别后了,此处front和back合并 (参考24171-9);
     DebugE();
-    [TCForecast rForecast:model];
-    
-    //8. IRT触发器;
-    [TCForecast forecastReasonIRT:model];
-    [TCForecast forecastPerceptIRT:model];
+    [TCDemand rDemand:model];
 }
 
 /**
  *  MARK:--------------------"外层输入" 推进 "中层循环" 认知--------------------
  *  @title 外层输入对In短时记忆的影响处理 (参考22052-2);
- *  @param cmvNode : 新输入的mv;2
+ *  @param cmvNode : 新输入的mv;
  *  @version
  *      2021.01.24: 对多时序识别结果支持,及时全面的改变status为OutBackYes (参考22073-todo5);
  *      2021.02.04: In反省支持虚mv,所以此处也要支持虚mv的OPush判断 (参考22108);
@@ -138,6 +135,7 @@
  *      2022.05.22: R任务有效性反馈状态更新 (参考26095-3);
  *      2022.05.29: 反馈与demand.mv对比匹配,而不是solutionFo (参考26141-BUG1);
  *      2022.06.03: 将roots浅复制,避免强训过程中因loopCache变化而闪退;
+ *      2022.09.06: TC流程调整_直接调用TCDemand (参考27096-实践1);
  */
 +(void) feedbackTOP:(AICMVNode*)cmvNode{
     //1. 数据检查
@@ -214,7 +212,7 @@
     
     //3. p任务;
     DebugE();
-    [TCForecast pForecast:cmvNode];
+    [TCDemand pDemand:cmvNode];
 }
 
 @end

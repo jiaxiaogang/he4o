@@ -20,8 +20,11 @@
     [theTC updateOperCount:kFILENAME];
     Debug();
     OSTitleLog(@"rDemand");
-    [theTC.outModelManager updateCMVCache_RMV:model];
+    NSArray *newRoots = [theTC.outModelManager updateCMVCache_RMV:model];
     [theTV updateFrame];
+    
+    //3. 为新roots构建反省触发器;
+    [TCForecast forecast_Multi:newRoots];
     
     //6. 此处推进不成功,则运行TOP四模式;
     DebugE();
