@@ -58,7 +58,7 @@
 //            BOOL mIsC = [TOUtils mIsC_1:model.protoAlg.pointer c:waitAlg_p];
             BOOL mIsC = [recognitionAlgs containsObject:waitAlg_p];
             if (mIsC) {
-                waitModel.status = TIModelStatus_OutBackReason;
+                [waitModel feedbackFrame:model.protoAlg.pointer];
                 [theTV updateFrame];
                 NSLog(@"tir_OPushM: waitFo场景更新,原IRT理性失效");
             }

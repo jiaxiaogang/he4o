@@ -8,6 +8,19 @@
 
 #import "AIMatchFoModel.h"
 
+@interface AIMatchFoModel ()
+
+/**
+ *  MARK:--------------------当前反馈帧的相近度--------------------
+ *  @desc 比对feedback输入的protoAlg和当前等待反馈的itemAlg之间相近度,并存到此值下;
+ *  @callers
+ *      1. 有反馈时,计算并赋值;
+ *      2. 跳转下帧时,恢复默认值0;
+ */
+@property (assign, nonatomic) CGFloat feedbackNear;
+
+@end
+
 @implementation AIMatchFoModel
 
 +(AIMatchFoModel*) newWithMatchFo:(AIKVPointer*)matchFo maskFo:(AIKVPointer*)maskFo sumNear:(CGFloat)sumNear nearCount:(NSInteger)nearCount indexDic:(NSDictionary*)indexDic cutIndex:(NSInteger)cutIndex{
@@ -22,27 +35,34 @@
     return model;
 }
 
+//MARK:===============================================================
+//MARK:                     < publicMethod >
+//MARK:===============================================================
+
+//当前帧有反馈;
+-(void) feedbackFrame:(AIKVPointer*)fbProtoAlg {
+    //1. 数据准备;
+    AIFoNodeBase *matchFo = [SMGUtils searchNode:self.matchFo];
+    AIKVPointer *waitAlg_p = ARR_INDEX(matchFo.content_ps, self.cutIndex + 1);
+    
+    //2. 更新status和near;
+    self.status = TIModelStatus_OutBackReason;
+    self.feedbackNear = [AIAnalyst compareCansetAlg:waitAlg_p protoAlg:fbProtoAlg];
+}
+
 -(void) forwardFrame {
     //1. 推进到下一帧;
     self.cutIndex ++;
     
-    //2. 状态重置 & 失效重置为false;
+    //2. 更新匹配度分子分母值;
+    self.sumNear += self.feedbackNear;
+    self.nearCount ++;
+    
+    //3. 状态重置 & 失效重置为false & 反馈相近度重置 & 重置scoreCache(触发重新计算mv评分);
     self.status = TIModelStatus_LastWait;
     self.isExpired = false;
-    
-    //3. 重置scoreCache (重新计算mv评分);
+    self.feedbackNear = 0;
     self.scoreCache = defaultScore;
-    
-    //4. 更新匹配度matchFoValue (可改成单存分子分母两个值,更新时分母+1,分子计算当前的相近度即可);
-    //TODOTOMORROW20220906:
-    //  1. 看明天把feedbackTIR中的inputProtoAlg传递过来,做对比用;
-    //  2. 或者干脆在反馈时,就把相近度near算出来存上;
-    
-    AIKVPointer *checkAssAlg_p = nil;
-    AIKVPointer *compareProtoAlg = nil;
-    CGFloat near = [AIAnalyst compareCansetAlg:checkAssAlg_p protoAlg:compareProtoAlg];
-    self.sumNear += near;
-    self.nearCount ++;
     
     //5. 更新indexDic;
     //[indexDic setObject:@(curIndex) forKey:@(maskFoIndex)];
@@ -50,10 +70,6 @@
     //5. 触发器 (非末帧继续R反省,末帧则P反省);
     //[AITime setTimeTrigger:deltaTime trigger:^{
 }
-
-//MARK:===============================================================
-//MARK:                     < publicMethod >
-//MARK:===============================================================
 
 //匹配度计算
 -(CGFloat) matchFoValue {

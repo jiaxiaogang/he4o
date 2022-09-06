@@ -12,6 +12,7 @@
  *  MARK:--------------------单条matchFo模型--------------------
  *  @version
  *      2021.06.29: 将cutIndex拆分为lastMatchIndex和cutIndex两个,即新增cutIndex已发生截点 (参考23152);
+ *      2022.09.06: 将匹配度matchFoValue改成单存分子分母两个值,更新时分母+1,分子计算当前的相近度即可 (参考27095-8);
  */
 @class AIFoNodeBase;
 @interface AIMatchFoModel : NSObject
@@ -52,6 +53,14 @@
  *      2022.08.19: 初版,因为demand评分常慢(>1s),跑会训练就卡的很,所以加了这个评分缓存 (参考27065);
  */
 @property (assign, nonatomic) CGFloat scoreCache;
+
+
+//MARK:===============================================================
+//MARK:                     < publicMethod >
+//MARK:===============================================================
+
+//当前帧有反馈;
+-(void) feedbackFrame:(AIKVPointer*)fbProtoAlg;
 
 //推进至下一帧;
 -(void) forwardFrame;
