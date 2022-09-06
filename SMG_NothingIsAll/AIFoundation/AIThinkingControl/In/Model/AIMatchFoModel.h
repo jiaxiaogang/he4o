@@ -16,10 +16,11 @@
 @class AIFoNodeBase;
 @interface AIMatchFoModel : NSObject
 
-+(AIMatchFoModel*) newWithMatchFo:(AIKVPointer*)matchFo maskFo:(AIKVPointer*)maskFo matchFoValue:(CGFloat)matchFoValue indexDic:(NSDictionary*)indexDic cutIndex:(NSInteger)cutIndex;
++(AIMatchFoModel*) newWithMatchFo:(AIKVPointer*)matchFo maskFo:(AIKVPointer*)maskFo sumNear:(CGFloat)sumNear nearCount:(NSInteger)nearCount indexDic:(NSDictionary*)indexDic cutIndex:(NSInteger)cutIndex;
 @property (strong, nonatomic) AIKVPointer *matchFo;     //匹配时序
 @property (strong, nonatomic) AIKVPointer *maskFo;      //识别时为protoFo,反思时为regroupFo;
-@property (assign, nonatomic) CGFloat matchFoValue;     //时序匹配度
+@property (assign, nonatomic) CGFloat sumNear;          //时序元素相近度总和
+@property (assign, nonatomic) NSInteger nearCount;      //时序元素相近数
 @property (assign, nonatomic) TIModelStatus status;     //状态
 @property (assign, nonatomic) BOOL isExpired;           //过期状态 (参考n27p09)
 
@@ -52,6 +53,10 @@
  */
 @property (assign, nonatomic) CGFloat scoreCache;
 
+//推进至下一帧;
 -(void) forwardFrame;
+
+//匹配度计算;
+-(CGFloat) matchFoValue;
 
 @end

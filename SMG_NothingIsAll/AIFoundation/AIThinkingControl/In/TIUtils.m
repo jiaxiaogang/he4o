@@ -406,11 +406,11 @@
             
             //7. 全含判断;
             AIFoNodeBase *regroupFo = fromRegroup ? maskFo : nil;
-            [self TIR_Fo_CheckFoValidMatch:assFo outOfFos:assFo_ps success:^(NSInteger lastAssIndex, NSDictionary *indexDic, CGFloat matchValue) {
-                if (Log4MFo) NSLog(@"时序识别item SUCCESS 完成度:%f %@->%@",matchValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
+            [self TIR_Fo_CheckFoValidMatch:assFo outOfFos:assFo_ps success:^(NSInteger lastAssIndex, NSDictionary *indexDic, CGFloat sumNear,NSInteger nearCount) {
                 NSInteger cutIndex = fromRegroup ? -1 : lastAssIndex;
                 AddTCDebug(@"时序识别24");
-                AIMatchFoModel *newMatchFo = [AIMatchFoModel newWithMatchFo:assFo.pointer maskFo:maskFo.pointer matchFoValue:matchValue indexDic:indexDic cutIndex:cutIndex];
+                AIMatchFoModel *newMatchFo = [AIMatchFoModel newWithMatchFo:assFo.pointer maskFo:maskFo.pointer sumNear:sumNear nearCount:nearCount indexDic:indexDic cutIndex:cutIndex];
+                if (Log4MFo) NSLog(@"时序识别item SUCCESS 完成度:%f %@->%@",newMatchFo.matchFoValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
                 AddTCDebug(@"时序识别25");
                 
                 //8. 被引用强度;
@@ -477,7 +477,7 @@
  *      2022.06.08: 排序公式改为sumNear / nearCount (参考26222-TODO1);
  *  _result 将protoFo与assFo判断是否全含,并将匹配度返回;
  */
-+(void) TIR_Fo_CheckFoValidMatch:(AIFoNodeBase*)assFo outOfFos:(NSArray*)outOfFos success:(void(^)(NSInteger lastAssIndex, NSDictionary *indexDic,CGFloat matchValue))success regroupFo:(AIFoNodeBase*)regroupFo{
++(void) TIR_Fo_CheckFoValidMatch:(AIFoNodeBase*)assFo outOfFos:(NSArray*)outOfFos success:(void(^)(NSInteger lastAssIndex, NSDictionary *indexDic,CGFloat sumNear,NSInteger nearCount))success regroupFo:(AIFoNodeBase*)regroupFo{
     //1. 数据准备;
     AddTCDebug(@"时序识别10");
     BOOL paramValid = assFo && assFo.content_ps.count > 0 && success;
@@ -595,11 +595,8 @@
     }
     AddTCDebug(@"时序识别23");
     
-    //6. 到此全含成功 之: 匹配度计算
-    CGFloat matchValue = nearCount > 0 ? sumNear / nearCount : 1;
-    
     //7. 到此全含成功 之: 返回success
-    success(lastAssIndex,indexDic,matchValue);
+    success(lastAssIndex,indexDic,sumNear,nearCount);
 }
 
 /**

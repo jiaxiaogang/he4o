@@ -10,11 +10,12 @@
 
 @implementation AIMatchFoModel
 
-+(AIMatchFoModel*) newWithMatchFo:(AIKVPointer*)matchFo maskFo:(AIKVPointer*)maskFo matchFoValue:(CGFloat)matchFoValue indexDic:(NSDictionary*)indexDic cutIndex:(NSInteger)cutIndex{
++(AIMatchFoModel*) newWithMatchFo:(AIKVPointer*)matchFo maskFo:(AIKVPointer*)maskFo sumNear:(CGFloat)sumNear nearCount:(NSInteger)nearCount indexDic:(NSDictionary*)indexDic cutIndex:(NSInteger)cutIndex{
     AIMatchFoModel *model = [[AIMatchFoModel alloc] init];
     model.matchFo = matchFo;
     model.maskFo = maskFo;
-    model.matchFoValue = matchFoValue;
+    model.sumNear = sumNear;
+    model.nearCount = nearCount;
     model.indexDic = indexDic;
     model.cutIndex = cutIndex;
     model.scoreCache = defaultScore; //评分缓存默认值;
@@ -33,15 +34,30 @@
     self.scoreCache = defaultScore;
     
     //4. 更新匹配度matchFoValue (可改成单存分子分母两个值,更新时分母+1,分子计算当前的相近度即可);
-//    CGFloat near = [AIAnalyst compareCansetAlg:checkAssAlg_p protoAlg:compareProtoAlg];
-//    sumNear += near;
-//    nearCount ++;
+    //TODOTOMORROW20220906:
+    //  1. 看明天把feedbackTIR中的inputProtoAlg传递过来,做对比用;
+    //  2. 或者干脆在反馈时,就把相近度near算出来存上;
+    
+    AIKVPointer *checkAssAlg_p = nil;
+    AIKVPointer *compareProtoAlg = nil;
+    CGFloat near = [AIAnalyst compareCansetAlg:checkAssAlg_p protoAlg:compareProtoAlg];
+    self.sumNear += near;
+    self.nearCount ++;
     
     //5. 更新indexDic;
     //[indexDic setObject:@(curIndex) forKey:@(maskFoIndex)];
     
     //5. 触发器 (非末帧继续R反省,末帧则P反省);
     //[AITime setTimeTrigger:deltaTime trigger:^{
+}
+
+//MARK:===============================================================
+//MARK:                     < publicMethod >
+//MARK:===============================================================
+
+//匹配度计算
+-(CGFloat) matchFoValue {
+    return self.nearCount > 0 ? self.sumNear / self.nearCount : 1;
 }
 
 /**
@@ -52,7 +68,8 @@
     if (self) {
         self.matchFo = [aDecoder decodeObjectForKey:@"matchFo"];
         self.maskFo = [aDecoder decodeObjectForKey:@"maskFo"];
-        self.matchFoValue = [aDecoder decodeFloatForKey:@"matchFoValue"];
+        self.sumNear = [aDecoder decodeFloatForKey:@"sumNear"];
+        self.nearCount = [aDecoder decodeIntegerForKey:@"nearCount"];
         self.status = [aDecoder decodeIntegerForKey:@"status"];
         self.indexDic = [aDecoder decodeObjectForKey:@"indexDic"];
         self.cutIndex = [aDecoder decodeIntegerForKey:@"cutIndex"];
@@ -65,7 +82,8 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [aCoder encodeObject:self.matchFo forKey:@"matchFo"];
     [aCoder encodeObject:self.maskFo forKey:@"maskFo"];
-    [aCoder encodeFloat:self.matchFoValue forKey:@"matchFoValue"];
+    [aCoder encodeFloat:self.sumNear forKey:@"sumNear"];
+    [aCoder encodeInteger:self.nearCount forKey:@"nearCount"];
     [aCoder encodeInteger:self.status forKey:@"status"];
     [aCoder encodeObject:self.indexDic forKey:@"indexDic"];
     [aCoder encodeInteger:self.cutIndex forKey:@"cutIndex"];
