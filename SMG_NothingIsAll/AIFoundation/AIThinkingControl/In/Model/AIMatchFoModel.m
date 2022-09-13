@@ -50,6 +50,7 @@
     self.feedbackNear = [AIAnalyst compareCansetAlg:waitAlg_p protoAlg:fbProtoAlg];
 }
 
+//推进至下一帧;
 -(void) forwardFrame {
     //1. 推进到下一帧;
     self.cutIndex ++;
@@ -67,8 +68,13 @@
     //5. 更新indexDic;
     //[indexDic setObject:@(curIndex) forKey:@(maskFoIndex)];
     
+    // > 取到fbProtoAlg的index和当前waitAlg的index(应该就是cutIndex),然后更新indexDic;
+    // > 注意: 原来的indexDic是源于时序识别时的,而此时的反馈,未必与原protoFo还是同一个时序,所以这个需要注意并分析下;
+    //          > 如果不是同一个时序,这里的indexDic在使用时,就无法取得结果,除非把indexDic改成protoAlg序列 (content_ps?)
+    
     //5. 触发器 (非末帧继续R反省,末帧则P反省);
     //[AITime setTimeTrigger:deltaTime trigger:^{
+    // > 这里看能不能直接调用forecast_Single();
 }
 
 //匹配度计算
