@@ -35,7 +35,7 @@
         pAleardayCount = pFo.cutIndex + 1;
     }else{
         //b. 子R任务时 (参考26232-TODO6);
-        pAleardayCount = [SMGUtils filterArr:pFo.indexDic.allValues checkValid:^BOOL(NSNumber *item) {
+        pAleardayCount = [SMGUtils filterArr:pFo.indexDic2.allValues checkValid:^BOOL(NSNumber *item) {
             int maskIndex = item.intValue;
             return maskIndex <= demandBaseFo.actionIndex;
         }].count;
@@ -45,7 +45,7 @@
     return [self compareCansetFo:cansetFo_p ptAleardayCount:pAleardayCount needBackMatch:false getMaskAlgFromPtIndexBlock:^AIKVPointer *(NSInteger ptIndex) {
         
         //5. 根据indexDic将ptIndex转成maskIndex,然后返回mask元素;
-        int maskIndex = [NUMTOOK([pFo.indexDic objectForKey:@(ptIndex)]) intValue];
+        int maskIndex = [NUMTOOK([pFo.indexDic2 objectForKey:@(ptIndex)]) intValue];
         return ARR_INDEX(maskFo.content_ps, maskIndex);
     }];
 }

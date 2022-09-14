@@ -19,7 +19,12 @@
 
 +(AIMatchFoModel*) newWithMatchFo:(AIKVPointer*)matchFo maskFo:(AIKVPointer*)maskFo sumNear:(CGFloat)sumNear nearCount:(NSInteger)nearCount indexDic:(NSDictionary*)indexDic cutIndex:(NSInteger)cutIndex;
 @property (strong, nonatomic) AIKVPointer *matchFo;     //匹配时序
-@property (strong, nonatomic) AIKVPointer *maskFo;      //识别时为protoFo,反思时为regroupFo;
+
+/**
+ *  MARK:--------------------识别时为protoFo,反思时为regroupFo--------------------
+ *  @desc 状态: 未使用,因为demand下也存了protoFo和regroupFo,而现在都用的是demand下的;
+ */
+@property (strong, nonatomic) AIKVPointer *maskFo;
 @property (assign, nonatomic) CGFloat sumNear;          //时序元素相近度总和
 @property (assign, nonatomic) NSInteger nearCount;      //时序元素相近数
 @property (assign, nonatomic) TIModelStatus status;     //状态
@@ -34,7 +39,7 @@
  *  @version
  *      2022.06.11: 将lastMatchIndex迭代成indexDic,即从末位改成记录所有 (参考26232-TODO2);
  */
-@property (strong, nonatomic) NSDictionary *indexDic;
+@property (strong, nonatomic) NSDictionary *indexDic2;
 
 /**
  *  MARK:--------------------已发生截点--------------------

@@ -29,7 +29,7 @@
     model.maskFo = maskFo;
     model.sumNear = sumNear;
     model.nearCount = nearCount;
-    model.indexDic = indexDic;
+    model.indexDic2 = indexDic;
     model.cutIndex = cutIndex;
     model.scoreCache = defaultScore; //评分缓存默认值;
     return model;
@@ -71,6 +71,13 @@
     // > 取到fbProtoAlg的index和当前waitAlg的index(应该就是cutIndex),然后更新indexDic;
     // > 注意: 原来的indexDic是源于时序识别时的,而此时的反馈,未必与原protoFo还是同一个时序,所以这个需要注意并分析下;
     //          > 如果不是同一个时序,这里的indexDic在使用时,就无法取得结果,除非把indexDic改成protoAlg序列 (content_ps?)
+    //代码回顾 与 indexDic的体用筛查 (查更新indexDic是否会导致什么问题):
+    //  1. demand会记录下当时inShortModel的protoFo和regroupFo;
+    //  2. 在使用indexDic2时,会用它的valueIndex来取上面的demand.protoFo/regroupFo的content_ps;
+    //  3. 如果此处单纯的更新了indexDic2,那么从demand.protoFo/regroupFo就取越界了;
+    //  4. 所以必须支持后期更新protoFo (但反省触发器是根据pFo来的,而不是demand);
+    //  5. 所以,应该根据pFo中,更新维护一个updateMaskFoContent_ps;
+    
     
     //5. 触发器 (非末帧继续R反省,末帧则P反省);
     //[AITime setTimeTrigger:deltaTime trigger:^{
@@ -93,7 +100,7 @@
         self.sumNear = [aDecoder decodeFloatForKey:@"sumNear"];
         self.nearCount = [aDecoder decodeIntegerForKey:@"nearCount"];
         self.status = [aDecoder decodeIntegerForKey:@"status"];
-        self.indexDic = [aDecoder decodeObjectForKey:@"indexDic"];
+        self.indexDic2 = [aDecoder decodeObjectForKey:@"indexDic2"];
         self.cutIndex = [aDecoder decodeIntegerForKey:@"cutIndex"];
         self.matchFoStrong = [aDecoder decodeIntegerForKey:@"matchFoStrong"];
         self.scoreCache = [aDecoder decodeFloatForKey:@"scoreCache"];
@@ -107,7 +114,7 @@
     [aCoder encodeFloat:self.sumNear forKey:@"sumNear"];
     [aCoder encodeInteger:self.nearCount forKey:@"nearCount"];
     [aCoder encodeInteger:self.status forKey:@"status"];
-    [aCoder encodeObject:self.indexDic forKey:@"indexDic"];
+    [aCoder encodeObject:self.indexDic2 forKey:@"indexDic2"];
     [aCoder encodeInteger:self.cutIndex forKey:@"cutIndex"];
     [aCoder encodeInteger:self.matchFoStrong forKey:@"matchFoStrong"];
     [aCoder encodeFloat:self.scoreCache forKey:@"scoreCache"];
