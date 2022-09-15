@@ -19,14 +19,12 @@
  *      2022.05.30: R和H模式复用封装 (参考26161);
  *      2022.06.11: 修复反思子任务没有protoFo用于analyst的BUG (参考26224-方案图);
  *      2022.06.11: 改用pFo参与analyst算法比对 & 并改取pFo已发生个数计算方式 (参考26232-TODO3&5&6);
+ *      2022.09.15: 导致任务的maskFo不从demand取,而是从pFo取 (因为它在推进时会变化) (参考27097-todo3);
  */
 +(AISolutionModel*) compareRCansetFo:(AIKVPointer*)cansetFo_p pFo:(AIMatchFoModel*)pFo demand:(ReasonDemandModel*)demand {
     //1. 数据准备;
     BOOL isRoot = !demand.baseOrGroup;
     TOFoModel *demandBaseFo = (TOFoModel*)demand.baseOrGroup;
-    
-    //2. 取导致任务的maskFo;
-    AIFoNodeBase *maskFo = [SMGUtils searchNode:isRoot ? demand.protoFo : demand.regroupFo];
     
     //3. 取pFo已发生个数 (参考26232-TODO3);
     NSInteger pAleardayCount = 0;
@@ -46,7 +44,7 @@
         
         //5. 根据indexDic将ptIndex转成maskIndex,然后返回mask元素;
         int maskIndex = [NUMTOOK([pFo.indexDic2 objectForKey:@(ptIndex)]) intValue];
-        return ARR_INDEX(maskFo.content_ps, maskIndex);
+        return ARR_INDEX(pFo.realMaskFo, maskIndex);
     }];
 }
 

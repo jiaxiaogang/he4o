@@ -13,6 +13,7 @@
  *  @version
  *      2021.06.29: 将cutIndex拆分为lastMatchIndex和cutIndex两个,即新增cutIndex已发生截点 (参考23152);
  *      2022.09.06: 将匹配度matchFoValue改成单存分子分母两个值,更新时分母+1,分子计算当前的相近度即可 (参考27095-8);
+ *      2022.09.15: 因为maskFo(本体为protoFo/regroupFo),它其实在反省推进时会变化的,所以改成realMaskFo (参考27097);
  */
 @class AIFoNodeBase;
 @interface AIMatchFoModel : NSObject
@@ -22,9 +23,11 @@
 
 /**
  *  MARK:--------------------识别时为protoFo,反思时为regroupFo--------------------
- *  @desc 状态: 未使用,因为demand下也存了protoFo和regroupFo,而现在都用的是demand下的;
+ *  @desc 状态: 启用,初始化时为maskFo,但后续可随着反省触发器和cutIndex的推进更新;
+ *  @desc 元素初始化时为protoFo/regroupFo的content_ps,后续随着更新附加到尾部;
  */
-@property (strong, nonatomic) AIKVPointer *maskFo;
+@property (strong, nonatomic) NSMutableArray *realMaskFo;
+
 @property (assign, nonatomic) CGFloat sumNear;          //时序元素相近度总和
 @property (assign, nonatomic) NSInteger nearCount;      //时序元素相近数
 @property (assign, nonatomic) TIModelStatus status;     //状态
@@ -39,7 +42,7 @@
  *  @version
  *      2022.06.11: 将lastMatchIndex迭代成indexDic,即从末位改成记录所有 (参考26232-TODO2);
  */
-@property (strong, nonatomic) NSDictionary *indexDic2;
+@property (strong, nonatomic) NSMutableDictionary *indexDic2;
 
 /**
  *  MARK:--------------------已发生截点--------------------

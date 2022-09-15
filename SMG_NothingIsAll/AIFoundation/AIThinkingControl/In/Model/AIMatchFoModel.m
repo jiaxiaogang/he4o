@@ -24,30 +24,56 @@
 @implementation AIMatchFoModel
 
 +(AIMatchFoModel*) newWithMatchFo:(AIKVPointer*)matchFo maskFo:(AIKVPointer*)maskFo sumNear:(CGFloat)sumNear nearCount:(NSInteger)nearCount indexDic:(NSDictionary*)indexDic cutIndex:(NSInteger)cutIndex{
+    AIFoNodeBase *maskFoNode = [SMGUtils searchNode:maskFo];
     AIMatchFoModel *model = [[AIMatchFoModel alloc] init];
     model.matchFo = matchFo;
-    model.maskFo = maskFo;
+    [model.realMaskFo addObjectsFromArray:maskFoNode.content_ps];
     model.sumNear = sumNear;
     model.nearCount = nearCount;
-    model.indexDic2 = indexDic;
+    model.indexDic2 = [[NSMutableDictionary alloc] initWithDictionary:indexDic];
     model.cutIndex = cutIndex;
     model.scoreCache = defaultScore; //评分缓存默认值;
     return model;
 }
 
 //MARK:===============================================================
+//MARK:                     < privateMethod >
+//MARK:===============================================================
+-(NSMutableArray *)realMaskFo {
+    if (!_realMaskFo) {
+        _realMaskFo = [[NSMutableArray alloc] init];
+    }
+    return _realMaskFo;
+}
+
+//MARK:===============================================================
 //MARK:                     < publicMethod >
 //MARK:===============================================================
 
-//当前帧有反馈;
+/**
+ *  MARK:--------------------当前帧有反馈--------------------
+ *  @version
+ *      2022.09.15: 更新indexDic & realMaskFo (参考27097);
+ */
 -(void) feedbackFrame:(AIKVPointer*)fbProtoAlg {
     //1. 数据准备;
     AIFoNodeBase *matchFo = [SMGUtils searchNode:self.matchFo];
     AIKVPointer *waitAlg_p = ARR_INDEX(matchFo.content_ps, self.cutIndex + 1);
     
-    //2. 更新status和near;
+    //2. 更新status & near & realMaskFo;
     self.status = TIModelStatus_OutBackReason;
     self.feedbackNear = [AIAnalyst compareCansetAlg:waitAlg_p protoAlg:fbProtoAlg];
+    [self.realMaskFo addObject:fbProtoAlg];
+    
+    //3. 取到反馈fbProtoAlg的index(应该就是realMaskFo.count)
+    NSInteger maskIndex = self.realMaskFo.count - 1;
+    
+    //4. 取当前waitAlg的index (应该就是cutIndex + 1)
+    NSInteger matchIndex = self.cutIndex + 1;
+    
+    //5. 更新indexDic (V: 末位maskIndex, K: matchIndex);
+    //TODOTEST20220915: 测下此处的新KV是否正确,比如断点查下原KV末位到了哪,或者查下当前时序的推进情况是否与新帧KV符合;
+    [self.indexDic2 setObject:@(maskIndex) forKey:@(matchIndex)];
 }
 
 //推进至下一帧;
@@ -65,18 +91,8 @@
     self.feedbackNear = 0;
     self.scoreCache = defaultScore;
     
-    //5. 更新indexDic;
-    //[indexDic setObject:@(curIndex) forKey:@(maskFoIndex)];
     
-    // > 取到fbProtoAlg的index和当前waitAlg的index(应该就是cutIndex),然后更新indexDic;
-    // > 注意: 原来的indexDic是源于时序识别时的,而此时的反馈,未必与原protoFo还是同一个时序,所以这个需要注意并分析下;
-    //          > 如果不是同一个时序,这里的indexDic在使用时,就无法取得结果,除非把indexDic改成protoAlg序列 (content_ps?)
-    //代码回顾 与 indexDic的体用筛查 (查更新indexDic是否会导致什么问题):
-    //  1. demand会记录下当时inShortModel的protoFo和regroupFo;
-    //  2. 在使用indexDic2时,会用它的valueIndex来取上面的demand.protoFo/regroupFo的content_ps;
-    //  3. 如果此处单纯的更新了indexDic2,那么从demand.protoFo/regroupFo就取越界了;
-    //  4. 所以必须支持后期更新protoFo (但反省触发器是根据pFo来的,而不是demand);
-    //  5. 所以,应该根据pFo中,更新维护一个updateMaskFoContent_ps;
+    
     
     
     //5. 触发器 (非末帧继续R反省,末帧则P反省);
@@ -96,7 +112,7 @@
     self = [super init];
     if (self) {
         self.matchFo = [aDecoder decodeObjectForKey:@"matchFo"];
-        self.maskFo = [aDecoder decodeObjectForKey:@"maskFo"];
+        self.realMaskFo = [aDecoder decodeObjectForKey:@"realMaskFo"];
         self.sumNear = [aDecoder decodeFloatForKey:@"sumNear"];
         self.nearCount = [aDecoder decodeIntegerForKey:@"nearCount"];
         self.status = [aDecoder decodeIntegerForKey:@"status"];
@@ -110,7 +126,7 @@
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [aCoder encodeObject:self.matchFo forKey:@"matchFo"];
-    [aCoder encodeObject:self.maskFo forKey:@"maskFo"];
+    [aCoder encodeObject:self.realMaskFo forKey:@"realMaskFo"];
     [aCoder encodeFloat:self.sumNear forKey:@"sumNear"];
     [aCoder encodeInteger:self.nearCount forKey:@"nearCount"];
     [aCoder encodeInteger:self.status forKey:@"status"];

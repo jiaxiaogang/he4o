@@ -475,6 +475,7 @@
  *      2022.05.25: 将衰后稳定性计算集成到全含判断方法中 (这样性能好些);
  *      2022.06.08: 稳定性低的不过滤了,因为学时统计,不关稳定性(概率)的事儿 (参考26222-TODO1);
  *      2022.06.08: 排序公式改为sumNear / nearCount (参考26222-TODO1);
+ *      2022.09.15: 修复indexDic收集的KV反了的BUG (与pFo.indexDic的定义不符);
  *  _result 将protoFo与assFo判断是否全含,并将匹配度返回;
  */
 +(void) TIR_Fo_CheckFoValidMatch:(AIFoNodeBase*)assFo outOfFos:(NSArray*)outOfFos success:(void(^)(NSInteger lastAssIndex, NSDictionary *indexDic,CGFloat sumNear,NSInteger nearCount))success regroupFo:(AIFoNodeBase*)regroupFo{
@@ -519,7 +520,7 @@
         //2. 匹配则记录lastAssIndex值;
         if (mIsC) {
             lastAssIndex = curIndex;
-            [indexDic setObject:@(curIndex) forKey:@(maskFoIndex)];
+            [indexDic setObject:@(maskFoIndex) forKey:@(curIndex)];
             AddTCDebug(@"时序识别14");
             
             //3. 统计匹配度;
@@ -567,7 +568,7 @@
                     lastProtoIndex = j; //成功匹配alg时,更新protoIndex (以达到只能向前匹配的目的);
                     checkResult = true;
                     validItemCount ++;  //有效数+1;
-                    [indexDic setObject:@(i) forKey:@(j)];
+                    [indexDic setObject:@(j) forKey:@(i)];
                     
                     //3. 统计匹配度;
                     AIKVPointer *compareProtoAlg = regroupFo ? ARR_INDEX(regroupFo.content_ps, j) : [TIUtils getProtoAlg:j];
