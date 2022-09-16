@@ -91,13 +91,8 @@
     self.feedbackNear = 0;
     self.scoreCache = defaultScore;
     
-    
-    
-    
-    
-    //5. 触发器 (非末帧继续R反省,末帧则P反省);
-    //[AITime setTimeTrigger:deltaTime trigger:^{
-    // > 这里看能不能直接调用forecast_Single();
+    //4. 触发器 (非末帧继续R反省,末帧则P反省);
+    [TCForecast forecast_Single:self];
 }
 
 //匹配度计算
