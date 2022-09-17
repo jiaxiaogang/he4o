@@ -44,7 +44,8 @@
         for (AIMatchFoModel *waitModel in root.pFos) {
             
             //4. 取出等待中的_非wait状态的,不处理;
-            if (waitModel.status != TIModelStatus_LastWait) continue;
+            NSInteger status = [waitModel getStatusForCutIndex:waitModel.cutIndex];
+            if (status != TIModelStatus_LastWait) continue;
             AIFoNodeBase *matchFo = [SMGUtils searchNode:waitModel.matchFo];
             if (Log4TIROPushM) NSLog(@"==> checkTIModel=MatchFo: %@",Fo2FStr(matchFo));
             
@@ -107,15 +108,16 @@
             NSInteger maxCutIndex = waitMatchFo.count - 1;
             
             //4. 非等待中的跳过;
-            if (Log4OPushM) NSLog(@"==> checkTIModel=MatchFo: %@ (%@)",Fo2FStr(waitMatchFo),TIStatus2Str(waitModel.status));
-            if (waitModel.status != TIModelStatus_LastWait) continue;
+            NSInteger status = [waitModel getStatusForCutIndex:waitModel.cutIndex];
+            if (Log4OPushM) NSLog(@"==> checkTIModel=MatchFo: %@ (%@)",Fo2FStr(waitMatchFo),TIStatus2Str(status));
+            if (status != TIModelStatus_LastWait) continue;
             
             //5. 非末位跳过 (参考25031-2);
             if (waitModel.cutIndex < maxCutIndex) continue;
             
             //6. 等待中的inModel_判断hope(wait)和real(new)之间是否相符 (仅标记同区同向反馈);
             if ([AIScore sameIdenSameScore:waitMatchFo.cmvNode_p mv2:cmvNode.pointer]) {
-                waitModel.status = TIModelStatus_OutBackSameDelta;
+                [waitModel setStatus:TIModelStatus_OutBackSameDelta forCutIndex:waitModel.cutIndex];
                 [theTV updateFrame];
                 NSLog(@"tip_OPushM: 实MV 正向反馈");
             }

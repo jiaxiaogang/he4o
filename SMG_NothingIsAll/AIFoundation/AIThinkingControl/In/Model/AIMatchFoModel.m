@@ -50,11 +50,11 @@
 }
 
 -(TIModelStatus) getStatusForCutIndex:(NSInteger)cutIndex {
-    
+    return NUMTOOK([self.status objectForKey:@(cutIndex)]).integerValue;
 }
 
 -(void) setStatus:(TIModelStatus)status forCutIndex:(NSInteger)cutIndex {
-    
+    [self.status setObject:@(status) forKey:@(cutIndex)];
 }
 
 //MARK:===============================================================
@@ -67,12 +67,13 @@
  *      2022.09.15: 更新indexDic & realMaskFo (参考27097);
  */
 -(void) feedbackFrame:(AIKVPointer*)fbProtoAlg {
+    //----------------当前帧处理----------------
     //1. 数据准备;
     AIFoNodeBase *matchFo = [SMGUtils searchNode:self.matchFo];
     AIKVPointer *waitAlg_p = ARR_INDEX(matchFo.content_ps, self.cutIndex + 1);
     
     //2. 更新status & near & realMaskFo;
-    self.status = TIModelStatus_OutBackReason;
+    [self setStatus:TIModelStatus_OutBackReason forCutIndex:self.cutIndex];
     self.feedbackNear = [AIAnalyst compareCansetAlg:waitAlg_p protoAlg:fbProtoAlg];
     [self.realMaskFo addObject:fbProtoAlg];
     
@@ -97,7 +98,7 @@
     self.nearCount ++;
     
     //3. 状态重置 & 失效重置为false & 反馈相近度重置 & 重置scoreCache(触发重新计算mv评分);
-    self.status = TIModelStatus_LastWait;
+    [self setStatus:TIModelStatus_LastWait forCutIndex:self.cutIndex];
     self.isExpired = false;
     self.feedbackNear = 0;
     self.scoreCache = defaultScore;
