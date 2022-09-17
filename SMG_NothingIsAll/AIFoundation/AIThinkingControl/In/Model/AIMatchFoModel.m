@@ -40,10 +40,21 @@
 //MARK:                     < privateMethod >
 //MARK:===============================================================
 -(NSMutableArray *)realMaskFo {
-    if (!_realMaskFo) {
-        _realMaskFo = [[NSMutableArray alloc] init];
-    }
+    if (!_realMaskFo) _realMaskFo = [[NSMutableArray alloc] init];
     return _realMaskFo;
+}
+
+-(NSMutableDictionary *)status {
+    if (!_status) _status = [[NSMutableDictionary alloc] init];
+    return _status;
+}
+
+-(TIModelStatus) getStatusForCutIndex:(NSInteger)cutIndex {
+    
+}
+
+-(void) setStatus:(TIModelStatus)status forCutIndex:(NSInteger)cutIndex {
+    
 }
 
 //MARK:===============================================================
@@ -110,7 +121,7 @@
         self.realMaskFo = [aDecoder decodeObjectForKey:@"realMaskFo"];
         self.sumNear = [aDecoder decodeFloatForKey:@"sumNear"];
         self.nearCount = [aDecoder decodeIntegerForKey:@"nearCount"];
-        self.status = [aDecoder decodeIntegerForKey:@"status"];
+        self.status = [aDecoder decodeObjectForKey:@"status"];
         self.indexDic2 = [aDecoder decodeObjectForKey:@"indexDic2"];
         self.cutIndex = [aDecoder decodeIntegerForKey:@"cutIndex"];
         self.matchFoStrong = [aDecoder decodeIntegerForKey:@"matchFoStrong"];
@@ -124,7 +135,7 @@
     [aCoder encodeObject:self.realMaskFo forKey:@"realMaskFo"];
     [aCoder encodeFloat:self.sumNear forKey:@"sumNear"];
     [aCoder encodeInteger:self.nearCount forKey:@"nearCount"];
-    [aCoder encodeInteger:self.status forKey:@"status"];
+    [aCoder encodeObject:self.status forKey:@"status"];
     [aCoder encodeObject:self.indexDic2 forKey:@"indexDic2"];
     [aCoder encodeInteger:self.cutIndex forKey:@"cutIndex"];
     [aCoder encodeInteger:self.matchFoStrong forKey:@"matchFoStrong"];

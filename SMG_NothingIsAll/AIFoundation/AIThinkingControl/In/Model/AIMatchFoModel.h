@@ -30,8 +30,14 @@
 
 @property (assign, nonatomic) CGFloat sumNear;          //时序元素相近度总和
 @property (assign, nonatomic) NSInteger nearCount;      //时序元素相近数
-@property (assign, nonatomic) TIModelStatus status;     //状态
 @property (assign, nonatomic) BOOL isExpired;           //过期状态 (参考n27p09)
+
+//MARK:===============================================================
+//MARK:                     < status每帧状态 >
+//MARK:===============================================================
+@property (strong, nonatomic) NSMutableDictionary *status;//每帧状态 <K:cutIndex, V:TIModelStatus>
+-(TIModelStatus) getStatusForCutIndex:(NSInteger)cutIndex;
+-(void) setStatus:(TIModelStatus)status forCutIndex:(NSInteger)cutIndex;
 
 /**
  *  MARK:--------------------匹配下标映射--------------------
