@@ -22,6 +22,7 @@
  *      2022.05.02: 用matchAlgs+partAlgs替代mIsC (参考25234-8);
  *      2022.09.05: 将theTC.inModels改成roots.pFos (参考27096-方案2);
  *      2022.09.06: TC流程调整_直接调用TCDemand,将感理性反省预置都后置到Demand中 (参考27096-实践1);
+ *      2022.09.18: 有反馈时,及时处理反省和任务推进帧 (参考27098-todo2&todo3);
  *  @status
  *      xxxx.xx.xx: 非启动状态,因为时序识别中,未涵盖HNGL类型,所以并未对HNGL进行预测;
  *      2021.10.17: 启动,支持对IRT的理性失效 (参考24059&24061-方案2);
@@ -59,6 +60,10 @@
 //            BOOL mIsC = [TOUtils mIsC_1:model.protoAlg.pointer c:waitAlg_p];
             BOOL mIsC = [recognitionAlgs containsObject:waitAlg_p];
             if (mIsC) {
+                //6. 有反馈时,进行P反省: 进行理性IRT反省;
+                [TCRethink reasonInRethink:waitModel type:ATPlus];
+                
+                //7. pFo任务顺利: 推进帧;
                 [waitModel feedbackFrame:model.protoAlg.pointer];
                 [theTV updateFrame];
                 NSLog(@"tir_OPushM: waitFo场景更新,原IRT理性失效");
@@ -83,6 +88,7 @@
  *      2021.12.25: 废弃虚mv的代码 (因为虚mv早已不在时序识别的结果中,并且整个dsFo都已废弃掉了) (参考Note24);
  *      2021.12.25: 针对感性IRT反省的支持 (判断末位为感性预测中) (参考25022-②);
  *      2022.09.05: 将theTC.inModels改成roots.pFos (参考27096-方案2);
+ *      2022.09.18: 有反馈时,及时处理反省和任务失效 (参考27098-todo2);
  *  @bug
  *      2021.01.25: 修复witMatchFo.cmvNode_p空判断逻辑反了,导致无法执行修改状态为OutBackYes,从而反省类比永远为"逆";
  */
@@ -118,6 +124,22 @@
             //6. 等待中的inModel_判断hope(wait)和real(new)之间是否相符 (仅标记同区同向反馈);
             if ([AIScore sameIdenSameScore:waitMatchFo.cmvNode_p mv2:cmvNode.pointer]) {
                 [waitModel setStatus:TIModelStatus_OutBackSameDelta forCutIndex:waitModel.cutIndex];
+                AIFoNodeBase *waitMatchFo = [SMGUtils searchNode:waitModel.matchFo];
+                
+                //10. 有反馈;
+                CGFloat score = [AIScore score4MV:waitMatchFo.cmvNode_p ratio:1.0f];
+                
+                //b. 正mv反馈为P(好) 或 负mv反馈为S(坏);
+                if (score != 0) {
+                    AnalogyType type = score > 0 ? ATPlus : ATSub;
+                    
+                    //11. 则进行感性IRT反省;
+                    [TCRethink perceptInRethink:waitModel type:type];
+                    NSLog(@"---//IP反省触发器执行:%p F%ld 状态:%@",waitMatchFo,waitMatchFo.pointer.pointerId,TIStatus2Str(status));
+                }
+                
+                //13. pFo任务失效 (参考27093-条件1 & 27095-1);
+                waitModel.isExpired = true;
                 [theTV updateFrame];
                 NSLog(@"tip_OPushM: 实MV 正向反馈");
             }

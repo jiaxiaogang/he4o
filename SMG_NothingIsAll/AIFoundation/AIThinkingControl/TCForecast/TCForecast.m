@@ -52,6 +52,8 @@
  *  MARK:--------------------单条pFo处理--------------------
  *  @desc 可自动根据cutIndex判断触发理性或感性: 反省触发器;
  *  @callers : 1. 用于新root调用; 2. 用于反省顺利时推进到下一帧的触发器;
+ *  @version
+ *      2022.09.18: 有反馈时移至feedback及时处理 (参考27098-todo2&3&4);
  */
 +(void) forecast_Single:(AIMatchFoModel*)item{
     //1. 数据准备;
@@ -68,24 +70,20 @@
         
         NSLog(@"---//理性IRT触发器新增等待反馈:%p (%@ | useTime:%.2f)",matchFo,Fo2FStr(matchFo),deltaTime);
         [AITime setTimeTrigger:deltaTime trigger:^{
-            //5. 如果状态已改成OutBackReason,说明有反馈;
+            //5. 如果状态还是Wait,则无反馈:
             TIModelStatus status = [item getStatusForCutIndex:curCutIndex];
-            AnalogyType type = status == TIModelStatus_LastWait ? ATSub : ATPlus;
-            
-            //6. 则进行理性IRT反省;
-            [TCRethink reasonInRethink:item type:type];
-            NSLog(@"---//IR反省触发器执行:%p F%ld 状态:%@",matchFo,matchFo.pointer.pointerId,TIStatus2Str(status));
-            
-            //8. 失效判断;
             if (status == TIModelStatus_LastWait) {
-                //a. pFo任务失效 (参考27093-条件2 & 27095-2);
+                NSLog(@"---//IR反省触发器执行:%p F%ld 状态:%@",matchFo,matchFo.pointer.pointerId,TIStatus2Str(status));
+                
+                //6. 则进行理性IRT反省;
+                [TCRethink reasonInRethink:item type:ATSub];
+                
+                //7. 失效判断: pFo任务失效 (参考27093-条件2 & 27095-2);
                 item.isExpired = true;
-            }else{
-                //b. pFo任务顺利;
-                [item forwardFrame];
+                
+                //8. 失败状态标记;
+                [item setStatus:TIModelStatus_OutBackNone forCutIndex:curCutIndex];
             }
-            //7. 失败状态标记;
-            if (status == TIModelStatus_LastWait) [item setStatus:TIModelStatus_OutBackNone forCutIndex:curCutIndex];
         }];
     }
     //3. ========> 末位感性反省 (参考25031-2) ->feedbackTIP;
@@ -102,24 +100,21 @@
         [AITime setTimeTrigger:deltaTime trigger:^{
             //10. 如果状态已改成OutBack,说明有反馈;
             TIModelStatus status = [item getStatusForCutIndex:curCutIndex];
-            AnalogyType type = ATDefault;
             CGFloat score = [AIScore score4MV:matchFo.cmvNode_p ratio:1.0f];
-            if (score > 0) {
-                //b. 实mv+反馈同向:P(好),未反馈:S(坏);
-                type = (status == TIModelStatus_OutBackSameDelta) ? ATPlus : ATSub;
-            }else if(score < 0){
-                //b. 实mv-反馈同向:S(坏),未反馈:P(好);
-                type = (status == TIModelStatus_OutBackSameDelta) ? ATSub : ATPlus;
+            if (status == TIModelStatus_LastWait) {
+                if (score != 0) {
+                    
+                    //10. 正mv未反馈为S(坏) 或负mv未反馈为P(好);
+                    AnalogyType type = score > 0 ? ATSub : ATPlus;
+                    
+                    //11. 则进行感性IRT反省;
+                    [TCRethink perceptInRethink:item type:type];
+                    NSLog(@"---//IP反省触发器执行:%p F%ld 状态:%@",matchFo,matchFo.pointer.pointerId,TIStatus2Str(status));
+                }
+                
+                //12. 失败状态标记;
+                [item setStatus:TIModelStatus_OutBackNone forCutIndex:curCutIndex];
             }
-            
-            //11. 则进行感性IRT反省;
-            if (type != ATDefault) {
-                [TCRethink perceptInRethink:item type:type];
-                NSLog(@"---//IP反省触发器执行:%p F%ld 状态:%@",matchFo,matchFo.pointer.pointerId,TIStatus2Str(status));
-            }
-            
-            //12. 失败状态标记;
-            if (status == TIModelStatus_LastWait) [item setStatus:TIModelStatus_OutBackNone forCutIndex:curCutIndex];
             
             //13. pFo任务失效 (参考27093-条件1 & 27095-1);
             item.isExpired = true;

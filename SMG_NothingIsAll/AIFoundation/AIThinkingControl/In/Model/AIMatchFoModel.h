@@ -35,6 +35,12 @@
 //MARK:===============================================================
 //MARK:                     < status每帧状态 >
 //MARK:===============================================================
+
+/**
+ *  MARK:--------------------状态--------------------
+ *  @version
+ *      2022.09.17: status迭代为每帧一个 (参考27098-todo1);
+ */
 @property (strong, nonatomic) NSMutableDictionary *status;//每帧状态 <K:cutIndex, V:TIModelStatus>
 -(TIModelStatus) getStatusForCutIndex:(NSInteger)cutIndex;
 -(void) setStatus:(TIModelStatus)status forCutIndex:(NSInteger)cutIndex;
