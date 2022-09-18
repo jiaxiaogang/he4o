@@ -80,10 +80,7 @@
 //MARK:===============================================================
 
 //当前帧有反馈;
--(void) feedbackFrame:(AIKVPointer*)fbProtoAlg;
-
-//推进至下一帧;
--(void) forwardFrame;
+-(void) feedbackPushFrame:(AIKVPointer*)fbProtoAlg;
 
 //匹配度计算;
 -(CGFloat) matchFoValue;

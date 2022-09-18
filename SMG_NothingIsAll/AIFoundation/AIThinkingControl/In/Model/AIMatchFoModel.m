@@ -63,10 +63,12 @@
 
 /**
  *  MARK:--------------------当前帧有反馈--------------------
+ *  @param fbProtoAlg : 瞬时记忆新帧,反馈feedback来的protoAlg;
  *  @version
  *      2022.09.15: 更新indexDic & realMaskFo (参考27097);
+ *      2022.09.18: 将反馈处理和推进下一帧,集成到同一个方法执行 (参考27095-9 & 27098-todo3)
  */
--(void) feedbackFrame:(AIKVPointer*)fbProtoAlg {
+-(void) feedbackPushFrame:(AIKVPointer*)fbProtoAlg {
     //----------------当前帧处理----------------
     //1. 数据准备;
     AIFoNodeBase *matchFo = [SMGUtils searchNode:self.matchFo];
@@ -86,24 +88,20 @@
     //5. 更新indexDic (V: 末位maskIndex, K: matchIndex);
     //TODOTEST20220915: 测下此处的新KV是否正确,比如断点查下原KV末位到了哪,或者查下当前时序的推进情况是否与新帧KV符合;
     [self.indexDic2 setObject:@(maskIndex) forKey:@(matchIndex)];
-}
-
-//推进至下一帧;
--(void) forwardFrame {
-    //1. 推进到下一帧;
-    self.cutIndex ++;
     
-    //2. 更新匹配度分子分母值;
+    //----------------推进至下帧----------------
+    //1. 推进到下一帧_更新: cutIndex & sumNear(匹配度分子) & nearCount(匹配度分母);
+    self.cutIndex ++;
     self.sumNear += self.feedbackNear;
     self.nearCount ++;
     
-    //3. 状态重置 & 失效重置为false & 反馈相近度重置 & 重置scoreCache(触发重新计算mv评分);
+    //2. 推进到下一步_重置: status & 失效状态 & 反馈相近度 & scoreCache(触发重新计算mv评分);
     [self setStatus:TIModelStatus_LastWait forCutIndex:self.cutIndex];
     self.isExpired = false;
     self.feedbackNear = 0;
     self.scoreCache = defaultScore;
     
-    //4. 触发器 (非末帧继续R反省,末帧则P反省);
+    //3. 触发器 (非末帧继续R反省,末帧则P反省);
     [TCForecast forecast_Single:self];
 }
 
