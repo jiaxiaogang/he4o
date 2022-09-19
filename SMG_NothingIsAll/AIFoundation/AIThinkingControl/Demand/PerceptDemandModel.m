@@ -10,4 +10,9 @@
 
 @implementation PerceptDemandModel
 
+-(NSArray*)pFos{
+    //查27122-训练第2步中途闪退的BUG;
+    return nil;
+}
+
 @end
