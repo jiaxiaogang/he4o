@@ -35,7 +35,7 @@
     NSArray *recognitionAlgs = [TIUtils getMatchAndPartAlgPsByModel:model];
     
     //1. fbTIR对roots进行反馈判断 (参考27096-方案2);
-    NSArray *roots = theTC.outModelManager.getAllDemand;
+    NSArray *roots = [theTC.outModelManager.getAllDemand copy];
     for (ReasonDemandModel *root in roots) {
         
         //2. 仅支持ReasonDemandModel类型的反馈,因为PerceptDemandModel已经发生完毕,不需要反馈;
@@ -100,7 +100,7 @@
     
     //2. 判断最近一次input是否与等待中pFo感性结果相匹配 (匹配,比如吃,确定自己是否真吃了);
     //2. fbTIP对roots进行反馈判断 (参考27096-方案2);
-    NSArray *roots = theTC.outModelManager.getAllDemand;
+    NSArray *roots = [theTC.outModelManager.getAllDemand copy];
     for (ReasonDemandModel *root in roots) {
         
         //2. 仅支持ReasonDemandModel类型的反馈,因为PerceptDemandModel已经发生完毕,不需要反馈;
@@ -170,7 +170,7 @@
     IFTitleLog(@"feedbackTOP", @"\n输入MV:%@",Mv2FStr(cmvNode));
     
     //2. ============== 对所有等待中的任务尝试处理 (R-任务); ==============
-    NSMutableArray *roots = [[NSMutableArray alloc] initWithArray:theTC.outModelManager.getAllDemand];
+    NSArray *roots = [theTC.outModelManager.getAllDemand copy];
     for (ReasonDemandModel *root in roots) {
         NSArray *waitModels = [TOUtils getSubOutModels_AllDeep:root validStatus:@[@(TOModelStatus_ActYes)]];
         for (TOFoModel *waitModel in waitModels) {
