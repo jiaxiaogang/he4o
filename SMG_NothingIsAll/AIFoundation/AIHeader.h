@@ -368,3 +368,5 @@
 #define Switch4RS true
 //P决策模式
 #define Switch4PS false
+//P任务开关
+#define Switch4PDemand true

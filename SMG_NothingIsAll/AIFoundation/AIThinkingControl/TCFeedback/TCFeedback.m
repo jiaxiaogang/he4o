@@ -39,7 +39,7 @@
     for (ReasonDemandModel *root in roots) {
         
         //2. 仅支持ReasonDemandModel类型的反馈,因为PerceptDemandModel已经发生完毕,不需要反馈;
-        if (ISOK(root, ReasonDemandModel.class)) continue;
+        if (!ISOK(root, ReasonDemandModel.class)) continue;
         
         //3. 对pFos做理性反馈;
         for (AIMatchFoModel *waitModel in root.pFos) {
@@ -104,7 +104,7 @@
     for (ReasonDemandModel *root in roots) {
         
         //2. 仅支持ReasonDemandModel类型的反馈,因为PerceptDemandModel已经发生完毕,不需要反馈;
-        if (ISOK(root, ReasonDemandModel.class)) continue;
+        if (!ISOK(root, ReasonDemandModel.class)) continue;
         
         //3. 对pFos做理性反馈;
         for (AIMatchFoModel *waitModel in root.pFos) {

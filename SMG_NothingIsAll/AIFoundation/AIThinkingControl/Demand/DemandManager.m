@@ -46,12 +46,13 @@
  *      2020.08.24: 在inputMv时,当前demand进行抵消时,其状态设置为Finish;
  *      2021.09.04: 当R任务的 (R部分发生完毕 & P部分也发生完毕 & R任务又没在ActYes/OutBack状态),则销毁这一任务 (参考23224-方案-代码2);
  *      2022.05.18: 废弃抵消功能 (反馈功能早已由TCFeedback来做,不需要这里弄);
+ *      2022.09.20: 加PDemand开关功能,先继续开着,其实现在P任务已经不怎么用了,逐步关掉;
  *  @todo
  *      2022.xx.xx: 废弃P模式 (参考xx);
  */
 -(void) updateCMVCache_PMV:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta{
     //1. 数据检查
-    if (delta == 0) {
+    if (delta == 0 || !Switch4PDemand) {
         return;
     }
     
