@@ -42,6 +42,17 @@
 }
 
 /**
+ *  MARK:--------------------任务的pFos--------------------
+ *  @desc 默认返回未失效的pFos任务 (也可以考虑改成失效时,直接移除失效的pFo) (参考27095-10);
+ */
+-(NSArray *)pFos {
+    _pFos = ARRTOOK(_pFos);
+    return [SMGUtils filterArr:_pFos checkValid:^BOOL(AIMatchFoModel *item) {
+        return !item.isExpired;
+    }];
+}
+
+/**
  *  MARK:--------------------NSCoding--------------------
  */
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
