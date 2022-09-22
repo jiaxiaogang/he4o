@@ -86,7 +86,6 @@
     NSInteger matchIndex = self.cutIndex + 1;
     
     //5. 更新indexDic (V: 末位maskIndex, K: matchIndex);
-    //TODOTEST20220915: 测下此处的新KV是否正确,比如断点查下原KV末位到了哪,或者查下当前时序的推进情况是否与新帧KV符合;
     [self.indexDic2 setObject:@(maskIndex) forKey:@(matchIndex)];
     
     //----------------推进至下帧----------------

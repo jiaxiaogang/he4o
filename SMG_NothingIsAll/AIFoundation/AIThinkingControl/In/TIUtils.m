@@ -520,12 +520,6 @@
         //2. 匹配则记录lastAssIndex值;
         if (mIsC) {
             lastAssIndex = curIndex;
-            
-            //TODOTOMORROW20220922: 查indexDic是否有错误 (一周后没用可删);
-            if (!regroupFo && assFo.count > 1 && (maskFoIndex > 0 || curIndex > 0)) {
-                NSLog(@"protoIndex:%ld assIndex:%ld",maskFoIndex,curIndex);
-                NSLog(@"");
-            }
             [indexDic setObject:@(maskFoIndex) forKey:@(curIndex)];
             AddTCDebug(@"时序识别14");
             
