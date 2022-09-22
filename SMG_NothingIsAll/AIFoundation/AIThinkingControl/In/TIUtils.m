@@ -498,8 +498,8 @@
     AddTCDebug(@"时序识别11");
     
     //2. 找出lastIndex
-    for (NSInteger i = 0; i < assFo.content_ps.count; i++) {
-        NSInteger curIndex = assFo.content_ps.count - i - 1;
+    for (NSInteger i = 0; i < assFo.count; i++) {
+        NSInteger curIndex = assFo.count - i - 1;
         AIKVPointer *checkAssAlg_p = ARR_INDEX(assFo.content_ps, curIndex);
         
         //2. 匹配判断: 反思时用mIsC判断 & 识别时用瞬时末帧matchAlgs+partAlgs包含来判断;
@@ -520,6 +520,12 @@
         //2. 匹配则记录lastAssIndex值;
         if (mIsC) {
             lastAssIndex = curIndex;
+            
+            //TODOTOMORROW20220922: 查indexDic是否有错误 (一周后没用可删);
+            if (!regroupFo && assFo.count > 1 && (maskFoIndex > 0 || curIndex > 0)) {
+                NSLog(@"protoIndex:%ld assIndex:%ld",maskFoIndex,curIndex);
+                NSLog(@"");
+            }
             [indexDic setObject:@(maskFoIndex) forKey:@(curIndex)];
             AddTCDebug(@"时序识别14");
             
