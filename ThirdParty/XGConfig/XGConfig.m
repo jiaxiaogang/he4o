@@ -32,8 +32,8 @@ static id mInstance;
                       @(true),xgConfigKeyTest,
                       @(false),xgConfigKeyPauseRLT,
                       nil];
-    [self.configDic writeToURL:[self url] atomically:true];
-    
+    NSLog(@"%@",[self url].path);
+    [[NSFileManager defaultManager] createDirectoryAtPath:[self folder] withIntermediateDirectories:false attributes:nil error:nil];
     BOOL success = [self.configDic writeToURL:[self url] atomically:true];
     NSLog(@"======> XGConfig初始化%@",success ? @"成功" : @"失败");
 }
@@ -100,9 +100,12 @@ static id mInstance;
 
 // notnull
 -(NSURL*) url{
+    return [NSURL fileURLWithPath:STRFORMAT(@"%@/%@",[self folder],xgConfigFile)];
+}
+
+-(NSString*) folder{
     NSString *cachePath = kCachePath;
-    NSURL *fileURL = [NSURL fileURLWithPath:STRFORMAT(@"%@/%@",cachePath,xgConfigPath)];
-    return fileURL;
+    return STRFORMAT(@"%@/%@",cachePath,xgConfigPath);
 }
 
 @end

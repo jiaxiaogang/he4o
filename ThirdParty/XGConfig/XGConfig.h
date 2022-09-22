@@ -8,7 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
-#define xgConfigPath @"xgConfig/config.txt"
+#define xgConfigPath @"xgConfig"
+#define xgConfigFile @"config.txt"
 #define xgConfigKeyZiWuMode @"植物模式"
 #define xgConfigKeyTest @"还牛逼不?"
 #define xgConfigKeyPauseRLT @"暂停强化训练"
