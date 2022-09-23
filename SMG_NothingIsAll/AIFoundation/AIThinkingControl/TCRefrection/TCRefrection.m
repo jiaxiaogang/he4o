@@ -82,7 +82,6 @@
         AIFoNodeBase *recogFo = [SMGUtils searchNode:item.cansetFo];
         
         //4. 算出后半段稳定性评分;
-        //TODOTEST: 测入此处cutIndex2传的是否正确;
         CGFloat stabScore = [TOUtils getStableScore:recogFo startSPIndex:item.cutIndex + 1 endSPIndex:recogFo.count];
         
         //5. 算出后半段稳定性 x mv评分 (正mv返回正分 | 负mv返回负分 | 无mv返回0分);
@@ -93,7 +92,6 @@
         mvScoreNum ++;
         
         //7. 算出后段的"懒"评分;
-        //TODOTEST: 测入此处cutIndex2传的是否正确;
         CGFloat lazyScore = 0;
         for (NSInteger i = item.cutIndex + 1; i < recogFo.count; i++) {
             //8. 遍历后半段中的"isOut=true"的行为,各指定"懒"评分;
