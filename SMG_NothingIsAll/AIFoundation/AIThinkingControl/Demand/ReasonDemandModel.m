@@ -47,9 +47,15 @@
  */
 -(NSArray *)pFos {
     _pFos = ARRTOOK(_pFos);
-    return [SMGUtils filterArr:_pFos checkValid:^BOOL(AIMatchFoModel *item) {
+    NSArray *result = [SMGUtils filterArr:_pFos checkValid:^BOOL(AIMatchFoModel *item) {
         return !item.isExpired;
     }];
+    if (!ARRISOK(result)) {
+        //TODOTOMORROW20220924: 当pFos全失效时,应该将此任务置为失效,并且它的子任务也不应该再继续执行;
+        NSLog(@"%ld条",result.count);
+        NSLog(@"");
+    }
+    return result;
 }
 
 /**
