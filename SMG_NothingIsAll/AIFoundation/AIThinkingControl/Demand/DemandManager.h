@@ -31,14 +31,13 @@
 -(NSArray*) updateCMVCache_RMV:(AIShortMatchModel*)inModel;
 
 /**
- *  MARK:--------------------获取任务--------------------
+ *  MARK:--------------------获取任务 (决策部分: 可继续决策的部分)--------------------
  */
--(DemandModel*) getCurrentDemand;       //获取当前,最紧急任务;
 -(DemandModel*) getCanDecisionDemand;   //获取当前,可以继续决策的任务 (未完成 & 非等待反馈ActYes);
 
 
 /**
- *  MARK:--------------------返回所有demand任务--------------------
+ *  MARK:--------------------获取任务 (全部返回: 用于反馈和可视化等)--------------------
  */
 -(NSArray*) getAllDemand;
 

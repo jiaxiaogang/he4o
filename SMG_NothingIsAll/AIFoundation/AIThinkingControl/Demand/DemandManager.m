@@ -180,26 +180,13 @@
 }
 
 /**
- *  MARK:--------------------获取当前,最紧急任务--------------------
- *  @version
- *      2021.01.29: 将last改为取first (因为顺序是从大到小,第一个才是最紧急的最新任务);
- */
--(DemandModel*) getCurrentDemand{
-    if (ARRISOK(self.loopCache)) {
-        //1. 重排序 & 取当前序列最前;
-        [self refreshCmvCacheSort];
-        return self.loopCache.firstObject;
-    }
-    return nil;
-}
-
-/**
- *  MARK:--------------------获取当前,可以继续决策的任务--------------------
+ *  MARK:--------------------获取任务 (决策部分: 可继续决策的部分)--------------------
  *  @version
  *      xxxx.xx.xx: (未完成 & 非等待反馈ActYes);
  *      2021.12.23: root非WithOut状态的 (参考24212-6);
  *      2021.12.23: 最优末枝处在actYes状态时,继续secondRoot (参考24212-7);
  *      2022.06.01: 末端actYes时,root不应期,因为actYes是向上传染不向下 (参考26185-TODO3);
+ *      2022.09.24: 失效处理: 根任务失效时,不进行决策 (参考27123-问题2-todo2);
  */
 -(DemandModel*) getCanDecisionDemand{
     //1. 数据检查
@@ -218,6 +205,9 @@
         //4. 已无计可施,下一个 (TCPlan会优先从末枝执行,所以当root就是末枝时,说明整个三条大树干全烂透没用了);
         if (item.status == TOModelStatus_WithOut) continue;
         
+        //4. 当任务失效时,不返回;
+        if (ISOK(item, ReasonDemandModel.class) && ((ReasonDemandModel*)item).isExpired) continue;
+        
         //5. 最末枝在actYes状态时,不应期,继续secondRoot;
         BOOL endHavActYes = [TOUtils endHavActYes:item];
         if (endHavActYes) continue;
@@ -233,7 +223,7 @@
 }
 
 /**
- *  MARK:--------------------返回所有demand任务--------------------
+ *  MARK:--------------------获取任务 (全部返回: 用于反馈和可视化等)--------------------
  *  @desc 排序方式: 从大到小;
  */
 -(NSArray*) getAllDemand{

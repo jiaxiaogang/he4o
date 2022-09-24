@@ -90,10 +90,15 @@
 /**
  *  MARK:--------------------获取单demand的评分--------------------
  *  @desc 只返回不直接计入字典,因为demand评分是要"求和"后计入字典的;
+ *  @version
+ *      2022.09.24: 失效处理: 子任务失效时,不进行决策综评 (参考27123-问题2-todo3);
  */
 +(CGFloat) score_SingleDemand:(DemandModel*)demand scoreDic:(NSMutableDictionary*)scoreDic{
     //1. 当demand在feedbackTOR已finish时,不计分;
     if (demand.status == TOModelStatus_Finish) return 0;
+    
+    //1. 当demand失效时,不计分;
+    if (ISOK(demand, ReasonDemandModel.class) && ((ReasonDemandModel*)demand).isExpired) return 0;
 
     //2. 取出还未理性失败的解决方案;
     NSArray *validActionFos = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOFoModel *actionFo) {

@@ -50,12 +50,15 @@
     NSArray *result = [SMGUtils filterArr:_pFos checkValid:^BOOL(AIMatchFoModel *item) {
         return !item.isExpired;
     }];
-    if (!ARRISOK(result)) {
-        //TODOTOMORROW20220924: 当pFos全失效时,应该将此任务置为失效,并且它的子任务也不应该再继续执行;
-        NSLog(@"%ld条",result.count);
-        NSLog(@"");
-    }
     return result;
+}
+
+/**
+ *  MARK:--------------------任务是否失效--------------------
+ *  @desc : 当R任务的pFos全失效时,则R任务也失效 (参考27123-问题2-todo1);
+ */
+-(BOOL) isExpired {
+    return !ARRISOK(self.pFos);
 }
 
 /**
