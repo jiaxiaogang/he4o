@@ -70,6 +70,18 @@
         return NUMTOOK([recogDic objectForKey:@(obj.cansetFo.pointerId)]).floatValue;
     }];
     
+    //TODOTOMORROW20220925:
+    //1. 原本有8条,在排除不应期后剩下4条;
+    //2. 在"排序中段稳定性<=0的"后,成了1条;
+    //3. 在此处limit后,更是成了0条;
+    //4. 最终导致,反思mv分是0,懒分也是0,反思必通过;
+    
+    //先改了以上问题,然后再测,这次27123-问题3的循环,肯定不止这些问题,
+    //主要通过查看循环卡顿时的单轮日志,来查它卡的原因,和卡时在跑什么;
+    
+    
+    
+    
     //2. cansets有80条,那么到底前多少条,参与到反思评价中来? => 截取三分之一,但最多不超过5条;
     NSInteger limit = MIN(5, sortCansets.count * 0.3f);
     sortCansets = ARR_SUB(sortCansets, 0, limit);
