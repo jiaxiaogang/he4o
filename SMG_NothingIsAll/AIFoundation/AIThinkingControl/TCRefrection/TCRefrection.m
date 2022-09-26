@@ -14,13 +14,13 @@
 //MARK:===============================================================
 //MARK:                     < publicMethod >
 //MARK:===============================================================
-+(BOOL) refrection:(AISolutionModel*)checkCanset cansets:(NSArray*)cansets demand:(DemandModel*)demand{
++(BOOL) refrection:(AISolutionModel*)checkCanset cansets:(NSArray*)protoCansets demand:(DemandModel*)demand{
     OFTitleLog(@"TCRefrection反思", @"\n%@",Pit2FStr(checkCanset.cansetFo));
     //1. 反思识别
-    NSDictionary *recogDic = [TCRefrection recognition4SRefrection:checkCanset cansets:cansets];
+    NSDictionary *recogDic = [TCRefrection recognition4SRefrection:checkCanset cansets:protoCansets];
     
     //2. 反思评价
-    BOOL score = [TCRefrection score4SRefrection:recogDic cansets:cansets demand:demand];
+    BOOL score = [TCRefrection score4SRefrection:recogDic cansets:protoCansets demand:demand];
     return score;
 }
 
@@ -34,17 +34,17 @@
  *          2. 向性: 下;
  *          3. 范围: 无论是H还是R,都向具象根据匹配度取数条,做综合反思 (参考27055-方案1-步骤3);
  *  @param checkCanset  : 当前canset检查项;
- *  @param cansets      : item所在的cansets;
+ *  @param protoCansets : item所在的cansets (原始proto候选集);
  *  @version
  *      2022.07.16: 写S评分pk (参考27048-TODO3 & 27049-TODO4);
  *  @result frontNearDic : 识别结果,按照前段匹配度排序返回为字典格式 <K:结果pId, V:匹配度>;
  */
-+(NSDictionary*) recognition4SRefrection:(AISolutionModel*)checkCanset cansets:(NSArray*)cansets{
++(NSDictionary*) recognition4SRefrection:(AISolutionModel*)checkCanset cansets:(NSArray*)protoCansets{
     //1. 收集前段匹配度字典 <K:checkCansetFoPId, V:frontSumNear>
     NSMutableDictionary *frontNearDic = [[NSMutableDictionary alloc] init];
     
     //2. 与cansets兄弟们逐一进行比对,得出前段匹配度;
-    for (AISolutionModel *otherCanset in cansets) {
+    for (AISolutionModel *otherCanset in protoCansets) {
         //3. 不与自身比较;
         if ([otherCanset.cansetFo isEqual:checkCanset.cansetFo]) continue;
         
@@ -59,31 +59,21 @@
  *  MARK:--------------------S反思评价--------------------
  *  @desc 从具象上求解 (本方法中,从同具象层的cansets中,找出前段相似的,共同算出综合评分);
  *  @param recogDic : 反思识别的结果字典 (参考recognition4SRefrection()的@result);
- *  @param cansets  : 所在的源候选集;
+ *  @param protoCansets : 所在的源候选集 (原始proto候选集);
  *  @param demand   : 所在的源demand;
  *  @version
  *      2022.07.16: 写S评分pk (参考27048-TODO3 & 27049-TODO4);
+ *      2022.09.26: cansets由可用方案候选集,改成原始候选集 (参考27123-问题3-方案);
+ *      2022.09.26: 将limit保留最少3条 (因为发生了明明有1条,反而只限高没限低,导致被截剩0条了的问题);
  */
-+(BOOL) score4SRefrection:(NSDictionary*)recogDic cansets:(NSArray*)cansets demand:(DemandModel*)demand{
++(BOOL) score4SRefrection:(NSDictionary*)recogDic cansets:(NSArray*)protoCansets demand:(DemandModel*)demand{
     //1. 根据前段匹配度排序;
-    NSArray *sortCansets = [SMGUtils sortBig2Small:cansets compareBlock:^double(AISolutionModel *obj) {
+    NSArray *sortCansets = [SMGUtils sortBig2Small:protoCansets compareBlock:^double(AISolutionModel *obj) {
         return NUMTOOK([recogDic objectForKey:@(obj.cansetFo.pointerId)]).floatValue;
     }];
     
-    //TODOTOMORROW20220925:
-    //1. 原本有8条,在排除不应期后剩下4条;
-    //2. 在"排序中段稳定性<=0的"后,成了1条;
-    //3. 在此处limit后,更是成了0条;
-    //4. 最终导致,反思mv分是0,懒分也是0,反思必通过;
-    
-    //先改了以上问题,然后再测,这次27123-问题3的循环,肯定不止这些问题,
-    //主要通过查看循环卡顿时的单轮日志,来查它卡的原因,和卡时在跑什么;
-    
-    
-    
-    
-    //2. cansets有80条,那么到底前多少条,参与到反思评价中来? => 截取三分之一,但最多不超过5条;
-    NSInteger limit = MIN(5, sortCansets.count * 0.3f);
+    //2. cansets有80条,那么到底前多少条,参与到反思评价中来? => 截取三分之一,但最多不超过5条,最小不少于3条;
+    NSInteger limit = MAX(3, MIN(5, sortCansets.count * 0.3f));
     sortCansets = ARR_SUB(sortCansets, 0, limit);
     
     //3. 取到fo,算出后段的mv评分,并累计到sum中;

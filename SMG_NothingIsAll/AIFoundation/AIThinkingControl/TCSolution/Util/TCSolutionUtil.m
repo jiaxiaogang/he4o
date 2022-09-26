@@ -188,6 +188,9 @@
     BOOL havBack = ISOK(demand, HDemandModel.class); //H有后段,别的没有;
     NSLog(@"第5步 Anaylst匹配成功:%ld",cansetModels.count);//测时94条
     
+    //2. 留下最初的protoCansets,用于反思等 (因为反思是不用防重等的,越原始越准确);
+    NSArray *protoCansets = [NSArray arrayWithArray:cansetModels];
+    
     //8. 排除不应期;
     cansetModels = [SMGUtils filterArr:cansetModels checkValid:^BOOL(AISolutionModel *item) {
         return ![except_ps containsObject:item.cansetFo];
@@ -224,7 +227,7 @@
     
     //13. 逐条S反思;
     for (AISolutionModel *item in sortModels) {
-        BOOL score = [TCRefrection refrection:item cansets:sortModels demand:demand];
+        BOOL score = [TCRefrection refrection:item cansets:protoCansets demand:demand];
         if (score) {
             result = item;
             break;
