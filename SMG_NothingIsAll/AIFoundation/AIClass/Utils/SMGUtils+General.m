@@ -28,9 +28,10 @@
  *  @version
  *      xxxx.xx.xx: 初版#def IFTitleLog(t,fmt, ...) NSLog((@"\n\n------ " t @" ------"fmt), ##__VA_ARGS__);
  *      2022.05.31: v2版,封装成方法,并支持loopId;
+ *      2022.09.28: 把---改成===,因为不靠这个分IO,改成===反而更加直观些;
  */
 +(void) inTitle:(NSString*)title log:(NSString*)log{
-    NSString *side = @"-------------------------------";
+    NSString *side = @"===============================";
     NSLog(@"\n\n%@ %lld %@ %@%@",side,theTC.getLoopId,title,side,log);
 }
 +(void) outTitle:(NSString*)title log:(NSString*)log{
