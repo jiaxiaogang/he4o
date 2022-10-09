@@ -17,7 +17,7 @@
  */
 @interface AIKVPointer : AIPointer
 
-+(AIKVPointer*) newWithPointerId:(NSInteger)pointerId folderName:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem type:(AnalogyType)type;
++(AIKVPointer*) newWithPointerId:(NSInteger)pointerId folderName:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut type:(AnalogyType)type;
 
 //MARK:===============================================================
 //MARK:                     < 单属性取值 >

@@ -51,7 +51,6 @@
     self = [super init];
     if (self) {
         self.pointerId = [aDecoder decodeIntegerForKey:@"pointerId"];
-        self.isMem = [aDecoder decodeBoolForKey:@"isMem"];
         self.params = [aDecoder decodeObjectForKey:@"params"];
     }
     return self;
@@ -59,7 +58,6 @@
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [aCoder encodeInteger:self.pointerId forKey:@"pointerId"];
-    [aCoder encodeBool:self.isMem forKey:@"isMem"];
     [aCoder encodeObject:self.params forKey:@"params"];
 }
 
@@ -73,7 +71,6 @@
 - (id)copyWithZone:(NSZone __unused *)zone {
     AIPointer *copy = [[AIPointer alloc] init];
     copy.pointerId = self.pointerId;
-    copy.isMem = self.isMem;
     copy.params = self.params;
     return copy;
 }

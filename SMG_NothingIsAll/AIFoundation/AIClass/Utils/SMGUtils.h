@@ -25,7 +25,7 @@
 //MARK:                     < AIPointer >
 //MARK:===============================================================
 //General指针
-+(AIKVPointer*) createPointer:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem type:(AnalogyType)type;
++(AIKVPointer*) createPointer:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut type:(AnalogyType)type;
 
 //Direction的mv分区pointer;(存引用序列)
 +(AIKVPointer*) createPointerForDirection:(NSString*)mvAlgsType direction:(MVDirection)direction;
@@ -50,7 +50,7 @@
  *      2. 类比构建器时,概念的ds就是类比源,比如:有无大小同异;
  *      3. 默认(其它)时,概念节点的ds是其content_ps中稀疏码共同的at;
  */
-+(AIKVPointer*) createPointerForAlg:(NSString*)folderName at:(NSString*)at dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem type:(AnalogyType)type;
++(AIKVPointer*) createPointerForAlg:(NSString*)folderName at:(NSString*)at dataSource:(NSString*)dataSource isOut:(BOOL)isOut type:(AnalogyType)type;
 
 /**
  *  MARK:--------------------时序节点指针--------------------

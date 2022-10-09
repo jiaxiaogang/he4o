@@ -108,8 +108,8 @@ static AINet *_instance;
 -(AICMVNode*) createConMv:(NSArray*)imvAlgsArr{
     return [self.mvFoManager createConMv:imvAlgsArr];
 }
--(AICMVNode*) createConMv:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p at:(NSString*)at isMem:(BOOL)isMem{
-    return [self.mvFoManager createConMv:urgentTo_p delta_p:delta_p at:at isMem:isMem];
+-(AICMVNode*) createConMv:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p at:(NSString*)at {
+    return [self.mvFoManager createConMv:urgentTo_p delta_p:delta_p at:at];
 }
 
 
@@ -120,8 +120,8 @@ static AINet *_instance;
  *  MARK:--------------------构建conFo--------------------
  *  @result notnull
  */
--(AIFrontOrderNode*) createConFo:(NSArray*)order isMem:(BOOL)isMem{
-    return [AIMvFoManager createConFo:order isMem:isMem];
+-(AIFrontOrderNode*) createConFo:(NSArray*)order{
+    return [AIMvFoManager createConFo:order];
 }
 
 
@@ -141,12 +141,12 @@ static AINet *_instance;
 //MARK:                     < directionReference >
 //MARK:===============================================================
 
--(NSArray*) getNetNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction isMem:(BOOL)isMem limit:(int)limit {
-    return [self.netDirectionReference getNodePointersFromDirectionReference:mvAlgsType direction:direction isMem:isMem limit:limit];
+-(NSArray*) getNetNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction limit:(int)limit {
+    return [self.netDirectionReference getNodePointersFromDirectionReference:mvAlgsType direction:direction limit:limit];
 }
 
--(NSArray*) getNetNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction isMem:(BOOL)isMem filter:(NSArray*(^)(NSArray *protoArr))filter{
-    return [self.netDirectionReference getNodePointersFromDirectionReference:mvAlgsType direction:direction isMem:isMem filter:filter];
+-(NSArray*) getNetNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction filter:(NSArray*(^)(NSArray *protoArr))filter{
+    return [self.netDirectionReference getNodePointersFromDirectionReference:mvAlgsType direction:direction filter:filter];
 }
 
 -(void) setMvNodeToDirectionReference:(AICMVNodeBase*)cmvNode difStrong:(NSInteger)difStrong {
@@ -180,36 +180,23 @@ static AINet *_instance;
 //MARK:===============================================================
 //MARK:                     < algNode >
 //MARK:===============================================================
-//-(AIAlgNode*) createAlgNode:(NSArray*)algsArr isOut:(BOOL)isOut isMem:(BOOL)isMem{
-//    return [AIAlgNodeManager createAlgNode:algsArr isOut:isOut isMem:isMem];
-//}
-//-(AIAlgNode*) createAlgNode:(NSArray*)algsArr dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem{
-//    return [AIAlgNodeManager createAlgNode:algsArr dataSource:dataSource isOut:isOut isMem:isMem];
-//}
-//
-//-(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs dataSource:(NSString*)dataSource isMem:(BOOL)isMem{
-//    if (ARRISOK(conAlgs)) {
-//        return [AIAlgNodeManager createAbsAlgNode:value_ps conAlgs:conAlgs dataSource:dataSource isMem:isMem];
-//    }
-//    return nil;
-//}
 
 /**
  *  MARK:--------------------构建抽象概念_防重--------------------
  */
--(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem at:(NSString*)at type:(AnalogyType)type{
-    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs isMem:isMem at:at ds:nil isOutBlock:nil type:type];
+-(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs at:(NSString*)at type:(AnalogyType)type{
+    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs at:at ds:nil isOutBlock:nil type:type];
 }
--(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type{
-    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs isMem:isMem at:at ds:ds isOutBlock:nil type:type];
+-(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type{
+    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs at:at ds:ds isOutBlock:nil type:type];
 }
--(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem isOut:(BOOL)isOut at:(NSString*)at type:(AnalogyType)type{
-    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs isMem:isMem at:at ds:nil isOutBlock:^BOOL{
+-(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isOut:(BOOL)isOut at:(NSString*)at type:(AnalogyType)type{
+    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs at:at ds:nil isOutBlock:^BOOL{
         return isOut;
     } type:type];
 }
--(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem isOut:(BOOL)isOut at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type{
-    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs isMem:isMem at:at ds:ds isOutBlock:^BOOL{
+-(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isOut:(BOOL)isOut at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type{
+    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs at:at ds:ds isOutBlock:^BOOL{
         return isOut;
     } type:type];
 }

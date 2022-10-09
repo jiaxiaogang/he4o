@@ -100,9 +100,6 @@
 }
 
 -(CGFloat)nv_GetNodeAlpha:(AIKVPointer*)node_p{
-    if (node_p && node_p.isMem) {
-        return 0.5f;
-    }
     return 1.0f;
 }
 
@@ -111,15 +108,12 @@
     //[theApp.nvView setNodeData:node_p appendLightStr:[NVHeUtil getLightStr:node_p]];
     
     //1. value时,返回 "iden+value值";
-    NSInteger memRefCount = ARRTOOK([SMGUtils searchObjectForPointer:node_p fileName:kFNMemRefPorts time:cRTMemPort]).count;
     if ([NVHeUtil isValue:node_p]) {
-        NSInteger hdRefCount = ARRTOOK([SMGUtils searchObjectForPointer:node_p fileName:kFNRefPorts time:cRTMemPort]).count;
+        NSInteger hdRefCount = ARRTOOK([SMGUtils searchObjectForPointer:node_p fileName:kFNRefPorts time:cRTPort]).count;
         NSNumber *value = NUMTOOK([AINetIndex getData:node_p]);
-        return STRFORMAT(@"V%ld AT:%@ DS:%@ 值:%@ REF:h%ld/m%ld",(long)node_p.pointerId,node_p.algsType,node_p.typeStr,value,(long)hdRefCount,(long)memRefCount);
+        return STRFORMAT(@"V%ld AT:%@ DS:%@ 值:%@ REF:h%ld",(long)node_p.pointerId,node_p.algsType,node_p.typeStr,value,(long)hdRefCount);
     }
     //2. algNode时,返回content_ps的 "微信息数+嵌套数";
-    NSInteger memAbsCount = ARRTOOK([SMGUtils searchObjectForPointer:node_p fileName:kFNMemAbsPorts time:cRTMemPort]).count;
-    NSInteger memConCount = ARRTOOK([SMGUtils searchObjectForPointer:node_p fileName:kFNMemConPorts time:cRTMemPort]).count;
     if([NVHeUtil isAlg:node_p]){
         AIAlgNodeBase *algNode = [SMGUtils searchNode:node_p];
         if (algNode) {
@@ -132,7 +126,7 @@
             
             ///2. 返回描述;
             NSInteger hdConCount = ISOK(algNode, AIAbsAlgNode.class) ? ((AIAbsAlgNode*)algNode).conPorts.count : 0;
-            return STRFORMAT(@"A%ld AT:%@ DS:%@ 数:%ld REF:h%lu/m%ld ABS:h%lu/m%ld CON:h%ld/m%ld 内容:%@",(long)node_p.pointerId,node_p.algsType,node_p.typeStr,(long)algNode.content_ps.count,(unsigned long)algNode.refPorts.count,(long)memRefCount,(unsigned long)algNode.absPorts.count,(long)memAbsCount,(long)hdConCount,(long)memConCount,Alg2FStr(algNode));
+            return STRFORMAT(@"A%ld AT:%@ DS:%@ 数:%ld REF:%lu ABS:%lu CON:%ld 内容:%@",(long)node_p.pointerId,node_p.algsType,node_p.typeStr,(long)algNode.count,(unsigned long)algNode.refPorts.count,(unsigned long)algNode.absPorts.count,(long)hdConCount,Alg2FStr(algNode));
         }
     }
     //3. foNode时,返回 "order_kvp数"
@@ -147,7 +141,7 @@
             }
             ///2. 返回描述;
             NSInteger hdConCount = ISOK(foNode, AINetAbsFoNode.class) ? ((AINetAbsFoNode*)foNode).conPorts.count : 0;
-            return STRFORMAT(@"F%ld AT:%@ DS:%@ 数:%lu ABS:h%lu/m%ld CON:h%ld/m%ld 内容:%@",(long)node_p.pointerId,node_p.algsType,node_p.typeStr,(unsigned long)foNode.content_ps.count,(unsigned long)foNode.absPorts.count,(long)memAbsCount,(long)hdConCount,(long)memConCount,Fo2FStr(foNode));
+            return STRFORMAT(@"F%ld AT:%@ DS:%@ 数:%lu ABS:%lu CON:%ld 内容:%@",(long)node_p.pointerId,node_p.algsType,node_p.typeStr,(unsigned long)foNode.content_ps.count,(unsigned long)foNode.absPorts.count,(long)hdConCount,Fo2FStr(foNode));
         }
     }
     //4. mv时,返回 "类型+升降";
@@ -160,7 +154,7 @@
             NSInteger hdConCount = ISOK(mvNode, AIAbsCMVNode.class) ? ((AIAbsCMVNode*)mvNode).conPorts.count : 0;
             
             ///2. 返回
-            return STRFORMAT(@"M%ld iden:%@_%@ urgentTo:%ld delta:%ld ABS:h%lu/m%ld CON:h%ld/m%ld",(long)node_p.pointerId,node_p.algsType,node_p.typeStr,(long)urgentTo,(long)delta,(unsigned long)mvNode.absPorts.count,(long)memAbsCount,(long)hdConCount,(long)memConCount);
+            return STRFORMAT(@"M%ld iden:%@_%@ urgentTo:%ld delta:%ld ABS:%lu CON:%ld",(long)node_p.pointerId,node_p.algsType,node_p.typeStr,(long)urgentTo,(long)delta,(unsigned long)mvNode.absPorts.count,(long)hdConCount);
         }
     }
     return nil;
@@ -235,9 +229,6 @@
     if (node_p) {
         //1. 如果是algNode/foNode/mvNode则返回.absPorts;
         if ([NVHeUtil isAlg:node_p] || [NVHeUtil isFo:node_p] || [NVHeUtil isMv:node_p]) {
-            //2. memAbsPorts
-            NSArray *memAbsPorts = [SMGUtils searchObjectForPointer:node_p fileName:kFNMemAbsPorts time:cRTMemPort];
-            [result addObjectsFromArray:[SMGUtils convertPointersFromPorts:memAbsPorts]];
 
             //3. hdAbsPorts
             AINodeBase *node = [SMGUtils searchNode:node_p];
@@ -252,12 +243,6 @@
 -(NSArray*)nv_ConNodeDatas:(AIKVPointer*)node_p{
     NSMutableArray *result = [[NSMutableArray alloc] init];
     if (node_p) {
-        //1. alg&fo&mv_MemConPorts
-        if ([NVHeUtil isAlg:node_p] || [NVHeUtil isFo:node_p] || [NVHeUtil isMv:node_p]) {
-            NSArray *memConPorts = [SMGUtils searchObjectForPointer:node_p fileName:kFNMemConPorts];
-            [result addObjectsFromArray:[SMGUtils convertPointersFromPorts:memConPorts]];
-        }
-
         if ([NVHeUtil isAlg:node_p]) {
             //2. algNode_HdConPorts
             AIAbsAlgNode *absAlgNode = [SMGUtils searchNode:node_p];

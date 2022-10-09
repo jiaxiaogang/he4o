@@ -10,10 +10,9 @@
 
 @implementation AIKVPointer
 
-+(AIKVPointer*) newWithPointerId:(NSInteger)pointerId folderName:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem type:(AnalogyType)type{
++(AIKVPointer*) newWithPointerId:(NSInteger)pointerId folderName:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut type:(AnalogyType)type{
     AIKVPointer *pointer = [[AIKVPointer alloc] init];
     pointer.pointerId = pointerId;
-    pointer.isMem = isMem;
     [pointer.params setObject:STRTOOK(folderName) forKey:@"folderName"];
     [pointer.params setObject:STRTOOK(algsType) forKey:@"algsType"];
     [pointer.params setObject:STRTOOK(dataSource) forKey:@"dataSource"];

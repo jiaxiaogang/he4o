@@ -99,7 +99,6 @@
                                                            algsType:at
                                                          dataSource:dataSource
                                                               isOut:isOut.boolValue
-                                                              isMem:false
                                                                type:ATDefault];
                 
                 //9. 验证是否存在;

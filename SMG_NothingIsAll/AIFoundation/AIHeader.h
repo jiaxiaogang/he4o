@@ -119,6 +119,8 @@
 
 /**
  *  MARK:--------------------FileNameKey (kFN)--------------------
+ *  @version
+ *      2022.10.09: 废弃isMem内存单独存的key (参考27124-todo3);
  */
 #define kFNNode @"node"               //节点
 //#define kFNValue @"value"             //微信息
@@ -130,18 +132,6 @@
 #define kFNReference_ByPointer @"reference_ByPointer" //微信息引用(pointer序)
 #define kFNReference_ByPort @"reference_ByPort"       //微信息引用(port序)
 #define kFNDefault @" "                               //默认文件名; (例如:小脑canout序列)
-
-#define kFNMemRefPorts @"memRefPorts" //内存网络_微信息的reference序列文件名;
-#define kFNMemAbsPorts @"memAbsPorts" //内存网络_抽象序列;
-#define kFNMemConPorts @"memConPorts" //内存网络_具象序列;
-#define kFNMemDBPorts @"memDiffBasePorts" //内存网络_DB序列;
-#define kFNMemDSPorts @"memDiffSubPorts" //内存网络_DS序列;
-#define kFNMemNode @"memNode"         //内存网络中节点
-
-#define kFNRefPorts_All(isMem) (isMem ? kFNMemRefPorts : kFNRefPorts) //微信息的reference序列文件名;
-//#define kFNAbsPorts_All(isMem) (isMem ? kFNMemAbsPorts : kFNAbsPorts) //抽象序列; (硬盘中存在node下)
-//#define kFNConPorts_All(isMem) (isMem ? kFNMemConPorts : kFNConPorts) //具象序列; (硬盘中存在node下)
-#define kFNNode_All(isMem) (isMem ? kFNMemNode : kFNNode) //节点
 
 //所有文件夹数组
 #define kFN_ALL @[/*mvNode*/kPN_CMV_NODE,kPN_ABS_CMV_NODE,/*mv索引*/kPN_DIRECTION(MVDirection_None),kPN_DIRECTION(MVDirection_Negative),kPN_DIRECTION(MVDirection_Positive),/*foNode*/kPN_FRONT_ORDER_NODE,kPN_FO_ABS_NODE,/*algNode*/kPN_ALG_NODE,kPN_ALG_ABS_NODE,/*小脑*/kPN_CEREBEL_CANOUT,/*稀疏码索引*/kPN_INDEX,kPN_DATA,kPN_VALUE];

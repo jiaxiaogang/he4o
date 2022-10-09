@@ -44,7 +44,7 @@
 //MARK:===============================================================
 
 //General指针
-+(AIKVPointer*) createPointer:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem type:(AnalogyType)type{
++(AIKVPointer*) createPointer:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut type:(AnalogyType)type{
     NSInteger pointerId = [SMGUtils createPointerId:algsType dataSource:dataSource];
     
     //TODOTOMORROW: 查20151-BUG9 (此处新指针有重复,导致问题);
@@ -52,41 +52,41 @@
         WLog(@"---------引用强度BUG-mv新指针:%ld",pointerId);
         HeLog(@"---------引用强度BUG-mv新指针:%ld",pointerId);
     }
-    AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:folderName algsType:algsType dataSource:dataSource isOut:isOut isMem:isMem type:type];
+    AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:folderName algsType:algsType dataSource:dataSource isOut:isOut type:type];
     return kvPointer;
 }
 
 //Direction的mv分区pointer;(存引用序列)
 +(AIKVPointer*) createPointerForDirection:(NSString*)mvAlgsType direction:(MVDirection)direction{
     NSInteger pointerId = 0;
-    AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:kPN_DIRECTION((long)direction) algsType:mvAlgsType dataSource:DefaultDataSource isOut:false isMem:false type:ATDefault];
+    AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:kPN_DIRECTION((long)direction) algsType:mvAlgsType dataSource:DefaultDataSource isOut:false type:ATDefault];
     return kvPointer;
 }
 
 //生成小脑CanOut指针;
 +(AIKVPointer*) createPointerForCerebelCanOut{
-    AIKVPointer *pointer = [AIKVPointer newWithPointerId:0 folderName:kPN_CEREBEL_CANOUT algsType:DefaultAlgsType dataSource:DefaultDataSource isOut:false isMem:false type:ATDefault];
+    AIKVPointer *pointer = [AIKVPointer newWithPointerId:0 folderName:kPN_CEREBEL_CANOUT algsType:DefaultAlgsType dataSource:DefaultDataSource isOut:false type:ATDefault];
     return pointer;
 }
 
 //生成indexValue的指针;
 +(AIKVPointer*) createPointerForValue:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut{
     NSInteger pointerId = [self createPointerId:algsType dataSource:dataSource];
-    return [AIKVPointer newWithPointerId:pointerId folderName:kPN_VALUE algsType:algsType dataSource:dataSource isOut:isOut isMem:false type:ATDefault];
+    return [AIKVPointer newWithPointerId:pointerId folderName:kPN_VALUE algsType:algsType dataSource:dataSource isOut:isOut type:ATDefault];
 }
 
 +(AIKVPointer*) createPointerForValue:(NSInteger)pointerId algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut{
-    return [AIKVPointer newWithPointerId:pointerId folderName:kPN_VALUE algsType:algsType dataSource:dataSource isOut:isOut isMem:false type:ATDefault];
+    return [AIKVPointer newWithPointerId:pointerId folderName:kPN_VALUE algsType:algsType dataSource:dataSource isOut:isOut type:ATDefault];
 }
 
 +(AIKVPointer*) createPointerForIndex{
     NSInteger pointerId = 0;
-    return [AIKVPointer newWithPointerId:pointerId folderName:kPN_INDEX algsType:DefaultAlgsType dataSource:DefaultDataSource isOut:false isMem:false type:ATDefault];
+    return [AIKVPointer newWithPointerId:pointerId folderName:kPN_INDEX algsType:DefaultAlgsType dataSource:DefaultDataSource isOut:false type:ATDefault];
 }
 
 +(AIKVPointer*) createPointerForData:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut{
     NSInteger pointerId = 0;
-    return [AIKVPointer newWithPointerId:pointerId folderName:kPN_DATA algsType:algsType dataSource:dataSource isOut:isOut isMem:false type:ATDefault];
+    return [AIKVPointer newWithPointerId:pointerId folderName:kPN_DATA algsType:algsType dataSource:dataSource isOut:isOut type:ATDefault];
 }
 
 /**
@@ -95,9 +95,9 @@
  *      2021.09.25: 将algsType由pointerId改为" ";
  *      2021.09.25: 将at由参数传入,因为有些稀疏码没有ds(如FLY_RDS),此时构建glAlg,就只能传来at (参考24021-概念部分-4);
  */
-+(AIKVPointer*) createPointerForAlg:(NSString*)folderName at:(NSString*)at dataSource:(NSString*)dataSource isOut:(BOOL)isOut isMem:(BOOL)isMem type:(AnalogyType)type{
++(AIKVPointer*) createPointerForAlg:(NSString*)folderName at:(NSString*)at dataSource:(NSString*)dataSource isOut:(BOOL)isOut type:(AnalogyType)type{
     NSInteger pointerId = [SMGUtils createPointerId:DefaultAlgsType dataSource:dataSource];
-    return [AIKVPointer newWithPointerId:pointerId folderName:folderName algsType:at dataSource:dataSource isOut:isOut isMem:isMem type:type];
+    return [AIKVPointer newWithPointerId:pointerId folderName:folderName algsType:at dataSource:dataSource isOut:isOut type:type];
 }
 
 /**
@@ -106,7 +106,7 @@
  *      2021.09.25: 将at由参数传入,因为有些稀疏码没有ds(如FLY_RDS),此时构建glFo,就只能传来at (参考24021-时序部分-3);
  */
 +(AIKVPointer*) createPointerForFo:(NSString*)folderName at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type{
-    return [self createPointer:folderName algsType:at dataSource:ds isOut:false isMem:false type:type];
+    return [self createPointer:folderName algsType:at dataSource:ds isOut:false type:type];
 }
 
 @end
@@ -369,12 +369,6 @@
 }
 
 +(id) searchObjectForFilePath:(NSString*)filePath fileName:(NSString*)fileName time:(double)time{
-    //isMem临时先这么判断,后续再改 (由各方法自行传入);
-    BOOL isMem = [kFNMemNode isEqualToString:fileName] || [kFNMemAbsPorts isEqualToString:fileName] || [kFNMemConPorts isEqualToString:fileName] || [kFNMemRefPorts isEqualToString:fileName];
-    return [self searchObjectForFilePath:filePath fileName:fileName time:time isMem:isMem];
-}
-
-+(id) searchObjectForFilePath:(NSString*)filePath fileName:(NSString*)fileName time:(double)time isMem:(BOOL)isMem{
     //1. 数据检查
     filePath = STRTOOK(filePath);
     
@@ -389,7 +383,7 @@
         fromType = @"XGWedis";
         
         //4. 最后取disk
-        if (result == nil && !isMem) {
+        if (result == nil) {
             PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:filePath];
             result = [cache objectForKey:fileName];
             fromType = @"Disk";
@@ -409,7 +403,7 @@
 //}
 +(void) insertObject:(NSObject*)obj pointer:(AIPointer*)pointer fileName:(NSString*)fileName time:(double)time{
     if (ISOK(pointer, AIPointer.class)) {
-        [self insertObject:obj rootPath:pointer.filePath fileName:fileName time:time saveDB:!pointer.isMem];
+        [self insertObject:obj rootPath:pointer.filePath fileName:fileName time:time saveDB:true];
     }
 }
 +(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName time:(double)time saveDB:(BOOL)saveDB{
@@ -440,7 +434,7 @@
 
 +(id) searchNode:(AIPointer*)pointer {
     if (ISOK(pointer, AIPointer.class)) {
-        return [self searchObjectForFilePath:pointer.filePath fileName:kFNNode_All(pointer.isMem) time:cRTNode_All(pointer.isMem)];
+        return [self searchObjectForFilePath:pointer.filePath fileName:kFNNode time:cRTNode];
     }
     return nil;
 }
@@ -464,7 +458,7 @@
 
 +(void) insertNode:(AINodeBase*)node{
     if (ISOK(node, AINodeBase.class)) {
-        [self insertObject:node pointer:node.pointer fileName:kFNNode_All(node.pointer.isMem) time:cRTNode_All(node.pointer.isMem)];
+        [self insertObject:node pointer:node.pointer fileName:kFNNode time:cRTNode];
     }
 }
 

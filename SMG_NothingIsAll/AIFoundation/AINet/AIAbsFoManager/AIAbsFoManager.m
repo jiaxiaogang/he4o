@@ -41,14 +41,6 @@
     for (AIPort *port in allAbsPorts) {
         if ([samesMd5 isEqualToString:port.header] && [port.target_p.algsType isEqualToString:at] && [port.target_p.dataSource isEqualToString:ds] && port.target_p.type == type) {
             findAbsNode = [SMGUtils searchNode:port.target_p];
-            if (findAbsNode.pointer.isMem) {
-                ///3. 转移foNode到硬盘网络;
-                findAbsNode = [AINetUtils move2HdNodeFromMemNode_Fo:findAbsNode];
-                NSLog(@"检查!!!!,此处对findAbsFo做内存到硬盘网络的转移!!!");
-                if (findAbsNode.content_ps.count == 0) {
-                    NSLog(@"警告...fo.orders为空");
-                }
-            }
             break;
         }
     }
@@ -60,8 +52,8 @@
         findAbsNode = [[AINetAbsFoNode alloc] init];
         findAbsNode.pointer = [SMGUtils createPointerForFo:kPN_FO_ABS_NODE at:at ds:ds type:type];
         
-        //3. 收集order_ps (将不在hdNet中的转移)
-        findAbsNode.content_ps = [AINetUtils move2Hd4Alg_ps:orderSames];
+        //3. 收集order_ps
+        [findAbsNode.content_ps addObjectsFromArray:orderSames];
         
         //4. order_ps更新概念节点引用序列;
         [AINetUtils insertRefPorts_AllFoNode:findAbsNode.pointer order_ps:findAbsNode.content_ps ps:findAbsNode.content_ps difStrong:difStrong];

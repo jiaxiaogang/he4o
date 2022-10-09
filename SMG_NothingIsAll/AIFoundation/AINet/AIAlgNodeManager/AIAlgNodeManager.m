@@ -14,7 +14,6 @@
  *  MARK:--------------------构建抽象概念--------------------
  *  @param value_ps     : 要构建absAlgNode的content_ps (稀疏码组) notnull;
  *  @param conAlgs      : 具象AIAlgNode数组:(外类比时的algA&algB / 内类比时仅有一个元素) //不可为空数组
- *  @param isMem        : 是否持久化,(如thinkIn中,视觉场景下的subView就不进行持久化,只存在内存网络中)
  *  _param dataSource   : 概念节点的dataSource就是稀疏码信息的algsType; (不传时,从algsArr提取) (废弃,参考24021);
  *  @param ds           : 为nil时,默认为DefaultDataSource;
  *  @param isOutBlock   : 指定isOut (默认从conAlgs获取) (概念节点的isOut状态; (思维控制器知道它是行为还是认知));
@@ -29,7 +28,7 @@
  *      2021.01.03: 判断abs已存在抽象节点时,加上ATDS的匹配判断,因为不同类型节点不必去重 (参考2120B-BUG2);
  *      2021.09.26: 从conAlgs中防重返回时,要判断at&ds&type (参考24022-BUG3);
  */
-+(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem at:(NSString*)at ds:(NSString*)ds isOutBlock:(BOOL(^)())isOutBlock type:(AnalogyType)type{
++(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs at:(NSString*)at ds:(NSString*)ds isOutBlock:(BOOL(^)())isOutBlock type:(AnalogyType)type{
     //1. 数据准备
     BOOL isOut = isOutBlock ? isOutBlock() : [AINetUtils checkAllOfOut:conAlgs];
     conAlgs = ARRTOOK(conAlgs);
@@ -68,10 +67,7 @@
                 //1> 遍历找抽象是否已存在;
                 if ([samesMd5 isEqualToString:absPort.header] && [absPort.target_p.algsType isEqualToString:at] && [absPort.target_p.dataSource isEqualToString:ds] && absPort.target_p.type == type) {
                     AIAbsAlgNode *absNode = [SMGUtils searchNode:absPort.target_p];
-                    //2> 已存在,则转移到硬盘网络;
-                    if (absNode.pointer.isMem) {
-                        absNode = [AINetUtils move2HdNodeFromMemNode_Alg:absNode];
-                    }
+                    
                     //3> findAbsNode成功;
                     result = absNode;
                     if (!ISOK(absNode, AIAbsAlgNode.class) ) {
@@ -88,7 +84,7 @@
     if (!result) {
         absIsNew = true;
         result = [[AIAbsAlgNode alloc] init];
-        result.pointer = [SMGUtils createPointerForAlg:kPN_ALG_ABS_NODE at:at dataSource:ds isOut:isOut isMem:isMem type:type];
+        result.pointer = [SMGUtils createPointerForAlg:kPN_ALG_ABS_NODE at:at dataSource:ds isOut:isOut type:type];
         result.content_ps = [[NSMutableArray alloc] initWithArray:sortSames];
     }
     
@@ -108,7 +104,7 @@
     
     //5. 关联 & 存储
     [AINetUtils relateAlgAbs:result conNodes:validConAlgs isNew:absIsNew];
-    [theApp.heLogView addLog:STRFORMAT(@"构建抽象概念:%@,存储于:%d,内容:%@",result.pointer.identifier,result.pointer.isMem,Alg2FStr(result))];
+    [theApp.heLogView addLog:STRFORMAT(@"构建抽象概念:%@,内容:%@",result.pointer.identifier,Alg2FStr(result))];
     [SMGUtils insertNode:result];
     return result;
 }
@@ -121,7 +117,7 @@
  *      2021.08.06: 本地去重,支持ds防重,因为不去重导致同内容的S和P混乱 (参考23205);
  *      2021.09.22: 支持type防重 (参考24019);
  */
-+(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isMem:(BOOL)isMem at:(NSString*)at ds:(NSString*)ds isOutBlock:(BOOL(^)())isOutBlock type:(AnalogyType)type{
++(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs at:(NSString*)at ds:(NSString*)ds isOutBlock:(BOOL(^)())isOutBlock type:(AnalogyType)type{
     //1. 数据检查
     value_ps = ARRTOOK(value_ps);
     NSArray *sort_ps = [SMGUtils sortPointers:value_ps];
@@ -143,12 +139,10 @@
     //3. 有则加强;
     if (ISOK(localAlg, AIAbsAlgNode.class)) {
         [AINetUtils relateAlgAbs:localAlg conNodes:conAlgs isNew:false];
-        //4. 向硬盘转移
-        if (!isMem) localAlg = [AINetUtils move2HdNodeFromMemNode_Alg:localAlg];
         return localAlg;
     }else{
         //4. 无则构建
-        return [self createAbsAlgNode:value_ps conAlgs:conAlgs isMem:isMem at:at ds:ds isOutBlock:isOutBlock type:type];
+        return [self createAbsAlgNode:value_ps conAlgs:conAlgs at:at ds:ds isOutBlock:isOutBlock type:type];
     }
 }
 

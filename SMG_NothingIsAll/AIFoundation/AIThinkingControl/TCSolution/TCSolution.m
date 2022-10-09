@@ -201,7 +201,7 @@
     
     //3. =======以下: 调用方向索引,找解决方案代码
     //2. 方向索引,用方向索引找normalFo解决方案 (P例:饿了,该怎么办 S例:累了,肿么肥事);
-    NSArray *mvRefs = [theNet getNetNodePointersFromDirectionReference:demandModel.algsType direction:direction isMem:false filter:nil];
+    NSArray *mvRefs = [theNet getNetNodePointersFromDirectionReference:demandModel.algsType direction:direction filter:nil];
     
     //4. debugLog
     if (Log4DirecRef){

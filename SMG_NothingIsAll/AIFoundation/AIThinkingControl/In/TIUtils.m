@@ -85,7 +85,7 @@
     //if (!assAlgNode) assAlgNode = [AINetIndexUtils partMatching_Alg:algNode isMem:true except_ps:except_ps];
     
     ///4. 局部匹配 (Abs匹配 和 Seem匹配);
-    [self partMatching_Alg:protoAlg isMem:false except_ps:except_ps inModel:inModel];
+    [self partMatching_Alg:protoAlg except_ps:except_ps inModel:inModel];
     
     //5. 关联处理 & 外类比 (这样后面TOR理性决策时,才可以直接对当前瞬时实物进行很好的理性评价) (参考21091-蓝线);
     for (AIAlgNodeBase *matchAlg in inModel.matchAlgs) {
@@ -143,7 +143,7 @@
  *      2022.06.07 - 排序公式改为sumNear / nearCount (参考2619j-TODO5);
  *      2022.06.13 - 修复因matchCount<result.count导致概念识别有错误结果的BUG (参考26236);
  */
-+(void) partMatching_Alg:(AIAlgNodeBase*)protoAlg isMem:(BOOL)isMem except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel{
++(void) partMatching_Alg:(AIAlgNodeBase*)protoAlg except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel{
     //1. 数据准备;
     if (!ISOK(protoAlg, AIAlgNodeBase.class)) return;
     except_ps = ARRTOOK(except_ps);                                 //不应期
@@ -168,7 +168,7 @@
             double nearV = [AIAnalyst compareCansetValue:near_p protoValue:item_p];
             
             //6. 第2_取near_p的refPorts (参考25083-1);
-            NSArray *refPorts = [SMGUtils filterPorts_Normal:[AINetUtils refPorts_All4Value:near_p isMem:isMem]];
+            NSArray *refPorts = [SMGUtils filterPorts_Normal:[AINetUtils refPorts_All4Value:near_p]];
             refPorts = ARR_SUB(refPorts, 0, cPartMatchingCheckRefPortsLimit_Alg(refPorts.count));
             
             //6. 第3_仅保留有mv指向的部分 (参考26022-3);

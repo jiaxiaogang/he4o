@@ -72,6 +72,8 @@ static AIThinkingControl *_instance;
 /**
  *  MARK:--------------------数据输入--------------------
  *  说明: 单model (普通算法模型 或 imv模型)
+ *  @version
+ *      2022.10.09: 新输入直接存硬盘而不是isMem内存 (参考27124-todo6);
  */
 -(void) commitInput:(NSObject*)algsModel{
     //1. 植物模式阻断感知;
@@ -91,7 +93,7 @@ static AIThinkingControl *_instance;
         [TCInput pInput:algsArr];
     }else{
         //1. 打包成algTypeNode;
-        AIAlgNodeBase *algNode = [theNet createAbsAlg_NoRepeat:algsArr conAlgs:nil isMem:true isOut:false at:nil ds:nil type:ATDefault];
+        AIAlgNodeBase *algNode = [theNet createAbsAlg_NoRepeat:algsArr conAlgs:nil isOut:false at:nil ds:nil type:ATDefault];
         
         //2. 加入瞬时记忆 & 识别等;
         [TCInput rInput:algNode except_ps:nil];
@@ -108,6 +110,7 @@ static AIThinkingControl *_instance;
  *
  *  @version
  *      2020.07.19: 空场景时,不将空场景概念加到瞬时记忆序列中 (因为现在的内类比HN已经不再使用空场景做任何参考,所以其存在无意义,反而会影响到时序全含判断,因为记忆时序中的空场景,往往无法被新的时序包含);
+ *      2022.10.09: 新输入直接存硬盘而不是isMem内存 (参考27124-todo6);
  *
  *  TODOWAIT:
  *  1. 默认为按边缘(ios的view层级)分组,随后可扩展概念内类比,按别的维度分组; 参考: n16p7
@@ -129,7 +132,7 @@ static AIThinkingControl *_instance;
     }
     
     //3. 构建父概念 & 将空场景加入瞬时记忆;
-    AIAbsAlgNode *parentAlgNode = [theNet createAbsAlg_NoRepeat:parentValue_ps conAlgs:nil isMem:true isOut:false at:nil ds:nil type:ATDefault];
+    AIAbsAlgNode *parentAlgNode = [theNet createAbsAlg_NoRepeat:parentValue_ps conAlgs:nil isOut:false at:nil ds:nil type:ATDefault];
     //if (parentValue_ps.count == 0) [self.delegate aiThinkIn_AddToShortMemory:parentAlgNode.pointer isMatch:false];
     if (Log4TCInput) NSLog(@"---> 构建InputParent节点:%@",Alg2FStr(parentAlgNode));
     
@@ -138,7 +141,7 @@ static AIThinkingControl *_instance;
     
     //5. 构建子概念 (抽象概念,并嵌套);
     for (NSArray *subValue_ps in subValuePsArr) {
-        AIAbsAlgNode *subAlgNode = [theNet createAbsAlg_NoRepeat:subValue_ps conAlgs:@[parentAlgNode] isMem:true at:nil ds:nil type:ATDefault];
+        AIAbsAlgNode *subAlgNode = [theNet createAbsAlg_NoRepeat:subValue_ps conAlgs:@[parentAlgNode] at:nil ds:nil type:ATDefault];
         [fromGroup_ps addObject:subAlgNode.pointer];
         
         //6. 将所有子概念添加到瞬时记忆 (2020.08.17: 由短时记忆替代);
@@ -174,7 +177,7 @@ static AIThinkingControl *_instance;
     }
     
     //2. 提交到ThinkIn进行识别_构建概念
-    AIAbsAlgNode *outAlg = [theNet createAbsAlg_NoRepeat:value_ps conAlgs:nil isMem:false isOut:true at:nil type:ATDefault];
+    AIAbsAlgNode *outAlg = [theNet createAbsAlg_NoRepeat:value_ps conAlgs:nil isOut:true at:nil type:ATDefault];
     
     //3. 提交到ThinkIn进行识别_加瞬时记忆 & 进行识别
     [TCInput rInput:outAlg except_ps:nil];

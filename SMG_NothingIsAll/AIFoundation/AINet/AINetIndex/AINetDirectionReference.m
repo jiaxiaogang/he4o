@@ -15,16 +15,16 @@
 //MARK:                     < publicMethod >
 //MARK:===============================================================
 
--(NSArray*) getNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction isMem:(BOOL)isMem limit:(NSInteger)limit {
-    return [self getNodePointersFromDirectionReference:mvAlgsType direction:direction isMem:isMem filter:^NSArray *(NSArray *protoArr) {
+-(NSArray*) getNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction limit:(NSInteger)limit {
+    return [self getNodePointersFromDirectionReference:mvAlgsType direction:direction filter:^NSArray *(NSArray *protoArr) {
         return ARR_SUB(protoArr, 0, limit);
     }];
 }
 
--(NSArray*) getNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction isMem:(BOOL)isMem filter:(NSArray*(^)(NSArray *protoArr))filter{
+-(NSArray*) getNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction filter:(NSArray*(^)(NSArray *protoArr))filter{
     //1. 取mv分区的引用序列文件;
     AIKVPointer *mvReference_p = [SMGUtils createPointerForDirection:mvAlgsType direction:direction];
-    NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:mvReference_p fileName:kFNRefPorts_All(isMem) time:cRTMemMvRef_All(isMem)]];
+    NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:mvReference_p fileName:kFNRefPorts time:cRTMvRef]];
     
     //2. 筛选器 (无筛选器时,返回所有);
     if (filter) {

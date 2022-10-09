@@ -78,7 +78,7 @@
                             //3. 当为same类型时,节点设为default类型即可 (参考24019);
                             NSArray *conAlgs = @[algNodeA,algNodeB];
                             AnalogyType nodeType = [AINetUtils getTypeFromConNodes:conAlgs];
-                            AIAbsAlgNode *createAbsNode = [theNet createAbsAlg_NoRepeat:sameValue_ps conAlgs:conAlgs isMem:false at:nil type:nodeType];
+                            AIAbsAlgNode *createAbsNode = [theNet createAbsAlg_NoRepeat:sameValue_ps conAlgs:conAlgs at:nil type:nodeType];
                             if (createAbsNode) {
                                 //3. 收集并更新jMax;
                                 [orderSames insertObject:createAbsNode.pointer atIndex:0];
@@ -170,7 +170,7 @@
 //MARK:===============================================================
 +(AIAlgNodeBase*) analogyAlg:(AIAlgNodeBase*)algA algB:(AIAlgNodeBase*)algB{
     NSArray *same_ps = [SMGUtils filterSame_ps:algA.content_ps parent_ps:algB.content_ps];
-    AIAlgNodeBase *result = [theNet createAbsAlg_NoRepeat:same_ps conAlgs:@[algA,algB] isMem:false at:nil type:ATDefault];
+    AIAlgNodeBase *result = [theNet createAbsAlg_NoRepeat:same_ps conAlgs:@[algA,algB] at:nil type:ATDefault];
     NSLog(@"外类比=> A%ld : A%ld = %@",algA.pointer.pointerId,algB.pointer.pointerId,Alg2FStr(result));
     return result;
 }

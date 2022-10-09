@@ -110,33 +110,6 @@
 +(void) insertRefPorts_AllMvNode:(AIKVPointer*)mvNode_p value_p:(AIPointer*)value_p difStrong:(NSInteger)difStrong;
 
 
-
-//MARK:===============================================================
-//MARK:                     < 内存插线 >
-//MARK:===============================================================
-
-/**
- *  MARK:--------------------节点插到被引用信息上--------------------
- *  @param passiveRef_p : 此指针,被某节点引用;
- *  @param memNode_p    : 此节点,引用了某指针;
- *  @param ps           : algNode传content_ps,foNode传content_ps,而mv传nil;
- *  @param difStrong    : mvNode索引引用序列传迫切度正相关值,delta和urgent及别的微信息传1;
- *  1. 目前仅支持内存网络,硬盘网络在AIRefrAINetIndexReference.setRefresh()中;
- *  2. 微信息引用ports.header为空; (因为目前不需要)
- */
-+(void) insertRefPorts_MemNode:(AIPointer*)memNode_p passiveRef_p:(AIPointer*)passiveRef_p ps:(NSArray*)ps difStrong:(NSInteger)difStrong;
-/**
- *  MARK:--------------------抽象插到具象上--------------------
- */
-+(void) insertAbsPorts_MemNode:(AIPointer*)abs_p con_p:(AIPointer*)con_p absNodeContent:(NSArray*)absNodeContent difStrong:(NSInteger)difStrong;
-
-/**
- *  MARK:--------------------具象插到抽象上--------------------
- */
-+(void) insertConPorts_MemNode:(AIPointer*)con_p abs_p:(AIPointer*)abs_p conNodeContent:(NSArray*)conNodeContent difStrong:(NSInteger)difStrong;
-
-
-
 //MARK:===============================================================
 //MARK:                     < 通用 仅插线到ports >
 //MARK:===============================================================
@@ -148,15 +121,6 @@
  *  @param ps       : pointer是alg时,传alg.content_ps | pointer是fo时,传fo.orders; (用来计算md5.header)
  */
 +(void) insertPointer_Hd:(AIKVPointer*)pointer toPorts:(NSMutableArray*)ports ps:(NSArray*)ps;
-
-/**
- *  MARK:--------------------内存插线到时间ports序列--------------------
- *  @param pointer  : 把这个插到ports
- *  @param memPorts : 把pointer插到这儿;
- *  @param ps       : pointer是alg时,传alg.content_ps | pointer是fo时,传fo.orders; (用来计算md5.header)
- *  注: 内存网络中,仅按时间排序,没有强度;
- */
-+(void) insertPointer_Mem:(AIKVPointer*)pointer toPorts:(NSMutableArray*)memPorts ps:(NSArray*)ps difStrong:(NSInteger)difStrong;
 
 
 //MARK:===============================================================
@@ -189,18 +153,6 @@
 
 
 //MARK:===============================================================
-//MARK:                     < 转移 >
-//MARK:===============================================================
-@interface AINetUtils (Move)
-
-//notnull
-+(NSMutableArray*) move2Hd4Alg_ps:(NSArray*)alg_ps;
-+(id) move2HdNodeFromMemNode_Alg:(AINodeBase*)memNode;
-+(id) move2HdNodeFromMemNode_Fo:(AINodeBase*)memNode;
-
-@end
-
-//MARK:===============================================================
 //MARK:                     < Port >
 //MARK:===============================================================
 @interface AINetUtils (Port)
@@ -230,7 +182,6 @@
 +(NSArray*) refPorts_All4Alg:(AIAlgNodeBase*)node;
 +(NSArray*) refPorts_All4Alg_Normal:(AIAlgNodeBase*)node;
 +(NSArray*) refPorts_All4Value:(AIKVPointer*)value_p;
-+(NSArray*) refPorts_All4Value:(AIKVPointer*)value_p isMem:(BOOL)isMem;
 +(NSArray*) refPorts_All:(AIKVPointer*)node_p;
 
 /**

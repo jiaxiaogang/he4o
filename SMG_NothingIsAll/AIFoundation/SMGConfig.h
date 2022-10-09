@@ -11,6 +11,12 @@
 //MARK:===============================================================
 //MARK:                     < redisTime >
 //MARK:===============================================================
+
+/**
+ *  MARK:--------------------缓存时间--------------------
+ *  @version
+ *      2022.10.09: 废弃isMem内存缓存时间的配置 (因为XGRedis早就把它的功能替了,参考27124-todo2);
+ */
 #define cRTIndex 315360000  //常驻内存(十年)
 #define cRTData 315360000   //常驻内存(十年)
 #define cRTReference 9999   //微信息索引序列时间;
@@ -18,17 +24,6 @@
 #define cRTDefault 60       //默认,例如:小脑canout序列;
 #define cRTPort 200         //refPorts(概念),absPorts,conPorts的时间;
 #define cRTMvRef 600        //mv方向索引时间;
-
-#define cRTMemDefault 1800  //内存网络_默认生存时间;
-#define cRTMemNode 1800     //内存网络_Node时间;
-#define cRTMemPort 1800     //内存网络_Port时间;
-#define cRTMemReference 9999//内存网络_微信息引用序列
-#define cRTMemMvRef 1800    //mv方向索引时间;
-
-#define cRTNode_All(isMem) (isMem ? cRTMemNode : cRTNode)
-#define cRTPort_All(isMem) (isMem ? cRTMemPort : cRTPort)
-#define cRTReference_All(isMem) (isMem ? cRTMemReference : cRTReference)    //微信息索引序列
-#define cRTMemMvRef_All(isMem) (isMem ? cRTMemMvRef : cRTMvRef)             //mv方向索引时间;
 
 //MARK:===============================================================
 //MARK:                     < thinkingControl >

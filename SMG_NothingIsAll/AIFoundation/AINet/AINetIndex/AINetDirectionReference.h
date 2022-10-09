@@ -25,9 +25,8 @@
  *  @param limit : 最多少个
  *  @param mvAlgsType : 分区标识(mv类型)
  *  @param direction : mv变化方向
- *  @param isMem : 取内存网络/硬盘网络
  */
--(NSArray*) getNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction isMem:(BOOL)isMem limit:(NSInteger)limit;
+-(NSArray*) getNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction limit:(NSInteger)limit;
 
 
 /**
@@ -35,9 +34,8 @@
  *  @param filter : 指定筛选器
  *  @param mvAlgsType : 分区标识(mv类型)
  *  @param direction : mv变化方向
- *  @param isMem : 取内存网络/硬盘网络
  */
--(NSArray*) getNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction isMem:(BOOL)isMem filter:(NSArray*(^)(NSArray *protoArr))filter;
+-(NSArray*) getNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction filter:(NSArray*(^)(NSArray *protoArr))filter;
 
 
 @end

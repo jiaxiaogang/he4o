@@ -26,12 +26,12 @@
  *  MARK:--------------------构建具象mv--------------------
  */
 -(AICMVNode*) createConMv:(NSArray*)imvAlgsArr;
--(AICMVNode*) createConMv:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p at:(NSString*)at isMem:(BOOL)isMem;
+-(AICMVNode*) createConMv:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p at:(NSString*)at;
 
 /**
  *  MARK:--------------------构建conFo--------------------
  *  @result notnull
  */
-+(AIFrontOrderNode*) createConFo:(NSArray*)order isMem:(BOOL)isMem;
++(AIFrontOrderNode*) createConFo:(NSArray*)order;
 
 @end
