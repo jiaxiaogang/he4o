@@ -321,6 +321,7 @@
  *      2. 作用: 从中习得防撞能力,躲避危险;
  *  @version
  *      2022.08.07: 将原100轮,拆分为10轮x10次 (参考27061-更新);
+ *      2022.10.10: 测着比较稳了,改回些,改成33轮x3次 (参考27142-步骤2);
  */
 //步骤参考26029-加长版强化加训 (参考26031-2);
 - (IBAction)loadFlyBtnOnClick:(id)sender {
@@ -331,7 +332,7 @@
     [theRT queue1:kBirthPosRdmCentSEL];
     
     //0. 加长版训练100轮
-    for (int j = 0; j < 10; j++) {
+    for (int j = 0; j < 33; j++) {
         
         //1. 进入训练页
         NSMutableArray *names = [[NSMutableArray alloc] init];
