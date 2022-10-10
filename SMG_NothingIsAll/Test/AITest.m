@@ -130,4 +130,10 @@
     }
 }
 
++(void) test13:(NSArray*)slowSolutionCansets {
+    if (slowSolutionCansets && slowSolutionCansets.count > 1000) {
+        ELog(@"自检13: 慢思考候选集太长,建议限limit");
+    }
+}
+
 @end

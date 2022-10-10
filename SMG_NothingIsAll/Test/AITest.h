@@ -27,4 +27,6 @@
  */
 +(void) test12:(CGFloat)score;
 
++(void) test13:(NSArray*)slowSolutionCansets;
+
 @end

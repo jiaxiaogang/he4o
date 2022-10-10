@@ -183,6 +183,7 @@
  */
 +(AISolutionModel*) generalSolution_Slow:(DemandModel *)demand cansetModels:(NSArray*)cansetModels except_ps:(NSArray*)except_ps {
     //1. 数据准备;
+    [AITest test13:cansetModels];
     except_ps = ARRTOOK(except_ps);
     AISolutionModel *result = nil;
     BOOL havBack = ISOK(demand, HDemandModel.class); //H有后段,别的没有;
