@@ -19,12 +19,13 @@
 
 @end
 
-@class TOMVisionItemModel;
+@class TOMVisionItemModel,TVSettingWindow;
 @interface TVPanelView : UIView
 
 @property (strong, nonatomic) NSMutableArray *models;   //所有帧数据 List<TOMVisionItemModel>
 @property (weak, nonatomic) id<TVPanelViewDelegate> delegate;//notnull
 @property (assign, nonatomic) BOOL stop;                //功能开关
+@property (strong, nonatomic) TVSettingWindow *settingWindow;
 
 -(void) updateFrame;
 -(void) getModel:(NSInteger)changeIndex complete:(void(^)(TOMVisionItemModel*,TOModelBase*))complete;

@@ -12,6 +12,7 @@
 #import "TOMVisionItemModel.h"
 #import "PINDiskCache.h"
 #import "TVideoWindow.h"
+#import "TVSettingWindow.h"
 #import "TVUtil.h"
 
 @interface TVPanelView () <TVideoWindowDelegate>
@@ -64,6 +65,9 @@
     //tvideoWindow
     self.tvideoWindow = [[TVideoWindow alloc] init];
     self.tvideoWindow.delegate = self;
+    
+    //settingWindow
+    self.settingWindow = [[TVSettingWindow alloc] init];
 }
 
 -(void) initData{
@@ -298,6 +302,10 @@
 
 - (IBAction)saveBtnOnClicked:(id)sender {
     [self.tvideoWindow open];
+}
+
+- (IBAction)settingBtnClick:(id)sender {
+    [self.settingWindow open];
 }
 
 //MARK:===============================================================

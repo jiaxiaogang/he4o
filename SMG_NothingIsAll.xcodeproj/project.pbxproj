@@ -153,6 +153,8 @@
 		08C7539225A3EEB800BCF011 /* AIScore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C7539125A3EEB800BCF011 /* AIScore.m */; };
 		08C84A8E1E9A866200897D8B /* AIInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A8D1E9A866200897D8B /* AIInput.m */; };
 		08CEAFAD22B317A800CD1D91 /* NodeCompareModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08CEAFAC22B317A800CD1D91 /* NodeCompareModel.m */; };
+		08D01CA228F70296003688ED /* TVSettingWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D01CA128F70296003688ED /* TVSettingWindow.m */; };
+		08D01CA428F702B0003688ED /* TVSettingWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 08D01CA328F702B0003688ED /* TVSettingWindow.xib */; };
 		08D322A91EBA28B0009D734A /* Foundation+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D322A81EBA28B0009D734A /* Foundation+Log.m */; };
 		08D471DE1FEB3FFF00C61322 /* AIImvAlgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D471DD1FEB3FFF00C61322 /* AIImvAlgs.m */; };
 		08D4EC512160501000DA646B /* AINetUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D4EC502160501000DA646B /* AINetUtils.m */; };
@@ -495,6 +497,9 @@
 		08CB89B82231EAB200EC1181 /* ReadMe.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReadMe.h; sourceTree = "<group>"; };
 		08CEAFAB22B317A800CD1D91 /* NodeCompareModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NodeCompareModel.h; sourceTree = "<group>"; };
 		08CEAFAC22B317A800CD1D91 /* NodeCompareModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NodeCompareModel.m; sourceTree = "<group>"; };
+		08D01CA028F70296003688ED /* TVSettingWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TVSettingWindow.h; sourceTree = "<group>"; };
+		08D01CA128F70296003688ED /* TVSettingWindow.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TVSettingWindow.m; sourceTree = "<group>"; };
+		08D01CA328F702B0003688ED /* TVSettingWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TVSettingWindow.xib; sourceTree = "<group>"; };
 		08D322A71EBA2783009D734A /* SMGPrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SMGPrefixHeader.pch; sourceTree = "<group>"; };
 		08D322A81EBA28B0009D734A /* Foundation+Log.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Foundation+Log.m"; sourceTree = "<group>"; };
 		08D471DC1FEB3FFF00C61322 /* AIImvAlgs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIImvAlgs.h; sourceTree = "<group>"; };
@@ -627,6 +632,9 @@
 				082075F327EDFFE60005D7A8 /* TVideoWindow.h */,
 				082075F527EDFFE70005D7A8 /* TVideoWindow.m */,
 				082075F427EDFFE70005D7A8 /* TVideoWindow.xib */,
+				08D01CA028F70296003688ED /* TVSettingWindow.h */,
+				08D01CA128F70296003688ED /* TVSettingWindow.m */,
+				08D01CA328F702B0003688ED /* TVSettingWindow.xib */,
 			);
 			path = Panel;
 			sourceTree = "<group>";
@@ -1780,6 +1788,7 @@
 				08A5D5DA22AF1E9D00E56BB4 /* NVView.xib in Resources */,
 				082075F627EDFFE70005D7A8 /* TVideoWindow.xib in Resources */,
 				0858C5B02194F5E400951BA5 /* CarView.xib in Resources */,
+				08D01CA428F702B0003688ED /* TVSettingWindow.xib in Resources */,
 				0889258122B0703700A0DBDD /* NVModuleView.xib in Resources */,
 				0802962927E4D7920050C767 /* TVPanelView.xib in Resources */,
 				08AF45551E97D0B500377887 /* Assets.xcassets in Resources */,
@@ -1863,6 +1872,7 @@
 				082F9D561EB234750009F6A9 /* Output.m in Sources */,
 				0858C5CD2194F8B000951BA5 /* MASConstraintMaker.m in Sources */,
 				88BC09DA20B4ECAB0006ABEF /* XGRedisUtil.m in Sources */,
+				08D01CA228F70296003688ED /* TVSettingWindow.m in Sources */,
 				083112F21F05E12600051DE6 /* MBProgressHUD+Add.m in Sources */,
 				082075F727EDFFE70005D7A8 /* TVideoWindow.m in Sources */,
 				08A232E5243557110090D4B5 /* TOUtils.m in Sources */,

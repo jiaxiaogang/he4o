@@ -22,6 +22,7 @@
 #import "TVLineView.h"
 #import "TVTimeLine.h"
 #import "TVUtil.h"
+#import "TVSettingWindow.h"
 
 @interface TOMVision2 () <TVPanelViewDelegate,UIScrollViewDelegate>
 
@@ -156,6 +157,20 @@
     CGFloat rootNodeW = rootGroupW * 0.6f;
     for (DemandModel *demand in frameModel.roots) {
         //NSLog(@"----------> root下树为:\n%@",[TOModelVision cur2Sub:demand]);
+        
+        //3. 显示设置开关处理;
+        if (!self.panelView.settingWindow.finishSwitch) {
+            if (demand.status == TOModelStatus_Finish) continue;
+        }
+        if (!self.panelView.settingWindow.expiredSwitch) {
+            if (ISOK(demand, ReasonDemandModel.class) && ((ReasonDemandModel*)demand).isExpired) continue;
+        }
+        if (!self.panelView.settingWindow.withOutSwitch) {
+            if (demand.status == TOModelStatus_WithOut) continue;
+        }
+        if (!self.panelView.settingWindow.actYesSwitch) {
+            if ([TOUtils endHavActYes:demand]) continue;
+        }
         
         //3. 从demand根节点递归生长出它的分枝,
         NSMutableArray *unorderModels = [TOModelVisionUtil convertCur2Sub2UnorderModels:demand];
