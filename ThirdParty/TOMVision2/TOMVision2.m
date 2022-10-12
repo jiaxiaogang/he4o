@@ -131,6 +131,7 @@
  *  @version
  *      2022.03.19: 子节点与根节点同尺寸,只是缩放了而已 (如果调小尺寸,缩放就没意义了);
  *      2022.03.22: 每层hSpace间隔为当前层的1.8倍 (避免末枝很小却间距好远);
+ *      2022.10.12: 改为先过滤出有效roots,避免排版还是按所有roots算,而导致排版错误BUG;
  */
 -(void) refreshDisplay{
     [self refreshDisplay:false];
@@ -153,25 +154,27 @@
     //注: 排版为[-NNN--NNN-],其中-为节点间距,NNN为节点宽度,占60%;
     //注: rootGroupW最大宽度为250;
     if (!frameModel) return;
-    CGFloat rootGroupW = MIN(ScreenWidth / frameModel.roots.count, 420);
-    CGFloat rootNodeW = rootGroupW * 0.6f;
-    for (DemandModel *demand in frameModel.roots) {
-        //NSLog(@"----------> root下树为:\n%@",[TOModelVision cur2Sub:demand]);
-        
+    NSArray *validRoots = [SMGUtils filterArr:frameModel.roots checkValid:^BOOL(DemandModel *demand) {
         //3. 显示设置开关处理;
         if (!self.panelView.settingWindow.finishSwitch) {
-            if (demand.status == TOModelStatus_Finish) continue;
+            if (demand.status == TOModelStatus_Finish) return false;
         }
         if (!self.panelView.settingWindow.expiredSwitch) {
-            if (ISOK(demand, ReasonDemandModel.class) && ((ReasonDemandModel*)demand).isExpired) continue;
+            if (ISOK(demand, ReasonDemandModel.class) && ((ReasonDemandModel*)demand).isExpired) return false;
         }
         if (!self.panelView.settingWindow.withOutSwitch) {
-            if (demand.status == TOModelStatus_WithOut) continue;
+            if (demand.status == TOModelStatus_WithOut) return false;
         }
         if (!self.panelView.settingWindow.actYesSwitch) {
-            if ([TOUtils endHavActYes:demand]) continue;
+            if ([TOUtils endHavActYes:demand]) return false;
         }
-        
+        return true;
+    }];
+    
+    CGFloat rootGroupW = MIN(ScreenWidth / validRoots.count, 420);
+    CGFloat rootNodeW = rootGroupW * 0.6f;
+    for (DemandModel *demand in validRoots) {
+        //NSLog(@"----------> root下树为:\n%@",[TOModelVision cur2Sub:demand]);
         //3. 从demand根节点递归生长出它的分枝,
         NSMutableArray *unorderModels = [TOModelVisionUtil convertCur2Sub2UnorderModels:demand];
         
@@ -185,7 +188,7 @@
             if (!nodeView.data.baseOrGroup) {
                 
                 //4. nodeX = (左侧空白0.2 + 下标) x 组宽;
-                NSInteger index = [frameModel.roots indexOfObject:nodeView.data];
+                NSInteger index = [validRoots indexOfObject:nodeView.data];
                 CGFloat nodeX = rootGroupW * (index + 0.2f);
                 
                 //5. root节点的frame指定;

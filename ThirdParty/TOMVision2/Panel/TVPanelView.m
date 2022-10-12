@@ -317,14 +317,21 @@
     [self refreshDisplay];
 }
 
+/**
+ *  MARK:--------------------存视频--------------------
+ *  @version
+ *      2022.10.12: 修复因文件夹为空存储失败的BUG;
+ */
 -(void) tvideo_Save:(NSString*)fileName{
     //1. 数据准备;
     NSString *cachePath = kCachePath;
-    NSURL *fileURL = [NSURL fileURLWithPath:STRFORMAT(@"%@/tvideo/%@.tv",cachePath,fileName)];
+    NSString *folder = STRFORMAT(@"%@/tvideo",cachePath);
+    NSURL *fileURL = [NSURL fileURLWithPath:STRFORMAT(@"%@/%@.tv",folder,fileName)];
     NSData *data = OBJ2DATA(self.models);
-    BOOL success = [data writeToURL:fileURL options:NSDataWritingAtomic error:nil];
     
-    //2. 备份UserDefaults记忆;
+    //2. 新建文件夹
+    [[NSFileManager defaultManager] createDirectoryAtPath:folder withIntermediateDirectories:false attributes:nil error:nil];
+    BOOL success = [data writeToURL:fileURL options:NSDataWritingAtomic error:nil];
     NSLog(@"======> 存储思维录像《%@.tv》%@",fileName,success ? @"成功" : @"失败");
 }
 
