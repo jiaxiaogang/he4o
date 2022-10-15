@@ -125,7 +125,7 @@
     //11. S评分PK: pk通过 = 任务评分 - 方案评分 - 懒评分 > 0;
     //12. 三个评分都是负的,所以公式为以下 (result = 收益(负任务分) + mv的负分 + lazy的负分 > 0);
     BOOL result = -averageDemandScore + averageMvScore + averageLazyScore > 0;
-    NSLog(@"反思评价结果:%d 任务分%.1f 价值分:%.2f 懒分:%.1f",result,averageDemandScore,averageMvScore,averageLazyScore);
+    NSLog(@"反思评价结果:%@通过 任务分%.1f 价值分:%.2f 懒分:%.1f",result?@"已":@"未",averageDemandScore,averageMvScore,averageLazyScore);
     return result;
 }
 

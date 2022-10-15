@@ -83,12 +83,16 @@
  *      2022.06.09: 弃用阈值方案,改为综合排名 (参考26222-TODO2);
  *      2022.06.12: 废弃同cansetFo的effStrong累计 (参考26232-TODO8);
  *      2022.06.12: 每个pFo独立做analyst比对,转为cansetModels (参考26232-TODO8);
+ *      2022.10.15: 快思考支持反思,不然因为一点点小任务就死循环 (参考27143-问题2);
  */
 +(AISolutionModel*) generalSolution_Fast:(DemandModel *)demand cansets:(NSArray*)cansets except_ps:(NSArray*)except_ps{
     //1. 数据准备;
     except_ps = ARRTOOK(except_ps);
     BOOL havBack = ISOK(demand, HDemandModel.class); //H有后段,别的没有;
     NSLog(@"1. 快思考protoCansets数:%ld",cansets.count);
+    
+    //2. 留下最初的protoCansets,用于反思等 (因为反思是不用防重等的,越原始越准确);
+    NSArray *protoCansets = [NSArray arrayWithArray:cansets];
     
     //2. solutionModels过滤器;
     cansets = [SMGUtils filterArr:cansets checkValid:^BOOL(AISolutionModel *item) {
@@ -119,8 +123,17 @@
         NSLog(@"\t(前%.2f 中%.2f 后%.2f) %@",m.frontMatchValue,m.effectScore,m.backMatchValue,Pit2FStr(m.cansetFo));
     }
 
+    //6. 逐条S反思;
+    AISolutionModel *result = nil;
+    for (AISolutionModel *item in sortCansets) {
+        BOOL score = [TCRefrection refrection:item cansets:protoCansets demand:demand];
+        if (score) {
+            result = item;
+            break;
+        }
+    }
+    
     //7. 将首条最佳方案返回;
-    AISolutionModel *result = ARR_INDEX(sortCansets, 0);
     if (Log4Solution && result) NSLog(@"4. 快思考最佳结果:F%ld (前%.2f 中%.2f 后%.2f",result.cansetFo.pointerId,result.frontMatchValue,result.effectScore,result.backMatchValue);
     return result;
 }
