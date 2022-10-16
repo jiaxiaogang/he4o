@@ -32,7 +32,7 @@
     [theTC updateOperCount:kFILENAME];
     Debug();
     //1. 获取最近的识别模型;
-    IFTitleLog(@"P学习", @"\n输入ProtoFo:%@->%@", Fo2FStr(protoFo),Mvp2Str(protoFo.cmvNode_p));
+    IFTitleLog(@"pLearning", @"\n输入ProtoFo:%@->%@", Fo2FStr(protoFo),Mvp2Str(protoFo.cmvNode_p));
     NSArray *inModels = ARRTOOK(theTC.inModelManager.models);
     for (AIShortMatchModel *item in inModels) {
         for (AIMatchFoModel *pFo in item.fos4PLearning) {
@@ -79,8 +79,7 @@
     NSLog(@"\npFo外类比 =>");
     for (AIMatchFoModel *item in model.fos4RLearning) {
         AIFoNodeBase *itemMFo = [SMGUtils searchNode:item.matchFo];
-        AIFoNodeBase *absFo = [AIAnalogy analogyOutside:protoFo assFo:itemMFo type:ATDefault createAbsAlgBlock:nil];
-        if (Log4AnalogyAbsRFo) NSLog(@"F%ld再抽象: %@->%@",itemMFo.pointer.pointerId,Fo2FStr(absFo),Mvp2Str(absFo.cmvNode_p));
+        [AIAnalogy analogyOutside:protoFo assFo:itemMFo type:ATDefault createAbsAlgBlock:nil];
     }
     
     //2. TIR反馈;
