@@ -50,6 +50,7 @@
  *  @todo
  *      2020.11.18: 随后可考虑,将是否"全含"作为第一排序标准,matchCount作为第二排序标准 (转至下条);
  *      2020.11.18: 随后可考虑,是否将"全含"部分移出去,此处仅保留partAlgs即可 T;
+ *      2022.01.12: 支持相近匹配后,就全是全含了,此处实则已废弃 (参考25084);
  */
 @property (strong, nonatomic) NSArray *partAlgs;
 @property (assign, nonatomic) NSTimeInterval inputTime; //原始概念输入时间

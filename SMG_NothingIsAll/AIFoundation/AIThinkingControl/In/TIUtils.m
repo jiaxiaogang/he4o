@@ -69,6 +69,7 @@
  *      20220115: 识别结果可为自身,参考partMatching_Alg(),所以不需要此处再add(self)了;
  *      20220116: 全含可能也只是相似,由直接构建抽具象关联,改成概念外类比 (参考25105);
  *      20220528: 把概念外类比关掉 (参考26129-方案2-1);
+ *      20221018: 对proto直接抽象指向matchAlg (参考27153-1);
  *
  *  _result
  *      xxxx.xx.xx: completeBlock : 共支持三种返回: 匹配效果从高到低分别为:fuzzyAlg废弃,matchAlg全含,seemAlg局部;
@@ -88,21 +89,26 @@
     [self partMatching_Alg:protoAlg except_ps:except_ps inModel:inModel];
     
     //5. 关联处理 & 外类比 (这样后面TOR理性决策时,才可以直接对当前瞬时实物进行很好的理性评价) (参考21091-蓝线);
-    for (AIAlgNodeBase *matchAlg in inModel.matchAlgs) {
+    for (AIAbsAlgNode *matchAlg in inModel.matchAlgs) {
         //4. 识别到时,value.refPorts -> 更新/加强微信息的引用序列
         [AINetUtils insertRefPorts_AllAlgNode:matchAlg.pointer content_ps:matchAlg.content_ps difStrong:1];
         
         //5. 识别且全含时,进行外类比 (参考25105);
         //[AIAnalogy analogyAlg:protoAlg algB:matchAlg];
+        
+        //5. 对proto直接抽象指向matchAlg (参考27153-1);
+        [AINetUtils relateAlgAbs:matchAlg conNodes:@[protoAlg] isNew:false];
+        
+        
+        //TODOTOMORROW20221017: 看下把相近度,也存到二者的关系里
+        //1. 可以存在absNode里,这样到时候只读一个节点即可;
+        //2. 别存在conPorts里,没必要两个数组掺和,单存开更方便维护;
+        
+        
+        
+        
+        
     }
-    
-    
-    //TODOTOMORROW20221017: 概念识别后,直接对相近结果构建抽象关联 (参考27153);
-    // 调试确定下此处partAlgs应该是已停用状态;
-    NSLog(@"概念识别结果数:%ld %ld",inModel.matchAlgs.count,inModel.partAlgs.count);
-    
-    
-    
     
     //6. 关联处理_对seem和proto进行类比抽象 (参考21091-绿线);
     if (ARRISOK(inModel.partAlgs)) {
