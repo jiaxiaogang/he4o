@@ -43,12 +43,6 @@
     //2. 识别概念;
     [TIUtils TIR_Alg:algNode.pointer except_ps:except_ps inModel:mModel];
     
-    //TODOTOMORROW20221017: 概念识别后,直接对相近结果构建抽象关联 (参考27153);
-    
-    
-    
-    
-    
     //3. 将mModel保留 (只有先保留后,构建时序时,才会含新帧概念);
     [theTC.inModelManager add:mModel];
     DebugE();

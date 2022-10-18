@@ -96,6 +96,14 @@
         //[AIAnalogy analogyAlg:protoAlg algB:matchAlg];
     }
     
+    
+    //TODOTOMORROW20221017: 概念识别后,直接对相近结果构建抽象关联 (参考27153);
+    // 调试确定下此处partAlgs应该是已停用状态;
+    NSLog(@"概念识别结果数:%ld %ld",inModel.matchAlgs.count,inModel.partAlgs.count);
+    
+    
+    
+    
     //6. 关联处理_对seem和proto进行类比抽象 (参考21091-绿线);
     if (ARRISOK(inModel.partAlgs)) {
         NSLog(@"对局部匹配首条构建TopAbs抽象");
