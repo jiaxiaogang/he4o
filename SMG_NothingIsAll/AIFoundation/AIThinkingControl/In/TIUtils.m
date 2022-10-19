@@ -89,7 +89,7 @@
     [self partMatching_Alg:protoAlg except_ps:except_ps inModel:inModel];
     
     //5. 关联处理 & 外类比 (这样后面TOR理性决策时,才可以直接对当前瞬时实物进行很好的理性评价) (参考21091-蓝线);
-    for (AIAbsAlgNode *matchAlg in inModel.matchAlgs) {
+    for (AIAbsAlgNode *matchAlg in inModel.matchAlgs2) {
         //4. 识别到时,value.refPorts -> 更新/加强微信息的引用序列
         [AINetUtils insertRefPorts_AllAlgNode:matchAlg.pointer content_ps:matchAlg.content_ps difStrong:1];
         
@@ -114,7 +114,7 @@
     if (ARRISOK(inModel.partAlgs)) {
         NSLog(@"对局部匹配首条构建TopAbs抽象");
         AIAlgNodeBase *firstPartAlg = ARR_INDEX(inModel.partAlgs, 0);
-        AIAlgNodeBase *firstMatchAlg = ARR_INDEX(inModel.matchAlgs, 0);
+        AIAlgNodeBase *firstMatchAlg = ARR_INDEX(inModel.matchAlgs2, 0);
         AIAlgNodeBase *seemProtoAbs = [AIAnalogy analogyAlg:protoAlg algB:firstPartAlg];
         
         //7. 关联处理_对seemProtoAbs与matchAlg建立抽具象关联 (参考21091-黄线);
@@ -197,6 +197,16 @@
                 //8. 不应期 -> 不可激活;
                 if ([SMGUtils containsSub_p:refPort.target_p parent_ps:except_ps]) continue;
                 
+                
+                //TODOTOMORROW20221019:
+                //1. 此处把各个dic去掉,直接收集AIMatchAlgModel即可;
+                //2. 然后把所有matchAlgs2和matchAlg2的调用处都更新下数据格式为AIMatchAlgModel;
+                //3. 完成后,继续TODOTOMORROW20221017: 把相近度的值存到AIPort中;
+                
+                
+                
+                
+                
                 //9. 第1_统计匹配度;
                 //NSData *key = OBJ2DATA(refPort.target_p);
                 NSNumber *key = @(refPort.target_p.pointerId);
@@ -222,46 +232,43 @@
         if (Log4MAlg) if (countDic.count) NSLog(@"计数字典匹配情况: %@ ------",countDic.allValues);
     }
     
+    //11. 转为AIMatchAlgModel格式: protoModels;
+    NSArray *protoModels = [SMGUtils convertArr:countDic.allKeys convertBlock:^id(NSNumber *key) {
+        return [AIMatchAlgModel newWithMatchAlg:[recordDic objectForKey:key]
+                                     matchCount:[NUMTOOK([countDic objectForKey:key]) intValue]
+                                        sumNear:[NUMTOOK([sumNearVDic objectForKey:key]) doubleValue]
+                                      nearCount:[NUMTOOK([nearCountDic objectForKey:key]) intValue]
+                                   sumRefStrong:[NUMTOOK([sumStrongDic objectForKey:key]) intValue]];
+    }];
+    
     //11. 按nearA排序 (参考25083-2&公式2 & 25084-1);
-    NSArray *sortKeys = [SMGUtils sortBig2Small:countDic.allKeys compareBlock:^double(NSNumber *obj) {
-        double sumNear = [NUMTOOK([sumNearVDic objectForKey:obj]) doubleValue];
-        int nearCount = [NUMTOOK([nearCountDic objectForKey:obj]) intValue];
-        return nearCount > 0 ? sumNear / nearCount : 1;
+    NSArray *sortModels = [SMGUtils sortBig2Small:protoModels compareBlock:^double(AIMatchAlgModel *obj) {
+        return [obj matchValue];
     }];
     
     //13. 仅保留最相近的20条 (参考25083-3);
-    sortKeys = ARR_SUB(sortKeys, 0, cAlgNarrowLimit(protoAlg.count));
+    sortModels = ARR_SUB(sortModels, 0, cAlgNarrowLimit(protoAlg.count));
     
     //14. 全含或局部匹配判断: 从大到小,依次取到对应的node和matchingCount (注: 支持相近后,应该全是全含了,参考25084-1);
-    for (NSNumber *key in sortKeys) {
+    for (AIMatchAlgModel *sortModel in sortModels) {
         //14. 过滤掉匹配度<85%的;
-        double matchV = [NUMTOOK([sumNearVDic objectForKey:key]) doubleValue] / [NUMTOOK([nearCountDic objectForKey:key]) intValue];
-        if (matchV < 0.90f) {
-            continue;
-        }
+        if (sortModel.matchValue < 0.90f) continue;
         
         //15. 判断全含 & 收集;
         //AIKVPointer *key_p = DATA2OBJ(key);
-        AIKVPointer *key_p = [recordDic objectForKey:key];
-        AIAlgNodeBase *result = [SMGUtils searchNode:key_p];
-        if (result.content_ps.count == [NUMTOOK([countDic objectForKey:key]) intValue]) {
+        AIAlgNodeBase *result = [SMGUtils searchNode:sortModel.matchAlg];
+        if (result.count == sortModel.matchCount) {
             [matchAlgs addObject:result];
         }//else{ //[partAlgs addObject:result]; }
     }
     
     //16. 未将全含返回,则返回最相似 (2020.10.22: 全含返回,也要返回seemAlg) (2022.01.15: 支持相近匹配后,全是全含没局部了);
-    NSLog(@"\n识别结果 >> 总数:%ld = 全含匹配数:%ld + 局部匹配数:%ld",sortKeys.count,matchAlgs.count,partAlgs.count);
-    for (AIAlgNodeBase *item in matchAlgs) {
-        //id key = OBJ2DATA(item.pointer);
-        id key = @(item.pointer.pointerId);
-        int sumStrong = [NUMTOOK([sumStrongDic objectForKey:key]) intValue];
-        double sumNear = [NUMTOOK([sumNearVDic objectForKey:key]) doubleValue];
-        int nearCount = [NUMTOOK([nearCountDic objectForKey:key]) intValue];
-        int matchCount = [NUMTOOK([countDic objectForKey:key]) intValue];
-        NSLog(@"-->>>(%d) 全含item: %@   \t相近度 => %.2f (count:%d)",sumStrong,Alg2FStr(item),sumNear / nearCount,matchCount);
+    NSLog(@"\n识别结果 >> 总数:%ld = 全含匹配数:%ld + 局部匹配数:%ld",sortModels.count,matchAlgs.count,partAlgs.count);
+    for (AIMatchAlgModel *item in matchAlgs) {
+        NSLog(@"-->>>(%d) 全含item: %@   \t相近度 => %.2f (count:%d)",item.sumRefStrong,Pit2FStr(item.matchAlg),item.matchValue,item.matchCount);
     }
     for (AIAlgNodeBase *item in partAlgs) NSLog(@"-->>> 局部item: %@",Alg2FStr(item));
-    inModel.matchAlgs = matchAlgs;
+    inModel.matchAlgs2 = matchAlgs;
     inModel.partAlgs = partAlgs;
 }
 
@@ -365,7 +372,7 @@
         [assIndexes addObjectsFromArray:Ports2Pits([AINetUtils absPorts_All_Normal:lastAlg])];
     }else{
         [assIndexes addObject:inModel.protoAlg.pointer];
-        [assIndexes addObjectsFromArray:Nodes2Pits(inModel.matchAlgs)];
+        [assIndexes addObjectsFromArray:Nodes2Pits(inModel.matchAlgs2)];
         [assIndexes addObjectsFromArray:Nodes2Pits(inModel.partAlgs)];
     }
     AddTCDebug(@"时序识别1");
@@ -622,7 +629,7 @@
     return [self getMatchAndPartAlgPsByModel:inModel];
 }
 +(NSArray*) getMatchAndPartAlgPsByModel:(AIShortMatchModel*)frameModel {
-    NSArray *algs = [SMGUtils collectArrA:frameModel.matchAlgs arrB:frameModel.partAlgs];
+    NSArray *algs = [SMGUtils collectArrA:frameModel.matchAlgs2 arrB:frameModel.partAlgs];
     NSArray *result = Nodes2Pits(algs);
     return result;
 }

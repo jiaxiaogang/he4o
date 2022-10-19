@@ -37,6 +37,7 @@
 #import "HDemandModel.h"
 #import "DemandManager.h"
 #import "AIMatchFoModel.h"
+#import "AIMatchAlgModel.h"
 
 //短时记忆
 #import "TOAlgModel.h"

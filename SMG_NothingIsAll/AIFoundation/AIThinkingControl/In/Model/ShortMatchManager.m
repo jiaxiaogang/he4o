@@ -51,8 +51,8 @@
         //2. 逐个取: isMatch=true时,取优先级为(Match > Part > Proto) / isMatch=false时,直接取proto;
         AIKVPointer *itemAlg_p;
         if (isMatch) {
-            if (mModel.matchAlg) {
-                itemAlg_p = mModel.matchAlg.pointer;
+            if (mModel.matchAlg2) {
+                itemAlg_p = mModel.matchAlg2.pointer;
             }else if(ARRISOK(mModel.partAlgs)){
                 AIAlgNodeBase *firstPartAlg = ARR_INDEX(mModel.partAlgs, 0);
                 itemAlg_p = firstPartAlg.pointer;

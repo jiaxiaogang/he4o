@@ -10,8 +10,8 @@
 
 @implementation AIShortMatchModel
 
--(AIAlgNodeBase *)matchAlg{
-    return ARR_INDEX(self.matchAlgs, 0);
+-(AIAlgNodeBase *)matchAlg2{
+    return ARR_INDEX(self.matchAlgs2, 0);
 }
 
 -(NSMutableArray *)matchPFos{

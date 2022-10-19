@@ -1,20 +1,28 @@
-////
-////  AIMatchAlgModel.h
-////  SMG_NothingIsAll
-////
-////  Created by jia on 2022/1/15.
-////  Copyright © 2022年 XiaoGang. All rights reserved.
-////
 //
-//#import <Foundation/Foundation.h>
+//  AIMatchAlgModel.h
+//  SMG_NothingIsAll
 //
-///**
-// *  MARK:--------------------单条matchAlg模型--------------------
-// */
-//@interface AIMatchAlgModel : NSObject
+//  Created by jia on 2022/1/15.
+//  Copyright © 2022年 XiaoGang. All rights reserved.
 //
-//+(AIMatchAlgModel*) newWithMatchAlg:(AIAlgNodeBase*)matchAlg matchValue:(CGFloat)matchValue;
-//@property (strong, nonatomic) AIAlgNodeBase *matchAlg;  //匹配概念
-//@property (assign, nonatomic) CGFloat matchValue;       //匹配度
-//
-//@end
+
+#import <Foundation/Foundation.h>
+
+/**
+ *  MARK:--------------------单条matchAlg模型--------------------
+ */
+@interface AIMatchAlgModel : NSObject
+
++(AIMatchAlgModel*) newWithMatchAlg:(AIKVPointer*)matchAlg matchCount:(int)matchCount sumNear:(CGFloat)sumNear nearCount:(NSInteger)nearCount sumRefStrong:(int)sumRefStrong;
+@property (strong, nonatomic) AIKVPointer *matchAlg;//匹配概念
+@property (assign, nonatomic) int matchCount;       //匹配数
+@property (assign, nonatomic) CGFloat sumNear;      //总相近度
+@property (assign, nonatomic) int nearCount;        //相近度<1的相近个数
+@property (assign, nonatomic) int sumRefStrong;     //总引用强度 (目前没啥用)
+
+/**
+ *  MARK:--------------------获取相近度--------------------
+ */
+-(CGFloat) matchValue;
+
+@end
