@@ -156,18 +156,13 @@
  *      2022.06.07 - 为了打开抽象结果(确定,轻易别改了),排序公式改为sumNear / matchCount (参考2619j-TODO2);
  *      2022.06.07 - 排序公式改为sumNear / nearCount (参考2619j-TODO5);
  *      2022.06.13 - 修复因matchCount<result.count导致概念识别有错误结果的BUG (参考26236);
+ *      2022.10.20 - 删掉早已废弃的partAlgs代码 & 将返回List<AlgNode>类型改成List<AIMatchAlgModel> (参考27153);
  */
 +(void) partMatching_Alg:(AIAlgNodeBase*)protoAlg except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel{
     //1. 数据准备;
     if (!ISOK(protoAlg, AIAlgNodeBase.class)) return;
-    except_ps = ARRTOOK(except_ps);                                 //不应期
-    NSMutableArray *matchAlgs = [[NSMutableArray alloc] init];      //用来收集全含匹配结果;
-    NSMutableArray *partAlgs = [[NSMutableArray alloc] init];       //用来收集局部匹配结果;
-    NSMutableDictionary *countDic = [NSMutableDictionary new];      //匹配度计数字典 <K:refAlg_p,V:matchCount>;
-    NSMutableDictionary *nearCountDic = [NSMutableDictionary new];  //相近计数字典 <K:pId,V:count>;
-    NSMutableDictionary *recordDic = [NSMutableDictionary new];     //pit不能做key,所以存这字典里 <K:pId,V:pit>
-    NSMutableDictionary *sumNearVDic = [NSMutableDictionary new];   //相近度字典 <K:refAlg_p,V:sum(nearV)> (参考25082-公式2分子部分);
-    NSMutableDictionary *sumStrongDic = [NSMutableDictionary new];  //总强度字典<K:refAPId,V:sum(strong)>;
+    except_ps = ARRTOOK(except_ps);
+    NSMutableArray *protoModels = [[NSMutableArray alloc] init];    //List<AIMatchAlgModel>;
     
     //2. 广入: 对每个元素,分别取索引序列 (参考25083-1);
     for (AIKVPointer *item_p in protoAlg.content_ps) {
@@ -199,77 +194,57 @@
                 
                 
                 //TODOTOMORROW20221019:
-                //1. 此处把各个dic去掉,直接收集AIMatchAlgModel即可;
                 //2. 然后把所有matchAlgs2和matchAlg2的调用处都更新下数据格式为AIMatchAlgModel;
                 //3. 完成后,继续TODOTOMORROW20221017: 把相近度的值存到AIPort中;
                 
                 
+                //9. 找model (无则新建);
+                AIMatchAlgModel *model = [SMGUtils filterSingleFromArr:protoModels checkValid:^BOOL(AIMatchAlgModel *item) {
+                    return [item.matchAlg isEqual:refPort.target_p];
+                }];
+                if (!model) {
+                    model = [[AIMatchAlgModel alloc] init];
+                    [protoModels addObject:model];
+                }
+                model.matchAlg = refPort.target_p;
                 
-                
-                
-                //9. 第1_统计匹配度;
-                //NSData *key = OBJ2DATA(refPort.target_p);
-                NSNumber *key = @(refPort.target_p.pointerId);
-                int oldCount = [NUMTOOK([countDic objectForKey:key]) intValue];
-                [countDic setObject:@(oldCount + 1) forKey:key];
-                
-                //9. 统计相近度<1的个数;
-                int nearCount = [NUMTOOK([nearCountDic objectForKey:key]) intValue];
-                [nearCountDic setObject:@(nearCount + 1) forKey:key];
-                
-                //10. 第2_统计相近度;
-                double oldSumNearV = [NUMTOOK([sumNearVDic objectForKey:key]) doubleValue];
-                [sumNearVDic setObject:@(oldSumNearV + nearV) forKey:key];
-                
-                //10. 记录引用强度;
-                int oldSumStrong = [NUMTOOK([sumStrongDic objectForKey:key]) intValue];
-                [sumStrongDic setObject:@(oldSumStrong + refPort.strong.value) forKey:key];
-                
-                //11. 将指针存记录着后面用;
-                [recordDic setObject:refPort.target_p forKey:key];
+                //10. 统计匹配度matchCount & 相近度<1个数nearCount & 相近度sumNear & 引用强度sumStrong
+                model.matchCount++;
+                model.nearCount++;
+                model.sumNear += nearV;
+                model.sumRefStrong += (int)refPort.strong.value;
             }
         }
-        if (Log4MAlg) if (countDic.count) NSLog(@"计数字典匹配情况: %@ ------",countDic.allValues);
+        if (Log4MAlg) if (protoModels.count) NSLog(@"计数字典匹配情况: %@ ------",[SMGUtils convertArr:protoModels convertBlock:^id(AIMatchAlgModel *obj) {
+            return @(obj.matchCount);
+        }]);
     }
-    
-    //11. 转为AIMatchAlgModel格式: protoModels;
-    NSArray *protoModels = [SMGUtils convertArr:countDic.allKeys convertBlock:^id(NSNumber *key) {
-        return [AIMatchAlgModel newWithMatchAlg:[recordDic objectForKey:key]
-                                     matchCount:[NUMTOOK([countDic objectForKey:key]) intValue]
-                                        sumNear:[NUMTOOK([sumNearVDic objectForKey:key]) doubleValue]
-                                      nearCount:[NUMTOOK([nearCountDic objectForKey:key]) intValue]
-                                   sumRefStrong:[NUMTOOK([sumStrongDic objectForKey:key]) intValue]];
-    }];
     
     //11. 按nearA排序 (参考25083-2&公式2 & 25084-1);
     NSArray *sortModels = [SMGUtils sortBig2Small:protoModels compareBlock:^double(AIMatchAlgModel *obj) {
         return [obj matchValue];
     }];
     
-    //13. 仅保留最相近的20条 (参考25083-3);
-    sortModels = ARR_SUB(sortModels, 0, cAlgNarrowLimit(protoAlg.count));
-    
-    //14. 全含或局部匹配判断: 从大到小,依次取到对应的node和matchingCount (注: 支持相近后,应该全是全含了,参考25084-1);
-    for (AIMatchAlgModel *sortModel in sortModels) {
+    //12. 全含判断: 从大到小,依次取到对应的node和matchingCount (注: 支持相近后,应该全是全含了,参考25084-1);
+    NSArray *validModels = [SMGUtils filterArr:sortModels checkValid:^BOOL(AIMatchAlgModel *item) {
         //14. 过滤掉匹配度<85%的;
-        if (sortModel.matchValue < 0.90f) continue;
+        if (item.matchValue < 0.90f) return false;
         
-        //15. 判断全含 & 收集;
-        //AIKVPointer *key_p = DATA2OBJ(key);
-        AIAlgNodeBase *result = [SMGUtils searchNode:sortModel.matchAlg];
-        if (result.count == sortModel.matchCount) {
-            [matchAlgs addObject:result];
-        }//else{ //[partAlgs addObject:result]; }
-    }
+        //15. 仅保留全含 (当count!=matchCount时为局部匹配: 局部匹配partAlgs已废弃);
+        AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item.matchAlg];
+        if (itemAlg.count == item.matchCount) return true;
+        return false;
+    }];
+    
+    //13. 仅保留最相近的20条 (参考25083-3);
+    NSArray *matchModels = ARR_SUB(validModels, 0, cAlgNarrowLimit(protoAlg.count));
     
     //16. 未将全含返回,则返回最相似 (2020.10.22: 全含返回,也要返回seemAlg) (2022.01.15: 支持相近匹配后,全是全含没局部了);
-    NSLog(@"\n识别结果 >> 总数:%ld = 全含匹配数:%ld + 局部匹配数:%ld",sortModels.count,matchAlgs.count,partAlgs.count);
-    for (AIMatchAlgModel *item in matchAlgs) {
+    NSLog(@"\n识别结果 >> 概念识别结果数:%ld",matchModels.count);
+    for (AIMatchAlgModel *item in matchModels) {
         NSLog(@"-->>>(%d) 全含item: %@   \t相近度 => %.2f (count:%d)",item.sumRefStrong,Pit2FStr(item.matchAlg),item.matchValue,item.matchCount);
     }
-    for (AIAlgNodeBase *item in partAlgs) NSLog(@"-->>> 局部item: %@",Alg2FStr(item));
-    inModel.matchAlgs2 = matchAlgs;
-    inModel.partAlgs = partAlgs;
+    inModel.matchAlgs2 = matchModels;
 }
 
 //MARK:===============================================================

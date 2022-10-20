@@ -16,7 +16,7 @@
 +(AIMatchAlgModel*) newWithMatchAlg:(AIKVPointer*)matchAlg matchCount:(int)matchCount sumNear:(CGFloat)sumNear nearCount:(NSInteger)nearCount sumRefStrong:(int)sumRefStrong;
 @property (strong, nonatomic) AIKVPointer *matchAlg;//匹配概念
 @property (assign, nonatomic) int matchCount;       //匹配数
-@property (assign, nonatomic) CGFloat sumNear;      //总相近度
+@property (assign, nonatomic) CGFloat sumNear;      //总相近度 (参考25082-公式2分子部分);
 @property (assign, nonatomic) int nearCount;        //相近度<1的相近个数
 @property (assign, nonatomic) int sumRefStrong;     //总引用强度 (目前没啥用)
 
