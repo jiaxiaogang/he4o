@@ -31,7 +31,7 @@
     //1. 取所有lastWait模型,并与新输入的概念做mIsC判断;
     [theTC updateOperCount:kFILENAME];
     Debug();
-    IFTitleLog(@"feedbackTIR", @"\n输入M:%@\n输入P:%@",Alg2FStr(model.matchAlg2),Alg2FStr(model.protoAlg));
+    IFTitleLog(@"feedbackTIR", @"\n输入M:%@\n输入P:%@",Pit2FStr(model.firstMatchAlg.matchAlg),Alg2FStr(model.protoAlg));
     NSArray *recognitionAlgs = [TIUtils getMatchAndPartAlgPsByModel:model];
     
     //1. fbTIR对roots进行反馈判断 (参考27096-方案2);

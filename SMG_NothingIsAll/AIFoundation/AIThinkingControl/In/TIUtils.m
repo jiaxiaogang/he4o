@@ -89,9 +89,10 @@
     [self partMatching_Alg:protoAlg except_ps:except_ps inModel:inModel];
     
     //5. 关联处理 & 外类比 (这样后面TOR理性决策时,才可以直接对当前瞬时实物进行很好的理性评价) (参考21091-蓝线);
-    for (AIAbsAlgNode *matchAlg in inModel.matchAlgs2) {
+    for (AIMatchAlgModel *matchModel in inModel.matchAlgs) {
         //4. 识别到时,value.refPorts -> 更新/加强微信息的引用序列
-        [AINetUtils insertRefPorts_AllAlgNode:matchAlg.pointer content_ps:matchAlg.content_ps difStrong:1];
+        AIAbsAlgNode *matchAlg = [SMGUtils searchNode:matchModel.matchAlg];
+        [AINetUtils insertRefPorts_AllAlgNode:matchModel.matchAlg content_ps:matchAlg.content_ps difStrong:1];
         
         //5. 识别且全含时,进行外类比 (参考25105);
         //[AIAnalogy analogyAlg:protoAlg algB:matchAlg];
@@ -105,22 +106,11 @@
         //2. 别存在conPorts里,没必要两个数组掺和,单存开更方便维护;
         
         
+        //3. 完成后,继续TODOTOMORROW20221017: 把相近度的值存到AIPort中;
         
         
         
-    }
-    
-    //6. 关联处理_对seem和proto进行类比抽象 (参考21091-绿线);
-    if (ARRISOK(inModel.partAlgs)) {
-        NSLog(@"对局部匹配首条构建TopAbs抽象");
-        AIAlgNodeBase *firstPartAlg = ARR_INDEX(inModel.partAlgs, 0);
-        AIAlgNodeBase *firstMatchAlg = ARR_INDEX(inModel.matchAlgs2, 0);
-        AIAlgNodeBase *seemProtoAbs = [AIAnalogy analogyAlg:protoAlg algB:firstPartAlg];
         
-        //7. 关联处理_对seemProtoAbs与matchAlg建立抽具象关联 (参考21091-黄线);
-        if (seemProtoAbs && firstMatchAlg) {
-            [AIAnalogy analogyAlg:seemProtoAbs algB:firstMatchAlg];
-        }
     }
 }
 
@@ -192,12 +182,6 @@
                 //8. 不应期 -> 不可激活;
                 if ([SMGUtils containsSub_p:refPort.target_p parent_ps:except_ps]) continue;
                 
-                
-                //TODOTOMORROW20221019:
-                //2. 然后把所有matchAlgs2和matchAlg2的调用处都更新下数据格式为AIMatchAlgModel;
-                //3. 完成后,继续TODOTOMORROW20221017: 把相近度的值存到AIPort中;
-                
-                
                 //9. 找model (无则新建);
                 AIMatchAlgModel *model = [SMGUtils filterSingleFromArr:protoModels checkValid:^BOOL(AIMatchAlgModel *item) {
                     return [item.matchAlg isEqual:refPort.target_p];
@@ -244,7 +228,7 @@
     for (AIMatchAlgModel *item in matchModels) {
         NSLog(@"-->>>(%d) 全含item: %@   \t相近度 => %.2f (count:%d)",item.sumRefStrong,Pit2FStr(item.matchAlg),item.matchValue,item.matchCount);
     }
-    inModel.matchAlgs2 = matchModels;
+    inModel.matchAlgs = matchModels;
 }
 
 //MARK:===============================================================
@@ -347,8 +331,7 @@
         [assIndexes addObjectsFromArray:Ports2Pits([AINetUtils absPorts_All_Normal:lastAlg])];
     }else{
         [assIndexes addObject:inModel.protoAlg.pointer];
-        [assIndexes addObjectsFromArray:Nodes2Pits(inModel.matchAlgs2)];
-        [assIndexes addObjectsFromArray:Nodes2Pits(inModel.partAlgs)];
+        [assIndexes addObjectsFromArray:[TIUtils getMatchAndPartAlgPsByModel:inModel]];
     }
     AddTCDebug(@"时序识别1");
     
@@ -604,9 +587,10 @@
     return [self getMatchAndPartAlgPsByModel:inModel];
 }
 +(NSArray*) getMatchAndPartAlgPsByModel:(AIShortMatchModel*)frameModel {
-    NSArray *algs = [SMGUtils collectArrA:frameModel.matchAlgs2 arrB:frameModel.partAlgs];
-    NSArray *result = Nodes2Pits(algs);
-    return result;
+    NSArray *matchAlg_ps = [SMGUtils convertArr:frameModel.matchAlgs convertBlock:^id(AIMatchAlgModel *o) {
+        return o.matchAlg;
+    }];
+    return [SMGUtils collectArrA:matchAlg_ps arrB:Nodes2Pits(frameModel.partAlgs)];
 }
 +(AIKVPointer*) getProtoAlg:(NSInteger)frameIndex {
     AIShortMatchModel *inModel = [theTC.inModelManager getFrameModel:frameIndex];

@@ -41,8 +41,8 @@
  *  @desc
  *      排序方式: 按照matchCount特征匹配数从大到小排序 (匹配数最多的,一般也最具象);
  */
-@property (strong, nonatomic) NSArray *matchAlgs2; //概念识别结果 (元素为AIMatchAlgModel)
-@property (strong, nonatomic) AIAlgNodeBase *matchAlg2;//默认为matchAlgs首条;
+@property (strong, nonatomic) NSArray *matchAlgs; //概念识别结果 (元素为AIMatchAlgModel)
+@property (strong, nonatomic) AIMatchAlgModel *firstMatchAlg;//默认为matchAlgs首条;
 
 /**
  *  MARK:--------------------局部匹配概念--------------------
