@@ -94,23 +94,17 @@
         AIAbsAlgNode *matchAlg = [SMGUtils searchNode:matchModel.matchAlg];
         [AINetUtils insertRefPorts_AllAlgNode:matchModel.matchAlg content_ps:matchAlg.content_ps difStrong:1];
         
-        //5. 识别且全含时,进行外类比 (参考25105);
-        //[AIAnalogy analogyAlg:protoAlg algB:matchAlg];
-        
-        //5. 对proto直接抽象指向matchAlg (参考27153-1);
-        [AINetUtils relateAlgAbs:matchAlg conNodes:@[protoAlg] isNew:false];
-        
+        //5. 存储protoAlg与matchAlg之间的相近度记录 (为保证抽象多样性,所以相近的也抽具象关联);
         
         //TODOTOMORROW20221017: 看下把相近度,也存到二者的关系里
-        //1. 可以存在absNode里,这样到时候只读一个节点即可;
-        //2. 别存在conPorts里,没必要两个数组掺和,单存开更方便维护;
-        
-        
-        //3. 完成后,继续TODOTOMORROW20221017: 把相近度的值存到AIPort中;
-        
+        //1. 将相近度存至node中 (absMatchCountDic和conMatchCountDic);
+        //2. 直接像spDic & effectDic一样,将方法封装到node下;
+        //3. 或者模仿relateAlgAbs方法,写个类似的方法;
         
         
         
+        //6. 对proto直接抽象指向matchAlg,并增强强度值 (参考27153-1);
+        [AINetUtils relateAlgAbs:matchAlg conNodes:@[protoAlg] isNew:false];
     }
 }
 
