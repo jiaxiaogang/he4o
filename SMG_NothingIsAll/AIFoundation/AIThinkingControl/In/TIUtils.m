@@ -69,7 +69,8 @@
  *      20220115: 识别结果可为自身,参考partMatching_Alg(),所以不需要此处再add(self)了;
  *      20220116: 全含可能也只是相似,由直接构建抽具象关联,改成概念外类比 (参考25105);
  *      20220528: 把概念外类比关掉 (参考26129-方案2-1);
- *      20221018: 对proto直接抽象指向matchAlg (参考27153-1);
+ *      20221018: 对proto直接抽象指向matchAlg (参考27153-todo3);
+ *      20221024: 将抽具象相似度存至algNode中 (参考27153-todo2);
  *
  *  _result
  *      xxxx.xx.xx: completeBlock : 共支持三种返回: 匹配效果从高到低分别为:fuzzyAlg废弃,matchAlg全含,seemAlg局部;
@@ -94,16 +95,10 @@
         AIAbsAlgNode *matchAlg = [SMGUtils searchNode:matchModel.matchAlg];
         [AINetUtils insertRefPorts_AllAlgNode:matchModel.matchAlg content_ps:matchAlg.content_ps difStrong:1];
         
-        //5. 存储protoAlg与matchAlg之间的相近度记录 (为保证抽象多样性,所以相近的也抽具象关联);
+        //5. 存储protoAlg与matchAlg之间的相近度记录 (参考27153-todo2);
+        [protoAlg updateMatchValue:matchAlg matchValue:matchModel.matchValue];
         
-        //TODOTOMORROW20221017: 看下把相近度,也存到二者的关系里
-        //1. 将相近度存至node中 (absMatchCountDic和conMatchCountDic);
-        //2. 直接像spDic & effectDic一样,将方法封装到node下;
-        //3. 或者模仿relateAlgAbs方法,写个类似的方法;
-        
-        
-        
-        //6. 对proto直接抽象指向matchAlg,并增强强度值 (参考27153-1);
+        //6. 对proto直接抽象指向matchAlg,并增强强度值 (为保证抽象多样性,所以相近的也抽具象关联) (参考27153-3);
         [AINetUtils relateAlgAbs:matchAlg conNodes:@[protoAlg] isNew:false];
     }
 }

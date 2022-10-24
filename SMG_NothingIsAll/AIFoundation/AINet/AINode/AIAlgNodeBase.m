@@ -17,6 +17,38 @@
     return _refPorts;
 }
 
+-(NSMutableDictionary *)absMatchDic{
+    if (!ISOK(_absMatchDic, NSMutableDictionary.class)) _absMatchDic = [[NSMutableDictionary alloc] initWithDictionary:_absMatchDic];
+    return _absMatchDic;
+}
+
+-(NSMutableDictionary *)conMatchDic{
+    if (!ISOK(_conMatchDic, NSMutableDictionary.class)) _conMatchDic = [[NSMutableDictionary alloc] initWithDictionary:_conMatchDic];
+    return _conMatchDic;
+}
+
+//MARK:===============================================================
+//MARK:                     < publicMethod >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------更新抽具象相似度--------------------
+ *  @param absAlg : 传抽象节点进来,而self为具象节点;
+ *  @version
+ *      2022.10.24: 将algNode的抽具象关系也存上相似度 (参考27153-todo2);
+ */
+-(void) updateMatchValue:(AIAlgNodeBase*)absAlg matchValue:(CGFloat)matchValue{
+    //1. 更新抽象相似度;
+    [self.absMatchDic setObject:@(matchValue) forKey:@(absAlg.pointer.pointerId)];
+    
+    //2. 更新具象相似度;
+    [absAlg.conMatchDic setObject:@(matchValue) forKey:@(self.pointer.pointerId)];
+    
+    //3. 保存节点;
+    [SMGUtils insertNode:self];
+    [SMGUtils insertNode:absAlg];
+}
+
 /**
  *  MARK:--------------------NSCoding--------------------
  */
