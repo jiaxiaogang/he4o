@@ -76,7 +76,12 @@
                         
                         
                         
-                        
+                        BOOL aIsB = [TOUtils mIsC_2:algNodeA_p c:algNodeB_p];
+                        BOOL bIsA = [TOUtils mIsC_2:algNodeB_p c:algNodeA_p];
+                        NSLog(@"%@是抽象", aIsB ? @"B" : bIsA ? @"A" : @"都不");
+                        if (!aIsB) {
+                            NSLog(@"B不是抽象时,停下断点看看");
+                        }
                         
                         
                         
