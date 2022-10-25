@@ -65,6 +65,16 @@
 
                     ///3. values->absPorts的认知过程
                     if (algNodeA && algNodeB) {
+                        
+                        
+                        //TODOTOMORROW20221025:
+                        //1. 用mIsC判断替代sameValue_ps (参考27153-todo3);
+                        //2. 当algA和algB有抽具象关系时,将抽象的一方收入规律中,并用于构建最终的抽象时序;
+                        
+                        
+                        
+                        
+                        
                         NSMutableArray *sameValue_ps = [[NSMutableArray alloc] init];
                         for (AIKVPointer *valueA_p in algNodeA.content_ps) {
                             for (AIKVPointer *valueB_p in algNodeB.content_ps) {
