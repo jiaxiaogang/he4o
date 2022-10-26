@@ -78,10 +78,25 @@
                         
                         BOOL aIsB = [TOUtils mIsC_2:algNodeA_p c:algNodeB_p];
                         BOOL bIsA = [TOUtils mIsC_2:algNodeB_p c:algNodeA_p];
-                        NSLog(@"%@是抽象", aIsB ? @"B" : bIsA ? @"A" : @"都不");
-                        if (!aIsB) {
+                        NSLog(@"%@是抽象 %@ : %@", aIsB ? @"B" : bIsA ? @"A" : @"都不",Alg2FStr(algNodeA),Alg2FStr(algNodeB));
+                        if (!aIsB && algNodeA.count != 1 && algNodeB.count != 1) {
                             NSLog(@"B不是抽象时,停下断点看看");
                         }
+                        //经调试: 一般情况下,B都是抽象,但如果B不是抽象,有两种情况:
+                        //1. A是飞,而B是木棒,二者肯定不是抽象;
+                        //2. AB都是木棒,但二者就是没有抽具象关系;
+                        //      其实不是就不是,说明在认知期就没认为二者有抽具象关系;
+                        //所以: 此处只需要判断B是否为A的抽象即可;
+                        
+                        //下面再调试一下,aIsB时,2层判断和1层判断,是否得到的结果一致? (即全是1层);
+                        BOOL aIsB1 = [TOUtils mIsC_1:algNodeA_p c:algNodeB_p];
+                        if (aIsB != aIsB1) {
+                            NSLog(@"1层和2级判断不一致,断点看看");
+                        }
+                        
+                        
+                        
+                        
                         
                         
                         

@@ -330,7 +330,7 @@
 #define Log4InAnaHN(type) ((type == ATHav || type == ATNone) && false)
 
 //外类比
-#define Log4OutAna false
+#define Log4OutAna true
 #define Log4OutAnaDefault(type) (!Log4OutAna && (type == ATDefault && false))
 #define Log4OutAnaType(type) Log4OutAna || Log4OutAnaDefault(type)
 
