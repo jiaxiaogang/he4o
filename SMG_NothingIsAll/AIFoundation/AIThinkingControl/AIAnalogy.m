@@ -36,8 +36,9 @@
  *      20201203: 修复21175BUG (因createAbsAlgBlock忘记调用,导致absAlg和glAlg间未关联) (参考21115);
  *      20210819: 修复长1和长2类比时,类比出长2的BUG (参考23221-BUG2);
  *      20210926: 修复glFo外类比时非末位alg类比构建absAlg时,也使用了GLType的问题 (参考24022-BUG1);
+ *      20221028: 用mIsC判断替代sameValue_ps (参考27153-todo4);
  */
-+(AINetAbsFoNode*) analogyOutside:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type createAbsAlgBlock:(void(^)(AIAlgNodeBase *createAlg,NSInteger foIndex,NSInteger assFoIndex))createAbsAlgBlock{
++(AINetAbsFoNode*) analogyOutside:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type {
     //1. 类比orders的规律
     if (Log4OutAnaType(type)) NSLog(@"\n----------- 外类比(%@) -----------\nfo:%@ \nassFo:%@",ATType2Str(type),Fo2FStr(fo),Fo2FStr(assFo));
     NSMutableArray *orderSames = [[NSMutableArray alloc] init];
@@ -52,58 +53,14 @@
                 if (Log4OutAna) NSLog(@"Fo    I: %ld -> %@",i,Pit2FStr(algNodeA_p));
                 if (Log4OutAna) NSLog(@"AssFo J: %ld -> %@",j,Pit2FStr(algNodeB_p));
                 
-                //2. A与B直接一致则直接添加 & 不一致则如下代码;
-                if ([algNodeA_p isEqual:algNodeB_p]) {
-                    [orderSames insertObject:algNodeA_p atIndex:0];
+                //3. B源于matchFo,此处只判断B是1层抽象 (参考27161-调试1&调试2);
+                BOOL mIsC = [TOUtils mIsC_1:algNodeA_p c:algNodeB_p];
+                if (mIsC) {
+                    //3. 收集并更新jMax;
+                    [orderSames insertObject:algNodeB_p atIndex:0];
                     jMax = j - 1;
+                    if (Log4OutAna) NSLog(@"-> 外类比构建概念 Finish: %@ from: ↑↑↑(A%ld:A%ld)",Pit2FStr(algNodeB_p),(long)algNodeA_p.pointerId,(long)algNodeB_p.pointerId);
                     break;
-                }else{
-                    ///1. 构建时,消耗能量值; if (!canAssBlock()) 
-                    ///2. 取出algNodeA & algNodeB
-                    AIAlgNodeBase *algNodeA = [SMGUtils searchNode:algNodeA_p];
-                    AIAlgNodeBase *algNodeB = [SMGUtils searchNode:algNodeB_p];
-
-                    ///3. values->absPorts的认知过程
-                    if (algNodeA && algNodeB) {
-                        
-                        
-                        //TODOTOMORROW20221025:
-                        //1. 用mIsC判断替代sameValue_ps (参考27153-todo3);
-                        //2. 当algA和algB有抽具象关系时,将抽象的一方收入规律中,并用于构建最终的抽象时序;
-                        
-                        
-                        //3. B源于matchFo,此处只判断B是1层抽象 (参考27161-调试1&调试2);
-                        
-                        
-                        
-                        
-                        NSMutableArray *sameValue_ps = [[NSMutableArray alloc] init];
-                        for (AIKVPointer *valueA_p in algNodeA.content_ps) {
-                            for (AIKVPointer *valueB_p in algNodeB.content_ps) {
-                                if ([valueA_p isEqual:valueB_p] && ![sameValue_ps containsObject:valueB_p]) {
-                                    [sameValue_ps addObject:valueB_p];
-                                    break;
-                                }
-                            }
-                        }
-                        if (ARRISOK(sameValue_ps)) {
-                            //3. 当为same类型时,节点设为default类型即可 (参考24019);
-                            NSArray *conAlgs = @[algNodeA,algNodeB];
-                            AnalogyType nodeType = [AINetUtils getTypeFromConNodes:conAlgs];
-                            AIAbsAlgNode *createAbsNode = [theNet createAbsAlg_NoRepeat:sameValue_ps conAlgs:conAlgs at:nil type:nodeType];
-                            if (createAbsNode) {
-                                //3. 收集并更新jMax;
-                                [orderSames insertObject:createAbsNode.pointer atIndex:0];
-                                jMax = j - 1;
-                                if (Log4OutAna) NSLog(@"-> 外类比构建概念 Finish: %@(%@) from: ↑↑↑(A%ld:A%ld)",Alg2FStr(createAbsNode),ATType2Str(nodeType),(long)algNodeA.pointer.pointerId,(long)algNodeB.pointer.pointerId);
-                                
-                                //3. 构建absAlg时,回调构建和glhnAlg的关联 (参考21115);
-                                if (createAbsAlgBlock) createAbsAlgBlock(createAbsNode,i,j);
-                                break;
-                            }
-                            ///4. 构建时,消耗能量值; updateEnergy(-0.1f);
-                        }
-                    }
                 }
             }
         }
@@ -174,16 +131,6 @@
     NSInteger assFoStrong = [AINetUtils getStrong:result atConNode:assFo type:type];
     NSString *log = STRFORMAT(@"-> 与ass%@外类比\n\t构建时序 (%@): %@->{%@} from: (protoFo(%ld):assFo(%ld))",Fo2FStr(assFo),ATType2Str(type),Fo2FStr(result),Mvp2Str(result.cmvNode_p),foStrong,assFoStrong);
     NSLog(@"%@",log);
-    return result;
-}
-
-//MARK:===============================================================
-//MARK:                     < 概念外类比 >
-//MARK:===============================================================
-+(AIAlgNodeBase*) analogyAlg:(AIAlgNodeBase*)algA algB:(AIAlgNodeBase*)algB{
-    NSArray *same_ps = [SMGUtils filterSame_ps:algA.content_ps parent_ps:algB.content_ps];
-    AIAlgNodeBase *result = [theNet createAbsAlg_NoRepeat:same_ps conAlgs:@[algA,algB] at:nil type:ATDefault];
-    NSLog(@"外类比=> A%ld : A%ld = %@",algA.pointer.pointerId,algB.pointer.pointerId,Alg2FStr(result));
     return result;
 }
 

@@ -29,11 +29,6 @@
 //MARK:===============================================================
 //MARK:                     < 外类比时序 >
 //MARK:===============================================================
-+(AINetAbsFoNode*) analogyOutside:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type createAbsAlgBlock:(void(^)(AIAlgNodeBase *createAlg,NSInteger foIndex,NSInteger assFoIndex))createAbsAlgBlock;
-
-//MARK:===============================================================
-//MARK:                     < 概念外类比 >
-//MARK:===============================================================
-+(AIAlgNodeBase*) analogyAlg:(AIAlgNodeBase*)algA algB:(AIAlgNodeBase*)algB;
++(AINetAbsFoNode*) analogyOutside:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type;
 
 @end

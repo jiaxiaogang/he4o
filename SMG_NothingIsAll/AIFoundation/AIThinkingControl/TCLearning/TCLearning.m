@@ -42,7 +42,7 @@
             if (!isSame) continue;
             
             //3. 正向反馈类比 (外类比);
-            [AIAnalogy analogyOutside:protoFo assFo:matchFo type:ATDefault createAbsAlgBlock:nil];
+            [AIAnalogy analogyOutside:protoFo assFo:matchFo type:ATDefault];
         }
     }
     
@@ -79,7 +79,7 @@
     NSLog(@"\npFo外类比 =>");
     for (AIMatchFoModel *item in model.fos4RLearning) {
         AIFoNodeBase *itemMFo = [SMGUtils searchNode:item.matchFo];
-        [AIAnalogy analogyOutside:protoFo assFo:itemMFo type:ATDefault createAbsAlgBlock:nil];
+        [AIAnalogy analogyOutside:protoFo assFo:itemMFo type:ATDefault];
     }
     
     //2. TIR反馈;

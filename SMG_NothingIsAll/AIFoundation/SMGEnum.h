@@ -62,17 +62,18 @@ typedef NS_ENUM(NSInteger, MVDirection) {
  *  MARK:--------------------类比类型(大小有无同异)--------------------
  *  @version
  *      2021.10.12: SP的定义由顺逆改为好坏 (参考24054-方案2);
+ *      2022.10.28: 除了ATPlus和ATSub用来标记好坏外,此枚举早已弃用;
  */
 typedef NS_ENUM(NSInteger,  AnalogyType) {
     ATDefault   = 0,            //默认
-    ATGreater   = INT_MAX - 47, //2147483600    内类比_变大
-    ATLess      = INT_MIN + 48, //-2147483600   内类比_变小
-    ATHav       = INT_MAX,      //2147483647    内类比_变有
-    ATNone      = INT_MIN,      //-2147483648   内类比_变无
+    ATGreater   = INT_MAX - 47, //2147483600    内类比_变大 (已弃用);
+    ATLess      = INT_MIN + 48, //-2147483600   内类比_变小 (已弃用)
+    ATHav       = INT_MAX,      //2147483647    内类比_变有 (已弃用)
+    ATNone      = INT_MIN,      //-2147483648   内类比_变无 (已弃用)
     ATPlus      = INT_MAX - 147,//2147483500    反省_好
     ATSub       = INT_MIN + 148,//-2147483500   反省_坏
-    ATSame      = INT_MAX - 247,//2147483400    正向外类比 (仅用于表示是否指向实mv,不做为节点类型使用)
-    ATDiff      = INT_MIN + 247,//-2147483400   反向外类比 (即用于表示是否指向虚mv,也做为节点类型使用)
+    ATSame      = INT_MAX - 247,//2147483400    正向外类比 (仅用于表示是否指向实mv,不做为节点类型使用) (已弃用)
+    ATDiff      = INT_MIN + 247,//-2147483400   反向外类比 (即用于表示是否指向虚mv,也做为节点类型使用) (已弃用)
 };
 
 /**
