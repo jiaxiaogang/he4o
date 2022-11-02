@@ -89,6 +89,12 @@
         for (NSInteger j = lastMatchAtProtoIndex + 1; j < ptAleardayCount; j++) {
             AIKVPointer *maskA_p = getMaskAlgFromPtIndexBlock(j);
             
+            //TODOTOMORROW20221102:
+            //1. 此处把pFo传进来,然后用于复用alg相似度;
+            //2. 回顾下代码,看H反思时,没pFo可传吧?传什么进来?
+            
+            
+            
             //4. 比对两个概念匹配度;
             itemMatchValue = [self compareCansetAlg:cansetA_p protoAlg:maskA_p];
             
