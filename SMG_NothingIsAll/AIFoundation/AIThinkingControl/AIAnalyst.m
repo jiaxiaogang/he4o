@@ -20,6 +20,7 @@
  *      2022.06.11: 修复反思子任务没有protoFo用于analyst的BUG (参考26224-方案图);
  *      2022.06.11: 改用pFo参与analyst算法比对 & 并改取pFo已发生个数计算方式 (参考26232-TODO3&5&6);
  *      2022.09.15: 导致任务的maskFo不从demand取,而是从pFo取 (因为它在推进时会变化) (参考27097-todo3);
+ *      2022.11.03: compareHCansetFo比对中复用alg相似度 (参考27175-3);
  */
 +(AISolutionModel*) compareRCansetFo:(AIKVPointer*)cansetFo_p pFo:(AIMatchFoModel*)pFo demand:(ReasonDemandModel*)demand {
     //1. 数据准备;
@@ -40,11 +41,26 @@
     }
     
     //4. 匹配判断;
-    return [self compareCansetFo:cansetFo_p ptAleardayCount:pAleardayCount needBackMatch:false getMaskAlgFromPtIndexBlock:^AIKVPointer *(NSInteger ptIndex) {
+    return [self compareCansetFo:cansetFo_p ptAleardayCount:pAleardayCount needBackMatch:false getAlgMatchValueBlock:^CGFloat(NSInteger ptIndex, AIKVPointer *cansetAlg_p) {
+        
+        //TODOTOMORROW20221102 复用相似度: R时返回的mask源于realMaskFo (参考27175-2):
+        //1. 前段是pFo.matchFo部分,是cansetA的抽象;
+        //2. 后段是事实发生的protoA;
+        //      2.1 cansetA做为wait_p接受反馈,所以canset应该是proto的抽象;
+        //      2.2 还有一种可能是pFo.matchFo做为wait,所以canset和proto有共同抽象 (可是realMaskFo明明前段是所有的matchFo);
+        //              > 这个需要明天待查代码,看下过去的代码是怎样的情况,哪个是wait,啥的...
+        
+        
+        
+        
+        
         
         //5. 根据indexDic将ptIndex转成maskIndex,然后返回mask元素;
         int maskIndex = [NUMTOOK([pFo.indexDic2 objectForKey:@(ptIndex)]) intValue];
-        return ARR_INDEX(pFo.realMaskFo, maskIndex);
+        AIKVPointer *maskAlg_p = ARR_INDEX(pFo.realMaskFo, maskIndex);
+        
+        //5. 比对两个概念匹配度;
+        return [self compareCansetAlg:cansetAlg_p protoAlg:maskAlg_p];
     }];
 }
 
@@ -53,12 +69,12 @@
     NSInteger tAleardayCount = targetFoM.actionIndex;
     
     //2. 匹配判断;
-    AIFoNodeBase *maskFo = [SMGUtils searchNode:targetFoM.content_p];
-    return [self compareCansetFo:cansetFo_p ptAleardayCount:tAleardayCount needBackMatch:true getMaskAlgFromPtIndexBlock:^AIKVPointer *(NSInteger ptIndex) {
-        
-        //3. H时: ptFo=maskFo,所以直接传回maskFo的元素;
-        NSInteger maskIndex = ptIndex;
-        return ARR_INDEX(maskFo.content_ps, maskIndex);
+    AIFoNodeBase *targetFo = [SMGUtils searchNode:targetFoM.content_p];
+    return [self compareCansetFo:cansetFo_p ptAleardayCount:tAleardayCount needBackMatch:true getAlgMatchValueBlock:^CGFloat(NSInteger ptIndex, AIKVPointer *cansetAlg_p) {
+        //3. H时: ptFo=targetFo,所以直接复用canset抽象指向target的相似度 (参考27175-3);
+        AIKVPointer *targetAlg_p = ARR_INDEX(targetFo.content_ps, ptIndex);
+        AIAlgNodeBase *cansetAlg = [SMGUtils searchNode:cansetAlg_p];
+        return [cansetAlg getAbsMatchValue:targetAlg_p];
     }];
 }
 
@@ -71,8 +87,9 @@
  *  @param needBackMatch        : 是否需要后段匹配 (R不需要,H需要);
  *  @version
  *      2022.06.12: 每帧analyst都映射转换成maskFo的帧元素比对 (参考26232-TODO4);
+ *      2022.11.03: 复用alg相似度 (参考27175-2&3);
  */
-+(AISolutionModel*) compareCansetFo:(AIKVPointer*)cansetFo_p ptAleardayCount:(NSInteger)ptAleardayCount needBackMatch:(BOOL)needBackMatch getMaskAlgFromPtIndexBlock:(AIKVPointer*(^)(NSInteger ptIndex))getMaskAlgFromPtIndexBlock{
++(AISolutionModel*) compareCansetFo:(AIKVPointer*)cansetFo_p ptAleardayCount:(NSInteger)ptAleardayCount needBackMatch:(BOOL)needBackMatch getAlgMatchValueBlock:(CGFloat(^)(NSInteger ptIndex,AIKVPointer *cansetAlg_p))getAlgMatchValueBlock{
     //1. 数据准备;
     AISolutionModel *result = nil;
     AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
@@ -87,20 +104,7 @@
         
         //3. 继续从proto后面未找过的部分里,找匹配;
         for (NSInteger j = lastMatchAtProtoIndex + 1; j < ptAleardayCount; j++) {
-            AIKVPointer *maskA_p = getMaskAlgFromPtIndexBlock(j);
-            
-            //TODOTOMORROW20221102 复用相似度 (参考27175-2&3):
-            
-            //1. 取cansetA直接抽象指向targetA,用来复用相似度;
-            //H时返回的mask源于targetFo就是抽象本身 (cansetA抽象指向targetA);
-            
-            //2. 取protoA.absPorts和canset.absPorts判断交集,然后用交集复用相似度;
-            //R时返回的mask源于realMaskFo (前段是pFo.matchFo部分,是cansetA的抽象) (后段是事实发生的protoA,cansetA与protoA有共同的抽象)
-            
-            
-            
-            //4. 比对两个概念匹配度;
-            itemMatchValue = [self compareCansetAlg:cansetA_p protoAlg:maskA_p];
+            itemMatchValue = getAlgMatchValueBlock(j, cansetA_p);
             
             //5. 匹配成功,则更新匹配进度,并break报喜;
             if (itemMatchValue > 0) {
