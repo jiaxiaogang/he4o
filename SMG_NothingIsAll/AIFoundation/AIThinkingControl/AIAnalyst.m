@@ -134,7 +134,7 @@
             //a. 数据准备mask目标帧
             CGFloat backMatchValue = 0;//后段匹配度
             NSInteger cansetTargetIndex = -1;//canset目标下标
-            AIKVPointer *actionIndexA_p = getMaskAlgFromPtIndexBlock(ptAleardayCount);
+            AIKVPointer *actionIndexA_p = getAlgMatchValueBlock(ptAleardayCount);
             
             //b. 分别对canset后段,比对两个概念匹配度;
             for (NSInteger i = cansetCutIndex + 1; i < cansetFo.count; i++) {
@@ -215,6 +215,8 @@
                 otherStart = otherIndex + 1;
                 
                 //TODOTOMORROW20221103: 把用来获取cansets的pFo传进来,复用相似度 (参考27173-todo1);
+                //这里也有同样的问题,即pFo中,有content部分,
+                //也有后面,protoAlgs新发生的反馈的那些,那么此处传入pFo也不能完全复用成功;
                 
                 
                 

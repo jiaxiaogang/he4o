@@ -27,10 +27,6 @@
  */
 +(AISolutionModel*) compareHCansetFo:(AIKVPointer*)cansetFo_p targetFo:(TOFoModel*)targetFoM;
 
-/**
- *  MARK:--------------------比对时序--------------------
- */
-+(AISolutionModel*) compareCansetFo:(AIKVPointer*)cansetFo_p ptAleardayCount:(NSInteger)ptAleardayCount needBackMatch:(BOOL)needBackMatch getMaskAlgFromPtIndexBlock:(AIKVPointer*(^)(NSInteger ptIndex))getMaskAlgFromPtIndexBlock;
 
 //MARK:===============================================================
 //MARK:                 < 比对分析两条Solution候选方案 >
