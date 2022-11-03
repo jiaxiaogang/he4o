@@ -26,7 +26,7 @@
  *  @desc 状态: 启用,初始化时为maskFo,但后续可随着反省触发器和cutIndex的推进更新;
  *  @desc 元素初始化时为protoFo/regroupFo的content_ps,后续随着更新附加到尾部;
  */
-@property (strong, nonatomic) NSMutableArray *realMaskFo;
+@property (strong, nonatomic) NSMutableArray *realMaskFo; //List<protoAlg_p>
 
 @property (assign, nonatomic) CGFloat sumNear;          //时序元素相近度总和
 @property (assign, nonatomic) NSInteger nearCount;      //时序元素相近数

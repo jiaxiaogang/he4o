@@ -89,15 +89,13 @@
         for (NSInteger j = lastMatchAtProtoIndex + 1; j < ptAleardayCount; j++) {
             AIKVPointer *maskA_p = getMaskAlgFromPtIndexBlock(j);
             
-            //TODOTOMORROW20221102:
-            //1. 此处把pFo传进来,然后用于复用alg相似度;
-            //2. H反思时,可以传targetFo;
+            //TODOTOMORROW20221102 复用相似度 (参考27175-2&3):
             
+            //1. 取cansetA直接抽象指向targetA,用来复用相似度;
+            //H时返回的mask源于targetFo就是抽象本身 (cansetA抽象指向targetA);
             
-            //////////回顾下代码,看以下想法是否ok;
-            //3. 问题在于,pFo不会及时更新,导致pFo的前段可能不全,因为早已发生了新的帧...
-            //4. 但只要新发生的,与pFo匹配 (只要pFo还没失败,就肯定还是匹配的);
-            //5. 如果如此话,倒可以依然以pFo的absAlg来复用相似度用;
+            //2. 取protoA.absPorts和canset.absPorts判断交集,然后用交集复用相似度;
+            //R时返回的mask源于realMaskFo (前段是pFo.matchFo部分,是cansetA的抽象) (后段是事实发生的protoA,cansetA与protoA有共同的抽象)
             
             
             
@@ -211,6 +209,11 @@
                 
                 //9. 则记录other的进度;
                 otherStart = otherIndex + 1;
+                
+                //TODOTOMORROW20221103: 把用来获取cansets的pFo传进来,复用相似度 (参考27173-todo1);
+                
+                
+                
                 
                 //10. 后根据匹配上的alg,算出的匹配值;
                 CGFloat near = [AIAnalyst compareCansetAlg:checkAlg_p protoAlg:otherAlg_p];

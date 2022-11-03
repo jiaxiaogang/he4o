@@ -50,6 +50,16 @@
 }
 
 /**
+ *  MARK:--------------------取抽或具象的相近度--------------------
+ */
+-(CGFloat) getConMatchValue:(AIKVPointer*)con_p {
+    return NUMTOOK([self.conMatchDic objectForKey:@(con_p.pointerId)]).floatValue;
+}
+-(CGFloat) getAbsMatchValue:(AIKVPointer*)abs_p {
+    return NUMTOOK([self.absMatchDic objectForKey:@(abs_p.pointerId)]).floatValue;
+}
+
+/**
  *  MARK:--------------------NSCoding--------------------
  */
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {

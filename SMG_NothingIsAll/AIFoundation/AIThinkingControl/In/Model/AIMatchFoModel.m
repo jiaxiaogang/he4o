@@ -67,16 +67,18 @@
  *  @version
  *      2022.09.15: 更新indexDic & realMaskFo (参考27097);
  *      2022.09.18: 将反馈处理和推进下一帧,集成到同一个方法执行 (参考27095-9 & 27098-todo3)
+ *      2022.11.03: alg复用相似度 (参考27175-1);
  */
 -(void) feedbackPushFrame:(AIKVPointer*)fbProtoAlg {
     //----------------当前帧处理----------------
     //1. 数据准备;
     AIFoNodeBase *matchFo = [SMGUtils searchNode:self.matchFo];
     AIKVPointer *waitAlg_p = ARR_INDEX(matchFo.content_ps, self.cutIndex + 1);
+    AIAlgNodeBase *waitAlg = [SMGUtils searchNode:waitAlg_p];
     
     //2. 更新status & near & realMaskFo;
     [self setStatus:TIModelStatus_OutBackReason forCutIndex:self.cutIndex];
-    self.feedbackNear = [AIAnalyst compareCansetAlg:waitAlg_p protoAlg:fbProtoAlg];
+    self.feedbackNear = [waitAlg getConMatchValue:fbProtoAlg];
     [self.realMaskFo addObject:fbProtoAlg];
     
     //3. 取到反馈fbProtoAlg的index(应该就是realMaskFo.count)

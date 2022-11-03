@@ -28,4 +28,10 @@
  */
 -(void) updateMatchValue:(AIAlgNodeBase*)absAlg matchValue:(CGFloat)matchValue;
 
+/**
+ *  MARK:--------------------取抽或具象的相近度--------------------
+ */
+-(CGFloat) getConMatchValue:(AIKVPointer*)con_p;
+-(CGFloat) getAbsMatchValue:(AIKVPointer*)abs_p;
+
 @end
