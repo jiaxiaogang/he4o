@@ -21,10 +21,11 @@
  */
 +(AISolutionModel*) newWithCansetFo:(AIKVPointer*)cansetFo
                     frontMatchValue:(CGFloat)frontMatchValue backMatchValue:(CGFloat)backMatchValue
-                           cutIndex:(NSInteger)cutIndex targetIndex:(NSInteger)targetIndex;
+                           cutIndex:(NSInteger)cutIndex targetIndex:(NSInteger)targetIndex
+             basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel;
 
 @property (strong, nonatomic) AIKVPointer *cansetFo;    //候选集fo;
-//@property (strong, nonatomic) AIKVPointer *ptFo;        //R任务时为pFo,H任务时为targetFo;
+@property (strong, nonatomic) id basePFoOrTargetFoModel;//R任务时为pFoModel,H任务时为targetFoModel;
 
 @property (assign, nonatomic) CGFloat frontMatchValue;  //前段(已发生部分)匹配度 (相近度和/已发生数);
 @property (assign, nonatomic) CGFloat backMatchValue;   //后段匹配度 (R时为1,H时为目标帧相近度);

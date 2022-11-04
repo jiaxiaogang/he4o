@@ -41,7 +41,7 @@
     }
     
     //4. 匹配判断;
-    return [self compareCansetFo:cansetFo_p ptAleardayCount:pAleardayCount needBackMatch:false getAlgMatchValueBlock:^CGFloat(NSInteger ptIndex, AIKVPointer *cansetAlg_p) {
+    return [self compareCansetFo:cansetFo_p ptAleardayCount:pAleardayCount isH:false getAlgMatchValueBlock:^CGFloat(NSInteger ptIndex, AIKVPointer *cansetAlg_p) {
         
         //TODOTOMORROW20221102 复用相似度: R时返回的mask源于realMaskFo (参考27175-2):
         //1. 前段是pFo.matchFo部分,是cansetA的抽象;
@@ -49,6 +49,14 @@
         //      2.1 cansetA做为wait_p接受反馈,所以canset应该是proto的抽象;
         //      2.2 还有一种可能是pFo.matchFo做为wait,所以canset和proto有共同抽象 (可是realMaskFo明明前段是所有的matchFo);
         //              > 这个需要明天待查代码,看下过去的代码是怎样的情况,哪个是wait,啥的...
+        
+        //TODOTOMORROW20221104: 实际跑起来调试下此处的checkCanset.basePFoOrTargetFoModel的抽具象关系........;
+        //此时的pFo有可能经历过反馈,但它的realMaskFo后面的全是protoAlg部分,而前面的match.content部分...
+        //但这些部分,其实它的抽象全在content里,所以这里应该没逃出content的范围,如果 逃出了,那就是这条pFo已经结束status了,要么S要么P;
+        
+        //此处最大的改动,就是cansetA要与matchAlg比对而不是protoAlg,所以:
+        //TODOTOMORROW20221104: 先想一个例子,能够佐证某个S与proto不匹配时,却与当前认为的match 场景匹配,而我们采用了这个S来推进行为化...
+        
         
         
         
@@ -61,7 +69,7 @@
         
         //5. 比对两个概念匹配度;
         return [self compareCansetAlg:cansetAlg_p protoAlg:maskAlg_p];
-    }];
+    } basePFoOrTargetFoModel:pFo];
 }
 
 +(AISolutionModel*) compareHCansetFo:(AIKVPointer*)cansetFo_p targetFo:(TOFoModel*)targetFoM {
@@ -70,12 +78,12 @@
     
     //2. 匹配判断;
     AIFoNodeBase *targetFo = [SMGUtils searchNode:targetFoM.content_p];
-    return [self compareCansetFo:cansetFo_p ptAleardayCount:tAleardayCount needBackMatch:true getAlgMatchValueBlock:^CGFloat(NSInteger ptIndex, AIKVPointer *cansetAlg_p) {
+    return [self compareCansetFo:cansetFo_p ptAleardayCount:tAleardayCount isH:true getAlgMatchValueBlock:^CGFloat(NSInteger ptIndex, AIKVPointer *cansetAlg_p) {
         //3. H时: ptFo=targetFo,所以直接复用canset抽象指向target的相似度 (参考27175-3);
         AIKVPointer *targetAlg_p = ARR_INDEX(targetFo.content_ps, ptIndex);
         AIAlgNodeBase *cansetAlg = [SMGUtils searchNode:cansetAlg_p];
         return [cansetAlg getAbsMatchValue:targetAlg_p];
-    }];
+    } basePFoOrTargetFoModel:targetFoM];
 }
 
 /**
@@ -84,12 +92,12 @@
  *                                  1. 根R=cutIndex+1
  *                                  2. 子R=父actionIndex对应indexDic条数;
  *                                  3. H.actionIndex前已发生;
- *  @param needBackMatch        : 是否需要后段匹配 (R不需要,H需要);
+ *  @param isH                  : 是否需要后段匹配 (R不需要传false,H需要传true);
  *  @version
  *      2022.06.12: 每帧analyst都映射转换成maskFo的帧元素比对 (参考26232-TODO4);
  *      2022.11.03: 复用alg相似度 (参考27175-2&3);
  */
-+(AISolutionModel*) compareCansetFo:(AIKVPointer*)cansetFo_p ptAleardayCount:(NSInteger)ptAleardayCount needBackMatch:(BOOL)needBackMatch getAlgMatchValueBlock:(CGFloat(^)(NSInteger ptIndex,AIKVPointer *cansetAlg_p))getAlgMatchValueBlock{
++(AISolutionModel*) compareCansetFo:(AIKVPointer*)cansetFo_p ptAleardayCount:(NSInteger)ptAleardayCount isH:(BOOL)isH getAlgMatchValueBlock:(CGFloat(^)(NSInteger ptIndex,AIKVPointer *cansetAlg_p))getAlgMatchValueBlock basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel {
     //1. 数据准备;
     AISolutionModel *result = nil;
     AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
@@ -130,16 +138,15 @@
     if (cansetCutIndex != -1 && frontMatchValue > 0) {
         
         //10. 后段: 从canset后段,找maskFo目标 (R不需要后段匹配,H需要);
-        if (needBackMatch) {
+        if (isH) {
             //a. 数据准备mask目标帧
             CGFloat backMatchValue = 0;//后段匹配度
             NSInteger cansetTargetIndex = -1;//canset目标下标
-            AIKVPointer *actionIndexA_p = getAlgMatchValueBlock(ptAleardayCount);
             
             //b. 分别对canset后段,比对两个概念匹配度;
             for (NSInteger i = cansetCutIndex + 1; i < cansetFo.count; i++) {
                 AIKVPointer *cansetA_p = ARR_INDEX(cansetFo.content_ps, i);
-                CGFloat checkBackMatchValue = [self compareCansetAlg:cansetA_p protoAlg:actionIndexA_p];
+                CGFloat checkBackMatchValue = getAlgMatchValueBlock(ptAleardayCount,cansetA_p);
                 
                 //c. 匹配成功时: 记下匹配度和目标下标;
                 if (checkBackMatchValue > 0) {
@@ -151,12 +158,12 @@
             
             //d. 后段成功;
             if (cansetTargetIndex > -1) {
-                result = [AISolutionModel newWithCansetFo:cansetFo_p frontMatchValue:frontMatchValue backMatchValue:backMatchValue cutIndex:cansetCutIndex targetIndex:cansetTargetIndex];
+                result = [AISolutionModel newWithCansetFo:cansetFo_p frontMatchValue:frontMatchValue backMatchValue:backMatchValue cutIndex:cansetCutIndex targetIndex:cansetTargetIndex basePFoOrTargetFoModel:basePFoOrTargetFoModel];
             }
             if (!result) NSLog(@"itemCanset不适用当前场景:%ld",cansetFo_p.pointerId);
         }else{
             //11. 后段: R不判断后段;
-            result = [AISolutionModel newWithCansetFo:cansetFo_p frontMatchValue:frontMatchValue backMatchValue:1 cutIndex:cansetCutIndex targetIndex:cansetFo.count];
+            result = [AISolutionModel newWithCansetFo:cansetFo_p frontMatchValue:frontMatchValue backMatchValue:1 cutIndex:cansetCutIndex targetIndex:cansetFo.count basePFoOrTargetFoModel:basePFoOrTargetFoModel];
         }
     }
     return result;
@@ -217,6 +224,9 @@
                 //TODOTOMORROW20221103: 把用来获取cansets的pFo传进来,复用相似度 (参考27173-todo1);
                 //这里也有同样的问题,即pFo中,有content部分,
                 //也有后面,protoAlgs新发生的反馈的那些,那么此处传入pFo也不能完全复用成功;
+                
+                //TODOTOMORROW20221104: 实际跑起来调试下此处的checkCanset.basePFoOrTargetFoModel的抽具象关系........;
+                
                 
                 
                 
