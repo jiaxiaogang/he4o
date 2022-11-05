@@ -49,15 +49,6 @@
         if ([otherCanset.cansetFo isEqual:checkCanset.cansetFo]) continue;
         
         //4. 对比二者;
-        //TODOTOMORROW20221101: 这里的checkCanset和otherCanset在同层中 (因为cansets是从conPorts中取的);
-        //而同层间,是没有matchDic缓存的,那这个需要解决下,不然决策期就肯定会重新计算相似度;
-        // 参考27172-分析下: 此处反思竞争 机制是否应该迭代下;
-        
-        
-        
-        
-        
-        
         CGFloat frontNear = [AIAnalyst compareFromSolutionCanset:checkCanset otherCanset:otherCanset];
         [frontNearDic setObject:@(frontNear) forKey:@(otherCanset.cansetFo.pointerId)];
     }

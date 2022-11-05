@@ -42,30 +42,31 @@
     
     //4. 匹配判断;
     return [self compareCansetFo:cansetFo_p ptAleardayCount:pAleardayCount isH:false getAlgMatchValueBlock:^CGFloat(NSInteger ptIndex, AIKVPointer *cansetAlg_p) {
-        
-        //TODOTOMORROW20221102 复用相似度: R时返回的mask源于realMaskFo (参考27175-2):
-        //1. 前段是pFo.matchFo部分,是cansetA的抽象;
-        //2. 后段是事实发生的protoA;
-        //      2.1 cansetA做为wait_p接受反馈,所以canset应该是proto的抽象;
-        //      2.2 还有一种可能是pFo.matchFo做为wait,所以canset和proto有共同抽象 (可是realMaskFo明明前段是所有的matchFo);
-        //              > 这个需要明天待查代码,看下过去的代码是怎样的情况,哪个是wait,啥的...
-        
-        //TODOTOMORROW20221104: 实际跑起来调试下此处的checkCanset.basePFoOrTargetFoModel的抽具象关系........;
-        //此时的pFo有可能经历过反馈,但它的realMaskFo后面的全是protoAlg部分,而前面的match.content部分...
-        //但这些部分,其实它的抽象全在content里,所以这里应该没逃出content的范围,如果 逃出了,那就是这条pFo已经结束status了,要么S要么P;
-        
-        //此处最大的改动,就是cansetA要与matchAlg比对而不是protoAlg,所以:
-        //TODOTOMORROW20221104: 先想一个例子,能够佐证某个S与proto不匹配时,却与当前认为的match 场景匹配,而我们采用了这个S来推进行为化...
-        
-        
-        
-        
-        
-        
-        
         //5. 根据indexDic将ptIndex转成maskIndex,然后返回mask元素;
         int maskIndex = [NUMTOOK([pFo.indexDic2 objectForKey:@(ptIndex)]) intValue];
         AIKVPointer *maskAlg_p = ARR_INDEX(pFo.realMaskFo, maskIndex);
+        
+        
+        
+        //TODOTOMORROW20221102 复用相似度: R时返回的mask源于realMaskFo (参考27175-2):
+        //此处最大的改动,就是cansetA要与matchAlg比对而不是protoAlg,所以:
+        //TODOTOMORROW20221104: 先想一个例子,能够佐证某个S与proto不匹配时,却与当前认为的match 场景匹配,而我们采用了这个S来推进行为化...
+        AIFoNodeBase *matchFo = [SMGUtils searchNode:pFo.matchFo];
+        AIKVPointer *protoA = maskAlg_p;
+        AIKVPointer *matchA = ARR_INDEX(matchFo.content_ps, ptIndex);
+        if ([TOUtils mIsC_1:protoA c:matchA]) {
+            NSLog(@"proto is match success");
+        }else {
+            NSLog(@"proto is match failure");
+        }
+        if ([TOUtils mIsC_1:cansetAlg_p c:matchA]) {
+            NSLog(@"canset is match success");
+        }else {
+            NSLog(@"canset is match failure");
+        }
+        
+        
+        
         
         //5. 比对两个概念匹配度;
         return [self compareCansetAlg:cansetAlg_p protoAlg:maskAlg_p];
@@ -203,6 +204,40 @@
         AIAlgNodeBase *checkAlg = [SMGUtils searchNode:checkAlg_p];
         NSArray *checkAbs = [AINetUtils absPorts_All:checkAlg];
         
+        
+        
+        
+        //TODOTOMORROW20221103: 把用来获取cansets的pFo传进来,复用相似度 (参考27173-todo1);
+        //TODOTOMORROW20221101: 这里的checkCanset和otherCanset在同层中,而同层间,是没有matchDic缓存的 (因为cansets是从conPorts中取的) (参考27172-2);
+        //TODOTOMORROW20221104: 实际跑起来调试下此处的checkCanset.basePFoOrTargetFoModel的抽具象关系........;
+        AIFoNodeBase *matchFo = [SMGUtils searchNode:checkCanset.getBaseFoFromBasePFoOrTargetFoModel];
+        for (int i = 0; i < matchFo.count; i++) {
+            AIKVPointer *matchA = ARR_INDEX(matchFo.content_ps, i);
+            if ([TOUtils mIsC_1:checkAlg_p c:matchA]) {
+                NSLog(@"第%d个: canset is match success",i);
+            }
+            
+            if (ISOK(checkCanset.basePFoOrTargetFoModel, AIMatchFoModel.class)) {
+                AIMatchFoModel *pFo = (AIMatchFoModel*)checkCanset.basePFoOrTargetFoModel;
+                AIKVPointer *protoA = ARR_INDEX(pFo.realMaskFo, i);
+                if ([TOUtils mIsC_1:protoA c:matchA]) {
+                    NSLog(@"第%d个: proto is match success",i);
+                }
+            }
+        }
+        NSLog(@"'is match' CHECK FINISH");
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         for (NSInteger otherIndex = otherStart; otherIndex < otherCanset.cutIndex; otherIndex++) {
             
             //6. 取出otherAlg的抽象 (用于判断共同抽象);
@@ -220,16 +255,6 @@
                 
                 //9. 则记录other的进度;
                 otherStart = otherIndex + 1;
-                
-                //TODOTOMORROW20221103: 把用来获取cansets的pFo传进来,复用相似度 (参考27173-todo1);
-                //这里也有同样的问题,即pFo中,有content部分,
-                //也有后面,protoAlgs新发生的反馈的那些,那么此处传入pFo也不能完全复用成功;
-                
-                //TODOTOMORROW20221104: 实际跑起来调试下此处的checkCanset.basePFoOrTargetFoModel的抽具象关系........;
-                
-                
-                
-                
                 
                 //10. 后根据匹配上的alg,算出的匹配值;
                 CGFloat near = [AIAnalyst compareCansetAlg:checkAlg_p protoAlg:otherAlg_p];
