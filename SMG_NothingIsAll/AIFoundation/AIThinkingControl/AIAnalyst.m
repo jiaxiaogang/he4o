@@ -50,19 +50,20 @@
         
         //TODOTOMORROW20221102 复用相似度: R时返回的mask源于realMaskFo (参考27175-2):
         //此处最大的改动,就是cansetA要与matchAlg比对而不是protoAlg,所以:
-        //TODOTOMORROW20221104: 先想一个例子,能够佐证某个S与proto不匹配时,却与当前认为的match 场景匹配,而我们采用了这个S来推进行为化...
         AIFoNodeBase *matchFo = [SMGUtils searchNode:pFo.matchFo];
         AIKVPointer *protoA = maskAlg_p;
         AIKVPointer *matchA = ARR_INDEX(matchFo.content_ps, ptIndex);
         if ([TOUtils mIsC_1:protoA c:matchA]) {
-            NSLog(@"proto is match success");
+            //NSLog(@"proto is match success"); //占100%
         }else {
-            NSLog(@"proto is match failure");
+            //NSLog(@"proto is match failure"); //占0%
         }
         if ([TOUtils mIsC_1:cansetAlg_p c:matchA]) {
-            NSLog(@"canset is match success");
+            //NSLog(@"canset is match success"); //占64%
         }else {
-            NSLog(@"canset is match failure");
+            
+            //TODOTOMORROW20221107: V3调试: 此处查下,当protoIsMatch时,canset不是match的原因...
+            //NSLog(@"canset is match failure"); //占36%
         }
         
         
@@ -211,22 +212,33 @@
         //TODOTOMORROW20221101: 这里的checkCanset和otherCanset在同层中,而同层间,是没有matchDic缓存的 (因为cansets是从conPorts中取的) (参考27172-2);
         //TODOTOMORROW20221104: 实际跑起来调试下此处的checkCanset.basePFoOrTargetFoModel的抽具象关系........;
         AIFoNodeBase *matchFo = [SMGUtils searchNode:checkCanset.getBaseFoFromBasePFoOrTargetFoModel];
+        BOOL cansetIsMatchSuccess = false, protoIsMatchSuccess = false;
         for (int i = 0; i < matchFo.count; i++) {
             AIKVPointer *matchA = ARR_INDEX(matchFo.content_ps, i);
+            
+            //调试V2: 具象必须全含抽象,所以抽象的每一帧,都应该被canset中找到success,打出failure即错误;
             if ([TOUtils mIsC_1:checkAlg_p c:matchA]) {
-                NSLog(@"第%d个: canset is match success",i);
+                NSLog(@"第%ld/%ld个matchA检查: canset is match success",checkIndex,checkFo.count);
+                cansetIsMatchSuccess = true;
             }
             
+            //调试V2: 此处全是canset中<cutIndex部分: proto肯定是已发生部分,可以判断为protoIsMatch,打出failure即错误;
             if (ISOK(checkCanset.basePFoOrTargetFoModel, AIMatchFoModel.class)) {
                 AIMatchFoModel *pFo = (AIMatchFoModel*)checkCanset.basePFoOrTargetFoModel;
                 AIKVPointer *protoA = ARR_INDEX(pFo.realMaskFo, i);
                 if ([TOUtils mIsC_1:protoA c:matchA]) {
-                    NSLog(@"第%d个: proto is match success",i);
+                    NSLog(@"第%ld/%ld个matchA检查: proto is match success",checkIndex,checkFo.count);
+                    protoIsMatchSuccess = true;
                 }
             }
         }
+        if (!cansetIsMatchSuccess) {
+            NSLog(@"第%ld/%ld个matchA检查: canset is match failure",(long)checkIndex,checkFo.count);
+        }
+        if (!protoIsMatchSuccess) {
+            NSLog(@"第%ld/%ld个matchA检查: proto is match failure",(long)checkIndex,checkFo.count);
+        }
         NSLog(@"'is match' CHECK FINISH");
-        
         
         
         
