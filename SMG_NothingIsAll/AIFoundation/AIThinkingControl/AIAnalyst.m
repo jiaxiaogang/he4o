@@ -63,6 +63,7 @@
         }else {
             
             //TODOTOMORROW20221107: V3调试: 此处查下,当protoIsMatch时,canset不是match的原因...
+            //目前怀疑,需要重新训练下第1步,因为其间代码改过,可能结构会混乱些;
             //NSLog(@"canset is match failure"); //占36%
         }
         
@@ -175,6 +176,11 @@
 //MARK:                 < 比对分析两条Solution候选方案 >
 //MARK:===============================================================
 
+static int cansetIsMatchSuccess = 0;
+static int cansetIsMatchFailure = 0;
+static int protoIsMatchSuccess = 0;
+static int protoIsMatchFailure = 0;
+
 /**
  *  MARK:--------------------比对checkCanset和它的otherCanset们--------------------
  *  @desc
@@ -212,34 +218,36 @@
         //TODOTOMORROW20221101: 这里的checkCanset和otherCanset在同层中,而同层间,是没有matchDic缓存的 (因为cansets是从conPorts中取的) (参考27172-2);
         //TODOTOMORROW20221104: 实际跑起来调试下此处的checkCanset.basePFoOrTargetFoModel的抽具象关系........;
         AIFoNodeBase *matchFo = [SMGUtils searchNode:checkCanset.getBaseFoFromBasePFoOrTargetFoModel];
-        BOOL cansetIsMatchSuccess = false, protoIsMatchSuccess = false;
+        BOOL cansetIsMatchSuccess = false;
         for (int i = 0; i < matchFo.count; i++) {
             AIKVPointer *matchA = ARR_INDEX(matchFo.content_ps, i);
-            
             //调试V2: 具象必须全含抽象,所以抽象的每一帧,都应该被canset中找到success,打出failure即错误;
             if ([TOUtils mIsC_1:checkAlg_p c:matchA]) {
-                NSLog(@"第%ld/%ld个matchA检查: canset is match success",checkIndex,checkFo.count);
+                cansetIsMatchSuccess++;//83%
                 cansetIsMatchSuccess = true;
-            }
-            
-            //调试V2: 此处全是canset中<cutIndex部分: proto肯定是已发生部分,可以判断为protoIsMatch,打出failure即错误;
-            if (ISOK(checkCanset.basePFoOrTargetFoModel, AIMatchFoModel.class)) {
-                AIMatchFoModel *pFo = (AIMatchFoModel*)checkCanset.basePFoOrTargetFoModel;
-                AIKVPointer *protoA = ARR_INDEX(pFo.realMaskFo, i);
-                if ([TOUtils mIsC_1:protoA c:matchA]) {
-                    NSLog(@"第%ld/%ld个matchA检查: proto is match success",checkIndex,checkFo.count);
-                    protoIsMatchSuccess = true;
-                }
             }
         }
         if (!cansetIsMatchSuccess) {
-            NSLog(@"第%ld/%ld个matchA检查: canset is match failure",(long)checkIndex,checkFo.count);
+            //TODOTOMORROW20221108: 查此处未指向的情况原因,目前怀疑,需要重新训练下第1步,因为其间代码改过,可能结构会混乱些;
+            cansetIsMatchFailure++;//17%
         }
-        if (!protoIsMatchSuccess) {
-            NSLog(@"第%ld/%ld个matchA检查: proto is match failure",(long)checkIndex,checkFo.count);
-        }
-        NSLog(@"'is match' CHECK FINISH");
         
+        if (ISOK(checkCanset.basePFoOrTargetFoModel, AIMatchFoModel.class)) {
+            BOOL protoIsMatchSuccess = false;
+            for (int i = 0; i < matchFo.count; i++) {
+                AIKVPointer *matchA = ARR_INDEX(matchFo.content_ps, i);
+                //调试V2: 此处全是canset中<cutIndex部分: proto肯定是已发生部分,可以判断为protoIsMatch,打出failure即错误;
+                AIMatchFoModel *pFo = (AIMatchFoModel*)checkCanset.basePFoOrTargetFoModel;
+                AIKVPointer *protoA = ARR_INDEX(pFo.realMaskFo, i);
+                if ([TOUtils mIsC_1:protoA c:matchA]) {
+                    protoIsMatchSuccess++;//67%
+                    protoIsMatchSuccess = true;
+                }
+            }
+            if (!protoIsMatchSuccess) {
+                protoIsMatchFailure++;//33%
+            }
+        }
         
         
         
@@ -277,6 +285,14 @@
             }
         }
         //12. 如果循环最后也匹配不上_则没找到共同抽象的otherIndex,那跳过这条,继续下条;
+    }
+    if (cansetIsMatchFailure + cansetIsMatchSuccess > 0) {
+        CGFloat sucRate = cansetIsMatchSuccess / (cansetIsMatchFailure + cansetIsMatchSuccess);
+        NSLog(@"cansetSuccess: %d (%.2f) cansetFailure: %d (%.2f)",cansetIsMatchSuccess,sucRate,cansetIsMatchFailure,1-sucRate);
+    }
+    if (protoIsMatchFailure + protoIsMatchSuccess > 0) {
+        CGFloat sucRate = protoIsMatchSuccess / (protoIsMatchFailure + protoIsMatchSuccess);
+        NSLog(@"cansetSuccess: %d (%.2f) cansetFailure: %d (%.2f)",protoIsMatchSuccess,sucRate,protoIsMatchFailure,1-sucRate);
     }
     
     //13. 直至二者循环完,即算出了最终综合匹配度排序;
