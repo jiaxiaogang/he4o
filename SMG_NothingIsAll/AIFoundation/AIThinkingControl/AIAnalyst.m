@@ -68,12 +68,12 @@
         }
         
         if (cansetIsMatchFailure_S + cansetIsMatchSuccess_S > 0) {
-            CGFloat sucRate = cansetIsMatchSuccess_S / (cansetIsMatchFailure_S + cansetIsMatchSuccess_S);
-            NSLog(@"CHECKISMATCH_方案: cansetSuccess: %d (%.2f) cansetFailure: %d (%.2f)",cansetIsMatchSuccess_S,sucRate,cansetIsMatchFailure_S,1-sucRate);
+            CGFloat sucRate = (float)cansetIsMatchSuccess_S / (cansetIsMatchFailure_S + cansetIsMatchSuccess_S) * 100;
+            NSLog(@"CHECKISMATCH_方案: cansetSuccess: %d %.0f%% cansetFailure: %d %.0f%%",cansetIsMatchSuccess_S,sucRate,cansetIsMatchFailure_S,100-sucRate);
         }
         if (protoIsMatchFailure_S + protoIsMatchSuccess_S > 0) {
-            CGFloat sucRate = protoIsMatchSuccess_S / (protoIsMatchFailure_S + protoIsMatchSuccess_S);
-            NSLog(@"CHECKISMATCH_方案: protoSuccess: %d (%.2f) protoFailure: %d (%.2f)",protoIsMatchSuccess_S,sucRate,protoIsMatchFailure_S,1-sucRate);
+            CGFloat sucRate = (float)protoIsMatchSuccess_S / (protoIsMatchFailure_S + protoIsMatchSuccess_S) * 100;
+            NSLog(@"CHECKISMATCH_方案: protoSuccess: %d %.0f%% protoFailure: %d %.0f%%",protoIsMatchSuccess_S,sucRate,protoIsMatchFailure_S,100-sucRate);
         }
         
         
@@ -301,12 +301,12 @@ static int protoIsMatchFailure = 0;
         //12. 如果循环最后也匹配不上_则没找到共同抽象的otherIndex,那跳过这条,继续下条;
     }
     if (cansetIsMatchFailure + cansetIsMatchSuccess > 0) {
-        CGFloat sucRate = cansetIsMatchSuccess / (cansetIsMatchFailure + cansetIsMatchSuccess);
-        NSLog(@"CHECKISMATCH_反思: cansetSuccess: %d (%.2f) cansetFailure: %d (%.2f)",cansetIsMatchSuccess,sucRate,cansetIsMatchFailure,1-sucRate);
+        CGFloat sucRate = (float)cansetIsMatchSuccess / (cansetIsMatchFailure + cansetIsMatchSuccess) * 100;
+        NSLog(@"CHECKISMATCH_反思: cansetSuccess: %d %.0f%% cansetFailure: %d %.0f%%",cansetIsMatchSuccess,sucRate,cansetIsMatchFailure,100-sucRate);
     }
     if (protoIsMatchFailure + protoIsMatchSuccess > 0) {
-        CGFloat sucRate = protoIsMatchSuccess / (protoIsMatchFailure + protoIsMatchSuccess);
-        NSLog(@"CHECKISMATCH_反思: protoSuccess: %d (%.2f) protoFailure: %d (%.2f)",protoIsMatchSuccess,sucRate,protoIsMatchFailure,1-sucRate);
+        CGFloat sucRate = (float)protoIsMatchSuccess / (protoIsMatchFailure + protoIsMatchSuccess) * 100;
+        NSLog(@"CHECKISMATCH_反思: protoSuccess: %d %.0f%% protoFailure: %d %.0f%%",protoIsMatchSuccess,sucRate,protoIsMatchFailure,100-sucRate);
     }
     
     //13. 直至二者循环完,即算出了最终综合匹配度排序;
