@@ -69,6 +69,10 @@
             //cansetFo=[A1657棒,A947右下飞,A1657棒]
             //而此处在对比二者的首帧,所以A1657不是A947,导致为failure;
             
+            //所以,canset在match里本来就未必有,
+            //1. 如果没有时,匹配度是否可以不理会;
+            //2. 如果有时,此处处理取到合适的cansetIndex对应matchIndex;
+            
             cansetIsMatchFailure_S++;//占36%
             if (tempSwitch) {
                 tempSwitch = false;
