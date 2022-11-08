@@ -63,8 +63,22 @@
         }else {
             
             //TODOTOMORROW20221107: V3调试: 此处查下,当protoIsMatch时,canset不是match的原因...
-            //目前怀疑,需要重新训练下第1步,因为其间代码改过,可能结构会混乱些;
+            //目前怀疑,需要重新训练下第1步,因为其间代码改过,可能结构会混乱些 => 重测后,一样有39%是cansetIsMatch失败的;
+            //经查代码
+            //matchFo=[A947右下飞]
+            //cansetFo=[A1657棒,A947右下飞,A1657棒]
+            //而此处在对比二者的首帧,所以A1657不是A947,导致为failure;
+            
             cansetIsMatchFailure_S++;//占36%
+            if (tempSwitch) {
+                tempSwitch = false;
+                [theNV invokeForceMode:^{
+                    [theNV setNodeData:cansetAlg_p lightStr:@"canset"];
+                    [theNV setNodeData:matchA lightStr:@"match"];
+                    [theNV setNodeData:cansetFo_p lightStr:@"canset"];
+                    [theNV setNodeData:matchFo.pointer lightStr:@"match"];
+                }];
+            }
         }
         
         if (cansetIsMatchFailure_S + cansetIsMatchSuccess_S > 0) {
@@ -194,6 +208,8 @@ static int cansetIsMatchSuccess = 0;
 static int cansetIsMatchFailure = 0;
 static int protoIsMatchSuccess = 0;
 static int protoIsMatchFailure = 0;
+
+static BOOL tempSwitch = true;
 
 /**
  *  MARK:--------------------比对checkCanset和它的otherCanset们--------------------
