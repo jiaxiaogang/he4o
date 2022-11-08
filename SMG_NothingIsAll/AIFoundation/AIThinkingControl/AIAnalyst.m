@@ -54,17 +54,26 @@
         AIKVPointer *protoA = maskAlg_p;
         AIKVPointer *matchA = ARR_INDEX(matchFo.content_ps, ptIndex);
         if ([TOUtils mIsC_1:protoA c:matchA]) {
-            //NSLog(@"proto is match success"); //占100%
+            protoIsMatchSuccess_S++;//占100%
         }else {
-            //NSLog(@"proto is match failure"); //占0%
+            protoIsMatchFailure_S++;//占0%
         }
         if ([TOUtils mIsC_1:cansetAlg_p c:matchA]) {
-            //NSLog(@"canset is match success"); //占64%
+            cansetIsMatchSuccess_S++;//占64%
         }else {
             
             //TODOTOMORROW20221107: V3调试: 此处查下,当protoIsMatch时,canset不是match的原因...
             //目前怀疑,需要重新训练下第1步,因为其间代码改过,可能结构会混乱些;
-            //NSLog(@"canset is match failure"); //占36%
+            cansetIsMatchFailure_S++;//占36%
+        }
+        
+        if (cansetIsMatchFailure_S + cansetIsMatchSuccess_S > 0) {
+            CGFloat sucRate = cansetIsMatchSuccess_S / (cansetIsMatchFailure_S + cansetIsMatchSuccess_S);
+            NSLog(@"CHECKISMATCH_方案: cansetSuccess: %d (%.2f) cansetFailure: %d (%.2f)",cansetIsMatchSuccess_S,sucRate,cansetIsMatchFailure_S,1-sucRate);
+        }
+        if (protoIsMatchFailure_S + protoIsMatchSuccess_S > 0) {
+            CGFloat sucRate = protoIsMatchSuccess_S / (protoIsMatchFailure_S + protoIsMatchSuccess_S);
+            NSLog(@"CHECKISMATCH_方案: protoSuccess: %d (%.2f) protoFailure: %d (%.2f)",protoIsMatchSuccess_S,sucRate,protoIsMatchFailure_S,1-sucRate);
         }
         
         
@@ -175,6 +184,11 @@
 //MARK:===============================================================
 //MARK:                 < 比对分析两条Solution候选方案 >
 //MARK:===============================================================
+
+static int cansetIsMatchSuccess_S = 0;
+static int cansetIsMatchFailure_S = 0;
+static int protoIsMatchSuccess_S = 0;
+static int protoIsMatchFailure_S = 0;
 
 static int cansetIsMatchSuccess = 0;
 static int cansetIsMatchFailure = 0;
@@ -288,11 +302,11 @@ static int protoIsMatchFailure = 0;
     }
     if (cansetIsMatchFailure + cansetIsMatchSuccess > 0) {
         CGFloat sucRate = cansetIsMatchSuccess / (cansetIsMatchFailure + cansetIsMatchSuccess);
-        NSLog(@"cansetSuccess: %d (%.2f) cansetFailure: %d (%.2f)",cansetIsMatchSuccess,sucRate,cansetIsMatchFailure,1-sucRate);
+        NSLog(@"CHECKISMATCH_反思: cansetSuccess: %d (%.2f) cansetFailure: %d (%.2f)",cansetIsMatchSuccess,sucRate,cansetIsMatchFailure,1-sucRate);
     }
     if (protoIsMatchFailure + protoIsMatchSuccess > 0) {
         CGFloat sucRate = protoIsMatchSuccess / (protoIsMatchFailure + protoIsMatchSuccess);
-        NSLog(@"cansetSuccess: %d (%.2f) cansetFailure: %d (%.2f)",protoIsMatchSuccess,sucRate,protoIsMatchFailure,1-sucRate);
+        NSLog(@"CHECKISMATCH_反思: protoSuccess: %d (%.2f) protoFailure: %d (%.2f)",protoIsMatchSuccess,sucRate,protoIsMatchFailure,1-sucRate);
     }
     
     //13. 直至二者循环完,即算出了最终综合匹配度排序;
