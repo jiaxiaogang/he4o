@@ -30,19 +30,19 @@
 +(void) rRecognition:(AIShortMatchModel*)model{
     //1. 数据准备;
     NSArray *except_ps = @[model.protoFo.pointer,model.matchAFo.pointer];
-    AIFoNodeBase *maskFo = ARRISOK(model.matchAlgs) ? model.protoFo : model.matchAFo;
+    AIFoNodeBase *protoFo = ARRISOK(model.matchAlgs) ? model.protoFo : model.matchAFo;
     [theTC updateOperCount:kFILENAME];
     Debug();
-    IFTitleLog(@"时序识别", @"\n%@:%@->%@",ARRISOK(model.matchAlgs) ? @"protoFo" : @"matchAFo",Fo2FStr(maskFo),Mvp2Str(maskFo.cmvNode_p));
+    IFTitleLog(@"时序识别", @"\nprotoFo:%@->%@",Fo2FStr(protoFo),Mvp2Str(protoFo.cmvNode_p));
     
     AddTCDebug(@"R START");
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
-    [TIUtils partMatching_FoV1Dot5:maskFo except_ps:except_ps decoratorInModel:model fromRegroup:false];
+    [TIUtils partMatching_FoV1Dot5:protoFo except_ps:except_ps decoratorInModel:model fromRegroup:false];
     AddTCDebug(@"R FINISH");
     
     //5. 学习;
     DebugE();
-    [TCLearning rLearning:model protoFo:maskFo];
+    [TCLearning rLearning:model protoFo:protoFo];
 }
 
 +(void) pRecognition:(AIFoNodeBase*)protoFo{

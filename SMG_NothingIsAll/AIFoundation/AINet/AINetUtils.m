@@ -92,6 +92,7 @@
 /**
  *  MARK:--------------------是否虚mv--------------------
  *  @desc 虚mv判断标准 (迫切度是否为0);
+ *  @status 2022.11.10: 应该早就是弃用状态,整个虚mv功能应该早没用了;
  */
 +(BOOL) isVirtualMv:(AIKVPointer*)mv_p{
     AICMVNodeBase *mv = [SMGUtils searchNode:mv_p];
