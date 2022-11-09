@@ -73,6 +73,13 @@
             //1. 如果没有时,匹配度是否可以不理会;
             //2. 如果有时,此处处理取到合适的cansetIndex对应matchIndex;
             
+            //TODOTOMORROW20221109:
+            //1. 先把时序识别迭代下复用alg相似度;
+            //2. 然后分析下,这里重新计算indexDic的成本大不大;
+            //      2.1: 如果成本小,则重新计算下;
+            //              > 参考下时序识别算法,看当时的全含匹配流程是怎样的;
+            //      2.2: 如果成本高,则将时序识别中indexDic也存下来供这儿复用;
+            
             cansetIsMatchFailure_S++;//占36%
             if (tempSwitch) {
                 tempSwitch = false;
