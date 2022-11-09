@@ -431,6 +431,7 @@
  *      2022.06.08: 稳定性低的不过滤了,因为学时统计,不关稳定性(概率)的事儿 (参考26222-TODO1);
  *      2022.06.08: 排序公式改为sumNear / nearCount (参考26222-TODO1);
  *      2022.09.15: 修复indexDic收集的KV反了的BUG (与pFo.indexDic的定义不符);
+ *      2022.11.10: 复用alg相似度,且原性能问题应该也ok了 (参考27175-5);
  *  _result 将protoFo与assFo判断是否全含,并将匹配度返回;
  */
 +(void) TIR_Fo_CheckFoValidMatch:(AIFoNodeBase*)assFo outOfFos:(NSArray*)outOfFos success:(void(^)(NSInteger lastAssIndex, NSDictionary *indexDic,CGFloat sumNear,NSInteger nearCount))success isRegroup:(BOOL)isRegroup protoOrRegroupFo:(AIFoNodeBase*)protoOrRegroupFo{
@@ -452,29 +453,20 @@
         AIKVPointer *checkAssAlg_p = ARR_INDEX(assFo.content_ps, assIndex);
         
         //2. 匹配判断: 反思时用mIsC判断 & 识别时用瞬时末帧matchAlgs+partAlgs包含来判断;
-        BOOL mIsC = false;
-        AIKVPointer *lastProtoAlg = nil;
-        NSInteger maskFoIndex = isRegroup ? protoOrRegroupFo.count - 1 : theTC.inModelManager.models.count - 1;
-        AddTCDebug(@"时序识别12");
-        if (isRegroup) {
-            lastProtoAlg = ARR_INDEX(protoOrRegroupFo.content_ps, maskFoIndex);
-            mIsC = [TOUtils mIsC_1:lastProtoAlg c:checkAssAlg_p];
-        }else{
-            lastProtoAlg = [self getProtoAlg:maskFoIndex];
-            NSArray *lastAlgs = [self getMatchAndPartAlgPs:maskFoIndex];
-            mIsC = [lastAlgs containsObject:checkAssAlg_p];
-        }
+        AIKVPointer *lastProtoAlg_p = ARR_INDEX_REVERSE(protoOrRegroupFo.content_ps, 0);
+        AIAlgNodeBase *lastProtoAlg = [SMGUtils searchNode:lastProtoAlg_p];
+        BOOL mIsC = [TOUtils mIsC_1:lastProtoAlg_p c:checkAssAlg_p];
         AddTCDebug(@"时序识别13");
         
         //2. 匹配则记录lastAssIndex值;
         if (mIsC) {
+            //2. 匹配则记录lastAssIndex并存下indexDic映射;
             lastAssIndex = assIndex;
-            [indexDic setObject:@(maskFoIndex) forKey:@(assIndex)];
+            [indexDic setObject:@(protoOrRegroupFo.count - 1) forKey:@(lastAssIndex)];
             AddTCDebug(@"时序识别14");
             
             //3. 统计匹配度;
-            //TODOTOMORROW20220821: 经测此处卡了73ms (识别算法共用了626ms);
-            CGFloat near = [AIAnalyst compareCansetAlg:checkAssAlg_p protoAlg:lastProtoAlg];
+            CGFloat near = [lastProtoAlg getAbsMatchValue:checkAssAlg_p];
             AddTCDebug(@"时序识别15");
             if (near < 1) {
                 sumNear += near;
@@ -489,6 +481,13 @@
         return;
     }
     AddTCDebug(@"时序识别17");
+    
+    
+    //TODOTOMORROW20221110: 明天继续复用alg相似度,看下以下改完后,能不能和上面的取last的部分合而为一,这样更精简;
+    
+    
+    
+    
     
     //3. 从lastAssIndex向前逐个匹配;
     if (Log4MFo)NSLog(@"--->>>>> 在%ld位,找到LastItem匹配",lastAssIndex);
