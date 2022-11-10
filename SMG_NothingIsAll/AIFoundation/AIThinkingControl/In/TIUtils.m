@@ -361,8 +361,8 @@
             if (rContains) continue;
             
             //7. 全含判断;
-            [self TIR_Fo_CheckFoValidMatch:assFo outOfFos:assFo_ps success:^(NSInteger lastAssIndex, NSDictionary *indexDic, CGFloat sumNear,NSInteger nearCount) {
-                NSInteger cutIndex = fromRegroup ? -1 : lastAssIndex;
+            [self TIR_Fo_CheckFoValidMatch:assFo success:^(NSInteger assCutIndex, NSDictionary *indexDic, CGFloat sumNear,NSInteger nearCount) {
+                NSInteger cutIndex = fromRegroup ? -1 : assCutIndex;
                 AddTCDebug(@"时序识别24");
                 AIMatchFoModel *newMatchFo = [AIMatchFoModel newWithMatchFo:assFo.pointer maskFo:protoOrRegroupFo.pointer sumNear:sumNear nearCount:nearCount indexDic:indexDic cutIndex:cutIndex];
                 if (Log4MFo) NSLog(@"时序识别item SUCCESS 完成度:%f %@->%@",newMatchFo.matchFoValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
@@ -417,13 +417,15 @@
 
 /**
  *  MARK:--------------------时序识别之: protoFo&assFo匹配判断--------------------
- *  要求: protoFo必须全含assFo对应的last匹配下标之前的所有元素;
+ *  要求: protoFo必须全含assFo对应的last匹配下标之前的所有元素,即:
+ *       1. proto的末帧,必须在assFo中找到 (并记录找到的assIndex为cutIndex截点);
+ *       2. assFo在cutIndex截点前的部分,必须在protoFo中找到 (找到即全含,否则为整体失败);
  *  例如: 如: protFo:[abcde] 全含 assFo:[acefg]
  *  名词说明:
  *      1. 全含: 指从lastAssIndex向前,所有的assItemAlg都匹配成功;
  *      2. 非全含: 指从lastAssIndex向前,只要有一个assItemAlg匹配失败,则非全含;
  *  @param success  : lastAssIndex指已发生到的index,后面则为时序预测; matchValue指匹配度(0-1) notnull;
- *  @param outOfFos : 用于计算衰减值;
+ *  _param outOfFos : 用于计算衰减值; (未知何时已废弃)
  *  @version
  *      2022.04.30: 将每帧的matchAlgs和partAlgs用于全含判断,而不是单纯用protoFo来判断 (参考25234-6);
  *      2022.05.23: 反思时,改回旧有mIsC判断方式 (参考26096-BUG6);
@@ -432,118 +434,80 @@
  *      2022.06.08: 排序公式改为sumNear / nearCount (参考26222-TODO1);
  *      2022.09.15: 修复indexDic收集的KV反了的BUG (与pFo.indexDic的定义不符);
  *      2022.11.10: 复用alg相似度,且原性能问题应该也ok了 (参考27175-5);
+ *      2022.11.11: 将找末位,和找全含两个部分,合而为一,使算法代码更精简易读;
  *  _result 将protoFo与assFo判断是否全含,并将匹配度返回;
  */
-+(void) TIR_Fo_CheckFoValidMatch:(AIFoNodeBase*)assFo outOfFos:(NSArray*)outOfFos success:(void(^)(NSInteger lastAssIndex, NSDictionary *indexDic,CGFloat sumNear,NSInteger nearCount))success isRegroup:(BOOL)isRegroup protoOrRegroupFo:(AIFoNodeBase*)protoOrRegroupFo{
-    //1. 数据准备;
++(void) TIR_Fo_CheckFoValidMatch:(AIFoNodeBase*)assFo success:(void(^)(NSInteger lastAssIndex, NSDictionary *indexDic,CGFloat sumNear,NSInteger nearCount))success isRegroup:(BOOL)isRegroup protoOrRegroupFo:(AIFoNodeBase*)protoOrRegroupFo{
     AddTCDebug(@"时序识别10");
     if (Log4MFo) NSLog(@"------------------------ 时序全含检查 ------------------------\nass:%@->%@",Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
-    
-    //1. 默认有效数为1 (因为lastAlg肯定有效);
-    NSMutableDictionary *indexDic = [[NSMutableDictionary alloc] init];
-    int validItemCount = 1;
-    CGFloat sumNear = 0;
-    int nearCount = 0;
-    //1. 在assFo已发生到的index,后面为预测;
-    NSInteger lastAssIndex = -1;
+    //1. 数据准备;
+    NSMutableDictionary *indexDic = [[NSMutableDictionary alloc] init]; //记录protoIndex和assIndex的映射字典 <K:assIndex, V:protoIndex>;
+    int nearCount = 0;  //总相近数 (匹配值<1)
+    CGFloat sumNear = 0;//总相近度
     AddTCDebug(@"时序识别11");
     
-    //2. 从后向前找出lastIndex
+    //2. assFo已发生截点 (含cutIndex已发生,所以cutIndex应该就是proto末位在assFo中匹配到的assIndex下标);
+    NSInteger assCutIndex = -1;
+    
+    //3. 用于找着时:记录下进度,下次循环时,这个进度已处理过的不再处理;
+    NSInteger nextMaxForProtoIndex = protoOrRegroupFo.count - 1;
+    
+    //4. 从后向前倒着一帧帧,找assFo的元素,要求如下:
     for (NSInteger assIndex = assFo.count - 1; assIndex >= 0; assIndex--) {
-        AIKVPointer *checkAssAlg_p = ARR_INDEX(assFo.content_ps, assIndex);
-        
-        //2. 匹配判断: 反思时用mIsC判断 & 识别时用瞬时末帧matchAlgs+partAlgs包含来判断;
-        AIKVPointer *lastProtoAlg_p = ARR_INDEX_REVERSE(protoOrRegroupFo.content_ps, 0);
-        BOOL mIsC = [TOUtils mIsC_1:lastProtoAlg_p c:checkAssAlg_p];
-        AddTCDebug(@"时序识别13");
-        
-        //2. 匹配则记录lastAssIndex值;
-        if (mIsC) {
-            //2. 匹配则记录lastAssIndex并存下indexDic映射;
-            lastAssIndex = assIndex;
-            [indexDic setObject:@(protoOrRegroupFo.count - 1) forKey:@(lastAssIndex)];
-            AddTCDebug(@"时序识别14");
+        AIKVPointer *assAlg_p = ARR_INDEX(assFo.content_ps, assIndex);
+        BOOL itemSuccess = false;
+        for (NSInteger protoIndex = nextMaxForProtoIndex; protoIndex >= 0; protoIndex--) {
             
-            //3. 统计匹配度;
-            AIAlgNodeBase *protoAlg = [SMGUtils searchNode:lastProtoAlg_p];
-            CGFloat near = [protoAlg getAbsMatchValue:checkAssAlg_p];
-            AddTCDebug(@"时序识别15");
-            if (near < 1) {
-                sumNear += near;
-                nearCount ++;
+            //5. mIsC判断匹配;
+            AIKVPointer *protoAlg_p = ARR_INDEX(protoOrRegroupFo.content_ps, protoIndex);
+            BOOL mIsC = [TOUtils mIsC_1:protoAlg_p c:assAlg_p];
+            AddTCDebug(@"时序识别13");
+            if (mIsC) {
+                //6. 匹配时_记录assFo匹配到的cutIndex;
+                if (protoIndex == protoOrRegroupFo.count - 1) {
+                    assCutIndex = assIndex;
+                }
+                
+                //7. 匹配时_记录下次循环proto时,从哪帧开始倒序循环: nextMaxForProtoIndex进度
+                nextMaxForProtoIndex = protoIndex; //TODOTEST2022.11.11: 此处应试改为protoIndex-1,实测确定下再改...
+                
+                //8. 匹配时_记录本条成功标记;
+                itemSuccess = true;
+                
+                //9. 匹配时_记录indexDic映射
+                [indexDic setObject:@(protoIndex) forKey:@(assIndex)];
+                AddTCDebug(@"时序识别14");
+                
+                //10. 统计匹配度 & 匹配数;
+                AIAlgNodeBase *protoAlg = [SMGUtils searchNode:protoAlg_p];
+                CGFloat near = [protoAlg getAbsMatchValue:assAlg_p];
+                AddTCDebug(@"时序识别15");
+                if (near < 1) {
+                    sumNear += near;
+                    nearCount++;
+                }
+                if (Log4MFo)NSLog(@"时序识别: item有效+1");
+                break;
+            } else {
+                //11. proto的末帧必须找到,所以不匹配时,直接break,继续ass循环找它... (参考: 注释要求1);
+                if (protoIndex == protoOrRegroupFo.count - 1) break;
             }
-            break;
+            AddTCDebug(@"时序识别16");
         }
-        AddTCDebug(@"时序识别16");
-    }
-    if (lastAssIndex == -1) {
-        NSLog(@"时序识别: lastItem匹配失败,查看是否在联想时就出bug了");
-        return;
+        
+        //12. 非全含 (一个失败,全盘皆输);
+        if (!itemSuccess) {
+            if (Log4MFo) NSLog(@"末帧时,找不着则联想时就:有BUG === 非末帧时,则ass未在proto中找到:非全含");
+            return;
+        }
     }
     AddTCDebug(@"时序识别17");
     
-    
-    //TODOTOMORROW20221110: 明天继续复用alg相似度,看下以下改完后,能不能和上面的取last的部分合而为一,这样更精简;
-    
-    
-    
-    
-    
-    //3. 从lastAssIndex向前逐个匹配;
-    if (Log4MFo)NSLog(@"--->>>>> 在%ld位,找到LastItem匹配",lastAssIndex);
-    for (NSInteger assIndex = lastAssIndex - 1; assIndex >= 0; assIndex--) {
-        AIKVPointer *checkAssAlg_p = ARR_INDEX(assFo.content_ps, assIndex);
-        if (checkAssAlg_p) {
-            
-            //4. 在protoFo中同样从lastProtoIndex依次向前找匹配 (从倒数第二个开始);
-            BOOL checkResult = false;
-            NSInteger lastProtoIndex = (isRegroup ? protoOrRegroupFo.count : theTC.inModelManager.models.count) - 2;
-            AddTCDebug(@"时序识别18");
-            for (NSInteger j = lastProtoIndex; j >= 0; j--) {
-                //2. 匹配判断: 反思时用mIsC判断 & 识别时用瞬时末帧matchAlgs+partAlgs包含来判断;
-                AIKVPointer *protoAlg_p = ARR_INDEX(protoOrRegroupFo.content_ps, j);
-                BOOL mIsC = [TOUtils mIsC_1:protoAlg_p c:checkAssAlg_p];
-                AddTCDebug(@"时序识别19");
-                
-                //2. 匹配时处理;
-                if (mIsC) {
-                    lastProtoIndex = j; //成功匹配alg时,更新protoIndex (以达到只能向前匹配的目的);
-                    checkResult = true;
-                    validItemCount ++;  //有效数+1;
-                    [indexDic setObject:@(j) forKey:@(assIndex)];
-                    
-                    //3. 统计匹配度;
-                    AddTCDebug(@"时序识别20");
-                    AIAlgNodeBase *protoAlg = [SMGUtils searchNode:protoAlg_p];
-                    CGFloat near = [protoAlg getAbsMatchValue:checkAssAlg_p];
-                    AddTCDebug(@"时序识别21");
-                    if (near < 1) {
-                        sumNear += near;
-                        nearCount ++;
-                    }
-                    if (Log4MFo)NSLog(@"时序识别: item有效+1");
-                    break;
-                }else{
-                    if (Log4MFo)NSLog(@"---->匹配失败:\n%@",AlgP2FStr(checkAssAlg_p));
-                }
-            }
-            AddTCDebug(@"时序识别22");
-            
-            //5. 非全含 (一个失败,全盘皆输);
-            if (!checkResult) {
-                if (Log4MFo) NSLog(@"时序识别: item无效,未在protoFo中找到,所有非全含,不匹配");
-                return;
-            }
-        }
-    }
-    AddTCDebug(@"时序识别23");
-    
-    //7. 到此全含成功 之: 返回success
-    success(lastAssIndex,indexDic,sumNear,nearCount);
+    //13. 到此全含成功: 返回success
+    success(assCutIndex,indexDic,sumNear,nearCount);
 }
 
-
-+(void) TIR_Fo_CheckFoValidMatchV3:(AIFoNodeBase*)assFo outOfFos:(NSArray*)outOfFos success:(void(^)(NSInteger lastAssIndex, NSDictionary *indexDic,CGFloat sumNear,NSInteger nearCount))success isRegroup:(BOOL)isRegroup protoOrRegroupFo:(AIFoNodeBase*)protoOrRegroupFo{
++(void) TIR_Fo_CheckFoValidMatchBak:(AIFoNodeBase*)assFo success:(void(^)(NSInteger lastAssIndex, NSDictionary *indexDic,CGFloat sumNear,NSInteger nearCount))success isRegroup:(BOOL)isRegroup protoOrRegroupFo:(AIFoNodeBase*)protoOrRegroupFo{
     //1. 数据准备;
     AddTCDebug(@"时序识别10");
     if (Log4MFo) NSLog(@"------------------------ 时序全含检查 ------------------------\nass:%@->%@",Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
