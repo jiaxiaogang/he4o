@@ -25,8 +25,6 @@
 /**
  *  MARK:--------------------获取某帧shortModel的matchAlgs+partAlgs--------------------
  */
-+(NSArray*) getMatchAndPartAlgPs:(NSInteger)frameIndex;
 +(NSArray*) getMatchAndPartAlgPsByModel:(AIShortMatchModel*)frameModel;
-+(AIKVPointer*) getProtoAlg:(NSInteger)frameIndex;
 
 @end

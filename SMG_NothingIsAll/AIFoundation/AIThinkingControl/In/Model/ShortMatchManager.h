@@ -21,6 +21,11 @@
 
 -(NSMutableArray*)models;
 -(void) add:(AIShortMatchModel*)model;
+
+/**
+ *  MARK:--------------------获取某帧index的模型--------------------
+ *  @status 废弃状态 (如果2023.10之前未用,则删除);
+ */
 -(AIShortMatchModel*) getFrameModel:(NSInteger)frameIndex;
 
 /**
