@@ -501,14 +501,8 @@
             AddTCDebug(@"时序识别18");
             for (NSInteger j = lastProtoIndex; j >= 0; j--) {
                 //2. 匹配判断: 反思时用mIsC判断 & 识别时用瞬时末帧matchAlgs+partAlgs包含来判断;
-                BOOL mIsC = false;
-                if (isRegroup) {
-                    AIKVPointer *reoupAlg_p = ARR_INDEX(protoOrRegroupFo.content_ps, j);
-                    mIsC = [TOUtils mIsC_1:reoupAlg_p c:checkAssAlg_p];
-                }else{
-                    NSArray *frameAlgs = [self getMatchAndPartAlgPs:j];
-                    mIsC = [frameAlgs containsObject:checkAssAlg_p];
-                }
+                AIKVPointer *protoAlg_p = ARR_INDEX(protoOrRegroupFo.content_ps, j);
+                BOOL mIsC = [TOUtils mIsC_1:protoAlg_p c:checkAssAlg_p];
                 AddTCDebug(@"时序识别19");
                 
                 //2. 匹配时处理;
