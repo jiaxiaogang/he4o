@@ -365,7 +365,7 @@
                 NSInteger cutIndex = fromRegroup ? -1 : assCutIndex;
                 AddTCDebug(@"时序识别24");
                 AIMatchFoModel *newMatchFo = [AIMatchFoModel newWithMatchFo:assFo.pointer maskFo:protoOrRegroupFo.pointer sumNear:sumNear nearCount:nearCount indexDic:indexDic cutIndex:cutIndex];
-                if (Log4MFo) NSLog(@"时序识别item SUCCESS 完成度:%f %@->%@",newMatchFo.matchFoValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
+                if (Log4MFo) NSLog(@"时序识别itemSUCCESS 匹配度:%f %@->%@",newMatchFo.matchFoValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
                 AddTCDebug(@"时序识别25");
                 
                 //8. 被引用强度;
@@ -433,8 +433,10 @@
  *      2022.06.08: 稳定性低的不过滤了,因为学时统计,不关稳定性(概率)的事儿 (参考26222-TODO1);
  *      2022.06.08: 排序公式改为sumNear / nearCount (参考26222-TODO1);
  *      2022.09.15: 修复indexDic收集的KV反了的BUG (与pFo.indexDic的定义不符);
- *      2022.11.10: 复用alg相似度,且原性能问题应该也ok了 (参考27175-5);
- *      2022.11.11: 将找末位,和找全含两个部分,合而为一,使算法代码更精简易读;
+ *      2022.11.10: 复用alg相似度,且原本比对相似度的性能问题自然也ok了 (参考27175-5);
+ *      2022.11.11: 全改回用mIsC判断,因为等效 (matchAlgs全是protoAlg的抽象,且mIsC是有缓存的,无性能问题),且全用mIsC后代码更精简;
+ *      2022.11.11: 将找末位,和找全含两个部分,合而为一,使算法代码更精简易读 (参考27175-7);
+ *      2022.11.11: BUG_indexDic中有重复的Value (一个protoA对应多个assA): 将nextMaxForProtoIndex改为protoIndex-1后ok (参考27175-8);
  *  _result 将protoFo与assFo判断是否全含,并将匹配度返回;
  */
 +(void) TIR_Fo_CheckFoValidMatch:(AIFoNodeBase*)assFo success:(void(^)(NSInteger lastAssIndex, NSDictionary *indexDic,CGFloat sumNear,NSInteger nearCount))success isRegroup:(BOOL)isRegroup protoOrRegroupFo:(AIFoNodeBase*)protoOrRegroupFo{
@@ -469,7 +471,7 @@
                 }
                 
                 //7. 匹配时_记录下次循环proto时,从哪帧开始倒序循环: nextMaxForProtoIndex进度
-                nextMaxForProtoIndex = protoIndex; //TODOTEST2022.11.11: 此处应试改为protoIndex-1,实测确定下再改...
+                nextMaxForProtoIndex = protoIndex - 1;
                 
                 //8. 匹配时_记录本条成功标记;
                 itemSuccess = true;
@@ -483,6 +485,9 @@
                 CGFloat near = [protoAlg getAbsMatchValue:assAlg_p];
                 AddTCDebug(@"时序识别15");
                 if (near < 1) {
+                    if (near == 0) {
+                        NSLog(@"BUG! 怎么会有near=0的抽具象关联咧? %ld : %ld",protoAlg_p.pointerId,assAlg_p.pointerId);
+                    }
                     sumNear += near;
                     nearCount++;
                 }
