@@ -483,10 +483,18 @@
                 //10. 统计匹配度 & 匹配数;
                 AIAlgNodeBase *protoAlg = [SMGUtils searchNode:protoAlg_p];
                 CGFloat near = [protoAlg getAbsMatchValue:assAlg_p];
+                
+                //10. 二者一样时,直接=1;
+                if ([protoAlg_p isEqual:assAlg_p]) near = 1;
                 AddTCDebug(@"时序识别15");
+                
+                //10. 只记录near<1的 (取<1的原因未知,参考2619j-todo5);
                 if (near < 1) {
                     if (near == 0) {
-                        NSLog(@"BUG! 怎么会有near=0的抽具象关联咧? %ld : %ld",protoAlg_p.pointerId,assAlg_p.pointerId);
+                        NSLog(@"BUG! 怎么会有near=0的抽具象关联咧?");
+                        //经查,matchDic没有持久化存起来...应该就是这个锅了...需要重新训练实测下...
+                        CGFloat near = [protoAlg getAbsMatchValue:assAlg_p];
+                        NSLog(@"");
                     }
                     sumNear += near;
                     nearCount++;

@@ -66,6 +66,8 @@
     self = [super initWithCoder:aDecoder];
     if (self) {
         self.refPorts = [aDecoder decodeObjectForKey:@"refPorts"];
+        self.absMatchDic = [aDecoder decodeObjectForKey:@"absMatchDic"];
+        self.conMatchDic = [aDecoder decodeObjectForKey:@"conMatchDic"];
     }
     return self;
 }
@@ -78,6 +80,8 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [super encodeWithCoder:aCoder];
     [aCoder encodeObject:[self.refPorts copy] forKey:@"refPorts"];
+    [aCoder encodeObject:[self.absMatchDic copy] forKey:@"absMatchDic"];
+    [aCoder encodeObject:[self.conMatchDic copy] forKey:@"conMatchDic"];
 }
 
 @end
