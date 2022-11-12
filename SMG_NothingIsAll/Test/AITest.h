@@ -29,4 +29,6 @@
 
 +(void) test13:(NSArray*)slowSolutionCansets;
 
++(void) test14:(CGFloat)near;
+
 @end

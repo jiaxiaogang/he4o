@@ -136,4 +136,10 @@
     }
 }
 
++(void) test14:(CGFloat)near {
+    if (near == 0) {
+        ELog(@"自检14: 怎么会有near=0的抽具象关联咧?查下是matchDic中没存着么?");
+    }
+}
+
 @end

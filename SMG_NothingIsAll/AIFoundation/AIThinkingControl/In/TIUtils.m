@@ -490,12 +490,7 @@
                 
                 //10. 只记录near<1的 (取<1的原因未知,参考2619j-todo5);
                 if (near < 1) {
-                    if (near == 0) {
-                        NSLog(@"BUG! 怎么会有near=0的抽具象关联咧?");
-                        //经查,matchDic没有持久化存起来...应该就是这个锅了...需要重新训练实测下...
-                        CGFloat near = [protoAlg getAbsMatchValue:assAlg_p];
-                        NSLog(@"");
-                    }
+                    [AITest test14:near];
                     sumNear += near;
                     nearCount++;
                 }
