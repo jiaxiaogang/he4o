@@ -145,24 +145,46 @@
 /**
  *  MARK:--------------------获取near数据--------------------
  *  @desc 根据indexDic取得nearCount&sumNear (参考27177-todo3);
+ *  _result 目前未返回结果,等到调用者使用时,再来写返回方式;
  */
--(void) getNearCountAndSumNearByIndexDic {
-//    int nearCount = 0;  //总相近数 (匹配值<1)
-//    CGFloat sumNear = 0;//总相近度
-//    //10. 统计匹配度 & 匹配数;
-//    AIAlgNodeBase *protoAlg = [SMGUtils searchNode:protoAlg_p];
-//    CGFloat near = [protoAlg getAbsMatchValue:assAlg_p];
-//
-//    //10. 二者一样时,直接=1;
-//    if ([protoAlg_p isEqual:assAlg_p]) near = 1;
-//    AddTCDebug(@"时序识别15");
-//
-//    //10. 只记录near<1的 (取<1的原因未知,参考2619j-todo5);
-//    if (near < 1) {
-//        [AITest test14:near];
-//        sumNear += near;
-//        nearCount++;
-//    }
+-(void) getNearCountAndSumNearByIndexDic:(AIKVPointer*)other_p isAbs:(BOOL)isAbs {
+    //1. 数据准备;
+    int nearCount = 0;  //总相近数 (匹配值<1)
+    CGFloat sumNear = 0;//总相近度
+    AIFoNodeBase *otherFo = [SMGUtils searchNode:other_p];
+    AIFoNodeBase *absFo = isAbs ? otherFo : self;
+    AIFoNodeBase *conFo = isAbs ? self : otherFo;
+    NSDictionary *indexDic = [self getIndexDic:other_p isAbs:isAbs];
+    
+    //2. 逐个统计;
+    for (NSNumber *key in indexDic.allKeys) {
+        NSInteger absIndex = key.integerValue;
+        NSInteger conIndex = NUMTOOK([indexDic objectForKey:key]).integerValue;
+        AIKVPointer *absA_p = ARR_INDEX(absFo.content_ps, absIndex);
+        AIKVPointer *conA_p = ARR_INDEX(conFo.content_ps, conIndex);
+        
+        //3. 复用取near值;
+        CGFloat near = 0;
+        if (isAbs) {
+            //4. 当前是具象时_从具象取复用;
+            AIAlgNodeBase *conA = [SMGUtils searchNode:conA_p];
+            near = [conA getAbsMatchValue:absA_p];
+        }else{
+            //5. 当前是抽象时_从抽象取复用;
+            AIAlgNodeBase *absA = [SMGUtils searchNode:absA_p];
+            near = [absA getConMatchValue:conA_p];
+        }
+        
+        //6. 二者一样时,直接=1;
+        if ([absA_p isEqual:conA_p]) near = 1;
+        
+        //7. 只记录near<1的 (取<1的原因未知,参考2619j-todo5);
+        if (near < 1) {
+            [AITest test14:near];
+            sumNear += near;
+            nearCount++;
+        }
+    }
 }
 
 /**

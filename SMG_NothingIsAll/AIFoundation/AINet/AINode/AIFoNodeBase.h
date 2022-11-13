@@ -101,4 +101,9 @@
  */
 -(NSInteger) getCutIndexByIndexDic:(AIKVPointer*)other_p isAbs:(BOOL)isAbs;
 
+/**
+ *  MARK:--------------------获取near数据--------------------
+ */
+-(void) getNearCountAndSumNearByIndexDic:(AIKVPointer*)other_p isAbs:(BOOL)isAbs;
+
 @end

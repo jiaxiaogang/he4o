@@ -23,11 +23,11 @@
 
 @implementation AIMatchFoModel
 
-+(AIMatchFoModel*) newWithMatchFo:(AIKVPointer*)matchFo maskFo:(AIKVPointer*)maskFo sumNear:(CGFloat)sumNear nearCount:(NSInteger)nearCount indexDic:(NSDictionary*)indexDic cutIndex:(NSInteger)cutIndex{
-    AIFoNodeBase *maskFoNode = [SMGUtils searchNode:maskFo];
++(AIMatchFoModel*) newWithMatchFo:(AIKVPointer*)matchFo protoOrRegroupFo:(AIKVPointer*)protoOrRegroupFo sumNear:(CGFloat)sumNear nearCount:(NSInteger)nearCount indexDic:(NSDictionary*)indexDic cutIndex:(NSInteger)cutIndex{
+    AIFoNodeBase *protoOrRegroupFoNode = [SMGUtils searchNode:protoOrRegroupFo];
     AIMatchFoModel *model = [[AIMatchFoModel alloc] init];
     model.matchFo = matchFo;
-    [model.realMaskFo addObjectsFromArray:maskFoNode.content_ps];
+    [model.realMaskFo addObjectsFromArray:protoOrRegroupFoNode.content_ps];
     model.sumNear = sumNear;
     model.nearCount = nearCount;
     model.indexDic2 = [[NSMutableDictionary alloc] initWithDictionary:indexDic];

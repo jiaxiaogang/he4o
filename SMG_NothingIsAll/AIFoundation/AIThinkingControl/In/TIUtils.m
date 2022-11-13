@@ -364,7 +364,7 @@
             [self TIR_Fo_CheckFoValidMatch:assFo success:^(NSInteger assCutIndex, NSDictionary *indexDic, CGFloat sumNear,NSInteger nearCount) {
                 NSInteger cutIndex = fromRegroup ? -1 : assCutIndex;
                 AddTCDebug(@"时序识别24");
-                AIMatchFoModel *newMatchFo = [AIMatchFoModel newWithMatchFo:assFo.pointer maskFo:protoOrRegroupFo.pointer sumNear:sumNear nearCount:nearCount indexDic:indexDic cutIndex:cutIndex];
+                AIMatchFoModel *newMatchFo = [AIMatchFoModel newWithMatchFo:assFo.pointer protoOrRegroupFo:protoOrRegroupFo.pointer sumNear:sumNear nearCount:nearCount indexDic:indexDic cutIndex:cutIndex];
                 if (Log4MFo) NSLog(@"时序识别itemSUCCESS 匹配度:%f %@->%@",newMatchFo.matchFoValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
                 AddTCDebug(@"时序识别25");
                 
