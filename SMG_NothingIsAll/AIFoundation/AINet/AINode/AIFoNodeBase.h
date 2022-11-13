@@ -50,12 +50,29 @@
 @property (strong, nonatomic) NSMutableDictionary *effectDic;
 
 /**
+ *  MARK:--------------------指向抽/具象indexDic的持久化--------------------
+ *  @desc <K:指向的PId, V:与指向fo的indexDic映射> (其中indexDic为<K:absIndex,V:conIndex>);
+ */
+@property (strong, nonatomic) NSMutableDictionary *absIndexDDic;
+@property (strong, nonatomic) NSMutableDictionary *conIndexDDic;
+
+
+//MARK:===============================================================
+//MARK:                     < spDic组 >
+//MARK:===============================================================
+
+/**
  *  MARK:--------------------更新SP强度值--------------------
  *  @param spIndex : 当前要更新sp强度值的下标 (参考25031-3);
  *                    1. 表示责任帧下标,比如为1时,则表示第2帧的责任;
  *                    2. 如果是mv则输入content.count;
  */
 -(void) updateSPStrong:(NSInteger)spIndex type:(AnalogyType)type;
+
+
+//MARK:===============================================================
+//MARK:                     < effectDic组 >
+//MARK:===============================================================
 
 /**
  *  MARK:--------------------更新有效率值--------------------
@@ -68,5 +85,20 @@
  *  MARK:--------------------取effIndex下有效的Effs--------------------
  */
 -(NSArray*) getValidEffs:(NSInteger)effIndex;
+
+
+//MARK:===============================================================
+//MARK:                     < indexDic组 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------返回self的抽/具象的indexDic--------------------
+ */
+-(NSDictionary*) getIndexDic:(AIKVPointer*)other_p isAbs:(BOOL)isAbs;
+
+/**
+ *  MARK:--------------------获取cutIndex--------------------
+ */
+-(NSInteger) getCutIndexByIndexDic:(AIKVPointer*)other_p isAbs:(BOOL)isAbs;
 
 @end

@@ -25,9 +25,20 @@
     return _effectDic;
 }
 
+-(NSMutableDictionary *)absIndexDDic{
+    if (!ISOK(_absIndexDDic, NSMutableDictionary.class)) _absIndexDDic = [[NSMutableDictionary alloc] initWithDictionary:_absIndexDDic];
+    return _absIndexDDic;
+}
+
+-(NSMutableDictionary *)conIndexDDic{
+    if (!ISOK(_conIndexDDic, NSMutableDictionary.class)) _conIndexDDic = [[NSMutableDictionary alloc] initWithDictionary:_conIndexDDic];
+    return _conIndexDDic;
+}
+
 //MARK:===============================================================
-//MARK:                     < publicMethod >
+//MARK:                     < spDic组 >
 //MARK:===============================================================
+
 /**
  *  MARK:--------------------更新SP强度值--------------------
  *  @param spIndex : 当前要更新sp强度值的下标 (参考25031-3);
@@ -51,6 +62,10 @@
     //3. 保存fo
     [SMGUtils insertNode:self];
 }
+
+//MARK:===============================================================
+//MARK:                     < effectDic组 >
+//MARK:===============================================================
 
 /**
  *  MARK:--------------------更新有效率值--------------------
@@ -93,18 +108,38 @@
     }];
 }
 
+//MARK:===============================================================
+//MARK:                     < indexDic组 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------返回self的抽/具象的indexDic--------------------
+ *  @result indexDic<K:absIndex,V:conIndex>;
+ */
+-(NSDictionary*) getIndexDic:(AIKVPointer*)other_p isAbs:(BOOL)isAbs {
+    NSMutableDictionary *indexDDic = isAbs ? self.absIndexDDic : self.conIndexDDic;
+    return DICTOOK([indexDDic objectForKey:@(other_p.pointerId)]);
+}
+
 /**
  *  MARK:--------------------获取cutIndex--------------------
- *  @desc 根据indexDic取得截点cutIndex (参考27177-todo2);
+ *  @title 根据indexDic取得截点cutIndex (参考27177-todo2);
+ *  @desc
+ *      1. 已发生截点 (含cutIndex已发生,所以cutIndex应该就是proto末位在assFo中匹配到的assIndex下标);
+ *      2. 取用方式1: 取最大的key即是cutIndex (目前选用,因为它省得取出conFo);
+ *      3. 取用方式2: 取protoFo末位为value,对应的key即为:cutIndex;
+ *  @result 返回截点cutIndex (注: 此处永远返回抽象Fo的截点,因为具象在时序识别中没截点);
  */
--(int) getCutIndexByIndexDic{
-//    //2. assFo已发生截点 (含cutIndex已发生,所以cutIndex应该就是proto末位在assFo中匹配到的assIndex下标);
-//    NSInteger assCutIndex = -1;
-//    //6. 匹配时_记录assFo匹配到的cutIndex;
-//    if (protoIndex == protoOrRegroupFo.count - 1) {
-//        assCutIndex = assIndex;
-//    }
-    return 0;
+-(NSInteger) getCutIndexByIndexDic:(AIKVPointer*)other_p isAbs:(BOOL)isAbs{
+    //1. 取indexDic;
+    NSInteger result = -1;
+    NSDictionary *indexDic = [self getIndexDic:other_p isAbs:isAbs];
+    
+    //2. 取最大的key,即为cutIndex;
+    for (NSNumber *absIndex in indexDic.allKeys) {
+        if (result < absIndex.integerValue) result = absIndex.integerValue;
+    }
+    return result;
 }
 
 /**
@@ -141,6 +176,8 @@
         self.mvDeltaTime = [aDecoder decodeDoubleForKey:@"mvDeltaTime"];
         self.spDic = [aDecoder decodeObjectForKey:@"spDic"];
         self.effectDic = [aDecoder decodeObjectForKey:@"effectDic"];
+        self.absIndexDDic = [aDecoder decodeObjectForKey:@"absIndexDDic"];
+        self.conIndexDDic = [aDecoder decodeObjectForKey:@"conIndexDDic"];
     }
     return self;
 }
@@ -152,6 +189,8 @@
     [aCoder encodeDouble:self.mvDeltaTime forKey:@"mvDeltaTime"];
     [aCoder encodeObject:[self.spDic copy] forKey:@"spDic"];
     [aCoder encodeObject:[self.effectDic copy] forKey:@"effectDic"];
+    [aCoder encodeObject:[self.absIndexDDic copy] forKey:@"absIndexDDic"];
+    [aCoder encodeObject:[self.conIndexDDic copy] forKey:@"conIndexDDic"];
 }
 
 @end
