@@ -437,6 +437,7 @@
  *      2022.11.11: 全改回用mIsC判断,因为等效 (matchAlgs全是protoAlg的抽象,且mIsC是有缓存的,无性能问题),且全用mIsC后代码更精简;
  *      2022.11.11: 将找末位,和找全含两个部分,合而为一,使算法代码更精简易读 (参考27175-7);
  *      2022.11.11: BUG_indexDic中有重复的Value (一个protoA对应多个assA): 将nextMaxForProtoIndex改为protoIndex-1后ok (参考27175-8);
+ *      2022.11.13: 迭代V2: 仅返回indexDic (参考27177);
  *  _result 将protoFo与assFo判断是否全含,并将匹配度返回;
  */
 +(void) TIR_Fo_CheckFoValidMatch:(AIFoNodeBase*)assFo success:(void(^)(NSInteger lastAssIndex, NSDictionary *indexDic,CGFloat sumNear,NSInteger nearCount))success isRegroup:(BOOL)isRegroup protoOrRegroupFo:(AIFoNodeBase*)protoOrRegroupFo{
@@ -513,6 +514,57 @@
     
     //13. 到此全含成功: 返回success
     success(assCutIndex,indexDic,sumNear,nearCount);
+}
+
++(NSDictionary*) TIR_Fo_CheckFoValidMatchV2:(AIFoNodeBase*)assFo protoOrRegroupFo:(AIFoNodeBase*)protoOrRegroupFo{
+    AddTCDebug(@"时序识别10");
+    if (Log4MFo) NSLog(@"------------------------ 时序全含检查 ------------------------\nass:%@->%@",Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
+    //1. 数据准备;
+    NSMutableDictionary *indexDic = [[NSMutableDictionary alloc] init]; //记录protoIndex和assIndex的映射字典 <K:assIndex, V:protoIndex>;
+    AddTCDebug(@"时序识别11");
+    
+    //3. 用于找着时:记录下进度,下次循环时,这个进度已处理过的不再处理;
+    NSInteger nextMaxForProtoIndex = protoOrRegroupFo.count - 1;
+    
+    //4. 从后向前倒着一帧帧,找assFo的元素,要求如下:
+    for (NSInteger assIndex = assFo.count - 1; assIndex >= 0; assIndex--) {
+        AIKVPointer *assAlg_p = ARR_INDEX(assFo.content_ps, assIndex);
+        BOOL itemSuccess = false;
+        for (NSInteger protoIndex = nextMaxForProtoIndex; protoIndex >= 0; protoIndex--) {
+            
+            //5. mIsC判断匹配;
+            AIKVPointer *protoAlg_p = ARR_INDEX(protoOrRegroupFo.content_ps, protoIndex);
+            BOOL mIsC = [TOUtils mIsC_1:protoAlg_p c:assAlg_p];
+            AddTCDebug(@"时序识别13");
+            if (mIsC) {
+                
+                //7. 匹配时_记录下次循环proto时,从哪帧开始倒序循环: nextMaxForProtoIndex进度
+                nextMaxForProtoIndex = protoIndex - 1;
+                
+                //8. 匹配时_记录本条成功标记;
+                itemSuccess = true;
+                
+                //9. 匹配时_记录indexDic映射
+                [indexDic setObject:@(protoIndex) forKey:@(assIndex)];
+                if (Log4MFo)NSLog(@"时序识别: item有效+1");
+                break;
+            } else {
+                //11. proto的末帧必须找到,所以不匹配时,直接break,继续ass循环找它... (参考: 注释要求1);
+                if (protoIndex == protoOrRegroupFo.count - 1) break;
+            }
+            AddTCDebug(@"时序识别16");
+        }
+        
+        //12. 非全含 (一个失败,全盘皆输);
+        if (!itemSuccess) {
+            if (Log4MFo) NSLog(@"末帧时,找不着则联想时就:有BUG === 非末帧时,则ass未在proto中找到:非全含");
+            return [NSMutableDictionary new];
+        }
+    }
+    AddTCDebug(@"时序识别17");
+    
+    //13. 到此全含成功: 返回success
+    return indexDic;
 }
 
 /**

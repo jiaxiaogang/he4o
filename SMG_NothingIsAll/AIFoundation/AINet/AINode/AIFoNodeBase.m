@@ -94,6 +94,43 @@
 }
 
 /**
+ *  MARK:--------------------获取cutIndex--------------------
+ *  @desc 根据indexDic取得截点cutIndex (参考27177-todo2);
+ */
+-(int) getCutIndexByIndexDic{
+//    //2. assFo已发生截点 (含cutIndex已发生,所以cutIndex应该就是proto末位在assFo中匹配到的assIndex下标);
+//    NSInteger assCutIndex = -1;
+//    //6. 匹配时_记录assFo匹配到的cutIndex;
+//    if (protoIndex == protoOrRegroupFo.count - 1) {
+//        assCutIndex = assIndex;
+//    }
+    return 0;
+}
+
+/**
+ *  MARK:--------------------获取near数据--------------------
+ *  @desc 根据indexDic取得nearCount&sumNear (参考27177-todo3);
+ */
+-(void) getNearCountAndSumNearByIndexDic {
+//    int nearCount = 0;  //总相近数 (匹配值<1)
+//    CGFloat sumNear = 0;//总相近度
+//    //10. 统计匹配度 & 匹配数;
+//    AIAlgNodeBase *protoAlg = [SMGUtils searchNode:protoAlg_p];
+//    CGFloat near = [protoAlg getAbsMatchValue:assAlg_p];
+//
+//    //10. 二者一样时,直接=1;
+//    if ([protoAlg_p isEqual:assAlg_p]) near = 1;
+//    AddTCDebug(@"时序识别15");
+//
+//    //10. 只记录near<1的 (取<1的原因未知,参考2619j-todo5);
+//    if (near < 1) {
+//        [AITest test14:near];
+//        sumNear += near;
+//        nearCount++;
+//    }
+}
+
+/**
  *  MARK:--------------------NSCoding--------------------
  */
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
