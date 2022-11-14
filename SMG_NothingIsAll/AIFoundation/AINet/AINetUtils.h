@@ -190,3 +190,20 @@
 +(void) maskHavMv_AlgWithFo:(AIFoNodeBase*)foNode;
 
 @end
+
+//MARK:===============================================================
+//MARK:                     < Node >
+//MARK:===============================================================
+@interface AINetUtils (Node)
+
+/**
+ *  MARK:--------------------获取cutIndex--------------------
+ */
++(NSInteger) getCutIndexByIndexDic:(NSDictionary*)indexDic;
+
+/**
+ *  MARK:--------------------获取near数据--------------------
+ */
++(NSArray*) getNearDataByIndexDic:(NSDictionary*)indexDic absFo:(AIKVPointer*)absFo_p conFo:(AIKVPointer*)conFo_p callerIsAbs:(BOOL)callerIsAbs;
+
+@end

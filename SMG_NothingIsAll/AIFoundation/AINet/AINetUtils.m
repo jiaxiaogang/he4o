@@ -514,3 +514,78 @@
 }
 
 @end
+
+
+//MARK:===============================================================
+//MARK:                     < Node >
+//MARK:===============================================================
+@implementation AINetUtils (Node)
+
+/**
+ *  MARK:--------------------获取cutIndex--------------------
+ *  @title 根据indexDic取得截点cutIndex (参考27177-todo2);
+ *  @desc
+ *      1. 已发生截点 (含cutIndex已发生,所以cutIndex应该就是proto末位在assFo中匹配到的assIndex下标);
+ *      2. 取用方式1: 取最大的key即是cutIndex (目前选用,因为它省得取出conFo);
+ *      3. 取用方式2: 取protoFo末位为value,对应的key即为:cutIndex;
+ *  @result 返回截点cutIndex (注: 此处永远返回抽象Fo的截点,因为具象在时序识别中没截点);
+ */
++(NSInteger) getCutIndexByIndexDic:(NSDictionary*)indexDic {
+    //1. 取indexDic;
+    NSInteger result = -1;
+    indexDic = DICTOOK(indexDic);
+    
+    //2. 取最大的key,即为cutIndex;
+    for (NSNumber *absIndex in indexDic.allKeys) {
+        if (result < absIndex.integerValue) result = absIndex.integerValue;
+    }
+    return result;
+}
+
+/**
+ *  MARK:--------------------获取near数据--------------------
+ *  @desc 根据indexDic取得nearCount&sumNear (参考27177-todo3);
+ *  @param callerIsAbs : 调用者是否是抽象;
+ *  @result notnull 必有两个元素,格式为: [nearCount, sumNear],二者都是0时,则为无效返回;
+ */
++(NSArray*) getNearDataByIndexDic:(NSDictionary*)indexDic absFo:(AIKVPointer*)absFo_p conFo:(AIKVPointer*)conFo_p callerIsAbs:(BOOL)callerIsAbs{
+    //1. 数据准备;
+    int nearCount = 0;  //总相近数 (匹配值<1)
+    CGFloat sumNear = 0;//总相近度
+    indexDic = DICTOOK(indexDic);
+    AIFoNodeBase *absFo = [SMGUtils searchNode:absFo_p];
+    AIFoNodeBase *conFo = [SMGUtils searchNode:conFo_p];
+    
+    //2. 逐个统计;
+    for (NSNumber *key in indexDic.allKeys) {
+        NSInteger absIndex = key.integerValue;
+        NSInteger conIndex = NUMTOOK([indexDic objectForKey:key]).integerValue;
+        AIKVPointer *absA_p = ARR_INDEX(absFo.content_ps, absIndex);
+        AIKVPointer *conA_p = ARR_INDEX(conFo.content_ps, conIndex);
+        
+        //3. 复用取near值;
+        CGFloat near = 0;
+        if (callerIsAbs) {
+            //5. 当前是抽象时_从抽象取复用;
+            AIAlgNodeBase *absA = [SMGUtils searchNode:absA_p];
+            near = [absA getConMatchValue:conA_p];
+        }else{
+            //4. 当前是具象时_从具象取复用;
+            AIAlgNodeBase *conA = [SMGUtils searchNode:conA_p];
+            near = [conA getAbsMatchValue:absA_p];
+        }
+        
+        //6. 二者一样时,直接=1;
+        if ([absA_p isEqual:conA_p]) near = 1;
+        
+        //7. 只记录near<1的 (取<1的原因未知,参考2619j-todo5);
+        if (near < 1) {
+            [AITest test14:near];
+            sumNear += near;
+            nearCount++;
+        }
+    }
+    return @[@(nearCount), @(sumNear)];
+}
+
+@end

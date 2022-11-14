@@ -116,75 +116,12 @@
  *  MARK:--------------------返回self的抽/具象的indexDic--------------------
  *  @result indexDic<K:absIndex,V:conIndex>;
  */
--(NSDictionary*) getIndexDic:(AIKVPointer*)other_p isAbs:(BOOL)isAbs {
-    NSMutableDictionary *indexDDic = isAbs ? self.absIndexDDic : self.conIndexDDic;
-    return DICTOOK([indexDDic objectForKey:@(other_p.pointerId)]);
+-(NSDictionary*) getAbsIndexDic:(AIKVPointer*)abs_p {
+    return DICTOOK([self.absIndexDDic objectForKey:@(abs_p.pointerId)]);
 }
 
-/**
- *  MARK:--------------------获取cutIndex--------------------
- *  @title 根据indexDic取得截点cutIndex (参考27177-todo2);
- *  @desc
- *      1. 已发生截点 (含cutIndex已发生,所以cutIndex应该就是proto末位在assFo中匹配到的assIndex下标);
- *      2. 取用方式1: 取最大的key即是cutIndex (目前选用,因为它省得取出conFo);
- *      3. 取用方式2: 取protoFo末位为value,对应的key即为:cutIndex;
- *  @result 返回截点cutIndex (注: 此处永远返回抽象Fo的截点,因为具象在时序识别中没截点);
- */
--(NSInteger) getCutIndexByIndexDic:(AIKVPointer*)other_p isAbs:(BOOL)isAbs{
-    //1. 取indexDic;
-    NSInteger result = -1;
-    NSDictionary *indexDic = [self getIndexDic:other_p isAbs:isAbs];
-    
-    //2. 取最大的key,即为cutIndex;
-    for (NSNumber *absIndex in indexDic.allKeys) {
-        if (result < absIndex.integerValue) result = absIndex.integerValue;
-    }
-    return result;
-}
-
-/**
- *  MARK:--------------------获取near数据--------------------
- *  @desc 根据indexDic取得nearCount&sumNear (参考27177-todo3);
- *  _result 目前未返回结果,等到调用者使用时,再来写返回方式;
- */
--(void) getNearCountAndSumNearByIndexDic:(AIKVPointer*)other_p isAbs:(BOOL)isAbs {
-    //1. 数据准备;
-    int nearCount = 0;  //总相近数 (匹配值<1)
-    CGFloat sumNear = 0;//总相近度
-    AIFoNodeBase *otherFo = [SMGUtils searchNode:other_p];
-    AIFoNodeBase *absFo = isAbs ? otherFo : self;
-    AIFoNodeBase *conFo = isAbs ? self : otherFo;
-    NSDictionary *indexDic = [self getIndexDic:other_p isAbs:isAbs];
-    
-    //2. 逐个统计;
-    for (NSNumber *key in indexDic.allKeys) {
-        NSInteger absIndex = key.integerValue;
-        NSInteger conIndex = NUMTOOK([indexDic objectForKey:key]).integerValue;
-        AIKVPointer *absA_p = ARR_INDEX(absFo.content_ps, absIndex);
-        AIKVPointer *conA_p = ARR_INDEX(conFo.content_ps, conIndex);
-        
-        //3. 复用取near值;
-        CGFloat near = 0;
-        if (isAbs) {
-            //4. 当前是具象时_从具象取复用;
-            AIAlgNodeBase *conA = [SMGUtils searchNode:conA_p];
-            near = [conA getAbsMatchValue:absA_p];
-        }else{
-            //5. 当前是抽象时_从抽象取复用;
-            AIAlgNodeBase *absA = [SMGUtils searchNode:absA_p];
-            near = [absA getConMatchValue:conA_p];
-        }
-        
-        //6. 二者一样时,直接=1;
-        if ([absA_p isEqual:conA_p]) near = 1;
-        
-        //7. 只记录near<1的 (取<1的原因未知,参考2619j-todo5);
-        if (near < 1) {
-            [AITest test14:near];
-            sumNear += near;
-            nearCount++;
-        }
-    }
+-(NSDictionary*) getConIndexDic:(AIKVPointer*)con_p {
+    return DICTOOK([self.conIndexDDic objectForKey:@(con_p.pointerId)]);
 }
 
 /**

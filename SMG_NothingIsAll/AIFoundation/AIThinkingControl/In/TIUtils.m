@@ -361,26 +361,35 @@
             if (rContains) continue;
             
             //7. 全含判断;
-            [self TIR_Fo_CheckFoValidMatch:assFo success:^(NSInteger assCutIndex, NSDictionary *indexDic, CGFloat sumNear,NSInteger nearCount) {
-                NSInteger cutIndex = fromRegroup ? -1 : assCutIndex;
-                AddTCDebug(@"时序识别24");
-                AIMatchFoModel *newMatchFo = [AIMatchFoModel newWithMatchFo:assFo.pointer protoOrRegroupFo:protoOrRegroupFo.pointer sumNear:sumNear nearCount:nearCount indexDic:indexDic cutIndex:cutIndex];
-                if (Log4MFo) NSLog(@"时序识别itemSUCCESS 匹配度:%f %@->%@",newMatchFo.matchFoValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
-                AddTCDebug(@"时序识别25");
-                
-                //8. 被引用强度;
-                AIPort *newMatchFoFromPort = [AINetUtils findPort:assFo_p fromPorts:assFoPorts];
-                newMatchFo.matchFoStrong = newMatchFoFromPort ? newMatchFoFromPort.strong.value : 0;
-                AddTCDebug(@"时序识别26");
-                
-                //9. 收集到pFos/rFos;
-                if (assFo.cmvNode_p) {
-                    [inModel.matchPFos addObject:newMatchFo];
-                }else{
-                    [inModel.matchRFos addObject:newMatchFo];
-                }
-                AddTCDebug(@"时序识别27");
-            } isRegroup:fromRegroup protoOrRegroupFo:protoOrRegroupFo];
+            NSDictionary *indexDic = [self TIR_Fo_CheckFoValidMatchV2:assFo protoOrRegroupFo:protoOrRegroupFo];
+            
+            //7. cutIndex在fromRegroup时为-1,全未发生 (旧代码一直如此,未知原因);
+            //说明: cutIndex指已发生到的index,后面则为时序预测; matchValue指匹配度(0-1)
+            NSInteger cutIndex = fromRegroup ? -1 : [AINetUtils getCutIndexByIndexDic:indexDic];
+            
+            //7. 根据indexDic取nearCount & sumNear;
+            NSArray *nearData = [AINetUtils getNearDataByIndexDic:indexDic absFo:assFo_p conFo:protoOrRegroupFo.pointer callerIsAbs:false];
+            int nearCount = NUMTOOK(ARR_INDEX(nearData, 0)).intValue;
+            CGFloat sumNear = NUMTOOK(ARR_INDEX(nearData, 1)).floatValue;
+            AddTCDebug(@"时序识别24");
+            
+            //7. 实例化识别结果AIMatchFoModel;
+            AIMatchFoModel *newMatchFo = [AIMatchFoModel newWithMatchFo:assFo.pointer protoOrRegroupFo:protoOrRegroupFo.pointer sumNear:sumNear nearCount:nearCount indexDic:indexDic cutIndex:cutIndex];
+            if (Log4MFo) NSLog(@"时序识别itemSUCCESS 匹配度:%f %@->%@",newMatchFo.matchFoValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
+            AddTCDebug(@"时序识别25");
+            
+            //8. 被引用强度;
+            AIPort *newMatchFoFromPort = [AINetUtils findPort:assFo_p fromPorts:assFoPorts];
+            newMatchFo.matchFoStrong = newMatchFoFromPort ? newMatchFoFromPort.strong.value : 0;
+            AddTCDebug(@"时序识别26");
+            
+            //9. 收集到pFos/rFos;
+            if (assFo.cmvNode_p) {
+                [inModel.matchPFos addObject:newMatchFo];
+            }else{
+                [inModel.matchRFos addObject:newMatchFo];
+            }
+            AddTCDebug(@"时序识别27");
         }
     }
     AddTCDebug(@"时序识别28");
@@ -424,7 +433,6 @@
  *  名词说明:
  *      1. 全含: 指从lastAssIndex向前,所有的assItemAlg都匹配成功;
  *      2. 非全含: 指从lastAssIndex向前,只要有一个assItemAlg匹配失败,则非全含;
- *  @param success  : lastAssIndex指已发生到的index,后面则为时序预测; matchValue指匹配度(0-1) notnull;
  *  _param outOfFos : 用于计算衰减值; (未知何时已废弃)
  *  @version
  *      2022.04.30: 将每帧的matchAlgs和partAlgs用于全含判断,而不是单纯用protoFo来判断 (参考25234-6);
@@ -440,82 +448,6 @@
  *      2022.11.13: 迭代V2: 仅返回indexDic (参考27177);
  *  _result 将protoFo与assFo判断是否全含,并将匹配度返回;
  */
-+(void) TIR_Fo_CheckFoValidMatch:(AIFoNodeBase*)assFo success:(void(^)(NSInteger lastAssIndex, NSDictionary *indexDic,CGFloat sumNear,NSInteger nearCount))success isRegroup:(BOOL)isRegroup protoOrRegroupFo:(AIFoNodeBase*)protoOrRegroupFo{
-    AddTCDebug(@"时序识别10");
-    if (Log4MFo) NSLog(@"------------------------ 时序全含检查 ------------------------\nass:%@->%@",Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
-    //1. 数据准备;
-    NSMutableDictionary *indexDic = [[NSMutableDictionary alloc] init]; //记录protoIndex和assIndex的映射字典 <K:assIndex, V:protoIndex>;
-    int nearCount = 0;  //总相近数 (匹配值<1)
-    CGFloat sumNear = 0;//总相近度
-    AddTCDebug(@"时序识别11");
-    
-    //2. assFo已发生截点 (含cutIndex已发生,所以cutIndex应该就是proto末位在assFo中匹配到的assIndex下标);
-    NSInteger assCutIndex = -1;
-    
-    //3. 用于找着时:记录下进度,下次循环时,这个进度已处理过的不再处理;
-    NSInteger nextMaxForProtoIndex = protoOrRegroupFo.count - 1;
-    
-    //4. 从后向前倒着一帧帧,找assFo的元素,要求如下:
-    for (NSInteger assIndex = assFo.count - 1; assIndex >= 0; assIndex--) {
-        AIKVPointer *assAlg_p = ARR_INDEX(assFo.content_ps, assIndex);
-        BOOL itemSuccess = false;
-        for (NSInteger protoIndex = nextMaxForProtoIndex; protoIndex >= 0; protoIndex--) {
-            
-            //5. mIsC判断匹配;
-            AIKVPointer *protoAlg_p = ARR_INDEX(protoOrRegroupFo.content_ps, protoIndex);
-            BOOL mIsC = [TOUtils mIsC_1:protoAlg_p c:assAlg_p];
-            AddTCDebug(@"时序识别13");
-            if (mIsC) {
-                //6. 匹配时_记录assFo匹配到的cutIndex;
-                if (protoIndex == protoOrRegroupFo.count - 1) {
-                    assCutIndex = assIndex;
-                }
-                
-                //7. 匹配时_记录下次循环proto时,从哪帧开始倒序循环: nextMaxForProtoIndex进度
-                nextMaxForProtoIndex = protoIndex - 1;
-                
-                //8. 匹配时_记录本条成功标记;
-                itemSuccess = true;
-                
-                //9. 匹配时_记录indexDic映射
-                [indexDic setObject:@(protoIndex) forKey:@(assIndex)];
-                AddTCDebug(@"时序识别14");
-                
-                //10. 统计匹配度 & 匹配数;
-                AIAlgNodeBase *protoAlg = [SMGUtils searchNode:protoAlg_p];
-                CGFloat near = [protoAlg getAbsMatchValue:assAlg_p];
-                
-                //10. 二者一样时,直接=1;
-                if ([protoAlg_p isEqual:assAlg_p]) near = 1;
-                AddTCDebug(@"时序识别15");
-                
-                //10. 只记录near<1的 (取<1的原因未知,参考2619j-todo5);
-                if (near < 1) {
-                    [AITest test14:near];
-                    sumNear += near;
-                    nearCount++;
-                }
-                if (Log4MFo)NSLog(@"时序识别: item有效+1");
-                break;
-            } else {
-                //11. proto的末帧必须找到,所以不匹配时,直接break,继续ass循环找它... (参考: 注释要求1);
-                if (protoIndex == protoOrRegroupFo.count - 1) break;
-            }
-            AddTCDebug(@"时序识别16");
-        }
-        
-        //12. 非全含 (一个失败,全盘皆输);
-        if (!itemSuccess) {
-            if (Log4MFo) NSLog(@"末帧时,找不着则联想时就:有BUG === 非末帧时,则ass未在proto中找到:非全含");
-            return;
-        }
-    }
-    AddTCDebug(@"时序识别17");
-    
-    //13. 到此全含成功: 返回success
-    success(assCutIndex,indexDic,sumNear,nearCount);
-}
-
 +(NSDictionary*) TIR_Fo_CheckFoValidMatchV2:(AIFoNodeBase*)assFo protoOrRegroupFo:(AIFoNodeBase*)protoOrRegroupFo{
     AddTCDebug(@"时序识别10");
     if (Log4MFo) NSLog(@"------------------------ 时序全含检查 ------------------------\nass:%@->%@",Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));

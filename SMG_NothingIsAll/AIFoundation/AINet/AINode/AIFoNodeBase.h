@@ -94,16 +94,7 @@
 /**
  *  MARK:--------------------返回self的抽/具象的indexDic--------------------
  */
--(NSDictionary*) getIndexDic:(AIKVPointer*)other_p isAbs:(BOOL)isAbs;
-
-/**
- *  MARK:--------------------获取cutIndex--------------------
- */
--(NSInteger) getCutIndexByIndexDic:(AIKVPointer*)other_p isAbs:(BOOL)isAbs;
-
-/**
- *  MARK:--------------------获取near数据--------------------
- */
--(void) getNearCountAndSumNearByIndexDic:(AIKVPointer*)other_p isAbs:(BOOL)isAbs;
+-(NSDictionary*) getAbsIndexDic:(AIKVPointer*)abs_p;
+-(NSDictionary*) getConIndexDic:(AIKVPointer*)con_p;
 
 @end
