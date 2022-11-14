@@ -97,4 +97,9 @@
 -(NSDictionary*) getAbsIndexDic:(AIKVPointer*)abs_p;
 -(NSDictionary*) getConIndexDic:(AIKVPointer*)con_p;
 
+/**
+ *  MARK:--------------------更新抽具象indexDic存储--------------------
+ */
+-(void) updateIndexDic:(AIFoNodeBase*)absFo indexDic:(NSDictionary*)indexDic;
+
 @end

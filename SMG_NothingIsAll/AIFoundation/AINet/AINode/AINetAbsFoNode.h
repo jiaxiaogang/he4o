@@ -11,9 +11,6 @@
 /**
  *  MARK:--------------------抽象时序节点--------------------
  */
-@class AIKVPointer;
 @interface AINetAbsFoNode : AIFoNodeBase
-
-@property (strong, nonatomic) NSMutableArray *conPorts; //具象关联端口
 
 @end

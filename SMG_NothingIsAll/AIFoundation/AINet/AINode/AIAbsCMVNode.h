@@ -15,6 +15,4 @@
  */
 @interface AIAbsCMVNode : AICMVNodeBase
 
-@property (strong, nonatomic) NSMutableArray *conPorts; //具象方向端口;
-
 @end

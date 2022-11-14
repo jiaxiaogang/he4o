@@ -29,6 +29,6 @@
 //MARK:===============================================================
 //MARK:                     < 外类比时序 >
 //MARK:===============================================================
-+(AINetAbsFoNode*) analogyOutside:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type;
++(AINetAbsFoNode*) analogyOutside:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type;
 
 @end

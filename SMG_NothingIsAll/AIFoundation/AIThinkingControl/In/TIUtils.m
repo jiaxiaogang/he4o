@@ -302,6 +302,7 @@
  *      2022.06.08: 排序公式改为sumNear / nearCount (参考26222-TODO1);
  *      2022.11.10: 因为最近加强了抽具象多层多样性,所以从matchAlgs+partAlgs取改为从lastAlg.absPorts取 (效用一样);
  *      2022.11.10: 时序识别中alg相似度复用-准备部分 & 参数调整 (参考27175-5);
+ *      2022.11.15: 对识别结果,直接构建抽具象关联 (参考27177-todo6);
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
 +(void) partMatching_FoV1Dot5:(AIFoNodeBase*)protoOrRegroupFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel fromRegroup:(BOOL)fromRegroup{
@@ -362,6 +363,7 @@
             
             //7. 全含判断;
             NSDictionary *indexDic = [self TIR_Fo_CheckFoValidMatchV2:assFo protoOrRegroupFo:protoOrRegroupFo];
+            if (!DICISOK(indexDic)) continue;
             
             //7. cutIndex在fromRegroup时为-1,全未发生 (旧代码一直如此,未知原因);
             //说明: cutIndex指已发生到的index,后面则为时序预测; matchValue指匹配度(0-1)
@@ -422,6 +424,19 @@
         NSLog(@"强度:(%ld)\t> %@ (from:%@)",item.matchFoStrong,Pit2FStr(item.matchFo),CLEANSTR(matchFo.spDic));
     }
     AddTCDebug(@"时序识别32");
+    
+    //12. 关联处理,直接protoFo抽象指向matchFo,并持久化indexDic (参考27177-todo6);
+    for (AIMatchFoModel *item in inModel.matchPFos) {
+        //4. 识别到时,refPorts -> 更新/加强微信息的引用序列
+        AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
+        [AINetUtils insertRefPorts_AllFoNode:item.matchFo order_ps:matchFo.content_ps ps:matchFo.content_ps];
+        
+        //5. 存储matchFo与protoFo之间的indexDic映射 (参考27177-todo5);
+        [protoOrRegroupFo updateIndexDic:matchFo indexDic:item.indexDic2];
+        
+        //6. 对proto直接抽象指向matchAlg,并增强强度值 (为保证抽象多样性,所以相近的也抽具象关联) (参考27153-3);
+        [AINetUtils relateFoAbs:matchFo conNodes:@[protoOrRegroupFo] isNew:false];
+    }
 }
 
 /**
@@ -446,7 +461,7 @@
  *      2022.11.11: 将找末位,和找全含两个部分,合而为一,使算法代码更精简易读 (参考27175-7);
  *      2022.11.11: BUG_indexDic中有重复的Value (一个protoA对应多个assA): 将nextMaxForProtoIndex改为protoIndex-1后ok (参考27175-8);
  *      2022.11.13: 迭代V2: 仅返回indexDic (参考27177);
- *  _result 将protoFo与assFo判断是否全含,并将匹配度返回;
+ *  @result 判断protoFo是否全含assFo: 成功时返回indexDic / 失败时返回空dic;
  */
 +(NSDictionary*) TIR_Fo_CheckFoValidMatchV2:(AIFoNodeBase*)assFo protoOrRegroupFo:(AIFoNodeBase*)protoOrRegroupFo{
     AddTCDebug(@"时序识别10");

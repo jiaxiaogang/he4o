@@ -15,6 +15,4 @@
  */
 @interface AIAbsAlgNode : AIAlgNodeBase
 
-@property (strong, nonatomic,nonnull) NSMutableArray *conPorts;
-
 @end

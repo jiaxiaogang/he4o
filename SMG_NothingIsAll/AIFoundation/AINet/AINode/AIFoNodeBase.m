@@ -125,6 +125,22 @@
 }
 
 /**
+ *  MARK:--------------------更新抽具象indexDic存储--------------------
+ *  @param absFo : 传抽象节点进来,而self为具象节点;
+ *  @version
+ *      2022.11.15: 将抽具象关系也存上匹配映射 (参考27177-todo5);
+ */
+-(void) updateIndexDic:(AIFoNodeBase*)absFo indexDic:(NSDictionary*)indexDic {
+    //1. 更新抽具象两个indexDDic;
+    [self.absIndexDDic setObject:indexDic forKey:@(absFo.pointer.pointerId)];
+    [absFo.conIndexDDic setObject:indexDic forKey:@(self.pointer.pointerId)];
+    
+    //2. 保存节点;
+    [SMGUtils insertNode:self];
+    [SMGUtils insertNode:absFo];
+}
+
+/**
  *  MARK:--------------------NSCoding--------------------
  */
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {

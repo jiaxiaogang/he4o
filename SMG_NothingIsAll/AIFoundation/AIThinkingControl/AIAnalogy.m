@@ -38,28 +38,28 @@
  *      20210926: 修复glFo外类比时非末位alg类比构建absAlg时,也使用了GLType的问题 (参考24022-BUG1);
  *      20221028: 用mIsC判断替代sameValue_ps (参考27153-todo4);
  */
-+(AINetAbsFoNode*) analogyOutside:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type {
++(AINetAbsFoNode*) analogyOutside:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type {
     //1. 类比orders的规律
-    if (Log4OutAnaType(type)) NSLog(@"\n----------- 外类比(%@) -----------\nfo:%@ \nassFo:%@",ATType2Str(type),Fo2FStr(fo),Fo2FStr(assFo));
+    if (Log4OutAnaType(type)) NSLog(@"\n----------- 外类比(%@) -----------\nfo:%@ \nassFo:%@",ATType2Str(type),Fo2FStr(protoFo),Fo2FStr(assFo));
     NSMutableArray *orderSames = [[NSMutableArray alloc] init];
-    if (fo && assFo) {
+    if (protoFo && assFo) {
 
         //2. 外类比有序进行 (记录jMax & 反序)
         NSInteger jMax = assFo.count - 1;
-        for (NSInteger i = fo.count - 1; i >= 0; i--) {
+        for (NSInteger i = protoFo.count - 1; i >= 0; i--) {
             for (NSInteger j = jMax; j >= 0; j--) {
-                AIKVPointer *algNodeA_p = fo.content_ps[i];
-                AIKVPointer *algNodeB_p = assFo.content_ps[j];
-                if (Log4OutAna) NSLog(@"Fo    I: %ld -> %@",i,Pit2FStr(algNodeA_p));
-                if (Log4OutAna) NSLog(@"AssFo J: %ld -> %@",j,Pit2FStr(algNodeB_p));
+                AIKVPointer *protoA_p = protoFo.content_ps[i];
+                AIKVPointer *assA_p = assFo.content_ps[j];
+                if (Log4OutAna) NSLog(@"ProtoFo I: %ld -> %@",i,Pit2FStr(protoA_p));
+                if (Log4OutAna) NSLog(@"AssFo   J: %ld -> %@",j,Pit2FStr(assA_p));
                 
                 //3. B源于matchFo,此处只判断B是1层抽象 (参考27161-调试1&调试2);
-                BOOL mIsC = [TOUtils mIsC_1:algNodeA_p c:algNodeB_p];
+                BOOL mIsC = [TOUtils mIsC_1:protoA_p c:assA_p];
                 if (mIsC) {
                     //3. 收集并更新jMax;
-                    [orderSames insertObject:algNodeB_p atIndex:0];
+                    [orderSames insertObject:assA_p atIndex:0];
                     jMax = j - 1;
-                    if (Log4OutAna) NSLog(@"-> 外类比构建概念 Finish: %@ from: ↑↑↑(A%ld:A%ld)",Pit2FStr(algNodeB_p),(long)algNodeA_p.pointerId,(long)algNodeB_p.pointerId);
+                    if (Log4OutAna) NSLog(@"-> 外类比构建概念 Finish: %@ from: ↑↑↑(A%ld:A%ld)",Pit2FStr(assA_p),(long)protoA_p.pointerId,(long)assA_p.pointerId);
                     break;
                 }
             }
@@ -67,7 +67,7 @@
     }
 
     //3. 外类比构建
-    return [self analogyOutside_Creater:orderSames fo:fo assFo:assFo type:type];
+    return [self analogyOutside_Creater:orderSames fo:protoFo assFo:assFo type:type];
 }
 
 /**
