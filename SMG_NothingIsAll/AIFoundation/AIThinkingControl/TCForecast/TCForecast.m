@@ -83,6 +83,14 @@
                 
                 //8. 失败状态标记;
                 [item setStatus:TIModelStatus_OutBackNone forCutIndex:curCutIndex];
+                
+                
+                //TODOTOMORROW20221116: 在此处推进失败时,即最终失败,可加入到conCansets (参考27183);
+                
+                
+                
+                
+                
             }
         }];
     }
@@ -110,13 +118,6 @@
                     //11. 则进行感性IRT反省;
                     [TCRethink perceptInRethink:item type:type];
                     NSLog(@"---//IP反省触发器执行:%p F%ld 状态:%@",matchFo,matchFo.pointer.pointerId,TIStatus2Str(status));
-                    
-                    
-                    //TODOTOMORROW20221116: 在此处推进完全时,最终无论成或败,都可加入到conCansets (参考27183);
-                    
-                    
-                    
-                    
                 }
                 
                 //12. 失败状态标记;
@@ -125,6 +126,15 @@
             
             //13. pFo任务失效 (参考27093-条件1 & 27095-1);
             item.isExpired = true;
+            
+            
+            //TODOTOMORROW20221116: 在此处推进完全时,最终无论成或败,都可加入到conCansets (参考27183);
+            
+            
+            
+            
+            
+            
         }];
     }
 }
