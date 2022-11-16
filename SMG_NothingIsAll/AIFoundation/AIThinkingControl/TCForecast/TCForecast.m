@@ -110,6 +110,13 @@
                     //11. 则进行感性IRT反省;
                     [TCRethink perceptInRethink:item type:type];
                     NSLog(@"---//IP反省触发器执行:%p F%ld 状态:%@",matchFo,matchFo.pointer.pointerId,TIStatus2Str(status));
+                    
+                    
+                    //TODOTOMORROW20221116: 在此处推进完全时,最终无论成或败,都可加入到conCansets (参考27183);
+                    
+                    
+                    
+                    
                 }
                 
                 //12. 失败状态标记;

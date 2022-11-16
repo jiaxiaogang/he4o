@@ -56,6 +56,12 @@
 @property (strong, nonatomic) NSMutableDictionary *absIndexDDic;
 @property (strong, nonatomic) NSMutableDictionary *conIndexDDic;
 
+/**
+ *  MARK:--------------------S候选集--------------------
+ *  @desc 在proto发生完全时,将它记录到此处,在sulution慢思考时,取做S候选集;
+ */
+@property (strong, nonatomic) NSMutableArray *conSolutionCansets;
+
 
 //MARK:===============================================================
 //MARK:                     < spDic组 >

@@ -124,6 +124,11 @@
     return DICTOOK([self.conIndexDDic objectForKey:@(con_p.pointerId)]);
 }
 
+-(NSMutableArray *)conSolutionCansets {
+    if (!_conSolutionCansets) _conSolutionCansets = [[NSMutableArray alloc] init];
+    return _conSolutionCansets;
+}
+
 /**
  *  MARK:--------------------更新抽具象indexDic存储--------------------
  *  @param absFo : 传抽象节点进来,而self为具象节点;
@@ -153,6 +158,7 @@
         self.effectDic = [aDecoder decodeObjectForKey:@"effectDic"];
         self.absIndexDDic = [aDecoder decodeObjectForKey:@"absIndexDDic"];
         self.conIndexDDic = [aDecoder decodeObjectForKey:@"conIndexDDic"];
+        self.conSolutionCansets = [aDecoder decodeObjectForKey:@"conSolutionCansets"];
     }
     return self;
 }
@@ -166,6 +172,7 @@
     [aCoder encodeObject:[self.effectDic copy] forKey:@"effectDic"];
     [aCoder encodeObject:[self.absIndexDDic copy] forKey:@"absIndexDDic"];
     [aCoder encodeObject:[self.conIndexDDic copy] forKey:@"conIndexDDic"];
+    [aCoder encodeObject:[self.conSolutionCansets copy] forKey:@"conSolutionCansets"];
 }
 
 @end
