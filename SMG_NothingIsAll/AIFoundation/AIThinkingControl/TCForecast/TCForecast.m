@@ -87,6 +87,13 @@
                 
                 //TODOTOMORROW20221116: 在此处推进失败时,即最终失败,可加入到conCansets (参考27183);
                 
+                //1. 用item.realMaskFo生成protoFo;
+                item.realMaskFo
+                
+                //2. 将protoFo挂载到matchFo下的conCansets下;
+                
+                //3. 将item.indexDic挂载到matchFo的conIndexDDic下;
+                
                 
                 
                 
