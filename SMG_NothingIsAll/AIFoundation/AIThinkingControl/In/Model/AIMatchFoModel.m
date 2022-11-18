@@ -28,6 +28,8 @@
     AIMatchFoModel *model = [[AIMatchFoModel alloc] init];
     model.matchFo = matchFo;
     [model.realMaskFo addObjectsFromArray:protoOrRegroupFoNode.content_ps];
+    [model.realDeltaTimes addObjectsFromArray:protoOrRegroupFoNode.deltaTimes];
+    model.lastFrameTime = [[NSDate date] timeIntervalSince1970];
     model.sumNear = sumNear;
     model.nearCount = nearCount;
     model.indexDic2 = [[NSMutableDictionary alloc] initWithDictionary:indexDic];
@@ -42,6 +44,11 @@
 -(NSMutableArray *)realMaskFo {
     if (!_realMaskFo) _realMaskFo = [[NSMutableArray alloc] init];
     return _realMaskFo;
+}
+
+-(NSMutableArray *)realDeltaTimes {
+    if (!_realDeltaTimes) _realDeltaTimes = [[NSMutableArray alloc] init];
+    return _realDeltaTimes;
 }
 
 -(NSMutableDictionary *)status {
@@ -81,6 +88,11 @@
     self.feedbackNear = [waitAlg getConMatchValue:fbProtoAlg];
     [self.realMaskFo addObject:fbProtoAlg];
     
+    //2. 更新realDeltaTimes和lastFrameTime;
+    NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
+    [self.realDeltaTimes addObject:@(now - self.lastFrameTime)];
+    self.lastFrameTime = now;
+    
     //3. 取到反馈fbProtoAlg的index(应该就是realMaskFo.count)
     NSInteger maskIndex = self.realMaskFo.count - 1;
     
@@ -119,6 +131,8 @@
     if (self) {
         self.matchFo = [aDecoder decodeObjectForKey:@"matchFo"];
         self.realMaskFo = [aDecoder decodeObjectForKey:@"realMaskFo"];
+        self.realDeltaTimes = [aDecoder decodeObjectForKey:@"realDeltaTimes"];
+        self.lastFrameTime = [aDecoder decodeDoubleForKey:@"lastFrameTime"];
         self.sumNear = [aDecoder decodeFloatForKey:@"sumNear"];
         self.nearCount = [aDecoder decodeIntegerForKey:@"nearCount"];
         self.status = [aDecoder decodeObjectForKey:@"status"];
@@ -133,6 +147,8 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [aCoder encodeObject:self.matchFo forKey:@"matchFo"];
     [aCoder encodeObject:self.realMaskFo forKey:@"realMaskFo"];
+    [aCoder encodeObject:self.realDeltaTimes forKey:@"realDeltaTimes"];
+    [aCoder encodeDouble:self.lastFrameTime forKey:@"lastFrameTime"];
     [aCoder encodeFloat:self.sumNear forKey:@"sumNear"];
     [aCoder encodeInteger:self.nearCount forKey:@"nearCount"];
     [aCoder encodeObject:self.status forKey:@"status"];

@@ -88,7 +88,13 @@
                 //TODOTOMORROW20221116: 在此处推进失败时,即最终失败,可加入到conCansets (参考27183);
                 
                 //1. 用item.realMaskFo生成protoFo;
-                item.realMaskFo
+                NSMutableArray *order = [[NSMutableArray alloc] init];
+                for (NSInteger i = 0; i < item.realMaskFo.count; i++) {
+                    AIKVPointer *itemA_p = ARR_INDEX(item.realMaskFo, i);
+                    NSTimeInterval itemDeltaTime = NUMTOOK(ARR_INDEX(item.realDeltaTimes, i)).doubleValue;
+                    [order addObject:[AIShortMatchModel_Simple newWithAlg_p:itemA_p inputTime:itemDeltaTime]];
+                }
+                AIFoNodeBase *protoFo = [theNet createConFo:order];
                 
                 //2. 将protoFo挂载到matchFo下的conCansets下;
                 

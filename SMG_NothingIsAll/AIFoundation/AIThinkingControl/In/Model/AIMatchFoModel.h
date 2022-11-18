@@ -27,6 +27,8 @@
  *  @desc 元素初始化时为protoFo/regroupFo的content_ps,后续随着更新附加到尾部;
  */
 @property (strong, nonatomic) NSMutableArray *realMaskFo; //List<protoAlg_p>
+@property (strong, nonatomic) NSMutableArray *realDeltaTimes; //List<deltaTime> (用来完全时序时,构建protoFo时使用);
+@property (assign, nonatomic) NSTimeInterval lastFrameTime; // 最后一帧的时间 (用来记录上一帧,以记录下(新)帧时的deltaTime值);
 
 @property (assign, nonatomic) CGFloat sumNear;          //时序元素相近度总和
 @property (assign, nonatomic) NSInteger nearCount;      //时序元素相近数
