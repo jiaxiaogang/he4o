@@ -171,7 +171,7 @@
     NSArray *cansetModels = [SMGUtils convertArr:demand.pFos convertItemArrBlock:^NSArray *(AIMatchFoModel *pFo) {
         
         //2. 取出cansetFos候选集;
-        NSArray *cansetFos = [self getCansetFos_Slow:pFo.matchFo];
+        NSArray *cansetFos = [self getCansetFos_SlowV2:pFo.matchFo];
         cansetFos = [self slowCansetFosFilter:cansetFos demand:demand];
         
         //3. 转cansetModels候选集 (参考26128-第1步 & 26161-1&2&3);
@@ -266,6 +266,8 @@
  *  @version
  *      2022.07.14: 将取抽象,同级,自身全废弃掉,改为仅取具象 (参考27049);
  *      2022.07.15: 每个pFo下支持limit (参考27048-TODO6);
+ *      2022.11.19: v2更新,支持从conCansets中取数据 (参考20202-1)
+ *      2022.11.19: v2的limit由5改为500 (因为conCansets的复用数据更多,性能ok) (参考27202-2);
  */
 +(NSArray*) getCansetFos_Slow:(AIKVPointer*)ptFo_p{
     //1. 取conPFos
@@ -275,6 +277,12 @@
     conFos = [SMGUtils removeRepeat:conFos];
     conFos = ARR_SUB(conFos, 0, cansetLimit);
     return conFos;
+}
+
++(NSArray*) getCansetFos_SlowV2:(AIKVPointer*)ptFo_p{
+    int cansetLimit = 500;
+    AIFoNodeBase *ptFo = [SMGUtils searchNode:ptFo_p];
+    return ARR_SUB(ptFo.conCansets, 0, cansetLimit);
 }
 
 /**
