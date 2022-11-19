@@ -48,6 +48,20 @@
         
         
         
+        //TODOTOMORROW20221119: 对比此处canset的元素和match的元素,
+        //1. ptIndex是match的下标,以前是用来取映射的proto的,然后对比canset和proto用的;
+        //2. 而现在canset和match的映射关系本来就存在indexDic中,只需要直接对比canset和match已发生部分即可;
+        //3. 即此处,传回cansetIndex即可,然后根据indexDic取到matchIndex,再然后当matchIndex<ptAleardayCount时,即为前段,,,,
+        //4. 然后将cansetIndex和matchIndex对应二者的持久化概念相似度复用返回即可;
+        
+        
+        
+        
+        
+        
+        
+        
+        
         //TODOTOMORROW20221102 复用相似度: R时返回的mask源于realMaskFo (参考27175-2):
         //此处最大的改动,就是cansetA要与matchAlg比对而不是protoAlg,所以:
         AIFoNodeBase *matchFo = [SMGUtils searchNode:pFo.matchFo];
