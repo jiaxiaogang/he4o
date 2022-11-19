@@ -35,6 +35,11 @@
     return _conIndexDDic;
 }
 
+-(NSMutableArray *)conCansets {
+    if (!_conCansets) _conCansets = [[NSMutableArray alloc] init];
+    return _conCansets;
+}
+
 //MARK:===============================================================
 //MARK:                     < spDic组 >
 //MARK:===============================================================
@@ -124,11 +129,6 @@
     return DICTOOK([self.conIndexDDic objectForKey:@(con_p.pointerId)]);
 }
 
--(NSMutableArray *)conSolutionCansets {
-    if (!_conSolutionCansets) _conSolutionCansets = [[NSMutableArray alloc] init];
-    return _conSolutionCansets;
-}
-
 /**
  *  MARK:--------------------更新抽具象indexDic存储--------------------
  *  @param absFo : 传抽象节点进来,而self为具象节点;
@@ -145,6 +145,20 @@
     [SMGUtils insertNode:absFo];
 }
 
+//MARK:===============================================================
+//MARK:                     < conCansets组 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------更新一条候选--------------------
+ */
+-(void) updateConCanset:(AIKVPointer*)newConCansetFo {
+    if (![self.conCansets containsObject:newConCansetFo]) {
+        [self.conCansets addObject:newConCansetFo];
+        [SMGUtils insertNode:self];
+    }
+}
+
 /**
  *  MARK:--------------------NSCoding--------------------
  */
@@ -158,7 +172,7 @@
         self.effectDic = [aDecoder decodeObjectForKey:@"effectDic"];
         self.absIndexDDic = [aDecoder decodeObjectForKey:@"absIndexDDic"];
         self.conIndexDDic = [aDecoder decodeObjectForKey:@"conIndexDDic"];
-        self.conSolutionCansets = [aDecoder decodeObjectForKey:@"conSolutionCansets"];
+        self.conCansets = [aDecoder decodeObjectForKey:@"conCansets"];
     }
     return self;
 }
@@ -172,7 +186,7 @@
     [aCoder encodeObject:[self.effectDic copy] forKey:@"effectDic"];
     [aCoder encodeObject:[self.absIndexDDic copy] forKey:@"absIndexDDic"];
     [aCoder encodeObject:[self.conIndexDDic copy] forKey:@"conIndexDDic"];
-    [aCoder encodeObject:[self.conSolutionCansets copy] forKey:@"conSolutionCansets"];
+    [aCoder encodeObject:[self.conCansets copy] forKey:@"conCansets"];
 }
 
 @end

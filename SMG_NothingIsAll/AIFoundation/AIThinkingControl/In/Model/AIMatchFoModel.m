@@ -64,6 +64,18 @@
     [self.status setObject:@(status) forKey:@(cutIndex)];
 }
 
+//在发生完全后,构建完全protoFo时使用获取orders;
+-(NSArray*) convertRealMaskFoAndRealDeltaTimes2Orders4CreateProtoFo {
+    [AITest test15:self];
+    NSMutableArray *order = [[NSMutableArray alloc] init];
+    for (NSInteger i = 0; i < self.realMaskFo.count; i++) {
+        AIKVPointer *itemA_p = ARR_INDEX(self.realMaskFo, i);
+        NSTimeInterval itemDeltaTime = NUMTOOK(ARR_INDEX(self.realDeltaTimes, i)).doubleValue;
+        [order addObject:[AIShortMatchModel_Simple newWithAlg_p:itemA_p inputTime:itemDeltaTime]];
+    }
+    return order;
+}
+
 //MARK:===============================================================
 //MARK:                     < publicMethod >
 //MARK:===============================================================
@@ -121,6 +133,24 @@
 //匹配度计算
 -(CGFloat) matchFoValue {
     return self.nearCount > 0 ? self.sumNear / self.nearCount : 1;
+}
+
+/**
+ *  MARK:--------------------推进帧结束(完全帧)时总结 (参考27201-5)--------------------
+ */
+-(void) pushFrameFinish {
+    //1. 数据准备;
+    AIFoNodeBase *matchFo = [SMGUtils searchNode:self.matchFo];
+    NSArray *orders = [self convertRealMaskFoAndRealDeltaTimes2Orders4CreateProtoFo];
+    
+    //2. 用realMaskFo & realDeltaTimes生成protoFo (参考27201-1 & 5);
+    AIFoNodeBase *protoFo = [theNet createConFo:orders];
+    
+    //3. 将protoFo挂载到matchFo下的conCansets下 (参考27201-2);
+    [matchFo updateConCanset:protoFo.pointer];
+    
+    //4. 将item.indexDic挂载到matchFo的conIndexDDic下 (参考27201-3);
+    [protoFo updateIndexDic:matchFo indexDic:self.indexDic2];
 }
 
 /**

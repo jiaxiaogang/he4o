@@ -21,14 +21,9 @@
 +(void) test9:(AIFoNodeBase*)fo type:(AnalogyType)type;
 +(void) test10:(TOModelBase*)toModel;
 +(void) test11:(AIShortMatchModel*)shortModel waitAlg_p:(AIKVPointer*)waitAlg_p;
-
-/**
- *  MARK:--------------------判断一个评分是否异常--------------------
- */
-+(void) test12:(CGFloat)score;
-
++(void) test12:(CGFloat)score;//判断一个评分是否异常
 +(void) test13:(NSArray*)slowSolutionCansets;
-
 +(void) test14:(CGFloat)near;
++(void) test15:(AIMatchFoModel*)model;
 
 @end

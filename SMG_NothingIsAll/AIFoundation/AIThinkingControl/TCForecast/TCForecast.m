@@ -84,26 +84,8 @@
                 //8. 失败状态标记;
                 [item setStatus:TIModelStatus_OutBackNone forCutIndex:curCutIndex];
                 
-                
-                //TODOTOMORROW20221116: 在此处推进失败时,即最终失败,可加入到conCansets (参考27183);
-                
-                //1. 用item.realMaskFo生成protoFo;
-                NSMutableArray *order = [[NSMutableArray alloc] init];
-                for (NSInteger i = 0; i < item.realMaskFo.count; i++) {
-                    AIKVPointer *itemA_p = ARR_INDEX(item.realMaskFo, i);
-                    NSTimeInterval itemDeltaTime = NUMTOOK(ARR_INDEX(item.realDeltaTimes, i)).doubleValue;
-                    [order addObject:[AIShortMatchModel_Simple newWithAlg_p:itemA_p inputTime:itemDeltaTime]];
-                }
-                AIFoNodeBase *protoFo = [theNet createConFo:order];
-                
-                //2. 将protoFo挂载到matchFo下的conCansets下;
-                
-                //3. 将item.indexDic挂载到matchFo的conIndexDDic下;
-                
-                
-                
-                
-                
+                //9. 在此处推进失败时,即最终失败,则处理推进为完全时序 (参考27183);
+                [item pushFrameFinish];
             }
         }];
     }
@@ -140,14 +122,8 @@
             //13. pFo任务失效 (参考27093-条件1 & 27095-1);
             item.isExpired = true;
             
-            
-            //TODOTOMORROW20221116: 在此处推进完全时,最终无论成或败,都可加入到conCansets (参考27183);
-            
-            
-            
-            
-            
-            
+            //14. 在此处推进完全时,最终无论成或败,都处理推进为完全时序 (参考27183);
+            [item pushFrameFinish];
         }];
     }
 }

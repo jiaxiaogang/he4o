@@ -21,6 +21,11 @@
  */
 @property (strong, nonatomic) AIKVPointer *cmvNode_p;
 
+
+//MARK:===============================================================
+//MARK:                     < deltaTimes组 >
+//MARK:===============================================================
+
 /**
  *  MARK:--------------------生物钟时间间隔记录--------------------
  *  @desc
@@ -37,35 +42,16 @@
 @property (strong, nonatomic) NSMutableArray *deltaTimes;
 @property (assign, nonatomic) NSTimeInterval mvDeltaTime;
 
+
+//MARK:===============================================================
+//MARK:                     < spDic组 >
+//MARK:===============================================================
+
 /**
  *  MARK:--------------------SP强度值--------------------
  *  @desc <key:spIndex, value:spStrong> (其中mv的key为content.count) (参考25031-3);
  */
 @property (strong, nonatomic) NSMutableDictionary *spDic;
-
-/**
- *  MARK:--------------------有效率--------------------
- *  @desc <key:effectIndex, value:effectStrong> (其中mv的key为content.count) (参考26094);
- */
-@property (strong, nonatomic) NSMutableDictionary *effectDic;
-
-/**
- *  MARK:--------------------指向抽/具象indexDic的持久化--------------------
- *  @desc <K:指向的PId, V:与指向fo的indexDic映射> (其中indexDic为<K:absIndex,V:conIndex>);
- */
-@property (strong, nonatomic) NSMutableDictionary *absIndexDDic;
-@property (strong, nonatomic) NSMutableDictionary *conIndexDDic;
-
-/**
- *  MARK:--------------------S候选集--------------------
- *  @desc 在proto发生完全时,将它记录到此处,在sulution慢思考时,取做S候选集;
- */
-@property (strong, nonatomic) NSMutableArray *conSolutionCansets;
-
-
-//MARK:===============================================================
-//MARK:                     < spDic组 >
-//MARK:===============================================================
 
 /**
  *  MARK:--------------------更新SP强度值--------------------
@@ -79,6 +65,12 @@
 //MARK:===============================================================
 //MARK:                     < effectDic组 >
 //MARK:===============================================================
+
+/**
+ *  MARK:--------------------有效率--------------------
+ *  @desc <key:effectIndex, value:effectStrong> (其中mv的key为content.count) (参考26094);
+ */
+@property (strong, nonatomic) NSMutableDictionary *effectDic;
 
 /**
  *  MARK:--------------------更新有效率值--------------------
@@ -98,6 +90,13 @@
 //MARK:===============================================================
 
 /**
+ *  MARK:--------------------指向抽/具象indexDic的持久化--------------------
+ *  @desc <K:指向的PId, V:与指向fo的indexDic映射> (其中indexDic为<K:absIndex,V:conIndex>);
+ */
+@property (strong, nonatomic) NSMutableDictionary *absIndexDDic;
+@property (strong, nonatomic) NSMutableDictionary *conIndexDDic;
+
+/**
  *  MARK:--------------------返回self的抽/具象的indexDic--------------------
  */
 -(NSDictionary*) getAbsIndexDic:(AIKVPointer*)abs_p;
@@ -107,5 +106,22 @@
  *  MARK:--------------------更新抽具象indexDic存储--------------------
  */
 -(void) updateIndexDic:(AIFoNodeBase*)absFo indexDic:(NSDictionary*)indexDic;
+
+
+//MARK:===============================================================
+//MARK:                     < conCansets组 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------S候选集--------------------
+ *  @desc 在proto发生完全时,将它记录到此处,在sulution慢思考时,取做S候选集;
+ *  @result 类型: List<AIKVPointer>
+ */
+@property (strong, nonatomic) NSMutableArray *conCansets;
+
+/**
+ *  MARK:--------------------更新一条候选--------------------
+ */
+-(void) updateConCanset:(AIKVPointer*)newConCansetFo;
 
 @end

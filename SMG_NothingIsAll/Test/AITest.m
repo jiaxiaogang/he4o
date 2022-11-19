@@ -142,4 +142,10 @@
     }
 }
 
++(void) test15:(AIMatchFoModel*)model {
+    if (model.realMaskFo.count != model.realDeltaTimes.count) {
+        ELog(@"自检15: 经查AIMatchFoModel里的proto所需的两个数组不一样长度,有BUG,但下为什么不一样长,不一样长的话,就没法生成有效的order从而构建(完全)protoFo");
+    }
+}
+
 @end
