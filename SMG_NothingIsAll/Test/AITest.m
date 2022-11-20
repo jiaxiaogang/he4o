@@ -148,4 +148,10 @@
     }
 }
 
++(void) test16:(CGFloat*)algHDMatchValue {
+    if (algHDMatchValue == 0) {
+        ELog(@"自检16: 概念相似度复用为0,但下原因");
+    }
+}
+
 @end

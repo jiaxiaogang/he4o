@@ -25,5 +25,6 @@
 +(void) test13:(NSArray*)slowSolutionCansets;
 +(void) test14:(CGFloat)near;
 +(void) test15:(AIMatchFoModel*)model;
++(void) test16:(CGFloat*)algHDMatchValue;
 
 @end

@@ -26,11 +26,15 @@
 
 //R时返回pFo.matchFo,H时返回targetFo;
 -(AIKVPointer*) getBaseFoFromBasePFoOrTargetFoModel {
-    if (ISOK(self.basePFoOrTargetFoModel, AIMatchFoModel.class)) {
-        AIMatchFoModel *pFo = (AIMatchFoModel*)self.basePFoOrTargetFoModel;
+    return [AISolutionModel getBaseFoFromBasePFoOrTargetFoModel:self.basePFoOrTargetFoModel];
+}
+
++(AIKVPointer*) getBaseFoFromBasePFoOrTargetFoModel:(id)basePFoOrTargetFoModel {
+    if (ISOK(basePFoOrTargetFoModel, AIMatchFoModel.class)) {
+        AIMatchFoModel *pFo = (AIMatchFoModel*)basePFoOrTargetFoModel;
         return pFo.matchFo;
-    } else if(ISOK(self.basePFoOrTargetFoModel, TOFoModel.class)){
-        TOFoModel *targetFo = (TOFoModel*)self.basePFoOrTargetFoModel;
+    } else if(ISOK(basePFoOrTargetFoModel, TOFoModel.class)){
+        TOFoModel *targetFo = (TOFoModel*)basePFoOrTargetFoModel;
         return targetFo.content_p;
     }
     return nil;

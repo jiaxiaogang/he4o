@@ -38,5 +38,6 @@
 
 //R时返回pFo.matchFo,H时返回targetFo;
 -(AIKVPointer*) getBaseFoFromBasePFoOrTargetFoModel;
++(AIKVPointer*) getBaseFoFromBasePFoOrTargetFoModel:(id)basePFoOrTargetFoModel;
 
 @end

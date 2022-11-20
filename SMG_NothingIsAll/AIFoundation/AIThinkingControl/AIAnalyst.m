@@ -21,6 +21,7 @@
  *      2022.06.11: 改用pFo参与analyst算法比对 & 并改取pFo已发生个数计算方式 (参考26232-TODO3&5&6);
  *      2022.09.15: 导致任务的maskFo不从demand取,而是从pFo取 (因为它在推进时会变化) (参考27097-todo3);
  *      2022.11.03: compareHCansetFo比对中复用alg相似度 (参考27175-3);
+ *      2022.11.20: 持久化复用: 支持indexDic复用和概念matchValue复用 (参考20202-3&4);
  */
 +(AISolutionModel*) compareRCansetFo:(AIKVPointer*)cansetFo_p pFo:(AIMatchFoModel*)pFo demand:(ReasonDemandModel*)demand {
     //1. 数据准备;
@@ -41,44 +42,7 @@
     }
     
     //4. 匹配判断;
-    return [self compareCansetFo:cansetFo_p matchFo:pFo.matchFo ptAleardayCount:pAleardayCount isH:false getAlgMatchValueBlock:^CGFloat(NSInteger cansetIndex) {
-        //5. 根据indexDic将ptIndex转成maskIndex,然后返回mask元素;
-        int protoIndex = [NUMTOOK([pFo.indexDic2 objectForKey:@(matchIndex)]) intValue];
-        AIKVPointer *protoAlg_p = ARR_INDEX(pFo.realMaskFo, protoIndex);
-        
-        
-        
-        //TODOTOMORROW20221119: 对比此处canset的元素和match的元素,
-        //1. ptIndex是match的下标,以前是用来取映射的proto的,然后对比canset和proto用的;
-        AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
-        AIFoNodeBase *matchFo = [SMGUtils searchNode:pFo.matchFo];
-        NSDictionary *indexDic = [cansetFo getAbsIndexDic:matchFo.pointer];
-        NSInteger matchIndex = NUMTOOK([SMGUtils filterSingleFromArr:indexDic.allKeys checkValid:^BOOL(NSNumber *key) {
-            return cansetIndex == NUMTOOK([indexDic objectForKey:key]).integerValue;
-        }]).integerValue;
-        AIKVPointer *cansetA_p = ARR_INDEX(cansetFo.content_ps, cansetIndex);
-        AIKVPointer *matchA_p = ARR_INDEX(matchFo.content_ps, matchIndex);
-        AIAlgNodeBase *cansetA = [SMGUtils searchNode:cansetA_p];
-        
-        if (matchIndex < pAleardayCount) {
-            // 前段,返回复用相似度;
-            return [cansetA getAbsMatchValue:matchA_p];
-        } else {
-            // 后段,先不返回;
-            return 0;
-        }
-        
-        
-        //2. 而现在canset和match的映射关系本来就存在indexDic中,只需要直接对比canset和match已发生部分即可;
-        //3. 即此处,传回cansetIndex即可,然后根据indexDic取到matchIndex,再然后当matchIndex<ptAleardayCount时,即为前段,,,,
-        //4. 然后将cansetIndex和matchIndex对应二者的持久化概念相似度复用返回即可;
-        
-        
-        
-        //5. 比对两个概念匹配度;
-        //return [self compareCansetAlg:cansetAlg_p protoAlg:maskAlg_p];
-        return 0;
-    } basePFoOrTargetFoModel:pFo];
+    return [self compareCansetFo:cansetFo_p ptAleardayCount:pAleardayCount isH:false basePFoOrTargetFoModel:pFo];
 }
 
 +(AISolutionModel*) compareHCansetFo:(AIKVPointer*)cansetFo_p targetFo:(TOFoModel*)targetFoM {
@@ -86,13 +50,7 @@
     NSInteger tAleardayCount = targetFoM.actionIndex;
     
     //2. 匹配判断;
-    AIFoNodeBase *targetFo = [SMGUtils searchNode:targetFoM.content_p];
-    return [self compareCansetFo:cansetFo_p matchFo:targetFoM.content_p ptAleardayCount:tAleardayCount isH:true getAlgMatchValueBlock:^CGFloat(NSInteger ptIndex, AIKVPointer *cansetAlg_p) {
-        //3. H时: ptFo=targetFo,所以直接复用canset抽象指向target的相似度 (参考27175-3);
-        AIKVPointer *targetAlg_p = ARR_INDEX(targetFo.content_ps, ptIndex);
-        AIAlgNodeBase *cansetAlg = [SMGUtils searchNode:cansetAlg_p];
-        return [cansetAlg getAbsMatchValue:targetAlg_p];
-    } basePFoOrTargetFoModel:targetFoM];
+    return [self compareCansetFo:cansetFo_p ptAleardayCount:tAleardayCount isH:true basePFoOrTargetFoModel:targetFoM];
 }
 
 /**
@@ -105,35 +63,22 @@
  *  @version
  *      2022.06.12: 每帧analyst都映射转换成maskFo的帧元素比对 (参考26232-TODO4);
  *      2022.11.03: 复用alg相似度 (参考27175-2&3);
+ *      2022.11.20: 改为match与canset比对,复用indexDic和alg相似度 (参考27202-3&4&5);
  */
-+(AISolutionModel*) compareCansetFo:(AIKVPointer*)cansetFo_p matchFo:(AIKVPointer*)matchFo_p ptAleardayCount:(NSInteger)ptAleardayCount isH:(BOOL)isH getAlgMatchVaueBlock:(CGFloat(^)(NSInteger cansetIndex))getAlgMatchVaueBlock basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel {
++(AISolutionModel*) compareCansetFo:(AIKVPointer*)cansetFo_p ptAleardayCount:(NSInteger)ptAleardayCount isH:(BOOL)isH basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel {
     //1. 数据准备;
     AISolutionModel *result = nil;
     AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
-    NSInteger lastMatchAtProtoIndex = -1;   //proto的匹配进度;
     CGFloat sumMatchValue = 0;              //累计匹配度;
     NSInteger cansetCutIndex = -1;          //canset的cutIndex,也已在proto中发生;
+    AIKVPointer *matchFo_p = [AISolutionModel getBaseFoFromBasePFoOrTargetFoModel:basePFoOrTargetFoModel];
     
     //2. 前段: cansetFo从前到后,分别在proto中找匹配;
     for (NSInteger i = 0; i < cansetFo.count; i++) {
-        AIKVPointer *cansetA_p = ARR_INDEX(cansetFo.content_ps, i);
-        CGFloat itemMatchValue = 0;
-        
         //3. 继续从proto后面未找过的部分里,找匹配;
-        CGFloat itemMatchValue2 = getAlgMatchVaueBlock2(i);
-        
-        
-        
-        
-        for (NSInteger j = lastMatchAtProtoIndex + 1; j < ptAleardayCount; j++) {
-            itemMatchValue = getAlgMatchValueBlock(j, cansetA_p);
-            
-            //5. 匹配成功,则更新匹配进度,并break报喜;
-            if (itemMatchValue > 0) {
-                lastMatchAtProtoIndex = j;
-                break;
-            }
-        }
+        CGFloat itemMatchValue = [self compareCansetAlg:i cansetFo:cansetFo_p matchFo:matchFo_p checkMatchIndexBlock:^BOOL(NSInteger matchIndex) {
+            return matchIndex < ptAleardayCount; //判断matchIndex属于前段;
+        }];
         
         //6. 匹配成功时: 结算这一位,继续下一位;
         if (itemMatchValue > 0) {
@@ -159,8 +104,11 @@
             
             //b. 分别对canset后段,比对两个概念匹配度;
             for (NSInteger i = cansetCutIndex + 1; i < cansetFo.count; i++) {
-                AIKVPointer *cansetA_p = ARR_INDEX(cansetFo.content_ps, i);
-                CGFloat checkBackMatchValue = getAlgMatchValueBlock(ptAleardayCount,cansetA_p);
+                
+                //b. 匹配到后段,则复用来相似度;
+                CGFloat checkBackMatchValue = [self compareCansetAlg:i cansetFo:cansetFo_p matchFo:matchFo_p checkMatchIndexBlock:^BOOL(NSInteger matchIndex) {
+                    return matchIndex == ptAleardayCount; //判断matchIndex属于后段;
+                }];
                 
                 //c. 匹配成功时: 记下匹配度和目标下标;
                 if (checkBackMatchValue > 0) {
@@ -315,6 +263,41 @@ static BOOL tempSwitch = true;
     
     //13. 直至二者循环完,即算出了最终综合匹配度排序;
     return frontSumNear;
+}
+
+/**
+ *  MARK:--------------------对比canset和match (复用indexDic和相似度)--------------------
+ *  @desc 对比canset的元素和match的元素;
+ *          1. 复用indexDic: canset和match的映射关系本来就存在indexDic中;
+ *          2. matchIndex: 根据indexDic取到matchIndex,当matchIndex<ptAleardayCount时,即为前段,=时为后段;
+ *          3. 复用matchValue: 然后将cansetIndex和matchIndex对应二者的持久化概念相似度复用返回即可;
+ *  @param checkMatchIndexBlock : 根据matchIndex检查是否要继续 (比如前段时:matchIndex在后段就不继续,或者在后段时matchIndex在前段也不继续);
+ *  @version
+ *      2022.11.20: 初版: match与canset比对,复用indexDic和alg相似度 (参考27202-3&4&5);
+ */
++(CGFloat) compareCansetAlg:(NSInteger)cansetIndex cansetFo:(AIKVPointer*)cansetFo_p matchFo:(AIKVPointer*)matchFo_p checkMatchIndexBlock:(BOOL(^)(NSInteger matchIndex))checkMatchIndexBlock{
+    //1. 数据准备;
+    AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
+    AIFoNodeBase *matchFo = [SMGUtils searchNode:matchFo_p];
+    
+    //2. 复用indexDic;
+    NSDictionary *indexDic = [cansetFo getAbsIndexDic:matchFo.pointer];
+    
+    //3. 根据indexDic取出matchIndex;
+    NSInteger matchIndex = NUMTOOK([SMGUtils filterSingleFromArr:indexDic.allKeys checkValid:^BOOL(NSNumber *key) {
+        return cansetIndex == NUMTOOK([indexDic objectForKey:key]).integerValue;
+    }]).integerValue;
+    
+    //4. 检查matchIndex: 前后段不匹配时,直接返0;
+    if (!checkMatchIndexBlock(matchIndex)) return 0;
+    
+    //5. 前后段匹配时: 返回复用matchValue相似度;
+    AIKVPointer *cansetA_p = ARR_INDEX(cansetFo.content_ps, cansetIndex);
+    AIKVPointer *matchA_p = ARR_INDEX(matchFo.content_ps, matchIndex);
+    AIAlgNodeBase *cansetA = [SMGUtils searchNode:cansetA_p];
+    CGFloat matchValue = [cansetA getAbsMatchValue:matchA_p];
+    [AITest test16:matchValue];
+    return matchValue;
 }
 
 
