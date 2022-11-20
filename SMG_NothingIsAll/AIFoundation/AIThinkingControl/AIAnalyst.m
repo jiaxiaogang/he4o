@@ -178,6 +178,17 @@ static BOOL tempSwitch = true;
         NSArray *checkAbs = [AINetUtils absPorts_All:checkAlg];
         
         
+        //TODOTOMORROW20221120: 反思也复用indexDic和matchValue (参考26292-6);
+        //1. 反思本来就是从protoCansets中,找出当前欲尝试canset之间最相似的五条;
+        //2. 然后根据这五条的评分,来反思当前欲尝试的大概会怎么样;
+        //3. 各个canset间是同层,所以无法复用indexDic和matchValue;
+        //4. 方案1: 此处不复用了先;
+        //5. 方案2: 反思是不是应该向抽象走走,毕竟protoCansets全只是解决方案,它们估计5条也反思不出个所以然;
+        //          > 所以,,,以前执行checkCanset都发生了啥?它们存在effectDic中?
+        //          > 所以,,,如果向着抽象反思,那么是canset的再抽象? (行为化结束时类比?发生负mv时???);
+        //          > 所以,,,如果 是新的canset呢?没抽象呢?
+        //          > 所以,,,如果是一个成熟的任务,突然来了一个新的canset,经验里明明知道它坑,但却反思不到?因为是新的canset没关联?
+        
         
         
         //TODOTOMORROW20221103: 把用来获取cansets的pFo传进来,复用相似度 (参考27173-todo1);
