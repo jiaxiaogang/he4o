@@ -135,18 +135,6 @@
 //MARK:                 < 比对分析两条Solution候选方案 >
 //MARK:===============================================================
 
-static int cansetIsMatchSuccess_S = 0;
-static int cansetIsMatchFailure_S = 0;
-static int protoIsMatchSuccess_S = 0;
-static int protoIsMatchFailure_S = 0;
-
-static int cansetIsMatchSuccess = 0;
-static int cansetIsMatchFailure = 0;
-static int protoIsMatchSuccess = 0;
-static int protoIsMatchFailure = 0;
-
-static BOOL tempSwitch = true;
-
 /**
  *  MARK:--------------------比对checkCanset和它的otherCanset们--------------------
  *  @desc
@@ -178,62 +166,11 @@ static BOOL tempSwitch = true;
         NSArray *checkAbs = [AINetUtils absPorts_All:checkAlg];
         
         
-        //TODOTOMORROW20221120: 反思也复用indexDic和matchValue (参考26292-6);
-        //1. 反思本来就是从protoCansets中,找出当前欲尝试canset之间最相似的五条;
-        //2. 然后根据这五条的评分,来反思当前欲尝试的大概会怎么样;
-        //3. 各个canset间是同层,所以无法复用indexDic和matchValue;
-        //4. 方案1: 此处不复用了先;
-        //5. 方案2: 反思是不是应该向抽象走走,毕竟protoCansets全只是解决方案,它们估计5条也反思不出个所以然;
-        //          > 所以,,,以前执行checkCanset都发生了啥?它们存在effectDic中?
-        //          > 所以,,,如果向着抽象反思,那么是canset的再抽象? (行为化结束时类比?发生负mv时???);
-        //          > 所以,,,如果 是新的canset呢?没抽象呢?
-        //          > 所以,,,如果是一个成熟的任务,突然来了一个新的canset,经验里明明知道它坑,但却反思不到?因为是新的canset没关联?
-        
-        //分析: 从同层进行反思,这应该是原则性错误 (因为同层再相似,也根本场景不匹配,不是一回事);
-        
-        
-        
-        
-        
-        
-        
-        
-        
         //TODOTOMORROW20221103: 把用来获取cansets的pFo传进来,复用相似度 (参考27173-todo1);
-        //TODOTOMORROW20221101: 这里的checkCanset和otherCanset在同层中,而同层间,是没有matchDic缓存的 (因为cansets是从conPorts中取的) (参考27172-2);
-        //TODOTOMORROW20221104: 实际跑起来调试下此处的checkCanset.basePFoOrTargetFoModel的抽具象关系........;
-        AIFoNodeBase *matchFo = [SMGUtils searchNode:checkCanset.getBaseFoFromBasePFoOrTargetFoModel];
-        BOOL cansetIsMatchSuccess = false;
-        for (int i = 0; i < matchFo.count; i++) {
-            AIKVPointer *matchA = ARR_INDEX(matchFo.content_ps, i);
-            //调试V2: 具象必须全含抽象,所以抽象的每一帧,都应该被canset中找到success,打出failure即错误;
-            if ([TOUtils mIsC_1:checkAlg_p c:matchA]) {
-                cansetIsMatchSuccess++;//83%
-                cansetIsMatchSuccess = true;
-            }
-        }
-        if (!cansetIsMatchSuccess) {
-            //TODOTOMORROW20221108: 查此处未指向的情况原因,目前怀疑,需要重新训练下第1步,因为其间代码改过,可能结构会混乱些;
-            cansetIsMatchFailure++;//17%
-        }
+        //TODOTOMORROW20221120: 反思也复用indexDic和matchValue (参考27202-6 & 27192);
         
-        if (ISOK(checkCanset.basePFoOrTargetFoModel, AIMatchFoModel.class)) {
-            BOOL protoIsMatchSuccess = false;
-            for (int i = 0; i < matchFo.count; i++) {
-                AIKVPointer *matchA = ARR_INDEX(matchFo.content_ps, i);
-                //调试V2: 此处全是canset中<cutIndex部分: proto肯定是已发生部分,可以判断为protoIsMatch,打出failure即错误;
-                AIMatchFoModel *pFo = (AIMatchFoModel*)checkCanset.basePFoOrTargetFoModel;
-                AIKVPointer *protoA = ARR_INDEX(pFo.realMaskFo, i);
-                if ([TOUtils mIsC_1:protoA c:matchA]) {
-                    protoIsMatchSuccess++;//67%
-                    protoIsMatchSuccess = true;
-                }
-            }
-            if (!protoIsMatchSuccess) {
-                protoIsMatchFailure++;//33%
-            }
-        }
-        
+        //1. canset的类比抽象;
+        //2. canset的spDic收集;
         
         
         
@@ -270,14 +207,6 @@ static BOOL tempSwitch = true;
             }
         }
         //12. 如果循环最后也匹配不上_则没找到共同抽象的otherIndex,那跳过这条,继续下条;
-    }
-    if (cansetIsMatchFailure + cansetIsMatchSuccess > 0) {
-        CGFloat sucRate = (float)cansetIsMatchSuccess / (cansetIsMatchFailure + cansetIsMatchSuccess) * 100;
-        NSLog(@"CHECKISMATCH_反思: cansetSuccess: %d %.0f%% cansetFailure: %d %.0f%%",cansetIsMatchSuccess,sucRate,cansetIsMatchFailure,100-sucRate);
-    }
-    if (protoIsMatchFailure + protoIsMatchSuccess > 0) {
-        CGFloat sucRate = (float)protoIsMatchSuccess / (protoIsMatchFailure + protoIsMatchSuccess) * 100;
-        NSLog(@"CHECKISMATCH_反思: protoSuccess: %d %.0f%% protoFailure: %d %.0f%%",protoIsMatchSuccess,sucRate,protoIsMatchFailure,100-sucRate);
     }
     
     //13. 直至二者循环完,即算出了最终综合匹配度排序;
