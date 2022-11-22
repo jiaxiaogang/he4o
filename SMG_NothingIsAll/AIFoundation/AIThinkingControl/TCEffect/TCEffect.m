@@ -35,7 +35,6 @@
     [AITime setTimeTrigger:maxDeltaTime trigger:^{
         //2. 取有效性 (默认即有效);
         EffectStatus es = rDemand.effectStatus == ES_NoEff ? ES_NoEff : ES_HavEff;
-        //AnalogyType tp = rDemand.effectStatus == ES_NoEff ? ATSub : ATPlus;
         
         //3. 更新effectDic;
         //AIFoNodeBase *solutionFo = [SMGUtils searchNode:rSolution.content_p];
@@ -88,7 +87,6 @@
     [AITime setTimeTrigger:deltaTime trigger:^{
         //4. 取有效性 (默认即无效);
         EffectStatus es = hDemand.effectStatus == ES_HavEff ? ES_HavEff : ES_NoEff;
-        //AnalogyType tp = hDemand.effectStatus == ES_HavEff ? ATPlus : ATSub;
         
         //5. 更新effectDic;
         [targetFoNode updateEffectStrong:targetFo.actionIndex solutionFo:hSolution.content_p status:es];

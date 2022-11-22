@@ -69,6 +69,8 @@
 /**
  *  MARK:--------------------有效率--------------------
  *  @desc <key:effectIndex, value:effectStrong> (其中mv的key为content.count) (参考26094);
+ *  @todo
+ *      2022.11.23: 待废除 (参考27205);
  */
 @property (strong, nonatomic) NSMutableDictionary *effectDic;
 

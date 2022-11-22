@@ -252,12 +252,13 @@
             
             //6. 判断input是否与hAlg相匹配 (匹配,比如找锤子,看到锤子了);
             [AITest test11:model waitAlg_p:targetAlg.content_p];//测下2523c-此处是否会导致匹配不到;
-            //            BOOL mIsC = [TOUtils mIsC_1:model.protoAlg.pointer c:targetAlg.content_p];
+            //BOOL mIsC = [TOUtils mIsC_1:model.protoAlg.pointer c:targetAlg.content_p];
             BOOL mIsC = [recognitionAlgs containsObject:targetAlg.content_p];
             if (Log4OPushM) NSLog(@"H有效判断_mIsC:(M=headerM C=%@) 结果:%d",Pit2FStr(targetAlg.content_p),mIsC);
             if (mIsC) {
-                waitModel.status = TOModelStatus_OuterBack;
+                //6. 记录feedbackAlg (参考27204-1);
                 waitModel.feedbackAlg = model.protoAlg.pointer;
+                waitModel.status = TOModelStatus_OuterBack;
                 BOOL isEndFrame = solutionModel.actionIndex == solutionModel.targetSPIndex;
                 
                 //a. H反馈中段: 标记OuterBack,solutionFo继续;
@@ -295,7 +296,7 @@
             
             //9. 判断input是否与等待中waitModel相匹配 (匹配,比如吃,确定自己是否真吃了);
             [AITest test11:model waitAlg_p:frameAlg.content_p];//测下2523c-此处是否会导致匹配不到;
-            //            BOOL mIsC = [TOUtils mIsC_1:model.protoAlg.pointer c:targetAlg.content_p];
+            //BOOL mIsC = [TOUtils mIsC_1:model.protoAlg.pointer c:targetAlg.content_p];
             BOOL mIsC = [recognitionAlgs containsObject:frameAlg.content_p];
             if (Log4OPushM) NSLog(@"Normal有效判断_mIsC:(M=headerM C=%@) 结果:%d",Pit2FStr(frameAlg.content_p),mIsC);
             if (mIsC) {
@@ -352,6 +353,7 @@
  *      2022.05.29: 反馈与demand.mv对比匹配,而不是solutionFo (参考26141-BUG1);
  *      2022.06.03: 将roots浅复制,避免强训过程中因loopCache变化而闪退;
  *      2022.09.06: TC流程调整_直接调用TCDemand (参考27096-实践1);
+ *      2022.11.23: 记录feedbackMv (参考27204-2);
  */
 +(void) feedbackTOP:(AICMVNode*)cmvNode{
     //1. 数据检查
@@ -385,6 +387,9 @@
             DemandModel *demand = (DemandModel*)waitModel.baseOrGroup;
             BOOL sameIden = [cmvNode.pointer.algsType isEqualToString:demand.algsType];
             if (sameIden) {
+                
+                //7. 记录feedbackMv (参考27204-2);
+                waitModel.feedbackMv = cmvNode.pointer;
                 
                 //7. 同向匹配 (比如撞疼,确定疼了);
                 CGFloat score = [AIScore score4MV:cmvNode.pointer ratio:1.0f];

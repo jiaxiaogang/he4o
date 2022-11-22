@@ -56,4 +56,10 @@
  */
 //@property (strong, nonatomic) TOModelBase *activateSubModel;
 
+/**
+ *  MARK:--------------------最终反馈的protoMv--------------------
+ *  @desc 当前fo的目标为mv时,如果反馈了mv,即记录到此处 (可用于生成实际发生protoFo时用到);
+ */
+@property (strong, nonatomic) AIKVPointer *feedbackMv;
+
 @end
