@@ -25,7 +25,7 @@
 @class TOFoModel;
 @interface TOAlgModel : TOModelBase <ITryActionFoDelegate,ISubModelsDelegate,ISubDemandDelegate>
 
-+(TOAlgModel*) newWithAlg_p:(AIKVPointer*)alg_p group:(id<ISubModelsDelegate>)group;
++(TOAlgModel*) newWithAlg_p:(AIKVPointer*)alg_p group:(TOModelBase<ISubModelsDelegate>*)group;
 
 /**
  *  MARK:-------------------- 一: 保留params之replaceAlgs短记--------------------

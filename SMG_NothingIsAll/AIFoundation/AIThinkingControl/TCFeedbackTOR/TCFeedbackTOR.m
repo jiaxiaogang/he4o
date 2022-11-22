@@ -114,6 +114,7 @@
             if (Log4OPushM) NSLog(@"H有效判断_mIsC:(M=headerM C=%@) 结果:%d",Pit2FStr(targetAlg.content_p),mIsC);
             if (mIsC) {
                 waitModel.status = TOModelStatus_OuterBack;
+                waitModel.feedbackAlg = model.protoAlg.pointer;
                 BOOL isEndFrame = solutionModel.actionIndex == solutionModel.targetSPIndex;
                 
                 //a. H反馈中段: 标记OuterBack,solutionFo继续;
@@ -188,6 +189,7 @@
         if ([recognitionAlgs containsObject:targetAlg.content_p]) {
             
             //c. 明确有效;
+            targetAlg.feedbackAlg = model.protoAlg.pointer;
             hDemand.effectStatus = ES_HavEff;
             hDemand.status = TOModelStatus_Finish;
         }

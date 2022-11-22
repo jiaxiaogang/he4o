@@ -84,7 +84,7 @@
                 //8. 失败状态标记;
                 [item setStatus:TIModelStatus_OutBackNone forCutIndex:curCutIndex];
                 
-                //9. 在此处推进失败时,即最终失败,则处理推进为完全时序 (参考27183);
+                //9. 中间帧推进失败时,即提前达到终点,即处理推进为完全时序 (参考27183);
                 [item pushFrameFinish];
             }
         }];
@@ -122,7 +122,7 @@
             //13. pFo任务失效 (参考27093-条件1 & 27095-1);
             item.isExpired = true;
             
-            //14. 在此处推进完全时,最终无论成或败,都处理推进为完全时序 (参考27183);
+            //14. 最末帧推进完全时,无论成败都算终点,则处理推进为完全时序 (参考27183);
             [item pushFrameFinish];
         }];
     }
