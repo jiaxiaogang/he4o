@@ -166,11 +166,19 @@
         NSArray *checkAbs = [AINetUtils absPorts_All:checkAlg];
         
         
-        //TODOTOMORROW20221103: 把用来获取cansets的pFo传进来,复用相似度 (参考27173-todo1);
-        //TODOTOMORROW20221120: 反思也复用indexDic和matchValue (参考27202-6 & 27192);
+        //TODOTOMORROW20221120: 反思也复用indexDic和matchValue (注:用checkCanset.baseOrTargetModel来复用相似度) (参考27202-6 & 27192);
         
         //1. canset的类比抽象;
+        //  先写一下canset的再类比:
+        //      1. 使其结束时调用类比器,并构建抽象;
+        //      2. 类比结果做为原任务的抽象解决方案;
+        //分析一下protoCansetFo,cansetFo,和absCansetFo之间的数据关系?是否全挂在任务下?
+        
+        
+        
+        
         //2. canset的spDic收集;
+        
         
         
         
