@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ *  MARK:--------------------行为化推进触发器--------------------
+ */
 @interface TCActYes : NSObject
 
 //+(void) arsTimeActYes:(TOAlgModel*)algModel;

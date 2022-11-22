@@ -300,7 +300,6 @@
             [TCRethink reasonOutRethink:solutionModel type:type];
             NSLog(@"---//行为化帧触发理性反省:%p A%ld 状态:%@",frameModel,frameAlg_p.pointerId,TOStatus2Str(frameModel.status));
             
-            
             //5. 失败时_继续决策 (成功时,由feedback的IN流程继续);
             if (frameModel.status == TOModelStatus_ActYes) {
                 //5. 2020.11.28: alg本级递归 (只有_Hav全部失败时,才会自行调用failure声明失败) (参考2114C);
