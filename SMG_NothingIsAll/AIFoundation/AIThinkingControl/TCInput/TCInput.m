@@ -48,7 +48,7 @@
     DebugE();
     
     //3. 概念反馈 -> 重组
-    [TCFeedbackTOR feedbackTOR:mModel];
+    [TCFeedback feedbackTOR:mModel];
     
     //4. 转regroup
     [TCRegroup rRegroup:mModel];
