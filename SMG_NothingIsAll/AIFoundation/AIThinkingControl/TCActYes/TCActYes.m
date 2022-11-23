@@ -306,8 +306,16 @@
                 ReasonDemandModel *rDemand = (ReasonDemandModel*)demand;
                 for (AIMatchFoModel *pFo in rDemand.pFos) {
                     AIFoNodeBase *matchFo = [SMGUtils searchNode:pFo.matchFo];
-                    if ([matchFo.conCansets containsObject:solutionModel.content_p]) {
-                        [matchFo updateConCanset:absCansetFo.pointer];
+                    NSArray *conCansets = [matchFo getConCansets:matchFo.count];
+                    if ([conCansets containsObject:solutionModel.content_p]) {
+                        
+                        //TODOTOMORROW20221123: 分析下,此处存入absCansetFo时,用不用把indexDic也存入其中,,,因为后面在决策时要用?
+                        
+                        
+                        
+                        
+                        
+                        [matchFo updateConCanset:absCansetFo.pointer targetIndex:matchFo.count];
                     }
                 }
             }

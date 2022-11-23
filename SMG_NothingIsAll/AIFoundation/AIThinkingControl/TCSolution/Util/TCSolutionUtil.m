@@ -151,7 +151,16 @@
     TOFoModel *targetFoModel = (TOFoModel*)hDemand.baseOrGroup.baseOrGroup;
     
     //2. 取出cansetFos候选集;
-    NSArray *cansetFos = [self getCansetFos_SlowV2:targetFoModel.content_p];
+    
+    //TODOTOMORROW20221123: 此处取得hDemand在targetFoModel中的哪一帧上,然后传为targetIndex.....
+    
+    
+    
+    
+    
+    
+    
+    NSArray *cansetFos = [self getCansetFos_SlowV2:targetFoModel.content_p targetIndex:targetFoModel.actionIndex];
     cansetFos = [self slowCansetFosFilter:cansetFos demand:hDemand];
     
     //3. 转cansetModels候选集 (参考26128-第1步 & 26161-1&2&3);
@@ -171,7 +180,8 @@
     NSArray *cansetModels = [SMGUtils convertArr:demand.pFos convertItemArrBlock:^NSArray *(AIMatchFoModel *pFo) {
         
         //2. 取出cansetFos候选集;
-        NSArray *cansetFos = [self getCansetFos_SlowV2:pFo.matchFo];
+        AIFoNodeBase *matchFo = [SMGUtils searchNode:pFo.matchFo];
+        NSArray *cansetFos = [self getCansetFos_SlowV2:pFo.matchFo targetIndex:matchFo.count];
         cansetFos = [self slowCansetFosFilter:cansetFos demand:demand];
         
         //3. 转cansetModels候选集 (参考26128-第1步 & 26161-1&2&3);
@@ -262,17 +272,17 @@
 
 /**
  *  MARK:--------------------取候选集fos--------------------
- *  @param ptFo_p : R时传pFo, H时传targetFo;
+ *  @param pFoOrTargetFoOfMatch_p : R时传pFo, H时传targetFo;
  *  @version
  *      2022.07.14: 将取抽象,同级,自身全废弃掉,改为仅取具象 (参考27049);
  *      2022.07.15: 每个pFo下支持limit (参考27048-TODO6);
  *      2022.11.19: v2更新,支持从conCansets中取数据 (参考20202-1)
  *      2022.11.19: v2的limit由5改为500 (因为conCansets的复用数据更多,性能ok) (参考27202-2);
  */
-+(NSArray*) getCansetFos_SlowV2:(AIKVPointer*)ptFo_p{
++(NSArray*) getCansetFos_SlowV2:(AIKVPointer*)pFoOrTargetFoOfMatch_p targetIndex:(NSInteger)targetIndex{
     int cansetLimit = 500;
-    AIFoNodeBase *ptFo = [SMGUtils searchNode:ptFo_p];
-    return ARR_SUB(ptFo.conCansets, 0, cansetLimit);
+    AIFoNodeBase *matchFo = [SMGUtils searchNode:pFoOrTargetFoOfMatch_p];
+    return ARR_SUB([matchFo getConCansets:targetIndex], 0, cansetLimit);
 }
 
 /**

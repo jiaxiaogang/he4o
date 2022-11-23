@@ -117,13 +117,23 @@
 /**
  *  MARK:--------------------S候选集--------------------
  *  @desc 在proto发生完全时,将它记录到此处,在sulution慢思考时,取做S候选集;
- *  @result 类型: List<AIKVPointer>
+ *  @desc 来源:
+ *          1. 末尾帧: R任务的解决方案来源,是源于TI阶段预测pFo未发生时,认为当时真实发生的事肯定有所帮助,所以才没发生,所以将其记录在此;
+ *          2. 中间帧: H任务的解决方案来源,是源于在行为化后,它真实有效时,抽象出H帧的解决方案,并记录在此;
+ *  @version
+ *      2022.11.23: 将conCansets更新成conCansetsDic (参考;
+ *  @result 类型: <K:targetIndex, V: List<AIKVPointer>> 注: 当targetIndex=self.count时,则为R任务的解决方案候选集;
  */
-@property (strong, nonatomic) NSMutableArray *conCansets;
+@property (strong, nonatomic) NSMutableDictionary *conCansetsDic;
+
+/**
+ *  MARK:--------------------获取所有候选集--------------------
+ */
+-(NSArray*) getConCansets:(NSInteger)targetIndex;
 
 /**
  *  MARK:--------------------更新一条候选--------------------
  */
--(void) updateConCanset:(AIKVPointer*)newConCansetFo;
+-(void) updateConCanset:(AIKVPointer*)newConCansetFo targetIndex:(NSInteger)targetIndex;
 
 @end

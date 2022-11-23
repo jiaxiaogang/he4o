@@ -147,7 +147,7 @@
     AIFoNodeBase *protoFo = [theNet createConFo:orders];
     
     //3. 将protoFo挂载到matchFo下的conCansets下 (参考27201-2);
-    [matchFo updateConCanset:protoFo.pointer];
+    [matchFo updateConCanset:protoFo.pointer targetIndex:matchFo.count];
     
     //4. 将item.indexDic挂载到matchFo的conIndexDDic下 (参考27201-3);
     [protoFo updateIndexDic:matchFo indexDic:self.indexDic2];

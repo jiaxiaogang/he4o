@@ -35,9 +35,9 @@
     return _conIndexDDic;
 }
 
--(NSMutableArray *)conCansets {
-    if (!_conCansets) _conCansets = [[NSMutableArray alloc] init];
-    return _conCansets;
+-(NSMutableDictionary *)conCansetsDic {
+    if (!ISOK(_conCansetsDic, NSMutableDictionary.class)) _conCansetsDic = [[NSMutableDictionary alloc] initWithDictionary:_conCansetsDic];
+    return _conCansetsDic;
 }
 
 //MARK:===============================================================
@@ -150,11 +150,27 @@
 //MARK:===============================================================
 
 /**
+ *  MARK:--------------------获取所有候选集--------------------
+ *  @desc 将>=targetIndex下标对应的解决方案候选集打包返回;
+ *  @result notnull
+ */
+-(NSArray*) getConCansets:(NSInteger)targetIndex {
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    for (NSInteger i = targetIndex; i <= self.count; i++) {
+        [result addObjectsFromArray:[self.conCansetsDic objectForKey:@(i)]];
+    }
+    result = [SMGUtils removeRepeat:result];
+    return result;
+}
+
+/**
  *  MARK:--------------------更新一条候选--------------------
  */
--(void) updateConCanset:(AIKVPointer*)newConCansetFo {
-    if (![self.conCansets containsObject:newConCansetFo]) {
-        [self.conCansets addObject:newConCansetFo];
+-(void) updateConCanset:(AIKVPointer*)newConCansetFo targetIndex:(NSInteger)targetIndex {
+    NSMutableArray *conCansets = [[NSMutableArray alloc] initWithArray:[self.conCansetsDic objectForKey:@(targetIndex)]];
+    if (![conCansets containsObject:newConCansetFo]) {
+        [conCansets addObject:newConCansetFo];
+        [self.conCansetsDic setObject:conCansets forKey:@(targetIndex)];
         [SMGUtils insertNode:self];
     }
 }
@@ -172,7 +188,7 @@
         self.effectDic = [aDecoder decodeObjectForKey:@"effectDic"];
         self.absIndexDDic = [aDecoder decodeObjectForKey:@"absIndexDDic"];
         self.conIndexDDic = [aDecoder decodeObjectForKey:@"conIndexDDic"];
-        self.conCansets = [aDecoder decodeObjectForKey:@"conCansets"];
+        self.conCansetsDic = [aDecoder decodeObjectForKey:@"conCansetsDic"];
     }
     return self;
 }
@@ -186,7 +202,7 @@
     [aCoder encodeObject:[self.effectDic copy] forKey:@"effectDic"];
     [aCoder encodeObject:[self.absIndexDDic copy] forKey:@"absIndexDDic"];
     [aCoder encodeObject:[self.conIndexDDic copy] forKey:@"conIndexDDic"];
-    [aCoder encodeObject:[self.conCansets copy] forKey:@"conCansets"];
+    [aCoder encodeObject:[self.conCansetsDic copy] forKey:@"conCansetsDic"];
 }
 
 @end
