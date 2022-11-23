@@ -338,6 +338,15 @@
                 //6. 2021.12.02: 失败时,继续决策;
                 [TCScore score];
             }
+            
+            //7. H顺利解决时->生成realProtoFo并与solutionFo类比得出抽象canset (参考27204-6);
+            if (ISOK(demand, HDemandModel.class) && frameModel.status != TOModelStatus_ActYes) {
+                
+                
+                //明日继续;
+                
+                
+            }
         }
         DebugE();
     }];
