@@ -62,4 +62,9 @@
  */
 @property (strong, nonatomic) AIKVPointer *feedbackMv;
 
+/**
+ *  MARK:--------------------将每帧反馈转成orders,以构建protoFo--------------------
+ */
+-(NSArray*) convertFeedbackAlgAndRealDeltaTimes2Orders4CreateProtoFo;
+
 @end

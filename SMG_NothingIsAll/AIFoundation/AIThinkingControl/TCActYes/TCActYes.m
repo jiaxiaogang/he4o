@@ -291,6 +291,26 @@
                 demand.status = TOModelStatus_Runing;
                 [TCScore score];
             }
+            
+            //f. R顺利解决时->生成realProtoFo并与solutionFo类比得出抽象canset (参考27204-3);
+            if (ISOK(demand, ReasonDemandModel.class) && solutionModel.status != TOModelStatus_OuterBack) {
+                
+                //g. 收集真实发生feedbackAlg,并生成新protoFo时序 (参考27204-3);
+                NSArray *order = [solutionModel convertFeedbackAlgAndRealDeltaTimes2Orders4CreateProtoFo];
+                AIFoNodeBase *protoFo = [theNet createConFo:order];
+                
+                //h. 外类比,并将结果挂到conCansets下 (参考27204-4);
+                AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:protoFo assFo:solutionFo type:ATDefault];
+                
+                //i. absCansetFo挂到任务下做为新的canset (参考27204-5);
+                ReasonDemandModel *rDemand = (ReasonDemandModel*)demand;
+                for (AIMatchFoModel *pFo in rDemand.pFos) {
+                    AIFoNodeBase *matchFo = [SMGUtils searchNode:pFo.matchFo];
+                    if ([matchFo.conCansets containsObject:solutionModel.content_p]) {
+                        [matchFo updateConCanset:absCansetFo.pointer];
+                    }
+                }
+            }
         }
         //5. 中间为帧理性目标;
         else{

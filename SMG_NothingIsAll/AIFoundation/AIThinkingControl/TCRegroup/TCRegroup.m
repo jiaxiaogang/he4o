@@ -56,24 +56,9 @@
     //1. 数据准备;
     [theTC updateOperCount:kFILENAME];
     Debug();
-    AIFoNodeBase *fo = [SMGUtils searchNode:foModel.content_p];
     
     //3. 数据准备 (收集除末位外的content为order);
-    NSMutableArray *order = [[NSMutableArray alloc] init];
-    for (NSInteger i = 0; i < fo.count - 1; i++) {
-        AIKVPointer *alg_p = ARR_INDEX(fo.content_ps, i);
-        
-        //4. 将反馈代入;
-        for (TOAlgModel *item in foModel.subModels) {
-            if (item.status == TOModelStatus_OuterBack && [item.content_p isEqual:alg_p]) {
-                alg_p = item.feedbackAlg;
-            }
-        }
-        
-        //5. 生成时序元素;
-        NSTimeInterval inputTime = [NUMTOOK(ARR_INDEX(fo.deltaTimes, i)) longLongValue];
-        [order addObject:[AIShortMatchModel_Simple newWithAlg_p:alg_p inputTime:inputTime]];
-    }
+    NSArray *order = [foModel convertFeedbackAlgAndRealDeltaTimes2Orders4CreateProtoFo];
     
     //6. 将时序元素生成新时序;
     AIFoNodeBase *regroupFo = [theNet createConFo:order];

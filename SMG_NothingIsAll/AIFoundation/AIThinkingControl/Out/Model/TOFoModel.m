@@ -66,6 +66,34 @@
 //}
 
 /**
+ *  MARK:--------------------将每帧反馈转成orders,以构建protoFo--------------------
+ */
+-(NSArray*) convertFeedbackAlgAndRealDeltaTimes2Orders4CreateProtoFo {
+    //1. 数据准备 (收集除末位外的content为order);
+    AIFoNodeBase *fo = [SMGUtils searchNode:self.content_p];
+    NSMutableArray *order = [[NSMutableArray alloc] init];
+    
+    //2. 将fo逐帧收集真实发生的alg;
+    for (NSInteger i = 0; i < fo.count - 1; i++) {
+        
+        //3. 如果没反馈feedbackAlg,则从fo.content中取;
+        AIKVPointer *alg_p = ARR_INDEX(fo.content_ps, i);
+        
+        //4. 如果有反馈feedbackAlg,则优先取反馈;
+        for (TOAlgModel *item in self.subModels) {
+            if (item.status == TOModelStatus_OuterBack && [item.content_p isEqual:alg_p]) {
+                alg_p = item.feedbackAlg;
+            }
+        }
+        
+        //5. 生成时序元素;
+        NSTimeInterval inputTime = [NUMTOOK(ARR_INDEX(fo.deltaTimes, i)) longLongValue];
+        [order addObject:[AIShortMatchModel_Simple newWithAlg_p:alg_p inputTime:inputTime]];
+    }
+    return order;
+}
+
+/**
  *  MARK:--------------------NSCoding--------------------
  */
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
@@ -75,6 +103,7 @@
         self.actionIndex = [aDecoder decodeIntegerForKey:@"actionIndex"];
         self.targetSPIndex = [aDecoder decodeIntegerForKey:@"targetSPIndex"];
         self.subDemands = [aDecoder decodeObjectForKey:@"subDemands"];
+        self.feedbackMv = [aDecoder decodeObjectForKey:@"feedbackMv"];
     }
     return self;
 }
@@ -85,6 +114,7 @@
     [aCoder encodeInteger:self.actionIndex forKey:@"actionIndex"];
     [aCoder encodeInteger:self.targetSPIndex forKey:@"targetSPIndex"];
     [aCoder encodeObject:self.subDemands forKey:@"subDemands"];
+    [aCoder encodeObject:self.feedbackMv forKey:@"feedbackMv"];
 }
 
 @end

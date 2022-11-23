@@ -319,16 +319,16 @@
     
     //2. ============== 对HDemand反馈判断 ==============
     //a. 收集所有工作记忆树的H任务;
-    NSMutableArray *allRDemands = [[NSMutableArray alloc] init];
+    NSMutableArray *allHDemands = [[NSMutableArray alloc] init];
     for (DemandModel *root in theTC.outModelManager.getAllDemand) {
         NSArray *singleRDemands = [SMGUtils filterArr:[TOUtils getSubOutModels_AllDeep:root validStatus:nil] checkValid:^BOOL(TOModelBase *item) {
             return ISOK(item, HDemandModel.class);
         }];
-        [allRDemands addObjectsFromArray:singleRDemands];
+        [allHDemands addObjectsFromArray:singleRDemands];
     }
     
     //b. 反馈匹配 (比如找锤子,看到锤子了);
-    for (HDemandModel *hDemand in allRDemands) {
+    for (HDemandModel *hDemand in allHDemands) {
         TOAlgModel *targetAlg = (TOAlgModel*)hDemand.baseOrGroup;   //hDemand的目标alg;
         if ([recognitionAlgs containsObject:targetAlg.content_p]) {
             
