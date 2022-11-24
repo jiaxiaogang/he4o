@@ -151,15 +151,7 @@
     TOFoModel *targetFoModel = (TOFoModel*)hDemand.baseOrGroup.baseOrGroup;
     
     //2. 取出cansetFos候选集;
-    
-    //TODOTOMORROW20221123: 此处取得hDemand在targetFoModel中的哪一帧上,然后传为targetIndex.....
-    
-    
-    
-    
-    
-    
-    
+    //TODOTEST20221123: 测下此处取actionIndex是否正确...
     NSArray *cansetFos = [self getCansetFos_SlowV2:targetFoModel.content_p targetIndex:targetFoModel.actionIndex];
     cansetFos = [self slowCansetFosFilter:cansetFos demand:hDemand];
     
