@@ -151,7 +151,7 @@
 
 /**
  *  MARK:--------------------获取所有候选集--------------------
- *  @desc 将>=targetIndex下标对应的解决方案候选集打包返回;
+ *  @desc 将>=targetIndex下标对应的解决方案候选集打包返回 (参考27204b);
  *  @result notnull
  */
 -(NSArray*) getConCansets:(NSInteger)targetIndex {

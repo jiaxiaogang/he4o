@@ -340,12 +340,19 @@
             }
             
             //7. H顺利解决时->生成realProtoFo并与solutionFo类比得出抽象canset (参考27204-6);
-            if (ISOK(demand, HDemandModel.class) && frameModel.status != TOModelStatus_ActYes) {
+            if (ISOK(demand, HDemandModel.class) && solutionModel.targetSPIndex == solutionModel.actionIndex && type == ATPlus) {
                 
+                //g. 收集真实发生feedbackAlg,并生成新protoFo时序 (参考27204-6);
+                NSArray *order = [solutionModel convertFeedbackAlgAndRealDeltaTimes2Orders4CreateProtoFo];
+                AIFoNodeBase *protoFo = [theNet createConFo:order];
                 
-                //明日继续;
+                //h. 外类比,并将结果挂到conCansets下 (参考27204-4);
+                AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:protoFo assFo:solutionFo type:ATDefault];
                 
-                
+                //i. 取出targetFo,然后将absCansetFo挂在下面,index=当前目标帧下标(targetFoModel.actionIndex) (参考27204-8);
+                TOFoModel *targetFoModel = (TOFoModel*)demand.baseOrGroup;
+                AIFoNodeBase *targetFo = [SMGUtils searchNode:targetFoModel.content_p];
+                [targetFo updateConCanset:absCansetFo.pointer targetIndex:targetFoModel.actionIndex];
             }
         }
         DebugE();
