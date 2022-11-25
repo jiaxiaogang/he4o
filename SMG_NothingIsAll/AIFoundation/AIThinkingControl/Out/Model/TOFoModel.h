@@ -65,6 +65,6 @@
 /**
  *  MARK:--------------------将每帧反馈转成orders,以构建protoFo--------------------
  */
--(NSArray*) convertFeedbackAlgAndRealDeltaTimes2Orders4CreateProtoFo;
+-(NSArray*) convertFeedbackAlgAndRealDeltaTimes2Orders4CreateProtoFo:(BOOL)justFeedbackAlg;
 
 @end

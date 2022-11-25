@@ -58,7 +58,7 @@
     Debug();
     
     //3. 数据准备 (收集除末位外的content为order);
-    NSArray *order = [foModel convertFeedbackAlgAndRealDeltaTimes2Orders4CreateProtoFo];
+    NSArray *order = [foModel convertFeedbackAlgAndRealDeltaTimes2Orders4CreateProtoFo:false];
     
     //6. 将时序元素生成新时序;
     AIFoNodeBase *regroupFo = [theNet createConFo:order];

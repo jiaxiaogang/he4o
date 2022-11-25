@@ -67,28 +67,38 @@
 
 /**
  *  MARK:--------------------将每帧反馈转成orders,以构建protoFo--------------------
+ *  @param justFeedbackAlg : 仅转换有feedbackAlg的部分;
+ *  @version
+ *      2022.11.25: 转regroupFo时收集默认content_p内容(代码不变),canset再类比时仅获取feedback反馈的alg (参考27207-1);
  */
--(NSArray*) convertFeedbackAlgAndRealDeltaTimes2Orders4CreateProtoFo {
+-(NSArray*) convertFeedbackAlgAndRealDeltaTimes2Orders4CreateProtoFo:(BOOL)justFeedbackAlg {
     //1. 数据准备 (收集除末位外的content为order);
     AIFoNodeBase *fo = [SMGUtils searchNode:self.content_p];
     NSMutableArray *order = [[NSMutableArray alloc] init];
     
     //2. 将fo逐帧收集真实发生的alg;
     for (NSInteger i = 0; i < fo.count - 1; i++) {
-        
-        //3. 如果没反馈feedbackAlg,则从fo.content中取;
-        AIKVPointer *alg_p = ARR_INDEX(fo.content_ps, i);
+        //3. 找到当前帧alg_p;
+        AIKVPointer *matchAlg_p = ARR_INDEX(fo.content_ps, i);
         
         //4. 如果有反馈feedbackAlg,则优先取反馈;
+        AIKVPointer *findAlg_p = nil;
         for (TOAlgModel *item in self.subModels) {
-            if (item.status == TOModelStatus_OuterBack && [item.content_p isEqual:alg_p]) {
-                alg_p = item.feedbackAlg;
+            if (item.status == TOModelStatus_OuterBack && [item.content_p isEqual:matchAlg_p]) {
+                findAlg_p = item.feedbackAlg;
             }
         }
         
+        //4. 如果没找着feedbackAlg,且允许取match时,则取matchAlg;
+        if (!findAlg_p && !justFeedbackAlg) {
+            findAlg_p = matchAlg_p;
+        }
+        
         //5. 生成时序元素;
-        NSTimeInterval inputTime = [NUMTOOK(ARR_INDEX(fo.deltaTimes, i)) longLongValue];
-        [order addObject:[AIShortMatchModel_Simple newWithAlg_p:alg_p inputTime:inputTime]];
+        if (findAlg_p) {
+            NSTimeInterval inputTime = [NUMTOOK(ARR_INDEX(fo.deltaTimes, i)) longLongValue];
+            [order addObject:[AIShortMatchModel_Simple newWithAlg_p:findAlg_p inputTime:inputTime]];
+        }
     }
     return order;
 }

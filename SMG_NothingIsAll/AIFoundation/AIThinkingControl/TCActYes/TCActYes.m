@@ -296,7 +296,7 @@
             if (ISOK(demand, ReasonDemandModel.class) && solutionModel.status != TOModelStatus_OuterBack) {
                 
                 //g. 收集真实发生feedbackAlg,并生成新protoFo时序 (参考27204-3);
-                NSArray *order = [solutionModel convertFeedbackAlgAndRealDeltaTimes2Orders4CreateProtoFo];
+                NSArray *order = [solutionModel convertFeedbackAlgAndRealDeltaTimes2Orders4CreateProtoFo:true];
                 AIFoNodeBase *protoFo = [theNet createConFo:order];
                 
                 //h. 外类比,并将结果挂到conCansets下 (参考27204-4);
@@ -350,7 +350,7 @@
             if (ISOK(demand, HDemandModel.class) && solutionModel.targetSPIndex == solutionModel.actionIndex && type == ATPlus) {
                 
                 //g. 收集真实发生feedbackAlg,并生成新protoFo时序 (参考27204-6);
-                NSArray *order = [solutionModel convertFeedbackAlgAndRealDeltaTimes2Orders4CreateProtoFo];
+                NSArray *order = [solutionModel convertFeedbackAlgAndRealDeltaTimes2Orders4CreateProtoFo:true];
                 AIFoNodeBase *protoFo = [theNet createConFo:order];
                 
                 //h. 外类比,并将结果挂到conCansets下 (参考27204-4);
