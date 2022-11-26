@@ -310,14 +310,6 @@
                     if ([conCansets containsObject:solutionModel.content_p]) {
                         
                         //TODOTOMORROW20221123: 分析下,此处存入absCansetFo时,用不用把indexDic也存入其中,,,因为后面在决策时要用?
-                        //查一下,此处proto当时feedbackAlg是怎么记录下来的,经查在feedbackTOR中是feedbackAlg抽象指向solutionAlg (或者feedbackAlg=solutionAlg);
-                        //所以protoFo和solutionFo类比,得出的结果还是solutionFo,只是有可能缺后面几帧,因为提前已完全了...尤其是H任务更是绝对会少后面帧因为target之后没了;
-                        
-                        //类比: 所以此处protoFo和solutionFo类比后的absCanset,其实还是solutionFo,只是在H时截取了其中targetIndex前的部分;
-                        //convertFeedbackAlgAndRealDeltaTimes2Orders4CreateProtoFo
-                        //  1. 此方法看要不要改成target之后就不返回;
-                        //  2. 或者无feedbackAlg的不返回,毕竟这部分才是真正结束且未有反馈的部分;
-                        
                         
                         
                         
