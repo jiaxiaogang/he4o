@@ -67,4 +67,9 @@
  */
 -(NSArray*) convertFeedbackAlgAndRealDeltaTimes2Orders4CreateProtoFo:(BOOL)justFeedbackAlg;
 
+/**
+ *  MARK:--------------------算出新的indexDic--------------------
+ */
+-(NSDictionary*) convertOldIndexDic2NewIndexDic:(AIKVPointer*)targetOrPFo_p;
+
 @end

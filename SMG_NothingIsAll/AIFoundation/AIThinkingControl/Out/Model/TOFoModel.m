@@ -104,6 +104,46 @@
 }
 
 /**
+ *  MARK:--------------------算出新的indexDic--------------------
+ *  @desc 用旧indexDic和feedbackAlg计算出新的indexDic (参考27206d-方案2);
+ */
+-(NSDictionary*) convertOldIndexDic2NewIndexDic:(AIKVPointer*)targetOrPFo_p {
+    //1. 数据准备;
+    AIFoNodeBase *fo = [SMGUtils searchNode:self.content_p];
+    NSMutableArray *feedbackConIndexArr = [[NSMutableArray alloc] init];
+    AIFoNodeBase *targetOrPFo = [SMGUtils searchNode:targetOrPFo_p];
+    AIKVPointer *solutionFo = self.content_p;
+    
+    //2. 将fo逐帧收集有反馈的conIndex (参考27207-7);
+    for (NSInteger i = 0; i < fo.count - 1; i++) {
+        AIKVPointer *matchAlg_p = ARR_INDEX(fo.content_ps, i);
+        for (TOAlgModel *item in self.subModels) {
+            if (item.status == TOModelStatus_OuterBack && [item.content_p isEqual:matchAlg_p]) {
+                [feedbackConIndexArr addObject:@(i)];
+                break;
+            }
+        }
+    }
+    
+    //3. 取出solutionFo旧有的indexDic (参考27207-8);
+    NSDictionary *oldIndexDic = [targetOrPFo getConIndexDic:solutionFo];
+    
+    //4. 筛选出有反馈的absIndex数组 (参考27207-9);
+    NSArray *feedbackAbsIndexArr = [SMGUtils filterArr:oldIndexDic.allKeys checkValid:^BOOL(NSNumber *absIndexKey) {
+        NSNumber *conIndexValue = NUMTOOK([oldIndexDic objectForKey:absIndexKey]);
+        return [feedbackConIndexArr containsObject:conIndexValue];
+    }];
+    
+    //5. 转成newIndexDic (参考27207-10);
+    NSMutableDictionary *newIndexDic = [[NSMutableDictionary alloc] init];
+    for (NSInteger i = 0; i < feedbackAbsIndexArr.count; i++) {
+        NSNumber *absIndex = ARR_INDEX(feedbackAbsIndexArr, i);
+        [newIndexDic setObject:@(i) forKey:absIndex];
+    }
+    return newIndexDic;
+}
+
+/**
  *  MARK:--------------------NSCoding--------------------
  */
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {

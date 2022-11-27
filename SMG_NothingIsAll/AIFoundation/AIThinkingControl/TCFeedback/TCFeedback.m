@@ -217,6 +217,8 @@
  *      2022.06.01: H反馈中段和末帧改的状态不同处理;
  *      2022.06.01: 有反馈时,继续调用TCScore (参考26185-TODO2);
  *      2022.06.01: HDemand.targetAlg提前反馈时,HDemand设为finish状态 (参考26185-TODO6);
+ *      2022.11.27: H任务完成时,H当前正执行的S提前完成,并进行外类比 (参考27206c-H任务);
+ *      2022.11.27: H解决方案再类比时,为其生成indexDic (参考27206d-方案2);
  *  @bug
  *      2020.09.22: 加上cutStopStatus,避免同一waitModel被多次触发,导致BUG (参考21042);
  *      2020.12.26: GL时,waitType的判断改为bFo,因为只有bFo才携带了waitTypeDS (参考21204);
@@ -349,17 +351,13 @@
                     NSArray *order = [solutionModel convertFeedbackAlgAndRealDeltaTimes2Orders4CreateProtoFo:true];
                     AIFoNodeBase *protoFo = [theNet createConFo:order];
                     
-                    //h. 外类比,并将结果挂到conCansets下 (参考27204-4);
-                    
-                    //TODOTOMORROW20221127: 把indexDic从类比中取得,或者从取order的算法中取得,然后到类比中,就不用再类比了,只需要直接截出抽象时序;
-                    
-                    
-                    
-                    
+                    //h. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
                     AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:protoFo assFo:solutionFo type:ATDefault];
-                    
-                    //i. 取出targetFo,然后将absCansetFo挂在下面,index=当前目标帧下标(targetFoModel.actionIndex) (参考27204-8);
                     [targetFo updateConCanset:absCansetFo.pointer targetIndex:targetFoModel.actionIndex];
+                    
+                    //j. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);
+                    NSDictionary *newIndexDic = [solutionModel convertOldIndexDic2NewIndexDic:targetFoModel.content_p];
+                    [absCansetFo updateIndexDic:targetFo indexDic:newIndexDic];
                 }
             }
         }
