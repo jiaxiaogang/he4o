@@ -17,7 +17,7 @@
 
 @implementation TOFoModel
 
-+(TOFoModel*) newWithFo_p:(AIKVPointer*)fo_p base:(TOModelBase<ITryActionFoDelegate>*)base{
++(TOFoModel*) newWithFo_p:(AIKVPointer*)fo_p base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFo_p:(AIKVPointer*)basePFoOrTargetFo_p{
     //1. 数据准备;
     AIFoNodeBase *fo = [SMGUtils searchNode:fo_p];
     TOFoModel *result = [[TOFoModel alloc] initWithContent_p:fo_p];

@@ -22,7 +22,7 @@
  */
 @interface TOFoModel : TOModelBase <ISubModelsDelegate,ISubDemandDelegate>
 
-+(TOFoModel*) newWithFo_p:(AIKVPointer*)fo_p base:(TOModelBase<ITryActionFoDelegate>*)base;
++(TOFoModel*) newWithFo_p:(AIKVPointer*)fo_p base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFo_p:(AIKVPointer*)basePFoOrTargetFo_p;
 
 /**
  *  MARK:--------------------行为化数据--------------------
@@ -61,6 +61,11 @@
  *  @desc 当前fo的目标为mv时,如果反馈了mv,即记录到此处 (可用于生成实际发生protoFo时用到);
  */
 @property (strong, nonatomic) AIKVPointer *feedbackMv;
+
+/**
+ *  MARK:--------------------此解决方案基于哪个pFo/targetFo--------------------
+ */
+@property (strong, nonatomic) AIKVPointer *basePFoOrTargetFo_p;
 
 /**
  *  MARK:--------------------将每帧反馈转成orders,以构建protoFo--------------------

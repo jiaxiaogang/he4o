@@ -137,30 +137,51 @@
 
 /**
  *  MARK:--------------------推进帧结束(完全帧)时总结 (参考27201-5)--------------------
+ *  @version
+ *      2022.11.28: 自然未发生则生成protoCanset,行为有作用则触发再类比生成absCanset (参考27206c-R任务);
  */
 -(void) pushFrameFinish {
-    //1. 数据准备;
-    AIFoNodeBase *matchFo = [SMGUtils searchNode:self.matchFo];
-    NSArray *orders = [self convertRealMaskFoAndRealDeltaTimes2Orders4CreateProtoFo];
+    //1. 判断处在actYes状态的解决方案 && 解决方案是属性当前pFo决策取得的 (参考27206c-综上&多S问题);
+    NSArray *solutionModels = [SMGUtils filterArr:self.baseRDemand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
+        return item.status == TOModelStatus_ActYes && [item.basePFoOrTargetFo_p isEqual:self.matchFo];
+    }];
     
-    //2. 用realMaskFo & realDeltaTimes生成protoFo (参考27201-1 & 5);
-    AIFoNodeBase *protoFo = [theNet createConFo:orders];
-    
-    //3. 将protoFo挂载到matchFo下的conCansets下 (参考27201-2);
-    [matchFo updateConCanset:protoFo.pointer targetIndex:matchFo.count];
-    
-    //4. 将item.indexDic挂载到matchFo的conIndexDDic下 (参考27201-3);
-    [protoFo updateIndexDic:matchFo indexDic:self.indexDic2];
-    
-    
-    //TODOTOMORROW20221127: 参考27206c-R任务;
-    //假如此处,并不是自然解决的,而是有行为化解决的问题,那么:
-    //1. protoFo还应该做为canset吗?
-    //2. 它正在执行的解决方案是否起到了作用?应该触发canset再类比?
-    if (self.baseRDemand.subSolutionModels.count > 0) {
-        ....有S且完成时?
-        ....有S但未完成时?
-        ....无S时?
+    //2. =================有actYes的时,归功于解决方案,执行canset再类比 (参考27206c-R任务)=================
+    if (ARRISOK(solutionModels)) {
+        for (TOFoModel *solutionModel in solutionModels) {
+            [AITest test17:solutionModel.status];
+            //a. 数据准备;
+            AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.content_p];
+            AIFoNodeBase *pFo = [SMGUtils searchNode:solutionModel.basePFoOrTargetFo_p];
+            
+            //g. 收集真实发生feedbackAlg,并生成新protoFo时序 (参考27204-6);
+            NSArray *order = [solutionModel convertFeedbackAlgAndRealDeltaTimes2Orders4CreateProtoFo:true];
+            AIFoNodeBase *protoFo = [theNet createConFo:order];
+            
+            //h. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
+            AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:protoFo assFo:solutionFo type:ATDefault];
+            [pFo updateConCanset:absCansetFo.pointer targetIndex:pFo.count];
+            
+            //j. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);
+            NSDictionary *newIndexDic = [solutionModel convertOldIndexDic2NewIndexDic:pFo.pointer];
+            [absCansetFo updateIndexDic:pFo indexDic:newIndexDic];
+            [AITest test18:newIndexDic newCanset:absCansetFo absFo:pFo];
+        }
+    }
+    //3. =================无actYes的S时,归功于自然未发生,则新增protoCanset (参考27206c-R任务)=================
+    else {
+        //a. 数据准备;
+        AIFoNodeBase *matchFo = [SMGUtils searchNode:self.matchFo];
+        NSArray *orders = [self convertRealMaskFoAndRealDeltaTimes2Orders4CreateProtoFo];
+        
+        //b. 用realMaskFo & realDeltaTimes生成protoFo (参考27201-1 & 5);
+        AIFoNodeBase *protoFo = [theNet createConFo:orders];
+        
+        //c. 将protoFo挂载到matchFo下的conCansets下 (参考27201-2);
+        [matchFo updateConCanset:protoFo.pointer targetIndex:matchFo.count];
+        
+        //d. 将item.indexDic挂载到matchFo的conIndexDDic下 (参考27201-3);
+        [protoFo updateIndexDic:matchFo indexDic:self.indexDic2];
     }
 }
 
