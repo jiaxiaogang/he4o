@@ -336,6 +336,32 @@
             targetAlg.feedbackAlg = model.protoAlg.pointer;
             hDemand.effectStatus = ES_HavEff;
             hDemand.status = TOModelStatus_Finish;
+            
+            //8. H任务完成时,H当前正执行的S提前完成,并进行外类比 (参考27206c-H任务);
+            for (TOFoModel *solutionModel in hDemand.actionFoModels) {
+                if (solutionModel.status == TOModelStatus_ActYes) {
+                    //a. 数据准备;
+                    AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.content_p];
+                    TOFoModel *targetFoModel = (TOFoModel*)hDemand.baseOrGroup;
+                    AIFoNodeBase *targetFo = [SMGUtils searchNode:targetFoModel.content_p];
+                    
+                    //g. 收集真实发生feedbackAlg,并生成新protoFo时序 (参考27204-6);
+                    NSArray *order = [solutionModel convertFeedbackAlgAndRealDeltaTimes2Orders4CreateProtoFo:true];
+                    AIFoNodeBase *protoFo = [theNet createConFo:order];
+                    
+                    //h. 外类比,并将结果挂到conCansets下 (参考27204-4);
+                    
+                    //TODOTOMORROW20221127: 把indexDic从类比中取得,或者从取order的算法中取得,然后到类比中,就不用再类比了,只需要直接截出抽象时序;
+                    
+                    
+                    
+                    
+                    AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:protoFo assFo:solutionFo type:ATDefault];
+                    
+                    //i. 取出targetFo,然后将absCansetFo挂在下面,index=当前目标帧下标(targetFoModel.actionIndex) (参考27204-8);
+                    [targetFo updateConCanset:absCansetFo.pointer targetIndex:targetFoModel.actionIndex];
+                }
+            }
         }
     }
     DebugE();
