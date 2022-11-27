@@ -38,6 +38,11 @@
     result.fromIden = STRFORMAT(@"%p",inModel);
     result.protoFo = inModel.protoFo.pointer;
     result.regroupFo = inModel.regroupFo.pointer;
+    
+    //4. pFos赋值baseRDemand;
+    for (AIMatchFoModel *pFo in pFos) {
+        pFo.baseRDemand = result;
+    }
     return result;
 }
 

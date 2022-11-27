@@ -151,6 +151,17 @@
     
     //4. 将item.indexDic挂载到matchFo的conIndexDDic下 (参考27201-3);
     [protoFo updateIndexDic:matchFo indexDic:self.indexDic2];
+    
+    
+    //TODOTOMORROW20221127: 参考27206c-R任务;
+    //假如此处,并不是自然解决的,而是有行为化解决的问题,那么:
+    //1. protoFo还应该做为canset吗?
+    //2. 它正在执行的解决方案是否起到了作用?应该触发canset再类比?
+    if (self.baseRDemand.subSolutionModels.count > 0) {
+        ....有S且完成时?
+        ....有S但未完成时?
+        ....无S时?
+    }
 }
 
 /**
