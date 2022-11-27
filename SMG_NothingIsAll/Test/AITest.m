@@ -154,4 +154,20 @@
     }
 }
 
++(void) test17:(TOModelStatus)status {
+    NSLog(@"调试一下,H任务在什么状态时,可以触发canset再类比? %ld",status);
+}
+
++(void) test18:(NSDictionary*)newIndexDic newCanset:(AIFoNodeBase*)newCanset absFo:(AIFoNodeBase*)absFo {
+    for (NSNumber *key in newIndexDic.allKeys) {
+        NSInteger absIndex = key.integerValue;
+        NSInteger conIndex = NUMTOOK([newIndexDic objectForKey:key]).integerValue;
+        AIKVPointer *conAlg = ARR_INDEX(newCanset.content_ps, conIndex);
+        AIKVPointer *absAlg = ARR_INDEX(absFo.content_ps, absIndex);
+        if (![TOUtils mIsC_1:conAlg c:absAlg]) {
+            ELog(@"检查newCanset的indexDic有误");
+        }
+    }
+}
+
 @end

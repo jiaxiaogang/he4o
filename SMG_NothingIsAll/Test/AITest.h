@@ -26,5 +26,7 @@
 +(void) test14:(CGFloat)near;
 +(void) test15:(AIMatchFoModel*)model;
 +(void) test16:(CGFloat)algHDMatchValue;
++(void) test17:(TOModelStatus)status;
++(void) test18:(NSDictionary*)newIndexDic newCanset:(AIFoNodeBase*)newCanset absFo:(AIFoNodeBase*)absFo;
 
 @end

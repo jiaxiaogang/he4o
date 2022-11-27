@@ -341,6 +341,7 @@
             
             //8. H任务完成时,H当前正执行的S提前完成,并进行外类比 (参考27206c-H任务);
             for (TOFoModel *solutionModel in hDemand.actionFoModels) {
+                [AITest test17:solutionModel.status];
                 if (solutionModel.status == TOModelStatus_ActYes) {
                     //a. 数据准备;
                     AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.content_p];
@@ -358,6 +359,7 @@
                     //j. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);
                     NSDictionary *newIndexDic = [solutionModel convertOldIndexDic2NewIndexDic:targetFoModel.content_p];
                     [absCansetFo updateIndexDic:targetFo indexDic:newIndexDic];
+                    [AITest test18:newIndexDic newCanset:absCansetFo absFo:targetFo];
                 }
             }
         }
