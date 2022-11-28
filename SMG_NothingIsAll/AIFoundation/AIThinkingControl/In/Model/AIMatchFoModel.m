@@ -145,11 +145,13 @@
     NSArray *solutionModels = [SMGUtils filterArr:self.baseRDemand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
         return item.status == TOModelStatus_ActYes && [item.basePFoOrTargetFo_p isEqual:self.matchFo];
     }];
+    for (TOFoModel *item in self.baseRDemand.actionFoModels) {
+        [AITest test17:item.status];
+    }
     
     //2. =================有actYes的时,归功于解决方案,执行canset再类比 (参考27206c-R任务)=================
     if (ARRISOK(solutionModels)) {
         for (TOFoModel *solutionModel in solutionModels) {
-            [AITest test17:solutionModel.status];
             //a. 数据准备;
             AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.content_p];
             AIFoNodeBase *pFo = [SMGUtils searchNode:solutionModel.basePFoOrTargetFo_p];

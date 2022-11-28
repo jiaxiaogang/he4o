@@ -291,33 +291,6 @@
                 demand.status = TOModelStatus_Runing;
                 [TCScore score];
             }
-            
-            //f. R顺利解决时->生成realProtoFo并与solutionFo类比得出抽象canset (参考27204-3);
-            if (ISOK(demand, ReasonDemandModel.class) && solutionModel.status != TOModelStatus_OuterBack) {
-                
-                //g. 收集真实发生feedbackAlg,并生成新protoFo时序 (参考27204-3);
-                NSArray *order = [solutionModel convertFeedbackAlgAndRealDeltaTimes2Orders4CreateProtoFo:true];
-                AIFoNodeBase *protoFo = [theNet createConFo:order];
-                
-                //h. 外类比,并将结果挂到conCansets下 (参考27204-4);
-                AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:protoFo assFo:solutionFo type:ATDefault];
-                
-                //i. absCansetFo挂到任务下做为新的canset (参考27204-5);
-                ReasonDemandModel *rDemand = (ReasonDemandModel*)demand;
-                for (AIMatchFoModel *pFo in rDemand.pFos) {
-                    AIFoNodeBase *matchFo = [SMGUtils searchNode:pFo.matchFo];
-                    NSArray *conCansets = [matchFo getConCansets:matchFo.count];
-                    if ([conCansets containsObject:solutionModel.content_p]) {
-                        
-                        //TODOTOMORROW20221123: 分析下,此处存入absCansetFo时,用不用把indexDic也存入其中,,,因为后面在决策时要用?
-                        
-                        
-                        
-                        
-                        [matchFo updateConCanset:absCansetFo.pointer targetIndex:matchFo.count];
-                    }
-                }
-            }
         }
         //5. 中间为帧理性目标;
         else{
@@ -336,22 +309,6 @@
                 
                 //6. 2021.12.02: 失败时,继续决策;
                 [TCScore score];
-            }
-            
-            //7. H顺利解决时->生成realProtoFo并与solutionFo类比得出抽象canset (参考27204-6);
-            if (ISOK(demand, HDemandModel.class) && solutionModel.targetSPIndex == solutionModel.actionIndex && type == ATPlus) {
-                
-                //g. 收集真实发生feedbackAlg,并生成新protoFo时序 (参考27204-6);
-                NSArray *order = [solutionModel convertFeedbackAlgAndRealDeltaTimes2Orders4CreateProtoFo:true];
-                AIFoNodeBase *protoFo = [theNet createConFo:order];
-                
-                //h. 外类比,并将结果挂到conCansets下 (参考27204-4);
-                AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:protoFo assFo:solutionFo type:ATDefault];
-                
-                //i. 取出targetFo,然后将absCansetFo挂在下面,index=当前目标帧下标(targetFoModel.actionIndex) (参考27204-8);
-                TOFoModel *targetFoModel = (TOFoModel*)demand.baseOrGroup;
-                AIFoNodeBase *targetFo = [SMGUtils searchNode:targetFoModel.content_p];
-                [targetFo updateConCanset:absCansetFo.pointer targetIndex:targetFoModel.actionIndex];
             }
         }
         DebugE();
