@@ -75,6 +75,7 @@
     //1. 数据准备 (收集除末位外的content为order);
     AIFoNodeBase *fo = [SMGUtils searchNode:self.content_p];
     NSMutableArray *order = [[NSMutableArray alloc] init];
+    NSArray *feedbackIndexArr = [self getIndexArrIfHavFeedback];
     
     //2. 将fo逐帧收集真实发生的alg;
     for (NSInteger i = 0; i < fo.count - 1; i++) {
@@ -83,14 +84,11 @@
         
         //4. 如果有反馈feedbackAlg,则优先取反馈;
         AIKVPointer *findAlg_p = nil;
-        for (TOAlgModel *item in self.subModels) {
-            if (item.status == TOModelStatus_OuterBack && [item.content_p isEqual:matchAlg_p]) {
-                findAlg_p = item.feedbackAlg;
-            }
+        if ([feedbackIndexArr containsObject:@(i)]) {
+            findAlg_p = [self getFeedbackAlgWithSolutionIndex:i];
         }
-        
         //4. 如果没找着feedbackAlg,且允许取match时,则取matchAlg;
-        if (!findAlg_p && !justFeedbackAlg) {
+        else if(!justFeedbackAlg) {
             findAlg_p = matchAlg_p;
         }
         
@@ -109,21 +107,11 @@
  */
 -(NSDictionary*) convertOldIndexDic2NewIndexDic:(AIKVPointer*)targetOrPFo_p {
     //1. 数据准备;
-    AIFoNodeBase *fo = [SMGUtils searchNode:self.content_p];
-    NSMutableArray *feedbackConIndexArr = [[NSMutableArray alloc] init];
     AIFoNodeBase *targetOrPFo = [SMGUtils searchNode:targetOrPFo_p];
     AIKVPointer *solutionFo = self.content_p;
     
     //2. 将fo逐帧收集有反馈的conIndex (参考27207-7);
-    for (NSInteger i = 0; i < fo.count - 1; i++) {
-        AIKVPointer *matchAlg_p = ARR_INDEX(fo.content_ps, i);
-        for (TOAlgModel *item in self.subModels) {
-            if (item.status == TOModelStatus_OuterBack && [item.content_p isEqual:matchAlg_p]) {
-                [feedbackConIndexArr addObject:@(i)];
-                break;
-            }
-        }
-    }
+    NSArray *feedbackIndexArr = [self getIndexArrIfHavFeedback];
     
     //3. 取出solutionFo旧有的indexDic (参考27207-8);
     NSDictionary *oldIndexDic = [targetOrPFo getConIndexDic:solutionFo];
@@ -131,7 +119,7 @@
     //4. 筛选出有反馈的absIndex数组 (参考27207-9);
     NSArray *feedbackAbsIndexArr = [SMGUtils filterArr:oldIndexDic.allKeys checkValid:^BOOL(NSNumber *absIndexKey) {
         NSNumber *conIndexValue = NUMTOOK([oldIndexDic objectForKey:absIndexKey]);
-        return [feedbackConIndexArr containsObject:conIndexValue];
+        return [feedbackIndexArr containsObject:conIndexValue];
     }];
     
     //5. 转成newIndexDic (参考27207-10);
@@ -141,6 +129,73 @@
         [newIndexDic setObject:@(i) forKey:absIndex];
     }
     return newIndexDic;
+}
+
+/**
+ *  MARK:--------------------算出新的spDic--------------------
+ *  @desc 用旧spDic和feedbackAlg计算出新的spDic (参考27211-todo1);
+ */
+-(NSDictionary*) convertOldSPDic2NewSPDic:(AIKVPointer*)absCansetFo_p {
+    //1. 数据准备 (收集除末位外的content为order);
+    AIFoNodeBase *solutionFo = [SMGUtils searchNode:self.content_p];
+    NSArray *feedbackIndexArr = [self getIndexArrIfHavFeedback];
+    
+    //2. sulutionIndex都是有反馈的帧,
+    NSInteger nextSolutionIndex = 0;
+    for (NSNumber *solutionIndex in feedbackIndexArr) {
+        for (NSInteger i = nextSolutionIndex; i <= solutionIndex.integerValue; i++) {
+            
+            // 明天继续写, 综合算出从next到solutionIndex帧之间所需要的SP综合值;
+            //solutionFo.spDic
+            
+            //然后赋值新的nextSolutionIndex = solutionIndex + 1;
+        }
+        
+    }
+    return nil;
+}
+
+//MARK:===============================================================
+//MARK:                     < privateMthod >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------获取当前solution中有反馈的下标数组--------------------
+ *  @result <K:有反馈的下标,V:有反馈的feedbackAlg_p>
+ */
+-(NSMutableArray*) getIndexArrIfHavFeedback {
+    //1. 数据准备;
+    AIFoNodeBase *solutionFo = [SMGUtils searchNode:self.content_p];
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    
+    //2. 将fo逐帧收集有反馈的conIndex (参考27207-7);
+    for (NSInteger i = 0; i < solutionFo.count - 1; i++) {
+        AIKVPointer *solutionAlg_p = ARR_INDEX(solutionFo.content_ps, i);
+        for (TOAlgModel *item in self.subModels) {
+            if (item.status == TOModelStatus_OuterBack && [item.content_p isEqual:solutionAlg_p] && item.feedbackAlg) {
+                [result addObject:@(i)];
+                break;
+            }
+        }
+    }
+    return result;
+}
+
+/**
+ *  MARK:--------------------根据solutionIndex取feedbackAlg--------------------
+ */
+-(AIKVPointer*) getFeedbackAlgWithSolutionIndex:(NSInteger)solutionIndex {
+    //1. 数据准备;
+    AIFoNodeBase *solutionFo = [SMGUtils searchNode:self.content_p];
+    AIKVPointer *solutionAlg_p = ARR_INDEX(solutionFo.content_ps, solutionIndex);
+    
+    //2. 找出反馈返回;
+    for (TOAlgModel *item in self.subModels) {
+        if (item.status == TOModelStatus_OuterBack && [item.content_p isEqual:solutionAlg_p] && item.feedbackAlg) {
+            return item.feedbackAlg;
+        }
+    }
+    return nil;
 }
 
 /**
