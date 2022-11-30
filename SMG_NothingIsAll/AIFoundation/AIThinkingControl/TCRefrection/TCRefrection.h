@@ -11,6 +11,6 @@
 @class AISolutionModel,DemandModel;
 @interface TCRefrection : NSObject
 
-+(BOOL) refrection:(AISolutionModel*)checkCanset cansets:(NSArray*)protoCansets demand:(DemandModel*)demand;
++(BOOL) refrection:(AISolutionModel*)checkCanset demand:(DemandModel*)demand;
 
 @end

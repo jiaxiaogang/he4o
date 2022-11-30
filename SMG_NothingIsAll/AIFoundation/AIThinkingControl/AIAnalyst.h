@@ -27,16 +27,6 @@
  */
 +(AISolutionModel*) compareHCansetFo:(AIKVPointer*)cansetFo_p targetFo:(TOFoModel*)targetFoM;
 
-
-//MARK:===============================================================
-//MARK:                 < 比对分析两条Solution候选方案 >
-//MARK:===============================================================
-
-/**
- *  MARK:--------------------比对checkCanset和它的otherCanset们--------------------
- */
-+(CGFloat) compareFromSolutionCanset:(AISolutionModel*)checkCanset otherCanset:(AISolutionModel*)otherCanset;
-
 /**
  *  MARK:--------------------比对两个概念匹配度--------------------
  */

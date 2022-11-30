@@ -126,7 +126,7 @@
     //6. 逐条S反思;
     AISolutionModel *result = nil;
     for (AISolutionModel *item in sortCansets) {
-        BOOL score = [TCRefrection refrection:item cansets:protoCansets demand:demand];
+        BOOL score = [TCRefrection refrection:item demand:demand];
         if (score) {
             result = item;
             break;
@@ -243,7 +243,7 @@
     
     //13. 逐条S反思;
     for (AISolutionModel *item in sortModels) {
-        BOOL score = [TCRefrection refrection:item cansets:protoCansets demand:demand];
+        BOOL score = [TCRefrection refrection:item demand:demand];
         if (score) {
             result = item;
             break;
