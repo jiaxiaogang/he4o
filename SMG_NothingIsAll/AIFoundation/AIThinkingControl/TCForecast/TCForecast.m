@@ -40,8 +40,13 @@
     for (ReasonDemandModel *root in newRoots) {
         NSLog(@"NewRoot from:%@",FoP2FStr(root.protoFo));
         
-        //2. 预测下一帧 (参考25031-2) ->feedbackTIR;
+        //2. 每个pFo的预测处理;
         for (AIMatchFoModel *pFo in root.pFos) {
+            //3. 已发生: 补上当前进度前面的SP计数P+1 (参考27213-4);
+            AIFoNodeBase *matchFo = [SMGUtils searchNode:pFo.matchFo];
+            [matchFo updatePStrong:0 end:pFo.cutIndex];
+            
+            //4. 预测帧: 下帧预测触发器; (参考25031-2) ->feedbackTIR;
             [self forecast_Single:pFo];
         }
     }

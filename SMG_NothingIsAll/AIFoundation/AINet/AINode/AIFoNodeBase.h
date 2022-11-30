@@ -60,6 +60,15 @@
  *                    2. 如果是mv则输入content.count;
  */
 -(void) updateSPStrong:(NSInteger)spIndex type:(AnalogyType)type;
+
+/**
+ *  MARK:--------------------从start到end都计一次P--------------------
+ */
+-(void) updatePStrong:(NSInteger)start end:(NSInteger)end;
+
+/**
+ *  MARK:--------------------更新整个spDic--------------------
+ */
 -(void) updateSPDic:(NSDictionary*)spDic;
 
 

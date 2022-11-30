@@ -68,6 +68,19 @@
     [SMGUtils insertNode:self];
 }
 
+/**
+ *  MARK:--------------------从start到end都计一次P--------------------
+ *  @desc 含start 也含end;
+ */
+-(void) updatePStrong:(NSInteger)start end:(NSInteger)end {
+    for (NSInteger i = start; i <= end; i++) {
+        [self updateSPStrong:i type:ATPlus];
+    }
+}
+
+/**
+ *  MARK:--------------------更新整个spDic--------------------
+ */
 -(void) updateSPDic:(NSDictionary*)spDic {
     [self.spDic setDictionary:spDic];
     [SMGUtils insertNode:self];

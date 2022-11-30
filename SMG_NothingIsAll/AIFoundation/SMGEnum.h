@@ -140,7 +140,7 @@ typedef NS_ENUM(NSInteger, EffectStatus) {
  */
 typedef NS_ENUM(NSInteger, TIModelStatus) {
     TIModelStatus_Default           = 0,//默认值
-    TIModelStatus_LastWait          = 1,//下帧等待(末位时即等待mv) (相当于TO的ActYes状态)
+    TIModelStatus_LastWait          = 1,//等待下帧(末位时即等待mv) (相当于TO的ActYes状态) (如0是LastWait状态其实是在等待1的反馈);
     TIModelStatus_OutBackReason     = 2,//反馈理性结果 (用于理性反馈)
     TIModelStatus_OutBackSameDelta  = 3,//反馈同向delta (用于实mv)
     TIModelStatus_OutBackNone       = 5,//无反馈
