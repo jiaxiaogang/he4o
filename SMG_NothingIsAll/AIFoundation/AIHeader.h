@@ -359,3 +359,5 @@
 #define Switch4PS false
 //P任务开关
 #define Switch4PDemand true
+//快思考开关
+#define Switch4FastSolution false

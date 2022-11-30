@@ -18,8 +18,11 @@
 /**
  *  MARK:--------------------R快思考--------------------
  *  @desc 习惯 (参考26142);
+ *  @version
+ *      2022.11.30: 先关掉快思考功能,因为慢思考有了indexDic和相似度复用后并不慢,并且effectDic和SP等效 (参考27205);
  */
 +(AISolutionModel*) rSolution_Fast:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps{
+    if (!Switch4FastSolution) return nil;
     //1. 数据准备;
     except_ps = ARRTOOK(except_ps);
     
@@ -48,8 +51,11 @@
 /**
  *  MARK:--------------------H快思考--------------------
  *  @desc 习惯 (参考26142);
+ *  @version
+ *      2022.11.30: 先关掉快思考功能,因为慢思考有了indexDic和相似度复用后并不慢,并且effectDic和SP等效 (参考27205);
  */
 +(AISolutionModel*) hSolution_Fast:(HDemandModel *)hDemand except_ps:(NSArray*)except_ps{
+    if (!Switch4FastSolution) return nil;
     //1. 数据准备;
     TOFoModel *targetFoM = (TOFoModel*)hDemand.baseOrGroup.baseOrGroup;
     AIFoNodeBase *targetFo = [SMGUtils searchNode:targetFoM.content_p];

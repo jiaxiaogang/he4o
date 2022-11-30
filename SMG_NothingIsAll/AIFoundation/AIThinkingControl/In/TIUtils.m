@@ -237,7 +237,7 @@
  *  _param fromRegroup      : 调用者
  *                              1. 正常识别时: cutIndex=lastAssIndex;
  *                              2. 源自regroup时: cutIndex需从父任务中判断 (默认为-1);
- *  @param maskFo           : 识别时:protoFo中的概念元素为parent层, 而在反思时,其元素为match层;
+ *  _param maskFo           : 识别时:protoFo中的概念元素为parent层, 而在反思时,其元素为match层;
  *  TODO_TEST_HERE:调试Pointer能否indexOfObject
  *  TODO_TEST_HERE:调试下item_p在indexOfObject中,有多个时,怎么办;
  *  TODO_TEST_HERE:测试下cPartMatchingThreshold配置值是否合理;

@@ -59,6 +59,7 @@
     //12. 三个评分都是负的,所以公式为以下 (result = 收益(负任务分) + mv的负分 + lazy的负分 > 0);
     BOOL result = -demandScore + mvScore + lazyScore > 0;
     NSLog(@"反思评价结果:%@通过 任务分%.1f 价值分:%.2f 懒分:%.1f",result?@"已":@"未",demandScore,mvScore,lazyScore);
+    [AITest test21:result];
     return result;
 }
 

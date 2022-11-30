@@ -10,15 +10,15 @@
 
 @implementation AIMatchAlgModel
 
-+(AIMatchAlgModel*) newWithMatchAlg:(AIKVPointer*)matchAlg matchCount:(int)matchCount sumNear:(CGFloat)sumNear nearCount:(NSInteger)nearCount sumRefStrong:(int)sumRefStrong{
-    AIMatchAlgModel *model = [[AIMatchAlgModel alloc] init];
-    model.matchCount = matchCount;
-    model.matchAlg = matchAlg;
-    model.sumNear = sumNear;
-    model.nearCount = nearCount;
-    model.sumRefStrong = sumRefStrong;
-    return model;
-}
+//+(AIMatchAlgModel*) newWithMatchAlg:(AIKVPointer*)matchAlg matchCount:(int)matchCount sumNear:(CGFloat)sumNear nearCount:(int)nearCount sumRefStrong:(int)sumRefStrong{
+//    AIMatchAlgModel *model = [[AIMatchAlgModel alloc] init];
+//    model.matchCount = matchCount;
+//    model.matchAlg = matchAlg;
+//    model.sumNear = sumNear;
+//    model.nearCount = nearCount;
+//    model.sumRefStrong = sumRefStrong;
+//    return model;
+//}
 
 /**
  *  MARK:--------------------获取相近度--------------------
@@ -34,20 +34,20 @@
     self = [super init];
     if (self) {
         self.matchAlg = [aDecoder decodeObjectForKey:@"matchAlg"];
-        self.matchCount = [aDecoder decodeIntegerForKey:@"matchCount"];
+        self.matchCount = [aDecoder decodeIntForKey:@"matchCount"];
         self.sumNear = [aDecoder decodeFloatForKey:@"sumNear"];
-        self.nearCount = [aDecoder decodeIntegerForKey:@"nearCount"];
-        self.sumRefStrong = [aDecoder decodeIntegerForKey:@"sumRefStrong"];
+        self.nearCount = [aDecoder decodeIntForKey:@"nearCount"];
+        self.sumRefStrong = [aDecoder decodeIntForKey:@"sumRefStrong"];
     }
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [aCoder encodeObject:self.matchAlg forKey:@"matchAlg"];
-    [aCoder encodeInteger:self.matchCount forKey:@"matchCount"];
+    [aCoder encodeInt:self.matchCount forKey:@"matchCount"];
     [aCoder encodeFloat:self.sumNear forKey:@"sumNear"];
-    [aCoder encodeInteger:self.nearCount forKey:@"nearCount"];
-    [aCoder encodeInteger:self.sumRefStrong forKey:@"sumRefStrong"];
+    [aCoder encodeInt:self.nearCount forKey:@"nearCount"];
+    [aCoder encodeInt:self.sumRefStrong forKey:@"sumRefStrong"];
 }
 
 @end

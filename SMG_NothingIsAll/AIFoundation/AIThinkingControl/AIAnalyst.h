@@ -14,8 +14,13 @@
  *  @version
  *      2019.xx.xx: PM算法 (参考手稿PM相关涉及);
  *      2022.05.xx: 比对算法 (参考26122);
+ *      2022.11.30: 在前段时间改indexDic和matchValue复用后,此处TI调用alg相似度早已废弃,今天彻底删掉它的代码;
  */
 @interface AIAnalyst : NSObject
+
+//MARK:===============================================================
+//MARK:                     < Fo相似度 (由TO调用) >
+//MARK:===============================================================
 
 /**
  *  MARK:--------------------分析R任务的cansetFo--------------------
@@ -27,10 +32,10 @@
  */
 +(AISolutionModel*) compareHCansetFo:(AIKVPointer*)cansetFo_p targetFo:(TOFoModel*)targetFoM;
 
-/**
- *  MARK:--------------------比对两个概念匹配度--------------------
- */
-+(CGFloat) compareCansetAlg:(AIKVPointer*)cansetAlg_p protoAlg:(AIKVPointer*)protoAlg_p;
+
+//MARK:===============================================================
+//MARK:                     < Value相近度 (由TI调用) >
+//MARK:===============================================================
 
 /**
  *  MARK:--------------------比对稀疏码相近度--------------------

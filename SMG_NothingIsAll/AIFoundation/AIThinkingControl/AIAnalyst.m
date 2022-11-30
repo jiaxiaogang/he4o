@@ -10,6 +10,10 @@
 
 @implementation AIAnalyst
 
+//MARK:===============================================================
+//MARK:                     < Fo相似度 (由TO调用) >
+//MARK:===============================================================
+
 /**
  *  MARK:--------------------时序比对--------------------
  *  @desc 初步比对候选集是否适用于protoFo (参考26128-第1步);
@@ -166,45 +170,9 @@
     return matchValue;
 }
 
-
-/**
- *  MARK:--------------------比对两个概念匹配度--------------------
- *  @result 返回0到1 (0:完全不一样 & 1:完全一样) (参考26127-TODO5);
- *  @version
- *      2022.06.08: 排序公式改为sumNear / nearCount (参考2619j-TODO5);
- */
-+(CGFloat) compareCansetAlg:(AIKVPointer*)cansetAlg_p protoAlg:(AIKVPointer*)protoAlg_p{
-    //1. 数据准备;
-    AIAlgNodeBase *cansetAlg = [SMGUtils searchNode:cansetAlg_p];
-    AIAlgNodeBase *protoAlg = [SMGUtils searchNode:protoAlg_p];
-    AIKVPointer *cansetFirstV_p = ARR_INDEX(cansetAlg.content_ps, 0);
-    AIKVPointer *protoFirstV_p = ARR_INDEX(protoAlg.content_ps, 0);
-    NSString *cansetAT = cansetFirstV_p.algsType;
-    NSString *protoAT = protoFirstV_p.algsType;
-    
-    //2. 先比对二者是否同区;
-    if (![cansetAT isEqualToString:protoAT]) {
-        return 0;
-    }
-    
-    //3. 找出二者稀疏码同标识的;
-    __block CGFloat sumNear = 0;
-    __block int nearCount = 0;
-    for (AIKVPointer *cansetV in cansetAlg.content_ps) {
-        for (AIKVPointer *protoV in protoAlg.content_ps) {
-            if ([cansetV.dataSource isEqualToString:protoV.dataSource]) {
-                
-                //4. 比对稀疏码相近度 & 并累计;
-                CGFloat near = [self compareCansetValue:cansetV protoValue:protoV];
-                if (near < 1) {
-                    sumNear += near;
-                    nearCount ++;
-                }
-            }
-        }
-    }
-    return nearCount > 0 ? sumNear / nearCount : 1;
-}
+//MARK:===============================================================
+//MARK:                     < Value相近度 (由TI调用) >
+//MARK:===============================================================
 
 /**
  *  MARK:--------------------比对稀疏码相近度--------------------

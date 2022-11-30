@@ -182,4 +182,10 @@
     }
 }
 
++(void) test21:(BOOL)refrectionResult {
+    if (!refrectionResult) {
+        ELog(@"调试下反思未通过的原因,此处仅为了保证反思有失败时,且失败的原因合理");
+    }
+}
+
 @end
