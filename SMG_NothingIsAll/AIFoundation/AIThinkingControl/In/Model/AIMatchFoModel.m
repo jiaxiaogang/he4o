@@ -168,6 +168,10 @@
             NSDictionary *newIndexDic = [solutionModel convertOldIndexDic2NewIndexDic:pFo.pointer];
             [absCansetFo updateIndexDic:pFo indexDic:newIndexDic];
             [AITest test18:newIndexDic newCanset:absCansetFo absFo:pFo];
+            
+            //k. 算出spDic (参考27213-5);
+            [absCansetFo updateSPDic:[solutionModel convertOldSPDic2NewSPDic]];
+            [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
         }
     }
     //3. =================无actYes的S时,归功于自然未发生,则新增protoCanset (参考27206c-R任务)=================

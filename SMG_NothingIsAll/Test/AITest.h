@@ -29,5 +29,6 @@
 +(void) test17:(TOModelStatus)status;
 +(void) test18:(NSDictionary*)newIndexDic newCanset:(AIFoNodeBase*)newCanset absFo:(AIFoNodeBase*)absFo;
 +(void) test19:(AISPStrong*)newSPStrong;
++(void) test20:(AIFoNodeBase*)newCanset newSPDic:(NSDictionary*)newSPDic;
 
 @end

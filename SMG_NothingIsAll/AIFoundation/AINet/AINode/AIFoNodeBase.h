@@ -60,6 +60,7 @@
  *                    2. 如果是mv则输入content.count;
  */
 -(void) updateSPStrong:(NSInteger)spIndex type:(AnalogyType)type;
+-(void) updateSPDic:(NSDictionary*)spDic;
 
 
 //MARK:===============================================================

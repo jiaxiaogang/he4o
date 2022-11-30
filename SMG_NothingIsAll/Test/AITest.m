@@ -176,4 +176,10 @@
     }
 }
 
++(void) test20:(AIFoNodeBase*)newCanset newSPDic:(NSDictionary*)newSPDic {
+    if (newCanset.count != newSPDic.count) {
+        ELog(@"检查newSPDic有误,它的长度不等于absCanset长度,查下原因");
+    }
+}
+
 @end

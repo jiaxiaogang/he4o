@@ -360,6 +360,10 @@
                     NSDictionary *newIndexDic = [solutionModel convertOldIndexDic2NewIndexDic:targetFoModel.content_p];
                     [absCansetFo updateIndexDic:targetFo indexDic:newIndexDic];
                     [AITest test18:newIndexDic newCanset:absCansetFo absFo:targetFo];
+                    
+                    //k. 算出spDic (参考27213-5);
+                    [absCansetFo updateSPDic:[solutionModel convertOldSPDic2NewSPDic]];
+                    [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
                 }
             }
         }

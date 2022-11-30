@@ -68,6 +68,11 @@
     [SMGUtils insertNode:self];
 }
 
+-(void) updateSPDic:(NSDictionary*)spDic {
+    [self.spDic setDictionary:spDic];
+    [SMGUtils insertNode:self];
+}
+
 //MARK:===============================================================
 //MARK:                     < effectDic组 >
 //MARK:===============================================================
