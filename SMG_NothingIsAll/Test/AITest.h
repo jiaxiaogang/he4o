@@ -28,5 +28,6 @@
 +(void) test16:(CGFloat)algHDMatchValue;
 +(void) test17:(TOModelStatus)status;
 +(void) test18:(NSDictionary*)newIndexDic newCanset:(AIFoNodeBase*)newCanset absFo:(AIFoNodeBase*)absFo;
++(void) test19:(AISPStrong*)newSPStrong;
 
 @end

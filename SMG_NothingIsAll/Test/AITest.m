@@ -170,4 +170,10 @@
     }
 }
 
++(void) test19:(AISPStrong*)newSPStrong {
+    if (newSPStrong.sStrong < 0 || newSPStrong.pStrong < 0) {
+        ELog(@"检查newSPStrong有误,肯定是前面少计数了,导致后面的P太大,而前面的SP之和反而小于它");
+    }
+}
+
 @end

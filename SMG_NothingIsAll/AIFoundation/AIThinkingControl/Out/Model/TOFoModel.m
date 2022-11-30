@@ -134,25 +134,40 @@
 /**
  *  MARK:--------------------算出新的spDic--------------------
  *  @desc 用旧spDic和feedbackAlg计算出新的spDic (参考27211-todo1);
+ *  @result notnull (建议返回后,检查一下spDic和absCansetFo的长度是否一致,不一致时来查BUG);
  */
--(NSDictionary*) convertOldSPDic2NewSPDic:(AIKVPointer*)absCansetFo_p {
-    //1. 数据准备 (收集除末位外的content为order);
+-(NSDictionary*) convertOldSPDic2NewSPDic {
+    //1. 数据准备 (收集除末位外的content为order) (参考27212-步骤1);
     AIFoNodeBase *solutionFo = [SMGUtils searchNode:self.content_p];
     NSArray *feedbackIndexArr = [self getIndexArrIfHavFeedback];
+    NSMutableDictionary *newSPDic = [[NSMutableDictionary alloc] init];
     
     //2. sulutionIndex都是有反馈的帧,
-    NSInteger nextSolutionIndex = 0;
-    for (NSNumber *solutionIndex in feedbackIndexArr) {
-        for (NSInteger i = nextSolutionIndex; i <= solutionIndex.integerValue; i++) {
-            
-            // 明天继续写, 综合算出从next到solutionIndex帧之间所需要的SP综合值;
-            //solutionFo.spDic
-            
-            //然后赋值新的nextSolutionIndex = solutionIndex + 1;
-        }
+    NSInteger nextStart = 0;
+    for (NSInteger i = 0; i < feedbackIndexArr.count; i++) {
+        //3. 数据准备: 有反馈的帧,在solution对应的index (参考27212-步骤1);
+        NSNumber *solutionIndex = ARR_INDEX(feedbackIndexArr, i);
         
+        //3. 取得首末帧 & 记录末帧 (参考27213-2&3);
+        NSInteger start = nextStart;
+        NSInteger end = solutionIndex.integerValue;
+        nextStart = end + 1;
+        
+        //4. 取得首末帧的spStrong (参考27213-2&3);
+        AISPStrong *endSPStrong = [solutionFo.spDic objectForKey:@(end)];
+        AISPStrong *startSPStrong = [solutionFo.spDic objectForKey:@(start)];
+        
+        //5. 计算新帧SP值 (参考27213-2&3);
+        AISPStrong *newSPStrong = [[AISPStrong alloc] init];
+        newSPStrong.pStrong = endSPStrong ? endSPStrong.pStrong : 0;
+        newSPStrong.sStrong = startSPStrong ? (startSPStrong.sStrong + startSPStrong.pStrong - newSPStrong.pStrong) : 0;
+        [AITest test19:newSPStrong];
+        
+        //6. 新的spDic收集一帧: 抽象canset的帧=i (因为比如有3帧有反馈,那么这三帧就是0,1,2) (参考27207-10);
+        NSInteger absCansetIndex = i;
+        [newSPDic setObject:newSPStrong forKey:@(absCansetIndex)];
     }
-    return nil;
+    return newSPDic;
 }
 
 //MARK:===============================================================

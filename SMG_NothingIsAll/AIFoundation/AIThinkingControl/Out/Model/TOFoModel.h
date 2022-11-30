@@ -77,4 +77,9 @@
  */
 -(NSDictionary*) convertOldIndexDic2NewIndexDic:(AIKVPointer*)targetOrPFo_p;
 
+/**
+ *  MARK:--------------------算出新的spDic--------------------
+ */
+-(NSDictionary*) convertOldSPDic2NewSPDic;
+
 @end
