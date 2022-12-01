@@ -97,9 +97,6 @@
     BOOL havBack = ISOK(demand, HDemandModel.class); //H有后段,别的没有;
     NSLog(@"1. 快思考protoCansets数:%ld",cansets.count);
     
-    //2. 留下最初的protoCansets,用于反思等 (因为反思是不用防重等的,越原始越准确);
-    NSArray *protoCansets = [NSArray arrayWithArray:cansets];
-    
     //2. solutionModels过滤器;
     cansets = [SMGUtils filterArr:cansets checkValid:^BOOL(AISolutionModel *item) {
         //a. 排除不应期;
@@ -209,9 +206,6 @@
     AISolutionModel *result = nil;
     BOOL havBack = ISOK(demand, HDemandModel.class); //H有后段,别的没有;
     NSLog(@"第5步 Anaylst匹配成功:%ld",cansetModels.count);//测时94条
-    
-    //2. 留下最初的protoCansets,用于反思等 (因为反思是不用防重等的,越原始越准确);
-    NSArray *protoCansets = [NSArray arrayWithArray:cansetModels];
     
     //8. 排除不应期;
     cansetModels = [SMGUtils filterArr:cansetModels checkValid:^BOOL(AISolutionModel *item) {
