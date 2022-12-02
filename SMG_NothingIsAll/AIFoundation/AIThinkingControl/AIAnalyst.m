@@ -88,6 +88,16 @@
         if (itemMatchValue > 0) {
             sumMatchValue += itemMatchValue;
         }else{
+            //TODOTOMORROW20221202: 匹配不到时,也有可能是前段还没开始,未必就是结束;
+            //因为proto全含match,比如proto的首帧,在match中不存在,这里就是0;
+            if (i == 0) {
+                NSLog(@"调试下,此处是不是还没开始,就proto在match首帧没找着?");
+            }
+            
+            
+            
+            
+            
             //7. 前中段截点: 匹配不到时,说明前段结束,前段proto全含canset,到cansetCutIndex为截点 (参考26128-1-1);
             cansetCutIndex = i - 1;
             break;
