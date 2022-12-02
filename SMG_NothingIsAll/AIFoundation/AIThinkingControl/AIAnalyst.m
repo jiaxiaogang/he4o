@@ -89,8 +89,24 @@
             sumMatchValue += itemMatchValue;
         }else{
             //TODOTOMORROW20221202: 匹配不到时,也有可能是前段还没开始,未必就是结束;
-            //因为proto全含match,比如proto的首帧,在match中不存在,这里就是0;
             if (i == 0) {
+                AIFoNodeBase *matchFo = [SMGUtils searchNode:matchFo_p];
+                NSLog(@" match: %@",Pit2FStr(matchFo_p));
+                NSLog(@"canset: %@",Pit2FStr(cansetFo_p));
+                [theNV invokeForceMode:^{
+                    [theNV setNodeData:matchFo_p lightStr:@"match"];
+                    [theNV setNodeData:cansetFo_p lightStr:@"canset"];
+                }];
+                for (id key in matchFo.conCansetsDic.allKeys) {
+                    NSArray *cansets = [matchFo.conCansetsDic objectForKey:key];
+                    for (AIKVPointer *canset in cansets) {
+                        NSLog(@"查下cansetsDic: %@ => %@",key, Pit2FStr(canset));
+                    }
+                }
+                [theTC setStopThink:true];
+                [RLTrainer.sharedInstance setPlaying:false];
+                //因为proto全含match,比如proto的首帧,在match中不存在,这里就是0;
+                //明日修复: 这里针对这一情况做下处理,让它不能没开始就认为结束了就行;
                 NSLog(@"调试下,此处是不是还没开始,就proto在match首帧没找着?");
             }
             
