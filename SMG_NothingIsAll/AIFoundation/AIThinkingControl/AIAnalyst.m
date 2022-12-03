@@ -69,6 +69,7 @@
  *      2022.11.03: 复用alg相似度 (参考27175-2&3);
  *      2022.11.20: 改为match与canset比对,复用indexDic和alg相似度 (参考27202-3&4&5);
  *      2022.12.03: 修复复用matchValue有时为0的问题 (参考27223);
+ *      2022.12.03: 当canset前段有遗漏时,该方案无效 (参考27224);
  */
 +(AISolutionModel*) compareCansetFo:(AIKVPointer*)cansetFo_p ptAleardayCount:(NSInteger)ptAleardayCount isH:(BOOL)isH basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel {
     //1. 数据准备 & 复用indexDic;
@@ -76,8 +77,12 @@
     AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
     NSDictionary *indexDic = [cansetFo getAbsIndexDic:matchFo_p];
     
-    //3. 判断canset前段是否有遗漏 (参考27224);
+    //2. 计算出canset的cutIndex (canset的cutIndex,也已在proto中发生) (参考26128-1-1);
+    NSInteger matchCutIndex = ptAleardayCount - 1;
+    NSInteger cansetCutIndex = NUMTOOK([indexDic objectForKey:@(matchCutIndex)]).integerValue;
     
+    //3. 判断canset前段是否有遗漏 (参考27224);
+    if (cansetCutIndex < matchCutIndex) return nil;
     
     //4. 计算前段匹配度 (参考26128-1-4);
     CGFloat sumFrontMatchValue = 0;
@@ -88,10 +93,6 @@
     
     //5. 前段不匹配时,直接返回nil (参考26128-1-3);
     if (frontMatchValue == 0) return nil;
-    
-    //5. 计算出canset的cutIndex (canset的cutIndex,也已在proto中发生) (参考26128-1-1);
-    NSInteger matchCutIndex = ptAleardayCount - 1;
-    NSInteger cansetCutIndex = NUMTOOK([indexDic objectForKey:@(matchCutIndex)]).integerValue;
     
     //6. 后段: 找canset后段目标 和 后段匹配度 (H需要后段匹配, R不需要);
     if (isH) {
@@ -109,7 +110,6 @@
         //11. 后段: R不判断后段;
         return [AISolutionModel newWithCansetFo:cansetFo_p frontMatchValue:frontMatchValue backMatchValue:1 cutIndex:cansetCutIndex targetIndex:cansetFo.count basePFoOrTargetFoModel:basePFoOrTargetFoModel];
     }
-    return nil;
 }
 
 /**
