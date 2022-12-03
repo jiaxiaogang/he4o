@@ -80,6 +80,10 @@
     //2. 前段: cansetFo从前到后,分别在proto中找匹配;
     for (NSInteger i = 0; i < cansetFo.count; i++) {
         //3. 继续从proto后面未找过的部分里,找匹配;
+        
+        
+        //TODOTOMORROW20221203:
+        //此方法改成先取indexDic出来,截出前段和后段两个arr,然后再分别循环这个arr取值即可,不以为0做为是否cutIndex的判断标准;因为为0并不能说明它是截点;
         CGFloat itemMatchValue = [self compareCansetAlg:i cansetFo:cansetFo_p matchFo:matchFo_p checkMatchIndexBlock:^BOOL(NSInteger matchIndex) {
             return matchIndex < ptAleardayCount; //判断matchIndex属于前段;
         }];
