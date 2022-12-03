@@ -31,5 +31,6 @@
 +(void) test19:(AISPStrong*)newSPStrong;
 +(void) test20:(AIFoNodeBase*)newCanset newSPDic:(NSDictionary*)newSPDic;
 +(void) test21:(BOOL)refrectionResult;
++(void) test22;
 
 @end

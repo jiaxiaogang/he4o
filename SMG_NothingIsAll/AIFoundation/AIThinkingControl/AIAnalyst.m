@@ -68,101 +68,48 @@
  *      2022.06.12: 每帧analyst都映射转换成maskFo的帧元素比对 (参考26232-TODO4);
  *      2022.11.03: 复用alg相似度 (参考27175-2&3);
  *      2022.11.20: 改为match与canset比对,复用indexDic和alg相似度 (参考27202-3&4&5);
+ *      2022.12.03: 修复复用matchValue有时为0的问题 (参考27223);
  */
 +(AISolutionModel*) compareCansetFo:(AIKVPointer*)cansetFo_p ptAleardayCount:(NSInteger)ptAleardayCount isH:(BOOL)isH basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel {
-    //1. 数据准备;
-    AISolutionModel *result = nil;
-    AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
-    CGFloat sumMatchValue = 0;              //累计匹配度;
-    NSInteger cansetCutIndex = -1;          //canset的cutIndex,也已在proto中发生;
+    //1. 数据准备 & 复用indexDic;
     AIKVPointer *matchFo_p = [AISolutionModel getBaseFoFromBasePFoOrTargetFoModel:basePFoOrTargetFoModel];
+    AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
+    NSDictionary *indexDic = [cansetFo getAbsIndexDic:matchFo_p];
     
-    //2. 前段: cansetFo从前到后,分别在proto中找匹配;
-    for (NSInteger i = 0; i < cansetFo.count; i++) {
-        //3. 继续从proto后面未找过的部分里,找匹配;
-        
-        
-        //TODOTOMORROW20221203:
-        //此方法改成先取indexDic出来,截出前段和后段两个arr,然后再分别循环这个arr取值即可,不以为0做为是否cutIndex的判断标准;因为为0并不能说明它是截点;
-        CGFloat itemMatchValue = [self compareCansetAlg:i cansetFo:cansetFo_p matchFo:matchFo_p checkMatchIndexBlock:^BOOL(NSInteger matchIndex) {
-            return matchIndex < ptAleardayCount; //判断matchIndex属于前段;
-        }];
-        
-        //6. 匹配成功时: 结算这一位,继续下一位;
-        if (itemMatchValue > 0) {
-            sumMatchValue += itemMatchValue;
-        }else{
-            //TODOTOMORROW20221202: 匹配不到时,也有可能是前段还没开始,未必就是结束;
-            if (i == 0) {
-                AIFoNodeBase *matchFo = [SMGUtils searchNode:matchFo_p];
-                NSLog(@" match: %@",Pit2FStr(matchFo_p));
-                NSLog(@"canset: %@",Pit2FStr(cansetFo_p));
-                [theNV invokeForceMode:^{
-                    [theNV setNodeData:matchFo_p lightStr:@"match"];
-                    [theNV setNodeData:cansetFo_p lightStr:@"canset"];
-                }];
-                for (id key in matchFo.conCansetsDic.allKeys) {
-                    NSArray *cansets = [matchFo.conCansetsDic objectForKey:key];
-                    for (AIKVPointer *canset in cansets) {
-                        NSLog(@"查下cansetsDic: %@ => %@",key, Pit2FStr(canset));
-                    }
-                }
-                [theTC setStopThink:true];
-                [RLTrainer.sharedInstance setPlaying:false];
-                //因为proto全含match,比如proto的首帧,在match中不存在,这里就是0;
-                //明日修复: 这里针对这一情况做下处理,让它不能没开始就认为结束了就行;
-                NSLog(@"调试下,此处是不是还没开始,就proto在match首帧没找着?");
-            }
-            
-            
-            
-            
-            
-            //7. 前中段截点: 匹配不到时,说明前段结束,前段proto全含canset,到cansetCutIndex为截点 (参考26128-1-1);
-            cansetCutIndex = i - 1;
-            break;
-        }
+    //3. 判断canset前段是否有遗漏 (参考27224);
+    
+    
+    //4. 计算前段匹配度 (参考26128-1-4);
+    CGFloat sumFrontMatchValue = 0;
+    for (NSInteger i = 0; i < ptAleardayCount; i++) {
+        sumFrontMatchValue += [self compareCansetAlg:i cansetFo:cansetFo_p matchFo:matchFo_p];
     }
+    CGFloat frontMatchValue = sumFrontMatchValue / ptAleardayCount;
     
-    //8. 计算前段匹配度 (参考26128-1-4);
-    CGFloat frontMatchValue = sumMatchValue / ptAleardayCount;
+    //5. 前段不匹配时,直接返回nil (参考26128-1-3);
+    if (frontMatchValue == 0) return nil;
     
-    //9. 找到了`前中段`截点 => 则初步为有效方案 (参考26128-1-3);
-    if (cansetCutIndex != -1 && frontMatchValue > 0) {
+    //5. 计算出canset的cutIndex (canset的cutIndex,也已在proto中发生) (参考26128-1-1);
+    NSInteger matchCutIndex = ptAleardayCount - 1;
+    NSInteger cansetCutIndex = NUMTOOK([indexDic objectForKey:@(matchCutIndex)]).integerValue;
+    
+    //6. 后段: 找canset后段目标 和 后段匹配度 (H需要后段匹配, R不需要);
+    if (isH) {
+        //7. 后段匹配度 (后段不匹配时,直接返nil);
+        CGFloat backMatchValue =  [self compareCansetAlg:ptAleardayCount cansetFo:cansetFo_p matchFo:matchFo_p];
+        if (backMatchValue == 0) return nil;
         
-        //10. 后段: 从canset后段,找maskFo目标 (R不需要后段匹配,H需要);
-        if (isH) {
-            //a. 数据准备mask目标帧
-            CGFloat backMatchValue = 0;//后段匹配度
-            NSInteger cansetTargetIndex = -1;//canset目标下标
-            
-            //b. 分别对canset后段,比对两个概念匹配度;
-            for (NSInteger i = cansetCutIndex + 1; i < cansetFo.count; i++) {
-                
-                //b. 匹配到后段,则复用来相似度;
-                CGFloat checkBackMatchValue = [self compareCansetAlg:i cansetFo:cansetFo_p matchFo:matchFo_p checkMatchIndexBlock:^BOOL(NSInteger matchIndex) {
-                    return matchIndex == ptAleardayCount; //判断matchIndex属于后段;
-                }];
-                
-                //c. 匹配成功时: 记下匹配度和目标下标;
-                if (checkBackMatchValue > 0) {
-                    backMatchValue = checkBackMatchValue;
-                    cansetTargetIndex = i;
-                    break;
-                }
-            }
-            
-            //d. 后段成功;
-            if (cansetTargetIndex > -1) {
-                result = [AISolutionModel newWithCansetFo:cansetFo_p frontMatchValue:frontMatchValue backMatchValue:backMatchValue cutIndex:cansetCutIndex targetIndex:cansetTargetIndex basePFoOrTargetFoModel:basePFoOrTargetFoModel];
-            }
-            if (!result) NSLog(@"itemCanset不适用当前场景:%ld",cansetFo_p.pointerId);
-        }else{
-            //11. 后段: R不判断后段;
-            result = [AISolutionModel newWithCansetFo:cansetFo_p frontMatchValue:frontMatchValue backMatchValue:1 cutIndex:cansetCutIndex targetIndex:cansetFo.count basePFoOrTargetFoModel:basePFoOrTargetFoModel];
-        }
+        //8. canset目标下标
+        NSInteger cansetTargetIndex = NUMTOOK([indexDic objectForKey:@(ptAleardayCount)]).integerValue;
+        
+        //9. 后段成功;
+        return [AISolutionModel newWithCansetFo:cansetFo_p frontMatchValue:frontMatchValue backMatchValue:backMatchValue cutIndex:cansetCutIndex targetIndex:cansetTargetIndex basePFoOrTargetFoModel:basePFoOrTargetFoModel];
+        
+    }else{
+        //11. 后段: R不判断后段;
+        return [AISolutionModel newWithCansetFo:cansetFo_p frontMatchValue:frontMatchValue backMatchValue:1 cutIndex:cansetCutIndex targetIndex:cansetFo.count basePFoOrTargetFoModel:basePFoOrTargetFoModel];
     }
-    return result;
+    return nil;
 }
 
 /**
@@ -171,26 +118,22 @@
  *          1. 复用indexDic: canset和match的映射关系本来就存在indexDic中;
  *          2. matchIndex: 根据indexDic取到matchIndex,当matchIndex<ptAleardayCount时,即为前段,=时为后段;
  *          3. 复用matchValue: 然后将cansetIndex和matchIndex对应二者的持久化概念相似度复用返回即可;
- *  @param checkMatchIndexBlock : 根据matchIndex检查是否要继续 (比如前段时:matchIndex在后段就不继续,或者在后段时matchIndex在前段也不继续);
+ *  _param checkMatchIndexBlock : 根据matchIndex检查是否要继续 (比如前段时:matchIndex在后段就不继续,或者在后段时matchIndex在前段也不继续);
  *  @version
  *      2022.11.20: 初版: match与canset比对,复用indexDic和alg相似度 (参考27202-3&4&5);
  */
-+(CGFloat) compareCansetAlg:(NSInteger)cansetIndex cansetFo:(AIKVPointer*)cansetFo_p matchFo:(AIKVPointer*)matchFo_p checkMatchIndexBlock:(BOOL(^)(NSInteger matchIndex))checkMatchIndexBlock{
++(CGFloat) compareCansetAlg:(NSInteger)matchIndex cansetFo:(AIKVPointer*)cansetFo_p matchFo:(AIKVPointer*)matchFo_p {
     //1. 数据准备;
     AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
     AIFoNodeBase *matchFo = [SMGUtils searchNode:matchFo_p];
-    
+
     //2. 复用indexDic;
     NSDictionary *indexDic = [cansetFo getAbsIndexDic:matchFo.pointer];
+    if (![indexDic objectForKey:@(matchIndex)]) [AITest test22];
     
-    //3. 根据indexDic取出matchIndex;
-    NSInteger matchIndex = NUMTOOK([SMGUtils filterSingleFromArr:indexDic.allKeys checkValid:^BOOL(NSNumber *key) {
-        return cansetIndex == NUMTOOK([indexDic objectForKey:key]).integerValue;
-    }]).integerValue;
-    
-    //4. 检查matchIndex: 前后段不匹配时,直接返0;
-    if (!checkMatchIndexBlock(matchIndex)) return 0;
-    
+    //3. 根据indexDic取出cansetIndex;
+    NSInteger cansetIndex = NUMTOOK([indexDic objectForKey:@(matchIndex)]).integerValue;
+
     //5. 前后段匹配时: 返回复用matchValue相似度;
     AIKVPointer *cansetA_p = ARR_INDEX(cansetFo.content_ps, cansetIndex);
     AIKVPointer *matchA_p = ARR_INDEX(matchFo.content_ps, matchIndex);

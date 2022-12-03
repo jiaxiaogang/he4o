@@ -188,4 +188,8 @@
     }
 }
 
++(void) test22 {
+    ELog(@"发现indexDic在absIndex下找不到conIndex,查下为什么没映射到?是不是识别时全含判断错了?");
+}
+
 @end
