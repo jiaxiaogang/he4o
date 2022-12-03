@@ -341,7 +341,7 @@
             
             //8. H任务完成时,H当前正执行的S提前完成,并进行外类比 (参考27206c-H任务);
             for (TOFoModel *solutionModel in hDemand.actionFoModels) {
-                [AITest test17:solutionModel.status];
+                [AITest test17:solutionModel];
                 if (solutionModel.status == TOModelStatus_ActYes) {
                     //a. 数据准备;
                     AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.content_p];
