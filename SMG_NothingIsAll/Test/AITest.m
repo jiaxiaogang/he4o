@@ -154,8 +154,8 @@
     }
 }
 
-+(void) test17:(TOModelStatus)status {
-    NSLog(@"调试一下,H任务在什么状态时,可以触发canset再类比? %ld",status);
++(void) test17:(TOFoModel*)solutionFo {
+    NSLog(@"调试一下,H任务在什么状态时,可以触发canset再类比? %@ %ld",NSStringFromClass(solutionFo.baseOrGroup.class),solutionFo.status);
 }
 
 +(void) test18:(NSDictionary*)newIndexDic newCanset:(AIFoNodeBase*)newCanset absFo:(AIFoNodeBase*)absFo {

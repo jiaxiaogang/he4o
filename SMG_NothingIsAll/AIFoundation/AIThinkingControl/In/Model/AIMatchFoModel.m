@@ -146,7 +146,7 @@
         return item.status == TOModelStatus_ActYes && [item.basePFoOrTargetFo_p isEqual:self.matchFo];
     }];
     for (TOFoModel *item in self.baseRDemand.actionFoModels) {
-        [AITest test17:item.status];
+        [AITest test17:item];
     }
     
     //2. =================有actYes的时,归功于解决方案,执行canset再类比 (参考27206c-R任务)=================
