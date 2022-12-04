@@ -51,11 +51,15 @@
 
 /**
  *  MARK:--------------------取抽或具象的相近度--------------------
+ *  @version
+ *      2022.12.04: 当二者相等时,默认返回1 (因为时序识别时mIsC1有自身判断,所以取相似度时要兼容支持下);
  */
 -(CGFloat) getConMatchValue:(AIKVPointer*)con_p {
+    if ([self.pointer isEqual:con_p]) return 1;
     return NUMTOOK([self.conMatchDic objectForKey:@(con_p.pointerId)]).floatValue;
 }
 -(CGFloat) getAbsMatchValue:(AIKVPointer*)abs_p {
+    if ([self.pointer isEqual:abs_p]) return 1;
     return NUMTOOK([self.absMatchDic objectForKey:@(abs_p.pointerId)]).floatValue;
 }
 
