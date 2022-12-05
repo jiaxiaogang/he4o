@@ -25,8 +25,8 @@ static NSString *lastTCName = @""; //记录当前在打日志的TC模块名字;
 +(NSString*) subStr:(NSString*)s toIndex:(NSInteger)index;  //notnull
 
 //log
-+(void) inTitle:(NSString*)title log:(NSString*)log;
-+(void) outTitle:(NSString*)title log:(NSString*)log;
++(void) inTitle:(NSString*)title log:(NSString*)log fileName:(NSString*)fileName;
++(void) outTitle:(NSString*)title log:(NSString*)log fileName:(NSString*)fileName;
 +(NSString*) codeLocateFormat:(NSString*)fileName line:(NSInteger)line;
 +(void) checkPrintNSLog:(NSString*)fileName line:(NSInteger)line protoLog:(NSString*)protoLog headerMode:(LogHeaderMode)headerMode;
 +(NSString*) nsLogFormat:(NSString*)fileName line:(NSInteger)line protoLog:(NSString*)protoLog headerMode:(LogHeaderMode)headerMode;//NSLog自定义格式化;

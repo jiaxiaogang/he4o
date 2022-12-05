@@ -30,13 +30,13 @@
  *      2022.05.31: v2版,封装成方法,并支持loopId;
  *      2022.09.28: 把---改成===,因为不靠这个分IO,改成===反而更加直观些;
  */
-+(void) inTitle:(NSString*)title log:(NSString*)log{
++(void) inTitle:(NSString*)title log:(NSString*)log fileName:(NSString*)fileName{
     NSString *side = @"===============================";
-    NSLog(@"\n\n%@ %lld %@ %@%@",side,theTC.getLoopId,title,side,log);
+    NSLog_CustomFileName(fileName, @"\n\n%@ %lld %@ %@%@",side,theTC.getLoopId,title,side,log);
 }
-+(void) outTitle:(NSString*)title log:(NSString*)log{
++(void) outTitle:(NSString*)title log:(NSString*)log fileName:(NSString*)fileName{
     NSString *side = @"===============================";
-    NSLog(@"\n\n%@ %lld %@ %@%@",side,theTC.getLoopId,title,side,log);
+    NSLog_CustomFileName(fileName, @"\n\n%@ %lld %@ %@%@",side,theTC.getLoopId,title,side,log);
 }
 +(NSString*) codeLocateFormat:(NSString*)fileName line:(NSInteger)line{
     //1. 数据 准备

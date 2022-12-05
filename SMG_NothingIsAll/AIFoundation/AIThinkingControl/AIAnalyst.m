@@ -75,6 +75,7 @@
     //1. 数据准备 & 复用indexDic;
     AIKVPointer *matchFo_p = [AISolutionModel getBaseFoFromBasePFoOrTargetFoModel:basePFoOrTargetFoModel];
     AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
+    NSLog(@"取得canset类型: %@",NSStringFromClass(cansetFo.class));
     NSDictionary *indexDic = [cansetFo getAbsIndexDic:matchFo_p];
     
     //2. 计算出canset的cutIndex (canset的cutIndex,也已在proto中发生) (参考26128-1-1);

@@ -289,9 +289,9 @@
 #define DemoLog(fmt, ...) NSLog((@"\n******************************* " fmt @" *******************************"), ##__VA_ARGS__);
 //titleLog (控制台日志组块title) (其实S为简化版,F为全版,I为输入期,O为输出期);
 #define ISTitleLog(title) IFTitleLog(title,@"")
-#define IFTitleLog(title,fmt, ...) [SMGUtils inTitle:title log:[NSString stringWithFormat:fmt, ##__VA_ARGS__]]
+#define IFTitleLog(title,fmt, ...) [SMGUtils inTitle:title log:[NSString stringWithFormat:fmt, ##__VA_ARGS__] fileName:FILENAME]
 #define OSTitleLog(title) OFTitleLog(title,@"")
-#define OFTitleLog(title,fmt, ...) [SMGUtils outTitle:title log:[NSString stringWithFormat:fmt, ##__VA_ARGS__]]
+#define OFTitleLog(title,fmt, ...) [SMGUtils outTitle:title log:[NSString stringWithFormat:fmt, ##__VA_ARGS__] fileName:FILENAME]
 //groupLog (每轮循环之始可用)
 #define ISGroupLog(title) IFGroupLog(title,@"")
 #define IFGroupLog(title,fmt, ...) NSLog((@"\n\n#########################################################################################################\n                                                <" title @"> \n#########################################################################################################"fmt), ##__VA_ARGS__);
@@ -300,6 +300,7 @@
 //20220515: 将NSLog拆分成NSLog+PrintLog (为了增加noNSLog开关功能);
 //#define NSLog(FORMAT, ...) fprintf(stderr,"%s",[[SMGUtils nsLogFormat:FILENAME line:__LINE__ protoLog:[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] headerMode:DefaultHeaderMode] UTF8String]);
 #define NSLog(FORMAT, ...) [SMGUtils checkPrintNSLog:FILENAME line:__LINE__ protoLog:[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] headerMode:DefaultHeaderMode]
+#define NSLog_CustomFileName(customFileName,FORMAT, ...) [SMGUtils checkPrintNSLog:customFileName line:__LINE__ protoLog:[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] headerMode:DefaultHeaderMode]
 #define PrintLog(log) fprintf(stderr,"%s",[log UTF8String]);
 //nsLog (自定义header模式)
 #define NSLog_Mode(mode,FORMAT, ...) fprintf(stderr,"%s",[[SMGUtils nsLogFormat:FILENAME line:__LINE__ protoLog:[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] headerMode:mode] UTF8String]);
@@ -314,8 +315,8 @@
  *  MARK:--------------------LOG开关--------------------
  */
 //测试模式 (功能说明: 把all关掉,然后仅会打印just中模块的日志; 使用说明: 用于测试某些模块时使用);
-#define LogJustPrintTCs @[@"TCFeedback"]
-#define LogPrintAllTCs false
+#define LogJustPrintTCs @[@"TCSolution"]
+#define LogPrintAllTCs true
 //皮层
 #define Log4CortexAlgs false
 //输入思维
