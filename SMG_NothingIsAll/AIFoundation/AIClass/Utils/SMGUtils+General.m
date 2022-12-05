@@ -67,9 +67,17 @@
     }
     return lineStr;
 }
-
 +(void) checkPrintNSLog:(NSString*)fileName line:(NSInteger)line protoLog:(NSString*)protoLog headerMode:(LogHeaderMode)headerMode{
-    if (!theApp.noNSLog) {
+    //1. 记录下最后一条TC;
+    if ([@"TC" isEqualToString:SUBSTR2INDEX(fileName, 2)]) {
+        lastTCName = fileName;
+    }
+    
+    //2. 当TC有效时,打印它;
+    BOOL tcsCanPrint = LogPrintAllTCs || !STRISOK(lastTCName) || [LogJustPrintTCs containsObject:SUBSTR2INDEX(lastTCName, lastTCName.length - 2)];
+    
+    //3. 打印
+    if (!theApp.noNSLog && tcsCanPrint) {
         NSString *log = [self nsLogFormat:fileName line:line protoLog:protoLog headerMode:headerMode];
         PrintLog(log);
     }

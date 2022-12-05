@@ -13,7 +13,8 @@
 #define kyyyyMMddHHmmss @"yyyy-MM-dd HH:mm:ss"
 #define kyyyyMMddHHmmssSSS @"yyyy-MM-dd HH:mm:ss:SSS"
 #define kyyyyMMddHHmmssSSS_Simple @"yyyyMMddHHmmssSSS"
-static int logLineNum;
+static int logLineNum; //日志行号
+static NSString *lastTCName = @""; //记录当前在打日志的TC模块名字;
 
 @interface SMGUtils (General)
 
