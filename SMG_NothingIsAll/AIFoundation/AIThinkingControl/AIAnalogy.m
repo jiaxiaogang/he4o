@@ -40,7 +40,7 @@
  */
 +(AINetAbsFoNode*) analogyOutside:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type {
     //1. 类比orders的规律
-    if (Log4OutAnaType(type)) NSLog(@"\n----------- 外类比(%@) -----------\nfo:%@ \nassFo:%@",ATType2Str(type),Fo2FStr(protoFo),Fo2FStr(assFo));
+    if (Log4OutAna) NSLog(@"\n----------- 外类比(%@) -----------\nfo:%@ \nassFo:%@",ATType2Str(type),Fo2FStr(protoFo),Fo2FStr(assFo));
     NSMutableArray *orderSames = [[NSMutableArray alloc] init];
     if (protoFo && assFo) {
 
@@ -50,16 +50,14 @@
             for (NSInteger j = jMax; j >= 0; j--) {
                 AIKVPointer *protoA_p = protoFo.content_ps[i];
                 AIKVPointer *assA_p = assFo.content_ps[j];
-                if (Log4OutAna) NSLog(@"ProtoFo I: %ld -> %@",i,Pit2FStr(protoA_p));
-                if (Log4OutAna) NSLog(@"AssFo   J: %ld -> %@",j,Pit2FStr(assA_p));
                 
                 //3. B源于matchFo,此处只判断B是1层抽象 (参考27161-调试1&调试2);
                 BOOL mIsC = [TOUtils mIsC_1:protoA_p c:assA_p];
+                if (Log4OutAna) NSLog(@"proto的第%ld: A%ld 类比 ass的第%ld: A%ld (%@)",i,protoA_p.pointerId,j,assA_p.pointerId,mIsC?@"成功":@"失败");
                 if (mIsC) {
                     //3. 收集并更新jMax;
                     [orderSames insertObject:assA_p atIndex:0];
                     jMax = j - 1;
-                    if (Log4OutAna) NSLog(@"-> 外类比构建概念 Finish: %@ from: ↑↑↑(A%ld:A%ld)",Pit2FStr(assA_p),(long)protoA_p.pointerId,(long)assA_p.pointerId);
                     break;
                 }
             }

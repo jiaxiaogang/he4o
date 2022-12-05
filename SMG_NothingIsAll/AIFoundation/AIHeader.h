@@ -322,7 +322,7 @@
 //模糊匹配
 #define Log4FuzzyAlg false
 //识别时序
-#define Log4MFo true
+#define Log4MFo false
 //内类比
 #define Log4InAna false
 #define Log4InAnaGL(type) ((type == ATGreater || type == ATLess) && false)
@@ -330,9 +330,6 @@
 
 //外类比
 #define Log4OutAna true
-#define Log4OutAnaDefault(type) (!Log4OutAna && (type == ATDefault && false))
-#define Log4OutAnaType(type) Log4OutAna || Log4OutAnaDefault(type)
-
 //方向索引
 #define Log4DirecRef true
 //外输入推进中循环
