@@ -33,4 +33,6 @@
 +(void) test21:(BOOL)refrectionResult;
 +(void) test22;
 
++(void) test101:(AIFoNodeBase*)absCansetFo;
+
 @end

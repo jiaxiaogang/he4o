@@ -192,4 +192,8 @@
     ELog(@"发现indexDic在absIndex下找不到conIndex,查下为什么没映射到?是不是识别时全含判断错了?");
 }
 
++(void) test101:(AIFoNodeBase*)absCansetFo {
+    ELog(@"必经点测试: 触发canset再抽象有被执行到");
+}
+
 @end

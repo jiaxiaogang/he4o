@@ -163,6 +163,7 @@
             //h. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
             AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:protoFo assFo:solutionFo type:ATDefault];
             [pFo updateConCanset:absCansetFo.pointer targetIndex:pFo.count];
+            [AITest test101:absCansetFo];
             
             //j. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);
             NSDictionary *newIndexDic = [solutionModel convertOldIndexDic2NewIndexDic:pFo.pointer];
