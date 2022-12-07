@@ -28,6 +28,7 @@
     result.baseOrGroup = base;
     result.actionIndex = -1;//默认为头(-1),r和h任务自行重赋值;
     result.targetSPIndex = fo.count;//默认到尾(foCount),h任务自行重赋值;
+    result.basePFoOrTargetFo_p = basePFoOrTargetFo_p;
     return result;
 }
 
