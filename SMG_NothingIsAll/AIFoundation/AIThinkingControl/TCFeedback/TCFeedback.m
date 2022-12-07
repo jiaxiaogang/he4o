@@ -330,17 +330,21 @@
     }
     
     //b. 反馈匹配 (比如找锤子,看到锤子了);
+    NSLog(@"b1");
     for (HDemandModel *hDemand in allHDemands) {
         TOAlgModel *targetAlg = (TOAlgModel*)hDemand.baseOrGroup;   //hDemand的目标alg;
+        NSLog(@"b2");
         if ([recognitionAlgs containsObject:targetAlg.content_p]) {
             
             //c. 明确有效;
             targetAlg.feedbackAlg = model.protoAlg.pointer;
             hDemand.effectStatus = ES_HavEff;
             hDemand.status = TOModelStatus_Finish;
+            NSLog(@"b3");
             
             //8. H任务完成时,H当前正执行的S提前完成,并进行外类比 (参考27206c-H任务);
             for (TOFoModel *solutionModel in hDemand.actionFoModels) {
+                NSLog(@"b4");
                 [AITest test17:solutionModel];
                 if (solutionModel.status == TOModelStatus_ActYes) {
                     //a. 数据准备;

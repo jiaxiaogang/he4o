@@ -142,15 +142,39 @@
  */
 -(void) pushFrameFinish {
     //1. 判断处在actYes状态的解决方案 && 解决方案是属性当前pFo决策取得的 (参考27206c-综上&多S问题);
+    NSLog(@"a1");
     NSArray *solutionModels = [SMGUtils filterArr:self.baseRDemand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
         return item.status == TOModelStatus_ActYes && [item.basePFoOrTargetFo_p isEqual:self.matchFo];
     }];
+    
+    
+    
+    //2022.12.07调试过程记录:
+    for (TOFoModel *actionFo in self.baseRDemand.actionFoModels) {
+        NSLog(@"任务的状态是? %ld",actionFo.status);
+    }
+    NSLog(@"a2");
+    //案例1:
+    //此时self.status = TIModelStatus_OutBackSameDelta; (1678)
+    //  > 说明导致任务的这条pFo以阻止失败告终;
+    //self.baseRDemand.actionFoModels中,两个的其中一条为TOModelStatus_OuterBack; (3123);
+    //  > 说明任务已经有两个S,其中一个ActNo失败了,第二个在feedbackTOP中也反馈负mv失败了,所以是OuterBack状态;
+    //综合: 已经失败的canset确实不应该进行canset再类比,
+    
+    //案例2:
+    //此时有status为ActYes的进来了,但solutionModels还是0条,
+    //经查basePFoOrTargetFo_p为nil,查下原因,为什么有空的情况?难道取解决方案时,没有赋值成功吗?
+    
+    
+    
+    
     for (TOFoModel *item in self.baseRDemand.actionFoModels) {
         [AITest test17:item];
     }
     
     //2. =================有actYes的时,归功于解决方案,执行canset再类比 (参考27206c-R任务)=================
     if (ARRISOK(solutionModels)) {
+        NSLog(@"a3");
         for (TOFoModel *solutionModel in solutionModels) {
             //a. 数据准备;
             AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.content_p];
