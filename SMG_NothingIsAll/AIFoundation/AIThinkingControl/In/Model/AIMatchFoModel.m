@@ -137,108 +137,82 @@
 
 /**
  *  MARK:--------------------推进帧结束(完全帧)时总结 (参考27201-5)--------------------
+ *  @desc 触发及功能说明: 当解决方案有效解决了需求时,此处构建具象canset或进行canset再类比抽象;
+ *  @desc 另 (方案无效时): 当阻止失败时,不应触发canset再类比 (本方法不做解决失败的处理,仅记录下逻辑说明在此);
+ *              a. 在feedbackTIP中反馈负mv后: pFo.status=TIModelStatus_OutBackSameDelta;
+ *              b. 在feedbackTOP中反馈负mv后: cansetS.status=TOModelStatus_OuterBack;
  *  @version
  *      2022.11.28: 自然未发生则生成protoCanset,行为有作用则触发再类比生成absCanset (参考27206c-R任务);
+ *      2022.12.09: BUG_当解决方案实际执行0条时,不触发canset再类比 (如果触发,会导致抽象为nil,闪退);
+ *      2022.12.09: 无论是否进行抽象,都生成具象canset (参考27228);
  */
 -(void) pushFrameFinish {
-    //1. 判断处在actYes状态的解决方案 && 解决方案是属性当前pFo决策取得的 (参考27206c-综上&多S问题);
-    //注: 当阻止失败时,不应触发canset再类比;
-    //  a. 在feedbackTIP中反馈负mv后: pFo.status=TIModelStatus_OutBackSameDelta;
-    //  b. 在feedbackTOP中反馈负mv后: cansetS.status=TOModelStatus_OuterBack;
-    NSLog(@"a1");
-    NSArray *solutionModels = [SMGUtils filterArr:self.baseRDemand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
-        return item.status == TOModelStatus_ActYes && [item.basePFoOrTargetFo_p isEqual:self.matchFo];
-    }];
+
+    //TODOTOMORROW20221208:
+    //1. 实际训练特性: 此处具象canset容易,但抽象太不易了
+    //  思路: 再多训练训练,有了第一个,后面会越来越容易 (但目前还没一个成功抽象的,,,继续训练测试......);
+    
+    //2. 抽象很难原因: 第2步训练,从扔到飞,都是间隔太久,导致很难有习得通过飞行躲避成功的案例;
+    //  方案: 可以尝试下,在扔出木棒后,快速通过躲避成功的案例经历 (较易复现方式,危险地带直投,然后立马下飞躲开...);
+    
+    //先继续跑跑,看能不能跑到a4;
     
     
-    
-    //2022.12.07调试过程记录:
+    //1. =================有actYes的时,归功于解决方案,执行canset再类比 (参考27206c-R任务)=================
     NSLog(@"当前pFo:%ld 兄弟pFos:%@",self.matchFo.pointerId,[SMGUtils convertArr:self.baseRDemand.pFos convertBlock:^id(AIMatchFoModel *obj) {
         return Pit2FStr(obj.matchFo);
     }]);
-    for (TOFoModel *actionFo in self.baseRDemand.actionFoModels) {
-        NSLog(@"任务的状态是? %ld 基于pFo: %ld",actionFo.status,actionFo.basePFoOrTargetFo_p.pointerId);
-        NSLog(@"a2");
+    for (TOFoModel *solutionModel in self.baseRDemand.actionFoModels) {
+        NSLog(@"item解决方案%@的状态是 %ld 基于pFo: %ld",Pit2FStr(solutionModel.content_p),solutionModel.status,solutionModel.basePFoOrTargetFo_p.pointerId);
+        [AITest test17:solutionModel];
+        
+        //1. 判断处在actYes状态的解决方案 && 解决方案是属性当前pFo决策取得的 (参考27206c-综上&多S问题);
+        //a. 非actYes状态的不做canset再类比;
+        if (solutionModel.status != TOModelStatus_ActYes) continue;
+        
+        //b. 非当前pFo下的解决方案,不做canset再类比;
+        if (![solutionModel.basePFoOrTargetFo_p isEqual:self.matchFo]) continue;
+        
+        //c. 数据准备;
+        AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.content_p];
+        AIFoNodeBase *pFo = [SMGUtils searchNode:solutionModel.basePFoOrTargetFo_p];
+        
+        //d. 收集真实发生feedbackAlg (order为0条时,跳过);
+        NSArray *order = [solutionModel convertFeedbackAlgAndRealDeltaTimes2Orders4CreateProtoFo:true];
+        if (!ARRISOK(order)) continue;
+        
+        //e. 生成新protoFo时序 (参考27204-6);
+        AIFoNodeBase *protoFo = [theNet createConFo:order];
+        
+        //f. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
+        AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:protoFo assFo:solutionFo type:ATDefault];
+        NSLog(@"a4");
+        [pFo updateConCanset:absCansetFo.pointer targetIndex:pFo.count];
+        [AITest test101:absCansetFo];
+        
+        //g. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);
+        NSDictionary *newIndexDic = [solutionModel convertOldIndexDic2NewIndexDic:pFo.pointer];
+        [absCansetFo updateIndexDic:pFo indexDic:newIndexDic];
+        [AITest test18:newIndexDic newCanset:absCansetFo absFo:pFo];
+        
+        //h. 算出spDic (参考27213-5);
+        [absCansetFo updateSPDic:[solutionModel convertOldSPDic2NewSPDic]];
+        [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
     }
     
+    //2. =================无actYes的S时,归功于自然未发生,则新增protoCanset (参考27206c-R任务)=================
+    //a. 数据准备;
+    AIFoNodeBase *matchFo = [SMGUtils searchNode:self.matchFo];
+    NSArray *orders = [self convertRealMaskFoAndRealDeltaTimes2Orders4CreateProtoFo];
     
+    //b. 用realMaskFo & realDeltaTimes生成protoFo (参考27201-1 & 5);
+    AIFoNodeBase *protoFo = [theNet createConFo:orders];
     
+    //c. 将protoFo挂载到matchFo下的conCansets下 (参考27201-2);
+    [matchFo updateConCanset:protoFo.pointer targetIndex:matchFo.count];
     
-    for (TOFoModel *item in self.baseRDemand.actionFoModels) {
-        [AITest test17:item];
-    }
-    
-    //2. =================有actYes的时,归功于解决方案,执行canset再类比 (参考27206c-R任务)=================
-    if (ARRISOK(solutionModels)) {
-        NSLog(@"a3");
-        //TODOTOMORROW20221208: 此处a3到a4间闪退,偏投木棒时应该可以复现;
-        //1. 查下为什么有时明明偏扔木棒,也执行不到这里;
-        //2. 查日志: 有时pFo反省了好,但状态不是ActYes?
-        //      > 在a2时不判断actYes状态才打日志,而是全打出来,看下原因...
-        
-        
-        //TODOTOMORROW20221208: 此处具象canset容易,但抽象太不易了 (再多训练训练,有了第一个,后面会越来越容易);
-        //情况1: 解决方案失败时;
-        //即: 此处solution解决方案的状态是ActNo;
-        //即使pFo反馈时发现它最终没有发生危险...那么也不会触发canset外类比,而是会生成一个新的具象canset;
-        
-        //情况2: 解决方案成功时;
-        //即: 对执行canset再类比;
-        
-        
-        //分析: 第2步训练,从扔到飞,都是间隔太久,导致很难有习得通过飞行躲避成功的案例;
-        //方案: 可以尝试下,在扔出木棒后,快速通过躲避成功的案例经历;
-        
-        
-        
-        
-        
-        for (TOFoModel *solutionModel in solutionModels) {
-            
-            //TODOTOMORROW20221208: 另外偶然运行到此处时,也会闪退(好像是在执行外类比时)..查下原因...
-            //复现方式,危险地带直投,然后立马下飞躲开...
-            
-            
-            
-            //a. 数据准备;
-            AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.content_p];
-            AIFoNodeBase *pFo = [SMGUtils searchNode:solutionModel.basePFoOrTargetFo_p];
-            
-            //g. 收集真实发生feedbackAlg,并生成新protoFo时序 (参考27204-6);
-            NSArray *order = [solutionModel convertFeedbackAlgAndRealDeltaTimes2Orders4CreateProtoFo:true];
-            AIFoNodeBase *protoFo = [theNet createConFo:order];
-            
-            //h. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
-            AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:protoFo assFo:solutionFo type:ATDefault];
-            [pFo updateConCanset:absCansetFo.pointer targetIndex:pFo.count];
-            NSLog(@"a4");
-            [AITest test101:absCansetFo];
-            
-            //j. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);
-            NSDictionary *newIndexDic = [solutionModel convertOldIndexDic2NewIndexDic:pFo.pointer];
-            [absCansetFo updateIndexDic:pFo indexDic:newIndexDic];
-            [AITest test18:newIndexDic newCanset:absCansetFo absFo:pFo];
-            
-            //k. 算出spDic (参考27213-5);
-            [absCansetFo updateSPDic:[solutionModel convertOldSPDic2NewSPDic]];
-            [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
-        }
-    }
-    //3. =================无actYes的S时,归功于自然未发生,则新增protoCanset (参考27206c-R任务)=================
-    else {
-        //a. 数据准备;
-        AIFoNodeBase *matchFo = [SMGUtils searchNode:self.matchFo];
-        NSArray *orders = [self convertRealMaskFoAndRealDeltaTimes2Orders4CreateProtoFo];
-        
-        //b. 用realMaskFo & realDeltaTimes生成protoFo (参考27201-1 & 5);
-        AIFoNodeBase *protoFo = [theNet createConFo:orders];
-        
-        //c. 将protoFo挂载到matchFo下的conCansets下 (参考27201-2);
-        [matchFo updateConCanset:protoFo.pointer targetIndex:matchFo.count];
-        
-        //d. 将item.indexDic挂载到matchFo的conIndexDDic下 (参考27201-3);
-        [protoFo updateIndexDic:matchFo indexDic:self.indexDic2];
-    }
+    //d. 将item.indexDic挂载到matchFo的conIndexDDic下 (参考27201-3);
+    [protoFo updateIndexDic:matchFo indexDic:self.indexDic2];
 }
 
 /**
