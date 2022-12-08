@@ -194,6 +194,12 @@
         
         
         for (TOFoModel *solutionModel in solutionModels) {
+            
+            //TODOTOMORROW20221208: 另外偶然运行到此处时,也会闪退(好像是在执行外类比时)..查下原因...
+            //复现方式,危险地带直投,然后立马下飞躲开...
+            
+            
+            
             //a. 数据准备;
             AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.content_p];
             AIFoNodeBase *pFo = [SMGUtils searchNode:solutionModel.basePFoOrTargetFo_p];
