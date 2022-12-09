@@ -147,23 +147,8 @@
  *      2022.12.09: 无论是否进行抽象,都生成具象canset (参考27228);
  */
 -(void) pushFrameFinish {
-
-    //TODOTOMORROW20221208:
-    //1. 实际训练特性: 此处具象canset容易,但抽象太不易了
-    //  思路: 再多训练训练,有了第一个,后面会越来越容易 (但目前还没一个成功抽象的,,,继续训练测试......);
-    
-    //2. 抽象很难原因: 第2步训练,从扔到飞,都是间隔太久,导致很难有习得通过飞行躲避成功的案例;
-    //  方案: 可以尝试下,在扔出木棒后,快速通过躲避成功的案例经历 (较易复现方式,危险地带直投,然后立马下飞躲开...);
-    
-    //先继续跑跑,看能不能跑到a4;
-    
-    
     //1. =================有actYes的时,归功于解决方案,执行canset再类比 (参考27206c-R任务)=================
-    NSLog(@"当前pFo:%ld 兄弟pFos:%@",self.matchFo.pointerId,[SMGUtils convertArr:self.baseRDemand.pFos convertBlock:^id(AIMatchFoModel *obj) {
-        return Pit2FStr(obj.matchFo);
-    }]);
     for (TOFoModel *solutionModel in self.baseRDemand.actionFoModels) {
-        NSLog(@"item解决方案%@的状态是 %ld 基于pFo: %ld",Pit2FStr(solutionModel.content_p),solutionModel.status,solutionModel.basePFoOrTargetFo_p.pointerId);
         [AITest test17:solutionModel];
         
         //1. 判断处在actYes状态的解决方案 && 解决方案是属性当前pFo决策取得的 (参考27206c-综上&多S问题);
@@ -172,6 +157,7 @@
         
         //b. 非当前pFo下的解决方案,不做canset再类比;
         if (![solutionModel.basePFoOrTargetFo_p isEqual:self.matchFo]) continue;
+        NSLog(@"item解决方案%@的状态是 %ld 基于pFo: %ld",Pit2FStr(solutionModel.content_p),solutionModel.status,solutionModel.basePFoOrTargetFo_p.pointerId);
         
         //c. 数据准备;
         AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.content_p];
