@@ -165,6 +165,9 @@
         
         //d. 收集真实发生feedbackAlg (order为0条时,跳过);
         NSArray *order = [solutionModel convertFeedbackAlgAndRealDeltaTimes2Orders4CreateProtoFo:true];
+        if (solutionModel.actionIndex > 2 && order.count == 0) {
+            NSLog(@"2722a-此处有问题,actionIndex很大了,但order却是0条...");
+        }
         if (!ARRISOK(order)) continue;
         
         //e. 生成新protoFo时序 (参考27204-6);
