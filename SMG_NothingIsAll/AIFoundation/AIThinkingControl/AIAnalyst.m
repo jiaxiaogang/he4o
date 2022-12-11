@@ -82,15 +82,6 @@
     NSInteger matchCutIndex = ptAleardayCount - 1;
     NSInteger cansetCutIndex = NUMTOOK([indexDic objectForKey:@(matchCutIndex)]).integerValue;
     
-    //测试2722a-思路2-分析:
-    AIFoNodeBase *matchFo = [SMGUtils searchNode:matchFo_p];
-    if (cansetCutIndex > matchFo.count) {
-        NSLog(@"canset的中段截点很高,比matchFo的长度都长...");
-        NSLog(@"所以canset的前段总有一些是未执行的...");
-        NSLog(@"所以这解决方案就算后段全执行成功了,也没法有效解决任务吧?");
-        NSLog(@"");
-    }
-    
     //3. 判断canset前段是否有遗漏 (参考27224);
     if (cansetCutIndex < matchCutIndex) return nil;
     

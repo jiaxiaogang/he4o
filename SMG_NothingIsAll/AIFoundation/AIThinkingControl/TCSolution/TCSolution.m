@@ -136,10 +136,6 @@
         AIFoNodeBase *bestSFo = [SMGUtils searchNode:bestResult.cansetFo];
         TOFoModel *foModel = [TOFoModel newWithFo_p:bestSFo.pointer base:demand basePFoOrTargetFo_p:bestResult.getBaseFoFromBasePFoOrTargetFoModel];
         foModel.actionIndex = bestResult.cutIndex;
-        
-        
-        NSLog(@"2722a-怀疑此处初始化actionIndex就是4,不信你打出来调试下看看: %ld",foModel.actionIndex);
-        
         NSLog(@"> newS 第%ld例: %@",demand.actionFoModels.count,Fo2FStr(bestSFo));
         
         //a) 有效率
