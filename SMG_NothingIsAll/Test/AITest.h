@@ -10,6 +10,9 @@
 
 @interface AITest : NSObject
 
+//MARK:===============================================================
+//MARK:               < 异常单元测试 (常开,有异常时停在断点) >
+//MARK:===============================================================
 +(void) test1:(NSString*)aDS hnAlgDS:(NSString*)hnAlgDS;
 +(void) test2:(AIKVPointer*)pointer type:(AnalogyType)type at:(NSString*)at ds:(NSString*)ds;
 +(void) test3:(AIKVPointer*)pointer type:(AnalogyType)type ds:(NSString*)ds;
@@ -33,6 +36,10 @@
 +(void) test21:(BOOL)refrectionResult;
 +(void) test22;
 
+//MARK:===============================================================
+//MARK:    < 回测必经点测试 (常关,每个轮回测时打开,触发则关,未触发者为异常) >
+//MARK:===============================================================
 +(void) test101:(AIFoNodeBase*)absCansetFo;
++(void) test102:(AIFoNodeBase*)cansetFo;
 
 @end

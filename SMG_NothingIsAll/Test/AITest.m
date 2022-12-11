@@ -10,6 +10,10 @@
 
 @implementation AITest
 
+//MARK:===============================================================
+//MARK:               < 异常单元测试 (常开,有异常时停在断点) >
+//MARK:===============================================================
+
 +(void) test1:(NSString*)aDS hnAlgDS:(NSString*)hnAlgDS{
     if (![aDS isEqualToString:@" "] ||
         ![hnAlgDS isEqualToString:@" "]) {
@@ -192,8 +196,19 @@
     ELog(@"发现indexDic在absIndex下找不到conIndex,查下为什么没映射到?是不是识别时全含判断错了?");
 }
 
+
+//MARK:===============================================================
+//MARK:    < 回测必经点测试 (常关,每个轮回测时打开,触发则关,未触发者为异常) >
+//MARK:===============================================================
 +(void) test101:(AIFoNodeBase*)absCansetFo {
     ELog(@"必经点测试: 触发canset再抽象有被执行到");
+}
+
++(void) test102:(AIFoNodeBase*)cansetFo {
+    //测试27222-1,TCSolution取得抽象canset;
+    if (AINetAbsFoNode.class == cansetFo.class) {
+        NSLog(@"取得抽象canset: %@",NSStringFromClass(cansetFo.class));
+    }
 }
 
 @end

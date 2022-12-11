@@ -75,17 +75,21 @@
     //1. 数据准备 & 复用indexDic;
     AIKVPointer *matchFo_p = [AISolutionModel getBaseFoFromBasePFoOrTargetFoModel:basePFoOrTargetFoModel];
     AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
-    
-    //测试27222-1,TCSolution取得抽象canset;
-    if (AINetAbsFoNode.class == cansetFo.class) {
-        NSLog(@"取得canset类型: %@",NSStringFromClass(cansetFo.class));
-        NSLog(@"");
-    }
     NSDictionary *indexDic = [cansetFo getAbsIndexDic:matchFo_p];
+    [AITest test102:cansetFo];
     
     //2. 计算出canset的cutIndex (canset的cutIndex,也已在proto中发生) (参考26128-1-1);
     NSInteger matchCutIndex = ptAleardayCount - 1;
     NSInteger cansetCutIndex = NUMTOOK([indexDic objectForKey:@(matchCutIndex)]).integerValue;
+    
+    //测试2722a-思路2-分析:
+    AIFoNodeBase *matchFo = [SMGUtils searchNode:matchFo_p];
+    if (cansetCutIndex > matchFo.count) {
+        NSLog(@"canset的中段截点很高,比matchFo的长度都长...");
+        NSLog(@"所以canset的前段总有一些是未执行的...");
+        NSLog(@"所以这解决方案就算后段全执行成功了,也没法有效解决任务吧?");
+        NSLog(@"");
+    }
     
     //3. 判断canset前段是否有遗漏 (参考27224);
     if (cansetCutIndex < matchCutIndex) return nil;
