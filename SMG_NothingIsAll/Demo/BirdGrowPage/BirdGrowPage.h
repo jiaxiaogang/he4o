@@ -10,4 +10,6 @@
 
 @interface BirdGrowPage : HEViewController
 
+@property (assign, nonatomic) CGPoint birdBirthPos;
+
 @end

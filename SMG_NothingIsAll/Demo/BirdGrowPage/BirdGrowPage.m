@@ -410,7 +410,9 @@
 
 //获取坐标;
 -(CGPoint) getBirdBirthPos{
-    if (theApp.birthPosMode == 1) {
+    if (self.birdBirthPos.x > 0 || self.birdBirthPos.y > 0) {
+        return self.birdBirthPos;
+    }else if (theApp.birthPosMode == 1) {
         return [self getBirdBirthPos_RandomCenter];
     }else if(theApp.birthPosMode == 2){
         return [self getBirdBirthPos_Center];

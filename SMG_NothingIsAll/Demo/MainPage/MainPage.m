@@ -51,31 +51,57 @@
 }
 
 - (IBAction)birdGrowBtnOnClick:(id)sender {
-    BirdGrowPage *page = [[BirdGrowPage alloc] init];
-    [self.navigationController pushViewController:page animated:true];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [theRT invoked:kGrowPageSEL];
-    });
+    [self pushBrowPage:CGPointZero];
 }
 
+//MARK:===============================================================
+//MARK:                     < block >
+//MARK:===============================================================
 - (void)miniGrowTap:(UITapGestureRecognizer *)tap{
     //1. 计算距离和角度
     UIView *tapView = tap.view;
     CGPoint point = [tap locationInView:tapView];                 //点击坐标
-    CGPoint targetPoint = CGPointZero;
-    
-    //2. 远投按键,计算映射坐标;
     CGFloat xRate = point.x / tapView.width;
     CGFloat yRate = point.y / tapView.height;
-    CGFloat targetX = 30 + (ScreenWidth - 60) * xRate;
-    CGFloat targetY = 94 + (ScreenHeight - 60 - 128) * yRate;
-    targetPoint = CGPointMake(targetX, targetY);
     
-    //4. 投食 & 打日志;
-    if (targetPoint.x != 0 && targetPoint.y != 0) {
-        NSLog(@"鸟出生坐标 (X:%.2f Y:%.2f)",targetPoint.x,targetPoint.y);
+    //2. 实际路的上中下高宽;
+    CGFloat topH = (ScreenHeight - 128 - 100) / 2.0f, btmH = topH, roadH = 100, roadW = ScreenWidth - 32;
+    
+    //3. 计算映射坐标 (mini图的中间0.4是路中,路上下各0.3);
+    CGFloat targetX = 16 + xRate * roadW;
+    if (yRate < 0.3f) {
+        //a. 路上坐标计算
+        CGFloat topRate = yRate / 0.3f;
+        CGFloat targetY = 64 + topRate * topH;
+        [self pushBrowPage:CGPointMake(targetX, targetY)];
+    }else if (yRate < 0.7f) {
+        //b. 路中坐标计算
+        CGFloat roadRate = (yRate - 0.3f) / 0.4f;
+        CGFloat targetY = 64 + topH + roadRate * roadH;
+        [self pushBrowPage:CGPointMake(targetX, targetY)];
+    }else {
+        //c. 路下坐标计算
+        CGFloat btmRate = (yRate - 0.7f) / 0.3f;
+        CGFloat targetY = 64 + topH + roadH + btmRate * btmH;
+        [self pushBrowPage:CGPointMake(targetX, targetY)];
     }
 }
 
+//MARK:===============================================================
+//MARK:                     < privateMethod >
+//MARK:===============================================================
+-(void) pushBrowPage:(CGPoint)birdPos {
+    //1. 到成长页;
+    BirdGrowPage *page = [[BirdGrowPage alloc] init];
+    [self.navigationController pushViewController:page animated:true];
+    
+    //2. 指定小鸟出生地点;
+    page.birdBirthPos = birdPos;
+    
+    //3. 标记训练器步骤;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [theRT invoked:kGrowPageSEL];
+    });
+}
 
 @end
