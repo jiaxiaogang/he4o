@@ -11,16 +11,17 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MainPage">
             <connections>
+                <outlet property="miniGrowView" destination="hbi-w6-FMC" id="UDW-67-NUA"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
-            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <rect key="frame" x="0.0" y="0.0" width="865" height="413"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IR0-M6-u0f">
-                    <rect key="frame" x="16" y="80" width="343" height="100"/>
+                    <rect key="frame" x="16" y="80" width="833" height="100"/>
                     <color key="backgroundColor" red="0.62745098039215685" green="0.62745098039215685" blue="0.62745098039215685" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="100" id="Mbj-3z-2WR"/>
@@ -34,7 +35,7 @@
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wcn-tv-AfJ">
-                    <rect key="frame" x="16" y="190" width="343" height="100"/>
+                    <rect key="frame" x="16" y="190" width="833" height="100"/>
                     <color key="backgroundColor" red="0.62745098039215685" green="0.62745098039215685" blue="0.62745098039215685" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="100" id="y7f-W6-gL7"/>
@@ -48,7 +49,7 @@
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5Nw-fL-2CK">
-                    <rect key="frame" x="16" y="300" width="343" height="100"/>
+                    <rect key="frame" x="16" y="300" width="833" height="100"/>
                     <color key="backgroundColor" red="0.62745098040000002" green="0.62745098040000002" blue="0.62745098040000002" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="100" id="fBR-CB-F32"/>
@@ -61,6 +62,23 @@
                         <action selector="birdGrowBtnOnClick:" destination="-1" eventType="touchUpInside" id="lvB-SF-AL4"/>
                     </connections>
                 </button>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hbi-w6-FMC">
+                    <rect key="frame" x="647" y="300" width="178" height="100"/>
+                    <subviews>
+                        <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5I5-kB-8ah">
+                            <rect key="frame" x="0.0" y="30" width="178" height="40"/>
+                            <color key="backgroundColor" red="1" green="0.62745098040000002" blue="0.55294117649999996" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        </view>
+                    </subviews>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="width" secondItem="hbi-w6-FMC" secondAttribute="height" multiplier="16:9" id="06F-Xk-8Bm"/>
+                        <constraint firstItem="5I5-kB-8ah" firstAttribute="leading" secondItem="hbi-w6-FMC" secondAttribute="leading" id="0jA-v7-HC5"/>
+                        <constraint firstAttribute="trailing" secondItem="5I5-kB-8ah" secondAttribute="trailing" id="Pz5-DV-Fbt"/>
+                        <constraint firstItem="5I5-kB-8ah" firstAttribute="height" secondItem="hbi-w6-FMC" secondAttribute="height" multiplier="0.4" id="gpq-Fc-RIO"/>
+                        <constraint firstItem="5I5-kB-8ah" firstAttribute="centerY" secondItem="hbi-w6-FMC" secondAttribute="centerY" id="lgb-pZ-g1e"/>
+                    </constraints>
+                </view>
             </subviews>
             <color key="backgroundColor" red="0.8666666666666667" green="0.8666666666666667" blue="0.8666666666666667" alpha="1" colorSpace="calibratedRGB"/>
             <constraints>
@@ -68,13 +86,22 @@
                 <constraint firstAttribute="trailing" secondItem="5Nw-fL-2CK" secondAttribute="trailing" constant="16" id="AYF-mx-lnU"/>
                 <constraint firstItem="wcn-tv-AfJ" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="16" id="AwW-cG-Xyd"/>
                 <constraint firstItem="IR0-M6-u0f" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="16" id="T7m-sT-HVU"/>
+                <constraint firstItem="hbi-w6-FMC" firstAttribute="bottom" secondItem="5Nw-fL-2CK" secondAttribute="bottom" id="TUI-Db-Bcl"/>
                 <constraint firstItem="wcn-tv-AfJ" firstAttribute="top" secondItem="IR0-M6-u0f" secondAttribute="bottom" constant="10" id="Y5j-Qf-w6b"/>
+                <constraint firstAttribute="trailing" secondItem="hbi-w6-FMC" secondAttribute="trailing" constant="40" id="cI1-U2-Lzi"/>
                 <constraint firstItem="5Nw-fL-2CK" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="16" id="cQX-lw-ptk"/>
                 <constraint firstItem="IR0-M6-u0f" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="80" id="csM-3B-t7S"/>
                 <constraint firstAttribute="trailing" secondItem="IR0-M6-u0f" secondAttribute="trailing" constant="16" id="heB-u7-0Cg"/>
+                <constraint firstItem="hbi-w6-FMC" firstAttribute="top" secondItem="5Nw-fL-2CK" secondAttribute="top" id="wJb-dt-eNm"/>
                 <constraint firstAttribute="trailing" secondItem="wcn-tv-AfJ" secondAttribute="trailing" constant="16" id="xBE-H1-rev"/>
             </constraints>
-            <point key="canvasLocation" x="138.40000000000001" y="128.18590704647679"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="530.39999999999998" y="13.943028485757123"/>
+        </view>
+        <view contentMode="scaleToFill" id="2wC-dD-bca">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </view>
     </objects>
 </document>
