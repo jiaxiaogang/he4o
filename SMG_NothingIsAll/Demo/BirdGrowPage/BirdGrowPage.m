@@ -338,6 +338,12 @@
     [self.woodView.layer removeAllAnimations];
     [self.woodView setFrame:frame];
 }
+- (IBAction)miniResetBtnClick:(id)sender {
+    [theTC clear];
+}
+- (IBAction)miniBackBtnClick:(id)sender {
+    [self.navigationController popToRootViewControllerAnimated:YES];
+}
 
 /**
  *  MARK:--------------------BirdViewDelegate--------------------
