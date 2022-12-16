@@ -26,6 +26,8 @@
  *      2021.12.26: hSolution达到目标帧转hActYes的处理 (参考25031-9);
  *      2021.12.26: 下标不急(弄巧成拙)评价,支持isOut=true的情况 (参考25031-10);
  *      2022.05.19: 废弃ARSTime评价 (参考26051);
+ *      2022.12.09: 修复少执行了一帧的问题 (后16号又发现多了一帧,把target也执行了,这里9号时的情况已经忘了);
+ *      2022.12.16: 修复多执行了一帧的问题 (即target帧不必行为化,自然发生即可);
  *  @callers : 可以供_Demand和_Hav等调用;
  */
 +(void) action:(TOFoModel*)foModel{
@@ -36,10 +38,10 @@
     OFTitleLog(@"行为化Fo", @"\n时序:%@->%@ 类型:(%@)",Fo2FStr(curFo),Mvp2Str(curFo.cmvNode_p),curFo.pointer.typeStr);
     
     //4. 跳转下帧 (最后一帧为目标,自然发生即可,此前帧则需要行为化实现);
-    if (foModel.actionIndex < foModel.targetSPIndex) {
+    if (foModel.actionIndex < foModel.targetSPIndex - 1) {
         //a. Alg转移 (下帧)
         foModel.actionIndex ++;
-        NSLog(@"_Fo行为化第 %ld/%ld 个: %@",(long)foModel.actionIndex + 1,foModel.targetSPIndex,Fo2FStr(curFo));
+        NSLog(@"_Fo行为化第 %ld/%ld 个: %@",(long)foModel.actionIndex,foModel.targetSPIndex,Fo2FStr(curFo));
         
         //@desc: 下标不急评价说明: R模式_Hav首先是为了避免forecastAlg,其次才是为了达成curFo解决方案 (参考22153);
         //5. 下标不急(弄巧成拙)评价_数据准备 (参考24171-12);
@@ -57,13 +59,14 @@
         //        return;
         //    }
         //}
-        
-        //6. 转下帧;
+        //6. 转下帧: 理性帧则生成TOAlgModel;
         AIKVPointer *move_p = ARR_INDEX(curFo.content_ps, foModel.actionIndex);
         TOAlgModel *moveAlg = [TOAlgModel newWithAlg_p:move_p group:foModel];
-        [TCActYes frameActYes:foModel];//调用frameActYes();
         
-        //7. 尝试行为当前帧;
+        //7. 调用frameActYes();
+        [TCActYes frameActYes:foModel];
+        
+        //8. 当前帧是理性帧时: 尝试行为当前帧;
         DebugE();
         [TCOut out:moveAlg];
     }else{
