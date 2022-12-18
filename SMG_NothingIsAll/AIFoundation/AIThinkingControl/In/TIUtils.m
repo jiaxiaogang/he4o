@@ -193,6 +193,14 @@
         }]);
     }
     
+    //TODOTOMORROW20221218: 此处按相似度排序,有可能最相似的全是最具象的节点,导致抽象节点在此处体现不出优势 (参考2722d-问题);
+    //1. 看此处也参与强度竞争;
+    //2. 然后训练下,此处可以慢慢凸显出 (训练得到危险地带和安全地带的抽象概念);
+    
+    
+    
+    
+    
     //11. 按nearA排序 (参考25083-2&公式2 & 25084-1);
     NSArray *sortModels = [SMGUtils sortBig2Small:protoModels compareBlock:^double(AIMatchAlgModel *obj) {
         return [obj matchValue];
