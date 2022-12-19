@@ -136,6 +136,7 @@
  *      2022.06.07 - 排序公式改为sumNear / nearCount (参考2619j-TODO5);
  *      2022.06.13 - 修复因matchCount<result.count导致概念识别有错误结果的BUG (参考26236);
  *      2022.10.20 - 删掉早已废弃的partAlgs代码 & 将返回List<AlgNode>类型改成List<AIMatchAlgModel> (参考27153);
+ *      2022.12.19 - 迭代概念识别结果的竞争机制 (参考2722d-方案2);
  */
 +(void) partMatching_Alg:(AIAlgNodeBase*)protoAlg except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel{
     //1. 数据准备;
@@ -193,17 +194,12 @@
         }]);
     }
     
-    //TODOTOMORROW20221218: 此处按相似度排序,有可能最相似的全是最具象的节点,导致抽象节点在此处体现不出优势 (参考2722d-问题);
-    //1. 看此处也参与强度竞争;
-    //2. 然后训练下,此处可以慢慢凸显出 (训练得到危险地带和安全地带的抽象概念);
-    
-    
-    
-    
+    //11. 识别竞争机制 (参考2722d-方案2);
+    NSDictionary *rankDic = [AIRank recognitonAlgRank:protoModels];
     
     //11. 按nearA排序 (参考25083-2&公式2 & 25084-1);
-    NSArray *sortModels = [SMGUtils sortBig2Small:protoModels compareBlock:^double(AIMatchAlgModel *obj) {
-        return [obj matchValue];
+    NSArray *sortModels = [SMGUtils sortSmall2Big:protoModels compareBlock:^double(AIMatchAlgModel *obj) {
+        return NUMTOOK([rankDic objectForKey:@(obj.matchAlg.pointerId)]).floatValue;
     }];
     
     //12. 全含判断: 从大到小,依次取到对应的node和matchingCount (注: 支持相近后,应该全是全含了,参考25084-1);

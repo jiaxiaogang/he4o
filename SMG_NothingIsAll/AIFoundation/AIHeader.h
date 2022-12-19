@@ -67,6 +67,7 @@
 #import "OutputModel.h"
 #import "Output.h"
 #import "AINoRepeatRun.h"
+#import "AIRank.h"
 
 //2021新TC架构
 #import "TCInput.h"

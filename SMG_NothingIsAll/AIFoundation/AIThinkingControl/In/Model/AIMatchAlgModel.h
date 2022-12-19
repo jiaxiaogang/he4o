@@ -18,11 +18,16 @@
 @property (assign, nonatomic) int matchCount;       //匹配数
 @property (assign, nonatomic) CGFloat sumNear;      //总相近度 (参考25082-公式2分子部分);
 @property (assign, nonatomic) int nearCount;        //相近度<1的相近个数
-@property (assign, nonatomic) int sumRefStrong;     //总引用强度 (目前没啥用)
+@property (assign, nonatomic) int sumRefStrong;     //总引用强度 (稀疏码被此概念引用的强度和);
 
 /**
  *  MARK:--------------------获取相近度--------------------
  */
 -(CGFloat) matchValue;
+
+/**
+ *  MARK:--------------------获取强度--------------------
+ */
+-(CGFloat) strongValue;
 
 @end
