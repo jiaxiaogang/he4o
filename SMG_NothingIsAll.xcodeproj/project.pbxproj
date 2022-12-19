@@ -891,8 +891,6 @@
 				08F3E9302241B6E800545795 /* AIAnalogy.m */,
 				083680402853863E003F91FE /* AIAnalyst.h */,
 				083680412853863E003F91FE /* AIAnalyst.m */,
-				08C3978B2950A1A700C49EA7 /* AIRank.h */,
-				08C3978C2950A1A700C49EA7 /* AIRank.m */,
 				087705BE2753786700BA4EFB /* README.md */,
 			);
 			path = AIThinkingControl;
@@ -1524,6 +1522,8 @@
 			children = (
 				08C7539025A3EEB800BCF011 /* AIScore.h */,
 				08C7539125A3EEB800BCF011 /* AIScore.m */,
+				08C3978B2950A1A700C49EA7 /* AIRank.h */,
+				08C3978C2950A1A700C49EA7 /* AIRank.m */,
 			);
 			path = Score;
 			sourceTree = "<group>";

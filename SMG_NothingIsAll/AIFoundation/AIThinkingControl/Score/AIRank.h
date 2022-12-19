@@ -8,11 +8,19 @@
 
 #import <Foundation/Foundation.h>
 
+//MARK:===============================================================
+//MARK:                     < 综合竞争 >
+//MARK:===============================================================
 @interface AIRank : NSObject
 
 /**
  *  MARK:--------------------概念识别综合排名 (参考2722d-方案2-todo2)--------------------
  */
 +(NSDictionary*) recognitonAlgRank:(NSArray*)matchAlgModels;
+
+/**
+ *  MARK:--------------------S综合排名--------------------
+ */
++(NSArray*) solutionFoRanking:(NSArray*)solutionModels needBack:(BOOL)needBack fromSlow:(BOOL)fromSlow;
 
 @end

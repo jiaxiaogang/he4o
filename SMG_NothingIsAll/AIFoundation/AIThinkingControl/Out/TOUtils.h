@@ -170,12 +170,6 @@
  */
 +(CGFloat) getColSPScore:(AIFoNodeBase*)fo outOfFos:(NSArray*)outOfFo_ps startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex;
 
-
-//MARK:===============================================================
-//MARK:                     < 解决方案竞争 >
-//MARK:===============================================================
-+(NSArray*) solutionTotalRanking:(NSArray*)solutionModels needBack:(BOOL)needBack fromSlow:(BOOL)fromSlow;
-
 /**
  *  MARK:--------------------检查某toModel的末枝有没有ActYes状态--------------------
  */

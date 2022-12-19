@@ -516,36 +516,6 @@
 }
 
 /**
- *  MARK:--------------------S综合排名--------------------
- *  @desc 对前中后段分别排名,然后综合排名 (参考26222-TODO2);
- *  @param needBack : 是否排后段: H传true需要,R传false不需要;
- *  @param fromSlow : 是否源于慢思考: 慢思考传true中段用stable排,快思考传false中段用effect排;
- */
-+(NSArray*) solutionTotalRanking:(NSArray*)solutionModels needBack:(BOOL)needBack fromSlow:(BOOL)fromSlow{
-    //1. 三段分开排;
-    NSArray *backSorts = needBack ? [SMGUtils sortBig2Small:solutionModels compareBlock:^double(AISolutionModel *obj) {
-        return obj.backMatchValue;
-    }] : nil;
-    NSArray *midSorts = [SMGUtils sortBig2Small:solutionModels compareBlock:^double(AISolutionModel *obj) {
-        return fromSlow ? obj.stableScore : obj.effectScore;
-    }];
-    NSArray *frontSorts = [SMGUtils sortBig2Small:solutionModels compareBlock:^double(AISolutionModel *obj) {
-        return obj.frontMatchValue;
-    }];
-    
-    //2. 综合排名
-    NSArray *ranking = [SMGUtils sortSmall2Big:solutionModels compareBlock:^double(AISolutionModel *obj) {
-        NSInteger backIndex = needBack ? [backSorts indexOfObject:obj] : 0;
-        NSInteger midIndex = [midSorts indexOfObject:obj];
-        NSInteger frontIndex = [frontSorts indexOfObject:obj];
-        return backIndex + midIndex + frontIndex;
-    }];
-    
-    //3. 返回;
-    return ranking;
-}
-
-/**
  *  MARK:--------------------检查某toModel的末枝有没有ActYes状态--------------------
  *  @desc 因为actYes向上传染,不向下,所以末枝有actYes,即当前curModel也不应响应 (参考26184-原则);
  */
