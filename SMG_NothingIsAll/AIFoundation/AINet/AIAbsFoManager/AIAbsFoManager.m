@@ -53,7 +53,7 @@
         findAbsNode.pointer = [SMGUtils createPointerForFo:kPN_FO_ABS_NODE at:at ds:ds type:type];
         
         //3. 收集order_ps
-        [findAbsNode.content_ps addObjectsFromArray:orderSames];
+        findAbsNode.content_ps = [[NSMutableArray alloc] initWithArray:orderSames];
         
         //4. order_ps更新概念节点引用序列;
         [AINetUtils insertRefPorts_AllFoNode:findAbsNode.pointer order_ps:findAbsNode.content_ps ps:findAbsNode.content_ps difStrong:difStrong];

@@ -80,7 +80,7 @@
     NSArray *content_ps = [AINetAbsFoUtils convertOrder2Alg_ps:order];
     
     //4. foNode.orders收集
-    [foNode.content_ps addObjectsFromArray:content_ps];
+    foNode.content_ps = [[NSMutableArray alloc] initWithArray:content_ps];
 
     //5. foNode引用conAlg;
     [AINetUtils insertRefPorts_AllFoNode:foNode.pointer order_ps:foNode.content_ps ps:foNode.content_ps difStrong:difStrong];

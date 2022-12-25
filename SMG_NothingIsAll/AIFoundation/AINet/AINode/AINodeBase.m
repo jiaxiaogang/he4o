@@ -21,9 +21,9 @@
     return _absPorts;
 }
 
--(NSMutableArray *)content_ps{
-    if (_content_ps == nil) _content_ps = [[NSMutableArray alloc] init];
-    return _content_ps;
+-(NSMutableArray *)contentPorts{
+    if (_contentPorts == nil) _contentPorts = [[NSMutableArray alloc] init];
+    return _contentPorts;
 }
 
 //MARK:===============================================================
@@ -31,6 +31,23 @@
 //MARK:===============================================================
 -(NSInteger) count{
     return self.content_ps.count;
+}
+
+-(NSMutableArray *)content_ps{
+    return [SMGUtils convertArr:self.contentPorts convertBlock:^id(AIPort *obj) {
+        return obj.target_p;
+    }];
+}
+
+-(void) setContent_ps:(NSArray*)content_ps {
+    content_ps = ARRTOOK(content_ps);
+    self.contentPorts = [SMGUtils convertArr:content_ps convertBlock:^id(AIKVPointer *obj) {
+        AIPort *port = [[AIPort alloc] init];
+        port.target_p = obj;
+        port.header = [NSString md5:[SMGUtils convertPointers2String:content_ps]];
+        port.strong.value = 1;
+        return port;
+    }];
 }
 
 //MARK:===============================================================
@@ -50,7 +67,7 @@
         self.pointer = [aDecoder decodeObjectForKey:@"pointer"];
         self.conPorts = [aDecoder decodeObjectForKey:@"conPorts"];
         self.absPorts = [aDecoder decodeObjectForKey:@"absPorts"];
-        self.content_ps = [aDecoder decodeObjectForKey:@"content_ps"];
+        self.contentPorts = [aDecoder decodeObjectForKey:@"contentPorts"];
     }
     return self;
 }
@@ -65,7 +82,7 @@
     [aCoder encodeObject:self.pointer forKey:@"pointer"];
     [aCoder encodeObject:[self.conPorts copy] forKey:@"conPorts"];
     [aCoder encodeObject:[self.absPorts copy] forKey:@"absPorts"];
-    [aCoder encodeObject:self.content_ps forKey:@"content_ps"];
+    [aCoder encodeObject:self.contentPorts forKey:@"contentPorts"];
 }
 
 @end
