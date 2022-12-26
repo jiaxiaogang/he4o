@@ -65,7 +65,7 @@
     }
 
     //3. 外类比构建
-    return [self analogyOutside_Creater:orderSames fo:protoFo assFo:assFo type:type];
+    return [self analogyOutside_Creater:orderSames protoFo:protoFo assFo:assFo type:type];
 }
 
 /**
@@ -81,51 +81,45 @@
  *      2021.09.26: 仅构建glFo时才从conNodes取at&ds值,避免SFo也有值的问题 (参考24022-BUG2);
  *      2021.09.28: ATSame和ATDiff两个type是描述是否包含cmv指向的,改为传ATDefault过来 (参考24022-BUG5);
  */
-+(AINetAbsFoNode*)analogyOutside_Creater:(NSArray*)orderSames fo:(AIFoNodeBase*)fo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type{
++(AINetAbsFoNode*)analogyOutside_Creater:(NSArray*)orderSames protoFo:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type{
     //2. 数据检查;
     AINetAbsFoNode *result = nil;
-    if (ARRISOK(orderSames) && ISOK(fo, AIFoNodeBase.class) && ISOK(assFo, AIFoNodeBase.class)) {
+    if (ARRISOK(orderSames) && ISOK(protoFo, AIFoNodeBase.class) && ISOK(assFo, AIFoNodeBase.class)) {
 
         //3. fo和assFo本来就是抽象关系时_直接关联即可;
         BOOL samesEqualAssFo = orderSames.count == assFo.count && [SMGUtils containsSub_ps:orderSames parent_ps:assFo.content_ps];
         BOOL jumpForAbsAlreadyHav = (ISOK(assFo, AINetAbsFoNode.class) && samesEqualAssFo);
         if (jumpForAbsAlreadyHav) {
             result = (AINetAbsFoNode*)assFo;
-            [AINetUtils relateFoAbs:result conNodes:@[fo] isNew:false];
+            [AINetUtils relateFoAbs:result conNodes:@[protoFo] isNew:false];
             [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
             if (result.cmvNode_p) [theNet setMvNodeToDirectionReference:[SMGUtils searchNode:result.cmvNode_p] difStrong:1];
         }else{
             //4. 取foDifStrong
             NSInteger foDifStrong = 1;
-            AICMVNodeBase *foMv = [SMGUtils searchNode:fo.cmvNode_p];
+            AICMVNodeBase *foMv = [SMGUtils searchNode:protoFo.cmvNode_p];
             AICMVNodeBase *assMv = [SMGUtils searchNode:assFo.cmvNode_p];
             if (foMv && assMv) {
-                NSArray *conMvs = [SMGUtils searchNodes:@[fo.cmvNode_p,assFo.cmvNode_p]];
+                NSArray *conMvs = [SMGUtils searchNodes:@[protoFo.cmvNode_p,assFo.cmvNode_p]];
                 NSInteger absUrgentTo = [AINetAbsCMVUtil getAbsUrgentTo:conMvs];
                 foDifStrong = absUrgentTo;
             }
             
             //5. 构建absFoNode (当GL时,传入at&ds);
-            NSArray *conFos = @[fo,assFo];
-            NSString *at = DefaultAlgsType,*ds = DefaultDataSource;
-            if (type == ATGreater || type == ATLess) {
-                ds = [AINetUtils getDSFromConNodes:conFos];
-                at = [AINetUtils getATFromConNodes:conFos];
-            }
-            result = [theNet createAbsFo_NoRepeat:conFos content_ps:orderSames difStrong:foDifStrong at:at ds:ds type:type];
+            result = [theNet createAbsFo_NoRepeat:orderSames protoFo:protoFo assFo:assFo difStrong:foDifStrong type:type];
             
             //5. 从fo和conFo.mvDeltaTime中提取mv导致时间隔,在relateFo之前,赋值到result中;
-            result.mvDeltaTime = MAX(MAX(fo.mvDeltaTime, assFo.mvDeltaTime), result.mvDeltaTime);
+            result.mvDeltaTime = MAX(MAX(protoFo.mvDeltaTime, assFo.mvDeltaTime), result.mvDeltaTime);
             
             //6. createAbsCmvNode (当正向类比,且result没有cmv指向时);
-            if (fo.cmvNode_p && assMv && !result.cmvNode_p) {
-                AIAbsCMVNode *resultMv = [theNet createAbsCMVNode_Outside:nil aMv_p:fo.cmvNode_p bMv_p:assMv.pointer];
+            if (protoFo.cmvNode_p && assMv && !result.cmvNode_p) {
+                AIAbsCMVNode *resultMv = [theNet createAbsCMVNode_Outside:nil aMv_p:protoFo.cmvNode_p bMv_p:assMv.pointer];
                 [AINetUtils relateFo:result mv:resultMv];//cmv模型连接;
             }
         }
     }
     //调试短时序; (先仅打外类比日志);
-    NSInteger foStrong = [AINetUtils getStrong:result atConNode:fo type:type];
+    NSInteger foStrong = [AINetUtils getStrong:result atConNode:protoFo type:type];
     NSInteger assFoStrong = [AINetUtils getStrong:result atConNode:assFo type:type];
     NSString *log = STRFORMAT(@"-> 与ass%@外类比\n\t构建时序 (%@): %@->{%@} from: (protoFo(%ld):assFo(%ld))",Fo2FStr(assFo),ATType2Str(type),Fo2FStr(result),Mvp2Str(result.cmvNode_p),foStrong,assFoStrong);
     NSLog(@"%@",log);

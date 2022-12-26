@@ -14,7 +14,6 @@
 
 /**
  *  MARK:--------------------在foNode基础上构建抽象--------------------
- *  @params conFos      : 具象节点们 (外类比时,传入foA和foB) (内类比时传入baseFo即可)
  *  @params orderSames  : algNode组
  *  注: 转移: 仅概念支持内存网络向硬盘网络的转移,fo不进行转移;
  *
@@ -23,11 +22,11 @@
  *      2021.01.03: 判断abs已存在抽象节点时,加上ATDS的匹配判断,因为不同类型节点不必去重 (参考2120B-BUG2);
  *  @result : notnull
  */
--(AINetAbsFoNode*) create:(NSArray*)conFos orderSames:(NSArray*)orderSames difStrong:(NSInteger)difStrong at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type{
+-(AINetAbsFoNode*) create:(NSArray*)orderSames protoFo:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo difStrong:(NSInteger)difStrong at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type{
     //1. 数据准备
+    NSArray *conFos = @[protoFo,assFo];
     if(!at) at = DefaultAlgsType;
     if(!ds) ds = DefaultDataSource;
-    if (!ARRISOK(conFos)) return nil;
     orderSames = ARRTOOK(orderSames);
     NSString *samesStr = [SMGUtils convertPointers2String:orderSames];
     NSString *samesMd5 = STRTOOK([NSString md5:samesStr]);
@@ -51,6 +50,17 @@
         isNew = true;
         findAbsNode = [[AINetAbsFoNode alloc] init];
         findAbsNode.pointer = [SMGUtils createPointerForFo:kPN_FO_ABS_NODE at:at ds:ds type:type];
+        
+        //TODOTOMORROW20221226: 复用orderSames在类比前的引用强度:
+        //1. 类比时assFo一定是抽象,所以只需要从assFo中,取orderSames的每个引用强度即可;
+        //2.
+        
+        
+        
+        
+        
+        
+        
         
         //3. 收集order_ps
         findAbsNode.content_ps = [[NSMutableArray alloc] initWithArray:orderSames];
@@ -76,7 +86,7 @@
  *  @callers : 被外类比构建器调用;
  *  @功能说明: 1. 未支持内存去重;
  *  @param difStrong : 构建fo的被引用初始强度;
- *  @param ds : 新构建时传入指定ds,尤其是GL类型时,一般要将value.dataSource传递过来 (参考24019-概念部分);
+ *  _param ds : 新构建时传入指定ds,尤其是GL类型时,一般要将value.dataSource传递过来 (参考24019-概念部分);
  *              非新构建时,可传nil,此时尝试从conFos继承获取 (如果它们有共同的ds);
  *  @version
  *      2020.04.26: 去掉时序的全局去重;
@@ -90,12 +100,12 @@
  *  @status
  *      2021.04.25: 打开后,gl经验全为0条,所以先关掉,后续测试打开后为什么为0条;
  */
--(AINetAbsFoNode*) create_NoRepeat:(NSArray*)conFos content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type{
+-(AINetAbsFoNode*) create_NoRepeat:(NSArray*)content_ps protoFo:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo difStrong:(NSInteger)difStrong type:(AnalogyType)type{
     //1. 数据准备
-    conFos = ARRTOOK(conFos);
+    NSArray *conFos = @[protoFo,assFo];
+    NSString *at = DefaultAlgsType; //[AINetUtils getDSFromConNodes:conFos type:type];
+    NSString *ds = DefaultDataSource; //[AINetUtils getATFromConNodes:conFos type:type];
     content_ps = ARRTOOK(content_ps);
-    if(!at) at = DefaultAlgsType;
-    if(!ds) ds = DefaultDataSource;
     AINetAbsFoNode *result = nil;
     
     //2. 防重_SP类型时,嵌套范围内绝对匹配;
@@ -119,7 +129,7 @@
         [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
     }else{
         //4. 无则新构建;
-        result = [self create:conFos orderSames:content_ps difStrong:difStrong at:at ds:ds type:type];
+        result = [self create:content_ps protoFo:protoFo assFo:assFo difStrong:difStrong at:at ds:ds type:type];
     }
     return result;
 }

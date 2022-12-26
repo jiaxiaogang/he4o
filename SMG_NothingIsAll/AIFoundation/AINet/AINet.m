@@ -133,8 +133,8 @@ static AINet *_instance;
 //        return ds;
 //    }];
 //}
--(AINetAbsFoNode*) createAbsFo_NoRepeat:(NSArray*)conFos content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type{
-    return [self.absFoManager create_NoRepeat:conFos content_ps:content_ps difStrong:difStrong at:at ds:ds type:type];
+-(AINetAbsFoNode*) createAbsFo_NoRepeat:(NSArray*)content_ps protoFo:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo difStrong:(NSInteger)difStrong type:(AnalogyType)type{
+    return [self.absFoManager create_NoRepeat:content_ps protoFo:protoFo assFo:assFo difStrong:difStrong type:type];
 }
 
 //MARK:===============================================================

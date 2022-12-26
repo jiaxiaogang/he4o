@@ -85,18 +85,8 @@
         absIsNew = true;
         result = [[AIAbsAlgNode alloc] init];
         result.pointer = [SMGUtils createPointerForAlg:kPN_ALG_ABS_NODE at:at dataSource:ds isOut:isOut type:type];
-        result.content_ps = [[NSMutableArray alloc] initWithArray:sortSames];
+        [result setContent_ps:sortSames];
     }
-    
-    ////4. 概念的嵌套 (190816取消概念嵌套,参见n16p17-bug16)
-    //for (AIAlgNode *item in conAlgs) {
-    //    ///1. 可替换时,逐个进行替换; (比如ATLess/ATGreater时,就不可替换)
-    //    if ([SMGUtils containsSub_ps:value_ps parent_ps:item.content_ps]) {
-    //        NSMutableArray *newValue_ps = [SMGUtils removeSub_ps:value_ps parent_ps:[[NSMutableArray alloc] initWithArray:item.content_ps]];
-    //        [newValue_ps addObject:findAbsNode.pointer];
-    //        item.content_ps = [SMGUtils sortPointers:newValue_ps];
-    //    }
-    //}
     
     //4. value.refPorts (更新/加强微信息的引用序列)
     NSInteger difStrong = 1;//absIsNew ? validConAlgs.count : 1;//20200106改回1,自由竞争无论是抽象还是具象;世上没有两片一样的树叶,所以对于抽象来说,本来就是讨便宜,易联想匹配的;

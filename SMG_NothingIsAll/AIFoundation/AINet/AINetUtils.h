@@ -67,8 +67,8 @@
  *  MARK:--------------------从conNodes中取at&ds&type--------------------
  */
 +(AnalogyType) getTypeFromConNodes:(NSArray*)conNodes;
-+(NSString*) getDSFromConNodes:(NSArray*)conNodes;
-+(NSString*) getATFromConNodes:(NSArray*)conNodes;
++(NSString*) getDSFromConNodes:(NSArray*)conNodes type:(AnalogyType)type;
++(NSString*) getATFromConNodes:(NSArray*)conNodes type:(AnalogyType)type;
 
 @end
 
