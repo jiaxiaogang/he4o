@@ -20,6 +20,7 @@
  *  @version
  *      2020.08.18: 支持deltaTimes (抽象时序的deltaTime全部由conFos得出,参考:20201);
  *      2021.01.03: 判断abs已存在抽象节点时,加上ATDS的匹配判断,因为不同类型节点不必去重 (参考2120B-BUG2);
+ *      2022.12.27: 构建抽象fo时,从源assFo复用contentPort的强度 (参考2722f-todo12);
  *  @result : notnull
  */
 -(AINetAbsFoNode*) create:(NSArray*)orderSames protoFo:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo difStrong:(NSInteger)difStrong at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type{
@@ -51,19 +52,14 @@
         findAbsNode = [[AINetAbsFoNode alloc] init];
         findAbsNode.pointer = [SMGUtils createPointerForFo:kPN_FO_ABS_NODE at:at ds:ds type:type];
         
-        //TODOTOMORROW20221226: 复用orderSames在类比前的引用强度:
-        //1. 类比时assFo一定是抽象,所以只需要从assFo中,取orderSames的每个引用强度即可;
-        //2.
-        
-        
-        
-        
-        
-        
-        
-        
         //3. 收集order_ps
-        findAbsNode.content_ps = [[NSMutableArray alloc] initWithArray:orderSames];
+        [findAbsNode setContent_ps:orderSames getStrongBlock:^NSInteger(AIKVPointer *item_p) {
+            //4. 复用类比orderSames的assFo中的原content强度 (参考2722f-todo12);
+            for (AIPort *port in assFo.contentPorts) {
+                if ([port.target_p isEqual:item_p]) return port.strong.value + 1;
+            }
+            return 1;
+        }];
         
         //4. order_ps更新概念节点引用序列;
         [AINetUtils insertRefPorts_AllFoNode:findAbsNode.pointer order_ps:findAbsNode.content_ps ps:findAbsNode.content_ps difStrong:difStrong];

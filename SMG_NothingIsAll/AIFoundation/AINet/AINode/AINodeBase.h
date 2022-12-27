@@ -34,6 +34,7 @@
 @property (strong, nonatomic,nonnull) NSMutableArray *contentPorts;
 -(NSMutableArray *)content_ps;
 -(void) setContent_ps:(NSArray*)content_ps;
+-(void) setContent_ps:(NSArray*)content_ps getStrongBlock:(NSInteger(^)(AIKVPointer *item_p))getStrongBlock;
 
 /**
  *  MARK:--------------------返回content长度--------------------

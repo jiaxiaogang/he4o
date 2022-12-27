@@ -40,12 +40,18 @@
 }
 
 -(void) setContent_ps:(NSArray*)content_ps {
+    [self setContent_ps:content_ps getStrongBlock:^NSInteger(AIKVPointer *item_p) {
+        return 1;
+    }];
+}
+
+-(void) setContent_ps:(NSArray*)content_ps getStrongBlock:(NSInteger(^)(AIKVPointer *item_p))getStrongBlock{
     content_ps = ARRTOOK(content_ps);
     self.contentPorts = [SMGUtils convertArr:content_ps convertBlock:^id(AIKVPointer *obj) {
         AIPort *port = [[AIPort alloc] init];
         port.target_p = obj;
         port.header = [NSString md5:[SMGUtils convertPointers2String:content_ps]];
-        port.strong.value = 1;
+        port.strong.value = getStrongBlock(obj);
         return port;
     }];
 }
