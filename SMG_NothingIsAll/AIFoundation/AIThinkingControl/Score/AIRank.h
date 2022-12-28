@@ -19,6 +19,11 @@
 +(NSDictionary*) recognitonAlgRank:(NSArray*)matchAlgModels;
 
 /**
+ *  MARK:--------------------时序识别综合排名 (参考2722d-方案2-todo2 & 2722f-todo14)--------------------
+ */
++(NSDictionary*) recognitonFoRank:(NSArray*)matchFoModels;
+
+/**
  *  MARK:--------------------S综合排名--------------------
  */
 +(NSArray*) solutionFoRanking:(NSArray*)solutionModels needBack:(BOOL)needBack fromSlow:(BOOL)fromSlow;

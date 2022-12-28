@@ -307,6 +307,7 @@
  *      2022.11.10: 因为最近加强了抽具象多层多样性,所以从matchAlgs+partAlgs取改为从lastAlg.absPorts取 (效用一样);
  *      2022.11.10: 时序识别中alg相似度复用-准备部分 & 参数调整 (参考27175-5);
  *      2022.11.15: 对识别结果,直接构建抽具象关联 (参考27177-todo6);
+ *      2022.12.28: 求出匹配部分的综合引用强度值,并参与到综合竞争中 (参考2722f-todo13&todo14);
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
 +(void) partMatching_FoV1Dot5:(AIFoNodeBase*)protoOrRegroupFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel fromRegroup:(BOOL)fromRegroup{
@@ -400,12 +401,14 @@
     AddTCDebug(@"时序识别28");
     
     //10. 按照 (强度x匹配度) 排序,强度最重要,包含了价值初始和使用频率,其次匹配度也重要 (参考23222-BUG2);
+    NSDictionary *pRankDic = [AIRank recognitonFoRank:inModel.matchPFos];
     NSArray *sortPFos = [SMGUtils sortBig2Small:inModel.matchPFos compareBlock:^double(AIMatchFoModel *obj) {
-        return obj.matchFoValue;
+        return NUMTOOK([pRankDic objectForKey:@(obj.matchFo.pointerId)]).floatValue;
     }];
     AddTCDebug(@"时序识别29");
+    NSDictionary *rRankDic = [AIRank recognitonFoRank:inModel.matchRFos];
     NSArray *sortRFos = [SMGUtils sortBig2Small:inModel.matchRFos compareBlock:^double(AIMatchFoModel *obj) {
-        return obj.matchFoValue;
+        return NUMTOOK([rRankDic objectForKey:@(obj.matchFo.pointerId)]).floatValue;
     }];
     AddTCDebug(@"时序识别30");
     

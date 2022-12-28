@@ -44,6 +44,39 @@
 }
 
 /**
+ *  MARK:--------------------时序识别综合排名 (参考2722d-方案2-todo2 & 2722f-todo14)--------------------
+ *  @result 返回排名名次: <matchFo.pId, 综合排名值(越小越靠前)>;
+ */
++(NSDictionary*) recognitonFoRank:(NSArray*)matchFoModels {
+    //1. 数据准备;
+    matchFoModels = ARRTOOK(matchFoModels);
+    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
+    
+    //2. 分别按相似度和强度排序;
+    NSArray *rank4MatchValue = [SMGUtils sortBig2Small:matchFoModels compareBlock:^double(AIMatchFoModel *obj) {
+        return [obj matchFoValue];
+    }];
+    NSArray *rank4StrongValue = [SMGUtils sortBig2Small:matchFoModels compareBlock:^double(AIMatchFoModel *obj) {
+        return [obj strongValue];
+    }];
+    
+    //3. 求出综合排名;
+    for (AIMatchFoModel *item in matchFoModels) {
+        //4. 取两科排名下标;
+        NSInteger index4MatchValue = [rank4MatchValue indexOfObject:item];
+        NSInteger index4StrongValue = [rank4StrongValue indexOfObject:item];
+        
+        //5. 各自归1化;
+        CGFloat normalized4MatchValue = index4MatchValue / rank4MatchValue.count;
+        CGFloat normalized4StrongValue = index4StrongValue / rank4StrongValue.count;
+        
+        //6. 计算综合排名;
+        [result setObject:@(normalized4MatchValue * normalized4StrongValue) forKey:@(item.matchFo.pointerId)];
+    }
+    return result;
+}
+
+/**
  *  MARK:--------------------S综合排名--------------------
  *  @desc 对前中后段分别排名,然后综合排名 (参考26222-TODO2);
  *  @param needBack : 是否排后段: H传true需要,R传false不需要;
