@@ -206,4 +206,9 @@
  */
 +(NSArray*) getNearDataByIndexDic:(NSDictionary*)indexDic absFo:(AIKVPointer*)absFo_p conFo:(AIKVPointer*)conFo_p callerIsAbs:(BOOL)callerIsAbs;
 
+/**
+ *  MARK:--------------------获取sumRefStrong已发生部分强度--------------------
+ */
++(NSInteger) getSumRefStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p;
+
 @end

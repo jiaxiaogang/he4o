@@ -379,15 +379,14 @@
             CGFloat sumNear = NUMTOOK(ARR_INDEX(nearData, 1)).floatValue;
             AddTCDebug(@"时序识别24");
             
+            //8. 被引用强度;
+            NSInteger sumRefStrong = [AINetUtils getSumRefStrongByIndexDic:indexDic matchFo:assFo_p];
+            AddTCDebug(@"时序识别26");
+            
             //7. 实例化识别结果AIMatchFoModel;
-            AIMatchFoModel *newMatchFo = [AIMatchFoModel newWithMatchFo:assFo.pointer protoOrRegroupFo:protoOrRegroupFo.pointer sumNear:sumNear nearCount:nearCount indexDic:indexDic cutIndex:cutIndex];
+            AIMatchFoModel *newMatchFo = [AIMatchFoModel newWithMatchFo:assFo.pointer protoOrRegroupFo:protoOrRegroupFo.pointer sumNear:sumNear nearCount:nearCount indexDic:indexDic cutIndex:cutIndex sumRefStrong:sumRefStrong];
             if (Log4MFo) NSLog(@"时序识别itemSUCCESS 匹配度:%f %@->%@",newMatchFo.matchFoValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
             AddTCDebug(@"时序识别25");
-            
-            //8. 被引用强度;
-            AIPort *newMatchFoFromPort = [AINetUtils findPort:assFo_p fromPorts:assFoPorts];
-            newMatchFo.matchFoStrong = newMatchFoFromPort ? newMatchFoFromPort.strong.value : 0;
-            AddTCDebug(@"时序识别26");
             
             //9. 收集到pFos/rFos;
             if (assFo.cmvNode_p) {
@@ -419,13 +418,13 @@
     NSLog(@"\n=====> 时序识别Finish (PFos数:%lu)",(unsigned long)inModel.matchPFos.count);
     for (AIMatchFoModel *item in inModel.matchPFos) {
         AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
-        NSLog(@"强度:(%ld)\t> %@->%@ (from:%@)",item.matchFoStrong,Fo2FStr(matchFo), Mvp2Str(matchFo.cmvNode_p),CLEANSTR(matchFo.spDic));
+        NSLog(@"强度:(%ld)\t> %@->%@ (from:%@)",item.sumRefStrong,Fo2FStr(matchFo), Mvp2Str(matchFo.cmvNode_p),CLEANSTR(matchFo.spDic));
     }
         
     NSLog(@"\n=====> 时序识别Finish (RFos数:%lu)",(unsigned long)inModel.matchRFos.count);
     for (AIMatchFoModel *item in inModel.matchRFos){
         AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
-        NSLog(@"强度:(%ld)\t> %@ (from:%@)",item.matchFoStrong,Pit2FStr(item.matchFo),CLEANSTR(matchFo.spDic));
+        NSLog(@"强度:(%ld)\t> %@ (from:%@)",item.sumRefStrong,Pit2FStr(item.matchFo),CLEANSTR(matchFo.spDic));
     }
     AddTCDebug(@"时序识别32");
     

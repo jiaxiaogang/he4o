@@ -18,7 +18,7 @@
 @class AIFoNodeBase;
 @interface AIMatchFoModel : NSObject
 
-+(AIMatchFoModel*) newWithMatchFo:(AIKVPointer*)matchFo protoOrRegroupFo:(AIKVPointer*)protoOrRegroupFo sumNear:(CGFloat)sumNear nearCount:(NSInteger)nearCount indexDic:(NSDictionary*)indexDic cutIndex:(NSInteger)cutIndex;
++(AIMatchFoModel*) newWithMatchFo:(AIKVPointer*)matchFo protoOrRegroupFo:(AIKVPointer*)protoOrRegroupFo sumNear:(CGFloat)sumNear nearCount:(NSInteger)nearCount indexDic:(NSDictionary*)indexDic cutIndex:(NSInteger)cutIndex sumRefStrong:(NSInteger)sumRefStrong;
 
 @property (weak, nonatomic) ReasonDemandModel *baseRDemand; //记录其挂载在哪个R任务下 (weak不允许序列化,避免循环序列化);
 @property (strong, nonatomic) AIKVPointer *matchFo;     //匹配时序
@@ -68,7 +68,12 @@
  */
 @property (assign, nonatomic) NSInteger cutIndex;
 
-@property (assign, nonatomic) NSInteger matchFoStrong;  //时序识别中被引用强度 (目前仅用于调试);
+/**
+ *  MARK:--------------------时序识别中被引用强度--------------------
+ *  @version
+ *      2022.12.28: 改为indexDic匹配已发生部分的综合强度 (参考2722f-todo13);
+ */
+@property (assign, nonatomic) NSInteger sumRefStrong;
 
 /**
  *  MARK:--------------------AIMatchFoModel的评分(懒加载)缓存--------------------

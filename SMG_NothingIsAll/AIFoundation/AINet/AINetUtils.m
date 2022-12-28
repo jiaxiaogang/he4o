@@ -592,4 +592,22 @@
     return @[@(nearCount), @(sumNear)];
 }
 
+/**
+ *  MARK:--------------------获取sumRefStrong已发生部分强度--------------------
+ *  @desc 根据indexDic取得sumRefStrong (参考2722f-todo13);
+ */
++(NSInteger) getSumRefStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p {
+    //1. 数据准备;
+    NSInteger sumRefStrong = 0;  //总强度
+    AIFoNodeBase *matchFo = [SMGUtils searchNode:matchFo_p];
+    
+    //2. 逐个统计;
+    for (NSNumber *key in indexDic.allKeys) {
+        NSInteger absIndex = key.integerValue;
+        AIPort *itemPort = ARR_INDEX(matchFo.contentPorts, absIndex);
+        sumRefStrong += itemPort.strong.value;
+    }
+    return sumRefStrong;
+}
+
 @end

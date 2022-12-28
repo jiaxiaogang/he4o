@@ -23,7 +23,7 @@
 
 @implementation AIMatchFoModel
 
-+(AIMatchFoModel*) newWithMatchFo:(AIKVPointer*)matchFo protoOrRegroupFo:(AIKVPointer*)protoOrRegroupFo sumNear:(CGFloat)sumNear nearCount:(NSInteger)nearCount indexDic:(NSDictionary*)indexDic cutIndex:(NSInteger)cutIndex{
++(AIMatchFoModel*) newWithMatchFo:(AIKVPointer*)matchFo protoOrRegroupFo:(AIKVPointer*)protoOrRegroupFo sumNear:(CGFloat)sumNear nearCount:(NSInteger)nearCount indexDic:(NSDictionary*)indexDic cutIndex:(NSInteger)cutIndex sumRefStrong:(NSInteger)sumRefStrong{
     AIFoNodeBase *protoOrRegroupFoNode = [SMGUtils searchNode:protoOrRegroupFo];
     AIMatchFoModel *model = [[AIMatchFoModel alloc] init];
     model.matchFo = matchFo;
@@ -34,6 +34,7 @@
     model.nearCount = nearCount;
     model.indexDic2 = [[NSMutableDictionary alloc] initWithDictionary:indexDic];
     model.cutIndex = cutIndex;
+    model.sumRefStrong = sumRefStrong;
     model.scoreCache = defaultScore; //评分缓存默认值;
     return model;
 }
@@ -216,7 +217,7 @@
         self.status = [aDecoder decodeObjectForKey:@"status"];
         self.indexDic2 = [aDecoder decodeObjectForKey:@"indexDic2"];
         self.cutIndex = [aDecoder decodeIntegerForKey:@"cutIndex"];
-        self.matchFoStrong = [aDecoder decodeIntegerForKey:@"matchFoStrong"];
+        self.sumRefStrong = [aDecoder decodeIntegerForKey:@"sumRefStrong"];
         self.scoreCache = [aDecoder decodeFloatForKey:@"scoreCache"];
     }
     return self;
@@ -232,7 +233,7 @@
     [aCoder encodeObject:self.status forKey:@"status"];
     [aCoder encodeObject:self.indexDic2 forKey:@"indexDic2"];
     [aCoder encodeInteger:self.cutIndex forKey:@"cutIndex"];
-    [aCoder encodeInteger:self.matchFoStrong forKey:@"matchFoStrong"];
+    [aCoder encodeInteger:self.sumRefStrong forKey:@"sumRefStrong"];
     [aCoder encodeFloat:self.scoreCache forKey:@"scoreCache"];
 }
 
