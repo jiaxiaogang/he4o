@@ -610,4 +610,37 @@
     return sumRefStrong;
 }
 
+/**
+ *  MARK:--------------------根据indexDic更新refPort强度值 (参考2722f-todo33)--------------------
+ */
++(void) updateRefStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p {
+    //1. 数据准备;
+    AIFoNodeBase *matchFo = [SMGUtils searchNode:matchFo_p];
+    
+    //2. 根据indexDic取出已发生部分content_ps;
+    NSArray *frontContent_ps = [SMGUtils convertArr:indexDic.allKeys convertBlock:^id(NSNumber *key) {
+        NSInteger absIndex = key.integerValue;
+        return ARR_INDEX(matchFo.content_ps, absIndex);
+    }];
+    
+    //3. 将已发生部分增强refStrong;
+    [AINetUtils insertRefPorts_AllFoNode:matchFo_p order_ps:frontContent_ps ps:matchFo.content_ps];
+}
+
+/**
+ *  MARK:--------------------根据indexDic更新contentPort强度值 (参考2722f-todo32)--------------------
+ */
++(void) updateContentStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p {
+    //1. 数据准备;
+    AIFoNodeBase *matchFo = [SMGUtils searchNode:matchFo_p];
+    
+    //2. 根据indexDic更新contentPort强度值 & 保存;
+    for (NSNumber *key in indexDic.allKeys) {
+        NSInteger absIndex = key.integerValue;
+        AIPort *itemPort = ARR_INDEX(matchFo.contentPorts, absIndex);
+        itemPort.strong.value++;
+    }
+    [SMGUtils insertNode:matchFo];
+}
+
 @end

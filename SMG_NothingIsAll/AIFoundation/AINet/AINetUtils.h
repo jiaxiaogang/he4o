@@ -211,4 +211,14 @@
  */
 +(NSInteger) getSumRefStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p;
 
+/**
+ *  MARK:--------------------根据indexDic更新refPort强度值 (参考2722f-todo33)--------------------
+ */
++(void) updateRefStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p;
+
+/**
+ *  MARK:--------------------根据indexDic更新contentPort强度值 (参考2722f-todo32)--------------------
+ */
++(void) updateContentStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p;
+
 @end

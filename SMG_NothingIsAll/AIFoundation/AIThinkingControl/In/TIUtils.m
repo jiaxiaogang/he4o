@@ -308,6 +308,7 @@
  *      2022.11.10: 时序识别中alg相似度复用-准备部分 & 参数调整 (参考27175-5);
  *      2022.11.15: 对识别结果,直接构建抽具象关联 (参考27177-todo6);
  *      2022.12.28: 求出匹配部分的综合引用强度值,并参与到综合竞争中 (参考2722f-todo13&todo14);
+ *      2022.12.29: 时序识别后,增强indexDic已发生部分的refStrong和contentStrong (参考2722f-todo32&todo33);
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
 +(void) partMatching_FoV1Dot5:(AIFoNodeBase*)protoOrRegroupFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel fromRegroup:(BOOL)fromRegroup{
@@ -435,7 +436,8 @@
     for (AIMatchFoModel *item in inModel.matchPFos) {
         //4. 识别到时,refPorts -> 更新/加强微信息的引用序列
         AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
-        [AINetUtils insertRefPorts_AllFoNode:item.matchFo order_ps:matchFo.content_ps ps:matchFo.content_ps];
+        [AINetUtils updateRefStrongByIndexDic:item.indexDic2 matchFo:item.matchFo];
+        [AINetUtils updateContentStrongByIndexDic:item.indexDic2 matchFo:item.matchFo];
         
         //5. 存储matchFo与protoFo之间的indexDic映射 (参考27177-todo5);
         [protoOrRegroupFo updateIndexDic:matchFo indexDic:item.indexDic2];
