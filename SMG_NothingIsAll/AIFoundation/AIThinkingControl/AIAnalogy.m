@@ -52,6 +52,7 @@
                 AIKVPointer *assA_p = assFo.content_ps[j];
                 
                 //3. B源于matchFo,此处只判断B是1层抽象 (参考27161-调试1&调试2);
+                //此处proto抽象仅指向刚识别的matchAlgs,所以与contains等效;
                 BOOL mIsC = [TOUtils mIsC_1:protoA_p c:assA_p];
                 if (Log4OutAna) NSLog(@"proto的第%ld: A%ld 类比 ass的第%ld: A%ld (%@)",i,protoA_p.pointerId,j,assA_p.pointerId,mIsC?@"成功":@"失败");
                 if (mIsC) {

@@ -485,7 +485,8 @@
         BOOL itemSuccess = false;
         for (NSInteger protoIndex = nextMaxForProtoIndex; protoIndex >= 0; protoIndex--) {
             
-            //5. mIsC判断匹配;
+            //5. mIsC判断匹配
+            //此处proto抽象仅指向刚识别的matchAlgs,所以与contains等效;
             AIKVPointer *protoAlg_p = ARR_INDEX(protoOrRegroupFo.content_ps, protoIndex);
             BOOL mIsC = [TOUtils mIsC_1:protoAlg_p c:assAlg_p];
             AddTCDebug(@"时序识别13");
