@@ -403,12 +403,12 @@
     
     //10. 按照 (强度x匹配度) 排序,强度最重要,包含了价值初始和使用频率,其次匹配度也重要 (参考23222-BUG2);
     NSDictionary *pRankDic = [AIRank recognitonFoRank:inModel.matchPFos];
-    NSArray *sortPFos = [SMGUtils sortBig2Small:inModel.matchPFos compareBlock:^double(AIMatchFoModel *obj) {
+    NSArray *sortPFos = [SMGUtils sortSmall2Big:inModel.matchPFos compareBlock:^double(AIMatchFoModel *obj) {
         return NUMTOOK([pRankDic objectForKey:@(obj.matchFo.pointerId)]).floatValue;
     }];
     AddTCDebug(@"时序识别29");
     NSDictionary *rRankDic = [AIRank recognitonFoRank:inModel.matchRFos];
-    NSArray *sortRFos = [SMGUtils sortBig2Small:inModel.matchRFos compareBlock:^double(AIMatchFoModel *obj) {
+    NSArray *sortRFos = [SMGUtils sortSmall2Big:inModel.matchRFos compareBlock:^double(AIMatchFoModel *obj) {
         return NUMTOOK([rRankDic objectForKey:@(obj.matchFo.pointerId)]).floatValue;
     }];
     AddTCDebug(@"时序识别30");
