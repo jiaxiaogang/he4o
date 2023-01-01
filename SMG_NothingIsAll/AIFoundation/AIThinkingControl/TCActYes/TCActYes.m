@@ -246,6 +246,7 @@
  *  @version
  *      2022.05.29: 不判断solutionFo.mv价值分因为它一般为空;
  *      2022.06.01: actYes仅标记自己及所在的demand,不标记root (参考26185-TODO1);
+ *      2023.01.01: 修复solutionFo的mvDeltaTime总是0的问题 (参考28013);
  */
 +(void) frameActYes:(TOFoModel*)solutionModel{
     [theTC updateOperCount:kFILENAME];
@@ -267,7 +268,8 @@
     double deltaTime = 0;
     BOOL actYes4Mv = solutionModel.actionIndex >= solutionFo.count;
     if (actYes4Mv) {
-        deltaTime = solutionFo.mvDeltaTime;
+        AIFoNodeBase *basePFoOrTargetFo = [SMGUtils searchNode:solutionModel.basePFoOrTargetFo_p];
+        deltaTime = basePFoOrTargetFo.mvDeltaTime;
     }else{
         deltaTime = [NUMTOOK(ARR_INDEX(solutionFo.deltaTimes, solutionModel.actionIndex)) doubleValue];
     }
