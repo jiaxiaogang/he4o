@@ -85,6 +85,13 @@
     //3. 判断canset前段是否有遗漏 (参考27224);
     if (cansetCutIndex < matchCutIndex) return nil;
     
+    //TODOTOMORROW20230105: 27224改为工作记忆的matchFos,通过contains来判断是否前段条件满足 (参考28021 & 28022);
+    //1. 可以考虑此代码写到TCSolution的过滤器中;
+    
+    
+    
+    
+    
     //4. 计算前段匹配度 (参考26128-1-4);
     CGFloat sumFrontMatchValue = 0;
     for (NSInteger i = 0; i < ptAleardayCount; i++) {
