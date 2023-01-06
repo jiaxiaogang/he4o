@@ -85,8 +85,31 @@
     //3. 判断canset前段是否有遗漏 (参考27224);
     if (cansetCutIndex < matchCutIndex) return nil;
     
+    
     //TODOTOMORROW20230105: 27224改为工作记忆的matchFos,通过contains来判断是否前段条件满足 (参考28021 & 28022);
     //1. 可以考虑此代码写到TCSolution的过滤器中;
+    
+    //2. 从aleardayCount和indexDic取得截点,
+    //3. canset的前段,每一帧判断是否与前几帧相符,需要从pFo或targetFo向工作记忆树中,取得matchFos...
+    //4. 然后用每条matchFos来contains判断canset的这一帧;
+    if (ISOK(basePFoOrTargetFoModel, AIMatchFoModel.class)) {
+        AIMatchFoModel *pFo = (AIMatchFoModel*)basePFoOrTargetFoModel;
+        return [SMGUtils convertArr:pFo.baseRDemand.pFos convertBlock:^id(AIMatchFoModel *itemPFo) {
+            return itemPFo.matchFo;
+        }];
+        // 此处代码中,有baseRDemand,也有matchFos,但即取不到各帧的matchAlgs...
+        // 在每帧识别时序时,将前面几帧的概念matchAlgs,也 用weak存在里面,,,以供此处方便 复用,
+        
+        //明天看下,在识别处的代码,看能否这么改下数据结构...
+        
+        
+    }
+    
+    
+    
+    
+    
+    
     
     
     
