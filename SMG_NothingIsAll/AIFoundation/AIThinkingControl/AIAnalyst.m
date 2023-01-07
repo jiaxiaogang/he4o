@@ -94,13 +94,25 @@
     //4. 然后用每条matchFos来contains判断canset的这一帧;
     if (ISOK(basePFoOrTargetFoModel, AIMatchFoModel.class)) {
         AIMatchFoModel *pFo = (AIMatchFoModel*)basePFoOrTargetFoModel;
-        return [SMGUtils convertArr:pFo.baseRDemand.pFos convertBlock:^id(AIMatchFoModel *itemPFo) {
-            return itemPFo.matchFo;
-        }];
         // 此处代码中,有baseRDemand,也有matchFos,但即取不到各帧的matchAlgs...
         // 在每帧识别时序时,将前面几帧的概念matchAlgs,也 用weak存在里面,,,以供此处方便 复用,
         
         //明天看下,在识别处的代码,看能否这么改下数据结构...
+        for (NSInteger matchIndex = 0; matchIndex < ptAleardayCount; matchIndex++) {
+            NSInteger cansetIndex = NUMTOOK([indexDic objectForKey:@(matchIndex)]).integerValue;
+            
+            
+            
+            
+            //此处的pFo.baseRDemand.shortModel.protoFo/regroupFo都是由protoAlg或feedbackProtoAlg构成的;
+            
+            //TODOTOMORROW20230107: 从matchFo和protoFo取得indexDic,然后取得protoIndex...
+            
+            
+            
+            
+            
+        }
         
         
     }

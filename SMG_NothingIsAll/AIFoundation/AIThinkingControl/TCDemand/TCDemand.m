@@ -70,7 +70,7 @@
     OFTitleLog(@"subDemand",@"\n子任务数:%ld baseFo:%@",fos4Demand.count,Pit2FStr(foModel.content_p));
     for (NSString *atKey in fos4Demand.allKeys) {
         NSArray *pFosValue = [fos4Demand objectForKey:atKey];
-        [ReasonDemandModel newWithAlgsType:atKey pFos:pFosValue inModel:model baseFo:foModel];
+        [ReasonDemandModel newWithAlgsType:atKey pFos:pFosValue shortModel:model baseFo:foModel];
         for (AIMatchFoModel *pFo in pFosValue) NSLog(@"\t pFo:%@->{%.2f}",Pit2FStr(pFo.matchFo),[AIScore score4MV_v2FromCache:pFo]);
     }
     [theTV updateFrame];

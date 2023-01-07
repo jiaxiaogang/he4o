@@ -23,10 +23,9 @@
 /**
  *  MARK:--------------------newWith--------------------
  *  @param pFos     : List<AIMatchFoModel>
- *  @param inModel  : notnull
  *  @param baseFo   : 当前为子任务时,传入baseFo,非子任务传空即可;
  */
-+(ReasonDemandModel*) newWithAlgsType:(NSString*)algsType pFos:(NSArray*)pFos inModel:(AIShortMatchModel*)inModel baseFo:(TOFoModel*)baseFo;
++(ReasonDemandModel*) newWithAlgsType:(NSString*)algsType pFos:(NSArray*)pFos shortModel:(AIShortMatchModel*)shortModel baseFo:(TOFoModel*)baseFo;
 
 
 /**

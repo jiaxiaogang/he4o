@@ -62,9 +62,8 @@
 /**
  *  MARK:--------------------原始时序--------------------
  *  @desc
- *      1. 不可轻易改为由protoAlg构建,因为matchAlg对红色或距离的认识才是几个标志性值(比如5,8,13,21,57);
- *          a. 内类比成果因此而,这对以后决策时进行匹配有用,如果改成protoAlg构建,这个值会非常多,使决策循环也非常多才能找到有用的经验;
- *          b. 反向反馈类比成果也同理,对MC中MC是否有效可行为化的判定非常有用,因为一旦无法MC匹配到mIsC,那么将进入下轮决策循环;
+ *      1. protoFo: 由前几帧AIShortModel.protoAlg组成时序;
+ *      2. regroupFo: 由TOFoModel的实际反馈feedbackProtoAlg组成时序 (没反馈的由原matchFo.alg补足);
  *  @version
  *      2020.06.26: 将protoFo拆分为protoFo和matchAFo两部分;
  */

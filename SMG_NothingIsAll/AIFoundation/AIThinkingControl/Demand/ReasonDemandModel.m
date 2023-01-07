@@ -16,7 +16,7 @@
  *      2021.03.28: 将at & delta & urgentTo也封装到此处取赋值;
  *      2021.06.01: 将子任务时的base也兼容入baseOrGroup中 (参考23094);
  */
-+(ReasonDemandModel*) newWithAlgsType:(NSString*)algsType pFos:(NSArray*)pFos inModel:(AIShortMatchModel*)inModel baseFo:(TOFoModel*)baseFo{
++(ReasonDemandModel*) newWithAlgsType:(NSString*)algsType pFos:(NSArray*)pFos shortModel:(AIShortMatchModel*)shortModel baseFo:(TOFoModel*)baseFo{
     //1. 数据准备;
     ReasonDemandModel *result = [[ReasonDemandModel alloc] init];
     AIMatchFoModel *firstPFo = ARR_INDEX(pFos, 0);
@@ -35,9 +35,9 @@
     result.delta = delta;
     result.urgentTo = urgentTo;
     result.pFos = pFos;
-    result.fromIden = STRFORMAT(@"%p",inModel);
-    result.protoFo = inModel.protoFo.pointer;
-    result.regroupFo = inModel.regroupFo.pointer;
+    result.fromIden = STRFORMAT(@"%p",shortModel);
+    result.protoFo = shortModel.protoFo.pointer;
+    result.regroupFo = shortModel.regroupFo.pointer;
     
     //4. pFos赋值baseRDemand;
     for (AIMatchFoModel *pFo in pFos) {
@@ -75,6 +75,7 @@
         self.pFos = [aDecoder decodeObjectForKey:@"pFos"];
         self.fromIden = [aDecoder decodeObjectForKey:@"fromIden"];
         self.protoFo = [aDecoder decodeObjectForKey:@"protoFo"];
+        self.regroupFo = [aDecoder decodeObjectForKey:@"regroupFo"];
     }
     return self;
 }
@@ -84,6 +85,7 @@
     [aCoder encodeObject:self.pFos forKey:@"pFos"];
     [aCoder encodeObject:self.fromIden forKey:@"fromIden"];
     [aCoder encodeObject:self.protoFo forKey:@"protoFo"];
+    [aCoder encodeObject:self.regroupFo forKey:@"regroupFo"];
 }
 
 @end
