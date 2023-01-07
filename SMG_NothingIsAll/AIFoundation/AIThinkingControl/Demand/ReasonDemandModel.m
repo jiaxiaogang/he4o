@@ -58,6 +58,11 @@
     return result;
 }
 
+-(AIKVPointer*) protoOrRegroupFo {
+    if (self.protoFo) return self.protoFo;
+    return self.regroupFo;
+}
+
 /**
  *  MARK:--------------------任务是否失效--------------------
  *  @desc : 当R任务的pFos全失效时,则R任务也失效 (参考27123-问题2-todo1);

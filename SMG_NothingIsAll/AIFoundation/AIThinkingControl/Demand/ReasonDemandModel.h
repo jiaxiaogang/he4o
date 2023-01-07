@@ -50,6 +50,7 @@
  */
 @property (strong, nonatomic) AIKVPointer *protoFo;     //触发识别根任务的protoFo
 @property (strong, nonatomic) AIKVPointer *regroupFo;   //触发反思子任务的regroupFo
+-(AIKVPointer*) protoOrRegroupFo;
 
 /**
  *  MARK:--------------------任务是否失效--------------------

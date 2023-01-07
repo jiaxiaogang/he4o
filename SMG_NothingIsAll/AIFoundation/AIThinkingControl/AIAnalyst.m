@@ -101,7 +101,14 @@
         for (NSInteger matchIndex = 0; matchIndex < ptAleardayCount; matchIndex++) {
             NSInteger cansetIndex = NUMTOOK([indexDic objectForKey:@(matchIndex)]).integerValue;
             
-            
+            AIFoNodeBase *matchFo = [SMGUtils searchNode:matchFo_p];
+            AIKVPointer *protoFo_p = pFo.baseRDemand.protoOrRegroupFo;
+            AIFoNodeBase *protoFo = [SMGUtils searchNode:protoFo_p];
+            NSDictionary *protoMatchIndexDic = [matchFo getConIndexDic:protoFo_p];
+            NSInteger protoIndex = NUMTOOK([protoMatchIndexDic objectForKey:@(matchIndex)]).integerValue;
+            AIKVPointer *protoAlg_p = ARR_INDEX(protoFo.content_ps, protoIndex);
+            AIAlgNodeBase *protoAlg = [SMGUtils searchNode:protoAlg_p];
+            NSArray *matchAlgs = [AINetUtils absPorts_All:protoAlg];
             
             
             //此处的pFo.baseRDemand.shortModel.protoFo/regroupFo都是由protoAlg或feedbackProtoAlg构成的;
