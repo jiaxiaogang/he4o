@@ -36,7 +36,8 @@
         //b. 分析analyst结果 & 排除掉不适用当前场景的(为nil) (参考26232-TODO8);
         return [SMGUtils convertArr:cansetFos convertBlock:^id(AIEffectStrong *eff) {
             //c. 分析比对结果;
-            AISolutionModel *sModel = [AIAnalyst compareRCansetFo:eff.solutionFo pFo:pFoM demand:demand];
+            NSInteger rAleardayCount = [self getRAleardayCount:demand pFo:pFoM];
+            AISolutionModel *sModel = [AIAnalyst compareCansetFo:eff.solutionFo basePFoOrTargetFoModel:pFoM ptAleardayCount:rAleardayCount isH:false];
             
             //d. 快思考附加effScore分,并收集成果;
             if (sModel) sModel.effectScore = [TOUtils getEffectScore:eff];
@@ -66,7 +67,8 @@
     //3. 分析analyst结果 & 排除掉不适用当前场景的(为nil) (参考26232-TODO8);
     NSArray *cansetModels = [SMGUtils convertArr:cansetFos convertBlock:^id(AIEffectStrong *eff) {
         //a. 分析比对结果;
-        AISolutionModel *sModel = [AIAnalyst compareHCansetFo:eff.solutionFo targetFo:targetFoM];
+        NSInteger hAleardayCount = [self getHAleardayCount:targetFoM];
+        AISolutionModel *sModel = [AIAnalyst compareCansetFo:eff.solutionFo basePFoOrTargetFoModel:targetFoM ptAleardayCount:hAleardayCount isH:true];
         
         //b. 快思考附加effScore分,并收集成果;
         if (sModel) sModel.effectScore = [TOUtils getEffectScore:eff];
@@ -156,11 +158,14 @@
     //2. 取出cansetFos候选集;
     //TODOTEST20221123: 测下此处取actionIndex是否正确...
     NSArray *cansetFos = [self getCansetFos_SlowV2:targetFoModel.content_p targetIndex:targetFoModel.actionIndex];
-    cansetFos = [self slowCansetFosFilter:cansetFos demand:hDemand];
+    
+    //3. 过滤器;
+    NSInteger hAleardayCount = [self getHAleardayCount:targetFoModel];
+    cansetFos = [self slowCansetFosFilter:cansetFos demand:hDemand ptAleardayCount:hAleardayCount basePFoOrTargetFoModel:targetFoModel];
     
     //3. 转cansetModels候选集 (参考26128-第1步 & 26161-1&2&3);
-    NSArray *cansetModels = [SMGUtils convertArr:cansetFos convertBlock:^id(AIKVPointer *item) {
-        return [AIAnalyst compareHCansetFo:item targetFo:targetFoModel];
+    NSArray *cansetModels = [SMGUtils convertArr:cansetFos convertBlock:^id(AIKVPointer *cansetFo_p) {
+        return [AIAnalyst compareCansetFo:cansetFo_p basePFoOrTargetFoModel:targetFoModel ptAleardayCount:hAleardayCount isH:true];
     }];
     
     //4. 慢思考;
@@ -177,11 +182,14 @@
         //2. 取出cansetFos候选集;
         AIFoNodeBase *matchFo = [SMGUtils searchNode:pFo.matchFo];
         NSArray *cansetFos = [self getCansetFos_SlowV2:pFo.matchFo targetIndex:matchFo.count];
-        cansetFos = [self slowCansetFosFilter:cansetFos demand:demand];
+        
+        //3. 过滤器;
+        NSInteger rAleardayCount = [self getRAleardayCount:demand pFo:pFo];
+        cansetFos = [self slowCansetFosFilter:cansetFos demand:demand ptAleardayCount:rAleardayCount basePFoOrTargetFoModel:pFo];
         
         //3. 转cansetModels候选集 (参考26128-第1步 & 26161-1&2&3);
         NSArray *cansetModels = [SMGUtils convertArr:cansetFos convertBlock:^id(AIKVPointer *cansetFo_p) {
-            return [AIAnalyst compareRCansetFo:cansetFo_p pFo:pFo demand:demand];
+            return [AIAnalyst compareCansetFo:cansetFo_p basePFoOrTargetFoModel:pFo ptAleardayCount:rAleardayCount isH:false];
         }];
         return cansetModels;
     }];
@@ -282,23 +290,94 @@
  *  @version
  *      2022.07.14: S的价值pk迭代: 将过滤负价值的,改成过滤无价值指向的 (参考27048-TODO4&TODO9);
  *      2022.07.20: 不要求mv指向 (参考27055-步骤1);
+ *      2023.01.08: 加上条件满足过滤器-R任务部分 (参考28022);
  */
-+(NSArray*) slowCansetFosFilter:(NSArray*)cansetFos demand:(DemandModel*)demand{
++(NSArray*) slowCansetFosFilter:(NSArray*)cansetFos demand:(DemandModel*)demand ptAleardayCount:(NSInteger)ptAleardayCount basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel{
     //1. 数据准备;
     BOOL havBack = ISOK(demand, HDemandModel.class); //H有后段,别的没有;
     int minCount = havBack ? 2 : 1;
+    AIKVPointer *matchFo_p = [AISolutionModel getBaseFoFromBasePFoOrTargetFoModel:basePFoOrTargetFoModel];
+    AIFoNodeBase *matchFo = [SMGUtils searchNode:matchFo_p];
     
     //2. 过滤器;
-    cansetFos = [SMGUtils filterArr:cansetFos checkValid:^BOOL(AIKVPointer *item) {
-        //a. 过滤掉长度不够的 (因为前段全含至少要1位,中段修正也至少要0位,后段H目标要1位R要0位);
-        AIFoNodeBase *fo = [SMGUtils searchNode:item];
-        if (fo.count < minCount) return false;
+    cansetFos = [SMGUtils filterArr:cansetFos checkValid:^BOOL(AIKVPointer *cansetFo_p) {
+        //3. 过滤掉长度不够的 (因为前段全含至少要1位,中段修正也至少要0位,后段H目标要1位R要0位);
+        AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
+        if (cansetFo.count < minCount) return false;
+        
+        //4. 通过contains来判断是否前段条件满足 (参考28021 & 28022);
+        if (ISOK(demand, ReasonDemandModel.class)) {
+            
+            //5. R任务时,数据准备;
+            AIMatchFoModel *pFo = (AIMatchFoModel*)basePFoOrTargetFoModel;
+            AIKVPointer *protoFo_p = pFo.baseRDemand.protoOrRegroupFo;
+            AIFoNodeBase *protoFo = [SMGUtils searchNode:protoFo_p];
+            
+            //6. 根据matchFo取得与canset的indexDic映射;
+            NSDictionary *cansetMatchIndexDic = [matchFo getConIndexDic:cansetFo_p];
+            
+            //7. 根据matchFo取得proto的indexDic映射;
+            NSDictionary *protoMatchIndexDic = [matchFo getConIndexDic:protoFo_p];
+            
+            //7. 所有已发生帧,都要判断一下条件满足 (28022-todo4);
+            for (NSInteger matchIndex = 0; matchIndex < ptAleardayCount; matchIndex++) {
+                
+                //7. 取得match当前帧对应的protoAlg;
+                NSInteger protoIndex = NUMTOOK([protoMatchIndexDic objectForKey:@(matchIndex)]).integerValue;
+                AIKVPointer *protoAlg_p = ARR_INDEX(protoFo.content_ps, protoIndex);
+                
+                //8. 取得match当前帧对应的cansetAlg;
+                NSInteger cansetIndex = NUMTOOK([cansetMatchIndexDic objectForKey:@(matchIndex)]).integerValue;
+                AIKVPointer *cansetAlg_p = ARR_INDEX(cansetFo.content_ps, cansetIndex);
+                
+                //9. 根据protoAlg取得matchAlgs (参考28021-问题2-结果);
+                AIAlgNodeBase *protoAlg = [SMGUtils searchNode:protoAlg_p];
+                NSArray *matchAlg_ps = Ports2Pits([AINetUtils absPorts_All:protoAlg]);
+                
+                //10. 判断是否包含cansetAlg (只要有一条不包含,则条件不满足,返回过滤掉) (参考28022-todo2&3);
+                if (![matchAlg_ps containsObject:cansetAlg_p]) {
+                    return false;
+                }
+            }
+        } else if (ISOK(demand, HDemandModel.class)) {
+            //TODOTOMORROW20230108: 此处支持对hDemand的情况下的支持;
+            NSLog(@"");
+            
+            
+            
+        }
         
         //b. 闯关成功;
         return true;
     }];
     NSLog(@"第4步 最小长度 & 非负价值过滤后:%ld",cansetFos.count);//测时96条
     return cansetFos;
+}
+
++(NSInteger) getRAleardayCount:(ReasonDemandModel*)rDemand pFo:(AIMatchFoModel*)pFo{
+    //1. 数据准备;
+    BOOL isRoot = !rDemand.baseOrGroup;
+    TOFoModel *demandBaseFo = (TOFoModel*)rDemand.baseOrGroup;
+    
+    //3. 取pFo已发生个数 (参考26232-TODO3);
+    NSInteger pFoAleardayCount = 0;
+    if (isRoot) {
+        //a. 根R任务时 (参考26232-TODO5);
+        pFoAleardayCount = pFo.cutIndex + 1;
+    }else{
+        //b. 子R任务时 (参考26232-TODO6);
+        pFoAleardayCount = [SMGUtils filterArr:pFo.indexDic2.allValues checkValid:^BOOL(NSNumber *item) {
+            int maskIndex = item.intValue;
+            return maskIndex <= demandBaseFo.actionIndex;
+        }].count;
+    }
+    return pFoAleardayCount;
+}
+
++(NSInteger) getHAleardayCount:(TOFoModel*)targetFoM {
+    //1. 已发生个数 (targetFo已行为化部分即已发生) (参考26161-模型);
+    NSInteger targetFoAleardayCount = targetFoM.actionIndex;
+    return targetFoAleardayCount;
 }
 
 @end

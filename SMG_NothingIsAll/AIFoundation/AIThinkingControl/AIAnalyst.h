@@ -23,14 +23,9 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------分析R任务的cansetFo--------------------
+ *  MARK:--------------------分析R/H任务的cansetFo--------------------
  */
-+(AISolutionModel*) compareRCansetFo:(AIKVPointer*)cansetFo_p pFo:(AIMatchFoModel*)pFo demand:(ReasonDemandModel*)demand;
-
-/**
- *  MARK:--------------------分析H任务的cansetFo--------------------
- */
-+(AISolutionModel*) compareHCansetFo:(AIKVPointer*)cansetFo_p targetFo:(TOFoModel*)targetFoM;
++(AISolutionModel*) compareCansetFo:(AIKVPointer*)cansetFo_p basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel ptAleardayCount:(NSInteger)ptAleardayCount isH:(BOOL)isH;
 
 
 //MARK:===============================================================
