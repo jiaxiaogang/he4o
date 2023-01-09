@@ -36,8 +36,4 @@
 @property (assign, nonatomic) NSInteger cutIndex;       //已发生截点 (含cutIndex也已发生);
 @property (assign, nonatomic) NSInteger targetIndex;    //目标index (R时为cansetFo.count,H时为目标帧下标);
 
-//R时返回pFo.matchFo,H时返回targetFo;
--(AIKVPointer*) getBaseFoFromBasePFoOrTargetFoModel;
-+(AIKVPointer*) getBaseFoFromBasePFoOrTargetFoModel:(id)basePFoOrTargetFoModel;
-
 @end

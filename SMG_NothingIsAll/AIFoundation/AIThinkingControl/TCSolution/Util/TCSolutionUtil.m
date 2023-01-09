@@ -343,6 +343,24 @@
             //TODOTOMORROW20230108: 此处支持对hDemand的情况下的支持;
             NSLog(@"");
             
+            TOFoModel *targetFoModel = (TOFoModel*)basePFoOrTargetFoModel;
+            
+            //此处targetFoModel.actionIndex之前,全是前段,
+            if (!ISOK(targetFoModel.baseOrGroup, ReasonDemandModel.class)) {
+                //1. 不为R时,继续indexDic的映射传递;
+                
+                //层级: 每个H任务的solutionFo,都抽象指向其basePFoOrTargetFoModel,所以记忆树的越根部越是抽象,越
+                //每条indexDic,都暂取出,做为最终的综合映射依据;
+                
+                
+                
+            } else {
+                //2. 为R时,取得pFo(matchFo),并以此取得protoFo,根据protoFo取得概念识别matchAlgs,来与最终的canset对应的cansetAlg判断contains;
+                
+                ReasonDemandModel *rDemand = (ReasonDemandModel*)targetFoModel.baseOrGroup;
+                targetFoModel.basePFoOrTargetFoModel
+                rDemand.protoOrRegroupFo
+            }
             
             
         }

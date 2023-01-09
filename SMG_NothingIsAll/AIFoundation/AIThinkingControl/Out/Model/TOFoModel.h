@@ -22,7 +22,7 @@
  */
 @interface TOFoModel : TOModelBase <ISubModelsDelegate,ISubDemandDelegate>
 
-+(TOFoModel*) newWithFo_p:(AIKVPointer*)fo_p base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFo_p:(AIKVPointer*)basePFoOrTargetFo_p;
++(TOFoModel*) newWithFo_p:(AIKVPointer*)fo_p base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel;
 
 /**
  *  MARK:--------------------行为化数据--------------------
@@ -65,7 +65,7 @@
 /**
  *  MARK:--------------------此解决方案基于哪个pFo/targetFo--------------------
  */
-@property (strong, nonatomic) AIKVPointer *basePFoOrTargetFo_p;
+@property (weak, nonatomic) id basePFoOrTargetFoModel;//R任务时为pFoModel,H任务时为targetFoModel;
 
 /**
  *  MARK:--------------------将每帧反馈转成orders,以构建protoFo--------------------

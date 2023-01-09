@@ -254,6 +254,18 @@
     }];
 }
 
+//R时返回pFo.matchFo,H时返回targetFo;
++(AIKVPointer*) getBaseFoFromBasePFoOrTargetFoModel:(id)basePFoOrTargetFoModel {
+    if (ISOK(basePFoOrTargetFoModel, AIMatchFoModel.class)) {
+        AIMatchFoModel *pFo = (AIMatchFoModel*)basePFoOrTargetFoModel;
+        return pFo.matchFo;
+    } else if(ISOK(basePFoOrTargetFoModel, TOFoModel.class)){
+        TOFoModel *targetFo = (TOFoModel*)basePFoOrTargetFoModel;
+        return targetFo.content_p;
+    }
+    return nil;
+}
+
 /**
  *  MARK:--------------------是否HNGL节点--------------------
  *  @version

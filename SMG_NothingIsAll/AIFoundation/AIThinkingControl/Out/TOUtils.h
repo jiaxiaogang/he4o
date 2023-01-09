@@ -88,6 +88,9 @@
  */
 +(NSMutableArray*) convertPointersFromTOModels:(NSArray*)toModels;
 
+//R时返回pFo.matchFo,H时返回targetFo;
++(AIKVPointer*) getBaseFoFromBasePFoOrTargetFoModel:(id)basePFoOrTargetFoModel;
+
 /**
  *  MARK:--------------------是否HNGL节点--------------------
  *  @desc 其中isHNGL主要支持fo,alg都是hnglConAlg (参考21115);
