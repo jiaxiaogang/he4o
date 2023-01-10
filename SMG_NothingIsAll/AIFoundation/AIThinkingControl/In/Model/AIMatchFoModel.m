@@ -157,7 +157,7 @@
         if (solutionModel.status != TOModelStatus_ActYes) continue;
         
         //b. 非当前pFo下的解决方案,不做canset再类比;
-        AIKVPointer *basePFoOrTargetFo_p = [TOUtils getBaseFoFromBasePFoOrTargetFoModel:solutionModel.basePFoOrTargetFoModel];
+        AIKVPointer *basePFoOrTargetFo_p = [TOUtils convertBaseFoFromBasePFoOrTargetFoModel:solutionModel.basePFoOrTargetFoModel];
         if (![basePFoOrTargetFo_p isEqual:self.matchFo]) continue;
         NSLog(@"item解决方案%@的状态是 %ld 基于pFo: %ld",Pit2FStr(solutionModel.content_p),solutionModel.status,basePFoOrTargetFo_p.pointerId);
         

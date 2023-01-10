@@ -268,7 +268,7 @@
     double deltaTime = 0;
     BOOL actYes4Mv = solutionModel.actionIndex >= solutionFo.count;
     if (actYes4Mv) {
-        AIKVPointer *basePFoOrTargetFo_p = [TOUtils getBaseFoFromBasePFoOrTargetFoModel:solutionModel.basePFoOrTargetFoModel];
+        AIKVPointer *basePFoOrTargetFo_p = [TOUtils convertBaseFoFromBasePFoOrTargetFoModel:solutionModel.basePFoOrTargetFoModel];
         AIFoNodeBase *basePFoOrTargetFo = [SMGUtils searchNode:basePFoOrTargetFo_p];
         deltaTime = basePFoOrTargetFo.mvDeltaTime;
     }else{

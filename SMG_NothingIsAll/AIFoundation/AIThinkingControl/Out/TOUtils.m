@@ -255,7 +255,7 @@
 }
 
 //R时返回pFo.matchFo,H时返回targetFo;
-+(AIKVPointer*) getBaseFoFromBasePFoOrTargetFoModel:(id)basePFoOrTargetFoModel {
++(AIKVPointer*) convertBaseFoFromBasePFoOrTargetFoModel:(id)basePFoOrTargetFoModel {
     if (ISOK(basePFoOrTargetFoModel, AIMatchFoModel.class)) {
         AIMatchFoModel *pFo = (AIMatchFoModel*)basePFoOrTargetFoModel;
         return pFo.matchFo;

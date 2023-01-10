@@ -296,7 +296,7 @@
     //1. 数据准备;
     BOOL havBack = ISOK(demand, HDemandModel.class); //H有后段,别的没有;
     int minCount = havBack ? 2 : 1;
-    AIKVPointer *matchFo_p = [AISolutionModel getBaseFoFromBasePFoOrTargetFoModel:basePFoOrTargetFoModel];
+    AIKVPointer *matchFo_p = [TOUtils convertBaseFoFromBasePFoOrTargetFoModel:basePFoOrTargetFoModel];
     AIFoNodeBase *matchFo = [SMGUtils searchNode:matchFo_p];
     
     //2. 过滤器;
@@ -358,8 +358,10 @@
                 //2. 为R时,取得pFo(matchFo),并以此取得protoFo,根据protoFo取得概念识别matchAlgs,来与最终的canset对应的cansetAlg判断contains;
                 
                 ReasonDemandModel *rDemand = (ReasonDemandModel*)targetFoModel.baseOrGroup;
-                targetFoModel.basePFoOrTargetFoModel
-                rDemand.protoOrRegroupFo
+                
+                
+                
+                
             }
             
             
@@ -396,6 +398,41 @@
     //1. 已发生个数 (targetFo已行为化部分即已发生) (参考26161-模型);
     NSInteger targetFoAleardayCount = targetFoM.actionIndex;
     return targetFoAleardayCount;
+}
+
+/**
+ *  MARK:--------------------综合求出H的indexDic--------------------
+ *  @desc 递归方法,从工作记忆的末枝向头枝,直至递归到R任务中的protoFo为止;
+ *  @result 顺着targetFoModel向头枝直至找到protoFo,将整个寻找途径的indexDic映射综合返回;
+ */
++(NSDictionary*) getHIndexDic:(TOFoModel*)targetFoModel sumIndexDic:(NSDictionary*)sumIndexDic {
+    if (ISOK(targetFoModel.basePFoOrTargetFoModel, TOFoModel.class)) {
+        //1. base还是H时: 取出这层的itemIndexDic映射;
+        AIFoNodeBase *cansetFo = [SMGUtils searchNode:targetFoModel.content_p];
+        TOFoModel *baseTargetFoModel = (TOFoModel*)targetFoModel.basePFoOrTargetFoModel;
+        NSDictionary *itemIndexDic = [cansetFo getAbsIndexDic:baseTargetFoModel.content_p];
+        
+        //2. 将本层itemIndexDic与往层综合sumIndexDic再综合一下;
+        
+        
+        //3. 继续递归;
+        return [self getHIndexDic:baseTargetFoModel sumIndexDic:sumIndexDic];
+    } else {
+        //4. 找着RDemand的protoFo时,将最终sumIndexDic返回;
+        ReasonDemandModel *rDemand = (ReasonDemandModel*)targetFoModel.baseOrGroup;
+        
+        //此处,根据canset与matchFo取indexDic;
+        //然后,根据matchFo与protoFo取indexDic;
+        AIKVPointer *protoFo_p = rDemand.protoOrRegroupFo;
+        
+        //最后,求出cansetFo与protoFo的indexDic;
+        
+        
+        
+        
+        
+        return sumIndexDic;
+    }
 }
 
 @end

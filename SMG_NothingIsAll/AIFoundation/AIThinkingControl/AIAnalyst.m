@@ -40,7 +40,7 @@
  */
 +(AISolutionModel*) compareCansetFo:(AIKVPointer*)cansetFo_p basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel ptAleardayCount:(NSInteger)ptAleardayCount isH:(BOOL)isH {
     //1. 数据准备 & 复用indexDic;
-    AIKVPointer *matchFo_p = [AISolutionModel getBaseFoFromBasePFoOrTargetFoModel:basePFoOrTargetFoModel];
+    AIKVPointer *matchFo_p = [TOUtils convertBaseFoFromBasePFoOrTargetFoModel:basePFoOrTargetFoModel];
     AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
     NSDictionary *indexDic = [cansetFo getAbsIndexDic:matchFo_p];
     [AITest test102:cansetFo];

@@ -89,7 +89,7 @@
 +(NSMutableArray*) convertPointersFromTOModels:(NSArray*)toModels;
 
 //R时返回pFo.matchFo,H时返回targetFo;
-+(AIKVPointer*) getBaseFoFromBasePFoOrTargetFoModel:(id)basePFoOrTargetFoModel;
++(AIKVPointer*) convertBaseFoFromBasePFoOrTargetFoModel:(id)basePFoOrTargetFoModel;
 
 /**
  *  MARK:--------------------是否HNGL节点--------------------
