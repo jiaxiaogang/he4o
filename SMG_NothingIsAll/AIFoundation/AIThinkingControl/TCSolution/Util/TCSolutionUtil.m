@@ -401,7 +401,7 @@
 }
 
 /**
- *  MARK:--------------------综合求出H的indexDic--------------------
+ *  MARK:--------------------综合求出H的indexDic (参考28024-回答1&回答2)--------------------
  *  @desc 递归方法,从工作记忆的末枝向头枝,直至递归到R任务中的protoFo为止;
  *  @result 顺着targetFoModel向头枝直至找到protoFo,将整个寻找途径的indexDic映射综合返回;
  */
@@ -412,11 +412,24 @@
         TOFoModel *baseTargetFoModel = (TOFoModel*)targetFoModel.basePFoOrTargetFoModel;
         NSDictionary *itemIndexDic = [cansetFo getAbsIndexDic:baseTargetFoModel.content_p];
         
-        //2. 将本层itemIndexDic与往层综合sumIndexDic再综合一下;
+        //2. 将本层itemIndexDic与往层综合sumIndexDic再综合一下 (计算方法参考28024-回答2);
+        NSMutableDictionary *newSumIndexDic = [[NSMutableDictionary alloc] init];
+        for (NSNumber *sumKey in sumIndexDic.allKeys) {
+            NSNumber *sumValue = [sumIndexDic objectForKey:sumKey];
+            for (NSNumber *itemKey in itemIndexDic.allKeys) {
+                NSNumber *itemValue = [itemIndexDic objectForKey:itemKey];
+                
+                //3. 当sum的抽象=item的具象时: 记录一条综合结果;
+                if ([sumKey isEqualToNumber:itemValue]) {
+                    
+                    //4. 综合结果计为: <K:item的抽象, V:sum的具象>;
+                    [newSumIndexDic setObject:sumValue forKey:itemKey];
+                }
+            }
+        }
         
-        
-        //3. 继续递归;
-        return [self getHIndexDic:baseTargetFoModel sumIndexDic:sumIndexDic];
+        //5. 继续递归;
+        return [self getHIndexDic:baseTargetFoModel sumIndexDic:newSumIndexDic];
     } else {
         //4. 找着RDemand的protoFo时,将最终sumIndexDic返回;
         ReasonDemandModel *rDemand = (ReasonDemandModel*)targetFoModel.baseOrGroup;
