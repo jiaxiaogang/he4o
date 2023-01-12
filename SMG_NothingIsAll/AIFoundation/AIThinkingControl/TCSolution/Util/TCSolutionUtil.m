@@ -341,12 +341,12 @@
             }
         } else if (ISOK(demand, HDemandModel.class)) {
             //TODOTOMORROW20230108: 此处支持对hDemand的情况下的支持;
-            NSLog(@"");
-            
-            TOFoModel *targetFoModel = (TOFoModel*)basePFoOrTargetFoModel;
+            NSDictionary *cansetMatchIndexDic = [self getHIndexDic:cansetFo_p baseTargetFoModel:basePFoOrTargetFoModel sumIndexDic:nil];
             
             //此处targetFoModel.actionIndex之前,全是前段,
             if (!ISOK(targetFoModel.baseOrGroup, ReasonDemandModel.class)) {
+                
+                
                 //1. 不为R时,继续indexDic的映射传递;
                 
                 //层级: 每个H任务的solutionFo,都抽象指向其basePFoOrTargetFoModel,所以记忆树的越根部越是抽象,越
@@ -403,17 +403,23 @@
 /**
  *  MARK:--------------------综合求出H的indexDic (参考28024-回答1&回答2)--------------------
  *  @desc 递归方法,从工作记忆的末枝向头枝,直至递归到R任务中的protoFo为止;
+ *  @param cansetFo_p : 传入H任务取的候选集中的其中一条 (正在检查过滤的一条);
+ *  @param basePFoOrTargetFoModel : 传入cansetFo_p基于的targetFoModel;
+ *  @param sumIndexDic : 传入空即可 (用来递归间收集的,最初就是空);
  *  @result 顺着targetFoModel向头枝直至找到protoFo,将整个寻找途径的indexDic映射综合返回;
  */
-+(NSDictionary*) getHIndexDic:(TOFoModel*)targetFoModel sumIndexDic:(NSDictionary*)sumIndexDic {
-    if (ISOK(targetFoModel.basePFoOrTargetFoModel, TOFoModel.class)) {
-        //1. base还是H时: 取出这层的itemIndexDic映射;
-        AIFoNodeBase *cansetFo = [SMGUtils searchNode:targetFoModel.content_p];
-        TOFoModel *baseTargetFoModel = (TOFoModel*)targetFoModel.basePFoOrTargetFoModel;
-        NSDictionary *itemIndexDic = [cansetFo getAbsIndexDic:baseTargetFoModel.content_p];
-        
-        //2. 将本层itemIndexDic与往层综合sumIndexDic再综合一下 (计算方法参考28024-回答2);
-        NSMutableDictionary *newSumIndexDic = [[NSMutableDictionary alloc] init];
++(NSDictionary*) getCansetMatchIndexDic:(AIKVPointer*)cansetFo_p basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel sumIndexDic:(NSDictionary*)sumIndexDic {
+    //1. base还是H时: 取出这层的itemIndexDic映射;
+    AIKVPointer *matchFo_p = [TOUtils convertBaseFoFromBasePFoOrTargetFoModel:basePFoOrTargetFoModel];
+    AIFoNodeBase *matchFo = [SMGUtils searchNode:matchFo_p];
+    NSDictionary *itemIndexDic = [matchFo getConIndexDic:cansetFo_p];
+    NSMutableDictionary *newSumIndexDic = [[NSMutableDictionary alloc] init];
+    
+    //2. 首条时: 当sumIndexDic为空时,说明是首条,当前itemIndexDic即当前综合映射;
+    if (!sumIndexDic) {
+        [newSumIndexDic setDictionary:itemIndexDic];
+    } else {
+        //3. 非首条时: 将本层itemIndexDic与往层综合sumIndexDic再综合一下 (计算方法参考28024-回答2);
         for (NSNumber *sumKey in sumIndexDic.allKeys) {
             NSNumber *sumValue = [sumIndexDic objectForKey:sumKey];
             for (NSNumber *itemKey in itemIndexDic.allKeys) {
@@ -427,24 +433,16 @@
                 }
             }
         }
-        
-        //5. 继续递归;
-        return [self getHIndexDic:baseTargetFoModel sumIndexDic:newSumIndexDic];
-    } else {
-        //4. 找着RDemand的protoFo时,将最终sumIndexDic返回;
-        ReasonDemandModel *rDemand = (ReasonDemandModel*)targetFoModel.baseOrGroup;
-        
-        //此处,根据canset与matchFo取indexDic;
-        //然后,根据matchFo与protoFo取indexDic;
-        AIKVPointer *protoFo_p = rDemand.protoOrRegroupFo;
-        
-        //最后,求出cansetFo与protoFo的indexDic;
-        
-        
-        
-        
-        
-        return sumIndexDic;
+    }
+    
+    //5. 本次非R时: 继续递归;
+    if (ISOK(basePFoOrTargetFoModel, TOFoModel.class)) {
+        TOFoModel *baseTargetFo = (TOFoModel*)basePFoOrTargetFoModel;
+        return [self getHIndexDic:baseTargetFo.content_p basePFoOrTargetFoModel:baseTargetFo.basePFoOrTargetFoModel sumIndexDic:newSumIndexDic];
+    }
+    //6. 本次是R时: 返回最终结果;
+    else {
+        return newSumIndexDic;
     }
 }
 
