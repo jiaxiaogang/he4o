@@ -335,6 +335,7 @@
             if (![matchAlg_ps containsObject:cansetAlg_p]) {
                 return false;
             }
+            NSLog(@"第%ld帧,条件满足通过 proto:%@ canset:%@",matchIndex,Pit2FStr(protoAlg_p),Pit2FStr(cansetAlg_p));
         }
         
         //b. 闯关成功;
