@@ -318,6 +318,7 @@
         
         //7. 所有已发生帧,都要判断一下条件满足 (ptAleardayCount之前全是前段) (28022-todo4);
         for (NSInteger matchIndex = 0; matchIndex < ptAleardayCount; matchIndex++) {
+            [AITest test23:protoMatchIndexDic cmDic:cansetMatchIndexDic matchIndex:matchIndex];
             
             //7. 取得match当前帧对应的protoAlg;
             NSInteger protoIndex = NUMTOOK([protoMatchIndexDic objectForKey:@(matchIndex)]).integerValue;

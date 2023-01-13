@@ -196,6 +196,12 @@
     ELog(@"发现indexDic在absIndex下找不到conIndex,查下为什么没映射到?是不是识别时全含判断错了?");
 }
 
++(void) test23:(NSDictionary*)pmDic cmDic:(NSDictionary*)cmDic matchIndex:(NSInteger)matchIndex {
+    if (![pmDic objectForKey:@(matchIndex)] || ![cmDic objectForKey:@(matchIndex)]) {
+        ELog(@"matchIndex在前段条件判断中,未找到proto或canset的映射,查下原因 (H任务跳转多了是否有找不着的可能?)");
+    }
+}
+
 
 //MARK:===============================================================
 //MARK:    < 回测必经点测试 (常关,每个轮回测时打开,触发则关,未触发者为异常) >

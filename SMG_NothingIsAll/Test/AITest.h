@@ -35,6 +35,7 @@
 +(void) test20:(AIFoNodeBase*)newCanset newSPDic:(NSDictionary*)newSPDic;
 +(void) test21:(BOOL)refrectionResult;
 +(void) test22;
++(void) test23:(NSDictionary*)pmDic cmDic:(NSDictionary*)cmDic matchIndex:(NSInteger)matchIndex;
 
 //MARK:===============================================================
 //MARK:    < 回测必经点测试 (常关,每个轮回测时打开,触发则关,未触发者为异常) >
