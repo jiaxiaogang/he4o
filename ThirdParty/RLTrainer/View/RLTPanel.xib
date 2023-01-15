@@ -229,14 +229,16 @@
                                 <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </state>
                             <connections>
-                                <action selector="loadRecognitionBtnClick:" destination="-1" eventType="touchUpInside" id="7z8-TZ-3vg"/>
+                                <action selector="loadRecognitionBtnClick:" destination="-1" eventType="touchUpInside" id="4vs-Bi-Rua"/>
                             </connections>
                         </button>
                     </subviews>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
                         <constraint firstAttribute="trailing" secondItem="liB-rw-YPc" secondAttribute="trailing" id="2wS-tG-02B"/>
+                        <constraint firstItem="liB-rw-YPc" firstAttribute="top" secondItem="CFs-nM-9Si" secondAttribute="top" id="4Km-Pf-bML"/>
                         <constraint firstItem="Ri6-2G-wtv" firstAttribute="top" secondItem="CFs-nM-9Si" secondAttribute="top" id="7OJ-Ye-KxT"/>
+                        <constraint firstAttribute="bottom" secondItem="liB-rw-YPc" secondAttribute="bottom" id="7Ug-Hv-6se"/>
                         <constraint firstAttribute="bottom" secondItem="4RE-dO-qp4" secondAttribute="bottom" id="7sO-Rc-Pth"/>
                         <constraint firstAttribute="bottom" secondItem="Ri6-2G-wtv" secondAttribute="bottom" id="Bzi-I9-LRx"/>
                         <constraint firstItem="Ri6-2G-wtv" firstAttribute="leading" secondItem="CFs-nM-9Si" secondAttribute="leading" id="M6v-Cs-Az2"/>
