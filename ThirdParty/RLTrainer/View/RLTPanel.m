@@ -355,6 +355,37 @@
     }
 }
 
+/**
+ *  MARK:--------------------训练识别 (参考28034)--------------------
+ */
+- (IBAction)loadRecognitionBtnClick:(id)sender {
+    //0. 训练300轮 (每条训练项都包含: 进入训练页 & 退出主页);
+    for (NSInteger i = 0; i < 300; i++) {
+        //1. 随机出生位置;
+        [theRT queue1:kBirthPosRdmSEL];
+        
+        //2. 随机位置扔木棒;
+        [theRT queueN:@[kGrowPageSEL,kWoodRdmSEL,kMainPageSEL,kClearTCSEL] count:1];
+        
+        //3. 左侧扔木棒;
+        [theRT queueN:@[kGrowPageSEL,kWoodLeftSEL,kMainPageSEL,kClearTCSEL] count:1];
+        
+        //4. 随机偏中出生位置;
+        [theRT queue1:kBirthPosRdmCentSEL];
+        
+        //5. 随机飞或扔木棒,五步;
+        [theRT queue1:kGrowPageSEL];
+        for (int i = 0; i < 5; i++) {
+            NSArray *randomNames = @[kFlySEL,kWoodLeftSEL];
+            int randomIndex = arc4random() % 2;
+            NSString *randomName = ARR_INDEX(randomNames, randomIndex);
+            [theRT queue1:randomName];
+        }
+        [theRT queueN:@[kMainPageSEL,kClearTCSEL] count:1];
+    }
+    
+}
+
 //MARK:===============================================================
 //MARK:                     < 训练项 >
 //MARK:===============================================================
