@@ -137,6 +137,7 @@
  *      2022.06.13 - 修复因matchCount<result.count导致概念识别有错误结果的BUG (参考26236);
  *      2022.10.20 - 删掉早已废弃的partAlgs代码 & 将返回List<AlgNode>类型改成List<AIMatchAlgModel> (参考27153);
  *      2022.12.19 - 迭代概念识别结果的竞争机制 (参考2722d-方案2);
+ *      2023.01.18 - 相似度用相乘 (参考28035-todo1);
  */
 +(void) partMatching_Alg:(AIAlgNodeBase*)protoAlg except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel{
     //1. 数据准备;
@@ -185,7 +186,7 @@
                 //10. 统计匹配度matchCount & 相近度<1个数nearCount & 相近度sumNear & 引用强度sumStrong
                 model.matchCount++;
                 model.nearCount++;
-                model.sumNear += nearV;
+                model.sumNear *= nearV;
                 model.sumRefStrong += (int)refPort.strong.value;
             }
         }

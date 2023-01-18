@@ -549,6 +549,8 @@
 /**
  *  MARK:--------------------获取near数据--------------------
  *  @desc 根据indexDic取得nearCount&sumNear (参考27177-todo3);
+ *  @version
+ *      2023.01.18: 相似度改为相乘 (参考28035-todo2);
  *  @param callerIsAbs : 调用者是否是抽象;
  *  @result notnull 必有两个元素,格式为: [nearCount, sumNear],二者都是0时,则为无效返回;
  */
@@ -585,7 +587,7 @@
         //7. 只记录near<1的 (取<1的原因未知,参考2619j-todo5);
         if (near < 1) {
             [AITest test14:near];
-            sumNear += near;
+            sumNear *= near;
             nearCount++;
         }
     }

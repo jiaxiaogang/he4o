@@ -22,9 +22,12 @@
 
 /**
  *  MARK:--------------------获取相近度--------------------
+ *  @version
+ *      2023.01.18: 相乘的值就是相似度直接返回 (参考28035-todo1);
  */
 -(CGFloat) matchValue {
-    return self.nearCount > 0 ? self.sumNear / self.nearCount : 1;
+    return self.sumNear;
+    //return self.nearCount > 0 ? self.sumNear / self.nearCount : 1;
 }
 
 /**

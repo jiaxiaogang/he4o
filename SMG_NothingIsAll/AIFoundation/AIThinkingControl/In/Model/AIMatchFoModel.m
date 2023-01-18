@@ -131,9 +131,14 @@
     [TCForecast forecast_Single:self];
 }
 
-//匹配度计算
+/**
+ *  MARK:--------------------匹配度计算--------------------
+ *  @version
+ *      2023.01.18: 相似度改为相乘 (参考28035-todo2);
+ */
 -(CGFloat) matchFoValue {
-    return self.nearCount > 0 ? self.sumNear / self.nearCount : 1;
+    return self.sumNear;
+    //return self.nearCount > 0 ? self.sumNear / self.nearCount : 1;
 }
 
 /**
