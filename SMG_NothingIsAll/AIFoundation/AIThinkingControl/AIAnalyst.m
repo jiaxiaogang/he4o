@@ -52,12 +52,11 @@
     //3. 判断canset前段是否有遗漏 (参考27224);
     if (cansetCutIndex < matchCutIndex) return nil;
     
-    //4. 计算前段匹配度 (参考26128-1-4);
-    CGFloat sumFrontMatchValue = 0;
+    //4. 计算前段匹配度 (参考28035-todo3);
+    CGFloat frontMatchValue = 1;
     for (NSInteger i = 0; i < ptAleardayCount; i++) {
-        sumFrontMatchValue += [self compareCansetAlg:i cansetFo:cansetFo_p matchFo:matchFo_p];
+        frontMatchValue *= [self compareCansetAlg:i cansetFo:cansetFo_p matchFo:matchFo_p];
     }
-    CGFloat frontMatchValue = sumFrontMatchValue / ptAleardayCount;
     
     //5. 前段不匹配时,直接返回nil (参考26128-1-3);
     if (frontMatchValue == 0) return nil;

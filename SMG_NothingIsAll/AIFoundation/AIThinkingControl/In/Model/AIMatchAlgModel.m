@@ -10,6 +10,14 @@
 
 @implementation AIMatchAlgModel
 
+-(id) init {
+    self = [super init];
+    if (self != nil) {
+        self.sumNear = 1;
+    }
+    return self;
+}
+
 //+(AIMatchAlgModel*) newWithMatchAlg:(AIKVPointer*)matchAlg matchCount:(int)matchCount sumNear:(CGFloat)sumNear nearCount:(int)nearCount sumRefStrong:(int)sumRefStrong{
 //    AIMatchAlgModel *model = [[AIMatchAlgModel alloc] init];
 //    model.matchCount = matchCount;

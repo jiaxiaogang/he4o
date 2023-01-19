@@ -550,14 +550,14 @@
  *  MARK:--------------------获取near数据--------------------
  *  @desc 根据indexDic取得nearCount&sumNear (参考27177-todo3);
  *  @version
- *      2023.01.18: 相似度改为相乘 (参考28035-todo2);
+ *      2023.01.18: 相似度默认值为1,且相似度改为相乘 (参考28035-todo2);
  *  @param callerIsAbs : 调用者是否是抽象;
  *  @result notnull 必有两个元素,格式为: [nearCount, sumNear],二者都是0时,则为无效返回;
  */
 +(NSArray*) getNearDataByIndexDic:(NSDictionary*)indexDic absFo:(AIKVPointer*)absFo_p conFo:(AIKVPointer*)conFo_p callerIsAbs:(BOOL)callerIsAbs{
     //1. 数据准备;
     int nearCount = 0;  //总相近数 (匹配值<1)
-    CGFloat sumNear = 0;//总相近度
+    CGFloat sumNear = 1;//总相近度
     indexDic = DICTOOK(indexDic);
     AIFoNodeBase *absFo = [SMGUtils searchNode:absFo_p];
     AIFoNodeBase *conFo = [SMGUtils searchNode:conFo_p];
