@@ -138,6 +138,7 @@
  *      2022.10.20 - 删掉早已废弃的partAlgs代码 & 将返回List<AlgNode>类型改成List<AIMatchAlgModel> (参考27153);
  *      2022.12.19 - 迭代概念识别结果的竞争机制 (参考2722d-方案2);
  *      2023.01.18 - 相似度用相乘 (参考28035-todo1);
+ *      2023.01.24 - BUG修复: 修复相似度相乘后,相似度阈值相应调低 (参考28041-BUG1);
  */
 +(void) partMatching_Alg:(AIAlgNodeBase*)protoAlg except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel{
     //1. 数据准备;
@@ -206,7 +207,7 @@
     //12. 全含判断: 从大到小,依次取到对应的node和matchingCount (注: 支持相近后,应该全是全含了,参考25084-1);
     NSArray *validModels = [SMGUtils filterArr:sortModels checkValid:^BOOL(AIMatchAlgModel *item) {
         //14. 过滤掉匹配度<85%的;
-        if (item.matchValue < 0.90f) return false;
+        if (item.matchValue < 0.60f) return false;
         
         //15. 仅保留全含 (当count!=matchCount时为局部匹配: 局部匹配partAlgs已废弃);
         AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item.matchAlg];
