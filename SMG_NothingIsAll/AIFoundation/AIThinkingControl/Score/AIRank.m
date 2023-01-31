@@ -37,8 +37,12 @@
         CGFloat normalized4MatchValue = index4MatchValue / rank4MatchValue.count;
         CGFloat normalized4StrongValue = index4StrongValue / rank4StrongValue.count;
         
+        //5. 各自冷却后的值;
+        CGFloat cool4MatchValue = [self getCooledValue:1 pastTime:normalized4MatchValue];
+        CGFloat cool4StrongValue = [self getCooledValue:1 pastTime:normalized4StrongValue];
+        
         //6. 计算综合排名;
-        [result setObject:@(normalized4MatchValue * normalized4StrongValue) forKey:@(item.matchAlg.pointerId)];
+        [result setObject:@(cool4MatchValue * cool4StrongValue) forKey:@(item.matchAlg.pointerId)];
     }
     return result;
 }
@@ -70,8 +74,12 @@
         CGFloat normalized4MatchValue = index4MatchValue / rank4MatchValue.count;
         CGFloat normalized4StrongValue = index4StrongValue / rank4StrongValue.count;
         
+        //5. 各自冷却后的值;
+        CGFloat cool4MatchValue = [self getCooledValue:1 pastTime:normalized4MatchValue];
+        CGFloat cool4StrongValue = [self getCooledValue:1 pastTime:normalized4StrongValue];
+        
         //6. 计算综合排名;
-        [result setObject:@(normalized4MatchValue * normalized4StrongValue) forKey:@(item.matchFo.pointerId)];
+        [result setObject:@(cool4MatchValue * cool4StrongValue) forKey:@(item.matchFo.pointerId)];
     }
     return result;
 }
@@ -105,6 +113,29 @@
     
     //3. 返回;
     return ranking;
+}
+
+//MARK:===============================================================
+//MARK:                     < privateMethod >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------获取冷却后值--------------------
+ *  @desc 使用: NewtonCoolDownCurve
+ *  @param totalCoolTime : 冷却至微不可见的总需时长
+ *  @param pastTime : 当前项已冷却了多久;
+ *  @result 冷却后的温度值;
+ */
++(CGFloat) getCooledValue:(CGFloat)totalCoolTime pastTime:(CGFloat)pastTime{
+    //1. 冷却完全后的值 (现此值符合28原则);
+    CGFloat finishValue = 0.000322f;
+    
+    //2. 冷却系数
+    CGFloat coefficient = -logf(finishValue) / totalCoolTime;
+    
+    //3. 计算出冷却后的值;
+    CGFloat cooledValue = expf(-coefficient * pastTime);
+    return cooledValue;
 }
 
 @end
