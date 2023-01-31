@@ -13,6 +13,8 @@
 /**
  *  MARK:--------------------概念识别综合排名 (参考2722d-方案2-todo2)--------------------
  *  @result 返回排名名次: <matchAlg.pId, 综合排名值(越小越靠前)>;
+ *  @version
+ *      2023.01.31: 单项权重新增牛顿冷却曲线 (参考28042-思路2-3);
  */
 +(NSDictionary*) recognitonAlgRank:(NSArray*)matchAlgModels {
     //1. 数据准备;
@@ -50,6 +52,8 @@
 /**
  *  MARK:--------------------时序识别综合排名 (参考2722d-方案2-todo2 & 2722f-todo14)--------------------
  *  @result 返回排名名次: <matchFo.pId, 综合排名值(越小越靠前)>;
+ *  @version
+ *      2023.01.31: 单项权重新增牛顿冷却曲线 (参考28042-思路2-3);
  */
 +(NSDictionary*) recognitonFoRank:(NSArray*)matchFoModels {
     //1. 数据准备;
@@ -121,7 +125,7 @@
 
 /**
  *  MARK:--------------------获取冷却后值--------------------
- *  @desc 使用: NewtonCoolDownCurve
+ *  @desc 使用: 单项权重新增NewtonCoolDownCurve (参考28042-思路2-3);
  *  @param totalCoolTime : 冷却至微不可见的总需时长
  *  @param pastTime : 当前项已冷却了多久;
  *  @result 冷却后的温度值;

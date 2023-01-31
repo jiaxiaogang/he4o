@@ -82,7 +82,6 @@
 //MARK:                     < 窄出 >
 //MARK:===============================================================
 #define cIndexNarrowLimit 1000  //所以每个稀疏码的精度,不允许大于1k;
-#define cValueNarrowLimit 500   //不能太小,不然概念识别时,没交集了 (参考26075);
 #define cAlgNarrowLimit(protoCount) protoCount * 2
 #define cFoNarrowLimit 10
 #define cRFoNarrowLimit 0

@@ -108,24 +108,6 @@
     
     //9. 初始化XGConfig
     [XGConfig.instance initConfig];
-    
-    //28原则测试数值;
-    CGFloat good = 0, bad = 0;
-    for (NSInteger i = 0; i < 1000; i++) {
-        CGFloat cur = [AIRank getCooledValue:1 pastTime:i * 0.001f];
-        if (i < 200) {
-            good += cur;
-        }else {
-            bad += cur;
-        }
-        NSLog(@"%ld = %.3f",i,cur);
-    }
-    NSLog(@"good %.3f / bad %.3f = %.3f",good,bad,good/bad);
-    
-    
-    
-    
-    
     return YES;
 }
 

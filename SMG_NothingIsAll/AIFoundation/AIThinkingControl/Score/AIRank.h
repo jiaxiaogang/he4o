@@ -28,6 +28,4 @@
  */
 +(NSArray*) solutionFoRanking:(NSArray*)solutionModels needBack:(BOOL)needBack fromSlow:(BOOL)fromSlow;
 
-+(CGFloat) getCooledValue:(CGFloat)totalCoolTime pastTime:(CGFloat)pastTime;
-
 @end
