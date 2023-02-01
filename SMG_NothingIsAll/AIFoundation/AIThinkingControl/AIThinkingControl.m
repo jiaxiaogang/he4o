@@ -111,6 +111,7 @@ static AIThinkingControl *_instance;
  *  @version
  *      2020.07.19: 空场景时,不将空场景概念加到瞬时记忆序列中 (因为现在的内类比HN已经不再使用空场景做任何参考,所以其存在无意义,反而会影响到时序全含判断,因为记忆时序中的空场景,往往无法被新的时序包含);
  *      2022.10.09: 新输入直接存硬盘而不是isMem内存 (参考27124-todo6);
+ *      2023.02.01: 不可识别自身,因为此处自身几乎全是新概念,识别自身似乎目前没啥用 (参考28041-BUG1-思路1-修复);
  *
  *  TODOWAIT:
  *  1. 默认为按边缘(ios的view层级)分组,随后可扩展概念内类比,按别的维度分组; 参考: n16p7
@@ -150,7 +151,7 @@ static AIThinkingControl *_instance;
     
     //6. NoMv处理;
     for (AIKVPointer *alg_p in fromGroup_ps) {
-        [TCInput rInput:[SMGUtils searchNode:alg_p] except_ps:[SMGUtils removeSub_p:alg_p parent_ps:fromGroup_ps]];
+        [TCInput rInput:[SMGUtils searchNode:alg_p] except_ps:fromGroup_ps];
     }
 }
 

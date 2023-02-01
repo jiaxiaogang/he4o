@@ -86,6 +86,7 @@
         result = [[AIAbsAlgNode alloc] init];
         result.pointer = [SMGUtils createPointerForAlg:kPN_ALG_ABS_NODE at:at dataSource:ds isOut:isOut type:type];
         [result setContent_ps:sortSames];
+        NSLog(@"构建新概念:A%ld",result.pointer.pointerId);
     }
     
     //4. value.refPorts (更新/加强微信息的引用序列)
@@ -94,7 +95,7 @@
     
     //5. 关联 & 存储
     [AINetUtils relateAlgAbs:result conNodes:validConAlgs isNew:absIsNew];
-    [theApp.heLogView addLog:STRFORMAT(@"构建抽象概念:%@,内容:%@",result.pointer.identifier,Alg2FStr(result))];
+    //[theApp.heLogView addLog:STRFORMAT(@"构建抽象概念:%@,内容:%@",result.pointer.identifier,Alg2FStr(result))];
     [SMGUtils insertNode:result];
     return result;
 }
