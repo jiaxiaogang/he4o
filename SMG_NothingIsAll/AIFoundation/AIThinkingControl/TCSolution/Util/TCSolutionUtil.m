@@ -321,6 +321,11 @@
         
         //TODOTOMORROW20230202: 此处应该是对canset的前段条件满足进行判断,而不是对protoOrTargetFo (参考28051);
         
+        //1. canset没后段,则pass,因为没能行为化的了;
+        //2. 根据ptAleardayCount向前,取得末帧cansetIndex后: 以下for循环,就以发现的cansetIndex为准来执行吧...
+        //3. 此处不行就别强依赖indexDic了,就以mIsC为准来搞 (存疑,继续深入分析下);
+        
+        
         
         
         
