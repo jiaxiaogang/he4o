@@ -317,6 +317,15 @@
         NSDictionary *protoMatchIndexDic = [matchFo getConIndexDic:protoFo_p];
         
         //7. 所有已发生帧,都要判断一下条件满足 (ptAleardayCount之前全是前段) (28022-todo4);
+        NSLog(@"第3步 cansetFo%@",Fo2FStr(cansetFo));
+        
+        //TODOTOMORROW20230202: 此处应该是对canset的前段条件满足进行判断,而不是对protoOrTargetFo (参考28051);
+        
+        
+        
+        
+        
+        
         for (NSInteger matchIndex = 0; matchIndex < ptAleardayCount; matchIndex++) {
             [AITest test23:protoMatchIndexDic cmDic:cansetMatchIndexDic matchIndex:matchIndex];
             
@@ -336,10 +345,11 @@
             if (![matchAlg_ps containsObject:cansetAlg_p]) {
                 return false;
             }
-            NSLog(@"第%ld帧,条件满足通过 proto:%@ canset:%@",matchIndex,Pit2FStr(protoAlg_p),Pit2FStr(cansetAlg_p));
+            NSLog(@"\t第%ld帧,条件满足通过 proto:%@ canset:%@",matchIndex,Pit2FStr(protoAlg_p),Pit2FStr(cansetAlg_p));
         }
         
         //b. 闯关成功;
+        NSLog(@"\t全部条件满足通过\n");
         return true;
     }];
     NSLog(@"第4步 最小长度 & 非负价值过滤后:%ld",cansetFos.count);//测时96条
