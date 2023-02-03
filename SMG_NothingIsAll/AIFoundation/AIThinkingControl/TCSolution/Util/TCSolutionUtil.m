@@ -292,6 +292,7 @@
  *      2022.07.14: S的价值pk迭代: 将过滤负价值的,改成过滤无价值指向的 (参考27048-TODO4&TODO9);
  *      2022.07.20: 不要求mv指向 (参考27055-步骤1);
  *      2023.01.08: 加上条件满足过滤器-R任务部分 (参考28022);
+ *  @param ptAleardayCount : 即取得"canset的basePFoOrTargetFo推进到哪了"的截点;
  */
 +(NSArray*) slowCansetFosFilter:(NSArray*)cansetFos demand:(DemandModel*)demand ptAleardayCount:(NSInteger)ptAleardayCount basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel{
     //1. 数据准备;
