@@ -322,4 +322,9 @@
  */
 //+(void) foreach:(NSArray *)a_ps b_ps:(NSArray*)b_ps tryOut:(void(^)(AIKVPointer *a_p,AIKVPointer *b_p))tryOut;
 
+/**
+ *  MARK:--------------------for正反序执行--------------------
+ */
++(void) fori:(NSArray *)arr min:(NSInteger)min max:(NSInteger)max run:(BOOL(^)(id item,NSInteger i))run forward:(BOOL)forward;
+
 @end

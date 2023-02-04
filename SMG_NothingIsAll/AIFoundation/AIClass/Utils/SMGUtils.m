@@ -975,4 +975,22 @@
 //    }
 //}
 
+/**
+ *  MARK:--------------------for正反序执行--------------------
+ *  @param min : 循环含min
+ *  @param max : 执行到max-1 (不含max);
+ *  @param run : 每条回调,返回true时,中断循环;
+ */
++(void) fori:(NSArray *)arr min:(NSInteger)min max:(NSInteger)max run:(BOOL(^)(id item,NSInteger i))run forward:(BOOL)forward{
+    //1. 数据检查;
+    arr = ARRTOOK(arr);
+    if (!forward) return;
+    
+    //2. 执行循环;
+    for (NSInteger i = min; i < max; i++) {
+        NSInteger index = forward ? i : max - i - 1;
+        if (run(ARR_INDEX(arr, index),index)) return;
+    }
+}
+
 @end

@@ -294,7 +294,8 @@
  *      2023.01.08: 加上条件满足过滤器-R任务部分 (参考28022);
  *      2023.01.08: V1末版说明: 根据28025,递归找match,proto,canset三者的映射,来判断条件满足,已废弃 (参考28023&28051);
  *      2023.02.04: V2版本,解决原方式条件满足不完全问题 (参考28052);
- *  @param ptAleardayCount : 即取得"canset的basePFoOrTargetFo推进到哪了"的截点;
+ *      2023.02.04: 修复条件满足不完全问题 (参考28052);
+ *  @param ptAleardayCount : 即取得"canset的basePFoOrTargetFo推进到哪了"的截点 (aleardayCount = cutIndex+1 或 actionIndex);
  */
 +(NSArray*) slowCansetFosFilterV2:(NSArray*)cansetFos demand:(DemandModel*)demand ptAleardayCount:(NSInteger)ptAleardayCount basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel{
     //1. 数据准备;
@@ -303,7 +304,7 @@
     
     //2. 过滤器;
     cansetFos = [SMGUtils filterArr:cansetFos checkValid:^BOOL(AIKVPointer *cansetFo_p) {
-        //3. 过滤掉长度不够的 (因为前段全含至少要1位,中段修正也至少要0位,后段H目标要1位R要0位);
+        //3. 过滤器1===: 过滤掉长度不够的 (因为前段全含至少要1位,中段修正也至少要0位,后段H目标要1位R要0位);
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
         if (cansetFo.count < minCount) return false;
         
@@ -311,63 +312,30 @@
         AIKVPointer *matchFo_p = [TOUtils convertBaseFoFromBasePFoOrTargetFoModel:basePFoOrTargetFoModel];
         AIFoNodeBase *matchFo = [SMGUtils searchNode:matchFo_p];
         
-        //5. 递归找到protoFo;
+        //5. 根据matchFo取得与canset的indexDic映射;
+        NSDictionary *cansetMatchIndexDic = [matchFo getConIndexDic:cansetFo.pointer];
+        
+        //6. 所有已发生帧,都要判断一下条件满足 (ptAleardayCount之前全是前段) (参考28022-todo4);
+        NSLog(@"第3步 cansetFo%@",Fo2FStr(cansetFo));
+        
+        //7. 根据ptAleardayCount取出对应的cansetIndex,做为中段截点 (aleardayCount - 1 = cutIndex);
+        NSInteger matchCutIndex = ptAleardayCount - 1;
+        NSInteger cansetCutIndex = NUMTOOK([cansetMatchIndexDic objectForKey:@(matchCutIndex)]).integerValue;
+        
+        //8. 过滤器2===: 过滤掉canset没后段的 (没可行为化的东西) (参考28052-4);
+        if (cansetFo.count <= cansetCutIndex + 1) return false;
+        
+        //9. 递归找到protoFo;
         AIMatchFoModel *pFo = [self getPFo:cansetFo_p basePFoOrTargetFoModel:basePFoOrTargetFoModel];
         AIKVPointer *protoFo_p = pFo.baseRDemand.protoOrRegroupFo;
         AIFoNodeBase *protoFo = [SMGUtils searchNode:protoFo_p];
         
-        //6. 根据matchFo取得与canset的indexDic映射;
-        NSDictionary *cansetMatchIndexDic = [matchFo getConIndexDic:cansetFo.pointer];
+        //10. 过滤器3===: 过滤掉条件不满足的 (protoFo对cansetFo条件满足) 注:此时canset是proto的抽象 (参考28052-2);
+        BOOL findAbsFromProto = [self findAbsFoFromProtoFo:protoFo absFo:cansetFo absCutIndex:cansetCutIndex];
+        if (!findAbsFromProto) return false;
         
-        //7. 所有已发生帧,都要判断一下条件满足 (ptAleardayCount之前全是前段) (参考28022-todo4);
-        NSLog(@"第3步 cansetFo%@",Fo2FStr(cansetFo));
-        
-        
-        
-        //TODOTOMORROW20230202: 此处应该是对canset的前段条件满足进行判断,而不是对protoOrTargetFo (参考28051);
-        
-        //1. canset没后段,则pass,因为没能行为化的了;
-        //2. 根据ptAleardayCount向前,取得末帧cansetIndex后: 以下for循环,就以发现的cansetIndex为准来执行吧...
-        //3. 此处不行就别强依赖indexDic了,就以mIsC为准来搞 (存疑,继续深入分析下);
-        //实践....
-        //1. 根据ptAleardayCount取出对应的cansetIndex,做为中段截点;
-        NSInteger cansetCutIndex = NUMTOOK([cansetMatchIndexDic objectForKey:@(ptAleardayCount)]).integerValue;
-        for (NSInteger i = 0; i < cansetCutIndex; i++) {
-            //先查下,此处<cutIndex是否正确,看下这个中间截点,是已发生,还是未发生... (应该是已发生);
-            
-            
-            
-            
-            
-        }
-        
-        
-        
-        for (NSInteger matchIndex = 0; matchIndex < ptAleardayCount; matchIndex++) {
-            [AITest test23:protoMatchIndexDic cmDic:cansetMatchIndexDic matchIndex:matchIndex];
-            
-            //7. 取得match当前帧对应的protoAlg;
-            NSInteger protoIndex = NUMTOOK([protoMatchIndexDic objectForKey:@(matchIndex)]).integerValue;
-            AIKVPointer *protoAlg_p = ARR_INDEX(protoFo.content_ps, protoIndex);
-            
-            //8. 取得match当前帧对应的cansetAlg;
-            NSInteger cansetIndex = NUMTOOK([cansetMatchIndexDic objectForKey:@(matchIndex)]).integerValue;
-            AIKVPointer *cansetAlg_p = ARR_INDEX(cansetFo.content_ps, cansetIndex);
-            
-            //9. 根据protoAlg取得matchAlgs (参考28021-问题2-结果);
-            AIAlgNodeBase *protoAlg = [SMGUtils searchNode:protoAlg_p];
-            NSArray *matchAlg_ps = Ports2Pits([AINetUtils absPorts_All:protoAlg]);
-            
-            //10. 判断是否包含cansetAlg (只要有一条不包含,则条件不满足,返回过滤掉) (参考28022-todo2&3);
-            //通过contains来判断是否前段条件满足 (参考28021 & 28022);
-            if (![matchAlg_ps containsObject:cansetAlg_p]) {
-                return false;
-            }
-            NSLog(@"\t第%ld帧,条件满足通过 proto:%@ canset:%@",matchIndex,Pit2FStr(protoAlg_p),Pit2FStr(cansetAlg_p));
-        }
-        
-        //b. 闯关成功;
-        NSLog(@"\t全部条件满足通过\n");
+        //11. 闯关成功;
+        NSLog(@"\t过滤器全部通过\n");
         return true;
     }];
     NSLog(@"第4步 最小长度 & 非负价值过滤后:%ld",cansetFos.count);//测时96条
@@ -415,6 +383,50 @@
     else {
         return basePFoOrTargetFoModel;
     }
+}
+
+/**
+ *  MARK:--------------------从proto中找abs--------------------
+ *  @desc 判断当前proto场景对abs是条件满足的 (参考28052-2);
+ *  @param absCutIndex : 其中absFo执行到的最大值 (含absCutIndex);
+ *  @version
+ *      2023.02.04: 初版,为解决条件满足不完全的问题,此方法将尝试从proto找出canset前段的每帧 (参考28052);
+ *  @result 在proto中全找到canset的前段则返回true;
+ */
++(BOOL) findAbsFoFromProtoFo:(AIFoNodeBase*)protoFo absFo:(AIFoNodeBase*)absFo absCutIndex:(NSInteger)absCutIndex {
+    //1. 数据准备;
+    if (!protoFo || !absFo) return false;
+        
+    //2. 每帧match都到proto里去找,找到则记录proto的进度,找不到则全部失败;
+    __block NSInteger protoMin = 0;
+    for (NSInteger absI = 0; absI < absCutIndex + 1; absI ++) {
+        AIKVPointer *absAlg = ARR_INDEX(absFo.content_ps, absI);
+        BOOL findItem = false;
+        for (NSInteger protoI = protoMin; protoI < protoFo.count; protoI++) {
+            AIKVPointer *protoAlg = ARR_INDEX(protoFo.content_ps, protoI);
+            //3. B源于absFo,此处只判断B是1层抽象 (参考27161-调试1&调试2);
+            //3. 单条判断方式: 此处proto抽象仅指向刚识别的matchAlgs,所以与contains等效 (参考28052-3);
+            BOOL mIsC = [TOUtils mIsC_1:protoAlg c:absAlg];
+            //if (Log4OutAna) NSLog(@"proto第%ld A%ld 是 ass第%ld A%ld (%@)",protoI,protoAlg.pointerId,absI,absAlg.pointerId,mIsC?@"成立":@"不成立");
+            if (mIsC) {
+                //4. 找到了 & 记录protoI的进度;
+                findItem = true;
+                protoMin = protoI + 1;
+                NSLog(@"\t第%ld帧,条件满足通过 proto:%@ canset:%@",absI,Pit2FStr(protoAlg),Pit2FStr(absAlg));
+                break;
+            }
+        }
+        
+        //5. 有一条失败,则全失败;
+        if (!findItem) {
+            NSLog(@"\t第%ld帧,条件满足未通过 canset:%@",absI,Pit2FStr(absAlg));
+            return false;
+        }
+    }
+    
+    //6. 全找到,则成功;
+    NSLog(@"\t全部条件满足通过\n");
+    return true;
 }
 
 @end
