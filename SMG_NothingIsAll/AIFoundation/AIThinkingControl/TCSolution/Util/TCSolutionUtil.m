@@ -331,7 +331,7 @@
         AIFoNodeBase *protoFo = [SMGUtils searchNode:protoFo_p];
         
         //10. 过滤器3===: 过滤掉条件不满足的 (protoFo对cansetFo条件满足) 注:此时canset是proto的抽象 (参考28052-2);
-        BOOL findAbsFromProto = [self findAbsFoFromProtoFo:protoFo absFo:cansetFo absCutIndex:cansetCutIndex];
+        BOOL findAbsFromProto = [self sceneIsOk:protoFo absFo:cansetFo absCutIndex:cansetCutIndex];
         if (!findAbsFromProto) return false;
         
         //11. 闯关成功;
@@ -386,14 +386,14 @@
 }
 
 /**
- *  MARK:--------------------从proto中找abs--------------------
- *  @desc 判断当前proto场景对abs是条件满足的 (参考28052-2);
+ *  MARK:--------------------判断条件满足--------------------
+ *  @desc 即从proto中找abs: 判断当前proto场景对abs是条件满足的 (参考28052-2);
  *  @param absCutIndex : 其中absFo执行到的最大值 (含absCutIndex);
  *  @version
  *      2023.02.04: 初版,为解决条件满足不完全的问题,此方法将尝试从proto找出canset前段的每帧 (参考28052);
  *  @result 在proto中全找到canset的前段则返回true;
  */
-+(BOOL) findAbsFoFromProtoFo:(AIFoNodeBase*)protoFo absFo:(AIFoNodeBase*)absFo absCutIndex:(NSInteger)absCutIndex {
++(BOOL) sceneIsOk:(AIFoNodeBase*)protoFo absFo:(AIFoNodeBase*)absFo absCutIndex:(NSInteger)absCutIndex {
     //1. 数据准备;
     if (!protoFo || !absFo) return false;
         
