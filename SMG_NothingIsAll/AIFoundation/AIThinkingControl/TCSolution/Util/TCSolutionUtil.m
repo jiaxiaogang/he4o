@@ -161,7 +161,7 @@
     
     //3. 过滤器;
     NSInteger hAleardayCount = [self getHAleardayCount:targetFoModel];
-    cansetFos = [self slowCansetFosFilter:cansetFos demand:hDemand ptAleardayCount:hAleardayCount basePFoOrTargetFoModel:targetFoModel];
+    cansetFos = [self slowCansetFosFilterV2:cansetFos demand:hDemand ptAleardayCount:hAleardayCount basePFoOrTargetFoModel:targetFoModel];
     
     //3. 转cansetModels候选集 (参考26128-第1步 & 26161-1&2&3);
     NSArray *cansetModels = [SMGUtils convertArr:cansetFos convertBlock:^id(AIKVPointer *cansetFo_p) {
@@ -185,7 +185,7 @@
         
         //3. 过滤器;
         NSInteger rAleardayCount = [self getRAleardayCount:demand pFo:pFo];
-        cansetFos = [self slowCansetFosFilter:cansetFos demand:demand ptAleardayCount:rAleardayCount basePFoOrTargetFoModel:pFo];
+        cansetFos = [self slowCansetFosFilterV2:cansetFos demand:demand ptAleardayCount:rAleardayCount basePFoOrTargetFoModel:pFo];
         
         //3. 转cansetModels候选集 (参考26128-第1步 & 26161-1&2&3);
         NSArray *cansetModels = [SMGUtils convertArr:cansetFos convertBlock:^id(AIKVPointer *cansetFo_p) {
@@ -292,9 +292,11 @@
  *      2022.07.14: S的价值pk迭代: 将过滤负价值的,改成过滤无价值指向的 (参考27048-TODO4&TODO9);
  *      2022.07.20: 不要求mv指向 (参考27055-步骤1);
  *      2023.01.08: 加上条件满足过滤器-R任务部分 (参考28022);
+ *      2023.01.08: V1末版说明: 根据28025,递归找match,proto,canset三者的映射,来判断条件满足,已废弃 (参考28023&28051);
+ *      2023.02.04: V2版本,解决原方式条件满足不完全问题 (参考28052);
  *  @param ptAleardayCount : 即取得"canset的basePFoOrTargetFo推进到哪了"的截点;
  */
-+(NSArray*) slowCansetFosFilter:(NSArray*)cansetFos demand:(DemandModel*)demand ptAleardayCount:(NSInteger)ptAleardayCount basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel{
++(NSArray*) slowCansetFosFilterV2:(NSArray*)cansetFos demand:(DemandModel*)demand ptAleardayCount:(NSInteger)ptAleardayCount basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel{
     //1. 数据准备;
     BOOL havBack = ISOK(demand, HDemandModel.class); //H有后段,别的没有;
     int minCount = havBack ? 2 : 1;
@@ -305,30 +307,39 @@
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
         if (cansetFo.count < minCount) return false;
         
-        //4. 通过contains来判断是否前段条件满足: 数据准备 (参考28021 & 28022);
+        //4. 取出pFoOrTargetFo
+        AIKVPointer *matchFo_p = [TOUtils convertBaseFoFromBasePFoOrTargetFoModel:basePFoOrTargetFoModel];
+        AIFoNodeBase *matchFo = [SMGUtils searchNode:matchFo_p];
+        
+        //5. 递归找到protoFo;
         AIMatchFoModel *pFo = [self getPFo:cansetFo_p basePFoOrTargetFoModel:basePFoOrTargetFoModel];
         AIKVPointer *protoFo_p = pFo.baseRDemand.protoOrRegroupFo;
         AIFoNodeBase *protoFo = [SMGUtils searchNode:protoFo_p];
-        AIFoNodeBase *matchFo = [SMGUtils searchNode:pFo.matchFo];
         
         //6. 根据matchFo取得与canset的indexDic映射;
-        NSDictionary *cansetMatchIndexDic = [self getCansetMatchIndexDic:cansetFo_p basePFoOrTargetFoModel:basePFoOrTargetFoModel sumIndexDic:nil];
+        NSDictionary *cansetMatchIndexDic = [matchFo getConIndexDic:cansetFo.pointer];
         
-        //7. 根据matchFo取得proto的indexDic映射;
-        NSDictionary *protoMatchIndexDic = [matchFo getConIndexDic:protoFo_p];
-        
-        //7. 所有已发生帧,都要判断一下条件满足 (ptAleardayCount之前全是前段) (28022-todo4);
+        //7. 所有已发生帧,都要判断一下条件满足 (ptAleardayCount之前全是前段) (参考28022-todo4);
         NSLog(@"第3步 cansetFo%@",Fo2FStr(cansetFo));
+        
+        
         
         //TODOTOMORROW20230202: 此处应该是对canset的前段条件满足进行判断,而不是对protoOrTargetFo (参考28051);
         
         //1. canset没后段,则pass,因为没能行为化的了;
         //2. 根据ptAleardayCount向前,取得末帧cansetIndex后: 以下for循环,就以发现的cansetIndex为准来执行吧...
         //3. 此处不行就别强依赖indexDic了,就以mIsC为准来搞 (存疑,继续深入分析下);
-        
-        
-        
-        
+        //实践....
+        //1. 根据ptAleardayCount取出对应的cansetIndex,做为中段截点;
+        NSInteger cansetCutIndex = NUMTOOK([cansetMatchIndexDic objectForKey:@(ptAleardayCount)]).integerValue;
+        for (NSInteger i = 0; i < cansetCutIndex; i++) {
+            //先查下,此处<cutIndex是否正确,看下这个中间截点,是已发生,还是未发生... (应该是已发生);
+            
+            
+            
+            
+            
+        }
         
         
         
@@ -348,6 +359,7 @@
             NSArray *matchAlg_ps = Ports2Pits([AINetUtils absPorts_All:protoAlg]);
             
             //10. 判断是否包含cansetAlg (只要有一条不包含,则条件不满足,返回过滤掉) (参考28022-todo2&3);
+            //通过contains来判断是否前段条件满足 (参考28021 & 28022);
             if (![matchAlg_ps containsObject:cansetAlg_p]) {
                 return false;
             }
@@ -386,56 +398,6 @@
     //1. 已发生个数 (targetFo已行为化部分即已发生) (参考26161-模型);
     NSInteger targetFoAleardayCount = targetFoM.actionIndex;
     return targetFoAleardayCount;
-}
-
-/**
- *  MARK:--------------------综合求出canset与match的indexDic映射 (参考28024-回答1&回答2)--------------------
- *  @desc 递归方法,从工作记忆的末枝向头枝,直至递归到R任务中的protoFo为止;
- *  @desc 适用范围: (参考28025-todo7);
- *          1. H任务可以递归取到R为止 (含R);
- *          2. R任务也可以直接取到R的结果 (含R);
- *
- *  @param cansetFo_p : 传入H任务取的候选集中的其中一条 (正在检查过滤的一条);
- *  @param basePFoOrTargetFoModel : H传入cansetFo_p基于的targetFoModel / R传canset基于的pFo;
- *  @param sumIndexDic : 传入空即可 (用来递归间收集的,最初就是空);
- *  @result 顺着targetFoModel向头枝直至找到protoFo,将整个寻找途径的indexDic映射综合(含R)返回 (参考28025-todo6);
- */
-+(NSDictionary*) getCansetMatchIndexDic:(AIKVPointer*)cansetFo_p basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel sumIndexDic:(NSDictionary*)sumIndexDic {
-    //1. base还是H时: 取出这层的itemIndexDic映射;
-    AIKVPointer *matchFo_p = [TOUtils convertBaseFoFromBasePFoOrTargetFoModel:basePFoOrTargetFoModel];
-    AIFoNodeBase *matchFo = [SMGUtils searchNode:matchFo_p];
-    NSDictionary *itemIndexDic = [matchFo getConIndexDic:cansetFo_p];
-    NSMutableDictionary *newSumIndexDic = [[NSMutableDictionary alloc] init];
-    
-    //2. 首条时: 当sumIndexDic为空时,说明是首条,当前itemIndexDic即当前综合映射;
-    if (!sumIndexDic) {
-        [newSumIndexDic setDictionary:itemIndexDic];
-    } else {
-        //3. 非首条时: 将本层itemIndexDic与往层综合sumIndexDic再综合一下 (计算方法参考28024-回答2);
-        for (NSNumber *sumKey in sumIndexDic.allKeys) {
-            NSNumber *sumValue = [sumIndexDic objectForKey:sumKey];
-            for (NSNumber *itemKey in itemIndexDic.allKeys) {
-                NSNumber *itemValue = [itemIndexDic objectForKey:itemKey];
-                
-                //3. 当sum的抽象=item的具象时: 记录一条综合结果;
-                if ([sumKey isEqualToNumber:itemValue]) {
-                    
-                    //4. 综合结果计为: <K:item的抽象, V:sum的具象>;
-                    [newSumIndexDic setObject:sumValue forKey:itemKey];
-                }
-            }
-        }
-    }
-    
-    //5. 本次非R时: 继续递归;
-    if (ISOK(basePFoOrTargetFoModel, TOFoModel.class)) {
-        TOFoModel *baseTargetFo = (TOFoModel*)basePFoOrTargetFoModel;
-        return [self getCansetMatchIndexDic:baseTargetFo.content_p basePFoOrTargetFoModel:baseTargetFo.basePFoOrTargetFoModel sumIndexDic:newSumIndexDic];
-    }
-    //6. 本次是R时: 返回最终结果;
-    else {
-        return newSumIndexDic;
-    }
 }
 
 /**
