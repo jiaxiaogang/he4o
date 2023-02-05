@@ -314,9 +314,7 @@
         
         //5. 根据matchFo取得与canset的indexDic映射;
         NSDictionary *cansetMatchIndexDic = [matchFo getConIndexDic:cansetFo.pointer];
-        
-        //6. 所有已发生帧,都要判断一下条件满足 (ptAleardayCount之前全是前段) (参考28022-todo4);
-        NSLog(@"第3步 cansetFo%@",Fo2FStr(cansetFo));
+        //NSLog(@"第3步 cansetFo%@",Fo2FStr(cansetFo));
         
         //7. 根据ptAleardayCount取出对应的cansetIndex,做为中段截点 (aleardayCount - 1 = cutIndex);
         NSInteger matchCutIndex = ptAleardayCount - 1;
@@ -331,6 +329,7 @@
         AIFoNodeBase *protoFo = [SMGUtils searchNode:protoFo_p];
         
         //10. 过滤器3===: 过滤掉条件不满足的 (protoFo对cansetFo条件满足) 注:此时canset是proto的抽象 (参考28052-2);
+        //说明: 所有已发生帧,都要判断一下条件满足 (ptAleardayCount之前全是前段) (参考28022-todo4);
         BOOL findAbsFromProto = [self sceneIsOk:protoFo absFo:cansetFo absCutIndex:cansetCutIndex];
         if (!findAbsFromProto) return false;
         
@@ -398,7 +397,7 @@
     if (!protoFo || !absFo) return false;
         
     //2. 每帧match都到proto里去找,找到则记录proto的进度,找不到则全部失败;
-    __block NSInteger protoMin = 0;
+    NSInteger protoMin = 0;
     for (NSInteger absI = 0; absI < absCutIndex + 1; absI ++) {
         AIKVPointer *absAlg = ARR_INDEX(absFo.content_ps, absI);
         BOOL findItem = false;
