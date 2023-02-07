@@ -302,6 +302,9 @@
     BOOL havBack = ISOK(demand, HDemandModel.class); //H有后段,别的没有;
     int minCount = havBack ? 2 : 1;
     
+    //TEMPTEST-FOR-28063BUG (2023.03此代码段过期);
+    for (AIKVPointer *item in cansetFos) NSLog(@"取候选集,看下是不是全没后段?itemCanset: %@",Pit2FStr(item));
+    
     //2. 过滤器;
     cansetFos = [SMGUtils filterArr:cansetFos checkValid:^BOOL(AIKVPointer *cansetFo_p) {
         //3. 过滤器1===: 过滤掉长度不够的 (因为前段全含至少要1位,中段修正也至少要0位,后段H目标要1位R要0位);
