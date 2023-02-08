@@ -67,6 +67,8 @@
                 [waitModel feedbackPushFrame:model.protoAlg.pointer];
                 [theTV updateFrame];
                 NSLog(@"tir_OPushM: waitFo场景更新,原IRT理性失效");
+            } else {
+                [waitModel feedbackOtherFrame:model.protoAlg.pointer];
             }
         }
     }

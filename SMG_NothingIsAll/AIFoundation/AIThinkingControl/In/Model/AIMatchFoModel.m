@@ -82,7 +82,7 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------当前帧有反馈--------------------
+ *  MARK:--------------------有反馈且匹配当前帧--------------------
  *  @param fbProtoAlg : 瞬时记忆新帧,反馈feedback来的protoAlg;
  *  @version
  *      2022.09.15: 更新indexDic & realMaskFo (参考27097);
@@ -129,6 +129,25 @@
     
     //3. 触发器 (非末帧继续R反省,末帧则P反省);
     [TCForecast forecast_Single:self];
+}
+
+/**
+ *  MARK:--------------------有反馈但不匹配当前帧--------------------
+ *  @desc 不匹配的新帧也要记录 (参考28063-方案);
+ *  @template 比如: matchFo是被撞,protoAlg无关帧可能是上飞躲避,它与matchFo确实无关,但却是事实经历中的一帧;
+ *  @作用: pushFrameFinish中自然未发生时,会生成新canset时需要用;
+ *  @version
+ *      2023.02.08: 初版,用于修复解决方案没后段的问题 (事实经历缺帧) (参考28063);
+ */
+-(void) feedbackOtherFrame:(AIKVPointer*)otherProtoAlg {
+    //----------------仅记录当前帧----------------
+    //1. 更新realMaskFo;
+    [self.realMaskFo addObject:otherProtoAlg];
+    
+    //2. 更新realDeltaTimes和lastFrameTime;
+    NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
+    [self.realDeltaTimes addObject:@(now - self.lastFrameTime)];
+    self.lastFrameTime = now;
 }
 
 /**

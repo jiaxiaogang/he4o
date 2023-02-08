@@ -25,6 +25,7 @@
 
 /**
  *  MARK:--------------------识别时为protoFo,反思时为regroupFo--------------------
+ *  @title 实际经历;
  *  @desc 状态: 启用,初始化时为maskFo,但后续可随着反省触发器和cutIndex的推进更新;
  *  @desc 元素初始化时为protoFo/regroupFo的content_ps,后续随着更新附加到尾部;
  */
@@ -88,8 +89,11 @@
 //MARK:                     < publicMethod >
 //MARK:===============================================================
 
-//当前帧有反馈;
+//有反馈且匹配当前帧
 -(void) feedbackPushFrame:(AIKVPointer*)fbProtoAlg;
+
+//有反馈但不匹配当前帧
+-(void) feedbackOtherFrame:(AIKVPointer*)otherProtoAlg;
 
 //匹配度计算;
 -(CGFloat) matchFoValue;
