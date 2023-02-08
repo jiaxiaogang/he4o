@@ -138,6 +138,7 @@
  *  @作用: pushFrameFinish中自然未发生时,会生成新canset时需要用;
  *  @version
  *      2023.02.08: 初版,用于修复解决方案没后段的问题 (事实经历缺帧) (参考28063);
+ *  @callers : 在feedbackTIR中,只要没调用到pushFrame,就调用此方法记录protoA;
  */
 -(void) feedbackOtherFrame:(AIKVPointer*)otherProtoAlg {
     //----------------仅记录当前帧----------------

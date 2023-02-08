@@ -22,7 +22,8 @@
  *      2022.05.02: 用matchAlgs+partAlgs替代mIsC (参考25234-8);
  *      2022.09.05: 将theTC.inModels改成roots.pFos (参考27096-方案2);
  *      2022.09.06: TC流程调整_直接调用TCDemand,将感理性反省预置都后置到Demand中 (参考27096-实践1);
- *      2022.09.18: 有反馈时,及时处理反省和任务推进帧 (参考27098-todo2&todo3);
+ *      2022.09.18: 反馈匹配时,及时处理反省和任务推进帧 (参考27098-todo2&todo3);
+ *      2023.02.09: 反馈不匹配时(只要没调用到匹配,即调用不匹配),也要记录protoAlg到pFo里的实际发生帧 (参考28063-todo1);
  *  @status
  *      xxxx.xx.xx: 非启动状态,因为时序识别中,未涵盖HNGL类型,所以并未对HNGL进行预测;
  *      2021.10.17: 启动,支持对IRT的理性失效 (参考24059&24061-方案2);
@@ -46,13 +47,21 @@
             
             //4. 取出等待中的_非wait状态的,不处理;
             NSInteger status = [waitModel getStatusForCutIndex:waitModel.cutIndex];
-            if (status != TIModelStatus_LastWait) continue;
+            if (status != TIModelStatus_LastWait) {
+                //调用1: 只要没调用到pushFrame,就调用此方法记录protoA;
+                [waitModel feedbackOtherFrame:model.protoAlg.pointer];
+                continue;
+            }
             AIFoNodeBase *matchFo = [SMGUtils searchNode:waitModel.matchFo];
             if (Log4TIROPushM) NSLog(@"==> checkTIModel=MatchFo: %@",Fo2FStr(matchFo));
             
             //5. 末位跳过,不需要反馈 (参考25031-2 & 25134-方案2);
             NSInteger maxCutIndex = matchFo.count - 1;
-            if (waitModel.cutIndex >= maxCutIndex) continue;
+            if (waitModel.cutIndex >= maxCutIndex){
+                //调用2: 只要没调用到pushFrame,就调用此方法记录protoA;
+                [waitModel feedbackOtherFrame:model.protoAlg.pointer];
+                continue;
+            }
             AIKVPointer *waitAlg_p = ARR_INDEX(matchFo.content_ps, waitModel.cutIndex + 1);
             
             //6. 判断protoAlg与waitAlg之间匹配,成立则OutBackYes;
@@ -68,6 +77,7 @@
                 [theTV updateFrame];
                 NSLog(@"tir_OPushM: waitFo场景更新,原IRT理性失效");
             } else {
+                //调用3: 只要没调用到pushFrame,就调用此方法记录protoA;
                 [waitModel feedbackOtherFrame:model.protoAlg.pointer];
             }
         }
@@ -332,21 +342,17 @@
     }
     
     //b. 反馈匹配 (比如找锤子,看到锤子了);
-    NSLog(@"b1");
     for (HDemandModel *hDemand in allHDemands) {
         TOAlgModel *targetAlg = (TOAlgModel*)hDemand.baseOrGroup;   //hDemand的目标alg;
-        NSLog(@"b2");
         if ([recognitionAlgs containsObject:targetAlg.content_p]) {
             
             //c. 明确有效;
             targetAlg.feedbackAlg = model.protoAlg.pointer;
             hDemand.effectStatus = ES_HavEff;
             hDemand.status = TOModelStatus_Finish;
-            NSLog(@"b3");
             
             //8. H任务完成时,H当前正执行的S提前完成,并进行外类比 (参考27206c-H任务);
             for (TOFoModel *solutionModel in hDemand.actionFoModels) {
-                NSLog(@"b4");
                 [AITest test17:solutionModel];
                 if (solutionModel.status == TOModelStatus_ActYes) {
                     //a. 数据准备;
