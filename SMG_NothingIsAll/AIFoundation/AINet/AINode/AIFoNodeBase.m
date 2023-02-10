@@ -185,11 +185,6 @@
  *  MARK:--------------------更新一条候选--------------------
  */
 -(void) updateConCanset:(AIKVPointer*)newConCansetFo targetIndex:(NSInteger)targetIndex {
-    
-    //TEMPTEST-FOR-28063BUG (2023.03此代码段过期);
-    NSLog(@"新候选集,,,查下是不是没后段? %@",Pit2FStr(newConCansetFo));
-    
-    
     NSMutableArray *conCansets = [[NSMutableArray alloc] initWithArray:[self.conCansetsDic objectForKey:@(targetIndex)]];
     if (![conCansets containsObject:newConCansetFo]) {
         [conCansets addObject:newConCansetFo];

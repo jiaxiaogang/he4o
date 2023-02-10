@@ -344,6 +344,8 @@
 #define Log4InRethink true
 #define Log4OutRethink true
 #define Log4Rethink true
+//解决方案条件满足
+#define Log4SceneIsOk true
 
 //Score
 #define Log4Score false

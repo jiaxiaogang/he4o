@@ -338,13 +338,20 @@
         //1. 进入训练页
         NSMutableArray *names = [[NSMutableArray alloc] init];
         [names addObject:kGrowPageSEL];
+        [names addObject:kWoodLeftSEL];
         
         //2. 随机飞或扔木棒,五步;
         for (int i = 0; i < 5; i++) {
-            NSArray *randomNames = @[kFlySEL,kWoodLeftSEL];
-            int randomIndex = arc4random() % 2;
-            NSString *randomName = ARR_INDEX(randomNames, randomIndex);
-            [names addObject:randomName];
+            [names addObject:kFlySEL];
+            
+            //TODOTOMORROW20230210: 实现当kFlySEL不必等待思维控制器空载即执行;
+            //然后训练第2步学躲,看下:
+            //  1. 能不能训练会各方向躲成功;
+            //  2. 能不能执行到抽象canset执行;
+            
+            
+            
+            
         }
         
         //3. 退到主页,模拟重启;

@@ -206,14 +206,14 @@
 //MARK:===============================================================
 //MARK:    < 回测必经点测试 (常关,每个轮回测时打开,触发则关,未触发者为异常) >
 //MARK:===============================================================
-+(void) test101:(AIFoNodeBase*)absCansetFo {
-    ELog(@"必经点测试: 触发canset再抽象有被执行到");
++(void) test101:(AIFoNodeBase*)absCansetFo proto:(AIFoNodeBase*)proto conCanset:(AIFoNodeBase*)conCanset{
+    WLog(@"必经点测试: 触发canset再抽象执行到;\n\tabsCanset %@ from:\n\tproto:%@\n\tconConset:%@",Fo2FStr(absCansetFo),Fo2FStr(proto),Fo2FStr(conCanset));
 }
 
 +(void) test102:(AIFoNodeBase*)cansetFo {
     //测试27222-1,TCSolution取得抽象canset;
     if (AINetAbsFoNode.class == cansetFo.class) {
-        NSLog(@"取得抽象canset: %@",NSStringFromClass(cansetFo.class));
+        WLog(@"必经点测试: 读取到抽象canset: %@",NSStringFromClass(cansetFo.class));
     }
 }
 

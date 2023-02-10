@@ -40,7 +40,7 @@
 //MARK:===============================================================
 //MARK:    < 回测必经点测试 (常关,每个轮回测时打开,触发则关,未触发者为异常) >
 //MARK:===============================================================
-+(void) test101:(AIFoNodeBase*)absCansetFo;
++(void) test101:(AIFoNodeBase*)absCansetFo proto:(AIFoNodeBase*)proto conCanset:(AIFoNodeBase*)conCanset;
 +(void) test102:(AIFoNodeBase*)cansetFo;
 
 @end

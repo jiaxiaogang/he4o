@@ -302,9 +302,6 @@
     BOOL havBack = ISOK(demand, HDemandModel.class); //H有后段,别的没有;
     int minCount = havBack ? 2 : 1;
     
-    //TEMPTEST-FOR-28063BUG (2023.03此代码段过期);
-    for (AIKVPointer *item in cansetFos) NSLog(@"取候选集,看下是不是全没后段?itemCanset: %@",Pit2FStr(item));
-    
     //2. 过滤器;
     cansetFos = [SMGUtils filterArr:cansetFos checkValid:^BOOL(AIKVPointer *cansetFo_p) {
         //3. 过滤器1===: 过滤掉长度不够的 (因为前段全含至少要1位,中段修正也至少要0位,后段H目标要1位R要0位);
@@ -414,20 +411,20 @@
                 //4. 找到了 & 记录protoI的进度;
                 findItem = true;
                 protoMin = protoI + 1;
-                NSLog(@"\t第%ld帧,条件满足通过 proto:%@ canset:%@",absI,Pit2FStr(protoAlg),Pit2FStr(absAlg));
+                if (Log4SceneIsOk) NSLog(@"\t第%ld帧,条件满足通过 proto:%@ canset:%@",absI,Pit2FStr(protoAlg),Pit2FStr(absAlg));
                 break;
             }
         }
         
         //5. 有一条失败,则全失败;
         if (!findItem) {
-            NSLog(@"\t第%ld帧,条件满足未通过 canset:%@",absI,Pit2FStr(absAlg));
+            if (Log4SceneIsOk) NSLog(@"\t第%ld帧,条件满足未通过 canset:%@",absI,Pit2FStr(absAlg));
             return false;
         }
     }
     
     //6. 全找到,则成功;
-    NSLog(@"\t全部条件满足通过\n");
+    if (Log4SceneIsOk) NSLog(@"\t全部条件满足通过\n");
     return true;
 }
 
