@@ -137,6 +137,7 @@
  *  MARK:--------------------强训执行器--------------------
  *  @version
  *      2023.02.11: 在等待上条命名,或思维空载时,kFlySEL继续执行 (参考28066-todo2);
+ *      2023.02.11: BUG_多次飞的动画似乎有一点交叉,改为行为输出时,必须等上条执行完,才能执行下条;
  */
 -(void) timeBlock {
     //1. 不用执行: 非播放状态,return;
@@ -158,16 +159,20 @@
     
     //4. 行为输出时,会即刻执行;
     NSString *name = ARR_INDEX(self.queues, self.queueIndex);
-    BOOL runSoon = [name isEqualToString:kFlySEL];
+    BOOL curNeedWait = ![kFlySEL isEqualToString:name];
+    BOOL lastNeedCurWait = [kFlySEL isEqualToString:self.invokingName];
     
-    //5. 非即刻执行的命令,判断是否需要等待上一命令 || 等待思维空载;
-    if (!runSoon) {
-        //6. 没轮到下帧: 上帧还未执行完成时,等待完成再执行下帧;
-        if (STRISOK(self.invokingName)) {
-            NSLog(@"----> 强化训练_上帧执行中 -> 等待");
-            return;
-        }
-        
+    //5. (a || b) && c => 需要等待上一命令执行完;
+    //  a. 这步要求等待 = curNeedWait;
+    //  b. 上步要求这步等它 = lastNeedCurWait (上条命令是行为);
+    //  c. 这步执行中 = STRISOK(self.invokingName);
+    if ((curNeedWait || lastNeedCurWait) && STRISOK(self.invokingName)) {
+        NSLog(@"----> 强化训练_上帧执行中 -> 等待");
+        return;
+    }
+    
+    //6. 非即刻执行的命令 => 等待思维空载;
+    if (curNeedWait) {
         //7. 思维忙时没轮到下帧: TC忙碌状态则返回 (计数速率(负载)>10时,为忙状态);
         NSInteger operDelta = theTC.getOperCount - self.lastOperCount;
         self.lastOperCount = theTC.getOperCount;
