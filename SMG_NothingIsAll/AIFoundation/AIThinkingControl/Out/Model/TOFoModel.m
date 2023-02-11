@@ -73,6 +73,14 @@
  *      2022.11.25: 转regroupFo时收集默认content_p内容(代码不变),canset再类比时仅获取feedback反馈的alg (参考27207-1);
  */
 -(NSArray*) convertFeedbackAlgAndRealDeltaTimes2Orders4CreateProtoFo:(BOOL)justFeedbackAlg {
+    //TODOTOMORROW20230211: 这里order,看下加进前段 (参考28068);
+    //  1. 考虑改成: convertRealMaskFoAndRealDeltaTimes2Orders4CreateProtoFo()
+    //  2. 或改成从pFo.realMaskFo中取;
+    
+    
+    
+    
+    
     //1. 数据准备 (收集除末位外的content为order);
     AIFoNodeBase *fo = [SMGUtils searchNode:self.content_p];
     NSMutableArray *order = [[NSMutableArray alloc] init];
