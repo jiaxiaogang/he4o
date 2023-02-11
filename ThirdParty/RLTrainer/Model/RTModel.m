@@ -146,27 +146,33 @@
         return;
     }
     
-    //2. 意外>count时处理;
+    //3. 意外>count时处理;
     if (self.queueIndex > self.queues.count) return;
     [self playSetLastStartTime];
     
-    //2. 没轮到下帧: 上帧还未执行完成时,等待完成再执行下帧;
-    if (STRISOK(self.invokingName)) {
-        NSLog(@"----> 强化训练_上帧执行中 -> 等待");
-        return;
-    }
-    
-    //3. 没轮到下帧: TC忙碌状态则返回 (计数速率(负载)>10时,为忙状态);
-    NSInteger operDelta = theTC.getOperCount - self.lastOperCount;
-    BOOL busyStatus = operDelta > 0;
-    self.lastOperCount = theTC.getOperCount;
-    if (busyStatus) {
-        NSLog(@"----> 强化训练_思维负载(%ld) -> 等待",operDelta);
-        return;
-    }
-    
-    //3. 执行下帧;
+    //4. 行为输出时,会即刻执行;
     NSString *name = ARR_INDEX(self.queues, self.queueIndex);
+    BOOL runSoon = [name isEqualToString:kFlySEL];
+    
+    //5. 非即刻执行的命令,判断是否需要等待上一命令 || 等待思维空载;
+    if (!runSoon) {
+        //6. 没轮到下帧: 上帧还未执行完成时,等待完成再执行下帧;
+        if (STRISOK(self.invokingName)) {
+            NSLog(@"----> 强化训练_上帧执行中 -> 等待");
+            return;
+        }
+        
+        //7. 思维忙时没轮到下帧: TC忙碌状态则返回 (计数速率(负载)>10时,为忙状态);
+        NSInteger operDelta = theTC.getOperCount - self.lastOperCount;
+        self.lastOperCount = theTC.getOperCount;
+        BOOL busyStatus = operDelta > 0;
+        if (busyStatus) {
+            NSLog(@"----> 强化训练_思维负载(%ld) -> 等待",operDelta);
+            return;
+        }
+    }
+    
+    //8. 执行下帧;
     NSLog(@"强化训练 -> 执行:%@ (%ld/%ld)",name,self.queueIndex+1,self.queues.count);
     self.queueIndex++;
     self.invokingName = name;
