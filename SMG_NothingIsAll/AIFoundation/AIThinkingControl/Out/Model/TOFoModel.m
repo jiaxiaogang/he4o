@@ -68,15 +68,12 @@
 
 /**
  *  MARK:--------------------将每帧反馈转成orders,以构建protoFo--------------------
- *  @param fromRegroup : 从TCRegroup调用;
+ *  @param fromRegroup : 从TCRegroup调用时未发生部分也取, 而用于canset抽象时仅取已发生部分;
  *  @version
  *      2022.11.25: 转regroupFo时收集默认content_p内容(代码不变),canset再类比时仅获取feedback反馈的alg (参考27207-1);
+ *      2023.02.12: 返回改为: matchFo的前段+执行部分反馈帧 (参考28068-方案1);
  */
--(NSArray*) convertFeedbackAlgAndRealDeltaTimes2Orders4CreateProtoFo:(BOOL)fromRegroup {
-    //TODOTOMORROW20230211: 这里order,看下加进前段 (参考28068);
-    //  1. 考虑改成: convertRealMaskFoAndRealDeltaTimes2Orders4CreateProtoFo()
-    //  2. 或改成从pFo.realMaskFo中取;
-    
+-(NSArray*) getOrderUseMatchAndFeedbackAlg:(BOOL)fromRegroup {
     //1. 数据准备 (收集除末位外的content为order);
     AIFoNodeBase *fo = [SMGUtils searchNode:self.content_p];
     NSMutableArray *order = [[NSMutableArray alloc] init];

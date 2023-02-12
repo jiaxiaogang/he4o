@@ -70,7 +70,7 @@
 /**
  *  MARK:--------------------将每帧反馈转成orders,以构建protoFo--------------------
  */
--(NSArray*) convertFeedbackAlgAndRealDeltaTimes2Orders4CreateProtoFo:(BOOL)fromRegroup;
+-(NSArray*) getOrderUseMatchAndFeedbackAlg:(BOOL)fromRegroup;
 
 /**
  *  MARK:--------------------算出新的indexDic--------------------
