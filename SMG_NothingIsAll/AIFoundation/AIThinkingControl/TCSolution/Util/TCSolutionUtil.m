@@ -305,6 +305,7 @@
     //2. 过滤器;
     cansetFos = [SMGUtils filterArr:cansetFos checkValid:^BOOL(AIKVPointer *cansetFo_p) {
         //3. 过滤器1===: 过滤掉长度不够的 (因为前段全含至少要1位,中段修正也至少要0位,后段H目标要1位R要0位);
+        if (Log4SolutionFilter) NSLog(@"S过滤器 checkItem: %@",Pit2FStr(cansetFo_p));
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
         if (cansetFo.count < minCount) return false;
         
@@ -334,10 +335,10 @@
         if (!findAbsFromProto) return false;
         
         //11. 闯关成功;
-        NSLog(@"\t过滤器全部通过\n");
+        if (Log4SolutionFilter) NSLog(@"ItemCanset过滤器通过: %@\n",Pit2FStr(cansetFo_p));
         return true;
     }];
-    NSLog(@"第4步 最小长度 & 非负价值过滤后:%ld",cansetFos.count);//测时96条
+    NSLog(@"第4步 Solution过滤器过滤后:%ld",cansetFos.count);//测时96条
     return cansetFos;
 }
 
@@ -406,7 +407,6 @@
             //3. B源于absFo,此处只判断B是1层抽象 (参考27161-调试1&调试2);
             //3. 单条判断方式: 此处proto抽象仅指向刚识别的matchAlgs,所以与contains等效 (参考28052-3);
             BOOL mIsC = [TOUtils mIsC_1:protoAlg c:absAlg];
-            //if (Log4OutAna) NSLog(@"proto第%ld A%ld 是 ass第%ld A%ld (%@)",protoI,protoAlg.pointerId,absI,absAlg.pointerId,mIsC?@"成立":@"不成立");
             if (mIsC) {
                 //4. 找到了 & 记录protoI的进度;
                 findItem = true;
@@ -424,7 +424,7 @@
     }
     
     //6. 全找到,则成功;
-    if (Log4SceneIsOk) NSLog(@"\t全部条件满足通过\n");
+    if (Log4SceneIsOk) NSLog(@"条件满足通过:%@ (absCutIndex:%ld protoCount:%ld)",Fo2FStr(absFo),absCutIndex,protoFo.count);
     return true;
 }
 

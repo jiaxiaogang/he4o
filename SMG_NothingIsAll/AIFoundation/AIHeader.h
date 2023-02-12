@@ -345,7 +345,9 @@
 #define Log4OutRethink true
 #define Log4Rethink true
 //解决方案条件满足
-#define Log4SceneIsOk true
+#define Log4SceneIsOk false
+//S过滤器
+#define Log4SolutionFilter false
 
 //Score
 #define Log4Score false
