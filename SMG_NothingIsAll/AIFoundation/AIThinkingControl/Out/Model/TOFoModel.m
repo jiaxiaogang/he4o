@@ -68,37 +68,30 @@
 
 /**
  *  MARK:--------------------将每帧反馈转成orders,以构建protoFo--------------------
- *  @param justFeedbackAlg : 仅转换有feedbackAlg的部分;
+ *  @param fromRegroup : 从TCRegroup调用;
  *  @version
  *      2022.11.25: 转regroupFo时收集默认content_p内容(代码不变),canset再类比时仅获取feedback反馈的alg (参考27207-1);
  */
--(NSArray*) convertFeedbackAlgAndRealDeltaTimes2Orders4CreateProtoFo:(BOOL)justFeedbackAlg {
+-(NSArray*) convertFeedbackAlgAndRealDeltaTimes2Orders4CreateProtoFo:(BOOL)fromRegroup {
     //TODOTOMORROW20230211: 这里order,看下加进前段 (参考28068);
     //  1. 考虑改成: convertRealMaskFoAndRealDeltaTimes2Orders4CreateProtoFo()
     //  2. 或改成从pFo.realMaskFo中取;
-    
-    
-    
-    
     
     //1. 数据准备 (收集除末位外的content为order);
     AIFoNodeBase *fo = [SMGUtils searchNode:self.content_p];
     NSMutableArray *order = [[NSMutableArray alloc] init];
     NSArray *feedbackIndexArr = [self getIndexArrIfHavFeedback];
+    NSInteger max = fromRegroup ? fo.count : self.actionIndex;
     
     //2. 将fo逐帧收集真实发生的alg;
-    for (NSInteger i = 0; i < fo.count - 1; i++) {
+    for (NSInteger i = 0; i < max; i++) {
         //3. 找到当前帧alg_p;
         AIKVPointer *matchAlg_p = ARR_INDEX(fo.content_ps, i);
         
         //4. 如果有反馈feedbackAlg,则优先取反馈;
-        AIKVPointer *findAlg_p = nil;
+        AIKVPointer *findAlg_p = matchAlg_p;
         if ([feedbackIndexArr containsObject:@(i)]) {
             findAlg_p = [self getFeedbackAlgWithSolutionIndex:i];
-        }
-        //4. 如果没找着feedbackAlg,且允许取match时,则取matchAlg;
-        else if(!justFeedbackAlg) {
-            findAlg_p = matchAlg_p;
         }
         
         //5. 生成时序元素;
@@ -193,7 +186,7 @@
     NSMutableArray *result = [[NSMutableArray alloc] init];
     
     //2. 将fo逐帧收集有反馈的conIndex (参考27207-7);
-    for (NSInteger i = 0; i < solutionFo.count - 1; i++) {
+    for (NSInteger i = 0; i < solutionFo.count; i++) {
         AIKVPointer *solutionAlg_p = ARR_INDEX(solutionFo.content_ps, i);
         for (TOAlgModel *item in self.subModels) {
             if (item.status == TOModelStatus_OuterBack && [item.content_p isEqual:solutionAlg_p] && item.feedbackAlg) {

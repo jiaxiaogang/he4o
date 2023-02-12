@@ -342,7 +342,7 @@
         [names addObject:kWoodLeftSEL];
         
         //2. 随机飞或扔木棒,五步;
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 4; i++) {
             [names addObject:kFlySEL];
         }
         

@@ -191,7 +191,7 @@
         AIFoNodeBase *pFo = [SMGUtils searchNode:basePFoOrTargetFo_p];
         
         //d. 收集真实发生feedbackAlg (order为0条时,跳过);
-        NSArray *order = [solutionModel convertFeedbackAlgAndRealDeltaTimes2Orders4CreateProtoFo:true];
+        NSArray *order = [solutionModel convertFeedbackAlgAndRealDeltaTimes2Orders4CreateProtoFo:false];
         if (!ARRISOK(order)) continue;
         
         //e. 生成新protoFo时序 (参考27204-6);
