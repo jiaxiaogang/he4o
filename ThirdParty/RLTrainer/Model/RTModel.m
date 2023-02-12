@@ -7,6 +7,7 @@
 //
 
 #import "RTModel.h"
+#import "RTQueueModel.h"
 
 #define TimerInterval 0.6f
 
@@ -70,14 +71,14 @@
     [self.dic setObject:invocation forKey:name];
 }
 
--(void) queue:(NSArray*)names count:(NSInteger)count{
+-(void) queue:(NSArray*)queues count:(NSInteger)count{
     //1. 数据检查;
-    names = ARRTOOK(names);
+    queues = ARRTOOK(queues);
     
     //2. 更新训练队列;
     for (NSInteger i = 0; i < count; i++) {
-        for (NSString *name in names) {
-            [self.queues addObject:name];
+        for (RTQueueModel *queue in queues) {
+            [self.queues addObject:queue];
         }
     }
 }
@@ -108,8 +109,10 @@
 //MARK:===============================================================
 //MARK:                     < privateMethod >
 //MARK:===============================================================
--(void) invoke:(NSString*)name{
-    NSInvocation *invc = [self.dic objectForKey:name];
+-(void) invoke:(RTQueueModel*)queue {
+    NSInvocation *invc = [self.dic objectForKey:queue.name];
+    void * arg0 = (__bridge void *)(queue.arg0);
+    [invc setArgument:arg0 atIndex:0];
     [invc invoke];
 }
 
@@ -158,8 +161,8 @@
     [self playSetLastStartTime];
     
     //4. 行为输出时,会即刻执行;
-    NSString *name = ARR_INDEX(self.queues, self.queueIndex);
-    BOOL curNeedWait = ![kFlySEL isEqualToString:name];
+    RTQueueModel *queue = ARR_INDEX(self.queues, self.queueIndex);
+    BOOL curNeedWait = ![kFlySEL isEqualToString:queue.name];
     BOOL lastNeedCurWait = [kFlySEL isEqualToString:self.invokingName];
     
     //5. (a || b) && c => 需要等待上一命令执行完;
@@ -184,10 +187,10 @@
     }
     
     //8. 执行下帧;
-    NSLog(@"强化训练 -> 执行:%@ (%ld/%ld)",name,self.queueIndex+1,self.queues.count);
+    NSLog(@"强化训练 -> 执行:%@ (%ld/%ld)",queue.name,self.queueIndex+1,self.queues.count);
     self.queueIndex++;
-    self.invokingName = name;
-    [self invoke:name];
+    self.invokingName = queue.name;
+    [self invoke:queue];
     [self.delegate rtModel_Invoked];
 }
 

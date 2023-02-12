@@ -69,6 +69,7 @@
 		084C3A6B21926D5700DAA08A /* BirdView.m in Sources */ = {isa = PBXBuildFile; fileRef = 084C3A6A21926D5700DAA08A /* BirdView.m */; };
 		084C3A6D21926D7800DAA08A /* BirdView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 084C3A6C21926D7800DAA08A /* BirdView.xib */; };
 		084F132226FF6E1200E9D455 /* AITest.m in Sources */ = {isa = PBXBuildFile; fileRef = 084F132126FF6E1200E9D455 /* AITest.m */; };
+		0851F78D2999362900977B98 /* RTQueueModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0851F78C2999362900977B98 /* RTQueueModel.m */; };
 		08586DE527E80C8B008D2F8C /* TVLineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 08586DE427E80C8B008D2F8C /* TVLineView.m */; };
 		0858C5AE2194F5DA00951BA5 /* CarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0858C5AD2194F5DA00951BA5 /* CarView.m */; };
 		0858C5B02194F5E400951BA5 /* CarView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0858C5AF2194F5E400951BA5 /* CarView.xib */; };
@@ -326,6 +327,8 @@
 		084C3A6C21926D7800DAA08A /* BirdView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BirdView.xib; sourceTree = "<group>"; };
 		084F132026FF6E1200E9D455 /* AITest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AITest.h; sourceTree = "<group>"; };
 		084F132126FF6E1200E9D455 /* AITest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AITest.m; sourceTree = "<group>"; };
+		0851F78B2999362900977B98 /* RTQueueModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RTQueueModel.h; sourceTree = "<group>"; };
+		0851F78C2999362900977B98 /* RTQueueModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RTQueueModel.m; sourceTree = "<group>"; };
 		08586DE327E80C8B008D2F8C /* TVLineView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TVLineView.h; sourceTree = "<group>"; };
 		08586DE427E80C8B008D2F8C /* TVLineView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TVLineView.m; sourceTree = "<group>"; };
 		0858C5AC2194F5DA00951BA5 /* CarView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CarView.h; sourceTree = "<group>"; };
@@ -730,6 +733,8 @@
 			children = (
 				082A905127F5E447003D15BE /* RTModel.h */,
 				082A905227F5E447003D15BE /* RTModel.m */,
+				0851F78B2999362900977B98 /* RTQueueModel.h */,
+				0851F78C2999362900977B98 /* RTQueueModel.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1916,6 +1921,7 @@
 				88A43F3D2109576D00281348 /* AIFrontOrderNode.m in Sources */,
 				0802962727E4D77D0050C767 /* TVPanelView.m in Sources */,
 				087705AE2753745100BA4EFB /* TCRecognition.m in Sources */,
+				0851F78D2999362900977B98 /* RTQueueModel.m in Sources */,
 				0858C5CB2194F8B000951BA5 /* MASCompositeConstraint.m in Sources */,
 				0843AAE228142A49002B9AA9 /* XGDebugTV.m in Sources */,
 				08057B342355574600E9B6F1 /* AIShortMatchModel.m in Sources */,

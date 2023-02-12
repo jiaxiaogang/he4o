@@ -15,6 +15,7 @@
 #import "TVUtil.h"
 #import "XGDebugTV.h"
 #import "XGLabCell.h"
+#import "RTQueueModel.h"
 
 @interface RLTPanel () <UITableViewDelegate,UITableViewDataSource>
 
@@ -309,9 +310,9 @@
  *      2022.06.05: 调整 (参考26197-1&2);
  */
 - (IBAction)loadHitBtnOnClick:(id)sender {
-    [theRT queue1:kBirthPosRdmSEL];
-    [theRT queueN:@[kGrowPageSEL,kWoodRdmSEL,kMainPageSEL,kClearTCSEL] count:200];
-    [theRT queueN:@[kGrowPageSEL,kWoodLeftSEL,kMainPageSEL,kClearTCSEL] count:100];
+    [theRT queue1:Queue(kBirthPosRdmSEL)];
+    [theRT queueN:@[Queue(kGrowPageSEL),Queue(kWoodRdmSEL),Queue(kMainPageSEL),Queue(kClearTCSEL)] count:200];
+    [theRT queueN:@[Queue(kGrowPageSEL),Queue(kWoodLeftSEL),Queue(kMainPageSEL),Queue(kClearTCSEL)] count:100];
 }
 
 /**
@@ -331,26 +332,28 @@
     //[theApp setNoLogMode:true];
     
     //0. 出生在随机偏中位置 (以方便训练被撞和躲开经验);
-    [theRT queue1:kBirthPosRdmCentSEL];
+    [theRT queue1:Queue(kBirthPosRdmCentSEL)];
     
     //0. 加长版训练100轮
     for (int j = 0; j < 100; j++) {
         
         //1. 进入训练页
-        NSMutableArray *names = [[NSMutableArray alloc] init];
-        [names addObject:kGrowPageSEL];
-        [names addObject:kWoodLeftSEL];
+        NSMutableArray *queues = [[NSMutableArray alloc] init];
+        [queues addObject:Queue(kGrowPageSEL)];
+        [queues addObject:Queue(kWoodLeftSEL)];
         
         //2. 随机飞或扔木棒,五步;
-        for (int i = 0; i < 4; i++) {
-            [names addObject:kFlySEL];
+        //6. 屏中,任意方向;
+        NSNumber *flyDirection = @(arc4random() % 8);
+        for (int i = 0; i < 3; i++) {
+            [queues addObject:Queue0(kFlySEL,flyDirection)];
         }
         
         //3. 退到主页,模拟重启;
-        [names addObjectsFromArray:@[kMainPageSEL,kClearTCSEL]];
+        [queues addObjectsFromArray:@[Queue(kMainPageSEL),Queue(kClearTCSEL)]];
         
         //4. 训练names;
-        [theRT queueN:names count:1];
+        [theRT queueN:queues count:1];
     }
 }
 
@@ -361,26 +364,26 @@
     //0. 训练300轮 (每条训练项都包含: 进入训练页 & 退出主页);
     for (NSInteger i = 0; i < 300; i++) {
         //1. 随机出生位置;
-        [theRT queue1:kBirthPosRdmSEL];
+        [theRT queue1:Queue(kBirthPosRdmSEL)];
         
         //2. 随机位置扔木棒;
-        [theRT queueN:@[kGrowPageSEL,kWoodRdmSEL,kMainPageSEL,kClearTCSEL] count:1];
+        [theRT queueN:@[Queue(kGrowPageSEL),Queue(kWoodRdmSEL),Queue(kMainPageSEL),Queue(kClearTCSEL)] count:1];
         
         //3. 左侧扔木棒;
-        [theRT queueN:@[kGrowPageSEL,kWoodLeftSEL,kMainPageSEL,kClearTCSEL] count:1];
+        [theRT queueN:@[Queue(kGrowPageSEL),Queue(kWoodLeftSEL),Queue(kMainPageSEL),Queue(kClearTCSEL)] count:1];
         
         //4. 随机偏中出生位置;
-        [theRT queue1:kBirthPosRdmCentSEL];
+        [theRT queue1:Queue(kBirthPosRdmCentSEL)];
         
         //5. 随机飞或扔木棒,五步;
-        [theRT queue1:kGrowPageSEL];
+        [theRT queue1:Queue(kGrowPageSEL)];
         for (int i = 0; i < 5; i++) {
-            NSArray *randomNames = @[kFlySEL,kWoodLeftSEL];
+            NSArray *randomNames = @[Queue(kFlySEL),Queue(kWoodLeftSEL)];
             int randomIndex = arc4random() % 2;
             NSString *randomName = ARR_INDEX(randomNames, randomIndex);
-            [theRT queue1:randomName];
+            [theRT queue1:Queue(randomName)];
         }
-        [theRT queueN:@[kMainPageSEL,kClearTCSEL] count:1];
+        [theRT queueN:@[Queue(kMainPageSEL),Queue(kClearTCSEL)] count:1];
     }
     
 }
@@ -390,12 +393,12 @@
 //MARK:===============================================================
 //步骤参考26011-基础版强化训练;
 -(void) trainer1{
-    [theRT queue1:kGrowPageSEL];
-    [theRT queueN:@[kFlySEL,kWoodLeftSEL] count:5];
+    [theRT queue1:Queue(kGrowPageSEL)];
+    [theRT queueN:@[Queue(kFlySEL),Queue(kWoodLeftSEL)] count:5];
 }
 //步骤参考xxxxx
 -(void) trainer2{
-    [theRT queueN:@[kGrowPageSEL,kFlySEL,kFlySEL,kWoodLeftSEL,kMainPageSEL,kClearTCSEL] count:20];
+    [theRT queueN:@[Queue(kGrowPageSEL),Queue(kFlySEL),Queue(kFlySEL),Queue(kWoodLeftSEL),Queue(kMainPageSEL),Queue(kClearTCSEL)] count:20];
 }
 
 /**
@@ -406,10 +409,10 @@
  */
 -(void) trainer5{
     //0. 出生在随机偏中位置 (以方便训练被撞和躲开经验);
-    [theRT queue1:kBirthPosRdmCentSEL];
+    [theRT queue1:Queue(kBirthPosRdmCentSEL)];
     
     //1. 加长版训练100轮
-    [theRT queueN:@[kGrowPageSEL,kWoodLeftSEL,kFlySEL,kFlySEL,kWoodLeftSEL,kMainPageSEL,kClearTCSEL] count:100];
+    [theRT queueN:@[Queue(kGrowPageSEL),Queue(kWoodLeftSEL),Queue(kFlySEL),Queue(kFlySEL),Queue(kWoodLeftSEL),Queue(kMainPageSEL),Queue(kClearTCSEL)] count:100];
 }
 
 //MARK:===============================================================

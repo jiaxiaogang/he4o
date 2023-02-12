@@ -27,6 +27,7 @@
  *          2. 再通过queue()新增训练序列;
  *          3. 再通过invoked()标记训练项执行完成;
  */
+@class RTQueueModel;
 @interface RLTrainer : NSObject
 
 +(RLTrainer*) sharedInstance;
@@ -39,9 +40,9 @@
 /**
  *  MARK:--------------------新增训练序列--------------------
  */
--(void) queue1:(NSString*)name;
--(void) queue1:(NSString*)name count:(NSInteger)count;
--(void) queueN:(NSArray*)names count:(NSInteger)count;
+-(void) queue1:(RTQueueModel*)queue;
+-(void) queue1:(RTQueueModel*)queue count:(NSInteger)count;
+-(void) queueN:(NSArray*)queues count:(NSInteger)count;
 
 /**
  *  MARK:--------------------单步训练执行完成报告--------------------

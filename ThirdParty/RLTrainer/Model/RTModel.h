@@ -16,6 +16,7 @@
 
 @end
 
+@class RTQueueModel;
 @interface RTModel : NSObject
 
 @property (weak, nonatomic) id<RTModelDelegate> delegate;
@@ -30,7 +31,7 @@
 //MARK:                     < publicMethod >
 //MARK:===============================================================
 -(void) regist:(NSString*)name target:(NSObject*)target selector:(SEL)selector;
--(void) queue:(NSArray*)names count:(NSInteger)count;
+-(void) queue:(NSArray*)queues count:(NSInteger)count;
 -(void) invoked:(NSString*)name;
 -(void) clear;
 -(long long) getTotalUseTimed;

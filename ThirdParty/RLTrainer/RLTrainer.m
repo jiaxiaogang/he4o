@@ -49,15 +49,15 @@ static RLTrainer *_instance;
 -(void) regist:(NSString*)name target:(NSObject*)target selector:(SEL)selector{
     [self.model regist:name target:target selector:selector];
 }
--(void) queue1:(NSString*)name{
-    [self queueN:@[name] count:1];
+-(void) queue1:(RTQueueModel*)queue{
+    [self queueN:@[queue] count:1];
 }
--(void) queue1:(NSString*)name count:(NSInteger)count{
-    [self queueN:@[name] count:count];
+-(void) queue1:(RTQueueModel*)queue count:(NSInteger)count{
+    [self queueN:@[queue] count:count];
 }
--(void) queueN:(NSArray*)names count:(NSInteger)count{
+-(void) queueN:(NSArray*)queues count:(NSInteger)count{
     [self.panel open];
-    [self.model queue:names count:count];
+    [self.model queue:queues count:count];
     [self.panel reloadData];
 }
 -(void) invoked:(NSString*)name{

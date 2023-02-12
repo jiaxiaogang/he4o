@@ -109,10 +109,10 @@
     
     //2. 综合排名
     NSArray *ranking = [SMGUtils sortSmall2Big:solutionModels compareBlock:^double(AISolutionModel *obj) {
-        NSInteger backIndex = needBack ? [backSorts indexOfObject:obj] : 0;
-        NSInteger midIndex = [midSorts indexOfObject:obj];
-        NSInteger frontIndex = [frontSorts indexOfObject:obj];
-        return backIndex + midIndex + frontIndex;
+        NSInteger backIndex = needBack ? [backSorts indexOfObject:obj] + 1 : 1;
+        NSInteger midIndex = [midSorts indexOfObject:obj] + 1;
+        NSInteger frontIndex = [frontSorts indexOfObject:obj] + 1;
+        return backIndex * midIndex * frontIndex;
     }];
     
     //3. 返回;

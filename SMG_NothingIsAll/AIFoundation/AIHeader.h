@@ -228,6 +228,10 @@
 #define TOModel2Sub2Str(cur) [TOModelVision cur2Sub:cur]
 #define TOModel2Key(model) [TOUtils toModel2Key:model]
 
+//强训工具
+#define Queue(name) [RTQueueModel newWithName:name arg0:nil]
+#define Queue0(name,arg0) [RTQueueModel newWithName:name arg0:arg0]
+
 
 /**
  *  MARK:--------------------快捷建对象--------------------
