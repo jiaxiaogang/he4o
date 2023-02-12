@@ -68,7 +68,7 @@
 
 -(void) initData{
     [super initData];
-    [theRT regist:kFlySEL target:self selector:@selector(touchWingBtnOnClick:)];
+    [theRT regist:kFlySEL target:self selector:@selector(touchWingBlock:)];
     [theRT regist:kWoodLeftSEL target:self selector:@selector(throwWood_Left)];
     [theRT regist:kWoodRdmSEL target:self selector:@selector(throwWood_Rdm)];
 }
@@ -204,6 +204,10 @@
 }
 
 - (IBAction)touchWingBtnOnClick:(id)sender {
+    [self touchWingBlock:nil];
+}
+
+- (void)touchWingBlock:(NSNumber*)direction {
     ISTitleLog(@"现实世界");
     DemoLog(@"摸翅膀onClick");
     [theApp.heLogView addDemoLog:@"摸翅膀onClick"];
@@ -224,6 +228,11 @@
     }else {
         //6. 屏中,任意方向;
         random = arc4random() % 8;
+    }
+    
+    //7. 指定方向参数时;
+    if (direction) {
+        random = NUMTOOK(direction).intValue;
     }
     [self.birdView touchWing:random];
 }

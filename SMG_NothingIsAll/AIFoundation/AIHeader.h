@@ -24,6 +24,7 @@
 #import "XGDelegate.h"
 #import "TOModelVision.h"
 #import "TOMVision2.h"
+#import "RTQueueModel.h"
 
 //Util
 #import "ThinkingUtils.h"
@@ -230,7 +231,7 @@
 
 //强训工具
 #define Queue(name) [RTQueueModel newWithName:name arg0:nil]
-#define Queue0(name,arg0) [RTQueueModel newWithName:name arg0:arg0]
+#define Queue0(name,a0) [RTQueueModel newWithName:name arg0:a0]
 
 
 /**

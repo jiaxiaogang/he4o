@@ -7,7 +7,6 @@
 //
 
 #import "RTModel.h"
-#import "RTQueueModel.h"
 
 #define TimerInterval 0.6f
 
@@ -111,8 +110,10 @@
 //MARK:===============================================================
 -(void) invoke:(RTQueueModel*)queue {
     NSInvocation *invc = [self.dic objectForKey:queue.name];
-    void * arg0 = (__bridge void *)(queue.arg0);
-    [invc setArgument:arg0 atIndex:0];
+    if (queue.arg0) {
+        id arg0 = queue.arg0;
+        [invc setArgument:&arg0 atIndex:2];
+    }
     [invc invoke];
 }
 

@@ -15,7 +15,6 @@
 #import "TVUtil.h"
 #import "XGDebugTV.h"
 #import "XGLabCell.h"
-#import "RTQueueModel.h"
 
 @interface RLTPanel () <UITableViewDelegate,UITableViewDataSource>
 
@@ -346,7 +345,7 @@
         //6. 屏中,任意方向;
         NSNumber *flyDirection = @(arc4random() % 8);
         for (int i = 0; i < 3; i++) {
-            [queues addObject:Queue0(kFlySEL,flyDirection)];
+            [queues addObject:Queue0(kFlySEL, flyDirection)];
         }
         
         //3. 退到主页,模拟重启;
@@ -435,8 +434,8 @@
         return cell;
     }else {
         //2. 正常返回queueCell_数据准备;
-        NSString *queue = STRTOOK(ARR_INDEX(self.tvDatas, indexPath.row));
-        NSString *cellStr = STRFORMAT(@"%ld. %@",indexPath.row+1, [self cellStr:queue]);
+        RTQueueModel *queue = ARR_INDEX(self.tvDatas, indexPath.row);
+        NSString *cellStr = STRFORMAT(@"%ld. %@",indexPath.row+1, [self cellStr:queue.name]);
         BOOL trained = indexPath.row < self.tvIndex;
         UIColor *color = trained ? UIColor.greenColor : UIColor.orangeColor;
         
