@@ -16,33 +16,27 @@
  *      2022.05.22: 初版,任务有效率强化 (将ES状态更新至任务pFo下的effectDic中) (参考26095-1&2);
  *      2022.05.27: 将effect改为行为化首帧O反省 (参考26127-TODO1);
  *      2022.05.28: 不需要effect做首帧反省了,tcActYes支持每帧O反省 (参考26136-方案);
+ *      2023.02.14: 当前effect仅对取得solution的pFo有效 (参考28076);
  */
 +(void) rEffect:(TOFoModel*)rSolution{
     [theTC updateOperCount:kFILENAME];
     Debug();
     //1. 取deltaTime;
     ReasonDemandModel *rDemand = (ReasonDemandModel*)rSolution.baseOrGroup;
-    double maxDeltaTime = 0;
-    for (AIMatchFoModel *pFo in rDemand.pFos) {
-        AIFoNodeBase *fo = [SMGUtils searchNode:pFo.matchFo];
-        double deltaTime = [TOUtils getSumDeltaTime2Mv:fo cutIndex:pFo.cutIndex];
-        maxDeltaTime = MAX(maxDeltaTime, deltaTime);
-    }
+    AIMatchFoModel *pFo = (AIMatchFoModel*)rSolution.basePFoOrTargetFoModel;
+    AIFoNodeBase *baseFo = [SMGUtils searchNode:pFo.matchFo];
+    double deltaTime = [TOUtils getSumDeltaTime2Mv:baseFo cutIndex:pFo.cutIndex];
+    double triggerTime = deltaTime * 3.0f;
     
     //2. 触发器;
-    maxDeltaTime *= 3.0f;
-    NSLog(@"---//rEffect触发器新增:%p (%@ | 触发时间:%.2f)",rDemand,TOStatus2Str(rDemand.status),maxDeltaTime);
-    [AITime setTimeTrigger:maxDeltaTime trigger:^{
+    NSLog(@"---//rEffect触发器新增:%p (%@ | 触发时间:%.2f)",rDemand,TOStatus2Str(rDemand.status),triggerTime);
+    [AITime setTimeTrigger:triggerTime trigger:^{
         //2. 取有效性 (默认即有效);
         EffectStatus es = rDemand.effectStatus == ES_NoEff ? ES_NoEff : ES_HavEff;
         
         //3. 更新effectDic;
-        //AIFoNodeBase *solutionFo = [SMGUtils searchNode:rSolution.content_p];
         //[solutionFo updateSPStrong:solutionFo.count type:tp];
-        for (AIMatchFoModel *pFoModel in rDemand.pFos) {
-            AIFoNodeBase *pFo = [SMGUtils searchNode:pFoModel.matchFo];
-            [pFo updateEffectStrong:pFo.count solutionFo:rSolution.content_p status:es];
-        }
+        [baseFo updateEffectStrong:baseFo.count solutionFo:rSolution.content_p status:es];
         
         //3. 有效,则解决方案成功 & 任务成功;
         //if (tp == ATPlus) {
@@ -52,12 +46,8 @@
         }
         
         //4. log;
-        IFTitleLog(@"rSolution反省", @"\n%p S:%@ (有效性:%@ 任务状态:%@)",rDemand,Pit2FStr(rSolution.content_p),EffectStatus2Str(es),TOStatus2Str(rDemand.status));
-        for (AIMatchFoModel *pFoModel in rDemand.pFos) {
-            AIFoNodeBase *pFo = [SMGUtils searchNode:pFoModel.matchFo];
-            AIEffectStrong *strong = [TOUtils getEffectStrong:pFo effectIndex:pFo.count solutionFo:rSolution.content_p];
-            NSLog(@"\t=>pFo:%@ (index:%ld H%ldN%ld)",Fo2FStr(pFo),pFo.count,strong.hStrong,strong.nStrong);
-        }
+        AIEffectStrong *strong = [TOUtils getEffectStrong:baseFo effectIndex:baseFo.count solutionFo:rSolution.content_p];
+        IFTitleLog(@"rSolution反省", @"\n%p S:%@ (有效性:%@ 任务状态:%@)\n\tfromPFo:%@ (index:%ld H%ldN%ld)",rDemand,Pit2FStr(rSolution.content_p),EffectStatus2Str(es),TOStatus2Str(rDemand.status),Fo2FStr(baseFo),baseFo.count,strong.hStrong,strong.nStrong);
     }];
     DebugE();
 }
