@@ -357,7 +357,7 @@
 //Score
 #define Log4Score false
 #define Log4Solution true
-#define Log4Solution_Slow false
+#define Log4Solution_Slow true
 #define Log4Solution_Fast true
 
 //MARK:===============================================================
