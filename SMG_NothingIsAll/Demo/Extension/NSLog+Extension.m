@@ -13,7 +13,7 @@
 
 @implementation NSLog_Extension
 
-+(NSString*) convertTOStatus2Desc:(TOModelStatus)status{
++(NSString*) convertTOStatus2Desc:(TOModelStatus)status {
     if(status == TOModelStatus_Runing){
         return @"Runing";
     }else if(status == TOModelStatus_ActYes){
@@ -29,7 +29,7 @@
     }else if(status == TOModelStatus_Finish){
         return @"Finish";
     }
-    return @"None";
+    return @"Other";
 }
 
 +(NSString*) convertATType2Desc:(AnalogyType)atType{

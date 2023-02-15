@@ -175,16 +175,14 @@
 -(void) pushFrameFinish {
     //1. =================有actYes的时,归功于解决方案,执行canset再类比 (参考27206c-R任务)=================
     for (TOFoModel *solutionModel in self.baseRDemand.actionFoModels) {
-        [AITest test17:solutionModel];
-        
-        //1. 判断处在actYes状态的解决方案 && 解决方案是属性当前pFo决策取得的 (参考27206c-综上&多S问题);
-        //a. 非actYes状态的不做canset再类比;
-        if (solutionModel.status != TOModelStatus_ActYes) continue;
-        
         //b. 非当前pFo下的解决方案,不做canset再类比;
         AIKVPointer *basePFoOrTargetFo_p = [TOUtils convertBaseFoFromBasePFoOrTargetFoModel:solutionModel.basePFoOrTargetFoModel];
         if (![basePFoOrTargetFo_p isEqual:self.matchFo]) continue;
-        NSLog(@"item解决方案%@的状态是 %ld 基于pFo: %ld",Pit2FStr(solutionModel.content_p),solutionModel.status,basePFoOrTargetFo_p.pointerId);
+        
+        //1. 判断处在actYes状态的解决方案 && 解决方案是属性当前pFo决策取得的 (参考27206c-综上&多S问题);
+        //a. 非actYes和runing状态的不做canset再类比;
+        [AITest test17:solutionModel];
+        if (solutionModel.status != TOModelStatus_ActYes && solutionModel.status != TOModelStatus_Runing) continue;
         
         //c. 数据准备;
         AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.content_p];
@@ -195,6 +193,13 @@
         if (!ARRISOK(order)) continue;
         
         //e. 生成新protoFo时序 (参考27204-6);
+        
+        //TODOTOMORROW20230215: 查下撞到后,也触发了这里的canset再类比;
+        //看起来飞躲成功,或失败,这里全是runing状态...用这个状态来判断似乎不太行...
+        
+        
+        
+        NSLog(@"RCanset再类比 (状态:%@ fromPFo:F%ld) \n\t当前Canset:%@",TOStatus2Str(solutionModel.status),basePFoOrTargetFo_p.pointerId,Pit2FStr(solutionModel.content_p));
         AIFoNodeBase *protoFo = [theNet createConFo:order];
         
         //f. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);

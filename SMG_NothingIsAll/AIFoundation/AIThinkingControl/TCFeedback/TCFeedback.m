@@ -354,7 +354,7 @@
             //8. H任务完成时,H当前正执行的S提前完成,并进行外类比 (参考27206c-H任务);
             for (TOFoModel *solutionModel in hDemand.actionFoModels) {
                 [AITest test17:solutionModel];
-                if (solutionModel.status == TOModelStatus_ActYes) {
+                if (solutionModel.status == TOModelStatus_ActYes || solutionModel.status == TOModelStatus_Runing) {
                     //a. 数据准备;
                     AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.content_p];
                     TOFoModel *targetFoModel = (TOFoModel*)hDemand.baseOrGroup;
@@ -365,6 +365,7 @@
                     AIFoNodeBase *protoFo = [theNet createConFo:order];
                     
                     //h. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
+                    NSLog(@"HCanset再类比 (状态:%@ fromTargetFo:F%ld) \n\t当前Canset:%@",TOStatus2Str(solutionModel.status),targetFoModel.content_p.pointerId,Pit2FStr(solutionModel.content_p));
                     AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:protoFo assFo:solutionFo type:ATDefault];
                     [targetFo updateConCanset:absCansetFo.pointer targetIndex:targetFoModel.actionIndex];
                     [AITest test101:absCansetFo proto:protoFo conCanset:solutionFo];
