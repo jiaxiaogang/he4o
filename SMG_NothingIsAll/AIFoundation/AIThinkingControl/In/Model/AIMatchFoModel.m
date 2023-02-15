@@ -173,11 +173,26 @@
  *      2022.12.09: 无论是否进行抽象,都生成具象canset (参考27228);
  */
 -(void) pushFrameFinish {
+    //TODOTOMORROW20230215: 查下撞到后,也触发了这里的canset再类比;
+    TIModelStatus status = [self getStatusForCutIndex:self.cutIndex];
+    if (status == TIModelStatus_OutBackSameDelta) {
+        //1. 已反馈mv,即已失败,
+        return; //失败时不构建canset;
+    }else if (status == TIModelStatus_LastWait || status == TIModelStatus_OutBackNone) {
+        //2. 这二者话,应该是自然未发生(生成具象方案),或阻止有效(再类比),参考下forecast_Single()代码,也实测下status躲开时的值;
+    }
+    
+    //3. 完成后,再看看另一个调用再类比的地方,看是否也需要判断这些;
+    
+    
+    
+    
+    
+    
     //1. =================有actYes的时,归功于解决方案,执行canset再类比 (参考27206c-R任务)=================
     for (TOFoModel *solutionModel in self.baseRDemand.actionFoModels) {
         //b. 非当前pFo下的解决方案,不做canset再类比;
-        AIKVPointer *basePFoOrTargetFo_p = [TOUtils convertBaseFoFromBasePFoOrTargetFoModel:solutionModel.basePFoOrTargetFoModel];
-        if (![basePFoOrTargetFo_p isEqual:self.matchFo]) continue;
+        if (![solutionModel.basePFoOrTargetFoModel isEqual:self]) continue;
         
         //1. 判断处在actYes状态的解决方案 && 解决方案是属性当前pFo决策取得的 (参考27206c-综上&多S问题);
         //a. 非actYes和runing状态的不做canset再类比;
@@ -185,6 +200,7 @@
         if (solutionModel.status != TOModelStatus_ActYes && solutionModel.status != TOModelStatus_Runing) continue;
         
         //c. 数据准备;
+        AIKVPointer *basePFoOrTargetFo_p = [TOUtils convertBaseFoFromBasePFoOrTargetFoModel:solutionModel.basePFoOrTargetFoModel];
         AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.content_p];
         AIFoNodeBase *pFo = [SMGUtils searchNode:basePFoOrTargetFo_p];
         
@@ -193,12 +209,6 @@
         if (!ARRISOK(order)) continue;
         
         //e. 生成新protoFo时序 (参考27204-6);
-        
-        //TODOTOMORROW20230215: 查下撞到后,也触发了这里的canset再类比;
-        //看起来飞躲成功,或失败,这里全是runing状态...用这个状态来判断似乎不太行...
-        
-        
-        
         NSLog(@"RCanset再类比 (状态:%@ fromPFo:F%ld) \n\t当前Canset:%@",TOStatus2Str(solutionModel.status),basePFoOrTargetFo_p.pointerId,Pit2FStr(solutionModel.content_p));
         AIFoNodeBase *protoFo = [theNet createConFo:order];
         
