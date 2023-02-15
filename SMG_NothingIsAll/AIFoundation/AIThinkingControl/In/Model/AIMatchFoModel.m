@@ -171,25 +171,27 @@
  *      2022.11.28: 自然未发生则生成protoCanset,行为有作用则触发再类比生成absCanset (参考27206c-R任务);
  *      2022.12.09: BUG_当解决方案实际执行0条时,不触发canset再类比 (如果触发,会导致抽象为nil,闪退);
  *      2022.12.09: 无论是否进行抽象,都生成具象canset (参考27228);
+ *      2023.02.14: BUG_canset再类比几乎不触发的问题 (参考28071);
+ *      2023.02.15: BUG_修复被撞到还"生成canset及外类比"的问题 (参考28077);
  */
 -(void) pushFrameFinish {
-    //TODOTOMORROW20230215: 查下撞到后,也触发了这里的canset再类比;
+    //0. 只有pFo触发时未收到反馈,才执行生成canset或再类比 (参考28077-修复);
     TIModelStatus status = [self getStatusForCutIndex:self.cutIndex];
-    if (status == TIModelStatus_OutBackSameDelta) {
-        //1. 已反馈mv,即已失败,
-        return; //失败时不构建canset;
-    }else if (status == TIModelStatus_LastWait || status == TIModelStatus_OutBackNone) {
-        //2. 这二者话,应该是自然未发生(生成具象方案),或阻止有效(再类比),参考下forecast_Single()代码,也实测下status躲开时的值;
+    if (status != TIModelStatus_OutBackNone) {
+        return;
     }
     
-    //3. 完成后,再看看另一个调用再类比的地方,看是否也需要判断这些;
+    //TODOTOMORROW20230215:
+    //看看另一个调用再类比的地方,看是否也需要判断这些base啥的状态;
     
     
     
     
     
     
-    //1. =================有actYes的时,归功于解决方案,执行canset再类比 (参考27206c-R任务)=================
+    
+    
+    //1. =================解决方案执行有效(再类比): 有actYes的时,归功于解决方案,执行canset再类比 (参考27206c-R任务)=================
     for (TOFoModel *solutionModel in self.baseRDemand.actionFoModels) {
         //b. 非当前pFo下的解决方案,不做canset再类比;
         if (![solutionModel.basePFoOrTargetFoModel isEqual:self]) continue;
@@ -227,7 +229,7 @@
         [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
     }
     
-    //2. =================无actYes的S时,归功于自然未发生,则新增protoCanset (参考27206c-R任务)=================
+    //2. =================自然未发生(新方案): 无actYes的S时,归功于自然未发生,则新增protoCanset (参考27206c-R任务)=================
     //a. 数据准备;
     AIFoNodeBase *matchFo = [SMGUtils searchNode:self.matchFo];
     NSArray *orders = [self convertRealMaskFoAndRealDeltaTimes2Orders4CreateProtoFo];
