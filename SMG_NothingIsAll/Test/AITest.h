@@ -29,7 +29,7 @@
 +(void) test14:(CGFloat)near;
 +(void) test15:(AIMatchFoModel*)model;
 +(void) test16:(CGFloat)algHDMatchValue;
-+(void) test17:(TOFoModel*)solutionFo;
++(void) test17;
 +(void) test18:(NSDictionary*)newIndexDic newCanset:(AIFoNodeBase*)newCanset absFo:(AIFoNodeBase*)absFo;
 +(void) test19:(AISPStrong*)newSPStrong;
 +(void) test20:(AIFoNodeBase*)newCanset newSPDic:(NSDictionary*)newSPDic;

@@ -353,7 +353,7 @@
             
             //8. H任务完成时,H当前正执行的S提前完成,并进行外类比 (参考27206c-H任务);
             for (TOFoModel *solutionModel in hDemand.actionFoModels) {
-                [AITest test17:solutionModel];
+                [AITest test17];
                 if (solutionModel.status == TOModelStatus_ActYes || solutionModel.status == TOModelStatus_Runing) {
                     //a. 数据准备;
                     AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.content_p];
@@ -362,6 +362,7 @@
                     
                     //g. 收集真实发生feedbackAlg,并生成新protoFo时序 (参考27204-6);
                     NSArray *order = [solutionModel getOrderUseMatchAndFeedbackAlg:false];
+                    if (!ARRISOK(order)) continue;
                     AIFoNodeBase *protoFo = [theNet createConFo:order];
                     
                     //h. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);

@@ -158,8 +158,10 @@
     }
 }
 
-+(void) test17:(TOFoModel*)solutionFo {
-    NSLog(@"核实下,R和H任务在什么状态时,可触发canset再类比 %@ %@",NSStringFromClass(solutionFo.baseOrGroup.class),TOStatus2Str(solutionFo.status));
++(void) test17 {
+    NSLog(@"此处打到断点时,先稳步查看n28p07-末尾-未完成项,再继续");
+    NSLog(@"核实下,H任务触发canset再类比的时机:targetAlg有反馈? (参考28071)");
+    NSLog(@"核实下,H任务触发canset再类比的条件:要求targetFo或hDemand的状态? (参考28077-另外)");
 }
 
 +(void) test18:(NSDictionary*)newIndexDic newCanset:(AIFoNodeBase*)newCanset absFo:(AIFoNodeBase*)absFo {

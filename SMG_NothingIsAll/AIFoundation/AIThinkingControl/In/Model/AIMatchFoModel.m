@@ -181,16 +181,6 @@
         return;
     }
     
-    //TODOTOMORROW20230215:
-    //看看另一个调用再类比的地方,看是否也需要判断这些base啥的状态;
-    
-    
-    
-    
-    
-    
-    
-    
     //1. =================解决方案执行有效(再类比): 有actYes的时,归功于解决方案,执行canset再类比 (参考27206c-R任务)=================
     for (TOFoModel *solutionModel in self.baseRDemand.actionFoModels) {
         //b. 非当前pFo下的解决方案,不做canset再类比;
@@ -198,7 +188,6 @@
         
         //1. 判断处在actYes状态的解决方案 && 解决方案是属性当前pFo决策取得的 (参考27206c-综上&多S问题);
         //a. 非actYes和runing状态的不做canset再类比;
-        [AITest test17:solutionModel];
         if (solutionModel.status != TOModelStatus_ActYes && solutionModel.status != TOModelStatus_Runing) continue;
         
         //c. 数据准备;
