@@ -37,7 +37,7 @@
         return [SMGUtils convertArr:cansetFos convertBlock:^id(AIEffectStrong *eff) {
             //c. 分析比对结果;
             NSInteger rAleardayCount = [self getRAleardayCount:demand pFo:pFoM];
-            AISolutionModel *sModel = [AIAnalyst compareCansetFo:eff.solutionFo basePFoOrTargetFoModel:pFoM ptAleardayCount:rAleardayCount isH:false];
+            AISolutionModel *sModel = [self getSolutionModel:eff.solutionFo basePFoOrTargetFoModel:pFoM ptAleardayCount:rAleardayCount isH:false];
             
             //d. 快思考附加effScore分,并收集成果;
             if (sModel) sModel.effectScore = [TOUtils getEffectScore:eff];
@@ -68,7 +68,7 @@
     NSArray *cansetModels = [SMGUtils convertArr:cansetFos convertBlock:^id(AIEffectStrong *eff) {
         //a. 分析比对结果;
         NSInteger hAleardayCount = [self getHAleardayCount:targetFoM];
-        AISolutionModel *sModel = [AIAnalyst compareCansetFo:eff.solutionFo basePFoOrTargetFoModel:targetFoM ptAleardayCount:hAleardayCount isH:true];
+        AISolutionModel *sModel = [self getSolutionModel:eff.solutionFo basePFoOrTargetFoModel:targetFoM ptAleardayCount:hAleardayCount isH:true];
         
         //b. 快思考附加effScore分,并收集成果;
         if (sModel) sModel.effectScore = [TOUtils getEffectScore:eff];
@@ -165,7 +165,7 @@
     
     //3. 转cansetModels候选集 (参考26128-第1步 & 26161-1&2&3);
     NSArray *cansetModels = [SMGUtils convertArr:cansetFos convertBlock:^id(AIKVPointer *cansetFo_p) {
-        return [AIAnalyst compareCansetFo:cansetFo_p basePFoOrTargetFoModel:targetFoModel ptAleardayCount:hAleardayCount isH:true];
+        return [self getSolutionModel:cansetFo_p basePFoOrTargetFoModel:targetFoModel ptAleardayCount:hAleardayCount isH:true];
     }];
     
     //4. 慢思考;
@@ -189,7 +189,7 @@
         
         //3. 转cansetModels候选集 (参考26128-第1步 & 26161-1&2&3);
         NSArray *cansetModels = [SMGUtils convertArr:cansetFos convertBlock:^id(AIKVPointer *cansetFo_p) {
-            return [AIAnalyst compareCansetFo:cansetFo_p basePFoOrTargetFoModel:pFo ptAleardayCount:rAleardayCount isH:false];
+            return [self getSolutionModel:cansetFo_p basePFoOrTargetFoModel:pFo ptAleardayCount:rAleardayCount isH:false];
         }];
         return cansetModels;
     }];
@@ -345,7 +345,8 @@
         
         //10. 过滤器3===: 过滤掉条件不满足的 (protoFo对cansetFo条件满足) 注:此时canset是proto的抽象 (参考28052-2);
         //说明: 所有已发生帧,都要判断一下条件满足 (ptAleardayCount之前全是前段) (参考28022-todo4);
-        BOOL findAbsFromProto = [self sceneIsOk:protoFo absFo:cansetFo absCutIndex:cansetCutIndex];
+        NSDictionary *frontIndexDic = [self getFrontIndexDic:protoFo absFo:cansetFo absCutIndex:cansetCutIndex];
+        BOOL findAbsFromProto = DICISOK(frontIndexDic);
         if (!findAbsFromProto) return false;
         
         //11. 闯关成功;
@@ -400,16 +401,17 @@
 }
 
 /**
- *  MARK:--------------------判断条件满足--------------------
+ *  MARK:--------------------条件满足时: 获取前段indexDic--------------------
  *  @desc 即从proto中找abs: 判断当前proto场景对abs是条件满足的 (参考28052-2);
  *  @param absCutIndex : 其中absFo执行到的最大值 (含absCutIndex);
  *  @version
  *      2023.02.04: 初版,为解决条件满足不完全的问题,此方法将尝试从proto找出canset前段的每帧 (参考28052);
- *  @result 在proto中全找到canset的前段则返回true;
+ *  @result 在proto中全找到canset的前段则返回indexDic映射,未全找到时返回nil;
  */
-+(BOOL) sceneIsOk:(AIFoNodeBase*)protoFo absFo:(AIFoNodeBase*)absFo absCutIndex:(NSInteger)absCutIndex {
++(NSDictionary*) getFrontIndexDic:(AIFoNodeBase*)protoFo absFo:(AIFoNodeBase*)absFo absCutIndex:(NSInteger)absCutIndex {
     //1. 数据准备;
-    if (!protoFo || !absFo) return false;
+    NSMutableDictionary *indexDic = [[NSMutableDictionary alloc] init];
+    if (!protoFo || !absFo) return nil;
         
     //2. 每帧match都到proto里去找,找到则记录proto的进度,找不到则全部失败;
     NSInteger protoMin = 0;
@@ -425,6 +427,7 @@
                 //4. 找到了 & 记录protoI的进度;
                 findItem = true;
                 protoMin = protoI + 1;
+                [indexDic setObject:@(protoI) forKey:@(absI)];
                 if (Log4SceneIsOk) NSLog(@"\t第%ld帧,条件满足通过 proto:%@ canset:%@",absI,Pit2FStr(protoAlg),Pit2FStr(absAlg));
                 break;
             }
@@ -433,13 +436,83 @@
         //5. 有一条失败,则全失败;
         if (!findItem) {
             if (Log4SceneIsOk) NSLog(@"\t第%ld帧,条件满足未通过 canset:%@",absI,Pit2FStr(absAlg));
-            return false;
+            return nil;
         }
     }
     
     //6. 全找到,则成功;
     if (Log4SceneIsOk) NSLog(@"条件满足通过:%@ (absCutIndex:%ld protoCount:%ld)",Fo2FStr(absFo),absCutIndex,protoFo.count);
-    return true;
+    return indexDic;
+}
+
+//MARK:===============================================================
+//MARK:                     < Fo相似度 (由TO调用) >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------时序比对--------------------
+ *  @desc 初步比对候选集是否适用于protoFo (参考26128-第1步);
+ *  @param ptAleardayCount      : ptFo已发生个数:
+ *                                  1. 根R=cutIndex+1
+ *                                  2. 子R=父actionIndex对应indexDic条数;
+ *                                  3. H.actionIndex前已发生;
+ *  @param isH                  : 是否需要后段匹配 (R不需要传false,H需要传true);
+ *  @version
+ *      2022.05.30: 匹配度公式改成: 匹配度总和/proto长度 (参考26128-1-4);
+ *      2022.05.30: R和H模式复用封装 (参考26161);
+ *      2022.06.11: 修复反思子任务没有protoFo用于analyst的BUG (参考26224-方案图);
+ *      2022.06.11: 改用pFo参与analyst算法比对 & 并改取pFo已发生个数计算方式 (参考26232-TODO3&5&6);
+ *      2022.06.12: 每帧analyst都映射转换成maskFo的帧元素比对 (参考26232-TODO4);
+ *      2022.09.15: 导致任务的maskFo不从demand取,而是从pFo取 (因为它在推进时会变化) (参考27097-todo3);
+ *      2022.11.03: compareHCansetFo比对中复用alg相似度 (参考27175-3);
+ *      2022.11.03: 复用alg相似度 (参考27175-2&3);
+ *      2022.11.20: 改为match与canset比对,复用indexDic和alg相似度 (参考27202-3&4&5);
+ *      2022.11.20: 持久化复用: 支持indexDic复用和概念matchValue复用 (参考20202-3&4);
+ *      2022.12.03: 修复复用matchValue有时为0的问题 (参考27223);
+ *      2022.12.03: 当canset前段有遗漏时,该方案无效 (参考27224);
+ *      2023.01.08: 将R和H的时序比对,整理删除仅留下这个通用时序比对方法;
+ *      2023.02.17: 从Analyze整理到TCSolutionUtil中,因为它现在其实就是获取SolutionModel用的;
+ *  @result 返回cansetFo前段匹配度 & 以及已匹配的cutIndex截点;
+ */
++(AISolutionModel*) getSolutionModel:(AIKVPointer*)cansetFo_p basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel ptAleardayCount:(NSInteger)ptAleardayCount isH:(BOOL)isH {
+    //1. 数据准备 & 复用indexDic;
+    AIKVPointer *matchFo_p = [TOUtils convertBaseFoFromBasePFoOrTargetFoModel:basePFoOrTargetFoModel];
+    AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
+    NSDictionary *indexDic = [cansetFo getAbsIndexDic:matchFo_p];
+    [AITest test102:cansetFo];
+    
+    //2. 计算出canset的cutIndex (canset的cutIndex,也已在proto中发生) (参考26128-1-1);
+    NSInteger matchCutIndex = ptAleardayCount - 1;
+    NSInteger cansetCutIndex = NUMTOOK([indexDic objectForKey:@(matchCutIndex)]).integerValue;
+    
+    //3. 判断canset前段是否有遗漏 (参考27224);
+    if (cansetCutIndex < matchCutIndex) return nil;
+    
+    //4. 计算前段匹配度 (参考28035-todo3);
+    CGFloat frontMatchValue = 1;
+    for (NSInteger i = 0; i < ptAleardayCount; i++) {
+        frontMatchValue *= [AIAnalyst compareCansetAlg:i cansetFo:cansetFo_p matchFo:matchFo_p];
+    }
+    
+    //5. 前段不匹配时,直接返回nil (参考26128-1-3);
+    if (frontMatchValue == 0) return nil;
+    
+    //6. 后段: 找canset后段目标 和 后段匹配度 (H需要后段匹配, R不需要);
+    if (isH) {
+        //7. 后段匹配度 (后段不匹配时,直接返nil);
+        CGFloat backMatchValue =  [AIAnalyst compareCansetAlg:ptAleardayCount cansetFo:cansetFo_p matchFo:matchFo_p];
+        if (backMatchValue == 0) return nil;
+        
+        //8. canset目标下标
+        NSInteger cansetTargetIndex = NUMTOOK([indexDic objectForKey:@(ptAleardayCount)]).integerValue;
+        
+        //9. 后段成功;
+        return [AISolutionModel newWithCansetFo:cansetFo_p frontMatchValue:frontMatchValue backMatchValue:backMatchValue cutIndex:cansetCutIndex targetIndex:cansetTargetIndex basePFoOrTargetFoModel:basePFoOrTargetFoModel];
+        
+    }else{
+        //11. 后段: R不判断后段;
+        return [AISolutionModel newWithCansetFo:cansetFo_p frontMatchValue:frontMatchValue backMatchValue:1 cutIndex:cansetCutIndex targetIndex:cansetFo.count basePFoOrTargetFoModel:basePFoOrTargetFoModel];
+    }
 }
 
 @end
