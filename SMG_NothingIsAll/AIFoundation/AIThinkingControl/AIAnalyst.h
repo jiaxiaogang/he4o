@@ -15,7 +15,7 @@
  *      2019.xx.xx: PM算法 (参考手稿PM相关涉及);
  *      2022.05.xx: 比对算法 (参考26122);
  *      2022.11.30: 在前段时间改indexDic和matchValue复用后,此处TI调用alg相似度早已废弃,今天彻底删掉它的代码;
- *      2023.02.17: 将时序比对移到TCSolutionUtil中 (因为它现在其实就是个获取SolutionModel的算法,而不是比对了);
+ *      2023.02.17: 将时序比对移到TCSolutionUtil中 (因为它现在其实就是个获取SolutionModel的算法,而不是比对了) (参考28084-1);
  */
 @interface AIAnalyst : NSObject
 
