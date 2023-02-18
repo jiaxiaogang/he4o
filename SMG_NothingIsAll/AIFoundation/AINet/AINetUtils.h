@@ -221,4 +221,9 @@
  */
 +(void) updateContentStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p;
 
+/**
+ *  MARK:--------------------获取canset的near数据--------------------
+ */
++(NSArray*) getMatchAndStrongByFrontIndexDic:(NSDictionary*)frontIndexDic cansetFo:(AIKVPointer*)cansetFo_p protoFo:(AIFoNodeBase*)protoFo;
+
 @end

@@ -20,14 +20,29 @@
  *      2. H任务时,所有参数都有效;
  */
 +(AISolutionModel*) newWithCansetFo:(AIKVPointer*)cansetFo
-                    frontMatchValue:(CGFloat)frontMatchValue backMatchValue:(CGFloat)backMatchValue
-                           cutIndex:(NSInteger)cutIndex targetIndex:(NSInteger)targetIndex
+                    frontMatchValue:(CGFloat)frontMatchValue
+                   frontStrongValue:(CGFloat)frontStrongValue
+                     backMatchValue:(CGFloat)backMatchValue
+                           cutIndex:(NSInteger)cutIndex
+                        targetIndex:(NSInteger)targetIndex
              basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel;
 
 @property (strong, nonatomic) AIKVPointer *cansetFo;    //候选集fo;
 @property (strong, nonatomic) id basePFoOrTargetFoModel;//R任务时为pFoModel,H任务时为targetFoModel;
 
-@property (assign, nonatomic) CGFloat frontMatchValue;  //前段(已发生部分)匹配度 (相近度和/已发生数);
+/**
+ *  MARK:--------------------a--------------------
+ *  @version
+ *      2023.01.13: 求乘版: 用canset前段和match的帧映射计算前段匹配度 (参考28035-todo3);
+ *      2023.02.18: AIRank细分版: 用canset前段和proto的帧映射计算前段匹配度 (参考28083-方案2);
+ */
+@property (assign, nonatomic) CGFloat frontMatchValue;
+
+/**
+ *  MARK:--------------------前段强度竞争值 (参考28083-方案2)--------------------
+ */
+@property (assign, nonatomic) CGFloat frontStrongValue;
+
 @property (assign, nonatomic) CGFloat backMatchValue;   //后段匹配度 (R时为1,H时为目标帧相近度);
 
 @property (assign, nonatomic) CGFloat stableScore;      //中段稳定性分 (用于慢思考);

@@ -340,10 +340,10 @@
 /**
  *  MARK:--------------------条件满足时: 获取前段indexDic--------------------
  *  @desc 即从proto中找abs: 判断当前proto场景对abs是条件满足的 (参考28052-2);
- *  @param absCutIndex : 其中absFo执行到的最大值 (含absCutIndex);
+ *  @param absCutIndex : 其中absFo执行到的最大值 (含absCutIndex) (是ptAleardayCount-1对应的canset下标);
  *  @version
  *      2023.02.04: 初版,为解决条件满足不完全的问题,此方法将尝试从proto找出canset前段的每帧 (参考28052);
- *  @result 在proto中全找到canset的前段则返回indexDic映射,未全找到时返回nil;
+ *  @result 在proto中全找到canset的前段则返回indexDic映射,未全找到时(条件不满足)返回nil;
  */
 +(NSDictionary*) getFrontIndexDic:(AIFoNodeBase*)protoFo absFo:(AIFoNodeBase*)absFo absCutIndex:(NSInteger)absCutIndex {
     //1. 数据准备;
@@ -352,6 +352,8 @@
         
     //2. 每帧match都到proto里去找,找到则记录proto的进度,找不到则全部失败;
     NSInteger protoMin = 0;
+    
+    //2. 说明: 所有已发生帧,都要判断一下条件满足 (absCutIndex之前全是前段) (参考28022-todo4);
     for (NSInteger absI = 0; absI < absCutIndex + 1; absI ++) {
         AIKVPointer *absAlg = ARR_INDEX(absFo.content_ps, absI);
         BOOL findItem = false;
@@ -415,12 +417,12 @@
  *      2023.02.04: 修复条件满足不完全问题 (参考28052);
  *      2023.02.17: 从Analyze整理到TCSolutionUtil中,因为它现在其实就是获取SolutionModel用的 (参考28084-1);
  *      2023.02.17: 废弃filter过滤器,并合并到此处来 (参考28084-2);
+ *      2023.02.18: 计算前段竞争值 (参考28084-4);
  *  @result 返回cansetFo前段匹配度 & 以及已匹配的cutIndex截点;
  */
 +(AISolutionModel*) getSolutionModel:(AIKVPointer*)cansetFo_p basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel ptAleardayCount:(NSInteger)ptAleardayCount demand:(DemandModel*)demand {
     //1. 数据准备 & 复用indexDic & 取出pFoOrTargetFo;
     AIKVPointer *matchFo_p = [TOUtils convertBaseFoFromBasePFoOrTargetFoModel:basePFoOrTargetFoModel];
-    AIFoNodeBase *matchFo = [SMGUtils searchNode:matchFo_p];
     AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
     
     //3. 过滤器1===: 过滤掉长度不够的 (因为前段全含至少要1位,中段修正也至少要0位,后段H目标要1位R要0位);
@@ -442,29 +444,23 @@
     if (cansetCutIndex < matchCutIndex) return nil;
     
     //8. 过滤器2===: 过滤掉canset没后段的 (没可行为化的东西) (参考28052-4);
-    if (cansetFo.count <= cansetCutIndex + 1) return false;
+    if (cansetFo.count <= cansetCutIndex + 1) return nil;
     
     //9. 递归找到protoFo;
     AIMatchFoModel *pFo = [self getPFo:cansetFo_p basePFoOrTargetFoModel:basePFoOrTargetFoModel];
     AIKVPointer *protoFo_p = pFo.baseRDemand.protoOrRegroupFo;
     AIFoNodeBase *protoFo = [SMGUtils searchNode:protoFo_p];
     
-    //10. 过滤器3===: 过滤掉条件不满足的 (protoFo对cansetFo条件满足) 注:此时canset是proto的抽象 (参考28052-2);
-    //说明: 所有已发生帧,都要判断一下条件满足 (ptAleardayCount之前全是前段) (参考28022-todo4);
+    //10. 判断protoFo对cansetFo条件满足 (返回条件满足的每帧间映射);
     NSDictionary *frontIndexDic = [self getFrontIndexDic:protoFo absFo:cansetFo absCutIndex:cansetCutIndex];
-    BOOL findAbsFromProto = DICISOK(frontIndexDic);
-    if (!findAbsFromProto) return false;
     
-    //TODOTOMORROW20230217: 此处明天写将前段frontIndexDic,存到solutionModel中,然后用于AIRank时,前段竞争时用...
+    //10. 过滤器3===: 过滤掉条件不满足的: 条件不满足时,直接返回nil 注:此时canset是proto的抽象 (参考28052-2 & 28084-3);
+    if (!DICISOK(frontIndexDic)) return nil;
     
-    
-    
-    
-    //4. 计算前段匹配度 (参考28035-todo3);
-    CGFloat frontMatchValue = 1;
-    for (NSInteger i = 0; i < ptAleardayCount; i++) {
-        frontMatchValue *= [AIAnalyst compareCansetAlg:i cansetFo:cansetFo_p matchFo:matchFo_p];
-    }
+    //4. 计算前段竞争值 (参考28084-4);
+    NSArray *matchStrongData = [AINetUtils getMatchAndStrongByFrontIndexDic:frontIndexDic cansetFo:cansetFo_p protoFo:protoFo];
+    CGFloat frontStrongValue = NUMTOOK(ARR_INDEX(matchStrongData, 0)).floatValue;
+    CGFloat frontMatchValue = NUMTOOK(ARR_INDEX(matchStrongData, 1)).floatValue;
     
     //5. 前段不匹配时,直接返回nil (参考26128-1-3);
     if (frontMatchValue == 0) return nil;
@@ -479,11 +475,11 @@
         NSInteger cansetTargetIndex = NUMTOOK([indexDic objectForKey:@(ptAleardayCount)]).integerValue;
         
         //9. 后段成功;
-        return [AISolutionModel newWithCansetFo:cansetFo_p frontMatchValue:frontMatchValue backMatchValue:backMatchValue cutIndex:cansetCutIndex targetIndex:cansetTargetIndex basePFoOrTargetFoModel:basePFoOrTargetFoModel];
+        return [AISolutionModel newWithCansetFo:cansetFo_p frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue backMatchValue:backMatchValue cutIndex:cansetCutIndex targetIndex:cansetTargetIndex basePFoOrTargetFoModel:basePFoOrTargetFoModel];
         
     }else{
         //11. 后段: R不判断后段;
-        return [AISolutionModel newWithCansetFo:cansetFo_p frontMatchValue:frontMatchValue backMatchValue:1 cutIndex:cansetCutIndex targetIndex:cansetFo.count basePFoOrTargetFoModel:basePFoOrTargetFoModel];
+        return [AISolutionModel newWithCansetFo:cansetFo_p frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue backMatchValue:1 cutIndex:cansetCutIndex targetIndex:cansetFo.count basePFoOrTargetFoModel:basePFoOrTargetFoModel];
     }
 }
 

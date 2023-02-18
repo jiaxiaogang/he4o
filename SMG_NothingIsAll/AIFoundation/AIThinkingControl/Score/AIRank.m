@@ -119,6 +119,42 @@
     return ranking;
 }
 
+/**
+ *  MARK:--------------------求解S前段排名 (参考28083-方案2 & 28084-5)--------------------
+ */
++(NSDictionary*) solutionFrontRank:(NSArray*)solutionModels protoFo:(AIFoNodeBase*)protoFo {
+    //1. 数据准备;
+    solutionModels = ARRTOOK(solutionModels);
+    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
+    
+    //2. 分别按相似度和强度排序;
+    NSArray *rank4MatchValue = [SMGUtils sortBig2Small:solutionModels compareBlock:^double(AISolutionModel *obj) {
+        return obj.frontMatchValue;
+    }];
+    NSArray *rank4StrongValue = [SMGUtils sortBig2Small:solutionModels compareBlock:^double(AISolutionModel *obj) {
+        return obj.frontStrongValue;
+    }];
+    
+    //3. 求出综合排名;
+    for (AIMatchAlgModel *item in solutionModels) {
+        //4. 取两科排名下标;
+        NSInteger index4MatchValue = [rank4MatchValue indexOfObject:item];
+        NSInteger index4StrongValue = [rank4StrongValue indexOfObject:item];
+        
+        //5. 各自归1化;
+        CGFloat normalized4MatchValue = index4MatchValue / rank4MatchValue.count;
+        CGFloat normalized4StrongValue = index4StrongValue / rank4StrongValue.count;
+        
+        //5. 各自冷却后的值;
+        CGFloat cool4MatchValue = [self getCooledValue:1 pastTime:normalized4MatchValue];
+        CGFloat cool4StrongValue = [self getCooledValue:1 pastTime:normalized4StrongValue];
+        
+        //6. 计算综合排名;
+        [result setObject:@(cool4MatchValue * cool4StrongValue) forKey:@(item.matchAlg.pointerId)];
+    }
+    return result;
+}
+
 //MARK:===============================================================
 //MARK:                     < privateMethod >
 //MARK:===============================================================

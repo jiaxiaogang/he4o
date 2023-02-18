@@ -28,4 +28,9 @@
  */
 +(NSArray*) solutionFoRanking:(NSArray*)solutionModels needBack:(BOOL)needBack fromSlow:(BOOL)fromSlow;
 
+/**
+ *  MARK:--------------------求解S前段排名 (参考28083-方案2 & 28084-5)--------------------
+ */
++(NSDictionary*) solutionFrontRank:(NSArray*)solutionModels protoFo:(AIFoNodeBase*)protoFo;
+
 @end
