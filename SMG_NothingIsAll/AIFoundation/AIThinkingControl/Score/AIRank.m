@@ -45,25 +45,14 @@
 /**
  *  MARK:--------------------S综合排名--------------------
  *  @desc 对前中后段分别排名,然后综合排名 (参考26222-TODO2);
+ *  @desc 此处综合S的三个竞争器,顺序为:后->中->前 (参考28080-决策 & 结论2);
  *  @param needBack : 是否排后段: H传true需要,R传false不需要;
  *  @param fromSlow : 是否源于慢思考: 慢思考传true中段用stable排,快思考传false中段用effect排;
+ *  @version
+ *      2023.02.18: V2迭代: 把三项排名改成三次排序+漏斗 (参考28080-结论2);
  *  @result 返回排名结果;
  */
 +(NSArray*) solutionFoRanking:(NSArray*)solutionModels needBack:(BOOL)needBack fromSlow:(BOOL)fromSlow{
-    //1. 前段排名;
-    solutionModels = [AIRank solutionFrontRank:solutionModels];
-    NSInteger limit = MAX(10, solutionModels.count);
-    solutionModels = ARR_SUB(solutionModels, 0, limit);
-    
-    
-    //TODOTOMORROW20230218: 写中段竞争器;
-    
-    
-    
-    
-    
-    
-    
     //1. 三段分开排;
     NSArray *backSorts = needBack ? [SMGUtils sortBig2Small:solutionModels compareBlock:^double(AISolutionModel *obj) {
         return obj.backMatchValue;
@@ -85,6 +74,21 @@
     
     //3. 返回;
     return ranking;
+}
++(NSArray*) solutionFoRankingV2:(NSArray*)solutionModels needBack:(BOOL)needBack fromSlow:(BOOL)fromSlow{
+    //1. 后段排名;
+    //TODOTOMORROW20230218: 写中段竞争器;
+    
+    //2. 中段排名;
+    
+    
+    //3. 前段排名;
+    solutionModels = [AIRank solutionFrontRank:solutionModels];
+    NSInteger limit = MAX(10, solutionModels.count * 0.2f);
+    solutionModels = ARR_SUB(solutionModels, 0, limit);
+    
+    //4. 返回;
+    return solutionModels;
 }
 
 /**
