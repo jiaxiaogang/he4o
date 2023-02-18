@@ -201,12 +201,8 @@
     }
     
     //11. 识别竞争机制 (参考2722d-方案2);
-    NSDictionary *rankDic = [AIRank recognitonAlgRank:protoModels];
-    
     //11. 按nearA排序 (参考25083-2&公式2 & 25084-1);
-    NSArray *sortModels = [SMGUtils sortSmall2Big:protoModels compareBlock:^double(AIMatchAlgModel *obj) {
-        return NUMTOOK([rankDic objectForKey:@(obj.matchAlg.pointerId)]).floatValue;
-    }];
+    NSArray *sortModels = [AIRank recognitonAlgRank:protoModels];
     
     //12. 全含判断: 从大到小,依次取到对应的node和matchingCount (注: 支持相近后,应该全是全含了,参考25084-1);
     NSArray *validModels = [SMGUtils filterArr:sortModels checkValid:^BOOL(AIMatchAlgModel *item) {
@@ -408,15 +404,9 @@
     AddTCDebug(@"时序识别28");
     
     //10. 按照 (强度x匹配度) 排序,强度最重要,包含了价值初始和使用频率,其次匹配度也重要 (参考23222-BUG2);
-    NSDictionary *pRankDic = [AIRank recognitonFoRank:inModel.matchPFos];
-    NSArray *sortPFos = [SMGUtils sortSmall2Big:inModel.matchPFos compareBlock:^double(AIMatchFoModel *obj) {
-        return NUMTOOK([pRankDic objectForKey:@(obj.matchFo.pointerId)]).floatValue;
-    }];
+    NSArray *sortPFos = [AIRank recognitonFoRank:inModel.matchPFos];
     AddTCDebug(@"时序识别29");
-    NSDictionary *rRankDic = [AIRank recognitonFoRank:inModel.matchRFos];
-    NSArray *sortRFos = [SMGUtils sortSmall2Big:inModel.matchRFos compareBlock:^double(AIMatchFoModel *obj) {
-        return NUMTOOK([rRankDic objectForKey:@(obj.matchFo.pointerId)]).floatValue;
-    }];
+    NSArray *sortRFos = [AIRank recognitonFoRank:inModel.matchRFos];
     AddTCDebug(@"时序识别30");
     
     //11. 仅保留前NarrowLimit条;

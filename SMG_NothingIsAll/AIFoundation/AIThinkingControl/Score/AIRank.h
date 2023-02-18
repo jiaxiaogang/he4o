@@ -16,12 +16,12 @@
 /**
  *  MARK:--------------------概念识别综合排名 (参考2722d-方案2-todo2)--------------------
  */
-+(NSDictionary*) recognitonAlgRank:(NSArray*)matchAlgModels;
++(NSArray*) recognitonAlgRank:(NSArray*)matchAlgModels;
 
 /**
  *  MARK:--------------------时序识别综合排名 (参考2722d-方案2-todo2 & 2722f-todo14)--------------------
  */
-+(NSDictionary*) recognitonFoRank:(NSArray*)matchFoModels;
++(NSArray*) recognitonFoRank:(NSArray*)matchFoModels;
 
 /**
  *  MARK:--------------------S综合排名--------------------
@@ -31,6 +31,6 @@
 /**
  *  MARK:--------------------求解S前段排名 (参考28083-方案2 & 28084-5)--------------------
  */
-+(NSDictionary*) solutionFrontRank:(NSArray*)solutionModels;
++(NSArray*) solutionFrontRank:(NSArray*)solutionModels;
 
 @end

@@ -16,7 +16,7 @@
  *  @version
  *      2023.01.31: 单项权重新增牛顿冷却曲线 (参考28042-思路2-3);
  */
-+(NSDictionary*) recognitonAlgRank:(NSArray*)matchAlgModels {
++(NSArray*) recognitonAlgRank:(NSArray*)matchAlgModels {
     return [self getCooledRankTwice:matchAlgModels itemScoreBlock1:^CGFloat(AIMatchAlgModel *item) {
         return [item matchValue]; //匹配度项;
     } itemScoreBlock2:^CGFloat(AIMatchAlgModel *item) {
@@ -32,7 +32,7 @@
  *  @version
  *      2023.01.31: 单项权重新增牛顿冷却曲线 (参考28042-思路2-3);
  */
-+(NSDictionary*) recognitonFoRank:(NSArray*)matchFoModels {
++(NSArray*) recognitonFoRank:(NSArray*)matchFoModels {
     return [self getCooledRankTwice:matchFoModels itemScoreBlock1:^CGFloat(AIMatchFoModel *item) {
         return [item matchFoValue]; //匹配度项;
     } itemScoreBlock2:^CGFloat(AIMatchFoModel *item) {
@@ -50,6 +50,20 @@
  *  @result 返回排名结果;
  */
 +(NSArray*) solutionFoRanking:(NSArray*)solutionModels needBack:(BOOL)needBack fromSlow:(BOOL)fromSlow{
+    //1. 前段排名;
+    solutionModels = [AIRank solutionFrontRank:solutionModels];
+    NSInteger limit = MAX(10, solutionModels.count);
+    solutionModels = ARR_SUB(solutionModels, 0, limit);
+    
+    
+    //TODOTOMORROW20230218: 写中段竞争器;
+    
+    
+    
+    
+    
+    
+    
     //1. 三段分开排;
     NSArray *backSorts = needBack ? [SMGUtils sortBig2Small:solutionModels compareBlock:^double(AISolutionModel *obj) {
         return obj.backMatchValue;
@@ -76,7 +90,7 @@
 /**
  *  MARK:--------------------求解S前段排名 (参考28083-方案2 & 28084-5)--------------------
  */
-+(NSDictionary*) solutionFrontRank:(NSArray*)solutionModels {
++(NSArray*) solutionFrontRank:(NSArray*)solutionModels {
     return [self getCooledRankTwice:solutionModels itemScoreBlock1:^CGFloat(AISolutionModel *item) {
         return item.frontMatchValue; //前段匹配度项;
     } itemScoreBlock2:^CGFloat(AISolutionModel *item) {
@@ -146,19 +160,19 @@
  *  MARK:--------------------两项models冷却后竞争值--------------------
  *  @desc 包含两项, 比如: 三班的语数竞赛;
  */
-+(NSDictionary*) getCooledRankTwice:(NSArray*)models itemScoreBlock1:(CGFloat(^)(id item))itemScoreBlock1 itemScoreBlock2:(CGFloat(^)(id item))itemScoreBlock2 itemKeyBlock:(id(^)(id item))itemKeyBlock{
++(NSArray*) getCooledRankTwice:(NSArray*)models itemScoreBlock1:(CGFloat(^)(id item))itemScoreBlock1 itemScoreBlock2:(CGFloat(^)(id item))itemScoreBlock2 itemKeyBlock:(id(^)(id item))itemKeyBlock{
     //1. 两个冷却后字典计算;
     NSDictionary *cooledDic1 = [self getCooledValueDic:models itemScoreBlock:itemScoreBlock1 itemKeyBlock:itemKeyBlock];
     NSDictionary *cooledDic2 = [self getCooledValueDic:models itemScoreBlock:itemScoreBlock2 itemKeyBlock:itemKeyBlock];
     
-    //2. 求出综合竞争值并返回;
-    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
-    for (id item in models) {
-        id key = itemKeyBlock(item);
+    //2. 求出综合竞争值并排序 (参考25083-2&公式2 & 25084-1);
+    NSArray *result = [SMGUtils sortSmall2Big:models compareBlock:^double(id obj) {
+        id key = itemKeyBlock(obj);
         float coolScore1 = NUMTOOK([cooledDic1 objectForKey:key]).floatValue;
         float coolScore2 = NUMTOOK([cooledDic2 objectForKey:key]).floatValue;
-        [result setObject:@(coolScore1 * coolScore2) forKey:key];
-    }
+        //[result setObject:@(coolScore1 * coolScore2) forKey:key]; // 返回排序前的scoreDic时;
+        return coolScore1 * coolScore2; //返回排序后的sortArr时;
+    }];
     return result;
 }
 
