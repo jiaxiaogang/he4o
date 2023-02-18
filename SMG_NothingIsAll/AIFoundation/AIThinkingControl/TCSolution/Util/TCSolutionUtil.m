@@ -140,6 +140,12 @@
     
     //7. 将首条最佳方案返回;
     if (Log4Solution && result) NSLog(@"4. 快思考最佳结果:F%ld (前%.2f 中%.2f 后%.2f",result.cansetFo.pointerId,result.frontMatchValue,result.effectScore,result.backMatchValue);
+    
+    //8. 更新其前段ref强度 (此处canset就是frontIndexDic的抽象,所以传为matchFo参数没毛病) (参考28085);
+    if (result) {
+        [AINetUtils updateRefStrongByIndexDic:result.frontIndexDic matchFo:result.cansetFo];
+        [AINetUtils updateContentStrongByIndexDic:result.frontIndexDic matchFo:result.cansetFo];
+    }
     return result;
 }
 
@@ -270,6 +276,10 @@
     if (result) {
         AIFoNodeBase *resultFo = [SMGUtils searchNode:result.cansetFo];
         NSLog(@"慢思考最佳结果:F%ld (前%.2f 中%.2f 后%.2f) %@",result.cansetFo.pointerId,result.frontMatchValue,result.stableScore,result.backMatchValue,CLEANSTR(resultFo.spDic));
+        
+        //15. 更新其前段ref强度 (此处canset就是frontIndexDic的抽象,所以传为matchFo参数没毛病) (参考28085);
+        [AINetUtils updateRefStrongByIndexDic:result.frontIndexDic matchFo:result.cansetFo];
+        [AINetUtils updateContentStrongByIndexDic:result.frontIndexDic matchFo:result.cansetFo];
     }
     return result;
 }
@@ -458,9 +468,10 @@
     if (!DICISOK(frontIndexDic)) return nil;
     
     //4. 计算前段竞争值 (参考28084-4);
-    NSArray *matchStrongData = [AINetUtils getMatchAndStrongByFrontIndexDic:frontIndexDic cansetFo:cansetFo_p protoFo:protoFo];
-    CGFloat frontStrongValue = NUMTOOK(ARR_INDEX(matchStrongData, 0)).floatValue;
-    CGFloat frontMatchValue = NUMTOOK(ARR_INDEX(matchStrongData, 1)).floatValue;
+    NSArray *nearData = [AINetUtils getNearDataByIndexDic:frontIndexDic absFo:cansetFo_p conFo:protoFo_p callerIsAbs:true];
+    NSInteger sumStrong = [AINetUtils getSumRefStrongByIndexDic:frontIndexDic matchFo:cansetFo_p];
+    CGFloat frontMatchValue = NUMTOOK(ARR_INDEX(nearData, 1)).floatValue;
+    CGFloat frontStrongValue = (float)sumStrong / frontIndexDic.count;
     
     //5. 前段不匹配时,直接返回nil (参考26128-1-3);
     if (frontMatchValue == 0) return nil;
@@ -475,11 +486,11 @@
         NSInteger cansetTargetIndex = NUMTOOK([indexDic objectForKey:@(ptAleardayCount)]).integerValue;
         
         //9. 后段成功;
-        return [AISolutionModel newWithCansetFo:cansetFo_p frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue backMatchValue:backMatchValue cutIndex:cansetCutIndex targetIndex:cansetTargetIndex basePFoOrTargetFoModel:basePFoOrTargetFoModel];
+        return [AISolutionModel newWithCansetFo:cansetFo_p frontIndexDic:frontIndexDic frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue backMatchValue:backMatchValue cutIndex:cansetCutIndex targetIndex:cansetTargetIndex basePFoOrTargetFoModel:basePFoOrTargetFoModel];
         
     }else{
         //11. 后段: R不判断后段;
-        return [AISolutionModel newWithCansetFo:cansetFo_p frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue backMatchValue:1 cutIndex:cansetCutIndex targetIndex:cansetFo.count basePFoOrTargetFoModel:basePFoOrTargetFoModel];
+        return [AISolutionModel newWithCansetFo:cansetFo_p frontIndexDic:frontIndexDic frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue backMatchValue:1 cutIndex:cansetCutIndex targetIndex:cansetFo.count basePFoOrTargetFoModel:basePFoOrTargetFoModel];
     }
 }
 

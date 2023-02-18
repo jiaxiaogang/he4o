@@ -581,9 +581,6 @@
             near = [conA getAbsMatchValue:absA_p];
         }
         
-        //6. 二者一样时,直接=1;
-        if ([absA_p isEqual:conA_p]) near = 1;
-        
         //7. 只记录near<1的 (取<1的原因未知,参考2619j-todo5);
         if (near < 1) {
             [AITest test14:near];
@@ -643,42 +640,6 @@
         itemPort.strong.value++;
     }
     [SMGUtils insertNode:matchFo];
-}
-
-/**
- *  MARK:--------------------获取canset的near数据--------------------
- *  @result notnull 必有两个元素,格式为: [strongValue, matchValue],默认强度为0,匹配度为1;
- */
-+(NSArray*) getMatchAndStrongByFrontIndexDic:(NSDictionary*)frontIndexDic cansetFo:(AIKVPointer*)cansetFo_p protoFo:(AIFoNodeBase*)protoFo {
-    //1. 数据准备;
-    AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
-    frontIndexDic = DICTOOK(frontIndexDic);
-    CGFloat matchValue = 1;
-    NSInteger sumStrong = 0;
-    
-    //2. 逐个计算cansetAlg竞争值;
-    for (NSNumber *absKey in frontIndexDic.allKeys) {
-        //3. 取出cansetAlg和protoAlg;
-        NSInteger cansetIndex = absKey.integerValue;
-        NSInteger protoIndex = NUMTOOK([frontIndexDic objectForKey:absKey]).integerValue;
-        AIKVPointer *cansetAlg_p = ARR_INDEX(cansetFo.content_ps, cansetIndex);
-        AIKVPointer *protoAlg_p = ARR_INDEX(protoFo.content_ps, protoIndex);
-        
-        //4. 取得匹配度;
-        AIAlgNodeBase *cansetAlg = [SMGUtils searchNode:cansetAlg_p];
-        CGFloat itemMatchValue = [cansetAlg getConMatchValue:protoAlg_p];
-        matchValue *= itemMatchValue;
-        
-        //5. 取得强度;
-        AIPort *findPort = [AINetUtils findPort:protoAlg_p fromPorts:cansetAlg.conPorts];
-        NSInteger itemStrong = findPort.strong.value;
-        sumStrong += itemStrong;
-    }
-    //6. strongValue取平均值;
-    CGFloat strongValue = (float)sumStrong / frontIndexDic.count;
-    
-    //7. 结果值返回;
-    return @[@(strongValue),@(matchValue)];
 }
 
 @end
