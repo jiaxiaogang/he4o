@@ -17,36 +17,13 @@
  *      2023.01.31: 单项权重新增牛顿冷却曲线 (参考28042-思路2-3);
  */
 +(NSDictionary*) recognitonAlgRank:(NSArray*)matchAlgModels {
-    //1. 数据准备;
-    matchAlgModels = ARRTOOK(matchAlgModels);
-    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
-    
-    //2. 分别按相似度和强度排序;
-    NSArray *rank4MatchValue = [SMGUtils sortBig2Small:matchAlgModels compareBlock:^double(AIMatchAlgModel *obj) {
-        return [obj matchValue];
+    return [self getCooledRankTwice:matchAlgModels itemScoreBlock1:^CGFloat(AIMatchAlgModel *item) {
+        return [item matchValue]; //匹配度项;
+    } itemScoreBlock2:^CGFloat(AIMatchAlgModel *item) {
+        return [item strongValue]; //强度项;
+    } itemKeyBlock:^id(AIMatchAlgModel *item) {
+        return @(item.matchAlg.pointerId);
     }];
-    NSArray *rank4StrongValue = [SMGUtils sortBig2Small:matchAlgModels compareBlock:^double(AIMatchAlgModel *obj) {
-        return [obj strongValue];
-    }];
-    
-    //3. 求出综合排名;
-    for (AIMatchAlgModel *item in matchAlgModels) {
-        //4. 取两科排名下标;
-        NSInteger index4MatchValue = [rank4MatchValue indexOfObject:item];
-        NSInteger index4StrongValue = [rank4StrongValue indexOfObject:item];
-        
-        //5. 各自归1化;
-        CGFloat normalized4MatchValue = index4MatchValue / rank4MatchValue.count;
-        CGFloat normalized4StrongValue = index4StrongValue / rank4StrongValue.count;
-        
-        //5. 各自冷却后的值;
-        CGFloat cool4MatchValue = [self getCooledValue:1 pastTime:normalized4MatchValue];
-        CGFloat cool4StrongValue = [self getCooledValue:1 pastTime:normalized4StrongValue];
-        
-        //6. 计算综合排名;
-        [result setObject:@(cool4MatchValue * cool4StrongValue) forKey:@(item.matchAlg.pointerId)];
-    }
-    return result;
 }
 
 /**
@@ -56,36 +33,13 @@
  *      2023.01.31: 单项权重新增牛顿冷却曲线 (参考28042-思路2-3);
  */
 +(NSDictionary*) recognitonFoRank:(NSArray*)matchFoModels {
-    //1. 数据准备;
-    matchFoModels = ARRTOOK(matchFoModels);
-    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
-    
-    //2. 分别按相似度和强度排序;
-    NSArray *rank4MatchValue = [SMGUtils sortBig2Small:matchFoModels compareBlock:^double(AIMatchFoModel *obj) {
-        return [obj matchFoValue];
+    return [self getCooledRankTwice:matchFoModels itemScoreBlock1:^CGFloat(AIMatchFoModel *item) {
+        return [item matchFoValue]; //匹配度项;
+    } itemScoreBlock2:^CGFloat(AIMatchFoModel *item) {
+        return [item strongValue]; //强度项;
+    } itemKeyBlock:^id(AIMatchFoModel *item) {
+        return @(item.matchFo.pointerId);
     }];
-    NSArray *rank4StrongValue = [SMGUtils sortBig2Small:matchFoModels compareBlock:^double(AIMatchFoModel *obj) {
-        return [obj strongValue];
-    }];
-    
-    //3. 求出综合排名;
-    for (AIMatchFoModel *item in matchFoModels) {
-        //4. 取两科排名下标;
-        NSInteger index4MatchValue = [rank4MatchValue indexOfObject:item];
-        NSInteger index4StrongValue = [rank4StrongValue indexOfObject:item];
-        
-        //5. 各自归1化;
-        CGFloat normalized4MatchValue = index4MatchValue / rank4MatchValue.count;
-        CGFloat normalized4StrongValue = index4StrongValue / rank4StrongValue.count;
-        
-        //5. 各自冷却后的值;
-        CGFloat cool4MatchValue = [self getCooledValue:1 pastTime:normalized4MatchValue];
-        CGFloat cool4StrongValue = [self getCooledValue:1 pastTime:normalized4StrongValue];
-        
-        //6. 计算综合排名;
-        [result setObject:@(cool4MatchValue * cool4StrongValue) forKey:@(item.matchFo.pointerId)];
-    }
-    return result;
 }
 
 /**
@@ -122,37 +76,14 @@
 /**
  *  MARK:--------------------求解S前段排名 (参考28083-方案2 & 28084-5)--------------------
  */
-+(NSDictionary*) solutionFrontRank:(NSArray*)solutionModels protoFo:(AIFoNodeBase*)protoFo {
-    //1. 数据准备;
-    solutionModels = ARRTOOK(solutionModels);
-    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
-    
-    //2. 分别按相似度和强度排序;
-    NSArray *rank4MatchValue = [SMGUtils sortBig2Small:solutionModels compareBlock:^double(AISolutionModel *obj) {
-        return obj.frontMatchValue;
++(NSDictionary*) solutionFrontRank:(NSArray*)solutionModels {
+    return [self getCooledRankTwice:solutionModels itemScoreBlock1:^CGFloat(AISolutionModel *item) {
+        return item.frontMatchValue; //前段匹配度项;
+    } itemScoreBlock2:^CGFloat(AISolutionModel *item) {
+        return item.frontStrongValue; //前段强度项;
+    } itemKeyBlock:^id(AISolutionModel *item) {
+        return @(item.cansetFo.pointerId);
     }];
-    NSArray *rank4StrongValue = [SMGUtils sortBig2Small:solutionModels compareBlock:^double(AISolutionModel *obj) {
-        return obj.frontStrongValue;
-    }];
-    
-    //3. 求出综合排名;
-    for (AIMatchAlgModel *item in solutionModels) {
-        //4. 取两科排名下标;
-        NSInteger index4MatchValue = [rank4MatchValue indexOfObject:item];
-        NSInteger index4StrongValue = [rank4StrongValue indexOfObject:item];
-        
-        //5. 各自归1化;
-        CGFloat normalized4MatchValue = index4MatchValue / rank4MatchValue.count;
-        CGFloat normalized4StrongValue = index4StrongValue / rank4StrongValue.count;
-        
-        //5. 各自冷却后的值;
-        CGFloat cool4MatchValue = [self getCooledValue:1 pastTime:normalized4MatchValue];
-        CGFloat cool4StrongValue = [self getCooledValue:1 pastTime:normalized4StrongValue];
-        
-        //6. 计算综合排名;
-        [result setObject:@(cool4MatchValue * cool4StrongValue) forKey:@(item.matchAlg.pointerId)];
-    }
-    return result;
 }
 
 //MARK:===============================================================
@@ -160,7 +91,8 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------获取冷却后值--------------------
+ *  MARK:--------------------单条model冷却后竞争值--------------------
+ *  @desc 单条仅一条,比如: 张三的语文考试;
  *  @desc 使用: 单项权重新增NewtonCoolDownCurve (参考28042-思路2-3);
  *  @param totalCoolTime : 冷却至微不可见的总需时长
  *  @param pastTime : 当前项已冷却了多久;
@@ -176,6 +108,58 @@
     //3. 计算出冷却后的值;
     CGFloat cooledValue = expf(-coefficient * pastTime);
     return cooledValue;
+}
+
+/**
+ *  MARK:--------------------单项models冷却后竞争值--------------------
+ *  @desc 单项一般包含多条,如匹配度项竞争,比如: 三班的语文考试;
+ */
++(NSDictionary*) getCooledValueDic:(NSArray*)models itemScoreBlock:(CGFloat(^)(id item))itemScoreBlock itemKeyBlock:(id(^)(id item))itemKeyBlock {
+    //1. 数据准备;
+    models = ARRTOOK(models);
+    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
+    
+    //2. 分别按相似度和强度排序;
+    NSArray *rank = [SMGUtils sortBig2Small:models compareBlock:^double(id obj) {
+        return itemScoreBlock(obj);
+    }];
+    
+    //3. 求出综合排名;
+    for (id item in models) {
+        //4. 取单科排名下标;
+        NSInteger index4Rank = [rank indexOfObject:item];
+        
+        //5. 各自归1化;
+        CGFloat normalized4Rank = index4Rank / rank.count;
+        
+        //5. 各自冷却后的值;
+        CGFloat cool4Rank = [self getCooledValue:1 pastTime:normalized4Rank];
+        
+        //6. 计算综合排名;
+        id key = itemKeyBlock(item);
+        [result setObject:@(cool4Rank) forKey:key];
+    }
+    return result;
+}
+
+/**
+ *  MARK:--------------------两项models冷却后竞争值--------------------
+ *  @desc 包含两项, 比如: 三班的语数竞赛;
+ */
++(NSDictionary*) getCooledRankTwice:(NSArray*)models itemScoreBlock1:(CGFloat(^)(id item))itemScoreBlock1 itemScoreBlock2:(CGFloat(^)(id item))itemScoreBlock2 itemKeyBlock:(id(^)(id item))itemKeyBlock{
+    //1. 两个冷却后字典计算;
+    NSDictionary *cooledDic1 = [self getCooledValueDic:models itemScoreBlock:itemScoreBlock1 itemKeyBlock:itemKeyBlock];
+    NSDictionary *cooledDic2 = [self getCooledValueDic:models itemScoreBlock:itemScoreBlock2 itemKeyBlock:itemKeyBlock];
+    
+    //2. 求出综合竞争值并返回;
+    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
+    for (id item in models) {
+        id key = itemKeyBlock(item);
+        float coolScore1 = NUMTOOK([cooledDic1 objectForKey:key]).floatValue;
+        float coolScore2 = NUMTOOK([cooledDic2 objectForKey:key]).floatValue;
+        [result setObject:@(coolScore1 * coolScore2) forKey:key];
+    }
+    return result;
 }
 
 @end
