@@ -138,7 +138,7 @@
  *  @param conNodes : 具象概念们
  *  注: 抽具象的difStrong默认都为1;
  */
-+(void) relateAlgAbs:(AIAbsAlgNode*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew;
++(void) relateAlgAbs:(AIAlgNodeBase*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew;
 +(void) relateFoAbs:(AIFoNodeBase*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew;
 +(void) relateMvAbs:(AIAbsCMVNode*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew;
 
@@ -220,5 +220,15 @@
  *  MARK:--------------------根据indexDic更新contentPort强度值 (参考2722f-todo32)--------------------
  */
 +(void) updateContentStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p;
+
+/**
+ *  MARK:--------------------获取sumConStrong已发生部分强度--------------------
+ */
++(NSInteger) getSumConStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p cansetFo:(AIKVPointer*)cansetFo_p;
+
+/**
+ *  MARK:--------------------根据indexDic更新conPort和absPort强度值 (参考28086)--------------------
+ */
++(void) updateConAndAbsStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p cansetFo:(AIKVPointer*)cansetFo_p;
 
 @end

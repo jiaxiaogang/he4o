@@ -821,6 +821,21 @@
     return result;
 }
 
++(NSMutableDictionary*) filterDic:(NSDictionary *)dic checkValid:(BOOL(^)(id key,id value))checkValid {
+    //1. 数据准备
+    dic = DICTOOK(dic);
+    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
+    
+    //2. 筛选
+    for (id key in dic.allKeys) {
+        id value = [dic objectForKey:key];
+        if (checkValid && checkValid(key,value)) {
+            [result setObject:value forKey:key];
+        }
+    }
+    return result;
+}
+
 //用analogyType来筛选ports
 +(NSArray*) filterPorts_Normal:(NSArray*)ports{
     NSArray *noTypes = @[@(ATGreater),@(ATLess),@(ATHav),@(ATNone),

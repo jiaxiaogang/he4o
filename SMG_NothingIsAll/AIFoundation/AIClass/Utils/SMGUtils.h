@@ -258,6 +258,12 @@
 +(NSMutableArray*) filterArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid limit:(NSInteger)limit;
 
 /**
+ *  MARK:--------------------筛选字典--------------------
+ *  @result notnull
+ */
++(NSMutableDictionary*) filterDic:(NSDictionary *)dic checkValid:(BOOL(^)(id key,id value))checkValid;
+
+/**
  *  MARK:--------------------用analogyType来筛选ports--------------------
  *  @result notnull
  */

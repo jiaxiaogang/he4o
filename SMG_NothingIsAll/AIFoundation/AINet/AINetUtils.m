@@ -315,7 +315,7 @@
 //MARK:===============================================================
 //MARK:                     < 抽具象关联 Relate (外界调用,支持alg/fo) >
 //MARK:===============================================================
-+(void) relateAlgAbs:(AIAbsAlgNode*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew{
++(void) relateAlgAbs:(AIAlgNodeBase*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew{
     [self relateGeneralAbs:absNode absConPorts:absNode.conPorts conNodes:conNodes isNew:isNew difStrong:1];
 }
 +(void) relateFoAbs:(AIFoNodeBase*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew{
@@ -640,6 +640,47 @@
         itemPort.strong.value++;
     }
     [SMGUtils insertNode:matchFo];
+}
+
+/**
+ *  MARK:--------------------获取sumConStrong已发生部分强度--------------------
+ *  @desc 根据indexDic取得sumConStrong (参考28086-todo1);
+ */
++(NSInteger) getSumConStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p cansetFo:(AIKVPointer*)cansetFo_p{
+    //1. 数据准备;
+    NSInteger sumStrong = 0;  //总强度
+    AIFoNodeBase *matchFo = [SMGUtils searchNode:matchFo_p];
+    AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
+    
+    //2. 逐个统计;
+    for (NSNumber *key in indexDic.allKeys) {
+        NSInteger absIndex = key.integerValue;
+        NSInteger conIndex = NUMTOOK([indexDic objectForKey:key]).integerValue;
+        AIAlgNodeBase *absAlg = [SMGUtils searchNode:ARR_INDEX(matchFo.content_ps, absIndex)];
+        AIKVPointer *conAlg = ARR_INDEX(cansetFo.content_ps, conIndex);
+        AIPort *findPort = [AINetUtils findPort:conAlg fromPorts:absAlg.conPorts];
+        sumStrong += findPort.strong.value;
+    }
+    return sumStrong;
+}
+
+/**
+ *  MARK:--------------------根据indexDic更新conPort和absPort强度值--------------------
+ *  @desc canset方案最终激活时,将其conPorts和absPorts的强度+1 (参考28086-todo2);
+ */
++(void) updateConAndAbsStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p cansetFo:(AIKVPointer*)cansetFo_p{
+    //1. 数据准备;
+    AIFoNodeBase *matchFo = [SMGUtils searchNode:matchFo_p];
+    AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
+    
+    //2. 将已发生部分增强refStrong;
+    for (NSNumber *key in indexDic.allKeys) {
+        NSInteger absIndex = key.integerValue;
+        NSInteger conIndex = NUMTOOK([indexDic objectForKey:key]).integerValue;
+        AIAlgNodeBase *absAlg = [SMGUtils searchNode:ARR_INDEX(matchFo.content_ps, absIndex)];
+        AIKVPointer *conAlg = ARR_INDEX(cansetFo.content_ps, conIndex);
+        [AINetUtils relateAlgAbs:absAlg conNodes:@[conAlg] isNew:false];
+    }
 }
 
 @end

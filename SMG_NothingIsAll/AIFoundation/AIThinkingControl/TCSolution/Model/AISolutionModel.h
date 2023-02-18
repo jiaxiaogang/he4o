@@ -20,7 +20,8 @@
  *      2. H任务时,所有参数都有效;
  */
 +(AISolutionModel*) newWithCansetFo:(AIKVPointer*)cansetFo
-                      frontIndexDic:(NSDictionary *)frontIndexDic
+                 protoFrontIndexDic:(NSDictionary *)protoFrontIndexDic
+                 matchFrontIndexDic:(NSDictionary *)matchFrontIndexDic
                     frontMatchValue:(CGFloat)frontMatchValue
                    frontStrongValue:(CGFloat)frontStrongValue
                      backMatchValue:(CGFloat)backMatchValue
@@ -35,7 +36,8 @@
 //MARK:                     < 前段部分 >
 //MARK:===============================================================
 
-@property (strong, nonatomic) NSDictionary *frontIndexDic;//前段canset与proto的映射字典;
+@property (strong, nonatomic) NSDictionary *protoFrontIndexDic;//前段canset与proto的映射字典 (canset是抽象);
+@property (strong, nonatomic) NSDictionary *matchFrontIndexDic;//前段canset与match的映射字典 (match是抽象);
 
 /**
  *  MARK:--------------------前段匹配度--------------------
