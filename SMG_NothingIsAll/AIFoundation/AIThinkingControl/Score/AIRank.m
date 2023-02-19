@@ -50,45 +50,29 @@
  *  @param fromSlow : 是否源于慢思考: 慢思考传true中段用stable排,快思考传false中段用effect排;
  *  @version
  *      2023.02.18: V2迭代: 把三项排名改成三次排序+漏斗 (参考28080-结论2);
+ *      2023.02.19: 正式启用v2,并且动态计算每次保留比例;
  *  @result 返回排名结果;
  */
-+(NSArray*) solutionFoRanking:(NSArray*)solutionModels needBack:(BOOL)needBack fromSlow:(BOOL)fromSlow{
-    //1. 三段分开排;
-    NSArray *backSorts = needBack ? [SMGUtils sortBig2Small:solutionModels compareBlock:^double(AISolutionModel *obj) {
-        return obj.backMatchValue;
-    }] : nil;
-    NSArray *midSorts = [SMGUtils sortBig2Small:solutionModels compareBlock:^double(AISolutionModel *obj) {
-        return fromSlow ? obj.midStableScore : obj.midEffectScore;
-    }];
-    NSArray *frontSorts = [SMGUtils sortBig2Small:solutionModels compareBlock:^double(AISolutionModel *obj) {
-        return obj.frontMatchValue;
-    }];
-    
-    //2. 综合排名
-    NSArray *ranking = [SMGUtils sortSmall2Big:solutionModels compareBlock:^double(AISolutionModel *obj) {
-        NSInteger backIndex = needBack ? [backSorts indexOfObject:obj] + 1 : 1;
-        NSInteger midIndex = [midSorts indexOfObject:obj] + 1;
-        NSInteger frontIndex = [frontSorts indexOfObject:obj] + 1;
-        return backIndex * midIndex * frontIndex;
-    }];
-    
-    //3. 返回;
-    return ranking;
-}
 +(NSArray*) solutionFoRankingV2:(NSArray*)solutionModels needBack:(BOOL)needBack fromSlow:(BOOL)fromSlow{
+    //0. 数据准备;
+    CGFloat resultNum = 5;
+    NSInteger rankNum = needBack ? 3 : 2;//排名几次;
+    CGFloat singleRate = MIN(1, powf(resultNum / solutionModels.count, 1 / rankNum));//每次保留条数比例;
+    
     //1. 后段排名;
     if (needBack) {
         solutionModels = [AIRank solutionBackRank:solutionModels];
-        NSInteger limit = MAX(10, solutionModels.count * 0.2f);
-        solutionModels = ARR_SUB(solutionModels, 0, limit);
+        solutionModels = ARR_SUB(solutionModels, 0, solutionModels.count * singleRate);
     }
     
     //2. 中段排名;
-    //TODOTOMORROW20230219: 写中段竞争器;
+    solutionModels = [AIRank solutionMidRank:solutionModels];
+    solutionModels = ARR_SUB(solutionModels, 0, solutionModels.count * singleRate);
     
     
     //3. 前段排名;
     solutionModels = [AIRank solutionFrontRank:solutionModels];
+    solutionModels = ARR_SUB(solutionModels, 0, solutionModels.count * singleRate);
     
     //4. 返回;
     return solutionModels;
@@ -115,6 +99,19 @@
         return item.backMatchValue; //匹配度项;
     } itemScoreBlock2:^CGFloat(AISolutionModel *item) {
         return item.backStrongValue; //强度项;
+    } itemKeyBlock:^id(AISolutionModel *item) {
+        return @(item.cansetFo.pointerId);
+    }];
+}
+
+/**
+ *  MARK:--------------------求解S中段排名 (参考28092-方案 & todo3)--------------------
+ */
++(NSArray*) solutionMidRank:(NSArray*)solutionModels {
+    return [self getCooledRankTwice:solutionModels itemScoreBlock1:^CGFloat(AISolutionModel *item) {
+        return item.midStableScore; //中断稳定性项;
+    } itemScoreBlock2:^CGFloat(AISolutionModel *item) {
+        return item.midEffectScore; //中段有效性项;
     } itemKeyBlock:^id(AISolutionModel *item) {
         return @(item.cansetFo.pointerId);
     }];

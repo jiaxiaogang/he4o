@@ -116,7 +116,7 @@
     NSLog(@"2. (不应期 & FRSTime & 后中后段阈值)过滤后:%ld",cansets.count);
 
     //6. 对候选集排序;
-    NSArray *sortCansets = [AIRank solutionFoRanking:cansets needBack:havBack fromSlow:false];
+    NSArray *sortCansets = [AIRank solutionFoRankingV2:cansets needBack:havBack fromSlow:false];
     NSLog(@"3. 有效率排序后:%ld",cansets.count);
     if (Log4Solution_Fast) for (AISolutionModel *m in ARR_SUB(sortCansets, 0, 5)) {
         NSLog(@"\t(前%.2f 中%.2f 后%.2f) %@",m.frontMatchValue,m.midEffectScore,m.backMatchValue,Pit2FStr(m.cansetFo));
@@ -241,7 +241,7 @@
     //NSLog(@"第8步 排序中段稳定性<=0的:%ld",cansetModels.count);//测时xx条
     
     //11. 根据候选集综合分排序 (参考26128-2-2 & 26161-4);
-    NSArray *sortModels = [AIRank solutionFoRanking:cansetModels needBack:isH fromSlow:true];
+    NSArray *sortModels = [AIRank solutionFoRankingV2:cansetModels needBack:isH fromSlow:true];
     
     //12. debugLog
     for (AISolutionModel *model in sortModels) {
