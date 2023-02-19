@@ -15,6 +15,8 @@
                  matchFrontIndexDic:(NSDictionary *)matchFrontIndexDic
                     frontMatchValue:(CGFloat)frontMatchValue
                    frontStrongValue:(CGFloat)frontStrongValue
+                     midEffectScore:(CGFloat)midEffectScore
+                     midStableScore:(CGFloat)midStableScore
                        backIndexDic:(NSDictionary*)backIndexDic
                      backMatchValue:(CGFloat)backMatchValue
                     backStrongValue:(CGFloat)backStrongValue
@@ -28,6 +30,8 @@
     model.matchFrontIndexDic = matchFrontIndexDic;
     model.frontMatchValue = frontMatchValue;
     model.frontStrongValue = frontStrongValue;
+    model.midEffectScore = midEffectScore;
+    model.midStableScore = midStableScore;
     model.backMatchValue = backMatchValue;
     model.backStrongValue = backStrongValue;
     model.cutIndex = cutIndex;

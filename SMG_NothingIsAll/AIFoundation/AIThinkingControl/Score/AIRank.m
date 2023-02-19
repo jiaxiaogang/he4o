@@ -58,7 +58,7 @@
         return obj.backMatchValue;
     }] : nil;
     NSArray *midSorts = [SMGUtils sortBig2Small:solutionModels compareBlock:^double(AISolutionModel *obj) {
-        return fromSlow ? obj.stableScore : obj.effectScore;
+        return fromSlow ? obj.midStableScore : obj.midEffectScore;
     }];
     NSArray *frontSorts = [SMGUtils sortBig2Small:solutionModels compareBlock:^double(AISolutionModel *obj) {
         return obj.frontMatchValue;
