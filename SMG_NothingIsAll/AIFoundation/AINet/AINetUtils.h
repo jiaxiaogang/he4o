@@ -204,7 +204,12 @@
 /**
  *  MARK:--------------------获取near数据--------------------
  */
++(CGFloat) getMatchByIndexDic:(NSDictionary*)indexDic absFo:(AIKVPointer*)absFo_p conFo:(AIKVPointer*)conFo_p callerIsAbs:(BOOL)callerIsAbs;
 +(NSArray*) getNearDataByIndexDic:(NSDictionary*)indexDic absFo:(AIKVPointer*)absFo_p conFo:(AIKVPointer*)conFo_p callerIsAbs:(BOOL)callerIsAbs;
+
+//MARK:===============================================================
+//MARK:                     < 引用强度RefStrong的取值和更新 >
+//MARK:===============================================================
 
 /**
  *  MARK:--------------------获取sumRefStrong已发生部分强度--------------------
@@ -220,6 +225,10 @@
  *  MARK:--------------------根据indexDic更新contentPort强度值 (参考2722f-todo32)--------------------
  */
 +(void) updateContentStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p;
+
+//MARK:===============================================================
+//MARK:                     < 抽具象强度ConStrong的取值和更新 >
+//MARK:===============================================================
 
 /**
  *  MARK:--------------------获取sumConStrong已发生部分强度--------------------

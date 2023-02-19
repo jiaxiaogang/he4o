@@ -554,11 +554,14 @@
  *  @param callerIsAbs : 调用者是否是抽象;
  *  @result notnull 必有两个元素,格式为: [nearCount, sumNear],二者都是0时,则为无效返回;
  */
++(CGFloat) getMatchByIndexDic:(NSDictionary*)indexDic absFo:(AIKVPointer*)absFo_p conFo:(AIKVPointer*)conFo_p callerIsAbs:(BOOL)callerIsAbs {
+    return NUMTOOK(ARR_INDEX([self getNearDataByIndexDic:indexDic absFo:absFo_p conFo:conFo_p callerIsAbs:callerIsAbs], 1)).floatValue;
+}
 +(NSArray*) getNearDataByIndexDic:(NSDictionary*)indexDic absFo:(AIKVPointer*)absFo_p conFo:(AIKVPointer*)conFo_p callerIsAbs:(BOOL)callerIsAbs{
     //1. 数据准备;
     int nearCount = 0;  //总相近数 (匹配值<1)
-    CGFloat sumNear = 1;//总相近度
     indexDic = DICTOOK(indexDic);
+    CGFloat sumNear = indexDic.count > 0 ? 1 : 0;//总相近度 (有数据时默认1,无数据时默认0);
     AIFoNodeBase *absFo = [SMGUtils searchNode:absFo_p];
     AIFoNodeBase *conFo = [SMGUtils searchNode:conFo_p];
     
@@ -590,6 +593,10 @@
     }
     return @[@(nearCount), @(sumNear)];
 }
+
+//MARK:===============================================================
+//MARK:                     < 引用强度RefStrong的取值和更新 >
+//MARK:===============================================================
 
 /**
  *  MARK:--------------------获取sumRefStrong已发生部分强度--------------------
@@ -641,6 +648,10 @@
     }
     [SMGUtils insertNode:matchFo];
 }
+
+//MARK:===============================================================
+//MARK:                     < 抽具象强度ConStrong的取值和更新 >
+//MARK:===============================================================
 
 /**
  *  MARK:--------------------获取sumConStrong已发生部分强度--------------------

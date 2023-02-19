@@ -16,13 +16,9 @@
  *      2022.05.xx: 比对算法 (参考26122);
  *      2022.11.30: 在前段时间改indexDic和matchValue复用后,此处TI调用alg相似度早已废弃,今天彻底删掉它的代码;
  *      2023.02.17: 将时序比对移到TCSolutionUtil中 (因为它现在其实就是个获取SolutionModel的算法,而不是比对了) (参考28084-1);
+ *      2023.02.19: 将概念比对删掉,它现在在AINetUtils.getNearData()中;
  */
 @interface AIAnalyst : NSObject
-
-/**
- *  MARK:--------------------对比canset和match (复用indexDic和相似度)--------------------
- */
-+(CGFloat) compareCansetAlg:(NSInteger)matchIndex cansetFo:(AIKVPointer*)cansetFo_p matchFo:(AIKVPointer*)matchFo_p;
 
 //MARK:===============================================================
 //MARK:                     < Value相近度 (由TI调用) >
