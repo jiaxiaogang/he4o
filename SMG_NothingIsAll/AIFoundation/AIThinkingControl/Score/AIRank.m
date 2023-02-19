@@ -77,15 +77,18 @@
 }
 +(NSArray*) solutionFoRankingV2:(NSArray*)solutionModels needBack:(BOOL)needBack fromSlow:(BOOL)fromSlow{
     //1. 后段排名;
-    //TODOTOMORROW20230218: 写中段竞争器;
+    if (needBack) {
+        solutionModels = [AIRank solutionBackRank:solutionModels];
+        NSInteger limit = MAX(10, solutionModels.count * 0.2f);
+        solutionModels = ARR_SUB(solutionModels, 0, limit);
+    }
     
     //2. 中段排名;
+    //TODOTOMORROW20230219: 写中段竞争器;
     
     
     //3. 前段排名;
     solutionModels = [AIRank solutionFrontRank:solutionModels];
-    NSInteger limit = MAX(10, solutionModels.count * 0.2f);
-    solutionModels = ARR_SUB(solutionModels, 0, limit);
     
     //4. 返回;
     return solutionModels;
@@ -99,6 +102,19 @@
         return item.frontMatchValue; //前段匹配度项;
     } itemScoreBlock2:^CGFloat(AISolutionModel *item) {
         return item.frontStrongValue; //前段强度项;
+    } itemKeyBlock:^id(AISolutionModel *item) {
+        return @(item.cansetFo.pointerId);
+    }];
+}
+
+/**
+ *  MARK:--------------------求解S后段排名 (参考28092-方案 & todo3)--------------------
+ */
++(NSArray*) solutionBackRank:(NSArray*)solutionModels {
+    return [self getCooledRankTwice:solutionModels itemScoreBlock1:^CGFloat(AISolutionModel *item) {
+        return item.backMatchValue; //匹配度项;
+    } itemScoreBlock2:^CGFloat(AISolutionModel *item) {
+        return item.backStrongValue; //强度项;
     } itemKeyBlock:^id(AISolutionModel *item) {
         return @(item.cansetFo.pointerId);
     }];

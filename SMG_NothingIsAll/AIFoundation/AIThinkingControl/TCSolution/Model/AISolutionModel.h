@@ -24,7 +24,9 @@
                  matchFrontIndexDic:(NSDictionary *)matchFrontIndexDic
                     frontMatchValue:(CGFloat)frontMatchValue
                    frontStrongValue:(CGFloat)frontStrongValue
+                       backIndexDic:(NSDictionary*)backIndexDic
                      backMatchValue:(CGFloat)backMatchValue
+                    backStrongValue:(CGFloat)backStrongValue
                            cutIndex:(NSInteger)cutIndex
                         targetIndex:(NSInteger)targetIndex
              basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel;
@@ -58,7 +60,9 @@
 //MARK:===============================================================
 //MARK:                     < 后段部分 >
 //MARK:===============================================================
-@property (assign, nonatomic) CGFloat backMatchValue;   //后段匹配度 (R时为1,H时为目标帧相近度);
+@property (assign, nonatomic) CGFloat backMatchValue;   //后段匹配度 (R时为1,H时为目标帧相近度) (参考28092-todo1);
+@property (assign, nonatomic) CGFloat backStrongValue;  //后段强度值 (R时为0,H时为目标帧conStrong强度) (参考28092-todo2);
+@property (strong, nonatomic) NSDictionary *backIndexDic;//后段canset与match的映射字典 (match是抽象);
 
 @property (assign, nonatomic) CGFloat stableScore;      //中段稳定性分 (用于慢思考);
 @property (assign, nonatomic) CGFloat effectScore;      //整体有效率分 (用于快思考);

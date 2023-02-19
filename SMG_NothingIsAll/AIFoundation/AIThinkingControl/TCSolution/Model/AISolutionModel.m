@@ -15,7 +15,9 @@
                  matchFrontIndexDic:(NSDictionary *)matchFrontIndexDic
                     frontMatchValue:(CGFloat)frontMatchValue
                    frontStrongValue:(CGFloat)frontStrongValue
+                       backIndexDic:(NSDictionary*)backIndexDic
                      backMatchValue:(CGFloat)backMatchValue
+                    backStrongValue:(CGFloat)backStrongValue
                            cutIndex:(NSInteger)cutIndex
                         targetIndex:(NSInteger)targetIndex
              basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel {
@@ -27,6 +29,7 @@
     model.frontMatchValue = frontMatchValue;
     model.frontStrongValue = frontStrongValue;
     model.backMatchValue = backMatchValue;
+    model.backStrongValue = backStrongValue;
     model.cutIndex = cutIndex;
     model.targetIndex = targetIndex;
     return model;

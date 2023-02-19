@@ -138,14 +138,19 @@
         }
     }
     
-    //7. 将首条最佳方案返回;
-    if (Log4Solution && result) NSLog(@"4. 快思考最佳结果:F%ld (前%.2f 中%.2f 后%.2f",result.cansetFo.pointerId,result.frontMatchValue,result.effectScore,result.backMatchValue);
-    
-    //8. 更新其前段帧的con和abs抽具象强度 (参考28086-todo2);
+    //7. 日志及更新强度值等;
     if (result) {
+        if (Log4Solution && result) NSLog(@"4. 快思考最佳结果:F%ld (前%.2f 中%.2f 后%.2f",result.cansetFo.pointerId,result.frontMatchValue,result.effectScore,result.backMatchValue);
+        
+        //8. 更新其前段帧的con和abs抽具象强度 (参考28086-todo2);
         AIKVPointer *matchFo_p = [TOUtils convertBaseFoFromBasePFoOrTargetFoModel:result.basePFoOrTargetFoModel];
         [AINetUtils updateConAndAbsStrongByIndexDic:result.matchFrontIndexDic matchFo:matchFo_p cansetFo:result.cansetFo];
+        
+        //16. 更新后段的的具象强度 (参考28092-todo4);
+        [AINetUtils updateConAndAbsStrongByIndexDic:result.backIndexDic matchFo:matchFo_p cansetFo:result.cansetFo];
     }
+    
+    //8. 将首条最佳方案返回;
     return result;
 }
 
@@ -213,7 +218,7 @@
     [AITest test13:cansetModels];
     except_ps = ARRTOOK(except_ps);
     AISolutionModel *result = nil;
-    BOOL havBack = ISOK(demand, HDemandModel.class); //H有后段,别的没有;
+    BOOL isH = ISOK(demand, HDemandModel.class); //H有后段,别的没有;
     NSLog(@"第5步 Anaylst匹配成功:%ld",cansetModels.count);//测时94条
     
     //8. 排除不应期;
@@ -242,7 +247,7 @@
     NSLog(@"第8步 排序中段稳定性<=0的:%ld",cansetModels.count);//测时xx条
     
     //11. 根据候选集综合分排序 (参考26128-2-2 & 26161-4);
-    NSArray *sortModels = [AIRank solutionFoRanking:cansetModels needBack:havBack fromSlow:true];
+    NSArray *sortModels = [AIRank solutionFoRanking:cansetModels needBack:isH fromSlow:true];
     
     //12. debugLog
     for (AISolutionModel *model in sortModels) {
@@ -281,6 +286,9 @@
         //15. 更新其前段帧的con和abs抽具象强度 (参考28086-todo2);
         AIKVPointer *matchFo_p = [TOUtils convertBaseFoFromBasePFoOrTargetFoModel:result.basePFoOrTargetFoModel];
         [AINetUtils updateConAndAbsStrongByIndexDic:result.matchFrontIndexDic matchFo:matchFo_p cansetFo:result.cansetFo];
+        
+        //16. 更新后段的的具象强度 (参考28092-todo4);
+        [AINetUtils updateConAndAbsStrongByIndexDic:result.backIndexDic matchFo:matchFo_p cansetFo:result.cansetFo];
     }
     return result;
 }
@@ -482,14 +490,17 @@
         CGFloat backMatchValue = [AINetUtils getMatchByIndexDic:backIndexDic absFo:matchFo_p conFo:cansetFo_p callerIsAbs:true];
         if (backMatchValue == 0) return nil; //过滤6: 后段不匹配时,直接返回nil;
         
+        //7. 后段强度竞争值;
+        NSInteger backStrongValue = [AINetUtils getSumConStrongByIndexDic:backIndexDic matchFo:matchFo_p cansetFo:cansetFo_p];
+        
         //8. canset目标下标
         NSInteger cansetTargetIndex = NUMTOOK([indexDic objectForKey:@(ptAleardayCount)]).integerValue;
         
         //9. 后段成功;
-        return [AISolutionModel newWithCansetFo:cansetFo_p protoFrontIndexDic:protoFrontIndexDic matchFrontIndexDic:matchFrontIndexDic frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue backMatchValue:backMatchValue cutIndex:cansetCutIndex targetIndex:cansetTargetIndex basePFoOrTargetFoModel:basePFoOrTargetFoModel];
+        return [AISolutionModel newWithCansetFo:cansetFo_p protoFrontIndexDic:protoFrontIndexDic matchFrontIndexDic:matchFrontIndexDic frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue backIndexDic:backIndexDic backMatchValue:backMatchValue backStrongValue:backStrongValue cutIndex:cansetCutIndex targetIndex:cansetTargetIndex basePFoOrTargetFoModel:basePFoOrTargetFoModel];
     }else{
         //11. 后段: R不判断后段;
-        return [AISolutionModel newWithCansetFo:cansetFo_p protoFrontIndexDic:protoFrontIndexDic matchFrontIndexDic:matchFrontIndexDic frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue backMatchValue:1 cutIndex:cansetCutIndex targetIndex:cansetFo.count basePFoOrTargetFoModel:basePFoOrTargetFoModel];
+        return [AISolutionModel newWithCansetFo:cansetFo_p protoFrontIndexDic:protoFrontIndexDic matchFrontIndexDic:matchFrontIndexDic frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue backIndexDic:nil backMatchValue:1 backStrongValue:0 cutIndex:cansetCutIndex targetIndex:cansetFo.count basePFoOrTargetFoModel:basePFoOrTargetFoModel];
     }
 }
 
