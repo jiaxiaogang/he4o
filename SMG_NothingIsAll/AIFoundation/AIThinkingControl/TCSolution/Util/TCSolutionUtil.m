@@ -296,7 +296,7 @@
  */
 +(NSArray*) getCansetFos_SlowV2:(AIKVPointer*)pFoOrTargetFoOfMatch_p targetIndex:(NSInteger)targetIndex{
     AIFoNodeBase *matchFo = [SMGUtils searchNode:pFoOrTargetFoOfMatch_p];
-    return ARR_SUB([matchFo getConCansets:targetIndex], 0, NSUIntegerMax);
+    return [matchFo getConCansets:targetIndex];
 }
 
 +(NSInteger) getRAleardayCount:(ReasonDemandModel*)rDemand pFo:(AIMatchFoModel*)pFo{

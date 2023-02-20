@@ -177,8 +177,7 @@
     for (NSInteger i = targetIndex; i <= self.count; i++) {
         [result addObjectsFromArray:[self.conCansetsDic objectForKey:@(i)]];
     }
-    result = [SMGUtils removeRepeat:result];
-    return result;
+    return [SMGUtils removeRepeat:result];
 }
 
 /**
