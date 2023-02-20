@@ -163,6 +163,7 @@
     //2. 取出cansetFos候选集;
     //TODOTEST20221123: 测下此处取actionIndex是否正确...
     NSArray *cansetFos = [self getCansetFos_SlowV2:targetFoModel.content_p targetIndex:targetFoModel.actionIndex];
+    NSLog(@"第1步 H候选集数:%ld fromTargetFo:%@ (帧%ld)",cansetFos.count,Pit2FStr(targetFoModel.content_p),targetFoModel.actionIndex);
     
     //3. 过滤器 & 转cansetModels候选集 (参考26128-第1步 & 26161-1&2&3);
     NSInteger hAleardayCount = [self getHAleardayCount:targetFoModel];
@@ -184,6 +185,7 @@
         //2. 取出cansetFos候选集;
         AIFoNodeBase *matchFo = [SMGUtils searchNode:pFo.matchFo];
         NSArray *cansetFos = [self getCansetFos_SlowV2:pFo.matchFo targetIndex:matchFo.count];
+        NSLog(@"第1步 R候选集数:%ld fromPFo:%@ (帧%ld)",cansetFos.count,Fo2FStr(matchFo),matchFo.count);
         
         //3. 过滤器 & 转cansetModels候选集 (参考26128-第1步 & 26161-1&2&3);
         NSInteger rAleardayCount = [self getRAleardayCount:demand pFo:pFo];
@@ -290,11 +292,11 @@
  *      2022.07.15: 每个pFo下支持limit (参考27048-TODO6);
  *      2022.11.19: v2更新,支持从conCansets中取数据 (参考20202-1)
  *      2022.11.19: v2的limit由5改为500 (因为conCansets的复用数据更多,性能ok) (参考27202-2);
+ *      2023.02.20: 取消limit,因为后面的过滤器和竞争机制完善了,完全不需要强行切掉一些 (参考n28p08 & n28p09);
  */
 +(NSArray*) getCansetFos_SlowV2:(AIKVPointer*)pFoOrTargetFoOfMatch_p targetIndex:(NSInteger)targetIndex{
-    int cansetLimit = 500;
     AIFoNodeBase *matchFo = [SMGUtils searchNode:pFoOrTargetFoOfMatch_p];
-    return ARR_SUB([matchFo getConCansets:targetIndex], 0, cansetLimit);
+    return ARR_SUB([matchFo getConCansets:targetIndex], 0, NSUIntegerMax);
 }
 
 +(NSInteger) getRAleardayCount:(ReasonDemandModel*)rDemand pFo:(AIMatchFoModel*)pFo{

@@ -200,13 +200,13 @@
         if (!ARRISOK(order)) continue;
         
         //e. 生成新protoFo时序 (参考27204-6);
-        NSLog(@"RCanset再类比 (状态:%@ fromPFo:F%ld) \n\t当前Canset:%@",TOStatus2Str(solutionModel.status),basePFoOrTargetFo_p.pointerId,Pit2FStr(solutionModel.content_p));
         AIFoNodeBase *protoFo = [theNet createConFo:order];
         
         //f. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
         AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:protoFo assFo:solutionFo type:ATDefault];
         [pFo updateConCanset:absCansetFo.pointer targetIndex:pFo.count];
         [AITest test101:absCansetFo proto:protoFo conCanset:solutionFo];
+        NSLog(@"RCanset再类比:%@ (curS:F%ld 状态:%@ fromPFo:F%ld 帧:%ld)",Fo2FStr(absCansetFo),solutionFo.pointer.pointerId,TOStatus2Str(solutionModel.status),basePFoOrTargetFo_p.pointerId,pFo.count);
         
         //g. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);
         NSDictionary *newIndexDic = [solutionModel convertOldIndexDic2NewIndexDic:pFo.pointer];
@@ -228,6 +228,7 @@
     
     //c. 将protoFo挂载到matchFo下的conCansets下 (参考27201-2);
     [matchFo updateConCanset:protoFo.pointer targetIndex:matchFo.count];
+    NSLog(@"R新Canset:%@ (状态:%@ fromPFo:F%ld 帧:%ld)",Fo2FStr(protoFo),TIStatus2Str(status),self.matchFo.pointerId,matchFo.count);
     
     //d. 将item.indexDic挂载到matchFo的conIndexDDic下 (参考27201-3);
     [protoFo updateIndexDic:matchFo indexDic:self.indexDic2];
