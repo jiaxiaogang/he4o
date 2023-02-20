@@ -689,7 +689,7 @@
         NSInteger absIndex = key.integerValue;
         NSInteger conIndex = NUMTOOK([indexDic objectForKey:key]).integerValue;
         AIAlgNodeBase *absAlg = [SMGUtils searchNode:ARR_INDEX(matchFo.content_ps, absIndex)];
-        AIKVPointer *conAlg = ARR_INDEX(cansetFo.content_ps, conIndex);
+        AIAlgNodeBase *conAlg = [SMGUtils searchNode:ARR_INDEX(cansetFo.content_ps, conIndex)];
         [AINetUtils relateAlgAbs:absAlg conNodes:@[conAlg] isNew:false];
     }
 }

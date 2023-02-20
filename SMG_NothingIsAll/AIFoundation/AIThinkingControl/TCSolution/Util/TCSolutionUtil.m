@@ -245,22 +245,12 @@
     
     //12. debugLog
     for (AISolutionModel *model in sortModels) {
-        NSString *effDesc = @"";
-        AIKVPointer *pFo_p = [TOUtils convertBaseFoFromBasePFoOrTargetFoModel:model.basePFoOrTargetFoModel];
-        AIFoNodeBase *pFo = [SMGUtils searchNode:pFo_p];
-        if (ISOK(demand, ReasonDemandModel.class)) {
-            NSArray *effCansets = [pFo getValidEffs:pFo.count];
-            AIEffectStrong *effStrong = ARR_INDEX([SMGUtils filterArr:effCansets checkValid:^BOOL(AIEffectStrong *item) {
-                return item.solutionFo.pointerId == model.cansetFo.pointerId;
-            } limit:1], 0);
-            if (effStrong) {
-                effDesc = effStrong.description;
-            }
-            effDesc = CLEANSTR(pFo.effectDic);
-        }
-        
+        AIKVPointer *pFoOrTargetFo_p = [TOUtils convertBaseFoFromBasePFoOrTargetFoModel:model.basePFoOrTargetFoModel];
+        AIFoNodeBase *pFoOrTargetFo = [SMGUtils searchNode:pFoOrTargetFo_p];
+        AIEffectStrong *effStrong = [TOUtils getEffectStrong:pFoOrTargetFo effectIndex:pFoOrTargetFo.count solutionFo:model.cansetFo];
+        NSString *effDesc = effStrong ? effStrong.description : @"";
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:model.cansetFo];
-        if (Log4Solution_Slow) NSLog(@"> %@\n\t综合排名:%ld (前%.2f 中%.2f 后%.2f) fromPFo:F%ld eff:%@ sp:%@",Pit2FStr(model.cansetFo),[sortModels indexOfObject:model],model.frontMatchValue,model.midStableScore,model.backMatchValue,pFo_p.pointerId,effDesc,CLEANSTR(cansetFo.spDic));
+        if (Log4Solution_Slow) NSLog(@"%ld: %@ (前%.2f 中%.2f 后%.2f) fromPFo:F%ld eff:%@ sp:%@",[sortModels indexOfObject:model],Pit2FStr(model.cansetFo),model.frontMatchValue,model.midStableScore,model.backMatchValue,pFoOrTargetFo_p.pointerId,effDesc,CLEANSTR(cansetFo.spDic));
     }
     
     //13. 逐条S反思;

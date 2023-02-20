@@ -55,9 +55,9 @@
  */
 +(NSArray*) solutionFoRankingV2:(NSArray*)solutionModels needBack:(BOOL)needBack fromSlow:(BOOL)fromSlow{
     //0. 数据准备;
-    CGFloat resultNum = 5;
+    CGFloat resultNum = 6;
     NSInteger rankNum = needBack ? 3 : 2;//排名几次;
-    CGFloat singleRate = MIN(1, powf(resultNum / solutionModels.count, 1 / rankNum));//每次保留条数比例;
+    CGFloat singleRate = MIN(1, powf(resultNum / solutionModels.count, 1.0f / rankNum));//每次保留条数比例;
     
     //1. 后段排名;
     if (needBack) {
