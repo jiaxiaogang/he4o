@@ -208,7 +208,7 @@
 +(NSArray*) getNearDataByIndexDic:(NSDictionary*)indexDic absFo:(AIKVPointer*)absFo_p conFo:(AIKVPointer*)conFo_p callerIsAbs:(BOOL)callerIsAbs;
 
 //MARK:===============================================================
-//MARK:                     < 引用强度RefStrong的取值和更新 >
+//MARK:                     < Fo引用强度RefStrong的取值和更新 >
 //MARK:===============================================================
 
 /**
@@ -227,7 +227,7 @@
 +(void) updateContentStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p;
 
 //MARK:===============================================================
-//MARK:                     < 抽具象强度ConStrong的取值和更新 >
+//MARK:                     < Alg抽具象强度ConStrong的取值和更新 >
 //MARK:===============================================================
 
 /**
@@ -239,5 +239,14 @@
  *  MARK:--------------------根据indexDic更新conPort和absPort强度值 (参考28086)--------------------
  */
 +(void) updateConAndAbsStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p cansetFo:(AIKVPointer*)cansetFo_p;
+
+//MARK:===============================================================
+//MARK:                     < Alg引用强度RefStrong更新 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------根据indexDic更新refPort强度值 (参考28103-3)--------------------
+ */
++(void) updateAlgRefStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p;
 
 @end

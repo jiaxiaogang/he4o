@@ -595,7 +595,7 @@
 }
 
 //MARK:===============================================================
-//MARK:                     < 引用强度RefStrong的取值和更新 >
+//MARK:                     < Fo引用强度RefStrong的取值和更新 >
 //MARK:===============================================================
 
 /**
@@ -620,14 +620,9 @@
  *  MARK:--------------------根据indexDic更新refPort强度值 (参考2722f-todo33)--------------------
  */
 +(void) updateRefStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p {
-    //1. 数据准备;
+    //1. 根据indexDic取出已发生部分content_ps;
     AIFoNodeBase *matchFo = [SMGUtils searchNode:matchFo_p];
-    
-    //2. 根据indexDic取出已发生部分content_ps;
-    NSArray *frontContent_ps = [SMGUtils convertArr:indexDic.allKeys convertBlock:^id(NSNumber *key) {
-        NSInteger absIndex = key.integerValue;
-        return ARR_INDEX(matchFo.content_ps, absIndex);
-    }];
+    NSArray *frontContent_ps = [self filterContentAlgPsByIndexDic:indexDic matchFo:matchFo];
     
     //3. 将已发生部分增强refStrong;
     [AINetUtils insertRefPorts_AllFoNode:matchFo_p order_ps:frontContent_ps ps:matchFo.content_ps];
@@ -650,7 +645,7 @@
 }
 
 //MARK:===============================================================
-//MARK:                     < 抽具象强度ConStrong的取值和更新 >
+//MARK:                     < Alg抽具象强度ConStrong的取值和更新 >
 //MARK:===============================================================
 
 /**
@@ -692,6 +687,41 @@
         AIAlgNodeBase *conAlg = [SMGUtils searchNode:ARR_INDEX(cansetFo.content_ps, conIndex)];
         [AINetUtils relateAlgAbs:absAlg conNodes:@[conAlg] isNew:false];
     }
+}
+
+//MARK:===============================================================
+//MARK:                     < Alg引用强度RefStrong更新 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------根据indexDic更新refPort强度值 (参考28103-3)--------------------
+ */
++(void) updateAlgRefStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p {
+    //1. 根据indexDic取出已发生部分content_ps;
+    AIFoNodeBase *matchFo = [SMGUtils searchNode:matchFo_p];
+    NSArray *frontContent_ps = [self filterContentAlgPsByIndexDic:indexDic matchFo:matchFo];
+    
+    //2. 将已发生部分Alg增强refStrong;
+    for (AIKVPointer *item in frontContent_ps) {
+        AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item];
+        [AINetUtils insertRefPorts_AllAlgNode:item content_ps:itemAlg.content_ps difStrong:1];
+    }
+}
+
+//MARK:===============================================================
+//MARK:                     < PrivateMethod >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------根据indexDic筛选fo的content--------------------
+ */
++(NSArray*) filterContentAlgPsByIndexDic:(NSDictionary*)indexDic matchFo:(AIFoNodeBase*)matchFo {
+    //2. 根据indexDic取出已发生部分content_ps;
+    NSArray *filterContent_ps = [SMGUtils convertArr:indexDic.allKeys convertBlock:^id(NSNumber *key) {
+        NSInteger absIndex = key.integerValue;
+        return ARR_INDEX(matchFo.content_ps, absIndex);
+    }];
+    return filterContent_ps;
 }
 
 @end

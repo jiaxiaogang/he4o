@@ -275,6 +275,9 @@
         
         //16. 更新后段的的具象强度 (参考28092-todo4);
         [AINetUtils updateConAndAbsStrongByIndexDic:result.backIndexDic matchFo:matchFo_p cansetFo:result.cansetFo];
+        
+        //17. 更新其前段alg引用value的强度;
+        [AINetUtils updateAlgRefStrongByIndexDic:result.protoFrontIndexDic matchFo:result.cansetFo];
     }
     return result;
 }
