@@ -290,7 +290,7 @@
                 
                 //c. 最终反馈了feedbackAlg时,重组 & 反思;
                 [theTV updateFrame];
-                if (isEndFrame) [TCRegroup feedbackRegroup:targetFo];
+                if (isEndFrame) [TCRegroup feedbackRegroup:targetFo feedbackFrameOfMatchAlgs:model.matchAlgs];
                 DebugE();
                 [TCScore score];
             }
@@ -325,7 +325,7 @@
                 //c. 重组
                 [theTV updateFrame];
                 DebugE();
-                [TCRegroup feedbackRegroup:solutionFo];
+                [TCRegroup feedbackRegroup:solutionFo feedbackFrameOfMatchAlgs:model.matchAlgs];
                 [TCScore score];
             }
         }

@@ -37,7 +37,7 @@
     
     AddTCDebug(@"R START");
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
-    [TIUtils partMatching_FoV1Dot5:protoFo except_ps:except_ps decoratorInModel:model fromRegroup:false];
+    [TIUtils partMatching_FoV1Dot5:protoFo except_ps:except_ps decoratorInModel:model fromRegroup:false matchAlgs:model.matchAlgs];
     AddTCDebug(@"R FINISH");
     
     //5. 学习;
@@ -81,6 +81,7 @@
  *      2020.07.17 : 换上新版partMatching_FoV2时序识别算法;
  *      2021.04.13 : 将装饰AIShortMatchModel改为result返回 & 参数由order直接改为fo传入;
  *      2021.07.07 : 反思时,cutIndex全部返-1 (参考23156);
+ *      2023.01.21 : regroupFo调用时序识别,传入反馈帧概念识别的结果matchAlgs (参考28103-2.2);
  *  @todo :
  *      2020.04.03: 支持识别到多个时序 T;
  *      2020.04.03: 以识别到的多个时序,得到多个价值预测 (支持更多元的评价);
@@ -88,7 +89,7 @@
  *      1. 输出反思已废弃;
  *      2. 输入反思功能整合回正向识别中 (即由重组,来调用识别实现);
  */
-+(void) feedbackRecognition:(AIFoNodeBase*)regroupFo foModel:(TOFoModel*)foModel{
++(void) feedbackRecognition:(AIFoNodeBase*)regroupFo foModel:(TOFoModel*)foModel feedbackFrameOfMatchAlgs:(NSArray*)feedbackFrameOfMatchAlgs{
     //1. 数据检查
     AIShortMatchModel *result = [[AIShortMatchModel alloc] init];
     result.regroupFo = regroupFo;
@@ -98,7 +99,7 @@
     
     AddTCDebug(@"FB0");
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
-    [TIUtils partMatching_FoV1Dot5:regroupFo except_ps:@[regroupFo.pointer] decoratorInModel:result fromRegroup:true];
+    [TIUtils partMatching_FoV1Dot5:regroupFo except_ps:@[regroupFo.pointer] decoratorInModel:result fromRegroup:true matchAlgs:feedbackFrameOfMatchAlgs];
     //NSLog(@"反思时序: Finish >> %@",Fo2FStr(result.matchFo));
     AddTCDebug(@"FB1");
     

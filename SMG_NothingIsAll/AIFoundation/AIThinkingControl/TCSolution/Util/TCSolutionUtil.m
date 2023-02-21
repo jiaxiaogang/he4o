@@ -372,20 +372,20 @@
                 findItem = true;
                 protoMin = protoI + 1;
                 [indexDic setObject:@(protoI) forKey:@(absI)];
-                if (Log4SceneIsOk) NSLog(@"\t第%ld帧,条件满足通过 proto:%@ canset:%@",absI,Pit2FStr(protoAlg),Pit2FStr(absAlg));
+                if (Log4SceneIsOk) NSLog(@"\t第%ld帧,条件满足通过 canset:%@ (fromProto:F%ldA%ld)",absI,Pit2FStr(absAlg),protoFo.pointer.pointerId,protoAlg.pointerId);
                 break;
             }
         }
         
         //5. 有一条失败,则全失败;
         if (!findItem) {
-            if (Log4SceneIsOk) NSLog(@"\t第%ld帧,条件满足未通过 canset:%@",absI,Pit2FStr(absAlg));
+            if (Log4SceneIsOk) NSLog(@"\t第%ld帧,条件满足未通过 canset:%@ (fromProtoFo:F%ld)",absI,Pit2FStr(absAlg),protoFo.pointer.pointerId);
             return nil;
         }
     }
     
     //6. 全找到,则成功;
-    if (Log4SceneIsOk) NSLog(@"条件满足通过:%@ (absCutIndex:%ld protoCount:%ld)",Fo2FStr(absFo),absCutIndex,protoFo.count);
+    if (Log4SceneIsOk) NSLog(@"条件满足通过:%@ (absCutIndex:%ld fromProtoFo:%ld)",Fo2FStr(absFo),absCutIndex,protoFo.pointer.pointerId);
     return indexDic;
 }
 

@@ -51,8 +51,9 @@
  *  @desc
  *      说明: 在foModel下找到subAlgModel,其中feedbackAlg有值的,替换到foModel中,并重组成新的时序;
  *      例如: [我要吃水果],结果反馈了榴莲,重组成[我要吃榴莲];
+ *  @param feedbackFrameOfMatchAlgs : 触发调用此反馈重组方法的protoAlg的识别matchAlgs结果 (参考28103-2.2);
  */
-+(void) feedbackRegroup:(TOFoModel*)foModel{
++(void) feedbackRegroup:(TOFoModel*)foModel feedbackFrameOfMatchAlgs:(NSArray*)feedbackFrameOfMatchAlgs {
     //1. 数据准备;
     [theTC updateOperCount:kFILENAME];
     Debug();
@@ -65,7 +66,7 @@
     
     //7. 识别时序 (预测到鸡蛋变脏,或者cpu损坏) (理性预测影响评价即理性评价);
     DebugE();
-    [TCRecognition feedbackRecognition:regroupFo foModel:foModel];
+    [TCRecognition feedbackRecognition:regroupFo foModel:foModel feedbackFrameOfMatchAlgs:feedbackFrameOfMatchAlgs];
 }
 
 @end

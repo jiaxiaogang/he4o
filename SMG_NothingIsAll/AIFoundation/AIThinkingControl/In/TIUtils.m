@@ -143,6 +143,7 @@
  *      2023.01.18 - 相似度用相乘 (参考28035-todo1);
  *      2023.01.24 - BUG修复: 修复相似度相乘后,相似度阈值相应调低 (参考28041-BUG1);
  *      2023.02.01 - 不限制相似度,让其自然竞争越来越准确 (参考28042-思路2-4);
+ *      2023.02.21 - 识别结果保留20% (参考28102-方案1);
  */
 +(void) partMatching_Alg:(AIAlgNodeBase*)protoAlg except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel{
     //1. 数据准备;
@@ -216,7 +217,8 @@
     }];
     
     //13. 仅保留最相近的20条 (参考25083-3);
-    NSArray *matchModels = ARR_SUB(validModels, 0, cAlgNarrowLimit(protoAlg.count));
+    int limit = MAX(10, validModels.count * 0.2f);
+    NSArray *matchModels = ARR_SUB(validModels, 0, limit);
     
     //16. 未将全含返回,则返回最相似 (2020.10.22: 全含返回,也要返回seemAlg) (2022.01.15: 支持相近匹配后,全是全含没局部了);
     NSLog(@"\n识别结果 >> 概念识别结果数:%ld",matchModels.count);
@@ -244,6 +246,7 @@
  *                              1. 正常识别时: cutIndex=lastAssIndex;
  *                              2. 源自regroup时: cutIndex需从父任务中判断 (默认为-1);
  *  _param maskFo           : 识别时:protoFo中的概念元素为parent层, 而在反思时,其元素为match层;
+ *  @param matchAlgs        : 触发此识别时的那一帧的概念识别结果 (参考28103-2);
  *  TODO_TEST_HERE:调试Pointer能否indexOfObject
  *  TODO_TEST_HERE:调试下item_p在indexOfObject中,有多个时,怎么办;
  *  TODO_TEST_HERE:测试下cPartMatchingThreshold配置值是否合理;
@@ -311,15 +314,16 @@
  *      2022.11.15: 对识别结果,直接构建抽具象关联 (参考27177-todo6);
  *      2022.12.28: 求出匹配部分的综合引用强度值,并参与到综合竞争中 (参考2722f-todo13&todo14);
  *      2022.12.29: 时序识别后,增强indexDic已发生部分的refStrong和contentStrong (参考2722f-todo32&todo33);
+ *      2023.02.21: 废弃收集proto的lastAlg当索引,因为它只被protoFo一条时序引用,所以在时序识别中没什么用 (参考28103-4另);
+ *      2023.02.21: 传入触发帧概念识别结果matchAlgs的前10条做为时序识别的索引 (参考28103-2);
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
-+(void) partMatching_FoV1Dot5:(AIFoNodeBase*)protoOrRegroupFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel fromRegroup:(BOOL)fromRegroup{
-    //2. 取assIndexes (反思时: 取本身+抽象一层; 识别时: 取proto+matchs+parts);
++(void) partMatching_FoV1Dot5:(AIFoNodeBase*)protoOrRegroupFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel fromRegroup:(BOOL)fromRegroup matchAlgs:(NSArray*)matchAlgs {
     AddTCDebug(@"时序识别0");
-    AIAlgNodeBase *lastAlg = [SMGUtils searchNode:ARR_INDEX_REVERSE(protoOrRegroupFo.content_ps, 0)];
-    NSMutableArray *assIndexes = [[NSMutableArray alloc] init];
-    [assIndexes addObject:lastAlg.pointer];
-    [assIndexes addObjectsFromArray:Ports2Pits([AINetUtils absPorts_All_Normal:lastAlg])];
+    //1. 取assIndexes (取前10条) (参考28103-2);
+    NSArray *assIndexes = [SMGUtils convertArr:ARR_SUB(matchAlgs, 0, 10) convertBlock:^id(AIMatchAlgModel *obj) {
+        return obj.matchAlg;
+    }];
     AddTCDebug(@"时序识别1");
     
     //3. 递归进行assFos
