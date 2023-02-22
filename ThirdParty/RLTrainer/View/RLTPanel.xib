@@ -225,11 +225,11 @@
                             <rect key="frame" x="116" y="0.0" width="54" height="30"/>
                             <color key="backgroundColor" red="0.54668511279999998" green="0.052707248259999999" blue="0.51405164930000002" alpha="1" colorSpace="calibratedRGB"/>
                             <fontDescription key="fontDescription" type="system" pointSize="11"/>
-                            <state key="normal" title="识别训练">
+                            <state key="normal" title="载入试错">
                                 <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </state>
                             <connections>
-                                <action selector="loadRecognitionBtnClick:" destination="-1" eventType="touchUpInside" id="4vs-Bi-Rua"/>
+                                <action selector="loadTryOutOfWay:" destination="-1" eventType="touchUpInside" id="mbK-uR-gdj"/>
                             </connections>
                         </button>
                     </subviews>

@@ -384,7 +384,14 @@
         }
         [theRT queueN:@[Queue(kMainPageSEL),Queue(kClearTCSEL)] count:1];
     }
-    
+}
+
+/**
+ *  MARK:--------------------试错训练--------------------
+ *  @desc 与学撞训练步骤一致,此处其实就是各种撞它,让它自己尝试躲避 (类似学步婴儿尝试走路);
+ */
+- (IBAction)loadTryOutOfWay:(id)sender {
+    [self loadHitBtnOnClick:nil];
 }
 
 //MARK:===============================================================
