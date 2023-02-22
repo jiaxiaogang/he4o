@@ -114,7 +114,11 @@
         id arg0 = queue.arg0;
         [invc setArgument:&arg0 atIndex:2];
     }
-    [invc invoke];
+    @try {
+        [invc invoke];
+    }@catch (NSException *exception) {
+        NSLog(@"%@", exception);
+    }
 }
 
 //暂停时,把最后一次训练用时收集到已用时:useTimed中;
