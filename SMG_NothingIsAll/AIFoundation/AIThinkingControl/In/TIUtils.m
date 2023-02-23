@@ -447,6 +447,52 @@
     }
 }
 
++(void) partMatching_FoV2:(AIFoNodeBase*)protoOrRegroupFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel fromRegroup:(BOOL)fromRegroup matchAlgs:(NSArray*)matchAlgs {
+    AddTCDebug(@"时序识别0");
+    //1. 数据准备;
+    except_ps = ARRTOOK(except_ps);
+    NSMutableArray *protoModels = [[NSMutableArray alloc] init];    //List<AIMatchAlgModel>;
+        
+    //2. 广入: 对每个元素,分别取索引序列 (参考25083-1);
+    for (AIKVPointer *proto_p in protoOrRegroupFo.content_ps) {
+        AIAlgNodeBase *protoAlg = [SMGUtils searchNode:proto_p];
+        
+        //4. 每个abs_p分别索引;
+        for (AIPort *absPort in protoAlg.absPorts) {
+            //6. 第2_取abs_p的refPorts (参考28107-todo2);
+            NSArray *refPorts = [AINetUtils refPorts_All:absPort.target_p];
+            
+            //7. 每个refPort做两件事:
+            for (AIPort *refPort in refPorts) {
+                
+                //8. 不应期 -> 不可激活;
+                if ([SMGUtils containsSub_p:refPort.target_p parent_ps:except_ps]) continue;
+                
+                //7. 全含判断;
+                AIFoNodeBase *refFo = [SMGUtils searchNode:refPort.target_p];
+                NSDictionary *indexDic = [self TIR_Fo_CheckFoValidMatchV2:refFo protoOrRegroupFo:protoOrRegroupFo];
+                
+                
+                //TODOTOMORROW20230223: 继续写时序识别v2算法;
+                if (!DICISOK(indexDic)) {
+                    //假如未全含,则直接追加到不应期;
+                }else {
+                    //假如全含,则直接生成AIMatchFoModel,并收集起来 (也加入到不应期);
+                }
+                
+                
+            }
+        }
+    }
+        
+    //11. 识别竞争机制;
+    NSArray *sortModels = [AIRank recognitonFoRank:protoModels];
+    
+    //13. 仅保留20%;
+    NSArray *matchModels = ARR_SUB(sortModels, 0, MAX(10, sortModels.count * 0.2f));
+    inModel.matchRFos = matchModels;
+}
+
 /**
  *  MARK:--------------------时序识别之: protoFo&assFo匹配判断--------------------
  *  要求: protoFo必须全含assFo对应的last匹配下标之前的所有元素,即:

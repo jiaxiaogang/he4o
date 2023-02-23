@@ -118,7 +118,7 @@
     //----------------推进至下帧----------------
     //1. 推进到下一帧_更新: cutIndex & sumNear(匹配度分子) & nearCount(匹配度分母);
     self.cutIndex ++;
-    self.sumNear += self.feedbackNear;
+    self.sumNear *= self.feedbackNear;
     self.nearCount ++;
     
     //2. 推进到下一步_重置: status & 失效状态 & 反馈相近度 & scoreCache(触发重新计算mv评分);
