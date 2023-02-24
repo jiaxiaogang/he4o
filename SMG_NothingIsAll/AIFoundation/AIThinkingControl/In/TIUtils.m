@@ -384,7 +384,7 @@
     AddTCDebug(@"时序识别30");
     
     //11. 仅保留前20%条;
-    [inModel.matchRFos addObjectsFromArray:ARR_SUB(sorts, 0, sorts.count * 0.2f)];
+    [inModel.matchRFos addObjectsFromArray:ARR_SUB(sorts, 0, MAX(10, sorts.count * 0.2f))];
     AddTCDebug(@"时序识别31");
     
     //11. 调试日志;
