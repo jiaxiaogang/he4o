@@ -316,115 +316,78 @@
  *      2022.12.29: 时序识别后,增强indexDic已发生部分的refStrong和contentStrong (参考2722f-todo32&todo33);
  *      2023.02.21: 废弃收集proto的lastAlg当索引,因为它只被protoFo一条时序引用,所以在时序识别中没什么用 (参考28103-4另);
  *      2023.02.21: 传入触发帧概念识别结果matchAlgs的前10条做为时序识别的索引 (参考28103-2);
+ *      2023.02.24: 提升时序识别成功率: 把索引改成所有proto帧的抽象alg (参考28107-todo1);
+ *      2023.02.24: 提升时序识别成功率: 废弃matchPFos (其实早废弃了,借着这次改,彻底此处相关代码删掉);
+ *      2023.02.24: 提升时序识别成功率: 时序结果保留20% (参考28107-todo4);
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
-+(void) partMatching_FoV1Dot5:(AIFoNodeBase*)protoOrRegroupFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel fromRegroup:(BOOL)fromRegroup matchAlgs:(NSArray*)matchAlgs {
++(void) recognitionFo:(AIFoNodeBase*)protoOrRegroupFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel fromRegroup:(BOOL)fromRegroup matchAlgs:(NSArray*)matchAlgs {
     AddTCDebug(@"时序识别0");
-    //1. 取assIndexes (取前10条) (参考28103-2);
-    NSArray *assIndexes = [SMGUtils convertArr:ARR_SUB(matchAlgs, 0, 10) convertBlock:^id(AIMatchAlgModel *obj) {
-        return obj.matchAlg;
-    }];
-    AddTCDebug(@"时序识别1");
+    //1. 数据准备;
+    except_ps = ARRTOOK(except_ps);
+    NSMutableArray *protoModels = [[NSMutableArray alloc] init];
     
-    //3. 递归进行assFos
-    if (Log4MFo) NSLog(@"------------ TIR_Fo ------------索引数:%lu",(unsigned long)assIndexes.count);
-    for (AIKVPointer *assIndex_p in assIndexes) {
-        //4. indexAlg.refPorts; (取识别到过的抽象节点(如苹果));
-        //TODOTOMORROW20220821: 经测此处卡了286ms (识别算法共用了626ms);
-        AIAlgNodeBase *indexAlg = [SMGUtils searchNode:assIndex_p];
-        NSArray *assFoPorts = [AINetUtils refPorts_All4Alg_Normal:indexAlg];//b. 仅Normal
-        AddTCDebug(@"时序识别3");
+    //2. 广入: 对每个元素,分别取索引序列 (参考25083-1);
+    for (AIKVPointer *proto_p in protoOrRegroupFo.content_ps) {
+        AIAlgNodeBase *protoAlg = [SMGUtils searchNode:proto_p];
         
-        //6. 无mv指向的仅保留limit(0)条 (参考26022-3);
-        __block int rCount = 0;
-        assFoPorts = [SMGUtils filterArr:assFoPorts checkValid:^BOOL(AIPort *item) {
-            if (!item.targetHavMv && ++rCount > cRFoNarrowLimit) {
-                return false;
+        //4. 每个abs_p分别索引;
+        for (AIPort *absPort in protoAlg.absPorts) {
+            //6. 第2_取abs_p的refPorts (参考28107-todo2);
+            AIAlgNodeBase *absAlg = [SMGUtils searchNode:absPort.target_p];
+            NSArray *refPorts = [AINetUtils refPorts_All4Alg_Normal:absAlg];
+            
+            //6. 仅保留mv指向的 (参考26022-3);
+            refPorts = [SMGUtils filterArr:refPorts checkValid:^BOOL(AIPort *item) {
+                return item.targetHavMv;
+            }];
+            
+            //7. 每个refPort做两件事:
+            for (AIPort *refPort in refPorts) {
+                
+                //8. 不应期 -> 不可激活 & 收集到不应期同一fo仅处理一次;
+                if ([SMGUtils containsSub_p:refPort.target_p parent_ps:except_ps]) continue;
+                except_ps = [SMGUtils collectArrA:except_ps arrB:@[refPort.target_p]];
+                
+                //7. 全含判断;
+                AIFoNodeBase *refFo = [SMGUtils searchNode:refPort.target_p];
+                NSDictionary *indexDic = [self TIR_Fo_CheckFoValidMatchV2:refFo protoOrRegroupFo:protoOrRegroupFo];
+                if (!DICISOK(indexDic)) continue;
+                
+                //7. cutIndex在fromRegroup时为-1,全未发生 (旧代码一直如此,未知原因);
+                //说明: cutIndex指已发生到的index,后面则为时序预测; matchValue指匹配度(0-1)
+                NSInteger cutIndex = fromRegroup ? -1 : [AINetUtils getCutIndexByIndexDic:indexDic];
+                
+                //7. 根据indexDic取nearCount & sumNear;
+                NSArray *nearData = [AINetUtils getNearDataByIndexDic:indexDic absFo:refFo.pointer conFo:protoOrRegroupFo.pointer callerIsAbs:false];
+                int nearCount = NUMTOOK(ARR_INDEX(nearData, 0)).intValue;
+                CGFloat sumNear = NUMTOOK(ARR_INDEX(nearData, 1)).floatValue;
+                AddTCDebug(@"时序识别24");
+                
+                //8. 被引用强度;
+                NSInteger sumRefStrong = [AINetUtils getSumRefStrongByIndexDic:indexDic matchFo:refFo.pointer];
+                AddTCDebug(@"时序识别26");
+                
+                //7. 实例化识别结果AIMatchFoModel;
+                AIMatchFoModel *newMatchFo = [AIMatchFoModel newWithMatchFo:refFo.pointer protoOrRegroupFo:protoOrRegroupFo.pointer sumNear:sumNear nearCount:nearCount indexDic:indexDic cutIndex:cutIndex sumRefStrong:sumRefStrong];
+                if (Log4MFo) NSLog(@"时序识别itemSUCCESS 匹配度:%f %@->%@",newMatchFo.matchFoValue,Fo2FStr(refFo),Mvp2Str(refFo.cmvNode_p));
+                AddTCDebug(@"时序识别25");
+                
+                //9. 收集到pFos/rFos;
+                [protoModels addObject:newMatchFo];
             }
-            return true;
-        }];
-        NSArray *assFo_ps = Ports2Pits(assFoPorts);
-        if (Log4MFo) NSLog(@"\n-----> TIR_Fo 索引:%@ 时序数:%lu",Alg2FStr(indexAlg),(unsigned long)assFo_ps.count);
-        AddTCDebug(@"时序识别4");
-        
-        //5. 依次对assFos对应的时序,做匹配度评价; (参考: 160_TIRFO单线顺序模型)
-        for (AIKVPointer *assFo_p in assFo_ps) {
-        
-            //5. 不应期;
-            if ([except_ps containsObject:assFo_p]) continue;
-            
-            AIFoNodeBase *assFo = [SMGUtils searchNode:assFo_p];
-            AddTCDebug(@"时序识别6");
-            
-            //5. 虚mv,无效;
-            if (assFo.cmvNode_p && [AINetUtils isVirtualMv:assFo.cmvNode_p]) continue;
-            AddTCDebug(@"时序识别7");
-            
-            //6. 防重;
-            BOOL pContains = ARRISOK([SMGUtils filterArr:inModel.matchPFos checkValid:^BOOL(AIMatchFoModel *item) {
-                return [item.matchFo isEqual:assFo.pointer];
-            }]);
-            AddTCDebug(@"时序识别8");
-            if (pContains) continue;
-            
-            BOOL rContains = ARRISOK([SMGUtils filterArr:inModel.matchRFos checkValid:^BOOL(AIMatchFoModel *item) {
-                return [item.matchFo isEqual:assFo.pointer];
-            }]);
-            AddTCDebug(@"时序识别9");
-            if (rContains) continue;
-            
-            //7. 全含判断;
-            NSDictionary *indexDic = [self TIR_Fo_CheckFoValidMatchV2:assFo protoOrRegroupFo:protoOrRegroupFo];
-            if (!DICISOK(indexDic)) continue;
-            
-            //7. cutIndex在fromRegroup时为-1,全未发生 (旧代码一直如此,未知原因);
-            //说明: cutIndex指已发生到的index,后面则为时序预测; matchValue指匹配度(0-1)
-            NSInteger cutIndex = fromRegroup ? -1 : [AINetUtils getCutIndexByIndexDic:indexDic];
-            
-            //7. 根据indexDic取nearCount & sumNear;
-            NSArray *nearData = [AINetUtils getNearDataByIndexDic:indexDic absFo:assFo_p conFo:protoOrRegroupFo.pointer callerIsAbs:false];
-            int nearCount = NUMTOOK(ARR_INDEX(nearData, 0)).intValue;
-            CGFloat sumNear = NUMTOOK(ARR_INDEX(nearData, 1)).floatValue;
-            AddTCDebug(@"时序识别24");
-            
-            //8. 被引用强度;
-            NSInteger sumRefStrong = [AINetUtils getSumRefStrongByIndexDic:indexDic matchFo:assFo_p];
-            AddTCDebug(@"时序识别26");
-            
-            //7. 实例化识别结果AIMatchFoModel;
-            AIMatchFoModel *newMatchFo = [AIMatchFoModel newWithMatchFo:assFo.pointer protoOrRegroupFo:protoOrRegroupFo.pointer sumNear:sumNear nearCount:nearCount indexDic:indexDic cutIndex:cutIndex sumRefStrong:sumRefStrong];
-            if (Log4MFo) NSLog(@"时序识别itemSUCCESS 匹配度:%f %@->%@",newMatchFo.matchFoValue,Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
-            AddTCDebug(@"时序识别25");
-            
-            //9. 收集到pFos/rFos;
-            if (assFo.cmvNode_p) {
-                [inModel.matchPFos addObject:newMatchFo];
-            }else{
-                [inModel.matchRFos addObject:newMatchFo];
-            }
-            AddTCDebug(@"时序识别27");
         }
     }
-    AddTCDebug(@"时序识别28");
     
     //10. 按照 (强度x匹配度) 排序,强度最重要,包含了价值初始和使用频率,其次匹配度也重要 (参考23222-BUG2);
-    NSArray *sortPFos = [AIRank recognitonFoRank:inModel.matchPFos];
-    AddTCDebug(@"时序识别29");
-    NSArray *sortRFos = [AIRank recognitonFoRank:inModel.matchRFos];
+    NSArray *sorts = [AIRank recognitonFoRank:protoModels];
     AddTCDebug(@"时序识别30");
     
-    //11. 仅保留前NarrowLimit条;
-    inModel.matchPFos = [[NSMutableArray alloc] initWithArray:ARR_SUB(sortPFos, 0, cFoNarrowLimit)];
-    inModel.matchRFos = [[NSMutableArray alloc] initWithArray:ARR_SUB(sortRFos, 0, cFoNarrowLimit)];
+    //11. 仅保留前20%条;
+    [inModel.matchRFos addObjectsFromArray:ARR_SUB(sorts, 0, sorts.count * 0.2f)];
     AddTCDebug(@"时序识别31");
     
     //11. 调试日志;
-    NSLog(@"\n=====> 时序识别Finish (PFos数:%lu)",(unsigned long)inModel.matchPFos.count);
-    for (AIMatchFoModel *item in inModel.matchPFos) {
-        AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
-        NSLog(@"强度:(%ld)\t> %@->%@ (from:%@)",item.sumRefStrong,Fo2FStr(matchFo), Mvp2Str(matchFo.cmvNode_p),CLEANSTR(matchFo.spDic));
-    }
-        
     NSLog(@"\n=====> 时序识别Finish (RFos数:%lu)",(unsigned long)inModel.matchRFos.count);
     for (AIMatchFoModel *item in inModel.matchRFos){
         AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
@@ -433,7 +396,7 @@
     AddTCDebug(@"时序识别32");
     
     //12. 关联处理,直接protoFo抽象指向matchFo,并持久化indexDic (参考27177-todo6);
-    for (AIMatchFoModel *item in inModel.matchPFos) {
+    for (AIMatchFoModel *item in inModel.matchRFos) {
         //4. 识别到时,refPorts -> 更新/加强微信息的引用序列
         AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
         [AINetUtils updateRefStrongByIndexDic:item.indexDic2 matchFo:item.matchFo];
@@ -445,52 +408,6 @@
         //6. 对proto直接抽象指向matchAlg,并增强强度值 (为保证抽象多样性,所以相近的也抽具象关联) (参考27153-3);
         [AINetUtils relateFoAbs:matchFo conNodes:@[protoOrRegroupFo] isNew:false];
     }
-}
-
-+(void) partMatching_FoV2:(AIFoNodeBase*)protoOrRegroupFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel fromRegroup:(BOOL)fromRegroup matchAlgs:(NSArray*)matchAlgs {
-    AddTCDebug(@"时序识别0");
-    //1. 数据准备;
-    except_ps = ARRTOOK(except_ps);
-    NSMutableArray *protoModels = [[NSMutableArray alloc] init];    //List<AIMatchAlgModel>;
-        
-    //2. 广入: 对每个元素,分别取索引序列 (参考25083-1);
-    for (AIKVPointer *proto_p in protoOrRegroupFo.content_ps) {
-        AIAlgNodeBase *protoAlg = [SMGUtils searchNode:proto_p];
-        
-        //4. 每个abs_p分别索引;
-        for (AIPort *absPort in protoAlg.absPorts) {
-            //6. 第2_取abs_p的refPorts (参考28107-todo2);
-            NSArray *refPorts = [AINetUtils refPorts_All:absPort.target_p];
-            
-            //7. 每个refPort做两件事:
-            for (AIPort *refPort in refPorts) {
-                
-                //8. 不应期 -> 不可激活;
-                if ([SMGUtils containsSub_p:refPort.target_p parent_ps:except_ps]) continue;
-                
-                //7. 全含判断;
-                AIFoNodeBase *refFo = [SMGUtils searchNode:refPort.target_p];
-                NSDictionary *indexDic = [self TIR_Fo_CheckFoValidMatchV2:refFo protoOrRegroupFo:protoOrRegroupFo];
-                
-                
-                //TODOTOMORROW20230223: 继续写时序识别v2算法;
-                if (!DICISOK(indexDic)) {
-                    //假如未全含,则直接追加到不应期;
-                }else {
-                    //假如全含,则直接生成AIMatchFoModel,并收集起来 (也加入到不应期);
-                }
-                
-                
-            }
-        }
-    }
-        
-    //11. 识别竞争机制;
-    NSArray *sortModels = [AIRank recognitonFoRank:protoModels];
-    
-    //13. 仅保留20%;
-    NSArray *matchModels = ARR_SUB(sortModels, 0, MAX(10, sortModels.count * 0.2f));
-    inModel.matchRFos = matchModels;
 }
 
 /**

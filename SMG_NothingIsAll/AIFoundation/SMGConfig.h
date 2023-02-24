@@ -82,7 +82,6 @@
 //MARK:                     < 窄出 >
 //MARK:===============================================================
 #define cIndexNarrowLimit 1000  //所以每个稀疏码的精度,不允许大于1k;
-#define cFoNarrowLimit 10
 #define cRFoNarrowLimit 0
 #define cSolutionNarrowLimit 5
 

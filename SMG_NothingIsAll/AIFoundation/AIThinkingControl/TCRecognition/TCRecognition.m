@@ -37,7 +37,7 @@
     
     AddTCDebug(@"R START");
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
-    [TIUtils partMatching_FoV1Dot5:protoFo except_ps:except_ps decoratorInModel:model fromRegroup:false matchAlgs:model.matchAlgs];
+    [TIUtils recognitionFo:protoFo except_ps:except_ps decoratorInModel:model fromRegroup:false matchAlgs:model.matchAlgs];
     AddTCDebug(@"R FINISH");
     
     //5. 学习;
@@ -99,7 +99,7 @@
     
     AddTCDebug(@"FB0");
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
-    [TIUtils partMatching_FoV1Dot5:regroupFo except_ps:@[regroupFo.pointer] decoratorInModel:result fromRegroup:true matchAlgs:feedbackFrameOfMatchAlgs];
+    [TIUtils recognitionFo:regroupFo except_ps:@[regroupFo.pointer] decoratorInModel:result fromRegroup:true matchAlgs:feedbackFrameOfMatchAlgs];
     //NSLog(@"反思时序: Finish >> %@",Fo2FStr(result.matchFo));
     AddTCDebug(@"FB1");
     
