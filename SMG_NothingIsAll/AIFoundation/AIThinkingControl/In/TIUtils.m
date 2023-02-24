@@ -317,7 +317,7 @@
  *      2023.02.21: 废弃收集proto的lastAlg当索引,因为它只被protoFo一条时序引用,所以在时序识别中没什么用 (参考28103-4另);
  *      2023.02.21: 传入触发帧概念识别结果matchAlgs的前10条做为时序识别的索引 (参考28103-2);
  *      2023.02.24: 提升时序识别成功率: 把索引改成所有proto帧的抽象alg (参考28107-todo1);
- *      2023.02.24: 提升时序识别成功率: 废弃matchPFos (其实早废弃了,借着这次改,彻底此处相关代码删掉);
+ *      2023.02.24: 提升时序识别成功率: 废弃matchRFos (其实早废弃了,借着这次改,彻底此处相关代码删掉);
  *      2023.02.24: 提升时序识别成功率: 时序结果保留20% (参考28107-todo4);
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
@@ -384,19 +384,19 @@
     AddTCDebug(@"时序识别30");
     
     //11. 仅保留前20%条;
-    [inModel.matchRFos addObjectsFromArray:ARR_SUB(sorts, 0, MAX(10, sorts.count * 0.2f))];
+    [inModel.matchPFos addObjectsFromArray:ARR_SUB(sorts, 0, MAX(10, sorts.count * 0.2f))];
     AddTCDebug(@"时序识别31");
     
     //11. 调试日志;
-    NSLog(@"\n=====> 时序识别Finish (RFos数:%lu)",(unsigned long)inModel.matchRFos.count);
-    for (AIMatchFoModel *item in inModel.matchRFos){
+    NSLog(@"\n=====> 时序识别Finish (PFos数:%lu)",(unsigned long)inModel.matchPFos.count);
+    for (AIMatchFoModel *item in inModel.matchPFos) {
         AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
-        NSLog(@"强度:(%ld)\t> %@ (from:%@)",item.sumRefStrong,Pit2FStr(item.matchFo),CLEANSTR(matchFo.spDic));
+        NSLog(@"强度:(%ld)\t> %@->%@ (from:%@)",item.sumRefStrong,Fo2FStr(matchFo), Mvp2Str(matchFo.cmvNode_p),CLEANSTR(matchFo.spDic));
     }
     AddTCDebug(@"时序识别32");
     
     //12. 关联处理,直接protoFo抽象指向matchFo,并持久化indexDic (参考27177-todo6);
-    for (AIMatchFoModel *item in inModel.matchRFos) {
+    for (AIMatchFoModel *item in inModel.matchPFos) {
         //4. 识别到时,refPorts -> 更新/加强微信息的引用序列
         AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
         [AINetUtils updateRefStrongByIndexDic:item.indexDic2 matchFo:item.matchFo];

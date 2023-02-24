@@ -19,10 +19,10 @@
     return _matchPFos;
 }
 
--(NSMutableArray *)matchRFos{
-    if (!_matchRFos) _matchRFos = [[NSMutableArray alloc] init];
-    return _matchRFos;
-}
+//-(NSMutableArray *)matchRFos{
+//    if (!_matchRFos) _matchRFos = [[NSMutableArray alloc] init];
+//    return _matchRFos;
+//}
 
 //-(AIFoNodeBase *)matchFo{
 //    AIMatchFoModel *mFo = [self mustUrgentMFo];
@@ -67,17 +67,17 @@
 //MARK:===============================================================
 
 //用于学习 (参考:25134-方案2-A学习);
--(NSArray*) fos4RLearning{
-    return [SMGUtils collectArrA:[AIShortMatchModel fullMatchs:self.matchPFos] arrB:[AIShortMatchModel fullMatchs:self.matchRFos]];
-}
+//-(NSArray*) fos4RLearning{
+//    return [SMGUtils collectArrA:[AIShortMatchModel fullMatchs:self.matchPFos] arrB:[AIShortMatchModel fullMatchs:self.matchRFos]];
+//}
 -(NSArray*) fos4PLearning{
     return ARR_SUB(self.matchPFos, 0, 10);
 }
 
 //用于预测 (参考:25134-方案2-B预测);
--(NSArray*) fos4RForecast{
-    return [SMGUtils collectArrA:[AIShortMatchModel partMatchs:self.matchPFos] arrB:[AIShortMatchModel partMatchs:self.matchRFos]];
-}
+//-(NSArray*) fos4RForecast{
+//    return [SMGUtils collectArrA:[AIShortMatchModel partMatchs:self.matchPFos] arrB:[AIShortMatchModel partMatchs:self.matchRFos]];
+//}
 -(NSArray*) fos4PForecast{
     return [AIShortMatchModel fullMatchs:self.matchPFos];
 }

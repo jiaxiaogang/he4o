@@ -24,6 +24,7 @@
  *  @version
  *      2020.10.30: 将seemAlg改成partAlgs,即将所有相似返回 (参考21113-步骤1);
  *      2022.01.17: 废弃matchRFos,因其主要用于GL已被废弃,且现rLearning再抽象不仅针对rFos也支持pFos (参考25104);
+ *      2023.02.25: 废弃matchRFos代码,其早已明存实亡,最近改动了下时序识别算法,正好把它代码注掉 (参考时序识别算法-注释2023.02.24);
  */
 @interface AIShortMatchModel : NSObject
 
@@ -89,7 +90,7 @@
  *      排序方式: 按照当前matchAlg.refPorts被引用强度有序;
  */
 @property (strong, nonatomic) NSMutableArray *matchPFos; //有mv指向匹配时序 (元素为AIMatchFoModel);
-@property (strong, nonatomic) NSMutableArray *matchRFos; //无mv指向匹配时序 (元素为AIMatchFoModel);
+//@property (strong, nonatomic) NSMutableArray *matchRFos; //无mv指向匹配时序 (元素为AIMatchFoModel);
 
 /**
  *  MARK:--------------------含mv且迫切度最高的一条mFo--------------------
@@ -104,11 +105,11 @@
 //MARK:===============================================================
 
 //用于学习 (参考:25134-方案2-A学习);
--(NSArray*) fos4RLearning;
+//-(NSArray*) fos4RLearning;
 -(NSArray*) fos4PLearning;
 
 //用于预测 (参考:25134-方案2-B预测);
--(NSArray*) fos4RForecast;
+//-(NSArray*) fos4RForecast;
 -(NSArray*) fos4PForecast;
 
 //用于预测 (参考:25134-方案2-B预测);
