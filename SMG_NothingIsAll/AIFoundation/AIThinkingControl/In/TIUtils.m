@@ -202,9 +202,12 @@
         }]);
     }
     
+    //11. 识别过滤器 (参考28109-todo2);
+    NSArray *filterModels = [AIFilter recognitonAlgFilter:protoModels];
+    
     //11. 识别竞争机制 (参考2722d-方案2);
     //11. 按nearA排序 (参考25083-2&公式2 & 25084-1);
-    NSArray *sortModels = [AIRank recognitonAlgRank:protoModels];
+    NSArray *sortModels = [AIRank recognitonAlgRank:filterModels];
     
     //12. 全含判断: 从大到小,依次取到对应的node和matchingCount (注: 支持相近后,应该全是全含了,参考25084-1);
     NSArray *validModels = [SMGUtils filterArr:sortModels checkValid:^BOOL(AIMatchAlgModel *item) {
