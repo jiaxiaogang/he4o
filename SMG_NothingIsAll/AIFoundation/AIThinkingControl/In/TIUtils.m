@@ -145,6 +145,7 @@
  *      2023.01.24 - BUG修复: 修复相似度相乘后,相似度阈值相应调低 (参考28041-BUG1);
  *      2023.02.01 - 不限制相似度,让其自然竞争越来越准确 (参考28042-思路2-4);
  *      2023.02.21 - 识别结果保留20% (参考28102-方案1);
+ *      2023.02.25 - 集成概念识别过滤器 (参考28111-todo1) & 取消识别后过滤20% (参考28111-todo2);
  */
 +(void) partMatching_Alg:(AIAlgNodeBase*)protoAlg except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel{
     //1. 数据准备;
@@ -210,7 +211,7 @@
     NSArray *sortModels = [AIRank recognitonAlgRank:filterModels];
     
     //12. 全含判断: 从大到小,依次取到对应的node和matchingCount (注: 支持相近后,应该全是全含了,参考25084-1);
-    NSArray *validModels = [SMGUtils filterArr:sortModels checkValid:^BOOL(AIMatchAlgModel *item) {
+    NSArray *matchModels = [SMGUtils filterArr:sortModels checkValid:^BOOL(AIMatchAlgModel *item) {
         //14. 过滤掉匹配度<85%的;
         //if (item.matchValue < 0.60f) return false;
         
@@ -219,10 +220,6 @@
         if (itemAlg.count == item.matchCount) return true;
         return false;
     }];
-    
-    //13. 仅保留最相近的20条 (参考25083-3);
-    int limit = MAX(10, validModels.count * 0.2f);
-    NSArray *matchModels = ARR_SUB(validModels, 0, limit);
     
     //16. 未将全含返回,则返回最相似 (2020.10.22: 全含返回,也要返回seemAlg) (2022.01.15: 支持相近匹配后,全是全含没局部了);
     NSLog(@"\n概念识别结果 (%ld条) protoAlg:%@",matchModels.count,Alg2FStr(protoAlg));
@@ -383,12 +380,13 @@
         }
     }
     
-    //10. 按照 (强度x匹配度) 排序,强度最重要,包含了价值初始和使用频率,其次匹配度也重要 (参考23222-BUG2);
-    NSArray *sorts = [AIRank recognitonFoRank:protoModels];
+    //10. 过滤强度前20% (参考28111-todo1);
+    NSArray *filterModels = [AIFilter recognitonFoFilter:protoModels];
     AddTCDebug(@"时序识别30");
     
-    //11. 仅保留前20%条;
-    [inModel.matchPFos addObjectsFromArray:ARR_SUB(sorts, 0, MAX(10, sorts.count * 0.2f))];
+    //10. 按照 (强度x匹配度) 排序,强度最重要,包含了价值初始和使用频率,其次匹配度也重要 (参考23222-BUG2);
+    NSArray *sorts = [AIRank recognitonFoRank:filterModels];
+    inModel.matchPFos = [[NSMutableArray alloc] initWithArray:sorts];
     AddTCDebug(@"时序识别31");
     
     //11. 调试日志;
