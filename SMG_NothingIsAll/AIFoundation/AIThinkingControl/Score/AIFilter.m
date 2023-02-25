@@ -17,4 +17,11 @@
     return ARR_SUB(sort, 0, MAX(10, sort.count * 0.2f));
 }
 
++(NSArray*) recognitonFoFilter:(NSArray*)matchModels {
+    NSArray *sort = [SMGUtils sortBig2Small:matchModels compareBlock:^double(AIMatchFoModel *obj) {
+        return obj.strongValue;
+    }];
+    return ARR_SUB(sort, 0, MAX(10, sort.count * 0.2f));
+}
+
 @end

@@ -18,4 +18,9 @@
  */
 +(NSArray*) recognitonAlgFilter:(NSArray*)matchAlgModels;
 
+/**
+ *  MARK:--------------------时序识别过滤器 (参考28111-todo1)--------------------
+ */
++(NSArray*) recognitonFoFilter:(NSArray*)matchModels;
+
 @end
