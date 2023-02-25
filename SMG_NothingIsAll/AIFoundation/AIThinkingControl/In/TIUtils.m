@@ -21,6 +21,7 @@
  *      2022.05.23: 初版,排序和限制limit条数放到此处,原来getIndex_ps()方法里并没有相近度排序 (参考26096-BUG5);
  *      2022.05.23: 废弃掉不超过10%的条件,因为它会导致过窄问题 (参考26096-BUG3-方案1);
  *      2023.01.31: 返回limit改成20%条目 (参考28042-思路2-1);
+ *      2023.02.25: 返回limit改成80%条目 (参考28108-todo1);
  *  @result 返回当前码识别的相近序列;
  */
 +(NSArray*) TIR_Value:(AIKVPointer*)protoV_p{
@@ -35,7 +36,7 @@
     }];
     
     //3. 窄出,仅返回前NarrowLimit条 (最多narrowLimit条,最少1条);
-    NSInteger limit = MAX(near_ps.count * 0.2f, 10);
+    NSInteger limit = MAX(near_ps.count * 0.8f, 20);
     return ARR_SUB(near_ps, 0, limit);
 }
 
@@ -221,7 +222,7 @@
     NSArray *matchModels = ARR_SUB(validModels, 0, limit);
     
     //16. 未将全含返回,则返回最相似 (2020.10.22: 全含返回,也要返回seemAlg) (2022.01.15: 支持相近匹配后,全是全含没局部了);
-    NSLog(@"\n识别结果 >> 概念识别结果数:%ld",matchModels.count);
+    NSLog(@"\n概念识别结果 (%ld条) protoAlg:%@",matchModels.count,Alg2FStr(protoAlg));
     for (AIMatchAlgModel *item in matchModels) {
         NSLog(@"-->>>(%d) 全含item: %@   \t相近度 => %.2f (count:%d)",item.sumRefStrong,Pit2FStr(item.matchAlg),item.matchValue,item.matchCount);
     }
@@ -388,7 +389,7 @@
     AddTCDebug(@"时序识别31");
     
     //11. 调试日志;
-    NSLog(@"\n=====> 时序识别Finish (PFos数:%lu)",(unsigned long)inModel.matchPFos.count);
+    NSLog(@"\n时序识别结果 (%ld条) protoFo:%@",inModel.matchPFos.count,Fo2FStr(protoOrRegroupFo));
     for (AIMatchFoModel *item in inModel.matchPFos) {
         AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
         NSLog(@"强度:(%ld)\t> %@->%@ (from:%@)",item.sumRefStrong,Fo2FStr(matchFo), Mvp2Str(matchFo.cmvNode_p),CLEANSTR(matchFo.spDic));
