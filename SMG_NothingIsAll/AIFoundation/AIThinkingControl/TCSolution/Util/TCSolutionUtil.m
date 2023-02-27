@@ -388,7 +388,7 @@
     }
     
     //6. 全找到,则成功;
-    NSLog(@"条件满足通过:%@ (absCutIndex:%ld fromProtoFo:%ld)",Fo2FStr(absFo),absCutIndex,protoFo.pointer.pointerId);
+    if (Log4SceneIsOk) NSLog(@"条件满足通过:%@ (absCutIndex:%ld fromProtoFo:%ld)",Fo2FStr(absFo),absCutIndex,protoFo.pointer.pointerId);
     return indexDic;
 }
 
