@@ -64,6 +64,7 @@
  *      2021.12.28: 重新整理整个方法,参考评分字典数据结构做最优路径 (参考24196-示图);
  *      2022.06.02: 中层为actYes时,不向下传染,继续找路径 (参考26185-TODO7);
  *      2022.06.02: BUG_过滤掉actNo的结果,不然给solution一个actNo的最佳路径尴尬了;
+ *      2023.02.28: R子任务不求解 (参考28135-2);
  *  @result
  *      1. 返回空S的Demand时,执行solution找解决方案;
  *      2. 返回路径末枝BestFo时,执行action行为化;
@@ -94,7 +95,10 @@
     NSMutableArray *allSubDemands = [[NSMutableArray alloc] init];
     
     //5. 优先级: 先解决子R任务 (副作用,磨刀不误砍柴功) (参考25042-4);
-    [allSubDemands addObjectsFromArray:bestFo.subDemands];
+    if (Switch4SubRDemand2Solution) {
+        NSArray *subRDemands = bestFo.subDemands;
+        [allSubDemands addObjectsFromArray:subRDemands];
+    }
     
     //6. 优先级: 再解决子H任务,即推进时序跳下一帧 (磨完刀了去继续砍柴) (参考25042-4);
     NSArray *subHDemands = [SMGUtils convertArr:bestFo.subModels convertBlock:^id(TOAlgModel *item) {

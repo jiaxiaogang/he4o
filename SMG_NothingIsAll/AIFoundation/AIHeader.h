@@ -373,3 +373,5 @@
 #define Switch4PDemand true
 //快思考开关
 #define Switch4FastSolution false
+//子R任务求解 (参考28135-2)
+#define Switch4SubRDemand2Solution false
