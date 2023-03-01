@@ -158,7 +158,7 @@
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
-    [aCoder encodeObject:self.pointerIds forKey:@"pointerIds"];
+    [aCoder encodeObject:[self.pointerIds copy] forKey:@"pointerIds"];
     [aCoder encodeObject:self.algsType forKey:@"algsType"];
     [aCoder encodeObject:self.dataSource forKey:@"dataSource"];
 }
