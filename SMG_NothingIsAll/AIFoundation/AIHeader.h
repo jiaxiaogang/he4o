@@ -369,8 +369,8 @@
 #define Switch4RS true
 //P决策模式
 #define Switch4PS false
-//P任务开关
-#define Switch4PDemand true
+//P任务开关 (20230301早没用P任务了,关掉)
+#define Switch4PDemand false
 //快思考开关
 #define Switch4FastSolution false
 //子R任务求解 (参考28135-2)

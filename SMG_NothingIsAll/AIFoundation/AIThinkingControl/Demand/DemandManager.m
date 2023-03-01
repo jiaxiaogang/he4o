@@ -168,10 +168,11 @@
  *      2021.01.27: 支持第二级排序:initTime (参考22074-BUG2);
  *      2021.11.13: R任务排序根据 "迫切度*匹配度" 得出 (参考24107-2);
  *      2022.03.15: 将排序方式更新为用score4Demand (参考25142);
+ *      2023.03.01: 修复排序反了的BUG: 评分越低越应该优先 (参考28136-修复);
  */
 -(void) refreshCmvCacheSort{
     NSArray *sort = [SMGUtils sortBig2Small:self.loopCache compareBlock1:^double(DemandModel *obj) {
-        return [AIScore score4Demand:obj];
+        return -[AIScore score4Demand:obj];
     } compareBlock2:^double(DemandModel *obj) {
         return obj.initTime;
     }];
