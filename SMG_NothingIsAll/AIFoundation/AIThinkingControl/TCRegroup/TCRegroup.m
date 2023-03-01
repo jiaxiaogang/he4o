@@ -18,10 +18,7 @@
     model.matchAFo = [theNet createConFo:matchAShortMem];
     NSArray *protoAShortMem = [theTC.inModelManager shortCache:false];
     model.protoFo = [theNet createConFo:protoAShortMem];
-    
-    //2. 识别
     DebugE();
-    [TCRecognition rRecognition:model];
 }
 
 /**

@@ -87,7 +87,6 @@
     //2021.12.01: R任务(新架构应在forecastIRT之后,调用rForecastBack.rDemand,但旧架构在前面,先不动,等测没影响再改后面);
     //2021.12.05: 将tor移到概念识别后了,此处front和back合并 (参考24171-9);
     DebugE();
-    [TCDemand rDemand:model];
 }
 
 /**

@@ -82,10 +82,7 @@
     //    AIFoNodeBase *itemMFo = [SMGUtils searchNode:item.matchFo];
     //    [AIAnalogy analogyOutside:protoFo assFo:itemMFo type:ATDefault];
     //}
-    
-    //2. TIR反馈;
     DebugE();
-    [TCFeedback feedbackTIR:model];
 }
 
 @end

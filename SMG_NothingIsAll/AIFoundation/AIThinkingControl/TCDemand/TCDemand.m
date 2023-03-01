@@ -15,20 +15,15 @@
  *  @version
  *      2021.12.05: 原本只有tor受阻时才执行solution,现改为不依赖tor,因为tor改到概念识别之后了 (参考24171-9);
  */
-+(void) rDemand:(AIShortMatchModel*)model{
++(NSArray*) rDemand:(AIShortMatchModel*)model{
     //2. 预测处理_把mv加入到demandManager;
     [theTC updateOperCount:kFILENAME];
     Debug();
     OSTitleLog(@"rDemand");
     NSArray *newRoots = [theTC.outModelManager updateCMVCache_RMV:model];
     [theTV updateFrame];
-    
-    //3. 为新roots构建反省触发器;
-    [TCForecast forecast_Multi:newRoots];
-    
-    //6. 此处推进不成功,则运行TOP四模式;
     DebugE();
-    [TCScore score];
+    return newRoots;
 }
 
 /**
