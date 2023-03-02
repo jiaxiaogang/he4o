@@ -50,7 +50,11 @@
         if (model.pointerIds.count <= index) {
             [model.pointerIds addObject:@(value_p.pointerId)];
         }else{
+            NSLog(@"1a");
+            //TODOTOMORROW20230302: 此处报[__NSArrayI insertObject:atIndex:]: unrecognized selector sent to instance 0x7f9653928000 libc++abi.dylib: terminate_handler unexpectedly threw an exception
+            //先重新训练下,看是不是当时训练时没把indexes持久化好... (参考28142);
             [model.pointerIds insertObject:@(value_p.pointerId) atIndex:index];
+            NSLog(@"2a");
         }
         
         //5. 存
