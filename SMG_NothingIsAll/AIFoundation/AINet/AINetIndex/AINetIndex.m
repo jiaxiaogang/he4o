@@ -50,19 +50,7 @@
         if (model.pointerIds.count <= index) {
             [model.pointerIds addObject:@(value_p.pointerId)];
         }else{
-            //TODOTOMORROW20230303: 此处重新训练后,有时可复现,先打日志在此待出现问题时看 (参考28142);
-            NSLog(@"1a");
-            for (NSInteger i = 0; i < model.pointerIds.count; i++) {
-                NSNumber *item = ARR_INDEX(model.pointerIds, i);
-                if (!item) {
-                    NSLog(@"1b is null");
-                } else if (!ISOK(item, NSNumber.class)) {
-                    NSLog(@"1c class error: %@->%@",NSStringFromClass(item.class),item);
-                }
-            }
-            //TODOTOMORROW20230302: 此处报[__NSArrayI insertObject:atIndex:]: unrecognized selector sent to instance 0x7f9653928000 libc++abi.dylib: terminate_handler unexpectedly threw an exception
             [model.pointerIds insertObject:@(value_p.pointerId) atIndex:index];
-            NSLog(@"2a");
         }
         
         //5. 存
@@ -150,9 +138,7 @@
 //MARK:                     < method >
 //MARK:===============================================================
 -(NSMutableArray *)pointerIds{
-    if (_pointerIds == nil) {
-        _pointerIds = [NSMutableArray new];
-    }
+    if (!ISOK(_pointerIds, NSMutableArray.class)) _pointerIds = [[NSMutableArray alloc] initWithArray:_pointerIds];
     return _pointerIds;
 }
 
