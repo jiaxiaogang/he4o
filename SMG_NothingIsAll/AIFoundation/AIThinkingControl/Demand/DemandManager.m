@@ -133,8 +133,7 @@
         
         //3. 数据准备
         NSArray *pFosValue = [fos4Demand objectForKey:atKey];
-        AIMatchFoModel *firstPFo = ARR_INDEX(pFosValue, 0);
-        CGFloat score = [AIScore score4MV_v2FromCache:firstPFo];
+        CGFloat score = [AIScore score4PFos:pFosValue];
         
         //5. 取迫切度评分: 判断matchingFo.mv有值才加入demandManager,同台竞争,执行顺应mv;
         if (score < 0) {

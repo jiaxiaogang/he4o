@@ -186,16 +186,24 @@
 +(CGFloat) score4Demand:(DemandModel*)demand{
     if (ISOK(demand, ReasonDemandModel.class) ) {
         ReasonDemandModel *rDemand = (ReasonDemandModel*)demand;
-        CGFloat sumScore = 0;
-        for (AIMatchFoModel *pFo in rDemand.pFos) {
-            sumScore += [AIScore score4MV_v2FromCache:pFo];
-        }
-        return rDemand.pFos.count > 0 ? sumScore / rDemand.pFos.count : 0;
+        return [self score4PFos:rDemand.pFos];
     }else if (ISOK(demand, PerceptDemandModel.class) ) {
         PerceptDemandModel *pDemand = (PerceptDemandModel*)demand;
         return [AIScore score4MV:pDemand.algsType urgentTo:pDemand.urgentTo delta:pDemand.delta ratio:1.0f];
     }
     return 0;
+}
+
+/**
+ *  MARK:--------------------求pFos的平均价值分--------------------
+ */
++(CGFloat) score4PFos:(NSArray*)pFos {
+    pFos = ARRTOOK(pFos);
+    CGFloat sumScore = 0;
+    for (AIMatchFoModel *pFo in pFos) {
+        sumScore += [AIScore score4MV_v2FromCache:pFo];
+    }
+    return pFos.count > 0 ? sumScore / pFos.count : 0;
 }
 
 //MARK:===============================================================

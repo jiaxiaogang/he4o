@@ -56,6 +56,11 @@
 +(CGFloat) score4Demand:(DemandModel*)demand;
 
 /**
+ *  MARK:--------------------求pFos的平均价值分--------------------
+ */
++(CGFloat) score4PFos:(NSArray*)pFos;
+
+/**
  *  MARK:--------------------获取mv1和mv2是否同向或反向--------------------
  *  @result 默认返回false;
  */
