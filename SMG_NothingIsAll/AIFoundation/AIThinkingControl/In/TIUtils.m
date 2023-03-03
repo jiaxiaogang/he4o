@@ -390,10 +390,10 @@
     AddTCDebug(@"时序识别31");
     
     //11. 调试日志;
-    NSLog(@"\n时序识别结果 (%ld条) protoFo:%@",inModel.matchPFos.count,Fo2FStr(protoOrRegroupFo));
+    NSLog(@"\n时序识别结果 (%ld条)",inModel.matchPFos.count);
     for (AIMatchFoModel *item in inModel.matchPFos) {
         AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
-        NSLog(@"强度:(%ld)\t> %@->%@ (from:%@)",item.sumRefStrong,Fo2FStr(matchFo), Mvp2Str(matchFo.cmvNode_p),CLEANSTR(matchFo.spDic));
+        NSLog(@"强度:(%ld)\t> %@->%@ (from:%@) %@",item.sumRefStrong,Fo2FStr(matchFo), Mvp2Str(matchFo.cmvNode_p),CLEANSTR(matchFo.spDic),CLEANSTR(item.indexDic2));
     }
     AddTCDebug(@"时序识别32");
     

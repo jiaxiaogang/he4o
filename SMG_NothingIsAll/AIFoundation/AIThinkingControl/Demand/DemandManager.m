@@ -216,7 +216,7 @@
         NSArray *statuses = [SMGUtils convertArr:ARR_SUB(self.loopCache, 0, i) convertBlock:^id(DemandModel *obj) {
             return obj.status == TOModelStatus_ActYes ? @"等待反馈" : STRFORMAT(@"%ld",obj.status);
         }];
-        NSLog(@"当前执行任务:%ld 不应期root任务的状态:%@",i,CLEANSTR(statuses));
+        NSLog(@"当前执行任务:(%ld/%ld) 不应期root任务的状态:%@",i,self.loopCache.count,CLEANSTR(statuses));
         return item;
     }
     return nil;
