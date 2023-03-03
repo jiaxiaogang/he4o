@@ -213,10 +213,10 @@
         if (endHavActYes) continue;
         
         //6. 有效,则返回;
-        NSArray *statuses = [SMGUtils convertArr:ARR_SUB(self.loopCache, 0, i) convertBlock:^id(DemandModel *obj) {
-            return obj.status == TOModelStatus_ActYes ? @"等待反馈" : STRFORMAT(@"%ld",obj.status);
-        }];
-        NSLog(@"当前执行任务:(%ld/%ld) 不应期root任务的状态:%@",i,self.loopCache.count,CLEANSTR(statuses));
+        for (NSInteger j = 0; j < self.loopCache.count; j++) {
+            ReasonDemandModel *item = ARR_INDEX(self.loopCache, j);
+            if (Log4CanDecisionDemand) NSLog(@"root:%@ (%@) %@%@",Pit2FStr(item.protoFo),[SMGUtils date2Str:kHHmmss timeInterval:item.initTime],i==j?@"本次激活":@"",[TOModelVision cur2Sub:item]);
+        }
         return item;
     }
     return nil;

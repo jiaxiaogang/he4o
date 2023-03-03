@@ -205,6 +205,9 @@
 +(NSString*) date2yyyyMMddHHmmssSSS:(NSDate*)date{
     return [SMGUtils date2Str:kyyyyMMddHHmmssSSS date:date];
 }
++(NSString*) date2Str:(NSString*)format timeInterval:(long long)timeInterval{
+    return [self date2Str:format date:[NSDate dateWithTimeIntervalSince1970:timeInterval]];
+}
 +(NSString*) date2Str:(NSString*)format date:(NSDate*)date{
     if (!date) date = [NSDate new];
     NSDateFormatter *fmt = [[NSDateFormatter alloc] init];

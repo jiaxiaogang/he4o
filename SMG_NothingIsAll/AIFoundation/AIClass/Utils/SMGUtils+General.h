@@ -60,6 +60,7 @@ static NSString *lastTCName = @""; //记录当前在打日志的TC模块名字;
 +(NSString*) date2HHMMSSSSS;
 +(NSString*) date2yyyyMMddHHmmss;
 +(NSString*) date2yyyyMMddHHmmssSSS:(NSDate*)date;
++(NSString*) date2Str:(NSString*)format timeInterval:(long long)timeInterval;
 +(NSString*) date2Str:(NSString*)format date:(NSDate*)date;
 
 //dateFromStr
