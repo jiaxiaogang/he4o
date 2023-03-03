@@ -276,6 +276,9 @@
     }
     
     //3. 触发器;
+    //TODOTOMORROW20230303: 此处有时已经连续推进了两帧,才触发反省,导致前一帧的判断有错,因为现在已经是后一帧的actionIndex和status了... (参考28144);
+    
+    
     NSLog(@"---//行为化帧%@性触发器:%@ time:%f\n解决方案:%@ (%ld/%ld)",actYes4Mv?@" 感":@"理",demand.algsType,deltaTime,Fo2FStr(solutionFo),solutionModel.actionIndex,solutionModel.targetSPIndex);
     [AITime setTimeTrigger:deltaTime trigger:^{
         
