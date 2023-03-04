@@ -321,6 +321,7 @@
 /**
  *  MARK:--------------------LOG开关--------------------
  */
+#define Log4DemoWood false
 //测试模式 (功能说明: 把all关掉,然后仅会打印just中模块的日志; 使用说明: 用于测试某些模块时使用);
 #define LogJustPrintTCs @[@"TCSolution"]
 #define LogPrintAllTCs true
