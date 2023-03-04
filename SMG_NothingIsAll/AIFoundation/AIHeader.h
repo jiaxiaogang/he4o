@@ -347,7 +347,7 @@
 #define Log4OPushM true
 #define Log4TIROPushM false
 //当前可决策任务:CanDecisionDemand;
-#define Log4CanDecisionDemand true
+#define Log4CanDecisionDemand false
 //In反省
 #define Log4InRethink true
 #define Log4OutRethink true

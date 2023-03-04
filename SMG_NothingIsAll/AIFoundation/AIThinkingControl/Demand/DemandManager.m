@@ -217,9 +217,10 @@
         if (endHavActYes) continue;
         
         //6. 有效,则返回;
-        if (Log4CanDecisionDemand) NSLog(@"本次激活(%ld):%@",i,Pit2FStr(((ReasonDemandModel*)item).protoFo));
+        NSLog(@"本次激活(%ld):%@",i,Pit2FStr(((ReasonDemandModel*)item).protoFo));
         return item;
     }
+    NSLog(@"本次未激活(共%ld条)",self.loopCache.count);
     return nil;
 }
 

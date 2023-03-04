@@ -530,11 +530,22 @@
 /**
  *  MARK:--------------------检查某toModel的末枝有没有ActYes状态--------------------
  *  @desc 因为actYes向上传染,不向下,所以末枝有actYes,即当前curModel也不应响应 (参考26184-原则);
+ *  @version
+ *      2023.03.04: 判断末枝要排除subDemand的影响 (参考28143-回测 & 修复);
  */
 +(BOOL) endHavActYes:(TOModelBase*)curModel{
     NSArray *allSubModels = [TOUtils getSubOutModels_AllDeep:curModel validStatus:nil];
     BOOL endHavActYes = [SMGUtils filterSingleFromArr:allSubModels checkValid:^BOOL(TOModelBase *item) {
-        return item.status == TOModelStatus_ActYes && [TOUtils getSubOutModels:item].count == 0;
+        //1. 判断是ActYes状态;
+        if (item.status == TOModelStatus_ActYes) {
+            //2. 判断是末枝 (其下有Demand不算) (参考28143-修复);
+            NSArray *subModels = [TOUtils getSubOutModels:item];
+            subModels = [SMGUtils filterArr:subModels checkValid:^BOOL(id item) {
+                return !ISOK(item, DemandModel.class);
+            }];
+            return subModels.count == 0;
+        }
+        return false;
     }];
     return endHavActYes;
 }
