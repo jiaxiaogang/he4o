@@ -81,7 +81,7 @@
                 NSLog(@"---//IR反省触发器执行:%p F%ld 状态:%@",matchFo,matchFo.pointer.pointerId,TIStatus2Str(status));
                 
                 //6. 则进行理性IRT反省;
-                [TCRethink reasonInRethink:item type:ATSub];
+                [TCRethink reasonInRethink:item cutIndex:curCutIndex type:ATSub];
                 
                 //7. 失效判断: pFo任务失效 (参考27093-条件2 & 27095-2);
                 item.isExpired = true;

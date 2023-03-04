@@ -15,9 +15,9 @@
  */
 @interface TCRethink : NSObject
 
-+(void) reasonInRethink:(AIMatchFoModel*)model type:(AnalogyType)type;
++(void) reasonInRethink:(AIMatchFoModel*)model cutIndex:(NSInteger)cutIndex type:(AnalogyType)type;
 +(void) perceptInRethink:(AIMatchFoModel*)model type:(AnalogyType)type;
-+(void) reasonOutRethink:(TOFoModel*)model type:(AnalogyType)type;
++(void) reasonOutRethink:(TOFoModel*)model actionIndex:(NSInteger)actionIndex type:(AnalogyType)type;
 +(void) perceptOutRethink:(TOFoModel*)model type:(AnalogyType)type;
 
 @end

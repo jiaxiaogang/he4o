@@ -70,7 +70,7 @@
             BOOL mIsC = [recognitionAlgs containsObject:waitAlg_p];
             if (mIsC) {
                 //6. 有反馈时,进行P反省: 进行理性IRT反省;
-                [TCRethink reasonInRethink:waitModel type:ATPlus];
+                [TCRethink reasonInRethink:waitModel cutIndex:waitModel.cutIndex type:ATPlus];
                 
                 //7. pFo任务顺利: 推进帧;
                 [waitModel feedbackPushFrame:model.protoAlg.pointer];

@@ -247,6 +247,7 @@
  *      2022.05.29: 不判断solutionFo.mv价值分因为它一般为空;
  *      2022.06.01: actYes仅标记自己及所在的demand,不标记root (参考26185-TODO1);
  *      2023.01.01: 修复solutionFo的mvDeltaTime总是0的问题 (参考28013);
+ *      2023.03.04: 修复反省未保留以往帧actionIndex,导致反省时错误的BUG (参考28144-todo);
  */
 +(void) frameActYes:(TOFoModel*)solutionModel{
     [theTC updateOperCount:kFILENAME];
@@ -254,7 +255,8 @@
     //0. 数据准备 (从上到下,取demand,solutionFo,frameAlg);
     DemandModel *demand = (DemandModel*)solutionModel.baseOrGroup;
     AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.content_p];
-    AIKVPointer *frameAlg_p = ARR_INDEX(solutionFo.content_ps, solutionModel.actionIndex);
+    NSInteger curActionIndex = solutionModel.actionIndex;
+    AIKVPointer *frameAlg_p = ARR_INDEX(solutionFo.content_ps, curActionIndex);
     TOAlgModel *frameModel = [SMGUtils filterSingleFromArr:solutionModel.subModels checkValid:^BOOL(TOAlgModel *item) {
         return [item.content_p isEqual:frameAlg_p];
     }];
@@ -266,24 +268,21 @@
     
     //2. solutionFo已执行完成,直接取mvDeltaTime做触发器时间;
     double deltaTime = 0;
-    BOOL actYes4Mv = solutionModel.actionIndex >= solutionFo.count;
+    BOOL actYes4Mv = curActionIndex >= solutionFo.count;
     if (actYes4Mv) {
         AIKVPointer *basePFoOrTargetFo_p = [TOUtils convertBaseFoFromBasePFoOrTargetFoModel:solutionModel.basePFoOrTargetFoModel];
         AIFoNodeBase *basePFoOrTargetFo = [SMGUtils searchNode:basePFoOrTargetFo_p];
         deltaTime = basePFoOrTargetFo.mvDeltaTime;
     }else{
-        deltaTime = [NUMTOOK(ARR_INDEX(solutionFo.deltaTimes, solutionModel.actionIndex)) doubleValue];
+        deltaTime = [NUMTOOK(ARR_INDEX(solutionFo.deltaTimes, curActionIndex)) doubleValue];
     }
     
     //3. 触发器;
-    //TODOTOMORROW20230303: 此处有时已经连续推进了两帧,才触发反省,导致前一帧的判断有错,因为现在已经是后一帧的actionIndex和status了... (参考28144);
-    
-    
-    NSLog(@"---//行为化帧%@性触发器:%@ time:%f\n解决方案:%@ (%ld/%ld)",actYes4Mv?@" 感":@"理",demand.algsType,deltaTime,Fo2FStr(solutionFo),solutionModel.actionIndex,solutionModel.targetSPIndex);
+    NSLog(@"---//行为化帧%@性触发器:%@ time:%f for:F%ld (%ld/%ld)",actYes4Mv?@" 感":@"理",demand.algsType,deltaTime,solutionFo.pointer.pointerId,curActionIndex,solutionModel.targetSPIndex);
     [AITime setTimeTrigger:deltaTime trigger:^{
         
         //4. 末尾为mv感性目标;
-        if (solutionModel.actionIndex >= solutionFo.count) {
+        if (curActionIndex >= solutionFo.count) {
             //a. 如果状态已改成OutBack,说明有反馈(坏),否则未反馈(好) (参考feedbackTOP);
             AnalogyType type = (solutionModel.status == TOModelStatus_OuterBack) ? ATSub : ATPlus;
             
@@ -303,7 +302,7 @@
             
             //a. 反省类比(成功/未成功)的主要原因,进行RORT反省;
             AnalogyType type = (frameModel.status == TOModelStatus_ActYes) ? ATSub : ATPlus;
-            [TCRethink reasonOutRethink:solutionModel type:type];
+            [TCRethink reasonOutRethink:solutionModel actionIndex:curActionIndex type:type];
             NSLog(@"---//行为化帧触发理性反省:%p A%ld 状态:%@",frameModel,frameAlg_p.pointerId,TOStatus2Str(frameModel.status));
             
             //5. 失败时_继续决策 (成功时,由feedback的IN流程继续);
