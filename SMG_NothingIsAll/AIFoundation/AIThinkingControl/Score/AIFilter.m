@@ -47,8 +47,8 @@
  */
 +(NSArray*) filterTwice:(NSArray*)protoArr scoreBlock1:(double(^)(id item))scoreBlock1 rate1:(CGFloat)rate1 scoreBlock2:(double(^)(id item))scoreBlock2 rate2:(CGFloat)rate2{
     //1. 分别按1和2过滤前35%;
-    NSArray *filter1 = ARR_SUB([SMGUtils sortBig2Small:protoArr compareBlock:scoreBlock1], 0, protoArr.count * rate1);
-    NSArray *filter2 = ARR_SUB([SMGUtils sortBig2Small:protoArr compareBlock:scoreBlock2], 0, protoArr.count * rate2);
+    NSArray *filter1 = ARR_SUB([SMGUtils sortBig2Small:protoArr compareBlock:scoreBlock1], 0, MAX(10, protoArr.count * rate1));
+    NSArray *filter2 = ARR_SUB([SMGUtils sortBig2Small:protoArr compareBlock:scoreBlock2], 0, MAX(10, protoArr.count * rate2));
     
     //2. 过滤出同时符合二项的,并返回 (参考28152-方案3-todo3);
     NSArray *filterTwice = [SMGUtils filterArr:protoArr checkValid:^BOOL(id item) {
