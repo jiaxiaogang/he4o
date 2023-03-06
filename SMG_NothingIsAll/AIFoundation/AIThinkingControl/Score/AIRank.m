@@ -15,8 +15,10 @@
  *  @result 返回排名名次: <matchAlg.pId, 综合排名值(越小越靠前)>;
  *  @version
  *      2023.01.31: 单项权重新增牛顿冷却曲线 (参考28042-思路2-3);
+ *      2023.03.06: 识别排名器当前无用,关闭它 (参考28152-方案5 & todo6);
  */
 +(NSArray*) recognitonAlgRank:(NSArray*)matchAlgModels {
+    if (!Switch4RecognitonRank) return matchAlgModels;//开关关闭则直接返回;
     return [self getCooledRankTwice:matchAlgModels itemScoreBlock1:^CGFloat(AIMatchAlgModel *item) {
         return [item matchValue]; //匹配度项;
     } itemScoreBlock2:^CGFloat(AIMatchAlgModel *item) {
@@ -31,8 +33,10 @@
  *  @result 返回排名名次: <matchFo.pId, 综合排名值(越小越靠前)>;
  *  @version
  *      2023.01.31: 单项权重新增牛顿冷却曲线 (参考28042-思路2-3);
+ *      2023.03.06: 识别排名器当前无用,关闭它 (参考28152-方案5 & todo6);
  */
 +(NSArray*) recognitonFoRank:(NSArray*)matchFoModels {
+    if (!Switch4RecognitonRank) return matchFoModels;//开关关闭则直接返回;
     return [self getCooledRankTwice:matchFoModels itemScoreBlock1:^CGFloat(AIMatchFoModel *item) {
         return [item matchFoValue]; //匹配度项;
     } itemScoreBlock2:^CGFloat(AIMatchFoModel *item) {

@@ -380,3 +380,5 @@
 #define Switch4SubRDemand2Solution false
 //行为再输入开关 (参考28133-1 & 28137-修复)
 #define Switch4IsOutReIn false
+//识别排名器开关 (参考28152-方案5)
+#define Switch4RecognitonRank false
