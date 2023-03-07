@@ -20,7 +20,9 @@
 #define cRTIndex 315360000  //常驻内存(十年)
 #define cRTData 315360000   //常驻内存(十年)
 #define cRTReference 9999   //微信息索引序列时间;
-#define cRTNode 200         //所有node时间
+#define cRTNode(pointer) PitIsAlg(pointer) ? cRTAlgNode : cRTOtherNode //节点缓存时间
+#define cRTAlgNode 3600     //概念node时间(1小时)
+#define cRTOtherNode 200    //别的node时间(200秒)
 #define cRTDefault 60       //默认,例如:小脑canout序列;
 #define cRTPort 200         //refPorts(概念),absPorts,conPorts的时间;
 #define cRTMvRef 600        //mv方向索引时间;

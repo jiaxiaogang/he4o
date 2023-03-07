@@ -203,21 +203,21 @@
  */
 +(void) insertRefPorts_AllFoNode:(AIKVPointer*)foNode_p order_ps:(NSArray*)order_ps ps:(NSArray*)ps {
     order_ps = [SMGUtils removeRepeat:order_ps];
-    for (AIPointer *order_p in ARRTOOK(order_ps)) {
+    for (AIKVPointer *order_p in ARRTOOK(order_ps)) {
         [self insertRefPorts_AllFoNode:foNode_p order_p:order_p ps:ps difStrong:1];
     }
 }
 +(void) insertRefPorts_AllFoNode:(AIKVPointer*)foNode_p order_ps:(NSArray*)order_ps ps:(NSArray*)ps difStrong:(NSInteger)difStrong{
     order_ps = [SMGUtils removeRepeat:order_ps];
-    for (AIPointer *order_p in ARRTOOK(order_ps)) {
+    for (AIKVPointer *order_p in ARRTOOK(order_ps)) {
         [self insertRefPorts_AllFoNode:foNode_p order_p:order_p ps:ps difStrong:difStrong];
     }
 }
-+(void) insertRefPorts_AllFoNode:(AIKVPointer*)foNode_p order_p:(AIPointer*)order_p ps:(NSArray*)ps difStrong:(NSInteger)difStrong{
-    AIAlgNodeBase *algNode = [SMGUtils searchObjectForPointer:order_p fileName:kFNNode time:cRTNode];
++(void) insertRefPorts_AllFoNode:(AIKVPointer*)foNode_p order_p:(AIKVPointer*)order_p ps:(NSArray*)ps difStrong:(NSInteger)difStrong{
+    AIAlgNodeBase *algNode = [SMGUtils searchObjectForPointer:order_p fileName:kFNNode time:cRTNode(order_p)];
     if (ISOK(algNode, AIAlgNodeBase.class)) {
         [AINetUtils insertPointer_Hd:foNode_p toPorts:algNode.refPorts ps:ps difStrong:difStrong];
-        [SMGUtils insertObject:algNode pointer:algNode.pointer fileName:kFNNode time:cRTNode];
+        [SMGUtils insertObject:algNode pointer:algNode.pointer fileName:kFNNode time:cRTNode(algNode.pointer)];
     }
 }
 
@@ -358,7 +358,7 @@
             //3. hd_抽象节点插"具象端口";
             [AINetUtils insertPointer_Hd:conNode.pointer toPorts:absConPorts ps:conContent_ps difStrong:difStrong];
             //4. hd_存储
-            [SMGUtils insertObject:conNode pointer:conNode.pointer fileName:kFNNode time:cRTNode];
+            [SMGUtils insertObject:conNode pointer:conNode.pointer fileName:kFNNode time:cRTNode(conNode.pointer)];
         }
         
         //7. 抽象节点的 关联&存储
