@@ -46,6 +46,7 @@
  *      2023.03.06: 过滤前20%改为35% (参考28152-方案3-todo2);
  *      2023.03.07: 减少过滤结果条数(从10到3),避免过滤器久久不生效 (参考28152b-todo1);
  *      2023.03.07: 过滤率改成动态计算,使其条数少时,两个过滤器也都能生效 (参考28152b-todo2);
+ *      2023.03.07: 修改主辅过滤器为嵌套执行 (参考28152b-todo3);
  */
 +(NSArray*) filterTwice:(NSArray*)protoArr scoreBlock1:(double(^)(id item))scoreBlock1 rate1:(CGFloat)rate1 scoreBlock2:(double(^)(id item))scoreBlock2 rate2:(CGFloat)rate2{
     //0. 数据准备;
@@ -65,17 +66,12 @@
     CGFloat zuFilterNum = filterNum - fuFilterNum;                  //主过滤条数;
     CGFloat zuRate = (protoCount - zuFilterNum) / protoCount;       //主过滤率;
     CGFloat fuRate = resultNum / (protoCount - zuFilterNum);        //辅过滤率;
-    NSLog(@"过滤器: 总条:%ld 主:%.2f 辅:%.2f 结果:%ld",protoCount,zuRate,fuRate,resultNum);
     
-    //1. 分别按1和2过滤前35%;
-    NSArray *filter1 = ARR_SUB([SMGUtils sortBig2Small:protoArr compareBlock:scoreBlock1], 0, MAX(10, protoArr.count * zuRate));
-    NSArray *filter2 = ARR_SUB([SMGUtils sortBig2Small:protoArr compareBlock:scoreBlock2], 0, MAX(10, protoArr.count * fuRate));
-    
-    //2. 过滤出同时符合二项的,并返回 (参考28152-方案3-todo3);
-    NSArray *filterTwice = [SMGUtils filterArr:protoArr checkValid:^BOOL(id item) {
-        return [filter1 containsObject:item] && [filter2 containsObject:item];
-    }];
-    return filterTwice;
+    //5. 主中辅,嵌套过滤 (参考28152b-todo3);
+    NSArray *filter1 = ARR_SUB([SMGUtils sortBig2Small:protoArr compareBlock:scoreBlock1], 0, protoArr.count * zuRate);
+    NSArray *filter2 = ARR_SUB([SMGUtils sortBig2Small:filter1 compareBlock:scoreBlock2], 0, filter1.count * fuRate);
+    NSLog(@"过滤器: 总%ld需%ld 主:%.2f(剩:%ld) 辅:%.2f(剩:%ld)",protoCount,resultNum,zuRate,filter1.count,fuRate,filter2.count);
+    return filter2;
 }
 
 @end
