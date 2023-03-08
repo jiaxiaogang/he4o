@@ -25,6 +25,7 @@
 #import "TOModelVision.h"
 #import "TOMVision2.h"
 #import "RTQueueModel.h"
+#import "XGWedis.h"
 
 //Util
 #import "ThinkingUtils.h"

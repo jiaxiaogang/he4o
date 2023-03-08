@@ -54,4 +54,9 @@ typedef void (^XGWedisSaveBlock)(NSDictionary *dic);
  */
 -(NSInteger) count;
 
+/**
+ *  MARK:--------------------调用一次保存--------------------
+ */
+-(void) save;
+
 @end

@@ -67,10 +67,7 @@ static XGWedis *_instance;
     return self.dic.count;
 }
 
-//MARK:===============================================================
-//MARK:                     < privateMethod >
-//MARK:===============================================================
-- (void)notificationTimer{
+-(void) save {
     NSMutableDictionary *saveDic = [self.dic copy];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [[NSNotificationCenter defaultCenter] postNotificationName:kXGWedisSaveObserver object:saveDic];
@@ -83,6 +80,13 @@ static XGWedis *_instance;
         //dispatch_async(dispatch_get_main_queue(), ^{});
     });
     [self.dic removeAllObjects];
+}
+
+//MARK:===============================================================
+//MARK:                     < privateMethod >
+//MARK:===============================================================
+- (void)notificationTimer{
+    [self save];
 }
 
 

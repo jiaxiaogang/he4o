@@ -10,7 +10,6 @@
 #import "PINCache.h"
 #import "XGRedisUtil.h"
 #import "XGRedis.h"
-#import "XGWedis.h"
 
 @implementation SMGUtils
 

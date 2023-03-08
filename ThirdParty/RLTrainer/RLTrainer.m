@@ -86,7 +86,13 @@ static RLTrainer *_instance;
 }
 
 -(void) rtModel_Finished{
+    //1. 强训完成后,恢复日志开关;
     [theApp setNoLogMode:false];
+    
+    //2. 强训完成后,强行持久化保存一次,避免丢数据;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [[XGWedis sharedInstance] save];
+    });
 }
 
 //MARK:===============================================================

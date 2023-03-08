@@ -76,6 +76,9 @@
     //3. 模拟重启
     [self createNavBtn:6 title:@"重启" action:@selector(resetBtnOnClick:) bg:0];
     
+    //3. 持久化
+    [self createNavBtn:7 title:@"2DB" action:@selector(wedisSaveBtnOnClick:) bg:0];
+    
     //4. 神经网络可视化
     self.nvView = [[NVView alloc] initWithDelegate:[NVDelegate_He new]];
     [self.nvView setAlpha:0.9f];
@@ -168,6 +171,10 @@
 -(void) stopThinkBtnOnClick:(UIButton*)btn{
     theTC.stopThink = !theTC.stopThink;
     [btn setTitle:theTC.stopThink ? @"动物" : @"植物" forState:UIControlStateNormal];
+}
+
+-(void) wedisSaveBtnOnClick:(UIButton*)btn{
+    [[XGWedis sharedInstance] save];
 }
 
 -(void) resetBtnOnClick:(UIButton*)btn{

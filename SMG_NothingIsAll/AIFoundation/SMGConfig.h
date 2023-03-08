@@ -90,9 +90,9 @@
 //MARK:===============================================================
 //MARK:                     < third & demo >
 //MARK:===============================================================
-#define cWedis2DBInterval 20
+#define cWedis2DBInterval 600
 #define cHeLog2DBInterval 20
 #define heLogSwitch false //heLog默认开关;
-#define tomV2Switch true //tv默认开关;
+#define tomV2Switch false //tv默认开关;
 #define defaultScore NSNotFound //默认评分值 (一般用于判断评分是否已经评过,比如用于缓存时只计算一次判断);
 #define defaultMatchValue NSNotFound //默认相似度
