@@ -39,7 +39,8 @@
 //@property (assign,nonatomic) CGFloat direction;
 
 //distance
-@property (assign,nonatomic) NSInteger distance;
+//20230308: 去掉距离 (因为与Y距X距重复);
+//@property (assign,nonatomic) NSInteger distance;
 @property (assign,nonatomic) NSInteger distanceX;
 @property (assign,nonatomic) NSInteger distanceY;
 
@@ -48,7 +49,8 @@
 
 //20190723: originX和originY由direction和distance替代;
 //20200317: 二测训练时,再打开,与distance共存,并更名为posX/Y;
-@property (assign,nonatomic) NSInteger posX;
-@property (assign,nonatomic) NSInteger posY;
+//20230308: 客观特征全去掉 (参考28161-方案5);
+//@property (assign,nonatomic) NSInteger posX;
+//@property (assign,nonatomic) NSInteger posY;
 
 @end

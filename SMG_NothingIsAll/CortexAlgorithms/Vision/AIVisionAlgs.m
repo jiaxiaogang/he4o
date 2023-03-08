@@ -46,14 +46,14 @@
             //model.radius = [self radius:curView];
             //model.speed = [self speed:curView];
             //model.direction = [self direction:selfView target:curView];
-            model.distance = [self distance:selfView target:curView];
+            //model.distance = [self distance:selfView target:curView];
             model.distanceX = [self distanceX:selfView target:curView];
             model.distanceY = [self distanceY:selfView target:curView];
             model.border = [self border:curView];
-            model.posX = [self posX:curView];
-            model.posY = [self posY:curView];
+            //model.posX = [self posX:curView];
+            //model.posY = [self posY:curView];
             //NSLog(@"视觉目标 [距离:%ld 角度:%f 宽:%f 高:%f 皮:%f 圆角:%f]",(long)model.distance,model.direction,model.sizeWidth,model.sizeHeight,model.border,model.radius);
-            NSLog(@"视觉目标 [距:%ld X:%ld Y:%ld X距:%ld Y距:%ld 高:%ld 皮:%ld]",model.distance,model.posX,model.posY,model.distanceX,model.distanceY,model.sizeHeight,model.border);
+            NSLog(@"视觉目标 [X距:%ld Y距:%ld 高:%ld 皮:%ld]",model.distanceX,model.distanceY,model.sizeHeight,model.border);
             NSMutableDictionary *modelDic = [NSObject getDic:model containParent:true];
             //for (NSString *key in modelDic.allKeys) {
             //    if ([NUMTOOK([modelDic objectForKey:key]) isEqualToNumber:@(0)]) {
