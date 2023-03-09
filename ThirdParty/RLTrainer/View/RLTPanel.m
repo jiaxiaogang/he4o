@@ -344,7 +344,7 @@
         //2. 随机飞或扔木棒,五步;
         //6. 屏中,任意方向;
         NSNumber *flyDirection = @(arc4random() % 8);
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 2; i++) {
             [queues addObject:Queue0(kFlySEL, flyDirection)];
         }
         

@@ -62,7 +62,7 @@
     
     //4. 用sin计算对边Y,cos计算邻边X;
     NSLog(@"fly >> %@ angle:%.0f",[NVHeUtil getLightStr_Value:value algsType:FLY_RDS dataSource:@""],value_F1_1 * 180);
-    [UIView animateWithDuration:0.1f animations:^{
+    [UIView animateWithDuration:0.15 animations:^{
         [self setX:self.x + (cos(angle) * 30.0f)];
         [self setY:self.y + (sin(angle) * 30.0f)];
     }completion:^(BOOL finished) {
