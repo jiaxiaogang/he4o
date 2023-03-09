@@ -212,7 +212,7 @@
     DemoLog(@"摸翅膀onClick");
     [theApp.heLogView addDemoLog:@"摸翅膀onClick"];
     //1. 计算random
-    int random = 0;
+    long random = 0;
     if ([self birdLeftOut]) {
         //2. 左屏外,仅向3,4,5飞;
         random = arc4random() % 3 + 3;
@@ -232,7 +232,8 @@
     
     //7. 指定方向参数时;
     if (direction) {
-        random = NUMTOOK(direction).intValue;
+        random = NUMTOOK(direction).longValue;
+        NSLog(@"强训fly >> %@",[NVHeUtil getLightStr_Value:random / 8.0f algsType:FLY_RDS dataSource:@""]);
     }
     [self.birdView touchWing:random];
 }
