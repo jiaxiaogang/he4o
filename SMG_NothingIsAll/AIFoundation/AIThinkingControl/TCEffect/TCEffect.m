@@ -47,7 +47,7 @@
         
         //4. log;
         AIEffectStrong *strong = [TOUtils getEffectStrong:baseFo effectIndex:baseFo.count solutionFo:rSolution.content_p];
-        IFTitleLog(@"rSolution反省", @"\n%p S:%@ (有效性:%@ 任务状态:%@)\n\tfromPFo:%@ (index:%ld H%ldN%ld)",rDemand,Pit2FStr(rSolution.content_p),EffectStatus2Str(es),TOStatus2Str(rDemand.status),Fo2FStr(baseFo),baseFo.count,strong.hStrong,strong.nStrong);
+        IFTitleLog(@"rEffect", @"\n%p S:%@ (有效性:%@ 任务状态:%@)\n\tfromPFo:%@ (index:%ld H%ldN%ld)",rDemand,Pit2FStr(rSolution.content_p),EffectStatus2Str(es),TOStatus2Str(rDemand.status),Fo2FStr(baseFo),baseFo.count,strong.hStrong,strong.nStrong);
     }];
     DebugE();
 }
@@ -88,7 +88,7 @@
         
         //7. log
         AIEffectStrong *strong = [TOUtils getEffectStrong:targetFoNode effectIndex:targetFo.actionIndex solutionFo:hSolution.content_p];
-        IFTitleLog(@"HSolution反省", @"\n%p S:%@ (有效性:%@ 当前方案状态:%@)",hSolution,Pit2FStr(hSolution.content_p),EffectStatus2Str(es),TOStatus2Str(hSolution.status));
+        IFTitleLog(@"hEffect", @"\n%p S:%@ (有效性:%@ 当前方案状态:%@)",hSolution,Pit2FStr(hSolution.content_p),EffectStatus2Str(es),TOStatus2Str(hSolution.status));
         NSLog(@"\t=>targetFo:%@ (index:%ld H%ldN%ld)",Fo2FStr(targetFoNode),targetFo.actionIndex,strong.hStrong,strong.nStrong);
     }];
     DebugE();
