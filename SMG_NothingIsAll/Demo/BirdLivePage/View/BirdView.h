@@ -22,6 +22,12 @@
 
 @property (weak,nonatomic) id<BirdViewDelegate> delegate;
 
+/**
+ *  MARK:--------------------饿了在等吃状态--------------------
+ *  @desc 如果等待期间吃不上则会更饿,如果吃上了就不会更饿 (参考28171-todo2)
+ */
+@property (assign, nonatomic) BOOL waitEat;
+
 
 /**
  *  MARK:--------------------视觉--------------------

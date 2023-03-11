@@ -196,11 +196,23 @@
     CGPoint birdPos = self.birdView.center;
     [self food2Pos:CGPointMake(birdPos.x - 100, birdPos.y + 100)];
 }
+/**
+ *  MARK:--------------------饥饿是连续的mv输入 (参考28171-todo2)--------------------
+ */
 - (IBAction)hungerBtnOnClick:(id)sender {
     ISTitleLog(@"感官输入");
     DemoLog(@"马上饿onClick");
     [theApp.heLogView addDemoLog:@"马上饿onClick"];
+    //1. 先感觉到饿: 从0.7饿到0.6 (按0.6计算得迫切度为16);
     [[[DemoHunger alloc] init] commit:0.6 state:UIDeviceBatteryStateUnplugged];
+    self.birdView.waitEat = true;
+    
+    //2. 五秒后更饿: 从0.6饿到0.5 (按0.5计算得迫切度为25);
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        if (self.birdView.waitEat) {
+            [[[DemoHunger alloc] init] commit:0.5 state:UIDeviceBatteryStateUnplugged];
+        }
+    });
 }
 
 - (IBAction)touchWingBtnOnClick:(id)sender {

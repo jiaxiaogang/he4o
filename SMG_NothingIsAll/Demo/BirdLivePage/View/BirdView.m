@@ -126,7 +126,9 @@
 /**
  *  MARK:--------------------吃--------------------
  *  @desc 无论是主动吃,还是被动吃,都要观察下吃前的视觉,吃后的视觉,以及价值上的影响;
- *  @desc 20200120 吃前视觉仅由被动吃时有,为解决外层死循环问题 (参考n18p5-BUG9)
+ *  @version
+ *      2020.01.20: 吃前视觉仅由被动吃时有,为解决外层死循环问题 (参考n18p5-BUG9);
+ *      2023.03.11: 吃上了,不会立马感觉饱,而是不再继续更饿 (参考28171-todo2);
  */
 -(void) eatAction:(CGFloat)value{
     //1. 吃动作
@@ -158,8 +160,9 @@
             
             //5. 价值变化;
             if (foodView.status == FoodStatus_Eat) {
-                //a. 产生HungerMindValue (饥饿感下降);
-                [self sendHunger:-1.0f];
+                //a. 吃上了,不会立马感觉饱,而是不再继续更饿 (参考28171-todo2);
+                DemoLog(@"吃上坚果了");
+                self.waitEat = false;
             }else if(foodView.status == FoodStatus_Border){
                 //b. 产生HurtMindValue (坚果带皮时,不仅吃不到,还得嘴疼);
                 [AIInput commitIMV:MVType_Hurt from:2.0f to:3.0f];
@@ -213,19 +216,6 @@
             [theApp setTipLog:@"叽叽喳喳叫一叫"];
         }
     }
-}
-
-//MARK:===============================================================
-//MARK:                     < privateMethod >
-//MARK:===============================================================
-
-/**
- *  MARK:--------------------发送饥饿信号--------------------
- *  @desc 饥饿感 (0-10) (值越大越饿);
- */
--(void) sendHunger:(CGFloat)hungerDelta{
-    DemoLog(@"饥饿感 %f",hungerDelta);
-    [AIInput commitIMV:MVType_Hunger from:5.0f to:5.0 + hungerDelta];
 }
 
 @end
