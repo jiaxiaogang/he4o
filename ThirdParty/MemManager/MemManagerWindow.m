@@ -147,7 +147,7 @@
     NSIndexPath *selected = [self.readTableView indexPathForSelectedRow];
     NSString *data = ARR_INDEX(self.datas, selected.row);
     if (STRISOK(data)) {
-        DemoLog(@"删除记忆");
+        DemoLog(@"删除记忆:%@",data);
         NSString *cachePath = kCachePath;
         [[NSFileManager defaultManager] removeItemAtPath:STRFORMAT(@"%@/save/%@",cachePath,data) error:nil];
         [self refreshDisplay];

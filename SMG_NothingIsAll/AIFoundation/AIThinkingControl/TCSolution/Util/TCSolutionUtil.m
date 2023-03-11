@@ -179,22 +179,6 @@
  *  MARK:--------------------R慢思考--------------------
  */
 +(AISolutionModel*) rSolution_Slow:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps {
-    
-    
-    
-    //TODOTOMORROW20230307: BUG_多条pFo,可能对不准的取解决方案,最匹配的反而没机会...
-    //方案1: 可以考虑下,取S时,计数一下它在几条pFo下,作为竞争依据之一;
-    //1. 多pFo计数的可以增加权重;
-    //2. 综合它们的effDic有效率;
-    
-    //方案2: 边测边改,pFos排序用不改成匹配度?
-    //2. 看下相似度低末尾部分过滤掉?
-    //3. 此处逐条pFo取解决方案,跑最终没有再取下个pFo (赢家通吃);
-    
-    
-    
-    
-    
     //1. 收集cansetModels候选集;
     NSArray *cansetModels = [SMGUtils convertArr:demand.pFos convertItemArrBlock:^NSArray *(AIMatchFoModel *pFo) {
         
