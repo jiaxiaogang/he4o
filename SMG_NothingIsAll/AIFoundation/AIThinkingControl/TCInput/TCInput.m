@@ -83,7 +83,8 @@
 /**
  *  MARK:--------------------pInput--------------------
  *  @version
- *      2023.03.11: mv也生成shortModel,并加入瞬时序列
+ *      2023.03.11: mv也生成shortModel,并加入瞬时序列 (参考28171-todo6);
+ *      2023.03.11: 捋一下mv输入不需要概念识别和时序识别 (参考28171-todo5);
  */
 +(void) pInput:(AICMVNode*)mv{
     ISGroupLog(@"input P");
@@ -95,14 +96,6 @@
     shortModel.protoAlg = mv;
     shortModel.inputTime = [[NSDate date] timeIntervalSince1970];
     DebugE();
-    
-    //TODOTOMORROW20230311:
-    //1. shortModel的potoAlg支持mv类型;
-    //2. 看生成时序时,收集元素兼容收集mv元素;
-    
-    
-    
-    
     
     //2. 转regroup生成protoFo;
     [TCRegroup pRegroup:mv shortModel:shortModel];
