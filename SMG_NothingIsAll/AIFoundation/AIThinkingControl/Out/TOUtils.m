@@ -16,8 +16,17 @@
     if (layerDiff == 2) return [self mIsC_2:m c:c];
     return false;
 }
+
+/**
+ *  MARK:--------------------mIsC--------------------
+ *  @version
+ *      2023.03.11: 兼容mv的判断 (参考28171-todo8);
+ */
 +(BOOL) mIsC_0:(AIKVPointer*)m c:(AIKVPointer*)c{
     if (m && c) {
+        //0. 判断mv的相等;
+        if (PitIsMv(m) && PitIsMv(c)) return [m.algsType isEqualToString:c.algsType];
+        
         //1. 判断本级相等;
         BOOL equ0 = [m isEqual:c];
         if (equ0) return true;
@@ -28,6 +37,9 @@
     if (m && c) {
         //1. 判断本级相等;
         if ([self mIsC_0:m c:c]) return true;
+        
+        //1. 在mIsC0判断mv不相等时,还有mv类型直接返回false;
+        if (PitIsMv(m) || PitIsMv(c)) return false;
         
         //2. 判断一级抽象;
         NSArray *mAbs = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:[SMGUtils searchNode:m]]];
@@ -40,6 +52,9 @@
     if (m && c) {
         //1. 判断0-1级抽象;
         if ([self mIsC_1:m c:c]) return true;
+        
+        //1. 在mIsC0判断mv不相等时,还有mv类型直接返回false;
+        if (PitIsMv(m) || PitIsMv(c)) return false;
         
         //2. 判断二级抽象;
         NSArray *mAbs = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:[SMGUtils searchNode:m]]];

@@ -55,12 +55,25 @@
  *      2022.12.04: 当二者相等时,默认返回1 (因为时序识别时mIsC1有自身判断,所以取相似度时要兼容支持下);
  */
 -(CGFloat) getConMatchValue:(AIKVPointer*)con_p {
+    if (PitIsMv(self.pointer) && PitIsMv(con_p)) return [self getMatchValue4Mv:con_p];
     if ([self.pointer isEqual:con_p]) return 1;
     return NUMTOOK([self.conMatchDic objectForKey:@(con_p.pointerId)]).floatValue;
 }
 -(CGFloat) getAbsMatchValue:(AIKVPointer*)abs_p {
+    if (PitIsMv(self.pointer) && PitIsMv(abs_p)) return [self getMatchValue4Mv:abs_p];
     if ([self.pointer isEqual:abs_p]) return 1;
     return NUMTOOK([self.absMatchDic objectForKey:@(abs_p.pointerId)]).floatValue;
+}
+
+/**
+ *  MARK:--------------------mv匹配度 (参考28171-todo9)--------------------
+ */
+-(CGFloat) getMatchValue4Mv:(AIKVPointer*)otherMv_p {
+    
+    
+    
+    //double nearV = [AIAnalyst compareCansetValue:near_p protoValue:item_p];
+    return 0;
 }
 
 /**
