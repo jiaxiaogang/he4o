@@ -67,12 +67,14 @@
 
 /**
  *  MARK:--------------------mv匹配度 (参考28171-todo9)--------------------
+ *  @desc mv的匹配度就是匹配度的相近度;
  */
 -(CGFloat) getMatchValue4Mv:(AIKVPointer*)otherMv_p {
-    
-    
-    
-    //double nearV = [AIAnalyst compareCansetValue:near_p protoValue:item_p];
+    if ([self.pointer.algsType isEqualToString:otherMv_p.algsType]) {
+        AICMVNodeBase *selfMv = (AICMVNodeBase*)self;
+        AICMVNodeBase *otherMv = [SMGUtils searchNode:otherMv_p];
+        return [AIAnalyst compareCansetValue:selfMv.urgentTo_p protoValue:otherMv.urgentTo_p];
+    }
     return 0;
 }
 

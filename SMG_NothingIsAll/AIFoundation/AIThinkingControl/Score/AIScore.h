@@ -44,7 +44,7 @@
  *  @desc 对ExpOut评价时:
  *      1. 以默认ratio=0.2,进行评价;
  */
-+(CGFloat) score4MV:(AIPointer*)cmvNode_p ratio:(CGFloat)ratio;
++(CGFloat) score4MV:(AIKVPointer*)cmvNode_p ratio:(CGFloat)ratio;
 +(CGFloat) score4MV:(NSString*)algsType urgentTo_p:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p ratio:(CGFloat)ratio;
 +(CGFloat) score4MV:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta ratio:(CGFloat)ratio;
 +(CGFloat) score4MV_v2FromCache:(AIMatchFoModel*)inModel;

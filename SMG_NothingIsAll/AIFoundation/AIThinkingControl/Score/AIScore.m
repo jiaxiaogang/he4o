@@ -122,7 +122,7 @@
  *  MARK:--------------------MPS评分--------------------
  *  @result 负价值返回负分,正价值返回正分;
  */
-+(CGFloat) score4MV:(AIPointer*)cmvNode_p ratio:(CGFloat)ratio{
++(CGFloat) score4MV:(AIKVPointer*)cmvNode_p ratio:(CGFloat)ratio{
     AICMVNodeBase *cmvNode = [SMGUtils searchNode:cmvNode_p];
     if (ISOK(cmvNode, AICMVNodeBase.class)) {
         return [AIScore score4MV:cmvNode.pointer.algsType urgentTo_p:cmvNode.urgentTo_p delta_p:cmvNode.delta_p ratio:ratio];
