@@ -10,14 +10,14 @@
 
 @implementation TCRegroup
 
-+(void) rRegroup:(AIShortMatchModel*)model{
++(void) rRegroup:(AIShortMatchModel*)shortModel{
     //1. 构建时序 (把每次dic输入,都作为一个新的内存时序);
     [theTC updateOperCount:kFILENAME];
     Debug();
     NSArray *matchAShortMem = [theTC.inModelManager shortCache:true];
-    model.matchAFo = [theNet createConFo:matchAShortMem];
+    shortModel.matchAFo = [theNet createConFo:matchAShortMem];
     NSArray *protoAShortMem = [theTC.inModelManager shortCache:false];
-    model.protoFo = [theNet createConFo:protoAShortMem];
+    shortModel.protoFo = [theNet createConFo:protoAShortMem];
     DebugE();
 }
 
@@ -28,19 +28,15 @@
  *      20200416 - 将先"mv需求处理"后"学习",改为先"学习"后"mv需求处理",因为外层死循环 (参考n19p5-B组BUG2);
  *      20210120 - 支持tir_OPush()反向反馈类比;
  */
-+(void) pRegroup:(NSArray*)algsArr{
++(void) pRegroup:(AICMVNode*)mv shortModel:(AIShortMatchModel*)shortModel{
     //1. 联想到mv时,创建CmvModel取到FoNode;
     [theTC updateOperCount:kFILENAME];
     Debug();
-    NSTimeInterval inputTime = [[NSDate date] timeIntervalSince1970];
     
     //2. 创建CmvModel取到FoNode;
-    AIFrontOrderNode *protoFo = [theNet createCMV:algsArr inputTime:inputTime order:[theTC.inModelManager shortCache:false]];
+    shortModel.protoFo = [theNet createCMVFo:shortModel.inputTime order:[theTC.inModelManager shortCache:false] mv:mv];
     //[self.shortMemory clear] (参考注释2020.01.20);
-    
-    //3. 提交学习识别;
     DebugE();
-    [TCRecognition pRecognition:protoFo];
 }
 
 /**

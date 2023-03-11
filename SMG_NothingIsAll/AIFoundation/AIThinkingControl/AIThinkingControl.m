@@ -90,7 +90,11 @@ static AIThinkingControl *_instance;
     
     //3. 分流_mv时
     if (findMV) {
-        [TCInput pInput:algsArr];
+        //1. 打包cmvNode;
+        AICMVNode *mvNode = [theNet createConMv:algsArr];
+        
+        //2. 加入瞬时记忆 & 生成时序指向mv等;
+        [TCInput pInput:mvNode];
     }else{
         //1. 打包成algTypeNode;
         AIAlgNodeBase *algNode = [theNet createAbsAlg_NoRepeat:algsArr conAlgs:nil isOut:false at:nil ds:nil type:ATDefault];

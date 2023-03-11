@@ -80,13 +80,38 @@
     [TCScore score];
 }
 
-+(void) pInput:(NSArray*)algsArr{
+/**
+ *  MARK:--------------------pInput--------------------
+ *  @version
+ *      2023.03.11: mv也生成shortModel,并加入瞬时序列
+ */
++(void) pInput:(AICMVNode*)mv{
     ISGroupLog(@"input P");
     [theTC updateLoopId];
     [theTC updateOperCount:kFILENAME];
     Debug();
+    //1. 数据准备 (瞬时记忆,理性匹配出的模型);
+    __block AIShortMatchModel *shortModel = [[AIShortMatchModel alloc] init];
+    shortModel.protoAlg = mv;
+    shortModel.inputTime = [[NSDate date] timeIntervalSince1970];
     DebugE();
-    [TCRegroup pRegroup:algsArr];
+    
+    //TODOTOMORROW20230311:
+    //1. shortModel的potoAlg支持mv类型;
+    //2. 看生成时序时,收集元素兼容收集mv元素;
+    
+    
+    
+    
+    
+    //2. 转regroup生成protoFo;
+    [TCRegroup pRegroup:mv shortModel:shortModel];
+    
+    //3. P不需要概念识别,但可以直接生成AIShortMatchModel,并收集到瞬时序列 => 将mModel保留 (只有先保留后,构建时序时,才会含新帧概念);
+    [theTC.inModelManager add:shortModel];
+    
+    //4. P不需要时序识别,但可以触发学习 => 提交学习识别;
+    [TCRecognition pRecognition:shortModel.protoFo];
 }
 
 +(void) hInput:(TOAlgModel*)algModel{

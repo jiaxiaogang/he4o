@@ -16,11 +16,11 @@
 
 /**
  *  MARK:--------------------create foNode->cmvNode 基本模型--------------------
- *  @param imvAlgsArr : imv此次输入信息
+ *  @param mv : 触发了create的mv;
  *  @param order : 瞬时记忆序列
  *  @result : 返回foNode;
  */
--(AIFrontOrderNode*) create:(NSArray*)imvAlgsArr inputTime:(NSTimeInterval)inputTime order:(NSArray*)order;
+-(AIFrontOrderNode*) create:(NSTimeInterval)inputTime order:(NSArray*)order mv:(AICMVNode*)mv;
 
 /**
  *  MARK:--------------------构建具象mv--------------------

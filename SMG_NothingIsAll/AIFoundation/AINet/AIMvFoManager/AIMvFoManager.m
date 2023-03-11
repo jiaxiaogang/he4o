@@ -11,10 +11,13 @@
 
 @implementation AIMvFoManager
 
--(AIFrontOrderNode*) create:(NSArray*)imvAlgsArr inputTime:(NSTimeInterval)inputTime order:(NSArray*)order{
-    //1. 打包cmvNode & foNode;
-    AICMVNode *cmvNode = [self createConMv:imvAlgsArr];
-    NSInteger urgentTo = [NUMTOOK([AINetIndex getData:cmvNode.urgentTo_p]) integerValue];
+/**
+ *  MARK:--------------------创建fo和mv的指向--------------------
+ *  @param mv notnull
+ */
+-(AIFrontOrderNode*) create:(NSTimeInterval)inputTime order:(NSArray*)order mv:(AICMVNode*)mv{
+    //1. foNode;
+    NSInteger urgentTo = [NUMTOOK([AINetIndex getData:mv.urgentTo_p]) integerValue];
     AIFrontOrderNode *foNode = [AIMvFoManager createConFo:order difStrong:urgentTo];
 
     //2. 将mv.inputTime传入,在relateFo之前,将inputTime赋值fo.mvDeltaTime;
@@ -24,7 +27,7 @@
     }
     
     //3. 互指向
-    [AINetUtils relateFo:foNode mv:cmvNode];
+    [AINetUtils relateFo:foNode mv:mv];
 
     //4. 返回给thinking
     return foNode;

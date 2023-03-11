@@ -10,8 +10,8 @@
 
 @interface TCRegroup : NSObject
 
-+(void) rRegroup:(AIShortMatchModel*)model;
-+(void) pRegroup:(NSArray*)algsArr;
++(void) rRegroup:(AIShortMatchModel*)shortModel;
++(void) pRegroup:(AICMVNode*)mv shortModel:(AIShortMatchModel*)shortModel;
 +(void) feedbackRegroup:(TOFoModel*)foModel feedbackFrameOfMatchAlgs:(NSArray*)feedbackFrameOfMatchAlgs;
 
 @end

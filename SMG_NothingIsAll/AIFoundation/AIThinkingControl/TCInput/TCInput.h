@@ -11,7 +11,7 @@
 @interface TCInput : NSObject
 
 +(void) rInput:(AIAlgNodeBase*)algNode except_ps:(NSArray*)except_ps;
-+(void) pInput:(NSArray*)algsArr;
++(void) pInput:(AICMVNode*)mv;
 +(void) hInput:(TOAlgModel*)algModel;
 
 @end

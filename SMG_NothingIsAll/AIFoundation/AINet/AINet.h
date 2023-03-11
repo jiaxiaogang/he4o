@@ -54,7 +54,7 @@
 //MARK:===============================================================
 //MARK:                     < cmv >
 //MARK:===============================================================
--(AIFrontOrderNode*) createCMV:(NSArray*)imvAlgsArr inputTime:(NSTimeInterval)inputTime order:(NSArray*)order;
+-(AIFrontOrderNode*) createCMVFo:(NSTimeInterval)inputTime order:(NSArray*)order mv:(AICMVNode*)mv;
 -(AICMVNode*) createConMv:(NSArray*)imvAlgsArr;
 -(AICMVNode*) createConMv:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p at:(NSString*)at;
 
