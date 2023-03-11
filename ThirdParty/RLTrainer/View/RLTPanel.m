@@ -300,6 +300,10 @@
     [self close];
 }
 
+//MARK:===============================================================
+//MARK:                     < 防撞训练 >
+//MARK:===============================================================
+
 /**
  *  MARK:--------------------学被撞--------------------
  *  @desc
@@ -419,6 +423,64 @@
     
     //1. 加长版训练100轮
     [theRT queueN:@[Queue(kGrowPageSEL),Queue(kWoodLeftSEL),Queue(kFlySEL),Queue(kFlySEL),Queue(kWoodLeftSEL),Queue(kMainPageSEL),Queue(kClearTCSEL)] count:100];
+}
+
+//MARK:===============================================================
+//MARK:                     < 觅食训练 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------第1步学饿--------------------
+ *  @desc 参考28172-第1步;
+ */
+- (IBAction)eat1BtnClick:(id)sender {
+    //1. 随机出生;
+    [theRT queue1:Queue(kBirthPosRdmSEL)];
+    
+    //2. 饥饿,随机扔个坚果 x 200次;
+    [theRT queueN:@[Queue(kGrowPageSEL),Queue(kHungerSEL),Queue(kFoodRdmSEL),Queue(kMainPageSEL),Queue(kClearTCSEL)] count:200];
+    
+    //TODOTOMORROW20230311:
+    //1. 支持第二次饥饿信号发出后,允许扔食物继续跑,但别的不允许;
+    
+    //2. 飞到食物上时,要触发反射吃掉;
+    
+    
+}
+
+/**
+ *  MARK:--------------------第2步学吃--------------------
+ *  @desc 参考28172-第2步;
+ */
+- (IBAction)eat2BtnClick:(id)sender {
+    //1. 随机出生;
+    [theRT queue1:Queue(kBirthPosRdmSEL)];
+    for (NSInteger i = 0; i < 100; i++) {
+        //2. 进入训练页 & 饥饿 & 附近投坚果;
+        NSMutableArray *queues = [[NSMutableArray alloc] init];
+        [queues addObject:Queue(kGrowPageSEL)];
+        [queues addObject:Queue(kHungerSEL)];
+        [queues addObject:Queue(kFoodRdmNearSEL)];
+        
+        //3. 随机飞个方向连续3步;
+        NSNumber *flyDirection = @(arc4random() % 8);
+        for (int i = 0; i < 3; i++) {
+            [queues addObject:Queue0(kFlySEL, flyDirection)];
+        }
+        
+        //4. 退到主页,模拟重启;
+        [queues addObjectsFromArray:@[Queue(kMainPageSEL),Queue(kClearTCSEL)]];
+        
+        //5. 训练names;
+        [theRT queueN:queues count:1];
+    }
+}
+
+/**
+ *  MARK:--------------------第3步试错--------------------
+ */
+- (IBAction)eat3BtnClick:(id)sender {
+    
 }
 
 //MARK:===============================================================

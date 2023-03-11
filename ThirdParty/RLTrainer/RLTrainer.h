@@ -20,6 +20,10 @@
 #define kBirthPosRdmCentSEL @"BirthPosRdmCent"  //出生在随机偏中间
 #define kBirthPosCentSEL @"BirthPosCent"        //出生在中间
 
+#define kHungerSEL @"Hunger"                    //马上饿
+#define kFoodRdmSEL @"FoodRdm"                  //随机地点_投食物
+#define kFoodRdmNearSEL @"FoodRdmNear"          //随机在鸟附近_投食物
+
 /**
  *  MARK:--------------------强化训练器--------------------
  *  @desc 使用说明: 每个训练项,必须调用以下三个方法:

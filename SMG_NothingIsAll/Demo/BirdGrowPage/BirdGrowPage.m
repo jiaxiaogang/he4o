@@ -71,6 +71,9 @@
     [theRT regist:kFlySEL target:self selector:@selector(touchWingBlock:)];
     [theRT regist:kWoodLeftSEL target:self selector:@selector(throwWood_Left)];
     [theRT regist:kWoodRdmSEL target:self selector:@selector(throwWood_Rdm)];
+    [theRT regist:kHungerSEL target:self selector:@selector(hungerBtnOnClick:)];
+    [theRT regist:kFoodRdmSEL target:self selector:@selector(randomThrowFood4Screen)];
+    [theRT regist:kFoodRdmNearSEL target:self selector:@selector(randomThrowFood4Near)];
 }
 
 //MARK:===============================================================
@@ -106,6 +109,51 @@
 //MARK:===============================================================
 //MARK:                     < method >
 //MARK:===============================================================
+
+/**
+ *  MARK:--------------------随机屏内扔个坚果--------------------
+ */
+-(void) randomThrowFood4Screen {
+    //1. 数据准备;
+    int randomX = 20 + (arc4random() % (int)(ScreenWidth - 40));//屏内x为20到screenW-20;
+    int randomY = 84 + (arc4random() % (int)(ScreenHeight - 168));//屏内y为84到screenW-84;
+    
+    //2. 投食物
+    [self food2Pos:CGPointMake(randomX, randomY)];
+    
+    //3. 报强训结束标记;
+    [theRT invoked:kFoodRdmSEL];
+}
+
+/**
+ *  MARK:--------------------随机附近扔个坚果--------------------
+ *  @desc 在鸟的八个方向,随机3飞距离内投个坚果;
+ *          1. 不允许投在鸟身上;
+ *          2. 投的位置要随机抖动一些,避免完全的直或斜;
+ */
+-(void) randomThrowFood4Near {
+    //1. 数据准备;
+    int random = arc4random() % 8;
+    CGPoint birdPos = self.birdView.center;
+    int ziDis = 15 + 8 + (arc4random() % 42);//直线时,距离为23 -> 65之间;
+    int xieDis = 22 + 8 + (arc4random() % 16);//斜线时,距离为30 -> 46之间;
+    int douDon1 = (arc4random() % 6) - 3;//抖动距离正负3;
+    int douDon2 = (arc4random() % 6) - 3;//抖动距离正负3;
+    
+    //2. 随机方向扔食物
+    if (random == 0) [self food2Pos:CGPointMake(birdPos.x - ziDis + douDon1, birdPos.y + douDon2)];
+    else if (random == 1) [self food2Pos:CGPointMake(birdPos.x - xieDis + douDon1, birdPos.y - xieDis + douDon2)];
+    else if (random == 2) [self food2Pos:CGPointMake(birdPos.x + douDon1, birdPos.y - ziDis + douDon2)];
+    else if (random == 3) [self food2Pos:CGPointMake(birdPos.x + xieDis + douDon1, birdPos.y - xieDis + douDon2)];
+    else if (random == 4) [self food2Pos:CGPointMake(birdPos.x + ziDis + douDon1, birdPos.y + douDon2)];
+    else if (random == 5) [self food2Pos:CGPointMake(birdPos.x + xieDis + douDon1, birdPos.y + xieDis + douDon2)];
+    else if (random == 6) [self food2Pos:CGPointMake(birdPos.x + douDon1, birdPos.y + ziDis + douDon2)];
+    else if (random == 7) [self food2Pos:CGPointMake(birdPos.x - xieDis + douDon1, birdPos.y + xieDis + douDon2)];
+    
+    //3. 报强训结束标记;
+    [theRT invoked:kFoodRdmNearSEL];
+}
+
 //单击投食
 - (void)singleTap:(UITapGestureRecognizer *)tapRecognizer{
     //1. 计算距离和角度
@@ -152,49 +200,49 @@
     [self animationFlash:sender];
     DemoLog(@"远投-左");
     CGPoint birdPos = self.birdView.center;
-    [self food2Pos:CGPointMake(birdPos.x - 100, birdPos.y)];
+    [self food2Pos:CGPointMake(birdPos.x - 65, birdPos.y)];
 }
 - (IBAction)foodLeftUpOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-左上");
     CGPoint birdPos = self.birdView.center;
-    [self food2Pos:CGPointMake(birdPos.x - 100, birdPos.y - 100)];
+    [self food2Pos:CGPointMake(birdPos.x - 46, birdPos.y - 46)];
 }
 - (IBAction)foodUpOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-上");
     CGPoint birdPos = self.birdView.center;
-    [self food2Pos:CGPointMake(birdPos.x, birdPos.y - 100)];
+    [self food2Pos:CGPointMake(birdPos.x, birdPos.y - 65)];
 }
 - (IBAction)foodRightUpOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-右上");
     CGPoint birdPos = self.birdView.center;
-    [self food2Pos:CGPointMake(birdPos.x + 100, birdPos.y - 100)];
+    [self food2Pos:CGPointMake(birdPos.x + 46, birdPos.y - 46)];
 }
 - (IBAction)foodRightOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-右");
     CGPoint birdPos = self.birdView.center;
-    [self food2Pos:CGPointMake(birdPos.x + 100, birdPos.y)];
+    [self food2Pos:CGPointMake(birdPos.x + 65, birdPos.y)];
 }
 - (IBAction)foodRightDownOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-右下");
     CGPoint birdPos = self.birdView.center;
-    [self food2Pos:CGPointMake(birdPos.x + 100, birdPos.y + 100)];
+    [self food2Pos:CGPointMake(birdPos.x + 46, birdPos.y + 46)];
 }
 - (IBAction)foodDownOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-下");
     CGPoint birdPos = self.birdView.center;
-    [self food2Pos:CGPointMake(birdPos.x, birdPos.y + 100)];
+    [self food2Pos:CGPointMake(birdPos.x, birdPos.y + 65)];
 }
 - (IBAction)foodLeftDownOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-左下");
     CGPoint birdPos = self.birdView.center;
-    [self food2Pos:CGPointMake(birdPos.x - 100, birdPos.y + 100)];
+    [self food2Pos:CGPointMake(birdPos.x - 46, birdPos.y + 46)];
 }
 /**
  *  MARK:--------------------饥饿是连续的mv输入 (参考28171-todo2)--------------------
@@ -213,6 +261,9 @@
             [[[DemoHunger alloc] init] commit:0.5 state:UIDeviceBatteryStateUnplugged];
         }
     });
+    
+    //3. 报强训结束标记;
+    [theRT invoked:kHungerSEL];
 }
 
 - (IBAction)touchWingBtnOnClick:(id)sender {
