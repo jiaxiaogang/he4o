@@ -439,13 +439,6 @@
     
     //2. 饥饿,随机扔个坚果 x 200次;
     [theRT queueN:@[Queue(kGrowPageSEL),Queue(kHungerSEL),Queue(kFoodRdmSEL),Queue(kMainPageSEL),Queue(kClearTCSEL)] count:200];
-    
-    //TODOTOMORROW20230311:
-    //1. 支持第二次饥饿信号发出后,允许扔食物继续跑,但别的不允许;
-    
-    //2. 飞到食物上时,要触发反射吃掉;
-    
-    
 }
 
 /**
@@ -467,6 +460,13 @@
         for (int i = 0; i < 3; i++) {
             [queues addObject:Queue0(kFlySEL, flyDirection)];
         }
+        
+        //TODOTOMORROW20230311:
+        //1. 飞到食物上时,要触发反射吃掉;
+        
+        
+        
+        
         
         //4. 退到主页,模拟重启;
         [queues addObjectsFromArray:@[Queue(kMainPageSEL),Queue(kClearTCSEL)]];

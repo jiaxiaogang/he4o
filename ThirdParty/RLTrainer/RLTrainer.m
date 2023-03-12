@@ -75,6 +75,16 @@ static RLTrainer *_instance;
 }
 
 //MARK:===============================================================
+//MARK:               < publicMethod: 触发暂停命令 >
+//MARK:===============================================================
+-(void) appendPauseNames:(NSArray*)value {
+    [self.model appendPauseNames:value];
+}
+-(void) clearPauseNames {
+    [self.model clearPauseNames];
+}
+
+//MARK:===============================================================
 //MARK:                     < RTModelDelegate >
 //MARK:===============================================================
 -(BOOL) rtModel_Playing{

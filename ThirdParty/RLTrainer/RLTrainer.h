@@ -63,4 +63,10 @@
  */
 -(void)setPlaying:(BOOL)playing;
 
+//MARK:===============================================================
+//MARK:               < publicMethod: 触发暂停命令 >
+//MARK:===============================================================
+-(void) appendPauseNames:(NSArray*)value;
+-(void) clearPauseNames;
+
 @end

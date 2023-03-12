@@ -255,11 +255,16 @@
     [[[DemoHunger alloc] init] commit:0.6 state:UIDeviceBatteryStateUnplugged];
     self.birdView.waitEat = true;
     
+    //2. 强训工具需要等待第2次更饿后,才能继续训练下轮;
+    [theRT appendPauseNames:@[kMainPageSEL]];
+    
     //2. 五秒后更饿: 从0.6饿到0.5 (按0.5计算得迫切度为25);
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         if (self.birdView.waitEat) {
             [[[DemoHunger alloc] init] commit:0.5 state:UIDeviceBatteryStateUnplugged];
         }
+        //3. 第2次饿后,允许强训工具继续;
+        [theRT clearPauseNames];
     });
     
     //3. 报强训结束标记;

@@ -20,6 +20,7 @@
 @property (assign, nonatomic) long long useTimed;           //已使用时间
 @property (assign, nonatomic) long long lastStartTime;      //最后一次开始时间
 @property (strong, nonatomic) NSString *invokingName;       //当前执行中name;
+@property (strong, nonatomic) NSMutableArray *pauseNames;   //需要停下等待的命令;
 
 @end
 
@@ -36,6 +37,7 @@
 -(void) initData{
     self.dic = [[NSMutableDictionary alloc] init];
     self.queues = [[NSMutableArray alloc] init];
+    self.pauseNames = [[NSMutableArray alloc] init];
     self.timer = [NSTimer scheduledTimerWithTimeInterval:TimerInterval target:self selector:@selector(timeBlock) userInfo:nil repeats:true];
 }
 
@@ -106,6 +108,22 @@
 }
 
 //MARK:===============================================================
+//MARK:               < publicMethod: 触发暂停命令 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------增加暂停命令 (参考28172-todo1.1)--------------------
+ *  @desc 用于有些预约指令需要时间等待执行,防止强训工具提前退出本次训练 (所以一般用于防止回到MainPage或模拟重启);
+ */
+-(void) appendPauseNames:(NSArray*)value {
+    [self.pauseNames addObjectsFromArray:value];
+}
+
+-(void) clearPauseNames {
+    [self.pauseNames removeAllObjects];
+}
+
+//MARK:===============================================================
 //MARK:                     < privateMethod >
 //MARK:===============================================================
 -(void) invoke:(RTQueueModel*)queue {
@@ -165,8 +183,14 @@
     if (self.queueIndex > self.queues.count) return;
     [self playSetLastStartTime];
     
-    //4. 行为输出时,会即刻执行;
+    //3. 暂停命令等待;
     RTQueueModel *queue = ARR_INDEX(self.queues, self.queueIndex);
+    if ([self.pauseNames containsObject:queue.name]) {
+        NSLog(@"----> 强化训练_遇到暂停命令 -> 等待");
+        return;
+    }
+    
+    //4. 行为输出时,会即刻执行;
     BOOL curNeedWait = ![kFlySEL isEqualToString:queue.name];
     BOOL lastNeedCurWait = [kFlySEL isEqualToString:self.invokingName];
     

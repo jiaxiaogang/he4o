@@ -36,4 +36,10 @@
 -(void) clear;
 -(long long) getTotalUseTimed;
 
+//MARK:===============================================================
+//MARK:               < publicMethod: 触发暂停命令 >
+//MARK:===============================================================
+-(void) appendPauseNames:(NSArray*)value;
+-(void) clearPauseNames;
+
 @end
