@@ -119,10 +119,7 @@
     int randomY = 84 + (arc4random() % (int)(ScreenHeight - 168));//屏内y为84到screenW-84;
     
     //2. 投食物
-    [self food2Pos:CGPointMake(randomX, randomY)];
-    
-    //3. 报强训结束标记;
-    [theRT invoked:kFoodRdmSEL];
+    [self food2Pos:CGPointMake(randomX, randomY) caller4RL:kFoodRdmSEL];
 }
 
 /**
@@ -141,17 +138,14 @@
     int douDon2 = (arc4random() % 6) - 3;//抖动距离正负3;
     
     //2. 随机方向扔食物
-    if (random == 0) [self food2Pos:CGPointMake(birdPos.x - ziDis + douDon1, birdPos.y + douDon2)];
-    else if (random == 1) [self food2Pos:CGPointMake(birdPos.x - xieDis + douDon1, birdPos.y - xieDis + douDon2)];
-    else if (random == 2) [self food2Pos:CGPointMake(birdPos.x + douDon1, birdPos.y - ziDis + douDon2)];
-    else if (random == 3) [self food2Pos:CGPointMake(birdPos.x + xieDis + douDon1, birdPos.y - xieDis + douDon2)];
-    else if (random == 4) [self food2Pos:CGPointMake(birdPos.x + ziDis + douDon1, birdPos.y + douDon2)];
-    else if (random == 5) [self food2Pos:CGPointMake(birdPos.x + xieDis + douDon1, birdPos.y + xieDis + douDon2)];
-    else if (random == 6) [self food2Pos:CGPointMake(birdPos.x + douDon1, birdPos.y + ziDis + douDon2)];
-    else if (random == 7) [self food2Pos:CGPointMake(birdPos.x - xieDis + douDon1, birdPos.y + xieDis + douDon2)];
-    
-    //3. 报强训结束标记;
-    [theRT invoked:kFoodRdmNearSEL];
+    if (random == 0) [self food2Pos:CGPointMake(birdPos.x - ziDis + douDon1, birdPos.y + douDon2) caller4RL:kFoodRdmNearSEL];
+    else if (random == 1) [self food2Pos:CGPointMake(birdPos.x - xieDis + douDon1, birdPos.y - xieDis + douDon2) caller4RL:kFoodRdmNearSEL];
+    else if (random == 2) [self food2Pos:CGPointMake(birdPos.x + douDon1, birdPos.y - ziDis + douDon2) caller4RL:kFoodRdmNearSEL];
+    else if (random == 3) [self food2Pos:CGPointMake(birdPos.x + xieDis + douDon1, birdPos.y - xieDis + douDon2) caller4RL:kFoodRdmNearSEL];
+    else if (random == 4) [self food2Pos:CGPointMake(birdPos.x + ziDis + douDon1, birdPos.y + douDon2) caller4RL:kFoodRdmNearSEL];
+    else if (random == 5) [self food2Pos:CGPointMake(birdPos.x + xieDis + douDon1, birdPos.y + xieDis + douDon2) caller4RL:kFoodRdmNearSEL];
+    else if (random == 6) [self food2Pos:CGPointMake(birdPos.x + douDon1, birdPos.y + ziDis + douDon2) caller4RL:kFoodRdmNearSEL];
+    else if (random == 7) [self food2Pos:CGPointMake(birdPos.x - xieDis + douDon1, birdPos.y + xieDis + douDon2) caller4RL:kFoodRdmNearSEL];
 }
 
 //单击投食
@@ -178,7 +172,7 @@
     if (targetPoint.x != 0 && targetPoint.y != 0) {
         DemoLog(@"远投 (X:%.2f Y:%.2f)",targetPoint.x,targetPoint.y);
         [theApp.heLogView addDemoLog:STRFORMAT(@"远投 (X:%.2f Y:%.2f)",targetPoint.x,targetPoint.y)];
-        [self food2Pos:targetPoint];
+        [self food2Pos:targetPoint caller4RL:nil];
     }
 }
 
@@ -200,50 +194,51 @@
     [self animationFlash:sender];
     DemoLog(@"远投-左");
     CGPoint birdPos = self.birdView.center;
-    [self food2Pos:CGPointMake(birdPos.x - 65, birdPos.y)];
+    [self food2Pos:CGPointMake(birdPos.x - 65, birdPos.y) caller4RL:nil];
 }
 - (IBAction)foodLeftUpOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-左上");
     CGPoint birdPos = self.birdView.center;
-    [self food2Pos:CGPointMake(birdPos.x - 46, birdPos.y - 46)];
+    [self food2Pos:CGPointMake(birdPos.x - 46, birdPos.y - 46) caller4RL:nil];
 }
 - (IBAction)foodUpOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-上");
     CGPoint birdPos = self.birdView.center;
-    [self food2Pos:CGPointMake(birdPos.x, birdPos.y - 65)];
+    [self food2Pos:CGPointMake(birdPos.x, birdPos.y - 65) caller4RL:nil];
 }
 - (IBAction)foodRightUpOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-右上");
     CGPoint birdPos = self.birdView.center;
-    [self food2Pos:CGPointMake(birdPos.x + 46, birdPos.y - 46)];
+    [self food2Pos:CGPointMake(birdPos.x + 46, birdPos.y - 46) caller4RL:nil];
 }
 - (IBAction)foodRightOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-右");
     CGPoint birdPos = self.birdView.center;
-    [self food2Pos:CGPointMake(birdPos.x + 65, birdPos.y)];
+    [self food2Pos:CGPointMake(birdPos.x + 65, birdPos.y) caller4RL:nil];
 }
 - (IBAction)foodRightDownOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-右下");
     CGPoint birdPos = self.birdView.center;
-    [self food2Pos:CGPointMake(birdPos.x + 46, birdPos.y + 46)];
+    [self food2Pos:CGPointMake(birdPos.x + 46, birdPos.y + 46) caller4RL:nil];
 }
 - (IBAction)foodDownOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-下");
     CGPoint birdPos = self.birdView.center;
-    [self food2Pos:CGPointMake(birdPos.x, birdPos.y + 65)];
+    [self food2Pos:CGPointMake(birdPos.x, birdPos.y + 65) caller4RL:nil];
 }
 - (IBAction)foodLeftDownOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-左下");
     CGPoint birdPos = self.birdView.center;
-    [self food2Pos:CGPointMake(birdPos.x - 46, birdPos.y + 46)];
+    [self food2Pos:CGPointMake(birdPos.x - 46, birdPos.y + 46) caller4RL:nil];
 }
+
 /**
  *  MARK:--------------------饥饿是连续的mv输入 (参考28171-todo2)--------------------
  */
@@ -449,7 +444,7 @@
 //MARK:===============================================================
 //MARK:                     < privateMethod >
 //MARK:===============================================================
-- (void) food2Pos:(CGPoint)targetPoint{
+- (void) food2Pos:(CGPoint)targetPoint caller4RL:(NSString*)caller4RL{
     FoodView *foodView = [[FoodView alloc] init];
     [foodView hit];
     [foodView setOrigin:CGPointMake(ScreenWidth * 0.375f, ScreenHeight - 66)];
@@ -459,6 +454,16 @@
     }completion:^(BOOL finished) {
         //1. 视觉输入
         [self.birdView see:self.view];
+        
+        //2. 投食碰撞检测 (参考28172-todo2.2);
+        if ([self birdView_GetFoodOnMouth]) {
+            
+            //3. 如果扔到鸟身上,则触发吃掉 (参考28172-todo2.1);
+            [self.birdView touchMouth];
+        }
+        
+        //4. 报强训结束标记 (投果结束);
+        [theRT invoked:caller4RL];
     }];
 }
 

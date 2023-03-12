@@ -66,6 +66,13 @@
         [self setX:self.x + (cos(angle) * 30.0f)];
         [self setY:self.y + (sin(angle) * 30.0f)];
     }completion:^(BOOL finished) {
+        //5. 飞后与坚果碰撞检测 (参考28172-todo2.2);
+        if ([self.delegate birdView_GetFoodOnMouth]) {
+            
+            //6. 如果飞到坚果上,则触发吃掉 (参考28172-todo2.1);
+            [self touchMouth];
+        }
+        //7. 强训飞完报告;
         [theRT invoked:kFlySEL];
     }];
 }
