@@ -39,7 +39,7 @@
     
     //2. 拼接返回
     for (AIKVPointer *item_p in node_ps){
-        NSString *str = [NVHeUtil getLightStr:item_p simple:simple header:header];
+        NSString *str = [NVHeUtil getLightStr:item_p simple:simple header:header from:node_ps];
         [result appendFormat:@"%@%@",str,sep];
     }
     return SUBSTR2INDEX(result, result.length - sep.length);
@@ -48,16 +48,19 @@
 +(NSString*) getLightStr:(AIKVPointer*)node_p {
     return [self getLightStr:node_p simple:true header:false];
 }
-+(NSString*) getLightStr:(AIKVPointer*)node_p simple:(BOOL)simple header:(BOOL)header{
++(NSString*) getLightStr:(AIKVPointer*)node_p simple:(BOOL)simple header:(BOOL)header {
+    return [self getLightStr:node_p simple:simple header:header from:nil];
+}
++(NSString*) getLightStr:(AIKVPointer*)node_p simple:(BOOL)simple header:(BOOL)header from:(NSArray*)from{
     NSString *lightStr = @"";
     if (ISOK(node_p, AIKVPointer.class)) {
         if ([self isValue:node_p]) {
-            lightStr = [self getLightStr_ValueP:node_p];
+            lightStr = [self getLightStr_ValueP:node_p from:from];
         }else if ([self isAlg:node_p]) {
             AIAlgNodeBase *algNode = [SMGUtils searchNode:node_p];
             if (algNode) {
                 if (simple) {
-                    NSString *firstValueStr = [self getLightStr_ValueP:ARR_INDEX(algNode.content_ps, 0)];
+                    NSString *firstValueStr = [self getLightStr_ValueP:ARR_INDEX(algNode.content_ps, 0) from:algNode.content_ps];
                     lightStr = STRFORMAT(@"%@%@",firstValueStr,(algNode.content_ps.count > 1) ? @"..." : @"");
                 }else{
                     lightStr = [self getLightStr4Ps:algNode.content_ps simple:simple header:header sep:@","];
@@ -79,7 +82,7 @@
 }
 
 //获取value_p的light描述;
-+(NSString*) getLightStr_ValueP:(AIKVPointer*)value_p{
++(NSString*) getLightStr_ValueP:(AIKVPointer*)value_p from:(NSArray*)from{
     if (!value_p) return @"";
     double value = [NUMTOOK([AINetIndex getData:value_p]) doubleValue];
     NSString *valueStr = [self getLightStr_Value:value algsType:value_p.algsType dataSource:value_p.dataSource];
@@ -102,7 +105,11 @@
     }else if ([@"distanceX" isEqualToString:value_p.dataSource]) {
         return STRFORMAT(@"X距%@",valueStr);
     }else if ([@"distanceY" isEqualToString:value_p.dataSource]) {
-        return STRFORMAT(@"Y距_%@_%@",[TVUtil distanceYDesc:value],valueStr);
+        if (ARRISOK(from) && NUMTOOK(ARR_INDEX([SMGUtils convertArr:from convertBlock:^id(AIKVPointer *item) {
+            if ([@"sizeHeight" isEqualToString:item.dataSource]) return NUMTOOK([AINetIndex getData:item]);
+            return nil;
+        }], 0)).doubleValue == 100) return STRFORMAT(@"Y距_%@_%@",[TVUtil distanceYDesc:value],valueStr);
+        return STRFORMAT(@"Y距%@",valueStr);
     }else if ([@"speed" isEqualToString:value_p.dataSource]) {
         return STRFORMAT(@"速%@",valueStr);
     }else if ([@"border" isEqualToString:value_p.dataSource]) {

@@ -469,13 +469,6 @@
             [queues addObject:Queue0(kFlySEL, flyDirection)];
         }
         
-        //TODOTOMORROW20230311:
-        //1. 飞到食物上时,要触发反射吃掉;
-        
-        
-        
-        
-        
         //4. 退到主页,模拟重启;
         [queues addObjectsFromArray:@[Queue(kMainPageSEL),Queue(kClearTCSEL)]];
         
