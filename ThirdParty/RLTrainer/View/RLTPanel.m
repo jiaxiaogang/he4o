@@ -156,21 +156,29 @@
 //MARK:===============================================================
 -(NSString*) cellStr:(NSString*)queue {
     if ([kGrowPageSEL isEqualToString:queue]) {
-        return @"页 - 进入成长页";
+        return @"进入成长页";
     }else if ([kFlySEL isEqualToString:queue]) {
-        return @"飞 - 随机";
+        return @"随机飞";
     }else if ([kWoodLeftSEL isEqualToString:queue]) {
-        return @"棒 - 扔木棒";
+        return @"扔木棒";
     }else if ([kWoodRdmSEL isEqualToString:queue]) {
-        return @"棒 - 随机扔木棒";
+        return @"随机扔木棒";
     }else if ([kMainPageSEL isEqualToString:queue]) {
-        return @"页 - 回主页";
+        return @"回主页";
     }else if ([kClearTCSEL isEqualToString:queue]) {
-        return @"页 - 重启";
+        return @"重启";
     }else if ([kBirthPosRdmSEL isEqualToString:queue]) {
-        return @"参 - 出生地随机";
+        return @"出生地随机";
     }else if ([kBirthPosRdmCentSEL isEqualToString:queue]) {
-        return @"参 - 出生地随机偏路中";
+        return @"出生地随机偏路中";
+    }else if ([kBirthPosCentSEL isEqualToString:queue]) {
+        return @"出生在中间";
+    }else if ([kHungerSEL isEqualToString:queue]) {
+        return @"饿";
+    }else if ([kFoodRdmSEL isEqualToString:queue]) {
+        return @"随机投食";
+    }else if ([kFoodRdmNearSEL isEqualToString:queue]) {
+        return @"附近投食";
     }
     return @"";
 }
