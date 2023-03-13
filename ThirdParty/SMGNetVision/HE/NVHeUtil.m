@@ -178,7 +178,16 @@
     return lightStr;
 }
 
+/**
+ *  MARK:--------------------方向--------------------
+ *  @version
+ *      2023.03.13: 飞方向有8向,但视觉方向改为360向了 (因为早已支持相近匹配了);
+ */
 +(NSString*) direction2Str:(CGFloat)value{
+    return STRFORMAT(@"%.0f",value);
+}
+
++(NSString*) fly2Str:(CGFloat)value{
     int caseValue = value * 8;
     switch (caseValue) {
         case 0: return @"←";
@@ -191,10 +200,6 @@
         case 7: return @"↙";
     }
     return @"";
-}
-
-+(NSString*) fly2Str:(CGFloat)value{
-    return [self direction2Str:value];
 }
 
 @end

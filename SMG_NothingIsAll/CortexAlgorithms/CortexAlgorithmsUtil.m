@@ -18,8 +18,9 @@
  *  @result 首尾循环的返回最大值,如果不循环的值则返回0;
  */
 +(double) maxOfLoopValue:(NSString*)at ds:(NSString*)ds {
-    if ([@"AIVisionAlgsModel" isEqualString:ds] && [@"direction" isEquilString:at]) {
-        return 360; //方向有360个值;
+    //1. 视觉方向有360个值;
+    if ([@"AIVisionAlgs" isEqualToString:at] && [@"direction" isEqualToString:ds]) {
+        return 360;
     }
     return 0;
 }

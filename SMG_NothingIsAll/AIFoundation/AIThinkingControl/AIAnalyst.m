@@ -22,6 +22,8 @@
 /**
  *  MARK:--------------------比对稀疏码相近度--------------------
  *  @result 返回0到1 (0:稀疏码完全不同, 1稀疏码完全相同) (参考26127-TODO6);
+ *  @version
+ *      2023.03.13: 支持循环码时的相近度计算 (参考28174-todo2);
  */
 +(CGFloat) compareCansetValue:(AIKVPointer*)cansetV_p protoValue:(AIKVPointer*)protoV_p{
     //1. 取稀疏码值;
@@ -34,7 +36,7 @@
         double halfMax = max / 2;
         double protoDelta = fabs(cansetData - protoData);
         protoDelta = protoDelta > halfMax ? protoDelta - halfMax : protoDelta;
-        return protoDelta / halfMax;
+        return 1 - protoDelta / halfMax;
     }
     
     //3. 线性时: 计算出nearV相近度 (参考25082-公式1);
