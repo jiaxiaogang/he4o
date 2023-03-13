@@ -21,6 +21,8 @@
  *      2021.09.14: 废弃速度,因为HE视觉是离散的,速度不重要 (参考24017-问题1);
  *      2022.06.04: 废弃X值和方向,新增X距 (参考26196);
  *      2022.06.05: 回退26196-方案3 (参考26196-尝试1);
+ *      2023.03.08: 废除客观特征posXY (参考28161-方案5);
+ *      2023.03.13: 用距离和方向替代XY距 (参考28173-方案3);
  */
 +(void) commitView:(UIView*)selfView targetView:(UIView*)targetView rect:(CGRect)rect{
     //1. 数据准备;
@@ -46,14 +48,14 @@
             //model.radius = [self radius:curView];
             //model.speed = [self speed:curView];
             model.direction = [self direction:selfView target:curView];
-            //model.distance = [self distance:selfView target:curView];
-            model.distanceX = [self distanceX:selfView target:curView];
-            model.distanceY = [self distanceY:selfView target:curView];
+            model.distance = [self distance:selfView target:curView];
+            //model.distanceX = [self distanceX:selfView target:curView];
+            //model.distanceY = [self distanceY:selfView target:curView];
             model.border = [self border:curView];
             //model.posX = [self posX:curView];
             //model.posY = [self posY:curView];
             //NSLog(@"视觉目标 [距离:%ld 角度:%f 宽:%f 高:%f 皮:%f 圆角:%f]",(long)model.distance,model.direction,model.sizeWidth,model.sizeHeight,model.border,model.radius);
-            NSLog(@"视觉目标 [X距:%ld Y距:%ld 高:%ld 皮:%ld]",model.distanceX,model.distanceY,model.sizeHeight,model.border);
+            NSLog(@"视觉目标 [方向:%ld 距离:%ld 高:%ld 皮:%ld]",model.direction,model.distance,model.sizeHeight,model.border);
             NSMutableDictionary *modelDic = [NSObject getDic:model containParent:true];
             //for (NSString *key in modelDic.allKeys) {
             //    if ([NUMTOOK([modelDic objectForKey:key]) isEqualToNumber:@(0)]) {
@@ -161,7 +163,7 @@
  *  @version
  *      2023.03.13: 打开方向码 (参考28174-todo1);
  */
-+(CGFloat) direction:(UIView*)selfView target:(UIView*)target{
++(NSInteger) direction:(UIView*)selfView target:(UIView*)target{
     //1. 取距离
     CGPoint distanceP = [UIView distancePoint:selfView target:target];
     
@@ -179,8 +181,8 @@
     //return (paramInt % 8) / 8.0f;
     
     //4. 360向(0-360)版本: 返回360向;
-    int result = (int)roundf(protoParam * 360.0f);
-    if (Log4CortexAlgs) NSLog(@"视觉目标 方向角度:%.2f (%.2f) 返回:%d",rads / M_PI * 180,protoParam,result);
+    NSInteger result = (NSInteger)roundf(protoParam * 360.0f);
+    if (Log4CortexAlgs) NSLog(@"视觉目标 方向角度:%.2f (%.2f) 返回:%ld",rads / M_PI * 180,protoParam,result);
     return result;
 }
 

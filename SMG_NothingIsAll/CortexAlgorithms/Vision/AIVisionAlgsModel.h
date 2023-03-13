@@ -36,13 +36,14 @@
 //@property (assign,nonatomic) NSInteger speed;
 
 //direction
-@property (assign,nonatomic) CGFloat direction;
+@property (assign,nonatomic) NSInteger direction;
 
 //distance
 //20230308: 去掉距离 (因为与Y距X距重复);
-//@property (assign,nonatomic) NSInteger distance;
-@property (assign,nonatomic) NSInteger distanceX;
-@property (assign,nonatomic) NSInteger distanceY;
+//20230313: 用距离替代XY距 (参考28174-todo3);
+@property (assign,nonatomic) NSInteger distance;
+//@property (assign,nonatomic) NSInteger distanceX;
+//@property (assign,nonatomic) NSInteger distanceY;
 
 //border
 @property (assign,nonatomic) NSInteger border;
