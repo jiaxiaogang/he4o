@@ -26,6 +26,7 @@
 #import "TOMVision2.h"
 #import "RTQueueModel.h"
 #import "XGWedis.h"
+#import "CortexAlgorithmsUtil.h"
 
 //Util
 #import "ThinkingUtils.h"

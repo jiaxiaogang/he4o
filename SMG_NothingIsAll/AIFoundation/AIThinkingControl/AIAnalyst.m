@@ -28,7 +28,16 @@
     double cansetData = [NUMTOOK([AINetIndex getData:cansetV_p]) doubleValue];
     double protoData = [NUMTOOK([AINetIndex getData:protoV_p]) doubleValue];
     
-    //2. 计算出nearV (参考25082-公式1);
+    //2. 循环时: 计算出nearV相近度 (参考28174-todo2);
+    double max = [CortexAlgorithmsUtil maxOfLoopValue:cansetV_p.algsType ds:cansetV_p.dataSource];
+    if (max > 0) {
+        double halfMax = max / 2;
+        double protoDelta = fabs(cansetData - protoData);
+        protoDelta = protoDelta > halfMax ? protoDelta - halfMax : protoDelta;
+        return protoDelta / halfMax;
+    }
+    
+    //3. 线性时: 计算出nearV相近度 (参考25082-公式1);
     double delta = fabs(cansetData - protoData);
     double span = [AINetIndex getIndexSpan:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut];
     double nearV = (span == 0) ? 1 : (1 - delta / span);

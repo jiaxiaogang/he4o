@@ -45,7 +45,7 @@
             //model.colorBlue = [self colorBlue:curView];
             //model.radius = [self radius:curView];
             //model.speed = [self speed:curView];
-            //model.direction = [self direction:selfView target:curView];
+            model.direction = [self direction:selfView target:curView];
             //model.distance = [self distance:selfView target:curView];
             model.distanceX = [self distanceX:selfView target:curView];
             model.distanceY = [self distanceY:selfView target:curView];
@@ -156,16 +156,14 @@
 //    return (NSInteger)speed;
 //}
 
-//direction
+/**
+ *  MARK:--------------------direction--------------------
+ *  @version
+ *      2023.03.13: 打开方向码 (参考28174-todo1);
+ */
 +(CGFloat) direction:(UIView*)selfView target:(UIView*)target{
     //1. 取距离
     CGPoint distanceP = [UIView distancePoint:selfView target:target];
-    
-    //2. 在身上,则距离为(0,0);
-    //CGFloat distance = [UIView distance:selfView target:target];
-    //if (distance == 0) {
-    //    distanceP = CGPointMake(0, 0);
-    //}
     
     //2. 将距离转成角度-PI -> PI (从右至左,上面为-0 -> -3.14 / 从右至左,下面为0 -> 3.14)
     CGFloat rads = atan2f(distanceP.y,distanceP.x);
@@ -173,12 +171,16 @@
     //3. 将(-PI到PI) 转换成 (0到1)
     float protoParam = (rads / M_PI + 1) / 2;
     
-    //4. 将(0到1)转成四舍五入整数(0-8);
-    int paramInt = (int)roundf(protoParam * 8.0f);
+    //4. 8向(0-1)版本: 返回8向:
+    ////4. 将(0到1)转成四舍五入整数(0-8);
+    //int paramInt = (int)roundf(protoParam * 8.0f);
+    //
+    ////5. 如果是8,也是0;
+    //return (paramInt % 8) / 8.0f;
     
-    //5. 如果是8,也是0;
-    float result = (paramInt % 8) / 8.0f;
-    if (Log4CortexAlgs) NSLog(@"视觉目标 方向 >> 角度:%f 原始参数:%f 返回参数:%f",rads / M_PI * 180,protoParam,result);
+    //4. 360向(0-360)版本: 返回360向;
+    int result = (int)roundf(protoParam * 360.0f);
+    if (Log4CortexAlgs) NSLog(@"视觉目标 方向角度:%.2f (%.2f) 返回:%d",rads / M_PI * 180,protoParam,result);
     return result;
 }
 

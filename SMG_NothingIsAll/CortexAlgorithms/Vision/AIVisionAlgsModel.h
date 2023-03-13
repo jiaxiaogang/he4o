@@ -36,7 +36,7 @@
 //@property (assign,nonatomic) NSInteger speed;
 
 //direction
-//@property (assign,nonatomic) CGFloat direction;
+@property (assign,nonatomic) CGFloat direction;
 
 //distance
 //20230308: 去掉距离 (因为与Y距X距重复);
