@@ -47,7 +47,7 @@ static id mInstance;
     
     //2. 更新配置导致的变化到系统;
     if (NUMTOOK([self.configDic objectForKey:xgConfigKeyZiWuMode]).boolValue) {
-        theTC.stopThink = true;
+        theTC.thinkMode = 2;
         NSLog(@"======> XGConfig响应: 进入植物模式");
     }
     

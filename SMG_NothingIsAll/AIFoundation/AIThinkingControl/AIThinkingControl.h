@@ -19,12 +19,13 @@
 +(AIThinkingControl*) shareInstance;
 
 /**
- *  MARK:--------------------植物模式--------------------
+ *  MARK:--------------------思维模式--------------------
+ *  @desc 0动物模式(IO都启), 1认知模式(I启O停), 2植物模式(IO都停);
  *  @desc 强行停止思维工作 (参考27084-TODO4);
  *          1. TO通过energyValid返false阻断TCSolution来实现;
  *          2. TI通过阻断Input感知来实现;
  */
-@property (assign, nonatomic) BOOL stopThink;
+@property (assign, nonatomic) int thinkMode;
 
 //MARK:===============================================================
 //MARK:                     < 数据输入 >

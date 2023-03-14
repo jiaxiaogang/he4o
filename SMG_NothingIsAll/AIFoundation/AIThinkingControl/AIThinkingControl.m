@@ -77,7 +77,7 @@ static AIThinkingControl *_instance;
  */
 -(void) commitInput:(NSObject*)algsModel{
     //1. 植物模式阻断感知;
-    if (self.stopThink) return;
+    if (self.thinkMode == 2) return;
     //0. 将algModel转为modelDic;
     NSDictionary *modelDic = [NSObject getDic:algsModel containParent:true];
     NSString *algsType = NSStringFromClass(algsModel.class);
@@ -122,7 +122,7 @@ static AIThinkingControl *_instance;
  */
 -(void) commitInputWithModels:(NSArray*)dics algsType:(NSString*)algsType{
     //1. 植物模式阻断感知;
-    if (self.stopThink) return;
+    if (self.thinkMode == 2) return;
     //1. 数据检查 (小鸟不能仅传入foodView,而要传入整个视角场景)
     dics = ARRTOOK(dics);
     ISTitleLog(@"皮层输入");
@@ -167,7 +167,7 @@ static AIThinkingControl *_instance;
  */
 -(void) commitOutputLog:(NSArray*)outputModels{
     //1. 植物模式阻断感知;
-    if (self.stopThink) return;
+    if (self.thinkMode == 2) return;
     //1. 数据
     NSMutableArray *value_ps = [[NSMutableArray alloc] init];
     for (OutputModel *model in ARRTOOK(outputModels)) {
@@ -230,7 +230,7 @@ static AIThinkingControl *_instance;
  *      2022.05.22: roots又有循环卡顿问题,此处加上强行停止思考的功能,以方便调试);
  */
 -(BOOL) energyValid{
-    if (self.stopThink) {
+    if (self.thinkMode == 1 || self.thinkMode == 2) {
         return false;
     }
     return self.energy > 0;

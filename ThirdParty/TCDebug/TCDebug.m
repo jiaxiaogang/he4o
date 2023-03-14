@@ -82,11 +82,11 @@
         BOOL lastLimited = self.lastOperesTimeArr.count >= DebugLastOperesNum;
         
         //5. 思维控制器工作正常,且判断卡住时,转入植物状态;
-        if (!theTC.stopThink && lastLimited && lastKale) {
+        if (theTC.thinkMode == 0 && lastLimited && lastKale) {
             
             //a. 设为植物模式;
             NSLog(@"操作计数判断当前为: 卡顿状态,转为植物模式");
-            theTC.stopThink = true;
+            theTC.thinkMode = 2;
             
             //b. 并暂停强化训练;
             [theRT setPlaying:false];

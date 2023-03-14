@@ -169,8 +169,15 @@
 }
 
 -(void) stopThinkBtnOnClick:(UIButton*)btn{
-    theTC.stopThink = !theTC.stopThink;
-    [btn setTitle:theTC.stopThink ? @"动物" : @"植物" forState:UIControlStateNormal];
+    theTC.thinkMode++;
+    theTC.thinkMode %= 3;
+    if (theTC.thinkMode == 0) {
+        [btn setTitle:@"动物" forState:UIControlStateNormal];
+    }else if(theTC.thinkMode == 1) {
+        [btn setTitle:@"认知" forState:UIControlStateNormal];
+    }else if(theTC.thinkMode == 2) {
+        [btn setTitle:@"植物" forState:UIControlStateNormal];
+    }
 }
 
 -(void) wedisSaveBtnOnClick:(UIButton*)btn{
