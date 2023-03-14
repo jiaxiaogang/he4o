@@ -540,11 +540,13 @@
  *  @desc 优点:
  *          1. 限定的范围固定,不会离谱;
  *          2. 限定范围内离屏中心概率更大;
+ *  @version
+ *      2023.03.14: 缩小防撞第2步训练出生范围 (参考28174-试解);
  */
 -(CGPoint) getBirdBirthPos_RandomCenter{
     //1. 取根值10;
-    CGFloat areaW = 400;
-    CGFloat areaH = 300;
+    CGFloat areaW = 280;
+    CGFloat areaH = 140;
     float modW = sqrtf(areaW * 0.5f);
     float modH = sqrtf(areaH * 0.5f);
     
