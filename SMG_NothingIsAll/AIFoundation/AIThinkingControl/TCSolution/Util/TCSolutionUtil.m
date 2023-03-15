@@ -426,6 +426,7 @@
  *      2023.02.17: 从Analyze整理到TCSolutionUtil中,因为它现在其实就是获取SolutionModel用的 (参考28084-1);
  *      2023.02.17: 废弃filter过滤器,并合并到此处来 (参考28084-2);
  *      2023.02.18: 计算前段竞争值 (参考28084-4);
+ *      2023.03.16: 先用任意帧sp值>5脱离惰性期 (参考28182-todo9);
  *  @result 返回cansetFo前段匹配度 & 以及已匹配的cutIndex截点;
  */
 +(AISolutionModel*) getSolutionModel:(AIKVPointer*)cansetFo_p basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel ptAleardayCount:(NSInteger)ptAleardayCount demand:(DemandModel*)demand {
@@ -440,6 +441,16 @@
     int minCount = isH ? 2 : 1;
     if (Log4SolutionFilter) NSLog(@"S过滤器 checkItem: %@",Pit2FStr(cansetFo_p));
     if (cansetFo.count < minCount) return nil; //过滤1: 过滤掉长度不够的 (因为前段全含至少要1位,中段修正也至少要0位,后段H目标要1位R要0位);
+    
+    //3. 惰性期 (参考28182-todo9);
+    BOOL inertTime = true;
+    for (AISPStrong *sp in cansetFo.spDic) {
+        if (sp.sStrong + sp.pStrong > 5) {
+            inertTime = false;
+            break;
+        }
+    }
+    if (inertTime) return nil;
     
     //5. 根据matchFo取得与canset的indexDic映射;
     NSDictionary *indexDic = [cansetFo getAbsIndexDic:matchFo_p];
