@@ -18,9 +18,10 @@
 @class AIFoNodeBase;
 @interface AIMatchFoModel : NSObject
 
-+(AIMatchFoModel*) newWithMatchFo:(AIKVPointer*)matchFo protoOrRegroupFo:(AIKVPointer*)protoOrRegroupFo sumNear:(CGFloat)sumNear nearCount:(NSInteger)nearCount indexDic:(NSDictionary*)indexDic cutIndex:(NSInteger)cutIndex sumRefStrong:(NSInteger)sumRefStrong;
++(AIMatchFoModel*) newWithMatchFo:(AIKVPointer*)matchFo protoOrRegroupFo:(AIKVPointer*)protoOrRegroupFo sumNear:(CGFloat)sumNear nearCount:(NSInteger)nearCount indexDic:(NSDictionary*)indexDic cutIndex:(NSInteger)cutIndex sumRefStrong:(NSInteger)sumRefStrong baseFrameModel:(AIShortMatchModel*)baseFrameModel;
 
 @property (weak, nonatomic) ReasonDemandModel *baseRDemand; //记录其挂载在哪个R任务下 (weak不允许序列化,避免循环序列化);
+@property (weak, nonatomic) AIShortMatchModel *baseFrameModel;//记录其挂载在哪个frameModel下;
 @property (strong, nonatomic) AIKVPointer *matchFo;     //匹配时序
 
 /**

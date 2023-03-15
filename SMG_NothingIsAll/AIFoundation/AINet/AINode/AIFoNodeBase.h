@@ -13,6 +13,7 @@
  *  @name 前因序列
  *  1. 是frontOrderNode和absNode的基类;
  */
+@class AIEffectStrong;
 @interface AIFoNodeBase : AINodeBase
 
 /**
@@ -86,10 +87,8 @@
 
 /**
  *  MARK:--------------------更新有效率值--------------------
- *  @version
- *      2022.05.27; 废弃,eff改成反省的一种了,所以不再需要effDic了 (参考26127-TODO1);
  */
--(void) updateEffectStrong:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo status:(EffectStatus)status;
+-(AIEffectStrong*) updateEffectStrong:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo status:(EffectStatus)status;
 
 /**
  *  MARK:--------------------取effIndex下有效的Effs--------------------

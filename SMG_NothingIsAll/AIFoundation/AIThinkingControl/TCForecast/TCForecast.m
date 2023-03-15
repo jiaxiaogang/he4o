@@ -132,19 +132,6 @@
             
             //14. 最末帧推进完全时,无论成败都算终点,则处理推进为完全时序 (参考27183);
             [item pushFrameFinish];
-            
-            
-            //TODOTOMORROW20230315:
-            //1. 在未反馈调用pushFrameFinish构建新的canset时,将matchFo的cansets与matchRFos取交集,然后对交集的eff加1;
-            
-            
-            
-            
-            
-            
-            
-            
-            
         }];
     }
 }

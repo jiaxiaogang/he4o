@@ -92,8 +92,11 @@
 
 /**
  *  MARK:--------------------更新有效率值--------------------
+ *  @version
+ *      2022.05.27; 废弃,eff改成反省的一种了,所以不再需要effDic了 (参考26127-TODO1);
+ *  @result 将更新后的strong模型返回;
  */
--(void) updateEffectStrong:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo status:(EffectStatus)status{
+-(AIEffectStrong*) updateEffectStrong:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo status:(EffectStatus)status{
     //1. 取kv (无则新建);
     NSNumber *key = @(effectIndex);
     NSMutableArray *value = [[NSMutableArray alloc] initWithArray:[self.effectDic objectForKey:key]];
@@ -117,6 +120,7 @@
     
     //3. 保存fo
     [SMGUtils insertNode:self];
+    return strong;
 }
 
 /**

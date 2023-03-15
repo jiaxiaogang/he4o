@@ -147,6 +147,10 @@
                     //11. 则进行感性IRT反省;
                     [TCRethink perceptInRethink:waitModel type:type];
                     NSLog(@"---//IP反省触发器执行:%p F%ld 状态:%@",waitMatchFo,waitMatchFo.pointer.pointerId,TIStatus2Str(status));
+                    
+                    //12. 有mv反馈时,matchRFos包含的解决方案更新下eff值 (一般是score<0,即eff-1) (参考28182-todo7);
+                    EffectStatus es = score > 0 ? ES_HavEff : ES_NoEff;
+                    [TCEffect rInEffect:waitMatchFo matchRFos:waitModel.baseFrameModel.matchRFos es:es];
                 }
                 
                 //13. pFo任务失效 (参考27093-条件1 & 27095-1);

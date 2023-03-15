@@ -23,9 +23,10 @@
 
 @implementation AIMatchFoModel
 
-+(AIMatchFoModel*) newWithMatchFo:(AIKVPointer*)matchFo protoOrRegroupFo:(AIKVPointer*)protoOrRegroupFo sumNear:(CGFloat)sumNear nearCount:(NSInteger)nearCount indexDic:(NSDictionary*)indexDic cutIndex:(NSInteger)cutIndex sumRefStrong:(NSInteger)sumRefStrong{
++(AIMatchFoModel*) newWithMatchFo:(AIKVPointer*)matchFo protoOrRegroupFo:(AIKVPointer*)protoOrRegroupFo sumNear:(CGFloat)sumNear nearCount:(NSInteger)nearCount indexDic:(NSDictionary*)indexDic cutIndex:(NSInteger)cutIndex sumRefStrong:(NSInteger)sumRefStrong baseFrameModel:(AIShortMatchModel*)baseFrameModel{
     AIFoNodeBase *protoOrRegroupFoNode = [SMGUtils searchNode:protoOrRegroupFo];
     AIMatchFoModel *model = [[AIMatchFoModel alloc] init];
+    model.baseFrameModel = baseFrameModel;
     model.matchFo = matchFo;
     [model.realMaskFo addObjectsFromArray:protoOrRegroupFoNode.content_ps];
     [model.realDeltaTimes addObjectsFromArray:protoOrRegroupFoNode.deltaTimes];
@@ -232,6 +233,9 @@
     
     //d. 将item.indexDic挂载到matchFo的conIndexDDic下 (参考27201-3);
     [protoFo updateIndexDic:matchFo indexDic:self.indexDic2];
+    
+    //3. =================生成新方案后 IN有效率+1 (参考28182-todo6)=================
+    [TCEffect rInEffect:matchFo matchRFos:self.baseFrameModel.matchRFos es:ES_HavEff];
 }
 
 /**
