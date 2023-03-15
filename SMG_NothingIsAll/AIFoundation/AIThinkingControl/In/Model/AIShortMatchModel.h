@@ -85,12 +85,13 @@
  *      2021.01.23: 支持时序多识别 (参考22073);
  *      2021.01.24: 默认取首条mFo,改为默认取含mv且迫切度最高的一条 (参考22073-todo7);
  *      2021.04.15: 支持matchRFos (参考23014-分析1&23016);
+ *      2023.03.15: 打开matchRFos (参考28181-方案3);
  *  @desc
  *      内容说明: 对已发生部分全含匹配的时序;
  *      排序方式: 按照当前matchAlg.refPorts被引用强度有序;
  */
 @property (strong, nonatomic) NSMutableArray *matchPFos; //有mv指向匹配时序 (元素为AIMatchFoModel);
-//@property (strong, nonatomic) NSMutableArray *matchRFos; //无mv指向匹配时序 (元素为AIMatchFoModel);
+@property (strong, nonatomic) NSMutableArray *matchRFos; //无mv指向匹配时序 (元素为AIMatchFoModel);
 
 /**
  *  MARK:--------------------含mv且迫切度最高的一条mFo--------------------

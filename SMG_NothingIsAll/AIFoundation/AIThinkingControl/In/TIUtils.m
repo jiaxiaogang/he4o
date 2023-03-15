@@ -320,13 +320,15 @@
  *      2023.02.24: 提升时序识别成功率: 把索引改成所有proto帧的抽象alg (参考28107-todo1);
  *      2023.02.24: 提升时序识别成功率: 废弃matchRFos (其实早废弃了,借着这次改,彻底此处相关代码删掉);
  *      2023.02.24: 提升时序识别成功率: 时序结果保留20% (参考28107-todo4);
+ *      2023.03.15: 打开matchRFos (参考28181-方案3);
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
 +(void) recognitionFo:(AIFoNodeBase*)protoOrRegroupFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel fromRegroup:(BOOL)fromRegroup matchAlgs:(NSArray*)matchAlgs {
     AddTCDebug(@"时序识别0");
     //1. 数据准备;
     except_ps = ARRTOOK(except_ps);
-    NSMutableArray *protoModels = [[NSMutableArray alloc] init];
+    NSMutableArray *protoPModels = [[NSMutableArray alloc] init];
+    NSMutableArray *protoRModels = [[NSMutableArray alloc] init];
     
     //2. 广入: 对每个元素,分别取索引序列 (参考25083-1);
     for (AIKVPointer *proto_p in protoOrRegroupFo.content_ps) {
@@ -339,9 +341,9 @@
             NSArray *refPorts = [AINetUtils refPorts_All4Alg_Normal:absAlg];
             
             //6. 仅保留mv指向的 (参考26022-3);
-            refPorts = [SMGUtils filterArr:refPorts checkValid:^BOOL(AIPort *item) {
-                return item.targetHavMv;
-            }];
+            //refPorts = [SMGUtils filterArr:refPorts checkValid:^BOOL(AIPort *item) {
+            //    return item.targetHavMv;
+            //}];
             
             //7. 每个refPort做两件事:
             for (AIPort *refPort in refPorts) {
@@ -375,30 +377,38 @@
                 AddTCDebug(@"时序识别25");
                 
                 //9. 收集到pFos/rFos;
-                [protoModels addObject:newMatchFo];
+                if (refFo.cmvNode_p) {
+                    [protoPModels addObject:newMatchFo];
+                } else {
+                    [protoRModels addObject:newMatchFo];
+                }
             }
         }
     }
     
     //10. 过滤强度前20% (参考28111-todo1);
-    NSArray *filterModels = [AIFilter recognitonFoFilter:protoModels];
+    NSArray *filterPModels = [AIFilter recognitonFoFilter:protoPModels];
+    NSArray *filterRModels = [AIFilter recognitonFoFilter:protoRModels];
     AddTCDebug(@"时序识别30");
     
     //10. 按照 (强度x匹配度) 排序,强度最重要,包含了价值初始和使用频率,其次匹配度也重要 (参考23222-BUG2);
-    NSArray *sorts = [AIRank recognitonFoRank:filterModels];
-    inModel.matchPFos = [[NSMutableArray alloc] initWithArray:sorts];
+    NSArray *sortPs = [AIRank recognitonFoRank:filterPModels];
+    NSArray *sortRs = [AIRank recognitonFoRank:filterRModels];
+    inModel.matchPFos = [[NSMutableArray alloc] initWithArray:sortPs];
+    inModel.matchRFos = [[NSMutableArray alloc] initWithArray:sortRs];
     AddTCDebug(@"时序识别31");
     
     //11. 调试日志;
-    NSLog(@"\n时序识别结果 (%ld条)",inModel.matchPFos.count);
-    for (AIMatchFoModel *item in inModel.matchPFos) {
+    NSArray *allMatchFos = [SMGUtils collectArrA:inModel.matchPFos arrB:inModel.matchRFos];
+    NSLog(@"\n时序识别结果 P(%ld条) R(%ld条)",inModel.matchPFos.count,inModel.matchRFos.count);
+    for (AIMatchFoModel *item in allMatchFos) {
         AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
         NSLog(@"强度:(%ld)\t> %@->%@ (from:%@) %@ 匹配度 => %.2f",item.sumRefStrong,Fo2FStr(matchFo), Mvp2Str(matchFo.cmvNode_p),CLEANSTR(matchFo.spDic),CLEANSTR(item.indexDic2),item.matchFoValue);
     }
     AddTCDebug(@"时序识别32");
     
     //12. 关联处理,直接protoFo抽象指向matchFo,并持久化indexDic (参考27177-todo6);
-    for (AIMatchFoModel *item in inModel.matchPFos) {
+    for (AIMatchFoModel *item in allMatchFos) {
         //4. 识别到时,refPorts -> 更新/加强微信息的引用序列
         AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
         [AINetUtils updateRefStrongByIndexDic:item.indexDic2 matchFo:item.matchFo];

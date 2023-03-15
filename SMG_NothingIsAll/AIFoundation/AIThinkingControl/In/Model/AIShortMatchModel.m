@@ -19,10 +19,10 @@
     return _matchPFos;
 }
 
-//-(NSMutableArray *)matchRFos{
-//    if (!_matchRFos) _matchRFos = [[NSMutableArray alloc] init];
-//    return _matchRFos;
-//}
+-(NSMutableArray *)matchRFos{
+    if (!_matchRFos) _matchRFos = [[NSMutableArray alloc] init];
+    return _matchRFos;
+}
 
 //-(AIFoNodeBase *)matchFo{
 //    AIMatchFoModel *mFo = [self mustUrgentMFo];
