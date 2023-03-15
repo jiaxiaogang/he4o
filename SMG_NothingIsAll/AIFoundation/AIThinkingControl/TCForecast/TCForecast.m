@@ -57,6 +57,8 @@
  *  @callers : 1. 用于新root调用; 2. 用于反省顺利时推进到下一帧的触发器;
  *  @version
  *      2022.09.18: 有反馈时移至feedback及时处理 (参考27098-todo2&3&4);
+ *      2023.03.15: 支持rFos的预测 (参考28182-todo2);
+ *      2023.03.15: rFos预测推进失败不设为Canset(因为它失败并不意味着解决了pFo) (参考28182-todo3);
  */
 +(void) forecast_Single:(AIMatchFoModel*)item{
     //1. 数据准备;
@@ -81,26 +83,17 @@
                 //6. 则进行理性IRT反省;
                 [TCRethink reasonInRethink:item cutIndex:curCutIndex type:ATSub];
                 
-                //TODOTOMORROW20230315:
-                //1. 对每一帧rFos也支持I反省,并累计SP;
-                //2. 在pushFrameFinish构建新的canset时,将matchFo的cansets与matchRFos取交集,然后对交集的eff加1;
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                //7. 失效判断: pFo任务失效 (参考27093-条件2 & 27095-2);
-                item.isExpired = true;
-                
-                //8. 失败状态标记;
+                //7. 失败状态标记;
                 [item setStatus:TIModelStatus_OutBackNone forCutIndex:curCutIndex];
                 
-                //9. 中间帧推进失败时,即提前达到终点,即处理推进为完全时序 (参考27183);
-                [item pushFrameFinish];
+                //8. 只有pFo时,才设定失效,以及将推进失败的完全时序设为protoCanset (参考28182-todo3);
+                if (matchFo.cmvNode_p) {
+                    //9. 失效判断: pFo任务失效 (参考27093-条件2 & 27095-2);
+                    item.isExpired = true;
+                    
+                    //10. 中间帧推进失败时,即提前达到终点,即处理推进为完全时序 (参考27183);
+                    [item pushFrameFinish];
+                }
             }
         }];
     }
@@ -139,6 +132,19 @@
             
             //14. 最末帧推进完全时,无论成败都算终点,则处理推进为完全时序 (参考27183);
             [item pushFrameFinish];
+            
+            
+            //TODOTOMORROW20230315:
+            //1. 在未反馈调用pushFrameFinish构建新的canset时,将matchFo的cansets与matchRFos取交集,然后对交集的eff加1;
+            
+            
+            
+            
+            
+            
+            
+            
+            
         }];
     }
 }
