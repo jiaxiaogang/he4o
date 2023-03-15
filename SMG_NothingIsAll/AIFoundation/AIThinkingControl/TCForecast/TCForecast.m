@@ -25,36 +25,34 @@
  *                  > 弃做,何必绕圈子,原有做法: 时序预测直接做触发器就行;
  *      2021.12.25: 支持理性IRT反省;
  *      2022.03.05: 将forecastIRT分裂成感性和理性两个部分,分别处理不同的识别prFos结果,触发不同的反省 (参考25134-方案2-B预测);
+ *      2023.03.15: 支持matchRFos也进行预测并统计SP (参考28182-todo2);
  *  @todo
  *      2021.03.22: 迭代提高预测的准确性(1.以更具象为准(猴子怕虎,悟空不怕) 2.以更全面为准(猴子有麻醉枪不怕虎)) (参考22182);
  *  @status
  *      1. 后半部分"有mv判断"生效中;
  *      2. 前半部分"HNGL末位判断"未启用 (因为matchFos中未涵盖HNGL类型);
  */
-+(void) forecast_Multi:(NSArray*)newRoots{
++(void) forecast_Multi:(NSArray*)matchPRFos{
     //1. 数据检查 (参考25031-1);
     [theTC updateOperCount:kFILENAME];
     Debug();
-    ISTitleLog(@"NewRoot预测");
-    newRoots = ARRTOOK(newRoots);
-    for (ReasonDemandModel *root in newRoots) {
-        NSLog(@"NewRoot from:%@",FoP2FStr(root.protoFo));
+    ISTitleLog(@"matchFos预测");
+    matchPRFos = ARRTOOK(matchPRFos);
         
-        //2. 每个pFo的预测处理;
-        for (AIMatchFoModel *pFo in root.pFos) {
-            //3. 已发生: 补上当前进度前面的SP计数P+1 (参考27213-4);
-            AIFoNodeBase *matchFo = [SMGUtils searchNode:pFo.matchFo];
-            [matchFo updatePStrong:0 end:pFo.cutIndex];
-            
-            //4. 预测帧: 下帧预测触发器; (参考25031-2) ->feedbackTIR;
-            [self forecast_Single:pFo];
-        }
+    //2. 每个pFo的预测处理;
+    for (AIMatchFoModel *prFo in matchPRFos) {
+        //3. 已发生: 补上当前进度前面的SP计数P+1 (参考27213-4);
+        AIFoNodeBase *matchFo = [SMGUtils searchNode:prFo.matchFo];
+        [matchFo updatePStrong:0 end:prFo.cutIndex];
+        
+        //4. 预测帧: 下帧预测触发器; (参考25031-2) ->feedbackTIR;
+        [self forecast_Single:prFo];
     }
     DebugE();
 }
 
 /**
- *  MARK:--------------------单条pFo处理--------------------
+ *  MARK:--------------------单条prFo处理--------------------
  *  @desc 可自动根据cutIndex判断触发理性或感性: 反省触发器;
  *  @callers : 1. 用于新root调用; 2. 用于反省顺利时推进到下一帧的触发器;
  *  @version
@@ -82,6 +80,18 @@
                 
                 //6. 则进行理性IRT反省;
                 [TCRethink reasonInRethink:item cutIndex:curCutIndex type:ATSub];
+                
+                //TODOTOMORROW20230315:
+                //1. 对每一帧rFos也支持I反省,并累计SP;
+                //2. 在pushFrameFinish构建新的canset时,将matchFo的cansets与matchRFos取交集,然后对交集的eff加1;
+                
+                
+                
+                
+                
+                
+                
+                
                 
                 //7. 失效判断: pFo任务失效 (参考27093-条件2 & 27095-2);
                 item.isExpired = true;

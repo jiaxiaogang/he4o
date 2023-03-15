@@ -70,10 +70,11 @@
     //10. 行为不构建任务和预测 (参考28137-修复);
     if (!algNode.pointer.isOut || Switch4IsOutReIn) {
         //11. 任务;
-        NSArray *newRoots = [TCDemand rDemand:mModel];
+        [TCDemand rDemand:mModel];
         
-        //12. 为新roots构建反省触发器;
-        [TCForecast forecast_Multi:newRoots];
+        //12. 为新matchPFos & matchRFos构建反省触发器;
+        [TCForecast forecast_Multi:mModel.matchPFos];
+        [TCForecast forecast_Multi:mModel.matchRFos];
     }
     
     //13. 转继续决策;

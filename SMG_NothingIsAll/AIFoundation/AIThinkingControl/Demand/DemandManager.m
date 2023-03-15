@@ -156,6 +156,7 @@
             NSLog(@"当前,预测mv未形成需求:%@ 评分:%f",atKey,score);
         }
     }
+    NSLog(@"生成NewRoot数:%ld from:%@",newRootsResult.count,Fo2FStr(inModel.protoFo));
     return newRootsResult;
 }
 
