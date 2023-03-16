@@ -23,6 +23,7 @@
  *      2023.01.31: 返回limit改成20%条目 (参考28042-思路2-1);
  *      2023.02.25: 返回limit改成80%条目 (参考28108-todo1);
  *      2023.03.16: 支持首尾循环的情况 (参考28174-todo4);
+ *      2023.03.16: 修复首尾差值算错的BUG (因为测得360左右度和180左右度相近度是0.9以上);
  *  @result 返回当前码识别的相近序列;
  */
 +(NSArray*) TIR_Value:(AIKVPointer*)protoV_p{
@@ -37,7 +38,7 @@
         double nearDelta = fabs(objData - maskData);
         
         //2. 循环时: 计算nearV相近度算法 (参考28174-todo4);
-        if (max > 0 && nearDelta > (max / 2)) nearDelta -= (max / 2);
+        if (max > 0 && nearDelta > (max / 2)) nearDelta = max - nearDelta;
         return nearDelta;
     }];
     
