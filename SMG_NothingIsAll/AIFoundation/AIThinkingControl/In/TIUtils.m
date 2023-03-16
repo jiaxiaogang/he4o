@@ -393,6 +393,15 @@
         }
     }
     
+    //调试识别结果matchRFos和cansets没交集问题;
+    NSMutableDictionary *tmpDic = [NSMutableDictionary new];
+    for (AIMatchFoModel *item in protoRModels) {
+        AIFoNodeBase *fo = [SMGUtils searchNode:item.matchFo];
+        int oldCount = NUMTOOK([tmpDic objectForKey:@(fo.count)]).intValue;
+        [tmpDic setObject:@(oldCount + 1) forKey:@(fo.count)];
+    }
+    NSLog(@"共有结果长度名细:%@",CLEANSTR(tmpDic));
+    
     //10. 过滤强度前20% (参考28111-todo1);
     NSArray *filterPModels = [AIFilter recognitonFoFilter:protoPModels];
     NSArray *filterRModels = [AIFilter recognitonFoFilter:protoRModels];
@@ -410,7 +419,7 @@
     NSLog(@"\n时序识别结果 P(%ld条) R(%ld条)",inModel.matchPFos.count,inModel.matchRFos.count);
     for (AIMatchFoModel *item in allMatchFos) {
         AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
-        NSLog(@"%@强度:(%ld)\t> %@->%@ (from:%@) %@ 匹配度 => %.2f",matchFo.cmvNode_p?@"P":@"R",item.sumRefStrong,Fo2FStr(matchFo), Mvp2Str(matchFo.cmvNode_p),CLEANSTR(matchFo.spDic),CLEANSTR(item.indexDic2),item.matchFoValue);
+        NSLog(@"%@强度:(%ld)\t> %@->%@ (from:%@) %@ 匹配度 => %.2f",matchFo.cmvNode_p?@"P":@"",item.sumRefStrong,Fo2FStr(matchFo), Mvp2Str(matchFo.cmvNode_p),CLEANSTR(matchFo.spDic),CLEANSTR(item.indexDic2),item.matchFoValue);
     }
     AddTCDebug(@"时序识别32");
     
