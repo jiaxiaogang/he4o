@@ -347,10 +347,11 @@
             AIAlgNodeBase *absAlg = [SMGUtils searchNode:absPort.target_p];
             NSArray *refPorts = [AINetUtils refPorts_All4Alg_Normal:absAlg];
             
-            //6. 仅保留mv指向的 (参考26022-3);
-            //refPorts = [SMGUtils filterArr:refPorts checkValid:^BOOL(AIPort *item) {
-            //    return item.targetHavMv;
-            //}];
+            //6. RFo的长度>1才有意义 (参考28183-BUG1);
+            refPorts = [SMGUtils filterArr:refPorts checkValid:^BOOL(AIPort *item) {
+                AIFoNodeBase *refFo = [SMGUtils searchNode:item.target_p];
+                return item.targetHavMv || refFo.count > 1;
+            }];
             
             //7. 每个refPort做两件事:
             for (AIPort *refPort in refPorts) {
@@ -400,7 +401,7 @@
         int oldCount = NUMTOOK([tmpDic objectForKey:@(fo.count)]).intValue;
         [tmpDic setObject:@(oldCount + 1) forKey:@(fo.count)];
     }
-    NSLog(@"共有结果长度名细:%@",CLEANSTR(tmpDic));
+    NSLog(@"共有结果长度明细:%@",CLEANSTR(tmpDic));
     
     //10. 过滤强度前20% (参考28111-todo1);
     NSArray *filterPModels = [AIFilter recognitonFoFilter:protoPModels];
