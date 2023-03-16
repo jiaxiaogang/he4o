@@ -22,17 +22,23 @@
  *      2022.05.23: 废弃掉不超过10%的条件,因为它会导致过窄问题 (参考26096-BUG3-方案1);
  *      2023.01.31: 返回limit改成20%条目 (参考28042-思路2-1);
  *      2023.02.25: 返回limit改成80%条目 (参考28108-todo1);
+ *      2023.03.16: 支持首尾循环的情况 (参考28174-todo4);
  *  @result 返回当前码识别的相近序列;
  */
 +(NSArray*) TIR_Value:(AIKVPointer*)protoV_p{
     //1. 取索引序列 & 当前稀疏码值;
     NSArray *index_ps = [AINetIndex getIndex_ps:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut];
     double maskData = [NUMTOOK([AINetIndex getData:protoV_p]) doubleValue];
+    double max = [CortexAlgorithmsUtil maxOfLoopValue:protoV_p.algsType ds:protoV_p.dataSource];
     
     //2. 按照相近度排序;
     NSArray *near_ps = [SMGUtils sortSmall2Big:index_ps compareBlock:^double(AIKVPointer *obj) {
         double objData = [NUMTOOK([AINetIndex getData:obj]) doubleValue];
-        return fabs(objData - maskData);
+        double nearDelta = fabs(objData - maskData);
+        
+        //2. 循环时: 计算nearV相近度算法 (参考28174-todo4);
+        if (max > 0 && nearDelta > (max / 2)) nearDelta -= (max / 2);
+        return nearDelta;
     }];
     
     //3. 窄出,仅返回前NarrowLimit条 (最多narrowLimit条,最少1条);
@@ -403,7 +409,7 @@
     NSLog(@"\n时序识别结果 P(%ld条) R(%ld条)",inModel.matchPFos.count,inModel.matchRFos.count);
     for (AIMatchFoModel *item in allMatchFos) {
         AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
-        NSLog(@"强度:(%ld)\t> %@->%@ (from:%@) %@ 匹配度 => %.2f",item.sumRefStrong,Fo2FStr(matchFo), Mvp2Str(matchFo.cmvNode_p),CLEANSTR(matchFo.spDic),CLEANSTR(item.indexDic2),item.matchFoValue);
+        NSLog(@"%@强度:(%ld)\t> %@->%@ (from:%@) %@ 匹配度 => %.2f",matchFo.cmvNode_p?@"P":@"R",item.sumRefStrong,Fo2FStr(matchFo), Mvp2Str(matchFo.cmvNode_p),CLEANSTR(matchFo.spDic),CLEANSTR(item.indexDic2),item.matchFoValue);
     }
     AddTCDebug(@"时序识别32");
     

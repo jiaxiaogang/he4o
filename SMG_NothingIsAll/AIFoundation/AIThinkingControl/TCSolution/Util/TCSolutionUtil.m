@@ -444,13 +444,17 @@
     
     //3. 惰性期 (参考28182-todo9);
     BOOL inertTime = true;
-    for (AISPStrong *sp in cansetFo.spDic) {
-        if (sp.sStrong + sp.pStrong > 5) {
+    for (AISPStrong *sp in cansetFo.spDic.allValues) {
+        if (sp.sStrong + sp.pStrong > 3) {
             inertTime = false;
             break;
         }
     }
-    if (inertTime) return nil;
+    if (inertTime) {
+        return nil;
+    }else{
+        NSLog(@"惰性期通过:%@",CLEANSTR(cansetFo.spDic));
+    }
     
     //5. 根据matchFo取得与canset的indexDic映射;
     NSDictionary *indexDic = [cansetFo getAbsIndexDic:matchFo_p];
