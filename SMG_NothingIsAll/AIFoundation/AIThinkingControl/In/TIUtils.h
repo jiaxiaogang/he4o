@@ -22,6 +22,12 @@
 +(void) recognitionFo:(AIFoNodeBase*)protoOrRegroupFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel fromRegroup:(BOOL)fromRegroup matchAlgs:(NSArray*)matchAlgs;
 
 
+//MARK:===============================================================
+//MARK:                     < 新Canset识别 >
+//MARK:===============================================================
++(void) recognitionCansetFo:(AIFoNodeBase*)newCansetFo matchFo:(AIFoNodeBase*)matchFo;
+
+
 /**
  *  MARK:--------------------获取某帧shortModel的matchAlgs+partAlgs--------------------
  */

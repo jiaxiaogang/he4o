@@ -174,6 +174,7 @@
  *      2022.12.09: 无论是否进行抽象,都生成具象canset (参考27228);
  *      2023.02.14: BUG_canset再类比几乎不触发的问题 (参考28071);
  *      2023.02.15: BUG_修复被撞到还"生成canset及外类比"的问题 (参考28077);
+ *      2023.03.17: 支持新canset的场景内识别 (参考28184-方案1);
  */
 -(void) pushFrameFinish {
     //0. 只有pFo触发时未收到反馈,才执行生成canset或再类比 (参考28077-修复);
@@ -236,6 +237,7 @@
     
     //3. =================生成新方案后 IN有效率+1 (参考28182-todo6)=================
     //[TCEffect rInEffect:matchFo matchRFos:self.baseFrameModel.matchRFos es:ES_HavEff];
+    [TIUtils recognitionCansetFo:protoFo matchFo:matchFo];
 }
 
 /**
