@@ -94,24 +94,24 @@
     DebugE();
 }
 
-/**
- *  MARK:--------------------输入期eff有效率 (参考28182-todo6&7)--------------------
- */
-+(void) rInEffect:(AIFoNodeBase*)pFo matchRFos:(NSArray*)matchRFos es:(EffectStatus)es{
-    [theTC updateOperCount:kFILENAME];
-    Debug();
-    //1. 取交集: matchFo下的cansets与matchRFos取交集 (参考28182-todo6-场景判断);
-    NSArray *cansets = [pFo getConCansets:pFo.count];
-    NSArray *cansetRFos = [SMGUtils filterArr:matchRFos checkValid:^BOOL(AIMatchFoModel *item) {
-        return [cansets containsObject:item.matchFo];
-    }];
-    
-    //2. 对交集canset进行effect计数更新;
-    for (AIMatchFoModel *item in cansetRFos) {
-        AIEffectStrong *strong = [pFo updateEffectStrong:pFo.count solutionFo:item.matchFo status:es];
-        IFTitleLog(@"rInEffect", @"\nS:%@ (有效性:%@)\n\tfromPFo:%@ (index:%ld H%ldN%ld)",Pit2FStr(item.matchFo),EffectStatus2Str(es),Fo2FStr(pFo),pFo.count,strong.hStrong,strong.nStrong);
-    }
-    DebugE();
-}
+///**
+// *  MARK:--------------------输入期eff有效率 (参考28182-todo6&7)--------------------
+// */
+//+(void) rInEffect:(AIFoNodeBase*)pFo matchRFos:(NSArray*)matchRFos es:(EffectStatus)es{
+//    [theTC updateOperCount:kFILENAME];
+//    Debug();
+//    //1. 取交集: matchFo下的cansets与matchRFos取交集 (参考28182-todo6-场景判断);
+//    NSArray *cansets = [pFo getConCansets:pFo.count];
+//    NSArray *cansetRFos = [SMGUtils filterArr:matchRFos checkValid:^BOOL(AIMatchFoModel *item) {
+//        return [cansets containsObject:item.matchFo];
+//    }];
+//    
+//    //2. 对交集canset进行effect计数更新;
+//    for (AIMatchFoModel *item in cansetRFos) {
+//        AIEffectStrong *strong = [pFo updateEffectStrong:pFo.count solutionFo:item.matchFo status:es];
+//        IFTitleLog(@"rInEffect", @"\nS:%@ (有效性:%@)\n\tfromPFo:%@ (index:%ld H%ldN%ld)",Pit2FStr(item.matchFo),EffectStatus2Str(es),Fo2FStr(pFo),pFo.count,strong.hStrong,strong.nStrong);
+//    }
+//    DebugE();
+//}
 
 @end

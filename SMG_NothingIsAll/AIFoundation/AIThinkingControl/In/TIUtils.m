@@ -328,6 +328,7 @@
  *      2023.02.24: 提升时序识别成功率: 废弃matchRFos (其实早废弃了,借着这次改,彻底此处相关代码删掉);
  *      2023.02.24: 提升时序识别成功率: 时序结果保留20% (参考28107-todo4);
  *      2023.03.15: 打开matchRFos (参考28181-方案3);
+ *      2023.03.17: 关闭matchRFos (参考28184-原因1&2);
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
 +(void) recognitionFo:(AIFoNodeBase*)protoOrRegroupFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel fromRegroup:(BOOL)fromRegroup matchAlgs:(NSArray*)matchAlgs {
@@ -349,8 +350,14 @@
             
             //6. RFo的长度>1才有意义 (参考28183-BUG1);
             refPorts = [SMGUtils filterArr:refPorts checkValid:^BOOL(AIPort *item) {
-                AIFoNodeBase *refFo = [SMGUtils searchNode:item.target_p];
-                return item.targetHavMv || refFo.count > 1;
+                if (Switch4RecognitionMatchRFos) {
+                    //a. 打开pFos和rFos;
+                    AIFoNodeBase *refFo = [SMGUtils searchNode:item.target_p];
+                    return item.targetHavMv || refFo.count > 1;
+                } else {
+                    //b. 只打开matchPFos;
+                    return item.targetHavMv;
+                }
             }];
             
             //7. 每个refPort做两件事:

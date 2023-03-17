@@ -20,6 +20,5 @@
 
 +(void) rEffect:(TOFoModel*)rSolution;
 +(void) hEffect:(TOFoModel*)hSolution;
-+(void) rInEffect:(AIFoNodeBase*)pFo matchRFos:(NSArray*)matchRFos es:(EffectStatus)es;
 
 @end
