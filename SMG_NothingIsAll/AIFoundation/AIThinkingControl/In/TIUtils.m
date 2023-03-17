@@ -538,6 +538,7 @@
     OFTitleLog(@"解决方案识别",@" (识别池:%ld)\n新方案:%@\nmatchFo:%@",oldCansets.count,Fo2FStr(newCansetFo),Fo2FStr(matchFo));
     
     //2. 旧有候选集: 作为识别池;
+    int logIndex = 0;
     for (AIKVPointer *oldCanset in oldCansets) {
         //3. 不应期 (不识别自身);
         if ([newCansetFo.pointer isEqual:oldCanset]) continue;
@@ -552,7 +553,7 @@
         AIEffectStrong *eff = [matchFo updateEffectStrong:matchFo.count solutionFo:oldCanset status:ES_HavEff];
         
         //6. 日志
-        NSLog(@"%@ SP:%@ EFF:%@",Fo2FStr(oldCansetFo),CLEANSTR(oldCansetFo.spDic),CLEANSTR(eff));
+        NSLog(@"结果%d. %@ SP:%@ EFF:%@",++logIndex,Fo2FStr(oldCansetFo),CLEANSTR(oldCansetFo.spDic),CLEANSTR(eff));
     }
 }
 

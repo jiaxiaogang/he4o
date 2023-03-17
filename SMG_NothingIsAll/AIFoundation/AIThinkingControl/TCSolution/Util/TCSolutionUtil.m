@@ -450,11 +450,8 @@
             break;
         }
     }
-    if (inertTime) {
-        return nil;
-    }else{
-        NSLog(@"惰性期通过:%@",CLEANSTR(cansetFo.spDic));
-    }
+    if (inertTime) return nil;
+    NSLog(@"惰性期通过:%@",CLEANSTR(cansetFo.spDic));
     
     //5. 根据matchFo取得与canset的indexDic映射;
     NSDictionary *indexDic = [cansetFo getAbsIndexDic:matchFo_p];
