@@ -91,6 +91,11 @@
 -(AIEffectStrong*) updateEffectStrong:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo status:(EffectStatus)status;
 
 /**
+ *  MARK:--------------------获取canset的effStrong--------------------
+ */
+-(AIEffectStrong*) getEffectStrong:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo;
+
+/**
  *  MARK:--------------------取effIndex下有效的Effs--------------------
  */
 -(NSArray*) getValidEffs:(NSInteger)effIndex;

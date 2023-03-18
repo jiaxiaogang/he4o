@@ -537,7 +537,7 @@
 +(void) recognitionCansetFo:(AIFoNodeBase*)protoFo matchFo:(AIFoNodeBase*)matchFo es:(EffectStatus)es{
     //1. 取出旧有候选集;
     NSArray *oldCansets = [matchFo getConCansets:matchFo.count];
-    OFTitleLog(@"Canset识别",@" (EFF:%@) (候选数:%ld)\n新方案:%@\nmatchFo:%@",EffectStatus2Str(es),oldCansets.count,Fo2FStr(protoFo),Fo2FStr(matchFo));
+    OFTitleLog(@"Canset识别",@" (EFF:%@) (候选数:%ld)\nprotoFo:%@->%@\nmatchFo:%@",EffectStatus2Str(es),oldCansets.count,Fo2FStr(protoFo),Mvp2Str(protoFo.cmvNode_p),Fo2FStr(matchFo));
     
     //2. 旧有候选集: 作为识别池;
     int logIndex = 0;

@@ -462,16 +462,7 @@
     return 0;
 }
 +(AIEffectStrong*) getEffectStrong:(AIFoNodeBase*)demandFo effectIndex:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo{
-    //1. 取有效率解决方案数组;
-    NSArray *strongs = ARRTOOK([demandFo.effectDic objectForKey:@(effectIndex)]);
-    
-    //2. 取得匹配的strong;
-    AIEffectStrong *strong = [SMGUtils filterSingleFromArr:strongs checkValid:^BOOL(AIEffectStrong *item) {
-        return [item.solutionFo isEqual:solutionFo];
-    }];
-    
-    //3. 返回有效率;
-    return strong;
+    return [demandFo getEffectStrong:effectIndex solutionFo:solutionFo];
 }
 +(NSString*) getEffectDesc:(AIFoNodeBase*)demandFo effectIndex:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo{
     AIEffectStrong *strong = [self getEffectStrong:demandFo effectIndex:effectIndex solutionFo:solutionFo];

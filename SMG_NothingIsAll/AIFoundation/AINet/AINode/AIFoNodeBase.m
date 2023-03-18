@@ -124,6 +124,22 @@
 }
 
 /**
+ *  MARK:--------------------获取canset的effStrong--------------------
+ */
+-(AIEffectStrong*) getEffectStrong:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo {
+    //1. 取有效率解决方案数组;
+    NSArray *strongs = ARRTOOK([self.effectDic objectForKey:@(effectIndex)]);
+    
+    //2. 取得匹配的strong;
+    AIEffectStrong *strong = [SMGUtils filterSingleFromArr:strongs checkValid:^BOOL(AIEffectStrong *item) {
+        return [item.solutionFo isEqual:solutionFo];
+    }];
+    
+    //3. 返回有效率;
+    return strong;
+}
+
+/**
  *  MARK:--------------------取effIndex下有效的Effs--------------------
  *  @result 返回有效结果: 排除有效率为0的 (参考26192);
  */
@@ -188,12 +204,16 @@
  *  MARK:--------------------更新一条候选--------------------
  */
 -(void) updateConCanset:(AIKVPointer*)newConCansetFo targetIndex:(NSInteger)targetIndex {
+    //1. 更新一条候选;
     NSMutableArray *conCansets = [[NSMutableArray alloc] initWithArray:[self.conCansetsDic objectForKey:@(targetIndex)]];
     if (![conCansets containsObject:newConCansetFo]) {
         [conCansets addObject:newConCansetFo];
         [self.conCansetsDic setObject:conCansets forKey:@(targetIndex)];
         [SMGUtils insertNode:self];
     }
+    
+    //2. 更新后 (新的默认eff=1,旧的eff则增强+1);
+    [self updateEffectStrong:1 solutionFo:newConCansetFo status:ES_HavEff];
 }
 
 /**

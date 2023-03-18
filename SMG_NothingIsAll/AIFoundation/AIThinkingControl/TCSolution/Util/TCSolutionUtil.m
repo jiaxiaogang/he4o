@@ -443,10 +443,9 @@
     if (Log4SolutionFilter) NSLog(@"S过滤器 checkItem: %@",Pit2FStr(cansetFo_p));
     if (cansetFo.count < minCount) return nil; //过滤1: 过滤掉长度不够的 (因为前段全含至少要1位,中段修正也至少要0位,后段H目标要1位R要0位);
     
-    //3. 惰性期 (阈值为2: EFF默认值为0,达到阈值时触发) (参考28182-todo9 & 28185-todo6);
+    //3. 惰性期 (阈值为2: EFF默认值为1,达到阈值时触发) (参考28182-todo9 & 28185-todo6);
     AIEffectStrong *effStrong = [TOUtils getEffectStrong:matchFo effectIndex:matchFo.count solutionFo:cansetFo_p];
-    BOOL inertTime = effStrong.hStrong + effStrong.nStrong <= 2;
-    if (inertTime) return nil;
+    if (effStrong.hStrong <= 2) return nil;
     //NSLog(@"惰性期通过:%@",CLEANSTR(cansetFo.spDic));
     
     //5. 根据matchFo取得与canset的indexDic映射;
