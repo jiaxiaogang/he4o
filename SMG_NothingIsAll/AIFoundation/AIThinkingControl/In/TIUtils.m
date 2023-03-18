@@ -210,15 +210,8 @@
         }]);
     }
     
-    //11. 识别过滤器 (参考28109-todo2);
-    NSArray *filterModels = [AIFilter recognitonAlgFilter:protoModels];
-    
-    //11. 识别竞争机制 (参考2722d-方案2);
-    //11. 按nearA排序 (参考25083-2&公式2 & 25084-1);
-    NSArray *sortModels = [AIRank recognitonAlgRank:filterModels];
-    
     //12. 全含判断: 从大到小,依次取到对应的node和matchingCount (注: 支持相近后,应该全是全含了,参考25084-1);
-    NSArray *matchModels = [SMGUtils filterArr:sortModels checkValid:^BOOL(AIMatchAlgModel *item) {
+    protoModels = [SMGUtils filterArr:protoModels checkValid:^BOOL(AIMatchAlgModel *item) {
         //14. 过滤掉匹配度<85%的;
         //if (item.matchValue < 0.60f) return false;
         
@@ -228,12 +221,19 @@
         return false;
     }];
     
+    //11. 识别过滤器 (参考28109-todo2);
+    NSArray *filterModels = [AIFilter recognitonAlgFilter:protoModels];
+    
+    //11. 识别竞争机制 (参考2722d-方案2);
+    //11. 按nearA排序 (参考25083-2&公式2 & 25084-1);
+    NSArray *sortModels = [AIRank recognitonAlgRank:filterModels];
+    
     //16. 未将全含返回,则返回最相似 (2020.10.22: 全含返回,也要返回seemAlg) (2022.01.15: 支持相近匹配后,全是全含没局部了);
-    NSLog(@"\n概念识别结果 (%ld条) protoAlg:%@",matchModels.count,Alg2FStr(protoAlg));
-    for (AIMatchAlgModel *item in matchModels) {
+    NSLog(@"\n概念识别结果 (%ld条) protoAlg:%@",sortModels.count,Alg2FStr(protoAlg));
+    for (AIMatchAlgModel *item in sortModels) {
         NSLog(@"-->>>(%d) 全含item: %@   \t相近度 => %.2f (count:%d)",item.sumRefStrong,Pit2FStr(item.matchAlg),item.matchValue,item.matchCount);
     }
-    inModel.matchAlgs = matchModels;
+    inModel.matchAlgs = sortModels;
 }
 
 //MARK:===============================================================
@@ -400,15 +400,6 @@
             }
         }
     }
-    
-    //调试识别结果matchRFos和cansets没交集问题;
-    NSMutableDictionary *tmpDic = [NSMutableDictionary new];
-    for (AIMatchFoModel *item in protoRModels) {
-        AIFoNodeBase *fo = [SMGUtils searchNode:item.matchFo];
-        int oldCount = NUMTOOK([tmpDic objectForKey:@(fo.count)]).intValue;
-        [tmpDic setObject:@(oldCount + 1) forKey:@(fo.count)];
-    }
-    NSLog(@"共有结果长度明细:%@",CLEANSTR(tmpDic));
     
     //10. 过滤强度前20% (参考28111-todo1);
     NSArray *filterPModels = [AIFilter recognitonFoFilter:protoPModels];

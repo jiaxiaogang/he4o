@@ -20,7 +20,7 @@
         return item.matchValue;
     } subBlock:^double(AIMatchAlgModel *item) {
         return item.strongValue;
-    } radio:0.16f];
+    } radio:0.30f];
 }
 
 /**
@@ -31,7 +31,7 @@
 +(NSArray*) recognitonFoFilter:(NSArray*)matchModels {
     //此过滤度参数调整中...
     //20230318. 由0.16调整为0.5 (概念已经很准了,时序只要把不准部分切了就行,不需要过滤太多);
-    CGFloat radio = 0.5f;
+    CGFloat radio = 0.8f;
     return [self filterTwice:matchModels mainBlock:^double(AIMatchFoModel *item) {
         return item.strongValue;
     } subBlock:^double(AIMatchFoModel *item) {
@@ -73,7 +73,7 @@
     //1. 条数 (参考注释公式说明-1);
     NSInteger protoCount = protoArr.count;                          //总数 (如30);
     CGFloat minResultNum = radio * protoCount;                      //最小条数 (建议16%,值越小越准);
-    NSInteger resultNum = 3;                                        //结果返回至少2条;
+    NSInteger resultNum = 4;                                        //结果返回至少3条;
     resultNum = MAX(minResultNum, MIN(resultNum, protoCount));      //结果需要 大于20% 且 小于100%;
     
     //2. 过滤任务和力度 (参考注释公式说明-2);
