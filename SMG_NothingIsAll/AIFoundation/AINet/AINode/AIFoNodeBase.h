@@ -63,9 +63,9 @@
 -(void) updateSPStrong:(NSInteger)spIndex type:(AnalogyType)type;
 
 /**
- *  MARK:--------------------从start到end都计一次P--------------------
+ *  MARK:--------------------从start到end都计一次S或P--------------------
  */
--(void) updatePStrong:(NSInteger)start end:(NSInteger)end;
+-(void) updateSPStrong:(NSInteger)start end:(NSInteger)end type:(AnalogyType)type;
 
 /**
  *  MARK:--------------------更新整个spDic--------------------

@@ -523,34 +523,36 @@
 }
 
 //MARK:===============================================================
-//MARK:                     < 新Canset识别 >
+//MARK:                     < Canset识别 >
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------新Canset在场景内识别--------------------
+ *  MARK:--------------------Canset识别--------------------
  *  @desc 功能说明:
  *          1. 识别: 用条件满足来实现类似全含判断功能 (参考28185-todo3);
  *          2. 增强: 识别结果增强sp和eff (参考28185-todo4);
+ *  @version
+ *      2023.03.18: 失败时,也调用Canset识别,并将es计负分 (参考28185-todo5);
  */
-+(void) recognitionCansetFo:(AIFoNodeBase*)newCansetFo matchFo:(AIFoNodeBase*)matchFo {
++(void) recognitionCansetFo:(AIFoNodeBase*)protoFo matchFo:(AIFoNodeBase*)matchFo es:(EffectStatus)es{
     //1. 取出旧有候选集;
     NSArray *oldCansets = [matchFo getConCansets:matchFo.count];
-    OFTitleLog(@"解决方案识别",@" (识别池:%ld)\n新方案:%@\nmatchFo:%@",oldCansets.count,Fo2FStr(newCansetFo),Fo2FStr(matchFo));
+    OFTitleLog(@"Canset识别",@" (EFF:%@) (候选数:%ld)\n新方案:%@\nmatchFo:%@",EffectStatus2Str(es),oldCansets.count,Fo2FStr(protoFo),Fo2FStr(matchFo));
     
     //2. 旧有候选集: 作为识别池;
     int logIndex = 0;
     for (AIKVPointer *oldCanset in oldCansets) {
         //3. 不应期 (不识别自身);
-        if ([newCansetFo.pointer isEqual:oldCanset]) continue;
+        if ([protoFo.pointer isEqual:oldCanset]) continue;
         AIFoNodeBase *oldCansetFo = [SMGUtils searchNode:oldCanset];
         
         //4. 判断protoFo对cansetFo条件满足 (返回条件满足的每帧间映射) (参考28185-todo3);
-        NSDictionary *frontIndexDic = [TCSolutionUtil getFrontIndexDic:newCansetFo absFo:oldCansetFo absCutIndex:oldCansetFo.count - 1];
+        NSDictionary *frontIndexDic = [TCSolutionUtil getFrontIndexDic:protoFo absFo:oldCansetFo absCutIndex:oldCansetFo.count - 1];
         if (!DICISOK(frontIndexDic)) continue;
         
         //5. 条件满足的都算识别结果 (更新sp和eff) (参考28185-todo4);
-        [oldCansetFo updatePStrong:0 end:oldCansetFo.count - 1];
-        AIEffectStrong *eff = [matchFo updateEffectStrong:matchFo.count solutionFo:oldCanset status:ES_HavEff];
+        [oldCansetFo updateSPStrong:0 end:oldCansetFo.count - 1 type:ATPlus];
+        AIEffectStrong *eff = [matchFo updateEffectStrong:matchFo.count solutionFo:oldCanset status:es];
         
         //6. 日志
         NSLog(@"结果%d. %@ SP:%@ EFF:%@",++logIndex,Fo2FStr(oldCansetFo),CLEANSTR(oldCansetFo.spDic),CLEANSTR(eff));

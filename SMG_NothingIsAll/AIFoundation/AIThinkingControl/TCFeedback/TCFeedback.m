@@ -103,7 +103,7 @@
  *  @bug
  *      2021.01.25: 修复witMatchFo.cmvNode_p空判断逻辑反了,导致无法执行修改状态为OutBackYes,从而反省类比永远为"逆";
  */
-+(void) feedbackTIP:(AICMVNode*)cmvNode{
++(void) feedbackTIP:(AIFoNodeBase*)protoFo cmvNode:(AICMVNode*)cmvNode {
     //1. 数据检查
     [theTC updateOperCount:kFILENAME];
     Debug();
@@ -147,6 +147,11 @@
                     //11. 则进行感性IRT反省;
                     [TCRethink perceptInRethink:waitModel type:type];
                     NSLog(@"---//IP反省触发器执行:%p F%ld 状态:%@",waitMatchFo,waitMatchFo.pointer.pointerId,TIStatus2Str(status));
+                    
+                    //12. 有mv反馈时,做Canset识别 (参考28185-todo5);
+                    //[TCEffect rInEffect:waitMatchFo matchRFos:waitModel.baseFrameModel.matchRFos es:es];
+                    EffectStatus es = score > 0 ? ES_HavEff : ES_NoEff;
+                    [TIUtils recognitionCansetFo:protoFo matchFo:waitMatchFo es:es];
                 }
                 
                 //13. pFo任务失效 (参考27093-条件1 & 27095-1);

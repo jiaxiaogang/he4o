@@ -54,7 +54,7 @@
     
     //4. tip_OPushM
     DebugE();
-    [TCFeedback feedbackTIP:cmvNode];
+    [TCFeedback feedbackTIP:protoFo cmvNode:cmvNode];
     
     //2. top_OPushM
     [TCFeedback feedbackTOP:cmvNode];

@@ -72,9 +72,9 @@
  *  MARK:--------------------从start到end都计一次P--------------------
  *  @desc 含start 也含end;
  */
--(void) updatePStrong:(NSInteger)start end:(NSInteger)end {
+-(void) updateSPStrong:(NSInteger)start end:(NSInteger)end type:(AnalogyType)type{
     for (NSInteger i = start; i <= end; i++) {
-        [self updateSPStrong:i type:ATPlus];
+        [self updateSPStrong:i type:type];
     }
 }
 

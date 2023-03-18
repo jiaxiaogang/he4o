@@ -43,7 +43,7 @@
     for (AIMatchFoModel *prFo in matchPRFos) {
         //3. 已发生: 补上当前进度前面的SP计数P+1 (参考27213-4);
         AIFoNodeBase *matchFo = [SMGUtils searchNode:prFo.matchFo];
-        [matchFo updatePStrong:0 end:prFo.cutIndex];
+        [matchFo updateSPStrong:0 end:prFo.cutIndex type:ATPlus];
         
         //4. 预测帧: 下帧预测触发器; (参考25031-2) ->feedbackTIR;
         [self forecast_Single:prFo];
