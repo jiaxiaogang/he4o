@@ -20,7 +20,7 @@
         return item.matchValue;
     } subBlock:^double(AIMatchAlgModel *item) {
         return item.strongValue;
-    }];
+    } radio:0.16f];
 }
 
 /**
@@ -29,11 +29,14 @@
  *      2023.03.06: 时序识别过滤器强度为主,匹配度为辅 (参考28152-方案4-todo5);
  */
 +(NSArray*) recognitonFoFilter:(NSArray*)matchModels {
+    //此过滤度参数调整中...
+    //20230318. 由0.16调整为0.5 (概念已经很准了,时序只要把不准部分切了就行,不需要过滤太多);
+    CGFloat radio = 0.5f;
     return [self filterTwice:matchModels mainBlock:^double(AIMatchFoModel *item) {
         return item.strongValue;
     } subBlock:^double(AIMatchFoModel *item) {
         return item.matchFoValue;
-    }];
+    } radio:radio];
 }
 
 //MARK:===============================================================
@@ -53,6 +56,7 @@
  *      2. 主辅任务比例: 越大主过滤器作用越大;
  *      3. 最小条数百分比: 值越小越准;
  *  @desc 现配置: 结果数为16%,主辅过滤力度20:1,即主过滤掉80%,辅再过滤掉剩下的20%;
+ *  @param radio : 过滤率 (传值范围0-1),越小越精准,但剩余结果越少,反之其效亦反;
  *
  *  @version
  *      2023.03.06: 过滤前20%改为35% (参考28152-方案3-todo2);
@@ -60,14 +64,15 @@
  *      2023.03.07: 过滤率改成动态计算,使其条数少时,两个过滤器也都能生效 (参考28152b-todo2);
  *      2023.03.07: 修改主辅过滤器为嵌套执行 (参考28152b-todo3);
  *      2023.03.07: 结果保留改为16%,将主辅力度调整为20:1 (因为实测4:1时,真实主过滤率=37%左右,太高了);
+ *      2023.03.18: 加上radio参数,方便对概念和时序的过滤器分别指定不同的过滤度 (参考28186-方案1-结果);
  */
-+(NSArray*) filterTwice:(NSArray*)protoArr mainBlock:(double(^)(id item))mainBlock subBlock:(double(^)(id item))subBlock {
++(NSArray*) filterTwice:(NSArray*)protoArr mainBlock:(double(^)(id item))mainBlock subBlock:(double(^)(id item))subBlock radio:(CGFloat)radio {
     //0. 数据准备;
     if (!ARRISOK(protoArr)) return protoArr;
     
     //1. 条数 (参考注释公式说明-1);
     NSInteger protoCount = protoArr.count;                          //总数 (如30);
-    CGFloat minResultNum = 0.16f * protoCount;                      //最小条数 (建议16%,值越小越准);
+    CGFloat minResultNum = radio * protoCount;                      //最小条数 (建议16%,值越小越准);
     NSInteger resultNum = 3;                                        //结果返回至少2条;
     resultNum = MAX(minResultNum, MIN(resultNum, protoCount));      //结果需要 大于20% 且 小于100%;
     
