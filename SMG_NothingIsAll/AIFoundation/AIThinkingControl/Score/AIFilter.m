@@ -20,7 +20,7 @@
         return item.matchValue;
     } subBlock:^double(AIMatchAlgModel *item) {
         return item.strongValue;
-    } radio:0.30f];
+    } radio:0.16f];
 }
 
 /**
@@ -30,8 +30,8 @@
  */
 +(NSArray*) recognitonFoFilter:(NSArray*)matchModels {
     //此过滤度参数调整中...
-    //20230318. 由0.16调整为0.5 (概念已经很准了,时序只要把不准部分切了就行,不需要过滤太多);
-    CGFloat radio = 0.8f;
+    //20230318. 由0.16调整为0.6 (概念已经很准了,时序只要把不准部分切了就行,不需要过滤太多);
+    CGFloat radio = 0.6f;
     return [self filterTwice:matchModels mainBlock:^double(AIMatchFoModel *item) {
         return item.strongValue;
     } subBlock:^double(AIMatchFoModel *item) {
