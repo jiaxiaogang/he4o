@@ -42,6 +42,10 @@
     //4. pFos赋值baseRDemand;
     for (AIMatchFoModel *pFo in pFos) {
         pFo.baseRDemand = result;
+        
+        pFo.baseRDemandTMP = CLEANSTR([SMGUtils convertArr:result.pFos convertBlock:^id(AIMatchFoModel *obj) {
+            return STRFORMAT(@"F%ld",obj.matchFo.pointerId);
+        }]);
     }
     return result;
 }

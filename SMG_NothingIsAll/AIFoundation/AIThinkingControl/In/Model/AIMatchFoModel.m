@@ -26,7 +26,7 @@
 +(AIMatchFoModel*) newWithMatchFo:(AIKVPointer*)matchFo protoOrRegroupFo:(AIKVPointer*)protoOrRegroupFo sumNear:(CGFloat)sumNear nearCount:(NSInteger)nearCount indexDic:(NSDictionary*)indexDic cutIndex:(NSInteger)cutIndex sumRefStrong:(NSInteger)sumRefStrong baseFrameModel:(AIShortMatchModel*)baseFrameModel{
     AIFoNodeBase *protoOrRegroupFoNode = [SMGUtils searchNode:protoOrRegroupFo];
     AIMatchFoModel *model = [[AIMatchFoModel alloc] init];
-    model.baseFrameModel = baseFrameModel;
+    //model.baseFrameModel = baseFrameModel;
     model.matchFo = matchFo;
     [model.realMaskFo addObjectsFromArray:protoOrRegroupFoNode.content_ps];
     [model.realDeltaTimes addObjectsFromArray:protoOrRegroupFoNode.deltaTimes];
@@ -234,6 +234,16 @@
         AIFoNodeBase *pFo = [SMGUtils searchNode:pFoM.matchFo];
         [pFo updateConCanset:protoFo.pointer targetIndex:pFo.count];
     }
+    
+    
+    
+    //TODOTOMORROW20230320: 查为什么self不在baseRDemand.pFos下,,,写了TMP打印发现当时 是有的,只是后来可能 什么时候删了...
+    for (AIMatchFoModel *o in self.baseRDemand.pFos) {
+        NSLog(@"---baseRDemand   F%ld",o.matchFo.pointerId);
+    }
+    
+    
+    
     NSLog(@"R新Canset:%@ (状态:%@ fromPFo:F%ld 帧:%ld) 挂pFos下:%@",Fo2FStr(protoFo),TIStatus2Str(status),self.matchFo.pointerId,matchFo.count,CLEANSTR([SMGUtils convertArr:self.baseRDemand.pFos convertBlock:^id(AIMatchFoModel *obj) {
         return STRFORMAT(@"F%ld",obj.matchFo.pointerId);
     }]));
