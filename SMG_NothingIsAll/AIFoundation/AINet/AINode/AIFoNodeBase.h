@@ -150,19 +150,4 @@
  */
 -(void) updateConCanset:(AIKVPointer*)newConCansetFo targetIndex:(NSInteger)targetIndex;
 
-//MARK:===============================================================
-//MARK:                     < absConsets组 >
-//MARK:===============================================================
-
-/**
- *  MARK:--------------------S候选集老师及有效率--------------------
- *  @desc 0. 内容: <key:effectIndex, value:effectStrong> (其中mv的key为content.count) (参考26094);
- *        1. 说明: 当前节点的具象fo,推举出来的Canset老师 (参考28187b-问题2-师);
- *        2. 作用: 主要用于Canset迁移功能,即共同的抽象老师,通过此处教给下一届学生;
- *        3. 此处即存Canset老师,也存EFF效率 (用EFFStrong模型) (参考28188-todo1);
- *  @version
- *      2023.03.19: 初版 (参考28188-todo1);
- */
-@property (strong, nonatomic) NSMutableDictionary *teacherCansetsEffectDic;
-
 @end

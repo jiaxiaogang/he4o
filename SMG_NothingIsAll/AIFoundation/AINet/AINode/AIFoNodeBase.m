@@ -40,11 +40,6 @@
     return _conCansetsDic;
 }
 
--(NSMutableDictionary *)teacherCansetsEffectDic{
-    if (!ISOK(_teacherCansetsEffectDic, NSMutableDictionary.class)) _teacherCansetsEffectDic = [[NSMutableDictionary alloc] initWithDictionary:_teacherCansetsEffectDic];
-    return _teacherCansetsEffectDic;
-}
-
 //MARK:===============================================================
 //MARK:                     < spDic组 >
 //MARK:===============================================================
@@ -235,7 +230,6 @@
         self.absIndexDDic = [aDecoder decodeObjectForKey:@"absIndexDDic"];
         self.conIndexDDic = [aDecoder decodeObjectForKey:@"conIndexDDic"];
         self.conCansetsDic = [aDecoder decodeObjectForKey:@"conCansetsDic"];
-        self.teacherCansetsEffectDic = [aDecoder decodeObjectForKey:@"teacherCansetsEffectDic"];
     }
     return self;
 }
@@ -250,7 +244,6 @@
     [aCoder encodeObject:[self.absIndexDDic copy] forKey:@"absIndexDDic"];
     [aCoder encodeObject:[self.conIndexDDic copy] forKey:@"conIndexDDic"];
     [aCoder encodeObject:[self.conCansetsDic copy] forKey:@"conCansetsDic"];
-    [aCoder encodeObject:[self.teacherCansetsEffectDic copy] forKey:@"teacherCansetsEffectDic"];
 }
 
 @end
