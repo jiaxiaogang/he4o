@@ -176,6 +176,7 @@
  *      2023.02.15: BUG_修复被撞到还"生成canset及外类比"的问题 (参考28077);
  *      2023.03.17: 支持新canset的场景内识别 (参考28184-方案1);
  *      2023.03.20: 将新Canset挂在所有pFos下 (参考2818a-TODO);
+ *      2023.03.21: 回滚代码,由挂在所有pFos下改回仅挂在selfPFo下 (参考29012-回测失败);
  */
 -(void) pushFrameFinish {
     //0. 只有pFo触发时未收到反馈,才执行生成canset或再类比 (参考28077-修复);
@@ -229,14 +230,9 @@
     //b. 用realMaskFo & realDeltaTimes生成protoFo (参考27201-1 & 5);
     AIFoNodeBase *protoFo = [theNet createConFo:orders];
     
-    //c. 将protoFo挂载到matchFo下的conCansets下 (参考27201-2 & 2818a-TODO);
-    for (AIMatchFoModel *pFoM in self.baseRDemand.validPFos) {
-        AIFoNodeBase *pFo = [SMGUtils searchNode:pFoM.matchFo];
-        [pFo updateConCanset:protoFo.pointer targetIndex:pFo.count];
-    }
-    NSLog(@"R新Canset:%@ (状态:%@ fromPFo:F%ld 帧:%ld) 挂pFos下:%@",Fo2FStr(protoFo),TIStatus2Str(status),self.matchFo.pointerId,matchFo.count,CLEANSTR([SMGUtils convertArr:self.baseRDemand.validPFos convertBlock:^id(AIMatchFoModel *obj) {
-        return STRFORMAT(@"F%ld",obj.matchFo.pointerId);
-    }]));
+    //c. 将protoFo挂载到matchFo下的conCansets下 (参考27201-2);
+    [matchFo updateConCanset:protoFo.pointer targetIndex:matchFo.count];
+    NSLog(@"R新Canset:%@ (状态:%@ fromPFo:F%ld 帧:%ld)",Fo2FStr(protoFo),TIStatus2Str(status),self.matchFo.pointerId,matchFo.count);
     
     //d. 将item.indexDic挂载到matchFo的conIndexDDic下 (参考27201-3);
     [protoFo updateIndexDic:matchFo indexDic:self.indexDic2];
