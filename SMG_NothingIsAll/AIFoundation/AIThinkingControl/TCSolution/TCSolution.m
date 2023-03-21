@@ -110,7 +110,7 @@
     
     //2. 不应期 (可以考虑) (源于:反思且子任务失败的 或 fo行为化最终失败的,参考24135);
     NSMutableArray *except_ps = [TOUtils convertPointersFromTOModels:demand.actionFoModels];
-    [except_ps addObjectsFromArray:[SMGUtils convertArr:demand.pFos convertBlock:^id(AIMatchFoModel *obj) {
+    [except_ps addObjectsFromArray:[SMGUtils convertArr:demand.validPFos convertBlock:^id(AIMatchFoModel *obj) {
         return obj.matchFo;
     }]];
     

@@ -27,7 +27,7 @@
     except_ps = ARRTOOK(except_ps);
     
     //2. 收集所有解决方案候选集;
-    NSArray *cansetModels = [SMGUtils convertArr:demand.pFos convertItemArrBlock:^NSArray *(AIMatchFoModel *pFoM) {
+    NSArray *cansetModels = [SMGUtils convertArr:demand.validPFos convertItemArrBlock:^NSArray *(AIMatchFoModel *pFoM) {
         //a. 取出pFo的effectDic候选集;
         AIFoNodeBase *pFo = [SMGUtils searchNode:pFoM.matchFo];
         NSArray *cansetFos = [pFo getValidEffs:pFo.count];
@@ -180,7 +180,7 @@
  */
 +(AISolutionModel*) rSolution_Slow:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps {
     //1. 收集cansetModels候选集;
-    NSArray *cansetModels = [SMGUtils convertArr:demand.pFos convertItemArrBlock:^NSArray *(AIMatchFoModel *pFo) {
+    NSArray *cansetModels = [SMGUtils convertArr:demand.validPFos convertItemArrBlock:^NSArray *(AIMatchFoModel *pFo) {
         
         //2. 取出cansetFos候选集;
         AIFoNodeBase *matchFo = [SMGUtils searchNode:pFo.matchFo];

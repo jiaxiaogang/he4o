@@ -230,21 +230,11 @@
     AIFoNodeBase *protoFo = [theNet createConFo:orders];
     
     //c. 将protoFo挂载到matchFo下的conCansets下 (参考27201-2 & 2818a-TODO);
-    for (AIMatchFoModel *pFoM in self.baseRDemand.pFos) {
+    for (AIMatchFoModel *pFoM in self.baseRDemand.validPFos) {
         AIFoNodeBase *pFo = [SMGUtils searchNode:pFoM.matchFo];
         [pFo updateConCanset:protoFo.pointer targetIndex:pFo.count];
     }
-    
-    
-    
-    //TODOTOMORROW20230320: 查为什么self不在baseRDemand.pFos下,,,写了TMP打印发现当时 是有的,只是后来可能 什么时候删了...
-    for (AIMatchFoModel *o in self.baseRDemand.pFos) {
-        NSLog(@"---baseRDemand   F%ld",o.matchFo.pointerId);
-    }
-    
-    
-    
-    NSLog(@"R新Canset:%@ (状态:%@ fromPFo:F%ld 帧:%ld) 挂pFos下:%@",Fo2FStr(protoFo),TIStatus2Str(status),self.matchFo.pointerId,matchFo.count,CLEANSTR([SMGUtils convertArr:self.baseRDemand.pFos convertBlock:^id(AIMatchFoModel *obj) {
+    NSLog(@"R新Canset:%@ (状态:%@ fromPFo:F%ld 帧:%ld) 挂pFos下:%@",Fo2FStr(protoFo),TIStatus2Str(status),self.matchFo.pointerId,matchFo.count,CLEANSTR([SMGUtils convertArr:self.baseRDemand.validPFos convertBlock:^id(AIMatchFoModel *obj) {
         return STRFORMAT(@"F%ld",obj.matchFo.pointerId);
     }]));
     

@@ -35,6 +35,7 @@
  *      2022.05.18: 替换原单个mModel,改成pFos多个 (参考26042-TODO2);
  */
 @property (strong, nonatomic) NSArray *pFos;
+-(NSArray*) validPFos;
 
 /**
  *  MARK:--------------------需求来源inModel--------------------

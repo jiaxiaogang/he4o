@@ -43,7 +43,7 @@
         if (!ISOK(root, ReasonDemandModel.class)) continue;
         
         //3. 对pFos做理性反馈;
-        for (AIMatchFoModel *waitModel in root.pFos) {
+        for (AIMatchFoModel *waitModel in root.validPFos) {
             
             //4. 取出等待中的_非wait状态的,不处理;
             NSInteger status = [waitModel getStatusForCutIndex:waitModel.cutIndex];
@@ -118,7 +118,7 @@
         if (!ISOK(root, ReasonDemandModel.class)) continue;
         
         //3. 对pFos做理性反馈;
-        for (AIMatchFoModel *waitModel in root.pFos) {
+        for (AIMatchFoModel *waitModel in root.validPFos) {
             
             //3. 数据准备;
             AIFoNodeBase *waitMatchFo = [SMGUtils searchNode:waitModel.matchFo];

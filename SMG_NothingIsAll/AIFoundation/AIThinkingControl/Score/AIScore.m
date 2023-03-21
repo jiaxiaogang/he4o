@@ -105,7 +105,7 @@
     double needTime = [TOUtils getSumDeltaTime:solutionFo startIndex:solutionModel.cutIndex + 1 endIndex:solutionModel.cutIndex + 2];
     
     //4. 取父任务能给的时间;
-    AIMatchFoModel *firstPFo = ARR_INDEX(nearRDemand.pFos, 0);
+    AIMatchFoModel *firstPFo = ARR_INDEX(nearRDemand.validPFos, 0);
     AIFoNodeBase *pFo = [SMGUtils searchNode:firstPFo.matchFo];
     double giveTime = [TOUtils getSumDeltaTime2Mv:pFo cutIndex:firstPFo.cutIndex];
     
@@ -186,7 +186,7 @@
 +(CGFloat) score4Demand:(DemandModel*)demand{
     if (ISOK(demand, ReasonDemandModel.class) ) {
         ReasonDemandModel *rDemand = (ReasonDemandModel*)demand;
-        return [self score4PFos:rDemand.pFos];
+        return [self score4PFos:rDemand.validPFos];
     }else if (ISOK(demand, PerceptDemandModel.class) ) {
         PerceptDemandModel *pDemand = (PerceptDemandModel*)demand;
         return [AIScore score4MV:pDemand.algsType urgentTo:pDemand.urgentTo delta:pDemand.delta ratio:1.0f];

@@ -59,6 +59,7 @@
  *      2022.09.18: 有反馈时移至feedback及时处理 (参考27098-todo2&3&4);
  *      2023.03.15: 支持rFos的预测 (参考28182-todo2);
  *      2023.03.15: rFos预测推进失败不设为Canset(因为它失败并不意味着解决了pFo) (参考28182-todo3);
+ *      2023.03.21: 修复: pFo先失效,导致后面生成Canset时,未执行到此pFo的问题 (参考29011-问题);
  */
 +(void) forecast_Single:(AIMatchFoModel*)item{
     //1. 数据准备;
@@ -88,11 +89,12 @@
                 
                 //8. 只有pFo时,才设定失效,以及将推进失败的完全时序设为protoCanset (参考28182-todo3);
                 if (matchFo.cmvNode_p) {
-                    //9. 失效判断: pFo任务失效 (参考27093-条件2 & 27095-2);
-                    item.isExpired = true;
                     
                     //10. 中间帧推进失败时,即提前达到终点,即处理推进为完全时序 (参考27183);
                     [item pushFrameFinish];
+                    
+                    //9. 失效判断: pFo任务失效 (参考27093-条件2 & 27095-2);
+                    item.isExpired = true;
                 }
             }
         }];
@@ -127,11 +129,11 @@
                 [item setStatus:TIModelStatus_OutBackNone forCutIndex:curCutIndex];
             }
             
-            //13. pFo任务失效 (参考27093-条件1 & 27095-1);
-            item.isExpired = true;
-            
             //14. 最末帧推进完全时,无论成败都算终点,则处理推进为完全时序 (参考27183);
             [item pushFrameFinish];
+            
+            //13. pFo任务失效 (参考27093-条件1 & 27095-1);
+            item.isExpired = true;
         }];
     }
 }

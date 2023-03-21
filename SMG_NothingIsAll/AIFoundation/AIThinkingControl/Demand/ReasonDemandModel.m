@@ -42,10 +42,6 @@
     //4. pFos赋值baseRDemand;
     for (AIMatchFoModel *pFo in pFos) {
         pFo.baseRDemand = result;
-        
-        pFo.baseRDemandTMP = CLEANSTR([SMGUtils convertArr:result.pFos convertBlock:^id(AIMatchFoModel *obj) {
-            return STRFORMAT(@"F%ld",obj.matchFo.pointerId);
-        }]);
     }
     return result;
 }
@@ -54,12 +50,10 @@
  *  MARK:--------------------任务的pFos--------------------
  *  @desc 默认返回未失效的pFos任务 (也可以考虑改成失效时,直接移除失效的pFo) (参考27095-10);
  */
--(NSArray *)pFos {
-    _pFos = ARRTOOK(_pFos);
-    NSArray *result = [SMGUtils filterArr:_pFos checkValid:^BOOL(AIMatchFoModel *item) {
+-(NSArray*) validPFos {
+    return [SMGUtils filterArr:_pFos checkValid:^BOOL(AIMatchFoModel *item) {
         return !item.isExpired;
     }];
-    return result;
 }
 
 -(AIKVPointer*) protoOrRegroupFo {
@@ -72,7 +66,7 @@
  *  @desc : 当R任务的pFos全失效时,则R任务也失效 (参考27123-问题2-todo1);
  */
 -(BOOL) isExpired {
-    return !ARRISOK(self.pFos);
+    return !ARRISOK(self.validPFos);
 }
 
 /**
