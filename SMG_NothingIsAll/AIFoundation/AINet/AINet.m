@@ -184,6 +184,9 @@ static AINet *_instance;
 /**
  *  MARK:--------------------构建抽象概念_防重--------------------
  */
+-(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs {
+    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs at:nil ds:nil isOutBlock:nil type:ATDefault];
+}
 -(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs at:(NSString*)at type:(AnalogyType)type{
     return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs at:at ds:nil isOutBlock:nil type:type];
 }

@@ -37,6 +37,7 @@
  *      20210819: 修复长1和长2类比时,类比出长2的BUG (参考23221-BUG2);
  *      20210926: 修复glFo外类比时非末位alg类比构建absAlg时,也使用了GLType的问题 (参考24022-BUG1);
  *      20221028: 用mIsC判断替代sameValue_ps (参考27153-todo4);
+ *      20230322: 打开外类比,支持(根据相近度将主要责任的码抽象掉)共同点抽象 (参考29025-11);
  */
 +(AINetAbsFoNode*) analogyOutside:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type {
     //1. 类比orders的规律
@@ -56,8 +57,12 @@
                 BOOL mIsC = [TOUtils mIsC_1:protoA_p c:assA_p];
                 if (Log4OutAna) NSLog(@"proto的第%ld: A%ld 类比 ass的第%ld: A%ld (%@)",i,protoA_p.pointerId,j,assA_p.pointerId,mIsC?@"成功":@"失败");
                 if (mIsC) {
-                    //3. 收集并更新jMax;
-                    [orderSames insertObject:assA_p atIndex:0];
+                    
+                    //4. 即使mIsC匹配,也要进行共同点抽象 (参考29025-11);
+                    AIAlgNodeBase *absA = [self analogyAlg:protoA_p assA:assA_p];
+                    
+                    //5. 收集并更新jMax;
+                    [orderSames insertObject:absA.pointer atIndex:0];
                     jMax = j - 1;
                     break;
                 }
@@ -65,7 +70,7 @@
         }
     }
 
-    //3. 外类比构建
+    //6. 外类比构建
     return [self analogyOutside_Creater:orderSames protoFo:protoFo assFo:assFo type:type];
 }
 
@@ -125,6 +130,49 @@
     NSString *log = STRFORMAT(@"-> 与ass%@外类比\n\t构建时序 (%@): %@->{%@} from: (protoFo(%ld):assFo(%ld))",Fo2FStr(assFo),ATType2Str(type),Fo2FStr(result),Mvp2Str(result.cmvNode_p),foStrong,assFoStrong);
     NSLog(@"%@",log);
     return result;
+}
+
+/**
+ *  MARK:--------------------概念类比--------------------
+ *  @desc 概念类比: 将相近度低的(负主要责任的)过滤掉 (参考29025-12);
+ */
++(AIAlgNodeBase*) analogyAlg:(AIKVPointer*)protoA_p assA:(AIKVPointer*)assA_p {
+    //1. 数据准备;
+    AIAlgNodeBase *protoA = [SMGUtils searchNode:protoA_p];
+    AIAlgNodeBase *assA = [SMGUtils searchNode:assA_p];
+    NSMutableArray *sameValue_ps = [[NSMutableArray alloc] init];
+    
+    //2. 分别对protoA和assA的稀疏码进行对比;
+    for (AIKVPointer *protoV_p in protoA.content_ps) {
+        for (AIKVPointer *assV_p in assA.content_ps) {
+            
+            //3. 二者同区时;
+            if ([protoV_p.dataSource isEqualToString:assV_p.dataSource] && [protoV_p.algsType isEqualToString:assV_p.algsType]) {
+                
+                //4. 如果完全一致时;
+                if ([protoV_p isEqual:assV_p]) {
+                    [sameValue_ps addObject:assV_p];
+                    break;
+                } else {
+                    //5. 二者相似度较高时 (计算当前码的责任比例: 比如:1*0.8*0.7时,当前码=0.7时,它的责任比例=(1-0.7)/(1-0.8 + 1-0.7)=60%) (参考29025-13);
+                    CGFloat algMatchValue = [protoA getAbsMatchValue:assA_p];
+                    CGFloat valueMatchValue = [AIAnalyst compareCansetValue:protoV_p protoValue:assV_p];
+                    CGFloat otherValueMatchValue = valueMatchValue > 0 ? algMatchValue / valueMatchValue : 1;   //别的码相乘是0.xx;
+                    CGFloat otherQueKou = 1 - otherValueMatchValue;                                             //别的码缺口;
+                    CGFloat curQueKou = 1 - valueMatchValue;                                                    //当前码缺口;
+                    CGFloat curRate = curQueKou / (curQueKou + otherQueKou);                                    //算出当前码责任比例;
+                    
+                    //6. 当前码责任<50%时 (次要责任时,免责);
+                    if (curRate < 0.5) {
+                        [sameValue_ps addObject:assV_p];
+                    }
+                }
+            }
+        }
+    }
+    
+    //7. 将相近度善可的构建成抽象概念返回;
+    return [theNet createAbsAlg_NoRepeat:sameValue_ps conAlgs:@[protoA,assA]];
 }
 
 @end
