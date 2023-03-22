@@ -149,24 +149,22 @@
             //3. 二者同区时;
             if ([protoV_p.dataSource isEqualToString:assV_p.dataSource] && [protoV_p.algsType isEqualToString:assV_p.algsType]) {
                 
-                //4. 如果完全一致时;
-                if ([protoV_p isEqual:assV_p]) {
+                //4. 二者相似度较高时 (计算当前码的责任比例: 比如:1*0.8*0.7时,当前码=0.7时,它的责任比例=(1-0.7)/(1-0.8 + 1-0.7)=60%) (参考29025-13);
+                CGFloat algMatchValue = [protoA getAbsMatchValue:assA_p];
+                CGFloat valueMatchValue = [AIAnalyst compareCansetValue:protoV_p protoValue:assV_p];
+                CGFloat otherValueMatchValue = valueMatchValue > 0 ? algMatchValue / valueMatchValue : 1;   //别的码相乘是0.xx;
+                CGFloat otherQueKou = 1 - otherValueMatchValue;                                             //别的码缺口;
+                CGFloat curQueKou = 1 - valueMatchValue;                                                    //当前码缺口;
+                CGFloat sumQueKou = otherQueKou + curQueKou;                                                //总缺口;
+                CGFloat curRate = sumQueKou > 0 ? curQueKou / sumQueKou : 0;                                //算出当前码责任比例;
+                
+                //5. 当前码责任<50%时 (次要责任时,免责);
+                if (curRate < 0.5) {
                     [sameValue_ps addObject:assV_p];
-                    break;
-                } else {
-                    //5. 二者相似度较高时 (计算当前码的责任比例: 比如:1*0.8*0.7时,当前码=0.7时,它的责任比例=(1-0.7)/(1-0.8 + 1-0.7)=60%) (参考29025-13);
-                    CGFloat algMatchValue = [protoA getAbsMatchValue:assA_p];
-                    CGFloat valueMatchValue = [AIAnalyst compareCansetValue:protoV_p protoValue:assV_p];
-                    CGFloat otherValueMatchValue = valueMatchValue > 0 ? algMatchValue / valueMatchValue : 1;   //别的码相乘是0.xx;
-                    CGFloat otherQueKou = 1 - otherValueMatchValue;                                             //别的码缺口;
-                    CGFloat curQueKou = 1 - valueMatchValue;                                                    //当前码缺口;
-                    CGFloat curRate = curQueKou / (curQueKou + otherQueKou);                                    //算出当前码责任比例;
-                    
-                    //6. 当前码责任<50%时 (次要责任时,免责);
-                    if (curRate < 0.5) {
-                        [sameValue_ps addObject:assV_p];
-                    }
                 }
+                
+                //6. break继续判断proto的下个V码;
+                break;
             }
         }
     }
