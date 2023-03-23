@@ -541,6 +541,14 @@
         NSDictionary *frontIndexDic = [TCSolutionUtil getFrontIndexDic:protoFo absFo:oldCansetFo absCutIndex:oldCansetFo.count - 1];
         if (!DICISOK(frontIndexDic)) continue;
         
+        //TODOTOMORROW20230322:
+        //1. 此处要尝试取newCanset和oldCanset的全含indexDic;
+        //2. 只要全含了,再对二者进行外类比;
+        
+        
+        
+        
+        
         //5. 条件满足的都算识别结果 (更新sp和eff) (参考28185-todo4);
         [oldCansetFo updateSPStrong:0 end:oldCansetFo.count - 1 type:ATPlus];
         AIEffectStrong *eff = [matchFo updateEffectStrong:matchFo.count solutionFo:oldCanset status:es];
@@ -548,6 +556,50 @@
         //6. 日志
         NSLog(@"结果%d. %@ SP:%@ EFF:%@",++logIndex,Fo2FStr(oldCansetFo),CLEANSTR(oldCansetFo.spDic),CLEANSTR(eff));
     }
+}
+
+/**
+ *  MARK:--------------------Canset的全含判断--------------------
+ *  @result 全含时,返回二者的indexDic;
+ */
++(NSDictionary*) checkFoValidMatch_NewCanset:(AIFoNodeBase*)newCanset oldCanset:(AIFoNodeBase*)oldCanset matchFo:(AIFoNodeBase*)matchFo{
+    //1. 数据准备;
+    NSMutableDictionary *indexDic = [[NSMutableDictionary alloc] init];
+    NSDictionary *newIndexDic = [matchFo getConIndexDic:newCanset.pointer];
+    NSDictionary *oldIndexDic = [matchFo getConIndexDic:oldCanset.pointer];
+    
+    //2. 每帧match都到proto里去找,找到则记录proto的进度,找不到则全部失败;
+    NSInteger protoMin = 0;
+    
+    //2. 说明: 所有已发生帧,都要判断一下条件满足 (absCutIndex之前全是前段) (参考28022-todo4);
+    for (NSInteger absI = 0; absI < oldCanset.count; absI ++) {
+        AIKVPointer *absAlg = ARR_INDEX(oldCanset.content_ps, absI);
+        BOOL findItem = false;
+        for (NSInteger protoI = protoMin; protoI < newCanset.count; protoI++) {
+            AIKVPointer *protoAlg = ARR_INDEX(newCanset.content_ps, protoI);
+            //3. B源于absFo,此处只判断B是1层抽象 (参考27161-调试1&调试2);
+            //3. 单条判断方式: 此处proto抽象仅指向刚识别的matchAlgs,所以与contains等效 (参考28052-3);
+            BOOL mIsC = [TOUtils mIsC_1:protoAlg c:absAlg];
+            if (mIsC) {
+                //4. 找到了 & 记录protoI的进度;
+                findItem = true;
+                protoMin = protoI + 1;
+                [indexDic setObject:@(protoI) forKey:@(absI)];
+                if (Log4SceneIsOk) NSLog(@"\t第%ld帧,条件满足通过 canset:%@ (fromProto:F%ldA%ld)",absI,Pit2FStr(absAlg),newCanset.pointer.pointerId,protoAlg.pointerId);
+                break;
+            }
+        }
+        
+        //5. 有一条失败,则全失败;
+        if (!findItem) {
+            if (Log4SceneIsOk) NSLog(@"\t第%ld帧,条件满足未通过 canset:%@ (fromProtoFo:F%ld)",absI,Pit2FStr(absAlg),newCanset.pointer.pointerId);
+            return nil;
+        }
+    }
+    
+    //6. 全找到,则成功;
+    if (Log4SceneIsOk) NSLog(@"条件满足通过:%@ (fromProtoFo:%ld)",Fo2FStr(oldCanset),newCanset.pointer.pointerId);
+    return indexDic;
 }
 
 /**

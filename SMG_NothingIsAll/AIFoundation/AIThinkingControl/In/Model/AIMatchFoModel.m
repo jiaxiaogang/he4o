@@ -66,12 +66,41 @@
     [self.status setObject:@(status) forKey:@(cutIndex)];
 }
 
-//在发生完全后,构建完全protoFo时使用获取orders;
--(NSArray*) convertRealMaskFoAndRealDeltaTimes2Orders4CreateProtoFo {
+/**
+ *  MARK:--------------------在发生完全后,构建完全protoFo时使用获取orders--------------------
+ *  @version
+ *      xxxx.xx.xx: v1版,从realMaskFo中取protoAlg组成;
+ *      2023.03.23: v2版,优先从matchFo中取,缺帧的再取protoAlg (参考29025-21&22);
+ */
+-(NSArray*) convertOrders4NewCansetV1 {
     [AITest test15:self];
     NSMutableArray *order = [[NSMutableArray alloc] init];
     for (NSInteger i = 0; i < self.realMaskFo.count; i++) {
         AIKVPointer *itemA_p = ARR_INDEX(self.realMaskFo, i);
+        NSTimeInterval itemDeltaTime = NUMTOOK(ARR_INDEX(self.realDeltaTimes, i)).doubleValue;
+        [order addObject:[AIShortMatchModel_Simple newWithAlg_p:itemA_p inputTime:itemDeltaTime]];
+    }
+    return order;
+}
+-(NSArray*) convertOrders4NewCansetV2 {
+    //1. 数据准备;
+    [AITest test15:self];
+    NSMutableArray *order = [[NSMutableArray alloc] init];
+    AIFoNodeBase *matchFo = [SMGUtils searchNode:self.matchFo];
+    
+    //2. 依次收集protoAlg;
+    for (NSInteger i = 0; i < self.realMaskFo.count; i++) {
+        NSNumber *matchKey = ARR_INDEX([self.indexDic2 allKeysForObject:@(i)], 0);
+        AIKVPointer *itemA_p = nil;
+        if (matchKey) {
+            //3. 如果找着matchIndex则优先从matchFo取;
+            itemA_p = ARR_INDEX(matchFo.content_ps, matchKey.integerValue);
+        } else {
+            //4. 其次则从realMaskFo中取protoAlg;
+            itemA_p = ARR_INDEX(self.realMaskFo, i);
+        }
+        
+        //5. 算出当前帧deltaTime;
         NSTimeInterval itemDeltaTime = NUMTOOK(ARR_INDEX(self.realDeltaTimes, i)).doubleValue;
         [order addObject:[AIShortMatchModel_Simple newWithAlg_p:itemA_p inputTime:itemDeltaTime]];
     }
@@ -177,6 +206,7 @@
  *      2023.03.17: 支持新canset的场景内识别 (参考28184-方案1);
  *      2023.03.20: 将新Canset挂在所有pFos下 (参考2818a-TODO);
  *      2023.03.21: 回滚代码,由挂在所有pFos下改回仅挂在selfPFo下 (参考29012-回测失败);
+ *      2023.03.23: 生成新Canset时,优先从场景matchFo中取元素 (参考29025-21&22);
  */
 -(void) pushFrameFinish {
     //0. 只有pFo触发时未收到反馈,才执行生成canset或再类比 (参考28077-修复);
@@ -225,21 +255,21 @@
     //2. =================自然未发生(新方案): 无actYes的S时,归功于自然未发生,则新增protoCanset (参考27206c-R任务)=================
     //a. 数据准备;
     AIFoNodeBase *matchFo = [SMGUtils searchNode:self.matchFo];
-    NSArray *orders = [self convertRealMaskFoAndRealDeltaTimes2Orders4CreateProtoFo];
+    NSArray *orders = [self convertOrders4NewCansetV2];
     
     //b. 用realMaskFo & realDeltaTimes生成protoFo (参考27201-1 & 5);
-    AIFoNodeBase *protoFo = [theNet createConFo:orders];
+    AIFoNodeBase *cansetFo = [theNet createConFo:orders];
     
     //c. 将protoFo挂载到matchFo下的conCansets下 (参考27201-2);
-    [matchFo updateConCanset:protoFo.pointer targetIndex:matchFo.count];
-    NSLog(@"R新Canset:%@ (状态:%@ fromPFo:F%ld 帧:%ld)",Fo2FStr(protoFo),TIStatus2Str(status),self.matchFo.pointerId,matchFo.count);
+    [matchFo updateConCanset:cansetFo.pointer targetIndex:matchFo.count];
+    NSLog(@"R新Canset:%@ (状态:%@ fromPFo:F%ld 帧:%ld)",Fo2FStr(cansetFo),TIStatus2Str(status),self.matchFo.pointerId,matchFo.count);
     
     //d. 将item.indexDic挂载到matchFo的conIndexDDic下 (参考27201-3);
-    [protoFo updateIndexDic:matchFo indexDic:self.indexDic2];
+    [cansetFo updateIndexDic:matchFo indexDic:self.indexDic2];
     
     //3. =================生成新方案后 IN有效率+1 (参考28182-todo6)=================
     //[TCEffect rInEffect:matchFo matchRFos:self.baseFrameModel.matchRFos es:ES_HavEff];
-    [TIUtils recognitionCansetFo:protoFo matchFo:matchFo es:ES_HavEff];
+    [TIUtils recognitionCansetFo:cansetFo matchFo:matchFo es:ES_HavEff];
 }
 
 /**
