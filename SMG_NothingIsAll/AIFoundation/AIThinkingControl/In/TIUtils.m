@@ -562,8 +562,9 @@
 
 /**
  *  MARK:--------------------Canset的全含判断 (参考29025-23)--------------------
- *  @desc 要求newCanset和oldCanset必须互相全含,才返回肯定结果;
- *  @result 全含时,返回二者的indexDic (二者的indexDic必然是<1:1,2:2,3:3,4:4>类似这种,其实和返回true也没啥区别,都是帧帧全含的);
+ *  @desc 全含说明: 要求newCanset包含oldCanset,才返回肯定结果; 
+ *          示例: 比如:新[1,3,5,7,9a]和旧[1,5,9b]和场景[1,5] = 是全含的,并最终返回<1:1, 2:3, 3:5>; //其中9a和9b有共同抽象
+ *  @result 全含时,返回二者的indexDic;
  */
 +(NSDictionary*) checkFoValidMatch_NewCanset:(AIFoNodeBase*)newCanset oldCanset:(AIFoNodeBase*)oldCanset matchFo:(AIFoNodeBase*)matchFo{
     //1. 数据准备;
@@ -571,12 +572,7 @@
     NSDictionary *newIndexDic = [matchFo getConIndexDic:newCanset.pointer];
     NSDictionary *oldIndexDic = [matchFo getConIndexDic:oldCanset.pointer];
     
-    //2. 二者长度都不同,不可能互相全含,直接判为失败 (参考29025-23a);
-    if (newCanset.count != oldCanset.count) {
-        return nil;
-    }
-    
-    //3. 说明: 所有帧,都要判断一下互相条件满足,只要有一帧失败就全失败 (参考29025-23a);
+    //3. 说明: 所有帧,都要判断新的全含旧的,只要有一帧失败就全失败 (参考29025-23a);
     NSInteger protoMin = 0;
     for (NSInteger oldIndex = 0; oldIndex < oldCanset.count; oldIndex ++) {
         AIKVPointer *oldAlg = ARR_INDEX(oldCanset.content_ps, oldIndex);
@@ -585,13 +581,14 @@
             AIKVPointer *newAlg = ARR_INDEX(newCanset.content_ps, newIndex);
             
             //4. 分别判断old和new这一帧是否被matchFo场景包含 (参考29025-23b);
-            BOOL oldHav = [oldIndexDic.allValues containsObject:@(oldIndex)];
-            BOOL newHav = [newIndexDic.allValues containsObject:@(newIndex)];
-            if (oldHav && newHav) {
+            NSNumber *oldKey = ARR_INDEX([oldIndexDic allKeysForObject:@(oldIndex)], 0);
+            NSNumber *newKey = ARR_INDEX([newIndexDic allKeysForObject:@(newIndex)], 0);
+            if (oldKey && newKey && [oldKey isEqualToNumber:newKey]) {
                 //5. 如果二者都包含=>则此帧成功 (注: 因为canset都优先取matchAlg,所以此时oldAlg和newAlg应该是一个节点) (参考29025-23b);
                 findItem = true;
-            } else if (oldHav != newHav) {
-                //6. 如果二者有一个包含,则此帧失败 (参考29025-23a);
+            } else if (oldKey != newKey) {
+                //6. 如果二者有一个包含,则此帧失败 (参考29025-23b2 & 23c3);
+                break;
             } else {
                 //7. 如果二者都不包含,则判断二者有没有共同的抽象 (参考29025-23c);
                 NSMutableArray *oldAbs_ps = [[NSMutableArray alloc] initWithArray:Ports2Pits([AINetUtils absPorts_All:[SMGUtils searchNode:oldAlg]])];
@@ -604,7 +601,7 @@
                     //8. 有共同抽象=>则此帧成功 (参考29025-23c);
                     findItem = true;
                 } else {
-                    //9. 无共同抽象,则此帧失败 (参考29025-23c);
+                    //9. 无共同抽象,则继续找newCanset的下帧,看能不能有共同抽象 (参考29025-23c2);
                 }
             }
             

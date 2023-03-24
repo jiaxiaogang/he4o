@@ -173,4 +173,36 @@
     return [theNet createAbsAlg_NoRepeat:sameValue_ps conAlgs:@[protoA,assA]];
 }
 
+/**
+ *  MARK:--------------------Canset类比 (参考29025-24)--------------------
+ */
++(AINetAbsFoNode*) analogyCansetFo:(NSDictionary*)indexDic newCanset:(AIFoNodeBase*)newCanset oldCanset:(AIFoNodeBase*)oldCanset matchFo:(AIFoNodeBase*)matchFo {
+    //1. 类比orders的规律
+    if (Log4OutAna) NSLog(@"\n----------- Canset类比 -----------\nnew:%@ \nold:%@",Fo2FStr(newCanset),Fo2FStr(oldCanset));
+    NSMutableArray *orderSames = [[NSMutableArray alloc] init];
+    
+    //2. 根据新旧的映射indexDic分别进行概念类比 (参考29025-24a);
+    for (NSNumber *key in indexDic.allKeys) {
+        NSInteger oldIndex = key.integerValue;
+        NSInteger newIndex = NUMTOOK([indexDic objectForKey:key]).integerValue;
+        AIKVPointer *oldAlg_p = ARR_INDEX(oldCanset.content_ps, oldIndex);
+        AIKVPointer *newAlg_p = ARR_INDEX(newCanset.content_ps, newIndex);
+        
+        //3. 一致直接收集 (参考29025-24b);
+        if ([oldAlg_p isEqual:newAlg_p]) {
+            [orderSames addObject:oldAlg_p];
+        }
+        
+        //4. 问题,这俩没有抽具象关系, (要分析下,两个概念有共同抽象时,应该怎么实现类比?)
+        AIAlgNodeBase *absA = [AIAnalogy analogyAlg:oldAlg_p assA:newAlg_p];
+        
+        //5. 收集;
+        [orderSames addObject:absA.pointer];
+        
+    }
+    
+    //6. 外类比构建
+    return [theNet createAbsFo_NoRepeat:orderSames protoFo:newCanset assFo:oldCanset difStrong:1 type:ATDefault];
+}
+
 @end
