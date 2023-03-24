@@ -135,6 +135,7 @@
 /**
  *  MARK:--------------------概念类比--------------------
  *  @desc 概念类比: 将相近度低的(负主要责任的)过滤掉 (参考29025-12);
+ *        作用范围: 仅适用于protoA和assA有抽具象关系时的概念类比;
  */
 +(AIAlgNodeBase*) analogyAlg:(AIKVPointer*)protoA_p assA:(AIKVPointer*)assA_p {
     //1. 数据准备;
@@ -187,18 +188,30 @@
         NSInteger newIndex = NUMTOOK([indexDic objectForKey:key]).integerValue;
         AIKVPointer *oldAlg_p = ARR_INDEX(oldCanset.content_ps, oldIndex);
         AIKVPointer *newAlg_p = ARR_INDEX(newCanset.content_ps, newIndex);
+        AIAlgNodeBase *oldAlg = [SMGUtils searchNode:oldAlg_p];
+        AIAlgNodeBase *newAlg = [SMGUtils searchNode:newAlg_p];
         
         //3. 一致直接收集 (参考29025-24b);
         if ([oldAlg_p isEqual:newAlg_p]) {
             [orderSames addObject:oldAlg_p];
         }
         
+        
         //4. 问题,这俩没有抽具象关系, (要分析下,两个概念有共同抽象时,应该怎么实现类比?)
-        AIAlgNodeBase *absA = [AIAnalogy analogyAlg:oldAlg_p assA:newAlg_p];
+        [AIAnalogy analogyAlg:oldAlg_p assA:newAlg_p];
+        
+        
+        //TODOTOMORROW20230324:
+        //1. 先取出抽象时序要用到的pid,这里ds要用;
+        //然后要测下空概念的防重机制,看起来不会工作...因为它似乎V的索引在防重...,,,
+        //然后可以先分析下,这个 防重机制,是不是可以被这里利用一下?因为别的地方防重不到,这里怎么就可以?先设计下这个...
+        
+        NSString *ds = @"matchFo.pointerId";
+        NSString *at = @"matchFo.index";
+        AIAlgNodeBase *absA = [theNet createAbsAlg_NoRepeat:@[] conAlgs:@[oldAlg,newAlg] at:at ds:ds type:ATDefault];
         
         //5. 收集;
         [orderSames addObject:absA.pointer];
-        
     }
     
     //6. 外类比构建
