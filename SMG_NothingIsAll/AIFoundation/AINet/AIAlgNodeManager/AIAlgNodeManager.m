@@ -141,7 +141,7 @@
  *  MARK:--------------------构建空概念_防重 (参考29031-todo1)--------------------
  */
 +(AIAlgNodeBase*)createEmptyAlg_NoRepeat:(NSArray*)conAlgs absAlgs:(NSArray*)absAlg_ps {
-    //1. 数据准备
+    //1. 数据准备 (参考29031-todo1.1 & 29031);
     NSArray *pidArr = [SMGUtils convertArr:[SMGUtils sortSmall2Big:absAlg_ps compareBlock:^double(AIKVPointer *obj) {
         return obj.pointerId; //先pid排序;
     }] convertBlock:^id(AIKVPointer *obj) {
@@ -149,7 +149,7 @@
     }];
     NSString *ds = ARRTOSTR(pidArr,@"A",@"");
     
-    //2. 去重找本地 (仅抽象);
+    //2. 去重找本地 (参考29031-todo1.1);
     AIKVPointer *localAlg_p = nil;
     for (AIAlgNodeBase *conAlg in conAlgs) {
         NSArray *abs_ps = Ports2Pits([AINetUtils absPorts_All:conAlg]);
@@ -160,15 +160,16 @@
     }
     AIAlgNodeBase *localAlg = [SMGUtils searchNode:localAlg_p];
     
-    //3. 有则加强;
-    if (ISOK(localAlg, AIAbsAlgNode.class)) {
+    //3. 有则加强: 具象指向conAlgs & 抽象指向absAlgs (参考29031-todo2 & todo3);
+    if (ISOK(localAlg, AIAlgNodeBase.class)) {
         [AINetUtils relateAlgAbs:localAlg conNodes:conAlgs isNew:false];
-        //TODOTOMORROW20230325: 关联localAlg与抽象...
+        [AINetUtils relateGeneralCon:localAlg absNodes:absAlg_ps];
         return localAlg;
     }else{
-        //TODOTOMORROW20230325: 构建方法支持传入absAlgs,并关联localAlg与抽象...
-        //4. 无则构建
-        return [self createAbsAlgNode:@[] conAlgs:conAlgs at:DefaultAlgsType ds:ds isOutBlock:nil type:ATDefault];
+        //4. 无则构建: 具象指向conAlgs(在构建方法已集成) & 抽象指向absAlgs (参考29031-todo1 & todo3);
+        AIAlgNodeBase *createAlg = [self createAbsAlgNode:@[] conAlgs:conAlgs at:nil ds:ds isOutBlock:nil type:ATDefault];
+        [AINetUtils relateGeneralCon:createAlg absNodes:absAlg_ps];
+        return createAlg;
     }
 }
 

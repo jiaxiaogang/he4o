@@ -133,7 +133,7 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------关联抽具象概念--------------------
+ *  MARK:--------------------关联具象部分--------------------
  *  @param absNode  : 抽象概念
  *  @param conNodes : 具象概念们
  *  注: 抽具象的difStrong默认都为1;
@@ -143,6 +143,11 @@
 +(void) relateMvAbs:(AIAbsCMVNode*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew;
 
 +(void) relateFoAbs:(AINetAbsFoNode*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew strongPorts:(NSArray*)strongPorts;
+
+/**
+ *  MARK:--------------------关联抽象通用方法 (参考29031-todo3)--------------------
+ */
++(void) relateGeneralCon:(AINodeBase*)conNode absNodes:(NSArray*)absNode_ps;
 
 //MARK:===============================================================
 //MARK:                     < 关联mv基本模型 >

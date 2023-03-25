@@ -367,6 +367,30 @@
 }
 
 /**
+ *  MARK:--------------------抽具象关联通用方法 (参考29031-todo3)--------------------
+ */
++(void) relateGeneralCon:(AINodeBase*)conNode absNodes:(NSArray*)absNode_ps {
+    //1. 数据准备;
+    absNode_ps = ARRTOOK(absNode_ps);
+    if (!ISOK(conNode, AINodeBase.class)) return;
+    
+    //2. 依次关联;
+    for (AIKVPointer *absNode_p in absNode_ps) {
+        //1. con与abs必须不同;
+        AINodeBase *absNode = [SMGUtils searchNode:absNode_p];
+        if ([conNode isEqual:absNode]) continue;
+        
+        //2. hd_具象节点插"抽象端口";
+        [AINetUtils insertPointer_Hd:absNode.pointer toPorts:conNode.absPorts ps:absNode.content_ps difStrong:1];
+        //3. hd_抽象节点插"具象端口";
+        [AINetUtils insertPointer_Hd:conNode.pointer toPorts:absNode.conPorts ps:conNode.content_ps difStrong:1];
+        //4. hd_存储
+        [SMGUtils insertNode:absNode];
+        [SMGUtils insertNode:conNode];
+    }
+}
+
+/**
  *  MARK:--------------------cmv基本模型--------------------
  *  @version
  *      2022.05.11: cmv模型ralate时,将foNode的content.refPort标记mv指向 (参考26022-2);

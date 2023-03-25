@@ -202,13 +202,12 @@
         
         
         //TODOTOMORROW20230324:
-        //1. 先取出抽象时序要用到的pid,这里ds要用;
-        //然后要测下空概念的防重机制,看起来不会工作...因为它似乎V的索引在防重...,,,
-        //然后可以先分析下,这个 防重机制,是不是可以被这里利用一下?因为别的地方防重不到,这里怎么就可以?先设计下这个...
+        //2. 把absAlgs传进来,并传过去......
         
-        NSString *ds = @"matchFo.pointerId";
-        NSString *at = @"matchFo.index";
-        AIAlgNodeBase *absA = [theNet createAbsAlg_NoRepeat:@[] conAlgs:@[oldAlg,newAlg] at:at ds:ds type:ATDefault];
+        
+        
+        
+        AIAlgNodeBase *absA = [theNet createEmptyAlg_NoRepeat:@[oldAlg,newAlg] absAlgs:nil];
         
         //5. 收集;
         [orderSames addObject:absA.pointer];

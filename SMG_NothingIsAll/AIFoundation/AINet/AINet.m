@@ -204,8 +204,11 @@ static AINet *_instance;
     } type:type];
 }
 
--(AIAbsAlgNode*)createEmptyAlg_NoRepeat:(NSArray*)conAlgs ds:(NSString*)ds {
-    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs at:@"empty" ds:ds isOutBlock:nil type:type];
+/**
+ *  MARK:--------------------构建空概念_防重 (参考29031-todo1)--------------------
+ */
+-(AIAlgNodeBase*)createEmptyAlg_NoRepeat:(NSArray*)conAlgs absAlgs:(NSArray*)absAlg_ps {
+    return [AIAlgNodeManager createEmptyAlg_NoRepeat:conAlgs absAlgs:absAlg_ps];
 }
 
 @end

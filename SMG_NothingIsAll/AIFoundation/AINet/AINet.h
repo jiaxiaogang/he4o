@@ -115,4 +115,9 @@
 -(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isOut:(BOOL)isOut at:(NSString*)at type:(AnalogyType)type;
 -(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isOut:(BOOL)isOut at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type;
 
+/**
+ *  MARK:--------------------构建空概念_防重 (参考29031-todo1)--------------------
+ */
+-(AIAlgNodeBase*)createEmptyAlg_NoRepeat:(NSArray*)conAlgs absAlgs:(NSArray*)absAlg_ps;
+
 @end
