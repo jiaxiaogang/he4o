@@ -39,6 +39,7 @@ static NSString *lastTCName = @""; //记录当前在打日志的TC模块名字;
 +(id) arrTransIndex:(NSArray*)a index:(NSInteger)i;     //取数组反序index元素
 +(BOOL) arrIndexIsOk:(NSArray*)a index:(NSInteger)i;    //数组index有效判断
 +(NSArray*) arrSub:(NSArray*)a start:(NSInteger)s length:(NSInteger)l;  //截数组 (notnull)
++(NSString*) arrToStr:(NSArray*)arr prefix:(NSString*)prefix sep:(NSString*)sep;
 
 //number
 +(BOOL) numIsOk:(NSNumber*)n;

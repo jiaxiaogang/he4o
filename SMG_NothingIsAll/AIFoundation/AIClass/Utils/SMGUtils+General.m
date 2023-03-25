@@ -163,6 +163,16 @@
     return (ARRISOK(a) ? [a subarrayWithRange:NSMakeRange(s, l)] : [NSArray new]);
 }
 
++(NSString*) arrToStr:(NSArray*)arr prefix:(NSString*)prefix sep:(NSString*)sep {
+    arr = ARRTOOK(arr);
+    NSMutableString *result = [[NSMutableString alloc] init];
+    for (NSInteger i = 0; i < arr.count; i++) {
+        id item = ARR_INDEX(arr, i);
+        [result appendFormat:@"%@%@%@",prefix,item,(i == arr.count - 1) ? @"" : sep];
+    }
+    return result;
+}
+
 //number
 +(BOOL) numIsOk:(NSNumber*)n{
     return (n && [n isKindOfClass:[NSNumber class]]);

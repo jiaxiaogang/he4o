@@ -204,4 +204,8 @@ static AINet *_instance;
     } type:type];
 }
 
+-(AIAbsAlgNode*)createEmptyAlg_NoRepeat:(NSArray*)conAlgs ds:(NSString*)ds {
+    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs at:@"empty" ds:ds isOutBlock:nil type:type];
+}
+
 @end
