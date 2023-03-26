@@ -213,6 +213,13 @@
     //2. 如果absCanset本来没有:
     //  a. 此时直接将旧Canset的Sp和EFF累计给absCanset;
     
+    //3. 这里需要先将构建时,它是否新,是否本来指向oldCanset,取到...
+    //  a. 然后这里才能根据这个来看是否继承oldCanset的SPEFF;
+    //  b. 或者到构建方法里,去继承...构建absCanset顺便把这事做了就行... (不科学,毕竟有些地方构建时并不继承这些玩意儿);
+    //  c. 所以还是写成block吧,然后在block里,把SPEFF给更了去...
+    
+    
+    
     
     
 }
