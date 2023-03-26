@@ -537,19 +537,12 @@
         if ([protoFo.pointer isEqual:oldCanset]) continue;
         AIFoNodeBase *oldCansetFo = [SMGUtils searchNode:oldCanset];
         
-        //4. 判断protoFo对cansetFo条件满足 (返回条件满足的每帧间映射) (参考28185-todo3);
+        //4. 判断protoFo全含cansetFo (返回全含indexDic) (参考29025-23c);
         NSDictionary *indexDic = [self checkFoValidMatch_NewCanset:protoFo oldCanset:oldCansetFo matchFo:matchFo];
         if (!DICISOK(indexDic)) continue;
         
-        //TODOTOMORROW20230322:
-        //1. 此处要尝试取newCanset和oldCanset的全含indexDic T;
-        //2. 只要全含了,再对二者进行外类比;
-        
-        
-        
-        
-        
-        
+        //4. 只要全含了,再对二者进行外类比 (参考29025-24 & 29027-方案3);
+        [AIAnalogy analogyCansetFo:indexDic newCanset:protoFo oldCanset:oldCansetFo matchFo:matchFo];
         
         //5. 条件满足的都算识别结果 (更新sp和eff) (参考28185-todo4);
         [oldCansetFo updateSPStrong:0 end:oldCansetFo.count - 1 type:ATPlus];

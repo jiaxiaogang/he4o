@@ -175,7 +175,7 @@
 }
 
 /**
- *  MARK:--------------------Canset类比 (参考29025-24)--------------------
+ *  MARK:--------------------Canset类比 (参考29025-24 & 29027-方案3)--------------------
  */
 +(AINetAbsFoNode*) analogyCansetFo:(NSDictionary*)indexDic newCanset:(AIFoNodeBase*)newCanset oldCanset:(AIFoNodeBase*)oldCanset matchFo:(AIFoNodeBase*)matchFo {
     //1. 类比orders的规律
@@ -196,18 +196,8 @@
             [orderSames addObject:oldAlg_p];
         }
         
-        
-        //4. 问题,这俩没有抽具象关系, (要分析下,两个概念有共同抽象时,应该怎么实现类比?)
-        [AIAnalogy analogyAlg:oldAlg_p assA:newAlg_p];
-        
-        
-        //TODOTOMORROW20230324:
-        //2. 把absAlgs传进来,并传过去......
-        
-        
-        
-        
-        AIAlgNodeBase *absA = [theNet createEmptyAlg_NoRepeat:@[oldAlg,newAlg] absAlgs:nil];
+        //4. 直接构建空概念 (参考29027-方案3);
+        AIAlgNodeBase *absA = [theNet createEmptyAlg_NoRepeat:@[oldAlg,newAlg]];
         
         //5. 收集;
         [orderSames addObject:absA.pointer];
@@ -215,6 +205,16 @@
     
     //6. 外类比构建
     return [theNet createAbsFo_NoRepeat:orderSames protoFo:newCanset assFo:oldCanset difStrong:1 type:ATDefault];
+    
+    //TODOTOMORROW20230326: 分析一下,在Canset外类比后,需要继承哪些数据给它...
+    //1. 如果absCanset本来就有:
+    //  a. 如果旧Canset本来就指向它了,则将抽象cansetFo的SP和EFF+1就行吧?
+    //  b. 如果旧Canset是新指向它的 (那么就把旧cansetFo的SP和EFF都累计给absCanset);
+    //2. 如果absCanset本来没有:
+    //  a. 此时直接将旧Canset的Sp和EFF累计给absCanset;
+    
+    
+    
 }
 
 @end

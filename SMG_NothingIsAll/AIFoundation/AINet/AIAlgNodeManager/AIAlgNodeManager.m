@@ -27,6 +27,7 @@
  *  @version
  *      2021.01.03: 判断abs已存在抽象节点时,加上ATDS的匹配判断,因为不同类型节点不必去重 (参考2120B-BUG2);
  *      2021.09.26: 从conAlgs中防重返回时,要判断at&ds&type (参考24022-BUG3);
+ *  @result notnull
  */
 +(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs at:(NSString*)at ds:(NSString*)ds isOutBlock:(BOOL(^)())isOutBlock type:(AnalogyType)type{
     //1. 数据准备
@@ -138,9 +139,22 @@
 }
 
 /**
- *  MARK:--------------------构建空概念_防重 (参考29031-todo1)--------------------
+ *  MARK:--------------------构建空概念_防重 (参考29027-方案3)--------------------
+ *  @result notnull
  */
-+(AIAlgNodeBase*)createEmptyAlg_NoRepeat:(NSArray*)conAlgs absAlgs:(NSArray*)absAlg_ps {
++(AIAlgNodeBase*)createEmptyAlg_NoRepeat:(NSArray*)conAlgs {
+    //0. 根据具象conAlgs取得共同抽象;
+    NSArray *absAlg_ps = nil;
+    for (AIAlgNodeBase *conAlg in conAlgs) {
+        NSArray *itemAbs_ps = Ports2Pits([AINetUtils absPorts_All:conAlg]);
+        if (!absAlg_ps) {
+            absAlg_ps = itemAbs_ps;
+        } else {
+            absAlg_ps = [SMGUtils filterSame_ps:itemAbs_ps parent_ps:absAlg_ps];
+        }
+    }
+    [AITest test24:absAlg_ps];
+    
     //1. 数据准备 (参考29031-todo1.1 & 29031);
     NSArray *pidArr = [SMGUtils convertArr:[SMGUtils sortSmall2Big:absAlg_ps compareBlock:^double(AIKVPointer *obj) {
         return obj.pointerId; //先pid排序;

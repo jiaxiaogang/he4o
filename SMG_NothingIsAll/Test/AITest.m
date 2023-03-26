@@ -227,6 +227,13 @@
     }
 }
 
++(void) test24:(NSArray*)absArrForEmptyAlgOfAbsCountCheck {
+    if (!Switch4AITest) return;
+    if (!ARRISOK(absArrForEmptyAlgOfAbsCountCheck)) {
+        ELog(@"构建空抽象时,它的具象概念们的抽象没有共同抽象! (查下Canset识别算法,它有共同抽象才被全含匹配到,如果匹配了,但却没共同抽象,显然有问题)");
+    }
+}
+
 
 //MARK:===============================================================
 //MARK:    < 回测必经点测试 (常关,每个轮回测时打开,触发则关,未触发者为异常) >

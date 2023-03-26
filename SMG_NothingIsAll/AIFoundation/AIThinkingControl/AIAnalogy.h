@@ -31,4 +31,9 @@
 //MARK:===============================================================
 +(AINetAbsFoNode*) analogyOutside:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type;
 
+/**
+ *  MARK:--------------------Canset类比 (参考29025-24)--------------------
+ */
++(AINetAbsFoNode*) analogyCansetFo:(NSDictionary*)indexDic newCanset:(AIFoNodeBase*)newCanset oldCanset:(AIFoNodeBase*)oldCanset matchFo:(AIFoNodeBase*)matchFo;
+
 @end
