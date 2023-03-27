@@ -38,6 +38,7 @@
  *      20210926: 修复glFo外类比时非末位alg类比构建absAlg时,也使用了GLType的问题 (参考24022-BUG1);
  *      20221028: 用mIsC判断替代sameValue_ps (参考27153-todo4);
  *      20230322: 打开外类比,支持(根据相近度将主要责任的码抽象掉)共同点抽象 (参考29025-11);
+ *      20230327: 支持得出protoFo/assFo 与 absFo的indexDic映射 (参考29032-todo1.2);
  */
 +(AINetAbsFoNode*) analogyOutside:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type {
     //1. 类比orders的规律
@@ -76,15 +77,8 @@
     NSDictionary *assAbsIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:protoAssIndexDic.allKeys];
     NSDictionary *protoAbsIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:protoAssIndexDic.allValues];
     
-    //TODOTOMORROW20230327: 继承sp和eff (参考29032);
-    //1. 将indexDic传递到构建器中...
-    
-    
-    
-    
-    
     //7. 外类比构建
-    return [self analogyOutside_Creater:orderSames protoFo:protoFo assFo:assFo type:type];
+    return [self analogyOutside_Creater:orderSames protoFo:protoFo assFo:assFo type:type protoIndexDic:protoAbsIndexDic assIndexDic:assAbsIndexDic];
 }
 
 /**
@@ -100,7 +94,7 @@
  *      2021.09.26: 仅构建glFo时才从conNodes取at&ds值,避免SFo也有值的问题 (参考24022-BUG2);
  *      2021.09.28: ATSame和ATDiff两个type是描述是否包含cmv指向的,改为传ATDefault过来 (参考24022-BUG5);
  */
-+(AINetAbsFoNode*)analogyOutside_Creater:(NSArray*)orderSames protoFo:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type{
++(AINetAbsFoNode*)analogyOutside_Creater:(NSArray*)orderSames protoFo:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type protoIndexDic:(NSDictionary*)protoIndexDic assIndexDic:(NSDictionary*)assIndexDic {
     //2. 数据检查;
     AINetAbsFoNode *result = nil;
     if (ARRISOK(orderSames) && ISOK(protoFo, AIFoNodeBase.class) && ISOK(assFo, AIFoNodeBase.class)) {
@@ -125,7 +119,7 @@
             }
             
             //5. 构建absFoNode (当GL时,传入at&ds);
-            result = [theNet createAbsFo_NoRepeat:orderSames protoFo:protoFo assFo:assFo difStrong:foDifStrong type:type];
+            result = [theNet createAbsFo_NoRepeat:orderSames protoFo:protoFo assFo:assFo difStrong:foDifStrong type:type protoIndexDic:protoIndexDic assIndexDic:assIndexDic];
             
             //5. 从fo和conFo.mvDeltaTime中提取mv导致时间隔,在relateFo之前,赋值到result中;
             result.mvDeltaTime = MAX(MAX(protoFo.mvDeltaTime, assFo.mvDeltaTime), result.mvDeltaTime);
@@ -189,6 +183,8 @@
 
 /**
  *  MARK:--------------------Canset类比 (参考29025-24 & 29027-方案3)--------------------
+ *  @version
+ *      2023.03.27: 支持得出newCansetFo/oldCansetFo 与 absCansetFo的indexDic映射 (参考29032-todo1.1);
  */
 +(AINetAbsFoNode*) analogyCansetFo:(NSDictionary*)indexDic newCanset:(AIFoNodeBase*)newCanset oldCanset:(AIFoNodeBase*)oldCanset matchFo:(AIFoNodeBase*)matchFo {
     //1. 类比orders的规律
@@ -220,8 +216,8 @@
     NSDictionary *newIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:indexDic.allValues];
     NSDictionary *oldIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:indexDic.allKeys];
     
-    //6. 外类比构建
-    return [theNet createAbsFo_NoRepeat:orderSames protoFo:newCanset assFo:oldCanset difStrong:1 type:ATDefault];
+    //7. 外类比构建
+    return [theNet createAbsFo_NoRepeat:orderSames protoFo:newCanset assFo:oldCanset difStrong:1 type:ATDefault protoIndexDic:newIndexDic assIndexDic:oldIndexDic];
 }
 
 @end

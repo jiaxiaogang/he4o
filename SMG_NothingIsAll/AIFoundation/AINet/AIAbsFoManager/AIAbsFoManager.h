@@ -18,6 +18,6 @@
  *  MARK:--------------------构建fo_防重版--------------------
  *  @param difStrong : 构建fo的被引用初始强度;
  */
--(AINetAbsFoNode*) create_NoRepeat:(NSArray*)content_ps protoFo:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo difStrong:(NSInteger)difStrong type:(AnalogyType)type;
+-(AINetAbsFoNode*) create_NoRepeat:(NSArray*)content_ps protoFo:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo difStrong:(NSInteger)difStrong type:(AnalogyType)type protoIndexDic:(NSDictionary*)protoIndexDic assIndexDic:(NSDictionary*)assIndexDic;
 
 @end

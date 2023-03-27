@@ -93,10 +93,11 @@
  *      2021.05.23: 对GL类型仅在当前场景下防重 (参考23081);
  *      2021.09.22: fo支持type防重 (参考24019);
  *      2021.09.23: fo支持从conFos中继承ds,如果conFos的ds都相同的话 (参考24019-时序部分);
+ *      2023.03.28: 将两条具象与absFo的indexDic映射传过来 (用于继承sp和eff) (参考29032-todo1);
  *  @status
  *      2021.04.25: 打开后,gl经验全为0条,所以先关掉,后续测试打开后为什么为0条;
  */
--(AINetAbsFoNode*) create_NoRepeat:(NSArray*)content_ps protoFo:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo difStrong:(NSInteger)difStrong type:(AnalogyType)type{
+-(AINetAbsFoNode*) create_NoRepeat:(NSArray*)content_ps protoFo:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo difStrong:(NSInteger)difStrong type:(AnalogyType)type protoIndexDic:(NSDictionary*)protoIndexDic assIndexDic:(NSDictionary*)assIndexDic {
     //1. 数据准备
     NSArray *conFos = @[protoFo,assFo];
     NSString *at = DefaultAlgsType; //[AINetUtils getDSFromConNodes:conFos type:type];
@@ -118,6 +119,13 @@
             return [AINetUtils refPorts_All4Alg:itemAlg];
         } at:at ds:ds type:type];
     }
+    
+    
+    //TODOTOMORROW20230327: 继承sp和eff (参考29032);
+    //1. 用indexDic在该继承时,就把sp和eff给继承了...
+    
+    
+    
     
     //3. 有则加强关联;
     if (ISOK(result, AINetAbsFoNode.class)) {
