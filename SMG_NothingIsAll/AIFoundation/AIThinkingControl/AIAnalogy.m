@@ -61,6 +61,13 @@
                     //4. 即使mIsC匹配,也要进行共同点抽象 (参考29025-11);
                     AIAlgNodeBase *absA = [self analogyAlg:protoA_p assA:assA_p];
                     
+                    //TODOTOMORROW20230327: 继承sp和eff (参考29032);
+                    //1. 生成protoIndexDic 和 assIndexDic  (参考29032-todo1.2);
+                    
+                    
+                    
+                    
+                    
                     //5. 收集并更新jMax;
                     [orderSames insertObject:absA.pointer atIndex:0];
                     jMax = j - 1;
@@ -194,21 +201,21 @@
         //3. 一致直接收集 (参考29025-24b);
         if ([oldAlg_p isEqual:newAlg_p]) {
             [orderSames addObject:oldAlg_p];
+        } else {
+            //4. 直接构建空概念 (参考29027-方案3);
+            AIAlgNodeBase *absA = [theNet createEmptyAlg_NoRepeat:@[oldAlg,newAlg]];
+            
+            //5. 收集;
+            [orderSames addObject:absA.pointer];
         }
-        
-        //4. 直接构建空概念 (参考29027-方案3);
-        AIAlgNodeBase *absA = [theNet createEmptyAlg_NoRepeat:@[oldAlg,newAlg]];
-        
-        //5. 收集;
-        [orderSames addObject:absA.pointer];
     }
+    
+    //6. 取得newIndexDic和oldIndexDic (参考29032-todo1.1);
+    NSDictionary *newIndexDic = [AINetUtils getIndexDic4AnalogyCansetFo:indexDic.allValues];
+    NSDictionary *oldIndexDic = [AINetUtils getIndexDic4AnalogyCansetFo:indexDic.allKeys];
     
     //6. 外类比构建
     return [theNet createAbsFo_NoRepeat:orderSames protoFo:newCanset assFo:oldCanset difStrong:1 type:ATDefault];
-    
-    //TODOTOMORROW20230327: 继承sp和eff (参考29032);
-    
-    
 }
 
 @end

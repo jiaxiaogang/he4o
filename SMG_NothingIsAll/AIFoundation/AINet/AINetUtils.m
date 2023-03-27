@@ -748,4 +748,22 @@
     return filterContent_ps;
 }
 
+/**
+ *  MARK:--------------------生成抽象canset与conCanset的indexDic (参考29032-todo1.1)--------------------
+ *  @desc 比如输入[3,5,1],则返回<1:1, 2:3, 3:5>;
+ *  @param conCansetIndexes : 具象帧的下标数组 (每个元素,都对应了抽象的一帧);
+ */
++(NSDictionary*) getIndexDic4AnalogyCansetFo:(NSArray*)conCansetIndexes {
+    NSMutableDictionary *result = [NSMutableDictionary new];
+    //1. 具象下标数组从小到大排序下 (比如3,5,1排成1,3,5);
+    NSArray *sort = [SMGUtils sortSmall2Big:conCansetIndexes compareBlock:^double(NSNumber *obj) {
+        return obj.integerValue;
+    }];
+    //2. 根据每帧映射生成indexDic结果返回;
+    for (NSInteger i = 0; i < sort.count; i++) {
+        [result setObject:ARR_INDEX(sort, i) forKey:@(i)];
+    }
+    return result;
+}
+
 @end
