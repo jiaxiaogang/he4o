@@ -43,6 +43,7 @@
     //1. 类比orders的规律
     if (Log4OutAna) NSLog(@"\n----------- 外类比(%@) -----------\nfo:%@ \nassFo:%@",ATType2Str(type),Fo2FStr(protoFo),Fo2FStr(assFo));
     NSMutableArray *orderSames = [[NSMutableArray alloc] init];
+    NSMutableDictionary *protoAssIndexDic = [NSMutableDictionary new];//收集proto和ass的映射;
     if (protoFo && assFo) {
 
         //2. 外类比有序进行 (记录jMax & 反序)
@@ -61,14 +62,8 @@
                     //4. 即使mIsC匹配,也要进行共同点抽象 (参考29025-11);
                     AIAlgNodeBase *absA = [self analogyAlg:protoA_p assA:assA_p];
                     
-                    //TODOTOMORROW20230327: 继承sp和eff (参考29032);
-                    //1. 生成protoIndexDic 和 assIndexDic  (参考29032-todo1.2);
-                    
-                    
-                    
-                    
-                    
                     //5. 收集并更新jMax;
+                    [protoAssIndexDic setObject:@(i) forKey:@(j)];
                     [orderSames insertObject:absA.pointer atIndex:0];
                     jMax = j - 1;
                     break;
@@ -77,7 +72,18 @@
         }
     }
 
-    //6. 外类比构建
+    //6. 生成protoIndexDic 和 assIndexDic  (参考29032-todo1.2);
+    NSDictionary *assAbsIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:protoAssIndexDic.allKeys];
+    NSDictionary *protoAbsIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:protoAssIndexDic.allValues];
+    
+    //TODOTOMORROW20230327: 继承sp和eff (参考29032);
+    //1. 将indexDic传递到构建器中...
+    
+    
+    
+    
+    
+    //7. 外类比构建
     return [self analogyOutside_Creater:orderSames protoFo:protoFo assFo:assFo type:type];
 }
 
@@ -211,8 +217,8 @@
     }
     
     //6. 取得newIndexDic和oldIndexDic (参考29032-todo1.1);
-    NSDictionary *newIndexDic = [AINetUtils getIndexDic4AnalogyCansetFo:indexDic.allValues];
-    NSDictionary *oldIndexDic = [AINetUtils getIndexDic4AnalogyCansetFo:indexDic.allKeys];
+    NSDictionary *newIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:indexDic.allValues];
+    NSDictionary *oldIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:indexDic.allKeys];
     
     //6. 外类比构建
     return [theNet createAbsFo_NoRepeat:orderSames protoFo:newCanset assFo:oldCanset difStrong:1 type:ATDefault];

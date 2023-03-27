@@ -749,14 +749,16 @@
 }
 
 /**
- *  MARK:--------------------生成抽象canset与conCanset的indexDic (参考29032-todo1.1)--------------------
+ *  MARK:--------------------类比出absFo时,此处取得具象fo与absFo的indexDic映射--------------------
+ *  @desc 作用1: 生成抽象canset与conCanset的indexDic (参考29032-todo1.1)
+ *  @desc 作用2: 生成外类比AnalogyOutside()里的absFo与protoFo/assFo的映射 (参考29032-todo1.2);
  *  @desc 比如输入[3,5,1],则返回<1:1, 2:3, 3:5>;
- *  @param conCansetIndexes : 具象帧的下标数组 (每个元素,都对应了抽象的一帧);
+ *  @param conFoIndexes : 具象帧的下标数组 (每个元素,都对应了抽象的一帧);
  */
-+(NSDictionary*) getIndexDic4AnalogyCansetFo:(NSArray*)conCansetIndexes {
++(NSDictionary*) getIndexDic4AnalogyAbsFo:(NSArray*)conFoIndexes {
     NSMutableDictionary *result = [NSMutableDictionary new];
     //1. 具象下标数组从小到大排序下 (比如3,5,1排成1,3,5);
-    NSArray *sort = [SMGUtils sortSmall2Big:conCansetIndexes compareBlock:^double(NSNumber *obj) {
+    NSArray *sort = [SMGUtils sortSmall2Big:conFoIndexes compareBlock:^double(NSNumber *obj) {
         return obj.integerValue;
     }];
     //2. 根据每帧映射生成indexDic结果返回;

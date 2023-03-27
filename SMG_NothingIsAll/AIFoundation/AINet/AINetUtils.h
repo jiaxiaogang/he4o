@@ -255,8 +255,8 @@
 +(void) updateAlgRefStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p;
 
 /**
- *  MARK:--------------------生成抽象canset与conCanset的indexDic (参考29032-todo1.1)--------------------
+ *  MARK:--------------------类比出absFo时,此处取得具象fo与absFo的indexDic映射--------------------
  */
-+(NSDictionary*) getIndexDic4AnalogyCansetFo:(NSArray*)conCansetIndexes;
++(NSDictionary*) getIndexDic4AnalogyAbsFo:(NSArray*)conFoIndexes;
 
 @end
