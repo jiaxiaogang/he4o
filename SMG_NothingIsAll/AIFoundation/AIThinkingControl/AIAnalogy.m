@@ -206,20 +206,7 @@
     //6. 外类比构建
     return [theNet createAbsFo_NoRepeat:orderSames protoFo:newCanset assFo:oldCanset difStrong:1 type:ATDefault];
     
-    //TODOTOMORROW20230326: 分析一下,在Canset外类比后,需要继承哪些数据给它...
-    //1. 如果absCanset本来就有:
-    //  a. 如果旧Canset本来就指向它了,则将抽象cansetFo的SP和EFF+1就行吧?
-    //  b. 如果旧Canset是新指向它的 (那么就把旧cansetFo的SP和EFF都累计给absCanset);
-    //2. 如果absCanset本来没有:
-    //  a. 此时直接将旧Canset的Sp和EFF累计给absCanset;
-    
-    //3. 这里需要先将构建时,它是否新,是否本来指向oldCanset,取到...
-    //  a. 然后这里才能根据这个来看是否继承oldCanset的SPEFF;
-    //  b. 或者到构建方法里,去继承...构建absCanset顺便把这事做了就行... (不科学,毕竟有些地方构建时并不继承这些玩意儿);
-    //  c. 所以还是写成block吧,然后在block里,把SPEFF给更了去...
-    
-    
-    
+    //TODOTOMORROW20230327: 继承sp和eff (参考29032);
     
     
 }
