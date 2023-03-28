@@ -259,4 +259,9 @@
  */
 +(NSDictionary*) getIndexDic4AnalogyAbsFo:(NSArray*)conFoIndexes;
 
+/**
+ *  MARK:--------------------absFo根据indexDic继承conFo的sp和eff值 (参考29032-todo2.2)--------------------
+ */
++(void) extendSPEFFByIndexDic:(NSDictionary*)assIndexDic assFo:(AIFoNodeBase*)assFo absFo:(AIFoNodeBase*)absFo;
+
 @end

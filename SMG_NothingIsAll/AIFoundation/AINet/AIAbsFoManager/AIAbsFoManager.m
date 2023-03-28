@@ -21,9 +21,10 @@
  *      2020.08.18: 支持deltaTimes (抽象时序的deltaTime全部由conFos得出,参考:20201);
  *      2021.01.03: 判断abs已存在抽象节点时,加上ATDS的匹配判断,因为不同类型节点不必去重 (参考2120B-BUG2);
  *      2022.12.27: 构建抽象fo时,从源assFo复用contentPort的强度 (参考2722f-todo12);
+ *      2023.03.28: 将assFo和absFo是否本来就有关联通过&conAbsIsRelate返回 (参考29032-todo2.1);
  *  @result : notnull
  */
--(AINetAbsFoNode*) create:(NSArray*)orderSames protoFo:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo difStrong:(NSInteger)difStrong at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type{
+-(AINetAbsFoNode*) create:(NSArray*)orderSames protoFo:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo difStrong:(NSInteger)difStrong at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type conAbsIsRelate:(BOOL*)conAbsIsRelate{
     //1. 数据准备
     NSArray *conFos = @[protoFo,assFo];
     if(!at) at = DefaultAlgsType;
@@ -65,6 +66,9 @@
         [AINetUtils insertRefPorts_AllFoNode:findAbsNode.pointer order_ps:findAbsNode.content_ps ps:findAbsNode.content_ps difStrong:difStrong];
     }
     
+    //4. 节点非新的:absFo早就和assFo有关联,否则反之 (参考29032-todo2.1);
+    if (conAbsIsRelate) *conAbsIsRelate = !isNew;
+    
     //4. 具象节点&抽象节点_关联 & 存储;
     [AINetUtils relateFoAbs:findAbsNode conNodes:conFos isNew:isNew];
     
@@ -94,6 +98,7 @@
  *      2021.09.22: fo支持type防重 (参考24019);
  *      2021.09.23: fo支持从conFos中继承ds,如果conFos的ds都相同的话 (参考24019-时序部分);
  *      2023.03.28: 将两条具象与absFo的indexDic映射传过来 (用于继承sp和eff) (参考29032-todo1);
+ *      2023.03.28: 支持判断ass和abs本来无关联时,继承ass的SPEFF (参考29032-todo2.1 & todo2.2);
  *  @status
  *      2021.04.25: 打开后,gl经验全为0条,所以先关掉,后续测试打开后为什么为0条;
  */
@@ -120,21 +125,31 @@
         } at:at ds:ds type:type];
     }
     
+    //4. 在下面的ifelse中,判断下具象和抽象时序是否本来就有关联 (参考29032-todo2.1);
+    BOOL conAbsIsRelate = false;
     
-    //TODOTOMORROW20230327: 继承sp和eff (参考29032);
-    //1. 用indexDic在该继承时,就把sp和eff给继承了...
-    
-    
-    
-    
-    //3. 有则加强关联;
+    //5. 有则加强关联;
     if (ISOK(result, AINetAbsFoNode.class)) {
+        conAbsIsRelate = [Ports2Pits(assFo.absPorts) containsObject:result.pointer];
         [AINetUtils relateFoAbs:result conNodes:conFos isNew:false];
         [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
     }else{
-        //4. 无则新构建;
-        result = [self create:content_ps protoFo:protoFo assFo:assFo difStrong:difStrong at:at ds:ds type:type];
+        //6. 无则新构建;
+        result = [self create:content_ps protoFo:protoFo assFo:assFo difStrong:difStrong at:at ds:ds type:type conAbsIsRelate:&conAbsIsRelate];
     }
+    
+    //7. 继承sp和eff (参考29032-todo2.2);
+    if (!conAbsIsRelate) {
+        [AINetUtils extendSPEFFByIndexDic:assIndexDic assFo:assFo absFo:result];
+    }
+    
+    //TODOTOMORROW20230328: 把protoFo和assFo分别给absFo的SPEFF+1 (参考29032-todo2.3);
+    
+    
+    
+    
+    
+    
     return result;
 }
 

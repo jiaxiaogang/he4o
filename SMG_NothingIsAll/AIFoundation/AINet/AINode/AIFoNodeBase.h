@@ -61,6 +61,7 @@
  *                    2. 如果是mv则输入content.count;
  */
 -(void) updateSPStrong:(NSInteger)spIndex type:(AnalogyType)type;
+-(void) updateSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type;
 
 /**
  *  MARK:--------------------从start到end都计一次S或P--------------------

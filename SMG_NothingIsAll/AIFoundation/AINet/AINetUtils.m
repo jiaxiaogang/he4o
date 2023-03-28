@@ -768,4 +768,21 @@
     return result;
 }
 
+/**
+ *  MARK:--------------------absFo根据indexDic继承conFo的sp和eff值 (参考29032-todo2.2)--------------------
+ */
++(void) extendSPEFFByIndexDic:(NSDictionary*)assIndexDic assFo:(AIFoNodeBase*)assFo absFo:(AIFoNodeBase*)absFo {
+    //1. ass与abs的每条映射都要继承;
+    for (NSNumber *absIndex in assIndexDic.allKeys) {
+        
+        //2. 取出ass中旧有的spStrong模型;
+        NSNumber *assIndex = [assIndexDic objectForKey:absIndex];
+        AISPStrong *spStrong = [assFo.spDic objectForKey:assIndex];
+        
+        //3. 将spStrong继承给absFo;
+        [absFo updateSPStrong:absIndex.integerValue difStrong:spStrong.sStrong type:ATSub];
+        [absFo updateSPStrong:absIndex.integerValue difStrong:spStrong.pStrong type:ATPlus];
+    }
+}
+
 @end

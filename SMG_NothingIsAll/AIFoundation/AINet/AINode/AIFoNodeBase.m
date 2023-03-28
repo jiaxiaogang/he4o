@@ -50,7 +50,10 @@
  *                    1. 表示责任帧下标,比如为1时,则表示第2帧的责任;
  *                    2. 如果是mv则输入content.count;
  */
--(void) updateSPStrong:(NSInteger)spIndex type:(AnalogyType)type{
+-(void) updateSPStrong:(NSInteger)spIndex type:(AnalogyType)type {
+    [self updateSPStrong:spIndex difStrong:1 type:type];
+}
+-(void) updateSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type {
     //1. 取kv;
     NSNumber *key = @(spIndex);
     AISPStrong *value = [self.spDic objectForKey:key];
@@ -58,9 +61,9 @@
     
     //2. 更新强度_线性+1 (参考25031-7);
     if (type == ATSub) {
-        value.sStrong++;
+        value.sStrong += difStrong;
     }else if(type == ATPlus){
-        value.pStrong++;
+        value.pStrong += difStrong;
     }
     [self.spDic setObject:value forKey:key];
     
