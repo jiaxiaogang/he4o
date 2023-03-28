@@ -148,7 +148,11 @@
     //8. 把protoFo给absFo的SP+1 (参考29032-todo2.3);
     [AINetUtils updateSPByIndexDic:protoIndexDic conFo:protoFo absFo:result];
     
-    //9. 将结果返回;
+    //9. 存下conFo与absFo的indexDic (参考29032-todo3);
+    [protoFo updateIndexDic:result indexDic:protoIndexDic];
+    [assFo updateIndexDic:result indexDic:assIndexDic];
+    
+    //10. 将结果outConAbsIsRelate和absFo返回;
     if (outConAbsIsRelate) *outConAbsIsRelate = conAbsIsRelate;
     return result;
 }
