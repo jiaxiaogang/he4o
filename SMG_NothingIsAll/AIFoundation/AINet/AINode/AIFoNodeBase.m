@@ -128,6 +128,7 @@
 
 /**
  *  MARK:--------------------获取canset的effStrong--------------------
+ *  @param effectIndex : 当R任务时传self.count,当H任务时将相应targetIndex传过来;
  */
 -(AIEffectStrong*) getEffectStrong:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo {
     //1. 取有效率解决方案数组;

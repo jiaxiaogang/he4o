@@ -88,6 +88,7 @@
  *  @param difStrong : 构建fo的被引用初始强度;
  *  _param ds : 新构建时传入指定ds,尤其是GL类型时,一般要将value.dataSource传递过来 (参考24019-概念部分);
  *              非新构建时,可传nil,此时尝试从conFos继承获取 (如果它们有共同的ds);
+ *  @param outConAbsIsRelate : 将con和abs是否本来就有关联返回 (参考29032-todo2.1);
  *  @version
  *      2020.04.26: 去掉时序的全局去重;
  *      2021.04.25: 打开防重,仅对content_ps防重,但没有对ds做同区要求判断 (参考23054-疑点);
@@ -99,10 +100,11 @@
  *      2021.09.23: fo支持从conFos中继承ds,如果conFos的ds都相同的话 (参考24019-时序部分);
  *      2023.03.28: 将两条具象与absFo的indexDic映射传过来 (用于继承sp和eff) (参考29032-todo1);
  *      2023.03.28: 支持判断ass和abs本来无关联时,继承ass的SPEFF (参考29032-todo2.1 & todo2.2);
+ *      2023.03.28: 将outConAbsIsRelate返回 (因为只有Canset类比时才更新EFF,需要返回这个值判断) (参考29032-todo2.4);
  *  @status
  *      2021.04.25: 打开后,gl经验全为0条,所以先关掉,后续测试打开后为什么为0条;
  */
--(AINetAbsFoNode*) create_NoRepeat:(NSArray*)content_ps protoFo:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo difStrong:(NSInteger)difStrong type:(AnalogyType)type protoIndexDic:(NSDictionary*)protoIndexDic assIndexDic:(NSDictionary*)assIndexDic {
+-(AINetAbsFoNode*) create_NoRepeat:(NSArray*)content_ps protoFo:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo difStrong:(NSInteger)difStrong type:(AnalogyType)type protoIndexDic:(NSDictionary*)protoIndexDic assIndexDic:(NSDictionary*)assIndexDic outConAbsIsRelate:(BOOL*)outConAbsIsRelate{
     //1. 数据准备
     NSArray *conFos = @[protoFo,assFo];
     NSString *at = DefaultAlgsType; //[AINetUtils getDSFromConNodes:conFos type:type];
@@ -140,16 +142,14 @@
     
     //7. 继承sp和eff (参考29032-todo2.2);
     if (!conAbsIsRelate) {
-        [AINetUtils extendSPEFFByIndexDic:assIndexDic assFo:assFo absFo:result];
+        [AINetUtils extendSPByIndexDic:assIndexDic assFo:assFo absFo:result];
     }
     
-    //TODOTOMORROW20230328: 把protoFo和assFo分别给absFo的SPEFF+1 (参考29032-todo2.3);
+    //8. 把protoFo给absFo的SP+1 (参考29032-todo2.3);
+    [AINetUtils updateSPByIndexDic:protoIndexDic conFo:protoFo absFo:result];
     
-    
-    
-    
-    
-    
+    //9. 将结果返回;
+    if (outConAbsIsRelate) *outConAbsIsRelate = conAbsIsRelate;
     return result;
 }
 

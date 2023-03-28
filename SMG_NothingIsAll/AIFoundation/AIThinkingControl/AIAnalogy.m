@@ -119,7 +119,7 @@
             }
             
             //5. 构建absFoNode (当GL时,传入at&ds);
-            result = [theNet createAbsFo_NoRepeat:orderSames protoFo:protoFo assFo:assFo difStrong:foDifStrong type:type protoIndexDic:protoIndexDic assIndexDic:assIndexDic];
+            result = [theNet createAbsFo_NoRepeat:orderSames protoFo:protoFo assFo:assFo difStrong:foDifStrong type:type protoIndexDic:protoIndexDic assIndexDic:assIndexDic outConAbsIsRelate:nil];
             
             //5. 从fo和conFo.mvDeltaTime中提取mv导致时间隔,在relateFo之前,赋值到result中;
             result.mvDeltaTime = MAX(MAX(protoFo.mvDeltaTime, assFo.mvDeltaTime), result.mvDeltaTime);
@@ -217,7 +217,19 @@
     NSDictionary *oldIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:indexDic.allKeys];
     
     //7. 外类比构建
-    return [theNet createAbsFo_NoRepeat:orderSames protoFo:newCanset assFo:oldCanset difStrong:1 type:ATDefault protoIndexDic:newIndexDic assIndexDic:oldIndexDic];
+    BOOL outConAbsIsRelate = true;
+    AINetAbsFoNode *absFo = [theNet createAbsFo_NoRepeat:orderSames protoFo:newCanset assFo:oldCanset difStrong:1 type:ATDefault protoIndexDic:newIndexDic assIndexDic:oldIndexDic outConAbsIsRelate:&outConAbsIsRelate];
+    
+    //8. oldCanset与absCanset新关联时: 取出ass中旧有的effStrong模型继承给absFo (参考29032-todo2.2);
+    if (!outConAbsIsRelate) {
+        AIEffectStrong *effStrong = [matchFo getEffectStrong:matchFo.count solutionFo:oldCanset.pointer];
+        [matchFo updateEffectStrong:effStrong.hStrong solutionFo:absFo.pointer status:ES_HavEff];
+        [matchFo updateEffectStrong:effStrong.nStrong solutionFo:absFo.pointer status:ES_NoEff];
+    }
+    
+    //9. 抽象fo时: 根据protoCansetFo增强absFo的Eff值+1 (参考29032-todo2.3);
+    [matchFo updateEffectStrong:matchFo.count solutionFo:absFo.pointer status:ES_HavEff];
+    return absFo;
 }
 
 @end

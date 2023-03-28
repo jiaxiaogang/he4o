@@ -259,9 +259,18 @@
  */
 +(NSDictionary*) getIndexDic4AnalogyAbsFo:(NSArray*)conFoIndexes;
 
+//MARK:===============================================================
+//MARK:                     < 抽象Fo时,更新SP值 >
+//MARK:===============================================================
+
 /**
- *  MARK:--------------------absFo根据indexDic继承conFo的sp和eff值 (参考29032-todo2.2)--------------------
+ *  MARK:--------------------absFo根据indexDic继承conFo的sp值 (参考29032-todo2.2)--------------------
  */
-+(void) extendSPEFFByIndexDic:(NSDictionary*)assIndexDic assFo:(AIFoNodeBase*)assFo absFo:(AIFoNodeBase*)absFo;
++(void) extendSPByIndexDic:(NSDictionary*)assIndexDic assFo:(AIFoNodeBase*)assFo absFo:(AIFoNodeBase*)absFo;
+
+/**
+ *  MARK:--------------------抽象fo时: 根据protoFo增强absFo的SP值+1 (参考29032-todo2.3)--------------------
+ */
++(void) updateSPByIndexDic:(NSDictionary*)conIndexDic conFo:(AIFoNodeBase*)conFo absFo:(AIFoNodeBase*)absFo;
 
 @end
