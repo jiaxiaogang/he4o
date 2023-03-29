@@ -541,15 +541,17 @@
         NSDictionary *indexDic = [self checkFoValidMatch_NewCanset:protoFo oldCanset:oldCansetFo matchFo:matchFo];
         if (!DICISOK(indexDic)) continue;
         
-        //4. 只要全含了,再对二者进行外类比 (参考29025-24 & 29027-方案3);
-        [AIAnalogy analogyCansetFo:indexDic newCanset:protoFo oldCanset:oldCansetFo matchFo:matchFo];
+        //4. 只要全含 & 是有效newCanset => 对二者进行外类比 (参考29025-24 & 29027-方案3);
+        if (es == ES_HavEff) {
+            [AIAnalogy analogyCansetFo:indexDic newCanset:protoFo oldCanset:oldCansetFo matchFo:matchFo];
+        }
         
         //5. 条件满足的都算识别结果 (更新sp和eff) (参考28185-todo4);
         [oldCansetFo updateSPStrong:0 end:oldCansetFo.count - 1 type:ATPlus];
         AIEffectStrong *eff = [matchFo updateEffectStrong:matchFo.count solutionFo:oldCanset status:es];
         
         //6. 日志
-        NSLog(@"结果%d. %@ SP:%@ EFF:%@",++logIndex,Fo2FStr(oldCansetFo),CLEANSTR(oldCansetFo.spDic),CLEANSTR(eff));
+        NSLog(@"Canset识别结果%d. %@ SP:%@ EFF:%@",++logIndex,Fo2FStr(oldCansetFo),CLEANSTR(oldCansetFo.spDic),CLEANSTR(eff));
     }
 }
 
