@@ -529,9 +529,9 @@
     //1. 取出旧有候选集;
     NSArray *oldCansets = [matchFo getConCansets:matchFo.count];
     OFTitleLog(@"Canset识别",@" (EFF:%@) (候选数:%ld)\nprotoFo:%@->%@\nmatchFo:%@",EffectStatus2Str(es),oldCansets.count,Fo2FStr(protoFo),Mvp2Str(protoFo.cmvNode_p),Fo2FStr(matchFo));
+    NSMutableArray *matchModels = [[NSMutableArray alloc] init];
     
     //2. 旧有候选集: 作为识别池;
-    int logIndex = 0;
     for (AIKVPointer *oldCanset in oldCansets) {
         //3. 不应期 (不识别自身);
         if ([protoFo.pointer isEqual:oldCanset]) continue;
@@ -541,17 +541,32 @@
         NSDictionary *indexDic = [self checkFoValidMatch_NewCanset:protoFo oldCanset:oldCansetFo matchFo:matchFo];
         if (!DICISOK(indexDic)) continue;
         
+        //5. 收集;
+        [matchModels addObject:[AIMatchCansetModel newWithMatchFo:oldCansetFo indexDic:indexDic]];
+    }
+    
+    //TODOTOMORROW20230329: Canset识别支持AIFilter过滤器;
+    //6. AIFilter过滤;
+    
+    
+    
+    
+    //7. 日志
+    for (AIMatchCansetModel *model in matchModels) {
+        AIEffectStrong *eff = [matchFo getEffectStrong:model.matchFo.count solutionFo:model.matchFo.pointer];
+        NSLog(@"Canset识别结果:%@ SP:%@ EFF:%@",Fo2FStr(model.matchFo),CLEANSTR(model.matchFo.spDic),CLEANSTR(eff));
+    }
+    
+    //8. 识别后处理: 外类比 & 增强SP & 增强EFF;
+    for (AIMatchCansetModel *model in matchModels) {
         //4. 只要全含 & 是有效newCanset => 对二者进行外类比 (参考29025-24 & 29027-方案3);
         if (es == ES_HavEff) {
-            [AIAnalogy analogyCansetFo:indexDic newCanset:protoFo oldCanset:oldCansetFo matchFo:matchFo];
+            [AIAnalogy analogyCansetFo:model.indexDic newCanset:protoFo oldCanset:model.matchFo matchFo:matchFo];
         }
         
         //5. 条件满足的都算识别结果 (更新sp和eff) (参考28185-todo4);
-        [oldCansetFo updateSPStrong:0 end:oldCansetFo.count - 1 type:ATPlus];
-        AIEffectStrong *eff = [matchFo updateEffectStrong:matchFo.count solutionFo:oldCanset status:es];
-        
-        //6. 日志
-        NSLog(@"Canset识别结果%d. %@ SP:%@ EFF:%@",++logIndex,Fo2FStr(oldCansetFo),CLEANSTR(oldCansetFo.spDic),CLEANSTR(eff));
+        [model.matchFo updateSPStrong:0 end:model.matchFo.count - 1 type:ATPlus];
+        [matchFo updateEffectStrong:matchFo.count solutionFo:model.matchFo.pointer status:es];
     }
 }
 

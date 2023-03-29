@@ -18,6 +18,7 @@
 		08089280215B07FC00710636 /* AICMVNodeBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 0808927F215B07FC00710636 /* AICMVNodeBase.m */; };
 		0808D34022B6F73D00D383BA /* NVLineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0808D33F22B6F73D00D383BA /* NVLineView.m */; };
 		0808D34822B6FDD100D383BA /* NVViewUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 0808D34722B6FDD100D383BA /* NVViewUtil.m */; };
+		080A126D29D4813B0042870B /* AIMatchCansetModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 080A126C29D4813B0042870B /* AIMatchCansetModel.m */; };
 		080A74321F60C6490025DBA3 /* AIPort.m in Sources */ = {isa = PBXBuildFile; fileRef = 080A74311F60C6490025DBA3 /* AIPort.m */; };
 		080BFAAF2304D06A00046D22 /* HEViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 080BFAAE2304D06A00046D22 /* HEViewController.m */; };
 		0810E50F236A637500B33226 /* AINetIndexUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 0810E50E236A637500B33226 /* AINetIndexUtils.m */; };
@@ -226,6 +227,8 @@
 		0808D33F22B6F73D00D383BA /* NVLineView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NVLineView.m; sourceTree = "<group>"; };
 		0808D34622B6FDD100D383BA /* NVViewUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVViewUtil.h; sourceTree = "<group>"; };
 		0808D34722B6FDD100D383BA /* NVViewUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NVViewUtil.m; sourceTree = "<group>"; };
+		080A126B29D4813B0042870B /* AIMatchCansetModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIMatchCansetModel.h; sourceTree = "<group>"; };
+		080A126C29D4813B0042870B /* AIMatchCansetModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIMatchCansetModel.m; sourceTree = "<group>"; };
 		080A74301F60C6490025DBA3 /* AIPort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIPort.h; sourceTree = "<group>"; };
 		080A74311F60C6490025DBA3 /* AIPort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIPort.m; sourceTree = "<group>"; };
 		080BFAAD2304D06A00046D22 /* HEViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HEViewController.h; sourceTree = "<group>"; };
@@ -974,6 +977,8 @@
 				0832AD4225BC5AEF001B4DB1 /* AIMatchFoModel.m */,
 				087C81882792DD400046DF9E /* AIMatchAlgModel.h */,
 				087C81892792DD400046DF9E /* AIMatchAlgModel.m */,
+				080A126B29D4813B0042870B /* AIMatchCansetModel.h */,
+				080A126C29D4813B0042870B /* AIMatchCansetModel.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1983,6 +1988,7 @@
 				0858C5CE2194F8B000951BA5 /* MASLayoutConstraint.m in Sources */,
 				0827DAD724199C9E00A025D4 /* HeLogView.m in Sources */,
 				08E8CF5525B2880600AA18DB /* WoodView.m in Sources */,
+				080A126D29D4813B0042870B /* AIMatchCansetModel.m in Sources */,
 				0864936127E216B5003EF661 /* TOMVisionNodeBase.m in Sources */,
 				0808927A215AF5F400710636 /* AINodeBase.m in Sources */,
 				089A2DEC2840F19600B66674 /* AISolutionModel.m in Sources */,

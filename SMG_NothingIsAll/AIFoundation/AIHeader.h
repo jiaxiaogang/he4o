@@ -41,6 +41,7 @@
 #import "DemandManager.h"
 #import "AIMatchFoModel.h"
 #import "AIMatchAlgModel.h"
+#import "AIMatchCansetModel.h"
 
 //短时记忆
 #import "TOAlgModel.h"
