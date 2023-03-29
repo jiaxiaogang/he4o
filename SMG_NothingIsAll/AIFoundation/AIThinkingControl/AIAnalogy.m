@@ -190,7 +190,7 @@
  */
 +(AINetAbsFoNode*) analogyCansetFo:(NSDictionary*)indexDic newCanset:(AIFoNodeBase*)newCanset oldCanset:(AIFoNodeBase*)oldCanset matchFo:(AIFoNodeBase*)matchFo {
     //1. 类比orders的规律
-    if (Log4OutAna) NSLog(@"\n----------- Canset类比 -----------\nnew:%@ \nold:%@",Fo2FStr(newCanset),Fo2FStr(oldCanset));
+    if (Log4OutCansetAna) NSLog(@"\n----------- Canset类比 -----------\nnew:%@ \nold:%@",Fo2FStr(newCanset),Fo2FStr(oldCanset));
     NSMutableArray *orderSames = [[NSMutableArray alloc] init];
     
     //2. 根据新旧的映射indexDic分别进行概念类比 (参考29025-24a);
@@ -230,7 +230,8 @@
     }
     
     //9. 抽象fo时: 根据protoCansetFo增强absFo的Eff值+1 (参考29032-todo2.3);
-    [matchFo updateEffectStrong:matchFo.count solutionFo:absFo.pointer status:ES_HavEff];
+    AIEffectStrong *endEffStrong = [matchFo updateEffectStrong:matchFo.count solutionFo:absFo.pointer status:ES_HavEff];
+    NSLog(@"构建absCanset:%@ SP:%@ EFF:%@",Fo2FStr(absFo),CLEANSTR(absFo.spDic),CLEANSTR(endEffStrong));
     return absFo;
 }
 
