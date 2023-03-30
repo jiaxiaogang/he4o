@@ -269,7 +269,7 @@
     
     //3. =================生成新方案后 IN有效率+1 (参考28182-todo6)=================
     //[TCEffect rInEffect:matchFo matchRFos:self.baseFrameModel.matchRFos es:ES_HavEff];
-    [TIUtils recognitionCansetFo:cansetFo matchFo:matchFo es:ES_HavEff];
+    [TIUtils recognitionCansetFo:cansetFo sceneFo:matchFo es:ES_HavEff];
 }
 
 /**

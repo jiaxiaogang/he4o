@@ -25,7 +25,7 @@
 //MARK:===============================================================
 //MARK:                     < Canset识别 >
 //MARK:===============================================================
-+(void) recognitionCansetFo:(AIFoNodeBase*)protoFo matchFo:(AIFoNodeBase*)matchFo es:(EffectStatus)es;
++(void) recognitionCansetFo:(AIFoNodeBase*)newCanset sceneFo:(AIFoNodeBase*)sceneFo es:(EffectStatus)es;
 
 
 /**

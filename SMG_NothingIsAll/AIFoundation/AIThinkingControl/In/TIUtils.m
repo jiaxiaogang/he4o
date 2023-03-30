@@ -550,9 +550,10 @@
     NSArray *filterModels = [AIFilter recognitonCansetFilter:matchModels sceneFo:sceneFo];
     
     //7. 日志
+    NSLog(@"\nCanset识别结果: %ld条",filterModels.count);
     for (AIMatchCansetModel *model in filterModels) {
         AIEffectStrong *eff = [sceneFo getEffectStrong:model.matchFo.count solutionFo:model.matchFo.pointer];
-        NSLog(@"Canset识别结果:%@ SP:%@ EFF:%@",Fo2FStr(model.matchFo),CLEANSTR(model.matchFo.spDic),CLEANSTR(eff));
+        NSLog(@"-->>> %@ SP:%@ EFF:%@",Fo2FStr(model.matchFo),CLEANSTR(model.matchFo.spDic),CLEANSTR(eff));
     }
     
     //8. 识别后处理: 外类比 & 增强SP & 增强EFF;
