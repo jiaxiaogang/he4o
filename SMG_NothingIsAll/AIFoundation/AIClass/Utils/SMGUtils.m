@@ -408,9 +408,6 @@
 +(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName time:(double)time saveDB:(BOOL)saveDB{
     //1. 存disk (异步持久化)
     NSString *key = STRFORMAT(@"%@/%@",rootPath,fileName);
-    if (!STRISOK(rootPath) || !STRISOK(fileName) || !obj) {
-        NSLog(@"");
-    }
     if (saveDB) {
         [[XGWedis sharedInstance] setObject:obj forKey:key];
         [[XGWedis sharedInstance] setSaveBlock:^(NSDictionary *dic) {
@@ -420,9 +417,6 @@
                 NSString *sep = @"/";
                 NSString *saveFileName = STRTOOK(ARR_INDEX_REVERSE(STRTOARR(saveKey, sep), 0));
                 NSString *saveRootPath = STRTOOK(SUBSTR2INDEX(saveKey, (saveKey.length - saveFileName.length - 1)));
-                if (!STRISOK(saveRootPath) || !STRISOK(saveFileName) || !saveObj) {
-                    NSLog(@"");
-                }
                 PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:saveRootPath];
                 [cache setObject:saveObj forKey:saveFileName];
                 DebugW();

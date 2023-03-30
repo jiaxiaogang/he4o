@@ -162,6 +162,10 @@
         return STRFORMAT(@"%ld",obj.pointerId); //后转成pIdStr;
     }];
     NSString *ds = ARRTOSTR(pidArr,@"A",@"");
+    if (ds.length > 30 || [SMGUtils removeRepeat:pidArr].count != pidArr.count) {
+        NSLog(@"29044BUG应该是因为这里报错,可以实测下试下,为什么这里会有那么长名字的ds存在,并且还有重复");
+        NSLog(@"");
+    }
     
     //2. 去重找本地 (参考29031-todo1.1);
     AIKVPointer *localAlg_p = nil;
