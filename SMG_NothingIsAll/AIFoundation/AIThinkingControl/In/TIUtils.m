@@ -539,7 +539,7 @@
         AIFoNodeBase *oldCansetFo = [SMGUtils searchNode:oldCanset];
         
         //4. 判断newCanset全含cansetFo (返回全含indexDic) (参考29025-23c);
-        NSDictionary *indexDic = [self checkFoValidMatch_NewCanset:newCanset oldCanset:oldCansetFo matchFo:sceneFo];
+        NSDictionary *indexDic = [self checkFoValidMatch_NewCanset:newCanset oldCanset:oldCansetFo sceneFo:sceneFo];
         if (!DICISOK(indexDic)) continue;
         
         //5. 收集;
@@ -559,7 +559,7 @@
     for (AIMatchCansetModel *model in filterModels) {
         //4. 只要全含 & 是有效newCanset => 对二者进行外类比 (参考29025-24 & 29027-方案3);
         if (es == ES_HavEff) {
-            [AIAnalogy analogyCansetFo:model.indexDic newCanset:newCanset oldCanset:model.matchFo matchFo:sceneFo];
+            [AIAnalogy analogyCansetFo:model.indexDic newCanset:newCanset oldCanset:model.matchFo sceneFo:sceneFo];
         }
         
         //5. 条件满足的都算识别结果 (更新sp和eff) (参考28185-todo4);
@@ -574,11 +574,11 @@
  *          示例: 比如:新[1,3,5,7,9a]和旧[1,5,9b]和场景[1,5] = 是全含的,并最终返回<1:1, 2:3, 3:5>; //其中9a和9b有共同抽象
  *  @result 全含时,返回二者的indexDic;
  */
-+(NSDictionary*) checkFoValidMatch_NewCanset:(AIFoNodeBase*)newCanset oldCanset:(AIFoNodeBase*)oldCanset matchFo:(AIFoNodeBase*)matchFo{
++(NSDictionary*) checkFoValidMatch_NewCanset:(AIFoNodeBase*)newCanset oldCanset:(AIFoNodeBase*)oldCanset sceneFo:(AIFoNodeBase*)sceneFo {
     //1. 数据准备;
     NSMutableDictionary *indexDic = [[NSMutableDictionary alloc] init];
-    NSDictionary *newIndexDic = [matchFo getConIndexDic:newCanset.pointer];
-    NSDictionary *oldIndexDic = [matchFo getConIndexDic:oldCanset.pointer];
+    NSDictionary *newIndexDic = [sceneFo getConIndexDic:newCanset.pointer];
+    NSDictionary *oldIndexDic = [sceneFo getConIndexDic:oldCanset.pointer];
     
     //3. 说明: 所有帧,都要判断新的全含旧的,只要有一帧失败就全失败 (参考29025-23a);
     NSInteger protoMin = 0;
@@ -588,7 +588,7 @@
         for (NSInteger newIndex = protoMin; newIndex < newCanset.count; newIndex++) {
             AIKVPointer *newAlg = ARR_INDEX(newCanset.content_ps, newIndex);
             
-            //4. 分别判断old和new这一帧是否被matchFo场景包含 (参考29025-23b);
+            //4. 分别判断old和new这一帧是否被sceneFo场景包含 (参考29025-23b);
             NSNumber *oldKey = ARR_INDEX([oldIndexDic allKeysForObject:@(oldIndex)], 0);
             NSNumber *newKey = ARR_INDEX([newIndexDic allKeysForObject:@(newIndex)], 0);
             if (oldKey && newKey && [oldKey isEqualToNumber:newKey]) {

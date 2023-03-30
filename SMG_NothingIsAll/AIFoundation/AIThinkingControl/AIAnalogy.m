@@ -188,7 +188,7 @@
  *  @version
  *      2023.03.27: 支持得出newCansetFo/oldCansetFo 与 absCansetFo的indexDic映射 (参考29032-todo1.1);
  */
-+(AINetAbsFoNode*) analogyCansetFo:(NSDictionary*)indexDic newCanset:(AIFoNodeBase*)newCanset oldCanset:(AIFoNodeBase*)oldCanset matchFo:(AIFoNodeBase*)matchFo {
++(AINetAbsFoNode*) analogyCansetFo:(NSDictionary*)indexDic newCanset:(AIFoNodeBase*)newCanset oldCanset:(AIFoNodeBase*)oldCanset sceneFo:(AIFoNodeBase*)sceneFo {
     //1. 类比orders的规律
     if (Log4OutCansetAna) NSLog(@"\n----------- Canset类比 -----------\nnew:%@ \nold:%@",Fo2FStr(newCanset),Fo2FStr(oldCanset));
     NSMutableArray *orderSames = [[NSMutableArray alloc] init];
@@ -224,13 +224,13 @@
     
     //8. oldCanset与absCanset新关联时: 取出ass中旧有的effStrong模型继承给absFo (参考29032-todo2.2);
     if (!outConAbsIsRelate) {
-        AIEffectStrong *effStrong = [matchFo getEffectStrong:matchFo.count solutionFo:oldCanset.pointer];
-        [matchFo updateEffectStrong:effStrong.hStrong solutionFo:absFo.pointer status:ES_HavEff];
-        [matchFo updateEffectStrong:effStrong.nStrong solutionFo:absFo.pointer status:ES_NoEff];
+        AIEffectStrong *effStrong = [sceneFo getEffectStrong:sceneFo.count solutionFo:oldCanset.pointer];
+        [sceneFo updateEffectStrong:effStrong.hStrong solutionFo:absFo.pointer status:ES_HavEff];
+        [sceneFo updateEffectStrong:effStrong.nStrong solutionFo:absFo.pointer status:ES_NoEff];
     }
     
     //9. 抽象fo时: 根据protoCansetFo增强absFo的Eff值+1 (参考29032-todo2.3);
-    AIEffectStrong *endEffStrong = [matchFo updateEffectStrong:matchFo.count solutionFo:absFo.pointer status:ES_HavEff];
+    AIEffectStrong *endEffStrong = [sceneFo updateEffectStrong:sceneFo.count solutionFo:absFo.pointer status:ES_HavEff];
     NSLog(@"构建absCanset:%@ SP:%@ EFF:%@",Fo2FStr(absFo),CLEANSTR(absFo.spDic),CLEANSTR(endEffStrong));
     return absFo;
 }
