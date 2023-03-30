@@ -23,4 +23,9 @@
  */
 +(NSArray*) recognitonFoFilter:(NSArray*)matchModels;
 
+/**
+ *  MARK:--------------------Canset识别过滤器 (参考29042)--------------------
+ */
++(NSArray*) recognitonCansetFilter:(NSArray*)matchModels sceneFo:(AIFoNodeBase*)sceneFo;
+
 @end

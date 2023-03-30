@@ -47,6 +47,7 @@
     return [self havDownDemand:algsType delta:delta] || [self havUpDemand:algsType delta:delta];
 }
 +(BOOL) havDemand:(AIKVPointer*)cmvNode_p{
+    if (!cmvNode_p) return false;
     AICMVNodeBase *cmvNode = [SMGUtils searchNode:cmvNode_p];
     NSInteger delta = [NUMTOOK([AINetIndex getData:cmvNode.delta_p]) integerValue];
     return [self havDemand:cmvNode_p.algsType delta:delta];

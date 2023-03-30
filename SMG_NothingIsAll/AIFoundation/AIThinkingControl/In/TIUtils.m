@@ -524,49 +524,47 @@
  *          2. 增强: 识别结果增强sp和eff (参考28185-todo4);
  *  @version
  *      2023.03.18: 失败时,也调用Canset识别,并将es计负分 (参考28185-todo5);
+ *      2023.03.30: 支持过滤器 (参考29042);
  */
-+(void) recognitionCansetFo:(AIFoNodeBase*)protoFo matchFo:(AIFoNodeBase*)matchFo es:(EffectStatus)es{
++(void) recognitionCansetFo:(AIFoNodeBase*)newCanset sceneFo:(AIFoNodeBase*)sceneFo es:(EffectStatus)es{
     //1. 取出旧有候选集;
-    NSArray *oldCansets = [matchFo getConCansets:matchFo.count];
-    OFTitleLog(@"Canset识别",@" (EFF:%@) (候选数:%ld)\nprotoFo:%@->%@\nmatchFo:%@",EffectStatus2Str(es),oldCansets.count,Fo2FStr(protoFo),Mvp2Str(protoFo.cmvNode_p),Fo2FStr(matchFo));
+    NSArray *oldCansets = [sceneFo getConCansets:sceneFo.count];
+    OFTitleLog(@"Canset识别",@" (EFF:%@) (候选数:%ld)\nnewCanset:%@\nsceneFo:%@",EffectStatus2Str(es),oldCansets.count,Fo2FStr(newCanset),Fo2FStr(sceneFo));
     NSMutableArray *matchModels = [[NSMutableArray alloc] init];
     
     //2. 旧有候选集: 作为识别池;
     for (AIKVPointer *oldCanset in oldCansets) {
         //3. 不应期 (不识别自身);
-        if ([protoFo.pointer isEqual:oldCanset]) continue;
+        if ([newCanset.pointer isEqual:oldCanset]) continue;
         AIFoNodeBase *oldCansetFo = [SMGUtils searchNode:oldCanset];
         
-        //4. 判断protoFo全含cansetFo (返回全含indexDic) (参考29025-23c);
-        NSDictionary *indexDic = [self checkFoValidMatch_NewCanset:protoFo oldCanset:oldCansetFo matchFo:matchFo];
+        //4. 判断newCanset全含cansetFo (返回全含indexDic) (参考29025-23c);
+        NSDictionary *indexDic = [self checkFoValidMatch_NewCanset:newCanset oldCanset:oldCansetFo matchFo:sceneFo];
         if (!DICISOK(indexDic)) continue;
         
         //5. 收集;
         [matchModels addObject:[AIMatchCansetModel newWithMatchFo:oldCansetFo indexDic:indexDic]];
     }
     
-    //TODOTOMORROW20230329: Canset识别支持AIFilter过滤器;
-    //6. AIFilter过滤;
-    
-    
-    
+    //6. AIFilter过滤 (参考29042);
+    NSArray *filterModels = [AIFilter recognitonCansetFilter:matchModels sceneFo:sceneFo];
     
     //7. 日志
-    for (AIMatchCansetModel *model in matchModels) {
-        AIEffectStrong *eff = [matchFo getEffectStrong:model.matchFo.count solutionFo:model.matchFo.pointer];
+    for (AIMatchCansetModel *model in filterModels) {
+        AIEffectStrong *eff = [sceneFo getEffectStrong:model.matchFo.count solutionFo:model.matchFo.pointer];
         NSLog(@"Canset识别结果:%@ SP:%@ EFF:%@",Fo2FStr(model.matchFo),CLEANSTR(model.matchFo.spDic),CLEANSTR(eff));
     }
     
     //8. 识别后处理: 外类比 & 增强SP & 增强EFF;
-    for (AIMatchCansetModel *model in matchModels) {
+    for (AIMatchCansetModel *model in filterModels) {
         //4. 只要全含 & 是有效newCanset => 对二者进行外类比 (参考29025-24 & 29027-方案3);
         if (es == ES_HavEff) {
-            [AIAnalogy analogyCansetFo:model.indexDic newCanset:protoFo oldCanset:model.matchFo matchFo:matchFo];
+            [AIAnalogy analogyCansetFo:model.indexDic newCanset:newCanset oldCanset:model.matchFo matchFo:sceneFo];
         }
         
         //5. 条件满足的都算识别结果 (更新sp和eff) (参考28185-todo4);
         [model.matchFo updateSPStrong:0 end:model.matchFo.count - 1 type:ATPlus];
-        [matchFo updateEffectStrong:matchFo.count solutionFo:model.matchFo.pointer status:es];
+        [sceneFo updateEffectStrong:sceneFo.count solutionFo:model.matchFo.pointer status:es];
     }
 }
 

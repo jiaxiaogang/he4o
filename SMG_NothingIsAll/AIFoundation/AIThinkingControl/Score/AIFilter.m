@@ -20,7 +20,7 @@
         return item.matchValue;
     } subBlock:^double(AIMatchAlgModel *item) {
         return item.strongValue;
-    } radio:0.16f];
+    } radio:0.16f resultNum:4];
 }
 
 /**
@@ -36,7 +36,19 @@
         return item.strongValue;
     } subBlock:^double(AIMatchFoModel *item) {
         return item.matchFoValue;
-    } radio:radio];
+    } radio:radio resultNum:4];
+}
+
+/**
+ *  MARK:--------------------Canset识别过滤器 (参考29042)--------------------
+ *  @desc 初版Canset识别因为结果太多再类比时性能差,加过滤器体现竞争 (参考29042);
+ */
++(NSArray*) recognitonCansetFilter:(NSArray*)matchModels sceneFo:(AIFoNodeBase*)sceneFo {
+    return [self filterTwice:matchModels mainBlock:^double(AIMatchCansetModel *item) {
+        return [TOUtils getStableScore:item.matchFo startSPIndex:0 endSPIndex:item.matchFo.count - 1];
+    } subBlock:^double(AIMatchCansetModel *item) {
+        return [TOUtils getEffectScore:sceneFo effectIndex:sceneFo.count solutionFo:item.matchFo.pointer];
+    } radio:0.16f resultNum:3];
 }
 
 //MARK:===============================================================
@@ -57,6 +69,7 @@
  *      3. 最小条数百分比: 值越小越准;
  *  @desc 现配置: 结果数为16%,主辅过滤力度20:1,即主过滤掉80%,辅再过滤掉剩下的20%;
  *  @param radio : 过滤率 (传值范围0-1),越小越精准,但剩余结果越少,反之其效亦反;
+ *  @param resultNum : 建议返回条数;
  *
  *  @version
  *      2023.03.06: 过滤前20%改为35% (参考28152-方案3-todo2);
@@ -66,14 +79,13 @@
  *      2023.03.07: 结果保留改为16%,将主辅力度调整为20:1 (因为实测4:1时,真实主过滤率=37%左右,太高了);
  *      2023.03.18: 加上radio参数,方便对概念和时序的过滤器分别指定不同的过滤度 (参考28186-方案1-结果);
  */
-+(NSArray*) filterTwice:(NSArray*)protoArr mainBlock:(double(^)(id item))mainBlock subBlock:(double(^)(id item))subBlock radio:(CGFloat)radio {
++(NSArray*) filterTwice:(NSArray*)protoArr mainBlock:(double(^)(id item))mainBlock subBlock:(double(^)(id item))subBlock radio:(CGFloat)radio resultNum:(NSInteger)resultNum{
     //0. 数据准备;
     if (!ARRISOK(protoArr)) return protoArr;
     
     //1. 条数 (参考注释公式说明-1);
     NSInteger protoCount = protoArr.count;                          //总数 (如30);
     CGFloat minResultNum = radio * protoCount;                      //最小条数 (建议16%,值越小越准);
-    NSInteger resultNum = 4;                                        //结果返回至少3条;
     resultNum = MAX(minResultNum, MIN(resultNum, protoCount));      //结果需要 大于20% 且 小于100%;
     
     //2. 过滤任务和力度 (参考注释公式说明-2);
