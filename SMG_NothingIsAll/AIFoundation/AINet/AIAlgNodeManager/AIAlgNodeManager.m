@@ -144,23 +144,36 @@
  */
 +(AIAlgNodeBase*)createEmptyAlg_NoRepeat:(NSArray*)conAlgs {
     //0. 根据具象conAlgs取得共同抽象;
-    NSArray *absAlg_ps = nil;
+    NSArray *absAlgPorts = nil;
     for (AIAlgNodeBase *conAlg in conAlgs) {
-        NSArray *itemAbs_ps = Ports2Pits([AINetUtils absPorts_All:conAlg]);
-        if (!absAlg_ps) {
-            absAlg_ps = itemAbs_ps;
+        NSArray *itemAbsPorts = [AINetUtils absPorts_All:conAlg];
+        if (!absAlgPorts) {
+            absAlgPorts = itemAbsPorts;
         } else {
-            absAlg_ps = [SMGUtils filterSame_ps:itemAbs_ps parent_ps:absAlg_ps];
+            absAlgPorts = [SMGUtils filterSame_ps:itemAbsPorts parent_ps:absAlgPorts];
         }
     }
-    [AITest test24:absAlg_ps];
+    [AITest test24:absAlgPorts];
+    
+    //1. 从共同抽象中找已有空概念: 防重 (参考29044-todo1);
+    AIPort *localPort = [SMGUtils filterSingleFromArr:absAlgPorts checkValid:^BOOL(AIPort *item) {
+        return [item.header isEqualToString:[NSString md5:@""]];
+    }];
+    if (localPort) {
+        //TODOTOMORROW20230331: 支持当conAlgs本身是空概念时,且是另一个conAlg的抽象时的复用;
+        
+        
+        
+        
+    }
     
     //1. 数据准备 (参考29031-todo1.1 & 29031);
-    NSArray *pidArr = [SMGUtils convertArr:[SMGUtils sortSmall2Big:absAlg_ps compareBlock:^double(AIKVPointer *obj) {
-        return obj.pointerId; //先pid排序;
-    }] convertBlock:^id(AIKVPointer *obj) {
-        return STRFORMAT(@"%ld",obj.pointerId); //后转成pIdStr;
+    NSArray *pidArr = [SMGUtils convertArr:[SMGUtils sortSmall2Big:absAlgPorts compareBlock:^double(AIPort *obj) {
+        return obj.target_p.pointerId; //先pid排序;
+    }] convertBlock:^id(AIPort *obj) {
+        return STRFORMAT(@"%ld",obj.target_p.pointerId); //后转成pIdStr;
     }];
+    
     NSString *ds = ARRTOSTR(pidArr,@"A",@"");
     if (ds.length > 30 || [SMGUtils removeRepeat:pidArr].count != pidArr.count) {
         NSLog(@"29044BUG应该是因为这里报错,可以实测下试下,为什么这里会有那么长名字的ds存在,并且还有重复");
@@ -181,12 +194,12 @@
     //3. 有则加强: 具象指向conAlgs & 抽象指向absAlgs (参考29031-todo2 & todo3);
     if (ISOK(localAlg, AIAlgNodeBase.class)) {
         [AINetUtils relateAlgAbs:localAlg conNodes:conAlgs isNew:false];
-        [AINetUtils relateGeneralCon:localAlg absNodes:absAlg_ps];
+        [AINetUtils relateGeneralCon:localAlg absNodes:Ports2Pits(absAlgPorts)];
         return localAlg;
     }else{
         //4. 无则构建: 具象指向conAlgs(在构建方法已集成) & 抽象指向absAlgs (参考29031-todo1 & todo3);
         AIAlgNodeBase *createAlg = [self createAbsAlgNode:@[] conAlgs:conAlgs at:nil ds:ds isOutBlock:nil type:ATDefault];
-        [AINetUtils relateGeneralCon:createAlg absNodes:absAlg_ps];
+        [AINetUtils relateGeneralCon:createAlg absNodes:Ports2Pits(absAlgPorts)];
         return createAlg;
     }
 }
