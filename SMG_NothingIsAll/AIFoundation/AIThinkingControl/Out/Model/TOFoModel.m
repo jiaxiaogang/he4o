@@ -133,6 +133,8 @@
 /**
  *  MARK:--------------------算出新的spDic--------------------
  *  @desc 用旧spDic和feedbackAlg计算出新的spDic (参考27211-todo1);
+ *  @version
+ *      2023.04.01: 修复算出的S可能为负的BUG,改为直接从conSolution继承对应帧的SP值 (参考27214);
  *  @result notnull (建议返回后,检查一下spDic和absCansetFo的长度是否一致,不一致时来查BUG);
  */
 -(NSDictionary*) convertOldSPDic2NewSPDic {
@@ -142,29 +144,20 @@
     NSMutableDictionary *newSPDic = [[NSMutableDictionary alloc] init];
     
     //2. sulutionIndex都是有反馈的帧,
-    NSInteger nextStart = 0;
     for (NSInteger i = 0; i < feedbackIndexArr.count; i++) {
         //3. 数据准备: 有反馈的帧,在solution对应的index (参考27212-步骤1);
         NSNumber *solutionIndex = ARR_INDEX(feedbackIndexArr, i);
         
-        //3. 取得首末帧 & 记录末帧 (参考27213-2&3);
-        NSInteger start = nextStart;
-        NSInteger end = solutionIndex.integerValue;
-        nextStart = end + 1;
+        //4. 取得具象solutionFo的spStrong (参考27213-2&3);
+        AISPStrong *conSPStrong = [solutionFo.spDic objectForKey:@(solutionIndex.integerValue)];
         
-        //4. 取得首末帧的spStrong (参考27213-2&3);
-        AISPStrong *endSPStrong = [solutionFo.spDic objectForKey:@(end)];
-        AISPStrong *startSPStrong = [solutionFo.spDic objectForKey:@(start)];
-        
-        //5. 计算新帧SP值 (参考27213-2&3);
-        AISPStrong *newSPStrong = [[AISPStrong alloc] init];
-        newSPStrong.pStrong = endSPStrong ? endSPStrong.pStrong : 0;
-        newSPStrong.sStrong = startSPStrong ? (startSPStrong.sStrong + startSPStrong.pStrong - newSPStrong.pStrong) : 0;
-        [AITest test19:newSPStrong];
+        //5. 直接继承solutionFo对应帧的SP值 (参考27214-方案);
+        AISPStrong *absSPStrong = conSPStrong ? conSPStrong : [[AISPStrong alloc] init];
+        [AITest test19:absSPStrong];
         
         //6. 新的spDic收集一帧: 抽象canset的帧=i (因为比如有3帧有反馈,那么这三帧就是0,1,2) (参考27207-10);
         NSInteger absCansetIndex = i;
-        [newSPDic setObject:newSPStrong forKey:@(absCansetIndex)];
+        [newSPDic setObject:absSPStrong forKey:@(absCansetIndex)];
     }
     return newSPDic;
 }
