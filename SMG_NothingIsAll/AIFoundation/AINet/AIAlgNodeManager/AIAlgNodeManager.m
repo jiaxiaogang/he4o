@@ -140,10 +140,24 @@
 
 /**
  *  MARK:--------------------构建空概念_防重 (参考29027-方案3)--------------------
+ *  @version
+ *      2023.03.31: 迭代空概念防重机制为场景内同抽象仅生成一条空概念 (参考29044-todo1 & todo2);
+ *      2023.04.01: 废弃原来的ds防重,因为它无效 (参考29044-todo3);
  *  @result notnull
  */
 +(AIAlgNodeBase*)createEmptyAlg_NoRepeat:(NSArray*)conAlgs {
-    //0. 根据具象conAlgs取得共同抽象;
+    //1. 当有一条是空概念 && 且别的都已经抽象指向它时 => 则复用 (参考29044-todo2);
+    AIAlgNodeBase *localAlg = nil;
+    for (AIAlgNodeBase *conAlgA in conAlgs) {
+        if (!ARRISOK(conAlgA.content_ps) && !ARRISOK([SMGUtils filterSingleFromArr:conAlgs checkValid:^BOOL(AIAlgNodeBase *item) {
+            return ![TOUtils mIsC_1:item.pointer c:conAlgA.pointer];
+        }])) {
+            localAlg = conAlgA;
+            break;
+        }
+    }
+    
+    //2. 根据具象conAlgs取得共同抽象;
     NSArray *absAlgPorts = nil;
     for (AIAlgNodeBase *conAlg in conAlgs) {
         NSArray *itemAbsPorts = [AINetUtils absPorts_All:conAlg];
@@ -155,53 +169,39 @@
     }
     [AITest test24:absAlgPorts];
     
-    //1. 从共同抽象中找已有空概念: 防重 (参考29044-todo1);
-    AIPort *localPort = [SMGUtils filterSingleFromArr:absAlgPorts checkValid:^BOOL(AIPort *item) {
-        return [item.header isEqualToString:[NSString md5:@""]];
-    }];
-    if (localPort) {
-        //TODOTOMORROW20230331: 支持当conAlgs本身是空概念时,且是另一个conAlg的抽象时的复用;
-        
-        
-        
-        
+    if (!localAlg) {
+        //3. 从共同抽象中找已有空概念: 防重 (参考29044-todo1);
+        AIPort *localPort = [SMGUtils filterSingleFromArr:absAlgPorts checkValid:^BOOL(AIPort *item) {
+            return [item.header isEqualToString:[NSString md5:@""]];
+        }];
+        if (localPort) {
+            localAlg = [SMGUtils searchNode:localPort.target_p];
+        }
     }
     
-    //1. 数据准备 (参考29031-todo1.1 & 29031);
+    //4. 找到本地防重的则加强: 具象指向conAlgs & 抽象指向absAlgs (参考29031-todo2 & todo3);
+    if (ISOK(localAlg, AIAlgNodeBase.class)) {
+        [AINetUtils relateAlgAbs:localAlg conNodes:conAlgs isNew:false];
+        [AINetUtils relateGeneralCon:localAlg absNodes:Ports2Pits(absAlgPorts)];
+        return localAlg;
+    }
+    
+    //5. 没本地的,则为新建抽象生成ds (参考29031-todo1.1 & 29031) (2023.05后无用则将此ds删掉,改为用defaultDS: 参考29044-todo4);
     NSArray *pidArr = [SMGUtils convertArr:[SMGUtils sortSmall2Big:absAlgPorts compareBlock:^double(AIPort *obj) {
         return obj.target_p.pointerId; //先pid排序;
     }] convertBlock:^id(AIPort *obj) {
         return STRFORMAT(@"%ld",obj.target_p.pointerId); //后转成pIdStr;
     }];
-    
     NSString *ds = ARRTOSTR(pidArr,@"A",@"");
     if (ds.length > 30 || [SMGUtils removeRepeat:pidArr].count != pidArr.count) {
         NSLog(@"29044BUG应该是因为这里报错,可以实测下试下,为什么这里会有那么长名字的ds存在,并且还有重复");
         NSLog(@"");
     }
     
-    //2. 去重找本地 (参考29031-todo1.1);
-    AIKVPointer *localAlg_p = nil;
-    for (AIAlgNodeBase *conAlg in conAlgs) {
-        NSArray *abs_ps = Ports2Pits([AINetUtils absPorts_All:conAlg]);
-        localAlg_p = [SMGUtils filterSingleFromArr:abs_ps checkValid:^BOOL(AIKVPointer *item) {
-            return [item.dataSource isEqualToString:ds];
-        }];
-        if (localAlg_p) break;
-    }
-    AIAlgNodeBase *localAlg = [SMGUtils searchNode:localAlg_p];
-    
-    //3. 有则加强: 具象指向conAlgs & 抽象指向absAlgs (参考29031-todo2 & todo3);
-    if (ISOK(localAlg, AIAlgNodeBase.class)) {
-        [AINetUtils relateAlgAbs:localAlg conNodes:conAlgs isNew:false];
-        [AINetUtils relateGeneralCon:localAlg absNodes:Ports2Pits(absAlgPorts)];
-        return localAlg;
-    }else{
-        //4. 无则构建: 具象指向conAlgs(在构建方法已集成) & 抽象指向absAlgs (参考29031-todo1 & todo3);
-        AIAlgNodeBase *createAlg = [self createAbsAlgNode:@[] conAlgs:conAlgs at:nil ds:ds isOutBlock:nil type:ATDefault];
-        [AINetUtils relateGeneralCon:createAlg absNodes:Ports2Pits(absAlgPorts)];
-        return createAlg;
-    }
+    //4. 无则构建: 具象指向conAlgs(在构建方法已集成) & 抽象指向absAlgs (参考29031-todo1 & todo3);
+    AIAlgNodeBase *createAlg = [self createAbsAlgNode:@[] conAlgs:conAlgs at:nil ds:ds isOutBlock:nil type:ATDefault];
+    [AINetUtils relateGeneralCon:createAlg absNodes:Ports2Pits(absAlgPorts)];
+    return createAlg;
 }
 
 @end
