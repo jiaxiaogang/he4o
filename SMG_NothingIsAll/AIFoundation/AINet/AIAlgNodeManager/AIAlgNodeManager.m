@@ -143,6 +143,7 @@
  *  @version
  *      2023.03.31: 迭代空概念防重机制为场景内同抽象仅生成一条空概念 (参考29044-todo1 & todo2);
  *      2023.04.01: 废弃原来的ds防重,因为它无效 (参考29044-todo3);
+ *      2023.04.01: 废弃ds拼接,因为它本来也没啥用了 (参数29044-todo4);
  *  @result notnull
  */
 +(AIAlgNodeBase*)createEmptyAlg_NoRepeat:(NSArray*)conAlgs {
@@ -186,20 +187,8 @@
         return localAlg;
     }
     
-    //5. 没本地的,则为新建抽象生成ds (参考29031-todo1.1 & 29031) (2023.05后无用则将此ds删掉,改为用defaultDS: 参考29044-todo4);
-    NSArray *pidArr = [SMGUtils convertArr:[SMGUtils sortSmall2Big:absAlgPorts compareBlock:^double(AIPort *obj) {
-        return obj.target_p.pointerId; //先pid排序;
-    }] convertBlock:^id(AIPort *obj) {
-        return STRFORMAT(@"%ld",obj.target_p.pointerId); //后转成pIdStr;
-    }];
-    NSString *ds = ARRTOSTR(pidArr,@"A",@"");
-    if (ds.length > 30 || [SMGUtils removeRepeat:pidArr].count != pidArr.count) {
-        NSLog(@"29044BUG应该是因为这里报错,可以实测下试下,为什么这里会有那么长名字的ds存在,并且还有重复");
-        NSLog(@"");
-    }
-    
-    //4. 无则构建: 具象指向conAlgs(在构建方法已集成) & 抽象指向absAlgs (参考29031-todo1 & todo3);
-    AIAlgNodeBase *createAlg = [self createAbsAlgNode:@[] conAlgs:conAlgs at:nil ds:ds isOutBlock:nil type:ATDefault];
+    //5. 无则构建: 具象指向conAlgs(在构建方法已集成) & 抽象指向absAlgs (参考29031-todo1 & todo3);
+    AIAlgNodeBase *createAlg = [self createAbsAlgNode:@[] conAlgs:conAlgs at:nil ds:DefaultDataSource isOutBlock:nil type:ATDefault];
     [AINetUtils relateGeneralCon:createAlg absNodes:Ports2Pits(absAlgPorts)];
     return createAlg;
 }
