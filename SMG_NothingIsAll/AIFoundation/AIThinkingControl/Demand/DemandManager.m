@@ -149,7 +149,8 @@
             [theTC updateEnergyValue:-score * 20];
             NSLog(@"RMV新需求: %@ (条数+1=%ld 评分:%@)",atKey,self.loopCache.count,Double2Str_NDZ(score));
             for (AIMatchFoModel *pFo in pFosValue) {
-                NSLog(@"\t pFo:%@->{%.2f}",Pit2FStr(pFo.matchFo),[AIScore score4MV_v2FromCache:pFo]);
+                AIFoNodeBase *matchFo = [SMGUtils searchNode:pFo.matchFo];
+                NSLog(@"\t pFo:%@->{%.2f} SP:%@ indexDic:%@",Pit2FStr(pFo.matchFo),[AIScore score4MV_v2FromCache:pFo],CLEANSTR(matchFo.spDic),CLEANSTR(pFo.indexDic2));
             }
         }else{
             [theTC updateEnergyValue:-score * 20];
