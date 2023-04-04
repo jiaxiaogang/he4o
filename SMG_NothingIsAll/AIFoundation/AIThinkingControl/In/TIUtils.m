@@ -583,6 +583,13 @@
     
     
     //5. 可以尝试加训一下,看各方向能不能都抽象出类似[棒,飞,棒,飞]这样的Canset;
+    for (AIKVPointer *item in oldCansets) {
+        NSLog(@"old:%@",Pit2FStr(item));
+    }
+    //无论是F959还是别的几个sceneFo,下面都有类似[棒,飞,棒,飞]这样的Canset,只是它在filter竞争中失败了...
+    //可考虑:
+    //  1. 单帧canset以前做过,算无效canset;
+    //  2. filter改为用: 匹配度和长度匹配度(长度差绝对值)来排序试下;
     
     
     
