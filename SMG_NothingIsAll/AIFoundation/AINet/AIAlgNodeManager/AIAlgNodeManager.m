@@ -87,7 +87,9 @@
         result = [[AIAbsAlgNode alloc] init];
         result.pointer = [SMGUtils createPointerForAlg:kPN_ALG_ABS_NODE at:at dataSource:ds isOut:isOut type:type];
         [result setContent_ps:sortSames];
-        NSLog(@"构建新概念:A%ld",result.pointer.pointerId);
+        NSLog(@"构建新概念:A%ld fromConAlgs:%@",result.pointer.pointerId,CLEANSTR([SMGUtils convertArr:conAlgs convertBlock:^id(AIAlgNodeBase *obj) {
+            return STRFORMAT(@"A%ld",obj.pointer.pointerId);
+        }]));
     }
     
     //4. value.refPorts (更新/加强微信息的引用序列)
