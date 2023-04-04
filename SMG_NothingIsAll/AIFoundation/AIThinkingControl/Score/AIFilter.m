@@ -42,13 +42,16 @@
 /**
  *  MARK:--------------------Canset识别过滤器 (参考29042)--------------------
  *  @desc 初版Canset识别因为结果太多再类比时性能差,加过滤器体现竞争 (参考29042);
+ *  @version
+ *      2023.04.04: 将过滤器由SP主EFF辅,改为映射数为主SP为辅 (参考29055-方案);
  */
 +(NSArray*) recognitonCansetFilter:(NSArray*)matchModels sceneFo:(AIFoNodeBase*)sceneFo {
-    return [self filterTwice:matchModels mainBlock:^double(AIMatchCansetModel *item) {
-        return [TOUtils getStableScore:item.matchFo startSPIndex:0 endSPIndex:item.matchFo.count - 1];
-    } subBlock:^double(AIMatchCansetModel *item) {
-        return [TOUtils getEffectScore:sceneFo effectIndex:sceneFo.count solutionFo:item.matchFo.pointer];
-    } radio:0.16f resultNum:3];
+    CGFloat radio = 0.2f;
+    NSArray *result = ARR_SUB([SMGUtils sortBig2Small:matchModels compareBlock:^double(AIMatchCansetModel *obj) {
+        return obj.indexDic.count;
+    }], 0, matchModels.count * radio);
+    NSLog(@"Canset识别过滤器: 总%ld * 需%.0f%% => 剩:%ld",matchModels.count,radio * 100,result.count);
+    return result;
 }
 
 //MARK:===============================================================
