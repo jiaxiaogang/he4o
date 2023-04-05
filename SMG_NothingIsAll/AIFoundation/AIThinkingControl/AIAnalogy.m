@@ -222,6 +222,9 @@
     BOOL outConAbsIsRelate = true;
     AINetAbsFoNode *absFo = [theNet createAbsFo_NoRepeat:orderSames protoFo:newCanset assFo:oldCanset difStrong:1 type:ATDefault protoIndexDic:newIndexDic assIndexDic:oldIndexDic outConAbsIsRelate:&outConAbsIsRelate];
     
+    //8. 将抽象Canset挂到sceneFo下;
+    [sceneFo updateConCanset:absFo.pointer targetIndex:sceneFo.count];
+    
     //8. oldCanset与absCanset新关联时: 取出ass中旧有的effStrong模型继承给absFo (参考29032-todo2.2);
     if (!outConAbsIsRelate) {
         AIEffectStrong *effStrong = [sceneFo getEffectStrong:sceneFo.count solutionFo:oldCanset.pointer];
