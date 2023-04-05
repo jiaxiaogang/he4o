@@ -547,24 +547,6 @@
         [matchModels addObject:[AIMatchCansetModel newWithMatchFo:oldCansetFo indexDic:indexDic]];
     }
     
-    
-    
-    //TODOTOMORROW20230404: 连续多次上飞躲开,竟然测不到此处识别出[棒,上,棒,上],并抽象类似的Canset (参考29055);
-    //1. 虽然更高的抽象: 比如(高,皮), 并没有被识别到 (因为它在matchPFos识别中过滤了被); //都是些: > F769[A768(高100,皮0,距61)],F170[A169(高100,皮0,距70)],F586[A585(高100,皮0,向343)]
-    //2. 当然也有一些较ok的,比如下面的向343,和向5,至少在各方向上有迁移性了;
-    //分析: 识别时有一些有方向限制的其实还好 (虽然不够抽象,但也足够了), 比如//sceneFo:F586[A585(高100,皮0,向343)]
-    
-    //3. 将过滤器改为用indexDic映射数来即可...
-    //for (AIMatchCansetModel *item in matchModels) {
-    //    NSLog(@"old全含的在过滤前:%@ 映射数:%ld",Fo2FStr(item.matchFo),item.indexDic.count);
-    //}
-    
-    
-    
-    
-    
-    
-    
     //6. AIFilter过滤 (参考29042);
     NSArray *filterModels = [AIFilter recognitonCansetFilter:matchModels sceneFo:sceneFo];
     
