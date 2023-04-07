@@ -255,13 +255,14 @@
         if (Log4Solution_Slow) NSLog(@"%ld: %@ (前%.2f 中%.2f 后%.2f) fromPFo:F%ld eff:%@ sp:%@",[sortModels indexOfObject:model],Pit2FStr(model.cansetFo),model.frontMatchValue,model.midStableScore,model.backMatchValue,pFoOrTargetFo_p.pointerId,effDesc,CLEANSTR(cansetFo.spDic));
     }
     
-    //13. 逐条S反思;
+    //13. 取通过S反思的最佳S;
     for (AISolutionModel *item in sortModels) {
         BOOL score = [TCRefrection refrection:item demand:demand];
-        if (score) {
-            result = item;
-            break;
-        }
+        if (!score) continue;
+        
+        //14. 闯关成功,取出最佳,跳出循环;
+        result = item;
+        break;
     }
     
     //14. 返回最佳解决方案;
