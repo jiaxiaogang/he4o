@@ -187,9 +187,11 @@
  *  MARK:--------------------Canset类比 (参考29025-24 & 29027-方案3)--------------------
  *  @version
  *      2023.03.27: 支持得出newCansetFo/oldCansetFo 与 absCansetFo的indexDic映射 (参考29032-todo1.1);
+ *      2023.04.07: 关闭Canset类比 (参考29059-改动);
  */
 +(AINetAbsFoNode*) analogyCansetFo:(NSDictionary*)indexDic newCanset:(AIFoNodeBase*)newCanset oldCanset:(AIFoNodeBase*)oldCanset sceneFo:(AIFoNodeBase*)sceneFo {
     //1. 类比orders的规律
+    if (!Switch4AnalogyCansetFo) return nil;
     if (Log4OutCansetAna) NSLog(@"\n----------- Canset类比 -----------\nnew:%@ \nold:%@",Fo2FStr(newCanset),Fo2FStr(oldCanset));
     NSMutableArray *orderSames = [[NSMutableArray alloc] init];
     

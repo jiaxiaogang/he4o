@@ -526,8 +526,10 @@
  *      2023.03.18: 失败时,也调用Canset识别,并将es计负分 (参考28185-todo5);
  *      2023.03.30: 支持过滤器 (参考29042);
  *      2023.04.04: 将Canset过滤器改为根据indexDic映射数来 (参考29055);
+ *      2023.04.07: 关闭Canset识别 (参考29059-改动);
  */
 +(void) recognitionCansetFo:(AIFoNodeBase*)newCanset sceneFo:(AIFoNodeBase*)sceneFo es:(EffectStatus)es{
+    if (!Switch4RecognitionCansetFo) return;
     //1. 取出旧有候选集;
     NSArray *oldCansets = [sceneFo getConCansets:sceneFo.count];
     OFTitleLog(@"Canset识别",@" (EFF:%@) (候选数:%ld)\nnewCanset:%@\nsceneFo:%@",EffectStatus2Str(es),oldCansets.count,Fo2FStr(newCanset),Fo2FStr(sceneFo));
