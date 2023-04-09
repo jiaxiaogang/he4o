@@ -153,6 +153,7 @@
  *      2023.02.01 - 不限制相似度,让其自然竞争越来越准确 (参考28042-思路2-4);
  *      2023.02.21 - 识别结果保留20% (参考28102-方案1);
  *      2023.02.25 - 集成概念识别过滤器 (参考28111-todo1) & 取消识别后过滤20% (参考28111-todo2);
+ *      2023.04.09 - 仅识别似层 (参考29064-todo1);
  */
 +(void) partMatching_Alg:(AIAlgNodeBase*)protoAlg except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel{
     //1. 数据准备;
@@ -215,10 +216,13 @@
         //14. 过滤掉匹配度<85%的;
         //if (item.matchValue < 0.60f) return false;
         
-        //15. 仅保留全含 (当count!=matchCount时为局部匹配: 局部匹配partAlgs已废弃);
+        //15. 过滤掉非全含的 (当count!=matchCount时为局部匹配: 局部匹配partAlgs已废弃);
         AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item.matchAlg];
-        if (itemAlg.count == item.matchCount) return true;
-        return false;
+        if (itemAlg.count != item.matchCount) return false;
+        
+        //16. 过滤掉非似层的 (参考29064-todo1);
+        if (itemAlg.count != protoAlg.count) return false;
+        return true;
     }];
     
     //11. 识别过滤器 (参考28109-todo2);
