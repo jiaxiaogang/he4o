@@ -580,6 +580,8 @@
  *  MARK:--------------------Canset的全含判断 (参考29025-23)--------------------
  *  @desc 全含说明: 要求newCanset包含oldCanset,才返回肯定结果; 
  *          示例: 比如:新[1,3,5,7,9a]和旧[1,5,9b]和场景[1,5] = 是全含的,并最终返回<1:1, 2:3, 3:5>; //其中9a和9b有共同抽象
+ *  @version
+ *      2023.04.10: 场景包含帧判断全含时,改用mIsC而不是绝对同一个节点 (因为场景内canset可类比抽象) (参考29067-todo1.1);
  *  @result 全含时,返回二者的indexDic;
  */
 +(NSDictionary*) checkFoValidMatch_NewCanset:(AIFoNodeBase*)newCanset oldCanset:(AIFoNodeBase*)oldCanset sceneFo:(AIFoNodeBase*)sceneFo {
@@ -600,18 +602,12 @@
             NSNumber *oldKey = ARR_INDEX([oldIndexDic allKeysForObject:@(oldIndex)], 0);
             NSNumber *newKey = ARR_INDEX([newIndexDic allKeysForObject:@(newIndex)], 0);
             
-            //TODOTOMORROW20230410: 根据最新的两层scene两层canset示图迭代(参考29066-示图);
-            //1. 此处可以用mIsC判断newAlg is oldAlg
-            //2. 再改Canset识别算法,尤其看来类比,mIsC的直接用absA,而有共同抽象的,可以直接做下alg类比即可 (并且废除空概念);
-            
-            
-            
-            
-            
-            
-            if (oldKey && newKey && [oldKey isEqualToNumber:newKey]) {
-                //5. 如果二者都包含=>则此帧成功 (注: 因为canset都优先取matchAlg,所以此时oldAlg和newAlg应该是一个节点) (参考29025-23b);
-                findItem = true;
+            //5. 如果二者都包含=>即场景包含帧: (因为canset都优先取matchAlg,所以oldAlg和newAlg一般是同一节点) (参考29025-23b);
+            if (oldKey && newKey) {
+                //5. 但因为会类比抽象所以有时不是同一节点: 此时要求new抽象指向old: 算匹配成功 (参考29067-todo1.1);
+                if ([TOUtils mIsC_1:newAlg c:oldAlg]) {
+                    findItem = true;
+                }
             } else if (oldKey != newKey) {
                 //6. 如果二者有一个包含,则此帧失败 (参考29025-23b2 & 23c3);
                 break;

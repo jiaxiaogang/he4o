@@ -204,12 +204,19 @@
         AIAlgNodeBase *oldAlg = [SMGUtils searchNode:oldAlg_p];
         AIAlgNodeBase *newAlg = [SMGUtils searchNode:newAlg_p];
         
-        //3. 一致直接收集 (参考29025-24b);
-        if ([oldAlg_p isEqual:newAlg_p]) {
+        //3. mIsC成立时,直接收集oldA (即absAlg) (参考29067-todo1.1);
+        if ([TOUtils mIsC_1:newAlg_p c:oldAlg_p]) {
             [orderSames addObject:oldAlg_p];
         } else {
-            //4. 直接构建空概念 (参考29027-方案3);
-            AIAlgNodeBase *absA = [theNet createEmptyAlg_NoRepeat:@[oldAlg,newAlg]];
+            //TODOTOMORROW20230410: 迭代canset类比算法 (参考29067-todo1 & todo1.3);
+            //1. 再改Canset识别算法,尤其看来类比,mIsC的直接用absA,而有共同抽象的,可以直接做下alg类比即可 (并且废除空概念);
+            //  analogyAlg仅支持assA是protoA的抽象 (查下当二者有共同抽象时,应该怎么类比下);
+            AIAlgNodeBase *absA = [self analogyAlg:newAlg_p assA:oldAlg_p];
+            
+            
+            
+            
+            
             
             //5. 收集;
             [orderSames addObject:absA.pointer];
