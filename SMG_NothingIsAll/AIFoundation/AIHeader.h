@@ -392,9 +392,9 @@
 //AITest开关
 #define Switch4AITest false
 //Canset识别开关
-#define Switch4RecognitionCansetFo false
+#define Switch4RecognitionCansetFo true
 //Canset类比开关
-#define Switch4AnalogyCansetFo false
+#define Switch4AnalogyCansetFo true
 
 
 
