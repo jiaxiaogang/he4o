@@ -303,6 +303,36 @@
     return [matchFo getConCansets:targetIndex];
 }
 
+/**
+ *  MARK:--------------------cansets--------------------
+ *  @desc 收集三处的候选集,其中优先级: 似层 > 交层 > 交层下别的似层;
+ */
++(AICansetModel*) getCansetFos_SlowV3:(NSArray*)pFoOrTargetFoOfMatch_ps targetIndex:(NSInteger)targetIndex{
+    //1. 数据准备: 用似层取出交层的fos;
+    AICansetModel *result = [[AICansetModel alloc] init];
+    pFoOrTargetFoOfMatch_ps = ARRTOOK(pFoOrTargetFoOfMatch_ps);
+    AIFoNodeBase *siFo = [SMGUtils searchNode:pFoOrTargetFoOfMatch_p];
+    NSArray *jaoFoPorts = [AINetUtils absPorts_All:siFo];
+    NSArray *jaoFos = [SMGUtils convertArr:jaoFoPorts convertBlock:^id(AIPort *obj) {
+        return [SMGUtils searchNode:obj.target_p];
+    }];
+    
+    //2. 依次取jao层
+    [SMGUtils convertArr:jaoFoPorts convertItemArrBlock:^NSArray *(AIPort *obj) {
+        
+        //3. 判断jao层有这个targetIndex对应的目标;
+        NSDictionary *siJaoIndexDic = [siFo getAbsIndexDic:obj.target_p];
+        NSNumber *absIndex = ARR_INDEX([siJaoIndexDic allKeysForObject:@(targetIndex)], 0);
+        
+        
+        
+        AIFoNodeBase *jaoFo = [SMGUtils searchNode:obj.target_p];
+        
+    }];
+    
+    return [matchFo getConCansets:targetIndex];
+}
+
 +(NSInteger) getRAleardayCount:(ReasonDemandModel*)rDemand pFo:(AIMatchFoModel*)pFo{
     //1. 数据准备;
     BOOL isRoot = !rDemand.baseOrGroup;

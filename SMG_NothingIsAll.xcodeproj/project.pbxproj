@@ -159,6 +159,7 @@
 		08CEAFAD22B317A800CD1D91 /* NodeCompareModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08CEAFAC22B317A800CD1D91 /* NodeCompareModel.m */; };
 		08D01CA228F70296003688ED /* TVSettingWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D01CA128F70296003688ED /* TVSettingWindow.m */; };
 		08D01CA428F702B0003688ED /* TVSettingWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 08D01CA328F702B0003688ED /* TVSettingWindow.xib */; };
+		08D1926E29E5A98400032AD8 /* AICansetModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D1926D29E5A98400032AD8 /* AICansetModel.m */; };
 		08D322A91EBA28B0009D734A /* Foundation+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D322A81EBA28B0009D734A /* Foundation+Log.m */; };
 		08D471DE1FEB3FFF00C61322 /* AIImvAlgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D471DD1FEB3FFF00C61322 /* AIImvAlgs.m */; };
 		08D4EC512160501000DA646B /* AINetUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D4EC502160501000DA646B /* AINetUtils.m */; };
@@ -512,6 +513,8 @@
 		08D01CA028F70296003688ED /* TVSettingWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TVSettingWindow.h; sourceTree = "<group>"; };
 		08D01CA128F70296003688ED /* TVSettingWindow.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TVSettingWindow.m; sourceTree = "<group>"; };
 		08D01CA328F702B0003688ED /* TVSettingWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TVSettingWindow.xib; sourceTree = "<group>"; };
+		08D1926C29E5A98400032AD8 /* AICansetModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AICansetModel.h; sourceTree = "<group>"; };
+		08D1926D29E5A98400032AD8 /* AICansetModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AICansetModel.m; sourceTree = "<group>"; };
 		08D322A71EBA2783009D734A /* SMGPrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SMGPrefixHeader.pch; sourceTree = "<group>"; };
 		08D322A81EBA28B0009D734A /* Foundation+Log.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Foundation+Log.m"; sourceTree = "<group>"; };
 		08D471DC1FEB3FFF00C61322 /* AIImvAlgs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIImvAlgs.h; sourceTree = "<group>"; };
@@ -1288,6 +1291,8 @@
 			children = (
 				089A2DEA2840F19600B66674 /* AISolutionModel.h */,
 				089A2DEB2840F19600B66674 /* AISolutionModel.m */,
+				08D1926C29E5A98400032AD8 /* AICansetModel.h */,
+				08D1926D29E5A98400032AD8 /* AICansetModel.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1954,6 +1959,7 @@
 				88A43F3A2109571300281348 /* AIAbsCMVNode.m in Sources */,
 				08D4EC512160501000DA646B /* AINetUtils.m in Sources */,
 				08D322A91EBA28B0009D734A /* Foundation+Log.m in Sources */,
+				08D1926E29E5A98400032AD8 /* AICansetModel.m in Sources */,
 				08C159C02808F47100983717 /* RLTPanel.m in Sources */,
 				087705BD2753748A00BA4EFB /* TCOut.m in Sources */,
 				88A43F40210957C300281348 /* AINetAbsFoNode.m in Sources */,

@@ -50,6 +50,7 @@
 #import "AIShortMatchModel_Simple.h"
 #import "ShortMatchManager.h"
 #import "AISolutionModel.h"
+#import "AICansetModel.h"
 
 //网络
 #import "AINetUtils.h"
@@ -395,6 +396,3 @@
 #define Switch4RecognitionCansetFo true
 //Canset类比开关
 #define Switch4AnalogyCansetFo true
-
-
-
