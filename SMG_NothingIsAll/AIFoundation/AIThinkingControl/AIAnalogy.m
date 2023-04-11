@@ -188,6 +188,7 @@
  *  @version
  *      2023.03.27: 支持得出newCansetFo/oldCansetFo 与 absCansetFo的indexDic映射 (参考29032-todo1.1);
  *      2023.04.07: 关闭Canset类比 (参考29059-改动);
+ *      2023.04.10: 场景包含帧的类比用mIsC判断成立后,直接采用absAlg (参考29067-todo1.1);
  */
 +(AINetAbsFoNode*) analogyCansetFo:(NSDictionary*)indexDic newCanset:(AIFoNodeBase*)newCanset oldCanset:(AIFoNodeBase*)oldCanset sceneFo:(AIFoNodeBase*)sceneFo {
     //1. 类比orders的规律
@@ -208,15 +209,9 @@
         if ([TOUtils mIsC_1:newAlg_p c:oldAlg_p]) {
             [orderSames addObject:oldAlg_p];
         } else {
-            //TODOTOMORROW20230410: 迭代canset类比算法 (参考29067-todo1 & todo1.3);
-            //1. 再改Canset识别算法,尤其看来类比,mIsC的直接用absA,而有共同抽象的,可以直接做下alg类比即可 (并且废除空概念);
-            //  analogyAlg仅支持assA是protoA的抽象 (查下当二者有共同抽象时,应该怎么类比下);
-            AIAlgNodeBase *absA = [self analogyAlg:newAlg_p assA:oldAlg_p];
-            
-            
-            
-            
-            
+            //4. 直接构建空概念 (参考29027-方案3);
+            //4. 2023.04.11: 后废弃,后又启用 (参考29068-todo1);
+            AIAlgNodeBase *absA = [theNet createEmptyAlg_NoRepeat:@[oldAlg,newAlg]];
             
             //5. 收集;
             [orderSames addObject:absA.pointer];
