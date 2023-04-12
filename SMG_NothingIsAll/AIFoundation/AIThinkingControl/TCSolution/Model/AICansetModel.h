@@ -32,10 +32,10 @@
 @property (assign, nonatomic) CansetType type;
 
 /**
- *  MARK:--------------------cansets--------------------
- *  @desc 当前下面挂载的cansets;
+ *  MARK:--------------------overrideCansets--------------------
+ *  @desc 当前下面挂载的且有效的cansets: (当前cansets - 用优先级更高一级cansets);
  */
-@property (strong, nonatomic) NSArray *cansets;
+-(NSArray*) overrideCansets;
 
 /**
  *  MARK:--------------------scene--------------------
