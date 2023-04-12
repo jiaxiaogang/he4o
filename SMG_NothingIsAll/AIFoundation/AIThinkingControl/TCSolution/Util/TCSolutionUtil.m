@@ -305,33 +305,46 @@
 
 /**
  *  MARK:--------------------cansets--------------------
- *  @desc 收集三处的候选集,其中优先级: 似层 > 交层 > 交层下别的似层;
+ *  @desc 收集三处候选集 (参考29069-todo3);
+ *  @status 目前仅支持R任务,等到做去皮训练时有需要再支持H任务 (29069-todo2);
  */
-//+(AICansetModel*) getCansetFos_SlowV3:(NSArray*)pFoOrTargetFoOfMatch_ps targetIndex:(NSInteger)targetIndex{
-//    //1. 数据准备: 用似层取出交层的fos;
-//    AICansetModel *result = [[AICansetModel alloc] init];
-//    pFoOrTargetFoOfMatch_ps = ARRTOOK(pFoOrTargetFoOfMatch_ps);
-//    AIFoNodeBase *siFo = [SMGUtils searchNode:pFoOrTargetFoOfMatch_p];
-//    NSArray *jaoFoPorts = [AINetUtils absPorts_All:siFo];
-//    NSArray *jaoFos = [SMGUtils convertArr:jaoFoPorts convertBlock:^id(AIPort *obj) {
-//        return [SMGUtils searchNode:obj.target_p];
-//    }];
-//
-//    //2. 依次取jao层
-//    [SMGUtils convertArr:jaoFoPorts convertItemArrBlock:^NSArray *(AIPort *obj) {
-//
-//        //3. 判断jao层有这个targetIndex对应的目标;
-//        NSDictionary *siJaoIndexDic = [siFo getAbsIndexDic:obj.target_p];
-//        NSNumber *absIndex = ARR_INDEX([siJaoIndexDic allKeysForObject:@(targetIndex)], 0);
-//
-//
-//
-//        AIFoNodeBase *jaoFo = [SMGUtils searchNode:obj.target_p];
-//
-//    }];
-//
-//    return [matchFo getConCansets:targetIndex];
-//}
++(NSArray*) getCansetFos_SlowV3:(NSArray*)pFos targetIndex:(NSInteger)targetIndex{
+    //1. 数据准备;
+    pFos = ARRTOOK(pFos);
+    NSMutableArray *iModels = [[NSMutableArray alloc] init];
+    NSMutableArray *fatherModels = [[NSMutableArray alloc] init];
+    NSMutableArray *brotherModels = [[NSMutableArray alloc] init];
+    
+    //2. 取自己级;
+    for (AIMatchFoModel *pFo in pFos) {
+        AICansetModel *model = [AICansetModel newWithBase:nil type:CansetTypeI scene:pFo.matchFo];
+        [iModels addObject:model];
+    }
+    
+    //3. 取父类级;
+    for (AICansetModel *iModel in iModels) {
+        AIFoNodeBase *iFo = [SMGUtils searchNode:iModel.scene];
+        NSArray *fatherScenePorts = [AINetUtils absPorts_All:iFo];
+        
+        //TODOTOMORROW20230412: 过滤下mv指向 (参考29069-todo4);
+        
+        for (AIPort *fatherScenePort in fatherScenePorts) {
+            AICansetModel *model = [AICansetModel newWithBase:iModel type:CansetTypeFather scene:fatherScenePort.target_p];
+            [fatherModels addObject:model];
+        }
+    }
+    
+    //4. 取兄弟级;
+    for (AICansetModel *fatherModel in fatherModels) {
+        AIFoNodeBase *fatherFo = [SMGUtils searchNode:fatherModel.scene];
+        NSArray *brotherScenePorts = [AINetUtils conPorts_All:fatherFo];
+        for (AIPort *brotherScenePort in brotherScenePorts) {
+            AICansetModel *model = [AICansetModel newWithBase:fatherModel type:CansetTypeBrother scene:brotherScenePort.target_p];
+            [brotherModels addObject:model];
+        }
+    }
+    return iModels;
+}
 
 +(NSInteger) getRAleardayCount:(ReasonDemandModel*)rDemand pFo:(AIMatchFoModel*)pFo{
     //1. 数据准备;

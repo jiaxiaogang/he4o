@@ -10,6 +10,8 @@
 
 @interface AICansetModel : NSObject
 
++(AICansetModel*) newWithBase:(AICansetModel*)base type:(CansetType)type scene:(AIKVPointer*)scene;
+
 /**
  *  MARK:--------------------base--------------------
  *  @desc 参考29069-数据结构示图 (兄弟的base=父类 父类的base=自己);
@@ -19,8 +21,9 @@
 /**
  *  MARK:--------------------subs--------------------
  *  @desc 参考29069-数据结构示图 (自己的subs=父类 父类的subs=兄弟);
+ *  @init 在子模型构建时,一个个报名填充进来;
  */
-@property (strong, nonatomic) NSArray *subs;
+@property (strong, nonatomic) NSMutableArray *subs;
 
 /**
  *  MARK:--------------------type--------------------

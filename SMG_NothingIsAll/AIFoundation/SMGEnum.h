@@ -161,7 +161,7 @@ typedef NS_ENUM(NSInteger, TIModelStatus) {
  *  MARK:--------------------CansetType (参考29069-todo1)--------------------
  */
 typedef NS_ENUM(NSInteger,  CansetType) {
-    CansetTypeI   = 0,
-    CansetFather  = 1,
-    CansetBrother = 2
+    CansetTypeI         = 0,
+    CansetTypeFather    = 1,
+    CansetTypeBrother   = 2
 };
