@@ -156,3 +156,12 @@ typedef NS_ENUM(NSInteger, TIModelStatus) {
 //    TO_ReasonPlus = 2,//R+ (顺应即可,顺不成也算完成,无需求,暂废弃)
 //    TO_ReasonSub  = 3,//R- (只要阻止,就算完成)
 //};
+
+/**
+ *  MARK:--------------------CansetType (参考29069-todo1)--------------------
+ */
+typedef NS_ENUM(NSInteger,  CansetType) {
+    CansetTypeI   = 0,
+    CansetFather  = 1,
+    CansetBrother = 2
+};
