@@ -179,7 +179,24 @@
  *  MARK:--------------------R慢思考--------------------
  */
 +(AISolutionModel*) rSolution_Slow:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps {
+    /////////// v3新版 ///////////
     //1. 收集cansetModels候选集;
+    NSArray *cansetModels2 = [self getCansetFos_SlowV3:demand.validPFos];
+    for (AICansetModel *cansetModel in cansetModels2) {
+        NSArray *cansets = ARRTOOK([cansetModel overrideCansets]);
+        for (AIKVPointer *canset in cansets) {
+            //TODOTOMORROW20230413:
+            //1. 判断canset前中后段,必须需要找出cutIndex;
+            //2. 而取aleardayCount: 如果是I层还好,Father层,和Brother层,就得看映射关系了...
+            //3. 调用getSolutionModel()时,传pFo该传哪个,传scene可行么?
+            //4. 调用getSolutionModel()时,传demand可行么?
+            
+            
+            
+        }
+    }
+    
+    /////////// v2旧版 ///////////
     NSArray *cansetModels = [SMGUtils convertArr:demand.validPFos convertItemArrBlock:^NSArray *(AIMatchFoModel *pFo) {
         
         //2. 取出cansetFos候选集;
@@ -309,9 +326,9 @@
  *  @status 目前仅支持R任务,等到做去皮训练时有需要再支持H任务 (29069-todo2);
  *  @version
  *      2023.04.13: 过滤出有同区mv指向的,才收集到各级候选集中 (参考29069-todo4);
- *  @result 将iModels返回;
+ *  @result 将三级全收集返回;
  */
-+(NSArray*) getCansetFos_SlowV3:(NSArray*)pFos targetIndex:(NSInteger)targetIndex{
++(NSArray*) getCansetFos_SlowV3:(NSArray*)pFos {
     //1. 数据准备;
     pFos = ARRTOOK(pFos);
     NSMutableArray *iModels = [[NSMutableArray alloc] init];
@@ -359,7 +376,13 @@
             [brotherModels addObject:model];
         }
     }
-    return iModels;
+    
+    //5. 将三级全收集返回;
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    [result addObjectsFromArray:iModels];
+    [result addObjectsFromArray:fatherModels];
+    [result addObjectsFromArray:brotherModels];
+    return result;
 }
 
 +(NSInteger) getRAleardayCount:(ReasonDemandModel*)rDemand pFo:(AIMatchFoModel*)pFo{

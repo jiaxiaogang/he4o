@@ -8,6 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ *  MARK:--------------------CansetModel--------------------
+ *  @desc 一个CansetModel中包含多个overrideCanset;
+ */
 @interface AICansetModel : NSObject
 
 +(AICansetModel*) newWithBase:(AICansetModel*)base type:(CansetType)type scene:(AIKVPointer*)scene;
