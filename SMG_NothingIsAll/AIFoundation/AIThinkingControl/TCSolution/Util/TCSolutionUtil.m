@@ -307,6 +307,9 @@
  *  MARK:--------------------cansets--------------------
  *  @desc 收集三处候选集 (参考29069-todo3);
  *  @status 目前仅支持R任务,等到做去皮训练时有需要再支持H任务 (29069-todo2);
+ *  @version
+ *      2023.04.13: 过滤出有同区mv指向的,才收集到各级候选集中 (参考29069-todo4);
+ *  @result 将iModels返回;
  */
 +(NSArray*) getCansetFos_SlowV3:(NSArray*)pFos targetIndex:(NSInteger)targetIndex{
     //1. 数据准备;
@@ -326,8 +329,13 @@
         AIFoNodeBase *iFo = [SMGUtils searchNode:iModel.scene];
         NSArray *fatherScenePorts = [AINetUtils absPorts_All:iFo];
         
-        //TODOTOMORROW20230412: 过滤下mv指向 (参考29069-todo4);
+        //a. 过滤下同区mv指向 (参考29069-todo4);
+        fatherScenePorts = [SMGUtils filterArr:fatherScenePorts checkValid:^BOOL(AIPort *item) {
+            AIFoNodeBase *fo = [SMGUtils searchNode:item.target_p];
+            return [iFo.cmvNode_p.identifier isEqualToString:fo.cmvNode_p.identifier];
+        }];
         
+        //b. 将father生成模型;
         for (AIPort *fatherScenePort in fatherScenePorts) {
             AICansetModel *model = [AICansetModel newWithBase:iModel type:CansetTypeFather scene:fatherScenePort.target_p];
             [fatherModels addObject:model];
@@ -338,6 +346,14 @@
     for (AICansetModel *fatherModel in fatherModels) {
         AIFoNodeBase *fatherFo = [SMGUtils searchNode:fatherModel.scene];
         NSArray *brotherScenePorts = [AINetUtils conPorts_All:fatherFo];
+        
+        //a. 过滤下同区mv指向 (参考29069-todo4);
+        brotherScenePorts = [SMGUtils filterArr:brotherScenePorts checkValid:^BOOL(AIPort *item) {
+            AIFoNodeBase *fo = [SMGUtils searchNode:item.target_p];
+            return [fatherFo.cmvNode_p.identifier isEqualToString:fo.cmvNode_p.identifier];
+        }];
+        
+        //b. 将brother生成模型;
         for (AIPort *brotherScenePort in brotherScenePorts) {
             AICansetModel *model = [AICansetModel newWithBase:fatherModel type:CansetTypeBrother scene:brotherScenePort.target_p];
             [brotherModels addObject:model];

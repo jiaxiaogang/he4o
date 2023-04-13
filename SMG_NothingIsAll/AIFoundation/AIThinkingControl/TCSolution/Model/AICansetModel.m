@@ -14,9 +14,7 @@
     AICansetModel *result = [[AICansetModel alloc] init];
     result.type = type;
     if (base) [base.subs addObject:result];
-    
-    
-    
+    result.scene = scene;
     return result;
 }
 
