@@ -137,11 +137,10 @@
         if (Log4Solution && result) NSLog(@"4. 快思考最佳结果:F%ld (前%.2f 中%.2f 后%.2f",result.cansetFo.pointerId,result.frontMatchValue,result.midEffectScore,result.backMatchValue);
         
         //8. 更新其前段帧的con和abs抽具象强度 (参考28086-todo2);
-        AIKVPointer *matchFo_p = [TOUtils convertBaseFoFromBasePFoOrTargetFoModel:result.basePFoOrTargetFoModel];
-        [AINetUtils updateConAndAbsStrongByIndexDic:result.matchFrontIndexDic matchFo:matchFo_p cansetFo:result.cansetFo];
+        [AINetUtils updateConAndAbsStrongByIndexDic:result.matchFrontIndexDic matchFo:result.sceneFo cansetFo:result.cansetFo];
         
         //16. 更新后段的的具象强度 (参考28092-todo4);
-        [AINetUtils updateConAndAbsStrongByIndexDic:result.backIndexDic matchFo:matchFo_p cansetFo:result.cansetFo];
+        [AINetUtils updateConAndAbsStrongByIndexDic:result.backIndexDic matchFo:result.sceneFo cansetFo:result.cansetFo];
     }
     
     //8. 将首条最佳方案返回;
@@ -254,12 +253,11 @@
     
     //12. debugLog
     for (AISolutionModel *model in sortModels) {
-        AIKVPointer *pFoOrTargetFo_p = [TOUtils convertBaseFoFromBasePFoOrTargetFoModel:model.basePFoOrTargetFoModel];
-        AIFoNodeBase *pFoOrTargetFo = [SMGUtils searchNode:pFoOrTargetFo_p];
-        AIEffectStrong *effStrong = [TOUtils getEffectStrong:pFoOrTargetFo effectIndex:pFoOrTargetFo.count solutionFo:model.cansetFo];
+        AIFoNodeBase *sceneFo = [SMGUtils searchNode:model.sceneFo];
+        AIEffectStrong *effStrong = [TOUtils getEffectStrong:sceneFo effectIndex:sceneFo.count solutionFo:model.cansetFo];
         NSString *effDesc = effStrong ? effStrong.description : @"";
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:model.cansetFo];
-        if (Log4Solution_Slow) NSLog(@"%ld: %@ (前%.2f 中%.2f 后%.2f) fromPFo:F%ld eff:%@ sp:%@",[sortModels indexOfObject:model],Pit2FStr(model.cansetFo),model.frontMatchValue,model.midStableScore,model.backMatchValue,pFoOrTargetFo_p.pointerId,effDesc,CLEANSTR(cansetFo.spDic));
+        if (Log4Solution_Slow) NSLog(@"%ld: %@ (前%.2f 中%.2f 后%.2f) fromSceneFo:F%ld eff:%@ sp:%@",[sortModels indexOfObject:model],Pit2FStr(model.cansetFo),model.frontMatchValue,model.midStableScore,model.backMatchValue,sceneFo.pointer.pointerId,effDesc,CLEANSTR(cansetFo.spDic));
     }
     
     //13. 取通过S反思的最佳S;
@@ -278,11 +276,10 @@
         NSLog(@"慢思考最佳结果:F%ld (前%.2f 中%.2f 后%.2f) %@",result.cansetFo.pointerId,result.frontMatchValue,result.midStableScore,result.backMatchValue,CLEANSTR(resultFo.spDic));
         
         //15. 更新其前段帧的con和abs抽具象强度 (参考28086-todo2);
-        AIKVPointer *matchFo_p = [TOUtils convertBaseFoFromBasePFoOrTargetFoModel:result.basePFoOrTargetFoModel];
-        [AINetUtils updateConAndAbsStrongByIndexDic:result.matchFrontIndexDic matchFo:matchFo_p cansetFo:result.cansetFo];
+        [AINetUtils updateConAndAbsStrongByIndexDic:result.matchFrontIndexDic matchFo:result.sceneFo cansetFo:result.cansetFo];
         
         //16. 更新后段的的具象强度 (参考28092-todo4);
-        [AINetUtils updateConAndAbsStrongByIndexDic:result.backIndexDic matchFo:matchFo_p cansetFo:result.cansetFo];
+        [AINetUtils updateConAndAbsStrongByIndexDic:result.backIndexDic matchFo:result.sceneFo cansetFo:result.cansetFo];
         
         //17. 更新其前段alg引用value的强度;
         [AINetUtils updateAlgRefStrongByIndexDic:result.protoFrontIndexDic matchFo:result.cansetFo];

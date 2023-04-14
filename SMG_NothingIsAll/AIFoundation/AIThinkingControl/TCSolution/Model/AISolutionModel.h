@@ -36,7 +36,14 @@
 
 @property (strong, nonatomic) AIKVPointer *cansetFo;    //候选集fo;
 @property (strong, nonatomic) AIKVPointer *sceneFo;
-@property (strong, nonatomic) id basePFoOrTargetFoModel;//R任务时为pFoModel,H任务时为targetFoModel;
+
+/**
+ *  MARK:--------------------basePFoOrTargetFoModel--------------------
+ *  @desc R任务时为pFoModel,H任务时为targetFoModel;
+ *  @callers:
+ *      1. 用于构建TOFoModel时,传过去;
+ */
+@property (strong, nonatomic) id basePFoOrTargetFoModel;
 
 //MARK:===============================================================
 //MARK:                     < 前段部分 >
