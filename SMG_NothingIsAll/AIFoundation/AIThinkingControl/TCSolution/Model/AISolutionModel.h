@@ -20,6 +20,7 @@
  *      2. H任务时,所有参数都有效;
  */
 +(AISolutionModel*) newWithCansetFo:(AIKVPointer*)cansetFo
+                            sceneFo:(AIKVPointer*)sceneFo
                  protoFrontIndexDic:(NSDictionary *)protoFrontIndexDic
                  matchFrontIndexDic:(NSDictionary *)matchFrontIndexDic
                     frontMatchValue:(CGFloat)frontMatchValue
@@ -34,6 +35,7 @@
              basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel;
 
 @property (strong, nonatomic) AIKVPointer *cansetFo;    //候选集fo;
+@property (strong, nonatomic) AIKVPointer *sceneFo;
 @property (strong, nonatomic) id basePFoOrTargetFoModel;//R任务时为pFoModel,H任务时为targetFoModel;
 
 //MARK:===============================================================
@@ -41,7 +43,7 @@
 //MARK:===============================================================
 
 @property (strong, nonatomic) NSDictionary *protoFrontIndexDic;//前段canset与proto的映射字典 (canset是抽象);
-@property (strong, nonatomic) NSDictionary *matchFrontIndexDic;//前段canset与match的映射字典 (match是抽象);
+@property (strong, nonatomic) NSDictionary *matchFrontIndexDic;//前段canset与scene的映射字典 (scene是抽象);
 
 /**
  *  MARK:--------------------前段匹配度--------------------

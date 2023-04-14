@@ -14,7 +14,7 @@
  */
 @interface AICansetModel : NSObject
 
-+(AICansetModel*) newWithBase:(AICansetModel*)base type:(CansetType)type scene:(AIKVPointer*)scene;
++(AICansetModel*) newWithBase:(AICansetModel*)base type:(CansetType)type scene:(AIKVPointer*)scene cutIndex:(NSInteger)cutIndex;
 
 /**
  *  MARK:--------------------base--------------------
@@ -40,11 +40,17 @@
  *  @desc 当前下面挂载的且有效的cansets: (当前cansets - 用优先级更高一级cansets);
  */
 -(NSArray*) overrideCansets;
+-(AICansetModel*) getRoot;
 
 /**
  *  MARK:--------------------scene--------------------
  *  @desc 当前cansetModel是基于哪个scene;
  */
 @property (strong, nonatomic) AIKVPointer *scene;
+
+/**
+ *  MARK:--------------------cutIndex--------------------
+ */
+@property (assign, nonatomic) NSInteger cutIndex;
 
 @end

@@ -11,6 +11,7 @@
 @implementation AISolutionModel
 
 +(AISolutionModel*) newWithCansetFo:(AIKVPointer*)cansetFo
+                            sceneFo:(AIKVPointer*)sceneFo
                  protoFrontIndexDic:(NSDictionary *)protoFrontIndexDic
                  matchFrontIndexDic:(NSDictionary *)matchFrontIndexDic
                     frontMatchValue:(CGFloat)frontMatchValue
@@ -25,6 +26,7 @@
              basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel {
     AISolutionModel *model = [[AISolutionModel alloc] init];
     model.cansetFo = cansetFo;
+    model.sceneFo = sceneFo;
     model.basePFoOrTargetFoModel = basePFoOrTargetFoModel;
     model.protoFrontIndexDic = protoFrontIndexDic;
     model.matchFrontIndexDic = matchFrontIndexDic;

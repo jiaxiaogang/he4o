@@ -10,11 +10,12 @@
 
 @implementation AICansetModel
 
-+(AICansetModel*) newWithBase:(AICansetModel*)base type:(CansetType)type scene:(AIKVPointer*)scene {
++(AICansetModel*) newWithBase:(AICansetModel*)base type:(CansetType)type scene:(AIKVPointer*)scene cutIndex:(NSInteger)cutIndex {
     AICansetModel *result = [[AICansetModel alloc] init];
     result.type = type;
     if (base) [base.subs addObject:result];
     result.scene = scene;
+    result.cutIndex = cutIndex;
     return result;
 }
 
@@ -44,6 +45,17 @@
     }
     return nil;
 }
+
+-(AICansetModel*) getRoot {
+    if (self.type == CansetTypeI) {
+        return self;
+    }
+    return [self.base getRoot];
+}
+
+//MARK:===============================================================
+//MARK:                     < privateMethod >
+//MARK:===============================================================
 
 /**
  *  MARK:--------------------获取override用来过滤的部分 (参考29069-todo5.2)--------------------
