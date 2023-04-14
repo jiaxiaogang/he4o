@@ -1,17 +1,17 @@
 //
-//  AICansetModel.m
+//  AISceneModel.m
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2023/4/11.
 //  Copyright © 2023年 XiaoGang. All rights reserved.
 //
 
-#import "AICansetModel.h"
+#import "AISceneModel.h"
 
-@implementation AICansetModel
+@implementation AISceneModel
 
-+(AICansetModel*) newWithBase:(AICansetModel*)base type:(CansetType)type scene:(AIKVPointer*)scene cutIndex:(NSInteger)cutIndex {
-    AICansetModel *result = [[AICansetModel alloc] init];
++(AISceneModel*) newWithBase:(AISceneModel*)base type:(CansetType)type scene:(AIKVPointer*)scene cutIndex:(NSInteger)cutIndex {
+    AISceneModel *result = [[AISceneModel alloc] init];
     result.type = type;
     if (base) [base.subs addObject:result];
     result.scene = scene;
@@ -46,7 +46,7 @@
     return nil;
 }
 
--(AICansetModel*) getRoot {
+-(AISceneModel*) getRoot {
     if (self.type == CansetTypeI) {
         return self;
     }

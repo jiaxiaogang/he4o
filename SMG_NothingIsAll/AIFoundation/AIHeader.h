@@ -50,7 +50,7 @@
 #import "AIShortMatchModel_Simple.h"
 #import "ShortMatchManager.h"
 #import "AISolutionModel.h"
-#import "AICansetModel.h"
+#import "AISceneModel.h"
 
 //网络
 #import "AINetUtils.h"

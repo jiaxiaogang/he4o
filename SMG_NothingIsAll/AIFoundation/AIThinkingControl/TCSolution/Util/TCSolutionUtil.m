@@ -186,7 +186,7 @@
     
     //2. 每个cansetModel转solutionModel;
     NSMutableArray *cansetModels = [[NSMutableArray alloc] init];
-    for (AICansetModel *sceneModel in sceneModels) {
+    for (AISceneModel *sceneModel in sceneModels) {
         
         //3. 取出overrideCansets;
         NSArray *cansets = ARRTOOK([sceneModel overrideCansets]);
@@ -328,48 +328,48 @@
     //2. 取自己级;
     iModels = [SMGUtils convertArr:demand.validPFos convertBlock:^id(AIMatchFoModel *pFo) {
         NSInteger aleardayCount = [self getRAleardayCount:demand pFo:pFo];
-        return [AICansetModel newWithBase:nil type:CansetTypeI scene:pFo.matchFo cutIndex:aleardayCount - 1];
+        return [AISceneModel newWithBase:nil type:CansetTypeI scene:pFo.matchFo cutIndex:aleardayCount - 1];
     }];
     
     //3. 取父类级;
-    for (AICansetModel *iModel in iModels) {
+    for (AISceneModel *iModel in iModels) {
         AIFoNodeBase *iFo = [SMGUtils searchNode:iModel.scene];
         NSArray *fatherScenePorts = [AINetUtils absPorts_All:iFo];
         
-        //a. 过滤器 & 转为CansetModel (参考29069-todo4);
+        //a. 过滤器 & 转为CansetModel;
         fatherModels = [SMGUtils convertArr:fatherScenePorts convertBlock:^id(AIPort *item) {
-            //a1. 过滤father不含截点的;
+            //a1. 过滤father不含截点的 (参考29069-todo5.6);
             NSDictionary *indexDic = [iFo getAbsIndexDic:item.target_p];
             NSNumber *fatherCutIndex = ARR_INDEX([indexDic allKeysForObject:@(iModel.cutIndex)], 0);
             if (!fatherCutIndex) return nil;
             
-            //a2. 过滤无同区mv指向的;
+            //a2. 过滤无同区mv指向的 (参考29069-todo4);
             AIFoNodeBase *fo = [SMGUtils searchNode:item.target_p];
             if (![iFo.cmvNode_p.identifier isEqualToString:fo.cmvNode_p.identifier]) return nil;
             
             //a3. 将father生成模型;
-            return [AICansetModel newWithBase:iModel type:CansetTypeFather scene:item.target_p cutIndex:fatherCutIndex.integerValue];
+            return [AISceneModel newWithBase:iModel type:CansetTypeFather scene:item.target_p cutIndex:fatherCutIndex.integerValue];
         }];
     }
     
     //4. 取兄弟级;
-    for (AICansetModel *fatherModel in fatherModels) {
+    for (AISceneModel *fatherModel in fatherModels) {
         AIFoNodeBase *fatherFo = [SMGUtils searchNode:fatherModel.scene];
         NSArray *brotherScenePorts = [AINetUtils conPorts_All:fatherFo];
         
-        //a. 过滤器 & 转为CansetModel (参考29069-todo4);
+        //a. 过滤器 & 转为CansetModel;
         brotherModels = [SMGUtils convertArr:brotherScenePorts convertBlock:^id(AIPort *item) {
-            //a1. 过滤brother不含截点的;
+            //a1. 过滤brother不含截点的 (参考29069-todo5.6);
             NSDictionary *indexDic = [fatherFo getConIndexDic:item.target_p];
             NSNumber *brotherCutIndex = [indexDic objectForKey:@(fatherModel.cutIndex)];
             if (!brotherCutIndex) return nil;
             
-            //a2. 过滤无同区mv指向的;
+            //a2. 过滤无同区mv指向的 (参考29069-todo4);
             AIFoNodeBase *fo = [SMGUtils searchNode:item.target_p];
             if (![fatherFo.cmvNode_p.identifier isEqualToString:fo.cmvNode_p.identifier]) return nil;
             
             //a3. 将brother生成模型;
-            return [AICansetModel newWithBase:fatherModel type:CansetTypeBrother scene:item.target_p cutIndex:brotherCutIndex.integerValue];
+            return [AISceneModel newWithBase:fatherModel type:CansetTypeBrother scene:item.target_p cutIndex:brotherCutIndex.integerValue];
         }];
     }
     

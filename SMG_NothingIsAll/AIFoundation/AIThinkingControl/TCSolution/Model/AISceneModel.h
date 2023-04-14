@@ -1,5 +1,5 @@
 //
-//  AICansetModel.h
+//  AISceneModel.h
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2023/4/11.
@@ -12,15 +12,15 @@
  *  MARK:--------------------CansetModel--------------------
  *  @desc 一个CansetModel中包含多个overrideCanset;
  */
-@interface AICansetModel : NSObject
+@interface AISceneModel : NSObject
 
-+(AICansetModel*) newWithBase:(AICansetModel*)base type:(CansetType)type scene:(AIKVPointer*)scene cutIndex:(NSInteger)cutIndex;
++(AISceneModel*) newWithBase:(AISceneModel*)base type:(CansetType)type scene:(AIKVPointer*)scene cutIndex:(NSInteger)cutIndex;
 
 /**
  *  MARK:--------------------base--------------------
  *  @desc 参考29069-数据结构示图 (兄弟的base=父类 父类的base=自己);
  */
-@property (strong, nonatomic) AICansetModel *base;
+@property (strong, nonatomic) AISceneModel *base;
 
 /**
  *  MARK:--------------------subs--------------------
@@ -40,7 +40,7 @@
  *  @desc 当前下面挂载的且有效的cansets: (当前cansets - 用优先级更高一级cansets);
  */
 -(NSArray*) overrideCansets;
--(AICansetModel*) getRoot;
+-(AISceneModel*) getRoot;
 
 /**
  *  MARK:--------------------scene--------------------
