@@ -20,9 +20,10 @@
  *  @version
  *      2021.03.27: 实现ITryActionFoDelegate接口,因为每个fo都有可能是子任务 (参考22193);
  */
+@class AISceneModel;
 @interface TOFoModel : TOModelBase <ISubModelsDelegate,ISubDemandDelegate>
 
-+(TOFoModel*) newWithFo_p:(AIKVPointer*)fo_p base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel;
++(TOFoModel*) newWithFo_p:(AIKVPointer*)fo_p base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel;
 
 /**
  *  MARK:--------------------行为化数据--------------------
@@ -66,6 +67,11 @@
  *  MARK:--------------------此解决方案基于哪个pFo/targetFo--------------------
  */
 @property (weak, nonatomic) id basePFoOrTargetFoModel;//R任务时为pFoModel,H任务时为targetFoModel;
+
+/**
+ *  MARK:--------------------从决策中一步步传过来 (参考29069-todo7)--------------------
+ */
+@property (strong, nonatomic) AISceneModel *baseSceneModel;
 
 /**
  *  MARK:--------------------将每帧反馈转成orders,以构建protoFo--------------------

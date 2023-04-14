@@ -11,6 +11,7 @@
 /**
  *  MARK:--------------------单条S候选集与proto对比结果模型--------------------
  */
+@class AISceneModel;
 @interface AICansetModel : NSObject
 
 /**
@@ -32,7 +33,8 @@
                     backStrongValue:(CGFloat)backStrongValue
                            cutIndex:(NSInteger)cutIndex
                         targetIndex:(NSInteger)targetIndex
-             basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel;
+             basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel
+                     baseSceneModel:(AISceneModel*)baseSceneModel;
 
 @property (strong, nonatomic) AIKVPointer *cansetFo;    //候选集fo;
 @property (strong, nonatomic) AIKVPointer *sceneFo;
@@ -44,6 +46,11 @@
  *      1. 用于构建TOFoModel时,传过去;
  */
 @property (strong, nonatomic) id basePFoOrTargetFoModel;
+
+/**
+ *  MARK:--------------------从决策中一步步传过来 (参考29069-todo7)--------------------
+ */
+@property (strong, nonatomic) AISceneModel *baseSceneModel;
 
 //MARK:===============================================================
 //MARK:                     < 前段部分 >

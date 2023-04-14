@@ -37,7 +37,7 @@
         return [SMGUtils convertArr:cansetFos convertBlock:^id(AIEffectStrong *eff) {
             //c. 分析比对结果;
             NSInteger rAleardayCount = [self getRAleardayCount:demand pFo:pFoM];
-            AICansetModel *sModel = [self getSolutionModel:eff.solutionFo sceneFo:pFoM.matchFo basePFoOrTargetFoModel:pFoM ptAleardayCount:rAleardayCount isH:true];
+            AICansetModel *sModel = [self convert2CansetModel:eff.solutionFo sceneFo:pFoM.matchFo basePFoOrTargetFoModel:pFoM ptAleardayCount:rAleardayCount isH:true sceneModel:nil];
             return sModel;
         }];
     }];
@@ -65,7 +65,7 @@
     NSArray *cansetModels = [SMGUtils convertArr:cansetFos convertBlock:^id(AIEffectStrong *eff) {
         //a. 分析比对结果;
         NSInteger hAleardayCount = [self getHAleardayCount:targetFoM];
-        AICansetModel *sModel = [self getSolutionModel:eff.solutionFo sceneFo:targetFoM.content_p basePFoOrTargetFoModel:targetFoM ptAleardayCount:hAleardayCount isH:true];
+        AICansetModel *sModel = [self convert2CansetModel:eff.solutionFo sceneFo:targetFoM.content_p basePFoOrTargetFoModel:targetFoM ptAleardayCount:hAleardayCount isH:true sceneModel:nil];
         return sModel;
     }];
 
@@ -167,7 +167,7 @@
     //3. 过滤器 & 转cansetModels候选集 (参考26128-第1步 & 26161-1&2&3);
     NSInteger hAleardayCount = [self getHAleardayCount:targetFoModel];
     NSArray *cansetModels = [SMGUtils convertArr:cansetFos convertBlock:^id(AIKVPointer *cansetFo_p) {
-        return [self getSolutionModel:cansetFo_p sceneFo:targetFoModel.content_p basePFoOrTargetFoModel:targetFoModel ptAleardayCount:hAleardayCount isH:true];
+        return [self convert2CansetModel:cansetFo_p sceneFo:targetFoModel.content_p basePFoOrTargetFoModel:targetFoModel ptAleardayCount:hAleardayCount isH:true sceneModel:nil];
     }];
 
     //4. 慢思考;
@@ -178,7 +178,6 @@
  *  MARK:--------------------R慢思考--------------------
  */
 +(AICansetModel*) rSolution_Slow:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps {
-    /////////// v3新版 ///////////
     //1. 收集cansetModels候选集;
     NSArray *sceneModels = [self getSceneFos_SlowV3:demand];
     NSLog(@"第1步 R候选集数:%ld",sceneModels.count);
@@ -190,13 +189,14 @@
         //3. 取出overrideCansets;
         NSArray *cansets = ARRTOOK([sceneModel overrideCansets]);
         for (AIKVPointer *canset in cansets) {
+            //4. cansetModel转换器参数准备;
             NSInteger aleardayCount = sceneModel.cutIndex + 1;
             AIMatchFoModel *pFo = [SMGUtils filterSingleFromArr:demand.validPFos checkValid:^BOOL(AIMatchFoModel *item) {
                 return [item.matchFo isEqual:sceneModel.getRoot.scene];
             }];
 
             //4. 过滤器 & 转cansetModels候选集 (参考26128-第1步 & 26161-1&2&3);
-            AICansetModel *cansetModel = [self getSolutionModel:canset sceneFo:sceneModel.scene basePFoOrTargetFoModel:pFo ptAleardayCount:aleardayCount isH:false];
+            AICansetModel *cansetModel = [self convert2CansetModel:canset sceneFo:sceneModel.scene basePFoOrTargetFoModel:pFo ptAleardayCount:aleardayCount isH:false sceneModel:sceneModel];
             if (cansetModel) [cansetModels addObject:cansetModel];
         }
     }
@@ -481,6 +481,7 @@
  *                                  3. H.actionIndex前已发生;
  *  @param sceneFo_p            : 当前cansetFo_p挂在哪个场景fo下就传哪个;
  *  @param basePFoOrTargetFoModel : 一用来取protoFo用,二用来传参给结果AICansetModel用;
+ *  @param sceneModel           : 此cansetModel是基于哪个sceneModel的就传哪个;
  *  @version
  *      2022.05.30: 匹配度公式改成: 匹配度总和/proto长度 (参考26128-1-4);
  *      2022.05.30: R和H模式复用封装 (参考26161);
@@ -508,7 +509,7 @@
  *      2023.03.18: 惰性期阈值改为eff>2时脱离惰性期 (参考28185-todo6);
  *  @result 返回cansetFo前段匹配度 & 以及已匹配的cutIndex截点;
  */
-+(AICansetModel*) getSolutionModel:(AIKVPointer*)cansetFo_p sceneFo:(AIKVPointer*)sceneFo_p basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel ptAleardayCount:(NSInteger)ptAleardayCount isH:(BOOL)isH {
++(AICansetModel*) convert2CansetModel:(AIKVPointer*)cansetFo_p sceneFo:(AIKVPointer*)sceneFo_p basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel ptAleardayCount:(NSInteger)ptAleardayCount isH:(BOOL)isH sceneModel:(AISceneModel*)sceneModel {
     //1. 数据准备 & 复用indexDic & 取出pFoOrTargetFo;
     AIFoNodeBase *matchFo = [SMGUtils searchNode:sceneFo_p];
     AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
@@ -578,13 +579,15 @@
         return [AICansetModel newWithCansetFo:cansetFo_p sceneFo:sceneFo_p protoFrontIndexDic:protoFrontIndexDic matchFrontIndexDic:matchFrontIndexDic frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue
                                  midEffectScore:midEffectScore midStableScore:midStableScore
                                    backIndexDic:backIndexDic backMatchValue:backMatchValue backStrongValue:backStrongValue
-                                       cutIndex:cansetCutIndex targetIndex:cansetTargetIndex basePFoOrTargetFoModel:basePFoOrTargetFoModel];
+                                       cutIndex:cansetCutIndex targetIndex:cansetTargetIndex basePFoOrTargetFoModel:basePFoOrTargetFoModel
+                                 baseSceneModel:sceneModel];
     }else{
         //11. 后段: R不判断后段;
         return [AICansetModel newWithCansetFo:cansetFo_p sceneFo:sceneFo_p protoFrontIndexDic:protoFrontIndexDic matchFrontIndexDic:matchFrontIndexDic frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue
                                  midEffectScore:midEffectScore midStableScore:midStableScore
                                    backIndexDic:nil backMatchValue:1 backStrongValue:0
-                                       cutIndex:cansetCutIndex targetIndex:cansetFo.count basePFoOrTargetFoModel:basePFoOrTargetFoModel];
+                                       cutIndex:cansetCutIndex targetIndex:cansetFo.count basePFoOrTargetFoModel:basePFoOrTargetFoModel
+                                 baseSceneModel:sceneModel];
     }
 }
 

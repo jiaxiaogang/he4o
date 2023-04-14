@@ -23,11 +23,13 @@
                     backStrongValue:(CGFloat)backStrongValue
                            cutIndex:(NSInteger)cutIndex
                         targetIndex:(NSInteger)targetIndex
-             basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel {
+             basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel
+                     baseSceneModel:(AISceneModel*)baseSceneModel {
     AICansetModel *model = [[AICansetModel alloc] init];
     model.cansetFo = cansetFo;
     model.sceneFo = sceneFo;
     model.basePFoOrTargetFoModel = basePFoOrTargetFoModel;
+    model.baseSceneModel = baseSceneModel;
     model.protoFrontIndexDic = protoFrontIndexDic;
     model.matchFrontIndexDic = matchFrontIndexDic;
     model.frontMatchValue = frontMatchValue;

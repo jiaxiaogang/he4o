@@ -17,7 +17,7 @@
 
 @implementation TOFoModel
 
-+(TOFoModel*) newWithFo_p:(AIKVPointer*)fo_p base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel{
++(TOFoModel*) newWithFo_p:(AIKVPointer*)fo_p base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel {
     //1. 数据准备;
     AIFoNodeBase *fo = [SMGUtils searchNode:fo_p];
     TOFoModel *result = [[TOFoModel alloc] initWithContent_p:fo_p];
@@ -29,6 +29,7 @@
     result.actionIndex = -1;//默认为头(-1),r和h任务自行重赋值;
     result.targetSPIndex = fo.count;//默认到尾(foCount),h任务自行重赋值;
     result.basePFoOrTargetFoModel = basePFoOrTargetFoModel;
+    result.baseSceneModel = baseSceneModel;
     return result;
 }
 
