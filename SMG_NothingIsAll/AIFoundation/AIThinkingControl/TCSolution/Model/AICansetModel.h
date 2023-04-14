@@ -1,5 +1,5 @@
 //
-//  AISolutionModel.h
+//  AICansetModel.h
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2022/5/27.
@@ -11,7 +11,7 @@
 /**
  *  MARK:--------------------单条S候选集与proto对比结果模型--------------------
  */
-@interface AISolutionModel : NSObject
+@interface AICansetModel : NSObject
 
 /**
  *  MARK:--------------------newWith--------------------
@@ -19,7 +19,7 @@
  *      1. R任务时,backMatchValue和targetIndex两个参数无用;
  *      2. H任务时,所有参数都有效;
  */
-+(AISolutionModel*) newWithCansetFo:(AIKVPointer*)cansetFo
++(AICansetModel*) newWithCansetFo:(AIKVPointer*)cansetFo
                             sceneFo:(AIKVPointer*)sceneFo
                  protoFrontIndexDic:(NSDictionary *)protoFrontIndexDic
                  matchFrontIndexDic:(NSDictionary *)matchFrontIndexDic

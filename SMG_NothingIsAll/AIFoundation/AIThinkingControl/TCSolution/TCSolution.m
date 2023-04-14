@@ -115,7 +115,7 @@
     }]];
     
     //3. 前3条,优先快思考;
-    AISolutionModel *bestResult = nil;
+    AICansetModel *bestResult = nil;
     if (demand.actionFoModels.count <= 3) {
         bestResult = [TCSolutionUtil rSolution_Fast:demand except_ps:except_ps];
     }
@@ -282,7 +282,7 @@
     NSArray *except_ps = [TOUtils convertPointersFromTOModels:hDemand.actionFoModels];
     
     //3. 前3条,优先快思考;
-    AISolutionModel *bestResult = nil;
+    AICansetModel *bestResult = nil;
     if (hDemand.actionFoModels.count <= 3) {
         bestResult = [TCSolutionUtil hSolution_Fast:hDemand except_ps:except_ps];
     }

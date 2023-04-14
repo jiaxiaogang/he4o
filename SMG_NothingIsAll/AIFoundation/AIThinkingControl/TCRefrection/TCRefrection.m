@@ -26,7 +26,7 @@
  *      2022.09.26: 将limit保留最少3条 (因为发生了明明有1条,反而只限高没限低,导致被截剩0条了的问题);
  *      2022.11.30: 反思不需要识别,因为cansets都是同级,没法复用indexDic等,并且相似也不表示同场景 (而现在相似的抽具象已支持) (参考27211-todo2);
  */
-+(BOOL) refrection:(AISolutionModel*)checkCanset demand:(DemandModel*)demand{
++(BOOL) refrection:(AICansetModel*)checkCanset demand:(DemandModel*)demand{
     //1. 数据准备;
     AIFoNodeBase *cansetFo = [SMGUtils searchNode:checkCanset.cansetFo];
     

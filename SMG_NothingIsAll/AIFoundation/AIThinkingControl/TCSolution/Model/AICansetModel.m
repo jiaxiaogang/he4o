@@ -1,16 +1,16 @@
 //
-//  AISolutionModel.m
+//  AICansetModel.m
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2022/5/27.
 //  Copyright © 2022年 XiaoGang. All rights reserved.
 //
 
-#import "AISolutionModel.h"
+#import "AICansetModel.h"
 
-@implementation AISolutionModel
+@implementation AICansetModel
 
-+(AISolutionModel*) newWithCansetFo:(AIKVPointer*)cansetFo
++(AICansetModel*) newWithCansetFo:(AIKVPointer*)cansetFo
                             sceneFo:(AIKVPointer*)sceneFo
                  protoFrontIndexDic:(NSDictionary *)protoFrontIndexDic
                  matchFrontIndexDic:(NSDictionary *)matchFrontIndexDic
@@ -24,7 +24,7 @@
                            cutIndex:(NSInteger)cutIndex
                         targetIndex:(NSInteger)targetIndex
              basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel {
-    AISolutionModel *model = [[AISolutionModel alloc] init];
+    AICansetModel *model = [[AICansetModel alloc] init];
     model.cansetFo = cansetFo;
     model.sceneFo = sceneFo;
     model.basePFoOrTargetFoModel = basePFoOrTargetFoModel;

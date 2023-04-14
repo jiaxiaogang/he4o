@@ -8,9 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
-@class AISolutionModel,DemandModel;
+@class AICansetModel,DemandModel;
 @interface TCRefrection : NSObject
 
-+(BOOL) refrection:(AISolutionModel*)checkCanset demand:(DemandModel*)demand;
++(BOOL) refrection:(AICansetModel*)checkCanset demand:(DemandModel*)demand;
 
 @end

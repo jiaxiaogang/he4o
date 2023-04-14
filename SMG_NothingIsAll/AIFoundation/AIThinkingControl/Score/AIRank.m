@@ -86,11 +86,11 @@
  *  MARK:--------------------求解S前段排名 (参考28083-方案2 & 28084-5)--------------------
  */
 +(NSArray*) solutionFrontRank:(NSArray*)solutionModels {
-    return [self getCooledRankTwice:solutionModels itemScoreBlock1:^CGFloat(AISolutionModel *item) {
+    return [self getCooledRankTwice:solutionModels itemScoreBlock1:^CGFloat(AICansetModel *item) {
         return item.frontMatchValue; //前段匹配度项;
-    } itemScoreBlock2:^CGFloat(AISolutionModel *item) {
+    } itemScoreBlock2:^CGFloat(AICansetModel *item) {
         return item.frontStrongValue; //前段强度项;
-    } itemKeyBlock:^id(AISolutionModel *item) {
+    } itemKeyBlock:^id(AICansetModel *item) {
         return @(item.cansetFo.pointerId);
     }];
 }
@@ -99,11 +99,11 @@
  *  MARK:--------------------求解S后段排名 (参考28092-方案 & todo3)--------------------
  */
 +(NSArray*) solutionBackRank:(NSArray*)solutionModels {
-    return [self getCooledRankTwice:solutionModels itemScoreBlock1:^CGFloat(AISolutionModel *item) {
+    return [self getCooledRankTwice:solutionModels itemScoreBlock1:^CGFloat(AICansetModel *item) {
         return item.backMatchValue; //匹配度项;
-    } itemScoreBlock2:^CGFloat(AISolutionModel *item) {
+    } itemScoreBlock2:^CGFloat(AICansetModel *item) {
         return item.backStrongValue; //强度项;
-    } itemKeyBlock:^id(AISolutionModel *item) {
+    } itemKeyBlock:^id(AICansetModel *item) {
         return @(item.cansetFo.pointerId);
     }];
 }
@@ -112,11 +112,11 @@
  *  MARK:--------------------求解S中段排名 (参考28092-方案 & todo3)--------------------
  */
 +(NSArray*) solutionMidRank:(NSArray*)solutionModels {
-    return [self getCooledRankTwice:solutionModels itemScoreBlock1:^CGFloat(AISolutionModel *item) {
+    return [self getCooledRankTwice:solutionModels itemScoreBlock1:^CGFloat(AICansetModel *item) {
         return item.midStableScore; //中断稳定性项;
-    } itemScoreBlock2:^CGFloat(AISolutionModel *item) {
+    } itemScoreBlock2:^CGFloat(AICansetModel *item) {
         return item.midEffectScore; //中段有效性项;
-    } itemKeyBlock:^id(AISolutionModel *item) {
+    } itemKeyBlock:^id(AICansetModel *item) {
         return @(item.cansetFo.pointerId);
     }];
 }
