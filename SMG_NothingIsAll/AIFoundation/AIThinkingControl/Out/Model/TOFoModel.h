@@ -88,4 +88,9 @@
  */
 -(NSDictionary*) convertOldSPDic2NewSPDic;
 
+//MARK:===============================================================
+//MARK:                     < for 三级场景 >
+//MARK:===============================================================
+@property (strong, nonatomic) AIKVPointer *actionFo_p;
+
 @end

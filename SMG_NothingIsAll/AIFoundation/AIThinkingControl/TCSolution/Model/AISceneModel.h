@@ -14,7 +14,7 @@
  */
 @interface AISceneModel : NSObject
 
-+(AISceneModel*) newWithBase:(AISceneModel*)base type:(CansetType)type scene:(AIKVPointer*)scene cutIndex:(NSInteger)cutIndex;
++(AISceneModel*) newWithBase:(AISceneModel*)base type:(SceneType)type scene:(AIKVPointer*)scene cutIndex:(NSInteger)cutIndex;
 
 /**
  *  MARK:--------------------base--------------------
@@ -33,7 +33,7 @@
  *  MARK:--------------------type--------------------
  *  @desc 当前是自己,还是父类,还是兄弟;
  */
-@property (assign, nonatomic) CansetType type;
+@property (assign, nonatomic) SceneType type;
 
 /**
  *  MARK:--------------------overrideCansets--------------------

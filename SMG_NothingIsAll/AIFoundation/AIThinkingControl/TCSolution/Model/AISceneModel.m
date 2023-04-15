@@ -10,7 +10,7 @@
 
 @implementation AISceneModel
 
-+(AISceneModel*) newWithBase:(AISceneModel*)base type:(CansetType)type scene:(AIKVPointer*)scene cutIndex:(NSInteger)cutIndex {
++(AISceneModel*) newWithBase:(AISceneModel*)base type:(SceneType)type scene:(AIKVPointer*)scene cutIndex:(NSInteger)cutIndex {
     AISceneModel *result = [[AISceneModel alloc] init];
     result.type = type;
     if (base) [base.subs addObject:result];
@@ -28,17 +28,17 @@
     AIFoNodeBase *selfFo = [SMGUtils searchNode:self.scene];
     
     //2. 不同type的公式不同 (参考29069-todo5.3 & 5.4 & 5.5);
-    if (self.type == CansetTypeBrother) {
+    if (self.type == SceneTypeBrother) {
         //3. 当前是brother时: (brother有效canset = brother.conCansets - father.conCansets) (参考29069-todo5.3);
         NSArray *brotherConCansets = [selfFo getConCansets:selfFo.count];
         NSArray *fatherFilter_ps = [self getFilter_ps];
         return [SMGUtils filterSame_ps:fatherFilter_ps parent_ps:brotherConCansets];
-    } else if (self.type == CansetTypeFather) {
+    } else if (self.type == SceneTypeFather) {
         //4. 当前是father时: (father有效canset = father.conCansets - i.conCansets) (参考29069-todo5.4);
         NSArray *fatherConCansets = [selfFo getConCansets:selfFo.count];
         NSArray *iFilter_ps = [self getFilter_ps];
         return [SMGUtils filterSame_ps:iFilter_ps parent_ps:fatherConCansets];
-    } else if (self.type == CansetTypeI) {
+    } else if (self.type == SceneTypeI) {
         //4. 当前是i时: (i有效canset = i.conCansets) (参考29069-todo5.5);
         NSArray *iConCansets = [selfFo getConCansets:selfFo.count];
         return iConCansets;
@@ -47,7 +47,7 @@
 }
 
 -(AISceneModel*) getRoot {
-    if (self.type == CansetTypeI) {
+    if (self.type == SceneTypeI) {
         return self;
     }
     return [self.base getRoot];
@@ -63,7 +63,7 @@
  */
 -(NSArray*) getFilter_ps {
     //1. brother时: 取father及其具象 => 作为过滤部分 (参考29069-todo5.3-公式减数);
-    if (self.type == CansetTypeBrother) {
+    if (self.type == SceneTypeBrother) {
         //2. 取到father的conCansets;
         AIFoNodeBase *fatherFo = [SMGUtils searchNode:self.base.scene];
         NSArray *fatherConCansets = [fatherFo getConCansets:fatherFo.count];
@@ -77,7 +77,7 @@
         return allFilter_ps;
     }
     //4. father时: 取i及其抽象 => 作为过滤部分 (参考29069-todo5.4-公式减数);
-    else if (self.type == CansetTypeFather) {
+    else if (self.type == SceneTypeFather) {
         //5. 取到i的conCansets;
         AIFoNodeBase *iFo = [SMGUtils searchNode:self.base.scene];
         NSArray *iConCansets = [iFo getConCansets:iFo.count];

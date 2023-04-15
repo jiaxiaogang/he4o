@@ -325,7 +325,7 @@
     //2. 取自己级;
     iModels = [SMGUtils convertArr:demand.validPFos convertBlock:^id(AIMatchFoModel *pFo) {
         NSInteger aleardayCount = [self getRAleardayCount:demand pFo:pFo];
-        return [AISceneModel newWithBase:nil type:CansetTypeI scene:pFo.matchFo cutIndex:aleardayCount - 1];
+        return [AISceneModel newWithBase:nil type:SceneTypeI scene:pFo.matchFo cutIndex:aleardayCount - 1];
     }];
 
     //3. 取父类级;
@@ -345,7 +345,7 @@
             if (![iFo.cmvNode_p.identifier isEqualToString:fo.cmvNode_p.identifier]) return nil;
 
             //a3. 将father生成模型;
-            return [AISceneModel newWithBase:iModel type:CansetTypeFather scene:item.target_p cutIndex:fatherCutIndex.integerValue];
+            return [AISceneModel newWithBase:iModel type:SceneTypeFather scene:item.target_p cutIndex:fatherCutIndex.integerValue];
         }];
     }
 
@@ -366,7 +366,7 @@
             if (![fatherFo.cmvNode_p.identifier isEqualToString:fo.cmvNode_p.identifier]) return nil;
 
             //a3. 将brother生成模型;
-            return [AISceneModel newWithBase:fatherModel type:CansetTypeBrother scene:item.target_p cutIndex:brotherCutIndex.integerValue];
+            return [AISceneModel newWithBase:fatherModel type:SceneTypeBrother scene:item.target_p cutIndex:brotherCutIndex.integerValue];
         }];
     }
 

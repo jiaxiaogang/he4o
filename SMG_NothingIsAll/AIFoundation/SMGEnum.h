@@ -158,10 +158,10 @@ typedef NS_ENUM(NSInteger, TIModelStatus) {
 //};
 
 /**
- *  MARK:--------------------CansetType (参考29069-todo1)--------------------
+ *  MARK:--------------------SceneType (参考29069-todo1)--------------------
  */
-typedef NS_ENUM(NSInteger,  CansetType) {
-    CansetTypeI         = 0,
-    CansetTypeFather    = 1,
-    CansetTypeBrother   = 2
+typedef NS_ENUM(NSInteger,  SceneType) {
+    SceneTypeI         = 0,
+    SceneTypeFather    = 1,
+    SceneTypeBrother   = 2
 };

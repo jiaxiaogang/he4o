@@ -206,6 +206,43 @@
     return nil;
 }
 
+//MARK:===============================================================
+//MARK:                     < for 三级场景 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------不同场景类型,actionFo不同实现 (参考29069-todo8)--------------------
+ */
+-(AIKVPointer *)actionFo_p {
+    if (!_actionFo_p) {
+        [self lazyInitActionFo];
+    }
+    return _actionFo_p;
+}
+-(void) lazyInitActionFo {
+    if (self.baseSceneModel) {
+        //判断包含空概念时,取用具象一级的canset (过滤掉具象也含空概念的部分);
+        
+        //不包含时,则直接使用content_p;
+    } else {
+        self.actionFo_p = self.content_p;
+    }
+}
+
+/**
+ *  MARK:--------------------不同场景类型,feedback不同实现 (参考29069-todo9)--------------------
+ */
+-(void) checkFeedback {
+    if (self.baseSceneModel && self.baseSceneModel.type == SceneTypeFather) {
+        //father时,直接判断mIsC
+    } else if (self.baseSceneModel && self.baseSceneModel.type == SceneTypeBrother) {
+        //brother时,场景包含帧,判断mIsC指向了fatherAlg;
+        //          不包含帧,则判断mIsC指向了brotherAlg;
+    } else {
+        //i时,也直接判断mIsC;
+    }
+}
+
 /**
  *  MARK:--------------------NSCoding--------------------
  */
