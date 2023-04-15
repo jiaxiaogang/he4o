@@ -45,12 +45,23 @@
     }];
 }
 
+/**
+ *  MARK:--------------------设置引用--------------------
+ *  @version
+ *      2023.04.15: BUG_此处header应该以alg元素为准;
+ */
 -(void) setContent_ps:(NSArray*)content_ps getStrongBlock:(NSInteger(^)(AIKVPointer *item_p))getStrongBlock{
     content_ps = ARRTOOK(content_ps);
     self.contentPorts = [SMGUtils convertArr:content_ps convertBlock:^id(AIKVPointer *obj) {
+        //1. 数据准备: 求出header
+        AIAlgNodeBase *alg = [SMGUtils searchNode:obj];
+        NSArray *sortValue_ps = ARRTOOK([SMGUtils sortPointers:alg.content_ps]);
+        NSString *header = [NSString md5:[SMGUtils convertPointers2String:sortValue_ps]];
+        
+        //2. 生成port
         AIPort *port = [[AIPort alloc] init];
         port.target_p = obj;
-        port.header = [NSString md5:[SMGUtils convertPointers2String:content_ps]];
+        port.header = header;
         port.strong.value = getStrongBlock(obj);
         return port;
     }];

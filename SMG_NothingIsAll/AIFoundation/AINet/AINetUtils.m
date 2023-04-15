@@ -798,4 +798,14 @@
     }
 }
 
+/**
+ *  MARK:--------------------判断时序中有空概念--------------------
+ */
++(BOOL) foHasEmptyAlg:(AIKVPointer*)fo_p {
+    AIFoNodeBase *fo = [SMGUtils searchNode:fo_p];
+    return [SMGUtils filterSingleFromArr:fo.contentPorts checkValid:^BOOL(AIPort *item) {
+        return [item.header isEqualToString:[NSString md5:@""]];
+    }];
+}
+
 @end

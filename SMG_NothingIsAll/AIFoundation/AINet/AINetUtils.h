@@ -273,4 +273,9 @@
  */
 +(void) updateSPByIndexDic:(NSDictionary*)conIndexDic conFo:(AIFoNodeBase*)conFo absFo:(AIFoNodeBase*)absFo;
 
+/**
+ *  MARK:--------------------判断时序中有空概念--------------------
+ */
++(BOOL) foHasEmptyAlg:(AIKVPointer*)fo_p;
+
 @end
