@@ -12,6 +12,7 @@
 
 @property (strong, nonatomic) NSMutableArray *subModels;
 @property (strong, nonatomic) NSMutableArray *subDemands;
+@property (strong, nonatomic) AIKVPointer *actionFo_p;
 
 @end
 
@@ -212,12 +213,16 @@
 
 /**
  *  MARK:--------------------不同场景类型,actionFo不同实现 (参考29069-todo8)--------------------
+ *  @desc 所有foModel的content_p由actionFo来接替;
  */
--(AIKVPointer *)actionFo_p {
+-(AIKVPointer *)content_p {
     if (!_actionFo_p) {
         [self lazyInitActionFo];
     }
     return _actionFo_p;
+}
+-(AIKVPointer *)superContent_p {
+    return super.content_p;
 }
 
 /**
