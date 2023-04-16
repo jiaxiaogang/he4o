@@ -820,6 +820,9 @@
  *  @desc 用于将canset从brother迁移到father再迁移到i场景下;
  */
 +(void) moveBrother2Father2I:(AICansetModel*)bestCansetModel complate:(void(^)(AIKVPointer *brotherCanset,AIKVPointer *fatherCanset,AIKVPointer *iCanset))complate {
+    //0. 数据准备;
+    AIKVPointer *brotherCanset = nil, *fatherCanset = nil, *iCanset = nil;
+    
     //1. 无base场景 或 type==I时 => 直接将cansetFo设为iCanset;
     if (!bestCansetModel || bestCansetModel.baseSceneModel.type == SceneTypeI) {
         complate(nil,nil,bestCansetModel.cansetFo);
@@ -832,19 +835,23 @@
     //2. I从Father继承Canset (参考29069-todo10.1);
     if (bestCansetModel.baseSceneModel.type == SceneTypeFather) {
         //a. 数据准备;
+        AIKVPointer *fatherCanset = bestCansetModel.cansetFo;
         AIKVPointer *fatherScene_p = bestCansetModel.baseSceneModel.scene;
         AIKVPointer *iScene_p = [TOUtils convertBaseFoFromBasePFoOrTargetFoModel:bestCansetModel.basePFoOrTargetFoModel];
         
         //b. 新生成CenCanset和CenPort;
-        AIKVPointer *newCenCanset = bestCansetModel.cansetFo;//i直接从father继承一模一样的canset;
-        AICuanCenPort *newCenPort = [AICuanCenPort newWithScene:iScene_p canset:newCenCanset];
+        iCanset = fatherCanset;//i直接从father继承一模一样的canset;
+        AICuanCenPort *newCenPort = [AICuanCenPort newWithScene:iScene_p canset:iCanset];
         
         //c. 防重;
         AIFoNodeBase *fatherScene = [SMGUtils searchNode:fatherScene_p];
-        if ([fatherScene.cenPorts containsObject:newCenPort]) {
+        if (![fatherScene.cenPorts containsObject:newCenPort]) {
+            //d. 将newCenCanset挂到iScene下;
+            AIFoNodeBase *iScene = [SMGUtils searchNode:iScene_p];
+            [iScene updateConCanset:iCanset targetIndex:bestCansetModel.targetIndex];
             
-        } else {
-            //将newCenCanset挂到iScene下,并构建传承关联;
+            //e. 并进行传承关联
+            [AINetUtils relateCuanCen:fatherScene_p cuanCanset:fatherCanset cenScene:iScene_p cenCanset:iCanset];
         }
         
         complate(nil,nil,bestCansetModel.cansetFo);
@@ -854,6 +861,29 @@
     
     
     complate(nil,nil,nil);
+}
+
+/**
+ *  MARK:--------------------传承关联--------------------
+ */
++(void) relateCuanCen:(AIKVPointer*)cuanScene cuanCanset:(AIKVPointer*)cuanCanset cenScene:(AIKVPointer*)cenScene cenCanset:(AIKVPointer*)cenCanset {
+    //1. 数据准备;
+    AIFoNodeBase *cuanSceneNode = [SMGUtils searchNode:cuanScene];
+    AIFoNodeBase *cenSceneNode = [SMGUtils searchNode:cenScene];
+    AICuanCenPort *cuanPort = [AICuanCenPort newWithScene:cuanScene canset:cuanCanset];
+    AICuanCenPort *cenPort = [AICuanCenPort newWithScene:cenScene canset:cenCanset];
+    
+    //2. 插入传节点的承端口;
+    if (![cuanSceneNode.cenPorts containsObject:cenPort]) {
+        [cuanSceneNode.cenPorts addObject:cenPort];
+        [SMGUtils insertNode:cuanSceneNode];
+    }
+    
+    //3. 插入承节点的传端口;
+    if (![cenSceneNode.cuanPorts containsObject:cuanPort]) {
+        [cenSceneNode.cuanPorts addObject:cuanPort];
+        [SMGUtils insertNode:cenSceneNode];
+    }
 }
 
 @end
