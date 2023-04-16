@@ -819,8 +819,22 @@
  *  MARK:--------------------canset迁移算法 (29069-todo10)--------------------
  *  @desc 用于将canset从brother迁移到father再迁移到i场景下;
  */
-+(void) moveBrother2Father2I:(AICansetModel*)bestCansetModel complate:(void(^)AIKVPointer *brotherCanset,AIKVPointer *fatherCanset,AIKVPointer *iCanset)complate {
++(void) moveBrother2Father2I:(AICansetModel*)bestCansetModel complate:(void(^)(AIKVPointer *brotherCanset,AIKVPointer *fatherCanset,AIKVPointer *iCanset))complate {
+    //1. 无base场景 或 type==I时 => 直接将cansetFo设为iCanset;
+    if (!bestCansetModel || bestCansetModel.baseSceneModel.type == SceneTypeI) {
+        complate(nil,nil,bestCansetModel.cansetFo);
+        return;
+    }
+    
+    
     //TODOTOMORROW20230416:
+    
+    
+    if (bestCansetModel.baseSceneModel.type == SceneTypeFather) {
+        complate(nil,nil,bestCansetModel.cansetFo);
+        return;
+    }
+    
     
     
     complate(nil,nil,nil);
