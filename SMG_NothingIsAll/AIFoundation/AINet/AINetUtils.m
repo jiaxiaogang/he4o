@@ -829,8 +829,24 @@
     
     //TODOTOMORROW20230416:
     
-    
+    //2. I从Father继承Canset (参考29069-todo10.1);
     if (bestCansetModel.baseSceneModel.type == SceneTypeFather) {
+        //a. 数据准备;
+        AIKVPointer *fatherScene_p = bestCansetModel.baseSceneModel.scene;
+        AIKVPointer *iScene_p = [TOUtils convertBaseFoFromBasePFoOrTargetFoModel:bestCansetModel.basePFoOrTargetFoModel];
+        
+        //b. 新生成CenCanset和CenPort;
+        AIKVPointer *newCenCanset = bestCansetModel.cansetFo;//i直接从father继承一模一样的canset;
+        AICuanCenPort *newCenPort = [AICuanCenPort newWithScene:iScene_p canset:newCenCanset];
+        
+        //c. 防重;
+        AIFoNodeBase *fatherScene = [SMGUtils searchNode:fatherScene_p];
+        if ([fatherScene.cenPorts containsObject:newCenPort]) {
+            
+        } else {
+            //将newCenCanset挂到iScene下,并构建传承关联;
+        }
+        
         complate(nil,nil,bestCansetModel.cansetFo);
         return;
     }

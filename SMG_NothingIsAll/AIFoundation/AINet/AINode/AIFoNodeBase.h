@@ -17,6 +17,16 @@
 @interface AIFoNodeBase : AINodeBase
 
 /**
+ *  MARK:--------------------向上传 (参考29069-todo10.2)--------------------
+ */
+@property (strong, nonatomic) NSMutableArray *cuanPorts;
+
+/**
+ *  MARK:--------------------向下承 (参考29069-todo10.2)--------------------
+ */
+@property (strong, nonatomic) NSMutableArray *cenPorts;
+
+/**
  *  MARK:--------------------cmvNode_p结果--------------------
  *  @desc 指向mv基本模型的价值影响节点;
  */

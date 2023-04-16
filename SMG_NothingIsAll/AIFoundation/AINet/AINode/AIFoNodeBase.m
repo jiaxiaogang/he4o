@@ -40,6 +40,16 @@
     return _conCansetsDic;
 }
 
+-(NSMutableArray *)cuanPorts{
+    if (!ISOK(_cuanPorts, NSMutableArray.class)) _cuanPorts = [[NSMutableArray alloc] initWithArray:_cuanPorts];
+    return _cuanPorts;
+}
+
+-(NSMutableArray *)cenPorts{
+    if (!ISOK(_cenPorts, NSMutableArray.class)) _cenPorts = [[NSMutableArray alloc] initWithArray:_cenPorts];
+    return _cenPorts;
+}
+
 //MARK:===============================================================
 //MARK:                     < spDic组 >
 //MARK:===============================================================
@@ -234,6 +244,8 @@
         self.absIndexDDic = [aDecoder decodeObjectForKey:@"absIndexDDic"];
         self.conIndexDDic = [aDecoder decodeObjectForKey:@"conIndexDDic"];
         self.conCansetsDic = [aDecoder decodeObjectForKey:@"conCansetsDic"];
+        self.cuanPorts = [aDecoder decodeObjectForKey:@"cuanPorts"];
+        self.cenPorts = [aDecoder decodeObjectForKey:@"cenPorts"];
     }
     return self;
 }
@@ -248,6 +260,8 @@
     [aCoder encodeObject:[self.absIndexDDic copy] forKey:@"absIndexDDic"];
     [aCoder encodeObject:[self.conIndexDDic copy] forKey:@"conIndexDDic"];
     [aCoder encodeObject:[self.conCansetsDic copy] forKey:@"conCansetsDic"];
+    [aCoder encodeObject:[self.cuanPorts copy] forKey:@"cuanPorts"];
+    [aCoder encodeObject:[self.cenPorts copy] forKey:@"cenPorts"];
 }
 
 @end
