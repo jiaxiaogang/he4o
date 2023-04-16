@@ -809,3 +809,21 @@
 }
 
 @end
+
+//MARK:===============================================================
+//MARK:                     < Canset >
+//MARK:===============================================================
+@implementation AINetUtils (Canset)
+
+/**
+ *  MARK:--------------------canset迁移算法 (29069-todo10)--------------------
+ *  @desc 用于将canset从brother迁移到father再迁移到i场景下;
+ */
++(void) moveBrother2Father2I:(AICansetModel*)bestCansetModel complate:(void(^)AIKVPointer *brotherCanset,AIKVPointer *fatherCanset,AIKVPointer *iCanset)complate {
+    //TODOTOMORROW20230416:
+    
+    
+    complate(nil,nil,nil);
+}
+
+@end

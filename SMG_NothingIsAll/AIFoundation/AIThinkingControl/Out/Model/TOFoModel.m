@@ -18,7 +18,7 @@
 
 @implementation TOFoModel
 
-+(TOFoModel*) newWithFo_p:(AIKVPointer*)fo_p base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel {
++(TOFoModel*) newWithFo_p:(AIKVPointer*)fo_p base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel {
     //1. 数据准备;
     AIFoNodeBase *fo = [SMGUtils searchNode:fo_p];
     TOFoModel *result = [[TOFoModel alloc] initWithContent_p:fo_p];
@@ -30,7 +30,6 @@
     result.actionIndex = -1;//默认为头(-1),r和h任务自行重赋值;
     result.targetSPIndex = fo.count;//默认到尾(foCount),h任务自行重赋值;
     result.basePFoOrTargetFoModel = basePFoOrTargetFoModel;
-    result.baseSceneModel = baseSceneModel;
     return result;
 }
 
@@ -210,6 +209,13 @@
 //MARK:===============================================================
 //MARK:                     < for 三级场景 >
 //MARK:===============================================================
+
+-(void) setDataWithSceneModel:(AISceneModel*)baseSceneModel brotherCanset:(AIKVPointer*)brotherCanset fatherCanset:(AIKVPointer*)fatherCanset iCanset:(AIKVPointer*)iCanset {
+    self.baseSceneModel = baseSceneModel;
+    self.brotherCanset = brotherCanset;
+    self.fatherCanset = fatherCanset;
+    self.iCanset = iCanset;
+}
 
 /**
  *  MARK:--------------------不同场景类型,actionFo不同实现 (参考29069-todo8)--------------------

@@ -279,3 +279,15 @@
 +(BOOL) foHasEmptyAlg:(AIKVPointer*)fo_p;
 
 @end
+
+//MARK:===============================================================
+//MARK:                     < Canset >
+//MARK:===============================================================
+@interface AINetUtils (Canset)
+
+/**
+ *  MARK:--------------------canset迁移算法 (29069-todo10)--------------------
+ */
++(void) moveBrother2Father2I:(AICansetModel*)bestCansetModel complate:(void(^)(AIKVPointer *brotherCanset,AIKVPointer *fatherCanset,AIKVPointer *iCanset))complate;
+
+@end

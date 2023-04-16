@@ -134,7 +134,10 @@
         
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
         AIFoNodeBase *bestSFo = [SMGUtils searchNode:bestResult.cansetFo];
-        TOFoModel *foModel = [TOFoModel newWithFo_p:bestSFo.pointer base:demand basePFoOrTargetFoModel:bestResult.basePFoOrTargetFoModel baseSceneModel:bestResult.baseSceneModel];
+        TOFoModel *foModel = [TOFoModel newWithFo_p:bestSFo.pointer base:demand basePFoOrTargetFoModel:bestResult.basePFoOrTargetFoModel];
+        [AINetUtils moveBrother2Father2I:bestResult complate:^(AIKVPointer *brotherCanset, AIKVPointer *fatherCanset, AIKVPointer *iCanset) {
+            [foModel setDataWithSceneModel:bestResult.baseSceneModel brotherCanset:brotherCanset fatherCanset:fatherCanset iCanset:iCanset];
+        }];
         foModel.actionIndex = bestResult.cutIndex;
         NSLog(@"> newS 第%ld例: %@",demand.actionFoModels.count,Pit2FStr(bestResult.cansetFo));
         
@@ -228,7 +231,7 @@
                 AIFoNodeBase *fo = [SMGUtils searchNode:itemMV.foNode_p];
                 
                 //a. 构建TOFoModel
-                TOFoModel *toFoModel = [TOFoModel newWithFo_p:fo.pointer base:demandModel basePFoOrTargetFoModel:nil baseSceneModel:nil];
+                TOFoModel *toFoModel = [TOFoModel newWithFo_p:fo.pointer base:demandModel basePFoOrTargetFoModel:nil];
                 
                 //b. 取自身,实现吃,则可不饿 (提交C给TOR行为化);
                 //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
@@ -300,7 +303,7 @@
         [theTC updateEnergyDelta:-1];
         
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
-        TOFoModel *foModel = [TOFoModel newWithFo_p:bestResult.cansetFo base:hDemand basePFoOrTargetFoModel:bestResult.basePFoOrTargetFoModel baseSceneModel:nil];
+        TOFoModel *foModel = [TOFoModel newWithFo_p:bestResult.cansetFo base:hDemand basePFoOrTargetFoModel:bestResult.basePFoOrTargetFoModel];
         foModel.actionIndex = bestResult.cutIndex;
         foModel.targetSPIndex = bestResult.targetIndex;
         NSLog(@"> newH 第%ld例: %@ (cutIndex:%ld=>targetIndex:%ld)",hDemand.actionFoModels.count,Pit2FStr(bestResult.cansetFo),bestResult.cutIndex,bestResult.targetIndex);

@@ -10,6 +10,9 @@
 
 /**
  *  MARK:--------------------单条S候选集与proto对比结果模型--------------------
+ *  @desc 作用:
+ *      1. 主要作用是用于TCSolution竞争值和做竞争用;
+ *      2. 次要作用是参数传递: fromAISceneModel -> toTOFoModel;
  */
 @class AISceneModel;
 @interface AICansetModel : NSObject

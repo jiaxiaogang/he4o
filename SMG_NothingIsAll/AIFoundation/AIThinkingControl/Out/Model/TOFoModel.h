@@ -23,7 +23,7 @@
 @class AISceneModel;
 @interface TOFoModel : TOModelBase <ISubModelsDelegate,ISubDemandDelegate>
 
-+(TOFoModel*) newWithFo_p:(AIKVPointer*)fo_p base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel;
++(TOFoModel*) newWithFo_p:(AIKVPointer*)fo_p base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel;
 
 /**
  *  MARK:--------------------行为化数据--------------------
@@ -91,5 +91,9 @@
 //MARK:===============================================================
 //MARK:                     < for 三级场景 >
 //MARK:===============================================================
+-(void) setDataWithSceneModel:(AISceneModel*)baseSceneModel brotherCanset:(AIKVPointer*)brotherCanset fatherCanset:(AIKVPointer*)fatherCanset iCanset:(AIKVPointer*)iCanset;
+@property (strong, nonatomic) AIKVPointer *brotherCanset;
+@property (strong, nonatomic) AIKVPointer *fatherCanset;
+@property (strong, nonatomic) AIKVPointer *iCanset;
 
 @end
