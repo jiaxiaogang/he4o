@@ -135,7 +135,7 @@
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
         AIFoNodeBase *bestSFo = [SMGUtils searchNode:bestResult.cansetFo];
         TOFoModel *foModel = [TOFoModel newWithFo_p:bestSFo.pointer base:demand basePFoOrTargetFoModel:bestResult.basePFoOrTargetFoModel];
-        [AINetUtils moveBrother2Father2I:bestResult complate:^(AIKVPointer *brotherCanset, AIKVPointer *fatherCanset, AIKVPointer *iCanset) {
+        [TCTransfer transfer:bestResult complate:^(AIKVPointer *brotherCanset, AIKVPointer *fatherCanset, AIKVPointer *iCanset) {
             [foModel setDataWithSceneModel:bestResult.baseSceneModel brotherCanset:brotherCanset fatherCanset:fatherCanset iCanset:iCanset];
         }];
         foModel.actionIndex = bestResult.cutIndex;

@@ -90,6 +90,7 @@
 #import "TCSolution.h"
 #import "TCRefrection.h"
 #import "TCEffect.h"
+#import "TCTransfer.h"
 #import "TCAction.h"
 #import "TCActYes.h"
 #import "TCOut.h"

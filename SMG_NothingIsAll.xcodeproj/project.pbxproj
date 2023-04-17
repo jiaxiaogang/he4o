@@ -178,6 +178,7 @@
 		08EA48CE202932B80038B982 /* CustomAlgsChargeModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08EA48CD202932B80038B982 /* CustomAlgsChargeModel.m */; };
 		08EA48D1202932E70038B982 /* AICustomAlgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 08EA48D0202932E70038B982 /* AICustomAlgs.m */; };
 		08EF706421E5743F009B5194 /* OutputModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08EF706321E5743F009B5194 /* OutputModel.m */; };
+		08F27D6E29ED8FC60063E71B /* TCTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F27D6D29ED8FC60063E71B /* TCTransfer.m */; };
 		08F3E9312241B6E800545795 /* AIAnalogy.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F3E9302241B6E800545795 /* AIAnalogy.m */; };
 		08F4C98E1EA7A03900F3EDA8 /* SMGUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F4C98D1EA7A03900F3EDA8 /* SMGUtils.m */; };
 		08F5334027DE3A8F0038812E /* TOMVision2.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F5333F27DE3A8F0038812E /* TOMVision2.m */; };
@@ -552,6 +553,8 @@
 		08EA48D0202932E70038B982 /* AICustomAlgs.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AICustomAlgs.m; sourceTree = "<group>"; };
 		08EF706221E5743F009B5194 /* OutputModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OutputModel.h; sourceTree = "<group>"; };
 		08EF706321E5743F009B5194 /* OutputModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OutputModel.m; sourceTree = "<group>"; };
+		08F27D6C29ED8FC60063E71B /* TCTransfer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCTransfer.h; sourceTree = "<group>"; };
+		08F27D6D29ED8FC60063E71B /* TCTransfer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCTransfer.m; sourceTree = "<group>"; };
 		08F3E92F2241B6E800545795 /* AIAnalogy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIAnalogy.h; sourceTree = "<group>"; };
 		08F3E9302241B6E800545795 /* AIAnalogy.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIAnalogy.m; sourceTree = "<group>"; };
 		08F4C98C1EA7A03900F3EDA8 /* SMGUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMGUtils.h; sourceTree = "<group>"; };
@@ -906,6 +909,7 @@
 				087705A3275373FA00BA4EFB /* TCSolution */,
 				0873E11028B45CB300FBC09E /* TCRefrection */,
 				08F9DAAB2839E97200AB012B /* TCEffect */,
+				08F27D6B29ED8F980063E71B /* TCTransfer */,
 				087705A42753740600BA4EFB /* TCAction */,
 				0892BAEA277808E30024B43C /* TCActYes */,
 				087705A52753740F00BA4EFB /* TCOut */,
@@ -1553,6 +1557,15 @@
 			path = AlgsModel;
 			sourceTree = "<group>";
 		};
+		08F27D6B29ED8F980063E71B /* TCTransfer */ = {
+			isa = PBXGroup;
+			children = (
+				08F27D6C29ED8FC60063E71B /* TCTransfer.h */,
+				08F27D6D29ED8FC60063E71B /* TCTransfer.m */,
+			);
+			path = TCTransfer;
+			sourceTree = "<group>";
+		};
 		08F38D62272C39C1001CD764 /* Score */ = {
 			isa = PBXGroup;
 			children = (
@@ -2012,6 +2025,7 @@
 				0864936127E216B5003EF661 /* TOMVisionNodeBase.m in Sources */,
 				0808927A215AF5F400710636 /* AINodeBase.m in Sources */,
 				089A2DEC2840F19600B66674 /* AICansetModel.m in Sources */,
+				08F27D6E29ED8FC60063E71B /* TCTransfer.m in Sources */,
 				089E66B421B9F84500ECA28A /* AIAlgNode.m in Sources */,
 				081B3ACC1F6E2155008A7F36 /* AITime.m in Sources */,
 				08A7E06A24EE07C40042C7A9 /* AIShortMatchModel_Simple.m in Sources */,

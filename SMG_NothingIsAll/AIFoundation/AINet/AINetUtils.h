@@ -286,11 +286,6 @@
 @interface AINetUtils (Canset)
 
 /**
- *  MARK:--------------------canset迁移算法 (29069-todo10)--------------------
- */
-+(void) transferBrother2Father2I:(AICansetModel*)bestCansetModel complate:(void(^)(AIKVPointer *brotherCanset,AIKVPointer *fatherCanset,AIKVPointer *iCanset))complate;
-
-/**
  *  MARK:--------------------新增传承关联--------------------
  */
 +(void) relateCuanCen:(AIKVPointer*)cuanScene cuanCanset:(AIKVPointer*)cuanCanset cenScene:(AIKVPointer*)cenScene cenCanset:(AIKVPointer*)cenCanset;
