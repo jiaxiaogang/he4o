@@ -855,6 +855,11 @@
         return;
     }
     
+    //写brother推举到father逻辑;
+    if (bestCansetModel.baseSceneModel.type == SceneTypeBrother) {
+        fatherCanset = [self transfer4TuiJu:bestCansetModel.cansetFo brotherCansetTargetIndex:bestCansetModel.targetIndex brotherScene:bestCansetModel.baseSceneModel.scene fatherScene_p:bestCansetModel.baseSceneModel.base.scene];
+    }
+    
     
     
     complate(nil,nil,nil);
@@ -864,62 +869,56 @@
  *  MARK:--------------------canset推举算法 (29069-todo10.1推举算法示图&步骤)--------------------
  *  @desc 用于将canset从brother推举到father场景下;
  */
-+(void) transfer4TuiJu:(AICansetModel*)bestCansetModel complate:(void(^)(AIKVPointer *brotherCanset,AIKVPointer *fatherCanset,AIKVPointer *iCanset))complate {
++(AIKVPointer*) transfer4TuiJu:(AIKVPointer*)brotherCanset brotherCansetTargetIndex:(NSInteger)brotherCansetTargetIndex brotherScene:(AIKVPointer*)brotherScene_p fatherScene_p:(AIKVPointer*)fatherScene_p {
     //0. 数据准备;
-    AIKVPointer *brotherCanset = nil, *fatherCanset = nil, *iCanset = nil;
+    AIKVPointer *fatherCanset = nil;
     
-    //写brother推举到father逻辑;
-    if (bestCansetModel.baseSceneModel.type == SceneTypeBrother) {
-        //a. 数据准备;
-        brotherCanset = bestCansetModel.cansetFo;
-        AIKVPointer *brotherScene_p = bestCansetModel.baseSceneModel.scene;
-        AIKVPointer *fatherScene_p = [TOUtils convertBaseFoFromBasePFoOrTargetFoModel:bestCansetModel.baseSceneModel.base.scene];
-        AIFoNodeBase *brotherScene = [SMGUtils searchNode:brotherScene_p];
-        AIFoNodeBase *fatherScene = [SMGUtils searchNode:fatherScene_p];
-
-        //b. 取两级映射 (参考29069-todo10.1推举算法示图);
-        NSDictionary *indexDic1 = [brotherScene getConIndexDic:brotherCanset];
-        NSDictionary *indexDic2 = [brotherScene getAbsIndexDic:fatherScene_p];
-        
-        //c. 新生成fatherCanset (参考29069-todo10.1推举算法示图&步骤);
-        AIFoNodeBase *brotherCansetNode = [SMGUtils searchNode:brotherCanset];
-        NSMutableArray *orders = [[NSMutableArray alloc] init];
-        for (NSInteger i = 0; i < brotherCansetNode.content_ps.count; i++) {
-            //d. 判断映射链: (参考29069-todo10.1-步骤2);
-            NSNumber *brotherSceneIndex = ARR_INDEX([indexDic1 allKeysForObject:@(i)], 0);
-            NSNumber *fatherSceneIndex = ARR_INDEX([indexDic2 allKeysForObject:brotherSceneIndex], 0);
-            //e. 通过则收集迁移后scene元素 (参考29069-todo10.1-步骤3);
-            if (fatherSceneIndex) {
-                //TODOTOMORROW20230417: 此处需要支持AIShortMatchModel_Simple类型,时间戳收集;
-                
-                
-                
-                
-                [orders addObject:ARR_INDEX(fatherScene.content_ps, fatherSceneIndex.intValue)];
-            } else {
-                //f. 不通过则收集迁移前canset元素 (参考29069-todo10.1-步骤4);
-                [orders addObject:ARR_INDEX(brotherCansetNode.content_ps, i)];
-            }
-        }
-        fatherCanset = [theNet createConFo:orders].pointer;
-        
-        //新生成fatherPort;
-        AICuanCenPort *newFatherPort = [AICuanCenPort newWithScene:fatherScene_p canset:fatherCanset];
-        
-        //c. 防重 (其实不可能重复,因为如果重复在override算法中当前cansetModel就已经被过滤了);
-        if (![brotherScene.cuanPorts containsObject:newFatherPort]) {
-            //d. 将newFatherCanset挂到fatherScene下;
-            AIFoNodeBase *fatherScene = [SMGUtils searchNode:fatherScene_p];
-            [fatherScene updateConCanset:fatherCanset targetIndex:bestCansetModel.targetIndex];//前后canset同长度,所以传前者targetIndex即可;
-            
-            //e. 并进行传承关联
-            [AINetUtils relateCuanCen:fatherScene_p cuanCanset:fatherCanset cenScene:brotherScene_p cenCanset:brotherCanset];
+    //1. 数据准备;
+    AIFoNodeBase *brotherScene = [SMGUtils searchNode:brotherScene_p];
+    AIFoNodeBase *fatherScene = [SMGUtils searchNode:fatherScene_p];
+    
+    //2. 取两级映射 (参考29069-todo10.1推举算法示图);
+    NSDictionary *indexDic1 = [brotherScene getConIndexDic:brotherCanset];
+    NSDictionary *indexDic2 = [brotherScene getAbsIndexDic:fatherScene_p];
+    
+    //3. 新生成fatherCanset (参考29069-todo10.1推举算法示图&步骤);
+    AIFoNodeBase *brotherCansetNode = [SMGUtils searchNode:brotherCanset];
+    NSMutableArray *orders = [[NSMutableArray alloc] init];
+    
+    //========================= 算法关键代码 START =========================
+    for (NSInteger i = 0; i < brotherCansetNode.content_ps.count; i++) {
+        //4. 判断映射链: (参考29069-todo10.1-步骤2);
+        NSNumber *brotherSceneIndex = ARR_INDEX([indexDic1 allKeysForObject:@(i)], 0);
+        NSNumber *fatherSceneIndex = ARR_INDEX([indexDic2 allKeysForObject:brotherSceneIndex], 0);
+        double deltaTime = [NUMTOOK(ARR_INDEX(brotherCansetNode.deltaTimes, i)) doubleValue];
+        if (fatherSceneIndex) {
+            //5. 通过则收集迁移后scene元素 (参考29069-todo10.1-步骤3);
+            id order = [AIShortMatchModel_Simple newWithAlg_p:ARR_INDEX(fatherScene.content_ps, fatherSceneIndex.intValue) inputTime:deltaTime];
+            [orders addObject:order];
+        } else {
+            //6. 不通过则收集迁移前canset元素 (参考29069-todo10.1-步骤4);
+            id order = [AIShortMatchModel_Simple newWithAlg_p:ARR_INDEX(brotherCansetNode.content_ps, i) inputTime:deltaTime];
+            [orders addObject:order];
         }
     }
+    //========================= 算法关键代码 END =========================
     
+    //7. 构建result;
+    fatherCanset = [theNet createConFo:orders].pointer;
     
+    //8. 新生成fatherPort;
+    AICuanCenPort *newFatherPort = [AICuanCenPort newWithScene:fatherScene_p canset:fatherCanset];
     
-    complate(nil,nil,nil);
+    //9. 防重 (其实不可能重复,因为如果重复在override算法中当前cansetModel就已经被过滤了);
+    if (![brotherScene.cuanPorts containsObject:newFatherPort]) {
+        //10. 将newFatherCanset挂到fatherScene下;
+        AIFoNodeBase *fatherScene = [SMGUtils searchNode:fatherScene_p];
+        [fatherScene updateConCanset:fatherCanset targetIndex:brotherCansetTargetIndex];//前后canset同长度,所以传前者targetIndex即可;
+        
+        //11. 并进行传承关联
+        [AINetUtils relateCuanCen:fatherScene_p cuanCanset:fatherCanset cenScene:brotherScene_p cenCanset:brotherCanset];
+    }
+    return fatherCanset;
 }
 
 /**
