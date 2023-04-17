@@ -36,10 +36,8 @@
 @property (assign, nonatomic) SceneType type;
 
 /**
- *  MARK:--------------------overrideCansets--------------------
- *  @desc 当前下面挂载的且有效的cansets: (当前cansets - 用优先级更高一级cansets);
+ *  MARK:--------------------获取scene树的根model--------------------
  */
--(NSArray*) overrideCansets;
 -(AISceneModel*) getRoot;
 
 /**
