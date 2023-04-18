@@ -269,6 +269,9 @@
         result = item;
         break;
     }
+    
+    //13. 输出前: 可行性检查;
+    result = [TCRealact checkRealactAndReplaceIfNeed:result fromCansets:sortModels];
 
     //14. 返回最佳解决方案;
     if (result) {

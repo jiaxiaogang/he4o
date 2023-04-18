@@ -90,16 +90,16 @@
     iCanset = [theNet createConFo:orders].pointer;
     
     //8. 新生成fatherPort;
-    AICuanCenPort *newIPort = [AICuanCenPort newWithScene:iScene_p canset:iCanset];
+    AITransferPort *newIPort = [AITransferPort newWithScene:iScene_p canset:iCanset];
     
     //9. 防重 (其实不可能重复,因为如果重复在override算法中当前cansetModel就已经被过滤了);
-    if (![fatherScene.cenPorts containsObject:newIPort]) {
+    if (![fatherScene.transferConPorts containsObject:newIPort]) {
         //10. 将newIPort挂到iScene下;
         AIFoNodeBase *iScene = [SMGUtils searchNode:iScene_p];
         [iScene updateConCanset:iCanset targetIndex:fatherCansetTargetIndex];//前后canset同长度,所以传前者targetIndex即可;
         
-        //11. 并进行传承关联
-        [AINetUtils relateCuanCen:fatherScene_p cuanCanset:fatherCanset cenScene:iScene_p cenCanset:iCanset];
+        //11. 并进行迁移关联
+        [AINetUtils relateTransfer:fatherScene_p absCanset:fatherCanset conScene:iScene_p conCanset:iCanset];
     }
     return iCanset;
 }
@@ -144,16 +144,16 @@
     fatherCanset = [theNet createConFo:orders].pointer;
     
     //8. 新生成fatherPort;
-    AICuanCenPort *newFatherPort = [AICuanCenPort newWithScene:fatherScene_p canset:fatherCanset];
+    AITransferPort *newFatherPort = [AITransferPort newWithScene:fatherScene_p canset:fatherCanset];
     
     //9. 防重 (其实不可能重复,因为如果重复在override算法中当前cansetModel就已经被过滤了);
-    if (![brotherScene.cuanPorts containsObject:newFatherPort]) {
+    if (![brotherScene.transferAbsPorts containsObject:newFatherPort]) {
         //10. 将newFatherCanset挂到fatherScene下;
         AIFoNodeBase *fatherScene = [SMGUtils searchNode:fatherScene_p];
         [fatherScene updateConCanset:fatherCanset targetIndex:brotherCansetTargetIndex];//前后canset同长度,所以传前者targetIndex即可;
         
-        //11. 并进行传承关联
-        [AINetUtils relateCuanCen:fatherScene_p cuanCanset:fatherCanset cenScene:brotherScene_p cenCanset:brotherCanset];
+        //11. 并进行迁移关联
+        [AINetUtils relateTransfer:fatherScene_p absCanset:fatherCanset conScene:brotherScene_p conCanset:brotherCanset];
     }
     return fatherCanset;
 }

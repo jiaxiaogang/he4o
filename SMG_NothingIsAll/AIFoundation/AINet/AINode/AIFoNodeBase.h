@@ -19,12 +19,12 @@
 /**
  *  MARK:--------------------向上传 (参考29069-todo10.2)--------------------
  */
-@property (strong, nonatomic) NSMutableArray *cuanPorts;
+@property (strong, nonatomic) NSMutableArray *transferAbsPorts;
 
 /**
  *  MARK:--------------------向下承 (参考29069-todo10.2)--------------------
  */
-@property (strong, nonatomic) NSMutableArray *cenPorts;
+@property (strong, nonatomic) NSMutableArray *transferConPorts;
 
 /**
  *  MARK:--------------------cmvNode_p结果--------------------

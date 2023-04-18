@@ -286,8 +286,8 @@
 @interface AINetUtils (Canset)
 
 /**
- *  MARK:--------------------新增传承关联--------------------
+ *  MARK:--------------------新增迁移关联--------------------
  */
-+(void) relateCuanCen:(AIKVPointer*)cuanScene cuanCanset:(AIKVPointer*)cuanCanset cenScene:(AIKVPointer*)cenScene cenCanset:(AIKVPointer*)cenCanset;
++(void) relateTransfer:(AIKVPointer*)absScone absCanset:(AIKVPointer*)absCanset conScene:(AIKVPointer*)conScene conCanset:(AIKVPointer*)conCanset;
 
 @end

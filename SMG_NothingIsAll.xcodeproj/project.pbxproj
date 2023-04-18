@@ -35,7 +35,7 @@
 		08236CEC21A23439008D8761 /* AIVisionAlgsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08236CEB21A23439008D8761 /* AIVisionAlgsModel.m */; };
 		08250AE0228112C000FC497C /* XGWedis.m in Sources */ = {isa = PBXBuildFile; fileRef = 08250ADF228112C000FC497C /* XGWedis.m */; };
 		0825AFF31F748F67003B86C7 /* NSObject+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 0825AFF21F748F67003B86C7 /* NSObject+Extension.m */; };
-		082709D229EC1A5E0045EE22 /* AICuanCenPort.m in Sources */ = {isa = PBXBuildFile; fileRef = 082709D129EC1A5E0045EE22 /* AICuanCenPort.m */; };
+		082709D229EC1A5E0045EE22 /* AITransferPort.m in Sources */ = {isa = PBXBuildFile; fileRef = 082709D129EC1A5E0045EE22 /* AITransferPort.m */; };
 		0827DAD324198EAC00A025D4 /* HeLogModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0827DAD224198EAC00A025D4 /* HeLogModel.m */; };
 		0827DAD724199C9E00A025D4 /* HeLogView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0827DAD624199C9E00A025D4 /* HeLogView.m */; };
 		0827DAD924199CC100A025D4 /* HeLogView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0827DAD824199CC100A025D4 /* HeLogView.xib */; };
@@ -267,8 +267,8 @@
 		08250ADF228112C000FC497C /* XGWedis.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XGWedis.m; sourceTree = "<group>"; };
 		0825AFF11F748F67003B86C7 /* NSObject+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+Extension.h"; sourceTree = "<group>"; };
 		0825AFF21F748F67003B86C7 /* NSObject+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+Extension.m"; sourceTree = "<group>"; };
-		082709D029EC1A5E0045EE22 /* AICuanCenPort.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AICuanCenPort.h; sourceTree = "<group>"; };
-		082709D129EC1A5E0045EE22 /* AICuanCenPort.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AICuanCenPort.m; sourceTree = "<group>"; };
+		082709D029EC1A5E0045EE22 /* AITransferPort.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AITransferPort.h; sourceTree = "<group>"; };
+		082709D129EC1A5E0045EE22 /* AITransferPort.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AITransferPort.m; sourceTree = "<group>"; };
 		0827DAD124198EAC00A025D4 /* HeLogModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HeLogModel.h; sourceTree = "<group>"; };
 		0827DAD224198EAC00A025D4 /* HeLogModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HeLogModel.m; sourceTree = "<group>"; };
 		0827DAD424198F4900A025D4 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -732,8 +732,8 @@
 			children = (
 				080A74301F60C6490025DBA3 /* AIPort.h */,
 				080A74311F60C6490025DBA3 /* AIPort.m */,
-				082709D029EC1A5E0045EE22 /* AICuanCenPort.h */,
-				082709D129EC1A5E0045EE22 /* AICuanCenPort.m */,
+				082709D029EC1A5E0045EE22 /* AITransferPort.h */,
+				082709D129EC1A5E0045EE22 /* AITransferPort.m */,
 			);
 			path = AIPort;
 			sourceTree = "<group>";
@@ -919,9 +919,9 @@
 				08F27D7329ED957B0063E71B /* TCCanset */,
 				087705A3275373FA00BA4EFB /* TCSolution */,
 				0873E11028B45CB300FBC09E /* TCRefrection */,
+				08F27D7729ED987C0063E71B /* TCRealact */,
 				08F9DAAB2839E97200AB012B /* TCEffect */,
 				08F27D6B29ED8F980063E71B /* TCTransfer */,
-				08F27D7729ED987C0063E71B /* TCRealact */,
 				087705A42753740600BA4EFB /* TCAction */,
 				0892BAEA277808E30024B43C /* TCActYes */,
 				087705A52753740F00BA4EFB /* TCOut */,
@@ -1955,7 +1955,7 @@
 				0895FFE4264A13C500DAD3EA /* TOModelVision.m in Sources */,
 				084219ED1FD8CF81009DA6BC /* AIThinkingControl.m in Sources */,
 				089614A9219A4D5200343FAC /* BirdGrowPage.m in Sources */,
-				082709D229EC1A5E0045EE22 /* AICuanCenPort.m in Sources */,
+				082709D229EC1A5E0045EE22 /* AITransferPort.m in Sources */,
 				08F27D7A29ED98C50063E71B /* TCRealact.m in Sources */,
 				083F61381F048329000330E1 /* AILine.m in Sources */,
 				08F5334027DE3A8F0038812E /* TOMVision2.m in Sources */,

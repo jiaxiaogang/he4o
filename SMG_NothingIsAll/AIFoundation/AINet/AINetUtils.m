@@ -816,25 +816,25 @@
 @implementation AINetUtils (Canset)
 
 /**
- *  MARK:--------------------传承关联--------------------
+ *  MARK:--------------------迁移关联--------------------
  */
-+(void) relateCuanCen:(AIKVPointer*)cuanScene cuanCanset:(AIKVPointer*)cuanCanset cenScene:(AIKVPointer*)cenScene cenCanset:(AIKVPointer*)cenCanset {
++(void) relateTransfer:(AIKVPointer*)absScone absCanset:(AIKVPointer*)absCanset conScene:(AIKVPointer*)conScene conCanset:(AIKVPointer*)conCanset {
     //1. 数据准备;
-    AIFoNodeBase *cuanSceneNode = [SMGUtils searchNode:cuanScene];
-    AIFoNodeBase *cenSceneNode = [SMGUtils searchNode:cenScene];
-    AICuanCenPort *cuanPort = [AICuanCenPort newWithScene:cuanScene canset:cuanCanset];
-    AICuanCenPort *cenPort = [AICuanCenPort newWithScene:cenScene canset:cenCanset];
+    AIFoNodeBase *absSconeNode = [SMGUtils searchNode:absScone];
+    AIFoNodeBase *conSceneNode = [SMGUtils searchNode:conScene];
+    AITransferPort *absPort = [AITransferPort newWithScene:absScone canset:absCanset];
+    AITransferPort *conPort = [AITransferPort newWithScene:conScene canset:conCanset];
     
     //2. 插入传节点的承端口;
-    if (![cuanSceneNode.cenPorts containsObject:cenPort]) {
-        [cuanSceneNode.cenPorts addObject:cenPort];
-        [SMGUtils insertNode:cuanSceneNode];
+    if (![absSconeNode.transferConPorts containsObject:conPort]) {
+        [absSconeNode.transferConPorts addObject:conPort];
+        [SMGUtils insertNode:absSconeNode];
     }
     
     //3. 插入承节点的传端口;
-    if (![cenSceneNode.cuanPorts containsObject:cuanPort]) {
-        [cenSceneNode.cuanPorts addObject:cuanPort];
-        [SMGUtils insertNode:cenSceneNode];
+    if (![conSceneNode.transferAbsPorts containsObject:absPort]) {
+        [conSceneNode.transferAbsPorts addObject:absPort];
+        [SMGUtils insertNode:conSceneNode];
     }
 }
 

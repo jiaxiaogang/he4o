@@ -40,14 +40,14 @@
     return _conCansetsDic;
 }
 
--(NSMutableArray *)cuanPorts{
-    if (!ISOK(_cuanPorts, NSMutableArray.class)) _cuanPorts = [[NSMutableArray alloc] initWithArray:_cuanPorts];
-    return _cuanPorts;
+-(NSMutableArray *)transferAbsPorts{
+    if (!ISOK(_transferAbsPorts, NSMutableArray.class)) _transferAbsPorts = [[NSMutableArray alloc] initWithArray:_transferAbsPorts];
+    return _transferAbsPorts;
 }
 
--(NSMutableArray *)cenPorts{
-    if (!ISOK(_cenPorts, NSMutableArray.class)) _cenPorts = [[NSMutableArray alloc] initWithArray:_cenPorts];
-    return _cenPorts;
+-(NSMutableArray *)transferConPorts{
+    if (!ISOK(_transferConPorts, NSMutableArray.class)) _transferConPorts = [[NSMutableArray alloc] initWithArray:_transferConPorts];
+    return _transferConPorts;
 }
 
 //MARK:===============================================================
@@ -244,8 +244,8 @@
         self.absIndexDDic = [aDecoder decodeObjectForKey:@"absIndexDDic"];
         self.conIndexDDic = [aDecoder decodeObjectForKey:@"conIndexDDic"];
         self.conCansetsDic = [aDecoder decodeObjectForKey:@"conCansetsDic"];
-        self.cuanPorts = [aDecoder decodeObjectForKey:@"cuanPorts"];
-        self.cenPorts = [aDecoder decodeObjectForKey:@"cenPorts"];
+        self.transferAbsPorts = [aDecoder decodeObjectForKey:@"transferAbsPorts"];
+        self.transferConPorts = [aDecoder decodeObjectForKey:@"transferConPorts"];
     }
     return self;
 }
@@ -260,8 +260,8 @@
     [aCoder encodeObject:[self.absIndexDDic copy] forKey:@"absIndexDDic"];
     [aCoder encodeObject:[self.conIndexDDic copy] forKey:@"conIndexDDic"];
     [aCoder encodeObject:[self.conCansetsDic copy] forKey:@"conCansetsDic"];
-    [aCoder encodeObject:[self.cuanPorts copy] forKey:@"cuanPorts"];
-    [aCoder encodeObject:[self.cenPorts copy] forKey:@"cenPorts"];
+    [aCoder encodeObject:[self.transferAbsPorts copy] forKey:@"transferAbsPorts"];
+    [aCoder encodeObject:[self.transferConPorts copy] forKey:@"transferConPorts"];
 }
 
 @end

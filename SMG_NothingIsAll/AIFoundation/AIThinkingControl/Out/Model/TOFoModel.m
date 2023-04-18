@@ -12,7 +12,6 @@
 
 @property (strong, nonatomic) NSMutableArray *subModels;
 @property (strong, nonatomic) NSMutableArray *subDemands;
-@property (strong, nonatomic) AIKVPointer *actionFo_p;
 
 @end
 
@@ -215,23 +214,6 @@
     self.brotherCanset = brotherCanset;
     self.fatherCanset = fatherCanset;
     self.iCanset = iCanset;
-}
-
-/**
- *  MARK:--------------------不同场景类型,actionFo不同实现 (参考29069-todo8)--------------------
- *  @desc 所有foModel的content_p由actionFo来接替;
- */
--(AIKVPointer *)content_p {
-    if (!_actionFo_p) {
-        //取实战可行actionFo;
-        _actionFo_p = [TCRealact getRealactFo:self];
-        //再为空则默认为content_p;
-        if (!_actionFo_p) _actionFo_p = self.content_p;
-    }
-    return _actionFo_p;
-}
--(AIKVPointer *)superContent_p {
-    return super.content_p;
 }
 
 /**

@@ -9,14 +9,14 @@
 #import <Foundation/Foundation.h>
 
 /**
- *  MARK:--------------------取实战actionFo--------------------
- *  @desc 用于当iCanset太抽象时(含空概念时),向具象取出真实可行的供行为化的解决方案 (;
+ *  MARK:--------------------realact: 对TCSolution最佳输出的可行性检查--------------------
+ *  @desc TCSolution最后输出最佳result之前,检查result如果太抽象(含空概念)则不可行,那么向具象重新找个可行的;
  */
 @interface TCRealact : NSObject
 
 /**
- *  MARK:--------------------懒加载真正跑行为化的actionFo--------------------
+ *  MARK:--------------------TCSolution最佳输出的可行性检查--------------------
  */
-+(AIKVPointer*) getRealactFo:(TOFoModel*)foModel;
++(AICansetModel*) checkRealactAndReplaceIfNeed:(AICansetModel*)bestResult fromCansets:(NSArray*)fromCansets;
 
 @end
