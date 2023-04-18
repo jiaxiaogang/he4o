@@ -217,17 +217,11 @@
 }
 
 /**
- *  MARK:--------------------不同场景类型,feedback不同实现 (参考29069-todo9)--------------------
+ *  MARK:--------------------有iCanset直接返回进行行为化等 (参考29069-todo9 & todo10.1b)--------------------
  */
--(void) checkFeedback {
-    if (self.baseSceneModel && self.baseSceneModel.type == SceneTypeFather) {
-        //father时,直接判断mIsC
-    } else if (self.baseSceneModel && self.baseSceneModel.type == SceneTypeBrother) {
-        //brother时,场景包含帧,判断mIsC指向了fatherAlg;
-        //          不包含帧,则判断mIsC指向了brotherAlg;
-    } else {
-        //i时,也直接判断mIsC;
-    }
+-(AIKVPointer *)content_p {
+    if (_iCanset) return _iCanset;
+    return super.content_p;
 }
 
 /**
@@ -241,6 +235,9 @@
         self.targetSPIndex = [aDecoder decodeIntegerForKey:@"targetSPIndex"];
         self.subDemands = [aDecoder decodeObjectForKey:@"subDemands"];
         self.feedbackMv = [aDecoder decodeObjectForKey:@"feedbackMv"];
+        self.brotherCanset = [aDecoder decodeObjectForKey:@"brotherCanset"];
+        self.fatherCanset = [aDecoder decodeObjectForKey:@"fatherCanset"];
+        self.iCanset = [aDecoder decodeObjectForKey:@"iCanset"];
     }
     return self;
 }
@@ -252,6 +249,9 @@
     [aCoder encodeInteger:self.targetSPIndex forKey:@"targetSPIndex"];
     [aCoder encodeObject:self.subDemands forKey:@"subDemands"];
     [aCoder encodeObject:self.feedbackMv forKey:@"feedbackMv"];
+    [aCoder encodeObject:self.brotherCanset forKey:@"brotherCanset"];
+    [aCoder encodeObject:self.fatherCanset forKey:@"fatherCanset"];
+    [aCoder encodeObject:self.iCanset forKey:@"iCanset"];
 }
 
 @end
