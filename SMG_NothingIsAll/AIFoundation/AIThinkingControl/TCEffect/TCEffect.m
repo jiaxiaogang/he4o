@@ -17,6 +17,7 @@
  *      2022.05.27: 将effect改为行为化首帧O反省 (参考26127-TODO1);
  *      2022.05.28: 不需要effect做首帧反省了,tcActYes支持每帧O反省 (参考26136-方案);
  *      2023.02.14: 当前effect仅对取得solution的pFo有效 (参考28076);
+ *      2023.04.19: 支持canset迁移的EFF统计 (参考29069-todo11);
  */
 +(void) rEffect:(TOFoModel*)rSolution{
     [theTC updateOperCount:kFILENAME];
@@ -34,10 +35,6 @@
         //2. 取有效性 (默认即有效);
         EffectStatus es = rDemand.effectStatus == ES_NoEff ? ES_NoEff : ES_HavEff;
         
-        //3. 更新effectDic;
-        //[solutionFo updateSPStrong:solutionFo.count type:tp];
-        [baseFo updateEffectStrong:baseFo.count solutionFo:rSolution.content_p status:es];
-        
         //3. 有效,则解决方案成功 & 任务成功;
         //if (tp == ATPlus) {
         if (es == ES_HavEff) {
@@ -45,9 +42,17 @@
             rDemand.status = TOModelStatus_Finish;
         }
         
-        //4. log;
-        AIEffectStrong *strong = [TOUtils getEffectStrong:baseFo effectIndex:baseFo.count solutionFo:rSolution.content_p];
-        IFTitleLog(@"rEffect", @"\n%p S:%@ (有效性:%@ 任务状态:%@)\n\tfromPFo:%@ (index:%ld H%ldN%ld)",rDemand,Pit2FStr(rSolution.content_p),EffectStatus2Str(es),TOStatus2Str(rDemand.status),Fo2FStr(baseFo),baseFo.count,strong.hStrong,strong.nStrong);
+        //4. 取出所有需要eff更新的cansets;
+        NSArray *canset_ps = [rSolution getRethinkEffectCansets];
+        for (AIKVPointer *canset_p in canset_ps) {
+            //5. 更新effectDic;
+            //[solutionFo updateSPStrong:solutionFo.count type:tp];
+            [baseFo updateEffectStrong:baseFo.count solutionFo:canset_p status:es];
+            
+            //6. log;
+            AIEffectStrong *strong = [TOUtils getEffectStrong:baseFo effectIndex:baseFo.count solutionFo:canset_p];
+            IFTitleLog(@"rEffect", @"\n%p S:%@ (有效性:%@ 任务状态:%@)\n\tfromPFo:%@ (index:%ld H%ldN%ld)",rDemand,Pit2FStr(canset_p),EffectStatus2Str(es),TOStatus2Str(rDemand.status),Fo2FStr(baseFo),baseFo.count,strong.hStrong,strong.nStrong);
+        }
     }];
     DebugE();
 }
@@ -58,6 +63,7 @@
  *      2022.05.22: 初版,任务有效率强化 (将ES状态更新至任务targetFo下的effectDic中) (参考26095-4&5);
  *      2022.05.27: 将effect改为行为化首帧O反省 (参考26127-TODO1);
  *      2022.05.28: 不需要effect做首帧反省了,tcActYes支持每帧O反省 (参考26136-方案);
+ *      2023.04.19: 支持canset迁移的EFF统计 (参考29069-todo11);
  */
 +(void) hEffect:(TOFoModel*)hSolution{
     [theTC updateOperCount:kFILENAME];
@@ -78,18 +84,22 @@
         //4. 取有效性 (默认即无效);
         EffectStatus es = hDemand.effectStatus == ES_HavEff ? ES_HavEff : ES_NoEff;
         
-        //5. 更新effectDic;
-        [targetFoNode updateEffectStrong:targetFo.actionIndex solutionFo:hSolution.content_p status:es];
-        //[targetFoNode updateSPStrong:targetFo.actionIndex type:tp];
-
-        //6. 无效,则当前方案失败;
+        //5. 无效,则当前方案失败;
         if (es == ES_NoEff) hSolution.status = TOModelStatus_ActNo;
         //if (tp == ATSub) hSolution.status = TOModelStatus_ActNo;
         
-        //7. log
-        AIEffectStrong *strong = [TOUtils getEffectStrong:targetFoNode effectIndex:targetFo.actionIndex solutionFo:hSolution.content_p];
-        IFTitleLog(@"hEffect", @"\n%p S:%@ (有效性:%@ 当前方案状态:%@)",hSolution,Pit2FStr(hSolution.content_p),EffectStatus2Str(es),TOStatus2Str(hSolution.status));
-        NSLog(@"\t=>targetFo:%@ (index:%ld H%ldN%ld)",Fo2FStr(targetFoNode),targetFo.actionIndex,strong.hStrong,strong.nStrong);
+        //6. 取出所有需要eff更新的cansets;
+        NSArray *canset_ps = [hSolution getRethinkEffectCansets];
+        for (AIKVPointer *canset_p in canset_ps) {
+            //7. 更新effectDic;
+            [targetFoNode updateEffectStrong:targetFo.actionIndex solutionFo:canset_p status:es];
+            //[targetFoNode updateSPStrong:targetFo.actionIndex type:tp];
+            
+            //8. log
+            AIEffectStrong *strong = [TOUtils getEffectStrong:targetFoNode effectIndex:targetFo.actionIndex solutionFo:canset_p];
+            IFTitleLog(@"hEffect", @"\n%p S:%@ (有效性:%@ 当前方案状态:%@)",hSolution,Pit2FStr(canset_p),EffectStatus2Str(es),TOStatus2Str(hSolution.status));
+            NSLog(@"\t=>targetFo:%@ (index:%ld H%ldN%ld)",Fo2FStr(targetFoNode),targetFo.actionIndex,strong.hStrong,strong.nStrong);
+        }
     }];
     DebugE();
 }

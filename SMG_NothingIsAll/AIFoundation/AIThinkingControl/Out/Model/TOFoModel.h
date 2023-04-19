@@ -97,7 +97,7 @@
 @property (strong, nonatomic) AIKVPointer *iCanset;
 
 /**
- *  MARK:--------------------返回需用于反省或有效统计的cansets (参考29069-todo11)--------------------
+ *  MARK:--------------------返回需用于反省或有效统计的cansets (参考29069-todo11 && todo11.2)--------------------
  */
 -(NSArray*) getRethinkEffectCansets;
 
