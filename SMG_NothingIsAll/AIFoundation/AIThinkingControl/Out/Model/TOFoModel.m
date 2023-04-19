@@ -225,6 +225,22 @@
 }
 
 /**
+ *  MARK:--------------------返回需用于反省或有效统计的cansets (参考29069-todo11)--------------------
+ */
+-(NSArray*) getRethinkEffectCansets {
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    
+    //1. 三级canset有值时,收集;
+    if (self.brotherCanset) [result addObject:self.brotherCanset];
+    if (self.fatherCanset) [result addObject:self.fatherCanset];
+    if (self.iCanset) [result addObject:self.iCanset];
+    
+    //2. 三级canset都无值时,默认返回content_p;
+    if (!ARRISOK(result)) [result addObject:self.content_p];
+    return result;
+}
+
+/**
  *  MARK:--------------------NSCoding--------------------
  */
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {

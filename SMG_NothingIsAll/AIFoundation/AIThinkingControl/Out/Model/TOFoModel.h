@@ -96,4 +96,9 @@
 @property (strong, nonatomic) AIKVPointer *fatherCanset;
 @property (strong, nonatomic) AIKVPointer *iCanset;
 
+/**
+ *  MARK:--------------------返回需用于反省或有效统计的cansets (参考29069-todo11)--------------------
+ */
+-(NSArray*) getRethinkEffectCansets;
+
 @end

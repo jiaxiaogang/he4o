@@ -37,22 +37,29 @@
  *  MARK:--------------------OR反省器--------------------
  *  @version
  *      2023.03.04: 修复反省未保留以往帧actionIndex,导致反省时错误的BUG (参考28144-todo);
+ *      2023.04.19: 支持canset迁移时的SP统计 (参考29069-todo11);
  */
 +(void) reasonOutRethink:(TOFoModel*)model actionIndex:(NSInteger)actionIndex type:(AnalogyType)type{
-    AIFoNodeBase *fo = [SMGUtils searchNode:model.content_p];
     [theTC updateOperCount:kFILENAME];
     Debug();
-    IFTitleLog(@"OR反省", @"\n%@ spIndex:%ld -> (%@)",FoP2FStr(model.content_p),actionIndex,ATType2Str(type));
-    [fo updateSPStrong:actionIndex type:type];
+    NSArray *canset_ps = [model getRethinkEffectCansets];
+    for (AIKVPointer *canset_p in canset_ps) {
+        AIFoNodeBase *canset = [SMGUtils searchNode:canset_p];
+        IFTitleLog(@"OR反省", @"\n%@ spIndex:%ld -> (%@)",FoP2FStr(canset_p),actionIndex,ATType2Str(type));
+        [canset updateSPStrong:actionIndex type:type];
+    }
     DebugE();
 }
 
 +(void) perceptOutRethink:(TOFoModel*)model type:(AnalogyType)type{
-    AIFoNodeBase *fo = [SMGUtils searchNode:model.content_p];
     [theTC updateOperCount:kFILENAME];
     Debug();
-    IFTitleLog(@"OP反省", @"\n%@ spIndex:%ld -> (%@)",FoP2FStr(model.content_p),fo.count,ATType2Str(type));
-    [fo updateSPStrong:fo.count type:type];
+    NSArray *canset_ps = [model getRethinkEffectCansets];
+    for (AIKVPointer *canset_p in canset_ps) {
+        AIFoNodeBase *canset = [SMGUtils searchNode:canset_p];
+        IFTitleLog(@"OP反省", @"\n%@ spIndex:%ld -> (%@)",FoP2FStr(canset_p),canset.count,ATType2Str(type));
+        [canset updateSPStrong:canset.count type:type];
+    }
     DebugE();
 }
 
