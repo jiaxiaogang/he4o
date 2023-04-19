@@ -25,7 +25,7 @@
 //MARK:===============================================================
 //MARK:                     < Canset识别 >
 //MARK:===============================================================
-+(void) recognitionCansetFo:(AIFoNodeBase*)newCanset sceneFo:(AIFoNodeBase*)sceneFo;
++(void) recognitionCansetFo:(AIKVPointer*)newCanset_p sceneFo:(AIKVPointer*)sceneFo_p;
 
 
 /**

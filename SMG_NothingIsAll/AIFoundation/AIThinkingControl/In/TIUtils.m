@@ -533,9 +533,11 @@
  *      2023.04.07: 关闭Canset识别 (参考29059-改动);
  *      2023.04.19: TCTransfer迁移后调用Canset识别类比,但不对SPEFF+1 (参考29069-todo12 & todo12.1);
  */
-+(void) recognitionCansetFo:(AIFoNodeBase*)newCanset sceneFo:(AIFoNodeBase*)sceneFo {
++(void) recognitionCansetFo:(AIKVPointer*)newCanset_p sceneFo:(AIKVPointer*)sceneFo_p {
     if (!Switch4RecognitionCansetFo) return;
     //1. 取出旧有候选集;
+    AIFoNodeBase *newCanset = [SMGUtils searchNode:newCanset_p];
+    AIFoNodeBase *sceneFo = [SMGUtils searchNode:sceneFo_p];
     NSArray *oldCansets = [sceneFo getConCansets:sceneFo.count];
     OFTitleLog(@"Canset识别",@"(候选数:%ld)\nnewCanset:%@\nsceneFo:%@",oldCansets.count,Fo2FStr(newCanset),Fo2FStr(sceneFo));
     NSMutableArray *matchModels = [[NSMutableArray alloc] init];

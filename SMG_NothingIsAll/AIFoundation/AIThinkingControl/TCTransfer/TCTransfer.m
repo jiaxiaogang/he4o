@@ -13,6 +13,8 @@
 /**
  *  MARK:--------------------canset迁移算法 (29069-todo10)--------------------
  *  @desc 用于将canset从brother迁移到father再迁移到i场景下;
+ *  @version
+ *      2023.04.19: TCTranfer执行后,调用Canset识别类比 (参考29069-todo12);
  */
 +(void) transfer:(AICansetModel*)bestCansetModel complate:(void(^)(AIKVPointer *brotherCanset,AIKVPointer *fatherCanset,AIKVPointer *iCanset))complate {
     //0. 数据准备;
@@ -33,6 +35,9 @@
         //b. 得出两个canset;
         fatherCanset = bestCansetModel.cansetFo;
         iCanset = [self transferJiCen:fatherCanset fatherCansetTargetIndex:targetIndex fatherScene:fatherScene iScene_p:iScene];
+        
+        //c. 调用Canset识别类比 (参考29069-todo12);
+        [TIUtils recognitionCansetFo:iCanset sceneFo:iScene];
     }
     
     //3. canset迁移之: brother推举到father,再继承给i (参考29069-todo10.1);
@@ -45,8 +50,11 @@
         brotherCanset = bestCansetModel.cansetFo;
         fatherCanset = [self transfer4TuiJu:brotherCanset brotherCansetTargetIndex:targetIndex brotherScene:brotherScene fatherScene_p:fatherScene];
         iCanset = [self transferJiCen:fatherCanset fatherCansetTargetIndex:targetIndex fatherScene:fatherScene iScene_p:iScene];
+        
+        //c. 调用Canset识别类比 (参考29069-todo12);
+        [TIUtils recognitionCansetFo:fatherCanset sceneFo:fatherScene];
+        [TIUtils recognitionCansetFo:iCanset sceneFo:iScene];
     }
-    
     complate(brotherCanset,fatherCanset,iCanset);
 }
 
