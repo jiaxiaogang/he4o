@@ -269,7 +269,9 @@
     
     //3. =================生成新方案后 IN有效率+1 (参考28182-todo6)=================
     //[TCEffect rInEffect:matchFo matchRFos:self.baseFrameModel.matchRFos es:ES_HavEff];
-    [TIUtils recognitionCansetFo:cansetFo sceneFo:matchFo es:ES_HavEff];
+    
+    //2023.04.19: 改到TCTransfer迁移后调用canset识别类比 (参考29069-todo12);
+    //[TIUtils recognitionCansetFo:cansetFo sceneFo:matchFo es:ES_HavEff];
 }
 
 /**

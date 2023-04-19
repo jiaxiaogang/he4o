@@ -531,12 +531,13 @@
  *      2023.03.30: 支持过滤器 (参考29042);
  *      2023.04.04: 将Canset过滤器改为根据indexDic映射数来 (参考29055);
  *      2023.04.07: 关闭Canset识别 (参考29059-改动);
+ *      2023.04.19: TCTransfer迁移后调用Canset识别类比,但不对SPEFF+1 (参考29069-todo12 & todo12.1);
  */
-+(void) recognitionCansetFo:(AIFoNodeBase*)newCanset sceneFo:(AIFoNodeBase*)sceneFo es:(EffectStatus)es{
++(void) recognitionCansetFo:(AIFoNodeBase*)newCanset sceneFo:(AIFoNodeBase*)sceneFo {
     if (!Switch4RecognitionCansetFo) return;
     //1. 取出旧有候选集;
     NSArray *oldCansets = [sceneFo getConCansets:sceneFo.count];
-    OFTitleLog(@"Canset识别",@" (EFF:%@) (候选数:%ld)\nnewCanset:%@\nsceneFo:%@",EffectStatus2Str(es),oldCansets.count,Fo2FStr(newCanset),Fo2FStr(sceneFo));
+    OFTitleLog(@"Canset识别",@"(候选数:%ld)\nnewCanset:%@\nsceneFo:%@",oldCansets.count,Fo2FStr(newCanset),Fo2FStr(sceneFo));
     NSMutableArray *matchModels = [[NSMutableArray alloc] init];
     
     //2. 旧有候选集: 作为识别池;
@@ -566,13 +567,7 @@
     //8. 识别后处理: 外类比 & 增强SP & 增强EFF;
     for (AIMatchCansetModel *model in filterModels) {
         //4. 只要全含 & 是有效newCanset => 对二者进行外类比 (参考29025-24 & 29027-方案3);
-        if (es == ES_HavEff) {
-            [AIAnalogy analogyCansetFo:model.indexDic newCanset:newCanset oldCanset:model.matchFo sceneFo:sceneFo];
-        }
-        
-        //5. 条件满足的都算识别结果 (更新sp和eff) (参考28185-todo4);
-        [model.matchFo updateSPStrong:0 end:model.matchFo.count - 1 type:ATPlus];
-        [sceneFo updateEffectStrong:sceneFo.count solutionFo:model.matchFo.pointer status:es];
+        [AIAnalogy analogyCansetFo:model.indexDic newCanset:newCanset oldCanset:model.matchFo sceneFo:sceneFo];
     }
 }
 

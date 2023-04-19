@@ -189,6 +189,7 @@
  *      2023.03.27: 支持得出newCansetFo/oldCansetFo 与 absCansetFo的indexDic映射 (参考29032-todo1.1);
  *      2023.04.07: 关闭Canset类比 (参考29059-改动);
  *      2023.04.10: 场景包含帧的类比用mIsC判断成立后,直接采用absAlg (参考29067-todo1.1);
+ *      2023.04.19: 取消EFF+1,因为迁移完成不表示已正向发生 (参考29069-todo12.1);
  */
 +(AINetAbsFoNode*) analogyCansetFo:(NSDictionary*)indexDic newCanset:(AIFoNodeBase*)newCanset oldCanset:(AIFoNodeBase*)oldCanset sceneFo:(AIFoNodeBase*)sceneFo {
     //1. 类比orders的规律
@@ -236,9 +237,9 @@
         [sceneFo updateEffectStrong:effStrong.nStrong solutionFo:absFo.pointer status:ES_NoEff];
     }
     
-    //9. 抽象fo时: 根据protoCansetFo增强absFo的Eff值+1 (参考29032-todo2.3);
-    AIEffectStrong *endEffStrong = [sceneFo updateEffectStrong:sceneFo.count solutionFo:absFo.pointer status:ES_HavEff];
-    NSLog(@"构建absCanset:%@ SP:%@ EFF:%@",Fo2FStr(absFo),CLEANSTR(absFo.spDic),CLEANSTR(endEffStrong));
+    //9. 打日志
+    AIEffectStrong *effStrong = [sceneFo getEffectStrong:sceneFo.count solutionFo:absFo.pointer];
+    NSLog(@"构建absCanset:%@ SP:%@ EFF:%@",Fo2FStr(absFo),CLEANSTR(absFo.spDic),CLEANSTR(effStrong));
     return absFo;
 }
 
