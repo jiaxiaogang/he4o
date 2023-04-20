@@ -172,6 +172,11 @@
 +(NSArray*) absPorts_All:(AINodeBase*)node havTypes:(NSArray*)havTypes noTypes:(NSArray*)noTypes;
 
 /**
+ *  MARK:--------------------返回abs+自己的指针数组--------------------
+ */
++(NSArray*) absAndMePits:(AINodeBase*)node;
+
+/**
  *  MARK:--------------------取hdConPorts + memConPorts--------------------
  *  @result notnull
  */

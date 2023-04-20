@@ -436,6 +436,11 @@
     NSArray *allPorts = [self absPorts_All:node];
     return [SMGUtils filterPorts:allPorts havTypes:havTypes noTypes:noTypes];
 }
++(NSArray*) absAndMePits:(AINodeBase*)node{
+    NSMutableArray *result = [[NSMutableArray alloc] initWithObjects:node.pointer, nil];
+    [result addObjectsFromArray:Ports2Pits([self absPorts_All:node])];
+    return result;
+}
 
 +(NSArray*) conPorts_All:(AINodeBase*)node{
     NSMutableArray *allPorts = [[NSMutableArray alloc] init];

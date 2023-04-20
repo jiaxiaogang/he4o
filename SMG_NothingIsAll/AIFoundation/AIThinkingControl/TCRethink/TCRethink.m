@@ -21,6 +21,10 @@
     Debug();
     IFTitleLog(@"IR反省", @"\n%@ spIndex:%ld -> (%@)",Fo2FStr(matchFo),cutIndex + 1,ATType2Str(type));
     [matchFo updateSPStrong:cutIndex + 1 type:type];
+    //2. 抽象也更新 (参考29069-todo11.4);
+    [TCRethinkUtil spEff4Abs:matchFo curFoIndex:cutIndex + 1 itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {
+        [absFo updateSPStrong:absIndex type:type];
+    }];
     DebugE();
 }
 
@@ -30,6 +34,10 @@
     Debug();
     IFTitleLog(@"IP反省", @"\n%@ spIndex:%ld -> (%@)",Fo2FStr(matchFo),matchFo.count,ATType2Str(type));
     [matchFo updateSPStrong:matchFo.count type:type];
+    //2. 抽象也更新 (参考29069-todo11.4);
+    [TCRethinkUtil spEff4Abs:matchFo curFoIndex:matchFo.count itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {
+        [absFo updateSPStrong:absIndex type:type];
+    }];
     DebugE();
 }
 
@@ -47,6 +55,10 @@
         AIFoNodeBase *canset = [SMGUtils searchNode:canset_p];
         IFTitleLog(@"OR反省", @"\n%@ spIndex:%ld -> (%@)",FoP2FStr(canset_p),actionIndex,ATType2Str(type));
         [canset updateSPStrong:actionIndex type:type];
+        //2. 抽象也更新 (参考29069-todo11.4);
+        [TCRethinkUtil spEff4Abs:canset curFoIndex:actionIndex itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {
+            [absFo updateSPStrong:absIndex type:type];
+        }];
     }
     DebugE();
 }
@@ -59,6 +71,10 @@
         AIFoNodeBase *canset = [SMGUtils searchNode:canset_p];
         IFTitleLog(@"OP反省", @"\n%@ spIndex:%ld -> (%@)",FoP2FStr(canset_p),canset.count,ATType2Str(type));
         [canset updateSPStrong:canset.count type:type];
+        //2. 抽象也更新 (参考29069-todo11.4);
+        [TCRethinkUtil spEff4Abs:canset curFoIndex:canset.count itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {
+            [absFo updateSPStrong:absIndex type:type];
+        }];
     }
     DebugE();
 }

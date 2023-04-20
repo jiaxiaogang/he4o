@@ -33,6 +33,7 @@
 #import "TOUtils.h"
 #import "TIUtils.h"
 #import "TCSolutionUtil.h"
+#import "TCRethinkUtil.h"
 
 //任务池
 #import "ReasonDemandModel.h"

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0800B2BF29F0BF6800CF5E2C /* TCRethinkUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 0800B2BE29F0BF6800CF5E2C /* TCRethinkUtil.m */; };
 		080228E1227282F80087FE69 /* TOModelBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 080228E0227282F80087FE69 /* TOModelBase.m */; };
 		0802962727E4D77D0050C767 /* TVPanelView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0802962627E4D77D0050C767 /* TVPanelView.m */; };
 		0802962927E4D7920050C767 /* TVPanelView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0802962827E4D7920050C767 /* TVPanelView.xib */; };
@@ -212,6 +213,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0800B2BD29F0BF6800CF5E2C /* TCRethinkUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCRethinkUtil.h; sourceTree = "<group>"; };
+		0800B2BE29F0BF6800CF5E2C /* TCRethinkUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCRethinkUtil.m; sourceTree = "<group>"; };
 		080228DF227282F80087FE69 /* TOModelBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOModelBase.h; sourceTree = "<group>"; };
 		080228E0227282F80087FE69 /* TOModelBase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOModelBase.m; sourceTree = "<group>"; };
 		0802962527E4D77D0050C767 /* TVPanelView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TVPanelView.h; sourceTree = "<group>"; };
@@ -1268,6 +1271,8 @@
 			children = (
 				0892BAE42776D6920024B43C /* TCRethink.h */,
 				0892BAE52776D6920024B43C /* TCRethink.m */,
+				0800B2BD29F0BF6800CF5E2C /* TCRethinkUtil.h */,
+				0800B2BE29F0BF6800CF5E2C /* TCRethinkUtil.m */,
 			);
 			path = TCRethink;
 			sourceTree = "<group>";
@@ -2035,6 +2040,7 @@
 				88C20B8220C7696A0076BB52 /* AINetAbsFoUtils.m in Sources */,
 				08586DE527E80C8B008D2F8C /* TVLineView.m in Sources */,
 				0858C5D22194F8B000951BA5 /* NSLayoutConstraint+MASDebugAdditions.m in Sources */,
+				0800B2BF29F0BF6800CF5E2C /* TCRethinkUtil.m in Sources */,
 				8822852020F58BDA009884DC /* AINetDirectionReference.m in Sources */,
 				081BD08825B94F1B003C3038 /* ReasonDemandModel.m in Sources */,
 				08F738071F7C714F005EAD56 /* AISqlPointer.m in Sources */,
