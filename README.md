@@ -104,8 +104,11 @@
 
 ### 6. -------------时间线-------------
 
-> ##### 2023.04.02 `至今`
-> - 提升Canset迁移性决策部分：`废弃Canset识别类比`、`Canset迁移性增强的决策支持`
+> ##### 2023.04.20 `至今`
+> - Canset迁移性增强回测
+
+> ##### 2023.04.02 `耗时18天`
+> - 提升Canset迁移性决策部分：`Canset迁移性增强的决策支持`、`TCScene场景树`、`TCCanset.override算法`、`TCRealact可行性`、`TCTransfer推举和继承算法`、`相应更新SPEFF`
 
 > ##### 2023.03.21 `耗时11天`
 > - 提升Canset迁移性认知部分：`外类比支持匹配度共同点`、`构建新Canset优先用场景alg`、`迭代Canst识别&全含判断`、`Canst外类比`、`Canst空概念`、`抽象Canset初始SPEFF`、`Canset识别支持AIFilter`、`回测Canset迁移性`

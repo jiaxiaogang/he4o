@@ -49,6 +49,12 @@
             //[solutionFo updateSPStrong:solutionFo.count type:tp];
             [baseFo updateEffectStrong:baseFo.count solutionFo:canset_p status:es];
             
+            //6. 对抽象也更新eff (此处canset.count应该和rSolution.targetIndex是一样的) (参考29069-todo11.5);
+            AIFoNodeBase *canset = [SMGUtils searchNode:canset_p];
+            [TCRethinkUtil spEff4Abs:canset curFoIndex:canset.count itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {
+                [baseFo updateEffectStrong:baseFo.count solutionFo:absFo.pointer status:es];
+            }];
+            
             //6. log;
             AIEffectStrong *strong = [TOUtils getEffectStrong:baseFo effectIndex:baseFo.count solutionFo:canset_p];
             IFTitleLog(@"rEffect", @"\n%p S:%@ (有效性:%@ 任务状态:%@)\n\tfromPFo:%@ (index:%ld H%ldN%ld)",rDemand,Pit2FStr(canset_p),EffectStatus2Str(es),TOStatus2Str(rDemand.status),Fo2FStr(baseFo),baseFo.count,strong.hStrong,strong.nStrong);
@@ -94,6 +100,12 @@
             //7. 更新effectDic;
             [targetFoNode updateEffectStrong:targetFo.actionIndex solutionFo:canset_p status:es];
             //[targetFoNode updateSPStrong:targetFo.actionIndex type:tp];
+            
+            //8. 对抽象也更新eff (参考29069-todo11.5);
+            AIFoNodeBase *canset = [SMGUtils searchNode:canset_p];
+            [TCRethinkUtil spEff4Abs:canset curFoIndex:hSolution.targetSPIndex itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {
+                [targetFoNode updateEffectStrong:targetFo.actionIndex solutionFo:absFo.pointer status:es];
+            }];
             
             //8. log
             AIEffectStrong *strong = [TOUtils getEffectStrong:targetFoNode effectIndex:targetFo.actionIndex solutionFo:canset_p];
