@@ -14,9 +14,15 @@
     AISceneModel *result = [[AISceneModel alloc] init];
     result.type = type;
     if (base) [base.subs addObject:result];
+    result.base = base;
     result.scene = scene;
     result.cutIndex = cutIndex;
     return result;
+}
+
+-(NSMutableArray *)subs {
+    if (!_subs) _subs = [[NSMutableArray alloc] init];
+    return _subs;
 }
 
 -(AISceneModel*) getRoot {
