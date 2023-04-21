@@ -32,4 +32,9 @@
     return [self.base getRoot];
 }
 
+-(BOOL) isEqual:(AISceneModel*)object{
+    if (ISOK(object, AISceneModel.class)) return [self.scene isEqual:object.scene];
+    return false;
+}
+
 @end
