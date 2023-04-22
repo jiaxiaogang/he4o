@@ -97,8 +97,13 @@
  *              2. 在末尾调用PrintDebugCodeBlock()将结果日志打出;
  *  @desc 前辍说明: 使用当前文件名+循环id;
  */
-#define AddDebugCodeBlock(s) [theDebug debugModuleWithPrefix:TCDebugPrefixV1 suffix:s]
+//默认前辍版本,默认前辍为当前类名 (适用于在单类工作时调用);
+#define AddDebugCodeBlock(codeBlockName) [theDebug debugModuleWithPrefix:TCDebugPrefixV1 suffix:codeBlockName]
 #define PrintDebugCodeBlock() [theDebug print:TCDebugPrefixV1]
+
+//含自定义前辍版本 (适用于多类工作时,根据自定义前辍跨类工作);
+#define AddDebugCodeBlock_Key(key,codeBlockName) [theDebug debugModuleWithPrefix:TCDebugPrefixV2(key) suffix:codeBlockName]
+#define PrintDebugCodeBlock_Key(key) [theDebug print:TCDebugPrefixV2(key)]
 
 /**
  *  MARK:--------------------tcDebug拼接前辍--------------------
