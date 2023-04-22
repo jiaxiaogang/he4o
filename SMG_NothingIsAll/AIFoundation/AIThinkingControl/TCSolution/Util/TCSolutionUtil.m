@@ -447,6 +447,7 @@
  *      2023.02.18: 计算前段竞争值 (参考28084-4);
  *      2023.03.16: 先用任意帧sp值>5脱离惰性期 (参考28182-todo9);
  *      2023.03.18: 惰性期阈值改为eff>2时脱离惰性期 (参考28185-todo6);
+ *      2023.04.22: 关闭惰性期 (参考29073-方案);
  *  @result 返回cansetFo前段匹配度 & 以及已匹配的cutIndex截点;
  */
 +(AICansetModel*) convert2CansetModel:(AIKVPointer*)cansetFo_p sceneFo:(AIKVPointer*)sceneFo_p basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel ptAleardayCount:(NSInteger)ptAleardayCount isH:(BOOL)isH sceneModel:(AISceneModel*)sceneModel {
@@ -463,10 +464,12 @@
     AddDebugCodeBlock(@"convert2Canset 1");
     
     //3. 惰性期 (阈值为2: EFF默认值为1,达到阈值时触发) (参考28182-todo9 & 28185-todo6);
-    AIEffectStrong *effStrong = [TOUtils getEffectStrong:matchFo effectIndex:matchFo.count solutionFo:cansetFo_p];
-    if (effStrong.hStrong <= 2) return nil;
-    AddDebugCodeBlock(@"convert2Canset 2");
-    //NSLog(@"惰性期通过:%@",CLEANSTR(cansetFo.spDic));
+    if (Switch4DuoXinQi) {
+        AIEffectStrong *effStrong = [TOUtils getEffectStrong:matchFo effectIndex:matchFo.count solutionFo:cansetFo_p];
+        if (effStrong.hStrong <= 2) return nil;
+        AddDebugCodeBlock(@"convert2Canset 2");
+        //NSLog(@"惰性期通过:%@",CLEANSTR(cansetFo.spDic));
+    }
 
     //5. 根据matchFo取得与canset的indexDic映射;
     NSDictionary *indexDic = [cansetFo getAbsIndexDic:sceneFo_p];

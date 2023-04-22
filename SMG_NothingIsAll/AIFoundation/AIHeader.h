@@ -402,3 +402,5 @@
 #define Switch4RecognitionCansetFo true
 //Canset类比开关
 #define Switch4AnalogyCansetFo true
+//惰性期开关 (参考29073-方案)
+#define Switch4DuoXinQi false
