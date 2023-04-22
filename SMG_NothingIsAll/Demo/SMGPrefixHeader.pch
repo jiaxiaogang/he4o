@@ -78,7 +78,8 @@
 #define FLY_RDS @"FLY_RDS"  //扇翅膀反射标识 (类似人类的抓握反射)
 
 /**
- *  MARK:--------------------debug--------------------
+ *  MARK:--------------------xgDebug调试模块--------------------
+ *  @use 使用方法: 每个模块开始调用Debug(),结束调用DebugE();
  */
 #define DebugParam(p,s) [theDebug debugModuleWithPrefix:p suffix:s] //指定前辍&&后辍
 #define Debug() [theDebug debugModuleWithFileName:FILENAME suffix:nil]
@@ -89,6 +90,18 @@
 #define kFILENAME FILENAME
 #define kLINE __LINE__
 
-#define AddTCDebug(s) [theDebug debugModuleWithPrefix:TCDebugPrefixV1 suffix:s]
+/**
+ *  MARK:--------------------xgDebug调试代码块--------------------
+ *  @use 使用方法:
+ *              1. 先在代码块之间调用AddDebugCodeBlock("自定义后辍");
+ *              2. 在末尾调用PrintDebugCodeBlock()将结果日志打出;
+ *  @desc 前辍说明: 使用当前文件名+循环id;
+ */
+#define AddDebugCodeBlock(s) [theDebug debugModuleWithPrefix:TCDebugPrefixV1 suffix:s]
+#define PrintDebugCodeBlock() [theDebug print:TCDebugPrefixV1]
+
+/**
+ *  MARK:--------------------tcDebug拼接前辍--------------------
+ */
 #define TCDebugPrefixV1 TCDebugPrefixV2(kFILENAME) //TCDebug的前辍=文件名+循环Id
 #define TCDebugPrefixV2(FILENAME) STRFORMAT(@"%@%lld",FILENAME,theTC.getLoopId) //TCDebug的前辍=文件名+循环Id

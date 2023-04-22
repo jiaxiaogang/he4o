@@ -128,7 +128,7 @@
 /**
  *  MARK:--------------------单条model冷却后竞争值--------------------
  *  @desc 单条仅一条,比如: 张三的语文考试;
- *  @desc 使用: 单项权重新增NewtonCoolDownCurve (参考28042-思路2-3);
+ *  @use 使用: 单项权重新增NewtonCoolDownCurve (参考28042-思路2-3);
  *  @param totalCoolTime : 冷却至微不可见的总需时长
  *  @param pastTime : 当前项已冷却了多久;
  *  @result 冷却后的温度值;

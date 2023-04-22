@@ -27,6 +27,10 @@ static XGDebug *_instance;
     return _instance;
 }
 
+//MARK:===============================================================
+//MARK:                     < IN >
+//MARK:===============================================================
+
 /**
  *  MARK:--------------------追加一条记录--------------------
  *  @version
@@ -88,8 +92,13 @@ static XGDebug *_instance;
     return _models;
 }
 
+//MARK:===============================================================
+//MARK:                     < OUT >
+//MARK:===============================================================
+
 /**
  *  MARK:--------------------根据前辍取debugModels--------------------
+ *  @desc 用于获取结果输出;
  */
 -(NSArray*) getDebugModels:(NSString*)prefix {
     prefix = STRTOOK(prefix);
@@ -98,6 +107,16 @@ static XGDebug *_instance;
         return [prefix isEqualToString:itemPrefix];
     }];
     return result;
+}
+
+/**
+ *  MARK:--------------------打印结果--------------------
+ */
+-(void) print:(NSString*)prefix {
+    NSArray *debugModels = [theDebug getDebugModels:prefix];
+    for (XGDebugModel *model in debugModels) {
+        NSLog(@"%@ 计数:%ld 均耗:%.0f = 总耗:%.0f 读:%ld 写:%ld",model.key,model.sumCount,model.sumTime / model.sumCount,model.sumTime,model.sumReadCount,model.sumWriteCount);
+    }
 }
 
 @end

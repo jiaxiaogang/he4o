@@ -474,9 +474,9 @@
     return allPorts;
 }
 +(NSArray*) refPorts_All4Alg_Normal:(AIAlgNodeBase*)node{
-    AddTCDebug(@"时序识别2.1");
+    AddDebugCodeBlock(@"时序识别2.1");
     NSArray *allPorts = [self refPorts_All4Alg:node];
-    AddTCDebug(@"时序识别2.7");
+    AddDebugCodeBlock(@"时序识别2.7");
     return [SMGUtils filterPorts_Normal:allPorts];
 }
 

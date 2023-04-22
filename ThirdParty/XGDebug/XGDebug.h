@@ -10,12 +10,17 @@
 
 /**
  *  MARK:--------------------性能分析--------------------
- *  @desc 使用说明: 每条显示的用时为,当前条到下条执行间的代码用时;
+ *  @use 使用说明: 每条显示的用时为,当前条到下条执行间的代码用时;
+ *  @callers 用于调试性能,是TCDebug工具的底层核心;
  */
 @class XGDebugModel;
 @interface XGDebug : NSObject
 
 +(XGDebug*) sharedInstance;
+
+//MARK:===============================================================
+//MARK:                     < IN >
+//MARK:===============================================================
 
 /**
  *  MARK:--------------------追加一条记录--------------------
@@ -26,13 +31,27 @@
  */
 -(void) debugModuleWithFileName:(NSString*)fileName suffix:(NSString*)suffix;
 -(void) debugModuleWithPrefix:(NSString*)prefix suffix:(NSString*)suffix;
+
+/**
+ *  MARK:--------------------磁盘读写计数器--------------------
+ *  @desc 每次磁盘读写操作时,调用DebugW或DebugR来计数+1;
+ */
 -(void) debugWrite;
 -(void) debugRead;
 -(NSMutableArray *)models; //notnull
+
+//MARK:===============================================================
+//MARK:                     < OUT >
+//MARK:===============================================================
 
 /**
  *  MARK:--------------------根据前辍取debugModels--------------------
  */
 -(NSArray*) getDebugModels:(NSString*)prefix;
+
+/**
+ *  MARK:--------------------打印结果--------------------
+ */
+-(void) print:(NSString*)prefix;
 
 @end

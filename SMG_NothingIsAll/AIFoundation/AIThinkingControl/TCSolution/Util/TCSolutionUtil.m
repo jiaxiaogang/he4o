@@ -200,6 +200,7 @@
             if (cansetModel) [cansetModels addObject:cansetModel];
         }
     }
+    PrintDebugCodeBlock();//将TCSolutionUtil的代码块执行情况打出来;
 
     //5. 慢思考;
     return [self generalSolution_Slow:demand cansetModels:cansetModels except_ps:except_ps];
@@ -450,6 +451,7 @@
  */
 +(AICansetModel*) convert2CansetModel:(AIKVPointer*)cansetFo_p sceneFo:(AIKVPointer*)sceneFo_p basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel ptAleardayCount:(NSInteger)ptAleardayCount isH:(BOOL)isH sceneModel:(AISceneModel*)sceneModel {
     //1. 数据准备 & 复用indexDic & 取出pFoOrTargetFo;
+    AddDebugCodeBlock(@"convert2Canset 1");
     AIFoNodeBase *matchFo = [SMGUtils searchNode:sceneFo_p];
     AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
     NSInteger matchTargetIndex = isH ? ptAleardayCount : matchFo.count;
@@ -462,6 +464,7 @@
     //3. 惰性期 (阈值为2: EFF默认值为1,达到阈值时触发) (参考28182-todo9 & 28185-todo6);
     AIEffectStrong *effStrong = [TOUtils getEffectStrong:matchFo effectIndex:matchFo.count solutionFo:cansetFo_p];
     if (effStrong.hStrong <= 2) return nil;
+    AddDebugCodeBlock(@"convert2Canset 2");
     //NSLog(@"惰性期通过:%@",CLEANSTR(cansetFo.spDic));
 
     //5. 根据matchFo取得与canset的indexDic映射;
@@ -476,7 +479,9 @@
     //8. canset目标下标 (R时canset没有mv,所以要用count-1);
     NSInteger cansetTargetIndex = isH ? NUMTOOK([indexDic objectForKey:@(ptAleardayCount)]).integerValue : cansetFo.count - 1;
     if (cansetCutIndex < matchCutIndex) return nil; //过滤2: 判断canset前段是否有遗漏 (参考27224);
+    AddDebugCodeBlock(@"convert2Canset 3");
     if (cansetFo.count <= cansetCutIndex + 1) return nil; //过滤3: 过滤掉canset没后段的 (没可行为化的东西) (参考28052-4);
+    AddDebugCodeBlock(@"convert2Canset 4");
 
     //9. 递归找到protoFo;
     AIMatchFoModel *pFo = [self getPFo:cansetFo_p basePFoOrTargetFoModel:basePFoOrTargetFoModel];
@@ -486,10 +491,12 @@
     //10. 判断protoFo对cansetFo条件满足 (返回条件满足的每帧间映射);
     NSDictionary *protoFrontIndexDic = [self getFrontIndexDic:protoFo absFo:cansetFo absCutIndex:cansetCutIndex];
     if (!DICISOK(protoFrontIndexDic)) return nil; //过滤4: 条件不满足时,直接返回nil (参考28052-2 & 28084-3);
+    AddDebugCodeBlock(@"convert2Canset 5");
 
     //4. 计算前段竞争值之匹配值 (参考28084-4);
     CGFloat frontMatchValue = [AINetUtils getMatchByIndexDic:protoFrontIndexDic absFo:cansetFo_p conFo:protoFo_p callerIsAbs:true];
     if (frontMatchValue == 0) return nil; //过滤5: 前段不匹配时,直接返回nil (参考26128-1-3);
+    AddDebugCodeBlock(@"convert2Canset 6");
 
     //5. 计算前段竞争值之强度竞争值 (参考28086-todo1);
     NSDictionary *matchFrontIndexDic = [SMGUtils filterDic:indexDic checkValid:^BOOL(NSNumber *key, id value) {
@@ -510,6 +517,7 @@
         }];
         CGFloat backMatchValue = [AINetUtils getMatchByIndexDic:backIndexDic absFo:sceneFo_p conFo:cansetFo_p callerIsAbs:true];
         if (backMatchValue == 0) return nil; //过滤6: 后段不匹配时,直接返回nil;
+        AddDebugCodeBlock(@"convert2Canset endH");
 
         //7. 后段强度竞争值;
         NSInteger backStrongValue = [AINetUtils getSumConStrongByIndexDic:backIndexDic matchFo:sceneFo_p cansetFo:cansetFo_p];
@@ -521,6 +529,7 @@
                                        cutIndex:cansetCutIndex targetIndex:cansetTargetIndex basePFoOrTargetFoModel:basePFoOrTargetFoModel
                                  baseSceneModel:sceneModel];
     }else{
+        AddDebugCodeBlock(@"convert2Canset endR");
         //11. 后段: R不判断后段;
         return [AICansetModel newWithCansetFo:cansetFo_p sceneFo:sceneFo_p protoFrontIndexDic:protoFrontIndexDic matchFrontIndexDic:matchFrontIndexDic frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue
                                  midEffectScore:midEffectScore midStableScore:midStableScore

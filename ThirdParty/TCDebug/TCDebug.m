@@ -46,6 +46,7 @@
  *              a. 记录当前正在调试的DebugingTC最后DebugLastOperesNum(10条);
  *              b. 平均用时超过DebugKaleTime(800ms)时,则判定为卡顿状态;
  *              c. 判断卡顿时,转为植物状态,并暂停强化训练;
+ *  @use 使用说明: 用于每个思维TC模块开始时调用;
  */
 -(void) updateOperCount:(NSString*)operater {
     
@@ -93,10 +94,7 @@
             
             //d. 调试具体慢原因性能;
             for (NSString *logingTC in LogingTCs) {
-                NSArray *debugModels = [theDebug getDebugModels:TCDebugPrefixV2(logingTC)];
-                for (XGDebugModel *model in debugModels) {
-                    NSLog(@"%@ 计数:%ld 均耗:%.0f = 总耗:%.0f 读:%ld 写:%ld",model.key,model.sumCount,model.sumTime / model.sumCount,model.sumTime,model.sumReadCount,model.sumWriteCount);
-                }
+                [theDebug print:TCDebugPrefixV2(logingTC)];
             }
         }
     }
