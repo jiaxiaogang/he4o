@@ -25,7 +25,7 @@
         //3. 当前是brother时: (brother有效canset = brother.conCansets - father.conCansets) (参考29069-todo5.3);
         NSArray *brotherConCansets = [selfFo getConCansets:selfFo.count];
         NSArray *fatherFilter_ps = [TCCanset getFilter_ps:sceneModel];
-        if (fatherFilter_ps.count > 0) {
+        if (fatherFilter_ps.count > 0 && brotherConCansets.count > 0) {
             NSLog(@"测下override过滤生效");
         }
         return [SMGUtils removeSub_ps:fatherFilter_ps parent_ps:brotherConCansets];
@@ -33,7 +33,7 @@
         //4. 当前是father时: (father有效canset = father.conCansets - i.conCansets) (参考29069-todo5.4);
         NSArray *fatherConCansets = [selfFo getConCansets:selfFo.count];
         NSArray *iFilter_ps = [TCCanset getFilter_ps:sceneModel];
-        if (fatherFilter_ps.count > 0) {
+        if (iFilter_ps.count > 0 && fatherConCansets.count > 0) {
             NSLog(@"测下override过滤生效");
         }
         return [SMGUtils removeSub_ps:iFilter_ps parent_ps:fatherConCansets];
@@ -52,35 +52,21 @@
 /**
  *  MARK:--------------------获取override用来过滤的部分 (参考29069-todo5.2)--------------------
  *  @desc 取father过滤部分 (用于mIsC过滤) (参考29069-todo5.1);
+ *  @version
+ *      2023.04.23: BUG_修复抽具象关联取不到过滤结果,改为用迁移关联取 (参考29074);
  */
 +(NSArray*) getFilter_ps:(AISceneModel*)sceneModel {
     //1. brother时: 取father及其具象 => 作为过滤部分 (参考29069-todo5.3-公式减数);
     if (sceneModel.type == SceneTypeBrother) {
-        //2. 取到father的conCansets;
+        //2. 从fatherScene中找出与当前scene有迁移关联的cansets并返回 (参考29069-todo5.3 & 29074);
         AIFoNodeBase *fatherFo = [SMGUtils searchNode:sceneModel.base.scene];
-        NSArray *fatherConCansets = [fatherFo getConCansets:fatherFo.count];
-        
-        //3. 将filter_ps收集并返回 (参考29069-todo5.3);
-        NSMutableArray *allFilter_ps = [[NSMutableArray alloc] initWithArray:fatherConCansets];
-        [allFilter_ps addObjectsFromArray:[SMGUtils convertArr:fatherConCansets convertItemArrBlock:^NSArray *(AIKVPointer *obj) {
-            AIFoNodeBase *fatherConConset = [SMGUtils searchNode:obj];
-            return Ports2Pits([AINetUtils conPorts_All:fatherConConset]);
-        }]];
-        return allFilter_ps;
+        return [fatherFo getTransferConCansets:sceneModel.scene];
     }
-    //4. father时: 取i及其抽象 => 作为过滤部分 (参考29069-todo5.4-公式减数);
+    //3. father时: 取i及其抽象 => 作为过滤部分 (参考29069-todo5.4-公式减数);
     else if (sceneModel.type == SceneTypeFather) {
-        //5. 取到i的conCansets;
+        //4. 从iScene中找出与当前scene有迁移关联的cansets并返回 (参考29069-todo5.4 & 29074);
         AIFoNodeBase *iFo = [SMGUtils searchNode:sceneModel.base.scene];
-        NSArray *iConCansets = [iFo getConCansets:iFo.count];
-        
-        //6. 将filter_ps收集并返回 (参考29069-todo5.4);
-        NSMutableArray *allFilter_ps = [[NSMutableArray alloc] initWithArray:iConCansets];
-        [allFilter_ps addObjectsFromArray:[SMGUtils convertArr:iConCansets convertItemArrBlock:^NSArray *(AIKVPointer *obj) {
-            AIFoNodeBase *iConConset = [SMGUtils searchNode:obj];
-            return Ports2Pits([AINetUtils absPorts_All:iConConset]);
-        }]];
-        return allFilter_ps;
+        return [iFo getTransferAbsCansets:sceneModel.scene];
     }
     return nil;
 }

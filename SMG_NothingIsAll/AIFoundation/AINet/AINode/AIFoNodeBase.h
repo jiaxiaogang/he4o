@@ -17,12 +17,14 @@
 @interface AIFoNodeBase : AINodeBase
 
 /**
- *  MARK:--------------------向上传 (参考29069-todo10.2)--------------------
+ *  MARK:--------------------迁移关联 (上传) (参考29069-todo10.2)--------------------
+ *  @desc 工作在场景fo下,在cansetFo下不工作;
  */
 @property (strong, nonatomic) NSMutableArray *transferAbsPorts;
 
 /**
- *  MARK:--------------------向下承 (参考29069-todo10.2)--------------------
+ *  MARK:--------------------迁移关联 (下承) (参考29069-todo10.2)--------------------
+ *  @desc 工作在场景fo下,在cansetFo下不工作;
  */
 @property (strong, nonatomic) NSMutableArray *transferConPorts;
 
@@ -160,5 +162,19 @@
  *  MARK:--------------------更新一条候选--------------------
  */
 -(void) updateConCanset:(AIKVPointer*)newConCansetFo targetIndex:(NSInteger)targetIndex;
+
+//MARK:===============================================================
+//MARK:                     < transfer组 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------找出交层场景中,有哪些canset是与当前fo迁移关联的--------------------
+ */
+-(NSArray*) getTransferAbsCansets:(AIKVPointer*)absScene_p;
+
+/**
+ *  MARK:--------------------找出似层场景中,有哪些canset是与当前fo迁移关联的--------------------
+ */
+-(NSArray*) getTransferConCansets:(AIKVPointer*)conScene_p;
 
 @end

@@ -230,6 +230,38 @@
     [self updateEffectStrong:1 solutionFo:newConCansetFo status:ES_HavEff];
 }
 
+//MARK:===============================================================
+//MARK:                     < transfer组 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------找出交层场景中,有哪些canset是与当前fo迁移关联的--------------------
+ */
+-(NSArray*) getTransferAbsCansets:(AIKVPointer*)absScene_p {
+    return [self filterCansetsWithScene:absScene_p fromTransferPorts:self.transferAbsPorts];
+}
+/**
+ *  MARK:--------------------找出似层场景中,有哪些canset是与当前fo迁移关联的--------------------
+ */
+-(NSArray*) getTransferConCansets:(AIKVPointer*)conScene_p {
+    return [self filterCansetsWithScene:conScene_p fromTransferPorts:self.transferConPorts];
+}
+
+//MARK:===============================================================
+//MARK:                     < privateMethod >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------从fromTransferPorts中筛选出: 场景是scene的并转成cansets格式--------------------
+ */
+-(NSArray*) filterCansetsWithScene:(AIKVPointer*)scene fromTransferPorts:(NSArray*)fromTransferPorts {
+    return [SMGUtils convertArr:[SMGUtils filterArr:fromTransferPorts checkValid:^BOOL(AITransferPort *port) {
+        return [port.scene isEqual:scene];
+    }] convertBlock:^id(AITransferPort *port) {
+        return port.canset;
+    }];
+}
+
 /**
  *  MARK:--------------------NSCoding--------------------
  */
