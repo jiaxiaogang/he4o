@@ -221,13 +221,14 @@
 #define Nodes2Pits(nodes) [SMGUtils convertPointersFromNodes:nodes]
 #define TOModels2Pits(toModels) [TOUtils convertPointersFromTOModels:toModels];
 
-//AnalogType转字符串
+//Type转字符串
 #define ATType2Str(type) [NSLog_Extension convertATType2Desc:type]
 #define TOStatus2Str(status) [NSLog_Extension convertTOStatus2Desc:status]
 #define TIStatus2Str(status) [NSLog_Extension convertTIStatus2Desc:status]
 #define EffectStatus2Str(status) [NSLog_Extension convertEffectStatus2Desc:status]
 #define Class2Str(c) [NSLog_Extension convertClass2Desc:c]
 #define Mvp2DeltaStr(mv_p) [NSLog_Extension convertMvp2DeltaDesc:mv_p]
+#define SceneType2Str(type) [NSLog_Extension convertSceneType2Desc:type]
 
 //Double转Str
 #define Double2Str_NDZ(value) [NSString double2Str_NoDotZero:value]
@@ -375,6 +376,9 @@
 #define Log4Solution true
 #define Log4Solution_Slow true
 #define Log4Solution_Fast true
+
+//TCCanset日志开关
+#define Log4TCCanset true
 
 //MARK:===============================================================
 //MARK:                     < 系统模块开关 >

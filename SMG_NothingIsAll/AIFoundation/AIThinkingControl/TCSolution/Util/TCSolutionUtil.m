@@ -179,27 +179,26 @@
  */
 +(AICansetModel*) rSolution_Slow:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps {
     //1. 收集cansetModels候选集;
-    NSArray *sceneModels = [self getSceneFos_SlowV3:demand];
-    NSLog(@"第1步 R候选集数:%ld",sceneModels.count);
+    NSArray *sceneModels = [TCScene getSceneTree:demand];
 
     //2. 每个cansetModel转solutionModel;
-    NSMutableArray *cansetModels = [[NSMutableArray alloc] init];
-    for (AISceneModel *sceneModel in sceneModels) {
-
+    NSArray *cansetModels = [SMGUtils convertArr:sceneModels convertItemArrBlock:^NSArray *(AISceneModel *sceneModel) {
         //3. 取出overrideCansets;
         NSArray *cansets = ARRTOOK([TCCanset getOverrideCansets:sceneModel]);
-        for (AIKVPointer *canset in cansets) {
+        NSArray *itemCansetModels = [SMGUtils convertArr:cansets convertBlock:^id(AIKVPointer *canset) {
             //4. cansetModel转换器参数准备;
             NSInteger aleardayCount = sceneModel.cutIndex + 1;
             AIMatchFoModel *pFo = [SMGUtils filterSingleFromArr:demand.validPFos checkValid:^BOOL(AIMatchFoModel *item) {
                 return [item.matchFo isEqual:sceneModel.getRoot.scene];
             }];
-
+            
             //4. 过滤器 & 转cansetModels候选集 (参考26128-第1步 & 26161-1&2&3);
-            AICansetModel *cansetModel = [self convert2CansetModel:canset sceneFo:sceneModel.scene basePFoOrTargetFoModel:pFo ptAleardayCount:aleardayCount isH:false sceneModel:sceneModel];
-            if (cansetModel) [cansetModels addObject:cansetModel];
-        }
-    }
+            return [self convert2CansetModel:canset sceneFo:sceneModel.scene basePFoOrTargetFoModel:pFo ptAleardayCount:aleardayCount isH:false sceneModel:sceneModel];
+        }];
+        if (Log4TCCanset && cansets.count > 0) NSLog(@"\t item场景(%@):%@ 取得候选数:%ld 转成候选模型数:%ld",SceneType2Str(sceneModel.type),Pit2FStr(sceneModel.scene),cansets.count,itemCansetModels.count);
+        return itemCansetModels;
+    }];
+    NSLog(@"第2步 转为候选集 总数:%ld",cansetModels.count);
     PrintDebugCodeBlock();//将TCSolutionUtil的代码块执行情况打出来;
 
     //5. 慢思考;
@@ -309,13 +308,6 @@
 +(NSArray*) getCansetFos_SlowV2:(AIKVPointer*)pFoOrTargetFoOfMatch_p targetIndex:(NSInteger)targetIndex{
     AIFoNodeBase *matchFo = [SMGUtils searchNode:pFoOrTargetFoOfMatch_p];
     return [matchFo getConCansets:targetIndex];
-}
-
-/**
- *  MARK:--------------------cansets--------------------
- */
-+(NSArray*) getSceneFos_SlowV3:(ReasonDemandModel*)demand {
-    return [TCScene getSceneTree:demand];
 }
 
 +(NSInteger) getRAleardayCount:(ReasonDemandModel*)rDemand pFo:(AIMatchFoModel*)pFo{

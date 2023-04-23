@@ -80,6 +80,7 @@
     [result addObjectsFromArray:iModels];
     [result addObjectsFromArray:fatherModels];
     [result addObjectsFromArray:brotherModels];
+    NSLog(@"第1步 R场景树枝点数 I:%ld + Father:%ld + Brother:%ld = 总:%ld",iModels.count,fatherModels.count,brotherModels.count,result.count);
     return result;
 }
 

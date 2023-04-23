@@ -13,6 +13,8 @@
 /**
  *  MARK:--------------------overrideCansets算法 (参考29069-todo5)--------------------
  *  @desc 当前下面挂载的且有效的cansets: (当前cansets - 用优先级更高一级cansets);
+ *  @version
+ *      2023.04.23: BUG_修复差集取成了交集,导致总返回0条;
  */
 +(NSArray*) getOverrideCansets:(AISceneModel*)sceneModel {
     //1. 数据准备;
@@ -23,12 +25,18 @@
         //3. 当前是brother时: (brother有效canset = brother.conCansets - father.conCansets) (参考29069-todo5.3);
         NSArray *brotherConCansets = [selfFo getConCansets:selfFo.count];
         NSArray *fatherFilter_ps = [TCCanset getFilter_ps:sceneModel];
-        return [SMGUtils filterSame_ps:fatherFilter_ps parent_ps:brotherConCansets];
+        if (fatherFilter_ps.count > 0) {
+            NSLog(@"测下override过滤生效");
+        }
+        return [SMGUtils removeSub_ps:fatherFilter_ps parent_ps:brotherConCansets];
     } else if (sceneModel.type == SceneTypeFather) {
         //4. 当前是father时: (father有效canset = father.conCansets - i.conCansets) (参考29069-todo5.4);
         NSArray *fatherConCansets = [selfFo getConCansets:selfFo.count];
         NSArray *iFilter_ps = [TCCanset getFilter_ps:sceneModel];
-        return [SMGUtils filterSame_ps:iFilter_ps parent_ps:fatherConCansets];
+        if (fatherFilter_ps.count > 0) {
+            NSLog(@"测下override过滤生效");
+        }
+        return [SMGUtils removeSub_ps:iFilter_ps parent_ps:fatherConCansets];
     } else if (sceneModel.type == SceneTypeI) {
         //4. 当前是i时: (i有效canset = i.conCansets) (参考29069-todo5.5);
         NSArray *iConCansets = [selfFo getConCansets:selfFo.count];

@@ -85,4 +85,11 @@
     return @"⇅";
 }
 
++(NSString*) convertSceneType2Desc:(SceneType)type {
+    if (type == SceneTypeI) return @"I";
+    if (type == SceneTypeFather) return @"Father";
+    if (type == SceneTypeBrother) return @"Brother";
+    return @"";
+}
+
 @end
