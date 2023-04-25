@@ -443,8 +443,9 @@
  *  @result 返回cansetFo前段匹配度 & 以及已匹配的cutIndex截点;
  */
 +(AICansetModel*) convert2CansetModel:(AIKVPointer*)cansetFo_p sceneFo:(AIKVPointer*)sceneFo_p basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel ptAleardayCount:(NSInteger)ptAleardayCount isH:(BOOL)isH sceneModel:(AISceneModel*)sceneModel {
+    BOOL debugMode = sceneModel.type == SceneTypeBrother && (sceneModel.scene.pointerId == 678 || sceneModel.scene.pointerId == 431);
     //1. 数据准备 & 复用indexDic & 取出pFoOrTargetFo;
-    AddDebugCodeBlock(@"convert2Canset 0");
+    if (debugMode) AddDebugCodeBlock(@"convert2Canset 0");
     AIFoNodeBase *matchFo = [SMGUtils searchNode:sceneFo_p];
     AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
     NSInteger matchTargetIndex = isH ? ptAleardayCount : matchFo.count;
@@ -453,13 +454,13 @@
     int minCount = isH ? 2 : 1;
     if (Log4SolutionFilter) NSLog(@"S过滤器 checkItem: %@",Pit2FStr(cansetFo_p));
     if (cansetFo.count < minCount) return nil; //过滤1: 过滤掉长度不够的 (因为前段全含至少要1位,中段修正也至少要0位,后段H目标要1位R要0位);
-    AddDebugCodeBlock(@"convert2Canset 1");
+    if (debugMode) AddDebugCodeBlock(@"convert2Canset 1");
     
     //3. 惰性期 (阈值为2: EFF默认值为1,达到阈值时触发) (参考28182-todo9 & 28185-todo6);
     if (Switch4DuoXinQi) {
         AIEffectStrong *effStrong = [TOUtils getEffectStrong:matchFo effectIndex:matchFo.count solutionFo:cansetFo_p];
         if (effStrong.hStrong <= 2) return nil;
-        AddDebugCodeBlock(@"convert2Canset 2");
+        if (debugMode) AddDebugCodeBlock(@"convert2Canset 2");
         //NSLog(@"惰性期通过:%@",CLEANSTR(cansetFo.spDic));
     }
 
@@ -475,9 +476,17 @@
     //8. canset目标下标 (R时canset没有mv,所以要用count-1);
     NSInteger cansetTargetIndex = isH ? NUMTOOK([indexDic objectForKey:@(ptAleardayCount)]).integerValue : cansetFo.count - 1;
     if (cansetCutIndex < matchCutIndex) return nil; //过滤2: 判断canset前段是否有遗漏 (参考27224);
-    AddDebugCodeBlock(@"convert2Canset 3");
+    if (debugMode) AddDebugCodeBlock(@"convert2Canset 3");
+    
+    //TODOTOMORROW20230426: 经测29075BUG,这里的canset全是长度1的无效canset,查下为什么第2步第1次时,F678和F431他俩没挂上有用的canset?
+    if (debugMode) NSLog(@"打出当前debug的scene下的cansets: %ld %ld %@",cansetFo.count,cansetCutIndex + 1,Pit2FStr(cansetFo_p));
+    
+    
+    
+    
+    
     if (cansetFo.count <= cansetCutIndex + 1) return nil; //过滤3: 过滤掉canset没后段的 (没可行为化的东西) (参考28052-4);
-    AddDebugCodeBlock(@"convert2Canset 4");
+    if (debugMode) AddDebugCodeBlock(@"convert2Canset 4");
 
     //9. 递归找到protoFo;
     AIMatchFoModel *pFo = [self getPFo:cansetFo_p basePFoOrTargetFoModel:basePFoOrTargetFoModel];
@@ -487,12 +496,12 @@
     //10. 判断protoFo对cansetFo条件满足 (返回条件满足的每帧间映射);
     NSDictionary *protoFrontIndexDic = [self getFrontIndexDic:protoFo absFo:cansetFo absCutIndex:cansetCutIndex];
     if (!DICISOK(protoFrontIndexDic)) return nil; //过滤4: 条件不满足时,直接返回nil (参考28052-2 & 28084-3);
-    AddDebugCodeBlock(@"convert2Canset 5");
+    if (debugMode) AddDebugCodeBlock(@"convert2Canset 5");
 
     //4. 计算前段竞争值之匹配值 (参考28084-4);
     CGFloat frontMatchValue = [AINetUtils getMatchByIndexDic:protoFrontIndexDic absFo:cansetFo_p conFo:protoFo_p callerIsAbs:true];
     if (frontMatchValue == 0) return nil; //过滤5: 前段不匹配时,直接返回nil (参考26128-1-3);
-    AddDebugCodeBlock(@"convert2Canset 6");
+    if (debugMode) AddDebugCodeBlock(@"convert2Canset 6");
 
     //5. 计算前段竞争值之强度竞争值 (参考28086-todo1);
     NSDictionary *matchFrontIndexDic = [SMGUtils filterDic:indexDic checkValid:^BOOL(NSNumber *key, id value) {
@@ -513,7 +522,7 @@
         }];
         CGFloat backMatchValue = [AINetUtils getMatchByIndexDic:backIndexDic absFo:sceneFo_p conFo:cansetFo_p callerIsAbs:true];
         if (backMatchValue == 0) return nil; //过滤6: 后段不匹配时,直接返回nil;
-        AddDebugCodeBlock(@"convert2Canset endH");
+        if (debugMode) AddDebugCodeBlock(@"convert2Canset endH");
 
         //7. 后段强度竞争值;
         NSInteger backStrongValue = [AINetUtils getSumConStrongByIndexDic:backIndexDic matchFo:sceneFo_p cansetFo:cansetFo_p];
@@ -525,7 +534,7 @@
                                        cutIndex:cansetCutIndex targetIndex:cansetTargetIndex basePFoOrTargetFoModel:basePFoOrTargetFoModel
                                  baseSceneModel:sceneModel];
     }else{
-        AddDebugCodeBlock(@"convert2Canset endR");
+        if (debugMode) AddDebugCodeBlock(@"convert2Canset endR");
         //11. 后段: R不判断后段;
         return [AICansetModel newWithCansetFo:cansetFo_p sceneFo:sceneFo_p protoFrontIndexDic:protoFrontIndexDic matchFrontIndexDic:matchFrontIndexDic frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue
                                  midEffectScore:midEffectScore midStableScore:midStableScore
