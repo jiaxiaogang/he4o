@@ -480,7 +480,8 @@
     
     //TODOTOMORROW20230426: 经测29075BUG,这里的canset全是长度1的无效canset,查下为什么第2步第1次时,F678和F431他俩没挂上有用的canset?
     if (debugMode) NSLog(@"打出当前debug的scene下的cansets: %ld %ld %@",cansetFo.count,cansetCutIndex + 1,Pit2FStr(cansetFo_p));
-    
+    //2. 再重测一次第1次,第2次时又有长度>1的canset了
+    //3. 但还是在if (!DICISOK(protoFrontIndexDic))时又return nil了,,,后面主要查这里,brother很难前段条件满足,兼容下brother的情况;
     
     
     
