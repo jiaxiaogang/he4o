@@ -361,7 +361,15 @@
  *      2023.02.04: 初版,为解决条件满足不完全的问题,此方法将尝试从proto找出canset前段的每帧 (参考28052);
  *  @result 在proto中全找到canset的前段则返回indexDic映射,未全找到时(条件不满足)返回nil;
  */
-+(NSDictionary*) getFrontIndexDic:(AIFoNodeBase*)protoFo absFo:(AIFoNodeBase*)absFo absCutIndex:(NSInteger)absCutIndex {
++(NSDictionary*) getFrontIndexDic:(AIFoNodeBase*)protoFo absFo:(AIFoNodeBase*)absFo absCutIndex:(NSInteger)absCutIndex sceneModel:(AISceneModel*)sceneModel{
+    //TODOTOMORROW20230426:
+    //1. brother时,canset长度>1时,此处protoFrontIndexDic又return nil了,已验证确实是brother很难前段条件满足,兼容下brother的情况;
+    //2. 主要在mIsC,改为protoAlg和cansetAlg都指向了fatherAlg (用indexDic映射来判断即可);
+    
+    
+    
+    
+    
     //1. 数据准备;
     NSMutableDictionary *indexDic = [[NSMutableDictionary alloc] init];
     if (!protoFo || !absFo) return nil;
@@ -477,14 +485,7 @@
     NSInteger cansetTargetIndex = isH ? NUMTOOK([indexDic objectForKey:@(ptAleardayCount)]).integerValue : cansetFo.count - 1;
     if (cansetCutIndex < matchCutIndex) return nil; //过滤2: 判断canset前段是否有遗漏 (参考27224);
     if (debugMode) AddDebugCodeBlock(@"convert2Canset 3");
-    
-    //TODOTOMORROW20230426: 经测29075BUG,这里的canset全是长度1的无效canset,查下为什么第2步第1次时,F678和F431他俩没挂上有用的canset?
     if (debugMode) NSLog(@"打出当前debug的scene下的cansets: %ld %ld %@",cansetFo.count,cansetCutIndex + 1,Pit2FStr(cansetFo_p));
-    //2. 再重测一次第1次,第2次时又有长度>1的canset了
-    //3. 但还是在if (!DICISOK(protoFrontIndexDic))时又return nil了,,,后面主要查这里,brother很难前段条件满足,兼容下brother的情况;
-    
-    
-    
     
     if (cansetFo.count <= cansetCutIndex + 1) return nil; //过滤3: 过滤掉canset没后段的 (没可行为化的东西) (参考28052-4);
     if (debugMode) AddDebugCodeBlock(@"convert2Canset 4");
@@ -495,7 +496,7 @@
     AIFoNodeBase *protoFo = [SMGUtils searchNode:protoFo_p];
 
     //10. 判断protoFo对cansetFo条件满足 (返回条件满足的每帧间映射);
-    NSDictionary *protoFrontIndexDic = [self getFrontIndexDic:protoFo absFo:cansetFo absCutIndex:cansetCutIndex];
+    NSDictionary *protoFrontIndexDic = [self getFrontIndexDic:protoFo absFo:cansetFo absCutIndex:cansetCutIndex sceneModel:sceneModel];
     if (!DICISOK(protoFrontIndexDic)) return nil; //过滤4: 条件不满足时,直接返回nil (参考28052-2 & 28084-3);
     if (debugMode) AddDebugCodeBlock(@"convert2Canset 5");
 
