@@ -11,8 +11,13 @@
 @interface TCCanset : NSObject
 
 /**
- *  MARK:--------------------overrideCansets算法 (参考29069-todo5)--------------------
+ *  MARK:--------------------将sceneModel转成canset_ps (override算法) (参考29069-todo5)--------------------
  */
 +(NSArray*) getOverrideCansets:(AISceneModel*)sceneModel;
+
+/**
+ *  MARK:--------------------将canset_p转成cansetModel--------------------
+ */
++(AICansetModel*) convert2CansetModel:(AIKVPointer*)cansetFo_p sceneFo:(AIKVPointer*)sceneFo_p basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel ptAleardayCount:(NSInteger)ptAleardayCount isH:(BOOL)isH sceneModel:(AISceneModel*)sceneModel;
 
 @end
