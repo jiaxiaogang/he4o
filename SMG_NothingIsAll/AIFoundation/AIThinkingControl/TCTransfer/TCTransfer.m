@@ -166,4 +166,30 @@
     return fatherCanset;
 }
 
+//MARK:===============================================================
+//MARK:                     < transferAlg >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------cansetAlg迁移算法 (29075-方案3)--------------------
+ *  @desc 用于将brother或father的canset转成iAlg返回;
+ */
++(void) transferAlg:(AICansetModel*)bestCansetModel complate:(void(^)(AIKVPointer *brotherCanset,AIKVPointer *fatherCanset,AIKVPointer *iCanset))complate {
+    
+}
+
+/**
+ *  MARK:--------------------fatherAlg 2 iAlg--------------------
+ */
++(AIKVPointer*) transferAlgJiCen:(AIKVPointer*)fatherCanset fatherCansetTargetIndex:(NSInteger)fatherCansetTargetIndex fatherScene:(AIKVPointer*)fatherScene_p iScene_p:(AIKVPointer*)iScene_p {
+    return nil;
+}
+
+/**
+ *  MARK:--------------------brotherAlg 2 fatherAlg--------------------
+ */
++(AIKVPointer*) transfer4AlgTuiJu:(AIKVPointer*)brotherCanset brotherCansetTargetIndex:(NSInteger)brotherCansetTargetIndex brotherScene:(AIKVPointer*)brotherScene_p fatherScene_p:(AIKVPointer*)fatherScene_p {
+    return nil;
+}
+
 @end
