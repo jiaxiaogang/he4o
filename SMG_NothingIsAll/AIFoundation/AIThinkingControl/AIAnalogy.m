@@ -230,6 +230,8 @@
     //8. 将抽象Canset挂到sceneFo下;
     [sceneFo updateConCanset:absFo.pointer targetIndex:sceneFo.count];
     
+    //TODOTOMORROW20230428: 为此处absCanset加上与scene的indexDic A;
+    
     //8. oldCanset与absCanset新关联时: 取出ass中旧有的effStrong模型继承给absFo (参考29032-todo2.2);
     if (!outConAbsIsRelate) {
         AIEffectStrong *effStrong = [sceneFo getEffectStrong:sceneFo.count solutionFo:oldCanset.pointer];

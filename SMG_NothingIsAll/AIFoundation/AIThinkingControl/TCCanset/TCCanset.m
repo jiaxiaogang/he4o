@@ -246,24 +246,22 @@
             AIKVPointer *protoAlg = ARR_INDEX(protoFo.content_ps, protoI);
             //3. B源于cansetFo,此处只判断B是1层抽象 (参考27161-调试1&调试2);
             //3. 单条判断方式: 此处proto抽象仅指向刚识别的matchAlgs,所以与contains等效 (参考28052-3);
+            AIKVPointer *transferAlg = [TCTransfer transferAlg:sceneModel canset:cansetFo cansetIndex:cansetI];
+            BOOL mIsC = [TOUtils mIsC_1:protoAlg c:transferAlg];
+            
+            //TODOTOMORROW20230428: 测试:
             if (sceneModel.type == SceneTypeBrother) {
-                //a. brother时,优先取为fatherA,
-                
-                
-                
-                
-                //TODOTOMORROW20230426:
-                //1. brother时,canset长度>1时,此处protoFrontIndexDic又return nil了,已验证确实是brother很难前段条件满足,兼容下brother的情况;
-                //2. 主要在mIsC,改为protoAlg和cansetAlg都指向了fatherAlg (用indexDic映射来判断即可);
-                //3. 这里对brother和father都需要另外支持一下;
-                //4. 看复用下,和迁移时的算法一样,这里不迁移fo,但复用下迁移alg的代码...
-                
                 NSLog(@"%@ %@ %@",Pit2FStr(protoAlg),Pit2FStr(cansetAlg),Pit2FStr(sceneModel.base.scene));
                 NSLog(@"");
             }else if (sceneModel.type == SceneTypeFather) {
-                [TOUtils mIsC_2:nil c:nil];
+                NSLog(@"%@ %@ %@",Pit2FStr(protoAlg),Pit2FStr(cansetAlg),Pit2FStr(sceneModel.base.scene));
+                NSLog(@"");
+            }else if (sceneModel.type == SceneTypeI) {
+                NSLog(@"%@ %@ %@",Pit2FStr(protoAlg),Pit2FStr(cansetAlg),Pit2FStr(sceneModel.base.scene));
+                NSLog(@"");
             }
-            BOOL mIsC = [TOUtils mIsC_1:protoAlg c:cansetAlg];
+            
+            
             if (mIsC) {
                 //4. 找到了 & 记录protoI的进度;
                 findItem = true;

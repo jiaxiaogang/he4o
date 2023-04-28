@@ -20,4 +20,9 @@
  */
 +(void) transfer:(AICansetModel*)bestCansetModel complate:(void(^)(AIKVPointer *brotherCanset,AIKVPointer *fatherCanset,AIKVPointer *iCanset))complate;
 
+/**
+ *  MARK:--------------------cansetAlg迁移算法 (29075-方案3)--------------------
+ */
++(AIKVPointer*) transferAlg:(AISceneModel*)sceneModel canset:(AIFoNodeBase*)canset cansetIndex:(NSInteger)cansetIndex;
+
 @end
