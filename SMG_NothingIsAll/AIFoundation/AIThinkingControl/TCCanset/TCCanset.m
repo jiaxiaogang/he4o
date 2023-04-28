@@ -228,6 +228,7 @@
  *  @param cansetCutIndex : 其中cansetFo执行到的最大值 (含cansetCutIndex) (是ptAleardayCount-1对应的canset下标);
  *  @version
  *      2023.02.04: 初版,为解决条件满足不完全的问题,此方法将尝试从proto找出canset前段的每帧 (参考28052);
+ *      2023.04.28: 条件满足兼容迁移alg的情况 (参考29075-方案3);
  *  @result 在proto中全找到canset的前段则返回indexDic映射,未全找到时(条件不满足)返回nil;
  */
 +(NSDictionary*) getFrontIndexDic:(AIFoNodeBase*)protoFo cansetFo:(AIFoNodeBase*)cansetFo cansetCutIndex:(NSInteger)cansetCutIndex sceneModel:(AISceneModel*)sceneModel{
@@ -249,7 +250,10 @@
             AIKVPointer *transferAlg = [TCTransfer transferAlg:sceneModel canset:cansetFo cansetIndex:cansetI];
             BOOL mIsC = [TOUtils mIsC_1:protoAlg c:transferAlg];
             
-            //TODOTOMORROW20230428: 测试:
+            //TODOTOMORROW20230428:
+            //1. 下面debug代码回测下29075的BUG;
+            //2. 看下中后段的条件满足,用不用 也兼容支持一下...
+            
             if (sceneModel.type == SceneTypeBrother) {
                 NSLog(@"%@ %@ %@",Pit2FStr(protoAlg),Pit2FStr(cansetAlg),Pit2FStr(sceneModel.base.scene));
                 NSLog(@"");
