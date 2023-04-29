@@ -170,7 +170,7 @@
                 if (curRate < 0.5) {
                     [sameValue_ps addObject:assV_p];
                 } else {
-                    NSLog(@"> 当前A%ld<%@>比A%ld<%@>的缺口:%.2f / 总缺口%.2f = 当前责任%.2f",protoA_p.pointerId,Pit2FStr(protoV_p),assA_p.pointerId,Pit2FStr(assV_p),curQueKou,sumQueKou,curRate);
+                    NSLog(@"> 当前A%ld<%@>比A%ld<%@>的缺口:%.2f / 总缺口%.2f = 当前责任%.2f",protoA_p.pointerId,Pit2FStr(protoV_p),(long)assA_p.pointerId,Pit2FStr(assV_p),curQueKou,sumQueKou,curRate);
                 }
                 
                 //6. break继续判断proto的下个V码;
@@ -190,6 +190,7 @@
  *      2023.04.07: 关闭Canset类比 (参考29059-改动);
  *      2023.04.10: 场景包含帧的类比用mIsC判断成立后,直接采用absAlg (参考29067-todo1.1);
  *      2023.04.19: 取消EFF+1,因为迁移完成不表示已正向发生 (参考29069-todo12.1);
+ *      2023.04.29: 得出absCanset和scene的indexDic (参考29076-todo2);
  */
 +(AINetAbsFoNode*) analogyCansetFo:(NSDictionary*)indexDic newCanset:(AIFoNodeBase*)newCanset oldCanset:(AIFoNodeBase*)oldCanset sceneFo:(AIFoNodeBase*)sceneFo {
     //1. 类比orders的规律
@@ -230,7 +231,30 @@
     //8. 将抽象Canset挂到sceneFo下;
     [sceneFo updateConCanset:absFo.pointer targetIndex:sceneFo.count];
     
-    //TODOTOMORROW20230428: 为此处absCanset加上与scene的indexDic A;
+    //8. 根据scene与oldCanset的映射 与 oldCanset与absCanset的映射 得出 absCanset与scene的映射 (参考29076-todo2);
+    NSDictionary *sceneNewCansetIndexDic = [sceneFo getConIndexDic:newCanset.p];
+    NSMutableDictionary *sceneAbsCansetIndexDic = [[NSMutableDictionary alloc] init];
+    for (id sceneIndex in sceneNewCansetIndexDic.allKeys) {
+        id newCansetIndex = [sceneNewCansetIndexDic objectForKey:sceneIndex];
+        id absCansetIndex = ARR_INDEX([newIndexDic allKeysForObject:newCansetIndex], 0);
+        if (absCansetIndex) {
+            [sceneAbsCansetIndexDic setObject:absCansetIndex forKey:sceneIndex];
+        }
+    }
+    [absFo updateIndexDic:sceneFo indexDic:sceneAbsCansetIndexDic];
+    
+    //debug调试代码 ===== START =====:
+    NSDictionary *sceneOldCansetIndexDic = [sceneFo getConIndexDic:oldCanset.p];
+    NSMutableDictionary *tmpResult = [[NSMutableDictionary alloc] init];
+    for (id sceneIndex in sceneOldCansetIndexDic.allKeys) {
+        id oldCansetIndex = [sceneOldCansetIndexDic objectForKey:sceneIndex];
+        id absCansetIndex = ARR_INDEX([oldIndexDic allKeysForObject:oldCansetIndex], 0);
+        if (absCansetIndex) {
+            [tmpResult setObject:absCansetIndex forKey:sceneIndex];
+        }
+    }
+    NSLog(@"测试: %@ 对比 %@ (需一致,如不一致查BUG)",CLEANSTR(sceneAbsCansetIndexDic),CLEANSTR(tmpResult));
+    //debug调试代码 ===== END =====:
     
     //8. oldCanset与absCanset新关联时: 取出ass中旧有的effStrong模型继承给absFo (参考29032-todo2.2);
     if (!outConAbsIsRelate) {
