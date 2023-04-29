@@ -133,6 +133,12 @@
     if (!DICISOK(protoFrontIndexDic)) return nil; //过滤4: 条件不满足时,直接返回nil (参考28052-2 & 28084-3);
     if (debugMode) AddDebugCodeBlock(@"convert2Canset 5");
     
+    //TODOTOMORROW20230429:
+    //前段条件满足兼容迁移了,但此处匹配度还没兼容...
+    
+    
+    
+    
     //4. 计算前段竞争值之匹配值 (参考28084-4);
     CGFloat frontMatchValue = [AINetUtils getMatchByIndexDic:protoFrontIndexDic absFo:cansetFo_p conFo:protoFo_p callerIsAbs:true];
     if (frontMatchValue == 0) return nil; //过滤5: 前段不匹配时,直接返回nil (参考26128-1-3);
@@ -250,18 +256,29 @@
             AIKVPointer *transferAlg = [TCTransfer transferAlg:sceneModel canset:cansetFo cansetIndex:cansetI];
             BOOL mIsC = [TOUtils mIsC_1:protoAlg c:transferAlg];
             
-            //TODOTOMORROW20230428: 下面debug代码回测下29075的BUG;
+            //TODOTEST20230428: 下面debug代码回测下29075的BUG (测段时间ok后,这里debug代码删掉);
             if (sceneModel.type == SceneTypeBrother) {
-                NSLog(@"%@ %@ %@",Pit2FStr(protoAlg),Pit2FStr(cansetAlg),Pit2FStr(sceneModel.base.scene));
+                NSLog(@"canset:%@",Pit2FStr(cansetAlg));
+                NSLog(@"transfer:%@",Pit2FStr(transferAlg));
+                NSLog(@"proto:%@",Pit2FStr(protoAlg));
+                NSLog(@"brotherScene:%@",Pit2FStr(sceneModel.scene));
+                NSLog(@"fatherScene:%@",Pit2FStr(sceneModel.base.scene));
+                NSLog(@"iScene:%@",Pit2FStr(sceneModel.base.base.scene));
                 NSLog(@"");
             }else if (sceneModel.type == SceneTypeFather) {
-                NSLog(@"%@ %@ %@",Pit2FStr(protoAlg),Pit2FStr(cansetAlg),Pit2FStr(sceneModel.base.scene));
+                NSLog(@"canset:%@",Pit2FStr(cansetAlg));
+                NSLog(@"transfer:%@",Pit2FStr(transferAlg));
+                NSLog(@"proto:%@",Pit2FStr(protoAlg));
+                NSLog(@"fatherScene:%@",Pit2FStr(sceneModel.scene));
+                NSLog(@"iScene:%@",Pit2FStr(sceneModel.base.scene));
                 NSLog(@"");
             }else if (sceneModel.type == SceneTypeI) {
-                NSLog(@"%@ %@ %@",Pit2FStr(protoAlg),Pit2FStr(cansetAlg),Pit2FStr(sceneModel.base.scene));
+                NSLog(@"canset:%@",Pit2FStr(cansetAlg));
+                NSLog(@"transfer:%@",Pit2FStr(transferAlg));
+                NSLog(@"proto:%@",Pit2FStr(protoAlg));
+                NSLog(@"iScene:%@",Pit2FStr(sceneModel.scene));
                 NSLog(@"");
             }
-            
             
             if (mIsC) {
                 //4. 找到了 & 记录protoI的进度;
@@ -281,7 +298,7 @@
     }
     
     //6. 全找到,则成功;
-    if (Log4SceneIsOk) NSLog(@"条件满足通过:%@ (cansetCutIndex:%ld fromProtoFo:%ld)",Fo2FStr(cansetFo),cansetCutIndex,protoFo.pointer.pointerId);
+    if (Log4SceneIsOk) NSLog(@"前段条件满足通过:%@ (cansetCutIndex:%ld fromProtoFo:%ld)",Fo2FStr(cansetFo),cansetCutIndex,protoFo.pointer.pointerId);
     return indexDic;
 }
 
