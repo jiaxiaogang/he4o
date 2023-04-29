@@ -45,6 +45,10 @@
     }];
 }
 
+-(AIKVPointer*) p {
+    return self.pointer;
+}
+
 /**
  *  MARK:--------------------设置引用--------------------
  *  @version

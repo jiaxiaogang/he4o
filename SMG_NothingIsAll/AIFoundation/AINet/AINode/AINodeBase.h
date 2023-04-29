@@ -40,5 +40,6 @@
  *  MARK:--------------------返回content长度--------------------
  */
 -(NSInteger) count;
+-(AIKVPointer*) p;
 
 @end

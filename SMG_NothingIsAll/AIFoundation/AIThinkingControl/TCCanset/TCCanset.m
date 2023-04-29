@@ -250,10 +250,7 @@
             AIKVPointer *transferAlg = [TCTransfer transferAlg:sceneModel canset:cansetFo cansetIndex:cansetI];
             BOOL mIsC = [TOUtils mIsC_1:protoAlg c:transferAlg];
             
-            //TODOTOMORROW20230428:
-            //1. 下面debug代码回测下29075的BUG;
-            //2. 看下中后段的条件满足,用不用 也兼容支持一下...
-            
+            //TODOTOMORROW20230428: 下面debug代码回测下29075的BUG;
             if (sceneModel.type == SceneTypeBrother) {
                 NSLog(@"%@ %@ %@",Pit2FStr(protoAlg),Pit2FStr(cansetAlg),Pit2FStr(sceneModel.base.scene));
                 NSLog(@"");
