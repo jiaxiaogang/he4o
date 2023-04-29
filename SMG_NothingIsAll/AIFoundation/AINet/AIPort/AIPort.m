@@ -11,7 +11,6 @@
 
 @implementation AIPort
 
-
 /**
  *  MARK:--------------------NSCoding--------------------
  */
@@ -32,7 +31,6 @@
     [coder encodeObject:self.header forKey:@"header"];
     [coder encodeBool:self.targetHavMv forKey:@"targetHavMv"];
 }
-
 
 //MARK:===============================================================
 //MARK:                     < method >

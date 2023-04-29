@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface AITransferPort : NSObject
+@interface AITransferPort : NSObject <NSCoding>
 
 +(AITransferPort*) newWithScene:(AIKVPointer*)scene canset:(AIKVPointer*)canset;
 

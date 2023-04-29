@@ -170,7 +170,7 @@
                 if (curRate < 0.5) {
                     [sameValue_ps addObject:assV_p];
                 } else {
-                    NSLog(@"> 当前A%ld<%@>比A%ld<%@>的缺口:%.2f / 总缺口%.2f = 当前责任%.2f",protoA_p.pointerId,Pit2FStr(protoV_p),(long)assA_p.pointerId,Pit2FStr(assV_p),curQueKou,sumQueKou,curRate);
+                    NSLog(@"> 当前A%ld<%@>比A%ld<%@>的缺口:%.2f / 总缺口%.2f = 当前责任%.2f",(long)protoA_p.pointerId,Pit2FStr(protoV_p),(long)assA_p.pointerId,Pit2FStr(assV_p),curQueKou,sumQueKou,curRate);
                 }
                 
                 //6. break继续判断proto的下个V码;

@@ -422,7 +422,9 @@
                 DebugW();
             }
             if (dic.count > 0) {
-                NSLog(@">>>>>>>>>WriteDisk,%lu",(unsigned long)dic.count);
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    NSLog(@">>>>>>>>>WriteDisk,%lu",(unsigned long)dic.count);
+                });
             }
         }];
     }

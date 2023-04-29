@@ -24,4 +24,21 @@
     return false;
 }
 
+/**
+ *  MARK:--------------------NSCoding--------------------
+ */
+- (instancetype)initWithCoder:(NSCoder *)coder {
+    self = [super init];
+    if (self) {
+        self.scene = [coder decodeObjectForKey:@"scene"];
+        self.canset = [coder decodeObjectForKey:@"canset"];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    [coder encodeObject:self.scene forKey:@"scene"];
+    [coder encodeObject:self.canset forKey:@"canset"];
+}
+
 @end
