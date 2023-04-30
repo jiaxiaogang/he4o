@@ -81,6 +81,7 @@
  *      2023.03.16: 先用任意帧sp值>5脱离惰性期 (参考28182-todo9);
  *      2023.03.18: 惰性期阈值改为eff>2时脱离惰性期 (参考28185-todo6);
  *      2023.04.22: 关闭惰性期 (参考29073-方案);
+ *      2023.04.30: 用迁移后cansetA与protoA来计算前段匹配度值 (参考29075-todo5);
  *  @result 返回cansetFo前段匹配度 & 以及已匹配的cutIndex截点;
  */
 +(AICansetModel*) convert2CansetModel:(AIKVPointer*)cansetFo_p sceneFo:(AIKVPointer*)sceneFo_p basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel ptAleardayCount:(NSInteger)ptAleardayCount isH:(BOOL)isH sceneModel:(AISceneModel*)sceneModel {
@@ -105,7 +106,7 @@
         //NSLog(@"惰性期通过:%@",CLEANSTR(cansetFo.spDic));
     }
     
-    //5. 根据matchFo取得与canset的indexDic映射;
+    //5. 根据sceneFo取得与canset的indexDic映射;
     NSDictionary *indexDic = [cansetFo getAbsIndexDic:sceneFo_p];
     [AITest test102:cansetFo];
     
@@ -136,14 +137,17 @@
     if (!DICISOK(protoFrontIndexDic)) return nil; //过滤4: 条件不满足时,直接返回nil (参考28052-2 & 28084-3);
     if (debugMode) AddDebugCodeBlock(@"convert2Canset 5");
     
-    //TODOTOMORROW20230429:
-    //前段条件满足兼容迁移了,但此处匹配度还没兼容...
-    
-    
-    
-    
     //4. 计算前段竞争值之匹配值 (参考28084-4);
-    CGFloat frontMatchValue = [AINetUtils getMatchByIndexDic:protoFrontIndexDic absFo:cansetFo_p conFo:protoFo_p callerIsAbs:true];
+    NSArray *frontNearData = [AINetUtils getNearDataByIndexDic:protoFrontIndexDic getAbsAlgBlock:^AIKVPointer *(NSInteger absIndex) {
+        FrontIndexDicModel *model = [SMGUtils filterSingleFromArr:frontIndexDicModels checkValid:^BOOL(FrontIndexDicModel *o) {
+            return o.cansetIndex == absIndex;
+        }];
+        if (model) return model.transferAlg_p;
+        return nil;
+    } getConAlgBlock:^AIKVPointer *(NSInteger conIndex) {
+        return ARR_INDEX(protoFo.content_ps, conIndex);
+    } callerIsAbs:true];
+    CGFloat frontMatchValue = NUMTOOK(ARR_INDEX(frontNearData, 1)).floatValue;
     if (frontMatchValue == 0) return nil; //过滤5: 前段不匹配时,直接返回nil (参考26128-1-3);
     if (debugMode) AddDebugCodeBlock(@"convert2Canset 6");
     
