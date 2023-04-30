@@ -212,10 +212,15 @@
 +(NSInteger) getCutIndexByIndexDic:(NSDictionary*)indexDic;
 
 /**
- *  MARK:--------------------获取near数据--------------------
+ *  MARK:--------------------获取near数据 (直传fo版)--------------------
  */
 +(CGFloat) getMatchByIndexDic:(NSDictionary*)indexDic absFo:(AIKVPointer*)absFo_p conFo:(AIKVPointer*)conFo_p callerIsAbs:(BOOL)callerIsAbs;
 +(NSArray*) getNearDataByIndexDic:(NSDictionary*)indexDic absFo:(AIKVPointer*)absFo_p conFo:(AIKVPointer*)conFo_p callerIsAbs:(BOOL)callerIsAbs;
+
+/**
+ *  MARK:--------------------获取near数据 (回调版)--------------------
+ */
++(NSArray*) getNearDataByIndexDic:(NSDictionary*)indexDic getAbsAlgBlock:(AIKVPointer*(^)(NSInteger absIndex))getAbsAlgBlock getConAlgBlock:(AIKVPointer*(^)(NSInteger conIndex))getConAlgBlock callerIsAbs:(BOOL)callerIsAbs;
 
 //MARK:===============================================================
 //MARK:                     < Fo引用强度RefStrong的取值和更新 >

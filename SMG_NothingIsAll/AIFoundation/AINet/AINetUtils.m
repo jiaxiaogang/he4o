@@ -576,7 +576,8 @@
 }
 
 /**
- *  MARK:--------------------获取near数据--------------------
+ *  MARK:--------------------获取near数据 (直传fo版)--------------------
+ *  @desc 调用说明: 对于有明确的absFo和conFo的,可以调用fo版;
  *  @desc 根据indexDic取得nearCount&sumNear (参考27177-todo3);
  *  @version
  *      2023.01.18: 相似度默认值为1,且相似度改为相乘 (参考28035-todo2);
@@ -587,19 +588,34 @@
     return NUMTOOK(ARR_INDEX([self getNearDataByIndexDic:indexDic absFo:absFo_p conFo:conFo_p callerIsAbs:callerIsAbs], 1)).floatValue;
 }
 +(NSArray*) getNearDataByIndexDic:(NSDictionary*)indexDic absFo:(AIKVPointer*)absFo_p conFo:(AIKVPointer*)conFo_p callerIsAbs:(BOOL)callerIsAbs{
+    AIFoNodeBase *absFo = [SMGUtils searchNode:absFo_p];
+    AIFoNodeBase *conFo = [SMGUtils searchNode:conFo_p];
+    return [self getNearDataByIndexDic:indexDic getAbsAlgBlock:^AIKVPointer *(NSInteger absIndex) {
+        return ARR_INDEX(absFo.content_ps, absIndex);
+    } getConAlgBlock:^AIKVPointer *(NSInteger conIndex) {
+        return ARR_INDEX(conFo.content_ps, conIndex);
+    } callerIsAbs:callerIsAbs];
+}
+
+/**
+ *  MARK:--------------------获取near数据 (回调版)--------------------
+ *  @desc 调用说明: 对于未生成明确的absFo或conFo的调用回调版 (比如: canset在transferAlg时,还没有生成为fo供传参,此处用回调去取Alg元素);
+ *  @param indexDic 根据此dic逐条取itemNear数据;
+ *  @param getAbsAlgBlock : 根据absIndex取对应的absAlg回调
+ *  @param getConAlgBlock : 根据conIndex取对应的conAlg回调
+ */
++(NSArray*) getNearDataByIndexDic:(NSDictionary*)indexDic getAbsAlgBlock:(AIKVPointer*(^)(NSInteger absIndex))getAbsAlgBlock getConAlgBlock:(AIKVPointer*(^)(NSInteger conIndex))getConAlgBlock callerIsAbs:(BOOL)callerIsAbs {
     //1. 数据准备;
     int nearCount = 0;  //总相近数 (匹配值<1)
     indexDic = DICTOOK(indexDic);
     CGFloat sumNear = indexDic.count > 0 ? 1 : 0;//总相近度 (有数据时默认1,无数据时默认0);
-    AIFoNodeBase *absFo = [SMGUtils searchNode:absFo_p];
-    AIFoNodeBase *conFo = [SMGUtils searchNode:conFo_p];
     
     //2. 逐个统计;
     for (NSNumber *key in indexDic.allKeys) {
         NSInteger absIndex = key.integerValue;
         NSInteger conIndex = NUMTOOK([indexDic objectForKey:key]).integerValue;
-        AIKVPointer *absA_p = ARR_INDEX(absFo.content_ps, absIndex);
-        AIKVPointer *conA_p = ARR_INDEX(conFo.content_ps, conIndex);
+        AIKVPointer *absA_p = getAbsAlgBlock(absIndex);
+        AIKVPointer *conA_p = getConAlgBlock(conIndex);
         
         //3. 复用取near值;
         CGFloat near = 0;

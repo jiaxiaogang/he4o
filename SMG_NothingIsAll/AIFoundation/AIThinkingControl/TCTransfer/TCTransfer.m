@@ -186,6 +186,7 @@
 
 /**
  *  MARK:--------------------cansetAlg迁移算法 (29075-方案3)--------------------
+ *  _param 参数说明 : canset的cansetIndex帧,延着sceneModel向base最终找着transferIAlg返回;
  *  @desc 用于将brother或father的canset转成iAlg返回;
  *  @desc 代码说明: 此算法逐步用indexDic映射来判断,全成功则最终返回iAlg,中途失败则返回中断时的resultAlg;
  */
