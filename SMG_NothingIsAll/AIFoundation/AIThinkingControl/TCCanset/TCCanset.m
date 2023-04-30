@@ -119,7 +119,6 @@
     NSInteger cansetTargetIndex = isH ? NUMTOOK([indexDic objectForKey:@(ptAleardayCount)]).integerValue : cansetFo.count - 1;
     if (cansetCutIndex < matchCutIndex) return nil; //过滤2: 判断canset前段是否有遗漏 (参考27224);
     if (debugMode) AddDebugCodeBlock(@"convert2Canset 3");
-    if (debugMode) NSLog(@"打出当前debug的scene下的cansets: %ld %ld %@",cansetFo.count,cansetCutIndex + 1,Pit2FStr(cansetFo_p));
     
     if (cansetFo.count <= cansetCutIndex + 1) return nil; //过滤3: 过滤掉canset没后段的 (没可行为化的东西) (参考28052-4);
     if (debugMode) AddDebugCodeBlock(@"convert2Canset 4");
@@ -265,13 +264,6 @@
             
             //TODOTEST20230428: 下面debug代码回测下29075的BUG (测段时间ok后,这里debug代码删掉);
             if (sceneModel.type == SceneTypeBrother) {
-                NSLog(@"canset:%@",Pit2FStr(cansetAlg));
-                NSLog(@"transfer:%@",Pit2FStr(transferAlg));
-                NSLog(@"proto:%@",Pit2FStr(protoAlg));
-                NSLog(@"brotherScene:%@",Pit2FStr(sceneModel.scene));
-                NSLog(@"fatherScene:%@",Pit2FStr(sceneModel.base.scene));
-                NSLog(@"iScene:%@",Pit2FStr(sceneModel.base.base.scene));
-                NSLog(@"");
             }else if (sceneModel.type == SceneTypeFather) {
                 NSLog(@"canset:%@",Pit2FStr(cansetAlg));
                 NSLog(@"transfer:%@",Pit2FStr(transferAlg));

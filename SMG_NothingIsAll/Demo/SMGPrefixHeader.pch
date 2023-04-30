@@ -107,6 +107,7 @@
 
 /**
  *  MARK:--------------------tcDebug拼接前辍--------------------
+ *  @param prefixKey : 一般传文件名,如果要打出所有模块,则只仅TC即可,如果要打所有文件,可以传空字符串;
  */
-#define TCDebugPrefixV1 TCDebugPrefixV2(kFILENAME) //TCDebug的前辍=文件名+循环Id
-#define TCDebugPrefixV2(FILENAME) STRFORMAT(@"%@%lld",FILENAME,theTC.getLoopId) //TCDebug的前辍=文件名+循环Id
+#define TCDebugPrefixV1 TCDebugPrefixV2(kFILENAME) //TCDebug的前辍=循环Id+文件名
+#define TCDebugPrefixV2(prefixKey) STRFORMAT(@"DEBUG匹配 => 循环圈:%lld 前辍:%@",theTC.getLoopId,prefixKey) //TCDebug的前辍=循环Id+文件名用来匹配的前部分

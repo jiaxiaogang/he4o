@@ -45,7 +45,7 @@ static XGDebug *_instance;
 -(void) debugModuleWithPrefix:(NSString*)prefix suffix:(NSString*)suffix {
     //0. 数据准备;
     prefix = STRTOOK(prefix);
-    NSString *key = STRISOK(suffix) ? STRFORMAT(@"%@_%@",prefix,suffix) : prefix;
+    NSString *key = STRISOK(suffix) ? STRFORMAT(@"%@ 代码块:%@",prefix,suffix) : prefix;
     
     //1. 上帧结算;
     NSTimeInterval now = [[NSDate date] timeIntervalSince1970] * 1000;
