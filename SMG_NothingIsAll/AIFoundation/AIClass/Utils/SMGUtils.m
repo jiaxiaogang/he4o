@@ -611,6 +611,19 @@
 }
 
 /**
+ *  MARK:--------------------将arr转成dic--------------------
+ */
++(NSDictionary*) convertArr2Dic:(NSArray*)objs kvBlock:(NSArray*(^)(id obj))kvBlock {
+    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
+    for (FrontIndexDicModel *obj in objs) {
+        NSArray *kvArr = kvBlock(obj);
+        id k = ARR_INDEX(kvArr, 0), v = ARR_INDEX(kvArr, 1);
+        if (k && v) [result setObject:v forKey:k];
+    }
+    return result;
+}
+
+/**
  *  MARK:--------------------从foPorts中找出含valueIden的元素并返回--------------------
  *  @desc 每个fo,仅判断首条符合的alg;
  */

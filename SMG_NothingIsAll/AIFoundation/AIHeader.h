@@ -52,6 +52,7 @@
 #import "ShortMatchManager.h"
 #import "AICansetModel.h"
 #import "AISceneModel.h"
+#import "FrontIndexDicModel.h"
 
 //网络
 #import "AINetUtils.h"

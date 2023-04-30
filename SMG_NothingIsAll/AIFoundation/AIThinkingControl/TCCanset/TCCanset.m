@@ -129,7 +129,10 @@
     AIFoNodeBase *protoFo = [SMGUtils searchNode:protoFo_p];
     
     //10. 判断protoFo对cansetFo条件满足 (返回条件满足的每帧间映射);
-    NSDictionary *protoFrontIndexDic = [self getFrontIndexDic:protoFo cansetFo:cansetFo cansetCutIndex:cansetCutIndex sceneModel:sceneModel];
+    NSArray *frontIndexDicModels = [self getFrontIndexDic:protoFo cansetFo:cansetFo cansetCutIndex:cansetCutIndex sceneModel:sceneModel];
+    NSDictionary *protoFrontIndexDic = [SMGUtils convertArr2Dic:frontIndexDicModels kvBlock:^NSArray *(FrontIndexDicModel *obj) {
+        return @[@(obj.cansetIndex),@(obj.protoIndex)];
+    }];
     if (!DICISOK(protoFrontIndexDic)) return nil; //过滤4: 条件不满足时,直接返回nil (参考28052-2 & 28084-3);
     if (debugMode) AddDebugCodeBlock(@"convert2Canset 5");
     
@@ -235,11 +238,11 @@
  *  @version
  *      2023.02.04: 初版,为解决条件满足不完全的问题,此方法将尝试从proto找出canset前段的每帧 (参考28052);
  *      2023.04.28: 条件满足兼容迁移alg的情况 (参考29075-方案3);
- *  @result 在proto中全找到canset的前段则返回indexDic映射,未全找到时(条件不满足)返回nil;
+ *  @result 在proto中全找到canset的前段则返回frontIndexDic映射模型,未全找到时(条件不满足)返回空数组;
  */
-+(NSDictionary*) getFrontIndexDic:(AIFoNodeBase*)protoFo cansetFo:(AIFoNodeBase*)cansetFo cansetCutIndex:(NSInteger)cansetCutIndex sceneModel:(AISceneModel*)sceneModel{
++(NSArray*) getFrontIndexDic:(AIFoNodeBase*)protoFo cansetFo:(AIFoNodeBase*)cansetFo cansetCutIndex:(NSInteger)cansetCutIndex sceneModel:(AISceneModel*)sceneModel {
     //1. 数据准备;
-    NSMutableDictionary *indexDic = [[NSMutableDictionary alloc] init];
+    NSMutableArray *result = [[NSMutableArray alloc] init];
     if (!protoFo || !cansetFo) return nil;
     
     //2. 每帧match都到proto里去找,找到则记录proto的进度,找不到则全部失败;
@@ -284,7 +287,7 @@
                 //4. 找到了 & 记录protoI的进度;
                 findItem = true;
                 protoMin = protoI + 1;
-                [indexDic setObject:@(protoI) forKey:@(cansetI)];
+                [result addObject:[FrontIndexDicModel newWithProtoIndex:protoI cansetIndex:cansetI transferAlg:transferAlg]];
                 if (Log4SceneIsOk) NSLog(@"\t第%ld帧,条件满足通过 canset:%@ (fromProto:F%ldA%ld)",cansetI,Pit2FStr(cansetAlg),protoFo.pointer.pointerId,protoAlg.pointerId);
                 break;
             }
@@ -299,7 +302,7 @@
     
     //6. 全找到,则成功;
     if (Log4SceneIsOk) NSLog(@"前段条件满足通过:%@ (cansetCutIndex:%ld fromProtoFo:%ld)",Fo2FStr(cansetFo),cansetCutIndex,protoFo.pointer.pointerId);
-    return indexDic;
+    return result;
 }
 
 @end
