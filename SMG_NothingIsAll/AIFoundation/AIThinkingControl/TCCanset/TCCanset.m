@@ -85,11 +85,11 @@
  *  @result 返回cansetFo前段匹配度 & 以及已匹配的cutIndex截点;
  */
 +(AICansetModel*) convert2CansetModel:(AIKVPointer*)cansetFo_p sceneFo:(AIKVPointer*)sceneFo_p basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel ptAleardayCount:(NSInteger)ptAleardayCount isH:(BOOL)isH sceneModel:(AISceneModel*)sceneModel {
-    BOOL debugMode = sceneModel.type == SceneTypeBrother && (sceneModel.scene.pointerId == 678 || sceneModel.scene.pointerId == 431);
     //1. 数据准备 & 复用indexDic & 取出pFoOrTargetFo;
-    if (debugMode) AddDebugCodeBlock(@"convert2Canset 0");
     AIFoNodeBase *matchFo = [SMGUtils searchNode:sceneFo_p];
     AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
+    BOOL debugMode = sceneModel.type == SceneTypeBrother && cansetFo.count > 1;
+    if (debugMode) AddDebugCodeBlock(@"convert2Canset 0");
     NSInteger matchTargetIndex = isH ? ptAleardayCount : matchFo.count;
     
     //2. 判断是否H任务 (H有后段,别的没有);
