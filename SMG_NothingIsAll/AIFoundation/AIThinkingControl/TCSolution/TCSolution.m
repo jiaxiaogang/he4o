@@ -95,6 +95,7 @@
  */
 +(void) rSolution:(ReasonDemandModel*)demand {
     //0. S数达到limit时设为WithOut;
+    if (![theTC energyValid]) return;
     OFTitleLog(@"rSolution", @"\n任务源:%@ protoFo:%@ 已有方案数:%ld",demand.algsType,Pit2FStr(demand.protoFo),demand.actionFoModels.count);
     
     //1. 树限宽且限深;
@@ -129,7 +130,6 @@
     DebugE();
     if (bestResult) {
         //7. 消耗活跃度;
-        if (![theTC energyValid]) return;
         [theTC updateEnergyDelta:-1];
         
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
@@ -183,6 +183,7 @@
     //TODO: 2021.12.29: 此处方向索引,可以改成和rh任务一样的从pFos&rFos中取具象得来 (因为方向索引应该算脱离场景);
     MVDirection direction = [ThinkingUtils getDemandDirection:demandModel.algsType delta:demandModel.delta];
     if (!Switch4PS || direction == MVDirection_None) return;
+    if (![theTC energyValid]) return;
     OFTitleLog(@"pSolution", @"\n任务:%@,发生%ld,方向%ld,已有方案数:%ld",demandModel.algsType,(long)demandModel.delta,(long)direction,demandModel.actionFoModels.count);
     
     //1. 树限宽且限深;
@@ -228,7 +229,6 @@
             //5. 方向索引找到一条normalFo解决方案 (P例:吃可以解决饿; S例:运动导致累);
             if (![except_ps containsObject:itemMV.foNode_p]) {
                 //8. 消耗活跃度;
-                if (![theTC energyValid]) return;
                 [theTC updateEnergyDelta:-1];
                 AIFoNodeBase *fo = [SMGUtils searchNode:itemMV.foNode_p];
                 
@@ -270,6 +270,7 @@
  */
 +(void) hSolution:(HDemandModel*)hDemand{
     //0. S数达到limit时设为WithOut;
+    if (![theTC energyValid]) return;
     OFTitleLog(@"hSolution", @"\n目标:%@ 已有S数:%ld",Pit2FStr(hDemand.baseOrGroup.content_p),hDemand.actionFoModels.count);
     
     //1. 树限宽且限深;
@@ -301,7 +302,6 @@
     DebugE();
     if (bestResult) {
         //8. 消耗活跃度;
-        if (![theTC energyValid]) return;
         [theTC updateEnergyDelta:-1];
         
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);

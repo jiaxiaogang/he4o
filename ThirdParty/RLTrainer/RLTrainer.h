@@ -10,7 +10,7 @@
 
 #define kGrowPageSEL @"GrowPage"                //成长页
 #define kMainPageSEL @"MainPage"                //回主页
-#define kFlySEL @"Fly"                          //飞
+#define kFlySEL @"Fly"                          //飞 (可传0-7 long参数: 飞行方向)
 #define kWoodLeftSEL @"Wood"                    //扔木棒
 #define kWoodRdmSEL @"WoodRdm"                  //随机地点_扔木棒
 #define kEatSEL @"Eat"                          //吃
@@ -23,6 +23,8 @@
 #define kHungerSEL @"Hunger"                    //马上饿
 #define kFoodRdmSEL @"FoodRdm"                  //随机地点_投食物
 #define kFoodRdmNearSEL @"FoodRdmNear"          //随机在鸟附近_投食物
+
+#define kThinkModeSEL @"ThinkMode"              //认知模式 (可传int参数: 思维模式值)
 
 /**
  *  MARK:--------------------强化训练器--------------------

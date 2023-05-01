@@ -49,7 +49,7 @@
 
 -(void) initView{
     //self
-    [self setAlpha:0.5f];
+    [self setAlpha:0.7f];
     CGFloat width = 350;//ScreenWidth * 0.667f;
     [self setFrame:CGRectMake(ScreenWidth - width - 20, 64, width, ScreenHeight - 128)];
     
@@ -154,31 +154,42 @@
 //MARK:===============================================================
 //MARK:                     < privateMethod >
 //MARK:===============================================================
--(NSString*) cellStr:(NSString*)queue {
-    if ([kGrowPageSEL isEqualToString:queue]) {
+-(NSString*) cellStr:(RTQueueModel*)queue {
+    if ([kGrowPageSEL isEqualToString:queue.name]) {
         return @"进入成长页";
-    }else if ([kFlySEL isEqualToString:queue]) {
+    }else if ([kFlySEL isEqualToString:queue.name]) {
+        if (NUMISOK(queue.arg0)) {
+            return STRFORMAT(@"%@飞",[NVHeUtil fly2Str:NUMTOOK(queue.arg0).longValue / 8.0f]);
+        }
         return @"随机飞";
-    }else if ([kWoodLeftSEL isEqualToString:queue]) {
+    }else if ([kWoodLeftSEL isEqualToString:queue.name]) {
         return @"扔木棒";
-    }else if ([kWoodRdmSEL isEqualToString:queue]) {
+    }else if ([kWoodRdmSEL isEqualToString:queue.name]) {
         return @"随机扔木棒";
-    }else if ([kMainPageSEL isEqualToString:queue]) {
+    }else if ([kMainPageSEL isEqualToString:queue.name]) {
         return @"回主页";
-    }else if ([kClearTCSEL isEqualToString:queue]) {
+    }else if ([kClearTCSEL isEqualToString:queue.name]) {
         return @"重启";
-    }else if ([kBirthPosRdmSEL isEqualToString:queue]) {
+    }else if ([kBirthPosRdmSEL isEqualToString:queue.name]) {
         return @"出生地随机";
-    }else if ([kBirthPosRdmCentSEL isEqualToString:queue]) {
+    }else if ([kBirthPosRdmCentSEL isEqualToString:queue.name]) {
         return @"出生地随机偏路中";
-    }else if ([kBirthPosCentSEL isEqualToString:queue]) {
+    }else if ([kBirthPosCentSEL isEqualToString:queue.name]) {
         return @"出生在中间";
-    }else if ([kHungerSEL isEqualToString:queue]) {
+    }else if ([kHungerSEL isEqualToString:queue.name]) {
         return @"饿";
-    }else if ([kFoodRdmSEL isEqualToString:queue]) {
+    }else if ([kFoodRdmSEL isEqualToString:queue.name]) {
         return @"随机投食";
-    }else if ([kFoodRdmNearSEL isEqualToString:queue]) {
+    }else if ([kFoodRdmNearSEL isEqualToString:queue.name]) {
         return @"附近投食";
+    }else if ([kThinkModeSEL isEqualToString:queue.name]) {
+        if (NUMTOOK(queue.arg0).intValue == 0) {
+            return @"动物模式";
+        }else if (NUMTOOK(queue.arg0).intValue == 1) {
+            return @"认知模式";
+        }else if (NUMTOOK(queue.arg0).intValue == 1) {
+            return @"植物模式";
+        }
     }
     return @"";
 }
@@ -313,7 +324,7 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------学被撞--------------------
+ *  MARK:--------------------第1步 学被撞--------------------
  *  @desc
  *      1. 说明: 学被撞 (出生随机位置,被随机扔出的木棒撞 x 300);
  *      2. 作用: 主要用于训练识别功能 (耗时约50min) (参考26197-1);
@@ -327,7 +338,7 @@
 }
 
 /**
- *  MARK:--------------------学飞躲--------------------
+ *  MARK:--------------------第2步 学飞躲--------------------
  *  @desc
  *      1. 说明: 学飞躲 (出生随机偏中位置,左棒,随机飞x2,左棒 x 100);
  *      2. 作用: 从中习得防撞能力,躲避危险;
@@ -341,6 +352,9 @@
 - (IBAction)loadFlyBtnOnClick:(id)sender {
     //0. 无日志模式;
     //[theApp setNoLogMode:true];
+    
+    //0. 认知模式
+    [theRT queue1:Queue0(kThinkModeSEL, @(1))];
     
     //0. 出生在随机偏中位置 (以方便训练被撞和躲开经验);
     [theRT queue1:Queue(kBirthPosRdmCentSEL)];
@@ -366,6 +380,9 @@
         //4. 训练names;
         [theRT queueN:queues count:1];
     }
+    
+    //5. 正常模式
+    [theRT queue1:Queue0(kThinkModeSEL, @(0))];
 }
 
 /**
@@ -399,7 +416,7 @@
 }
 
 /**
- *  MARK:--------------------试错训练--------------------
+ *  MARK:--------------------第3步 试错训练--------------------
  *  @desc 与学撞训练步骤一致,此处其实就是各种撞它,让它自己尝试躲避 (类似学步婴儿尝试走路);
  */
 - (IBAction)loadTryOutOfWay:(id)sender {
@@ -505,9 +522,9 @@
     }else {
         //2. 正常返回queueCell_数据准备;
         RTQueueModel *queue = ARR_INDEX(self.tvDatas, indexPath.row);
-        NSString *cellStr = STRFORMAT(@"%ld. %@",indexPath.row+1, [self cellStr:queue.name]);
+        NSString *cellStr = STRFORMAT(@"%ld. %@",indexPath.row+1, [self cellStr:queue]);
         BOOL trained = indexPath.row < self.tvIndex;
-        UIColor *color = trained ? UIColor.greenColor : UIColor.orangeColor;
+        UIColor *color = trained ? UIColor.blackColor : UIColor.redColor;
         
         //3. 创建cell;
         XGLabCell *cell = [tableView dequeueReusableCellWithIdentifier:@"queueCell"];

@@ -61,6 +61,7 @@ static AIThinkingControl *_instance;
     self.demandManager = [[DemandManager alloc] init];
     self.shortMatchManager = [[ShortMatchManager alloc] init];
     [theRT regist:kClearTCSEL target:self selector:@selector(clear)];
+    [theRT regist:kThinkModeSEL target:self selector:@selector(updateThinkMode:)];
     self.tcDebug = [[TCDebug alloc] init];
 }
 
@@ -284,6 +285,13 @@ static AIThinkingControl *_instance;
     [self.outModelManager clear];
     self.energy = 0;
     [theRT invoked:kClearTCSEL];
+}
+
+-(void) updateThinkMode:(NSNumber*)value {
+    if (NUMISOK(value)) {
+        self.thinkMode = value.intValue;
+    }
+    [theRT invoked:kThinkModeSEL];
 }
 
 @end
