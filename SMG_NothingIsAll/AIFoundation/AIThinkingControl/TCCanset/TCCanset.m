@@ -20,6 +20,14 @@
     //1. 数据准备;
     AIFoNodeBase *selfFo = [SMGUtils searchNode:sceneModel.scene];
     
+    
+    //TODOTOMORROW20230501:
+    //1. 先做29079的试错训练 (或者先把2改了,再训练试错);
+    //2. 然后考虑下,任一条pFo对所有pFos下的father和brother都有override防重作用;
+    
+    
+    
+    
     //2. 不同type的公式不同 (参考29069-todo5.3 & 5.4 & 5.5);
     if (sceneModel.type == SceneTypeBrother) {
         //3. 当前是brother时: (brother有效canset = brother.conCansets - 与father有迁移关联部分) (参考29069-todo5.3);
@@ -271,13 +279,7 @@
                 NSLog(@"fatherScene:%@",Pit2FStr(sceneModel.scene));
                 NSLog(@"iScene:%@",Pit2FStr(sceneModel.base.scene));
                 NSLog(@"");
-            }else if (sceneModel.type == SceneTypeI) {
-                NSLog(@"canset:%@",Pit2FStr(cansetAlg));
-                NSLog(@"transfer:%@",Pit2FStr(transferAlg));
-                NSLog(@"proto:%@",Pit2FStr(protoAlg));
-                NSLog(@"iScene:%@",Pit2FStr(sceneModel.scene));
-                NSLog(@"");
-            }
+            }else if (sceneModel.type == SceneTypeI) {}
             
             if (mIsC) {
                 //4. 找到了 & 记录protoI的进度;

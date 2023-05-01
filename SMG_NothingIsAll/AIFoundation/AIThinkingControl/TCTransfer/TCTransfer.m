@@ -55,6 +55,7 @@
         [TIUtils recognitionCansetFo:fatherCanset sceneFo:fatherScene];
         [TIUtils recognitionCansetFo:iCanset sceneFo:iScene];
     }
+    OFTitleLog(@"TCTransfer迁移", @"%@\nbrotherCanset:%@ \nfatherCanset:%@ \niCanset:%@",SceneType2Str(bestCansetModel.baseSceneModel.type),Pit2FStr(brotherCanset),Pit2FStr(fatherCanset),Pit2FStr(iCanset));
     complate(brotherCanset,fatherCanset,iCanset);
 }
 
