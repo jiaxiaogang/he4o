@@ -22,8 +22,9 @@
     
     
     //TODOTOMORROW20230501:
-    //1. 先做29079的试错训练 (或者先把2改了,再训练试错);
-    //2. 然后考虑下,任一条pFo对所有pFos下的father和brother都有override防重作用;
+    //1. 任一条pFo对所有pFos下的father和brother都有override防重作用;
+    //2. 任一条brother或father都能对所有fathers和brothers进行防重作用;
+    //3. 看下转transferAlg算法,判断多条一样的结果时,对其进行防重;
     
     
     
@@ -33,7 +34,7 @@
         //3. 当前是brother时: (brother有效canset = brother.conCansets - 与father有迁移关联部分) (参考29069-todo5.3);
         NSArray *brotherConCansets = [selfFo getConCansets:selfFo.count];
         NSArray *brotherFilter_ps = [TCCanset getFilter_ps:sceneModel];
-        if (brotherFilter_ps.count > 0) {
+        if (brotherFilter_ps.count > 0 && brotherConCansets.count > 0) {
             NSLog(@"测下override过滤生效");
         }
         return [SMGUtils removeSub_ps:brotherFilter_ps parent_ps:brotherConCansets];
@@ -41,7 +42,7 @@
         //4. 当前是father时: (father有效canset = father.conCansets - 与i有迁移关联部分) (参考29069-todo5.4);
         NSArray *fatherConCansets = [selfFo getConCansets:selfFo.count];
         NSArray *fatherFilter_ps = [TCCanset getFilter_ps:sceneModel];
-        if (fatherFilter_ps.count > 0) {
+        if (fatherFilter_ps.count > 0 && fatherConCansets.count > 0) {
             NSLog(@"测下override过滤生效");
         }
         return [SMGUtils removeSub_ps:fatherFilter_ps parent_ps:fatherConCansets];
