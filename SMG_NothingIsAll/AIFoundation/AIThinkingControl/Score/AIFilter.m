@@ -54,6 +54,18 @@
     return result;
 }
 
+/**
+ *  MARK:--------------------取conCansets过滤器 (参考29081-todo6)--------------------
+ */
++(NSArray*) conCansetFilter:(AIFoNodeBase*)sceneFo targetIndex:(NSInteger)targetIndex {
+    NSArray *protoConCansets = [sceneFo getConCansets:targetIndex];
+    NSArray *sorts = [SMGUtils sortBig2Small:protoConCansets compareBlock:^double(AIKVPointer *canset) {
+        return [TOUtils getEffectScore:sceneFo effectIndex:targetIndex solutionFo:canset];
+    }];
+    NSInteger limit = MAX(3, protoConCansets.count * 0.2f);//取20% & 至少尝试取3条;
+    return ARR_SUB(sorts, 0, limit);
+}
+
 //MARK:===============================================================
 //MARK:                     < privateMethod >
 //MARK:===============================================================
