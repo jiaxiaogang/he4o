@@ -124,6 +124,10 @@ static AINet *_instance;
     return [AIMvFoManager createConFo:order];
 }
 
+-(AIFrontOrderNode*) createConFo_NoRepeat:(NSArray*)order{
+    return [AIMvFoManager createConFo_NoRepeat:order];
+}
+
 
 //MARK:===============================================================
 //MARK:                     < absFo >

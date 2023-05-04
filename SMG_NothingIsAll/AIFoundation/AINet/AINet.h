@@ -63,6 +63,7 @@
 //MARK:                     < conFo >
 //MARK:===============================================================
 -(AIFrontOrderNode*) createConFo:(NSArray*)order;
+-(AIFrontOrderNode*) createConFo_NoRepeat:(NSArray*)order;
 
 
 //MARK:===============================================================

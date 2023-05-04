@@ -55,7 +55,7 @@
 }
 
 /**
- *  MARK:--------------------取conCansets过滤器 (参考29081-todo6)--------------------
+ *  MARK:--------------------取conCansets过滤器 (参考29081-todo41)--------------------
  */
 +(NSArray*) conCansetFilter:(AIFoNodeBase*)sceneFo targetIndex:(NSInteger)targetIndex {
     NSArray *protoConCansets = [sceneFo getConCansets:targetIndex];

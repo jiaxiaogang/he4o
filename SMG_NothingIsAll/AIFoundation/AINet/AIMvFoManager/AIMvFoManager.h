@@ -33,5 +33,6 @@
  *  @result notnull
  */
 +(AIFrontOrderNode*) createConFo:(NSArray*)order;
++(AIFoNodeBase*) createConFo_NoRepeat:(NSArray*)order;
 
 @end

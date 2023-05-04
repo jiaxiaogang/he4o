@@ -72,6 +72,24 @@
 +(AIFrontOrderNode*) createConFo:(NSArray*)order{
     return [self createConFo:order difStrong:1];
 }
++(AIFoNodeBase*) createConFo_NoRepeat:(NSArray*)order {
+    //1. 防重_取本地全局绝对匹配;
+    NSArray *content_ps = [AINetAbsFoUtils convertOrder2Alg_ps:order];
+    AIFoNodeBase *result = [AINetIndexUtils getAbsoluteMatching_General:content_ps sort_ps:content_ps except_ps:nil getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
+        AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
+        return [AINetUtils refPorts_All4Alg:itemAlg];
+    } at:DefaultAlgsType ds:DefaultDataSource type:ATDefault];
+    
+    //2. 有则加强关联;
+    if (ISOK(result, AINetAbsFoNode.class)) {
+        [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
+    }else{
+        //3. 无则新构建;
+        result = [self createConFo:order];
+    }
+    return result;
+}
+
 +(AIFrontOrderNode*) createConFo:(NSArray*)order difStrong:(NSInteger)difStrong{
     //1. foNode
     AIFrontOrderNode *foNode = [[AIFrontOrderNode alloc] init];

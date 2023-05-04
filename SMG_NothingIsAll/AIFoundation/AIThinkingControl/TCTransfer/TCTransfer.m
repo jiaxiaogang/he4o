@@ -123,6 +123,8 @@
 /**
  *  MARK:--------------------canset推举算法 (29069-todo10.1推举算法示图&步骤)--------------------
  *  @desc 用于将canset从brother推举到father场景下;
+ *  @version
+ *      2023.05.04: 通过fo全局防重实现推举防重 (参考29081-todo32);
  */
 +(AIKVPointer*) transfer4TuiJu:(AIKVPointer*)brotherCanset brotherCansetTargetIndex:(NSInteger)brotherCansetTargetIndex brotherScene:(AIKVPointer*)brotherScene_p fatherScene_p:(AIKVPointer*)fatherScene_p {
     //1. 数据准备;
@@ -161,7 +163,7 @@
     //========================= 算法关键代码 END =========================
     
     //7. 构建result;
-    fatherCanset = [theNet createConFo:orders];
+    fatherCanset = [theNet createConFo_NoRepeat:orders];
     
     //8. 新生成fatherPort;
     AITransferPort *newFatherPort = [AITransferPort newWithScene:fatherScene_p canset:fatherCanset.p];
