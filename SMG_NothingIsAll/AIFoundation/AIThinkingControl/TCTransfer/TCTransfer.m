@@ -100,7 +100,7 @@
     //========================= 算法关键代码 END =========================
     
     //7. 构建result;
-    iCanset = [theNet createConFo:orders];
+    iCanset = [theNet createConFo_NoRepeat:orders];
     
     //8. 新生成fatherPort;
     AITransferPort *newIPort = [AITransferPort newWithScene:iScene_p canset:iCanset.p];
