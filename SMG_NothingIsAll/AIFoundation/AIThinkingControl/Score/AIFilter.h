@@ -36,6 +36,6 @@
 /**
  *  MARK:--------------------Scene求解过滤器 (参考2908a-todo2)--------------------
  */
-+(NSArray*) solutonSceneFilter:(AIFoNodeBase*)protoScene isAbs:(BOOL)isAbs;
++(NSArray*) solutonSceneFilter:(AIFoNodeBase*)protoScene toAbs:(BOOL)toAbs;
 
 @end

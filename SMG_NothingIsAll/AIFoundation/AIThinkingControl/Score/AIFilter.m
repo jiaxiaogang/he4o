@@ -68,26 +68,29 @@
 
 /**
  *  MARK:--------------------Scene求解过滤器 (参考2908a-todo2)--------------------
- *  @param isAbs : 从protoScene向抽象还是具象取ports返回?
+ *  @param toAbs : 从protoScene向抽象还是具象取ports返回? (proto为i时传true,proto为father时传false);
  */
-+(NSArray*) solutonSceneFilter:(AIFoNodeBase*)protoScene isAbs:(BOOL)isAbs {
-    NSArray *otherScene_ps = Ports2Pits(isAbs ? [AINetUtils absPorts_All:protoScene] : [AINetUtils conPorts_All:protoScene]);
++(NSArray*) solutonSceneFilter:(AIFoNodeBase*)protoScene toAbs:(BOOL)toAbs {
+    //1. 数据准备: 向着isAbs方向取得抽具关联场景;
+    NSArray *otherScene_ps = Ports2Pits(toAbs ? [AINetUtils absPorts_All:protoScene] : [AINetUtils conPorts_All:protoScene]);
     
-    
-    //TODOTOMORROW20230507:
-    
-    //根据是否有conCanset过滤;
-    [SMGUtils filterArr:otherScene_ps checkValid:^BOOL(id item) {
-        return true;
+    //2. 根据是否有conCanset过滤 (目前仅支持R任务,所以直接用fo.count做targetIndex) (参考29089-解答1-补充 & 2908a-todo5);
+    otherScene_ps = [SMGUtils filterArr:otherScene_ps checkValid:^BOOL(AIKVPointer *item) {
+        AIFoNodeBase *fo = [SMGUtils searchNode:item];
+        return ARRISOK([fo getConCansets:fo.count]);
     }];
     
-    
-    //根据匹配度排序;
-    [SMGUtils sortBig2Small:otherScene_ps compareBlock:^double(id obj) {
-        return 0;
+    //3. 根据indexDic复用匹配度进行排序 (参考2908a-todo2);
+    otherScene_ps = [SMGUtils sortBig2Small:otherScene_ps compareBlock:^double(AIKVPointer *obj) {
+        if (toAbs) {
+            return [AINetUtils getMatchByIndexDic:[protoScene getAbsIndexDic:obj] absFo:obj conFo:protoScene.pointer callerIsAbs:false];
+        }
+        return [AINetUtils getMatchByIndexDic:[protoScene getConIndexDic:obj] absFo:protoScene.pointer conFo:obj callerIsAbs:true];
     }];
     
-    return otherScene_ps;
+    //4. 取20% & 至少尝试取3条 (参考2908a-todo4);
+    NSInteger limit = MAX(3, otherScene_ps.count * 0.2f);
+    return ARR_SUB(otherScene_ps, 0, limit);
 }
 
 //MARK:===============================================================
