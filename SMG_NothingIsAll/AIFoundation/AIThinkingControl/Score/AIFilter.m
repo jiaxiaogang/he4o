@@ -55,15 +55,39 @@
 }
 
 /**
- *  MARK:--------------------取conCansets过滤器 (参考29081-todo41)--------------------
+ *  MARK:--------------------Canset求解过滤器 (参考29081-todo41)--------------------
  */
-+(NSArray*) conCansetFilter:(AIFoNodeBase*)sceneFo targetIndex:(NSInteger)targetIndex {
++(NSArray*) solutionCansetFilter:(AIFoNodeBase*)sceneFo targetIndex:(NSInteger)targetIndex {
     NSArray *protoConCansets = [sceneFo getConCansets:targetIndex];
     NSArray *sorts = [SMGUtils sortBig2Small:protoConCansets compareBlock:^double(AIKVPointer *canset) {
         return [TOUtils getEffectScore:sceneFo effectIndex:targetIndex solutionFo:canset];
     }];
     NSInteger limit = MAX(3, protoConCansets.count * 0.2f);//取20% & 至少尝试取3条;
     return ARR_SUB(sorts, 0, limit);
+}
+
+/**
+ *  MARK:--------------------Scene求解过滤器 (参考2908a-todo2)--------------------
+ *  @param isAbs : 从protoScene向抽象还是具象取ports返回?
+ */
++(NSArray*) solutonSceneFilter:(AIFoNodeBase*)protoScene isAbs:(BOOL)isAbs {
+    NSArray *otherScene_ps = Ports2Pits(isAbs ? [AINetUtils absPorts_All:protoScene] : [AINetUtils conPorts_All:protoScene]);
+    
+    
+    //TODOTOMORROW20230507:
+    
+    //根据是否有conCanset过滤;
+    [SMGUtils filterArr:otherScene_ps checkValid:^BOOL(id item) {
+        return true;
+    }];
+    
+    
+    //根据匹配度排序;
+    [SMGUtils sortBig2Small:otherScene_ps compareBlock:^double(id obj) {
+        return 0;
+    }];
+    
+    return otherScene_ps;
 }
 
 //MARK:===============================================================

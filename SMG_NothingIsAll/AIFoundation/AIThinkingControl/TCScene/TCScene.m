@@ -34,21 +34,21 @@
     //3. 取父类级;
     for (AISceneModel *iModel in iModels) {
         AIFoNodeBase *iFo = [SMGUtils searchNode:iModel.scene];
-        NSArray *fatherScenePorts = [AINetUtils absPorts_All:iFo];
+        NSArray *fatherScene_ps = [AIFilter solutonSceneFilter:iFo isAbs:true];
         
         //a. 过滤器 & 转为CansetModel;
-        NSArray *itemFatherModels = [SMGUtils convertArr:fatherScenePorts convertBlock:^id(AIPort *item) {
+        NSArray *itemFatherModels = [SMGUtils convertArr:fatherScene_ps convertBlock:^id(AIKVPointer *item) {
             //a1. 过滤father不含截点的 (参考29069-todo5.6);
-            NSDictionary *indexDic = [iFo getAbsIndexDic:item.target_p];
+            NSDictionary *indexDic = [iFo getAbsIndexDic:item];
             NSNumber *fatherCutIndex = ARR_INDEX([indexDic allKeysForObject:@(iModel.cutIndex)], 0);
             if (!fatherCutIndex) return nil;
             
             //a2. 过滤无同区mv指向的 (参考29069-todo4);
-            AIFoNodeBase *fo = [SMGUtils searchNode:item.target_p];
+            AIFoNodeBase *fo = [SMGUtils searchNode:item];
             if (![iFo.cmvNode_p.identifier isEqualToString:fo.cmvNode_p.identifier]) return nil;
             
             //a3. 将father生成模型;
-            return [AISceneModel newWithBase:iModel type:SceneTypeFather scene:item.target_p cutIndex:fatherCutIndex.integerValue];
+            return [AISceneModel newWithBase:iModel type:SceneTypeFather scene:item cutIndex:fatherCutIndex.integerValue];
         }];
         [fatherModels addObjectsFromArray:itemFatherModels];
     }
@@ -56,21 +56,21 @@
     //4. 取兄弟级;
     for (AISceneModel *fatherModel in fatherModels) {
         AIFoNodeBase *fatherFo = [SMGUtils searchNode:fatherModel.scene];
-        NSArray *brotherScenePorts = [AINetUtils conPorts_All:fatherFo];
+        NSArray *brotherScene_ps = [AIFilter solutonSceneFilter:fatherFo isAbs:false];
         
         //a. 过滤器 & 转为CansetModel;
-        NSArray *itemBrotherModels = [SMGUtils convertArr:brotherScenePorts convertBlock:^id(AIPort *item) {
+        NSArray *itemBrotherModels = [SMGUtils convertArr:brotherScene_ps convertBlock:^id(AIKVPointer *item) {
             //a1. 过滤brother不含截点的 (参考29069-todo5.6);
-            NSDictionary *indexDic = [fatherFo getConIndexDic:item.target_p];
+            NSDictionary *indexDic = [fatherFo getConIndexDic:item];
             NSNumber *brotherCutIndex = [indexDic objectForKey:@(fatherModel.cutIndex)];
             if (!brotherCutIndex) return nil;
             
             //a2. 过滤无同区mv指向的 (参考29069-todo4);
-            AIFoNodeBase *fo = [SMGUtils searchNode:item.target_p];
+            AIFoNodeBase *fo = [SMGUtils searchNode:item];
             if (![fatherFo.cmvNode_p.identifier isEqualToString:fo.cmvNode_p.identifier]) return nil;
             
             //a3. 将brother生成模型;
-            return [AISceneModel newWithBase:fatherModel type:SceneTypeBrother scene:item.target_p cutIndex:brotherCutIndex.integerValue];
+            return [AISceneModel newWithBase:fatherModel type:SceneTypeBrother scene:item cutIndex:brotherCutIndex.integerValue];
         }];
         [brotherModels addObjectsFromArray:itemBrotherModels];
     }

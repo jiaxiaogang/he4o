@@ -29,8 +29,13 @@
 +(NSArray*) recognitonCansetFilter:(NSArray*)matchModels sceneFo:(AIFoNodeBase*)sceneFo;
 
 /**
- *  MARK:--------------------取conCansets过滤器 (参考29081-todo41)--------------------
+ *  MARK:--------------------Canset求解过滤器 (参考29081-todo41)--------------------
  */
-+(NSArray*) conCansetFilter:(AIFoNodeBase*)sceneFo targetIndex:(NSInteger)targetIndex;
++(NSArray*) solutionCansetFilter:(AIFoNodeBase*)sceneFo targetIndex:(NSInteger)targetIndex;
+
+/**
+ *  MARK:--------------------Scene求解过滤器 (参考2908a-todo2)--------------------
+ */
++(NSArray*) solutonSceneFilter:(AIFoNodeBase*)protoScene isAbs:(BOOL)isAbs;
 
 @end
