@@ -68,17 +68,21 @@
 
 /**
  *  MARK:--------------------Scene求解过滤器 (参考2908a-todo2)--------------------
- *  @param toAbs : 从protoScene向抽象还是具象取ports返回? (proto为i时传true,proto为father时传false);
+ *  @param type : protoScene的类型,i时向抽象取ports,father时向具象取ports;
+ *  @version
+ *      2023.05.08: BUG_father没conCanset被过滤,导致它的brother全没机会激活 (改为仅brother时才要求必须有cansets指向);
  */
-+(NSArray*) solutonSceneFilter:(AIFoNodeBase*)protoScene toAbs:(BOOL)toAbs {
++(NSArray*) solutonSceneFilter:(AIFoNodeBase*)protoScene type:(SceneType)type {
     //1. 数据准备: 向着isAbs方向取得抽具关联场景;
+    BOOL toAbs = type != SceneTypeFather;
     NSArray *otherScene_ps = Ports2Pits(toAbs ? [AINetUtils absPorts_All:protoScene] : [AINetUtils conPorts_All:protoScene]);
     
     //2. 根据是否有conCanset过滤 (目前仅支持R任务,所以直接用fo.count做targetIndex) (参考29089-解答1-补充 & 2908a-todo5);
     otherScene_ps = [SMGUtils filterArr:otherScene_ps checkValid:^BOOL(AIKVPointer *item) {
         AIFoNodeBase *fo = [SMGUtils searchNode:item];
-        //BUG: 如果father没conCanset,但它的brother有呢?这里直接判断conCanset 后,直接就断了;
-        return [fo.cmvNode_p.identifier isEqualToString:protoScene.cmvNode_p.identifier] && ARRISOK([fo getConCansets:fo.count]);
+        BOOL mvIdenOK = [fo.cmvNode_p.identifier isEqualToString:protoScene.cmvNode_p.identifier];//mv要求必须同区;
+        BOOL havCansetsOK = type != SceneTypeBrother || ARRISOK([fo getConCansets:fo.count]);//brother时要求必须有cansets;
+        return mvIdenOK && havCansetsOK;
     }];
     
     //3. 根据indexDic复用匹配度进行排序 (参考2908a-todo2);
