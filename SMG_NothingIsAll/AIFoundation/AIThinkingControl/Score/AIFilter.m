@@ -77,7 +77,8 @@
     //2. 根据是否有conCanset过滤 (目前仅支持R任务,所以直接用fo.count做targetIndex) (参考29089-解答1-补充 & 2908a-todo5);
     otherScene_ps = [SMGUtils filterArr:otherScene_ps checkValid:^BOOL(AIKVPointer *item) {
         AIFoNodeBase *fo = [SMGUtils searchNode:item];
-        return ARRISOK([fo getConCansets:fo.count]);
+        //BUG: 如果father没conCanset,但它的brother有呢?这里直接判断conCanset 后,直接就断了;
+        return [fo.cmvNode_p.identifier isEqualToString:protoScene.cmvNode_p.identifier] && ARRISOK([fo getConCansets:fo.count]);
     }];
     
     //3. 根据indexDic复用匹配度进行排序 (参考2908a-todo2);
