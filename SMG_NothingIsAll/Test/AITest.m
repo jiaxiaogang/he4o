@@ -234,6 +234,14 @@
     }
 }
 
++(void) test25:(AIAlgNodeBase*)absAlg conAlgs:(NSArray*)conAlgs {
+    for (AINodeBase *con in conAlgs) {
+        if ([absAlg getConMatchValue:con.p] == 0) {
+            ELog(@"alg抽具象关联后: 二者的匹配度读到为0,关联后不应该为0,应该全把匹配度写入时存上");
+        }
+    }
+}
+
 
 //MARK:===============================================================
 //MARK:    < 回测必经点测试 (常关,每个轮回测时打开,触发则关,未触发者为异常) >

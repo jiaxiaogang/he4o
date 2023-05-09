@@ -317,6 +317,7 @@
 //MARK:===============================================================
 +(void) relateAlgAbs:(AIAlgNodeBase*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew{
     [self relateGeneralAbs:absNode absConPorts:absNode.conPorts conNodes:conNodes isNew:isNew difStrong:1];
+    [AITest test25:absNode conAlgs:conNodes];
 }
 +(void) relateFoAbs:(AIFoNodeBase*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew{
     [self relateGeneralAbs:absNode absConPorts:absNode.conPorts conNodes:conNodes isNew:isNew difStrong:1];
@@ -393,7 +394,7 @@
 /**
  *  MARK:--------------------cmv基本模型--------------------
  *  @version
- *      2022.05.11: cmv模型ralate时,将foNode的content.refPort标记mv指向 (参考26022-2);
+ *      2022.05.11: cmv模型relate时,将foNode的content.refPort标记mv指向 (参考26022-2);
  */
 +(void) relateFo:(AIFoNodeBase*)foNode mv:(AICMVNodeBase*)mvNode{
     if (foNode && mvNode) {

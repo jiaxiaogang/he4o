@@ -37,6 +37,7 @@
 +(void) test22;
 +(void) test23:(NSDictionary*)pmDic cmDic:(NSDictionary*)cmDic matchIndex:(NSInteger)matchIndex;
 +(void) test24:(NSArray*)absArrForEmptyAlgOfAbsCountCheck;
++(void) test25:(AIAlgNodeBase*)absAlg conAlgs:(NSArray*)conAlgs;
 
 //MARK:===============================================================
 //MARK:    < 回测必经点测试 (常关,每个轮回测时打开,触发则关,未触发者为异常) >

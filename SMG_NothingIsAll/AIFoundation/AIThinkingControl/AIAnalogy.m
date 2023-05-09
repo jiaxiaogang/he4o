@@ -180,6 +180,7 @@
     }
     
     //7. 将相近度善可的构建成抽象概念返回;
+    //TODOTOMORROW20230509: 排查抽具象alg匹配度复用不到 漏代码处1;
     return [theNet createAbsAlg_NoRepeat:sameValue_ps conAlgs:@[protoA,assA]];
 }
 
