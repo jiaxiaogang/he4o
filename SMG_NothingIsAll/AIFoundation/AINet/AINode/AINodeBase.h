@@ -41,5 +41,6 @@
  */
 -(NSInteger) count;
 -(AIKVPointer*) p;
+-(NSInteger) pId;
 
 @end

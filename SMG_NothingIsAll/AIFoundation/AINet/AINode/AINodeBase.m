@@ -49,6 +49,10 @@
     return self.pointer;
 }
 
+-(NSInteger) pId {
+    return self.pointer.pointerId;
+}
+
 /**
  *  MARK:--------------------设置引用--------------------
  *  @version
