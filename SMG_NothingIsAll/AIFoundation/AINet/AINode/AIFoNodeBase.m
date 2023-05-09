@@ -195,6 +195,25 @@
     //2. 保存节点;
     [SMGUtils insertNode:self];
     [SMGUtils insertNode:absFo];
+    
+    
+    //2. TODOTOMORROW20230509: 查下near复用到0的问题 (参考29091);
+    for (NSNumber *key in indexDic.allKeys) {
+        AIKVPointer *absA_p = ARR_INDEX(absFo.content_ps, key.integerValue);
+        AIKVPointer *conA_p = ARR_INDEX(self.content_ps, NUMTOOK([indexDic objectForKey:key]).integerValue);
+        
+        //5. 当前是抽象时_从抽象取复用;
+        AIAlgNodeBase *absA = [SMGUtils searchNode:absA_p];
+        CGFloat near = [absA getConMatchValue:conA_p];
+        
+        
+        //7. 只记录near<1的 (取<1的原因未知,参考2619j-todo5);
+        if (near == 0) {
+            BOOL mIsC = [TOUtils mIsC_1:conA_p c:absA_p];
+            NSLog(@"TODOTOMORROW20230509: 查下为什么有indexDic关联了,但匹配度却是0 mIsC:%d",mIsC);
+        }
+    }
+    
 }
 
 //MARK:===============================================================
