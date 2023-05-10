@@ -97,21 +97,6 @@
     
     //4. 取20% & 至少尝试取3条 (参考2908a-todo4);
     NSInteger limit = MAX(3, otherScene_ps.count * 0.2f);
-    
-    //TODOTOMORROW20230508: 调试 (测得复用匹配度全是0的BUG);
-    if (otherScene_ps.count > 0) {
-        NSArray *tmp = ARR_SUB(otherScene_ps, 0, limit);
-        NSMutableString *mstr = [NSMutableString new];
-        for (AIKVPointer *obj in tmp) {
-            if (toAbs) {
-                NSDictionary *dic = [protoScene getAbsIndexDic:obj];
-                [mstr appendFormat:@" %.2f",[AINetUtils getMatchByIndexDic:dic absFo:obj conFo:protoScene.pointer callerIsAbs:false]];
-            }
-            NSDictionary *dic = [protoScene getConIndexDic:obj];
-            [mstr appendFormat:@" %.2f",[AINetUtils getMatchByIndexDic:dic absFo:protoScene.pointer conFo:obj callerIsAbs:true]];
-        }
-        NSLog(@"TODOTOMORROW20230510: Scene过滤器(%@) 取场景数:%ld 有效数:%ld 竞争后返回数:%ld \t%@",SceneType2Str(type),c1,c2,limit,mstr);
-    }
     return ARR_SUB(otherScene_ps, 0, limit);
 }
 

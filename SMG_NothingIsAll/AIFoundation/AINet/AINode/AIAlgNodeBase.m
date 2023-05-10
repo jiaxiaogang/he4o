@@ -57,11 +57,13 @@
 -(CGFloat) getConMatchValue:(AIKVPointer*)con_p {
     if (PitIsMv(self.pointer) && PitIsMv(con_p)) return [self getMatchValue4Mv:con_p];
     if ([self.pointer isEqual:con_p]) return 1;
+    [AITest test26:self.conMatchDic checkA:con_p];
     return NUMTOOK([self.conMatchDic objectForKey:@(con_p.pointerId)]).floatValue;
 }
 -(CGFloat) getAbsMatchValue:(AIKVPointer*)abs_p {
     if (PitIsMv(self.pointer) && PitIsMv(abs_p)) return [self getMatchValue4Mv:abs_p];
     if ([self.pointer isEqual:abs_p]) return 1;
+    [AITest test26:self.absMatchDic checkA:abs_p];
     return NUMTOOK([self.absMatchDic objectForKey:@(abs_p.pointerId)]).floatValue;
 }
 
