@@ -235,11 +235,13 @@
 }
 
 +(void) test25:(AIAlgNodeBase*)absAlg conAlgs:(NSArray*)conAlgs {
-    for (AINodeBase *con in conAlgs) {
-        if ([absAlg getConMatchValue:con.p] == 0) {
-            ELog(@"alg抽具象关联后: 二者的匹配度读到为0,关联后不应该为0,应该全把匹配度写入时存上 %ld",con.pId);
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        for (AINodeBase *con in conAlgs) {
+            if (absAlg.pId != con.pId && ![absAlg.conMatchDic objectForKey:@(con.pId)]) {
+                ELog(@"alg抽具象关联后: 二者的匹配度未保存,查下为什么匹配度没写存上 abs:%ld con:%ld",absAlg.pId,con.pId);
+            }
         }
-    }
+    });
 }
 
 

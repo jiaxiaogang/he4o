@@ -20,15 +20,6 @@
     //1. 数据准备;
     AIFoNodeBase *selfFo = [SMGUtils searchNode:sceneModel.scene];
     
-    
-    //TODOTOMORROW20230501:
-    //1. 任一条pFo对所有pFos下的father和brother都有override防重作用;
-    //2. 任一条brother或father都能对所有fathers和brothers进行防重作用;
-    //3. 看下转transferAlg算法,判断多条一样的结果时,对其进行防重;
-    
-    
-    
-    
     //2. 不同type的公式不同 (参考29069-todo5.3 & 5.4 & 5.5);
     if (sceneModel.type == SceneTypeBrother) {
         //3. 当前是brother时: (brother有效canset = brother.conCansets - 与father有迁移关联部分) (参考29069-todo5.3);

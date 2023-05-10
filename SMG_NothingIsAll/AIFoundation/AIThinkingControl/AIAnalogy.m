@@ -143,12 +143,15 @@
  *  MARK:--------------------概念类比--------------------
  *  @desc 概念类比: 将相近度低的(负主要责任的)过滤掉 (参考29025-12);
  *        作用范围: 仅适用于protoA和assA有抽具象关系时的概念类比;
+ *  @version
+ *      2023.05.10: 修复此处抽具象匹配度未储存,导致复用时取不到的问题 (参考29091);
  */
 +(AIAlgNodeBase*) analogyAlg:(AIKVPointer*)protoA_p assA:(AIKVPointer*)assA_p {
     //1. 数据准备;
     AIAlgNodeBase *protoA = [SMGUtils searchNode:protoA_p];
     AIAlgNodeBase *assA = [SMGUtils searchNode:assA_p];
     NSMutableArray *sameValue_ps = [[NSMutableArray alloc] init];
+    AIMatchAlgModel *protoAbsModel4MatchValue = [[AIMatchAlgModel alloc] init];//此模型仅用于收集proto和abs的相近度,用于计算matchValue;
     
     //2. 分别对protoA和assA的稀疏码进行对比;
     for (AIKVPointer *protoV_p in protoA.content_ps) {
@@ -169,6 +172,10 @@
                 //5. 当前码责任<50%时 (次要责任时,免责);
                 if (curRate < 0.5) {
                     [sameValue_ps addObject:assV_p];
+                    
+                    //6. 相近度个数nearCount & 相近度sumNear
+                    protoAbsModel4MatchValue.nearCount++;
+                    protoAbsModel4MatchValue.sumNear *= valueMatchValue;
                 } else {
                     NSLog(@"> 当前A%ld<%@>比A%ld<%@>的缺口:%.2f / 总缺口%.2f = 当前责任%.2f",(long)protoA_p.pointerId,Pit2FStr(protoV_p),(long)assA_p.pointerId,Pit2FStr(assV_p),curQueKou,sumQueKou,curRate);
                 }
@@ -180,9 +187,12 @@
     }
     
     //7. 将相近度善可的构建成抽象概念返回;
-    //TODOTOMORROW20230509: 排查抽具象alg匹配度复用不到 漏代码处1;
-    NSLog(@"alg抽具象关联前: 漏代码处1: %ld %ld",protoA.pId,assA.pId);
-    return [theNet createAbsAlg_NoRepeat:sameValue_ps conAlgs:@[protoA,assA]];
+    AIAbsAlgNode *absA = [theNet createAbsAlg_NoRepeat:sameValue_ps conAlgs:@[protoA,assA]];
+    
+    //8. 将抽象概念与具象的匹配度存下来 (参考29091BUG);
+    [protoA updateMatchValue:absA matchValue:protoAbsModel4MatchValue.matchValue];
+    [assA updateMatchValue:absA matchValue:1];
+    return absA;
 }
 
 /**
