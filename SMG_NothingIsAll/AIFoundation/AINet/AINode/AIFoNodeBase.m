@@ -204,16 +204,13 @@
         
         //5. 当前是抽象时_从抽象取复用;
         AIAlgNodeBase *absA = [SMGUtils searchNode:absA_p];
-        CGFloat near = [absA getConMatchValue:conA_p];
-        
         
         //7. 只记录near<1的 (取<1的原因未知,参考2619j-todo5);
-        if (near == 0) {
+        if (absA.pId != conA_p.pointerId && ![absA.conMatchDic objectForKey:@(conA_p.pointerId)]) {
             BOOL mIsC = [TOUtils mIsC_1:conA_p c:absA_p];
             NSLog(@"TODOTOMORROW20230509: 查下为什么有indexDic关联了,但匹配度却是0 mIsC:%d",mIsC);
         }
     }
-    
 }
 
 //MARK:===============================================================

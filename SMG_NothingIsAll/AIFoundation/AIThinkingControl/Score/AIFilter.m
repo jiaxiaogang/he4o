@@ -105,12 +105,12 @@
         for (AIKVPointer *obj in tmp) {
             if (toAbs) {
                 NSDictionary *dic = [protoScene getAbsIndexDic:obj];
-                [mstr appendFormat:@"%.4f",[AINetUtils getMatchByIndexDic:dic absFo:obj conFo:protoScene.pointer callerIsAbs:false]];
+                [mstr appendFormat:@" %.2f",[AINetUtils getMatchByIndexDic:dic absFo:obj conFo:protoScene.pointer callerIsAbs:false]];
             }
             NSDictionary *dic = [protoScene getConIndexDic:obj];
-            [mstr appendFormat:@"%.4f",[AINetUtils getMatchByIndexDic:dic absFo:protoScene.pointer conFo:obj callerIsAbs:true]];
+            [mstr appendFormat:@" %.2f",[AINetUtils getMatchByIndexDic:dic absFo:protoScene.pointer conFo:obj callerIsAbs:true]];
         }
-        NSLog(@"Scene过滤器(%@) 取场景数:%ld 有效数:%ld 竞争后返回数:%ld \t%@",SceneType2Str(type),c1,c2,limit,mstr);
+        NSLog(@"TODOTOMORROW20230510: Scene过滤器(%@) 取场景数:%ld 有效数:%ld 竞争后返回数:%ld \t%@",SceneType2Str(type),c1,c2,limit,mstr);
     }
     return ARR_SUB(otherScene_ps, 0, limit);
 }
