@@ -76,7 +76,6 @@
     //1. 数据准备: 向着isAbs方向取得抽具关联场景;
     BOOL toAbs = type != SceneTypeFather;
     NSArray *otherScene_ps = Ports2Pits(toAbs ? [AINetUtils absPorts_All:protoScene] : [AINetUtils conPorts_All:protoScene]);
-    NSInteger c1 = otherScene_ps.count;
     
     //2. 根据是否有conCanset过滤 (目前仅支持R任务,所以直接用fo.count做targetIndex) (参考29089-解答1-补充 & 2908a-todo5);
     otherScene_ps = [SMGUtils filterArr:otherScene_ps checkValid:^BOOL(AIKVPointer *item) {
@@ -85,7 +84,6 @@
         BOOL havCansetsOK = type != SceneTypeBrother || ARRISOK([fo getConCansets:fo.count]);//brother时要求必须有cansets;
         return mvIdenOK && havCansetsOK;
     }];
-    NSInteger c2 = otherScene_ps.count;
     
     //3. 根据indexDic复用匹配度进行排序 (参考2908a-todo2);
     otherScene_ps = [SMGUtils sortBig2Small:otherScene_ps compareBlock:^double(AIKVPointer *obj) {

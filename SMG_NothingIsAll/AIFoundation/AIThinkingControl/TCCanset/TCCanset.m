@@ -25,18 +25,20 @@
         //3. 当前是brother时: (brother有效canset = brother.conCansets - 与father有迁移关联部分) (参考29069-todo5.3);
         NSArray *brotherConCansets = [AIFilter solutionCansetFilter:selfFo targetIndex:selfFo.count];
         NSArray *brotherFilter_ps = [TCCanset getFilter_ps:sceneModel];
+        NSArray *result = [SMGUtils removeSub_ps:brotherFilter_ps parent_ps:brotherConCansets];
         if (brotherFilter_ps.count > 0 && brotherConCansets.count > 0) {
-            NSLog(@"测下override过滤生效");
+            NSLog(@"测下override过滤生效 (B-F): 原有%ld - 过滤%ld => 结果%ld",brotherConCansets.count,brotherFilter_ps.count,result.count);
         }
-        return [SMGUtils removeSub_ps:brotherFilter_ps parent_ps:brotherConCansets];
+        return result;
     } else if (sceneModel.type == SceneTypeFather) {
         //4. 当前是father时: (father有效canset = father.conCansets - 与i有迁移关联部分) (参考29069-todo5.4);
         NSArray *fatherConCansets = [AIFilter solutionCansetFilter:selfFo targetIndex:selfFo.count];
         NSArray *fatherFilter_ps = [TCCanset getFilter_ps:sceneModel];
+        NSArray *result = [SMGUtils removeSub_ps:fatherFilter_ps parent_ps:fatherConCansets];
         if (fatherFilter_ps.count > 0 && fatherConCansets.count > 0) {
-            NSLog(@"测下override过滤生效");
+            NSLog(@"测下override过滤生效 (F-I): 原有%ld - 过滤%ld => 结果%ld",fatherConCansets.count,fatherFilter_ps.count,result.count);
         }
-        return [SMGUtils removeSub_ps:fatherFilter_ps parent_ps:fatherConCansets];
+        return result;
     } else if (sceneModel.type == SceneTypeI) {
         //4. 当前是i时: (i有效canset = i.conCansets) (参考29069-todo5.5);
         NSArray *iConCansets = [AIFilter solutionCansetFilter:selfFo targetIndex:selfFo.count];

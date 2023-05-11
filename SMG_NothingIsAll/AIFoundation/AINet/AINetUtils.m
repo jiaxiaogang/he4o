@@ -840,11 +840,11 @@
 /**
  *  MARK:--------------------迁移关联--------------------
  */
-+(void) relateTransfer:(AIKVPointer*)absScone absCanset:(AIKVPointer*)absCanset conScene:(AIKVPointer*)conScene conCanset:(AIKVPointer*)conCanset {
++(void) relateTransfer:(AIKVPointer*)absScene absCanset:(AIKVPointer*)absCanset conScene:(AIKVPointer*)conScene conCanset:(AIKVPointer*)conCanset {
     //1. 数据准备;
-    AIFoNodeBase *absSconeNode = [SMGUtils searchNode:absScone];
+    AIFoNodeBase *absSconeNode = [SMGUtils searchNode:absScene];
     AIFoNodeBase *conSceneNode = [SMGUtils searchNode:conScene];
-    AITransferPort *absPort = [AITransferPort newWithScene:absScone canset:absCanset];
+    AITransferPort *absPort = [AITransferPort newWithScene:absScene canset:absCanset];
     AITransferPort *conPort = [AITransferPort newWithScene:conScene canset:conCanset];
     
     //2. 插入传节点的承端口;

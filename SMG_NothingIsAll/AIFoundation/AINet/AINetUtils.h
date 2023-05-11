@@ -298,6 +298,6 @@
 /**
  *  MARK:--------------------新增迁移关联--------------------
  */
-+(void) relateTransfer:(AIKVPointer*)absScone absCanset:(AIKVPointer*)absCanset conScene:(AIKVPointer*)conScene conCanset:(AIKVPointer*)conCanset;
++(void) relateTransfer:(AIKVPointer*)absScene absCanset:(AIKVPointer*)absCanset conScene:(AIKVPointer*)conScene conCanset:(AIKVPointer*)conCanset;
 
 @end

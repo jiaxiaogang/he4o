@@ -18,7 +18,7 @@
     if (!Switch4AITest) return;
     if (![aDS isEqualToString:@" "] ||
         ![hnAlgDS isEqualToString:@" "]) {
-        NSLog(@"自检1. 测下getHN经验时vDS匹配判断代码是否多余,多余告警");
+        NSLog(@"自检1: 测下getHN经验时vDS匹配判断代码是否多余,多余告警");
     }
 }
 
@@ -40,7 +40,7 @@
                     ![ds isEqualToString:@"border"] &&
                     ![ds isEqualToString:@"posX"] &&
                     ![ds isEqualToString:@"posY"]) {
-                    NSLog(@"自检2. 测生成GL的AIKVPointer时的ds是否正常赋值,因为它影响node防重;");
+                    NSLog(@"自检2: 测生成GL的AIKVPointer时的ds是否正常赋值,因为它影响node防重;");
                 }
             }
         }
@@ -62,7 +62,7 @@
     if (!Switch4AITest) return;
     if (PitIsValue(pointer)) {
         if ([at isEqualToString:FLY_RDS] && !isOut) {
-            NSLog(@"自检4. 行为飞稀疏码的isOut为false的问题");
+            NSLog(@"自检4: 行为飞稀疏码的isOut为false的问题");
         }
     }
 }
@@ -73,7 +73,7 @@
         if (type == ATGreater || type == ATLess) {
             if (![@"AIVisionAlgs" isEqualToString:at] &&
                 ![FLY_RDS isEqualToString:at]) {
-                NSLog(@"自检5. 测生成GL的AIKVPointer时的at是否正常赋值,因为它影响node防重");
+                NSLog(@"自检5: 测生成GL的AIKVPointer时的at是否正常赋值,因为它影响node防重");
             }
         }
     }
@@ -83,7 +83,7 @@
     if (!Switch4AITest) return;
     arr = ARRTOOK(arr);
     if (arr.count > 1) {
-        NSLog(@"自检6. 测从conNodes取at&ds&type应唯一,否则查为何不同的node会类比抽象");
+        NSLog(@"自检6: 测从conNodes取at&ds&type应唯一,否则查为何不同的node会类比抽象");
     }
 }
 
@@ -94,7 +94,7 @@
             return @(obj.type);
         }]];
         if (types.count > 1) {
-            NSLog(@"自检7. 测构建SPFo时,元素有两种类型的原因(参考24022BUG3)");
+            NSLog(@"自检7: 测构建SPFo时,元素有两种类型的原因(参考24022BUG3)");
         }
     }
 }
@@ -103,7 +103,7 @@
     if (!Switch4AITest) return;
     for (AIKVPointer *item_p in content_ps) {
         if (item_p.type != ATDefault && item_p.type != type) {
-            NSLog(@"自检8. 测构建Fo时,有不匹配type的元素原因(参考24022BUG4)");
+            NSLog(@"自检8: 测构建Fo时,有不匹配type的元素原因(参考24022BUG4)");
         }
     }
 }
@@ -111,7 +111,7 @@
 +(void) test9:(AIFoNodeBase*)fo type:(AnalogyType)type{
     if (!Switch4AITest) return;
     if (type == ATPlus && [Fo2FStr(fo) containsString:@"Y距35"]) {
-        NSLog(@"自检9. 测构建了Y距35的P节点原因(参考24057)");
+        NSLog(@"自检9: 测构建了Y距35的P节点原因(参考24057)");
     }
 }
 
@@ -134,7 +134,7 @@
         BOOL newMIsC = [recognitionAlgs containsObject:waitAlg_p];
         
         if (oldMIsC && !newMIsC) {
-            ELog(@"复现成功,二者不一样: 对比下mAbs和recognitionAlgs,看下区别,为什么导致newMIsC未匹配到");
+            ELog(@"自检11: 复现成功,二者不一样: 对比下mAbs和recognitionAlgs,看下区别,为什么导致newMIsC未匹配到");
         }
     }
 }
@@ -176,9 +176,9 @@
 
 +(void) test17 {
     if (!Switch4AITest) return;
-    NSLog(@"此处打到断点时,先稳步查看n28p07-末尾-未完成项,再继续");
-    NSLog(@"核实下,H任务触发canset再类比的时机:targetAlg有反馈? (参考28071)");
-    NSLog(@"核实下,H任务触发canset再类比的条件:要求targetFo或hDemand的状态? (参考28077-另外)");
+    NSLog(@"自检17: 此处打到断点时,先稳步查看n28p07-末尾-未完成项,再继续");
+    NSLog(@"自检17: 核实下,H任务触发canset再类比的时机:targetAlg有反馈? (参考28071)");
+    NSLog(@"自检17: 核实下,H任务触发canset再类比的条件:要求targetFo或hDemand的状态? (参考28077-另外)");
 }
 
 +(void) test18:(NSDictionary*)newIndexDic newCanset:(AIFoNodeBase*)newCanset absFo:(AIFoNodeBase*)absFo {
@@ -189,7 +189,7 @@
         AIKVPointer *conAlg = ARR_INDEX(newCanset.content_ps, conIndex);
         AIKVPointer *absAlg = ARR_INDEX(absFo.content_ps, absIndex);
         if (![TOUtils mIsC_1:conAlg c:absAlg]) {
-            ELog(@"检查newCanset的indexDic有误");
+            ELog(@"自检18: 检查newCanset的indexDic有误");
         }
     }
 }
@@ -197,40 +197,40 @@
 +(void) test19:(AISPStrong*)newSPStrong {
     if (!Switch4AITest) return;
     if (newSPStrong.sStrong < 0 || newSPStrong.pStrong < 0) {
-        ELog(@"检查newSPStrong有误,肯定是前面少计数了,导致后面的P太大,而前面的SP之和反而小于它");
+        ELog(@"自检19: 检查newSPStrong有误,肯定是前面少计数了,导致后面的P太大,而前面的SP之和反而小于它");
     }
 }
 
 +(void) test20:(AIFoNodeBase*)newCanset newSPDic:(NSDictionary*)newSPDic {
     if (!Switch4AITest) return;
     if (newCanset.count != newSPDic.count) {
-        ELog(@"检查newSPDic有误,它的长度不等于absCanset长度,查下原因");
+        ELog(@"自检20: 检查newSPDic有误,它的长度不等于absCanset长度,查下原因");
     }
 }
 
 +(void) test21:(BOOL)refrectionResult {
     if (!Switch4AITest) return;
     if (!refrectionResult) {
-        ELog(@"调试下反思未通过的原因,此处仅为了保证反思有失败时,且失败的原因合理");
+        ELog(@"自检21: 调试下反思未通过的原因,此处仅为了保证反思有失败时,且失败的原因合理");
     }
 }
 
 +(void) test22 {
     if (!Switch4AITest) return;
-    ELog(@"发现indexDic在absIndex下找不到conIndex,查下为什么没映射到?是不是识别时全含判断错了?");
+    ELog(@"自检22: 发现indexDic在absIndex下找不到conIndex,查下为什么没映射到?是不是识别时全含判断错了?");
 }
 
 +(void) test23:(NSDictionary*)pmDic cmDic:(NSDictionary*)cmDic matchIndex:(NSInteger)matchIndex {
     if (!Switch4AITest) return;
     if (![pmDic objectForKey:@(matchIndex)] || ![cmDic objectForKey:@(matchIndex)]) {
-        ELog(@"matchIndex在前段条件判断中,未找到proto或canset的映射,查下原因 (H任务跳转多了是否有找不着的可能?)");
+        ELog(@"自检23: matchIndex在前段条件判断中,未找到proto或canset的映射,查下原因 (H任务跳转多了是否有找不着的可能?)");
     }
 }
 
 +(void) test24:(NSArray*)absArrForEmptyAlgOfAbsCountCheck {
     if (!Switch4AITest) return;
     if (!ARRISOK(absArrForEmptyAlgOfAbsCountCheck)) {
-        ELog(@"构建空抽象时,它的具象概念们的抽象没有共同抽象! (查下Canset识别算法,它有共同抽象才被全含匹配到,如果匹配了,但却没共同抽象,显然有问题)");
+        ELog(@"自检24: 构建空抽象时,它的具象概念们的抽象没有共同抽象! (查下Canset识别算法,它有共同抽象才被全含匹配到,如果匹配了,但却没共同抽象,显然有问题)");
     }
 }
 
@@ -238,7 +238,7 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         for (AINodeBase *con in conAlgs) {
             if (absAlg.pId != con.pId && ![absAlg.conMatchDic objectForKey:@(con.pId)]) {
-                ELog(@"alg抽具象关联后: 二者的匹配度未保存,查下为什么匹配度没写存上 abs:%ld con:%ld",absAlg.pId,con.pId);
+                ELog(@"自检25: 存概念匹配度: alg抽具象关联后: 二者的匹配度未保存,查下为什么匹配度没写存上 abs:%ld con:%ld",absAlg.pId,con.pId);
             }
         }
     });
@@ -246,7 +246,7 @@
 
 +(void) test26:(NSDictionary*)matchDic checkA:(AIKVPointer*)checkA {
     if (![matchDic objectForKey:@(checkA.pointerId)]) {
-        ELog(@"复用概念匹配度失败,查下为什么");
+        ELog(@"自检26: 取概念匹配度: 复用概念匹配度失败,查下为什么");
     }
 }
 
