@@ -62,6 +62,9 @@
 /**
  *  MARK:--------------------canset继承算法 (29069-todo10.1推举算法示图&步骤)--------------------
  *  @desc 用于将canset从father继承到i场景下;
+ *  @param fatherCansetTargetIndex : 前后canset同长度,所以传前者targetIndex即可;
+ *  @version
+ *      2023.05.11: BUG_canset的targetIndex是执行目标,而scene的targetIndex是任务目标,用错修复 (参考29093-线索 & 方案);
  */
 +(AIKVPointer*) transferJiCen:(AIKVPointer*)fatherCanset fatherCansetTargetIndex:(NSInteger)fatherCansetTargetIndex fatherScene:(AIKVPointer*)fatherScene_p iScene_p:(AIKVPointer*)iScene_p {
     //1. 数据准备;
@@ -107,9 +110,18 @@
     
     //9. 防重 (其实不可能重复,因为如果重复在override算法中当前cansetModel就已经被过滤了);
     if (![fatherScene.transferConPorts containsObject:newIPort]) {
+        //10. 将canset执行目标转成scene任务目标targetIndex (参考29093-方案);
+        NSInteger sceneTargetIndex = iScene.count;
+        if (fatherCansetTargetIndex < fatherCansetNode.count) {
+            NSArray *keys = [iSceneCansetIndexDic allKeysForObject:@(fatherCansetTargetIndex)];
+            if (ARRISOK(keys)) {
+                sceneTargetIndex = NUMTOOK(ARR_INDEX(keys, 0)).integerValue;
+            }
+        }
+        
         //10. 将newIPort挂到iScene下;
         AIFoNodeBase *iScene = [SMGUtils searchNode:iScene_p];
-        [iScene updateConCanset:iCanset.p targetIndex:fatherCansetTargetIndex];//前后canset同长度,所以传前者targetIndex即可;
+        [iScene updateConCanset:iCanset.p targetIndex:sceneTargetIndex];
         
         //10. 为迁移后iCanset加上与iScene的indexDic (参考29075-todo4);
         [iCanset updateIndexDic:iScene indexDic:iSceneCansetIndexDic];
@@ -172,7 +184,7 @@
     if (![brotherScene.transferAbsPorts containsObject:newFatherPort]) {
         //10. 将newFatherCanset挂到fatherScene下;
         AIFoNodeBase *fatherScene = [SMGUtils searchNode:fatherScene_p];
-        [fatherScene updateConCanset:fatherCanset.p targetIndex:brotherCansetTargetIndex];//前后canset同长度,所以传前者targetIndex即可;
+        [fatherScene updateConCanset:fatherCanset.p targetIndex:fatherScene.count];
         
         //10. 为迁移后fatherCanset加上与fatherScene的indexDic (参考29075-todo4);
         [fatherCanset updateIndexDic:fatherScene indexDic:fatherSceneCansetIndexDic];
