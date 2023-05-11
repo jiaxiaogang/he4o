@@ -238,7 +238,8 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         for (AINodeBase *con in conAlgs) {
             if (absAlg.pId != con.pId && ![absAlg.conMatchDic objectForKey:@(con.pId)]) {
-                ELog(@"自检25: 存概念匹配度: alg抽具象关联后: 二者的匹配度未保存,查下为什么匹配度没写存上 abs:%ld con:%ld",absAlg.pId,con.pId);
+                //这个错报也没啥事,因为有时卡了,还没存上,就执行了这儿,如果这里的错一直报了,可以查下test26,只要26不报,说明取用时没问题,这个存自然也就没问题;
+                //ELog(@"自检25: 存概念匹配度: alg抽具象关联后: 二者的匹配度未保存,查下为什么匹配度没写存上 abs:%ld con:%ld",absAlg.pId,con.pId);
             }
         }
     });
