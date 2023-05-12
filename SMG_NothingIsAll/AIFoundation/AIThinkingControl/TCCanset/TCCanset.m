@@ -26,18 +26,14 @@
         NSArray *brotherConCansets = [AIFilter solutionCansetFilter:selfFo targetIndex:selfFo.count];
         NSArray *brotherFilter_ps = [TCCanset getFilter_ps:sceneModel];
         NSArray *result = [SMGUtils removeSub_ps:brotherFilter_ps parent_ps:brotherConCansets];
-        if (brotherFilter_ps.count > 0 && brotherConCansets.count > 0) {
-            NSLog(@"测下override过滤生效 (B-F): 原有%ld - 过滤%ld => 结果%ld",brotherConCansets.count,brotherFilter_ps.count,result.count);
-        }
+        if (Log4TCCanset && brotherConCansets.count > 0) NSLog(@"测下override过滤生效 (B-F): 原有%ld - 过滤%ld => 结果%ld",brotherConCansets.count,brotherFilter_ps.count,result.count);
         return result;
     } else if (sceneModel.type == SceneTypeFather) {
         //4. 当前是father时: (father有效canset = father.conCansets - 与i有迁移关联部分) (参考29069-todo5.4);
         NSArray *fatherConCansets = [AIFilter solutionCansetFilter:selfFo targetIndex:selfFo.count];
         NSArray *fatherFilter_ps = [TCCanset getFilter_ps:sceneModel];
         NSArray *result = [SMGUtils removeSub_ps:fatherFilter_ps parent_ps:fatherConCansets];
-        if (fatherFilter_ps.count > 0 && fatherConCansets.count > 0) {
-            NSLog(@"测下override过滤生效 (F-I): 原有%ld - 过滤%ld => 结果%ld",fatherConCansets.count,fatherFilter_ps.count,result.count);
-        }
+        if (Log4TCCanset && fatherConCansets.count > 0) NSLog(@"测下override过滤生效 (F-I): 原有%ld - 过滤%ld => 结果%ld",fatherConCansets.count,fatherFilter_ps.count,result.count);
         return result;
     } else if (sceneModel.type == SceneTypeI) {
         //4. 当前是i时: (i有效canset = i.conCansets) (参考29069-todo5.5);
@@ -90,7 +86,7 @@
     //1. 数据准备 & 复用indexDic & 取出pFoOrTargetFo;
     AIFoNodeBase *matchFo = [SMGUtils searchNode:sceneFo_p];
     AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
-    BOOL debugMode = sceneModel.type == SceneTypeBrother && cansetFo.count > 1;
+    BOOL debugMode = false;//性能调试ok了关掉;
     if (debugMode) AddDebugCodeBlock(@"convert2Canset 0");
     NSInteger matchTargetIndex = isH ? ptAleardayCount : matchFo.count;
     
@@ -263,18 +259,6 @@
             //3. 单条判断方式: 此处proto抽象仅指向刚识别的matchAlgs,所以与contains等效 (参考28052-3);
             AIKVPointer *transferAlg = [TCTransfer transferAlg:sceneModel canset:cansetFo cansetIndex:cansetI];
             BOOL mIsC = [TOUtils mIsC_1:protoAlg c:transferAlg];
-            
-            //TODOTEST20230428: 下面debug代码回测下29075的BUG (测段时间ok后,这里debug代码删掉);
-            if (sceneModel.type == SceneTypeBrother) {
-            }else if (sceneModel.type == SceneTypeFather) {
-                NSLog(@"canset:%@",Pit2FStr(cansetAlg));
-                NSLog(@"transfer:%@",Pit2FStr(transferAlg));
-                NSLog(@"proto:%@",Pit2FStr(protoAlg));
-                NSLog(@"fatherScene:%@",Pit2FStr(sceneModel.scene));
-                NSLog(@"iScene:%@",Pit2FStr(sceneModel.base.scene));
-                NSLog(@"");
-            }else if (sceneModel.type == SceneTypeI) {}
-            
             if (mIsC) {
                 //4. 找到了 & 记录protoI的进度;
                 findItem = true;

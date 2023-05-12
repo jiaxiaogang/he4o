@@ -114,9 +114,15 @@ static XGDebug *_instance;
  */
 -(void) print:(NSString*)prefix {
     NSArray *debugModels = [theDebug getDebugModels:prefix];
+    XGDebugModel *sum = [[XGDebugModel alloc] init];
     for (XGDebugModel *model in debugModels) {
-        NSLog(@"%@ 计数:%ld 均耗:%.0f = 总耗:%.0f 读:%ld 写:%ld",model.key,model.sumCount,model.sumTime / model.sumCount,model.sumTime,model.sumReadCount,model.sumWriteCount);
+        NSLog(@"%@ 计数:%ld 均耗:%.2f = 总耗:%.0f 读:%ld 写:%ld",model.key,model.sumCount,model.sumTime / model.sumCount,model.sumTime,model.sumReadCount,model.sumWriteCount);
+        sum.sumCount += model.sumCount;
+        sum.sumTime += model.sumTime;
+        sum.sumReadCount += model.sumReadCount;
+        sum.sumWriteCount += model.sumWriteCount;
     }
+    NSLog(@"DEBUG匹配 => 总计数:%ld 均耗:%.2f = 总耗:%.0f 读:%ld 写:%ld",sum.sumCount,sum.sumTime / sum.sumCount,sum.sumTime,sum.sumReadCount,sum.sumWriteCount);
 }
 
 @end

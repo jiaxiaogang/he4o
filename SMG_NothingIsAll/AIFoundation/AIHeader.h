@@ -379,7 +379,7 @@
 #define Log4Solution_Fast true
 
 //TCCanset日志开关
-#define Log4TCCanset true
+#define Log4TCCanset false
 
 //MARK:===============================================================
 //MARK:                     < 系统模块开关 >
