@@ -114,6 +114,7 @@ static XGDebug *_instance;
  */
 -(void) print:(NSString*)prefix {
     NSArray *debugModels = [theDebug getDebugModels:prefix];
+    if (!ARRISOK(debugModels)) return;
     XGDebugModel *sum = [[XGDebugModel alloc] init];
     for (XGDebugModel *model in debugModels) {
         NSLog(@"%@ 计数:%ld 均耗:%.2f = 总耗:%.0f 读:%ld 写:%ld",model.key,model.sumCount,model.sumTime / model.sumCount,model.sumTime,model.sumReadCount,model.sumWriteCount);

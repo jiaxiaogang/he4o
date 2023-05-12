@@ -254,19 +254,7 @@
         }
     }
     [absFo updateIndexDic:sceneFo indexDic:sceneAbsCansetIndexDic];
-    
-    //debug调试代码 ===== START =====:
-    NSDictionary *sceneOldCansetIndexDic = [sceneFo getConIndexDic:oldCanset.p];
-    NSMutableDictionary *tmpResult = [[NSMutableDictionary alloc] init];
-    for (id sceneIndex in sceneOldCansetIndexDic.allKeys) {
-        id oldCansetIndex = [sceneOldCansetIndexDic objectForKey:sceneIndex];
-        id absCansetIndex = ARR_INDEX([oldIndexDic allKeysForObject:oldCansetIndex], 0);
-        if (absCansetIndex) {
-            [tmpResult setObject:absCansetIndex forKey:sceneIndex];
-        }
-    }
-    NSLog(@"测试: %@ 对比 %@ (需一致,如不一致查BUG)",CLEANSTR(sceneAbsCansetIndexDic),CLEANSTR(tmpResult));
-    //debug调试代码 ===== END =====:
+    [AITest test27:sceneFo oldCanset:oldCanset.p oldIndexDic:oldIndexDic compareIndexDicFromNewCanset:sceneAbsCansetIndexDic];
     
     //8. oldCanset与absCanset新关联时: 取出ass中旧有的effStrong模型继承给absFo (参考29032-todo2.2);
     if (!outConAbsIsRelate) {

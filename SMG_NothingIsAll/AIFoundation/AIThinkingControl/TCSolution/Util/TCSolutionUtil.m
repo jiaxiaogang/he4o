@@ -257,7 +257,7 @@
         AIEffectStrong *effStrong = [TOUtils getEffectStrong:sceneFo effectIndex:sceneFo.count solutionFo:model.cansetFo];
         NSString *effDesc = effStrong ? effStrong.description : @"";
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:model.cansetFo];
-        if (Log4Solution_Slow) NSLog(@"%ld: %@ (前%.2f 中%.2f 后%.2f) fromSceneFo:F%ld eff:%@ sp:%@",[sortModels indexOfObject:model],Pit2FStr(model.cansetFo),model.frontMatchValue,model.midStableScore,model.backMatchValue,sceneFo.pointer.pointerId,effDesc,CLEANSTR(cansetFo.spDic));
+        if (Log4Solution_Slow) NSLog(@"%ld: %@\n\t> from%@Scene:%@ (前%.2f 中%.2f 后%.2f) eff:%@ sp:%@",[sortModels indexOfObject:model],Pit2FStr(model.cansetFo),SceneType2Str(model.baseSceneModel.type),Fo2FStr(sceneFo),model.frontMatchValue,model.midStableScore,model.backMatchValue,effDesc,CLEANSTR(cansetFo.spDic));
     }
 
     //13. 取通过S反思的最佳S;

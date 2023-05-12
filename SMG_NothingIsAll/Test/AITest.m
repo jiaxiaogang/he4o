@@ -251,6 +251,28 @@
     }
 }
 
+/**
+ *  MARK:--------------------test27--------------------
+ *  @desc 作用说明: 在Canset类比中,用old和new生成最终indexDic应该是一致的,此test27用于检查二者是否一致,如果不一致则查下是不是有什么BUG;
+ *        有效日期: 2023.08前如果未发现问题,则test27可删掉;
+ */
++(void) test27:(AIFoNodeBase*)sceneFo oldCanset:(AIKVPointer*)oldCanset_p oldIndexDic:(NSDictionary*)oldIndexDic compareIndexDicFromNewCanset:(NSDictionary*)compareIndexDicFromNewCanset {
+    NSDictionary *sceneOldCansetIndexDic = [sceneFo getConIndexDic:oldCanset_p];
+    NSMutableDictionary *indexDicFromOldCanset = [[NSMutableDictionary alloc] init];
+    for (id sceneIndex in sceneOldCansetIndexDic.allKeys) {
+        id oldCansetIndex = [sceneOldCansetIndexDic objectForKey:sceneIndex];
+        id absCansetIndex = ARR_INDEX([oldIndexDic allKeysForObject:oldCansetIndex], 0);
+        if (absCansetIndex) [indexDicFromOldCanset setObject:absCansetIndex forKey:sceneIndex];
+    }
+    
+    //> 在canset类比中已经为new生成了indexDic,本test27中再为old生成indexDic,然后对比二者是否一致,不一致则打出错误日志;
+    NSString *newStr = CLEANSTR(compareIndexDicFromNewCanset);
+    NSString *oldStr = CLEANSTR(indexDicFromOldCanset);
+    if (![newStr isEqualToString:oldStr]) {
+        ELog(@"自检27: 测得Canset类比的最终生成indexDic从新旧路径不一致!!!查下为什么: new:%@ old:%@",newStr,oldStr);
+    }
+}
+
 
 //MARK:===============================================================
 //MARK:    < 回测必经点测试 (常关,每个轮回测时打开,触发则关,未触发者为异常) >
