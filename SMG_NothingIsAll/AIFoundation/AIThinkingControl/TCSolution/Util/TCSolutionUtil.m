@@ -195,6 +195,17 @@
             //4. 过滤器 & 转cansetModels候选集 (参考26128-第1步 & 26161-1&2&3);
             return [TCCanset convert2CansetModel:canset sceneFo:sceneModel.scene basePFoOrTargetFoModel:pFo ptAleardayCount:aleardayCount isH:false sceneModel:sceneModel];
         }];
+        
+        //TODOTOMORROW20230513: 手训躲开,尝试四次后,此处依然没有迁移到任何canset (如下,结果一堆,但没有一条最终转成cansetModel的);
+        //测下override过滤生效 (B-F): 原有3 - 过滤0 => 结果3
+        //测下override过滤生效 (B-F): 原有4 - 过滤0 => 结果4
+        //测下override过滤生效 (B-F): 原有3 - 过滤0 => 结果3
+        //测下override过滤生效 (B-F): 原有7 - 过滤0 => 结果7
+        //测下override过滤生效 (B-F): 原有3 - 过滤0 => 结果3
+        //测下override过滤生效 (B-F): 原有3 - 过滤0 => 结果3
+        
+        
+        
         if (Log4TCCanset && cansets.count > 0 && itemCansetModels.count > 0) NSLog(@"\t item场景(%@):%@ 取得候选数:%ld 转成候选模型数:%ld",SceneType2Str(sceneModel.type),Pit2FStr(sceneModel.scene),cansets.count,itemCansetModels.count);
         return itemCansetModels;
     }];
