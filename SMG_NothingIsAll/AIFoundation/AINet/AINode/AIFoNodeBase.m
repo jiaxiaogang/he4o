@@ -216,8 +216,13 @@
 
 /**
  *  MARK:--------------------更新一条候选--------------------
+ *  @result 将是否保存成功返回 (长度为1及以下的没后段,所以直接不存了) (参考28052-4 && 29094-BUG1);
  */
--(void) updateConCanset:(AIKVPointer*)newConCansetFo targetIndex:(NSInteger)targetIndex {
+-(BOOL) updateConCanset:(AIKVPointer*)newConCansetFo targetIndex:(NSInteger)targetIndex {
+    //0. canset没后段的直接不存了 (没可行为化的东西) (参考28052-4);
+    AIFoNodeBase *newCanset = [SMGUtils searchNode:newConCansetFo];
+    if (newCanset.count <= 1) return false;
+    
     //1. 更新一条候选;
     NSMutableArray *conCansets = [[NSMutableArray alloc] initWithArray:[self.conCansetsDic objectForKey:@(targetIndex)]];
     if (![conCansets containsObject:newConCansetFo]) {
@@ -228,6 +233,7 @@
     
     //2. 更新后 (新的默认eff=1,旧的eff则增强+1);
     [self updateEffectStrong:1 solutionFo:newConCansetFo status:ES_HavEff];
+    return true;
 }
 
 //MARK:===============================================================

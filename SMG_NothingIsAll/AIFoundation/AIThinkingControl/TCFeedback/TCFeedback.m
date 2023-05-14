@@ -374,17 +374,19 @@
                     //h. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
                     NSLog(@"HCanset再类比 (状态:%@ fromTargetFo:F%ld) \n\t当前Canset:%@",TOStatus2Str(solutionModel.status),targetFoModel.content_p.pointerId,Pit2FStr(solutionModel.content_p));
                     AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:protoFo assFo:solutionFo type:ATDefault];
-                    [targetFo updateConCanset:absCansetFo.pointer targetIndex:targetFoModel.actionIndex];
+                    BOOL updateCansetSuccess = [targetFo updateConCanset:absCansetFo.pointer targetIndex:targetFoModel.actionIndex];
                     [AITest test101:absCansetFo proto:protoFo conCanset:solutionFo];
                     
-                    //j. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);
-                    NSDictionary *newIndexDic = [solutionModel convertOldIndexDic2NewIndexDic:targetFoModel.content_p];
-                    [absCansetFo updateIndexDic:targetFo indexDic:newIndexDic];
-                    [AITest test18:newIndexDic newCanset:absCansetFo absFo:targetFo];
-                    
-                    //k. 算出spDic (参考27213-5);
-                    [absCansetFo updateSPDic:[solutionModel convertOldSPDic2NewSPDic]];
-                    [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
+                    if (updateCansetSuccess) {
+                        //j. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);
+                        NSDictionary *newIndexDic = [solutionModel convertOldIndexDic2NewIndexDic:targetFoModel.content_p];
+                        [absCansetFo updateIndexDic:targetFo indexDic:newIndexDic];
+                        [AITest test18:newIndexDic newCanset:absCansetFo absFo:targetFo];
+                        
+                        //k. 算出spDic (参考27213-5);
+                        [absCansetFo updateSPDic:[solutionModel convertOldSPDic2NewSPDic]];
+                        [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
+                    }
                 }
             }
         }

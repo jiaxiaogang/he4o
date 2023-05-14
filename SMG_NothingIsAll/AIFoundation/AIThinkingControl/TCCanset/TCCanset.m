@@ -26,18 +26,19 @@
         NSArray *brotherConCansets = [AIFilter solutionCansetFilter:selfFo targetIndex:selfFo.count];
         NSArray *brotherFilter_ps = [TCCanset getFilter_ps:sceneModel];
         NSArray *result = [SMGUtils removeSub_ps:brotherFilter_ps parent_ps:brotherConCansets];
-        if (Log4TCCanset && brotherConCansets.count > 0) NSLog(@"测下override过滤生效 (B-F): 原有%ld - 过滤%ld => 结果%ld",brotherConCansets.count,brotherFilter_ps.count,result.count);
+        if (Log4TCCanset) NSLog(@"测下override过滤生效 (B-F): 原有%ld - 过滤%ld => 结果%ld",brotherConCansets.count,brotherFilter_ps.count,result.count);
         return result;
     } else if (sceneModel.type == SceneTypeFather) {
         //4. 当前是father时: (father有效canset = father.conCansets - 与i有迁移关联部分) (参考29069-todo5.4);
         NSArray *fatherConCansets = [AIFilter solutionCansetFilter:selfFo targetIndex:selfFo.count];
         NSArray *fatherFilter_ps = [TCCanset getFilter_ps:sceneModel];
         NSArray *result = [SMGUtils removeSub_ps:fatherFilter_ps parent_ps:fatherConCansets];
-        if (Log4TCCanset && fatherConCansets.count > 0) NSLog(@"测下override过滤生效 (F-I): 原有%ld - 过滤%ld => 结果%ld",fatherConCansets.count,fatherFilter_ps.count,result.count);
+        if (Log4TCCanset) NSLog(@"测下override过滤生效 (F-I): 原有%ld - 过滤%ld => 结果%ld",fatherConCansets.count,fatherFilter_ps.count,result.count);
         return result;
     } else if (sceneModel.type == SceneTypeI) {
         //4. 当前是i时: (i有效canset = i.conCansets) (参考29069-todo5.5);
         NSArray *iConCansets = [AIFilter solutionCansetFilter:selfFo targetIndex:selfFo.count];
+        if (Log4TCCanset) NSLog(@"测下override过滤生效 (I): 结果%ld",iConCansets.count);
         return iConCansets;
     }
     return nil;
@@ -86,7 +87,7 @@
     //1. 数据准备 & 复用indexDic & 取出pFoOrTargetFo;
     AIFoNodeBase *matchFo = [SMGUtils searchNode:sceneFo_p];
     AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
-    BOOL debugMode = false;//性能调试ok了关掉;
+    BOOL debugMode = Log4TCCanset;//性能调试ok了关掉;
     if (debugMode) AddDebugCodeBlock(@"convert2Canset 0");
     NSInteger matchTargetIndex = isH ? ptAleardayCount : matchFo.count;
     

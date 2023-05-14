@@ -121,13 +121,15 @@
         
         //10. 将newIPort挂到iScene下;
         AIFoNodeBase *iScene = [SMGUtils searchNode:iScene_p];
-        [iScene updateConCanset:iCanset.p targetIndex:sceneTargetIndex];
+        BOOL updateCansetSuccess = [iScene updateConCanset:iCanset.p targetIndex:sceneTargetIndex];
         
-        //10. 为迁移后iCanset加上与iScene的indexDic (参考29075-todo4);
-        [iCanset updateIndexDic:iScene indexDic:iSceneCansetIndexDic];
-        
-        //11. 并进行迁移关联
-        [AINetUtils relateTransfer:fatherScene_p absCanset:fatherCanset conScene:iScene_p conCanset:iCanset.p];
+        if (updateCansetSuccess) {
+            //11. 为迁移后iCanset加上与iScene的indexDic (参考29075-todo4);
+            [iCanset updateIndexDic:iScene indexDic:iSceneCansetIndexDic];
+            
+            //12. 并进行迁移关联
+            [AINetUtils relateTransfer:fatherScene_p absCanset:fatherCanset conScene:iScene_p conCanset:iCanset.p];
+        }
     }
     return iCanset.p;
 }
@@ -184,13 +186,15 @@
     if (![brotherScene.transferAbsPorts containsObject:newFatherPort]) {
         //10. 将newFatherCanset挂到fatherScene下;
         AIFoNodeBase *fatherScene = [SMGUtils searchNode:fatherScene_p];
-        [fatherScene updateConCanset:fatherCanset.p targetIndex:fatherScene.count];
+        BOOL updateCansetSuccess = [fatherScene updateConCanset:fatherCanset.p targetIndex:fatherScene.count];
         
-        //10. 为迁移后fatherCanset加上与fatherScene的indexDic (参考29075-todo4);
-        [fatherCanset updateIndexDic:fatherScene indexDic:fatherSceneCansetIndexDic];
-        
-        //11. 并进行迁移关联
-        [AINetUtils relateTransfer:fatherScene_p absCanset:fatherCanset.p conScene:brotherScene_p conCanset:brotherCanset];
+        if (updateCansetSuccess) {
+            //11. 为迁移后fatherCanset加上与fatherScene的indexDic (参考29075-todo4);
+            [fatherCanset updateIndexDic:fatherScene indexDic:fatherSceneCansetIndexDic];
+            
+            //12. 并进行迁移关联
+            [AINetUtils relateTransfer:fatherScene_p absCanset:fatherCanset.p conScene:brotherScene_p conCanset:brotherCanset];
+        }
     }
     return fatherCanset.p;
 }

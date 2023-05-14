@@ -206,7 +206,7 @@
         
         
         
-        if (Log4TCCanset && cansets.count > 0 && itemCansetModels.count > 0) NSLog(@"\t item场景(%@):%@ 取得候选数:%ld 转成候选模型数:%ld",SceneType2Str(sceneModel.type),Pit2FStr(sceneModel.scene),cansets.count,itemCansetModels.count);
+        if (Log4TCCanset) NSLog(@"\t item场景(%@):%@ 取得候选数:%ld 转成候选模型数:%ld",SceneType2Str(sceneModel.type),Pit2FStr(sceneModel.scene),cansets.count,itemCansetModels.count);
         return itemCansetModels;
     }];
     NSLog(@"第2步 转为候选集 总数:%ld",cansetModels.count);

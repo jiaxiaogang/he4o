@@ -241,31 +241,33 @@
     AINetAbsFoNode *absFo = [theNet createAbsFo_NoRepeat:orderSames protoFo:newCanset assFo:oldCanset difStrong:1 type:ATDefault protoIndexDic:newIndexDic assIndexDic:oldIndexDic outConAbsIsRelate:&outConAbsIsRelate];
     
     //8. 将抽象Canset挂到sceneFo下;
-    [sceneFo updateConCanset:absFo.pointer targetIndex:sceneFo.count];
+    BOOL updateCansetSuccess = [sceneFo updateConCanset:absFo.pointer targetIndex:sceneFo.count];
     
-    //8. 根据scene与oldCanset的映射 与 oldCanset与absCanset的映射 得出 absCanset与scene的映射 (参考29076-todo2);
-    NSDictionary *sceneNewCansetIndexDic = [sceneFo getConIndexDic:newCanset.p];
-    NSMutableDictionary *sceneAbsCansetIndexDic = [[NSMutableDictionary alloc] init];
-    for (id sceneIndex in sceneNewCansetIndexDic.allKeys) {
-        id newCansetIndex = [sceneNewCansetIndexDic objectForKey:sceneIndex];
-        id absCansetIndex = ARR_INDEX([newIndexDic allKeysForObject:newCansetIndex], 0);
-        if (absCansetIndex) {
-            [sceneAbsCansetIndexDic setObject:absCansetIndex forKey:sceneIndex];
+    if (updateCansetSuccess) {
+        //9. 根据scene与oldCanset的映射 与 oldCanset与absCanset的映射 得出 absCanset与scene的映射 (参考29076-todo2);
+        NSDictionary *sceneNewCansetIndexDic = [sceneFo getConIndexDic:newCanset.p];
+        NSMutableDictionary *sceneAbsCansetIndexDic = [[NSMutableDictionary alloc] init];
+        for (id sceneIndex in sceneNewCansetIndexDic.allKeys) {
+            id newCansetIndex = [sceneNewCansetIndexDic objectForKey:sceneIndex];
+            id absCansetIndex = ARR_INDEX([newIndexDic allKeysForObject:newCansetIndex], 0);
+            if (absCansetIndex) {
+                [sceneAbsCansetIndexDic setObject:absCansetIndex forKey:sceneIndex];
+            }
         }
+        [absFo updateIndexDic:sceneFo indexDic:sceneAbsCansetIndexDic];
+        [AITest test27:sceneFo oldCanset:oldCanset.p oldIndexDic:oldIndexDic compareIndexDicFromNewCanset:sceneAbsCansetIndexDic];
+        
+        //10. oldCanset与absCanset新关联时: 取出ass中旧有的effStrong模型继承给absFo (参考29032-todo2.2);
+        if (!outConAbsIsRelate) {
+            AIEffectStrong *effStrong = [sceneFo getEffectStrong:sceneFo.count solutionFo:oldCanset.pointer];
+            [sceneFo updateEffectStrong:effStrong.hStrong solutionFo:absFo.pointer status:ES_HavEff];
+            [sceneFo updateEffectStrong:effStrong.nStrong solutionFo:absFo.pointer status:ES_NoEff];
+        }
+        
+        //11. 打日志
+        AIEffectStrong *effStrong = [sceneFo getEffectStrong:sceneFo.count solutionFo:absFo.pointer];
+        NSLog(@"构建absCanset:%@ SP:%@ EFF:%@",Fo2FStr(absFo),CLEANSTR(absFo.spDic),CLEANSTR(effStrong));
     }
-    [absFo updateIndexDic:sceneFo indexDic:sceneAbsCansetIndexDic];
-    [AITest test27:sceneFo oldCanset:oldCanset.p oldIndexDic:oldIndexDic compareIndexDicFromNewCanset:sceneAbsCansetIndexDic];
-    
-    //8. oldCanset与absCanset新关联时: 取出ass中旧有的effStrong模型继承给absFo (参考29032-todo2.2);
-    if (!outConAbsIsRelate) {
-        AIEffectStrong *effStrong = [sceneFo getEffectStrong:sceneFo.count solutionFo:oldCanset.pointer];
-        [sceneFo updateEffectStrong:effStrong.hStrong solutionFo:absFo.pointer status:ES_HavEff];
-        [sceneFo updateEffectStrong:effStrong.nStrong solutionFo:absFo.pointer status:ES_NoEff];
-    }
-    
-    //9. 打日志
-    AIEffectStrong *effStrong = [sceneFo getEffectStrong:sceneFo.count solutionFo:absFo.pointer];
-    NSLog(@"构建absCanset:%@ SP:%@ EFF:%@",Fo2FStr(absFo),CLEANSTR(absFo.spDic),CLEANSTR(effStrong));
     return absFo;
 }
 

@@ -161,7 +161,7 @@
 /**
  *  MARK:--------------------更新一条候选--------------------
  */
--(void) updateConCanset:(AIKVPointer*)newConCansetFo targetIndex:(NSInteger)targetIndex;
+-(BOOL) updateConCanset:(AIKVPointer*)newConCansetFo targetIndex:(NSInteger)targetIndex;
 
 //MARK:===============================================================
 //MARK:                     < transfer组 >
