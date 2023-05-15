@@ -71,31 +71,33 @@
  *  @param type : protoScene的类型,i时向抽象取ports,father时向具象取ports;
  *  @version
  *      2023.05.08: BUG_father没conCanset被过滤,导致它的brother全没机会激活 (改为仅brother时才要求必须有cansets指向);
+ *      2023.05.15: 改为强度为主,匹配度为辅进行过滤 (参考29094-BUG3-方案2);
  */
 +(NSArray*) solutonSceneFilter:(AIFoNodeBase*)protoScene type:(SceneType)type {
     //1. 数据准备: 向着isAbs方向取得抽具关联场景;
     BOOL toAbs = type != SceneTypeFather;
-    NSArray *otherScene_ps = Ports2Pits(toAbs ? [AINetUtils absPorts_All:protoScene] : [AINetUtils conPorts_All:protoScene]);
+    NSArray *otherScenePorts = toAbs ? [AINetUtils absPorts_All:protoScene] : [AINetUtils conPorts_All:protoScene];
     
     //2. 根据是否有conCanset过滤 (目前仅支持R任务,所以直接用fo.count做targetIndex) (参考29089-解答1-补充 & 2908a-todo5);
-    otherScene_ps = [SMGUtils filterArr:otherScene_ps checkValid:^BOOL(AIKVPointer *item) {
-        AIFoNodeBase *fo = [SMGUtils searchNode:item];
+    otherScenePorts = [SMGUtils filterArr:otherScenePorts checkValid:^BOOL(AIPort *item) {
+        AIFoNodeBase *fo = [SMGUtils searchNode:item.target_p];
         BOOL mvIdenOK = [fo.cmvNode_p.identifier isEqualToString:protoScene.cmvNode_p.identifier];//mv要求必须同区;
         BOOL havCansetsOK = type != SceneTypeBrother || ARRISOK([fo getConCansets:fo.count]);//brother时要求必须有cansets;
         return mvIdenOK && havCansetsOK;
     }];
     
-    //3. 根据indexDic复用匹配度进行排序 (参考2908a-todo2);
-    otherScene_ps = [SMGUtils sortBig2Small:otherScene_ps compareBlock:^double(AIKVPointer *obj) {
+    //3. 根据强度为主,匹配度为辅进行过滤: 取20% & 至少尝试取3条 (参考29094-BUG3-方案2);
+    otherScenePorts = [self filterTwice:otherScenePorts mainBlock:^double(AIPort *item) {
+        //4. 根据强度,进行主要过滤 (参考29094-BUG3-方案2);
+        return item.strong.value;
+    } subBlock:^double(AIPort *item) {
+        //5. 根据indexDic复用匹配度进行辅助过滤 (参考2908a-todo2);
         if (toAbs) {
-            return [AINetUtils getMatchByIndexDic:[protoScene getAbsIndexDic:obj] absFo:obj conFo:protoScene.pointer callerIsAbs:false];
+            return [AINetUtils getMatchByIndexDic:[protoScene getAbsIndexDic:item.target_p] absFo:item.target_p conFo:protoScene.pointer callerIsAbs:false];
         }
-        return [AINetUtils getMatchByIndexDic:[protoScene getConIndexDic:obj] absFo:protoScene.pointer conFo:obj callerIsAbs:true];
-    }];
-    
-    //4. 取20% & 至少尝试取3条 (参考2908a-todo4);
-    NSInteger limit = MAX(3, otherScene_ps.count * 0.2f);
-    return ARR_SUB(otherScene_ps, 0, limit);
+        return [AINetUtils getMatchByIndexDic:[protoScene getConIndexDic:item.target_p] absFo:protoScene.pointer conFo:item.target_p callerIsAbs:true];
+    } radio:0.2f resultNum:4];
+    return Ports2Pits(otherScenePorts);
 }
 
 //MARK:===============================================================
