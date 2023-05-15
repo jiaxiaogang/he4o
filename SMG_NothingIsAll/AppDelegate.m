@@ -71,7 +71,8 @@
     [theRT regist:kBirthPosCentSEL target:self selector:@selector(setBirthPosMode_Cent)];
     
     //3. 强行停止思考能力按钮
-    [self createNavBtn:5 title:@"植物" action:@selector(stopThinkBtnOnClick:) bg:1];
+    NSString *thinkStr = [self getThinkBtnStr];
+    [self createNavBtn:5 title:thinkStr action:@selector(stopThinkBtnOnClick:) bg:1];
     
     //3. 模拟重启
     [self createNavBtn:6 title:@"重启" action:@selector(resetBtnOnClick:) bg:0];
@@ -171,13 +172,7 @@
 -(void) stopThinkBtnOnClick:(UIButton*)btn{
     theTC.thinkMode++;
     theTC.thinkMode %= 3;
-    if (theTC.thinkMode == 0) {
-        [btn setTitle:@"动物" forState:UIControlStateNormal];
-    }else if(theTC.thinkMode == 1) {
-        [btn setTitle:@"认知" forState:UIControlStateNormal];
-    }else if(theTC.thinkMode == 2) {
-        [btn setTitle:@"植物" forState:UIControlStateNormal];
-    }
+    [btn setTitle:[self getThinkBtnStr] forState:UIControlStateNormal];
 }
 
 -(void) wedisSaveBtnOnClick:(UIButton*)btn{
@@ -197,6 +192,17 @@
         self.refreshDot.alpha = fabs(self.refreshDot.alpha - 1);
         [self startRefreshDotAnimation];
     });
+}
+
+-(NSString*) getThinkBtnStr {
+    if (theTC.thinkMode == 0) {
+        return @"动物";
+    }else if(theTC.thinkMode == 1) {
+        return @"认知";
+    }else if(theTC.thinkMode == 2) {
+        return @"植物";
+    }
+    return @"其它";
 }
 
 /**
