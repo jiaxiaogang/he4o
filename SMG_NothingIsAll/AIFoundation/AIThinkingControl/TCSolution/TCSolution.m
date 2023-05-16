@@ -141,7 +141,18 @@
             [foModel setDataWithSceneModel:bestResult.baseSceneModel brotherCanset:brotherCanset fatherCanset:fatherCanset iCanset:iCanset];
         }];
         foModel.actionIndex = bestResult.cutIndex;
-        NSLog(@"> newS 第%ld例: %@",demand.actionFoModels.count,Pit2FStr(bestResult.cansetFo));
+        
+        //c) 调试;
+        //TODOTOMORROW20230516: 此处在29094尝试2试错时,它的speff都没有效统计?还是有错漏,用了多次,统计起来的值不够;
+        //明天复查下newS的日志,有没有统计更新正常;
+        
+        
+        
+        AIFoNodeBase *sceneFo = [SMGUtils searchNode:bestResult.sceneFo];
+        AIEffectStrong *effStrong = [TOUtils getEffectStrong:sceneFo effectIndex:sceneFo.count solutionFo:bestResult.cansetFo];
+        NSString *effDesc = effStrong ? effStrong.description : @"";
+        AIFoNodeBase *cansetFo = [SMGUtils searchNode:bestResult.cansetFo];
+        NSLog(@"> newS 第%ld例: eff:%@ sp:%@ %@Scene:F%ld %@ (前%.2f 中%.2f 后%.2f)",demand.actionFoModels.count,effDesc,CLEANSTR(cansetFo.spDic),SceneType2Str(bestResult.baseSceneModel.type),sceneFo.pId,Fo2FStr(cansetFo),bestResult.frontMatchValue,bestResult.midStableScore,bestResult.backMatchValue);
         
         //a) 有效率
         [TCEffect rEffect:foModel];
