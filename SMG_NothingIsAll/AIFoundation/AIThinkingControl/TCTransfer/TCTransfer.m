@@ -23,8 +23,7 @@
     
     //1. 无base场景 或 type==I时 => 直接将cansetFo设为iCanset;
     if (!bestCansetModel || bestCansetModel.baseSceneModel.type == SceneTypeI) {
-        complate(nil,nil,bestCansetModel.cansetFo);
-        return;
+        iCanset = bestCansetModel.cansetFo;
     }
     
     //2. canset迁移之: father继承给i (参考29069-todo10.1);
