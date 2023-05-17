@@ -43,21 +43,24 @@
         }
         
         //4. 取出所有需要eff更新的cansets;
+        //TODOTOMORROW20230517: 线索: 此处取得fatherCanset时,它的sceneFo应该是rSolution.baseSceneModel.base;
+        //先重新试错训练,试下此线索是否成立,如果成立,改之;
+        
+        
+        
         NSArray *canset_ps = [rSolution getRethinkEffectCansets];
         for (AIKVPointer *canset_p in canset_ps) {
             //5. 更新effectDic;
             //[solutionFo updateSPStrong:solutionFo.count type:tp];
-            [baseFo updateEffectStrong:baseFo.count solutionFo:canset_p status:es];
+            AIEffectStrong *strong = [baseFo updateEffectStrong:baseFo.count solutionFo:canset_p status:es];
+            IFTitleLog(@"rEffect", @"\n%p Scene:%@ (有效性:%@ 任务状态:%@)\n更新S:%@ (index:%ld H%ldN%ld)",rDemand,Fo2FStr(baseFo),EffectStatus2Str(es),TOStatus2Str(rDemand.status),Pit2FStr(canset_p),baseFo.count,strong.hStrong,strong.nStrong);
             
             //6. 对抽象也更新eff (此处canset.count应该和rSolution.targetIndex是一样的) (参考29069-todo11.5);
             AIFoNodeBase *canset = [SMGUtils searchNode:canset_p];
             [TCRethinkUtil spEff4Abs:canset curFoIndex:canset.count itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {
-                [baseFo updateEffectStrong:baseFo.count solutionFo:absFo.pointer status:es];
+                AIEffectStrong *strong = [baseFo updateEffectStrong:baseFo.count solutionFo:absFo.pointer status:es];
+                NSLog(@"\t更新absS:%@ (index:%ld H%ldN%ld)",Fo2FStr(absFo),baseFo.count,strong.hStrong,strong.nStrong);
             }];
-            
-            //6. log;
-            AIEffectStrong *strong = [TOUtils getEffectStrong:baseFo effectIndex:baseFo.count solutionFo:canset_p];
-            IFTitleLog(@"rEffect", @"\n%p S:%@ (有效性:%@ 任务状态:%@)\n\tfromPFo:%@ (index:%ld H%ldN%ld)",rDemand,Pit2FStr(canset_p),EffectStatus2Str(es),TOStatus2Str(rDemand.status),Fo2FStr(baseFo),baseFo.count,strong.hStrong,strong.nStrong);
         }
     }];
     DebugE();
