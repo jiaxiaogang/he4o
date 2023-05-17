@@ -56,7 +56,10 @@
         [TIUtils recognitionCansetFo:fatherCanset sceneFo:fatherScene];
         [TIUtils recognitionCansetFo:iCanset sceneFo:iScene];
     }
-    OFTitleLog(@"TCTransfer迁移", @" from%@\nbrotherScene:F%ld Canset:%@ \nfatherScene:F%ld Canset:%@ \niScene:F%ld Canset:%@",SceneType2Str(bestCansetModel.baseSceneModel.type),brotherScene.pointerId,Pit2FStr(brotherCanset),fatherScene.pointerId,Pit2FStr(fatherCanset),iScene.pointerId,Pit2FStr(iCanset));
+    OFTitleLog(@"TCTransfer迁移", @" from%@",SceneType2Str(bestCansetModel.baseSceneModel.type));
+    if (brotherCanset) NSLog(@"迁移结果: brotherScene:F%ld Canset:%@",brotherScene.pointerId,Pit2FStr(brotherCanset));
+    if (fatherCanset) NSLog(@"迁移结果: fatherScene:F%ld Canset:%@",fatherScene.pointerId,Pit2FStr(fatherCanset));
+    NSLog(@"迁移结果: iScene:F%ld Canset:%@",iScene.pointerId,Pit2FStr(iCanset));
     complate(brotherCanset,fatherCanset,iCanset);
 }
 

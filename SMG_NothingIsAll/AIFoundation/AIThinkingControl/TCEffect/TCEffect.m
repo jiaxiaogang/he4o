@@ -53,13 +53,13 @@
             //5. 更新effectDic;
             //[solutionFo updateSPStrong:solutionFo.count type:tp];
             AIEffectStrong *strong = [baseFo updateEffectStrong:baseFo.count solutionFo:canset_p status:es];
-            IFTitleLog(@"rEffect", @"\n%p Scene:%@ (有效性:%@ 任务状态:%@)\n更新S:%@ (index:%ld H%ldN%ld)",rDemand,Fo2FStr(baseFo),EffectStatus2Str(es),TOStatus2Str(rDemand.status),Pit2FStr(canset_p),baseFo.count,strong.hStrong,strong.nStrong);
+            IFTitleLog(@"rEffect", @"\n%p Scene:%@ (有效性:%@ 任务状态:%@)\nEff更新S:%@ (index:%ld H%ldN%ld)",rDemand,Fo2FStr(baseFo),EffectStatus2Str(es),TOStatus2Str(rDemand.status),Pit2FStr(canset_p),baseFo.count,strong.hStrong,strong.nStrong);
             
             //6. 对抽象也更新eff (此处canset.count应该和rSolution.targetIndex是一样的) (参考29069-todo11.5);
             AIFoNodeBase *canset = [SMGUtils searchNode:canset_p];
             [TCRethinkUtil spEff4Abs:canset curFoIndex:canset.count itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {
                 AIEffectStrong *strong = [baseFo updateEffectStrong:baseFo.count solutionFo:absFo.pointer status:es];
-                NSLog(@"\t更新absS:%@ (index:%ld H%ldN%ld)",Fo2FStr(absFo),baseFo.count,strong.hStrong,strong.nStrong);
+                NSLog(@"\tEff更新absS:%@ (index:%ld H%ldN%ld)",Fo2FStr(absFo),baseFo.count,strong.hStrong,strong.nStrong);
             }];
         }
     }];
