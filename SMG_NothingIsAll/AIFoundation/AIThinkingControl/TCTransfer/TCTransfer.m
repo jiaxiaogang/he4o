@@ -16,51 +16,58 @@
  *  @version
  *      2023.04.19: TCTranfer执行后,调用Canset识别类比 (参考29069-todo12);
  */
-+(void) transfer:(AICansetModel*)bestCansetModel complate:(void(^)(AIKVPointer *brotherCanset,AIKVPointer *fatherCanset,AIKVPointer *iCanset))complate {
++(void) transfer:(AICansetModel*)bestCansetModel complate:(void(^)(AITransferModel *brother,AITransferModel *father,AITransferModel *i))complate {
     //0. 数据准备;
-    AIKVPointer *brotherCanset = nil, *fatherCanset = nil, *iCanset = nil;
-    AIKVPointer *brotherScene = nil, *fatherScene = nil, *iScene = nil;
+    AITransferModel *brotherResult = nil, *fatherResult = nil, *iResult = nil;
     NSInteger targetIndex = bestCansetModel.targetIndex; //因为推举和继承的canset全是等长,所以他们仨的targetIndex也一样;
     
     //1. 无base场景 或 type==I时 => 直接将cansetFo设为iCanset;
     if (!bestCansetModel || bestCansetModel.baseSceneModel.type == SceneTypeI) {
-        iScene = bestCansetModel.sceneFo;
-        iCanset = bestCansetModel.cansetFo;
+        AIKVPointer *iScene = bestCansetModel.sceneFo;
+        AIKVPointer *iCanset = bestCansetModel.cansetFo;
+        iResult = [AITransferModel newWithScene:iScene canset:iCanset];
     }
     
     //2. canset迁移之: father继承给i (参考29069-todo10.1);
     if (bestCansetModel.baseSceneModel.type == SceneTypeFather) {
-        //a. 数据准备;
-        fatherScene = bestCansetModel.baseSceneModel.scene;
-        iScene = bestCansetModel.baseSceneModel.base.scene;
-        //b. 得出两个canset;
-        fatherCanset = bestCansetModel.cansetFo;
-        iCanset = [self transferJiCen:fatherCanset fatherCansetTargetIndex:targetIndex fatherScene:fatherScene iScene_p:iScene];
-        
+        //a. 生成father结果;
+        AIKVPointer *fatherScene = bestCansetModel.baseSceneModel.scene;
+        AIKVPointer *fatherCanset = bestCansetModel.cansetFo;
+        fatherResult = [AITransferModel newWithScene:fatherScene canset:fatherCanset];
+        //b. 生成i结果;
+        AIKVPointer *iScene = bestCansetModel.baseSceneModel.base.scene;
+        AIKVPointer *iCanset = [self transferJiCen:fatherCanset fatherCansetTargetIndex:targetIndex fatherScene:fatherScene iScene_p:iScene];
+        iResult = [AITransferModel newWithScene:iScene canset:iCanset];
         //c. 调用Canset识别类比 (参考29069-todo12);
         [TIUtils recognitionCansetFo:iCanset sceneFo:iScene];
     }
     
     //3. canset迁移之: brother推举到father,再继承给i (参考29069-todo10.1);
     if (bestCansetModel.baseSceneModel.type == SceneTypeBrother) {
-        //a. 数据准备;
-        brotherScene = bestCansetModel.baseSceneModel.scene;
-        fatherScene = bestCansetModel.baseSceneModel.base.scene;
-        iScene = bestCansetModel.baseSceneModel.base.base.scene;
-        //b. 得出三个canset;
-        brotherCanset = bestCansetModel.cansetFo;
-        fatherCanset = [self transfer4TuiJu:brotherCanset brotherCansetTargetIndex:targetIndex brotherScene:brotherScene fatherScene_p:fatherScene];
-        iCanset = [self transferJiCen:fatherCanset fatherCansetTargetIndex:targetIndex fatherScene:fatherScene iScene_p:iScene];
+        //a. 得出brother结果;
+        AIKVPointer *brotherScene = bestCansetModel.baseSceneModel.scene;
+        AIKVPointer *brotherCanset = bestCansetModel.cansetFo;
+        brotherResult = [AITransferModel newWithScene:brotherScene canset:brotherCanset];
         
-        //c. 调用Canset识别类比 (参考29069-todo12);
+        //b. 得出father结果;
+        AIKVPointer *fatherScene = bestCansetModel.baseSceneModel.base.scene;
+        AIKVPointer *fatherCanset = [self transfer4TuiJu:brotherCanset brotherCansetTargetIndex:targetIndex brotherScene:brotherScene fatherScene_p:fatherScene];
+        fatherResult = [AITransferModel newWithScene:fatherScene canset:fatherCanset];
+        
+        //c. 得出i结果
+        AIKVPointer *iScene = bestCansetModel.baseSceneModel.base.base.scene;
+        AIKVPointer *iCanset = [self transferJiCen:fatherCanset fatherCansetTargetIndex:targetIndex fatherScene:fatherScene iScene_p:iScene];
+        iResult = [AITransferModel newWithScene:iScene canset:iCanset];
+        
+        //d. 调用Canset识别类比 (参考29069-todo12);
         [TIUtils recognitionCansetFo:fatherCanset sceneFo:fatherScene];
         [TIUtils recognitionCansetFo:iCanset sceneFo:iScene];
     }
     OFTitleLog(@"TCTransfer迁移", @" from%@",SceneType2Str(bestCansetModel.baseSceneModel.type));
-    if (brotherCanset) NSLog(@"迁移结果: brotherScene:F%ld Canset:%@",brotherScene.pointerId,Pit2FStr(brotherCanset));
-    if (fatherCanset) NSLog(@"迁移结果: fatherScene:F%ld Canset:%@",fatherScene.pointerId,Pit2FStr(fatherCanset));
-    NSLog(@"迁移结果: iScene:F%ld Canset:%@",iScene.pointerId,Pit2FStr(iCanset));
-    complate(brotherCanset,fatherCanset,iCanset);
+    if (brotherResult) NSLog(@"迁移结果: brotherScene:F%ld Canset:%@",brotherResult.scene.pointerId,Pit2FStr(brotherResult.canset));
+    if (fatherResult) NSLog(@"迁移结果: fatherScene:F%ld Canset:%@",fatherResult.scene.pointerId,Pit2FStr(fatherResult.canset));
+    if (iResult) NSLog(@"迁移结果: iScene:F%ld Canset:%@",iResult.scene.pointerId,Pit2FStr(iResult.canset));
+    complate(brotherResult,fatherResult,iResult);
 }
 
 /**

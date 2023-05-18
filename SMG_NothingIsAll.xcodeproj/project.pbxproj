@@ -153,6 +153,7 @@
 		08AFC5F0276979D8000BAB26 /* TCPlan.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AFC5EF276979D8000BAB26 /* TCPlan.m */; };
 		08B180D327F495340069F11E /* TVTimeLine.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B180D227F495340069F11E /* TVTimeLine.m */; };
 		08B31E7E20648C3700FD96EA /* ThinkingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B31E7D20648C3700FD96EA /* ThinkingUtils.m */; };
+		08B91E902A15B1B700B8AC59 /* AITransferModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B91E8F2A15B1B700B8AC59 /* AITransferModel.m */; };
 		08C159C02808F47100983717 /* RLTPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C159BF2808F47100983717 /* RLTPanel.m */; };
 		08C159C22808F4CB00983717 /* RLTPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 08C159C12808F4CB00983717 /* RLTPanel.xib */; };
 		08C3978D2950A1A700C49EA7 /* AIRank.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C3978C2950A1A700C49EA7 /* AIRank.m */; };
@@ -509,6 +510,8 @@
 		08B31E7C20648C3700FD96EA /* ThinkingUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ThinkingUtils.h; sourceTree = "<group>"; };
 		08B31E7D20648C3700FD96EA /* ThinkingUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ThinkingUtils.m; sourceTree = "<group>"; };
 		08B4DAEC25E881D200E32DB1 /* XGDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XGDelegate.h; sourceTree = "<group>"; };
+		08B91E8E2A15B1B700B8AC59 /* AITransferModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AITransferModel.h; sourceTree = "<group>"; };
+		08B91E8F2A15B1B700B8AC59 /* AITransferModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AITransferModel.m; sourceTree = "<group>"; };
 		08C159BE2808F47100983717 /* RLTPanel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RLTPanel.h; sourceTree = "<group>"; };
 		08C159BF2808F47100983717 /* RLTPanel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RLTPanel.m; sourceTree = "<group>"; };
 		08C159C12808F4CB00983717 /* RLTPanel.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RLTPanel.xib; sourceTree = "<group>"; };
@@ -1570,6 +1573,8 @@
 			children = (
 				08F27D6C29ED8FC60063E71B /* TCTransfer.h */,
 				08F27D6D29ED8FC60063E71B /* TCTransfer.m */,
+				08B91E8E2A15B1B700B8AC59 /* AITransferModel.h */,
+				08B91E8F2A15B1B700B8AC59 /* AITransferModel.m */,
 			);
 			path = TCTransfer;
 			sourceTree = "<group>";
@@ -1984,6 +1989,7 @@
 				08C3978D2950A1A700C49EA7 /* AIRank.m in Sources */,
 				0858C5CF2194F8B000951BA5 /* MASViewAttribute.m in Sources */,
 				88BC09D720B4EB920006ABEF /* XGRedis.m in Sources */,
+				08B91E902A15B1B700B8AC59 /* AITransferModel.m in Sources */,
 				084219E11FD8CEFD009DA6BC /* AIReactorControl.m in Sources */,
 				0827DC0229BEA60E0070EB67 /* CortexAlgorithmsUtil.m in Sources */,
 				088A147F27E177AC00FA1097 /* TOMVisionDemandView.m in Sources */,

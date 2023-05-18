@@ -53,6 +53,7 @@
 #import "AICansetModel.h"
 #import "AISceneModel.h"
 #import "FrontIndexDicModel.h"
+#import "AITransferModel.h"
 
 //网络
 #import "AINetUtils.h"

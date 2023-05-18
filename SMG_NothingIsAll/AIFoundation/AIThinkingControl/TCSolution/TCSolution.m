@@ -137,8 +137,8 @@
         TOFoModel *foModel = [TOFoModel newWithFo_p:bestSFo.pointer base:demand basePFoOrTargetFoModel:bestResult.basePFoOrTargetFoModel];
         
         //b) bestResult的迁移;
-        [TCTransfer transfer:bestResult complate:^(AIKVPointer *brotherCanset, AIKVPointer *fatherCanset, AIKVPointer *iCanset) {
-            [foModel setDataWithSceneModel:bestResult.baseSceneModel brotherCanset:brotherCanset fatherCanset:fatherCanset iCanset:iCanset];
+        [TCTransfer transfer:bestResult complate:^(AITransferModel *brother, AITransferModel *father, AITransferModel *i) {
+            [foModel setDataWithSceneModel:bestResult.baseSceneModel brother:brother father:father i:i];
         }];
         foModel.actionIndex = bestResult.cutIndex;
         

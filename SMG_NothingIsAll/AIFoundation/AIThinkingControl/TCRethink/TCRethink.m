@@ -50,10 +50,10 @@
 +(void) reasonOutRethink:(TOFoModel*)model actionIndex:(NSInteger)actionIndex type:(AnalogyType)type{
     [theTC updateOperCount:kFILENAME];
     Debug();
-    NSArray *canset_ps = [model getRethinkEffectCansets];
-    for (AIKVPointer *canset_p in canset_ps) {
-        AIFoNodeBase *canset = [SMGUtils searchNode:canset_p];
-        IFTitleLog(@"OR反省", @"\n%@ spIndex:%ld -> (%@)",FoP2FStr(canset_p),actionIndex,ATType2Str(type));
+    NSArray *tModels = [model getRethinkEffectCansets];
+    for (AITransferModel *tModel in tModels) {
+        AIFoNodeBase *canset = [SMGUtils searchNode:tModel.canset];
+        IFTitleLog(@"OR反省", @"\n%@ spIndex:%ld -> (%@)",FoP2FStr(tModel.canset),actionIndex,ATType2Str(type));
         [canset updateSPStrong:actionIndex type:type];
         //2. 抽象也更新 (参考29069-todo11.4);
         [TCRethinkUtil spEff4Abs:canset curFoIndex:actionIndex itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {
@@ -66,10 +66,10 @@
 +(void) perceptOutRethink:(TOFoModel*)model type:(AnalogyType)type{
     [theTC updateOperCount:kFILENAME];
     Debug();
-    NSArray *canset_ps = [model getRethinkEffectCansets];
-    for (AIKVPointer *canset_p in canset_ps) {
-        AIFoNodeBase *canset = [SMGUtils searchNode:canset_p];
-        IFTitleLog(@"OP反省", @"\n%@ spIndex:%ld -> (%@)",FoP2FStr(canset_p),canset.count,ATType2Str(type));
+    NSArray *tModels = [model getRethinkEffectCansets];
+    for (AITransferModel *tModel in tModels) {
+        AIFoNodeBase *canset = [SMGUtils searchNode:tModel.canset];
+        IFTitleLog(@"OP反省", @"\n%@ spIndex:%ld -> (%@)",FoP2FStr(tModel.canset),canset.count,ATType2Str(type));
         [canset updateSPStrong:canset.count type:type];
         //2. 抽象也更新 (参考29069-todo11.4);
         [TCRethinkUtil spEff4Abs:canset curFoIndex:canset.count itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {

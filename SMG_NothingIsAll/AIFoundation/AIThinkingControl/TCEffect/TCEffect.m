@@ -18,6 +18,7 @@
  *      2022.05.28: 不需要effect做首帧反省了,tcActYes支持每帧O反省 (参考26136-方案);
  *      2023.02.14: 当前effect仅对取得solution的pFo有效 (参考28076);
  *      2023.04.19: 支持canset迁移的EFF统计 (参考29069-todo11);
+ *      2023.05.18: BUG_修复fatherCanset更新的scene错误导致EFF更新错误问题 (参考29095-修复);
  */
 +(void) rEffect:(TOFoModel*)rSolution{
     [theTC updateOperCount:kFILENAME];
@@ -43,23 +44,19 @@
         }
         
         //4. 取出所有需要eff更新的cansets;
-        //TODOTOMORROW20230517: 线索: 此处取得fatherCanset时,它的sceneFo应该是rSolution.baseSceneModel.base;
-        //先重新试错训练,试下此线索是否成立,如果成立,改之;
-        
-        
-        
-        NSArray *canset_ps = [rSolution getRethinkEffectCansets];
-        for (AIKVPointer *canset_p in canset_ps) {
+        NSArray *tModels = [rSolution getRethinkEffectCansets];
+        for (AITransferModel *tModel in tModels) {
             //5. 更新effectDic;
             //[solutionFo updateSPStrong:solutionFo.count type:tp];
-            AIEffectStrong *strong = [baseFo updateEffectStrong:baseFo.count solutionFo:canset_p status:es];
-            IFTitleLog(@"rEffect", @"\n%p Scene:%@ (有效性:%@ 任务状态:%@)\nEff更新S:%@ (index:%ld H%ldN%ld)",rDemand,Fo2FStr(baseFo),EffectStatus2Str(es),TOStatus2Str(rDemand.status),Pit2FStr(canset_p),baseFo.count,strong.hStrong,strong.nStrong);
+            AIFoNodeBase *baseScene = [SMGUtils searchNode:tModel.scene];
+            AIEffectStrong *strong = [baseScene updateEffectStrong:baseScene.count solutionFo:tModel.canset status:es];
+            IFTitleLog(@"rEffect", @"\n%p Scene:%@ (有效性:%@ 任务状态:%@)\nEff更新Scene:F%ld S:%@ (index:%ld H%ldN%ld)",rDemand,Fo2FStr(baseScene),EffectStatus2Str(es),TOStatus2Str(rDemand.status),baseScene.pId,Pit2FStr(tModel.canset),baseScene.count,strong.hStrong,strong.nStrong);
             
             //6. 对抽象也更新eff (此处canset.count应该和rSolution.targetIndex是一样的) (参考29069-todo11.5);
-            AIFoNodeBase *canset = [SMGUtils searchNode:canset_p];
+            AIFoNodeBase *canset = [SMGUtils searchNode:tModel.canset];
             [TCRethinkUtil spEff4Abs:canset curFoIndex:canset.count itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {
-                AIEffectStrong *strong = [baseFo updateEffectStrong:baseFo.count solutionFo:absFo.pointer status:es];
-                NSLog(@"\tEff更新absS:%@ (index:%ld H%ldN%ld)",Fo2FStr(absFo),baseFo.count,strong.hStrong,strong.nStrong);
+                AIEffectStrong *strong = [baseScene updateEffectStrong:baseScene.count solutionFo:absFo.pointer status:es];
+                NSLog(@"\tEff更新scene:F%ld absS:%@ (index:%ld H%ldN%ld)",baseScene.pId,Fo2FStr(absFo),baseScene.count,strong.hStrong,strong.nStrong);
             }];
         }
     }];
@@ -98,23 +95,22 @@
         //if (tp == ATSub) hSolution.status = TOModelStatus_ActNo;
         
         //6. 取出所有需要eff更新的cansets;
-        NSArray *canset_ps = [hSolution getRethinkEffectCansets];
-        for (AIKVPointer *canset_p in canset_ps) {
-            //7. 更新effectDic;
-            [targetFoNode updateEffectStrong:targetFo.actionIndex solutionFo:canset_p status:es];
-            //[targetFoNode updateSPStrong:targetFo.actionIndex type:tp];
-            
-            //8. 对抽象也更新eff (参考29069-todo11.5);
-            AIFoNodeBase *canset = [SMGUtils searchNode:canset_p];
-            [TCRethinkUtil spEff4Abs:canset curFoIndex:hSolution.targetSPIndex itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {
-                [targetFoNode updateEffectStrong:targetFo.actionIndex solutionFo:absFo.pointer status:es];
-            }];
-            
-            //8. log
-            AIEffectStrong *strong = [TOUtils getEffectStrong:targetFoNode effectIndex:targetFo.actionIndex solutionFo:canset_p];
-            IFTitleLog(@"hEffect", @"\n%p S:%@ (有效性:%@ 当前方案状态:%@)",hSolution,Pit2FStr(canset_p),EffectStatus2Str(es),TOStatus2Str(hSolution.status));
-            NSLog(@"\t=>targetFo:%@ (index:%ld H%ldN%ld)",Fo2FStr(targetFoNode),targetFo.actionIndex,strong.hStrong,strong.nStrong);
-        }
+        AIKVPointer *canset_p = hSolution.content_p;
+        
+        //7. 更新effectDic;
+        [targetFoNode updateEffectStrong:targetFo.actionIndex solutionFo:canset_p status:es];
+        //[targetFoNode updateSPStrong:targetFo.actionIndex type:tp];
+        
+        //8. 对抽象也更新eff (参考29069-todo11.5);
+        AIFoNodeBase *canset = [SMGUtils searchNode:canset_p];
+        [TCRethinkUtil spEff4Abs:canset curFoIndex:hSolution.targetSPIndex itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {
+            [targetFoNode updateEffectStrong:targetFo.actionIndex solutionFo:absFo.pointer status:es];
+        }];
+        
+        //8. log
+        AIEffectStrong *strong = [TOUtils getEffectStrong:targetFoNode effectIndex:targetFo.actionIndex solutionFo:canset_p];
+        IFTitleLog(@"hEffect", @"\n%p S:%@ (有效性:%@ 当前方案状态:%@)",hSolution,Pit2FStr(canset_p),EffectStatus2Str(es),TOStatus2Str(hSolution.status));
+        NSLog(@"\t=>targetFo:%@ (index:%ld H%ldN%ld)",Fo2FStr(targetFoNode),targetFo.actionIndex,strong.hStrong,strong.nStrong);
     }];
     DebugE();
 }

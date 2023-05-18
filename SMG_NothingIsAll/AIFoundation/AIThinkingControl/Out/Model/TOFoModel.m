@@ -209,18 +209,18 @@
 //MARK:                     < for 三级场景 >
 //MARK:===============================================================
 
--(void) setDataWithSceneModel:(AISceneModel*)baseSceneModel brotherCanset:(AIKVPointer*)brotherCanset fatherCanset:(AIKVPointer*)fatherCanset iCanset:(AIKVPointer*)iCanset {
+-(void) setDataWithSceneModel:(AISceneModel*)baseSceneModel brother:(AITransferModel*)brother father:(AITransferModel*)father i:(AITransferModel*)i {
     self.baseSceneModel = baseSceneModel;
-    self.brotherCanset = brotherCanset;
-    self.fatherCanset = fatherCanset;
-    self.iCanset = iCanset;
+    self.brother = brother;
+    self.father = father;
+    self.i = i;
 }
 
 /**
  *  MARK:--------------------有iCanset直接返回进行行为化等 (参考29069-todo9 & todo10.1b)--------------------
  */
 -(AIKVPointer *)content_p {
-    if (_iCanset) return _iCanset;
+    if (_i) return _i.canset;
     return super.content_p;
 }
 
@@ -232,12 +232,32 @@
     NSMutableArray *result = [[NSMutableArray alloc] init];
     
     //1. father和i两级canset有值时,收集 (参考29069-todo11.2);
-    if (self.fatherCanset) [result addObject:self.fatherCanset];
-    if (self.iCanset) [result addObject:self.iCanset];
+    if (self.father) [result addObject:self.father];
+    if (self.i) [result addObject:self.i];
     
     //2. 三级canset都无值时,默认返回content_p;
-    if (!ARRISOK(result)) [result addObject:self.content_p];
+    if (!ARRISOK(result)) [result addObject:[AITransferModel newWithScene:[self getContentScene] canset:self.content_p]];
     return result;
+}
+
+//MARK:===============================================================
+//MARK:                     < privateMethod >
+//MARK:===============================================================
+
+-(AIKVPointer*) getContentScene {
+    //1. R任务时,返回content所在的scene;
+    if (ISOK(self.baseOrGroup, ReasonDemandModel.class)) {
+        AIMatchFoModel *pFo = (AIMatchFoModel*)self.basePFoOrTargetFoModel;
+        return pFo.matchFo;
+    }
+    
+    //2. H任务时,返回content所在的scene;
+    if (ISOK(self.baseOrGroup, HDemandModel.class)) {
+        HDemandModel *hDemand = (HDemandModel*)self.baseOrGroup;
+        TOFoModel *targetFo = (TOFoModel*)hDemand.baseOrGroup.baseOrGroup;
+        return targetFo.content_p;
+    }
+    return nil;
 }
 
 /**
@@ -251,9 +271,9 @@
         self.targetSPIndex = [aDecoder decodeIntegerForKey:@"targetSPIndex"];
         self.subDemands = [aDecoder decodeObjectForKey:@"subDemands"];
         self.feedbackMv = [aDecoder decodeObjectForKey:@"feedbackMv"];
-        self.brotherCanset = [aDecoder decodeObjectForKey:@"brotherCanset"];
-        self.fatherCanset = [aDecoder decodeObjectForKey:@"fatherCanset"];
-        self.iCanset = [aDecoder decodeObjectForKey:@"iCanset"];
+        self.brother = [aDecoder decodeObjectForKey:@"brother"];
+        self.father = [aDecoder decodeObjectForKey:@"father"];
+        self.i = [aDecoder decodeObjectForKey:@"i"];
     }
     return self;
 }
@@ -265,9 +285,9 @@
     [aCoder encodeInteger:self.targetSPIndex forKey:@"targetSPIndex"];
     [aCoder encodeObject:self.subDemands forKey:@"subDemands"];
     [aCoder encodeObject:self.feedbackMv forKey:@"feedbackMv"];
-    [aCoder encodeObject:self.brotherCanset forKey:@"brotherCanset"];
-    [aCoder encodeObject:self.fatherCanset forKey:@"fatherCanset"];
-    [aCoder encodeObject:self.iCanset forKey:@"iCanset"];
+    [aCoder encodeObject:self.brother forKey:@"brother"];
+    [aCoder encodeObject:self.father forKey:@"father"];
+    [aCoder encodeObject:self.i forKey:@"i"];
 }
 
 @end

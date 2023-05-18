@@ -40,7 +40,7 @@
                      baseSceneModel:(AISceneModel*)baseSceneModel;
 
 @property (strong, nonatomic) AIKVPointer *cansetFo;    //候选集fo;
-@property (strong, nonatomic) AIKVPointer *sceneFo;
+@property (strong, nonatomic) AIKVPointer *sceneFo;     //候选集所在的scene
 
 /**
  *  MARK:--------------------basePFoOrTargetFoModel--------------------

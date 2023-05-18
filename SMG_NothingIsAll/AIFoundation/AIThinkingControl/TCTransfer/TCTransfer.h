@@ -18,7 +18,7 @@
 /**
  *  MARK:--------------------canset迁移算法 (29069-todo10)--------------------
  */
-+(void) transfer:(AICansetModel*)bestCansetModel complate:(void(^)(AIKVPointer *brotherCanset,AIKVPointer *fatherCanset,AIKVPointer *iCanset))complate;
++(void) transfer:(AICansetModel*)bestCansetModel complate:(void(^)(AITransferModel *brother,AITransferModel *father,AITransferModel *i))complate;
 
 /**
  *  MARK:--------------------cansetAlg迁移算法 (29075-方案3)--------------------

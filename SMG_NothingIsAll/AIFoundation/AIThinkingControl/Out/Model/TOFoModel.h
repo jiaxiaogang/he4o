@@ -20,8 +20,8 @@
  *  @version
  *      2021.03.27: 实现ITryActionFoDelegate接口,因为每个fo都有可能是子任务 (参考22193);
  */
-@class AISceneModel;
-@interface TOFoModel : TOModelBase <ISubModelsDelegate,ISubDemandDelegate>
+@class AISceneModel,AITransferModel;
+@interface TOFoModel : TOModelBase <ISubModelsDelegate,ISubDemandDelegate,NSCoding>
 
 +(TOFoModel*) newWithFo_p:(AIKVPointer*)fo_p base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel;
 
@@ -91,10 +91,10 @@
 //MARK:===============================================================
 //MARK:                     < for 三级场景 >
 //MARK:===============================================================
--(void) setDataWithSceneModel:(AISceneModel*)baseSceneModel brotherCanset:(AIKVPointer*)brotherCanset fatherCanset:(AIKVPointer*)fatherCanset iCanset:(AIKVPointer*)iCanset;
-@property (strong, nonatomic) AIKVPointer *brotherCanset;
-@property (strong, nonatomic) AIKVPointer *fatherCanset;
-@property (strong, nonatomic) AIKVPointer *iCanset;
+-(void) setDataWithSceneModel:(AISceneModel*)baseSceneModel brother:(AITransferModel*)brother father:(AITransferModel*)father i:(AITransferModel*)i;
+@property (strong, nonatomic) AITransferModel *brother;
+@property (strong, nonatomic) AITransferModel *father;
+@property (strong, nonatomic) AITransferModel *i;
 
 /**
  *  MARK:--------------------返回需用于反省或有效统计的cansets (参考29069-todo11 && todo11.2)--------------------
