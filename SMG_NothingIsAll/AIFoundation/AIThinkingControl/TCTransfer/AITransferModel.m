@@ -21,7 +21,7 @@
  *  MARK:--------------------NSCoding--------------------
  */
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
-    self = [super initWithCoder:aDecoder];
+    self = [super init];
     if (self) {
         self.scene = [aDecoder decodeObjectForKey:@"scene"];
         self.canset = [aDecoder decodeObjectForKey:@"canset"];
@@ -30,7 +30,6 @@
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
-    [super encodeWithCoder:aCoder];
     [aCoder encodeObject:self.scene forKey:@"scene"];
     [aCoder encodeObject:self.canset forKey:@"canset"];
 }
