@@ -14,7 +14,7 @@
 #import "NVViewUtil.h"
 #import "WoodView.h"
 
-@interface BirdGrowPage ()<UIGestureRecognizerDelegate,BirdViewDelegate>
+@interface BirdGrowPage ()<UIGestureRecognizerDelegate,BirdViewDelegate,UIDynamicAnimatorDelegate,UICollisionBehaviorDelegate>
 
 @property (strong,nonatomic) BirdView *birdView;
 @property (strong,nonatomic) UITapGestureRecognizer *singleTap;
@@ -23,6 +23,7 @@
 @property (weak, nonatomic) IBOutlet UIView *borderView;
 @property (weak, nonatomic) IBOutlet UIButton *throwWoodBtn;
 @property (strong, nonatomic) WoodView *woodView;
+@property(nonatomic,strong)UIDynamicAnimator *animator;
 
 @end
 
@@ -64,6 +65,10 @@
     //6. woodView
     self.woodView = [[WoodView alloc] init];
     [self.view addSubview:self.woodView];
+    
+    //7. 创建物理仿真器，设置仿真范围，ReferenceView为参照视图
+    self.animator = [[UIDynamicAnimator alloc] initWithReferenceView:self.view];
+    self.animator.delegate = self;
 }
 
 -(void) initData{
@@ -404,6 +409,25 @@
         NSLog(@"---> failure 没撞到");
         return false;
     } invoked:invoked];
+    
+//    //重力测试
+//    UIGravityBehavior *gravityB = [[UIGravityBehavior alloc] initWithItems:@[self.woodView]];
+//    // 设置重力的方向
+//    gravityB.gravityDirection = CGVectorMake(1, 1);
+//    // 设置重力的角度
+//    gravityB.angle = M_PI_2;
+//    // 设置重力的加速度
+//    gravityB.magnitude = 1.0;
+//    // 将物理仿真行为添加到仿真器中, self.dynamicAnimator为懒加载的物理仿真器对象
+//    [self.animator addBehavior:gravityB];
+    
+    //碰撞检测测试
+    UICollisionBehavior *collision = [[UICollisionBehavior alloc]init];
+    collision.collisionDelegate = self;
+    collision.translatesReferenceBoundsIntoBoundary = YES;//让参照视图的边框成为碰撞检测的边界
+    [collision addItem:self.woodView];
+    [collision addItem:self.birdView];
+    [self.animator addBehavior:collision];
 }
 
 - (IBAction)stopWoodBtnOnClick:(id)sender {
@@ -440,6 +464,32 @@
     return CGRectMake(0, 64, ScreenWidth, ScreenHeight - 64 - 64);//naviBar和btmBtn
 }
 
+/**
+ *  MARK:--------------------UIDynamicAnimatorDelegate--------------------
+ */
+- (void)dynamicAnimatorWillResume:(UIDynamicAnimator *)animator {
+    NSLog(@"aaa1");
+}
+- (void)dynamicAnimatorDidPause:(UIDynamicAnimator *)animator {
+    NSLog(@"aaa2");
+}
+
+/**
+ *  MARK:--------------------UICollisionBehaviorDelegate--------------------
+ */
+- (void)collisionBehavior:(UICollisionBehavior *)behavior beganContactForItem:(id <UIDynamicItem>)item1 withItem:(id <UIDynamicItem>)item2 atPoint:(CGPoint)p {
+    NSLog(@"aaa3");
+}
+- (void)collisionBehavior:(UICollisionBehavior *)behavior endedContactForItem:(id <UIDynamicItem>)item1 withItem:(id <UIDynamicItem>)item2 {
+    NSLog(@"aaa4");
+}
+
+- (void)collisionBehavior:(UICollisionBehavior*)behavior beganContactForItem:(id <UIDynamicItem>)item withBoundaryIdentifier:(nullable id <NSCopying>)identifier atPoint:(CGPoint)p {
+    NSLog(@"aaa5");
+}
+- (void)collisionBehavior:(UICollisionBehavior*)behavior endedContactForItem:(id <UIDynamicItem>)item withBoundaryIdentifier:(nullable id <NSCopying>)identifier {
+    NSLog(@"aaa6");
+}
 
 //MARK:===============================================================
 //MARK:                     < privateMethod >
