@@ -14,7 +14,7 @@
 #import "NVViewUtil.h"
 #import "WoodView.h"
 
-@interface BirdGrowPage ()<UIGestureRecognizerDelegate,BirdViewDelegate,UIDynamicAnimatorDelegate,UICollisionBehaviorDelegate>
+@interface BirdGrowPage ()<UIGestureRecognizerDelegate,BirdViewDelegate,UICollisionBehaviorDelegate>
 
 @property (strong,nonatomic) BirdView *birdView;
 @property (strong,nonatomic) UITapGestureRecognizer *singleTap;
@@ -23,7 +23,8 @@
 @property (weak, nonatomic) IBOutlet UIView *borderView;
 @property (weak, nonatomic) IBOutlet UIButton *throwWoodBtn;
 @property (strong, nonatomic) WoodView *woodView;
-@property(nonatomic,strong)UIDynamicAnimator *animator;
+@property(nonatomic,strong) UIDynamicAnimator *dyAnimator;
+@property (strong, nonatomic) UICollisionBehavior *collision;
 
 @end
 
@@ -67,8 +68,7 @@
     [self.view addSubview:self.woodView];
     
     //7. 创建物理仿真器，设置仿真范围，ReferenceView为参照视图
-    self.animator = [[UIDynamicAnimator alloc] initWithReferenceView:self.view];
-    self.animator.delegate = self;
+    self.dyAnimator = [[UIDynamicAnimator alloc] initWithReferenceView:self.view];
 }
 
 -(void) initData{
@@ -359,17 +359,22 @@
 }
 -(void) throwWood_Rdm{
     int randomX = arc4random() % (int)ScreenWidth;
-    [self throwWood:randomX invoked:^{
+    [self throwWoodV2:randomX invoked:^{
         [theRT invoked:kWoodRdmSEL];
     }];
 }
 -(void) throwWood_Left{
-    [self throwWood:0 invoked:^{
+    [self throwWoodV2:0 invoked:^{
         [theRT invoked:kWoodLeftSEL];
     }];
 }
 
--(void) throwWood:(CGFloat)x invoked:(void(^)())invoked{
+/**
+ *  MARK:--------------------扔木棒--------------------
+ *  @version
+ *      2023.05.19: 迭代v2,改为用物理仿真碰撞检测,因为原来的二段式判断太简略且可能判错 (参考29096-问题2);
+ */
+-(void) throwWoodV1:(CGFloat)x invoked:(void(^)())invoked{
     //0. 鸟不在,则跳过;
     if ([self birdOut]) {
         invoked();
@@ -409,25 +414,52 @@
         NSLog(@"---> failure 没撞到");
         return false;
     } invoked:invoked];
+}
+
+-(void) throwWoodV2:(CGFloat)x invoked:(void(^)())invoked{
+    //0. 鸟不在,则跳过;
+    if ([self birdOut]) {
+        invoked();
+        return;
+    }
     
-//    //重力测试
-//    UIGravityBehavior *gravityB = [[UIGravityBehavior alloc] initWithItems:@[self.woodView]];
-//    // 设置重力的方向
-//    gravityB.gravityDirection = CGVectorMake(1, 1);
-//    // 设置重力的角度
-//    gravityB.angle = M_PI_2;
-//    // 设置重力的加速度
-//    gravityB.magnitude = 1.0;
-//    // 将物理仿真行为添加到仿真器中, self.dynamicAnimator为懒加载的物理仿真器对象
-//    [self.animator addBehavior:gravityB];
+    //1. 复位木棒
+    [self.woodView reset:false x:x];
     
-    //碰撞检测测试
-    UICollisionBehavior *collision = [[UICollisionBehavior alloc]init];
-    collision.collisionDelegate = self;
-    collision.translatesReferenceBoundsIntoBoundary = YES;//让参照视图的边框成为碰撞检测的边界
-    [collision addItem:self.woodView];
-    [collision addItem:self.birdView];
-    [self.animator addBehavior:collision];
+    //2. 扔前木棒视觉帧
+    DemoLog(@"木棒扔前视觉");
+    [self.birdView see:self.woodView];
+    
+    //3. 预计撞到的时间 (撞需距离 / 总扔距离 * 总扔时间);
+    [self.dyAnimator removeAllBehaviors];
+    CGFloat allDistance = ScreenWidth - self.woodView.x;
+    CGFloat allTime = allDistance / ScreenWidth * ThrowTime;
+    CGFloat speed = allTime > 0 ? allDistance / allTime : 0;
+    
+    //4. 自定义力
+    UIDynamicItemBehavior *itemBehavior = [[UIDynamicItemBehavior alloc] initWithItems:@[self.woodView]];
+    itemBehavior.allowsRotation = false; //禁止被撞的旋转
+    itemBehavior.density = 0; //密度 (默认1,设为0时也能撞到,不知道啥意思);
+    itemBehavior.friction = 0; //摩擦力
+    itemBehavior.resistance = 0; //线性阻力
+    [itemBehavior addLinearVelocity:CGPointMake(speed, 0) forItem:self.woodView]; //线性速度
+    [self.dyAnimator addBehavior:itemBehavior];
+    
+    //5. 碰撞
+    self.collision = [[UICollisionBehavior alloc] initWithItems:@[self.woodView,self.birdView]];
+    [self.collision setTranslatesReferenceBoundsIntoBoundary:true];
+    self.collision.collisionDelegate = self;
+    self.collision.collisionMode = UICollisionBehaviorModeItems;
+    [self.dyAnimator addBehavior:self.collision];
+    
+    //6. 执行完成报告;
+    itemBehavior.action = ^{
+        if (self.woodView.x > ScreenWidth) {
+            [self.dyAnimator removeAllBehaviors];
+            [self.woodView reset:true x:0];
+            invoked();
+        }
+    };
 }
 
 - (IBAction)stopWoodBtnOnClick:(id)sender {
@@ -465,30 +497,12 @@
 }
 
 /**
- *  MARK:--------------------UIDynamicAnimatorDelegate--------------------
- */
-- (void)dynamicAnimatorWillResume:(UIDynamicAnimator *)animator {
-    NSLog(@"aaa1");
-}
-- (void)dynamicAnimatorDidPause:(UIDynamicAnimator *)animator {
-    NSLog(@"aaa2");
-}
-
-/**
  *  MARK:--------------------UICollisionBehaviorDelegate--------------------
  */
 - (void)collisionBehavior:(UICollisionBehavior *)behavior beganContactForItem:(id <UIDynamicItem>)item1 withItem:(id <UIDynamicItem>)item2 atPoint:(CGPoint)p {
-    NSLog(@"aaa3");
-}
-- (void)collisionBehavior:(UICollisionBehavior *)behavior endedContactForItem:(id <UIDynamicItem>)item1 withItem:(id <UIDynamicItem>)item2 {
-    NSLog(@"aaa4");
-}
-
-- (void)collisionBehavior:(UICollisionBehavior*)behavior beganContactForItem:(id <UIDynamicItem>)item withBoundaryIdentifier:(nullable id <NSCopying>)identifier atPoint:(CGPoint)p {
-    NSLog(@"aaa5");
-}
-- (void)collisionBehavior:(UICollisionBehavior*)behavior endedContactForItem:(id <UIDynamicItem>)item withBoundaryIdentifier:(nullable id <NSCopying>)identifier {
-    NSLog(@"aaa6");
+    NSLog(@"---> success 撞到了");
+    [self.collision removeItem:self.birdView];//防止被撞飞;
+    [self.birdView hurt];
 }
 
 //MARK:===============================================================
