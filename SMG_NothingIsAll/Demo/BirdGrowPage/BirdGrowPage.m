@@ -496,6 +496,10 @@
     return CGRectMake(0, 64, ScreenWidth, ScreenHeight - 64 - 64);//naviBar和btmBtn
 }
 
+-(UIDynamicAnimator*) birdView_GetDyAnimator {
+    return self.dyAnimator;
+}
+
 /**
  *  MARK:--------------------UICollisionBehaviorDelegate--------------------
  */
