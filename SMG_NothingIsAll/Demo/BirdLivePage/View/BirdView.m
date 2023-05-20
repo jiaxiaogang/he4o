@@ -56,7 +56,39 @@
  *  @version
  *      2023.05.20: 改为物理仿真飞行 (为了碰撞检测用物理仿真更准确,而用了后飞行就必须也用) (参考29096-问题2-另外);
  */
--(void) flyAction:(CGFloat)value{
+-(void) flyAction:(CGFloat)value {
+    //如果物理仿真测着卡或者别的问题,可以尝试切回v1,并使用frame的override更新来判断是否碰撞 (木棒上下帧的直线,与鸟上下帧的直线,是否有交叉来判断);
+    [self flyActionV2:value];
+}
+
+-(void) flyActionV1:(CGFloat)value{
+    //1. 数据检查
+    value = MAX(MIN(1, value), 0);
+    
+    //2. 将从左顺时针: "0至1",转换为: "-1至1";
+    CGFloat value_F1_1 = value * 2 - 1;
+    
+    //3. 将"-1至1",转为: "-180至180度";
+    CGFloat angle = value_F1_1 * M_PI;
+    
+    //4. 用sin计算对边Y,cos计算邻边X;
+    NSLog(@"fly >> %@ angle:%.0f",[NVHeUtil getLightStr_Value:value algsType:FLY_RDS dataSource:@""],value_F1_1 * 180);
+    [UIView animateWithDuration:0.15 animations:^{
+        [self setX:self.x + (cos(angle) * 30.0f)];
+        [self setY:self.y + (sin(angle) * 30.0f)];
+    }completion:^(BOOL finished) {
+        //5. 飞后与坚果碰撞检测 (参考28172-todo2.2);
+        if ([self.delegate birdView_GetFoodOnMouth]) {
+            
+            //6. 如果飞到坚果上,则触发吃掉 (参考28172-todo2.1);
+            [self touchMouth];
+        }
+        //7. 强训飞完报告;
+        [theRT invoked:kFlySEL];
+    }];
+}
+
+-(void) flyActionV2:(CGFloat)value{
     //1. 数据检查
     value = MAX(MIN(1, value), 0);
     

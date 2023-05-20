@@ -359,12 +359,12 @@
 }
 -(void) throwWood_Rdm{
     int randomX = arc4random() % (int)ScreenWidth;
-    [self throwWoodV2:randomX invoked:^{
+    [self throwWood:randomX invoked:^{
         [theRT invoked:kWoodRdmSEL];
     }];
 }
 -(void) throwWood_Left{
-    [self throwWoodV2:0 invoked:^{
+    [self throwWood:0 invoked:^{
         [theRT invoked:kWoodLeftSEL];
     }];
 }
@@ -374,6 +374,10 @@
  *  @version
  *      2023.05.19: 迭代v2,改为用物理仿真碰撞检测,因为原来的二段式判断太简略且可能判错 (参考29096-问题2);
  */
+-(void) throwWood:(CGFloat)x invoked:(void(^)())invoked {
+    //如果物理仿真测着卡或者别的问题,可以尝试切回v1,并使用frame的override更新来判断是否碰撞 (木棒上下帧的直线,与鸟上下帧的直线,是否有交叉来判断);
+    [self throwWoodV2:x invoked:invoked];
+}
 -(void) throwWoodV1:(CGFloat)x invoked:(void(^)())invoked{
     //0. 鸟不在,则跳过;
     if ([self birdOut]) {
