@@ -436,7 +436,7 @@
     CGFloat allTime = allDistance / ScreenWidth * ThrowTime;
     CGFloat speed = allTime > 0 ? allDistance / allTime : 0;
     
-    //4. 自定义力
+    //4. 自定义力 及 item属性
     UIDynamicItemBehavior *itemBehavior = [[UIDynamicItemBehavior alloc] initWithItems:@[self.woodView]];
     itemBehavior.allowsRotation = false; //禁止被撞的旋转
     itemBehavior.density = 0; //密度 (默认1,设为0时也能撞到,不知道啥意思);

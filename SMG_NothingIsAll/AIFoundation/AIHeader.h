@@ -34,6 +34,7 @@
 #import "TIUtils.h"
 #import "TCSolutionUtil.h"
 #import "TCRethinkUtil.h"
+#import "NVViewUtil.h"
 
 //任务池
 #import "ReasonDemandModel.h"

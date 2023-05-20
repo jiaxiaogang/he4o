@@ -59,22 +59,49 @@
     
     //3. 将"-1至1",转为: "-180至180度";
     CGFloat angle = value_F1_1 * M_PI;
+    CGFloat distance = 30;
+    CGFloat time = 0.15f;
+    CGFloat xDistance = (cos(angle) * distance);
+    CGFloat yDistance = (sin(angle) * distance);
+    CGFloat xSpeed = xDistance / time, ySpeed = yDistance / time;
+    CGPoint protoPos = self.origin;
     
     //4. 用sin计算对边Y,cos计算邻边X;
     NSLog(@"fly >> %@ angle:%.0f",[NVHeUtil getLightStr_Value:value algsType:FLY_RDS dataSource:@""],value_F1_1 * 180);
-    [UIView animateWithDuration:0.15 animations:^{
-        [self setX:self.x + (cos(angle) * 30.0f)];
-        [self setY:self.y + (sin(angle) * 30.0f)];
-    }completion:^(BOOL finished) {
-        //5. 飞后与坚果碰撞检测 (参考28172-todo2.2);
-        if ([self.delegate birdView_GetFoodOnMouth]) {
+    UIDynamicAnimator *dyAnimator = nil;
+    
+    //5. 自定义力 及 item属性
+    UIDynamicItemBehavior *itemBehavior = [[UIDynamicItemBehavior alloc] initWithItems:@[self]];
+    itemBehavior.allowsRotation = false; //禁止被撞的旋转
+    itemBehavior.density = 0; //密度 (默认1,设为0时也能撞到,不知道啥意思);
+    itemBehavior.friction = 0; //摩擦力
+    itemBehavior.resistance = 0; //线性阻力
+    [itemBehavior addLinearVelocity:CGPointMake(xSpeed / 100, ySpeed / 100) forItem:self]; //线性速度
+    [dyAnimator addBehavior:itemBehavior];
+    
+    //6. finish
+    __block typeof(itemBehavior) weakItemBehavior = itemBehavior;
+    itemBehavior.action = ^{
+        
+        //7. 距离飞够后移除线性力;
+        CGFloat aleardayDistance = [NVViewUtil distancePoint:protoPos second:self.origin];
+        if (aleardayDistance > distance) {
+            [dyAnimator removeBehavior:weakItemBehavior];
             
-            //6. 如果飞到坚果上,则触发吃掉 (参考28172-todo2.1);
-            [self touchMouth];
+            //8. 指定目标位置;
+            [self setX:self.x + xDistance];
+            [self setY:self.y + yDistance];
+            
+            //9. 飞后与坚果碰撞检测 (参考28172-todo2.2);
+            if ([self.delegate birdView_GetFoodOnMouth]) {
+                
+                //10. 如果飞到坚果上,则触发吃掉 (参考28172-todo2.1);
+                [self touchMouth];
+            }
+            //11. 强训飞完报告;
+            [theRT invoked:kFlySEL];
         }
-        //7. 强训飞完报告;
-        [theRT invoked:kFlySEL];
-    }];
+    };
 }
 -(void) flyResult:(CGFloat)value{
     //1. 飞后视觉
