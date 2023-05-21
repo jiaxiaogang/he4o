@@ -14,6 +14,8 @@
 
 //复位
 -(void) reset:(BOOL)hidden x:(CGFloat)x;
+-(void) reset4StartAnimation:(CGFloat)throwX;
+-(void) reset4EndAnimation;
 
 /**
  *  MARK:--------------------扔出--------------------

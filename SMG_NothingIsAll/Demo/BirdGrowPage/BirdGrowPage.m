@@ -374,9 +374,10 @@
  *  @version
  *      2023.05.19: 迭代v2,改为用物理仿真碰撞检测,因为原来的二段式判断太简略且可能判错 (参考29096-问题2);
  *      2023.05.21: v2物理仿真: "飞行卡循环,木棒扔不全",所以切回v1 (参考29097);
+ *      2023.05.21: 迭代v3,将动画改为count个step来执行 (参考29097-新方案);
  */
 -(void) throwWood:(CGFloat)x invoked:(void(^)())invoked {
-    [self throwWoodV1:x invoked:invoked];
+    [self throwWoodV3:x invoked:invoked];
 }
 -(void) throwWoodV1:(CGFloat)x invoked:(void(^)())invoked{
     //0. 鸟不在,则跳过;
@@ -464,6 +465,71 @@
             invoked();
         }
     };
+}
+
+-(void) throwWoodV3:(CGFloat)x invoked:(void(^)())invoked{
+    //0. 鸟不在,则跳过;
+    if ([self birdOut]) {
+        invoked();
+        return;
+    }
+    
+    //1. 复位木棒
+    [self.woodView reset4StartAnimation:x];
+    
+    //2. 扔前木棒视觉帧
+    DemoLog(@"木棒扔前视觉");
+    [self.birdView see:self.woodView];
+    
+    //3. 扔前数据准备
+    CGFloat allDistance = ScreenWidth - self.woodView.x; //动画扔多远;
+    CGFloat allTime = allDistance / ScreenWidth * ThrowTime; //动画总时长
+    __block BOOL hited = false;
+    __block CGRect lastWoodRect = self.woodView.showFrame, lastBirdRect = self.birdView.showFrame;
+    DemoLog(@"扔木棒 (时:%.2f 距:%.2f)",allTime,allDistance);
+    
+    //4. 扔出
+    [self throwWoodV3_Step:allTime distance:allDistance aleardayCount:0 stepBlock:^{
+        //5. 每step执行完: 碰撞检测;
+        if (!hited) {
+            CGRect woodUnionRect = [MathUtils collectRectA:lastWoodRect rectB:self.woodView.showFrame];
+            CGRect birdUnionRect = [MathUtils collectRectA:lastBirdRect rectB:self.birdView.showFrame];
+            hited = !CGRectIsNull([MathUtils filterRectA:woodUnionRect rectB:birdUnionRect]);
+            NSLog(@"碰撞检测 %@",hited ? @"撞到了" : @"没撞到");
+            
+            //6. 记录上次rect;
+            lastWoodRect = self.woodView.showFrame;
+            lastBirdRect = self.birdView.showFrame;
+        }
+    } finishBlock:^{
+        invoked();
+        [self.woodView reset4EndAnimation];
+    }];
+}
+
+/**
+ *  MARK:--------------------一步动画 (每次分10步)--------------------
+ */
+-(void) throwWoodV3_Step:(CGFloat)time distance:(CGFloat)distance aleardayCount:(NSInteger)aleardayCount stepBlock:(void(^)())stepBlock finishBlock:(void(^)())finishBlock {
+    //1. 数据准备;
+    NSInteger stepCount = 10;
+    CGFloat stepTime = time / stepCount;
+    CGFloat stepDistance = distance / stepCount;
+    
+    //2. 动画全结束;
+    aleardayCount++;
+    if (aleardayCount >= stepCount) {
+        finishBlock();
+        return;
+    }
+    
+    //3. 未结束,执行单步动画;
+    [UIView animateWithDuration:stepTime delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
+        self.woodView.x += stepDistance;
+    } completion:^(BOOL finished) {
+        stepBlock();
+        [self throwWoodV3_Step:time distance:distance aleardayCount:aleardayCount stepBlock:stepBlock finishBlock:finishBlock];
+    }];
 }
 
 - (IBAction)stopWoodBtnOnClick:(id)sender {

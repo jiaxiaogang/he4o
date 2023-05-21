@@ -125,20 +125,6 @@
 
 
 //MARK:===============================================================
-//MARK:                     < MathUtils >
-//MARK:===============================================================
-@interface MathUtils : NSObject
-
-//数据范围变换
-+(CGFloat) getNegativeTen2TenWithOriRange:(UIFloatRange)oriRange oriValue:(CGFloat)oriValue;
-+(CGFloat) getZero2TenWithOriRange:(UIFloatRange)oriRange oriValue:(CGFloat)oriValue;
-+(CGFloat) getValueWithOriRange:(UIFloatRange)oriRange targetRange:(UIFloatRange)targetRange oriValue:(CGFloat)oriValue;
-
-
-@end
-
-
-//MARK:===============================================================
 //MARK:                     < SMGUtils (Contains) >
 //MARK:===============================================================
 @interface SMGUtils (Contains)

@@ -40,6 +40,20 @@
     self.alpha = hidden ? 0 : 1;
 }
 
+//复位
+-(void) reset4StartAnimation:(CGFloat)throwX {
+    //1. 扔出前复位 (并移除可能还在进行中的动画);
+    [self reset:false x:throwX];
+    [self.layer removeAllAnimations];
+}
+
+//复位
+-(void) reset4EndAnimation {
+    [self reset:true x:0];
+}
+
+
+
 /**
  *  MARK:--------------------扔出--------------------
  *  @param hitBlock : 碰撞检测 (碰撞时刻检测一次,如果没撞到到终点后再检测一次) notnull
