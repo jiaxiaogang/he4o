@@ -46,4 +46,20 @@
     return CGRectIntersection(rectA, rectB);
 }
 
+/**
+ *  MARK:--------------------取start到end之间百分比处的值--------------------
+ */
++(CGRect) radioRect:(CGRect)startRect endRect:(CGRect)endRect radio:(CGFloat)radio{
+    CGFloat x = [self radioFloat:CGRectGetMinX(startRect) endFloat:CGRectGetMinX(endRect) radio:radio];
+    CGFloat y = [self radioFloat:CGRectGetMinY(startRect) endFloat:CGRectGetMinY(endRect) radio:radio];
+    CGFloat w = [self radioFloat:CGRectGetWidth(startRect) endFloat:CGRectGetWidth(endRect) radio:radio];
+    CGFloat h = [self radioFloat:CGRectGetHeight(startRect) endFloat:CGRectGetHeight(endRect) radio:radio];
+    return CGRectMake(x, y, w, h);
+}
+
+//用radio取float从start到end之间的值;
++(CGFloat) radioFloat:(CGFloat)startFloat endFloat:(CGFloat)endFloat radio:(CGFloat)radio{
+    return startFloat + (endFloat - startFloat) * radio;
+}
+
 @end

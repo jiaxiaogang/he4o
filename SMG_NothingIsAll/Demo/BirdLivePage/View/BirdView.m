@@ -287,4 +287,9 @@
     }
 }
 
+-(void)setFrame:(CGRect)frame {
+    [super setFrame:frame];
+    [self.delegate birdView_SetFramed];
+}
+
 @end

@@ -29,4 +29,9 @@
  */
 +(CGRect) filterRectA:(CGRect)rectA rectB:(CGRect)rectB;
 
+/**
+ *  MARK:--------------------取start到end之间百分比处的值--------------------
+ */
++(CGRect) radioRect:(CGRect)startRect endRect:(CGRect)endRect radio:(CGFloat)radio;
+
 @end

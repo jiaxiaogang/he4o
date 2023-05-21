@@ -36,6 +36,9 @@
 @property (nonatomic,readonly) CGFloat showMaxX;
 @property (nonatomic,readonly) CGFloat showMaxY;
 
+- (CGFloat)showCenX;
+- (CGFloat)showCenY;
+
 
 //MARK:===============================================================
 //MARK:                     < subView >

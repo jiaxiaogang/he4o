@@ -123,6 +123,14 @@
     return self.showY + self.showH;
 }
 
+- (CGFloat)showCenX {
+    return self.showX + self.showW * 0.5f;
+}
+
+- (CGFloat)showCenY {
+    return self.showY + self.showH * 0.5f;
+}
+
 //MARK:===============================================================
 //MARK:                     < subView >
 //MARK:===============================================================

@@ -135,6 +135,7 @@
 		089614A9219A4D5200343FAC /* BirdGrowPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 089614A7219A4D5200343FAC /* BirdGrowPage.m */; };
 		089614AA219A4D5200343FAC /* BirdGrowPage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 089614A8219A4D5200343FAC /* BirdGrowPage.xib */; };
 		0898BD67276ED44F003449BF /* TCScore.m in Sources */ = {isa = PBXBuildFile; fileRef = 0898BD66276ED44F003449BF /* TCScore.m */; };
+		089991C02A1A432200A44050 /* HitItemModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 089991BF2A1A432200A44050 /* HitItemModel.m */; };
 		089A2DEC2840F19600B66674 /* AICansetModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 089A2DEB2840F19600B66674 /* AICansetModel.m */; };
 		089E66B121B9F5D100ECA28A /* AIAbsAlgNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 089E66B021B9F5D100ECA28A /* AIAbsAlgNode.m */; };
 		089E66B421B9F84500ECA28A /* AIAlgNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 089E66B321B9F84500ECA28A /* AIAlgNode.m */; };
@@ -477,6 +478,8 @@
 		089614A8219A4D5200343FAC /* BirdGrowPage.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BirdGrowPage.xib; sourceTree = "<group>"; };
 		0898BD65276ED44F003449BF /* TCScore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCScore.h; sourceTree = "<group>"; };
 		0898BD66276ED44F003449BF /* TCScore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCScore.m; sourceTree = "<group>"; };
+		089991BE2A1A432200A44050 /* HitItemModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HitItemModel.h; sourceTree = "<group>"; };
+		089991BF2A1A432200A44050 /* HitItemModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HitItemModel.m; sourceTree = "<group>"; };
 		089A2DEA2840F19600B66674 /* AICansetModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AICansetModel.h; sourceTree = "<group>"; };
 		089A2DEB2840F19600B66674 /* AICansetModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AICansetModel.m; sourceTree = "<group>"; };
 		089E66AF21B9F5D100ECA28A /* AIAbsAlgNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIAbsAlgNode.h; sourceTree = "<group>"; };
@@ -835,6 +838,7 @@
 		083352F0218008F0003931E5 /* BirdLivePage */ = {
 			isa = PBXGroup;
 			children = (
+				089991BD2A1A42FA00A44050 /* Model */,
 				084C3A6821926D2B00DAA08A /* View */,
 				0881965C21800F2B00D5DB36 /* BirdLivePage.h */,
 				0881965D21800F2B00D5DB36 /* BirdLivePage.m */,
@@ -1328,6 +1332,15 @@
 				0898BD66276ED44F003449BF /* TCScore.m */,
 			);
 			path = TCScore;
+			sourceTree = "<group>";
+		};
+		089991BD2A1A42FA00A44050 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				089991BE2A1A432200A44050 /* HitItemModel.h */,
+				089991BF2A1A432200A44050 /* HitItemModel.m */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		08A5D5D522AF1C1E00E56BB4 /* Core */ = {
@@ -1980,6 +1993,7 @@
 				08F27D7A29ED98C50063E71B /* TCRealact.m in Sources */,
 				083F61381F048329000330E1 /* AILine.m in Sources */,
 				08F5334027DE3A8F0038812E /* TOMVision2.m in Sources */,
+				089991C02A1A432200A44050 /* HitItemModel.m in Sources */,
 				0898BD67276ED44F003449BF /* TCScore.m in Sources */,
 				083352F521800AB1003931E5 /* MainPage.m in Sources */,
 				0817D6AB219E3CC7000E45AB /* UIColor+expanded.m in Sources */,

@@ -13,8 +13,9 @@
 #import "DemoHunger.h"
 #import "NVViewUtil.h"
 #import "WoodView.h"
+#import "HitItemModel.h"
 
-@interface BirdGrowPage ()<UIGestureRecognizerDelegate,BirdViewDelegate,UICollisionBehaviorDelegate>
+@interface BirdGrowPage ()<UIGestureRecognizerDelegate,BirdViewDelegate,UICollisionBehaviorDelegate,WoodViewDelegate>
 
 @property (strong,nonatomic) BirdView *birdView;
 @property (strong,nonatomic) UITapGestureRecognizer *singleTap;
@@ -25,6 +26,10 @@
 @property (strong, nonatomic) WoodView *woodView;
 @property(nonatomic,strong) UIDynamicAnimator *dyAnimator;
 @property (strong, nonatomic) UICollisionBehavior *collision;
+
+@property (assign, nonatomic) BOOL waitHiting; //碰撞检测中 (当扔木棒中时,做碰撞检测);
+@property (assign, nonatomic) BOOL isHited; //检测撞到了;
+@property (strong, nonatomic) HitItemModel *lastHitModel;
 
 @end
 
@@ -65,6 +70,7 @@
     
     //6. woodView
     self.woodView = [[WoodView alloc] init];
+    self.woodView.delegate = self;
     [self.view addSubview:self.woodView];
     
     //7. 创建物理仿真器，设置仿真范围，ReferenceView为参照视图
@@ -375,9 +381,10 @@
  *      2023.05.19: 迭代v2,改为用物理仿真碰撞检测,因为原来的二段式判断太简略且可能判错 (参考29096-问题2);
  *      2023.05.21: v2物理仿真: "飞行卡循环,木棒扔不全",所以切回v1 (参考29097);
  *      2023.05.21: 迭代v3,将动画改为count个step来执行 (参考29097-新方案);
+ *      2023.05.21: 迭代v4,碰撞检测交由setFrame来完成,step动画仅执行一轮 (参考29098-方案3-步骤1 & 步骤4);
  */
 -(void) throwWood:(CGFloat)x invoked:(void(^)())invoked {
-    [self throwWoodV3:x invoked:invoked];
+    [self throwWoodV4:x invoked:invoked];
 }
 -(void) throwWoodV1:(CGFloat)x invoked:(void(^)())invoked{
     //0. 鸟不在,则跳过;
@@ -487,6 +494,7 @@
     __block BOOL hited = false;
     __block CGRect lastWoodRect = self.woodView.showFrame, lastBirdRect = self.birdView.showFrame;
     DemoLog(@"扔木棒 (时:%.2f 距:%.2f)",allTime,allDistance);
+    self.waitHiting = true;
     
     //4. 扔出
     [self throwWoodV3_Step:allTime distance:allDistance aleardayCount:0 stepBlock:^{
@@ -494,11 +502,11 @@
         if (!hited) {
             CGRect woodUnionRect = [MathUtils collectRectA:lastWoodRect rectB:self.woodView.showFrame];
             CGRect birdUnionRect = [MathUtils collectRectA:lastBirdRect rectB:self.birdView.showFrame];
-            
-            
-            
             hited = !CGRectIsNull([MathUtils filterRectA:woodUnionRect rectB:birdUnionRect]);
             NSLog(@"碰撞检测: wood:%.0f birdX:%.0f Y:%.0f %@",self.woodView.center.x,self.birdView.center.x,self.birdView.center.y,hited ? @"撞到了" : @"没撞到");
+            if (hited) {
+                [self.birdView hurt];
+            }
             
             //6. 记录上次rect;
             lastWoodRect = self.woodView.showFrame;
@@ -506,16 +514,52 @@
         }
     } finishBlock:^{
         invoked();
+        self.waitHiting = false;
         [self.woodView reset4EndAnimation];
-    }];
+    } stepCount:3];
+}
+
+-(void) throwWoodV4:(CGFloat)x invoked:(void(^)())invoked{
+    //0. 鸟不在,则跳过;
+    if ([self birdOut]) {
+        invoked();
+        return;
+    }
+    
+    //1. 复位木棒
+    [self.woodView reset4StartAnimation:x];
+    
+    //2. 扔前木棒视觉帧
+    DemoLog(@"木棒扔前视觉");
+    [self.birdView see:self.woodView];
+    
+    //3. 扔前数据准备
+    CGFloat allDistance = ScreenWidth - self.woodView.x; //动画扔多远;
+    CGFloat allTime = allDistance / ScreenWidth * ThrowTime; //动画总时长
+    DemoLog(@"扔木棒 (时:%.2f 距:%.2f)",allTime,allDistance);
+    self.waitHiting = true;
+    
+    //4. 扔出: step动画仅执行一轮 (参考29098-方案3-步骤4);
+    [self throwWoodV3_Step:allTime distance:allDistance aleardayCount:0 stepBlock:^{
+        //5. 此处不做碰撞检测,交由setFrame调用runCheckHit()来完成 (参考29098-方案3-步骤1);
+    } finishBlock:^{
+        invoked();
+        self.waitHiting = false;
+        [self.woodView reset4EndAnimation];
+    } stepCount:1];
 }
 
 /**
  *  MARK:--------------------一步动画 (每次分10步)--------------------
+ *  @param stepCount : 分几片执行动画;
+ *  @param aleardayCount : 已执行了几片 (递归完成);
+ *  @param stepBlock : 每step完成后回调 (一般用来碰撞检测);
+ *  @param finishBlock : 全部动画完成;
+ *  @version
+ *      2023.05.21: 碰撞检测用frame完成,所以动画改为stepCount改为1 (参考29098-方案3-步骤4);
  */
--(void) throwWoodV3_Step:(CGFloat)time distance:(CGFloat)distance aleardayCount:(NSInteger)aleardayCount stepBlock:(void(^)())stepBlock finishBlock:(void(^)())finishBlock {
+-(void) throwWoodV3_Step:(CGFloat)time distance:(CGFloat)distance aleardayCount:(NSInteger)aleardayCount stepBlock:(void(^)())stepBlock finishBlock:(void(^)())finishBlock stepCount:(NSInteger)stepCount{
     //1. 数据准备;
-    NSInteger stepCount = 4;
     CGFloat stepTime = time / stepCount;
     CGFloat stepDistance = distance / stepCount;
     
@@ -531,7 +575,7 @@
         self.woodView.x += stepDistance;
     } completion:^(BOOL finished) {
         stepBlock();
-        [self throwWoodV3_Step:time distance:distance aleardayCount:aleardayCount stepBlock:stepBlock finishBlock:finishBlock];
+        [self throwWoodV3_Step:time distance:distance aleardayCount:aleardayCount stepBlock:stepBlock finishBlock:finishBlock stepCount:stepCount];
     }];
 }
 
@@ -573,6 +617,10 @@
     return self.dyAnimator;
 }
 
+-(void)birdView_SetFramed {
+    [self runCheckHit];
+}
+
 /**
  *  MARK:--------------------UICollisionBehaviorDelegate--------------------
  */
@@ -582,9 +630,68 @@
     [self.birdView hurt];
 }
 
+/**
+ *  MARK:--------------------WoodViewDelegate--------------------
+ */
+-(void)woodView_SetFramed {
+    [self runCheckHit];
+}
+
 //MARK:===============================================================
 //MARK:                     < privateMethod >
 //MARK:===============================================================
+
+-(void)setWaitHiting:(BOOL)value {
+    //1. 检测碰撞开始或结束时: 重置lastModel记录 & isHited检测结果;
+    NSLog(@"碰撞检测: %@",value ? @"开始 >>>>>>>" : @"结束 <<<<<<<");
+    self.lastHitModel = nil;
+    self.isHited = false;
+    
+    //2. 开关更新;
+    _waitHiting = value;
+}
+
+/**
+ *  MARK:--------------------碰撞检测算法 (参考29098)--------------------
+ *  @callers 检查中状态时,无论是木棒还是小鸟的frame变化都调用 (参考29098-方案3-步骤1);
+ */
+-(void) runCheckHit {
+    //1. 非检查中 或 已检测到碰撞 => 返回;
+    if (!self.waitHiting || self.isHited) return;
+    
+    //2. 当前帧model;
+    HitItemModel *curHitModel = [[HitItemModel alloc] init];
+    curHitModel.woodFrame = self.woodView.showFrame;
+    curHitModel.birdFrame = self.birdView.showFrame;
+    curHitModel.time = [[NSDate date] timeIntervalSince1970] * 1000;
+    
+    //3. 上帧为空时,直接等于当前帧;
+    if (self.lastHitModel == nil) {
+        self.lastHitModel = curHitModel;
+    }
+    
+    //4. 分10帧,检查每帧棒鸟是否有碰撞 (含首尾帧) (参考29098-方案3-步骤3);
+    NSInteger frameCount = 10;
+    for (NSInteger i = 0; i <= frameCount; i++) {
+        CGRect checkWoodR = [MathUtils radioRect:self.lastHitModel.woodFrame endRect:curHitModel.woodFrame radio:(float)i / frameCount];
+        CGRect checkBirdR = [MathUtils radioRect:self.lastHitModel.birdFrame endRect:curHitModel.birdFrame radio:(float)i / frameCount];
+        if (!CGRectIsNull([MathUtils filterRectA:checkWoodR rectB:checkBirdR])) {
+            self.isHited = true;
+            break;
+        }
+    }
+    
+    //5. 保留lastHitModel & 撞到时触发痛感 (参考29098-方案3-步骤2);
+    NSLog(@"碰撞检测: %@ 棒(%.0f -> %.0f) 鸟(%.0f,%.0f -> %.0f,%.0f)",self.isHited ? @"撞到了" : @"没撞到",
+          self.lastHitModel.woodFrame.origin.x,curHitModel.woodFrame.origin.x,
+          self.lastHitModel.birdFrame.origin.x,self.lastHitModel.birdFrame.origin.y,
+          curHitModel.birdFrame.origin.x,curHitModel.birdFrame.origin.y);
+    self.lastHitModel = curHitModel;
+    if (self.isHited) {
+        [self.birdView hurt];
+    }
+}
+
 - (void) food2Pos:(CGPoint)targetPoint caller4RL:(NSString*)caller4RL{
     FoodView *foodView = [[FoodView alloc] init];
     [foodView hit];

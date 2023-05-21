@@ -10,7 +10,15 @@
 
 #define ThrowTime 5.0f //满屏飞过用时
 
+@protocol WoodViewDelegate <NSObject>
+
+-(void) woodView_SetFramed;
+
+@end
+
 @interface WoodView : HEView
+
+@property (weak, nonatomic) id<WoodViewDelegate> delegate;
 
 //复位
 -(void) reset:(BOOL)hidden x:(CGFloat)x;

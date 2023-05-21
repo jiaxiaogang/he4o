@@ -103,4 +103,9 @@
     }];
 }
 
+- (void)setFrame:(CGRect)frame {
+    [super setFrame:frame];
+    [self.delegate woodView_SetFramed];
+}
+
 @end

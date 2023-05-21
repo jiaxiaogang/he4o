@@ -15,6 +15,7 @@
 -(UIView*) birdView_GetPageView;
 -(CGRect) birdView_GetSeeRect;//视觉范围 (仅能看到范围内的view)
 -(UIDynamicAnimator*) birdView_GetDyAnimator;
+-(void) birdView_SetFramed;
 
 @end
 
