@@ -36,11 +36,6 @@
  *  MARK:--------------------取rect并集--------------------
  */
 +(CGRect) collectRectA:(CGRect)rectA rectB:(CGRect)rectB {
-    //CGFloat x = MIN(rectA.origin.x, rectB.origin.x);
-    //CGFloat y = MIN(rectA.origin.y, rectB.origin.y);
-    //CGFloat w = MAX(CGRectGetMaxX(rectA), CGRectGetMaxX(rectB)) - x;
-    //CGFloat h = MAX(CGRectGetMaxY(rectA), CGRectGetMaxY(rectB)) - y;
-    //return CGRectMake(x, y, w, h);
     return CGRectUnion(rectA, rectB);
 }
 

@@ -494,8 +494,11 @@
         if (!hited) {
             CGRect woodUnionRect = [MathUtils collectRectA:lastWoodRect rectB:self.woodView.showFrame];
             CGRect birdUnionRect = [MathUtils collectRectA:lastBirdRect rectB:self.birdView.showFrame];
+            
+            
+            
             hited = !CGRectIsNull([MathUtils filterRectA:woodUnionRect rectB:birdUnionRect]);
-            NSLog(@"碰撞检测 %@",hited ? @"撞到了" : @"没撞到");
+            NSLog(@"碰撞检测: wood:%.0f birdX:%.0f Y:%.0f %@",self.woodView.center.x,self.birdView.center.x,self.birdView.center.y,hited ? @"撞到了" : @"没撞到");
             
             //6. 记录上次rect;
             lastWoodRect = self.woodView.showFrame;
@@ -512,16 +515,16 @@
  */
 -(void) throwWoodV3_Step:(CGFloat)time distance:(CGFloat)distance aleardayCount:(NSInteger)aleardayCount stepBlock:(void(^)())stepBlock finishBlock:(void(^)())finishBlock {
     //1. 数据准备;
-    NSInteger stepCount = 10;
+    NSInteger stepCount = 4;
     CGFloat stepTime = time / stepCount;
     CGFloat stepDistance = distance / stepCount;
     
     //2. 动画全结束;
-    aleardayCount++;
     if (aleardayCount >= stepCount) {
         finishBlock();
         return;
     }
+    aleardayCount++;
     
     //3. 未结束,执行单步动画;
     [UIView animateWithDuration:stepTime delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
