@@ -24,6 +24,11 @@
 @property (strong, nonatomic) UIView *refreshDot;//因为模拟器下的UI动画老不刷新,所以写个闪动点,来推动UI被动刷新;
 @property (strong, nonatomic) MemManagerWindow *memManagerWindow;
 
+//思维状态
+@property (strong, nonatomic) NSTimer *timer;               //间隔计时器
+@property (assign, nonatomic) long long lastOperCount;
+@property (strong, nonatomic) UILabel *thinkStatusLab;
+
 @end
 
 @implementation AppDelegate
@@ -61,6 +66,21 @@
     
     //3. 工作记忆按钮
     [self createNavBtn:3 title:@"思维" action:@selector(tvBtnOnClick:) bg:0];
+    
+    //3. 思维状态
+    self.timer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(timeBlock) userInfo:nil repeats:true];
+    
+    //3. 思维状态显示
+    self.thinkStatusLab = [[UILabel alloc] init];
+    [self.thinkStatusLab setTextColor:[UIColor blackColor]];
+    [self.thinkStatusLab setFont:[UIFont fontWithName:@"PingFang SC" size:8.0f]];
+    self.thinkStatusLab.lineBreakMode = NSLineBreakByCharWrapping;
+    [self.thinkStatusLab setNumberOfLines:0];
+    [self.window addSubview:self.thinkStatusLab];
+    [self.thinkStatusLab mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.trailing.mas_equalTo(self.window).offset(-145);
+        make.top.mas_equalTo(self.window).offset(10);
+    }];
     
     //3. 强化训练按钮
     [self createNavBtn:4 title:@"强训" action:@selector(rtBtnOnClick:) bg:0];
@@ -177,6 +197,12 @@
 
 -(void) wedisSaveBtnOnClick:(UIButton*)btn{
     [[XGWedis sharedInstance] save];
+    //成功提示
+    UIColor *bakColor = btn.titleLabel.textColor;
+    [btn setTitleColor:UIColor.greenColor forState:UIControlStateNormal];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [btn setTitleColor:bakColor forState:UIControlStateNormal];
+    });
 }
 
 -(void) resetBtnOnClick:(UIButton*)btn{
@@ -240,6 +266,14 @@
 - (void)setBirthPosMode_Cent{
     self.birthPosMode = 2;
     [theRT invoked:kBirthPosCentSEL];
+}
+
+//MARK:===============================================================
+//MARK:                     < block >
+//MARK:===============================================================
+-(void) timeBlock {
+    [self.thinkStatusLab setText:STRFORMAT(@"%lld",theTC.getOperCount - self.lastOperCount)];
+    self.lastOperCount = theTC.getOperCount;
 }
 
 @end

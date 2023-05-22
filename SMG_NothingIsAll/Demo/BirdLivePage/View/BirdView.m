@@ -14,6 +14,7 @@
 @interface BirdView ()
 
 @property (strong,nonatomic) IBOutlet UIView *containerView;
+@property (weak, nonatomic) IBOutlet UILabel *titleLab;
 
 @end
 
@@ -188,6 +189,11 @@
 -(void) hurt{
     DemoLog(@"痛感");
     [AIInput commitIMV:MVType_Hurt from:2.0f to:3.0f];
+    [UIView animateWithDuration:0.4 animations:^{
+        [self.titleLab setTextColor:UIColor.redColor];
+    } completion:^(BOOL finished) {
+        [self.titleLab setTextColor:UIColor.whiteColor];
+    }];
 }
 
 -(void) dealloc{
