@@ -527,7 +527,7 @@
     }
     
     //1. 复位木棒
-    [self.woodView reset4StartAnimation:x];
+    [self.woodView reset:false x:x];
     
     //2. 扔前木棒视觉帧
     DemoLog(@"木棒扔前视觉");
@@ -540,13 +540,7 @@
     self.waitHiting = true;
     
     //4. 扔出: step动画仅执行一轮 (参考29098-方案3-步骤4);
-    [self throwWoodV3_Step:allTime distance:allDistance aleardayCount:0 stepBlock:^{
-        //5. 此处不做碰撞检测,交由setFrame调用runCheckHit()来完成 (参考29098-方案3-步骤1);
-    } finishBlock:^{
-        invoked();
-        self.waitHiting = false;
-        [self.woodView reset4EndAnimation];
-    } stepCount:1];
+    [self.woodView throwV4:x time:allTime distance:allDistance invoked:invoked];
 }
 
 /**
@@ -621,6 +615,10 @@
     [self runCheckHit];
 }
 
+-(void)birdView_FlyAnimationFinish {
+    [self runCheckHit];//动画执行完后,要调用下碰撞检测,因为UIView动画后不会立马更新frame (参考29098-追BUG1);
+}
+
 /**
  *  MARK:--------------------UICollisionBehaviorDelegate--------------------
  */
@@ -635,6 +633,11 @@
  */
 -(void)woodView_SetFramed {
     [self runCheckHit];
+}
+
+-(void) woodView_WoodAnimationFinish {
+    [self runCheckHit];//动画执行完后,要调用下碰撞检测,因为UIView动画后不会立马更新frame (参考29098-追BUG1);
+    self.waitHiting = false;//木棒动画结束时,同时碰撞检测也结束;
 }
 
 //MARK:===============================================================
@@ -653,7 +656,9 @@
 
 /**
  *  MARK:--------------------碰撞检测算法 (参考29098)--------------------
- *  @callers 检查中状态时,无论是木棒还是小鸟的frame变化都调用 (参考29098-方案3-步骤1);
+ *  @callers 检查中状态时,只要木棒或小鸟的位置有变化,就调用:
+ *          1. 无论是木棒还是小鸟的frame变化都调用 (参考29098-方案3-步骤1);
+ *          2. 无论是木棒还是小鸟的动画结束时,都手动调用下 (因为UIView动画后不会立马更新frame);
  */
 -(void) runCheckHit {
     //1. 非检查中 或 已检测到碰撞 => 返回;
@@ -670,12 +675,20 @@
         self.lastHitModel = curHitModel;
     }
     
-    //4. 分10帧,检查每帧棒鸟是否有碰撞 (含首尾帧) (参考29098-方案3-步骤3);
-    NSInteger frameCount = 10;
-    for (NSInteger i = 0; i <= frameCount; i++) {
-        CGRect checkWoodR = [MathUtils radioRect:self.lastHitModel.woodFrame endRect:curHitModel.woodFrame radio:(float)i / frameCount];
-        CGRect checkBirdR = [MathUtils radioRect:self.lastHitModel.birdFrame endRect:curHitModel.birdFrame radio:(float)i / frameCount];
-        if (!CGRectIsNull([MathUtils filterRectA:checkWoodR rectB:checkBirdR])) {
+    //4. 分10帧,检查每帧棒鸟是否有碰撞 (参考29098-方案3-步骤3);
+    if (self.lastHitModel.woodFrame.origin.x == 0 && curHitModel.woodFrame.origin.x == 736) {
+        NSLog(@"");
+    }
+    NSInteger frameCount = 2;
+    for (NSInteger i = 0; i < frameCount; i++) {
+        //5. 取上下等份的Rect取并集,避免两等份间距过大,导致错漏检测问题 (参考29098-测BUG2);
+        CGRect wr1 = [MathUtils radioRect:self.lastHitModel.woodFrame endRect:curHitModel.woodFrame radio:(float)i / frameCount];
+        CGRect br1 = [MathUtils radioRect:self.lastHitModel.birdFrame endRect:curHitModel.birdFrame radio:(float)i / frameCount];
+        CGRect wr2 = [MathUtils radioRect:self.lastHitModel.woodFrame endRect:curHitModel.woodFrame radio:(float)(i+1) / frameCount];
+        CGRect br2 = [MathUtils radioRect:self.lastHitModel.birdFrame endRect:curHitModel.birdFrame radio:(float)(i+1) / frameCount];
+        CGRect wrUnion = [MathUtils collectRectA:wr1 rectB:wr2];
+        CGRect brUnion = [MathUtils collectRectA:br1 rectB:br2];
+        if (!CGRectIsNull([MathUtils filterRectA:wrUnion rectB:brUnion])) {
             self.isHited = true;
             break;
         }

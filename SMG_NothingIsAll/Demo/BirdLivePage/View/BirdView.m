@@ -77,6 +77,8 @@
         [self setX:self.x + (cos(angle) * 30.0f)];
         [self setY:self.y + (sin(angle) * 30.0f)];
     }completion:^(BOOL finished) {
+        //5. 飞完动画时,要调用下碰撞检测 (因为UIView动画后,不会立马执行frame更新);
+        [self.delegate birdView_FlyAnimationFinish];
         //5. 飞后与坚果碰撞检测 (参考28172-todo2.2);
         if ([self.delegate birdView_GetFoodOnMouth]) {
             

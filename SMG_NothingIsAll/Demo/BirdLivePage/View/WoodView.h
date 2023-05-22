@@ -13,6 +13,7 @@
 @protocol WoodViewDelegate <NSObject>
 
 -(void) woodView_SetFramed;
+-(void) woodView_WoodAnimationFinish;
 
 @end
 
@@ -30,5 +31,6 @@
  *  @param hitBlock : 碰撞检测 (碰撞时刻检测一次,如果没撞到到终点后再检测一次) notnull
  */
 -(void) throw:(CGFloat)throwX frontTime:(CGFloat)frontTime backTime:(CGFloat)backTime speed:(CGFloat)speed hitBlock:(BOOL(^)())hitBlock invoked:(void(^)())invoked;
+-(void) throwV4:(CGFloat)throwX time:(CGFloat)time distance:(CGFloat)distance invoked:(void(^)())invoked;
 
 @end

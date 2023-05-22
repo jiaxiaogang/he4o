@@ -61,6 +61,7 @@
  *      2021.09.08: 支持两段动画,并在中段和尾段分别进行碰撞检测;
  *      2022.04.27: 调慢木棒动画 (参考25222);
  *      2022.06.04: 支持随机扔出点 (参考26196-方案2);
+ *      2023.05.22: 迭代v4:动画结束时,调用下碰撞检测啥的 (参考29098-方案3);
  */
 -(void) throw:(CGFloat)throwX frontTime:(CGFloat)frontTime backTime:(CGFloat)backTime speed:(CGFloat)speed hitBlock:(BOOL(^)())hitBlock invoked:(void(^)())invoked{
     //1. 扔出前复位 (并移除可能还在进行中的动画);
@@ -100,6 +101,20 @@
         }else{
             invoked();
         }
+    }];
+}
+
+-(void) throwV4:(CGFloat)throwX time:(CGFloat)time distance:(CGFloat)distance invoked:(void(^)())invoked {
+    //1. 扔出前复位 (并移除可能还在进行中的动画);
+    [self reset4StartAnimation:throwX];
+    
+    //2. 执行动画;
+    [UIView animateWithDuration:time delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
+        self.x += distance;
+    } completion:^(BOOL finished) {
+        [self.delegate woodView_WoodAnimationFinish];
+        [self reset4EndAnimation];
+        invoked();
     }];
 }
 
