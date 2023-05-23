@@ -188,7 +188,7 @@
     
     
     //3. 求出综合排名;
-    for (id item in models) {
+    for (id item in rank) {
         //4. 取单科排名下标;
         NSInteger index4Rank = [rank indexOfObject:item];
         
