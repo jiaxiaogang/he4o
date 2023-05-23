@@ -55,6 +55,7 @@
  *  @version
  *      2023.02.18: V2迭代: 把三项排名改成三次排序+漏斗 (参考28080-结论2);
  *      2023.02.19: 正式启用v2,并且动态计算每次保留比例;
+ *      2023.05.23: 迭代v3,改为仅根据稳定性和有效性排名 (参考29099-方案);
  *  @result 返回排名结果;
  */
 +(NSArray*) solutionFoRankingV2:(NSArray*)solutionModels needBack:(BOOL)needBack fromSlow:(BOOL)fromSlow{
@@ -118,6 +119,19 @@
         return item.midEffectScore; //中段有效性项;
     } itemKeyBlock:^id(AICansetModel *item) {
         return @(item.cansetFo.pointerId);
+    }];
+}
+
++(NSArray*) solutionFoRankingV3:(NSArray*)solutionModels {
+    //1. 根据cutIndex到target之间的稳定性和有效性来排名 (参考29099-todo1 & todo2);
+    return [self getCooledRankTwice:solutionModels itemScoreBlock1:^CGFloat(AICansetModel *item) {
+        AIFoNodeBase *cansetFo = [SMGUtils searchNode:item.cansetFo];
+        return [TOUtils getStableScore:cansetFo startSPIndex:item.cutIndex + 1 endSPIndex:item.targetIndex];
+    } itemScoreBlock2:^CGFloat(AICansetModel *item) {
+        AIFoNodeBase *sceneFo = [SMGUtils searchNode:item.sceneFo];
+        return [TOUtils getEffectScore:sceneFo effectIndex:item.targetIndex solutionFo:item.cansetFo];
+    } itemKeyBlock:^id(AICansetModel *item) {
+        return STRFORMAT(@"%ld_%ld",item.sceneFo.pointerId,item.cansetFo.pointerId);
     }];
 }
 

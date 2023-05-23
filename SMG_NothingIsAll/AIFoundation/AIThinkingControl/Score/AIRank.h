@@ -27,10 +27,6 @@
  *  MARK:--------------------S综合排名--------------------
  */
 +(NSArray*) solutionFoRankingV2:(NSArray*)solutionModels needBack:(BOOL)needBack fromSlow:(BOOL)fromSlow;
-
-/**
- *  MARK:--------------------求解S前段排名 (参考28083-方案2 & 28084-5)--------------------
- */
-+(NSArray*) solutionFrontRank:(NSArray*)solutionModels;
++(NSArray*) solutionFoRankingV3:(NSArray*)solutionModels;
 
 @end
