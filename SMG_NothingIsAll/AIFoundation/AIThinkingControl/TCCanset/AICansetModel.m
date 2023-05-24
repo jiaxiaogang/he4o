@@ -22,6 +22,7 @@
                      backMatchValue:(CGFloat)backMatchValue
                     backStrongValue:(CGFloat)backStrongValue
                            cutIndex:(NSInteger)cutIndex
+                      sceneCutIndex:(NSInteger)sceneCutIndex
                         targetIndex:(NSInteger)targetIndex
                    sceneTargetIndex:(NSInteger)sceneTargetIndex
              basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel

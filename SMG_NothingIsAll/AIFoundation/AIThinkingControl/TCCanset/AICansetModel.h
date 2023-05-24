@@ -35,6 +35,7 @@
                      backMatchValue:(CGFloat)backMatchValue
                     backStrongValue:(CGFloat)backStrongValue
                            cutIndex:(NSInteger)cutIndex
+                      sceneCutIndex:(NSInteger)sceneCutIndex
                         targetIndex:(NSInteger)targetIndex
                    sceneTargetIndex:(NSInteger)sceneTargetIndex
              basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel
@@ -89,8 +90,9 @@
 @property (assign, nonatomic) CGFloat midStableScore;    //中段稳定性分;
 @property (assign, nonatomic) CGFloat midEffectScore;    //整体有效率分;
 
-@property (assign, nonatomic) NSInteger cutIndex;       //已发生截点 (含cutIndex也已发生);
-@property (assign, nonatomic) NSInteger targetIndex;    //目标index (R时为cansetFo.count,H时为目标帧下标);
-@property (assign, nonatomic) NSInteger sceneTargetIndex;//任务目标index (R时为sceneFo.count,H时为目标帧下标);
+@property (assign, nonatomic) NSInteger cutIndex;       //cansetFo已发生截点 (含cutIndex也已发生);
+@property (assign, nonatomic) NSInteger targetIndex;    //cansetFo执行目标index (R时为fo.count,H时为目标帧下标);
+@property (assign, nonatomic) NSInteger sceneCutIndex;  //sceneFo已发生截点 (含cutIndex也已发生);
+@property (assign, nonatomic) NSInteger sceneTargetIndex;//sceneFo任务目标index (R时为fo.count,H时为目标帧下标);
 
 @end

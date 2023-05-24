@@ -174,18 +174,24 @@
         NSInteger backStrongValue = [AINetUtils getSumConStrongByIndexDic:backIndexDic matchFo:sceneFo_p cansetFo:cansetFo_p];
         
         //9. 后段成功;
-        return [AICansetModel newWithCansetFo:cansetFo_p sceneFo:sceneFo_p protoFrontIndexDic:protoFrontIndexDic matchFrontIndexDic:matchFrontIndexDic frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue
+        return [AICansetModel newWithCansetFo:cansetFo_p sceneFo:sceneFo_p
+                           protoFrontIndexDic:protoFrontIndexDic matchFrontIndexDic:matchFrontIndexDic
+                              frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue
                                midEffectScore:midEffectScore midStableScore:midStableScore
                                  backIndexDic:backIndexDic backMatchValue:backMatchValue backStrongValue:backStrongValue
-                                     cutIndex:cansetCutIndex targetIndex:cansetTargetIndex sceneTargetIndex:matchTargetIndex
+                                     cutIndex:cansetCutIndex sceneCutIndex:matchCutIndex
+                                  targetIndex:cansetTargetIndex sceneTargetIndex:matchTargetIndex
                        basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel];
     }else{
         if (debugMode) AddDebugCodeBlock(@"convert2Canset endR");
         //11. 后段: R不判断后段;
-        return [AICansetModel newWithCansetFo:cansetFo_p sceneFo:sceneFo_p protoFrontIndexDic:protoFrontIndexDic matchFrontIndexDic:matchFrontIndexDic frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue
+        return [AICansetModel newWithCansetFo:cansetFo_p sceneFo:sceneFo_p
+                           protoFrontIndexDic:protoFrontIndexDic matchFrontIndexDic:matchFrontIndexDic
+                              frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue
                                midEffectScore:midEffectScore midStableScore:midStableScore
                                  backIndexDic:nil backMatchValue:1 backStrongValue:0
-                                     cutIndex:cansetCutIndex targetIndex:cansetFo.count sceneTargetIndex:matchTargetIndex
+                                     cutIndex:cansetCutIndex sceneCutIndex:matchCutIndex
+                                  targetIndex:cansetFo.count sceneTargetIndex:matchTargetIndex
                        basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel];
     }
 }

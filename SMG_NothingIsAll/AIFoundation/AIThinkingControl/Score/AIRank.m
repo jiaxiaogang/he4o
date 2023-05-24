@@ -132,10 +132,10 @@
     //1. 根据cutIndex到target之间的稳定性和有效性来排名 (参考29099-todo1 & todo2);
     return [self getCooledRankTwice:solutionModels itemScoreBlock1:^CGFloat(AICansetModel *item) {
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:item.cansetFo];
-        return [TOUtils getStableScore:cansetFo startSPIndex:item.cutIndex + 1 endSPIndex:item.targetIndex];
+        return [TOUtils getStableScore:cansetFo startSPIndex:item.cutIndex + 1 endSPIndex:item.targetIndex];//中后段稳定性
     } itemScoreBlock2:^CGFloat(AICansetModel *item) {
         AIFoNodeBase *sceneFo = [SMGUtils searchNode:item.sceneFo];
-        return [TOUtils getEffectScore:sceneFo effectIndex:item.sceneTargetIndex solutionFo:item.cansetFo];
+        return [TOUtils getEffectScore:sceneFo effectIndex:item.sceneTargetIndex solutionFo:item.cansetFo];//后段有效性
     } itemKeyBlock:^id(AICansetModel *item) {
         return STRFORMAT(@"%p",item);
     }];
@@ -181,13 +181,6 @@
         return itemScoreBlock(obj);
     }];
     
-    //debug
-    NSLog(@"综合排名 临时1 > %@",CLEANSTR([SMGUtils convertArr:rank convertBlock:^id(id obj) {
-        return itemKeyBlock(obj);
-    }]));
-    
-    
-    
     //3. 求出综合排名;
     for (id item in rank) {
         //4. 取单科排名下标;
@@ -203,6 +196,7 @@
         id key = itemKeyBlock(item);
         [result setObject:@(cool4Rank) forKey:key];
     }
+    if (Log4AIRank) NSLog(@"AIRank-单项排名: %@",CLEANSTR([SMGUtils convertArr:rank convertBlock:^id(id obj) {return itemKeyBlock(obj);}]));
     return result;
 }
 
@@ -222,26 +216,20 @@
         id key = itemKeyBlock(obj);
         float coolScore1 = NUMTOOK([cooledDic1 objectForKey:key]).floatValue;
         float coolScore2 = NUMTOOK([cooledDic2 objectForKey:key]).floatValue;
-        //[result setObject:@(coolScore1 * coolScore2) forKey:key]; // 返回排序前的scoreDic时;
         return coolScore1 * coolScore2; //返回排序后的sortArr时;
     }];
     
-    //debug
+    //3. debug日志
     for (AICansetModel *obj in result) {
         id key = itemKeyBlock(obj);
-        float coolScore1 = NUMTOOK([cooledDic1 objectForKey:key]).floatValue;
-        float coolScore2 = NUMTOOK([cooledDic2 objectForKey:key]).floatValue;
-        CGFloat spScore = itemScoreBlock1(obj);
-        CGFloat effScore = itemScoreBlock2(obj);
-        float score = coolScore1 * coolScore2;
+        float coolScore1 = NUMTOOK([cooledDic1 objectForKey:key]).floatValue,coolScore2 = NUMTOOK([cooledDic2 objectForKey:key]).floatValue;
+        CGFloat spScore = itemScoreBlock1(obj), effScore = itemScoreBlock2(obj);
         if (ISOK(obj, AICansetModel.class)) {
-            NSLog(@"%ld %@ <F%ld F%ld>: sp分:%.5f (排名%.5f) eff分:%.5f (排名:%.5f) 综合排名:%.8f",[result indexOfObject:obj],key,
-                  obj.sceneFo.pointerId,obj.cansetFo.pointerId,
-                  spScore,coolScore1,
-                  effScore,coolScore2,
-                  score);
+            if (Log4AIRank) NSLog(@"AIRank-%ld %@ <F%ld F%ld>: sp分:%.5f (排名%.5f) eff分:%.5f (排名:%.5f) 综合排名:%.8f",[result indexOfObject:obj],key,
+                  obj.sceneFo.pointerId,obj.cansetFo.pointerId,spScore,coolScore1,effScore,coolScore2,coolScore1 * coolScore2);
         }
     }
+    
     return result;
 }
 
