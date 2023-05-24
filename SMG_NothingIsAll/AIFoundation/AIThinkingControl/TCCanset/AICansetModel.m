@@ -23,6 +23,7 @@
                     backStrongValue:(CGFloat)backStrongValue
                            cutIndex:(NSInteger)cutIndex
                         targetIndex:(NSInteger)targetIndex
+                   sceneTargetIndex:(NSInteger)sceneTargetIndex
              basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel
                      baseSceneModel:(AISceneModel*)baseSceneModel {
     AICansetModel *model = [[AICansetModel alloc] init];
@@ -40,6 +41,7 @@
     model.backStrongValue = backStrongValue;
     model.cutIndex = cutIndex;
     model.targetIndex = targetIndex;
+    model.sceneTargetIndex = sceneTargetIndex;
     return model;
 }
 

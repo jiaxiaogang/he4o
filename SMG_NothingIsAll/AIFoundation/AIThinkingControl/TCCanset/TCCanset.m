@@ -177,16 +177,16 @@
         return [AICansetModel newWithCansetFo:cansetFo_p sceneFo:sceneFo_p protoFrontIndexDic:protoFrontIndexDic matchFrontIndexDic:matchFrontIndexDic frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue
                                midEffectScore:midEffectScore midStableScore:midStableScore
                                  backIndexDic:backIndexDic backMatchValue:backMatchValue backStrongValue:backStrongValue
-                                     cutIndex:cansetCutIndex targetIndex:cansetTargetIndex basePFoOrTargetFoModel:basePFoOrTargetFoModel
-                               baseSceneModel:sceneModel];
+                                     cutIndex:cansetCutIndex targetIndex:cansetTargetIndex sceneTargetIndex:matchTargetIndex
+                       basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel];
     }else{
         if (debugMode) AddDebugCodeBlock(@"convert2Canset endR");
         //11. 后段: R不判断后段;
         return [AICansetModel newWithCansetFo:cansetFo_p sceneFo:sceneFo_p protoFrontIndexDic:protoFrontIndexDic matchFrontIndexDic:matchFrontIndexDic frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue
                                midEffectScore:midEffectScore midStableScore:midStableScore
                                  backIndexDic:nil backMatchValue:1 backStrongValue:0
-                                     cutIndex:cansetCutIndex targetIndex:cansetFo.count basePFoOrTargetFoModel:basePFoOrTargetFoModel
-                               baseSceneModel:sceneModel];
+                                     cutIndex:cansetCutIndex targetIndex:cansetFo.count sceneTargetIndex:matchTargetIndex
+                       basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel];
     }
 }
 

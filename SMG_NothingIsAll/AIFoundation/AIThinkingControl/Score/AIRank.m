@@ -125,7 +125,8 @@
 /**
  *  MARK:--------------------求解S排名器 (参考29099-方案)--------------------
  *  @version
- *      2023.05.23: 用sceneId_cansetId做key,会有重复的,导致算漏的BUG,改用内存地址来做唯一key;
+ *      2023.05.23: BUG_用sceneId_cansetId做key,会有重复的,导致算漏的BUG,改用内存地址来做唯一key;
+ *      2023.05.24: BUG_修复此处将sceneTargetIndex用错成cansetTargetIndex的问题 (会导致取到eff几乎全是错的0);
  */
 +(NSArray*) solutionFoRankingV3:(NSArray*)solutionModels {
     //1. 根据cutIndex到target之间的稳定性和有效性来排名 (参考29099-todo1 & todo2);
@@ -134,7 +135,7 @@
         return [TOUtils getStableScore:cansetFo startSPIndex:item.cutIndex + 1 endSPIndex:item.targetIndex];
     } itemScoreBlock2:^CGFloat(AICansetModel *item) {
         AIFoNodeBase *sceneFo = [SMGUtils searchNode:item.sceneFo];
-        return [TOUtils getEffectScore:sceneFo effectIndex:item.targetIndex solutionFo:item.cansetFo];
+        return [TOUtils getEffectScore:sceneFo effectIndex:item.sceneTargetIndex solutionFo:item.cansetFo];
     } itemKeyBlock:^id(AICansetModel *item) {
         return STRFORMAT(@"%p",item);
     }];
