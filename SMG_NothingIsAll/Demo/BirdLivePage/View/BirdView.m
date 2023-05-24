@@ -189,11 +189,10 @@
 -(void) hurt{
     DemoLog(@"痛感");
     [AIInput commitIMV:MVType_Hurt from:2.0f to:3.0f];
-    [UIView animateWithDuration:0.4 animations:^{
-        [self.titleLab setTextColor:UIColor.redColor];
-    } completion:^(BOOL finished) {
+    [self.titleLab setTextColor:UIColor.redColor];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.8 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self.titleLab setTextColor:UIColor.whiteColor];
-    }];
+    });
 }
 
 -(void) dealloc{

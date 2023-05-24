@@ -208,6 +208,8 @@
 /**
  *  MARK:--------------------两项models冷却后竞争值--------------------
  *  @desc 包含两项, 比如: 三班的语数竞赛;
+ *  @version
+ *      2023.05.24: BUG_热度应该是越高越好,排反了,改为从大到小排;
  */
 +(NSArray*) getCooledRankTwice:(NSArray*)models itemScoreBlock1:(CGFloat(^)(id item))itemScoreBlock1 itemScoreBlock2:(CGFloat(^)(id item))itemScoreBlock2 itemKeyBlock:(id(^)(id item))itemKeyBlock{
     //1. 两个冷却后字典计算;
@@ -215,7 +217,7 @@
     NSDictionary *cooledDic2 = [self getCooledValueDic:models itemScoreBlock:itemScoreBlock2 itemKeyBlock:itemKeyBlock];
     
     //2. 求出综合竞争值并排序 (参考25083-2&公式2 & 25084-1);
-    NSArray *result = [SMGUtils sortSmall2Big:models compareBlock:^double(id obj) {
+    NSArray *result = [SMGUtils sortBig2Small:models compareBlock:^double(id obj) {
         id key = itemKeyBlock(obj);
         float coolScore1 = NUMTOOK([cooledDic1 objectForKey:key]).floatValue;
         float coolScore2 = NUMTOOK([cooledDic2 objectForKey:key]).floatValue;
@@ -232,7 +234,7 @@
         CGFloat effScore = itemScoreBlock2(obj);
         float score = coolScore1 * coolScore2;
         if (ISOK(obj, AICansetModel.class)) {
-            NSLog(@"%ld %@ <F%ld F%ld>: sp分:%.2f (排名%.2f) eff分:%.2f (排名:%.2f) 综合排名:%.2f",[result indexOfObject:obj],key,
+            NSLog(@"%ld %@ <F%ld F%ld>: sp分:%.5f (排名%.5f) eff分:%.5f (排名:%.5f) 综合排名:%.8f",[result indexOfObject:obj],key,
                   obj.sceneFo.pointerId,obj.cansetFo.pointerId,
                   spScore,coolScore1,
                   effScore,coolScore2,
