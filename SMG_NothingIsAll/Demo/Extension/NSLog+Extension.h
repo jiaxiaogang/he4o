@@ -16,6 +16,6 @@
 +(NSString*) convertEffectStatus2Desc:(EffectStatus)status;
 +(NSString*) convertClass2Desc:(Class)clazz;
 +(NSString*) convertMvp2DeltaDesc:(AIKVPointer*)mv_p;
-+(NSString*) convertSceneType2Desc:(SceneType)type;
++(NSString*) convertSceneType2Desc:(SceneType)type simple:(BOOL)simple;
 
 @end

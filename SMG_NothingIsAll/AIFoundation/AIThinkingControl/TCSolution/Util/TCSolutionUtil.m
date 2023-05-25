@@ -252,15 +252,6 @@
     //11. 根据候选集综合分排序 (参考26128-2-2 & 26161-4);
     NSArray *sortModels = [AIRank solutionFoRankingV3:cansetModels];
 
-    //12. debugLog
-    for (AICansetModel *model in ARR_SUB(sortModels, 0, 6)) {
-        AIFoNodeBase *sceneFo = [SMGUtils searchNode:model.sceneFo];
-        AIEffectStrong *effStrong = [TOUtils getEffectStrong:sceneFo effectIndex:sceneFo.count solutionFo:model.cansetFo];
-        NSString *effDesc = effStrong ? effStrong.description : @"";
-        AIFoNodeBase *cansetFo = [SMGUtils searchNode:model.cansetFo];
-        if (Log4Solution_Slow) NSLog(@"%ld: eff:%@ sp:%@ %@Scene:F%ld %@ (前%.2f 中%.2f 后%.2f)",[sortModels indexOfObject:model],effDesc,CLEANSTR(cansetFo.spDic),SceneType2Str(model.baseSceneModel.type),sceneFo.pId,Pit2FStr(model.cansetFo),model.frontMatchValue,model.midStableScore,model.backMatchValue);
-    }
-
     //13. 取通过S反思的最佳S;
     for (AICansetModel *item in sortModels) {
         BOOL score = [TCRefrection refrection:item demand:demand];

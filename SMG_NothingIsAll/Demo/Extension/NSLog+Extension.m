@@ -85,10 +85,10 @@
     return @"⇅";
 }
 
-+(NSString*) convertSceneType2Desc:(SceneType)type {
++(NSString*) convertSceneType2Desc:(SceneType)type simple:(BOOL)simple{
     if (type == SceneTypeI) return @"I";
-    if (type == SceneTypeFather) return @"Father";
-    if (type == SceneTypeBrother) return @"Brother";
+    if (type == SceneTypeFather) return simple ? @"F" : @"Father";
+    if (type == SceneTypeBrother) return simple ? @"B" : @"Brother";
     return @"";
 }
 

@@ -170,6 +170,7 @@
  *  @desc 单项一般包含多条,如匹配度项竞争,比如: 三班的语文考试;
  *  @version
  *      2023.05.23: 修复归1化后小数写成了int型,导致只有0和1的BUG;
+ *  @todo : 其实这里的排名再冷却,有点麻烦,可以直接改成排名的名次相加来计算,但目前也没啥问题,所以先不动了 (如果哪天发现现做法有问题时再这么改);
  */
 +(NSDictionary*) getCooledValueDic:(NSArray*)models itemScoreBlock:(CGFloat(^)(id item))itemScoreBlock itemKeyBlock:(id(^)(id item))itemKeyBlock {
     //1. 数据准备;
@@ -196,7 +197,7 @@
         id key = itemKeyBlock(item);
         [result setObject:@(cool4Rank) forKey:key];
     }
-    if (Log4AIRank) NSLog(@"AIRank-单项排名: %@",CLEANSTR([SMGUtils convertArr:rank convertBlock:^id(id obj) {return itemKeyBlock(obj);}]));
+    if (Log4AIRankDebugMode) NSLog(@"AIRank-单项排名: %@",CLEANSTR([SMGUtils convertArr:rank convertBlock:^id(id obj) {return itemKeyBlock(obj);}]));
     return result;
 }
 
@@ -222,11 +223,16 @@
     //3. debug日志
     for (AICansetModel *obj in result) {
         id key = itemKeyBlock(obj);
+        AIFoNodeBase *sceneFo = [SMGUtils searchNode:obj.sceneFo];
+        AIEffectStrong *effStrong = [TOUtils getEffectStrong:sceneFo effectIndex:sceneFo.count solutionFo:obj.cansetFo];
+        AIFoNodeBase *cansetFo = [SMGUtils searchNode:obj.cansetFo];
         float coolScore1 = NUMTOOK([cooledDic1 objectForKey:key]).floatValue,coolScore2 = NUMTOOK([cooledDic2 objectForKey:key]).floatValue;
         CGFloat spScore = itemScoreBlock1(obj), effScore = itemScoreBlock2(obj);
         if (ISOK(obj, AICansetModel.class)) {
-            if (Log4AIRank) NSLog(@"AIRank-%ld %@ <F%ld F%ld>: sp分:%.5f (排名%.5f) eff分:%.5f (排名:%.5f) 综合排名:%.8f",[result indexOfObject:obj],key,
-                  obj.sceneFo.pointerId,obj.cansetFo.pointerId,spScore,coolScore1,effScore,coolScore2,coolScore1 * coolScore2);
+            if (Log4AIRank) NSLog(@"%ld. %@:(分:%.2f) %@:(分:%.2f) %@<F%ld %@>",[result indexOfObject:obj],
+                                  CLEANSTR(cansetFo.spDic),spScore,effStrong.description,effScore,
+                                  SceneType2Str(obj.baseSceneModel.type),obj.sceneFo.pointerId,Fo2FStr(cansetFo));
+            if (Log4AIRankDebugMode) NSLog(@"\t> %@ sp排名:%.5f eff排名:%.5f => 综合排名:%.5f",key,coolScore1,coolScore2,coolScore1 * coolScore2);
         }
     }
     

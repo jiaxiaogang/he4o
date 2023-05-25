@@ -232,7 +232,7 @@
 #define EffectStatus2Str(status) [NSLog_Extension convertEffectStatus2Desc:status]
 #define Class2Str(c) [NSLog_Extension convertClass2Desc:c]
 #define Mvp2DeltaStr(mv_p) [NSLog_Extension convertMvp2DeltaDesc:mv_p]
-#define SceneType2Str(type) [NSLog_Extension convertSceneType2Desc:type]
+#define SceneType2Str(type) [NSLog_Extension convertSceneType2Desc:type simple:true]
 
 //Double转Str
 #define Double2Str_NDZ(value) [NSString double2Str_NoDotZero:value]
@@ -386,6 +386,7 @@
 
 //AIRank日志开关
 #define Log4AIRank true
+#define Log4AIRankDebugMode false //Rank在BUG调试模式时的日志
 
 //MARK:===============================================================
 //MARK:                     < 系统模块开关 >
