@@ -40,7 +40,9 @@
     //2. 拼接返回
     for (AIKVPointer *item_p in node_ps){
         NSString *str = [NVHeUtil getLightStr:item_p simple:simple header:header from:node_ps];
-        [result appendFormat:@"%@%@",str,sep];
+        if (STRISOK(str)) {
+            [result appendFormat:@"%@%@",str,sep];
+        }
     }
     return SUBSTR2INDEX(result, result.length - sep.length);
 }
@@ -64,6 +66,25 @@
                     lightStr = STRFORMAT(@"%@%@",firstValueStr,(algNode.content_ps.count > 1) ? @"..." : @"");
                 }else{
                     lightStr = [self getLightStr4Ps:algNode.content_ps simple:simple header:header sep:@","];
+                }
+                
+                //简化日志1: 概念加后辍
+                int height = NUMTOOK([AINetIndex getData:[SMGUtils filterSingleFromArr:algNode.content_ps checkValid:^BOOL(AIKVPointer *item) {
+                    return [@"sizeHeight" isEqualToString:item.dataSource];
+                }]]).intValue;
+                if (height == 100) {
+                    lightStr = STRFORMAT(@"%@,棒",lightStr);
+                } else if (height == 30) {
+                    lightStr = STRFORMAT(@"%@,鸟",lightStr);
+                } else if (height == 5) {
+                    lightStr = STRFORMAT(@"%@,果",lightStr);
+                }
+                
+                //简化日志2: 飞不加header
+                if ([SMGUtils filterSingleFromArr:algNode.content_ps checkValid:^BOOL(AIKVPointer *item) {
+                    return [FLY_RDS isEqualToString:item.algsType];
+                }]) {
+                    header = false;
                 }
             }
         }else if([self isFo:node_p]){
@@ -89,7 +110,7 @@
     if ([@"sizeWidth" isEqualToString:value_p.dataSource]) {
         return STRFORMAT(@"宽%@",valueStr);
     }else if ([@"sizeHeight" isEqualToString:value_p.dataSource]) {
-        return STRFORMAT(@"高%@",valueStr);
+        return @"";//STRFORMAT(@"高%@",valueStr);
     }else if ([@"colorRed" isEqualToString:value_p.dataSource]) {
         return STRFORMAT(@"红%@",valueStr);
     }else if ([@"colorBlue" isEqualToString:value_p.dataSource]) {
@@ -113,7 +134,7 @@
     }else if ([@"speed" isEqualToString:value_p.dataSource]) {
         return STRFORMAT(@"速%@",valueStr);
     }else if ([@"border" isEqualToString:value_p.dataSource]) {
-        return STRFORMAT(@"皮%@",valueStr);
+        return @"";//STRFORMAT(@"皮%@",valueStr);
     }else if ([@"posX" isEqualToString:value_p.dataSource]) {
         return STRFORMAT(@"X%@",valueStr);
     }else if ([@"posY" isEqualToString:value_p.dataSource]) {
