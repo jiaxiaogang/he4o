@@ -637,6 +637,9 @@
     return [SMGUtils sortBig2Small:arr compareBlock1:compareBlock compareBlock2:nil];
 }
 +(NSArray*) sortBig2Small:(NSArray*)arr compareBlock1:(double(^)(id obj))compareBlock1 compareBlock2:(double(^)(id obj))compareBlock2{
+    return [SMGUtils sortBig2Small:arr compareBlock1:compareBlock1 compareBlock2:compareBlock2 compareBlock3:nil];
+}
++(NSArray*) sortBig2Small:(NSArray*)arr compareBlock1:(double(^)(id obj))compareBlock1 compareBlock2:(double(^)(id obj))compareBlock2 compareBlock3:(double(^)(id obj))compareBlock3 {
     //1. 数据检查;
     arr = ARRTOOK(arr);
     
@@ -644,14 +647,13 @@
     return [arr sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
         //3. 一级对比;
         NSComparisonResult result = NSOrderedSame;
-        if (compareBlock1) {
-            result = [SMGUtils compareDoubleA:compareBlock1(obj1) doubleB:compareBlock1(obj2)];
-        }
+        if (compareBlock1) result = [SMGUtils compareDoubleA:compareBlock1(obj1) doubleB:compareBlock1(obj2)];
         
         //4. 二级对比;
-        if (result == NSOrderedSame && compareBlock2) {
-            result = [SMGUtils compareDoubleA:compareBlock2(obj1) doubleB:compareBlock2(obj2)];
-        }
+        if (result == NSOrderedSame && compareBlock2) result = [SMGUtils compareDoubleA:compareBlock2(obj1) doubleB:compareBlock2(obj2)];
+        
+        //5. 三级对比;
+        if (result == NSOrderedSame && compareBlock3) result = [SMGUtils compareDoubleA:compareBlock3(obj1) doubleB:compareBlock3(obj2)];
         return result;
     }];
 }

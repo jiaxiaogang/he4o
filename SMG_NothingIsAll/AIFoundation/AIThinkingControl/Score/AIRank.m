@@ -58,87 +58,103 @@
  *      2023.05.23: 迭代v3,改为仅根据稳定性和有效性排名 (参考29099-方案);
  *  @result 返回排名结果;
  */
-+(NSArray*) solutionFoRankingV2:(NSArray*)solutionModels needBack:(BOOL)needBack fromSlow:(BOOL)fromSlow{
-    //0. 数据准备;
-    CGFloat resultNum = 6;
-    NSInteger rankNum = needBack ? 3 : 2;//排名几次;
-    CGFloat singleRate = MIN(1, powf(resultNum / solutionModels.count, 1.0f / rankNum));//每次保留条数比例;
-    
-    //1. 后段排名;
-    if (needBack) {
-        solutionModels = [AIRank solutionBackRank:solutionModels];
-        solutionModels = ARR_SUB(solutionModels, 0, solutionModels.count * singleRate);
-    }
-    
-    //2. 中段排名;
-    solutionModels = [AIRank solutionMidRank:solutionModels];
-    solutionModels = ARR_SUB(solutionModels, 0, solutionModels.count * singleRate);
-    
-    
-    //3. 前段排名;
-    solutionModels = [AIRank solutionFrontRank:solutionModels];
-    solutionModels = ARR_SUB(solutionModels, 0, solutionModels.count * singleRate);
-    
-    //4. 返回;
-    return solutionModels;
-}
-
-/**
- *  MARK:--------------------求解S前段排名 (参考28083-方案2 & 28084-5)--------------------
- */
-+(NSArray*) solutionFrontRank:(NSArray*)solutionModels {
-    return [self getCooledRankTwice:solutionModels itemScoreBlock1:^CGFloat(AICansetModel *item) {
-        return item.frontMatchValue; //前段匹配度项;
-    } itemScoreBlock2:^CGFloat(AICansetModel *item) {
-        return item.frontStrongValue; //前段强度项;
-    } itemKeyBlock:^id(AICansetModel *item) {
-        return @(item.cansetFo.pointerId);
-    }];
-}
-
-/**
- *  MARK:--------------------求解S后段排名 (参考28092-方案 & todo3)--------------------
- */
-+(NSArray*) solutionBackRank:(NSArray*)solutionModels {
-    return [self getCooledRankTwice:solutionModels itemScoreBlock1:^CGFloat(AICansetModel *item) {
-        return item.backMatchValue; //匹配度项;
-    } itemScoreBlock2:^CGFloat(AICansetModel *item) {
-        return item.backStrongValue; //强度项;
-    } itemKeyBlock:^id(AICansetModel *item) {
-        return @(item.cansetFo.pointerId);
-    }];
-}
-
-/**
- *  MARK:--------------------求解S中段排名 (参考28092-方案 & todo3)--------------------
- */
-+(NSArray*) solutionMidRank:(NSArray*)solutionModels {
-    return [self getCooledRankTwice:solutionModels itemScoreBlock1:^CGFloat(AICansetModel *item) {
-        return item.midStableScore; //中断稳定性项;
-    } itemScoreBlock2:^CGFloat(AICansetModel *item) {
-        return item.midEffectScore; //中段有效性项;
-    } itemKeyBlock:^id(AICansetModel *item) {
-        return @(item.cansetFo.pointerId);
-    }];
-}
+//+(NSArray*) solutionFoRankingV2:(NSArray*)solutionModels needBack:(BOOL)needBack fromSlow:(BOOL)fromSlow{
+//    //0. 数据准备;
+//    CGFloat resultNum = 6;
+//    NSInteger rankNum = needBack ? 3 : 2;//排名几次;
+//    CGFloat singleRate = MIN(1, powf(resultNum / solutionModels.count, 1.0f / rankNum));//每次保留条数比例;
+//
+//    //1. 后段排名;
+//    if (needBack) {
+//        solutionModels = [AIRank solutionBackRank:solutionModels];
+//        solutionModels = ARR_SUB(solutionModels, 0, solutionModels.count * singleRate);
+//    }
+//
+//    //2. 中段排名;
+//    solutionModels = [AIRank solutionMidRank:solutionModels];
+//    solutionModels = ARR_SUB(solutionModels, 0, solutionModels.count * singleRate);
+//
+//
+//    //3. 前段排名;
+//    solutionModels = [AIRank solutionFrontRank:solutionModels];
+//    solutionModels = ARR_SUB(solutionModels, 0, solutionModels.count * singleRate);
+//
+//    //4. 返回;
+//    return solutionModels;
+//}
+//
+///**
+// *  MARK:--------------------求解S前段排名 (参考28083-方案2 & 28084-5)--------------------
+// */
+//+(NSArray*) solutionFrontRank:(NSArray*)solutionModels {
+//    return [self getCooledRankTwice:solutionModels itemScoreBlock1:^CGFloat(AICansetModel *item) {
+//        return item.frontMatchValue; //前段匹配度项;
+//    } itemScoreBlock2:^CGFloat(AICansetModel *item) {
+//        return item.frontStrongValue; //前段强度项;
+//    } itemKeyBlock:^id(AICansetModel *item) {
+//        return @(item.cansetFo.pointerId);
+//    }];
+//}
+//
+///**
+// *  MARK:--------------------求解S后段排名 (参考28092-方案 & todo3)--------------------
+// */
+//+(NSArray*) solutionBackRank:(NSArray*)solutionModels {
+//    return [self getCooledRankTwice:solutionModels itemScoreBlock1:^CGFloat(AICansetModel *item) {
+//        return item.backMatchValue; //匹配度项;
+//    } itemScoreBlock2:^CGFloat(AICansetModel *item) {
+//        return item.backStrongValue; //强度项;
+//    } itemKeyBlock:^id(AICansetModel *item) {
+//        return @(item.cansetFo.pointerId);
+//    }];
+//}
+//
+///**
+// *  MARK:--------------------求解S中段排名 (参考28092-方案 & todo3)--------------------
+// */
+//+(NSArray*) solutionMidRank:(NSArray*)solutionModels {
+//    return [self getCooledRankTwice:solutionModels itemScoreBlock1:^CGFloat(AICansetModel *item) {
+//        return item.midStableScore; //中断稳定性项;
+//    } itemScoreBlock2:^CGFloat(AICansetModel *item) {
+//        return item.midEffectScore; //中段有效性项;
+//    } itemKeyBlock:^id(AICansetModel *item) {
+//        return @(item.cansetFo.pointerId);
+//    }];
+//}
 
 /**
  *  MARK:--------------------求解S排名器 (参考29099-方案)--------------------
  *  @version
  *      2023.05.23: BUG_用sceneId_cansetId做key,会有重复的,导致算漏的BUG,改用内存地址来做唯一key;
  *      2023.05.24: BUG_修复此处将sceneTargetIndex用错成cansetTargetIndex的问题 (会导致取到eff几乎全是错的0);
+ *      2023.05.26: BUG_修复SP总是取到0的问题,改为eff为主排序,sp仅取下一帧稳定性做二级排序,H值三级排序 (参考2909a-方案2);
  */
 +(NSArray*) solutionFoRankingV3:(NSArray*)solutionModels {
     //1. 根据cutIndex到target之间的稳定性和有效性来排名 (参考29099-todo1 & todo2);
-    return [self getCooledRankTwice:solutionModels itemScoreBlock1:^CGFloat(AICansetModel *item) {
-        AIFoNodeBase *cansetFo = [SMGUtils searchNode:item.cansetFo];
-        return [TOUtils getStableScore:cansetFo startSPIndex:item.cutIndex + 1 endSPIndex:item.targetIndex];//中后段稳定性
-    } itemScoreBlock2:^CGFloat(AICansetModel *item) {
+    NSArray *sort = [SMGUtils sortBig2Small:solutionModels compareBlock1:^double(AICansetModel *item) {
         AIFoNodeBase *sceneFo = [SMGUtils searchNode:item.sceneFo];
-        return [TOUtils getEffectScore:sceneFo effectIndex:item.sceneTargetIndex solutionFo:item.cansetFo];//后段有效性
-    } itemKeyBlock:^id(AICansetModel *item) {
-        return STRFORMAT(@"%p",item);
+        return [TOUtils getEffectScore:sceneFo effectIndex:item.sceneTargetIndex solutionFo:item.cansetFo];//后段有效性 (参考2909a-todo1);
+    } compareBlock2:^double(AICansetModel *item) {
+        AIFoNodeBase *cansetFo = [SMGUtils searchNode:item.cansetFo];
+        return [TOUtils getStableScore:cansetFo startSPIndex:item.cutIndex + 1 endSPIndex:item.cutIndex + 1];//下帧稳定性
+    } compareBlock3:^double(AICansetModel *item) {
+        AIFoNodeBase *sceneFo = [SMGUtils searchNode:item.sceneFo];
+        AIEffectStrong *strong = [TOUtils getEffectStrong:sceneFo effectIndex:item.sceneTargetIndex solutionFo:item.cansetFo];
+        return strong.hStrong;//H值 (参考2909a-todo3);
     }];
+    
+    //2. debug日志
+    for (AICansetModel *obj in sort) {
+        AIFoNodeBase *sceneFo = [SMGUtils searchNode:obj.sceneFo];
+        AIEffectStrong *effStrong = [TOUtils getEffectStrong:sceneFo effectIndex:sceneFo.count solutionFo:obj.cansetFo];
+        CGFloat effScore = [TOUtils getEffectScore:effStrong];
+        AIFoNodeBase *cansetFo = [SMGUtils searchNode:obj.cansetFo];
+        CGFloat spScore = [TOUtils getStableScore:cansetFo startSPIndex:obj.cutIndex + 1 endSPIndex:obj.cutIndex + 1];
+        if (Log4AIRank) NSLog(@"%ld. %@:(分:%.2f) %@:(分:%.2f) %@<F%ld %@>",[sort indexOfObject:obj],
+                              CLEANSTR(cansetFo.spDic),spScore,effStrong.description,effScore,
+                              SceneType2Str(obj.baseSceneModel.type),obj.sceneFo.pointerId,Fo2FStr(cansetFo));
+    }
+    return sort;
 }
 
 //MARK:===============================================================
@@ -156,10 +172,10 @@
 +(CGFloat) getCooledValue:(CGFloat)totalCoolTime pastTime:(CGFloat)pastTime{
     //1. 冷却完全后的值 (现此值符合28原则);
     CGFloat finishValue = 0.000322f;
-    
+
     //2. 冷却系数
     CGFloat coefficient = -logf(finishValue) / totalCoolTime;
-    
+
     //3. 计算出冷却后的值;
     CGFloat cooledValue = expf(-coefficient * pastTime);
     return cooledValue;
@@ -176,23 +192,23 @@
     //1. 数据准备;
     models = ARRTOOK(models);
     NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
-    
+
     //2. 分别按相似度和强度排序;
     NSArray *rank = [SMGUtils sortBig2Small:models compareBlock:^double(id obj) {
         return itemScoreBlock(obj);
     }];
-    
+
     //3. 求出综合排名;
     for (id item in rank) {
         //4. 取单科排名下标;
         NSInteger index4Rank = [rank indexOfObject:item];
-        
+
         //5. 各自归1化;
         CGFloat normalized4Rank = (float)index4Rank / rank.count;
-        
+
         //5. 各自冷却后的值;
         CGFloat cool4Rank = [self getCooledValue:1 pastTime:normalized4Rank];
-        
+
         //6. 计算综合排名;
         id key = itemKeyBlock(item);
         [result setObject:@(cool4Rank) forKey:key];
@@ -211,7 +227,7 @@
     //1. 两个冷却后字典计算;
     NSDictionary *cooledDic1 = [self getCooledValueDic:models itemScoreBlock:itemScoreBlock1 itemKeyBlock:itemKeyBlock];
     NSDictionary *cooledDic2 = [self getCooledValueDic:models itemScoreBlock:itemScoreBlock2 itemKeyBlock:itemKeyBlock];
-    
+
     //2. 求出综合竞争值并排序 (参考25083-2&公式2 & 25084-1);
     NSArray *result = [SMGUtils sortBig2Small:models compareBlock:^double(id obj) {
         id key = itemKeyBlock(obj);
@@ -219,7 +235,7 @@
         float coolScore2 = NUMTOOK([cooledDic2 objectForKey:key]).floatValue;
         return coolScore1 * coolScore2; //返回排序后的sortArr时;
     }];
-    
+
     //3. debug日志
     for (AICansetModel *obj in result) {
         id key = itemKeyBlock(obj);
@@ -235,7 +251,7 @@
             if (Log4AIRankDebugMode) NSLog(@"\t> %@ sp排名:%.5f eff排名:%.5f => 综合排名:%.5f",key,coolScore1,coolScore2,coolScore1 * coolScore2);
         }
     }
-    
+
     return result;
 }
 

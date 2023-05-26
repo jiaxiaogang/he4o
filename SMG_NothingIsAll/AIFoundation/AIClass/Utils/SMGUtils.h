@@ -184,6 +184,7 @@
 //从大到小排序
 +(NSArray*) sortBig2Small:(NSArray*)arr compareBlock:(double(^)(id obj))compareBlock;
 +(NSArray*) sortBig2Small:(NSArray*)arr compareBlock1:(double(^)(id obj))compareBlock1 compareBlock2:(double(^)(id obj))compareBlock2;
++(NSArray*) sortBig2Small:(NSArray*)arr compareBlock1:(double(^)(id obj))compareBlock1 compareBlock2:(double(^)(id obj))compareBlock2 compareBlock3:(double(^)(id obj))compareBlock3;
 +(NSArray*) sortSmall2Big:(NSArray*)arr compareBlock:(double(^)(id obj))compareBlock;
 
 @end

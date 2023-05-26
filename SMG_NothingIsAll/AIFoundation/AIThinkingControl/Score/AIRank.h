@@ -26,7 +26,7 @@
 /**
  *  MARK:--------------------S综合排名--------------------
  */
-+(NSArray*) solutionFoRankingV2:(NSArray*)solutionModels needBack:(BOOL)needBack fromSlow:(BOOL)fromSlow;
+//+(NSArray*) solutionFoRankingV2:(NSArray*)solutionModels needBack:(BOOL)needBack fromSlow:(BOOL)fromSlow;
 +(NSArray*) solutionFoRankingV3:(NSArray*)solutionModels;
 
 @end

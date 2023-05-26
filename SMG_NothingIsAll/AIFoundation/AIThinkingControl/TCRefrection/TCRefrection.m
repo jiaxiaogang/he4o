@@ -25,17 +25,20 @@
  *      2022.09.26: cansets由可用方案候选集,改成原始候选集 (参考27123-问题3-方案);
  *      2022.09.26: 将limit保留最少3条 (因为发生了明明有1条,反而只限高没限低,导致被截剩0条了的问题);
  *      2022.11.30: 反思不需要识别,因为cansets都是同级,没法复用indexDic等,并且相似也不表示同场景 (而现在相似的抽具象已支持) (参考27211-todo2);
+ *      2023.05.26: 计算canset稳定性改为有效性(sp改为eff得分),因为canset复现率低,几乎全是0分 (参考2909a-todo2);
+ *      2023.05.26: BUG_修复计算cansetFenXianScore时,取cansetFo.cmvNode_p导致怎么都算出来是0分问题;
  */
 +(BOOL) refrection:(AICansetModel*)checkCanset demand:(DemandModel*)demand{
     //1. 数据准备;
     AIFoNodeBase *cansetFo = [SMGUtils searchNode:checkCanset.cansetFo];
+    AIFoNodeBase *sceneFo = [SMGUtils searchNode:checkCanset.sceneFo];
     
-    //4. 算出后半段稳定性评分;
-    CGFloat stabScore = [TOUtils getStableScore:cansetFo startSPIndex:checkCanset.cutIndex + 1 endSPIndex:cansetFo.count];
-    OFTitleLog(@"TCRefrection反思", @"\n%@ CUT:%ld 前匹配度%.2f 后稳定性:%.2f",Pit2FStr(checkCanset.cansetFo),(long)checkCanset.cutIndex,checkCanset.frontMatchValue,stabScore);
+    //4. 算出如果canset无效,会带来的风险;
+    CGFloat nEffScore = 1 - [TOUtils getEffectScore:sceneFo effectIndex:checkCanset.sceneTargetIndex solutionFo:checkCanset.cansetFo];
+    OFTitleLog(@"TCRefrection反思", @"\n%@ CUT:%ld 前匹配度%.2f 无效率:%.2f",Pit2FStr(checkCanset.cansetFo),(long)checkCanset.cutIndex,checkCanset.frontMatchValue,nEffScore);
     
-    //5. 算出后半段稳定性 x mv评分 (正mv返回正分 | 负mv返回负分 | 无mv返回0分);
-    CGFloat mvScore = [AIScore score4MV:cansetFo.cmvNode_p ratio:stabScore];
+    //5. 算出因canset无效,带来的风险分 = Eff为N的概率 x scene的mv评分;
+    CGFloat canestFenXianScore = [AIScore score4MV:sceneFo.cmvNode_p ratio:nEffScore];
     
     //7. 算出后段的"懒"评分;
     CGFloat lazyScore = 0;
@@ -47,18 +50,19 @@
         }
     }
     
-    //10. 计算任务评分: 取baseRDemand评分 (参考27057);
+    //10. 计算解决任务奖励评分: 取负的baseRDemand评分 (参考27057);
     NSArray *rootDemands = [TOUtils getBaseDemands_AllDeep:demand];
     rootDemands = [SMGUtils filterArr:rootDemands checkValid:^BOOL(id item) {
         return ISOK(item, ReasonDemandModel.class);
     }];
     ReasonDemandModel *baseRDemand = ARR_INDEX_REVERSE(rootDemands, 0);
-    CGFloat demandScore = [AIScore score4Demand:baseRDemand];
+    CGFloat demandJianLiScore = -[AIScore score4Demand:baseRDemand];
     
     //11. S评分PK: pk通过 = 任务评分 - 方案评分 - 懒评分 > 0;
     //12. 三个评分都是负的,所以公式为以下 (result = 收益(负任务分) + mv的负分 + lazy的负分 > 0);
-    BOOL result = -demandScore + mvScore + lazyScore > 0;
-    NSLog(@"反思评价结果:%@通过 任务分%.1f 价值分:%.2f 懒分:%.1f",result?@"已":@"未",demandScore,mvScore,lazyScore);
+    CGFloat sumScore = demandJianLiScore + canestFenXianScore + lazyScore;
+    BOOL result = sumScore > 0;
+    NSLog(@"反思评价结果:%@通过 (解决任务奖励分%.1f Canset风险:%.2f 懒分:%.1f = %.1f)",result?@"已":@"未",demandJianLiScore,canestFenXianScore,lazyScore,sumScore);
     [AITest test21:result];
     return result;
 }
