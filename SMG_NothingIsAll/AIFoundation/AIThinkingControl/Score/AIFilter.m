@@ -159,4 +159,34 @@
     return filter2;
 }
 
+/**
+ *  MARK:--------------------二次识别过滤器--------------------
+ */
++(void) secondRecognitonFilter:(AIShortMatchModel*)inModel {
+    for (AIMatchFoModel *pFoM in inModel.matchPFos) {
+        AIFoNodeBase *pFo = [SMGUtils searchNode:pFoM.matchFo];
+        NSArray *abs_ps = Ports2Pits([AINetUtils absPorts_All:pFo]);
+        for (AIKVPointer *abs_p in abs_ps) {
+            //2. 判断具象cutIndex在抽象中有对应的帧;
+            NSDictionary *indexDic = [pFo getAbsIndexDic:abs_p];
+            NSNumber *key = ARR_INDEX([indexDic allKeysForObject:@(pFoM.cutIndex)], 0);
+            if (key) {
+                
+                //3. 有对应时,判断稳定性;
+                NSInteger absCutIndex = key.integerValue;
+                AIFoNodeBase *absFo = [SMGUtils searchNode:abs_p];
+                CGFloat spScore = [TOUtils getSPScore:absFo startSPIndex:absCutIndex + 1 endSPIndex:absFo.count];
+                
+                //问题1. 如果8个方向都有可能有食物,然后距离也不重要,那么得出的是不是方向和距离都平等了?还是无法得出距离不重要的事实;
+                //      > 每个方向的抽象上是不是只有这个方向的absFo?
+                //问题2. pFo的absFos是不是都和pFo差不多,那么得出的范围就全是局部相似的那一点,也没法判断出哪个重要哪个不重要;
+                
+                //所以. 不管是怎样,都要先把抽象指向absFos给分析分析,看下该怎么来合适,再调整方案;
+                
+            }
+            
+        }
+    }
+}
+
 @end
