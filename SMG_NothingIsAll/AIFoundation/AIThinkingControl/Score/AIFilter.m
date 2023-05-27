@@ -163,9 +163,11 @@
  *  MARK:--------------------二次识别过滤器--------------------
  */
 +(void) secondRecognitonFilter:(AIShortMatchModel*)inModel {
+    NSLog(@"今天测: for protoFo: %@",Fo2FStr(inModel.protoFo));
     for (AIMatchFoModel *pFoM in inModel.matchPFos) {
         AIFoNodeBase *pFo = [SMGUtils searchNode:pFoM.matchFo];
         NSArray *abs_ps = Ports2Pits([AINetUtils absPorts_All:pFo]);
+        NSLog(@"今天测: from pFo: %@",Fo2FStr(pFo));
         for (AIKVPointer *abs_p in abs_ps) {
             //2. 判断具象cutIndex在抽象中有对应的帧;
             NSDictionary *indexDic = [pFo getAbsIndexDic:abs_p];
@@ -176,12 +178,22 @@
                 NSInteger absCutIndex = key.integerValue;
                 AIFoNodeBase *absFo = [SMGUtils searchNode:abs_p];
                 CGFloat spScore = [TOUtils getSPScore:absFo startSPIndex:absCutIndex + 1 endSPIndex:absFo.count];
-                
+                NSLog(@"\t > 今天测: absFo: %@->%@ 稳定性(%.2f)",Pit2FStr(abs_p),Pit2FStr(absFo.cmvNode_p),spScore);
                 //问题1. 如果8个方向都有可能有食物,然后距离也不重要,那么得出的是不是方向和距离都平等了?还是无法得出距离不重要的事实;
                 //      > 每个方向的抽象上是不是只有这个方向的absFo?
-                //问题2. pFo的absFos是不是都和pFo差不多,那么得出的范围就全是局部相似的那一点,也没法判断出哪个重要哪个不重要;
+                //      > 此问题不成立,8个方向不会同时出现在一个场景内,而场景外的方案,转29105,场景外范围就广了,还真有可能二者都平等了,只能依赖sp稳定性来搞 (转29105);
                 
-                //所以. 不管是怎样,都要先把抽象指向absFos给分析分析,看下该怎么来合适,再调整方案;
+                //先把抽象指向absFos给分析分析,看下该怎么来合适,再调整方案: 实测日志可见: (推翻29103 & 29104);
+                //  1. 经实测: pFo.absFo全是交层,没似层,似层方案跪;
+                //  2. 即使是交层,场景内的: 其稳定性大差不差,无法区分哪个特征重要;
+                //  3. 交层中: 无距或无向,出现的次数也大差不差,无法区分哪个特征重要;
+                
+                
+                
+                
+                
+                
+                
                 
             }
             

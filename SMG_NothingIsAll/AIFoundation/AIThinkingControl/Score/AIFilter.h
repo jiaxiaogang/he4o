@@ -38,4 +38,9 @@
  */
 +(NSArray*) solutonSceneFilter:(AIFoNodeBase*)protoScene type:(SceneType)type;
 
+/**
+ *  MARK:--------------------二次识别过滤器--------------------
+ */
++(void) secondRecognitonFilter:(AIShortMatchModel*)inModel;
+
 @end
