@@ -163,51 +163,87 @@
  *  MARK:--------------------二次识别过滤器--------------------
  */
 +(void) secondRecognitonFilter:(AIShortMatchModel*)inModel {
+    //1. 数据准备;
     NSLog(@"今天测: for protoFo: %@",Fo2FStr(inModel.protoFo));
+    NSMutableArray *allConPorts1 = [[NSMutableArray alloc] init]; //收集所有同级port
+    NSMutableDictionary *cutIndexOfConFo = [[NSMutableDictionary alloc] init]; //收集所有同级fo的cutIndex
+    
+    //2. 逐个收集pFos的同级(抽象的具象)->抽象部分 (参考29105-方案改);
     for (AIMatchFoModel *pFoM in inModel.matchPFos) {
         AIFoNodeBase *pFo = [SMGUtils searchNode:pFoM.matchFo];
         NSArray *abs_ps = Ports2Pits([AINetUtils absPorts_All:pFo]);
         NSLog(@"今天测: from pFo: %@",Fo2FStr(pFo));
         for (AIKVPointer *abs_p in abs_ps) {
-            //2. 判断具象cutIndex在抽象中有对应的帧;
+            //3. 判断抽象中有对应的cutIndex帧;
             NSDictionary *indexDic = [pFo getAbsIndexDic:abs_p];
-            NSNumber *key = ARR_INDEX([indexDic allKeysForObject:@(pFoM.cutIndex)], 0);
-            if (key) {
+            NSNumber *absCutIndexKey = ARR_INDEX([indexDic allKeysForObject:@(pFoM.cutIndex)], 0);
+            if (!absCutIndexKey) continue;
+            
+            //4. 逐个收集pFos的同级(抽象的具象)->具象部分 (参考29105-方案改);
+            AIFoNodeBase *absFo = [SMGUtils searchNode:abs_p];
+            if (!absFo.cmvNode_p) continue;//无mv指向则略过;
+            NSLog(@"\t > 今天测: absFo: %@->%@",Pit2FStr(abs_p),Pit2FStr(absFo.cmvNode_p));
+            NSArray *conPorts = [AINetUtils conPorts_All:absFo];
+            for (AIPort *conPort in conPorts) {
+                NSDictionary *indexDic2 = [absFo getConIndexDic:conPort.target_p];
+                NSNumber *conCutIndexValue = [indexDic2 objectForKey:absCutIndexKey];
+                if (!conCutIndexValue) continue;
                 
-                //3. 有对应时,判断稳定性;
-                NSInteger absCutIndex = key.integerValue;
-                AIFoNodeBase *absFo = [SMGUtils searchNode:abs_p];
-                CGFloat spScore = [TOUtils getSPScore:absFo startSPIndex:absCutIndex + 1 endSPIndex:absFo.count];
-                NSLog(@"\t > 今天测: absFo: %@->%@ 稳定性(%.2f)",Pit2FStr(abs_p),Pit2FStr(absFo.cmvNode_p),spScore);
-                //问题1. 如果8个方向都有可能有食物,然后距离也不重要,那么得出的是不是方向和距离都平等了?还是无法得出距离不重要的事实;
-                //      > 每个方向的抽象上是不是只有这个方向的absFo?
-                //      > 此问题不成立,8个方向不会同时出现在一个场景内,而场景外的方案,转29105,场景外范围就广了,还真有可能二者都平等了,只能依赖sp稳定性来搞 (转29105);
-                
-                //先把抽象指向absFos给分析分析,看下该怎么来合适,再调整方案: 实测日志可见: (推翻29103 & 29104);
-                //  1. 经实测: pFo.absFo全是交层,没似层,似层方案跪;
-                //  2. 即使是交层,场景内的: 其稳定性大差不差,无法区分哪个特征重要;
-                //  3. 交层中: 无距或无向,出现的次数也大差不差,无法区分哪个特征重要;
-                
-                
-                
-                NSArray *conPorts = [AINetUtils conPorts_All:absFo];
-                conPorts = [SMGUtils filterArr:conPorts checkValid:^BOOL(AIPort *item) {
-                    return item.strong.value >= 5;
-                }];
-                for (AIPort *conPort in conPorts) {
-                    NSDictionary *indexDic2 = [absFo getConIndexDic:conPort.target_p];
-                    NSNumber *value = [indexDic2 objectForKey:key];
-                    
-                    if (value) {
-                        NSInteger conCutIndex = value.integerValue;
-                        AIFoNodeBase *conFo = [SMGUtils searchNode:conPort.target_p];
-                        CGFloat conSPScore = [TOUtils getSPScore:conFo startSPIndex:conCutIndex + 1 endSPIndex:conFo.count];
-                        NSLog(@"\t\t > 今天测: conFo: %@->%@ 稳定性(%.2f), 强度%ld %@",Pit2FStr(conPort.target_p),Pit2FStr(conFo.cmvNode_p),conSPScore,conPort.strong.value,CLEANSTR(conFo.spDic));
-                    }
-                }
+                //5. 分别收集同级port,和记录它的conCutIndex;
+                [cutIndexOfConFo setObject:conCutIndexValue forKey:@(conPort.target_p.pointerId)];
+                [allConPorts1 addObject:conPort];
             }
         }
     }
+    
+    //6. 先进行防重 (参考29105-todo1);
+    NSArray *noRepeat2 = [SMGUtils removeRepeat:allConPorts1];
+    
+    //7. 平均强度值 = 总强度值 / 总conFo数 (参考29105-todo6 & todo5.2);
+    NSInteger sumStrongValue = 0;
+    for (AIPort *port in noRepeat2) sumStrongValue += port.strong.value;
+    NSInteger conFoCount = noRepeat2.count;
+    CGFloat averageStrong = (float)sumStrongValue / conFoCount;
+    
+    //8. 排序,并取前20% (参考29105-todo2);
+    NSArray *sortOfStrong3 = [SMGUtils sortBig2Small:noRepeat2 compareBlock:^double(AIPort *obj) {
+        return obj.strong.value;
+    }];
+    NSArray *goodPart4 = ARR_SUB(sortOfStrong3, 0, sortOfStrong3.count * 0.2f);
+    
+    //9. 分别计算protoAlg的几个特征的重要性;
+    NSDictionary *protoImportanceDic = [SMGUtils convertArr2Dic:inModel.protoAlg.content_ps kvBlock:^NSArray *(AIKVPointer *protoValue_p) {
+        NSInteger lastStrong = averageStrong, nextStrong = averageStrong;
+        double lastValue = 0, nextValue = 0;
+        NSInteger protoValue = NUMTOOK([AINetIndex getData:protoValue_p]).integerValue;
+        
+        //10. 转成conFo中对应的概念帧conAlg;
+        for (AIPort *conFoPort in goodPart4) {
+            AIFoNodeBase *conFo = [SMGUtils searchNode:conFoPort.target_p];
+            NSInteger conCutIndex = NUMTOOK([cutIndexOfConFo objectForKey:@(conFo.pId)]).integerValue;
+            AIKVPointer *conAlg_p = ARR_INDEX(conFo.content_ps, conCutIndex);
+            AIAlgNodeBase *conAlg = [SMGUtils searchNode:conAlg_p];
+            
+            //11. 根据上个下个来计算protoValue码的强度值 (参考29105-todo5.1);
+            AIKVPointer *findSameIdenConValue_p = [SMGUtils filterSingleFromArr:conAlg.content_ps checkValid:^BOOL(AIKVPointer *conValue_p) {
+                return [protoValue_p.identifier isEqualToString:conValue_p.identifier];
+            }];
+            if (!findSameIdenConValue_p) continue;
+            
+            //把最近的一条,但不得是protoFo自身,存下来直接复用它的强度 (参考29105-todo3-方案4);
+            if ([AIAnalyst compareCansetValue:nil protoValue:nil]) {
+                
+            }
+            
+        }
+        
+        return @[];
+    }];
+    
+    
+    AIFoNodeBase *conFo = [SMGUtils searchNode:conPort.target_p];
+    CGFloat conSPScore = [TOUtils getSPScore:conFo startSPIndex:conCutIndex + 1 endSPIndex:conFo.count];
+    NSLog(@"\t\t > 今天测: conFo: %@->%@ 稳定性(%.2f), 强度%ld %@",Pit2FStr(conPort.target_p),Pit2FStr(conFo.cmvNode_p),conSPScore,conPort.strong.value,CLEANSTR(conFo.spDic));
     NSLog(@"今天测结尾 ======finish======");
 }
 

@@ -589,7 +589,7 @@
  */
 +(NSDictionary*) convertArr2Dic:(NSArray*)objs kvBlock:(NSArray*(^)(id obj))kvBlock {
     NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
-    for (FrontIndexDicModel *obj in objs) {
+    for (id obj in objs) {
         NSArray *kvArr = kvBlock(obj);
         id k = ARR_INDEX(kvArr, 0), v = ARR_INDEX(kvArr, 1);
         if (k && v) [result setObject:v forKey:k];
