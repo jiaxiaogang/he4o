@@ -190,15 +190,25 @@
                 
                 
                 
-                
-                
-                
-                
-                
+                NSArray *conPorts = [AINetUtils conPorts_All:absFo];
+                conPorts = [SMGUtils filterArr:conPorts checkValid:^BOOL(AIPort *item) {
+                    return item.strong.value >= 5;
+                }];
+                for (AIPort *conPort in conPorts) {
+                    NSDictionary *indexDic2 = [absFo getConIndexDic:conPort.target_p];
+                    NSNumber *value = [indexDic2 objectForKey:key];
+                    
+                    if (value) {
+                        NSInteger conCutIndex = value.integerValue;
+                        AIFoNodeBase *conFo = [SMGUtils searchNode:conPort.target_p];
+                        CGFloat conSPScore = [TOUtils getSPScore:conFo startSPIndex:conCutIndex + 1 endSPIndex:conFo.count];
+                        NSLog(@"\t\t > 今天测: conFo: %@->%@ 稳定性(%.2f), 强度%ld %@",Pit2FStr(conPort.target_p),Pit2FStr(conFo.cmvNode_p),conSPScore,conPort.strong.value,CLEANSTR(conFo.spDic));
+                    }
+                }
             }
-            
         }
     }
+    NSLog(@"今天测结尾 ======finish======");
 }
 
 @end
