@@ -165,14 +165,75 @@
 +(void) secondRecognitonFilter:(AIShortMatchModel*)inModel {
     //1. 数据准备;
     NSLog(@"今天测: for protoFo: %@",Fo2FStr(inModel.protoFo));
-    NSMutableArray *allConPorts1 = [[NSMutableArray alloc] init]; //收集所有同级port
     NSMutableDictionary *cutIndexOfConFo = [[NSMutableDictionary alloc] init]; //收集所有同级fo的cutIndex
     
     //2. 逐个收集pFos的同级(抽象的具象)->抽象部分 (参考29105-方案改);
-    for (AIMatchFoModel *pFoM in inModel.matchPFos) {
+    NSMutableArray *allConPorts1 = [self collectAbsFosThenConFos:inModel.matchPFos outCutIndexDic:cutIndexOfConFo];
+    
+    //3. 先进行防重 (参考29105-todo1);
+    NSMutableArray *noRepeat2 = [SMGUtils removeRepeat:allConPorts1];
+    
+    //4. 排除自身 (参考29105-todo3-方案4);
+    [noRepeat2 removeObject:inModel.protoFo.pointer];
+    
+    //5. 平均强度值 = 总强度值 / 总conFo数 (参考29105-todo6 & todo5.2);
+    NSInteger sumStrongValue = 0;
+    for (AIPort *port in noRepeat2) sumStrongValue += port.strong.value;
+    NSInteger conFoCount = noRepeat2.count;
+    CGFloat averageStrong = (float)sumStrongValue / conFoCount;
+    
+    //6. 排序,并取前20% (参考29105-todo2);
+    NSArray *sortOfStrong3 = [SMGUtils sortBig2Small:noRepeat2 compareBlock:^double(AIPort *obj) {
+        return obj.strong.value;
+    }];
+    NSArray *goodPorts4 = ARR_SUB(sortOfStrong3, 0, sortOfStrong3.count * 0.2f);
+    
+    //debugLog
+    for (AIPort *conFoPort in goodPorts4) NSLog(@"\t\t > conFo: %@ 强度%ld",Pit2FStr(conFoPort.target_p),conFoPort.strong.value);
+    
+    //7. 分别根据protoV找到在goodPorts4中最相近的那一条,最接近那条的强度即算做protoV的强度 (参考29105-todo3-方案4);
+    for (AIKVPointer *protoV_p in inModel.protoAlg.content_ps) {
+        AIPort *mostNearConFoPort = [self findMostNearConFoPortFromConFoPorts:goodPorts4 cutIndexDic:cutIndexOfConFo protoV:protoV_p];
+        if (!mostNearConFoPort) continue;
+        
+        //8. 节约性能: 全程只有一个固定值的打酱油码,不做处理 (参考29105-todo4);
+        double span = [AINetIndex getIndexSpan:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut];
+        if (span == 0) continue;
+        
+        //9. 算出当前码的重要性 (参考29105-todo5);
+        CGFloat vImportance = mostNearConFoPort.strong.value / averageStrong;
+        NSLog(@"proto码:%@ 重要性:%.3f",Pit2FStr(protoV_p),vImportance);
+        
+        //问题及原因: 这里算出来的不对,最相近的可能方向可能强度只有2,但它的隔壁却都是15,18啥的;
+        //但问题在于,即使你遇到15,或18,也不太对,这偶然性太高了;
+        //思路: 在所有conFos中,距和向的数据根本不同在于:
+        //  1. 方向全集中在355-8,很集中;
+        //  2. 距离则分散在49-177,很分散;
+        
+        NSLog(@"");
+    }
+    NSLog(@"今天测结尾 ======finish======");
+}
+
+//MARK:===============================================================
+//MARK:                     < privateMethod >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------收集pFos的同层fos (抽象后具象)--------------------
+ *  @param outCutIndexDic 将结果对应的cutIndex也返回;
+ *  @result notnull
+ */
++(NSMutableArray*) collectAbsFosThenConFos:(NSArray*)pFoModels outCutIndexDic:(NSMutableDictionary*)outCutIndexDic{
+    //1. 数据检查;
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    pFoModels = ARRTOOK(pFoModels);
+    
+    //2. 依次对pFo取同层;
+    for (AIMatchFoModel *pFoM in pFoModels) {
         AIFoNodeBase *pFo = [SMGUtils searchNode:pFoM.matchFo];
         NSArray *abs_ps = Ports2Pits([AINetUtils absPorts_All:pFo]);
-        NSLog(@"今天测: from pFo: %@",Fo2FStr(pFo));
+        NSLog(@"from pFo: %@",Fo2FStr(pFo));
         for (AIKVPointer *abs_p in abs_ps) {
             //3. 判断抽象中有对应的cutIndex帧;
             NSDictionary *indexDic = [pFo getAbsIndexDic:abs_p];
@@ -182,7 +243,7 @@
             //4. 逐个收集pFos的同级(抽象的具象)->具象部分 (参考29105-方案改);
             AIFoNodeBase *absFo = [SMGUtils searchNode:abs_p];
             if (!absFo.cmvNode_p) continue;//无mv指向则略过;
-            NSLog(@"\t > 今天测: absFo: %@->%@",Pit2FStr(abs_p),Pit2FStr(absFo.cmvNode_p));
+            NSLog(@"\t > absFo: %@->%@",Pit2FStr(abs_p),Pit2FStr(absFo.cmvNode_p));
             NSArray *conPorts = [AINetUtils conPorts_All:absFo];
             for (AIPort *conPort in conPorts) {
                 NSDictionary *indexDic2 = [absFo getConIndexDic:conPort.target_p];
@@ -190,61 +251,44 @@
                 if (!conCutIndexValue) continue;
                 
                 //5. 分别收集同级port,和记录它的conCutIndex;
-                [cutIndexOfConFo setObject:conCutIndexValue forKey:@(conPort.target_p.pointerId)];
-                [allConPorts1 addObject:conPort];
+                [outCutIndexDic setObject:conCutIndexValue forKey:@(conPort.target_p.pointerId)];
+                [result addObject:conPort];
             }
         }
     }
+    return result;
+}
+
+/**
+ *  MARK:--------------------从conFoPorts中找到与protoV的码值最接近的一条conFoPort (参考29105-todo3-方案4)--------------------
+ *  @param cutIndexDic 根据这个来取从conFoPort中哪一个概念,来判断与protoV的相近度;
+ */
++(AIPort*) findMostNearConFoPortFromConFoPorts:(NSArray*)conFoPorts cutIndexDic:(NSDictionary*)cutIndexDic protoV:(AIKVPointer*)protoV_p {
+    //1. 数据准备;
+    AIPort *mostNearPort = nil; //目前最接近的一条;
+    CGFloat mostNearValue = 0; //目前最接近的一条的相近度;
     
-    //6. 先进行防重 (参考29105-todo1);
-    NSArray *noRepeat2 = [SMGUtils removeRepeat:allConPorts1];
-    
-    //7. 平均强度值 = 总强度值 / 总conFo数 (参考29105-todo6 & todo5.2);
-    NSInteger sumStrongValue = 0;
-    for (AIPort *port in noRepeat2) sumStrongValue += port.strong.value;
-    NSInteger conFoCount = noRepeat2.count;
-    CGFloat averageStrong = (float)sumStrongValue / conFoCount;
-    
-    //8. 排序,并取前20% (参考29105-todo2);
-    NSArray *sortOfStrong3 = [SMGUtils sortBig2Small:noRepeat2 compareBlock:^double(AIPort *obj) {
-        return obj.strong.value;
-    }];
-    NSArray *goodPart4 = ARR_SUB(sortOfStrong3, 0, sortOfStrong3.count * 0.2f);
-    
-    //9. 分别计算protoAlg的几个特征的重要性;
-    NSDictionary *protoImportanceDic = [SMGUtils convertArr2Dic:inModel.protoAlg.content_ps kvBlock:^NSArray *(AIKVPointer *protoValue_p) {
-        NSInteger lastStrong = averageStrong, nextStrong = averageStrong;
-        double lastValue = 0, nextValue = 0;
-        NSInteger protoValue = NUMTOOK([AINetIndex getData:protoValue_p]).integerValue;
+    //2. 转成conFo中对应的概念帧conAlg;
+    for (AIPort *conFoPort in conFoPorts) {
+        AIFoNodeBase *conFo = [SMGUtils searchNode:conFoPort.target_p];
+        NSInteger conCutIndex = NUMTOOK([cutIndexDic objectForKey:@(conFo.pId)]).integerValue;
+        AIKVPointer *conAlg_p = ARR_INDEX(conFo.content_ps, conCutIndex);
+        AIAlgNodeBase *conAlg = [SMGUtils searchNode:conAlg_p];
         
-        //10. 转成conFo中对应的概念帧conAlg;
-        for (AIPort *conFoPort in goodPart4) {
-            AIFoNodeBase *conFo = [SMGUtils searchNode:conFoPort.target_p];
-            NSInteger conCutIndex = NUMTOOK([cutIndexOfConFo objectForKey:@(conFo.pId)]).integerValue;
-            AIKVPointer *conAlg_p = ARR_INDEX(conFo.content_ps, conCutIndex);
-            AIAlgNodeBase *conAlg = [SMGUtils searchNode:conAlg_p];
-            
-            //11. 根据上个下个来计算protoValue码的强度值 (参考29105-todo5.1);
-            AIKVPointer *findSameIdenConValue_p = [SMGUtils filterSingleFromArr:conAlg.content_ps checkValid:^BOOL(AIKVPointer *conValue_p) {
-                return [protoValue_p.identifier isEqualToString:conValue_p.identifier];
-            }];
-            if (!findSameIdenConValue_p) continue;
-            
-            //把最近的一条,但不得是protoFo自身,存下来直接复用它的强度 (参考29105-todo3-方案4);
-            if ([AIAnalyst compareCansetValue:nil protoValue:nil]) {
-                
-            }
-            
+        //3. 在conAlg中找着同区码,用来判断它是否与protoV最相近;
+        AIKVPointer *findSameIdenConValue_p = [SMGUtils filterSingleFromArr:conAlg.content_ps checkValid:^BOOL(AIKVPointer *conValue_p) {
+            return [protoV_p.identifier isEqualToString:conValue_p.identifier];
+        }];
+        if (!findSameIdenConValue_p) continue;
+        
+        //4. 循环找到最最近的一条 (参考29105-todo3-方案4);
+        CGFloat nearV = [AIAnalyst compareCansetValue:findSameIdenConValue_p protoValue:protoV_p];
+        if (nearV > mostNearValue) {
+            mostNearPort = conFoPort;
+            mostNearValue = nearV;
         }
-        
-        return @[];
-    }];
-    
-    
-    AIFoNodeBase *conFo = [SMGUtils searchNode:conPort.target_p];
-    CGFloat conSPScore = [TOUtils getSPScore:conFo startSPIndex:conCutIndex + 1 endSPIndex:conFo.count];
-    NSLog(@"\t\t > 今天测: conFo: %@->%@ 稳定性(%.2f), 强度%ld %@",Pit2FStr(conPort.target_p),Pit2FStr(conFo.cmvNode_p),conSPScore,conPort.strong.value,CLEANSTR(conFo.spDic));
-    NSLog(@"今天测结尾 ======finish======");
+    }
+    return mostNearPort;
 }
 
 @end
