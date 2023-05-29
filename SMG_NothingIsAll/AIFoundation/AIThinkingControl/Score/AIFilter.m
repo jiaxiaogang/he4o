@@ -200,16 +200,18 @@
         double span = [AINetIndex getIndexSpan:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut];
         if (span == 0) continue;
         
+        //9. 求出全部xy轴;
+        NSDictionary *xyDic = [self convertConFoPorts2XYDic:goodPorts4 cutIndexDic:cutIndexOfConFo protoV:protoV_p];
+        
+        //10. 均匀取样100份,求出平均值;
+        
+        
+        //11. 根据protoV的值,求出protoV的Y轴强度值;
+        
+        
         //9. 算出当前码的重要性 (参考29105-todo5);
         CGFloat vImportance = mostNearConFoPort.strong.value / averageStrong;
         NSLog(@"proto码:%@ 重要性:%.3f",Pit2FStr(protoV_p),vImportance);
-        
-        //问题及原因: 这里算出来的不对,最相近的可能方向可能强度只有2,但它的隔壁却都是15,18啥的;
-        //但问题在于,即使你遇到15,或18,也不太对,这偶然性太高了;
-        //思路: 在所有conFos中,距和向的数据根本不同在于:
-        //  1. 方向全集中在355-8,很集中;
-        //  2. 距离则分散在49-177,很分散;
-        
         NSLog(@"");
     }
     NSLog(@"今天测结尾 ======finish======");
@@ -289,6 +291,51 @@
         }
     }
     return mostNearPort;
+}
+
+/**
+ *  MARK:--------------------将conFoPorts转成xy轴数据 (x轴为v值,y轴为强度) (参考29106-解曲线)--------------------
+ */
++(NSDictionary*) convertConFoPorts2XYDic:(NSArray*)conFoPorts cutIndexDic:(NSDictionary*)cutIndexDic protoV:(AIKVPointer*)protoV_p {
+    //1. 数据准备;
+    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
+    
+    //2. 转成conFo中对应的概念帧conAlg;
+    for (AIPort *conFoPort in conFoPorts) {
+        AIFoNodeBase *conFo = [SMGUtils searchNode:conFoPort.target_p];
+        NSInteger conCutIndex = NUMTOOK([cutIndexDic objectForKey:@(conFo.pId)]).integerValue;
+        AIKVPointer *conAlg_p = ARR_INDEX(conFo.content_ps, conCutIndex);
+        AIAlgNodeBase *conAlg = [SMGUtils searchNode:conAlg_p];
+        
+        //3. 在conAlg中找着同区码 (用来取xy轴);
+        AIKVPointer *findSameIdenConValue_p = [SMGUtils filterSingleFromArr:conAlg.content_ps checkValid:^BOOL(AIKVPointer *conValue_p) {
+            return [protoV_p.identifier isEqualToString:conValue_p.identifier];
+        }];
+        if (!findSameIdenConValue_p) continue;
+        
+        //4. 得出xy轴值,用于计算特征强度曲线 (参考29106-解曲线);
+        double x = NUMTOOK([AINetIndex getData:findSameIdenConValue_p]).doubleValue;
+        NSInteger y = conFoPort.strong.value;
+        [result setObject:@(y) forKey:@(x)];
+    }
+    return result;
+}
+
+/**
+ *  MARK:--------------------根据xyDic和x值计算出y值 (参考29106-解曲线)--------------------
+ */
++(CGFloat) getY:(NSDictionary*)xyDic checkX:(double)checkX at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut {
+    CGFloat resultY = 0;
+    for (NSNumber *key in xyDic.allKeys) {
+        double templateX = key.doubleValue;
+        CGFloat near = [AIAnalyst compareCansetValue:templateX protoV:checkX at:at ds:ds isOut:isOut];
+        if (near > 0.5) {
+            NSInteger y = NUMTOOK([xyDic objectForKey:key]).integerValue;
+            CGFloat cooledY = 0;//根据强度冷却加分;
+            resultY += cooledY;
+        }
+    }
+    return resultY;
 }
 
 @end

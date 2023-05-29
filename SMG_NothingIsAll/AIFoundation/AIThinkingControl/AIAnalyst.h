@@ -28,5 +28,6 @@
  *  MARK:--------------------比对稀疏码相近度--------------------
  */
 +(CGFloat) compareCansetValue:(AIKVPointer*)cansetV_p protoValue:(AIKVPointer*)protoV_p;
++(CGFloat) compareCansetValue:(double)cansetV protoV:(double)protoV at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut;
 
 @end
