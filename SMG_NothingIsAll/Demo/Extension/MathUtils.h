@@ -41,5 +41,7 @@
  *  @param finishValue 最终冷却温度 (当28原则时,为0.000322f)
  */
 +(CGFloat) getCooledValue:(CGFloat)totalCoolTime pastTime:(CGFloat)pastTime finishValue:(CGFloat)finishValue;
++(CGFloat) getCooledValue_28:(CGFloat)pastRate;
++(CGFloat) getCooledValue:(CGFloat)pastRate finishValue:(CGFloat)finishValue;
 
 @end

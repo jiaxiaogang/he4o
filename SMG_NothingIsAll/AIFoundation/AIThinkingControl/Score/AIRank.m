@@ -162,19 +162,6 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------单条model冷却后竞争值--------------------
- *  @desc 单条仅一条,比如: 张三的语文考试;
- *  @use 使用: 单项权重新增NewtonCoolDownCurve (参考28042-思路2-3);
- *  @param totalCoolTime : 冷却至微不可见的总需时长
- *  @param pastTime : 当前项已冷却了多久;
- *  @result 冷却后的温度值;
- */
-+(CGFloat) getCooledValue:(CGFloat)totalCoolTime pastTime:(CGFloat)pastTime{
-    //1. 冷却完全后的值 (现此值符合28原则);
-    return [MathUtils getCooledValue:totalCoolTime pastTime:pastTime finishValue:0.000322f];
-}
-
-/**
  *  MARK:--------------------单项models冷却后竞争值--------------------
  *  @desc 单项一般包含多条,如匹配度项竞争,比如: 三班的语文考试;
  *  @version
@@ -199,8 +186,8 @@
         //5. 各自归1化;
         CGFloat normalized4Rank = (float)index4Rank / rank.count;
 
-        //5. 各自冷却后的值;
-        CGFloat cool4Rank = [self getCooledValue:1 pastTime:normalized4Rank];
+        //5. 单条model根据28原则冷却后的值 (单条仅一条,比如: 张三的语文考试) (参考28042-思路2-3);
+        CGFloat cool4Rank = [MathUtils getCooledValue_28:normalized4Rank];
 
         //6. 计算综合排名;
         id key = itemKeyBlock(item);

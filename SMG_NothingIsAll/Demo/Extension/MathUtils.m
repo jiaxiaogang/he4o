@@ -64,16 +64,26 @@
 
 /**
  *  MARK:--------------------牛顿冷却--------------------
- *  @param totalCoolTime 总冷却时间
+ *  @param totalCoolTime 总冷却时间 (需>0)
  *  @param pastTime 已冷却时间
+ *  _param pastRate : 已冷却百分比时间;
  *  @param finishValue 环境温度 (输出百分比即可: 0%时冷却到0,100%时不冷却) (当28原则时,为0.000322f)
+ *  @result 返回剩下温度百分比 (此值 <= 1 && > finishValue);
  */
 +(CGFloat) getCooledValue:(CGFloat)totalCoolTime pastTime:(CGFloat)pastTime finishValue:(CGFloat)finishValue {
+    return [self getCooledValue:pastTime / totalCoolTime finishValue:finishValue];
+}
+
++(CGFloat) getCooledValue_28:(CGFloat)pastRate {
+    return [self getCooledValue:pastRate finishValue:0.000322f];
+}
+
++(CGFloat) getCooledValue:(CGFloat)pastRate finishValue:(CGFloat)finishValue {
     //2. 冷却系数
-    CGFloat coefficient = -logf(finishValue) / totalCoolTime;
+    CGFloat coefficient = -logf(finishValue);
     
     //3. 计算出冷却后的值;
-    CGFloat cooledValue = expf(-coefficient * pastTime);
+    CGFloat cooledValue = expf(-coefficient * pastRate);
     return cooledValue;
 }
 

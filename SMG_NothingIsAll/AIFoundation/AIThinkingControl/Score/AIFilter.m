@@ -328,12 +328,11 @@
     CGFloat resultY = 0;
     for (NSNumber *key in xyDic.allKeys) {
         double templateX = key.doubleValue;
+        AIValueInfo *info = [AINetIndex getValueInfo:at ds:ds isOut:isOut];
         double delta = [AINetIndexUtils deltaWithValueA:templateX valueB:checkX at:at ds:ds isOut:isOut];
-        if (near > 0.5) {
-            NSInteger y = NUMTOOK([xyDic objectForKey:key]).integerValue;
-            CGFloat cooledY = 0;//根据强度冷却加分;
-            resultY += cooledY;
-        }
+        CGFloat cooledValue = [MathUtils getCooledValue:info.span / 2 pastTime:delta finishValue:0.3f];
+        NSInteger y = NUMTOOK([xyDic objectForKey:key]).integerValue;
+        resultY += y * cooledValue;
     }
     return resultY;
 }
