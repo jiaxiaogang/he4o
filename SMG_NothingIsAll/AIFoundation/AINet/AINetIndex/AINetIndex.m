@@ -93,6 +93,21 @@
  *  @result 值域不为负
  */
 +(double) getIndexSpan:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut {
+    AIValueInfo *info = [self getValueInfo:at ds:ds isOut:isOut];
+    return info.span;
+}
+
+/**
+ *  MARK:--------------------获取值的信息--------------------
+ *  @result notnull;
+ */
++(AIValueInfo*) getValueInfo:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut {
+    //0. 如果是循环码时,直接返回指定数;
+    double maxLoopValue = [CortexAlgorithmsUtil maxOfLoopValue:at ds:ds];
+    if (maxLoopValue > 0) {
+        return [AIValueInfo newWithMin:0 max:maxLoopValue loop:true];
+    }
+    
     //1. 取索引序列 & 稀疏码值字典;
     AINetIndexModel *model = [AINetIndexUtils searchIndexModel:at ds:ds isOut:isOut];
     NSDictionary *dataDic = [AINetIndexUtils searchDataDic:at ds:ds isOut:isOut];
@@ -104,11 +119,10 @@
     //3. 取出最大最小的稀疏码值;
     NSNumber *minData = [dataDic objectForKey:STRFORMAT(@"%ld",minPId)];
     NSNumber *maxData = [dataDic objectForKey:STRFORMAT(@"%ld",maxPId)];
-    if (!NUMISOK(minData) || !NUMISOK(maxData)) return 0;
-    
-    //4. 计算值域;
-    double span = maxData.doubleValue - minData.doubleValue;
-    return span;
+    if (!NUMISOK(minData) || !NUMISOK(maxData)) {
+        return [AIValueInfo newWithMin:0 max:0 loop:false];
+    }
+    return [AIValueInfo newWithMin:minData.doubleValue max:maxData.doubleValue loop:false];
 }
 
 //MARK:===============================================================
@@ -162,3 +176,23 @@
 }
 
 @end
+
+//MARK:===============================================================
+//MARK:                     < 码域信息 >
+//MARK:===============================================================
+@implementation AIValueInfo : NSObject
+
++(AIValueInfo*) newWithMin:(double)min max:(double)max loop:(BOOL)loop {
+    AIValueInfo *info = [[AIValueInfo alloc] init];
+    info.min = min;
+    info.max = max;
+    info.loop = loop;
+    return info;
+}
+
+-(double) span {
+    return self.max - self.min;
+}
+
+@end
+

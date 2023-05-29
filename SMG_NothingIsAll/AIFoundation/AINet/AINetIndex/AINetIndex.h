@@ -22,7 +22,7 @@
  *      > 记录可输出reference (用于将指针,索引到引用序列)
  *          [theNet setNetNodePointerToOutputReference:output_p algsType:algsType dataSource:dataSource difStrong:1];
  */
-@class AIPointer,AIKVPointer;
+@class AIPointer,AIKVPointer,AIValueInfo;
 @interface AINetIndex : NSObject
 
 
@@ -48,6 +48,12 @@
  */
 +(double) getIndexSpan:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut;
 
+/**
+ *  MARK:--------------------获取值的信息--------------------
+ *  @result notnull;
+ */
++(AIValueInfo*) getValueInfo:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut;
+
 @end
 
 
@@ -61,5 +67,20 @@
 @property (strong,nonatomic) NSMutableArray *pointerIds;
 @property (strong,nonatomic) NSString *algsType;
 @property (strong,nonatomic) NSString *dataSource;
+
+@end
+
+
+//MARK:===============================================================
+//MARK:                     < 码域信息 >
+//MARK:===============================================================
+@interface AIValueInfo : NSObject
+
++(AIValueInfo*) newWithMin:(double)min max:(double)max loop:(BOOL)loop;
+
+@property (assign, nonatomic) double min; //最大值
+@property (assign, nonatomic) double max; //最小值
+@property (assign, nonatomic) BOOL loop; //是否循环码
+-(double) span;
 
 @end

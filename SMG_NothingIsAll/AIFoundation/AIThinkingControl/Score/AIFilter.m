@@ -197,8 +197,8 @@
         if (!mostNearConFoPort) continue;
         
         //8. 节约性能: 全程只有一个固定值的打酱油码,不做处理 (参考29105-todo4);
-        double span = [AINetIndex getIndexSpan:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut];
-        if (span == 0) continue;
+        AIValueInfo *info = [AINetIndex getValueInfo:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut];
+        if (info.span == 0) continue;
         
         //9. 求出全部xy轴;
         NSDictionary *xyDic = [self convertConFoPorts2XYDic:goodPorts4 cutIndexDic:cutIndexOfConFo protoV:protoV_p];
