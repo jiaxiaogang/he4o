@@ -176,12 +176,6 @@
     //4. 排除自身 (参考29105-todo3-方案4);
     [noRepeat2 removeObject:inModel.protoFo.pointer];
     
-    //5. 平均强度值 = 总强度值 / 总conFo数 (参考29105-todo6 & todo5.2);
-    NSInteger sumStrongValue = 0;
-    for (AIPort *port in noRepeat2) sumStrongValue += port.strong.value;
-    NSInteger conFoCount = noRepeat2.count;
-    CGFloat averageStrong = (float)sumStrongValue / conFoCount;
-    
     //6. 排序,并取前20% (参考29105-todo2);
     NSArray *sortOfStrong3 = [SMGUtils sortBig2Small:noRepeat2 compareBlock:^double(AIPort *obj) {
         return obj.strong.value;
@@ -193,9 +187,6 @@
     
     //7. 分别根据protoV找到在goodPorts4中最相近的那一条,最接近那条的强度即算做protoV的强度 (参考29105-todo3-方案4);
     for (AIKVPointer *protoV_p in inModel.protoAlg.content_ps) {
-        AIPort *mostNearConFoPort = [self findMostNearConFoPortFromConFoPorts:goodPorts4 cutIndexDic:cutIndexOfConFo protoV:protoV_p];
-        if (!mostNearConFoPort) continue;
-        
         //8. 节约性能: 全程只有一个固定值的打酱油码,不做处理 (参考29105-todo4);
         AIValueInfo *info = [AINetIndex getValueInfo:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut];
         if (info.span == 0) continue;
@@ -203,14 +194,21 @@
         //9. 求出全部xy轴;
         NSDictionary *xyDic = [self convertConFoPorts2XYDic:goodPorts4 cutIndexDic:cutIndexOfConFo protoV:protoV_p];
         
-        //10. 均匀取样100份,求出平均值;
-        
+        //10. 均匀取样100份,求出平均值 (参考29106-解均值);
+        double sumTemplateY = 0;//所有样本总Y值;
+        for (int i = 0; i < 100; i++) {
+            double itemSpan = info.span / 100;
+            double curX = (i + 0.5f) * itemSpan;
+            sumTemplateY += [self getY:xyDic checkX:curX at:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut];
+        }
+        double averageY = sumTemplateY / 100;
         
         //11. 根据protoV的值,求出protoV的Y轴强度值;
-        
+        double protoV = NUMTOOK([AINetIndex getData:protoV_p]).doubleValue;
+        CGFloat protoY = [self getY:xyDic checkX:protoV at:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut];
         
         //9. 算出当前码的重要性 (参考29105-todo5);
-        CGFloat vImportance = mostNearConFoPort.strong.value / averageStrong;
+        CGFloat vImportance = protoY / averageY;
         NSLog(@"proto码:%@ 重要性:%.3f",Pit2FStr(protoV_p),vImportance);
         NSLog(@"");
     }
@@ -262,38 +260,6 @@
 }
 
 /**
- *  MARK:--------------------从conFoPorts中找到与protoV的码值最接近的一条conFoPort (参考29105-todo3-方案4)--------------------
- *  @param cutIndexDic 根据这个来取从conFoPort中哪一个概念,来判断与protoV的相近度;
- */
-+(AIPort*) findMostNearConFoPortFromConFoPorts:(NSArray*)conFoPorts cutIndexDic:(NSDictionary*)cutIndexDic protoV:(AIKVPointer*)protoV_p {
-    //1. 数据准备;
-    AIPort *mostNearPort = nil; //目前最接近的一条;
-    CGFloat mostNearValue = 0; //目前最接近的一条的相近度;
-    
-    //2. 转成conFo中对应的概念帧conAlg;
-    for (AIPort *conFoPort in conFoPorts) {
-        AIFoNodeBase *conFo = [SMGUtils searchNode:conFoPort.target_p];
-        NSInteger conCutIndex = NUMTOOK([cutIndexDic objectForKey:@(conFo.pId)]).integerValue;
-        AIKVPointer *conAlg_p = ARR_INDEX(conFo.content_ps, conCutIndex);
-        AIAlgNodeBase *conAlg = [SMGUtils searchNode:conAlg_p];
-        
-        //3. 在conAlg中找着同区码,用来判断它是否与protoV最相近;
-        AIKVPointer *findSameIdenConValue_p = [SMGUtils filterSingleFromArr:conAlg.content_ps checkValid:^BOOL(AIKVPointer *conValue_p) {
-            return [protoV_p.identifier isEqualToString:conValue_p.identifier];
-        }];
-        if (!findSameIdenConValue_p) continue;
-        
-        //4. 循环找到最最近的一条 (参考29105-todo3-方案4);
-        CGFloat nearV = [AIAnalyst compareCansetValue:findSameIdenConValue_p protoValue:protoV_p];
-        if (nearV > mostNearValue) {
-            mostNearPort = conFoPort;
-            mostNearValue = nearV;
-        }
-    }
-    return mostNearPort;
-}
-
-/**
  *  MARK:--------------------将conFoPorts转成xy轴数据 (x轴为v值,y轴为强度) (参考29106-解曲线)--------------------
  */
 +(NSDictionary*) convertConFoPorts2XYDic:(NSArray*)conFoPorts cutIndexDic:(NSDictionary*)cutIndexDic protoV:(AIKVPointer*)protoV_p {
@@ -323,15 +289,24 @@
 
 /**
  *  MARK:--------------------根据xyDic和x值计算出y值 (参考29106-解曲线)--------------------
+ *  @version
+ *      2023.05.30: 增强竞争: 将辐射由50%改为33%,环境温度由30%改为10% (参考29106-todo7.1);
  */
 +(CGFloat) getY:(NSDictionary*)xyDic checkX:(double)checkX at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut {
     CGFloat resultY = 0;
     for (NSNumber *key in xyDic.allKeys) {
+        //1. 数据准备;
         double templateX = key.doubleValue;
+        NSInteger y = NUMTOOK([xyDic objectForKey:key]).integerValue;
+        
+        //2. 已冷却时长;
         AIValueInfo *info = [AINetIndex getValueInfo:at ds:ds isOut:isOut];
         double delta = [AINetIndexUtils deltaWithValueA:templateX valueB:checkX at:at ds:ds isOut:isOut];
-        CGFloat cooledValue = [MathUtils getCooledValue:info.span / 2 pastTime:delta finishValue:0.3f];
-        NSInteger y = NUMTOOK([xyDic objectForKey:key]).integerValue;
+        
+        //3. span的50%时冷却完成,环境温度30% (参考29106-解曲线);
+        CGFloat cooledValue = [MathUtils getCooledValue:info.span / 3 pastTime:delta finishValue:0.1f];
+        
+        //4. 将checkX的强度值累计起来,用于返回;
         resultY += y * cooledValue;
     }
     return resultY;
