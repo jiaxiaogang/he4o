@@ -171,14 +171,7 @@
  */
 +(CGFloat) getCooledValue:(CGFloat)totalCoolTime pastTime:(CGFloat)pastTime{
     //1. 冷却完全后的值 (现此值符合28原则);
-    CGFloat finishValue = 0.000322f;
-
-    //2. 冷却系数
-    CGFloat coefficient = -logf(finishValue) / totalCoolTime;
-
-    //3. 计算出冷却后的值;
-    CGFloat cooledValue = expf(-coefficient * pastTime);
-    return cooledValue;
+    return [MathUtils getCooledValue:totalCoolTime pastTime:pastTime finishValue:0.000322f];
 }
 
 /**

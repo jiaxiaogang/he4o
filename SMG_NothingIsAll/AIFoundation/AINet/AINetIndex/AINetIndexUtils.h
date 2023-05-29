@@ -48,4 +48,9 @@
 +(NSDictionary*) searchDataDic:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut;
 +(void) insertDataDic:(NSDictionary*)dataDic at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut;
 
+/**
+ *  MARK:--------------------取两个V差值--------------------
+ */
++(CGFloat) deltaWithValueA:(double)valueA valueB:(double)valueB at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut;
+
 @end

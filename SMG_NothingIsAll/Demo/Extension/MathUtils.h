@@ -34,4 +34,12 @@
  */
 +(CGRect) radioRect:(CGRect)startRect endRect:(CGRect)endRect radio:(CGFloat)radio;
 
+/**
+ *  MARK:--------------------牛顿冷却--------------------
+ *  @param totalCoolTime 总冷却时间
+ *  @param pastTime 已冷却时间
+ *  @param finishValue 最终冷却温度 (当28原则时,为0.000322f)
+ */
++(CGFloat) getCooledValue:(CGFloat)totalCoolTime pastTime:(CGFloat)pastTime finishValue:(CGFloat)finishValue;
+
 @end

@@ -36,20 +36,19 @@
 }
 
 +(CGFloat) compareCansetValue:(double)cansetV protoV:(double)protoV at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut{
+    //1. 数据准备;
+    double delta = [AINetIndexUtils deltaWithValueA:cansetV valueB:protoV at:at ds:ds isOut:isOut];
+    AIValueInfo *info = [AINetIndex getValueInfo:at ds:ds isOut:isOut];
+    double nearV = 0;
+    if (info.span == 0) nearV = 1;
+    
     //2. 循环时: 计算出nearV相近度 (参考28174-todo2);
-    double max = [CortexAlgorithmsUtil maxOfLoopValue:at ds:ds];
-    if (max > 0) {
-        double halfMax = max / 2;
-        double protoDelta = fabs(cansetV - protoV);
-        protoDelta = protoDelta > halfMax ? max - protoDelta : protoDelta;
-        CGFloat result = 1 - protoDelta / halfMax;
-        return result;
+    if (info.loop) {
+        nearV = 1 - delta / (info.span / 2);
     }
     
     //3. 线性时: 计算出nearV相近度 (参考25082-公式1);
-    double delta = fabs(cansetV - protoV);
-    double span = [AINetIndex getIndexSpan:at ds:ds isOut:isOut];
-    double nearV = (span == 0) ? 1 : (1 - delta / span);
+    nearV = 1 - delta / info.span;
     return nearV;
 }
 

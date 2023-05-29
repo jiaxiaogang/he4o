@@ -328,7 +328,7 @@
     CGFloat resultY = 0;
     for (NSNumber *key in xyDic.allKeys) {
         double templateX = key.doubleValue;
-        CGFloat near = [AIAnalyst compareCansetValue:templateX protoV:checkX at:at ds:ds isOut:isOut];
+        double delta = [AINetIndexUtils deltaWithValueA:templateX valueB:checkX at:at ds:ds isOut:isOut];
         if (near > 0.5) {
             NSInteger y = NUMTOOK([xyDic objectForKey:key]).integerValue;
             CGFloat cooledY = 0;//根据强度冷却加分;

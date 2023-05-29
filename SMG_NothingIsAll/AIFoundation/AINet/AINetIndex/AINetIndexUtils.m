@@ -132,5 +132,19 @@
     [SMGUtils insertObject:DICTOOK(dataDic) pointer:[SMGUtils createPointerForData:at dataSource:ds isOut:isOut] fileName:kFNData(isOut) time:cRTData];
 }
 
+/**
+ *  MARK:--------------------取两个V差值--------------------
+ */
++(CGFloat) deltaWithValueA:(double)valueA valueB:(double)valueB at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut {
+    //1. 计算两个V差值;
+    AIValueInfo *info = [AINetIndex getValueInfo:at ds:ds isOut:isOut];
+    double delta = fabs(valueA - valueB);
+    
+    //2. 如果是循环V时,正反取小;
+    if (info.loop && delta > (info.span / 2)) {
+        delta = info.max - delta;
+    }
+    return delta;
+}
 
 @end
