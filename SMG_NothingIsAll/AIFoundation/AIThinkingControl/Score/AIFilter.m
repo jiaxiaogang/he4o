@@ -166,6 +166,7 @@
     //1. 数据准备;
     NSLog(@"今天测: for protoFo: %@",Fo2FStr(inModel.protoFo));
     NSMutableDictionary *cutIndexOfConFo = [[NSMutableDictionary alloc] init]; //收集所有同级fo的cutIndex
+    NSMutableArray *quXianYArr = [[NSMutableArray alloc] init];
     
     //2. 逐个收集pFos的同级(抽象的具象)->抽象部分 (参考29105-方案改);
     NSMutableArray *allConPorts1 = [self collectAbsFosThenConFos:inModel.matchPFos outCutIndexDic:cutIndexOfConFo];
@@ -199,7 +200,9 @@
         for (int i = 0; i < 100; i++) {
             double itemSpan = info.span / 100;
             double curX = (i + 0.5f) * itemSpan;
-            sumTemplateY += [self getY:xyDic checkX:curX at:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut];
+            CGFloat curY = [self getY:xyDic checkX:curX at:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut];
+            sumTemplateY += curY;
+            [quXianYArr addObject:@(curY)];
         }
         double averageY = sumTemplateY / 100;
         
@@ -211,6 +214,25 @@
         CGFloat vImportance = protoY / averageY;
         NSLog(@"proto码:%@ 重要性:%.3f",Pit2FStr(protoV_p),vImportance);
         NSLog(@"");
+        
+        //13. debugLog
+        int maxY = (int)protoY;
+        for (NSNumber *item in quXianYArr) {
+            if (maxY < (int)item.doubleValue) maxY = (int)item.doubleValue;
+        }
+        for (int row = maxY; row >= 1; row--) {//一行行打印
+            NSMutableString *line = [[NSMutableString alloc] init];
+            if (row % 2 == 1) continue;//放小打印图为一半;
+            for (int column = 0; column < (int)info.span; column++) {
+                if (column % 2 == 1) continue;//放小打印图为一半;
+                int quXianY = NUMTOOK(ARR_INDEX(quXianYArr, column)).doubleValue;
+                BOOL isProto = fabs(row - protoY) <= 2 && fabs(column - protoV) <= 2;//放大proto点打印
+                NSString *spc = isProto ? @"●" : @" ";
+                NSString *dot = isProto ? @"●" : row / 2 == ((int)averageY) / 2 ? @"-" : @"o";
+                [line appendString:quXianY >= row ? dot : spc];
+            }
+            NSLog(@"%@",line);
+        }
     }
     NSLog(@"今天测结尾 ======finish======");
 }
@@ -304,7 +326,7 @@
         double delta = [AINetIndexUtils deltaWithValueA:templateX valueB:checkX at:at ds:ds isOut:isOut];
         
         //3. span的50%时冷却完成,环境温度30% (参考29106-解曲线);
-        CGFloat cooledValue = [MathUtils getCooledValue:info.span / 3 pastTime:delta finishValue:0.1f];
+        CGFloat cooledValue = [MathUtils getCooledValue:info.span / 2 pastTime:delta finishValue:0.1f];
         
         //4. 将checkX的强度值累计起来,用于返回;
         resultY += y * cooledValue;
