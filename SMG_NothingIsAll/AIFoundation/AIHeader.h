@@ -33,6 +33,7 @@
 #import "TOUtils.h"
 #import "TIUtils.h"
 #import "TCSolutionUtil.h"
+#import "TCRecognitionUtil.h"
 #import "TCRethinkUtil.h"
 #import "NVViewUtil.h"
 #import "MathUtils.h"

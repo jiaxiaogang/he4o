@@ -75,6 +75,7 @@
 		084C3A6B21926D5700DAA08A /* BirdView.m in Sources */ = {isa = PBXBuildFile; fileRef = 084C3A6A21926D5700DAA08A /* BirdView.m */; };
 		084C3A6D21926D7800DAA08A /* BirdView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 084C3A6C21926D7800DAA08A /* BirdView.xib */; };
 		084F132226FF6E1200E9D455 /* AITest.m in Sources */ = {isa = PBXBuildFile; fileRef = 084F132126FF6E1200E9D455 /* AITest.m */; };
+		0850859B2A25B26F00ED63F2 /* TCRecognitionUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 0850859A2A25B26F00ED63F2 /* TCRecognitionUtil.m */; };
 		0851F78D2999362900977B98 /* RTQueueModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0851F78C2999362900977B98 /* RTQueueModel.m */; };
 		085490B429FE3B800099D17F /* FrontIndexDicModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 085490B329FE3B800099D17F /* FrontIndexDicModel.m */; };
 		08586DE527E80C8B008D2F8C /* TVLineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 08586DE427E80C8B008D2F8C /* TVLineView.m */; };
@@ -353,6 +354,8 @@
 		084C3A6C21926D7800DAA08A /* BirdView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BirdView.xib; sourceTree = "<group>"; };
 		084F132026FF6E1200E9D455 /* AITest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AITest.h; sourceTree = "<group>"; };
 		084F132126FF6E1200E9D455 /* AITest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AITest.m; sourceTree = "<group>"; };
+		085085992A25B26F00ED63F2 /* TCRecognitionUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCRecognitionUtil.h; sourceTree = "<group>"; };
+		0850859A2A25B26F00ED63F2 /* TCRecognitionUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCRecognitionUtil.m; sourceTree = "<group>"; };
 		0851F78B2999362900977B98 /* RTQueueModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RTQueueModel.h; sourceTree = "<group>"; };
 		0851F78C2999362900977B98 /* RTQueueModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RTQueueModel.m; sourceTree = "<group>"; };
 		085490B229FE3B800099D17F /* FrontIndexDicModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FrontIndexDicModel.h; sourceTree = "<group>"; };
@@ -1197,6 +1200,8 @@
 			children = (
 				087705AC2753745100BA4EFB /* TCRecognition.h */,
 				087705AD2753745100BA4EFB /* TCRecognition.m */,
+				085085992A25B26F00ED63F2 /* TCRecognitionUtil.h */,
+				0850859A2A25B26F00ED63F2 /* TCRecognitionUtil.m */,
 			);
 			path = TCRecognition;
 			sourceTree = "<group>";
@@ -2088,6 +2093,7 @@
 				082B910A27E414FB00EE4DF2 /* TOMVisionAlgView.m in Sources */,
 				0858C5D12194F8B000951BA5 /* NSArray+MASAdditions.m in Sources */,
 				087705B72753747300BA4EFB /* TCSolution.m in Sources */,
+				0850859B2A25B26F00ED63F2 /* TCRecognitionUtil.m in Sources */,
 				0858C5CC2194F8B000951BA5 /* MASConstraint.m in Sources */,
 				0889257F22B0702A00A0DBDD /* NVModuleView.m in Sources */,
 				0858C5CE2194F8B000951BA5 /* MASLayoutConstraint.m in Sources */,
