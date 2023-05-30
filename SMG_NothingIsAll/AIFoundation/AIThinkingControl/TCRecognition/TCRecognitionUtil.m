@@ -12,6 +12,7 @@
 
 /**
  *  MARK:--------------------获取V重要性字典 (参考29105 & 29106)--------------------
+ *  @result 返回结果为重要性字典<K:稀疏码标识,V:重要性值> & 做了最小值1的缩放处理 (参考29107-步骤1);
  */
 +(NSDictionary*) getVImportanceDic:(AIShortMatchModel*)inModel {
     //1. 数据准备;
@@ -85,7 +86,9 @@
         NSLog(@"proto码:%@ 重要性:%.3f",Pit2FStr(protoV_p),vImportance);
         [result setObject:@(vImportance) forKey:protoV_p.identifier];
     }
-    return result;
+    
+    //14. 缩放处理并返回 (参考29107-步骤1);
+    return [self scala4ImportanceDic:result];
 }
 
 //MARK:===============================================================
@@ -184,6 +187,28 @@
         resultY += y * cooledValue;
     }
     return resultY;
+}
+
+/**
+ *  MARK:--------------------字典缩放处理--------------------
+ *  @desc 缩放至最小值为1 (参考29107-步骤1);
+ */
++(NSDictionary*) scala4ImportanceDic:(NSDictionary*)importanceDic {
+    //1. 数据检查;
+    importanceDic = DICTOOK(importanceDic);
+    
+    //2. 缩放重要性字典: 找到最小值 (参考29107-步骤1);
+    double min = 0;
+    for (NSNumber *value in importanceDic.allValues) {
+        if (min > value.doubleValue) min = value.doubleValue;
+    }
+    
+    //3. 缩放重要性字典: 缩放至最小值为1 (参考29107-步骤1);
+    for (NSString *key in importanceDic.allKeys) {
+        double value = NUMTOOK([importanceDic objectForKey:key]).doubleValue;
+        [importanceDic setValue:@(value / min) forKey:key];
+    }
+    return importanceDic;
 }
 
 @end

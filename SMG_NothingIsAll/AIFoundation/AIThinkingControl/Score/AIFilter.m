@@ -73,10 +73,35 @@
     //1. 获取V重要性字典;
     NSDictionary *importanceDic = [TCRecognitionUtil getVImportanceDic:inModel];
     
-    //2. 根据重要性重新排序;
-    [SMGUtils sortBig2Small:inModel.matchPFos compareBlock:^double(id obj) {
-        return 0;
+    //2. 根据重要性加权计算二次过滤匹配度 (参考29107-步骤2);
+    NSMutableDictionary *secondMatchValueDic = [[NSMutableDictionary alloc] init];
+    for (AIMatchAlgModel *item in inModel.matchAlgs) {
+        CGFloat secondMatchValue = 1;
+        AIAlgNodeBase *matchAlg = [SMGUtils searchNode:item.matchAlg];
+        for (AIKVPointer *protoV_p in inModel.protoAlg.content_ps) {
+            for (AIKVPointer *matchV_p in matchAlg.content_ps) {
+                if ([protoV_p.identifier isEqualToString:matchV_p.identifier]) {
+                    
+                    //3. 二次过滤V相近度 = 原V相近度 的 重要性次方 (参考29107-步骤2);
+                    CGFloat nearV = [AIAnalyst compareCansetValue:matchV_p protoValue:protoV_p];
+                    double importance = NUMTOOK_DV([importanceDic objectForKey:protoV_p.identifier],1).doubleValue;
+                    secondMatchValue *= powf(nearV, importance);
+                }
+            }
+        }
+        [secondMatchValueDic setObject:@(secondMatchValue) forKey:@(matchAlg.pId)];
+    }
+    
+    //4. 概念识别的二次排序过滤 (保留60% & 至少保留4条) (参考29107-todo1);
+    NSArray *sort = [SMGUtils sortBig2Small:inModel.matchAlgs compareBlock:^double(AIMatchAlgModel *obj) {
+        return NUMTOOK([secondMatchValueDic objectForKey:@(obj.matchAlg.pointerId)]).floatValue;
     }];
+    sort = ARR_SUB(sort, 0, MAX(sort.count * 0.6f, 4));
+    
+    
+    //TODOTOMORROW20230530: 测下这么排出来符合预期先,然后写29107-todo2;
+    
+    
     
 }
 
