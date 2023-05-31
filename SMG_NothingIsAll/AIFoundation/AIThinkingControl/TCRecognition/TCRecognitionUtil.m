@@ -18,7 +18,7 @@
     //1. 数据准备;
     NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
     BOOL debugMode = true;
-    if (debugMode) NSLog(@"for protoFo: %@",Fo2FStr(inModel.protoFo));
+    if (debugMode) NSLog(@"识别重要性判断 for protoFo: %@",Fo2FStr(inModel.protoFo));
     NSMutableDictionary *cutIndexOfConFo = [[NSMutableDictionary alloc] init]; //收集所有同级fo的cutIndex
     
     //2. 逐个收集pFos的同级(抽象的具象)->抽象部分 (参考29105-方案改);
@@ -82,7 +82,7 @@
         }
         
         //13. 算出当前码的重要性 (参考29105-todo5);
-        CGFloat vImportance = protoY / averageY;
+        double vImportance = protoY / averageY;
         NSLog(@"proto码:%@ 重要性:%.3f",Pit2FStr(protoV_p),vImportance);
         [result setObject:@(vImportance) forKey:protoV_p.identifier];
     }
@@ -102,6 +102,7 @@
  */
 +(NSMutableArray*) collectAbsFosThenConFos:(NSArray*)pFoModels outCutIndexDic:(NSMutableDictionary*)outCutIndexDic{
     //1. 数据检查;
+    BOOL debugMode = false;
     NSMutableArray *result = [[NSMutableArray alloc] init];
     pFoModels = ARRTOOK(pFoModels);
     
@@ -109,7 +110,7 @@
     for (AIMatchFoModel *pFoM in pFoModels) {
         AIFoNodeBase *pFo = [SMGUtils searchNode:pFoM.matchFo];
         NSArray *abs_ps = Ports2Pits([AINetUtils absPorts_All:pFo]);
-        NSLog(@"from pFo: %@",Fo2FStr(pFo));
+        if (debugMode) NSLog(@"from pFo: %@",Fo2FStr(pFo));
         for (AIKVPointer *abs_p in abs_ps) {
             //3. 判断抽象中有对应的cutIndex帧;
             NSDictionary *indexDic = [pFo getAbsIndexDic:abs_p];
@@ -119,7 +120,7 @@
             //4. 逐个收集pFos的同级(抽象的具象)->具象部分 (参考29105-方案改);
             AIFoNodeBase *absFo = [SMGUtils searchNode:abs_p];
             if (!absFo.cmvNode_p) continue;//无mv指向则略过;
-            NSLog(@"\t > absFo: %@->%@",Pit2FStr(abs_p),Pit2FStr(absFo.cmvNode_p));
+            if (debugMode) NSLog(@"\t > absFo: %@->%@",Pit2FStr(abs_p),Pit2FStr(absFo.cmvNode_p));
             NSArray *conPorts = [AINetUtils conPorts_All:absFo];
             for (AIPort *conPort in conPorts) {
                 NSDictionary *indexDic2 = [absFo getConIndexDic:conPort.target_p];
@@ -167,7 +168,7 @@
  *  MARK:--------------------根据xyDic和x值计算出y值 (参考29106-解曲线)--------------------
  *  @version
  *      2023.05.30: 增强竞争: 将辐射由50%改为33%,环境温度由30%改为10% (参考29106-todo7.1);
- *      2023.05.30: 增强竞争: 加上可视化曲线后,边调整边看曲线,调整为辐射50%,环境温度5%;
+ *      2023.05.30: 增强竞争: 加上可视化曲线后,边调整边看曲线,调整为辐射50%,环境温度5% (后再激烈点,调成3%);
  */
 +(CGFloat) getY:(NSDictionary*)xyDic checkX:(double)checkX at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut {
     CGFloat resultY = 0;
@@ -181,7 +182,7 @@
         double delta = [AINetIndexUtils deltaWithValueA:templateX valueB:checkX at:at ds:ds isOut:isOut];
         
         //3. span的50%时冷却完成,环境温度30% (参考29106-解曲线);
-        CGFloat cooledValue = [MathUtils getCooledValue:info.span / 2 pastTime:delta finishValue:0.05f];
+        CGFloat cooledValue = [MathUtils getCooledValue:info.span / 2 pastTime:delta finishValue:0.03f];
         
         //4. 将checkX的强度值累计起来,用于返回;
         resultY += y * cooledValue;
@@ -198,7 +199,7 @@
     importanceDic = DICTOOK(importanceDic);
     
     //2. 缩放重要性字典: 找到最小值 (参考29107-步骤1);
-    double min = 0;
+    double min = MAXFLOAT;
     for (NSNumber *value in importanceDic.allValues) {
         if (min > value.doubleValue) min = value.doubleValue;
     }

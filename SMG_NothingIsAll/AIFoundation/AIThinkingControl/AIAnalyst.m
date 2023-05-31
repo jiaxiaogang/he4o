@@ -39,17 +39,15 @@
     //1. 数据准备;
     double delta = [AINetIndexUtils deltaWithValueA:cansetV valueB:protoV at:at ds:ds isOut:isOut];
     AIValueInfo *info = [AINetIndex getValueInfo:at ds:ds isOut:isOut];
-    double nearV = 0;
-    if (info.span == 0) nearV = 1;
+    if (info.span == 0) return 1;
     
     //2. 循环时: 计算出nearV相近度 (参考28174-todo2);
     if (info.loop) {
-        nearV = 1 - delta / (info.span / 2);
+        return 1 - delta / (info.span / 2);
     }
     
     //3. 线性时: 计算出nearV相近度 (参考25082-公式1);
-    nearV = 1 - delta / info.span;
-    return nearV;
+    return 1 - delta / info.span;
 }
 
 @end
