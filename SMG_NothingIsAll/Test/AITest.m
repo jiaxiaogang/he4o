@@ -273,6 +273,17 @@
     }
 }
 
++(void) test28:(AIShortMatchModel*)inModel {
+    for (AIMatchFoModel *item in inModel.matchPFos) {
+        AIFoNodeBase *fo = [SMGUtils searchNode:item.matchFo];
+        AIKVPointer *alg_p = ARR_INDEX(fo.content_ps, item.cutIndex);
+        if (![SMGUtils filterSingleFromArr:inModel.matchAlgs checkValid:^BOOL(AIMatchAlgModel *obj) {
+            return [obj.matchAlg isEqual:alg_p];
+        }]) {
+            ELog(@"自检28: 测得matchPFos的cutIndex对应的下标alg竟然不属于matchAlgs,按道理来cutIndex是刚发生的最后一帧,然后最后一帧应该都抽象源自matchAlgs才对");
+        }
+}
+
 
 //MARK:===============================================================
 //MARK:    < 回测必经点测试 (常关,每个轮回测时打开,触发则关,未触发者为异常) >

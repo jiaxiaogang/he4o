@@ -100,23 +100,22 @@
         return NUMTOOK([secondMatchValueDic objectForKey:@(obj.matchAlg.pointerId)]).doubleValue;
     }];
     if (debugMode) for (AIMatchAlgModel *item in sort) NSLog(@"%ld 现匹配度:%.2f (原%.2f) %@",[sort indexOfObject:item],NUMTOOK([secondMatchValueDic objectForKey:@(item.matchAlg.pointerId)]).doubleValue,item.matchValue,Pit2FStr(item.matchAlg));
-    sort = ARR_SUB(sort, 0, MAX(sort.count * 0.4f, 4));
+    NSArray *filterAlgs = ARR_SUB(sort, 0, MAX(sort.count * 0.4f, 4));
     
-    //5. 时序识别的二次过滤,用概念识别过滤结果来过滤;
-    for (AIMatchFoModel *item in inModel.matchPFos) {
+    //5. 时序识别的二次过滤,用概念识别过滤结果来过滤 (参考29107-todo2);
+    [AITest test28:inModel];
+    NSArray *filterFos = [SMGUtils filterArr:inModel.matchPFos checkValid:^BOOL(AIMatchFoModel *item) {
+        AIFoNodeBase *pFo = [SMGUtils searchNode:item.matchFo];
+        AIKVPointer *cutIndexAlg_p = ARR_INDEX(pFo.content_ps, item.cutIndex);//取刚发生的alg;
         
-        
-        //TODOTOMORROW20230530: 然后写29107-todo2;
-        
-        //根据item.cutIndex看能不能找出所有的matchAlgs;
-        //然后根据它来过滤下时序结果;
-        
-        
-        
-        
-        
-    }
+        //6. 根据filterAlgs来过滤pFos;
+        return [SMGUtils filterSingleFromArr:filterAlgs checkValid:^BOOL(AIMatchAlgModel *obj) {
+            return [obj.matchAlg isEqual:cutIndexAlg_p];
+        }];
+    }];
     
+    NSLog(@"概念过滤条数:%ld => %ld  时序过滤条数:%ld => %ld",inModel.matchAlgs.count,filterAlgs.count,inModel.matchPFos.count,filterFos.count);
+    NSLog(@"");
     
     
 }
