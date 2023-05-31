@@ -73,7 +73,8 @@
  */
 +(void) secondRecognitonFilter:(AIShortMatchModel*)inModel {
     //1. 获取V重要性字典;
-    BOOL debugMode = true;
+    IFTitleLog(@"识别二次过滤",@"\nfrom protoFo:%@",Fo2FStr(inModel.protoFo));
+    BOOL debugMode = false;
     NSDictionary *importanceDic = [TCRecognitionUtil getVImportanceDic:inModel];
     
     //2. 根据重要性加权计算二次过滤匹配度 (参考29107-步骤2);
@@ -99,7 +100,7 @@
     NSArray *sort = [SMGUtils sortBig2Small:inModel.matchAlgs compareBlock:^double(AIMatchAlgModel *obj) {
         return NUMTOOK([secondMatchValueDic objectForKey:@(obj.matchAlg.pointerId)]).doubleValue;
     }];
-    if (debugMode) for (AIMatchAlgModel *item in sort) NSLog(@"%ld 现匹配度:%.2f (原%.2f) %@",[sort indexOfObject:item],NUMTOOK([secondMatchValueDic objectForKey:@(item.matchAlg.pointerId)]).doubleValue,item.matchValue,Pit2FStr(item.matchAlg));
+    if (debugMode) for (AIMatchAlgModel *item in sort) NSLog(@"看不重要的被排到了后面日志: %ld 现匹配度:%.2f (原%.2f) %@",[sort indexOfObject:item],NUMTOOK([secondMatchValueDic objectForKey:@(item.matchAlg.pointerId)]).doubleValue,item.matchValue,Pit2FStr(item.matchAlg));
     NSArray *filterAlgs = ARR_SUB(sort, 0, MAX(sort.count * 0.4f, 4));
     
     //5. 时序识别的二次过滤,用概念识别过滤结果来过滤 (参考29107-todo2);
@@ -114,7 +115,13 @@
         }];
     }];
     
-    NSLog(@"概念过滤条数:%ld => %ld  时序过滤条数:%ld => %ld",inModel.matchAlgs.count,filterAlgs.count,inModel.matchPFos.count,filterFos.count);
+    //7. debugLog
+    NSLog(@"概念二次过滤后条数: 原%ld 剩%ld >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",inModel.matchAlgs.count,filterAlgs.count);
+    for (AIMatchAlgModel *item in filterAlgs) NSLog(@"\t%ld. %@ (现匹配度:%.2f 原%.2f)",[filterAlgs indexOfObject:item] + 1,Pit2FStr(item.matchAlg),NUMTOOK([secondMatchValueDic objectForKey:@(item.matchAlg.pointerId)]).doubleValue,item.matchValue);
+    NSLog(@"\n时序二次过滤后条数: 原%ld 剩%ld >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",inModel.matchPFos.count,filterFos.count);
+    for (AIMatchFoModel *item in filterFos) NSLog(@"\t%ld. %@",[filterFos indexOfObject:item] + 1,Pit2FStr(item.matchFo));
+    
+    //8. 存下结果;
     inModel.matchAlgs = filterAlgs;
     inModel.matchPFos = [[NSMutableArray alloc] initWithArray:filterFos];
 }

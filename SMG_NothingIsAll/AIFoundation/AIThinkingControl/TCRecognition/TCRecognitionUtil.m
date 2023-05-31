@@ -18,7 +18,6 @@
     //1. 数据准备;
     NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
     BOOL debugMode = true;
-    if (debugMode) NSLog(@"识别重要性判断 for protoFo: %@",Fo2FStr(inModel.protoFo));
     NSMutableDictionary *cutIndexOfConFo = [[NSMutableDictionary alloc] init]; //收集所有同级fo的cutIndex
     
     //2. 逐个收集pFos的同级(抽象的具象)->抽象部分 (参考29105-方案改);
@@ -44,6 +43,7 @@
         
         //9. 求出全部xy轴;
         NSDictionary *xyDic = [self convertConFoPorts2XYDic:goodPorts4 cutIndexDic:cutIndexOfConFo protoV:protoV_p];
+        if (!DICISOK(xyDic)) continue;
         
         //10. 均匀取样100份,求出平均值 (参考29106-解均值);
         double sumTemplateY = 0;//所有样本总Y值;
@@ -74,7 +74,8 @@
                 int quXianY = NUMTOOK(ARR_INDEX(quXianYArr, column)).doubleValue;
                 double protoX = (protoV / info.span) * 100; //protoX需要由真实v值,转为0-100的x轴值;
                 BOOL isProto = fabs(row - protoY) <= 2 && fabs(column - protoX) <= 1;//放大proto点打印(更显眼)
-                NSString *spc = isProto ? @"●" : @" ";
+                BOOL border = column == 0;
+                NSString *spc = isProto ? @"●" : border ? @"|" : @" ";
                 NSString *dot = isProto ? @"●" : row / 2 == ((int)averageY) / 2 ? @"-" : @"o";
                 [line appendString:quXianY >= row ? dot : spc];
             }
@@ -83,7 +84,7 @@
         
         //13. 算出当前码的重要性 (参考29105-todo5);
         double vImportance = protoY / averageY;
-        NSLog(@"proto码:%@ 重要性:%.3f",Pit2FStr(protoV_p),vImportance);
+        NSLog(@"------------------------------------------ %@ 重要性:%.3f ------------------------------------------\n",Pit2FStr(protoV_p),vImportance);
         [result setObject:@(vImportance) forKey:protoV_p.identifier];
     }
     
