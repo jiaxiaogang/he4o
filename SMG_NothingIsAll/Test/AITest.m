@@ -282,6 +282,7 @@
         }]) {
             ELog(@"自检28: 测得matchPFos的cutIndex对应的下标alg竟然不属于matchAlgs,按道理来cutIndex是刚发生的最后一帧,然后最后一帧应该都抽象源自matchAlgs才对");
         }
+    }
 }
 
 

@@ -67,7 +67,7 @@
 }
 
 /**
- *  MARK:--------------------二次识别过滤器--------------------
+ *  MARK:--------------------识别二次过滤器--------------------
  *  @version
  *      2023.05.31: 回测概念识别二次过滤ok,就是保留60%有点多,调成40%;
  */
@@ -115,9 +115,8 @@
     }];
     
     NSLog(@"概念过滤条数:%ld => %ld  时序过滤条数:%ld => %ld",inModel.matchAlgs.count,filterAlgs.count,inModel.matchPFos.count,filterFos.count);
-    NSLog(@"");
-    
-    
+    inModel.matchAlgs = filterAlgs;
+    inModel.matchPFos = [[NSMutableArray alloc] initWithArray:filterFos];
 }
 
 /**

@@ -417,8 +417,6 @@
     inModel.matchRFos = [[NSMutableArray alloc] initWithArray:sortRs];
     AddDebugCodeBlock(@"时序识别31");
     
-    [AIFilter secondRecognitonFilter:inModel];
-    
     //11. 调试日志;
     NSArray *allMatchFos = [SMGUtils collectArrA:inModel.matchPFos arrB:inModel.matchRFos];
     NSLog(@"\n时序识别结果 P(%ld条) R(%ld条)",inModel.matchPFos.count,inModel.matchRFos.count);

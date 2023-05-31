@@ -30,6 +30,7 @@
  *      20211016 - 将预测调整到R决策之后,因为R决策总会卡住,而预测中将来的UI变化迟迟不来 (参考24058-方案1);
  *      20211017 - 在执行决策前,先到OPushM将TIModel.status更新了,因为有些IRT触发器已经失效了 (参考24061);
  *      20230301 - 输出行为不必再触发`时序识别&学习&任务&反省` (参考28137-修复);
+ *      20230531 - r时序识别结束后,调用识别二次过滤器 (参考29107-todo3);
  */
 +(void) rInput:(AIAlgNodeBase*)algNode except_ps:(NSArray*)except_ps{
     ISGroupLog(@"input R");
@@ -59,6 +60,9 @@
     if (!algNode.pointer.isOut || Switch4IsOutReIn) {
         //7. 时序识别
         [TCRecognition rRecognition:mModel];
+        
+        //8. 识别二次过滤器;
+        [AIFilter secondRecognitonFilter:mModel];
         
         //8. 学习;
         [TCLearning rLearning:mModel protoFo:protoFo];
