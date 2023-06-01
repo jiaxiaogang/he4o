@@ -16,17 +16,17 @@
 /**
  *  MARK:--------------------概念识别过滤器 (参考28109-todo2)--------------------
  */
-+(NSArray*) recognitonAlgFilter:(NSArray*)matchAlgModels;
++(NSArray*) recognitionAlgFilter:(NSArray*)matchAlgModels;
 
 /**
  *  MARK:--------------------时序识别过滤器 (参考28111-todo1)--------------------
  */
-+(NSArray*) recognitonFoFilter:(NSArray*)matchModels;
++(NSArray*) recognitionFoFilter:(NSArray*)matchModels;
 
 /**
  *  MARK:--------------------Canset识别过滤器 (参考29042)--------------------
  */
-+(NSArray*) recognitonCansetFilter:(NSArray*)matchModels sceneFo:(AIFoNodeBase*)sceneFo;
++(NSArray*) recognitionCansetFilter:(NSArray*)matchModels sceneFo:(AIFoNodeBase*)sceneFo;
 
 /**
  *  MARK:--------------------Canset求解过滤器 (参考29081-todo41)--------------------
@@ -41,6 +41,6 @@
 /**
  *  MARK:--------------------识别二次过滤器--------------------
  */
-+(void) secondRecognitonFilter:(AIShortMatchModel*)inModel;
++(void) secondRecognitionFilter:(AIShortMatchModel*)inModel;
 
 @end

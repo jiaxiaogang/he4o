@@ -226,11 +226,11 @@
     }];
     
     //11. 识别过滤器 (参考28109-todo2);
-    NSArray *filterModels = [AIFilter recognitonAlgFilter:protoModels];
+    NSArray *filterModels = [AIFilter recognitionAlgFilter:protoModels];
     
     //11. 识别竞争机制 (参考2722d-方案2);
     //11. 按nearA排序 (参考25083-2&公式2 & 25084-1);
-    NSArray *sortModels = [AIRank recognitonAlgRank:filterModels];
+    NSArray *sortModels = [AIRank recognitionAlgRank:filterModels];
     
     //16. 未将全含返回,则返回最相似 (2020.10.22: 全含返回,也要返回seemAlg) (2022.01.15: 支持相近匹配后,全是全含没局部了);
     NSLog(@"\n概念识别结果 (%ld条) protoAlg:%@",sortModels.count,Alg2FStr(protoAlg));
@@ -406,13 +406,13 @@
     }
     
     //10. 过滤强度前20% (参考28111-todo1);
-    NSArray *filterPModels = [AIFilter recognitonFoFilter:protoPModels];
-    NSArray *filterRModels = [AIFilter recognitonFoFilter:protoRModels];
+    NSArray *filterPModels = [AIFilter recognitionFoFilter:protoPModels];
+    NSArray *filterRModels = [AIFilter recognitionFoFilter:protoRModels];
     AddDebugCodeBlock(@"时序识别30");
     
     //10. 按照 (强度x匹配度) 排序,强度最重要,包含了价值初始和使用频率,其次匹配度也重要 (参考23222-BUG2);
-    NSArray *sortPs = [AIRank recognitonFoRank:filterPModels];
-    NSArray *sortRs = [AIRank recognitonFoRank:filterRModels];
+    NSArray *sortPs = [AIRank recognitionFoRank:filterPModels];
+    NSArray *sortRs = [AIRank recognitionFoRank:filterRModels];
     inModel.matchPFos = [[NSMutableArray alloc] initWithArray:sortPs];
     inModel.matchRFos = [[NSMutableArray alloc] initWithArray:sortRs];
     AddDebugCodeBlock(@"时序识别31");
@@ -557,7 +557,7 @@
     }
     
     //6. AIFilter过滤 (参考29042);
-    NSArray *filterModels = [AIFilter recognitonCansetFilter:matchModels sceneFo:sceneFo];
+    NSArray *filterModels = [AIFilter recognitionCansetFilter:matchModels sceneFo:sceneFo];
     
     //7. 日志
     NSLog(@"\nCanset识别结果: %ld条",filterModels.count);

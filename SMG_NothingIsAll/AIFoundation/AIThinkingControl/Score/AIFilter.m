@@ -14,29 +14,27 @@
  *  MARK:--------------------概念识别过滤器--------------------
  *  @version
  *      2023.03.06: 概念识别过滤器匹配度为主,强度为辅 (参考28152-方案4-todo4);
+ *      2023.06.01: BUG_有了识别二次过滤后,过滤太强导致最后的pFos剩下0-2条太少了,所以此处减弱一下过滤力度;
  */
-+(NSArray*) recognitonAlgFilter:(NSArray*)matchAlgModels {
++(NSArray*) recognitionAlgFilter:(NSArray*)matchAlgModels {
     return [self filterTwice:matchAlgModels mainBlock:^double(AIMatchAlgModel *item) {
         return item.matchValue;
     } subBlock:^double(AIMatchAlgModel *item) {
         return item.strongValue;
-    } radio:0.16f resultNum:4];
+    } radio:0.32f resultNum:20];
 }
 
 /**
  *  MARK:--------------------时序识别过滤器--------------------
  *  @version
  *      2023.03.06: 时序识别过滤器强度为主,匹配度为辅 (参考28152-方案4-todo5);
+ *      2023.03.18. 由0.16调整为0.6 (概念已经很准了,时序只要把不准部分切了就行,不需要过滤太多);
+ *      2023.06.01: 加上识别二次过滤后,第一次不需要过滤匹配度了,仅排除一下强度太弱的末尾即可;
  */
-+(NSArray*) recognitonFoFilter:(NSArray*)matchModels {
-    //此过滤度参数调整中...
-    //20230318. 由0.16调整为0.6 (概念已经很准了,时序只要把不准部分切了就行,不需要过滤太多);
-    CGFloat radio = 0.6f;
-    return [self filterTwice:matchModels mainBlock:^double(AIMatchFoModel *item) {
++(NSArray*) recognitionFoFilter:(NSArray*)matchModels {
+    return [self filterOnce:matchModels mainBlock:^double(AIMatchFoModel *item) {
         return item.strongValue;
-    } subBlock:^double(AIMatchFoModel *item) {
-        return item.matchFoValue;
-    } radio:radio resultNum:4];
+    } radio:0.8f resultNum:8];
 }
 
 /**
@@ -45,7 +43,7 @@
  *  @version
  *      2023.04.04: 将过滤器由SP主EFF辅,改为映射数为主SP为辅 (参考29055-方案);
  */
-+(NSArray*) recognitonCansetFilter:(NSArray*)matchModels sceneFo:(AIFoNodeBase*)sceneFo {
++(NSArray*) recognitionCansetFilter:(NSArray*)matchModels sceneFo:(AIFoNodeBase*)sceneFo {
     CGFloat radio = 0.2f;
     NSArray *result = ARR_SUB([SMGUtils sortBig2Small:matchModels compareBlock:^double(AIMatchCansetModel *obj) {
         return obj.indexDic.count;
@@ -71,7 +69,7 @@
  *  @version
  *      2023.05.31: 回测概念识别二次过滤ok,就是保留60%有点多,调成40%;
  */
-+(void) secondRecognitonFilter:(AIShortMatchModel*)inModel {
++(void) secondRecognitionFilter:(AIShortMatchModel*)inModel {
     //1. 获取V重要性字典;
     IFTitleLog(@"识别二次过滤",@"\nfrom protoFo:%@",Fo2FStr(inModel.protoFo));
     BOOL debugMode = false;
@@ -101,7 +99,7 @@
         return NUMTOOK([secondMatchValueDic objectForKey:@(obj.matchAlg.pointerId)]).doubleValue;
     }];
     if (debugMode) for (AIMatchAlgModel *item in sort) NSLog(@"看不重要的被排到了后面日志: %ld 现匹配度:%.2f (原%.2f) %@",[sort indexOfObject:item],NUMTOOK([secondMatchValueDic objectForKey:@(item.matchAlg.pointerId)]).doubleValue,item.matchValue,Pit2FStr(item.matchAlg));
-    NSArray *filterAlgs = ARR_SUB(sort, 0, MAX(sort.count * 0.4f, 4));
+    NSArray *filterAlgs = ARR_SUB(sort, 0, MAX(sort.count * 0.6f, 4));
     
     //5. 时序识别的二次过滤,用概念识别过滤结果来过滤 (参考29107-todo2);
     [AITest test28:inModel];
@@ -217,6 +215,19 @@
     
     //6. 返回结果 (参考注释公式说明-5);
     return filter2;
+}
+
++(NSArray*) filterOnce:(NSArray*)protoArr mainBlock:(double(^)(id item))mainBlock radio:(CGFloat)radio resultNum:(NSInteger)resultNum{
+    //0. 数据准备;
+    if (!ARRISOK(protoArr)) return protoArr;
+    resultNum = MIN(resultNum, protoArr.count);//resultNum不得大于protoArr数；
+    resultNum = MAX(resultNum ,radio * protoArr.count);//resultNum不得小于radio(如20％);
+    CGFloat realRate = resultNum / protoArr.count;//实际过滤率;
+    
+    //2. 过滤并返回结果;
+    NSArray *filter = ARR_SUB([SMGUtils sortBig2Small:protoArr compareBlock:mainBlock], 0, protoArr.count * realRate);
+    NSLog(@"过滤器: 总%ld需%ld 主:%.2f => 剩:%ld",protoArr.count,resultNum,realRate,filter.count);
+    return filter;
 }
 
 @end

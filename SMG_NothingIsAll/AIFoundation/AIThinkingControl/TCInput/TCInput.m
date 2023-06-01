@@ -62,7 +62,7 @@
         [TCRecognition rRecognition:mModel];
         
         //8. 识别二次过滤器;
-        [AIFilter secondRecognitonFilter:mModel];
+        [AIFilter secondRecognitionFilter:mModel];
         
         //8. 学习;
         [TCLearning rLearning:mModel protoFo:protoFo];

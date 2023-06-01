@@ -406,7 +406,7 @@
 //行为再输入开关 (参考28133-1 & 28137-修复)
 #define Switch4IsOutReIn false
 //识别排名器开关 (参考28152-方案5)
-#define Switch4RecognitonRank false
+#define Switch4RecognitionRank false
 //matchRFos识别开关 (参考28185-todo1)
 #define Switch4RecognitionMatchRFos false
 //AITest开关
