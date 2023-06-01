@@ -154,12 +154,14 @@
  *      2023.02.21 - 识别结果保留20% (参考28102-方案1);
  *      2023.02.25 - 集成概念识别过滤器 (参考28111-todo1) & 取消识别后过滤20% (参考28111-todo2);
  *      2023.04.09 - 仅识别似层 (参考29064-todo1);
+ *      2023.06.01 - 将识别结果拆分成pAlgs和rAlgs两个部分 (参考29108-2.1);
  */
 +(void) partMatching_Alg:(AIAlgNodeBase*)protoAlg except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel{
     //1. 数据准备;
     if (!ISOK(protoAlg, AIAlgNodeBase.class)) return;
     except_ps = ARRTOOK(except_ps);
-    NSMutableArray *protoModels = [[NSMutableArray alloc] init];    //List<AIMatchAlgModel>;
+    NSMutableArray *protoPAlgs = [[NSMutableArray alloc] init];    //List<AIMatchAlgModel>;
+    NSMutableArray *protoRAlgs = [[NSMutableArray alloc] init];    //List<AIMatchAlgModel>;
     
     //2. 广入: 对每个元素,分别取索引序列 (参考25083-1);
     for (AIKVPointer *item_p in protoAlg.content_ps) {
@@ -190,12 +192,12 @@
                 if ([SMGUtils containsSub_p:refPort.target_p parent_ps:except_ps]) continue;
                 
                 //9. 找model (无则新建);
-                AIMatchAlgModel *model = [SMGUtils filterSingleFromArr:protoModels checkValid:^BOOL(AIMatchAlgModel *item) {
+                NSArray *collectPRAlgs = [SMGUtils collectArrA:protoPAlgs arrB:protoRAlgs];
+                AIMatchAlgModel *model = [SMGUtils filterSingleFromArr:collectPRAlgs checkValid:^BOOL(AIMatchAlgModel *item) {
                     return [item.matchAlg isEqual:refPort.target_p];
                 }];
                 if (!model) {
                     model = [[AIMatchAlgModel alloc] init];
-                    [protoModels addObject:model];
                 }
                 model.matchAlg = refPort.target_p;
                 
@@ -204,40 +206,59 @@
                 model.nearCount++;
                 model.sumNear *= nearV;
                 model.sumRefStrong += (int)refPort.strong.value;
+                
+                //11. 收集;
+                if (refPort.targetHavMv) {
+                    [protoPAlgs addObject:model];
+                }else {
+                    [protoRAlgs addObject:model];
+                }
             }
         }
-        if (Log4MAlg) if (protoModels.count) NSLog(@"计数字典匹配情况: %@ ------",[SMGUtils convertArr:protoModels convertBlock:^id(AIMatchAlgModel *obj) {
-            return @(obj.matchCount);
-        }]);
     }
     
     //12. 全含判断: 从大到小,依次取到对应的node和matchingCount (注: 支持相近后,应该全是全含了,参考25084-1);
-    protoModels = [SMGUtils filterArr:protoModels checkValid:^BOOL(AIMatchAlgModel *item) {
-        //14. 过滤掉匹配度<85%的;
+    NSArray *validPAlgs = [self TIR_Alg_CheckFoValidMatchV2:protoPAlgs protoAlgCount:protoAlg.count];
+    NSArray *validRAlgs = [self TIR_Alg_CheckFoValidMatchV2:protoRAlgs protoAlgCount:protoAlg.count];
+    
+    //13. 识别过滤器 (参考28109-todo2);
+    NSArray *filterPAlgs = [AIFilter recognitionAlgFilter:validPAlgs radio:0.5f];
+    NSArray *filterRAlgs = [AIFilter recognitionAlgFilter:validRAlgs radio:0.16f];
+    
+    //14. 识别竞争机制 (参考2722d-方案2);
+    //14. 按nearA排序 (参考25083-2&公式2 & 25084-1);
+    NSArray *sortPAlgs = [AIRank recognitionAlgRank:filterPAlgs];
+    NSArray *sortRAlgs = [AIRank recognitionAlgRank:filterRAlgs];
+    
+    //15. 未将全含返回,则返回最相似 (2020.10.22: 全含返回,也要返回seemAlg) (2022.01.15: 支持相近匹配后,全是全含没局部了);
+    //15. 合并后赋值给matchAlgs (参考29108-2.2);
+    NSArray *allSortAlgs = [SMGUtils collectArrA:sortPAlgs arrB:sortRAlgs];
+    inModel.matchAlgs = allSortAlgs;
+    
+    //16. debugLog
+    NSLog(@"\n概念识别结果 (%ld条) protoAlg:%@",allSortAlgs.count,Alg2FStr(protoAlg));
+    for (AIMatchAlgModel *item in allSortAlgs) {
+        NSLog(@"-->>>(%d) 全含item: %@   \t相近度 => %.2f (count:%d)",item.sumRefStrong,Pit2FStr(item.matchAlg),item.matchValue,item.matchCount);
+    }
+}
+
+/**
+ *  MARK:--------------------概念识别全含判断--------------------
+ */
++(NSArray*) TIR_Alg_CheckFoValidMatchV2:(NSArray*)protoPRModels protoAlgCount:(NSInteger)protoAlgCount{
+    //1. 全含判断: 从大到小,依次取到对应的node和matchingCount (注: 支持相近后,应该全是全含了,参考25084-1);
+    return [SMGUtils filterArr:protoPRModels checkValid:^BOOL(AIMatchAlgModel *item) {
+        //2. 过滤掉匹配度<85%的;
         //if (item.matchValue < 0.60f) return false;
         
-        //15. 过滤掉非全含的 (当count!=matchCount时为局部匹配: 局部匹配partAlgs已废弃);
+        //3. 过滤掉非全含的 (当count!=matchCount时为局部匹配: 局部匹配partAlgs已废弃);
         AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item.matchAlg];
         if (itemAlg.count != item.matchCount) return false;
         
-        //16. 过滤掉非似层的 (参考29064-todo1);
-        if (itemAlg.count != protoAlg.count) return false;
+        //4. 过滤掉非似层的 (参考29064-todo1);
+        if (itemAlg.count != protoAlgCount) return false;
         return true;
     }];
-    
-    //11. 识别过滤器 (参考28109-todo2);
-    NSArray *filterModels = [AIFilter recognitionAlgFilter:protoModels];
-    
-    //11. 识别竞争机制 (参考2722d-方案2);
-    //11. 按nearA排序 (参考25083-2&公式2 & 25084-1);
-    NSArray *sortModels = [AIRank recognitionAlgRank:filterModels];
-    
-    //16. 未将全含返回,则返回最相似 (2020.10.22: 全含返回,也要返回seemAlg) (2022.01.15: 支持相近匹配后,全是全含没局部了);
-    NSLog(@"\n概念识别结果 (%ld条) protoAlg:%@",sortModels.count,Alg2FStr(protoAlg));
-    for (AIMatchAlgModel *item in sortModels) {
-        NSLog(@"-->>>(%d) 全含item: %@   \t相近度 => %.2f (count:%d)",item.sumRefStrong,Pit2FStr(item.matchAlg),item.matchValue,item.matchCount);
-    }
-    inModel.matchAlgs = sortModels;
 }
 
 //MARK:===============================================================

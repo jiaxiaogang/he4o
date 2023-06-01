@@ -16,7 +16,7 @@
 /**
  *  MARK:--------------------概念识别过滤器 (参考28109-todo2)--------------------
  */
-+(NSArray*) recognitionAlgFilter:(NSArray*)matchAlgModels;
++(NSArray*) recognitionAlgFilter:(NSArray*)matchAlgModels radio:(CGFloat)radio;
 
 /**
  *  MARK:--------------------时序识别过滤器 (参考28111-todo1)--------------------

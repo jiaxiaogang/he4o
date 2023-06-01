@@ -15,13 +15,14 @@
  *  @version
  *      2023.03.06: 概念识别过滤器匹配度为主,强度为辅 (参考28152-方案4-todo4);
  *      2023.06.01: BUG_有了识别二次过滤后,过滤太强导致最后的pFos剩下0-2条太少了,所以此处减弱一下过滤力度;
+ *      2023.06.01: pAlgs和rAlgs支持传入不同的radio过滤值 (参考29108-2.1);
  */
-+(NSArray*) recognitionAlgFilter:(NSArray*)matchAlgModels {
++(NSArray*) recognitionAlgFilter:(NSArray*)matchAlgModels radio:(CGFloat)radio {
     return [self filterTwice:matchAlgModels mainBlock:^double(AIMatchAlgModel *item) {
         return item.matchValue;
     } subBlock:^double(AIMatchAlgModel *item) {
         return item.strongValue;
-    } radio:0.32f resultNum:20];
+    } radio:radio resultNum:10];
 }
 
 /**
@@ -29,7 +30,7 @@
  *  @version
  *      2023.03.06: 时序识别过滤器强度为主,匹配度为辅 (参考28152-方案4-todo5);
  *      2023.03.18. 由0.16调整为0.6 (概念已经很准了,时序只要把不准部分切了就行,不需要过滤太多);
- *      2023.06.01: 加上识别二次过滤后,第一次不需要过滤匹配度了,仅排除一下强度太弱的末尾即可;
+ *      2023.06.01: 加上识别二次过滤后,第一次不需要过滤匹配度了,仅排除一下强度太弱的末尾即可 (参考29108-1);
  */
 +(NSArray*) recognitionFoFilter:(NSArray*)matchModels {
     return [self filterOnce:matchModels mainBlock:^double(AIMatchFoModel *item) {
