@@ -198,6 +198,12 @@
                 }];
                 if (!model) {
                     model = [[AIMatchAlgModel alloc] init];
+                    //9. 收集;
+                    if (refPort.targetHavMv) {
+                        [protoPAlgs addObject:model];
+                    }else {
+                        [protoRAlgs addObject:model];
+                    }
                 }
                 model.matchAlg = refPort.target_p;
                 
@@ -206,13 +212,6 @@
                 model.nearCount++;
                 model.sumNear *= nearV;
                 model.sumRefStrong += (int)refPort.strong.value;
-                
-                //11. 收集;
-                if (refPort.targetHavMv) {
-                    [protoPAlgs addObject:model];
-                }else {
-                    [protoRAlgs addObject:model];
-                }
             }
         }
     }

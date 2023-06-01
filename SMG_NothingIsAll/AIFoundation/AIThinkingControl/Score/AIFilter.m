@@ -223,7 +223,7 @@
     if (!ARRISOK(protoArr)) return protoArr;
     resultNum = MIN(resultNum, protoArr.count);//resultNum不得大于protoArr数；
     resultNum = MAX(resultNum ,radio * protoArr.count);//resultNum不得小于radio(如20％);
-    CGFloat realRate = resultNum / protoArr.count;//实际过滤率;
+    CGFloat realRate = (float)resultNum / protoArr.count;//实际过滤率;
     
     //2. 过滤并返回结果;
     NSArray *filter = ARR_SUB([SMGUtils sortBig2Small:protoArr compareBlock:mainBlock], 0, protoArr.count * realRate);
