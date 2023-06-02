@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-#define ThrowTime 5.0f //满屏飞过用时
+#define ThrowTime 8.0f //满屏飞过用时
 
 @protocol WoodViewDelegate <NSObject>
 
@@ -30,7 +30,6 @@
  *  MARK:--------------------扔出--------------------
  *  @param hitBlock : 碰撞检测 (碰撞时刻检测一次,如果没撞到到终点后再检测一次) notnull
  */
--(void) throw:(CGFloat)throwX frontTime:(CGFloat)frontTime backTime:(CGFloat)backTime speed:(CGFloat)speed hitBlock:(BOOL(^)())hitBlock invoked:(void(^)())invoked;
 -(void) throwV4:(CGFloat)throwX time:(CGFloat)time distance:(CGFloat)distance invoked:(void(^)())invoked;
 
 @end

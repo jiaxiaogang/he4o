@@ -63,47 +63,6 @@
  *      2022.06.04: 支持随机扔出点 (参考26196-方案2);
  *      2023.05.22: 迭代v4:动画结束时,调用下碰撞检测啥的 (参考29098-方案3);
  */
--(void) throw:(CGFloat)throwX frontTime:(CGFloat)frontTime backTime:(CGFloat)backTime speed:(CGFloat)speed hitBlock:(BOOL(^)())hitBlock invoked:(void(^)())invoked{
-    //1. 扔出前复位 (并移除可能还在进行中的动画);
-    [self reset:false x:throwX];
-    [self.layer removeAllAnimations];
-    
-    //2. 前段动画,撞击前部分;
-    [UIView animateWithDuration:frontTime delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
-        self.x += frontTime * speed;
-    } completion:^(BOOL finished) {
-
-        //3. 准时碰撞检测;
-        BOOL hited = false;
-        if (frontTime > 0) {
-            NSLog(@"碰撞检测 (hitTime) ↓↓↓");
-            hited = hitBlock();
-        }
-
-        ///4. 后段动画,撞击后部分;
-        if (finished) {
-            [UIView animateWithDuration:backTime delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
-                self.x += speed * backTime;
-            } completion:^(BOOL finished) {
-
-                //5. 收尾碰撞检测 (如果准时未撞到,到结尾再判断一次);
-                if (!hited && frontTime > 0 && backTime > 0) {
-                    NSLog(@"碰撞检测 (finishTime) ↓↓↓");
-                    hitBlock();
-                }
-                if (finished) {
-                    [self reset:true x:0];
-                }
-
-                //6. 标记执行完成;
-                invoked();
-            }];
-        }else{
-            invoked();
-        }
-    }];
-}
-
 -(void) throwV4:(CGFloat)throwX time:(CGFloat)time distance:(CGFloat)distance invoked:(void(^)())invoked {
     //1. 扔出前复位 (并移除可能还在进行中的动画);
     [self reset4StartAnimation:throwX];

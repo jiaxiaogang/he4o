@@ -378,54 +378,15 @@
 /**
  *  MARK:--------------------扔木棒--------------------
  *  @version
+ *      xxxx.xx.xx: v1版本,分前后两段扔;
  *      2023.05.19: 迭代v2,改为用物理仿真碰撞检测,因为原来的二段式判断太简略且可能判错 (参考29096-问题2);
- *      2023.05.21: v2物理仿真: "飞行卡循环,木棒扔不全",所以切回v1 (参考29097);
- *      2023.05.21: 迭代v3,将动画改为count个step来执行 (参考29097-新方案);
+ *      2023.05.21: 废弃v2物理仿真: "飞行卡循环,木棒扔不全" (参考29097);
+ *      2023.05.21: 迭代v3,将动画改为count个step来执行 (后测count越多,一顿一顿的,改成v4) (参考29097-新方案);
  *      2023.05.21: 迭代v4,碰撞检测交由setFrame来完成,step动画仅执行一轮 (参考29098-方案3-步骤1 & 步骤4);
+ *      2023.06.02: 调慢扔的速度_因为v4,一次动画全跑完,有点太顺当,导致鸟经常来不急反应飞躲开,所以调慢,从5秒调整成8秒 (参考29109-测得1);
  */
 -(void) throwWood:(CGFloat)x invoked:(void(^)())invoked {
     [self throwWoodV4:x invoked:invoked];
-}
--(void) throwWoodV1:(CGFloat)x invoked:(void(^)())invoked{
-    //0. 鸟不在,则跳过;
-    if ([self birdOut]) {
-        invoked();
-        return;
-    }
-    
-    //1. 复位木棒
-    [self.woodView reset:false x:x];
-    
-    //2. 扔前木棒视觉帧
-    DemoLog(@"木棒扔前视觉");
-    [self.birdView see:self.woodView];
-    
-    //3. 预计撞到的时间 (撞需距离 / 总扔距离 * 总扔时间);
-    CGFloat allDistance = ScreenWidth - self.woodView.x;
-    CGFloat allTime = allDistance / ScreenWidth * ThrowTime;
-    CGFloat frontTime = MAX(((self.birdView.showMinX - self.woodView.showMaxX) / allDistance) * allTime, 0);
-    CGFloat backTime = allTime - frontTime;
-    CGFloat speed = allTime > 0 ? allDistance / allTime : 0;
-    
-    //4. 扔出
-    DemoLog(@"扔木棒 (frontTime:%f backTime:%f)",frontTime,backTime);
-    [self.woodView throw:x frontTime:frontTime backTime:backTime speed:speed hitBlock:^BOOL{
-        BOOL xHited = self.woodView.showMaxX >= self.birdView.showMinX;
-        BOOL YHit1 = self.birdView.showMinY < self.woodView.showMaxY;
-        BOOL YHit2 = self.birdView.showMaxY > self.woodView.showMinY;
-        BOOL YHited = YHit1 && YHit2;
-        if (Log4DemoWood) NSLog(@"1. 鸟左:%f>=木右:%f = %@",self.birdView.showMinX,self.woodView.showMaxX,xHited ? @"撞到":@"没撞");
-        if (Log4DemoWood) NSLog(@"2. 鸟上:%f<木下:%f = %@",self.birdView.showMinY,self.woodView.showMaxY,YHit1 ? @"撞到":@"没撞");
-        if (Log4DemoWood) NSLog(@"3. 鸟下:%f>木上:%f = %@",self.birdView.showMaxY,self.woodView.showMinY,YHit2 ? @"撞到":@"没撞");
-        if (xHited && YHited) {
-            //5. 触发疼痛感;
-            NSLog(@"---> success 撞到了");
-            [self.birdView hurt];
-            return true;
-        }
-        NSLog(@"---> failure 没撞到");
-        return false;
-    } invoked:invoked];
 }
 
 -(void) throwWoodV2:(CGFloat)x invoked:(void(^)())invoked{
@@ -474,51 +435,6 @@
     };
 }
 
--(void) throwWoodV3:(CGFloat)x invoked:(void(^)())invoked{
-    //0. 鸟不在,则跳过;
-    if ([self birdOut]) {
-        invoked();
-        return;
-    }
-    
-    //1. 复位木棒
-    [self.woodView reset4StartAnimation:x];
-    
-    //2. 扔前木棒视觉帧
-    DemoLog(@"木棒扔前视觉");
-    [self.birdView see:self.woodView];
-    
-    //3. 扔前数据准备
-    CGFloat allDistance = ScreenWidth - self.woodView.x; //动画扔多远;
-    CGFloat allTime = allDistance / ScreenWidth * ThrowTime; //动画总时长
-    __block BOOL hited = false;
-    __block CGRect lastWoodRect = self.woodView.showFrame, lastBirdRect = self.birdView.showFrame;
-    DemoLog(@"扔木棒 (时:%.2f 距:%.2f)",allTime,allDistance);
-    self.waitHiting = true;
-    
-    //4. 扔出
-    [self throwWoodV3_Step:allTime distance:allDistance aleardayCount:0 stepBlock:^{
-        //5. 每step执行完: 碰撞检测;
-        if (!hited) {
-            CGRect woodUnionRect = [MathUtils collectRectA:lastWoodRect rectB:self.woodView.showFrame];
-            CGRect birdUnionRect = [MathUtils collectRectA:lastBirdRect rectB:self.birdView.showFrame];
-            hited = !CGRectIsNull([MathUtils filterRectA:woodUnionRect rectB:birdUnionRect]);
-            NSLog(@"碰撞检测: wood:%.0f birdX:%.0f Y:%.0f %@",self.woodView.center.x,self.birdView.center.x,self.birdView.center.y,hited ? @"撞到了" : @"没撞到");
-            if (hited) {
-                [self.birdView hurt];
-            }
-            
-            //6. 记录上次rect;
-            lastWoodRect = self.woodView.showFrame;
-            lastBirdRect = self.birdView.showFrame;
-        }
-    } finishBlock:^{
-        invoked();
-        self.waitHiting = false;
-        [self.woodView reset4EndAnimation];
-    } stepCount:3];
-}
-
 -(void) throwWoodV4:(CGFloat)x invoked:(void(^)())invoked{
     //0. 鸟不在,则跳过;
     if ([self birdOut]) {
@@ -541,36 +457,6 @@
     
     //4. 扔出: step动画仅执行一轮 (参考29098-方案3-步骤4);
     [self.woodView throwV4:x time:allTime distance:allDistance invoked:invoked];
-}
-
-/**
- *  MARK:--------------------一步动画 (每次分10步)--------------------
- *  @param stepCount : 分几片执行动画;
- *  @param aleardayCount : 已执行了几片 (递归完成);
- *  @param stepBlock : 每step完成后回调 (一般用来碰撞检测);
- *  @param finishBlock : 全部动画完成;
- *  @version
- *      2023.05.21: 碰撞检测用frame完成,所以动画改为stepCount改为1 (参考29098-方案3-步骤4);
- */
--(void) throwWoodV3_Step:(CGFloat)time distance:(CGFloat)distance aleardayCount:(NSInteger)aleardayCount stepBlock:(void(^)())stepBlock finishBlock:(void(^)())finishBlock stepCount:(NSInteger)stepCount{
-    //1. 数据准备;
-    CGFloat stepTime = time / stepCount;
-    CGFloat stepDistance = distance / stepCount;
-    
-    //2. 动画全结束;
-    if (aleardayCount >= stepCount) {
-        finishBlock();
-        return;
-    }
-    aleardayCount++;
-    
-    //3. 未结束,执行单步动画;
-    [UIView animateWithDuration:stepTime delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
-        self.woodView.x += stepDistance;
-    } completion:^(BOOL finished) {
-        stepBlock();
-        [self throwWoodV3_Step:time distance:distance aleardayCount:aleardayCount stepBlock:stepBlock finishBlock:finishBlock stepCount:stepCount];
-    }];
 }
 
 - (IBAction)stopWoodBtnOnClick:(id)sender {
