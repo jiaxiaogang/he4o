@@ -24,7 +24,6 @@
 @property (strong, nonatomic) ShortMatchManager *shortMatchManager; //IN短时记忆 (输入数据管理器);
 @property (assign, nonatomic) long long operCount;                  //思维操作计数;
 @property (assign, nonatomic) long long loopId;                     //思维循环Id;
-@property (strong, nonatomic) TCDebug *tcDebug;                     //tcDebug工具;
 
 /**
  *  MARK:--------------------当前能量值--------------------

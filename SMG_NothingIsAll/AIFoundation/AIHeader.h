@@ -37,6 +37,8 @@
 #import "TCRethinkUtil.h"
 #import "NVViewUtil.h"
 #import "MathUtils.h"
+#import "XGDebug.h"
+#import "TCDebug.h"
 
 //任务池
 #import "ReasonDemandModel.h"

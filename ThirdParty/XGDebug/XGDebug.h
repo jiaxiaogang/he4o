@@ -9,9 +9,13 @@
 #import <Foundation/Foundation.h>
 
 /**
- *  MARK:--------------------性能分析--------------------
+ *  MARK:--------------------整体模块Debug性能调试器--------------------
  *  @use 使用说明: 每条显示的用时为,当前条到下条执行间的代码用时;
  *  @callers 用于调试性能,是TCDebug工具的底层核心;
+ *  @desc XGDebug主要关注整体性能的统计情况;
+ *  @常用: 1. 常用于观察每个代码块性能,对这个代码块的性能有个长时间的统计,并可打印;
+ *        2. 被用到DebugS()和DebugE(),用来长时间统计每个TC的执行性能情况;
+ *  @特性: 1. 长时间整体统计;   2. 在TC中有S有E两个夹着;
  */
 @class XGDebugModel;
 @interface XGDebug : NSObject

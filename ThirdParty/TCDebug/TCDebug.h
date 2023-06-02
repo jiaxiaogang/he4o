@@ -9,12 +9,16 @@
 #import <Foundation/Foundation.h>
 
 /**
- *  MARK:--------------------思维控制器调试器--------------------
+ *  MARK:--------------------单次模块Debug性能调试器--------------------
  *  @desc 1. 使用方法: TCDebug(@"R8");TCDebug(@"R9");
  *        2. 功能说明: 打出的日志,R8用时表示在R8到R9之间的代码用时;
- *  @desc 功能说明: 仅用于思维控制器TC模块的封装,底层还是XGDebug;
+ *  @常用 1. 常用于仅记录当前操作的统计情况;   2. 用于思维控制器中,将循环数,操作计数等记下来,相当于在XGDebug上封装了TC所需的一层附带数据 (但并没有由TCDebug调用XGDebug);
+ *  @特性 1. 仅当前模块;   2. 每个TC在开头调用,结尾不调用(所以可查看当前TC的所有数据,直至下个TC开始);
  */
 @interface TCDebug : NSObject
+
+@property (assign, nonatomic) NSInteger lastRCount;//硬盘读数 (因为HD读写往往与性能关系密切,所以记录下)
+@property (assign, nonatomic) NSInteger lastWCount;//硬盘写数 (因为HD读写往往与性能关系密切,所以记录下)
 
 -(void) updateOperCount:(NSString*)operater;
 -(void) updateLoopId;

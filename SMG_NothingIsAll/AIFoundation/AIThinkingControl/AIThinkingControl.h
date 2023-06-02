@@ -13,10 +13,11 @@
  *  1. 主要负责思维 (前额叶) 功能;
  *  2. 次要负责分发激活等 (丘脑) 功能;
  */
-@class ShortMatchManager,DemandManager;
+@class ShortMatchManager,DemandManager,TCDebug;
 @interface AIThinkingControl : NSObject
 
 +(AIThinkingControl*) shareInstance;
+@property (strong, nonatomic) TCDebug *tcDebug;
 
 /**
  *  MARK:--------------------思维模式--------------------

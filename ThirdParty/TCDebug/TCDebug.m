@@ -58,7 +58,7 @@
         //1. 打印计数日志;
         NSString *useTimeStr = @"";
         for (int i = 0; i < (int)(useTime / 100); i++) {useTimeStr = STRFORMAT(@"%@*",useTimeStr);}
-        NSLog(@"当前:%@ 操作计数更新:%lld 用时:%@ (%.0f) from:%@",operater,theTC.getOperCount,useTimeStr,useTime,self.lastOperater);
+        NSLog(@"更新:%@ 操作计数更新:%lld ==> 上个结算报告:%@ 用时:%@ (%.0f) (读:%ld 写:%ld)",operater,theTC.getOperCount,self.lastOperater,useTimeStr,useTime,self.lastRCount,self.lastWCount);
     }
     
     //功能2: ============ 判断卡顿 ============
@@ -102,6 +102,8 @@
     //5. 记录lastOperater
     self.lastOperTime = now;
     self.lastOperater = operater;
+    self.lastRCount = 0;
+    self.lastWCount = 0;
 }
 
 /**

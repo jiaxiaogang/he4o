@@ -387,6 +387,7 @@
             result = [cache objectForKey:fileName];
             fromType = @"Disk";
             DebugR();
+            theTC.tcDebug.lastRCount++;
         }
         
         //5. 存到redis (wedis/disk)
@@ -420,6 +421,7 @@
                 PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:saveRootPath];
                 [cache setObject:saveObj forKey:saveFileName];
                 DebugW();
+                theTC.tcDebug.lastWCount++;
             }
             if (dic.count > 0) {
                 dispatch_async(dispatch_get_main_queue(), ^{
