@@ -13,6 +13,8 @@
 /**
  *  MARK:--------------------获取V重要性字典 (参考29105 & 29106)--------------------
  *  @result 返回结果为重要性字典<K:稀疏码标识,V:重要性值> & 做了最小值1的缩放处理 (参考29107-步骤1);
+ *  @version
+ *      2023.06.02: 优化vInfo在循环中,导致的性能问题,把vInfo移到尽可以循环外,然后传进去复用后性能ok (参考29109-测得2);
  */
 +(NSDictionary*) getVImportanceDic:(AIShortMatchModel*)inModel {
     //1. 数据准备;
@@ -46,7 +48,6 @@
         if (!DICISOK(xyDic)) continue;
         
         //10. 均匀取样100份,求出平均值 (参考29106-解均值);
-        [theTC.tcDebug updateOperCount:STRFORMAT(@"start %@",protoV_p.dataSource) min:0];
         double sumTemplateY = 0;//所有样本总Y值;
         NSMutableArray *quXianYArr = [[NSMutableArray alloc] init];
         for (int i = 0; i < 100; i++) {
@@ -57,7 +58,6 @@
             [quXianYArr addObject:@(curY)];
         }
         double averageY = sumTemplateY / 100;
-        [theTC.tcDebug updateOperCount:STRFORMAT(@"end %@",protoV_p.dataSource) min:0];
         
         //11. 根据protoV的值,求出protoV的Y轴强度值;
         double protoV = NUMTOOK([AINetIndex getData:protoV_p]).doubleValue;
