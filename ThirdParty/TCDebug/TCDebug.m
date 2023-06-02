@@ -23,9 +23,6 @@
 //判断为卡状态的阈值 (单位:ms)
 #define DebugKaleTime 1600
 
-//TCOper操作剔除最小数的阈值 (单位:ms)
-#define DebugOperMinTime 200
-
 @interface TCDebug()
 
 //最后几次调试中操作用时记录;
@@ -39,21 +36,24 @@
 @implementation TCDebug
 
 /**
- *  MARK:--------------------调试TC的操作--------------------
+ *  MARK:--------------------代码块报告--------------------
  *  @desc 说明:
- *          1. 调试用时: 大于DebugOperMinTime(200ms)时,才算达到"分析表"入门资格;
+ *          1. 调试用时: 大于min时,才算达到"分析表"入门资格;
  *          2. 调试卡顿:
  *              a. 记录当前正在调试的DebugingTC最后DebugLastOperesNum(10条);
  *              b. 平均用时超过DebugKaleTime(800ms)时,则判定为卡顿状态;
  *              c. 判断卡顿时,转为植物状态,并暂停强化训练;
- *  @use 使用说明: 用于每个思维TC模块开始时调用;
+ *  @use 使用说明:
+ *          1. 调试TC的操作 (用于每个思维TC模块开始时调用);
+ *          2. 调试代码块的操作 (每次代码块执行的性能报告);
+ *  @param min : Oper操作剔除最小数的阈值 (单位:ms) (超过这个值时会打印,不超过不打印);
  */
--(void) updateOperCount:(NSString*)operater {
+-(void) updateOperCount:(NSString*)operater min:(NSInteger)min {
     
     //功能1: ============ 调试用时 ============
     NSTimeInterval now = [NSDate new].timeIntervalSince1970 * 1000;
     NSTimeInterval useTime = now - self.lastOperTime;
-    BOOL thanMin = useTime > DebugOperMinTime;
+    BOOL thanMin = useTime > min;
     if (self.lastOperTime > 0 && thanMin) {
         //1. 打印计数日志;
         NSString *useTimeStr = @"";

@@ -250,7 +250,7 @@ static AIThinkingControl *_instance;
  */
 -(void) updateOperCount:(NSString*)operater{
     self.operCount++;
-    [self.tcDebug updateOperCount:operater];
+    [self.tcDebug updateOperCount:operater min:200];
 }
 
 -(long long) getOperCount{
