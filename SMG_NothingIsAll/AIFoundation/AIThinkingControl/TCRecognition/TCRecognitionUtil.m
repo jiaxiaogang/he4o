@@ -46,20 +46,22 @@
         if (!DICISOK(xyDic)) continue;
         
         //10. 均匀取样100份,求出平均值 (参考29106-解均值);
+        [theTC.tcDebug updateOperCount:STRFORMAT(@"start %@",protoV_p.dataSource) min:0];
         double sumTemplateY = 0;//所有样本总Y值;
         NSMutableArray *quXianYArr = [[NSMutableArray alloc] init];
         for (int i = 0; i < 100; i++) {
             double itemSpan = info.span / 100;
             double curX = (i + 0.5f) * itemSpan;
-            CGFloat curY = [self getY:xyDic checkX:curX at:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut];
+            CGFloat curY = [self getY:xyDic checkX:curX at:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut vInfo:info];
             sumTemplateY += curY;
             [quXianYArr addObject:@(curY)];
         }
         double averageY = sumTemplateY / 100;
+        [theTC.tcDebug updateOperCount:STRFORMAT(@"end %@",protoV_p.dataSource) min:0];
         
         //11. 根据protoV的值,求出protoV的Y轴强度值;
         double protoV = NUMTOOK([AINetIndex getData:protoV_p]).doubleValue;
-        CGFloat protoY = [self getY:xyDic checkX:protoV at:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut];
+        CGFloat protoY = [self getY:xyDic checkX:protoV at:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut vInfo:info];
         
         //12. debugLog
         //for (AIPort *conFoPort in goodPorts4) NSLog(@"\t\t > conFo: %@ 强度%ld",Pit2FStr(conFoPort.target_p),conFoPort.strong.value);
@@ -167,11 +169,12 @@
 
 /**
  *  MARK:--------------------根据xyDic和x值计算出y值 (参考29106-解曲线)--------------------
+ *  @param vInfo 为性能好,提前取好valueInfo传过来复用;
  *  @version
  *      2023.05.30: 增强竞争: 将辐射由50%改为33%,环境温度由30%改为10% (参考29106-todo7.1);
  *      2023.05.30: 增强竞争: 加上可视化曲线后,边调整边看曲线,调整为辐射50%,环境温度5% (后再激烈点,调成3%);
  */
-+(CGFloat) getY:(NSDictionary*)xyDic checkX:(double)checkX at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut {
++(CGFloat) getY:(NSDictionary*)xyDic checkX:(double)checkX at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut vInfo:(AIValueInfo*)vInfo{
     CGFloat resultY = 0;
     for (NSNumber *key in xyDic.allKeys) {
         //1. 数据准备;
@@ -179,11 +182,10 @@
         NSInteger y = NUMTOOK([xyDic objectForKey:key]).integerValue;
         
         //2. 已冷却时长;
-        AIValueInfo *info = [AINetIndex getValueInfo:at ds:ds isOut:isOut];
         double delta = [AINetIndexUtils deltaWithValueA:templateX valueB:checkX at:at ds:ds isOut:isOut];
         
         //3. span的50%时冷却完成,环境温度30% (参考29106-解曲线);
-        CGFloat cooledValue = [MathUtils getCooledValue:info.span / 2 pastTime:delta finishValue:0.03f];
+        CGFloat cooledValue = [MathUtils getCooledValue:vInfo.span / 2 pastTime:delta finishValue:0.03f];
         
         //4. 将checkX的强度值累计起来,用于返回;
         resultY += y * cooledValue;

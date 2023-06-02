@@ -76,9 +76,8 @@
     IFTitleLog(@"识别二次过滤",@"\nfrom protoFo:%@",Fo2FStr(inModel.protoFo));
     BOOL debugMode = false;
     NSDictionary *importanceDic = [TCRecognitionUtil getVImportanceDic:inModel];
-    [theTC.tcDebug updateOperCount:@"temptest2" min:0];//701ms
     
-    //2. 根据重要性加权计算二次过滤匹配度 (参考29107-步骤2);
+    //2. 根据重要性加权计算二次过滤匹配度 (参考29107-步骤2) (性能: 耗时42ms);
     NSMutableDictionary *secondMatchValueDic = [[NSMutableDictionary alloc] init];
     for (AIMatchAlgModel *item in inModel.matchAlgs) {
         double secondMatchValue = 1;
@@ -96,7 +95,6 @@
         }
         [secondMatchValueDic setObject:@(secondMatchValue) forKey:@(matchAlg.pId)];
     }
-    [theTC.tcDebug updateOperCount:@"temptest3" min:0];//42ms
     
     //4. 概念识别的二次排序过滤 (保留60% & 至少保留4条) (参考29107-todo1);
     NSArray *sort = [SMGUtils sortBig2Small:inModel.matchAlgs compareBlock:^double(AIMatchAlgModel *obj) {
