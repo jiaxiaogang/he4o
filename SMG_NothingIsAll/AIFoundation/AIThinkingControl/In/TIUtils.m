@@ -155,6 +155,7 @@
  *      2023.02.25 - 集成概念识别过滤器 (参考28111-todo1) & 取消识别后过滤20% (参考28111-todo2);
  *      2023.04.09 - 仅识别似层 (参考29064-todo1);
  *      2023.06.01 - 将识别结果拆分成pAlgs和rAlgs两个部分 (参考29108-2.1);
+ *      2023.06.02 - 性能优化_复用vInfo (在识别二次过滤器中测得,这个vInfo在循环中时性能影响挺大的);
  */
 +(void) partMatching_Alg:(AIAlgNodeBase*)protoAlg except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel{
     //1. 数据准备;
@@ -170,10 +171,11 @@
         NSArray *near_ps = [self TIR_Value:item_p];
         
         //4. 每个near_p做两件事:
+        AIValueInfo *vInfo = [AINetIndex getValueInfo:item_p.algsType ds:item_p.dataSource isOut:item_p.isOut];
         for (AIKVPointer *near_p in near_ps) {
             
             //5. 第1_计算出nearV (参考25082-公式1);
-            double nearV = [AIAnalyst compareCansetValue:near_p protoValue:item_p];
+            double nearV = [AIAnalyst compareCansetValue:near_p protoValue:item_p vInfo:vInfo];
             
             //6. 第2_取near_p的refPorts (参考25083-1);
             NSArray *refPorts = [SMGUtils filterPorts_Normal:[AINetUtils refPorts_All4Value:near_p]];

@@ -169,7 +169,7 @@
 
 /**
  *  MARK:--------------------根据xyDic和x值计算出y值 (参考29106-解曲线)--------------------
- *  @param vInfo 为性能好,提前取好valueInfo传过来复用;
+ *  @param vInfo notnull 为性能好,提前取好valueInfo传过来复用;
  *  @version
  *      2023.05.30: 增强竞争: 将辐射由50%改为33%,环境温度由30%改为10% (参考29106-todo7.1);
  *      2023.05.30: 增强竞争: 加上可视化曲线后,边调整边看曲线,调整为辐射50%,环境温度5% (后再激烈点,调成3%);
@@ -182,7 +182,7 @@
         NSInteger y = NUMTOOK([xyDic objectForKey:key]).integerValue;
         
         //2. 已冷却时长;
-        double delta = [AINetIndexUtils deltaWithValueA:templateX valueB:checkX at:at ds:ds isOut:isOut];
+        double delta = [AINetIndexUtils deltaWithValueA:templateX valueB:checkX at:at ds:ds isOut:isOut vInfo:vInfo];
         
         //3. span的50%时冷却完成,环境温度30% (参考29106-解曲线);
         CGFloat cooledValue = [MathUtils getCooledValue:vInfo.span / 2 pastTime:delta finishValue:0.03f];

@@ -87,7 +87,7 @@
                 if ([protoV_p.identifier isEqualToString:matchV_p.identifier]) {
                     
                     //3. 二次过滤V相近度 = 原V相近度 的 重要性次方 (参考29107-步骤2);
-                    CGFloat nearV = [AIAnalyst compareCansetValue:matchV_p protoValue:protoV_p];
+                    CGFloat nearV = [AIAnalyst compareCansetValue:matchV_p protoValue:protoV_p vInfo:nil];
                     double importance = NUMTOOK_DV([importanceDic objectForKey:protoV_p.identifier],1).doubleValue;
                     secondMatchValue *= powf(nearV, importance);
                 }

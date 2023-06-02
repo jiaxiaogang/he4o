@@ -75,7 +75,7 @@
     if ([self.pointer.algsType isEqualToString:otherMv_p.algsType]) {
         AICMVNodeBase *selfMv = (AICMVNodeBase*)self;
         AICMVNodeBase *otherMv = [SMGUtils searchNode:otherMv_p];
-        return [AIAnalyst compareCansetValue:selfMv.urgentTo_p protoValue:otherMv.urgentTo_p];
+        return [AIAnalyst compareCansetValue:selfMv.urgentTo_p protoValue:otherMv.urgentTo_p vInfo:nil];
     }
     return 0;
 }

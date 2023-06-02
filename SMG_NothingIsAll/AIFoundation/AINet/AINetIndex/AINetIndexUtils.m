@@ -134,15 +134,15 @@
 
 /**
  *  MARK:--------------------取两个V差值--------------------
+ *  @param vInfo notnull 为性能好,提前取好valueInfo传过来复用;
  */
-+(CGFloat) deltaWithValueA:(double)valueA valueB:(double)valueB at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut {
++(CGFloat) deltaWithValueA:(double)valueA valueB:(double)valueB at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut vInfo:(AIValueInfo*)vInfo {
     //1. 计算两个V差值;
-    AIValueInfo *info = [AINetIndex getValueInfo:at ds:ds isOut:isOut];
     double delta = fabs(valueA - valueB);
     
     //2. 如果是循环V时,正反取小;
-    if (info.loop && delta > (info.span / 2)) {
-        delta = info.max - delta;
+    if (vInfo.loop && delta > (vInfo.span / 2)) {
+        delta = vInfo.max - delta;
     }
     return delta;
 }
