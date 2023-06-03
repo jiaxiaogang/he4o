@@ -24,17 +24,19 @@
  *      2023.02.25: 返回limit改成80%条目 (参考28108-todo1);
  *      2023.03.16: 支持首尾循环的情况 (参考28174-todo4);
  *      2023.03.16: 修复首尾差值算错的BUG (因为测得360左右度和180左右度相近度是0.9以上);
+ *      2023.06.03: 性能优化_复用cacheDataDic到循环外 (参考29109-测得3);
  *  @result 返回当前码识别的相近序列;
  */
 +(NSArray*) TIR_Value:(AIKVPointer*)protoV_p{
     //1. 取索引序列 & 当前稀疏码值;
+    NSDictionary *cacheDataDic = [AINetIndexUtils searchDataDic:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut];
     NSArray *index_ps = [AINetIndex getIndex_ps:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut];
     double maskData = [NUMTOOK([AINetIndex getData:protoV_p]) doubleValue];
     double max = [CortexAlgorithmsUtil maxOfLoopValue:protoV_p.algsType ds:protoV_p.dataSource];
     
     //2. 按照相近度排序;
     NSArray *near_ps = [SMGUtils sortSmall2Big:index_ps compareBlock:^double(AIKVPointer *obj) {
-        double objData = [NUMTOOK([AINetIndex getData:obj]) doubleValue];
+        double objData = [NUMTOOK([AINetIndex getData:obj fromDataDic:cacheDataDic]) doubleValue];
         double nearDelta = fabs(objData - maskData);
         
         //2. 循环时: 计算nearV相近度算法 (参考28174-todo4);
@@ -156,6 +158,7 @@
  *      2023.04.09 - 仅识别似层 (参考29064-todo1);
  *      2023.06.01 - 将识别结果拆分成pAlgs和rAlgs两个部分 (参考29108-2.1);
  *      2023.06.02 - 性能优化_复用vInfo (在识别二次过滤器中测得,这个vInfo在循环中时性能影响挺大的);
+ *      2023.06.03 - 性能优化_复用cacheDataDic到循环外 & cacheProtoData到循环外 & proto收集防重用dic (参考29109-测得3);
  */
 +(void) partMatching_Alg:(AIAlgNodeBase*)protoAlg except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel{
     //0. 数据准备;
@@ -168,15 +171,15 @@
     //2. 广入: 对每个元素,分别取索引序列 (参考25083-1);
     for (AIKVPointer *item_p in protoAlg.content_ps) {
         
-        AddDebugCodeBlock_Key(@"a", @"2");//计数:4 均耗:73.60 = 总耗:294 读:0 写:0
+        //3. 性能优化: 加载循环外缓存数据;
+        NSDictionary *cacheDataDic = [AINetIndexUtils searchDataDic:item_p.algsType ds:item_p.dataSource isOut:item_p.isOut];
+        AIValueInfo *vInfo = [AINetIndex getValueInfo:item_p.algsType ds:item_p.dataSource isOut:item_p.isOut];
+        double cacheProtoData = [NUMTOOK([AINetIndex getData:item_p fromDataDic:cacheDataDic]) doubleValue];
+        
         //3. 取相近度序列 (按相近程度排序);
         NSArray *near_ps = [self TIR_Value:item_p];
-        AddDebugCodeBlock_Key(@"a", @"3");
         
         //4. 每个near_p做两件事:
-        AIValueInfo *vInfo = [AINetIndex getValueInfo:item_p.algsType ds:item_p.dataSource isOut:item_p.isOut];
-        double cacheProtoData = [NUMTOOK([AINetIndex getData:item_p]) doubleValue];
-        NSDictionary *cacheDataDic = [AINetIndexUtils searchDataDic:item_p.algsType ds:item_p.dataSource isOut:item_p.isOut];
         for (AIKVPointer *near_p in near_ps) {
             
             //5. 第1_计算出nearV (参考25082-公式1) (性能:400次计算,耗100ms很正常);
@@ -240,9 +243,6 @@
     for (AIMatchAlgModel *item in allSortAlgs) {
         NSLog(@"-->>>(%d) 全含item: %@   \t相近度 => %.2f (count:%d)",item.sumRefStrong,Pit2FStr(item.matchAlg),item.matchValue,item.matchCount);
     }
-    AddDebugCodeBlock_Key(@"a", @"22");
-    PrintDebugCodeBlock_Key(@"a");
-    NSLog(@"");
 }
 
 /**
