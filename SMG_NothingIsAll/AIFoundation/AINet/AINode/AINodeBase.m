@@ -30,7 +30,7 @@
 //MARK:                     < publicMethod >
 //MARK:===============================================================
 -(NSInteger) count{
-    return self.content_ps.count;
+    return self.contentPorts.count;
 }
 
 -(NSMutableArray *)content_ps{

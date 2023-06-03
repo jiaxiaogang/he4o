@@ -37,6 +37,7 @@
  *  MARK:--------------------取微信息值--------------------
  */
 +(NSNumber*) getData:(AIKVPointer*)value_p;
++(NSNumber*) getData:(AIKVPointer*)value_p fromDataDic:(NSDictionary*)dataDic;
 
 /**
  *  MARK:--------------------获取索引序列--------------------

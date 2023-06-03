@@ -852,7 +852,11 @@
 }
 
 +(id) filterSingleFromArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid {
-    return ARR_INDEX([SMGUtils filterArr:arr checkValid:checkValid limit:1], 0);
+    arr = ARRTOOK(arr);
+    for (id item in arr) {
+        if (checkValid && checkValid(item)) return item;
+    }
+    return nil;
 }
 
 /**

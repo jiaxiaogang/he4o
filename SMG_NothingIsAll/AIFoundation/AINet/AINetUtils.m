@@ -491,12 +491,8 @@
 }
 
 +(NSArray*) refPorts_All4Value:(AIKVPointer*)value_p {
-    NSMutableArray *allPorts = [[NSMutableArray alloc] init];
-    if (value_p) {
-        //1. 收集db的;
-        [allPorts addObjectsFromArray:[SMGUtils searchObjectForFilePath:value_p.filePath fileName:kFNRefPorts time:cRTReference]];
-    }
-    return allPorts;
+    if (!value_p) return nil;
+    return [SMGUtils searchObjectForFilePath:value_p.filePath fileName:kFNRefPorts time:cRTReference];
 }
 
 /**

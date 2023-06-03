@@ -61,8 +61,15 @@
     return resultPointer;
 }
 
+/**
+ *  MARK:--------------------获取稀疏码值--------------------
+ *  _param fromDataDic 为性能好,可提前缓存好dataDic,传入进来便于复用;
+ */
 +(NSNumber*) getData:(AIKVPointer*)value_p{
-    NSDictionary *dataDic = [AINetIndexUtils searchDataDic:value_p.algsType ds:value_p.dataSource isOut:value_p.isOut];
+    return [self getData:value_p fromDataDic:nil];
+}
++(NSNumber*) getData:(AIKVPointer*)value_p fromDataDic:(NSDictionary*)dataDic {
+    if (!DICISOK(dataDic)) dataDic = [AINetIndexUtils searchDataDic:value_p.algsType ds:value_p.dataSource isOut:value_p.isOut];
     return [dataDic objectForKey:STRFORMAT(@"%ld",(long)value_p.pointerId)];
 }
 
