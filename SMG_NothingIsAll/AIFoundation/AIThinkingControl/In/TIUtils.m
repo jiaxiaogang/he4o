@@ -164,22 +164,30 @@
     NSMutableArray *protoPAlgs = [[NSMutableArray alloc] init];    //List<AIMatchAlgModel>;
     NSMutableArray *protoRAlgs = [[NSMutableArray alloc] init];    //List<AIMatchAlgModel>;
     
+    AddDebugCodeBlock_Key(@"a", @"1");
     //2. 广入: 对每个元素,分别取索引序列 (参考25083-1);
     for (AIKVPointer *item_p in protoAlg.content_ps) {
         
+        AddDebugCodeBlock_Key(@"a", @"2");//计数:4 均耗:73.60 = 总耗:294 读:0 写:0
         //3. 取相近度序列 (按相近程度排序);
         NSArray *near_ps = [self TIR_Value:item_p];
+        AddDebugCodeBlock_Key(@"a", @"3");
         
         //4. 每个near_p做两件事:
         AIValueInfo *vInfo = [AINetIndex getValueInfo:item_p.algsType ds:item_p.dataSource isOut:item_p.isOut];
+        AddDebugCodeBlock_Key(@"a", @"4");
         for (AIKVPointer *near_p in near_ps) {
+            AddDebugCodeBlock_Key(@"a", @"5");//计数:270 均耗:0.25 = 总耗:68 读:0 写:0
             
             //5. 第1_计算出nearV (参考25082-公式1);
             double nearV = [AIAnalyst compareCansetValue:near_p protoValue:item_p vInfo:vInfo];
+            AddDebugCodeBlock_Key(@"a", @"6");//计数:270 均耗:0.89 = 总耗:241 读:266 写:0
             
             //6. 第2_取near_p的refPorts (参考25083-1);
             NSArray *refPorts = [SMGUtils filterPorts_Normal:[AINetUtils refPorts_All4Value:near_p]];
+            AddDebugCodeBlock_Key(@"a", @"7");
             refPorts = ARR_SUB(refPorts, 0, cPartMatchingCheckRefPortsLimit_Alg(refPorts.count));
+            AddDebugCodeBlock_Key(@"a", @"8");
             
             //6. 第3_仅保留有mv指向的部分 (参考26022-3);
             //refPorts = [SMGUtils filterArr:refPorts checkValid:^BOOL(AIPort *item) {
@@ -189,15 +197,17 @@
             
             //7. 每个refPort做两件事:
             for (AIPort *refPort in refPorts) {
-                
+                AddDebugCodeBlock_Key(@"a", @"9");
                 //8. 不应期 -> 不可激活;
                 if ([SMGUtils containsSub_p:refPort.target_p parent_ps:except_ps]) continue;
-                
+                AddDebugCodeBlock_Key(@"a", @"10");
                 //9. 找model (无则新建);
                 NSArray *collectPRAlgs = [SMGUtils collectArrA:protoPAlgs arrB:protoRAlgs];
+                AddDebugCodeBlock_Key(@"a", @"11");//计数:844 均耗:0.10 = 总耗:86 读:0 写:0
                 AIMatchAlgModel *model = [SMGUtils filterSingleFromArr:collectPRAlgs checkValid:^BOOL(AIMatchAlgModel *item) {
                     return [item.matchAlg isEqual:refPort.target_p];
                 }];
+                AddDebugCodeBlock_Key(@"a", @"12");
                 if (!model) {
                     model = [[AIMatchAlgModel alloc] init];
                     //9. 收集;
@@ -207,6 +217,7 @@
                         [protoRAlgs addObject:model];
                     }
                 }
+                AddDebugCodeBlock_Key(@"a", @"13");
                 model.matchAlg = refPort.target_p;
                 
                 //10. 统计匹配度matchCount & 相近度<1个数nearCount & 相近度sumNear & 引用强度sumStrong
@@ -214,33 +225,40 @@
                 model.nearCount++;
                 model.sumNear *= nearV;
                 model.sumRefStrong += (int)refPort.strong.value;
+                AddDebugCodeBlock_Key(@"a", @"14");
             }
+            AddDebugCodeBlock_Key(@"a", @"15");
         }
+        AddDebugCodeBlock_Key(@"a", @"16");
     }
+    AddDebugCodeBlock_Key(@"a", @"17");//计数:1 均耗:599.72 = 总耗:600 读:390 写:0
     
     //12. 全含判断: 从大到小,依次取到对应的node和matchingCount (注: 支持相近后,应该全是全含了,参考25084-1);
     NSArray *validPAlgs = [self TIR_Alg_CheckFoValidMatchV2:protoPAlgs protoAlgCount:protoAlg.count];
     NSArray *validRAlgs = [self TIR_Alg_CheckFoValidMatchV2:protoRAlgs protoAlgCount:protoAlg.count];
-    
+    AddDebugCodeBlock_Key(@"a", @"18");
     //13. 识别过滤器 (参考28109-todo2);
     NSArray *filterPAlgs = [AIFilter recognitionAlgFilter:validPAlgs radio:0.5f];
     NSArray *filterRAlgs = [AIFilter recognitionAlgFilter:validRAlgs radio:0.16f];
-    
+    AddDebugCodeBlock_Key(@"a", @"19");
     //14. 识别竞争机制 (参考2722d-方案2);
     //14. 按nearA排序 (参考25083-2&公式2 & 25084-1);
     NSArray *sortPAlgs = [AIRank recognitionAlgRank:filterPAlgs];
     NSArray *sortRAlgs = [AIRank recognitionAlgRank:filterRAlgs];
-    
+    AddDebugCodeBlock_Key(@"a", @"20");
     //15. 未将全含返回,则返回最相似 (2020.10.22: 全含返回,也要返回seemAlg) (2022.01.15: 支持相近匹配后,全是全含没局部了);
     //15. 合并后赋值给matchAlgs (参考29108-2.2);
     NSArray *allSortAlgs = [SMGUtils collectArrA:sortPAlgs arrB:sortRAlgs];
     inModel.matchAlgs = allSortAlgs;
-    
+    AddDebugCodeBlock_Key(@"a", @"21");
     //16. debugLog
     NSLog(@"\n概念识别结果 (%ld条) protoAlg:%@",allSortAlgs.count,Alg2FStr(protoAlg));
     for (AIMatchAlgModel *item in allSortAlgs) {
         NSLog(@"-->>>(%d) 全含item: %@   \t相近度 => %.2f (count:%d)",item.sumRefStrong,Pit2FStr(item.matchAlg),item.matchValue,item.matchCount);
     }
+    AddDebugCodeBlock_Key(@"a", @"22");
+    PrintDebugCodeBlock_Key(@"a");
+    NSLog(@"");
 }
 
 /**
