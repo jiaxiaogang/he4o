@@ -69,6 +69,7 @@
  *  MARK:--------------------识别二次过滤器--------------------
  *  @version
  *      2023.05.31: 回测概念识别二次过滤ok,就是保留60%有点多,调成40%;
+ *      2023.06.04: BUG_修复时序过滤条数有不确定性 (参考29109-测得4);
  */
 +(void) secondRecognitionFilter:(AIShortMatchModel*)inModel {
     //1. 获取V重要性字典;
@@ -101,19 +102,24 @@
         return NUMTOOK([secondMatchValueDic objectForKey:@(obj.matchAlg.pointerId)]).doubleValue;
     }];
     if (debugMode) for (AIMatchAlgModel *item in sort) NSLog(@"看不重要的被排到了后面日志: %ld 现匹配度:%.2f (原%.2f) %@",[sort indexOfObject:item],NUMTOOK([secondMatchValueDic objectForKey:@(item.matchAlg.pointerId)]).doubleValue,item.matchValue,Pit2FStr(item.matchAlg));
-    NSArray *filterAlgs = ARR_SUB(sort, 0, MAX(sort.count * 0.6f, 4));
     
-    //5. 时序识别的二次过滤,用概念识别过滤结果来过滤 (参考29107-todo2);
+    //5. 保留时序30% & 至少4条;
     [AITest test28:inModel];
-    NSArray *filterFos = [SMGUtils filterArr:inModel.matchPFos checkValid:^BOOL(AIMatchFoModel *item) {
-        AIFoNodeBase *pFo = [SMGUtils searchNode:item.matchFo];
-        AIKVPointer *cutIndexAlg_p = ARR_INDEX(pFo.content_ps, item.cutIndex);//取刚发生的alg;
+    NSInteger foLimit = MAX(4, inModel.matchPFos.count * 0.3f);
+    NSMutableArray *filterAlgs = [[NSMutableArray alloc] init];
+    NSMutableArray *filterFos = [[NSMutableArray alloc] init];
+    for (AIMatchAlgModel *aItem in sort) {
+        //6. 将当前aItem收集;
+        [filterAlgs addObject:aItem];
         
-        //6. 根据filterAlgs来过滤pFos;
-        return [SMGUtils filterSingleFromArr:filterAlgs checkValid:^BOOL(AIMatchAlgModel *obj) {
-            return [obj.matchAlg isEqual:cutIndexAlg_p];
-        }];
-    }];
+        //7. 并收集aItem它对应的pFos (收集够foLimit条时break) (参考29107-todo2 & 29109-测得4);
+        [filterFos addObjectsFromArray:[SMGUtils filterArr:inModel.matchPFos checkValid:^BOOL(AIMatchFoModel *item) {
+            AIFoNodeBase *pFo = [SMGUtils searchNode:item.matchFo];
+            AIKVPointer *cutIndexAlg_p = ARR_INDEX(pFo.content_ps, item.cutIndex);//取刚发生的alg;
+            return [cutIndexAlg_p isEqual:aItem.matchAlg];
+        }]];
+        if (filterFos.count >= foLimit) break;
+    }
     
     //7. debugLog
     NSLog(@"概念二次过滤后条数: 原%ld 剩%ld >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",inModel.matchAlgs.count,filterAlgs.count);
@@ -123,7 +129,7 @@
     
     //8. 存下结果;
     inModel.matchAlgs = filterAlgs;
-    inModel.matchPFos = [[NSMutableArray alloc] initWithArray:filterFos];
+    inModel.matchPFos = filterFos;
 }
 
 /**
