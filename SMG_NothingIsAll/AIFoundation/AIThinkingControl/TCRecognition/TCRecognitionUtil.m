@@ -19,7 +19,7 @@
 +(NSDictionary*) getVImportanceDic:(AIShortMatchModel*)inModel {
     //1. 数据准备;
     NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
-    BOOL debugMode = true;
+    BOOL debugMode = false;
     NSMutableDictionary *cutIndexOfConFo = [[NSMutableDictionary alloc] init]; //收集所有同级fo的cutIndex
     
     //2. 逐个收集pFos的同级(抽象的具象)->抽象部分 (参考29105-方案改);
@@ -38,6 +38,7 @@
     NSArray *goodPorts4 = ARR_SUB(sortOfStrong3, 0, sortOfStrong3.count * 0.2f);
     
     //7. 分别根据protoV找到在goodPorts4中最相近的那一条,最接近那条的强度即算做protoV的强度 (参考29105-todo3-方案4);
+    NSMutableString *zunjieLog = [[NSMutableString alloc] init];
     for (AIKVPointer *protoV_p in inModel.protoAlg.content_ps) {
         //8. 节约性能: 全程只有一个固定值的打酱油码,不做处理 (参考29105-todo4);
         AIValueInfo *info = [AINetIndex getValueInfo:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut];
@@ -86,9 +87,11 @@
         
         //13. 算出当前码的重要性 (参考29105-todo5);
         double vImportance = protoY / averageY;
-        NSLog(@"------------------------------------------ %@ 重要性:%.3f ------------------------------------------\n",Pit2FStr(protoV_p),vImportance);
+        if (debugMode) NSLog(@"------------------------------------------ %@ 重要性:%.3f ------------------------------------------\n",Pit2FStr(protoV_p),vImportance);
+        [zunjieLog appendFormat:@"%@ = %.3f; ",Pit2FStr(protoV_p),vImportance];
         [result setObject:@(vImportance) forKey:protoV_p.identifier];
     }
+    NSLog(@"重要性结果: %@",zunjieLog);
     
     //14. 缩放处理并返回 (参考29107-步骤1);
     return [self scala4ImportanceDic:result];
@@ -185,7 +188,7 @@
         double delta = [AINetIndexUtils deltaWithValueA:templateX valueB:checkX at:at ds:ds isOut:isOut vInfo:vInfo];
         
         //3. span的50%时冷却完成,环境温度30% (参考29106-解曲线);
-        CGFloat cooledValue = [MathUtils getCooledValue:vInfo.span / 2 pastTime:delta finishValue:0.03f];
+        CGFloat cooledValue = [MathUtils getCooledValue:vInfo.span / 4 pastTime:delta finishValue:0.005f];
         
         //4. 将checkX的强度值累计起来,用于返回;
         resultY += y * cooledValue;

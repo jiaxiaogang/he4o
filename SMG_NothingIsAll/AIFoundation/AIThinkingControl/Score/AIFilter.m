@@ -105,7 +105,7 @@
     
     //5. 保留时序30% & 至少4条;
     [AITest test28:inModel];
-    NSInteger foLimit = MAX(4, inModel.matchPFos.count * 0.3f);
+    NSInteger foLimit = MAX(4, inModel.matchPFos.count * 0.2f);
     NSMutableArray *filterAlgs = [[NSMutableArray alloc] init];
     NSMutableArray *filterFos = [[NSMutableArray alloc] init];
     for (AIMatchAlgModel *aItem in sort) {
