@@ -56,7 +56,6 @@
 
 /**
  *  MARK:--------------------扔出--------------------
- *  @param hitBlock : 碰撞检测 (碰撞时刻检测一次,如果没撞到到终点后再检测一次) notnull
  *  @version
  *      2021.09.08: 支持两段动画,并在中段和尾段分别进行碰撞检测;
  *      2022.04.27: 调慢木棒动画 (参考25222);
@@ -68,6 +67,7 @@
     [self reset4StartAnimation:throwX];
     
     //2. 执行动画;
+    [self.delegate woodView_FlyAnimationBegin:time];
     [UIView animateWithDuration:time delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
         self.x += distance;
     } completion:^(BOOL finished) {

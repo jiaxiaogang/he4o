@@ -17,6 +17,7 @@
 -(UIDynamicAnimator*) birdView_GetDyAnimator;
 -(void) birdView_SetFramed;
 -(void) birdView_FlyAnimationFinish;
+-(void) birdView_FlyAnimationBegin:(CGFloat)aniDuration;
 
 @end
 

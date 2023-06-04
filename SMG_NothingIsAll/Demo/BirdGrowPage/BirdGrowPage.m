@@ -497,12 +497,17 @@
     return self.dyAnimator;
 }
 
+//2023.06.04: 废弃_将setFramed换成动画开始,二者是同时触发的,但setFramed有两个问题,1是无法传过来动画时间,2是它会触发两次;
 -(void)birdView_SetFramed {
-    [self runCheckHit];
+    //[self runCheckHit:@"鸟位置变化"];
 }
 
 -(void)birdView_FlyAnimationFinish {
-    [self runCheckHit];//动画执行完后,要调用下碰撞检测,因为UIView动画后不会立马更新frame (参考29098-追BUG1);
+    [self runCheckHit:0 hiterDesc:@"鸟飞结束"];//动画执行完后,要调用下碰撞检测,因为UIView动画后不会立马更新frame (参考29098-追BUG1);
+}
+
+-(void) birdView_FlyAnimationBegin:(CGFloat)aniDuration {
+    [self runCheckHit:aniDuration hiterDesc:@"鸟飞开始"];
 }
 
 /**
@@ -517,13 +522,19 @@
 /**
  *  MARK:--------------------WoodViewDelegate--------------------
  */
+
+//2023.06.04: 废弃_将setFramed换成动画开始,二者是同时触发的,但setFramed有两个问题,1是无法传过来动画时间,2是它会触发两次;
 -(void)woodView_SetFramed {
-    [self runCheckHit];
+    //[self runCheckHit:@"棒扔位置变化"];
 }
 
 -(void) woodView_WoodAnimationFinish {
-    [self runCheckHit];//动画执行完后,要调用下碰撞检测,因为UIView动画后不会立马更新frame (参考29098-追BUG1);
+    [self runCheckHit:0 hiterDesc:@"棒扔结束"];//动画执行完后,要调用下碰撞检测,因为UIView动画后不会立马更新frame (参考29098-追BUG1);
     self.waitHiting = false;//木棒动画结束时,同时碰撞检测也结束;
+}
+
+-(void) woodView_FlyAnimationBegin:(CGFloat)aniDuration {
+    [self runCheckHit:aniDuration hiterDesc:@"棒扔开始"];
 }
 
 //MARK:===============================================================
@@ -542,13 +553,19 @@
 
 /**
  *  MARK:--------------------碰撞检测算法 (参考29098)--------------------
+ *  @param duration : 当前触发的动画到结束所需动画时长 (用来计算碰撞检测,比如鸟飞的很快,下次触发时却过了很久,不能均匀的认为它飞了这么久);
  *  @callers 检查中状态时,只要木棒或小鸟的位置有变化,就调用:
  *          1. 无论是木棒还是小鸟的frame变化都调用 (参考29098-方案3-步骤1);
  *          2. 无论是木棒还是小鸟的动画结束时,都手动调用下 (因为UIView动画后不会立马更新frame);
  */
--(void) runCheckHit {
+-(void) runCheckHit:(CGFloat)duration hiterDesc:(NSString*)hiterDesc {
     //1. 非检查中 或 已检测到碰撞 => 返回;
     if (!self.waitHiting || self.isHited) return;
+    
+    //TODOTOMORROW20230604: 根据动画持续时间,修复30012的BUG;
+    
+    
+    
     
     //2. 当前帧model;
     HitItemModel *curHitModel = [[HitItemModel alloc] init];
@@ -562,9 +579,6 @@
     }
     
     //4. 分10帧,检查每帧棒鸟是否有碰撞 (参考29098-方案3-步骤3);
-    if (self.lastHitModel.woodFrame.origin.x == 0 && curHitModel.woodFrame.origin.x == 736) {
-        NSLog(@"");
-    }
     NSInteger frameCount = 2;
     for (NSInteger i = 0; i < frameCount; i++) {
         //5. 取上下等份的Rect取并集,避免两等份间距过大,导致错漏检测问题 (参考29098-测BUG2);
@@ -581,10 +595,10 @@
     }
     
     //5. 保留lastHitModel & 撞到时触发痛感 (参考29098-方案3-步骤2);
-    NSLog(@"碰撞检测: %@ 棒(%.0f -> %.0f) 鸟(%.0f,%.0f -> %.0f,%.0f)",self.isHited ? @"撞到了" : @"没撞到",
+    NSLog(@"碰撞检测: %@ 棒(%.0f -> %.0f) 鸟(%.0f,%.0f -> %.0f,%.0f) from:%@",self.isHited ? @"撞到了" : @"没撞到",
           self.lastHitModel.woodFrame.origin.x,curHitModel.woodFrame.origin.x,
           self.lastHitModel.birdFrame.origin.x,self.lastHitModel.birdFrame.origin.y,
-          curHitModel.birdFrame.origin.x,curHitModel.birdFrame.origin.y);
+          curHitModel.birdFrame.origin.x,curHitModel.birdFrame.origin.y,hiterDesc);
     self.lastHitModel = curHitModel;
     if (self.isHited) {
         [self.birdView hurt];

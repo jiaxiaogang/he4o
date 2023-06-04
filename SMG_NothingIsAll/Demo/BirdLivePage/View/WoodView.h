@@ -14,6 +14,7 @@
 
 -(void) woodView_SetFramed;
 -(void) woodView_WoodAnimationFinish;
+-(void) woodView_FlyAnimationBegin:(CGFloat)aniDuration;
 
 @end
 
@@ -28,7 +29,6 @@
 
 /**
  *  MARK:--------------------扔出--------------------
- *  @param hitBlock : 碰撞检测 (碰撞时刻检测一次,如果没撞到到终点后再检测一次) notnull
  */
 -(void) throwV4:(CGFloat)throwX time:(CGFloat)time distance:(CGFloat)distance invoked:(void(^)())invoked;
 
