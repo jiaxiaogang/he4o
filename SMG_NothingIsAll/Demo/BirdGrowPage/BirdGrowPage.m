@@ -503,11 +503,11 @@
 }
 
 -(void)birdView_FlyAnimationFinish {
-    [self runCheckHit:0 hiterDesc:@"鸟飞结束"];//动画执行完后,要调用下碰撞检测,因为UIView动画后不会立马更新frame (参考29098-追BUG1);
+    [self runCheckHit:0 woodDuration:0 hiterDesc:@"鸟飞结束"];//动画执行完后,要调用下碰撞检测,因为UIView动画后不会立马更新frame (参考29098-追BUG1);
 }
 
 -(void) birdView_FlyAnimationBegin:(CGFloat)aniDuration {
-    [self runCheckHit:aniDuration hiterDesc:@"鸟飞开始"];
+    [self runCheckHit:aniDuration woodDuration:0 hiterDesc:@"鸟飞开始"];
 }
 
 /**
@@ -529,12 +529,12 @@
 }
 
 -(void) woodView_WoodAnimationFinish {
-    [self runCheckHit:0 hiterDesc:@"棒扔结束"];//动画执行完后,要调用下碰撞检测,因为UIView动画后不会立马更新frame (参考29098-追BUG1);
+    [self runCheckHit:0 woodDuration:0 hiterDesc:@"棒扔结束"];//动画执行完后,要调用下碰撞检测,因为UIView动画后不会立马更新frame (参考29098-追BUG1);
     self.waitHiting = false;//木棒动画结束时,同时碰撞检测也结束;
 }
 
 -(void) woodView_FlyAnimationBegin:(CGFloat)aniDuration {
-    [self runCheckHit:aniDuration hiterDesc:@"棒扔开始"];
+    [self runCheckHit:0 woodDuration:aniDuration hiterDesc:@"棒扔开始"];
 }
 
 //MARK:===============================================================
@@ -553,25 +553,22 @@
 
 /**
  *  MARK:--------------------碰撞检测算法 (参考29098)--------------------
- *  @param duration : 当前触发的动画到结束所需动画时长 (用来计算碰撞检测,比如鸟飞的很快,下次触发时却过了很久,不能均匀的认为它飞了这么久);
+ *  @param birdDuration : 当前触发的动画到结束所需动画时长 (用来计算碰撞检测,比如鸟飞的很快,下次触发时却过了很久,不能均匀的认为它飞了这么久);
  *  @callers 检查中状态时,只要木棒或小鸟的位置有变化,就调用:
  *          1. 无论是木棒还是小鸟的frame变化都调用 (参考29098-方案3-步骤1);
  *          2. 无论是木棒还是小鸟的动画结束时,都手动调用下 (因为UIView动画后不会立马更新frame);
  */
--(void) runCheckHit:(CGFloat)duration hiterDesc:(NSString*)hiterDesc {
+-(void) runCheckHit:(CGFloat)birdDuration woodDuration:(CGFloat)woodDuration hiterDesc:(NSString*)hiterDesc {
     //1. 非检查中 或 已检测到碰撞 => 返回;
     if (!self.waitHiting || self.isHited) return;
-    
-    //TODOTOMORROW20230604: 根据动画持续时间,修复30012的BUG;
-    
-    
-    
     
     //2. 当前帧model;
     HitItemModel *curHitModel = [[HitItemModel alloc] init];
     curHitModel.woodFrame = self.woodView.showFrame;
     curHitModel.birdFrame = self.birdView.showFrame;
     curHitModel.time = [[NSDate date] timeIntervalSince1970] * 1000;
+    curHitModel.birdDuration = birdDuration;
+    curHitModel.woodDuration = woodDuration;
     
     //3. 上帧为空时,直接等于当前帧;
     if (self.lastHitModel == nil) {
@@ -579,18 +576,42 @@
     }
     
     //4. 分10帧,检查每帧棒鸟是否有碰撞 (参考29098-方案3-步骤3);
-    NSInteger frameCount = 2;
+    if ([hiterDesc isEqualToString:@"棒扔结束"]) {
+        NSLog(@"TODOTOMORROW20230605: 回测下根据动画持续时间,修复30012的BUG是否ok;");
+    }
+    CGFloat totalTime = curHitModel.time - self.lastHitModel.time; //总共过了多久;
+    CGFloat woodTime = self.lastHitModel.woodDuration == 0 ? totalTime : self.lastHitModel.woodDuration * 1000; //木棒扔了多久;
+    CGFloat birdTime = self.lastHitModel.birdDuration == 0 ? totalTime : self.lastHitModel.birdDuration * 1000; //小鸟飞了多久;
+    CGFloat firstCheckTime = MIN(totalTime,MIN(woodTime,birdTime)); //先把检查指定时间的(比如bird动画开始指定了0.15s);
+    NSInteger frameCount = 10;
+    CGFloat itemTime = firstCheckTime / frameCount; //在下面循环中每份i过了多久;
     for (NSInteger i = 0; i < frameCount; i++) {
         //5. 取上下等份的Rect取并集,避免两等份间距过大,导致错漏检测问题 (参考29098-测BUG2);
-        CGRect wr1 = [MathUtils radioRect:self.lastHitModel.woodFrame endRect:curHitModel.woodFrame radio:(float)i / frameCount];
-        CGRect br1 = [MathUtils radioRect:self.lastHitModel.birdFrame endRect:curHitModel.birdFrame radio:(float)i / frameCount];
-        CGRect wr2 = [MathUtils radioRect:self.lastHitModel.woodFrame endRect:curHitModel.woodFrame radio:(float)(i+1) / frameCount];
-        CGRect br2 = [MathUtils radioRect:self.lastHitModel.birdFrame endRect:curHitModel.birdFrame radio:(float)(i+1) / frameCount];
+        CGRect wr1 = [MathUtils radioRect:self.lastHitModel.woodFrame endRect:curHitModel.woodFrame radio:i * itemTime / woodTime];
+        CGRect br1 = [MathUtils radioRect:self.lastHitModel.birdFrame endRect:curHitModel.birdFrame radio:i * itemTime / birdTime];
+        CGRect wr2 = [MathUtils radioRect:self.lastHitModel.woodFrame endRect:curHitModel.woodFrame radio:(i+1) * itemTime / woodTime];
+        CGRect br2 = [MathUtils radioRect:self.lastHitModel.birdFrame endRect:curHitModel.birdFrame radio:(i+1) * itemTime / birdTime];
         CGRect wrUnion = [MathUtils collectRectA:wr1 rectB:wr2];
         CGRect brUnion = [MathUtils collectRectA:br1 rectB:br2];
         if (!CGRectIsNull([MathUtils filterRectA:wrUnion rectB:brUnion])) {
             self.isHited = true;
             break;
+        }
+    }
+    
+    //6. 前段没执行完,后段再执行下检查;
+    if (!self.isHited && firstCheckTime != totalTime) {
+        //a. wr1br1就是前段的结尾处;
+        CGRect wr1 = [MathUtils radioRect:self.lastHitModel.woodFrame endRect:curHitModel.woodFrame radio:firstCheckTime / woodTime];
+        CGRect br1 = [MathUtils radioRect:self.lastHitModel.birdFrame endRect:curHitModel.birdFrame radio:firstCheckTime / woodTime];
+        //b. wr2br2直接就是最结尾,即curHitModel的位置;
+        CGRect wr2 = curHitModel.woodFrame;
+        CGRect br2 = curHitModel.birdFrame;
+        //c. 后段碰撞检测;
+        CGRect wrUnion = [MathUtils collectRectA:wr1 rectB:wr2];
+        CGRect brUnion = [MathUtils collectRectA:br1 rectB:br2];
+        if (!CGRectIsNull([MathUtils filterRectA:wrUnion rectB:brUnion])) {
+            self.isHited = true;
         }
     }
     
