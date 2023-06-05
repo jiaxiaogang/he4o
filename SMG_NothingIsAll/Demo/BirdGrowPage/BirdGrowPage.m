@@ -573,12 +573,10 @@
     //3. 上帧为空时,直接等于当前帧;
     if (self.lastHitModel == nil) {
         self.lastHitModel = curHitModel;
+        return;
     }
     
     //4. 分10帧,检查每帧棒鸟是否有碰撞 (参考29098-方案3-步骤3);
-    if ([hiterDesc isEqualToString:@"棒扔结束"]) {
-        NSLog(@"TODOTOMORROW20230605: 回测下根据动画持续时间,修复30012的BUG是否ok;");
-    }
     CGFloat totalTime = curHitModel.time - self.lastHitModel.time; //总共过了多久;
     CGFloat woodTime = self.lastHitModel.woodDuration == 0 ? totalTime : self.lastHitModel.woodDuration * 1000; //木棒扔了多久;
     CGFloat birdTime = self.lastHitModel.birdDuration == 0 ? totalTime : self.lastHitModel.birdDuration * 1000; //小鸟飞了多久;
@@ -603,7 +601,7 @@
     if (!self.isHited && firstCheckTime != totalTime) {
         //a. wr1br1就是前段的结尾处;
         CGRect wr1 = [MathUtils radioRect:self.lastHitModel.woodFrame endRect:curHitModel.woodFrame radio:firstCheckTime / woodTime];
-        CGRect br1 = [MathUtils radioRect:self.lastHitModel.birdFrame endRect:curHitModel.birdFrame radio:firstCheckTime / woodTime];
+        CGRect br1 = [MathUtils radioRect:self.lastHitModel.birdFrame endRect:curHitModel.birdFrame radio:firstCheckTime / birdTime];
         //b. wr2br2直接就是最结尾,即curHitModel的位置;
         CGRect wr2 = curHitModel.woodFrame;
         CGRect br2 = curHitModel.birdFrame;
