@@ -70,10 +70,13 @@
  *  @version
  *      2023.05.31: 回测概念识别二次过滤ok,就是保留60%有点多,调成40%;
  *      2023.06.04: BUG_修复时序过滤条数有不确定性 (参考29109-测得4);
+ *      2023.06.06: 过滤出20%的结果依然太多,直接改成4条,小于4条时直接return不过滤 (参考30013);
  */
 +(void) secondRecognitionFilter:(AIShortMatchModel*)inModel {
     //1. 获取V重要性字典;
     [theTC updateOperCount:kFILENAME];
+    NSInteger foLimit = 4;//MAX(4, inModel.matchPFos.count * 0.2f);
+    if (inModel.matchPFos.count <= foLimit) return;//小于limit条时,不用二次过滤;
     IFTitleLog(@"识别二次过滤",@"\nfrom protoFo:%@",Fo2FStr(inModel.protoFo));
     BOOL debugMode = false;
     NSDictionary *importanceDic = [TCRecognitionUtil getVImportanceDic:inModel];
@@ -105,7 +108,6 @@
     
     //5. 保留时序30% & 至少4条;
     [AITest test28:inModel];
-    NSInteger foLimit = MAX(4, inModel.matchPFos.count * 0.2f);
     NSMutableArray *filterAlgs = [[NSMutableArray alloc] init];
     NSMutableArray *filterFos = [[NSMutableArray alloc] init];
     for (AIMatchAlgModel *aItem in sort) {

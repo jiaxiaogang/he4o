@@ -240,9 +240,9 @@
     
     //16. debugLog
     NSLog(@"\n概念识别结果 (%ld条) protoAlg:%@",allSortAlgs.count,Alg2FStr(protoAlg));
-    for (AIMatchAlgModel *item in allSortAlgs) {
-        NSLog(@"-->>>(%d) 全含item: %@   \t相近度 => %.2f (count:%d)",item.sumRefStrong,Pit2FStr(item.matchAlg),item.matchValue,item.matchCount);
-    }
+    //for (AIMatchAlgModel *item in allSortAlgs) {
+    //    NSLog(@"-->>>(%d) 全含item: %@   \t相近度 => %.2f (count:%d)",item.sumRefStrong,Pit2FStr(item.matchAlg),item.matchValue,item.matchCount);
+    //}
 }
 
 /**
@@ -444,10 +444,10 @@
     //11. 调试日志;
     NSArray *allMatchFos = [SMGUtils collectArrA:inModel.matchPFos arrB:inModel.matchRFos];
     NSLog(@"\n时序识别结果 P(%ld条) R(%ld条)",inModel.matchPFos.count,inModel.matchRFos.count);
-    for (AIMatchFoModel *item in allMatchFos) {
-        AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
-        NSLog(@"%@强度:(%ld)\t> %@->{%.2f} (SP:%@) indexDic:%@ 匹配度 => %.2f",matchFo.cmvNode_p?@"P":@"",item.sumRefStrong,Fo2FStr(matchFo),[AIScore score4MV_v2FromCache:item],CLEANSTR(matchFo.spDic),CLEANSTR(item.indexDic2),item.matchFoValue);
-    }
+    //for (AIMatchFoModel *item in allMatchFos) {
+    //    AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
+    //    NSLog(@"%@强度:(%ld)\t> %@->{%.2f} (SP:%@) indexDic:%@ 匹配度 => %.2f",matchFo.cmvNode_p?@"P":@"",item.sumRefStrong,Fo2FStr(matchFo),[AIScore score4MV_v2FromCache:item],CLEANSTR(matchFo.spDic),CLEANSTR(item.indexDic2),item.matchFoValue);
+    //}
     AddDebugCodeBlock(@"时序识别32");
     
     //12. 关联处理,直接protoFo抽象指向matchFo,并持久化indexDic (参考27177-todo6);
