@@ -50,6 +50,7 @@
     DebugE();
     
     //4. 概念反馈 -> 重组 & 反思;
+    //todo: 加了二次过滤后,此处过滤前,可能太杂了,毕竟pAlgs过过滤了50% (可能导致tor才容易feedback成功了) (先不改,等测得具体有影响的bug时再改);
     [TCFeedback feedbackTOR:mModel];
     
     //5. 转regroup生成protoFo;
@@ -69,6 +70,7 @@
     }
     
     //9. TIR反馈;
+    //todo: 加了二次过滤后,此处过滤后,仅剩几条了 (可能导致tir太难feedback成功了) (先不改,等测得具体有影响的bug时再改);
     [TCFeedback feedbackTIR:mModel];
     
     //10. 行为不构建任务和预测 (参考28137-修复);
