@@ -43,6 +43,7 @@
  *  MARK:--------------------取rect交集--------------------
  */
 +(CGRect) filterRectA:(CGRect)rectA rectB:(CGRect)rectB {
+    //注意: 有时候CGRectIntersects()返回的是一个+-inf的xy
     return CGRectIntersection(rectA, rectB);
 }
 

@@ -557,6 +557,8 @@
  *  @callers 检查中状态时,只要木棒或小鸟的位置有变化,就调用:
  *          1. 无论是木棒还是小鸟的frame变化都调用 (参考29098-方案3-步骤1);
  *          2. 无论是木棒还是小鸟的动画结束时,都手动调用下 (因为UIView动画后不会立马更新frame);
+ *  @version
+ *      2023.06.09: 修复因分母为0,导致分帧rect取到NaN,导致交集全判为撞到的BUG (参考30015);
  */
 -(void) runCheckHit:(CGFloat)birdDuration woodDuration:(CGFloat)woodDuration hiterDesc:(NSString*)hiterDesc {
     //1. 非检查中 或 已检测到碰撞 => 返回;
@@ -585,14 +587,15 @@
     CGFloat itemTime = firstCheckTime / frameCount; //在下面循环中每份i过了多久;
     for (NSInteger i = 0; i < frameCount; i++) {
         //5. 取上下等份的Rect取并集,避免两等份间距过大,导致错漏检测问题 (参考29098-测BUG2);
-        CGRect wr1 = [MathUtils radioRect:self.lastHitModel.woodFrame endRect:curHitModel.woodFrame radio:i * itemTime / woodTime];
-        CGRect br1 = [MathUtils radioRect:self.lastHitModel.birdFrame endRect:curHitModel.birdFrame radio:i * itemTime / birdTime];
-        CGRect wr2 = [MathUtils radioRect:self.lastHitModel.woodFrame endRect:curHitModel.woodFrame radio:(i+1) * itemTime / woodTime];
-        CGRect br2 = [MathUtils radioRect:self.lastHitModel.birdFrame endRect:curHitModel.birdFrame radio:(i+1) * itemTime / birdTime];
+        CGFloat wrRadio1 = woodTime == 0 ? 0 : i * itemTime / woodTime, wrRadio2 = woodTime == 0 ? 0 : (i+1) * itemTime / woodTime;
+        CGFloat brRadio1 = birdTime == 0 ? 0 : i * itemTime / birdTime, brRadio2 = birdTime == 0 ? 0 : (i+1) * itemTime / birdTime;
+        CGRect wr1 = [MathUtils radioRect:self.lastHitModel.woodFrame endRect:curHitModel.woodFrame radio:wrRadio1];
+        CGRect br1 = [MathUtils radioRect:self.lastHitModel.birdFrame endRect:curHitModel.birdFrame radio:brRadio1];
+        CGRect wr2 = [MathUtils radioRect:self.lastHitModel.woodFrame endRect:curHitModel.woodFrame radio:wrRadio2];
+        CGRect br2 = [MathUtils radioRect:self.lastHitModel.birdFrame endRect:curHitModel.birdFrame radio:brRadio2];
         CGRect wrUnion = [MathUtils collectRectA:wr1 rectB:wr2];
         CGRect brUnion = [MathUtils collectRectA:br1 rectB:br2];
-//        if (CGRectIntersectsRect(wrUnion, brUnion)) {
-        if (!CGRectIsNull([MathUtils filterRectA:wrUnion rectB:brUnion])) {
+        if (CGRectIntersectsRect(wrUnion, brUnion)) {
             self.isHited = true;
             break;
         }
@@ -601,16 +604,16 @@
     //6. 前段没执行完,后段再执行下检查;
     if (!self.isHited && firstCheckTime != totalTime) {
         //a. wr1br1就是前段的结尾处;
-        CGRect wr1 = [MathUtils radioRect:self.lastHitModel.woodFrame endRect:curHitModel.woodFrame radio:firstCheckTime / woodTime];
-        CGRect br1 = [MathUtils radioRect:self.lastHitModel.birdFrame endRect:curHitModel.birdFrame radio:firstCheckTime / birdTime];
+        CGFloat wrRadio1 = woodTime == 0 ? 0 : firstCheckTime / woodTime, brRadio1 = birdTime == 0 ? 0 : firstCheckTime / birdTime;
+        CGRect wr1 = [MathUtils radioRect:self.lastHitModel.woodFrame endRect:curHitModel.woodFrame radio:wrRadio1];
+        CGRect br1 = [MathUtils radioRect:self.lastHitModel.birdFrame endRect:curHitModel.birdFrame radio:brRadio1];
         //b. wr2br2直接就是最结尾,即curHitModel的位置;
         CGRect wr2 = curHitModel.woodFrame;
         CGRect br2 = curHitModel.birdFrame;
         //c. 后段碰撞检测;
         CGRect wrUnion = [MathUtils collectRectA:wr1 rectB:wr2];
         CGRect brUnion = [MathUtils collectRectA:br1 rectB:br2];
-//        if (CGRectIntersectsRect(wrUnion, brUnion)) {
-        if (!CGRectIsNull([MathUtils filterRectA:wrUnion rectB:brUnion])) {
+        if (CGRectIntersectsRect(wrUnion, brUnion)) {
             self.isHited = true;
         }
     }
@@ -620,93 +623,9 @@
           self.lastHitModel.woodFrame.origin.x,curHitModel.woodFrame.origin.x,
           self.lastHitModel.birdFrame.origin.x,self.lastHitModel.birdFrame.origin.y,
           curHitModel.birdFrame.origin.x,curHitModel.birdFrame.origin.y,hiterDesc);
-    
-    //查30015BUG
-    if (self.isHited) {
-        //有时候CGRectIntersects()返回的是一个+inf什么的xy,不知道是否和这个有关...
-        //怀疑和CGRectIntersects()有关,所以改成CGRectIntersectsRect看还能不能复现...
-        
-        //复现: 有专门的30015复现分支...
-        //问题: 经查,当复现时,传到tempTest中测试发现: totalTime=0,所以woodTime为0,第一个循环时,所有wood的rect全是无效NaN,然后NaN时判断交集,会全为true;
-        //经测: 任何rect与NaN全有交集... (无论是CGRectIntersectsRect还是CGRectIntersects);
-        //方案: 针对totalTime=0的情况,进行支持,比如10次循环全返回初始位置frame就行呗...
-        if (CGRectEqualToRect(self.lastHitModel.birdFrame, curHitModel.birdFrame) &&
-            CGRectEqualToRect(self.lastHitModel.woodFrame, curHitModel.woodFrame)) {
-//            if (!CGRectIntersectsRect(self.lastHitModel.birdFrame, self.lastHitModel.woodFrame)) {
-            if (CGRectIsNull([MathUtils filterRectA:self.lastHitModel.birdFrame rectB:self.lastHitModel.woodFrame])) {
-                NSLog(@"复现30015: 明明没撞到,却判断为撞到的BUG");
-                [BirdGrowPage runCheckHitTempTest:curHitModel lm:self.lastHitModel];
-            } else {
-                NSLog(@"没 复现30015: 明明没撞到,却判断为撞到的BUG");
-            }
-        }
-    }
     self.lastHitModel = curHitModel;
     if (self.isHited) {
         [self.birdView hurt];
-    }
-}
-
-+(void) runCheckHitTempTest:(HitItemModel*)cm lm:(HitItemModel*)lm {
-    BOOL isHited = false;
-    //4. 分10帧,检查每帧棒鸟是否有碰撞 (参考29098-方案3-步骤3);
-    CGFloat totalTime = cm.time - lm.time; //总共过了多久;
-    CGFloat woodTime = lm.woodDuration == 0 ? totalTime : lm.woodDuration * 1000; //木棒扔了多久;
-    CGFloat birdTime = lm.birdDuration == 0 ? totalTime : lm.birdDuration * 1000; //小鸟飞了多久;
-    CGFloat firstCheckTime = MIN(totalTime,MIN(woodTime,birdTime)); //先把检查指定时间的(比如bird动画开始指定了0.15s);
-    NSInteger frameCount = 10;
-    CGFloat itemTime = firstCheckTime / frameCount; //在下面循环中每份i过了多久;
-    for (NSInteger i = 0; i < frameCount; i++) {
-        //5. 取上下等份的Rect取并集,避免两等份间距过大,导致错漏检测问题 (参考29098-测BUG2);
-        CGRect wr1 = [MathUtils radioRect:lm.woodFrame endRect:cm.woodFrame radio:i * itemTime / woodTime];
-        CGRect br1 = [MathUtils radioRect:lm.birdFrame endRect:cm.birdFrame radio:i * itemTime / birdTime];
-        CGRect wr2 = [MathUtils radioRect:lm.woodFrame endRect:cm.woodFrame radio:(i+1) * itemTime / woodTime];
-        CGRect br2 = [MathUtils radioRect:lm.birdFrame endRect:cm.birdFrame radio:(i+1) * itemTime / birdTime];
-        CGRect wrUnion = [MathUtils collectRectA:wr1 rectB:wr2];
-        CGRect brUnion = [MathUtils collectRectA:br1 rectB:br2];
-        //        if (CGRectIntersectsRect(wrUnion, brUnion)) {
-        if (!CGRectIsNull([MathUtils filterRectA:wrUnion rectB:brUnion])) {
-            isHited = true;
-            break;
-        }
-    }
-    
-    //6. 前段没执行完,后段再执行下检查;
-    if (!isHited && firstCheckTime != totalTime) {
-        //a. wr1br1就是前段的结尾处;
-        CGRect wr1 = [MathUtils radioRect:lm.woodFrame endRect:cm.woodFrame radio:firstCheckTime / woodTime];
-        CGRect br1 = [MathUtils radioRect:lm.birdFrame endRect:cm.birdFrame radio:firstCheckTime / birdTime];
-        //b. wr2br2直接就是最结尾,即curHitModel的位置;
-        CGRect wr2 = cm.woodFrame;
-        CGRect br2 = cm.birdFrame;
-        //c. 后段碰撞检测;
-        CGRect wrUnion = [MathUtils collectRectA:wr1 rectB:wr2];
-        CGRect brUnion = [MathUtils collectRectA:br1 rectB:br2];
-        //        if (CGRectIntersectsRect(wrUnion, brUnion)) {
-        if (!CGRectIsNull([MathUtils filterRectA:wrUnion rectB:brUnion])) {
-            isHited = true;
-        }
-    }
-    
-    //5. 保留lastHitModel & 撞到时触发痛感 (参考29098-方案3-步骤2);
-    NSLog(@"碰撞检测: %@ 棒(%.0f -> %.0f) 鸟(%.0f,%.0f -> %.0f,%.0f)",isHited ? @"撞到了" : @"没撞到",
-          lm.woodFrame.origin.x,cm.woodFrame.origin.x,
-          lm.birdFrame.origin.x,lm.birdFrame.origin.y,
-          cm.birdFrame.origin.x,cm.birdFrame.origin.y);
-    
-    //查30015BUG
-    if (isHited) {
-        //有时候CGRectIntersects()返回的是一个+inf什么的xy,不知道是否和这个有关...
-        //怀疑和CGRectIntersects()有关,所以改成CGRectIntersectsRect看还能不能复现...
-        if (CGRectEqualToRect(lm.birdFrame, cm.birdFrame) &&
-            CGRectEqualToRect(lm.woodFrame, cm.woodFrame)) {
-            //            if (!CGRectIntersectsRect(self.lastHitModel.birdFrame, self.lastHitModel.woodFrame)) {
-            if (CGRectIsNull([MathUtils filterRectA:lm.birdFrame rectB:lm.woodFrame])) {
-                NSLog(@"复现30015: 明明没撞到,却判断为撞到的BUG");
-            } else {
-                NSLog(@"没 复现30015: 明明没撞到,却判断为撞到的BUG");
-            }
-        }
     }
 }
 
