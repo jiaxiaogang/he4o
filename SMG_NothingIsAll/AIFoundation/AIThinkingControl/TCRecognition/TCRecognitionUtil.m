@@ -19,50 +19,58 @@
 +(NSDictionary*) getVImportanceDic:(AIShortMatchModel*)inModel {
     //1. 数据准备;
     NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
-    BOOL debugMode = false;
+    AddDebugCodeBlock_Key(@"a", @"1");
+    BOOL debugMode = true;
     NSMutableDictionary *cutIndexOfConFo = [[NSMutableDictionary alloc] init]; //收集所有同级fo的cutIndex
     
     //2. 逐个收集pFos的同级(抽象的具象)->抽象部分 (参考29105-方案改);
     NSMutableArray *allConPorts1 = [self collectAbsFosThenConFos:inModel.matchPFos outCutIndexDic:cutIndexOfConFo];
-    
-    //3. 先进行防重 (参考29105-todo1);
-    NSMutableArray *noRepeat2 = [SMGUtils removeRepeat:allConPorts1];
-    
-    //4. 排除自身 (参考29105-todo3-方案4);
-    [noRepeat2 removeObject:inModel.protoFo.pointer];
+    AddDebugCodeBlock_Key(@"a", @"2");
     
     //6. 排序,并取前20% (参考29105-todo2);
-    NSArray *sortOfStrong3 = [SMGUtils sortBig2Small:noRepeat2 compareBlock:^double(AIPort *obj) {
+    NSArray *sortOfStrong3 = [SMGUtils sortBig2Small:allConPorts1 compareBlock:^double(AIPort *obj) {
         return obj.strong.value;
     }];
+    AddDebugCodeBlock_Key(@"a", @"5");
     NSArray *goodPorts4 = ARR_SUB(sortOfStrong3, 0, sortOfStrong3.count * 0.2f);
+    AddDebugCodeBlock_Key(@"a", @"6");
     
     //7. 分别根据protoV找到在goodPorts4中最相近的那一条,最接近那条的强度即算做protoV的强度 (参考29105-todo3-方案4);
     NSMutableString *zunjieLog = [[NSMutableString alloc] init];
     for (AIKVPointer *protoV_p in inModel.protoAlg.content_ps) {
+        AddDebugCodeBlock_Key(@"a", @"7");
         //8. 节约性能: 全程只有一个固定值的打酱油码,不做处理 (参考29105-todo4);
         AIValueInfo *info = [AINetIndex getValueInfo:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut];
+        AddDebugCodeBlock_Key(@"a", @"8");
         if (info.span == 0) continue;
         
         //9. 求出全部xy轴;
         NSDictionary *xyDic = [self convertConFoPorts2XYDic:goodPorts4 cutIndexDic:cutIndexOfConFo protoV:protoV_p];
+        AddDebugCodeBlock_Key(@"a", @"9");
         if (!DICISOK(xyDic)) continue;
         
         //10. 均匀取样100份,求出平均值 (参考29106-解均值);
         double sumTemplateY = 0;//所有样本总Y值;
         NSMutableArray *quXianYArr = [[NSMutableArray alloc] init];
         for (int i = 0; i < 100; i++) {
+            AddDebugCodeBlock_Key(@"a", @"10");
             double itemSpan = info.span / 100;
             double curX = (i + 0.5f) * itemSpan;
+            AddDebugCodeBlock_Key(@"a", @"11");
             CGFloat curY = [self getY:xyDic checkX:curX at:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut vInfo:info];
+            AddDebugCodeBlock_Key(@"a", @"12");
             sumTemplateY += curY;
             [quXianYArr addObject:@(curY)];
+            AddDebugCodeBlock_Key(@"a", @"13");
         }
         double averageY = sumTemplateY / 100;
+        AddDebugCodeBlock_Key(@"a", @"14");
         
         //11. 根据protoV的值,求出protoV的Y轴强度值;
         double protoV = NUMTOOK([AINetIndex getData:protoV_p]).doubleValue;
+        AddDebugCodeBlock_Key(@"a", @"15");
         CGFloat protoY = [self getY:xyDic checkX:protoV at:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut vInfo:info];
+        AddDebugCodeBlock_Key(@"a", @"16");
         
         //12. debugLog
         //for (AIPort *conFoPort in goodPorts4) NSLog(@"\t\t > conFo: %@ 强度%ld",Pit2FStr(conFoPort.target_p),conFoPort.strong.value);
@@ -70,6 +78,7 @@
         for (NSNumber *item in quXianYArr) {
             if (maxY < (int)item.doubleValue) maxY = (int)item.doubleValue;
         }
+        AddDebugCodeBlock_Key(@"a", @"17");
         for (int row = maxY; row >= 1; row--) {//一行行打印
             NSMutableString *line = [[NSMutableString alloc] init];
             if (row % 2 == 1) continue;//高度缩小为50%;
@@ -84,6 +93,7 @@
             }
             if (debugMode) NSLog(@"%@",line);
         }
+        AddDebugCodeBlock_Key(@"a", @"18");
         
         //13. 算出当前码的重要性 (参考29105-todo5);
         double vImportance = protoY / averageY;
@@ -91,9 +101,11 @@
         [zunjieLog appendFormat:@"%@ = %.3f; ",Pit2FStr(protoV_p),vImportance];
         [result setObject:@(vImportance) forKey:protoV_p.identifier];
     }
+    AddDebugCodeBlock_Key(@"a", @"19");
     NSLog(@"重要性结果: %@",zunjieLog);
     
     //14. 缩放处理并返回 (参考29107-步骤1);
+    PrintDebugCodeBlock_Key(@"a");
     return [self scala4ImportanceDic:result];
 }
 
@@ -104,6 +116,8 @@
 /**
  *  MARK:--------------------收集pFos的同层fos (抽象后具象)--------------------
  *  @param outCutIndexDic 将结果对应的cutIndex也返回;
+ *  @version
+ *      2023.06.11: 返回结果防重,提前防重性能好 (参考30022);
  *  @result notnull
  */
 +(NSMutableArray*) collectAbsFosThenConFos:(NSArray*)pFoModels outCutIndexDic:(NSMutableDictionary*)outCutIndexDic{
@@ -129,6 +143,10 @@
             if (debugMode) NSLog(@"\t > absFo: %@->%@",Pit2FStr(abs_p),Pit2FStr(absFo.cmvNode_p));
             NSArray *conPorts = [AINetUtils conPorts_All:absFo];
             for (AIPort *conPort in conPorts) {
+                //4. 防重 (根据outCutIndexDic防重,性能更好) (参考29105-todo1);
+                if ([outCutIndexDic objectForKey:@(conPort.target_p.pointerId)]) continue;
+                
+                //4. 防无效;
                 NSDictionary *indexDic2 = [absFo getConIndexDic:conPort.target_p];
                 NSNumber *conCutIndexValue = [indexDic2 objectForKey:absCutIndexKey];
                 if (!conCutIndexValue) continue;
