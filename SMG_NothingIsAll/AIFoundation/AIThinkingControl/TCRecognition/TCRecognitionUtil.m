@@ -15,12 +15,9 @@
  *  @result 返回结果为重要性字典<K:稀疏码标识,V:重要性值> & 做了最小值1的缩放处理 (参考29107-步骤1);
  *  @version
  *      2023.06.02: 优化vInfo在循环中,导致的性能问题,把vInfo移到尽可以循环外,然后传进去复用后性能ok (参考29109-测得2);
+ *      2023.06.12: 优化取得同级场景的条数,避免条数太多导致卡 (参考30022-优化3);
  */
 +(NSDictionary*) getVImportanceDic:(AIShortMatchModel*)inModel {
-    
-    //TODOTOMORROW20230612: 因为pFos识别数多,且取得同层场景数多,导致重要性判断时,硬盘读太多,导致性能差;
-    
-    
     //1. 数据准备;
     NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
     AddDebugCodeBlock_Key(@"a", STRFORMAT(@"1 pFos:%ld条",inModel.matchPFos.count));
@@ -36,7 +33,8 @@
         return obj.strong.value;
     }];
     AddDebugCodeBlock_Key(@"a", @"3");
-    NSArray *goodPorts4 = ARR_SUB(sortOfStrong3, 0, sortOfStrong3.count * 0.2f);
+    NSInteger goodLimit = MIN(30, sortOfStrong3.count * 0.2f);
+    NSArray *goodPorts4 = ARR_SUB(sortOfStrong3, 0, goodLimit);
     AddDebugCodeBlock_Key(@"a", STRFORMAT(@"4 强度前20%%: %ld条",goodPorts4.count));
     
     //7. 分别根据protoV找到在goodPorts4中最相近的那一条,最接近那条的强度即算做protoV的强度 (参考29105-todo3-方案4);
@@ -121,7 +119,7 @@
  *  MARK:--------------------收集pFos的同层fos (抽象后具象)--------------------
  *  @param outCutIndexDic 将结果对应的cutIndex也返回;
  *  @version
- *      2023.06.11: 返回结果防重,提前防重性能好 (参考30022);
+ *      2023.06.11: 返回结果防重,提前防重性能好 (参考30022-优化1);
  *  @result notnull
  */
 +(NSMutableArray*) collectAbsFosThenConFos:(NSArray*)pFoModels outCutIndexDic:(NSMutableDictionary*)outCutIndexDic{

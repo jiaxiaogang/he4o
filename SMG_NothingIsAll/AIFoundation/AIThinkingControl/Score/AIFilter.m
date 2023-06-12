@@ -22,7 +22,7 @@
         return item.matchValue;
     } subBlock:^double(AIMatchAlgModel *item) {
         return item.strongValue;
-    } radio:radio resultNum:10];
+    } radio:radio min:10 max:20];
 }
 
 /**
@@ -35,7 +35,7 @@
 +(NSArray*) recognitionFoFilter:(NSArray*)matchModels {
     return [self filterOnce:matchModels mainBlock:^double(AIMatchFoModel *item) {
         return item.strongValue;
-    } radio:0.8f resultNum:8];
+    } radio:0.8f min:8 max:20];
 }
 
 /**
@@ -164,7 +164,7 @@
             return [AINetUtils getMatchByIndexDic:[protoScene getAbsIndexDic:item.target_p] absFo:item.target_p conFo:protoScene.pointer callerIsAbs:false];
         }
         return [AINetUtils getMatchByIndexDic:[protoScene getConIndexDic:item.target_p] absFo:protoScene.pointer conFo:item.target_p callerIsAbs:true];
-    } radio:0.2f resultNum:4];
+    } radio:0.2f min:4 max:20];
     return Ports2Pits(otherScenePorts);
 }
 
@@ -186,7 +186,7 @@
  *      3. 最小条数百分比: 值越小越准;
  *  @desc 现配置: 结果数为16%,主辅过滤力度20:1,即主过滤掉80%,辅再过滤掉剩下的20%;
  *  @param radio : 过滤率 (传值范围0-1),越小越精准,但剩余结果越少,反之其效亦反;
- *  @param resultNum : 建议返回条数;
+ *  @param min : 最小返回条数;
  *
  *  @version
  *      2023.03.06: 过滤前20%改为35% (参考28152-方案3-todo2);
@@ -195,18 +195,17 @@
  *      2023.03.07: 修改主辅过滤器为嵌套执行 (参考28152b-todo3);
  *      2023.03.07: 结果保留改为16%,将主辅力度调整为20:1 (因为实测4:1时,真实主过滤率=37%左右,太高了);
  *      2023.03.18: 加上radio参数,方便对概念和时序的过滤器分别指定不同的过滤度 (参考28186-方案1-结果);
+ *      2023.06.12: 加上max条件上限 (避免结果过多,导致性能问题) (参考30022-优化2);
  */
-+(NSArray*) filterTwice:(NSArray*)protoArr mainBlock:(double(^)(id item))mainBlock subBlock:(double(^)(id item))subBlock radio:(CGFloat)radio resultNum:(NSInteger)resultNum{
++(NSArray*) filterTwice:(NSArray*)protoArr mainBlock:(double(^)(id item))mainBlock subBlock:(double(^)(id item))subBlock radio:(CGFloat)radio min:(NSInteger)min max:(NSInteger)max {
     //0. 数据准备;
     if (!ARRISOK(protoArr)) return protoArr;
     
     //1. 条数 (参考注释公式说明-1);
-    NSInteger protoCount = protoArr.count;                          //总数 (如30);
-    CGFloat minResultNum = radio * protoCount;                      //最小条数 (建议16%,值越小越准);
-    resultNum = MAX(minResultNum, MIN(resultNum, protoCount));      //结果需要 大于20% 且 小于100%;
+    NSInteger resultNum = [self getResultNum:protoArr.count radio:radio min:min max:max];
     
     //2. 过滤任务和力度 (参考注释公式说明-2);
-    NSInteger filterNum = protoCount - resultNum;                   //总过滤任务 (比如共30条,剩10条,过滤任务就是20条);
+    NSInteger filterNum = protoArr.count - resultNum;               //总过滤任务 (比如共30条,剩10条,过滤任务就是20条);
     CGFloat zuFilterForce = 20, fuFilterForce = 1;                  //主辅两过滤器的力度权重 (一般主力度要大于辅力度多倍);
     CGFloat totalForce = zuFilterForce + fuFilterForce;             //总过滤力量份数 (比如: 主4 + 辅1 = 总力5份);
     
@@ -215,29 +214,38 @@
     CGFloat zuFilterNum = filterNum - fuFilterNum;                  //主过滤条数;
     
     //4. 主辅过滤率 (参考注释公式说明-4);
-    CGFloat zuRate = (protoCount - zuFilterNum) / protoCount;       //主过滤率;
-    CGFloat fuRate = resultNum / (protoCount - zuFilterNum);        //辅过滤率;
+    CGFloat zuRate = (protoArr.count - zuFilterNum) / protoArr.count;   //主过滤率;
+    CGFloat fuRate = resultNum / (protoArr.count - zuFilterNum);        //辅过滤率;
     
     //5. 主中辅,嵌套过滤 (参考28152b-todo3);
     NSArray *filter1 = ARR_SUB([SMGUtils sortBig2Small:protoArr compareBlock:mainBlock], 0, protoArr.count * zuRate);
     NSArray *filter2 = ARR_SUB([SMGUtils sortBig2Small:filter1 compareBlock:subBlock], 0, filter1.count * fuRate);
-    NSLog(@"过滤器: 总%ld需%ld 主:%.2f => 剩:%ld 辅:%.2f => 剩:%ld",protoCount,resultNum,zuRate,filter1.count,fuRate,filter2.count);
+    NSLog(@"过滤器: 总%ld需%ld 主:%.2f => 剩:%ld 辅:%.2f => 剩:%ld",protoArr.count,resultNum,zuRate,filter1.count,fuRate,filter2.count);
     
     //6. 返回结果 (参考注释公式说明-5);
     return filter2;
 }
 
-+(NSArray*) filterOnce:(NSArray*)protoArr mainBlock:(double(^)(id item))mainBlock radio:(CGFloat)radio resultNum:(NSInteger)resultNum{
++(NSArray*) filterOnce:(NSArray*)protoArr mainBlock:(double(^)(id item))mainBlock radio:(CGFloat)radio min:(NSInteger)min max:(NSInteger)max{
     //0. 数据准备;
     if (!ARRISOK(protoArr)) return protoArr;
-    resultNum = MIN(resultNum, protoArr.count);//resultNum不得大于protoArr数；
-    resultNum = MAX(resultNum ,radio * protoArr.count);//resultNum不得小于radio(如20％);
-    CGFloat realRate = (float)resultNum / protoArr.count;//实际过滤率;
+    NSInteger resultNum = [self getResultNum:protoArr.count radio:radio min:min max:max];
+    CGFloat realRate = (float)resultNum / protoArr.count;       //实际过滤率;
     
     //2. 过滤并返回结果;
     NSArray *filter = ARR_SUB([SMGUtils sortBig2Small:protoArr compareBlock:mainBlock], 0, protoArr.count * realRate);
     NSLog(@"过滤器: 总%ld需%ld 主:%.2f => 剩:%ld",protoArr.count,resultNum,realRate,filter.count);
     return filter;
+}
+
+/**
+ *  MARK:--------------------算出过滤器保留结果数--------------------
+ */
++(NSInteger) getResultNum:(NSInteger)protoNum radio:(CGFloat)radio min:(NSInteger)min max:(NSInteger)max {
+    NSInteger resultNum = (NSInteger)(radio * protoNum);  //建议条数 (建议16%,值越小越准);
+    resultNum = MIN(max, MAX(min, resultNum));            //结果需 >=min && <=max;
+    resultNum = MIN(protoNum, MAX(0, resultNum));         //结果需 >=0 && <= protoCount;
+    return resultNum;
 }
 
 @end
