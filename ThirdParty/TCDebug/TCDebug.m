@@ -94,7 +94,7 @@
             
             //d. 调试具体慢原因性能;
             for (NSString *logingTC in LogingTCs) {
-                [theDebug print:TCDebugPrefixV2(logingTC)];
+                [theDebug print:TCDebugPrefixV2(logingTC) rmPrefix:TCDebugRMPrefixV2(logingTC)];
             }
         }
     }

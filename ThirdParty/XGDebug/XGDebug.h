@@ -13,9 +13,8 @@
  *  @use 使用说明: 每条显示的用时为,当前条到下条执行间的代码用时;
  *  @callers 用于调试性能,是TCDebug工具的底层核心;
  *  @desc XGDebug主要关注整体性能的统计情况;
- *  @常用: 1. 常用于观察每个代码块在当前循环loopId内的性能,并可打印
- *              > 使用方法1. AddDebugCodeBlock("yourCodeBlockName"));
- *              > 使用方法2. AddDebugCodeBlock_Key(@"代码块KEY", @"步骤"); PrintDebugCodeBlock_Key(@"代码块KEY");
+ *  @常用: 1. 常用于观察每个代码块在当前循环loopId内的性能,并可打印;
+ *              > 使用方法1. AddDebugCodeBlock_Key(@"代码块KEY", @"步骤"); PrintDebugCodeBlock_Key(@"代码块KEY");
  *        2. 被用到DebugS()和DebugE(),用来长时间统计每个TC的执行性能情况;
  *  @特性: 1. 长时间整体统计;   2. 在TC中有S有E两个夹着;
  */
@@ -58,6 +57,6 @@
 /**
  *  MARK:--------------------打印结果--------------------
  */
--(void) print:(NSString*)prefix;
+-(void) print:(NSString*)prefix rmPrefix:(NSString*)rmPrefix;
 
 @end

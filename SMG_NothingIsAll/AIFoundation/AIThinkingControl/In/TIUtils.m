@@ -360,7 +360,6 @@
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
 +(void) recognitionFo:(AIFoNodeBase*)protoOrRegroupFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel fromRegroup:(BOOL)fromRegroup matchAlgs:(NSArray*)matchAlgs {
-    AddDebugCodeBlock(@"时序识别0");
     //1. 数据准备;
     except_ps = ARRTOOK(except_ps);
     NSMutableArray *protoPModels = [[NSMutableArray alloc] init];
@@ -408,16 +407,13 @@
                 NSArray *nearData = [AINetUtils getNearDataByIndexDic:indexDic absFo:refFo.pointer conFo:protoOrRegroupFo.pointer callerIsAbs:false];
                 int nearCount = NUMTOOK(ARR_INDEX(nearData, 0)).intValue;
                 CGFloat sumNear = NUMTOOK(ARR_INDEX(nearData, 1)).floatValue;
-                AddDebugCodeBlock(@"时序识别24");
                 
                 //8. 被引用强度;
                 NSInteger sumRefStrong = [AINetUtils getSumRefStrongByIndexDic:indexDic matchFo:refFo.pointer];
-                AddDebugCodeBlock(@"时序识别26");
                 
                 //7. 实例化识别结果AIMatchFoModel;
                 AIMatchFoModel *newMatchFo = [AIMatchFoModel newWithMatchFo:refFo.pointer protoOrRegroupFo:protoOrRegroupFo.pointer sumNear:sumNear nearCount:nearCount indexDic:indexDic cutIndex:cutIndex sumRefStrong:sumRefStrong baseFrameModel:inModel];
                 if (Log4MFo) NSLog(@"时序识别itemSUCCESS 匹配度:%f %@->%@",newMatchFo.matchFoValue,Fo2FStr(refFo),Mvp2Str(refFo.cmvNode_p));
-                AddDebugCodeBlock(@"时序识别25");
                 
                 //9. 收集到pFos/rFos;
                 if (refFo.cmvNode_p) {
@@ -432,14 +428,12 @@
     //10. 过滤强度前20% (参考28111-todo1);
     NSArray *filterPModels = [AIFilter recognitionFoFilter:protoPModels];
     NSArray *filterRModels = [AIFilter recognitionFoFilter:protoRModels];
-    AddDebugCodeBlock(@"时序识别30");
     
     //10. 按照 (强度x匹配度) 排序,强度最重要,包含了价值初始和使用频率,其次匹配度也重要 (参考23222-BUG2);
     NSArray *sortPs = [AIRank recognitionFoRank:filterPModels];
     NSArray *sortRs = [AIRank recognitionFoRank:filterRModels];
     inModel.matchPFos = [[NSMutableArray alloc] initWithArray:sortPs];
     inModel.matchRFos = [[NSMutableArray alloc] initWithArray:sortRs];
-    AddDebugCodeBlock(@"时序识别31");
     
     //11. 调试日志;
     NSArray *allMatchFos = [SMGUtils collectArrA:inModel.matchPFos arrB:inModel.matchRFos];
@@ -448,7 +442,6 @@
     //    AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
     //    NSLog(@"%@强度:(%ld)\t> %@->{%.2f} (SP:%@) indexDic:%@ 匹配度 => %.2f",matchFo.cmvNode_p?@"P":@"",item.sumRefStrong,Fo2FStr(matchFo),[AIScore score4MV_v2FromCache:item],CLEANSTR(matchFo.spDic),CLEANSTR(item.indexDic2),item.matchFoValue);
     //}
-    AddDebugCodeBlock(@"时序识别32");
     
     //12. 关联处理,直接protoFo抽象指向matchFo,并持久化indexDic (参考27177-todo6);
     for (AIMatchFoModel *item in allMatchFos) {
@@ -490,11 +483,9 @@
  *  @result 判断protoFo是否全含assFo: 成功时返回indexDic / 失败时返回空dic;
  */
 +(NSDictionary*) TIR_Fo_CheckFoValidMatchV2:(AIFoNodeBase*)assFo protoOrRegroupFo:(AIFoNodeBase*)protoOrRegroupFo{
-    AddDebugCodeBlock(@"时序识别10");
     if (Log4MFo) NSLog(@"------------------------ 时序全含检查 ------------------------\nass:%@->%@",Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
     //1. 数据准备;
     NSMutableDictionary *indexDic = [[NSMutableDictionary alloc] init]; //记录protoIndex和assIndex的映射字典 <K:assIndex, V:protoIndex>;
-    AddDebugCodeBlock(@"时序识别11");
     
     //3. 用于找着时:记录下进度,下次循环时,这个进度已处理过的不再处理;
     NSInteger nextMaxForProtoIndex = protoOrRegroupFo.count - 1;
@@ -509,7 +500,6 @@
             //此处proto抽象仅指向刚识别的matchAlgs,所以与contains等效;
             AIKVPointer *protoAlg_p = ARR_INDEX(protoOrRegroupFo.content_ps, protoIndex);
             BOOL mIsC = [TOUtils mIsC_1:protoAlg_p c:assAlg_p];
-            AddDebugCodeBlock(@"时序识别13");
             if (mIsC) {
                 
                 //7. 匹配时_记录下次循环proto时,从哪帧开始倒序循环: nextMaxForProtoIndex进度
@@ -526,7 +516,6 @@
                 //11. proto的末帧必须找到,所以不匹配时,直接break,继续ass循环找它... (参考: 注释要求1);
                 if (protoIndex == protoOrRegroupFo.count - 1) break;
             }
-            AddDebugCodeBlock(@"时序识别16");
         }
         
         //12. 非全含 (一个失败,全盘皆输);
@@ -535,7 +524,6 @@
             return [NSMutableDictionary new];
         }
     }
-    AddDebugCodeBlock(@"时序识别17");
     
     //13. 到此全含成功: 返回success
     return indexDic;

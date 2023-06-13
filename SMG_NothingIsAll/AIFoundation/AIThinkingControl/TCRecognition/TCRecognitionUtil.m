@@ -177,13 +177,13 @@
     
     //2. 转成conFo中对应的概念帧conAlg;
     for (AIPort *conFoPort in conFoPorts) {
-        AddDebugCodeBlock_Key(@"b", @"2");//读慢 468ms 428ms
+        AddDebugCodeBlock_Key(@"b", @"2");
         AIFoNodeBase *conFo = [SMGUtils searchNode:conFoPort.target_p];
         AddDebugCodeBlock_Key(@"b", @"3");
         NSInteger conCutIndex = NUMTOOK([cutIndexDic objectForKey:@(conFo.pId)]).integerValue;
         AddDebugCodeBlock_Key(@"b", @"4");
         AIKVPointer *conAlg_p = ARR_INDEX(conFo.content_ps, conCutIndex);
-        AddDebugCodeBlock_Key(@"b", @"5");//读慢 112ms 72ms
+        AddDebugCodeBlock_Key(@"b", @"5");
         AIAlgNodeBase *conAlg = [SMGUtils searchNode:conAlg_p];
         AddDebugCodeBlock_Key(@"b", @"6");
         

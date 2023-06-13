@@ -34,10 +34,9 @@
     [theTC updateOperCount:kFILENAME];
     Debug();
     IFTitleLog(@"时序识别", @"\nprotoFo:%@->%@",Fo2FStr(protoFo),Mvp2Str(protoFo.cmvNode_p));
-    AddDebugCodeBlock(@"R START");
+    
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
     [TIUtils recognitionFo:protoFo except_ps:except_ps decoratorInModel:model fromRegroup:false matchAlgs:model.matchAlgs];
-    AddDebugCodeBlock(@"R FINISH");
     DebugE();
 }
 
@@ -93,11 +92,9 @@
     Debug();
     IFTitleLog(@"feedback时序识别", @"\nprotoFo:%@",Fo2FStr(regroupFo));
     
-    AddDebugCodeBlock(@"FB0");
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
     [TIUtils recognitionFo:regroupFo except_ps:@[regroupFo.pointer] decoratorInModel:result fromRegroup:true matchAlgs:feedbackFrameOfMatchAlgs];
     //NSLog(@"反思时序: Finish >> %@",Fo2FStr(result.matchFo));
-    AddDebugCodeBlock(@"FB1");
     
     //3. 调用更新到短时记忆树 (不用学习和反馈,直接构建子任务);
     DebugE();
