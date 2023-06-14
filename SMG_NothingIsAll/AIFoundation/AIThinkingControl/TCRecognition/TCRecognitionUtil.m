@@ -20,59 +20,59 @@
 +(NSDictionary*) getVImportanceDic:(AIShortMatchModel*)inModel {
     //1. 数据准备;
     NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
-    AddDebugCodeBlock_Key(@"a", STRFORMAT(@"1 pFos:%ld条",inModel.matchPFos.count));
-    BOOL debugMode = true;
+    BOOL debugMode = false;
+    if (debugMode) AddDebugCodeBlock_Key(@"a", STRFORMAT(@"1 pFos:%ld条",inModel.matchPFos.count));
     NSMutableDictionary *cutIndexOfConFo = [[NSMutableDictionary alloc] init]; //收集所有同级fo的cutIndex
     
     //2. 逐个收集pFos的同级(抽象的具象)->抽象部分 (参考29105-方案改);
     NSMutableArray *allConPorts1 = [self collectAbsFosThenConFos:inModel.matchPFos outCutIndexDic:cutIndexOfConFo];
-    AddDebugCodeBlock_Key(@"a", STRFORMAT(@"2 同层场景:%ld条",allConPorts1.count));
+    if (debugMode) AddDebugCodeBlock_Key(@"a", STRFORMAT(@"2 同层场景:%ld条",allConPorts1.count));
     
     //6. 排序,并取前20% (参考29105-todo2);
     NSArray *sortOfStrong3 = [SMGUtils sortBig2Small:allConPorts1 compareBlock:^double(AIPort *obj) {
         return obj.strong.value;
     }];
-    AddDebugCodeBlock_Key(@"a", @"3");
+    if (debugMode) AddDebugCodeBlock_Key(@"a", @"3");
     NSInteger goodLimit = MIN(30, sortOfStrong3.count * 0.2f);
     NSArray *goodPorts4 = ARR_SUB(sortOfStrong3, 0, goodLimit);
-    AddDebugCodeBlock_Key(@"a", STRFORMAT(@"4 强度前20%%: %ld条",goodPorts4.count));
+    if (debugMode) AddDebugCodeBlock_Key(@"a", STRFORMAT(@"4 强度前20%%: %ld条",goodPorts4.count));
     
     //7. 分别根据protoV找到在goodPorts4中最相近的那一条,最接近那条的强度即算做protoV的强度 (参考29105-todo3-方案4);
     NSMutableString *zunjieLog = [[NSMutableString alloc] init];
     for (AIKVPointer *protoV_p in inModel.protoAlg.content_ps) {
-        AddDebugCodeBlock_Key(@"a", @"7");
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"7");
         //8. 节约性能: 全程只有一个固定值的打酱油码,不做处理 (参考29105-todo4);
         AIValueInfo *info = [AINetIndex getValueInfo:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut];
-        AddDebugCodeBlock_Key(@"a", STRFORMAT(@"8 参与xy轴字典: %ld条",goodPorts4.count));
+        if (debugMode) AddDebugCodeBlock_Key(@"a", STRFORMAT(@"8 参与xy轴字典: %ld条",goodPorts4.count));
         if (info.span == 0) continue;
         
         //9. 求出全部xy轴;
         NSDictionary *xyDic = [self convertConFoPorts2XYDic:goodPorts4 cutIndexDic:cutIndexOfConFo protoV:protoV_p];
-        AddDebugCodeBlock_Key(@"a", @"9");
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"9");
         if (!DICISOK(xyDic)) continue;
         
         //10. 均匀取样100份,求出平均值 (参考29106-解均值);
         double sumTemplateY = 0;//所有样本总Y值;
         NSMutableArray *quXianYArr = [[NSMutableArray alloc] init];
         for (int i = 0; i < 100; i++) {
-            AddDebugCodeBlock_Key(@"a", @"10");
+            if (debugMode) AddDebugCodeBlock_Key(@"a", @"10");
             double itemSpan = info.span / 100;
             double curX = (i + 0.5f) * itemSpan;
-            AddDebugCodeBlock_Key(@"a", @"11");
+            if (debugMode) AddDebugCodeBlock_Key(@"a", @"11");
             CGFloat curY = [self getY:xyDic checkX:curX at:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut vInfo:info];
-            AddDebugCodeBlock_Key(@"a", @"12");
+            if (debugMode) AddDebugCodeBlock_Key(@"a", @"12");
             sumTemplateY += curY;
             [quXianYArr addObject:@(curY)];
-            AddDebugCodeBlock_Key(@"a", @"13");
+            if (debugMode) AddDebugCodeBlock_Key(@"a", @"13");
         }
         double averageY = sumTemplateY / 100;
-        AddDebugCodeBlock_Key(@"a", @"14");
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"14");
         
         //11. 根据protoV的值,求出protoV的Y轴强度值;
         double protoV = NUMTOOK([AINetIndex getData:protoV_p]).doubleValue;
-        AddDebugCodeBlock_Key(@"a", @"15");
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"15");
         CGFloat protoY = [self getY:xyDic checkX:protoV at:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut vInfo:info];
-        AddDebugCodeBlock_Key(@"a", @"16");
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"16");
         
         //12. debugLog
         //for (AIPort *conFoPort in goodPorts4) NSLog(@"\t\t > conFo: %@ 强度%ld",Pit2FStr(conFoPort.target_p),conFoPort.strong.value);
@@ -80,7 +80,7 @@
         for (NSNumber *item in quXianYArr) {
             if (maxY < (int)item.doubleValue) maxY = (int)item.doubleValue;
         }
-        AddDebugCodeBlock_Key(@"a", @"17");
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"17");
         for (int row = maxY; row >= 1; row--) {//一行行打印
             NSMutableString *line = [[NSMutableString alloc] init];
             if (row % 2 == 1) continue;//高度缩小为50%;
@@ -95,7 +95,7 @@
             }
             if (debugMode) NSLog(@"%@",line);
         }
-        AddDebugCodeBlock_Key(@"a", @"18");
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"18");
         
         //13. 算出当前码的重要性 (参考29105-todo5);
         double vImportance = protoY / averageY;
@@ -103,11 +103,11 @@
         [zunjieLog appendFormat:@"%@ = %.3f; ",Pit2FStr(protoV_p),vImportance];
         [result setObject:@(vImportance) forKey:protoV_p.identifier];
     }
-    AddDebugCodeBlock_Key(@"a", @"19");
+    if (debugMode) AddDebugCodeBlock_Key(@"a", @"19");
     NSLog(@"重要性结果: %@",zunjieLog);
     
     //14. 缩放处理并返回 (参考29107-步骤1);
-    PrintDebugCodeBlock_Key(@"a");
+    if (debugMode) PrintDebugCodeBlock_Key(@"a");
     return [self scala4ImportanceDic:result];
 }
 
@@ -169,40 +169,41 @@
  */
 +(NSDictionary*) convertConFoPorts2XYDic:(NSArray*)conFoPorts cutIndexDic:(NSDictionary*)cutIndexDic protoV:(AIKVPointer*)protoV_p {
     //1. 数据准备;
-    AddDebugCodeBlock_Key(@"b", @"0");
+    BOOL debugMode = false;
+    if (debugMode) AddDebugCodeBlock_Key(@"b", @"0");
     NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
     NSDictionary *protoDataDic = [AINetIndexUtils searchDataDic:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut];//为性能,在for中复用
     NSString *protoIdentifier = protoV_p.identifier;//为性能,在for中复用
-    AddDebugCodeBlock_Key(@"b", @"1");
+    if (debugMode) AddDebugCodeBlock_Key(@"b", @"1");
     
     //2. 转成conFo中对应的概念帧conAlg;
     for (AIPort *conFoPort in conFoPorts) {
-        AddDebugCodeBlock_Key(@"b", @"2");
+        if (debugMode) AddDebugCodeBlock_Key(@"b", @"2");
         AIFoNodeBase *conFo = [SMGUtils searchNode:conFoPort.target_p];
-        AddDebugCodeBlock_Key(@"b", @"3");
+        if (debugMode) AddDebugCodeBlock_Key(@"b", @"3");
         NSInteger conCutIndex = NUMTOOK([cutIndexDic objectForKey:@(conFo.pId)]).integerValue;
-        AddDebugCodeBlock_Key(@"b", @"4");
+        if (debugMode) AddDebugCodeBlock_Key(@"b", @"4");
         AIKVPointer *conAlg_p = ARR_INDEX(conFo.content_ps, conCutIndex);
-        AddDebugCodeBlock_Key(@"b", @"5");
+        if (debugMode) AddDebugCodeBlock_Key(@"b", @"5");
         AIAlgNodeBase *conAlg = [SMGUtils searchNode:conAlg_p];
-        AddDebugCodeBlock_Key(@"b", @"6");
+        if (debugMode) AddDebugCodeBlock_Key(@"b", @"6");
         
         //3. 在conAlg中找着同区码 (用来取xy轴);
         AIKVPointer *findSameIdenConValue_p = [SMGUtils filterSingleFromArr:conAlg.content_ps checkValid:^BOOL(AIKVPointer *conValue_p) {
             return [protoIdentifier isEqualToString:conValue_p.identifier];
         }];
-        AddDebugCodeBlock_Key(@"b", @"7");
+        if (debugMode) AddDebugCodeBlock_Key(@"b", @"7");
         if (!findSameIdenConValue_p) continue;
         
         //4. 得出xy轴值,用于计算特征强度曲线 (参考29106-解曲线);
         double x = NUMTOOK([AINetIndex getData:findSameIdenConValue_p fromDataDic:protoDataDic]).doubleValue;
-        AddDebugCodeBlock_Key(@"b", @"8");
+        if (debugMode) AddDebugCodeBlock_Key(@"b", @"8");
         NSInteger y = conFoPort.strong.value;
         [result setObject:@(y) forKey:@(x)];
-        AddDebugCodeBlock_Key(@"b", @"9");
+        if (debugMode) AddDebugCodeBlock_Key(@"b", @"9");
     }
-    AddDebugCodeBlock_Key(@"b", @"10");
-    PrintDebugCodeBlock_Key(@"b");
+    if (debugMode) AddDebugCodeBlock_Key(@"b", @"10");
+    if (debugMode) PrintDebugCodeBlock_Key(@"b");
     return result;
 }
 
