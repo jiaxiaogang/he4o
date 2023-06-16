@@ -216,6 +216,8 @@
 
 /**
  *  MARK:--------------------更新一条候选--------------------
+ *  @version
+ *      2023.06.16: 修复更新updateEffectStrong的targetIndex传错了,每次都传的1的问题 (参考30023-修复);
  *  @result 将是否保存成功返回 (长度为1及以下的没后段,所以直接不存了) (参考28052-4 && 29094-BUG1);
  */
 -(BOOL) updateConCanset:(AIKVPointer*)newConCansetFo targetIndex:(NSInteger)targetIndex {
@@ -231,8 +233,8 @@
         [SMGUtils insertNode:self];
     }
     
-    //2. 更新后 (新的默认eff=1,旧的eff则增强+1);
-    [self updateEffectStrong:1 solutionFo:newConCansetFo status:ES_HavEff];
+    //2. 更新后 (新的默认eff.h=1,旧的eff则增强+1);
+    [self updateEffectStrong:targetIndex solutionFo:newConCansetFo status:ES_HavEff];
     return true;
 }
 
