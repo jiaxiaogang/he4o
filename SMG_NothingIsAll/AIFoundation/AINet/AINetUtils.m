@@ -229,7 +229,7 @@
 +(void) insertRefPorts_AllMvNode:(AICMVNodeBase*)mvNode value_p:(AIPointer*)value_p difStrong:(NSInteger)difStrong{
     if (mvNode && value_p) {
         //0. mv的ps也不为nil,传delta和urgent生成 (本来这俩就是它的内容,只是现在单独存着两个字段而已);
-        NSArray *sort_ps = [SMGUtils sortPointers:@[mvNode.delta_p,mvNode.urgentTo_p]];
+        NSArray *sort_ps = [SMGUtils sortPointers:mvNode.content_ps];
         //1. 硬盘网络时,取出refPorts -> 并二分法强度序列插入 -> 存XGWedis;
         [self insertRefPorts_HdNode:mvNode.pointer passiveRefValue_p:value_p ps:sort_ps difStrong:difStrong];
     }

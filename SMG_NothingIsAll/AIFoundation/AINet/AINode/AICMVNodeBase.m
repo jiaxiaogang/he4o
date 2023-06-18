@@ -10,6 +10,10 @@
 
 @implementation AICMVNodeBase
 
+-(NSMutableArray *)content_ps{
+    return [[NSMutableArray alloc] initWithObjects:self.delta_p,self.urgentTo_p, nil];
+}
+
 /**
  *  MARK:--------------------NSCoding--------------------
  */

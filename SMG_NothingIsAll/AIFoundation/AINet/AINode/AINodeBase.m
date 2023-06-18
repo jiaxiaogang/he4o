@@ -57,6 +57,7 @@
  *  MARK:--------------------设置引用--------------------
  *  @version
  *      2023.04.15: BUG_此处header应该以alg元素为准;
+ *      2023.06.18: 支持mvNode取content_ps为delta_p和urgent_p,避免nil生成header,导致分不清mv和空概念 (参考30026-修复);
  */
 -(void) setContent_ps:(NSArray*)content_ps getStrongBlock:(NSInteger(^)(AIKVPointer *item_p))getStrongBlock{
     content_ps = ARRTOOK(content_ps);
