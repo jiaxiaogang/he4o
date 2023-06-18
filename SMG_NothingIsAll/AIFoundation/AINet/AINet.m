@@ -165,7 +165,7 @@ static AINet *_instance;
         AIKVPointer *mvReference_p = [SMGUtils createPointerForDirection:cmvNode.pointer.algsType direction:direction];
 
         //4. 将mvNode地址,插入到强度序列,并存储;
-        [AINetUtils insertRefPorts_AllMvNode:cmvNode.pointer value_p:mvReference_p difStrong:difStrong];
+        [AINetUtils insertRefPorts_AllMvNode:cmvNode value_p:mvReference_p difStrong:difStrong];
     }
 }
 

@@ -107,7 +107,7 @@
  *  @param value_p      : 有三种值; 1:delta 2:urgent 3:DirectionReference地址;
  *  注:目前在使用NetRefrence,所以此处不用;
  */
-+(void) insertRefPorts_AllMvNode:(AIKVPointer*)mvNode_p value_p:(AIPointer*)value_p difStrong:(NSInteger)difStrong;
++(void) insertRefPorts_AllMvNode:(AICMVNodeBase*)mvNode value_p:(AIPointer*)value_p difStrong:(NSInteger)difStrong;
 
 
 //MARK:===============================================================

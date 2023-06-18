@@ -74,8 +74,8 @@
     result.foNode_p = absFo_p;
     result.urgentTo_p = (AIKVPointer*)urgentTo_p;
     result.delta_p = (AIKVPointer*)delta_p;
-    [AINetUtils insertRefPorts_AllMvNode:result.pointer value_p:result.urgentTo_p difStrong:1];//引用插线
-    [AINetUtils insertRefPorts_AllMvNode:result.pointer value_p:result.delta_p difStrong:1];//引用插线
+    [AINetUtils insertRefPorts_AllMvNode:result value_p:result.urgentTo_p difStrong:1];//引用插线
+    [AINetUtils insertRefPorts_AllMvNode:result value_p:result.delta_p difStrong:1];//引用插线
 
     //3. 抽具象关联插线 & 存储抽具象节点;
     [AINetUtils relateMvAbs:result conNodes:conMvs isNew:true];

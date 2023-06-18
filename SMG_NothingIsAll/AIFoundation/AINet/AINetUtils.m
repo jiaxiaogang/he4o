@@ -221,11 +221,17 @@
     }
 }
 
-+(void) insertRefPorts_AllMvNode:(AIKVPointer*)mvNode_p value_p:(AIPointer*)value_p difStrong:(NSInteger)difStrong{
-    if (mvNode_p && value_p) {
-        
+/**
+ *  MARK:--------------------mv和它的稀疏码(delta和urgent)插线--------------------
+ *  @version
+ *      2023.06.18: 支持ps生成header,原来是nil,导致分不清mv和空概念 (参考30026-修复);
+ */
++(void) insertRefPorts_AllMvNode:(AICMVNodeBase*)mvNode value_p:(AIPointer*)value_p difStrong:(NSInteger)difStrong{
+    if (mvNode && value_p) {
+        //0. mv的ps也不为nil,传delta和urgent生成 (本来这俩就是它的内容,只是现在单独存着两个字段而已);
+        NSArray *sort_ps = [SMGUtils sortPointers:@[mvNode.delta_p,mvNode.urgentTo_p]];
         //1. 硬盘网络时,取出refPorts -> 并二分法强度序列插入 -> 存XGWedis;
-        [self insertRefPorts_HdNode:mvNode_p passiveRefValue_p:value_p ps:nil difStrong:difStrong];
+        [self insertRefPorts_HdNode:mvNode.pointer passiveRefValue_p:value_p ps:sort_ps difStrong:difStrong];
     }
 }
 

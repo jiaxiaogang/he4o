@@ -52,8 +52,8 @@
     cmvNode.pointer = [SMGUtils createPointer:kPN_CMV_NODE algsType:at dataSource:DefaultDataSource isOut:false type:ATDefault];
     cmvNode.delta_p = delta_p;
     cmvNode.urgentTo_p = urgentTo_p;
-    [AINetUtils insertRefPorts_AllMvNode:cmvNode.pointer value_p:cmvNode.delta_p difStrong:1];//引用插线
-    [AINetUtils insertRefPorts_AllMvNode:cmvNode.pointer value_p:cmvNode.urgentTo_p difStrong:1];//引用插线
+    [AINetUtils insertRefPorts_AllMvNode:cmvNode value_p:cmvNode.delta_p difStrong:1];//引用插线
+    [AINetUtils insertRefPorts_AllMvNode:cmvNode value_p:cmvNode.urgentTo_p difStrong:1];//引用插线
     [theNet setMvNodeToDirectionReference:cmvNode difStrong:urgentTo];//difStrong暂时先相等;
 
     //5. 存储cmvNode
