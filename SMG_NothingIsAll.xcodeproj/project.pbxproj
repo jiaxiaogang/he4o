@@ -1870,6 +1870,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -2246,7 +2247,7 @@
 				DEVELOPMENT_TEAM = H3583666HM;
 				GCC_PREFIX_HEADER = SMG_NothingIsAll/Demo/SMGPrefixHeader.pch;
 				INFOPLIST_FILE = SMG_NothingIsAll/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.jxg.he.283636001;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2265,7 +2266,7 @@
 				DEVELOPMENT_TEAM = H3583666HM;
 				GCC_PREFIX_HEADER = SMG_NothingIsAll/Demo/SMGPrefixHeader.pch;
 				INFOPLIST_FILE = SMG_NothingIsAll/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.jxg.he.283636001;
 				PRODUCT_NAME = "$(TARGET_NAME)";
