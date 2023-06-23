@@ -93,56 +93,6 @@
     }];
 }
 
--(void) flyActionV2:(CGFloat)value{
-    //1. 数据检查
-    value = MAX(MIN(1, value), 0);
-    
-    //2. 将从左顺时针: "0至1",转换为: "-1至1";
-    CGFloat value_F1_1 = value * 2 - 1;
-    
-    //3. 将"-1至1",转为: "-180至180度";
-    CGFloat angle = value_F1_1 * M_PI;
-    CGFloat distance = 30; //在物理仿真中,我们无法保证飞出30的距离,只能设定速度和阻力让它大概是这个距离;
-    CGFloat time = 0.15f;
-    CGFloat xDistance = (cos(angle) * distance);
-    CGFloat yDistance = (sin(angle) * distance);
-    CGFloat xSpeed = xDistance / time, ySpeed = yDistance / time;
-    
-    //4. 用sin计算对边Y,cos计算邻边X;
-    NSLog(@"fly >> %@ angle:%.0f",[NVHeUtil getLightStr_Value:value algsType:FLY_RDS dataSource:@""],value_F1_1 * 180);
-    UIDynamicAnimator *dyAnimator = [self.delegate birdView_GetDyAnimator];
-    
-    //5. 自定义力 及 item属性
-    UIDynamicItemBehavior *itemBehavior = [[UIDynamicItemBehavior alloc] initWithItems:@[self]];
-    itemBehavior.allowsRotation = false; //禁止被撞的旋转
-    //itemBehavior.density = 0; //密度 (默认1,设为0时也能撞到,不知道啥意思);
-    //itemBehavior.friction = 0; //摩擦力
-    itemBehavior.resistance = 6.5; //线性阻力 (差不多6.5能够保证每次飞出30距离);
-    [itemBehavior addLinearVelocity:CGPointMake(xSpeed / 1, ySpeed / 1) forItem:self]; //线性速度
-    [dyAnimator addBehavior:itemBehavior];
-    
-    //6. finish
-    __block typeof(itemBehavior) weakItemBehavior = itemBehavior;
-    __block CGPoint lastPos = CGPointZero;
-    itemBehavior.action = ^{
-        
-        //7. 飞停不动后: 移除线性力;
-        CGFloat lastDistance = [NVViewUtil distancePoint:lastPos second:self.origin];
-        lastPos = self.origin;
-        if (lastDistance == 0) {
-            [dyAnimator removeBehavior:weakItemBehavior];
-            
-            //9. 飞后与坚果碰撞检测 (参考28172-todo2.2);
-            if ([self.delegate birdView_GetFoodOnMouth]) {
-                
-                //10. 如果飞到坚果上,则触发吃掉 (参考28172-todo2.1);
-                [self touchMouth];
-            }
-            //11. 强训飞完报告;
-            [theRT invoked:kFlySEL];
-        }
-    };
-}
 -(void) flyResult:(CGFloat)value{
     //1. 飞后视觉
     [self see:[self.delegate birdView_GetPageView]];
@@ -254,6 +204,12 @@
 //MARK:===============================================================
 //MARK:                     < outputObserver >
 //MARK:===============================================================
+
+/**
+ *  MARK:--------------------行为输出--------------------
+ *  @version
+ *      2023.06.23: 输出吃时: 立马就吃到,而不是等动画结束 (参考30041-记录2);
+ */
 -(void) outputObserver:(NSNotification*)notification{
     if (notification && ISOK(notification.object, OutputModel.class)) {
         //1. 取数据
@@ -265,10 +221,10 @@
                 //b. 吃前 => 行为动画;
                 [self eatAction:[model.data floatValue]];
                 model.useTime = 0.2f;
-            }else if(OutputObserverType_Back == model.type){
-                //b. 吃后 => 世界变化 & 视觉 & 产生mv;
+                
+                //c. 吃后 => 世界变化 & 视觉 & 产生mv;
                 [self eatResult:[model.data floatValue]];
-            }
+            }else if(OutputObserverType_Back == model.type){}
         }
         //3. 扇翅膀反射
         else if([FLY_RDS isEqualToString:model.identify]){

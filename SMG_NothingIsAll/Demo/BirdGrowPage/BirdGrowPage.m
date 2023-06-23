@@ -274,6 +274,7 @@
     //2. 五秒后更饿: 从0.6饿到0.5 (按0.5计算得迫切度为25);
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(8 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         if (self.birdView.waitEat) {
+            NSLog(@"马上饿后 -> 触发更饿");
             [[[DemoHunger alloc] init] commit:0.5 state:UIDeviceBatteryStateUnplugged];
         }
         //3. 第2次饿后,允许强训工具继续;
