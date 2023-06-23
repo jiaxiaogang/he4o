@@ -15,7 +15,7 @@
 #import "WoodView.h"
 #import "HitItemModel.h"
 
-@interface BirdGrowPage ()<UIGestureRecognizerDelegate,BirdViewDelegate,UICollisionBehaviorDelegate,WoodViewDelegate>
+@interface BirdGrowPage ()<UIGestureRecognizerDelegate,BirdViewDelegate,WoodViewDelegate>
 
 @property (strong,nonatomic) BirdView *birdView;
 @property (strong,nonatomic) UITapGestureRecognizer *singleTap;
@@ -397,52 +397,6 @@
     [self throwWoodV4:x invoked:invoked];
 }
 
--(void) throwWoodV2:(CGFloat)x invoked:(void(^)())invoked{
-    //0. 鸟不在,则跳过;
-    if ([self birdOut]) {
-        invoked();
-        return;
-    }
-    
-    //1. 复位木棒
-    [self.woodView reset:false x:x];
-    
-    //2. 扔前木棒视觉帧
-    DemoLog(@"木棒扔前视觉");
-    [self.birdView see:self.woodView];
-    
-    //3. 预计撞到的时间 (撞需距离 / 总扔距离 * 总扔时间);
-    [self.dyAnimator removeAllBehaviors];
-    CGFloat allDistance = ScreenWidth - self.woodView.x;
-    CGFloat allTime = allDistance / ScreenWidth * ThrowTime;
-    CGFloat speed = allTime > 0 ? allDistance / allTime : 0;
-    
-    //4. 自定义力 及 item属性
-    UIDynamicItemBehavior *itemBehavior = [[UIDynamicItemBehavior alloc] initWithItems:@[self.woodView]];
-    itemBehavior.allowsRotation = false; //禁止被撞的旋转
-    itemBehavior.density = 0; //密度 (默认1,设为0时也能撞到,不知道啥意思);
-    itemBehavior.friction = 0; //摩擦力
-    itemBehavior.resistance = 0; //线性阻力
-    [itemBehavior addLinearVelocity:CGPointMake(speed, 0) forItem:self.woodView]; //线性速度
-    [self.dyAnimator addBehavior:itemBehavior];
-    
-    //5. 碰撞
-    self.collision = [[UICollisionBehavior alloc] initWithItems:@[self.woodView,self.birdView]];
-    [self.collision setTranslatesReferenceBoundsIntoBoundary:true];
-    self.collision.collisionDelegate = self;
-    self.collision.collisionMode = UICollisionBehaviorModeItems;
-    [self.dyAnimator addBehavior:self.collision];
-    
-    //6. 执行完成报告;
-    itemBehavior.action = ^{
-        if (self.woodView.x > ScreenWidth) {
-            [self.dyAnimator removeAllBehaviors];
-            [self.woodView reset:true x:0];
-            invoked();
-        }
-    };
-}
-
 -(void) throwWoodV4:(CGFloat)x invoked:(void(^)())invoked{
     //0. 鸟不在,则跳过;
     if ([self birdOut]) {
@@ -519,15 +473,6 @@
 }
 
 /**
- *  MARK:--------------------UICollisionBehaviorDelegate--------------------
- */
-- (void)collisionBehavior:(UICollisionBehavior *)behavior beganContactForItem:(id <UIDynamicItem>)item1 withItem:(id <UIDynamicItem>)item2 atPoint:(CGPoint)p {
-    NSLog(@"---> success 撞到了");
-    [self.collision removeItem:self.birdView];//防止被撞飞;
-    [self.birdView hurt];
-}
-
-/**
  *  MARK:--------------------WoodViewDelegate--------------------
  */
 
@@ -569,6 +514,81 @@
  *      2023.06.09: 修复因分母为0,导致分帧rect取到NaN,导致交集全判为撞到的BUG (参考30015);
  */
 -(void) runCheckHit:(CGFloat)birdDuration woodDuration:(CGFloat)woodDuration hiterDesc:(NSString*)hiterDesc {
+    //1. 非检查中 或 已检测到碰撞 => 返回;
+    if (!self.waitHiting || self.isHited) return;
+    
+    //2. 当前帧model;
+    HitItemModel *curHitModel = [[HitItemModel alloc] init];
+    curHitModel.woodFrame = self.woodView.showFrame;
+    curHitModel.birdFrame = self.birdView.showFrame;
+    curHitModel.time = [[NSDate date] timeIntervalSince1970] * 1000;
+    curHitModel.birdDuration = birdDuration;
+    curHitModel.woodDuration = woodDuration;
+    
+    //3. 上帧为空时,直接等于当前帧;
+    if (self.lastHitModel == nil) {
+        self.lastHitModel = curHitModel;
+        return;
+    }
+    
+    //4. 分10帧,检查每帧棒鸟是否有碰撞 (参考29098-方案3-步骤3);
+    CGFloat totalTime = curHitModel.time - self.lastHitModel.time; //总共过了多久;
+    CGFloat woodTime = self.lastHitModel.woodDuration == 0 ? totalTime : self.lastHitModel.woodDuration * 1000; //木棒扔了多久;
+    CGFloat birdTime = self.lastHitModel.birdDuration == 0 ? totalTime : self.lastHitModel.birdDuration * 1000; //小鸟飞了多久;
+    CGFloat firstCheckTime = MIN(totalTime,MIN(woodTime,birdTime)); //先把检查指定时间的(比如bird动画开始指定了0.15s);
+    NSInteger frameCount = 10;
+    CGFloat itemTime = firstCheckTime / frameCount; //在下面循环中每份i过了多久;
+    for (NSInteger i = 0; i < frameCount; i++) {
+        //5. 取上下等份的Rect取并集,避免两等份间距过大,导致错漏检测问题 (参考29098-测BUG2);
+        CGFloat wrRadio1 = woodTime == 0 ? 0 : i * itemTime / woodTime, wrRadio2 = woodTime == 0 ? 0 : (i+1) * itemTime / woodTime;
+        CGFloat brRadio1 = birdTime == 0 ? 0 : i * itemTime / birdTime, brRadio2 = birdTime == 0 ? 0 : (i+1) * itemTime / birdTime;
+        CGRect wr1 = [MathUtils radioRect:self.lastHitModel.woodFrame endRect:curHitModel.woodFrame radio:wrRadio1];
+        CGRect br1 = [MathUtils radioRect:self.lastHitModel.birdFrame endRect:curHitModel.birdFrame radio:brRadio1];
+        CGRect wr2 = [MathUtils radioRect:self.lastHitModel.woodFrame endRect:curHitModel.woodFrame radio:wrRadio2];
+        CGRect br2 = [MathUtils radioRect:self.lastHitModel.birdFrame endRect:curHitModel.birdFrame radio:brRadio2];
+        CGRect wrUnion = [MathUtils collectRectA:wr1 rectB:wr2];
+        CGRect brUnion = [MathUtils collectRectA:br1 rectB:br2];
+        if (CGRectIntersectsRect(wrUnion, brUnion)) {
+            self.isHited = true;
+            break;
+        }
+    }
+    
+    //6. 前段没执行完,后段再执行下检查;
+    if (!self.isHited && firstCheckTime != totalTime) {
+        //a. wr1br1就是前段的结尾处;
+        CGFloat wrRadio1 = woodTime == 0 ? 0 : firstCheckTime / woodTime, brRadio1 = birdTime == 0 ? 0 : firstCheckTime / birdTime;
+        CGRect wr1 = [MathUtils radioRect:self.lastHitModel.woodFrame endRect:curHitModel.woodFrame radio:wrRadio1];
+        CGRect br1 = [MathUtils radioRect:self.lastHitModel.birdFrame endRect:curHitModel.birdFrame radio:brRadio1];
+        //b. wr2br2直接就是最结尾,即curHitModel的位置;
+        CGRect wr2 = curHitModel.woodFrame;
+        CGRect br2 = curHitModel.birdFrame;
+        //c. 后段碰撞检测;
+        CGRect wrUnion = [MathUtils collectRectA:wr1 rectB:wr2];
+        CGRect brUnion = [MathUtils collectRectA:br1 rectB:br2];
+        if (CGRectIntersectsRect(wrUnion, brUnion)) {
+            self.isHited = true;
+        }
+    }
+    
+    //5. 保留lastHitModel & 撞到时触发痛感 (参考29098-方案3-步骤2);
+    NSLog(@"碰撞检测: %@ 棒(%.0f -> %.0f) 鸟(%.0f,%.0f -> %.0f,%.0f) from:%@",self.isHited ? @"撞到了" : @"没撞到",
+          self.lastHitModel.woodFrame.origin.x,curHitModel.woodFrame.origin.x,
+          self.lastHitModel.birdFrame.origin.x,self.lastHitModel.birdFrame.origin.y,
+          curHitModel.birdFrame.origin.x,curHitModel.birdFrame.origin.y,hiterDesc);
+    self.lastHitModel = curHitModel;
+    if (self.isHited) {
+        [self.birdView hurt];
+    }
+}
+
+/**
+ *  MARK:--------------------坚果碰撞检测算法 (参考30041-记录3-方案)--------------------
+ *  @desc 食物不会动,只需要判断鸟飞过的轨迹分帧,有没有路过坚果即可 (每dp一帧);
+ *  @version
+ *      2023.06.23: 初版,解决飞的太快,导致飞过却没吃到的BUG (参考30041-记录3);
+ */
+-(void) runCheckHit4Food:(CGFloat)birdDuration woodDuration:(CGFloat)woodDuration hiterDesc:(NSString*)hiterDesc {
     //1. 非检查中 或 已检测到碰撞 => 返回;
     if (!self.waitHiting || self.isHited) return;
     

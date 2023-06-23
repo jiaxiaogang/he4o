@@ -83,6 +83,12 @@
         //5. 飞完动画时,要调用下碰撞检测 (因为UIView动画后,不会立马执行frame更新);
         [self.delegate birdView_FlyAnimationFinish];
         //5. 飞后与坚果碰撞检测 (参考28172-todo2.2);
+        
+        
+        //TODOTOMORROW20230623: 此处做下碰撞检测 (参考30041-记录3);
+        //a. 检测后,把foodView记录下来;
+        
+        
         if ([self.delegate birdView_GetFoodOnMouth]) {
             
             //6. 如果飞到坚果上,则触发吃掉 (参考28172-todo2.1);
@@ -174,6 +180,12 @@
 -(void) eatResult:(CGFloat)value{
     if (self.delegate && [self.delegate respondsToSelector:@selector(birdView_GetFoodOnMouth)]) {
         //1. 嘴附近的食物
+        
+        
+        //TODOTOMORROW20230623: 此处吃掉碰撞到的坚果 (参考30041-记录3);
+        //b. 触发吃后,把碰撞到的坚果吃掉;
+        
+        
         FoodView *foodView = [self.delegate birdView_GetFoodOnMouth];
         
         //2. 吃掉UI (计时器触发,更饿时,发现没坚果吃,并不能解决饥饿问题,参考:18084_todo1);
