@@ -85,8 +85,8 @@
         //5. 飞完动画时,要调用下碰撞检测 (因为UIView动画后,不会立马执行frame更新);
         [self.delegate birdView_FlyAnimationFinish];
         //5. 飞后与坚果碰撞检测 (参考28172-todo2.2 & 30041-记录3);
-        NSArray *hitFoods = [self.delegate birdView_GetFoodOnMouth:birdStart birdEnd:self.frame];
-        if (ARRISOK(hitFoods)) {
+        self.hitFoods = [self.delegate birdView_GetFoodOnMouth:birdStart birdEnd:self.frame];
+        if (ARRISOK(self.hitFoods)) {
             
             //6. 如果飞到坚果上,则触发吃掉 (参考28172-todo2.1);
             [self touchMouth];

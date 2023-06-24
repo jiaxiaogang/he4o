@@ -109,6 +109,8 @@
     [UIView animateWithDuration:0.3f animations:^{
         [foodView setCenter:targetPoint];
     }completion:^(BOOL finished) {
+        //0. 扔后判断能吃到哪些坚果;
+        self.birdView.hitFoods = [self birdView_GetFoodOnMouth:self.birdView.frame birdEnd:self.birdView.frame];
         //1. 吃前视觉
         [self.birdView see:self.view];
         //2. 触碰到鸟嘴;
