@@ -436,15 +436,8 @@
 /**
  *  MARK:--------------------BirdViewDelegate--------------------
  */
--(FoodView *)birdView_GetFoodOnMouth{
-    NSArray *foods = ARRTOOK([self.view subViews_AllDeepWithClass:FoodView.class]);
-    for (FoodView *food in foods) {
-        //判断触碰到的食物 & 并返回;
-        if (fabs(food.center.x - self.birdView.center.x) <= 15.0f && fabs(food.center.y - self.birdView.center.y) <= 15.0f) {
-            return food;
-        }
-    }
-    return nil;
+-(NSArray *)birdView_GetFoodOnMouth:(CGRect)birdStart birdEnd:(CGRect)birdEnd {
+    return [self runCheckHit4Food:birdStart birdEnd:birdEnd];
 }
 
 -(UIView*) birdView_GetPageView{
@@ -584,77 +577,31 @@
 
 /**
  *  MARK:--------------------坚果碰撞检测算法 (参考30041-记录3-方案)--------------------
- *  @desc 食物不会动,只需要判断鸟飞过的轨迹分帧,有没有路过坚果即可 (每dp一帧);
+ *  @desc 1. 食物不会动,只需要判断鸟飞过的轨迹分帧,有没有路过坚果即可 (每dp一帧);
+ *        2. 坐标说明: 不用世界坐标,因为bird,wood,food全在self.view下;
  *  @version
  *      2023.06.23: 初版,解决飞的太快,导致飞过却没吃到的BUG (参考30041-记录3);
  */
--(void) runCheckHit4Food:(CGFloat)birdDuration woodDuration:(CGFloat)woodDuration hiterDesc:(NSString*)hiterDesc {
-    //1. 非检查中 或 已检测到碰撞 => 返回;
-    if (!self.waitHiting || self.isHited) return;
+-(NSArray*) runCheckHit4Food:(CGRect)birdStart birdEnd:(CGRect)birdEnd {
+    //1. 数据准备;
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    NSArray *foods = ARRTOOK([self.view subViews_AllDeepWithClass:FoodView.class]);
     
-    //2. 当前帧model;
-    HitItemModel *curHitModel = [[HitItemModel alloc] init];
-    curHitModel.woodFrame = self.woodView.showFrame;
-    curHitModel.birdFrame = self.birdView.showFrame;
-    curHitModel.time = [[NSDate date] timeIntervalSince1970] * 1000;
-    curHitModel.birdDuration = birdDuration;
-    curHitModel.woodDuration = woodDuration;
-    
-    //3. 上帧为空时,直接等于当前帧;
-    if (self.lastHitModel == nil) {
-        self.lastHitModel = curHitModel;
-        return;
-    }
-    
-    //4. 分10帧,检查每帧棒鸟是否有碰撞 (参考29098-方案3-步骤3);
-    CGFloat totalTime = curHitModel.time - self.lastHitModel.time; //总共过了多久;
-    CGFloat woodTime = self.lastHitModel.woodDuration == 0 ? totalTime : self.lastHitModel.woodDuration * 1000; //木棒扔了多久;
-    CGFloat birdTime = self.lastHitModel.birdDuration == 0 ? totalTime : self.lastHitModel.birdDuration * 1000; //小鸟飞了多久;
-    CGFloat firstCheckTime = MIN(totalTime,MIN(woodTime,birdTime)); //先把检查指定时间的(比如bird动画开始指定了0.15s);
-    NSInteger frameCount = 10;
-    CGFloat itemTime = firstCheckTime / frameCount; //在下面循环中每份i过了多久;
-    for (NSInteger i = 0; i < frameCount; i++) {
-        //5. 取上下等份的Rect取并集,避免两等份间距过大,导致错漏检测问题 (参考29098-测BUG2);
-        CGFloat wrRadio1 = woodTime == 0 ? 0 : i * itemTime / woodTime, wrRadio2 = woodTime == 0 ? 0 : (i+1) * itemTime / woodTime;
-        CGFloat brRadio1 = birdTime == 0 ? 0 : i * itemTime / birdTime, brRadio2 = birdTime == 0 ? 0 : (i+1) * itemTime / birdTime;
-        CGRect wr1 = [MathUtils radioRect:self.lastHitModel.woodFrame endRect:curHitModel.woodFrame radio:wrRadio1];
-        CGRect br1 = [MathUtils radioRect:self.lastHitModel.birdFrame endRect:curHitModel.birdFrame radio:brRadio1];
-        CGRect wr2 = [MathUtils radioRect:self.lastHitModel.woodFrame endRect:curHitModel.woodFrame radio:wrRadio2];
-        CGRect br2 = [MathUtils radioRect:self.lastHitModel.birdFrame endRect:curHitModel.birdFrame radio:brRadio2];
-        CGRect wrUnion = [MathUtils collectRectA:wr1 rectB:wr2];
-        CGRect brUnion = [MathUtils collectRectA:br1 rectB:br2];
-        if (CGRectIntersectsRect(wrUnion, brUnion)) {
-            self.isHited = true;
-            break;
+    //2. dp距离每点一帧,检查每帧坚果鸟是否有碰撞 (参考30041-记录3-方案);
+    float distance = [UIView distance4DP:birdStart.origin pointB:birdEnd.origin];
+    for (NSInteger i = 0; i <= distance; i++) {
+        CGFloat brRadio = distance == 0 ? 0 : i / distance;
+        CGRect birdIFrame = [MathUtils radioRect:birdStart endRect:birdEnd radio:brRadio];
+        for (FoodView *food in foods) {
+            if (![result containsObject:food] && CGRectIntersectsRect(birdIFrame, food.frame)) {
+                [result addObject:food];
+            }
         }
     }
     
-    //6. 前段没执行完,后段再执行下检查;
-    if (!self.isHited && firstCheckTime != totalTime) {
-        //a. wr1br1就是前段的结尾处;
-        CGFloat wrRadio1 = woodTime == 0 ? 0 : firstCheckTime / woodTime, brRadio1 = birdTime == 0 ? 0 : firstCheckTime / birdTime;
-        CGRect wr1 = [MathUtils radioRect:self.lastHitModel.woodFrame endRect:curHitModel.woodFrame radio:wrRadio1];
-        CGRect br1 = [MathUtils radioRect:self.lastHitModel.birdFrame endRect:curHitModel.birdFrame radio:brRadio1];
-        //b. wr2br2直接就是最结尾,即curHitModel的位置;
-        CGRect wr2 = curHitModel.woodFrame;
-        CGRect br2 = curHitModel.birdFrame;
-        //c. 后段碰撞检测;
-        CGRect wrUnion = [MathUtils collectRectA:wr1 rectB:wr2];
-        CGRect brUnion = [MathUtils collectRectA:br1 rectB:br2];
-        if (CGRectIntersectsRect(wrUnion, brUnion)) {
-            self.isHited = true;
-        }
-    }
-    
-    //5. 保留lastHitModel & 撞到时触发痛感 (参考29098-方案3-步骤2);
-    NSLog(@"碰撞检测: %@ 棒(%.0f -> %.0f) 鸟(%.0f,%.0f -> %.0f,%.0f) from:%@",self.isHited ? @"撞到了" : @"没撞到",
-          self.lastHitModel.woodFrame.origin.x,curHitModel.woodFrame.origin.x,
-          self.lastHitModel.birdFrame.origin.x,self.lastHitModel.birdFrame.origin.y,
-          curHitModel.birdFrame.origin.x,curHitModel.birdFrame.origin.y,hiterDesc);
-    self.lastHitModel = curHitModel;
-    if (self.isHited) {
-        [self.birdView hurt];
-    }
+    //3. 保留lastHitModel & 撞到时触发痛感 (参考29098-方案3-步骤2);
+    NSLog(@"碰撞检测到坚果数: %ld 鸟(%.0f,%.0f -> %.0f,%.0f)",result.count,birdStart.origin.x,birdStart.origin.y,birdEnd.origin.x,birdEnd.origin.y);
+    return result;
 }
 
 - (void) food2Pos:(CGPoint)targetPoint caller4RL:(NSString*)caller4RL{
@@ -669,7 +616,8 @@
         [self.birdView see:self.view];
         
         //2. 投食碰撞检测 (参考28172-todo2.2);
-        if ([self birdView_GetFoodOnMouth]) {
+        self.birdView.hitFoods = [self birdView_GetFoodOnMouth:self.birdView.frame birdEnd:self.birdView.frame];
+        if (ARRISOK(self.birdView.hitFoods)) {
             
             //3. 如果扔到鸟身上,则触发吃掉 (参考28172-todo2.1);
             [self.birdView touchMouth];

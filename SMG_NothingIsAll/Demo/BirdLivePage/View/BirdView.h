@@ -11,7 +11,7 @@
 @class FoodView;
 @protocol BirdViewDelegate <NSObject>
 
--(FoodView*) birdView_GetFoodOnMouth;
+-(NSArray *)birdView_GetFoodOnMouth:(CGRect)birdStart birdEnd:(CGRect)birdEnd;
 -(UIView*) birdView_GetPageView;
 -(CGRect) birdView_GetSeeRect;//视觉范围 (仅能看到范围内的view)
 -(UIDynamicAnimator*) birdView_GetDyAnimator;
@@ -25,6 +25,11 @@
 @interface BirdView : UIView
 
 @property (weak,nonatomic) id<BirdViewDelegate> delegate;
+
+/**
+ *  MARK:--------------------鸟飞过的坚果--------------------
+ */
+@property (strong, nonatomic) NSArray *hitFoods;
 
 /**
  *  MARK:--------------------饿了在等吃状态--------------------

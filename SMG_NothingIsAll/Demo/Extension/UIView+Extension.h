@@ -76,9 +76,13 @@
 //MARK:===============================================================
 //MARK:                     < distance >
 //MARK:===============================================================
+
+//view距离
 +(CGFloat) distance:(UIView*)selfView target:(UIView*)target;
 +(CGPoint) distancePoint:(UIView*)selfView target:(UIView*)target;
-
+//点距
++(CGFloat) distance4DP:(CGPoint)pointA pointB:(CGPoint)pointB;
++(CGPoint) distance4Point:(CGPoint)pointA pointB:(CGPoint)pointB;
 @end
 
 

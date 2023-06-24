@@ -57,6 +57,7 @@
  *  @version
  *      2023.05.20: 改为物理仿真飞行 (为了碰撞检测用物理仿真更准确,而用了后飞行就必须也用) (参考29096-问题2-另外);
  *      2023.05.21: v2物理仿真: "飞行卡循环,木棒扔不全",所以切回v1 (参考29097);
+ *      2023.06.24: 飞过坚果检测,交把结果存下来,以便触发"吃行为"后将其吃掉 (参考30041-记录3);
  */
 -(void) flyAction:(CGFloat)value {
     [self flyActionV1:value];
@@ -76,20 +77,16 @@
     NSLog(@"fly >> %@ angle:%.0f",[NVHeUtil getLightStr_Value:value algsType:FLY_RDS dataSource:@""],value_F1_1 * 180);
     CGFloat duration = 0.15f;
     [self.delegate birdView_FlyAnimationBegin:duration];
+    CGRect birdStart = self.frame;
     [UIView animateWithDuration:duration animations:^{
         [self setX:self.x + (cos(angle) * 30.0f)];
         [self setY:self.y + (sin(angle) * 30.0f)];
     }completion:^(BOOL finished) {
         //5. 飞完动画时,要调用下碰撞检测 (因为UIView动画后,不会立马执行frame更新);
         [self.delegate birdView_FlyAnimationFinish];
-        //5. 飞后与坚果碰撞检测 (参考28172-todo2.2);
-        
-        
-        //TODOTOMORROW20230623: 此处做下碰撞检测 (参考30041-记录3);
-        //a. 检测后,把foodView记录下来;
-        
-        
-        if ([self.delegate birdView_GetFoodOnMouth]) {
+        //5. 飞后与坚果碰撞检测 (参考28172-todo2.2 & 30041-记录3);
+        NSArray *hitFoods = [self.delegate birdView_GetFoodOnMouth:birdStart birdEnd:self.frame];
+        if (ARRISOK(hitFoods)) {
             
             //6. 如果飞到坚果上,则触发吃掉 (参考28172-todo2.1);
             [self touchMouth];
@@ -163,6 +160,7 @@
  *  @version
  *      2020.01.20: 吃前视觉仅由被动吃时有,为解决外层死循环问题 (参考n18p5-BUG9);
  *      2023.03.11: 吃上了,不会立马感觉饱,而是不再继续更饿 (参考28171-todo2);
+ *      2023.06.24: 触发吃后,吃掉碰撞到的坚果 (参考30041-记录3);
  */
 -(void) eatAction:(CGFloat)value{
     //1. 吃动作
@@ -178,38 +176,32 @@
     }];
 }
 -(void) eatResult:(CGFloat)value{
-    if (self.delegate && [self.delegate respondsToSelector:@selector(birdView_GetFoodOnMouth)]) {
-        //1. 嘴附近的食物
-        
-        
-        //TODOTOMORROW20230623: 此处吃掉碰撞到的坚果 (参考30041-记录3);
-        //b. 触发吃后,把碰撞到的坚果吃掉;
-        
-        
-        FoodView *foodView = [self.delegate birdView_GetFoodOnMouth];
-        
-        //2. 吃掉UI (计时器触发,更饿时,发现没坚果吃,并不能解决饥饿问题,参考:18084_todo1);
-        if (foodView){
-            //3. 吃掉 (让he以吸吮反射的方式,去主动吃;并将out入网,以抽象出"吃"的节点;参考n15p6-QT1)
-            if(foodView.status == FoodStatus_Eat){
-                [foodView removeFromSuperview];
-            }
-            
-            //4. 吃完视觉 (其实啥也看不到);
-            [self see:[self.delegate birdView_GetPageView]];
-            
-            //5. 价值变化;
-            if (foodView.status == FoodStatus_Eat) {
-                //a. 吃上了,不会立马感觉饱,而是不再继续更饿 (参考28171-todo2);
-                DemoLog(@"吃上坚果了");
-                self.waitEat = false;
-            }else if(foodView.status == FoodStatus_Border){
-                //b. 产生HurtMindValue (坚果带皮时,不仅吃不到,还得嘴疼);
-                [AIInput commitIMV:MVType_Hurt from:2.0f to:3.0f];
-            }
-        }else{
-            //3. 没坚果可吃 (计时器触发,更饿时,发现没坚果吃,并不能解决饥饿问题,参考:18084_todo1);
+    //1. 嘴附近的食物
+    self.hitFoods = ARRTOOK(self.hitFoods);
+    BOOL eated = false;
+    
+    //2. 吃掉UI (计时器触发,更饿时,发现没坚果吃,并不能解决饥饿问题,参考:18084_todo1);
+    for (FoodView *foodView in self.hitFoods) {
+        //3. 吃掉 (让he以吸吮反射的方式,去主动吃;并将out入网,以抽象出"吃"的节点;参考n15p6-QT1)
+        if(foodView.status == FoodStatus_Eat){
+            eated = true;
+            [foodView removeFromSuperview];
+        }else if(foodView.status == FoodStatus_Border){
+            //b. 产生HurtMindValue (坚果带皮时,不仅吃不到,还得嘴疼);
+            //[AIInput commitIMV:MVType_Hurt from:2.0f to:3.0f];
         }
+    }
+    
+    //3. 吃到 或 没吃到 => 的吃后视觉 & waitEat标记;
+    if (eated){
+        //4. 吃完视觉 (其实啥也看不到);
+        [self see:[self.delegate birdView_GetPageView]];
+        
+        //5. 价值变化: 吃上了,不会立马感觉饱,而是不再继续更饿 (参考28171-todo2);
+        DemoLog(@"吃上坚果了");
+        self.waitEat = false;
+    }else{
+        //3. 没坚果可吃 (计时器触发,更饿时,发现没坚果吃,并不能解决饥饿问题,参考:18084_todo1);
     }
 }
 

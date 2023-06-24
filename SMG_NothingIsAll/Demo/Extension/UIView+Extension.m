@@ -228,21 +228,31 @@
 //MARK:                     < distance >
 //MARK:===============================================================
 +(CGFloat) distance:(UIView*)selfView target:(UIView*)target{
-    CGPoint disPoint = [self distancePoint:selfView target:target];
-    CGFloat disFloat = sqrt(powf(disPoint.x, 2) + powf(disPoint.y, 2));
-    CGFloat distance = disFloat / [UIScreen mainScreen].scale;
-    return distance;
+    return [self convertPoint2DP:[self distancePoint:selfView target:target]];
 }
 
 +(CGPoint) distancePoint:(UIView*)selfView target:(UIView*)target{
     if (selfView && target) {
-        CGPoint targetPoint = [UIView convertWorldPoint:target];
-        CGPoint selfPoint = [UIView convertWorldPoint:selfView];
-        CGFloat distanceX = (targetPoint.x - selfPoint.x);
-        CGFloat distanceY = (targetPoint.y - selfPoint.y);
-        return CGPointMake(distanceX, distanceY);
+        return [self distance4Point:[UIView convertWorldPoint:selfView] pointB:[UIView convertWorldPoint:target]];
     }
     return CGPointZero;
+}
+
++(CGFloat) distance4DP:(CGPoint)pointA pointB:(CGPoint)pointB {
+    return [self convertPoint2DP:[self distance4Point:pointA pointB:pointB]];
+}
+
++(CGPoint) distance4Point:(CGPoint)pointA pointB:(CGPoint)pointB {
+    CGFloat distanceX = (pointB.x - pointA.x);
+    CGFloat distanceY = (pointB.y - pointA.y);
+    return CGPointMake(distanceX, distanceY);
+}
+
+//将point距离转成dp距离
++(CGFloat) convertPoint2DP:(CGPoint)p {
+    CGFloat disFloat = sqrt(powf(p.x, 2) + powf(p.y, 2));
+    CGFloat distance = disFloat / [UIScreen mainScreen].scale;
+    return distance;
 }
 
 @end
