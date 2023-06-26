@@ -82,9 +82,14 @@
     [theRT regist:kFlySEL target:self selector:@selector(touchWingBlock:)];
     [theRT regist:kWoodLeftSEL target:self selector:@selector(throwWood_Left)];
     [theRT regist:kWoodRdmSEL target:self selector:@selector(throwWood_Rdm)];
-    [theRT regist:kHungerSEL target:self selector:@selector(hungerBtnOnClick:)];
+    [theRT regist:kHungerSEL target:self selector:@selector(rtHungerBlock)];
     [theRT regist:kFoodRdmSEL target:self selector:@selector(randomThrowFood4Screen)];
     [theRT regist:kFoodRdmNearSEL target:self selector:@selector(randomThrowFood4Near)];
+}
+
+-(void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    self.birdView.waitEat = false;
 }
 
 //MARK:===============================================================
@@ -268,9 +273,17 @@
     //DemoLog(@"马上饿onClick");
     //[theApp.heLogView addDemoLog:@"马上饿onClick"];
     
-    //2. 触发饿感
+    //2. 触发饿感 (手动的执行999轮)
     self.birdView.waitEat = true;
-    [self hungerSingle:0];
+    [self hungerSingle:999];
+}
+
+- (void) rtHungerBlock {
+    ISTitleLog(@"感官输入");
+    
+    //2. 触发饿感 (强训仅执行3轮)
+    self.birdView.waitEat = true;
+    [self hungerSingle:3];
     
     //3. 强训工具需要等待第2次更饿后,才能继续训练下轮;
     [theRT appendPauseNames:@[kMainPageSEL]];
@@ -281,7 +294,6 @@
 
 -(void) hungerSingle:(int)invokedCount {
     //0. 数据准备;
-    invokedCount++;
     if (!self.birdView.waitEat) {
         [theRT clearPauseNames];//吃上坚果后,就不等待持续饿循环了;
         return;
@@ -291,18 +303,16 @@
     [[[DemoHunger alloc] init] commit:0.6 state:UIDeviceBatteryStateUnplugged];
     NSLog(@"触发饿感:%d",invokedCount);
     
-    //2. 五秒后更饿: 从0.6饿到0.5 (按0.5计算得迫切度为25);
+    //2. 执行计数 (执行完后,强训工具继续);
+    invokedCount--;
+    if (invokedCount <= 0) {
+        [theRT clearPauseNames];
+        return;
+    }
+    
+    //3. 五秒后更饿: 从0.6饿到0.5 (按0.5计算得迫切度为25);
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(8 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        
-        //TODOTOMORROW20230626: 退出页面后,这里也不应该再执行,否则会报错闪退;
-        
-        if (self.birdView.waitEat) {
-            [self hungerSingle:invokedCount];
-        }
-        //3. 第2次饿后,允许强训工具继续;
-        if (invokedCount >= 3) {
-            [theRT clearPauseNames];
-        }
+        [self hungerSingle:invokedCount];
     });
 }
 
