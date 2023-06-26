@@ -457,13 +457,15 @@
 /**
  *  MARK:--------------------第1步学饿--------------------
  *  @desc 参考28172-第1步;
+ *  @version
+ *      2023.06.26: 因为加了饿后视觉,重新规划学饿训练步骤 (参考30042-todo3);
  */
 - (IBAction)eat1BtnClick:(id)sender {
     //1. 随机出生;
     [theRT queue1:Queue(kBirthPosRdmSEL)];
     
     //2. 饥饿,随机扔个坚果 x 200次;
-    [theRT queueN:@[Queue(kGrowPageSEL),Queue(kHungerSEL),Queue(kFoodRdmSEL),Queue(kMainPageSEL),Queue(kClearTCSEL)] count:200];
+    [theRT queueN:@[Queue(kGrowPageSEL),Queue(kFoodRdmSEL),Queue(kHungerSEL),Queue(kMainPageSEL),Queue(kClearTCSEL)] count:200];
 }
 
 /**

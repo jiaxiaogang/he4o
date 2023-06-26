@@ -266,7 +266,8 @@
  *  MARK:--------------------饥饿是连续的mv输入 (参考28171-todo2)--------------------
  *  @version
  *      2023.06.16: 更饿间隔由5调长成8 (参考30024-修复);
- *      2023.06.26: 支持持续饥饿感 (参考30042-2);
+ *      2023.06.26: 支持持续饿感 (参考30042-todo1);
+ *      2023.06.26: 支持饿后视觉 (参考30042-todo2);
  */
 - (IBAction)hungerBtnOnClick:(id)sender {
     ISTitleLog(@"感官输入");
@@ -314,6 +315,9 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(8 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self hungerSingle:invokedCount];
     });
+    
+    //4. 饿后视觉 (参考30042-todo2);
+    [self.birdView see:self.view];
 }
 
 - (IBAction)touchWingBtnOnClick:(id)sender {
