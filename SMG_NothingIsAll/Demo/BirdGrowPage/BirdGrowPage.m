@@ -261,30 +261,49 @@
  *  MARK:--------------------饥饿是连续的mv输入 (参考28171-todo2)--------------------
  *  @version
  *      2023.06.16: 更饿间隔由5调长成8 (参考30024-修复);
+ *      2023.06.26: 支持持续饥饿感 (参考30042-2);
  */
 - (IBAction)hungerBtnOnClick:(id)sender {
     ISTitleLog(@"感官输入");
-    DemoLog(@"马上饿onClick");
-    [theApp.heLogView addDemoLog:@"马上饿onClick"];
+    //DemoLog(@"马上饿onClick");
+    //[theApp.heLogView addDemoLog:@"马上饿onClick"];
+    
+    //2. 触发饿感
+    self.birdView.waitEat = true;
+    [self hungerSingle:0];
+    
+    //3. 强训工具需要等待第2次更饿后,才能继续训练下轮;
+    [theRT appendPauseNames:@[kMainPageSEL]];
+    
+    //4. 报强训结束标记;
+    [theRT invoked:kHungerSEL];
+}
+
+-(void) hungerSingle:(int)invokedCount {
+    //0. 数据准备;
+    invokedCount++;
+    if (!self.birdView.waitEat) {
+        [theRT clearPauseNames];//吃上坚果后,就不等待持续饿循环了;
+        return;
+    }
+    
     //1. 先感觉到饿: 从0.7饿到0.6 (按0.6计算得迫切度为16);
     [[[DemoHunger alloc] init] commit:0.6 state:UIDeviceBatteryStateUnplugged];
-    self.birdView.waitEat = true;
-    
-    //2. 强训工具需要等待第2次更饿后,才能继续训练下轮;
-    [theRT appendPauseNames:@[kMainPageSEL]];
+    NSLog(@"触发饿感:%d",invokedCount);
     
     //2. 五秒后更饿: 从0.6饿到0.5 (按0.5计算得迫切度为25);
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(8 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        
+        //TODOTOMORROW20230626: 退出页面后,这里也不应该再执行,否则会报错闪退;
+        
         if (self.birdView.waitEat) {
-            NSLog(@"马上饿后 -> 触发更饿");
-            [[[DemoHunger alloc] init] commit:0.5 state:UIDeviceBatteryStateUnplugged];
+            [self hungerSingle:invokedCount];
         }
         //3. 第2次饿后,允许强训工具继续;
-        [theRT clearPauseNames];
+        if (invokedCount >= 3) {
+            [theRT clearPauseNames];
+        }
     });
-    
-    //3. 报强训结束标记;
-    [theRT invoked:kHungerSEL];
 }
 
 - (IBAction)touchWingBtnOnClick:(id)sender {
