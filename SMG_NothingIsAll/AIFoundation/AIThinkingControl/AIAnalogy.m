@@ -187,6 +187,7 @@
     }
     
     //7. 将相近度善可的构建成抽象概念返回;
+    [AITest test29:protoA assA:assA];
     AIAbsAlgNode *absA = [theNet createAbsAlg_NoRepeat:sameValue_ps conAlgs:@[protoA,assA]];
     
     //8. 将抽象概念与具象的匹配度存下来 (参考29091BUG);

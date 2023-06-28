@@ -285,6 +285,12 @@
     }
 }
 
++(void) test29:(AIAlgNodeBase*)protoA assA:(AIAlgNodeBase*)assA {
+    if (!protoA || !assA) {
+        ELog(@"自检29: alg类比器有闪退的情况,报arrayWithObjects:count:什么错,怀疑是这俩有一个是空的,如果这里触发了,断点,并查下为何为空,是_p没取到algNode吗,还是啥情况?");
+    }
+}
+
 
 //MARK:===============================================================
 //MARK:    < 回测必经点测试 (常关,每个轮回测时打开,触发则关,未触发者为异常) >
