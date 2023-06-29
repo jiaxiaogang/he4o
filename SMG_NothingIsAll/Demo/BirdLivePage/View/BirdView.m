@@ -140,10 +140,11 @@
  *  MARK:--------------------痛--------------------
  *  @version
  *      2021.01.25: 加大痛感,否则不痛不痒的思维没活力 (乌鸦不care);
+ *      2023.06.29: 增强痛感 (参考30044-BUG1);
  */
 -(void) hurt{
     DemoLog(@"痛感");
-    [AIInput commitIMV:MVType_Hurt from:2.0f to:3.0f];
+    [AIInput commitIMV:MVType_Hurt from:8.0f to:9.0f];
     [self.titleLab setTextColor:UIColor.redColor];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.8 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self.titleLab setTextColor:UIColor.whiteColor];
