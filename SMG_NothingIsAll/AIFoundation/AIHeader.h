@@ -234,6 +234,7 @@
 #define TIStatus2Str(status) [NSLog_Extension convertTIStatus2Desc:status]
 #define EffectStatus2Str(status) [NSLog_Extension convertEffectStatus2Desc:status]
 #define Class2Str(c) [NSLog_Extension convertClass2Desc:c]
+#define ClassName2Str(c) [NSLog_Extension convertClassName2Desc:c]
 #define Mvp2DeltaStr(mv_p) [NSLog_Extension convertMvp2DeltaDesc:mv_p]
 #define SceneType2Str(type) [NSLog_Extension convertSceneType2Desc:type simple:true]
 

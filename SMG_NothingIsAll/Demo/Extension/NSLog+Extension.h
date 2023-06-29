@@ -15,6 +15,7 @@
 +(NSString*) convertTIStatus2Desc:(TIModelStatus)status;
 +(NSString*) convertEffectStatus2Desc:(EffectStatus)status;
 +(NSString*) convertClass2Desc:(Class)clazz;
++(NSString*) convertClassName2Desc:(NSString*)className;
 +(NSString*) convertMvp2DeltaDesc:(AIKVPointer*)mv_p;
 +(NSString*) convertSceneType2Desc:(SceneType)type simple:(BOOL)simple;
 

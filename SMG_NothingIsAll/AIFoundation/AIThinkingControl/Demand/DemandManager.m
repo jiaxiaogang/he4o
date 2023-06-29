@@ -192,8 +192,9 @@
  */
 -(DemandModel*) getCanDecisionDemand{
     //1. 数据检查
+    DemandModel *result = nil;
     if (!ARRISOK(self.loopCache)) return nil;
-        
+    
     //2. 重排序 & 取当前序列最前;
     [self refreshCmvCacheSort];
     
@@ -202,28 +203,45 @@
         ReasonDemandModel *item = ARR_INDEX(self.loopCache, j);
         if (Log4CanDecisionDemand) NSLog(@"root(%ld/%ld):%@ (%@) %@",j,self.loopCache.count,Pit2FStr(item.protoFo),[SMGUtils date2Str:kHHmmss timeInterval:item.initTime],[TOModelVision cur2Sub:item]);
     }
+    NSLog(@"Demand竞争 ============================================= START 共%ld条",self.loopCache.count);
     for (NSInteger i = 0; i < self.loopCache.count; i++) {
         DemandModel *item = ARR_INDEX(self.loopCache, i);
+        //3. 即使已经找到result,也把日志打完,方便调试日志中查看Demand的完整竞争情况;
+        if (result) {
+            NSLog(@"\t第%ld条 %@ 评分%.2f",i+1,ClassName2Str(item.algsType),[AIScore score4Demand:item]);
+            continue;
+        }
         
         //4. 已完成时,下一个;
-        if (item.status == TOModelStatus_Finish) continue;
+        if (item.status == TOModelStatus_Finish) {
+            NSLog(@"\t第%ld条 %@ 评分%.2f 因FINISH 失败",i+1,ClassName2Str(item.algsType),[AIScore score4Demand:item]);
+            continue;
+        }
         
         //4. 已无计可施,下一个 (TCPlan会优先从末枝执行,所以当root就是末枝时,说明整个三条大树干全烂透没用了);
-        if (item.status == TOModelStatus_WithOut) continue;
+        if (item.status == TOModelStatus_WithOut) {
+            NSLog(@"\t第%ld条 %@ 评分%.2f 因WithOut 失败",i+1,ClassName2Str(item.algsType),[AIScore score4Demand:item]);
+            continue;
+        }
         
         //4. 当任务失效时,不返回;
-        if (ISOK(item, ReasonDemandModel.class) && ((ReasonDemandModel*)item).isExpired) continue;
+        if (ISOK(item, ReasonDemandModel.class) && ((ReasonDemandModel*)item).isExpired) {
+            NSLog(@"\t第%ld条 %@ 评分%.2f 因isExpired 失败",i+1,ClassName2Str(item.algsType),[AIScore score4Demand:item]);
+            continue;
+        }
         
         //5. 最末枝在actYes状态时,不应期,继续secondRoot;
         BOOL endHavActYes = [TOUtils endHavActYes:item];
-        if (endHavActYes) continue;
+        if (endHavActYes){
+            NSLog(@"\t第%ld条 %@ 评分%.2f 因endHavActYes 失败",i+1,ClassName2Str(item.algsType),[AIScore score4Demand:item]);
+            continue;
+        }
         
-        //6. 有效,则返回;
-        NSLog(@"本次激活(%ld):%@",i,Pit2FStr(((ReasonDemandModel*)item).protoFo));
-        return item;
+        //6. 有效,则记录;
+        NSLog(@"\t第%ld条 %@ 评分%.2f 激活成功",i+1,ClassName2Str(item.algsType),[AIScore score4Demand:item]);
+        result = item;
     }
-    NSLog(@"本次未激活(共%ld条)",self.loopCache.count);
-    return nil;
+    return result;
 }
 
 /**

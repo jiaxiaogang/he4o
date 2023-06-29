@@ -67,12 +67,16 @@
 }
 
 +(NSString*) convertClass2Desc:(Class)clazz{
-    if ([clazz isEqual:ImvAlgsHungerModel.class]) {
+    if ([ImvAlgsHungerModel.class isEqual:clazz]) {
         return @"饿";
-    }else if ([clazz isEqual:ImvAlgsHurtModel.class]) {
+    }else if ([ImvAlgsHurtModel.class isEqual:clazz]) {
         return @"疼";
     }
     return @"无";
+}
+
++(NSString*) convertClassName2Desc:(NSString*)className {
+    return [self convertClass2Desc:NSClassFromString(className)];
 }
 
 +(NSString*) convertMvp2DeltaDesc:(AIKVPointer*)mv_p{
