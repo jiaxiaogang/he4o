@@ -176,6 +176,7 @@
         }];
     }];
 }
+
 -(void) eatResult:(CGFloat)value{
     //1. 嘴附近的食物
     self.hitFoods = ARRTOOK(self.hitFoods);
