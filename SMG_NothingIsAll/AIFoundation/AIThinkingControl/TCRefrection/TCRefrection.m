@@ -71,8 +71,33 @@
  *  MARK:--------------------任务树反思--------------------
  *  @desc 判断当前输出,对任务树别的任务的不良影响,影响大则反思不通过,不大则通过 (参考30052-方案);
  */
-+(void) refrection4DemandTree {
-    
++(void) refrection4DemandTree:(AICansetModel*)checkCanset demand:(DemandModel*)demand {
+    //1. 数据准备;
+    NSArray *roots = [theTC.outModelManager.getAllDemand copy];
+    for (ReasonDemandModel *root in roots) {
+        //2. 任务类型非R时,或为当前demand时,跳过;
+        if (!ISOK(root, ReasonDemandModel.class)) continue;
+        if ([root isEqual:demand]) continue;
+        
+        //3. 对有效pFos进行反思;
+        for (AIMatchFoModel *pFo in root.validPFos) {
+            
+            //TODOTOMORROW20230705: 继续写任务树反思功能;
+            
+            //1. 截出pFo中含cutIndex部分
+//            pFo.cutIndex
+            
+            //2. canset的cutIndex已发生,只截出它的后面,到targetIndex(含targetIndex,如果它存在的话)之间部分;
+//            checkCanset.cutIndex
+            
+            //3. 将前两者拼接起来,regroup起来...
+            
+            //4. 然后取pFo.cansets中进行识别... (看下canset识别应该有能复用的代码);
+            
+            
+            
+        }
+    }
 }
 
 @end
