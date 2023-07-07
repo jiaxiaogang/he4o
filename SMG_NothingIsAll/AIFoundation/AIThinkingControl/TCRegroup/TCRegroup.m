@@ -62,4 +62,38 @@
     [TCRecognition feedbackRecognition:regroupFo foModel:foModel feedbackFrameOfMatchAlgs:feedbackFrameOfMatchAlgs];
 }
 
+/**
+ *  MARK:--------------------action输出前重组--------------------
+ *  @desc 将瞬时记忆几帧 + canset要cutIndex之后要输出的几帧 = 拼接起来 (参考30054-方案&另外1);
+ */
++(void) actionRegroup:(TOFoModel*)actionFoModel {
+    //1. 数据准备;
+    [theTC updateOperCount:kFILENAME];
+    Debug();
+    NSMutableArray *order = [[NSMutableArray alloc] init];
+    
+    //2. 收集瞬时记忆"刚已发生的protoFo"做为前半部分 (参考30054-todo1);
+    AIShortMatchModel *lastShortModel = ARR_INDEX_REVERSE(theTC.inModelManager.models, 0);
+    for (int i = 0; i < lastShortModel.protoFo.count; i++) {
+        AIKVPointer *item_p = ARR_INDEX(lastShortModel.protoFo.content_ps, 0);
+        NSTimeInterval itemTime = [NUMTOOK(ARR_INDEX(lastShortModel.protoFo.deltaTimes, i)) longLongValue];
+        [order addObject:[AIShortMatchModel_Simple newWithAlg_p:item_p inputTime:itemTime]];
+    }
+    
+    //3. 收集cansetFo"即将行为化的部分"做为后半部分 (参考30054-todo2);
+    AIFoNodeBase *actionFo = [SMGUtils searchNode:actionFoModel.content_p];
+    for (NSInteger i = actionFoModel.actionIndex; i <= MIN(actionFoModel.targetSPIndex, actionFo.count); i++) {
+        AIKVPointer *item_p = ARR_INDEX(actionFo.content_ps, i);
+        NSTimeInterval itemTime = [NUMTOOK(ARR_INDEX(actionFo.deltaTimes, i)) longLongValue];
+        [order addObject:[AIShortMatchModel_Simple newWithAlg_p:item_p inputTime:itemTime]];
+    }
+    
+    //4. 将时序元素生成新时序 (参考30054-todo3);
+    AIFoNodeBase *regroupFo = [theNet createConFo:order];
+    
+    //5. 识别时序 (预测到鸡蛋变脏,或者cpu损坏) (理性预测影响评价即理性评价) (参考30054-todo3);
+    DebugE();
+    [TCRecognition actionRecognition:regroupFo baseActionFo:actionFoModel];
+}
+
 @end

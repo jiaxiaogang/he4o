@@ -67,47 +67,4 @@
     return result;
 }
 
-/**
- *  MARK:--------------------任务树反思--------------------
- *  @desc 判断当前输出,对任务树别的任务的不良影响,影响大则反思不通过,不大则通过 (参考30052-方案);
- */
-+(void) refrection4DemandTree:(AICansetModel*)checkCanset demand:(DemandModel*)demand {
-    //1. 数据准备;
-    NSArray *roots = [theTC.outModelManager.getAllDemand copy];
-    for (ReasonDemandModel *root in roots) {
-        //2. 任务类型非R时,或为当前demand时,跳过;
-        if (!ISOK(root, ReasonDemandModel.class)) continue;
-        if ([root isEqual:demand]) continue;
-        
-        //3. 对有效pFos进行反思;
-        for (AIMatchFoModel *pFo in root.validPFos) {
-            
-            //1. 截出pFo中含cutIndex部分 (参考30052-todo2);
-            AIFoNodeBase *pFoNode = [SMGUtils searchNode:pFo.matchFo];
-            NSArray *frontContent_ps = ARR_SUB(pFoNode.content_ps, 0, pFo.cutIndex + 1);
-            
-            //2. canset的cutIndex已发生,只截出它的后面,到targetIndex(含targetIndex,如果它存在的话)之间部分 (参考30052-todo2);
-            AIFoNodeBase *cansetFo = [SMGUtils searchNode:checkCanset.cansetFo];
-            NSInteger length = checkCanset.targetIndex - checkCanset.cutIndex; //如目标为3,截点为1,则取2和3两帧 (即length=目标-截点);
-            NSArray *backContent_ps = ARR_SUB(cansetFo.content_ps, checkCanset.cutIndex + 1, length);
-            
-            //3. 将前后两部分拼接起来 (参考30052-todo2);
-            NSArray *regroup_ps = [SMGUtils collectArrA:frontContent_ps arrB:backContent_ps];
-            
-            //4. 出取pFo的cansets;
-            NSArray *oldCansets = [pFoNode getConCansets:pFoNode.count];
-            
-            
-            //TODOTOMORROW20230705: 继续写任务树反思功能;
-            
-            //5. 然后取pFo.cansets中进行识别;
-            //[TIUtils recognitionCansetFo:pFo.matchFo sceneFo:nil];
-            
-            
-            
-            
-        }
-    }
-}
-
 @end

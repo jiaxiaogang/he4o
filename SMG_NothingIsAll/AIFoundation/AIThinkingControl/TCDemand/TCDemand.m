@@ -50,14 +50,15 @@
 }
 
 /**
- *  MARK:--------------------反馈生成子任务--------------------
+ *  MARK:--------------------反思识别形成子任务--------------------
  *  @version
  *      2021.12.06: 反馈feedback后生成子任务,但并不触发solution决策 (参考24171-9de);
  *  @todo
  *      2022.03.11: 根据fos4Demand生成子任务后,根据它的mvScoreV2限制它的下辖分支数 (参考25142-TODO3);
  *      2022.05.18: 多pFos形成单个任务 (参考26042-TODO1);
+ *      2023.07.07: 以前是反馈后反思识别,现在改成行为化前反思识别,但最终都由此处生成子任务 (参考30054-todo5);
  */
-+(void) feedbackDemand:(AIShortMatchModel*)model foModel:(TOFoModel*)foModel{
++(void) subDemand:(AIShortMatchModel*)model foModel:(TOFoModel*)foModel{
     //1. 识别结果pFos挂载到targetFoModel下做子任务 (好的坏的全挂载,比如做的饭我爱吃{MV+},但是又太麻烦{MV-});
     [theTC updateOperCount:kFILENAME];
     Debug();
