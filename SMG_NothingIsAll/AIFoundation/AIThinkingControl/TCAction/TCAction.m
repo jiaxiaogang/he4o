@@ -28,6 +28,7 @@
  *      2022.05.19: 废弃ARSTime评价 (参考26051);
  *      2022.12.09: 修复少执行了一帧的问题 (后16号又发现多了一帧,把target也执行了,这里9号时的情况已经忘了);
  *      2022.12.16: 修复多执行了一帧的问题 (即target帧不必行为化,自然发生即可);
+ *      2023.07.08: 为避免输出行为捡了芝麻丢了西瓜,在行为化之前,先调用一下反思 (参考30054);
  *  @callers : 可以供_Demand和_Hav等调用;
  */
 +(void) action:(TOFoModel*)foModel{
@@ -40,15 +41,13 @@
     //2. Alg转移 (下帧),每次调用action立马先跳下actionIndex为当前正准备行为化的那一帧;
     foModel.actionIndex++;
     
-    //3. 先反思,如果不通过时,直接尝试先解决子任务;
+    //3. 进行反思识别,如果不通过时,回到TCScore可能会尝试先解决子任务,通过时继续行为化;
     [TCRegroup actionRegroup:foModel];
-    
-    //TODOTOMORROW20230707: 反思后,此处反思是否通过?是继续行为化?还是转由尝试执行子任务?
-    //>>> 都是调用[TCScore score]吗?
-    
-    
-    
-    
+    BOOL refrection = [TCRefrection actionRefrection:foModel];
+    if (!refrection) {
+        [TCScore score];
+        return;
+    }
     
     //4. 跳转下帧 (最后一帧为目标,自然发生即可,此前帧则需要行为化实现);
     if (foModel.actionIndex < foModel.targetSPIndex - 1) {

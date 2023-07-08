@@ -67,4 +67,17 @@
     return result;
 }
 
+/**
+ *  MARK:--------------------行为化反思--------------------
+ *  @desc 对比当前foModel能解决的任务分 与 子任务带来的最严重负分 => 得出反思结果 (参考30054-todo6);
+ */
++(BOOL) actionRefrection:(TOFoModel*)baseFoModel {
+    //1. 根据foModel向上找出rDemand的评分;
+    
+    //2. 根据foModel向下取出subDemands的评分 (取最严重的一条subDemand分);
+    
+    //3. 对比二者,得出反思是否通过;
+    return false;
+}
+
 @end

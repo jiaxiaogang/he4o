@@ -12,5 +12,6 @@
 @interface TCRefrection : NSObject
 
 +(BOOL) refrection:(AICansetModel*)checkCanset demand:(DemandModel*)demand;
++(BOOL) actionRefrection:(TOFoModel*)baseFoModel;
 
 @end
