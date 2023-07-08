@@ -152,6 +152,11 @@
 +(NSInteger) getBaseDemandsDeepCount:(TOModelBase*)subModel{
     return [self getBaseDemands_AllDeep:subModel].count;
 }
++(NSMutableArray*) getBaseRDemands_AllDeep:(TOModelBase*)subModel{
+    return [SMGUtils filterArr:[self getBaseOutModels_AllDeep:subModel] checkValid:^BOOL(id item) {
+        return ISOK(item, ReasonDemandModel.class);
+    }];
+}
 
 /**
  *  MARK:--------------------获取rDemand的来源同伴--------------------

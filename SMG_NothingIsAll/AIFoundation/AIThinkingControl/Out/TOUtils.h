@@ -60,6 +60,7 @@
  */
 +(NSMutableArray*) getBaseDemands_AllDeep:(TOModelBase*)subModel;//base方向;
 +(NSInteger) getBaseDemandsDeepCount:(TOModelBase*)subModel;
++(NSMutableArray*) getBaseRDemands_AllDeep:(TOModelBase*)subModel;
 
 
 //MARK:===============================================================

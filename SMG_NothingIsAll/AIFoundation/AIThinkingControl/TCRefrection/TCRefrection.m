@@ -73,11 +73,19 @@
  */
 +(BOOL) actionRefrection:(TOFoModel*)baseFoModel {
     //1. 根据foModel向上找出rDemand的评分;
+    ReasonDemandModel *baseRDemand = ARR_INDEX([TOUtils getBaseRDemands_AllDeep:baseFoModel], 0);
+    if (!baseRDemand) return true;
+    CGFloat demandScore = [AIScore score4Demand:baseRDemand];
     
     //2. 根据foModel向下取出subDemands的评分 (取最严重的一条subDemand分);
+    CGFloat zuiYanZonSubDemandScore = 0;
+    for (DemandModel *item in baseFoModel.subDemands) {
+        CGFloat curSubScore = [AIScore score4Demand:item];
+        zuiYanZonSubDemandScore = MIN(curSubScore, zuiYanZonSubDemandScore);
+    }
     
-    //3. 对比二者,得出反思是否通过;
-    return false;
+    //3. 对比二者,得出反思是否通过 (最严重也不比当前重要时,反思通过) (参考30054-todo6);
+    return zuiYanZonSubDemandScore > demandScore;
 }
 
 @end

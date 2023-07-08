@@ -41,7 +41,7 @@
     //2. Alg转移 (下帧),每次调用action立马先跳下actionIndex为当前正准备行为化的那一帧;
     foModel.actionIndex++;
     
-    //3. 进行反思识别,如果不通过时,回到TCScore可能会尝试先解决子任务,通过时继续行为化;
+    //3. 进行反思识别,如果不通过时,回到TCScore可能会尝试先解决子任务,通过时继续行为化 (参考30054-todo7);
     [TCRegroup actionRegroup:foModel];
     BOOL refrection = [TCRefrection actionRefrection:foModel];
     if (!refrection) {
