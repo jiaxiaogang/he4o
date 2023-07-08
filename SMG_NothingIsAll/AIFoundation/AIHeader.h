@@ -420,3 +420,5 @@
 #define Switch4AnalogyCansetFo true
 //惰性期开关 (参考29073-方案)
 #define Switch4DuoXinQi false
+//反馈反思识别开关,只要把它的重组关了,后面的识别也就关了 (参考30054)
+#define Switch4FeedbackRegroup false

@@ -45,9 +45,12 @@
  *      说明: 在foModel下找到subAlgModel,其中feedbackAlg有值的,替换到foModel中,并重组成新的时序;
  *      例如: [我要吃水果],结果反馈了榴莲,重组成[我要吃榴莲];
  *  @param feedbackFrameOfMatchAlgs : 触发调用此反馈重组方法的protoAlg的识别matchAlgs结果 (参考28103-2.2);
+ *  @version
+ *      2023.07.08: 写了action行为化反思后,这里已经没用了,所以关掉 (参考30054-另外);
  */
 +(void) feedbackRegroup:(TOFoModel*)foModel feedbackFrameOfMatchAlgs:(NSArray*)feedbackFrameOfMatchAlgs {
     //1. 数据准备;
+    if (!Switch4FeedbackRegroup) return;
     [theTC updateOperCount:kFILENAME];
     Debug();
     
