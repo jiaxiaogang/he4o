@@ -85,7 +85,7 @@
     
     //3. 收集cansetFo"即将行为化的部分"做为后半部分 (参考30054-todo2);
     AIFoNodeBase *actionFo = [SMGUtils searchNode:actionFoModel.content_p];
-    for (NSInteger i = actionFoModel.actionIndex; i <= MIN(actionFoModel.targetSPIndex, actionFo.count); i++) {
+    for (NSInteger i = actionFoModel.actionIndex; i <= MIN(actionFoModel.targetSPIndex, actionFo.count - 1); i++) {
         AIKVPointer *item_p = ARR_INDEX(actionFo.content_ps, i);
         NSTimeInterval itemTime = [NUMTOOK(ARR_INDEX(actionFo.deltaTimes, i)) longLongValue];
         [order addObject:[AIShortMatchModel_Simple newWithAlg_p:item_p inputTime:itemTime]];
