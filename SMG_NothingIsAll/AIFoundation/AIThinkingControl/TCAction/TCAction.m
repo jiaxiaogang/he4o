@@ -36,10 +36,10 @@
     AIFoNodeBase *curFo = [SMGUtils searchNode:foModel.content_p];
     [theTC updateOperCount:kFILENAME];
     Debug();
-    OFTitleLog(@"行为化Fo", @"\n时序:%@->%@ 类型:(%@)",Fo2FStr(curFo),Mvp2Str(curFo.cmvNode_p),curFo.pointer.typeStr);
     
     //2. Alg转移 (下帧),每次调用action立马先跳下actionIndex为当前正准备行为化的那一帧;
     foModel.actionIndex++;
+    OFTitleLog(@"行为化Fo", @"\n第 %ld/%ld 个,时序:%@",foModel.actionIndex+1,curFo.count,Fo2FStr(curFo));
     
     //3. 进行反思识别,如果不通过时,回到TCScore可能会尝试先解决子任务,通过时继续行为化 (参考30054-todo7);
     [TCRegroup actionRegroup:foModel];
@@ -51,7 +51,7 @@
     
     //4. 跳转下帧 (最后一帧为目标,自然发生即可,此前帧则需要行为化实现);
     if (foModel.actionIndex < foModel.targetSPIndex - 1) {
-        NSLog(@"_Fo行为化第 %ld/%ld 个: %@",(long)foModel.actionIndex,foModel.targetSPIndex,Fo2FStr(curFo));
+        NSLog(@"_Fo行为化第 %ld/%ld 个: %@",foModel.actionIndex+1,foModel.targetSPIndex,Fo2FStr(curFo));
         
         //@desc: 下标不急评价说明: R模式_Hav首先是为了避免forecastAlg,其次才是为了达成curFo解决方案 (参考22153);
         //5. 下标不急(弄巧成拙)评价_数据准备 (参考24171-12);
@@ -82,7 +82,7 @@
     }else{
         //8. R成功,转actYes等待反馈 & 触发反省 (原递归参考流程控制Finish的注释version-20200916 / 参考22061-7);
         DebugE();
-        NSLog(@"_Fo行为化: Finish %ld/%ld 到ActYes",(long)foModel.actionIndex,(long)curFo.count);
+        NSLog(@"_Fo行为化: Finish %ld/%ld 到ActYes",foModel.actionIndex+1,(long)curFo.count);
         
         if (ISOK(foModel.baseOrGroup, ReasonDemandModel.class)) {
             [TCActYes frameActYes:foModel];
