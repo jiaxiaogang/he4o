@@ -404,8 +404,6 @@
 #define Switch4PDemand false
 //快思考开关
 #define Switch4FastSolution false
-//子R任务求解 (参考28135-2)
-#define Switch4SubRDemand2Solution false
 //行为再输入开关 (参考28133-1 & 28137-修复)
 #define Switch4IsOutReIn false
 //识别排名器开关 (参考28152-方案5)
