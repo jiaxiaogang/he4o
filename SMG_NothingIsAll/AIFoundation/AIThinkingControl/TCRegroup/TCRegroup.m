@@ -68,26 +68,27 @@
 /**
  *  MARK:--------------------action输出前重组--------------------
  *  @desc 将瞬时记忆几帧 + canset要cutIndex之后要输出的几帧 = 拼接起来 (参考30054-方案&另外1);
+ *  @version
+ *      2023.07.09: 修复上帧为输出或mv时,未生成protoFo,导致收集不到前半部分order的问题 (参考30056);
+ *      2023.07.09: 修复order的时间错乱的问题 (将前后部分统一为时间戳,以使regroupFo生成deltaTimes正确);
  */
 +(void) actionRegroup:(TOFoModel*)actionFoModel {
     //1. 数据准备;
     [theTC updateOperCount:kFILENAME];
     Debug();
     NSMutableArray *order = [[NSMutableArray alloc] init];
+    AIShortMatchModel *lastShortModel = ARR_INDEX_REVERSE(theTC.inModelManager.models, 0);
+    NSTimeInterval lastInputTime = lastShortModel ? lastShortModel.inputTime : [[NSDate date] timeIntervalSince1970];//最后InputR的时间
     
     //2. 收集瞬时记忆"刚已发生的protoFo"做为前半部分 (参考30054-todo1);
-    AIShortMatchModel *lastShortModel = ARR_INDEX_REVERSE(theTC.inModelManager.models, 0);
-    for (int i = 0; i < lastShortModel.protoFo.count; i++) {
-        AIKVPointer *item_p = ARR_INDEX(lastShortModel.protoFo.content_ps, 0);
-        NSTimeInterval itemTime = [NUMTOOK(ARR_INDEX(lastShortModel.protoFo.deltaTimes, i)) longLongValue];
-        [order addObject:[AIShortMatchModel_Simple newWithAlg_p:item_p inputTime:itemTime]];
-    }
+    [order addObjectsFromArray:[theTC.inModelManager shortCache:false]];
     
     //3. 收集cansetFo"即将行为化的部分"做为后半部分 (参考30054-todo2);
     AIFoNodeBase *actionFo = [SMGUtils searchNode:actionFoModel.content_p];
     for (NSInteger i = actionFoModel.actionIndex; i <= MIN(actionFoModel.targetSPIndex, actionFo.count - 1); i++) {
         AIKVPointer *item_p = ARR_INDEX(actionFo.content_ps, i);
-        NSTimeInterval itemTime = [NUMTOOK(ARR_INDEX(actionFo.deltaTimes, i)) longLongValue];
+        NSTimeInterval deltaTime = [NUMTOOK(ARR_INDEX(actionFo.deltaTimes, i)) longLongValue];
+        NSTimeInterval itemTime = lastInputTime + deltaTime;
         [order addObject:[AIShortMatchModel_Simple newWithAlg_p:item_p inputTime:itemTime]];
     }
     
