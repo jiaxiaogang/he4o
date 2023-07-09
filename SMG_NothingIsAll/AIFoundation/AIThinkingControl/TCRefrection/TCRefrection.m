@@ -73,6 +73,7 @@
  */
 +(BOOL) actionRefrection:(TOFoModel*)baseFoModel {
     //1. 根据foModel向上找出rDemand的评分;
+    OSTitleLog(@"行为化前 反思评价");
     ReasonDemandModel *baseRDemand = ARR_INDEX([TOUtils getBaseRDemands_AllDeep:baseFoModel], 0);
     if (!baseRDemand) return true;
     CGFloat demandScore = [AIScore score4Demand:baseRDemand];
@@ -85,7 +86,9 @@
     }
     
     //3. 对比二者,得出反思是否通过 (最严重也不比当前重要时,反思通过) (参考30054-todo6);
-    return zuiYanZonSubDemandScore > demandScore;
+    BOOL result = zuiYanZonSubDemandScore > demandScore;
+    NSLog(@"> 最严重子任务分:%.2f > 当前任务分:%.2f =====> %@通过",zuiYanZonSubDemandScore,demandScore,result?@"已":@"未");
+    return result;
 }
 
 @end

@@ -111,7 +111,7 @@
     result.regroupFo = regroupFo;
     [theTC updateOperCount:kFILENAME];
     Debug();
-    IFTitleLog(@"action时序反思识别", @"\nprotoFo:%@",Fo2FStr(regroupFo));
+    IFTitleLog(@"行为化前 反思识别", @"\nprotoFo:%@",Fo2FStr(regroupFo));
     
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层) (参考30054-todo4);
     [TIUtils recognitionFo:regroupFo except_ps:@[regroupFo.pointer] decoratorInModel:result fromRegroup:true matchAlgs:nil];
