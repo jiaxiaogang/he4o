@@ -87,7 +87,7 @@
     AIFoNodeBase *actionFo = [SMGUtils searchNode:actionFoModel.content_p];
     for (NSInteger i = actionFoModel.actionIndex; i <= MIN(actionFoModel.targetSPIndex, actionFo.count - 1); i++) {
         AIKVPointer *item_p = ARR_INDEX(actionFo.content_ps, i);
-        NSTimeInterval deltaTime = [NUMTOOK(ARR_INDEX(actionFo.deltaTimes, i)) longLongValue];
+        NSTimeInterval deltaTime = [NUMTOOK(ARR_INDEX(actionFo.deltaTimes, i)) doubleValue];
         NSTimeInterval itemTime = lastInputTime + deltaTime;
         [order addObject:[AIShortMatchModel_Simple newWithAlg_p:item_p inputTime:itemTime]];
     }
