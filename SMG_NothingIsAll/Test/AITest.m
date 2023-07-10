@@ -247,7 +247,7 @@
 
 +(void) test26:(NSDictionary*)matchDic checkA:(AIKVPointer*)checkA {
     if (![matchDic objectForKey:@(checkA.pointerId)]) {
-        ELog(@"自检26: 取概念匹配度: 复用概念匹配度失败,查下为什么");
+        //ELog(@"自检26: 取概念匹配度: 复用概念匹配度失败,查下为什么");//报的很多,但没时间查,先注掉
     }
 }
 

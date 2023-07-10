@@ -144,7 +144,7 @@
     }];
     
     //2. debug日志
-    for (AICansetModel *obj in sort) {
+    for (AICansetModel *obj in ARR_SUB(sort, 0, 5)) {
         AIFoNodeBase *sceneFo = [SMGUtils searchNode:obj.sceneFo];
         AIEffectStrong *effStrong = [TOUtils getEffectStrong:sceneFo effectIndex:sceneFo.count solutionFo:obj.cansetFo];
         CGFloat effScore = [TOUtils getEffectScore:effStrong];

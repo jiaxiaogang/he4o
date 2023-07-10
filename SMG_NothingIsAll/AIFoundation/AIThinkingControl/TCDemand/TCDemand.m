@@ -67,7 +67,11 @@
     for (NSString *atKey in fos4Demand.allKeys) {
         NSArray *pFosValue = [fos4Demand objectForKey:atKey];
         [ReasonDemandModel newWithAlgsType:atKey pFos:pFosValue shortModel:model baseFo:foModel];
-        for (AIMatchFoModel *pFo in pFosValue) NSLog(@"\t pFo:%@->{%.2f}",Pit2FStr(pFo.matchFo),[AIScore score4MV_v2FromCache:pFo]);
+        for (AIMatchFoModel *pFo in pFosValue) {
+            AIFoNodeBase *pFoNode = [SMGUtils searchNode:pFo.matchFo];
+            NSLog(@"\t pFo:%@->{%@%.2f}",Pit2FStr(pFo.matchFo),ClassName2Str(pFoNode.cmvNode_p.algsType),[AIScore score4MV_v2FromCache:pFo]);
+        }
+        
     }
     [theTV updateFrame];
     DebugE();

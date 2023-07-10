@@ -85,12 +85,6 @@
         zuiYanZonSubDemandScore = MIN(curSubScore, zuiYanZonSubDemandScore);
     }
     
-    
-    //TODOTOMORROW20230709: 在觅食过程中扔木棒,最后看日志: 这里全是通过,没一个不通过的;
-    //> 按道理说,假设在有危险时,激活了觅食任务,并输出上飞前,这里应该反思不通过才对;
-    
-    
-    
     //3. 对比二者,得出反思是否通过 (最严重也不比当前重要时,反思通过) (参考30054-todo6);
     BOOL result = zuiYanZonSubDemandScore > demandScore;
     NSLog(@"> 最严重子任务分:%.2f > 当前任务分:%.2f =====> %@通过",zuiYanZonSubDemandScore,demandScore,result?@"已":@"未");

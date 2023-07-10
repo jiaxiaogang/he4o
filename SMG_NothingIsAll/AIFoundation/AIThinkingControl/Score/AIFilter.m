@@ -22,7 +22,7 @@
         return item.matchValue;
     } subBlock:^double(AIMatchAlgModel *item) {
         return item.strongValue;
-    } radio:radio min:10 max:20];
+    } radio:radio min:10 max:20 debugMode:true];
 }
 
 /**
@@ -164,7 +164,7 @@
             return [AINetUtils getMatchByIndexDic:[protoScene getAbsIndexDic:item.target_p] absFo:item.target_p conFo:protoScene.pointer callerIsAbs:false];
         }
         return [AINetUtils getMatchByIndexDic:[protoScene getConIndexDic:item.target_p] absFo:protoScene.pointer conFo:item.target_p callerIsAbs:true];
-    } radio:0.2f min:4 max:20];
+    } radio:0.2f min:4 max:20 debugMode:false];
     return Ports2Pits(otherScenePorts);
 }
 
@@ -197,7 +197,7 @@
  *      2023.03.18: 加上radio参数,方便对概念和时序的过滤器分别指定不同的过滤度 (参考28186-方案1-结果);
  *      2023.06.12: 加上max条件上限 (避免结果过多,导致性能问题) (参考30022-优化2);
  */
-+(NSArray*) filterTwice:(NSArray*)protoArr mainBlock:(double(^)(id item))mainBlock subBlock:(double(^)(id item))subBlock radio:(CGFloat)radio min:(NSInteger)min max:(NSInteger)max {
++(NSArray*) filterTwice:(NSArray*)protoArr mainBlock:(double(^)(id item))mainBlock subBlock:(double(^)(id item))subBlock radio:(CGFloat)radio min:(NSInteger)min max:(NSInteger)max debugMode:(BOOL)debugMode {
     //0. 数据准备;
     if (!ARRISOK(protoArr)) return protoArr;
     
@@ -220,7 +220,7 @@
     //5. 主中辅,嵌套过滤 (参考28152b-todo3);
     NSArray *filter1 = ARR_SUB([SMGUtils sortBig2Small:protoArr compareBlock:mainBlock], 0, protoArr.count * zuRate);
     NSArray *filter2 = ARR_SUB([SMGUtils sortBig2Small:filter1 compareBlock:subBlock], 0, filter1.count * fuRate);
-    NSLog(@"过滤器: 总%ld需%ld 主:%.2f => 剩:%ld 辅:%.2f => 剩:%ld",protoArr.count,resultNum,zuRate,filter1.count,fuRate,filter2.count);
+    if (debugMode) NSLog(@"过滤器: 总%ld需%ld 主:%.2f => 剩:%ld 辅:%.2f => 剩:%ld",protoArr.count,resultNum,zuRate,filter1.count,fuRate,filter2.count);
     
     //6. 返回结果 (参考注释公式说明-5);
     return filter2;

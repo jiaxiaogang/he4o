@@ -386,7 +386,7 @@
 #define Log4Solution_Fast true
 
 //TCCanset日志开关
-#define Log4TCCanset true
+#define Log4TCCanset false
 
 //AIRank日志开关
 #define Log4AIRank true
