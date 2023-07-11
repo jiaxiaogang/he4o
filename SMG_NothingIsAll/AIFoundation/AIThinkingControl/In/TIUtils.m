@@ -398,7 +398,7 @@
                 
                 //7. 全含判断;
                 AIFoNodeBase *refFo = [SMGUtils searchNode:refPort.target_p];
-                NSDictionary *indexDic = [self TIR_Fo_CheckFoValidMatchV2:refFo protoOrRegroupFo:protoOrRegroupFo];
+                NSDictionary *indexDic = [self TIR_Fo_CheckFoValidMatchV2:refFo protoOrRegroupFo:protoOrRegroupFo fromRegroup:fromRegroup];
                 if (!DICISOK(indexDic)) continue;
                 
                 //7. 取absCutIndex, 说明: cutIndex指已发生到的index,后面则为时序预测; matchValue指匹配度(0-1)
@@ -481,9 +481,10 @@
  *      2022.11.11: 将找末位,和找全含两个部分,合而为一,使算法代码更精简易读 (参考27175-7);
  *      2022.11.11: BUG_indexDic中有重复的Value (一个protoA对应多个assA): 将nextMaxForProtoIndex改为protoIndex-1后ok (参考27175-8);
  *      2022.11.13: 迭代V2: 仅返回indexDic (参考27177);
+ *      2023.07.11: 仅普通正向protoFo时序识别时,才要求末帧必含,regroup则不必如此 (参考30057-修复);
  *  @result 判断protoFo是否全含assFo: 成功时返回indexDic / 失败时返回空dic;
  */
-+(NSDictionary*) TIR_Fo_CheckFoValidMatchV2:(AIFoNodeBase*)assFo protoOrRegroupFo:(AIFoNodeBase*)protoOrRegroupFo{
++(NSDictionary*) TIR_Fo_CheckFoValidMatchV2:(AIFoNodeBase*)assFo protoOrRegroupFo:(AIFoNodeBase*)protoOrRegroupFo fromRegroup:(BOOL)fromRegroup {
     if (Log4MFo) NSLog(@"------------------------ 时序全含检查 ------------------------\nass:%@->%@",Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
     //1. 数据准备;
     NSMutableDictionary *indexDic = [[NSMutableDictionary alloc] init]; //记录protoIndex和assIndex的映射字典 <K:assIndex, V:protoIndex>;
@@ -515,7 +516,7 @@
                 break;
             } else {
                 //11. proto的末帧必须找到,所以不匹配时,直接break,继续ass循环找它... (参考: 注释要求1);
-                if (protoIndex == protoOrRegroupFo.count - 1) break;
+                if (!fromRegroup && protoIndex == protoOrRegroupFo.count - 1) break;
             }
         }
         

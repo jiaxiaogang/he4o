@@ -113,20 +113,6 @@
     Debug();
     IFTitleLog(@"行为化前 反思识别", @"\nregroupFo:%@",Fo2FStr(regroupFo));
     
-    
-    //TODOTOMORROW20230710: 在觅食过程中扔木棒,最后看日志: 这里全是通过,没一个不通过的;
-    //> 按道理说,假设在有危险时,激活了觅食任务,并输出上飞前,这里应该反思不通过才对;
-    //> 然后经查,当前任务为觅食,且刚看到过坚果时,无法识别现在危险,导致无视危险冲到危险地带;
-    
-    //> 当regroupFo含木棒,但当前的解决方案又不含木棒时,应该能停下断点,查下未识别到结果的原因;
-    
-    if ([Fo2FStr(regroupFo) containsString:@"棒"] && ![Pit2FStr(baseActionFo.content_p) containsString:@"棒"]) {
-        NSLog(@"停下后,查后面识别,为什么没识别到危险");
-    }
-    
-    
-    
-    
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层) (参考30054-todo4);
     [TIUtils recognitionFo:regroupFo except_ps:@[regroupFo.pointer] decoratorInModel:result fromRegroup:true matchAlgs:nil protoOrRegroupCutIndex:regroupCutIndex];
     

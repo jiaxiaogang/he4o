@@ -354,7 +354,7 @@
 //模糊匹配
 #define Log4FuzzyAlg false
 //识别时序
-#define Log4MFo true
+#define Log4MFo false
 //内类比
 #define Log4InAna false
 #define Log4InAnaGL(type) ((type == ATGreater || type == ATLess) && false)
