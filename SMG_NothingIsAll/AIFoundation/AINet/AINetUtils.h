@@ -210,6 +210,7 @@
  *  MARK:--------------------获取cutIndex--------------------
  */
 +(NSInteger) getCutIndexByIndexDic:(NSDictionary*)indexDic;
++(NSInteger) getCutIndexByIndexDicV2:(NSDictionary*)indexDic protoOrRegroupCutIndex:(NSInteger)protoOrRegroupCutIndex;
 
 /**
  *  MARK:--------------------获取near数据 (直传fo版)--------------------

@@ -283,6 +283,7 @@
  *                              2. 源自regroup时: cutIndex需从父任务中判断 (默认为-1);
  *  _param maskFo           : 识别时:protoFo中的概念元素为parent层, 而在反思时,其元素为match层;
  *  @param matchAlgs        : 触发此识别时的那一帧的概念识别结果 (参考28103-2);
+ *  @param protoOrRegroupCutIndex : proto或regroup当前已经进展到哪里,发进来cutIndex (proto时一般是全已发生);
  *  TODO_TEST_HERE:调试Pointer能否indexOfObject
  *  TODO_TEST_HERE:调试下item_p在indexOfObject中,有多个时,怎么办;
  *  TODO_TEST_HERE:测试下cPartMatchingThreshold配置值是否合理;
@@ -357,9 +358,10 @@
  *      2023.02.24: 提升时序识别成功率: 时序结果保留20% (参考28107-todo4);
  *      2023.03.15: 打开matchRFos (参考28181-方案3);
  *      2023.03.17: 关闭matchRFos (参考28184-原因1&2);
+ *      2023.07.11: 行为化反思时,将regroupCutIndex传进来,并根据它计算出absMatchFo的cutIndex,避免因此而计算sp率等不准确;
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
-+(void) recognitionFo:(AIFoNodeBase*)protoOrRegroupFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel fromRegroup:(BOOL)fromRegroup matchAlgs:(NSArray*)matchAlgs {
++(void) recognitionFo:(AIFoNodeBase*)protoOrRegroupFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel fromRegroup:(BOOL)fromRegroup matchAlgs:(NSArray*)matchAlgs protoOrRegroupCutIndex:(NSInteger)protoOrRegroupCutIndex {
     //1. 数据准备;
     except_ps = ARRTOOK(except_ps);
     NSMutableArray *protoPModels = [[NSMutableArray alloc] init];
@@ -399,9 +401,8 @@
                 NSDictionary *indexDic = [self TIR_Fo_CheckFoValidMatchV2:refFo protoOrRegroupFo:protoOrRegroupFo];
                 if (!DICISOK(indexDic)) continue;
                 
-                //7. cutIndex在fromRegroup时为-1,全未发生 (旧代码一直如此,未知原因);
-                //说明: cutIndex指已发生到的index,后面则为时序预测; matchValue指匹配度(0-1)
-                NSInteger cutIndex = fromRegroup ? -1 : [AINetUtils getCutIndexByIndexDic:indexDic];
+                //7. 取absCutIndex, 说明: cutIndex指已发生到的index,后面则为时序预测; matchValue指匹配度(0-1)
+                NSInteger cutIndex = [AINetUtils getCutIndexByIndexDicV2:indexDic protoOrRegroupCutIndex:protoOrRegroupCutIndex];
                 
                 //7. 根据indexDic取nearCount & sumNear;
                 NSArray *nearData = [AINetUtils getNearDataByIndexDic:indexDic absFo:refFo.pointer conFo:protoOrRegroupFo.pointer callerIsAbs:false];

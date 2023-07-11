@@ -562,6 +562,8 @@
  *      1. 已发生截点 (含cutIndex已发生,所以cutIndex应该就是proto末位在assFo中匹配到的assIndex下标);
  *      2. 取用方式1: 取最大的key即是cutIndex (目前选用,因为它省得取出conFo);
  *      3. 取用方式2: 取protoFo末位为value,对应的key即为:cutIndex;
+ *  @version
+ *      2023.07.11: v2-根据protoOrRegroupCutIndex在indexDic中取absMatchFo.cutIndex并返回;
  *  @result 返回截点cutIndex (注: 此处永远返回抽象Fo的截点,因为具象在时序识别中没截点);
  */
 +(NSInteger) getCutIndexByIndexDic:(NSDictionary*)indexDic {
@@ -574,6 +576,29 @@
         if (result < absIndex.integerValue) result = absIndex.integerValue;
     }
     return result;
+}
+
++(NSInteger) getCutIndexByIndexDicV2:(NSDictionary*)indexDic protoOrRegroupCutIndex:(NSInteger)protoOrRegroupCutIndex {
+    //1. 找出<=且最接近protoOrRegroupCutIndex的value;
+    NSInteger mostNear = -1;
+    for (NSNumber *value in indexDic.allValues) {
+        NSInteger conIndex = value.integerValue;
+        //2. 当前conIndex大于已知 & 且<=protoOrRegroupCutIndex(必须<=已发生);
+        if (conIndex > mostNear && conIndex <= protoOrRegroupCutIndex) {
+            mostNear = conIndex;
+        }
+    }
+    
+    //2. mostNear对应的absIndex就是要返回的cutIndex;
+    for (NSNumber *key in indexDic.allKeys) {
+        NSInteger conIndex = NUMTOOK([indexDic objectForKey:key]).integerValue;
+        if (conIndex == mostNear) {
+            return key.integerValue;
+        }
+    }
+    
+    //3. 如果一条没找着,说明matchFo一帧都没已发生;
+    return -1;
 }
 
 /**

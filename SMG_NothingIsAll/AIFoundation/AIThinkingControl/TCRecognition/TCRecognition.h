@@ -16,7 +16,7 @@
 +(void) rRecognition:(AIShortMatchModel*)model;
 +(void) pRecognition:(AIFoNodeBase*)protoFo;
 +(void) feedbackRecognition:(AIFoNodeBase*)regroupFo foModel:(TOFoModel*)foModel feedbackFrameOfMatchAlgs:(NSArray*)feedbackFrameOfMatchAlgs;
-+(void) actionRecognition:(AIFoNodeBase*)regroupFo baseActionFo:(TOFoModel*)baseActionFo;
++(void) actionRecognition:(AIFoNodeBase*)regroupFo baseActionFo:(TOFoModel*)baseActionFo regroupCutIndex:(NSInteger)regroupCutIndex;
 
 @end
 
