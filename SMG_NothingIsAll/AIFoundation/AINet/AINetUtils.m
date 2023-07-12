@@ -614,8 +614,8 @@
     return NUMTOOK(ARR_INDEX([self getNearDataByIndexDic:indexDic absFo:absFo_p conFo:conFo_p callerIsAbs:callerIsAbs], 1)).floatValue;
 }
 +(NSArray*) getNearDataByIndexDic:(NSDictionary*)indexDic absFo:(AIKVPointer*)absFo_p conFo:(AIKVPointer*)conFo_p callerIsAbs:(BOOL)callerIsAbs{
-    AIFoNodeBase *absFo = [SMGUtils searchNode:absFo_p];
-    AIFoNodeBase *conFo = [SMGUtils searchNode:conFo_p];
+    AIFoNodeBase *absFo = [SMGUtils searchNode:absFo_p];//400ms 4000次
+    AIFoNodeBase *conFo = [SMGUtils searchNode:conFo_p];//400ms 4000次
     return [self getNearDataByIndexDic:indexDic getAbsAlgBlock:^AIKVPointer *(NSInteger absIndex) {
         return ARR_INDEX(absFo.content_ps, absIndex);
     } getConAlgBlock:^AIKVPointer *(NSInteger conIndex) {
@@ -647,8 +647,8 @@
         CGFloat near = 0;
         if (callerIsAbs) {
             //5. 当前是抽象时_从抽象取复用;
-            AIAlgNodeBase *absA = [SMGUtils searchNode:absA_p];
-            near = [absA getConMatchValue:conA_p];
+            AIAlgNodeBase *absA = [SMGUtils searchNode:absA_p];//590ms 5000次
+            near = [absA getConMatchValue:conA_p];//100ms 5000次
         }else{
             //4. 当前是具象时_从具象取复用;
             AIAlgNodeBase *conA = [SMGUtils searchNode:conA_p];

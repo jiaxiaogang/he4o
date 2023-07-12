@@ -148,22 +148,22 @@
     
     //2. 根据是否有conCanset过滤 (目前仅支持R任务,所以直接用fo.count做targetIndex) (参考29089-解答1-补充 & 2908a-todo5);
     otherScenePorts = [SMGUtils filterArr:otherScenePorts checkValid:^BOOL(AIPort *item) {
-        AIFoNodeBase *fo = [SMGUtils searchNode:item.target_p];
-        BOOL mvIdenOK = [fo.cmvNode_p.identifier isEqualToString:protoScene.cmvNode_p.identifier];//mv要求必须同区;
-        BOOL havCansetsOK = type != SceneTypeBrother || ARRISOK([fo getConCansets:fo.count]);//brother时要求必须有cansets;
-        return mvIdenOK && havCansetsOK;
+        AIFoNodeBase *fo = [SMGUtils searchNode:item.target_p];//500ms R90 3455次
+        BOOL mvIdenOK = [fo.cmvNode_p.identifier isEqualToString:protoScene.cmvNode_p.identifier];//mv要求必须同区; //77ms 3455次
+        BOOL havCansetsOK = type != SceneTypeBrother || ARRISOK([fo getConCansets:fo.count]);//brother时要求必须有cansets; //43ms 3455次
+        return mvIdenOK && havCansetsOK; //43ms 3455次
     }];
     
     //3. 根据强度为主,匹配度为辅进行过滤: 取20% & 至少尝试取3条 (参考29094-BUG3-方案2);
     otherScenePorts = [self filterTwice:otherScenePorts mainBlock:^double(AIPort *item) {
         //4. 根据强度,进行主要过滤 (参考29094-BUG3-方案2);
-        return item.strong.value;
+        return item.strong.value;//mainBlock 135ms 11540次
     } subBlock:^double(AIPort *item) {
         //5. 根据indexDic复用匹配度进行辅助过滤 (参考2908a-todo2);
         if (toAbs) {
-            return [AINetUtils getMatchByIndexDic:[protoScene getAbsIndexDic:item.target_p] absFo:item.target_p conFo:protoScene.pointer callerIsAbs:false];
+            return [AINetUtils getMatchByIndexDic:[protoScene getAbsIndexDic:item.target_p] absFo:item.target_p conFo:protoScene.pointer callerIsAbs:false];//113ms 4038次
         }
-        return [AINetUtils getMatchByIndexDic:[protoScene getConIndexDic:item.target_p] absFo:protoScene.pointer conFo:item.target_p callerIsAbs:true];
+        return [AINetUtils getMatchByIndexDic:[protoScene getConIndexDic:item.target_p] absFo:protoScene.pointer conFo:item.target_p callerIsAbs:true];//1436ms 3878次
     } radio:0.2f min:4 max:20 debugMode:false];
     return Ports2Pits(otherScenePorts);
 }

@@ -34,7 +34,7 @@
     
     //3. 取父类级;
     for (AISceneModel *iModel in iModels) {
-        AIFoNodeBase *iFo = [SMGUtils searchNode:iModel.scene];
+        AIFoNodeBase *iFo = [SMGUtils searchNode:iModel.scene];//84ms
         NSArray *fatherScene_ps = [AIFilter solutonSceneFilter:iFo type:iModel.type];
         
         //a. 过滤器 & 转为CansetModel;
@@ -57,7 +57,7 @@
     //4. 取兄弟级;
     for (AISceneModel *fatherModel in fatherModels) {
         AIFoNodeBase *fatherFo = [SMGUtils searchNode:fatherModel.scene];
-        NSArray *brotherScene_ps = [AIFilter solutonSceneFilter:fatherFo type:fatherModel.type];
+        NSArray *brotherScene_ps = [AIFilter solutonSceneFilter:fatherFo type:fatherModel.type];//1799ms
         
         //a. 过滤器 & 转为CansetModel;
         NSArray *itemBrotherModels = [SMGUtils convertArr:brotherScene_ps convertBlock:^id(AIKVPointer *item) {
@@ -67,7 +67,7 @@
             if (!brotherCutIndex) return nil;
             
             //a2. 过滤无同区mv指向的 (参考29069-todo4);
-            AIFoNodeBase *fo = [SMGUtils searchNode:item];
+            AIFoNodeBase *fo = [SMGUtils searchNode:item];//68ms
             if (![fatherFo.cmvNode_p.identifier isEqualToString:fo.cmvNode_p.identifier]) return nil;
             
             //a3. 将brother生成模型;
