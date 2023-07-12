@@ -34,8 +34,6 @@
 +(void) action:(TOFoModel*)foModel{
     //1. 数据准备
     AIFoNodeBase *curFo = [SMGUtils searchNode:foModel.content_p];
-    [theTC updateOperCount:kFILENAME];
-    Debug();
     
     //2. Alg转移 (下帧),每次调用action立马先跳下actionIndex为当前正准备行为化的那一帧;
     foModel.actionIndex++;
@@ -49,6 +47,8 @@
         return;
     }
     
+    [theTC updateOperCount:kFILENAME];
+    Debug();
     //4. 跳转下帧 (最后一帧为目标,自然发生即可,此前帧则需要行为化实现);
     if (foModel.actionIndex < foModel.targetSPIndex - 1) {
         NSLog(@"_Fo行为化第 %ld/%ld 个: %@",foModel.actionIndex+1,foModel.targetSPIndex,Fo2FStr(curFo));

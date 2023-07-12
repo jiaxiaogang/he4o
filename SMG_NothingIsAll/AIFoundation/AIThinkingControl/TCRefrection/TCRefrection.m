@@ -30,6 +30,8 @@
  */
 +(BOOL) refrection:(AICansetModel*)checkCanset demand:(DemandModel*)demand{
     //1. 数据准备;
+    [theTC updateOperCount:kFILENAME];
+    Debug();
     AIFoNodeBase *cansetFo = [SMGUtils searchNode:checkCanset.cansetFo];
     AIFoNodeBase *sceneFo = [SMGUtils searchNode:checkCanset.sceneFo];
     
@@ -64,6 +66,7 @@
     BOOL result = sumScore > 0;
     NSLog(@"反思评价结果:%@通过 (解决任务奖励分%.1f Canset风险:%.2f 懒分:%.1f = %.1f)",result?@"已":@"未",demandJianLiScore,canestFenXianScore,lazyScore,sumScore);
     [AITest test21:result];
+    DebugE();
     return result;
 }
 
@@ -73,6 +76,8 @@
  */
 +(BOOL) actionRefrection:(TOFoModel*)baseFoModel {
     //1. 根据foModel向上找出rDemand的评分;
+    [theTC updateOperCount:kFILENAME];
+    Debug();
     OSTitleLog(@"行为化前 反思评价");
     ReasonDemandModel *baseRDemand = ARR_INDEX([TOUtils getBaseRDemands_AllDeep:baseFoModel], 0);
     if (!baseRDemand) return true;
@@ -88,6 +93,7 @@
     //3. 对比二者,得出反思是否通过 (最严重也不比当前重要时,反思通过) (参考30054-todo6);
     BOOL result = zuiYanZonSubDemandScore > demandScore;
     NSLog(@"> 最严重子任务分:%.2f > 当前任务分:%.2f =====> %@通过",zuiYanZonSubDemandScore,demandScore,result?@"已":@"未");
+    DebugE();
     return result;
 }
 

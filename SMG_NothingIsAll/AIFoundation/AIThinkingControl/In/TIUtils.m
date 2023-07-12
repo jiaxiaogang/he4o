@@ -553,7 +553,7 @@
     AIFoNodeBase *newCanset = [SMGUtils searchNode:newCanset_p];
     AIFoNodeBase *sceneFo = [SMGUtils searchNode:sceneFo_p];
     NSArray *oldCansets = [sceneFo getConCansets:sceneFo.count];
-    OFTitleLog(@"Canset识别",@"(候选数:%ld)\nnewCanset:%@\nsceneFo:%@",oldCansets.count,Fo2FStr(newCanset),Fo2FStr(sceneFo));
+    NSLog(@"\n----------- Canset识别 (候选数:%ld) -----------\nnewCanset:%@\nsceneFo:%@",oldCansets.count,Fo2FStr(newCanset),Fo2FStr(sceneFo));
     NSMutableArray *matchModels = [[NSMutableArray alloc] init];
     
     //2. 旧有候选集: 作为识别池;

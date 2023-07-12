@@ -18,6 +18,9 @@
  */
 +(void) transfer:(AICansetModel*)bestCansetModel complate:(void(^)(AITransferModel *brother,AITransferModel *father,AITransferModel *i))complate {
     //0. 数据准备;
+    [theTC updateOperCount:kFILENAME];
+    Debug();
+    OFTitleLog(@"TCTransfer迁移", @" from%@",SceneType2Str(bestCansetModel.baseSceneModel.type));
     AITransferModel *brotherResult = nil, *fatherResult = nil, *iResult = nil;
     NSInteger targetIndex = bestCansetModel.targetIndex; //因为推举和继承的canset全是等长,所以他们仨的targetIndex也一样;
     
@@ -63,10 +66,10 @@
         [TIUtils recognitionCansetFo:fatherCanset sceneFo:fatherScene];
         [TIUtils recognitionCansetFo:iCanset sceneFo:iScene];
     }
-    OFTitleLog(@"TCTransfer迁移", @" from%@",SceneType2Str(bestCansetModel.baseSceneModel.type));
     if (brotherResult) NSLog(@"迁移结果: brotherScene:F%ld Canset:%@",brotherResult.scene.pointerId,Pit2FStr(brotherResult.canset));
     if (fatherResult) NSLog(@"迁移结果: fatherScene:F%ld Canset:%@",fatherResult.scene.pointerId,Pit2FStr(fatherResult.canset));
     if (iResult) NSLog(@"迁移结果: iScene:F%ld Canset:%@",iResult.scene.pointerId,Pit2FStr(iResult.canset));
+    DebugE();
     complate(brotherResult,fatherResult,iResult);
 }
 
