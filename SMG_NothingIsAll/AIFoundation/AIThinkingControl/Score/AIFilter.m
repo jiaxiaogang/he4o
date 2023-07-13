@@ -150,6 +150,8 @@
         AIMatchFoModel *mostPFo = ARR_INDEX(groupPFos, 0);
         if (mostPFo) [inModel.matchPFos addObject:mostPFo];
     }
+    NSLog(@"\n时序二次过滤后条数: 剩%ld >>>>>>>>>>>>>>>>>>>>>",inModel.matchPFos.count);
+    for (AIMatchFoModel *item in inModel.matchPFos) NSLog(@"\t%ld. %@",[inModel.matchPFos indexOfObject:item] + 1,Pit2FStr(item.matchFo));
 }
 
 /**
