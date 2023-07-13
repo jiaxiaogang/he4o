@@ -137,18 +137,31 @@
 /**
  *  MARK:--------------------行为化前反思识别过滤器 (参考30059)--------------------
  *  @desc 根据mv类型分组,然后过滤出每组迫切度最强的一条 (参考30059-方案);
+ *  @version
+ *      2023.07.13: 改成matchPFos默认排序方式不变,仅截取每种mv类型的前3条 (参考30059-方案2);
  */
 +(void) secondActionRecognitionFilter:(AIShortMatchModel*)inModel {
-    //1. 按照mv分组,每组按迫切性排序;
-    NSDictionary *fos4Demand = inModel.fos4Demand;
+    //1. 按照mv分组,每组按pFos默认的强度排序;
+    NSMutableDictionary *groupDic = [[NSMutableDictionary alloc] init];
+    for (AIMatchFoModel *pFo in inModel.matchPFos) {
+        AIFoNodeBase *fo = [SMGUtils searchNode:pFo.matchFo];
+        
+        //2. 取分组;
+        NSMutableArray *itemArr = [groupDic objectForKey:fo.cmvNode_p.algsType];
+        if (!itemArr) itemArr = [[NSMutableArray alloc] init];
+        
+        //3. 收集到分组;
+        [itemArr addObject:pFo];
+        [groupDic setObject:itemArr forKey:fo.cmvNode_p.algsType];
+    }
     
-    //2. 清空matchPFos,然后重新收集过滤后部分;
+    //4. 清空matchPFos,然后重新收集过滤后部分;
     [inModel.matchPFos removeAllObjects];
     
-    //3. 把每组最迫切的一条收集起来 (过滤仅保留每组最迫切的一条);
-    for (NSArray *groupPFos in fos4Demand.allValues) {
-        AIMatchFoModel *mostPFo = ARR_INDEX(groupPFos, 0);
-        if (mostPFo) [inModel.matchPFos addObject:mostPFo];
+    //5. 把每组最迫切的一条收集起来 (过滤仅保留每组最迫切的一条);
+    for (NSArray *groupPFos in groupDic.allValues) {
+        NSArray *mostPFo = ARR_SUB(groupPFos, 0, 3);
+        if (ARRISOK(mostPFo)) [inModel.matchPFos addObjectsFromArray:mostPFo];
     }
     NSLog(@"\n时序二次过滤后条数: 剩%ld >>>>>>>>>>>>>>>>>>>>>",inModel.matchPFos.count);
     for (AIMatchFoModel *item in inModel.matchPFos) NSLog(@"\t%ld. %@",[inModel.matchPFos indexOfObject:item] + 1,Pit2FStr(item.matchFo));
