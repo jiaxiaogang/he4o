@@ -104,6 +104,8 @@
 /**
  *  MARK:--------------------行为化前反思识别--------------------
  *  @desc 在行为化输出前,先反思识别一下,如果这么做,会导致什么子任务 (参考30054-另外2&todo4);
+ *  @version
+ *      2023.07.13: 支持二次行为化前反思识别过滤器 (参考30059);
  */
 +(void) actionRecognition:(AIFoNodeBase*)regroupFo baseActionFo:(TOFoModel*)baseActionFo regroupCutIndex:(NSInteger)regroupCutIndex {
     //1. 数据检查
@@ -116,16 +118,8 @@
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层) (参考30054-todo4);
     [TIUtils recognitionFo:regroupFo except_ps:@[regroupFo.pointer] decoratorInModel:result fromRegroup:true matchAlgs:nil protoOrRegroupCutIndex:regroupCutIndex];
     
-    //TODOTOMORROW20230712: 看给反思识别写个二次过滤器,最终只需要最准确的三四条,多了rSolution顶不住 (参考30059);
-//    result.matchPFos = [[NSMutableArray alloc] initWithArray:ARR_SUB(result.matchPFos, 0, 4)];
-    //  1. 看能不能在过滤前3条时,能够保证一下它的mv多样性 (避免留下几条全是饿没疼);
-    //  2. 分析下二次过滤以什么为准进行排序;
-    
-    
-//    //3. 识别二次过滤器;
-//    [AIFilter secondRecognitionFilter:result];
-    
-    
+    //3. 识别二次过滤器;
+    [AIFilter secondActionRecognitionFilter:result];
     
     //3. 调用更新到短时记忆树 (不用学习和反馈,直接构建子任务) (参考30054-todo5);
     DebugE();

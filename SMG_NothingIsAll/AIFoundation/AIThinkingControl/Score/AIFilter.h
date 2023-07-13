@@ -43,4 +43,9 @@
  */
 +(void) secondRecognitionFilter:(AIShortMatchModel*)inModel;
 
+/**
+ *  MARK:--------------------行为化前反思识别过滤器 (参考30059)--------------------
+ */
++(void) secondActionRecognitionFilter:(AIShortMatchModel*)inModel;
+
 @end

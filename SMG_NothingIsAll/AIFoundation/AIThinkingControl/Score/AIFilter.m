@@ -135,6 +135,24 @@
 }
 
 /**
+ *  MARK:--------------------行为化前反思识别过滤器 (参考30059)--------------------
+ *  @desc 根据mv类型分组,然后过滤出每组迫切度最强的一条 (参考30059-方案);
+ */
++(void) secondActionRecognitionFilter:(AIShortMatchModel*)inModel {
+    //1. 按照mv分组,每组按迫切性排序;
+    NSDictionary *fos4Demand = inModel.fos4Demand;
+    
+    //2. 清空matchPFos,然后重新收集过滤后部分;
+    [inModel.matchPFos removeAllObjects];
+    
+    //3. 把每组最迫切的一条收集起来 (过滤仅保留每组最迫切的一条);
+    for (NSArray *groupPFos in fos4Demand.allValues) {
+        AIMatchFoModel *mostPFo = ARR_INDEX(groupPFos, 0);
+        if (mostPFo) [inModel.matchPFos addObject:mostPFo];
+    }
+}
+
+/**
  *  MARK:--------------------Scene求解过滤器 (参考2908a-todo2)--------------------
  *  @param type : protoScene的类型,i时向抽象取ports,father时向具象取ports;
  *  @version
