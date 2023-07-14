@@ -140,23 +140,7 @@
  *  @version
  *      2023.07.13: 改成matchPFos默认排序方式不变,仅截取每种mv类型的前3条 (参考30059-方案2);
  */
-+(void) secondActionRecognitionFilter:(AIShortMatchModel*)inModel {
-    
-    for (AIMatchFoModel *pFo in inModel.matchPFos) {
-        AIFoNodeBase *fo = [SMGUtils searchNode:pFo.matchFo];
-        NSLog(@"排前强度: %.0f -> {%@%.2f}",pFo.strongValue,ATType2Str(fo.cmvNode_p.type),[AIScore score4MV_v2:pFo]);
-    }
-    
-    inModel.matchPFos = [[NSMutableArray alloc] initWithArray:[SMGUtils sortBig2Small:inModel.matchPFos compareBlock:^double(AIMatchFoModel *obj) {
-        return obj.strongValue;
-    }]];
-    NSLog(@"\n\n");
-    
-    for (AIMatchFoModel *pFo in inModel.matchPFos) {
-        AIFoNodeBase *fo = [SMGUtils searchNode:pFo.matchFo];
-        NSLog(@"排后强度: %.0f -> {%@%.2f}",pFo.strongValue,ATType2Str(fo.cmvNode_p.type),[AIScore score4MV_v2:pFo]);
-    }
-    
++(void) secondActionRecognitionFilter:(AIShortMatchModel*)inModel {  
     //1. 按照mv分组,每组按pFos默认的强度排序;
     NSMutableDictionary *groupDic = [[NSMutableDictionary alloc] init];
     for (AIMatchFoModel *pFo in inModel.matchPFos) {
