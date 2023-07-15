@@ -38,16 +38,8 @@
     
     //2. 生成model
     for (HEView *curView in views) {
-        if (curView.tag == visibleTag) {
-            
-            //TODOTOMORROW20230715:
-            if (logLineNum > 9000 && [NSStringFromClass(curView) isEqualToString:@"WoodView"]) {
-                NSLog(@"30071问题复现");
-            }
-            
-            
-            
-            
+        BOOL curViewIsShow = curView.alpha > 0 && !curView.hidden;
+        if (curView.tag == visibleTag && curViewIsShow) {
             AIVisionAlgsModel *model = [[AIVisionAlgsModel alloc] init];
             //model.sizeWidth = [self sizeWidth:curView];
             model.sizeHeight = [self sizeHeight:curView];
