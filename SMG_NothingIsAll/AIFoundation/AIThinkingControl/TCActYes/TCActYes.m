@@ -278,7 +278,7 @@
     }
     
     //3. 触发器;
-    NSLog(@"---//行为化帧%@性触发器:%@ time:%f for:F%ld (%ld/%ld)",actYes4Mv?@" 感":@"理",demand.algsType,deltaTime,solutionFo.pointer.pointerId,curActionIndex,solutionModel.targetSPIndex);
+    NSLog(@"---//行为化帧%@性触发器:%@ time:%f for:F%ld (%ld/%ld)",actYes4Mv?@" 感":@"理",ClassName2Str(demand.algsType),deltaTime,solutionFo.pointer.pointerId,curActionIndex,solutionModel.targetSPIndex);
     [AITime setTimeTrigger:deltaTime trigger:^{
         
         //4. 末尾为mv感性目标;
