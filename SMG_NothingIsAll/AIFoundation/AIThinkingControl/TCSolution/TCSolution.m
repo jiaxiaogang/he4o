@@ -151,7 +151,7 @@
         
         //a) 有效率
         [TCEffect rEffect:foModel];
-        dispatch_async(dispatch_get_main_queue(), ^{//30073回同步
+        dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
             [theTV updateFrame];
         });
         [TCAction action:foModel];
@@ -246,7 +246,7 @@
                 //b. 取自身,实现吃,则可不饿 (提交C给TOR行为化);
                 //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
                 NSLog(@">>>>>> pSolution 新增第%ld例解决方案: %@->%@",demandModel.actionFoModels.count,Fo2FStr(fo),Mvp2Str(fo.cmvNode_p));
-                dispatch_async(dispatch_get_main_queue(), ^{//30073回同步
+                dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
                     [theTV updateFrame];
                 });
                 DebugE();
@@ -322,7 +322,7 @@
         
         //a) 有效率;
         [TCEffect hEffect:foModel];
-        dispatch_async(dispatch_get_main_queue(), ^{//30073回同步
+        dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
             [theTV updateFrame];
         });
         [TCAction action:foModel];

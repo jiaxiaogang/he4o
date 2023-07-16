@@ -37,7 +37,7 @@
         imvModel.delta = imvModel.urgentTo - urgentFrom;    //更痛5 更饿7;
         
         //7. 提交;
-        [theTC commitInput:imvModel];
+        [theTC commitInputAsync:imvModel];
     }
 }
 

@@ -73,7 +73,7 @@
     CGFloat triggerTime = deltaTime * 1.1f + 2.0f;//当24058-方案1不成时,此处方案2再做为备启用,即将1.0调整为3甚至5;
     triggerTime = MIN(triggerTime, 20.0f);
     NSLog(@"---> 设定生物钟触发器: deltaTime:%.2f triggerTime:%.2f",deltaTime,triggerTime);
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(triggerTime * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(triggerTime * NSEC_PER_SEC)), theTC.tcAsyncQueue, ^{//30083去异步
         //3. 触发时,判断是否还是actYes状态 (在OuterPushMiddleLoop()中,会将ActYes且符合,且PM算法成功的,改为Finish);
         if (canTrigger) {
             if (canTrigger()) trigger();

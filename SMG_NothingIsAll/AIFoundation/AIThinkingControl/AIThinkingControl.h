@@ -18,6 +18,7 @@
 
 +(AIThinkingControl*) shareInstance;
 @property (strong, nonatomic) TCDebug *tcDebug;
+@property (strong, nonatomic) dispatch_queue_t tcAsyncQueue;        //思维异步线程(串行队列)
 
 /**
  *  MARK:--------------------思维模式--------------------
@@ -35,16 +36,15 @@
 /**
  *  MARK:--------------------流入input--------------------
  */
--(void) commitInput:(NSObject*)algsModel;
+-(void) commitInputAsync:(NSObject*)algsModel;
 -(void) commitInputWithModelsAsync:(NSArray*)dics algsType:(NSString*)algsType;
--(void) commitInputWithModels:(NSArray*)dics algsType:(NSString*)algsType;
 
 /**
  *  MARK:--------------------输出的日志入网(输入小脑)--------------------
  *  @param outputModels : 输出内容(如:eat)
  *  注: 大脑为引,小脑为行
  */
--(void) commitOutputLog:(NSArray*)outputModels;
+-(void) commitOutputLogAsync:(NSArray*)outputModels;
 
 
 //MARK:===============================================================

@@ -21,7 +21,7 @@
     Debug();
     OSTitleLog(@"rDemand");
     NSArray *newRoots = [theTC.outModelManager updateCMVCache_RMV:model];
-    dispatch_async(dispatch_get_main_queue(), ^{//30073回同步
+    dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
         [theTV updateFrame];
     });
     DebugE();
@@ -44,7 +44,7 @@
     NSString *algsType = cmvNode.urgentTo_p.algsType;
     NSInteger urgentTo = [NUMTOOK([AINetIndex getData:cmvNode.urgentTo_p]) integerValue];
     [theTC.outModelManager updateCMVCache_PMV:algsType urgentTo:urgentTo delta:delta];
-    dispatch_async(dispatch_get_main_queue(), ^{//30073回同步
+    dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
         [theTV updateFrame];
     });
     
@@ -77,7 +77,7 @@
         }
         
     }
-    dispatch_async(dispatch_get_main_queue(), ^{//30073回同步
+    dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
         [theTV updateFrame];
     });
     DebugE();
@@ -94,7 +94,7 @@
     Debug();
     OFTitleLog(@"hDemand",@"\n%@",Pit2FStr(algModel.content_p));
     [HDemandModel newWithAlgModel:algModel];
-    dispatch_async(dispatch_get_main_queue(), ^{//30073回同步
+    dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
         [theTV updateFrame];
     });
     

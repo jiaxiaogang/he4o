@@ -25,7 +25,7 @@
         for (NSInteger i = 0; i < input.length; i ++) {
             AICharAlgsModel *model = [AICharAlgsModel new];
             model.c = chars[i];
-            [theTC commitInput:model];
+            [theTC commitInputAsync:model];
         }
     }
 }

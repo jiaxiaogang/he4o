@@ -77,7 +77,7 @@
     BOOL tcsCanPrint = LogPrintAllTCs || !STRISOK(lastTCName) || [LogJustPrintTCs containsObject:SUBSTR2INDEX(lastTCName, lastTCName.length - 2)];
     
     //3. 打印
-    dispatch_async(dispatch_get_main_queue(), ^{//30073回同步
+    dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
         if (!theApp.noNSLog && tcsCanPrint) {
             NSString *log = [self nsLogFormat:fileName line:line protoLog:protoLog headerMode:headerMode];
             PrintLog(log);

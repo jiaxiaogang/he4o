@@ -74,7 +74,7 @@
                 
                 //7. pFo任务顺利: 推进帧;
                 [waitModel feedbackPushFrame:model.protoAlg.pointer];
-                dispatch_async(dispatch_get_main_queue(), ^{//30073回同步
+                dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
                     [theTV updateFrame];
                 });
                 NSLog(@"tir_OPushM: waitFo场景更新,原IRT理性失效");
@@ -160,7 +160,7 @@
                 
                 //13. pFo任务失效 (参考27093-条件1 & 27095-1);
                 waitModel.isExpired = true;
-                dispatch_async(dispatch_get_main_queue(), ^{//30073回同步
+                dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
                     [theTV updateFrame];
                 });
                 NSLog(@"tip_OPushM: 实MV 正向反馈");
@@ -299,7 +299,7 @@
                 }
                 
                 //c. 最终反馈了feedbackAlg时,重组 & 反思;
-                dispatch_async(dispatch_get_main_queue(), ^{//30073回同步
+                dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
                     [theTV updateFrame];
                 });
                 if (isEndFrame) [TCRegroup feedbackRegroup:targetFo feedbackFrameOfMatchAlgs:model.matchAlgs];
@@ -335,7 +335,7 @@
                 if (subHDemand) subHDemand.status = TOModelStatus_Finish;
                 
                 //c. 重组
-                dispatch_async(dispatch_get_main_queue(), ^{//30073回同步
+                dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
                     [theTV updateFrame];
                 });
                 DebugE();
@@ -465,7 +465,7 @@
                     //8. solutionFo反馈好时,baseDemand为完成状态;
                     waitModel.baseOrGroup.status = TOModelStatus_Finish;
                 }
-                dispatch_async(dispatch_get_main_queue(), ^{//30073回同步
+                dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
                     [theTV updateFrame];
                 });
             }

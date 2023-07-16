@@ -31,7 +31,7 @@
         [theTC updateEnergyDelta:-1.0f];
         
         //3. 输出_用旧有代码->输出后转给TCInput.rInput();
-        dispatch_async(dispatch_get_main_queue(), ^{//30073回同步
+        dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
             [theTV updateFrame];
         });
         DebugE();

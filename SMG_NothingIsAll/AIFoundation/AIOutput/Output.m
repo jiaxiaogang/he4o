@@ -47,7 +47,7 @@
     if (ARRISOK(valids)) {
         [self output_General:valids logBlock:^{
             //6. 将输出入网
-            [theTC commitOutputLog:valids];
+            [theTC commitOutputLogAsync:valids];
         }];
         return true;
     }
@@ -69,7 +69,7 @@
     if (ARRISOK(models)) {
         [Output output_General:models logBlock:^{
             //3. 将输出入网
-            [theTC commitOutputLog:models];
+            [theTC commitOutputLogAsync:models];
         }];
     }
 }

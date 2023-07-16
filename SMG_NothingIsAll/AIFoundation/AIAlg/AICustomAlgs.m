@@ -15,7 +15,7 @@
     if (type == CustomInputType_Charge) {
         CustomAlgsChargeModel *model = [[CustomAlgsChargeModel alloc] init];
         model.value = value;
-        [theTC commitInput:model];
+        [theTC commitInputAsync:model];
     }
 }
 
