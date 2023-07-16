@@ -74,7 +74,9 @@
                 
                 //7. pFo任务顺利: 推进帧;
                 [waitModel feedbackPushFrame:model.protoAlg.pointer];
-                [theTV updateFrame];
+                dispatch_async(dispatch_get_main_queue(), ^{//30073回同步
+                    [theTV updateFrame];
+                });
                 NSLog(@"tir_OPushM: waitFo场景更新,原IRT理性失效");
             } else {
                 //调用3: 只要没调用到pushFrame,就调用此方法记录protoA;
@@ -158,7 +160,9 @@
                 
                 //13. pFo任务失效 (参考27093-条件1 & 27095-1);
                 waitModel.isExpired = true;
-                [theTV updateFrame];
+                dispatch_async(dispatch_get_main_queue(), ^{//30073回同步
+                    [theTV updateFrame];
+                });
                 NSLog(@"tip_OPushM: 实MV 正向反馈");
             }
         }
@@ -295,7 +299,9 @@
                 }
                 
                 //c. 最终反馈了feedbackAlg时,重组 & 反思;
-                [theTV updateFrame];
+                dispatch_async(dispatch_get_main_queue(), ^{//30073回同步
+                    [theTV updateFrame];
+                });
                 if (isEndFrame) [TCRegroup feedbackRegroup:targetFo feedbackFrameOfMatchAlgs:model.matchAlgs];
                 DebugE();
                 [TCScore score];
@@ -329,7 +335,9 @@
                 if (subHDemand) subHDemand.status = TOModelStatus_Finish;
                 
                 //c. 重组
-                [theTV updateFrame];
+                dispatch_async(dispatch_get_main_queue(), ^{//30073回同步
+                    [theTV updateFrame];
+                });
                 DebugE();
                 [TCRegroup feedbackRegroup:solutionFo feedbackFrameOfMatchAlgs:model.matchAlgs];
                 [TCScore score];
@@ -457,7 +465,9 @@
                     //8. solutionFo反馈好时,baseDemand为完成状态;
                     waitModel.baseOrGroup.status = TOModelStatus_Finish;
                 }
-                [theTV updateFrame];
+                dispatch_async(dispatch_get_main_queue(), ^{//30073回同步
+                    [theTV updateFrame];
+                });
             }
         }
     }

@@ -24,6 +24,7 @@
 @property (strong, nonatomic) ShortMatchManager *shortMatchManager; //IN短时记忆 (输入数据管理器);
 @property (assign, nonatomic) long long operCount;                  //思维操作计数;
 @property (assign, nonatomic) long long loopId;                     //思维循环Id;
+@property (strong, nonatomic) dispatch_queue_t tcAsyncQueue;        //思维异步线程(串行队列)
 
 /**
  *  MARK:--------------------当前能量值--------------------
@@ -57,13 +58,13 @@ static AIThinkingControl *_instance;
 }
 
 -(void) initData{
+    self.tcAsyncQueue = dispatch_queue_create([STRFORMAT(@"TC Asynchronous Queue %p",(void *)self) UTF8String], DISPATCH_QUEUE_SERIAL);//串行
     self.demandManager = [[DemandManager alloc] init];
     self.shortMatchManager = [[ShortMatchManager alloc] init];
     [theRT regist:kClearTCSEL target:self selector:@selector(clear)];
     [theRT regist:kThinkModeSEL target:self selector:@selector(updateThinkMode:)];
     self.tcDebug = [[TCDebug alloc] init];
 }
-
 
 //MARK:===============================================================
 //MARK:                     < 数据输入 >
@@ -120,6 +121,11 @@ static AIThinkingControl *_instance;
  *  TODOWAIT:
  *  1. 默认为按边缘(ios的view层级)分组,随后可扩展概念内类比,按别的维度分组; 参考: n16p7
  */
+-(void) commitInputWithModelsAsync:(NSArray*)dics algsType:(NSString*)algsType {
+    dispatch_async(self.tcAsyncQueue, ^{//30073去异步
+        [self commitInputWithModels:dics algsType:algsType];
+    });
+}
 -(void) commitInputWithModels:(NSArray*)dics algsType:(NSString*)algsType{
     //1. 植物模式阻断感知;
     if (self.thinkMode == 2) return;

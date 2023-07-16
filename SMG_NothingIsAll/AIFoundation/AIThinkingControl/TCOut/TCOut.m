@@ -31,7 +31,9 @@
         [theTC updateEnergyDelta:-1.0f];
         
         //3. 输出_用旧有代码->输出后转给TCInput.rInput();
-        [theTV updateFrame];
+        dispatch_async(dispatch_get_main_queue(), ^{//30073回同步
+            [theTV updateFrame];
+        });
         DebugE();
         BOOL invoked = [Output output_FromTC:algModel.content_p];
         NSLog(@"===执行%@",invoked ? @"success" : @"failure");

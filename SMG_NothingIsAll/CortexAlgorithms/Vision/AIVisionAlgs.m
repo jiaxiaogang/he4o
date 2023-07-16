@@ -68,7 +68,7 @@
     }
     
     //3. 传给thinkingControl
-    [theTC commitInputWithModels:dics algsType:NSStringFromClass(self)];
+    [theTC commitInputWithModelsAsync:dics algsType:NSStringFromClass(self)];
 }
 
 //MARK:===============================================================

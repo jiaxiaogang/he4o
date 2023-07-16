@@ -36,6 +36,7 @@
  *  MARK:--------------------流入input--------------------
  */
 -(void) commitInput:(NSObject*)algsModel;
+-(void) commitInputWithModelsAsync:(NSArray*)dics algsType:(NSString*)algsType;
 -(void) commitInputWithModels:(NSArray*)dics algsType:(NSString*)algsType;
 
 /**

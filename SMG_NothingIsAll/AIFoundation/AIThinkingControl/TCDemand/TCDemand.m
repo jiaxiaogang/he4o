@@ -21,7 +21,9 @@
     Debug();
     OSTitleLog(@"rDemand");
     NSArray *newRoots = [theTC.outModelManager updateCMVCache_RMV:model];
-    [theTV updateFrame];
+    dispatch_async(dispatch_get_main_queue(), ^{//30073回同步
+        [theTV updateFrame];
+    });
     DebugE();
     return newRoots;
 }
@@ -42,7 +44,9 @@
     NSString *algsType = cmvNode.urgentTo_p.algsType;
     NSInteger urgentTo = [NUMTOOK([AINetIndex getData:cmvNode.urgentTo_p]) integerValue];
     [theTC.outModelManager updateCMVCache_PMV:algsType urgentTo:urgentTo delta:delta];
-    [theTV updateFrame];
+    dispatch_async(dispatch_get_main_queue(), ^{//30073回同步
+        [theTV updateFrame];
+    });
     
     //2. 转向执行;
     DebugE();
@@ -73,7 +77,9 @@
         }
         
     }
-    [theTV updateFrame];
+    dispatch_async(dispatch_get_main_queue(), ^{//30073回同步
+        [theTV updateFrame];
+    });
     DebugE();
 }
 
@@ -88,7 +94,9 @@
     Debug();
     OFTitleLog(@"hDemand",@"\n%@",Pit2FStr(algModel.content_p));
     [HDemandModel newWithAlgModel:algModel];
-    [theTV updateFrame];
+    dispatch_async(dispatch_get_main_queue(), ^{//30073回同步
+        [theTV updateFrame];
+    });
     
     //2. 调用TCScore继续决策;
     DebugE();
