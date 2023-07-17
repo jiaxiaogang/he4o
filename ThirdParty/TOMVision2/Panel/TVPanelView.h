@@ -22,10 +22,7 @@
 @class TOMVisionItemModel,TVSettingWindow;
 @interface TVPanelView : UIView
 
-//TODOTOMORROW20230717: 怀疑此处需要线程安全 (也不一定,也许这里全是主线程,没此问题,可以加个开关试下先);
-
-
-@property (strong, nonatomic) NSMutableArray *models;   //所有帧数据 List<TOMVisionItemModel>
+@property (strong, nonatomic) NSMutableArray *models;   //所有帧数据 List<TOMVisionItemModel> (2023.07.17: 怀疑此处需要线程安全,等闪退时再来加)
 @property (weak, nonatomic) id<TVPanelViewDelegate> delegate;//notnull
 @property (assign, nonatomic) BOOL stop;                //功能开关
 @property (strong, nonatomic) TVSettingWindow *settingWindow;

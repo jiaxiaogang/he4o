@@ -133,7 +133,7 @@
  */
 -(void) updateFrame{
     //1. 数据检查;
-    if (theTC.outModelManager.getAllDemand.count <= 0 || self.stop) {
+    if (self.stop || theTC.outModelManager.getAllDemand.count <= 0) {
         return;
     }
     
