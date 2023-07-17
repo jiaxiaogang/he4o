@@ -20,6 +20,7 @@
 #import "AIKVPointer.h"
 #import "AIThinkingControl.h"
 #import "NSString+Extension.h"
+#import "AsyncMutableArray.h"
 #import "AIScore.h"
 #import "XGDelegate.h"
 #import "TOModelVision.h"

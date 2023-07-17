@@ -15,7 +15,7 @@
  *  元素 : <DemandModel.class>
  *  思维因子_当前cmv序列(注:所有cmv只与cacheImv中作匹配)(正序,order越大,排越前)
  */
-@property (strong,nonatomic) NSMutableArray *loopCache;
+@property (strong,nonatomic) AsyncMutableArray *loopCache;
 
 @end
 
@@ -30,7 +30,7 @@
 }
 
 -(void) initData{
-    self.loopCache = [[NSMutableArray alloc] init];
+    self.loopCache = [[AsyncMutableArray alloc] init];
 }
 
 //MARK:===============================================================
@@ -60,7 +60,7 @@
     BOOL canNeed = true;
     NSInteger limit = self.loopCache.count;
     for (NSInteger i = 0; i < limit; i++) {
-        DemandModel *checkItem = self.loopCache[i];
+        DemandModel *checkItem = [self.loopCache objectAtIndex:i];
         if ([STRTOOK(algsType) isEqualToString:checkItem.algsType]) {
             if (ISOK(checkItem, PerceptDemandModel.class)) {
                 if ((delta > 0 == checkItem.delta > 0)) {
@@ -172,7 +172,7 @@
  *      2023.03.01: 修复排序反了的BUG: 评分越低越应该优先 (参考28136-修复);
  */
 -(void) refreshCmvCacheSort{
-    NSArray *sort = [SMGUtils sortBig2Small:self.loopCache compareBlock1:^double(DemandModel *obj) {
+    NSArray *sort = [SMGUtils sortBig2Small:self.loopCache.array compareBlock1:^double(DemandModel *obj) {
         return -[AIScore score4Demand:obj];
     } compareBlock2:^double(DemandModel *obj) {
         return obj.initTime;
@@ -193,19 +193,19 @@
 -(DemandModel*) getCanDecisionDemand{
     //1. 数据检查
     DemandModel *result = nil;
-    if (!ARRISOK(self.loopCache)) return nil;
+    if (!ARRISOK(self.loopCache.array)) return nil;
     
     //2. 重排序 & 取当前序列最前;
     [self refreshCmvCacheSort];
     
     //3. 逐个判断条件
     for (NSInteger j = 0; j < self.loopCache.count; j++) {
-        ReasonDemandModel *item = ARR_INDEX(self.loopCache, j);
+        ReasonDemandModel *item = ARR_INDEX(self.loopCache.array, j);
         if (Log4CanDecisionDemand) NSLog(@"root(%ld/%ld):%@ (%@) %@",j,self.loopCache.count,Pit2FStr(item.protoFo),[SMGUtils date2Str:kHHmmss timeInterval:item.initTime],[TOModelVision cur2Sub:item]);
     }
     NSLog(@"Demand竞争 ============================================= START 共%ld条",self.loopCache.count);
     for (NSInteger i = 0; i < self.loopCache.count; i++) {
-        DemandModel *item = ARR_INDEX(self.loopCache, i);
+        DemandModel *item = ARR_INDEX(self.loopCache.array, i);
         //3. 即使已经找到result,也把日志打完,方便调试日志中查看Demand的完整竞争情况;
         if (result) {
             NSLog(@"\t第%ld条 %@ 评分%.2f",i+1,ClassName2Str(item.algsType),[AIScore score4Demand:item]);
@@ -250,7 +250,7 @@
  */
 -(NSArray*) getAllDemand{
     [self refreshCmvCacheSort];
-    return self.loopCache;
+    return self.loopCache.array;
 }
 
 /**
