@@ -130,9 +130,6 @@ static XGRedis *_instance;
     }
     
     //3. 并将已销毁的除出gcMarks
-    if (findCount > 1) {
-        NSLog(@"TODOTOMORROW20230718: 测下这里达到2时,下面remove方法是否正确执行;");
-    }
     [self.gcMarks removeObjectsInRange:NSMakeRange(0, findCount)];
 }
 
