@@ -205,6 +205,7 @@
     if (self.timer) [self.timer invalidate];
     if (speed > 0) {
         self.timer = [NSTimer scheduledTimerWithTimeInterval:1.0f / speed target:self selector:@selector(timeBlock) userInfo:nil repeats:true];
+        [ThinkingUtils activeTimer4TCThread:self.timer];
     }
 }
 

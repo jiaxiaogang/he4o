@@ -84,7 +84,7 @@
 
 - (void)insertObject:(id)anObject atIndex:(NSUInteger)index {
     dispatch_barrier_async(_syncQueue, ^{
-        if (anObject && index < [self.arr count]) {
+        if (anObject && index <= [self.arr count]) {
             [self.arr insertObject:anObject atIndex:index];
         }
     });
@@ -131,6 +131,12 @@
 - (void)removeLastObject {
     dispatch_barrier_async(_syncQueue, ^{
         [self.arr removeLastObject];
+    });
+}
+
+- (void)removeObjectsInRange:(NSRange)range {
+    dispatch_barrier_async(_syncQueue, ^{
+        [self.arr removeObjectsInRange:range];
     });
 }
 

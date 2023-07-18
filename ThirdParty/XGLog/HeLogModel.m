@@ -33,6 +33,7 @@
     //1. 初始化内存datas等;
     self.datas = [[NSMutableArray alloc] init];
     self.timer = [NSTimer scheduledTimerWithTimeInterval:cHeLog2DBInterval target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];
+    [ThinkingUtils activeTimer4TCThread:self.timer];
     
     //2. 重新加载硬盘;
     [self reloadData];

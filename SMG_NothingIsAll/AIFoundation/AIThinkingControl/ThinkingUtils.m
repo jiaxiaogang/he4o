@@ -130,4 +130,17 @@
     return false;
 }
 
+/**
+ *  MARK:--------------------非主线程需执行后NSTimer才工作--------------------
+ */
++(void) activeTimer4TCThread:(NSTimer*)timer {
+    if (![NSThread isMainThread]) {
+        [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
+        //过会再执行run,因为执行run后当前线程代码会执行一次exit (但不知道after之后,这里还会不会把当时正在执行的代码全exit掉,这个暂时没测,如果遇到问题,再来这里想办法解决吧);
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), theTC.tcAsyncQueue, ^{
+            [[NSRunLoop currentRunLoop] run];
+        });
+    }
+}
+
 @end

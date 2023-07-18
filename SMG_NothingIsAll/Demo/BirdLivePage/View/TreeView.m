@@ -50,6 +50,7 @@
 
 -(void) initData{
     self.timer = [NSTimer scheduledTimerWithTimeInterval:6 target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];
+    [ThinkingUtils activeTimer4TCThread:self.timer];
     self.dropY = 75;
 }
 

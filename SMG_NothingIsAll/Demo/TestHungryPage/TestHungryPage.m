@@ -55,6 +55,7 @@
 -(void) initData{
     [super initData];
     self.timer = [NSTimer scheduledTimerWithTimeInterval:0.03f target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];
+    [ThinkingUtils activeTimer4TCThread:self.timer];
     self.outputMStr = [[NSMutableString alloc] init];
 }
 

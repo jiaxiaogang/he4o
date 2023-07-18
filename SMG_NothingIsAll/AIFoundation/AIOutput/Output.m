@@ -125,7 +125,7 @@
         }
         
         //2. 行为输出完成后;
-        [NSTimer scheduledTimerWithTimeInterval:useTime target:self selector:@selector(notificationTimer:) userInfo:^(){
+        NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:useTime target:self selector:@selector(notificationTimer:) userInfo:^(){
             //3. 将输出入网
             logBlock();
             
@@ -135,6 +135,7 @@
                 [[NSNotificationCenter defaultCenter] postNotificationName:kOutputObserver object:model];
             }
         } repeats:false];
+        [ThinkingUtils activeTimer4TCThread:timer];
     });
 }
 

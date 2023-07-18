@@ -14,7 +14,7 @@
 @interface XGRedis ()
 
 @property (strong, nonatomic) XGRedisDictionary *dic;   //核心字典
-@property (strong, nonatomic) NSMutableArray *gcMarks;  //回收时间记录;(时间从先到后_有序)
+@property (strong, nonatomic) AsyncMutableArray *gcMarks;  //回收时间记录;(时间从先到后_有序)
 @property (strong,nonatomic) NSTimer *timer;            //计时器
 
 @end
@@ -39,8 +39,9 @@ static XGRedis *_instance;
 
 -(void) initData{
     self.dic = [[XGRedisDictionary alloc] init];
-    self.timer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];
-    self.gcMarks = [[NSMutableArray alloc] init];
+    self.timer = [NSTimer scheduledTimerWithTimeInterval:5.0f target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];
+    [ThinkingUtils activeTimer4TCThread:self.timer];
+    self.gcMarks = [[AsyncMutableArray alloc] init];
 }
 
 //MARK:===============================================================
@@ -111,7 +112,7 @@ static XGRedis *_instance;
     NSInteger findCount = 0;
     
     //2. 找到需要销毁的并销毁;
-    for (XGRedisGCMark *mark in self.gcMarks) {
+    for (XGRedisGCMark *mark in self.gcMarks.array) {
         if (mark.time < now) {
             findCount ++;
             [XGRedisUtil searchIndexWithCompare:^NSComparisonResult(NSInteger checkIndex) {
@@ -128,6 +129,9 @@ static XGRedis *_instance;
     }
     
     //3. 并将已销毁的除出gcMarks
+    if (findCount > 1) {
+        NSLog(@"TODOTOMORROW20230718: 测下这里达到2时,下面remove方法是否正确执行;");
+    }
     [self.gcMarks removeObjectsInRange:NSMakeRange(0, findCount)];
 }
 
@@ -136,7 +140,7 @@ static XGRedis *_instance;
     long long gcTime = (long long)([[NSDate date] timeIntervalSince1970] + MAX(0, time));
     __block NSInteger findOldIndex = 0;
     [XGRedisUtil searchIndexWithCompare:^NSComparisonResult(NSInteger checkIndex) {
-        XGRedisGCMark *checkMark = ARR_INDEX(self.gcMarks, checkIndex);
+        XGRedisGCMark *checkMark = ARR_INDEX(self.gcMarks.array, checkIndex);
         if (ISOK(checkMark, XGRedisGCMark.class)) {
             return checkMark.time > gcTime ? NSOrderedDescending : (checkMark.time < gcTime ? NSOrderedAscending : NSOrderedSame);
         }else{

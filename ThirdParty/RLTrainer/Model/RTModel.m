@@ -39,6 +39,7 @@
     self.queues = [[NSMutableArray alloc] init];
     self.pauseNames = [[NSMutableArray alloc] init];
     self.timer = [NSTimer scheduledTimerWithTimeInterval:TimerInterval target:self selector:@selector(timeBlock) userInfo:nil repeats:true];
+    [ThinkingUtils activeTimer4TCThread:self.timer];
 }
 
 //MARK:===============================================================

@@ -27,6 +27,7 @@
 - (void)removeObjectAtIndex:(NSUInteger)index;
 - (void)removeObject:(id)anObject;
 - (void)removeLastObject;
+- (void)removeObjectsInRange:(NSRange)range;
 -(void) removeAllObjects;
 
 @end
