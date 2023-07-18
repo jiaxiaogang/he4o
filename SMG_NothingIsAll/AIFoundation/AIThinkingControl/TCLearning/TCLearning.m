@@ -33,7 +33,7 @@
     Debug();
     //1. 获取最近的识别模型;
     IFTitleLog(@"pLearning", @"\n输入ProtoFo:%@->%@", Fo2FStr(protoFo),Mvp2Str(protoFo.cmvNode_p));
-    NSArray *inModels = ARRTOOK(theTC.inModelManager.models);
+    NSArray *inModels = [theTC.inModelManager.models copy];
     for (AIShortMatchModel *item in inModels) {
         for (AIMatchFoModel *pFo in item.fos4PLearning) {
             //2. 检查同向;
