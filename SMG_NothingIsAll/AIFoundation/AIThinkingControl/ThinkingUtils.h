@@ -63,9 +63,4 @@
  */
 +(BOOL) dataIn_CheckMV:(NSArray*)algResult_ps;
 
-/**
- *  MARK:--------------------非主线程需执行后NSTimer才工作--------------------
- */
-+(void) activeTimer4TCThread:(NSTimer*)timer;
-
 @end

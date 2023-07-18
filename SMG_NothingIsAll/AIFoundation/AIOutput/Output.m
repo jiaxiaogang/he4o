@@ -125,17 +125,18 @@
         }
         
         //2. 行为输出完成后;
-        NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:useTime target:self selector:@selector(notificationTimer:) userInfo:^(){
-            //3. 将输出入网
-            logBlock();
-            
-            //4. 广播执行输出后 (现实世界处理 & 飞后视觉 & 价值触发等);
-            for (OutputModel *model in ARRTOOK(outputModels)) {
-                model.type = OutputObserverType_Back;
-                [[NSNotificationCenter defaultCenter] postNotificationName:kOutputObserver object:model];
-            }
-        } repeats:false];
-        [ThinkingUtils activeTimer4TCThread:timer];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [NSTimer scheduledTimerWithTimeInterval:useTime target:self selector:@selector(notificationTimer:) userInfo:^(){
+                //3. 将输出入网
+                logBlock();
+                
+                //4. 广播执行输出后 (现实世界处理 & 飞后视觉 & 价值触发等);
+                for (OutputModel *model in ARRTOOK(outputModels)) {
+                    model.type = OutputObserverType_Back;
+                    [[NSNotificationCenter defaultCenter] postNotificationName:kOutputObserver object:model];
+                }
+            } repeats:false];
+        });
     });
 }
 

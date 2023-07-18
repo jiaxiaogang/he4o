@@ -38,8 +38,9 @@
     self.dic = [[NSMutableDictionary alloc] init];
     self.queues = [[NSMutableArray alloc] init];
     self.pauseNames = [[NSMutableArray alloc] init];
-    self.timer = [NSTimer scheduledTimerWithTimeInterval:TimerInterval target:self selector:@selector(timeBlock) userInfo:nil repeats:true];
-    [ThinkingUtils activeTimer4TCThread:self.timer];
+    dispatch_async(dispatch_get_main_queue(), ^{
+       self.timer = [NSTimer scheduledTimerWithTimeInterval:TimerInterval target:self selector:@selector(timeBlock) userInfo:nil repeats:true];
+    });
 }
 
 //MARK:===============================================================

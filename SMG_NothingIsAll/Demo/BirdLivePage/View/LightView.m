@@ -48,8 +48,9 @@
 
 -(void) initData{
     self.curLightIsGreen = true;
-    self.timer = [NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];
-    [ThinkingUtils activeTimer4TCThread:self.timer];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.timer = [NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];
+    });
 }
 
 -(void) initDisplay{

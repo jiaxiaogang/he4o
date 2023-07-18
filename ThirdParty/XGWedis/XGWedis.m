@@ -39,8 +39,9 @@ static XGWedis *_instance;
 
 -(void) initData{
     self.dic = [[NSMutableDictionary alloc] init];
-    self.timer = [NSTimer scheduledTimerWithTimeInterval:cWedis2DBInterval target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];
-    [ThinkingUtils activeTimer4TCThread:self.timer];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.timer = [NSTimer scheduledTimerWithTimeInterval:cWedis2DBInterval target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];
+    });
 }
 
 //MARK:===============================================================

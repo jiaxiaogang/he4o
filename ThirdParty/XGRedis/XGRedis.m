@@ -39,8 +39,9 @@ static XGRedis *_instance;
 
 -(void) initData{
     self.dic = [[XGRedisDictionary alloc] init];
-    self.timer = [NSTimer scheduledTimerWithTimeInterval:5.0f target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];
-    [ThinkingUtils activeTimer4TCThread:self.timer];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.timer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];
+    });
     self.gcMarks = [[AsyncMutableArray alloc] init];
 }
 

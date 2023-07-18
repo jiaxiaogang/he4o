@@ -49,8 +49,9 @@
 }
 
 -(void) initData{
-    self.timer = [NSTimer scheduledTimerWithTimeInterval:6 target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];
-    [ThinkingUtils activeTimer4TCThread:self.timer];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.timer = [NSTimer scheduledTimerWithTimeInterval:6 target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];
+    });
     self.dropY = 75;
 }
 
