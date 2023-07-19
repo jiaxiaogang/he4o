@@ -113,7 +113,8 @@ static XGRedis *_instance;
     NSInteger findCount = 0;
     
     //2. 找到需要销毁的并销毁;
-    for (XGRedisGCMark *mark in self.gcMarks.array) {
+    for (NSInteger i = 0; i < self.gcMarks.count; i++) {
+        XGRedisGCMark *mark = [self.gcMarks objectAtIndex:i];
         if (mark.time < now) {
             findCount ++;
             [XGRedisUtil searchIndexWithCompare:^NSComparisonResult(NSInteger checkIndex) {

@@ -11,8 +11,8 @@
 
 @interface XGRedisDictionary()
 
-@property (strong, nonatomic) NSMutableArray *keys;
-@property (strong, nonatomic) NSMutableArray *values;
+@property (strong, nonatomic) AsyncMutableArray *keys;
+@property (strong, nonatomic) AsyncMutableArray *values;
 
 @end
 
@@ -28,15 +28,15 @@
 }
 
 -(void) initData{
-    _keys = [[NSMutableArray alloc] init];
-    _values = [[NSMutableArray alloc] init];
+    _keys = [[AsyncMutableArray alloc] init];
+    _values = [[AsyncMutableArray alloc] init];
 }
 
 //MARK:===============================================================
 //MARK:                     < publicMethod >
 //MARK:===============================================================
 -(NSArray*) allKeys{
-    return [self.keys copy];
+    return [self.keys.array copy];
 }
 
 -(NSInteger) count{
@@ -73,11 +73,11 @@
 }
 
 -(NSString*) keyForIndex:(NSInteger)index{
-    return ARR_INDEX(self.keys, index);
+    return ARR_INDEX(self.keys.array, index);
 }
 
 -(id) valueForIndex:(NSInteger)index{
-    return ARR_INDEX(self.values, index);
+    return ARR_INDEX(self.values.array, index);
 }
 
 -(void) clear{

@@ -76,7 +76,7 @@
     
     //2. 提取返回
     for (AIShortMatchModel_Simple *simple in order) {
-        [result addObject:simple.alg_p];
+        if (simple.alg_p) [result addObject:simple.alg_p];
     }
     return result;
 }

@@ -140,9 +140,17 @@
     });
 }
 
--(void) removeAllObjects {
+- (void) removeAllObjects {
     dispatch_barrier_async(_syncQueue, ^{
         [self.arr removeAllObjects];
+    });
+}
+
+- (void) forEach:(void(^)(id))itemBlock {
+    dispatch_barrier_async(_syncQueue, ^{
+        for (id item in self.arr) {
+            itemBlock(item);
+        }
     });
 }
 

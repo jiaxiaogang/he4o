@@ -28,6 +28,7 @@
 - (void)removeObject:(id)anObject;
 - (void)removeLastObject;
 - (void)removeObjectsInRange:(NSRange)range;
--(void) removeAllObjects;
+- (void) removeAllObjects;
+- (void) forEach:(void(^)(id))itemBlock;
 
 @end
