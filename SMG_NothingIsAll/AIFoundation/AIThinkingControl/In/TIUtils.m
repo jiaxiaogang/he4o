@@ -359,6 +359,7 @@
  *      2023.03.15: 打开matchRFos (参考28181-方案3);
  *      2023.03.17: 关闭matchRFos (参考28184-原因1&2);
  *      2023.07.11: 行为化反思时,将regroupCutIndex传进来,并根据它计算出absMatchFo的cutIndex,避免因此而计算sp率等不准确;
+ *      2023.07.19: TC线程_因为数组多线程导致,导致foreach中闪退问题 (改加上copy);
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
 +(void) recognitionFo:(AIFoNodeBase*)protoOrRegroupFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel fromRegroup:(BOOL)fromRegroup matchAlgs:(NSArray*)matchAlgs protoOrRegroupCutIndex:(NSInteger)protoOrRegroupCutIndex {
@@ -368,14 +369,16 @@
     NSMutableArray *protoRModels = [[NSMutableArray alloc] init];
     
     //2. 广入: 对每个元素,分别取索引序列 (参考25083-1);
-    for (AIKVPointer *proto_p in protoOrRegroupFo.content_ps) {
+    NSArray *protoOrRegroupContent_ps = [protoOrRegroupFo.content_ps copy];
+    for (AIKVPointer *proto_p in protoOrRegroupContent_ps) {
         AIAlgNodeBase *protoAlg = [SMGUtils searchNode:proto_p];
         
         //4. 每个abs_p分别索引;
-        for (AIPort *absPort in protoAlg.absPorts) {
+        NSArray *protoAlgAbsPorts = [protoAlg.absPorts copy];
+        for (AIPort *absPort in protoAlgAbsPorts) {
             //6. 第2_取abs_p的refPorts (参考28107-todo2);
             AIAlgNodeBase *absAlg = [SMGUtils searchNode:absPort.target_p];
-            NSArray *refPorts = [AINetUtils refPorts_All4Alg_Normal:absAlg];
+            NSArray *refPorts = [[AINetUtils refPorts_All4Alg_Normal:absAlg] copy];
             
             //6. RFo的长度>1才有意义 (参考28183-BUG1);
             refPorts = [SMGUtils filterArr:refPorts checkValid:^BOOL(AIPort *item) {
@@ -437,7 +440,7 @@
     inModel.matchRFos = [[NSMutableArray alloc] initWithArray:sortRs];
     
     //11. 调试日志;
-    NSArray *allMatchFos = [SMGUtils collectArrA:inModel.matchPFos arrB:inModel.matchRFos];
+    NSArray *allMatchFos = [[SMGUtils collectArrA:inModel.matchPFos arrB:inModel.matchRFos] copy];
     NSLog(@"\n时序识别结果 P(%ld条) R(%ld条)",inModel.matchPFos.count,inModel.matchRFos.count);
     //for (AIMatchFoModel *item in allMatchFos) {
     //    AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];

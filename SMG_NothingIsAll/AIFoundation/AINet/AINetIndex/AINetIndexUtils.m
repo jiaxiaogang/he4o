@@ -83,11 +83,14 @@
 /**
  *  MARK:--------------------索引序列--------------------
  *  @desc 取现有索引序列 (无则新建);
+ *  @version
+ *      2023.07.19: 因为索引序列为空,导致闪退问题 (检查索引fnIndexArr不得为空);
  *  @result notnull
  */
 +(AINetIndexModel*) searchIndexModel:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut{
     //1. 取出所有索引序列;
-    NSMutableArray *indexModels = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:[SMGUtils createPointerForIndex] fileName:kFNIndex(isOut) time:cRTIndex]];
+    NSArray *fnIndexArr = ARRTOOK([SMGUtils searchObjectForPointer:[SMGUtils createPointerForIndex] fileName:kFNIndex(isOut) time:cRTIndex]);
+    NSMutableArray *indexModels = [[NSMutableArray alloc] initWithArray:fnIndexArr];
     
     //2. 找出同标识相符的;
     AINetIndexModel *model = ARR_INDEX([SMGUtils filterArr:indexModels checkValid:^BOOL(AINetIndexModel *item) {

@@ -56,8 +56,13 @@ static AIThinkingControl *_instance;
     return self;
 }
 
+/**
+ *  MARK:--------------------initData--------------------
+ *  @version
+ *      2023.07.19: tc线程由串行改为并行,因为虚拟世界输入信号是随时的,不应该排队 (如果TC在忙,大可在思维中因为优先级不够而中断,但确不该排队) (参考30083-todo4);
+ */
 -(void) initData{
-    self.tcAsyncQueue = dispatch_queue_create([STRFORMAT(@"TC Asynchronous Queue %p",(void *)self) UTF8String], DISPATCH_QUEUE_SERIAL);//串行
+    self.tcAsyncQueue = dispatch_queue_create([STRFORMAT(@"TC Asynchronous Queue %p",(void *)self) UTF8String], DISPATCH_QUEUE_CONCURRENT);//并行
     self.demandManager = [[DemandManager alloc] init];
     self.shortMatchManager = [[ShortMatchManager alloc] init];
     [theRT regist:kClearTCSEL target:self selector:@selector(clear)];
