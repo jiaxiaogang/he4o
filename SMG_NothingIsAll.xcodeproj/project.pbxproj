@@ -59,6 +59,7 @@
 		083680422853863E003F91FE /* AIAnalyst.m in Sources */ = {isa = PBXBuildFile; fileRef = 083680412853863E003F91FE /* AIAnalyst.m */; };
 		0839819F24DB7F8C00A020D2 /* HEView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0839819E24DB7F8C00A020D2 /* HEView.m */; };
 		083981F92A19E9D400F61263 /* MathUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 083981F82A19E9D400F61263 /* MathUtils.m */; };
+		083ADA722A67AB4F00319561 /* AsyncMutableDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 083ADA712A67AB4F00319561 /* AsyncMutableDictionary.m */; };
 		083F61381F048329000330E1 /* AILine.m in Sources */ = {isa = PBXBuildFile; fileRef = 083F61371F048329000330E1 /* AILine.m */; };
 		08412CA3216C324300483B6B /* AICerebel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08412CA2216C324300483B6B /* AICerebel.m */; };
 		084219E11FD8CEFD009DA6BC /* AIReactorControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 084219E01FD8CEFD009DA6BC /* AIReactorControl.m */; };
@@ -324,6 +325,8 @@
 		0839819E24DB7F8C00A020D2 /* HEView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HEView.m; sourceTree = "<group>"; };
 		083981F72A19E9D300F61263 /* MathUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MathUtils.h; sourceTree = "<group>"; };
 		083981F82A19E9D400F61263 /* MathUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MathUtils.m; sourceTree = "<group>"; };
+		083ADA702A67AB4F00319561 /* AsyncMutableDictionary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AsyncMutableDictionary.h; sourceTree = "<group>"; };
+		083ADA712A67AB4F00319561 /* AsyncMutableDictionary.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AsyncMutableDictionary.m; sourceTree = "<group>"; };
 		083F61361F048329000330E1 /* AILine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AILine.h; sourceTree = "<group>"; };
 		083F61371F048329000330E1 /* AILine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AILine.m; sourceTree = "<group>"; };
 		08412CA1216C324300483B6B /* AICerebel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AICerebel.h; sourceTree = "<group>"; };
@@ -1385,6 +1388,7 @@
 		08AF45471E97D0B500377887 /* SMG_NothingIsAll */ = {
 			isa = PBXGroup;
 			children = (
+				08B3677321530FA10046F1F8 /* Extension */,
 				084F131F26FF6DE900E9D455 /* Test */,
 				08E65A0722F3BAE3009ED1CF /* CortexAlgorithms */,
 				082F9D581EB236AC0009F6A9 /* Demo */,
@@ -1425,6 +1429,8 @@
 				0830DAB621D6E8AD003065CD /* NSString+Extension.m */,
 				08C071362A6582B7004D7110 /* AsyncMutableArray.h */,
 				08C071372A6582B7004D7110 /* AsyncMutableArray.m */,
+				083ADA702A67AB4F00319561 /* AsyncMutableDictionary.h */,
+				083ADA712A67AB4F00319561 /* AsyncMutableDictionary.m */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -1505,7 +1511,6 @@
 		08D7DA401ED1499C004B1018 /* AIFoundation */ = {
 			isa = PBXGroup;
 			children = (
-				08B3677321530FA10046F1F8 /* Extension */,
 				08196B81200074CF007B72C5 /* AIClass */,
 				08C84A8F1E9A86B900897D8B /* AIOutput */,
 				08CC991C1FE9EDCA00743ABE /* AIAlg */,
@@ -2000,6 +2005,7 @@
 				08F9DAAE2839EBCA00AB012B /* TCEffect.m in Sources */,
 				0895FFE4264A13C500DAD3EA /* TOModelVision.m in Sources */,
 				084219ED1FD8CF81009DA6BC /* AIThinkingControl.m in Sources */,
+				083ADA722A67AB4F00319561 /* AsyncMutableDictionary.m in Sources */,
 				089614A9219A4D5200343FAC /* BirdGrowPage.m in Sources */,
 				082709D229EC1A5E0045EE22 /* AITransferPort.m in Sources */,
 				08F27D7A29ED98C50063E71B /* TCRealact.m in Sources */,

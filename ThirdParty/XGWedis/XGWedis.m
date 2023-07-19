@@ -13,7 +13,7 @@
 
 @interface XGWedis ()
 
-@property (strong, nonatomic) NSMutableDictionary *dic; //异步持久化核心字典
+@property (strong, nonatomic) AsyncMutableDictionary *dic; //异步持久化核心字典
 @property (strong,nonatomic) NSTimer *timer;            //计时器
 @property (nonatomic, copy) XGWedisSaveBlock saveBlock; //持久化block
 
@@ -38,7 +38,7 @@ static XGWedis *_instance;
 }
 
 -(void) initData{
-    self.dic = [[NSMutableDictionary alloc] init];
+    self.dic = [[AsyncMutableDictionary alloc] init];
     dispatch_async(dispatch_get_main_queue(), ^{
         self.timer = [NSTimer scheduledTimerWithTimeInterval:cWedis2DBInterval target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];
     });
@@ -70,7 +70,7 @@ static XGWedis *_instance;
 }
 
 -(void) save {
-    NSMutableDictionary *saveDic = [self.dic copy];
+    NSMutableDictionary *saveDic = [self.dic.dictionary copy];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [[NSNotificationCenter defaultCenter] postNotificationName:kXGWedisSaveObserver object:saveDic];
         if (self.delegate && [self.delegate respondsToSelector:@selector(xgWedis_Save:)]) {

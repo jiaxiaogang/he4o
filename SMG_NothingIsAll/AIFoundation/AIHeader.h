@@ -21,6 +21,7 @@
 #import "AIThinkingControl.h"
 #import "NSString+Extension.h"
 #import "AsyncMutableArray.h"
+#import "AsyncMutableDictionary.h"
 #import "AIScore.h"
 #import "XGDelegate.h"
 #import "TOModelVision.h"
