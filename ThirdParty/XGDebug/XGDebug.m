@@ -35,6 +35,7 @@ static XGDebug *_instance;
  *  MARK:--------------------追加一条记录--------------------
  *  @version
  *      2022.08.09: 废弃line代码行号,因为它做不参与到key防重,所以不唯一,所以不准且没用;
+ *      2023.07.20: 几次pointer being free was not allocated因为多线程把String回收导致闪退 (改为全在主线程执行);
  */
 -(void) debugModuleWithFileName:(NSString*)fileName suffix:(NSString*)suffix {
     fileName = STRTOOK(fileName);
@@ -43,38 +44,43 @@ static XGDebug *_instance;
 }
 
 -(void) debugModuleWithPrefix:(NSString*)prefix suffix:(NSString*)suffix {
-    //0. 数据准备;
-    prefix = STRTOOK(prefix);
-    NSString *key = STRISOK(suffix) ? STRFORMAT(@"%@ 代码块:%@",prefix,suffix) : prefix;
-    
-    //1. 上帧结算;
-    NSTimeInterval now = [[NSDate date] timeIntervalSince1970] * 1000;
-    if (self.lastKey && self.lastTime > 0) {
+    __block NSString *weakPrefix = prefix;
+    __block NSString *weakSuffix = suffix;
+    //__block typeof(self) weakSelf = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        //0. 数据准备;
+        weakPrefix = STRTOOK(weakPrefix);
+        NSString *key = STRISOK(weakSuffix) ? STRFORMAT(@"%@ 代码块:%@",weakPrefix,weakSuffix) : weakPrefix;
         
-        //a. 旧有model;
-        XGDebugModel *lastModel = ARR_INDEX([SMGUtils filterArr:self.models checkValid:^BOOL(XGDebugModel *item) {
-            return [item.key isEqualToString:self.lastKey];
-        }], 0);
-        
-        //b. 无则新建;
-        if (!lastModel) {
-            lastModel = [[XGDebugModel alloc] init];
-            [self.models addObject:lastModel];
+        //1. 上帧结算;
+        NSTimeInterval now = [[NSDate date] timeIntervalSince1970] * 1000;
+        if (self.lastKey && self.lastTime > 0) {
+            
+            //a. 旧有model;
+            XGDebugModel *lastModel = ARR_INDEX([SMGUtils filterArr:self.models checkValid:^BOOL(XGDebugModel *item) {
+                return [item.key isEqualToString:self.lastKey];
+            }], 0);
+            
+            //b. 无则新建;
+            if (!lastModel) {
+                lastModel = [[XGDebugModel alloc] init];
+                [self.models addObject:lastModel];
+            }
+            
+            //c. 统计更新;
+            lastModel.key = self.lastKey;
+            lastModel.sumTime += now - self.lastTime;
+            lastModel.sumCount++;
+            lastModel.sumWriteCount += self.lastWriteCount;
+            lastModel.sumReadCount += self.lastReadCount;
         }
         
-        //c. 统计更新;
-        lastModel.key = self.lastKey;
-        lastModel.sumTime += now - self.lastTime;
-        lastModel.sumCount++;
-        lastModel.sumWriteCount += self.lastWriteCount;
-        lastModel.sumReadCount += self.lastReadCount;
-    }
-    
-    //2. 当前帧记录;
-    self.lastKey = key;
-    self.lastTime = now;
-    self.lastWriteCount = 0;
-    self.lastReadCount = 0;
+        //2. 当前帧记录;
+        self.lastKey = key;
+        self.lastTime = now;
+        self.lastWriteCount = 0;
+        self.lastReadCount = 0;
+    });
 }
 
 -(void) debugWrite{

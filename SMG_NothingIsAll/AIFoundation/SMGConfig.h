@@ -102,4 +102,4 @@
 //MARK:===============================================================
 
 //不打印NSLog日志开关
-static BOOL cNSLogSwitch = false;
+static BOOL cNSLogSwitch = true;

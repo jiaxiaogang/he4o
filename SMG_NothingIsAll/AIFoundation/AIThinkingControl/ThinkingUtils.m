@@ -130,4 +130,14 @@
     return false;
 }
 
+/**
+ *  MARK:--------------------在主线程跑act--------------------
+ */
++(void) runAtMainThread:(Act0)act {
+    __block Act0 weakAct = act;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        weakAct();
+    });
+}
+
 @end

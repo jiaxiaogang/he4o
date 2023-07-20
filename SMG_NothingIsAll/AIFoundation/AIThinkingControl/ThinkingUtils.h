@@ -63,4 +63,9 @@
  */
 +(BOOL) dataIn_CheckMV:(NSArray*)algResult_ps;
 
+/**
+ *  MARK:--------------------在主线程跑act--------------------
+ */
++(void) runAtMainThread:(Act0)act;
+
 @end
