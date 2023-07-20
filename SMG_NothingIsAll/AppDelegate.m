@@ -167,7 +167,7 @@
 -(void)setNoLogMode:(BOOL)noLogMode{
     [theTV setStop:noLogMode];
     [theHeLog setStop:noLogMode];
-    //self.noNSLog = noLogMode;
+    //cNSLogSwitch = noLogMode;
 }
 
 //MARK:===============================================================

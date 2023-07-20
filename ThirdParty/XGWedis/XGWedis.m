@@ -69,19 +69,16 @@ static XGWedis *_instance;
     return self.dic.count;
 }
 
+/**
+ *  MARK:--------------------持久化--------------------
+ *  @version
+ *      2023.07.20: 内存提前回收问题 (1.加_block 2.不采用异步存) (因为TC线程本来是并行的,所以选用2,将此处异步废弃掉);
+ */
 -(void) save {
-    NSMutableDictionary *saveDic = [self.dic.dictionary copy];
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [[NSNotificationCenter defaultCenter] postNotificationName:kXGWedisSaveObserver object:saveDic];
-        if (self.delegate && [self.delegate respondsToSelector:@selector(xgWedis_Save:)]) {
-            [self.delegate xgWedis_Save:saveDic];
-        }
     NSMutableDictionary *saveDic = [self.dic copy];
-        if (self.saveBlock) {
-            self.saveBlock(saveDic);
-        }
-        //dispatch_async(dispatch_get_main_queue(), ^{});
-    });
+    if (self.saveBlock) {
+        self.saveBlock(saveDic);
+    }
     [self.dic removeAllObjects];
 }
 
@@ -91,6 +88,5 @@ static XGWedis *_instance;
 - (void)notificationTimer{
     [self save];
 }
-
 
 @end

@@ -310,7 +310,8 @@
 //找出port
 +(AIPort*) findPort:(AIKVPointer*)pointer fromPorts:(NSArray*)fromPorts{
     fromPorts = ARRTOOK(fromPorts);
-    for (AIPort *port in fromPorts) {
+    NSArray *cp = [fromPorts copy];
+    for (AIPort *port in cp) {
         if ([port.target_p isEqual:pointer]) {
             return port;
         }

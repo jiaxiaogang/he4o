@@ -8,15 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-#define kXGWedisSaveObserver @"kXGWedisSaveObserver"    //xgWedis在Save时,会发送广播
 typedef void (^XGWedisSaveBlock)(NSDictionary *dic);
-
-
-@protocol XGWedisDelegate <NSObject>
-
--(void) xgWedis_Save:(NSDictionary*)dic;
-
-@end
 
 /**
  *  MARK:--------------------XGWedis--------------------
@@ -24,12 +16,12 @@ typedef void (^XGWedisSaveBlock)(NSDictionary *dic);
  *  1. XGWedis用来做异步持久化;
  *  2. 目前每10s持久化一次;
  *  3. XGWedis支持delegate/observer/block三种持久化方式;
- *
+ *  @version
+ *      2023.07.20: 废弃delegate和广播方式持久化 (也没用,留着费眼看代码);
  */
 @interface XGWedis : NSObject
 
 +(XGWedis*) sharedInstance;
-@property (weak, nonatomic) id<XGWedisDelegate> delegate;
 
 /**
  *  MARK:--------------------setObject--------------------

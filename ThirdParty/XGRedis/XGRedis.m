@@ -81,6 +81,9 @@ static XGRedis *_instance;
     //2. 找到需要销毁的并销毁;
     NSArray *gcMarkKeys = [self.gcMarks.allKeys copy];
     for (NSString *key in gcMarkKeys) {
+        if (!key) {
+            NSLog(@"TODOTOMORROW20230720: 复现,此处key为nil");
+        }
         long long gcTime = NUMTOOK([self.gcMarks objectForKey:key]).longLongValue;
         if (gcTime < now) {
             [self.dic removeObjectForKey:key];

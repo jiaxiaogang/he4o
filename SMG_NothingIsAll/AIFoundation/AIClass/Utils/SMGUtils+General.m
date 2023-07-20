@@ -77,12 +77,11 @@
     BOOL tcsCanPrint = LogPrintAllTCs || !STRISOK(lastTCName) || [LogJustPrintTCs containsObject:SUBSTR2INDEX(lastTCName, lastTCName.length - 2)];
     
     //3. 打印
-    dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
-        if (!theApp.noNSLog && tcsCanPrint) {
-            NSString *log = [self nsLogFormat:fileName line:line protoLog:protoLog headerMode:headerMode];
-            PrintLog(log);
-        }
-    });
+    //2023.07.20: 因为改到主线程导致当前线程提前销毁报错,直接取消切到主线程;
+    if (cNSLogSwitch && tcsCanPrint) {
+        NSString *log = [self nsLogFormat:fileName line:line protoLog:protoLog headerMode:headerMode];
+        PrintLog(log);
+    }
 }
 
 +(NSString*) nsLogFormat:(NSString*)fileName line:(NSInteger)line protoLog:(NSString*)protoLog headerMode:(LogHeaderMode)headerMode{

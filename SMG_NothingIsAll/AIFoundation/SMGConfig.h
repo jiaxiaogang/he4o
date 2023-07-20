@@ -90,9 +90,16 @@
 //MARK:===============================================================
 //MARK:                     < third & demo >
 //MARK:===============================================================
-#define cWedis2DBInterval 600
+#define cWedis2DBInterval 5 //2023.07.20: 因多线程常闪退,这里先调成5测段时间;
 #define cHeLog2DBInterval 20
 #define heLogSwitch false //heLog默认开关;
 #define tomV2Switch false //tv默认开关;
 #define defaultScore NSNotFound //默认评分值 (一般用于判断评分是否已经评过,比如用于缓存时只计算一次判断);
 #define defaultMatchValue NSNotFound //默认相似度
+
+//MARK:===============================================================
+//MARK:                     < 需要改变值的配置 >
+//MARK:===============================================================
+
+//不打印NSLog日志开关
+static BOOL cNSLogSwitch = false;
