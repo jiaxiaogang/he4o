@@ -424,9 +424,7 @@
                 theTC.tcDebug.lastWCount++;
             }
             if (dic.count > 0) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    NSLog(@">>>>>>>>>WriteDisk,%lu",(unsigned long)dic.count);
-                });
+                NSLog(@">>>>>>>>>WriteDisk,%lu",(unsigned long)dic.count);
             }
         }];
     }

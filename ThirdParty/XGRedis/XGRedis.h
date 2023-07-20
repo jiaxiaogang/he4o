@@ -13,6 +13,8 @@
 /**
  *  MARK:--------------------XGRedis--------------------
  *  注:time只针对设置时的key,并在倒计时后,找到key并remove;(设置time后,不可撤销)
+ *  @version
+ *      2023.07.20: 简化_模型改为直接用NSDictionary (操作更简单);
  *
  */
 @interface XGRedis : NSObject
