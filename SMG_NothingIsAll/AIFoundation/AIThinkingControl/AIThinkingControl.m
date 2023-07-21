@@ -81,8 +81,9 @@ static AIThinkingControl *_instance;
  *      2022.10.09: 新输入直接存硬盘而不是isMem内存 (参考27124-todo6);
  */
 -(void) commitInputAsync:(NSObject*)algsModel {
+    __block NSObject *weakAlgsModel = algsModel;
     dispatch_async(self.tcAsyncQueue, ^{//30083去异步
-        [self commitInput:algsModel];
+        [self commitInput:weakAlgsModel];
     });
 }
 -(void) commitInput:(NSObject*)algsModel{
@@ -131,8 +132,10 @@ static AIThinkingControl *_instance;
  *  1. 默认为按边缘(ios的view层级)分组,随后可扩展概念内类比,按别的维度分组; 参考: n16p7
  */
 -(void) commitInputWithModelsAsync:(NSArray*)dics algsType:(NSString*)algsType {
+    __block NSArray *weakDics = dics;
+    __block NSString *weakAT = algsType;
     dispatch_async(self.tcAsyncQueue, ^{//30083去异步
-        [self commitInputWithModels:dics algsType:algsType];
+        [self commitInputWithModels:weakDics algsType:weakAT];
     });
 }
 -(void) commitInputWithModels:(NSArray*)dics algsType:(NSString*)algsType{
@@ -181,8 +184,9 @@ static AIThinkingControl *_instance;
  *      20200414 - 将输出参数集value_ps转到ThinkIn,去进行识别,保留ShortMatchModel,内类比等流程;
  */
 -(void) commitOutputLogAsync:(NSArray*)outputModels {
+    __block NSArray *weakOutputModels = outputModels;
     dispatch_async(self.tcAsyncQueue, ^{//30083去异步
-        [self commitOutputLog:outputModels];
+        [self commitOutputLog:weakOutputModels];
     });
 }
 -(void) commitOutputLog:(NSArray*)outputModels{

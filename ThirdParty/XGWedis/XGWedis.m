@@ -47,9 +47,9 @@ static XGWedis *_instance;
 //MARK:===============================================================
 //MARK:                     < publicMethod >
 //MARK:===============================================================
--(void) setObject:(NSObject*)obj forKey:(NSString*)key {
-    if (obj && STRISOK(key)) {
-        [self.dic setObject:obj forKey:key];
+-(void) setObject:(NSObject*)obj forKey:(NSString*)xgWedisKey {
+    if (obj && STRISOK(xgWedisKey)) {
+        [self.dic setObject:obj forKey:xgWedisKey];
     }
 }
 
