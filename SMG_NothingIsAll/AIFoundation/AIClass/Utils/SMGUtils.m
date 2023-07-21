@@ -49,7 +49,6 @@
     //TODOTOMORROW: 查20151-BUG9 (此处新指针有重复,导致问题);
     if ([kPN_CMV_NODE isEqualToString:folderName] || [kPN_ABS_CMV_NODE isEqualToString:folderName]) {
         WLog(@"---------引用强度BUG-mv新指针:%ld",pointerId);
-        dispatch_async(dispatch_get_main_queue(), ^{ HeLog(@"---------引用强度BUG-mv新指针:%ld",pointerId); });//30083回同步
     }
     AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:folderName algsType:algsType dataSource:dataSource isOut:isOut type:type];
     return kvPointer;

@@ -114,29 +114,30 @@
  */
 +(void) output_General:(NSArray*)outputModels logBlock:(void(^)())logBlock{
     //0. 输出行为输出到UI时,重新调用回主线程;
+    __block NSArray *weakOutputModels = outputModels;
+    __block Act0 weakLogBlock = logBlock;
     dispatch_async(dispatch_get_main_queue(), ^{
     //dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         //1. 广播执行行为开始 (执行行为动画,返回执行用时);
         double useTime = 0;
-        for (OutputModel *model in ARRTOOK(outputModels)) {
+        for (OutputModel *model in ARRTOOK(weakOutputModels)) {
             model.type = OutputObserverType_Front;
             [[NSNotificationCenter defaultCenter] postNotificationName:kOutputObserver object:model];
             useTime = MAX(model.useTime, useTime);
         }
         
         //2. 行为输出完成后;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [NSTimer scheduledTimerWithTimeInterval:useTime target:self selector:@selector(notificationTimer:) userInfo:^(){
-                //3. 将输出入网
-                logBlock();
-                
-                //4. 广播执行输出后 (现实世界处理 & 飞后视觉 & 价值触发等);
-                for (OutputModel *model in ARRTOOK(outputModels)) {
-                    model.type = OutputObserverType_Back;
-                    [[NSNotificationCenter defaultCenter] postNotificationName:kOutputObserver object:model];
-                }
-            } repeats:false];
-        });
+        [NSTimer scheduledTimerWithTimeInterval:useTime target:self selector:@selector(notificationTimer:) userInfo:^(){
+            //3. 将输出入网
+            weakLogBlock();
+            
+            //4. 广播执行输出后 (现实世界处理 & 飞后视觉 & 价值触发等);
+            for (OutputModel *model in ARRTOOK(weakOutputModels)) {
+                model.type = OutputObserverType_Back;
+                [[NSNotificationCenter defaultCenter] postNotificationName:kOutputObserver object:model];
+            }
+        } repeats:false];
+        
     });
 }
 
