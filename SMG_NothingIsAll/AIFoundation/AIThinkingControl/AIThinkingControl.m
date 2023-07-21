@@ -24,6 +24,7 @@
 @property (strong, nonatomic) ShortMatchManager *shortMatchManager; //IN短时记忆 (输入数据管理器);
 @property (assign, nonatomic) long long operCount;                  //思维操作计数;
 @property (assign, nonatomic) long long loopId;                     //思维循环Id;
+@property (assign, nonatomic) long long toLoopId;                   //TO循环Id;
 
 /**
  *  MARK:--------------------当前能量值--------------------
@@ -52,6 +53,7 @@ static AIThinkingControl *_instance;
     self = [super init];
     if (self) {
         [self initData];
+        [self initDisplay];
     }
     return self;
 }
@@ -62,12 +64,27 @@ static AIThinkingControl *_instance;
  *      2023.07.19: tc线程由串行改为并行,因为虚拟世界输入信号是随时的,不应该排队 (如果TC在忙,大可在思维中因为优先级不够而中断,但确不该排队) (参考30083-todo4);
  */
 -(void) initData{
-    self.tcAsyncQueue = dispatch_queue_create([@"ThinkControl" UTF8String], DISPATCH_QUEUE_SERIAL);
+    self.tiQueue = dispatch_queue_create([@"ThinkControl" UTF8String], DISPATCH_QUEUE_SERIAL);
+    self.toQueue = dispatch_queue_create([@"ThinkOutQueue" UTF8String], DISPATCH_QUEUE_SERIAL);
     self.demandManager = [[DemandManager alloc] init];
     self.shortMatchManager = [[ShortMatchManager alloc] init];
     [theRT regist:kClearTCSEL target:self selector:@selector(clear)];
     [theRT regist:kThinkModeSEL target:self selector:@selector(updateThinkMode:)];
     self.tcDebug = [[TCDebug alloc] init];
+}
+
+-(void) initDisplay {
+    //1. 启动TO线程 (参考30084-方案);
+    dispatch_async(_toQueue, ^{
+        while (true) {
+            //TODOTOMORROW20230721: 由这么循环,改成TCOut输出行为化结束后,这里再触发下轮循环...
+            
+            
+            [NSThread sleepForTimeInterval:1];
+            [TCScore scoreFromTOQueue];
+            NSLog(@"TO循环: %lld",++self.toLoopId);
+        }
+    });
 }
 
 //MARK:===============================================================
@@ -82,7 +99,7 @@ static AIThinkingControl *_instance;
  */
 -(void) commitInputAsync:(NSObject*)algsModel {
     __block NSObject *weakAlgsModel = algsModel;
-    dispatch_async(self.tcAsyncQueue, ^{//30083去异步
+    dispatch_async(self.tiQueue, ^{//30083去异步
         [self commitInput:weakAlgsModel];
     });
 }
@@ -134,7 +151,7 @@ static AIThinkingControl *_instance;
 -(void) commitInputWithModelsAsync:(NSArray*)dics algsType:(NSString*)algsType {
     __block NSArray *weakDics = dics;
     __block NSString *weakAT = algsType;
-    dispatch_async(self.tcAsyncQueue, ^{//30083去异步
+    dispatch_async(self.tiQueue, ^{//30083去异步
         [self commitInputWithModels:weakDics algsType:weakAT];
     });
 }
@@ -185,7 +202,7 @@ static AIThinkingControl *_instance;
  */
 -(void) commitOutputLogAsync:(NSArray*)outputModels {
     __block NSArray *weakOutputModels = outputModels;
-    dispatch_async(self.tcAsyncQueue, ^{//30083去异步
+    dispatch_async(self.tiQueue, ^{//30083去异步
         [self commitOutputLog:weakOutputModels];
     });
 }

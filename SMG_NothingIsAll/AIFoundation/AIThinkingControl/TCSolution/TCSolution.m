@@ -102,7 +102,7 @@
     NSInteger deepCount = [TOUtils getBaseDemandsDeepCount:demand];
     if (deepCount >= cDemandDeepLimit || demand.actionFoModels.count >= cSolutionNarrowLimit) {
         demand.status = TOModelStatus_WithOut;
-        [TCScore score];
+        [TCScore scoreFromIfTCNeed];
         NSLog(@">>>>>> rSolution 已达limit条 (S数:%ld 层数:%ld)",demand.actionFoModels.count,deepCount);
         return;
     }
@@ -159,7 +159,7 @@
         //b) 下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);
         demand.status = TOModelStatus_WithOut;
         NSLog(@">>>>>> rSolution 无计可施");
-        [TCScore score];
+        [TCScore scoreFromIfTCNeed];
     }
 }
 
@@ -198,7 +198,7 @@
     NSInteger deepCount = [TOUtils getBaseDemandsDeepCount:demandModel];
     if (deepCount >= cDemandDeepLimit || demandModel.actionFoModels.count >= cSolutionNarrowLimit) {
         demandModel.status = TOModelStatus_WithOut;
-        [TCScore score];
+        [TCScore scoreFromIfTCNeed];
         NSLog(@"------->>>>>> pSolution 已达limit条");
         return;
     }
@@ -262,7 +262,7 @@
     DebugE();
     demandModel.status = TOModelStatus_WithOut;
     NSLog(@">>>>>> pSolution 无计可施");
-    [TCScore score];
+    [TCScore scoreFromIfTCNeed];
 }
 
 /**
@@ -287,7 +287,7 @@
     NSInteger deepCount = [TOUtils getBaseDemandsDeepCount:hDemand];
     if (deepCount >= cDemandDeepLimit || hDemand.actionFoModels.count >= cSolutionNarrowLimit) {
         hDemand.status = TOModelStatus_WithOut;
-        [TCScore score];
+        [TCScore scoreFromIfTCNeed];
         NSLog(@"------->>>>>> hSolution 已达limit条");
         return;
     }
@@ -330,7 +330,7 @@
         //b) 下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);
         hDemand.status = TOModelStatus_WithOut;
         NSLog(@">>>>>> hSolution 无计可施");
-        [TCScore score];
+        [TCScore scoreFromIfTCNeed];
     }
 }
 

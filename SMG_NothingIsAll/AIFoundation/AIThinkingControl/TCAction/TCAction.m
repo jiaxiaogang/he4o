@@ -43,7 +43,7 @@
     [TCRegroup actionRegroup:foModel];
     BOOL refrection = [TCRefrection actionRefrection:foModel];
     if (!refrection) {
-        [TCScore score];
+        [TCScore scoreFromIfTCNeed];
         return;
     }
     
@@ -86,7 +86,7 @@
         
         if (ISOK(foModel.baseOrGroup, ReasonDemandModel.class)) {
             [TCActYes frameActYes:foModel];
-            //[TCScore score];//r输出完成时,继续决策;
+            //[TCScore scoreFromIfTCNeed];//r输出完成时,继续决策;
         }else if(ISOK(foModel.baseOrGroup, HDemandModel.class)){
             //9. H目标帧只需要等 (转hActYes) (参考25031-9);
             AIKVPointer *hTarget_p = ARR_INDEX(curFo.content_ps, foModel.actionIndex);

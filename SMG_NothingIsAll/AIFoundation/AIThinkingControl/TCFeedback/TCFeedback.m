@@ -304,7 +304,7 @@
                 });
                 if (isEndFrame) [TCRegroup feedbackRegroup:targetFo feedbackFrameOfMatchAlgs:model.matchAlgs];
                 DebugE();
-                [TCScore score];
+                [TCScore scoreFromIfTCNeed];
             }
         }
         
@@ -340,7 +340,7 @@
                 });
                 DebugE();
                 [TCRegroup feedbackRegroup:solutionFo feedbackFrameOfMatchAlgs:model.matchAlgs];
-                [TCScore score];
+                [TCScore scoreFromIfTCNeed];
             }
         }
     }

@@ -11,6 +11,16 @@
 @implementation TCScore
 
 /**
+ *  MARK:--------------------调用入口--------------------
+ *  @version
+ *      2023.07.21: 关闭TC各处调用,改为在TO线程调用 (参考30084-方案);
+ */
++(void) scoreFromIfTCNeed{}
++(void) scoreFromTOQueue{
+    [self score];
+}
+
+/**
  *  MARK:--------------------新螺旋架构score方法--------------------
  */
 +(void) score{

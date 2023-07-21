@@ -18,7 +18,8 @@
 
 +(AIThinkingControl*) shareInstance;
 @property (strong, nonatomic) TCDebug *tcDebug;
-@property (strong, nonatomic) dispatch_queue_t tcAsyncQueue;        //思维异步线程(串行队列)
+@property (strong, nonatomic) dispatch_queue_t tiQueue; //TI异步线程
+@property (strong, nonatomic) dispatch_queue_t toQueue; //TO异步线程
 
 /**
  *  MARK:--------------------思维模式--------------------

@@ -80,11 +80,11 @@
 //                DebugE();
 //                if (type == ATPlus) {
 //                    algModel.status = TOModelStatus_Finish;
-//                    [TCScore score];
+//                    [TCScore scoreFromIfTCNeed];
 //                }else{
 //                    //6. 无反馈时,则R预测的坏事自然未发生 (OutBack未返回,静默成功) (参考22153-A22);
 //                    rDemand.status = TOModelStatus_Finish;
-//                    [TCScore score];//并继续决策;
+//                    [TCScore scoreFromIfTCNeed];//并继续决策;
 //                }
 //            }
 //        }];
@@ -145,7 +145,7 @@
 //                DebugE();
 //                if (foModel.status == TOModelStatus_ActYes) {
 //                    foModel.status = TOModelStatus_ActNo;
-//                    [TCScore score];
+//                    [TCScore scoreFromIfTCNeed];
 //                }
 //            }
 //        }
@@ -194,7 +194,7 @@
 //            algModel.status = TOModelStatus_ActNo;
 //
 //            //6. 2021.12.02: 失败时,继续决策;
-//            [TCScore score];
+//            [TCScore scoreFromIfTCNeed];
 //        }
 //    }];
 //}
@@ -234,7 +234,7 @@
 //            DebugE();
 //            if (foModel.status == TOModelStatus_ActYes) {
 //                foModel.status = TOModelStatus_ActNo;
-//                [TCScore score];
+//                [TCScore scoreFromIfTCNeed];
 //            }
 //        }
 //    }];
@@ -294,7 +294,7 @@
             if (solutionModel.status == TOModelStatus_ActYes) {
                 solutionModel.status = TOModelStatus_ActNo;
                 demand.status = TOModelStatus_Runing;
-                [TCScore score];
+                [TCScore scoreFromIfTCNeed];
             }
         }
         //5. 中间为帧理性目标;
@@ -313,7 +313,7 @@
                 demand.status = TOModelStatus_Runing;
                 
                 //6. 2021.12.02: 失败时,继续决策;
-                [TCScore score];
+                [TCScore scoreFromIfTCNeed];
             }
         }
         DebugE();

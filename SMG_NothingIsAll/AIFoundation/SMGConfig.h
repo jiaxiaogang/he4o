@@ -90,7 +90,7 @@
 //MARK:===============================================================
 //MARK:                     < third & demo >
 //MARK:===============================================================
-#define cWedis2DBInterval 5 //2023.07.20: 因多线程常闪退,这里先调成5测段时间;
+#define cWedis2DBInterval 600 //2023.07.20: 因多线程常闪退,这里先调成5测段时间;
 #define cHeLog2DBInterval 20
 #define heLogSwitch false //heLog默认开关;
 #define tomV2Switch false //tv默认开关;

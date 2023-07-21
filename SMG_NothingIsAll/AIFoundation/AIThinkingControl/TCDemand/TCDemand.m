@@ -50,7 +50,7 @@
     
     //2. 转向执行;
     DebugE();
-    [TCScore score];
+    [TCScore scoreFromIfTCNeed];
 }
 
 /**
@@ -100,7 +100,7 @@
     
     //2. 调用TCScore继续决策;
     DebugE();
-    [TCScore score];
+    [TCScore scoreFromIfTCNeed];
 }
 
 @end

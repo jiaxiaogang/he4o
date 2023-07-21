@@ -16,7 +16,11 @@
  */
 @interface TCScore : NSObject
 
-+(void) score;
+//从TC各处调用;
++(void) scoreFromIfTCNeed;
+
+//从TOQueue调用;
++(void) scoreFromTOQueue;
 
 //得出综评字典;
 +(TOFoModel*) score_Multi:(NSArray*)foModels scoreDic:(NSMutableDictionary*)scoreDic;
