@@ -410,7 +410,10 @@
     NSString *key = STRFORMAT(@"%@/%@",rootPath,fileName);
     if (saveDB) {
         [[XGWedis sharedInstance] setObject:obj forKey:key];
-        __block Act1 saveBlock = ^(AsyncMutableDictionary *dic) {
+        
+        //2. 持久化block;
+        //2023.07.21: TC线程改为串行了,所以此处不再调用主线程持久化;
+        Act1 saveBlock = ^(AsyncMutableDictionary *dic) {
             for (NSString *saveKey in dic.allKeys) {
                 id saveObj = [dic objectForKey:saveKey];
                 NSString *sep = @"/";
@@ -425,15 +428,7 @@
                 NSLog(@">>>>>>>>>WriteDisk,%lu",(unsigned long)dic.count);
             }
         };
-        
-        //2. 避免多次调用主线程导致的死锁 (参考30085-3);
-        if ([[NSThread currentThread] isMainThread]) {
-            [[XGWedis sharedInstance] setSaveBlock:saveBlock];
-        }else {
-            dispatch_async(dispatch_get_main_queue(), ^{//在把saveBlock函数放到主线程,避免它在TC线程里被提前销毁;
-                [[XGWedis sharedInstance] setSaveBlock:saveBlock];
-            });
-        }
+        [[XGWedis sharedInstance] setSaveBlock:saveBlock];
     }
     
     //2. 存redis
