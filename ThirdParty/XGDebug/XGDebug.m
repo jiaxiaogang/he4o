@@ -84,11 +84,15 @@ static XGDebug *_instance;
 }
 
 -(void) debugWrite{
-    self.lastWriteCount++;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.lastWriteCount++;
+    });
 }
 
 -(void) debugRead{
-    self.lastReadCount++;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.lastReadCount++;
+    });
 }
 
 -(NSMutableArray *)models{
@@ -108,11 +112,15 @@ static XGDebug *_instance;
  *  @result notnull
  */
 -(NSArray*) getDebugModels:(NSString*)prefix {
-    prefix = STRTOOK(prefix);
-    NSArray *result = [SMGUtils filterArr:self.models checkValid:^BOOL(XGDebugModel *item) {
-        NSString *itemPrefix = [item.key substringWithRange:NSMakeRange(0, MIN(prefix.length, item.key.length))];
-        return [prefix isEqualToString:itemPrefix];
-    }];
+    __block NSArray *result;
+    __block NSString *weakPrefix = prefix;
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        weakPrefix = STRTOOK(weakPrefix);
+        result = [SMGUtils filterArr:self.models checkValid:^BOOL(XGDebugModel *item) {
+            NSString *itemPrefix = [item.key substringWithRange:NSMakeRange(0, MIN(weakPrefix.length, item.key.length))];
+            return [weakPrefix isEqualToString:itemPrefix];
+        }];
+    });
     return result;
 }
 
@@ -122,26 +130,28 @@ static XGDebug *_instance;
  *      2023.06.13: 支持打印后直接将结果删除,因为代码块debug工具以loopId拼接key,这models越来越多,性能会变差 (参考30022-优化5);
  */
 -(void) print:(NSString*)prefix rmPrefix:(NSString*)rmPrefix {
-    NSArray *debugModels = [self getDebugModels:prefix];
-    if (!ARRISOK(debugModels)) return;
-    XGDebugModel *sum = [[XGDebugModel alloc] init];
-    for (XGDebugModel *model in debugModels) {
-        NSLog(@"%@ 计数:%ld 均耗:%.2f = 总耗:%.0f 读:%ld 写:%ld",model.key,model.sumCount,model.sumTime / model.sumCount,model.sumTime,model.sumReadCount,model.sumWriteCount);
-        sum.sumCount += model.sumCount;
-        sum.sumTime += model.sumTime;
-        sum.sumReadCount += model.sumReadCount;
-        sum.sumWriteCount += model.sumWriteCount;
-    }
-    NSLog(@"DEBUG匹配 => 总计数:%ld 均耗:%.2f = 总耗:%.0f 读:%ld 写:%ld",sum.sumCount,sum.sumTime / sum.sumCount,sum.sumTime,sum.sumReadCount,sum.sumWriteCount);
-    
-    //支持打印后将结果删除;
-    if (STRISOK(rmPrefix)) {
-        NSArray *rmModels = [self getDebugModels:rmPrefix];
-        for (XGDebugModel *model in rmModels) {
-            [self.models removeObject:model];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSArray *debugModels = [self getDebugModels:prefix];
+        if (!ARRISOK(debugModels)) return;
+        XGDebugModel *sum = [[XGDebugModel alloc] init];
+        for (XGDebugModel *model in debugModels) {
+            NSLog(@"%@ 计数:%ld 均耗:%.2f = 总耗:%.0f 读:%ld 写:%ld",model.key,model.sumCount,model.sumTime / model.sumCount,model.sumTime,model.sumReadCount,model.sumWriteCount);
+            sum.sumCount += model.sumCount;
+            sum.sumTime += model.sumTime;
+            sum.sumReadCount += model.sumReadCount;
+            sum.sumWriteCount += model.sumWriteCount;
         }
-        //NSLog(@"%@ -> 打印条数:%ld 删除条数:%lu 还剩条数: %lu",rmPrefix,debugModels.count,rmModels.count,self.models.count);
-    }
+        NSLog(@"DEBUG匹配 => 总计数:%ld 均耗:%.2f = 总耗:%.0f 读:%ld 写:%ld",sum.sumCount,sum.sumTime / sum.sumCount,sum.sumTime,sum.sumReadCount,sum.sumWriteCount);
+        
+        //支持打印后将结果删除;
+        if (STRISOK(rmPrefix)) {
+            NSArray *rmModels = [self getDebugModels:rmPrefix];
+            for (XGDebugModel *model in rmModels) {
+                [self.models removeObject:model];
+            }
+            //NSLog(@"%@ -> 打印条数:%ld 删除条数:%lu 还剩条数: %lu",rmPrefix,debugModels.count,rmModels.count,self.models.count);
+        }
+    });
 }
 
 @end
