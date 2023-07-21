@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-typedef void (^XGWedisSaveBlock)(NSDictionary *dic);
+typedef void (^XGWedisSaveBlock)(id dic);
 
 /**
  *  MARK:--------------------XGWedis--------------------

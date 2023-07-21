@@ -13,7 +13,7 @@
 
 @interface XGWedis ()
 
-@property (strong, nonatomic) NSMutableDictionary *dic; //异步持久化核心字典
+@property (strong, nonatomic) AsyncMutableDictionary *dic; //异步持久化核心字典
 @property (strong,nonatomic) NSTimer *timer;            //计时器
 @property (nonatomic, copy) XGWedisSaveBlock saveBlock; //持久化block
 
@@ -38,7 +38,7 @@ static XGWedis *_instance;
 }
 
 -(void) initData{
-    self.dic = [[NSMutableDictionary alloc] init];
+    self.dic = [[AsyncMutableDictionary alloc] init];
     dispatch_async(dispatch_get_main_queue(), ^{
         self.timer = [NSTimer scheduledTimerWithTimeInterval:cWedis2DBInterval target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];
     });
@@ -47,9 +47,9 @@ static XGWedis *_instance;
 //MARK:===============================================================
 //MARK:                     < publicMethod >
 //MARK:===============================================================
--(void) setObject:(NSObject*)obj forKey:(NSString*)xgWedisKey {
-    if (obj && STRISOK(xgWedisKey)) {
-        [self.dic setObject:obj forKey:xgWedisKey];
+-(void) setObject:(NSObject*)obj forKey:(NSString*)key {
+    if (obj && STRISOK(key)) {
+        [self.dic setObject:obj forKey:key];
     }
 }
 
@@ -75,9 +75,8 @@ static XGWedis *_instance;
  *      2023.07.20: 内存提前回收问题 (1.加_block 2.不采用异步存) (因为TC线程本来是并行的,所以选用2,将此处异步废弃掉);
  */
 -(void) save {
-    NSMutableDictionary *saveDic = [self.dic copy];
     if (self.saveBlock) {
-        self.saveBlock(saveDic);
+        self.saveBlock(self.dic);
     }
     [self.dic removeAllObjects];
 }

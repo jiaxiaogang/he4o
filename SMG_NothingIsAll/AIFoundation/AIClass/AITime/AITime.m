@@ -62,11 +62,9 @@
  *      2021.10.16: 通过延长触发时间,试图绕过TC卡顿的问题 (参考24058-方案2) (关闭状态,因为优先尝试方案1);
  *      2023.03.04: 将时间x2+1,改成x1.1+2 (参考28151-调试&修复);
  *      2023.07.20: 有时执行trigger时会提前release掉内存,所以由TC线程改为main线程执行;
+ *      2023.07.21: 思维部分本来就该在TC线程执行,trigger后也是思维代码,所以改回在TC线程 (为防止提前release,加了_block保留);
  */
 +(void) setTimeTrigger:(NSTimeInterval)deltaTime trigger:(void(^)())trigger{
-    [self setTimeTrigger:deltaTime canTrigger:nil trigger:trigger];
-}
-+(void) setTimeTrigger:(NSTimeInterval)deltaTime canTrigger:(BOOL(^)())canTrigger trigger:(void(^)())trigger{
     //1. 数据检查
     if (!trigger) return;
     
@@ -74,13 +72,10 @@
     CGFloat triggerTime = deltaTime * 1.1f + 2.0f;//当24058-方案1不成时,此处方案2再做为备启用,即将1.0调整为3甚至5;
     triggerTime = MIN(triggerTime, 20.0f);
     NSLog(@"---> 设定生物钟触发器: deltaTime:%.2f triggerTime:%.2f",deltaTime,triggerTime);
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(triggerTime * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    __block Act0 weakTrigger = trigger;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(triggerTime * NSEC_PER_SEC)), theTC.tcAsyncQueue, ^{
         //3. 触发时,判断是否还是actYes状态 (在OuterPushMiddleLoop()中,会将ActYes且符合,且PM算法成功的,改为Finish);
-        if (canTrigger) {
-            if (canTrigger()) trigger();
-        }else{
-            trigger();
-        }
+        weakTrigger();
     });
 }
 
