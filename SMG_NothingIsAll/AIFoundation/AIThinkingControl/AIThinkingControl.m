@@ -233,9 +233,13 @@ static AIThinkingControl *_instance;
     //1. 启动TO线程 (参考30084-方案);
     dispatch_async(_toQueue, ^{
         while (true) {
-            TCResult *result = [TCScore scoreFromTOQueue];
-            NSLog(@"TO上轮:%@ 等待:%.1f 下轮:%lld 消息:%@",result.success?@"成功":@"失败",result.delay,++self.toLoopId,result.msg);
-            [NSThread sleepForTimeInterval:1 + result.delay];
+            if (self.thinkMode == 1 || self.thinkMode == 2) {
+                [NSThread sleepForTimeInterval:1];
+            }else{
+                TCResult *result = [TCScore scoreFromTOQueue];
+                NSLog(@"TO上轮:%@ 等待:%.1f 下轮:%lld 消息:%@",result.success?@"成功":@"失败",result.delay,++self.toLoopId,result.msg);
+                [NSThread sleepForTimeInterval:1 + result.delay];
+            }
         }
     });
 }
