@@ -74,21 +74,11 @@ static AIThinkingControl *_instance;
 }
 
 -(void) initDisplay {
-    //1. 启动TO线程 (参考30084-方案);
-    dispatch_async(_toQueue, ^{
-        while (true) {
-            //TODOTOMORROW20230721: 由这么循环,改成TCOut输出行为化结束后,这里再触发下轮循环...
-            
-            
-            [NSThread sleepForTimeInterval:1];
-            [TCScore scoreFromTOQueue];
-            NSLog(@"TO循环: %lld",++self.toLoopId);
-        }
-    });
+    [self runToLoop];
 }
 
 //MARK:===============================================================
-//MARK:                     < 数据输入 >
+//MARK:                     < 输入流程 >
 //MARK:===============================================================
 
 /**
@@ -227,6 +217,27 @@ static AIThinkingControl *_instance;
     
     //3. 提交到ThinkIn进行识别_加瞬时记忆 & 进行识别
     [TCInput rInput:outAlg except_ps:nil];
+}
+
+//MARK:===============================================================
+//MARK:                     < 输出流程 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------TO循环--------------------
+ *  @desc 无论当前轮是否成功执行,都调用下轮循环继续TO线程;
+ *  @version
+ *      2023.07.22: 初版 (参考30084-todo2);
+ */
+-(void) runToLoop {
+    //1. 启动TO线程 (参考30084-方案);
+    dispatch_async(_toQueue, ^{
+        while (true) {
+            TCResult *result = [TCScore scoreFromTOQueue];
+            NSLog(@"TO上轮:%@ 等待:%.1f 下轮:%lld 消息:%@",result.success?@"成功":@"失败",result.delay,++self.toLoopId,result.msg);
+            [NSThread sleepForTimeInterval:1 + result.delay];
+        }
+    });
 }
 
 

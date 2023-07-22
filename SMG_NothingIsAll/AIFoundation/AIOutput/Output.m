@@ -16,11 +16,11 @@
  *  @version
  *      2021.02.05: 将概念嵌套的代码注掉,因为概念嵌套早已废弃;
  */
-+(BOOL) output_FromTC:(AIKVPointer*)algNode_p {
++(TCResult*) output_FromTC:(AIKVPointer*)algNode_p {
     //1. 数据
     AIAlgNodeBase *algNode = [SMGUtils searchNode:algNode_p];
     if (!ISOK(algNode, AIAlgNodeBase.class)) {
-        return false;
+        return [[TCResult new:false] mkMsg:@"output 输出非alg类型错误"];
     }
     
     //2. 循环微信息组
@@ -45,14 +45,12 @@
     
     //5. 执行输出
     if (ARRISOK(valids)) {
-        [self output_General:valids logBlock:^{
+        return [self output_General:valids logBlock:^{
             //6. 将输出入网
             [theTC commitOutputLogAsync:valids];
         }];
-        return true;
     }
-    
-    return false;
+    return [[TCResult new:false] mkMsg:@"output输出无效而失败"];
 }
 
 +(void) output_FromReactor:(NSString*)identify datas:(NSArray*)datas{
@@ -111,19 +109,26 @@
  *  @version
  *      2021.02.05: 改为front取回useTime触发行为开始,到back再执行行为后视觉等触发 (参考22117);
  *      2021.02.26: 将timer改为SEL方式,因为block方式在模拟器运行会闪退;
+ *      2023.07.22: 行为执行所需要时间返回到TCResult (参考30084-todo1);
  */
-+(void) output_General:(NSArray*)outputModels logBlock:(void(^)())logBlock{
++(TCResult*) output_General:(NSArray*)outputModels logBlock:(void(^)())logBlock{
     //0. 输出行为输出到UI时,重新调用回主线程;
     __block NSArray *weakOutputModels = outputModels;
     __block Act0 weakLogBlock = logBlock;
+    __block double useTime = 0;//从同步主线程取回所需要时间;
+    
+    //1. 取useTime
+    for (OutputModel *model in ARRTOOK(weakOutputModels)) {
+        model.type = OutputObserverType_UseTime;
+        [[NSNotificationCenter defaultCenter] postNotificationName:kOutputObserver object:model];
+        useTime = MAX(model.useTime, useTime);
+    }
+    
     dispatch_async(dispatch_get_main_queue(), ^{
-    //dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         //1. 广播执行行为开始 (执行行为动画,返回执行用时);
-        double useTime = 0;
         for (OutputModel *model in ARRTOOK(weakOutputModels)) {
             model.type = OutputObserverType_Front;
             [[NSNotificationCenter defaultCenter] postNotificationName:kOutputObserver object:model];
-            useTime = MAX(model.useTime, useTime);
         }
         
         //2. 行为输出完成后;
@@ -138,6 +143,7 @@
             }
         } repeats:false];
     });
+    return [[[TCResult new:true] mkMsg:@"output输出成功"] mkDelay:useTime];
 }
 
 +(void)notificationTimer:(NSTimer*)timer{

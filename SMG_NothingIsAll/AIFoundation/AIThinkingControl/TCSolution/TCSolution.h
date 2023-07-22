@@ -16,9 +16,6 @@
  */
 @interface TCSolution : NSObject
 
-+(void) solution:(TOModelBase*)endBranch endScore:(double)endScore;
-+(void) rSolution:(ReasonDemandModel*)demand;
-+(void) pSolution:(DemandModel*)demandModel;
-+(void) hSolution:(HDemandModel*)hDemand;
++(TCResult*) solution:(TOModelBase*)endBranch endScore:(double)endScore;
 
 @end

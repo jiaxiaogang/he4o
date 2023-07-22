@@ -19,26 +19,27 @@
  *      2021.12.28: 支持actYes时最优路径末枝为nil,并中止决策 (参考25042-3);
  *      2022.06.02: 如果endBranch的末枝正在等待actYes,则继续等待,不进行决策 (参考26185-TODO4);
  */
-+(void) solution:(TOModelBase*)endBranch endScore:(double)endScore{
++(TCResult*) solution:(TOModelBase*)endBranch endScore:(double)endScore{
     //1. 无末枝时 (可能正在ActYes等待状态),中断决策;
-    if (!endBranch) return;
+    if (!endBranch) return [[TCResult new:false] mkMsg:@"无末枝"];
     
     //1. 判断endBranch如果是actYes状态,则不处理,继续静默;
     BOOL endHavActYes = [TOUtils endHavActYes:endBranch];
-    if (endHavActYes) return;
+    if (endHavActYes) return [[TCResult new:false] mkMsg:@"末枝ActYes状态"];
     
     //2. 尝试取更多S;
-    Act1 runSolutionAct = ^(DemandModel *demand){
+    Func1 runSolutionAct = ^(DemandModel *demand){
         if (ISOK(demand, ReasonDemandModel.class)) {
             //a. R任务继续取解决方案 (参考24203-2);
-            [self rSolution:(ReasonDemandModel*)demand];
+            return [self rSolution:(ReasonDemandModel*)demand];
         }else if (ISOK(demand, PerceptDemandModel.class)) {
             //b. P任务继续取解决方案 (参考24203-2);
-            [self pSolution:demand];
+            return [self pSolution:demand];
         }else if (ISOK(demand, HDemandModel.class)) {
             //c. H任务继续取解决方案 (参考24203-2);
-            [self hSolution:(HDemandModel*)demand];
+            return [self hSolution:(HDemandModel*)demand];
         }
+        return [[TCResult new:false] mkMsg:@"solution 任务类型不同RPH任一种"];;
     };
     
     //3. 传入solutionFo时;
@@ -47,24 +48,29 @@
         TOFoModel *solutionFo = (TOFoModel*)endBranch;
         
         //4. endBranch >= 0分时,执行TCAction (参考24203-1);
-        if (endScore >= 0) [TCAction action:solutionFo];
+        if (endScore >= 0)
+            return [TCAction action:solutionFo];
         
         //5. 无更多S时_直接TCAction行为化 (参考24203-2b);
-        else if(baseDemand.status == TOModelStatus_WithOut) [TCAction action:solutionFo];
+        else if(baseDemand.status == TOModelStatus_WithOut)
+            return [TCAction action:solutionFo];
         
         //6. 末枝S达到3条时,则最优执行TCAction (参考24203-3);
-        else if(baseDemand.actionFoModels.count >= cSolutionNarrowLimit) [TCAction action:solutionFo];
+        else if(baseDemand.actionFoModels.count >= cSolutionNarrowLimit)
+            return [TCAction action:solutionFo];
         
         //7. endBranch < 0分时,且末枝S小于3条,执行TCSolution取下一方案 (参考24203-2);
-        else if (baseDemand.status != TOModelStatus_WithOut && baseDemand.actionFoModels.count < cSolutionNarrowLimit) runSolutionAct(baseDemand);
+        else if (baseDemand.status != TOModelStatus_WithOut && baseDemand.actionFoModels.count < cSolutionNarrowLimit)
+            return runSolutionAct(baseDemand);
     }
     
     //8. 传入demand时,且demand还可继续时,尝试执行TCSolution取下一方案 (参考24203);
     if (ISOK(endBranch, DemandModel.class)) {
         if (endBranch.status != TOModelStatus_ActNo && endBranch.status != TOModelStatus_ActYes && endBranch.status != TOModelStatus_WithOut) {
-            runSolutionAct((DemandModel*)endBranch);
+            return runSolutionAct((DemandModel*)endBranch);
         }
     }
+    return [[TCResult new:false] mkMsg:@"solution末枝非foModel也非demandModel"];
 }
 
 /**
@@ -93,9 +99,9 @@
  *      2022.05.29: 前3条优先取快思考,后2条或快思考无效时,再取慢思考 (参考26143-TODO2);
  *  @callers : 用于RDemand.Begin时调用;
  */
-+(void) rSolution:(ReasonDemandModel*)demand {
++(TCResult*) rSolution:(ReasonDemandModel*)demand {
     //0. S数达到limit时设为WithOut;
-    if (![theTC energyValid]) return;
+    if (![theTC energyValid]) return [[TCResult new:false] mkMsg:@"rSolution 能量不足"];
     OFTitleLog(@"rSolution", @"\n任务源:%@ protoFo:%@ 已有方案数:%ld 任务分:%.2f",ClassName2Str(demand.algsType),Pit2FStr(demand.protoFo),demand.actionFoModels.count,[AIScore score4Demand:demand]);
     
     //1. 树限宽且限深;
@@ -104,7 +110,7 @@
         demand.status = TOModelStatus_WithOut;
         [TCScore scoreFromIfTCNeed];
         NSLog(@">>>>>> rSolution 已达limit条 (S数:%ld 层数:%ld)",demand.actionFoModels.count,deepCount);
-        return;
+        return [[TCResult new:false] mkMsg:@"rSolution > limit"];
     }
     [theTC updateOperCount:kFILENAME];
     Debug();
@@ -154,12 +160,13 @@
         dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
             [theTV updateFrame];
         });
-        [TCAction action:foModel];
+        return [TCAction action:foModel];
     }else{
         //b) 下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);
         demand.status = TOModelStatus_WithOut;
         NSLog(@">>>>>> rSolution 无计可施");
         [TCScore scoreFromIfTCNeed];
+        return [[TCResult new:false] mkMsg:@"rSolution 无计可施"];
     }
 }
 
@@ -186,12 +193,12 @@
  *      1. 查点击马上饿,找不到解决方案的BUG,经查,MatchAlg与解决方案无明确关系,但MatchAlg.conPorts中,有与解决方案有直接关系的,改后解决 (参考20073)
  *      2020.07.09: 修改方向索引的解决方案不应期,解决只持续飞行两次就停住的BUG (参考n20p8-BUG1);
  */
-+(void) pSolution:(DemandModel*)demandModel{
++(TCResult*) pSolution:(DemandModel*)demandModel{
     //1. 数据准备;
     //TODO: 2021.12.29: 此处方向索引,可以改成和rh任务一样的从pFos&rFos中取具象得来 (因为方向索引应该算脱离场景);
     MVDirection direction = [ThinkingUtils getDemandDirection:demandModel.algsType delta:demandModel.delta];
-    if (!Switch4PS || direction == MVDirection_None) return;
-    if (![theTC energyValid]) return;
+    if (!Switch4PS || direction == MVDirection_None) return [[TCResult new:false] mkMsg:@"pSolution 开关关闭"];
+    if (![theTC energyValid]) return [[TCResult new:false] mkMsg:@"pSolution 能量不足"];
     OFTitleLog(@"pSolution", @"\n任务:%@,发生%ld,方向%ld,已有方案数:%ld",demandModel.algsType,(long)demandModel.delta,(long)direction,demandModel.actionFoModels.count);
     
     //1. 树限宽且限深;
@@ -200,7 +207,7 @@
         demandModel.status = TOModelStatus_WithOut;
         [TCScore scoreFromIfTCNeed];
         NSLog(@"------->>>>>> pSolution 已达limit条");
-        return;
+        return [[TCResult new:false] mkMsg:@"pSolution > limit"];
     }
     [theTC updateOperCount:kFILENAME];
     Debug();
@@ -250,10 +257,9 @@
                     [theTV updateFrame];
                 });
                 DebugE();
-                [TCAction action:toFoModel];//[theTOR singleLoopBackWithBegin:toFoModel];
                 
                 //8. 只要有一次tryResult成功,中断回调循环;
-                return;
+                return [TCAction action:toFoModel];//[theTOR singleLoopBackWithBegin:toFoModel];
             }
         }
     }
@@ -263,6 +269,7 @@
     demandModel.status = TOModelStatus_WithOut;
     NSLog(@">>>>>> pSolution 无计可施");
     [TCScore scoreFromIfTCNeed];
+    return [[TCResult new:false] mkMsg:@"pSolution 无计可施"];
 }
 
 /**
@@ -278,9 +285,9 @@
  *      2022.05.22: 窄出排序方式改为有效率为准 (参考26095-9);
  *      2022.05.31: 支持快慢思考 (参考26161 & 26162);
  */
-+(void) hSolution:(HDemandModel*)hDemand{
++(TCResult*) hSolution:(HDemandModel*)hDemand{
     //0. S数达到limit时设为WithOut;
-    if (![theTC energyValid]) return;
+    if (![theTC energyValid]) return [[TCResult new:false] mkMsg:@"hSolution能量不足"];
     OFTitleLog(@"hSolution", @"\n目标:%@ 已有S数:%ld",Pit2FStr(hDemand.baseOrGroup.content_p),hDemand.actionFoModels.count);
     
     //1. 树限宽且限深;
@@ -289,7 +296,7 @@
         hDemand.status = TOModelStatus_WithOut;
         [TCScore scoreFromIfTCNeed];
         NSLog(@"------->>>>>> hSolution 已达limit条");
-        return;
+        return [[TCResult new:false] mkMsg:@"hSolution > limit"];
     }
     [theTC updateOperCount:kFILENAME];
     Debug();
@@ -325,12 +332,13 @@
         dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
             [theTV updateFrame];
         });
-        [TCAction action:foModel];
+        return [TCAction action:foModel];
     }else{
         //b) 下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);
         hDemand.status = TOModelStatus_WithOut;
         NSLog(@">>>>>> hSolution 无计可施");
         [TCScore scoreFromIfTCNeed];
+        return [[TCResult new:false] mkMsg:@"hSolution无计可施"];
     }
 }
 

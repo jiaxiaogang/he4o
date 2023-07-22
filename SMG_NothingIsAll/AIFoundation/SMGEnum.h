@@ -80,6 +80,7 @@ typedef NS_ENUM(NSInteger,  AnalogyType) {
  *  MARK:--------------------Output通知前后枚举--------------------
  */
 typedef NS_ENUM(NSInteger,  OutputObserverType) {
+    OutputObserverType_UseTime = -1,//取行为动作使用时间 (只负责将现实世界行为动作所需时间传回给主线程和TO线程用,禁止UI操作);
     OutputObserverType_Front   = 0,//前 (动作输出);
     OutputObserverType_Back    = 1,//后 (世界变化处理 & 价值触发处理);
 };

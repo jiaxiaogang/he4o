@@ -10,6 +10,6 @@
 
 @interface TCOut : NSObject
 
-+(void) out:(TOAlgModel*)algModel;
++(TCResult*) run:(TOAlgModel*)algModel;
 
 @end

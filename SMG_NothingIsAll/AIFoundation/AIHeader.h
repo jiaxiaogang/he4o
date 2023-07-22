@@ -61,6 +61,7 @@
 #import "AISceneModel.h"
 #import "FrontIndexDicModel.h"
 #import "AITransferModel.h"
+#import "TCResult.h"
 
 //网络
 #import "AINetUtils.h"

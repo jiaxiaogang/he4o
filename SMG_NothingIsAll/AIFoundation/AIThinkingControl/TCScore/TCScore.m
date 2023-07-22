@@ -16,14 +16,14 @@
  *      2023.07.21: 关闭TC各处调用,改为在TO线程调用 (参考30084-方案);
  */
 +(void) scoreFromIfTCNeed{}
-+(void) scoreFromTOQueue{
-    [self score];
++(TCResult*) scoreFromTOQueue{
+    return [self score];
 }
 
 /**
  *  MARK:--------------------新螺旋架构score方法--------------------
  */
-+(void) score{
++(TCResult*) score{
     //1. 取当前任务 (参考24195-1);
     [theTC updateOperCount:kFILENAME];
     Debug();
@@ -36,7 +36,7 @@
     
     //3. 转给TCPlan取最优路径;
     DebugE();
-    [TCPlan plan:demand rootFo:foModel scoreDic:scoreDic];
+    return [TCPlan plan:demand rootFo:foModel scoreDic:scoreDic];
 }
 
 //MARK:===============================================================

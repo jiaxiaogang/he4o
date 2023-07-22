@@ -31,7 +31,7 @@
  *      2023.07.08: 为避免输出行为捡了芝麻丢了西瓜,在行为化之前,先调用一下反思 (参考30054);
  *  @callers : 可以供_Demand和_Hav等调用;
  */
-+(void) action:(TOFoModel*)foModel{
++(TCResult*) action:(TOFoModel*)foModel{
     //1. 数据准备
     AIFoNodeBase *curFo = [SMGUtils searchNode:foModel.content_p];
     
@@ -44,7 +44,7 @@
     BOOL refrection = [TCRefrection actionRefrection:foModel];
     if (!refrection) {
         [TCScore scoreFromIfTCNeed];
-        return;
+        return [[TCResult new:false] mkMsg:@"action反思不通过"];
     }
     
     [theTC updateOperCount:kFILENAME];
@@ -78,7 +78,7 @@
         
         //8. 当前帧是理性帧时: 尝试行为当前帧;
         DebugE();
-        [TCOut out:moveAlg];
+        return [TCOut run:moveAlg];
     }else{
         //8. R成功,转actYes等待反馈 & 触发反省 (原递归参考流程控制Finish的注释version-20200916 / 参考22061-7);
         DebugE();
@@ -95,6 +95,7 @@
         }else if(ISOK(foModel.baseOrGroup, PerceptDemandModel.class)){
             [TCActYes frameActYes:foModel];//p输出成功时,等待反馈;
         }
+        return [[TCResult new:true] mkMsg:@"action finish"];
     }
 }
 

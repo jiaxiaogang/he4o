@@ -17,7 +17,7 @@
  *      2021.12.26: H类型达到目标帧时,不会调用out,而是在action()中直接判断为末帧,并调用hActYes了 (参考25031-9);
  *      2021.12.26: 下标不急(弄巧成拙)评价,避免多余输出: 将代码前移到out输出前 (参考25031-10);
  */
-+(void) out:(TOAlgModel*)algModel{
++(TCResult*) run:(TOAlgModel*)algModel{
     //1. 无论是P-模式的Alg,还是R-中非S的Alg,都要走以下第1,第2,第3级流程;
     [theTC updateOperCount:kFILENAME];
     Debug();
@@ -35,12 +35,12 @@
             [theTV updateFrame];
         });
         DebugE();
-        BOOL invoked = [Output output_FromTC:algModel.content_p];
-        NSLog(@"===执行%@",invoked ? @"success" : @"failure");
+        return [Output output_FromTC:algModel.content_p];
     }else{
         //8. notOut转jump;
         DebugE();
         [TCInput hInput:algModel];
+        return [[TCResult new:true] mkMsg:@"out 此帧需要HDemand来完成,已转为h任务"];
     }
 }
 

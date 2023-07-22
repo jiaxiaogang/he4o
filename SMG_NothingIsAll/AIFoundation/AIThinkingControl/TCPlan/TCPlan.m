@@ -43,7 +43,7 @@
  *  @todo
  *      2021.12.08: 后续solution行为化处理,根据>cutIndex筛选 (参考24185-方案1-代码);
  */
-+(void) plan:(DemandModel*)rootDemand rootFo:(TOFoModel*)rootFo scoreDic:(NSMutableDictionary*)scoreDic{
++(TCResult*) plan:(DemandModel*)rootDemand rootFo:(TOFoModel*)rootFo scoreDic:(NSMutableDictionary*)scoreDic{
     //1. 根据得分字典,从root向sub,取最优路径 (参考24195-3);
     [theTC updateOperCount:kFILENAME];
     Debug();
@@ -53,7 +53,7 @@
     //2. 从最优路径末枝的解决方案,转给TCSolution执行 (参考24195-4);
     double endBranchScore = [NUMTOOK([scoreDic objectForKey:TOModel2Key(endBranch)]) doubleValue];
     DebugE();
-    [TCSolution solution:endBranch endScore:endBranchScore];
+    return [TCSolution solution:endBranch endScore:endBranchScore];
 }
 
 /**

@@ -10,6 +10,6 @@
 
 @interface TCAction : NSObject
 
-+(void) action:(TOFoModel*)foModel;
++(TCResult*) action:(TOFoModel*)foModel;
 
 @end

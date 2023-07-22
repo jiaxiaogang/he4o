@@ -223,10 +223,11 @@
         
         //2. 吸吮反射 / 主动吃
         if ([EAT_RDS isEqualToString:model.identify]) {
-            if (OutputObserverType_Front == model.type) {
+            if (OutputObserverType_UseTime == model.type) {
+                model.useTime = 0.2f;
+            } else if (OutputObserverType_Front == model.type) {
                 //b. 吃前 => 行为动画;
                 [self eatAction:[model.data floatValue]];
-                model.useTime = 0.2f;
                 
                 //c. 吃后 => 世界变化 & 视觉 & 产生mv;
                 [self eatResult:[model.data floatValue]];
@@ -234,11 +235,12 @@
         }
         //3. 扇翅膀反射
         else if([FLY_RDS isEqualToString:model.identify]){
-            if (OutputObserverType_Front == model.type) {
+            if (OutputObserverType_UseTime == model.type) {
+                model.useTime = 0.1f;
+            } else if (OutputObserverType_Front == model.type) {
                 //a. 飞前 => 行为动画;
                 NSLog(@"飞前视觉%p:%@",model,[NVHeUtil fly2Str:model.data.floatValue]);
                 [self flyAction:[model.data floatValue]];
-                model.useTime = 0.1f;
             }else if(OutputObserverType_Back == model.type){
                 //b. 飞后 => 视觉;
                 NSLog(@"飞后视觉%p:%@",model,[NVHeUtil fly2Str:model.data.floatValue]);
@@ -247,13 +249,17 @@
         }
         //4. 焦急反射
         else if([ANXIOUS_RDS isEqualToString:model.identify]){
-            //1. 小鸟焦急时_扇翅膀;
-            //[self see:[self.delegate birdView_GetPageView]];
-            //CGFloat data = (arc4random() % 8) / 8.0f;
-            //[AIReactorControl commitReactor:FLY_RDS datas:@[@(data)]];
-            
-            //2. 190731由飞改为叫;
-            [theApp setTipLog:@"叽叽喳喳叫一叫"];
+            if (OutputObserverType_UseTime == model.type) {
+                model.useTime = 0;
+            } else {
+                //1. 小鸟焦急时_扇翅膀;
+                //[self see:[self.delegate birdView_GetPageView]];
+                //CGFloat data = (arc4random() % 8) / 8.0f;
+                //[AIReactorControl commitReactor:FLY_RDS datas:@[@(data)]];
+                
+                //2. 190731由飞改为叫;
+                [theApp setTipLog:@"叽叽喳喳叫一叫"];
+            }
         }
     }
 }

@@ -25,7 +25,7 @@
  *  如: 吃奶,飞行
  *  注: 后天,主动 (由神经网络后天执行输出: 检查执行微信息输出)
  */
-+(BOOL) output_FromTC:(AIKVPointer*)algNode_p;
++(TCResult*) output_FromTC:(AIKVPointer*)algNode_p;
 
 /**
  *  MARK:--------------------反射输出--------------------
