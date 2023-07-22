@@ -137,7 +137,6 @@
                 [[NSNotificationCenter defaultCenter] postNotificationName:kOutputObserver object:model];
             }
         } repeats:false];
-        
     });
 }
 

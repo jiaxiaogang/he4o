@@ -32,11 +32,13 @@
  */
 +(void) inTitle:(NSString*)title log:(NSString*)log fileName:(NSString*)fileName{
     NSString *side = @"===============================";
-    NSLog_CustomFileName(fileName, @"\n\n%@ %lld %@ %@%@",side,theTC.getLoopId,title,side,log);
+    char *curQueueLab = dispatch_queue_get_label(dispatch_get_current_queue());
+    NSLog_CustomFileName(fileName, @"\n\n%@ %lld %@ %@%@ %s",side,theTC.getLoopId,title,side,log,curQueueLab);
 }
 +(void) outTitle:(NSString*)title log:(NSString*)log fileName:(NSString*)fileName{
     NSString *side = @"===============================";
-    NSLog_CustomFileName(fileName, @"\n\n%@ %lld %@ %@%@",side,theTC.getLoopId,title,side,log);
+    char *curQueueLab = dispatch_queue_get_label(dispatch_get_current_queue());
+    NSLog_CustomFileName(fileName, @"\n\n%@ %lld %@ %@%@ %s",side,theTC.getLoopId,title,side,log,curQueueLab);
 }
 +(NSString*) codeLocateFormat:(NSString*)fileName line:(NSInteger)line{
     //1. 数据 准备
