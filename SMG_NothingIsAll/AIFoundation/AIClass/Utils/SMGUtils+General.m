@@ -32,13 +32,11 @@
  */
 +(void) inTitle:(NSString*)title log:(NSString*)log fileName:(NSString*)fileName{
     NSString *side = @"===============================";
-    char *curQueueLab = dispatch_queue_get_label(dispatch_get_current_queue());
-    NSLog_CustomFileName(fileName, @"\n\n%@ %lld %@ %@%@ %s",side,theTC.getLoopId,title,side,log,curQueueLab);
+    NSLog_CustomFileName(fileName, @"\n\n%@ %lld %@ %@%@",side,theTC.getLoopId,title,side,log);
 }
 +(void) outTitle:(NSString*)title log:(NSString*)log fileName:(NSString*)fileName{
     NSString *side = @"===============================";
-    char *curQueueLab = dispatch_queue_get_label(dispatch_get_current_queue());
-    NSLog_CustomFileName(fileName, @"\n\n%@ %lld %@ %@%@ %s",side,theTC.getLoopId,title,side,log,curQueueLab);
+    NSLog_CustomFileName(fileName, @"\n\n%@ %lld %@ %@%@",side,theTC.getLoopId,title,side,log);
 }
 +(NSString*) codeLocateFormat:(NSString*)fileName line:(NSInteger)line{
     //1. 数据 准备
@@ -92,20 +90,34 @@
     NSString *timeStr = [SMGUtils date2HHMMSSSSS];
     NSString *codeStr = [SMGUtils codeLocateFormat:fileName line:line];
     NSMutableString *result = [[NSMutableString alloc] init];
+    NSString *queueStr = [self getQueueStr];
     
     //2. 拼接结果
     if (headerMode == LogHeaderMode_All) {
         NSString *sep = @"\n";
         NSArray *logLines = ARRTOOK(STRTOARR(protoLog, sep));
         for (NSString *logLine in logLines) {
-            [result appendFormat:@"%@ [%@ %@] %@\n",[SMGUtils logLineNumFormat],timeStr,codeStr,logLine];
+            [result appendFormat:@"%@ [%@ %@ %@] %@\n",[SMGUtils logLineNumFormat],timeStr,queueStr,codeStr,logLine];
         }
     }else if(headerMode == LogHeaderMode_First){
-        [result appendFormat:@"%@ [%@ %@] %@\n",[SMGUtils logLineNumFormat],timeStr,codeStr,protoLog];
+        [result appendFormat:@"%@ [%@ %@ %@] %@\n",[SMGUtils logLineNumFormat],timeStr,queueStr,codeStr,protoLog];
     }else{
         [result appendFormat:@"%@\n",protoLog];
     }
     return result;
+}
+
+//线程简写名称
++(NSString*) getQueueStr {
+    NSString *curQueueLab = STRFORMAT(@"%s",dispatch_queue_get_label(dispatch_get_current_queue()));
+    if ([tiQueueLab isEqualToString:curQueueLab]) {
+        return @"TI";
+    } else if ([toQueueLab isEqualToString:curQueueLab]) {
+        return @"TO";
+    } else if ([@"com.apple.main-thread" containsString:curQueueLab]) {
+        return @"MA";
+    }
+    return @"OT";
 }
 
 //注: STRFORMAT目前的宏定义中,并没有多余调用,所以不需要单独封装出来;

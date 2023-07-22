@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+#define tiQueueLab @"ThinkInQueue"
+#define toQueueLab @"ThinkOutQueue"
+
 /**
  *  MARK:--------------------思维控制器--------------------
  *  1. 主要负责思维 (前额叶) 功能;
