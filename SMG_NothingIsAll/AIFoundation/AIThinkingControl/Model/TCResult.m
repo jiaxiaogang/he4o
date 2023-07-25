@@ -26,4 +26,9 @@
     return self;
 }
 
+-(TCResult*) mkStep:(NSInteger)step {
+    self.step = step;
+    return self;
+}
+
 @end

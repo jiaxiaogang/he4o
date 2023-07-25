@@ -20,7 +20,7 @@
     //1. 数据
     AIAlgNodeBase *algNode = [SMGUtils searchNode:algNode_p];
     if (!ISOK(algNode, AIAlgNodeBase.class)) {
-        return [[TCResult new:false] mkMsg:@"output 输出非alg类型错误"];
+        return [[[TCResult new:false] mkMsg:@"output 输出非alg类型错误"] mkStep:51];
     }
     
     //2. 循环微信息组
@@ -50,7 +50,7 @@
             [theTC commitOutputLogAsync:valids];
         }];
     }
-    return [[TCResult new:false] mkMsg:@"output输出无效而失败"];
+    return [[[TCResult new:false] mkMsg:@"output输出无效而失败"] mkStep:52];
 }
 
 +(void) output_FromReactor:(NSString*)identify datas:(NSArray*)datas{
@@ -143,7 +143,7 @@
             }
         } repeats:false];
     });
-    return [[[TCResult new:true] mkMsg:@"output输出成功"] mkDelay:useTime];
+    return [[[[TCResult new:true] mkMsg:@"output输出成功"] mkDelay:useTime] mkStep:61];
 }
 
 +(void)notificationTimer:(NSTimer*)timer{

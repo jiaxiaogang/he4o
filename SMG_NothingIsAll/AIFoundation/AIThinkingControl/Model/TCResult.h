@@ -21,11 +21,13 @@
 @property (assign, nonatomic) BOOL success;
 @property (strong, nonatomic) NSString *msg;
 @property (assign, nonatomic) CGFloat delay;
+@property (assign, nonatomic) NSInteger step;
 
 /**
  *  MARK:--------------------装饰方法--------------------
  */
 -(TCResult*) mkMsg:(NSString*)msg;
 -(TCResult*) mkDelay:(CGFloat)delay;
+-(TCResult*) mkStep:(NSInteger)step;
 
 @end

@@ -237,7 +237,9 @@ static AIThinkingControl *_instance;
                 [NSThread sleepForTimeInterval:1];
             }else{
                 TCResult *result = [TCScore scoreFromTOQueue];
-                NSLog(@"TO上轮:%@ 等待:%.1f 下轮:%lld 消息:%@",result.success?@"成功":@"失败",result.delay,++self.toLoopId,result.msg);
+                if (result.step > 21) {
+                    NSLog(@"TO上轮:%@ 等待:%.1f 下轮:%lld 消息:%@",result.success?@"成功":@"失败",result.delay,++self.toLoopId,result.msg);
+                }
                 [NSThread sleepForTimeInterval:1 + result.delay];
             }
         }
@@ -305,8 +307,12 @@ static AIThinkingControl *_instance;
  *      2022.08.17: 记录和调试实际last调用者的性能 (参考27064-跟进);
  */
 -(void) updateOperCount:(NSString*)operater{
+    [self updateOperCount:operater min:200];
+}
+
+-(void) updateOperCount:(NSString*)operater min:(NSInteger)min{
     self.operCount++;
-    [self.tcDebug updateOperCount:operater min:200];
+    [self.tcDebug updateOperCount:operater min:min];
 }
 
 -(long long) getOperCount{

@@ -25,9 +25,9 @@
  */
 +(TCResult*) score{
     //1. 取当前任务 (参考24195-1);
-    [theTC updateOperCount:kFILENAME];
+    [theTC updateOperCount:kFILENAME min:1200];
     Debug();
-    OSTitleLog(@"TCScore");
+    //OSTitleLog(@"TCScore");
     DemandModel *demand = [theTC.outModelManager getCanDecisionDemand];
     
     //2. 对firstRootDemand取得分字典 (参考24195-2 & 24196示图);

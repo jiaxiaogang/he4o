@@ -44,7 +44,7 @@
     BOOL refrection = [TCRefrection actionRefrection:foModel];
     if (!refrection) {
         [TCScore scoreFromIfTCNeed];
-        return [[TCResult new:false] mkMsg:@"action反思不通过"];
+        return [[[TCResult new:false] mkMsg:@"action反思不通过"] mkStep:31];
     }
     
     [theTC updateOperCount:kFILENAME];
@@ -95,7 +95,7 @@
         }else if(ISOK(foModel.baseOrGroup, PerceptDemandModel.class)){
             [TCActYes frameActYes:foModel];//p输出成功时,等待反馈;
         }
-        return [[TCResult new:true] mkMsg:@"action finish"];
+        return [[[TCResult new:true] mkMsg:@"action finish"] mkStep:32];
     }
 }
 

@@ -78,6 +78,7 @@
 //MARK:                     < 操作计数 >
 //MARK:===============================================================
 -(void) updateOperCount:(NSString*)operater;
+-(void) updateOperCount:(NSString*)operater min:(NSInteger)min;
 -(long long) getOperCount;
 
 //MARK:===============================================================

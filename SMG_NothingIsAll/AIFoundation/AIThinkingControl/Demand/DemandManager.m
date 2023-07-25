@@ -203,7 +203,7 @@
         ReasonDemandModel *item = ARR_INDEX(self.loopCache.array, j);
         if (Log4CanDecisionDemand) NSLog(@"root(%ld/%ld):%@ (%@) %@",j,self.loopCache.count,Pit2FStr(item.protoFo),[SMGUtils date2Str:kHHmmss timeInterval:item.initTime],[TOModelVision cur2Sub:item]);
     }
-    NSLog(@"Demand竞争 ============================================= START 共%ld条",self.loopCache.count);
+    NSLog(@"Demand竞争 ==> START 共%ld条",self.loopCache.count);
     for (NSInteger i = 0; i < self.loopCache.count; i++) {
         DemandModel *item = ARR_INDEX(self.loopCache.array, i);
         //3. 即使已经找到result,也把日志打完,方便调试日志中查看Demand的完整竞争情况;

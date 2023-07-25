@@ -21,11 +21,11 @@
  */
 +(TCResult*) solution:(TOModelBase*)endBranch endScore:(double)endScore{
     //1. 无末枝时 (可能正在ActYes等待状态),中断决策;
-    if (!endBranch) return [[TCResult new:false] mkMsg:@"无末枝"];
+    if (!endBranch) return [[[TCResult new:false] mkMsg:@"无末枝"] mkStep:11];
     
     //1. 判断endBranch如果是actYes状态,则不处理,继续静默;
     BOOL endHavActYes = [TOUtils endHavActYes:endBranch];
-    if (endHavActYes) return [[TCResult new:false] mkMsg:@"末枝ActYes状态"];
+    if (endHavActYes) return [[[TCResult new:false] mkMsg:@"末枝ActYes状态"] mkStep:12];
     
     //2. 尝试取更多S;
     Func1 runSolutionAct = ^(DemandModel *demand){
@@ -39,7 +39,7 @@
             //c. H任务继续取解决方案 (参考24203-2);
             return [self hSolution:(HDemandModel*)demand];
         }
-        return [[TCResult new:false] mkMsg:@"solution 任务类型不同RPH任一种"];;
+        return [[[TCResult new:false] mkMsg:@"solution 任务类型不同RPH任一种"] mkStep:13];
     };
     
     //3. 传入solutionFo时;
@@ -70,7 +70,7 @@
             return runSolutionAct((DemandModel*)endBranch);
         }
     }
-    return [[TCResult new:false] mkMsg:@"solution末枝非foModel也非demandModel"];
+    return [[[TCResult new:false] mkMsg:@"solution末枝非foModel也非demandModel"] mkStep:14];
 }
 
 /**
@@ -101,7 +101,7 @@
  */
 +(TCResult*) rSolution:(ReasonDemandModel*)demand {
     //0. S数达到limit时设为WithOut;
-    if (![theTC energyValid]) return [[TCResult new:false] mkMsg:@"rSolution 能量不足"];
+    if (![theTC energyValid]) return [[[TCResult new:false] mkMsg:@"rSolution 能量不足"] mkStep:21];
     OFTitleLog(@"rSolution", @"\n任务源:%@ protoFo:%@ 已有方案数:%ld 任务分:%.2f",ClassName2Str(demand.algsType),Pit2FStr(demand.protoFo),demand.actionFoModels.count,[AIScore score4Demand:demand]);
     
     //1. 树限宽且限深;
@@ -110,7 +110,7 @@
         demand.status = TOModelStatus_WithOut;
         [TCScore scoreFromIfTCNeed];
         NSLog(@">>>>>> rSolution 已达limit条 (S数:%ld 层数:%ld)",demand.actionFoModels.count,deepCount);
-        return [[TCResult new:false] mkMsg:@"rSolution > limit"];
+        return [[[TCResult new:false] mkMsg:@"rSolution > limit"] mkStep:22];
     }
     [theTC updateOperCount:kFILENAME];
     Debug();
@@ -166,7 +166,7 @@
         demand.status = TOModelStatus_WithOut;
         NSLog(@">>>>>> rSolution 无计可施");
         [TCScore scoreFromIfTCNeed];
-        return [[TCResult new:false] mkMsg:@"rSolution 无计可施"];
+        return [[[TCResult new:false] mkMsg:@"rSolution 无计可施"] mkStep:23];
     }
 }
 
@@ -197,8 +197,8 @@
     //1. 数据准备;
     //TODO: 2021.12.29: 此处方向索引,可以改成和rh任务一样的从pFos&rFos中取具象得来 (因为方向索引应该算脱离场景);
     MVDirection direction = [ThinkingUtils getDemandDirection:demandModel.algsType delta:demandModel.delta];
-    if (!Switch4PS || direction == MVDirection_None) return [[TCResult new:false] mkMsg:@"pSolution 开关关闭"];
-    if (![theTC energyValid]) return [[TCResult new:false] mkMsg:@"pSolution 能量不足"];
+    if (!Switch4PS || direction == MVDirection_None) return [[[TCResult new:false] mkMsg:@"pSolution 开关关闭"] mkStep:20];
+    if (![theTC energyValid]) return [[[TCResult new:false] mkMsg:@"pSolution 能量不足"] mkStep:21];
     OFTitleLog(@"pSolution", @"\n任务:%@,发生%ld,方向%ld,已有方案数:%ld",demandModel.algsType,(long)demandModel.delta,(long)direction,demandModel.actionFoModels.count);
     
     //1. 树限宽且限深;
@@ -207,7 +207,7 @@
         demandModel.status = TOModelStatus_WithOut;
         [TCScore scoreFromIfTCNeed];
         NSLog(@"------->>>>>> pSolution 已达limit条");
-        return [[TCResult new:false] mkMsg:@"pSolution > limit"];
+        return [[[TCResult new:false] mkMsg:@"pSolution > limit"] mkStep:22];
     }
     [theTC updateOperCount:kFILENAME];
     Debug();
@@ -269,7 +269,7 @@
     demandModel.status = TOModelStatus_WithOut;
     NSLog(@">>>>>> pSolution 无计可施");
     [TCScore scoreFromIfTCNeed];
-    return [[TCResult new:false] mkMsg:@"pSolution 无计可施"];
+    return [[[TCResult new:false] mkMsg:@"pSolution 无计可施"] mkStep:23];
 }
 
 /**
@@ -287,7 +287,7 @@
  */
 +(TCResult*) hSolution:(HDemandModel*)hDemand{
     //0. S数达到limit时设为WithOut;
-    if (![theTC energyValid]) return [[TCResult new:false] mkMsg:@"hSolution能量不足"];
+    if (![theTC energyValid]) return [[[TCResult new:false] mkMsg:@"hSolution能量不足"] mkStep:21];
     OFTitleLog(@"hSolution", @"\n目标:%@ 已有S数:%ld",Pit2FStr(hDemand.baseOrGroup.content_p),hDemand.actionFoModels.count);
     
     //1. 树限宽且限深;
@@ -296,7 +296,7 @@
         hDemand.status = TOModelStatus_WithOut;
         [TCScore scoreFromIfTCNeed];
         NSLog(@"------->>>>>> hSolution 已达limit条");
-        return [[TCResult new:false] mkMsg:@"hSolution > limit"];
+        return [[[TCResult new:false] mkMsg:@"hSolution > limit"] mkStep:22];
     }
     [theTC updateOperCount:kFILENAME];
     Debug();
@@ -338,7 +338,7 @@
         hDemand.status = TOModelStatus_WithOut;
         NSLog(@">>>>>> hSolution 无计可施");
         [TCScore scoreFromIfTCNeed];
-        return [[TCResult new:false] mkMsg:@"hSolution无计可施"];
+        return [[[TCResult new:false] mkMsg:@"hSolution无计可施"] mkStep:23];
     }
 }
 

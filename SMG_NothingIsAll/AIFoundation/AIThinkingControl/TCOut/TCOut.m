@@ -40,7 +40,7 @@
         //8. notOut转jump;
         DebugE();
         [TCInput hInput:algModel];
-        return [[TCResult new:true] mkMsg:@"out 此帧需要HDemand来完成,已转为h任务"];
+        return [[[TCResult new:true] mkMsg:@"out 此帧需要HDemand来完成,已转为h任务"] mkStep:41];
     }
 }
 
