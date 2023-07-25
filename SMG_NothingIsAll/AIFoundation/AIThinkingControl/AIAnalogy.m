@@ -121,6 +121,25 @@
             //5. 构建absFoNode (当GL时,传入at&ds);
             result = [theNet createAbsFo_NoRepeat:orderSames protoFo:protoFo assFo:assFo difStrong:foDifStrong type:type protoIndexDic:protoIndexDic assIndexDic:assIndexDic outConAbsIsRelate:nil];
             
+            
+            //TODOTOMORROW20230725: 查下此处改为不断修正mvDeltaTime而不是永远取大;
+            // > 参考30087;
+            if (result.count == 2 && [Fo2FStr(result) containsString:@"棒"]) {
+                for (AIKVPointer *item in result.content_ps) {
+                    AIAlgNodeBase *alg = [SMGUtils searchNode:item];
+                    for (AIKVPointer *itemV in alg.content_ps) {
+                        if ([itemV.algsType isEqualToString:@"distance"]) {
+                            double distance = [NUMTOOK([AINetIndex getData:itemV]) doubleValue];
+                            double newMvDeltaTime = MAX(MAX(protoFo.mvDeltaTime, assFo.mvDeltaTime), result.mvDeltaTime);
+                            if (distance < 30 && newMvDeltaTime > 5) {
+                                NSLog(@"复现,明明距离很近,但得出的mvDeltaTime却很大");
+                            }
+                        }
+                    }
+                }
+            }
+            
+            
             //5. 从fo和conFo.mvDeltaTime中提取mv导致时间隔,在relateFo之前,赋值到result中;
             result.mvDeltaTime = MAX(MAX(protoFo.mvDeltaTime, assFo.mvDeltaTime), result.mvDeltaTime);
             
