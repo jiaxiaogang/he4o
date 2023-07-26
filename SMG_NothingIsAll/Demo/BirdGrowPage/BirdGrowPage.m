@@ -453,7 +453,7 @@
     self.waitHiting = true;
     
     //4. 扔出: step动画仅执行一轮 (参考29098-方案3-步骤4);
-    [self.woodView throwV4:x time:allTime distance:allDistance invoked:invoked];
+    [self.woodView throwV5:x time:allTime distance:allDistance invoked:invoked];
 }
 
 - (IBAction)stopWoodBtnOnClick:(id)sender {

@@ -124,11 +124,11 @@
             
             //TODOTOMORROW20230725: 查下此处改为不断修正mvDeltaTime而不是永远取大;
             // > 参考30087;
-            if (result.count == 2 && [Fo2FStr(result) containsString:@"棒"]) {
+            if (result.count == 1 && [Fo2FStr(result) containsString:@"棒"]) {
                 for (AIKVPointer *item in result.content_ps) {
                     AIAlgNodeBase *alg = [SMGUtils searchNode:item];
                     for (AIKVPointer *itemV in alg.content_ps) {
-                        if ([itemV.algsType isEqualToString:@"distance"]) {
+                        if ([itemV.dataSource isEqualToString:@"distance"]) {
                             double distance = [NUMTOOK([AINetIndex getData:itemV]) doubleValue];
                             double newMvDeltaTime = MAX(MAX(protoFo.mvDeltaTime, assFo.mvDeltaTime), result.mvDeltaTime);
                             if (distance < 30 && newMvDeltaTime > 5) {

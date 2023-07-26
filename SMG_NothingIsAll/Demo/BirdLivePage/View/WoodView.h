@@ -30,6 +30,6 @@
 /**
  *  MARK:--------------------扔出--------------------
  */
--(void) throwV4:(CGFloat)throwX time:(CGFloat)time distance:(CGFloat)distance invoked:(void(^)())invoked;
+-(void) throwV5:(CGFloat)throwX time:(CGFloat)time distance:(CGFloat)distance invoked:(void(^)())invoked;
 
 @end
