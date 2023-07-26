@@ -493,11 +493,11 @@
 }
 
 -(void)birdView_FlyAnimationFinish {
-    [self runCheckHit:0 woodDuration:0 hiterDesc:@"鸟飞结束"];//动画执行完后,要调用下碰撞检测,因为UIView动画后不会立马更新frame (参考29098-追BUG1);
+    //[self runCheckHit:0 woodDuration:0 hiterDesc:@"鸟飞结束"];//动画执行完后,要调用下碰撞检测,因为UIView动画后不会立马更新frame (参考29098-追BUG1);
 }
 
 -(void) birdView_FlyAnimationBegin:(CGFloat)aniDuration {
-    [self runCheckHit:aniDuration woodDuration:0 hiterDesc:@"鸟飞开始"];
+    //[self runCheckHit:aniDuration woodDuration:0 hiterDesc:@"鸟飞开始"];
 }
 
 /**
@@ -506,7 +506,7 @@
 
 //2023.06.04: 废弃_将setFramed换成动画开始,二者是同时触发的,但setFramed有两个问题,1是无法传过来动画时间,2是它会触发两次;
 -(void)woodView_SetFramed {
-    //[self runCheckHit:@"棒扔位置变化"];
+    [self runCheckHit:0 woodDuration:0 hiterDesc:@"棒扔位置变化"];
 }
 
 -(void) woodView_WoodAnimationFinish {
@@ -515,7 +515,7 @@
 }
 
 -(void) woodView_FlyAnimationBegin:(CGFloat)aniDuration {
-    [self runCheckHit:0 woodDuration:aniDuration hiterDesc:@"棒扔开始"];
+    //[self runCheckHit:0 woodDuration:aniDuration hiterDesc:@"棒扔开始"];
 }
 
 //MARK:===============================================================
@@ -540,6 +540,7 @@
  *          2. 无论是木棒还是小鸟的动画结束时,都手动调用下 (因为UIView动画后不会立马更新frame);
  *  @version
  *      2023.06.09: 修复因分母为0,导致分帧rect取到NaN,导致交集全判为撞到的BUG (参考30015);
+ *      2023.07.26: 改为每帧木棒变动都进行碰撞检测 & 且改为帧动画后不需要每次调用再分10帧了改为2 (参考30087-todo2);
  */
 -(void) runCheckHit:(CGFloat)birdDuration woodDuration:(CGFloat)woodDuration hiterDesc:(NSString*)hiterDesc {
     //1. 非检查中 或 已检测到碰撞 => 返回;
@@ -564,7 +565,7 @@
     CGFloat woodTime = self.lastHitModel.woodDuration == 0 ? totalTime : self.lastHitModel.woodDuration * 1000; //木棒扔了多久;
     CGFloat birdTime = self.lastHitModel.birdDuration == 0 ? totalTime : self.lastHitModel.birdDuration * 1000; //小鸟飞了多久;
     CGFloat firstCheckTime = MIN(totalTime,MIN(woodTime,birdTime)); //先把检查指定时间的(比如bird动画开始指定了0.15s);
-    NSInteger frameCount = 10;
+    NSInteger frameCount = 2;
     CGFloat itemTime = firstCheckTime / frameCount; //在下面循环中每份i过了多久;
     for (NSInteger i = 0; i < frameCount; i++) {
         //5. 取上下等份的Rect取并集,避免两等份间距过大,导致错漏检测问题 (参考29098-测BUG2);
@@ -600,10 +601,12 @@
     }
     
     //5. 保留lastHitModel & 撞到时触发痛感 (参考29098-方案3-步骤2);
-    NSLog(@"碰撞检测: %@ 棒(%.0f -> %.0f) 鸟(%.0f,%.0f -> %.0f,%.0f) from:%@",self.isHited ? @"撞到了" : @"没撞到",
-          self.lastHitModel.woodFrame.origin.x,curHitModel.woodFrame.origin.x,
-          self.lastHitModel.birdFrame.origin.x,self.lastHitModel.birdFrame.origin.y,
-          curHitModel.birdFrame.origin.x,curHitModel.birdFrame.origin.y,hiterDesc);
+    if (self.isHited) {
+        NSLog(@"碰撞检测: %@ 棒(%.0f -> %.0f) 鸟(%.0f,%.0f -> %.0f,%.0f) from:%@",self.isHited ? @"撞到了" : @"没撞到",
+              self.lastHitModel.woodFrame.origin.x,curHitModel.woodFrame.origin.x,
+              self.lastHitModel.birdFrame.origin.x,self.lastHitModel.birdFrame.origin.y,
+              curHitModel.birdFrame.origin.x,curHitModel.birdFrame.origin.y,hiterDesc);
+    }
     self.lastHitModel = curHitModel;
     if (self.isHited) {
         [self.birdView hurt];
