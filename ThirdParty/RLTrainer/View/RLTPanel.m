@@ -208,7 +208,7 @@
 
 -(NSString*) mvScoreStr {
     //1. 数据准备;
-    NSArray *roots = theTC.outModelManager.getAllDemand;
+    NSArray *roots = [theTC.outModelManager.getAllDemand copy];
     NSMutableString *mStr = [[NSMutableString alloc] init];
     
     //2. 分别对每个根任务,进行评分;
@@ -234,7 +234,7 @@
     NSMutableArray *spStrongArr = [[NSMutableArray alloc] init];
     
     //1. 收集根下所有树枝;
-    NSArray *roots = theTC.outModelManager.getAllDemand;
+    NSArray *roots = [theTC.outModelManager.getAllDemand copy];
     NSArray *branchs = [TVUtil collectAllSubTOModelByRoots:roots];
     NSArray *solutions = [SMGUtils filterArr:branchs checkValid:^BOOL(TOModelBase *item) {
         return ISOK(item, TOFoModel.class);
@@ -288,7 +288,7 @@
 
 -(CGFloat) solutionStr{
     //1. 收集根下所有树枝;
-    NSArray *roots = theTC.outModelManager.getAllDemand;
+    NSArray *roots = [theTC.outModelManager.getAllDemand copy];
     NSArray *branchs = [TVUtil collectAllSubTOModelByRoots:roots];
     NSArray *demands = [SMGUtils filterArr:branchs checkValid:^BOOL(TOModelBase *item) {
         return ISOK(item, DemandModel.class);

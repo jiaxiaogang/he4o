@@ -131,7 +131,7 @@
                         if ([itemV.dataSource isEqualToString:@"distance"]) {
                             double distance = [NUMTOOK([AINetIndex getData:itemV]) doubleValue];
                             double newMvDeltaTime = MAX(MAX(protoFo.mvDeltaTime, assFo.mvDeltaTime), result.mvDeltaTime);
-                            if (distance < 30 && newMvDeltaTime > 5) {
+                            if (distance < 200 && newMvDeltaTime > 5) {
                                 NSLog(@"复现,明明距离很近,但得出的mvDeltaTime却很大");
                             }
                         }
