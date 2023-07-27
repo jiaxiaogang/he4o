@@ -13,8 +13,8 @@
 
 @interface XGRedis ()
 
-@property (strong, nonatomic) NSMutableDictionary *dic;   //核心字典
-@property (strong, nonatomic) NSMutableDictionary *gcMarks;  //回收时间记录;(时间从先到后_有序)
+@property (strong, nonatomic) AsyncMutableDictionary *dic;   //核心字典
+@property (strong, nonatomic) AsyncMutableDictionary *gcMarks;  //回收时间记录;(时间从先到后_有序)
 @property (strong,nonatomic) NSTimer *timer;            //计时器
 
 @end
@@ -38,11 +38,11 @@ static XGRedis *_instance;
 }
 
 -(void) initData{
-    self.dic = [[NSMutableDictionary alloc] init];
+    self.dic = [[AsyncMutableDictionary alloc] init];
     dispatch_async(dispatch_get_main_queue(), ^{
         self.timer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];
     });
-    self.gcMarks = [[NSMutableDictionary alloc] init];
+    self.gcMarks = [[AsyncMutableDictionary alloc] init];
 }
 
 //MARK:===============================================================
