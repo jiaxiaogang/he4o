@@ -142,7 +142,7 @@
  */
 -(AIEffectStrong*) getEffectStrong:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo {
     //1. 取有效率解决方案数组;
-    NSArray *strongs = ARRTOOK([self.effectDic objectForKey:@(effectIndex)]);
+    NSArray *strongs = [ARRTOOK([self.effectDic objectForKey:@(effectIndex)]) copy];
     
     //2. 取得匹配的strong;
     AIEffectStrong *strong = [SMGUtils filterSingleFromArr:strongs checkValid:^BOOL(AIEffectStrong *item) {

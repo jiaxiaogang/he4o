@@ -132,7 +132,11 @@
                             double distance = [NUMTOOK([AINetIndex getData:itemV]) doubleValue];
                             double newMvDeltaTime = MAX(MAX(protoFo.mvDeltaTime, assFo.mvDeltaTime), result.mvDeltaTime);
                             if (distance < 200 && newMvDeltaTime > 5) {
-                                NSLog(@"复现,明明距离很近,但得出的mvDeltaTime却很大");
+                                NSLog(@"复现,明明距离很近,但得出的mvDeltaTime却很大 距离:%.1f",distance);
+                                NSLog(@"protoFo:%@ %.2f",Fo2FStr(protoFo),protoFo.mvDeltaTime);
+                                NSLog(@"assFo:%@ %.2f",Fo2FStr(assFo),assFo.mvDeltaTime);
+                                NSLog(@"resultFo:%@ 现:%.2f 新:%.2f",Fo2FStr(result),result.mvDeltaTime,newMvDeltaTime);
+                                NSLog(@"");
                             }
                         }
                     }
