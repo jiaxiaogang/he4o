@@ -42,6 +42,7 @@
 +(void) test27:(AIFoNodeBase*)sceneFo oldCanset:(AIKVPointer*)oldCanset_p oldIndexDic:(NSDictionary*)oldIndexDic compareIndexDicFromNewCanset:(NSDictionary*)compareIndexDicFromNewCanset;
 +(void) test28:(AIShortMatchModel*)inModel;
 +(void) test29:(AIAlgNodeBase*)protoA assA:(AIAlgNodeBase*)assA;
++(void) test30:(NSInteger)sumStrong;
 
 //MARK:===============================================================
 //MARK:    < 回测必经点测试 (常关,每个轮回测时打开,触发则关,未触发者为异常) >

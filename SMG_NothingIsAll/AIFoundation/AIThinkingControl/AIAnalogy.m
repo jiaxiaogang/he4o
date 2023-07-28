@@ -93,6 +93,7 @@
  *      2021.09.23: 构建fo时,新增type参数,废弃原foDS(typeStr)的做法 (参考24019-时序部分);
  *      2021.09.26: 仅构建glFo时才从conNodes取at&ds值,避免SFo也有值的问题 (参考24022-BUG2);
  *      2021.09.28: ATSame和ATDiff两个type是描述是否包含cmv指向的,改为传ATDefault过来 (参考24022-BUG5);
+ *      2023.07.28: 把mvDeltaTime改成偏移修正方式 (参考30087-分析1);
  */
 +(AINetAbsFoNode*)analogyOutside_Creater:(NSArray*)orderSames protoFo:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type protoIndexDic:(NSDictionary*)protoIndexDic assIndexDic:(NSDictionary*)assIndexDic {
     //2. 数据检查;
@@ -121,31 +122,19 @@
             //5. 构建absFoNode (当GL时,传入at&ds);
             result = [theNet createAbsFo_NoRepeat:orderSames protoFo:protoFo assFo:assFo difStrong:foDifStrong type:type protoIndexDic:protoIndexDic assIndexDic:assIndexDic outConAbsIsRelate:nil];
             
+            //6. 算出具象总强度,其和已经是累计了此次类比的新关联强度 (参考30087-todo6);
+            NSArray *conPorts = [AINetUtils conPorts_All:result];
+            NSInteger sumStrong = 0;
+            for (AIPort *item in conPorts) sumStrong += item.strong.value;
+            [AITest test30:sumStrong];
+            CGFloat frontMvDeltaTime4Log = result.mvDeltaTime;
             
-            //TODOTOMORROW20230725: 查下此处改为不断修正mvDeltaTime而不是永远取大;
-            // > 参考30087;
-            if (result.count == 1 && [Fo2FStr(result) containsString:@"棒"]) {
-                for (AIKVPointer *item in result.content_ps) {
-                    AIAlgNodeBase *alg = [SMGUtils searchNode:item];
-                    for (AIKVPointer *itemV in alg.content_ps) {
-                        if ([itemV.dataSource isEqualToString:@"distance"]) {
-                            double distance = [NUMTOOK([AINetIndex getData:itemV]) doubleValue];
-                            double newMvDeltaTime = MAX(MAX(protoFo.mvDeltaTime, assFo.mvDeltaTime), result.mvDeltaTime);
-                            if (distance < 200 && newMvDeltaTime > 5) {
-                                NSLog(@"复现,明明距离很近,但得出的mvDeltaTime却很大 距离:%.1f",distance);
-                                NSLog(@"protoFo:%@ %.2f",Fo2FStr(protoFo),protoFo.mvDeltaTime);
-                                NSLog(@"assFo:%@ %.2f",Fo2FStr(assFo),assFo.mvDeltaTime);
-                                NSLog(@"resultFo:%@ 现:%.2f 新:%.2f",Fo2FStr(result),result.mvDeltaTime,newMvDeltaTime);
-                                NSLog(@"");
-                            }
-                        }
-                    }
-                }
-            }
+            //6.1. 将protoFo的mvDeltaTime偏移量计入 (参考30087-todo5&6);
+            result.mvDeltaTime += (protoFo.mvDeltaTime - result.mvDeltaTime) / (sumStrong - 1);
             
-            
-            //5. 从fo和conFo.mvDeltaTime中提取mv导致时间隔,在relateFo之前,赋值到result中;
-            result.mvDeltaTime = MAX(MAX(protoFo.mvDeltaTime, assFo.mvDeltaTime), result.mvDeltaTime);
+            //6.2. 将assFo的mvDeltaTime偏移量计入 (参考30087-todo5&6);
+            result.mvDeltaTime += (assFo.mvDeltaTime - result.mvDeltaTime) / sumStrong;
+            NSLog(@"偏移mvDeltaTime (从%.2f到%.2f) (总强度:%ld con1:%.2f con2:%.2f) ",frontMvDeltaTime4Log,result.mvDeltaTime,sumStrong,protoFo.mvDeltaTime,assFo.mvDeltaTime);
             
             //6. createAbsCmvNode (当正向类比,且result没有cmv指向时);
             if (protoFo.cmvNode_p && assMv && !result.cmvNode_p) {
