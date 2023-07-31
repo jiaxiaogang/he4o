@@ -11,7 +11,7 @@
 @class FoodView;
 @protocol BirdViewDelegate <NSObject>
 
--(NSArray *)birdView_GetFoodOnMouth:(CGRect)birdStart birdEnd:(CGRect)birdEnd;
+-(NSArray *)birdView_GetFoodOnHit:(CGRect)birdStart birdEnd:(CGRect)birdEnd;
 -(UIView*) birdView_GetPageView;
 -(CGRect) birdView_GetSeeRect;//视觉范围 (仅能看到范围内的view)
 -(UIDynamicAnimator*) birdView_GetDyAnimator;
@@ -69,6 +69,12 @@
  *  @param direction 从左顺时针,8个方向,分别为0-7;
  */
 -(void) touchWing:(long)direction;
+
+/**
+ *  MARK:--------------------摸脚--------------------
+ *  @param direction 从左顺时针,8个方向,分别为0-7;
+ */
+-(void) touchFoot:(long)direction;
 
 /**
  *  MARK:--------------------痛--------------------

@@ -115,7 +115,7 @@
         [foodView setCenter:targetPoint];
     }completion:^(BOOL finished) {
         //0. 扔后判断能吃到哪些坚果;
-        self.birdView.hitFoods = [self birdView_GetFoodOnMouth:self.birdView.frame birdEnd:self.birdView.frame];
+        self.birdView.hitFoods = [self birdView_GetFoodOnHit:self.birdView.frame birdEnd:self.birdView.frame];
         //1. 吃前视觉
         [self.birdView see:self.view];
         //2. 触碰到鸟嘴;
@@ -471,7 +471,7 @@
 /**
  *  MARK:--------------------BirdViewDelegate--------------------
  */
--(NSArray *)birdView_GetFoodOnMouth:(CGRect)birdStart birdEnd:(CGRect)birdEnd {
+-(NSArray *)birdView_GetFoodOnHit:(CGRect)birdStart birdEnd:(CGRect)birdEnd {
     return [self runCheckHit4Food:birdStart birdEnd:birdEnd];
 }
 
@@ -654,7 +654,7 @@
         [self.birdView see:self.view];
         
         //2. 投食碰撞检测 (参考28172-todo2.2);
-        self.birdView.hitFoods = [self birdView_GetFoodOnMouth:self.birdView.frame birdEnd:self.birdView.frame];
+        self.birdView.hitFoods = [self birdView_GetFoodOnHit:self.birdView.frame birdEnd:self.birdView.frame];
         if (ARRISOK(self.birdView.hitFoods)) {
             
             //3. 如果扔到鸟身上,则触发吃掉 (参考28172-todo2.1);

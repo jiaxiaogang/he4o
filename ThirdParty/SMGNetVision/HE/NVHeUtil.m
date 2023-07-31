@@ -154,6 +154,8 @@
         return [NSLog_Extension convertATType2Desc:value];
     }else if([FLY_RDS isEqualToString:algsType]){
         return [NVHeUtil fly2Str:value];
+    }else if([KICK_RDS isEqualToString:algsType]){
+        return [NVHeUtil fly2Str:value];
     }else if([@"direction" isEqualToString:dataSource]){
         return [NVHeUtil direction2Str:value];
     }

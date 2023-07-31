@@ -75,7 +75,8 @@
  *  MARK:--------------------Identify标识 (外围方)--------------------
  */
 #define EAT_RDS @"EAT_RDS"  //吸吮反射标识
-#define FLY_RDS @"FLY_RDS"  //扇翅膀反射标识 (类似人类的抓握反射)
+#define FLY_RDS @"FLY_RDS"  //扇翅膀反射标识 (类似抓握反射)
+#define KICK_RDS @"KICK_RDS"//脚踢反射标识 (类似膝跳反射)
 
 /**
  *  MARK:--------------------xgDebug调试模块--------------------

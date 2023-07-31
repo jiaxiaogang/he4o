@@ -85,7 +85,7 @@
         //5. 飞完动画时,要调用下碰撞检测 (因为UIView动画后,不会立马执行frame更新);
         [self.delegate birdView_FlyAnimationFinish];
         //5. 飞后与坚果碰撞检测 (参考28172-todo2.2 & 30041-记录3);
-        self.hitFoods = [self.delegate birdView_GetFoodOnMouth:birdStart birdEnd:self.frame];
+        self.hitFoods = [self.delegate birdView_GetFoodOnHit:birdStart birdEnd:self.frame];
         if (ARRISOK(self.hitFoods)) {
             
             //6. 如果飞到坚果上,则触发吃掉 (参考28172-todo2.1);
@@ -109,18 +109,22 @@
     }
 }
 
-//被动吃
--(void) touchMouth{
-    //2. 吃
-    [AIReactorControl commitReactor:EAT_RDS];
-}
-
 //MARK:===============================================================
 //MARK:                     < onclick >
 //MARK:===============================================================
 - (IBAction)mouchOnClick:(id)sender {
     DemoLog(@"鸟嘴 吸吮反射");
     [self touchMouth];
+}
+
+//MARK:===============================================================
+//MARK:                     < 摸反射 >
+//MARK:===============================================================
+
+//被动吃
+-(void) touchMouth{
+    //2. 吃
+    [AIReactorControl commitReactor:EAT_RDS];
 }
 
 /**
@@ -134,6 +138,15 @@
     //2. 飞行
     float data = direction / 8.0f;
     [AIReactorControl commitReactor:FLY_RDS datas:@[@(data)]];
+}
+
+/**
+ *  MARK:--------------------摸脚--------------------
+ *  @param direction 从左顺时针,8个方向,分别为0-7;
+ */
+-(void) touchFoot:(long)direction {
+    float data = direction / 8.0f;
+    [AIReactorControl commitReactor:KICK_RDS datas:@[@(data)]];
 }
 
 /**
@@ -208,6 +221,48 @@
 }
 
 //MARK:===============================================================
+//MARK:                     < 踢 >
+//MARK:===============================================================
+-(void) kickAction:(CGFloat)value{
+    //1. 数据检查
+    value = MAX(MIN(1, value), 0);
+    
+    //2. 将从左顺时针: "0至1",转换为: "-1至1";
+    CGFloat value_F1_1 = value * 2 - 1;
+    
+    //3. 将"-1至1",转为: "-180至180度";
+    CGFloat angle = value_F1_1 * M_PI;
+    
+    //4. 用sin计算对边Y,cos计算邻边X;
+    NSLog(@"kick >> %@ angle:%.0f",[NVHeUtil getLightStr_Value:value algsType:KICK_RDS dataSource:@""],value_F1_1 * 180);
+    CGFloat duration = 0.1f;
+    CGRect birdStart = self.frame;
+    [UIView animateWithDuration:duration / 2.0f animations:^{
+        [self.containerView.layer setTransform:CATransform3DMakeRotation(M_PI_4 * 0.5f, 1, 0, 0)];
+    }completion:^(BOOL finished) {
+        [UIView animateWithDuration:duration / 2.0f animations:^{
+            [self.containerView.layer setTransform:CATransform3DIdentity];
+        }completion:^(BOOL finished) {
+            //5. 飞后与坚果碰撞检测 (参考28172-todo2.2 & 30041-记录3);
+            self.hitFoods = [self.delegate birdView_GetFoodOnHit:birdStart birdEnd:self.frame];
+            if (ARRISOK(self.hitFoods)) {
+                
+                
+                //TODOTOMORROW20230731: 继续写踢行为...
+                
+                
+                
+                
+                //6. 如果飞到坚果上,则触发吃掉 (参考28172-todo2.1);
+                [self touchMouth];
+            }
+            //7. 强训飞完报告;
+            [theRT invoked:kFlySEL];
+        }];
+    }];
+}
+
+//MARK:===============================================================
 //MARK:                     < outputObserver >
 //MARK:===============================================================
 
@@ -259,6 +314,27 @@
                 
                 //2. 190731由飞改为叫;
                 [theApp setTipLog:@"叽叽喳喳叫一叫"];
+            }
+        }
+        //3. 脚踢反射
+        else if([KICK_RDS isEqualToString:model.identify]){
+            if (OutputObserverType_UseTime == model.type) {
+                model.useTime = 0.1f;
+            } else if (OutputObserverType_Front == model.type) {
+                //a. 踢前 => 行为动画;
+                NSLog(@"踢前视觉%p:%@",model,[NVHeUtil fly2Str:model.data.floatValue]);
+                [self kickAction:[model.data floatValue]];
+            }else if(OutputObserverType_Back == model.type){
+                
+                
+                //TODOTOMORROW20230731: 继续写踢行为...
+                
+                
+                
+                
+                //b. 飞后 => 视觉;
+                NSLog(@"飞后视觉%p:%@",model,[NVHeUtil fly2Str:model.data.floatValue]);
+                [self flyResult:[model.data floatValue]];
             }
         }
     }
