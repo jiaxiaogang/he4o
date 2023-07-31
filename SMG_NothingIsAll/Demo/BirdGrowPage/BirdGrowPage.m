@@ -395,6 +395,67 @@
     [self.birdView touchWing:7];
 }
 
+//MARK:===============================================================
+//MARK:                     < 摸脚按钮 >
+//MARK:===============================================================
+- (IBAction)touchFootBtnOnClick:(id)sender {
+    [self touchFootBlock:nil];
+}
+
+- (void)touchFootBlock:(NSNumber*)direction {
+    ISTitleLog(@"现实世界");
+    DemoLog(@"摸脚onClick");
+    //1. 计算random
+    long random = arc4random() % 8;
+    
+    //7. 指定方向参数时;
+    if (direction) {
+        random = NUMTOOK(direction).longValue;
+        NSLog(@"强训kick >> %@",[NVHeUtil getLightStr_Value:random / 8.0f algsType:KICK_RDS dataSource:@""]);
+    }
+    [self.birdView touchFoot:random];
+}
+- (IBAction)touchFootLeftOnClick:(id)sender {
+    [self animationFlash:sender];
+    DemoLog(@"摸脚onClick-左");
+    [self.birdView touchFoot:0];
+}
+- (IBAction)touchFootLeftUpOnClick:(id)sender {
+    [self animationFlash:sender];
+    DemoLog(@"摸脚onClick-左上");
+    [self.birdView touchFoot:1];
+}
+- (IBAction)touchFootUpOnClick:(id)sender {
+    [self animationFlash:sender];
+    DemoLog(@"摸脚onClick-上");
+    [self.birdView touchFoot:2];
+}
+- (IBAction)touchFootRightUpOnClick:(id)sender {
+    [self animationFlash:sender];
+    DemoLog(@"摸脚onClick-右上");
+    [self.birdView touchFoot:3];
+}
+- (IBAction)touchFootRightOnClick:(id)sender {
+    [self animationFlash:sender];
+    DemoLog(@"摸脚onClick-右");
+    [self.birdView touchFoot:4];
+}
+- (IBAction)touchFootRightDownOnClick:(id)sender {
+    [self animationFlash:sender];
+    DemoLog(@"摸脚onClick-右下");
+    [self.birdView touchFoot:5];
+}
+- (IBAction)touchFootDownOnClick:(id)sender {
+    [self animationFlash:sender];
+    DemoLog(@"摸脚onClick-下");
+    [self.birdView touchFoot:6];
+}
+- (IBAction)touchFootLeftDownOnClick:(id)sender {
+    [self animationFlash:sender];
+    DemoLog(@"摸脚onClick-左下");
+    [self.birdView touchFoot:7];
+}
+
 /**
  *  MARK:--------------------扔木棒--------------------
  *  @version

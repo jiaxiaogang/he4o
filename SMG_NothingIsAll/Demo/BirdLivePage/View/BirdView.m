@@ -241,7 +241,7 @@
     
     //5. 踢动作;
     [UIView animateWithDuration:duration / 2.0f animations:^{
-        [self.containerView.layer setTransform:CATransform3DMakeRotation(M_PI_4 * 0.5f, 1, 0, 0)];
+        [self.containerView.layer setTransform:CATransform3DMakeRotation(M_PI_4 * 1.0f, 1, 0, 0)];
     }completion:^(BOOL finished) {
         [UIView animateWithDuration:duration / 2.0f animations:^{
             [self.containerView.layer setTransform:CATransform3DIdentity];
