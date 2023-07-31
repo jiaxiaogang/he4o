@@ -20,12 +20,11 @@
 @property (strong,nonatomic) BirdView *birdView;
 @property (strong,nonatomic) UITapGestureRecognizer *singleTap;
 @property (strong,nonatomic) UITapGestureRecognizer *doubleTap;
+@property (strong,nonatomic) UITapGestureRecognizer *threeTap;
 @property (weak, nonatomic) IBOutlet UIView *farView;
 @property (weak, nonatomic) IBOutlet UIView *borderView;
 @property (weak, nonatomic) IBOutlet UIButton *throwWoodBtn;
 @property (strong, nonatomic) WoodView *woodView;
-@property(nonatomic,strong) UIDynamicAnimator *dyAnimator;
-@property (strong, nonatomic) UICollisionBehavior *collision;
 
 @property (assign, nonatomic) BOOL waitHiting; //碰撞检测中 (当扔木棒中时,做碰撞检测);
 @property (assign, nonatomic) BOOL isHited; //检测撞到了;
@@ -46,11 +45,18 @@
     [self.birdView setCenter:[self getBirdBirthPos]];
     self.birdView.delegate = self;
     
+    //3. threeTap
+    self.threeTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(threeTap:)];
+    self.threeTap.numberOfTapsRequired = 3;
+    self.threeTap.numberOfTouchesRequired = 1;
+    self.threeTap.delegate = self;
+    
     //3. doubleTap
     self.doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(doubleTap:)];
     self.doubleTap.numberOfTapsRequired = 2;
     self.doubleTap.numberOfTouchesRequired = 1;
     self.doubleTap.delegate = self;
+    [self.doubleTap requireGestureRecognizerToFail:self.threeTap];
     
     //4. singleTap
     self.singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTap:)];
@@ -58,6 +64,7 @@
     self.singleTap.numberOfTouchesRequired  = 1;
     self.singleTap.delegate = self;
     [self.singleTap requireGestureRecognizerToFail:self.doubleTap];
+    [self.singleTap requireGestureRecognizerToFail:self.threeTap];
     
     //4. farView
     [self.farView addGestureRecognizer:self.singleTap];
@@ -66,15 +73,13 @@
     [self.borderView.layer setBorderColor:[UIColor grayColor].CGColor];
     [self.borderView addGestureRecognizer:self.singleTap];
     [self.borderView addGestureRecognizer:self.doubleTap];
+    [self.borderView addGestureRecognizer:self.threeTap];
     [self.borderView.layer setBorderWidth:20];
     
     //6. woodView
     self.woodView = [[WoodView alloc] init];
     self.woodView.delegate = self;
     [self.view addSubview:self.woodView];
-    
-    //7. 创建物理仿真器，设置仿真范围，ReferenceView为参照视图
-    self.dyAnimator = [[UIDynamicAnimator alloc] initWithReferenceView:self.view];
 }
 
 -(void) initData{
@@ -115,7 +120,7 @@
         [foodView setCenter:targetPoint];
     }completion:^(BOOL finished) {
         //0. 扔后判断能吃到哪些坚果;
-        self.birdView.hitFoods = [self birdView_GetFoodOnHit:self.birdView.frame birdEnd:self.birdView.frame];
+        self.birdView.hitFoods = [self birdView_GetFoodOnHit:self.birdView.frame birdEnd:self.birdView.frame status:FoodStatus_Eat];
         //1. 吃前视觉
         [self.birdView see:self.view];
         //2. 触碰到鸟嘴;
@@ -137,7 +142,7 @@
     int randomY = 84 + (arc4random() % (int)(ScreenHeight - 168));//屏内y为84到screenW-84;
     
     //2. 投食物
-    [self food2Pos:CGPointMake(randomX, randomY) caller4RL:kFoodRdmSEL];
+    [self food2Pos:CGPointMake(randomX, randomY) caller4RL:kFoodRdmSEL status:FoodStatus_Eat];
 }
 
 /**
@@ -151,7 +156,7 @@
     int random = arc4random() % 8;
     
     //2. 随机方向扔食物
-    [self food2Pos:[self convertDirection2FoodPos:random] caller4RL:kFoodRdmNearSEL];
+    [self food2Pos:[self convertDirection2FoodPos:random] caller4RL:kFoodRdmNearSEL status:FoodStatus_Eat];
 }
 
 /**
@@ -181,6 +186,11 @@
 
 //单击投食
 - (void)singleTap:(UITapGestureRecognizer *)tapRecognizer{
+    [self clickTap4Food_General:tapRecognizer status:FoodStatus_Eat];
+}
+
+//因点击而投食
+- (void)clickTap4Food_General:(UITapGestureRecognizer *)tapRecognizer status:(FoodStatus)status{
     //1. 计算距离和角度
     UIView *tapView = tapRecognizer.view;
     CGPoint point = [tapRecognizer locationInView:tapView];                 //点击坐标
@@ -203,7 +213,7 @@
     if (targetPoint.x != 0 && targetPoint.y != 0) {
         DemoLog(@"远投 (X:%.2f Y:%.2f)",targetPoint.x,targetPoint.y);
         [theApp.heLogView addDemoLog:STRFORMAT(@"远投 (X:%.2f Y:%.2f)",targetPoint.x,targetPoint.y)];
-        [self food2Pos:targetPoint caller4RL:nil];
+        [self food2Pos:targetPoint caller4RL:nil status:status];
     }
 }
 
@@ -221,45 +231,51 @@
     int direction = (int)(angle * 8.0f);
     [self.birdView touchWing:direction];
 }
+
+//三击投带皮坚果
+- (void)threeTap:(UITapGestureRecognizer *)tapRecognizer{
+    [self clickTap4Food_General:tapRecognizer status:FoodStatus_Border];
+}
+
 - (IBAction)foodLeftOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-左");
-    [self food2Pos:[self convertDirection2FoodPos:0] caller4RL:nil];
+    [self food2Pos:[self convertDirection2FoodPos:0] caller4RL:nil status:FoodStatus_Eat];
 }
 - (IBAction)foodLeftUpOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-左上");
-    [self food2Pos:[self convertDirection2FoodPos:1] caller4RL:nil];
+    [self food2Pos:[self convertDirection2FoodPos:1] caller4RL:nil status:FoodStatus_Eat];
 }
 - (IBAction)foodUpOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-上");
-    [self food2Pos:[self convertDirection2FoodPos:2] caller4RL:nil];
+    [self food2Pos:[self convertDirection2FoodPos:2] caller4RL:nil status:FoodStatus_Eat];
 }
 - (IBAction)foodRightUpOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-右上");
-    [self food2Pos:[self convertDirection2FoodPos:3] caller4RL:nil];
+    [self food2Pos:[self convertDirection2FoodPos:3] caller4RL:nil status:FoodStatus_Eat];
 }
 - (IBAction)foodRightOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-右");
-    [self food2Pos:[self convertDirection2FoodPos:4] caller4RL:nil];
+    [self food2Pos:[self convertDirection2FoodPos:4] caller4RL:nil status:FoodStatus_Eat];
 }
 - (IBAction)foodRightDownOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-右下");
-    [self food2Pos:[self convertDirection2FoodPos:5] caller4RL:nil];
+    [self food2Pos:[self convertDirection2FoodPos:5] caller4RL:nil status:FoodStatus_Eat];
 }
 - (IBAction)foodDownOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-下");
-    [self food2Pos:[self convertDirection2FoodPos:6] caller4RL:nil];
+    [self food2Pos:[self convertDirection2FoodPos:6] caller4RL:nil status:FoodStatus_Eat];
 }
 - (IBAction)foodLeftDownOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-左下");
-    [self food2Pos:[self convertDirection2FoodPos:7] caller4RL:nil];
+    [self food2Pos:[self convertDirection2FoodPos:7] caller4RL:nil status:FoodStatus_Eat];
 }
 
 /**
@@ -532,8 +548,8 @@
 /**
  *  MARK:--------------------BirdViewDelegate--------------------
  */
--(NSArray *)birdView_GetFoodOnHit:(CGRect)birdStart birdEnd:(CGRect)birdEnd {
-    return [self runCheckHit4Food:birdStart birdEnd:birdEnd];
+-(NSArray *)birdView_GetFoodOnHit:(CGRect)birdStart birdEnd:(CGRect)birdEnd status:(FoodStatus)status{
+    return [self runCheckHit4Food:birdStart birdEnd:birdEnd status:status];
 }
 
 -(UIView*) birdView_GetPageView{
@@ -542,10 +558,6 @@
 
 -(CGRect)birdView_GetSeeRect{
     return CGRectMake(0, 64, ScreenWidth, ScreenHeight - 64 - 64);//naviBar和btmBtn
-}
-
--(UIDynamicAnimator*) birdView_GetDyAnimator {
-    return self.dyAnimator;
 }
 
 //2023.06.04: 废弃_将setFramed换成动画开始,二者是同时触发的,但setFramed有两个问题,1是无法传过来动画时间,2是它会触发两次;
@@ -681,7 +693,7 @@
  *  @version
  *      2023.06.23: 初版,解决飞的太快,导致飞过却没吃到的BUG (参考30041-记录3);
  */
--(NSArray*) runCheckHit4Food:(CGRect)birdStart birdEnd:(CGRect)birdEnd {
+-(NSArray*) runCheckHit4Food:(CGRect)birdStart birdEnd:(CGRect)birdEnd status:(FoodStatus)status{
     //1. 数据准备;
     NSMutableArray *result = [[NSMutableArray alloc] init];
     NSArray *foods = ARRTOOK([self.view subViews_AllDeepWithClass:FoodView.class]);
@@ -692,7 +704,7 @@
         CGFloat brRadio = distance == 0 ? 0 : i / distance;
         CGRect birdIFrame = [MathUtils radioRect:birdStart endRect:birdEnd radio:brRadio];
         for (FoodView *food in foods) {
-            if (![result containsObject:food] && CGRectIntersectsRect(birdIFrame, food.frame)) {
+            if (food.status == status && ![result containsObject:food] && CGRectIntersectsRect(birdIFrame, food.frame)) {
                 [result addObject:food];
             }
         }
@@ -703,9 +715,9 @@
     return result;
 }
 
-- (void) food2Pos:(CGPoint)targetPoint caller4RL:(NSString*)caller4RL{
+- (void) food2Pos:(CGPoint)targetPoint caller4RL:(NSString*)caller4RL status:(FoodStatus)status{
     FoodView *foodView = [[FoodView alloc] init];
-    [foodView hit];
+    foodView.status = status;
     [foodView setOrigin:CGPointMake(ScreenWidth * 0.375f, ScreenHeight - 66)];
     [self.view addSubview:foodView];
     [UIView animateWithDuration:0.3f animations:^{
@@ -715,7 +727,7 @@
         [self.birdView see:self.view];
         
         //2. 投食碰撞检测 (参考28172-todo2.2);
-        self.birdView.hitFoods = [self birdView_GetFoodOnHit:self.birdView.frame birdEnd:self.birdView.frame];
+        self.birdView.hitFoods = [self birdView_GetFoodOnHit:self.birdView.frame birdEnd:self.birdView.frame status:FoodStatus_Eat];
         if (ARRISOK(self.birdView.hitFoods)) {
             
             //3. 如果扔到鸟身上,则触发吃掉 (参考28172-todo2.1);

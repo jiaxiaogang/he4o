@@ -73,5 +73,10 @@
     [self refreshDisplay];
 }
 
+-(void)setStatus:(FoodStatus)status {
+    _status = status;
+    [self refreshDisplay];
+}
+
 @end
 

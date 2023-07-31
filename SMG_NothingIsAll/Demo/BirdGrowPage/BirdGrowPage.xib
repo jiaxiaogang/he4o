@@ -521,7 +521,7 @@
                         <action selector="stopWoodBtnOnClick:" destination="-1" eventType="touchUpInside" id="jwN-Uz-DOc"/>
                     </connections>
                 </button>
-                <view alpha="0.050000000000000003" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gAK-OR-lQf" userLabel="load">
+                <view userInteractionEnabled="NO" alpha="0.050000000000000003" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gAK-OR-lQf" userLabel="load">
                     <rect key="frame" x="20" y="118.66666666666669" width="583" height="100"/>
                     <color key="backgroundColor" red="1" green="0.1019250594" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>

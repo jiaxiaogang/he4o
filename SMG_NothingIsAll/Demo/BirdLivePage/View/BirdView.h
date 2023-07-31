@@ -7,14 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "FoodView.h"
 
-@class FoodView;
 @protocol BirdViewDelegate <NSObject>
 
--(NSArray *)birdView_GetFoodOnHit:(CGRect)birdStart birdEnd:(CGRect)birdEnd;
+-(NSArray *)birdView_GetFoodOnHit:(CGRect)birdStart birdEnd:(CGRect)birdEnd status:(FoodStatus)status;
 -(UIView*) birdView_GetPageView;
 -(CGRect) birdView_GetSeeRect;//视觉范围 (仅能看到范围内的view)
--(UIDynamicAnimator*) birdView_GetDyAnimator;
 -(void) birdView_SetFramed;
 -(void) birdView_FlyAnimationFinish;
 -(void) birdView_FlyAnimationBegin:(CGFloat)aniDuration;

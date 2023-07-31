@@ -18,7 +18,6 @@
 @property (strong,nonatomic) BirdView *birdView;
 @property (strong,nonatomic) RoadView *roadView;
 @property (strong,nonatomic) TreeView *treeView;
-@property (strong, nonatomic) UIDynamicAnimator *dyAnimator;
 
 @end
 
@@ -42,9 +41,6 @@
     //4. treeView
     self.treeView = [[TreeView alloc] init];
     [self.view addSubview:self.treeView];
-    
-    //5. dyAnimator
-    self.dyAnimator = [[UIDynamicAnimator alloc] initWithReferenceView:self.view];
 }
 
 /**
@@ -52,13 +48,6 @@
  */
 -(NSArray *)roadView_GetFoodInLoad{
     return [self.treeView subViews_AllDeepWithClass:FoodView.class];
-}
-
-/**
- *  MARK:--------------------BirdViewDelegate--------------------
- */
--(UIDynamicAnimator*) birdView_GetDyAnimator {
-    return self.dyAnimator;
 }
 
 @end
