@@ -15,6 +15,7 @@
 #define kWoodRdmSEL @"WoodRdm"                  //随机地点_扔木棒
 #define kEatSEL @"Eat"                          //吃
 #define kClearTCSEL @"ClearTC"                  //模拟重启
+#define kKickSEL @"Kick"                        //踢 (可传0-7 long参数: 踢方向)
 
 #define kBirthPosRdmSEL @"BirthPosRdm"          //出生在随机
 #define kBirthPosRdmCentSEL @"BirthPosRdmCent"  //出生在随机偏中间

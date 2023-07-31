@@ -223,8 +223,9 @@
 //MARK:===============================================================
 //MARK:                     < 踢 >
 //MARK:===============================================================
--(void) kickAction:(CGFloat)value{
+-(void) kickAction:(OutputModel*)model{
     //1. 数据检查
+    CGFloat value = [model.data floatValue];
     value = MAX(MIN(1, value), 0);
     
     //2. 将从左顺时针: "0至1",转换为: "-1至1";
@@ -235,31 +236,31 @@
     
     //4. 用sin计算对边Y,cos计算邻边X;
     NSLog(@"kick >> %@ angle:%.0f",[NVHeUtil getLightStr_Value:value algsType:KICK_RDS dataSource:@""],value_F1_1 * 180);
-    CGFloat duration = 0.1f;
+    CGFloat duration = model.useTime;
     CGRect birdStart = self.frame;
+    
+    //5. 踢动作;
     [UIView animateWithDuration:duration / 2.0f animations:^{
         [self.containerView.layer setTransform:CATransform3DMakeRotation(M_PI_4 * 0.5f, 1, 0, 0)];
     }completion:^(BOOL finished) {
         [UIView animateWithDuration:duration / 2.0f animations:^{
             [self.containerView.layer setTransform:CATransform3DIdentity];
         }completion:^(BOOL finished) {
-            //5. 飞后与坚果碰撞检测 (参考28172-todo2.2 & 30041-记录3);
-            self.hitFoods = [self.delegate birdView_GetFoodOnHit:birdStart birdEnd:self.frame];
-            if (ARRISOK(self.hitFoods)) {
-                
-                
-                //TODOTOMORROW20230731: 继续写踢行为...
-                
-                
-                
-                
-                //6. 如果飞到坚果上,则触发吃掉 (参考28172-todo2.1);
-                [self touchMouth];
-            }
-            //7. 强训飞完报告;
-            [theRT invoked:kFlySEL];
+            //6. 强训踢完报告;
+            [theRT invoked:kKickSEL];
         }];
     }];
+    
+    //7. 坚果踢出距离;
+    self.hitFoods = [self.delegate birdView_GetFoodOnHit:birdStart birdEnd:self.frame];
+    if (ARRISOK(self.hitFoods)) {
+        [UIView animateWithDuration:duration animations:^{
+            for (UIView *foodView in self.hitFoods) {
+                [foodView setX:foodView.x + (cos(angle) * 30.0f)];
+                [foodView setY:foodView.y + (sin(angle) * 30.0f)];
+            }
+        }];
+    }
 }
 
 //MARK:===============================================================
@@ -323,18 +324,11 @@
             } else if (OutputObserverType_Front == model.type) {
                 //a. 踢前 => 行为动画;
                 NSLog(@"踢前视觉%p:%@",model,[NVHeUtil fly2Str:model.data.floatValue]);
-                [self kickAction:[model.data floatValue]];
+                [self kickAction:model];
             }else if(OutputObserverType_Back == model.type){
-                
-                
-                //TODOTOMORROW20230731: 继续写踢行为...
-                
-                
-                
-                
                 //b. 飞后 => 视觉;
-                NSLog(@"飞后视觉%p:%@",model,[NVHeUtil fly2Str:model.data.floatValue]);
-                [self flyResult:[model.data floatValue]];
+                NSLog(@"踢后视觉%p:%@",model,[NVHeUtil fly2Str:model.data.floatValue]);
+                [self see:[self.delegate birdView_GetPageView]];
             }
         }
     }
