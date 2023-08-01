@@ -550,7 +550,7 @@
  *  MARK:--------------------BirdViewDelegate--------------------
  */
 -(NSArray *)birdView_GetFoodOnHit:(CGRect)birdStart birdEnd:(CGRect)birdEnd status:(FoodStatus)status{
-    return [self runCheckHit4Food:birdStart birdEnd:birdEnd status:status];
+    return [self runCheckHit4BirdFood:birdStart birdEnd:birdEnd status:status];
 }
 
 -(UIView*) birdView_GetPageView{
@@ -563,15 +563,15 @@
 
 //2023.06.04: 废弃_将setFramed换成动画开始,二者是同时触发的,但setFramed有两个问题,1是无法传过来动画时间,2是它会触发两次;
 -(void)birdView_SetFramed {
-    //[self runCheckHit:@"鸟位置变化"];
+    //[self runCheckHit4WoodBird:@"鸟位置变化"];
 }
 
 -(void)birdView_FlyAnimationFinish {
-    //[self runCheckHit:0 woodDuration:0 hiterDesc:@"鸟飞结束"];//动画执行完后,要调用下碰撞检测,因为UIView动画后不会立马更新frame (参考29098-追BUG1);
+    //[self runCheckHit4WoodBird:0 woodDuration:0 hiterDesc:@"鸟飞结束"];//动画执行完后,要调用下碰撞检测,因为UIView动画后不会立马更新frame (参考29098-追BUG1);
 }
 
 -(void) birdView_FlyAnimationBegin:(CGFloat)aniDuration {
-    //[self runCheckHit:aniDuration woodDuration:0 hiterDesc:@"鸟飞开始"];
+    //[self runCheckHit4WoodBird:aniDuration woodDuration:0 hiterDesc:@"鸟飞开始"];
 }
 
 /**
@@ -580,16 +580,17 @@
 
 //2023.06.04: 废弃_将setFramed换成动画开始,二者是同时触发的,但setFramed有两个问题,1是无法传过来动画时间,2是它会触发两次;
 -(void)woodView_SetFramed {
-    [self runCheckHit:0 woodDuration:0 hiterDesc:@"棒扔位置变化"];
+    [self runCheckHit4WoodBird:0 woodDuration:0 hiterDesc:@"棒扔位置变化"];
+    [self runCheckHit4WoodFood];
 }
 
 -(void) woodView_WoodAnimationFinish {
-    [self runCheckHit:0 woodDuration:0 hiterDesc:@"棒扔结束"];//动画执行完后,要调用下碰撞检测,因为UIView动画后不会立马更新frame (参考29098-追BUG1);
+    [self runCheckHit4WoodBird:0 woodDuration:0 hiterDesc:@"棒扔结束"];//动画执行完后,要调用下碰撞检测,因为UIView动画后不会立马更新frame (参考29098-追BUG1);
     self.waitHiting = false;//木棒动画结束时,同时碰撞检测也结束;
 }
 
 -(void) woodView_FlyAnimationBegin:(CGFloat)aniDuration {
-    //[self runCheckHit:0 woodDuration:aniDuration hiterDesc:@"棒扔开始"];
+    //[self runCheckHit4WoodBird:0 woodDuration:aniDuration hiterDesc:@"棒扔开始"];
 }
 
 //MARK:===============================================================
@@ -616,7 +617,7 @@
  *      2023.06.09: 修复因分母为0,导致分帧rect取到NaN,导致交集全判为撞到的BUG (参考30015);
  *      2023.07.26: 改为每帧木棒变动都进行碰撞检测 & 且改为帧动画后不需要每次调用再分10帧了改为2 (参考30087-todo2);
  */
--(void) runCheckHit:(CGFloat)birdDuration woodDuration:(CGFloat)woodDuration hiterDesc:(NSString*)hiterDesc {
+-(void) runCheckHit4WoodBird:(CGFloat)birdDuration woodDuration:(CGFloat)woodDuration hiterDesc:(NSString*)hiterDesc {
     //1. 非检查中 或 已检测到碰撞 => 返回;
     if (!self.waitHiting || self.isHited) return;
     
@@ -698,59 +699,31 @@
     //3. 上帧为空时,直接等于当前帧;
     if (CGRectIsNull(self.lastWoodFrame)) {
         self.lastWoodFrame = self.woodView.showFrame;
-        return;
     }
     
     //4. 分10帧,检查每帧棒鸟是否有碰撞 (参考29098-方案3-步骤3);
     NSInteger frameCount = 3;
     for (NSInteger i = 0; i < frameCount; i++) {
         //5. 取上下等份的Rect取并集,避免两等份间距过大,导致错漏检测问题 (参考29098-测BUG2);
+        CGFloat radio1 = i / (float)frameCount, radio2 = (i+1) / (float)frameCount;
+        CGRect wr1 = [MathUtils radioRect:self.lastWoodFrame endRect:self.woodView.showFrame radio:radio1];
+        CGRect wr2 = [MathUtils radioRect:self.lastWoodFrame endRect:self.woodView.showFrame radio:radio2];
+        CGRect wrUnion = [MathUtils collectRectA:wr1 rectB:wr2];
+        
+        //6. 分别与每个food进行碰撞检测;
         for (FoodView *food in foods) {
-            CGFloat radio = i / (float)frameCount;
-            CGRect wr1 = [MathUtils radioRect:self.lastWoodFrame endRect:self.woodView.showFrame radio:radio];
-            
-            
-            //TODOTOMORROW20230801: 继续写木棒与坚果的碰撞检测;
-            
-            
-            
-            CGRect wrUnion = [MathUtils collectRectA:wr1 rectB:wr2];
-            CGRect brUnion = [MathUtils collectRectA:br1 rectB:br2];
-            if (CGRectIntersectsRect(wrUnion, brUnion)) {
-                self.isHited = true;
-                break;
+            if (CGRectIntersectsRect(wrUnion, food.showFrame)) {
+                if (![result containsObject:food]) [result addObject:food];
+                continue;
             }
         }
     }
     
-    //6. 前段没执行完,后段再执行下检查;
-    if (!self.isHited && firstCheckTime != totalTime) {
-        //a. wr1br1就是前段的结尾处;
-        CGFloat wrRadio1 = woodTime == 0 ? 0 : firstCheckTime / woodTime, brRadio1 = birdTime == 0 ? 0 : firstCheckTime / birdTime;
-        CGRect wr1 = [MathUtils radioRect:self.lastHitModel.woodFrame endRect:curHitModel.woodFrame radio:wrRadio1];
-        CGRect br1 = [MathUtils radioRect:self.lastHitModel.birdFrame endRect:curHitModel.birdFrame radio:brRadio1];
-        //b. wr2br2直接就是最结尾,即curHitModel的位置;
-        CGRect wr2 = curHitModel.woodFrame;
-        CGRect br2 = curHitModel.birdFrame;
-        //c. 后段碰撞检测;
-        CGRect wrUnion = [MathUtils collectRectA:wr1 rectB:wr2];
-        CGRect brUnion = [MathUtils collectRectA:br1 rectB:br2];
-        if (CGRectIntersectsRect(wrUnion, brUnion)) {
-            self.isHited = true;
-        }
+    //7. 压到破皮;
+    for (FoodView *item in result) {
+        item.status = FoodStatus_Eat;
     }
-    
-    //5. 保留lastHitModel & 撞到时触发痛感 (参考29098-方案3-步骤2);
-    if (self.isHited) {
-        NSLog(@"碰撞检测: %@ 棒(%.0f -> %.0f) 鸟(%.0f,%.0f -> %.0f,%.0f) from:%@",self.isHited ? @"撞到了" : @"没撞到",
-              self.lastHitModel.woodFrame.origin.x,curHitModel.woodFrame.origin.x,
-              self.lastHitModel.birdFrame.origin.x,self.lastHitModel.birdFrame.origin.y,
-              curHitModel.birdFrame.origin.x,curHitModel.birdFrame.origin.y,hiterDesc);
-    }
-    self.lastHitModel = curHitModel;
-    if (self.isHited) {
-        [self.birdView hurt];
-    }
+    if (ARRISOK(result)) NSLog(@"碰撞检测,棒压坚果数:%ld 棒(%.0f -> %.0f)",result.count,self.lastWoodFrame.origin.x,self.woodView.showX);
 }
 
 /**
@@ -760,7 +733,7 @@
  *  @version
  *      2023.06.23: 初版,解决飞的太快,导致飞过却没吃到的BUG (参考30041-记录3);
  */
--(NSArray*) runCheckHit4Food:(CGRect)birdStart birdEnd:(CGRect)birdEnd status:(FoodStatus)status{
+-(NSArray*) runCheckHit4BirdFood:(CGRect)birdStart birdEnd:(CGRect)birdEnd status:(FoodStatus)status{
     //1. 数据准备;
     NSMutableArray *result = [[NSMutableArray alloc] init];
     NSArray *foods = ARRTOOK([self.view subViews_AllDeepWithClass:FoodView.class]);
