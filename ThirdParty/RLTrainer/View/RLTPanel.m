@@ -15,6 +15,7 @@
 #import "TVUtil.h"
 #import "XGDebugTV.h"
 #import "XGLabCell.h"
+#import "FoodView.h"
 
 @interface RLTPanel () <UITableViewDelegate,UITableViewDataSource>
 
@@ -466,7 +467,7 @@
     [theRT queue1:Queue(kBirthPosRdmSEL)];
     
     //2. 饥饿,随机扔个坚果 x 200次;
-    [theRT queueN:@[Queue(kGrowPageSEL),Queue(kHungerSEL),Queue(kFoodRdmSEL),Queue(kMainPageSEL),Queue(kClearTCSEL)] count:200];
+    [theRT queueN:@[Queue(kGrowPageSEL),Queue(kHungerSEL),Queue0(kFoodRdmSEL,@(FoodStatus_Eat)),Queue(kMainPageSEL),Queue(kClearTCSEL)] count:200];
 }
 
 /**
@@ -503,6 +504,18 @@
 - (IBAction)eat3BtnClick:(id)sender {
     
 }
+
+//MARK:===============================================================
+//MARK:                     < 搬运训练 >
+//MARK:===============================================================
+- (IBAction)kick1BtnClick:(id)sender {
+    //1. 随机出生;
+    [theRT queue1:Queue(kBirthPosRdmSEL)];
+    
+    //2. 饥饿,随机扔个坚果 x 200次;
+    [theRT queueN:@[Queue(kGrowPageSEL),Queue(kHungerSEL),Queue0(kFoodRdmSEL,@(FoodStatus_Border)),Queue(kMainPageSEL),Queue(kClearTCSEL)] count:200];
+}
+
 
 //MARK:===============================================================
 //MARK:       < UITableViewDataSource &  UITableViewDelegate>

@@ -89,7 +89,7 @@
     [theRT regist:kWoodLeftSEL target:self selector:@selector(throwWood_Left)];
     [theRT regist:kWoodRdmSEL target:self selector:@selector(throwWood_Rdm)];
     [theRT regist:kHungerSEL target:self selector:@selector(rtHungerBlock)];
-    [theRT regist:kFoodRdmSEL target:self selector:@selector(randomThrowFood4Screen)];
+    [theRT regist:kFoodRdmSEL target:self selector:@selector(randomThrowFood4Screen:)];
     [theRT regist:kFoodRdmNearSEL target:self selector:@selector(randomThrowFood4Near)];
 }
 
@@ -137,13 +137,14 @@
 /**
  *  MARK:--------------------随机屏内扔个坚果--------------------
  */
--(void) randomThrowFood4Screen {
+-(void) randomThrowFood4Screen:(NSNumber*)statusNum {
     //1. 数据准备;
     int randomX = 20 + (arc4random() % (int)(ScreenWidth - 40));//屏内x为20到screenW-20;
     int randomY = 84 + (arc4random() % (int)(ScreenHeight - 168));//屏内y为84到screenW-84;
+    FoodStatus status = NUMTOOK(statusNum).intValue;
     
     //2. 投食物
-    [self food2Pos:CGPointMake(randomX, randomY) caller4RL:kFoodRdmSEL status:FoodStatus_Eat];
+    [self food2Pos:CGPointMake(randomX, randomY) caller4RL:kFoodRdmSEL status:status];
 }
 
 /**
