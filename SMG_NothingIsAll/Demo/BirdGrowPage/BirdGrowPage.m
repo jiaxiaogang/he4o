@@ -29,6 +29,7 @@
 @property (assign, nonatomic) BOOL waitHiting; //碰撞检测中 (当扔木棒中时,做碰撞检测);
 @property (assign, nonatomic) BOOL isHited; //检测撞到了;
 @property (strong, nonatomic) HitItemModel *lastHitModel;
+@property (assign, nonatomic) CGRect lastWoodFrame;//用于木棒食物碰撞检测
 
 @end
 
@@ -653,6 +654,72 @@
         if (CGRectIntersectsRect(wrUnion, brUnion)) {
             self.isHited = true;
             break;
+        }
+    }
+    
+    //6. 前段没执行完,后段再执行下检查;
+    if (!self.isHited && firstCheckTime != totalTime) {
+        //a. wr1br1就是前段的结尾处;
+        CGFloat wrRadio1 = woodTime == 0 ? 0 : firstCheckTime / woodTime, brRadio1 = birdTime == 0 ? 0 : firstCheckTime / birdTime;
+        CGRect wr1 = [MathUtils radioRect:self.lastHitModel.woodFrame endRect:curHitModel.woodFrame radio:wrRadio1];
+        CGRect br1 = [MathUtils radioRect:self.lastHitModel.birdFrame endRect:curHitModel.birdFrame radio:brRadio1];
+        //b. wr2br2直接就是最结尾,即curHitModel的位置;
+        CGRect wr2 = curHitModel.woodFrame;
+        CGRect br2 = curHitModel.birdFrame;
+        //c. 后段碰撞检测;
+        CGRect wrUnion = [MathUtils collectRectA:wr1 rectB:wr2];
+        CGRect brUnion = [MathUtils collectRectA:br1 rectB:br2];
+        if (CGRectIntersectsRect(wrUnion, brUnion)) {
+            self.isHited = true;
+        }
+    }
+    
+    //5. 保留lastHitModel & 撞到时触发痛感 (参考29098-方案3-步骤2);
+    if (self.isHited) {
+        NSLog(@"碰撞检测: %@ 棒(%.0f -> %.0f) 鸟(%.0f,%.0f -> %.0f,%.0f) from:%@",self.isHited ? @"撞到了" : @"没撞到",
+              self.lastHitModel.woodFrame.origin.x,curHitModel.woodFrame.origin.x,
+              self.lastHitModel.birdFrame.origin.x,self.lastHitModel.birdFrame.origin.y,
+              curHitModel.birdFrame.origin.x,curHitModel.birdFrame.origin.y,hiterDesc);
+    }
+    self.lastHitModel = curHitModel;
+    if (self.isHited) {
+        [self.birdView hurt];
+    }
+}
+
+//木棒与食物碰撞检测
+-(void) runCheckHit4WoodFood {
+    //1. 数据准备;
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    NSArray *foods = [SMGUtils filterArr:[self.view subViews_AllDeepWithClass:FoodView.class] checkValid:^BOOL(FoodView *item) {
+        return item.status == FoodStatus_Border;
+    }];
+    
+    //3. 上帧为空时,直接等于当前帧;
+    if (CGRectIsNull(self.lastWoodFrame)) {
+        self.lastWoodFrame = self.woodView.showFrame;
+        return;
+    }
+    
+    //4. 分10帧,检查每帧棒鸟是否有碰撞 (参考29098-方案3-步骤3);
+    NSInteger frameCount = 3;
+    for (NSInteger i = 0; i < frameCount; i++) {
+        //5. 取上下等份的Rect取并集,避免两等份间距过大,导致错漏检测问题 (参考29098-测BUG2);
+        for (FoodView *food in foods) {
+            CGFloat radio = i / (float)frameCount;
+            CGRect wr1 = [MathUtils radioRect:self.lastWoodFrame endRect:self.woodView.showFrame radio:radio];
+            
+            
+            //TODOTOMORROW20230801: 继续写木棒与坚果的碰撞检测;
+            
+            
+            
+            CGRect wrUnion = [MathUtils collectRectA:wr1 rectB:wr2];
+            CGRect brUnion = [MathUtils collectRectA:br1 rectB:br2];
+            if (CGRectIntersectsRect(wrUnion, brUnion)) {
+                self.isHited = true;
+                break;
+            }
         }
     }
     
