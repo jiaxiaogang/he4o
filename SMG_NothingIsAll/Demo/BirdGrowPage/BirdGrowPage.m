@@ -45,6 +45,7 @@
     [self.view addSubview:self.birdView];
     [self.birdView setCenter:[self getBirdBirthPos]];
     self.birdView.delegate = self;
+    self.birdView.userInteractionEnabled = false;
     
     //3. threeTap
     self.threeTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(threeTap:)];
@@ -219,8 +220,13 @@
     }
 }
 
-//双击飞行
+//双击投带皮坚果
 - (void)doubleTap:(UITapGestureRecognizer *)tapRecognizer{
+    [self clickTap4Food_General:tapRecognizer status:FoodStatus_Border];
+}
+
+//三击飞行
+- (void)threeTap:(UITapGestureRecognizer *)tapRecognizer{
     //1. 计算距离和角度
     UIView *tapView = tapRecognizer.view;
     CGPoint point = [tapRecognizer locationInView:tapView];                 //点击坐标
@@ -232,11 +238,6 @@
     angle = [NVViewUtil convertAngle2Direction_8:angle];
     int direction = (int)(angle * 8.0f);
     [self.birdView touchWing:direction];
-}
-
-//三击投带皮坚果
-- (void)threeTap:(UITapGestureRecognizer *)tapRecognizer{
-    [self clickTap4Food_General:tapRecognizer status:FoodStatus_Border];
 }
 
 - (IBAction)foodLeftOnClick:(id)sender {
