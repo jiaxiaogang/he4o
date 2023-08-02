@@ -72,12 +72,16 @@
                 int height = NUMTOOK([AINetIndex getData:[SMGUtils filterSingleFromArr:algNode.content_ps checkValid:^BOOL(AIKVPointer *item) {
                     return [@"sizeHeight" isEqualToString:item.dataSource];
                 }]]).intValue;
+                int border = NUMTOOK([AINetIndex getData:[SMGUtils filterSingleFromArr:algNode.content_ps checkValid:^BOOL(AIKVPointer *item) {
+                    return [@"border" isEqualToString:item.dataSource];
+                }]]).intValue;
                 if (height == 100) {
                     lightStr = STRFORMAT(@"%@,棒",lightStr);
                 } else if (height == 30) {
                     lightStr = STRFORMAT(@"%@,鸟",lightStr);
                 } else if (height == 5) {
-                    lightStr = STRFORMAT(@"%@,果",lightStr);
+                    if (border > 0) lightStr = STRFORMAT(@"%@,皮果",lightStr);
+                    else lightStr = STRFORMAT(@"%@,果",lightStr);
                 }
                 
                 //简化日志2: 飞不加header

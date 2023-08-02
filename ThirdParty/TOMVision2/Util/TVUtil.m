@@ -225,8 +225,6 @@
         return [TVUtil distanceYDesc:value];
     }else if([FLY_RDS isEqualToString:value_p.algsType]){
         return STRFORMAT(@"%@",valueStr);
-    }else if([@"border" isEqualToString:value_p.algsType]){
-        return value > 0 ? @"皮" : @"";
     }
     return @"";//valueStr
 }
