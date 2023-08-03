@@ -726,6 +726,14 @@
         item.status = FoodStatus_Eat;
     }
     if (ARRISOK(result)) NSLog(@"碰撞检测,棒压坚果数:%ld 棒(%.0f -> %.0f)",result.count,self.lastWoodFrame.origin.x,self.woodView.showX);
+    
+    //8. 保留lastWoodFrame
+    self.lastWoodFrame = self.woodView.showFrame;
+    
+    //9. 触发视觉
+    if (ARRISOK(result)) {
+        [self.birdView see:self.view];
+    }
 }
 
 /**
