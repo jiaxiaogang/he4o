@@ -111,6 +111,13 @@
     [theTC.inModelManager add:shortModel];
     
     //4. P不需要时序识别,但可以触发学习 => 提交学习识别;
+    
+    
+    //TODOTOMORROW20230805: protoFo是以mv为结尾构建时序,然后又想以mv为一帧来识别 (参考30093-方案1-改动点);
+    
+    
+    
+    
     [TCRecognition pRecognition:shortModel.protoFo];
 }
 
