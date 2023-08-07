@@ -89,6 +89,9 @@
 
 /**
  *  MARK:--------------------pInput--------------------
+ *  @desc pInput时:
+ *          1. 生成的protoFo构建指向mv的时序,并用于learning学习;
+ *          2. 生成的protoFo4PInput构建mv放到content末帧的时序,并用于pInput时的时序识别 (参考30094-todo3);
  *  @version
  *      2023.03.11: mv也生成shortModel,并加入瞬时序列 (参考28171-todo6);
  *      2023.03.11: 捋一下mv输入不需要概念识别和时序识别 (参考28171-todo5);
@@ -110,15 +113,14 @@
     //3. P不需要概念识别,但可以直接生成AIShortMatchModel,并收集到瞬时序列 => 将mModel保留 (只有先保留后,构建时序时,才会含新帧概念);
     [theTC.inModelManager add:shortModel];
     
-    //4. P不需要时序识别,但可以触发学习 => 提交学习识别;
+    //4. protoFo4PInput是以mv为结尾构建时序,然后又想以mv为一帧来识别 (参考30093-方案1-改动点 & 30094-todo3);
+    shortModel.protoFo4PInput = [theNet createConFo:[theTC.inModelManager shortCache:false]];
     
+    //5. P不需要时序识别,但可以触发学习 => 提交学习识别;
+    [TCRecognition pRecognition:shortModel];
     
-    //TODOTOMORROW20230805: protoFo是以mv为结尾构建时序,然后又想以mv为一帧来识别 (参考30093-方案1-改动点);
-    
-    
-    
-    
-    [TCRecognition pRecognition:shortModel.protoFo];
+    //6. 学习
+    [TCLearning pLearning:shortModel.protoFo];
 }
 
 +(void) hInput:(TOAlgModel*)algModel{

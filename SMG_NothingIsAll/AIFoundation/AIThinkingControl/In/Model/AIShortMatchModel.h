@@ -70,6 +70,7 @@
  */
 @property (strong, nonatomic) AIFoNodeBase *protoFo;    //识别时赋值
 @property (strong, nonatomic) AIFoNodeBase *regroupFo;  //反思时赋值
+@property (strong, nonatomic) AIFoNodeBase *protoFo4PInput;//P输出时赋值 (将mv放到protoFo的content末位) (参考30094-todo3);
 
 /**
  *  MARK:--------------------由matchAlg构建的时序--------------------
