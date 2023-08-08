@@ -45,19 +45,6 @@
             [AIAnalogy analogyOutside:protoFo assFo:matchFo type:ATDefault];
         }
     }
-    
-    //4. 取cmvNode: tip反馈 & 生成p任务;
-    AICMVNode *cmvNode = [SMGUtils searchNode:protoFo.cmvNode_p];
-    if (!ISOK(cmvNode, AICMVNode.class)) {
-        return;
-    }
-    
-    //4. tip_OPushM
-    DebugE();
-    [TCFeedback feedbackTIP:protoFo cmvNode:cmvNode];
-    
-    //2. top_OPushM
-    [TCFeedback feedbackTOP:cmvNode];
 }
 
 /**

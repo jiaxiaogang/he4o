@@ -121,6 +121,32 @@
     
     //6. 学习
     [TCLearning pLearning:shortModel.protoFo];
+    
+    //7. 取cmvNode: tip反馈: tip_OPushM & top_OPushM;
+    AICMVNode *cmvNode = [SMGUtils searchNode:shortModel.protoFo.cmvNode_p];
+    if (!ISOK(cmvNode, AICMVNode.class)) {
+        return;
+    }
+    [TCFeedback feedbackTIP:shortModel.protoFo cmvNode:cmvNode];
+    [TCFeedback feedbackTOP:cmvNode];
+    
+    //todotomorrow20230808:
+    //  1. 测下p时序识别
+    //  2. 考虑demand: 然后用不用写成pDemand啥的;
+    //  3. 考虑下forecast: 考虑下这个是否需要支持;
+    
+    
+//    //8. 任务=>生成p任务: 行为不构建任务和预测 (参考28137-修复);
+//    [TCDemand rDemand:mModel];
+//
+//    //9. 为新matchPFos & matchRFos构建反省触发器;
+//    [TCForecast forecast_Multi:mModel.matchPFos];
+//    [TCForecast forecast_Multi:mModel.matchRFos];
+
+    
+    
+    
+    
 }
 
 +(void) hInput:(TOAlgModel*)algModel{
