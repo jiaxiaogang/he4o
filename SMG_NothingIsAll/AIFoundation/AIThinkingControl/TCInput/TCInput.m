@@ -95,6 +95,7 @@
  *  @version
  *      2023.03.11: mv也生成shortModel,并加入瞬时序列 (参考28171-todo6);
  *      2023.03.11: 捋一下mv输入不需要概念识别和时序识别 (参考28171-todo5);
+ *      2023.08.08: pInput时支持时序识别 & 构建任务 & 预测 (参考30094-todo3 & todo5);
  */
 +(void) pInput:(AICMVNode*)mv{
     ISGroupLog(@"input P");
@@ -130,23 +131,12 @@
     [TCFeedback feedbackTIP:shortModel.protoFo cmvNode:cmvNode];
     [TCFeedback feedbackTOP:cmvNode];
     
-    //todotomorrow20230808:
-    //  1. 测下p时序识别
-    //  2. 考虑demand: 然后用不用写成pDemand啥的;
-    //  3. 考虑下forecast: 考虑下这个是否需要支持;
-    
-    
-//    //8. 任务=>生成p任务: 行为不构建任务和预测 (参考28137-修复);
-//    [TCDemand rDemand:mModel];
-//
-//    //9. 为新matchPFos & matchRFos构建反省触发器;
-//    [TCForecast forecast_Multi:mModel.matchPFos];
-//    [TCForecast forecast_Multi:mModel.matchRFos];
+    //8. 任务=>生成p任务: 行为不构建任务和预测 (参考28137-修复);
+    [TCDemand rDemand:shortModel];
 
-    
-    
-    
-    
+    //9. 为新matchPFos & matchRFos构建反省触发器;
+    [TCForecast forecast_Multi:shortModel.matchPFos];
+    [TCForecast forecast_Multi:shortModel.matchRFos];
 }
 
 +(void) hInput:(TOAlgModel*)algModel{

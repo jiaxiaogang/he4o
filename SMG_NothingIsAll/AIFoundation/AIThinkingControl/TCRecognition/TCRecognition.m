@@ -45,10 +45,6 @@
     AIFoNodeBase *protoFo = model.protoFo4PInput;
     [theTC updateOperCount:kFILENAME];
     Debug();
-    
-    //TODOTOMORROW20230807: 此处针对pInput的时序识别应该是有所不同的,明天试着重写下先;
-    
-    
     [TIUtils recognitionFo:protoFo except_ps:except_ps decoratorInModel:model fromRegroup:false matchAlgs:nil protoOrRegroupCutIndex:protoFo.count - 1];
     DebugE();
 }
