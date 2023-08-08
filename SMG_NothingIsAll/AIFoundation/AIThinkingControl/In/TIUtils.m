@@ -374,10 +374,10 @@
         AIAlgNodeBase *protoAlg = [SMGUtils searchNode:proto_p];
         
         //4. 每个abs_p分别索引;
-        NSArray *protoAlgAbsPorts = [protoAlg.absPorts copy];
-        for (AIPort *absPort in protoAlgAbsPorts) {
+        NSArray *protoAlgAbs_ps = ISOK(protoAlg, AICMVNodeBase.class) ? @[proto_p] : Ports2Pits([protoAlg.absPorts copy]);
+        for (AIKVPointer *absAlg_p in protoAlgAbs_ps) {
             //6. 第2_取abs_p的refPorts (参考28107-todo2);
-            AIAlgNodeBase *absAlg = [SMGUtils searchNode:absPort.target_p];
+            AIAlgNodeBase *absAlg = [SMGUtils searchNode:absAlg_p];
             NSArray *refPorts = [[AINetUtils refPorts_All4Alg_Normal:absAlg] copy];
             
             //6. RFo的长度>1才有意义 (参考28183-BUG1);
