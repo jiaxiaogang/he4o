@@ -60,6 +60,11 @@
     return [self create_General:absFo_p conMvs:conMvs at:algsType ds:dataSource urgentTo_p:urgentTo_p delta_p:delta_p];
 }
 
+/**
+ *  MARK:--------------------mvNode构建器--------------------
+ *  @version
+ *      2023.08.09: 支持全局防重 (参考30095-方案3);
+ */
 -(AIAbsCMVNode*) create_General:(AIKVPointer*)absFo_p conMvs:(NSArray*)conMvs at:(NSString*)at ds:(NSString*)ds urgentTo_p:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p{
     //1. 数据
     if (!ARRISOK(conMvs) || !urgentTo_p || !delta_p) {
@@ -67,17 +72,28 @@
     }
     at = STRTOOK(at);
     ds = STRTOOK(ds);
-
-    //2. 创建absCMVNode;
-    AIAbsCMVNode *result = [[AIAbsCMVNode alloc] init];
-    result.pointer = [SMGUtils createPointer:kPN_ABS_CMV_NODE algsType:at dataSource:ds isOut:false type:ATDefault];
-    result.foNode_p = absFo_p;
-    result.urgentTo_p = (AIKVPointer*)urgentTo_p;
-    result.delta_p = (AIKVPointer*)delta_p;
+    NSArray *content_ps = @[urgentTo_p, delta_p];
+    NSArray *sort_ps = [SMGUtils sortPointers:content_ps];
+    
+    //2. 全局防重;
+    AIAbsCMVNode *result = [AINetIndexUtils getAbsoluteMatching_General:content_ps sort_ps:sort_ps except_ps:nil getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
+        return [SMGUtils filterArr:[AINetUtils refPorts_All4Value:item_p] checkValid:^BOOL(AIPort *item) {
+            return [kPN_ALG_ABS_NODE isEqualToString:item.target_p.folderName];
+        }];
+    } at:at ds:ds type:ATDefault];
+    
+    //3. 无则新构建;
+    if (!ISOK(result, AICMVNodeBase.class)) {
+        result = [[AIAbsCMVNode alloc] init];
+        result.pointer = [SMGUtils createPointer:kPN_ABS_CMV_NODE algsType:at dataSource:ds isOut:false type:ATDefault];
+        result.foNode_p = absFo_p;
+        result.urgentTo_p = urgentTo_p;
+        result.delta_p = delta_p;
+    }
+    
+    //4. 抽具象关联插线 & 存储抽具象节点;
     [AINetUtils insertRefPorts_AllMvNode:result value_p:result.urgentTo_p difStrong:1];//引用插线
     [AINetUtils insertRefPorts_AllMvNode:result value_p:result.delta_p difStrong:1];//引用插线
-
-    //3. 抽具象关联插线 & 存储抽具象节点;
     [AINetUtils relateMvAbs:result conNodes:conMvs isNew:true];
 
     //4. 方向索引

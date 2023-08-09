@@ -109,7 +109,7 @@ static AIThinkingControl *_instance;
     //3. 分流_mv时
     if (findMV) {
         //1. 打包cmvNode;
-        AICMVNode *mvNode = [theNet createConMv:algsArr];
+        AICMVNodeBase *mvNode = [theNet createConMv:algsArr];
         
         //2. 加入瞬时记忆 & 生成时序指向mv等;
         [TCInput pInput:mvNode];

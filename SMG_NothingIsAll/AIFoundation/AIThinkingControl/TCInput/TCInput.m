@@ -97,7 +97,7 @@
  *      2023.03.11: 捋一下mv输入不需要概念识别和时序识别 (参考28171-todo5);
  *      2023.08.08: pInput时支持时序识别 & 构建任务 & 预测 (参考30094-todo3 & todo5);
  */
-+(void) pInput:(AICMVNode*)mv{
++(void) pInput:(AICMVNodeBase*)mv{
     ISGroupLog(@"input P");
     [theTC updateLoopId];
     [theTC updateOperCount:kFILENAME];

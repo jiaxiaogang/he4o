@@ -28,7 +28,7 @@
  *      20200416 - 将先"mv需求处理"后"学习",改为先"学习"后"mv需求处理",因为外层死循环 (参考n19p5-B组BUG2);
  *      20210120 - 支持tir_OPush()反向反馈类比;
  */
-+(void) pRegroup:(AICMVNode*)mv shortModel:(AIShortMatchModel*)shortModel{
++(void) pRegroup:(AICMVNodeBase*)mv shortModel:(AIShortMatchModel*)shortModel{
     //1. 联想到mv时,创建CmvModel取到FoNode;
     [theTC updateOperCount:kFILENAME];
     Debug();

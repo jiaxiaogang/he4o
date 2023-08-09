@@ -11,7 +11,7 @@
 @interface TCRegroup : NSObject
 
 +(void) rRegroup:(AIShortMatchModel*)shortModel;
-+(void) pRegroup:(AICMVNode*)mv shortModel:(AIShortMatchModel*)shortModel;
++(void) pRegroup:(AICMVNodeBase*)mv shortModel:(AIShortMatchModel*)shortModel;
 +(void) feedbackRegroup:(TOFoModel*)foModel feedbackFrameOfMatchAlgs:(NSArray*)feedbackFrameOfMatchAlgs;
 +(void) actionRegroup:(TOFoModel*)actionFoModel;
 

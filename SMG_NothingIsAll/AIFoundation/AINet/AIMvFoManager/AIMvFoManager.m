@@ -15,7 +15,7 @@
  *  MARK:--------------------创建fo和mv的指向--------------------
  *  @param mv notnull
  */
--(AIFrontOrderNode*) create:(NSTimeInterval)inputTime order:(NSArray*)order mv:(AICMVNode*)mv{
+-(AIFrontOrderNode*) create:(NSTimeInterval)inputTime order:(NSArray*)order mv:(AICMVNodeBase*)mv{
     //1. foNode;
     NSInteger urgentTo = [NUMTOOK([AINetIndex getData:mv.urgentTo_p]) integerValue];
     AIFrontOrderNode *foNode = [AIMvFoManager createConFo:order difStrong:urgentTo];
@@ -33,32 +33,51 @@
     return foNode;
 }
 
--(AICMVNode*) createConMv:(NSArray*)imvAlgsArr {
+-(AICMVNodeBase*) createConMv:(NSArray*)imvAlgsArr {
     //1. 数据解析 & 打包cmvNode;
-    __block AICMVNode *cmvNode = nil;
+    __block AICMVNodeBase *cmvNode = nil;
     [ThinkingUtils parserAlgsMVArr:imvAlgsArr success:^(AIKVPointer *delta_p, AIKVPointer *urgentTo_p, NSInteger delta, NSInteger urgentTo, NSString *algsType) {
         //2. 打包cmvNode (imv的价值节点先放内存中);
         cmvNode = [self createConMv:urgentTo_p delta_p:delta_p at:algsType];
     }];
     return cmvNode;
 }
--(AICMVNode*) createConMv:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p at:(NSString*)at {
+
+/**
+ *  MARK:--------------------mvNode构建器--------------------
+ *  @version
+ *      2023.08.09: 支持全局防重 (参考30095-方案3);
+ */
+-(AICMVNodeBase*) createConMv:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p at:(NSString*)at {
     //1. 数据
     if (!urgentTo_p || !delta_p || !at) return nil;
     NSInteger urgentTo = [NUMTOOK([AINetIndex getData:urgentTo_p]) integerValue];
-
-    //2. 打包cmvNode;
-    AICMVNode *cmvNode = [[AICMVNode alloc] init];
-    cmvNode.pointer = [SMGUtils createPointer:kPN_CMV_NODE algsType:at dataSource:DefaultDataSource isOut:false type:ATDefault];
-    cmvNode.delta_p = delta_p;
-    cmvNode.urgentTo_p = urgentTo_p;
-    [AINetUtils insertRefPorts_AllMvNode:cmvNode value_p:cmvNode.delta_p difStrong:1];//引用插线
-    [AINetUtils insertRefPorts_AllMvNode:cmvNode value_p:cmvNode.urgentTo_p difStrong:1];//引用插线
-    [theNet setMvNodeToDirectionReference:cmvNode difStrong:urgentTo];//difStrong暂时先相等;
+    NSArray *content_ps = @[urgentTo_p, delta_p];
+    NSArray *sort_ps = [SMGUtils sortPointers:content_ps];
+    
+    //2. 全局防重;
+    AICMVNodeBase *result = [AINetIndexUtils getAbsoluteMatching_General:content_ps sort_ps:sort_ps except_ps:nil getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
+        return [SMGUtils filterArr:[AINetUtils refPorts_All4Value:item_p] checkValid:^BOOL(AIPort *item) {
+            return [kPN_ALG_ABS_NODE isEqualToString:item.target_p.folderName];
+        }];
+    } at:at ds:DefaultDataSource type:ATDefault];
+    
+    //3. 无则新构建;
+    if (!ISOK(result, AICMVNodeBase.class)) {
+        result = [[AICMVNode alloc] init];
+        result.pointer = [SMGUtils createPointer:kPN_CMV_NODE algsType:at dataSource:DefaultDataSource isOut:false type:ATDefault];
+        result.delta_p = delta_p;
+        result.urgentTo_p = urgentTo_p;
+    }
+    
+    //4. 增强关联;
+    [AINetUtils insertRefPorts_AllMvNode:result value_p:result.delta_p difStrong:1];//引用插线
+    [AINetUtils insertRefPorts_AllMvNode:result value_p:result.urgentTo_p difStrong:1];//引用插线
+    [theNet setMvNodeToDirectionReference:result difStrong:urgentTo];//difStrong暂时先相等;
 
     //5. 存储cmvNode
-    [SMGUtils insertNode:cmvNode];
-    return cmvNode;
+    [SMGUtils insertNode:result];
+    return result;
 }
 
 

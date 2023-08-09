@@ -102,13 +102,13 @@ static AINet *_instance;
 //MARK:===============================================================
 //MARK:                     < cmv >
 //MARK:===============================================================
--(AIFrontOrderNode*) createCMVFo:(NSTimeInterval)inputTime order:(NSArray*)order mv:(AICMVNode*)mv{
+-(AIFrontOrderNode*) createCMVFo:(NSTimeInterval)inputTime order:(NSArray*)order mv:(AICMVNodeBase*)mv{
     return [self.mvFoManager create:inputTime order:order mv:mv];
 }
--(AICMVNode*) createConMv:(NSArray*)imvAlgsArr{
+-(AICMVNodeBase*) createConMv:(NSArray*)imvAlgsArr{
     return [self.mvFoManager createConMv:imvAlgsArr];
 }
--(AICMVNode*) createConMv:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p at:(NSString*)at {
+-(AICMVNodeBase*) createConMv:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p at:(NSString*)at {
     return [self.mvFoManager createConMv:urgentTo_p delta_p:delta_p at:at];
 }
 
