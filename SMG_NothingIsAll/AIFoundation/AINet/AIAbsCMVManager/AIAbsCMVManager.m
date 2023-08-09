@@ -78,7 +78,7 @@
     //2. 全局防重;
     AIAbsCMVNode *result = [AINetIndexUtils getAbsoluteMatching_General:content_ps sort_ps:sort_ps except_ps:nil getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
         return [SMGUtils filterArr:[AINetUtils refPorts_All4Value:item_p] checkValid:^BOOL(AIPort *item) {
-            return [kPN_ALG_ABS_NODE isEqualToString:item.target_p.folderName];
+            return [kPN_ABS_CMV_NODE isEqualToString:item.target_p.folderName];
         }];
     } at:at ds:ds type:ATDefault];
     
