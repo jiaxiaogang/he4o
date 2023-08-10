@@ -61,7 +61,9 @@
 }
 
 /**
- *  MARK:--------------------mvNode构建器--------------------
+ *  MARK:--------------------通用absMv构建方法--------------------
+ *  @param absFo_p  : 指向此absMv的时序指针;
+ *  @param conMvs   : 此absMv的具象价值节点们;
  *  @version
  *      2023.08.09: 支持全局防重 (参考30095-方案3);
  */
@@ -86,7 +88,6 @@
     if (!ISOK(result, AICMVNodeBase.class)) {
         result = [[AIAbsCMVNode alloc] init];
         result.pointer = [SMGUtils createPointer:kPN_ABS_CMV_NODE algsType:at dataSource:ds isOut:false type:ATDefault];
-        result.foNode_p = absFo_p;
         result.urgentTo_p = urgentTo_p;
         result.delta_p = delta_p;
     }

@@ -176,9 +176,6 @@ static AINet *_instance;
 -(AIAbsCMVNode*) createAbsCMVNode_Outside:(AIKVPointer*)absFo_p aMv_p:(AIKVPointer*)aMv_p bMv_p:(AIKVPointer*)bMv_p{
     return [self.absCmvManager create:absFo_p aMv_p:aMv_p bMv_p:bMv_p];
 }
--(AIAbsCMVNode*) createAbsMv:(AIKVPointer*)absFo_p conMvs:(NSArray*)conMvs at:(NSString*)at ds:(NSString*)ds urgentTo_p:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p{
-    return [self.absCmvManager create_General:absFo_p conMvs:conMvs at:at ds:ds urgentTo_p:urgentTo_p delta_p:delta_p];
-}
 
 
 //MARK:===============================================================

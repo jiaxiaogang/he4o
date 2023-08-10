@@ -238,30 +238,28 @@
     for (AIPort *item in mvRefs) {
         //a. analogyType处理 (仅支持normal的fo);
         AICMVNodeBase *itemMV = [SMGUtils searchNode:item.target_p];
-        AnalogyType foType = itemMV.foNode_p.type;
-        if (ATPlus != foType && ATSub != foType) {
-            if (Log4DirecRef) NSLog(@"方向索引_尝试_索引强度:%ld 方案:%@",item.strong.value,FoP2FStr(itemMV.foNode_p));
+        AIPort *firstFoPort = ARR_INDEX(itemMV.foPorts, 0);
+        if (Log4DirecRef) NSLog(@"方向索引_尝试_索引强度:%ld 方案:%@",item.strong.value,FoP2FStr(firstFoPort.target_p));
+        
+        //5. 方向索引找到一条normalFo解决方案 (P例:吃可以解决饿; S例:运动导致累);
+        if (![except_ps containsObject:firstFoPort.target_p]) {
+            //8. 消耗活跃度;
+            [theTC updateEnergyDelta:-1];
+            AIFoNodeBase *fo = [SMGUtils searchNode:firstFoPort.target_p];
             
-            //5. 方向索引找到一条normalFo解决方案 (P例:吃可以解决饿; S例:运动导致累);
-            if (![except_ps containsObject:itemMV.foNode_p]) {
-                //8. 消耗活跃度;
-                [theTC updateEnergyDelta:-1];
-                AIFoNodeBase *fo = [SMGUtils searchNode:itemMV.foNode_p];
-                
-                //a. 构建TOFoModel
-                TOFoModel *toFoModel = [TOFoModel newWithFo_p:fo.pointer base:demandModel basePFoOrTargetFoModel:nil];
-                
-                //b. 取自身,实现吃,则可不饿 (提交C给TOR行为化);
-                //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
-                NSLog(@">>>>>> pSolution 新增第%ld例解决方案: %@->%@",demandModel.actionFoModels.count,Fo2FStr(fo),Mvp2Str(fo.cmvNode_p));
-                dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
-                    [theTV updateFrame];
-                });
-                DebugE();
-                
-                //8. 只要有一次tryResult成功,中断回调循环;
-                return [TCAction action:toFoModel];//[theTOR singleLoopBackWithBegin:toFoModel];
-            }
+            //a. 构建TOFoModel
+            TOFoModel *toFoModel = [TOFoModel newWithFo_p:fo.pointer base:demandModel basePFoOrTargetFoModel:nil];
+            
+            //b. 取自身,实现吃,则可不饿 (提交C给TOR行为化);
+            //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
+            NSLog(@">>>>>> pSolution 新增第%ld例解决方案: %@->%@",demandModel.actionFoModels.count,Fo2FStr(fo),Mvp2Str(fo.cmvNode_p));
+            dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
+                [theTV updateFrame];
+            });
+            DebugE();
+            
+            //8. 只要有一次tryResult成功,中断回调循环;
+            return [TCAction action:toFoModel];//[theTOR singleLoopBackWithBegin:toFoModel];
         }
     }
     

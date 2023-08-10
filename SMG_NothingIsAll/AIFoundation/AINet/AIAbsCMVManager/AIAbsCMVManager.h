@@ -32,12 +32,4 @@
 -(AIAbsCMVNode*) create:(AIKVPointer*)absFo_p aMv_p:(AIKVPointer*)aMv_p bMv_p:(AIKVPointer*)bMv_p ;
 -(AIAbsCMVNode*) create:(AIKVPointer*)absFo_p conMvPs:(NSArray*)conMv_ps;
 
-
-/**
- *  MARK:--------------------通用absMv构建方法--------------------
- *  @param absFo_p  : 指向此absMv的时序指针;
- *  @param conMvs   : 此absMv的具象价值节点们;
- */
--(AIAbsCMVNode*) create_General:(AIKVPointer*)absFo_p conMvs:(NSArray*)conMvs at:(NSString*)at ds:(NSString*)ds urgentTo_p:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p;
-
 @end

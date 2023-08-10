@@ -403,11 +403,12 @@
  *  MARK:--------------------cmv基本模型--------------------
  *  @version
  *      2022.05.11: cmv模型relate时,将foNode的content.refPort标记mv指向 (参考26022-2);
+ *      2023.08.11: mv支持多个指向foNode (参考30095-todo2);
  */
 +(void) relateFo:(AIFoNodeBase*)foNode mv:(AICMVNodeBase*)mvNode{
     if (foNode && mvNode) {
         //1. 互指向
-        mvNode.foNode_p = foNode.pointer;
+        [AINetUtils insertPointer_Hd:foNode.pointer toPorts:mvNode.foPorts ps:foNode.content_ps difStrong:1];
         foNode.cmvNode_p = mvNode.pointer;
         
         //2. 对content.refPort标记mv;

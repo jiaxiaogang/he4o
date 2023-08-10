@@ -216,8 +216,8 @@
         }else if ([NVHeUtil isMv:node_p]) {
             //3. 如果是mvNode则返回mv指向foNode_p;
             AICMVNodeBase *mvNode = [SMGUtils searchNode:node_p];
-            if (ISOK(mvNode, AICMVNodeBase.class) && mvNode.foNode_p) {
-                return @[mvNode.foNode_p];
+            if (ISOK(mvNode, AICMVNodeBase.class)) {
+                return Ports2Pits(ARR_SUB(mvNode.foPorts, 0, 10));
             }
         }
     }
