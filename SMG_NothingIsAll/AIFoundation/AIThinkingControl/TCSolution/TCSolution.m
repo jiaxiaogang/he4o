@@ -229,7 +229,8 @@
         for (NSInteger i = 0; i < 10; i++) {
             AIPort *item = ARR_INDEX(mvRefs, i);
             AICMVNodeBase *itemMV = [SMGUtils searchNode:item.target_p];
-            if (item && itemMV && itemMV.foNode_p) NSLog(@"item-> 强度:%ld 方案:%@->%@",(long)item.strong.value,FoP2FStr(itemMV.foNode_p),Mv2FStr(itemMV));
+            AIPort *firstFoPort = ARR_INDEX(itemMV.foPorts, 0);
+            if (item && itemMV && firstFoPort) NSLog(@"item-> 强度:%ld 方案:%@->%@",(long)item.strong.value,FoP2FStr(firstFoPort.target_p),Mv2FStr(itemMV));
         }
     }
     

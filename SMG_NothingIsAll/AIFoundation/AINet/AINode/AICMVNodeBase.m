@@ -14,6 +14,13 @@
     return [[NSMutableArray alloc] initWithObjects:self.delta_p,self.urgentTo_p, nil];
 }
 
+-(NSMutableArray *)foPorts{
+    if (!ISOK(_foPorts, NSMutableArray.class)) {
+        _foPorts = [[NSMutableArray alloc] initWithArray:_foPorts];
+    }
+    return _foPorts;
+}
+
 /**
  *  MARK:--------------------NSCoding--------------------
  */
@@ -22,7 +29,7 @@
     if (self) {
         self.urgentTo_p = [aDecoder decodeObjectForKey:@"urgentTo_p"];
         self.delta_p = [aDecoder decodeObjectForKey:@"delta_p"];
-        self.foNode_p = [aDecoder decodeObjectForKey:@"foNode_p"];
+        self.foPorts = [aDecoder decodeObjectForKey:@"foPorts"];
     }
     return self;
 }
@@ -31,7 +38,7 @@
     [super encodeWithCoder:aCoder];
     [aCoder encodeObject:self.urgentTo_p forKey:@"urgentTo_p"];
     [aCoder encodeObject:self.delta_p forKey:@"delta_p"];
-    [aCoder encodeObject:self.foNode_p forKey:@"foNode_p"];
+    [aCoder encodeObject:self.foPorts forKey:@"foPorts"];
 }
 
 @end
