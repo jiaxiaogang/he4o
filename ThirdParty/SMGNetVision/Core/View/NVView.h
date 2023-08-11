@@ -110,6 +110,7 @@
  *  MARK:--------------------在强行工作模式下执行block--------------------
  */
 -(void) invokeForceMode:(void(^)())block;
++(void) invokeForceMode:(void(^)())block;
 
 @end
 

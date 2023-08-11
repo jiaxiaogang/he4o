@@ -216,6 +216,15 @@
     }
 }
 
++(void) invokeForceMode:(void(^)())block{
+    if (block) {
+        __block Act0 weakAct = block;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [theNV invokeForceMode:weakAct];
+        });
+    }
+}
+
 //MARK:===============================================================
 //MARK:                     < privateMethod >
 //MARK:===============================================================
