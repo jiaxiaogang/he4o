@@ -362,7 +362,7 @@
  *      2023.07.19: TC线程_因为数组多线程导致,导致foreach中闪退问题 (改加上copy);
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
-+(void) recognitionFo:(AIFoNodeBase*)protoOrRegroupFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel fromRegroup:(BOOL)fromRegroup matchAlgs:(NSArray*)matchAlgs protoOrRegroupCutIndex:(NSInteger)protoOrRegroupCutIndex {
++(void) recognitionFo:(AIFoNodeBase*)protoOrRegroupFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel fromRegroup:(BOOL)fromRegroup matchAlgs:(NSArray*)matchAlgs protoOrRegroupCutIndex:(NSInteger)protoOrRegroupCutIndex debugMode:(BOOL)debugMode{
     //1. 数据准备;
     except_ps = ARRTOOK(except_ps);
     NSMutableArray *protoPModels = [[NSMutableArray alloc] init];
@@ -442,10 +442,12 @@
     //11. 调试日志;
     NSArray *allMatchFos = [[SMGUtils collectArrA:inModel.matchPFos arrB:inModel.matchRFos] copy];
     NSLog(@"\n时序识别结果 P(%ld条) R(%ld条)",inModel.matchPFos.count,inModel.matchRFos.count);
-    //for (AIMatchFoModel *item in allMatchFos) {
-    //    AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
-    //    NSLog(@"%@强度:(%ld)\t> %@->{%.2f} (SP:%@) indexDic:%@ 匹配度 => %.2f",matchFo.cmvNode_p?@"P":@"",item.sumRefStrong,Fo2FStr(matchFo),[AIScore score4MV_v2FromCache:item],CLEANSTR(matchFo.spDic),CLEANSTR(item.indexDic2),item.matchFoValue);
-    //}
+    if (debugMode) {
+        for (AIMatchFoModel *item in allMatchFos) {
+            AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
+            NSLog(@"%@强度:(%ld)\t> %@->{%.2f} (SP:%@) indexDic:%@ 匹配度 => %.2f",matchFo.cmvNode_p?@"P":@"",item.sumRefStrong,Fo2FStr(matchFo),[AIScore score4MV_v2FromCache:item],CLEANSTR(matchFo.spDic),CLEANSTR(item.indexDic2),item.matchFoValue);
+        }
+    }
     
     //12. 关联处理,直接protoFo抽象指向matchFo,并持久化indexDic (参考27177-todo6);
     for (AIMatchFoModel *item in allMatchFos) {

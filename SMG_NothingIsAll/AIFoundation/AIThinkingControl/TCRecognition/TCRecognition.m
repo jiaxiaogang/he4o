@@ -36,7 +36,7 @@
     IFTitleLog(@"时序识别", @"\nprotoFo:%@->%@",Fo2FStr(protoFo),Mvp2Str(protoFo.cmvNode_p));
     
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
-    [TIUtils recognitionFo:protoFo except_ps:except_ps decoratorInModel:model fromRegroup:false matchAlgs:model.matchAlgs protoOrRegroupCutIndex:protoFo.count - 1];
+    [TIUtils recognitionFo:protoFo except_ps:except_ps decoratorInModel:model fromRegroup:false matchAlgs:model.matchAlgs protoOrRegroupCutIndex:protoFo.count - 1 debugMode:false];
     DebugE();
 }
 
@@ -45,7 +45,7 @@
     AIFoNodeBase *protoFo = model.protoFo4PInput;
     [theTC updateOperCount:kFILENAME];
     Debug();
-    [TIUtils recognitionFo:protoFo except_ps:except_ps decoratorInModel:model fromRegroup:false matchAlgs:nil protoOrRegroupCutIndex:protoFo.count - 1];
+    [TIUtils recognitionFo:protoFo except_ps:except_ps decoratorInModel:model fromRegroup:false matchAlgs:nil protoOrRegroupCutIndex:protoFo.count - 1 debugMode:true];
     DebugE();
 }
 
@@ -94,7 +94,7 @@
     IFTitleLog(@"feedback时序识别", @"\nprotoFo:%@",Fo2FStr(regroupFo));
     
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
-    [TIUtils recognitionFo:regroupFo except_ps:@[regroupFo.pointer] decoratorInModel:result fromRegroup:true matchAlgs:feedbackFrameOfMatchAlgs protoOrRegroupCutIndex:foModel.actionIndex - 1];
+    [TIUtils recognitionFo:regroupFo except_ps:@[regroupFo.pointer] decoratorInModel:result fromRegroup:true matchAlgs:feedbackFrameOfMatchAlgs protoOrRegroupCutIndex:foModel.actionIndex - 1 debugMode:false];
     //NSLog(@"反思时序: Finish >> %@",Fo2FStr(result.matchFo));
     
     //3. 调用更新到短时记忆树 (不用学习和反馈,直接构建子任务);
@@ -117,7 +117,7 @@
     IFTitleLog(@"行为化前 反思识别", @"\nregroupFo:%@",Fo2FStr(regroupFo));
     
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层) (参考30054-todo4);
-    [TIUtils recognitionFo:regroupFo except_ps:@[regroupFo.pointer] decoratorInModel:result fromRegroup:true matchAlgs:nil protoOrRegroupCutIndex:regroupCutIndex];
+    [TIUtils recognitionFo:regroupFo except_ps:@[regroupFo.pointer] decoratorInModel:result fromRegroup:true matchAlgs:nil protoOrRegroupCutIndex:regroupCutIndex debugMode:false];
     
     //3. 识别二次过滤器;
     [AIFilter secondActionRecognitionFilter:result];
