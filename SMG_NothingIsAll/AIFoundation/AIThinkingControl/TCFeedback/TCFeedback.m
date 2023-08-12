@@ -148,7 +148,7 @@
                     
                     //11. 则进行感性IRT反省;
                     [TCRethink perceptInRethink:waitModel type:type];
-                    NSLog(@"---//IP反省触发器执行:%p F%ld 状态:%@",waitMatchFo,waitMatchFo.pointer.pointerId,TIStatus2Str(status));
+                    NSLog(@"---//IP反省触发器执行:%p F%ld 状态:%@",waitMatchFo,waitMatchFo.pointer.pointerId,TIStatus2Str(TIModelStatus_OutBackSameDelta));
                     
                     //12. 有mv反馈时,做Canset识别 (参考28185-todo5);
                     //[TCEffect rInEffect:waitMatchFo matchRFos:waitModel.baseFrameModel.matchRFos es:es];

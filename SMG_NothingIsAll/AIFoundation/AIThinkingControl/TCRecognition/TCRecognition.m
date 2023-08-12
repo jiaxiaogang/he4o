@@ -45,6 +45,7 @@
     AIFoNodeBase *protoFo = model.protoFo4PInput;
     [theTC updateOperCount:kFILENAME];
     Debug();
+    IFTitleLog(@"时序识别", @"\nprotoFo4PInput:%@",Fo2FStr(protoFo));
     [TIUtils recognitionFo:protoFo except_ps:except_ps decoratorInModel:model fromRegroup:false matchAlgs:nil protoOrRegroupCutIndex:protoFo.count - 1 debugMode:true];
     DebugE();
 }
