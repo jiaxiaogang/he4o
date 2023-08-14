@@ -378,9 +378,9 @@
 #define Log4OutRethink true
 #define Log4Rethink true
 //解决方案条件满足
-#define Log4SceneIsOk false
+#define Log4SceneIsOk true
 //S过滤器
-#define Log4SolutionFilter false
+#define Log4SolutionFilter true
 
 //Score
 #define Log4Score false
@@ -389,7 +389,7 @@
 #define Log4Solution_Fast true
 
 //TCCanset日志开关
-#define Log4TCCanset false
+#define Log4TCCanset true
 
 //AIRank日志开关
 #define Log4AIRank true
