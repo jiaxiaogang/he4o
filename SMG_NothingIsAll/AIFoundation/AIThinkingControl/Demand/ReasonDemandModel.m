@@ -16,7 +16,7 @@
  *      2021.03.28: 将at & delta & urgentTo也封装到此处取赋值;
  *      2021.06.01: 将子任务时的base也兼容入baseOrGroup中 (参考23094);
  */
-+(ReasonDemandModel*) newWithAlgsType:(NSString*)algsType pFos:(NSArray*)pFos shortModel:(AIShortMatchModel*)shortModel baseFo:(TOFoModel*)baseFo{
++(ReasonDemandModel*) newWithAlgsType:(NSString*)algsType pFos:(NSArray*)pFos shortModel:(AIShortMatchModel*)shortModel baseFo:(TOFoModel*)baseFo protoFo:(AIFoNodeBase*)protoFo{
     //1. 数据准备;
     ReasonDemandModel *result = [[ReasonDemandModel alloc] init];
     AIMatchFoModel *firstPFo = ARR_INDEX(pFos, 0);
@@ -36,7 +36,7 @@
     result.urgentTo = urgentTo;
     result.pFos = pFos;
     result.fromIden = STRFORMAT(@"%p",shortModel);
-    result.protoFo = shortModel.protoFo.pointer;
+    result.protoFo = protoFo.pointer;
     result.regroupFo = shortModel.regroupFo.pointer;
     
     //4. pFos赋值baseRDemand;

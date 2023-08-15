@@ -76,7 +76,7 @@
     //10. 行为不构建任务和预测 (参考28137-修复);
     if (!algNode.pointer.isOut || Switch4IsOutReIn) {
         //11. 任务;
-        [TCDemand rDemand:mModel];
+        [TCDemand rDemand:mModel protoFo:mModel.protoFo];
         
         //12. 为新matchPFos & matchRFos构建反省触发器;
         [TCForecast forecast_Multi:mModel.matchPFos];
@@ -132,7 +132,7 @@
     [TCFeedback feedbackTOP:cmvNode];
     
     //8. 任务=>生成p任务: 行为不构建任务和预测 (参考28137-修复);
-    [TCDemand rDemand:shortModel];
+    [TCDemand rDemand:shortModel protoFo:shortModel.protoFo4PInput];
 
     //9. 为新matchPFos & matchRFos构建反省触发器;
     [TCForecast forecast_Multi:shortModel.matchPFos];

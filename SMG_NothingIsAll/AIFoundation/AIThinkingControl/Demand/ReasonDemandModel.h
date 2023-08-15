@@ -24,8 +24,9 @@
  *  MARK:--------------------newWith--------------------
  *  @param pFos     : List<AIMatchFoModel>
  *  @param baseFo   : 当前为子任务时,传入baseFo,非子任务传空即可;
+ *  @param protoFo  : pInput和rInput时的protoFo是不同的,所以传入进来保留到demandModel中 (参考30095代码段2);
  */
-+(ReasonDemandModel*) newWithAlgsType:(NSString*)algsType pFos:(NSArray*)pFos shortModel:(AIShortMatchModel*)shortModel baseFo:(TOFoModel*)baseFo;
++(ReasonDemandModel*) newWithAlgsType:(NSString*)algsType pFos:(NSArray*)pFos shortModel:(AIShortMatchModel*)shortModel baseFo:(TOFoModel*)baseFo protoFo:(AIFoNodeBase*)protoFo;
 
 
 /**

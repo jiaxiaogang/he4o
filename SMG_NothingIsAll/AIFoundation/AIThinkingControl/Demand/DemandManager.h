@@ -28,7 +28,7 @@
  *  MARK:--------------------生成R任务--------------------
  *  @desc RMV输入更新任务管理器 (理性思维预测mv加入)
  */
--(NSArray*) updateCMVCache_RMV:(AIShortMatchModel*)inModel;
+-(NSArray*) updateCMVCache_RMV:(AIShortMatchModel*)inModel protoFo:(AIFoNodeBase*)protoFo;
 
 /**
  *  MARK:--------------------获取任务 (决策部分: 可继续决策的部分)--------------------
