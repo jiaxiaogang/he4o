@@ -70,7 +70,7 @@
     OFTitleLog(@"subDemand",@"\n子任务数:%ld baseFo:%@",fos4Demand.count,Pit2FStr(foModel.content_p));
     for (NSString *atKey in fos4Demand.allKeys) {
         NSArray *pFosValue = [fos4Demand objectForKey:atKey];
-        [ReasonDemandModel newWithAlgsType:atKey pFos:pFosValue shortModel:model baseFo:foModel];
+        [ReasonDemandModel newWithAlgsType:atKey pFos:pFosValue shortModel:model baseFo:foModel protoFo:model.protoFo];
         for (AIMatchFoModel *pFo in pFosValue) {
             AIFoNodeBase *pFoNode = [SMGUtils searchNode:pFo.matchFo];
             NSLog(@"\t pFo:%@->{%@%.2f}",Pit2FStr(pFo.matchFo),ClassName2Str(pFoNode.cmvNode_p.algsType),[AIScore score4MV_v2FromCache:pFo]);

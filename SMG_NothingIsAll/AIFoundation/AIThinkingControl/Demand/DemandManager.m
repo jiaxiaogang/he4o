@@ -140,7 +140,7 @@
         if (score < 0) {
             
             //7. 有需求时,则加到需求序列中;
-            ReasonDemandModel *newItem = [ReasonDemandModel newWithAlgsType:atKey pFos:pFosValue shortModel:inModel baseFo:nil];
+            ReasonDemandModel *newItem = [ReasonDemandModel newWithAlgsType:atKey pFos:pFosValue shortModel:inModel baseFo:nil protoFo:protoFo];
             [self.loopCache addObject:newItem];
             [newRootsResult addObject:newItem];
             
