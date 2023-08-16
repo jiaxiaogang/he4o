@@ -275,7 +275,7 @@
     }
     
     //6. 全找到,则成功;
-    if (Log4SceneIsOk) NSLog(@"前段条件满足通过:%@ (cansetCutIndex:%ld fromProtoFo:%ld)",Fo2FStr(cansetFo),cansetCutIndex,protoFo.pointer.pointerId);
+    if (Log4SceneIsOk) NSLog(@"\t前段条件满足通过:%@ (cansetCutIndex:%ld fromProtoFo:%ld)",Fo2FStr(cansetFo),cansetCutIndex,protoFo.pointer.pointerId);
     return result;
 }
 
