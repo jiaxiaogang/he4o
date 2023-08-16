@@ -256,11 +256,6 @@
             //3. B源于cansetFo,此处只判断B是1层抽象 (参考27161-调试1&调试2);
             //3. 单条判断方式: 此处proto抽象仅指向刚识别的matchAlgs,所以与contains等效 (参考28052-3);
             AIKVPointer *transferAlg = [TCTransfer transferAlg:sceneModel canset:cansetFo cansetIndex:cansetI];
-            
-            //TODOTOMORROW20230814: 此处在pInput时,proto的长度为0,导致没法匹配前段... (参考30095代码段-2);
-            
-            
-            NSLog(@"\t\t prottIndex:%ld cansetIndex:%ld protoA:%@ cansetI:%@ transferA:%@",protoI,cansetI,Pit2FStr(protoAlg),Pit2FStr(cansetAlg),Pit2FStr(transferAlg));
             BOOL mIsC = [TOUtils mIsC_1:protoAlg c:transferAlg];
             if (mIsC) {
                 //4. 找到了 & 记录protoI的进度;
