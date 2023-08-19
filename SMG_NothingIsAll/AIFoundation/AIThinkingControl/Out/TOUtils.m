@@ -543,6 +543,7 @@
  *  @desc 因为actYes向上传染,不向下,所以末枝有actYes,即当前curModel也不应响应 (参考26184-原则);
  *  @version
  *      2023.03.04: 判断末枝要排除subDemand的影响 (参考28143-回测 & 修复);
+ *      2023.08.19: 末枝不排除hDemandModel (参考30113-todo1);
  */
 +(BOOL) endHavActYes:(TOModelBase*)curModel{
     NSArray *allSubModels = [TOUtils getSubOutModels_AllDeep:curModel validStatus:nil];
@@ -551,24 +552,8 @@
         if (item.status == TOModelStatus_ActYes) {
             //2. 判断是末枝 (其下有Demand不算) (参考28143-修复);
             NSArray *subModels = [TOUtils getSubOutModels:item];
-            
-            
-            //TODOTOMORROW20230819: ActYes中断是否也对DemandModel进行ActYes状态判断?
-            //1. HDemandModel应该计入,因为HDemandModel也有可能有解;
-            //      a. HDemand.baseAlg到底应该自然发生,还是推进H任务后发生?这是一个问题;
-            //      b. 如果是前者,那么H任务就不必执行;
-            //      c. 如果是后者,那么H任务就应该执行;
-            //      d. 例1: 在等西红柿变红的过程中,是否再放入可催熟的苹果呢? (催熟的动机,应该是另一个R任务);
-            //      e. 例2: 如果想要坚果随时就会有,那还需要对带皮果去皮吗? (显然,是否执行H任务,要看baseAlg自然出现的SP稳定性);
-            //              * 比如: baseAlg 50%会自然发生,而HDemandModel的稳定性是60%,那么我们就可以尝试执行HCanset;
-            //              * 再如: baseAlg 99%会自然发生,而HDemandModel的稳定性是60%,那么我们还不如原地等待呢;
-            //      f. 即,无论如何HDemandModel都要先执行再说,只是在hSolution反思时,要pk一下是否值得行为化;
-            //2. RDemandModel是否计入呢?
-            //      a. 如果不计入,那么子R任务就没法跑了;
-            
-            
             subModels = [SMGUtils filterArr:subModels checkValid:^BOOL(id item) {
-                return !ISOK(item, DemandModel.class);
+                return !ISOK(item, ReasonDemandModel.class);
             }];
             return subModels.count == 0;
         }
