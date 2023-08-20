@@ -29,6 +29,7 @@
  *      2022.12.09: 修复少执行了一帧的问题 (后16号又发现多了一帧,把target也执行了,这里9号时的情况已经忘了);
  *      2022.12.16: 修复多执行了一帧的问题 (即target帧不必行为化,自然发生即可);
  *      2023.07.08: 为避免输出行为捡了芝麻丢了西瓜,在行为化之前,先调用一下反思 (参考30054);
+ *      2023.08.21: 将反思通过与否保留下来,用于后面决策时激活其子R还是子H任务做判断依据 (参考30114-todo1);
  *  @callers : 可以供_Demand和_Hav等调用;
  */
 +(TCResult*) action:(TOFoModel*)foModel{
@@ -41,8 +42,8 @@
     
     //3. 进行反思识别,如果不通过时,回到TCScore可能会尝试先解决子任务,通过时继续行为化 (参考30054-todo7);
     [TCRegroup actionRegroup:foModel];
-    BOOL refrection = [TCRefrection actionRefrection:foModel];
-    if (!refrection) {
+    foModel.refrectionNo = ![TCRefrection actionRefrection:foModel];
+    if (foModel.refrectionNo) {
         [TCScore scoreFromIfTCNeed];
         return [[[TCResult new:false] mkMsg:@"action反思不通过"] mkStep:31];
     }

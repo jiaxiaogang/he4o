@@ -74,6 +74,11 @@
 @property (strong, nonatomic) AISceneModel *baseSceneModel;
 
 /**
+ *  MARK:--------------------反思未通过标记--------------------
+ */
+@property (assign, nonatomic) BOOL refrectionNo;
+
+/**
  *  MARK:--------------------将每帧反馈转成orders,以构建protoFo--------------------
  */
 -(NSArray*) getOrderUseMatchAndFeedbackAlg:(BOOL)fromRegroup;

@@ -274,6 +274,7 @@
         self.brother = [aDecoder decodeObjectForKey:@"brother"];
         self.father = [aDecoder decodeObjectForKey:@"father"];
         self.i = [aDecoder decodeObjectForKey:@"i"];
+        self.refrectionNo = [aDecoder decodeBoolForKey:@"refrectionNo"];
     }
     return self;
 }
@@ -288,6 +289,7 @@
     [aCoder encodeObject:self.brother forKey:@"brother"];
     [aCoder encodeObject:self.father forKey:@"father"];
     [aCoder encodeObject:self.i forKey:@"i"];
+    [aCoder encodeBool:self.refrectionNo forKey:@"refrectionNo"];
 }
 
 @end
