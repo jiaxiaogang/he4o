@@ -102,7 +102,7 @@
 +(TCResult*) rSolution:(ReasonDemandModel*)demand {
     //0. S数达到limit时设为WithOut;
     if (![theTC energyValid]) return [[[TCResult new:false] mkMsg:@"rSolution 能量不足"] mkStep:21];
-    OFTitleLog(@"rSolution", @"\n任务源:%@ protoFo:%@ 已有方案数:%ld 任务分:%.2f",ClassName2Str(demand.algsType),Pit2FStr(demand.protoFo),demand.actionFoModels.count,[AIScore score4Demand:demand]);
+    OFTitleLog(@"rSolution", @"\n任务源:%@ protoFo:%@ 已有方案数:%ld 任务分:%.2f",ClassName2Str(demand.algsType),Pit2FStr(demand.protoOrRegroupFo),demand.actionFoModels.count,[AIScore score4Demand:demand]);
     
     //1. 树限宽且限深;
     NSInteger deepCount = [TOUtils getBaseDemandsDeepCount:demand];

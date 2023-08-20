@@ -82,8 +82,7 @@
     AIKVPointer *content_p = nil;
     if (ISOK(model, ReasonDemandModel.class)) {
         ReasonDemandModel *rData = (ReasonDemandModel*)model;
-        AIMatchFoModel *firstPFo = ARR_INDEX(rData.pFos, 0);
-        content_p = firstPFo.matchFo;
+        content_p = rData.protoOrRegroupFo;
     }else if(ISOK(model, TOModelBase.class)){
         content_p = model.content_p;
     }
