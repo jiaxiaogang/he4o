@@ -45,6 +45,14 @@
  */
 +(TCResult*) plan:(DemandModel*)rootDemand rootFo:(TOFoModel*)rootFo scoreDic:(NSMutableDictionary*)scoreDic{
     //1. 根据得分字典,从root向sub,取最优路径 (参考24195-3);
+    
+    if ([SMGUtils filterSingleFromArr:[TOUtils getSubOutModels_AllDeep:rootDemand validStatus:nil] checkValid:^BOOL(TOModelBase *item) {
+        return ISOK(item, HDemandModel.class);
+    }]) {
+        NSLog(@"有HDemand了,查下scoreDic的生成和plan的竞争,看为什么endBranch没激活H任务");
+    }
+    
+    
     [theTC updateOperCount:kFILENAME];
     Debug();
     double demandScore = [AIScore score4Demand:rootDemand];
@@ -94,6 +102,22 @@
     //4. 感性未淘汰则继续深入分支 (判断条件 = bestFo得分 > demandScore) (参考25042-6);
     //4. 未感性淘汰,那么它的子R和H任务中,肯定有一个是未"理性淘汰"的: 收集R和H任务;
     NSMutableArray *allSubDemands = [[NSMutableArray alloc] init];
+    
+    
+    //TODOTOMORROW20230820: 在TCScore找末枝endBranch应该也有问题,因为在下图中,它激活了F18896而不是HDemand
+    //    ︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹
+    //    * ReasonDemandModel: F18903[M448{↑饿-16}]-> (普 | ActYes)
+    //      > TOFoModel: F18198[M448{↑饿-16},A18186(距9,向97,果),飞↑,A18191(距0,向123,果),A6167(吃1)]-> (普 | ActYes)
+    //          - TOAlgModel: A18186(距9,向97,果) (普 | ActYes)
+    //              # HDemandModel
+    //          - ReasonDemandModel: F18905[M448{↑饿-16},A18186(距9,向97,果),飞↑,A18191(距0,向123,果),A6167(吃1)]-> (普 | Other)
+    //    ︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺
+    //1. 此处先收集了subRDemands,再收集subHDemands;
+    //2. 所以,如果二者都无解时,会优先激活RDemands;
+    //3. 而这里的RDemands的来源是: 行为化前反思 (并且当时反思是通过了的);
+    //4. 所以问题在于,我们先继续推进父任务,还是先解决子任务?
+    
+    
     
     //5. 优先级: 先解决子R任务 (副作用,磨刀不误砍柴功) (参考25042-4);
     NSArray *subRDemands = bestFo.subDemands;
