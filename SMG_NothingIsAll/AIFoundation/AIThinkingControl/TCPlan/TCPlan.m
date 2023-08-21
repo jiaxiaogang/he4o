@@ -74,6 +74,7 @@
  *      2022.06.02: BUG_过滤掉actNo的结果,不然给solution一个actNo的最佳路径尴尬了;
  *      2023.02.28: R子任务不求解 (参考28135-2);
  *      2023.07.09: 打开子任务开关,因为明明有子任务却不激活的话,有可能它的父任务不断反思出子任务再回来又激活父任务,不断生成子任务,导致死循环 (参考30055);
+ *      2023.08.21: 调整子任务的优先级: 反思通过时子H任务优先,反思不通过时子R任务优先 (参考30114-todo2);
  *  @result
  *      1. 返回空S的Demand时,执行solution找解决方案;
  *      2. 返回路径末枝BestFo时,执行action行为化;
@@ -103,20 +104,21 @@
     //4. 未感性淘汰,那么它的子R和H任务中,肯定有一个是未"理性淘汰"的: 收集R和H任务;
     NSMutableArray *allSubDemands = [[NSMutableArray alloc] init];
     
-    //TODOTOMORROW20230821: 此处看下在哪里做下30114;
-    
-    
-    
-    //5. 优先级: 先解决子R任务 (副作用,磨刀不误砍柴功) (参考25042-4);
+    //5. 数据准备: 子R和子H任务;
     NSArray *subRDemands = bestFo.subDemands;
-    [allSubDemands addObjectsFromArray:subRDemands];
-    
-    //6. 优先级: 再解决子H任务,即推进时序跳下一帧 (磨完刀了去继续砍柴) (参考25042-4);
     NSArray *subHDemands = [SMGUtils convertArr:bestFo.subModels convertBlock:^id(TOAlgModel *item) {
         HDemandModel *hDemand = ARR_INDEX(item.subDemands, 0);
         return hDemand;
     }];
-    [allSubDemands addObjectsFromArray:subHDemands];
+    
+    //6. 优先级: 反思通过时子H任务优先,反思不通过时子R任务优先 (参考30114-todo2);
+    if (bestFo.refrectionNo) {
+        [allSubDemands addObjectsFromArray:subHDemands];
+        [allSubDemands addObjectsFromArray:subRDemands];
+    } else {
+        [allSubDemands addObjectsFromArray:subRDemands];
+        [allSubDemands addObjectsFromArray:subHDemands];
+    }
     
     //7. 向末枝路径探索: 从R到H逐一尝试最优路径,从中找出那个未"理性淘汰"的,递归判断;
     for (DemandModel *subDemand in allSubDemands) {
