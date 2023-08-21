@@ -45,14 +45,6 @@
  */
 +(TCResult*) plan:(DemandModel*)rootDemand rootFo:(TOFoModel*)rootFo scoreDic:(NSMutableDictionary*)scoreDic{
     //1. 根据得分字典,从root向sub,取最优路径 (参考24195-3);
-    
-    if ([SMGUtils filterSingleFromArr:[TOUtils getSubOutModels_AllDeep:rootDemand validStatus:nil] checkValid:^BOOL(TOModelBase *item) {
-        return ISOK(item, HDemandModel.class);
-    }]) {
-        NSLog(@"TODOTOMORROW20230821: 有HDemand了,查下scoreDic的生成和plan的竞争,看为什么endBranch没激活H任务");
-    }
-    
-    
     [theTC updateOperCount:kFILENAME];
     Debug();
     double demandScore = [AIScore score4Demand:rootDemand];
@@ -113,11 +105,11 @@
     
     //6. 优先级: 反思通过时子H任务优先,反思不通过时子R任务优先 (参考30114-todo2);
     if (bestFo.refrectionNo) {
-        [allSubDemands addObjectsFromArray:subHDemands];
         [allSubDemands addObjectsFromArray:subRDemands];
+        [allSubDemands addObjectsFromArray:subHDemands];
     } else {
-        [allSubDemands addObjectsFromArray:subRDemands];
         [allSubDemands addObjectsFromArray:subHDemands];
+        [allSubDemands addObjectsFromArray:subRDemands];
     }
     
     //7. 向末枝路径探索: 从R到H逐一尝试最优路径,从中找出那个未"理性淘汰"的,递归判断;
