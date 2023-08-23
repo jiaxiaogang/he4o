@@ -32,7 +32,7 @@
     //1. 取所有lastWait模型,并与新输入的概念做mIsC判断;
     [theTC updateOperCount:kFILENAME];
     Debug();
-    IFTitleLog(@"feedbackTIR", @"\n输入M:%@\n输入P:%@",Pit2FStr(model.firstMatchAlg.matchAlg),Alg2FStr(model.protoAlg));
+    IFTitleLog(@"feedbackTIR", @"\n输入ProtoA:%@ (识别matchAlgs数:%ld)",Alg2FStr(model.protoAlg),model.matchAlgs.count);
     NSArray *recognitionAlgs = [TIUtils getMatchAndPartAlgPsByModel:model];
     
     //1. fbTIR对roots进行反馈判断 (参考27096-方案2);
@@ -256,7 +256,7 @@
     for (ReasonDemandModel *root in theTC.outModelManager.getAllDemand) {
         [waitModels addObjectsFromArray:[TOUtils getSubOutModels_AllDeep:root validStatus:nil]];
     }
-    IFTitleLog(@"TOR反馈", @"\n输入M:%@\n输入P:%@\n等待中任务数:%lu",Pit2FStr(model.firstMatchAlg.matchAlg),Alg2FStr(model.protoAlg),(long)waitModels.count);
+    IFTitleLog(@"TOR反馈", @"\n输入ProtoA:%@ (识别matchAlgs数:%ld)\n等待中任务数:%lu",Alg2FStr(model.protoAlg),recognitionAlgs.count,(long)waitModels.count);
     
     //2. 保留/更新实际发生到outModel (通过了有效判断的,将实际概念直接存留到waitModel);
     for (TOAlgModel *waitModel in waitModels) {

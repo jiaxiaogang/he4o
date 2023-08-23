@@ -194,7 +194,7 @@
             //refPorts = [SMGUtils filterArr:refPorts checkValid:^BOOL(AIPort *item) {
             //    return item.targetHavMv;
             //}];
-            if (Log4MAlg) NSLog(@"当前near_p:%@ --ref数量:%lu",[NVHeUtil getLightStr:near_p],(unsigned long)refPorts.count);
+            //if (Log4MAlg) NSLog(@"当前near_p:%@ --ref数量:%lu",[NVHeUtil getLightStr:near_p],(unsigned long)refPorts.count);
             
             //7. 每个refPort做两件事: (性能: 以下for循环耗150ms很正常);
             for (AIPort *refPort in refPorts) {
@@ -240,9 +240,9 @@
     
     //16. debugLog
     NSLog(@"\n概念识别结果 (%ld条) protoAlg:%@",allSortAlgs.count,Alg2FStr(protoAlg));
-    //for (AIMatchAlgModel *item in allSortAlgs) {
-    //    NSLog(@"-->>>(%d) 全含item: %@   \t相近度 => %.2f (count:%d)",item.sumRefStrong,Pit2FStr(item.matchAlg),item.matchValue,item.matchCount);
-    //}
+    for (AIMatchAlgModel *item in allSortAlgs) {
+        if (Log4MAlg) NSLog(@"-->>>(%d) 全含item: %@   \t相近度 => %.2f (count:%d)",item.sumRefStrong,Pit2FStr(item.matchAlg),item.matchValue,item.matchCount);
+    }
 }
 
 /**
