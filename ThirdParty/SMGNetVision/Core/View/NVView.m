@@ -206,13 +206,10 @@
 
 -(void) invokeForceMode:(void(^)())block{
     if (block) {
-        __block Act0 weakAct = block;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            BOOL bakForceMode = self.forceMode;
-            [self setForceMode:true];
-            weakAct();
-            [self setForceMode:bakForceMode];
-        });
+        BOOL bakForceMode = self.forceMode;
+        [self setForceMode:true];
+        block();
+        [self setForceMode:bakForceMode];
     }
 }
 
