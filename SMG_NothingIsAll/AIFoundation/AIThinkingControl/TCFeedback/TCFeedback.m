@@ -331,6 +331,23 @@
             [NVView invokeForceMode:^{
                 [theNV setNodeData:frameAlg.content_p lightStr:@"A18186"];
             }];
+            AIAlgNodeBase *algN = [SMGUtils searchNode:frameAlg.content_p];
+            NSArray *abs_ps = Ports2Pits([AINetUtils absPorts_All:algN]);
+            NSArray *jiaoJi = [SMGUtils filterArr:recognitionAlgs checkValid:^BOOL(id item) {
+                return [abs_ps containsObject:item];
+            }];
+            NSLog(@"识别:%@ (数量:%ld)",CLEANSTR([SMGUtils convertArr:recognitionAlgs convertBlock:^id(AIKVPointer *obj) {
+                return STRFORMAT(@"A%ld",obj.pointerId);
+            }]),recognitionAlgs.count);
+            NSLog(@"抽象:%@ (数量:%ld)",CLEANSTR([SMGUtils convertArr:abs_ps convertBlock:^id(AIKVPointer *obj) {
+                return STRFORMAT(@"A%ld",obj.pointerId);
+            }]),abs_ps.count);
+            NSLog(@"交集:%@ (数量:%ld)",CLEANSTR([SMGUtils convertArr:jiaoJi convertBlock:^id(AIKVPointer *obj) {
+                return STRFORMAT(@"A%ld",obj.pointerId);
+            }]),jiaoJi.count);
+            //1. A18186是最具象节点,而A18186的抽象与matchAlgs交集31条,占38条的82%;
+            
+            
             
             
             
