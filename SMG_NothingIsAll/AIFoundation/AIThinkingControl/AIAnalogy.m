@@ -216,8 +216,9 @@
  *      2023.04.10: 场景包含帧的类比用mIsC判断成立后,直接采用absAlg (参考29067-todo1.1);
  *      2023.04.19: 取消EFF+1,因为迁移完成不表示已正向发生 (参考29069-todo12.1);
  *      2023.04.29: 得出absCanset和scene的indexDic (参考29076-todo2);
+ *      2023.09.01: 迁移完成时EFF不变(参数传ES_Default),但newCanset有用时+1,无用时-1 (参考30124-todo2 & todo3);
  */
-+(AINetAbsFoNode*) analogyCansetFo:(NSDictionary*)indexDic newCanset:(AIFoNodeBase*)newCanset oldCanset:(AIFoNodeBase*)oldCanset sceneFo:(AIFoNodeBase*)sceneFo {
++(AINetAbsFoNode*) analogyCansetFo:(NSDictionary*)indexDic newCanset:(AIFoNodeBase*)newCanset oldCanset:(AIFoNodeBase*)oldCanset sceneFo:(AIFoNodeBase*)sceneFo es:(EffectStatus)es {
     //1. 类比orders的规律
     if (!Switch4AnalogyCansetFo) return nil;
     if (Log4OutCansetAna) NSLog(@"\n----------- Canset类比 -----------\nnew:%@ \nold:%@",Fo2FStr(newCanset),Fo2FStr(oldCanset));
@@ -277,9 +278,10 @@
             [sceneFo updateEffectStrong:effStrong.nStrong solutionFo:absFo.pointer status:ES_NoEff];
         }
         
-        //11. 打日志
-        AIEffectStrong *effStrong = [sceneFo getEffectStrong:sceneFo.count solutionFo:absFo.pointer];
-        NSLog(@"构建absCanset:%@ SP:%@ EFF:%@",Fo2FStr(absFo),CLEANSTR(absFo.spDic),CLEANSTR(effStrong));
+        //11. 抽象fo时: 根据protoCansetFo增强absFo的Eff值+-1 (参考29032-todo2.3);
+        //2023.09.01: 打开eff+-1 (参考30124-todo2);
+        AIEffectStrong *endEffStrong = [sceneFo updateEffectStrong:sceneFo.count solutionFo:absFo.pointer status:es];
+        NSLog(@"构建absCanset:%@ SP:%@ EFF:%@",Fo2FStr(absFo),CLEANSTR(absFo.spDic),CLEANSTR(endEffStrong));
     }
     return absFo;
 }

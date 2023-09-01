@@ -102,6 +102,8 @@
  *      2021.12.25: 针对感性IRT反省的支持 (判断末位为感性预测中) (参考25022-②);
  *      2022.09.05: 将theTC.inModels改成roots.pFos (参考27096-方案2);
  *      2022.09.18: 有反馈时,及时处理反省和任务失效 (参考27098-todo2);
+ *      2023.04.19: 改到TCTransfer迁移后调用canset识别类比 (参考29069-todo12);
+ *      2023.09.01: 打开canset失败时调用canset识别类比,并eff-1 (参考30124-todo1&todo2);
  *  @bug
  *      2021.01.25: 修复witMatchFo.cmvNode_p空判断逻辑反了,导致无法执行修改状态为OutBackYes,从而反省类比永远为"逆";
  */
@@ -152,10 +154,8 @@
                     
                     //12. 有mv反馈时,做Canset识别 (参考28185-todo5);
                     //[TCEffect rInEffect:waitMatchFo matchRFos:waitModel.baseFrameModel.matchRFos es:es];
-                    
-                    //2023.04.19: 改到TCTransfer迁移后调用canset识别类比 (参考29069-todo12);
-                    //EffectStatus es = score > 0 ? ES_HavEff : ES_NoEff;
-                    //[TIUtils recognitionCansetFo:protoFo sceneFo:waitMatchFo es:es];
+                    EffectStatus es = score > 0 ? ES_HavEff : ES_NoEff;
+                    [TIUtils recognitionCansetFo:protoFo.pointer sceneFo:waitMatchFo.pointer es:es];
                 }
                 
                 //13. pFo任务失效 (参考27093-条件1 & 27095-1);

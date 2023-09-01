@@ -545,20 +545,27 @@
  *  @desc 功能说明:
  *          1. 识别: 用条件满足来实现类似全含判断功能 (参考28185-todo3);
  *          2. 增强: 识别结果增强sp和eff (参考28185-todo4);
+ *        现状说明:
+ *          调用者1. newCanset有效时,会调用canset识别,类比,sp+1,eff+1;
+ *          调用者2. 反馈canset无效时,会调用canset识别,不类比,sp+1,eff-1;
+ *          调用者3. 迁移时,会调用canset识别,类比,sp+0,eff+0;
+ *          注: 反馈无效时,sp也会+1的代码是以前的,此处未改,但它是否合理,待测出不合理时再来改正;
  *  @version
  *      2023.03.18: 失败时,也调用Canset识别,并将es计负分 (参考28185-todo5);
  *      2023.03.30: 支持过滤器 (参考29042);
  *      2023.04.04: 将Canset过滤器改为根据indexDic映射数来 (参考29055);
- *      2023.04.07: 关闭Canset识别 (参考29059-改动);
+ *      2023.04.07: 因为性能原因,并且newCanset时就识别类比的意义也没找着,所以关闭Canset识别 (后面会改为在迁移时进行懒识别类比) (参考29059-改动 & 29067-todo2);
  *      2023.04.19: TCTransfer迁移后调用Canset识别类比,但不对SPEFF+1 (参考29069-todo12 & todo12.1);
+ *      2023.09.01: 因为场景单一时不会触发transfer导致canset识别类比永远不会发生,所以改回newCanset时即刻触发canset识别类比 (参考30124-原则&todo1);
+ *      2023.09.01: newCanset触发时,EFF根据"有效或无效",更新+-1,TCTransfer触发时EFF不变 (参考30124-todo2&todo3);
  */
-+(void) recognitionCansetFo:(AIKVPointer*)newCanset_p sceneFo:(AIKVPointer*)sceneFo_p {
++(void) recognitionCansetFo:(AIKVPointer*)newCanset_p sceneFo:(AIKVPointer*)sceneFo_p es:(EffectStatus)es {
     if (!Switch4RecognitionCansetFo) return;
     //1. 取出旧有候选集;
     AIFoNodeBase *newCanset = [SMGUtils searchNode:newCanset_p];
     AIFoNodeBase *sceneFo = [SMGUtils searchNode:sceneFo_p];
     NSArray *oldCansets = [sceneFo getConCansets:sceneFo.count];
-    NSLog(@"\n----------- Canset识别 (候选数:%ld) -----------\nnewCanset:%@\nsceneFo:%@",oldCansets.count,Fo2FStr(newCanset),Fo2FStr(sceneFo));
+    NSLog(@"\n----------- Canset识别 (EFF:%@ 候选数:%ld) -----------\nnewCanset:%@\nsceneFo:%@",EffectStatus2Str(es),oldCansets.count,Fo2FStr(newCanset),Fo2FStr(sceneFo));
     NSMutableArray *matchModels = [[NSMutableArray alloc] init];
     
     //2. 旧有候选集: 作为识别池;
@@ -587,8 +594,16 @@
     
     //8. 识别后处理: 外类比 & 增强SP & 增强EFF;
     for (AIMatchCansetModel *model in filterModels) {
-        //4. 只要全含 & 是有效newCanset => 对二者进行外类比 (参考29025-24 & 29027-方案3);
-        [AIAnalogy analogyCansetFo:model.indexDic newCanset:newCanset oldCanset:model.matchFo sceneFo:sceneFo];
+        //9. 只要全含 & 非无效newCanset => 对二者进行外类比 (参考29025-24 & 29027-方案3);
+        if (es != ES_NoEff) {
+            [AIAnalogy analogyCansetFo:model.indexDic newCanset:newCanset oldCanset:model.matchFo sceneFo:sceneFo es:es];
+        }
+        
+        //10. 条件满足的都算识别结果 (更新sp和eff) (参考28185-todo4);
+        if (es != ES_Default) {
+            [model.matchFo updateSPStrong:0 end:model.matchFo.count - 1 type:ATPlus];
+            [sceneFo updateEffectStrong:sceneFo.count solutionFo:model.matchFo.pointer status:es];
+        }
     }
 }
 

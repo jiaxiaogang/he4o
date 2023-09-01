@@ -207,6 +207,7 @@
  *      2023.03.20: 将新Canset挂在所有pFos下 (参考2818a-TODO);
  *      2023.03.21: 回滚代码,由挂在所有pFos下改回仅挂在selfPFo下 (参考29012-回测失败);
  *      2023.03.23: 生成新Canset时,优先从场景matchFo中取元素 (参考29025-21&22);
+ *      2023.09.01: 打开newCanset时调用canset识别类比,并eff+1 (参考30124-todo1&todo2);
  */
 -(void) pushFrameFinish {
     //0. 只有pFo触发时未收到反馈,才执行生成canset或再类比 (参考28077-修复);
@@ -274,7 +275,7 @@
         //[TCEffect rInEffect:matchFo matchRFos:self.baseFrameModel.matchRFos es:ES_HavEff];
         
         //2023.04.19: 改到TCTransfer迁移后调用canset识别类比 (参考29069-todo12);
-        //[TIUtils recognitionCansetFo:cansetFo sceneFo:matchFo es:ES_HavEff];
+        [TIUtils recognitionCansetFo:cansetFo.pointer sceneFo:matchFo.pointer es:ES_HavEff];
     }
 }
 
