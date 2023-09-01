@@ -324,35 +324,6 @@
             [AITest test11:model waitAlg_p:frameAlg.content_p];//测下2523c-此处是否会导致匹配不到;
             //BOOL mIsC = [TOUtils mIsC_1:model.protoAlg.pointer c:targetAlg.content_p];
             BOOL mIsC = [recognitionAlgs containsObject:frameAlg.content_p];
-            
-            
-            
-            //TODOTOMORROW20230825: 此处在"饥饿,上扔坚果"后,A18186仍然反馈失败,matchAlgs中不含A18186,但查下别的...可能性,能否更广泛些的反馈,又不导致别的问题 (参考30122-方案);
-            [NVView invokeForceMode:^{
-                [theNV setNodeData:frameAlg.content_p lightStr:@"A18186"];
-            }];
-            AIAlgNodeBase *algN = [SMGUtils searchNode:frameAlg.content_p];
-            NSArray *abs_ps = Ports2Pits([AINetUtils absPorts_All:algN]);
-            NSArray *jiaoJi = [SMGUtils filterArr:recognitionAlgs checkValid:^BOOL(id item) {
-                return [abs_ps containsObject:item];
-            }];
-            NSLog(@"识别:%@ (数量:%ld)",CLEANSTR([SMGUtils convertArr:recognitionAlgs convertBlock:^id(AIKVPointer *obj) {
-                return STRFORMAT(@"A%ld",obj.pointerId);
-            }]),recognitionAlgs.count);
-            NSLog(@"抽象:%@ (数量:%ld)",CLEANSTR([SMGUtils convertArr:abs_ps convertBlock:^id(AIKVPointer *obj) {
-                return STRFORMAT(@"A%ld",obj.pointerId);
-            }]),abs_ps.count);
-            NSLog(@"交集:%@ (数量:%ld)",CLEANSTR([SMGUtils convertArr:jiaoJi convertBlock:^id(AIKVPointer *obj) {
-                return STRFORMAT(@"A%ld",obj.pointerId);
-            }]),jiaoJi.count);
-            //1. A18186是最具象节点,而A18186的抽象与matchAlgs交集31条,占38条的82%;
-            
-            
-            
-            
-            
-            
-            
             if (Log4OPushM) NSLog(@"Normal有效判断_mIsC:(M=headerM C=%@) 结果:%d",Pit2FStr(frameAlg.content_p),mIsC);
             if (mIsC) {
                 //a. 赋值
