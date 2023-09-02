@@ -365,7 +365,7 @@
 
 //外类比
 #define Log4OutAna false
-#define Log4OutCansetAna false
+#define Log4OutCansetAna true
 //方向索引
 #define Log4DirecRef true
 //外输入推进中循环
