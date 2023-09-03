@@ -600,6 +600,9 @@
             
             //TODOTOMORROW20230902: 测试30124修改结果
             NSLog(@"此处抽象出的absCanset,以及其sp和eff的值,然后在后面又有没有把absCanset用起来等;");
+            [NVView invokeForceMode:^{
+                [theNV setNodeData:absCanset.pointer];
+            }];
             
             
             

@@ -217,6 +217,7 @@
  *      2023.04.19: 取消EFF+1,因为迁移完成不表示已正向发生 (参考29069-todo12.1);
  *      2023.04.29: 得出absCanset和scene的indexDic (参考29076-todo2);
  *      2023.09.01: 迁移完成时EFF不变(参数传ES_Default),但newCanset有用时+1,无用时-1 (参考30124-todo2 & todo3);
+ *      2023.09.03: 修复dic.keys无序会导致此处生成的absFo序列也错乱的问题;
  */
 +(AINetAbsFoNode*) analogyCansetFo:(NSDictionary*)indexDic newCanset:(AIFoNodeBase*)newCanset oldCanset:(AIFoNodeBase*)oldCanset sceneFo:(AIFoNodeBase*)sceneFo es:(EffectStatus)es {
     //1. 类比orders的规律
@@ -229,7 +230,10 @@
     NSMutableArray *orderSames = [[NSMutableArray alloc] init];
     
     //2. 根据新旧的映射indexDic分别进行概念类比 (参考29025-24a);
-    for (NSNumber *key in indexDic.allKeys) {
+    NSArray *allKeys = [SMGUtils sortSmall2Big:indexDic.allKeys compareBlock:^double(NSNumber *obj) {
+        return obj.doubleValue;
+    }];
+    for (NSNumber *key in allKeys) {
         NSInteger oldIndex = key.integerValue;
         NSInteger newIndex = NUMTOOK([indexDic objectForKey:key]).integerValue;
         AIKVPointer *oldAlg_p = ARR_INDEX(oldCanset.content_ps, oldIndex);
