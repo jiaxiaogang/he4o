@@ -55,7 +55,7 @@
             }else if(![TOUtils isN:absAlg_p] && ![TOUtils isL:absAlg_p]){
                 //NL找不到,是正常的,因为"内类比无/小"时,本身具象只是frontConAlg,并且本来就是瞬间变"无/小"的;
                 if (![TOUtils isHNGL:absFo.pointer] && ([absFo.content_ps indexOfObject:absAlg_p] == absFo.count - 1))
-                    WLog(@"getDetailTimes\nAbsA:%@\nAbsF:%@\nConF:%@,%ld,%ld",AlgP2FStr(absAlg_p),Fo2FStr(absFo),Fo2FStr(conFo),(long)findIndex,(long)lastIndex);
+                    WLog(@"末帧没找着detailTime AbsA:%@ (%ld,%ld)\n\tAbsF:%@\n\tConF:%@",AlgP2FStr(absAlg_p),(long)findIndex,(long)lastIndex,Fo2FStr(absFo),Fo2FStr(conFo));
             }
         }
         

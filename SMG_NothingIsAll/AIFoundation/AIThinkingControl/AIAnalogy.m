@@ -221,7 +221,11 @@
 +(AINetAbsFoNode*) analogyCansetFo:(NSDictionary*)indexDic newCanset:(AIFoNodeBase*)newCanset oldCanset:(AIFoNodeBase*)oldCanset sceneFo:(AIFoNodeBase*)sceneFo es:(EffectStatus)es {
     //1. 类比orders的规律
     if (!Switch4AnalogyCansetFo) return nil;
-    if (Log4OutCansetAna) NSLog(@"\n----------- Canset类比 -----------\nnew:%@ \nold:%@",Fo2FStr(newCanset),Fo2FStr(oldCanset));
+    AIEffectStrong *newEffStrong = [sceneFo getEffectStrong:sceneFo.count solutionFo:newCanset.pointer];
+    AIEffectStrong *oldEffStrong = [sceneFo getEffectStrong:sceneFo.count solutionFo:oldCanset.pointer];
+    if (Log4OutCansetAna) NSLog(@"\n----------- Canset类比 -----------\nnew:%@ SP:%@ EFF:%@ \nold:%@ SP:%@ EFF:%@",
+                                Fo2FStr(newCanset),CLEANSTR(newCanset.spDic),CLEANSTR(newEffStrong),
+                                Fo2FStr(oldCanset),CLEANSTR(oldCanset.spDic),CLEANSTR(oldEffStrong));
     NSMutableArray *orderSames = [[NSMutableArray alloc] init];
     
     //2. 根据新旧的映射indexDic分别进行概念类比 (参考29025-24a);
@@ -256,7 +260,6 @@
     
     //8. 将抽象Canset挂到sceneFo下;
     BOOL updateCansetSuccess = [sceneFo updateConCanset:absFo.pointer targetIndex:sceneFo.count];
-    
     if (updateCansetSuccess) {
         //9. 根据scene与oldCanset的映射 与 oldCanset与absCanset的映射 得出 absCanset与scene的映射 (参考29076-todo2);
         NSDictionary *sceneNewCansetIndexDic = [sceneFo getConIndexDic:newCanset.p];
