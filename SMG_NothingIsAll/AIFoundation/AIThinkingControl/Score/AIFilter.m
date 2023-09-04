@@ -55,11 +55,16 @@
 
 /**
  *  MARK:--------------------Canset求解过滤器 (参考29081-todo41)--------------------
+ *  @version
+ *      2023.09.04: 加上hStrong做二级排序因子 (参考30125-方案);
  */
 +(NSArray*) solutionCansetFilter:(AIFoNodeBase*)sceneFo targetIndex:(NSInteger)targetIndex {
     NSArray *protoConCansets = [sceneFo getConCansets:targetIndex];
-    NSArray *sorts = [SMGUtils sortBig2Small:protoConCansets compareBlock:^double(AIKVPointer *canset) {
+    NSArray *sorts = [SMGUtils sortBig2Small:protoConCansets compareBlock1:^double(AIKVPointer *canset) {
         return [TOUtils getEffectScore:sceneFo effectIndex:targetIndex solutionFo:canset];
+    } compareBlock2:^double(AIKVPointer *canset) {
+        AIEffectStrong *strong = [TOUtils getEffectStrong:sceneFo effectIndex:targetIndex solutionFo:canset];
+        return strong.hStrong;
     }];
     NSInteger limit = MAX(3, protoConCansets.count * 0.2f);//取20% & 至少尝试取3条;
     return ARR_SUB(sorts, 0, limit);
