@@ -596,17 +596,7 @@
     for (AIMatchCansetModel *model in filterModels) {
         //9. 只要全含 & 非无效newCanset => 对二者进行外类比 (参考29025-24 & 29027-方案3);
         if (es != ES_NoEff) {
-            AIFoNodeBase *absCanset = [AIAnalogy analogyCansetFo:model.indexDic newCanset:newCanset oldCanset:model.matchFo sceneFo:sceneFo es:es];
-            
-            //TODOTOMORROW20230902: 测试30124修改结果
-            NSLog(@"此处抽象出的absCanset,以及其sp和eff的值,然后在后面又有没有把absCanset用起来等;");
-            [NVView invokeForceMode:^{
-                [theNV setNodeData:absCanset.pointer];
-            }];
-            
-            
-            
-            
+            [AIAnalogy analogyCansetFo:model.indexDic newCanset:newCanset oldCanset:model.matchFo sceneFo:sceneFo es:es];
         }
         
         //10. 条件满足的都算识别结果 (更新sp和eff) (参考28185-todo4);

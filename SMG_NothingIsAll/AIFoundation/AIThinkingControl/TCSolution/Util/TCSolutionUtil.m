@@ -185,6 +185,19 @@
     NSArray *cansetModels = [SMGUtils convertArr:sceneModels convertItemArrBlock:^NSArray *(AISceneModel *sceneModel) {
         //3. 取出overrideCansets;
         NSArray *cansets = ARRTOOK([TCCanset getOverrideCansets:sceneModel]);//127ms
+        
+        //TODOTOMORROW20230904: 回测为什么30124在回测构建的absCanset最后没激活;
+        if (sceneModel.scene.pointerId == 17264) {
+            AIFoNodeBase *sceneFo = [SMGUtils searchNode:sceneModel.scene];
+            NSArray *allCansets = [sceneFo getConCansets:sceneFo.count];
+            NSLog(@"F17264下的所有canset: %@",CLEANSTR([SMGUtils convertArr:allCansets convertBlock:^id(AIKVPointer *obj) {
+                return @(obj.pointerId);
+            }]));
+            NSLog(@"F17264下的有效canset: %@",CLEANSTR([SMGUtils convertArr:cansets convertBlock:^id(AIKVPointer *obj) {
+                return @(obj.pointerId);
+            }]));
+        }
+        
         NSArray *itemCansetModels = [SMGUtils convertArr:cansets convertBlock:^id(AIKVPointer *canset) {
             //4. cansetModel转换器参数准备;
             NSInteger aleardayCount = sceneModel.cutIndex + 1;
