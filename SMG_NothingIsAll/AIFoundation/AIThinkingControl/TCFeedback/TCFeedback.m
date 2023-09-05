@@ -256,7 +256,7 @@
     for (ReasonDemandModel *root in theTC.outModelManager.getAllDemand) {
         [waitModels addObjectsFromArray:[TOUtils getSubOutModels_AllDeep:root validStatus:nil]];
     }
-    IFTitleLog(@"TOR反馈", @"\n输入ProtoA:%@ (识别matchAlgs数:%ld)\n等待中任务数:%lu",Alg2FStr(model.protoAlg),recognitionAlgs.count,(long)waitModels.count);
+    IFTitleLog(@"feedbackTOR", @"\n输入ProtoA:%@ (识别matchAlgs数:%ld)\n等待中任务数:%lu",Alg2FStr(model.protoAlg),recognitionAlgs.count,(long)waitModels.count);
     
     //2. 保留/更新实际发生到outModel (通过了有效判断的,将实际概念直接存留到waitModel);
     for (TOAlgModel *waitModel in waitModels) {
@@ -324,7 +324,7 @@
             [AITest test11:model waitAlg_p:frameAlg.content_p];//测下2523c-此处是否会导致匹配不到;
             //BOOL mIsC = [TOUtils mIsC_1:model.protoAlg.pointer c:targetAlg.content_p];
             BOOL mIsC = [recognitionAlgs containsObject:frameAlg.content_p];
-            if (Log4OPushM) NSLog(@"Normal有效判断_mIsC:(M=headerM C=%@) 结果:%d",Pit2FStr(frameAlg.content_p),mIsC);
+            if (Log4OPushM) NSLog(@"rAlg反馈_M(A%ld) isC(A%ld) 结果:%d CAtFo:%@",model.protoAlg.pointer.pointerId,frameAlg.content_p.pointerId,mIsC,Pit2FStr(solutionFo.content_p));
             if (mIsC) {
                 //a. 赋值
                 frameAlg.status = TOModelStatus_OuterBack;
