@@ -150,9 +150,8 @@
         CGFloat effScore = [TOUtils getEffectScore:effStrong];
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:obj.cansetFo];
         CGFloat spScore = [TOUtils getStableScore:cansetFo startSPIndex:obj.cutIndex + 1 endSPIndex:obj.cutIndex + 1];
-        if (Log4AIRank) NSLog(@"%ld. %@:(分:%.2f) %@:(分:%.2f) %@<F%ld %@>",[sort indexOfObject:obj],
-                              CLEANSTR(cansetFo.spDic),spScore,effStrong.description,effScore,
-                              SceneType2Str(obj.baseSceneModel.type),obj.sceneFo.pointerId,Fo2FStr(cansetFo));
+        if (Log4AIRank) NSLog(@"%ld. %@<F%ld %@> %@:(分:%.2f) %@:(分:%.2f)",[sort indexOfObject:obj],SceneType2Str(obj.baseSceneModel.type),obj.sceneFo.pointerId,Fo2FStr(cansetFo),
+                              CLEANSTR(cansetFo.spDic),spScore,effStrong.description,effScore);
     }
     return sort;
 }
