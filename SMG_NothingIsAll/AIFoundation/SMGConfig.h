@@ -103,3 +103,4 @@
 
 //不打印NSLog日志开关
 static BOOL cNSLogSwitch = true;
+#define cNSLogSwitchIsOpenTypes @[@"TI",@"TO",@"MA",@"OT"]

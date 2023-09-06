@@ -75,10 +75,11 @@
     
     //2. 当TC有效时,打印它;
     BOOL tcsCanPrint = LogPrintAllTCs || !STRISOK(lastTCName) || [LogJustPrintTCs containsObject:SUBSTR2INDEX(lastTCName, lastTCName.length - 2)];
+    BOOL logSwitch = cNSLogSwitch && [cNSLogSwitchIsOpenTypes containsObject:[self getQueueStr]];
     
     //3. 打印
     //2023.07.20: 因为改到主线程导致当前线程提前销毁报错,直接取消切到主线程;
-    if (cNSLogSwitch && tcsCanPrint) {
+    if (logSwitch && tcsCanPrint) {
         NSString *log = [self nsLogFormat:fileName line:line protoLog:protoLog headerMode:headerMode];
         PrintLog(log);
     }
