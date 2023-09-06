@@ -263,7 +263,7 @@
         
         //3. waitModel有效检查;
         if (!ISOK(waitModel, TOAlgModel.class) || !ISOK(waitModel.baseOrGroup, TOFoModel.class)) continue;
-        if (Log4OPushM) NSLog(@"==> checkTOModel: %@",Pit2FStr(waitModel.content_p));
+        //if (Log4OPushM) NSLog(@"==> checkTOModel: %@",Pit2FStr(waitModel.content_p));
         
         //4. ============= H返回的有效判断 =============
         if (ISOK(waitModel.baseOrGroup.baseOrGroup, HDemandModel.class)) {

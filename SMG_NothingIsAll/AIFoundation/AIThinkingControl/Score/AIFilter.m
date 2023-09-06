@@ -130,7 +130,7 @@
     
     //7. debugLog
     NSLog(@"概念二次过滤后条数: 原%ld 剩%ld >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",inModel.matchAlgs.count,filterAlgs.count);
-    for (AIMatchAlgModel *item in filterAlgs) NSLog(@"\t%ld. %@ (现匹配度:%.2f 原%.2f)",[filterAlgs indexOfObject:item] + 1,Pit2FStr(item.matchAlg),NUMTOOK([secondMatchValueDic objectForKey:@(item.matchAlg.pointerId)]).doubleValue,item.matchValue);
+    for (AIMatchAlgModel *item in filterAlgs) if (debugMode) NSLog(@"\t%ld. %@ (现匹配度:%.2f 原%.2f)",[filterAlgs indexOfObject:item] + 1,Pit2FStr(item.matchAlg),NUMTOOK([secondMatchValueDic objectForKey:@(item.matchAlg.pointerId)]).doubleValue,item.matchValue);
     NSLog(@"\n时序二次过滤后条数: 原%ld 剩%ld >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",inModel.matchPFos.count,filterFos.count);
     for (AIMatchFoModel *item in filterFos) NSLog(@"\t%ld. %@",[filterFos indexOfObject:item] + 1,Pit2FStr(item.matchFo));
     

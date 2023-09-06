@@ -204,7 +204,6 @@
         ReasonDemandModel *item = ARR_INDEX(self.loopCache.array, j);
         if (Log4CanDecisionDemand) NSLog(@"root(%ld/%ld):%@ (%@) %@",j,self.loopCache.count,Pit2FStr(item.protoFo),[SMGUtils date2Str:kHHmmss timeInterval:item.initTime],[TOModelVision cur2Sub:item]);
     }
-    NSLog(@"Demand竞争 ==> START 共%ld条",self.loopCache.count);
     for (NSInteger i = 0; i < self.loopCache.count; i++) {
         ReasonDemandModel *item = ARR_INDEX(self.loopCache.array, i);
         NSArray *pFoTitles = [SMGUtils convertArr:item.pFos convertBlock:^id(AIMatchFoModel *obj) {
@@ -214,32 +213,32 @@
         
         //3. 即使已经找到result,也把日志打完,方便调试日志中查看Demand的完整竞争情况;
         if (result) {
-            NSLog(@"\t第%ld条 %@ 评分%.2f \t\t\t{%@}",i+1,ClassName2Str(item.algsType),[AIScore score4Demand:item],itemDesc);
+            if (Log4CanDecisionDemand) NSLog(@"\t第%ld条 %@ 评分%.2f \t\t\t{%@}",i+1,ClassName2Str(item.algsType),[AIScore score4Demand:item],itemDesc);
             continue;
         }
         
         //4. 已完成时,下一个;
         if (item.status == TOModelStatus_Finish) {
-            NSLog(@"\t第%ld条 %@ 评分%.2f 因FINISH 失败 \t{%@}",i+1,ClassName2Str(item.algsType),[AIScore score4Demand:item],itemDesc);
+            if (Log4CanDecisionDemand) NSLog(@"\t第%ld条 %@ 评分%.2f 因FINISH 失败 \t{%@}",i+1,ClassName2Str(item.algsType),[AIScore score4Demand:item],itemDesc);
             continue;
         }
         
         //4. 已无计可施,下一个 (TCPlan会优先从末枝执行,所以当root就是末枝时,说明整个三条大树干全烂透没用了);
         if (item.status == TOModelStatus_WithOut) {
-            NSLog(@"\t第%ld条 %@ 评分%.2f 因WithOut 失败 \t{%@}",i+1,ClassName2Str(item.algsType),[AIScore score4Demand:item],itemDesc);
+            if (Log4CanDecisionDemand) NSLog(@"\t第%ld条 %@ 评分%.2f 因WithOut 失败 \t{%@}",i+1,ClassName2Str(item.algsType),[AIScore score4Demand:item],itemDesc);
             continue;
         }
         
         //4. 当任务失效时,不返回;
         if (ISOK(item, ReasonDemandModel.class) && ((ReasonDemandModel*)item).isExpired) {
-            NSLog(@"\t第%ld条 %@ 评分%.2f 因isExpired 失败 \t{%@}",i+1,ClassName2Str(item.algsType),[AIScore score4Demand:item],itemDesc);
+            if (Log4CanDecisionDemand) NSLog(@"\t第%ld条 %@ 评分%.2f 因isExpired 失败 \t{%@}",i+1,ClassName2Str(item.algsType),[AIScore score4Demand:item],itemDesc);
             continue;
         }
         
         //5. 最末枝在actYes状态时,不应期,继续secondRoot;
         BOOL endHavActYes = [TOUtils endHavActYes:item];
         if (endHavActYes){
-            NSLog(@"\t第%ld条 %@ 评分%.2f 因endHavActYes 失败 \t{%@}",i+1,ClassName2Str(item.algsType),[AIScore score4Demand:item],itemDesc);
+            if (Log4CanDecisionDemand) NSLog(@"\t第%ld条 %@ 评分%.2f 因endHavActYes 失败 \t{%@}",i+1,ClassName2Str(item.algsType),[AIScore score4Demand:item],itemDesc);
             continue;
         }
         
@@ -247,6 +246,7 @@
         NSLog(@"\t第%ld条 %@ 评分%.2f 激活成功 \t{%@}",i+1,ClassName2Str(item.algsType),[AIScore score4Demand:item],itemDesc);
         result = item;
     }
+    if (result) NSLog(@"Demand竞争 <<<== SUCCESS 共%ld条",self.loopCache.count);
     return result;
 }
 
