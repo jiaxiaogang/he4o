@@ -246,7 +246,7 @@
         NSLog(@"\t第%ld条 %@ 评分%.2f 激活成功 \t{%@}",i+1,ClassName2Str(item.algsType),[AIScore score4Demand:item],itemDesc);
         result = item;
     }
-    if (result) NSLog(@"Demand竞争 <<<== SUCCESS 共%ld条",self.loopCache.count);
+    NSLog(@"Demand竞争 <<<== %@ 共%ld条",result?@"SUCCESS":@"FAILURE",self.loopCache.count);
     return result;
 }
 
