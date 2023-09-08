@@ -179,7 +179,7 @@
  *      2023.05.08: BUG_father没conCanset被过滤,导致它的brother全没机会激活 (改为仅brother时才要求必须有cansets指向);
  *      2023.05.15: 改为强度为主,匹配度为辅进行过滤 (参考29094-BUG3-方案2);
  */
-+(NSArray*) solutonSceneFilter:(AIFoNodeBase*)protoScene type:(SceneType)type {
++(NSArray*) rSolutionSceneFilter:(AIFoNodeBase*)protoScene type:(SceneType)type {
     //1. 数据准备: 向着isAbs方向取得抽具关联场景;
     BOOL toAbs = type != SceneTypeFather;
     NSArray *otherScenePorts = toAbs ? [AINetUtils absPorts_All:protoScene] : [AINetUtils conPorts_All:protoScene];
@@ -187,6 +187,42 @@
     //2. 根据是否有conCanset过滤 (目前仅支持R任务,所以直接用fo.count做targetIndex) (参考29089-解答1-补充 & 2908a-todo5);
     otherScenePorts = [SMGUtils filterArr:otherScenePorts checkValid:^BOOL(AIPort *item) {
         AIFoNodeBase *fo = [SMGUtils searchNode:item.target_p];//500ms R90 3455次
+        BOOL mvIdenOK = [fo.cmvNode_p.identifier isEqualToString:protoScene.cmvNode_p.identifier];//mv要求必须同区; //77ms 3455次
+        BOOL havCansetsOK = type != SceneTypeBrother || ARRISOK([fo getConCansets:fo.count]);//brother时要求必须有cansets; //43ms 3455次
+        return mvIdenOK && havCansetsOK; //43ms 3455次
+    }];
+    
+    //3. 根据强度为主,匹配度为辅进行过滤: 取20% & 至少尝试取3条 (参考29094-BUG3-方案2);
+    otherScenePorts = [self filterTwice:otherScenePorts mainBlock:^double(AIPort *item) {
+        //4. 根据强度,进行主要过滤 (参考29094-BUG3-方案2);
+        return item.strong.value;//mainBlock 135ms 11540次
+    } subBlock:^double(AIPort *item) {
+        //5. 根据indexDic复用匹配度进行辅助过滤 (参考2908a-todo2);
+        if (toAbs) {
+            return [AINetUtils getMatchByIndexDic:[protoScene getAbsIndexDic:item.target_p] absFo:item.target_p conFo:protoScene.pointer callerIsAbs:false];//113ms 4038次
+        }
+        return [AINetUtils getMatchByIndexDic:[protoScene getConIndexDic:item.target_p] absFo:protoScene.pointer conFo:item.target_p callerIsAbs:true];//1436ms 3878次
+    } radio:0.2f min:4 max:20 debugMode:false];
+    return Ports2Pits(otherScenePorts);
+}
+
++(NSArray*) hSolutionSceneFilter:(AIFoNodeBase*)protoScene type:(SceneType)type {
+    //1. 数据准备: 向着isAbs方向取得抽具关联场景;
+    BOOL toAbs = type != SceneTypeFather;
+    NSArray *otherScenePorts = toAbs ? [AINetUtils absPorts_All:protoScene] : [AINetUtils conPorts_All:protoScene];
+    
+    //2. 根据是否有conCanset过滤 (目前仅支持R任务,所以直接用fo.count做targetIndex) (参考29089-解答1-补充 & 2908a-todo5);
+    otherScenePorts = [SMGUtils filterArr:otherScenePorts checkValid:^BOOL(AIPort *item) {
+        AIFoNodeBase *fo = [SMGUtils searchNode:item.target_p];//500ms R90 3455次
+        
+        
+        //TODOTOMORROW20230908: hDemand支持TCScene
+        
+        //要求必须有targetIndex;
+        
+        //要求canset也必须有targetIndex对应;
+        
+        
         BOOL mvIdenOK = [fo.cmvNode_p.identifier isEqualToString:protoScene.cmvNode_p.identifier];//mv要求必须同区; //77ms 3455次
         BOOL havCansetsOK = type != SceneTypeBrother || ARRISOK([fo getConCansets:fo.count]);//brother时要求必须有cansets; //43ms 3455次
         return mvIdenOK && havCansetsOK; //43ms 3455次
