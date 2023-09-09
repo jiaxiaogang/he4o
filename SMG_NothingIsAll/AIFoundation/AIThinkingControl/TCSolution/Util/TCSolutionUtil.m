@@ -179,7 +179,7 @@
  */
 +(AICansetModel*) rSolution_Slow:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps {
     //1. 收集cansetModels候选集;
-    NSArray *sceneModels = [TCScene getSceneTree:demand];//1800ms
+    NSArray *sceneModels = [TCScene rGetSceneTree:demand];//1800ms
 
     //2. 每个cansetModel转solutionModel;
     NSArray *cansetModels = [SMGUtils convertArr:sceneModels convertItemArrBlock:^NSArray *(AISceneModel *sceneModel) {

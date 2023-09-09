@@ -209,6 +209,7 @@
 /**
  *  MARK:--------------------hScene求解过滤器 (参考2908a-todo2 & 30127)--------------------
  *  @param type : protoScene的类型,i时向抽象取ports,father时向具象取ports;
+ *  @param protoTargetIndex : H任务时的targetIndex不是fo.count,所以传入其对应的值;
  *  @version
  *      2023.09.09: 初版,hDemand支持TCScene (参考30127);
  */

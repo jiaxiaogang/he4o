@@ -20,7 +20,7 @@
  *      2023.05.07: TCScene支持过滤器(参考2908a-todo3);
  *  @result 将三级全收集返回 (返回的数据为: I,Father,Brother三者场景生成的CansetModel);
  */
-+(NSArray*) getSceneTree:(ReasonDemandModel*)demand {
++(NSArray*) rGetSceneTree:(ReasonDemandModel*)demand {
     //1. 数据准备;
     NSArray *iModels = nil;
     NSMutableArray *fatherModels = [[NSMutableArray alloc] init];
@@ -85,25 +85,22 @@
     return result;
 }
 
-+(NSArray*) getSceneTree4H:(HDemandModel*)demand {
++(NSArray*) hGetSceneTree:(HDemandModel*)demand {
     //1. 数据准备;
     NSMutableArray *iModels = [[NSMutableArray alloc] init];
     NSMutableArray *fatherModels = [[NSMutableArray alloc] init];
     NSMutableArray *brotherModels = [[NSMutableArray alloc] init];
     TOFoModel *targetFoM = (TOFoModel*)demand.baseOrGroup.baseOrGroup;
-    NSInteger aleardayCount = targetFoM.actionIndex;
+    NSInteger targetIndex = targetFoM.actionIndex;
     
     //2. 取自己级;
-    AISceneModel *iModel = [AISceneModel newWithBase:nil type:SceneTypeI scene:targetFoM.content_p cutIndex:aleardayCount - 1];
+    AISceneModel *iModel = [AISceneModel newWithBase:nil type:SceneTypeI scene:targetFoM.content_p cutIndex:targetIndex - 1];
     [iModels addObject:iModel];
     
     //3. 取父类级;
     for (AISceneModel *iModel in iModels) {
         AIFoNodeBase *iFo = [SMGUtils searchNode:iModel.scene];//84ms
-        
-        //TODOTOMORROW20230908: hDemand支持TCScene
-        
-        NSArray *fatherScene_ps = [AIFilter hSolutionSceneFilter:iFo type:iModel.type];
+        NSArray *fatherScene_ps = [AIFilter hSolutionSceneFilter:iFo protoTargetIndex:targetIndex type:iModel.type];
         
         //a. 过滤器 & 转为CansetModel;
         NSArray *itemFatherModels = [SMGUtils convertArr:fatherScene_ps convertBlock:^id(AIKVPointer *item) {
@@ -111,10 +108,6 @@
             NSDictionary *indexDic = [iFo getAbsIndexDic:item];
             NSNumber *fatherCutIndex = ARR_INDEX([indexDic allKeysForObject:@(iModel.cutIndex)], 0);
             if (!fatherCutIndex) return nil;
-            
-            //a2. 过滤无同区mv指向的 (参考29069-todo4);
-            AIFoNodeBase *fo = [SMGUtils searchNode:item];
-            if (![iFo.cmvNode_p.identifier isEqualToString:fo.cmvNode_p.identifier]) return nil;
             
             //a3. 将father生成模型;
             return [AISceneModel newWithBase:iModel type:SceneTypeFather scene:item cutIndex:fatherCutIndex.integerValue];
@@ -125,7 +118,7 @@
     //4. 取兄弟级;
     for (AISceneModel *fatherModel in fatherModels) {
         AIFoNodeBase *fatherFo = [SMGUtils searchNode:fatherModel.scene];
-        NSArray *brotherScene_ps = [AIFilter hSolutionSceneFilter:fatherFo type:fatherModel.type];//1799ms
+        NSArray *brotherScene_ps = [AIFilter hSolutionSceneFilter:fatherFo protoTargetIndex:targetIndex type:fatherModel.type];//1799ms
         
         //a. 过滤器 & 转为CansetModel;
         NSArray *itemBrotherModels = [SMGUtils convertArr:brotherScene_ps convertBlock:^id(AIKVPointer *item) {
@@ -133,10 +126,6 @@
             NSDictionary *indexDic = [fatherFo getConIndexDic:item];
             NSNumber *brotherCutIndex = [indexDic objectForKey:@(fatherModel.cutIndex)];
             if (!brotherCutIndex) return nil;
-            
-            //a2. 过滤无同区mv指向的 (参考29069-todo4);
-            AIFoNodeBase *fo = [SMGUtils searchNode:item];//68ms
-            if (![fatherFo.cmvNode_p.identifier isEqualToString:fo.cmvNode_p.identifier]) return nil;
             
             //a3. 将brother生成模型;
             return [AISceneModel newWithBase:fatherModel type:SceneTypeBrother scene:item cutIndex:brotherCutIndex.integerValue];
