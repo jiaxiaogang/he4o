@@ -204,12 +204,22 @@
 /**
  *  MARK:--------------------获取所有候选集--------------------
  *  @desc 将>=targetIndex下标对应的解决方案候选集打包返回 (参考27204b);
+ *  @version
+ *      2023.09.10: H任务时,>targetIndex的未必包含targetIndex,所以加上H任务时,canset中必须包含targetIndex对应帧;
  *  @result notnull
  */
 -(NSArray*) getConCansets:(NSInteger)targetIndex {
     NSMutableArray *result = [[NSMutableArray alloc] init];
+    BOOL forH = targetIndex < self.count;
     for (NSInteger i = targetIndex; i <= self.count; i++) {
-        [result addObjectsFromArray:[self.conCansetsDic objectForKey:@(i)]];
+        NSArray *itemArr = ARRTOOK([self.conCansetsDic objectForKey:@(i)]);
+        if (forH) { //H任务时,要求canset中必须包含targetIndex映射帧;
+            itemArr = [SMGUtils filterArr:itemArr checkValid:^BOOL(AIKVPointer *item) {
+                NSDictionary *indexDic = [self getConIndexDic:item];
+                return [indexDic objectForKey:@(targetIndex)];
+            }];
+        }
+        [result addObjectsFromArray:itemArr];
     }
     return [SMGUtils removeRepeat:result];
 }
