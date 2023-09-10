@@ -52,6 +52,7 @@
  *                                  1. 根R=cutIndex+1
  *                                  2. 子R=父actionIndex对应indexDic条数;
  *                                  3. H.actionIndex前已发生;
+ *                                  改: 在支持sceneTree后,统一传sceneModel.cutIndex + 1;
  *  @param sceneFo_p            : 当前cansetFo_p挂在哪个场景fo下就传哪个;
  *  @param basePFoOrTargetFoModel : 一用来取protoFo用,二用来传参给结果AICansetModel用;
  *  @param sceneModel           : 此cansetModel是基于哪个sceneModel的就传哪个;
