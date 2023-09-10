@@ -48,6 +48,9 @@
 
 /**
  *  MARK:--------------------cutIndex--------------------
+ *  @desc cutIndex的值 = aleardayCount - 1 = actionIndex - 1
+ *      1. H任务时: H任务的targetIndex = actionIndex (H任务目标是当前场景targetFo的actionIndex帧);
+ *      2. R任务时: R任务的targetIndex = sceneFo.count (R任务目标是最后的mv结果);
  */
 @property (assign, nonatomic) NSInteger cutIndex;
 

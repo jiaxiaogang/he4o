@@ -174,6 +174,41 @@
     return [self generalSolution_Slow:hDemand cansetModels:cansetModels except_ps:except_ps];
 }
 
++(AICansetModel*) hSolution_SlowV2:(HDemandModel *)demand except_ps:(NSArray*)except_ps {
+    //1. 收集cansetModels候选集;
+    NSArray *sceneModels = [TCScene hGetSceneTree:demand];
+
+    //2. 每个cansetModel转solutionModel;
+    NSArray *cansetModels = [SMGUtils convertArr:sceneModels convertItemArrBlock:^NSArray *(AISceneModel *sceneModel) {
+        //3. 取出overrideCansets;
+        AIFoNodeBase *sceneFo = [SMGUtils searchNode:sceneModel.scene];
+        NSArray *cansets = ARRTOOK([TCCanset getOverrideCansets:sceneModel sceneTargetIndex:sceneModel.cutIndex + 1]);//127ms
+        NSArray *itemCansetModels = [SMGUtils convertArr:cansets convertBlock:^id(AIKVPointer *canset) {
+            
+            
+            //TODOTOMORROW20230910: 写TCCanset支持hDemand;
+            
+            
+            
+            //4. cansetModel转换器参数准备;
+            NSInteger aleardayCount = sceneModel.cutIndex + 1;
+            AIMatchFoModel *pFo = [SMGUtils filterSingleFromArr:demand.validPFos checkValid:^BOOL(AIMatchFoModel *item) {
+                return [item.matchFo isEqual:sceneModel.getRoot.scene];
+            }];
+            
+            //4. 过滤器 & 转cansetModels候选集 (参考26128-第1步 & 26161-1&2&3);
+            return [TCCanset convert2CansetModel:canset sceneFo:sceneModel.scene basePFoOrTargetFoModel:pFo ptAleardayCount:aleardayCount isH:false sceneModel:sceneModel];//245ms
+        }];
+        
+        if (Log4TCCanset && cansets.count > 0) NSLog(@"\t item场景(%@):%@ 取得候选数:%ld 转成候选模型数:%ld",SceneType2Str(sceneModel.type),Pit2FStr(sceneModel.scene),cansets.count,itemCansetModels.count);
+        return itemCansetModels;
+    }];
+    NSLog(@"第2步 转为候选集 总数:%ld",cansetModels.count);
+
+    //5. 慢思考;
+    return [self generalSolution_Slow:demand cansetModels:cansetModels except_ps:except_ps];//400ms
+}
+
 /**
  *  MARK:--------------------R慢思考--------------------
  */
@@ -184,7 +219,8 @@
     //2. 每个cansetModel转solutionModel;
     NSArray *cansetModels = [SMGUtils convertArr:sceneModels convertItemArrBlock:^NSArray *(AISceneModel *sceneModel) {
         //3. 取出overrideCansets;
-        NSArray *cansets = ARRTOOK([TCCanset getOverrideCansets:sceneModel]);//127ms
+        AIFoNodeBase *sceneFo = [SMGUtils searchNode:sceneModel.scene];
+        NSArray *cansets = ARRTOOK([TCCanset getOverrideCansets:sceneModel sceneTargetIndex:sceneFo.count]);//127ms
         NSArray *itemCansetModels = [SMGUtils convertArr:cansets convertBlock:^id(AIKVPointer *canset) {
             //4. cansetModel转换器参数准备;
             NSInteger aleardayCount = sceneModel.cutIndex + 1;

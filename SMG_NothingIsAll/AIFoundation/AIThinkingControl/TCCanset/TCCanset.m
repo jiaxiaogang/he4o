@@ -15,29 +15,30 @@
  *  @desc 当前下面挂载的且有效的cansets: (当前cansets - 用优先级更高一级cansets);
  *  @version
  *      2023.04.23: BUG_修复差集取成了交集,导致总返回0条;
+ *      2023.09.10: 支持H任务时的override算法 (指定targetIndex即可) (参考30127);
  */
-+(NSArray*) getOverrideCansets:(AISceneModel*)sceneModel {
++(NSArray*) getOverrideCansets:(AISceneModel*)sceneModel sceneTargetIndex:(NSInteger)sceneTargetIndex {
     //1. 数据准备;
     AIFoNodeBase *selfFo = [SMGUtils searchNode:sceneModel.scene];
     
     //2. 不同type的公式不同 (参考29069-todo5.3 & 5.4 & 5.5);
     if (sceneModel.type == SceneTypeBrother) {
         //3. 当前是brother时: (brother有效canset = brother.conCansets - 与father有迁移关联部分) (参考29069-todo5.3);
-        NSArray *brotherConCansets = [AIFilter solutionCansetFilter:selfFo targetIndex:selfFo.count];
+        NSArray *brotherConCansets = [AIFilter solutionCansetFilter:selfFo targetIndex:sceneTargetIndex];
         NSArray *brotherFilter_ps = [TCCanset getFilter_ps:sceneModel];
         NSArray *result = [SMGUtils removeSub_ps:brotherFilter_ps parent_ps:brotherConCansets];
         if (Log4TCCanset && result.count > 0) NSLog(@"测下override过滤生效 (B-F): 原有%ld - 过滤%ld => 结果%ld",brotherConCansets.count,brotherFilter_ps.count,result.count);
         return result;
     } else if (sceneModel.type == SceneTypeFather) {
         //4. 当前是father时: (father有效canset = father.conCansets - 与i有迁移关联部分) (参考29069-todo5.4);
-        NSArray *fatherConCansets = [AIFilter solutionCansetFilter:selfFo targetIndex:selfFo.count];
+        NSArray *fatherConCansets = [AIFilter solutionCansetFilter:selfFo targetIndex:sceneTargetIndex];
         NSArray *fatherFilter_ps = [TCCanset getFilter_ps:sceneModel];
         NSArray *result = [SMGUtils removeSub_ps:fatherFilter_ps parent_ps:fatherConCansets];
         if (Log4TCCanset && result.count > 0) NSLog(@"测下override过滤生效 (F-I): 原有%ld - 过滤%ld => 结果%ld",fatherConCansets.count,fatherFilter_ps.count,result.count);
         return result;
     } else if (sceneModel.type == SceneTypeI) {
         //4. 当前是i时: (i有效canset = i.conCansets) (参考29069-todo5.5);
-        NSArray *iConCansets = [AIFilter solutionCansetFilter:selfFo targetIndex:selfFo.count];
+        NSArray *iConCansets = [AIFilter solutionCansetFilter:selfFo targetIndex:sceneTargetIndex];
         if (Log4TCCanset && iConCansets.count > 0) NSLog(@"测下override过滤生效 (I): 结果%ld",iConCansets.count);
         return iConCansets;
     }
