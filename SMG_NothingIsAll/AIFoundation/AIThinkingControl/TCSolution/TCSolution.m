@@ -139,8 +139,7 @@
         [theTC updateEnergyDelta:-1];
         
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
-        AIFoNodeBase *bestSFo = [SMGUtils searchNode:bestResult.cansetFo];
-        TOFoModel *foModel = [TOFoModel newWithFo_p:bestSFo.pointer base:demand basePFoOrTargetFoModel:bestResult.basePFoOrTargetFoModel];
+        TOFoModel *foModel = [TOFoModel newWithFo_p:bestResult.cansetFo base:demand basePFoOrTargetFoModel:bestResult.basePFoOrTargetFoModel];
         
         //b) bestResult的迁移;
         [TCTransfer transfer:bestResult complate:^(AITransferModel *brother, AITransferModel *father, AITransferModel *i) {
@@ -322,11 +321,22 @@
         
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
         TOFoModel *foModel = [TOFoModel newWithFo_p:bestResult.cansetFo base:hDemand basePFoOrTargetFoModel:bestResult.basePFoOrTargetFoModel];
+        
+        //b) bestResult的迁移;
+        [TCTransfer transfer:bestResult complate:^(AITransferModel *brother, AITransferModel *father, AITransferModel *i) {
+            [foModel setDataWithSceneModel:bestResult.baseSceneModel brother:brother father:father i:i];
+        }];
         foModel.actionIndex = bestResult.cutIndex;
         foModel.targetSPIndex = bestResult.targetIndex;
-        NSLog(@"> newH 第%ld例: %@ (cutIndex:%ld=>targetIndex:%ld)",hDemand.actionFoModels.count,Pit2FStr(bestResult.cansetFo),bestResult.cutIndex,bestResult.targetIndex);
         
-        //a) 有效率;
+        //c) 调试;
+        AIFoNodeBase *sceneFo = [SMGUtils searchNode:bestResult.sceneFo];
+        AIEffectStrong *effStrong = [TOUtils getEffectStrong:sceneFo effectIndex:sceneFo.count solutionFo:bestResult.cansetFo];
+        NSString *effDesc = effStrong ? effStrong.description : @"";
+        AIFoNodeBase *cansetFo = [SMGUtils searchNode:bestResult.cansetFo];
+        NSLog(@"> newH 第%ld例: eff:%@ sp:%@ %@ scene:F%ld canset:F%ld (cutIndex:%ld=>targetIndex:%ld) (前%.2f 中%.2f 后%.2f)",hDemand.actionFoModels.count,effDesc,CLEANSTR(cansetFo.spDic),SceneType2Str(bestResult.baseSceneModel.type),sceneFo.pId,cansetFo.pId,bestResult.cutIndex,bestResult.targetIndex,bestResult.frontMatchValue,bestResult.midStableScore,bestResult.backMatchValue);
+        
+        //a) 有效率
         [TCEffect hEffect:foModel];
         dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
             [theTV updateFrame];
