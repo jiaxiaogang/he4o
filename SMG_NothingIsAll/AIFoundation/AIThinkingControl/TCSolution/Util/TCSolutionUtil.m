@@ -154,26 +154,9 @@
 
 /**
  *  MARK:--------------------H慢思考--------------------
+ *  @version
+ *      2023.09.10: 升级v2,支持TCScene和TCCanset (参考30127);
  */
-+(AICansetModel*) hSolution_Slow:(HDemandModel *)hDemand except_ps:(NSArray*)except_ps{
-    //1. 取targetFo;
-    TOFoModel *targetFoModel = (TOFoModel*)hDemand.baseOrGroup.baseOrGroup;
-
-    //2. 取出cansetFos候选集;
-    //TODOTEST20221123: 测下此处取actionIndex是否正确...
-    NSArray *cansetFos = [self getCansetFos_SlowV2:targetFoModel.content_p targetIndex:targetFoModel.actionIndex];
-    NSLog(@"第1步 H候选集数:%ld fromTargetFo:%@ (帧%ld)",cansetFos.count,Pit2FStr(targetFoModel.content_p),targetFoModel.actionIndex);
-
-    //3. 过滤器 & 转cansetModels候选集 (参考26128-第1步 & 26161-1&2&3);
-    NSInteger hAleardayCount = [self getHAleardayCount:targetFoModel];
-    NSArray *cansetModels = [SMGUtils convertArr:cansetFos convertBlock:^id(AIKVPointer *cansetFo_p) {
-        return [TCCanset convert2CansetModel:cansetFo_p sceneFo:targetFoModel.content_p basePFoOrTargetFoModel:targetFoModel ptAleardayCount:hAleardayCount isH:true sceneModel:nil];
-    }];
-
-    //4. 慢思考;
-    return [self generalSolution_Slow:hDemand cansetModels:cansetModels except_ps:except_ps];
-}
-
 +(AICansetModel*) hSolution_SlowV2:(HDemandModel *)demand except_ps:(NSArray*)except_ps {
     //1. 收集cansetModels候选集;
     NSArray *sceneModels = [TCScene hGetSceneTree:demand];
@@ -311,22 +294,6 @@
 //MARK:===============================================================
 //MARK:                     < privateMethod >
 //MARK:===============================================================
-
-/**
- *  MARK:--------------------取候选集fos--------------------
- *  @param pFoOrTargetFoOfMatch_p : R时传pFo, H时传targetFo;
- *  @version
- *      2022.07.14: 将取抽象,同级,自身全废弃掉,改为仅取具象 (参考27049);
- *      2022.07.15: 每个pFo下支持limit (参考27048-TODO6);
- *      2022.11.19: v2更新,支持从conCansets中取数据 (参考20202-1)
- *      2022.11.19: v2的limit由5改为500 (因为conCansets的复用数据更多,性能ok) (参考27202-2);
- *      2023.02.20: 取消limit,因为后面的过滤器和竞争机制完善了,完全不需要强行切掉一些 (参考n28p08 & n28p09);
- */
-+(NSArray*) getCansetFos_SlowV2:(AIKVPointer*)pFoOrTargetFoOfMatch_p targetIndex:(NSInteger)targetIndex{
-    AIFoNodeBase *matchFo = [SMGUtils searchNode:pFoOrTargetFoOfMatch_p];
-    return [matchFo getConCansets:targetIndex];
-}
-
 +(NSInteger) getRAleardayCount:(ReasonDemandModel*)rDemand pFo:(AIMatchFoModel*)pFo{
     //1. 数据准备;
     BOOL isRoot = !rDemand.baseOrGroup;
