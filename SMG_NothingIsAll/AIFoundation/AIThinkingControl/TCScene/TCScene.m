@@ -90,6 +90,12 @@
     NSMutableArray *iModels = [[NSMutableArray alloc] init];
     NSMutableArray *fatherModels = [[NSMutableArray alloc] init];
     NSMutableArray *brotherModels = [[NSMutableArray alloc] init];
+    
+    //TODOTOMORROW20230911: 30128-targetFo并不是scene的问题;
+    //> 分析下,到底哪个才算scene,然后用它来构建iModel;
+    
+    
+    
     TOFoModel *targetFoM = (TOFoModel*)demand.baseOrGroup.baseOrGroup;
     NSInteger targetIndex = targetFoM.actionIndex;
     
@@ -138,7 +144,7 @@
     [result addObjectsFromArray:iModels];
     [result addObjectsFromArray:fatherModels];
     [result addObjectsFromArray:brotherModels];
-    NSLog(@"第1步 R场景树枝点数 I:%ld + Father:%ld + Brother:%ld = 总:%ld",iModels.count,fatherModels.count,brotherModels.count,result.count);
+    NSLog(@"第1步 H场景树枝点数 I:%ld + Father:%ld + Brother:%ld = 总:%ld",iModels.count,fatherModels.count,brotherModels.count,result.count);
     return result;
 }
 
