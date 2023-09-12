@@ -11,7 +11,7 @@
 @implementation TCScene
 
 /**
- *  MARK:--------------------cansets--------------------
+ *  MARK:--------------------R场景树--------------------
  *  @desc 收集三处候选集 (参考29069-todo3);
  *  @status 目前仅支持R任务,等到做去皮训练时有需要再支持H任务 (29069-todo2);
  *  @version
@@ -85,28 +85,28 @@
     return result;
 }
 
+/**
+ *  MARK:--------------------H场景树--------------------
+ *  @version
+ *      2023.09.12: BUG_修复把targetFoModel错当成scene,导致场景树返回几乎为空的问题 (参考30128);
+ */
 +(NSArray*) hGetSceneTree:(HDemandModel*)demand {
     //1. 数据准备;
     NSMutableArray *iModels = [[NSMutableArray alloc] init];
     NSMutableArray *fatherModels = [[NSMutableArray alloc] init];
     NSMutableArray *brotherModels = [[NSMutableArray alloc] init];
-    
-    //TODOTOMORROW20230911: 30128-targetFo并不是scene的问题;
-    //> 分析下,到底哪个才算scene,然后用它来构建iModel;
-    
-    
-    
     TOFoModel *targetFoM = (TOFoModel*)demand.baseOrGroup.baseOrGroup;
-    NSInteger targetIndex = targetFoM.actionIndex;
+    //NSInteger solutionTargetIndex = targetFoM.actionIndex;
+    AISceneModel *iScene = targetFoM.baseSceneModel;
     
     //2. 取自己级;
-    AISceneModel *iModel = [AISceneModel newWithBase:nil type:SceneTypeI scene:targetFoM.content_p cutIndex:targetIndex - 1];
+    AISceneModel *iModel = [AISceneModel newWithBase:nil type:SceneTypeI scene:iScene.scene cutIndex:iScene.cutIndex];
     [iModels addObject:iModel];
     
     //3. 取父类级;
     for (AISceneModel *iModel in iModels) {
         AIFoNodeBase *iFo = [SMGUtils searchNode:iModel.scene];//84ms
-        NSArray *fatherScene_ps = [AIFilter hSolutionSceneFilter:iFo protoTargetIndex:targetIndex type:iModel.type];
+        NSArray *fatherScene_ps = [AIFilter hSolutionSceneFilter:iFo protoTargetIndex:iModel.cutIndex + 1 type:iModel.type];
         
         //a. 过滤器 & 转为CansetModel;
         NSArray *itemFatherModels = [SMGUtils convertArr:fatherScene_ps convertBlock:^id(AIKVPointer *item) {
@@ -124,7 +124,7 @@
     //4. 取兄弟级;
     for (AISceneModel *fatherModel in fatherModels) {
         AIFoNodeBase *fatherFo = [SMGUtils searchNode:fatherModel.scene];
-        NSArray *brotherScene_ps = [AIFilter hSolutionSceneFilter:fatherFo protoTargetIndex:targetIndex type:fatherModel.type];//1799ms
+        NSArray *brotherScene_ps = [AIFilter hSolutionSceneFilter:fatherFo protoTargetIndex:fatherModel.cutIndex + 1 type:fatherModel.type];//1799ms
         
         //a. 过滤器 & 转为CansetModel;
         NSArray *itemBrotherModels = [SMGUtils convertArr:brotherScene_ps convertBlock:^id(AIKVPointer *item) {
