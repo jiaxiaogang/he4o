@@ -106,7 +106,7 @@
     //3. 取父类级;
     for (AISceneModel *iModel in iModels) {
         AIFoNodeBase *iFo = [SMGUtils searchNode:iModel.scene];//84ms
-        NSArray *fatherScene_ps = [AIFilter hSolutionSceneFilter:iFo protoTargetIndex:iModel.cutIndex + 1 type:iModel.type];
+        NSArray *fatherScene_ps = [AIFilter hSolutionSceneFilter:iModel];
         
         //a. 过滤器 & 转为CansetModel;
         NSArray *itemFatherModels = [SMGUtils convertArr:fatherScene_ps convertBlock:^id(AIKVPointer *item) {
@@ -124,7 +124,7 @@
     //4. 取兄弟级;
     for (AISceneModel *fatherModel in fatherModels) {
         AIFoNodeBase *fatherFo = [SMGUtils searchNode:fatherModel.scene];
-        NSArray *brotherScene_ps = [AIFilter hSolutionSceneFilter:fatherFo protoTargetIndex:fatherModel.cutIndex + 1 type:fatherModel.type];//1799ms
+        NSArray *brotherScene_ps = [AIFilter hSolutionSceneFilter:fatherModel];//1799ms
         
         //a. 过滤器 & 转为CansetModel;
         NSArray *itemBrotherModels = [SMGUtils convertArr:brotherScene_ps convertBlock:^id(AIKVPointer *item) {

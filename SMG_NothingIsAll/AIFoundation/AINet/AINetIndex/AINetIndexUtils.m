@@ -93,14 +93,6 @@
     NSMutableArray *indexModels = [[NSMutableArray alloc] initWithArray:fnIndexArr];
     
     //2. 找出同标识相符的;
-    for (AINetIndexModel *item in indexModels) {
-        if (!ISOK(item, AINetIndexModel.class)) {
-            NSLog(@"TODOTOMORROW20230719: 此处取的类型不对,查下原因");
-            //重取又对了,看起来应该是XGRedis那个dic有问题,会导致取错,可以尝试把那个dic的两个数组取消掉,直接用dictionary就行,简单好用;
-            NSArray *fnIndexArr = ARRTOOK([SMGUtils searchObjectForPointer:[SMGUtils createPointerForIndex] fileName:kFNIndex(isOut) time:cRTIndex]);//重取试下
-            return nil;
-        }
-    }
     AINetIndexModel *model = ARR_INDEX([SMGUtils filterArr:indexModels checkValid:^BOOL(AINetIndexModel *item) {
         return [item.algsType isEqualToString:at] && [item.dataSource isEqualToString:ds];
     }], 0);
@@ -117,9 +109,6 @@
 
 +(void) insertIndexModel:(AINetIndexModel*)model isOut:(BOOL)isOut{
     //1. 取出所有索引序列;
-    if (!ISOK(model, AINetIndexModel.class)) {
-        NSLog(@"TODOTOMORROW20230719: 此处存的类型不对,查下原因");
-    }
     NSMutableArray *models = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:[SMGUtils createPointerForIndex] fileName:kFNIndex(isOut) time:cRTIndex]];
     
     //2. 将旧同标识model移除;

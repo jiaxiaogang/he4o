@@ -81,9 +81,6 @@
 
 +(NSString*) convertMvp2DeltaDesc:(AIKVPointer*)mv_p{
     AICMVNodeBase *mv = [SMGUtils searchNode:mv_p];
-    if (!ISOK(mv, AICMVNodeBase.class)) {
-        NSLog(@"TODOTOMORROW20230719: 查到不匹配了,看下它是啥类型%@ %@",mv.class,NSStringFromClass(mv.class));
-    }
     if (mv) {
         NSInteger delta = [NUMTOOK([AINetIndex getData:mv.delta_p]) integerValue];
         if (delta > 0) return @"↑";

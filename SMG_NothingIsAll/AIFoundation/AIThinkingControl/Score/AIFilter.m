@@ -208,20 +208,22 @@
 
 /**
  *  MARK:--------------------hScene求解过滤器 (参考2908a-todo2 & 30127)--------------------
- *  @param type : protoScene的类型,i时向抽象取ports,father时向具象取ports;
- *  @param protoTargetIndex : H任务时的targetIndex不是fo.count,所以传入其对应的值;
+ *  _param type : protoScene的类型,i时向抽象取ports,father时向具象取ports;
+ *  _param protoTargetIndex : H任务时的targetIndex不是fo.count,所以传入其对应的值 (后发现,其实就是protoScene.cutIndex+1);
  *  @version
  *      2023.09.09: 初版,hDemand支持TCScene (参考30127);
  */
-+(NSArray*) hSolutionSceneFilter:(AIFoNodeBase*)protoScene protoTargetIndex:(NSInteger)protoTargetIndex type:(SceneType)type {
++(NSArray*) hSolutionSceneFilter:(AISceneModel*)protoScene {
     //1. 数据准备: 向着isAbs方向取得抽具关联场景;
-    BOOL toAbs = type != SceneTypeFather;
-    NSArray *otherScenePorts = toAbs ? [AINetUtils absPorts_All:protoScene] : [AINetUtils conPorts_All:protoScene];
+    NSInteger protoTargetIndex = protoScene.cutIndex + 1;
+    BOOL toAbs = protoScene.type != SceneTypeFather;
+    AIFoNodeBase *sceneFo = [SMGUtils searchNode:protoScene.scene];
+    NSArray *otherScenePorts = toAbs ? [AINetUtils absPorts_All:sceneFo] : [AINetUtils conPorts_All:sceneFo];
     
     //2. 根据是否有conCanset过滤 (目前仅支持R任务,所以直接用fo.count做targetIndex) (参考29089-解答1-补充 & 2908a-todo5);
     otherScenePorts = [SMGUtils filterArr:otherScenePorts checkValid:^BOOL(AIPort *item) {
         //a. 取联想到的assScene对应的targetIndex;
-        NSDictionary *indexDic = toAbs ? [protoScene getAbsIndexDic:item.target_p] : [protoScene getConIndexDic:item.target_p];
+        NSDictionary *indexDic = toAbs ? [sceneFo getAbsIndexDic:item.target_p] : [sceneFo getConIndexDic:item.target_p];
         NSNumber *assSceneTargetIndex = nil;
         if (toAbs) {
             assSceneTargetIndex = ARR_INDEX([indexDic allKeysForObject:@(protoTargetIndex)], 0);
@@ -236,7 +238,7 @@
         
         //c. 要求联想到的scene必须有cansets;
         AIFoNodeBase *assScene = [SMGUtils searchNode:item.target_p];//500ms R90 3455次
-        BOOL havCansetsOK = type != SceneTypeBrother || ARRISOK([assScene getConCansets:assSceneTargetIndex.integerValue]);//非brother时要求必须有cansets; //43ms 3455次
+        BOOL havCansetsOK = protoScene.type != SceneTypeBrother || ARRISOK([assScene getConCansets:assSceneTargetIndex.integerValue]);//非brother时要求必须有cansets; //43ms 3455次
         return havCansetsOK; //43ms 3455次
     }];
     
@@ -246,16 +248,16 @@
         return item.strong.value;//mainBlock 135ms 11540次
     } subBlock:^double(AIPort *item) {
         //5. 仅截出前段参与匹配度计算 (不含targetIndex的indexDic部分);
-        NSDictionary *indexDic = toAbs ? [protoScene getAbsIndexDic:item.target_p] : [protoScene getConIndexDic:item.target_p];
+        NSDictionary *indexDic = toAbs ? [sceneFo getAbsIndexDic:item.target_p] : [sceneFo getConIndexDic:item.target_p];
         indexDic = [SMGUtils filterDic:indexDic checkValid:^BOOL(NSNumber *key, NSNumber *value) {
             return (toAbs ? value.integerValue : key.integerValue) < protoTargetIndex;
         }];
         
         //6. 根据indexDic复用匹配度进行辅助过滤 (参考2908a-todo2);
         if (toAbs) {
-            return [AINetUtils getMatchByIndexDic:indexDic absFo:item.target_p conFo:protoScene.pointer callerIsAbs:false];//113ms 4038次
+            return [AINetUtils getMatchByIndexDic:indexDic absFo:item.target_p conFo:sceneFo.p callerIsAbs:false];//113ms 4038次
         }
-        return [AINetUtils getMatchByIndexDic:indexDic absFo:protoScene.pointer conFo:item.target_p callerIsAbs:true];//1436ms 3878次
+        return [AINetUtils getMatchByIndexDic:indexDic absFo:sceneFo.p conFo:item.target_p callerIsAbs:true];//1436ms 3878次
     } radio:0.2f min:4 max:20 debugMode:false];
     return Ports2Pits(otherScenePorts);
 }

@@ -37,7 +37,7 @@
  *  MARK:--------------------Scene求解过滤器 (参考2908a-todo2)--------------------
  */
 +(NSArray*) rSolutionSceneFilter:(AIFoNodeBase*)protoScene type:(SceneType)type;
-+(NSArray*) hSolutionSceneFilter:(AIFoNodeBase*)protoScene protoTargetIndex:(NSInteger)protoTargetIndex type:(SceneType)type;
++(NSArray*) hSolutionSceneFilter:(AISceneModel*)protoScene;
 
 /**
  *  MARK:--------------------识别二次过滤器--------------------
