@@ -89,6 +89,7 @@
  *  MARK:--------------------H场景树--------------------
  *  @version
  *      2023.09.12: BUG_修复把targetFoModel错当成scene,导致场景树返回几乎为空的问题 (参考30128);
+ *      2023.09.15: RCanset做为HScene (参考30131-todo2);
  */
 +(NSArray*) hGetSceneTree:(HDemandModel*)demand {
     //1. 数据准备;
@@ -96,11 +97,10 @@
     NSMutableArray *fatherModels = [[NSMutableArray alloc] init];
     NSMutableArray *brotherModels = [[NSMutableArray alloc] init];
     TOFoModel *targetFoM = (TOFoModel*)demand.baseOrGroup.baseOrGroup;
-    //NSInteger solutionTargetIndex = targetFoM.actionIndex;
-    AISceneModel *iScene = targetFoM.baseSceneModel;
+    NSInteger targetIndex = targetFoM.actionIndex;
     
     //2. 取自己级;
-    AISceneModel *iModel = [AISceneModel newWithBase:nil type:SceneTypeI scene:iScene.scene cutIndex:iScene.cutIndex];
+    AISceneModel *iModel = [AISceneModel newWithBase:nil type:SceneTypeI scene:targetFoM.content_p cutIndex:targetIndex - 1];
     [iModels addObject:iModel];
     
     //3. 取父类级;
