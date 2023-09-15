@@ -46,6 +46,7 @@
  *  @version
  *      2023.03.04: 修复反省未保留以往帧actionIndex,导致反省时错误的BUG (参考28144-todo);
  *      2023.04.19: 支持canset迁移时的SP统计 (参考29069-todo11);
+ *      2023.09.15: 增强SP可解释性 & 为canset生成canset (参考30131-todo1);
  */
 +(void) reasonOutRethink:(TOFoModel*)model actionIndex:(NSInteger)actionIndex type:(AnalogyType)type{
     [theTC updateOperCount:kFILENAME];
@@ -55,10 +56,19 @@
         AIFoNodeBase *canset = [SMGUtils searchNode:tModel.canset];
         IFTitleLog(@"OR反省", @"\n%@ spIndex:%ld -> (%@)",FoP2FStr(tModel.canset),actionIndex,ATType2Str(type));
         [canset updateSPStrong:actionIndex type:type];
+        
         //2. 抽象也更新 (参考29069-todo11.4);
         [TCRethinkUtil spEff4Abs:canset curFoIndex:actionIndex itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {
             [absFo updateSPStrong:absIndex type:type];
         }];
+        
+        //3. 收集真实发生feedbackAlg,收集成hCanset (参考27204-6 & 30131-todo1);
+        NSArray *order = [model getOrderUseMatchAndFeedbackAlg:false];
+        if (ARRISOK(order)) {
+            AIFoNodeBase *protoFo = [theNet createConFo:order];
+            [canset updateConCanset:protoFo.pointer targetIndex:actionIndex];
+            NSLog(@"\tOR反省为cansetF%ld第%ld帧 生成%@的hCanset:%@",canset.pId,actionIndex,ATType2Str(type),Fo2FStr(protoFo));
+        }
     }
     DebugE();
 }
