@@ -69,6 +69,14 @@
             [canset updateConCanset:protoFo.pointer targetIndex:actionIndex];
             NSLog(@"\tOR反省为cansetF%ld第%ld帧 生成%@的hCanset:%@",canset.pId,actionIndex,ATType2Str(type),Fo2FStr(protoFo));
         }
+        
+        //调试30132-方案2-能不能从basePFo取到realMaskFo;
+        if (ISOK(model.basePFoOrTargetFoModel, AIMatchFoModel.class)) {
+            AIMatchFoModel *basePFo = (AIMatchFoModel*)model.basePFoOrTargetFoModel;
+            NSArray *orders = [basePFo convertOrders4NewCansetV2];
+            AIFoNodeBase *hCanset = [theNet createConFo:orders];
+            NSLog(@"hCanset生成日志:%@",Fo2FStr(hCanset));
+        }
     }
     DebugE();
 }

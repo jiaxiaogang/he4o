@@ -693,7 +693,7 @@
 
 /**
  *  MARK:--------------------移除--------------------
- *  @param checkValid: 将要移除的item返回true,保留的返回false;
+ *  @param checkValid : 将要移除的item返回true,保留的返回false;
  */
 +(NSMutableArray*) removeArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid {
     NSMutableArray *result = [[NSMutableArray alloc] initWithArray:arr];

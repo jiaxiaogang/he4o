@@ -109,4 +109,9 @@
  */
 -(CGFloat) strongValue;
 
+/**
+ *  MARK:--------------------在发生完全后,构建完全protoFo时使用获取orders--------------------
+ */
+-(NSArray*) convertOrders4NewCansetV2;
+
 @end
