@@ -62,20 +62,16 @@
             [absFo updateSPStrong:absIndex type:type];
         }];
         
-        //3. 收集真实发生feedbackAlg,收集成hCanset (参考27204-6 & 30131-todo1);
-        NSArray *order = [model getOrderUseMatchAndFeedbackAlg:false];
-        if (ARRISOK(order)) {
-            AIFoNodeBase *protoFo = [theNet createConFo:order];
-            [canset updateConCanset:protoFo.pointer targetIndex:actionIndex];
-            NSLog(@"\tOR反省为cansetF%ld第%ld帧 生成%@的hCanset:%@",canset.pId,actionIndex,ATType2Str(type),Fo2FStr(protoFo));
-        }
-        
-        //调试30132-方案2-能不能从basePFo取到realMaskFo;
+        //3. 收集真实发生realMaskFo,收集成hCanset (参考30131-todo1 & 30132-方案);
         if (ISOK(model.basePFoOrTargetFoModel, AIMatchFoModel.class)) {
             AIMatchFoModel *basePFo = (AIMatchFoModel*)model.basePFoOrTargetFoModel;
-            NSArray *orders = [basePFo convertOrders4NewCansetV2];
-            AIFoNodeBase *hCanset = [theNet createConFo:orders];
-            NSLog(@"hCanset生成日志:%@",Fo2FStr(hCanset));
+            NSArray *order = [basePFo convertOrders4NewCansetV2];
+            
+            if (ARRISOK(order)) {
+                AIFoNodeBase *hCanset = [theNet createConFo:order];
+                [canset updateConCanset:hCanset.pointer targetIndex:actionIndex];
+                NSLog(@"\tOR反省为cansetF%ld第%ld帧 生成%@的hCanset:%@",canset.pId,actionIndex,ATType2Str(type),Fo2FStr(hCanset));
+            }
         }
     }
     DebugE();
