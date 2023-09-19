@@ -66,11 +66,10 @@
         if (ISOK(model.basePFoOrTargetFoModel, AIMatchFoModel.class)) {
             AIMatchFoModel *basePFo = (AIMatchFoModel*)model.basePFoOrTargetFoModel;
             NSArray *order = [basePFo convertOrders4NewCansetV2];
-            
             if (ARRISOK(order)) {
                 AIFoNodeBase *hCanset = [theNet createConFo:order];
                 [canset updateConCanset:hCanset.pointer targetIndex:actionIndex];
-                NSLog(@"\tOR反省为cansetF%ld第%ld帧 生成%@的hCanset:%@",canset.pId,actionIndex,ATType2Str(type),Fo2FStr(hCanset));
+                NSLog(@"\nOR反省(%@ 第%ld帧)为rCanset:%@... \n\t> 生成hCanset:%@",ATType2Str(type),actionIndex,SUBSTR2INDEX(Fo2FStr(canset), 100),Fo2FStr(hCanset));
             }
         }
     }
