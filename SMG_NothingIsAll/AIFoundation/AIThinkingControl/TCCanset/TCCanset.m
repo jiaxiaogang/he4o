@@ -89,7 +89,6 @@
     //1. 数据准备 & 复用indexDic & 取出pFoOrTargetFo;
     AIFoNodeBase *matchFo = [SMGUtils searchNode:sceneFo_p];
     AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
-    BOOL debugMode = Log4TCCanset;//性能调试ok了关掉;
     NSInteger matchTargetIndex = isH ? ptAleardayCount : matchFo.count;
     
     //2. 判断是否H任务 (H有后段,别的没有);

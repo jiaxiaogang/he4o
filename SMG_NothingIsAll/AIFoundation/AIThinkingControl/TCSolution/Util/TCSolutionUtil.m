@@ -172,7 +172,7 @@
             return [TCCanset convert2CansetModel:canset sceneFo:sceneModel.scene basePFoOrTargetFoModel:targetFoM ptAleardayCount:aleardayCount isH:true sceneModel:sceneModel];//245ms
         }];
         
-        if (Log4TCCanset && cansets.count > 0) NSLog(@"\t item场景(%@):%@ 取得候选数:%ld 转成候选模型数:%ld",SceneType2Str(sceneModel.type),Pit2FStr(sceneModel.scene),cansets.count,itemCansetModels.count);
+        if (Log4GetCansetResult4H && cansets.count > 0) NSLog(@"\t item场景(%@):%@ 取得候选数:%ld 转成候选模型数:%ld",SceneType2Str(sceneModel.type),Pit2FStr(sceneModel.scene),cansets.count,itemCansetModels.count);
         return itemCansetModels;
     }];
     NSLog(@"第2步 转为候选集 总数:%ld",cansetModels.count);
@@ -204,7 +204,7 @@
             return [TCCanset convert2CansetModel:canset sceneFo:sceneModel.scene basePFoOrTargetFoModel:pFo ptAleardayCount:aleardayCount isH:false sceneModel:sceneModel];//245ms
         }];
         
-        if (Log4TCCanset && cansets.count > 0) NSLog(@"\t item场景(%@):%@ 取得候选数:%ld 转成候选模型数:%ld",SceneType2Str(sceneModel.type),Pit2FStr(sceneModel.scene),cansets.count,itemCansetModels.count);
+        if (Log4GetCansetResult4R && cansets.count > 0) NSLog(@"\t item场景(%@):%@ 取得候选数:%ld 转成候选模型数:%ld",SceneType2Str(sceneModel.type),Pit2FStr(sceneModel.scene),cansets.count,itemCansetModels.count);
         return itemCansetModels;
     }];
     NSLog(@"第2步 转为候选集 总数:%ld",cansetModels.count);
@@ -228,7 +228,6 @@
     [AITest test13:cansetModels];
     except_ps = ARRTOOK(except_ps);
     AICansetModel *result = nil;
-    BOOL isH = ISOK(demand, HDemandModel.class); //H有后段,别的没有;
     NSLog(@"第5步 Anaylst匹配成功:%ld",cansetModels.count);//测时94条
 
     //8. 排除不应期;
