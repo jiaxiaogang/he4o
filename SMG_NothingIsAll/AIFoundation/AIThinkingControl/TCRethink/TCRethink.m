@@ -69,7 +69,7 @@
             if (ARRISOK(order)) {
                 AIFoNodeBase *hCanset = [theNet createConFo:order];
                 [canset updateConCanset:hCanset.pointer targetIndex:actionIndex];
-                NSLog(@"\nOR反省(%@ 第%ld帧)为rCanset:%@... \n\t> 生成hCanset:%@",ATType2Str(type),actionIndex,SUBSTR2INDEX(Fo2FStr(canset), 100),Fo2FStr(hCanset));
+                NSLog(@"\nOR反省(%@ 第%ld帧)为rCanset:%@... \n\t> 生成hCanset:%@",ATType2Str(type),actionIndex + 1,SUBSTR2INDEX(Fo2FStr(canset), 100),Fo2FStr(hCanset));
             }
         }
     }
