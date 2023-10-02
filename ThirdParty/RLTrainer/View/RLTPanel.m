@@ -521,6 +521,22 @@
     [theRT queueN:@[Queue(kGrowPageSEL),Queue(kHungerSEL),Queue0(kFoodRdmSEL,@(FoodStatus_Border)),Queue(kMainPageSEL),Queue(kClearTCSEL)] count:200];
 }
 
+/**
+ *  MARK:--------------------第3步学H去皮--------------------
+ *  @desc 学什么时候能压到,什么时候压不到 (参考30142-步骤3自);
+ */
+- (IBAction)kick3BtnClick:(id)sender {
+    //1. 随机出生;
+    [theRT queue1:Queue(kBirthPosRdmSEL)];
+    
+    //2. 饥饿,随机扔个坚果,扔木棒 x 200次;
+    [theRT queueN:@[Queue(kGrowPageSEL),
+                    Queue(kHungerSEL), //饿
+                    Queue0(kFoodRdmSEL,@(FoodStatus_Border)), //随机扔有皮果
+                    Queue(kWoodLeftSEL), //扔木棒
+                    Queue(kMainPageSEL),Queue(kClearTCSEL)] count:200];
+}
+
 
 //MARK:===============================================================
 //MARK:       < UITableViewDataSource &  UITableViewDelegate>

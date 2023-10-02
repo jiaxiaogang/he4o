@@ -293,25 +293,43 @@
                                 <action selector="eat3BtnClick:" destination="-1" eventType="touchUpInside" id="YER-gb-zep"/>
                             </connections>
                         </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SrX-EH-KMZ">
+                            <rect key="frame" x="58" y="32" width="54" height="14"/>
+                            <color key="backgroundColor" systemColor="systemBrownColor"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="14" id="wMf-qU-xLt"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                            <state key="normal" title="3学H去皮">
+                                <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </state>
+                            <connections>
+                                <action selector="kick3BtnClick:" destination="-1" eventType="touchUpInside" id="sH0-vS-fGL"/>
+                            </connections>
+                        </button>
                     </subviews>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
                         <constraint firstAttribute="trailing" secondItem="liB-rw-YPc" secondAttribute="trailing" id="2wS-tG-02B"/>
                         <constraint firstItem="liB-rw-YPc" firstAttribute="top" secondItem="CFs-nM-9Si" secondAttribute="top" id="4Km-Pf-bML"/>
                         <constraint firstItem="4RE-dO-qp4" firstAttribute="leading" secondItem="cqF-WY-6dd" secondAttribute="trailing" constant="4" id="4nD-mt-t3D"/>
+                        <constraint firstItem="SrX-EH-KMZ" firstAttribute="top" secondItem="BrY-Ix-nhI" secondAttribute="bottom" constant="2" id="6VR-gO-Owp"/>
                         <constraint firstItem="EYb-aV-ZDY" firstAttribute="leading" secondItem="CFs-nM-9Si" secondAttribute="leading" id="6oN-H0-xnB"/>
                         <constraint firstItem="Ri6-2G-wtv" firstAttribute="top" secondItem="CFs-nM-9Si" secondAttribute="top" id="7OJ-Ye-KxT"/>
                         <constraint firstItem="ICH-ND-rzQ" firstAttribute="height" secondItem="liB-rw-YPc" secondAttribute="height" id="8Zr-Xg-Juf"/>
+                        <constraint firstItem="SrX-EH-KMZ" firstAttribute="leading" secondItem="EYb-aV-ZDY" secondAttribute="trailing" constant="4" id="F9a-kR-VSh"/>
                         <constraint firstItem="BrY-Ix-nhI" firstAttribute="top" secondItem="4RE-dO-qp4" secondAttribute="bottom" constant="2" id="FEw-rm-b4p"/>
                         <constraint firstItem="Ri6-2G-wtv" firstAttribute="leading" secondItem="CFs-nM-9Si" secondAttribute="leading" id="M6v-Cs-Az2"/>
                         <constraint firstItem="ICH-ND-rzQ" firstAttribute="top" secondItem="liB-rw-YPc" secondAttribute="bottom" constant="2" id="NLL-Yq-Zrr"/>
                         <constraint firstItem="liB-rw-YPc" firstAttribute="width" secondItem="4RE-dO-qp4" secondAttribute="width" id="OAy-RC-07P"/>
                         <constraint firstItem="4RE-dO-qp4" firstAttribute="width" secondItem="Ri6-2G-wtv" secondAttribute="width" id="OwG-bK-1Ax"/>
+                        <constraint firstItem="SrX-EH-KMZ" firstAttribute="width" secondItem="EYb-aV-ZDY" secondAttribute="width" id="RUj-N4-2ZQ"/>
                         <constraint firstItem="liB-rw-YPc" firstAttribute="leading" secondItem="4RE-dO-qp4" secondAttribute="trailing" constant="4" id="SoP-s3-pbe"/>
                         <constraint firstItem="cqF-WY-6dd" firstAttribute="leading" secondItem="CFs-nM-9Si" secondAttribute="leading" id="TzU-SS-GqN"/>
                         <constraint firstAttribute="height" constant="45" id="V9Z-AJ-cBZ"/>
                         <constraint firstItem="EYb-aV-ZDY" firstAttribute="top" secondItem="cqF-WY-6dd" secondAttribute="bottom" constant="2" id="bn8-d7-Jra"/>
                         <constraint firstItem="liB-rw-YPc" firstAttribute="top" secondItem="4RE-dO-qp4" secondAttribute="top" id="f2N-Uv-jV5"/>
+                        <constraint firstItem="SrX-EH-KMZ" firstAttribute="height" secondItem="EYb-aV-ZDY" secondAttribute="height" id="fjz-wQ-jiO"/>
                         <constraint firstItem="BrY-Ix-nhI" firstAttribute="leading" secondItem="cqF-WY-6dd" secondAttribute="trailing" constant="4" id="ggb-Dv-U1N"/>
                         <constraint firstItem="ICH-ND-rzQ" firstAttribute="leading" secondItem="BrY-Ix-nhI" secondAttribute="trailing" constant="4" id="k1J-QV-ePq"/>
                         <constraint firstAttribute="trailing" secondItem="ICH-ND-rzQ" secondAttribute="trailing" id="mtT-cO-7Az"/>
