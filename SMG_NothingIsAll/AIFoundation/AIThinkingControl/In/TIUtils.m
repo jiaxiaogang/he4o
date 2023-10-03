@@ -564,6 +564,15 @@
     //1. 取出旧有候选集;
     AIFoNodeBase *newCanset = [SMGUtils searchNode:newCanset_p];
     AIFoNodeBase *sceneFo = [SMGUtils searchNode:sceneFo_p];
+    
+    
+    //TODOTOMORROW20231003: 此处为hCanset时:
+    //1. 取oldCanset用的index要不同;
+    //2. 打日志时,把当前是rCanset还是hCanset打出来,以便调试canset的竞争成长相关;
+    
+    
+    
+    
     NSArray *oldCansets = [sceneFo getConCansets:sceneFo.count];
     NSLog(@"\n----------- Canset识别 (EFF:%@ 候选数:%ld) -----------\nnewCanset:%@\nsceneFo:%@",EffectStatus2Str(es),oldCansets.count,Fo2FStr(newCanset),Fo2FStr(sceneFo));
     NSMutableArray *matchModels = [[NSMutableArray alloc] init];

@@ -46,7 +46,7 @@
  *  @version
  *      2023.03.04: 修复反省未保留以往帧actionIndex,导致反省时错误的BUG (参考28144-todo);
  *      2023.04.19: 支持canset迁移时的SP统计 (参考29069-todo11);
- *      2023.09.15: 增强SP可解释性 & 为canset生成canset (参考30131-todo1);
+ *      2023.09.15: 增强SP可解释性 & 为rCanset生成hCanset (参考30131-todo1);
  */
 +(void) reasonOutRethink:(TOFoModel*)model actionIndex:(NSInteger)actionIndex type:(AnalogyType)type{
     [theTC updateOperCount:kFILENAME];
