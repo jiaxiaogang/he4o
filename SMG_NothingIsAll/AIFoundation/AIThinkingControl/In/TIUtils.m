@@ -567,7 +567,7 @@
     
     
     //TODOTOMORROW20231003: 此处为hCanset时:
-    //1. 取oldCanset用的index要不同;
+    //1. 取oldCanset用的index应该不同 (随后做下处理);
     //2. 打日志时,把当前是rCanset还是hCanset打出来,以便调试canset的竞争成长相关;
     
     
