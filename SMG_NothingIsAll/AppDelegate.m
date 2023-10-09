@@ -89,6 +89,7 @@
     [theRT regist:kBirthPosRdmCentSEL target:self selector:@selector(setBirthPosMode_RdmCent)];
     [theRT regist:kBirthPosRdmSEL target:self selector:@selector(setBirthPosMode_Rdm)];
     [theRT regist:kBirthPosCentSEL target:self selector:@selector(setBirthPosMode_Cent)];
+    [theRT regist:kBirthPosRdmSafeSEL target:self selector:@selector(setBirthPosMode_RdmSafe)];
     
     //3. 强行停止思考能力按钮
     NSString *thinkStr = [self getThinkBtnStr];
@@ -265,6 +266,10 @@
 }
 - (void)setBirthPosMode_Cent{
     self.birthPosMode = 2;
+    [theRT invoked:kBirthPosCentSEL];
+}
+- (void)setBirthPosMode_RdmSafe{
+    self.birthPosMode = 3;
     [theRT invoked:kBirthPosCentSEL];
 }
 

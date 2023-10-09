@@ -177,6 +177,8 @@
         return @"出生地随机偏路中";
     }else if ([kBirthPosCentSEL isEqualToString:queue.name]) {
         return @"出生在中间";
+    }else if ([kBirthPosRdmSafeSEL isEqualToString:queue.name]) {
+        return @"出生在随机安全地带";
     }else if ([kHungerSEL isEqualToString:queue.name]) {
         return @"饿";
     }else if ([kFoodRdmSEL isEqualToString:queue.name]) {
@@ -514,6 +516,9 @@
  *  @desc 参考30092-步骤1 & 30145-步骤1;
  */
 - (IBAction)kick1BtnClick:(id)sender {
+    //0. 认知模式
+    [theRT queue1:Queue0(kThinkModeSEL, @(1))];
+    
     //1. 随机出生;
     [theRT queue1:Queue(kBirthPosRdmSEL)];
     
@@ -526,8 +531,11 @@
  *  @desc 参考30145-步骤2;
  */
 - (IBAction)kick2BtnClick:(id)sender {
+    //0. 认知模式
+    [theRT queue1:Queue0(kThinkModeSEL, @(1))];
+    
     //1. 随机出生;
-    [theRT queue1:Queue(kBirthPosRdmSEL)];
+    [theRT queue1:Queue(kBirthPosRdmSafeSEL)];
     
     //2. 扔木棒 x 300次;
     [theRT queueN:@[Queue(kGrowPageSEL),
@@ -540,8 +548,11 @@
  *  @desc 学什么时候能压到,什么时候压不到 (参考30142-步骤3自 & 30145-步骤4);
  */
 - (IBAction)kick3BtnClick:(id)sender {
+    //0. 认知模式
+    [theRT queue1:Queue0(kThinkModeSEL, @(1))];
+    
     //1. 随机出生;
-    [theRT queue1:Queue(kBirthPosRdmSEL)];
+    [theRT queue1:Queue(kBirthPosRdmSafeSEL)];
     
     //2. 饥饿,随机扔个坚果,扔木棒 x 200次;
     [theRT queueN:@[Queue(kGrowPageSEL),

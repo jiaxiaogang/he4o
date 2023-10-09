@@ -20,6 +20,7 @@
 #define kBirthPosRdmSEL @"BirthPosRdm"          //出生在随机
 #define kBirthPosRdmCentSEL @"BirthPosRdmCent"  //出生在随机偏中间
 #define kBirthPosCentSEL @"BirthPosCent"        //出生在中间
+#define kBirthPosRdmSafeSEL @"BirthPosRdmSafeSEL"//出生在随机安全地带
 
 #define kHungerSEL @"Hunger"                    //马上饿
 #define kFoodRdmSEL @"FoodRdm"                  //随机地点_投食物

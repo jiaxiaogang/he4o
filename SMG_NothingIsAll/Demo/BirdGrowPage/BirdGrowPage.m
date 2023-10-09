@@ -827,6 +827,8 @@
         return [self getBirdBirthPos_RandomCenter];
     }else if(theApp.birthPosMode == 2){
         return [self getBirdBirthPos_Center];
+    }else if(theApp.birthPosMode == 3){
+        return [self getBirdBirthPos_RandomSafe];
     }else{
         return [self getBirdBirthPos_Random];
     }
@@ -891,6 +893,34 @@
  */
 -(CGPoint) getBirdBirthPos_Center{
     return CGPointMake(ScreenWidth * 0.5f, ScreenHeight * 0.5f);
+}
+
+/**
+ *  MARK:--------------------安全地带随机--------------------
+ *  @desc 支持在安全地带出生,以方便训练去皮等,避免动不动疼干扰训练 (参考30145-注1);
+ */
+-(CGPoint) getBirdBirthPos_RandomSafe{
+    //1. 随机x值 (X取值范围: 20 到 ScreenWidth - 50);
+    float minX = 64,maxX = ScreenWidth - 50;
+    int xDelta = maxX - minX;
+    float resultX = (arc4random() % xDelta) + minX;
+    
+    //2. 随机y值 => 算出最大最小值;
+    float minY = 0,maxY = 0;
+    if (random() % 2 == 0) {
+        //a. 在路上方 (上方时Y取值范围: 64 到 (ScreenHeight - 100) * 0.5f - 30 - 1; //多减1避免撞上);
+        minY = 64;
+        maxY = (ScreenHeight - 100) * 0.5f - 30 - 1;
+    } else {
+        //b. 在路下方 (下方时Y取值范围: (ScreenHeight + 100) * 0.5f + 1 到 ScreenHeight - 64 - 30; //多加1避免撞上);
+        minY = (ScreenHeight + 100) * 0.5f + 1;
+        maxY = ScreenHeight - 64 - 30;
+    }
+    
+    //3. 随机y值 => 算出resultY;
+    int yDelta = maxY - minY;
+    float resultY = (arc4random() % yDelta) + minY;
+    return CGPointMake(resultX, resultY);
 }
 
 @end

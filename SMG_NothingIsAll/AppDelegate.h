@@ -15,7 +15,7 @@
 @property (strong, nonatomic) NVView *nvView;
 @property (strong, nonatomic) HeLogView *heLogView;
 @property (strong, nonatomic) TOMVision2 *tv;
-@property (assign, nonatomic) NSInteger birthPosMode;//小鸟出生地 (0随机,1随机偏屏中,2屏中);
+@property (assign, nonatomic) NSInteger birthPosMode;//小鸟出生地 (0随机,1随机偏屏中,2屏中,3安全地带随机);
 
 -(UIViewController*) getTopDisplayViewController;
 -(void) setTipLog:(NSString*)tipLog;
