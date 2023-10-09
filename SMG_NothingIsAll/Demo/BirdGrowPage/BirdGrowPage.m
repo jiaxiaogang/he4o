@@ -901,7 +901,7 @@
  */
 -(CGPoint) getBirdBirthPos_RandomSafe{
     //1. 随机x值 (X取值范围: 20 到 ScreenWidth - 50);
-    float minX = 64,maxX = ScreenWidth - 50;
+    float minX = 20,maxX = ScreenWidth - 50;
     int xDelta = maxX - minX;
     float resultX = (arc4random() % xDelta) + minX;
     
@@ -920,7 +920,9 @@
     //3. 随机y值 => 算出resultY;
     int yDelta = maxY - minY;
     float resultY = (arc4random() % yDelta) + minY;
-    return CGPointMake(resultX, resultY);
+    
+    //4. 要求返回中心点坐标,所以xy各加15;
+    return CGPointMake(resultX + 15, resultY + 15);
 }
 
 @end

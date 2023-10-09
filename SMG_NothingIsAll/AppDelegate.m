@@ -270,7 +270,7 @@
 }
 - (void)setBirthPosMode_RdmSafe{
     self.birthPosMode = 3;
-    [theRT invoked:kBirthPosCentSEL];
+    [theRT invoked:kBirthPosRdmSafeSEL];
 }
 
 //MARK:===============================================================
