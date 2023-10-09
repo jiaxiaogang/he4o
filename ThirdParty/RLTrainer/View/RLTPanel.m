@@ -511,7 +511,7 @@
 
 /**
  *  MARK:--------------------第1步带皮果学饿--------------------
- *  @desc 参考30092-步骤1;
+ *  @desc 参考30092-步骤1 & 30145-步骤1;
  */
 - (IBAction)kick1BtnClick:(id)sender {
     //1. 随机出生;
@@ -522,8 +522,22 @@
 }
 
 /**
+ *  MARK:--------------------第2步学认木棒--------------------
+ *  @desc 参考30145-步骤2;
+ */
+- (IBAction)kick2BtnClick:(id)sender {
+    //1. 随机出生;
+    [theRT queue1:Queue(kBirthPosRdmSEL)];
+    
+    //2. 扔木棒 x 300次;
+    [theRT queueN:@[Queue(kGrowPageSEL),
+                    Queue(kWoodLeftSEL), //扔木棒
+                    Queue(kMainPageSEL),Queue(kClearTCSEL)] count:300];
+}
+
+/**
  *  MARK:--------------------第3步学H去皮--------------------
- *  @desc 学什么时候能压到,什么时候压不到 (参考30142-步骤3自);
+ *  @desc 学什么时候能压到,什么时候压不到 (参考30142-步骤3自 & 30145-步骤4);
  */
 - (IBAction)kick3BtnClick:(id)sender {
     //1. 随机出生;
