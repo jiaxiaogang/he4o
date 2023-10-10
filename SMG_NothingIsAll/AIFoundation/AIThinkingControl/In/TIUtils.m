@@ -241,7 +241,8 @@
     //16. debugLog
     NSLog(@"\n概念识别结果 (%ld条) protoAlg:%@",allSortAlgs.count,Alg2FStr(protoAlg));
     for (AIMatchAlgModel *item in allSortAlgs) {
-        if (Log4MAlg) NSLog(@"-->>>(%d) 全含item: %@   \t相近度 => %.2f (count:%d)",item.sumRefStrong,Pit2FStr(item.matchAlg),item.matchValue,item.matchCount);
+        NSString *fromDesc = [sortPAlgs containsObject:item] ? @"P" : @"R";
+        if (Log4MAlg) NSLog(@"%@-->>>(%d) 全含item: %@   \t相近度 => %.2f (count:%d)",fromDesc,item.sumRefStrong,Pit2FStr(item.matchAlg),item.matchValue,item.matchCount);
     }
 }
 
