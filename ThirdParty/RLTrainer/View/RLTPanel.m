@@ -548,9 +548,6 @@
  *  @desc 学什么时候能压到,什么时候压不到 (参考30142-步骤3自 & 30145-步骤4);
  */
 - (IBAction)kick3BtnClick:(id)sender {
-    //0. 认知模式
-    [theRT queue1:Queue0(kThinkModeSEL, @(1))];
-    
     //1. 随机出生;
     [theRT queue1:Queue(kBirthPosRdmSafeSEL)];
     
