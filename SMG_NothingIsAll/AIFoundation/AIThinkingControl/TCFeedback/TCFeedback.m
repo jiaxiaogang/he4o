@@ -324,6 +324,21 @@
             [AITest test11:model waitAlg_p:frameAlg.content_p];//测下2523c-此处是否会导致匹配不到;
             //BOOL mIsC = [TOUtils mIsC_1:model.protoAlg.pointer c:targetAlg.content_p];
             BOOL mIsC = [recognitionAlgs containsObject:frameAlg.content_p];
+            
+            AIAlgNodeBase *targetA = [SMGUtils searchNode:frameAlg.content_p];
+            NSArray *absArr = Ports2Pits([AINetUtils absPorts_All:targetA]);
+            NSString *absDesc = CLEANSTR([SMGUtils convertArr:absArr convertBlock:^id(AIKVPointer *obj) {
+                return STRFORMAT(@"A%ld",obj.pointerId);
+            }]);
+            
+            if ([absDesc containsString:@"3524"] || [absDesc containsString:@"3611"]) {
+                NSLog(@"AAAAA %@",absDesc);
+                NSLog(@"");
+            }
+            //TODOTOMORROW20231014: 明天先把步骤3加训下,然后再来测下这里matchAlgs有没有交集...
+            
+            
+            
             if (Log4OPushM) NSLog(@"rAlg反馈_M(A%ld) isC(A%ld) 结果:%d CAtFo:%@",model.protoAlg.pointer.pointerId,frameAlg.content_p.pointerId,mIsC,Pit2FStr(solutionFo.content_p));
             if (mIsC) {
                 //a. 赋值
