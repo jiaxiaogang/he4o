@@ -654,13 +654,7 @@
                 break;
             } else {
                 //7. 如果二者都不包含,则判断二者有没有共同的抽象 (参考29025-23c);
-                NSMutableArray *oldAbs_ps = [[NSMutableArray alloc] initWithArray:Ports2Pits([AINetUtils absPorts_All:[SMGUtils searchNode:oldAlg]])];
-                [oldAbs_ps addObject:oldAlg];
-                NSMutableArray *newAbs_ps = [[NSMutableArray alloc] initWithArray:Ports2Pits([AINetUtils absPorts_All:[SMGUtils searchNode:newAlg]])];
-                [newAbs_ps addObject:newAlg];
-                if ([SMGUtils filterSingleFromArr:oldAbs_ps checkValid:^BOOL(AIKVPointer *item) {
-                    return [newAbs_ps containsObject:item];
-                }]) {
+                if ([TOUtils mcIsBro:newAlg c:oldAlg]) {
                     //8. 有共同抽象=>则此帧成功 (参考29025-23c);
                     findItem = true;
                 } else {

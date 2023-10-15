@@ -25,6 +25,11 @@
 +(BOOL) mIsC_1:(NSArray*)ms cs:(NSArray*)cs;
 
 /**
+ *  MARK:--------------------判断mc有共同抽象--------------------
+ */
++(BOOL) mcIsBro:(AIKVPointer*)m c:(AIKVPointer*)c;
+
+/**
  *  MARK:--------------------在具象Content中定位抽象Item的下标--------------------
  *  @result 如果找不到,默认返回-1;
  *  _param layerDiff: 检查层数,默认为1,支持0,1,2;

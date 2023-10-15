@@ -79,6 +79,19 @@
 }
 
 /**
+ *  MARK:--------------------判断mc有共同抽象--------------------
+ */
++(BOOL) mcIsBro:(AIKVPointer*)m c:(AIKVPointer*)c {
+    NSMutableArray *mAbs_ps = [[NSMutableArray alloc] initWithArray:Ports2Pits([AINetUtils absPorts_All:[SMGUtils searchNode:m]])];
+    [mAbs_ps addObject:m];
+    NSMutableArray *cAbs_ps = [[NSMutableArray alloc] initWithArray:Ports2Pits([AINetUtils absPorts_All:[SMGUtils searchNode:c]])];
+    [cAbs_ps addObject:c];
+    return [SMGUtils filterSingleFromArr:mAbs_ps checkValid:^BOOL(AIKVPointer *item) {
+        return [cAbs_ps containsObject:item];
+    }];
+}
+
+/**
  *  MARK:--------------------判断indexOf (支持本级+一级抽象)--------------------
  *  @bug 2020.06.12 : TOR.R-中firstAt_Plus取值为-1,经查因为mIsC方法取absPorts_Normal,对plus/sub不支持导致,改后好了;
  *  @version

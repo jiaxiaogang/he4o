@@ -325,17 +325,21 @@
             //BOOL mIsC = [TOUtils mIsC_1:model.protoAlg.pointer c:targetAlg.content_p];
             BOOL mIsC = [recognitionAlgs containsObject:frameAlg.content_p];
             
-            AIAlgNodeBase *targetA = [SMGUtils searchNode:frameAlg.content_p];
-            NSArray *absArr = Ports2Pits([AINetUtils absPorts_All:targetA]);
-            NSString *absDesc = CLEANSTR([SMGUtils convertArr:absArr convertBlock:^id(AIKVPointer *obj) {
-                return STRFORMAT(@"A%ld",obj.pointerId);
-            }]);
             
-            if ([absDesc containsString:@"3524"] || [absDesc containsString:@"3611"]) {
-                NSLog(@"AAAAA %@",absDesc);
+            
+            
+            //TODOTOMORROW20231014: 收集当前训练遇阻的各种细节线索如下:
+            
+            //1. 明天先把步骤3加训下(在路中的上下方,路后的上下方,各训练两次),然后再来测下这里matchAlgs有没有交集... (参考30143-跟进2);
+            //      > 加训步骤3后,是有交集的 (但加训步骤3之前,也有交集,这里的备忘当时是为什么要加训后测有没交集,,,因为喝酒忘了);
+            if ([TOUtils mcIsBro:model.protoAlg.pointer c:frameAlg.content_p]) {
+                NSLog(@"AAAAA 有交集");
                 NSLog(@"");
             }
-            //TODOTOMORROW20231014: 明天先把步骤3加训下,然后再来测下这里matchAlgs有没有交集...
+            
+            //分析: A3524和A3611本来就是最具象节点,要么测它抽象后,会是怎样的,要么就测它在抽象前,应该怎样判断这里的匹配 (参考30143-跟进3);
+            
+            
             
             
             
