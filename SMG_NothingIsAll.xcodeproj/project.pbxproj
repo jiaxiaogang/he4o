@@ -973,10 +973,6 @@
 				084219EA1FD8CF81009DA6BC /* AIThinkingControl.m */,
 				08B31E7C20648C3700FD96EA /* ThinkingUtils.h */,
 				08B31E7D20648C3700FD96EA /* ThinkingUtils.m */,
-				08F3E92F2241B6E800545795 /* AIAnalogy.h */,
-				08F3E9302241B6E800545795 /* AIAnalogy.m */,
-				083680402853863E003F91FE /* AIAnalyst.h */,
-				083680412853863E003F91FE /* AIAnalyst.m */,
 				087705BE2753786700BA4EFB /* README.md */,
 			);
 			path = AIThinkingControl;
@@ -1221,6 +1217,8 @@
 				087705AD2753745100BA4EFB /* TCRecognition.m */,
 				085085992A25B26F00ED63F2 /* TCRecognitionUtil.h */,
 				0850859A2A25B26F00ED63F2 /* TCRecognitionUtil.m */,
+				083680402853863E003F91FE /* AIAnalyst.h */,
+				083680412853863E003F91FE /* AIAnalyst.m */,
 			);
 			path = TCRecognition;
 			sourceTree = "<group>";
@@ -1508,6 +1506,8 @@
 			children = (
 				0819F4F527583B27007396D0 /* TCLearning.h */,
 				0819F4F627583B27007396D0 /* TCLearning.m */,
+				08F3E92F2241B6E800545795 /* AIAnalogy.h */,
+				08F3E9302241B6E800545795 /* AIAnalogy.m */,
 			);
 			path = TCLearning;
 			sourceTree = "<group>";
