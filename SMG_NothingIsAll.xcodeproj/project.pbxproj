@@ -736,7 +736,7 @@
 			path = AITime;
 			sourceTree = "<group>";
 		};
-		081BD08525B94F09003C3038 /* Demand */ = {
+		081BD08525B94F09003C3038 /* Model */ = {
 			isa = PBXGroup;
 			children = (
 				88E1F84C211591D80036B616 /* DemandManager.h */,
@@ -750,7 +750,7 @@
 				087705C12753B9F400BA4EFB /* HDemandModel.h */,
 				087705C22753B9F400BA4EFB /* HDemandModel.m */,
 			);
-			path = Demand;
+			path = Model;
 			sourceTree = "<group>";
 		};
 		08250ADD2281129300FC497C /* XGWedis */ = {
@@ -964,15 +964,11 @@
 				087705A42753740600BA4EFB /* TCAction */,
 				0892BAEA277808E30024B43C /* TCActYes */,
 				087705A52753740F00BA4EFB /* TCOut */,
-				08F38D62272C39C1001CD764 /* Score */,
-				081BD08525B94F09003C3038 /* Demand */,
+				08F38D62272C39C1001CD764 /* Util */,
 				0860617321F92F3E00113366 /* Out */,
 				0860617221F92F1900113366 /* In */,
-				081002162A6BAE3900BE9D8A /* Model */,
 				084219E91FD8CF80009DA6BC /* AIThinkingControl.h */,
 				084219EA1FD8CF81009DA6BC /* AIThinkingControl.m */,
-				08B31E7C20648C3700FD96EA /* ThinkingUtils.h */,
-				08B31E7D20648C3700FD96EA /* ThinkingUtils.m */,
 				087705BE2753786700BA4EFB /* README.md */,
 			);
 			path = AIThinkingControl;
@@ -1235,6 +1231,7 @@
 		087705A2275373E100BA4EFB /* TCDemand */ = {
 			isa = PBXGroup;
 			children = (
+				081BD08525B94F09003C3038 /* Model */,
 				087705B22753746800BA4EFB /* TCDemand.h */,
 				087705B32753746800BA4EFB /* TCDemand.m */,
 			);
@@ -1658,17 +1655,20 @@
 			path = TCRealact;
 			sourceTree = "<group>";
 		};
-		08F38D62272C39C1001CD764 /* Score */ = {
+		08F38D62272C39C1001CD764 /* Util */ = {
 			isa = PBXGroup;
 			children = (
+				081002162A6BAE3900BE9D8A /* Model */,
 				08C7539025A3EEB800BCF011 /* AIScore.h */,
 				08C7539125A3EEB800BCF011 /* AIScore.m */,
 				08C3978B2950A1A700C49EA7 /* AIRank.h */,
 				08C3978C2950A1A700C49EA7 /* AIRank.m */,
 				0846125129AA20C400661CC7 /* AIFilter.h */,
 				0846125229AA20C400661CC7 /* AIFilter.m */,
+				08B31E7C20648C3700FD96EA /* ThinkingUtils.h */,
+				08B31E7D20648C3700FD96EA /* ThinkingUtils.m */,
 			);
-			path = Score;
+			path = Util;
 			sourceTree = "<group>";
 		};
 		08F5333D27DE39500038812E /* TOMVision2 */ = {
