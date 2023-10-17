@@ -654,7 +654,9 @@
                 break;
             } else {
                 //7. 如果二者都不包含,则判断二者有没有共同的抽象 (参考29025-23c);
-                if ([TOUtils mcIsBro:newAlg c:oldAlg]) {
+                //2023.10.17: 关闭mc共同抽象为依据 (参考30148-todo1.1);
+                BOOL mcIsBro = false;//[TOUtils mcIsBro:newAlg c:oldAlg];
+                if (mcIsBro) {
                     //8. 有共同抽象=>则此帧成功 (参考29025-23c);
                     findItem = true;
                 } else {
