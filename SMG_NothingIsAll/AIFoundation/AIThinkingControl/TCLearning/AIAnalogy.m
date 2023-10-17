@@ -238,20 +238,23 @@
         NSInteger newIndex = NUMTOOK([indexDic objectForKey:key]).integerValue;
         AIKVPointer *oldAlg_p = ARR_INDEX(oldCanset.content_ps, oldIndex);
         AIKVPointer *newAlg_p = ARR_INDEX(newCanset.content_ps, newIndex);
-        AIAlgNodeBase *oldAlg = [SMGUtils searchNode:oldAlg_p];
-        AIAlgNodeBase *newAlg = [SMGUtils searchNode:newAlg_p];
         
         //3. mIsC成立时,直接收集oldA (即absAlg) (参考29067-todo1.1);
-        if ([TOUtils mIsC_1:newAlg_p c:oldAlg_p]) {
-            [orderSames addObject:oldAlg_p];
-        } else {
-            //4. 直接构建空概念 (参考29027-方案3);
-            //4. 2023.04.11: 后废弃,后又启用 (参考29068-todo1);
-            AIAlgNodeBase *absA = [theNet createEmptyAlg_NoRepeat:@[oldAlg,newAlg]];
-            
-            //5. 收集;
-            [orderSames addObject:absA.pointer];
-        }
+        //AIAlgNodeBase *oldAlg = [SMGUtils searchNode:oldAlg_p];
+        //AIAlgNodeBase *newAlg = [SMGUtils searchNode:newAlg_p];
+        //if ([TOUtils mIsC_1:newAlg_p c:oldAlg_p]) {
+        //    [orderSames addObject:oldAlg_p];
+        //} else {
+        //    //4. 直接构建空概念 (参考29027-方案3);
+        //    //4. 2023.04.11: 后废弃,后又启用 (参考29068-todo1);
+        //    AIAlgNodeBase *absA = [theNet createEmptyAlg_NoRepeat:@[oldAlg,newAlg]];
+        //
+        //    //5. 收集;
+        //    [orderSames addObject:absA.pointer];
+        //}
+        //2023.10.17: 改为只要indexDic的都类比下 (现在的indexDic中必然都是mIsC关系) (参考30148-todo1.2);
+        AIAlgNodeBase *absA = [AIAnalogy analogyAlg:newAlg_p assA:oldAlg_p];
+        [orderSames addObject:absA.pointer];
     }
     
     //6. 取得newIndexDic和oldIndexDic (参考29032-todo1.1);
