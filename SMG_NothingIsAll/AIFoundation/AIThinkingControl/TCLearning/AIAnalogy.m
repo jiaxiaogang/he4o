@@ -291,7 +291,9 @@
         //11. 抽象fo时: 根据protoCansetFo增强absFo的Eff值+-1 (参考29032-todo2.3);
         //2023.09.01: 打开eff+-1 (参考30124-todo2);
         AIEffectStrong *endEffStrong = [sceneFo updateEffectStrong:sceneFo.count solutionFo:absFo.pointer status:es];
-        NSLog(@"sceneFo:F%ld 构建absCanset:%@ SP:%@ EFF:%@",sceneFo.pointer.pointerId,Fo2FStr(absFo),CLEANSTR(absFo.spDic),CLEANSTR(endEffStrong));
+        NSInteger newFoStrong = [AINetUtils getStrong:absFo atConNode:newCanset type:ATDefault];
+        NSInteger oldFoStrong = [AINetUtils getStrong:absFo atConNode:oldCanset type:ATDefault];
+        NSLog(@"sceneFo:F%ld 构建absCanset:%@ SP:%@ EFF:%@ 强度:new=%ld old=%ld",sceneFo.pointer.pointerId,Fo2FStr(absFo),CLEANSTR(absFo.spDic),CLEANSTR(endEffStrong),newFoStrong,oldFoStrong);
     }
     return absFo;
 }
