@@ -542,7 +542,19 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------Canset识别--------------------
+ *  MARK:--------------------Canset概念识别--------------------
+ *  @desc Canset场景内概念识别算法 (参考3014a-方案 & 3014b);
+ *  @param sceneFo : 当前canset所在的sceneFo (cansetAlg识别是要限定于场景内的,sceneFo就是这个场景);
+ */
++(void) recognitionCansetAlg:(AIAlgNodeBase*)protoAlg sceneFo:(AIFoNodeBase*)sceneFo inModel:(AIShortMatchModel*)inModel {
+    //TODOTOMORROW20231019: 明天继续写此算法;
+    //1. 关于调用者:
+    //  a. 哪里在调用cansetFo识别,哪里就在fo识别前先调用下这个;
+    //  b. 或者再提前点,调用普通alg识别时,结合下工作记忆,顺带把这个也跑了;
+}
+
+/**
+ *  MARK:--------------------Canset时序识别--------------------
  *  @desc 功能说明:
  *          1. 识别: 用条件满足来实现类似全含判断功能 (参考28185-todo3);
  *          2. 增强: 识别结果增强sp和eff (参考28185-todo4);
