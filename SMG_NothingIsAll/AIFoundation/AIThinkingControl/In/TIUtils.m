@@ -571,6 +571,7 @@
  *      2023.04.19: TCTransfer迁移后调用Canset识别类比,但不对SPEFF+1 (参考29069-todo12 & todo12.1);
  *      2023.09.01: 因为场景单一时不会触发transfer导致canset识别类比永远不会发生,所以改回newCanset时即刻触发canset识别类比 (参考30124-原则&todo1);
  *      2023.09.01: newCanset触发时,EFF根据"有效或无效",更新+-1,TCTransfer触发时EFF不变 (参考30124-todo2&todo3);
+ *      2023.10.23: 关闭canset识别和类比 (参考3014b-方案5 & 3014c-todo2);
  */
 +(void) recognitionCansetFo:(AIKVPointer*)newCanset_p sceneFo:(AIKVPointer*)sceneFo_p es:(EffectStatus)es {
     if (!Switch4RecognitionCansetFo) return;
@@ -578,13 +579,9 @@
     AIFoNodeBase *newCanset = [SMGUtils searchNode:newCanset_p];
     AIFoNodeBase *sceneFo = [SMGUtils searchNode:sceneFo_p];
     
-    
-    //TODOTOMORROW20231003: 此处为hCanset时:
+    //TODO20231003: 此处为hCanset时: (因canset识别被关闭,此todo先不做)
     //1. 取oldCanset用的index应该不同 (随后做下处理);
     //2. 打日志时,把当前是rCanset还是hCanset打出来,以便调试canset的竞争成长相关;
-    
-    
-    
     
     NSArray *oldCansets = [sceneFo getConCansets:sceneFo.count];
     NSLog(@"\n----------- Canset识别 (EFF:%@ 候选数:%ld) -----------\nnewCanset:%@\nsceneFo:%@",EffectStatus2Str(es),oldCansets.count,Fo2FStr(newCanset),Fo2FStr(sceneFo));

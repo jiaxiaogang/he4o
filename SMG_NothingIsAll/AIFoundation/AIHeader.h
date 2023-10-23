@@ -418,7 +418,7 @@
 //AITest开关
 #define Switch4AITest false
 //Canset识别开关
-#define Switch4RecognitionCansetFo true
+#define Switch4RecognitionCansetFo false
 //Canset类比开关
 #define Switch4AnalogyCansetFo true
 //惰性期开关 (参考29073-方案)
