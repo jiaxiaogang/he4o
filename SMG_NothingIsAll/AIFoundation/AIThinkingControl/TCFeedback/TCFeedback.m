@@ -390,7 +390,7 @@
                     AIFoNodeBase *protoFo = [theNet createConFo:order];
                     
                     //h. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
-                    NSLog(@"HCanset再类比 (状态:%@ fromTargetFo:F%ld) \n\t当前Canset:%@",TOStatus2Str(solutionModel.status),targetFoModel.content_p.pointerId,Pit2FStr(solutionModel.content_p));
+                    NSLog(@"HCanset预想与实际类比: (状态:%@ fromTargetFo:F%ld) \n\t当前Canset:%@",TOStatus2Str(solutionModel.status),targetFoModel.content_p.pointerId,Pit2FStr(solutionModel.content_p));
                     AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:protoFo assFo:solutionFo type:ATDefault];
                     BOOL updateCansetSuccess = [targetFo updateConCanset:absCansetFo.pointer targetIndex:targetFoModel.actionIndex];
                     [AITest test101:absCansetFo proto:protoFo conCanset:solutionFo];
