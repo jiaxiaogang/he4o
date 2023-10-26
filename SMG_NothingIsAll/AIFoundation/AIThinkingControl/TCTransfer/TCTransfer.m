@@ -42,7 +42,7 @@
         AIKVPointer *iCanset = [self transferJiCen:fatherCanset fatherCansetTargetIndex:targetIndex fatherScene:fatherScene iScene_p:iScene];
         iResult = [AITransferModel newWithScene:iScene canset:iCanset];
         //c. 调用Canset识别类比 (参考29069-todo12);
-        [TIUtils recognitionCansetFo:iCanset sceneFo:iScene es:ES_Default];
+        //[TIUtils recognitionCansetFo:iCanset sceneFo:iScene es:ES_Default];
     }
     
     //3. canset迁移之: brother推举到father,再继承给i (参考29069-todo10.1);
@@ -63,8 +63,8 @@
         iResult = [AITransferModel newWithScene:iScene canset:iCanset];
         
         //d. 调用Canset识别类比 (参考29069-todo12);
-        [TIUtils recognitionCansetFo:fatherCanset sceneFo:fatherScene es:ES_Default];
-        [TIUtils recognitionCansetFo:iCanset sceneFo:iScene es:ES_Default];
+        //[TIUtils recognitionCansetFo:fatherCanset sceneFo:fatherScene es:ES_Default];
+        //[TIUtils recognitionCansetFo:iCanset sceneFo:iScene es:ES_Default];
     }
     if (brotherResult) NSLog(@"迁移结果: brotherScene:F%ld Canset:%@",brotherResult.scene.pointerId,Pit2FStr(brotherResult.canset));
     if (fatherResult) NSLog(@"迁移结果: fatherScene:F%ld Canset:%@",fatherResult.scene.pointerId,Pit2FStr(fatherResult.canset));

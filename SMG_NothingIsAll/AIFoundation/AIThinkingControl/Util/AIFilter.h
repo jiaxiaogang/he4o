@@ -26,7 +26,7 @@
 /**
  *  MARK:--------------------Canset识别过滤器 (参考29042)--------------------
  */
-+(NSArray*) recognitionCansetFilter:(NSArray*)matchModels sceneFo:(AIFoNodeBase*)sceneFo;
+//+(NSArray*) recognitionCansetFilter:(NSArray*)matchModels sceneFo:(AIFoNodeBase*)sceneFo;
 
 /**
  *  MARK:--------------------Canset求解过滤器 (参考29081-todo41)--------------------

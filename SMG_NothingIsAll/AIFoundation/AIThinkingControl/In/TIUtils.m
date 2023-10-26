@@ -545,13 +545,15 @@
  *  MARK:--------------------Canset概念识别--------------------
  *  @desc Canset场景内概念识别算法 (参考3014a-方案 & 3014b);
  *  @param sceneFo : 当前canset所在的sceneFo (cansetAlg识别是要限定于场景内的,sceneFo就是这个场景);
+ *  @version
+ *      2023.10.26: 废弃 (参考3014a-追加结果);
  */
-+(void) recognitionCansetAlg:(AIAlgNodeBase*)protoAlg sceneFo:(AIFoNodeBase*)sceneFo inModel:(AIShortMatchModel*)inModel {
-    //TODOTOMORROW20231019: 明天继续写此算法;
-    //1. 关于调用者:
-    //  a. 哪里在调用cansetFo识别,哪里就在fo识别前先调用下这个;
-    //  b. 或者再提前点,调用普通alg识别时,结合下工作记忆,顺带把这个也跑了;
-}
+//+(void) recognitionCansetAlg:(AIAlgNodeBase*)protoAlg sceneFo:(AIFoNodeBase*)sceneFo inModel:(AIShortMatchModel*)inModel {
+//    //TODOTOMORROW20231019: 明天继续写此算法;
+//    //1. 关于调用者:
+//    //  a. 哪里在调用cansetFo识别,哪里就在fo识别前先调用下这个;
+//    //  b. 或者再提前点,调用普通alg识别时,结合下工作记忆,顺带把这个也跑了;
+//}
 
 /**
  *  MARK:--------------------Canset时序识别--------------------
@@ -572,59 +574,60 @@
  *      2023.09.01: 因为场景单一时不会触发transfer导致canset识别类比永远不会发生,所以改回newCanset时即刻触发canset识别类比 (参考30124-原则&todo1);
  *      2023.09.01: newCanset触发时,EFF根据"有效或无效",更新+-1,TCTransfer触发时EFF不变 (参考30124-todo2&todo3);
  *      2023.10.23: 关闭canset识别和类比 (参考3014b-方案5 & 3014c-todo2);
+ *      2023.10.26: 废弃canset识别 (参考3014c-todo2);
  */
-+(void) recognitionCansetFo:(AIKVPointer*)newCanset_p sceneFo:(AIKVPointer*)sceneFo_p es:(EffectStatus)es {
-    if (!Switch4RecognitionCansetFo) return;
-    //1. 取出旧有候选集;
-    AIFoNodeBase *newCanset = [SMGUtils searchNode:newCanset_p];
-    AIFoNodeBase *sceneFo = [SMGUtils searchNode:sceneFo_p];
-    
-    //TODO20231003: 此处为hCanset时: (因canset识别被关闭,此todo先不做)
-    //1. 取oldCanset用的index应该不同 (随后做下处理);
-    //2. 打日志时,把当前是rCanset还是hCanset打出来,以便调试canset的竞争成长相关;
-    
-    NSArray *oldCansets = [sceneFo getConCansets:sceneFo.count];
-    NSLog(@"\n----------- Canset识别 (EFF:%@ 候选数:%ld) -----------\nnewCanset:%@\nsceneFo:%@",EffectStatus2Str(es),oldCansets.count,Fo2FStr(newCanset),Fo2FStr(sceneFo));
-    NSMutableArray *matchModels = [[NSMutableArray alloc] init];
-    
-    //2. 旧有候选集: 作为识别池;
-    for (AIKVPointer *oldCanset in oldCansets) {
-        //3. 不应期 (不识别自身);
-        if ([newCanset.pointer isEqual:oldCanset]) continue;
-        AIFoNodeBase *oldCansetFo = [SMGUtils searchNode:oldCanset];
-        
-        //4. 判断newCanset全含cansetFo (返回全含indexDic) (参考29025-23c);
-        NSDictionary *indexDic = [self checkFoValidMatch_NewCanset:newCanset oldCanset:oldCansetFo sceneFo:sceneFo];
-        if (!DICISOK(indexDic)) continue;
-        
-        //5. 收集;
-        [matchModels addObject:[AIMatchCansetModel newWithMatchFo:oldCansetFo indexDic:indexDic]];
-    }
-    
-    //6. AIFilter过滤 (参考29042);
-    NSArray *filterModels = [AIFilter recognitionCansetFilter:matchModels sceneFo:sceneFo];
-    
-    //7. 日志
-    NSLog(@"\nCanset识别结果: %ld条",filterModels.count);
-    for (AIMatchCansetModel *model in filterModels) {
-        AIEffectStrong *eff = [sceneFo getEffectStrong:model.matchFo.count solutionFo:model.matchFo.pointer];
-        NSLog(@"-->>> %@ SP:%@ EFF:%@",Fo2FStr(model.matchFo),CLEANSTR(model.matchFo.spDic),CLEANSTR(eff));
-    }
-    
-    //8. 识别后处理: 外类比 & 增强SP & 增强EFF;
-    for (AIMatchCansetModel *model in filterModels) {
-        //9. 只要全含 & 非无效newCanset => 对二者进行外类比 (参考29025-24 & 29027-方案3);
-        if (es != ES_NoEff) {
-            [AIAnalogy analogyCansetFo:model.indexDic newCanset:newCanset oldCanset:model.matchFo sceneFo:sceneFo es:es];
-        }
-        
-        //10. 条件满足的都算识别结果 (更新sp和eff) (参考28185-todo4);
-        if (es != ES_Default) {
-            [model.matchFo updateSPStrong:0 end:model.matchFo.count - 1 type:ATPlus];
-            [sceneFo updateEffectStrong:sceneFo.count solutionFo:model.matchFo.pointer status:es];
-        }
-    }
-}
+//+(void) recognitionCansetFo:(AIKVPointer*)newCanset_p sceneFo:(AIKVPointer*)sceneFo_p es:(EffectStatus)es {
+//    if (!Switch4RecognitionCansetFo) return;
+//    //1. 取出旧有候选集;
+//    AIFoNodeBase *newCanset = [SMGUtils searchNode:newCanset_p];
+//    AIFoNodeBase *sceneFo = [SMGUtils searchNode:sceneFo_p];
+//
+//    //TODO20231003: 此处为hCanset时: (因canset识别被关闭,此todo先不做)
+//    //1. 取oldCanset用的index应该不同 (随后做下处理);
+//    //2. 打日志时,把当前是rCanset还是hCanset打出来,以便调试canset的竞争成长相关;
+//
+//    NSArray *oldCansets = [sceneFo getConCansets:sceneFo.count];
+//    NSLog(@"\n----------- Canset识别 (EFF:%@ 候选数:%ld) -----------\nnewCanset:%@\nsceneFo:%@",EffectStatus2Str(es),oldCansets.count,Fo2FStr(newCanset),Fo2FStr(sceneFo));
+//    NSMutableArray *matchModels = [[NSMutableArray alloc] init];
+//
+//    //2. 旧有候选集: 作为识别池;
+//    for (AIKVPointer *oldCanset in oldCansets) {
+//        //3. 不应期 (不识别自身);
+//        if ([newCanset.pointer isEqual:oldCanset]) continue;
+//        AIFoNodeBase *oldCansetFo = [SMGUtils searchNode:oldCanset];
+//
+//        //4. 判断newCanset全含cansetFo (返回全含indexDic) (参考29025-23c);
+//        NSDictionary *indexDic = [self checkFoValidMatch_NewCanset:newCanset oldCanset:oldCansetFo sceneFo:sceneFo];
+//        if (!DICISOK(indexDic)) continue;
+//
+//        //5. 收集;
+//        [matchModels addObject:[AIMatchCansetModel newWithMatchFo:oldCansetFo indexDic:indexDic]];
+//    }
+//
+//    //6. AIFilter过滤 (参考29042);
+//    NSArray *filterModels = [AIFilter recognitionCansetFilter:matchModels sceneFo:sceneFo];
+//
+//    //7. 日志
+//    NSLog(@"\nCanset识别结果: %ld条",filterModels.count);
+//    for (AIMatchCansetModel *model in filterModels) {
+//        AIEffectStrong *eff = [sceneFo getEffectStrong:model.matchFo.count solutionFo:model.matchFo.pointer];
+//        NSLog(@"-->>> %@ SP:%@ EFF:%@",Fo2FStr(model.matchFo),CLEANSTR(model.matchFo.spDic),CLEANSTR(eff));
+//    }
+//
+//    //8. 识别后处理: 外类比 & 增强SP & 增强EFF;
+//    for (AIMatchCansetModel *model in filterModels) {
+//        //9. 只要全含 & 非无效newCanset => 对二者进行外类比 (参考29025-24 & 29027-方案3);
+//        if (es != ES_NoEff) {
+//            [AIAnalogy analogyCansetFo:model.indexDic newCanset:newCanset oldCanset:model.matchFo sceneFo:sceneFo es:es];
+//        }
+//
+//        //10. 条件满足的都算识别结果 (更新sp和eff) (参考28185-todo4);
+//        if (es != ES_Default) {
+//            [model.matchFo updateSPStrong:0 end:model.matchFo.count - 1 type:ATPlus];
+//            [sceneFo updateEffectStrong:sceneFo.count solutionFo:model.matchFo.pointer status:es];
+//        }
+//    }
+//}
 
 /**
  *  MARK:--------------------Canset的全含判断 (参考29025-23)--------------------
@@ -632,67 +635,68 @@
  *          示例: 比如:新[1,3,5,7,9a]和旧[1,5,9b]和场景[1,5] = 是全含的,并最终返回<1:1, 2:3, 3:5>; //其中9a和9b有共同抽象
  *  @version
  *      2023.04.10: 场景包含帧判断全含时,改用mIsC而不是绝对同一个节点 (因为场景内canset可类比抽象) (参考29067-todo1.1);
+ *      2023.10.26: 废弃canset识别 (参考3014c-todo2);
  *  @result 全含时,返回二者的indexDic;
  */
-+(NSDictionary*) checkFoValidMatch_NewCanset:(AIFoNodeBase*)newCanset oldCanset:(AIFoNodeBase*)oldCanset sceneFo:(AIFoNodeBase*)sceneFo {
-    //1. 数据准备;
-    NSMutableDictionary *indexDic = [[NSMutableDictionary alloc] init];
-    NSDictionary *newIndexDic = [sceneFo getConIndexDic:newCanset.pointer];
-    NSDictionary *oldIndexDic = [sceneFo getConIndexDic:oldCanset.pointer];
-    
-    //3. 说明: 所有帧,都要判断新的全含旧的,只要有一帧失败就全失败 (参考29025-23a);
-    NSInteger protoMin = 0;
-    for (NSInteger oldIndex = 0; oldIndex < oldCanset.count; oldIndex ++) {
-        AIKVPointer *oldAlg = ARR_INDEX(oldCanset.content_ps, oldIndex);
-        BOOL findItem = false;
-        for (NSInteger newIndex = protoMin; newIndex < newCanset.count; newIndex++) {
-            AIKVPointer *newAlg = ARR_INDEX(newCanset.content_ps, newIndex);
-            
-            //4. 分别判断old和new这一帧是否被sceneFo场景包含 (参考29025-23b);
-            NSNumber *oldKey = ARR_INDEX([oldIndexDic allKeysForObject:@(oldIndex)], 0);
-            NSNumber *newKey = ARR_INDEX([newIndexDic allKeysForObject:@(newIndex)], 0);
-            
-            //5. 如果二者都包含=>即场景包含帧: (因为canset都优先取matchAlg,所以oldAlg和newAlg一般是同一节点) (参考29025-23b);
-            if (oldKey && newKey) {
-                //5. 但因为会类比抽象所以有时不是同一节点: 此时要求new抽象指向old: 算匹配成功 (参考29067-todo1.1);
-                if ([TOUtils mIsC_1:newAlg c:oldAlg]) {
-                    findItem = true;
-                }
-            } else if (oldKey != newKey) {
-                //6. 如果二者有一个包含,则此帧失败 (参考29025-23b2 & 23c3);
-                break;
-            } else {
-                //7. 如果二者都不包含,则判断二者有没有共同的抽象 (参考29025-23c);
-                //2023.10.17: 关闭mc共同抽象为依据 (参考30148-todo1.1);
-                BOOL mcIsBro = false;//[TOUtils mcIsBro:newAlg c:oldAlg];
-                if (mcIsBro) {
-                    //8. 有共同抽象=>则此帧成功 (参考29025-23c);
-                    findItem = true;
-                } else {
-                    //9. 无共同抽象,则继续找newCanset的下帧,看能不能有共同抽象 (参考29025-23c2);
-                }
-            }
-            
-            //10. 此帧成功: 记录newIndex & 并记录protoMin (参考29025-23d);
-            if (findItem) {
-                protoMin = newIndex + 1;
-                [indexDic setObject:@(newIndex) forKey:@(oldIndex)];
-                if (Log4SceneIsOk) NSLog(@"\t第%ld帧,条件满足通过 canset:%@ (fromProto:F%ldA%ld)",oldIndex,Pit2FStr(oldAlg),newCanset.pointer.pointerId,newAlg.pointerId);
-                break;
-            }
-        }
-        
-        //11. 有一条失败,则全失败 (参考29025-23e);
-        if (!findItem) {
-            if (Log4SceneIsOk) NSLog(@"\t第%ld帧,条件满足未通过 canset:%@ (fromProtoFo:F%ld)",oldIndex,Pit2FStr(oldAlg),newCanset.pointer.pointerId);
-            return nil;
-        }
-    }
-    
-    //12. 全找到,则成功;
-    if (Log4SceneIsOk) NSLog(@"条件满足通过:%@ (fromProtoFo:%ld)",Fo2FStr(oldCanset),newCanset.pointer.pointerId);
-    return indexDic;
-}
+//+(NSDictionary*) checkFoValidMatch_NewCanset:(AIFoNodeBase*)newCanset oldCanset:(AIFoNodeBase*)oldCanset sceneFo:(AIFoNodeBase*)sceneFo {
+//    //1. 数据准备;
+//    NSMutableDictionary *indexDic = [[NSMutableDictionary alloc] init];
+//    NSDictionary *newIndexDic = [sceneFo getConIndexDic:newCanset.pointer];
+//    NSDictionary *oldIndexDic = [sceneFo getConIndexDic:oldCanset.pointer];
+//
+//    //3. 说明: 所有帧,都要判断新的全含旧的,只要有一帧失败就全失败 (参考29025-23a);
+//    NSInteger protoMin = 0;
+//    for (NSInteger oldIndex = 0; oldIndex < oldCanset.count; oldIndex ++) {
+//        AIKVPointer *oldAlg = ARR_INDEX(oldCanset.content_ps, oldIndex);
+//        BOOL findItem = false;
+//        for (NSInteger newIndex = protoMin; newIndex < newCanset.count; newIndex++) {
+//            AIKVPointer *newAlg = ARR_INDEX(newCanset.content_ps, newIndex);
+//
+//            //4. 分别判断old和new这一帧是否被sceneFo场景包含 (参考29025-23b);
+//            NSNumber *oldKey = ARR_INDEX([oldIndexDic allKeysForObject:@(oldIndex)], 0);
+//            NSNumber *newKey = ARR_INDEX([newIndexDic allKeysForObject:@(newIndex)], 0);
+//
+//            //5. 如果二者都包含=>即场景包含帧: (因为canset都优先取matchAlg,所以oldAlg和newAlg一般是同一节点) (参考29025-23b);
+//            if (oldKey && newKey) {
+//                //5. 但因为会类比抽象所以有时不是同一节点: 此时要求new抽象指向old: 算匹配成功 (参考29067-todo1.1);
+//                if ([TOUtils mIsC_1:newAlg c:oldAlg]) {
+//                    findItem = true;
+//                }
+//            } else if (oldKey != newKey) {
+//                //6. 如果二者有一个包含,则此帧失败 (参考29025-23b2 & 23c3);
+//                break;
+//            } else {
+//                //7. 如果二者都不包含,则判断二者有没有共同的抽象 (参考29025-23c);
+//                //2023.10.17: 关闭mc共同抽象为依据 (参考30148-todo1.1);
+//                BOOL mcIsBro = false;//[TOUtils mcIsBro:newAlg c:oldAlg];
+//                if (mcIsBro) {
+//                    //8. 有共同抽象=>则此帧成功 (参考29025-23c);
+//                    findItem = true;
+//                } else {
+//                    //9. 无共同抽象,则继续找newCanset的下帧,看能不能有共同抽象 (参考29025-23c2);
+//                }
+//            }
+//
+//            //10. 此帧成功: 记录newIndex & 并记录protoMin (参考29025-23d);
+//            if (findItem) {
+//                protoMin = newIndex + 1;
+//                [indexDic setObject:@(newIndex) forKey:@(oldIndex)];
+//                if (Log4SceneIsOk) NSLog(@"\t第%ld帧,条件满足通过 canset:%@ (fromProto:F%ldA%ld)",oldIndex,Pit2FStr(oldAlg),newCanset.pointer.pointerId,newAlg.pointerId);
+//                break;
+//            }
+//        }
+//
+//        //11. 有一条失败,则全失败 (参考29025-23e);
+//        if (!findItem) {
+//            if (Log4SceneIsOk) NSLog(@"\t第%ld帧,条件满足未通过 canset:%@ (fromProtoFo:F%ld)",oldIndex,Pit2FStr(oldAlg),newCanset.pointer.pointerId);
+//            return nil;
+//        }
+//    }
+//
+//    //12. 全找到,则成功;
+//    if (Log4SceneIsOk) NSLog(@"条件满足通过:%@ (fromProtoFo:%ld)",Fo2FStr(oldCanset),newCanset.pointer.pointerId);
+//    return indexDic;
+//}
 
 /**
  *  MARK:--------------------获取某帧shortModel的matchAlgs+partAlgs--------------------

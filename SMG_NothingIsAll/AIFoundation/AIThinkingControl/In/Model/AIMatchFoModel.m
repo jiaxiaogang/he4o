@@ -276,7 +276,7 @@
         //[TCEffect rInEffect:matchFo matchRFos:self.baseFrameModel.matchRFos es:ES_HavEff];
         
         //2023.04.19: 改到TCTransfer迁移后调用canset识别类比 (参考29069-todo12);
-        [TIUtils recognitionCansetFo:cansetFo.pointer sceneFo:matchFo.pointer es:ES_HavEff];
+        //[TIUtils recognitionCansetFo:cansetFo.pointer sceneFo:matchFo.pointer es:ES_HavEff];
     }
 }
 
