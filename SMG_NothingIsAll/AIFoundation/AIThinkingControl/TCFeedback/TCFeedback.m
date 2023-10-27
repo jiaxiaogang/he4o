@@ -241,6 +241,7 @@
  *      2022.06.01: HDemand.targetAlg提前反馈时,HDemand设为finish状态 (参考26185-TODO6);
  *      2022.11.27: H任务完成时,H当前正执行的S提前完成,并进行外类比 (参考27206c-H任务);
  *      2022.11.27: H解决方案再类比时,为其生成indexDic (参考27206d-方案2);
+ *      2023.10.27: 用共同抽象判断cansetAlg反馈: 取出targetAlg的abs层,并与识别的matchAlgs判断交集 (参考3014c-todo1);
  *  @bug
  *      2020.09.22: 加上cutStopStatus,避免同一waitModel被多次触发,导致BUG (参考21042);
  *      2020.12.26: GL时,waitType的判断改为bFo,因为只有bFo才携带了waitTypeDS (参考21204);
@@ -275,9 +276,8 @@
             TOFoModel *targetFo = (TOFoModel*)targetAlg.baseOrGroup;    //hDemand的目标alg所在的fo;
             
             //6. 判断input是否与hAlg相匹配 (匹配,比如找锤子,看到锤子了);
-            //6. 用共同抽象判断cansetAlg反馈: 取出targetAlg的abs层,并与识别的matchAlgs判断交集 (参考3014c-todo1);
             [AITest test11:model waitAlg_p:targetAlg.content_p];//测下2523c-此处是否会导致匹配不到;
-            BOOL mcIsBro = [TOUtils mcIsBro:recognitionAlgs cansetA:targetAlg.content_p];
+            BOOL mcIsBro = [TOUtils mcIsBro:recognitionAlgs cansetA:targetAlg.content_p]; //用共同抽象判断cansetAlg反馈 (参考3014c-todo1);
             if (Log4OPushM) NSLog(@"H有效判断_mIsC:(M=headerM C=%@) 结果:%d",Pit2FStr(targetAlg.content_p),mcIsBro);
             if (mcIsBro) {
                 //6. 记录feedbackAlg (参考27204-1);
@@ -322,20 +322,13 @@
             
             //9. 判断input是否与等待中waitModel相匹配 (匹配,比如吃,确定自己是否真吃了);
             [AITest test11:model waitAlg_p:frameAlg.content_p];//测下2523c-此处是否会导致匹配不到;
-            //BOOL mIsC = [TOUtils mIsC_1:model.protoAlg.pointer c:targetAlg.content_p];
-            BOOL mIsC = [recognitionAlgs containsObject:frameAlg.content_p];
-            
-            
-            
+            BOOL mcIsBro = [TOUtils mcIsBro:recognitionAlgs cansetA:frameAlg.content_p]; //用共同抽象判断cansetAlg反馈 (参考3014c-todo1);
             
             //TODOTOMORROW20231016: 等30148-todo1弄好,并重训练后,在这里测下30148-todo2;
             
             
-            
-            
-            
-            if (Log4OPushM) NSLog(@"rAlg反馈_M(A%ld) isC(A%ld) 结果:%d CAtFo:%@",model.protoAlg.pointer.pointerId,frameAlg.content_p.pointerId,mIsC,Pit2FStr(solutionFo.content_p));
-            if (mIsC) {
+            if (Log4OPushM) NSLog(@"rAlg反馈_M(A%ld) isC(A%ld) 结果:%d CAtFo:%@",model.protoAlg.pointer.pointerId,frameAlg.content_p.pointerId,mcIsBro,Pit2FStr(solutionFo.content_p));
+            if (mcIsBro) {
                 //a. 赋值
                 frameAlg.status = TOModelStatus_OuterBack;
                 frameAlg.feedbackAlg = model.protoAlg.pointer;
@@ -359,16 +352,17 @@
     //a. 收集所有工作记忆树的H任务;
     NSMutableArray *allHDemands = [[NSMutableArray alloc] init];
     for (DemandModel *root in theTC.outModelManager.getAllDemand) {
-        NSArray *singleRDemands = [SMGUtils filterArr:[TOUtils getSubOutModels_AllDeep:root validStatus:nil] checkValid:^BOOL(TOModelBase *item) {
+        NSArray *singleHDemands = [SMGUtils filterArr:[TOUtils getSubOutModels_AllDeep:root validStatus:nil] checkValid:^BOOL(TOModelBase *item) {
             return ISOK(item, HDemandModel.class);
         }];
-        [allHDemands addObjectsFromArray:singleRDemands];
+        [allHDemands addObjectsFromArray:singleHDemands];
     }
     
     //b. 反馈匹配 (比如找锤子,看到锤子了);
     for (HDemandModel *hDemand in allHDemands) {
         TOAlgModel *targetAlg = (TOAlgModel*)hDemand.baseOrGroup;   //hDemand的目标alg;
-        if ([recognitionAlgs containsObject:targetAlg.content_p]) {
+        BOOL mcIsBro = [TOUtils mcIsBro:recognitionAlgs cansetA:targetAlg.content_p]; //用共同抽象判断cansetAlg反馈 (参考3014c-todo1);
+        if (mcIsBro) {
             
             //c. 明确有效;
             targetAlg.feedbackAlg = model.protoAlg.pointer;
@@ -390,6 +384,7 @@
                     AIFoNodeBase *protoFo = [theNet createConFo:order];
                     
                     //h. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
+                    //TODO待查BUG20231028: 此处断点不要去掉,如果一直执行不到,查下是否因为本方法上面已经更新了hCanset的状态为OuterBack,导致这里是永远执行不到的;
                     NSLog(@"HCanset预想与实际类比: (状态:%@ fromTargetFo:F%ld) \n\t当前Canset:%@",TOStatus2Str(solutionModel.status),targetFoModel.content_p.pointerId,Pit2FStr(solutionModel.content_p));
                     AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:protoFo assFo:solutionFo type:ATDefault];
                     BOOL updateCansetSuccess = [targetFo updateConCanset:absCansetFo.pointer targetIndex:targetFoModel.actionIndex];

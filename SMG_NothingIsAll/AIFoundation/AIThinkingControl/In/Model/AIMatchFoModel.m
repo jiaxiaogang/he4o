@@ -217,7 +217,7 @@
     }
     
     //1. =================解决方案执行有效(再类比): 有actYes的时,归功于解决方案,执行canset再类比 (参考27206c-R任务)=================
-    //TODO: 废弃RCanset再类比功能,它与下方的newCanset并识别类比流程有重复,而下方才是主流 (参考3014a-问题3);
+    //TODO待查BUG20231028: 应该是在feedbackTOR中和hCanset一样,已经被改成了OuterBack状态,导致这里执行不到 (参考3014a-问题3);
     for (TOFoModel *solutionModel in self.baseRDemand.actionFoModels) {
         //b. 非当前pFo下的解决方案,不做canset再类比;
         if (![solutionModel.basePFoOrTargetFoModel isEqual:self]) continue;
