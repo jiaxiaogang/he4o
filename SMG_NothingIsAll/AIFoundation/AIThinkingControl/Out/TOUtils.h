@@ -28,6 +28,7 @@
  *  MARK:--------------------判断mc有共同抽象--------------------
  */
 +(BOOL) mcIsBro:(AIKVPointer*)m c:(AIKVPointer*)c;
++(BOOL) mcIsBro:(NSArray*)matchAlg_ps cansetA:(AIKVPointer*)cansetA_p;
 
 /**
  *  MARK:--------------------在具象Content中定位抽象Item的下标--------------------

@@ -91,6 +91,14 @@
     }];
 }
 
++(BOOL) mcIsBro:(NSArray*)matchAlg_ps cansetA:(AIKVPointer*)cansetA_p {
+    //用共同抽象判断cansetA的匹配: 判断新输入的matchAlgs和cansetA的抽象是否有匹配;
+    AIAlgNodeBase *cansetAlg = [SMGUtils searchNode:cansetA_p];
+    NSMutableArray *cansetAbses = [[NSMutableArray alloc] initWithArray:Ports2Pits([AINetUtils absPorts_All:cansetAlg])];
+    [cansetAbses addObject:cansetA_p];
+    return ARRISOK([SMGUtils filterArrA:matchAlg_ps arrB:cansetAbses]);
+}
+
 /**
  *  MARK:--------------------判断indexOf (支持本级+一级抽象)--------------------
  *  @bug 2020.06.12 : TOR.R-中firstAt_Plus取值为-1,经查因为mIsC方法取absPorts_Normal,对plus/sub不支持导致,改后好了;
