@@ -167,7 +167,7 @@
         if (!absAlgPorts) {
             absAlgPorts = itemAbsPorts;
         } else {
-            absAlgPorts = [SMGUtils filterSame_ps:itemAbsPorts parent_ps:absAlgPorts];
+            absAlgPorts = [SMGUtils filterArrA:itemAbsPorts arrB:absAlgPorts];
         }
     }
     [AITest test24:absAlgPorts];

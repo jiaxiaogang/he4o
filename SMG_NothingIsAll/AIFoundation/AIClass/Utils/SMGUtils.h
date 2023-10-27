@@ -242,7 +242,7 @@
  *  MARK:--------------------筛选数组--------------------
  *  @result notnull
  */
-+(NSArray*) filterSame_ps:(NSArray*)a_ps parent_ps:(NSArray*)b_ps;
++(NSArray*) filterArrA:(NSArray*)arrA arrB:(NSArray*)arrB;
 +(NSMutableArray*) filterArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid;
 +(NSMutableArray*) filterArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid limit:(NSInteger)limit;
 

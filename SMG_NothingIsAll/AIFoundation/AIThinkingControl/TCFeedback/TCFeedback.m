@@ -275,11 +275,14 @@
             TOFoModel *targetFo = (TOFoModel*)targetAlg.baseOrGroup;    //hDemand的目标alg所在的fo;
             
             //6. 判断input是否与hAlg相匹配 (匹配,比如找锤子,看到锤子了);
+            //6. 用共同抽象判断cansetAlg反馈: 取出targetAlg的abs层,并与识别的matchAlgs判断交集 (参考3014c-todo1);
             [AITest test11:model waitAlg_p:targetAlg.content_p];//测下2523c-此处是否会导致匹配不到;
-            //BOOL mIsC = [TOUtils mIsC_1:model.protoAlg.pointer c:targetAlg.content_p];
-            BOOL mIsC = [recognitionAlgs containsObject:targetAlg.content_p];
-            if (Log4OPushM) NSLog(@"H有效判断_mIsC:(M=headerM C=%@) 结果:%d",Pit2FStr(targetAlg.content_p),mIsC);
-            if (mIsC) {
+            AIAlgNodeBase *targetAlgNode = [SMGUtils searchNode:targetAlg.content_p];
+            NSMutableArray *targetAlgAbs_ps = [[NSMutableArray alloc] initWithArray:Ports2Pits([AINetUtils absPorts_All:targetAlgNode])];
+            [targetAlgAbs_ps addObject:targetAlg.content_p];
+            BOOL mcIsBro = ARRISOK([SMGUtils filterArrA:recognitionAlgs arrB:targetAlgAbs_ps]);
+            if (Log4OPushM) NSLog(@"H有效判断_mIsC:(M=headerM C=%@) 结果:%d",Pit2FStr(targetAlg.content_p),mcIsBro);
+            if (mcIsBro) {
                 //6. 记录feedbackAlg (参考27204-1);
                 waitModel.feedbackAlg = model.protoAlg.pointer;
                 waitModel.status = TOModelStatus_OuterBack;

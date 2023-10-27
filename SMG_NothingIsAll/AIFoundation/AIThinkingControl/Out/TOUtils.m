@@ -59,7 +59,7 @@
         //2. 判断二级抽象;
         NSArray *mAbs = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:[SMGUtils searchNode:m]]];
         NSArray *cCon = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:[SMGUtils searchNode:c]]];
-        BOOL equ2 = [SMGUtils filterSame_ps:mAbs parent_ps:cCon].count > 0;
+        BOOL equ2 = [SMGUtils filterArrA:mAbs arrB:cCon].count > 0;
         if (equ2) return true;
     }
     return false;
