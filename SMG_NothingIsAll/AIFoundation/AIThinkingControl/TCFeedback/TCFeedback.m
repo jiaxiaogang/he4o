@@ -400,6 +400,8 @@
                         [absCansetFo updateSPDic:[solutionModel convertOldSPDic2NewSPDic]];
                         [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
                     }
+                } else {
+                    NSLog(@"HCanset预想与实际类比未执行,F%ld 状态:%ld",solutionModel.content_p.pointerId,solutionModel.status);
                 }
             }
         }
