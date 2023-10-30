@@ -278,7 +278,7 @@
             //6. 判断input是否与hAlg相匹配 (匹配,比如找锤子,看到锤子了);
             [AITest test11:model waitAlg_p:targetAlg.content_p];//测下2523c-此处是否会导致匹配不到;
             BOOL mcIsBro = [TOUtils mcIsBro:recognitionAlgs cansetA:targetAlg.content_p]; //用共同抽象判断cansetAlg反馈 (参考3014c-todo1);
-            if (Log4OPushM) NSLog(@"H有效判断_mIsC:(M=headerM C=%@) 结果:%d",Pit2FStr(targetAlg.content_p),mcIsBro);
+            if (Log4OPushM) NSLog(@"HCansetA有效:M(A%ld) C:%@ 结果:%d",model.protoAlg.pId,Pit2FStr(targetAlg.content_p),mcIsBro);
             if (mcIsBro) {
                 //6. 记录feedbackAlg (参考27204-1);
                 waitModel.feedbackAlg = model.protoAlg.pointer;
@@ -327,7 +327,7 @@
             //TODOTOMORROW20231016: 等30148-todo1弄好,并重训练后,在这里测下30148-todo2;
             
             
-            if (Log4OPushM) NSLog(@"rAlg反馈_M(A%ld) isC(A%ld) 结果:%d CAtFo:%@",model.protoAlg.pointer.pointerId,frameAlg.content_p.pointerId,mcIsBro,Pit2FStr(solutionFo.content_p));
+            if (Log4OPushM) NSLog(@"RCansetA有效:M(A%ld) C(A%ld) 结果:%d CAtFo:%@",model.protoAlg.pointer.pointerId,frameAlg.content_p.pointerId,mcIsBro,Pit2FStr(solutionFo.content_p));
             if (mcIsBro) {
                 //a. 赋值
                 frameAlg.status = TOModelStatus_OuterBack;
