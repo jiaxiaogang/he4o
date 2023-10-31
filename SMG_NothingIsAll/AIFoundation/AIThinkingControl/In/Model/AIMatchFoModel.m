@@ -225,7 +225,7 @@
         //1. 判断处在actYes状态的解决方案 && 解决方案是属性当前pFo决策取得的 (参考27206c-综上&多S问题);
         //a. 非actYes和runing状态的不做canset再类比;
         if (solutionModel.status != TOModelStatus_ActYes && solutionModel.status != TOModelStatus_Runing) {
-            NSLog(@"RCanset预想与实际类比未执行,F%ld 状态:%ld",solutionModel.content_p.pointerId,solutionModel.status);
+            NSLog(@"tempLogPrerfix RCanset预想与实际类比未执行,F%ld 状态:%ld",solutionModel.content_p.pointerId,solutionModel.status);
             continue;
         }
         
@@ -245,7 +245,7 @@
         AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:protoFo assFo:solutionFo type:ATDefault];
         BOOL updateCansetSuccess = [pFo updateConCanset:absCansetFo.pointer targetIndex:pFo.count];
         [AITest test101:absCansetFo proto:protoFo conCanset:solutionFo];
-        NSLog(@"RCanset预想与实际类比:%@ (curS:F%ld 状态:%@ fromPFo:F%ld 帧:%ld)",Fo2FStr(absCansetFo),solutionFo.pointer.pointerId,TOStatus2Str(solutionModel.status),basePFoOrTargetFo_p.pointerId,pFo.count);
+        NSLog(@"tempLogPrerfix RCanset预想与实际类比:%@ (curS:F%ld 状态:%@ fromPFo:F%ld 帧:%ld)",Fo2FStr(absCansetFo),solutionFo.pointer.pointerId,TOStatus2Str(solutionModel.status),basePFoOrTargetFo_p.pointerId,pFo.count);
         
         if (updateCansetSuccess) {
             //g. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);
