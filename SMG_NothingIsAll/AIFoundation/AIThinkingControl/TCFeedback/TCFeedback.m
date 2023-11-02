@@ -327,7 +327,7 @@
             //TODOTOMORROW20231016: 等30148-todo1弄好,并重训练后,在这里测下30148-todo2;
             
             
-            if (Log4OPushM) NSLog(@"tempLogPrerfix RCansetA有效:M(A%ld) C(A%ld) 结果:%d CAtFo:%@",model.protoAlg.pointer.pointerId,frameAlg.content_p.pointerId,mcIsBro,Pit2FStr(solutionFo.content_p));
+            if (Log4OPushM) NSLog(@"tempLogPrefix RCansetA有效:M(A%ld) C(A%ld) 结果:%d CAtFo:%@",model.protoAlg.pointer.pointerId,frameAlg.content_p.pointerId,mcIsBro,Pit2FStr(solutionFo.content_p));
             if (mcIsBro) {
                 //a. 赋值
                 frameAlg.status = TOModelStatus_OuterBack;

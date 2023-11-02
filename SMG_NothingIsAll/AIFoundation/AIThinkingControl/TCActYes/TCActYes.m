@@ -311,6 +311,7 @@
                 frameModel.status = TOModelStatus_ActNo;
                 solutionModel.status = TOModelStatus_ActNo;
                 demand.status = TOModelStatus_Runing;
+                NSLog(@"tempLogPrefix solution to actNo-------->");
                 
                 //6. 2021.12.02: 失败时,继续决策;
                 [TCScore scoreFromIfTCNeed];
