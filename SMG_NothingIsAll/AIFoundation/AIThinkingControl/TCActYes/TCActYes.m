@@ -311,7 +311,7 @@
                 frameModel.status = TOModelStatus_ActNo;
                 solutionModel.status = TOModelStatus_ActNo;
                 demand.status = TOModelStatus_Runing;
-                NSLog(@"tempLogPrefix solution to actNo-------->");
+                NSLog(@"tempLogPrefix 在ReasonOutRethink反省后 solution:F%ld 因超时无效而set actYes to actNo-------->",solutionModel.content_p.pointerId);
                 
                 //6. 2021.12.02: 失败时,继续决策;
                 [TCScore scoreFromIfTCNeed];
