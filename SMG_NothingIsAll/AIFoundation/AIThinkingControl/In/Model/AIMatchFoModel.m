@@ -224,7 +224,8 @@
         
         //1. 判断处在actYes状态的解决方案 && 解决方案是属性当前pFo决策取得的 (参考27206c-综上&多S问题);
         //a. 非actYes和runing状态的不做canset再类比;
-        if (solutionModel.status != TOModelStatus_ActYes && solutionModel.status != TOModelStatus_Runing) {
+        //b. 2023.11.03: 即使失败也可以触发"预想与实际"的类比抽象;
+        if (solutionModel.status != TOModelStatus_ActYes && solutionModel.status != TOModelStatus_Runing && solutionModel.status != TOModelStatus_ActNo) {
             NSLog(@"tempLogPrefix RCanset预想与实际类比未执行,F%ld 状态:%ld",solutionModel.content_p.pointerId,solutionModel.status);
             continue;
         }

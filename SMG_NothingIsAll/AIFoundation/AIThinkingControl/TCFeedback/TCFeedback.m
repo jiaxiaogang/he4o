@@ -370,9 +370,10 @@
             hDemand.status = TOModelStatus_Finish;
             
             //8. H任务完成时,H当前正执行的S提前完成,并进行外类比 (参考27206c-H任务);
+            //2023.11.03: 即使失败也可以触发"预想与实际"的类比抽象;
             for (TOFoModel *solutionModel in hDemand.actionFoModels) {
                 [AITest test17];
-                if (solutionModel.status == TOModelStatus_ActYes || solutionModel.status == TOModelStatus_Runing) {
+                if (solutionModel.status == TOModelStatus_ActYes || solutionModel.status == TOModelStatus_Runing || solutionModel.status == TOModelStatus_ActNo) {
                     //a. 数据准备;
                     AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.content_p];
                     TOFoModel *targetFoModel = (TOFoModel*)hDemand.baseOrGroup;
