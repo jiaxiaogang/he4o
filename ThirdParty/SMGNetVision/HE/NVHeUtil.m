@@ -14,6 +14,8 @@
 #import "ThinkingUtils.h"
 #import "AIScore.h"
 #import "TVUtil.h"
+#import "ImvAlgsHungerModel.h"
+#import "ImvAlgsHurtModel.h"
 
 @implementation NVHeUtil
 
@@ -147,6 +149,10 @@
         return STRFORMAT(@"吃%@",valueStr);
     }else if([FLY_RDS isEqualToString:value_p.algsType]){
         return STRFORMAT(@"飞%@",valueStr);
+    }else if([NSStringFromClass(ImvAlgsHungerModel.class) isEqualToString:value_p.algsType] && [@"urgentTo" isEqualToString:value_p.dataSource]){
+        return STRFORMAT(@"饿%@",valueStr);
+    }else if([NSStringFromClass(ImvAlgsHurtModel.class) isEqualToString:value_p.algsType] && [@"urgentTo" isEqualToString:value_p.dataSource]){
+        return STRFORMAT(@"疼%@",valueStr);
     }
     return valueStr;
 }
