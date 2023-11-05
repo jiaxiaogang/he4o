@@ -146,8 +146,7 @@
     //调试短时序; (先仅打外类比日志);
     NSInteger foStrong = [AINetUtils getStrong:result atConNode:protoFo type:type];
     NSInteger assFoStrong = [AINetUtils getStrong:result atConNode:assFo type:type];
-    NSString *log = STRFORMAT(@"-> 与ass%@外类比\n\t构建时序 (%@): %@->{%@} from: (protoFo(%ld):assFo(%ld))",Fo2FStr(assFo),ATType2Str(type),Fo2FStr(result),Mvp2Str(result.cmvNode_p),foStrong,assFoStrong);
-    NSLog(@"%@",log);
+    NSLog(@"1. 新proto: %@\n2. 与ass: %@ \n3. 外类比构建时序: %@->{%@} from: (protoFo(%ld):assFo(%ld))",Fo2FStr(protoFo),Fo2FStr(assFo),Fo2FStr(result),Mvp2Str(result.cmvNode_p),foStrong,assFoStrong);
     return result;
 }
 

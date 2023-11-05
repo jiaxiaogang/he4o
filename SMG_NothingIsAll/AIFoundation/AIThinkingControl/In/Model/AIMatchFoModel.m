@@ -226,7 +226,7 @@
         //a. 非actYes和runing状态的不做canset再类比;
         //b. 2023.11.03: 即使失败也可以触发"预想与实际"的类比抽象;
         if (solutionModel.status != TOModelStatus_ActYes && solutionModel.status != TOModelStatus_Runing && solutionModel.status != TOModelStatus_ActNo) {
-            NSLog(@"tempLogPrefix RCanset预想与实际类比未执行,F%ld 状态:%ld",solutionModel.content_p.pointerId,solutionModel.status);
+            NSLog(@"RCanset预想与实际类比未执行,F%ld 状态:%ld",solutionModel.content_p.pointerId,solutionModel.status);
             continue;
         }
         
@@ -246,7 +246,7 @@
         AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:protoFo assFo:solutionFo type:ATDefault];
         BOOL updateCansetSuccess = [pFo updateConCanset:absCansetFo.pointer targetIndex:pFo.count];
         [AITest test101:absCansetFo proto:protoFo conCanset:solutionFo];
-        NSLog(@"tempLogPrefix RCanset预想与实际类比:%@ (curS:F%ld 状态:%@ fromPFo:F%ld 帧:%ld)",Fo2FStr(absCansetFo),solutionFo.pointer.pointerId,TOStatus2Str(solutionModel.status),basePFoOrTargetFo_p.pointerId,pFo.count);
+        NSLog(@"RCanset预想与实际类比:%@ (curS:F%ld 状态:%@ fromPFo:F%ld 帧:%ld)",Fo2FStr(absCansetFo),solutionFo.pointer.pointerId,TOStatus2Str(solutionModel.status),basePFoOrTargetFo_p.pointerId,pFo.count);
         
         if (updateCansetSuccess) {
             //g. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);
