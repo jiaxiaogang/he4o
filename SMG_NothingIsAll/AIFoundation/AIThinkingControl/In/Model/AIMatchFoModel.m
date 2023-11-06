@@ -216,7 +216,30 @@
         return;
     }
     
-    //1. =================解决方案执行有效(再类比): 有actYes的时,归功于解决方案,执行canset再类比 (参考27206c-R任务)=================
+    //1. =================自然未发生(新方案): 无actYes的S时,归功于自然未发生,则新增protoCanset (参考27206c-R任务)=================
+    //a. 数据准备;
+    AIFoNodeBase *matchFo = [SMGUtils searchNode:self.matchFo];
+    NSArray *orders = [self convertOrders4NewCansetV2];
+    
+    //b. 用realMaskFo & realDeltaTimes生成protoFo (参考27201-1 & 5);
+    AIFoNodeBase *newRCanset = [theNet createConFo:orders];
+    
+    //c. 将protoFo挂载到matchFo下的conCansets下 (参考27201-2);
+    BOOL updateCansetSuccess = [matchFo updateConCanset:newRCanset.pointer targetIndex:matchFo.count];
+    NSLog(@"R新Canset:%@ (状态:%@ fromPFo:F%ld 帧:%ld)",Fo2FStr(newRCanset),TIStatus2Str(status),self.matchFo.pointerId,matchFo.count);
+    
+    if (updateCansetSuccess) {
+        //d. 将item.indexDic挂载到matchFo的conIndexDDic下 (参考27201-3);
+        [newRCanset updateIndexDic:matchFo indexDic:self.indexDic2];
+        
+        //3. =================生成新方案后 IN有效率+1 (参考28182-todo6)=================
+        //[TCEffect rInEffect:matchFo matchRFos:self.baseFrameModel.matchRFos es:ES_HavEff];
+        
+        //2023.04.19: 改到TCTransfer迁移后调用canset识别类比 (参考29069-todo12);
+        //[TIUtils recognitionCansetFo:cansetFo.pointer sceneFo:matchFo.pointer es:ES_HavEff];
+    }
+    
+    //2. =================解决方案执行有效(再类比): 有actYes的时,归功于解决方案,执行canset再类比 (参考27206c-R任务)=================
     //TODO待查BUG20231028: 应该是在feedbackTOR中和hCanset一样,已经被改成了OuterBack状态,导致这里执行不到 (参考3014a-问题3);
     for (TOFoModel *solutionModel in self.baseRDemand.actionFoModels) {
         //b. 非当前pFo下的解决方案,不做canset再类比;
@@ -258,29 +281,6 @@
             [absCansetFo updateSPDic:[solutionModel convertOldSPDic2NewSPDic]];
             [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
         }
-    }
-    
-    //2. =================自然未发生(新方案): 无actYes的S时,归功于自然未发生,则新增protoCanset (参考27206c-R任务)=================
-    //a. 数据准备;
-    AIFoNodeBase *matchFo = [SMGUtils searchNode:self.matchFo];
-    NSArray *orders = [self convertOrders4NewCansetV2];
-    
-    //b. 用realMaskFo & realDeltaTimes生成protoFo (参考27201-1 & 5);
-    AIFoNodeBase *cansetFo = [theNet createConFo:orders];
-    
-    //c. 将protoFo挂载到matchFo下的conCansets下 (参考27201-2);
-    BOOL updateCansetSuccess = [matchFo updateConCanset:cansetFo.pointer targetIndex:matchFo.count];
-    NSLog(@"R新Canset:%@ (状态:%@ fromPFo:F%ld 帧:%ld)",Fo2FStr(cansetFo),TIStatus2Str(status),self.matchFo.pointerId,matchFo.count);
-    
-    if (updateCansetSuccess) {
-        //d. 将item.indexDic挂载到matchFo的conIndexDDic下 (参考27201-3);
-        [cansetFo updateIndexDic:matchFo indexDic:self.indexDic2];
-        
-        //3. =================生成新方案后 IN有效率+1 (参考28182-todo6)=================
-        //[TCEffect rInEffect:matchFo matchRFos:self.baseFrameModel.matchRFos es:ES_HavEff];
-        
-        //2023.04.19: 改到TCTransfer迁移后调用canset识别类比 (参考29069-todo12);
-        //[TIUtils recognitionCansetFo:cansetFo.pointer sceneFo:matchFo.pointer es:ES_HavEff];
     }
 }
 
