@@ -31,6 +31,7 @@
  *      20211017 - 在执行决策前,先到OPushM将TIModel.status更新了,因为有些IRT触发器已经失效了 (参考24061);
  *      20230301 - 输出行为不必再触发`时序识别&学习&任务&反省` (参考28137-修复);
  *      20230531 - r时序识别结束后,调用识别二次过滤器 (参考29107-todo3);
+ *      20231107 - 将feedbackTIR调整到feedbackTOR之前 (参考30154-todo4.2);
  */
 +(void) rInput:(AIAlgNodeBase*)algNode except_ps:(NSArray*)except_ps{
     ISGroupLog(@"input R");
@@ -48,6 +49,10 @@
     //3. 将mModel保留 (只有先保留后,构建时序时,才会含新帧概念);
     [theTC.inModelManager add:mModel];
     DebugE();
+    
+    //4. 概念反馈 -> TIR反馈;
+    //todo: 加了二次过滤后,此处过滤后,仅剩几条了 (可能导致tir太难feedback成功了) (先不改,等测得具体有影响的bug时再改);
+    [TCFeedback feedbackTIR:mModel];
     
     //4. 概念反馈 -> 重组 & 反思;
     //todo: 加了二次过滤后,此处过滤前,可能太杂了,毕竟pAlgs过过滤了50% (可能导致tor才容易feedback成功了) (先不改,等测得具体有影响的bug时再改);
@@ -68,10 +73,6 @@
         //8. 学习;
         [TCLearning rLearning:mModel protoFo:protoFo];
     }
-    
-    //9. TIR反馈;
-    //todo: 加了二次过滤后,此处过滤后,仅剩几条了 (可能导致tir太难feedback成功了) (先不改,等测得具体有影响的bug时再改);
-    [TCFeedback feedbackTIR:mModel];
     
     //10. 行为不构建任务和预测 (参考28137-修复);
     if (!algNode.pointer.isOut || Switch4IsOutReIn) {
