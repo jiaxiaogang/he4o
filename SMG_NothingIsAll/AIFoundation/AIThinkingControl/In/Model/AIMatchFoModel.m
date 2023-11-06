@@ -208,6 +208,7 @@
  *      2023.03.21: 回滚代码,由挂在所有pFos下改回仅挂在selfPFo下 (参考29012-回测失败);
  *      2023.03.23: 生成新Canset时,优先从场景matchFo中取元素 (参考29025-21&22);
  *      2023.09.01: 打开newCanset时调用canset识别类比,并eff+1 (参考30124-todo1&todo2);
+ *      2023.11.06: 预想与实际类比的protoFo采用newRCanset (参考30154-todo1);
  */
 -(void) pushFrameFinish {
     //0. 只有pFo触发时未收到反馈,才执行生成canset或再类比 (参考28077-修复);
@@ -259,16 +260,12 @@
         AIFoNodeBase *pFo = [SMGUtils searchNode:basePFoOrTargetFo_p];
         
         //d. 收集真实发生feedbackAlg (order为0条时,跳过);
-        NSArray *order = [solutionModel getOrderUseMatchAndFeedbackAlg:false];
-        if (!ARRISOK(order)) continue;
-        
-        //e. 生成新protoFo时序 (参考27204-6);
-        AIFoNodeBase *protoFo = [theNet createConFo:order];
+        if (newRCanset.count <= 1) continue;
         
         //f. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
-        AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:protoFo assFo:solutionFo type:ATDefault];
+        AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:newRCanset assFo:solutionFo type:ATDefault];
         BOOL updateCansetSuccess = [pFo updateConCanset:absCansetFo.pointer targetIndex:pFo.count];
-        [AITest test101:absCansetFo proto:protoFo conCanset:solutionFo];
+        [AITest test101:absCansetFo proto:newRCanset conCanset:solutionFo];
         NSLog(@"RCanset预想与实际类比:%@ (curS:F%ld 状态:%@ fromPFo:F%ld 帧:%ld)",Fo2FStr(absCansetFo),solutionFo.pointer.pointerId,TOStatus2Str(solutionModel.status),basePFoOrTargetFo_p.pointerId,pFo.count);
         
         if (updateCansetSuccess) {
