@@ -247,6 +247,7 @@
  *      2020.12.26: GL时,waitType的判断改为bFo,因为只有bFo才携带了waitTypeDS (参考21204);
  *      2020.12.26: GL时,在21204BUG修复后训练时,发现mIsC有时是cIsM,所以都判断下;
  *      2020.12.26: 在OPushM继续PM前,replaceAlg时,重新赋值JustPValues=P-C (参考21206);
+ *      2023.11.07: 预想与实际类比,实际hCanset采用pFo.maskRealFo来生成 (参考30154-todo2);
  */
 +(void) feedbackTOR:(AIShortMatchModel*)model{
     //1. 将新一帧数据报告给TOR,以进行短时记忆的更新,比如我输出行为"打",短时记忆由此知道输出"打"成功 (外循环入->推进->中循环出);
@@ -378,18 +379,18 @@
                     AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.content_p];
                     TOFoModel *targetFoModel = (TOFoModel*)hDemand.baseOrGroup;
                     AIFoNodeBase *targetFo = [SMGUtils searchNode:targetFoModel.content_p];
+                    AIMatchFoModel *pFo = [TOUtils getBasePFoWithSubOutModel:solutionModel];
                     
-                    //g. 收集真实发生feedbackAlg,并生成新protoFo时序 (参考27204-6);
-                    NSArray *order = [solutionModel getOrderUseMatchAndFeedbackAlg:false];
-                    if (!ARRISOK(order)) continue;
-                    AIFoNodeBase *protoFo = [theNet createConFo:order];
+                    //b. 用realMaskFo & realDeltaTimes生成protoFo (参考30154-todo2);
+                    NSArray *orders = [pFo convertOrders4NewCansetV2];
+                    AIFoNodeBase *newHCanset = [theNet createConFo:orders];
+                    if (newHCanset.count <= 1) continue;
                     
                     //h. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
-                    //TODO待查BUG20231028: 此处断点不要去掉,如果一直执行不到,查下是否因为本方法上面已经更新了hCanset的状态为OuterBack,导致这里是永远执行不到的;
                     NSLog(@"HCanset预想与实际类比: (状态:%@ fromTargetFo:F%ld) \n\t当前Canset:%@",TOStatus2Str(solutionModel.status),targetFoModel.content_p.pointerId,Pit2FStr(solutionModel.content_p));
-                    AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:protoFo assFo:solutionFo type:ATDefault];
+                    AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:newHCanset assFo:solutionFo type:ATDefault];
                     BOOL updateCansetSuccess = [targetFo updateConCanset:absCansetFo.pointer targetIndex:targetFoModel.actionIndex];
-                    [AITest test101:absCansetFo proto:protoFo conCanset:solutionFo];
+                    [AITest test101:absCansetFo proto:newHCanset conCanset:solutionFo];
                     
                     if (updateCansetSuccess) {
                         //j. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);

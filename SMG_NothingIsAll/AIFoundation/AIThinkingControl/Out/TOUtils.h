@@ -55,6 +55,10 @@
 //MARK:===============================================================
 //MARK:                     < 从TO短时记忆取demand >
 //MARK:===============================================================
+
+//获取subOutModel所在的pFo
++(AIMatchFoModel*) getBasePFoWithSubOutModel:(TOModelBase*)subOutModel;
+
 /**
  *  MARK:--------------------获取subOutModel的demand--------------------
  */

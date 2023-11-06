@@ -149,6 +149,24 @@
 //MARK:===============================================================
 //MARK:                     < 从TO短时记忆取demand >
 //MARK:===============================================================
+
+//获取subOutModel所在的pFo
++(AIMatchFoModel*) getBasePFoWithSubOutModel:(TOModelBase*)subOutModel {
+    //1. 最终没找着,返回nil;
+    if (!subOutModel) return nil;
+    
+    //2. 当前是fo且有指向pFo时: 找到了,返回;
+    if (ISOK(subOutModel, TOFoModel.class)) {
+        TOFoModel *foModel = (TOFoModel*)subOutModel;
+        if (ISOK(foModel.basePFoOrTargetFoModel, AIMatchFoModel.class)) {
+            return foModel.basePFoOrTargetFoModel;
+        }
+    }
+    
+    //3. 当前没找到pFo,则继续顺着base找上去;
+    return [self getBasePFoWithSubOutModel:subOutModel.baseOrGroup];
+}
+
 /**
  *  MARK:--------------------获取subOutModel的demand--------------------
  */
