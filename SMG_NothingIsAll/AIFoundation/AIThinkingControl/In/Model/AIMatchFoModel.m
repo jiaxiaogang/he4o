@@ -229,6 +229,10 @@
     BOOL updateCansetSuccess = [matchFo updateConCanset:newRCanset.pointer targetIndex:matchFo.count];
     NSLog(@"R新Canset:%@ (状态:%@ fromPFo:F%ld 帧:%ld)",Fo2FStr(newRCanset),TIStatus2Str(status),self.matchFo.pointerId,matchFo.count);
     
+    //TODOTOMORROW20231113: 重训训练步骤3: 复现31012BUG;
+    NSLog(@"查R新Canset木棒出现的时间为0的问题:%@",CLEANSTR(newRCanset.deltaTimes));
+    NSLog(@"");
+    
     if (updateCansetSuccess) {
         //d. 将item.indexDic挂载到matchFo的conIndexDDic下 (参考27201-3);
         [newRCanset updateIndexDic:matchFo indexDic:self.indexDic2];
