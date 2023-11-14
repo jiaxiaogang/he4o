@@ -66,6 +66,7 @@
             [result addObject:@(maxDeltaTime)];
         }
     }
+    [AITest test31:result];
     return result;
 }
 
@@ -98,11 +99,12 @@
         if (i == 0) {
             [result addObject:@(0)];
         }else{
-            NSTimeInterval deltaTime = MAX(simple.inputTime - lastInputTime, 0);
+            NSTimeInterval deltaTime = simple.isTimestamp ? MAX(simple.inputTime - lastInputTime, 0) : simple.inputTime;
             [result addObject:@(deltaTime)];
         }
         lastInputTime = simple.inputTime;
     }
+    [AITest test31:result];
     return result;
 }
 

@@ -13,9 +13,10 @@
  */
 @interface AIShortMatchModel_Simple : NSObject
 
-+(AIShortMatchModel_Simple*) newWithAlg_p:(AIKVPointer*)alg_p inputTime:(NSTimeInterval)inputTime;
++(AIShortMatchModel_Simple*) newWithAlg_p:(AIKVPointer*)alg_p inputTime:(NSTimeInterval)inputTime isTimestamp:(BOOL)isTimestamp;
 
 @property (strong, nonatomic) AIKVPointer *alg_p;       //概念
 @property (assign, nonatomic) NSTimeInterval inputTime; //概念输入时间 (单位:s)
+@property (assign, nonatomic) BOOL isTimestamp;         //是否时间戳
 
 @end

@@ -94,7 +94,7 @@
         //5. 生成时序元素;
         if (findAlg_p) {
             NSTimeInterval inputTime = [NUMTOOK(ARR_INDEX(fo.deltaTimes, i)) doubleValue];
-            [order addObject:[AIShortMatchModel_Simple newWithAlg_p:findAlg_p inputTime:inputTime]];
+            [order addObject:[AIShortMatchModel_Simple newWithAlg_p:findAlg_p inputTime:inputTime isTimestamp:false]];
         }
     }
     return order;

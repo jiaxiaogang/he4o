@@ -297,6 +297,22 @@
     }
 }
 
++(void) test31:(NSArray*)deltaTimes {
+    deltaTimes = ARRTOOK(deltaTimes);
+    for (NSInteger i = 0; i < deltaTimes.count; i++) {
+        NSNumber *item = ARR_INDEX(deltaTimes, i);
+        if (i == 0 && item.doubleValue != 0) {
+            ELog(@"自检31: 时间deltaTime的0位不是0");
+        } else if (i > 0) {
+            if (item.doubleValue == 0) {
+                ELog(@"自检31: 时间deltaTime的非0位是0");
+            } else if (item.doubleValue > 900) {
+                ELog(@"自检31: 时间deltaTime的非0位>900");
+            }
+        }
+    }
+}
+
 
 //MARK:===============================================================
 //MARK:    < 回测必经点测试 (常关,每个轮回测时打开,触发则关,未触发者为异常) >

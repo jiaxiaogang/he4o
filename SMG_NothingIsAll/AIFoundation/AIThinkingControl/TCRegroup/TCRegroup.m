@@ -90,7 +90,7 @@
         AIKVPointer *item_p = ARR_INDEX(actionFo.content_ps, i);
         NSTimeInterval deltaTime = [NUMTOOK(ARR_INDEX(actionFo.deltaTimes, i)) doubleValue];
         NSTimeInterval itemTime = lastInputTime + deltaTime;
-        [order addObject:[AIShortMatchModel_Simple newWithAlg_p:item_p inputTime:itemTime]];
+        [order addObject:[AIShortMatchModel_Simple newWithAlg_p:item_p inputTime:itemTime isTimestamp:true]];
     }
     
     //4. 将时序元素生成新时序 (参考30054-todo3);

@@ -103,14 +103,14 @@
         double deltaTime = [NUMTOOK(ARR_INDEX(fatherCansetNode.deltaTimes, i)) doubleValue];
         if (iSceneIndex) {
             //5. 通过则收集迁移后scene元素 (参考29069-todo10.1-步骤3);
-            id order = [AIShortMatchModel_Simple newWithAlg_p:ARR_INDEX(iScene.content_ps, iSceneIndex.intValue) inputTime:deltaTime];
+            id order = [AIShortMatchModel_Simple newWithAlg_p:ARR_INDEX(iScene.content_ps, iSceneIndex.intValue) inputTime:deltaTime isTimestamp:false];
             [orders addObject:order];
             
             //5. 只有最终迁移成功的帧,记录新的indexDic;
             [iSceneCansetIndexDic setObject:@(i) forKey:iSceneIndex];
         } else {
             //6. 不通过则收集迁移前canset元素 (参考29069-todo10.1-步骤4);
-            id order = [AIShortMatchModel_Simple newWithAlg_p:ARR_INDEX(fatherCansetNode.content_ps, i) inputTime:deltaTime];
+            id order = [AIShortMatchModel_Simple newWithAlg_p:ARR_INDEX(fatherCansetNode.content_ps, i) inputTime:deltaTime isTimestamp:false];
             [orders addObject:order];
         }
     }
@@ -177,14 +177,14 @@
         double deltaTime = [NUMTOOK(ARR_INDEX(brotherCansetNode.deltaTimes, i)) doubleValue];
         if (fatherSceneIndex) {
             //5. 通过则收集迁移后scene元素 (参考29069-todo10.1-步骤3);
-            id order = [AIShortMatchModel_Simple newWithAlg_p:ARR_INDEX(fatherScene.content_ps, fatherSceneIndex.intValue) inputTime:deltaTime];
+            id order = [AIShortMatchModel_Simple newWithAlg_p:ARR_INDEX(fatherScene.content_ps, fatherSceneIndex.intValue) inputTime:deltaTime isTimestamp:false];
             [orders addObject:order];
             
             //5. 只有最终迁移成功的帧,记录新的indexDic;
             [fatherSceneCansetIndexDic setObject:@(i) forKey:fatherSceneIndex];
         } else {
             //6. 不通过则收集迁移前canset元素 (参考29069-todo10.1-步骤4);
-            id order = [AIShortMatchModel_Simple newWithAlg_p:ARR_INDEX(brotherCansetNode.content_ps, i) inputTime:deltaTime];
+            id order = [AIShortMatchModel_Simple newWithAlg_p:ARR_INDEX(brotherCansetNode.content_ps, i) inputTime:deltaTime isTimestamp:false];
             [orders addObject:order];
         }
     }
