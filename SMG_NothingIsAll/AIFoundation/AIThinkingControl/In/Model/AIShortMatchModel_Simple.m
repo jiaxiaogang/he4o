@@ -14,6 +14,7 @@
     AIShortMatchModel_Simple *result = [[AIShortMatchModel_Simple alloc] init];
     result.alg_p = alg_p;
     result.inputTime = inputTime;
+    result.isTimestamp = isTimestamp;
     return result;
 }
 
