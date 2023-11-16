@@ -71,6 +71,7 @@
  *  @version
  *      2023.07.09: 修复上帧为输出或mv时,未生成protoFo,导致收集不到前半部分order的问题 (参考30056);
  *      2023.07.09: 修复order的时间错乱的问题 (将前后部分统一为时间戳,以使regroupFo生成deltaTimes正确);
+ *      2023.11.16: 修复order的inputTime时间前大后小的BUG (每次循环后更新lastInputTime即可);
  */
 +(void) actionRegroup:(TOFoModel*)actionFoModel {
     //1. 数据准备;
@@ -79,18 +80,24 @@
     NSMutableArray *order = [[NSMutableArray alloc] init];
     AIShortMatchModel *lastShortModel = ARR_INDEX_REVERSE(theTC.inModelManager.models, 0);
     NSTimeInterval lastInputTime = lastShortModel ? lastShortModel.inputTime : [[NSDate date] timeIntervalSince1970];//最后InputR的时间
+    NSLog(@"aaaaa 先取出第一条lastInputTime: %.2f %.2f",lastShortModel ? lastShortModel.inputTime : -1,lastInputTime);
     
     //2. 收集瞬时记忆"刚已发生的protoFo"做为前半部分 (参考30054-todo1);
     [order addObjectsFromArray:[theTC.inModelManager shortCache:false]];
     NSInteger regroupCutIndex = order.count - 1;
     
     //3. 收集cansetFo"即将行为化的部分"做为后半部分 (参考30054-todo2);
+    NSLog(@"aaaaa order中:%@",CLEANSTR([SMGUtils convertArr:order convertBlock:^id(AIShortMatchModel_Simple *obj) {
+        return STRFORMAT(@"%.2f",obj.inputTime);
+    }]));
     AIFoNodeBase *actionFo = [SMGUtils searchNode:actionFoModel.content_p];
     for (NSInteger i = actionFoModel.actionIndex; i <= MIN(actionFoModel.targetSPIndex, actionFo.count - 1); i++) {
         AIKVPointer *item_p = ARR_INDEX(actionFo.content_ps, i);
         NSTimeInterval deltaTime = [NUMTOOK(ARR_INDEX(actionFo.deltaTimes, i)) doubleValue];
         NSTimeInterval itemTime = lastInputTime + deltaTime;
+        NSLog(@"aaaaa 后追加time: %.2f + %.2f = %.2f",lastInputTime,deltaTime,itemTime);
         [order addObject:[AIShortMatchModel_Simple newWithAlg_p:item_p inputTime:itemTime isTimestamp:true]];
+        lastInputTime = itemTime;
     }
     
     //4. 将时序元素生成新时序 (参考30054-todo3);
