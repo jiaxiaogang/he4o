@@ -104,13 +104,6 @@
         }
         lastInputTime = simple.inputTime;
     }
-    //TODOTOMORROW20231115: 此处有BUG: 有时迟rInput的,比早rInput的时间戳还要小;
-    //314 [08:56:59:873 TI           TIUtils.m  35] =============================== 4 概念识别 ===============================
-    //315 [08:56:59:873 TI           TIUtils.m  35] A3624(距23,向92,棒) //inputTime:1700009832.6284201
-    //411 [08:57:00:123 TI           TIUtils.m  35] =============================== 5 概念识别 ===============================
-    //412 [08:57:00:123 TI           TIUtils.m  35] A3625(向103,距9,果) //inputTime:1700009831.357013
-    //明天查下,在生成AIShortMatchModel_Simple时是不是时间不对,应该前置到rInput()中先记录时间;
-    
     
     [AITest test31:result];
     return result;
