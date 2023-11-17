@@ -64,6 +64,11 @@
             [result addObject:@(0.0f)];
         }else{
             [result addObject:@(maxDeltaTime)];
+            if (maxDeltaTime <= 0) {
+                NSLog(@"TODOTOMORROW20231117: 跑步骤4时,这里有可能为0");
+                [self getDeltaTimes:conFos absFo:absFo];//重新跑下,调试下原因;
+                
+            }
         }
     }
     [AITest test31:result];
