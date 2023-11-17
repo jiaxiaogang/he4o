@@ -255,7 +255,8 @@
     Debug();
     NSMutableArray *waitModels = [[NSMutableArray alloc] init];
     NSArray *recognitionAlgs = [TIUtils getMatchAndPartAlgPsByModel:model];
-    for (ReasonDemandModel *root in theTC.outModelManager.getAllDemand) {
+    NSArray *roots = [theTC.outModelManager.getAllDemand copy];
+    for (ReasonDemandModel *root in roots) {
         [waitModels addObjectsFromArray:[TOUtils getSubOutModels_AllDeep:root validStatus:nil]];
     }
     IFTitleLog(@"feedbackTOR", @"\n输入ProtoA:%@ (识别matchAlgs数:%ld)\n等待中任务数:%lu",Alg2FStr(model.protoAlg),recognitionAlgs.count,(long)waitModels.count);
@@ -324,10 +325,6 @@
             //9. 判断input是否与等待中waitModel相匹配 (匹配,比如吃,确定自己是否真吃了);
             [AITest test11:model waitAlg_p:frameAlg.content_p];//测下2523c-此处是否会导致匹配不到;
             BOOL mcIsBro = [TOUtils mcIsBro:recognitionAlgs cansetA:frameAlg.content_p]; //用共同抽象判断cansetAlg反馈 (参考3014c-todo1);
-            
-            //TODOTOMORROW20231016: 等30148-todo1弄好,并重训练后,在这里测下30148-todo2;
-            
-            
             if (Log4OPushM) NSLog(@"RCansetA有效:M(A%ld) C(A%ld) 结果:%d CAtFo:%@",model.protoAlg.pointer.pointerId,frameAlg.content_p.pointerId,mcIsBro,Pit2FStr(solutionFo.content_p));
             if (mcIsBro) {
                 //a. 赋值
@@ -352,7 +349,7 @@
     //2. ============== 对HDemand反馈判断 ==============
     //a. 收集所有工作记忆树的H任务;
     NSMutableArray *allHDemands = [[NSMutableArray alloc] init];
-    for (DemandModel *root in theTC.outModelManager.getAllDemand) {
+    for (DemandModel *root in roots) {
         NSArray *singleHDemands = [SMGUtils filterArr:[TOUtils getSubOutModels_AllDeep:root validStatus:nil] checkValid:^BOOL(TOModelBase *item) {
             return ISOK(item, HDemandModel.class);
         }];
@@ -484,7 +481,7 @@
     //2. ============== 对Demand反馈判断 ==============
     //a. 收集所有工作记忆树的R任务;
     NSMutableArray *allRDemands = [[NSMutableArray alloc] init];
-    for (ReasonDemandModel *root in theTC.outModelManager.getAllDemand) {
+    for (ReasonDemandModel *root in roots) {
         NSArray *singleRDemands = [SMGUtils filterArr:[TOUtils getSubOutModels_AllDeep:root validStatus:nil] checkValid:^BOOL(TOModelBase *item) {
             return ISOK(item, ReasonDemandModel.class);
         }];

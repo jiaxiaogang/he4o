@@ -549,7 +549,6 @@
  *      2023.10.26: 废弃 (参考3014a-追加结果);
  */
 //+(void) recognitionCansetAlg:(AIAlgNodeBase*)protoAlg sceneFo:(AIFoNodeBase*)sceneFo inModel:(AIShortMatchModel*)inModel {
-//    //TODOTOMORROW20231019: 明天继续写此算法;
 //    //1. 关于调用者:
 //    //  a. 哪里在调用cansetFo识别,哪里就在fo识别前先调用下这个;
 //    //  b. 或者再提前点,调用普通alg识别时,结合下工作记忆,顺带把这个也跑了;
