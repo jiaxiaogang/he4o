@@ -30,7 +30,8 @@
     
     //2. 提取 (absFo有可能本来deltaTimes不为空,也要参与到竞争Max(A,B)中来;
     NSMutableDictionary *lastIndexDic = [[NSMutableDictionary alloc] init];
-    for (AIKVPointer *absAlg_p in absFo.content_ps) {
+    for (NSInteger i = 0; i < absFo.count; i++) {
+        AIKVPointer *absAlg_p = ARR_INDEX(absFo.content_ps, i);
         
         //3. 从每个conFo中找到对应absAlg_p的元素下标;
         double maxDeltaTime = 0;
@@ -62,13 +63,13 @@
         }
         
         //4. 首条时加入0,否则加入maxDeltaTime;
-        if ([absFo.content_ps indexOfObject:absAlg_p] == 0) {
+        if (i == 0) {
             [result addObject:@(0.0f)];
         }else{
             [result addObject:@(maxDeltaTime)];
+            NSLog(@"add:%.3f %@",maxDeltaTime,CLEANSTR(result));
             if (maxDeltaTime <= 0) {
                 NSLog(@"TODOTOMORROW20231118: 测下跑步骤4时,这里还有没有可能为0");
-                [self getDeltaTimes:conFos absFo:absFo];//重新跑下,调试下原因;
                 [self getDeltaTimes:conFos absFo:absFo];//重新跑下,调试下原因;
             }
         }
