@@ -21,7 +21,7 @@
  *      2023.11.18: 修复判断M1{↑饿-16}和A13(饿16,7)的抽具象关系因mIsC算法BUG导致总失败,导致取deltaTime为0;
  *  @todo
  *      2021.01.21: 当构建SPFo时,conFos中可能不包含所有的deltaTime (比如乌鸦带交警时,车不敢撞,具象时序中是无交警的);
- *      2023.11.18: 随后这里getDeltaTimes()改成前置些,用indexDic来复用取deltaTimes (现在这么做也没啥问题,先不改,后需要时再改);
+ *      2023.11.18: 随后废弃此方法,改到AIAbsFoManager.create_NoRepeat()中根据indexDic计算deltaTimes (现在这么做也没啥问题,先不改,后需要时再改);
  */
 +(NSMutableArray*) getDeltaTimes:(NSArray*)conFos absFo:(AIFoNodeBase*)absFo{
     //1. 数据准备;
@@ -67,11 +67,6 @@
             [result addObject:@(0.0f)];
         }else{
             [result addObject:@(maxDeltaTime)];
-            NSLog(@"add:%.3f %@",maxDeltaTime,CLEANSTR(result));
-            if (maxDeltaTime <= 0) {
-                NSLog(@"TODOTOMORROW20231118: 测下跑步骤4时,这里还有没有可能为0");
-                [self getDeltaTimes:conFos absFo:absFo];//重新跑下,调试下原因;
-            }
         }
     }
     [AITest test31:result];

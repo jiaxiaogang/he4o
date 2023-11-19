@@ -137,10 +137,6 @@
         [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
     }else{
         //6. 无则新构建;
-        //TODOTOMORROW20231117: 可以提前根据两个indexDic将order中的deltaTimes算出来,而不必等到createFo时再算;
-        //1. findAbsNode.deltaTimes = [AINetAbsFoUtils getDeltaTimes:conFos absFo:findAbsNode];
-        
-        
         result = [self create:content_ps protoFo:protoFo assFo:assFo difStrong:difStrong at:at ds:ds type:type conAbsIsRelate:&conAbsIsRelate];
     }
     
