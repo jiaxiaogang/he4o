@@ -18,6 +18,7 @@
  *      2020.09.10: findIndex有时会失败 (因为HNGL时,需要index判断两层) T;
  *      2020.09.10: maxDeltaTime在非0位时,有可能取到0的BUG (记录lastIndex,但并未彻底解决) (发现NL时为0正常) T;
  *      2020.09.15: 多个conFos,却只记录了一个lastIndex导致错乱找不到findIndex的bug; T
+ *      2023.11.18: 修复判断M1{↑饿-16}和A13(饿16,7)的抽具象关系因mIsC算法BUG导致总失败,导致取deltaTime为0;
  *  @todo
  *      2021.01.21: 当构建SPFo时,conFos中可能不包含所有的deltaTime (比如乌鸦带交警时,车不敢撞,具象时序中是无交警的);
  *      2023.11.18: 随后这里getDeltaTimes()改成前置些,用indexDic来复用取deltaTimes (现在这么做也没啥问题,先不改,后需要时再改);
@@ -66,18 +67,7 @@
         }else{
             [result addObject:@(maxDeltaTime)];
             if (maxDeltaTime <= 0) {
-                NSLog(@"TODOTOMORROW20231117: 跑步骤4时,这里有可能为0");//后修复mIsC兼容mv的情况后好了;
-                //在以下两个conFos中找A13(饿16,7) => 没找到;
-                //conProtoFo: F9352[A9339(向347,距131,果),M1{↑饿-16},A9347(距43,向300,棒),A9339(向347,距131,果)]->M1{↑饿-16}
-                //conAssFo: F4152[A4137(向348,距114,果),M1{↑饿-16},A4147(向289,距27,棒),A4137(向348,距114,果)]
-                
-                //在A13(饿16,7)fo和assFo的第二帧,都与A13匹配不上...导致的 => 没找到;
-                //> 经调试,如果用indexDic的话,四帧是全能匹配上的,并且没有deltaTime为0的情况;
-                //> 经查,这种mvAlg的抽象的情况,因为mIsC()中对mv的判断有误,导致永远返回false;
-                
-                
-                
-                NSLog(@"TODOTOMORROW20231118: 跑步骤4时,这里仍有可能为0");
+                NSLog(@"TODOTOMORROW20231118: 测下跑步骤4时,这里还有没有可能为0");
                 [self getDeltaTimes:conFos absFo:absFo];//重新跑下,调试下原因;
                 [self getDeltaTimes:conFos absFo:absFo];//重新跑下,调试下原因;
             }
