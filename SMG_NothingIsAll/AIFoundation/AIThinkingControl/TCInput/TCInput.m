@@ -109,6 +109,9 @@
     shortModel.inputTime = [[NSDate date] timeIntervalSince1970];
     DebugE();
     
+    //2. 识别概念;
+    [TIUtils TIR_Alg:mv.pointer except_ps:nil inModel:shortModel];
+    
     //2. 转regroup生成protoFo;
     [TCRegroup pRegroup:mv shortModel:shortModel];
     
