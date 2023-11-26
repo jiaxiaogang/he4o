@@ -381,6 +381,16 @@
             AIAlgNodeBase *absAlg = [SMGUtils searchNode:absAlg_p];
             NSArray *refPorts = [[AINetUtils refPorts_All4Alg_Normal:absAlg] copy];
             
+            
+            //TODOTOMORROW20231126: 经查识别不到饿了更饿的原因是,本来ass中就没有[饿]->{更饿}的时序...
+            for (AIPort *port in refPorts) {
+                AIFoNodeBase *fo = [SMGUtils searchNode:port.target_p];
+                if (fo && fo.count <= 1 && fo.cmvNode_p) {
+                    NSLog(@"aaa %@->%@",Fo2FStr(fo),Mvp2Str(fo.cmvNode_p));
+                    NSLog(@"");
+                }
+            }
+            
             //6. RFo的长度>1才有意义 (参考28183-BUG1);
             refPorts = [SMGUtils filterArr:refPorts checkValid:^BOOL(AIPort *item) {
                 if (Switch4RecognitionMatchRFos) {
