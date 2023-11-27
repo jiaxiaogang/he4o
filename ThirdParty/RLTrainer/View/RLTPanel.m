@@ -544,6 +544,21 @@
 }
 
 /**
+ *  MARK:--------------------第2.5步饿了更饿--------------------
+ *  @desc 参考31018-步骤2.5;
+ */
+- (IBAction)kickHungerThanHungerBtnClick:(id)sender {
+    //0. 认知模式
+    [theRT queue1:Queue0(kThinkModeSEL, @(1))];
+    
+    //1. 随机出生;
+    [theRT queue1:Queue(kBirthPosRdmSEL)];
+    
+    //2. 饥饿 x 20次;
+    [theRT queueN:@[Queue(kGrowPageSEL),Queue(kHungerSEL),Queue(kMainPageSEL),Queue(kClearTCSEL)] count:20];
+}
+
+/**
  *  MARK:--------------------第3步学H去皮--------------------
  *  @desc 学什么时候能压到,什么时候压不到 (参考30142-步骤3自 & 30145-步骤4);
  */
