@@ -571,7 +571,7 @@
                     Queue(kHungerSEL), //饿
                     Queue0(kFoodRdmSEL,@(FoodStatus_Border)), //随机扔有皮果
                     Queue(kWoodLeftSEL), //扔木棒
-                    Queue(kMainPageSEL),Queue(kClearTCSEL)] count:200];
+                    Queue(kMainPageSEL),Queue(kClearTCSEL)] count:70];
 }
 
 

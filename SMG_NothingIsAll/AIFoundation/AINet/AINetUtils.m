@@ -479,16 +479,11 @@
 +(NSArray*) refPorts_All4Alg:(AIAlgNodeBase*)node{
     NSMutableArray *allPorts = [[NSMutableArray alloc] init];
     if (ISOK(node, AIAlgNodeBase.class)) {
-        if (!ARRISOK(node.refPorts)) {
-            NSLog(@"空1");
-        } else {
-            for (id item in node.refPorts) {
-                if (!item) {
-                    //refPorts中有空元素,导致闪退...
-                    NSLog(@"空2 %@ \n%@",Alg2FStr(node),Pits2FStr(Ports2Pits(node.refPorts)));
-                    NSLog(@"");
-                }
-            }
+        
+        //2023.11.29: refPorts中有空元素,导致闪退...
+        for (id item in node.refPorts) {
+            if (!item)
+                ELog(@"以前没空过,突然这里闪退了,但不复现,以后复现时断点在这里,查下原因: %@ \n%@",Alg2FStr(node),Pits2FStr(Ports2Pits(node.refPorts)));
         }
         [allPorts addObjectsFromArray:node.refPorts];
     }
