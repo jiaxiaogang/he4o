@@ -479,6 +479,17 @@
 +(NSArray*) refPorts_All4Alg:(AIAlgNodeBase*)node{
     NSMutableArray *allPorts = [[NSMutableArray alloc] init];
     if (ISOK(node, AIAlgNodeBase.class)) {
+        if (!ARRISOK(node.refPorts)) {
+            NSLog(@"空1");
+        } else {
+            for (id item in node.refPorts) {
+                if (!item) {
+                    //refPorts中有空元素,导致闪退...
+                    NSLog(@"空2 %@ \n%@",Alg2FStr(node),Pits2FStr(Ports2Pits(node.refPorts)));
+                    NSLog(@"");
+                }
+            }
+        }
         [allPorts addObjectsFromArray:node.refPorts];
     }
     return allPorts;
