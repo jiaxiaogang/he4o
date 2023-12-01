@@ -23,7 +23,7 @@
 @property (strong, nonatomic) UILabel *tipLogLab;
 @property (strong, nonatomic) UIView *refreshDot;//因为模拟器下的UI动画老不刷新,所以写个闪动点,来推动UI被动刷新;
 @property (strong, nonatomic) MemManagerWindow *memManagerWindow;
-@property (assign, nonatomic) int waitReset;//0默认或成功 1等待重启 2fps为0一次 3fps为0两次 4fps为0三次;
+@property (assign, nonatomic) int waitReset;//0默认或成功 1等待重启 (2,3..N)fps<3连续n次
 
 //思维状态
 @property (strong, nonatomic) NSTimer *timer;               //间隔计时器
@@ -285,6 +285,7 @@
  *  MARK:--------------------每秒思维状态更新--------------------
  *  @version
  *      2023.12.01: 只有思维闲置3秒时才会重启,避免realMaskFo收集未完成导致newRCanset不全的问题 (参考31017-解答4);
+ *      2023.12.01: 动物模式时FPS永远>=2,所以等待重启的条件改为: FPS3以下连续5秒;
  */
 -(void) timeBlock {
     //1. FPS更新显示;
@@ -295,11 +296,11 @@
     
     //3. 如果在待重启状态,且思维闲时=>更新待重启状态;
     if (self.waitReset != 0) {
-        if (theTC.getOperCount - self.lastOperCount == 0) {
+        if (theTC.getOperCount - self.lastOperCount <= 3) {
             self.waitReset++;
             
-            //4. 三秒闲置后,进行重启;
-            if (self.waitReset >= 4) {
+            //4. 连续5秒闲置后,进行重启;
+            if (self.waitReset >= 6) {
                 [self.resetBtn setTitle:@"成功" forState:UIControlStateNormal];
                 [theTC clear];
                 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
