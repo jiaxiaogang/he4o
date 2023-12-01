@@ -27,7 +27,9 @@
 //思维状态
 @property (strong, nonatomic) NSTimer *timer;               //间隔计时器
 @property (assign, nonatomic) long long lastOperCount;
-@property (strong, nonatomic) UILabel *thinkStatusLab;
+@property (strong, nonatomic) UILabel *thinkFPSLab;
+
+@property (strong, nonatomic) UIButton *thinkModeBtn;
 
 @end
 
@@ -71,13 +73,13 @@
     self.timer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(timeBlock) userInfo:nil repeats:true];
     
     //3. 思维状态显示
-    self.thinkStatusLab = [[UILabel alloc] init];
-    [self.thinkStatusLab setTextColor:[UIColor blackColor]];
-    [self.thinkStatusLab setFont:[UIFont fontWithName:@"PingFang SC" size:8.0f]];
-    self.thinkStatusLab.lineBreakMode = NSLineBreakByCharWrapping;
-    [self.thinkStatusLab setNumberOfLines:0];
-    [self.window addSubview:self.thinkStatusLab];
-    [self.thinkStatusLab mas_makeConstraints:^(MASConstraintMaker *make) {
+    self.thinkFPSLab = [[UILabel alloc] init];
+    [self.thinkFPSLab setTextColor:[UIColor blackColor]];
+    [self.thinkFPSLab setFont:[UIFont fontWithName:@"PingFang SC" size:8.0f]];
+    self.thinkFPSLab.lineBreakMode = NSLineBreakByCharWrapping;
+    [self.thinkFPSLab setNumberOfLines:0];
+    [self.window addSubview:self.thinkFPSLab];
+    [self.thinkFPSLab mas_makeConstraints:^(MASConstraintMaker *make) {
         make.trailing.mas_equalTo(self.window).offset(-145);
         make.top.mas_equalTo(self.window).offset(10);
     }];
@@ -93,7 +95,7 @@
     
     //3. 强行停止思考能力按钮
     NSString *thinkStr = [self getThinkBtnStr];
-    [self createNavBtn:5 title:thinkStr action:@selector(stopThinkBtnOnClick:) bg:1];
+    self.thinkModeBtn = [self createNavBtn:5 title:thinkStr action:@selector(stopThinkBtnOnClick:) bg:1];
     
     //3. 模拟重启
     [self createNavBtn:6 title:@"重启" action:@selector(resetBtnOnClick:) bg:0];
@@ -237,7 +239,7 @@
  *  @param index : 0=40, 1=82, 2=124, 3=166, 4=208, 5=250, 6=292
  *  @param bg : 默认0绿,1红;
  */
--(void) createNavBtn:(NSInteger)index title:(NSString*)title action:(SEL)action bg:(int)bg{
+-(UIButton*) createNavBtn:(NSInteger)index title:(NSString*)title action:(SEL)action bg:(int)bg{
     //1. 数据准备;
     CGFloat marginRight = index * 40 + 40 + index * 2;
     CGFloat x = ScreenWidth - marginRight;
@@ -251,6 +253,7 @@
     [btn setTitle:title forState:UIControlStateNormal];
     [btn addTarget:self action:action forControlEvents:UIControlEventTouchUpInside];
     [self.window addSubview:btn];
+    return btn;
 }
 
 //MARK:===============================================================
@@ -277,8 +280,9 @@
 //MARK:                     < block >
 //MARK:===============================================================
 -(void) timeBlock {
-    [self.thinkStatusLab setText:STRFORMAT(@"%lld",theTC.getOperCount - self.lastOperCount)];
+    [self.thinkFPSLab setText:STRFORMAT(@"%lld",theTC.getOperCount - self.lastOperCount)];
     self.lastOperCount = theTC.getOperCount;
+    [self.thinkModeBtn setTitle:[self getThinkBtnStr] forState:UIControlStateNormal];
 }
 
 @end
