@@ -19,7 +19,7 @@
     AIFoNodeBase *matchFo = [SMGUtils searchNode:model.matchFo];
     [theTC updateOperCount:kFILENAME];
     Debug();
-    NSString *spFrom = [matchFo.spDic objectForKey:@(cutIndex + 1)];
+    NSString *spFrom = STRFORMAT(@"%@",[matchFo.spDic objectForKey:@(cutIndex + 1)]);
     [matchFo updateSPStrong:cutIndex + 1 type:type];
     IFTitleLog(@"IR反省", @"\nspIndex:%ld -> (%@) %@->%@ %@",cutIndex + 1,ATType2Str(type),spFrom,[matchFo.spDic objectForKey:@(cutIndex + 1)],Fo2FStr(matchFo));
     //2. 抽象也更新 (参考29069-todo11.4);
@@ -33,7 +33,7 @@
     AIFoNodeBase *matchFo = [SMGUtils searchNode:model.matchFo];
     [theTC updateOperCount:kFILENAME];
     Debug();
-    NSString *spFrom = [matchFo.spDic objectForKey:@(matchFo.count)];
+    NSString *spFrom = STRFORMAT(@"%@",[matchFo.spDic objectForKey:@(matchFo.count)]);
     [matchFo updateSPStrong:matchFo.count type:type];
     IFTitleLog(@"IP反省", @"\nspIndex:%ld -> (%@) %@->%@ %@",matchFo.count,ATType2Str(type),spFrom,[matchFo.spDic objectForKey:@(matchFo.count)],Fo2FStr(matchFo));
     
@@ -64,6 +64,7 @@
         //2. 抽象也更新 (参考29069-todo11.4);
         [TCRethinkUtil spEff4Abs:canset curFoIndex:actionIndex itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {
             [absFo updateSPStrong:absIndex type:type];
+            //NSLog(@"> 更新absFo spIndex:%ld -> (%@) %@ %@",actionIndex,ATType2Str(type),[absFo.spDic objectForKey:@(absIndex)],Fo2FStr(absFo));
         }];
         
         //3. 收集真实发生realMaskFo,收集成hCanset (参考30131-todo1 & 30132-方案);
@@ -86,7 +87,7 @@
     NSArray *tModels = [model getRethinkEffectCansets];
     for (AITransferModel *tModel in tModels) {
         AIFoNodeBase *canset = [SMGUtils searchNode:tModel.canset];
-        NSString *spFrom = [canset.spDic objectForKey:@(canset.count)];
+        NSString *spFrom = STRFORMAT(@"%@",[canset.spDic objectForKey:@(canset.count)]);
         [canset updateSPStrong:canset.count type:type];
         IFTitleLog(@"OP反省", @"\nspIndex:%ld -> (%@) %@->%@ %@",canset.count,ATType2Str(type),spFrom,[canset.spDic objectForKey:@(canset.count)],Fo2FStr(canset));
         
