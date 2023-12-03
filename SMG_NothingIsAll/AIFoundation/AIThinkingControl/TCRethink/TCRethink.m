@@ -19,8 +19,9 @@
     AIFoNodeBase *matchFo = [SMGUtils searchNode:model.matchFo];
     [theTC updateOperCount:kFILENAME];
     Debug();
-    IFTitleLog(@"IR反省", @"\n%@ spIndex:%ld -> (%@)",Fo2FStr(matchFo),cutIndex + 1,ATType2Str(type));
+    NSString *spFrom = [matchFo.spDic objectForKey:@(cutIndex + 1)];
     [matchFo updateSPStrong:cutIndex + 1 type:type];
+    IFTitleLog(@"IR反省", @"\nspIndex:%ld -> (%@) %@->%@ %@",cutIndex + 1,ATType2Str(type),spFrom,[matchFo.spDic objectForKey:@(cutIndex + 1)],Fo2FStr(matchFo));
     //2. 抽象也更新 (参考29069-todo11.4);
     [TCRethinkUtil spEff4Abs:matchFo curFoIndex:cutIndex + 1 itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {
         [absFo updateSPStrong:absIndex type:type];
@@ -32,8 +33,10 @@
     AIFoNodeBase *matchFo = [SMGUtils searchNode:model.matchFo];
     [theTC updateOperCount:kFILENAME];
     Debug();
-    IFTitleLog(@"IP反省", @"\n%@ spIndex:%ld -> (%@)",Fo2FStr(matchFo),matchFo.count,ATType2Str(type));
+    NSString *spFrom = [matchFo.spDic objectForKey:@(matchFo.count)];
     [matchFo updateSPStrong:matchFo.count type:type];
+    IFTitleLog(@"IP反省", @"\nspIndex:%ld -> (%@) %@->%@ %@",matchFo.count,ATType2Str(type),spFrom,[matchFo.spDic objectForKey:@(matchFo.count)],Fo2FStr(matchFo));
+    
     //2. 抽象也更新 (参考29069-todo11.4);
     [TCRethinkUtil spEff4Abs:matchFo curFoIndex:matchFo.count itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {
         [absFo updateSPStrong:absIndex type:type];
@@ -54,8 +57,9 @@
     NSArray *tModels = [model getRethinkEffectCansets];
     for (AITransferModel *tModel in tModels) {
         AIFoNodeBase *canset = [SMGUtils searchNode:tModel.canset];
-        IFTitleLog(@"OR反省", @"\n%@ spIndex:%ld -> (%@)",FoP2FStr(tModel.canset),actionIndex,ATType2Str(type));
+        NSString *spFrom = STRFORMAT(@"%@",[canset.spDic objectForKey:@(actionIndex)]);
         [canset updateSPStrong:actionIndex type:type];
+        IFTitleLog(@"OR反省", @"\nspIndex:%ld -> (%@) %@->%@ %@",actionIndex,ATType2Str(type),spFrom,[canset.spDic objectForKey:@(actionIndex)],Fo2FStr(canset));
         
         //2. 抽象也更新 (参考29069-todo11.4);
         [TCRethinkUtil spEff4Abs:canset curFoIndex:actionIndex itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {
@@ -69,7 +73,7 @@
             if (ARRISOK(order)) {
                 AIFoNodeBase *hCanset = [theNet createConFo:order];
                 [canset updateConCanset:hCanset.pointer targetIndex:actionIndex];
-                NSLog(@"\nOR反省(%@ 第%ld帧)为rCanset:%@... \n\t> NewHCanset:%@",ATType2Str(type),actionIndex + 1,SUBSTR2INDEX(Fo2FStr(canset), 100),Fo2FStr(hCanset));
+                NSLog(@"\n因OR反省(%@ 第%ld帧)为rCanset:F%ld 挂载NewHCanset:%@",ATType2Str(type),actionIndex + 1,canset.pId,Fo2FStr(hCanset));
             }
         }
     }
@@ -82,8 +86,10 @@
     NSArray *tModels = [model getRethinkEffectCansets];
     for (AITransferModel *tModel in tModels) {
         AIFoNodeBase *canset = [SMGUtils searchNode:tModel.canset];
-        IFTitleLog(@"OP反省", @"\n%@ spIndex:%ld -> (%@)",FoP2FStr(tModel.canset),canset.count,ATType2Str(type));
+        NSString *spFrom = [canset.spDic objectForKey:@(canset.count)];
         [canset updateSPStrong:canset.count type:type];
+        IFTitleLog(@"OP反省", @"\nspIndex:%ld -> (%@) %@->%@ %@",canset.count,ATType2Str(type),spFrom,[canset.spDic objectForKey:@(canset.count)],Fo2FStr(canset));
+        
         //2. 抽象也更新 (参考29069-todo11.4);
         [TCRethinkUtil spEff4Abs:canset curFoIndex:canset.count itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {
             [absFo updateSPStrong:absIndex type:type];
