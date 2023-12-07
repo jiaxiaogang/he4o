@@ -83,7 +83,7 @@
 /**
  *  MARK:--------------------更新整个spDic--------------------
  */
--(void) updateSPDic:(NSDictionary*)spDic;
+-(void) updateSPDic:(NSDictionary*)newSPDic;
 
 
 //MARK:===============================================================

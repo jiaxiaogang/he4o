@@ -141,6 +141,12 @@
             //11. 为迁移后iCanset加上与iScene的indexDic (参考29075-todo4);
             [iCanset updateIndexDic:iScene indexDic:iSceneCansetIndexDic];
             
+            //11. SP值也继承 (参考3101b-todo1);
+            if (fatherCansetNode.count == iCanset.count) {
+                [iCanset updateSPDic:fatherCansetNode.spDic];
+            }
+            [AITest test32:fatherCansetNode newCanset:iCanset];
+            
             //12. 并进行迁移关联
             [AINetUtils relateTransfer:fatherScene_p absCanset:fatherCanset conScene:iScene_p conCanset:iCanset.p];
         }
@@ -205,6 +211,12 @@
         if (updateCansetSuccess) {
             //11. 为迁移后fatherCanset加上与fatherScene的indexDic (参考29075-todo4);
             [fatherCanset updateIndexDic:fatherScene indexDic:fatherSceneCansetIndexDic];
+            
+            //11. SP值也推举 (参考3101b-todo2);
+            if (brotherCansetNode.count == fatherCanset.count) {
+                [fatherCanset updateSPDic:brotherCansetNode.spDic];
+            }
+            [AITest test32:brotherCansetNode newCanset:fatherCanset];
             
             //12. 并进行迁移关联
             [AINetUtils relateTransfer:fatherScene_p absCanset:fatherCanset.p conScene:brotherScene_p conCanset:brotherCanset];

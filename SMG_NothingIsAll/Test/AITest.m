@@ -313,6 +313,12 @@
     }
 }
 
++(void) test32:(AIFoNodeBase*)protoCanset newCanset:(AIFoNodeBase*)newCanset {
+    if (protoCanset.count != newCanset.count) {
+        ELog(@"自检32: 在迁移发生后,迁移前后的两个canset必须长度一致,不然会导致3101b-todo1继承的SP值失败或错位,如果这条日志打印了,请先检查一下是两个canset长度不一致有BUG,还是设计改变了,那么SP的继承也要跟着改下");
+    }
+}
+
 
 //MARK:===============================================================
 //MARK:    < 回测必经点测试 (常关,每个轮回测时打开,触发则关,未触发者为异常) >

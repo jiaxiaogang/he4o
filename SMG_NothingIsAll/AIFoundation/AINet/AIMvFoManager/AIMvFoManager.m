@@ -90,6 +90,7 @@
     return [self createConFo:order difStrong:1];
 }
 +(AIFoNodeBase*) createConFo_NoRepeat:(NSArray*)order {
+    //TODO: 随后改下: 构建canset时不应全局防重,而是只以场景内防重 (不然这些canset的SPEFF值就窜了,比如在北京吃龙虾不行,在家是可以的);
     //1. 防重_取本地全局绝对匹配;
     NSArray *content_ps = [AINetAbsFoUtils convertOrder2Alg_ps:order];
     AIFoNodeBase *result = [AINetIndexUtils getAbsoluteMatching_General:content_ps sort_ps:content_ps except_ps:nil getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {

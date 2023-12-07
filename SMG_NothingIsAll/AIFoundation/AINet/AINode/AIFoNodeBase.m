@@ -94,9 +94,13 @@
 /**
  *  MARK:--------------------更新整个spDic--------------------
  */
--(void) updateSPDic:(NSDictionary*)spDic {
-    [self.spDic setDictionary:spDic];
-    [SMGUtils insertNode:self];
+-(void) updateSPDic:(NSDictionary*)newSPDic {
+    newSPDic = DICTOOK(newSPDic);
+    for (NSNumber *newIndex in newSPDic) {
+        AISPStrong *newStrong = [newSPDic objectForKey:newIndex];
+        [self updateSPStrong:newIndex.integerValue difStrong:newStrong.sStrong type:ATSub];
+        [self updateSPStrong:newIndex.integerValue difStrong:newStrong.pStrong type:ATPlus];
+    }
 }
 
 //MARK:===============================================================
