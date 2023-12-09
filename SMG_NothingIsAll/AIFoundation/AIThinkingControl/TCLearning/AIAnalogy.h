@@ -30,6 +30,7 @@
 //MARK:                     < 外类比时序 >
 //MARK:===============================================================
 +(AINetAbsFoNode*) analogyOutside:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type;
++(AINetAbsFoNode*) analogyOutside:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type noRepeatArea_ps:(NSArray*)noRepeatArea_ps;
 
 /**
  *  MARK:--------------------Canset类比 (参考29025-24)--------------------

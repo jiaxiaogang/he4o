@@ -242,6 +242,7 @@
  *      2022.11.27: H任务完成时,H当前正执行的S提前完成,并进行外类比 (参考27206c-H任务);
  *      2022.11.27: H解决方案再类比时,为其生成indexDic (参考27206d-方案2);
  *      2023.10.27: 用共同抽象判断cansetAlg反馈: 取出targetAlg的abs层,并与识别的matchAlgs判断交集 (参考3014c-todo1);
+ *      2023.12.09: 预想与实际类比构建absCanset以场景内防重 (参考3101b-todo6);
  *  @bug
  *      2020.09.22: 加上cutStopStatus,避免同一waitModel被多次触发,导致BUG (参考21042);
  *      2020.12.26: GL时,waitType的判断改为bFo,因为只有bFo才携带了waitTypeDS (参考21204);
@@ -385,7 +386,8 @@
                     
                     //h. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
                     NSLog(@"HCanset预想与实际类比: (状态:%@ fromTargetFo:F%ld) \n\t当前Canset:%@",TOStatus2Str(solutionModel.status),targetFoModel.content_p.pointerId,Pit2FStr(solutionModel.content_p));
-                    AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:newHCanset assFo:solutionFo type:ATDefault];
+                    NSArray *noRepeatArea_ps = [targetFo getConCansets:targetFoModel.actionIndex];
+                    AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:newHCanset assFo:solutionFo type:ATDefault noRepeatArea_ps:noRepeatArea_ps];
                     BOOL updateCansetSuccess = [targetFo updateConCanset:absCansetFo.pointer targetIndex:targetFoModel.actionIndex];
                     [AITest test101:absCansetFo proto:newHCanset conCanset:solutionFo];
                     

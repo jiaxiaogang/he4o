@@ -29,6 +29,7 @@
  *  4. 类比处理(瓜是瓜)
  *  注: 类比的处理,是足够细化的,对思维每个信号作类比操作;(而将类比到的最基本的结果,输出给thinking,以供为构建网络的依据,最终是以网络为目的的)
  *  注: 随后可以由一个sames改为多个sames并实时使用block抽象 (并消耗energy);
+ *  _param noRepeatArea_ps : 类比结果absFo的防重范围 (默认传nil时,会全局防重);
  *
  *  @version
  *      20200215: 有序外类比: 将forin循环fo和assFo改为反序,并记录上次类比位置jMax (因出现了[果,果,吃,吃]这样的异常时序) 参考n18p11;
@@ -41,6 +42,9 @@
  *      20230327: 支持得出protoFo/assFo 与 absFo的indexDic映射 (参考29032-todo1.2);
  */
 +(AINetAbsFoNode*) analogyOutside:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type {
+    return [self analogyOutside:protoFo assFo:assFo type:type noRepeatArea_ps:nil];
+}
++(AINetAbsFoNode*) analogyOutside:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type noRepeatArea_ps:(NSArray*)noRepeatArea_ps {
     //1. 类比orders的规律
     if (Log4OutAna) NSLog(@"\n----------- 外类比(%@) -----------\nfo:%@ \nassFo:%@",ATType2Str(type),Fo2FStr(protoFo),Fo2FStr(assFo));
     NSMutableArray *orderSames = [[NSMutableArray alloc] init];
@@ -78,7 +82,7 @@
     NSDictionary *protoAbsIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:protoAssIndexDic.allValues];
     
     //7. 外类比构建
-    return [self analogyOutside_Creater:orderSames protoFo:protoFo assFo:assFo type:type protoIndexDic:protoAbsIndexDic assIndexDic:assAbsIndexDic];
+    return [self analogyOutside_Creater:orderSames protoFo:protoFo assFo:assFo type:type protoIndexDic:protoAbsIndexDic assIndexDic:assAbsIndexDic noRepeatArea_ps:noRepeatArea_ps];
 }
 
 /**
@@ -95,7 +99,7 @@
  *      2021.09.28: ATSame和ATDiff两个type是描述是否包含cmv指向的,改为传ATDefault过来 (参考24022-BUG5);
  *      2023.07.28: 把mvDeltaTime改成偏移修正方式 (参考30087-分析1);
  */
-+(AINetAbsFoNode*)analogyOutside_Creater:(NSArray*)orderSames protoFo:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type protoIndexDic:(NSDictionary*)protoIndexDic assIndexDic:(NSDictionary*)assIndexDic {
++(AINetAbsFoNode*)analogyOutside_Creater:(NSArray*)orderSames protoFo:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type protoIndexDic:(NSDictionary*)protoIndexDic assIndexDic:(NSDictionary*)assIndexDic noRepeatArea_ps:(NSArray*)noRepeatArea_ps{
     //2. 数据检查;
     AINetAbsFoNode *result = nil;
     if (ARRISOK(orderSames) && ISOK(protoFo, AIFoNodeBase.class) && ISOK(assFo, AIFoNodeBase.class)) {
@@ -120,7 +124,7 @@
             }
             
             //5. 构建absFoNode (当GL时,传入at&ds);
-            result = [theNet createAbsFo_NoRepeat:orderSames protoFo:protoFo assFo:assFo difStrong:foDifStrong type:type protoIndexDic:protoIndexDic assIndexDic:assIndexDic outConAbsIsRelate:nil];
+            result = [theNet createAbsFo_NoRepeat:orderSames protoFo:protoFo assFo:assFo difStrong:foDifStrong type:type protoIndexDic:protoIndexDic assIndexDic:assIndexDic outConAbsIsRelate:nil noRepeatArea_ps:noRepeatArea_ps];
             
             //6. 算出具象总强度,其和已经是累计了此次类比的新关联强度 (参考30087-todo6);
             NSArray *conPorts = [AINetUtils conPorts_All:result];

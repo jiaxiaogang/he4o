@@ -90,7 +90,7 @@
     return [self createConFo:order difStrong:1];
 }
 +(AIFoNodeBase*) createConFo_NoRepeat:(NSArray*)order {
-    return [self createConFo_General:order valid_ps:nil];
+    return [self createConFo_General:order noRepeatArea_ps:nil];
 }
 
 /**
@@ -99,17 +99,17 @@
  */
 +(AIFoNodeBase*) createConFoForCanset:(NSArray*)order sceneFo:(AIFoNodeBase*)sceneFo sceneTargetIndex:(NSInteger)sceneTargetIndex {
     NSArray *oldCansets = [sceneFo getConCansets:sceneTargetIndex];
-    return [self createConFo_General:order valid_ps:oldCansets];
+    return [self createConFo_General:order noRepeatArea_ps:oldCansets];
 }
 
 /**
  *  MARK:--------------------通用创建具象fo方法 (支持限定防重范围)--------------------
- *  @param valid_ps : 防重范围;
+ *  @param noRepeatArea_ps : 防重范围;
  */
-+(AIFoNodeBase*) createConFo_General:(NSArray*)order valid_ps:(NSArray*)valid_ps {
++(AIFoNodeBase*) createConFo_General:(NSArray*)order noRepeatArea_ps:(NSArray*)noRepeatArea_ps {
     //1. 防重_取本地全局绝对匹配;
     NSArray *content_ps = [AINetAbsFoUtils convertOrder2Alg_ps:order];
-    AIFoNodeBase *result = [AINetIndexUtils getAbsoluteMatching_ValidPs:content_ps sort_ps:content_ps except_ps:nil valid_ps:valid_ps getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
+    AIFoNodeBase *result = [AINetIndexUtils getAbsoluteMatching_ValidPs:content_ps sort_ps:content_ps except_ps:nil noRepeatArea_ps:noRepeatArea_ps getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
         AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
         return [AINetUtils refPorts_All4Alg:itemAlg];
     } at:DefaultAlgsType ds:DefaultDataSource type:ATDefault];

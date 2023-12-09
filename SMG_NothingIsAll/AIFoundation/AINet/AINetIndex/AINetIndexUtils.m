@@ -24,14 +24,14 @@
  *      2021.09.22: 支持type防重;
  */
 +(id) getAbsoluteMatching_General:(NSArray*)content_ps sort_ps:(NSArray*)sort_ps except_ps:(NSArray*)except_ps getRefPortsBlock:(NSArray*(^)(AIKVPointer *item_p))getRefPortsBlock at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type{
-    return [self getAbsoluteMatching_ValidPs:content_ps sort_ps:sort_ps except_ps:except_ps valid_ps:nil getRefPortsBlock:getRefPortsBlock at:at ds:ds type:type];
+    return [self getAbsoluteMatching_ValidPs:content_ps sort_ps:sort_ps except_ps:except_ps noRepeatArea_ps:nil getRefPortsBlock:getRefPortsBlock at:at ds:ds type:type];
 }
 
 /**
  *  MARK:--------------------绝对匹配 + 限定范围--------------------
- *  @param valid_ps 限定范围: 结果必须从valid_ps中找 (限定范围时不得传nil,不限定时直接传nil即可);
+ *  @param noRepeatArea_ps 限定范围: 结果必须从valid_ps中找 (限定范围时不得传nil,不限定时直接传nil即可);
  */
-+(id) getAbsoluteMatching_ValidPs:(NSArray*)content_ps sort_ps:(NSArray*)sort_ps except_ps:(NSArray*)except_ps valid_ps:(NSArray*)valid_ps getRefPortsBlock:(NSArray*(^)(AIKVPointer *item_p))getRefPortsBlock at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type{
++(id) getAbsoluteMatching_ValidPs:(NSArray*)content_ps sort_ps:(NSArray*)sort_ps except_ps:(NSArray*)except_ps noRepeatArea_ps:(NSArray*)noRepeatArea_ps getRefPortsBlock:(NSArray*(^)(AIKVPointer *item_p))getRefPortsBlock at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type{
     //1. 数据检查
     if (!getRefPortsBlock) return nil;
     content_ps = ARRTOOK(content_ps);
@@ -54,8 +54,8 @@
             if (atSeem && dsSeem && typeSeem && ![except_ps containsObject:refPort.target_p] && [md5 isEqualToString:refPort.header]) {
                 
                 //7. 当valid_ps不为空时,要求必须包含在valid_ps中;
-                if (valid_ps) {
-                    if ([valid_ps containsObject:refPort.target_p]) {
+                if (noRepeatArea_ps) {
+                    if ([noRepeatArea_ps containsObject:refPort.target_p]) {
                         return [SMGUtils searchNode:refPort.target_p];
                     }
                 }else {

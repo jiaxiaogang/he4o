@@ -89,6 +89,7 @@
  *  _param ds : 新构建时传入指定ds,尤其是GL类型时,一般要将value.dataSource传递过来 (参考24019-概念部分);
  *              非新构建时,可传nil,此时尝试从conFos继承获取 (如果它们有共同的ds);
  *  @param outConAbsIsRelate : 将con和abs是否本来就有关联返回 (参考29032-todo2.1);
+ *  @param noRepeatArea_ps : 结果防重范围
  *  @version
  *      2020.04.26: 去掉时序的全局去重;
  *      2021.04.25: 打开防重,仅对content_ps防重,但没有对ds做同区要求判断 (参考23054-疑点);
@@ -104,7 +105,7 @@
  *  @status
  *      2021.04.25: 打开后,gl经验全为0条,所以先关掉,后续测试打开后为什么为0条;
  */
--(AINetAbsFoNode*) create_NoRepeat:(NSArray*)content_ps protoFo:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo difStrong:(NSInteger)difStrong type:(AnalogyType)type protoIndexDic:(NSDictionary*)protoIndexDic assIndexDic:(NSDictionary*)assIndexDic outConAbsIsRelate:(BOOL*)outConAbsIsRelate{
+-(AINetAbsFoNode*) create_NoRepeat:(NSArray*)content_ps protoFo:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo difStrong:(NSInteger)difStrong type:(AnalogyType)type protoIndexDic:(NSDictionary*)protoIndexDic assIndexDic:(NSDictionary*)assIndexDic outConAbsIsRelate:(BOOL*)outConAbsIsRelate noRepeatArea_ps:(NSArray*)noRepeatArea_ps{
     //1. 数据准备
     NSArray *conFos = @[protoFo,assFo];
     NSString *at = DefaultAlgsType; //[AINetUtils getDSFromConNodes:conFos type:type];
@@ -121,7 +122,7 @@
         result = [AINetIndexUtils getAbsoluteMatching_ValidPorts:validPorts sort_ps:content_ps except_ps:Nodes2Pits(conFos) at:at ds:ds type:type];
     }else{
         //3. 防重_其它类型时,全局绝对匹配;
-        result = [AINetIndexUtils getAbsoluteMatching_General:content_ps sort_ps:content_ps except_ps:Nodes2Pits(conFos) getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
+        result = [AINetIndexUtils getAbsoluteMatching_ValidPs:content_ps sort_ps:content_ps except_ps:Nodes2Pits(conFos) noRepeatArea_ps:noRepeatArea_ps getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
             AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
             return [AINetUtils refPorts_All4Alg:itemAlg];
         } at:at ds:ds type:type];
