@@ -34,5 +34,6 @@
  */
 +(AIFrontOrderNode*) createConFo:(NSArray*)order;
 +(AIFoNodeBase*) createConFo_NoRepeat:(NSArray*)order;
++(AIFoNodeBase*) createConFoForCanset:(NSArray*)order sceneFo:(AIFoNodeBase*)sceneFo sceneTargetIndex:(NSInteger)sceneTargetIndex;
 
 @end

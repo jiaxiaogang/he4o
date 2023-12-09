@@ -90,10 +90,26 @@
     return [self createConFo:order difStrong:1];
 }
 +(AIFoNodeBase*) createConFo_NoRepeat:(NSArray*)order {
-    //TODO: 随后改下: 构建canset时不应全局防重,而是只以场景内防重 (不然这些canset的SPEFF值就窜了,比如在北京吃龙虾不行,在家是可以的);
+    return [self createConFo_General:order valid_ps:nil];
+}
+
+/**
+ *  MARK:--------------------创建具象cansetFo (支持场景内防重)--------------------
+ *  @desc 构建canset时不应全局防重,而是只以场景内防重 (不然这些canset的SPEFF值就窜了,比如在北京吃龙虾不行,在家是可以的) (参考3101b-todo5);
+ */
++(AIFoNodeBase*) createConFoForCanset:(NSArray*)order sceneFo:(AIFoNodeBase*)sceneFo sceneTargetIndex:(NSInteger)sceneTargetIndex {
+    NSArray *oldCansets = [sceneFo getConCansets:sceneTargetIndex];
+    return [self createConFo_General:order valid_ps:oldCansets];
+}
+
+/**
+ *  MARK:--------------------通用创建具象fo方法 (支持限定防重范围)--------------------
+ *  @param valid_ps : 防重范围;
+ */
++(AIFoNodeBase*) createConFo_General:(NSArray*)order valid_ps:(NSArray*)valid_ps {
     //1. 防重_取本地全局绝对匹配;
     NSArray *content_ps = [AINetAbsFoUtils convertOrder2Alg_ps:order];
-    AIFoNodeBase *result = [AINetIndexUtils getAbsoluteMatching_General:content_ps sort_ps:content_ps except_ps:nil getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
+    AIFoNodeBase *result = [AINetIndexUtils getAbsoluteMatching_ValidPs:content_ps sort_ps:content_ps except_ps:nil valid_ps:valid_ps getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
         AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
         return [AINetUtils refPorts_All4Alg:itemAlg];
     } at:DefaultAlgsType ds:DefaultDataSource type:ATDefault];

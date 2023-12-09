@@ -79,6 +79,7 @@
  *  @param fatherCansetTargetIndex : 前后canset同长度,所以传前者targetIndex即可;
  *  @version
  *      2023.05.11: BUG_canset的targetIndex是执行目标,而scene的targetIndex是任务目标,用错修复 (参考29093-线索 & 方案);
+ *      2023.12.09: 迁移出的新canset改为仅在场景内防重 (参考3101b-todo5);
  */
 +(AIKVPointer*) transferJiCen:(AIKVPointer*)fatherCanset fatherCansetTargetIndex:(NSInteger)fatherCansetTargetIndex fatherScene:(AIKVPointer*)fatherScene_p iScene_p:(AIKVPointer*)iScene_p {
     //1. 数据准备;
@@ -116,22 +117,23 @@
     }
     //========================= 算法关键代码 END =========================
     
-    //7. 构建result;
-    iCanset = [theNet createConFo_NoRepeat:orders];
+    //7. 将canset执行目标转成scene任务目标targetIndex (参考29093-方案);
+    NSInteger sceneTargetIndex = iScene.count;
+    if (fatherCansetTargetIndex < fatherCansetNode.count) {
+        NSArray *keys = [iSceneCansetIndexDic allKeysForObject:@(fatherCansetTargetIndex)];
+        if (ARRISOK(keys)) {
+            sceneTargetIndex = NUMTOOK(ARR_INDEX(keys, 0)).integerValue;
+        }
+    }
+    
+    //7. 构建result & 场景内防重;
+    iCanset = [theNet createConFoForCanset:orders sceneFo:iScene sceneTargetIndex:sceneTargetIndex];
     
     //8. 新生成fatherPort;
     AITransferPort *newIPort = [AITransferPort newWithScene:iScene_p canset:iCanset.p];
     
     //9. 防重 (其实不可能重复,因为如果重复在override算法中当前cansetModel就已经被过滤了);
     if (![fatherScene.transferConPorts containsObject:newIPort]) {
-        //10. 将canset执行目标转成scene任务目标targetIndex (参考29093-方案);
-        NSInteger sceneTargetIndex = iScene.count;
-        if (fatherCansetTargetIndex < fatherCansetNode.count) {
-            NSArray *keys = [iSceneCansetIndexDic allKeysForObject:@(fatherCansetTargetIndex)];
-            if (ARRISOK(keys)) {
-                sceneTargetIndex = NUMTOOK(ARR_INDEX(keys, 0)).integerValue;
-            }
-        }
         
         //10. 将newIPort挂到iScene下;
         AIFoNodeBase *iScene = [SMGUtils searchNode:iScene_p];
@@ -159,6 +161,7 @@
  *  @desc 用于将canset从brother推举到father场景下;
  *  @version
  *      2023.05.04: 通过fo全局防重实现推举防重 (参考29081-todo32);
+ *      2023.12.09: 迁移出的新canset改为仅在场景内防重 (参考3101b-todo5);
  */
 +(AIKVPointer*) transfer4TuiJu:(AIKVPointer*)brotherCanset brotherCansetTargetIndex:(NSInteger)brotherCansetTargetIndex brotherScene:(AIKVPointer*)brotherScene_p fatherScene_p:(AIKVPointer*)fatherScene_p {
     //1. 数据准备;
@@ -197,7 +200,7 @@
     //========================= 算法关键代码 END =========================
     
     //7. 构建result;
-    fatherCanset = [theNet createConFo_NoRepeat:orders];
+    fatherCanset = [theNet createConFoForCanset:orders sceneFo:fatherScene sceneTargetIndex:fatherScene.count];
     
     //8. 新生成fatherPort;
     AITransferPort *newFatherPort = [AITransferPort newWithScene:fatherScene_p canset:fatherCanset.p];

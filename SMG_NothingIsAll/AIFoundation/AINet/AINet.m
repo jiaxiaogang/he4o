@@ -128,6 +128,10 @@ static AINet *_instance;
     return [AIMvFoManager createConFo_NoRepeat:order];
 }
 
+-(AIFoNodeBase*) createConFoForCanset:(NSArray*)order sceneFo:(AIFoNodeBase*)sceneFo sceneTargetIndex:(NSInteger)sceneTargetIndex {
+    return [AIMvFoManager createConFoForCanset:order sceneFo:sceneFo sceneTargetIndex:sceneTargetIndex];
+}
+
 
 //MARK:===============================================================
 //MARK:                     < absFo >
