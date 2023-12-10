@@ -194,6 +194,15 @@
             if (ISOK(foNode, AIFoNodeBase.class) && foNode.cmvNode_p) {
                 return @[foNode.cmvNode_p];
             }
+        }else if ([NVHeUtil isMv:node_p]) {
+            AICMVNodeBase *mvNode = [SMGUtils searchNode:node_p];
+            NSArray *refPorts = [AINetUtils refPorts_All4Alg:mvNode];
+            NSString *nilDesc = @"";
+            for (NSInteger i = 0; i < refPorts.count; i++) {
+                AIPort *item = ARR_INDEX(refPorts, i);
+                if (!item) nilDesc = STRFORMAT(@" %ld",i);
+            }
+            TPLog(@"> ref条数: %ld 空下标:%@",refPorts.count,nilDesc);
         }
     }
     return nil;

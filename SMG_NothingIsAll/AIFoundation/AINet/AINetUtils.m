@@ -481,10 +481,11 @@
     if (ISOK(node, AIAlgNodeBase.class)) {
         
         //2023.11.29: refPorts中有空元素,导致闪退...
-        for (AIPort *item in node.refPorts) {
+        for (NSInteger i = 0; i < node.refPorts.count; i++) {
+            AIPort *item = ARR_INDEX(node.refPorts, i);
             if (!item) {
                 AIFoNodeBase *itemNode = [SMGUtils searchNode:item.target_p];
-                ELog(@"以前没空过,突然这里闪退了,但不复现,以后复现时断点在这里,查下原因:%@ %@ \n%@",Alg2FStr(node),Fo2FStr(itemNode),node.refPorts);
+                ELog(@"以前没空过,突然这里闪退了,但不复现,以后复现时断点在这里,查下原因:%@ %@ %ld/%ld",Alg2FStr(node),Fo2FStr(itemNode),i,node.refPorts.count);
                 NSLog(@"");
             }
         }

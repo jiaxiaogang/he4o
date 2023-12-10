@@ -122,7 +122,7 @@
     [self.tipLogLab setNumberOfLines:0];
     [self.window addSubview:self.tipLogLab];
     [self.tipLogLab mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.leading.mas_equalTo(self.window);
+        make.leading.mas_equalTo(self.window).offset(40);
         make.trailing.mas_equalTo(self.window);
         make.bottom.mas_equalTo(self.window);
     }];
