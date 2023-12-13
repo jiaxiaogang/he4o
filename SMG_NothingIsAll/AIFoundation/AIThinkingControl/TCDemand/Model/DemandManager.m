@@ -162,6 +162,28 @@
     return newRootsResult;
 }
 
+-(void) testMultiFrameBeRootGroup {
+    NSArray *inModels = [theTC.inModelManager.models copy];
+    for (AIShortMatchModel *inModel in inModels) {
+        
+        //1. 每个inModel的protoFo和regroupFo是不一样的,所以没法完全合并 (因为convert2CansetModel()中取proto做条件满足判断,不同的protoFo应该是不同的);
+        //  a. 有了新的protoFo后,旧的应该过期了,应该以新的为准;
+        //      * 即推进一帧后,上一帧的root直接关闭;
+        //      * 但上一帧也不是完全无用,有些正在推进中的canset是可以继续搞的;
+        //  b. 各自生成root,然后看判断"类似"来做互斥;
+        //      * 下一帧如果和上一帧+1一致时,将上一帧+1的工作记忆成果移过来继续用;
+        
+        
+        NSDictionary *fos4Demand = inModel.fos4Demand;
+        
+        for (NSString *atKey in fos4Demand.allKeys) {
+            NSArray *pFos = [fos4Demand objectForKey:atKey];
+            for (AIMatchFoModel *pFo in pFos) {
+            }
+        }
+    }
+}
+
 /**
  *  MARK:--------------------重排序cmvCache--------------------
  *  1. 懒排序,什么时候assLoop,什么时候排序;
