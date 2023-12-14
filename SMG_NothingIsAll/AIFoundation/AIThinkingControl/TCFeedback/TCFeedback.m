@@ -28,7 +28,8 @@
  *      xxxx.xx.xx: 非启动状态,因为时序识别中,未涵盖HNGL类型,所以并未对HNGL进行预测;
  *      2021.10.17: 启动,支持对IRT的理性失效 (参考24059&24061-方案2);
  */
-+(void) feedbackTIR:(AIShortMatchModel*)model{
++(NSArray*) feedbackTIR:(AIShortMatchModel*)model{
+    NSMutableArray *feedbackedPFos = [[NSMutableArray alloc] init];
     //1. 取所有lastWait模型,并与新输入的概念做mIsC判断;
     [theTC updateOperCount:kFILENAME];
     Debug();
@@ -71,6 +72,7 @@
             if (mIsC) {
                 //6. 有反馈时,进行P反省: 进行理性IRT反省;
                 [TCRethink reasonInRethink:waitModel cutIndex:waitModel.cutIndex type:ATPlus];
+                [feedbackedPFos addObject:waitModel];
                 
                 //7. pFo任务顺利: 推进帧;
                 [waitModel feedbackPushFrame:model.protoAlg.pointer];
@@ -89,6 +91,7 @@
     //2021.12.01: R任务(新架构应在forecastIRT之后,调用rForecastBack.rDemand,但旧架构在前面,先不动,等测没影响再改后面);
     //2021.12.05: 将tor移到概念识别后了,此处front和back合并 (参考24171-9);
     DebugE();
+    return feedbackedPFos;
 }
 
 /**

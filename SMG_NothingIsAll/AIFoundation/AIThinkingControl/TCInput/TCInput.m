@@ -52,7 +52,7 @@
     
     //4. 概念反馈 -> TIR反馈;
     //todo: 加了二次过滤后,此处过滤后,仅剩几条了 (可能导致tir太难feedback成功了) (先不改,等测得具体有影响的bug时再改);
-    [TCFeedback feedbackTIR:mModel];
+    NSArray *feedbackedPFos = [TCFeedback feedbackTIR:mModel];
     
     //4. 概念反馈 -> 重组 & 反思;
     //todo: 加了二次过滤后,此处过滤前,可能太杂了,毕竟pAlgs过过滤了50% (可能导致tor才容易feedback成功了) (先不改,等测得具体有影响的bug时再改);
@@ -78,6 +78,11 @@
     if (!algNode.pointer.isOut || Switch4IsOutReIn) {
         //11. 任务;
         [TCDemand rDemand:mModel protoFo:mModel.protoFo];
+        
+        for (AIMatchFoModel *feedbackedPFo in feedbackedPFos) {
+//            feedbackedPFo.baseRDemand.status = TOModelStatus_ScoreNo;
+            NSLog(@"旧的往后送 %@",Pit2FStr(feedbackedPFo.matchFo));
+        }
         
         //12. 为新matchPFos & matchRFos构建反省触发器;
         [TCForecast forecast_Multi:mModel.matchPFos];

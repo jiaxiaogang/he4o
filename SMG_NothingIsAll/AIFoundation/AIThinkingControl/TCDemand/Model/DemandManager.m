@@ -165,6 +165,7 @@
 -(void) testMultiFrameBeRootGroup {
     NSArray *inModels = [theTC.inModelManager.models copy];
     for (AIShortMatchModel *inModel in inModels) {
+        NSInteger index = [inModels indexOfObject:inModel];
         
         //1. 每个inModel的protoFo和regroupFo是不一样的,所以没法完全合并 (因为convert2CansetModel()中取proto做条件满足判断,不同的protoFo应该是不同的);
         //  a. 有了新的protoFo后,旧的应该过期了,应该以新的为准;
