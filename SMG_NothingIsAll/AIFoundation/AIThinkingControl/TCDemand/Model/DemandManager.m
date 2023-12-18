@@ -159,30 +159,26 @@
         }
     }
     NSLog(@"生成NewRoot数:%ld from:%@",newRootsResult.count,Fo2FStr(protoFo));
-    return newRootsResult;
-}
-
--(void) testMultiFrameBeRootGroup {
-    NSArray *inModels = [theTC.inModelManager.models copy];
-    for (AIShortMatchModel *inModel in inModels) {
-        NSInteger index = [inModels indexOfObject:inModel];
-        
-        //1. 每个inModel的protoFo和regroupFo是不一样的,所以没法完全合并 (因为convert2CansetModel()中取proto做条件满足判断,不同的protoFo应该是不同的);
-        //  a. 有了新的protoFo后,旧的应该过期了,应该以新的为准;
-        //      * 即推进一帧后,上一帧的root直接关闭;
-        //      * 但上一帧也不是完全无用,有些正在推进中的canset是可以继续搞的;
-        //  b. 各自生成root,然后看判断"类似"来做互斥;
-        //      * 下一帧如果和上一帧+1一致时,将上一帧+1的工作记忆成果移过来继续用;
-        
-        
-        NSDictionary *fos4Demand = inModel.fos4Demand;
-        
-        for (NSString *atKey in fos4Demand.allKeys) {
-            NSArray *pFos = [fos4Demand objectForKey:atKey];
-            for (AIMatchFoModel *pFo in pFos) {
+    
+    //先试下新旧pFo有一致的情况;
+    for (ReasonDemandModel *newRRoot in newRootsResult) {
+        NSInteger newIndex = [self.loopCache indexOfObject:newRRoot];
+        for (ReasonDemandModel *oldRRoot in self.loopCache.array) {
+            if (![newRootsResult containsObject:newRRoot]) {
+                //旧的成立;
+                NSInteger oldIndex = [self.loopCache indexOfObject:oldRRoot];
+                
+                //取新旧有一样的matchFo (这里pFo没有重写equal方法,可能是不成的,试下先);
+                NSArray *jiaoJi = [SMGUtils filterArrA:newRRoot.pFos arrB:oldRRoot.pFos];
+                if (ARRISOK(jiaoJi)) {
+                    NSLog(@"旧的pFos和新的有交集 %ld => %ld",oldIndex,newIndex);
+                }
             }
         }
     }
+    
+    
+    return newRootsResult;
 }
 
 /**
