@@ -167,8 +167,6 @@
             if (![newRootsResult containsObject:oldRRoot]) {
                 //旧的成立;
                 NSInteger oldIndex = [self.loopCache indexOfObject:oldRRoot];
-                
-                //取新旧有一样的matchFo (这里pFo没有重写equal方法,可能是不成的,试下先);
                 NSArray *newPFos = [SMGUtils convertArr:newRRoot.pFos convertBlock:^id(AIMatchFoModel *obj) {
                     return obj.matchFo;
                 }];
@@ -177,7 +175,9 @@
                 }];
                 NSArray *jiaoJi = [SMGUtils filterArrA:newPFos arrB:oldPFos];
                 if (ARRISOK(jiaoJi)) {
-                    NSLog(@"总ROOT数:%ld 新下标:%ld 和 旧下标:%ld => 有交集:%@",self.loopCache.count,newIndex,oldIndex,CLEANSTR([SMGUtils convertArr:jiaoJi convertBlock:^id(AIKVPointer *obj) {
+                    NSArray *newSubs = [TOUtils getSubOutModels_AllDeep:newRRoot validStatus:nil];
+                    NSArray *oldSubs = [TOUtils getSubOutModels_AllDeep:oldRRoot validStatus:nil];
+                    NSLog(@"总ROOT数:%ld 新下标:%ld(%ld) 和 旧下标:%ld(%ld) => 有交集:%@",self.loopCache.count,newIndex,newSubs.count,oldIndex,oldSubs.count,CLEANSTR([SMGUtils convertArr:jiaoJi convertBlock:^id(AIKVPointer *obj) {
                         return STRFORMAT(@"F%ld",obj.pointerId);
                     }]));
                 }
