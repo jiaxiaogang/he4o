@@ -121,6 +121,7 @@
  *      2022.05.18: 多pFos形成单个任务 (参考26042-TODO1);
  *      2022.05.18: 废弃抵消和防重功能,现在root各自工作,共用R和P反馈即可各自工作;
  *      2023.08.15: 传入protoFo,因为在pInput时和rInput时的protoFo是不同的,这个protoFo到决策时还要用 (参考30095代码段2);
+ *      2023.12.20: 写同质新旧Root合并 (参考31024);
  *  @result 将新增的root任务收集返回;
  */
 -(NSArray*) updateCMVCache_RMV:(AIShortMatchModel*)inModel protoFo:(AIFoNodeBase*)protoFo{
@@ -133,11 +134,35 @@
     for (NSString *atKey in fos4Demand.allKeys) {
         
         //3. 数据准备
-        NSArray *pFosValue = [fos4Demand objectForKey:atKey];
+        NSMutableArray *pFosValue = [fos4Demand objectForKey:atKey];
         CGFloat score = [AIScore score4PFos:pFosValue];
         
         //5. 取迫切度评分: 判断matchingFo.mv有值才加入demandManager,同台竞争,执行顺应mv;
         if (score < 0) {
+            
+            //6. 当新旧Root的pFos有交集时,即为同质ROOT: 将oldRoot.pFos合并到newRoot中 (参考31024-todo1);
+            for (ReasonDemandModel *oldRRoot in self.loopCache.array) {
+                NSInteger oldIndex = [self.loopCache indexOfObject:oldRRoot];
+                
+                //7. 判断新旧Root有交集 (参考31024-todo1);
+                NSArray *newPMatchFos = [SMGUtils convertArr:pFosValue convertBlock:^id(AIMatchFoModel *obj) {
+                    return obj.matchFo;
+                }];
+                NSArray *oldPMatchFos = [SMGUtils convertArr:oldRRoot.pFos convertBlock:^id(AIMatchFoModel *obj) {
+                    return obj.matchFo;
+                }];
+                if (ARRISOK([SMGUtils filterArrA:newPMatchFos arrB:oldPMatchFos])) {
+                    NSLog(@"发现同质Root: 旧下标:%ld/%ld 旧枝叶数:%ld",oldIndex,self.loopCache.count,[TOUtils getSubOutModels_AllDeep:oldRRoot validStatus:nil].count);
+                    
+                    //8. 新旧pFos全保留 (参考31024-todo1);
+                    [pFosValue addObjectsFromArray:oldRRoot.pFos];
+                    
+                    //9. 删掉旧的root (参考31024-todo2);
+                    [self.loopCache removeObject:oldRRoot];
+                    break;
+                }
+            }
+            
             
             //7. 有需求时,则加到需求序列中;
             ReasonDemandModel *newItem = [ReasonDemandModel newWithAlgsType:atKey pFos:pFosValue shortModel:inModel baseFo:nil protoFo:protoFo];
@@ -159,33 +184,6 @@
         }
     }
     NSLog(@"生成NewRoot数:%ld from:%@",newRootsResult.count,Fo2FStr(protoFo));
-    
-    //先试下新旧pFo有一致的情况;
-    for (ReasonDemandModel *newRRoot in newRootsResult) {
-        NSInteger newIndex = [self.loopCache indexOfObject:newRRoot];
-        for (ReasonDemandModel *oldRRoot in self.loopCache.array) {
-            if (![newRootsResult containsObject:oldRRoot]) {
-                //旧的成立;
-                NSInteger oldIndex = [self.loopCache indexOfObject:oldRRoot];
-                NSArray *newPFos = [SMGUtils convertArr:newRRoot.pFos convertBlock:^id(AIMatchFoModel *obj) {
-                    return obj.matchFo;
-                }];
-                NSArray *oldPFos = [SMGUtils convertArr:oldRRoot.pFos convertBlock:^id(AIMatchFoModel *obj) {
-                    return obj.matchFo;
-                }];
-                NSArray *jiaoJi = [SMGUtils filterArrA:newPFos arrB:oldPFos];
-                if (ARRISOK(jiaoJi)) {
-                    NSArray *newSubs = [TOUtils getSubOutModels_AllDeep:newRRoot validStatus:nil];
-                    NSArray *oldSubs = [TOUtils getSubOutModels_AllDeep:oldRRoot validStatus:nil];
-                    NSLog(@"总ROOT数:%ld 新下标:%ld(%ld) 和 旧下标:%ld(%ld) => 有交集:%@",self.loopCache.count,newIndex,newSubs.count,oldIndex,oldSubs.count,CLEANSTR([SMGUtils convertArr:jiaoJi convertBlock:^id(AIKVPointer *obj) {
-                        return STRFORMAT(@"F%ld",obj.pointerId);
-                    }]));
-                }
-            }
-        }
-    }
-    
-    
     return newRootsResult;
 }
 
