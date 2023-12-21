@@ -139,6 +139,11 @@
         
         //5. 取迫切度评分: 判断matchingFo.mv有值才加入demandManager,同台竞争,执行顺应mv;
         if (score < 0) {
+            NSLog(@"RMV新需求: %@ (第%ld条 评分:%@)",ClassName2Str(atKey),self.loopCache.count+1,Double2Str_NDZ(score));
+            for (AIMatchFoModel *pFo in pFosValue) {
+                AIFoNodeBase *matchFo = [SMGUtils searchNode:pFo.matchFo];
+                NSLog(@"\t pFo:%@->{%.2f} SP:%@ indexDic:%@",Pit2FStr(pFo.matchFo),[AIScore score4MV_v2FromCache:pFo],CLEANSTR(matchFo.spDic),CLEANSTR(pFo.indexDic2));
+            }
             
             //6. 当新旧Root的pFos有交集时,即为同质ROOT: 将oldRoot.pFos合并到newRoot中 (参考31024-todo1);
             for (ReasonDemandModel *oldRRoot in self.loopCache.array) {
@@ -152,7 +157,7 @@
                     return obj.matchFo;
                 }];
                 if (ARRISOK([SMGUtils filterArrA:newPMatchFos arrB:oldPMatchFos])) {
-                    NSLog(@"发现同质Root: 旧下标:%ld/%ld 旧枝叶数:%ld",oldIndex,self.loopCache.count,[TOUtils getSubOutModels_AllDeep:oldRRoot validStatus:nil].count);
+                    NSLog(@"发现同质Root: 旧位置:%ld/%ld 旧枝叶数:%ld pFos数:(旧%ld + 新%ld = %ld)",oldIndex+1,self.loopCache.count,[TOUtils getSubOutModels_AllDeep:oldRRoot validStatus:nil].count,oldRRoot.pFos.count,pFosValue.count,oldRRoot.pFos.count + pFosValue.count);
                     
                     //8. 新旧pFos全保留 (参考31024-todo1);
                     [pFosValue addObjectsFromArray:oldRRoot.pFos];
@@ -163,7 +168,6 @@
                 }
             }
             
-            
             //7. 有需求时,则加到需求序列中;
             ReasonDemandModel *newItem = [ReasonDemandModel newWithAlgsType:atKey pFos:pFosValue shortModel:inModel baseFo:nil protoFo:protoFo];
             [self.loopCache addObject:newItem];
@@ -173,11 +177,6 @@
             //2021.05.27: 为方便测试,所有imv都给20迫切度 (因为迫切度太低话,还没怎么思考就停了);
             //2022.03.10: 为使鸟躲避及时停下,将迫切度再改回受评分迫切度等影响;
             [theTC updateEnergyValue:-score * 20];
-            NSLog(@"RMV新需求: %@ (条数+1=%ld 评分:%@)",ClassName2Str(atKey),self.loopCache.count,Double2Str_NDZ(score));
-            for (AIMatchFoModel *pFo in pFosValue) {
-                AIFoNodeBase *matchFo = [SMGUtils searchNode:pFo.matchFo];
-                NSLog(@"\t pFo:%@->{%.2f} SP:%@ indexDic:%@",Pit2FStr(pFo.matchFo),[AIScore score4MV_v2FromCache:pFo],CLEANSTR(matchFo.spDic),CLEANSTR(pFo.indexDic2));
-            }
         }else{
             [theTC updateEnergyValue:-score * 20];
             NSLog(@"当前,预测mv未形成需求:%@ 评分:%f",atKey,score);
