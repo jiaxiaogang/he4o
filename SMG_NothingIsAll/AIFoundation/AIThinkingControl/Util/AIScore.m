@@ -104,6 +104,12 @@
     AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.cansetFo];
     double needTime = [TOUtils getSumDeltaTime:solutionFo startIndex:solutionModel.cutIndex + 1 endIndex:solutionModel.cutIndex + 2];
     
+    //TODOTOMORROW20231223: 此处validPFos为空,因为全是isExpired失效状态;
+    //1. 查下它什么时候全失效的;
+    //2. 查下失效后的demand为什么还能激活并决策;
+    
+    
+    
     //4. 取父任务能给的时间;
     AIMatchFoModel *firstPFo = ARR_INDEX(nearRDemand.validPFos, 0);
     AIFoNodeBase *pFo = [SMGUtils searchNode:firstPFo.matchFo];
