@@ -61,6 +61,8 @@
  */
 +(NSArray*) solutionCansetFilter:(AIFoNodeBase*)sceneFo targetIndex:(NSInteger)targetIndex {
     NSArray *protoConCansets = [sceneFo getConCansets:targetIndex];
+    //TODOTOMORROW20231224: 此处sort超耗能 (参考31025-代码段-问题1);
+    
     NSArray *sorts = [SMGUtils sortBig2Small:protoConCansets compareBlock1:^double(AIKVPointer *canset) {
         return [TOUtils getEffectScore:sceneFo effectIndex:targetIndex solutionFo:canset];
     } compareBlock2:^double(AIKVPointer *canset) {

@@ -21,6 +21,10 @@
     //1. 数据准备;
     AIFoNodeBase *selfFo = [SMGUtils searchNode:sceneModel.scene];
     
+    //2023.12.24: 性能测试记录 (结果: 此方法很卡) (参考31025-代码段-问题1);
+    //  a. 记录此处为brother时,   共执行了: 300次 x 每次10ms     = 3s;
+    //  b. 记录此处为father时,    共执行了: 16次  x 每次1ms      = 16ms;
+    //  c. 记录此处为i时,         共执行了: 16次  x 每次125ms    = 2s;
     //2. 不同type的公式不同 (参考29069-todo5.3 & 5.4 & 5.5);
     if (sceneModel.type == SceneTypeBrother) {
         //3. 当前是brother时: (brother有效canset = brother.conCansets - 与father有迁移关联部分) (参考29069-todo5.3);
