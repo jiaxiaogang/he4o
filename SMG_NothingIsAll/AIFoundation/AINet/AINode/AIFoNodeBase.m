@@ -146,12 +146,15 @@
  */
 -(AIEffectStrong*) getEffectStrong:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo {
     //1. 取有效率解决方案数组;
+//    AddDebugCodeBlock_Key(@"aaaaa", @"21");
     NSArray *strongs = [ARRTOOK([self.effectDic objectForKey:@(effectIndex)]) copy];
+//    AddDebugCodeBlock_Key(@"aaaaa", @"22");
     
     //2. 取得匹配的strong;
     AIEffectStrong *strong = [SMGUtils filterSingleFromArr:strongs checkValid:^BOOL(AIEffectStrong *item) {
         return [item.solutionFo isEqual:solutionFo];
     }];
+//    AddDebugCodeBlock_Key(@"aaaaa", @"23");
     
     //3. 返回有效率;
     return strong;

@@ -109,19 +109,16 @@ static XGDebug *_instance;
 /**
  *  MARK:--------------------根据前辍取debugModels--------------------
  *  @desc 用于获取结果输出;
+ *  @version
+ *      2023.12.25: 去掉本方法异步主线程: 这个方法只有self.print()在调用,而print()本来就在主线程中,这里就不进主线程了,不然闪退 (应该是嵌套异步导致的,未确认,但改后确实不闪了);
  *  @result notnull
  */
 -(NSArray*) getDebugModels:(NSString*)prefix {
-    __block NSArray *result;
-    __block NSString *weakPrefix = prefix;
-    dispatch_sync(dispatch_get_main_queue(), ^{
-        weakPrefix = STRTOOK(weakPrefix);
-        result = [SMGUtils filterArr:self.models checkValid:^BOOL(XGDebugModel *item) {
-            NSString *itemPrefix = [item.key substringWithRange:NSMakeRange(0, MIN(weakPrefix.length, item.key.length))];
-            return [weakPrefix isEqualToString:itemPrefix];
-        }];
-    });
-    return result;
+    prefix = STRTOOK(prefix);
+    return [SMGUtils filterArr:self.models checkValid:^BOOL(XGDebugModel *item) {
+        NSString *itemPrefix = [item.key substringWithRange:NSMakeRange(0, MIN(prefix.length, item.key.length))];
+        return [prefix isEqualToString:itemPrefix];
+    }];
 }
 
 /**

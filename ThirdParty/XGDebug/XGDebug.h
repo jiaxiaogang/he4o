@@ -50,11 +50,6 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------根据前辍取debugModels--------------------
- */
--(NSArray*) getDebugModels:(NSString*)prefix;
-
-/**
  *  MARK:--------------------打印结果--------------------
  */
 -(void) print:(NSString*)prefix rmPrefix:(NSString*)rmPrefix;

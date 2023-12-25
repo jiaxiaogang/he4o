@@ -63,13 +63,21 @@
     NSArray *protoConCansets = [sceneFo getConCansets:targetIndex];
     //TODOTOMORROW20231224: 此处sort超耗能 (参考31025-代码段-问题1);
     
+    AddDebugCodeBlock_Key(@"aaaaa", @"11");
     NSArray *sorts = [SMGUtils sortBig2Small:protoConCansets compareBlock1:^double(AIKVPointer *canset) {
-        return [TOUtils getEffectScore:sceneFo effectIndex:targetIndex solutionFo:canset];
+        AddDebugCodeBlock_Key(@"aaaaa", @"12");//计数上万次
+        CGFloat score = [TOUtils getEffectScore:sceneFo effectIndex:targetIndex solutionFo:canset];
+        AddDebugCodeBlock_Key(@"aaaaa", @"13");//计数上万次
+        return score;
     } compareBlock2:^double(AIKVPointer *canset) {
+        AddDebugCodeBlock_Key(@"aaaaa", @"14");//计数上万次
         AIEffectStrong *strong = [TOUtils getEffectStrong:sceneFo effectIndex:targetIndex solutionFo:canset];
+        AddDebugCodeBlock_Key(@"aaaaa", @"15");//计数上万次
         return strong.hStrong;
     }];
+    AddDebugCodeBlock_Key(@"aaaaa", @"16");
     NSInteger limit = MAX(3, protoConCansets.count * 0.2f);//取20% & 至少尝试取3条;
+    AddDebugCodeBlock_Key(@"aaaaa", @"17");
     return ARR_SUB(sorts, 0, limit);
 }
 
