@@ -63,19 +63,27 @@
     NSArray *protoConCansets = [sceneFo getConCansets:targetIndex];
     //TODOTOMORROW20231224: 此处sort超耗能 (参考31025-代码段-问题1);
     
-    AddDebugCodeBlock_Key(@"aaaaa", @"11");
-    NSArray *sorts = [SMGUtils sortBig2Small:protoConCansets compareBlock1:^double(AIKVPointer *canset) {
-        AddDebugCodeBlock_Key(@"aaaaa", @"12");//计数上万次
-        CGFloat score = [TOUtils getEffectScore:sceneFo effectIndex:targetIndex solutionFo:canset];
-        AddDebugCodeBlock_Key(@"aaaaa", @"13");//计数上万次
-        return score;
-    } compareBlock2:^double(AIKVPointer *canset) {
-        AddDebugCodeBlock_Key(@"aaaaa", @"14");//计数上万次
+    AddDebugCodeBlock_Key(@"aaaaa", @"10");
+    //1. canset数组转成mapModel (提前把strong都取出来,避免后面在排序时访问太多次而卡性能);
+    NSArray *mapArr = [SMGUtils convertArr:protoConCansets convertBlock:^id(AIKVPointer *canset) {
         AIEffectStrong *strong = [TOUtils getEffectStrong:sceneFo effectIndex:targetIndex solutionFo:canset];
-        AddDebugCodeBlock_Key(@"aaaaa", @"15");//计数上万次
+        return [MapModel newWithV1:canset v2:strong];
+    }];
+    AddDebugCodeBlock_Key(@"aaaaa", @"11");
+    
+    //2. 对mapModelArr排序;
+    NSArray *sorts = [SMGUtils sortBig2Small:mapArr compareBlock1:^double(MapModel *mapModel) {
+        return [TOUtils getEffectScore:mapModel.v2];
+    } compareBlock2:^double(MapModel *mapModel) {
+        AIEffectStrong *strong = mapModel.v2;
         return strong.hStrong;
     }];
     AddDebugCodeBlock_Key(@"aaaaa", @"16");
+    
+    //3. sort再转回canset数组;
+    sorts = [SMGUtils convertArr:sorts convertBlock:^id(MapModel *obj) {
+        return obj.v1;
+    }];
     NSInteger limit = MAX(3, protoConCansets.count * 0.2f);//取20% & 至少尝试取3条;
     AddDebugCodeBlock_Key(@"aaaaa", @"17");
     return ARR_SUB(sorts, 0, limit);

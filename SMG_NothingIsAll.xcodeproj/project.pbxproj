@@ -176,6 +176,7 @@
 		08DB40CB1F11A65E003162C8 /* TestHungryPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 08DB40C91F11A65E003162C8 /* TestHungryPage.m */; };
 		08DB40CC1F11A65E003162C8 /* TestHungryPage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 08DB40CA1F11A65E003162C8 /* TestHungryPage.xib */; };
 		08E084AB28B129000070B7F7 /* TCDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E084AA28B129000070B7F7 /* TCDebug.m */; };
+		08E44D372B3A58D1005456A1 /* MapModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E44D362B3A58D1005456A1 /* MapModel.m */; };
 		08E6885B22FA562600653545 /* BorderLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E6885A22FA562600653545 /* BorderLabel.m */; };
 		08E8CF5525B2880600AA18DB /* WoodView.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E8CF5425B2880600AA18DB /* WoodView.m */; };
 		08E8CF5825B2F07100AA18DB /* ImvAlgsHurtModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E8CF5725B2F07100AA18DB /* ImvAlgsHurtModel.m */; };
@@ -561,6 +562,8 @@
 		08DB40CA1F11A65E003162C8 /* TestHungryPage.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TestHungryPage.xib; sourceTree = "<group>"; };
 		08E084A928B129000070B7F7 /* TCDebug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCDebug.h; sourceTree = "<group>"; };
 		08E084AA28B129000070B7F7 /* TCDebug.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCDebug.m; sourceTree = "<group>"; };
+		08E44D352B3A58D1005456A1 /* MapModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MapModel.h; sourceTree = "<group>"; };
+		08E44D362B3A58D1005456A1 /* MapModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MapModel.m; sourceTree = "<group>"; };
 		08E6885922FA562600653545 /* BorderLabel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BorderLabel.h; sourceTree = "<group>"; };
 		08E6885A22FA562600653545 /* BorderLabel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BorderLabel.m; sourceTree = "<group>"; };
 		08E8CF5325B2880600AA18DB /* WoodView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WoodView.h; sourceTree = "<group>"; };
@@ -719,6 +722,7 @@
 		08196B81200074CF007B72C5 /* AIClass */ = {
 			isa = PBXGroup;
 			children = (
+				08E44D342B3A58A9005456A1 /* Model */,
 				08196B80200073FF007B72C5 /* Utils */,
 				081B3AC91F6E210E008A7F36 /* AITime */,
 				0886889C26479A7F00B7C75D /* AINoRepeatRun.h */,
@@ -1546,6 +1550,15 @@
 			path = TCDebug;
 			sourceTree = "<group>";
 		};
+		08E44D342B3A58A9005456A1 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				08E44D352B3A58D1005456A1 /* MapModel.h */,
+				08E44D362B3A58D1005456A1 /* MapModel.m */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		08E65A0722F3BAE3009ED1CF /* CortexAlgorithms */ = {
 			isa = PBXGroup;
 			children = (
@@ -2057,6 +2070,7 @@
 				084B4B0824433AA900FB3670 /* ShortMatchManager.m in Sources */,
 				08CEAFAD22B317A800CD1D91 /* NodeCompareModel.m in Sources */,
 				0858C5DB2194FB3F00951BA5 /* LightView.m in Sources */,
+				08E44D372B3A58D1005456A1 /* MapModel.m in Sources */,
 				08E8F7B221798AEE004F51DE /* AIFoNodeBase.m in Sources */,
 				0842ADBD1FE207500048ADDC /* DemoHunger.m in Sources */,
 				0805EB3426C54A0D005F6341 /* LongTipWindow.m in Sources */,

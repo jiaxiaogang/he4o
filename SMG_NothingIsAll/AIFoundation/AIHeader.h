@@ -29,6 +29,7 @@
 #import "RTQueueModel.h"
 #import "XGWedis.h"
 #import "CortexAlgorithmsUtil.h"
+#import "MapModel.h"
 
 //Util
 #import "ThinkingUtils.h"
