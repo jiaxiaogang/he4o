@@ -58,7 +58,7 @@
  *  MARK:--------------------Canset求解过滤器 (参考29081-todo41)--------------------
  *  @version
  *      2023.09.04: 加上hStrong做二级排序因子 (参考30125-方案);
- *      2023.12.26: 优化sort性能,把getEffectStrong()提出来提前取好 (参考31025-代码段-问题1);
+ *      2023.12.26: 优化sort性能,把getEffectStrong()提出来提前取好 (参考31025-代码段-问题1) //共三处优化,此乃其一;
  */
 +(NSArray*) solutionCansetFilter:(AIFoNodeBase*)sceneFo targetIndex:(NSInteger)targetIndex {
     NSArray *protoConCansets = [sceneFo getConCansets:targetIndex];
@@ -78,14 +78,14 @@
         AIEffectStrong *strong = mapModel.v2;
         return strong.hStrong;
     }];
-    AddDebugCodeBlock_Key(@"aaaaa", @"16");
+    AddDebugCodeBlock_Key(@"aaaaa", @"12");
     
     //3. sort再转回canset数组;
     sorts = [SMGUtils convertArr:sorts convertBlock:^id(MapModel *obj) {
         return obj.v1;
     }];
     NSInteger limit = MAX(3, protoConCansets.count * 0.2f);//取20% & 至少尝试取3条;
-    AddDebugCodeBlock_Key(@"aaaaa", @"17");
+    AddDebugCodeBlock_Key(@"aaaaa", @"13");
     return ARR_SUB(sorts, 0, limit);
 }
 

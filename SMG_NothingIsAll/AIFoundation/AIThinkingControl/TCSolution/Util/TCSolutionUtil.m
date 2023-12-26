@@ -189,6 +189,8 @@
 
 /**
  *  MARK:--------------------R慢思考--------------------
+ *  @version
+ *      2023.12.26: 提前在for之前取scene所在的pFo,以优化其性能 (参考31025-代码段-问题1) //共三处优化,此乃其一;
  */
 +(AICansetModel*) rSolution_Slow:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps {
     //1. 收集cansetModels候选集;
@@ -204,14 +206,14 @@
         AddDebugCodeBlock_Key(@"aaaaa", @"2");
         NSArray *cansets = ARRTOOK([TCCanset getOverrideCansets:sceneModel sceneTargetIndex:sceneFo.count]);//127ms
         AddDebugCodeBlock_Key(@"aaaaa", @"3");
+        AIMatchFoModel *pFo = [SMGUtils filterSingleFromArr:demand.validPFos checkValid:^BOOL(AIMatchFoModel *item) {
+            return [item.matchFo isEqual:sceneModel.getRoot.scene];
+        }];
+        AddDebugCodeBlock_Key(@"aaaaa", @"4");
         NSArray *itemCansetModels = [SMGUtils convertArr:cansets convertBlock:^id(AIKVPointer *canset) {
             //4. cansetModel转换器参数准备;
-            AddDebugCodeBlock_Key(@"aaaaa", @"4");
-            NSInteger aleardayCount = sceneModel.cutIndex + 1;
-            AIMatchFoModel *pFo = [SMGUtils filterSingleFromArr:demand.validPFos checkValid:^BOOL(AIMatchFoModel *item) {
-                return [item.matchFo isEqual:sceneModel.getRoot.scene];
-            }];
             AddDebugCodeBlock_Key(@"aaaaa", @"5");
+            NSInteger aleardayCount = sceneModel.cutIndex + 1;
             
             //4. 过滤器 & 转cansetModels候选集 (参考26128-第1步 & 26161-1&2&3);
             AICansetModel *model = [TCCanset convert2CansetModel:canset sceneFo:sceneModel.scene basePFoOrTargetFoModel:pFo ptAleardayCount:aleardayCount isH:false sceneModel:sceneModel];//245ms
