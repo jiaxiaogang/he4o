@@ -128,19 +128,31 @@
  *      2023.05.23: BUG_用sceneId_cansetId做key,会有重复的,导致算漏的BUG,改用内存地址来做唯一key;
  *      2023.05.24: BUG_修复此处将sceneTargetIndex用错成cansetTargetIndex的问题 (会导致取到eff几乎全是错的0);
  *      2023.05.26: BUG_修复SP总是取到0的问题,改为eff为主排序,sp仅取下一帧稳定性做二级排序,H值三级排序 (参考2909a-方案2);
+ *      2023.12.26: 优化sort性能,把getEffectStrong()提出来提前取好 (参考31025-代码段-问题1);
  */
 +(NSArray*) solutionFoRankingV3:(NSArray*)solutionModels {
-    //1. 根据cutIndex到target之间的稳定性和有效性来排名 (参考29099-todo1 & todo2);
-    NSArray *sort = [SMGUtils sortBig2Small:solutionModels compareBlock1:^double(AICansetModel *item) {
-        AIFoNodeBase *sceneFo = [SMGUtils searchNode:item.sceneFo];
-        return [TOUtils getEffectScore:sceneFo effectIndex:item.sceneTargetIndex solutionFo:item.cansetFo];//后段有效性 (参考2909a-todo1);
-    } compareBlock2:^double(AICansetModel *item) {
-        AIFoNodeBase *cansetFo = [SMGUtils searchNode:item.cansetFo];
-        return [TOUtils getStableScore:cansetFo startSPIndex:item.cutIndex + 1 endSPIndex:item.cutIndex + 1];//下帧稳定性
-    } compareBlock3:^double(AICansetModel *item) {
+    //0. 将effStrong提前取出来,存到mapModel中;
+    NSArray *mapArr = [SMGUtils convertArr:solutionModels convertBlock:^id(AICansetModel *item) {
         AIFoNodeBase *sceneFo = [SMGUtils searchNode:item.sceneFo];
         AIEffectStrong *strong = [TOUtils getEffectStrong:sceneFo effectIndex:item.sceneTargetIndex solutionFo:item.cansetFo];
+        return [MapModel newWithV1:item v2:strong];
+    }];
+    
+    //1. 根据cutIndex到target之间的稳定性和有效性来排名 (参考29099-todo1 & todo2);
+    NSArray *sort = [SMGUtils sortBig2Small:mapArr compareBlock1:^double(MapModel *item) {
+        return [TOUtils getEffectScore:item.v2];//后段有效性 (参考2909a-todo1);
+    } compareBlock2:^double(MapModel *item) {
+        AICansetModel *cansetModel = item.v1;
+        AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetModel.cansetFo];
+        return [TOUtils getStableScore:cansetFo startSPIndex:cansetModel.cutIndex + 1 endSPIndex:cansetModel.cutIndex + 1];//下帧稳定性
+    } compareBlock3:^double(MapModel *item) {
+        AIEffectStrong *strong = item.v2;
         return strong.hStrong;//H值 (参考2909a-todo3);
+    }];
+    
+    //2. 将mapModel转回AICansetModel数组;
+    sort = [SMGUtils convertArr:sort convertBlock:^id(MapModel *obj) {
+        return obj.v1;
     }];
     
     //2. debug日志

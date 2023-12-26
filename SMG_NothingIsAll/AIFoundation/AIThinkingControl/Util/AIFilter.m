@@ -58,10 +58,10 @@
  *  MARK:--------------------Canset求解过滤器 (参考29081-todo41)--------------------
  *  @version
  *      2023.09.04: 加上hStrong做二级排序因子 (参考30125-方案);
+ *      2023.12.26: 优化sort性能,把getEffectStrong()提出来提前取好 (参考31025-代码段-问题1);
  */
 +(NSArray*) solutionCansetFilter:(AIFoNodeBase*)sceneFo targetIndex:(NSInteger)targetIndex {
     NSArray *protoConCansets = [sceneFo getConCansets:targetIndex];
-    //TODOTOMORROW20231224: 此处sort超耗能 (参考31025-代码段-问题1);
     
     AddDebugCodeBlock_Key(@"aaaaa", @"10");
     //1. canset数组转成mapModel (提前把strong都取出来,避免后面在排序时访问太多次而卡性能);
