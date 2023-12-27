@@ -76,12 +76,50 @@
         [brotherModels addObjectsFromArray:itemBrotherModels];
     }
     
-    //5. 将三级全收集返回;
+    //5. 去重1: 数据准备;
+    NSArray *iSceneArr = [SMGUtils convertArr:iModels convertBlock:^id(AISceneModel *obj) {
+        return obj.scene;
+    }];
+    NSArray *fatherSceneArr = [SMGUtils convertArr:fatherModels convertBlock:^id(AISceneModel *obj) {
+        return obj.scene;
+    }];
+    
+    //6. 去重2: 优先级I>F>B: 即I有的F和B不能再有,F有的B不能再有;
+    fatherModels = [SMGUtils filterArr:fatherModels checkValid:^BOOL(AISceneModel *item) {
+        return ![iSceneArr containsObject:item.scene];
+    }];
+    brotherModels = [SMGUtils filterArr:brotherModels checkValid:^BOOL(AISceneModel *item) {
+        return ![iSceneArr containsObject:item.scene] && ![fatherSceneArr containsObject:item.scene];
+    }];
+    
+    //7. 去重3: 本层防重: 即F内不能重复,B内不能重复;
+    fatherModels = [SMGUtils removeRepeat:fatherModels convertBlock:^id(AISceneModel *obj) {
+        return obj.scene;
+    }];
+    brotherModels = [SMGUtils removeRepeat:brotherModels convertBlock:^id(AISceneModel *obj) {
+        return obj.scene;
+    }];
+    
+    //8. 将三级全收集返回;
     NSMutableArray *result = [[NSMutableArray alloc] init];
     [result addObjectsFromArray:iModels];
     [result addObjectsFromArray:fatherModels];
     [result addObjectsFromArray:brotherModels];
     NSLog(@"第1步 R场景树枝点数 I:%ld + Father:%ld + Brother:%ld = 总:%ld",iModels.count,fatherModels.count,brotherModels.count,result.count);
+    
+    
+
+    if (result.count > 30) {
+        NSArray *norepeat = [SMGUtils removeRepeat:result convertBlock:^id(AISceneModel *obj) {
+            return obj.scene;
+        }];
+        if (result.count != norepeat.count) {
+            NSLog(@"ALLSCENE: %@",CLEANSTR([SMGUtils convertArr:result convertBlock:^id(AISceneModel *obj) {
+                return STRFORMAT(@"F%ld",obj.scene.pointerId);
+            }]));
+            NSLog(@"");
+        }
+    }
     return result;
 }
 

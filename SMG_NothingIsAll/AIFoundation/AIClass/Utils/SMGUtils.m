@@ -717,18 +717,19 @@
 +(NSMutableArray*) removeRepeat:(NSArray*)protoArr convertBlock:(id(^)(id obj))convertBlock{
     //1. 数据准备
     NSMutableArray *result = [[NSMutableArray alloc] init];
+    NSMutableArray *resultConverteds = [[NSMutableArray alloc] init];
     protoArr = ARRTOOK(protoArr);
     
     //2. 防重收集
     for (id proto in protoArr) {
         
         //3. 将已收集部分和当前proto转为converted后的类型;
-        NSArray *resultConverteds = [SMGUtils convertArr:result convertBlock:convertBlock];
         id protoConverted = convertBlock(proto);
         
         //4. 判断是否已包含 (未包含则收集);
         if (![resultConverteds containsObject:protoConverted]) {
             [result addObject:proto];
+            [resultConverteds addObject:protoConverted];
         }
     }
     return result;
