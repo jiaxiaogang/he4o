@@ -194,40 +194,28 @@
  */
 +(AICansetModel*) rSolution_Slow:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps {
     //1. 收集cansetModels候选集;
-    AddDebugCodeBlock_Key(@"aaaaa", @"-1");
-    NSArray *sceneModels = [TCScene rGetSceneTree:demand];//1800ms
-    AddDebugCodeBlock_Key(@"aaaaa", @"0");
+    NSArray *sceneModels = [TCScene rGetSceneTree:demand];//600ms
     
     //2. 每个cansetModel转solutionModel;
     NSArray *cansetModels = [SMGUtils convertArr:sceneModels convertItemArrBlock:^NSArray *(AISceneModel *sceneModel) {
         //3. 取出overrideCansets;
-        AddDebugCodeBlock_Key(@"aaaaa", @"1");
         AIFoNodeBase *sceneFo = [SMGUtils searchNode:sceneModel.scene];
-        AddDebugCodeBlock_Key(@"aaaaa", @"2");
         NSArray *cansets = ARRTOOK([TCCanset getOverrideCansets:sceneModel sceneTargetIndex:sceneFo.count]);//127ms
-        AddDebugCodeBlock_Key(@"aaaaa", @"3");
         AIMatchFoModel *pFo = [SMGUtils filterSingleFromArr:demand.validPFos checkValid:^BOOL(AIMatchFoModel *item) {
             return [item.matchFo isEqual:sceneModel.getRoot.scene];
         }];
-        AddDebugCodeBlock_Key(@"aaaaa", @"4");
         NSArray *itemCansetModels = [SMGUtils convertArr:cansets convertBlock:^id(AIKVPointer *canset) {
             //4. cansetModel转换器参数准备;
-            AddDebugCodeBlock_Key(@"aaaaa", @"5");
             NSInteger aleardayCount = sceneModel.cutIndex + 1;
             
             //4. 过滤器 & 转cansetModels候选集 (参考26128-第1步 & 26161-1&2&3);
-            AICansetModel *model = [TCCanset convert2CansetModel:canset sceneFo:sceneModel.scene basePFoOrTargetFoModel:pFo ptAleardayCount:aleardayCount isH:false sceneModel:sceneModel];//245ms
-            AddDebugCodeBlock_Key(@"aaaaa", @"6");
-            return model;
+            return [TCCanset convert2CansetModel:canset sceneFo:sceneModel.scene basePFoOrTargetFoModel:pFo ptAleardayCount:aleardayCount isH:false sceneModel:sceneModel];//1200ms/600次执行
         }];
-        AddDebugCodeBlock_Key(@"aaaaa", @"7");
         
         if (Log4GetCansetResult4R && cansets.count > 0) NSLog(@"\t item场景(%@):%@ 取得候选数:%ld 转成候选模型数:%ld",SceneType2Str(sceneModel.type),Pit2FStr(sceneModel.scene),cansets.count,itemCansetModels.count);
         return itemCansetModels;
     }];
     NSLog(@"第2步 转为候选集 总数:%ld",cansetModels.count);
-    AddDebugCodeBlock_Key(@"aaaaa", @"8");
-    PrintDebugCodeBlock_Key(@"aaaaa");
 
     //5. 慢思考;
     return [self generalSolution_Slow:demand cansetModels:cansetModels except_ps:except_ps];//400ms

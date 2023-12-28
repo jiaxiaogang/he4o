@@ -106,20 +106,6 @@
     [result addObjectsFromArray:fatherModels];
     [result addObjectsFromArray:brotherModels];
     NSLog(@"第1步 R场景树枝点数 I:%ld + Father:%ld + Brother:%ld = 总:%ld",iModels.count,fatherModels.count,brotherModels.count,result.count);
-    
-    
-
-    if (result.count > 30) {
-        NSArray *norepeat = [SMGUtils removeRepeat:result convertBlock:^id(AISceneModel *obj) {
-            return obj.scene;
-        }];
-        if (result.count != norepeat.count) {
-            NSLog(@"ALLSCENE: %@",CLEANSTR([SMGUtils convertArr:result convertBlock:^id(AISceneModel *obj) {
-                return STRFORMAT(@"F%ld",obj.scene.pointerId);
-            }]));
-            NSLog(@"");
-        }
-    }
     return result;
 }
 

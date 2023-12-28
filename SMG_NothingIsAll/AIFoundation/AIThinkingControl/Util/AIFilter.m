@@ -63,13 +63,11 @@
 +(NSArray*) solutionCansetFilter:(AIFoNodeBase*)sceneFo targetIndex:(NSInteger)targetIndex {
     NSArray *protoConCansets = [sceneFo getConCansets:targetIndex];
     
-    AddDebugCodeBlock_Key(@"aaaaa", @"10");
     //1. canset数组转成mapModel (提前把strong都取出来,避免后面在排序时访问太多次而卡性能);
     NSArray *mapArr = [SMGUtils convertArr:protoConCansets convertBlock:^id(AIKVPointer *canset) {
         AIEffectStrong *strong = [TOUtils getEffectStrong:sceneFo effectIndex:targetIndex solutionFo:canset];
         return [MapModel newWithV1:canset v2:strong];
     }];
-    AddDebugCodeBlock_Key(@"aaaaa", @"11");
     
     //2. 对mapModelArr排序;
     NSArray *sorts = [SMGUtils sortBig2Small:mapArr compareBlock1:^double(MapModel *mapModel) {
@@ -78,14 +76,12 @@
         AIEffectStrong *strong = mapModel.v2;
         return strong.hStrong;
     }];
-    AddDebugCodeBlock_Key(@"aaaaa", @"12");
     
     //3. sort再转回canset数组;
     sorts = [SMGUtils convertArr:sorts convertBlock:^id(MapModel *obj) {
         return obj.v1;
     }];
     NSInteger limit = MAX(3, protoConCansets.count * 0.2f);//取20% & 至少尝试取3条;
-    AddDebugCodeBlock_Key(@"aaaaa", @"13");
     return ARR_SUB(sorts, 0, limit);
 }
 
