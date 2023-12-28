@@ -95,7 +95,6 @@
                     
                     //9. 失效判断: pFo任务失效 (参考27093-条件2 & 27095-2);
                     item.isExpired = true;
-                    NSLog(@"2 isexpired true baseRDemand.protoFo &regroupFo & pFo: F%ld F%ld F%ld",item.baseRDemand.protoFo.pointerId,item.baseRDemand.regroupFo.pointerId,item.matchFo.pointerId);
                 }
             }
         }];
@@ -135,7 +134,6 @@
             
             //13. pFo任务失效 (参考27093-条件1 & 27095-1);
             item.isExpired = true;
-            NSLog(@"3 isexpired true baseRDemand.protoFo &regroupFo & pFo: F%ld F%ld F%ld",item.baseRDemand.protoFo.pointerId,item.baseRDemand.regroupFo.pointerId,item.matchFo.pointerId);
         }];
     }
 }

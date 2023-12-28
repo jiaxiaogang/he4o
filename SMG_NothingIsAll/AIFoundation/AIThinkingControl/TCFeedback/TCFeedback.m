@@ -160,7 +160,6 @@
                 
                 //13. pFo任务失效 (参考27093-条件1 & 27095-1);
                 waitModel.isExpired = true;
-                NSLog(@"1 isexpired true baseRDemand.protoFo &regroupFo & pFo: F%ld F%ld F%ld",waitModel.baseRDemand.protoFo.pointerId,waitModel.baseRDemand.regroupFo.pointerId,waitModel.matchFo.pointerId);
                 dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
                     [theTV updateFrame];
                 });
