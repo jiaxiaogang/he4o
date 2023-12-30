@@ -72,13 +72,12 @@
             AIMatchFoModel *basePFo = (AIMatchFoModel*)model.basePFoOrTargetFoModel;
             NSArray *order = [basePFo convertOrders4NewCansetV2];
             if (ARRISOK(order)) {
-                
-                //TODOTOMORROW20231229: 查下这里,是不是只有ATPlus时,才应该生成新hCanset,ATSub时就算了...
-                
-                
-                AIFoNodeBase *hCanset = [theNet createConFoForCanset:order sceneFo:canset sceneTargetIndex:actionIndex];
-                [canset updateConCanset:hCanset.pointer targetIndex:actionIndex];
-                NSLog(@"\n因OR反省(%@ 第%ld帧)为rCanset:F%ld 挂载NewHCanset:%@",ATType2Str(type),actionIndex + 1,canset.pId,Fo2FStr(hCanset));
+                //2023.12.29: 改为只有ATPlus时,才应该生成新hCanset,ATSub时就算了 (做31026-第2步时临时起意改的);
+                if (type == ATPlus) {
+                    AIFoNodeBase *hCanset = [theNet createConFoForCanset:order sceneFo:canset sceneTargetIndex:actionIndex];
+                    [canset updateConCanset:hCanset.pointer targetIndex:actionIndex];
+                    NSLog(@"\n因OR反省(%@ 第%ld帧)为rCanset:F%ld 挂载NewHCanset:%@",ATType2Str(type),actionIndex + 1,canset.pId,Fo2FStr(hCanset));
+                }
             }
         }
     }
