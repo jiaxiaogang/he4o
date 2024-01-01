@@ -88,7 +88,7 @@
                 
                 //简化日志2: 飞不加header
                 if ([SMGUtils filterSingleFromArr:algNode.content_ps checkValid:^BOOL(AIKVPointer *item) {
-                    return [FLY_RDS isEqualToString:item.algsType];
+                    return [FLY_RDS isEqualToString:item.algsType] || [KICK_RDS isEqualToString:item.algsType];
                 }]) {
                     header = false;
                 }
@@ -149,6 +149,8 @@
         return STRFORMAT(@"吃%@",valueStr);
     }else if([FLY_RDS isEqualToString:value_p.algsType]){
         return STRFORMAT(@"飞%@",valueStr);
+    }else if([KICK_RDS isEqualToString:value_p.algsType]){
+        return STRFORMAT(@"踢%@",valueStr);
     }else if([NSStringFromClass(ImvAlgsHungerModel.class) isEqualToString:value_p.algsType] && [@"urgentTo" isEqualToString:value_p.dataSource]){
         return STRFORMAT(@"饿%@",valueStr);
     }else if([NSStringFromClass(ImvAlgsHurtModel.class) isEqualToString:value_p.algsType] && [@"urgentTo" isEqualToString:value_p.dataSource]){

@@ -225,6 +225,8 @@
         return [TVUtil distanceYDesc:value];
     }else if([FLY_RDS isEqualToString:value_p.algsType]){
         return STRFORMAT(@"%@",valueStr);
+    }else if([KICK_RDS isEqualToString:value_p.algsType]){
+        return STRFORMAT(@"%@",valueStr);
     }
     return @"";//valueStr
 }
@@ -235,6 +237,8 @@
         return [NVHeUtil fly2Str:value];
     }else if([@"direction" isEqualToString:dataSource]){
         return [NVHeUtil direction2Str:value];
+    }else if([KICK_RDS isEqualToString:dataSource]){
+        return STRFORMAT(@"踢%@",[NVHeUtil fly2Str:value]);
     }
     return Double2Str_NDZ(value);
 }
