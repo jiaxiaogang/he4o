@@ -118,7 +118,7 @@
  *  MARK:--------------------PathNameKey (kPH)--------------------
  */
 
-#define kCachePath [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+#define kCachePath [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0]
 
 //algNode
 #define kPN_ALG_NODE           @"PN_ALG_NODE"          //Alg节点根目录;(白质)
@@ -158,7 +158,7 @@
 #define kFNDefault @" "                               //默认文件名; (例如:小脑canout序列)
 
 //所有文件夹数组
-#define kFN_ALL @[/*mvNode*/kPN_CMV_NODE,kPN_ABS_CMV_NODE,/*mv索引*/kPN_DIRECTION(MVDirection_None),kPN_DIRECTION(MVDirection_Negative),kPN_DIRECTION(MVDirection_Positive),/*foNode*/kPN_FRONT_ORDER_NODE,kPN_FO_ABS_NODE,/*algNode*/kPN_ALG_NODE,kPN_ALG_ABS_NODE,/*小脑*/kPN_CEREBEL_CANOUT,/*稀疏码索引*/kPN_INDEX,kPN_DATA,kPN_VALUE];
+#define kFN_ALL @[/*mvNode*/kPN_CMV_NODE,kPN_ABS_CMV_NODE,/*mv索引*/kPN_DIRECTION(MVDirection_None),kPN_DIRECTION(MVDirection_Negative),kPN_DIRECTION(MVDirection_Positive),/*foNode*/kPN_FRONT_ORDER_NODE,kPN_FO_ABS_NODE,/*algNode*/kPN_ALG_NODE,kPN_ALG_ABS_NODE,/*小脑*/kPN_CEREBEL_CANOUT,/*稀疏码索引*/kPN_INDEX,kPN_DATA,kPN_VALUE]
 
 /**
  *  MARK:--------------------数据检查--------------------
@@ -230,7 +230,7 @@
 //xxx转指针
 #define Ports2Pits(ports) [SMGUtils convertPointersFromPorts:ports]
 #define Nodes2Pits(nodes) [SMGUtils convertPointersFromNodes:nodes]
-#define TOModels2Pits(toModels) [TOUtils convertPointersFromTOModels:toModels];
+#define TOModels2Pits(toModels) [TOUtils convertPointersFromTOModels:toModels]
 
 //Type转字符串
 #define ATType2Str(type) [NSLog_Extension convertATType2Desc:type]
