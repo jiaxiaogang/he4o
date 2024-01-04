@@ -203,18 +203,21 @@
         //取出root下在执行中的Canset,然后: BOOL progressScore = actionIndex/(targetIndex);
         
         CGFloat demandScore = -[AIScore score4Demand:obj];
+        CGFloat maxProgressScore = 0;
         for (TOFoModel *actionFo in obj.actionFoModels) {
+            if (actionFo.status != TOModelStatus_Runing && actionFo.status != TOModelStatus_ActYes) continue;
             AIFoNodeBase *fo = [SMGUtils searchNode:actionFo.content_p];
             CGFloat progress = (float)actionFo.actionIndex / actionFo.targetSPIndex;
-            CGFloat progressScore = demandScore * progress;
-            NSLog(@"cansetFo: F%ld %@ (%ld/%ld|%ld) => 进度分%.2f 总分:%.2f",actionFo.content_p.pointerId,TOStatus2Str(actionFo.status),actionFo.actionIndex+1,actionFo.targetSPIndex,fo.count,progressScore,progressScore + demandScore);
+            CGFloat hot = 1 - [MathUtils getCooledValue_28:progress];//根据28牛顿曲线,计算出当前进度带来热度值;
+            CGFloat progressScore = demandScore * hot;
+            CGFloat totalScore = progressScore + demandScore;
+            NSLog(@"cansetFo: F%ld %@ (%ld/%ld|%ld)",actionFo.content_p.pointerId,TOStatus2Str(actionFo.status),actionFo.actionIndex+1,actionFo.targetSPIndex,fo.count);
+            NSLog(@"进度:%.2f 热度:%.2f 进度分:%.2f 总分:%.2f",progress,hot,progressScore,totalScore);
+            maxProgressScore = MAX(maxProgressScore, progressScore);
         }
         
-        NSArray *validPFos = obj.validPFos;
-        for (AIMatchFoModel *validPFo in validPFos) {
-            AIFoNodeBase *fo = [SMGUtils searchNode:validPFo.matchFo];
-            //NSLog(@"pFo: F%ld (%ld) 共:%ld个元素",validPFo.matchFo.pointerId,validPFo.cutIndex,fo.count);
-        }
+        CGFloat totalScore = maxProgressScore + demandScore;
+        NSLog(@"最终进度分:%.2f 总分:%.2f",maxProgressScore,totalScore);
         
         return -[AIScore score4Demand:obj];
     } compareBlock2:^double(DemandModel *obj) {
@@ -224,7 +227,7 @@
     //用于回测31052;
     BOOL havHDemand = NUMTOOK([SMGUtils searchObjectForFilePath:kCachePath fileName:@"" time:1000]).boolValue;
     if (havHDemand) {
-        for (DemandModel *demand in theTC.outModelManager.getAllDemand) {
+        for (DemandModel *demand in self.loopCache.array) {
             NSLog(@"%.2f",[AIScore score4Demand:demand]);
             NSLog(@"%@",TOModel2Sub2Str(demand));
         }
