@@ -17,15 +17,6 @@
  */
 +(void) scoreFromIfTCNeed{}
 +(TCResult*) scoreFromTOQueue{
-    BOOL havHDemand = NUMTOOK([SMGUtils searchObjectForFilePath:kCachePath fileName:@"" time:1000]).boolValue;
-    if (havHDemand) {
-        for (DemandModel *demand in theTC.outModelManager.getAllDemand) {
-            NSLog(@"%.2f",[AIScore score4Demand:demand]);
-            NSLog(@"%@",TOModel2Sub2Str(demand));
-        }
-        NSLog(@"过一秒正常,此处查下score中,为什么触发了rSolution,却没触发hSolution");
-    }
-    
     return [self score];
 }
 
