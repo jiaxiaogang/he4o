@@ -198,6 +198,12 @@
  */
 -(void) refreshCmvCacheSort{
     NSArray *sort = [SMGUtils sortBig2Small:self.loopCache.array compareBlock1:^double(DemandModel *obj) {
+        //TODOTOMORROW20240104: 避免徒劳,已经付出努力的价值,计为进度分 (参考31052);
+        //BOOL progressScore =
+        //1. 取出root下在执行中的subCanset,看下actionIndex是多少;
+        //2. 算出actionIndex/cansetCount;
+        //3. 与所在任务分相乘 (可能有多层H任务,每一层分别只对应自己一级subRDemand的效果...这个要先分析下,该怎么乘比较好);
+        
         return -[AIScore score4Demand:obj];
     } compareBlock2:^double(DemandModel *obj) {
         return obj.initTime;

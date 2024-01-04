@@ -85,7 +85,6 @@
     if (!baseRDemand) return true;
     CGFloat demandScore = [AIScore score4Demand:baseRDemand];
     
-    
     //2. 根据foModel向下取出subDemands的评分 (取最严重的一条subDemand分);
     CGFloat zuiYanZonSubDemandScore = 0;
     NSString *zuiYanZonDemandTypeStr = @"";
