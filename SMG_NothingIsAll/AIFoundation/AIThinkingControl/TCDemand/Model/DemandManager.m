@@ -198,13 +198,6 @@
  *      2024.01.04: 避免徒劳,已经付出努力的价值,计为进度分 (参考31052);
  */
 -(void) refreshCmvCacheSort {
-    
-    //用于回测31052;
-    BOOL havHDemand = NUMTOOK([SMGUtils searchObjectForFilePath:kCachePath fileName:@"aaaaa" time:1000]).boolValue;
-    if (havHDemand) {
-        for (DemandModel *demand in self.loopCache.array) NSLog(@"%@",TOModel2Sub2Str(demand));
-    }
-    
     NSArray *sort = [SMGUtils sortBig2Small:self.loopCache.array compareBlock1:^double(ReasonDemandModel *obj) {
         //1. 计算任务分;
         CGFloat demandScore = -[AIScore score4Demand:obj];
@@ -216,8 +209,8 @@
             CGFloat progress = (float)actionFo.actionIndex / actionFo.targetSPIndex;//参考31052-公式1
             CGFloat hot = 1 - [MathUtils getCooledValue_28:progress];//参考31052-公式2
             CGFloat progressScore = demandScore * hot;//参考31052-公式3
-            NSLog(@"cansetFo: F%ld %@ (%ld/%ld)",actionFo.content_p.pointerId,TOStatus2Str(actionFo.status),actionFo.actionIndex+1,actionFo.targetSPIndex);
-            NSLog(@"进度:%.2f 热度:%.2f 进度分:%.2f",progress,hot,progressScore);
+            //NSLog(@"cansetFo: F%ld %@ (%ld/%ld)",actionFo.content_p.pointerId,TOStatus2Str(actionFo.status),actionFo.actionIndex+1,actionFo.targetSPIndex);
+            //NSLog(@"进度:%.2f 热度:%.2f 进度分:%.2f",progress,hot,progressScore);
             maxProgressScore = MAX(maxProgressScore, progressScore);
         }
         
