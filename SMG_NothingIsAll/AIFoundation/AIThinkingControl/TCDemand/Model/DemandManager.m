@@ -195,45 +195,39 @@
  *      2021.11.13: R任务排序根据 "迫切度*匹配度" 得出 (参考24107-2);
  *      2022.03.15: 将排序方式更新为用score4Demand (参考25142);
  *      2023.03.01: 修复排序反了的BUG: 评分越低越应该优先 (参考28136-修复);
+ *      2024.01.04: 避免徒劳,已经付出努力的价值,计为进度分 (参考31052);
  */
--(void) refreshCmvCacheSort{
+-(void) refreshCmvCacheSort {
+    
+    //用于回测31052;
+    BOOL havHDemand = NUMTOOK([SMGUtils searchObjectForFilePath:kCachePath fileName:@"aaaaa" time:1000]).boolValue;
+    if (havHDemand) {
+        for (DemandModel *demand in self.loopCache.array) NSLog(@"%@",TOModel2Sub2Str(demand));
+    }
+    
     NSArray *sort = [SMGUtils sortBig2Small:self.loopCache.array compareBlock1:^double(ReasonDemandModel *obj) {
-        
-        //TODOTOMORROW20240104: 避免徒劳,已经付出努力的价值,计为进度分 (参考31052);
-        //取出root下在执行中的Canset,然后: BOOL progressScore = actionIndex/(targetIndex);
-        
+        //1. 计算任务分;
         CGFloat demandScore = -[AIScore score4Demand:obj];
+        
+        //2. 计算进度分 (参考31052-todo1);
         CGFloat maxProgressScore = 0;
         for (TOFoModel *actionFo in obj.actionFoModels) {
             if (actionFo.status != TOModelStatus_Runing && actionFo.status != TOModelStatus_ActYes) continue;
-            AIFoNodeBase *fo = [SMGUtils searchNode:actionFo.content_p];
-            CGFloat progress = (float)actionFo.actionIndex / actionFo.targetSPIndex;
-            CGFloat hot = 1 - [MathUtils getCooledValue_28:progress];//根据28牛顿曲线,计算出当前进度带来热度值;
-            CGFloat progressScore = demandScore * hot;
-            CGFloat totalScore = progressScore + demandScore;
-            NSLog(@"cansetFo: F%ld %@ (%ld/%ld|%ld)",actionFo.content_p.pointerId,TOStatus2Str(actionFo.status),actionFo.actionIndex+1,actionFo.targetSPIndex,fo.count);
-            NSLog(@"进度:%.2f 热度:%.2f 进度分:%.2f 总分:%.2f",progress,hot,progressScore,totalScore);
+            CGFloat progress = (float)actionFo.actionIndex / actionFo.targetSPIndex;//参考31052-公式1
+            CGFloat hot = 1 - [MathUtils getCooledValue_28:progress];//参考31052-公式2
+            CGFloat progressScore = demandScore * hot;//参考31052-公式3
+            NSLog(@"cansetFo: F%ld %@ (%ld/%ld)",actionFo.content_p.pointerId,TOStatus2Str(actionFo.status),actionFo.actionIndex+1,actionFo.targetSPIndex);
+            NSLog(@"进度:%.2f 热度:%.2f 进度分:%.2f",progress,hot,progressScore);
             maxProgressScore = MAX(maxProgressScore, progressScore);
         }
         
+        //3. 求出总分,并用于排序 (参考31052-todo2);
         CGFloat totalScore = maxProgressScore + demandScore;
-        NSLog(@"最终进度分:%.2f 总分:%.2f",maxProgressScore,totalScore);
-        
-        return -[AIScore score4Demand:obj];
+        NSLog(@"任务分:%.2f + 最终进度分:%.2f = 总分:%.2f",demandScore,maxProgressScore,totalScore);
+        return totalScore;
     } compareBlock2:^double(DemandModel *obj) {
         return obj.initTime;
     }];
-    
-    //用于回测31052;
-    BOOL havHDemand = NUMTOOK([SMGUtils searchObjectForFilePath:kCachePath fileName:@"" time:1000]).boolValue;
-    if (havHDemand) {
-        for (DemandModel *demand in self.loopCache.array) {
-            NSLog(@"%.2f",[AIScore score4Demand:demand]);
-            NSLog(@"%@",TOModel2Sub2Str(demand));
-        }
-        NSLog(@"在有了HDemand有皮果后,此处查下score中,为什么触发了rSolution,却没触发hSolution");
-    }
-    
     
     [self.loopCache removeAllObjects];
     [self.loopCache addObjectsFromArray:sort];

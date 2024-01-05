@@ -97,7 +97,9 @@
     dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
         [theTV updateFrame];
     });
-    [SMGUtils insertObject:@(true) rootPath:kCachePath fileName:@"" time:1000 saveDB:false];
+    
+    //用于回测31052;
+    [SMGUtils insertObject:@(true) rootPath:kCachePath fileName:@"aaaaa" time:1000 saveDB:false];
     
     //2. 调用TCScore继续决策;
     DebugE();
