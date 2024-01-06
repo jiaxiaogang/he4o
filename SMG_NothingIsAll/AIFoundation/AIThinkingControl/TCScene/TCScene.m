@@ -120,6 +120,13 @@
     NSMutableArray *iModels = [[NSMutableArray alloc] init];
     NSMutableArray *fatherModels = [[NSMutableArray alloc] init];
     NSMutableArray *brotherModels = [[NSMutableArray alloc] init];
+    
+    //TODOTOMORROW20240106: 查下此处取得i只有一条,f和b全是0条;
+    //1. 这么取出base.base还只是rCanset,再取base才是rDemand;
+    //2. 而只有rScene才有丰富的抽具象关系,rCanset是没有的 (这里要分析下: 是丰富化rCanset抽具象关系,还是借由rScene实现迁移);
+    
+    
+    
     TOFoModel *targetFoM = (TOFoModel*)demand.baseOrGroup.baseOrGroup;
     NSInteger targetIndex = targetFoM.actionIndex;
     
