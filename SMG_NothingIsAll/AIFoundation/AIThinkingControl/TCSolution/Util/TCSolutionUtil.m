@@ -187,6 +187,41 @@
     return [self generalSolution_Slow:demand cansetModels:cansetModels except_ps:except_ps];//400ms
 }
 
++(AICansetModel*) hSolution_SlowV3:(HDemandModel *)demand except_ps:(NSArray*)except_ps {
+    //1. 数据准备;
+    TOFoModel *targetFoM = (TOFoModel*)demand.baseOrGroup.baseOrGroup;
+    ReasonDemandModel *baseRDemand = (ReasonDemandModel*)targetFoM.baseOrGroup;//取出rDemand
+    
+    //2. 再根据rDemand取出场景树;
+    NSArray *sceneModels = [TCScene rGetSceneTree:baseRDemand];
+    //3. 再根据r场景树,找出cansets;
+    
+    //2. 每个cansetModel转solutionModel;
+    NSArray *cansetModels = [SMGUtils convertArr:sceneModels convertItemArrBlock:^NSArray *(AISceneModel *sceneModel) {
+        //3. 取出overrideCansets;
+        NSArray *cansets = ARRTOOK([TCCanset getOverrideCansets:sceneModel sceneTargetIndex:sceneModel.cutIndex + 1]);//127ms
+        NSArray *itemCansetModels = [SMGUtils convertArr:cansets convertBlock:^id(AIKVPointer *canset) {
+            //4. 过滤器 & 转cansetModels候选集 (参考26128-第1步 & 26161-1&2&3);
+            NSInteger aleardayCount = sceneModel.cutIndex + 1;
+            
+            
+            //TODOTOMORROW20240106: 测下h任务也从r场景树迁移 (参考31053);
+            //1. 从cansets中过滤出与hDemand有抽具象关系的 (用hAlg取抽具象关系的,判断交集即可);
+            
+            
+            
+            return [TCCanset convert2CansetModel:canset sceneFo:sceneModel.scene basePFoOrTargetFoModel:targetFoM ptAleardayCount:aleardayCount isH:true sceneModel:sceneModel];//245ms
+        }];
+        
+        if (Log4GetCansetResult4H && cansets.count > 0) NSLog(@"\t item场景(%@):%@ 取得候选数:%ld 转成候选模型数:%ld",SceneType2Str(sceneModel.type),Pit2FStr(sceneModel.scene),cansets.count,itemCansetModels.count);
+        return itemCansetModels;
+    }];
+    NSLog(@"第2步 转为候选集 总数:%ld",cansetModels.count);
+
+    //5. 慢思考;
+    return [self generalSolution_Slow:demand cansetModels:cansetModels except_ps:except_ps];//400ms
+}
+
 /**
  *  MARK:--------------------R慢思考--------------------
  *  @version
