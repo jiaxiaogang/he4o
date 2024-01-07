@@ -225,23 +225,63 @@
 
 +(AICansetModel*) hSolution_SlowV4:(HDemandModel *)demand except_ps:(NSArray*)except_ps {
     //1. 取出rSolution的成果,在它的基础上继续做hSolution;
-    NSArray *rCansetModels = demand.rCansetModels;
+    ReasonDemandModel *rDemand = (ReasonDemandModel*)demand.baseOrGroup.baseOrGroup.baseOrGroup;
+    NSArray *rCansetModels = rDemand.rCansetModels;
     NSLog(@"第1步 rCansetModels数: %ld",rCansetModels.count);
     
     //2. 根据当前hAlg取抽具象树;
     TOAlgModel *hAlgModel = (TOAlgModel*)demand.baseOrGroup;
     AIFoNodeBase *hAlg = [SMGUtils searchNode:hAlgModel.content_p];
     NSArray *absHAlgs = Ports2Pits([AINetUtils absPorts_All:hAlg]);
-    NSArray *conHAlgs = Ports2Pits([AINetUtils conPorts_All:hAlg]);
+    NSArray *conHAlgs = [SMGUtils convertArr:absHAlgs convertItemArrBlock:^NSArray *(AIKVPointer *obj) {
+        AIAlgNodeBase *absHAlg = [SMGUtils searchNode:obj];
+        return Ports2Pits([AINetUtils conPorts_All:absHAlg]);
+    }];
+    
     NSMutableArray *allHAlgs = [[NSMutableArray alloc] init];
     [allHAlgs addObject:hAlg.pointer];
     [allHAlgs addObjectsFromArray:absHAlgs];
     [allHAlgs addObjectsFromArray:conHAlgs];
     NSLog(@"第2步 absHAlg数:%ld conHAlg数:%ld HAlg树总数:%ld",absHAlgs.count,conHAlgs.count,allHAlgs.count);
+//    NSLog(@"=====> %@",CLEANSTR([SMGUtils convertArr:allHAlgs convertBlock:^id(AIKVPointer *obj) {
+//        return STRFORMAT(@"F%ld",obj.pointerId);
+//    }]));
+    
+    NSString *hAlgStr = Alg2FStr(hAlg);
+    NSMutableArray *havHCansetOfRCanset = [[NSMutableArray alloc] init];
+    if ([hAlgStr containsString:@"果"]) {
+        NSLog(@"直接调试以下,rCanset中就没有包含 果 的...");
+        //1. 可是不对啊,都生成皮果hDemand了,怎么可能rCanset里没一个有"果"的呢?
+        //2. 即使就真的全没果,那么只好再多训练一些newHCanset出来了...
+        //3. 可是下面havHAlgRCansetModelsCount又显示计数5,就奇怪了...,既然没有"果",又哪里计到5呢?
+        
+        
+        for (AICansetModel *item in rCansetModels) {
+            AIFoNodeBase *rCanset = [SMGUtils searchNode:item.cansetFo];
+            for (NSInteger i = 0; i < rCanset.count; i++) {
+                NSArray *hCansets = [rCanset getConCansets:i];
+                if (!ARRISOK(hCansets)) {
+                    continue;
+                }
+                
+                AIKVPointer *rCansetAlg = ARR_INDEX(rCanset.content_ps, i);
+                NSString *rCansetAlgStr = Pit2FStr(rCansetAlg);
+                if (![rCansetAlgStr containsString:@"果"]) {
+                    continue;
+                }
+                
+                [havHCansetOfRCanset addObject:item];
+                NSLog(@"");
+            }
+        }
+    }
     
     //3. 从所有rCanset中,筛选出包含hAlg抽具象树的;
     __block NSInteger havHAlgRCansetModelsCount = 0;
     NSArray *hCansets = [SMGUtils convertArr:rCansetModels convertItemArrBlock:^NSArray *(AICansetModel *item) {
+        if ([havHCansetOfRCanset containsObject:item]) {
+            NSLog(@"");
+        }
         //a. 从每条rCanset中,找是否包含hAlg树的任何一个枝叶;
         AIFoNodeBase *rCansetFo = [SMGUtils searchNode:item.cansetFo];
         NSInteger findIndex = -1;
