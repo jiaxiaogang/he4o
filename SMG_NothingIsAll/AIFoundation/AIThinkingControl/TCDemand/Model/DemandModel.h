@@ -41,4 +41,10 @@
  */
 @property (assign, nonatomic) double updateTime;
 
+/**
+ *  MARK:--------------------在决策时,将输出bestCanset之前的排序好的canset候选集存下来--------------------
+ *  @desc 这个数据里将所有获取rCanset的数据存下来了,可以用于从中寻找可供迁移的hCanset;
+ */
+@property (strong, nonatomic) NSArray *rCansetModels;
+
 @end

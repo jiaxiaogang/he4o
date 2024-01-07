@@ -207,6 +207,7 @@
             
             //TODOTOMORROW20240106: 测下h任务也从r场景树迁移 (参考31053);
             //1. 从cansets中过滤出与hDemand有抽具象关系的 (用hAlg取抽具象关系的,判断交集即可);
+            //问题: 此处再跑一次R的流程有点浪费,并且R流程也不行,得再改代码,往H再深入一层,有点复杂且麻烦;
             
             
             
@@ -220,6 +221,24 @@
 
     //5. 慢思考;
     return [self generalSolution_Slow:demand cansetModels:cansetModels except_ps:except_ps];//400ms
+}
+
++(AICansetModel*) hSolution_SlowV4:(HDemandModel *)demand except_ps:(NSArray*)except_ps {
+    //1. 取出rSolution的成果,在它的基础上继续做hSolution;
+    NSArray *rCansetModels = demand.rCansetModels;
+    
+    //2. 根据当前hAlg取抽具象树;
+    
+    //3. 从所有rCanset中,筛选出包含hAlg抽具象树的;
+    
+    //4. 从所有rCanset中,筛选出有hAlg的hCanset解的部分;
+    
+    //5. 对有解的部分进行竞争;
+    
+    //6. 将最好的hCanset解返回 (改写H版本的generalSolution_Slow());
+    return nil;
+    
+    //7. 返回后,将hCanset打包成foModel,并迁移;
 }
 
 /**
@@ -300,6 +319,7 @@
 
     //11. 根据候选集综合分排序 (参考26128-2-2 & 26161-4);
     NSArray *sortModels = [AIRank solutionFoRankingV3:cansetModels];
+    demand.rCansetModels = sortModels;
 
     //13. 取通过S反思的最佳S;
     for (AICansetModel *item in sortModels) {
