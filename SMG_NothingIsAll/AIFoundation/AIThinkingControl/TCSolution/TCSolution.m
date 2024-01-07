@@ -310,7 +310,7 @@
     
     //4. 快思考无果或后2条,再做慢思考;
     if (!bestResult) {
-        bestResult = [TCSolutionUtil hSolution_SlowV2:hDemand except_ps:except_ps];
+        bestResult = [TCSolutionUtil hSolution_SlowV4:hDemand except_ps:except_ps];
     }
     
     //8. 新解决方案_的结果处理;

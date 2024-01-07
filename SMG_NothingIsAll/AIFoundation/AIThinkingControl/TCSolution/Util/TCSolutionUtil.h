@@ -21,7 +21,8 @@
 //MARK:===============================================================
 //MARK:                     < 慢思考 >
 //MARK:===============================================================
-+(AICansetModel*) hSolution_SlowV2:(HDemandModel *)hDemand except_ps:(NSArray*)except_ps;
++(AICansetModel*) hSolution_SlowV2:(HDemandModel *)demand except_ps:(NSArray*)except_ps;
++(AICansetModel*) hSolution_SlowV4:(HDemandModel *)demand except_ps:(NSArray*)except_ps;
 +(AICansetModel*) rSolution_Slow:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps;
 
 /**

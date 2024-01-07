@@ -226,12 +226,42 @@
 +(AICansetModel*) hSolution_SlowV4:(HDemandModel *)demand except_ps:(NSArray*)except_ps {
     //1. 取出rSolution的成果,在它的基础上继续做hSolution;
     NSArray *rCansetModels = demand.rCansetModels;
+    NSLog(@"第1步 rCansetModels数: %ld",rCansetModels.count);
     
     //2. 根据当前hAlg取抽具象树;
+    TOAlgModel *hAlgModel = (TOAlgModel*)demand.baseOrGroup;
+    AIFoNodeBase *hAlg = [SMGUtils searchNode:hAlgModel.content_p];
+    NSArray *absHAlgs = Ports2Pits([AINetUtils absPorts_All:hAlg]);
+    NSArray *conHAlgs = Ports2Pits([AINetUtils conPorts_All:hAlg]);
+    NSMutableArray *allHAlgs = [[NSMutableArray alloc] init];
+    [allHAlgs addObject:hAlg.pointer];
+    [allHAlgs addObjectsFromArray:absHAlgs];
+    [allHAlgs addObjectsFromArray:conHAlgs];
+    NSLog(@"第2步 absHAlg数:%ld conHAlg数:%ld HAlg树总数:%ld",absHAlgs.count,conHAlgs.count,allHAlgs.count);
     
     //3. 从所有rCanset中,筛选出包含hAlg抽具象树的;
-    
-    //4. 从所有rCanset中,筛选出有hAlg的hCanset解的部分;
+    __block NSInteger havHAlgRCansetModelsCount = 0;
+    NSArray *hCansets = [SMGUtils convertArr:rCansetModels convertItemArrBlock:^NSArray *(AICansetModel *item) {
+        //a. 从每条rCanset中,找是否包含hAlg树的任何一个枝叶;
+        AIFoNodeBase *rCansetFo = [SMGUtils searchNode:item.cansetFo];
+        NSInteger findIndex = -1;
+        for (NSInteger i = 0; i < rCansetFo.count; i++) {
+            AIKVPointer *rCansetAlg = ARR_INDEX(rCansetFo.content_ps, i);
+            if ([allHAlgs containsObject:rCansetAlg]) {
+                findIndex = i;
+                break;
+            }
+        }
+        if (findIndex == -1) return nil;//找hAlg树枝叶失败: 则此rCanset不具备迁移给hScene.hAlg帧的条件;
+        havHAlgRCansetModelsCount++;
+        
+        //b. 从所有rCanset中,筛选出有hAlg的hCanset解的部分;
+        NSArray *hCansets = [rCansetFo getConCansets:findIndex];
+        if (!ARRISOK(hCansets)) return nil;//rCanset这帧无H解: 则它没任何hCanset可迁移给hScene.hAlg;
+        return hCansets;
+    }];
+    NSLog(@"第3步 包含HAlg树的rCansetModels数:%ld",havHAlgRCansetModelsCount);
+    NSLog(@"第4步 找到hCansets数:%ld",hCansets.count);
     
     //5. 对有解的部分进行竞争;
     
