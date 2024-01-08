@@ -224,6 +224,8 @@
 }
 
 +(AICansetModel*) hSolution_SlowV4:(HDemandModel *)demand except_ps:(NSArray*)except_ps {
+    return [self hSolution_SlowV2:demand except_ps:except_ps];
+    
     //1. 取出rSolution的成果,在它的基础上继续做hSolution;
     ReasonDemandModel *rDemand = (ReasonDemandModel*)demand.baseOrGroup.baseOrGroup.baseOrGroup;
     NSArray *rCansetModels = rDemand.rCansetModels;
@@ -249,39 +251,41 @@
     
     NSString *hAlgStr = Alg2FStr(hAlg);
     NSMutableArray *havHCansetOfRCanset = [[NSMutableArray alloc] init];
-    if ([hAlgStr containsString:@"果"]) {
+    if ([hAlgStr containsString:@"皮果"]) {
         NSLog(@"直接调试以下,rCanset中就没有包含 果 的...");
         //1. 可是不对啊,都生成皮果hDemand了,怎么可能rCanset里没一个有"果"的呢?
         //2. 即使就真的全没果,那么只好再多训练一些newHCanset出来了...
         //3. 可是下面havHAlgRCansetModelsCount又显示计数5,就奇怪了...,既然没有"果",又哪里计到5呢?
         
         
+        NSInteger step1 = 0,step2 = 0;
         for (AICansetModel *item in rCansetModels) {
             AIFoNodeBase *rCanset = [SMGUtils searchNode:item.cansetFo];
             for (NSInteger i = 0; i < rCanset.count; i++) {
-                NSArray *hCansets = [rCanset getConCansets:i];
-                if (!ARRISOK(hCansets)) {
+                AIKVPointer *rCansetAlg = ARR_INDEX(rCanset.content_ps, i);
+                NSString *rCansetAlgStr = Pit2FStr(rCansetAlg);
+                if (![rCansetAlgStr containsString:@"皮果"]) {
+                    step1++;
                     continue;
                 }
                 
-                AIKVPointer *rCansetAlg = ARR_INDEX(rCanset.content_ps, i);
-                NSString *rCansetAlgStr = Pit2FStr(rCansetAlg);
-                if (![rCansetAlgStr containsString:@"果"]) {
+                NSArray *hCansets = [rCanset getConCansets:i];
+                if (!ARRISOK(hCansets)) {
+                    step2++;
                     continue;
                 }
                 
                 [havHCansetOfRCanset addObject:item];
-                NSLog(@"");
+                NSLog(@"挂载有hCanset Success");
             }
         }
+        NSLog(@"==============>>> %ld %ld",step1,step2);//包含有皮果的rCanset共192条,但它们全部都没有挂截hCanset;
     }
     
+    
     //3. 从所有rCanset中,筛选出包含hAlg抽具象树的;
-    __block NSInteger havHAlgRCansetModelsCount = 0;
+    __block NSMutableArray *havHAlgRCansetModels = [[NSMutableArray alloc] init];
     NSArray *hCansets = [SMGUtils convertArr:rCansetModels convertItemArrBlock:^NSArray *(AICansetModel *item) {
-        if ([havHCansetOfRCanset containsObject:item]) {
-            NSLog(@"");
-        }
         //a. 从每条rCanset中,找是否包含hAlg树的任何一个枝叶;
         AIFoNodeBase *rCansetFo = [SMGUtils searchNode:item.cansetFo];
         NSInteger findIndex = -1;
@@ -293,14 +297,16 @@
             }
         }
         if (findIndex == -1) return nil;//找hAlg树枝叶失败: 则此rCanset不具备迁移给hScene.hAlg帧的条件;
-        havHAlgRCansetModelsCount++;
+        [havHAlgRCansetModels addObject:item];
         
         //b. 从所有rCanset中,筛选出有hAlg的hCanset解的部分;
         NSArray *hCansets = [rCansetFo getConCansets:findIndex];
         if (!ARRISOK(hCansets)) return nil;//rCanset这帧无H解: 则它没任何hCanset可迁移给hScene.hAlg;
         return hCansets;
     }];
-    NSLog(@"第3步 包含HAlg树的rCansetModels数:%ld",havHAlgRCansetModelsCount);
+    NSLog(@"第3步 包含HAlg树的rCansetModels数:%ld \n%@",havHAlgRCansetModels.count,CLEANSTR([SMGUtils convertArr:havHAlgRCansetModels convertBlock:^id(AICansetModel *obj) {
+        return STRFORMAT(@"F%ld",obj.cansetFo.pointerId);
+    }]));
     NSLog(@"第4步 找到hCansets数:%ld",hCansets.count);
     
     //5. 对有解的部分进行竞争;
