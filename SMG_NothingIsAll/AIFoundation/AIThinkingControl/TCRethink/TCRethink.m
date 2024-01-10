@@ -66,20 +66,6 @@
             [absFo updateSPStrong:absIndex type:type];
             //NSLog(@"> 更新absFo spIndex:%ld -> (%@) %@ %@",actionIndex,ATType2Str(type),[absFo.spDic objectForKey:@(absIndex)],Fo2FStr(absFo));
         }];
-        
-        //3. 收集真实发生realMaskFo,收集成hCanset (参考30131-todo1 & 30132-方案);
-        if (ISOK(model.basePFoOrTargetFoModel, AIMatchFoModel.class)) {
-            AIMatchFoModel *basePFo = (AIMatchFoModel*)model.basePFoOrTargetFoModel;
-            NSArray *order = [basePFo convertOrders4NewCansetV2];
-            if (ARRISOK(order)) {
-                //2023.12.29: 改为只有ATPlus时,才应该生成新hCanset,ATSub时就算了 (做31026-第2步时临时起意改的);
-                if (type == ATPlus) {
-                    AIFoNodeBase *hCanset = [theNet createConFoForCanset:order sceneFo:canset sceneTargetIndex:actionIndex];
-                    [canset updateConCanset:hCanset.pointer targetIndex:actionIndex];
-                    NSLog(@"1.OR反省为rScene:%@\n2.rCanset:%@... 的第%ld帧:%@\n3.挂载NewHCanset:%@",Pit2FStr(basePFo.matchFo),SUBSTR2INDEX(Fo2FStr(canset), 50),actionIndex+1,Pit2FStr(ARR_INDEX(canset.content_ps, actionIndex)),Fo2FStr(hCanset));
-                }
-            }
-        }
     }
     DebugE();
 }

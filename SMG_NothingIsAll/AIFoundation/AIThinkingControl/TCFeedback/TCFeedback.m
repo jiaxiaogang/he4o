@@ -243,6 +243,7 @@
  *      2022.11.27: H解决方案再类比时,为其生成indexDic (参考27206d-方案2);
  *      2023.10.27: 用共同抽象判断cansetAlg反馈: 取出targetAlg的abs层,并与识别的matchAlgs判断交集 (参考3014c-todo1);
  *      2023.12.09: 预想与实际类比构建absCanset以场景内防重 (参考3101b-todo6);
+ *      2024.01.10: 改为在feedbackTOR有反馈"RCansetA有效"时,直接生成newHCanset,避免原本在OR反省时后面会有无关帧排到后段的问题 (参考31061-todo1);
  *  @bug
  *      2020.09.22: 加上cutStopStatus,避免同一waitModel被多次触发,导致BUG (参考21042);
  *      2020.12.26: GL时,waitType的判断改为bFo,因为只有bFo才携带了waitTypeDS (参考21204);
@@ -318,7 +319,7 @@
             //8. RDemand只处理ActYes状态的;
             if (waitModel.status != TOModelStatus_ActYes) continue;
             TOAlgModel *frameAlg = waitModel;                          //等待中的目标alg;
-            TOFoModel *solutionFo = (TOFoModel*)frameAlg.baseOrGroup;    //目标alg所在的fo;
+            TOFoModel *solutionModel = (TOFoModel*)frameAlg.baseOrGroup;    //目标alg所在的fo;
             HDemandModel *subHDemand = [SMGUtils filterSingleFromArr:frameAlg.subDemands checkValid:^BOOL(id item) {
                 return ISOK(item, HDemandModel.class);
             }];
@@ -326,22 +327,42 @@
             //9. 判断input是否与等待中waitModel相匹配 (匹配,比如吃,确定自己是否真吃了);
             [AITest test11:model waitAlg_p:frameAlg.content_p];//测下2523c-此处是否会导致匹配不到;
             BOOL mcIsBro = [TOUtils mcIsBro:recognitionAlgs cansetA:frameAlg.content_p]; //用共同抽象判断cansetAlg反馈 (参考3014c-todo1);
-            if (Log4OPushM) NSLog(@"RCansetA有效:M(A%ld) C(A%ld) 结果:%d CAtFo:%@",model.protoAlg.pointer.pointerId,frameAlg.content_p.pointerId,mcIsBro,Pit2FStr(solutionFo.content_p));
+            if (Log4OPushM) NSLog(@"RCansetA有效:M(A%ld) C(A%ld) 结果:%d CAtFo:%@",model.protoAlg.pointer.pointerId,frameAlg.content_p.pointerId,mcIsBro,Pit2FStr(solutionModel.content_p));
             if (mcIsBro) {
                 //a. 赋值
                 frameAlg.status = TOModelStatus_OuterBack;
                 frameAlg.feedbackAlg = model.protoAlg.pointer;
-                solutionFo.status = TOModelStatus_Runing;
+                solutionModel.status = TOModelStatus_Runing;
                 
                 //b. 当waitModel为hDemand.targetAlg时,此处提前反馈了,hDemand改为finish状态 (参考26185-TODO6);
                 if (subHDemand) subHDemand.status = TOModelStatus_Finish;
+                
+                //TODOTOMORROW20240110: isBro是否有点太宽泛,导致newHCanset极易生成
+                //比如:
+                //1. 我在找锤子的过程中看到砖头,是不是就反馈ok了;
+                //2. 如果我拿到砖头后,又看到了锤子呢? (是否要再生成一个newHCanset?)
+                //3. 二者的匹配度是不同的,锤子生成的hCanset,肯定是比砖头生成的hCanset更容易竞争战胜的;
+                
+                
+                //c. 收集真实发生realMaskFo,收集成hCanset (参考30131-todo1 & 30132-方案);
+                //2023.12.29: mcIsBro=true时,生成新hCanset (做31026-第2步时临时起意改的);
+                if (ISOK(solutionModel.basePFoOrTargetFoModel, AIMatchFoModel.class)) {
+                    AIFoNodeBase *rCanset = [SMGUtils searchNode:solutionModel.content_p];
+                    AIMatchFoModel *basePFo = (AIMatchFoModel*)solutionModel.basePFoOrTargetFoModel;
+                    NSArray *order = [basePFo convertOrders4NewCansetV2];
+                    if (ARRISOK(order) && solutionModel.actionIndex < rCanset.count) {
+                        AIFoNodeBase *hCanset = [theNet createConFoForCanset:order sceneFo:rCanset sceneTargetIndex:solutionModel.actionIndex];
+                        [rCanset updateConCanset:hCanset.pointer targetIndex:solutionModel.actionIndex];
+                        NSLog(@"1.feedbackTOR为rScene:%@\n2.rCanset:%@... 的第%ld帧:%@\n3.挂载NewHCanset:%@",Pit2FStr(basePFo.matchFo),SUBSTR2INDEX(Fo2FStr(rCanset), 50),solutionModel.actionIndex+1,Pit2FStr(ARR_INDEX(rCanset.content_ps, solutionModel.actionIndex)),Fo2FStr(hCanset));
+                    }
+                }
                 
                 //c. 重组
                 dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
                     [theTV updateFrame];
                 });
                 DebugE();
-                [TCRegroup feedbackRegroup:solutionFo feedbackFrameOfMatchAlgs:model.matchAlgs];
+                [TCRegroup feedbackRegroup:solutionModel feedbackFrameOfMatchAlgs:model.matchAlgs];
                 [TCScore scoreFromIfTCNeed];
             }
         }
