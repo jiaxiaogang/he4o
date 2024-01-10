@@ -76,7 +76,7 @@
                 if (type == ATPlus) {
                     AIFoNodeBase *hCanset = [theNet createConFoForCanset:order sceneFo:canset sceneTargetIndex:actionIndex];
                     [canset updateConCanset:hCanset.pointer targetIndex:actionIndex];
-                    NSLog(@"1.OR反省为rScene:F%ld 的 rCanset:F%ld 的第spIndex帧\n2.挂载NewHCanset:%@",basePFo.matchFo.pointerId,canset.pId,Fo2FStr(hCanset));
+                    NSLog(@"1.OR反省为rScene:%@\n2.rCanset:%@... 的第%ld帧:%@\n3.挂载NewHCanset:%@",Pit2FStr(basePFo.matchFo),SUBSTR2INDEX(Fo2FStr(canset), 50),actionIndex+1,Pit2FStr(ARR_INDEX(canset.content_ps, actionIndex)),Fo2FStr(hCanset));
                 }
             }
         }
