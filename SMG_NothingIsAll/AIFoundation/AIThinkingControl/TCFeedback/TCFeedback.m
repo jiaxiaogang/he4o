@@ -244,6 +244,7 @@
  *      2023.10.27: 用共同抽象判断cansetAlg反馈: 取出targetAlg的abs层,并与识别的matchAlgs判断交集 (参考3014c-todo1);
  *      2023.12.09: 预想与实际类比构建absCanset以场景内防重 (参考3101b-todo6);
  *      2024.01.10: 改为在feedbackTOR有反馈"RCansetA有效"时,直接生成newHCanset,避免原本在OR反省时后面会有无关帧排到后段的问题 (参考31061-todo1);
+ *      2024.01.11: H支持持续反馈 (参考31063-todo1);
  *  @bug
  *      2020.09.22: 加上cutStopStatus,避免同一waitModel被多次触发,导致BUG (参考21042);
  *      2020.12.26: GL时,waitType的判断改为bFo,因为只有bFo才携带了waitTypeDS (参考21204);
@@ -317,7 +318,8 @@
         if (ISOK(waitModel.baseOrGroup.baseOrGroup, ReasonDemandModel.class)) {
             
             //8. RDemand只处理ActYes状态的;
-            if (waitModel.status != TOModelStatus_ActYes) continue;
+            //2024.01.11: H支持持续反馈 (参考31063-todo1);
+            if (waitModel.status != TOModelStatus_ActYes && waitModel.status != TOModelStatus_OuterBack) continue;
             TOAlgModel *frameAlg = waitModel;                          //等待中的目标alg;
             TOFoModel *solutionModel = (TOFoModel*)frameAlg.baseOrGroup;    //目标alg所在的fo;
             HDemandModel *subHDemand = [SMGUtils filterSingleFromArr:frameAlg.subDemands checkValid:^BOOL(id item) {
@@ -329,6 +331,14 @@
             BOOL mcIsBro = [TOUtils mcIsBro:recognitionAlgs cansetA:frameAlg.content_p]; //用共同抽象判断cansetAlg反馈 (参考3014c-todo1);
             if (Log4OPushM) NSLog(@"RCansetA有效:M(A%ld) C(A%ld) 结果:%d CAtFo:%@",model.protoAlg.pointer.pointerId,frameAlg.content_p.pointerId,mcIsBro,Pit2FStr(solutionModel.content_p));
             if (mcIsBro) {
+                //TODOTOMORROW20240111:
+                //a. 判断本次反馈是否比旧有反馈更匹配 (参考31063-todo2);
+                //  现结构. protoAlg和cansetA在abs有交集: 交集与protoA的匹配度可计算 & 交集与cansetA的匹配度可计算;
+                //  方案1. protoA和cansetA,分别与交集,计算平均匹配度,二者相乘得到综合匹配度;
+                //  方案2. protoA和cansetA,分别与交集中的每一条计算两个匹配度,并将两个匹配度相乘,找出相乘值最大的,做为最终匹配度;
+                
+                
+                
                 //a. 赋值
                 frameAlg.status = TOModelStatus_OuterBack;
                 frameAlg.feedbackAlg = model.protoAlg.pointer;
@@ -336,13 +346,6 @@
                 
                 //b. 当waitModel为hDemand.targetAlg时,此处提前反馈了,hDemand改为finish状态 (参考26185-TODO6);
                 if (subHDemand) subHDemand.status = TOModelStatus_Finish;
-                
-                //TODOTOMORROW20240110: isBro是否有点太宽泛,导致newHCanset极易生成
-                //比如:
-                //1. 我在找锤子的过程中看到砖头,是不是就反馈ok了;
-                //2. 如果我拿到砖头后,又看到了锤子呢? (是否要再生成一个newHCanset?)
-                //3. 二者的匹配度是不同的,锤子生成的hCanset,肯定是比砖头生成的hCanset更容易竞争战胜的;
-                
                 
                 //c. 收集真实发生realMaskFo,收集成hCanset (参考30131-todo1 & 30132-方案);
                 //2023.12.29: mcIsBro=true时,生成新hCanset (做31026-第2步时临时起意改的);
