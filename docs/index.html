@@ -813,6 +813,13 @@
                             let currentTime = new Date().getTime();
                             if ((currentTime - lastInputEventTime) > 500) // .5 sec
                             {
+                                const inputBoxText = document.getElementById('searchInput').value;
+                                // Construct the new URL with the updated query string
+                                const newURL = `${window.location.protocol}//${window.location.host}${window.location.pathname}?q=${inputBoxText}`;
+
+                                // Use history.pushState() to update the URL without reloading the page
+                                history.pushState(null, null, newURL);
+
                                 hasInputEvent = false;
                                 if (!isSearchRunning) {
                                     isSearchRunning = true;
