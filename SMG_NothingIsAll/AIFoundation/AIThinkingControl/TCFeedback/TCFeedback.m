@@ -330,15 +330,15 @@
             [AITest test11:model waitAlg_p:frameAlg.content_p];//测下2523c-此处是否会导致匹配不到;
             BOOL mcIsBro = [TOUtils mcIsBro:recognitionAlgs cansetA:frameAlg.content_p]; //用共同抽象判断cansetAlg反馈 (参考3014c-todo1);
             if (Log4OPushM) NSLog(@"RCansetA有效:M(A%ld) C(A%ld) 结果:%d CAtFo:%@",model.protoAlg.pointer.pointerId,frameAlg.content_p.pointerId,mcIsBro,Pit2FStr(solutionModel.content_p));
+            
+            //TODOTOMORROW20240112: feedbackHAlg反思识别评价;
+            //1. 提前调用下feedbackRegroup;
+            //2. 调用convertOrders4NewCansetV2生成regroupFo?
+            //3. 调用识别,支持限定候选集内识别;
+            
+            
+            
             if (mcIsBro) {
-                //TODOTOMORROW20240111:
-                //a. 判断本次反馈是否比旧有反馈更匹配 (参考31063-todo2);
-                //  现结构. protoAlg和cansetA在abs有交集: 交集与protoA的匹配度可计算 & 交集与cansetA的匹配度可计算;
-                //  方案1. protoA和cansetA,分别与交集,计算平均匹配度,二者相乘得到综合匹配度;
-                //  方案2. protoA和cansetA,分别与交集中的每一条计算两个匹配度,并将两个匹配度相乘,找出相乘值最大的,做为最终匹配度;
-                
-                
-                
                 //a. 赋值
                 frameAlg.status = TOModelStatus_OuterBack;
                 frameAlg.feedbackAlg = model.protoAlg.pointer;
