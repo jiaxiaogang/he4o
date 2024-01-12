@@ -589,7 +589,13 @@
                         return [text, lowerText, upperText, lowerCapitalized]
                     }
 
-                    const searchTerm = searchInputElem.value;
+                    const searchTerm = searchInputElem.value.trim();
+
+                    // Display the search results
+                    const searchResults = document.getElementById('searchResults');
+                    searchResults.innerHTML = '';
+                    if (searchTerm.length == 0) { return }
+
                     const searchSubTerms = getSubTerms(searchTerm);
                     function getHighlightTerms(msubterms) {
                         var ret = []
@@ -605,10 +611,6 @@
                         return ret;
                     }
 
-                    // Display the search results
-                    const searchResults = document.getElementById('searchResults');
-                    searchResults.innerHTML = '';
-                    if (searchTerm.length == 0) { return }
                     var isFileSearch = false;
 
                     if (searchTerm.startsWith("/")) {
@@ -814,8 +816,16 @@
                             if ((currentTime - lastInputEventTime) > 500) // .5 sec
                             {
                                 const inputBoxText = document.getElementById('searchInput').value;
-                                // Construct the new URL with the updated query string
-                                const newURL = `${window.location.protocol}//${window.location.host}${window.location.pathname}?q=${inputBoxText}`;
+                                inputBoxText.trim()
+                                var newURL;
+                                if (inputBoxText.trim() !== "") {
+                                    // Construct the new URL with the updated query string
+                                    newURL = `${window.location.protocol}//${window.location.host}${window.location.pathname}?q=${inputBoxText}`;
+                                }
+                                else {
+                                    newURL = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
+
+                                }
 
                                 // Use history.pushState() to update the URL without reloading the page
                                 history.pushState(null, null, newURL);
