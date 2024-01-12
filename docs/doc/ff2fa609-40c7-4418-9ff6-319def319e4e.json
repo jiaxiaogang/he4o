@@ -1,0 +1,10 @@
+{
+    "summary": "The code declares a class named \"UnorderItemModel\" in the file UnorderItemModel.m, which is part of the SMG_NothingIsAll project and was created by the developer jia on June 3rd, 2021. The code is protected by copyright owned by XiaoGang.",
+    "details": [
+        {
+            "comment": "The code declares a class named \"UnorderItemModel\" in the file UnorderItemModel.m, which is part of the SMG_NothingIsAll project and was created by the developer jia on June 3rd, 2021. The code is protected by copyright owned by XiaoGang.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/TOModelVision/UnorderItemModel.m\":0-12",
+            "content": "//\n//  UnorderItemModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/6/3.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import \"UnorderItemModel.h\"\n@implementation UnorderItemModel\n@end"
+        }
+    ]
+}

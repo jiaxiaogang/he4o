@@ -1,0 +1,10 @@
+{
+    "summary": "TCRealact.h is a header file that imports Foundation. It defines an interface for the TCRealact class, which checks the real-act of the best result in AICanSetModel and replaces it if needed, based on the given fromCansets array.",
+    "details": [
+        {
+            "comment": "TCRealact.h is a header file that imports Foundation. It defines an interface for the TCRealact class, which checks the real-act of the best result in AICanSetModel and replaces it if needed, based on the given fromCansets array.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRealact/TCRealact.h\":0-21",
+            "content": "//\n//  TCRealact.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/4/17.\n//  Copyright \u00a9 2023\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------realact: \u5bf9TCSolution\u6700\u4f73\u8f93\u51fa\u7684\u53ef\u884c\u6027\u68c0\u67e5--------------------\n *  @desc TCSolution\u6700\u540e\u8f93\u51fa\u6700\u4f73result\u4e4b\u524d,\u68c0\u67e5result\u5982\u679c\u592a\u62bd\u8c61(\u542b\u7a7a\u6982\u5ff5)\u5219\u4e0d\u53ef\u884c,\u90a3\u4e48\u5411\u5177\u8c61\u91cd\u65b0\u627e\u4e2a\u53ef\u884c\u7684;\n */\n@interface TCRealact : NSObject\n/**\n *  MARK:--------------------TCSolution\u6700\u4f73\u8f93\u51fa\u7684\u53ef\u884c\u6027\u68c0\u67e5--------------------\n */\n+(AICansetModel*) checkRealactAndReplaceIfNeed:(AICansetModel*)bestResult fromCansets:(NSArray*)fromCansets;\n@end"
+        }
+    ]
+}

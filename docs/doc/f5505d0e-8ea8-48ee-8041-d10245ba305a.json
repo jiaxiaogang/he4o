@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines a class `TOMVisionAlgView` in the file `TOMVisionAlgView.m`. It overrides three methods: `initView`, `refreshDisplay`, and `getNodeDesc`. The `initView` method sets the background color of the view to hex #AAAAAA, and the `refreshDisplay` method checks data, updates display content, and displays it in the header label. The `getNodeDesc` method returns a node description string.",
+    "details": [
+        {
+            "comment": "This code defines a class `TOMVisionAlgView` in the file `TOMVisionAlgView.m`. It overrides three methods: `initView`, `refreshDisplay`, and `getNodeDesc`. The `initView` method sets the background color of the view to hex #AAAAAA, and the `refreshDisplay` method checks data, updates display content, and displays it in the header label. The `getNodeDesc` method returns a node description string.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/TOMVision2/View/TOMVisionAlgView.m\":0-38",
+            "content": "//\n//  TOMVisionAlgView.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/18.\n//  Copyright \u00a9 2022\u5e74 XiaoGang. All rights reserved.\n//\n#import \"TOMVisionAlgView.h\"\n#import \"TVUtil.h\"\n@implementation TOMVisionAlgView\n-(void) initView{\n    //self\n    [super initView];\n    [self setBackgroundColor:UIColorWithRGBHex(0xAAAAAA)];\n}\n-(void) refreshDisplay{\n    //1. \u68c0\u67e5\u6570\u636e;\n    [super refreshDisplay];\n    TOAlgModel *data = (TOAlgModel*)self.data;\n    if (!data) return;\n    //2. \u5185\u5bb9;\n    NSMutableString *mStr = [[NSMutableString alloc] init];\n    [mStr appendFormat:@\"A%ld\",data.content_p.pointerId];\n    [mStr appendFormat:@\"\\n%@\",[TVUtil getLightStr:data.content_p]];\n    //3. \u663e\u793a;\n    [self.headerLab setText:mStr];\n}\n-(NSString*) getNodeDesc{\n    return Pit2FStr(self.data.content_p);\n}\n@end"
+        }
+    ]
+}

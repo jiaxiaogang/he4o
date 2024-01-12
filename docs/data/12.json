@@ -1,0 +1,544 @@
+{
+    "1200": {
+        "file_id": 122,
+        "content": " *      2021.06.10: 子任务判断不了havRoot,改为判断root是否已经finish,因为在tor_OPushM中finish的任务actYes是不生效的;\n *      2021.12.02: 将旧架构actYes的代码移过来 (参考24164);\n *      2021.12.27: arsTime触发后的反馈处理 (有反馈则继续解决方案,无反馈则父任务自愈);\n *      2022.05.19: 废弃 (参考26051);\n */\n//arsTime模式,当评价需等待时,actYes;\n//+(void) arsTimeActYes:(TOAlgModel*)algModel{\n//    \n//    //1. R模式静默成功处理 (等待其自然出现,避免弄巧成拙) (参考22153-A2);\n//    [theTC updateOperCount:kFILENAME];\n//    Debug();\n//    ReasonDemandModel *rDemand = (ReasonDemandModel*)algModel.baseOrGroup.baseOrGroup;\n//    TOFoModel *dsFoModel = (TOFoModel*)algModel.baseOrGroup;\n//    \n//    //2. root设为actYes\n//    DemandModel *root = [TOUtils getRootDemandModelWithSubOutModel:algModel];\n//    root.status = TOModelStatus_ActYes;\n//    \n//    //4. 找出下标;\n//    __block NSInteger demandIndex = -1;\n//    [AIScore score4ARSTime:dsFoModel demand:rDemand finishBlock:^(NSInteger _dsIndex, NSInteger _demandIndex) {\n//        demandIndex = _demandIndex;\n//    }];\n//    \n//    if (demandIndex != -1) {\n//        //5. 从demand.matchFo的cutIndex到findIndex之间取deltaTime之和;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCActYes/TCActYes.m:32-57"
+    },
+    "1201": {
+        "file_id": 122,
+        "content": "Code snippet updates the root status to \"ActYes\", finds the demand index, and if not -1, calculates delta time between cutIndex and findIndex from matchFo.",
+        "type": "comment"
+    },
+    "1202": {
+        "file_id": 122,
+        "content": "//        AIFoNodeBase *matchFo = [SMGUtils searchNode:rDemand.mModel.matchFo];\n//        double deltaTime = [TOUtils getSumDeltaTime:matchFo startIndex:rDemand.mModel.cutIndex2 endIndex:demandIndex];\n//        \n//        //3. 触发器;\n//        NSLog(@\"---//触发器R-_静默成功任务Create:%@ 解决方案:%@ time:%f\",FoP2FStr(dsFoModel.content_p),Pit2FStr(algModel.content_p),deltaTime);\n//        NSInteger modelLayer = [TOUtils getBaseOutModels_AllDeep:algModel].count;\n//        NSInteger demandLayer = [TOUtils getBaseDemands_AllDeep:algModel].count;\n//        NSLog(@\"FC-ACTYES (所在层:%ld / 任务层:%ld) %@\",modelLayer,demandLayer,Pit2FStr(algModel.content_p));\n//        //NSLog(@\"%@\",TOModel2Root2Str(actYesModel));\n//        [AITime setTimeTrigger:deltaTime trigger:^{\n//            \n//            //3. 无root时,说明已被别的R-新matchFo抵消掉,抵消掉后是不做反省的 (参考22081-todo1);\n//            NSArray *baseDemands = [TOUtils getBaseDemands_AllDeep:algModel];\n//            BOOL finished = ARRISOK([SMGUtils filterArr:baseDemands checkValid:^BOOL(DemandModel *item) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCActYes/TCActYes.m:58-71"
+    },
+    "1203": {
+        "file_id": 122,
+        "content": "This code sets a time trigger, and logs information about the triggered task's model layer and demand layer. If there is no root in the model, it filters and checks valid demands using SMGUtils.",
+        "type": "comment"
+    },
+    "1204": {
+        "file_id": 122,
+        "content": "//                return item.status == TOModelStatus_Finish;\n//            }]);\n//            if (!finished) {\n//                //3. Outback有返回,则R-方案当前帧阻止失败 (参考22153-A21);\n//                AnalogyType type = (algModel.status == TOModelStatus_OuterBack) ? ATSub : ATPlus;\n//                NSLog(@\"---//触发器R-_理性alg任务Trigger:%@ 解决方案:%@ (%@)\",FoP2FStr(dsFoModel.content_p),Pit2FStr(algModel.content_p),ATType2Str(type));\n//                \n//                //5. 有反馈时,algModel自然出现成功,则设为finish并继续决策;\n//                DebugE();\n//                if (type == ATPlus) {\n//                    algModel.status = TOModelStatus_Finish;\n//                    [TCScore scoreFromIfTCNeed];\n//                }else{\n//                    //6. 无反馈时,则R预测的坏事自然未发生 (OutBack未返回,静默成功) (参考22153-A22);\n//                    rDemand.status = TOModelStatus_Finish;\n//                    [TCScore scoreFromIfTCNeed];//并继续决策;\n//                }\n//            }\n//        }];\n//    }\n//}\n/**\n *  MARK:--------------------rActYes--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCActYes/TCActYes.m:72-96"
+    },
+    "1205": {
+        "file_id": 122,
+        "content": "This code segment checks if a specific item is finished. If not, it determines the appropriate action based on various conditions, such as whether there's an Outback or feedback, and updates the status accordingly before proceeding with the decision-making process.",
+        "type": "comment"
+    },
+    "1206": {
+        "file_id": 122,
+        "content": " *  @desc R模式,fo执行完成时,actYes->feedbackTOP->调用感性ORT反省;\n *  @version\n *      2021.12.26: 触发器时间由baseDemand取改成solutionFo取,因为当前就是在执行solutionFo (参考25031-11);\n *                  > 而baseDemand\"时间不急\"自有其评价决定,此处只管触发器的直接时间;\n *      2021.12.26: 触发器和反省都针对solutionFo,而不是baseDemand.matchFo (参考25031-11);\n *      2021.12.26: 接入新的感性ORT反省 (参考25032-5);\n *      2022.05.28: 被frameActYes()替代 (参考26137-TODO2);\n */\n//+(void) rActYes:(TOFoModel*)foModel{\n//    //1. R-模式ActYes处理,仅赋值,等待R-触发器;\n//    [theTC updateOperCount:kFILENAME];\n//    Debug();\n//    ReasonDemandModel *demand = (ReasonDemandModel*)foModel.baseOrGroup;\n//    demand.status = TOModelStatus_ActYes;\n//\n//    //1. root设为actYes\n//    DemandModel *root = [TOUtils getRootDemandModelWithSubOutModel:foModel];\n//    root.status = TOModelStatus_ActYes;\n//\n//    //2. solutionFo已执行完成,直接取mvDeltaTime做触发器时间;\n//    AIFoNodeBase *solutionFo = [SMGUtils searchNode:foModel.content_p];\n//    double deltaTime = solutionFo.mvDeltaTime;\n//\n//    //3. 触发器;\n//    NSLog(@\"---//触发器R-_感性mv任务:%@ 解决方案:%@ time:%f\",demand.algsType,Pit2FStr(foModel.content_p),deltaTime);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCActYes/TCActYes.m:97-121"
+    },
+    "1207": {
+        "file_id": 122,
+        "content": "This code snippet is part of a class that handles the R-mode of ActYes in a specific framework. It sets the status of a demand model to \"ActYes\" and updates the trigger time for a specified solution Fo, while logging relevant information about the task and the solution Fo. This version was updated on 2021.12.26 and has been deprecated since 2022.05.28 in favor of frameActYes().",
+        "type": "comment"
+    },
+    "1208": {
+        "file_id": 122,
+        "content": "//    [AITime setTimeTrigger:deltaTime trigger:^{\n//\n//        //3. 无root时,说明已被别的R-新matchFo抵消掉,抵消掉后是不做反省的 (参考22081-todo1);\n//        BOOL havRoot = [theTC.outModelManager.getAllDemand containsObject:root];\n//        if (havRoot) {\n//\n//            //10. 如果状态已改成OutBack,说明有反馈;\n//            AnalogyType type = ATDefault;\n//            CGFloat score = [AIScore score4MV:solutionFo.cmvNode_p ratio:1.0f];\n//            if (score > 0) {\n//                //b. 实mv+反馈同向:P(好),未反馈:S(坏);\n//                type = (foModel.status == TOModelStatus_OuterBack) ? ATPlus : ATSub;\n//            }else if(score < 0){\n//                //b. 实mv-反馈同向:S(坏),未反馈:P(好);\n//                type = (foModel.status == TOModelStatus_OuterBack) ? ATSub : ATPlus;\n//            }\n//\n//            //11. 则进行感性IRT反省;\n//            if (type != ATDefault) {\n//                [TCRethink perceptOutRethink:foModel type:type];\n//                NSLog(@\"---//OP反省触发器执行(R任务):%p F%ld 状态:%@\",foModel,foModel.content_p.pointerId,TOStatus2Str(foModel.status));\n//",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCActYes/TCActYes.m:122-143"
+    },
+    "1209": {
+        "file_id": 122,
+        "content": "In this code block, we have a function that checks if there is a root object in the outModelManager's list of demands. If a root exists, it further examines whether the status has changed to OuterBack, indicating feedback. Depending on the score and feedback status, the type is determined as ATPlus or ATSub for further analysis. Finally, if the type is not default, it triggers a perception rethink function with the type as the parameter, logging the model and its status.",
+        "type": "comment"
+    },
+    "1210": {
+        "file_id": 122,
+        "content": "//                //12. 如果无反馈,则设为失败,并继续决策;\n//                DebugE();\n//                if (foModel.status == TOModelStatus_ActYes) {\n//                    foModel.status = TOModelStatus_ActNo;\n//                    [TCScore scoreFromIfTCNeed];\n//                }\n//            }\n//        }\n//    }];\n//}\n/**\n *  MARK:--------------------hActYes--------------------\n *  @desc H模式,等待hAlg输入反馈 -> 调用理性ORT反省 ->feedbackTOR;\n *  @version\n *      2021.12.26: 接入理性ORT反省 (参考25032-5);\n *      2022.05.28: 被frameActYes()替代 (参考26137-TODO3);\n */\n//+(void) hActYes:(TOAlgModel*)algModel{\n//    //1. 数据准备\n//    [theTC updateOperCount:kFILENAME];\n//    Debug();\n//    TOFoModel *foModel = (TOFoModel*)algModel.baseOrGroup;\n//    AIFoNodeBase *foNode = [SMGUtils searchNode:foModel.content_p];\n//\n//    //1. root设为actYes\n//    DemandModel *root = [TOUtils getRootDemandModelWithSubOutModel:algModel];\n//    root.status = TOModelStatus_ActYes;\n//\n//    //2. 如果TOAlgModel为HNGL时 (所需时间为\"target-1到target\"时间);\n//    double deltaTime = [NUMTOOK(ARR_INDEX(foNode.deltaTimes, foModel.targetSPIndex)) doubleValue];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCActYes/TCActYes.m:144-174"
+    },
+    "1211": {
+        "file_id": 122,
+        "content": "Code snippet is part of hActYes function in TCActYes.m, which is used to perform an action in the H mode by waiting for the feedback from hAlg and calling rationalORT reflection with feedbackTOR. The code prepares the data, sets the root status as actYes, and handles the case when TOAlgModel is HNGL. The function was replaced by frameActYes() starting May 28, 2022.",
+        "type": "comment"
+    },
+    "1212": {
+        "file_id": 122,
+        "content": "//    [AINoRepeatRun sign:STRFORMAT(@\"%p\",algModel)];\n//\n//    //3. 触发器 (触发条件:未等到实际输入);\n//    NSLog(@\"---//触发器A_生成: %@ from:%@ time:%f\",AlgP2FStr(algModel.content_p),Fo2FStr(foNode),deltaTime);\n//    [AITime setTimeTrigger:deltaTime trigger:^{\n//\n//        //4. 反省类比(成功/未成功)的主要原因;\n//        AnalogyType type = (algModel.status == TOModelStatus_ActYes) ? ATSub : ATPlus;\n//        [AINoRepeatRun run:STRFORMAT(@\"%p\",algModel) block:^{\n//            [TCRethink reasonOutRethink:foModel type:type];\n//            NSLog(@\"---//OR反省触发器执行:%p A%ld 状态:%@\",algModel,algModel.content_p.pointerId,TOStatus2Str(algModel.status));\n//        }];\n//\n//        //5. 失败时_继续决策 (成功时,由feedback的IN流程继续);\n//        BOOL havRoot = [theTC.outModelManager.getAllDemand containsObject:root];\n//        DebugE();\n//        if (algModel.status == TOModelStatus_ActYes && havRoot) {\n//            NSLog(@\"====ActYes is ATSub -> 递归alg\");\n//            //5. 2020.11.28: alg本级递归 (只有_Hav全部失败时,才会自行调用failure声明失败) (参考2114C);\n//            algModel.status = TOModelStatus_ActNo;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCActYes/TCActYes.m:175-194"
+    },
+    "1213": {
+        "file_id": 122,
+        "content": "This code appears to be a part of an AI model control system. It triggers a reflective analysis if there is no input within a specific time frame. The algorithm determines whether the reason for success or failure is due to subordination (ATSub) or additionality (ATPlus). If successful and there are ongoing demands, the code continues decision-making. If it's an ActYes situation and there are ongoing demands, it recursively calls itself for further analysis.",
+        "type": "comment"
+    },
+    "1214": {
+        "file_id": 122,
+        "content": "//\n//            //6. 2021.12.02: 失败时,继续决策;\n//            [TCScore scoreFromIfTCNeed];\n//        }\n//    }];\n//}\n/**\n *  MARK:--------------------P模式,fo执行完成时,actYes->feedbackTOP--------------------\n *  @version\n *      2022.05.28: 被frameActYes()替代 (参考26137-TODO4);\n */\n//+(void) pActYes:(TOFoModel*)foModel{\n//    //1. root设为actYes\n//    [theTC updateOperCount:kFILENAME];\n//    Debug();\n//    DemandModel *root = [TOUtils getRootDemandModelWithSubOutModel:foModel];\n//    root.status = TOModelStatus_ActYes;\n//    \n//    //2. P-模式ActYes处理 (TOFoModel时,数据准备);\n//    AIFoNodeBase *solutionFo = [SMGUtils searchNode:foModel.content_p];\n//    PerceptDemandModel *demand = (PerceptDemandModel*)foModel.baseOrGroup;\n//    \n//    //3. 触发器 (触发条件:任务未在demandManager中抵消);\n//    NSLog(@\"---//触发器pActYes_生成: %p -> %@ time:%f\",demand,Fo2FStr(solutionFo),solutionFo.mvDeltaTime);\n//    [AITime setTimeTrigger:solutionFo.mvDeltaTime trigger:^{\n//        \n//        //4. 无root时,说明已被别的R-新matchFo抵消掉,抵消掉后是不做反省的 (参考22081-todo1);\n//        BOOL havRoot = [theTC.outModelManager.getAllDemand containsObject:root];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCActYes/TCActYes.m:195-223"
+    },
+    "1215": {
+        "file_id": 122,
+        "content": "Code segment performs the following actions:\n\n1. Updates the root's status to \"ActYes\".\n2. Performs P-model ActYes processing on TOFoModel data.\n3. Triggers a time event when certain task conditions are met.\n4. Checks if there is a root (demand) and handles accordingly.",
+        "type": "comment"
+    },
+    "1216": {
+        "file_id": 122,
+        "content": "//        if (havRoot) {\n//            \n//            //5. 如果状态已改成OutBack,说明有反馈;\n//            AnalogyType type = (foModel.status == TOModelStatus_OuterBack) ? ATPlus : ATSub;\n//            \n//            //6. 则进行感性ORT反省;\n//            [TCRethink perceptOutRethink:foModel type:type];\n//            NSLog(@\"---//OP反省触发器执行(P任务):%p F%ld 状态:%@\",foModel,foModel.content_p.pointerId,TOStatus2Str(foModel.status));\n//            \n//            //7. 如果无反馈,则继续决策;\n//            DebugE();\n//            if (foModel.status == TOModelStatus_ActYes) {\n//                foModel.status = TOModelStatus_ActNo;\n//                [TCScore scoreFromIfTCNeed];\n//            }\n//        }\n//    }];\n//}\n/**\n *  MARK:--------------------帧静默等待--------------------\n *  @desc 每帧都触发等待反馈 (参考26136-方案);\n *  @version\n *      2022.05.29: 不判断solutionFo.mv价值分因为它一般为空;\n *      2022.06.01: actYes仅标记自己及所在的demand,不标记root (参考26185-TODO1);\n *      2023.01.01: 修复solutionFo的mvDeltaTime总是0的问题 (参考28013);\n *      2023.03.04: 修复反省未保留以往帧actionIndex,导致反省时错误的BUG (参考28144-todo);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCActYes/TCActYes.m:224-250"
+    },
+    "1217": {
+        "file_id": 122,
+        "content": "This code appears to be a part of a larger program written in Swift, and it seems to involve some sort of decision-making or feedback processing based on the state of an object called \"foModel\". The code checks whether \"havRoot\" is true, then performs different actions depending on the current status of foModel. It also has some logging statements for debugging purposes. Additionally, there are several annotations that reference specific issues or changes made to the code over time.",
+        "type": "comment"
+    },
+    "1218": {
+        "file_id": 122,
+        "content": " */\n+(void) frameActYes:(TOFoModel*)solutionModel{\n    [theTC updateOperCount:kFILENAME];\n    Debug();\n    //0. 数据准备 (从上到下,取demand,solutionFo,frameAlg);\n    DemandModel *demand = (DemandModel*)solutionModel.baseOrGroup;\n    AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.content_p];\n    NSInteger curActionIndex = solutionModel.actionIndex;\n    AIKVPointer *frameAlg_p = ARR_INDEX(solutionFo.content_ps, curActionIndex);\n    TOAlgModel *frameModel = [SMGUtils filterSingleFromArr:solutionModel.subModels checkValid:^BOOL(TOAlgModel *item) {\n        return [item.content_p isEqual:frameAlg_p];\n    }];\n    //1. 设为actYes\n    solutionModel.status = TOModelStatus_ActYes;\n    demand.status = TOModelStatus_ActYes;\n    if (frameModel) frameModel.status = TOModelStatus_ActYes;\n    //2. solutionFo已执行完成,直接取mvDeltaTime做触发器时间;\n    double deltaTime = 0;\n    BOOL actYes4Mv = curActionIndex >= solutionFo.count;\n    if (actYes4Mv) {\n        AIKVPointer *basePFoOrTargetFo_p = [TOUtils convertBaseFoFromBasePFoOrTargetFoModel:solutionModel.basePFoOrTargetFoModel];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCActYes/TCActYes.m:251-273"
+    },
+    "1219": {
+        "file_id": 122,
+        "content": "This code updates the status of a TOFoModel to \"ActYes\" for a given solution model, prepares data from demand, solutionFo, and frameAlg, checks if the solutionFo has been completed (actYes4Mv), and sets deltaTime accordingly. It uses helper functions from SMGUtils and TOUtils.",
+        "type": "comment"
+    },
+    "1220": {
+        "file_id": 122,
+        "content": "        AIFoNodeBase *basePFoOrTargetFo = [SMGUtils searchNode:basePFoOrTargetFo_p];\n        deltaTime = basePFoOrTargetFo.mvDeltaTime;\n    }else{\n        deltaTime = [NUMTOOK(ARR_INDEX(solutionFo.deltaTimes, curActionIndex)) doubleValue];\n    }\n    //3. 触发器;\n    NSLog(@\"---//构建行为化帧触发器:%p for:%@ time:%.2f\",actYes4Mv?solutionModel:frameModel,ClassName2Str(demand.algsType),deltaTime);\n    [AITime setTimeTrigger:deltaTime trigger:^{\n        //4. 末尾为mv感性目标;\n        if (curActionIndex >= solutionFo.count) {\n            //a. 如果状态已改成OutBack,说明有反馈(坏),否则未反馈(好) (参考feedbackTOP);\n            AnalogyType type = (solutionModel.status == TOModelStatus_OuterBack) ? ATSub : ATPlus;\n            //d. 则进行感性PORT反省;\n            [TCRethink perceptOutRethink:solutionModel type:type];\n            NSLog(@\"---//行为化帧触发感性反省:%p F%ld 状态:%@\",solutionModel,solutionFo.pointer.pointerId,TOStatus2Str(solutionModel.status));\n            //e. 如果无反馈,则设为失败,并继续决策;\n            if (solutionModel.status == TOModelStatus_ActYes) {\n                solutionModel.status = TOModelStatus_ActNo;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCActYes/TCActYes.m:274-295"
+    },
+    "1221": {
+        "file_id": 122,
+        "content": "The code initializes a trigger with the time delta for building an actYes behavior frame. It checks if the current action index is greater than or equal to the solution's count, and if so, it determines the analogy type based on the status of the solution model (OuterBack indicates feedback) and performs a perceptOutRethink with the determined type. If there was no feedback, the solution model is set to ActNo and the decision process continues.",
+        "type": "comment"
+    },
+    "1222": {
+        "file_id": 122,
+        "content": "                demand.status = TOModelStatus_Runing;\n                [TCScore scoreFromIfTCNeed];\n            }\n        }\n        //5. 中间为帧理性目标;\n        else{\n            //a. 反省类比(成功/未成功)的主要原因,进行RORT反省;\n            AnalogyType type = (frameModel.status == TOModelStatus_ActYes) ? ATSub : ATPlus;\n            [TCRethink reasonOutRethink:solutionModel actionIndex:curActionIndex type:type];\n            NSLog(@\"---//行为化帧触发理性反省:%p A%ld 状态:%@\",frameModel,frameAlg_p.pointerId,TOStatus2Str(frameModel.status));\n            //5. 失败时_继续决策 (成功时,由feedback的IN流程继续);\n            if (frameModel.status == TOModelStatus_ActYes) {\n                //5. 2020.11.28: alg本级递归 (只有_Hav全部失败时,才会自行调用failure声明失败) (参考2114C);\n                frameModel.status = TOModelStatus_ActNo;\n                solutionModel.status = TOModelStatus_ActNo;\n                demand.status = TOModelStatus_Runing;\n                NSLog(@\"在ReasonOutRethink反省后 solution:F%ld 因超时无效而set actYes to actNo-------->\",solutionModel.content_p.pointerId);\n                //6. 2021.12.02: 失败时,继续决策;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCActYes/TCActYes.m:296-316"
+    },
+    "1223": {
+        "file_id": 122,
+        "content": "This code appears to be a part of an algorithm for decision-making and reasoning. It involves frame models, solution models, and demand statuses. The code triggers rational reflection based on the success or failure of analogies. If successful, it continues to feedback processes; otherwise, it proceeds with further decision-making steps by setting the status to \"ActNo\" and continuing to determine solutions.",
+        "type": "comment"
+    },
+    "1224": {
+        "file_id": 122,
+        "content": "                [TCScore scoreFromIfTCNeed];\n            }\n        }\n        DebugE();\n    }];\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCActYes/TCActYes.m:317-324"
+    },
+    "1225": {
+        "file_id": 122,
+        "content": "This code segment initializes a TCScore object and calls its scoreFromIfTCNeed method, likely to calculate a score based on certain conditions. After that, it invokes the DebugE() function, presumably for error handling or logging purposes. The entire block is wrapped within an @implementation section for a class called \"TCActYes\".",
+        "type": "comment"
+    },
+    "1226": {
+        "file_id": 123,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCAction/TCAction.h",
+        "type": "filepath"
+    },
+    "1227": {
+        "file_id": 123,
+        "content": "This file contains the interface for TCAction, which is a subclass of NSObject. It defines a class method action that takes in a TOFoModel object and returns a TCResult object. The file was created by jia on November 28th, 2021 and is protected by copyright law.",
+        "type": "summary"
+    },
+    "1228": {
+        "file_id": 123,
+        "content": "//\n//  TCAction.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/11/28.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface TCAction : NSObject\n+(TCResult*) action:(TOFoModel*)foModel;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCAction/TCAction.h:1-15"
+    },
+    "1229": {
+        "file_id": 123,
+        "content": "This file contains the interface for TCAction, which is a subclass of NSObject. It defines a class method action that takes in a TOFoModel object and returns a TCResult object. The file was created by jia on November 28th, 2021 and is protected by copyright law.",
+        "type": "comment"
+    },
+    "1230": {
+        "file_id": 124,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCAction/TCAction.m",
+        "type": "filepath"
+    },
+    "1231": {
+        "file_id": 124,
+        "content": "The code implements a spiral architecture action in the SMG_NothingIsAll project, converts solutions to behavior, follows an iterative process with feedback, supports hAction, handles target frames using spIndex, updates for fixes since Nov 2021, evaluates downgrade urgency, manages demand types, triggers actions based on type and results, logs progress, and returns a result upon action completion.",
+        "type": "summary"
+    },
+    "1232": {
+        "file_id": 124,
+        "content": "//\n//  TCAction.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/11/28.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import \"TCAction.h\"\n#import \"TOFoModel.h\"\n@implementation TCAction\n/**\n *  MARK:--------------------新螺旋架构action--------------------\n *  @desc 解决方案fo即(加工目标),转_Fo()行为化 (参考24132-行为化1);\n *  @param foModel : notnull\n *  @version\n *      2021.11.17: 需调用者自行对foModel进行FRS稳定性竞争评价,本方法不再进行 (因为fo间的竞争,需由外界,fo内部问题在此方法内解决);\n *      2021.11.25: 迭代为功能架构 (参考24154-单轮示图);\n *      2021.11.25: H类型在Action后,最终行为化完毕后,调用hActYes后,在feedbackTOR反馈,并重组反思,下轮循环;\n *      2021.11.xx: 废弃outReflect反思功能 (全部待到inReflect统一再反思);\n *      2021.11.28: 时间不急评价,改为: 紧急情况 = 解决方案所需时间 > 父任务能给的时间 (参考24171-7);\n *      2021.12.01: 支持hAction;\n *      2021.12.26: action将foModel执行到spIndex之前一帧 (25032-4);\n *      2021.12.26: hSolution达到目标帧转hActYes的处理 (参考25031-9);\n *      2021.12.26: 下标不急(弄巧成拙)评价,支持isOut=true的情况 (参考25031-10);\n *      2022.05.19: 废弃ARSTime评价 (参考26051);\n *      2022.12.09: 修复少执行了一帧的问题 (后16号又发现多了一帧,把target也执行了,这里9号时的情况已经忘了);\n *      2022.12.16: 修复多执行了一帧的问题 (即target帧不必行为化,自然发生即可);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCAction/TCAction.m:1-30"
+    },
+    "1233": {
+        "file_id": 124,
+        "content": "This code is implementing a new spiral architecture action in the SMG_NothingIsAll project. It solves problems by converting the solution into behavior (reference 24132-behaviorization) and follows an iterative process involving feedbackTOR and reflecting on previous rounds. The function takes a not-null foModel as input and has undergone several modifications since its creation in November 2021. It supports hAction, handles target frames using spIndex, and has undergone recent updates to fix issues with frame execution.",
+        "type": "comment"
+    },
+    "1234": {
+        "file_id": 124,
+        "content": " *      2023.07.08: 为避免输出行为捡了芝麻丢了西瓜,在行为化之前,先调用一下反思 (参考30054);\n *      2023.08.21: 将反思通过与否保留下来,用于后面决策时激活其子R还是子H任务做判断依据 (参考30114-todo1);\n *  @callers : 可以供_Demand和_Hav等调用;\n */\n+(TCResult*) action:(TOFoModel*)foModel{\n    //1. 数据准备\n    AIFoNodeBase *curFo = [SMGUtils searchNode:foModel.content_p];\n    //2. Alg转移 (下帧),每次调用action立马先跳下actionIndex为当前正准备行为化的那一帧;\n    foModel.actionIndex++;\n    OFTitleLog(@\"行为化Fo\", @\"\\n第 %ld/%ld 个,时序:%@\",foModel.actionIndex+1,curFo.count,Fo2FStr(curFo));\n    //3. 进行反思识别,如果不通过时,回到TCScore可能会尝试先解决子任务,通过时继续行为化 (参考30054-todo7);\n    [TCRegroup actionRegroup:foModel];\n    foModel.refrectionNo = ![TCRefrection actionRefrection:foModel];\n    if (foModel.refrectionNo) {\n        [TCScore scoreFromIfTCNeed];\n        return [[[TCResult new:false] mkMsg:@\"action反思不通过\"] mkStep:31];\n    }\n    [theTC updateOperCount:kFILENAME];\n    Debug();\n    //4. 跳转下帧 (最后一帧为目标,自然发生即可,此前帧则需要行为化实现);\n    if (foModel.actionIndex < foModel.targetSPIndex - 1) {\n        NSLog(@\"_Fo行为化第 %ld/%ld 个: %@\",foModel.actionIndex+1,foModel.targetSPIndex,Fo2FStr(curFo));",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCAction/TCAction.m:31-55"
+    },
+    "1235": {
+        "file_id": 124,
+        "content": "This code performs action selection for a behavioral model. It prepares data, checks if the previous action was successful, updates operation counts, and jumps to the next frame. If the previous action failed, it may attempt to solve sub-tasks before trying again.",
+        "type": "comment"
+    },
+    "1236": {
+        "file_id": 124,
+        "content": "        //@desc: 下标不急评价说明: R模式_Hav首先是为了避免forecastAlg,其次才是为了达成curFo解决方案 (参考22153);\n        //5. 下标不急(弄巧成拙)评价_数据准备 (参考24171-12);\n        //TODO: 考虑改成,取base最近的一个R任务;\n        //6. 只有R类型,才参与下标不急评价;\n        //ReasonDemandModel *baseDemand = (ReasonDemandModel*)foModel.baseOrGroup;\n        //if(ISOK(baseDemand, ReasonDemandModel.class)){\n        //    BOOL arsTime = [AIScore ARS_Time:foModel demand:baseDemand];\n        //    if (!arsTime) {\n        //        //7. 评价不通过,则直接ActYes,等待其自然出现 (参考22153-A2);\n        //        DebugE();\n        //        NSLog(@\"==> arsTime弄巧成拙评价,子弹再飞一会儿\");\n        //        moveAlg.status = TOModelStatus_ActYes;\n        //        [TCActYes arsTimeActYes:moveAlg];\n        //        return;\n        //    }\n        //}\n        //6. 转下帧: 理性帧则生成TOAlgModel;\n        AIKVPointer *move_p = ARR_INDEX(curFo.content_ps, foModel.actionIndex);\n        TOAlgModel *moveAlg = [TOAlgModel newWithAlg_p:move_p group:foModel];\n        //7. 调用frameActYes();\n        [TCActYes frameActYes:foModel];\n        //8. 当前帧是理性帧时: 尝试行为当前帧;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCAction/TCAction.m:57-80"
+    },
+    "1237": {
+        "file_id": 124,
+        "content": "This code is preparing for the evaluation of \"downgrade not urgent\" in the context of a specific algorithm model. It checks if the base demand is of type R, and if not, it directly proceeds to \"ActYes\" status. If the base demand is of type R, it evaluates whether or not to proceed with the evaluation based on the ARS_Time result. If the evaluation fails, it moves to \"ActYes\" status and waits for a natural occurrence (referencing 22153-A2). Otherwise, it generates a TOAlgModel for the next frame and calls frameActYes() function for further processing.",
+        "type": "comment"
+    },
+    "1238": {
+        "file_id": 124,
+        "content": "        DebugE();\n        return [TCOut run:moveAlg];\n    }else{\n        //8. R成功,转actYes等待反馈 & 触发反省 (原递归参考流程控制Finish的注释version-20200916 / 参考22061-7);\n        DebugE();\n        NSLog(@\"_Fo行为化: Finish %ld/%ld 到ActYes\",foModel.actionIndex+1,(long)curFo.count);\n        if (ISOK(foModel.baseOrGroup, ReasonDemandModel.class)) {\n            [TCActYes frameActYes:foModel];\n            //[TCScore scoreFromIfTCNeed];//r输出完成时,继续决策;\n        }else if(ISOK(foModel.baseOrGroup, HDemandModel.class)){\n            //9. H目标帧只需要等 (转hActYes) (参考25031-9);\n            AIKVPointer *hTarget_p = ARR_INDEX(curFo.content_ps, foModel.actionIndex);\n            [TOAlgModel newWithAlg_p:hTarget_p group:foModel];\n            [TCActYes frameActYes:foModel];//h输出成功时,等待反馈;\n        }else if(ISOK(foModel.baseOrGroup, PerceptDemandModel.class)){\n            [TCActYes frameActYes:foModel];//p输出成功时,等待反馈;\n        }\n        return [[[TCResult new:true] mkMsg:@\"action finish\"] mkStep:32];\n    }\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCAction/TCAction.m:81-103"
+    },
+    "1239": {
+        "file_id": 124,
+        "content": "This code handles different types of demands and triggers corresponding actions. It checks the type of demand (R, H, or Percept) and calls the appropriate action function accordingly. If the action is successful, it waits for feedback before proceeding. The code also includes logging statements to track progress. Finally, it returns a result message indicating that the action has finished.",
+        "type": "comment"
+    },
+    "1240": {
+        "file_id": 125,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/AICansetModel.h",
+        "type": "filepath"
+    },
+    "1241": {
+        "file_id": 125,
+        "content": "The code defines classes AICansetModel and AISceneModel for analyzing can-sets, comparing proto objects, and facilitating parameter passing between models in TCSolution competition. These classes are used for decision-making and fine-tuning in AIRank.",
+        "type": "summary"
+    },
+    "1242": {
+        "file_id": 125,
+        "content": "//\n//  AICansetModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/5/27.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------单条S候选集与proto对比结果模型--------------------\n *  @desc 作用:\n *      1. 主要作用是用于TCSolution竞争值和做竞争用;\n *      2. 次要作用是参数传递: fromAISceneModel -> toTOFoModel;\n */\n@class AISceneModel;\n@interface AICansetModel : NSObject\n/**\n *  MARK:--------------------newWith--------------------\n *  @desc\n *      1. R任务时,backMatchValue和targetIndex两个参数无用;\n *      2. H任务时,所有参数都有效;\n */\n+(AICansetModel*) newWithCansetFo:(AIKVPointer*)cansetFo\n                            sceneFo:(AIKVPointer*)sceneFo\n                 protoFrontIndexDic:(NSDictionary *)protoFrontIndexDic\n                 matchFrontIndexDic:(NSDictionary *)matchFrontIndexDic\n                    frontMatchValue:(CGFloat)frontMatchValue\n                   frontStrongValue:(CGFloat)frontStrongValue\n                     midEffectScore:(CGFloat)midEffectScore\n                     midStableScore:(CGFloat)midStableScore",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/AICansetModel.h:1-33"
+    },
+    "1243": {
+        "file_id": 125,
+        "content": "This code defines a class called AICansetModel, which serves as a model for comparing single S candidate sets with proto objects. It has multiple parameters such as cansetFo, sceneFo, protoFrontIndexDic, matchFrontIndexDic, frontMatchValue, frontStrongValue, midEffectScore, and midStableScore. This model is used in TCSolution competition values and parameter passing between AISceneModel and toTOFoModel. The newWith method initializes the model with different parameters depending on whether it's an R task or H task.",
+        "type": "comment"
+    },
+    "1244": {
+        "file_id": 125,
+        "content": "                       backIndexDic:(NSDictionary*)backIndexDic\n                     backMatchValue:(CGFloat)backMatchValue\n                    backStrongValue:(CGFloat)backStrongValue\n                           cutIndex:(NSInteger)cutIndex\n                      sceneCutIndex:(NSInteger)sceneCutIndex\n                        targetIndex:(NSInteger)targetIndex\n                   sceneTargetIndex:(NSInteger)sceneTargetIndex\n             basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel\n                     baseSceneModel:(AISceneModel*)baseSceneModel;\n@property (strong, nonatomic) AIKVPointer *cansetFo;    //迁移前候选集fo;\n@property (strong, nonatomic) AIKVPointer *sceneFo;     //迁移前候选集所在的scene\n/**\n *  MARK:--------------------basePFoOrTargetFoModel--------------------\n *  @desc R任务时为pFoModel,H任务时为targetFoModel;\n *  @callers:\n *      1. 用于构建TOFoModel时,传过去;\n */\n@property (strong, nonatomic) id basePFoOrTargetFoModel;\n/**\n *  MARK:--------------------从决策中一步步传过来 (参考29069-todo7)--------------------\n */\n@property (strong, nonatomic) AISceneModel *baseSceneModel;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/AICansetModel.h:34-58"
+    },
+    "1245": {
+        "file_id": 125,
+        "content": "This code defines a class with properties for the current scene, base PFo or target Fo Model, and base Scene Model. The base PFo or target Fo Model is used for constructing TOFoModel and is passed step by step from decision-making.",
+        "type": "comment"
+    },
+    "1246": {
+        "file_id": 125,
+        "content": "//MARK:===============================================================\n//MARK:                     < 前段部分 >\n//MARK:===============================================================\n@property (strong, nonatomic) NSDictionary *protoFrontIndexDic;//前段canset与proto的映射字典 (canset是抽象);\n@property (strong, nonatomic) NSDictionary *matchFrontIndexDic;//前段canset与scene的映射字典 (scene是抽象);\n/**\n *  MARK:--------------------前段匹配度--------------------\n *  @desc 目前其表示cansetFo与protoFo的前段匹配度;\n *  @version\n *      2023.01.13: 求乘版: 用canset前段和match的帧映射计算前段匹配度 (参考28035-todo3);\n *      2023.02.18: AIRank细分版: 用canset前段和proto的帧映射计算前段匹配度 (参考28083-方案2);\n */\n@property (assign, nonatomic) CGFloat frontMatchValue;\n/**\n *  MARK:--------------------前段强度竞争值 (参考28083-方案2)--------------------\n *  @desc cansetFo的前段部分的refStrong平均强度;\n */\n@property (assign, nonatomic) CGFloat frontStrongValue;\n//MARK:===============================================================\n//MARK:                     < 后段部分 >\n//MARK:===============================================================",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/AICansetModel.h:60-85"
+    },
+    "1247": {
+        "file_id": 125,
+        "content": "This code defines properties for a class, including a dictionary mapping canset to proto, a dictionary mapping canset to scene, and two variables representing the front segment's match value and strength value. These values are used in AIRank fine-tuning and represent the front segment's matching degree and average strength.",
+        "type": "comment"
+    },
+    "1248": {
+        "file_id": 125,
+        "content": "@property (assign, nonatomic) CGFloat backMatchValue;   //后段匹配度 (R时为1,H时为目标帧相近度) (参考28092-todo1);\n@property (assign, nonatomic) CGFloat backStrongValue;  //后段强度值 (R时为0,H时为目标帧conStrong强度) (参考28092-todo2);\n@property (strong, nonatomic) NSDictionary *backIndexDic;//后段canset与match的映射字典 (match是抽象);\n@property (assign, nonatomic) CGFloat midStableScore;    //中段稳定性分;\n@property (assign, nonatomic) CGFloat midEffectScore;    //整体有效率分;\n@property (assign, nonatomic) NSInteger cutIndex;       //cansetFo已发生截点 (含cutIndex也已发生);\n@property (assign, nonatomic) NSInteger targetIndex;    //cansetFo执行目标index (R时为fo.count,H时为目标帧下标);\n@property (assign, nonatomic) NSInteger sceneCutIndex;  //sceneFo已发生截点 (含cutIndex也已发生);\n@property (assign, nonatomic) NSInteger sceneTargetIndex;//sceneFo任务目标index (R时为fo.count,H时为目标帧下标);\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/AICansetModel.h:86-98"
+    },
+    "1249": {
+        "file_id": 125,
+        "content": "This code defines a class with properties for various values related to can-set analysis. It includes properties for back match and strength, a dictionary mapping abstract canset and matches, as well as stability and effectiveness scores, and indices for cut points in can-set and scene.",
+        "type": "comment"
+    },
+    "1250": {
+        "file_id": 126,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/AICansetModel.m",
+        "type": "filepath"
+    },
+    "1251": {
+        "file_id": 126,
+        "content": "The code defines an AICansetModel class with a method to initialize and return an object, providing getter methods for scene, father scene, and brother scene in an AI model. The current TCTransfer implementation does not use this method but may utilize it in future base-directly takes implementations.",
+        "type": "summary"
+    },
+    "1252": {
+        "file_id": 126,
+        "content": "//\n//  AICansetModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/5/27.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import \"AICansetModel.h\"\n@implementation AICansetModel\n+(AICansetModel*) newWithCansetFo:(AIKVPointer*)cansetFo\n                            sceneFo:(AIKVPointer*)sceneFo\n                 protoFrontIndexDic:(NSDictionary *)protoFrontIndexDic\n                 matchFrontIndexDic:(NSDictionary *)matchFrontIndexDic\n                    frontMatchValue:(CGFloat)frontMatchValue\n                   frontStrongValue:(CGFloat)frontStrongValue\n                     midEffectScore:(CGFloat)midEffectScore\n                     midStableScore:(CGFloat)midStableScore\n                       backIndexDic:(NSDictionary*)backIndexDic\n                     backMatchValue:(CGFloat)backMatchValue\n                    backStrongValue:(CGFloat)backStrongValue\n                           cutIndex:(NSInteger)cutIndex\n                      sceneCutIndex:(NSInteger)sceneCutIndex\n                        targetIndex:(NSInteger)targetIndex",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/AICansetModel.m:1-26"
+    },
+    "1253": {
+        "file_id": 126,
+        "content": "This code is the implementation file for a class named \"AICansetModel\" in a project called \"SMG_NothingIsAll\". It defines a method to initialize an object of this class with multiple parameters, including various dictionaries and scores. The object appears to represent some kind of scene analysis or comparison result.",
+        "type": "comment"
+    },
+    "1254": {
+        "file_id": 126,
+        "content": "                   sceneTargetIndex:(NSInteger)sceneTargetIndex\n             basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel\n                     baseSceneModel:(AISceneModel*)baseSceneModel {\n    AICansetModel *model = [[AICansetModel alloc] init];\n    model.cansetFo = cansetFo;\n    model.sceneFo = sceneFo;\n    model.basePFoOrTargetFoModel = basePFoOrTargetFoModel;\n    model.baseSceneModel = baseSceneModel;\n    model.protoFrontIndexDic = protoFrontIndexDic;\n    model.matchFrontIndexDic = matchFrontIndexDic;\n    model.frontMatchValue = frontMatchValue;\n    model.frontStrongValue = frontStrongValue;\n    model.midEffectScore = midEffectScore;\n    model.midStableScore = midStableScore;\n    model.backMatchValue = backMatchValue;\n    model.backStrongValue = backStrongValue;\n    model.cutIndex = cutIndex;\n    model.targetIndex = targetIndex;\n    model.sceneTargetIndex = sceneTargetIndex;\n    return model;\n}\n//在TCTransfer中暂时不用这个,现在直接取base.base...在取用;\n//-(AIKVPointer*) getIScene {\n//    if (self.baseSceneModel.type == SceneTypeI) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/AICansetModel.m:27-51"
+    },
+    "1255": {
+        "file_id": 126,
+        "content": "This code defines a method that initializes and returns an AICansetModel object. It takes parameters like sceneTargetIndex, basePFoOrTargetFoModel, and baseSceneModel, and assigns them to corresponding instance variables of the model object. The comments suggest that this method is not currently used in TCTransfer, but may be used in the future when directly taking from base instead of the current implementation.",
+        "type": "comment"
+    },
+    "1256": {
+        "file_id": 126,
+        "content": "//        return self.sceneFo;\n//    } else if (self.baseSceneModel.type == SceneTypeFather) {\n//        return self.baseSceneModel.base.scene;\n//    } else if (self.baseSceneModel.type == SceneTypeBrother) {\n//        return self.baseSceneModel.base.base.scene;\n//    }\n//    return nil;\n//}\n//\n//-(AIKVPointer*) getFatherScene {\n//    if (self.baseSceneModel.type == SceneTypeFather) {\n//        return self.baseSceneModel.scene;\n//    } else if (self.baseSceneModel.type == SceneTypeBrother) {\n//        return self.baseSceneModel.base.scene;\n//    }\n//    return nil;\n//}\n//\n//-(AIKVPointer*) getBrotherScene {\n//    if (self.baseSceneModel.type == SceneTypeBrother) {\n//        return self.baseSceneModel.scene;\n//    }\n//    return nil;\n//}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/AICansetModel.m:52-77"
+    },
+    "1257": {
+        "file_id": 126,
+        "content": "The code provides getter methods for scene, father scene, and brother scene in an AI model. It returns the respective scene based on the type of the base scene model. If the type is not recognized, it returns nil.",
+        "type": "comment"
+    },
+    "1258": {
+        "file_id": 127,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/FrontIndexDicModel.h",
+        "type": "filepath"
+    },
+    "1259": {
+        "file_id": 127,
+        "content": "This is the header file for `FrontIndexDicModel`, a class in the SMG_NothingIsAll project. It represents a model for front-section condition fulfillment algorithm results, with properties including proto and canset indices, and a pointer to transferAlg.",
+        "type": "summary"
+    },
+    "1260": {
+        "file_id": 127,
+        "content": "//\n//  FrontIndexDicModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/4/30.\n//  Copyright © 2023年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------前段条件满足算法结果模型--------------------\n */\n@interface FrontIndexDicModel : NSObject\n+(FrontIndexDicModel*) newWithProtoIndex:(NSInteger)protoIndex cansetIndex:(NSInteger)cansetIndex transferAlg:(AIKVPointer*)transferAlg_p;\n@property (assign, nonatomic) NSInteger protoIndex;//映射到的proto下标\n@property (assign, nonatomic) NSInteger cansetIndex;//映射到的canset下标\n@property (strong, nonatomic) AIKVPointer *transferAlg_p;//cansetAlg迁移后的transferAlg;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/FrontIndexDicModel.h:1-22"
+    },
+    "1261": {
+        "file_id": 127,
+        "content": "This is the header file for `FrontIndexDicModel`, a class in the SMG_NothingIsAll project. It represents a model for front-section condition fulfillment algorithm results, with properties including proto and canset indices, and a pointer to transferAlg.",
+        "type": "comment"
+    },
+    "1262": {
+        "file_id": 128,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/FrontIndexDicModel.m",
+        "type": "filepath"
+    },
+    "1263": {
+        "file_id": 128,
+        "content": "This file contains the implementation of FrontIndexDicModel class which inherits from a superclass, likely in another file. It has a designated initializer method that takes protoIndex, cansetIndex and transferAlg as parameters and returns an instance of the class with these values assigned. The instance variables are protected by private or protected access modifiers to prevent direct manipulation from outside the class.",
+        "type": "summary"
+    },
+    "1264": {
+        "file_id": 128,
+        "content": "//\n//  FrontIndexDicModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/4/30.\n//  Copyright © 2023年 XiaoGang. All rights reserved.\n//\n#import \"FrontIndexDicModel.h\"\n@implementation FrontIndexDicModel\n+(FrontIndexDicModel*) newWithProtoIndex:(NSInteger)protoIndex cansetIndex:(NSInteger)cansetIndex transferAlg:(AIKVPointer*)transferAlg_p {\n    FrontIndexDicModel *result = [[FrontIndexDicModel alloc] init];\n    result.protoIndex = protoIndex;\n    result.cansetIndex = cansetIndex;\n    result.transferAlg_p = transferAlg_p;\n    return result;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/FrontIndexDicModel.m:1-21"
+    },
+    "1265": {
+        "file_id": 128,
+        "content": "This file contains the implementation of FrontIndexDicModel class which inherits from a superclass, likely in another file. It has a designated initializer method that takes protoIndex, cansetIndex and transferAlg as parameters and returns an instance of the class with these values assigned. The instance variables are protected by private or protected access modifiers to prevent direct manipulation from outside the class.",
+        "type": "comment"
+    },
+    "1266": {
+        "file_id": 129,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/TCCanset.h",
+        "type": "filepath"
+    },
+    "1267": {
+        "file_id": 129,
+        "content": "This code file, TCCanset.h, appears to define a class TCCanset which has two methods. One method converts sceneModel to override cansets (canset_ps) using algorithm 29069-todo5, and the other method converts canset_p to cansetModel. The class also takes in parameters such as AIKVPointer, AISceneModel, and NSInteger for specific operations within the methods.",
+        "type": "summary"
+    },
+    "1268": {
+        "file_id": 129,
+        "content": "//\n//  TCCanset.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/4/17.\n//  Copyright © 2023年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface TCCanset : NSObject\n/**\n *  MARK:--------------------将sceneModel转成canset_ps (override算法) (参考29069-todo5)--------------------\n */\n+(NSArray*) getOverrideCansets:(AISceneModel*)sceneModel sceneTargetIndex:(NSInteger)sceneTargetIndex;\n/**\n *  MARK:--------------------将canset_p转成cansetModel--------------------\n */\n+(AICansetModel*) convert2CansetModel:(AIKVPointer*)cansetFo_p sceneFo:(AIKVPointer*)sceneFo_p basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel ptAleardayCount:(NSInteger)ptAleardayCount isH:(BOOL)isH sceneModel:(AISceneModel*)sceneModel;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/TCCanset.h:1-23"
+    },
+    "1269": {
+        "file_id": 129,
+        "content": "This code file, TCCanset.h, appears to define a class TCCanset which has two methods. One method converts sceneModel to override cansets (canset_ps) using algorithm 29069-todo5, and the other method converts canset_p to cansetModel. The class also takes in parameters such as AIKVPointer, AISceneModel, and NSInteger for specific operations within the methods.",
+        "type": "comment"
+    },
+    "1270": {
+        "file_id": 130,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/TCCanset.m",
+        "type": "filepath"
+    },
+    "1271": {
+        "file_id": 130,
+        "content": "This code performs scene analysis, creates a new AICansetModel instance, retrieves transfer connection Cansets for text classification/information retrieval, and returns dictionaries/scores/models. It finds specific items in the canset, declaring failure if any are missing and considering success if all items are found.",
+        "type": "summary"
+    },
+    "1272": {
+        "file_id": 130,
+        "content": "//\n//  TCCanset.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/4/17.\n//  Copyright © 2023年 XiaoGang. All rights reserved.\n//\n#import \"TCCanset.h\"\n@implementation TCCanset\n/**\n *  MARK:--------------------将sceneModel转成canset_ps (override算法) (参考29069-todo5)--------------------\n *  @desc 当前下面挂载的且有效的cansets: (当前cansets - 用优先级更高一级cansets);\n *  @version\n *      2023.04.23: BUG_修复差集取成了交集,导致总返回0条;\n *      2023.09.10: 支持H任务时的override算法 (指定targetIndex即可) (参考30127);\n */\n+(NSArray*) getOverrideCansets:(AISceneModel*)sceneModel sceneTargetIndex:(NSInteger)sceneTargetIndex {\n    //1. 数据准备;\n    AIFoNodeBase *selfFo = [SMGUtils searchNode:sceneModel.scene];\n    //2023.12.24: 性能测试记录 (结果: 此方法很卡) (参考31025-代码段-问题1);\n    //  a. 记录此处为brother时,   共执行了: 300次 x 每次10ms     = 3s;\n    //  b. 记录此处为father时,    共执行了: 16次  x 每次1ms      = 16ms;\n    //  c. 记录此处为i时,         共执行了: 16次  x 每次125ms    = 2s;\n    //2. 不同type的公式不同 (参考29069-todo5.3 & 5.4 & 5.5);\n    if (sceneModel.type == SceneTypeBrother) {\n        //3. 当前是brother时: (brother有效canset = brother.conCansets - 与father有迁移关联部分) (参考29069-todo5.3);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/TCCanset.m:1-30"
+    },
+    "1273": {
+        "file_id": 130,
+        "content": "This code is performing scene analysis based on a given model and index. It prepares data, applies different formulas for different types of scenes, and returns the set of cansets that override each other. The code also includes performance test records related to brother, father, and i scenarios.",
+        "type": "comment"
+    },
+    "1274": {
+        "file_id": 130,
+        "content": "        NSArray *brotherConCansets = [AIFilter solutionCansetFilter:selfFo targetIndex:sceneTargetIndex];\n        NSArray *brotherFilter_ps = [TCCanset getFilter_ps:sceneModel];\n        NSArray *result = [SMGUtils removeSub_ps:brotherFilter_ps parent_ps:brotherConCansets];\n        if (Log4TCCanset && result.count > 0) NSLog(@\"测下override过滤生效 (B-F): 原有%ld - 过滤%ld => 结果%ld\",brotherConCansets.count,brotherFilter_ps.count,result.count);\n        return result;\n    } else if (sceneModel.type == SceneTypeFather) {\n        //4. 当前是father时: (father有效canset = father.conCansets - 与i有迁移关联部分) (参考29069-todo5.4);\n        NSArray *fatherConCansets = [AIFilter solutionCansetFilter:selfFo targetIndex:sceneTargetIndex];\n        NSArray *fatherFilter_ps = [TCCanset getFilter_ps:sceneModel];\n        NSArray *result = [SMGUtils removeSub_ps:fatherFilter_ps parent_ps:fatherConCansets];\n        if (Log4TCCanset && result.count > 0) NSLog(@\"测下override过滤生效 (F-I): 原有%ld - 过滤%ld => 结果%ld\",fatherConCansets.count,fatherFilter_ps.count,result.count);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/TCCanset.m:31-41"
+    },
+    "1275": {
+        "file_id": 130,
+        "content": "Code checks if the current scene model is of type \"brother\" or \"father\". If it's a brother, it filters the brother's cansets and returns the result. If it's a father, it filters the father's cansets and also logs the count of original, filtered, and final results.",
+        "type": "comment"
+    },
+    "1276": {
+        "file_id": 130,
+        "content": "        return result;\n    } else if (sceneModel.type == SceneTypeI) {\n        //4. 当前是i时: (i有效canset = i.conCansets) (参考29069-todo5.5);\n        NSArray *iConCansets = [AIFilter solutionCansetFilter:selfFo targetIndex:sceneTargetIndex];\n        if (Log4TCCanset && iConCansets.count > 0) NSLog(@\"测下override过滤生效 (I): 结果%ld\",iConCansets.count);\n        return iConCansets;\n    }\n    return nil;\n}\n/**\n *  MARK:--------------------将canset_p转成cansetModel--------------------\n *  @desc 初步比对候选集是否适用于protoFo (参考26128-第1步);\n *  @param ptAleardayCount      : ptFo已发生个数: 即取得\"canset的basePFoOrTargetFo推进到哪了\"的截点 (aleardayCount = cutIndex+1 或 actionIndex);\n *                                  1. 根R=cutIndex+1\n *                                  2. 子R=父actionIndex对应indexDic条数;\n *                                  3. H.actionIndex前已发生;\n *                                  改: 在支持sceneTree后,统一传sceneModel.cutIndex + 1;\n *  @param sceneFo_p            : 当前cansetFo_p挂在哪个场景fo下就传哪个;\n *  @param basePFoOrTargetFoModel : 一用来取protoFo用,二用来传参给结果AICansetModel用;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/TCCanset.m:42-61"
+    },
+    "1277": {
+        "file_id": 130,
+        "content": "This code is part of a function that returns the appropriate canset (a collection of candidate sets) based on a given type. If the current type is \"i\", it returns a filtered array of i-conCansets, and logs if overriding filters are in effect. Otherwise, it returns nil. The comments describe the function's purpose, parameters, and potential updates to support sceneTree.",
+        "type": "comment"
+    },
+    "1278": {
+        "file_id": 130,
+        "content": " *  @param sceneModel           : 此cansetModel是基于哪个sceneModel的就传哪个;\n *  @version\n *      2022.05.30: 匹配度公式改成: 匹配度总和/proto长度 (参考26128-1-4);\n *      2022.05.30: R和H模式复用封装 (参考26161);\n *      2022.06.11: 修复反思子任务没有protoFo用于analyst的BUG (参考26224-方案图);\n *      2022.06.11: 改用pFo参与analyst算法比对 & 并改取pFo已发生个数计算方式 (参考26232-TODO3&5&6);\n *      2022.06.12: 每帧analyst都映射转换成maskFo的帧元素比对 (参考26232-TODO4);\n *      2022.07.14: filter过滤器S的价值pk迭代: 将过滤负价值的,改成过滤无价值指向的 (参考27048-TODO4&TODO9);\n *      2022.07.20: filter过滤器不要求mv指向 (参考27055-步骤1);\n *      2022.09.15: 导致任务的maskFo不从demand取,而是从pFo取 (因为它在推进时会变化) (参考27097-todo3);\n *      2022.11.03: compareHCansetFo比对中复用alg相似度 (参考27175-3);\n *      2022.11.03: 复用alg相似度 (参考27175-2&3);\n *      2022.11.20: 改为match与canset比对,复用indexDic和alg相似度 (参考27202-3&4&5);\n *      2022.11.20: 持久化复用: 支持indexDic复用和概念matchValue复用 (参考20202-3&4);\n *      2022.12.03: 修复复用matchValue有时为0的问题 (参考27223);\n *      2022.12.03: 当canset前段有遗漏时,该方案无效 (参考27224);\n *      2023.01.08: filter过滤器加上条件满足过滤器-R任务部分 (参考28022);\n *      2023.01.08: filter过滤器V1末版说明: 根据28025,递归找match,proto,canset三者的映射,来判断条件满足,已废弃 (参考28023&28051);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/TCCanset.m:62-79"
+    },
+    "1279": {
+        "file_id": 130,
+        "content": "This code contains the version history of a function, with various changes and bug fixes made over time. It involves scene models, analyst algorithms, filtering, and concept matching.",
+        "type": "comment"
+    },
+    "1280": {
+        "file_id": 130,
+        "content": " *      2023.01.08: 将R和H的时序比对,整理删除仅留下这个通用时序比对方法;\n *      2023.02.04: filter过滤器V2版本,解决原方式条件满足不完全问题 (参考28052);\n *      2023.02.04: 修复条件满足不完全问题 (参考28052);\n *      2023.02.17: 从Analyze整理到TCSolutionUtil中,因为它现在其实就是获取SolutionModel用的 (参考28084-1);\n *      2023.02.17: 废弃filter过滤器,并合并到此处来 (参考28084-2);\n *      2023.02.18: 计算前段竞争值 (参考28084-4);\n *      2023.03.16: 先用任意帧sp值>5脱离惰性期 (参考28182-todo9);\n *      2023.03.18: 惰性期阈值改为eff>2时脱离惰性期 (参考28185-todo6);\n *      2023.04.22: 关闭惰性期 (参考29073-方案);\n *      2023.04.30: 用迁移后cansetA与protoA来计算前段匹配度值 (参考29075-todo5);\n *  @result 返回cansetFo前段匹配度 & 以及已匹配的cutIndex截点;\n */\n+(AICansetModel*) convert2CansetModel:(AIKVPointer*)cansetFo_p sceneFo:(AIKVPointer*)sceneFo_p basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel ptAleardayCount:(NSInteger)ptAleardayCount isH:(BOOL)isH sceneModel:(AISceneModel*)sceneModel {\n    //1. 数据准备 & 复用indexDic & 取出pFoOrTargetFo;\n    AIFoNodeBase *matchFo = [SMGUtils searchNode:sceneFo_p];\n    AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];\n    NSInteger matchTargetIndex = isH ? ptAleardayCount : matchFo.count;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/TCCanset.m:80-96"
+    },
+    "1281": {
+        "file_id": 130,
+        "content": "This code snippet is responsible for converting cansetFo and sceneFo into AICansetModel, retrieving the basePFoOrTargetFoModel, and calculating the front-section matching degree and matched cutIndex. It also incorporates various updates from different dates.",
+        "type": "comment"
+    },
+    "1282": {
+        "file_id": 130,
+        "content": "    //2. 判断是否H任务 (H有后段,别的没有);\n    int minCount = isH ? 2 : 1;\n    if (Log4SolutionFilter) NSLog(@\"S过滤器 checkItem: %@\",Pit2FStr(cansetFo_p));\n    if (cansetFo.count < minCount) return nil; //过滤1: 过滤掉长度不够的 (因为前段全含至少要1位,中段修正也至少要0位,后段H目标要1位R要0位);\n    //3. 惰性期 (阈值为2: EFF默认值为1,达到阈值时触发) (参考28182-todo9 & 28185-todo6);\n    if (Switch4DuoXinQi) {\n        AIEffectStrong *effStrong = [TOUtils getEffectStrong:matchFo effectIndex:matchFo.count solutionFo:cansetFo_p];\n        if (effStrong.hStrong <= 2) return nil;\n        //NSLog(@\"惰性期通过:%@\",CLEANSTR(cansetFo.spDic));\n    }\n    //5. 根据sceneFo取得与canset的indexDic映射;\n    NSDictionary *indexDic = [cansetFo getAbsIndexDic:sceneFo_p];\n    [AITest test102:cansetFo];\n    //2. 计算出canset的cutIndex (canset的cutIndex,也已在proto中发生) (参考26128-1-1);\n    //7. 根据ptAleardayCount取出对应的cansetIndex,做为中段截点 (aleardayCount - 1 = cutIndex);\n    NSInteger matchCutIndex = ptAleardayCount - 1;\n    NSInteger cansetCutIndex = NUMTOOK([indexDic objectForKey:@(matchCutIndex)]).integerValue;\n    //8. canset目标下标 (R时canset没有mv,所以要用count-1);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/TCCanset.m:98-119"
+    },
+    "1283": {
+        "file_id": 130,
+        "content": "This code block is performing the following tasks:\n1. Determines if it's an H task (filtering for those without enough segments).\n2. Applies a lazy period threshold (only allowing if the value exceeds 2).\n3. Retrieves an index dictionary based on scene and canset.\n4. Calculates cutIndex based on the number of matches and canset.\n5. Extracts the middle segment based on ptAleardayCount and cansetCutIndex.",
+        "type": "comment"
+    },
+    "1284": {
+        "file_id": 130,
+        "content": "    NSInteger cansetTargetIndex = isH ? NUMTOOK([indexDic objectForKey:@(ptAleardayCount)]).integerValue : cansetFo.count - 1;\n    if (cansetCutIndex < matchCutIndex) return nil; //过滤2: 判断canset前段是否有遗漏 (参考27224);\n    if (cansetFo.count <= cansetCutIndex + 1) return nil; //过滤3: 过滤掉canset没后段的 (没可行为化的东西) (参考28052-4);\n    //9. 递归找到protoFo;\n    AIMatchFoModel *pFo = [self getPFo:cansetFo_p basePFoOrTargetFoModel:basePFoOrTargetFoModel];\n    AIKVPointer *protoFo_p = pFo.baseRDemand.protoOrRegroupFo;\n    AIFoNodeBase *protoFo = [SMGUtils searchNode:protoFo_p];\n    //10. 判断protoFo对cansetFo条件满足 (返回条件满足的每帧间映射);\n    NSArray *frontIndexDicModels = [self getFrontIndexDic:protoFo cansetFo:cansetFo cansetCutIndex:cansetCutIndex sceneModel:sceneModel];\n    NSDictionary *protoFrontIndexDic = [SMGUtils convertArr2Dic:frontIndexDicModels kvBlock:^NSArray *(FrontIndexDicModel *obj) {\n        return @[@(obj.cansetIndex),@(obj.protoIndex)];\n    }];\n    if (!DICISOK(protoFrontIndexDic)) return nil; //过滤4: 条件不满足时,直接返回nil (参考28052-2 & 28084-3);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/TCCanset.m:120-135"
+    },
+    "1285": {
+        "file_id": 130,
+        "content": "This code is filtering canset and finding protoFo. It checks if there are any missing parts in the first segment of canset, verifies if the canset has a second part, recursively finds protoFo, and ensures that the conditions for protoFo are met. If any condition is not satisfied, it returns nil.",
+        "type": "comment"
+    },
+    "1286": {
+        "file_id": 130,
+        "content": "    //4. 计算前段竞争值之匹配值 (参考28084-4);\n    NSArray *frontNearData = [AINetUtils getNearDataByIndexDic:protoFrontIndexDic getAbsAlgBlock:^AIKVPointer *(NSInteger absIndex) {\n        FrontIndexDicModel *model = [SMGUtils filterSingleFromArr:frontIndexDicModels checkValid:^BOOL(FrontIndexDicModel *o) {\n            return o.cansetIndex == absIndex;\n        }];\n        if (model) return model.transferAlg_p;\n        return nil;\n    } getConAlgBlock:^AIKVPointer *(NSInteger conIndex) {\n        return ARR_INDEX(protoFo.content_ps, conIndex);\n    } callerIsAbs:true];\n    CGFloat frontMatchValue = NUMTOOK(ARR_INDEX(frontNearData, 1)).floatValue;\n    if (frontMatchValue == 0) return nil; //过滤5: 前段不匹配时,直接返回nil (参考26128-1-3);\n    //5. 计算前段竞争值之强度竞争值 (参考28086-todo1);\n    NSDictionary *matchFrontIndexDic = [SMGUtils filterDic:indexDic checkValid:^BOOL(NSNumber *key, id value) {\n        return key.integerValue <= matchCutIndex;\n    }];\n    NSInteger sumStrong = [AINetUtils getSumConStrongByIndexDic:matchFrontIndexDic matchFo:sceneFo_p cansetFo:cansetFo_p];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/TCCanset.m:137-154"
+    },
+    "1287": {
+        "file_id": 130,
+        "content": "This code calculates the match value and strong competition value for a front segment, filtering out nil values if there is no match. It also gets a sum of strong competition values using AINetUtils.",
+        "type": "comment"
+    },
+    "1288": {
+        "file_id": 130,
+        "content": "    CGFloat frontStrongValue = (float)sumStrong / matchFrontIndexDic.count;\n    //6. 计算中断竞争值;\n    CGFloat midEffectScore = [TOUtils getEffectScore:matchFo effectIndex:matchTargetIndex solutionFo:cansetFo_p];\n    CGFloat midStableScore = [TOUtils getStableScore:cansetFo startSPIndex:cansetCutIndex + 1 endSPIndex:cansetTargetIndex];\n    //6. 后段: 找canset后段目标 和 后段匹配度 (H需要后段匹配, R不需要);\n    if (isH) {\n        //7. 后段匹配度 (后段不匹配时,直接返nil);\n        NSDictionary *backIndexDic = [SMGUtils filterDic:indexDic checkValid:^BOOL(NSNumber *key, id value) {\n            return key.integerValue == ptAleardayCount;\n        }];\n        CGFloat backMatchValue = [AINetUtils getMatchByIndexDic:backIndexDic absFo:sceneFo_p conFo:cansetFo_p callerIsAbs:true];\n        if (backMatchValue == 0) return nil; //过滤6: 后段不匹配时,直接返回nil;\n        //7. 后段强度竞争值;\n        NSInteger backStrongValue = [AINetUtils getSumConStrongByIndexDic:backIndexDic matchFo:sceneFo_p cansetFo:cansetFo_p];\n        //9. 后段成功;\n        return [AICansetModel newWithCansetFo:cansetFo_p sceneFo:sceneFo_p",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/TCCanset.m:155-174"
+    },
+    "1289": {
+        "file_id": 130,
+        "content": "Calculates the front strength value, computes interrupt competition value with midEffectScore and midStableScore, finds the back segment target and match value for H type, calculates backMatchValue, checks if it's 0 and returns nil if true, otherwise gets backStrongValue, and finally creates a new AICansetModel with cansetFo and sceneFo.",
+        "type": "comment"
+    },
+    "1290": {
+        "file_id": 130,
+        "content": "                           protoFrontIndexDic:protoFrontIndexDic matchFrontIndexDic:matchFrontIndexDic\n                              frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue\n                               midEffectScore:midEffectScore midStableScore:midStableScore\n                                 backIndexDic:backIndexDic backMatchValue:backMatchValue backStrongValue:backStrongValue\n                                     cutIndex:cansetCutIndex sceneCutIndex:matchCutIndex\n                                  targetIndex:cansetTargetIndex sceneTargetIndex:matchTargetIndex\n                       basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel];\n    }else{\n        //11. 后段: R不判断后段;\n        return [AICansetModel newWithCansetFo:cansetFo_p sceneFo:sceneFo_p\n                           protoFrontIndexDic:protoFrontIndexDic matchFrontIndexDic:matchFrontIndexDic\n                              frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue\n                               midEffectScore:midEffectScore midStableScore:midStableScore",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/TCCanset.m:175-187"
+    },
+    "1291": {
+        "file_id": 130,
+        "content": "This code is creating a new instance of AICansetModel with the given parameters. If R segment is not judged, it returns an object with the provided cansetFo and sceneFo, along with other attributes like index dictionaries, scores, and models. The class AICansetModel seems to be related to text classification or information retrieval in a certain context.",
+        "type": "comment"
+    },
+    "1292": {
+        "file_id": 130,
+        "content": "                                 backIndexDic:nil backMatchValue:1 backStrongValue:0\n                                     cutIndex:cansetCutIndex sceneCutIndex:matchCutIndex\n                                  targetIndex:cansetFo.count sceneTargetIndex:matchTargetIndex\n                       basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel];\n    }\n}\n//MARK:===============================================================\n//MARK:                     < privateMethod >\n//MARK:===============================================================\n/**\n *  MARK:--------------------获取override用来过滤的部分 (参考29069-todo5.2)--------------------\n *  @desc 取father过滤部分 (用于mIsC过滤) (参考29069-todo5.1);\n *  @version\n *      2023.04.23: BUG_修复抽具象关联取不到过滤结果,改为用迁移关联取 (参考29074);\n */\n+(NSArray*) getFilter_ps:(AISceneModel*)sceneModel {\n    //1. brother时: 取father及其具象 => 作为过滤部分 (参考29069-todo5.3-公式减数);\n    if (sceneModel.type == SceneTypeBrother) {\n        //2. 从fatherScene中找出与当前scene有迁移关联的cansets并返回 (参考29069-todo5.3 & 29074);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/TCCanset.m:188-208"
+    },
+    "1293": {
+        "file_id": 130,
+        "content": "This code appears to be part of a method that gets the override used for filtering, referencing task 29069 and 29074. It checks if the sceneModel is a brother type, then finds the cansets related by migration from fatherScene and returns them as the filtering part.",
+        "type": "comment"
+    },
+    "1294": {
+        "file_id": 130,
+        "content": "        AIFoNodeBase *fatherFo = [SMGUtils searchNode:sceneModel.base.scene];\n        return [fatherFo getTransferConCansets:sceneModel.scene];\n    }\n    //3. father时: 取i及其抽象 => 作为过滤部分 (参考29069-todo5.4-公式减数);\n    else if (sceneModel.type == SceneTypeFather) {\n        //4. 从iScene中找出与当前scene有迁移关联的cansets并返回 (参考29069-todo5.4 & 29074);\n        AIFoNodeBase *iFo = [SMGUtils searchNode:sceneModel.base.scene];\n        return [iFo getTransferAbsCansets:sceneModel.scene];\n    }\n    return nil;\n}\n/**\n *  MARK:--------------------递归找出pFo (参考28025-todo8)--------------------\n *  @desc 适用范围: 即可用于R任务,也可用于H任务;\n *  @desc 执行说明: H任务会自动递归,直到找到R为止   /   R任务不会递归,直接返回R的pFo;\n */\n+(AIMatchFoModel*) getPFo:(AIKVPointer*)cansetFo_p basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel {\n    //1. 本次非R时: 继续递归;\n    if (ISOK(basePFoOrTargetFoModel, TOFoModel.class)) {\n        TOFoModel *baseTargetFo = (TOFoModel*)basePFoOrTargetFoModel;\n        return [self getPFo:baseTargetFo.content_p basePFoOrTargetFoModel:baseTargetFo.basePFoOrTargetFoModel];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/TCCanset.m:209-230"
+    },
+    "1295": {
+        "file_id": 130,
+        "content": "This code block checks the type of scene and retrieves the transfer connection Cansets accordingly. If the type is SceneTypeFather, it finds the iScene with a transfer relationship to the current scene and returns its abstract Cansets. Otherwise, it returns nil. The subsequent code snippet describes recursively finding pFo based on the basePFoOrTargetFoModel parameter.",
+        "type": "comment"
+    },
+    "1296": {
+        "file_id": 130,
+        "content": "    }\n    //2. 本次是R时: 返回最终找到的pFo;\n    else {\n        return basePFoOrTargetFoModel;\n    }\n}\n/**\n *  MARK:--------------------条件满足时: 获取前段indexDic--------------------\n *  @desc 即从proto中找abs: 判断当前proto场景对abs是条件满足的 (参考28052-2);\n *  @param cansetCutIndex : 其中cansetFo执行到的最大值 (含cansetCutIndex) (是ptAleardayCount-1对应的canset下标);\n *  @version\n *      2023.02.04: 初版,为解决条件满足不完全的问题,此方法将尝试从proto找出canset前段的每帧 (参考28052);\n *      2023.04.28: 条件满足兼容迁移alg的情况 (参考29075-方案3);\n *  @result 在proto中全找到canset的前段则返回frontIndexDic映射模型,未全找到时(条件不满足)返回空数组;\n */\n+(NSArray*) getFrontIndexDic:(AIFoNodeBase*)protoFo cansetFo:(AIFoNodeBase*)cansetFo cansetCutIndex:(NSInteger)cansetCutIndex sceneModel:(AISceneModel*)sceneModel {\n    //1. 数据准备;\n    NSMutableArray *result = [[NSMutableArray alloc] init];\n    if (!protoFo || !cansetFo) return nil;\n    //2. 每帧match都到proto里去找,找到则记录proto的进度,找不到则全部失败;\n    NSInteger protoMin = 0;\n    //2. 说明: 所有已发生帧,都要判断一下条件满足 (cansetCutIndex之前全是前段) (参考28022-todo4);\n    for (NSInteger cansetI = 0; cansetI < cansetCutIndex + 1; cansetI ++) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/TCCanset.m:231-256"
+    },
+    "1297": {
+        "file_id": 130,
+        "content": "This code is part of a class method that retrieves a mapping model for the front segment of a canset, based on the given proto and cansetFo objects. It first prepares data and then iterates through each frame to find if it meets the condition in the proto, recording the progress. If all frames meet the condition, it returns the frontIndexDic mapping model; otherwise, it returns an empty array.",
+        "type": "comment"
+    },
+    "1298": {
+        "file_id": 130,
+        "content": "        AIKVPointer *cansetAlg = ARR_INDEX(cansetFo.content_ps, cansetI);\n        BOOL findItem = false;\n        for (NSInteger protoI = protoMin; protoI < protoFo.count; protoI++) {\n            AIKVPointer *protoAlg = ARR_INDEX(protoFo.content_ps, protoI);\n            //3. B源于cansetFo,此处只判断B是1层抽象 (参考27161-调试1&调试2);\n            //3. 单条判断方式: 此处proto抽象仅指向刚识别的matchAlgs,所以与contains等效 (参考28052-3);\n            AIKVPointer *transferAlg = [TCTransfer transferAlg:sceneModel canset:cansetFo cansetIndex:cansetI];\n            BOOL mIsC = [TOUtils mIsC_1:protoAlg c:transferAlg];\n            if (mIsC) {\n                //4. 找到了 & 记录protoI的进度;\n                findItem = true;\n                protoMin = protoI + 1;\n                [result addObject:[FrontIndexDicModel newWithProtoIndex:protoI cansetIndex:cansetI transferAlg:transferAlg]];\n                if (Log4SceneIsOk) NSLog(@\"\\t第%ld帧,条件满足通过 canset:%@ (fromProto:F%ldA%ld)\",cansetI,Pit2FStr(cansetAlg),protoFo.pointer.pointerId,protoAlg.pointerId);\n                break;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/TCCanset.m:257-271"
+    },
+    "1299": {
+        "file_id": 130,
+        "content": "This code iterates through protos, checks if any proto is a 1-layer abstract derived from cansetFo, and stops once found. If found, it adds an object to the result list and logs a message indicating the successful condition satisfaction for that canset.",
+        "type": "comment"
+    }
+}

@@ -1,0 +1,542 @@
+{
+    "1700": {
+        "file_id": 174,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRethink/TCRethinkUtil.m",
+        "type": "filepath"
+    },
+    "1701": {
+        "file_id": 174,
+        "content": "The code updates SPEFF of an AI frame based on its abstract representation, prepares ports, checks execution conditions and maps/executes the target frame accordingly.",
+        "type": "summary"
+    },
+    "1702": {
+        "file_id": 174,
+        "content": "//\n//  TCRethinkUtil.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/4/20.\n//  Copyright © 2023年 XiaoGang. All rights reserved.\n//\n#import \"TCRethinkUtil.h\"\n@implementation TCRethinkUtil\n/**\n *  MARK:--------------------抽象也更新SPEFF (参考29069-todo11.4 & todo11.5)--------------------\n *  @param curFo : 当前正在SPEFF的fo (本方法就是取它的抽象);\n *  @param curFoIndex : 当前正在对fo的此下标下的帧执行更新SPEFF;\n */\n+(void) spEff4Abs:(AIFoNodeBase*)curFo curFoIndex:(NSInteger)curFoIndex itemRunBlock:(void(^)(AIFoNodeBase *absFo,NSInteger absIndex))itemRunBlock {\n    //1. 数据准备;\n    NSArray *absPorts = [AINetUtils absPorts_All:curFo];\n    for (AIPort *absPort in absPorts) {\n        //2. P: mv是目标帧的: 直接执行;\n        if (curFoIndex == curFo.count) {\n            AIFoNodeBase *absFo = [SMGUtils searchNode:absPort.target_p];\n            itemRunBlock(absFo,absFo.count);\n        }\n        //3. R: 理性目标帧时: 判断indexDic映射到目标帧再执行;\n        else {\n            NSDictionary *indexDic = [curFo getAbsIndexDic:absPort.target_p];\n            NSNumber *absIndex = ARR_INDEX([indexDic allKeysForObject:@(curFoIndex)], 0);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRethink/TCRethinkUtil.m:1-30"
+    },
+    "1703": {
+        "file_id": 174,
+        "content": "This code updates the SPEFF (Speech Effector) of a given AI frame based on its abstract representation. It prepares the abstract ports, checks if it's the last index to execute, and either executes directly or maps the current index to the target abstract frame for execution.",
+        "type": "comment"
+    },
+    "1704": {
+        "file_id": 174,
+        "content": "            if (absIndex) {\n                //4. 目标帧映射有效 => 执行;\n                AIFoNodeBase *absFo = [SMGUtils searchNode:absPort.target_p];\n                itemRunBlock(absFo,absIndex.integerValue);\n            }\n        }\n    }\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRethink/TCRethinkUtil.m:31-40"
+    },
+    "1705": {
+        "file_id": 174,
+        "content": "This code snippet checks if the target frame mapping is valid and if so, executes a block of code using the absolute frame node and index.",
+        "type": "comment"
+    },
+    "1706": {
+        "file_id": 175,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScene/AISceneModel.h",
+        "type": "filepath"
+    },
+    "1707": {
+        "file_id": 175,
+        "content": "The code defines the AISceneModel class, representing a scene model in SMG_NothingIsAll. It includes properties for parent and type, and methods to get the root of the scene tree and create new instances. The second code defines a class with scene and cutIndex properties related to task scenarios.",
+        "type": "summary"
+    },
+    "1708": {
+        "file_id": 175,
+        "content": "//\n//  AISceneModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/4/11.\n//  Copyright © 2023年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------CansetModel--------------------\n *  @desc 一个CansetModel中包含多个overrideCanset;\n */\n@interface AISceneModel : NSObject\n+(AISceneModel*) newWithBase:(AISceneModel*)base type:(SceneType)type scene:(AIKVPointer*)scene cutIndex:(NSInteger)cutIndex;\n/**\n *  MARK:--------------------base--------------------\n *  @desc 参考29069-数据结构示图 (兄弟的base=父类 父类的base=自己);\n */\n@property (strong, nonatomic) AISceneModel *base;\n/**\n *  MARK:--------------------subs--------------------\n *  @desc 参考29069-数据结构示图 (自己的subs=父类 父类的subs=兄弟);\n *  @init 在子模型构建时,一个个报名填充进来;\n */\n@property (strong, nonatomic) NSMutableArray *subs;\n/**\n *  MARK:--------------------type--------------------\n *  @desc 当前是自己,还是父类,还是兄弟;\n */\n@property (assign, nonatomic) SceneType type;\n/**\n *  MARK:--------------------获取scene树的根model--------------------\n */\n-(AISceneModel*) getRoot;\n/**",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScene/AISceneModel.h:1-43"
+    },
+    "1709": {
+        "file_id": 175,
+        "content": "This code defines the AISceneModel class, which represents a scene model in the SMG_NothingIsAll application. It has properties for base (parent), subs (children), and type (self or parent). The class also includes methods to get the root of the scene tree and create new instances of the model.",
+        "type": "comment"
+    },
+    "1710": {
+        "file_id": 175,
+        "content": " *  MARK:--------------------scene--------------------\n *  @desc 当前cansetModel是基于哪个scene;\n */\n@property (strong, nonatomic) AIKVPointer *scene;\n/**\n *  MARK:--------------------cutIndex--------------------\n *  @desc cutIndex的值 = aleardayCount - 1 = actionIndex - 1\n *      1. H任务时: H任务的targetIndex = actionIndex (H任务目标是当前场景targetFo的actionIndex帧);\n *      2. R任务时: R任务的targetIndex = sceneFo.count (R任务目标是最后的mv结果);\n */\n@property (assign, nonatomic) NSInteger cutIndex;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScene/AISceneModel.h:44-57"
+    },
+    "1711": {
+        "file_id": 175,
+        "content": "This code defines a class with two properties: scene and cutIndex. The scene property is of type AIKVPointer, which is used to represent the current scene. CutIndex's value is equal to aleardayCount - 1 (actionIndex - 1). In H task scenario, targetIndex is set to actionIndex, representing the current H task frame. In R task scenario, targetIndex is set to sceneFo count, representing the final mv result.",
+        "type": "comment"
+    },
+    "1712": {
+        "file_id": 176,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScene/AISceneModel.m",
+        "type": "filepath"
+    },
+    "1713": {
+        "file_id": 176,
+        "content": "The code is implementing a class AISceneModel that provides methods to create new scene models with base, type, and scene parameters. It also has getter and setter methods for subs, getRoot, and equality checking.",
+        "type": "summary"
+    },
+    "1714": {
+        "file_id": 176,
+        "content": "//\n//  AISceneModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/4/11.\n//  Copyright © 2023年 XiaoGang. All rights reserved.\n//\n#import \"AISceneModel.h\"\n@implementation AISceneModel\n+(AISceneModel*) newWithBase:(AISceneModel*)base type:(SceneType)type scene:(AIKVPointer*)scene cutIndex:(NSInteger)cutIndex {\n    AISceneModel *result = [[AISceneModel alloc] init];\n    result.type = type;\n    if (base) [base.subs addObject:result];\n    result.base = base;\n    result.scene = scene;\n    result.cutIndex = cutIndex;\n    return result;\n}\n-(NSMutableArray *)subs {\n    if (!_subs) _subs = [[NSMutableArray alloc] init];\n    return _subs;\n}\n-(AISceneModel*) getRoot {\n    if (self.type == SceneTypeI) {\n        return self;\n    }\n    return [self.base getRoot];\n}\n-(BOOL) isEqual:(AISceneModel*)object{\n    if (ISOK(object, AISceneModel.class)) return [self.scene isEqual:object.scene];\n    return false;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScene/AISceneModel.m:1-40"
+    },
+    "1715": {
+        "file_id": 176,
+        "content": "The code is implementing a class AISceneModel that provides methods to create new scene models with base, type, and scene parameters. It also has getter and setter methods for subs, getRoot, and equality checking.",
+        "type": "comment"
+    },
+    "1716": {
+        "file_id": 177,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScene/TCScene.h",
+        "type": "filepath"
+    },
+    "1717": {
+        "file_id": 177,
+        "content": "This is the header file for TCScene class, which provides methods to generate a structured scene tree based on demand inputs. The class inherits from NSObject and offers two methods: rGetSceneTree (ReasonDemandModel) and hGetSceneTree (HDemandModel).",
+        "type": "summary"
+    },
+    "1718": {
+        "file_id": 177,
+        "content": "//\n//  TCScene.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/4/17.\n//  Copyright © 2023年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------TCScene--------------------\n *  @desc 用于得出brother->father->i的结构化Scene (参考29069-todo3 & 686示图);\n */\n@interface TCScene : NSObject\n+(NSArray*) rGetSceneTree:(ReasonDemandModel*)demand;\n+(NSArray*) hGetSceneTree:(HDemandModel*)demand;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScene/TCScene.h:1-20"
+    },
+    "1719": {
+        "file_id": 177,
+        "content": "This is the header file for TCScene class, which provides methods to generate a structured scene tree based on demand inputs. The class inherits from NSObject and offers two methods: rGetSceneTree (ReasonDemandModel) and hGetSceneTree (HDemandModel).",
+        "type": "comment"
+    },
+    "1720": {
+        "file_id": 178,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScene/TCScene.m",
+        "type": "filepath"
+    },
+    "1721": {
+        "file_id": 178,
+        "content": "The method retrieves scene tree data, filters and converts father scenes with specific cut points into `AISceneModel` objects. It handles duplicates, identifiers, and cutpoints before returning a structured array of resulting models for further scene manipulation or data organization.",
+        "type": "summary"
+    },
+    "1722": {
+        "file_id": 178,
+        "content": "//\n//  TCScene.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/4/17.\n//  Copyright © 2023年 XiaoGang. All rights reserved.\n//\n#import \"TCScene.h\"\n@implementation TCScene\n/**\n *  MARK:--------------------R场景树--------------------\n *  @desc 收集三处候选集 (参考29069-todo3);\n *  @status 目前仅支持R任务,等到做去皮训练时有需要再支持H任务 (29069-todo2);\n *  @version\n *      2023.04.13: 过滤出有同区mv指向的,才收集到各级候选集中 (参考29069-todo4);\n *      2023.04.14: 为sceneModel记录cutIndex (参考29069-todo5.6);\n *      2023.05.07: TCScene支持过滤器(参考2908a-todo3);\n *  @result 将三级全收集返回 (返回的数据为: I,Father,Brother三者场景生成的CansetModel);\n */\n+(NSArray*) rGetSceneTree:(ReasonDemandModel*)demand {\n    //1. 数据准备;\n    NSArray *iModels = nil;\n    NSMutableArray *fatherModels = [[NSMutableArray alloc] init];\n    NSMutableArray *brotherModels = [[NSMutableArray alloc] init];\n    //2. 取自己级;\n    iModels = [SMGUtils convertArr:demand.validPFos convertBlock:^id(AIMatchFoModel *pFo) {\n        NSInteger aleardayCount = [TCSolutionUtil getRAleardayCount:demand pFo:pFo];\n        return [AISceneModel newWithBase:nil type:SceneTypeI scene:pFo.matchFo cutIndex:aleardayCount - 1];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScene/TCScene.m:1-32"
+    },
+    "1723": {
+        "file_id": 178,
+        "content": "This method retrieves the R scene tree for a given demand. It prepares data, collects I models, father models, and brother models. It then returns an array containing the collected I, Father, and Brother scene models.",
+        "type": "comment"
+    },
+    "1724": {
+        "file_id": 178,
+        "content": "    }];\n    //3. 取父类级;\n    for (AISceneModel *iModel in iModels) {\n        AIFoNodeBase *iFo = [SMGUtils searchNode:iModel.scene];//84ms\n        NSArray *fatherScene_ps = [AIFilter rSolutionSceneFilter:iFo type:iModel.type];\n        //a. 过滤器 & 转为CansetModel;\n        NSArray *itemFatherModels = [SMGUtils convertArr:fatherScene_ps convertBlock:^id(AIKVPointer *item) {\n            //a1. 过滤father不含截点的 (参考29069-todo5.6);\n            NSDictionary *indexDic = [iFo getAbsIndexDic:item];\n            NSNumber *fatherCutIndex = ARR_INDEX([indexDic allKeysForObject:@(iModel.cutIndex)], 0);\n            if (!fatherCutIndex) return nil;\n            //a2. 过滤无同区mv指向的 (参考29069-todo4);\n            AIFoNodeBase *fo = [SMGUtils searchNode:item];\n            if (![iFo.cmvNode_p.identifier isEqualToString:fo.cmvNode_p.identifier]) return nil;\n            //a3. 将father生成模型;\n            return [AISceneModel newWithBase:iModel type:SceneTypeFather scene:item cutIndex:fatherCutIndex.integerValue];\n        }];\n        [fatherModels addObjectsFromArray:itemFatherModels];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScene/TCScene.m:33-54"
+    },
+    "1725": {
+        "file_id": 178,
+        "content": "This code is filtering father scenes that contain a specific cut point and converting them into `AISceneModel` objects. It first searches for nodes in the scene, applies filters to get relevant models, and finally adds the filtered models to an array of father models.",
+        "type": "comment"
+    },
+    "1726": {
+        "file_id": 178,
+        "content": "    }\n    //4. 取兄弟级;\n    for (AISceneModel *fatherModel in fatherModels) {\n        AIFoNodeBase *fatherFo = [SMGUtils searchNode:fatherModel.scene];\n        NSArray *brotherScene_ps = [AIFilter rSolutionSceneFilter:fatherFo type:fatherModel.type];//1799ms\n        //a. 过滤器 & 转为CansetModel;\n        NSArray *itemBrotherModels = [SMGUtils convertArr:brotherScene_ps convertBlock:^id(AIKVPointer *item) {\n            //a1. 过滤brother不含截点的 (参考29069-todo5.6);\n            NSDictionary *indexDic = [fatherFo getConIndexDic:item];\n            NSNumber *brotherCutIndex = [indexDic objectForKey:@(fatherModel.cutIndex)];\n            if (!brotherCutIndex) return nil;\n            //a2. 过滤无同区mv指向的 (参考29069-todo4);\n            AIFoNodeBase *fo = [SMGUtils searchNode:item];//68ms\n            if (![fatherFo.cmvNode_p.identifier isEqualToString:fo.cmvNode_p.identifier]) return nil;\n            //a3. 将brother生成模型;\n            return [AISceneModel newWithBase:fatherModel type:SceneTypeBrother scene:item cutIndex:brotherCutIndex.integerValue];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScene/TCScene.m:55-74"
+    },
+    "1727": {
+        "file_id": 178,
+        "content": "This code appears to be searching for a specific scene model within another scene, filtering out any scenes that do not contain cutpoints or have different same-region identifiers. It then creates an array of resulting models (brothers) and returns them. The comments in the code refer to potential future improvements and references.",
+        "type": "comment"
+    },
+    "1728": {
+        "file_id": 178,
+        "content": "        }];\n        [brotherModels addObjectsFromArray:itemBrotherModels];\n    }\n    //5. 去重1: 数据准备;\n    NSArray *iSceneArr = [SMGUtils convertArr:iModels convertBlock:^id(AISceneModel *obj) {\n        return obj.scene;\n    }];\n    NSArray *fatherSceneArr = [SMGUtils convertArr:fatherModels convertBlock:^id(AISceneModel *obj) {\n        return obj.scene;\n    }];\n    //6. 去重2: 优先级I>F>B: 即I有的F和B不能再有,F有的B不能再有;\n    fatherModels = [SMGUtils filterArr:fatherModels checkValid:^BOOL(AISceneModel *item) {\n        return ![iSceneArr containsObject:item.scene];\n    }];\n    brotherModels = [SMGUtils filterArr:brotherModels checkValid:^BOOL(AISceneModel *item) {\n        return ![iSceneArr containsObject:item.scene] && ![fatherSceneArr containsObject:item.scene];\n    }];\n    //7. 去重3: 本层防重: 即F内不能重复,B内不能重复;\n    fatherModels = [SMGUtils removeRepeat:fatherModels convertBlock:^id(AISceneModel *obj) {\n        return obj.scene;\n    }];\n    brotherModels = [SMGUtils removeRepeat:brotherModels convertBlock:^id(AISceneModel *obj) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScene/TCScene.m:75-99"
+    },
+    "1729": {
+        "file_id": 178,
+        "content": "This code is preparing a scene array by filtering out duplicate scenes, ensuring that father scene models are not in iScene and brother models are neither in iScene nor fatherScene. Additionally, it removes any duplicates within the father and brother model arrays.",
+        "type": "comment"
+    },
+    "1730": {
+        "file_id": 178,
+        "content": "        return obj.scene;\n    }];\n    //8. 将三级全收集返回;\n    NSMutableArray *result = [[NSMutableArray alloc] init];\n    [result addObjectsFromArray:iModels];\n    [result addObjectsFromArray:fatherModels];\n    [result addObjectsFromArray:brotherModels];\n    NSLog(@\"第1步 R场景树枝点数 I:%ld + Father:%ld + Brother:%ld = 总:%ld\",iModels.count,fatherModels.count,brotherModels.count,result.count);\n    return result;\n}\n/**\n *  MARK:--------------------H场景树--------------------\n *  @version\n *      2023.09.12: BUG_修复把targetFoModel错当成scene,导致场景树返回几乎为空的问题 (参考30128);\n *      2023.09.15: RCanset做为HScene (参考30131-todo2);\n */\n+(NSArray*) hGetSceneTree:(HDemandModel*)demand {\n    //1. 数据准备;\n    NSMutableArray *iModels = [[NSMutableArray alloc] init];\n    NSMutableArray *fatherModels = [[NSMutableArray alloc] init];\n    NSMutableArray *brotherModels = [[NSMutableArray alloc] init];\n    TOFoModel *targetFoM = (TOFoModel*)demand.baseOrGroup.baseOrGroup;\n    NSInteger targetIndex = targetFoM.actionIndex;\n    //2. 取自己级;\n    AISceneModel *iM",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScene/TCScene.m:100-127"
+    },
+    "1731": {
+        "file_id": 178,
+        "content": "This code retrieves the H scene tree from a demand model by preparing necessary arrays, handling potential bugs related to incorrect target assignment, and iterating through the scene tree structure. The result is returned as an array containing all three levels of the scene tree: items (iModels), fathers (fatherModels), and brothers (brotherModels).",
+        "type": "comment"
+    },
+    "1732": {
+        "file_id": 178,
+        "content": "odel = [AISceneModel newWithBase:nil type:SceneTypeI scene:targetFoM.content_p cutIndex:targetIndex - 1];\n    [iModels addObject:iModel];\n    //3. 取父类级;\n    for (AISceneModel *iModel in iModels) {\n        AIFoNodeBase *iFo = [SMGUtils searchNode:iModel.scene];//84ms\n        NSArray *fatherScene_ps = [AIFilter hSolutionSceneFilter:iModel];\n        //a. 过滤器 & 转为CansetModel;\n        NSArray *itemFatherModels = [SMGUtils convertArr:fatherScene_ps convertBlock:^id(AIKVPointer *item) {\n            //a1. 过滤father不含截点的 (参考29069-todo5.6);\n            NSDictionary *indexDic = [iFo getAbsIndexDic:item];\n            NSNumber *fatherCutIndex = ARR_INDEX([indexDic allKeysForObject:@(iModel.cutIndex)], 0);\n            if (!fatherCutIndex) return nil;\n            //a3. 将father生成模型;\n            return [AISceneModel newWithBase:iModel type:SceneTypeFather scene:item cutIndex:fatherCutIndex.integerValue];\n        }];\n        [fatherModels addObjectsFromArray:itemFatherModels];\n    }\n    //4. 取兄弟级;\n    for (AISceneModel *fatherModel in fatherModels) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScene/TCScene.m:127-149"
+    },
+    "1733": {
+        "file_id": 178,
+        "content": "This code is creating a new AISceneModel for each item in iModels, filtering and converting them into CansetModel, then adding the filtered items to fatherModels. This appears to be part of a larger process related to scene manipulation or data organization.",
+        "type": "comment"
+    },
+    "1734": {
+        "file_id": 178,
+        "content": "        AIFoNodeBase *fatherFo = [SMGUtils searchNode:fatherModel.scene];\n        NSArray *brotherScene_ps = [AIFilter hSolutionSceneFilter:fatherModel];//1799ms\n        //a. 过滤器 & 转为CansetModel;\n        NSArray *itemBrotherModels = [SMGUtils convertArr:brotherScene_ps convertBlock:^id(AIKVPointer *item) {\n            //a1. 过滤brother不含截点的 (参考29069-todo5.6);\n            NSDictionary *indexDic = [fatherFo getConIndexDic:item];\n            NSNumber *brotherCutIndex = [indexDic objectForKey:@(fatherModel.cutIndex)];\n            if (!brotherCutIndex) return nil;\n            //a3. 将brother生成模型;\n            return [AISceneModel newWithBase:fatherModel type:SceneTypeBrother scene:item cutIndex:brotherCutIndex.integerValue];\n        }];\n        [brotherModels addObjectsFromArray:itemBrotherModels];\n    }\n    //5. 将三级全收集返回;\n    NSMutableArray *result = [[NSMutableArray alloc] init];\n    [result addObjectsFromArray:iModels];\n    [result addObjectsFromArray:fatherModels];\n    [result addObjectsFromArray:brotherModels];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScene/TCScene.m:150-170"
+    },
+    "1735": {
+        "file_id": 178,
+        "content": "This code is filtering out nodes and converting them to CansetModel, then adding them to the fatherModels and brotherModels arrays. Finally, it combines all three models into a single result array.",
+        "type": "comment"
+    },
+    "1736": {
+        "file_id": 178,
+        "content": "    NSLog(@\"第1步 H场景树枝点数 I:%ld + Father:%ld + Brother:%ld = 总:%ld\",iModels.count,fatherModels.count,brotherModels.count,result.count);\n    return result;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScene/TCScene.m:171-175"
+    },
+    "1737": {
+        "file_id": 178,
+        "content": "This code snippet logs the number of models in different categories and returns a result. It calculates the sum of iModels count, fatherModels count, and brotherModels count to get the total number of models (result). The log statement displays these counts for each category.",
+        "type": "comment"
+    },
+    "1738": {
+        "file_id": 179,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScore/TCScore.h",
+        "type": "filepath"
+    },
+    "1739": {
+        "file_id": 179,
+        "content": "This code is for the TCScore class, which is a part of the SMG_NothingIsAll project. It contains methods to calculate and get a comprehensive score from other modules such as TC and TOQueue. The class also has a method to derive a score dictionary using arrays of foModels and a mutable dictionary.",
+        "type": "summary"
+    },
+    "1740": {
+        "file_id": 179,
+        "content": "//\n//  TCScore.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/12/19.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------综合评分--------------------\n *  @todo\n *      2021.12.26: 支持多条hSolution共同行为化: hSolution执行完成时,它的baseRDemand可能完成了一定比率;\n *                  > 一条S未必全效,即只解决了一定率,此时还可以继续别的方案 (比如为了安全,即带枪又穿防弹衣);\n */\n@interface TCScore : NSObject\n//从TC各处调用;\n+(void) scoreFromIfTCNeed;\n//从TOQueue调用;\n+(TCResult*) scoreFromTOQueue;\n//得出综评字典;\n+(TOFoModel*) score_Multi:(NSArray*)foModels scoreDic:(NSMutableDictionary*)scoreDic;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScore/TCScore.h:1-28"
+    },
+    "1741": {
+        "file_id": 179,
+        "content": "This code is for the TCScore class, which is a part of the SMG_NothingIsAll project. It contains methods to calculate and get a comprehensive score from other modules such as TC and TOQueue. The class also has a method to derive a score dictionary using arrays of foModels and a mutable dictionary.",
+        "type": "comment"
+    },
+    "1742": {
+        "file_id": 180,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScore/TCScore.m",
+        "type": "filepath"
+    },
+    "1743": {
+        "file_id": 180,
+        "content": "The TCScore class in SMG_NothingIsAll project calculates comprehensive scores for solution models, updating tasks, supporting sub-branch evaluation, avoiding invalid branches, and storing scores. It evaluates and ranks strategies using `score_Single` and `score_Multi`, returning the best model with the highest score.",
+        "type": "summary"
+    },
+    "1744": {
+        "file_id": 180,
+        "content": "//\n//  TCScore.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/12/19.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import \"TCScore.h\"\n@implementation TCScore\n/**\n *  MARK:--------------------调用入口--------------------\n *  @version\n *      2023.07.21: 关闭TC各处调用,改为在TO线程调用 (参考30084-方案);\n */\n+(void) scoreFromIfTCNeed{}\n+(TCResult*) scoreFromTOQueue{\n    return [self score];\n}\n/**\n *  MARK:--------------------新螺旋架构score方法--------------------\n */\n+(TCResult*) score{\n    //1. 取当前任务 (参考24195-1);\n    [theTC updateOperCount:kFILENAME min:1200];\n    Debug();\n    //OSTitleLog(@\"TCScore\");\n    DemandModel *demand = [theTC.outModelManager getCanDecisionDemand];\n    //2. 对firstRootDemand取得分字典 (参考24195-2 & 24196示图);\n    NSMutableDictionary *scoreDic = [[NSMutableDictionary alloc] init];\n    TOFoModel *foModel = [self score_Multi:demand.actionFoModels scoreDic:scoreDic];\n    //3. 转给TCPlan取最优路径;\n    DebugE();\n    return [TCPlan plan:demand rootFo:foModel scoreDic:scoreDic];\n}\n//MARK:===============================================================",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScore/TCScore.m:1-42"
+    },
+    "1745": {
+        "file_id": 180,
+        "content": "This code is for the TCScore class in the SMG_NothingIsAll project, responsible for calculating scores based on certain conditions and tasks. It uses multiple methods such as \"scoreFromIfTCNeed\" and \"scoreFromTOQueue\". The score calculation process involves updating the current task, taking into account firstRootDemand, and then passing the information to TCPlan for optimal path planning.",
+        "type": "comment"
+    },
+    "1746": {
+        "file_id": 180,
+        "content": "//MARK:                     < 综合评分 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------短时记忆树综合评分--------------------\n *  @desc 对解决方案S进行综合评分 (参考24192);\n *  @desc\n *      1. 缩写说明: 1.sr=SubRDemand 2.ss=SubSolution 3.sa=SubAlgModel 4.sh=SubHDemand\n *      2. 每执行一次single方法,则scoreDic中收集一条model的得分 <foModel,score>;\n *      3. S竞争方法由_Best方法实现;\n *      4. R求和方法主要在_Single中实现;\n *      5. 先将所有得分算完后,再重新从root开始算最优路径,因为只有子枝算完,父枝才能知道怎么算最优路径;\n *  @version\n *      2021.12.21: 支持状态为WithOut的处理 (只有WithOut状态的才可能理性淘汰,不然就有可能死灰复燃);\n *      2021.12.21: 支持状态为ActNo (如为时间不急淘汰掉) 的处理 (子解决方案全ActNo之后且WithOut的理性淘汰);\n *      2021.12.26: 支持当rDemand和hDemand已finish时不计分,并中断向子枝评分;\n *      2022.03.11: 升级支持mvScoreV2 (参考25142-TODO4);\n *      2022.06.02: 封装单demand评分方法 (顺便解决有时solutionFos全为ActNo时,直接判负分,而不尝试新方案);\n *  @param scoreDic : notnull;\n *\n *  _result 将model及其下有效的分枝评分计算,并收集到评分字典 <K=foModel,V=score>;\n */\n+(void) score_Single:(TOFoModel*)model scoreDic:(NSMutableDictionary*)scoreDic{\n    //1. 数据检查;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScore/TCScore.m:43-66"
+    },
+    "1747": {
+        "file_id": 180,
+        "content": "This function calculates the comprehensive score of a solution model and stores it in a dictionary. It supports various states, such as WithOut or ActNo, and can interrupt evaluating sub-branches if rDemand and hDemand are already finished. The function also includes a single demand scoring method and ensures that models with invalid branches are not considered.",
+        "type": "comment"
+    },
+    "1748": {
+        "file_id": 180,
+        "content": "    double modelScore = 0;\n    //2. ===== 第0部分: foModel自身理性淘汰判断 (比如时间不急评否后,为actNo状态) (参考24053);\n    if (model.status == TOModelStatus_ActNo) {\n        [scoreDic setObject:@(INT_MIN) forKey:TOModel2Key(model)];\n        NSLog(@\"评分1: 因actNo直接评最小分: K:%@\",TOModel2Key(model));\n        return;\n    }\n    //3. ===== 第一部分: HDemand在FoModel.subModels下 (有解决方案:参与求和 & 无解决方案:理性淘汰);\n    //3. 用每个sa取sh子任务 (求和);\n    for (TOAlgModel *sa in model.subModels) {\n        //3. 取出sh (一条sa最多只能生成一个sh任务);\n        HDemandModel *sh = ARR_INDEX(sa.subDemands, 0);\n        if (sh) {\n            CGFloat score = [self score_SingleDemand:sh scoreDic:scoreDic];\n            modelScore += score;\n        }\n    }\n    //4. ===== 第二部分: RDemand在AlgModel.subDemands下 (有解决方案:参与求和 & 无解决方案:R自身计入综合评分中);\n    //4. 取出subRDemands子任务 (求和) 综合评价是否放弃当前父任务 (如又累又烦的活,赚钱也不干) (参考24195);\n    for (ReasonDemandModel *sr in model.subDemands) {\n        CGFloat score = [self score_SingleDemand:sr scoreDic:scoreDic];\n        modelScore += score;\n    }\n    //5. 将求和得分,计入dic (当没有sr也没有sa子任务 = 0分);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScore/TCScore.m:67-95"
+    },
+    "1749": {
+        "file_id": 180,
+        "content": "This code calculates the score of a task model by considering its sub-models and demands. It first checks if the model has an \"actNo\" status, in which case it sets the score to the minimum value. Next, it iterates through each sub-model's sub-demands, summing their scores if they have solutions; otherwise, they are rationally eliminated. Finally, it adds the scores of all reason demands to the total score and stores it in the score dictionary.",
+        "type": "comment"
+    },
+    "1750": {
+        "file_id": 180,
+        "content": "    [scoreDic setObject:@(modelScore) forKey:TOModel2Key(model)];\n    NSLog(@\"评分3: K:%@ => V:%@分\",TOModel2Key(model),[scoreDic objectForKey:TOModel2Key(model)]);\n}\n/**\n *  MARK:--------------------获取单demand的评分--------------------\n *  @desc 只返回不直接计入字典,因为demand评分是要\"求和\"后计入字典的;\n *  @version\n *      2022.09.24: 失效处理: 子任务失效时,不进行决策综评 (参考27123-问题2-todo3);\n */\n+(CGFloat) score_SingleDemand:(DemandModel*)demand scoreDic:(NSMutableDictionary*)scoreDic{\n    //1. 当demand在feedbackTOR已finish时,不计分;\n    if (demand.status == TOModelStatus_Finish) return 0;\n    //1. 当demand失效时,不计分;\n    if (ISOK(demand, ReasonDemandModel.class) && ((ReasonDemandModel*)demand).isExpired) return 0;\n    //2. 取出还未理性失败的解决方案;\n    NSArray *validActionFos = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOFoModel *actionFo) {\n        return actionFo.status != TOModelStatus_ActNo;\n    }];\n    //3. 当demand已经withOut状态,且其解决方案全部actNo时,则理性淘汰 (参考24192-H14);\n    if (demand.status == TOModelStatus_WithOut && !ARRISOK(validActionFos)) {\n        if (ISOK(demand, HDemandModel.class)) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScore/TCScore.m:96-121"
+    },
+    "1751": {
+        "file_id": 180,
+        "content": "This code calculates the score for a single demand. It first checks if the demand is already finished or invalid, and then filters out any valid solution options. If all solution options are invalid, it rationalizes by deducting points based on specific conditions such as whether the demand is in \"WithOut\" status. The calculated score is stored in the scoreDic dictionary for further use.",
+        "type": "comment"
+    },
+    "1752": {
+        "file_id": 180,
+        "content": "            //4. H无解决方案时,直接计min分计入modelScore;\n            return INT_MIN;\n        }else {\n            //5. R无解决方案时,直接将sr评分计入modelScore;\n            return [AIScore score4Demand:demand];\n        }\n    }else{\n        //6. demand有解决方案时,对S竞争,并将最高分计入modelScore;\n        TOFoModel *bestSS = [self score_Multi:validActionFos scoreDic:scoreDic];\n        //7. 并将竞争最高分胜者计入modelScore;\n        return [NUMTOOK([scoreDic objectForKey:TOModel2Key(bestSS)]) doubleValue];\n    }\n}\n/**\n *  MARK:--------------------S解决方案竞争--------------------\n *  @desc 感性竞争 (参考24192-R9);\n *  @param foModels : 解决方案S数,single传入>=1条,plan传入可能为0条;\n *  @param scoreDic : notnull\n *  @result 将bestFo返回;\n */\n+(TOFoModel*) score_Multi:(NSArray*)foModels scoreDic:(NSMutableDictionary*)scoreDic{\n    //1. 取出子任务的每个解决方案S (竞争);\n    TOFoModel *bestFoModel = nil;\n    for (TOFoModel *foModel in foModels) {\n        //2. 评分\n        [self score_Single:foModel scoreDic:scoreDic];\n        //3. 竞争\n        if (!bestFoModel) {\n            bestFoModel = foModel;\n        }else{\n            double oldScore = [NUMTOOK([scoreDic objectForKey:TOModel2Key(bestFoModel)]) doubleValue];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScore/TCScore.m:122-156"
+    },
+    "1753": {
+        "file_id": 180,
+        "content": "This code appears to be part of a larger system designed for evaluating and ranking different problem-solving strategies (solution A, solution R, and solution S) in some context. The function returns the best model score based on four different scenarios: when there is no solution A or R, when there is no solution S, and when there are multiple solution S options. In each scenario, it calculates a score for each solution using a function `score_Single`, compares them, and returns the highest-scoring solution as the best model (`TOFoModel`). The code also includes methods to handle multi-solution scenarios through competition (`score_Multi`) and converts scores to doubles.",
+        "type": "comment"
+    },
+    "1754": {
+        "file_id": 180,
+        "content": "            double newScore = [NUMTOOK([scoreDic objectForKey:TOModel2Key(foModel)]) doubleValue];\n            if (newScore > oldScore) {\n                bestFoModel = foModel;\n            }\n        }\n    }\n    //4. 将最优S返回;\n    return bestFoModel;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScore/TCScore.m:157-168"
+    },
+    "1755": {
+        "file_id": 180,
+        "content": "This function calculates the new score for each model and returns the best model (with the highest score) among them.",
+        "type": "comment"
+    },
+    "1756": {
+        "file_id": 181,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/TCSolution.h",
+        "type": "filepath"
+    },
+    "1757": {
+        "file_id": 181,
+        "content": "This code defines a class TCSolution that represents a solution to a problem. It is part of the SMG_NothingIsAll project and requires an instance of TOModelBase as input, along with an endScore. The class follows a markdown format for documentation and has some notes about keeping the solution within its intended context.",
+        "type": "summary"
+    },
+    "1758": {
+        "file_id": 181,
+        "content": "//\n//  TCSolution.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/11/28.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------解决方案--------------------\n *  @注意:\n *      1. 取解决方案-不得脱离场景;\n *      2. 行为化过程-不得脱离场景;\n */\n@interface TCSolution : NSObject\n+(TCResult*) solution:(TOModelBase*)endBranch endScore:(double)endScore;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/TCSolution.h:1-21"
+    },
+    "1759": {
+        "file_id": 181,
+        "content": "This code defines a class TCSolution that represents a solution to a problem. It is part of the SMG_NothingIsAll project and requires an instance of TOModelBase as input, along with an endScore. The class follows a markdown format for documentation and has some notes about keeping the solution within its intended context.",
+        "type": "comment"
+    },
+    "1760": {
+        "file_id": 182,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/TCSolution.m",
+        "type": "filepath"
+    },
+    "1761": {
+        "file_id": 182,
+        "content": "The code's \"solution\" method handles demand model types, checks validity and existence, prioritizes fast thinking, consumes energy for solutions, and logs UI updates. The pSolution function checks energy, limits, and factors, initializes actions, and returns TCResult with false status if no plan is calculable.",
+        "type": "summary"
+    },
+    "1762": {
+        "file_id": 182,
+        "content": "//\n//  TCSolution.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/11/28.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import \"TCSolution.h\"\n@implementation TCSolution\n/**\n *  MARK:--------------------新螺旋架构solution方法--------------------\n *  @desc 参考24203;\n *  @param endScore : 当传入endBranch为solutionFo时,endScore为:末枝S方案的综合评分;\n *  @version\n *      2021.12.28: 对首条S的支持 (参考25042);\n *      2021.12.28: 支持actYes时最优路径末枝为nil,并中止决策 (参考25042-3);\n *      2022.06.02: 如果endBranch的末枝正在等待actYes,则继续等待,不进行决策 (参考26185-TODO4);\n */\n+(TCResult*) solution:(TOModelBase*)endBranch endScore:(double)endScore{\n    //1. 无末枝时 (可能正在ActYes等待状态),中断决策;\n    if (!endBranch) return [[[TCResult new:false] mkMsg:@\"无末枝\"] mkStep:11];\n    //1. 判断endBranch如果是actYes状态,则不处理,继续静默;\n    BOOL endHavActYes = [TOUtils endHavActYes:endBranch];\n    if (endHavActYes) return [[[TCResult new:false] mkMsg:@\"末枝ActYes状态\"] mkStep:12];\n    //2. 尝试取更多S;\n    Func1 runSolutionAct = ^(DemandModel *demand){\n        if (ISOK(demand, ReasonDemandModel.class)) {\n            //a. R任务继续取解决方案 (参考24203-2);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/TCSolution.m:1-33"
+    },
+    "1763": {
+        "file_id": 182,
+        "content": "This code is implementing a method called \"solution\" that takes an endBranch and an endScore as parameters. It first checks if the endBranch is empty or in actYes state, and returns appropriate results accordingly. If not, it tries to take more S tasks.",
+        "type": "comment"
+    },
+    "1764": {
+        "file_id": 182,
+        "content": "            return [self rSolution:(ReasonDemandModel*)demand];\n        }else if (ISOK(demand, PerceptDemandModel.class)) {\n            //b. P任务继续取解决方案 (参考24203-2);\n            return [self pSolution:demand];\n        }else if (ISOK(demand, HDemandModel.class)) {\n            //c. H任务继续取解决方案 (参考24203-2);\n            return [self hSolution:(HDemandModel*)demand];\n        }\n        return [[[TCResult new:false] mkMsg:@\"solution 任务类型不同RPH任一种\"] mkStep:13];\n    };\n    //3. 传入solutionFo时;\n    if (ISOK(endBranch, TOFoModel.class)) {\n        DemandModel *baseDemand = (DemandModel*)endBranch.baseOrGroup;\n        TOFoModel *solutionFo = (TOFoModel*)endBranch;\n        //4. endBranch >= 0分时,执行TCAction (参考24203-1);\n        if (endScore >= 0)\n            return [TCAction action:solutionFo];\n        //5. 无更多S时_直接TCAction行为化 (参考24203-2b);\n        else if(baseDemand.status == TOModelStatus_WithOut)\n            return [TCAction action:solutionFo];\n        //6. 末枝S达到3条时,则最优执行TCAction (参考24203-3);\n        else if(baseDemand.actionFoModels.count >= cSolutionNarrowLimit)",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/TCSolution.m:34-59"
+    },
+    "1765": {
+        "file_id": 182,
+        "content": "The code checks the type of demand model and returns a solution accordingly. If the demand model is of ReasonDemandModel class, it calls rSolution method. If it's of PerceptDemandModel or HDemandModel class, it calls pSolution or hSolution methods respectively. If the demand model is not any of these types, an error message is returned. The code also handles scenarios where solutionFo is passed and performs TCAction accordingly based on endScore, baseDemand status, and the number of actionFoModels.",
+        "type": "comment"
+    },
+    "1766": {
+        "file_id": 182,
+        "content": "            return [TCAction action:solutionFo];\n        //7. endBranch < 0分时,且末枝S小于3条,执行TCSolution取下一方案 (参考24203-2);\n        else if (baseDemand.status != TOModelStatus_WithOut && baseDemand.actionFoModels.count < cSolutionNarrowLimit)\n            return runSolutionAct(baseDemand);\n    }\n    //8. 传入demand时,且demand还可继续时,尝试执行TCSolution取下一方案 (参考24203);\n    if (ISOK(endBranch, DemandModel.class)) {\n        if (endBranch.status != TOModelStatus_ActNo && endBranch.status != TOModelStatus_ActYes && endBranch.status != TOModelStatus_WithOut) {\n            return runSolutionAct((DemandModel*)endBranch);\n        }\n    }\n    return [[[TCResult new:false] mkMsg:@\"solution末枝非foModel也非demandModel\"] mkStep:14];\n}\n/**\n *  MARK:--------------------rSolution--------------------\n *  @desc 参考24154-单轮;\n *  @version\n *      2021.11.13: 初版,废弃dsFo,并将reasonSubV5由TOR迁移至此RAction中 (参考24101-第3阶段);\n *      2021.11.15: R任务FRS稳定性竞争,评分越高的场景排越前 (参考24127-2);\n *      2021.11.25: 迭代为功能架构 (参考24154-单轮示图);\n *      2021.12.25: 将FRS稳定性竞争废弃,改为仅取bestSP评分,取最稳定的一条 (参考25032-4);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/TCSolution.m:60-83"
+    },
+    "1767": {
+        "file_id": 182,
+        "content": "This function checks if the end branch exists, has a status of not acting or being without an action, and has fewer than the limit of solution actions. If true, it runs the TCSolution to find the next action. Otherwise, it returns an error message indicating that the solution branch is neither an FO model nor a demand model.",
+        "type": "comment"
+    },
+    "1768": {
+        "file_id": 182,
+        "content": " *      2021.12.28: 将抽具象路径rs改为从pFos中取同标识mv部分 (参考25051);\n *      2022.01.07: 改为将整个demand.actionFoModels全加入不应期 (因为还在决策中的S会重复);\n *      2022.01.09: 达到limit条时的处理;\n *      2022.01.19: 将时间不急评价封装为FRS_Time() (参考25106);\n *      2022.03.06: 当稳定性综评为0分时,不做为解决方案 (参考25131-思路2);\n *      2022.03.09: 将conPorts取前3条改成15条 (参考25144);\n *      2022.05.01: 废弃从等价demands下取解决方案 (参考25236);\n *      2022.05.04: 树限宽也限深 (参考2523c-分析代码1);\n *      2022.05.18: 改成多个pFos下的解决方案进行竞争 (参考26042-TODO3);\n *      2022.05.20: 过滤掉负价值不做为解决方案 (参考26063);\n *      2022.05.21: 窄出排序方式,以效用分为准 (参考26077-方案);\n *      2022.05.21: 窄出排序方式,退回到以SP稳定性排序 (参考26084);\n *      2022.05.22: 窄出排序方式,改为有效率排序 (参考26095-9);\n *      2022.05.27: 集成新的取S的方法 (参考26128);\n *      2022.05.27: 新解决方案从cutIndex开始行为化,而不是-1 (参考26127-TODO9);\n *      2022.05.29: 前3条优先取快思考,后2条或快思考无效时,再取慢思考 (参考26143-TODO2);\n *  @callers : 用于RDemand.Begin时调用;\n */\n+(TCResult*) rSolution:(ReasonDemandModel*)demand {\n    //0. S数达到limit时设为WithOut;\n    if (![theTC energyValid]) return [[[TCResult new:false] mkMsg:@\"rSolution 能量不足\"] mkStep:21];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/TCSolution.m:84-104"
+    },
+    "1769": {
+        "file_id": 182,
+        "content": "This code is responsible for getting a solution based on the given demand. It checks if there are enough energy resources available, and then selects solutions from different parts of the object graph based on certain criteria such as utility, stability, and efficiency. The function has undergone several changes since its initial implementation in December 2021.",
+        "type": "comment"
+    },
+    "1770": {
+        "file_id": 182,
+        "content": "    OFTitleLog(@\"rSolution\", @\"\\n任务源:%@ protoFo:%@ 已有方案数:%ld 任务分:%.2f\",ClassName2Str(demand.algsType),Pit2FStr(demand.protoOrRegroupFo),demand.actionFoModels.count,[AIScore score4Demand:demand]);\n    //1. 树限宽且限深;\n    NSInteger deepCount = [TOUtils getBaseDemandsDeepCount:demand];\n    if (deepCount >= cDemandDeepLimit || demand.actionFoModels.count >= cSolutionNarrowLimit) {\n        demand.status = TOModelStatus_WithOut;\n        [TCScore scoreFromIfTCNeed];\n        NSLog(@\">>>>>> rSolution 已达limit条 (S数:%ld 层数:%ld)\",demand.actionFoModels.count,deepCount);\n        return [[[TCResult new:false] mkMsg:@\"rSolution > limit\"] mkStep:22];\n    }\n    [theTC updateOperCount:kFILENAME];\n    Debug();\n    //2. 不应期 (可以考虑) (源于:反思且子任务失败的 或 fo行为化最终失败的,参考24135);\n    NSMutableArray *except_ps = [TOUtils convertPointersFromTOModels:demand.actionFoModels];\n    [except_ps addObjectsFromArray:[SMGUtils convertArr:demand.validPFos convertBlock:^id(AIMatchFoModel *obj) {\n        return obj.matchFo;\n    }]];\n    //3. 前3条,优先快思考;\n    AICansetModel *bestResult = nil;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/TCSolution.m:105-125"
+    },
+    "1771": {
+        "file_id": 182,
+        "content": "The code seems to implement a solution evaluation mechanism for a task-based AI system. It first checks if the task has exceeded certain limits (maximum depth and number of solutions). If it has, it marks the task as \"without\" a suitable solution and returns an error message. Next, it updates some operation counts. Finally, it processes tasks that should not be considered (\"except_ps\") by converting pointers to models and adding them from another array. The code also prioritizes evaluating the first three tasks for quicker analysis.",
+        "type": "comment"
+    },
+    "1772": {
+        "file_id": 182,
+        "content": "    if (demand.actionFoModels.count <= 3) {\n        bestResult = [TCSolutionUtil rSolution_Fast:demand except_ps:except_ps];\n    }\n    //4. 快思考无果或后2条,再做慢思考;\n    if (!bestResult) {\n        bestResult = [TCSolutionUtil rSolution_Slow:demand except_ps:except_ps];\n    }\n    //6. 转流程控制_有解决方案则转begin;\n    DebugE();\n    if (bestResult) {\n        //7. 消耗活跃度;\n        [theTC updateEnergyDelta:-1];\n        //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);\n        TOFoModel *foModel = [TOFoModel newWithFo_p:bestResult.cansetFo base:demand basePFoOrTargetFoModel:bestResult.basePFoOrTargetFoModel];\n        //b) bestResult的迁移;\n        [TCTransfer transfer:bestResult complate:^(AITransferModel *brother, AITransferModel *father, AITransferModel *i) {\n            [foModel setDataWithSceneModel:bestResult.baseSceneModel brother:brother father:father i:i];\n        }];\n        foModel.actionIndex = bestResult.cutIndex;\n        //c) 调试;\n        AIFoNodeBase *sceneFo = [SMGUtils searchNode:bestResult.sceneFo];\n        AIEf",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/TCSolution.m:126-152"
+    },
+    "1773": {
+        "file_id": 182,
+        "content": "The code checks the number of models in demand and executes fast thinking if it's less than or equal to 3. If no result is found, slow thinking is executed. Upon finding a solution, active energy is consumed, and the next move tries Action behavior immediately for evaluation in the next loop round. The best solution's transfer is handled, and the actionIndex of foModel is set to cutIndex. Debugging is done, and sceneFo is searched using SMGUtils.",
+        "type": "comment"
+    },
+    "1774": {
+        "file_id": 182,
+        "content": "fectStrong *effStrong = [TOUtils getEffectStrong:sceneFo effectIndex:sceneFo.count solutionFo:bestResult.cansetFo];\n        NSString *effDesc = effStrong ? effStrong.description : @\"\";\n        AIFoNodeBase *cansetFo = [SMGUtils searchNode:bestResult.cansetFo];\n        NSLog(@\"> newS 第%ld例: eff:%@ sp:%@ %@ scene:F%ld canset:F%ld (前%.2f 中%.2f 后%.2f)\",demand.actionFoModels.count,effDesc,CLEANSTR(cansetFo.spDic),SceneType2Str(bestResult.baseSceneModel.type),sceneFo.pId,cansetFo.pId,bestResult.frontMatchValue,bestResult.midStableScore,bestResult.backMatchValue);\n        //a) 有效率\n        [TCEffect rEffect:foModel];\n        dispatch_async(dispatch_get_main_queue(), ^{//30083回同步\n            [theTV updateFrame];\n        });\n        return [TCAction action:foModel];\n    }else{\n        //b) 下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);\n        demand.status = TOModelStatus_WithOut;\n        NSLog(@\">>>>>> rSolution 无计可施\");\n        [TCScore scoreFromIfTCNeed];\n        return [[[TCResult new:false] mkMsg:@\"rSolution 无计可施\"] mkStep:23];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/TCSolution.m:152-168"
+    },
+    "1775": {
+        "file_id": 182,
+        "content": "The code appears to be part of a larger solution and is likely responsible for handling different scenarios related to a demand. It seems to get an Effect Strong, search for a CANSET node, and log relevant information for each case. If no valid results are found, it sets the demand's status as 'WithOut', logs a message stating \"rSolution 无计可施\", calls TCScore, and returns a new TCResult object with a failure message. The code also seems to involve some sort of GUI update using dispatch_async.",
+        "type": "comment"
+    },
+    "1776": {
+        "file_id": 182,
+        "content": "    }\n}\n/**\n *  MARK:-------------------- pSolution --------------------\n *  @desc\n *      1. 简介: mv方向索引找正价值解决方案;\n *      2. 实例: 饿了,现有面粉,做面吃可以解决;\n *      3. 步骤: 用A.refPorts ∩ F.conPorts (参考P+模式模型图);\n *      4. 联想方式: 参考19192示图 (此行为后补注释);\n *  @todo :\n *      1. 集成原有的能量判断与消耗 T;\n *      2. 评价机制1: 比如土豆我超不爱吃,在mvScheme中评价,入不应期,并继续下轮循环;\n *      3. 评价机制2: 比如炒土豆好麻烦,在行为化中反思评价,入不应期,并继续下轮循环;\n *  @version\n *      2020.05.27: 将isOut=false时等待改成进行cHav行为化;\n *      2020.06.10: 索引解决方案:去除fo的不应期,因为不应期应针对mv,而fo的不应期是针对此处取得fo及其具象conPorts.fos的,所以将fo不应期前置了;\n *      2020.07.23: 联想方式迭代至V2_将19192示图的联想方式去掉,仅将方向索引除去不应期的返回,而解决方案到底是否实用,放到行为化中去判断;\n *      2020.09.23: 取消参数matchAlg (最近识别的M),如果今后还要使用短时优先功能,直接从theTC.shortManager取);\n *      2020.09.23: 只要得到解决方案,就返回true中断,因为即使行为化失败,也会交由流程控制继续决策,而非由此处处理;\n *      2020.12.17: 将此方法,归由流程控制控制 (跑下来逻辑与原来没啥不同);\n *      2022.05.04: 树限宽也限深 (参考2523c-分析代码1);\n *  @bug\n *      1. 查点击马上饿,找不到解决方案的BUG,经查,MatchAlg与解决方案无明确关系,但MatchAlg.conPorts中,有与解决方案有直接关系的,改后解决 (参考20073)\n *      2020.07.09: 修改方向索引的解决方案不应期,解决只持续飞行两次就停住的BUG (参考n20p8-BUG1);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/TCSolution.m:169-193"
+    },
+    "1777": {
+        "file_id": 182,
+        "content": "This code snippet is part of a solution for finding a suitable \"mv\" (meaning or value) in the context of a specific problem. It defines the pSolution method, which handles steps to find a solution based on given references and ports, evaluates it using different criteria, and returns true if a valid solution is found, otherwise false. The code has undergone several updates over time to improve functionality and fix bugs.",
+        "type": "comment"
+    },
+    "1778": {
+        "file_id": 182,
+        "content": " */\n+(TCResult*) pSolution:(DemandModel*)demandModel{\n    //1. 数据准备;\n    //TODO: 2021.12.29: 此处方向索引,可以改成和rh任务一样的从pFos&rFos中取具象得来 (因为方向索引应该算脱离场景);\n    MVDirection direction = [ThinkingUtils getDemandDirection:demandModel.algsType delta:demandModel.delta];\n    if (!Switch4PS || direction == MVDirection_None) return [[[TCResult new:false] mkMsg:@\"pSolution 开关关闭\"] mkStep:20];\n    if (![theTC energyValid]) return [[[TCResult new:false] mkMsg:@\"pSolution 能量不足\"] mkStep:21];\n    OFTitleLog(@\"pSolution\", @\"\\n任务:%@,发生%ld,方向%ld,已有方案数:%ld\",demandModel.algsType,(long)demandModel.delta,(long)direction,demandModel.actionFoModels.count);\n    //1. 树限宽且限深;\n    NSInteger deepCount = [TOUtils getBaseDemandsDeepCount:demandModel];\n    if (deepCount >= cDemandDeepLimit || demandModel.actionFoModels.count >= cSolutionNarrowLimit) {\n        demandModel.status = TOModelStatus_WithOut;\n        [TCScore scoreFromIfTCNeed];\n        NSLog(@\"------->>>>>> pSolution 已达limit条\");\n        return [[[TCResult new:false] mkMsg:@\"pSolution > limit\"] mkStep:22];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/TCSolution.m:194-209"
+    },
+    "1779": {
+        "file_id": 182,
+        "content": "This code appears to prepare data and perform checks before starting the pSolution function. It sets the direction, checks if the switch for pSolution is on, and verifies energy levels are sufficient. If any issues arise during these checks, it returns a TCResult with an appropriate message and step number. The code also logs information about the task and its parameters.",
+        "type": "comment"
+    },
+    "1780": {
+        "file_id": 182,
+        "content": "    }\n    [theTC updateOperCount:kFILENAME];\n    Debug();\n    //2. =======以下: 调用通用diff模式方法 (以下代码全是由diff模式方法迁移而来);\n    //3. 不应期 (考虑改为所有actionFoModels都不应期);\n    NSArray *exceptFoModels = [SMGUtils filterArr:demandModel.actionFoModels checkValid:^BOOL(TOModelBase *item) {\n        return item.status == TOModelStatus_ActNo || item.status == TOModelStatus_ScoreNo || item.status == TOModelStatus_ActYes;\n    }];\n    NSArray *except_ps = [TOUtils convertPointersFromTOModels:exceptFoModels];\n    if (Log4DirecRef) NSLog(@\"------->>>>>> Fo已有方案数:%lu 不应期数:%lu\",(long)demandModel.actionFoModels.count,(long)except_ps.count);\n    //3. =======以下: 调用方向索引,找解决方案代码\n    //2. 方向索引,用方向索引找normalFo解决方案 (P例:饿了,该怎么办 S例:累了,肿么肥事);\n    NSArray *mvRefs = [theNet getNetNodePointersFromDirectionReference:demandModel.algsType direction:direction filter:nil];\n    //4. debugLog\n    if (Log4DirecRef){\n        for (NSInteger i = 0; i < 10; i++) {\n            AIPort *item = ARR_INDEX(mvRefs, i);\n            AICMVNodeBase *itemMV = [SMGUtils searchNode:item.target_p];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/TCSolution.m:210-230"
+    },
+    "1781": {
+        "file_id": 182,
+        "content": "This code segment is part of an iOS application. It filters out action Fo models that are already solved, converts pointers from the filtered Fo models to NSString type, and logs the count of all Fo models and the ones that are not yet solved. It then retrieves a set of nodes based on a specific direction reference for normal Fo solutions and searches for each item's related node.",
+        "type": "comment"
+    },
+    "1782": {
+        "file_id": 182,
+        "content": "            AIPort *firstFoPort = ARR_INDEX(itemMV.foPorts, 0);\n            if (item && itemMV && firstFoPort) NSLog(@\"item-> 强度:%ld 方案:%@->%@\",(long)item.strong.value,FoP2FStr(firstFoPort.target_p),Mv2FStr(itemMV));\n        }\n    }\n    //3. 逐个返回;\n    for (AIPort *item in mvRefs) {\n        //a. analogyType处理 (仅支持normal的fo);\n        AICMVNodeBase *itemMV = [SMGUtils searchNode:item.target_p];\n        AIPort *firstFoPort = ARR_INDEX(itemMV.foPorts, 0);\n        if (Log4DirecRef) NSLog(@\"方向索引_尝试_索引强度:%ld 方案:%@\",item.strong.value,FoP2FStr(firstFoPort.target_p));\n        //5. 方向索引找到一条normalFo解决方案 (P例:吃可以解决饿; S例:运动导致累);\n        if (![except_ps containsObject:firstFoPort.target_p]) {\n            //8. 消耗活跃度;\n            [theTC updateEnergyDelta:-1];\n            AIFoNodeBase *fo = [SMGUtils searchNode:firstFoPort.target_p];\n            //a. 构建TOFoModel\n            TOFoModel *toFoModel = [TOFoModel newWithFo_p:fo.pointer base:demandModel basePFoOrTargetFoModel:nil];\n            //b. 取自身,实现吃,则可不饿 (提交C给TOR行为化);\n            //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/TCSolution.m:231-253"
+    },
+    "1783": {
+        "file_id": 182,
+        "content": "This code is iterating over items in a list, checking if they meet certain conditions and then updating the energy delta. It finds related nodes and constructs TOFoModel objects. The code also handles exceptions and logs information for debugging purposes.",
+        "type": "comment"
+    },
+    "1784": {
+        "file_id": 182,
+        "content": "            NSLog(@\">>>>>> pSolution 新增第%ld例解决方案: %@->%@\",demandModel.actionFoModels.count,Fo2FStr(fo),Mvp2Str(fo.cmvNode_p));\n            dispatch_async(dispatch_get_main_queue(), ^{//30083回同步\n                [theTV updateFrame];\n            });\n            DebugE();\n            //8. 只要有一次tryResult成功,中断回调循环;\n            return [TCAction action:toFoModel];//[theTOR singleLoopBackWithBegin:toFoModel];\n        }\n    }\n    //9. 无计可施,下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);\n    DebugE();\n    demandModel.status = TOModelStatus_WithOut;\n    NSLog(@\">>>>>> pSolution 无计可施\");\n    [TCScore scoreFromIfTCNeed];\n    return [[[TCResult new:false] mkMsg:@\"pSolution 无计可施\"] mkStep:23];\n}\n/**\n *  MARK:--------------------hSolution--------------------\n *  @desc 找hSolution解决方案 (参考25014-H & 25015-6);\n *  _param endBranch : hDemand目标alg所在的fo (即hDemand.baseA.baseF);\n *  @version\n *      2021.11.25: 由旧有action._Hav第3级迁移而来;\n *      2021.12.25: 迭代hSolution (参考25014-H & 25015-6);\n *      2022.01.09: 达到limit条时的处理;\n *      2022.01.09: 首条就是HAlg不能做H解决方案 (参考25057);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/TCSolution.m:254-281"
+    },
+    "1785": {
+        "file_id": 182,
+        "content": "This code finds the hSolution solution (hDemand target algorithm) and returns a new TCResult object with false status if no calculable plan exists. It also updates the UI, logs messages, and adjusts the demand model status to \"WithOut\".",
+        "type": "comment"
+    },
+    "1786": {
+        "file_id": 182,
+        "content": " *      2022.05.04: 树限宽也限深 (参考2523c-分析代码1);\n *      2022.05.22: 窄出排序方式改为有效率为准 (参考26095-9);\n *      2022.05.31: 支持快慢思考 (参考26161 & 26162);\n */\n+(TCResult*) hSolution:(HDemandModel*)hDemand{\n    //0. S数达到limit时设为WithOut;\n    if (![theTC energyValid]) return [[[TCResult new:false] mkMsg:@\"hSolution能量不足\"] mkStep:21];\n    OFTitleLog(@\"hSolution\", @\"\\n目标:%@ 已有S数:%ld\",Pit2FStr(hDemand.baseOrGroup.content_p),hDemand.actionFoModels.count);\n    //1. 树限宽且限深;\n    NSInteger deepCount = [TOUtils getBaseDemandsDeepCount:hDemand];\n    if (deepCount >= cDemandDeepLimit || hDemand.actionFoModels.count >= cSolutionNarrowLimit) {\n        hDemand.status = TOModelStatus_WithOut;\n        [TCScore scoreFromIfTCNeed];\n        NSLog(@\"------->>>>>> hSolution 已达limit条\");\n        return [[[TCResult new:false] mkMsg:@\"hSolution > limit\"] mkStep:22];\n    }\n    [theTC updateOperCount:kFILENAME];\n    Debug();\n    //1. 数据准备;\n    NSArray *except_ps = [TOUtils convertPointersFromTOModels:hDemand.actionFoModels];\n    //3. 前3条,优先快思考;\n    AICansetModel *bestResult = nil;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/TCSolution.m:282-306"
+    },
+    "1787": {
+        "file_id": 182,
+        "content": "The code snippet is for the hSolution method, which is responsible for analyzing demands and determining if a solution can be provided. It checks energy availability, limits based on depth and narrowness of the tree, updates the operating count, prepares data, and prioritizes fast thinking for the first three results.",
+        "type": "comment"
+    },
+    "1788": {
+        "file_id": 182,
+        "content": "    if (hDemand.actionFoModels.count <= 3) {\n        bestResult = [TCSolutionUtil hSolution_Fast:hDemand except_ps:except_ps];\n    }\n    //4. 快思考无果或后2条,再做慢思考;\n    if (!bestResult) {\n        bestResult = [TCSolutionUtil hSolution_SlowV4:hDemand except_ps:except_ps];\n    }\n    //8. 新解决方案_的结果处理;\n    DebugE();\n    if (bestResult) {\n        //8. 消耗活跃度;\n        [theTC updateEnergyDelta:-1];\n        //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);\n        TOFoModel *foModel = [TOFoModel newWithFo_p:bestResult.cansetFo base:hDemand basePFoOrTargetFoModel:bestResult.basePFoOrTargetFoModel];\n        //b) bestResult的迁移;\n        [TCTransfer transfer:bestResult complate:^(AITransferModel *brother, AITransferModel *father, AITransferModel *i) {\n            [foModel setDataWithSceneModel:bestResult.baseSceneModel brother:brother father:father i:i];\n        }];\n        foModel.actionIndex = bestResult.cutIndex;\n        foModel.targetSPIndex = bestResult.targetIndex;\n        //c) 调试;\n        AIFoNodeBase *sceneFo = [SMGUtils searchNode:bestResult.sceneFo];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/TCSolution.m:307-333"
+    },
+    "1789": {
+        "file_id": 182,
+        "content": "This code is part of a solution for an AI thinking process. It checks the demand and performs both fast and slow thinking methods to find the best solution. If no solution is found, it handles the next possible solution by updating energy, transferring data, and setting action and target indices. It also includes debugging and scene searching actions.",
+        "type": "comment"
+    },
+    "1790": {
+        "file_id": 182,
+        "content": "        AIEffectStrong *effStrong = [TOUtils getEffectStrong:sceneFo effectIndex:sceneFo.count solutionFo:bestResult.cansetFo];\n        NSString *effDesc = effStrong ? effStrong.description : @\"\";\n        AIFoNodeBase *cansetFo = [SMGUtils searchNode:bestResult.cansetFo];\n        NSLog(@\"> newH 第%ld例: eff:%@ sp:%@ %@ scene:F%ld canset:F%ld (cutIndex:%ld=>targetIndex:%ld) (前%.2f 中%.2f 后%.2f)\",hDemand.actionFoModels.count,effDesc,CLEANSTR(cansetFo.spDic),SceneType2Str(bestResult.baseSceneModel.type),sceneFo.pId,cansetFo.pId,bestResult.cutIndex,bestResult.targetIndex,bestResult.frontMatchValue,bestResult.midStableScore,bestResult.backMatchValue);\n        //a) 有效率\n        [TCEffect hEffect:foModel];\n        dispatch_async(dispatch_get_main_queue(), ^{//30083回同步\n            [theTV updateFrame];\n        });\n        return [TCAction action:foModel];\n    }else{\n        //b) 下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);\n        hDemand.status = TOModelStatus_WithOut;\n        NSLog(@\">>>>>> hSolution 无计可施\");",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/TCSolution.m:334-348"
+    },
+    "1791": {
+        "file_id": 182,
+        "content": "This code initializes a new action using the TOUtils method to get the most effective effect based on scene and solution factors. It logs the details of the new action, whether it is valid or not, and updates the TV frame on the main queue if applicable. If the action is invalid, it sets the status to \"WithOut\" and logs a message indicating that there are no more solutions available.",
+        "type": "comment"
+    },
+    "1792": {
+        "file_id": 182,
+        "content": "        [TCScore scoreFromIfTCNeed];\n        return [[[TCResult new:false] mkMsg:@\"hSolution无计可施\"] mkStep:23];\n    }\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/TCSolution.m:349-354"
+    },
+    "1793": {
+        "file_id": 182,
+        "content": "This code snippet appears to be a part of a class implementation. It seems that the `TCScore` object's method `scoreFromIfTCNeed` is being called, and if it returns some value (possibly indicating insufficiency), it returns an instance of `TCResult` with message \"hSolution无计可施\" and step number 23.",
+        "type": "comment"
+    },
+    "1794": {
+        "file_id": 183,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/Util/TCSolutionUtil.h",
+        "type": "filepath"
+    },
+    "1795": {
+        "file_id": 183,
+        "content": "The TCSolutionUtil class offers fast and slow thinking solutions, utilizing demand models as input and returning AICansetModel outputs. The code includes the \"getRAleardayCount\" method that takes ReasonDemandModel and AIMatchFoModel parameters to calculate an alearday count.",
+        "type": "summary"
+    },
+    "1796": {
+        "file_id": 183,
+        "content": "//\n//  TCSolutionUtil.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/6/5.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@class HDemandModel,ReasonDemandModel;\n@interface TCSolutionUtil : NSObject\n//MARK:===============================================================\n//MARK:                     < 快思考 >\n//MARK:===============================================================\n+(AICansetModel*) rSolution_Fast:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps;\n+(AICansetModel*) hSolution_Fast:(HDemandModel *)hDemand except_ps:(NSArray*)except_ps;\n//MARK:===============================================================\n//MARK:                     < 慢思考 >\n//MARK:===============================================================\n+(AICansetModel*) hSolution_SlowV2:(HDemandModel *)demand except_ps:(NSArray*)except_ps;\n+(AICansetModel*) hSolution_SlowV4:(HDemandModel *)demand except_ps:(NSArray*)except_ps;\n+(AICansetModel*) rSolution_Slow:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/Util/TCSolutionUtil.h:1-26"
+    },
+    "1797": {
+        "file_id": 183,
+        "content": "This file contains a class called TCSolutionUtil, which provides methods for fast and slow thinking solutions. It takes in demand models as input and returns an AICansetModel as output. The fast and slow thinking solutions are implemented differently and have different method names.",
+        "type": "comment"
+    },
+    "1798": {
+        "file_id": 183,
+        "content": "/**\n *  MARK:--------------------获取aleardayCount--------------------\n */\n+(NSInteger) getRAleardayCount:(ReasonDemandModel*)rDemand pFo:(AIMatchFoModel*)pFo;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/Util/TCSolutionUtil.h:28-33"
+    },
+    "1799": {
+        "file_id": 183,
+        "content": "This code defines a method named \"getRAleardayCount\" which takes two parameters: \"rDemand\" of type ReasonDemandModel and \"pFo\" of type AIMatchFoModel. The method returns an NSInteger value representing the alearday count for these parameters.",
+        "type": "comment"
+    }
+}

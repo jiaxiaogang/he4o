@@ -1,0 +1,15 @@
+{
+    "summary": "The AIInput class contains methods for committing text, IMV type, and custom input. The text commitment method has been updated since 2017. Custom inputs are processed through AIReactorControl. It commits a view change from selfView to targetView within the specified rect in AIReactorControl.",
+    "details": [
+        {
+            "comment": "AIInput class implementation file, contains methods to commit text, IMV type, and custom input. The text commitment method has been updated multiple times since its creation in 2017. Custom inputs are processed through AIReactorControl.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIInput/AIInput.m\":0-40",
+            "content": "//\n//  Input.m\n//  SMG_NothingIsAll\n//\n//  Created by \u8d3e  on 2017/4/9.\n//  Copyright \u00a9 2017\u5e74 XiaoGang. All rights reserved.\n//\n#import \"AIInput.h\"\n#import \"AIReactorControl.h\"\n@implementation AIInput\n+(void) commitText:(NSString*)text{\n    //2017.04\n    //[theThink commitUnderstandByShallowFromInput:text];//\u4eceinput\u5e38\u89c4\u8f93\u5165\u7684\u6d45\u5ea6\u7406\u89e3\u5373\u53ef;(\u7b80\u5355\u4e14\u9519\u8bef,\u53c2\u8003N4P2)\n    //2017.10.13\u4fee\u6b63,input->aiNet->funcModel->aiNet->awareness\u4f5c\u9884\u6d4b\u5bf9\u6bd4(\u53c2\u8003n7p6)\n    //[theNet commitString:text];\n    //2017.11.13\u4fee\u6b63,input->AIAwareness->AIThinkingControl->aiNet->...\n    //[theAIAwarenessControl commitInput:text];\n    //2017.12.15\u4fee\u6b63,\u53c2\u8003Note9SMG\u8f6f\u4ef6\u67b6\u67843\n    [AIReactorControl commitInput:text];\n}\n/**\n *  MARK:--------------------\u63d0\u4ea4mvType--------------------\n *  @params from : 0-10 (0\u4e3a\u6700\u9965,1\u4e3a\u6700\u9971)\n *  @params to : 0-10\n */\n+(void) commitIMV:(MVType)type from:(CGFloat)from to:(CGFloat)to{\n    [AIReactorControl commitIMV:type from:from to:to];\n}\n+(void) commitCustom:(CustomInputType)type value:(NSInteger)value{\n    [AIReactorControl commitCustom:type value:value];\n}\n+(void) commitView:(UIView*)selfView targetView:(UIView*)targetView rect:(CGRect)rect{"
+        },
+        {
+            "comment": "This code commits a view change from selfView to targetView within the specified rect in AIReactorControl.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIInput/AIInput.m\":41-44",
+            "content": "    [AIReactorControl commitView:selfView targetView:targetView rect:rect];\n}\n@end"
+        }
+    ]
+}

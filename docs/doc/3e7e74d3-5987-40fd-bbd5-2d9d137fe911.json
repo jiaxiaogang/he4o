@@ -1,0 +1,15 @@
+{
+    "summary": "AIAlgNodeBase is the base class for algorithm nodes in SMG_NothingIsAll, with properties for ports and dictionaries. It has methods to update and retrieve match values. The \"getAbsMatchValue\" method retrieves absolute match value using AIKVPointer*.",
+    "details": [
+        {
+            "comment": "AIAlgNodeBase is a class that serves as the base for algorithm nodes in SMG_NothingIsAll. It has properties for reference ports, abstract and concrete matching dictionaries, and methods for updating match values and retrieving concrete match values.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAlgNodeBase.h\":0-33",
+            "content": "//\n//  AIAlgNodeBase.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/1/3.\n//  Copyright \u00a9 2019\u5e74 XiaoGang. All rights reserved.\n//\n#import \"AINodeBase.h\"\n/**\n *  MARK:--------------------\u6982\u5ff5\u8282\u70b9\u57fa\u7c7b--------------------\n *  1. TODO: \u5c06\u6982\u5ff5\u6dfb\u52a0isOut,\u6216\u5c06foNode.orders\u4e2d\u6dfb\u52a0\u6bcf\u4e2a\u5143\u7d20\u7684isOut;\n *  2. TODOv2.0: \u5c06refPorts\u72ec\u7acb\u6210\u6587\u4ef6;\n *  3. \u6982\u5ff5\u5d4c\u5957: \u76ee\u524d\u4e0d\u8fdb\u884c\u6982\u5ff5\u5d4c\u5957,\u56e0\u592a\u590d\u6742,\u800c\u7531\u62bd\u5177\u8c61\u6216\u7ec4\u5206\u5173\u8054\u6765\u66ff\u4ee3; (\u7ec4\u5206\u5173\u8054\u5373\u5d4c\u5957?\u53c2\u8003\u5d4c\u5957\u76f8\u5173\u6587\u6863\u518d\u51b3\u5b9a)\n *  @todo\n *      2021.03.24: \u5c06OutRT\u53cd\u7701\u6784\u5efa\u7684SP\u8282\u70b9,\u4eceabsPorts\u4e2d\u8fc1\u81f3\u6b64\u5904,\u72ec\u7acb\u5b9a\u4e49\u4e3aports;\n */\n@interface AIAlgNodeBase : AINodeBase\n@property (strong, nonatomic) NSMutableArray *refPorts; //\u5f15\u7528\u5e8f\u5217\n@property (strong, nonatomic) NSMutableDictionary *absMatchDic; //\u62bd\u8c61\u5339\u914d\u5ea6\u5b57\u5178 <K:\u5bf9\u65b9pId, V:\u76f8\u4f3c\u5ea6> (\u53c2\u800327153-todo2);\n@property (strong, nonatomic) NSMutableDictionary *conMatchDic; //\u5177\u8c61\u5339\u914d\u5ea6\u5b57\u5178 <K:\u5bf9\u65b9pId, V:\u76f8\u4f3c\u5ea6> (\u53c2\u800327153-todo2);\n/**\n *  MARK:--------------------\u66f4\u65b0\u62bd\u5177\u8c61\u76f8\u4f3c\u5ea6--------------------\n *  @param absAlg : \u4f20\u62bd\u8c61\u8282\u70b9\u8fdb\u6765,\u800cself\u4e3a\u5177\u8c61\u8282\u70b9;\n */\n-(void) updateMatchValue:(AIAlgNodeBase*)absAlg matchValue:(CGFloat)matchValue;\n/**\n *  MARK:--------------------\u53d6\u62bd\u6216\u5177\u8c61\u7684\u76f8\u8fd1\u5ea6--------------------\n */\n-(CGFloat) getConMatchValue:(AIKVPointer*)con_p;"
+        },
+        {
+            "comment": "This code declares a method called \"getAbsMatchValue\" which is likely used to retrieve the absolute match value of a specific input parameter. The method takes an AIKVPointer* named \"abs_p\" as its argument, and returns a CGFloat value.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAlgNodeBase.h\":34-36",
+            "content": "-(CGFloat) getAbsMatchValue:(AIKVPointer*)abs_p;\n@end"
+        }
+    ]
+}

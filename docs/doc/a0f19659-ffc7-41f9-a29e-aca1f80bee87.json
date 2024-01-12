@@ -1,0 +1,15 @@
+{
+    "summary": "This code creates a model base class implementing NSCoding protocol, with initializer, equality checker, and status setter. It initializes objects using decode methods from a decoder and encodes properties for archiving.",
+    "details": [
+        {
+            "comment": "TOModelBase.m: Implementation of a model base class, including initializer, self identifier, equality checker, and status setter.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOModelBase.m\":0-48",
+            "content": "//\n//  TOModelBase.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/4/26.\n//  Copyright \u00a9 2019\u5e74 XiaoGang. All rights reserved.\n//\n#import \"TOModelBase.h\"\n@implementation TOModelBase\n-(id) initWithContent_p:(AIKVPointer*)content_p{\n    self = [super init];\n    if (self) {\n        self.content_p = content_p;\n    }\n    return self;\n}\n/**\n *  MARK:--------------------\u6765\u6e90\u6807\u8bc6--------------------\n */\n-(NSString *)selfIden{\n    if (!_selfIden) {\n        _selfIden = STRFORMAT(@\"%p\",self);\n    }\n    return _selfIden;\n}\n/**\n *  MARK:--------------------isEqual--------------------\n *  @version\n *      2022.03.19: content_p\u4e3a\u7a7a\u65f6,\u8fd4\u56desuper.Equal(),\u56e0\u4e3aDemand\u7684content_p\u5168\u662f\u7a7a\u7684;\n *      2022.03.23: \u6539\u6210\u7528selfIden\u5bf9\u6bd4,\u56e0\u4e3a\u5b83\u662f\u521d\u6b21\u5185\u5b58\u552f\u4e00,content_p\u4e00\u81f4\u5e76\u4e0d\u80fd\u8bf4\u660e\u4e00\u81f4;\n */\n-(BOOL) isEqual:(TOModelBase*)object{\n    return [self.selfIden isEqualToString:object.selfIden];\n}\n-(void)setStatus:(TOModelStatus)status{\n    _status = status;\n}\n/**\n *  MARK:--------------------NSCoding--------------------\n */\n- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {\n    self = [super init];"
+        },
+        {
+            "comment": "This code implements a model class that conforms to NSCoding protocol. It initializes the object properties using decode methods from a decoder in its init method, and encodes the object's properties for archiving with encodeWithCoder method.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOModelBase.m\":49-65",
+            "content": "    if (self) {\n        self.content_p = [aDecoder decodeObjectForKey:@\"content_p\"];\n        self.status = [aDecoder decodeIntegerForKey:@\"status\"];\n        self.baseOrGroup = [aDecoder decodeObjectForKey:@\"baseOrGroup\"];\n        self.selfIden = [aDecoder decodeObjectForKey:@\"selfIden\"];\n    }\n    return self;\n}\n- (void)encodeWithCoder:(NSCoder *)aCoder {\n    [aCoder encodeObject:self.content_p forKey:@\"content_p\"];\n    [aCoder encodeInteger:self.status forKey:@\"status\"];\n    [aCoder encodeObject:self.baseOrGroup forKey:@\"baseOrGroup\"];\n    [aCoder encodeObject:self.selfIden forKey:@\"selfIden\"];\n}\n@end"
+        }
+    ]
+}

@@ -1,0 +1,546 @@
+{
+    "100": {
+        "file_id": 19,
+        "content": " *          1. timer计时器触发,取deltaT x 1.3时间;\n *          2. \"计时触发\"时,对触发者的ActYes状态进行判断,如果还未由外循环实际输入,则\"实际触发\";\n *          3. 实际触发后,对预想时序fo 与 实际时序fo 进行反省类比;\n *          x. 当outModel中某时序完成时,则追回(销毁)与其对应的触发器 (废弃,不用销毁,改变status状态即可);\n *          x. 直到触发时,还未销毁,则说明实际时序并未完成,此时调用反省类比 (废弃,由tor_OPushM()来做状态改变即可);\n *      2020.08.23: 改为由TOFoModel中setTimeTrigger方法替代;\n *      2020.09.03: 支持不设触发条件时,默认必触发的重载;\n *      2021.03.16: 把triggerTime设为最大20s,以方便训练测试阶段等太慢;\n *\n *  @bug\n *      2020.09.26: 21053BUG-此处将单位s当做ms来计算,结果导致反省类比总是触发不了P,只有S;\n *\n *  @param deltaTime : 原本间隔时长,单位s\n *  _param canTrigger : 触发条件;\n *  @todo\n *      2021.02.05: 换[NSTimer scheduledTimerWithTimeInterval:time repeats:false block:^(NSTimer *timer){}]更准时;\n *      2021.03.16: 把triggerTime最大20s的设定删掉;\n *      2021.10.16: 通过延长触发时间,试图绕过TC卡顿的问题 (参考24058-方案2) (关闭状态,因为优先尝试方案1);\n *      2023.03.04: 将时间x2+1,改成x1.1+2 (参考28151-调试&修复);\n *      2023.07.20: 有时执行trigger时会提前release掉内存,所以由TC线程改为main线程执行;\n *      2023.07.21: 思维部分本来就该在TC线程执行,trigger后也是思维代码,所以改回在TC线程 (为防止提前release,加了_block保留);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/AITime/AITime.m:45-65"
+    },
+    "101": {
+        "file_id": 19,
+        "content": "This code sets up a timer that triggers after deltaT x 1.3 time intervals and checks the ActYes status of the trigger. If not yet input by outer loop, it initiates the action and compares the imagined timeline (fo) to the actual timeline. If a model's sequence is complete, it destroys the associated trigger (now changed to change status instead). It also fixes a bug where it previously used seconds as milliseconds. The code supports non-trigger conditions and now uses a more precise timer method. Changes include adjusting the trigger time and executing triggers in main thread to avoid early memory release.",
+        "type": "comment"
+    },
+    "102": {
+        "file_id": 19,
+        "content": " */\n+(void) setTimeTrigger:(NSTimeInterval)deltaTime trigger:(void(^)())trigger{\n    //1. 数据检查\n    if (!trigger) return;\n    //2. 用after延迟定时deltaT x 1.3触发;\n    CGFloat triggerTime = deltaTime * 1.1f + 2.0f;//当24058-方案1不成时,此处方案2再做为备启用,即将1.0调整为3甚至5;\n    triggerTime = MIN(triggerTime, 20.0f);\n    NSLog(@\"---> 设定生物钟触发器: deltaTime:%.2f triggerTime:%.2f\",deltaTime,triggerTime);\n    __block Act0 weakTrigger = trigger;\n    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(triggerTime * NSEC_PER_SEC)), theTC.tiQueue, ^{\n        //3. 触发时,判断是否还是actYes状态 (在OuterPushMiddleLoop()中,会将ActYes且符合,且PM算法成功的,改为Finish);\n        weakTrigger();\n    });\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/AITime/AITime.m:66-82"
+    },
+    "103": {
+        "file_id": 19,
+        "content": "Sets a time trigger with a specified NSTimeInterval and function pointer, delaying the function by deltaTime*1.1+2.0f seconds (capped at 20.0f). The function is called when it's still in its original state. Uses GCD to execute the function after the delay.",
+        "type": "comment"
+    },
+    "104": {
+        "file_id": 20,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIClass/Model/MapModel.h",
+        "type": "filepath"
+    },
+    "105": {
+        "file_id": 20,
+        "content": "This is a header file for the MapModel class, which represents a model to store two values (v1 and v2) instead of using an array.",
+        "type": "summary"
+    },
+    "106": {
+        "file_id": 20,
+        "content": "//\n//  MapModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/12/26.\n//  Copyright © 2023 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------存几个值的模型 (总比用数组方便)--------------------\n */\n@interface MapModel : NSObject\n+(MapModel*) newWithV1:(id)v1 v2:(id)v2;\n@property (strong, nonatomic) id v1;\n@property (strong, nonatomic) id v2;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Model/MapModel.h:1-21"
+    },
+    "107": {
+        "file_id": 20,
+        "content": "This is a header file for the MapModel class, which represents a model to store two values (v1 and v2) instead of using an array.",
+        "type": "comment"
+    },
+    "108": {
+        "file_id": 21,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIClass/Model/MapModel.m",
+        "type": "filepath"
+    },
+    "109": {
+        "file_id": 21,
+        "content": "This code defines a MapModel class with a single method, newWithV1:v2, which creates and initializes an instance of MapModel using provided parameters v1 and v2.",
+        "type": "summary"
+    },
+    "110": {
+        "file_id": 21,
+        "content": "//\n//  MapModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/12/26.\n//  Copyright © 2023 XiaoGang. All rights reserved.\n//\n#import \"MapModel.h\"\n@implementation MapModel\n+(MapModel*) newWithV1:(id)v1 v2:(id)v2 {\n    MapModel *result = [[MapModel alloc] init];\n    result.v1 = v1;\n    result.v2 = v2;\n    return result;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Model/MapModel.m:1-20"
+    },
+    "111": {
+        "file_id": 21,
+        "content": "This code defines a MapModel class with a single method, newWithV1:v2, which creates and initializes an instance of MapModel using provided parameters v1 and v2.",
+        "type": "comment"
+    },
+    "112": {
+        "file_id": 22,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils+General.h",
+        "type": "filepath"
+    },
+    "113": {
+        "file_id": 22,
+        "content": "This code includes string manipulation and logging methods in SMGUtils+General, along with utility functions for arrays, numbers, dictionaries, pointers, objects, and date/time conversions. It also defines methods for logging messages and processing data into objects, considering performance where necessary.",
+        "type": "summary"
+    },
+    "114": {
+        "file_id": 22,
+        "content": "//\n//  SMGUtil+General.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/7/9.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import \"SMGUtils.h\"\n#define kHHmmss @\"HH:mm:ss\"\n#define kHHmmssSSS @\"HH:mm:ss:SSS\"\n#define kyyyyMMddHHmmss @\"yyyy-MM-dd HH:mm:ss\"\n#define kyyyyMMddHHmmssSSS @\"yyyy-MM-dd HH:mm:ss:SSS\"\n#define kyyyyMMddHHmmssSSS_Simple @\"yyyyMMddHHmmssSSS\"\nstatic int logLineNum; //日志行号\nstatic NSString *lastTCName = @\"\"; //记录当前在打日志的TC模块名字;\n@interface SMGUtils (General)\n//string\n+(BOOL) strIsOk:(NSString*)s;\n+(NSString*) strToOk:(NSString*)s;\n+(NSArray*) strToArr:(NSString*)str sep:(NSString*)sep;     //str分隔arr\n+(NSString*) subStr:(NSString*)s toIndex:(NSInteger)index;  //notnull\n//log\n+(void) inTitle:(NSString*)title log:(NSString*)log fileName:(NSString*)fileName;\n+(void) outTitle:(NSString*)title log:(NSString*)log fileName:(NSString*)fileName;\n+(NSString*) codeLocateFormat:(NSString*)fileName line:(NSInteger)line;\n+(void) checkPrintNSLog:(NSString*)fileName line:(NSInteger)line protoLog:(NSString*)protoLog headerMode:(LogHeaderMode)headerMode;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils+General.h:1-31"
+    },
+    "115": {
+        "file_id": 22,
+        "content": "This code defines methods for string manipulation and logging in the SMGUtils+General class. It includes methods to check if a string is valid, convert strings, split strings into arrays, and log information with optional titles and file names. The code also has constants defining various date and time formats.",
+        "type": "comment"
+    },
+    "116": {
+        "file_id": 22,
+        "content": "+(NSString*) nsLogFormat:(NSString*)fileName line:(NSInteger)line protoLog:(NSString*)protoLog headerMode:(LogHeaderMode)headerMode;//NSLog自定义格式化;\n+(NSString*) cleanStr:(id)str;\n//array\n+(BOOL) arrIsOk:(NSArray*)a;                            //数组有效判断\n+(NSArray*) arrToOk:(NSArray*)a;                        //数组防闪\n+(id) arrIndex:(NSArray*)a index:(NSInteger)i;          //取数组index元素\n+(id) arrTransIndex:(NSArray*)a index:(NSInteger)i;     //取数组反序index元素\n+(BOOL) arrIndexIsOk:(NSArray*)a index:(NSInteger)i;    //数组index有效判断\n+(NSArray*) arrSub:(NSArray*)a start:(NSInteger)s length:(NSInteger)l;  //截数组 (notnull)\n+(NSString*) arrToStr:(NSArray*)arr prefix:(NSString*)prefix sep:(NSString*)sep;\n//number\n+(BOOL) numIsOk:(NSNumber*)n;\n+(NSNumber*) numToOk:(NSNumber*)n;\n+(NSNumber*) numToOk:(NSNumber*)n defaultValue:(double)defaultValue;\n//dictionary\n+(BOOL) dicIsOk:(NSDictionary*)d;\n+(NSDictionary*) dicToOk:(NSDictionary*)d;\n//pointer\n+(BOOL) pointerIsOk:(AIPointer*)p;\n//object\n+(BOOL) isOk:(NSObject*)o class:(Class)c;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils+General.h:32-57"
+    },
+    "117": {
+        "file_id": 22,
+        "content": "This code file contains various utility methods for handling arrays, numbers, dictionaries, pointers, and objects. These methods are used to validate, format, and perform operations on these data types.",
+        "type": "comment"
+    },
+    "118": {
+        "file_id": 22,
+        "content": "//date2Str (性能说明: stringFromDate较慢,所以批量处理时建议使用异步);\n+(NSString*) date2HHMMSS;\n+(NSString*) date2HHMMSSSSS;\n+(NSString*) date2yyyyMMddHHmmss;\n+(NSString*) date2yyyyMMddHHmmssSSS:(NSDate*)date;\n+(NSString*) date2Str:(NSString*)format timeInterval:(long long)timeInterval;\n+(NSString*) date2Str:(NSString*)format date:(NSDate*)date;\n//dateFromStr\n+(NSDate*) dateFromTimeStr_yyyyMMddHHmmssSSS:(NSString*)timeStr;\n+(NSDate*) dateFromTimeStr:(NSString*)timeStr format:(NSString*)format;\n//timestampFromStr\n+(long long)timestampFromStr_yyyyMMddHHmmssSSS:(NSString*)timeStr defaultResult:(long long)defaultResult;\n//nsdata\n+(NSArray*)datas2Objs:(NSArray*)datas;\n//log\n+(void)allLog:(NSString *)log;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils+General.h:59-80"
+    },
+    "119": {
+        "file_id": 22,
+        "content": "This code defines various utility methods for converting dates and times to strings, creating dates from strings, converting strings representing timestamps, and logging messages. It also includes a method for processing an array of data into objects. Performance considerations are mentioned where appropriate.",
+        "type": "comment"
+    },
+    "120": {
+        "file_id": 23,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils+General.m",
+        "type": "filepath"
+    },
+    "121": {
+        "file_id": 23,
+        "content": "SMGUtils is an Objective-C class offering utility functions for string manipulation, array handling, date formatting, and input class checking. It improves NSLog messages' formatting, tracks TestCase names, ensures main thread printing, and suggests improvements to string formatting.",
+        "type": "summary"
+    },
+    "122": {
+        "file_id": 23,
+        "content": "//\n//  SMGUtil+General.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/7/9.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import \"SMGUtils+General.h\"\n@implementation SMGUtils (General)\n//string\n+(BOOL) strIsOk:(NSString*)s{\n    return (s && ![s isKindOfClass:[NSNull class]] && [s isKindOfClass:[NSString class]] && ![s isEqualToString:@\"\"]);\n}\n+(NSString*) strToOk:(NSString*)s{\n    return (s && ![s isKindOfClass:[NSNull class]]) ? ([s isKindOfClass:[NSString class]] ? s : [NSString stringWithFormat:@\"%@\", s]) : @\"\";\n}\n+(NSArray*) strToArr:(NSString*)str sep:(NSString*)sep{\n    str = STRTOOK(str);\n    return [str componentsSeparatedByString:sep];\n}\n//log\n/**\n *  MARK:--------------------titleLog--------------------\n *  @version\n *      xxxx.xx.xx: 初版#def IFTitleLog(t,fmt, ...) NSLog((@\"\\n\\n------ \" t @\" ------\"fmt), ##__VA_ARGS__);\n *      2022.05.31: v2版,封装成方法,并支持loopId;\n *      2022.09.28: 把---改成===,因为不靠这个分IO,改成===反而更加直观些;\n */\n+(void) inTitle:(NSString*)title log:(NSString*)log fileName:(NSString*)fileName{",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils+General.m:1-33"
+    },
+    "123": {
+        "file_id": 23,
+        "content": "This code appears to be part of an Objective-C class named SMGUtils, with a section named General. It contains several methods for string manipulation and logging functionality. The strIsOk method checks if a string is not nil, not an instance of NSNull, and not an empty string. The strToOk method returns the non-nil version of a string, either as an NSString or an empty string. The strToArr method takes a string and a separator, and returns an array of substrings separated by the given separator. Lastly, the inTitle:log:fileName: method seems to be used for logging with optional title and file name parameters.",
+        "type": "comment"
+    },
+    "124": {
+        "file_id": 23,
+        "content": "    NSString *side = @\"===============================\";\n    NSLog_CustomFileName(fileName, @\"\\n\\n%@ %lld %@ %@%@\",side,theTC.getLoopId,title,side,log);\n}\n+(void) outTitle:(NSString*)title log:(NSString*)log fileName:(NSString*)fileName{\n    NSString *side = @\"===============================\";\n    NSLog_CustomFileName(fileName, @\"\\n\\n%@ %lld %@ %@%@\",side,theTC.getLoopId,title,side,log);\n}\n+(NSString*) codeLocateFormat:(NSString*)fileName line:(NSInteger)line{\n    //1. 数据 准备\n    fileName = STRTOOK(fileName);\n    //2. 拼lineStr\n    NSString *lineStr = STRFORMAT(@\"%@%ld\",(line > 999 ? @\"\" : ((line > 99 ? @\" \" : ((line > 9 ? @\"  \" : @\"   \"))))),(long)line);\n    //3. 拼fileNameStr字符串\n    NSString *fileNameStr = @\"\";\n    NSInteger fileNameMax = 19;\n    if (fileName.length > fileNameMax) {\n        fileNameStr = STRFORMAT(@\"%@..\",[fileName substringToIndex:fileNameMax - 2]);\n    }else{\n        NSMutableString *prefix = [[NSMutableString alloc] init];\n        for (NSInteger i = 0; i < fileNameMax - fileName.length; i++) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils+General.m:34-55"
+    },
+    "125": {
+        "file_id": 23,
+        "content": "This code defines a class method `outTitle:log:fileName:` that logs the title, loop ID, and log with a divider line. It also provides another class method `codeLocateFormat:line:` to get the formatted string of file name and line number. The first method uses these format strings in logging, while the second method prepares data for locating code by trimming file names if they exceed 19 characters.",
+        "type": "comment"
+    },
+    "126": {
+        "file_id": 23,
+        "content": "            [prefix appendString:@\" \"];\n        }\n        fileNameStr = STRFORMAT(@\"%@%@\",prefix,fileName);\n    }\n    return STRFORMAT(@\"%@%@\",fileNameStr,lineStr);\n}\n+(NSString*) logLineNumFormat{\n    //1. 转lineStr够5位 (不够的前面加空格);\n    NSString *lineStr = STRFORMAT(@\"%d\",++logLineNum);\n    for (NSInteger i = lineStr.length; i < 5; i++) {\n        lineStr = STRFORMAT(@\" %@\",lineStr);\n    }\n    return lineStr;\n}\n+(void) checkPrintNSLog:(NSString*)fileName line:(NSInteger)line protoLog:(NSString*)protoLog headerMode:(LogHeaderMode)headerMode{\n    //1. 记录下最后一条TC;\n    if ([@\"TC\" isEqualToString:SUBSTR2INDEX(fileName, 2)]) {\n        lastTCName = fileName;\n    }\n    //2. 当TC有效时,打印它;\n    BOOL tcsCanPrint = LogPrintAllTCs || !STRISOK(lastTCName) || [LogJustPrintTCs containsObject:SUBSTR2INDEX(lastTCName, lastTCName.length - 2)];\n    BOOL logSwitch = cNSLogSwitch && [cNSLogSwitchIsOpenTypes containsObject:[self getQueueStr]];\n    //3. 打印\n    //2023.07.20: 因为改到主线程导致当前线程提前销毁报错,直接取消切到主线程;\n    if (logSwitch && tcsCanPrint) {\n",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils+General.m:56-83"
+    },
+    "127": {
+        "file_id": 23,
+        "content": "This code appears to be a part of an NSLog formatting utility, specifically handling line number formatting and checking conditions for printing. It also keeps track of the last TestCase (TC) name and checks if it should be printed based on certain conditions. The code then prints the log only when allowed by the specified conditions and when running on the main thread.",
+        "type": "comment"
+    },
+    "128": {
+        "file_id": 23,
+        "content": "        NSString *log = [self nsLogFormat:fileName line:line protoLog:protoLog headerMode:headerMode];\n        PrintLog(log);\n    }\n}\n+(NSString*) nsLogFormat:(NSString*)fileName line:(NSInteger)line protoLog:(NSString*)protoLog headerMode:(LogHeaderMode)headerMode{\n    //1. 数据准备\n    protoLog = STRTOOK(protoLog);\n    NSString *timeStr = [SMGUtils date2HHMMSSSSS];\n    NSString *codeStr = [SMGUtils codeLocateFormat:fileName line:line];\n    NSMutableString *result = [[NSMutableString alloc] init];\n    NSString *queueStr = [self getQueueStr];\n    //2. 拼接结果\n    if (headerMode == LogHeaderMode_All) {\n        NSString *sep = @\"\\n\";\n        NSArray *logLines = ARRTOOK(STRTOARR(protoLog, sep));\n        for (NSString *logLine in logLines) {\n            [result appendFormat:@\"%@ [%@ %@ %@] %@\\n\",[SMGUtils logLineNumFormat],timeStr,queueStr,codeStr,logLine];\n        }\n    }else if(headerMode == LogHeaderMode_First){\n        [result appendFormat:@\"%@ [%@ %@ %@] %@\\n\",[SMGUtils logLineNumFormat],timeStr,queueStr,codeStr,protoLog];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils+General.m:83-104"
+    },
+    "129": {
+        "file_id": 23,
+        "content": "This code is responsible for logging system messages with specific formatting and information. It prepares the data by converting strings, adding time and file information, and then formats the log message based on the header mode provided. The resultant log message includes line numbers, timestamp, queue details, and the formatted log text itself.",
+        "type": "comment"
+    },
+    "130": {
+        "file_id": 23,
+        "content": "    }else{\n        [result appendFormat:@\"%@\\n\",protoLog];\n    }\n    return result;\n}\n//线程简写名称\n+(NSString*) getQueueStr {\n    NSString *curQueueLab = STRFORMAT(@\"%s\",dispatch_queue_get_label(dispatch_get_current_queue()));\n    if ([tiQueueLab isEqualToString:curQueueLab]) {\n        return @\"TI\";\n    } else if ([toQueueLab isEqualToString:curQueueLab]) {\n        return @\"TO\";\n    } else if ([@\"com.apple.main-thread\" containsString:curQueueLab]) {\n        return @\"MA\";\n    }\n    return @\"OT\";\n}\n//注: STRFORMAT目前的宏定义中,并没有多余调用,所以不需要单独封装出来;\n//注2: 如果有一天要使用此代码,可以尝试1: SMGArrayMake()来转换array, 尝试2:直接传递format,...到stringWithFormat:\n//#define STRFORMAT(s, ...) [SMGUtils strFormat:s, ##__VA_ARGS__]\n//+(NSString*) strFormat:(NSString*)format, ...{\n//    va_list paramList;\n//    va_start(paramList,format);\n//    NSString *result = [[NSString alloc]initWithFormat:format arguments:paramList];\n//    result = [result stringByAppendingString:@\"\\n\"];\n//    va_end(paramList);\n//    //return [NSString stringWithFormat:s...];\n//    //return [NSString stringWithFormat:a, ##__VA_ARGS__];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils+General.m:105-134"
+    },
+    "131": {
+        "file_id": 23,
+        "content": "This code contains a function that appends formatted text to a result string, and another function that returns a thread's queue name. It also includes comments explaining the macro definition for string formatting, which is currently not used, as well as suggestions for improving the string formatting functionality.",
+        "type": "comment"
+    },
+    "132": {
+        "file_id": 23,
+        "content": "//    return result;\n//}\n//notnull\n+(NSString*) subStr:(NSString*)s toIndex:(NSInteger)index{\n    return (STRISOK(s) ? [s substringToIndex:MIN(s.length, MAX(0, index))] : @\"\");\n}\n+(NSString*) cleanStr:(id)str{\n    NSString *validStr = STRTOOK(str);\n    validStr = [validStr stringByReplacingOccurrencesOfString:@\"\\n\" withString:@\"\"];\n    validStr = [validStr stringByReplacingOccurrencesOfString:@\"\\t\" withString:@\"\"];\n    //validStr = [validStr stringByReplacingOccurrencesOfString:@\" \" withString:@\"\"];\n    return validStr;\n}\n//array\n+(BOOL) arrIsOk:(NSArray*)a{\n    return a && [a isKindOfClass:[NSArray class]] && a.count;\n}\n+(NSArray*) arrToOk:(NSArray*)a{\n    return (a && [a isKindOfClass:[NSArray class]]) ? a : [NSArray new];\n}\n+(id) arrIndex:(NSArray*)a index:(NSInteger)i{\n    return [self arrIndexIsOk:a index:i] ? a[i] : nil;\n}\n+(id) arrTransIndex:(NSArray*)a index:(NSInteger)i{\n    NSInteger index = ARRTOOK(a).count - 1 - i;\n    return [self arrIndex:a index:index];\n}\n+(BOOL) arrIndexIsOk:(NSArray*)a index:(NSInteger)i{",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils+General.m:135-165"
+    },
+    "133": {
+        "file_id": 23,
+        "content": "This code snippet contains various utility methods for string manipulation and array handling. It includes functions to get a substring based on an index, clean a given string by removing special characters, check if an array is valid, return a valid array, retrieve elements from the array using index, and reverse index.",
+        "type": "comment"
+    },
+    "134": {
+        "file_id": 23,
+        "content": "    return (a && [a isKindOfClass:[NSArray class]] && a.count > i && i >= 0);\n}\n/**\n *  MARK:--------------------分隔数组--------------------\n *  @version\n *      2020.08.19: 将a.count提取为NSInteger类型,再参与MAX和MIN运算 (因为a.count默认为NSUInteger类型,导致s和l不支持负数)\n *  @result notnull (注意: subarrayWithRange是否可能返回null善未验证);\n */\n+(NSArray*) arrSub:(NSArray*)a start:(NSInteger)s length:(NSInteger)l{\n    NSInteger count = ARRISOK(a) ? a.count : 1;\n    s = MAX(0, MIN(s,count));\n    l = MAX(0, MIN(count - s, l));\n    return (ARRISOK(a) ? [a subarrayWithRange:NSMakeRange(s, l)] : [NSArray new]);\n}\n+(NSString*) arrToStr:(NSArray*)arr prefix:(NSString*)prefix sep:(NSString*)sep {\n    arr = ARRTOOK(arr);\n    NSMutableString *result = [[NSMutableString alloc] init];\n    for (NSInteger i = 0; i < arr.count; i++) {\n        id item = ARR_INDEX(arr, i);\n        [result appendFormat:@\"%@%@%@\",prefix,item,(i == arr.count - 1) ? @\"\" : sep];\n    }\n    return result;\n}\n//number\n+(BOOL) numIsOk:(NSNumber*)n{\n    return (n && [n isKindOfClass:[NSNumber class]]);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils+General.m:166-194"
+    },
+    "135": {
+        "file_id": 23,
+        "content": "This code defines utility methods for working with arrays and numbers in Objective-C. It includes a method to validate an array, subarray extraction, converting an array to a string, and validating a number. The methods use common practices like range validation, error handling, and format strings for concatenation.",
+        "type": "comment"
+    },
+    "136": {
+        "file_id": 23,
+        "content": "}\n+(NSNumber*) numToOk:(NSNumber*)n{\n    return [self numToOk:n defaultValue:0];\n}\n+(NSNumber*) numToOk:(NSNumber*)n defaultValue:(double)defaultValue{\n    return (n && [n isKindOfClass:[NSNumber class]]) ? n : @(defaultValue);\n}\n//dictionary\n+(BOOL) dicIsOk:(NSDictionary*)d{\n    return (d && [d isKindOfClass:[NSDictionary class]] && d.count);\n}\n+(NSDictionary*) dicToOk:(NSDictionary*)d{\n    return (d && [d isKindOfClass:[NSDictionary class]]) ? d : [NSDictionary new];\n}\n//pointer (pointerId从0开始)\n+(BOOL) pointerIsOk:(AIPointer*)p{\n    return (p && [p isKindOfClass:[AIPointer class]] && p.pointerId >= 0);\n}\n//object\n+(BOOL) isOk:(NSObject*)o class:(Class)c{\n    return (o && [o isKindOfClass:c]);\n}\n//date2Str\n+(NSString*) date2HHMMSS{\n    return [SMGUtils date2Str:kHHmmss date:nil];\n}\n+(NSString*) date2HHMMSSSSS{\n    return [SMGUtils date2Str:kHHmmssSSS date:nil];\n}\n+(NSString*) date2yyyyMMddHHmmss{\n    return [SMGUtils date2Str:kyyyyMMddHHmmss date:nil];\n}\n+(NSString*) date2yyyyMMddHHmmssSSS:(NSDate*)date{\n    return [SMGUtils date2Str:kyyyyMMddHHmmssSSS date:date];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils+General.m:195-232"
+    },
+    "137": {
+        "file_id": 23,
+        "content": "This code contains various utility methods for handling numbers, dictionaries, pointers, and objects. It also includes functions for formatting dates into different formats. The code ensures that inputs are of the correct class before returning or processing them.",
+        "type": "comment"
+    },
+    "138": {
+        "file_id": 23,
+        "content": "}\n+(NSString*) date2Str:(NSString*)format timeInterval:(long long)timeInterval{\n    return [self date2Str:format date:[NSDate dateWithTimeIntervalSince1970:timeInterval]];\n}\n+(NSString*) date2Str:(NSString*)format date:(NSDate*)date{\n    if (!date) date = [NSDate new];\n    NSDateFormatter *fmt = [[NSDateFormatter alloc] init];\n    fmt.dateFormat = format;\n    return [fmt stringFromDate:date];\n}\n//dateFromStr\n+(NSDate*) dateFromTimeStr_yyyyMMddHHmmssSSS:(NSString*)timeStr{\n    return [SMGUtils dateFromTimeStr:timeStr format:kyyyyMMddHHmmssSSS_Simple];\n}\n+(NSDate*) dateFromTimeStr:(NSString*)timeStr format:(NSString*)format{\n    NSDateFormatter *fmt = [[NSDateFormatter alloc] init];\n    fmt.dateFormat = STRTOOK(format);\n    return [fmt dateFromString:timeStr];\n}\n//timestampFromStr\n+(long long)timestampFromStr_yyyyMMddHHmmssSSS:(NSString*)timeStr defaultResult:(long long)defaultResult{\n    long long result = defaultResult;\n    if (STRISOK(timeStr)) {\n        NSDate *date = [SMGUtils dateFromTimeStr_yyyyMMddHHmmssSSS:timeStr];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils+General.m:233-258"
+    },
+    "139": {
+        "file_id": 23,
+        "content": "This code provides a series of methods for converting dates and timestamps between different formats. The date2Str method returns a string representation of a given timeInterval or date. The dateFromTimeStr method parses a timeString using the specified format. Lastly, timestampFromStr parses a timeString into a long long integer representing Unix timestamp with a default result in case of failure.",
+        "type": "comment"
+    },
+    "140": {
+        "file_id": 23,
+        "content": "        if (date) {\n            result = [date timeIntervalSince1970] * 1000.0f;\n        }\n    }\n    return result;\n}\n//nsdata\n+(NSArray*)datas2Objs:(NSArray*)datas{\n    NSMutableArray *result = [[NSMutableArray alloc] init];\n    datas = ARRTOOK(datas);\n    for (NSData *data in datas) {\n        [result addObject:DATA2OBJ(data)];\n    }\n    return result;\n}\n//log\n+(void)allLog:(NSString *)log{\n    NSLog(@\"%@\",log);\n    [theApp.heLogView addLog:log];\n    [theApp setTipLog:log];\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils+General.m:259-283"
+    },
+    "141": {
+        "file_id": 23,
+        "content": "This code defines a class with three methods: \n1. A method that converts a date to milliseconds since January 1, 1970 (in the GMT timezone).\n2. A method that takes an array of data and returns an array of objects after converting each data into an object.\n3. A method that logs a given message using NSLog, adds it to the heLogView object, and sets it as the tip log for the app.",
+        "type": "comment"
+    },
+    "142": {
+        "file_id": 24,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.h",
+        "type": "filepath"
+    },
+    "143": {
+        "file_id": 24,
+        "content": "This code manages pointer IDs, provides database operations and utility functions for searching, inserting, and containment checks on objects, as well as array conversion and sorting. It also filters arrays or dictionaries, validates properties, and offers non-repeating array collection in various methods.",
+        "type": "summary"
+    },
+    "144": {
+        "file_id": 24,
+        "content": "//\n//  SMGUtils.h\n//  SMG_NothingIsAll\n//\n//  Created by 贾  on 2017/4/19.\n//  Copyright © 2017年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@class AIPointer,AIKVPointer,AIObject,AIArray,ThinkModel,AIPort,AINodeBase,AIAlgNodeBase;\n@interface SMGUtils : NSObject\n//MARK:===============================================================\n//MARK:                     < PointerId >\n//MARK:===============================================================\n+(NSInteger) createPointerId:(NSString*)algsType dataSource:(NSString*)dataSource;\n+(NSInteger) createPointerId:(BOOL)updateLastId algsType:(NSString*)algsType dataSource:(NSString*)dataSource;\n+(NSInteger) getLastNetNodePointerId:(NSString*)algsType dataSource:(NSString*)dataSource;\n+(void) setNetNodePointerId:(NSInteger)count algsType:(NSString*)algsType dataSource:(NSString*)dataSource;\n//MARK:===============================================================\n//MARK:                     < AIPointer >\n//MARK:===============================================================",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.h:1-26"
+    },
+    "145": {
+        "file_id": 24,
+        "content": "This code declares a class SMGUtils and contains methods for creating, retrieving, and updating pointer IDs associated with AIPointer objects. It also includes methods for setting net node pointer IDs, likely related to network nodes in an AI application.",
+        "type": "comment"
+    },
+    "146": {
+        "file_id": 24,
+        "content": "//General指针\n+(AIKVPointer*) createPointer:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut type:(AnalogyType)type;\n//Direction的mv分区pointer;(存引用序列)\n+(AIKVPointer*) createPointerForDirection:(NSString*)mvAlgsType direction:(MVDirection)direction;\n//生成小脑CanOut指针;\n+(AIKVPointer*) createPointerForCerebelCanOut;\n//生成indexValue的指针;\n+(AIKVPointer*) createPointerForValue:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut;\n+(AIKVPointer*) createPointerForValue:(NSInteger)pointerId algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut;\n//索引指针\n+(AIKVPointer*) createPointerForIndex;\n//微信息值指针\n+(AIKVPointer*) createPointerForData:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut;\n/**\n *  MARK:--------------------概念节点指针--------------------\n *  @param dataSource : 有三种情况;\n *      1. input输入TIR新概念时,概念的ds就是算法的at,比如:AIVersionAgls;\n *      2. 类比构建器时,概念的ds就是类比源,比如:有无大小同异;\n *      3. 默认(其它)时,概念节点的ds是其content_ps中稀疏码共同的at;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.h:27-51"
+    },
+    "147": {
+        "file_id": 24,
+        "content": "This code contains multiple methods for creating different types of pointers in the AIKVPointer class. These include general pointers, directional pointers, cerebellum CanOut pointers, index pointers, and data pointers. The pointers are created based on various parameters such as folder name, algorithm type, data source, and whether it's an output or input pointer.",
+        "type": "comment"
+    },
+    "148": {
+        "file_id": 24,
+        "content": " */\n+(AIKVPointer*) createPointerForAlg:(NSString*)folderName at:(NSString*)at dataSource:(NSString*)dataSource isOut:(BOOL)isOut type:(AnalogyType)type;\n/**\n *  MARK:--------------------时序节点指针--------------------\n *  @param ds : 有两种情况;\n *      1. 类比构建器时,时序的ds就是类比源,比如:有无大小同异;\n *      2. 默认(其它)时,时序节点的ds=DefaultDataSource;\n */\n+(AIKVPointer*) createPointerForFo:(NSString*)folderName at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type;\n@end\n//MARK:===============================================================\n//MARK:                     < SMGUtils (Compare) >\n//MARK:===============================================================\n@interface SMGUtils (Compare)\n//+(BOOL) compareItemA:(id)itemA itemB:(id)itemB;\n//+(BOOL) compareArrayA:(NSArray*)arrA arrayB:(NSArray*)arrB;\n//+(BOOL) compareItemA:(id)itemA containsItemB:(id)itemB;\n//+(NSComparisonResult) compareRefsA_p:(NSArray*)refsA_p refsB_p:(NSArray*)refsB_p;//比较refsA是否比refsB大\n//比较pA是否比pB大 (1级pId,2级identifier)\n+(NSComparisonResult) comparePointerA:(AIPointer*)pA pointerB:(AIPointer*)pB;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.h:52-78"
+    },
+    "149": {
+        "file_id": 24,
+        "content": "This code defines methods for creating pointers and comparing items. The createPointerForFo method creates a pointer for folders, taking into account different scenarios. The comparePointerA:pointerB method compares two pointers (1-level pId, 2-level identifier) to determine which is larger.",
+        "type": "comment"
+    },
+    "150": {
+        "file_id": 24,
+        "content": "//类比port (1级强度,2级pointer)\n+(NSComparisonResult) comparePortA:(AIPort*)pA portB:(AIPort*)pB;\n+(NSComparisonResult) compareIntA:(NSInteger)intA intB:(NSInteger)intB;\n+(NSComparisonResult) compareFloatA:(CGFloat)floatA floatB:(CGFloat)floatB;\n+(NSComparisonResult) compareDoubleA:(CGFloat)doubleA doubleB:(CGFloat)doubleB;\n@end\n//MARK:===============================================================\n//MARK:                     < @SMGUtils (DB) >\n//MARK:===============================================================\n@interface SMGUtils (DB)\n/**\n *  MARK:--------------------SQL语句之rowId--------------------\n */\n+(NSString*) sqlWhere_RowId:(NSInteger)rowid;\n//+(NSString*) sqlWhere_K:(id)columnName V:(id)value;\n//+(NSDictionary*) sqlWhereDic_K:(id)columnName V:(id)value;\n/**\n *  MARK:--------------------searchObj--------------------\n */\n+(id) searchObjectForPointer:(AIPointer*)pointer fileName:(NSString*)fileName;\n+(id) searchObjectForPointer:(AIPointer*)pointer fileName:(NSString*)fileName time:(double)time;//找到后,缓存到redis,time秒;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.h:80-105"
+    },
+    "151": {
+        "file_id": 24,
+        "content": "This code contains several comparison methods and utility functions for a database operation. The comparison methods compare port, integer, float, and double values. The SQLWhere_RowId method creates an SQL statement based on the provided row id. The searchObjectForPointer methods find objects for a given pointer in a file and optionally cache them in Redis with a specified timeout time.",
+        "type": "comment"
+    },
+    "152": {
+        "file_id": 24,
+        "content": "+(id) searchObjectForFilePath:(NSString*)filePath fileName:(NSString*)fileName time:(double)time;\n/**\n *  MARK:--------------------insertObj--------------------\n */\n//+(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName;\n+(void) insertObject:(NSObject*)obj pointer:(AIPointer*)pointer fileName:(NSString*)fileName time:(double)time;\n+(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName time:(double)time saveDB:(BOOL)saveDB;//同时插入到redis,time秒\n/**\n *  MARK:--------------------Node--------------------\n */\n+(id) searchNode:(AIKVPointer*)pointer;\n+(NSArray*) searchNodes:(NSArray*)ps;\n+(void) insertNode:(AINodeBase*)node;\n@end\n//MARK:===============================================================\n//MARK:                     < SMGUtils (Contains) >\n//MARK:===============================================================\n@interface SMGUtils (Contains)\n//判断parent_ps是否包含sub_ps;\n+(BOOL) containsSub_ps:(NSArray*)sub_ps parent_ps:(NSArray*)parent_ps;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.h:106-133"
+    },
+    "153": {
+        "file_id": 24,
+        "content": "This code defines methods for searching and inserting objects, nodes, and performing containment checks. The `searchObjectForFilePath:` method searches for an object by file path and fileName. The `insertObject:pointer:fileName:time:` method inserts an object with a given pointer into the database with the specified fileName and time. The `containsSub_ps:parent_ps:` method checks if parent_ps contains sub_ps.",
+        "type": "comment"
+    },
+    "154": {
+        "file_id": 24,
+        "content": "+(BOOL) containsSub_p:(AIPointer*)sub_p parent_ps:(NSArray*)parent_ps;\n+(BOOL) containsSub_p:(AIPointer*)sub_p parentPorts:(NSArray*)parentPorts;\n@end\n//MARK:===============================================================\n//MARK:                     < SMGUtils (convert) >\n//MARK:===============================================================\n@interface SMGUtils (Convert)\n/**\n *  MARK:--------------------将ports端口中指向转换为指针数组返回--------------------\n *  @result notnull\n */\n+(NSMutableArray*) convertPointersFromPorts:(NSArray*)ports;\n//nodes转pointers\n+(NSMutableArray*) convertPointersFromNodes:(NSArray*)nodes;\n//将pointers转字符串;\n+(NSString*) convertPointers2String:(NSArray*)pointers;\n//将概念中的value_ps(含嵌套)展开成纯微信息的组; @result : notnull\n//2021.02.05: 概念嵌套早已废弃\n//+(NSMutableArray*) convertValuePs2MicroValuePs:(NSArray*)value_ps;\n//任意arr元素类型转换 notnull\n+(NSMutableArray*) convertArr:(NSArray*)arr convertBlock:(id(^)(id obj))convertBlock;\n+(NSMutableArray*) convertArr:(NSArray*)arr convertItemArrBlock:(NSArray*(^)(id obj))convertItemArrBlock;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.h:134-163"
+    },
+    "155": {
+        "file_id": 24,
+        "content": "This code snippet contains methods to convert arrays of various types, including converting ports to pointers, converting nodes to pointers, and converting values to micro value arrays. Some methods have been deprecated such as converting nested values.",
+        "type": "comment"
+    },
+    "156": {
+        "file_id": 24,
+        "content": "//将arr转成dic\n+(NSDictionary*) convertArr2Dic:(NSArray*)objs kvBlock:(NSArray*(^)(id obj))kvBlock;\n/**\n *  MARK:--------------------从foPorts中找出含valueIden的元素并返回--------------------\n *  @desc 每个fo,仅判断首条符合的alg;\n */\n+(NSMutableArray*) convertAlgPsFromFoPorts:(NSArray*)foPorts valueIden:(NSString*)valueIden;\n@end\n//MARK:===============================================================\n//MARK:                     < SMGUtils (Sort) >\n//MARK:===============================================================\n@interface SMGUtils (Sort)\n//对ps进行从大到小的排序\n+(NSArray*) sortPointers:(NSArray*)ps;\n//从大到小排序\n+(NSArray*) sortBig2Small:(NSArray*)arr compareBlock:(double(^)(id obj))compareBlock;\n+(NSArray*) sortBig2Small:(NSArray*)arr compareBlock1:(double(^)(id obj))compareBlock1 compareBlock2:(double(^)(id obj))compareBlock2;\n+(NSArray*) sortBig2Small:(NSArray*)arr compareBlock1:(double(^)(id obj))compareBlock1 compareBlock2:(double(^)(id obj))compareBlock2 compareBlock3:(double(^)(id obj))compareBlock3;\n+(NSArray*) sortSmall2Big:(NSArray*)arr compareBlock:(double(^)(id obj))compareBlock;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.h:164-188"
+    },
+    "157": {
+        "file_id": 24,
+        "content": "This code defines a class SMGUtils and provides several methods for sorting arrays in descending or ascending order, with optional comparison blocks for customized sorting logic. The interface also includes a method to convert an array to a dictionary using a specified key-value block.",
+        "type": "comment"
+    },
+    "158": {
+        "file_id": 24,
+        "content": "@end\n//MARK:===============================================================\n//MARK:                     < SMGUtils (Remove) >\n//MARK:===============================================================\n@interface SMGUtils (Remove)\n/**\n *  MARK:--------------------取差集--------------------\n *  @result notnull\n */\n+(NSMutableArray*) removeSub_ps:(NSArray*)sub_ps parent_ps:(NSArray*)parent_ps;\n+(NSMutableArray*) removeSub_p:(AIPointer*)sub_p parent_ps:(NSArray*)parent_ps;\n+(NSMutableArray*) removeArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid;\n/**\n *  MARK:--------------------防重--------------------\n *  _param convertBlock : 用于转换\"判断防重的数据类型\";\n *  @result notnull\n */\n+(NSMutableArray*) removeRepeat:(NSArray*)protoArr;\n+(NSMutableArray*) removeRepeat:(NSArray*)protoArr convertBlock:(id(^)(id obj))convertBlock;\n/**\n *  MARK:--------------------取交集--------------------\n *  @result notnull\n */\n//从bps中,找到与ap同区的bItem返回;\n+(AIKVPointer*) filterSameIdentifier_p:(AIKVPointer*)a_p b_ps:(NSArray*)b_ps;\n//从bps中,找到与aps同区的 所有映射结果 返回 (根据key去重);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.h:190-220"
+    },
+    "159": {
+        "file_id": 24,
+        "content": "This code defines a class extension called SMGUtils with methods to remove subsets, prevent duplicates, and filter intersections. The removeSub methods take in an array of sub-elements and parent elements, returning a mutable array containing only the removed sub-elements. The removeRepeat methods remove duplicate items from an input array using optional convertBlock for data type conversion if needed. The filterSameIdentifier method filters out elements with the same identifier from two input arrays.",
+        "type": "comment"
+    },
+    "160": {
+        "file_id": 24,
+        "content": "+(NSMutableDictionary*) filterSameIdentifier_Dic:(NSArray*)a_ps b_ps:(NSArray*)b_ps;\n//从from中,找出valid同区的 所有结果返回 (不去重);\n//+(NSArray*) filterSameIdentifier_Arr:(NSArray*)from_ps valid_ps:(NSArray*)valid_ps;\n//从b_ps中,找出与a_p同区不同值的指针;\n+(AIKVPointer*) filterSameIdentifier_DiffId_p:(AIKVPointer*)a_p b_ps:(NSArray*)b_ps;\n//同区不同值\n+(NSMutableDictionary*) filterSameIdentifier_DiffId_ps:(NSArray*)a_ps b_ps:(NSArray*)b_ps;\n/**\n *  MARK:--------------------从from_ps中,筛选出有效的元素返回--------------------\n *  @result notnull\n */\n+(NSArray*) filterPointers:(NSArray *)from_ps checkValid:(BOOL(^)(AIKVPointer *item_p))checkValid;\n/**\n *  MARK:--------------------从a_ps和b_ps中,筛选出有效的元素映射返回--------------------\n *  @result notnull (返回的字典中key,为NSData类型)\n */\n+(NSMutableDictionary*) filterPointers:(NSArray *)a_ps b_ps:(NSArray*)b_ps checkItemValid:(BOOL(^)(AIKVPointer *a_p,AIKVPointer *b_p))checkItemValid;\n/**\n *  MARK:--------------------筛选数组--------------------\n *  @result notnull\n */\n+(NSArray*) filterArrA:(NSArray*)arrA arrB:(NSArray*)arrB;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.h:221-245"
+    },
+    "161": {
+        "file_id": 24,
+        "content": "This code contains several class methods that filter arrays based on specific conditions. The methods include:\n1. `filterSameIdentifier_Dic`, which finds all items with the same identifier from two input arrays (not shown in the provided code).\n2. `filterSameIdentifier_Arr` and `filterPointers`, which find elements within a single array that meet certain validity conditions.\n3. `filterSameIdentifier_DiffId_p` and `filterSameIdentifier_DiffId_ps`, which find elements with the same identifier but different values in two input arrays.\n4. Finally, `filterArrA` filters two input arrays for specific conditions (not shown in the provided code).",
+        "type": "comment"
+    },
+    "162": {
+        "file_id": 24,
+        "content": "+(NSMutableArray*) filterArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid;\n+(NSMutableArray*) filterArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid limit:(NSInteger)limit;\n/**\n *  MARK:--------------------筛选字典--------------------\n *  @result notnull\n */\n+(NSMutableDictionary*) filterDic:(NSDictionary *)dic checkValid:(BOOL(^)(id key,id value))checkValid;\n/**\n *  MARK:--------------------用analogyType来筛选ports--------------------\n *  @result notnull\n */\n+(NSArray*) filterPorts_Normal:(NSArray*)ports;\n+(NSArray*) filterPorts:(NSArray*)ports havTypes:(NSArray*)havTypes noTypes:(NSArray*)noTypes;\n/**\n *  MARK:--------------------查找单条--------------------\n */\n+(id) filterSingleFromArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid;\n/**\n *  MARK:--------------------筛选alg by 指定标识--------------------\n */\n+(NSArray*) filterAlg_Ps:(NSArray*)alg_ps valueIdentifier:(NSString*)valueIdentifier itemValid:(void(^)(AIAlgNodeBase *alg,AIKVPointer *value_p))itemValid;\n/**\n *  MARK:--------------------筛选指针 by isOut--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.h:246-273"
+    },
+    "163": {
+        "file_id": 24,
+        "content": "The code contains multiple utility functions for filtering and checking arrays, dictionaries, ports, and algorithms based on specified conditions. These functions can be used to filter single items or entire lists by validating properties, specific types, or using custom filters.",
+        "type": "comment"
+    },
+    "164": {
+        "file_id": 24,
+        "content": " *  @param proto_ps : 从中筛选\n *  @param isOut : false时筛选出非out的pointers\n *  注:未判定是否连续;\n */\n+(NSArray*) filterPointers:(NSArray*)proto_ps isOut:(BOOL)isOut;\n/**\n *  MARK:--------------------筛选指针 by 指定标识--------------------\n */\n+(NSArray*) filterPointers:(NSArray*)from_ps identifier:(NSString*)identifier;\n/**\n *  MARK:--------------------筛选端口 by 指定标识--------------------\n */\n+(NSArray*) filterAlgPorts:(NSArray*)algPorts valueIdentifier:(NSString*)valueIdentifier;\n//筛选foPorts中,包含稀疏码同区码的;\n+(NSArray*) filterFoPorts:(NSArray*)foPorts valueIdentifier:(NSString*)valueIdentifier;\n//筛选fos中,包含稀疏码同区码的;\n+(NSArray*) filterFos:(NSArray*)fos valueIdentifier:(NSString*)valueIdentifier;\n@end\n//MARK:===============================================================\n//MARK:                     < SMGUtils (Collect) >\n//MARK:===============================================================\n@interface SMGUtils (Collect)\n/**\n *  MARK:--------------------并集--------------------\n *  @result notnull\n */\n+(NSMutableArray *) collectArrA:(NSArray*)arrA arrB:(NSArray*)arrB;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.h:274-305"
+    },
+    "165": {
+        "file_id": 24,
+        "content": "This code contains various methods for filtering and collecting data arrays based on specific identifiers or values. It includes functions to filter pointers, algorithm ports, FO ports, and FOS, as well as a method to collect two arrays into a new mutable array (union).",
+        "type": "comment"
+    },
+    "166": {
+        "file_id": 24,
+        "content": "//不管顺序: 先收集bigArr再收集littleArr\n+(NSMutableArray *) collectArrA_NoRepeat:(NSArray*)arrA arrB:(NSArray*)arrB;\n//保持顺序: 先收集first再收集second\n+(NSMutableArray *) collectArrA_NoRepeat_Sort:(NSArray*)firstArr arrB:(NSArray*)secondArr;\n@end\n@interface SMGUtils (Other)\n/**\n *  MARK:--------------------遍历--------------------\n */\n//+(void) foreach:(NSArray *)a_ps b_ps:(NSArray*)b_ps tryOut:(void(^)(AIKVPointer *a_p,AIKVPointer *b_p))tryOut;\n/**\n *  MARK:--------------------for正反序执行--------------------\n */\n+(void) fori:(NSArray *)arr min:(NSInteger)min max:(NSInteger)max run:(BOOL(^)(id item,NSInteger i))run forward:(BOOL)forward;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.h:306-325"
+    },
+    "167": {
+        "file_id": 24,
+        "content": "This code defines two functions for collecting non-repeating arrays, one maintaining order and the other not. It also includes a method for iterating over an array in both forward and reverse directions using a block.",
+        "type": "comment"
+    },
+    "168": {
+        "file_id": 25,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m",
+        "type": "filepath"
+    },
+    "169": {
+        "file_id": 25,
+        "content": "This code includes SMGUtils and AIKVPointer classes with factory methods, sorting, searching, and Redis/SQL utilities for asynchronous object storage. It also uses XGWedis, AsyncMutableDictionary, and PINDiskCache for handling large datasets with array manipulation in SMGUtils. The code contains utility methods for filtering arrays and combining them without duplicates, along with helper functions for searching nodes, filtering arrays, validating array elements, and looping with customizable range and callback function.",
+        "type": "summary"
+    },
+    "170": {
+        "file_id": 25,
+        "content": "//\n//  SMGUtils.m\n//  SMG_NothingIsAll\n//\n//  Created by 贾  on 2017/4/19.\n//  Copyright © 2017年 XiaoGang. All rights reserved.\n//\n#import \"SMGUtils.h\"\n#import \"PINCache.h\"\n#import \"XGRedisUtil.h\"\n#import \"XGRedis.h\"\n@implementation SMGUtils\n//MARK:===============================================================\n//MARK:                     < PointerId >\n//MARK:===============================================================\n+(NSInteger) createPointerId:(NSString*)algsType dataSource:(NSString*)dataSource{\n    return [self createPointerId:true algsType:algsType dataSource:dataSource];\n}\n+(NSInteger) createPointerId:(BOOL)updateLastId algsType:(NSString*)algsType dataSource:(NSString*)dataSource{\n    NSInteger lastId = [SMGUtils getLastNetNodePointerId:algsType dataSource:dataSource];\n    if (updateLastId) {\n        [SMGUtils setNetNodePointerId:1 algsType:algsType dataSource:dataSource];\n    }\n    return lastId + 1;\n}\n+(NSInteger) getLastNetNodePointerId:(NSString*)algsType dataSource:(NSString*)dataSource{\n    ret",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:1-32"
+    },
+    "171": {
+        "file_id": 25,
+        "content": "This code file SMGUtils.m defines a class SMGUtils and provides several utility functions for creating, updating, and retrieving pointer IDs based on the algorithm type and data source. It also imports other necessary header files.",
+        "type": "comment"
+    },
+    "172": {
+        "file_id": 25,
+        "content": "urn [[NSUserDefaults standardUserDefaults] integerForKey:STRFORMAT(@\"AIPointer_LastNetNodePointerId_KEY_%@_%@\",algsType,dataSource)];\n}\n+(void) setNetNodePointerId:(NSInteger)count algsType:(NSString*)algsType dataSource:(NSString*)dataSource{\n    NSInteger lastPId = [self getLastNetNodePointerId:algsType dataSource:dataSource];\n    [[NSUserDefaults standardUserDefaults] setInteger:lastPId + count forKey:STRFORMAT(@\"AIPointer_LastNetNodePointerId_KEY_%@_%@\",algsType,dataSource)];\n    [[NSUserDefaults standardUserDefaults] synchronize];\n}\n//MARK:===============================================================\n//MARK:                     < AIPointer >\n//MARK:===============================================================\n//General指针\n+(AIKVPointer*) createPointer:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut type:(AnalogyType)type{\n    NSInteger pointerId = [SMGUtils createPointerId:algsType dataSource:dataSource];\n    //TODOTOMORROW: 查20151-BUG9 (此处新指针有重复,导致问题);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:32-49"
+    },
+    "173": {
+        "file_id": 25,
+        "content": "This code retrieves the last net node pointer ID for a specific algorithm type and data source from user defaults, increments it by a given count, and then stores it back in the user defaults. It also creates a new AI key-value pointer using a helper function to generate a unique pointer ID based on the algorithm type and data source.",
+        "type": "comment"
+    },
+    "174": {
+        "file_id": 25,
+        "content": "    if ([kPN_CMV_NODE isEqualToString:folderName] || [kPN_ABS_CMV_NODE isEqualToString:folderName]) {\n        WLog(@\"---------引用强度BUG-mv新指针:%ld\",pointerId);\n    }\n    AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:folderName algsType:algsType dataSource:dataSource isOut:isOut type:type];\n    return kvPointer;\n}\n//Direction的mv分区pointer;(存引用序列)\n+(AIKVPointer*) createPointerForDirection:(NSString*)mvAlgsType direction:(MVDirection)direction{\n    NSInteger pointerId = 0;\n    AIKVPointer *kvPointer = [AIKVPointer newWithPointerId:pointerId folderName:kPN_DIRECTION((long)direction) algsType:mvAlgsType dataSource:DefaultDataSource isOut:false type:ATDefault];\n    return kvPointer;\n}\n//生成小脑CanOut指针;\n+(AIKVPointer*) createPointerForCerebelCanOut{\n    AIKVPointer *pointer = [AIKVPointer newWithPointerId:0 folderName:kPN_CEREBEL_CANOUT algsType:DefaultAlgsType dataSource:DefaultDataSource isOut:false type:ATDefault];\n    return pointer;\n}\n//生成indexValue的指针;\n+(AIKVPointer*) createPointerForValue:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut{",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:50-71"
+    },
+    "175": {
+        "file_id": 25,
+        "content": "This code defines a class AIKVPointer and provides methods to create different types of pointers based on parameters such as folder name, algorithm type, data source, and whether it's an output pointer. These methods are used to generate pointers for direction, cerebel can out, and index value respectively.",
+        "type": "comment"
+    },
+    "176": {
+        "file_id": 25,
+        "content": "    NSInteger pointerId = [self createPointerId:algsType dataSource:dataSource];\n    return [AIKVPointer newWithPointerId:pointerId folderName:kPN_VALUE algsType:algsType dataSource:dataSource isOut:isOut type:ATDefault];\n}\n+(AIKVPointer*) createPointerForValue:(NSInteger)pointerId algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut{\n    return [AIKVPointer newWithPointerId:pointerId folderName:kPN_VALUE algsType:algsType dataSource:dataSource isOut:isOut type:ATDefault];\n}\n+(AIKVPointer*) createPointerForIndex{\n    NSInteger pointerId = 0;\n    return [AIKVPointer newWithPointerId:pointerId folderName:kPN_INDEX algsType:DefaultAlgsType dataSource:DefaultDataSource isOut:false type:ATDefault];\n}\n+(AIKVPointer*) createPointerForData:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut{\n    NSInteger pointerId = 0;\n    return [AIKVPointer newWithPointerId:pointerId folderName:kPN_DATA algsType:algsType dataSource:dataSource isOut:isOut type:ATDefault];\n}\n/**",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:72-90"
+    },
+    "177": {
+        "file_id": 25,
+        "content": "This code defines various factory methods for creating `AIKVPointer` objects. Each method creates a new instance of the class with specific parameters such as pointer ID, folder name, algorithms type, data source, and whether it is an output pointer or not. These methods are used to create different types of pointers like value, index, and data pointers.",
+        "type": "comment"
+    },
+    "178": {
+        "file_id": 25,
+        "content": " *  MARK:--------------------生成alg指针--------------------\n *  @version\n *      2021.09.25: 将algsType由pointerId改为\" \";\n *      2021.09.25: 将at由参数传入,因为有些稀疏码没有ds(如FLY_RDS),此时构建glAlg,就只能传来at (参考24021-概念部分-4);\n */\n+(AIKVPointer*) createPointerForAlg:(NSString*)folderName at:(NSString*)at dataSource:(NSString*)dataSource isOut:(BOOL)isOut type:(AnalogyType)type{\n    NSInteger pointerId = [SMGUtils createPointerId:DefaultAlgsType dataSource:dataSource];\n    return [AIKVPointer newWithPointerId:pointerId folderName:folderName algsType:at dataSource:dataSource isOut:isOut type:type];\n}\n/**\n *  MARK:--------------------生成fo指针--------------------\n *  @version\n *      2021.09.25: 将at由参数传入,因为有些稀疏码没有ds(如FLY_RDS),此时构建glFo,就只能传来at (参考24021-时序部分-3);\n */\n+(AIKVPointer*) createPointerForFo:(NSString*)folderName at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type{\n    return [self createPointer:folderName algsType:at dataSource:ds isOut:false type:type];\n}\n@end\n/**\n *  MARK:--------------------比较--------------------\n */\n@implementation SMGUtils (Compare)",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:91-116"
+    },
+    "179": {
+        "file_id": 25,
+        "content": "This code defines methods for creating AIKVPointer objects for alg and fo in SMGUtils class. The alg pointer creation method takes folderName, at, dataSource, isOut, and type as parameters, while the fo pointer creation method only requires folderName, at, ds, and type. The methods use SMGUtils' createPointerId and createPointer helper methods.",
+        "type": "comment"
+    },
+    "180": {
+        "file_id": 25,
+        "content": "//+(BOOL) compareItemA:(id)itemA itemB:(id)itemB{\n//    if (itemA == nil && itemB == nil) {\n//        return true;\n//    }else if(itemA == nil || itemB == nil || ![self compareKindClassWithItemA:itemA itemB:itemB]){\n//        return false;\n//    }else{\n//        if ([itemA isKindOfClass:[NSString class]]) {\n//            return [(NSString*)itemA isEqualToString:itemB];        //NSString\n//        }else if ([itemA isKindOfClass:[NSNumber class]]) {\n//            return [itemA isEqualToNumber:itemB];                   //NSNumber\n//        }else if ([itemA isKindOfClass:[NSValue class]]) {\n//            return [itemA isEqualToValue:itemB];                    //NSValue\n//        }else if ([itemA isKindOfClass:[NSArray class]]) {\n//            return [itemA isEqualToArray:itemB];                    //NSArray\n//        }else if ([itemA isKindOfClass:[NSDictionary class]]) {\n//            return [itemA isEqualToDictionary:itemB];               //NSDictionary\n//        }else if ([itemA isKindOfClass:[NSSet class]]) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:118-134"
+    },
+    "181": {
+        "file_id": 25,
+        "content": "This method compares two objects (itemA and itemB) for equality, considering their type and using appropriate comparison methods. If both objects are nil, it returns true; otherwise, it checks the object's type and uses isKindOfClass to determine which comparison method to use. It supports comparing NSString, NSNumber, NSValue, NSArray, NSDictionary, and NSSet objects.",
+        "type": "comment"
+    },
+    "182": {
+        "file_id": 25,
+        "content": "//            return [itemA isEqualToSet:itemB];                      //NSSet\n//        }else if ([itemA isKindOfClass:[NSData class]]) {\n//            return [itemA isEqualToData:itemB];                     //NSData\n//        }else if ([itemA isKindOfClass:[NSDate class]]) {\n//            return [itemA isEqualToDate:itemB];                     //NSDate\n//        }else if ([itemA isKindOfClass:[NSAttributedString class]]) {\n//            return [itemA isEqualToAttributedString:itemB];         //NSAttributedString\n//        }else if ([itemA isKindOfClass:[NSIndexSet class]]) {\n//            return [itemA isEqualToIndexSet:itemB];                 //NSIndexSet\n//        }else if ([itemA isKindOfClass:[NSTimeZone class]]) {\n//            return [itemA isEqualToTimeZone:itemB];                 //NSTimeZone\n//        }else if ([itemA isKindOfClass:[NSHashTable class]]) {\n//            return [itemA isEqualToHashTable:itemB];                //NSHashTable\n//        }else if ([itemA isKindOfClass:[NSOrderedSet class]]) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:135-148"
+    },
+    "183": {
+        "file_id": 25,
+        "content": "The code is performing a series of type checks to determine the most appropriate comparison method for two objects. It uses \"isKindOfClass\" to check if the first object (itemA) belongs to any of several specific classes (NSSet, NSData, etc.), and then returns a corresponding equality check method (isEqualToSet, isEqualToData, etc.) based on which class it matches.",
+        "type": "comment"
+    },
+    "184": {
+        "file_id": 25,
+        "content": "//            return [itemA isEqualToOrderedSet:itemB];               //NSOrderedSet\n//        }else if ([itemA isKindOfClass:[NSDateInterval class]]) {\n//            return [itemA isEqualToDateInterval:itemB];             //NSDateInterval\n//        }else{\n//            return [itemA isEqual:itemB];                           //不识别的类型\n//        }\n//    }\n//}\n//\n//+(BOOL) compareArrayA:(NSArray*)arrA arrayB:(NSArray*)arrB{\n//    if (arrA == nil && arrB == nil) {\n//        return true;\n//    }else if(!ARRISOK(arrA) || !ARRISOK(arrB)){\n//        return false;\n//    }else{\n//        for (NSObject *itemA in arrA) {\n//            BOOL find = false;\n//            for (NSObject *itemB in arrB) {\n//                if ([itemA isEqual:itemB]) {\n//                    find = true;\n//                    break;\n//                }\n//            }\n//            if (!find) {\n//                return false;\n//            }\n//        }\n//        return true;\n//    }\n//}\n//\n//+(BOOL) compareItemA:(id)itemA containsItemB:(id)itemB{\n//    if (itemB == nil) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:149-181"
+    },
+    "185": {
+        "file_id": 25,
+        "content": "The code defines methods to compare arrays and check if one item contains another. It uses conditional statements to determine the type of items in the array and compare them accordingly. The `compareArrayA:arrayB:` method checks if two arrays have the same elements, while the `compareItemA:containsItemB:` method checks if one item contains another.",
+        "type": "comment"
+    },
+    "186": {
+        "file_id": 25,
+        "content": "//        return true;\n//    }else if(itemA == nil || ![self compareKindClassWithItemA:itemA itemB:itemB]){\n//        return false;\n//    }else{\n//        if ([itemA isKindOfClass:[NSString class]]) {\n//            return [(NSString*)itemA containsString:itemB];        //NSString\n//        }else if ([itemA isKindOfClass:[NSArray class]]) {\n//            BOOL itemAContainsItemB = true;//默认true;查到一个不包含设为false;\n//            for (id bItem in itemB) {\n//                BOOL aItemContainsBItem = false;//默认fale;查到一个包含设为true;\n//                for (id aItem in itemA) {\n//                    if ([self compareItemA:aItem containsItemB:bItem]) {\n//                        aItemContainsBItem = true;\n//                        break;\n//                    }\n//                }\n//                if (!aItemContainsBItem) {\n//                    itemAContainsItemB = false;\n//                }\n//            }\n//            //return [itemA containsObject:itemB];\n//            return itemAContainsItemB;                    //NSArray",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:182-203"
+    },
+    "187": {
+        "file_id": 25,
+        "content": "This method compares an itemA with itemB to determine if itemB is contained in itemA. If both items are NSString, it checks if itemA contains itemB using the containsString method. If itemA is an NSArray and itemB is an object inside the array, it sets a flag to true for that object. If any of these objects do not match with itemB, it sets the flag to false. Finally, it returns the flag's status representing whether itemB is contained in itemA or not.",
+        "type": "comment"
+    },
+    "188": {
+        "file_id": 25,
+        "content": "//        }else if ([itemA isKindOfClass:[NSDictionary class]]) {\n//            for (NSString *key in [(NSDictionary*)itemB allKeys]) { //NSDictionary\n//                if(![SMGUtils compareItemA:[(NSDictionary*)itemA objectForKey:key] containsItemB:[(NSDictionary*)itemB objectForKey:key]]){\n//                    return false;\n//                }\n//            }\n//            return true;\n//        }else if ([itemA isKindOfClass:[NSSet class]]) {\n//            return [itemA containsObject:itemB];                      //NSSet\n//        }else if ([itemA isKindOfClass:[NSDate class]]) {\n//            return [itemA containsDate:itemB];                     //NSDate\n//        }else if ([itemA isKindOfClass:[NSIndexSet class]]) {\n//            return [itemA containsIndexes:itemB];                 //NSIndexSet\n//        }else if ([itemA isKindOfClass:[NSHashTable class]]) {\n//            return [itemA containsObject:itemB];                //NSHashTable\n//        }else if ([itemA isKindOfClass:[NSOrderedSet class]]) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:204-219"
+    },
+    "189": {
+        "file_id": 25,
+        "content": "The code checks if 'itemA' and 'itemB' are of different types, and for each type it applies the appropriate comparison method to determine if 'itemA' contains or is equal to 'itemB'. If any comparison returns false, the function returns false. Otherwise, if all comparisons pass, the function returns true.",
+        "type": "comment"
+    },
+    "190": {
+        "file_id": 25,
+        "content": "//            return [itemA containsObject:itemB];               //NSOrderedSet\n//        }else{\n//            return [SMGUtils compareItemA:itemA itemB:itemB];       //不识别的类型\n//        }\n//    }\n//}\n//\n//\n///**\n// *  MARK:--------------------对比itemA和itemB是否有继承关系或同类型(NSObject除外)--------------------\n// */\n//+(BOOL) compareKindClassWithItemA:(id)itemA itemB:(id)itemB{\n//    if (itemA == nil && itemB == nil) {\n//        return true;\n//    }else if(itemA == nil || itemB == nil){\n//        return false;\n//    }else{\n//        if ([itemA isKindOfClass:[NSArray class]]) {\n//            return [itemB isKindOfClass:[NSArray class]];\n//        }else if([itemA isKindOfClass:[NSString class]]){\n//            return [itemB isKindOfClass:[NSString class]];\n//        }else if([itemA isKindOfClass:[NSDictionary class]]){\n//            return [itemB isKindOfClass:[NSDictionary class]];\n//        }else{\n//            BOOL isSeem = ([itemA class] == [itemB class]);\n//            BOOL isKind = ([itemA isKindOfClass:[itemB class]] || [itemB isKindOfClass:[itemA class]]);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:220-245"
+    },
+    "191": {
+        "file_id": 25,
+        "content": "This code is comparing two objects, itemA and itemB. It first checks if both are nil and returns true if so. Then it checks if either of them is nil and returns false. Afterwards, it checks if itemA is an NSArray or a NSString or a NSDictionary and compares itemB accordingly. Finally, it compares the classes of itemA and itemB to determine if they are the same class or have an inheritance relationship.",
+        "type": "comment"
+    },
+    "192": {
+        "file_id": 25,
+        "content": "//            return isSeem || isKind;\n//        }\n//    }\n//}\n/**\n *  MARK:--------------------比较refsA是否比refsB大--------------------\n */\n//+(NSComparisonResult) compareRefsA_p:(NSArray*)refsA_p refsB_p:(NSArray*)refsB_p{\n//    //1. 数据检查 & 准备\n//    refsA_p = ARRTOOK(refsA_p);\n//    refsB_p = ARRTOOK(refsB_p);\n//    NSInteger aLength = refsA_p.count;\n//    NSInteger bLength = refsB_p.count;\n//    \n//    //2. 比较大小\n//    for (NSInteger i = 0; i < MIN(aLength, bLength); i++) {\n//        AIKVPointer *itemA = ARR_INDEX(refsA_p, i);\n//        AIKVPointer *itemB = ARR_INDEX(refsB_p, i);\n//        NSNumber *aNum = [SMGUtils searchObjectForPointer:itemA fileName:kFNValue];\n//        NSNumber *bNum = [SMGUtils searchObjectForPointer:itemB fileName:kFNValue];\n//        NSComparisonResult result = [NUMTOOK(aNum) compare:NUMTOOK(bNum)] ;\n//        if (result != NSOrderedSame) {\n//            return result;\n//        }\n//    }\n//    \n//    //3. 前面都一样\n//    return aLength > bLength ? NSOrderedAscending : aLength < bLength ? NSOrderedDescending : NSOrderedSame;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:246-275"
+    },
+    "193": {
+        "file_id": 25,
+        "content": "This function compares two NSArray objects refsA and refsB, checks if they have the same length, and returns a comparison result of their elements. If the lengths are different, it returns the difference as the result. If the lengths are the same, it iterates through each item in the arrays, retrieves the value associated with each pointer, compares the values, and returns the comparison result if they differ. If all items have the same value, it returns NSOrderedSame.",
+        "type": "comment"
+    },
+    "194": {
+        "file_id": 25,
+        "content": "//}\n+(NSComparisonResult) comparePointerA:(AIPointer*)pA pointerB:(AIPointer*)pB{\n    //1. 数据检查\n    BOOL aIsOk = ISOK(pA, AIKVPointer.class);\n    BOOL bIsOk = ISOK(pB, AIKVPointer.class);\n    if (!aIsOk || !bIsOk) {\n        return (aIsOk == bIsOk) ? NSOrderedSame : (aIsOk ? NSOrderedAscending : NSOrderedDescending);\n    }\n    //2. PointerId越小越排前面\n    if (pA.pointerId > pB.pointerId) {\n        return NSOrderedDescending;\n    }else if(pA.pointerId < pB.pointerId){\n        return NSOrderedAscending;\n    }else{\n        return [XGRedisUtil compareStrA:pA.identifier strB:pB.identifier];\n    }\n}\n+(NSComparisonResult) comparePortA:(AIPort*)pA portB:(AIPort*)pB{\n    //1. 数据检查\n    BOOL aIsOk = ISOK(pA, AIPort.class);\n    BOOL bIsOk = ISOK(pB, AIPort.class);\n    if (!aIsOk || !bIsOk) {\n        return (aIsOk == bIsOk) ? NSOrderedSame : (aIsOk ? NSOrderedAscending : NSOrderedDescending);\n    }\n    //2. 默认按StrongValue从小到大排序 (self.strongValue越小越排前面)\n    if (pA.strong.value > pB.strong.value) {\n        return NSOrderedDescending;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:276-306"
+    },
+    "195": {
+        "file_id": 25,
+        "content": "This code compares two objects: AIPointer and AIPort. It first checks if the object is valid, then compares their PointerId or StrongValue (for AIPort), sorting them either by PointerId (AIPointer) or StrongValue (AIPort) in ascending order.",
+        "type": "comment"
+    },
+    "196": {
+        "file_id": 25,
+        "content": "    }else if(pA.strong.value < pB.strong.value){\n        return NSOrderedAscending;\n    }else{\n        return [SMGUtils comparePointerA:pA.target_p pointerB:pB.target_p];\n    }\n}\n/**\n *  MARK:--------------------比较intA是否比intB大--------------------\n */\n+(NSComparisonResult) compareIntA:(NSInteger)intA intB:(NSInteger)intB{\n    return intA > intB ? NSOrderedAscending : intA < intB ? NSOrderedDescending : NSOrderedSame;\n}\n/**\n *  MARK:--------------------比较floatA是否比floatB大--------------------\n *  @desc 从大到小排序,前大后小;\n */\n+(NSComparisonResult) compareFloatA:(CGFloat)floatA floatB:(CGFloat)floatB{\n    return floatA > floatB ? NSOrderedAscending : floatA < floatB ? NSOrderedDescending : NSOrderedSame;\n}\n+(NSComparisonResult) compareDoubleA:(CGFloat)doubleA doubleB:(CGFloat)doubleB{\n    return doubleA > doubleB ? NSOrderedAscending : doubleA < doubleB ? NSOrderedDescending : NSOrderedSame;\n}\n@end\n@implementation SMGUtils (DB)\n/**\n *  MARK:--------------------SQL语句之rowId--------------------\n */\n+(NSString*) sqlWhere_RowId:(NSInteger)rowid{",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:307-343"
+    },
+    "197": {
+        "file_id": 25,
+        "content": "This code compares two values, pA and pB, for different data types such as strings, integers, and floating-point numbers. It returns the comparison result (NSOrderedAscending, NSOrderedDescending, or NSOrderedSame) based on their values. The code also includes functions to compare int and float values specifically.",
+        "type": "comment"
+    },
+    "198": {
+        "file_id": 25,
+        "content": "    return [NSString stringWithFormat:@\"rowid='%ld'\",(long)rowid];\n}\n//+(NSString*) sqlWhere_K:(id)columnName V:(id)value{\n//    return [NSString stringWithFormat:@\"%@='%@'\",columnName,value];\n//}\n//\n//+(NSDictionary*) sqlWhereDic_K:(id)columnName V:(id)value{\n//    if (value) {\n//        return [[NSDictionary alloc] initWithObjectsAndKeys:value,STRTOOK(columnName), nil];\n//    }\n//    return nil;\n//}\n+(id) searchObjectForPointer:(AIPointer*)pointer fileName:(NSString*)fileName{\n    return [self searchObjectForPointer:pointer fileName:fileName time:0];\n}\n+(id) searchObjectForPointer:(AIPointer*)pointer fileName:(NSString*)fileName time:(double)time{\n    if (ISOK(pointer, AIPointer.class)) {\n        return [self searchObjectForFilePath:pointer.filePath fileName:fileName time:time];\n    }\n    return nil;\n}\n+(id) searchObjectForFilePath:(NSString*)filePath fileName:(NSString*)fileName time:(double)time{\n    //1. 数据检查\n    filePath = STRTOOK(filePath);\n    //2. 优先取redis\n    NSString *key = STRFORMAT(@\"%@/%@\",filePath,fileName);//随后去掉前辍",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:344-374"
+    },
+    "199": {
+        "file_id": 25,
+        "content": "This code defines methods for searching objects using pointers or file paths, and retrieves data from various sources like Redis. It includes utilities for creating SQL WHERE clauses and checking file paths.",
+        "type": "comment"
+    }
+}

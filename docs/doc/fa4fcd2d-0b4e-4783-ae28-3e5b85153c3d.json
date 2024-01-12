@@ -1,0 +1,15 @@
+{
+    "summary": "The code defines a class AIFilter with multiple filtering methods for concept recognition, temporal recognition, Canset recognition, Canset solving, scene solving, and additional filtering techniques.",
+    "details": [
+        {
+            "comment": "This code defines the class AIFilter and provides several filtering methods, including recognitionAlgFilter, recognitionFoFilter, recognitionCansetFilter, solutionCansetFilter, and rSolutionSceneFilter. These filters are used for concept recognition, temporal recognition, Canset recognition, Canset solving, and scene solving respectively.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIFilter.h\":0-38",
+            "content": "//\n//  AIFilter.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/2/25.\n//  Copyright \u00a9 2023\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------\u8fc7\u6ee4\u5668 (\u53c2\u800328109-todo1)--------------------\n */\n@interface AIFilter : NSObject\n/**\n *  MARK:--------------------\u6982\u5ff5\u8bc6\u522b\u8fc7\u6ee4\u5668 (\u53c2\u800328109-todo2)--------------------\n */\n+(NSArray*) recognitionAlgFilter:(NSArray*)matchAlgModels radio:(CGFloat)radio;\n/**\n *  MARK:--------------------\u65f6\u5e8f\u8bc6\u522b\u8fc7\u6ee4\u5668 (\u53c2\u800328111-todo1)--------------------\n */\n+(NSArray*) recognitionFoFilter:(NSArray*)matchModels;\n/**\n *  MARK:--------------------Canset\u8bc6\u522b\u8fc7\u6ee4\u5668 (\u53c2\u800329042)--------------------\n */\n//+(NSArray*) recognitionCansetFilter:(NSArray*)matchModels sceneFo:(AIFoNodeBase*)sceneFo;\n/**\n *  MARK:--------------------Canset\u6c42\u89e3\u8fc7\u6ee4\u5668 (\u53c2\u800329081-todo41)--------------------\n */\n+(NSArray*) solutionCansetFilter:(AIFoNodeBase*)sceneFo targetIndex:(NSInteger)targetIndex;\n/**\n *  MARK:--------------------Scene\u6c42\u89e3\u8fc7\u6ee4\u5668 (\u53c2\u80032908a-todo2)--------------------\n */\n+(NSArray*) rSolutionSceneFilter:(AIFoNodeBase*)protoScene type:(SceneType)type;"
+        },
+        {
+            "comment": "This code defines three methods for filtering: hSolutionSceneFilter, secondRecognitionFilter, and secondActionRecognitionFilter. The first method filters scenes, the second recognizes again, and the third applies a pre-reflection recognition filter.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIFilter.h\":39-51",
+            "content": "+(NSArray*) hSolutionSceneFilter:(AISceneModel*)protoScene;\n/**\n *  MARK:--------------------\u8bc6\u522b\u4e8c\u6b21\u8fc7\u6ee4\u5668--------------------\n */\n+(void) secondRecognitionFilter:(AIShortMatchModel*)inModel;\n/**\n *  MARK:--------------------\u884c\u4e3a\u5316\u524d\u53cd\u601d\u8bc6\u522b\u8fc7\u6ee4\u5668 (\u53c2\u800330059)--------------------\n */\n+(void) secondActionRecognitionFilter:(AIShortMatchModel*)inModel;\n@end"
+        }
+    ]
+}

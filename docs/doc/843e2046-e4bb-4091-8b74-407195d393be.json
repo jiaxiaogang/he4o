@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines the HDemandModel class, which extends DemandModel and is used for ATHav tasks. It has been updated to discard alg target field as it is redundant with hDemand.base. New feedbackAlg field has been added to store actual feedbackTOR for use in regrouping. The old feedbackAlg field has been deprecated, now using base.feedbackAlg instead.",
+    "details": [
+        {
+            "comment": "This code defines the HDemandModel class, which extends DemandModel and is used for ATHav tasks. It has been updated to discard alg target field as it is redundant with hDemand.base. New feedbackAlg field has been added to store actual feedbackTOR for use in regrouping. The old feedbackAlg field has been deprecated, now using base.feedbackAlg instead.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/HDemandModel.h\":0-22",
+            "content": "//\n//  HDemandModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/11/28.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import \"DemandModel.h\"\n/**\n *  MARK:--------------------H\u4efb\u52a1\u6a21\u578b--------------------\n *  @desc \u7528\u4e8e\u6982\u5ff5ATHav\u4efb\u52a1;\n *  @version\n *      2021.12.05: \u5c06alg\u76ee\u6807\u5b57\u6bb5\u5e9f\u5f03,\u56e0\u4e3a\u53d6hDemand.base\u5c31\u662f\u5b83,\u6ca1\u5fc5\u8981\u5355\u5b58\u4e00\u4efd;\n *      2021.12.05: \u65b0\u589efeedbackAlg\u5b57\u6bb5,\u5c06\u5b9e\u9645feedbackTOR\u7684\u5b58\u5728\u6b64\u5904,\u7528\u4e8eregroup\u65f6\u4f7f\u7528;\n *      2021.12.05: feedbackAlg\u5e9f\u5f03,\u7528\u65e7\u6709base.feedbackAlg\u5373\u53ef;\n */\n@interface HDemandModel : DemandModel\n+(HDemandModel*) newWithAlgModel:(TOAlgModel*)base;\n@end"
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+{
+    "summary": "ImvBadModel.h is a header file for a class in the SMG_NothingIsAll codebase, which inherits from ImvAlgsModelBase and represents a bad imv parent model with sensations like hunger or pain.",
+    "details": [
+        {
+            "comment": "ImvBadModel.h is a header file for a class in the SMG_NothingIsAll codebase, which inherits from ImvAlgsModelBase and represents a bad imv parent model with sensations like hunger or pain.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIAlg/AlgsModel/ImvAlgsModel/ImvBadModel.h\":0-16",
+            "content": "//\n//  ImvBadModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/1/16.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import \"ImvAlgsModelBase.h\"\n/**\n *  MARK:--------------------\u57fa\u4e8e\u4e0d\u597d\u7684imv\u7236\u6a21\u578b--------------------\n *  @desc \u4f8b\u5982: \u9965\u997f\u611f,\u75bc\u75db\u611f\u7b49;\n */\n@interface ImvBadModel : ImvAlgsModelBase\n@end"
+        }
+    ]
+}

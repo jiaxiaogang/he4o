@@ -1,0 +1,540 @@
+{
+    "2600": {
+        "file_id": 271,
+        "content": "/SMG_NothingIsAll/Extension/NSObject+Extension.h",
+        "type": "filepath"
+    },
+    "2601": {
+        "file_id": 271,
+        "content": "This code adds a method to the NSObject class called getDic, which converts an object into a dictionary. The containParent parameter specifies whether to include parent class properties in the conversion, and the returned value is a mutable dictionary.",
+        "type": "summary"
+    },
+    "2602": {
+        "file_id": 271,
+        "content": "//\n//  NSObject+Extension.h\n//  SMG_NothingIsAll\n//\n//  Created by 贾  on 2017/9/22.\n//  Copyright © 2017年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface NSObject (PrintConvertDicOrJson)\n/**\n *  MARK:--------------------将obj转为dic类型--------------------\n *  @param containParent : 是否转换父类中的属性\n *  @result notnull\n */\n+ (NSMutableDictionary*) getDic:(NSObject*)obj containParent:(BOOL)containParent;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Extension/NSObject+Extension.h:1-20"
+    },
+    "2603": {
+        "file_id": 271,
+        "content": "This code adds a method to the NSObject class called getDic, which converts an object into a dictionary. The containParent parameter specifies whether to include parent class properties in the conversion, and the returned value is a mutable dictionary.",
+        "type": "comment"
+    },
+    "2604": {
+        "file_id": 272,
+        "content": "/SMG_NothingIsAll/Extension/NSObject+Extension.m",
+        "type": "filepath"
+    },
+    "2605": {
+        "file_id": 272,
+        "content": "This code creates an NSObject class extension with a method to get a recursive dictionary representation of an object's properties, allowing for optional parent property inclusion and memory management.",
+        "type": "summary"
+    },
+    "2606": {
+        "file_id": 272,
+        "content": "//\n//  NSObject+Extension.m\n//  SMG_NothingIsAll\n//\n//  Created by 贾  on 2017/9/22.\n//  Copyright © 2017年 XiaoGang. All rights reserved.\n//\n#import \"NSObject+Extension.h\"\n#import <objc/runtime.h>\n@implementation NSObject (PrintConvertDicOrJson)\n/**\n *  MARK:--------------------引自LKDB中LKModel--------------------\n */\n+ (NSMutableDictionary*) getDic:(NSObject*)obj containParent:(BOOL)containParent{\n    NSMutableDictionary *mDic = [[NSMutableDictionary alloc] init];\n    if (obj) {\n        [obj getDic:mDic appendPropertyStringWithClass:obj.class containParent:containParent];\n    }\n    return mDic;\n}\n- (void)getDic:(NSMutableDictionary *)outDic appendPropertyStringWithClass:(Class)clazz containParent:(BOOL)containParent {\n    if (clazz == [NSObject class] || outDic == nil) {\n        return;\n    }\n    unsigned int outCount = 0, i = 0;\n    objc_property_t *properties = class_copyPropertyList(clazz, &outCount);\n    for (i = 0; i < outCount; i++) {\n        objc_property_t property = properties[i];\n        NSString *propertyName = [NSString stringWithCString:property_getName(property) encoding:NSUTF8StringEncoding];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Extension/NSObject+Extension.m:1-33"
+    },
+    "2607": {
+        "file_id": 272,
+        "content": "This code defines an extension for the NSObject class and provides a method to get a dictionary representation of an object, which recursively iterates through its properties. The dictionary contains property names and values, including optional parent properties if specified.",
+        "type": "comment"
+    },
+    "2608": {
+        "file_id": 272,
+        "content": "        [outDic setObject:[self valueForKey:propertyName] forKey:propertyName];\n    }\n    free(properties);\n    if (containParent) {\n        [self getDic:outDic appendPropertyStringWithClass:clazz.superclass containParent:containParent];\n    }\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Extension/NSObject+Extension.m:34-42"
+    },
+    "2609": {
+        "file_id": 272,
+        "content": "Setting object's value for specified property name in output dictionary and freeing memory allocated for \"properties\". If containParent is true, recursively call method to get parent class properties.",
+        "type": "comment"
+    },
+    "2610": {
+        "file_id": 273,
+        "content": "/SMG_NothingIsAll/Extension/NSString+Extension.h",
+        "type": "filepath"
+    },
+    "2611": {
+        "file_id": 273,
+        "content": "This code defines the NSString category with MD5 encryption and converting double to string functions.",
+        "type": "summary"
+    },
+    "2612": {
+        "file_id": 273,
+        "content": "//\n//  NSString+Extension.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2018/12/29.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface NSString (MD5)\n/**\n *  md5加密的字符串\n */\n+(NSString*) md5:(NSString *)str;\n/**\n *  MARK:-------------------- 截掉浮点数字符串后面的多余0--------------------\n */\n+(NSString*) double2Str_NoDotZero:(double)value;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Extension/NSString+Extension.h:1-23"
+    },
+    "2613": {
+        "file_id": 273,
+        "content": "This code defines the NSString category with MD5 encryption and converting double to string functions.",
+        "type": "comment"
+    },
+    "2614": {
+        "file_id": 274,
+        "content": "/SMG_NothingIsAll/Extension/NSString+Extension.m",
+        "type": "filepath"
+    },
+    "2615": {
+        "file_id": 274,
+        "content": "This code extends NSString with MD5 hash and double to string conversion methods, while another function finds the first \"0\" or \".\" in a reverse string iteration.",
+        "type": "summary"
+    },
+    "2616": {
+        "file_id": 274,
+        "content": "//\n//  NSString+Extension.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2018/12/29.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"NSString+Extension.h\"\n#import <CommonCrypto/CommonDigest.h>\n@implementation NSString (MD5)\n+(NSString*) md5:(NSString *)str{\n    const char *cStr = [str UTF8String];\n    unsigned char result[16];\n    CC_MD5(cStr, strlen(cStr), result); // This is the md5 call\n    return [NSString stringWithFormat:\n            @\"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x\",\n            result[0], result[1], result[2], result[3],\n            result[4], result[5], result[6], result[7],\n            result[8], result[9], result[10], result[11],\n            result[12], result[13], result[14], result[15]\n            ];\n}\n+(NSString*) double2Str_NoDotZero:(double)value{\n    //1. 数据检查\n    NSString *floatStr = STRFORMAT(@\"%f\",value);\n    NSRange dotRange = [floatStr rangeOfString:@\".\"];\n    if (dotRange.location <= 0) return floatStr;\n    //2. 取lastDotOrZeroIndex\n    NSInteger dotOrZeroIndex = floatStr.length;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Extension/NSString+Extension.m:1-34"
+    },
+    "2617": {
+        "file_id": 274,
+        "content": "This code defines an extension to the NSString class, specifically including methods for calculating the MD5 hash and converting a double value to a string representation without leading zeros.",
+        "type": "comment"
+    },
+    "2618": {
+        "file_id": 274,
+        "content": "    for (NSInteger i = floatStr.length - 1; i >= 0; i--) {\n        NSString *iChar = [floatStr substringWithRange:NSMakeRange(i, 1)];\n        if ([@\"0\" isEqualToString:iChar]) {\n            dotOrZeroIndex = i;\n        }else if([@\".\" isEqualToString:iChar]){\n            dotOrZeroIndex = i;\n            break;\n        }else{\n            break;\n        }\n    }\n    return [floatStr substringToIndex:dotOrZeroIndex];\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Extension/NSString+Extension.m:35-49"
+    },
+    "2619": {
+        "file_id": 274,
+        "content": "This code iterates through a string's characters in reverse order, searching for the first \"0\" or \".\" and returns the substring before it.",
+        "type": "comment"
+    },
+    "2620": {
+        "file_id": 275,
+        "content": "/SMG_NothingIsAll/Info.plist",
+        "type": "filepath"
+    },
+    "2621": {
+        "file_id": 275,
+        "content": "The Info.plist file contains properties for an iOS app, including development region, display name, executable name, bundle identifier, version info, OS requirements, interface orientations, and launch screen settings; the provided lines close the XML structure of the plist format.",
+        "type": "summary"
+    },
+    "2622": {
+        "file_id": 275,
+        "content": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n\t<key>CFBundleDevelopmentRegion</key>\n\t<string>en</string>\n\t<key>CFBundleDisplayName</key>\n\t<string>he</string>\n\t<key>CFBundleExecutable</key>\n\t<string>$(EXECUTABLE_NAME)</string>\n\t<key>CFBundleIdentifier</key>\n\t<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>\n\t<key>CFBundleInfoDictionaryVersion</key>\n\t<string>6.0</string>\n\t<key>CFBundleName</key>\n\t<string>$(PRODUCT_NAME)</string>\n\t<key>CFBundlePackageType</key>\n\t<string>APPL</string>\n\t<key>CFBundleShortVersionString</key>\n\t<string>2.0</string>\n\t<key>CFBundleVersion</key>\n\t<string>1</string>\n\t<key>LSRequiresIPhoneOS</key>\n\t<true/>\n\t<key>UILaunchStoryboardName</key>\n\t<string>LaunchScreen</string>\n\t<key>UIRequiredDeviceCapabilities</key>\n\t<array>\n\t\t<string>armv7</string>\n\t</array>\n\t<key>UIRequiresFullScreen</key>\n\t<false/>\n\t<key>UISupportedInterfaceOrientations</key>\n\t<array>\n\t\t<string>UIInterfaceOrientationLandscapeLeft</string>",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Info.plist:1-35"
+    },
+    "2623": {
+        "file_id": 275,
+        "content": "This is an Info.plist file containing various properties for the iOS app, specifying development region, display name, executable name, bundle identifier, version info, OS requirements, interface orientations, and launch screen settings.",
+        "type": "comment"
+    },
+    "2624": {
+        "file_id": 275,
+        "content": "\t</array>\n</dict>\n</plist>",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Info.plist:36-38"
+    },
+    "2625": {
+        "file_id": 275,
+        "content": "These lines close the XML structure of an Info.plist file, marking the end of a dictionary and array within the plist format.",
+        "type": "comment"
+    },
+    "2626": {
+        "file_id": 276,
+        "content": "/SMG_NothingIsAll/Test/AITest.h",
+        "type": "filepath"
+    },
+    "2627": {
+        "file_id": 276,
+        "content": "The code features a unit testing class, AITest, with 29 test functions for AI algorithm functionality and efficiency, while the backtesting module contains critical tests to be executed during trading.",
+        "type": "summary"
+    },
+    "2628": {
+        "file_id": 276,
+        "content": "//\n//  AITest.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/9/25.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface AITest : NSObject\n//MARK:===============================================================\n//MARK:               < 异常单元测试 (常开,有异常时停在断点) >\n//MARK:===============================================================\n+(void) test1:(NSString*)aDS hnAlgDS:(NSString*)hnAlgDS;\n+(void) test2:(AIKVPointer*)pointer type:(AnalogyType)type at:(NSString*)at ds:(NSString*)ds;\n+(void) test3:(AIKVPointer*)pointer type:(AnalogyType)type ds:(NSString*)ds;\n+(void) test4:(AIKVPointer*)pointer at:(NSString*)at isOut:(BOOL)isOut;\n+(void) test5:(AIKVPointer*)pointer type:(AnalogyType)type at:(NSString*)at;\n+(void) test6:(NSArray*)types;\n+(void) test7:(NSArray*)arr type:(AnalogyType)type;\n+(void) test8:(NSArray*)content_ps type:(AnalogyType)type;\n+(void) test9:(AIFoNodeBase*)fo type:(AnalogyType)type;\n+(void) test10:(TOModelBase*)toModel;\n+(void) test11:(AIShortMatchModel*)shortModel waitAlg_p:(AIKVPointer*)waitAlg_p;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Test/AITest.h:1-26"
+    },
+    "2629": {
+        "file_id": 276,
+        "content": "This code defines methods for unit testing in the AITest class. The tests include testing with different input parameters, such as strings, arrays, and objects, and are marked for exceptional cases that may require stopping at breakpoints if an exception occurs. These tests appear to be related to AI functionality and are organized into distinct methods for ease of organization and troubleshooting.",
+        "type": "comment"
+    },
+    "2630": {
+        "file_id": 276,
+        "content": "+(void) test12:(CGFloat)score;//判断一个评分是否异常\n+(void) test13:(NSArray*)slowSolutionCansets;\n+(void) test14:(CGFloat)near;\n+(void) test15:(AIMatchFoModel*)model;\n+(void) test16:(CGFloat)algHDMatchValue;\n+(void) test17;\n+(void) test18:(NSDictionary*)newIndexDic newCanset:(AIFoNodeBase*)newCanset absFo:(AIFoNodeBase*)absFo;\n+(void) test19:(AISPStrong*)newSPStrong;\n+(void) test20:(AIFoNodeBase*)newCanset newSPDic:(NSDictionary*)newSPDic;\n+(void) test21:(BOOL)refrectionResult;\n+(void) test22;\n+(void) test23:(NSDictionary*)pmDic cmDic:(NSDictionary*)cmDic matchIndex:(NSInteger)matchIndex;\n+(void) test24:(NSArray*)absArrForEmptyAlgOfAbsCountCheck;\n+(void) test25:(AIAlgNodeBase*)absAlg conAlgs:(NSArray*)conAlgs;\n+(void) test26:(NSDictionary*)matchDic checkA:(AIKVPointer*)checkA;\n+(void) test27:(AIFoNodeBase*)sceneFo oldCanset:(AIKVPointer*)oldCanset_p oldIndexDic:(NSDictionary*)oldIndexDic compareIndexDicFromNewCanset:(NSDictionary*)compareIndexDicFromNewCanset;\n+(void) test28:(AIShortMatchModel*)inModel;\n+(void) test29:(AIAlgNodeBase*)protoA assA:(AIAlgNodeBase*)assA;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Test/AITest.h:27-44"
+    },
+    "2631": {
+        "file_id": 276,
+        "content": "This code contains 29 test functions, each with a specific input parameter, used to test and validate various aspects of the AI algorithm. These tests check score anomalies, solution candidates, distances, index dictionaries, strong points, match indices, scene forcers, comparison index dictionaries, model validity, algorithm nodes, and more. The tests ensure the correctness and efficiency of the AI implementation.",
+        "type": "comment"
+    },
+    "2632": {
+        "file_id": 276,
+        "content": "+(void) test30:(NSInteger)sumStrong;\n+(void) test31:(NSArray*)deltaTimes;\n+(void) test32:(AIFoNodeBase*)protoCanset newCanset:(AIFoNodeBase*)newCanset;\n//MARK:===============================================================\n//MARK:    < 回测必经点测试 (常关,每个轮回测时打开,触发则关,未触发者为异常) >\n//MARK:===============================================================\n+(void) test101:(AIFoNodeBase*)absCansetFo proto:(AIFoNodeBase*)proto conCanset:(AIFoNodeBase*)conCanset;\n+(void) test102:(AIFoNodeBase*)cansetFo;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Test/AITest.h:45-55"
+    },
+    "2633": {
+        "file_id": 276,
+        "content": "This code contains various test functions for a backtesting module, including test30, test31, test32, and test101-test102. These tests are marked as critical checkpoints in the backtesting process, meant to be executed during each round of trading. The specific operations of these tests are not described here but can be found within the codebase.",
+        "type": "comment"
+    },
+    "2634": {
+        "file_id": 277,
+        "content": "/SMG_NothingIsAll/Test/AITest.m",
+        "type": "filepath"
+    },
+    "2635": {
+        "file_id": 277,
+        "content": "This code tests exception handling and type correctness in AI vision algorithms, with functions for potential issues, consistency checks, and concept recognition scenario verifications.",
+        "type": "summary"
+    },
+    "2636": {
+        "file_id": 277,
+        "content": "//\n//  AITest.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/9/25.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import \"AITest.h\"\n@implementation AITest\n//MARK:===============================================================\n//MARK:               < 异常单元测试 (常开,有异常时停在断点) >\n//MARK:===============================================================\n+(void) test1:(NSString*)aDS hnAlgDS:(NSString*)hnAlgDS{\n    if (!Switch4AITest) return;\n    if (![aDS isEqualToString:@\" \"] ||\n        ![hnAlgDS isEqualToString:@\" \"]) {\n        NSLog(@\"自检1: 测下getHN经验时vDS匹配判断代码是否多余,多余告警\");\n    }\n}\n+(void) test2:(AIKVPointer*)pointer type:(AnalogyType)type at:(NSString*)at ds:(NSString*)ds{\n    if (!Switch4AITest) return;\n    if (PitIsFo(pointer) || PitIsAlg(pointer)) {\n        if (type == ATGreater || type == ATLess) {\n            if ([@\"AIVisionAlgs\" isEqualToString:at]){\n                if (![ds isEqualToString:@\"sizeWidth\"] &&\n                    ![ds isEqualToString:@\"sizeHeight\"] &&\n                    ![ds isEqualToString:@\"colorRed\"] &&",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Test/AITest.m:1-32"
+    },
+    "2637": {
+        "file_id": 277,
+        "content": "This code defines a class AITest with several test methods for exception handling in an unknown context. The first method, test1, checks if the input strings match specific values and logs a message if they don't. The second method, test2, checks if the given pointer is of certain types and compares it to specific values. These methods seem to be part of an AI vision algorithm testing process.",
+        "type": "comment"
+    },
+    "2638": {
+        "file_id": 277,
+        "content": "                    ![ds isEqualToString:@\"colorBlue\"] &&\n                    ![ds isEqualToString:@\"colorGreen\"] &&\n                    ![ds isEqualToString:@\"radius\"] &&\n                    ![ds isEqualToString:@\"direction\"] &&\n                    ![ds isEqualToString:@\"distance\"] &&\n                    ![ds isEqualToString:@\"distanceY\"] &&\n                    ![ds isEqualToString:@\"speed\"] &&\n                    ![ds isEqualToString:@\"border\"] &&\n                    ![ds isEqualToString:@\"posX\"] &&\n                    ![ds isEqualToString:@\"posY\"]) {\n                    NSLog(@\"自检2: 测生成GL的AIKVPointer时的ds是否正常赋值,因为它影响node防重;\");\n                }\n            }\n        }\n    }\n}\n+(void) test3:(AIKVPointer*)pointer type:(AnalogyType)type ds:(NSString*)ds{\n    if (!Switch4AITest) return;\n    if (PitIsFo(pointer) || PitIsAlg(pointer)) {\n        if (type != ATGreater && type != ATLess) {\n            if (![ds isEqualToString:@\" \"]) {\n                NSLog(@\"自检3. 测生成非GL的AIKVPointer时的ds是否为\" \",因为它影响node防重;\");\n            }",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Test/AITest.m:33-56"
+    },
+    "2639": {
+        "file_id": 277,
+        "content": "This code is checking if the input parameter 'ds' is not equal to a list of specific strings in order to prevent duplicate nodes. If 'ds' has any of these values, it will log a message for diagnostics. This code is used in testing AIKVPointer generation for both GL and non-GL objects.",
+        "type": "comment"
+    },
+    "2640": {
+        "file_id": 277,
+        "content": "        }\n    }\n}\n+(void) test4:(AIKVPointer*)pointer at:(NSString*)at isOut:(BOOL)isOut{\n    if (!Switch4AITest) return;\n    if (PitIsValue(pointer)) {\n        if ([at isEqualToString:FLY_RDS] && !isOut) {\n            NSLog(@\"自检4: 行为飞稀疏码的isOut为false的问题\");\n        }\n    }\n}\n+(void) test5:(AIKVPointer*)pointer type:(AnalogyType)type at:(NSString*)at{\n    if (!Switch4AITest) return;\n    if (PitIsFo(pointer) || PitIsAlg(pointer)) {\n        if (type == ATGreater || type == ATLess) {\n            if (![@\"AIVisionAlgs\" isEqualToString:at] &&\n                ![FLY_RDS isEqualToString:at]) {\n                NSLog(@\"自检5: 测生成GL的AIKVPointer时的at是否正常赋值,因为它影响node防重\");\n            }\n        }\n    }\n}\n+(void) test6:(NSArray*)arr{\n    if (!Switch4AITest) return;\n    arr = ARRTOOK(arr);\n    if (arr.count > 1) {\n        NSLog(@\"自检6: 测从conNodes取at&ds&type应唯一,否则查为何不同的node会类比抽象\");\n    }\n}\n+(void) test7:(NSArray*)arr type:(AnalogyType)type{\n    if (!Switch4AITest) return;\n    if (type == ATPlus || type == ATSub) {\n        NSArray *types = [SMGUtils removeRepeat:[SMGUtils convertArr:arr convertBlock:^id(AIKVPointer *obj) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Test/AITest.m:57-93"
+    },
+    "2641": {
+        "file_id": 277,
+        "content": "- `test4` checks if the pointer's value matches a specific string and logs an error message if it does not match while `isOut` is false\n- `test5` checks if the pointer's type is either Fo or Alg, then checks if the `type` parameter is Greater or Less. If the `at` parameter doesn't match a specific string, logs an error message\n- `test6` checks if the count of an array is greater than 1. If it is, logs an error message indicating that the `at` and `ds` should be unique for each node comparison\n- `test7` checks if the type parameter is either Plus or Sub. The function then removes repeated elements from an array using helper functions",
+        "type": "comment"
+    },
+    "2642": {
+        "file_id": 277,
+        "content": "            return @(obj.type);\n        }]];\n        if (types.count > 1) {\n            NSLog(@\"自检7: 测构建SPFo时,元素有两种类型的原因(参考24022BUG3)\");\n        }\n    }\n}\n+(void) test8:(NSArray*)content_ps type:(AnalogyType)type{\n    if (!Switch4AITest) return;\n    for (AIKVPointer *item_p in content_ps) {\n        if (item_p.type != ATDefault && item_p.type != type) {\n            NSLog(@\"自检8: 测构建Fo时,有不匹配type的元素原因(参考24022BUG4)\");\n        }\n    }\n}\n+(void) test9:(AIFoNodeBase*)fo type:(AnalogyType)type{\n    if (!Switch4AITest) return;\n    if (type == ATPlus && [Fo2FStr(fo) containsString:@\"Y距35\"]) {\n        NSLog(@\"自检9: 测构建了Y距35的P节点原因(参考24057)\");\n    }\n}\n+(void) test10:(TOModelBase*)toModel{\n    if (!Switch4AITest) return;\n    //plan取得结果为actNo状态的自检;\n    if(toModel.status == TOModelStatus_ActNo){\n        WLog(@\"自检10: Plan结果为已ActNo状态\");\n    }\n}\n+(void) test11:(AIShortMatchModel*)shortModel waitAlg_p:(AIKVPointer*)waitAlg_p{\n    if (!Switch4AITest) return;\n    //2523c-理性反馈,的旧有mIsC方式没问题,但新matchAlgs+partAlgs的方式却有BUG;\n    //怀疑是反馈这块有匹配不到的问题,但又复现不了,所以此处写test11来测试下,希望能复现,报到错;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Test/AITest.m:94-129"
+    },
+    "2643": {
+        "file_id": 277,
+        "content": "These functions are testing various aspects of the AI implementation, such as checking for mismatched types in elements and verifying the status of plans and models. The tests are performed under certain conditions and log messages are generated if issues are found.",
+        "type": "comment"
+    },
+    "2644": {
+        "file_id": 277,
+        "content": "    if (shortModel && waitAlg_p) {\n        NSArray *recognitionAlgs = [TIUtils getMatchAndPartAlgPsByModel:shortModel];\n        NSArray *mAbs = Ports2Pits([AINetUtils absPorts_All:shortModel.protoAlg]);\n        BOOL oldMIsC = [mAbs containsObject:waitAlg_p];\n        BOOL newMIsC = [recognitionAlgs containsObject:waitAlg_p];\n        if (oldMIsC && !newMIsC) {\n            ELog(@\"自检11: 复现成功,二者不一样: 对比下mAbs和recognitionAlgs,看下区别,为什么导致newMIsC未匹配到\");\n        }\n    }\n}\n+(void) test12:(CGFloat)score {\n    if (!Switch4AITest) return;\n    if (score > 1000 || score < -1000) {\n        ELog(@\"自检12: 评分异常\");\n    }\n}\n+(void) test13:(NSArray*)slowSolutionCansets {\n    if (!Switch4AITest) return;\n    if (slowSolutionCansets && slowSolutionCansets.count > 1000) {\n        ELog(@\"自检13: 慢思考候选集太长,建议限limit\");\n    }\n}\n+(void) test14:(CGFloat)near {\n    if (!Switch4AITest) return;\n    if (near == 0) {\n        ELog(@\"自检14: 怎么会有near=0的抽具象关联咧?查下是matchDic中没存着么?\");\n    }\n}\n+(void) test15:(AIMatchFoModel*)model {\n    if (!Switch4AITest) return;\n    if (model.realMaskFo.count != model.realDeltaTimes.count) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Test/AITest.m:130-165"
+    },
+    "2645": {
+        "file_id": 277,
+        "content": "This code block contains a series of AI test functions that check for potential issues or anomalies in the AI model's performance. The tests include checking if a specific algorithm is present in both legacy and recognition algorithms, ensuring score values are within reasonable limits, limiting the number of solution candidates, and verifying the consistency between real mask features and their corresponding delta times.",
+        "type": "comment"
+    },
+    "2646": {
+        "file_id": 277,
+        "content": "        ELog(@\"自检15: 经查AIMatchFoModel里的proto所需的两个数组不一样长度,有BUG,但下为什么不一样长,不一样长的话,就没法生成有效的order从而构建(完全)protoFo\");\n    }\n}\n+(void) test16:(CGFloat)algHDMatchValue {\n    if (!Switch4AITest) return;\n    if (algHDMatchValue == 0) {\n        ELog(@\"自检16: 概念相似度复用为0,但下原因\");\n    }\n}\n+(void) test17 {\n    if (!Switch4AITest) return;\n    NSLog(@\"自检17: 此处打到断点时,先稳步查看n28p07-末尾-未完成项,再继续\");\n    NSLog(@\"自检17: 核实下,H任务触发canset再类比的时机:targetAlg有反馈? (参考28071)\");\n    NSLog(@\"自检17: 核实下,H任务触发canset再类比的条件:要求targetFo或hDemand的状态? (参考28077-另外)\");\n}\n+(void) test18:(NSDictionary*)newIndexDic newCanset:(AIFoNodeBase*)newCanset absFo:(AIFoNodeBase*)absFo {\n    if (!Switch4AITest) return;\n    for (NSNumber *key in newIndexDic.allKeys) {\n        NSInteger absIndex = key.integerValue;\n        NSInteger conIndex = NUMTOOK([newIndexDic objectForKey:key]).integerValue;\n        AIKVPointer *conAlg = ARR_INDEX(newCanset.content_ps, conIndex);\n        AIKVPointer *absAlg = ARR_INDEX(absFo.content_ps, absIndex);\n        if (![TOUtils mIsC_1:conAlg c:absAlg]) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Test/AITest.m:166-191"
+    },
+    "2647": {
+        "file_id": 277,
+        "content": "This code contains various test functions for the AI system. It checks for issues such as mismatched array lengths in AIMatchFoModel, zero concept similarity, and inconsistencies in H tasks triggering canset. Each test function is conditional and returns if Switch4AITest is not enabled.",
+        "type": "comment"
+    },
+    "2648": {
+        "file_id": 277,
+        "content": "            ELog(@\"自检18: 检查newCanset的indexDic有误\");\n        }\n    }\n}\n+(void) test19:(AISPStrong*)newSPStrong {\n    if (!Switch4AITest) return;\n    if (newSPStrong.sStrong < 0 || newSPStrong.pStrong < 0) {\n        ELog(@\"自检19: 检查newSPStrong有误,肯定是前面少计数了,导致后面的P太大,而前面的SP之和反而小于它\");\n    }\n}\n+(void) test20:(AIFoNodeBase*)newCanset newSPDic:(NSDictionary*)newSPDic {\n    if (!Switch4AITest) return;\n    if (newCanset.count != newSPDic.count) {\n        ELog(@\"自检20: 检查newSPDic有误,它的长度不等于absCanset长度,查下原因\");\n    }\n}\n+(void) test21:(BOOL)refrectionResult {\n    if (!Switch4AITest) return;\n    if (!refrectionResult) {\n        ELog(@\"自检21: 调试下反思未通过的原因,此处仅为了保证反思有失败时,且失败的原因合理\");\n    }\n}\n+(void) test22 {\n    if (!Switch4AITest) return;\n    ELog(@\"自检22: 发现indexDic在absIndex下找不到conIndex,查下为什么没映射到?是不是识别时全含判断错了?\");\n}\n+(void) test23:(NSDictionary*)pmDic cmDic:(NSDictionary*)cmDic matchIndex:(NSInteger)matchIndex {\n    if (!Switch4AITest) return;\n    if (![pmDic objectForKey:@(matchIndex)] || ![cmDic objectForKey:@(matchIndex)]) {\n        ELog(@\"自检23: matchIndex在前段条件判断中,未找到proto或canset的映射,查下原因 (H任务跳转多了是否有找不着的可能?)\");",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Test/AITest.m:192-226"
+    },
+    "2649": {
+        "file_id": 277,
+        "content": "This code contains a series of test functions for checking various aspects of the code, such as newSPStrong, newCanset, newSPDic, refrectionResult, indexDic, and matchIndex. The tests ensure that these variables have the correct values and that they are mapped correctly to avoid any issues in the program's functionality.",
+        "type": "comment"
+    },
+    "2650": {
+        "file_id": 277,
+        "content": "    }\n}\n+(void) test24:(NSArray*)absArrForEmptyAlgOfAbsCountCheck {\n    if (!Switch4AITest) return;\n    if (!ARRISOK(absArrForEmptyAlgOfAbsCountCheck)) {\n        ELog(@\"自检24: 构建空抽象时,它的具象概念们的抽象没有共同抽象! (查下Canset识别算法,它有共同抽象才被全含匹配到,如果匹配了,但却没共同抽象,显然有问题)\");\n    }\n}\n+(void) test25:(AIAlgNodeBase*)absAlg conAlgs:(NSArray*)conAlgs {\n    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{\n        for (AINodeBase *con in conAlgs) {\n            if (absAlg.pId != con.pId && ![absAlg.conMatchDic objectForKey:@(con.pId)]) {\n                //这个错报也没啥事,因为有时卡了,还没存上,就执行了这儿,如果这里的错一直报了,可以查下test26,只要26不报,说明取用时没问题,这个存自然也就没问题;\n                //ELog(@\"自检25: 存概念匹配度: alg抽具象关联后: 二者的匹配度未保存,查下为什么匹配度没写存上 abs:%ld con:%ld\",absAlg.pId,con.pId);\n            }\n        }\n    });\n}\n+(void) test26:(NSDictionary*)matchDic checkA:(AIKVPointer*)checkA {\n    if (![matchDic objectForKey:@(checkA.pointerId)]) {\n        //ELog(@\"自检26: 取概念匹配度: 复用概念匹配度失败,查下为什么\");//报的很多,但没时间查,先注掉\n    }\n}\n/**\n *  MARK:--------------------test27--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Test/AITest.m:227-255"
+    },
+    "2651": {
+        "file_id": 277,
+        "content": "The code includes several test methods (test24, test25, test26) for various scenarios related to AI algorithms and abstract concepts. Test24 checks if the given array of abstracts for an empty algorithm has a common abstract. Test25 checks if the match degree between two abstracts is stored correctly after associating them. Test26 checks if the match dictionary contains the expected value when retrieving a match degree. These tests help ensure proper functioning of AI algorithms and avoid potential issues during concept recognition.",
+        "type": "comment"
+    },
+    "2652": {
+        "file_id": 277,
+        "content": " *  @desc 作用说明: 在Canset类比中,用old和new生成最终indexDic应该是一致的,此test27用于检查二者是否一致,如果不一致则查下是不是有什么BUG;\n *        有效日期: 2023.08前如果未发现问题,则test27可删掉;\n */\n+(void) test27:(AIFoNodeBase*)sceneFo oldCanset:(AIKVPointer*)oldCanset_p oldIndexDic:(NSDictionary*)oldIndexDic compareIndexDicFromNewCanset:(NSDictionary*)compareIndexDicFromNewCanset {\n    NSDictionary *sceneOldCansetIndexDic = [sceneFo getConIndexDic:oldCanset_p];\n    NSMutableDictionary *indexDicFromOldCanset = [[NSMutableDictionary alloc] init];\n    for (id sceneIndex in sceneOldCansetIndexDic.allKeys) {\n        id oldCansetIndex = [sceneOldCansetIndexDic objectForKey:sceneIndex];\n        id absCansetIndex = ARR_INDEX([oldIndexDic allKeysForObject:oldCansetIndex], 0);\n        if (absCansetIndex) [indexDicFromOldCanset setObject:absCansetIndex forKey:sceneIndex];\n    }\n    //> 在canset类比中已经为new生成了indexDic,本test27中再为old生成indexDic,然后对比二者是否一致,不一致则打出错误日志;\n    NSString *newStr = CLEANSTR(compareIndexDicFromNewCanset);\n    NSString *oldStr = CLEANSTR(indexDicFromOldCanset);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Test/AITest.m:256-270"
+    },
+    "2653": {
+        "file_id": 277,
+        "content": "This code performs a test to check if the generated indexDic from oldCanset is consistent with the one from newCanset in Canset class comparison. If they are not consistent, it logs an error message. This test may be deleted after 2023.08 if no issues are found.",
+        "type": "comment"
+    },
+    "2654": {
+        "file_id": 277,
+        "content": "    if (![newStr isEqualToString:oldStr]) {\n        ELog(@\"自检27: 测得Canset类比的最终生成indexDic从新旧路径不一致!!!查下为什么: new:%@ old:%@\",newStr,oldStr);\n    }\n}\n+(void) test28:(AIShortMatchModel*)inModel {\n    for (AIMatchFoModel *item in inModel.matchPFos) {\n        AIFoNodeBase *fo = [SMGUtils searchNode:item.matchFo];\n        AIKVPointer *alg_p = ARR_INDEX(fo.content_ps, item.cutIndex);\n        if (![SMGUtils filterSingleFromArr:inModel.matchAlgs checkValid:^BOOL(AIMatchAlgModel *obj) {\n            return [obj.matchAlg isEqual:alg_p];\n        }]) {\n            ELog(@\"自检28: 测得matchPFos的cutIndex对应的下标alg竟然不属于matchAlgs,按道理来cutIndex是刚发生的最后一帧,然后最后一帧应该都抽象源自matchAlgs才对\");\n        }\n    }\n}\n+(void) test29:(AIAlgNodeBase*)protoA assA:(AIAlgNodeBase*)assA {\n    if (!protoA || !assA) {\n        ELog(@\"自检29: alg类比器有闪退的情况,报arrayWithObjects:count:什么错,怀疑是这俩有一个是空的,如果这里触发了,断点,并查下为何为空,是_p没取到algNode吗,还是啥情况?\");\n    }\n}\n+(void) test30:(NSInteger)sumStrong {\n    if (sumStrong < 2) {\n        ELog(@\"自检30: 时序类比抽象时,已经建立了关联,所以关联强度最小也是2,小于2则断点立马查下为什么\");",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Test/AITest.m:271-296"
+    },
+    "2655": {
+        "file_id": 277,
+        "content": "This code includes several test methods for validating the integrity and functionality of various objects in the application. Test 27 checks if the final generated indexDic is consistent between new and old paths, Test 28 ensures that the cutIndex-associated algorithm exists within the matchAlgs array, Test 29 checks for any null values in alg class comparisons, and Test 30 validates that the sum of strong connections is at least 2.",
+        "type": "comment"
+    },
+    "2656": {
+        "file_id": 277,
+        "content": "    }\n}\n+(void) test31:(NSArray*)deltaTimes {\n    deltaTimes = ARRTOOK(deltaTimes);\n    for (NSInteger i = 0; i < deltaTimes.count; i++) {\n        NSNumber *item = ARR_INDEX(deltaTimes, i);\n        if (i == 0 && item.doubleValue != 0) {\n            ELog(@\"自检31: 时间deltaTime的0位不是0\");\n        } else if (i > 0) {\n            if (item.doubleValue == 0) {\n                ELog(@\"自检31: 时间deltaTime的非0位是0\");\n            } else if (item.doubleValue > 900) {\n                ELog(@\"自检31: 时间deltaTime的非0位>900\");\n            }\n        }\n    }\n}\n+(void) test32:(AIFoNodeBase*)protoCanset newCanset:(AIFoNodeBase*)newCanset {\n    if (protoCanset.count != newCanset.count) {\n        ELog(@\"自检32: 在迁移发生后,迁移前后的两个canset必须长度一致,不然会导致3101b-todo1继承的SP值失败或错位,如果这条日志打印了,请先检查一下是两个canset长度不一致有BUG,还是设计改变了,那么SP的继承也要跟着改下\");\n    }\n}\n//MARK:===============================================================\n//MARK:    < 回测必经点测试 (常关,每个轮回测时打开,触发则关,未触发者为异常) >\n//MARK:===============================================================\n+(void) test101:(AIFoNodeBase*)absCansetFo proto:(AIFoNodeBase*)proto conCanset:(AIFoNodeBase*)conCanset{",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Test/AITest.m:297-326"
+    },
+    "2657": {
+        "file_id": 277,
+        "content": "This code contains several test functions for various conditions in a system. Test31 checks if the delta time at any index is not 0 or greater than 900, while Test32 ensures that the count of two sets of cansets (protoCanset and newCanset) are equal after migration. The code also includes tests for backtest checkpoints, which are important control points in a system.",
+        "type": "comment"
+    },
+    "2658": {
+        "file_id": 277,
+        "content": "    if (!Switch4AITest) return;\n    WLog(@\"必经点测试: 触发canset再抽象执行到;\\n\\tabsCanset %@ from:\\n\\tproto:%@\\n\\tconConset:%@\",Fo2FStr(absCansetFo),Fo2FStr(proto),Fo2FStr(conCanset));\n}\n+(void) test102:(AIFoNodeBase*)cansetFo {\n    if (!Switch4AITest) return;\n    //测试27222-1,TCSolution取得抽象canset;\n    if (AINetAbsFoNode.class == cansetFo.class) {\n        WLog(@\"必经点测试: 读取到抽象canset: %@\",NSStringFromClass(cansetFo.class));\n    }\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Test/AITest.m:327-339"
+    },
+    "2659": {
+        "file_id": 277,
+        "content": "The code checks if Switch4AITest is false, then logs the details of a point test, and finally tests if the input cansetFo is an instance of AINetAbsFoNode.",
+        "type": "comment"
+    },
+    "2660": {
+        "file_id": 278,
+        "content": "/SMG_NothingIsAll/main.m",
+        "type": "filepath"
+    },
+    "2661": {
+        "file_id": 278,
+        "content": "This code is the main entry point for the iOS app \"SMG_NothingIsAll\". It imports UIKit and AppDelegate header files, initializes an autorelease pool, and calls UIApplicationMain to launch the app.",
+        "type": "summary"
+    },
+    "2662": {
+        "file_id": 278,
+        "content": "//\n//  main.m\n//  SMG_NothingIsAll\n//\n//  Created by 贾  on 2017/4/7.\n//  Copyright © 2017年 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n#import \"AppDelegate.h\"\nint main(int argc, char * argv[]) {\n    @autoreleasepool {\n        return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));\n    }\n}",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/main.m:1-16"
+    },
+    "2663": {
+        "file_id": 278,
+        "content": "This code is the main entry point for the iOS app \"SMG_NothingIsAll\". It imports UIKit and AppDelegate header files, initializes an autorelease pool, and calls UIApplicationMain to launch the app.",
+        "type": "comment"
+    },
+    "2664": {
+        "file_id": 279,
+        "content": "/ThirdParty/MemManager/MemManager.h",
+        "type": "filepath"
+    },
+    "2665": {
+        "file_id": 279,
+        "content": "This code defines a MemManager class with functions to remove all memory, save all memory with a given name, and read all memory with a specified name.",
+        "type": "summary"
+    },
+    "2666": {
+        "file_id": 279,
+        "content": "//\n//  MemManager.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/6/6.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------记忆管理器--------------------\n *  @desc 由原本清空记忆的功能,以及记忆git备份工具的设想而来;\n */\n@interface MemManager : NSObject\n/**\n *  MARK:--------------------清除记忆--------------------\n */\n+(void) removeAllMemory;\n/**\n *  MARK:--------------------保存记忆--------------------\n */\n+(void) saveAllMemory:(NSString*)saveName;\n/**\n *  MARK:--------------------恢复记忆--------------------\n */\n+(void) readAllMemory:(NSString*)readName;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/MemManager/MemManager.h:1-32"
+    },
+    "2667": {
+        "file_id": 279,
+        "content": "This code defines a MemManager class with functions to remove all memory, save all memory with a given name, and read all memory with a specified name.",
+        "type": "comment"
+    },
+    "2668": {
+        "file_id": 280,
+        "content": "/ThirdParty/MemManager/MemManager.m",
+        "type": "filepath"
+    },
+    "2669": {
+        "file_id": 280,
+        "content": "This code clears memory by removing records, prepares data, and clears specified memories. It also backs up UserDefaults, KVFiles, heLog to savePath using PINDiskCache for UserDefaults. The code reads UserDefaults, KV files, and HeLog data, backing up the latter while logging progress, adds heLogDatas to cache, and reloads heLogView upon completion.",
+        "type": "summary"
+    },
+    "2670": {
+        "file_id": 280,
+        "content": "//\n//  MemManager.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/6/6.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import \"MemManager.h\"\n#import \"XGRedis.h\"\n#import \"XGWedis.h\"\n#import \"NSFile+Extension.h\"\n#import \"PINDiskCache.h\"\n@implementation MemManager\n+(void) removeAllMemory{\n    //1. 数据准备;\n    NSArray *kvFolders = kFN_ALL;\n    NSString *cachePath = kCachePath;\n    NSInteger sumCount = 0;\n    //1. 清空UserDefaults记忆;\n    NSDictionary *dic = DICTOOK([[NSUserDefaults standardUserDefaults] dictionaryRepresentation]);\n    sumCount += dic.count;\n    NSLog(@\"===> 清空UserDefaults记忆 \\t(%lu)\",(unsigned long)dic.count);\n    for (id key in dic) [[NSUserDefaults standardUserDefaults] removeObjectForKey:key];\n    [[NSUserDefaults standardUserDefaults] synchronize];\n    //2. 清空XGWedis\n    NSLog(@\"===> 清空XGRedis \\t(%lu)\",XGRedis.sharedInstance.count);\n    sumCount += XGRedis.sharedInstance.count;\n    [[XGRedis sharedInstance] clear];\n    //2. 清空XGWedis\n    NSLog(@\"===> 清空XGWedis记忆 \\t(%lu)\",XGWedis.sharedInstance.count);",
+        "type": "code",
+        "location": "/ThirdParty/MemManager/MemManager.m:1-36"
+    },
+    "2671": {
+        "file_id": 280,
+        "content": "This code is clearing all memory by removing UserDefaults, XGRedis, and XGWedis records. It first prepares data such as folders, cache paths, and counts the total memory to clear. It then removes UserDefaults entries, clears XGRedis and XGWedis memories.",
+        "type": "comment"
+    },
+    "2672": {
+        "file_id": 280,
+        "content": "    sumCount += XGWedis.sharedInstance.count;\n    [[XGWedis sharedInstance] clear];\n    //3. 清空KVFile\n    for (NSString *folderName in kvFolders) {\n        NSMutableString *fileRootPath = [[NSMutableString alloc] initWithFormat:@\"%@/%@\",cachePath,folderName];\n        NSArray *subFiles = [NSFile_Extension subFiles_AllDeep:fileRootPath];\n        NSLog(@\"===> 清空KVFile记忆:%@ \\t(%lu)\",folderName,subFiles.count);\n        sumCount += subFiles.count;\n        [[NSFileManager defaultManager] removeItemAtPath:fileRootPath error:nil];\n    }\n    //4. 清空heLog\n    NSLog(@\"===> 清空HeLog记忆 \\t(%lu)\",theApp.heLogView.count);\n    sumCount += theApp.heLogView.count;\n    [theApp.heLogView clear];\n    NSLog(@\"======> 清空记忆Finish \\t(%lu)\",sumCount);\n}\n+(void) saveAllMemory:(NSString*)saveName{\n    //1. 数据准备;\n    NSLog(@\"存储记忆至: %@\",saveName);\n    NSArray *kvFolders = kFN_ALL;\n    NSString *cachePath = kCachePath;\n    NSMutableString *savePath = [[NSMutableString alloc] initWithFormat:@\"%@/save/%@\",cachePath,saveName];\n    NSInteger sumCount = 0;",
+        "type": "code",
+        "location": "/ThirdParty/MemManager/MemManager.m:37-62"
+    },
+    "2673": {
+        "file_id": 280,
+        "content": "Clears XGWedis memory, empties KVFile folders, and deletes associated files. Also clears heLog and saves all memory to specified saveName directory.",
+        "type": "comment"
+    },
+    "2674": {
+        "file_id": 280,
+        "content": "    //2. 备份UserDefaults记忆;\n    NSDictionary *dic = DICTOOK([[NSUserDefaults standardUserDefaults] dictionaryRepresentation]);\n    sumCount += dic.count;\n    NSLog(@\"===> 存储UserDefaults记忆 \\t(%lu)\",(unsigned long)dic.count);\n    PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@\"\" rootPath:savePath];\n    [cache setObject:dic forKey:@\"UserDefaults\"];\n    //3. 备份KVFile\n    for (NSString *folderName in kvFolders) {\n        NSMutableString *fromFolder = [[NSMutableString alloc] initWithFormat:@\"%@/%@\",cachePath,folderName];\n        NSMutableString *toFolder = [[NSMutableString alloc] initWithFormat:@\"%@/%@\",savePath,folderName];\n        NSArray *subFiles = [NSFile_Extension subFiles_AllDeep:fromFolder];\n        NSLog(@\"===> 存储KVFile记忆:%@ \\t(%lu)\",folderName,subFiles.count);\n        sumCount += subFiles.count;\n        [[NSFileManager defaultManager] copyItemAtPath:fromFolder toPath:toFolder error:nil];\n    }\n    //4. 备份heLog\n    PINDiskCache *readHeLogCache = [[PINDiskCache alloc] initWithName:kPath_HeLog];//读",
+        "type": "code",
+        "location": "/ThirdParty/MemManager/MemManager.m:64-82"
+    },
+    "2675": {
+        "file_id": 280,
+        "content": "Backing up user defaults, KVFiles, and heLog to savePath.\n\nSummary: Backup user defaults, KVFiles, and heLog to specified savePath.",
+        "type": "comment"
+    },
+    "2676": {
+        "file_id": 280,
+        "content": "    NSMutableArray *heLogDatas = [[NSMutableArray alloc] initWithArray:[readHeLogCache objectForKey:kFile_HeLog]];\n    sumCount += heLogDatas.count;\n    NSLog(@\"===> 存储HeLog条数:%lu\",heLogDatas.count);\n    PINDiskCache *toHeLogCache = [[PINDiskCache alloc] initWithName:kPath_HeLog rootPath:savePath];//写\n    [toHeLogCache setObject:heLogDatas forKey:kFile_HeLog];\n    NSLog(@\"======> 存储记忆Finish \\t(%lu)\",sumCount);\n}\n+(void) readAllMemory:(NSString*)readName{\n    //1. 数据准备;\n    NSLog(@\"读取储记忆开始: %@\",readName);\n    NSArray *kvFolders = kFN_ALL;\n    NSString *cachePath = kCachePath;\n    NSMutableString *readPath = [[NSMutableString alloc] initWithFormat:@\"%@/save/%@\",cachePath,readName];\n    NSInteger sumCount = 0;\n    //2. 读取前,先清空当前记忆;\n    [self removeAllMemory];\n    //3. 读取UserDefaults记忆;\n    PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@\"\" rootPath:readPath];\n    NSDictionary *dic = DICTOOK([cache objectForKey:@\"UserDefaults\"]);\n    [[NSUserDefaults standardUserDefaults] setValuesForKeysWithDictionary:dic];",
+        "type": "code",
+        "location": "/ThirdParty/MemManager/MemManager.m:83-106"
+    },
+    "2677": {
+        "file_id": 280,
+        "content": "This code reads all memory data from the cache and clears the current memory before storing it. It then logs the count of HeLog data being read. The readAllMemory method is called with a specific name as an argument, and it prepares by setting up folders, paths, and clearing existing memory. The code also reads UserDefaults memory using PINDiskCache.",
+        "type": "comment"
+    },
+    "2678": {
+        "file_id": 280,
+        "content": "    sumCount += dic.count;\n    NSLog(@\"===> 读取UserDefaults记忆 \\t(%lu)\",(unsigned long)dic.count);\n    //4. 读取KVFile\n    for (NSString *folderName in kvFolders) {\n        NSMutableString *fromFolder = [[NSMutableString alloc] initWithFormat:@\"%@/%@\",readPath,folderName];\n        NSMutableString *toFolder = [[NSMutableString alloc] initWithFormat:@\"%@/%@\",cachePath,folderName];\n        NSArray *subFiles = [NSFile_Extension subFiles_AllDeep:fromFolder];\n        NSLog(@\"===> 读取KVFile记忆:%@ \\t(%lu)\",folderName,subFiles.count);\n        sumCount += subFiles.count;\n        [[NSFileManager defaultManager] copyItemAtPath:fromFolder toPath:toFolder error:nil];\n    }\n    //4. 备份heLog\n    PINDiskCache *readHeLogCache = [[PINDiskCache alloc] initWithName:kPath_HeLog rootPath:readPath];//读\n    NSMutableArray *heLogDatas = [[NSMutableArray alloc] initWithArray:[readHeLogCache objectForKey:kFile_HeLog]];\n    sumCount += heLogDatas.count;\n    NSLog(@\"===> 读取HeLog条数:%lu\",heLogDatas.count);\n    PINDiskCache *toHeLogCache = [[PINDiskCache alloc] initWithName:kPath_HeLog];//写",
+        "type": "code",
+        "location": "/ThirdParty/MemManager/MemManager.m:107-125"
+    },
+    "2679": {
+        "file_id": 280,
+        "content": "This code performs the following tasks:\n1. Increments `sumCount` with the count of items in dictionary `dic`.\n2. Logs the message \"===> 读取UserDefaults记忆 \\t(%lu)\" where the log is accompanied by the count of items in the `dic` dictionary.\n3. Reads KV files from folders within `readPath` and copies them to corresponding folders within `cachePath`. The number of subfiles in each folder is logged as \"===> 读取KVFile记忆:%@ \\t(%lu)\" along with the folder name, and the count is added to `sumCount`.\n4. Backs up the `heLog` file by initializing a `PINDiskCache` object for reading and writing with specific names and paths. The number of `heLogDatas` is logged as \"===> 读取HeLog条数:%lu\" where `%lu` is replaced with the count of `heLogDatas`.",
+        "type": "comment"
+    },
+    "2680": {
+        "file_id": 280,
+        "content": "    [toHeLogCache setObject:heLogDatas forKey:kFile_HeLog];\n    [theApp.heLogView reloadData:true];//重新加载显示;\n    NSLog(@\"======> 读取记忆Finish \\t(%lu)\",sumCount);\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/MemManager/MemManager.m:126-132"
+    },
+    "2681": {
+        "file_id": 280,
+        "content": "This code adds heLogDatas to the cache and then reloads the heLogView data, logging a message indicating the reading process has finished.",
+        "type": "comment"
+    },
+    "2682": {
+        "file_id": 281,
+        "content": "/ThirdParty/MemManager/MemManagerWindow.h",
+        "type": "filepath"
+    },
+    "2683": {
+        "file_id": 281,
+        "content": "\"MemManagerWindow.h\" is a header file for a UIView class in the \"SMG_NothingIsAll\" project, containing open and close methods for managing a window.",
+        "type": "summary"
+    },
+    "2684": {
+        "file_id": 281,
+        "content": "//\n//  MemManagerWindow.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/6/6.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n@interface MemManagerWindow : UIView\n-(void) open;\n-(void) close;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/MemManager/MemManagerWindow.h:1-16"
+    },
+    "2685": {
+        "file_id": 281,
+        "content": "\"MemManagerWindow.h\" is a header file for a UIView class in the \"SMG_NothingIsAll\" project, containing open and close methods for managing a window.",
+        "type": "comment"
+    },
+    "2686": {
+        "file_id": 282,
+        "content": "/ThirdParty/MemManager/MemManagerWindow.m",
+        "type": "filepath"
+    },
+    "2687": {
+        "file_id": 282,
+        "content": "This iOS code initializes a window and view, sorts paths, updates arrays, manages memory in MemManagerWindow, and performs recovery, deletion, and closure actions through table views.",
+        "type": "summary"
+    },
+    "2688": {
+        "file_id": 282,
+        "content": "//\n//  MemManagerWindow.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/6/6.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import \"MemManagerWindow.h\"\n#import \"MASConstraint.h\"\n#import \"View+MASAdditions.h\"\n#import \"NSFile+Extension.h\"\n#import \"MemManager.h\"\n@interface MemManagerWindow () <UITableViewDelegate,UITableViewDataSource>\n@property (strong, nonatomic) IBOutlet UIView *containerView;\n@property (weak, nonatomic) IBOutlet UITextField *saveNameTF;\n@property (weak, nonatomic) IBOutlet UITableView *readTableView;\n@property (strong, nonatomic) NSMutableArray *datas;   //已存的所有历史;\n@end\n@implementation MemManagerWindow\n-(id) init {\n    self = [super init];\n    if(self != nil){\n        [self initView];\n        [self initData];\n        [self initDisplay];\n    }\n    return self;\n}\n-(void) initView{\n    //self\n    [self setFrame:CGRectMake(0, 0, ScreenWidth, ScreenHeight)];\n    //containerView\n    [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];\n    [self addSubview:self.containerView];",
+        "type": "code",
+        "location": "/ThirdParty/MemManager/MemManagerWindow.m:1-43"
+    },
+    "2689": {
+        "file_id": 282,
+        "content": "This code is the implementation of MemManagerWindow class, initializing the view and data for a window. It sets the frame of the window to the screen size, loads the nib file containing the window contents, adds the container view as a subview of the window, and initializes data and display.",
+        "type": "comment"
+    },
+    "2690": {
+        "file_id": 282,
+        "content": "    [self.containerView mas_makeConstraints:^(MASConstraintMaker *make) {\n        make.leading.mas_equalTo(self);\n        make.trailing.mas_equalTo(self);\n        make.top.mas_equalTo(self);\n        make.bottom.mas_equalTo(self);\n    }];\n    //readTableView\n    self.readTableView.delegate = self;\n    self.readTableView.dataSource = self;\n}\n-(void) initData{\n    self.datas = [[NSMutableArray alloc] init];\n}\n-(void) initDisplay{\n    [self refreshDisplay];\n    [self close];\n}\n//MARK:===============================================================\n//MARK:                     < publicMethod >\n//MARK:===============================================================\n-(void) open{\n    [self setHidden:false];\n}\n-(void) close{\n    [self setHidden:true];\n}\n-(void) refreshDisplay{\n    //1. 重加载数据_加载save下的路径;\n    NSString *cachePath = kCachePath;\n    NSArray *paths = [NSFile_Extension subFolders:STRFORMAT(@\"%@/save\",cachePath)];\n    //2. 按创建时间排序;\n    paths = [paths sortedArrayUsingComparator:^NSComparisonResult(NSString *path1, NSString *path2) {",
+        "type": "code",
+        "location": "/ThirdParty/MemManager/MemManagerWindow.m:44-82"
+    },
+    "2691": {
+        "file_id": 282,
+        "content": "This code sets up the user interface and data management for a view controller. It initializes a container view, sets up a table view, and provides public methods to open/close the view and refresh its display. The refreshDisplay method loads paths from a cache directory, sorts them by creation time, and reloads the data in the table view.",
+        "type": "comment"
+    },
+    "2692": {
+        "file_id": 282,
+        "content": "        NSDictionary *info1 = DICTOOK([[NSFileManager defaultManager] attributesOfItemAtPath:path1 error:nil]);\n        NSDictionary *info2 = DICTOOK([[NSFileManager defaultManager] attributesOfItemAtPath:path2 error:nil]);\n        NSDate *date1 = [info1 objectForKey:NSFileCreationDate];\n        NSDate *date2 = [info2 objectForKey:NSFileCreationDate];\n        NSTimeInterval time1 = [date1 timeIntervalSince1970];\n        NSTimeInterval time2 = [date2 timeIntervalSince1970];\n        return (time1 == time2) ? NSOrderedSame : ((time1 < time2) ? NSOrderedAscending : NSOrderedDescending);\n    }];\n    //3. 重加载数据_转为folderName;\n    NSArray *foloders = [SMGUtils convertArr:paths convertBlock:^id(NSString *path) {\n        NSString *sep = @\"/\";\n        NSString *folderName = STRTOOK(ARR_INDEX_REVERSE(STRTOARR(path, sep), 0));\n        return folderName;\n    }];\n    //4. 重加载数据_收集到datas中;\n    [self.datas removeAllObjects];\n    [self.datas addObjectsFromArray:foloders];\n    //5. 重显示;\n    [self.readTableView reloadData];",
+        "type": "code",
+        "location": "/ThirdParty/MemManager/MemManagerWindow.m:83-104"
+    },
+    "2693": {
+        "file_id": 282,
+        "content": "The code reads file attributes and compares their creation dates to sort files. It then converts the paths to folder names, removes existing data from an array, adds newly converted folder names to the same array, and reloads the table view with the updated data.",
+        "type": "comment"
+    },
+    "2694": {
+        "file_id": 282,
+        "content": "    //6. 默认选中最后一个cell;\n    if (ARRISOK(self.datas)) {\n        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{\n            NSIndexPath *row = [NSIndexPath indexPathForRow:self.datas.count - 1 inSection:0];\n            [self.readTableView selectRowAtIndexPath:row animated:true scrollPosition:UITableViewScrollPositionTop];\n        });\n    }\n}\n//MARK:===============================================================\n//MARK:                     < onclick >\n//MARK:===============================================================\n- (IBAction)clearMemOnClick:(id)sender {\n    DemoLog(@\"清空记忆\");\n    [theApp.heLogView addDemoLog:@\"清空记忆\"];\n    [MemManager removeAllMemory];\n}\n- (IBAction)saveMemOnClick:(id)sender {\n    if (STRISOK(self.saveNameTF.text)) {\n        DemoLog(@\"保存记忆\");\n        [MemManager saveAllMemory:self.saveNameTF.text];\n        [self refreshDisplay];\n    }\n}\n- (IBAction)readMemOnClick:(id)sender {\n    NSIndexPath *selected = [self.readTableView indexPathForSelectedRow];",
+        "type": "code",
+        "location": "/ThirdParty/MemManager/MemManagerWindow.m:106-133"
+    },
+    "2695": {
+        "file_id": 282,
+        "content": "This code snippet appears to be part of a MemManagerWindow class in an iOS app. The comments indicate the following:\n1. The selected cell defaults to the last one if there are any data available.\n2. Two IBAction functions: \"clearMemOnClick\" clears all memory, and \"saveMemOnClick\" saves memory with a specified name from a text field.\n3. Another function, \"readMemOnClick\", retrieves the index path for the currently selected row in the table view.",
+        "type": "comment"
+    },
+    "2696": {
+        "file_id": 282,
+        "content": "    NSString *data = ARR_INDEX(self.datas, selected.row);\n    if (STRISOK(data)) {\n        DemoLog(@\"恢复记忆\");\n        [MemManager readAllMemory:data];\n        [self close];\n    }\n}\n- (IBAction)closeBtnOnClick:(id)sender {\n    [self close];\n}\n- (IBAction)deleteSaveOnClick:(id)sender {\n    NSIndexPath *selected = [self.readTableView indexPathForSelectedRow];\n    NSString *data = ARR_INDEX(self.datas, selected.row);\n    if (STRISOK(data)) {\n        DemoLog(@\"删除记忆:%@\",data);\n        NSString *cachePath = kCachePath;\n        [[NSFileManager defaultManager] removeItemAtPath:STRFORMAT(@\"%@/save/%@\",cachePath,data) error:nil];\n        [self refreshDisplay];\n    }\n}\n//MARK:===============================================================\n//MARK:       < UITableViewDataSource &  UITableViewDelegate>\n//MARK:===============================================================\n- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{\n    return self.datas.count;\n}\n- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{",
+        "type": "code",
+        "location": "/ThirdParty/MemManager/MemManagerWindow.m:134-163"
+    },
+    "2697": {
+        "file_id": 282,
+        "content": "This code is for a MemManagerWindow that handles three actions: recovering memory, deleting saved data, and closing the window. The table view displays data in a list format, and the number of rows depends on the count of self.datas. When the close button is clicked, it calls [self close], when the deleteSave button is clicked, it removes the selected item from the cache path and refreshes the display. If the data being read is not an SOK (presumably a specific string type), then a log message will be printed.",
+        "type": "comment"
+    },
+    "2698": {
+        "file_id": 282,
+        "content": "    UITableViewCell *cell = [[UITableViewCell alloc] init];\n    NSString *data = STRTOOK(ARR_INDEX(self.datas, indexPath.row));\n    [cell.textLabel setText:data];\n    return cell;\n}\n- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{\n    return 30;\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/MemManager/MemManagerWindow.m:164-173"
+    },
+    "2699": {
+        "file_id": 282,
+        "content": "This code initializes a UITableViewCell, sets its text label with data from an array, and returns the cell. It also provides a fixed height of 30 for each row in the table view.",
+        "type": "comment"
+    }
+}

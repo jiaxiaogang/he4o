@@ -1,0 +1,10 @@
+{
+    "summary": "This code declares a class TCDemand which handles different types of tasks such as R, P, H and sub tasks. The methods are used for Demand formation based on ShortMatchModel, FoNodeBase, CMVNode and TOFoModel respectively.",
+    "details": [
+        {
+            "comment": "This code declares a class TCDemand which handles different types of tasks such as R, P, H and sub tasks. The methods are used for Demand formation based on ShortMatchModel, FoNodeBase, CMVNode and TOFoModel respectively.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/TCDemand.h\":0-17",
+            "content": "//\n//  TCDemand.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/11/28.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface TCDemand : NSObject\n+(NSArray*) rDemand:(AIShortMatchModel*)model protoFo:(AIFoNodeBase*)protoFo;//R\u4efb\u52a1\n+(void) pDemand:(AICMVNode*)cmvNode;        //P\u4efb\u52a1\n+(void) subDemand:(AIShortMatchModel*)model foModel:(TOFoModel*)foModel;   //\u53cd\u601d\u8bc6\u522b\u5f62\u6210\u5b50\u4efb\u52a1;\n+(void) hDemand:(TOAlgModel*)algModel;      //H\u4efb\u52a1 (\u7528\u6765\u8f6c\u79fb\u67d0\u6982\u5ff5\u7684H\u4efb\u52a1);\n@end"
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+{
+    "summary": "Header file for logging utility class HeLogUtil, includes methods to filter logs by time, keyword, generate data identifiers, and calculate MD5 values.",
+    "details": [
+        {
+            "comment": "Header file for logging utility class HeLogUtil, includes methods to filter logs by time, keyword, generate data identifiers, and calculate MD5 values.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/XGLog/HeLogUtil.h\":0-29",
+            "content": "//\n//  HeLogUtil.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2020/3/14.\n//  Copyright \u00a9 2020\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface HeLogUtil : NSObject\n/**\n *  MARK:--------------------filter--------------------\n *  @param startT : \u683c\u5f0f\u4e3ayyyyMMddHHmmssSSS \u5982: 20201230235959000\n */\n+(NSArray*) filterByTime:(NSString*)startT endT:(NSString*)endT checkDatas:(NSArray*)checkDatas;\n+(NSArray*) filterByKeyword:(NSString*)keyword checkDatas:(NSArray*)checkDatas;\n/**\n *  MARK:--------------------\u6570\u636e\u7684\u6807\u8bc6--------------------\n */\n+(NSString*) idenByData:(NSMutableArray*)datas;\n/**\n *  MARK:--------------------NSData MD5--------------------\n */\n+(NSString *)md5ByData:(NSData*)data;\n@end"
+        }
+    ]
+}

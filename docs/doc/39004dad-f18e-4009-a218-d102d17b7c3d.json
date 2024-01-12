@@ -1,0 +1,10 @@
+{
+    "summary": "Header file for DemoHunger class, defines commit method with level and state parameters.",
+    "details": [
+        {
+            "comment": "Header file for DemoHunger class, defines commit method with level and state parameters.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Demo/Adapter/DemoHunger.h\":0-17",
+            "content": "//\n//  DemoHunger.h\n//  SMG_NothingIsAll\n//\n//  Created by \u8d3e  on 2017/12/14.\n//  Copyright \u00a9 2017\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------Mind\u5143:\u9965\u997f--------------------\n */\n@interface DemoHunger : NSObject\n-(void) commit:(CGFloat)level state:(UIDeviceBatteryState)state;\n@end"
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+{
+    "summary": "This file, TOMVisionDemandView.h, defines a class named TOMVisionDemandView that inherits from TOMVisionNodeBase and appears to be part of the SMG_NothingIsAll project.",
+    "details": [
+        {
+            "comment": "This file, TOMVisionDemandView.h, defines a class named TOMVisionDemandView that inherits from TOMVisionNodeBase and appears to be part of the SMG_NothingIsAll project.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/TOMVision2/View/TOMVisionDemandView.h\":0-12",
+            "content": "//\n//  TOMVisionDemandView.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/16.\n//  Copyright \u00a9 2022\u5e74 XiaoGang. All rights reserved.\n//\n#import \"TOMVisionNodeBase.h\"\n@interface TOMVisionDemandView : TOMVisionNodeBase\n@end"
+        }
+    ]
+}

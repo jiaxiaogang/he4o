@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines a MapModel class with a single method, newWithV1:v2, which creates and initializes an instance of MapModel using provided parameters v1 and v2.",
+    "details": [
+        {
+            "comment": "This code defines a MapModel class with a single method, newWithV1:v2, which creates and initializes an instance of MapModel using provided parameters v1 and v2.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIClass/Model/MapModel.m\":0-19",
+            "content": "//\n//  MapModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/12/26.\n//  Copyright \u00a9 2023 XiaoGang. All rights reserved.\n//\n#import \"MapModel.h\"\n@implementation MapModel\n+(MapModel*) newWithV1:(id)v1 v2:(id)v2 {\n    MapModel *result = [[MapModel alloc] init];\n    result.v1 = v1;\n    result.v2 = v2;\n    return result;\n}\n@end"
+        }
+    ]
+}

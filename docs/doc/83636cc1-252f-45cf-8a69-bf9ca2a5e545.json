@@ -1,0 +1,10 @@
+{
+    "summary": "This code is a README for the TCDebug debugging tool, which builds upon XGDebug and specializes in analyzing the performance of TC modules. It supports comprehensive analysis of multiple TC operations, automatic switching to plant mode when reaching a slow threshold, and debugging specific slow areas while printing results during slow periods.",
+    "details": [
+        {
+            "comment": "This code is a README for the TCDebug debugging tool, which builds upon XGDebug and specializes in analyzing the performance of TC modules. It supports comprehensive analysis of multiple TC operations, automatic switching to plant mode when reaching a slow threshold, and debugging specific slow areas while printing results during slow periods.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/TCDebug/README.md\":0-6",
+            "content": "#  TCDebug\u8c03\u8bd5\u5de5\u5177\n### \u8bf4\u660e: \u5728XGDebug\u7684\u57fa\u7840\u4e0a\u518d\u5c01\u88c5\u4e00\u5c42,\u4e13\u7528\u4e8e\u5206\u6790TC\u6a21\u5757\u7684\u6027\u80fd;\n1. \u652f\u6301\u5bf9\u591a\u6b21TC\u64cd\u4f5c\u7efc\u5408\u5206\u6790\u8017\u65f6;\n2. \u652f\u6301\u5728\u8fbe\u5230\u6162\u9608\u503c\u65f6,\u81ea\u52a8\u5207\u5230\u690d\u7269\u6a21\u5f0f;\n3. \u652f\u6301\u5728\u6162\u65f6,\u5c06\u5177\u4f53\u6162\u7684\u5730\u65b9\u4e5f\u8c03\u8bd5\u51fa\u6765,\u5e76\u6253\u5370\u7ed3\u679c;"
+        }
+    ]
+}

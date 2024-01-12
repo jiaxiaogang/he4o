@@ -1,0 +1,10 @@
+{
+    "summary": "This code file AIVisionAlgsModel.m is part of the SMG_NothingIsAll project and contains an implementation class named AIVisionAlgsModel which inherits from \"AIVisionAlgsModel\". It was created on 2018/11/19 by XiaoGang, who also holds all rights to this code.",
+    "details": [
+        {
+            "comment": "This code file AIVisionAlgsModel.m is part of the SMG_NothingIsAll project and contains an implementation class named AIVisionAlgsModel which inherits from \"AIVisionAlgsModel\". It was created on 2018/11/19 by XiaoGang, who also holds all rights to this code.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/CortexAlgorithms/Vision/AIVisionAlgsModel.m\":0-12",
+            "content": "//\n//  AIVisionAlgsModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/11/19.\n//  Copyright \u00a9 2018\u5e74 XiaoGang. All rights reserved.\n//\n#import \"AIVisionAlgsModel.h\"\n@implementation AIVisionAlgsModel\n@end"
+        }
+    ]
+}

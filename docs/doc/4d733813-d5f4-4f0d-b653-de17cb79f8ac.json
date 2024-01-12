@@ -1,0 +1,10 @@
+{
+    "summary": "This is the header file for `FrontIndexDicModel`, a class in the SMG_NothingIsAll project. It represents a model for front-section condition fulfillment algorithm results, with properties including proto and canset indices, and a pointer to transferAlg.",
+    "details": [
+        {
+            "comment": "This is the header file for `FrontIndexDicModel`, a class in the SMG_NothingIsAll project. It represents a model for front-section condition fulfillment algorithm results, with properties including proto and canset indices, and a pointer to transferAlg.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/FrontIndexDicModel.h\":0-21",
+            "content": "//\n//  FrontIndexDicModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/4/30.\n//  Copyright \u00a9 2023\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------\u524d\u6bb5\u6761\u4ef6\u6ee1\u8db3\u7b97\u6cd5\u7ed3\u679c\u6a21\u578b--------------------\n */\n@interface FrontIndexDicModel : NSObject\n+(FrontIndexDicModel*) newWithProtoIndex:(NSInteger)protoIndex cansetIndex:(NSInteger)cansetIndex transferAlg:(AIKVPointer*)transferAlg_p;\n@property (assign, nonatomic) NSInteger protoIndex;//\u6620\u5c04\u5230\u7684proto\u4e0b\u6807\n@property (assign, nonatomic) NSInteger cansetIndex;//\u6620\u5c04\u5230\u7684canset\u4e0b\u6807\n@property (strong, nonatomic) AIKVPointer *transferAlg_p;//cansetAlg\u8fc1\u79fb\u540e\u7684transferAlg;\n@end"
+        }
+    ]
+}

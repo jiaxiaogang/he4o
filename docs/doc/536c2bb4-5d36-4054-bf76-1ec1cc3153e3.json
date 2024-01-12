@@ -1,0 +1,10 @@
+{
+    "summary": "This code is the header file for RLTPanel, a UIView subclass that acts as a reinforcement learning training panel. It has a delegate protocol with methods to stop the panel and get queue information. The panel can be opened or closed, and data can be reloaded.",
+    "details": [
+        {
+            "comment": "This code is the header file for RLTPanel, a UIView subclass that acts as a reinforcement learning training panel. It has a delegate protocol with methods to stop the panel and get queue information. The panel can be opened or closed, and data can be reloaded.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/RLTrainer/View/RLTPanel.h\":0-30",
+            "content": "//\n//  RLTPanel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/4/15.\n//  Copyright \u00a9 2022\u5e74 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n@protocol RLTPanelDelegate <NSObject>\n-(void) rltPanel_Stop;\n-(NSArray*) rltPanel_getQueues;\n-(NSInteger) rltPanel_getQueueIndex;\n-(double) rltPanel_getUseTimed;\n@end\n/**\n *  MARK:--------------------\u5f3a\u5316\u8bad\u7ec3\u63a7\u5236\u53f0--------------------\n */\n@interface RLTPanel : UIView\n@property (weak, nonatomic) id<RLTPanelDelegate> delegate;\n@property (assign, nonatomic) BOOL playing;\n-(void) reloadData;\n-(void) open;\n-(void) close;\n@end"
+        }
+    ]
+}

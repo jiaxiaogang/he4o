@@ -1,0 +1,10 @@
+{
+    "summary": "This code file, \"ImvAlgsHurtModel.m\", is part of the \"SMG_NothingIsAll\" codebase and was created by user \"jia\" on January 16th, 2021. It is protected by a copyright and belongs to XiaoGang. The code file contains the implementation for the \"ImvAlgsHurtModel\" class, which presumably is used for hurt model algorithms within the larger project.",
+    "details": [
+        {
+            "comment": "This code file, \"ImvAlgsHurtModel.m\", is part of the \"SMG_NothingIsAll\" codebase and was created by user \"jia\" on January 16th, 2021. It is protected by a copyright and belongs to XiaoGang. The code file contains the implementation for the \"ImvAlgsHurtModel\" class, which presumably is used for hurt model algorithms within the larger project.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/CortexAlgorithms/Imv/ImvAlgsHurtModel.m\":0-12",
+            "content": "//\n//  ImvAlgsHurtModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/1/16.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import \"ImvAlgsHurtModel.h\"\n@implementation ImvAlgsHurtModel\n@end"
+        }
+    ]
+}

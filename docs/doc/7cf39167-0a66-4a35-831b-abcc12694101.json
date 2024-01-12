@@ -1,0 +1,10 @@
+{
+    "summary": "This code file, HeLogHeader.h, contains the header declarations for classes used in the SMG_NothingIsAll project, created by jia on 2020/3/12, and is copyrighted by XiaoGang. It imports Foundation.h, HeLogModel.h, and HeLogView.h files.",
+    "details": [
+        {
+            "comment": "This code file, HeLogHeader.h, contains the header declarations for classes used in the SMG_NothingIsAll project, created by jia on 2020/3/12, and is copyrighted by XiaoGang. It imports Foundation.h, HeLogModel.h, and HeLogView.h files.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/XGLog/HeLogHeader.h\":0-10",
+            "content": "//\n//  HeLogHeader.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2020/3/12.\n//  Copyright \u00a9 2020\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n#import \"HeLogModel.h\"\n#import \"HeLogView.h\""
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+{
+    "summary": "Header file for TCRegroup class in SMG_NothingIsAll project, defines methods to regroup short match models and feedback frames of match algorithms.",
+    "details": [
+        {
+            "comment": "Header file for TCRegroup class in SMG_NothingIsAll project, defines methods to regroup short match models and feedback frames of match algorithms.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRegroup/TCRegroup.h\":0-17",
+            "content": "//\n//  TCRegroup.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/11/28.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface TCRegroup : NSObject\n+(void) rRegroup:(AIShortMatchModel*)shortModel;\n+(void) pRegroup:(AICMVNodeBase*)mv shortModel:(AIShortMatchModel*)shortModel;\n+(void) feedbackRegroup:(TOFoModel*)foModel feedbackFrameOfMatchAlgs:(NSArray*)feedbackFrameOfMatchAlgs;\n+(void) actionRegroup:(TOFoModel*)actionFoModel;\n@end"
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines a class TCRethink that involves two types of reflection: rational and emotional. It has four feedback-based rethinking methods, split into reasoning and perception categories. The model and type parameters are used to specify the input for each method.",
+    "details": [
+        {
+            "comment": "This code defines a class TCRethink that involves two types of reflection: rational and emotional. It has four feedback-based rethinking methods, split into reasoning and perception categories. The model and type parameters are used to specify the input for each method.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRethink/TCRethink.h\":0-22",
+            "content": "//\n//  TCRethink.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/12/25.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------\u53cd\u7701--------------------\n *  @desc \u5206\u88c2\u6210\u7406\u6027\u53cd\u7701 \u548c \u611f\u6027\u53cd\u7701 (\u53c2\u8003n24p02);\n *  @desc \u56db\u4e2afeedback\u5206\u522b\u5bf9\u5e94\u56db\u4e2arethink\u53cd\u7701 (\u53c2\u800325031-12);\n */\n@interface TCRethink : NSObject\n+(void) reasonInRethink:(AIMatchFoModel*)model cutIndex:(NSInteger)cutIndex type:(AnalogyType)type;\n+(void) perceptInRethink:(AIMatchFoModel*)model type:(AnalogyType)type;\n+(void) reasonOutRethink:(TOFoModel*)model actionIndex:(NSInteger)actionIndex type:(AnalogyType)type;\n+(void) perceptOutRethink:(TOFoModel*)model type:(AnalogyType)type;\n@end"
+        }
+    ]
+}

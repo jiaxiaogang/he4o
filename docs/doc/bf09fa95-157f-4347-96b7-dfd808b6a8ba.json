@@ -1,0 +1,15 @@
+{
+    "summary": "The `AIKVPointer` class inherits from `AIPointer`, defines properties for folder name, algorithm type, data source, isOut flag, and type, and provides methods to set/get these properties. It returns the file path based on a custom folder name.",
+    "details": [
+        {
+            "comment": "This header file defines a class `AIKVPointer` that inherits from `AIPointer`. It has properties for folder name, algorithm type, data source, isOut flag, and type. The class also provides methods to set and get these properties.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AINet/AIPointer/AIKVPointer.h\":0-29",
+            "content": "//\n//  AIKVPointer.h\n//  SMG_NothingIsAll\n//\n//  Created by \u8d3e  on 2017/9/7.\n//  Copyright \u00a9 2017\u5e74 XiaoGang. All rights reserved.\n//\n#import \"AIPointer.h\"\n/**\n *  MARK:--------------------KV\u6307\u9488--------------------\n *  1. TODO: \u5c06isOut\u53bb\u9664,\u4ee5\u5927\u5c0f\u8111\u7f51\u7edc\u533a\u5206\u5fae\u4fe1\u606f\u662f\u5426\u8f93\u51fa; (\u4ee5\u5e7f\u64ad\u6807\u8bc6\u7b26\u6765\u6807\u8bc6canOut);\n *  2. isMemNet : \u662f\u5426\u5b58\u5230\u5185\u5b58\u7f51\u7edc (\u9ed8\u8ba4false,\u5b58\u786c\u76d8)\n *  @version\n *      2021.09.17: \u96c6\u6210type (\u53c2\u800324018-\u7ebf\u7d222);\n */\n@interface AIKVPointer : AIPointer\n+(AIKVPointer*) newWithPointerId:(NSInteger)pointerId folderName:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut type:(AnalogyType)type;\n//MARK:===============================================================\n//MARK:                     < \u5355\u5c5e\u6027\u53d6\u503c >\n//MARK:===============================================================\n-(NSString*) folderName;    //\u795e\u7ecf\u7f51\u7edc\u6839\u76ee\u5f55 | \u7d22\u5f15\u6839\u76ee\u5f55\n-(NSString*) algsType;      //\u7b97\u6cd5\u7c7b\u578b_\u5206\u533a\n-(NSString*) dataSource;    //\u6570\u636e\u6e90(AIData\u7684\u6765\u6e90:\u5982inputModel\u4e2d\u7684\u67d0\u5c5e\u6027targetType\u7b49)\n-(BOOL) isOut;              //\u662f\u5426outPointer(\u9ed8\u8ba4false);\n-(NSString*) typeStr;       //\u8282\u70b9\u7c7b\u578b\n-(AnalogyType) type;        //\u8282\u70b9\u7c7b\u578b"
+        },
+        {
+            "comment": "This method returns the file path based on a custom folder name.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AINet/AIPointer/AIKVPointer.h\":30-32",
+            "content": "-(NSString*) filePath:(NSString*)customFolderName;  //\u53d6\u81ea\u5b9a\u4e49folderName\u7684filePath;\n@end"
+        }
+    ]
+}

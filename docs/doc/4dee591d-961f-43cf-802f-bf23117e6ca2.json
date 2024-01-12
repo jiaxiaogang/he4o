@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines the class AICMVNodeBase, which is a subclass of AIAlgNodeBase. It has three properties: urgentTo_p (a pointer to the urgent value), delta_p (a pointer to the change value), and foPorts (an array of forwarding ports). The class also includes a brief description and notes for future improvements.",
+    "details": [
+        {
+            "comment": "This code defines the class AICMVNodeBase, which is a subclass of AIAlgNodeBase. It has three properties: urgentTo_p (a pointer to the urgent value), delta_p (a pointer to the change value), and foPorts (an array of forwarding ports). The class also includes a brief description and notes for future improvements.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AINet/AINode/AICMVNodeBase.h\":0-26",
+            "content": "//\n//  AICMVNodeBase.h\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/9/26.\n//  Copyright \u00a9 2018\u5e74 XiaoGang. All rights reserved.\n//\n#import \"AIAlgNodeBase.h\"\n/**\n *  MARK:--------------------\u4ef7\u503c\u8282\u70b9\u57fa\u7c7b--------------------\n *  1. \u6709\u6307\u9488\u5730\u5740;\n *  2. \u6709\u8feb\u5207\u5ea6;\n *  3. \u6709\u53d8\u5316;\n *  TODO: \u53ef\u8003\u8651\u5c06cmv\u7684\u62bd\u5177\u8c61\u53bb\u6389;\n *  @version\n *      2023.03.11: \u4ef7\u503c\u8282\u70b9\u4e5f\u662f\u6982\u5ff5\u7684\u4e00\u79cd (\u53c2\u800328171-todo7);\n *      2023.08.10: \u628afoNode\u6539\u6210\u6570\u7ec4ports (\u53c2\u800330095-todo2);\n */\n@interface AICMVNodeBase : AIAlgNodeBase\n@property (strong, nonatomic) AIKVPointer *urgentTo_p;  //\u8feb\u5207\u5ea6\u6570\u636e\u6307\u9488;(\u6307\u5411urgentValue\u7684\u503c\u5b58\u50a8\u5730\u5740)\n@property (strong, nonatomic) AIKVPointer *delta_p;     //\u53d8\u5316\u6307\u9488;(\u6307\u5411\u53d8\u5316\u503c\u5b58\u50a8\u5730\u5740)\n@property (strong, nonatomic) NSMutableArray *foPorts;  //\u524d\u56e0\u6570\u636e\n@end"
+        }
+    ]
+}

@@ -1,0 +1,15 @@
+{
+    "summary": "The MathUtils class provides utility methods for data range transformation and rect operations, while the code defines three functions for calculating cooled values based on cooling time and other parameters.",
+    "details": [
+        {
+            "comment": "This header file defines the MathUtils class that provides utility methods for data range transformation and rect operations. It includes functions to convert data ranges, collect rects, filter rects, and get rects at specific ratios.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Demo/Extension/MathUtils.h\":0-34",
+            "content": "//\n//  MathUtils.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/5/21.\n//  Copyright \u00a9 2023\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface MathUtils : NSObject\n//\u6570\u636e\u8303\u56f4\u53d8\u6362\n+(CGFloat) getNegativeTen2TenWithOriRange:(UIFloatRange)oriRange oriValue:(CGFloat)oriValue;\n+(CGFloat) getZero2TenWithOriRange:(UIFloatRange)oriRange oriValue:(CGFloat)oriValue;\n+(CGFloat) getValueWithOriRange:(UIFloatRange)oriRange targetRange:(UIFloatRange)targetRange oriValue:(CGFloat)oriValue;\n//MARK:===============================================================\n//MARK:                     < rect >\n//MARK:===============================================================\n/**\n *  MARK:--------------------\u53d6rect\u5e76\u96c6--------------------\n */\n+(CGRect) collectRectA:(CGRect)rectA rectB:(CGRect)rectB;\n/**\n *  MARK:--------------------\u53d6rect\u4ea4\u96c6--------------------\n */\n+(CGRect) filterRectA:(CGRect)rectA rectB:(CGRect)rectB;\n/**\n *  MARK:--------------------\u53d6start\u5230end\u4e4b\u95f4\u767e\u5206\u6bd4\u5904\u7684\u503c--------------------\n */\n+(CGRect) radioRect:(CGRect)startRect endRect:(CGRect)endRect radio:(CGFloat)radio;"
+        },
+        {
+            "comment": "This code defines three functions for calculating cooled values based on total cooling time, past cooling time, and a finish value. The first function takes these parameters directly while the second function uses a \"pastRate\" parameter instead of past time. The third function calculates the cooled value using both past rate and finish value.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Demo/Extension/MathUtils.h\":36-46",
+            "content": "/**\n *  MARK:--------------------\u725b\u987f\u51b7\u5374--------------------\n *  @param totalCoolTime \u603b\u51b7\u5374\u65f6\u95f4\n *  @param pastTime \u5df2\u51b7\u5374\u65f6\u95f4\n *  @param finishValue \u6700\u7ec8\u51b7\u5374\u6e29\u5ea6 (\u5f5328\u539f\u5219\u65f6,\u4e3a0.000322f)\n */\n+(CGFloat) getCooledValue:(CGFloat)totalCoolTime pastTime:(CGFloat)pastTime finishValue:(CGFloat)finishValue;\n+(CGFloat) getCooledValue_28:(CGFloat)pastRate;\n+(CGFloat) getCooledValue:(CGFloat)pastRate finishValue:(CGFloat)finishValue;\n@end"
+        }
+    ]
+}

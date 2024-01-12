@@ -1,0 +1,10 @@
+{
+    "summary": "This code file, AICMVNode.h, defines a class called AICMVNode which inherits from AICMVNodeBase. It is part of the SMG_NothingIsAll project created by iMac and is copyrighted under XiaoGang.",
+    "details": [
+        {
+            "comment": "This code file, AICMVNode.h, defines a class called AICMVNode which inherits from AICMVNodeBase. It is part of the SMG_NothingIsAll project created by iMac and is copyrighted under XiaoGang.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AINet/AINode/AICMVNode.h\":0-15",
+            "content": "//\n//  AICMVNode.h\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/7/26.\n//  Copyright \u00a9 2018\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------\u5177\u8c61\u4ef7\u503c\u8282\u70b9--------------------\n */\n@interface AICMVNode : AICMVNodeBase\n@end"
+        }
+    ]
+}

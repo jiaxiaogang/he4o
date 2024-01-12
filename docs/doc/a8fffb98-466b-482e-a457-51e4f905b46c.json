@@ -1,0 +1,10 @@
+{
+    "summary": "This is the header file for TCScene class, which provides methods to generate a structured scene tree based on demand inputs. The class inherits from NSObject and offers two methods: rGetSceneTree (ReasonDemandModel) and hGetSceneTree (HDemandModel).",
+    "details": [
+        {
+            "comment": "This is the header file for TCScene class, which provides methods to generate a structured scene tree based on demand inputs. The class inherits from NSObject and offers two methods: rGetSceneTree (ReasonDemandModel) and hGetSceneTree (HDemandModel).",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScene/TCScene.h\":0-19",
+            "content": "//\n//  TCScene.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/4/17.\n//  Copyright \u00a9 2023\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------TCScene--------------------\n *  @desc \u7528\u4e8e\u5f97\u51fabrother->father->i\u7684\u7ed3\u6784\u5316Scene (\u53c2\u800329069-todo3 & 686\u793a\u56fe);\n */\n@interface TCScene : NSObject\n+(NSArray*) rGetSceneTree:(ReasonDemandModel*)demand;\n+(NSArray*) hGetSceneTree:(HDemandModel*)demand;\n@end"
+        }
+    ]
+}

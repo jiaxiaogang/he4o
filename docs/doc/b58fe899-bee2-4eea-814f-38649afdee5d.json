@@ -1,0 +1,15 @@
+{
+    "summary": "This TIUtils.h file is part of the SMG_NothingIsAll codebase, providing utility functions for concept and temporal recognition in AI systems. Functions include TIR_Alg and recognitionFo with various parameters, but development status is unclear.",
+    "details": [
+        {
+            "comment": "This file, TIUtils.h, appears to be a part of the SMG_NothingIsAll codebase and is responsible for providing utility functions related to concept recognition and temporal recognition in an AI system. The functions include TIR_Alg, which performs concept recognition, and recognitionFo, which handles temporal recognition. These functions take various parameters such as algorithms, exception lists, model data, and cut indices to perform their tasks. It is unclear whether the code is finished or if it's still under development given that some variables are commented out and debug mode seems to be a feature in progress.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIUtils.h\":0-25",
+            "content": "//\n//  TIUtils.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/12/27.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface TIUtils : NSObject\n//MARK:===============================================================\n//MARK:                     < \u6982\u5ff5\u8bc6\u522b >\n//MARK:===============================================================\n+(void) TIR_Alg:(AIKVPointer*)algNode_p except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel;\n//MARK:===============================================================\n//MARK:                     < \u65f6\u5e8f\u8bc6\u522b >\n//MARK:===============================================================\n+(void) recognitionFo:(AIFoNodeBase*)protoOrRegroupFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel fromRegroup:(BOOL)fromRegroup matchAlgs:(NSArray*)matchAlgs protoOrRegroupCutIndex:(NSInteger)protoOrRegroupCutIndex debugMode:(BOOL)debugMode;\n//MARK:===============================================================\n//MARK:                     < Canset\u8bc6\u522b >"
+        },
+        {
+            "comment": "This code defines methods for recognition and obtaining match and part algorithms of a short-match model. It includes functions to get match and part algorithm pointers by providing a short-match model.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIUtils.h\":26-36",
+            "content": "//MARK:===============================================================\n//+(void) recognitionCansetAlg:(AIAlgNodeBase*)protoAlg sceneFo:(AIFoNodeBase*)sceneFo inModel:(AIShortMatchModel*)inModel;\n//+(void) recognitionCansetFo:(AIKVPointer*)newCanset_p sceneFo:(AIKVPointer*)sceneFo_p es:(EffectStatus)es;\n/**\n *  MARK:--------------------\u83b7\u53d6\u67d0\u5e27shortModel\u7684matchAlgs+partAlgs--------------------\n */\n+(NSArray*) getMatchAndPartAlgPsByModel:(AIShortMatchModel*)frameModel;\n@end"
+        }
+    ]
+}

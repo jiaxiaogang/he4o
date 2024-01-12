@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines various types of block functions (Act0-Act4, Func0-Func4) for different numbers of parameters and return types. The comments explain how to use these blocks as an alternative syntax.",
+    "details": [
+        {
+            "comment": "This code defines various types of block functions (Act0-Act4, Func0-Func4) for different numbers of parameters and return types. The comments explain how to use these blocks as an alternative syntax.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Demo/Extension/XGDelegate.h\":0-30",
+            "content": "//\n//  XGDelegate.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/2/26.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------\u4f7f\u7528\u8bf4\u660e--------------------\n *  @act\u4f7f\u7528\u793a\u4f8b:\n *      \u672c\u7528\u6cd5: Act0 act = ^(){ //\u6267\u884c\u4ee3\u7801 },\u4f7f\u7528\u65f6\u8c03\u7528act();\n *      \u76f8\u5f53\u4e8e: void(^act)() = ^(){ //\u6267\u884c\u4ee3\u7801 },\u4f7f\u7528\u65f6\u8c03\u7528act();\n *  @func\u4f7f\u7528\u793a\u4f8b:\n *      \u672c\u7528\u6cd5: Func1 func = ^(){return yourClass;};,\u4f7f\u7528\u65f6:YourClass yc = func();\n *      \u76f8\u5f53\u4e8e: YourClass(^func)() = ^(){ return yourClass; },\u4f7f\u7528\u65f6:YourClass yc = func();\n */\ntypedef void (^Act0)();\ntypedef void (^Act1)(id p1);\ntypedef void (^Act2)(id p2);\ntypedef void (^Act3)(id p3);\ntypedef void (^Act4)(id p4);\ntypedef id (^Func0)();\ntypedef id (^Func1)(id p1);\ntypedef id (^Func2)(id p2);\ntypedef id (^Func3)(id p3);\ntypedef id (^Func4)(id p4);"
+        }
+    ]
+}

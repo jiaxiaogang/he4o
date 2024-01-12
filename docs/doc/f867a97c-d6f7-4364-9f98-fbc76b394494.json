@@ -1,0 +1,10 @@
+{
+    "summary": "This file, AINetAbsUtils.h, contains a class AINetAbsFoUtils with three methods: getDeltaTimes, convertOrder2Alg_ps, and convertOrder2DeltaTimes. These methods are used to extract deltaTimes from conFos, convert order into alg_ps, and convert order into deltaTimes respectively.",
+    "details": [
+        {
+            "comment": "This file, AINetAbsUtils.h, contains a class AINetAbsFoUtils with three methods: getDeltaTimes, convertOrder2Alg_ps, and convertOrder2DeltaTimes. These methods are used to extract deltaTimes from conFos, convert order into alg_ps, and convert order into deltaTimes respectively.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AINet/AIAbsFoManager/AINetAbsFoUtils.h\":0-29",
+            "content": "//\n//  AINetAbsUtils.h\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/6/6.\n//  Copyright \u00a9 2018\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@class AIKVPointer,AIPort;\n@interface AINetAbsFoUtils : NSObject\n/**\n *  MARK:--------------------\u4ececonFos\u4e2d\u63d0\u53d6deltaTimes--------------------\n *  @result notnull\n */\n+(NSMutableArray*) getDeltaTimes:(NSArray*)conFos absFo:(AIFoNodeBase*)absFo;\n/**\n *  MARK:--------------------\u5c06order\u8f6c\u6362\u6210alg_ps--------------------\n */\n+(NSMutableArray*) convertOrder2Alg_ps:(NSArray*)order;\n/**\n *  MARK:--------------------\u5c06order\u8f6c\u6210deltaTimes--------------------\n */\n+(NSMutableArray*) convertOrder2DeltaTimes:(NSArray*)order;\n@end"
+        }
+    ]
+}

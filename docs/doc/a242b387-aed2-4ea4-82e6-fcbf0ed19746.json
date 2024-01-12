@@ -1,0 +1,10 @@
+{
+    "summary": "This code is the interface of AIAbsFoManager, which is a class in the SMG_NothingIsAll project. It contains a method called \"create_NoRepeat\" that takes parameters such as content_ps, protoFo, assFo, difStrong, type, protoIndexDic, assIndexDic, outConAbsIsRelate, and noRepeatArea_ps to create a fo version that is not repeated. The method returns an instance of AINetAbsFoNode.",
+    "details": [
+        {
+            "comment": "This code is the interface of AIAbsFoManager, which is a class in the SMG_NothingIsAll project. It contains a method called \"create_NoRepeat\" that takes parameters such as content_ps, protoFo, assFo, difStrong, type, protoIndexDic, assIndexDic, outConAbsIsRelate, and noRepeatArea_ps to create a fo version that is not repeated. The method returns an instance of AINetAbsFoNode.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AINet/AIAbsFoManager/AIAbsFoManager.h\":0-22",
+            "content": "//\n//  AIAbsFoManager.h\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/5/30.\n//  Copyright \u00a9 2018\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n//MARK:===============================================================\n//MARK:                     < AINetAbs\u7ba1\u7406\u5668 >\n//MARK:===============================================================\n@class AINetAbsFoNode,AIFoNodeBase;\n@interface AIAbsFoManager : NSObject\n/**\n *  MARK:--------------------\u6784\u5efafo_\u9632\u91cd\u7248--------------------\n *  @param difStrong : \u6784\u5efafo\u7684\u88ab\u5f15\u7528\u521d\u59cb\u5f3a\u5ea6;\n */\n-(AINetAbsFoNode*) create_NoRepeat:(NSArray*)content_ps protoFo:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo difStrong:(NSInteger)difStrong type:(AnalogyType)type protoIndexDic:(NSDictionary*)protoIndexDic assIndexDic:(NSDictionary*)assIndexDic outConAbsIsRelate:(BOOL*)outConAbsIsRelate noRepeatArea_ps:(NSArray*)noRepeatArea_ps;\n@end"
+        }
+    ]
+}

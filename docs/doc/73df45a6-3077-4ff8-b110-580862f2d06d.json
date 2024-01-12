@@ -1,0 +1,10 @@
+{
+    "summary": "This code is for the `TOMVisionItemModel` class in Objective-C, implementing the NSCoding protocol to support archiving and unarchiving of instances. The class has two methods: `initWithCoder:` to initialize an object with decoded data from a coder, and `encodeWithCoder:` to encode an object's state into a coder for later retrieval.",
+    "details": [
+        {
+            "comment": "This code is for the `TOMVisionItemModel` class in Objective-C, implementing the NSCoding protocol to support archiving and unarchiving of instances. The class has two methods: `initWithCoder:` to initialize an object with decoded data from a coder, and `encodeWithCoder:` to encode an object's state into a coder for later retrieval.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/TOMVision2/Model/TOMVisionItemModel.m\":0-29",
+            "content": "//\n//  TOMVisionItemModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/15.\n//  Copyright \u00a9 2022\u5e74 XiaoGang. All rights reserved.\n//\n#import \"TOMVisionItemModel.h\"\n@implementation TOMVisionItemModel\n/**\n *  MARK:--------------------NSCoding--------------------\n */\n- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {\n    self = [super init];\n    if (self) {\n        self.roots = [aDecoder decodeObjectForKey:@\"roots\"];\n        self.loopId = [aDecoder decodeIntegerForKey:@\"loopId\"];\n    }\n    return self;\n}\n- (void)encodeWithCoder:(NSCoder *)aCoder {\n    [aCoder encodeObject:self.roots forKey:@\"roots\"];\n    [aCoder encodeInteger:self.loopId forKey:@\"loopId\"];\n}\n@end"
+        }
+    ]
+}

@@ -1,0 +1,546 @@
+{
+    "200": {
+        "file_id": 25,
+        "content": "    id result = [[XGRedis sharedInstance] objectForKey:key];\n    NSString *fromType = @\"XGRedis\";\n    //3. 再取wedis\n    if (result == nil) {\n        result = [[XGWedis sharedInstance] objectForKey:key];\n        fromType = @\"XGWedis\";\n        //4. 最后取disk\n        if (result == nil) {\n            PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@\"\" rootPath:filePath];\n            result = [cache objectForKey:fileName];\n            fromType = @\"Disk\";\n            DebugR();\n            theTC.tcDebug.lastRCount++;\n        }\n        //5. 存到redis (wedis/disk)\n        if (time > 0 && result) {\n            [[XGRedis sharedInstance] setObject:result forKey:key time:time];\n        }\n    }\n    return result;\n}\n//+(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName{\n//    [self insertObject:obj rootPath:rootPath fileName:fileName time:0 saveDB:true];\n//}\n+(void) insertObject:(NSObject*)obj pointer:(AIPointer*)pointer fileName:(NSString*)fileName time:(double)time{\n    if (ISOK(pointer, AIPointer.class)) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:375-404"
+    },
+    "201": {
+        "file_id": 25,
+        "content": "This code checks for an object with the given key in Redis, then falls back to Wedis and finally Disk if not found. It also allows inserting objects into Redis or Disk depending on the input parameters. The code also increments a debug counter and calls DebugR function after retrieving data from disk.",
+        "type": "comment"
+    },
+    "202": {
+        "file_id": 25,
+        "content": "        [self insertObject:obj rootPath:pointer.filePath fileName:fileName time:time saveDB:true];\n    }\n}\n+(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName time:(double)time saveDB:(BOOL)saveDB{\n    //1. 存disk (异步持久化)\n    NSString *key = STRFORMAT(@\"%@/%@\",rootPath,fileName);\n    if (saveDB) {\n        [[XGWedis sharedInstance] setObject:obj forKey:key];\n        //2. 持久化block;\n        //2023.07.21: TC线程改为串行了,所以此处不再调用主线程持久化;\n        Act1 saveBlock = ^(AsyncMutableDictionary *dic) {\n            for (NSString *saveKey in dic.allKeys) {\n                id saveObj = [dic objectForKey:saveKey];\n                NSString *sep = @\"/\";\n                NSString *saveFileName = STRTOOK(ARR_INDEX_REVERSE(STRTOARR(saveKey, sep), 0));\n                NSString *saveRootPath = STRTOOK(SUBSTR2INDEX(saveKey, (saveKey.length - saveFileName.length - 1)));\n                PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@\"\" rootPath:saveRootPath];\n                [cache setObject:saveObj forKey:saveFileName];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:405-423"
+    },
+    "203": {
+        "file_id": 25,
+        "content": "This code inserts an object into disk storage asynchronously and optionally saves it to the database. It uses XGWedis shared instance for key-value storage, AsyncMutableDictionary for persistence, and PINDiskCache for local disk caching. The save block iterates over all keys in the dictionary, extracts file name and root path, creates a new PINDiskCache object, and saves the object to disk.",
+        "type": "comment"
+    },
+    "204": {
+        "file_id": 25,
+        "content": "                DebugW();\n                theTC.tcDebug.lastWCount++;\n            }\n            if (dic.count > 0) {\n                NSLog(@\">>>>>>>>>WriteDisk,%lu\",(unsigned long)dic.count);\n            }\n        };\n        [[XGWedis sharedInstance] setSaveBlock:saveBlock];\n    }\n    //2. 存redis\n    [[XGRedis sharedInstance] setObject:obj forKey:key time:time];//随后去掉(redisKey)前辍\n}\n+(id) searchNode:(AIKVPointer*)pointer {\n    if (ISOK(pointer, AIKVPointer.class)) {\n        return [self searchObjectForFilePath:pointer.filePath fileName:kFNNode time:cRTNode(pointer)];\n    }\n    return nil;\n}\n/**\n *  MARK:--------------------搜索节点组--------------------\n *  @result notnull\n */\n+(NSArray*) searchNodes:(NSArray*)ps {\n    //1. 数据准备\n    ps = ARRTOOK(ps);\n    NSMutableArray *result = [[NSMutableArray alloc] init];\n    //2. search\n    for (AIKVPointer *item_p in ps) {\n        AINodeBase *itemNode = [SMGUtils searchNode:item_p];\n        if (itemNode) [result addObject:itemNode];\n    }\n    return result;\n}\n+(void) insertNode:(AINodeBase*)node{",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:424-462"
+    },
+    "205": {
+        "file_id": 25,
+        "content": "This code seems to be implementing functionality related to searching and inserting nodes in a data structure. It includes methods for searching objects by file path and time, as well as searching and inserting multiple nodes at once. The code also sets up save blocks and interacts with Redis.",
+        "type": "comment"
+    },
+    "206": {
+        "file_id": 25,
+        "content": "    if (ISOK(node, AINodeBase.class)) {\n        [self insertObject:node pointer:node.pointer fileName:kFNNode time:cRTNode(node.pointer)];\n    }\n}\n@end\n//MARK:===============================================================\n//MARK:                     < SMGUtils (Contains) >\n//MARK:===============================================================\n@implementation SMGUtils (Contains)\n+(BOOL) containsSub_ps:(NSArray*)sub_ps parent_ps:(NSArray*)parent_ps{\n    sub_ps = ARRTOOK(sub_ps);\n    for (AIPointer *sub_p in sub_ps) {\n        if (![self containsSub_p:sub_p parent_ps:parent_ps]) {\n            return false;\n        }\n    }\n    return true;\n}\n+(BOOL) containsSub_p:(AIPointer*)sub_p parent_ps:(NSArray*)parent_ps{\n    if (ISOK(sub_p, AIPointer.class) && ARRISOK(parent_ps)) {\n        for (AIPointer *parent_p in parent_ps) {\n            if ([sub_p isEqual:parent_p]) {\n                return true;\n            }\n        }\n    }\n    return false;\n}\n+(BOOL) containsSub_p:(AIPointer*)sub_p parentPorts:(NSArray*)parentPorts{\n    NSArray *parent_ps = [SMGUtils convertPointersFromPorts:parentPorts];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:463-498"
+    },
+    "207": {
+        "file_id": 25,
+        "content": "This code contains functions to check if an array of sub-pointers (sub_ps) exists within another array of parent pointers (parent_ps). The `containsSub_ps` function takes in two arrays, checks if each sub-pointer is present in the parent pointers, and returns true if all are found. The `containsSub_p` function compares a single sub-pointer with the parent pointers to see if it exists within the array. The third function, `containsSub_p:parentPorts`, converts port objects into pointer objects and calls `containsSub_p` for comparison.",
+        "type": "comment"
+    },
+    "208": {
+        "file_id": 25,
+        "content": "    return [SMGUtils containsSub_p:sub_p parent_ps:parent_ps];\n}\n@end\n//MARK:===============================================================\n//MARK:                     < SMGUtils (convert) >\n//MARK:===============================================================\n@implementation SMGUtils (Convert)\n+(NSMutableArray*) convertPointersFromPorts:(NSArray*)ports{\n    NSMutableArray *result = [[NSMutableArray alloc] init];\n    for (AIPort *port in ARRTOOK(ports)) {\n        if (ISOK(port, AIPort.class) && ISOK(port.target_p, AIPointer.class)) {\n            [result addObject:port.target_p];\n        }\n    }\n    return result;\n}\n+(NSMutableArray*) convertPointersFromNodes:(NSArray*)nodes{\n    NSMutableArray *result = [[NSMutableArray alloc] init];\n    for (AINodeBase *node in ARRTOOK(nodes)) {\n        if (ISOK(node, AINodeBase.class)) {\n            [result addObject:node.pointer];\n        }\n    }\n    return result;\n}\n+(NSString*) convertPointers2String:(NSArray*)pointers{\n    NSMutableString *mStr = [[NSMutableString alloc] init];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:499-531"
+    },
+    "209": {
+        "file_id": 25,
+        "content": "This code is implementing a class named SMGUtils which has two functions - convertPointersFromPorts and convertPointersFromNodes. The function convertPointersFromPorts receives an array of ports as input and returns a new array containing only the pointers from those ports. Similarly, convertPointersFromNodes takes in an array of nodes and outputs a new array with only the pointers from those nodes. Finally, there is a function named convertPointers2String which converts an array of pointers to a string format.",
+        "type": "comment"
+    },
+    "210": {
+        "file_id": 25,
+        "content": "    for (AIPointer *p in ARRTOOK(pointers)) {\n        [mStr appendFormat:@\"%@_%ld,\",p.identifier,(long)p.pointerId];\n    }\n    return mStr;\n}\n//2021.02.05: 概念嵌套早已废弃\n//+(NSMutableArray*) convertValuePs2MicroValuePs:(NSArray*)value_ps{\n//    //1. 数据准备\n//    NSMutableArray *mic_ps = [[NSMutableArray alloc] init];\n//\n//    //2. 逐个收集\n//    for (AIKVPointer *value_p in value_ps) {\n//\n//        //3. 概念嵌套时\n//        if ([kPN_ALG_ABS_NODE isEqualToString:value_p.folderName]) {\n//            AIAlgNodeBase *algNode = [SMGUtils searchNode:value_p];\n//\n//            //4. 递归取嵌套的value_ps\n//            if (ISOK(algNode, AIAlgNodeBase.class)) {\n//                [mic_ps addObjectsFromArray:[self convertValuePs2MicroValuePs:algNode.content_ps]];\n//            }\n//        }\n//\n//        //5. 非概念嵌套时,直接收集;\n//        [mic_ps addObject:value_p];\n//    }\n//    return mic_ps;\n//}\n//任意arr元素类型转换 notnull\n+(NSMutableArray*) convertArr:(NSArray*)arr convertBlock:(id(^)(id obj))convertBlock{\n    //1. 数据准备;\n    arr = ARRTOOK(arr);\n    NSMutableArray *result = [[NSMutableArray alloc] init];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:532-566"
+    },
+    "211": {
+        "file_id": 25,
+        "content": "The code contains three functions. The first function, starting at line 531, takes an array of AIPointers and concatenates their identifiers with their pointer ids, separated by commas. It returns a string containing this information.\n\nThe second function, marked with the comment \"2021.02.05: 概念嵌套早已废弃\", converts an array of AIKVPointers into an array of MicroValuePs. It first checks if any pointer's folder name matches 'kPN_ALG_ABS_NODE'. If it does, the function calls [SMGUtils searchNode:value_p] to retrieve a corresponding algNode and adds its content_ps (if not null) to the result array. For all other pointers in the input array, it simply adds them to the result array.\n\nThe third function converts an array of any object type into an array of the specified convertBlock type. It first takes the non-null input array and initializes an empty NSMutableArray called 'result'. Then, for each element obj in arr, it applies the given convertBlock to obj and adds the resulting value to result. The function returns this populated result array.",
+        "type": "comment"
+    },
+    "212": {
+        "file_id": 25,
+        "content": "    //2. 转换\n    for (id obj in arr) {\n        id convertItem = convertBlock(obj);\n        if (convertItem) [result addObject:convertItem];\n    }\n    return result;\n}\n+(NSMutableArray*) convertArr:(NSArray*)arr convertItemArrBlock:(NSArray*(^)(id obj))convertItemArrBlock{\n    //1. 数据准备;\n    arr = ARRTOOK(arr);\n    NSMutableArray *result = [[NSMutableArray alloc] init];\n    //2. 转换\n    for (id obj in arr) {\n        NSArray *convertItemArr = convertItemArrBlock(obj);\n        if (ARRISOK(convertItemArr)) [result addObjectsFromArray:convertItemArr];\n    }\n    return result;\n}\n/**\n *  MARK:--------------------将arr转成dic--------------------\n */\n+(NSDictionary*) convertArr2Dic:(NSArray*)objs kvBlock:(NSArray*(^)(id obj))kvBlock {\n    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];\n    for (id obj in objs) {\n        NSArray *kvArr = kvBlock(obj);\n        id k = ARR_INDEX(kvArr, 0), v = ARR_INDEX(kvArr, 1);\n        if (k && v) [result setObject:v forKey:k];\n    }\n    return result;\n}\n/**\n *  MARK:--------------------从foPorts中找出含valueIden的元素并返回--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:568-603"
+    },
+    "213": {
+        "file_id": 25,
+        "content": "This code contains several methods for converting and manipulating arrays. The first method loops through an array, applying a block to each object, and adds the converted objects to a new array. The second method accepts an array and a block, converts each object using the block, and returns a new array of the converted objects. The third method takes an array and a block, creates a dictionary from the objects in the array using the key-value pairs provided by the block, and returns the dictionary. The final section is unrelated to the previous code and seems to search for elements containing a specific value identifier in a \"foPorts\" list.",
+        "type": "comment"
+    },
+    "214": {
+        "file_id": 25,
+        "content": " *  @desc 每个fo,仅判断首条符合的alg;\n */\n+(NSMutableArray*) convertAlgPsFromFoPorts:(NSArray*)foPorts valueIden:(NSString*)valueIden{\n    return [SMGUtils convertArr:foPorts convertBlock:^id(AIPort *item) {\n        //1. 从fo中检查alg元素是否包含同区码 (将首条符合的返回);\n        AIFoNodeBase *fo = [SMGUtils searchNode:item.target_p];\n        NSArray *validAlg_ps = [SMGUtils filterAlg_Ps:fo.content_ps valueIdentifier:valueIden itemValid:nil];\n        if (ARRISOK(validAlg_ps)) {\n            return ARR_INDEX(validAlg_ps, 0);\n        }\n        //2. 找不到返空;\n        return nil;\n    }];\n}\n@end\n//MARK:===============================================================\n//MARK:                     < SMGUtils (Sort) >\n//MARK:===============================================================\n@implementation SMGUtils (Sort)\n+(NSArray*) sortPointers:(NSArray*)ps{\n    ps = ARRTOOK(ps);\n    return [ps sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {\n        return [SMGUtils comparePointerA:obj1 pointerB:obj2];\n    }];\n}\n/**\n *  MARK:--------------------从大到小排序--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:604-636"
+    },
+    "215": {
+        "file_id": 25,
+        "content": "This function `convertAlgPsFromFoPorts` takes an array of `foPorts` and a `valueIden` as input. It checks the first matching `alg` element in each `fo` and returns the first matching one, while it returns nil if no match is found. The code also includes functions for sorting pointers from largest to smallest.",
+        "type": "comment"
+    },
+    "216": {
+        "file_id": 25,
+        "content": " */\n+(NSArray*) sortBig2Small:(NSArray*)arr compareBlock:(double(^)(id obj))compareBlock{\n    return [SMGUtils sortBig2Small:arr compareBlock1:compareBlock compareBlock2:nil];\n}\n+(NSArray*) sortBig2Small:(NSArray*)arr compareBlock1:(double(^)(id obj))compareBlock1 compareBlock2:(double(^)(id obj))compareBlock2{\n    return [SMGUtils sortBig2Small:arr compareBlock1:compareBlock1 compareBlock2:compareBlock2 compareBlock3:nil];\n}\n+(NSArray*) sortBig2Small:(NSArray*)arr compareBlock1:(double(^)(id obj))compareBlock1 compareBlock2:(double(^)(id obj))compareBlock2 compareBlock3:(double(^)(id obj))compareBlock3 {\n    //1. 数据检查;\n    arr = ARRTOOK(arr);\n    //2. 排序返回;\n    return [arr sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {\n        //3. 一级对比;\n        NSComparisonResult result = NSOrderedSame;\n        if (compareBlock1) result = [SMGUtils compareDoubleA:compareBlock1(obj1) doubleB:compareBlock1(obj2)];\n        //4. 二级对比;\n        if (result == NSOrderedSame && compareBlock2) result = [SMGUtils compareDoubleA:compareBlock2(obj1) doubleB:compareBlock2(obj2)];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:637-655"
+    },
+    "217": {
+        "file_id": 25,
+        "content": "This code defines a sorting method that takes an array and optional comparison blocks to sort the elements from big to small. The code performs three levels of comparison, prioritizing the first comparison block provided. It checks the input data, then applies the comparator function to sort the array in descending order.",
+        "type": "comment"
+    },
+    "218": {
+        "file_id": 25,
+        "content": "        //5. 三级对比;\n        if (result == NSOrderedSame && compareBlock3) result = [SMGUtils compareDoubleA:compareBlock3(obj1) doubleB:compareBlock3(obj2)];\n        return result;\n    }];\n}\n//从小到大,就是大到小的值取负 (反过来);\n+(NSArray*) sortSmall2Big:(NSArray*)arr compareBlock:(double(^)(id obj))compareBlock{\n    return [SMGUtils sortBig2Small:arr compareBlock:^double(id obj) {\n        return -compareBlock(obj);\n    }];\n}\n@end\n//MARK:===============================================================\n//MARK:                     < SMGUtils (Remove) >\n//MARK:===============================================================\n@implementation SMGUtils (Remove)\n+(NSMutableArray*) removeSub_ps:(NSArray*)sub_ps parent_ps:(NSArray*)parent_ps{\n    sub_ps = ARRTOOK(sub_ps);\n    NSMutableArray *result = [[NSMutableArray alloc] initWithArray:parent_ps];\n    for (AIPointer *sub_p in sub_ps) {\n        result = [self removeSub_p:sub_p parent_ps:result];\n    }\n    return result;\n}\n+(NSMutableArray*) removeSub_p:(AIPointer*)sub_p parent_ps:(NSArray*)parent_ps{",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:657-686"
+    },
+    "219": {
+        "file_id": 25,
+        "content": "This code snippet includes a method for sorting an array of objects in descending order using a provided comparison block, as well as methods for removing elements from arrays based on specific conditions. The SMGUtils class contains utility functions for various operations such as sorting and array manipulation.",
+        "type": "comment"
+    },
+    "220": {
+        "file_id": 25,
+        "content": "    NSMutableArray *result_ps = [[NSMutableArray alloc] initWithArray:parent_ps];\n    if (ISOK(sub_p, AIPointer.class)) {\n        [result_ps removeObject:sub_p];\n    }\n    return result_ps;\n}\n/**\n *  MARK:--------------------移除--------------------\n *  @param checkValid : 将要移除的item返回true,保留的返回false;\n */\n+(NSMutableArray*) removeArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid {\n    NSMutableArray *result = [[NSMutableArray alloc] initWithArray:arr];\n    NSArray *removeItems = [SMGUtils filterArr:arr checkValid:checkValid limit:NSIntegerMax];\n    [result removeObjectsInArray:removeItems];\n    return result;\n}\n/**\n *  MARK:--------------------防重--------------------\n *  _param convertBlock : 用于转换\"判断防重的数据类型\";\n *  @desc 性能说明: 当AIPort类型时,防重5000条以上时,用时经常1.5s以上 (所以此方法尽量少用);\n *  @result notnull\n */\n+(NSMutableArray*) removeRepeat:(NSArray*)protoArr{\n    return [self removeRepeat:protoArr convertBlock:^id(id obj) {\n        return obj;\n    }];\n}\n+(NSMutableArray*) removeRepeat:(NSArray*)protoArr convertBlock:(id(^)(id obj))convertBlock{",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:687-717"
+    },
+    "221": {
+        "file_id": 25,
+        "content": "This code defines a series of methods for manipulating arrays, such as removing items and preventing duplicates. The methods take in an array as input and return a new array with specified modifications. The performance consideration is mentioned for the \"removeRepeat\" method when handling large datasets.",
+        "type": "comment"
+    },
+    "222": {
+        "file_id": 25,
+        "content": "    //1. 数据准备\n    NSMutableArray *result = [[NSMutableArray alloc] init];\n    NSMutableArray *resultConverteds = [[NSMutableArray alloc] init];\n    protoArr = ARRTOOK(protoArr);\n    //2. 防重收集\n    for (id proto in protoArr) {\n        //3. 将已收集部分和当前proto转为converted后的类型;\n        id protoConverted = convertBlock(proto);\n        //4. 判断是否已包含 (未包含则收集);\n        if (![resultConverteds containsObject:protoConverted]) {\n            [result addObject:proto];\n            [resultConverteds addObject:protoConverted];\n        }\n    }\n    return result;\n}\n+(AIKVPointer*) filterSameIdentifier_p:(AIKVPointer*)a_p b_ps:(NSArray*)b_ps{\n    if (!a_p) return nil;\n    return ARR_INDEX([self filterSameIdentifier_Dic:@[a_p] b_ps:b_ps].allValues, 0);\n}\n+(NSMutableDictionary*) filterSameIdentifier_Dic:(NSArray*)a_ps b_ps:(NSArray*)b_ps{\n    return [SMGUtils filterPointers:a_ps b_ps:b_ps checkItemValid:^BOOL(AIKVPointer *a_p, AIKVPointer *b_p) {\n        return a_p ? [a_p.identifier isEqualToString:b_p.identifier] : false;\n    }];\n}\n//+(NSArray*) filterSameIdentifier_Arr:(NSArray*)from_ps valid_ps:(NSArray*)valid_ps{",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:718-747"
+    },
+    "223": {
+        "file_id": 25,
+        "content": "This code filters and collects unique proto objects from an array (protoArr) by converting them into their respective types using the convertBlock function. It then checks if each converted proto object is already in the resultConverteds array, and adds it to both the result and resultConverteds arrays if not. Additionally, there are two other methods, filterSameIdentifier_p and filterSameIdentifier_Dic, that help filter AIKVPointer objects based on their identifiers. The code also includes a commented out method filterSameIdentifier_Arr for filtering proto objects based on validity checks.",
+        "type": "comment"
+    },
+    "224": {
+        "file_id": 25,
+        "content": "//    NSMutableArray *result = [[NSMutableArray alloc] init];\n//    [SMGUtils foreach:from_ps b_ps:valid_ps tryOut:^(AIKVPointer *a_p, AIKVPointer *b_p) {\n//        if ([a_p.identifier isEqualToString:b_p.identifier]) {\n//            [result addObject:a_p];\n//        }\n//    }];\n//    return result;\n//}\n+(AIKVPointer*) filterSameIdentifier_DiffId_p:(AIKVPointer*)a_p b_ps:(NSArray*)b_ps{\n    if (! a_p) return nil;\n    return ARR_INDEX([SMGUtils filterSameIdentifier_DiffId_ps:@[a_p] b_ps:b_ps].allValues, 0);\n}\n+(NSMutableDictionary*) filterSameIdentifier_DiffId_ps:(NSArray*)a_ps b_ps:(NSArray*)b_ps{\n    return [SMGUtils filterPointers:a_ps b_ps:b_ps checkItemValid:^BOOL(AIKVPointer *a_p, AIKVPointer *b_p) {\n        if (a_p && b_p) {\n            return [a_p.identifier isEqualToString:b_p.identifier] && a_p.pointerId != b_p.pointerId;\n        }\n        return false;\n    }];\n}\n+(NSArray*) filterPointers:(NSArray *)from_ps checkValid:(BOOL(^)(AIKVPointer *item_p))checkValid {\n    return [self filterArr:from_ps checkValid:checkValid];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:748-770"
+    },
+    "225": {
+        "file_id": 25,
+        "content": "This code filters a list of AIKVPointer objects based on their identifiers. It returns the objects that have the same identifier but different pointer IDs, and also provides methods to filter by arrays or specific pointers with checkValid functions.",
+        "type": "comment"
+    },
+    "226": {
+        "file_id": 25,
+        "content": "}\n+(NSMutableDictionary*) filterPointers:(NSArray *)a_ps b_ps:(NSArray*)b_ps checkItemValid:(BOOL(^)(AIKVPointer *a_p,AIKVPointer *b_p))checkItemValid {\n    //1. 数据准备\n    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];\n    a_ps = ARRTOOK(a_ps);\n    b_ps = ARRTOOK(b_ps);\n    for (AIKVPointer *a_p in a_ps) {\n        for (AIKVPointer *b_p in b_ps) {\n            if (checkItemValid && checkItemValid(a_p,b_p)) {\n                [result setObject:b_p forKey:OBJ2DATA(a_p)];\n            }\n        }\n    }\n    return result;\n}\n/**\n *  MARK:--------------------交集--------------------\n *  @version\n *      2020.12.13: 使之改为保持parent_ps有序 (以前的旧有方式是dic筛选,会使无序,导致原有序被打乱,比如参考21194的BUG);\n *  @result notnull\n */\n+(NSArray*) filterArrA:(NSArray*)arrA arrB:(NSArray*)arrB {\n    return [self filterArr:arrB checkValid:^BOOL(id item) {\n        return [arrA containsObject:item];\n    }];\n}\n+(NSMutableArray*) filterArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid {\n    return [SMGUtils filterArr:arr checkValid:checkValid limit:NSIntegerMax];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:771-800"
+    },
+    "227": {
+        "file_id": 25,
+        "content": "This method takes two arrays, `a_ps` and `b_ps`, and filters them based on a given condition specified by the `checkItemValid` block. It returns a dictionary (`result`) where the keys are objects from array `a_ps` and the values are objects from array `b_ps` that pass the `checkItemValid` condition.",
+        "type": "comment"
+    },
+    "228": {
+        "file_id": 25,
+        "content": "}\n+(NSMutableArray*) filterArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid limit:(NSInteger)limit{\n    //1. 数据准备\n    arr = ARRTOOK(arr);\n    NSMutableArray *result = [[NSMutableArray alloc] init];\n    //2. 筛选\n    for (id item in arr) {\n        if (checkValid && checkValid(item)) {\n            [result addObject:item];\n            if (result.count >= limit) break;\n        }\n    }\n    return result;\n}\n+(NSMutableDictionary*) filterDic:(NSDictionary *)dic checkValid:(BOOL(^)(id key,id value))checkValid {\n    //1. 数据准备\n    dic = DICTOOK(dic);\n    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];\n    //2. 筛选\n    for (id key in dic.allKeys) {\n        id value = [dic objectForKey:key];\n        if (checkValid && checkValid(key,value)) {\n            [result setObject:value forKey:key];\n        }\n    }\n    return result;\n}\n//用analogyType来筛选ports\n+(NSArray*) filterPorts_Normal:(NSArray*)ports{\n    NSArray *noTypes = @[@(ATGreater),@(ATLess),@(ATHav),@(ATNone),\n                         @(ATPlus),@(ATSub),@(ATDiff),@(ATSame)];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:801-835"
+    },
+    "229": {
+        "file_id": 25,
+        "content": "This code contains two methods, `filterArr` and `filterDic`, for filtering arrays and dictionaries respectively based on a given condition. It also has a method `filterPorts_Normal` which filters ports using the `analogyType`. The code performs data preparation, iterates over the input array or dictionary, checks the validity of each item, and stops when reaching the specified limit.",
+        "type": "comment"
+    },
+    "230": {
+        "file_id": 25,
+        "content": "    return [SMGUtils filterPorts:ports havTypes:nil noTypes:noTypes];\n}\n+(NSArray*) filterPorts:(NSArray*)ports havTypes:(NSArray*)havTypes noTypes:(NSArray*)noTypes{\n    //1. 数据检查\n    havTypes = ARRTOOK(havTypes);\n    noTypes = ARRTOOK(noTypes);\n    ports = ARRTOOK(ports);\n    //3. 筛选类型\n    return [SMGUtils filterArr:ports checkValid:^BOOL(AIPort *item) {\n        //a. hav筛选 (必须被havDSArr包含);\n        if (ARRISOK(havTypes) && ![havTypes containsObject:@(item.target_p.type)]) return false;\n        //b. no筛选 (必须不被noDSArr包含);\n        if (ARRISOK(noTypes) && [noTypes containsObject:@(item.target_p.type)]) return false;\n        //c. 干不死的,有效;\n        return true;\n    }];\n}\n+(id) filterSingleFromArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid {\n    arr = ARRTOOK(arr);\n    for (id item in arr) {\n        if (checkValid && checkValid(item)) return item;\n    }\n    return nil;\n}\n/**\n *  MARK:--------------------筛选alg by 指定标识--------------------\n *  @desc 从alg_ps中查找含valueIdentifier标识稀疏码的概念并返回;\n *  @result 逐条返回 + 中断前所有收集全返回;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:836-866"
+    },
+    "231": {
+        "file_id": 25,
+        "content": "This code filters ports based on specified type arrays. It first checks if the input data is valid, and then filters the ports array based on two conditions: whether they are included in a given \"havTypes\" array (if not empty) or not included in a given \"noTypes\" array (if not empty). The function returns either the filtered ports array or a single valid port, depending on the usage of the function.",
+        "type": "comment"
+    },
+    "232": {
+        "file_id": 25,
+        "content": " */\n+(NSArray*) filterAlg_Ps:(NSArray*)alg_ps valueIdentifier:(NSString*)valueIdentifier itemValid:(void(^)(AIAlgNodeBase *alg,AIKVPointer *value_p))itemValid{\n    return [SMGUtils filterPointers:alg_ps checkValid:^BOOL(AIKVPointer *item_p) {\n        AIAlgNodeBase *alg = [SMGUtils searchNode:item_p];\n        if (alg) {\n            for (AIKVPointer *itemValue_p in alg.content_ps) {\n                if ([valueIdentifier isEqualToString:itemValue_p.identifier]) {\n                    if (itemValid) itemValid(alg,itemValue_p);\n                    return true;\n                }\n            }\n        }\n        return false;\n    }];\n}\n/**\n *  MARK:--------------------筛选指针 by isOut--------------------\n *  @param proto_ps : 从中筛选\n *  @param isOut : false时筛选出非out的pointers\n *  注:未判定是否连续;\n */\n+(NSArray*) filterPointers:(NSArray*)proto_ps isOut:(BOOL)isOut{\n    return [SMGUtils filterPointers:proto_ps checkValid:^BOOL(AIKVPointer *item_p) {\n        return item_p.isOut == isOut;\n    }];\n}\n/**\n *  MARK:--------------------筛选指针 by 指定标识--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:867-896"
+    },
+    "233": {
+        "file_id": 25,
+        "content": "This code defines two methods: `filterAlg_Ps` and `filterPointers`. The first method filters an array of AI algorithm pointers based on a specified value identifier, executing a block for each valid pointer found. The second method filters an array of pointers based on whether they are marked as \"out\" or not. Both methods use the `SMGUtils` class to perform the filtering operations.",
+        "type": "comment"
+    },
+    "234": {
+        "file_id": 25,
+        "content": " */\n+(NSArray*) filterPointers:(NSArray*)from_ps identifier:(NSString*)identifier{\n    return [SMGUtils filterPointers:from_ps checkValid:^BOOL(AIKVPointer *item_p) {\n        return [identifier isEqualToString:item_p.identifier];\n    }];\n}\n/**\n *  MARK:--------------------筛选端口 by 指定标识--------------------\n */\n+(NSArray*) filterAlgPorts:(NSArray*)algPorts valueIdentifier:(NSString*)valueIdentifier{\n    return [SMGUtils filterArr:algPorts checkValid:^BOOL(AIPort *item) {\n        AIAlgNodeBase *alg = [SMGUtils searchNode:item.target_p];\n        return ARRISOK([SMGUtils filterPointers:alg.content_ps identifier:valueIdentifier]);\n    }];\n}\n//筛选foPorts中,包含稀疏码同区码的;\n+(NSArray*) filterFoPorts:(NSArray*)foPorts valueIdentifier:(NSString*)valueIdentifier{\n    return [SMGUtils filterArr:foPorts checkValid:^BOOL(AIPort *item) {\n        //检查fo.content是否包含某同区码稀疏码;\n        AIFoNodeBase *fo = [SMGUtils searchNode:item.target_p];\n        return ARRISOK([SMGUtils filterAlg_Ps:fo.content_ps valueIdentifier:valueIdentifier itemValid:nil]);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:897-918"
+    },
+    "235": {
+        "file_id": 25,
+        "content": "The code defines three utility methods for filtering arrays of pointers, algorithm ports, and foreign ports based on specified identifiers. It uses other helper functions from the SMGUtils class to search nodes, filter arrays, and check array elements' validity. The filterAlgPorts and filterFoPorts methods take advantage of these utility methods to perform specific filtering tasks in their respective contexts.",
+        "type": "comment"
+    },
+    "236": {
+        "file_id": 25,
+        "content": "    }];\n}\n//筛选fos中,包含稀疏码同区码的;\n+(NSArray*) filterFos:(NSArray*)fos valueIdentifier:(NSString*)valueIdentifier{\n    return [SMGUtils filterArr:fos checkValid:^BOOL(AIFoNodeBase *fo) {\n        //检查fo.content是否包含某同区码稀疏码;\n        return ARRISOK([SMGUtils filterAlg_Ps:fo.content_ps valueIdentifier:valueIdentifier itemValid:nil]);\n    }];\n}\n@end\n//MARK:===============================================================\n//MARK:                     < SMGUtils (Collect) >\n//MARK:===============================================================\n@implementation SMGUtils (Collect)\n+(NSMutableArray *) collectArrA:(NSArray*)arrA arrB:(NSArray*)arrB{\n    NSMutableArray *result = [[NSMutableArray alloc] init];\n    [result addObjectsFromArray:arrA];\n    [result addObjectsFromArray:arrB];\n    return result;\n}\n//不管顺序: 先收集bigArr再收集littleArr\n+(NSMutableArray *) collectArrA_NoRepeat:(NSArray*)arrA arrB:(NSArray*)arrB{\n    //1. 数据准备;\n    arrA = ARRTOOK(arrA);\n    arrB = ARRTOOK(arrB);\n    NSArray *litArr = arrA.count < arrB.count ? arrA : arrB;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:919-948"
+    },
+    "237": {
+        "file_id": 25,
+        "content": "The code contains two functions: `filterFos` and methods in the `Collect` category of `SMGUtils`. The `filterFos` function filters `fos` array, keeping only elements that contain certain sparse code and dense code. In the `Collect` category, there are two methods: `collectArrA` adds all elements from `arrB` to `arrA`, resulting in a new mutable array; `collectArrA_NoRepeat` collects both `arrA` and `arrB`, ignoring any duplicates and returning the result.",
+        "type": "comment"
+    },
+    "238": {
+        "file_id": 25,
+        "content": "    NSArray *bigArr = arrA.count < arrB.count ? arrB : arrA;\n    //2. 先收集大的,再收集小的;\n    return [SMGUtils collectArrA_NoRepeat_Sort:bigArr arrB:litArr];\n}\n//保持顺序: 先收集first再收集second\n+(NSMutableArray *) collectArrA_NoRepeat_Sort:(NSArray*)firstArr arrB:(NSArray*)secondArr{\n    //1. 数据准备;\n    firstArr = ARRTOOK(firstArr);\n    secondArr = ARRTOOK(secondArr);\n    //2. 先收集大的;\n    NSMutableArray *result = [[NSMutableArray alloc] initWithArray:firstArr];\n    //3. 再收集小的;\n    for (id second in secondArr) {\n        if (![result containsObject:second]) {\n            [result addObject:second];\n        }\n    }\n    return result;\n}\n@end\n//MARK:===============================================================\n//MARK:                     < SMGUtils (Other) >\n//MARK:===============================================================\n@implementation SMGUtils (Other)\n//+(void) foreach:(NSArray *)a_ps b_ps:(NSArray*)b_ps tryOut:(void(^)(AIKVPointer *a_p,AIKVPointer *b_p))tryOut {\n//    a_ps = ARRTOOK(a_ps);\n//    b_ps = ARRTOOK(b_ps);\n//    for (AIKVPointer *a_p in a_ps) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:949-983"
+    },
+    "239": {
+        "file_id": 25,
+        "content": "The code collects two arrays, firstArr and secondArr, in order, without duplicates. It first arranges the larger array and then processes the smaller one, ensuring the order is maintained. The function collects firstArr elements into a result array and then iteratively adds elements from secondArr if they are not already present in the result array.",
+        "type": "comment"
+    },
+    "240": {
+        "file_id": 25,
+        "content": "//        for (AIKVPointer *b_p in b_ps) {\n//            if (tryOut) tryOut(a_p,b_p);\n//        }\n//    }\n//}\n/**\n *  MARK:--------------------for正反序执行--------------------\n *  @param min : 循环含min\n *  @param max : 执行到max-1 (不含max);\n *  @param run : 每条回调,返回true时,中断循环;\n */\n+(void) fori:(NSArray *)arr min:(NSInteger)min max:(NSInteger)max run:(BOOL(^)(id item,NSInteger i))run forward:(BOOL)forward{\n    //1. 数据检查;\n    arr = ARRTOOK(arr);\n    if (!forward) return;\n    //2. 执行循环;\n    for (NSInteger i = min; i < max; i++) {\n        NSInteger index = forward ? i : max - i - 1;\n        if (run(ARR_INDEX(arr, index),index)) return;\n    }\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m:984-1008"
+    },
+    "241": {
+        "file_id": 25,
+        "content": "The code is a method named 'fori' that takes an array, minimum and maximum values, and a callback function. It performs a loop iterating through the array from the minimum to the maximum value (in reverse order if 'forward' parameter is set to false). The callback function is executed for each item in the array and can interrupt the loop if it returns true.",
+        "type": "comment"
+    },
+    "242": {
+        "file_id": 26,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIHeader.h",
+        "type": "filepath"
+    },
+    "243": {
+        "file_id": 26,
+        "content": "AIHeader.h imports necessary modules for SMG_NothingIsAll, including utility and task pool models, offering constant definitions, string operations, array/dictionary macros, data type conversion utilities, access to AIFoundation library objects, logging constants/macros, customizable log statements, macro functions for AI system logging with adjustable modes and levels of logging, and switches to manage features during development.",
+        "type": "summary"
+    },
+    "244": {
+        "file_id": 26,
+        "content": "//\n//  AIHeader.h\n//  SMG_NothingIsAll\n//\n//  Created by 贾  on 2017/5/21.\n//  Copyright © 2017年 XiaoGang. All rights reserved.\n//\n#import \"SMGEnum.h\"\n#import \"SMGUtils.h\"\n#import \"SMGUtils+General.h\"\n#import \"SMGConfig.h\"\n#import \"AINodeBase.h\"\n#import \"AIFoNodeBase.h\"\n#import \"AICMVNodeBase.h\"\n#import \"NVHeader.h\"\n#import \"AIInput.h\"\n#import \"AINet.h\"\n#import \"HeLogHeader.h\"\n#import \"AIKVPointer.h\"\n#import \"AIThinkingControl.h\"\n#import \"NSString+Extension.h\"\n#import \"AsyncMutableArray.h\"\n#import \"AsyncMutableDictionary.h\"\n#import \"AIScore.h\"\n#import \"XGDelegate.h\"\n#import \"TOModelVision.h\"\n#import \"TOMVision2.h\"\n#import \"RTQueueModel.h\"\n#import \"XGWedis.h\"\n#import \"CortexAlgorithmsUtil.h\"\n#import \"MapModel.h\"\n//Util\n#import \"ThinkingUtils.h\"\n#import \"TOUtils.h\"\n#import \"TIUtils.h\"\n#import \"TCSolutionUtil.h\"\n#import \"TCRecognitionUtil.h\"\n#import \"TCRethinkUtil.h\"\n#import \"NVViewUtil.h\"\n#import \"MathUtils.h\"\n#import \"XGDebug.h\"\n#import \"TCDebug.h\"\n//任务池\n#import \"ReasonDemandModel.h\"\n#import \"PerceptDemandModel.h\"\n#import \"HDemandModel.h\"",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIHeader.h:1-49"
+    },
+    "245": {
+        "file_id": 26,
+        "content": "This file, AIHeader.h, imports numerous other files for various functionalities and modules in the SMG_NothingIsAll codebase. It includes utilities, task pool models, and other necessary headers for proper functioning of the AI system.",
+        "type": "comment"
+    },
+    "246": {
+        "file_id": 26,
+        "content": "#import \"DemandManager.h\"\n#import \"AIMatchFoModel.h\"\n#import \"AIMatchAlgModel.h\"\n#import \"AIMatchCansetModel.h\"\n//短时记忆\n#import \"TOAlgModel.h\"\n#import \"TOFoModel.h\"\n#import \"AIShortMatchModel.h\"\n#import \"AIShortMatchModel_Simple.h\"\n#import \"ShortMatchManager.h\"\n#import \"AICansetModel.h\"\n#import \"AISceneModel.h\"\n#import \"FrontIndexDicModel.h\"\n#import \"AITransferModel.h\"\n#import \"TCResult.h\"\n//网络\n#import \"AINetUtils.h\"\n#import \"AINetIndex.h\"\n#import \"AINetIndexUtils.h\"\n#import \"AIPort.h\"\n#import \"AITransferPort.h\"\n#import \"AIAbsAlgNode.h\"\n#import \"AIAlgNodeBase.h\"\n#import \"AIFrontOrderNode.h\"\n#import \"AIFoNodeBase.h\"\n#import \"AINetAbsFoNode.h\"\n#import \"AICMVNode.h\"\n#import \"AIAbsCMVNode.h\"\n//其它: 类比器,评价器,触发器,防重器,输入,输出\n#import \"AIAnalyst.h\"\n#import \"AIAnalogy.h\"\n#import \"AITime.h\"\n#import \"OutputModel.h\"\n#import \"Output.h\"\n#import \"AINoRepeatRun.h\"\n#import \"AIRank.h\"\n#import \"AIFilter.h\"\n//2021新TC架构\n#import \"TCInput.h\"\n#import \"TCRegroup.h\"\n#import \"TCRecognition.h\"\n#import \"TCLearning.h\"\n#import \"TCFeedback.h\"\n#import \"TCForecast.h\"",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIHeader.h:50-97"
+    },
+    "247": {
+        "file_id": 26,
+        "content": "This code imports various models and classes for different aspects of the AI system, such as demand manager, short-term memory, networking, analyzers, evaluators, triggers, repeat prevention, rankings, filters, and the new 2021 TC architecture.",
+        "type": "comment"
+    },
+    "248": {
+        "file_id": 26,
+        "content": "#import \"TCRethink.h\"\n#import \"TCDemand.h\"\n#import \"TCScore.h\"\n#import \"TCPlan.h\"\n#import \"TCScene.h\"\n#import \"TCCanset.h\"\n#import \"TCSolution.h\"\n#import \"TCRefrection.h\"\n#import \"TCEffect.h\"\n#import \"TCTransfer.h\"\n#import \"TCRealact.h\"\n#import \"TCAction.h\"\n#import \"TCActYes.h\"\n#import \"TCOut.h\"\n//MARK:===============================================================\n//MARK:                         < 内核宏 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------PathNameKey (kPH)--------------------\n */\n#define kCachePath [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0]\n//algNode\n#define kPN_ALG_NODE           @\"PN_ALG_NODE\"          //Alg节点根目录;(白质)\n#define kPN_ALG_ABS_NODE       @\"PN_ALG_ABS_NODE\"      //AbsAlg节点根目录;(白质)\n//foNode\n#define kPN_FRONT_ORDER_NODE   @\"PN_FRONT_ORDER_NODE\"  //frontOrder节点根目录;(白质)\n#define kPN_FO_ABS_NODE        @\"PN_FO_ABS_NODE\"       //神经网络根目录;(白质)\n//cmv\n#define kPN_CMV_NODE           @\"PN_CMV_NODE\"          //cmv节点根目录;(白质)",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIHeader.h:98-132"
+    },
+    "249": {
+        "file_id": 26,
+        "content": "This code defines several macro constants related to different node types and their root directories in a mobile app. These macros are used for organizing and accessing data associated with various components of the application.",
+        "type": "comment"
+    },
+    "250": {
+        "file_id": 26,
+        "content": "#define kPN_ABS_CMV_NODE       @\"PN_ABS_CMV_NODE\"      //cmv抽象节点根目录;(白质)\n#define kPN_DIRECTION(mvDir)   STRFORMAT(@\"PN_DIRECTION_%ld\",mvDir)//mv顺逆方向引用序列(以Path为各mv的分区,cmvNode和absCMVNode都指向此direction)\n//reference\n#define kPN_REFERENCE          @\"PN_REFERENCE\"         //神经网络\"引用序列\"根目录;(海马体)\n#define kPN_CEREBEL_CANOUT     @\"PN_CEREBEL_CANOUT\"    //小脑可输出标识序列\n#define kPN_INDEX              @\"PN_INDEX\"             //索引序列\n#define kPN_DATA               @\"PN_DATA\"              //微信息值字典\n#define kPN_VALUE              @\"PN_VALUE\"             //微信息单条值\n/**\n *  MARK:--------------------FileNameKey (kFN)--------------------\n *  @version\n *      2022.10.09: 废弃isMem内存单独存的key (参考27124-todo3);\n */\n#define kFNNode @\"node\"               //节点\n//#define kFNValue @\"value\"             //微信息\n#define kFNRefPorts @\"refPorts\"       //微信息的reference序列文件名;\n#define kFNIndex(isOut) STRFORMAT(@\"index_%d\",isOut) //in微信息索引(数组) / out小脑微信息(数组)\n#define kFNData(isOut) STRFORMAT(@\"data_%d\",isOut) //in微信息值 / out小脑微信息值 (dic)\n#define kFNDirectionIndex(mvDirection) STRFORMAT(@\"directionIndex_%ld\",mvDirection) //mv的顺逆方向索引序列地址",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIHeader.h:133-154"
+    },
+    "251": {
+        "file_id": 26,
+        "content": "This code defines various constants for different parts of a neural network, including nodes, directions, references, indices, values, and file names. These constants help organize the data structure of the neural network by providing clear labels for each component.",
+        "type": "comment"
+    },
+    "252": {
+        "file_id": 26,
+        "content": "#define kFNReference_ByPointer @\"reference_ByPointer\" //微信息引用(pointer序)\n#define kFNReference_ByPort @\"reference_ByPort\"       //微信息引用(port序)\n#define kFNDefault @\" \"                               //默认文件名; (例如:小脑canout序列)\n//所有文件夹数组\n#define kFN_ALL @[/*mvNode*/kPN_CMV_NODE,kPN_ABS_CMV_NODE,/*mv索引*/kPN_DIRECTION(MVDirection_None),kPN_DIRECTION(MVDirection_Negative),kPN_DIRECTION(MVDirection_Positive),/*foNode*/kPN_FRONT_ORDER_NODE,kPN_FO_ABS_NODE,/*algNode*/kPN_ALG_NODE,kPN_ALG_ABS_NODE,/*小脑*/kPN_CEREBEL_CANOUT,/*稀疏码索引*/kPN_INDEX,kPN_DATA,kPN_VALUE]\n/**\n *  MARK:--------------------数据检查--------------------\n */\n//String\n#define STRISOK(s) [SMGUtils strIsOk:s]                                 //是否空字符串\n#define STRTOOK(s) [SMGUtils strToOk:s]                                 //string强检查\n#define STRFORMAT(s, ...) [NSString stringWithFormat:s, ##__VA_ARGS__]  //String.format\n#define SUBSTR2INDEX(s,index) [SMGUtils subStr:s toIndex:index]         //subStr_toIndex\n#define STRTOARR(str, sep) [SMGUtils strToArr:str sep:sep]              //str分隔成arr",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIHeader.h:156-172"
+    },
+    "253": {
+        "file_id": 26,
+        "content": "This code defines several constants, including string literals for file references and folders, as well as functions to check strings. The code also includes functions to format strings and convert a string into an array based on a separator.",
+        "type": "comment"
+    },
+    "254": {
+        "file_id": 26,
+        "content": "#define CLEANSTR(s) [SMGUtils cleanStr:s]\n//Array\n#define ARRISOK(a) [SMGUtils arrIsOk:a]                                 //是否空数组\n#define ARRTOOK(a) [SMGUtils arrToOk:a]                                 //数组强检查\n#define ARR_INDEX(a,i) [SMGUtils arrIndex:a index:i]                    //数组取子防闪\n#define ARR_INDEX_REVERSE(a,i) [SMGUtils arrTransIndex:a index:i]       //数组反序取子防闪\n#define ARR_INDEXISOK(a,i) [SMGUtils arrIndexIsOk:a index:i]            //数组可移除i\n#define ARR_SUB(a,s,l) [SMGUtils arrSub:a start:s length:l]             //数组截取 (arr start length)\n#define ARRTOSTR(arr,mPre,mSep) [SMGUtils arrToStr:arr prefix:mPre sep:mSep]         //数组接成字符串\n//NSNumber\n#define NUMISOK(n) [SMGUtils numIsOk:n]                                 //是否有效NSNumber\n#define NUMTOOK(n) [SMGUtils numToOk:n]                                 //number强检查\n#define NUMTOOK_DV(n,dv) [SMGUtils numToOk:n defaultValue:dv]\n//Dic\n#define DICISOK(d) [SMGUtils dicIsOk:d]                                 //是否空字典\n#define DICTOOK(d) [SMGUtils dicToOk:d]                                 //dictionary强检查",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIHeader.h:173-191"
+    },
+    "255": {
+        "file_id": 26,
+        "content": "The code defines several macros for common operations on arrays, NSNumbers, and dictionaries. These macros are defined in the SMGUtils class. The array-related macros include checking if an array is empty or not, extracting elements from the array by index or in reverse order, removing elements at a specific index, and substring extraction. The number-related macros check if an NSNumber is valid and allow for default value handling. The dictionary-related macro checks if a dictionary is empty and performs a strong check on it.",
+        "type": "comment"
+    },
+    "256": {
+        "file_id": 26,
+        "content": "//AIPointer\n#define POINTERISOK(p) [SMGUtils pointerIsOk:p]                         //指针强检查\n#define PitIsValue(p) [NVHeUtil isValue:p]                              //是否稀疏码\n#define PitIsAlg(p) [NVHeUtil isAlg:p]                                  //是否概念\n#define PitIsFo(p) [NVHeUtil isFo:p]                                    //是否时序\n#define PitIsMv(p) [NVHeUtil isMv:p]                                    //是否价值\n#define PitIsAbs(p) [NVHeUtil isAbs:p]                                  //是否抽象节点\n//ISOK\n#define ISOK(o, c) [SMGUtils isOk:o class:c]                            //obj强检查 (object class)\n//NSData\n#define OBJ2DATA(obj) [NSKeyedArchiver archivedDataWithRootObject:obj]\n#define DATA2OBJ(data) [NSKeyedUnarchiver unarchiveObjectWithData:data]\n#define DATAS2OBJS(datas) [SMGUtils datas2Objs:datas]\n#define CopyByCoding(obj) DATA2OBJ(OBJ2DATA(obj))\n//指针转字符串\n#define Pit2FStr(p) [NVHeUtil getLightStr:p simple:false header:true]\n#define Pits2FStr(ps) [NVHeUtil getLightStr4Ps:ps simple:false header:true sep:@\",\"]\n#define Pits2FStr_MultiLine(ps) [NVHeUtil getLightStr4Ps:ps simple:false header:true sep:@\"\\n\"]",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIHeader.h:193-213"
+    },
+    "257": {
+        "file_id": 26,
+        "content": "This code defines various macros for pointer and object checks, NSData manipulation, and converting pointers to strings. The macros can be used for strong checking, verifying if a pointer represents a specific concept or data type, and converting objects to and from NSData. The code also includes functions for converting arrays of pointers into separate strings with different separators.",
+        "type": "comment"
+    },
+    "258": {
+        "file_id": 26,
+        "content": "#define Pit2SStr(p) [NVHeUtil getLightStr:p]\n#define Pits2SStr(ps) [NVHeUtil getLightStr4Ps:ps]\n//节点转字符串\n#define Alg2FStr(a) [NVHeUtil getLightStr:a.pointer simple:false header:true]\n#define Fo2FStr(f) [NVHeUtil getLightStr:f.pointer simple:false header:true]\n#define Mv2FStr(m) [NVHeUtil getLightStr:m.pointer simple:false header:true]\n#define AlgP2FStr(a_p) [NVHeUtil getLightStr:a_p simple:false header:true]\n#define FoP2FStr(f_p) [NVHeUtil getLightStr:f_p simple:false header:true]\n#define Mvp2Str(m_p) [NVHeUtil getLightStr:m_p simple:false header:true]\n//稀疏码值转字符串\n#define Data2FStr(data,at,ds) [NVHeUtil getLightStr_Value:data algsType:at dataSource:ds]\n//xxx转指针\n#define Ports2Pits(ports) [SMGUtils convertPointersFromPorts:ports]\n#define Nodes2Pits(nodes) [SMGUtils convertPointersFromNodes:nodes]\n#define TOModels2Pits(toModels) [TOUtils convertPointersFromTOModels:toModels]\n//Type转字符串\n#define ATType2Str(type) [NSLog_Extension convertATType2Desc:type]\n#define TOStatus2Str(status) [NSLog_Extension convertTOStatus2Desc:status]",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIHeader.h:215-237"
+    },
+    "259": {
+        "file_id": 26,
+        "content": "These macros define various functions to convert different types of data into strings, convert port and node pointers, and convert type descriptions. The code appears to be part of a larger utility library for converting between different data representations in an application.",
+        "type": "comment"
+    },
+    "260": {
+        "file_id": 26,
+        "content": "#define TIStatus2Str(status) [NSLog_Extension convertTIStatus2Desc:status]\n#define EffectStatus2Str(status) [NSLog_Extension convertEffectStatus2Desc:status]\n#define Class2Str(c) [NSLog_Extension convertClass2Desc:c]\n#define ClassName2Str(c) [NSLog_Extension convertClassName2Desc:c]\n#define Mvp2DeltaStr(mv_p) [NSLog_Extension convertMvp2DeltaDesc:mv_p]\n#define SceneType2Str(type) [NSLog_Extension convertSceneType2Desc:type simple:true]\n//Double转Str\n#define Double2Str_NDZ(value) [NSString double2Str_NoDotZero:value]\n//思维控制器相关转换\n#define Mvp2Delta(mv_p) [AINetUtils getDeltaFromMv:mv_p]\n#define Mvp2Score(mv_p,ratio) [AIScore score4MV:mv_p ratio:ratio]\n//短时记忆转字符串\n#define TOModel2Root2Str(sub) [TOModelVision cur2Root:sub]\n#define TOModel2Sub2Str(cur) [TOModelVision cur2Sub:cur]\n#define TOModel2Key(model) [TOUtils toModel2Key:model]\n//强训工具\n#define Queue(name) [RTQueueModel newWithName:name arg0:nil]\n#define Queue0(name,a0) [RTQueueModel newWithName:name arg0:a0]\n/**\n *  MARK:--------------------快捷建对象--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIHeader.h:238-263"
+    },
+    "261": {
+        "file_id": 26,
+        "content": "This code contains various macro definitions for converting different types of data into string format using NSLog_Extension and AIUtils functions. It also includes macros for converting MVP, scene type, TOModelVision, and RTQueueModel data. These macros provide convenient ways to convert and use different types of data in the codebase.",
+        "type": "comment"
+    },
+    "262": {
+        "file_id": 26,
+        "content": " */\n//NSArray\n//#define SMGArrayMake(arg) \\\n//NSMutableArray *array = [NSMutableArray arrayWithObject:arg];\\\n//va_list args;\\\n//va_start(args, arg);\\\n//id next = nil;\\\n//while ((next = va_arg(args,id))) {\\\n//[array addObject:next];\\\n//}\\\n//va_end(args);\\\n/**\n *  MARK:--------------------快捷访问对象--------------------\n */\n//2017.11.13后启用N8规则DOP架构;\n#define theNet [AINet sharedInstance]\n#define theTC [AIThinkingControl shareInstance]\n/**\n *  MARK:--------------------OutputObserverKey--------------------\n */\n//OutputObserverKey\n#define kOutputObserver   @\"kOutputObserver\"\n//OutputObjectKey (2021.02.05: 改为直接用OutputModel做obj);\n//#define kOOIdentify @\"identify\" //输出行为标识\n//#define kOOParam @\"param\"       //输出行为参数值\n//#define kOOType @\"type\"         //广播类型\n//#define kOOUseTime @\"useTime\"   //反馈需用时\n//Identify标识 (内核方)\n#define TEXT_RDS @\"TEXT_RDS\" //字符输出反射标识\n#define ANXIOUS_RDS @\"ANXIOUS_RDS\" //焦急情绪输出标识\n#define SATISFY_RDS @\"SATISFY_RDS\" //满意情绪输出标识\n/**\n *  MARK:--------------------AlgsType & DataSource--------------------\n */\n#define DefaultAlgsType @\" \"    //默认AlgsType",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIHeader.h:264-304"
+    },
+    "263": {
+        "file_id": 26,
+        "content": "This code defines several macros for accessing and defining different objects, keys, and identifiers used in the AIFoundation library. It also includes constants for various output types, such as text and emotional states like anxious or satisfied.",
+        "type": "comment"
+    },
+    "264": {
+        "file_id": 26,
+        "content": "#define DefaultDataSource @\" \"  //默认DataSource\n#define AlgNodeAlgsType(pId) STRFORMAT(@\"%ld\",(long)pId)   //概念节点AlgsType\n/**\n *  MARK:--------------------LOG--------------------\n */\n//日志默认header模式 (当前为首行显示)\n#define DefaultHeaderMode 2\n//当前类名\n#define FILENAME [[NSString stringWithUTF8String:__FILE__] lastPathComponent]\n//errorLog\n#define ELog(fmt, ...) NSLog((@\"<错误> \" fmt), ##__VA_ARGS__);\n//warnLog\n#define WLog(fmt, ...) NSLog((@\"<警告> \" fmt), ##__VA_ARGS__);\n//demoLog (Demo交互信息)\n#define DemoLog(fmt, ...) NSLog((@\"\\n******************************* \" fmt @\" *******************************\"), ##__VA_ARGS__);\n//titleLog (控制台日志组块title) (其实S为简化版,F为全版,I为输入期,O为输出期);\n#define ISTitleLog(title) IFTitleLog(title,@\"\")\n#define IFTitleLog(title,fmt, ...) [SMGUtils inTitle:title log:[NSString stringWithFormat:fmt, ##__VA_ARGS__] fileName:FILENAME]\n#define OSTitleLog(title) OFTitleLog(title,@\"\")\n#define OFTitleLog(title,fmt, ...) [SMGUtils outTitle:title log:[NSString stringWithFormat:fmt, ##__VA_ARGS__] fileName:FILENAME]",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIHeader.h:305-325"
+    },
+    "265": {
+        "file_id": 26,
+        "content": "This code defines constants for logging and data source. It includes macros for various log levels with customizable titles, allowing developers to easily add logging statements throughout their codebase.",
+        "type": "comment"
+    },
+    "266": {
+        "file_id": 26,
+        "content": "//groupLog (每轮循环之始可用)\n#define ISGroupLog(title) IFGroupLog(title,@\"\")\n#define IFGroupLog(title,fmt, ...) NSLog((@\"\\n\\n#########################################################################################################\\n                                                <\" title @\"> \\n#########################################################################################################\"fmt), ##__VA_ARGS__);\n//系统log (格式化)\n//20220515: 将NSLog拆分成NSLog+PrintLog (为了增加noNSLog开关功能);\n//#define NSLog(FORMAT, ...) fprintf(stderr,\"%s\",[[SMGUtils nsLogFormat:FILENAME line:__LINE__ protoLog:[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] headerMode:DefaultHeaderMode] UTF8String]);\n#define NSLog(FORMAT, ...) [SMGUtils checkPrintNSLog:FILENAME line:__LINE__ protoLog:[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] headerMode:DefaultHeaderMode]\n#define NSLog_CustomFileName(customFileName,FORMAT, ...) [SMGUtils checkPrintNSLog:customFileName line:__LINE__ protoLog:[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] headerMode:DefaultHeaderMode]",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIHeader.h:326-334"
+    },
+    "267": {
+        "file_id": 26,
+        "content": "This code defines macros for groupLog and NSLog with customizable titles, formats, and optionally a custom file name. It uses the SMGUtils class to check and print logs based on a \"noNSLog\" switch and provides default header formatting.",
+        "type": "comment"
+    },
+    "268": {
+        "file_id": 26,
+        "content": "#define PrintLog(log) fprintf(stderr,\"%s\",[log UTF8String]);\n//nsLog (自定义header模式)\n#define NSLog_Mode(mode,FORMAT, ...) fprintf(stderr,\"%s\",[[SMGUtils nsLogFormat:FILENAME line:__LINE__ protoLog:[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] headerMode:mode] UTF8String]);\n//heLog (持久化日志)\n#define HeLog(fmt, ...) [theApp.heLogView addLog:[NSString stringWithFormat:fmt, ##__VA_ARGS__]]\n//tipLog (UI弹出日志)\n#define TipLog(fmt, ...) [theApp setTipLog:[NSString stringWithFormat:fmt, ##__VA_ARGS__]]\n//allLog (系统 + 持久化 + UI弹出)\n#define AllLog(fmt, ...) [SMGUtils allLog:[NSString stringWithFormat:fmt, ##__VA_ARGS__]]\n/**\n *  MARK:--------------------LOG开关--------------------\n */\n#define Log4DemoWood false\n//测试模式 (功能说明: 把all关掉,然后仅会打印just中模块的日志; 使用说明: 用于测试某些模块时使用);\n#define LogJustPrintTCs @[@\"TCSolution\"]\n#define LogPrintAllTCs true\n//皮层\n#define Log4CortexAlgs false\n//输入思维\n#define Log4TCInput false\n//识别概念\n#define Log4MAlg true\n//模糊匹配\n#define Log4FuzzyAlg false\n//识别时序\n#define Log4MFo false\n//内类比\n#define Log4InAna false\n#define Log4InAnaGL(type) ((type == ATGreater || type == ATLess) && false)",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIHeader.h:335-364"
+    },
+    "269": {
+        "file_id": 26,
+        "content": "This code defines several macro functions for logging, allowing the user to choose different modes and levels of logging. The macros include PrintLog for standard error output, NSLog_Mode for customized header mode, HeLog for persistent log storage, TipLog for UI pop-up logs, and AllLog for system, persistent, and UI pop-up logs. The code also includes several flags to control which modules are logged based on test mode, cortex algorithms, TC input, concept recognition, fuzzy matching, time series recognition, and inner analogy.",
+        "type": "comment"
+    },
+    "270": {
+        "file_id": 26,
+        "content": "#define Log4InAnaHN(type) ((type == ATHav || type == ATNone) && false)\n//外类比\n#define Log4OutAna false\n#define Log4OutCansetAna true\n//方向索引\n#define Log4DirecRef true\n//外输入推进中循环\n#define Log4OPushM true\n#define Log4TIROPushM false\n//当前可决策任务:CanDecisionDemand;\n#define Log4CanDecisionDemand false\n//In反省\n#define Log4InRethink true\n#define Log4OutRethink true\n#define Log4Rethink true\n//解决方案条件满足\n#define Log4SceneIsOk false\n//S过滤器\n#define Log4SolutionFilter false\n//Score\n#define Log4Score false\n#define Log4Solution true\n#define Log4Solution_Slow true\n#define Log4Solution_Fast true\n//TCCanset日志开关\n#define Log4TCCanset false\n#define Log4GetCansetResult4R false\n#define Log4GetCansetResult4H true\n//AIRank日志开关\n#define Log4AIRank true\n#define Log4AIRankDebugMode false //Rank在BUG调试模式时的日志\n//MARK:===============================================================\n//MARK:                     < 系统模块开关 >\n//MARK:===============================================================\n//R决策模式\n#define Switch4RS true\n//P决策模式\n#define Switch4PS false\n//P任务开关 (20230301早没用P任务了,关掉)",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIHeader.h:365-409"
+    },
+    "271": {
+        "file_id": 26,
+        "content": "This code defines various logging conditions and settings for different modules within the AIHeader.h file. It enables or disables specific functionalities based on the specified log conditions. The code includes separate sections for analytics, input, output, decision-making, scoring, and system modules.",
+        "type": "comment"
+    },
+    "272": {
+        "file_id": 26,
+        "content": "#define Switch4PDemand false\n//快思考开关\n#define Switch4FastSolution false\n//行为再输入开关 (参考28133-1 & 28137-修复)\n#define Switch4IsOutReIn false\n//识别排名器开关 (参考28152-方案5)\n#define Switch4RecognitionRank false\n//matchRFos识别开关 (参考28185-todo1)\n#define Switch4RecognitionMatchRFos false\n//AITest开关\n#define Switch4AITest false\n//Canset识别开关\n//#define Switch4RecognitionCansetFo false\n//Canset类比开关\n#define Switch4AnalogyCansetFo true\n//惰性期开关 (参考29073-方案)\n#define Switch4DuoXinQi false\n//反馈反思识别开关,只要把它的重组关了,后面的识别也就关了 (参考30054)\n#define Switch4FeedbackRegroup false",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIHeader.h:410-428"
+    },
+    "273": {
+        "file_id": 26,
+        "content": "This code defines a series of switches that control various features and functionalities in the AI system. Each switch is associated with a specific feature or functionality and can be toggled on or off as needed, allowing for customization and debugging during development.",
+        "type": "comment"
+    },
+    "274": {
+        "file_id": 27,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIInput/AIInput.h",
+        "type": "filepath"
+    },
+    "275": {
+        "file_id": 27,
+        "content": "This code defines the AIInput class, which allows for the collection of various inputs including camera images, microphone audio, user text input, and custom input values. It also supports committing different types of inputs at the same time.",
+        "type": "summary"
+    },
+    "276": {
+        "file_id": 27,
+        "content": "//\n//  Input.h\n//  SMG_NothingIsAll\n//\n//  Created by 贾  on 2017/4/9.\n//  Copyright © 2017年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------输入(计算机视觉,听觉,文字,触觉,网络等)--------------------\n *  @过时废弃注释:\n *      1. 注意力对象有可能是一颗树;或者两颗树;或者注意力仅仅是树的大小;\n *      2. 注意力是可持续的;一次注意力,可以提交很多次数据;有时是声音;有时是图像;有时是大脑指定的属性值;\n *\n *  1,收集摄像头图片(图,文字)\n *  2,收集麦克风声音(音)\n *  3,收集用户输入的Text字符串(Text)\n *  4,收集摄像头视频do行为(视频行为)\n */\n@interface AIInput : NSObject\n+(void) commitText:(NSString*)text;\n+(void) commitIMV:(MVType)type from:(CGFloat)from to:(CGFloat)to;\n+(void) commitCustom:(CustomInputType)type value:(NSInteger)value;\n+(void) commitView:(UIView*)selfView targetView:(UIView*)targetView rect:(CGRect)rect;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIInput/AIInput.h:1-29"
+    },
+    "277": {
+        "file_id": 27,
+        "content": "This code defines the AIInput class, which allows for the collection of various inputs including camera images, microphone audio, user text input, and custom input values. It also supports committing different types of inputs at the same time.",
+        "type": "comment"
+    },
+    "278": {
+        "file_id": 28,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIInput/AIInput.m",
+        "type": "filepath"
+    },
+    "279": {
+        "file_id": 28,
+        "content": "The AIInput class contains methods for committing text, IMV type, and custom input. The text commitment method has been updated since 2017. Custom inputs are processed through AIReactorControl. It commits a view change from selfView to targetView within the specified rect in AIReactorControl.",
+        "type": "summary"
+    },
+    "280": {
+        "file_id": 28,
+        "content": "//\n//  Input.m\n//  SMG_NothingIsAll\n//\n//  Created by 贾  on 2017/4/9.\n//  Copyright © 2017年 XiaoGang. All rights reserved.\n//\n#import \"AIInput.h\"\n#import \"AIReactorControl.h\"\n@implementation AIInput\n+(void) commitText:(NSString*)text{\n    //2017.04\n    //[theThink commitUnderstandByShallowFromInput:text];//从input常规输入的浅度理解即可;(简单且错误,参考N4P2)\n    //2017.10.13修正,input->aiNet->funcModel->aiNet->awareness作预测对比(参考n7p6)\n    //[theNet commitString:text];\n    //2017.11.13修正,input->AIAwareness->AIThinkingControl->aiNet->...\n    //[theAIAwarenessControl commitInput:text];\n    //2017.12.15修正,参考Note9SMG软件架构3\n    [AIReactorControl commitInput:text];\n}\n/**\n *  MARK:--------------------提交mvType--------------------\n *  @params from : 0-10 (0为最饥,1为最饱)\n *  @params to : 0-10\n */\n+(void) commitIMV:(MVType)type from:(CGFloat)from to:(CGFloat)to{\n    [AIReactorControl commitIMV:type from:from to:to];\n}\n+(void) commitCustom:(CustomInputType)type value:(NSInteger)value{\n    [AIReactorControl commitCustom:type value:value];\n}\n+(void) commitView:(UIView*)selfView targetView:(UIView*)targetView rect:(CGRect)rect{",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIInput/AIInput.m:1-41"
+    },
+    "281": {
+        "file_id": 28,
+        "content": "AIInput class implementation file, contains methods to commit text, IMV type, and custom input. The text commitment method has been updated multiple times since its creation in 2017. Custom inputs are processed through AIReactorControl.",
+        "type": "comment"
+    },
+    "282": {
+        "file_id": 28,
+        "content": "    [AIReactorControl commitView:selfView targetView:targetView rect:rect];\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIInput/AIInput.m:42-45"
+    },
+    "283": {
+        "file_id": 28,
+        "content": "This code commits a view change from selfView to targetView within the specified rect in AIReactorControl.",
+        "type": "comment"
+    },
+    "284": {
+        "file_id": 29,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AIAbsCMVManager/AIAbsCMVManager.h",
+        "type": "filepath"
+    },
+    "285": {
+        "file_id": 29,
+        "content": "AIAbsCMVManager is a class that creates abstract cmv nodes by combining two or more cmv nodes and a macro node. It notes that absCmvNode doesn't have collective abstraction and has no higher-order abstractions, relying on the abstraction of time sequence nodes. The code provides two methods to create these abstract nodes based on different input parameters.",
+        "type": "summary"
+    },
+    "286": {
+        "file_id": 29,
+        "content": "//\n//  AIAbsCMVManager.h\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/7/27.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------生成AINetAbsCMVNode--------------------\n *  1. 抽象cmv节点不需要去重,(昨天三分饿和今天三分饿,是两个节点)\n *  2. cmv相较普通node数据,是快消品;\n *\n *  注: 因为absCmvNode是不去重的;\n *  > 1. 所以,absCmvNode不具有集体性抽象;\n *  > 2. 所以,absCmvNode的更高维抽象不存在;(不存在饿的饿的饿)(爱的爱的爱)\n *  > 3. 所以,absCmvNode的抽象是依托于\"前因时序节点\"的抽象的;\n */\n@class AIAbsCMVNode,AIKVPointer;\n@interface AIAbsCMVManager : NSObject\n/**\n *  MARK:--------------------在两个cmvNode基础上构建抽象--------------------\n *  @params absFo_p : 抽象宏节点(前因)\n *  @params aMv_p : cmv节点A\n *  @params bMv_p : cmv节点B\n *  注: 融合方式,可参考:n16p1\n */\n-(AIAbsCMVNode*) create:(AIKVPointer*)absFo_p aMv_p:(AIKVPointer*)aMv_p bMv_p:(AIKVPointer*)bMv_p ;\n-(AIAbsCMVNode*) create:(AIKVPointer*)absFo_p conMvPs:(NSArray*)conMv_ps;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIAbsCMVManager/AIAbsCMVManager.h:1-35"
+    },
+    "287": {
+        "file_id": 29,
+        "content": "AIAbsCMVManager is a class that creates abstract cmv nodes by combining two or more cmv nodes and a macro node. It notes that absCmvNode doesn't have collective abstraction and has no higher-order abstractions, relying on the abstraction of time sequence nodes. The code provides two methods to create these abstract nodes based on different input parameters.",
+        "type": "comment"
+    },
+    "288": {
+        "file_id": 30,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AIAbsCMVManager/AIAbsCMVManager.m",
+        "type": "filepath"
+    },
+    "289": {
+        "file_id": 30,
+        "content": "The create function in AIAbsCMVManager validates input, determines algorithm type and data source, constructs a General object, and creates a new AIAbsCMVNode by sorting, checking duplicates, inserting ports, relating to conMvs, and updating references.",
+        "type": "summary"
+    },
+    "290": {
+        "file_id": 30,
+        "content": "//\n//  AIAbsCMVManager.m\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/7/27.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"AIAbsCMVManager.h\"\n#import \"AINetAbsCMVUtil.h\"\n/**\n *  MARK:--------------------生成AINetAbsCMVNode--------------------\n */\n@implementation AIAbsCMVManager\n-(AIAbsCMVNode*) create:(AIKVPointer*)absFo_p aMv_p:(AIKVPointer*)aMv_p bMv_p:(AIKVPointer*)bMv_p {\n    //1. 数据\n    BOOL valid = ISOK(aMv_p, AIKVPointer.class) && ISOK(bMv_p, AIKVPointer.class) && [STRTOOK(aMv_p.algsType) isEqualToString:bMv_p.algsType];\n    if (!valid) {\n        return nil;\n    }\n    return [self create:absFo_p conMvPs:@[aMv_p,bMv_p]];\n}\n-(AIAbsCMVNode*) create:(AIKVPointer*)absFo_p conMvPs:(NSArray*)conMv_ps{\n    //1. 数据\n    if (!ARRISOK(conMv_ps)) {\n        return nil;\n    }\n    //2. 取algsType & dataSource (每一个conMv都一致,则继承,否则使用cMvNoneIdent)\n    NSString *algsType = nil;\n    NSString *dataSource = nil;\n    for (AIKVPointer *mv_p in conMv_ps) {\n        if (algsType == nil) {\n            algsType = mv_p.algsType;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIAbsCMVManager/AIAbsCMVManager.m:1-39"
+    },
+    "291": {
+        "file_id": 30,
+        "content": "Class AIAbsCMVManager implements a function create:, which takes two AIKVPointer objects as arguments and returns an instance of AIAbsCMVNode. The function first checks if the input data is valid and if the algType of both pointers match. If not valid or types don't match, it returns nil. If valid, it proceeds to call another create method with a NSArray of AIKVPointer objects. The algorithm type and datasource are determined by iterating through each pointer in the array and taking the first non-nil value encountered.",
+        "type": "comment"
+    },
+    "292": {
+        "file_id": 30,
+        "content": "        }else if(![algsType isEqualToString:mv_p.algsType]){\n            algsType = cMvNoneIdent;\n        }\n        if (dataSource == nil) {\n            dataSource = mv_p.dataSource;\n        }else if(![dataSource isEqualToString:mv_p.dataSource]){\n            dataSource = cMvNoneIdent;\n        }\n    }\n    //3. 将conMv_ps转换为conMvs\n    NSArray *conMvs = [SMGUtils searchNodes:conMv_ps];\n    //4. 取absUrgentTo & absDelta;\n    NSInteger absUrgentTo = [AINetAbsCMVUtil getAbsUrgentTo:conMvs];\n    NSInteger absDelta = [AINetAbsCMVUtil getAbsDelta:conMvs];\n    AIKVPointer *urgentTo_p = [theNet getNetDataPointerWithData:@(absUrgentTo) algsType:algsType dataSource:dataSource isOut:false];\n    AIKVPointer *delta_p = [theNet getNetDataPointerWithData:@(absDelta) algsType:algsType dataSource:dataSource isOut:false];\n    //5. 构建返回\n    return [self create_General:absFo_p conMvs:conMvs at:algsType ds:dataSource urgentTo_p:urgentTo_p delta_p:delta_p];\n}\n/**\n *  MARK:--------------------通用absMv构建方法--------------------\n *  @param absFo_p  : 指向此absMv的时序指针;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIAbsCMVManager/AIAbsCMVManager.m:40-65"
+    },
+    "293": {
+        "file_id": 30,
+        "content": "The code checks the algsType and dataSource to determine if they match the previous values. If not, it sets them to \"cMvNoneIdent\". It then retrieves the conMvs from conMv_ps, gets the absUrgentTo and absDelta using AINetAbsCMVUtil. Finally, it creates NetDataPointers for urgentTo_p and delta_p, and constructs a General object using create_General method with passed parameters.",
+        "type": "comment"
+    },
+    "294": {
+        "file_id": 30,
+        "content": " *  @param conMvs   : 此absMv的具象价值节点们;\n *  @version\n *      2023.08.09: 支持全局防重 (参考30095-方案3);\n */\n-(AIAbsCMVNode*) create_General:(AIKVPointer*)absFo_p conMvs:(NSArray*)conMvs at:(NSString*)at ds:(NSString*)ds urgentTo_p:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p{\n    //1. 数据\n    if (!ARRISOK(conMvs) || !urgentTo_p || !delta_p) {\n        return nil;\n    }\n    at = STRTOOK(at);\n    ds = STRTOOK(ds);\n    NSArray *content_ps = @[urgentTo_p, delta_p];\n    NSArray *sort_ps = [SMGUtils sortPointers:content_ps];\n    //2. 全局防重;\n    AIAbsCMVNode *result = [AINetIndexUtils getAbsoluteMatching_General:content_ps sort_ps:sort_ps except_ps:nil getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {\n        return [SMGUtils filterArr:[AINetUtils refPorts_All4Value:item_p] checkValid:^BOOL(AIPort *item) {\n            return [kPN_ABS_CMV_NODE isEqualToString:item.target_p.folderName];\n        }];\n    } at:at ds:ds type:ATDefault];\n    //3. 无则新构建;\n    if (!ISOK(result, AICMVNodeBase.class)) {\n        result = [[AIAbsCMVNode alloc] init];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIAbsCMVManager/AIAbsCMVManager.m:66-89"
+    },
+    "295": {
+        "file_id": 30,
+        "content": "This method creates a new AIAbsCMVNode object, optionally using existing nodes to avoid duplicates. The input parameters include an array of value nodes (conMvs), their pointers (absFo_p), and other related information like at, ds, urgentTo_p, delta_p. The method first checks the validity of these inputs and then sorts them for potential duplicate checking. It also utilizes AINetIndexUtils to retrieve an existing node or create a new one if none are found.",
+        "type": "comment"
+    },
+    "296": {
+        "file_id": 30,
+        "content": "        result.pointer = [SMGUtils createPointer:kPN_ABS_CMV_NODE algsType:at dataSource:ds isOut:false type:ATDefault];\n        result.urgentTo_p = urgentTo_p;\n        result.delta_p = delta_p;\n    }\n    //4. 抽具象关联插线 & 存储抽具象节点;\n    [AINetUtils insertRefPorts_AllMvNode:result value_p:result.urgentTo_p difStrong:1];//引用插线\n    [AINetUtils insertRefPorts_AllMvNode:result value_p:result.delta_p difStrong:1];//引用插线\n    [AINetUtils relateMvAbs:result conNodes:conMvs isNew:true];\n    //4. 方向索引\n    NSInteger indexStrong = [AINetAbsCMVUtil getDefaultStrong_Index:result conMvs:conMvs];\n    [theNet setMvNodeToDirectionReference:result difStrong:indexStrong];\n    return result;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIAbsCMVManager/AIAbsCMVManager.m:90-107"
+    },
+    "297": {
+        "file_id": 30,
+        "content": "Creates a pointer and assigns values to urgentTo_p and delta_p. Inserts reference ports for the result, relates the result with given conMvs, sets default strong index, and updates the direction reference in the net. Returns the result.",
+        "type": "comment"
+    },
+    "298": {
+        "file_id": 31,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AIAbsCMVManager/AINetAbsCMVUtil.h",
+        "type": "filepath"
+    },
+    "299": {
+        "file_id": 31,
+        "content": "This file, AINetAbsCMVUtil.h, defines a class for various methods related to abstracting and working with motion vectors (mvNodes). It provides functions to get the absolute urgentTo and delta values of two mv nodes, as well as to calculate the initial direction index strength of an abstract mv. This file has undergone changes over time, including updates to how the default strong index is determined.",
+        "type": "summary"
+    }
+}

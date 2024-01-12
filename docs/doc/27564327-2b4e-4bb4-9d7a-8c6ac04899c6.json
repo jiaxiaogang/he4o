@@ -1,0 +1,10 @@
+{
+    "summary": "This code is for creating a new instance of AIMatchCansetModel, initializing its matchFo and indexDic properties from provided parameters.",
+    "details": [
+        {
+            "comment": "This code is for creating a new instance of AIMatchCansetModel, initializing its matchFo and indexDic properties from provided parameters.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIMatchCansetModel.m\":0-19",
+            "content": "//\n//  AIMatchCansetModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/3/29.\n//  Copyright \u00a9 2023\u5e74 XiaoGang. All rights reserved.\n//\n#import \"AIMatchCansetModel.h\"\n@implementation AIMatchCansetModel\n+(AIMatchCansetModel*) newWithMatchFo:(AIFoNodeBase*)matchFo indexDic:(NSDictionary*)indexDic {\n    AIMatchCansetModel *model = [[AIMatchCansetModel alloc] init];\n    model.matchFo = matchFo;\n    model.indexDic = indexDic;\n    return model;\n}\n@end"
+        }
+    ]
+}

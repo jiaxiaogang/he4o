@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines a class `AITransferModel` that represents the relationship between a scene and a canset in an AI system. The model is initialized with a scene and a canset, both of which are pointers to some AI data structure (`AIKVPointer`). The purpose of this model is to maintain a correspondence between the scene and canset, likely for analysis or processing purposes.",
+    "details": [
+        {
+            "comment": "This code defines a class `AITransferModel` that represents the relationship between a scene and a canset in an AI system. The model is initialized with a scene and a canset, both of which are pointers to some AI data structure (`AIKVPointer`). The purpose of this model is to maintain a correspondence between the scene and canset, likely for analysis or processing purposes.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCTransfer/AITransferModel.h\":0-21",
+            "content": "//\n//  AITransferModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/5/18.\n//  Copyright \u00a9 2023\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------canset\u4e0escene\u5bf9\u5e94\u6a21\u578b--------------------\n *      2023.05.18: \u968f\u7740\u8fc1\u79fb\u6267\u884c,canset\u4e0escene\u6539\u4e3a\u5bf9\u5e94\u6a21\u578b\u7ed3\u679c,\u907f\u514d\u540e\u9762\u66f4\u65b0eff+1\u65f6\u5bf9\u5e94\u9519 (\u53c2\u800329095-\u4fee\u590d);\n */\n@interface AITransferModel : NSObject <NSCoding>\n+(AITransferModel*) newWithScene:(AIKVPointer*)scene canset:(AIKVPointer*)canset;\n@property (strong, nonatomic) AIKVPointer *scene;\n@property (strong, nonatomic) AIKVPointer *canset;\n@end"
+        }
+    ]
+}

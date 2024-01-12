@@ -1,0 +1,10 @@
+{
+    "summary": "The code is implementing a class AISceneModel that provides methods to create new scene models with base, type, and scene parameters. It also has getter and setter methods for subs, getRoot, and equality checking.",
+    "details": [
+        {
+            "comment": "The code is implementing a class AISceneModel that provides methods to create new scene models with base, type, and scene parameters. It also has getter and setter methods for subs, getRoot, and equality checking.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScene/AISceneModel.m\":0-39",
+            "content": "//\n//  AISceneModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/4/11.\n//  Copyright \u00a9 2023\u5e74 XiaoGang. All rights reserved.\n//\n#import \"AISceneModel.h\"\n@implementation AISceneModel\n+(AISceneModel*) newWithBase:(AISceneModel*)base type:(SceneType)type scene:(AIKVPointer*)scene cutIndex:(NSInteger)cutIndex {\n    AISceneModel *result = [[AISceneModel alloc] init];\n    result.type = type;\n    if (base) [base.subs addObject:result];\n    result.base = base;\n    result.scene = scene;\n    result.cutIndex = cutIndex;\n    return result;\n}\n-(NSMutableArray *)subs {\n    if (!_subs) _subs = [[NSMutableArray alloc] init];\n    return _subs;\n}\n-(AISceneModel*) getRoot {\n    if (self.type == SceneTypeI) {\n        return self;\n    }\n    return [self.base getRoot];\n}\n-(BOOL) isEqual:(AISceneModel*)object{\n    if (ISOK(object, AISceneModel.class)) return [self.scene isEqual:object.scene];\n    return false;\n}\n@end"
+        }
+    ]
+}

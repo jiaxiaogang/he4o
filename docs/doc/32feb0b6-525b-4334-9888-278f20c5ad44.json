@@ -1,0 +1,10 @@
+{
+    "summary": "Header file for XGConfig class, provides instance method for accessing and managing configuration. Contains constants for specific configuration keys and paths. Offers methods to initialize and respond to configuration changes. Provides read and write functionality for config values.",
+    "details": [
+        {
+            "comment": "Header file for XGConfig class, provides instance method for accessing and managing configuration. Contains constants for specific configuration keys and paths. Offers methods to initialize and respond to configuration changes. Provides read and write functionality for config values.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/XGConfig/XGConfig.h\":0-34",
+            "content": "//\n//  XGConfig.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/8/25.\n//  Copyright \u00a9 2022\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n#define xgConfigPath @\"xgConfig\"\n#define xgConfigFile @\"config.txt\"\n#define xgConfigKeyZiWuMode @\"\u690d\u7269\u6a21\u5f0f\"\n#define xgConfigKeyTest @\"\u8fd8\u725b\u903c\u4e0d?\"\n#define xgConfigKeyPauseRLT @\"\u6682\u505c\u5f3a\u5316\u8bad\u7ec3\"\n@interface XGConfig : NSObject\n+(XGConfig*) instance;\n/**\n *  MARK:--------------------\u521d\u59cb\u914d\u7f6e--------------------\n */\n-(void) initConfig;\n/**\n *  MARK:--------------------\u54cd\u5e94\u914d\u7f6e\u53d8\u5316\u5230\u7cfb\u7edf--------------------\n */\n-(void) responseXGConfig2HE;\n//\u8bfb\u5199\u914d\u7f6e\n-(id) valueForKey:(NSString*)key reloadIden:(NSString*)reloadIden;\n-(void) setValue:(id)value forKey:(NSString*)key;\n@end"
+        }
+    ]
+}

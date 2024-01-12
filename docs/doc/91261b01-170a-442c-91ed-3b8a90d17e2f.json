@@ -1,0 +1,15 @@
+{
+    "summary": "The code updates SPEFF of an AI frame based on its abstract representation, prepares ports, checks execution conditions and maps/executes the target frame accordingly.",
+    "details": [
+        {
+            "comment": "This code updates the SPEFF (Speech Effector) of a given AI frame based on its abstract representation. It prepares the abstract ports, checks if it's the last index to execute, and either executes directly or maps the current index to the target abstract frame for execution.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRethink/TCRethinkUtil.m\":0-29",
+            "content": "//\n//  TCRethinkUtil.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/4/20.\n//  Copyright \u00a9 2023\u5e74 XiaoGang. All rights reserved.\n//\n#import \"TCRethinkUtil.h\"\n@implementation TCRethinkUtil\n/**\n *  MARK:--------------------\u62bd\u8c61\u4e5f\u66f4\u65b0SPEFF (\u53c2\u800329069-todo11.4 & todo11.5)--------------------\n *  @param curFo : \u5f53\u524d\u6b63\u5728SPEFF\u7684fo (\u672c\u65b9\u6cd5\u5c31\u662f\u53d6\u5b83\u7684\u62bd\u8c61);\n *  @param curFoIndex : \u5f53\u524d\u6b63\u5728\u5bf9fo\u7684\u6b64\u4e0b\u6807\u4e0b\u7684\u5e27\u6267\u884c\u66f4\u65b0SPEFF;\n */\n+(void) spEff4Abs:(AIFoNodeBase*)curFo curFoIndex:(NSInteger)curFoIndex itemRunBlock:(void(^)(AIFoNodeBase *absFo,NSInteger absIndex))itemRunBlock {\n    //1. \u6570\u636e\u51c6\u5907;\n    NSArray *absPorts = [AINetUtils absPorts_All:curFo];\n    for (AIPort *absPort in absPorts) {\n        //2. P: mv\u662f\u76ee\u6807\u5e27\u7684: \u76f4\u63a5\u6267\u884c;\n        if (curFoIndex == curFo.count) {\n            AIFoNodeBase *absFo = [SMGUtils searchNode:absPort.target_p];\n            itemRunBlock(absFo,absFo.count);\n        }\n        //3. R: \u7406\u6027\u76ee\u6807\u5e27\u65f6: \u5224\u65adindexDic\u6620\u5c04\u5230\u76ee\u6807\u5e27\u518d\u6267\u884c;\n        else {\n            NSDictionary *indexDic = [curFo getAbsIndexDic:absPort.target_p];\n            NSNumber *absIndex = ARR_INDEX([indexDic allKeysForObject:@(curFoIndex)], 0);"
+        },
+        {
+            "comment": "This code snippet checks if the target frame mapping is valid and if so, executes a block of code using the absolute frame node and index.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRethink/TCRethinkUtil.m\":30-39",
+            "content": "            if (absIndex) {\n                //4. \u76ee\u6807\u5e27\u6620\u5c04\u6709\u6548 => \u6267\u884c;\n                AIFoNodeBase *absFo = [SMGUtils searchNode:absPort.target_p];\n                itemRunBlock(absFo,absIndex.integerValue);\n            }\n        }\n    }\n}\n@end"
+        }
+    ]
+}

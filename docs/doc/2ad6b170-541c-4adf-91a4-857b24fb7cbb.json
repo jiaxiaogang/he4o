@@ -1,0 +1,10 @@
+{
+    "summary": "This code is a README for the \"ThoughtVision2\" software, explaining that it's an iteration of the previous version focused on visualizing and animating multiple frames of working memory trees. It also supports recording, playback, and storage functionality, as well as UI visualization of the working memory trees.",
+    "details": [
+        {
+            "comment": "This code is a README for the \"ThoughtVision2\" software, explaining that it's an iteration of the previous version focused on visualizing and animating multiple frames of working memory trees. It also supports recording, playback, and storage functionality, as well as UI visualization of the working memory trees.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/TOMVision2/README.md\":0-10",
+            "content": "#  \u601d\u7ef4\u53ef\u89c6\u5316\n> \u672c\u6b21v2\u8fed\u4ee3\u652f\u6301\u4e86\u591a\u5e27\u5de5\u4f5c\u8bb0\u5fc6\u6811,\n> \u56e0\u4e3a\u6574\u4e2a\u601d\u7ef4\u87ba\u65cb\u5c31\u662f\u5728\u64cd\u4f5c\u5de5\u4f5c\u8bb0\u5fc6\u6811\u7684\u6625\u751f\u590f\u957f\u79cb\u6536\u51ac\u85cf\n> \u6240\u4ee5\u5de5\u4f5c\u8bb0\u5fc6\u6811\u7684\u591a\u5e27\u53ef\u89c6\u5316\u5c31=\u601d\u7ef4\u53ef\u89c6\u5316;\n#### \u539f\u672cv1\u7248\u672c\u662f\u505a\u5de5\u4f5c\u8bb0\u5fc6\u6811\u53ef\u89c6\u5316\u7684,\n#### \u73b0\u5728v2\u7248\u672c\u5927\u6539\u7248;\n1. \u652f\u6301\u5f55\u5236\u591a\u5e27\u5de5\u4f5c\u8bb0\u5fc6\u6811,\u5e76\u52a8\u753b\u5c55\u793a\u5176\u66f4\u65b0\u53d8\u5316;\n2. \u652f\u6301\u64ad\u653e,\u5b58\u50a8\u4e3a\u5f55\u5236\u6587\u4ef6\u7b49;\n3. \u652f\u6301UI\u53ef\u89c6\u5316\u5de5\u4f5c\u8bb0\u5fc6\u6811;"
+        }
+    ]
+}

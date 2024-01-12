@@ -1,0 +1,10 @@
+{
+    "summary": "This code is the main entry point for the iOS app \"SMG_NothingIsAll\". It imports UIKit and AppDelegate header files, initializes an autorelease pool, and calls UIApplicationMain to launch the app.",
+    "details": [
+        {
+            "comment": "This code is the main entry point for the iOS app \"SMG_NothingIsAll\". It imports UIKit and AppDelegate header files, initializes an autorelease pool, and calls UIApplicationMain to launch the app.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/main.m\":0-15",
+            "content": "//\n//  main.m\n//  SMG_NothingIsAll\n//\n//  Created by \u8d3e  on 2017/4/7.\n//  Copyright \u00a9 2017\u5e74 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n#import \"AppDelegate.h\"\nint main(int argc, char * argv[]) {\n    @autoreleasepool {\n        return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));\n    }\n}"
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines a class RTQueueModel in the header file RTQueueModel.h, and provides an initializer method newWithName:arg0: that creates an instance of the class with specified name and arg0 values.",
+    "details": [
+        {
+            "comment": "This code defines a class RTQueueModel in the header file RTQueueModel.h, and provides an initializer method newWithName:arg0: that creates an instance of the class with specified name and arg0 values.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/RLTrainer/Model/RTQueueModel.m\":0-19",
+            "content": "//\n//  RTQueueModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/2/12.\n//  Copyright \u00a9 2023\u5e74 XiaoGang. All rights reserved.\n//\n#import \"RTQueueModel.h\"\n@implementation RTQueueModel\n+(RTQueueModel*) newWithName:(NSString*)name arg0:(id)arg0 {\n    RTQueueModel *result = [[RTQueueModel alloc] init];\n    result.name = name;\n    result.arg0 = arg0;\n    return result;\n}\n@end"
+        }
+    ]
+}

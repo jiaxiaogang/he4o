@@ -1,0 +1,10 @@
+{
+    "summary": "This code file, XGLabCell.h, is part of the SMG_NothingIsAll project and is written by jia on April 23, 2022. It imports UIKit and defines a UITableViewCell subclass called XGLabCell with a setText:color:font method for customization.",
+    "details": [
+        {
+            "comment": "This code file, XGLabCell.h, is part of the SMG_NothingIsAll project and is written by jia on April 23, 2022. It imports UIKit and defines a UITableViewCell subclass called XGLabCell with a setText:color:font method for customization.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/XGDebug/XGLabCell.h\":0-14",
+            "content": "//\n//  XGLabCell.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/4/23.\n//  Copyright \u00a9 2022\u5e74 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n@interface XGLabCell : UITableViewCell\n-(void) setText:(NSString*)text color:(UIColor*)color font:(CGFloat)font;\n@end"
+        }
+    ]
+}

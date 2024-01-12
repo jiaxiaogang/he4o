@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines the NSString category with MD5 encryption and converting double to string functions.",
+    "details": [
+        {
+            "comment": "This code defines the NSString category with MD5 encryption and converting double to string functions.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Extension/NSString+Extension.h\":0-22",
+            "content": "//\n//  NSString+Extension.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2018/12/29.\n//  Copyright \u00a9 2018\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface NSString (MD5)\n/**\n *  md5\u52a0\u5bc6\u7684\u5b57\u7b26\u4e32\n */\n+(NSString*) md5:(NSString *)str;\n/**\n *  MARK:-------------------- \u622a\u6389\u6d6e\u70b9\u6570\u5b57\u7b26\u4e32\u540e\u9762\u7684\u591a\u4f590--------------------\n */\n+(NSString*) double2Str_NoDotZero:(double)value;\n@end"
+        }
+    ]
+}

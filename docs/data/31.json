@@ -1,0 +1,540 @@
+{
+    "3100": {
+        "file_id": 323,
+        "content": "//\n//  TVTimeLine.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/29.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n/**\n *  MARK:--------------------树生长时间线--------------------\n */\n@interface TVTimeLine : UIView\n/**\n *  MARK:--------------------曲线流程 List<NSValue(CGPoint)>--------------------\n *  @desc 用于绘制\"树\"生长时间线;\n */\n@property (strong, nonatomic) NSArray *bezierPoints;\n-(void)setData:(CGFloat)scale;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Line/TVTimeLine.h:1-23"
+    },
+    "3101": {
+        "file_id": 323,
+        "content": "This code defines a UIView class named TVTimeLine with a bezierPoints property, which is an array of NSValue(CGPoint) used for drawing a \"tree\" growth timeline. The setData method takes a scale parameter and can be used to update the view.",
+        "type": "comment"
+    },
+    "3102": {
+        "file_id": 324,
+        "content": "/ThirdParty/TOMVision2/Line/TVTimeLine.m",
+        "type": "filepath"
+    },
+    "3103": {
+        "file_id": 324,
+        "content": "This code sets up a customizable curve line using TVTimeLine class, with width and color adjustable. Updates line width based on scale value, triggers redraw with refreshDisplay method.",
+        "type": "summary"
+    },
+    "3104": {
+        "file_id": 324,
+        "content": "//\n//  TVTimeLine.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/29.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import \"TVTimeLine.h\"\n#define MaxLineWidth 2.0f\n#define MinLineWidth 0.2f\n@interface TVTimeLine ()\n@property (assign, nonatomic) CGFloat lineWidth;\n@end\n@implementation TVTimeLine\n- (void)drawRect:(CGRect)rect {\n    //1. 数据准备;\n    [super drawRect:rect];\n    self.bezierPoints = ARRTOOK(self.bezierPoints);\n    [UIColor.greenColor set];\n    //2. 生成贝塞尔曲线\n    UIBezierPath *path = [UIBezierPath bezierPath];\n    for (NSInteger i = 0; i < self.bezierPoints.count; i++) {\n        NSValue *item = self.bezierPoints[i];\n        CGPoint point = [item CGPointValue];\n        if (i == 0) {\n            [path moveToPoint:point];\n        }else{\n            //a. 前一点\n            CGPoint startPt = [[self.bezierPoints objectAtIndex: i-1] CGPointValue];\n            //b. 控制点\n            CGPoint cPt1, cPt2;\n            if(ABS(startPt.x - point.x) > ABS(startPt.y - point.y)) {\n                cPt1 = (CGPoint){(startPt.x + point.x)/2, startPt.y};",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Line/TVTimeLine.m:1-43"
+    },
+    "3105": {
+        "file_id": 324,
+        "content": "Code is importing TVTimeLine.h, defining MaxLineWidth and MinLineWidth constants, creating an interface for TVTimeLine class with a lineWidth property, implementing the drawRect method of TVTimeLine to prepare data, generate a UIBezierPath by iterating through bezierPoints array and setting the color to green.",
+        "type": "comment"
+    },
+    "3106": {
+        "file_id": 324,
+        "content": "                cPt2 = (CGPoint){cPt1.x, point.y};\n            } else {\n                cPt1 = (CGPoint){startPt.x, (startPt.y + point.y)/2};\n                cPt2 = (CGPoint){point.x, cPt1.y};\n            }\n            //3. 添加曲线点\n            [path addCurveToPoint:point controlPoint1:cPt1 controlPoint2:cPt2];\n        }\n    }\n    //3. 绘制\n    path.lineWidth = self.lineWidth > 0 ? self.lineWidth : MaxLineWidth;\n    path.lineCapStyle = kCGLineCapRound; //终点处理\n    path.lineJoinStyle = kCGLineJoinBevel; //线条拐角\n    [path stroke];\n}\n-(void)setData:(CGFloat)scale{\n    self.lineWidth = MAX(MinLineWidth, MIN(MaxLineWidth, 6.0f / scale));\n    [self refreshDisplay];\n}\n-(void) refreshDisplay{\n    [self setNeedsDisplay];\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Line/TVTimeLine.m:44-71"
+    },
+    "3107": {
+        "file_id": 324,
+        "content": "This code sets up and draws a curve line based on the input points. The path's width, cap style, and join style are customizable. The `setData` method updates the line width based on a given scale value and `refreshDisplay` method triggers a redraw of the view.",
+        "type": "comment"
+    },
+    "3108": {
+        "file_id": 325,
+        "content": "/ThirdParty/TOMVision2/Model/TOMVisionItemModel.h",
+        "type": "filepath"
+    },
+    "3109": {
+        "file_id": 325,
+        "content": "This is a header file for the TOMVisionItemModel class, which represents single frame TOModel data. It includes properties like loopId (current loop Id) and roots (snapshot of DemandManager's loopCache).",
+        "type": "summary"
+    },
+    "3110": {
+        "file_id": 325,
+        "content": "//\n//  TOMVisionItemModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/15.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------用于存单帧TOModel数据--------------------\n */\n@interface TOMVisionItemModel : NSObject <NSCoding>\n@property (assign, nonatomic) NSInteger loopId; //当前循环Id (自增);\n@property (strong, nonatomic) NSArray *roots;   //当前帧在DemandManager中的loopCache快照;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Model/TOMVisionItemModel.h:1-19"
+    },
+    "3111": {
+        "file_id": 325,
+        "content": "This is a header file for the TOMVisionItemModel class, which represents single frame TOModel data. It includes properties like loopId (current loop Id) and roots (snapshot of DemandManager's loopCache).",
+        "type": "comment"
+    },
+    "3112": {
+        "file_id": 326,
+        "content": "/ThirdParty/TOMVision2/Model/TOMVisionItemModel.m",
+        "type": "filepath"
+    },
+    "3113": {
+        "file_id": 326,
+        "content": "This code is for the `TOMVisionItemModel` class in Objective-C, implementing the NSCoding protocol to support archiving and unarchiving of instances. The class has two methods: `initWithCoder:` to initialize an object with decoded data from a coder, and `encodeWithCoder:` to encode an object's state into a coder for later retrieval.",
+        "type": "summary"
+    },
+    "3114": {
+        "file_id": 326,
+        "content": "//\n//  TOMVisionItemModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/15.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import \"TOMVisionItemModel.h\"\n@implementation TOMVisionItemModel\n/**\n *  MARK:--------------------NSCoding--------------------\n */\n- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {\n    self = [super init];\n    if (self) {\n        self.roots = [aDecoder decodeObjectForKey:@\"roots\"];\n        self.loopId = [aDecoder decodeIntegerForKey:@\"loopId\"];\n    }\n    return self;\n}\n- (void)encodeWithCoder:(NSCoder *)aCoder {\n    [aCoder encodeObject:self.roots forKey:@\"roots\"];\n    [aCoder encodeInteger:self.loopId forKey:@\"loopId\"];\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Model/TOMVisionItemModel.m:1-30"
+    },
+    "3115": {
+        "file_id": 326,
+        "content": "This code is for the `TOMVisionItemModel` class in Objective-C, implementing the NSCoding protocol to support archiving and unarchiving of instances. The class has two methods: `initWithCoder:` to initialize an object with decoded data from a coder, and `encodeWithCoder:` to encode an object's state into a coder for later retrieval.",
+        "type": "comment"
+    },
+    "3116": {
+        "file_id": 327,
+        "content": "/ThirdParty/TOMVision2/Panel/TVPanelView.h",
+        "type": "filepath"
+    },
+    "3117": {
+        "file_id": 327,
+        "content": "TVPanelView.h is a header file for the TVPanelView class, which is a UIView subclass representing a playback control panel. It has properties including an array of TOMVisionItemModel objects, a delegate, and a settingWindow. The class provides methods such as updateFrame() and getModel:complete: to interact with the view's data and functionality. The stop property is used for controlling the view's operation.",
+        "type": "summary"
+    },
+    "3118": {
+        "file_id": 327,
+        "content": "//\n//  TVPanelView.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/18.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n/**\n *  MARK:--------------------播放控制面板--------------------\n */\n@protocol TVPanelViewDelegate <NSObject>\n-(void) panelPlay:(NSInteger)changeIndex;\n-(void) panelCloseBtnClicked;\n-(void) panelScaleChanged:(CGFloat)scale;\n@end\n@class TOMVisionItemModel,TVSettingWindow;\n@interface TVPanelView : UIView\n@property (strong, nonatomic) NSMutableArray *models;   //所有帧数据 List<TOMVisionItemModel> (2023.07.17: 怀疑此处需要线程安全,等闪退时再来加)\n@property (weak, nonatomic) id<TVPanelViewDelegate> delegate;//notnull\n@property (assign, nonatomic) BOOL stop;                //功能开关\n@property (strong, nonatomic) TVSettingWindow *settingWindow;\n-(void) updateFrame;\n-(void) getModel:(NSInteger)changeIndex complete:(void(^)(TOMVisionItemModel*,TOModelBase*))complete;\n-(CGFloat) getFrameShowTime;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Panel/TVPanelView.h:1-34"
+    },
+    "3119": {
+        "file_id": 327,
+        "content": "TVPanelView.h is a header file for the TVPanelView class, which is a UIView subclass representing a playback control panel. It has properties including an array of TOMVisionItemModel objects, a delegate, and a settingWindow. The class provides methods such as updateFrame() and getModel:complete: to interact with the view's data and functionality. The stop property is used for controlling the view's operation.",
+        "type": "comment"
+    },
+    "3120": {
+        "file_id": 328,
+        "content": "/ThirdParty/TOMVision2/Panel/TVPanelView.m",
+        "type": "filepath"
+    },
+    "3121": {
+        "file_id": 328,
+        "content": "The code initializes a TVPanelView, handles video playback updates and speed settings, updates models, compares frames, limits frame arrays, and refreshes displays. It introduces the `TVPanelView` class for UI actions, view controller for list management, and exception handling within blocks.",
+        "type": "summary"
+    },
+    "3122": {
+        "file_id": 328,
+        "content": "//\n//  TVPanelView.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/18.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import \"TVPanelView.h\"\n#import \"MASConstraint.h\"\n#import \"View+MASAdditions.h\"\n#import \"TOMVisionItemModel.h\"\n#import \"PINDiskCache.h\"\n#import \"TVideoWindow.h\"\n#import \"TVSettingWindow.h\"\n#import \"TVUtil.h\"\n@interface TVPanelView () <TVideoWindowDelegate>\n@property (strong, nonatomic) IBOutlet UIView *containerView;\n@property (weak, nonatomic) IBOutlet UISlider *sliderView;\n@property (weak, nonatomic) IBOutlet UIButton *playBtn;\n@property (weak, nonatomic) IBOutlet UISegmentedControl *speedSegment;\n@property (weak, nonatomic) IBOutlet UILabel *changeLab;\n@property (weak, nonatomic) IBOutlet UILabel *frameLab;\n@property (weak, nonatomic) IBOutlet UILabel *timeLab;\n@property (weak, nonatomic) IBOutlet UILabel *loopLab;\n@property (weak, nonatomic) IBOutlet UIButton *plusBtn;\n@property (weak, nonatomic) IBOutlet UIButton *subBtn;\n@property (strong, nonatomic) TVideoWindow *tvideoWindow;",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Panel/TVPanelView.m:1-30"
+    },
+    "3123": {
+        "file_id": 328,
+        "content": "TVPanelView class properties and delegate set for TVideoWindow. Contains various UI elements including UISlider, UILabels, UISegmentedControl, and buttons, as well as a TVideoWindow object.",
+        "type": "comment"
+    },
+    "3124": {
+        "file_id": 328,
+        "content": "@property (assign, nonatomic) BOOL playing;             //播放中;\n@property (assign, nonatomic) CGFloat speed;            //播放速度 (其中0为直播);\n@property (strong, nonatomic) NSTimer *timer;           //用于播放时计时触发器;\n@property (assign, nonatomic) NSInteger changeIndex;            //当前播放中变数下标\n@property (strong, nonatomic) NSMutableDictionary *changeDic;   //变化数字典 <K:后帧下标, V:变化数组>;\n@end\n@implementation TVPanelView\n-(id) init {\n    self = [super init];\n    if(self != nil){\n        [self initView];\n        [self initData];\n        [self initDisplay];\n    }\n    return self;\n}\n-(void) initView{\n    //self\n    [self setFrame:CGRectMake(0, ScreenHeight - 40, ScreenWidth, 40)];\n    //containerView\n    [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];\n    [self addSubview:self.containerView];\n    [self.containerView mas_makeConstraints:^(MASConstraintMaker *make) {\n        make.leading.mas_equalTo(self);\n        make.trailing.mas_equalTo(self);\n        make.top.mas_equalTo(self);\n        make.bottom.mas_equalTo(self);",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Panel/TVPanelView.m:31-62"
+    },
+    "3125": {
+        "file_id": 328,
+        "content": "This code initializes a TVPanelView by setting its frame, loading the nib file, adding it as a subview, and setting constraints for layout.",
+        "type": "comment"
+    },
+    "3126": {
+        "file_id": 328,
+        "content": "    }];\n    //tvideoWindow\n    self.tvideoWindow = [[TVideoWindow alloc] init];\n    self.tvideoWindow.delegate = self;\n    //settingWindow\n    self.settingWindow = [[TVSettingWindow alloc] init];\n}\n-(void) initData{\n    self.models = [[NSMutableArray alloc] init];\n    self.changeDic = [[NSMutableDictionary alloc] init];\n    self.playing = true;\n    self.speed = 0;\n    self.changeIndex = 0;\n    self.stop = !tomV2Switch;\n}\n-(void) initDisplay{\n}\n-(void) refreshDisplay{\n    [self refreshDisplay:true];\n}\n-(void) refreshDisplay:(BOOL)refreshSlider{\n    //1. 取model\n    NSRange index = [TVUtil indexOfChangeIndex:self.changeIndex changeDic:self.changeDic];\n    NSInteger mainIndex = index.location;\n    NSInteger changeCount = [TVUtil countOfChangeDic:self.changeDic];\n    TOMVisionItemModel *playModel = ARR_INDEX(self.models, mainIndex);\n    TOMVisionItemModel *lastModel = ARR_INDEX_REVERSE(self.models, 0);\n    self.changeIndex = MAX(MIN(self.changeIndex, changeCount - 1), 0);\n    //2. 播放\n    [self.delegate panelPlay:self.changeIndex];",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Panel/TVPanelView.m:63-98"
+    },
+    "3127": {
+        "file_id": 328,
+        "content": "This code initializes the TVPanelView class, sets up delegate objects, and initializes various properties. The initData method sets up data structures, while initDisplay and refreshDisplay are left blank for future implementation. The refreshDisplay: method takes a boolean parameter and refreshes the display using this parameter.",
+        "type": "comment"
+    },
+    "3128": {
+        "file_id": 328,
+        "content": "    //3. 更新帧进度和循环数进度;\n    self.frameLab.text = STRFORMAT(@\"帧数: %ld/%ld\",mainIndex + 1,self.models.count);\n    self.loopLab.text = STRFORMAT(@\"循环: %ld/%ld\",playModel ? playModel.loopId : 0,lastModel ? lastModel.loopId : 0);\n    //4. 更新进度条 (当前sliderValue与changeIndex不匹配时,更新进度条);\n    // 2022.03.26: 分母-1,不然slider永远显示不到1的位置 (因为changeIndex最大为changeCount - 1);\n    if (refreshSlider) {\n        CGFloat sliderValue = self.changeIndex / ((float)changeCount - 1);\n        [self.sliderView setValue:sliderValue];\n    }\n    //5. 更新时间进度;\n    if (self.speed == 0) {\n        self.timeLab.text = @\"时长: --/--\";\n    }else{\n        NSInteger allS = changeCount / self.speed;\n        NSInteger curS = (self.changeIndex + 1) / self.speed;\n        NSString *timeStr = STRFORMAT(@\"时长: %ld:%ld/%ld:%ld\",curS / 60,curS % 60,allS / 60,allS % 60);\n        self.timeLab.text = timeStr;\n    }\n    //6. 更新变数;\n    self.changeLab.text = STRFORMAT(@\"变数: %ld/%ld\", self.changeIndex + 1, changeCount);\n}\n//MARK:===============================================================",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Panel/TVPanelView.m:100-125"
+    },
+    "3129": {
+        "file_id": 328,
+        "content": "This code updates the frame progress, loop progress, slider value and progress bar, time progress, and variable count in a video playback interface. It also handles cases where the speed is 0 and updates the time label accordingly.",
+        "type": "comment"
+    },
+    "3130": {
+        "file_id": 328,
+        "content": "//MARK:                     < publicMethod >\n//MARK:===============================================================\n/**\n *  MARK:--------------------添加新帧--------------------\n *  @version\n *      2022.05.04: 内存优化_减少无用帧 (无变化不记录 & 仅保留300帧);\n */\n-(void) updateFrame{\n    //1. 数据检查;\n    if (self.stop || theTC.outModelManager.getAllDemand.count <= 0) {\n        return;\n    }\n    //2. 新快照;\n    TOMVisionItemModel *newFrame = [[TOMVisionItemModel alloc] init];\n    newFrame.roots = CopyByCoding(theTC.outModelManager.getAllDemand);\n    //2. 无变化时,不记录;\n    TOMVisionItemModel *lastFrame = ARR_INDEX_REVERSE(self.models, 0);\n    NSInteger changeCount = [TVUtil getChange_Item:lastFrame itemB:newFrame].count;\n    if (changeCount <= 0) {\n        return;\n    }\n    //2. 记录快照\n    [self.models addObject:newFrame];\n    //3. 仅保留后x00帧;\n    NSInteger limit = self.stop ? 0 : 300;\n    NSArray *subModels = ARR_SUB(self.models, self.models.count - limit, limit);\n    [self.models removeAllObjects];\n    [self.models addObjectsFromArray:ARRTOOK(subModels)];",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Panel/TVPanelView.m:126-158"
+    },
+    "3131": {
+        "file_id": 328,
+        "content": "This code adds a new frame to the models array if there are any changes since the last frame. It checks for data integrity, gets a new snapshot of the model manager's demands, and compares the current and previous frames to determine if any changes have occurred. If no changes have occurred, the new frame is not added. The code also maintains a limit of 300 frames in the array by removing old frames.",
+        "type": "comment"
+    },
+    "3132": {
+        "file_id": 328,
+        "content": "    //3. 新轮循环Id;\n    if (lastFrame && lastFrame.loopId < theTC.getLoopId) {\n        newFrame.loopId = theTC.getLoopId;\n    }\n    //4. 计算变化数 (也不大耗能,就全重算吧);\n    [self.changeDic removeAllObjects];\n    [self.changeDic setDictionary:[TVUtil getChange_List:self.models]];\n    //5. 当前直播播放中,则实时更新;\n    if (self.playing && self.speed == 0) {\n        self.changeIndex = [TVUtil countOfChangeDic:self.changeDic] - 1;\n        [self refreshDisplay];\n    }\n}\n-(void) getModel:(NSInteger)changeIndex complete:(void(^)(TOMVisionItemModel*,TOModelBase*))complete{\n    //1. 取下标;\n    NSRange index = [TVUtil indexOfChangeIndex:changeIndex changeDic:self.changeDic];\n    //2. 取change变数组;\n    NSArray *changes = [self.changeDic objectForKey:@(index.location)];\n    //3. 将模型和变数返回;\n    TOMVisionItemModel *frameModel = ARR_INDEX(self.models, index.location);\n    TOModelBase *changeModel = ARR_INDEX(changes, index.length);\n    complete(frameModel,changeModel);\n}\n//返回单帧展示时长;\n-(CGFloat) getFrameShowTime{\n    if (self.speed != 0) {\n        return 1.0f / self.speed;",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Panel/TVPanelView.m:160-192"
+    },
+    "3133": {
+        "file_id": 328,
+        "content": "1. Update loopId if last frame has a lower loopId than the current one.\n2. Recalculate changes by removing all objects from changeDic and setting it to TVUtil's getChange_List result with models.\n3. If playing and speed is 0, update the changeIndex and call refreshDisplay.\n4. Get changeIndex from changeDic using indexOfChangeIndex method.\n5. Get change array from changeDic using objectForKey method.\n6. Return frame show time based on speed value.",
+        "type": "comment"
+    },
+    "3134": {
+        "file_id": 328,
+        "content": "    }\n    return 0;\n}\n//MARK:===============================================================\n//MARK:                     < getset >\n//MARK:===============================================================\n-(void)setSpeed:(CGFloat)speed{\n    //1. set\n    _speed = speed;\n    //2. 速度变化时,调整播放器播放间隔;\n    if (self.timer) [self.timer invalidate];\n    if (speed > 0) {\n        dispatch_async(dispatch_get_main_queue(), ^{\n            self.timer = [NSTimer scheduledTimerWithTimeInterval:1.0f / speed target:self selector:@selector(timeBlock) userInfo:nil repeats:true];\n        });\n    }\n}\n-(void) setPlaying:(BOOL)playing{\n    _playing = playing;\n    [self.playBtn setTitle:(self.playing ? @\"||\" : @\"▶\") forState:UIControlStateNormal];\n}\n//MARK:===============================================================\n//MARK:                     < block >\n//MARK:===============================================================\n-(void) timeBlock {\n    if (self.playing) {\n        //1. 播放中时,播放下帧;\n        NSInteger changeCount = [TVUtil countOfChangeDic:self.changeDic];",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Panel/TVPanelView.m:193-224"
+    },
+    "3135": {
+        "file_id": 328,
+        "content": "This code sets and gets the speed and playing status of a video player. The speed value is used to adjust the playback interval, and the playing status updates the button's title accordingly. A timer is used for continuous playback and counting the number of changes in the video.",
+        "type": "comment"
+    },
+    "3136": {
+        "file_id": 328,
+        "content": "        if (self.changeIndex < changeCount - 1) {\n            self.changeIndex ++;\n            [self refreshDisplay];\n        }else{\n            //2. 播放完成时,停止计时器,停止播放;\n            self.playing = false;\n            NSLog(@\"播放完成\");\n        }\n    }\n}\n//MARK:===============================================================\n//MARK:                     < onclick >\n//MARK:===============================================================\n- (IBAction)sliderChanged:(UISlider*)sender {\n    NSInteger changeCount = [TVUtil countOfChangeDic:self.changeDic];\n    self.changeIndex = (changeCount - 1) * sender.value;\n    [self refreshDisplay:false];\n}\n- (IBAction)speedSegmentChanged:(UISegmentedControl*)sender {\n    if (sender.selectedSegmentIndex == 0) {\n        self.speed = 0.25f;\n    }else if (sender.selectedSegmentIndex == 1) {\n        self.speed = 0.5f;\n    }else if (sender.selectedSegmentIndex == 2) {\n        self.speed = 1;\n    }else if (sender.selectedSegmentIndex == 3) {\n        self.speed = 2.0f;\n    }else if (sender.selectedSegmentIndex == 4) {",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Panel/TVPanelView.m:225-254"
+    },
+    "3137": {
+        "file_id": 328,
+        "content": "This code handles the playback of a video and adjustments to its speed. The `sliderChanged` method updates the current change index based on the slider's value and refreshes the display. The `speedSegmentChanged` method sets the playback speed based on the selected segment in a UISegmentedControl. If the number of changes is greater than the current index, it increments the index and calls `refreshDisplay`. Otherwise, it stops the timer, playback, and logs \"播放完成\".",
+        "type": "comment"
+    },
+    "3138": {
+        "file_id": 328,
+        "content": "        self.speed = 3.0f;\n    }else if (sender.selectedSegmentIndex == 5) {\n        self.speed = 4.0f;\n    }else if (sender.selectedSegmentIndex == 6) {\n        self.speed = 0;\n    }\n    [self refreshDisplay];\n}\n- (IBAction)scaleSegmentChanged:(UISegmentedControl*)sender {\n    CGFloat scale = 1.0f;\n    if (sender.selectedSegmentIndex == 0) {\n        scale = 0.25f;\n    }else if (sender.selectedSegmentIndex == 1) {\n        scale = 0.5f;\n    }else if (sender.selectedSegmentIndex == 2) {\n        scale = 1;\n    }else if (sender.selectedSegmentIndex == 3) {\n        scale = 2.0f;\n    }else if (sender.selectedSegmentIndex == 4) {\n        scale = 3.0f;\n    }else if (sender.selectedSegmentIndex == 5) {\n        scale = 4.0f;\n    }\n    [self.delegate panelScaleChanged:scale];\n}\n- (IBAction)playBtnClicked:(id)sender {\n    self.playing = !self.playing;\n}\n- (IBAction)plusBtnClicked:(id)sender {\n    NSInteger changeCount = [TVUtil countOfChangeDic:self.changeDic];\n    if (self.changeIndex < changeCount - 1) {\n        self.changeIndex++;",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Panel/TVPanelView.m:255-289"
+    },
+    "3139": {
+        "file_id": 328,
+        "content": "This code appears to be part of a user interface. The `TVPanelView` class handles button actions for selecting different speeds, adjusting scale, playing/pausing, and navigating through changes. Speed is set based on the selected segment index in a UISegmentedControl. The `scaleSegmentChanged` method updates the scale value based on the selected segment index as well. PlayBtnClicked toggles the `playing` flag between true and false. PlusBtnClicked increments the changeIndex if there are changes to cycle through.",
+        "type": "comment"
+    },
+    "3140": {
+        "file_id": 328,
+        "content": "        [self refreshDisplay];\n    }\n}\n- (IBAction)subBtnClicked:(id)sender {\n    if (self.changeIndex > 0) {\n        self.changeIndex--;\n        [self refreshDisplay];\n    }\n}\n- (IBAction)closeBtnClicked:(id)sender {\n    [self.delegate panelCloseBtnClicked];\n}\n- (IBAction)saveBtnOnClicked:(id)sender {\n    [self.tvideoWindow open];\n}\n- (IBAction)settingBtnClick:(id)sender {\n    [self.settingWindow open];\n}\n//MARK:===============================================================\n//MARK:                     < TVideoWindowDelegate >\n//MARK:===============================================================\n-(void) tvideo_ClearModels{\n    [self.models removeAllObjects];\n    [self.changeDic removeAllObjects];\n    [self refreshDisplay];\n}\n/**\n *  MARK:--------------------存视频--------------------\n *  @version\n *      2022.10.12: 修复因文件夹为空存储失败的BUG;\n */\n-(void) tvideo_Save:(NSString*)fileName{\n    //1. 数据准备;\n    NSString *cachePath = kCachePath;\n    NSString *folder = STRFORMAT(@\"%@/tvideo\",cachePath);\n    NSURL *fileURL = [NSURL fileURLWithPath:STRFORMAT(@\"%@/%@.tv\",folder,fileName)];",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Panel/TVPanelView.m:290-331"
+    },
+    "3141": {
+        "file_id": 328,
+        "content": "This code defines methods for a view controller, including actions for buttons and delegate methods for a TVideoWindow. The view controller manages a list of models, and has methods to clear the models, save videos, and refresh the display. The code also includes constants and paths for file storage.",
+        "type": "comment"
+    },
+    "3142": {
+        "file_id": 328,
+        "content": "    NSData *data = OBJ2DATA(self.models);\n    //2. 新建文件夹\n    [[NSFileManager defaultManager] createDirectoryAtPath:folder withIntermediateDirectories:false attributes:nil error:nil];\n    BOOL success = [data writeToURL:fileURL options:NSDataWritingAtomic error:nil];\n    NSLog(@\"======> 存储思维录像《%@.tv》%@\",fileName,success ? @\"成功\" : @\"失败\");\n}\n-(void) tvideo_Read:(NSString*)fileName{\n    //1. 数据准备\n    NSString *cachePath = kCachePath;\n    NSURL *fileURL = [NSURL fileURLWithPath:STRFORMAT(@\"%@/tvideo/%@\",cachePath,fileName)];\n    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{\n        @try {\n            //2. 异步取数据;\n            NSArray *object = [NSKeyedUnarchiver unarchiveObjectWithFile:[fileURL path]];\n            //3. 主线程同步数据和UI;\n            dispatch_async(dispatch_get_main_queue(), ^{\n                //4. 更新models\n                [self.models removeAllObjects];\n                [self.models addObjectsFromArray:object];\n                //5. 计算变化数;\n                [self.changeDic removeAllObjects];",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Panel/TVPanelView.m:332-357"
+    },
+    "3143": {
+        "file_id": 328,
+        "content": "This code snippet is responsible for storing and retrieving data from a file. It begins by preparing the necessary variables, such as the file URL, cache path, and model objects. Then, it creates a folder if it doesn't exist yet. The code uses asynchronous queues to write the data to the file and updates the models upon successful reading of the data on the main thread.",
+        "type": "comment"
+    },
+    "3144": {
+        "file_id": 328,
+        "content": "                [self.changeDic setDictionary:[TVUtil getChange_List:self.models]];\n                //6. 更新UI;\n                [self refreshDisplay];\n            });\n        }@catch (NSException *exception) {}\n    });\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Panel/TVPanelView.m:358-367"
+    },
+    "3145": {
+        "file_id": 328,
+        "content": "Updates the UI after setting a new dictionary in self.changeDic and retrieving data from TVUtil. This is done within a block to handle any exceptions that may occur.",
+        "type": "comment"
+    },
+    "3146": {
+        "file_id": 329,
+        "content": "/ThirdParty/TOMVision2/Panel/TVSettingWindow.h",
+        "type": "filepath"
+    },
+    "3147": {
+        "file_id": 329,
+        "content": "This code defines the TVSettingWindow class, a subclass of UIView. It has four Boolean properties representing different switch states and methods to open and close the window.",
+        "type": "summary"
+    },
+    "3148": {
+        "file_id": 329,
+        "content": "//\n//  TVSettingWindow.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/10/12.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n/**\n *  MARK:--------------------思维可视化设置面板--------------------\n *  @version\n *      2022.10.12: 初版,支持4种root的可视化开关,避免一堆没必要的显示;\n */\n@interface TVSettingWindow : UIView\n@property (assign, nonatomic) BOOL finishSwitch;\n@property (assign, nonatomic) BOOL expiredSwitch;\n@property (assign, nonatomic) BOOL actYesSwitch;\n@property (assign, nonatomic) BOOL withOutSwitch;\n-(void) open;\n-(void) close;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Panel/TVSettingWindow.h:1-26"
+    },
+    "3149": {
+        "file_id": 329,
+        "content": "This code defines the TVSettingWindow class, a subclass of UIView. It has four Boolean properties representing different switch states and methods to open and close the window.",
+        "type": "comment"
+    },
+    "3150": {
+        "file_id": 330,
+        "content": "/ThirdParty/TOMVision2/Panel/TVSettingWindow.m",
+        "type": "filepath"
+    },
+    "3151": {
+        "file_id": 330,
+        "content": "The code initializes a TVSettingWindow object with frame, nib file, and constraints, handles open/close, updates button colors with switch settings, defines button click actions for the window, and uses auto layout.",
+        "type": "summary"
+    },
+    "3152": {
+        "file_id": 330,
+        "content": "//\n//  TVSettingWindow.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/10/12.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import \"TVSettingWindow.h\"\n#import \"MASConstraint.h\"\n#import \"View+MASAdditions.h\"\n@interface TVSettingWindow ()\n@property (strong, nonatomic) IBOutlet UIView *containerView;\n@property (weak, nonatomic) IBOutlet UIButton *finishBtn;\n@property (weak, nonatomic) IBOutlet UIButton *expiredBtn;\n@property (weak, nonatomic) IBOutlet UIButton *actYesBtn;\n@property (weak, nonatomic) IBOutlet UIButton *withOutBtn;\n@end\n@implementation TVSettingWindow\n-(id) init {\n    self = [super init];\n    if(self != nil){\n        [self initView];\n        [self initData];\n        [self initDisplay];\n    }\n    return self;\n}\n-(void) initView{\n    //self\n    [self setFrame:CGRectMake(ScreenWidth - 100, ScreenHeight - 240, 100, 200)];\n    //containerView\n    [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];\n    [self addSubview:self.containerView];\n    [self.containerView mas_makeConstraints:^(MASConstraintMaker *make) {",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Panel/TVSettingWindow.m:1-42"
+    },
+    "3153": {
+        "file_id": 330,
+        "content": "This code initializes a TVSettingWindow object by setting its frame, loading the nib file, and adding the containerView as a subview with specified constraints. The initData and initDisplay methods are also called to further configure the window.",
+        "type": "comment"
+    },
+    "3154": {
+        "file_id": 330,
+        "content": "        make.leading.mas_equalTo(self);\n        make.trailing.mas_equalTo(self);\n        make.top.mas_equalTo(self);\n        make.bottom.mas_equalTo(self);\n    }];\n}\n-(void) initData{\n}\n-(void) initDisplay{\n    [self refreshDisplay];\n    [self close];\n}\n//MARK:===============================================================\n//MARK:                     < publicMethod >\n//MARK:===============================================================\n-(void) open{\n    [theApp.window addSubview:self];\n}\n-(void) close{\n    [self removeFromSuperview];\n}\n-(void) refreshDisplay{\n    self.finishBtn.backgroundColor = self.finishSwitch ? UIColor.greenColor : UIColor.redColor;\n    self.expiredBtn.backgroundColor = self.expiredSwitch ? UIColor.greenColor : UIColor.redColor;\n    self.withOutBtn.backgroundColor = self.withOutSwitch ? UIColor.greenColor : UIColor.redColor;\n    self.actYesBtn.backgroundColor = self.actYesSwitch ? UIColor.greenColor : UIColor.redColor;\n}\n//MARK:===============================================================\n//MARK:                     < click >",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Panel/TVSettingWindow.m:43-78"
+    },
+    "3155": {
+        "file_id": 330,
+        "content": "This code appears to be part of a user interface view controller class. It includes methods for initializing data, display, and handling public method calls like open and close. The refreshDisplay method updates button colors based on switch settings. The view is positioned within its superview using auto layout constraints.",
+        "type": "comment"
+    },
+    "3156": {
+        "file_id": 330,
+        "content": "//MARK:===============================================================\n- (IBAction)actYesBtnClick:(id)sender {\n    self.actYesSwitch = !self.actYesSwitch;\n    [self refreshDisplay];\n}\n- (IBAction)withOutBtnClick:(id)sender {\n    self.withOutSwitch = !self.withOutSwitch;\n    [self refreshDisplay];\n}\n- (IBAction)expiredBtnClick:(id)sender {\n    self.expiredSwitch = !self.expiredSwitch;\n    [self refreshDisplay];\n}\n- (IBAction)finishBtnClick:(id)sender {\n    self.finishSwitch = !self.finishSwitch;\n    [self refreshDisplay];\n}\n- (IBAction)closeBtnClick:(id)sender {\n    [self close];\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Panel/TVSettingWindow.m:79-101"
+    },
+    "3157": {
+        "file_id": 330,
+        "content": "This code defines various button click actions for a window. The actYesBtnClick, withOutBtnClick, expiredBtnClick, and finishBtnClick methods each toggle a corresponding switch's state and then refresh the display. The closeBtnClick method simply closes the window.",
+        "type": "comment"
+    },
+    "3158": {
+        "file_id": 331,
+        "content": "/ThirdParty/TOMVision2/Panel/TVideoWindow.h",
+        "type": "filepath"
+    },
+    "3159": {
+        "file_id": 331,
+        "content": "This code defines the TVideoWindow class, a UIView subclass with a delegate that conforms to the TVideoWindowDelegate protocol. The delegate can call methods for clearing models, saving, and reading files. The class also provides open and close methods.",
+        "type": "summary"
+    },
+    "3160": {
+        "file_id": 331,
+        "content": "//\n//  MemManagerWindow.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/6/6.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n@protocol TVideoWindowDelegate <NSObject>\n-(void) tvideo_ClearModels;\n-(void) tvideo_Save:(NSString*)fileName;\n-(void) tvideo_Read:(NSString*)fileName;\n@end\n@interface TVideoWindow : UIView\n@property (weak, nonatomic) id<TVideoWindowDelegate> delegate;\n-(void) open;\n-(void) close;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Panel/TVideoWindow.h:1-25"
+    },
+    "3161": {
+        "file_id": 331,
+        "content": "This code defines the TVideoWindow class, a UIView subclass with a delegate that conforms to the TVideoWindowDelegate protocol. The delegate can call methods for clearing models, saving, and reading files. The class also provides open and close methods.",
+        "type": "comment"
+    },
+    "3162": {
+        "file_id": 332,
+        "content": "/ThirdParty/TOMVision2/Panel/TVideoWindow.m",
+        "type": "filepath"
+    },
+    "3163": {
+        "file_id": 332,
+        "content": "This code initializes and manages a TVideoWindow view, sorts video paths by creation time, retrieves file attributes, and updates the table view based on dates. It defines methods for a TVideoWindow class implementing UITableViewDataSource and UITableViewDelegate, includes closeBtnOnClick and deleteSaveOnClick, and sets table view row height to 30 pixels.",
+        "type": "summary"
+    },
+    "3164": {
+        "file_id": 332,
+        "content": "//\n//  MemManagerWindow.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/6/6.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import \"TVideoWindow.h\"\n#import \"MASConstraint.h\"\n#import \"View+MASAdditions.h\"\n#import \"NSFile+Extension.h\"\n#import \"MemManager.h\"\n@interface TVideoWindow () <UITableViewDelegate,UITableViewDataSource>\n@property (strong, nonatomic) IBOutlet UIView *containerView;\n@property (weak, nonatomic) IBOutlet UITextField *saveNameTF;\n@property (weak, nonatomic) IBOutlet UITableView *readTableView;\n@property (strong, nonatomic) NSMutableArray *datas;   //已存的所有历史;\n@end\n@implementation TVideoWindow\n-(id) init {\n    self = [super init];\n    if(self != nil){\n        [self initView];\n        [self initData];\n        [self initDisplay];\n    }\n    return self;\n}\n-(void) initView{\n    //self\n    [self setFrame:CGRectMake(0, 0, ScreenWidth, ScreenHeight)];\n    //containerView\n    [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];\n    [self addSubview:self.containerView];",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Panel/TVideoWindow.m:1-43"
+    },
+    "3165": {
+        "file_id": 332,
+        "content": "This code is initializing the TVideoWindow view, setting its frame to match the screen width and height. It loads the nib file for the window, adds it as a subview of itself, and initializes the data and display. The class extends UITableViewDelegate and UITableViewDataSource to manage the table view contents.",
+        "type": "comment"
+    },
+    "3166": {
+        "file_id": 332,
+        "content": "    [self.containerView mas_makeConstraints:^(MASConstraintMaker *make) {\n        make.leading.mas_equalTo(self);\n        make.trailing.mas_equalTo(self);\n        make.top.mas_equalTo(self);\n        make.bottom.mas_equalTo(self);\n    }];\n    //readTableView\n    self.readTableView.delegate = self;\n    self.readTableView.dataSource = self;\n}\n-(void) initData{\n    self.datas = [[NSMutableArray alloc] init];\n}\n-(void) initDisplay{\n    [self refreshDisplay];\n    [self close];\n}\n//MARK:===============================================================\n//MARK:                     < publicMethod >\n//MARK:===============================================================\n-(void) open{\n    [theApp.window addSubview:self];\n}\n-(void) close{\n    [self removeFromSuperview];\n}\n-(void) refreshDisplay{\n    //1. 重加载数据_加载save下的路径;\n    NSString *cachePath = kCachePath;\n    NSArray *paths = [NSFile_Extension subFiles:STRFORMAT(@\"%@/tvideo\",cachePath)];\n    //2. 按创建时间排序;\n    paths = [paths sortedArrayUsingComparator:^NSComparisonResult(NSString *path1, NSString *path2) {",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Panel/TVideoWindow.m:44-82"
+    },
+    "3167": {
+        "file_id": 332,
+        "content": "The code belongs to TVideoWindow.m file of TOMVision2 project and is related to the management and display of videos in a window. It sets up constraints for the container view, initializes data and display, provides public methods to open/close the window, and sorts video paths based on creation time.",
+        "type": "comment"
+    },
+    "3168": {
+        "file_id": 332,
+        "content": "        NSDictionary *info1 = DICTOOK([[NSFileManager defaultManager] attributesOfItemAtPath:path1 error:nil]);\n        NSDictionary *info2 = DICTOOK([[NSFileManager defaultManager] attributesOfItemAtPath:path2 error:nil]);\n        NSDate *date1 = [info1 objectForKey:NSFileCreationDate];\n        NSDate *date2 = [info2 objectForKey:NSFileCreationDate];\n        NSTimeInterval time1 = [date1 timeIntervalSince1970];\n        NSTimeInterval time2 = [date2 timeIntervalSince1970];\n        return (time1 == time2) ? NSOrderedSame : ((time1 < time2) ? NSOrderedAscending : NSOrderedDescending);\n    }];\n    //3. 重加载数据_转为folderName;\n    NSArray *foloders = [SMGUtils convertArr:paths convertBlock:^id(NSString *path) {\n        NSString *sep = @\"/\";\n        NSString *folderName = STRTOOK(ARR_INDEX_REVERSE(STRTOARR(path, sep), 0));\n        return folderName;\n    }];\n    //4. 重加载数据_收集到datas中;\n    [self.datas removeAllObjects];\n    [self.datas addObjectsFromArray:foloders];\n    //5. 重显示;\n    [self.readTableView reloadData];",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Panel/TVideoWindow.m:83-104"
+    },
+    "3169": {
+        "file_id": 332,
+        "content": "This code retrieves file attributes, compares their creation dates to reload data and update table view. It converts paths to folder names, clears existing data array, adds new data, and reloads the table view for display.",
+        "type": "comment"
+    },
+    "3170": {
+        "file_id": 332,
+        "content": "    //6. 默认选中最后一个cell;\n    if (ARRISOK(self.datas)) {\n        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{\n            NSIndexPath *row = [NSIndexPath indexPathForRow:self.datas.count - 1 inSection:0];\n            [self.readTableView selectRowAtIndexPath:row animated:true scrollPosition:UITableViewScrollPositionTop];\n        });\n    }\n}\n//MARK:===============================================================\n//MARK:                     < onclick >\n//MARK:===============================================================\n- (IBAction)clearMemOnClick:(id)sender {\n    [self.delegate tvideo_ClearModels];\n}\n- (IBAction)saveMemOnClick:(id)sender {\n    if (STRISOK(self.saveNameTF.text)) {\n        [self.delegate tvideo_Save:self.saveNameTF.text];\n        [self refreshDisplay];\n    }\n}\n- (IBAction)readMemOnClick:(id)sender {\n    NSIndexPath *selected = [self.readTableView indexPathForSelectedRow];\n    NSString *data = ARR_INDEX(self.datas, selected.row);\n    if (STRISOK(data)) {",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Panel/TVideoWindow.m:106-132"
+    },
+    "3171": {
+        "file_id": 332,
+        "content": "This code is for a UITableView-based iOS application. It sets the default selection to the last cell, and provides three IBAction methods: clearMemOnClick clears the model data, saveMemOnClick saves the current data with an optional name, and readMemOnClick retrieves the selected data from the table view.",
+        "type": "comment"
+    },
+    "3172": {
+        "file_id": 332,
+        "content": "        [self.delegate tvideo_Read:data];\n        [self close];\n    }\n}\n- (IBAction)closeBtnOnClick:(id)sender {\n    [self close];\n}\n- (IBAction)deleteSaveOnClick:(id)sender {\n    NSIndexPath *selected = [self.readTableView indexPathForSelectedRow];\n    NSString *data = ARR_INDEX(self.datas, selected.row);\n    if (STRISOK(data)) {\n        NSString *cachePath = kCachePath;\n        [[NSFileManager defaultManager] removeItemAtPath:STRFORMAT(@\"%@/tvideo/%@\",cachePath,data) error:nil];\n        [self refreshDisplay];\n    }\n}\n//MARK:===============================================================\n//MARK:       < UITableViewDataSource &  UITableViewDelegate>\n//MARK:===============================================================\n- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{\n    return self.datas.count;\n}\n- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{\n    UITableViewCell *cell = [[UITableViewCell alloc] init];\n    NSString *data = STRTOOK(ARR_INDEX(self.datas, indexPath.row));",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Panel/TVideoWindow.m:133-160"
+    },
+    "3173": {
+        "file_id": 332,
+        "content": "The code defines methods for a TVideoWindow class, which implements UITableViewDataSource and UITableViewDelegate. The closeBtnOnClick method closes the window, while deleteSaveOnClick deletes a selected item from cache and refreshes the display. The class also has a delegate method tvideo_Read.",
+        "type": "comment"
+    },
+    "3174": {
+        "file_id": 332,
+        "content": "    [cell.textLabel setText:data];\n    return cell;\n}\n- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{\n    return 30;\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Panel/TVideoWindow.m:161-168"
+    },
+    "3175": {
+        "file_id": 332,
+        "content": "This code contains a UITableViewDataSource method and a UITableViewDelegate method. The dataSource method sets the cell's text label with provided data and returns the cell. The delegate method sets the table view row height to 30 pixels.",
+        "type": "comment"
+    },
+    "3176": {
+        "file_id": 333,
+        "content": "/ThirdParty/TOMVision2/README.md",
+        "type": "filepath"
+    },
+    "3177": {
+        "file_id": 333,
+        "content": "This code is a README for the \"ThoughtVision2\" software, explaining that it's an iteration of the previous version focused on visualizing and animating multiple frames of working memory trees. It also supports recording, playback, and storage functionality, as well as UI visualization of the working memory trees.",
+        "type": "summary"
+    },
+    "3178": {
+        "file_id": 333,
+        "content": "#  思维可视化\n> 本次v2迭代支持了多帧工作记忆树,\n> 因为整个思维螺旋就是在操作工作记忆树的春生夏长秋收冬藏\n> 所以工作记忆树的多帧可视化就=思维可视化;\n#### 原本v1版本是做工作记忆树可视化的,\n#### 现在v2版本大改版;\n1. 支持录制多帧工作记忆树,并动画展示其更新变化;\n2. 支持播放,存储为录制文件等;\n3. 支持UI可视化工作记忆树;",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/README.md:1-11"
+    },
+    "3179": {
+        "file_id": 333,
+        "content": "This code is a README for the \"ThoughtVision2\" software, explaining that it's an iteration of the previous version focused on visualizing and animating multiple frames of working memory trees. It also supports recording, playback, and storage functionality, as well as UI visualization of the working memory trees.",
+        "type": "comment"
+    },
+    "3180": {
+        "file_id": 334,
+        "content": "/ThirdParty/TOMVision2/TOMVision2.h",
+        "type": "filepath"
+    },
+    "3181": {
+        "file_id": 334,
+        "content": "This file, TOMVision2.h, is part of the \"SMG_NothingIsAll\" project and defines a UIView class called TOMVision2 with methods for updating frame, clearing network, stopping work, opening, and closing. It is copyrighted by XiaoGang in 2022.",
+        "type": "summary"
+    },
+    "3182": {
+        "file_id": 334,
+        "content": "//\n//  TOMVision2.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/13.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface TOMVision2 : UIView\n/**\n *  MARK:--------------------设置内容--------------------\n */\n-(void) updateFrame;\n/**\n *  MARK:--------------------清空网络--------------------\n */\n-(void) clear;\n/**\n *  MARK:--------------------停止工作--------------------\n */\n-(void) setStop:(BOOL)stop;\n//开关\n-(void) open;\n-(void) close;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/TOMVision2.h:1-32"
+    },
+    "3183": {
+        "file_id": 334,
+        "content": "This file, TOMVision2.h, is part of the \"SMG_NothingIsAll\" project and defines a UIView class called TOMVision2 with methods for updating frame, clearing network, stopping work, opening, and closing. It is copyrighted by XiaoGang in 2022.",
+        "type": "comment"
+    },
+    "3184": {
+        "file_id": 335,
+        "content": "/ThirdParty/TOMVision2/TOMVision2.m",
+        "type": "filepath"
+    },
+    "3185": {
+        "file_id": 335,
+        "content": "This code implements a TOMVision2 class for managing view size adjustments, focus animations, and long tap/double tap events in panel views. It sets zoom scale for scroll views and auto adjusts content size while handling zooming functionality through UIScrollView delegate method.",
+        "type": "summary"
+    },
+    "3186": {
+        "file_id": 335,
+        "content": "//\n//  TOMVision2.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/13.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import \"TOMVision2.h\"\n#import \"MASConstraint.h\"\n#import \"View+MASAdditions.h\"\n#import \"AIKVPointer.h\"\n#import \"TOMVisionItemModel.h\"\n#import \"UIView+Extension.h\"\n#import \"TOMVisionFoView.h\"\n#import \"TOMVisionDemandView.h\"\n#import \"TOMVisionFoView.h\"\n#import \"TOMVisionAlgView.h\"\n#import \"TOModelVisionUtil.h\"\n#import \"UnorderItemModel.h\"\n#import \"TVPanelView.h\"\n#import \"TVLineView.h\"\n#import \"TVTimeLine.h\"\n#import \"TVUtil.h\"\n#import \"TVSettingWindow.h\"\n@interface TOMVision2 () <TVPanelViewDelegate,UIScrollViewDelegate>\n@property (strong,nonatomic) IBOutlet UIView *containerView;\n@property (strong, nonatomic) UIScrollView *scrollView;\n@property (strong, nonatomic) UIView *contentView;\n@property (strong, nonatomic) TVPanelView *panelView;\n@property (strong, nonatomic) TVTimeLine *timeLine;\n@property (assign, nonatomic) NSInteger changeIndex; //当前显示的index;\n@property (weak, nonatomic) IBOutlet UILabel *tipLab;",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/TOMVision2.m:1-35"
+    },
+    "3187": {
+        "file_id": 335,
+        "content": "This code imports various headers and declares properties for a TOMVision2 class which conforms to TVPanelViewDelegate and UIScrollViewDelegate protocols. The class has outlets for containerView, scrollView, contentView, panelView, timeLine, changeIndex, and tipLab variables.",
+        "type": "comment"
+    },
+    "3188": {
+        "file_id": 335,
+        "content": "@property (strong,nonatomic) UITapGestureRecognizer *doubleTap;\n@property (strong,nonatomic) UITapGestureRecognizer *singleTap;\n@property (strong,nonatomic) UILongPressGestureRecognizer *longTap;\n@end\n@implementation TOMVision2\n-(id) init {\n    self = [super init];\n    if(self != nil){\n        [self initView];\n        [self initData];\n        [self initDisplay];\n    }\n    return self;\n}\n-(void) initView{\n    //self\n    [self setFrame:CGRectMake(0, 0, ScreenWidth, ScreenHeight)];\n    //containerView\n    [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];\n    [self addSubview:self.containerView];\n    [self.containerView mas_makeConstraints:^(MASConstraintMaker *make) {\n        make.leading.mas_equalTo(self);\n        make.trailing.mas_equalTo(self);\n        make.top.mas_equalTo(self);\n        make.bottom.mas_equalTo(self);\n    }];\n    //scrollView\n    self.scrollView = [[UIScrollView alloc] init];\n    [self.containerView addSubview:self.scrollView];\n    [self.scrollView setFrame:CGRectMake(0, 20, ScreenWidth, ScreenHeight - 20 - 40)];",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/TOMVision2.m:36-71"
+    },
+    "3189": {
+        "file_id": 335,
+        "content": "Initializing the view, loading nib, adding subviews and setting constraints for TOMVision2 instance.",
+        "type": "comment"
+    },
+    "3190": {
+        "file_id": 335,
+        "content": "    [self.scrollView setShowsVerticalScrollIndicator:NO];\n    [self.scrollView setShowsHorizontalScrollIndicator:NO];\n    self.scrollView.delegate = self;\n    self.scrollView.minimumZoomScale = CGFLOAT_MIN;\n    self.scrollView.maximumZoomScale = CGFLOAT_MAX;\n    self.scrollView.showsHorizontalScrollIndicator = true;\n    self.scrollView.showsVerticalScrollIndicator = true;\n    self.scrollView.indicatorStyle = UIScrollViewIndicatorStyleWhite;\n    //contentView\n    self.contentView = [[UIView alloc] init];\n    [self.scrollView addSubview:self.contentView];\n    [self.contentView setBackgroundColor:[UIColor clearColor]];\n    [self.contentView setFrame:CGRectMake(0, 0, ScreenWidth, ScreenHeight - 60)];\n    //panelView\n    self.panelView = [[TVPanelView alloc] init];\n    self.panelView.delegate = self;\n    [self.containerView addSubview:self.panelView];\n    //timeLine\n    self.timeLine = [[TVTimeLine alloc] init];\n    self.timeLine.backgroundColor = UIColorWithRGBHexA(0xFFFFFF, 0);\n    //doubleTap\n    self.doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(doubleTap:)];",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/TOMVision2.m:72-97"
+    },
+    "3191": {
+        "file_id": 335,
+        "content": "Sets scroll view properties and adds a content view, panel view, and time line view to the container view. Enables scroll indicators and sets their style to white. Adds a double tap gesture recognizer for interactivity.",
+        "type": "comment"
+    },
+    "3192": {
+        "file_id": 335,
+        "content": "    self.doubleTap.numberOfTapsRequired = 2;\n    self.doubleTap.numberOfTouchesRequired = 1;\n    [self.scrollView addGestureRecognizer:self.doubleTap];\n    //singleTap\n    self.singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTap:)];\n    self.singleTap.numberOfTapsRequired = 1;\n    self.singleTap.numberOfTouchesRequired = 1;\n    [self.singleTap requireGestureRecognizerToFail:self.doubleTap];\n    [self.scrollView addGestureRecognizer:self.singleTap];\n    //longTap\n    self.longTap = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longTap:)];\n    self.longTap.minimumPressDuration = 0.2;\n    [self.scrollView addGestureRecognizer:self.longTap];\n}\n-(void) initData{\n}\n-(void) initDisplay{\n    [self close];\n}\n//MARK:===============================================================\n//MARK:                     < method >\n//MARK:===============================================================\n-(void) updateFrame{\n    [self.panelView updateFrame];\n}\n/**\n *  MARK:--------------------refreshDisplay--------------------",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/TOMVision2.m:98-130"
+    },
+    "3193": {
+        "file_id": 335,
+        "content": "This code initializes three gesture recognizers: double tap, single tap, and long tap. The double tap recognizer requires two taps and one touch, and is added to the scroll view. The single tap recognizer requires one tap and one touch, fails if the double tap recognizer is satisfied, and is also added to the scroll view. The long tap recognizer has a minimum press duration of 0.2 seconds and is also added to the scroll view. Additionally, there are methods for initializing data, display, updating the frame of panelView, and refreshing the display.",
+        "type": "comment"
+    },
+    "3194": {
+        "file_id": 335,
+        "content": " *  @version\n *      2022.03.19: 子节点与根节点同尺寸,只是缩放了而已 (如果调小尺寸,缩放就没意义了);\n *      2022.03.22: 每层hSpace间隔为当前层的1.8倍 (避免末枝很小却间距好远);\n *      2022.10.12: 改为先过滤出有效roots,避免排版还是按所有roots算,而导致排版错误BUG;\n */\n-(void) refreshDisplay{\n    [self refreshDisplay:false];\n}\n-(void) refreshDisplay:(BOOL)focusMode{\n    //1. 数据准备;\n    if (self.isHidden) return;\n    __block TOMVisionItemModel *frameModel = nil;\n    __block TOModelBase *changeModel = nil;\n    [self.panelView getModel:self.changeIndex complete:^(TOMVisionItemModel *_frameModel, TOModelBase *_changeModel) {\n        frameModel = _frameModel;\n        changeModel = _changeModel;\n    }];\n    //2. 取出旧有节点缓存 & 并清空画板;\n    NSArray *oldSubViews = [self.contentView subViews_AllDeepWithClass:TOMVisionNodeBase.class];\n    [self.contentView removeAllSubviews];\n    //2. 刷新显示_计算根节点宽度 (参考25182-4);\n    //注: 排版为[-NNN--NNN-],其中-为节点间距,NNN为节点宽度,占60%;\n    //注: rootGroupW最大宽度为250;\n    if (!frameModel) return;\n    NSArray *validRoots = [SMGUtils filterArr:frameModel.roots checkValid:^BOOL(DemandModel *demand) {",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/TOMVision2.m:131-157"
+    },
+    "3195": {
+        "file_id": 335,
+        "content": "1. Refresh display method, optional focus mode parameter\n2. Prepares data and retrieves model from panelView\n3. Clears all subviews in contentView\n4. Filters valid roots from frameModel using SMGUtils filterArr\n5. Calculates root group width considering space and node size",
+        "type": "comment"
+    },
+    "3196": {
+        "file_id": 335,
+        "content": "        //3. 显示设置开关处理;\n        if (!self.panelView.settingWindow.finishSwitch) {\n            if (demand.status == TOModelStatus_Finish) return false;\n        }\n        if (!self.panelView.settingWindow.expiredSwitch) {\n            if (ISOK(demand, ReasonDemandModel.class) && ((ReasonDemandModel*)demand).isExpired) return false;\n        }\n        if (!self.panelView.settingWindow.withOutSwitch) {\n            if (demand.status == TOModelStatus_WithOut) return false;\n        }\n        if (!self.panelView.settingWindow.actYesSwitch) {\n            if ([TOUtils endHavActYes:demand]) return false;\n        }\n        return true;\n    }];\n    CGFloat rootGroupW = MIN(ScreenWidth / validRoots.count, 420);\n    CGFloat rootNodeW = rootGroupW * 0.6f;\n    for (DemandModel *demand in validRoots) {\n        //NSLog(@\"----------> root下树为:\\n%@\",[TOModelVision cur2Sub:demand]);\n        //3. 从demand根节点递归生长出它的分枝,\n        NSMutableArray *unorderModels = [TOModelVisionUtil convertCur2Sub2UnorderModels:demand];\n        //3. 转为nodeView",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/TOMVision2.m:158-181"
+    },
+    "3197": {
+        "file_id": 335,
+        "content": "This code handles setting switch processing. It checks if a specific demand should be displayed based on different settings switches, such as finish, expired, without, and action yes switch. If any of the switches are not enabled for the current demand, it returns false. Otherwise, it calculates the root group width and root node width and prepares to generate branches from the demand's root node using TOModelVisionUtil.",
+        "type": "comment"
+    },
+    "3198": {
+        "file_id": 335,
+        "content": "        for (UnorderItemModel *unorder in unorderModels) {\n            //4. 新建根节点;\n            TOMVisionNodeBase *nodeView = [self getOrCreateNode:unorder.data oldSubViews:oldSubViews];\n            [self.contentView addSubview:nodeView];\n            if (!nodeView.data.baseOrGroup) {\n                //4. nodeX = (左侧空白0.2 + 下标) x 组宽;\n                NSInteger index = [validRoots indexOfObject:nodeView.data];\n                CGFloat nodeX = rootGroupW * (index + 0.2f);\n                //5. root节点的frame指定;\n                [nodeView setFrame:CGRectMake(nodeX, unorder.tabNum * 60, rootNodeW, rootNodeW / 5)];\n                //6. 缩放比例\n                [nodeView scaleContainer:1.0f];\n            }else {\n                //6. 子节点的frame指定;\n                TOMVisionNodeBase *baseView = [self getOrCreateNode:nodeView.data.baseOrGroup oldSubViews:oldSubViews];\n                NSMutableArray *subModels = [TOUtils getSubOutModels:nodeView.data.baseOrGroup];\n                if (baseView && ARRISOK(subModels)) {\n                    //7. 子组最左X = 父组X - 左侧空白处(为节点宽的1/3);",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/TOMVision2.m:182-206"
+    },
+    "3199": {
+        "file_id": 335,
+        "content": "1. Loops through unorderModels array.\n2. Creates new node for each unorderModel and stores it in nodeView variable.\n3. Adds the newly created node to contentView.\n4. If node is not a base or group, calculates x-coordinate based on index and root group width.\n5. Sets frame of root nodes with calculated x, tab number height, and fixed width/height.\n6. Scales container (root) nodes to 1x size.\n7. For each group node, retrieves sub models and creates base view if it exists and there are sub models.\n8. Calculates x-coordinate for subgroup nodes based on parent group's x - left space/node width ratio.",
+        "type": "comment"
+    }
+}

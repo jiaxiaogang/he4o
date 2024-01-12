@@ -1,0 +1,10 @@
+{
+    "summary": "Custom file configuration (refer to 27084-TODO1);\nLocated in the sandbox's root directory, within the xgConfig folder, there is a config.txt file;\nUtilizes a dictionary to write configuration files, enabling real-time value changes during HE operation for altering its behavior;\nResponds to configuration file updates every round in the HE system.",
+    "details": [
+        {
+            "comment": "Custom file configuration (refer to 27084-TODO1);\nLocated in the sandbox's root directory, within the xgConfig folder, there is a config.txt file;\nUtilizes a dictionary to write configuration files, enabling real-time value changes during HE operation for altering its behavior;\nResponds to configuration file updates every round in the HE system.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/XGConfig/README.md\":0-5",
+            "content": "#  \u81ea\u5b9a\u4e49\u6587\u4ef6\u914d\u7f6e (\u53c2\u800327084-TODO1);\n#### \u529f\u80fd\u8bf4\u660e:\n1. \u5728\u6c99\u76d2\u6839\u76ee\u5f55\u4e0b\u7684xgConfig\u6587\u4ef6\u5939\u4e0b\u7684config.txt\u6587\u4ef6;\n2. \u7528\u5b57\u5178\u5199\u5165\u914d\u7f6e\u6587\u4ef6,\u7528\u4e8e\u5728HE\u8dd1\u7684\u8fc7\u7a0b\u4e2d,\u53ca\u65f6\u66f4\u6539\u503c,\u4ee5\u6539\u53d8HE\u8fd0\u884c\u7b49;\n3. \u6bcf\u8f6e\u5faa\u73af\u65f6,\u54cd\u5e94\u914d\u7f6e\u6587\u4ef6\u7684\u53d8\u5316\u5230HE\u7cfb\u7edf;"
+        }
+    ]
+}

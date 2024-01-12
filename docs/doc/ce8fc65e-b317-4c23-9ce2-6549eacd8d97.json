@@ -1,0 +1,15 @@
+{
+    "summary": "Class AICMVNodeBase with methods for initialization, encoding, and decoding properties; utility functions to create arrays and check array validity. Encodes delta_p and foPorts for key storage.",
+    "details": [
+        {
+            "comment": "This code defines a class AICMVNodeBase and implements methods for initializing, encoding, and decoding its properties. It also includes utility functions to create arrays and check if an array is valid.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AINet/AINode/AICMVNodeBase.m\":0-38",
+            "content": "//\n//  AICMVNodeBase.m\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/9/26.\n//  Copyright \u00a9 2018\u5e74 XiaoGang. All rights reserved.\n//\n#import \"AICMVNodeBase.h\"\n@implementation AICMVNodeBase\n-(NSMutableArray *)content_ps{\n    return [[NSMutableArray alloc] initWithObjects:self.delta_p,self.urgentTo_p, nil];\n}\n-(NSMutableArray *)foPorts{\n    if (!ISOK(_foPorts, NSMutableArray.class)) {\n        _foPorts = [[NSMutableArray alloc] initWithArray:_foPorts];\n    }\n    return _foPorts;\n}\n/**\n *  MARK:--------------------NSCoding--------------------\n */\n- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {\n    self = [super initWithCoder:aDecoder];\n    if (self) {\n        self.urgentTo_p = [aDecoder decodeObjectForKey:@\"urgentTo_p\"];\n        self.delta_p = [aDecoder decodeObjectForKey:@\"delta_p\"];\n        self.foPorts = [aDecoder decodeObjectForKey:@\"foPorts\"];\n    }\n    return self;\n}\n- (void)encodeWithCoder:(NSCoder *)aCoder {\n    [super encodeWithCoder:aCoder];\n    [aCoder encodeObject:self.urgentTo_p forKey:@\"urgentTo_p\"];"
+        },
+        {
+            "comment": "Encodes the delta_p and foPorts properties for key storage.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AINet/AINode/AICMVNodeBase.m\":39-43",
+            "content": "    [aCoder encodeObject:self.delta_p forKey:@\"delta_p\"];\n    [aCoder encodeObject:self.foPorts forKey:@\"foPorts\"];\n}\n@end"
+        }
+    ]
+}

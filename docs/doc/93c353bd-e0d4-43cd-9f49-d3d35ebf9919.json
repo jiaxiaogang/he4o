@@ -1,0 +1,10 @@
+{
+    "summary": "BirdLivePage.h file is a header file containing the interface declaration for BirdLivePage class, which inherits from HEViewController. Created by jiaxiaogang in 2018 and copyrighted under XiaoGang.",
+    "details": [
+        {
+            "comment": "BirdLivePage.h file is a header file containing the interface declaration for BirdLivePage class, which inherits from HEViewController. Created by jiaxiaogang in 2018 and copyrighted under XiaoGang.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Demo/BirdLivePage/BirdLivePage.h\":0-12",
+            "content": "//\n//  BirdLivePage.h\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/10/24.\n//  Copyright \u00a9 2018\u5e74 XiaoGang. All rights reserved.\n//\n#import \"HEViewController.h\"\n@interface BirdLivePage : HEViewController\n@end"
+        }
+    ]
+}

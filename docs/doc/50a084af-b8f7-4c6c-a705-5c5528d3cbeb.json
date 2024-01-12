@@ -1,0 +1,15 @@
+{
+    "summary": "The code defines a class, AIStringAlgs, with two methods: commitInput and length. It processes input strings character by character asynchronously and returns string lengths for valid sentences. The code utilizes a for loop to iterate through each character of the string.",
+    "details": [
+        {
+            "comment": "This code defines a class, AIStringAlgs, which has two methods: commitInput and length. The commitInput method processes an input string character by character asynchronously, while the length method returns the length of a string if it's a valid sentence (OK).",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIAlg/AIStringAlgs.m\":0-42",
+            "content": "//\n//  StringAlgs.m\n//  SMG_NothingIsAll\n//\n//  Created by \u8d3e  on 2017/9/17.\n//  Copyright \u00a9 2017\u5e74 XiaoGang. All rights reserved.\n//\n#import \"AIStringAlgs.h\"\n@implementation AIStringAlgs\n+(void) commitInput:(NSString*)input{\n    if (STRISOK(input)) {\n        //1. \u7b97\u6cd5\u8fd0\u7b97\n        //2. \u7ed3\u679c\u7ed9Thinking\n        //AIStringAlgsModel *model = [[AIStringAlgsModel alloc] init];\n        //model.str = input;\n        //model.length = [self length:input];\n        //model.spell = [self spell:input];\n        //[theTC commitInput:model];\n        const char *chars = [input UTF8String];\n        for (NSInteger i = 0; i < input.length; i ++) {\n            AICharAlgsModel *model = [AICharAlgsModel new];\n            model.c = chars[i];\n            [theTC commitInputAsync:model];\n        }\n    }\n}\n+(NSUInteger) length:(NSString*)str {\n    if (STRISOK(str)) {\n        return str.length;\n    }\n    return 0;\n}\n+(NSArray*) spell:(NSString*)str{\n    NSMutableArray *mArr = [[NSMutableArray alloc] init];\n    str = STRTOOK(str);\n    const char *chars = [str UTF8String];"
+        },
+        {
+            "comment": "This code is a for loop that iterates through each character of a string, converting them to characters and storing them in an array called mArr. It then returns the array of characters as the final result. The code also includes several markdown sections indicating different algorithm models for strings and characters.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIAlg/AIStringAlgs.m\":43-71",
+            "content": "    for (NSInteger i = 0; i < str.length; i ++) {\n        //unichar c = [str characterAtIndex:i];\n        char c = chars[i];\n        [mArr addObject:@(c)];\n    }\n    return mArr;\n}\n@end\n//MARK:===============================================================\n//MARK:                     < String\u7b97\u6cd5\u7ed3\u679c\u6a21\u578b >\n//MARK:===============================================================\n@implementation AIStringAlgsModel\n@end\n//MARK:===============================================================\n//MARK:                     < char\u7b97\u6cd5\u7ed3\u679c\u6a21\u578b >\n//MARK:===============================================================\n@implementation AICharAlgsModel : NSObject\n@end"
+        }
+    ]
+}

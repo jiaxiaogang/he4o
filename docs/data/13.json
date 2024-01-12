@@ -1,0 +1,538 @@
+{
+    "1300": {
+        "file_id": 130,
+        "content": "            }\n        }\n        //5. 有一条失败,则全失败;\n        if (!findItem) {\n            if (Log4SceneIsOk) NSLog(@\"\\t第%ld帧,条件满足未通过 canset:%@ (fromProtoFo:F%ld)\",cansetI,Pit2FStr(cansetAlg),protoFo.pointer.pointerId);\n            return nil;\n        }\n    }\n    //6. 全找到,则成功;\n    if (Log4SceneIsOk) NSLog(@\"\\t前段条件满足通过:%@ (cansetCutIndex:%ld fromProtoFo:%ld)\",Fo2FStr(cansetFo),cansetCutIndex,protoFo.pointer.pointerId);\n    return result;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/TCCanset.m:272-287"
+    },
+    "1301": {
+        "file_id": 130,
+        "content": "This code block is part of a function that appears to be checking conditions for a scene. It has three main steps: 1) find a specific item, 2) if any failure occurs, declare the whole operation as failed, and 3) if all items are found successfully, consider the operation successful. The log statements in this code help keep track of which frames pass or fail the conditions.",
+        "type": "comment"
+    },
+    "1302": {
+        "file_id": 131,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/DemandManager.h",
+        "type": "filepath"
+    },
+    "1303": {
+        "file_id": 131,
+        "content": "DemandManager.h manages tasks such as generating P and R tasks, updating CMV cache, and retrieving tasks for decision making and visualization in SMG_NothingIsAll codebase. It includes functions like `getAllDemand`, `removeDemand:` and `clear` to handle demands efficiently.",
+        "type": "summary"
+    },
+    "1304": {
+        "file_id": 131,
+        "content": "//\n//  DemandManager.h\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/8/4.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------思维控制器-循环管理器--------------------\n *  @version\n *      2021.12.28: 废弃取同抽具象路径rs的方法 (参考24107-3 & 25051);\n */\n@class DemandModel,AIShortMatchModel;\n@interface DemandManager : NSObject\n/**\n *  MARK:--------------------生成P任务--------------------\n *  1. 添加新的cmv到cache,并且自动撤消掉相对较弱的同类同向mv;\n *  2. 在assData等(内心活动,不抵消cmvCache中旧任务)\n *  3. 在dataIn时,抵消旧任务,并生成新任务;\n */\n-(void) updateCMVCache_PMV:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta;\n/**\n *  MARK:--------------------生成R任务--------------------\n *  @desc RMV输入更新任务管理器 (理性思维预测mv加入)\n */\n-(NSArray*) updateCMVCache_RMV:(AIShortMatchModel*)inModel protoFo:(AIFoNodeBase*)protoFo;\n/**\n *  MARK:--------------------获取任务 (决策部分: 可继续决策的部分)--------------------\n */\n-(DemandModel*) getCanDecisionDemand;   //获取当前,可以继续决策的任务 (未完成 & 非等待反馈ActYes);\n/**\n *  MARK:--------------------获取任务 (全部返回: 用于反馈和可视化等)--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/DemandManager.h:1-40"
+    },
+    "1305": {
+        "file_id": 131,
+        "content": "DemandManager.h is a header file for managing tasks related to thought control and looping in the SMG_NothingIsAll codebase. It contains functions for generating P and R tasks, updating CMV cache, and retrieving tasks for decision making and visualization.",
+        "type": "comment"
+    },
+    "1306": {
+        "file_id": 131,
+        "content": " */\n-(NSArray*) getAllDemand;\n/**\n *  MARK:--------------------移除某任务--------------------\n */\n-(void) removeDemand:(DemandModel*)demand;\n-(void) clear;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/DemandManager.h:41-51"
+    },
+    "1307": {
+        "file_id": 131,
+        "content": "Method `getAllDemand` returns an array of all demands, `removeDemand:` removes a specific demand instance from the list, and `clear` empties the demand list.",
+        "type": "comment"
+    },
+    "1308": {
+        "file_id": 132,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/DemandManager.m",
+        "type": "filepath"
+    },
+    "1309": {
+        "file_id": 132,
+        "content": "The DemandManager class manages demand, task generation, and updates based on algorithm type, urgency, and delta values. It handles CMV cache sorting and RMV task manager updates, calculates scores for demands, sorts them by initTime, selects optimal items, removes demands from loop cache, and logs removed R tasks' types while clearing the cache completely.",
+        "type": "summary"
+    },
+    "1310": {
+        "file_id": 132,
+        "content": "//\n//  DemandManager.m\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/8/4.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"DemandManager.h\"\n@interface DemandManager()\n/**\n *  MARK:--------------------实时序列--------------------\n *  元素 : <DemandModel.class>\n *  思维因子_当前cmv序列(注:所有cmv只与cacheImv中作匹配)(正序,order越大,排越前)\n */\n@property (strong,nonatomic) AsyncMutableArray *loopCache;\n@end\n@implementation DemandManager\n-(id) init{\n    self = [super init];\n    if (self) {\n        [self initData];\n    }\n    return self;\n}\n-(void) initData{\n    self.loopCache = [[AsyncMutableArray alloc] init];\n}\n//MARK:===============================================================\n//MARK:                     < method >\n//MARK:===============================================================\n/**\n *  MARK:--------------------生成P任务--------------------\n *  1. 添加新的cmv到cache,并且自动撤消掉相对较弱的同类同向mv;\n *  2. 在assData等(内心活动,不抵消cmvCache中旧任务)\n *  3. 在dataIn时,抵消旧任务,并生成新任务;\n *  @version\n *      2020.08.24: 在inputMv时,当前demand进行抵消时,其状态设置为Finish;\n *      2021.09.04: 当R任务的 (R部分发生完毕 & P部分也发生完毕 & R任务又没在ActYes/OutBack状态),则销毁这一任务 (参考23224-方案-代码2);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/DemandManager.m:1-47"
+    },
+    "1311": {
+        "file_id": 132,
+        "content": "This code is from the DemandManager class in the SMG_NothingIsAll project. It initializes a loopCache mutable array and provides methods for generating P tasks. The P task generation involves adding new cmv to cache, removing weaker same-direction mvs, and modifying demand status when inputMv occurs.",
+        "type": "comment"
+    },
+    "1312": {
+        "file_id": 132,
+        "content": " *      2022.05.18: 废弃抵消功能 (反馈功能早已由TCFeedback来做,不需要这里弄);\n *      2022.09.20: 加PDemand开关功能,先继续开着,其实现在P任务已经不怎么用了,逐步关掉;\n *  @todo\n *      2022.xx.xx: 废弃P模式 (参考xx);\n */\n-(void) updateCMVCache_PMV:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta{\n    //1. 数据检查\n    if (delta == 0 || !Switch4PDemand) {\n        return;\n    }\n    //2. 去重_同向撤弱,反向抵消;\n    BOOL canNeed = true;\n    NSInteger limit = self.loopCache.count;\n    for (NSInteger i = 0; i < limit; i++) {\n        DemandModel *checkItem = [self.loopCache objectAtIndex:i];\n        if ([STRTOOK(algsType) isEqualToString:checkItem.algsType]) {\n            if (ISOK(checkItem, PerceptDemandModel.class)) {\n                if ((delta > 0 == checkItem.delta > 0)) {\n                    //1) 同向较弱的撤消\n                    if (labs(urgentTo) > labs(checkItem.urgentTo)) {\n                        [self.loopCache removeObjectAtIndex:i];\n                        NSLog(@\"demandManager >> PMV移除P任务: 同向较弱撤消 %@,%ld\",checkItem.algsType,(long)checkItem.delta);\n                        limit--;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/DemandManager.m:48-71"
+    },
+    "1313": {
+        "file_id": 132,
+        "content": "This code appears to be part of a demand manager class, handling the updating of cache for P mode. It checks if there are any updates needed based on algorithm type, urgency, and delta values. If there is no update, it returns immediately. The code also includes comments about phasing out P mode and PDemand functionality, indicating potential future changes to this part of the codebase.",
+        "type": "comment"
+    },
+    "1314": {
+        "file_id": 132,
+        "content": "                        i--;\n                    }else{\n                        canNeed = false;\n                    }\n                }else{\n                    //2) 反向抵消\n                    [self.loopCache removeObjectAtIndex:i];\n                    checkItem.status = TOModelStatus_Finish;\n                    NSLog(@\"demandManager >> PMV移除P任务: 反向抵消 %@,%ld\",checkItem.algsType,(long)checkItem.delta);\n                    limit--;\n                    i--;\n                }\n            }\n        }\n    }\n    //3. 有需求时且可加入时_加入新的\n    //TODO:>>>>判断需求;(如饿,主动取当前状态,是否饿)\n    MVDirection direction = [ThinkingUtils getDemandDirection:algsType delta:delta];\n    if (canNeed && (direction != MVDirection_None)) {\n        PerceptDemandModel *newItem = [[PerceptDemandModel alloc] init];\n        newItem.algsType = algsType;\n        newItem.delta = delta;\n        newItem.urgentTo = urgentTo;\n        [self.loopCache addObject:newItem];\n        //2. 新需求时,加上活跃度;\n        [theTC updateEnergyDelta:urgentTo];\n        NSLog(@\"demandManager-PMV >> 新需求 %lu\",(unsigned long)self.loopCache.count);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/DemandManager.m:72-100"
+    },
+    "1315": {
+        "file_id": 132,
+        "content": "This code handles demand management in a task loop. It checks the current demand and adjusts based on direction, removes conflicting demands, adds new demands if possible, and updates energy delta for urgent tasks.",
+        "type": "comment"
+    },
+    "1316": {
+        "file_id": 132,
+        "content": "    }\n}\n/**\n *  MARK:--------------------生成R任务--------------------\n *  @desc RMV输入更新任务管理器 (理性思维预测mv加入)\n *  @todo\n *      2021.01.21: 抵销: 当汽车冲过来,突然又转向了,任务消除 (理性抵消 (仅能通过matchFo已发生的部分进行比对)) (参考22074-BUG2) T;\n *      2021.01.21: 抵销: 当另一辆更大的车又冲过来,两条matchFo都导致疼不能抵消 (理性抵消不以mv.algsType为准) (参考22074-BUG2) T;\n *      2021.01.21: 抵销&增强: 进度更新后,根据matchFo进行\"理性抵消\" 或者 \"理性增强(进度更新)\" 判断 (参考22074-BUG2) T;\n *  @version\n *      2021.01.25: RMV仅对ReasonDemandModel进行抵消防重 (否则会导致R-与P-需求冲突);\n *      2021.01.27: RMV仅对matchFoModel进行抵消防重 (否则会导致inModel预测处理不充分) (参考22074-BUG2);\n *      2021.02.05: 新增任务时,仅将\"与旧有同区最大迫切度的差值\"累增至活跃度 (参考22116);\n *      2021.03.01: 修复RMV一直在行为输出和被识别间重复死循环BUG (参考22142);\n *      2021.03.28: 此处algsType由urgentTo.at改成cmv.at,从mvNodeManager看这俩一致,如果出现bug再说;\n *      2021.07.14: 循环matchPFos时,采用反序,因为优先级和任务池优先级上弄反了 (参考23172);\n *      2021.11.11: 迭代RMV的生成机制,此代码其实啥也没改 (参考24107-1);\n *      2022.03.10: 为使鸟躲避及时停下,将迫切度再改回受评分迫切度等影响 (参考25142-改进);\n *      2022.05.02: 未形成新需求时,也更新energy (参考2523a-方案1);\n *      2022.05.18: 多pFos形成单个任务 (参考26042-TODO1);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/DemandManager.m:101-121"
+    },
+    "1317": {
+        "file_id": 132,
+        "content": "This code segment is related to generating R tasks for the Rational Minded Vision (RMV) input update task manager in a specific context. It includes various updates, enhancements, and bug fixes made over time, such as preventing conflicts between R and P demands, optimizing the order of matching forecasts, and updating energy levels even without new demands.",
+        "type": "comment"
+    },
+    "1318": {
+        "file_id": 132,
+        "content": " *      2022.05.18: 废弃抵消和防重功能,现在root各自工作,共用R和P反馈即可各自工作;\n *      2023.08.15: 传入protoFo,因为在pInput时和rInput时的protoFo是不同的,这个protoFo到决策时还要用 (参考30095代码段2);\n *      2023.12.20: 写同质新旧Root合并 (参考31024);\n *  @result 将新增的root任务收集返回;\n */\n-(NSArray*) updateCMVCache_RMV:(AIShortMatchModel*)inModel protoFo:(AIFoNodeBase*)protoFo{\n    //1. 数据检查;\n    NSMutableArray *newRootsResult = [[NSMutableArray alloc] init];\n    if (!inModel || !protoFo || !Switch4RS) return newRootsResult;\n    NSDictionary *fos4Demand = inModel.fos4Demand;\n    //2. 多时序识别预测分别进行处理;\n    for (NSString *atKey in fos4Demand.allKeys) {\n        //3. 数据准备\n        NSMutableArray *pFosValue = [fos4Demand objectForKey:atKey];\n        CGFloat score = [AIScore score4PFos:pFosValue];\n        //5. 取迫切度评分: 判断matchingFo.mv有值才加入demandManager,同台竞争,执行顺应mv;\n        if (score < 0) {\n            NSLog(@\"RMV新需求: %@ (第%ld条 评分:%@)\",ClassName2Str(atKey),self.loopCache.count+1,Double2Str_NDZ(score));\n            for (AIMatchFoModel *pFo in pFosValue) {\n                AIFoNodeBase *matchFo = [SMGUtils searchNode:pFo.matchFo];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/DemandManager.m:122-144"
+    },
+    "1319": {
+        "file_id": 132,
+        "content": "This code is updating the CMV cache for RMV in a demand manager. It checks input parameters, iterates through multiple time series recognitions, and evaluates scores to add new roots as needed.",
+        "type": "comment"
+    },
+    "1320": {
+        "file_id": 132,
+        "content": "                NSLog(@\"\\t pFo:%@->{%.2f} SP:%@ indexDic:%@\",Pit2FStr(pFo.matchFo),[AIScore score4MV_v2FromCache:pFo],CLEANSTR(matchFo.spDic),CLEANSTR(pFo.indexDic2));\n            }\n            //6. 当新旧Root的pFos有交集时,即为同质ROOT: 将oldRoot.pFos合并到newRoot中 (参考31024-todo1);\n            for (ReasonDemandModel *oldRRoot in self.loopCache.array) {\n                NSInteger oldIndex = [self.loopCache indexOfObject:oldRRoot];\n                //7. 判断新旧Root有交集 (参考31024-todo1);\n                NSArray *newPMatchFos = [SMGUtils convertArr:pFosValue convertBlock:^id(AIMatchFoModel *obj) {\n                    return obj.matchFo;\n                }];\n                NSArray *oldPMatchFos = [SMGUtils convertArr:oldRRoot.pFos convertBlock:^id(AIMatchFoModel *obj) {\n                    return obj.matchFo;\n                }];\n                if (ARRISOK([SMGUtils filterArrA:newPMatchFos arrB:oldPMatchFos])) {\n                    NSLog(@\"发现同质Root: 旧位置:%ld/%ld 旧枝叶数:%ld pFos数:(旧%ld + 新%ld = %ld)\",oldIndex+1,self.loopCache.co",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/DemandManager.m:145-160"
+    },
+    "1321": {
+        "file_id": 132,
+        "content": "This code is checking if two Roots have intersecting pFos (pattern-free occurrences). If they do, it merges the oldRoot's pFos into the newRoot. This helps in identifying similar Roots and avoiding redundancy in the loop cache.",
+        "type": "comment"
+    },
+    "1322": {
+        "file_id": 132,
+        "content": "unt,[TOUtils getSubOutModels_AllDeep:oldRRoot validStatus:nil].count,oldRRoot.pFos.count,pFosValue.count,oldRRoot.pFos.count + pFosValue.count);\n                    //8. 新旧pFos全保留 (参考31024-todo1);\n                    [pFosValue addObjectsFromArray:oldRRoot.pFos];\n                    //9. 删掉旧的root (参考31024-todo2);\n                    [self.loopCache removeObject:oldRRoot];\n                    break;\n                }\n            }\n            //7. 有需求时,则加到需求序列中;\n            ReasonDemandModel *newItem = [ReasonDemandModel newWithAlgsType:atKey pFos:pFosValue shortModel:inModel baseFo:nil protoFo:protoFo];\n            [self.loopCache addObject:newItem];\n            [newRootsResult addObject:newItem];\n            //8. 设活跃度_将最大的任务x2取负值,为当前活跃度 (参考25142-改进);;\n            //2021.05.27: 为方便测试,所有imv都给20迫切度 (因为迫切度太低话,还没怎么思考就停了);\n            //2022.03.10: 为使鸟躲避及时停下,将迫切度再改回受评分迫切度等影响;\n            [theTC updateEnergyValue:-score * 20];\n        }else{\n            [theTC updateEnergyValue:-score * 20];\n            NSLog(@\"当前,预测mv未形成需求:%@ 评分:%f\",atKey,score);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/DemandManager.m:160-182"
+    },
+    "1323": {
+        "file_id": 132,
+        "content": "This code snippet manages demand for a model. It checks if there is a demand, adds new items to the loop cache and results, updates the energy value based on score, and logs if no demand is formed.",
+        "type": "comment"
+    },
+    "1324": {
+        "file_id": 132,
+        "content": "        }\n    }\n    NSLog(@\"生成NewRoot数:%ld from:%@\",newRootsResult.count,Fo2FStr(protoFo));\n    return newRootsResult;\n}\n/**\n *  MARK:--------------------重排序cmvCache--------------------\n *  1. 懒排序,什么时候assLoop,什么时候排序;\n *  @version\n *      2021.01.02: loopCache排序后未被接收,所以一直是未生效的BUG;\n *      2021.01.27: 支持第二级排序:initTime (参考22074-BUG2);\n *      2021.11.13: R任务排序根据 \"迫切度*匹配度\" 得出 (参考24107-2);\n *      2022.03.15: 将排序方式更新为用score4Demand (参考25142);\n *      2023.03.01: 修复排序反了的BUG: 评分越低越应该优先 (参考28136-修复);\n *      2024.01.04: 避免徒劳,已经付出努力的价值,计为进度分 (参考31052);\n */\n-(void) refreshCmvCacheSort {\n    NSArray *sort = [SMGUtils sortBig2Small:self.loopCache.array compareBlock1:^double(ReasonDemandModel *obj) {\n        //1. 计算任务分;\n        CGFloat demandScore = -[AIScore score4Demand:obj];\n        //2. 计算进度分 (参考31052-todo1);\n        CGFloat maxProgressScore = 0;\n        for (TOFoModel *actionFo in obj.actionFoModels) {\n            if (actionFo.status != TOModelStatus_Runing && actionFo.status != TOModelStatus_ActYes) continue;\n            CGFloat progress = (float)actionFo.actionIndex / actionFo.targetSPIndex;//参考31052-公式1",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/DemandManager.m:183-209"
+    },
+    "1325": {
+        "file_id": 132,
+        "content": "This code sorts the `loopCache` array based on the demand score and progress score. The demand score is calculated using the `AIScore` method, while the progress score is determined by dividing the current action index by the target number of actions. The sort is performed in descending order to prioritize higher-scoring demands.",
+        "type": "comment"
+    },
+    "1326": {
+        "file_id": 132,
+        "content": "            CGFloat hot = 1 - [MathUtils getCooledValue_28:progress];//参考31052-公式2\n            CGFloat progressScore = demandScore * hot;//参考31052-公式3\n            //NSLog(@\"cansetFo: F%ld %@ (%ld/%ld)\",actionFo.content_p.pointerId,TOStatus2Str(actionFo.status),actionFo.actionIndex+1,actionFo.targetSPIndex);\n            //NSLog(@\"进度:%.2f 热度:%.2f 进度分:%.2f\",progress,hot,progressScore);\n            maxProgressScore = MAX(maxProgressScore, progressScore);\n        }\n        //3. 求出总分,并用于排序 (参考31052-todo2);\n        CGFloat totalScore = maxProgressScore + demandScore;\n        NSLog(@\"任务分:%.2f + 最终进度分:%.2f = 总分:%.2f\",demandScore,maxProgressScore,totalScore);\n        return totalScore;\n    } compareBlock2:^double(DemandModel *obj) {\n        return obj.initTime;\n    }];\n    [self.loopCache removeAllObjects];\n    [self.loopCache addObjectsFromArray:sort];\n}\n/**\n *  MARK:--------------------获取任务 (决策部分: 可继续决策的部分)--------------------\n *  @version\n *      xxxx.xx.xx: (未完成 & 非等待反馈ActYes);\n *      2021.12.23: root非WithOut状态的 (参考24212-6);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/DemandManager.m:210-233"
+    },
+    "1327": {
+        "file_id": 132,
+        "content": "This code calculates a score for each demand based on its progress and a maximum progress score, then calculates the total score by adding the maximum progress score and the demand score. The demands are sorted by their initTime in ascending order. This is part of a decision-making process to get tasks.",
+        "type": "comment"
+    },
+    "1328": {
+        "file_id": 132,
+        "content": " *      2021.12.23: 最优末枝处在actYes状态时,继续secondRoot (参考24212-7);\n *      2022.06.01: 末端actYes时,root不应期,因为actYes是向上传染不向下 (参考26185-TODO3);\n *      2022.09.24: 失效处理: 根任务失效时,不进行决策 (参考27123-问题2-todo2);\n */\n-(DemandModel*) getCanDecisionDemand{\n    //1. 数据检查\n    DemandModel *result = nil;\n    if (!ARRISOK(self.loopCache.array)) return nil;\n    //2. 重排序 & 取当前序列最前;\n    [self refreshCmvCacheSort];\n    //3. 逐个判断条件\n    for (NSInteger j = 0; j < self.loopCache.count; j++) {\n        ReasonDemandModel *item = ARR_INDEX(self.loopCache.array, j);\n        if (Log4CanDecisionDemand) NSLog(@\"root(%ld/%ld):%@ (%@) %@\",j,self.loopCache.count,Pit2FStr(item.protoFo),[SMGUtils date2Str:kHHmmss timeInterval:item.initTime],[TOModelVision cur2Sub:item]);\n    }\n    for (NSInteger i = 0; i < self.loopCache.count; i++) {\n        ReasonDemandModel *item = ARR_INDEX(self.loopCache.array, i);\n        NSArray *pFoTitles = [SMGUtils convertArr:item.pFos convertBlock:^id(AIMatchFoModel *obj) {\n            return STRFORMAT(@\"F%ld\",obj.matchFo.pointerId);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/DemandManager.m:234-254"
+    },
+    "1329": {
+        "file_id": 132,
+        "content": "This code retrieves the most optimal demand from a list, ensuring that it is currently active and not expired. It checks the conditions for each item in the list and sorts them accordingly. The sorted items are then iterated to find the most optimal demand that can be acted upon.",
+        "type": "comment"
+    },
+    "1330": {
+        "file_id": 132,
+        "content": "        }];\n        NSString *itemDesc = STRFORMAT(@\"proto:F%ld pFos:%@\",item.protoFo.pointerId,CLEANSTR(pFoTitles));\n        //3. 即使已经找到result,也把日志打完,方便调试日志中查看Demand的完整竞争情况;\n        if (result) {\n            if (Log4CanDecisionDemand) NSLog(@\"\\t第%ld条 %@ 评分%.2f \\t\\t\\t{%@}\",i+1,ClassName2Str(item.algsType),[AIScore score4Demand:item],itemDesc);\n            continue;\n        }\n        //4. 已完成时,下一个;\n        if (item.status == TOModelStatus_Finish) {\n            if (Log4CanDecisionDemand) NSLog(@\"\\t第%ld条 %@ 评分%.2f 因FINISH 失败 \\t{%@}\",i+1,ClassName2Str(item.algsType),[AIScore score4Demand:item],itemDesc);\n            continue;\n        }\n        //4. 已无计可施,下一个 (TCPlan会优先从末枝执行,所以当root就是末枝时,说明整个三条大树干全烂透没用了);\n        if (item.status == TOModelStatus_WithOut) {\n            if (Log4CanDecisionDemand) NSLog(@\"\\t第%ld条 %@ 评分%.2f 因WithOut 失败 \\t{%@}\",i+1,ClassName2Str(item.algsType),[AIScore score4Demand:item],itemDesc);\n            continue;\n        }\n        //4. 当任务失效时,不返回;\n        if (ISOK(item, ReasonDemandModel.class) && ((ReasonDemandModel*)item).isExpired) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/DemandManager.m:255-277"
+    },
+    "1331": {
+        "file_id": 132,
+        "content": "This code snippet is part of a decision-making process in the DemandManager. It logs information about each demand item, including its type, score, and description. If the demand has already been found or if it's invalid for any reason (finished, no applicable algorithm, or expired), it continues to the next demand without returning a result.",
+        "type": "comment"
+    },
+    "1332": {
+        "file_id": 132,
+        "content": "            if (Log4CanDecisionDemand) NSLog(@\"\\t第%ld条 %@ 评分%.2f 因isExpired 失败 \\t{%@}\",i+1,ClassName2Str(item.algsType),[AIScore score4Demand:item],itemDesc);\n            continue;\n        }\n        //5. 最末枝在actYes状态时,不应期,继续secondRoot;\n        BOOL endHavActYes = [TOUtils endHavActYes:item];\n        if (endHavActYes){\n            if (Log4CanDecisionDemand) NSLog(@\"\\t第%ld条 %@ 评分%.2f 因endHavActYes 失败 \\t{%@}\",i+1,ClassName2Str(item.algsType),[AIScore score4Demand:item],itemDesc);\n            continue;\n        }\n        //6. 有效,则记录;\n        NSLog(@\"\\t第%ld条 %@ 评分%.2f 激活成功 \\t{%@}\",i+1,ClassName2Str(item.algsType),[AIScore score4Demand:item],itemDesc);\n        result = item;\n    }\n    NSLog(@\"Demand竞争 <<<== %@ 共%ld条\",result?@\"SUCCESS\":@\"FAILURE\",self.loopCache.count);\n    return result;\n}\n/**\n *  MARK:--------------------获取任务 (全部返回: 用于反馈和可视化等)--------------------\n *  @desc 排序方式: 从大到小;\n */\n-(NSArray*) getAllDemand{\n    [self refreshCmvCacheSort];\n    return self.loopCache.array;\n}\n/**\n *  MARK:--------------------移除某任务--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/DemandManager.m:278-307"
+    },
+    "1333": {
+        "file_id": 132,
+        "content": "The code is a part of the DemandManager class. It handles decision-making for demands and includes a loop to evaluate each demand. If a demand fails, it logs the failure reason and continues to the next demand. If a demand is successful, it records it as the result. The code also provides methods to get all demands in descending order and remove a specific demand.",
+        "type": "comment"
+    },
+    "1334": {
+        "file_id": 132,
+        "content": " */\n-(void) removeDemand:(DemandModel*)demand{\n    if (ISOK(demand, ReasonDemandModel.class)) NSLog(@\"demandManager >> 移除R任务:%@\",((ReasonDemandModel*)demand).algsType);\n    if (demand) [self.loopCache removeObject:demand];\n}\n-(void) clear{\n    [self.loopCache removeAllObjects];\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/DemandManager.m:308-318"
+    },
+    "1335": {
+        "file_id": 132,
+        "content": "This method removes a demand object from the loop cache and logs the removed R task's type. The clear method empties the loop cache completely.",
+        "type": "comment"
+    },
+    "1336": {
+        "file_id": 133,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/DemandModel.h",
+        "type": "filepath"
+    },
+    "1337": {
+        "file_id": 133,
+        "content": "The code defines a DemandModel class that extends TOModelBase and implements ITryActionFoDelegate, with properties for urgentTo, delta, algsType, initTime, and effectStatus. It also includes methods for getting the current strongest outSubModel and updating time decay. Additionally, there's a class with an assignable updateTime property and rCansetModels array to store candidate sets and find possible candidates for migration, sorting them before outputting bestCanset in decision-making.",
+        "type": "summary"
+    },
+    "1338": {
+        "file_id": 133,
+        "content": "//\n//  DemandModel.h\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/8/2.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"TOModelBase.h\"\n#import \"ITryActionFoDelegate.h\"\n/**\n *  MARK:--------------------思维控制器中任务序列的_数据模型--------------------\n *  @version\n *      2020-05-22 : 将demandModel下直接挂载Fo,然后Fo下,再挂载subFo (Fo和subFo都用TOModelBase模型);\n *      2021-01-21 : 支持P和R两个子类;\n *      2021-01-27 : 支持二级排序initTime;\n */\n@interface DemandModel : TOModelBase <ITryActionFoDelegate>\n@property (assign, nonatomic) NSInteger urgentTo;   //一级排序因素 (高在前)\n@property (assign, nonatomic) NSInteger delta;\n@property (strong, nonatomic) NSString *algsType;   //mv的标识\n@property (assign, nonatomic) double initTime;      //二级排序因素 (新在前)\n@property (assign, nonatomic) EffectStatus effectStatus;//任务解决是否有效状态;\n/**\n *  MARK:--------------------获取当前最强的outSubModel--------------------\n *  @result 返回TOModelBase或其子类型;\n */\n//-(id) getCurSubModel;\n/**\n *  MARK:--------------------更新时间衰减--------------------\n *  1. 懒衰减,什么时候取order,什么时候进行衰减;\n *  2. 衰减规则:",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/DemandModel.h:1-36"
+    },
+    "1339": {
+        "file_id": 133,
+        "content": "This code defines a DemandModel class that extends TOModelBase and implements ITryActionFoDelegate. It has properties for urgentTo, delta, algsType, initTime, and effectStatus. It also includes two methods: one for getting the current strongest outSubModel and another for updating time decay. The getCurSubModel method returns a TOModelBase or its subclass, while the time decay method updates the time decay rule.",
+        "type": "comment"
+    },
+    "1340": {
+        "file_id": 133,
+        "content": " *      > 1分钟内加10;\n *      > 10分钟内持平;\n *      > 10分钟后-10;\n *      > 小于0则销毁;\n */\n@property (assign, nonatomic) double updateTime;\n/**\n *  MARK:--------------------在决策时,将输出bestCanset之前的排序好的canset候选集存下来--------------------\n *  @desc 这个数据里将所有获取rCanset的数据存下来了,可以用于从中寻找可供迁移的hCanset;\n */\n@property (strong, nonatomic) NSArray *rCansetModels;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/DemandModel.h:37-50"
+    },
+    "1341": {
+        "file_id": 133,
+        "content": "This code defines a class with an assignable updateTime property and an array of rCansetModels for storing all obtained candidate sets. The rCansetModels can be used to find possible candidates for migration. It also mentions sorting the candidate set (canset) before outputting bestCanset in decision-making.",
+        "type": "comment"
+    },
+    "1342": {
+        "file_id": 134,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/DemandModel.m",
+        "type": "filepath"
+    },
+    "1343": {
+        "file_id": 134,
+        "content": "This code defines a DemandModel class in SMG_NothingIsAll, initializing the model with getters, utilizing NSMutableArray for storage. It is part of a class that encodes and decodes object properties using NSCoder, updating time property during encoding/decoding.",
+        "type": "summary"
+    },
+    "1344": {
+        "file_id": 134,
+        "content": "//\n//  DemandModel.m\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/8/2.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"DemandModel.h\"\n@interface DemandModel()\n@property (strong, nonatomic) NSMutableArray *actionFoModels;\n@end\n@implementation DemandModel\n-(id) init{\n    self = [super init];\n    if (self) {\n        self.initTime = [[NSDate new] timeIntervalSince1970];\n    }\n    return self;\n}\n-(NSMutableArray *)actionFoModels{\n    if (_actionFoModels == nil) {\n        _actionFoModels = [[NSMutableArray alloc] init];\n    }\n    return _actionFoModels;\n}\n//-(id) getCurSubModel{\n//    TOFoModel *maxModel = nil;\n//    for (TOModelBase *model in self.subModels) {\n//        //1. 取不在except中的;\n//        if (![SMGUtils containsSub_p:model.content_p parent_ps:self.except_ps]) {\n//\n//            //2. 最高得分的返回;\n//            if (maxModel == nil || maxModel.score < model.score) {\n//                maxModel = model;\n//            }\n//        }\n//    }\n//    return maxModel;\n//}\n//MARK:===============================================================",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/DemandModel.m:1-49"
+    },
+    "1345": {
+        "file_id": 134,
+        "content": "This code is for the DemandModel class in the SMG_NothingIsAll project. It initializes the model and provides getters for actionFoModels, although getCurSubModel has been commented out. The class uses NSMutableArray to store its models and sets initTime upon initialization.",
+        "type": "comment"
+    },
+    "1346": {
+        "file_id": 134,
+        "content": "//MARK:                     < private_Method >\n//MARK:===============================================================\n/**\n *  MARK:--------------------重排序cmvCache--------------------\n *  1. 懒排序,什么时候assLoop,什么时候排序;\n */\n//-(void) refreshExpCacheSort{\n//    [self.subModels sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {\n//        TOModelBase *itemA = (TOModelBase*)obj1;\n//        TOModelBase *itemB = (TOModelBase*)obj2;\n//        return [SMGUtils compareFloatA:itemB.score floatB:itemA.score];\n//    }];\n//}\n/**\n *  MARK:--------------------NSCoding--------------------\n */\n- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {\n    self = [super initWithCoder:aDecoder];\n    if (self) {\n        self.actionFoModels = [aDecoder decodeObjectForKey:@\"actionFoModels\"];\n        self.urgentTo = [aDecoder decodeIntegerForKey:@\"urgentTo\"];\n        self.delta = [aDecoder decodeIntegerForKey:@\"delta\"];\n        self.algsType = [aDecoder decodeObjectForKey:@\"algsType\"];\n        self.initTime = [aDecoder decodeDoubleForKey:@\"initTime\"];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/DemandModel.m:50-75"
+    },
+    "1347": {
+        "file_id": 134,
+        "content": "This code contains two main methods: \n1. The `refreshExpCacheSort` method is used to sort the `cmvCache`. It uses lazy sorting, sorting only when necessary.\n2. The `initWithCoder` method is responsible for initializing the object from a coder. It decodes and assigns values to various properties like `actionFoModels`, `urgentTo`, `delta`, `algsType`, and `initTime`.",
+        "type": "comment"
+    },
+    "1348": {
+        "file_id": 134,
+        "content": "        self.updateTime = [aDecoder decodeDoubleForKey:@\"updateTime\"];\n        self.effectStatus = [aDecoder decodeIntegerForKey:@\"effectStatus\"];\n    }\n    return self;\n}\n- (void)encodeWithCoder:(NSCoder *)aCoder {\n    [super encodeWithCoder:aCoder];\n    [aCoder encodeObject:self.actionFoModels forKey:@\"actionFoModels\"];\n    [aCoder encodeInteger:self.urgentTo forKey:@\"urgentTo\"];\n    [aCoder encodeInteger:self.delta forKey:@\"delta\"];\n    [aCoder encodeObject:self.algsType forKey:@\"algsType\"];\n    [aCoder encodeDouble:self.initTime forKey:@\"initTime\"];\n    [aCoder encodeDouble:self.updateTime forKey:@\"updateTime\"];\n    [aCoder encodeInteger:self.effectStatus forKey:@\"effectStatus\"];\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/DemandModel.m:76-93"
+    },
+    "1349": {
+        "file_id": 134,
+        "content": "This code is part of a class that encodes and decodes object properties using NSCoder. The class has an updateTime property which gets decoded from aDecoder, and several other properties are encoded into aCoder.",
+        "type": "comment"
+    },
+    "1350": {
+        "file_id": 135,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/HDemandModel.h",
+        "type": "filepath"
+    },
+    "1351": {
+        "file_id": 135,
+        "content": "This code defines the HDemandModel class, which extends DemandModel and is used for ATHav tasks. It has been updated to discard alg target field as it is redundant with hDemand.base. New feedbackAlg field has been added to store actual feedbackTOR for use in regrouping. The old feedbackAlg field has been deprecated, now using base.feedbackAlg instead.",
+        "type": "summary"
+    },
+    "1352": {
+        "file_id": 135,
+        "content": "//\n//  HDemandModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/11/28.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import \"DemandModel.h\"\n/**\n *  MARK:--------------------H任务模型--------------------\n *  @desc 用于概念ATHav任务;\n *  @version\n *      2021.12.05: 将alg目标字段废弃,因为取hDemand.base就是它,没必要单存一份;\n *      2021.12.05: 新增feedbackAlg字段,将实际feedbackTOR的存在此处,用于regroup时使用;\n *      2021.12.05: feedbackAlg废弃,用旧有base.feedbackAlg即可;\n */\n@interface HDemandModel : DemandModel\n+(HDemandModel*) newWithAlgModel:(TOAlgModel*)base;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/HDemandModel.h:1-23"
+    },
+    "1353": {
+        "file_id": 135,
+        "content": "This code defines the HDemandModel class, which extends DemandModel and is used for ATHav tasks. It has been updated to discard alg target field as it is redundant with hDemand.base. New feedbackAlg field has been added to store actual feedbackTOR for use in regrouping. The old feedbackAlg field has been deprecated, now using base.feedbackAlg instead.",
+        "type": "comment"
+    },
+    "1354": {
+        "file_id": 136,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/HDemandModel.m",
+        "type": "filepath"
+    },
+    "1355": {
+        "file_id": 136,
+        "content": "This code imports the HDemandModel class and defines a method called newWithAlgModel, which returns an instance of HDemandModel initialized with a TOAlgModel parameter.",
+        "type": "summary"
+    },
+    "1356": {
+        "file_id": 136,
+        "content": "//\n//  HDemandModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/11/28.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import \"HDemandModel.h\"\n@implementation HDemandModel\n+(HDemandModel*) newWithAlgModel:(TOAlgModel*)base{\n    HDemandModel *result = [[HDemandModel alloc] init];\n    result.baseOrGroup = base;\n    [base.subDemands addObject:result];\n    return result;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/HDemandModel.m:1-20"
+    },
+    "1357": {
+        "file_id": 136,
+        "content": "This code imports the HDemandModel class and defines a method called newWithAlgModel, which returns an instance of HDemandModel initialized with a TOAlgModel parameter.",
+        "type": "comment"
+    },
+    "1358": {
+        "file_id": 137,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/PerceptDemandModel.h",
+        "type": "filepath"
+    },
+    "1359": {
+        "file_id": 137,
+        "content": "This code defines a PerceptDemandModel class that inherits from DemandModel, with no specific functionality provided. It marks the beginning of the \"感性需求模型\" (Percept Demand Model) section and imports the DemandModel class.",
+        "type": "summary"
+    },
+    "1360": {
+        "file_id": 137,
+        "content": "//\n//  PerceptDemandModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/1/21.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import \"DemandModel.h\"\n/**\n *  MARK:--------------------感性需求模型--------------------\n */\n@interface PerceptDemandModel : DemandModel\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/PerceptDemandModel.h:1-16"
+    },
+    "1361": {
+        "file_id": 137,
+        "content": "This code defines a PerceptDemandModel class that inherits from DemandModel, with no specific functionality provided. It marks the beginning of the \"感性需求模型\" (Percept Demand Model) section and imports the DemandModel class.",
+        "type": "comment"
+    },
+    "1362": {
+        "file_id": 138,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/PerceptDemandModel.m",
+        "type": "filepath"
+    },
+    "1363": {
+        "file_id": 138,
+        "content": "This code is a header file for PerceptDemandModel, which is part of the SMG_NothingIsAll project. It was created by jia on January 21, 2021 and is copyrighted by XiaoGang in 2021.",
+        "type": "summary"
+    },
+    "1364": {
+        "file_id": 138,
+        "content": "//\n//  PerceptDemandModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/1/21.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import \"PerceptDemandModel.h\"\n@implementation PerceptDemandModel\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/PerceptDemandModel.m:1-13"
+    },
+    "1365": {
+        "file_id": 138,
+        "content": "This code is a header file for PerceptDemandModel, which is part of the SMG_NothingIsAll project. It was created by jia on January 21, 2021 and is copyrighted by XiaoGang in 2021.",
+        "type": "comment"
+    },
+    "1366": {
+        "file_id": 139,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/ReasonDemandModel.h",
+        "type": "filepath"
+    },
+    "1367": {
+        "file_id": 139,
+        "content": "The ReasonDemandModel class is a subclass of DemandModel, defined by a list of pFos and other parameters. It serves as a standalone model or subtask for predicting the next move based on current state. The class has properties representing demand source, fo records, and pointer validation.",
+        "type": "summary"
+    },
+    "1368": {
+        "file_id": 139,
+        "content": "//\n//  ReasonDemandModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/1/21.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import \"DemandModel.h\"\n/**\n *  MARK:--------------------理性需求模型--------------------\n *  @desc 阻止inModel.matchFo继续发生;\n *  @todo\n *      2021.01.21: algsType,urgentTo,delta属性值,可以改为cutIndex*cmvScore实时计算返回 (暂时不用);\n *  @version\n *      2021.01.27: 将inModel改为单条mModel和protoFo;\n *      2021.03.28: 允许作为子任务;\n */\n@class AIShortMatchModel,TOFoModel,AIMatchFoModel;\n@interface ReasonDemandModel : DemandModel\n/**\n *  MARK:--------------------newWith--------------------\n *  @param pFos     : List<AIMatchFoModel>\n *  @param baseFo   : 当前为子任务时,传入baseFo,非子任务传空即可;\n *  @param protoFo  : pInput和rInput时的protoFo是不同的,所以传入进来保留到demandModel中 (参考30095代码段2);\n */\n+(ReasonDemandModel*) newWithAlgsType:(NSString*)algsType pFos:(NSArray*)pFos shortModel:(AIShortMatchModel*)shortModel baseFo:(TOFoModel*)baseFo protoFo:(AIFoNodeBase*)protoFo;\n/**\n *  MARK:--------------------R-的预测时序们--------------------\n *  @类型 List<AIMatchFoModel>",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/ReasonDemandModel.h:1-34"
+    },
+    "1369": {
+        "file_id": 139,
+        "content": "This code defines the ReasonDemandModel class, which is a subclass of DemandModel. It can be used as a standalone model or as a subtask. It takes a list of pFos (AIMatchFoModel) and other parameters to create an instance. The class also includes methods for predicting the next move based on the current state.",
+        "type": "comment"
+    },
+    "1370": {
+        "file_id": 139,
+        "content": " *  @version\n *      2022.05.18: 替换原单个mModel,改成pFos多个 (参考26042-TODO2);\n */\n@property (strong, nonatomic) NSArray *pFos;\n-(NSArray*) validPFos;\n/**\n *  MARK:--------------------需求来源inModel--------------------\n *  @version\n *      2022.03.23: 弃用inModel,改用fromIden标识 (参考25184);\n */\n//@property (strong, nonatomic) AIShortMatchModel *inModel;\n@property (strong, nonatomic) NSString *fromIden;\n/**\n *  MARK:--------------------触发了此任务的fo记录--------------------\n *  @desc 作用: 可用于Solution思考;\n */\n@property (strong, nonatomic) AIKVPointer *protoFo;     //触发识别根任务的protoFo\n@property (strong, nonatomic) AIKVPointer *regroupFo;   //触发反思子任务的regroupFo\n-(AIKVPointer*) protoOrRegroupFo;\n/**\n *  MARK:--------------------任务是否失效--------------------\n */\n-(BOOL) isExpired;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/ReasonDemandModel.h:35-62"
+    },
+    "1371": {
+        "file_id": 139,
+        "content": "This code defines a class with properties representing the source of demand, triggered fo records, and validation of pointers. It also includes methods for validating validPFos and checking if the task is expired. The code has undergone changes on May 18 and March 23 to replace inModel with fromIden and update pFos from a single model to multiple models.",
+        "type": "comment"
+    },
+    "1372": {
+        "file_id": 140,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/ReasonDemandModel.m",
+        "type": "filepath"
+    },
+    "1373": {
+        "file_id": 140,
+        "content": "The code initializes a ReasonDemandModel object, prepares data, and defines methods for valid pFos, task expiration, and obtaining proto/regroup fo. It also provides an NSCoding implementation for encoding/decoding properties using specified keys in the coder.",
+        "type": "summary"
+    },
+    "1374": {
+        "file_id": 140,
+        "content": "//\n//  ReasonDemandModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/1/21.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import \"ReasonDemandModel.h\"\n@implementation ReasonDemandModel\n/**\n *  MARK:--------------------newWith--------------------\n *  @version\n *      2021.03.28: 将at & delta & urgentTo也封装到此处取赋值;\n *      2021.06.01: 将子任务时的base也兼容入baseOrGroup中 (参考23094);\n */\n+(ReasonDemandModel*) newWithAlgsType:(NSString*)algsType pFos:(NSArray*)pFos shortModel:(AIShortMatchModel*)shortModel baseFo:(TOFoModel*)baseFo protoFo:(AIFoNodeBase*)protoFo{\n    //1. 数据准备;\n    ReasonDemandModel *result = [[ReasonDemandModel alloc] init];\n    AIMatchFoModel *firstPFo = ARR_INDEX(pFos, 0);\n    AIFoNodeBase *matchFo = [SMGUtils searchNode:firstPFo.matchFo];\n    AICMVNodeBase *mvNode = [SMGUtils searchNode:matchFo.cmvNode_p];\n    NSInteger delta = [NUMTOOK([AINetIndex getData:mvNode.delta_p]) integerValue];\n    NSInteger urgentTo = [NUMTOOK([AINetIndex getData:mvNode.urgentTo_p]) integerValue];\n    urgentTo = (int)(urgentTo * (firstPFo.cutIndex + 1));",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/ReasonDemandModel.m:1-27"
+    },
+    "1375": {
+        "file_id": 140,
+        "content": "This code is creating a ReasonDemandModel object and initializing its properties based on the provided parameters. It prepares data for the model by assigning values to certain attributes, such as delta and urgentTo, which are derived from the matching FO (firstPFo) and CMV nodes (mvNode). The code also calculates the value of urgentTo using a specific formula that involves cutting index plus 1.",
+        "type": "comment"
+    },
+    "1376": {
+        "file_id": 140,
+        "content": "    //2. 短时结构;\n    if (baseFo) [baseFo.subDemands addObject:result];\n    result.baseOrGroup = baseFo;\n    //3. 属性赋值;\n    result.algsType = algsType;\n    result.delta = delta;\n    result.urgentTo = urgentTo;\n    result.pFos = pFos;\n    result.fromIden = STRFORMAT(@\"%p\",shortModel);\n    result.protoFo = protoFo.pointer;\n    result.regroupFo = shortModel.regroupFo.pointer;\n    //4. pFos赋值baseRDemand;\n    for (AIMatchFoModel *pFo in pFos) {\n        pFo.baseRDemand = result;\n    }\n    return result;\n}\n/**\n *  MARK:--------------------任务的pFos--------------------\n *  @desc 默认返回未失效的pFos任务 (也可以考虑改成失效时,直接移除失效的pFo) (参考27095-10);\n */\n-(NSArray*) validPFos {\n    return [SMGUtils filterArr:_pFos checkValid:^BOOL(AIMatchFoModel *item) {\n        return !item.isExpired;\n    }];\n}\n-(AIKVPointer*) protoOrRegroupFo {\n    if (self.protoFo) return self.protoFo;\n    return self.regroupFo;\n}\n/**\n *  MARK:--------------------任务是否失效--------------------\n *  @desc : 当R任务的pFos全失效时,则R任务也失效 (参考27123-问题2-todo1);\n */\n-(BOOL) isExpired {\n    return !ARRISOK(self.validPFos);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/ReasonDemandModel.m:29-69"
+    },
+    "1377": {
+        "file_id": 140,
+        "content": "This code defines a class with methods for retrieving valid pFos, determining if the task is expired based on its pFos, and obtaining the proto or regroup fo. The methods filter out invalid pFos, check the status of each pFo, and handle the overall state of the task based on the pFos.",
+        "type": "comment"
+    },
+    "1378": {
+        "file_id": 140,
+        "content": "}\n/**\n *  MARK:--------------------NSCoding--------------------\n */\n- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {\n    self = [super initWithCoder:aDecoder];\n    if (self) {\n        self.pFos = [aDecoder decodeObjectForKey:@\"pFos\"];\n        self.fromIden = [aDecoder decodeObjectForKey:@\"fromIden\"];\n        self.protoFo = [aDecoder decodeObjectForKey:@\"protoFo\"];\n        self.regroupFo = [aDecoder decodeObjectForKey:@\"regroupFo\"];\n    }\n    return self;\n}\n- (void)encodeWithCoder:(NSCoder *)aCoder {\n    [super encodeWithCoder:aCoder];\n    [aCoder encodeObject:self.pFos forKey:@\"pFos\"];\n    [aCoder encodeObject:self.fromIden forKey:@\"fromIden\"];\n    [aCoder encodeObject:self.protoFo forKey:@\"protoFo\"];\n    [aCoder encodeObject:self.regroupFo forKey:@\"regroupFo\"];\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/ReasonDemandModel.m:70-94"
+    },
+    "1379": {
+        "file_id": 140,
+        "content": "This code defines an NSCoding protocol implementation for a class, providing methods to initialize with a coder and encode values using a coder. The class has properties pFos, fromIden, protoFo, and regroupFo which are encoded and decoded using the specified keys in the coder.",
+        "type": "comment"
+    },
+    "1380": {
+        "file_id": 141,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/TCDemand.h",
+        "type": "filepath"
+    },
+    "1381": {
+        "file_id": 141,
+        "content": "This code declares a class TCDemand which handles different types of tasks such as R, P, H and sub tasks. The methods are used for Demand formation based on ShortMatchModel, FoNodeBase, CMVNode and TOFoModel respectively.",
+        "type": "summary"
+    },
+    "1382": {
+        "file_id": 141,
+        "content": "//\n//  TCDemand.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/11/28.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface TCDemand : NSObject\n+(NSArray*) rDemand:(AIShortMatchModel*)model protoFo:(AIFoNodeBase*)protoFo;//R任务\n+(void) pDemand:(AICMVNode*)cmvNode;        //P任务\n+(void) subDemand:(AIShortMatchModel*)model foModel:(TOFoModel*)foModel;   //反思识别形成子任务;\n+(void) hDemand:(TOAlgModel*)algModel;      //H任务 (用来转移某概念的H任务);\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/TCDemand.h:1-18"
+    },
+    "1383": {
+        "file_id": 141,
+        "content": "This code declares a class TCDemand which handles different types of tasks such as R, P, H and sub tasks. The methods are used for Demand formation based on ShortMatchModel, FoNodeBase, CMVNode and TOFoModel respectively.",
+        "type": "comment"
+    },
+    "1384": {
+        "file_id": 142,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/TCDemand.m",
+        "type": "filepath"
+    },
+    "1385": {
+        "file_id": 142,
+        "content": "The TCDemand.m file updates energy values, demand pool, and decision loop in the AIThinkingControl module, syncing outModelManager data, managing child tasks, recognizing results, and updating operCount. It also updates 'theTV' frame and searches for nodes in a demand dictionary, logging Fo information.",
+        "type": "summary"
+    },
+    "1386": {
+        "file_id": 142,
+        "content": "//\n//  TCDemand.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/11/28.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import \"TCDemand.h\"\n@implementation TCDemand\n/**\n *  MARK:--------------------r预测--------------------\n *  @version\n *      2021.12.05: 原本只有tor受阻时才执行solution,现改为不依赖tor,因为tor改到概念识别之后了 (参考24171-9);\n */\n+(NSArray*) rDemand:(AIShortMatchModel*)model protoFo:(AIFoNodeBase*)protoFo{\n    //2. 预测处理_把mv加入到demandManager;\n    [theTC updateOperCount:kFILENAME];\n    Debug();\n    OSTitleLog(@\"rDemand\");\n    NSArray *newRoots = [theTC.outModelManager updateCMVCache_RMV:model protoFo:protoFo];\n    dispatch_async(dispatch_get_main_queue(), ^{//30083回同步\n        [theTV updateFrame];\n    });\n    DebugE();\n    return newRoots;\n}\n/**\n *  MARK:--------------------p任务--------------------\n *  @desc 功能说明:\n *      1. 更新energy值\n *      2. 更新需求池\n *      3. 进行dataOut决策行为化;\n */\n+(void) pDemand:(AICMVNode*)cmvNode{\n    //1. 将联想到的cmv更新energy & 更新demandManager & decisionLoop\n    [theTC updateOperCount:kFILENAME];\n    Debug();",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/TCDemand.m:1-41"
+    },
+    "1387": {
+        "file_id": 142,
+        "content": "TCDemand.m file contains methods for updating energy values, demand pool, and making decision loop in AIThinkingControl module of the codebase. The rDemand method predicts and updates CMVCache, while pDemand updates energy, demandManager, and performs dataOut decisions.",
+        "type": "comment"
+    },
+    "1388": {
+        "file_id": 142,
+        "content": "    OSTitleLog(@\"pDemand\");\n    NSInteger delta = [NUMTOOK([AINetIndex getData:cmvNode.delta_p]) integerValue];\n    NSString *algsType = cmvNode.urgentTo_p.algsType;\n    NSInteger urgentTo = [NUMTOOK([AINetIndex getData:cmvNode.urgentTo_p]) integerValue];\n    [theTC.outModelManager updateCMVCache_PMV:algsType urgentTo:urgentTo delta:delta];\n    dispatch_async(dispatch_get_main_queue(), ^{//30083回同步\n        [theTV updateFrame];\n    });\n    //2. 转向执行;\n    DebugE();\n    [TCScore scoreFromIfTCNeed];\n}\n/**\n *  MARK:--------------------反思识别形成子任务--------------------\n *  @version\n *      2021.12.06: 反馈feedback后生成子任务,但并不触发solution决策 (参考24171-9de);\n *  @todo\n *      2022.03.11: 根据fos4Demand生成子任务后,根据它的mvScoreV2限制它的下辖分支数 (参考25142-TODO3);\n *      2022.05.18: 多pFos形成单个任务 (参考26042-TODO1);\n *      2023.07.07: 以前是反馈后反思识别,现在改成行为化前反思识别,但最终都由此处生成子任务 (参考30054-todo5);\n */\n+(void) subDemand:(AIShortMatchModel*)model foModel:(TOFoModel*)foModel{\n    //1. 识别结果pFos挂载到targetFoModel下做子任务 (好的坏的全挂载,比如做的饭我爱吃{MV+},但是又太麻烦{MV-});\n    [theTC updateOperCount:kFILENAME];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/TCDemand.m:42-67"
+    },
+    "1389": {
+        "file_id": 142,
+        "content": "This code snippet updates the outModelManager with CMV cache data, triggers subDemand to generate subtasks based on the feedback, and manages pFos as child tasks. It also handles recognizing results and updating operCount for further processing.",
+        "type": "comment"
+    },
+    "1390": {
+        "file_id": 142,
+        "content": "    Debug();\n    NSDictionary *fos4Demand = model.fos4Demand;\n    OFTitleLog(@\"subDemand\",@\"\\n子任务数:%ld baseFo:%@\",fos4Demand.count,Pit2FStr(foModel.content_p));\n    for (NSString *atKey in fos4Demand.allKeys) {\n        NSArray *pFosValue = [fos4Demand objectForKey:atKey];\n        [ReasonDemandModel newWithAlgsType:atKey pFos:pFosValue shortModel:model baseFo:foModel protoFo:model.protoFo];\n        for (AIMatchFoModel *pFo in pFosValue) {\n            AIFoNodeBase *pFoNode = [SMGUtils searchNode:pFo.matchFo];\n            NSLog(@\"\\t pFo:%@->{%@%.2f}\",Pit2FStr(pFo.matchFo),ClassName2Str(pFoNode.cmvNode_p.algsType),[AIScore score4MV_v2FromCache:pFo]);\n        }\n    }\n    dispatch_async(dispatch_get_main_queue(), ^{//30083回同步\n        [theTV updateFrame];\n    });\n    DebugE();\n}\n/**\n *  MARK:--------------------hDemand--------------------\n *  @version\n *      2021.12.19: 改为调用TCScore而不是hSolution;\n */\n+(void) hDemand:(TOAlgModel*)algModel{\n    //1. 对algModel生成H任务,并挂载在当前短时记忆分支下;\n    [theTC updateOperCount:kFILENAME];\n    Debug();",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/TCDemand.m:68-94"
+    },
+    "1391": {
+        "file_id": 142,
+        "content": "Debugging function and dictionary declaration. Iterates through the demand dictionary, creates a new ReasonDemandModel for each key-value pair, searches for a corresponding node, and logs information about the match Fo. Finally, updates the TV frame on the main queue.",
+        "type": "comment"
+    },
+    "1392": {
+        "file_id": 142,
+        "content": "    OFTitleLog(@\"hDemand\",@\"\\n%@\",Pit2FStr(algModel.content_p));\n    [HDemandModel newWithAlgModel:algModel];\n    dispatch_async(dispatch_get_main_queue(), ^{//30083回同步\n        [theTV updateFrame];\n    });\n    //2. 调用TCScore继续决策;\n    DebugE();\n    [TCScore scoreFromIfTCNeed];\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/TCDemand.m:95-106"
+    },
+    "1393": {
+        "file_id": 142,
+        "content": "This code updates the frame of 'theTV' after synchronizing on the main queue, and then calls TCScore to continue decision-making.",
+        "type": "comment"
+    },
+    "1394": {
+        "file_id": 143,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCEffect/TCEffect.h",
+        "type": "filepath"
+    },
+    "1395": {
+        "file_id": 143,
+        "content": "This code defines the TCEffect class, which is used to record the efficiency of Demand solutions. It provides two methods, rEffect and hEffect, which take a TOFoModel as a parameter. These methods are likely called when creating Demand tasks or evaluating their effectiveness over time. The resulting effectiveness data is stored in the effectDic of the task's source fos.",
+        "type": "summary"
+    },
+    "1396": {
+        "file_id": 143,
+        "content": "//\n//  TCEffect.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/5/22.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------记录Demand的解决方案有效率--------------------\n *  @desc 对新的解决方案有效性的反省 (参考26094 & 26095);\n *      1. 构建Demand任务时调用;\n *      2. 有效性倒计时触发;\n *      3. 根据demand.status状态判断有效性;\n *      4. 将有效性,计入任务源fos的effectDic中;\n */\n@interface TCEffect : NSObject\n+(void) rEffect:(TOFoModel*)rSolution;\n+(void) hEffect:(TOFoModel*)hSolution;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCEffect/TCEffect.h:1-24"
+    },
+    "1397": {
+        "file_id": 143,
+        "content": "This code defines the TCEffect class, which is used to record the efficiency of Demand solutions. It provides two methods, rEffect and hEffect, which take a TOFoModel as a parameter. These methods are likely called when creating Demand tasks or evaluating their effectiveness over time. The resulting effectiveness data is stored in the effectDic of the task's source fos.",
+        "type": "comment"
+    },
+    "1398": {
+        "file_id": 144,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCEffect/TCEffect.m",
+        "type": "filepath"
+    },
+    "1399": {
+        "file_id": 144,
+        "content": "The `rEffect` function updates task efficiency, triggers timers and handles effect status determination for a given action index in cansets. It likely belongs to larger methods with potential debugging or testing purposes.",
+        "type": "summary"
+    }
+}

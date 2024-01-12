@@ -1,0 +1,10 @@
+{
+    "summary": "XGDebugTV is a subclass of UITableView with an updateModels method for managing table view data.",
+    "details": [
+        {
+            "comment": "XGDebugTV is a subclass of UITableView with an updateModels method for managing table view data.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/XGDebug/XGDebugTV.h\":0-14",
+            "content": "//\n//  XGDebugTV.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/4/23.\n//  Copyright \u00a9 2022\u5e74 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n@interface XGDebugTV : UITableView\n-(void) updateModels;\n@end"
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+{
+    "summary": "This header file defines the DemoCharge class, which is a subclass of NSObject. It has a commit method that takes a HungerState parameter and does not return anything.",
+    "details": [
+        {
+            "comment": "This header file defines the DemoCharge class, which is a subclass of NSObject. It has a commit method that takes a HungerState parameter and does not return anything.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Demo/Adapter/DemoCharge.h\":0-14",
+            "content": "//\n//  DemoCharge.h\n//  SMG_NothingIsAll\n//\n//  Created by \u8d3e  on 2017/12/14.\n//  Copyright \u00a9 2017\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface DemoCharge : NSObject\n-(void) commit:(HungerState)state ;\n@end"
+        }
+    ]
+}

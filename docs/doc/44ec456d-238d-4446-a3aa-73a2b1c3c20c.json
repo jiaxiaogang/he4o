@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines a class named AIShortMatchModel_Simple, which is a short-term memory model for AI. It has properties for an algorithm pointer (alg_p), input time (in seconds), and a Boolean flag to indicate if it's a timestamp. The class also provides a method called newWithAlg_p:inputTime:isTimestamp: to initialize the instance of this class.",
+    "details": [
+        {
+            "comment": "This code defines a class named AIShortMatchModel_Simple, which is a short-term memory model for AI. It has properties for an algorithm pointer (alg_p), input time (in seconds), and a Boolean flag to indicate if it's a timestamp. The class also provides a method called newWithAlg_p:inputTime:isTimestamp: to initialize the instance of this class.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIShortMatchModel_Simple.h\":0-21",
+            "content": "//\n//  AIShortMatchModel_Simple.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2020/8/20.\n//  Copyright \u00a9 2020\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------\u77ed\u65f6\u8bb0\u5fc6\u6a21\u578b (\u7b80\u5316\u7248)--------------------\n */\n@interface AIShortMatchModel_Simple : NSObject\n+(AIShortMatchModel_Simple*) newWithAlg_p:(AIKVPointer*)alg_p inputTime:(NSTimeInterval)inputTime isTimestamp:(BOOL)isTimestamp;\n@property (strong, nonatomic) AIKVPointer *alg_p;       //\u6982\u5ff5\n@property (assign, nonatomic) NSTimeInterval inputTime; //\u6982\u5ff5\u8f93\u5165\u65f6\u95f4 (\u5355\u4f4d:s)\n@property (assign, nonatomic) BOOL isTimestamp;         //\u662f\u5426\u65f6\u95f4\u6233\n@end"
+        }
+    ]
+}

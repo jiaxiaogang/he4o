@@ -1,0 +1,10 @@
+{
+    "summary": "This is a header file for the TOMVisionItemModel class, which represents single frame TOModel data. It includes properties like loopId (current loop Id) and roots (snapshot of DemandManager's loopCache).",
+    "details": [
+        {
+            "comment": "This is a header file for the TOMVisionItemModel class, which represents single frame TOModel data. It includes properties like loopId (current loop Id) and roots (snapshot of DemandManager's loopCache).",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/TOMVision2/Model/TOMVisionItemModel.h\":0-18",
+            "content": "//\n//  TOMVisionItemModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/15.\n//  Copyright \u00a9 2022\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------\u7528\u4e8e\u5b58\u5355\u5e27TOModel\u6570\u636e--------------------\n */\n@interface TOMVisionItemModel : NSObject <NSCoding>\n@property (assign, nonatomic) NSInteger loopId; //\u5f53\u524d\u5faa\u73afId (\u81ea\u589e);\n@property (strong, nonatomic) NSArray *roots;   //\u5f53\u524d\u5e27\u5728DemandManager\u4e2d\u7684loopCache\u5feb\u7167;\n@end"
+        }
+    ]
+}

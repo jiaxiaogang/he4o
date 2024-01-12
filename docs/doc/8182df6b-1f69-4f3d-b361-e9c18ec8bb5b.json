@@ -1,0 +1,10 @@
+{
+    "summary": "The code defines an interface for OutputModel class, which represents an output model with properties such as identify, data (a single parameter value), type (output stage), and useTime. The identify property currently represents the algorithm type (e.g., EAT_RDS) but may be refined later when structuring the output.",
+    "details": [
+        {
+            "comment": "The code defines an interface for OutputModel class, which represents an output model with properties such as identify, data (a single parameter value), type (output stage), and useTime. The identify property currently represents the algorithm type (e.g., EAT_RDS) but may be refined later when structuring the output.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIOutput/OutputModel.h\":0-30",
+            "content": "//\n//  OutputModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/1/9.\n//  Copyright \u00a9 2019\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------\u8f93\u51fa\u6a21\u578b--------------------\n */\n@interface OutputModel : NSObject\n/**\n *  MARK:--------------------\u901a\u77e5\u6807\u8bc6\u7b26--------------------\n *  \u6ce8: \u76ee\u524d\u8f93\u51fa\u662f\u5355\u503c\u7684,\u6240\u4ee5\u6b64\u5904rds\u5176\u5b9e\u5c31\u662falgsType,\u6bd4\u5982EAT_RDS,\u4ee5\u540e\u6709\u4e86\u7ed3\u6784\u5316\u540e,\u518d\u7ec6\u5206\u62c6\u5f00;\n */\n@property (strong,nonatomic) NSString *identify;\n//\u53c2\u6570\u503c (\u76ee\u524d\u4ec5\u652f\u63011\u4e2a) (\u5e94\u901a\u8fc7\u7f51\u7edc\u6765\u5b9e\u73b0\u7ec4,\u800c\u4e0d\u662f\u591a\u53c2\u6570)\n@property (strong,nonatomic) NSNumber *data;\n//\u8f93\u51fa\u7c7b\u578b (\u9636\u6bb5)\n@property (assign, nonatomic) OutputObserverType type;\n//\u8f93\u51fa\u6240\u9700\u65f6\u95f4\n@property (assign, nonatomic) CGFloat useTime;\n@end"
+        }
+    ]
+}

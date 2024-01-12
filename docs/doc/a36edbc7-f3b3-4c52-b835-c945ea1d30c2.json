@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines a class `CustomAlgsChargeModel` in the file `CustomAlgsChargeModel.m`, which is part of the `SMG_NothingIsAll` project. The class inherits from `CustomAlgsChargeModel.h` and provides an implementation for its methods.",
+    "details": [
+        {
+            "comment": "This code defines a class `CustomAlgsChargeModel` in the file `CustomAlgsChargeModel.m`, which is part of the `SMG_NothingIsAll` project. The class inherits from `CustomAlgsChargeModel.h` and provides an implementation for its methods.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIAlg/AlgsModel/CustomAlgsModel/CustomAlgsChargeModel.m\":0-12",
+            "content": "//\n//  CustomAlgsChargeModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2018/2/6.\n//  Copyright \u00a9 2018\u5e74 XiaoGang. All rights reserved.\n//\n#import \"CustomAlgsChargeModel.h\"\n@implementation CustomAlgsChargeModel\n@end"
+        }
+    ]
+}

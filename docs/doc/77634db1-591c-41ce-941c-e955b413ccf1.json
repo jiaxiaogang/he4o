@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines a CarView class that conforms to the CarViewDelegate protocol, allowing access to car running functionality and retrieving food data during loading.",
+    "details": [
+        {
+            "comment": "This code defines a CarView class that conforms to the CarViewDelegate protocol, allowing access to car running functionality and retrieving food data during loading.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Demo/BirdLivePage/View/CarView.h\":0-22",
+            "content": "//\n//  CarView.h\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/11/9.\n//  Copyright \u00a9 2018\u5e74 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n@protocol CarViewDelegate <NSObject>\n-(BOOL) carView_CanRun;\n-(NSArray*) carView_GetFoodInLoad;  //\u83b7\u53d6\u5728\u8def\u4e0a\u7684\u575a\u679c;\n@end\n@interface CarView : HEView\n@property (weak,nonatomic) id<CarViewDelegate> delegate;\n-(void) run;\n@end"
+        }
+    ]
+}

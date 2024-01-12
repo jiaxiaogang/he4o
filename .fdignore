@@ -1,0 +1,7 @@
+.*
+*.xc*
+LICENSE
+LICENSE*
+*.{lock,gif,png,jpg,xib,framework,bundle,xcassets,xcdatamodeld,xcmappingmodel}
+Pods
+docs

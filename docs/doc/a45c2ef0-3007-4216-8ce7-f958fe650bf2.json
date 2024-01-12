@@ -1,0 +1,10 @@
+{
+    "summary": "This file contains the implementation of the \"ImvGoodModel\" class in the \"SMG_NothingIsAll\" project, created by jia on January 16th, 2021. The copyright for this code is held by XiaoGang for the year 2021.",
+    "details": [
+        {
+            "comment": "This file contains the implementation of the \"ImvGoodModel\" class in the \"SMG_NothingIsAll\" project, created by jia on January 16th, 2021. The copyright for this code is held by XiaoGang for the year 2021.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIAlg/AlgsModel/ImvAlgsModel/ImvGoodModel.m\":0-12",
+            "content": "//\n//  ImvGoodModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/1/16.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import \"ImvGoodModel.h\"\n@implementation ImvGoodModel\n@end"
+        }
+    ]
+}

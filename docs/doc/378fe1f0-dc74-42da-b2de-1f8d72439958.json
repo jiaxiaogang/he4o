@@ -1,0 +1,10 @@
+{
+    "summary": "This file, CortexAlgorithmsUtil.h, is a part of the SMG_NothingIsAll codebase and contains methods for performing various algorithms using the Cortex framework. The class CortexAlgorithmsUtil inherits from NSObject in Foundation and provides a method maxOfLoopValue:ds: which takes two strings as arguments and returns a double value.",
+    "details": [
+        {
+            "comment": "This file, CortexAlgorithmsUtil.h, is a part of the SMG_NothingIsAll codebase and contains methods for performing various algorithms using the Cortex framework. The class CortexAlgorithmsUtil inherits from NSObject in Foundation and provides a method maxOfLoopValue:ds: which takes two strings as arguments and returns a double value.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/CortexAlgorithms/CortexAlgorithmsUtil.h\":0-14",
+            "content": "//\n//  CortexAlgorithmsUtil.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/3/13.\n//  Copyright \u00a9 2023\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface CortexAlgorithmsUtil : NSObject\n+(double) maxOfLoopValue:(NSString*)at ds:(NSString*)ds;\n@end"
+        }
+    ]
+}

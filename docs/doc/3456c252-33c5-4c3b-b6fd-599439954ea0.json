@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines a class called AsyncMutableArray that provides thread-safe operations for a mutable array, preventing crashes during multi-threaded usage. It includes methods for basic array manipulation and enumeration, as well as thread-safe iterations using block syntax.",
+    "details": [
+        {
+            "comment": "This code defines a class called AsyncMutableArray that provides thread-safe operations for a mutable array, preventing crashes during multi-threaded usage. It includes methods for basic array manipulation and enumeration, as well as thread-safe iterations using block syntax.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Extension/AsyncMutableArray.h\":0-33",
+            "content": "//\n//  AsyncMutableArray.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/7/17.\n//  Copyright \u00a9 2023 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------\u591a\u7ebf\u7a0b\u6570\u7ec4--------------------\n *  @desc \u591a\u7ebf\u7a0b\u64cd\u4f5c\u65f6\u4e0d\u95ea\u9000;\n */\n@interface AsyncMutableArray : NSObject\n- (NSMutableArray *)array;\n- (BOOL)containsObject:(id)anObject;\n- (NSUInteger)count;\n- (id)objectAtIndex:(NSUInteger)index;\n- (NSUInteger)indexOfObject:(id)anObject;\n- (NSEnumerator *)objectEnumerator; //\u679a\u4e3eitem\n- (void)insertObject:(id)anObject atIndex:(NSUInteger)index;\n- (void)addObject:(id)anObject;\n- (void)addObjectsFromArray:(NSArray*)objs;\n- (void)replaceObjectAtIndex:(NSUInteger)index withObject:(id)anObject;\n- (void)removeObjectAtIndex:(NSUInteger)index;\n- (void)removeObject:(id)anObject;\n- (void)removeLastObject;\n- (void)removeObjectsInRange:(NSRange)range;\n- (void) removeAllObjects;\n- (void) forEach:(void(^)(id))itemBlock;\n@end"
+        }
+    ]
+}

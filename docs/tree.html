@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="github-markdown.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .directory:hover {
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        :target {
+            background-color: yellow !important;
+        }
+
+        .folded::before {
+            content: '\25B6';
+            margin-right: 8px;
+            /* Add space between marker and text */
+        }
+
+        .expanded::before {
+            content: '\25BC';
+            margin-right: 8px;
+            /* Add space between marker and text */
+        }
+    </style>
+    <script>
+        function toggleVisibility(element) {
+            let mclass = element.getAttribute("class");
+            if (mclass == "expanded") {
+                element.setAttribute('class', 'folded');
+            } else {
+                element.setAttribute('class', 'expanded');
+            }
+            const siblings = element.parentNode.children;
+            for (const sibling of siblings) {
+                if (sibling !== element) {
+                    sibling.style.display = (sibling.style.display === 'none') ? 'block' : 'none';
+                }
+            }
+        }
+    </script>
+    <style>
+        .markdown-body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 45px;
+        }
+
+        @media (max-width: 767px) {
+            .markdown-body {
+                padding: 15px;
+            }
+
+            .partial-repository-url {
+                display: none;
+            }
+        }
+
+        ul {
+            list-style: none;
+        }
+    </style>
+</head>
+
+<body>
+    <article class="markdown-body">
+        <h2>Project Structure<span hierarchy="0" class="partial-repository-url"> of: jiaxiaogang/he4o</span><div style="float: right;"><a style="margin:3.5px;" href="index.html"><i class="bi bi-search"></i></a><a style="margin:3.5px;" href="tree.html?full=true"><i class="bi bi-arrow-down-square"></i></a></div></h2>
+<ul>
+<li><span hierarchy="0" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/"><code>he4o</code></strong> <em>AI-Secure App with Dev/Debug Tools</em></span><ul>
+<li><a href="index.html?q=/Podfile" id="/Podfile"><code>Podfile</code></a> <em>OS Podfile with PINCache, Umeng analytics</em></li>
+<li><a href="index.html?q=/README.md" id="/README.md"><code>README&period;md</code></a> <em>AI system, spiral entropy, neural networks training.</em></li>
+<li><span hierarchy="1" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/"><code>SMG&UnderBar;NothingIsAll</code></strong> <em>AI-driven app with secure iOS features.</em></span><ul>
+<li><span hierarchy="2" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/"><code>AIFoundation</code></strong> <em>Customizable AI SMG optimization foundation</em></span><ul>
+<li><span hierarchy="3" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIAlg/"><code>AIAlg</code></strong> <em>AI-driven, asynchronous, urgency calculation algorithms.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIAlg/AICustomAlgs.h" id="/SMG_NothingIsAll/AIFoundation/AIAlg/AICustomAlgs.h"><code>AICustomAlgs&period;h</code></a> <em>Customizable AI algorithms in AICustomAlgs.h</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIAlg/AICustomAlgs.m" id="/SMG_NothingIsAll/AIFoundation/AIAlg/AICustomAlgs.m"><code>AICustomAlgs&period;m</code></a> <em>Asynchronous custom input data committing in AICustomAlgs.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIAlg/AIImvAlgs.h" id="/SMG_NothingIsAll/AIFoundation/AIAlg/AIImvAlgs.h"><code>AIImvAlgs&period;h</code></a> <em>Map input mindValue between value domains.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIAlg/AIImvAlgs.m" id="/SMG_NothingIsAll/AIFoundation/AIAlg/AIImvAlgs.m"><code>AIImvAlgs&period;m</code></a> <em>Imports model, calculates urgency values for bad and good input types.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIAlg/AIStringAlgs.h" id="/SMG_NothingIsAll/AIFoundation/AIAlg/AIStringAlgs.h"><code>AIStringAlgs&period;h</code></a> <em>String algorithm interface header for AIFoundation</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIAlg/AIStringAlgs.m" id="/SMG_NothingIsAll/AIFoundation/AIAlg/AIStringAlgs.m"><code>AIStringAlgs&period;m</code></a> <em>AIStringAlgs: Asynchronous input processing, string length returns.</em></li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIAlg/AlgsModel/"><code>AlgsModel</code></strong> <em>AI-driven algorithm models directory</em></span><ul>
+<li><span hierarchy="5" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIAlg/AlgsModel/CustomAlgsModel/"><code>CustomAlgsModel</code></strong> <em>Custom charging model algorithms directory</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIAlg/AlgsModel/CustomAlgsModel/CustomAlgsChargeModel.h" id="/SMG_NothingIsAll/AIFoundation/AIAlg/AlgsModel/CustomAlgsModel/CustomAlgsChargeModel.h"><code>CustomAlgsChargeModel&period;h</code></a> <em>Custom charging model algorithm class definition</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIAlg/AlgsModel/CustomAlgsModel/CustomAlgsChargeModel.m" id="/SMG_NothingIsAll/AIFoundation/AIAlg/AlgsModel/CustomAlgsModel/CustomAlgsChargeModel.m"><code>CustomAlgsChargeModel&period;m</code></a> <em>Defines <code>CustomAlgsChargeModel</code> class in <code>SMG_NothingIsAll</code> project.</em></li>
+</ul>
+</li>
+<li><span hierarchy="5" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIAlg/AlgsModel/ImvAlgsModel/"><code>ImvAlgsModel</code></strong> <em>AI-powered IMV algorithm modeling class directories</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIAlg/AlgsModel/ImvAlgsModel/ImvAlgsModelBase.h" id="/SMG_NothingIsAll/AIFoundation/AIAlg/AlgsModel/ImvAlgsModel/ImvAlgsModelBase.h"><code>ImvAlgsModelBase&period;h</code></a> <em>ImvAlgsModelBase: AI-powered IMV algorithm modeling class.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIAlg/AlgsModel/ImvAlgsModel/ImvAlgsModelBase.m" id="/SMG_NothingIsAll/AIFoundation/AIAlg/AlgsModel/ImvAlgsModel/ImvAlgsModelBase.m"><code>ImvAlgsModelBase&period;m</code></a> <em>SMG_NothingIsAll ImvAlgsModelBase class implementation.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIAlg/AlgsModel/ImvAlgsModel/ImvBadModel.h" id="/SMG_NothingIsAll/AIFoundation/AIAlg/AlgsModel/ImvAlgsModel/ImvBadModel.h"><code>ImvBadModel&period;h</code></a> <em>Bad imv parent model in SMG_NothingIsAll</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIAlg/AlgsModel/ImvAlgsModel/ImvBadModel.m" id="/SMG_NothingIsAll/AIFoundation/AIAlg/AlgsModel/ImvAlgsModel/ImvBadModel.m"><code>ImvBadModel&period;m</code></a> <em>Implements "ImvBadModel" class in SMG_NothingIsAll project</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIAlg/AlgsModel/ImvAlgsModel/ImvGoodModel.h" id="/SMG_NothingIsAll/AIFoundation/AIAlg/AlgsModel/ImvAlgsModel/ImvGoodModel.h"><code>ImvGoodModel&period;h</code></a> <em>ImvGoodModel: IMV parent model with fullness, refresh.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIAlg/AlgsModel/ImvAlgsModel/ImvGoodModel.m" id="/SMG_NothingIsAll/AIFoundation/AIAlg/AlgsModel/ImvAlgsModel/ImvGoodModel.m"><code>ImvGoodModel&period;m</code></a> <em>ImvGoodModel class implementation by XiaoGang</em></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><span hierarchy="3" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIClass/"><code>AIClass</code></strong> <em>AI class registration prevents multiple actions.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIClass/AINoRepeatRun.h" id="/SMG_NothingIsAll/AIFoundation/AIClass/AINoRepeatRun.h"><code>AINoRepeatRun&period;h</code></a> <em>Prevent multiple AI action executions with AINoRepeatRun class.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIClass/AINoRepeatRun.m" id="/SMG_NothingIsAll/AIFoundation/AIClass/AINoRepeatRun.m"><code>AINoRepeatRun&period;m</code></a> <em>Register, execute once with key prevention.</em></li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIClass/AITime/"><code>AITime</code></strong> <em>AI runtime time, conscious time, and timer methods.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIClass/AITime/AITime.h" id="/SMG_NothingIsAll/AIFoundation/AIClass/AITime/AITime.h"><code>AITime&period;h</code></a> <em>AITime: AI runtime time, conscious time, and time trigger methods.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIClass/AITime/AITime.m" id="/SMG_NothingIsAll/AIFoundation/AIClass/AITime/AITime.m"><code>AITime&period;m</code></a> <em>Updated SMG timer code with bug fixes and precise GCD execution.</em></li>
+</ul>
+</li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIClass/Model/"><code>Model</code></strong> <em>AI class map models for two values, with methods and no arrays.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIClass/Model/MapModel.h" id="/SMG_NothingIsAll/AIFoundation/AIClass/Model/MapModel.h"><code>MapModel&period;h</code></a> <em>Map model for two values, no array.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIClass/Model/MapModel.m" id="/SMG_NothingIsAll/AIFoundation/AIClass/Model/MapModel.m"><code>MapModel&period;m</code></a> <em>MapModel class with method newWithV1:v2.</em></li>
+</ul>
+</li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIClass/Utils/"><code>Utils</code></strong> <em>Data manipulation and string utilities.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils%2BGeneral.h" id="/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils+General.h"><code>SMGUtils&plus;General&period;h</code></a> <em>General utility functions for various data types and string manipulation in SMGUtils+General.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils%2BGeneral.m" id="/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils+General.m"><code>SMGUtils&plus;General&period;m</code></a> <em>SMGUtils: Objective-C utility class for string, array, date, input functions.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.h" id="/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.h"><code>SMGUtils&period;h</code></a> <em>Manages pointers, provides utilities for object operations and array manipulation.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m" id="/SMG_NothingIsAll/AIFoundation/AIClass/Utils/SMGUtils.m"><code>SMGUtils&period;m</code></a> <em>SMGUtils: Asynchronous storage, array manipulation, filtering utilities.</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIHeader.h" id="/SMG_NothingIsAll/AIFoundation/AIHeader.h"><code>AIHeader&period;h</code></a> <em>AIHeader.h: SMG_NothingIsAll imports, defines, utilities, logging.</em></li>
+<li><span hierarchy="3" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIInput/"><code>AIInput</code></strong> <em>Simultaneous camera, audio, text &amp; custom inputs collection</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIInput/AIInput.h" id="/SMG_NothingIsAll/AIFoundation/AIInput/AIInput.h"><code>AIInput&period;h</code></a> <em>Collects camera, audio, text and custom inputs simultaneously.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIInput/AIInput.m" id="/SMG_NothingIsAll/AIFoundation/AIInput/AIInput.m"><code>AIInput&period;m</code></a> <em>AIInput: Text, IMV, Custom Inputs, Rect-based View Changes</em></li>
+</ul>
+</li>
+<li><span hierarchy="3" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AINet/"><code>AINet</code></strong> <em>Efficient AI network foundation.</em></span><ul>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AINet/AIAbsCMVManager/"><code>AIAbsCMVManager</code></strong> <em>Manages abstraction-free CMV functions.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AIAbsCMVManager/AIAbsCMVManager.h" id="/SMG_NothingIsAll/AIFoundation/AINet/AIAbsCMVManager/AIAbsCMVManager.h"><code>AIAbsCMVManager&period;h</code></a> <em>Abstract CMV node manager with no collective abstraction</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AIAbsCMVManager/AIAbsCMVManager.m" id="/SMG_NothingIsAll/AIFoundation/AINet/AIAbsCMVManager/AIAbsCMVManager.m"><code>AIAbsCMVManager&period;m</code></a> <em>Creates CMV node after validating inputs and selecting algorithm.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AIAbsCMVManager/AINetAbsCMVUtil.h" id="/SMG_NothingIsAll/AIFoundation/AINet/AIAbsCMVManager/AINetAbsCMVUtil.h"><code>AINetAbsCMVUtil&period;h</code></a> <em>Calculates abstract mv functions and initial direction strength.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AIAbsCMVManager/AINetAbsCMVUtil.m" id="/SMG_NothingIsAll/AIFoundation/AINet/AIAbsCMVManager/AINetAbsCMVUtil.m"><code>AINetAbsCMVUtil&period;m</code></a> <em>Average CMV values from node array</em></li>
+</ul>
+</li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AINet/AIAbsFoManager/"><code>AIAbsFoManager</code></strong> <em>Manages absolute foundational fo abstractions</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AIAbsFoManager/AIAbsFoManager.h" id="/SMG_NothingIsAll/AIFoundation/AINet/AIAbsFoManager/AIAbsFoManager.h"><code>AIAbsFoManager&period;h</code></a> <em>AIAbsFoManager: create_NoRepeat method for non-repeated fo versions</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AIAbsFoManager/AIAbsFoManager.m" id="/SMG_NothingIsAll/AIFoundation/AINet/AIAbsFoManager/AIAbsFoManager.m"><code>AIAbsFoManager&period;m</code></a> <em>Constructs AINetAbsFoNode, handles nested ranges, performs absolute matching.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AIAbsFoManager/AINetAbsFoUtils.h" id="/SMG_NothingIsAll/AIFoundation/AINet/AIAbsFoManager/AINetAbsFoUtils.h"><code>AINetAbsFoUtils&period;h</code></a> <em>Extracts delta times, converts order and finds deltas.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AIAbsFoManager/AINetAbsFoUtils.m" id="/SMG_NothingIsAll/AIFoundation/AINet/AIAbsFoManager/AINetAbsFoUtils.m"><code>AINetAbsFoUtils&period;m</code></a> <em>Retrieves delta times, stores max, handles simple objects.</em></li>
+</ul>
+</li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AINet/AIAlgNodeManager/"><code>AIAlgNodeManager</code></strong> <em>Manages abstract AI algorithms and connections efficiently.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AIAlgNodeManager/AIAlgNodeManager.h" id="/SMG_NothingIsAll/AIFoundation/AINet/AIAlgNodeManager/AIAlgNodeManager.h"><code>AIAlgNodeManager&period;h</code></a> <em>Manages abstract algorithms in the SMG_NothingIsAll project.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AIAlgNodeManager/AIAlgNodeManager.m" id="/SMG_NothingIsAll/AIFoundation/AINet/AIAlgNodeManager/AIAlgNodeManager.m"><code>AIAlgNodeManager&period;m</code></a> <em>Manages AI node connections efficiently.</em></li>
+</ul>
+</li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AINet/AICerebel/"><code>AICerebel</code></strong> <em>AICerebel class for SMG project, header and implementation.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AICerebel/AICerebel.h" id="/SMG_NothingIsAll/AIFoundation/AINet/AICerebel/AICerebel.h"><code>AICerebel&period;h</code></a> <em>AICerebel class header, 2018/10/9.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AICerebel/AICerebel.m" id="/SMG_NothingIsAll/AIFoundation/AINet/AICerebel/AICerebel.m"><code>AICerebel&period;m</code></a> <em>AICerebel class implementation for SMG_NothingIsAll project.</em></li>
+</ul>
+</li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AILine.h" id="/SMG_NothingIsAll/AIFoundation/AINet/AILine.h"><code>AILine&period;h</code></a> <em>AILine: Neural network line with pointers.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AILine.m" id="/SMG_NothingIsAll/AIFoundation/AINet/AILine.m"><code>AILine&period;m</code></a> <em>Create AILine instances with AIObjects and pointers.</em></li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AINet/AIMvFoManager/"><code>AIMvFoManager</code></strong> <em>AIMvFoManager: Manages foNode-cmvNode models, MV nodes, builds conFos.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AIMvFoManager/AIMvFoManager.h" id="/SMG_NothingIsAll/AIFoundation/AINet/AIMvFoManager/AIMvFoManager.h"><code>AIMvFoManager&period;h</code></a> <em>AIMvFoManager: Manages foNode-&gt;cmvNode models, constructs mvs, builds conFos.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AIMvFoManager/AIMvFoManager.m" id="/SMG_NothingIsAll/AIFoundation/AINet/AIMvFoManager/AIMvFoManager.m"><code>AIMvFoManager&period;m</code></a> <em>Manages MV nodes, limits repeat range, strengthens front orders.</em></li>
+</ul>
+</li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AINet.h" id="/SMG_NothingIsAll/AIFoundation/AINet/AINet.h"><code>AINet&period;h</code></a> <em>AINet: Network operations, indexing, model conversion, data packaging.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AINet.m" id="/SMG_NothingIsAll/AIFoundation/AINet/AINet.m"><code>AINet&period;m</code></a> <em>Singleton class with dictionary-based model conversion and unique algorithm nodes.</em></li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/"><code>AINetIndex</code></strong> <em>AINetIndex: Efficient indexing and searching.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetDirectionReference.h" id="/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetDirectionReference.h"><code>AINetDirectionReference&period;h</code></a> <em>AINetDirectionReference: Find node addresses by direction, port through filter.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetDirectionReference.m" id="/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetDirectionReference.m"><code>AINetDirectionReference&period;m</code></a> <em>Retrieves node pointers from direction reference files.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetIndex.h" id="/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetIndex.h"><code>AINetIndex&period;h</code></a> <em>AINetIndex: Efficient data indexing and retrieval.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetIndex.m" id="/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetIndex.m"><code>AINetIndex&period;m</code></a> <em>AINet: Efficient binary search, V index support, serialization.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetIndexUtils.h" id="/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetIndexUtils.h"><code>AINetIndexUtils&period;h</code></a> <em>AINetIndexUtils: Tools for indexing, searching, insertion.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetIndexUtils.m" id="/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetIndexUtils.m"><code>AINetIndexUtils&period;m</code></a> <em>Absolute matching with general parameters and duplication prevention.</em></li>
+</ul>
+</li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.h" id="/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.h"><code>AINetUtils&period;h</code></a> <em>AI framework utilities: ports, connections, algorithms, dictionaries.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m" id="/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m"><code>AINetUtils&period;m</code></a> <em>Manages AI components, updates strength values and performs analogy.</em></li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AINet/AINode/"><code>AINode</code></strong> <em>AI-powered duplicate removal nodes, organized AINet.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAbsAlgNode.h" id="/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAbsAlgNode.h"><code>AIAbsAlgNode&period;h</code></a> <em>AIAbsAlgNode: Remove duplicates, supports values_p.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAbsAlgNode.m" id="/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAbsAlgNode.m"><code>AIAbsAlgNode&period;m</code></a> <em>AIAbsAlgNode class implementation by jia.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAbsCMVNode.h" id="/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAbsCMVNode.h"><code>AIAbsCMVNode&period;h</code></a> <em>Abstract node class for AINet project</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAbsCMVNode.m" id="/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAbsCMVNode.m"><code>AIAbsCMVNode&period;m</code></a> <em>Empty implementation for AIAbsCMVNode class</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAlgNode.h" id="/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAlgNode.h"><code>AIAlgNode&period;h</code></a> <em>AIAlgNode class header file</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAlgNode.m" id="/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAlgNode.m"><code>AIAlgNode&period;m</code></a> <em>AIAlgNode class, SMG_NothingIsAll project, 12/7/2018, XiaoGang</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAlgNodeBase.h" id="/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAlgNodeBase.h"><code>AIAlgNodeBase&period;h</code></a> <em>Base class for algorithm nodes with port and dictionary properties.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAlgNodeBase.m" id="/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAlgNodeBase.m"><code>AIAlgNodeBase&period;m</code></a> <em>Machine learning tool for pattern recognition, with bug fixes and performance improvements.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AINode/AICMVNode.h" id="/SMG_NothingIsAll/AIFoundation/AINet/AINode/AICMVNode.h"><code>AICMVNode&period;h</code></a> <em>Defines AICMVNode class for SMG_NothingIsAll project.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AINode/AICMVNode.m" id="/SMG_NothingIsAll/AIFoundation/AINet/AINode/AICMVNode.m"><code>AICMVNode&period;m</code></a> <em>AICMVNode class implementation for CMV nodes.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AINode/AICMVNodeBase.h" id="/SMG_NothingIsAll/AIFoundation/AINet/AINode/AICMVNodeBase.h"><code>AICMVNodeBase&period;h</code></a> <em>AICMVNodeBase: subclass of AIAlgNodeBase with urgentTo_p, delta_p, and foPorts.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AINode/AICMVNodeBase.m" id="/SMG_NothingIsAll/AIFoundation/AINet/AINode/AICMVNodeBase.m"><code>AICMVNodeBase&period;m</code></a> <em>Class for CMVNode initialization, encoding, and decoding.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIFoNodeBase.h" id="/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIFoNodeBase.h"><code>AIFoNodeBase&period;h</code></a> <em>Time-series node base class with deltaTimes, strength value storage, and candidate set management.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIFoNodeBase.m" id="/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIFoNodeBase.m"><code>AIFoNodeBase&period;m</code></a> <em>Initializes arrays, updates SP strength, handles bug 29094.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIFrontOrderNode.h" id="/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIFrontOrderNode.h"><code>AIFrontOrderNode&period;h</code></a> <em>AIFrontOrderNode: Concrete sequence node, AIFoNodeBase inheritance.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIFrontOrderNode.m" id="/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIFrontOrderNode.m"><code>AIFrontOrderNode&period;m</code></a> <em>Declares and implements AIFrontOrderNode class.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AINode/AINetAbsFoNode.h" id="/SMG_NothingIsAll/AIFoundation/AINet/AINode/AINetAbsFoNode.h"><code>AINetAbsFoNode&period;h</code></a> <em>Abstract sequential network node class definition.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AINode/AINetAbsFoNode.m" id="/SMG_NothingIsAll/AIFoundation/AINet/AINode/AINetAbsFoNode.m"><code>AINetAbsFoNode&period;m</code></a> <em>AINetAbsFoNode class implementation</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AINode/AINodeBase.h" id="/SMG_NothingIsAll/AIFoundation/AINet/AINode/AINodeBase.h"><code>AINodeBase&period;h</code></a> <em>AINodeBase class: Base for nodes, pointers, ports, data flow organization.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AINode/AINodeBase.m" id="/SMG_NothingIsAll/AIFoundation/AINet/AINode/AINodeBase.m"><code>AINodeBase&period;m</code></a> <em>AINodeBase: Manages ports and arrays, implements NSCoding.</em></li>
+</ul>
+</li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AINet/AIPointer/"><code>AIPointer</code></strong> <em>AINet AIPointer: Binary searchable, NSCoding/NSCopying KV class for database management.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AIPointer/AIKVPointer.h" id="/SMG_NothingIsAll/AIFoundation/AINet/AIPointer/AIKVPointer.h"><code>AIKVPointer&period;h</code></a> <em>Custom AI KV pointer class</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AIPointer/AIKVPointer.m" id="/SMG_NothingIsAll/AIFoundation/AINet/AIPointer/AIKVPointer.m"><code>AIKVPointer&period;m</code></a> <em>Initializes AIKVPointer object with getter methods for paths, identifiers, and properties.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AIPointer/AIPointer.h" id="/SMG_NothingIsAll/AIFoundation/AINet/AIPointer/AIPointer.h"><code>AIPointer&period;h</code></a> <em>AIPointer: Pointer class for table items with binary search support.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AIPointer/AIPointer.m" id="/SMG_NothingIsAll/AIFoundation/AINet/AIPointer/AIPointer.m"><code>AIPointer&period;m</code></a> <em>AIPointer: object comparison, parameter access, NSCoding/NSCopying</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AIPointer/AISqlPointer.h" id="/SMG_NothingIsAll/AIFoundation/AINet/AIPointer/AISqlPointer.h"><code>AISqlPointer&period;h</code></a> <em>AISqlPointer: Database Pointer Management Class</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AIPointer/AISqlPointer.m" id="/SMG_NothingIsAll/AIFoundation/AINet/AIPointer/AISqlPointer.m"><code>AISqlPointer&period;m</code></a> <em>Initializes AISqlPointer with class and ID, handles database operations.</em></li>
+</ul>
+</li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AINet/AIPort/"><code>AIPort</code></strong> <em>AIPort class, subclasses, NSCoding support.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AIPort/AIPort.h" id="/SMG_NothingIsAll/AIFoundation/AINet/AIPort/AIPort.h"><code>AIPort&period;h</code></a> <em>Create AIPort class with strength-related subclasses for recording strengths.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AIPort/AIPort.m" id="/SMG_NothingIsAll/AIFoundation/AINet/AIPort/AIPort.m"><code>AIPort&period;m</code></a> <em>AIPort class with NSCoding, NSKeyArchiver</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AIPort/AITransferPort.h" id="/SMG_NothingIsAll/AIFoundation/AINet/AIPort/AITransferPort.h"><code>AITransferPort&period;h</code></a> <em>Singleton AITransferPort with scene and canset properties.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AINet/AIPort/AITransferPort.m" id="/SMG_NothingIsAll/AIFoundation/AINet/AIPort/AITransferPort.m"><code>AITransferPort&period;m</code></a> <em>AITransferPort: NSCoding, init, set, compare</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><span hierarchy="3" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIOutput/"><code>AIOutput</code></strong> <em>AI models for SMG Nothing Is All project, utilities for data conversion</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIOutput/Output.h" id="/SMG_NothingIsAll/AIFoundation/AIOutput/Output.h"><code>Output&period;h</code></a> <em>Output class manages different output types: thought, reactor, mood.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIOutput/Output.m" id="/SMG_NothingIsAll/AIFoundation/AIOutput/Output.m"><code>Output&period;m</code></a> <em>Output function for mood-based AI algorithm node.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIOutput/OutputModel.h" id="/SMG_NothingIsAll/AIFoundation/AIOutput/OutputModel.h"><code>OutputModel&period;h</code></a> <em>OutputModel class interface for AI output models</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIOutput/OutputModel.m" id="/SMG_NothingIsAll/AIFoundation/AIOutput/OutputModel.m"><code>OutputModel&period;m</code></a> <em>OutputModel class implementation for SMG_NothingIsAll project.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIOutput/OutputUtils.h" id="/SMG_NothingIsAll/AIFoundation/AIOutput/OutputUtils.h"><code>OutputUtils&period;h</code></a> <em>OutputUtils: Convert data type to output algorithm identifier.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIOutput/OutputUtils.m" id="/SMG_NothingIsAll/AIFoundation/AIOutput/OutputUtils.m"><code>OutputUtils&period;m</code></a> <em>OutputUtils: Convert algorithm type to data source.</em></li>
+</ul>
+</li>
+<li><span hierarchy="3" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIReactorControl/"><code>AIReactorControl</code></strong> <em>AIReactorControl: Manages AI reactor, data &amp; emotions.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIReactorControl/AIReactorControl.h" id="/SMG_NothingIsAll/AIFoundation/AIReactorControl/AIReactorControl.h"><code>AIReactorControl&period;h</code></a> <em>AIReactorControl: Manages data, emotions, reflexes &amp; autonomous function learning.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIReactorControl/AIReactorControl.m" id="/SMG_NothingIsAll/AIFoundation/AIReactorControl/AIReactorControl.m"><code>AIReactorControl&period;m</code></a> <em>AIReactorControl: Manage reactor commitment, outputs &amp; mind value creation.</em></li>
+</ul>
+</li>
+<li><span hierarchy="3" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/"><code>AIThinkingControl</code></strong> <em>AI-powered optimization and analysis.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/AIThinkingControl.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/AIThinkingControl.h"><code>AIThinkingControl&period;h</code></a> <em>AI Thinking Control Class: Properties, Methods, Energy</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/AIThinkingControl.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/AIThinkingControl.m"><code>AIThinkingControl&period;m</code></a> <em>Controls AI input data processing and energy levels.</em></li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/"><code>In</code></strong> <em>AI-enhanced thinking and control utilities.</em></span><ul>
+<li><span hierarchy="5" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/"><code>Model</code></strong> <em>AI-enhanced time series recognition and memory control.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIMatchAlgModel.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIMatchAlgModel.h"><code>AIMatchAlgModel&period;h</code></a> <em>AIMatchAlgModel: Match Algorithm Objective-C Model</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIMatchAlgModel.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIMatchAlgModel.m"><code>AIMatchAlgModel&period;m</code></a> <em>Match algorithm model with initializers and NSCoding.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIMatchCansetModel.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIMatchCansetModel.h"><code>AIMatchCansetModel&period;h</code></a> <em>AIMatchCansetModel: Single Barcode Recognition Result</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIMatchCansetModel.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIMatchCansetModel.m"><code>AIMatchCansetModel&period;m</code></a> <em>Create new AIMatchCansetModel instance, set properties.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIMatchFoModel.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIMatchFoModel.h"><code>AIMatchFoModel&period;h</code></a> <em>AI model for time-series recognition and feedback handling</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIMatchFoModel.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIMatchFoModel.m"><code>AIMatchFoModel&period;m</code></a> <em>Class for model-based similarity computation with efficiency improvements.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIShortMatchModel.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIShortMatchModel.h"><code>AIShortMatchModel&period;h</code></a> <em>Rational TOR model with fuzzy matching for time series forecasts.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIShortMatchModel.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIShortMatchModel.m"><code>AIShortMatchModel&period;m</code></a> <em>AIShortMatchModel: Accesses model properties, urgent matches, partial &amp; full matches.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIShortMatchModel_Simple.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIShortMatchModel_Simple.h"><code>AIShortMatchModel&UnderBar;Simple&period;h</code></a> <em>AIShortMatchModel_Simple: short-term AI memory model.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIShortMatchModel_Simple.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIShortMatchModel_Simple.m"><code>AIShortMatchModel&UnderBar;Simple&period;m</code></a> <em>AIShortMatchModel_Simple implementation</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/ShortMatchManager.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/ShortMatchManager.h"><code>ShortMatchManager&period;h</code></a> <em>ShortMatchManager: Interface for managing short-term AI memory.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/ShortMatchManager.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/ShortMatchManager.m"><code>ShortMatchManager&period;m</code></a> <em>ShortMatchManager: Manages array of AIShortMatchModel objects.</em></li>
+</ul>
+</li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIUtils.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIUtils.h"><code>TIUtils&period;h</code></a> <em>Utility functions for AI concept and temporal recognition.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIUtils.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIUtils.m"><code>TIUtils&period;m</code></a> <em>AI optimization, bug fixes, and logging improvements</em></li>
+</ul>
+</li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/"><code>Out</code></strong> <em>AI control, decision-making, task optimization, model utilities.</em></span><ul>
+<li><span hierarchy="5" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/"><code>Model</code></strong> <em>AI models for decision-making and task optimization, base class with NSCoding protocol for model objects.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/ISubDemandDelegate.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/ISubDemandDelegate.h"><code>ISubDemandDelegate&period;h</code></a> <em>ISubDemandDelegate: Protocol for managing child tasks</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/ISubModelsDelegate.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/ISubModelsDelegate.h"><code>ISubModelsDelegate&period;h</code></a> <em>Submodel Delegate Protocol for SMG Project</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/ITryActionFoDelegate.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/ITryActionFoDelegate.h"><code>ITryActionFoDelegate&period;h</code></a> <em>ITryActionFoDelegate: Attach R, P, HN, and GL tasks, actionFoModels array.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOAlgModel.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOAlgModel.h"><code>TOAlgModel&period;h</code></a> <em>AI model class for decision-making, inherits TOModelBase, updates feedbackAlg.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOAlgModel.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOAlgModel.m"><code>TOAlgModel&period;m</code></a> <em>Defines class for storing models and demands, conforming to NSCoding.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOFoModel.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOFoModel.h"><code>TOFoModel&period;h</code></a> <em>TOFoModel: Time-sequence AI model for SMG_NothingIsAll</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOFoModel.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOFoModel.m"><code>TOFoModel&period;m</code></a> <em>TOFoModel: Initializes class, calculates scores and updates dictionaries.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOModelBase.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOModelBase.h"><code>TOModelBase&period;h</code></a> <em>TOModelBase: Base NSObject, NSCoding, decision-making optimized class.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOModelBase.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOModelBase.m"><code>TOModelBase&period;m</code></a> <em>Base class with NSCoding protocol for model objects</em></li>
+</ul>
+</li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.h"><code>TOUtils&period;h</code></a> <em>TOUtils: Concept, search, abstract, match utilities for "SMG_NothingIsAll."</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.m"><code>TOUtils&period;m</code></a> <em>TOUtils: Demands, tasks, sub-models utilities.</em></li>
+</ul>
+</li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/README.md" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/README.md"><code>README&period;md</code></a> <em>AI architecture improvements and restructuring code layout.</em></li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCActYes/"><code>TCActYes</code></strong> <em>TCActYes: Objective-C and Swift classes for ActYes prediction and analysis.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCActYes/TCActYes.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCActYes/TCActYes.h"><code>TCActYes&period;h</code></a> <em>TCActYes: Objective-C class with input model methods and frameActYes.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCActYes/TCActYes.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCActYes/TCActYes.m"><code>TCActYes&period;m</code></a> <em>Swift class for ActYes prediction, demand updates, and analysis.</em></li>
+</ul>
+</li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCAction/"><code>TCAction</code></strong> <em>TCAction: TOFoModel class methods and spiral architecture implementation</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCAction/TCAction.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCAction/TCAction.h"><code>TCAction&period;h</code></a> <em>TCAction: TOFoModel class method, TCResult returns</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCAction/TCAction.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCAction/TCAction.m"><code>TCAction&period;m</code></a> <em>Spiral architecture action implementation</em></li>
+</ul>
+</li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/"><code>TCCanset</code></strong> <em>Automating text analysis with sceneModel conversions.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/AICansetModel.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/AICansetModel.h"><code>AICansetModel&period;h</code></a> <em>Can-set analysis classes for TCSolution competition and AIRank decision-making.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/AICansetModel.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/AICansetModel.m"><code>AICansetModel&period;m</code></a> <em>AICansetModel: Initializes AI model with scene, father &amp; brother getters.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/FrontIndexDicModel.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/FrontIndexDicModel.h"><code>FrontIndexDicModel&period;h</code></a> <em>FrontIndexDicModel: Front-section condition fulfillment model class.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/FrontIndexDicModel.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/FrontIndexDicModel.m"><code>FrontIndexDicModel&period;m</code></a> <em>FrontIndexDicModel class implementation with protected instance vars and designated initializer.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/TCCanset.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/TCCanset.h"><code>TCCanset&period;h</code></a> <em>TCCanset: Convert sceneModel to cansets using algo 29069.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/TCCanset.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/TCCanset.m"><code>TCCanset&period;m</code></a> <em>Analyzes scene, retrieves transfer Cansets for text classification.</em></li>
+</ul>
+</li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/"><code>TCDemand</code></strong> <em>Energy modeling for decision loop updates</em></span><ul>
+<li><span hierarchy="5" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/"><code>Model</code></strong> <em>TC Demand Model: Forecasts user needs with data, methods.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/DemandManager.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/DemandManager.h"><code>DemandManager&period;h</code></a> <em>Manages P&amp;R tasks, updates CMV cache in SMG_NothingIsAll.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/DemandManager.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/DemandManager.m"><code>DemandManager&period;m</code></a> <em>DemandManager: Manages, calculates, sorts, selects, logs &amp; clears demands.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/DemandModel.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/DemandModel.h"><code>DemandModel&period;h</code></a> <em>Demand Model: TOModelBase extension with time decay, candidate sets.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/DemandModel.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/DemandModel.m"><code>DemandModel&period;m</code></a> <em>Demand model class for SMG_NothingIsAll with NSCoder support</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/HDemandModel.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/HDemandModel.h"><code>HDemandModel&period;h</code></a> <em>HDemandModel: Updated, Redundancy Discarded, New Feedback Field Added</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/HDemandModel.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/HDemandModel.m"><code>HDemandModel&period;m</code></a> <em>HDemandModel: newWithAlgModel method returns initialized instance.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/PerceptDemandModel.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/PerceptDemandModel.h"><code>PerceptDemandModel&period;h</code></a> <em>Percept Demand Model class inheritance</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/PerceptDemandModel.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/PerceptDemandModel.m"><code>PerceptDemandModel&period;m</code></a> <em>Header file for PerceptDemandModel in SMG_NothingIsAll project.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/ReasonDemandModel.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/ReasonDemandModel.h"><code>ReasonDemandModel&period;h</code></a> <em>ReasonDemandModel: Predict next move based on current state.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/ReasonDemandModel.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/ReasonDemandModel.m"><code>ReasonDemandModel&period;m</code></a> <em>ReasonDemandModel: Initialization, Data Preparation, Methods, NSCoding</em></li>
+</ul>
+</li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/TCDemand.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/TCDemand.h"><code>TCDemand&period;h</code></a> <em>TCDemand: Task Class for Demand Formation</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/TCDemand.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/TCDemand.m"><code>TCDemand&period;m</code></a> <em>Update energy values, demand pool, and decision loop in AIThinkingControl module.</em></li>
+</ul>
+</li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCEffect/"><code>TCEffect</code></strong> <em>Manages TC efficiency, updates task status and triggers timers.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCEffect/TCEffect.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCEffect/TCEffect.h"><code>TCEffect&period;h</code></a> <em>Records Demand solution efficiency in TCEffect class.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCEffect/TCEffect.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCEffect/TCEffect.m"><code>TCEffect&period;m</code></a> <em>Updates task efficiency, triggers timers, and handles status for action index in cansets.</em></li>
+</ul>
+</li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/"><code>TCFeedback</code></strong> <em>Manages memory, task recognition and improved feedback for short-match models.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/TCFeedback.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/TCFeedback.h"><code>TCFeedback&period;h</code></a> <em>TCFeedback class header with 4 feedback methods for short-match models.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/TCFeedback.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/TCFeedback.m"><code>TCFeedback&period;m</code></a> <em>Manages memory, task recognition and improved feedback.</em></li>
+</ul>
+</li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCForecast/"><code>TCForecast</code></strong> <em>SMG Project: Two forecast methods, improved thinking control.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCForecast/TCForecast.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCForecast/TCForecast.h"><code>TCForecast&period;h</code></a> <em>TCForecast: Two forecast methods in SMG project.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCForecast/TCForecast.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCForecast/TCForecast.m"><code>TCForecast&period;m</code></a> <em>Improved thinking control forecasts with multi-trigger support.</em></li>
+</ul>
+</li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCInput/"><code>TCInput</code></strong> <em>AI Control for SMG_NothingIsAll Input Management</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCInput/TCInput.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCInput/TCInput.h"><code>TCInput&period;h</code></a> <em>Input methods for SMG_NothingIsAll AI system in TCInput header file.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCInput/TCInput.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCInput/TCInput.m"><code>TCInput&period;m</code></a> <em>TCInput: AI control for SMG_NothingIsAll, manages updates and triggers.</em></li>
+</ul>
+</li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/"><code>TCLearning</code></strong> <em>AI-enhanced abstract concept learning for decision-making.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/AIAnalogy.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/AIAnalogy.h"><code>AIAnalogy&period;h</code></a> <em>AI Analogy Class with Fo Pattern for Reasoning</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/AIAnalogy.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/AIAnalogy.m"><code>AIAnalogy&period;m</code></a> <em>Machine learning analogy mapping for Fo nodes.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/TCLearning.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/TCLearning.h"><code>TCLearning&period;h</code></a> <em>Learning algorithms class for SMG_NothingIsAll project.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/TCLearning.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/TCLearning.m"><code>TCLearning&period;m</code></a> <em>TCLearning: Iterative decision-making through abstract concept learning.</em></li>
+</ul>
+</li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCOut/"><code>TCOut</code></strong> <em>TCOut: AI model output processing with TCResult from TOAlgModel.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCOut/TCOut.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCOut/TCOut.h"><code>TCOut&period;h</code></a> <em>TCResult from TOAlgModel using TCOut class.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCOut/TCOut.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCOut/TCOut.m"><code>TCOut&period;m</code></a> <em>Output processing for AI model. Status updates and HDemand checks.</em></li>
+</ul>
+</li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCPlan/"><code>TCPlan</code></strong> <em>Optimal AI planning, TCResult, and rootDemand.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCPlan/TCPlan.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCPlan/TCPlan.h"><code>TCPlan&period;h</code></a> <em>TCPlan: TCResult from rootDemand, Fo model &amp; scoreDic</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCPlan/TCPlan.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCPlan/TCPlan.m"><code>TCPlan&period;m</code></a> <em>Optimal AI planning with four modes and cached data.</em></li>
+</ul>
+</li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRealact/"><code>TCRealact</code></strong> <em>TCRealact: Imports Foundation, checks real-act for optimal results</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRealact/TCRealact.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRealact/TCRealact.h"><code>TCRealact&period;h</code></a> <em>TCRealact: Imports Foundation, checks real-act for best result in AICanSetModel.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRealact/TCRealact.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRealact/TCRealact.m"><code>TCRealact&period;m</code></a> <em>Replaces empty concepts with specific ones, outputs best solution.</em></li>
+</ul>
+</li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/"><code>TCRecognition</code></strong> <em>AI-driven sequence optimization and recognition.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/AIAnalyst.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/AIAnalyst.h"><code>AIAnalyst&period;h</code></a> <em>Analyze, Compare &amp; Set Protocol Variables.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/AIAnalyst.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/AIAnalyst.m"><code>AIAnalyst&period;m</code></a> <em>Calculates similarity between sparse codes using "compareCansetValue" algorithm.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/TCRecognition.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/TCRecognition.h"><code>TCRecognition&period;h</code></a> <em>TCRecognition: Recognition and learning methods for models and data.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/TCRecognition.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/TCRecognition.m"><code>TCRecognition&period;m</code></a> <em>AI sequence recognition and behavioral analysis with feedback.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/TCRecognitionUtil.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/TCRecognitionUtil.h"><code>TCRecognitionUtil&period;h</code></a> <em>Get V importance dictionary from AI model in TCRecognitionUtil.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/TCRecognitionUtil.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/TCRecognitionUtil.m"><code>TCRecognitionUtil&period;m</code></a> <em>Optimizes, logs, performs array calculations for object recognition.</em></li>
+</ul>
+</li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRefrection/"><code>TCRefrection</code></strong> <em>TCRefrection: Reflection-based AIThinkingControl methods</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRefrection/TCRefrection.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRefrection/TCRefrection.h"><code>TCRefrection&period;h</code></a> <em>TCRefrection: Class interface for AIThinkingControl refrection methods</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRefrection/TCRefrection.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRefrection/TCRefrection.m"><code>TCRefrection&period;m</code></a> <em>反思": Reflection scores, updates, passes/fails, logs using DebugE.</em></li>
+</ul>
+</li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRegroup/"><code>TCRegroup</code></strong> <em>Regroups short-term memory models, processes CMV nodes.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRegroup/TCRegroup.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRegroup/TCRegroup.h"><code>TCRegroup&period;h</code></a> <em>Regroups short match models and feedback frames for algorithms.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRegroup/TCRegroup.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRegroup/TCRegroup.m"><code>TCRegroup&period;m</code></a> <em>TCRegroup: Regroups short-term memory, processes CMV nodes.</em></li>
+</ul>
+</li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRethink/"><code>TCRethink</code></strong> <em>Updating ML reasoning through AI frames and abstract representation.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRethink/TCRethink.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRethink/TCRethink.h"><code>TCRethink&period;h</code></a> <em>Rethinking class with rational, emotional reflection and 4 feedback methods.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRethink/TCRethink.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRethink/TCRethink.m"><code>TCRethink&period;m</code></a> <em>Update ML model's reasoning with abstract updates and debugging.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRethink/TCRethinkUtil.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRethink/TCRethinkUtil.h"><code>TCRethinkUtil&period;h</code></a> <em>TCRethinkUtil: Performs operation on FoNode and executes itemRunBlock.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRethink/TCRethinkUtil.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRethink/TCRethinkUtil.m"><code>TCRethinkUtil&period;m</code></a> <em>Updates SPEFF based on AI frame's abstract representation.</em></li>
+</ul>
+</li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScene/"><code>TCScene</code></strong> <em>Scene tree generation for efficient retrieval.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScene/AISceneModel.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScene/AISceneModel.h"><code>AISceneModel&period;h</code></a> <em>AISceneModel: SMG scene model class with parent, type, root, and new instance methods.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScene/AISceneModel.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScene/AISceneModel.m"><code>AISceneModel&period;m</code></a> <em>Create new scene models with base, type, and scene parameters.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScene/TCScene.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScene/TCScene.h"><code>TCScene&period;h</code></a> <em>TCScene: Class for demand-based scene tree generation.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScene/TCScene.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScene/TCScene.m"><code>TCScene&period;m</code></a> <em>Retrieves scene tree data, filters, and converts into AISceneModel objects.</em></li>
+</ul>
+</li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScore/"><code>TCScore</code></strong> <em>Calculate comprehensive scores for strategies, considering TC and TOQueue.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScore/TCScore.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScore/TCScore.h"><code>TCScore&period;h</code></a> <em>Calculate comprehensive score using TC and TOQueue.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScore/TCScore.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScore/TCScore.m"><code>TCScore&period;m</code></a> <em>Calculates comprehensive scores for solution models, evaluating and ranking strategies.</em></li>
+</ul>
+</li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/"><code>TCSolution</code></strong> <em>Handles demand, checks validity, prioritizes fast thinking.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/TCSolution.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/TCSolution.h"><code>TCSolution&period;h</code></a> <em>TCSolution: Solution Class, TOModelBase Input, EndScore Required</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/TCSolution.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/TCSolution.m"><code>TCSolution&period;m</code></a> <em>TC Solution: Handles demand, checks validity, prioritizes fast thinking.</em></li>
+<li><span hierarchy="5" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/Util/"><code>Util</code></strong> <em>AI-powered fast &amp; slow thinking solutions for facial recognition optimization.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/Util/TCSolutionUtil.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/Util/TCSolutionUtil.h"><code>TCSolutionUtil&period;h</code></a> <em>TCSolutionUtil: Fast and Slow Thinking Solutions with AIMatchFoModel.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/Util/TCSolutionUtil.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/Util/TCSolutionUtil.m"><code>TCSolutionUtil&period;m</code></a> <em>Optimizes facial recognition and image analysis with AI performance updates.</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCTransfer/"><code>TCTransfer</code></strong> <em>AITransferModel: Handles AI scene-to-scene data transfer</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCTransfer/AITransferModel.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCTransfer/AITransferModel.h"><code>AITransferModel&period;h</code></a> <em>Represents scene-canset relationship in AI system.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCTransfer/AITransferModel.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCTransfer/AITransferModel.m"><code>AITransferModel&period;m</code></a> <em>Defines <code>AITransferModel</code> class, conforming to NSCoding for encoding/decoding.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCTransfer/TCTransfer.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCTransfer/TCTransfer.h"><code>TCTransfer&period;h</code></a> <em>Handles feature migration in SMG_NothingIsAll project.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCTransfer/TCTransfer.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCTransfer/TCTransfer.m"><code>TCTransfer&period;m</code></a> <em>Manages canset transfers, updates counts, Father &amp; I scenes. Data prep, mappings, search algorithms.</em></li>
+</ul>
+</li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/"><code>Util</code></strong> <em>AI-powered optimization and evaluation.
+Utility methods for CMV, demand control in Objective-C.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIFilter.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIFilter.h"><code>AIFilter&period;h</code></a> <em>AI Filter class with various filtering methods.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIFilter.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIFilter.m"><code>AIFilter&period;m</code></a> <em>Optimized concept recognition filter, limits 4 matches, selects strongest items.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIRank.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIRank.h"><code>AIRank&period;h</code></a> <em>Calculate rankings in concept recognition, time series, and solution finding.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIRank.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIRank.m"><code>AIRank&period;m</code></a> <em>Calculates ranks for AI models, optimizes with caching.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIScore.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIScore.h"><code>AIScore&period;h</code></a> <em>Evaluate AI performance using AIScore class.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIScore.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIScore.m"><code>AIScore&period;m</code></a> <em>Urgent AI scoring in game environments with caching.</em></li>
+<li><span hierarchy="5" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/Model/"><code>Model</code></strong> <em>AI-TC Utils: AI Task Results Classes</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/Model/TCResult.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/Model/TCResult.h"><code>TCResult&period;h</code></a> <em>TCResult: TO execution results class with status, message, delay, step info.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/Model/TCResult.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/Model/TCResult.m"><code>TCResult&period;m</code></a> <em>Task result representation class with instance creation and property chaining.</em></li>
+</ul>
+</li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/ThinkingUtils.h" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/ThinkingUtils.h"><code>ThinkingUtils&period;h</code></a> <em>Utility functions for AI thinking control system.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/ThinkingUtils.m" id="/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/ThinkingUtils.m"><code>ThinkingUtils&period;m</code></a> <em>Utility methods for CMV and demand control in Objective-C.</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/ReadMe.h" id="/SMG_NothingIsAll/AIFoundation/ReadMe.h"><code>ReadMe&period;h</code></a> <em>ReadMe.h: Project instructions, tasks, future suggestions</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/SMGConfig.h" id="/SMG_NothingIsAll/AIFoundation/SMGConfig.h"><code>SMGConfig&period;h</code></a> <em>SMGConfig.h: SMG_NothingIsAll config settings</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AIFoundation/SMGEnum.h" id="/SMG_NothingIsAll/AIFoundation/SMGEnum.h"><code>SMGEnum&period;h</code></a> <em>SMG Enum: AI, Charging, Signals, Targets</em></li>
+</ul>
+</li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AppDelegate.h" id="/SMG_NothingIsAll/AppDelegate.h"><code>AppDelegate&period;h</code></a> <em>AppDelegate: UIResponder subclass, adopts UIApplicationDelegate.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/AppDelegate.m" id="/SMG_NothingIsAll/AppDelegate.m"><code>AppDelegate&period;m</code></a> <em>Initializes AppDelegate, manages UI, Umeng integration.</em></li>
+<li><span hierarchy="2" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/Base.lproj/"><code>Base&period;lproj</code></strong></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/Base.lproj/LaunchScreen.storyboard" id="/SMG_NothingIsAll/Base.lproj/LaunchScreen.storyboard"><code>LaunchScreen&period;storyboard</code></a> <em>Launch screen view controller layout (iOS app, Auto Layout, Xcode 8)</em></li>
+</ul>
+</li>
+<li><span hierarchy="2" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/CortexAlgorithms/"><code>CortexAlgorithms</code></strong> <em>Brain signal processing algorithms for SMG.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/CortexAlgorithms/CortexAlgorithmsUtil.h" id="/SMG_NothingIsAll/CortexAlgorithms/CortexAlgorithmsUtil.h"><code>CortexAlgorithmsUtil&period;h</code></a> <em>CortexAlgorithmsUtil: Cortex-based algorithms in SMG_NothingIsAll.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/CortexAlgorithms/CortexAlgorithmsUtil.m" id="/SMG_NothingIsAll/CortexAlgorithms/CortexAlgorithmsUtil.m"><code>CortexAlgorithmsUtil&period;m</code></a> <em>Max loop code value by string comparison.</em></li>
+<li><span hierarchy="3" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/CortexAlgorithms/Imv/"><code>Imv</code></strong> <em>Imv algorithms for hunger model</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/CortexAlgorithms/Imv/ImvAlgsHungerModel.h" id="/SMG_NothingIsAll/CortexAlgorithms/Imv/ImvAlgsHungerModel.h"><code>ImvAlgsHungerModel&period;h</code></a> <em>HungerModel header file, subclass of ImvBadModel.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/CortexAlgorithms/Imv/ImvAlgsHungerModel.m" id="/SMG_NothingIsAll/CortexAlgorithms/Imv/ImvAlgsHungerModel.m"><code>ImvAlgsHungerModel&period;m</code></a> <em>ImvAlgsHungerModel class implementation by Jia on Feb 6, 2018.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/CortexAlgorithms/Imv/ImvAlgsHurtModel.h" id="/SMG_NothingIsAll/CortexAlgorithms/Imv/ImvAlgsHurtModel.h"><code>ImvAlgsHurtModel&period;h</code></a> <em>ImvAlgsHurtModel: ImvBadModel subclass, 2021 XiaoGang.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/CortexAlgorithms/Imv/ImvAlgsHurtModel.m" id="/SMG_NothingIsAll/CortexAlgorithms/Imv/ImvAlgsHurtModel.m"><code>ImvAlgsHurtModel&period;m</code></a> <em>Hurt model algorithms in ImvAlgsHurtModel class.</em></li>
+</ul>
+</li>
+<li><a href="index.html?q=/SMG_NothingIsAll/CortexAlgorithms/README.md" id="/SMG_NothingIsAll/CortexAlgorithms/README.md"><code>README&period;md</code></a> <em>Sparse coding algorithm for images &amp; audio, API access.</em></li>
+<li><span hierarchy="3" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/CortexAlgorithms/Vision/"><code>Vision</code></strong> <em>AI Vision Algorithms &amp; Redis Measurements</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/CortexAlgorithms/Vision/AIVisionAlgs.h" id="/SMG_NothingIsAll/CortexAlgorithms/Vision/AIVisionAlgs.h"><code>AIVisionAlgs&period;h</code></a> <em>AIVisionAlgs: virtual vision algorithms class with properties, commitView method.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/CortexAlgorithms/Vision/AIVisionAlgs.m" id="/SMG_NothingIsAll/CortexAlgorithms/Vision/AIVisionAlgs.m"><code>AIVisionAlgs&period;m</code></a> <em>Enhanced AIVisionAlgs with commit method, speed/distance measurement for Redis</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/CortexAlgorithms/Vision/AIVisionAlgsModel.h" id="/SMG_NothingIsAll/CortexAlgorithms/Vision/AIVisionAlgsModel.h"><code>AIVisionAlgsModel&period;h</code></a> <em>Updated AIVisionAlgsModel with new distance property and removed objectives.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/CortexAlgorithms/Vision/AIVisionAlgsModel.m" id="/SMG_NothingIsAll/CortexAlgorithms/Vision/AIVisionAlgsModel.m"><code>AIVisionAlgsModel&period;m</code></a> <em>AI Vision Algorithms Model, SMG_NothingIsAll.</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><span hierarchy="2" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/Demo/"><code>Demo</code></strong> <em>AI demos highlighting customization</em></span><ul>
+<li><span hierarchy="3" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/Demo/Adapter/"><code>Adapter</code></strong> <em>AI battery-hunger monitoring adapter.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/Adapter/DemoCharge.h" id="/SMG_NothingIsAll/Demo/Adapter/DemoCharge.h"><code>DemoCharge&period;h</code></a> <em>DemoCharge class in DemoCharge.h</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/Adapter/DemoCharge.m" id="/SMG_NothingIsAll/Demo/Adapter/DemoCharge.m"><code>DemoCharge&period;m</code></a> <em>Initilizes DemoCharge object, sets up battery monitoring, defines methods.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/Adapter/DemoHunger.h" id="/SMG_NothingIsAll/Demo/Adapter/DemoHunger.h"><code>DemoHunger&period;h</code></a> <em>DemoHunger class header with commit method.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/Adapter/DemoHunger.m" id="/SMG_NothingIsAll/Demo/Adapter/DemoHunger.m"><code>DemoHunger&period;m</code></a> <em>Initializes and monitors battery-hunger levels for AI processing.</em></li>
+</ul>
+</li>
+<li><span hierarchy="3" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/Demo/BirdGrowPage/"><code>BirdGrowPage</code></strong> <em>BirdGrowPage: Managing bird life.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/BirdGrowPage/BirdGrowPage.h" id="/SMG_NothingIsAll/Demo/BirdGrowPage/BirdGrowPage.h"><code>BirdGrowPage&period;h</code></a> <em>BirdGrowPage class header with bird birth position</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/BirdGrowPage/BirdGrowPage.m" id="/SMG_NothingIsAll/Demo/BirdGrowPage/BirdGrowPage.m"><code>BirdGrowPage&period;m</code></a> <em>BirdGrowPage: Managing bird actions, view, food interaction, and movement.</em></li>
+</ul>
+</li>
+<li><span hierarchy="3" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/Demo/BirdLivePage/"><code>BirdLivePage</code></strong> <em>Live bird tracking with food notifications</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/BirdLivePage/BirdLivePage.h" id="/SMG_NothingIsAll/Demo/BirdLivePage/BirdLivePage.h"><code>BirdLivePage&period;h</code></a> <em>BirdLivePage.h: HEViewController subclass, 2018.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/BirdLivePage/BirdLivePage.m" id="/SMG_NothingIsAll/Demo/BirdLivePage/BirdLivePage.m"><code>BirdLivePage&period;m</code></a> <em>BirdLivePage: Bird, Road, Tree Views with Food Retrieval</em></li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/Demo/BirdLivePage/Model/"><code>Model</code></strong> <em>Bird position, time tracking models for game objects.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/BirdLivePage/Model/HitItemModel.h" id="/SMG_NothingIsAll/Demo/BirdLivePage/Model/HitItemModel.h"><code>HitItemModel&period;h</code></a> <em>HitItemModel: Position, Bird, Time, Duration for game objects.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/BirdLivePage/Model/HitItemModel.m" id="/SMG_NothingIsAll/Demo/BirdLivePage/Model/HitItemModel.m"><code>HitItemModel&period;m</code></a> <em>HitItemModel implementation file for SMG_NothingIsAll project.</em></li>
+</ul>
+</li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/Demo/BirdLivePage/View/"><code>View</code></strong> <em>Interactive bird tracking UI, delegate and observer pattern, tree management, food notifications, WoodView.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/BirdLivePage/View/BirdView.h" id="/SMG_NothingIsAll/Demo/BirdLivePage/View/BirdView.h"><code>BirdView&period;h</code></a> <em>BirdView: UIView, page view delegate, hit food tracking.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/BirdLivePage/View/BirdView.m" id="/SMG_NothingIsAll/Demo/BirdLivePage/View/BirdView.m"><code>BirdView&period;m</code></a> <em>Manages bird actions, animations, and interactions. Observer pattern for notifications.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/BirdLivePage/View/CarView.h" id="/SMG_NothingIsAll/Demo/BirdLivePage/View/CarView.h"><code>CarView&period;h</code></a> <em>CarView class for car functionality and food data retrieval.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/BirdLivePage/View/CarView.m" id="/SMG_NothingIsAll/Demo/BirdLivePage/View/CarView.m"><code>CarView&period;m</code></a> <em>Initializes CarView, sets animation, iterates foods array.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/BirdLivePage/View/FoodView.h" id="/SMG_NothingIsAll/Demo/BirdLivePage/View/FoodView.h"><code>FoodView&period;h</code></a> <em>FoodView: Food Status, Hit Handler</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/BirdLivePage/View/FoodView.m" id="/SMG_NothingIsAll/Demo/BirdLivePage/View/FoodView.m"><code>FoodView&period;m</code></a> <em>Initializes FoodView with border appearance and hit response.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/BirdLivePage/View/LightView.h" id="/SMG_NothingIsAll/Demo/BirdLivePage/View/LightView.h"><code>LightView&period;h</code></a> <em>Header for LightView class inheriting HEView, defines delegate &amp; properties.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/BirdLivePage/View/LightView.m" id="/SMG_NothingIsAll/Demo/BirdLivePage/View/LightView.m"><code>LightView&period;m</code></a> <em>Manages green/red light display in iOS with timer and delegate.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/BirdLivePage/View/RoadView.h" id="/SMG_NothingIsAll/Demo/BirdLivePage/View/RoadView.h"><code>RoadView&period;h</code></a> <em>RoadView: HEView-derived, food access via roadView_GetFoodInLoad.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/BirdLivePage/View/RoadView.m" id="/SMG_NothingIsAll/Demo/BirdLivePage/View/RoadView.m"><code>RoadView&period;m</code></a> <em>Initializes RoadView, sets properties, conforms to protocols, displays refresh and food retrieval.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/BirdLivePage/View/TreeView.h" id="/SMG_NothingIsAll/Demo/BirdLivePage/View/TreeView.h"><code>TreeView&period;h</code></a> <em>TreeView header file, inherits HEView, copyrighted.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/BirdLivePage/View/TreeView.m" id="/SMG_NothingIsAll/Demo/BirdLivePage/View/TreeView.m"><code>TreeView&period;m</code></a> <em>TreeView setup, NSTreeController management, food notifications.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/BirdLivePage/View/WoodView.h" id="/SMG_NothingIsAll/Demo/BirdLivePage/View/WoodView.h"><code>WoodView&period;h</code></a> <em>WoodView header: ThrowTime constant, WoodViewDelegate protocol, reset, throwV5.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/BirdLivePage/View/WoodView.m" id="/SMG_NothingIsAll/Demo/BirdLivePage/View/WoodView.m"><code>WoodView&period;m</code></a> <em>WoodView: view management, animation, collision detection.</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><span hierarchy="3" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/Demo/Extension/"><code>Extension</code></strong> <em>Customizable UILabel extension with borders, shadows, and logs.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/Extension/BorderLabel.h" id="/SMG_NothingIsAll/Demo/Extension/BorderLabel.h"><code>BorderLabel&period;h</code></a> <em>Customizable border UILabel class header</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/Extension/BorderLabel.m" id="/SMG_NothingIsAll/Demo/Extension/BorderLabel.m"><code>BorderLabel&period;m</code></a> <em>Custom UILabel with border and shadow</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/Extension/HEView.h" id="/SMG_NothingIsAll/Demo/Extension/HEView.h"><code>HEView&period;h</code></a> <em>Uniquely tagged view with initTime property.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/Extension/HEView.m" id="/SMG_NothingIsAll/Demo/Extension/HEView.m"><code>HEView&period;m</code></a> <em>HEView: Initializes, tags, stores time</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/Extension/HEViewController.h" id="/SMG_NothingIsAll/Demo/Extension/HEViewController.h"><code>HEViewController&period;h</code></a> <em>HEViewController: UIViewController subclass with init methods for view, data, and display.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/Extension/HEViewController.m" id="/SMG_NothingIsAll/Demo/Extension/HEViewController.m"><code>HEViewController&period;m</code></a> <em>Initializes views and data on viewDidLoad, status bar always visible, back button to main page.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/Extension/MBProgressHUD%2BAdd.h" id="/SMG_NothingIsAll/Demo/Extension/MBProgressHUD+Add.h"><code>MBProgressHUD&plus;Add&period;h</code></a> <em>MBProgressHUD extension with customizable error/success messages.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/Extension/MBProgressHUD%2BAdd.m" id="/SMG_NothingIsAll/Demo/Extension/MBProgressHUD+Add.m"><code>MBProgressHUD&plus;Add&period;m</code></a> <em>Customizable HUD notifications with icons</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/Extension/MathUtils.h" id="/SMG_NothingIsAll/Demo/Extension/MathUtils.h"><code>MathUtils&period;h</code></a> <em>MathUtils: Utilities for data range, rect ops &amp; cooling calculations</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/Extension/MathUtils.m" id="/SMG_NothingIsAll/Demo/Extension/MathUtils.m"><code>MathUtils&period;m</code></a> <em>MathUtils: Transform, CGRect manipulation &amp; temperature adjustment</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/Extension/NSFile%2BExtension.h" id="/SMG_NothingIsAll/Demo/Extension/NSFile+Extension.h"><code>NSFile&plus;Extension&period;h</code></a> <em>Gather subfiles, folders in given path.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/Extension/NSFile%2BExtension.m" id="/SMG_NothingIsAll/Demo/Extension/NSFile+Extension.m"><code>NSFile&plus;Extension&period;m</code></a> <em>Retrieves files, filters by directory types.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/Extension/NSLog%2BExtension.h" id="/SMG_NothingIsAll/Demo/Extension/NSLog+Extension.h"><code>NSLog&plus;Extension&period;h</code></a> <em>NSLog extension for detailed logging.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/Extension/NSLog%2BExtension.m" id="/SMG_NothingIsAll/Demo/Extension/NSLog+Extension.m"><code>NSLog&plus;Extension&period;m</code></a> <em>Converts enums to strings and extends NSLog with 3 methods.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/Extension/RuntimeInvoker.h" id="/SMG_NothingIsAll/Demo/Extension/RuntimeInvoker.h"><code>RuntimeInvoker&period;h</code></a> <em>Invoker: Runtime selector invocation for NSObject and NSString categories.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/Extension/RuntimeInvoker.m" id="/SMG_NothingIsAll/Demo/Extension/RuntimeInvoker.m"><code>RuntimeInvoker&period;m</code></a> <em>Invocation handler for NSObject methods</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/Extension/UIColor%2Bexpanded.h" id="/SMG_NothingIsAll/Demo/Extension/UIColor+expanded.h"><code>UIColor&plus;expanded&period;h</code></a> <em>RGB manipulation, luminance mapping, color representation extension.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/Extension/UIColor%2Bexpanded.m" id="/SMG_NothingIsAll/Demo/Extension/UIColor+expanded.m"><code>UIColor&plus;expanded&period;m</code></a> <em>Extended UIColor manipulation with darkening, conversions, and more.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/Extension/UIView%2BExtension.h" id="/SMG_NothingIsAll/Demo/Extension/UIView+Extension.h"><code>UIView&plus;Extension&period;h</code></a> <em>UIView extension for size, position, subviews, superview ops.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/Extension/UIView%2BExtension.m" id="/SMG_NothingIsAll/Demo/Extension/UIView+Extension.m"><code>UIView&plus;Extension&period;m</code></a> <em>UIView extension for simple frame manipulation &amp; subview operations.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/Extension/XGDelegate.h" id="/SMG_NothingIsAll/Demo/Extension/XGDelegate.h"><code>XGDelegate&period;h</code></a> <em>XGDelegate.h: Alternative block syntax with varying parameters and return types.</em></li>
+</ul>
+</li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/Foundation%2BLog.m" id="/SMG_NothingIsAll/Demo/Foundation+Log.m"><code>Foundation&plus;Log&period;m</code></a> <em>Improved log string readability for NSArray description method.</em></li>
+<li><span hierarchy="3" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/Demo/MainPage/"><code>MainPage</code></strong> <em>MainPage: Header, implementation with views and data.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/MainPage/MainPage.h" id="/SMG_NothingIsAll/Demo/MainPage/MainPage.h"><code>MainPage&period;h</code></a> <em>MainPage header file, empty class.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/MainPage/MainPage.m" id="/SMG_NothingIsAll/Demo/MainPage/MainPage.m"><code>MainPage&period;m</code></a> <em>MainPage implementation: views, data, gestures, titles, listeners.</em></li>
+</ul>
+</li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/SMGPrefixHeader.pch" id="/SMG_NothingIsAll/Demo/SMGPrefixHeader.pch"><code>SMGPrefixHeader&period;pch</code></a> <em>Universal iOS app precompiled header file.</em></li>
+<li><span hierarchy="3" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/Demo/TestHungryPage/"><code>TestHungryPage</code></strong> <em>Empty header with UI and battery/hunger state testing.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/TestHungryPage/TestHungryPage.h" id="/SMG_NothingIsAll/Demo/TestHungryPage/TestHungryPage.h"><code>TestHungryPage&period;h</code></a> <em>Empty header for "TestHungryPage" class.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Demo/TestHungryPage/TestHungryPage.m" id="/SMG_NothingIsAll/Demo/TestHungryPage/TestHungryPage.m"><code>TestHungryPage&period;m</code></a> <em>TestHungryPage.m: UI, views, slider control, battery/hunger state.</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><span hierarchy="2" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/Extension/"><code>Extension</code></strong> <em>Thread-safe, concurrent collections management and extension methods for object properties encryption.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/Extension/AsyncMutableArray.h" id="/SMG_NothingIsAll/Extension/AsyncMutableArray.h"><code>AsyncMutableArray&period;h</code></a> <em>Thread-safe, mutable array operations for multi-threaded usage.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Extension/AsyncMutableArray.m" id="/SMG_NothingIsAll/Extension/AsyncMutableArray.m"><code>AsyncMutableArray&period;m</code></a> <em>Async Mutable Array: Thread-safe, GCD-based.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Extension/AsyncMutableDictionary.h" id="/SMG_NothingIsAll/Extension/AsyncMutableDictionary.h"><code>AsyncMutableDictionary&period;h</code></a> <em>Asynchronous AsyncMutableDictionary management.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Extension/AsyncMutableDictionary.m" id="/SMG_NothingIsAll/Extension/AsyncMutableDictionary.m"><code>AsyncMutableDictionary&period;m</code></a> <em>Thread-safe, concurrent NSMutableDictionary implementation using GCD's dispatch_queue.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Extension/NSObject%2BExtension.h" id="/SMG_NothingIsAll/Extension/NSObject+Extension.h"><code>NSObject&plus;Extension&period;h</code></a> <em>Converts object to mutable dictionary with parent properties.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Extension/NSObject%2BExtension.m" id="/SMG_NothingIsAll/Extension/NSObject+Extension.m"><code>NSObject&plus;Extension&period;m</code></a> <em>Get recursive dictionary of object properties with optional parent inclusion.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Extension/NSString%2BExtension.h" id="/SMG_NothingIsAll/Extension/NSString+Extension.h"><code>NSString&plus;Extension&period;h</code></a> <em>MD5-encryption, double-to-string NSString category.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Extension/NSString%2BExtension.m" id="/SMG_NothingIsAll/Extension/NSString+Extension.m"><code>NSString&plus;Extension&period;m</code></a> <em>NSString extension: MD5, double conversion, reverse search.</em></li>
+</ul>
+</li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Info.plist" id="/SMG_NothingIsAll/Info.plist"><code>Info&period;plist</code></a> <em>OS app Info.plist properties</em></li>
+<li><span hierarchy="2" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/SMG_NothingIsAll/Test/"><code>Test</code></strong> <em>Test AI vision exception handling and critical backtesting module.</em></span><ul>
+<li><a href="index.html?q=/SMG_NothingIsAll/Test/AITest.h" id="/SMG_NothingIsAll/Test/AITest.h"><code>AITest&period;h</code></a> <em>Unit testing class AITest with 29 functions, critical backtesting module.</em></li>
+<li><a href="index.html?q=/SMG_NothingIsAll/Test/AITest.m" id="/SMG_NothingIsAll/Test/AITest.m"><code>AITest&period;m</code></a> <em>Test AI vision exception handling and type correctness.</em></li>
+</ul>
+</li>
+<li><a href="index.html?q=/SMG_NothingIsAll/main.m" id="/SMG_NothingIsAll/main.m"><code>main&period;m</code></a> <em>SMG_NothingIsAll iOS app main entry, UIKit import.</em></li>
+</ul>
+</li>
+<li><span hierarchy="1" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/ThirdParty/"><code>ThirdParty</code></strong> <em>Extensive customizable tools for dev/debug efficiency.</em></span><ul>
+<li><span hierarchy="2" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/ThirdParty/MemManager/"><code>MemManager</code></strong> <em>Efficient UIView memory management.</em></span><ul>
+<li><a href="index.html?q=/ThirdParty/MemManager/MemManager.h" id="/ThirdParty/MemManager/MemManager.h"><code>MemManager&period;h</code></a> <em>Memory management class with save/read functions</em></li>
+<li><a href="index.html?q=/ThirdParty/MemManager/MemManager.m" id="/ThirdParty/MemManager/MemManager.m"><code>MemManager&period;m</code></a> <em>Clears memory, backs up data, logs progress.</em></li>
+<li><a href="index.html?q=/ThirdParty/MemManager/MemManagerWindow.h" id="/ThirdParty/MemManager/MemManagerWindow.h"><code>MemManagerWindow&period;h</code></a> <em>Manages window in "SMG_NothingIsAll" UIView class.</em></li>
+<li><a href="index.html?q=/ThirdParty/MemManager/MemManagerWindow.m" id="/ThirdParty/MemManager/MemManagerWindow.m"><code>MemManagerWindow&period;m</code></a> <em>Manages window, views, memory in MemManagerWindow.</em></li>
+<li><a href="index.html?q=/ThirdParty/MemManager/README.md" id="/ThirdParty/MemManager/README.md"><code>README&period;md</code></a> <em>Manage memory operations for HE.</em></li>
+</ul>
+</li>
+<li><span hierarchy="2" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/ThirdParty/RLTrainer/"><code>RLTrainer</code></strong> <em>RLTrainer: Third-party tool for model training, demo automation, and reinforcement learning.</em></span><ul>
+<li><span hierarchy="3" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/ThirdParty/RLTrainer/Model/"><code>Model</code></strong> <em>Model directory for third-party RLTrainer library.</em></span><ul>
+<li><a href="index.html?q=/ThirdParty/RLTrainer/Model/RTModel.h" id="/ThirdParty/RLTrainer/Model/RTModel.h"><code>RTModel&period;h</code></a> <em>RTModel: RTModel class header with register, queue, invoke, clear functions.</em></li>
+<li><a href="index.html?q=/ThirdParty/RLTrainer/Model/RTModel.m" id="/ThirdParty/RLTrainer/Model/RTModel.m"><code>RTModel&period;m</code></a> <em>RTModel: Queue management, pause, register, report, invoke.</em></li>
+<li><a href="index.html?q=/ThirdParty/RLTrainer/Model/RTQueueModel.h" id="/ThirdParty/RLTrainer/Model/RTQueueModel.h"><code>RTQueueModel&period;h</code></a> <em>RTQueueModel: Foundation subclass, name &amp; arg0 properties, create method.</em></li>
+<li><a href="index.html?q=/ThirdParty/RLTrainer/Model/RTQueueModel.m" id="/ThirdParty/RLTrainer/Model/RTQueueModel.m"><code>RTQueueModel&period;m</code></a> <em>RTQueueModel: Class, newWithName:arg0: Initializer</em></li>
+</ul>
+</li>
+<li><a href="index.html?q=/ThirdParty/RLTrainer/README.md" id="/ThirdParty/RLTrainer/README.md"><code>README&period;md</code></a> <em>Reinforcement learning trainer for demo automation and stability.</em></li>
+<li><a href="index.html?q=/ThirdParty/RLTrainer/RLTrainer.h" id="/ThirdParty/RLTrainer/RLTrainer.h"><code>RLTrainer&period;h</code></a> <em>RLTrainer: Reinforcement learning, game selectors, actions, trainer class, pause commands.</em></li>
+<li><a href="index.html?q=/ThirdParty/RLTrainer/RLTrainer.m" id="/ThirdParty/RLTrainer/RLTrainer.m"><code>RLTrainer&period;m</code></a> <em>Singleton manages panels, queues, and training processes.</em></li>
+<li><span hierarchy="3" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/ThirdParty/RLTrainer/View/"><code>View</code></strong> <em>RLTrainer's dynamic UI for reinforcement learning games</em></span><ul>
+<li><a href="index.html?q=/ThirdParty/RLTrainer/View/RLTPanel.h" id="/ThirdParty/RLTrainer/View/RLTPanel.h"><code>RLTPanel&period;h</code></a> <em>RLTrainer's RLTPanel header file. Reinforcement learning UI panel with delegate support.</em></li>
+<li><a href="index.html?q=/ThirdParty/RLTrainer/View/RLTPanel.m" id="/ThirdParty/RLTrainer/View/RLTPanel.m"><code>RLTPanel&period;m</code></a> <em>Trains AI for 300-round game with dynamic UI and updates.</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><span hierarchy="2" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/ThirdParty/SMGNetVision/"><code>SMGNetVision</code></strong> <em>Third-party SMGNetVision library for neural network visualization.</em></span><ul>
+<li><span hierarchy="3" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/ThirdParty/SMGNetVision/Core/"><code>Core</code></strong> <em>Network visualization core components.</em></span><ul>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/ThirdParty/SMGNetVision/Core/Model/"><code>Model</code></strong> <em>SMGNetVision: Compare nodes for model formation and validation.</em></span><ul>
+<li><a href="index.html?q=/ThirdParty/SMGNetVision/Core/Model/NodeCompareModel.h" id="/ThirdParty/SMGNetVision/Core/Model/NodeCompareModel.h"><code>NodeCompareModel&period;h</code></a> <em>Compare two nodes for model formation.</em></li>
+<li><a href="index.html?q=/ThirdParty/SMGNetVision/Core/Model/NodeCompareModel.m" id="/ThirdParty/SMGNetVision/Core/Model/NodeCompareModel.m"><code>NodeCompareModel&period;m</code></a> <em>NodeCompareModel: Compare objects against stored node data, return true if equal.</em></li>
+</ul>
+</li>
+<li><a href="index.html?q=/ThirdParty/SMGNetVision/Core/NVViewUtil.h" id="/ThirdParty/SMGNetVision/Core/NVViewUtil.h"><code>NVViewUtil&period;h</code></a> <em>Utility functions for 2D line and point operations.</em></li>
+<li><a href="index.html?q=/ThirdParty/SMGNetVision/Core/NVViewUtil.m" id="/ThirdParty/SMGNetVision/Core/NVViewUtil.m"><code>NVViewUtil&period;m</code></a> <em>Checks line data, calculates Euclidean distance and angles in NVViewUtil.</em></li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/ThirdParty/SMGNetVision/Core/Util/"><code>Util</code></strong> <em>SMGNetVision Core Utilities Directory</em></span><ul>
+<li><a href="index.html?q=/ThirdParty/SMGNetVision/Core/Util/NVModuleUtil.h" id="/ThirdParty/SMGNetVision/Core/Util/NVModuleUtil.h"><code>NVModuleUtil&period;h</code></a> <em>NVModuleUtil: Utility class for managing data groups with relationship checks.</em></li>
+<li><a href="index.html?q=/ThirdParty/SMGNetVision/Core/Util/NVModuleUtil.m" id="/ThirdParty/SMGNetVision/Core/Util/NVModuleUtil.m"><code>NVModuleUtil&period;m</code></a> <em>NVModuleUtil: Utilities for grouping and merging nodes in SMGNetVision.</em></li>
+</ul>
+</li>
+<li><span hierarchy="4" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/ThirdParty/SMGNetVision/Core/View/"><code>View</code></strong> <em>Network visualization UI components directory.</em></span><ul>
+<li><a href="index.html?q=/ThirdParty/SMGNetVision/Core/View/NVLineView.h" id="/ThirdParty/SMGNetVision/Core/View/NVLineView.h"><code>NVLineView&period;h</code></a> <em>UIView subclass with data and light properties.</em></li>
+<li><a href="index.html?q=/ThirdParty/SMGNetVision/Core/View/NVLineView.m" id="/ThirdParty/SMGNetVision/Core/View/NVLineView.m"><code>NVLineView&period;m</code></a> <em>NVLineView initialization and layout adjustment.</em></li>
+<li><a href="index.html?q=/ThirdParty/SMGNetVision/Core/View/NVModuleView.h" id="/ThirdParty/SMGNetVision/Core/View/NVModuleView.h"><code>NVModuleView&period;h</code></a> <em>NVModuleView interface and methods for network module view.</em></li>
+<li><a href="index.html?q=/ThirdParty/SMGNetVision/Core/View/NVModuleView.m" id="/ThirdParty/SMGNetVision/Core/View/NVModuleView.m"><code>NVModuleView&period;m</code></a> <em>NVModuleView: Module view classes with default, interaction, and network connection drawing.</em></li>
+<li><a href="index.html?q=/ThirdParty/SMGNetVision/Core/View/NVNodeView.h" id="/ThirdParty/SMGNetVision/Core/View/NVNodeView.h"><code>NVNodeView&period;h</code></a> <em>NVNodeView: UIView subclass with delegate, light string, title, and show time management.</em></li>
+<li><a href="index.html?q=/ThirdParty/SMGNetVision/Core/View/NVNodeView.m" id="/ThirdParty/SMGNetVision/Core/View/NVNodeView.m"><code>NVNodeView&period;m</code></a> <em>Manages views, touch events, and delegates.</em></li>
+<li><a href="index.html?q=/ThirdParty/SMGNetVision/Core/View/NVView.h" id="/ThirdParty/SMGNetVision/Core/View/NVView.h"><code>NVView&period;h</code></a> <em>NVView: Handles node data, adds nodes, force mode in SMGNetVision.</em></li>
+<li><a href="index.html?q=/ThirdParty/SMGNetVision/Core/View/NVView.m" id="/ThirdParty/SMGNetVision/Core/View/NVView.m"><code>NVView&period;m</code></a> <em>NVView Controller Initializes Network Visualization</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><span hierarchy="3" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/ThirdParty/SMGNetVision/HE/"><code>HE</code></strong> <em>Custom UIView class for graph/network visualization</em></span><ul>
+<li><a href="index.html?q=/ThirdParty/SMGNetVision/HE/CustomAddNodeWindow.h" id="/ThirdParty/SMGNetVision/HE/CustomAddNodeWindow.h"><code>CustomAddNodeWindow&period;h</code></a> <em>Custom UIView class for adding nodes in graph/network systems.</em></li>
+<li><a href="index.html?q=/ThirdParty/SMGNetVision/HE/CustomAddNodeWindow.m" id="/ThirdParty/SMGNetVision/HE/CustomAddNodeWindow.m"><code>CustomAddNodeWindow&period;m</code></a> <em>CustomAddNodeWindow: UIViewController handling button clicks, initializing data and display.</em></li>
+<li><a href="index.html?q=/ThirdParty/SMGNetVision/HE/LongTipWindow.h" id="/ThirdParty/SMGNetVision/HE/LongTipWindow.h"><code>LongTipWindow&period;h</code></a> <em>LongTipWindow header: UIView subclass, setData method, copyright XiaoGang.</em></li>
+<li><a href="index.html?q=/ThirdParty/SMGNetVision/HE/LongTipWindow.m" id="/ThirdParty/SMGNetVision/HE/LongTipWindow.m"><code>LongTipWindow&period;m</code></a> <em>Manages LongTipWindow node data in network visualization app</em></li>
+<li><a href="index.html?q=/ThirdParty/SMGNetVision/HE/NVDelegate_He.h" id="/ThirdParty/SMGNetVision/HE/NVDelegate_He.h"><code>NVDelegate&UnderBar;He&period;h</code></a> <em>He's neural network delegate for SMG_NothingIsAll project</em></li>
+<li><a href="index.html?q=/ThirdParty/SMGNetVision/HE/NVDelegate_He.m" id="/ThirdParty/SMGNetVision/HE/NVDelegate_He.m"><code>NVDelegate&UnderBar;He&period;m</code></a> <em>Manages nodes, search, and UI interactions.</em></li>
+<li><a href="index.html?q=/ThirdParty/SMGNetVision/HE/NVHeUtil.h" id="/ThirdParty/SMGNetVision/HE/NVHeUtil.h"><code>NVHeUtil&period;h</code></a> <em>Node size, light description, and type identification functions.</em></li>
+<li><a href="index.html?q=/ThirdParty/SMGNetVision/HE/NVHeUtil.m" id="/ThirdParty/SMGNetVision/HE/NVHeUtil.m"><code>NVHeUtil&period;m</code></a> <em>Processes light data in "SMG_NothingIsAll" with arrays.</em></li>
+</ul>
+</li>
+<li><a href="index.html?q=/ThirdParty/SMGNetVision/NVConfig.h" id="/ThirdParty/SMGNetVision/NVConfig.h"><code>NVConfig&period;h</code></a> <em>NVConfig: Node, Module, Notification constants.</em></li>
+<li><a href="index.html?q=/ThirdParty/SMGNetVision/NVHeader.h" id="/ThirdParty/SMGNetVision/NVHeader.h"><code>NVHeader&period;h</code></a> <em>SMGNetVision header: includes, defines DirectionType.</em></li>
+<li><a href="index.html?q=/ThirdParty/SMGNetVision/ReadMe.md" id="/ThirdParty/SMGNetVision/ReadMe.md"><code>ReadMe&period;md</code></a> <em>SMGNetVision: Neural network visualization tool, improved UI and performance.</em></li>
+</ul>
+</li>
+<li><span hierarchy="2" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/ThirdParty/TCDebug/"><code>TCDebug</code></strong> <em>Advanced TC debugging library for iOS apps performance analysis.</em></span><ul>
+<li><a href="index.html?q=/ThirdParty/TCDebug/README.md" id="/ThirdParty/TCDebug/README.md"><code>README&period;md</code></a> <em>TC Debug Tool: Advanced TC Performance Analysis</em></li>
+<li><a href="index.html?q=/ThirdParty/TCDebug/TCDebug.h" id="/ThirdParty/TCDebug/TCDebug.h"><code>TCDebug&period;h</code></a> <em>TCDebug: Performance debugging class for single modules.</em></li>
+<li><a href="index.html?q=/ThirdParty/TCDebug/TCDebug.m" id="/ThirdParty/TCDebug/TCDebug.m"><code>TCDebug&period;m</code></a> <em>Debugging utilities for iOS applications.</em></li>
+</ul>
+</li>
+<li><span hierarchy="2" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/ThirdParty/TOMVision2/"><code>TOMVision2</code></strong> <em>TOMVision2 third-party customizable panel resources.</em></span><ul>
+<li><span hierarchy="3" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/ThirdParty/TOMVision2/Line/"><code>Line</code></strong> <em>TOMVision2: Customizable tree growth timeline UIView library</em></span><ul>
+<li><a href="index.html?q=/ThirdParty/TOMVision2/Line/TVLineView.h" id="/ThirdParty/TOMVision2/Line/TVLineView.h"><code>TVLineView&period;h</code></a> <em>TVLineView: UIView subclass, refreshes display with data for A&amp;B nodes.</em></li>
+<li><a href="index.html?q=/ThirdParty/TOMVision2/Line/TVLineView.m" id="/ThirdParty/TOMVision2/Line/TVLineView.m"><code>TVLineView&period;m</code></a> <em>TOMVision2: Line visualization UIView.</em></li>
+<li><a href="index.html?q=/ThirdParty/TOMVision2/Line/TVTimeLine.h" id="/ThirdParty/TOMVision2/Line/TVTimeLine.h"><code>TVTimeLine&period;h</code></a> <em>TVTimeLine: UIView class for tree growth timeline drawing.</em></li>
+<li><a href="index.html?q=/ThirdParty/TOMVision2/Line/TVTimeLine.m" id="/ThirdParty/TOMVision2/Line/TVTimeLine.m"><code>TVTimeLine&period;m</code></a> <em>Customizable curve line with adjustable width, color, and refresh.</em></li>
+</ul>
+</li>
+<li><span hierarchy="3" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/ThirdParty/TOMVision2/Model/"><code>Model</code></strong> <em>TOMVisionItemModel: TOModel data class with NSCoding protocol.</em></span><ul>
+<li><a href="index.html?q=/ThirdParty/TOMVision2/Model/TOMVisionItemModel.h" id="/ThirdParty/TOMVision2/Model/TOMVisionItemModel.h"><code>TOMVisionItemModel&period;h</code></a> <em>TOMVisionItemModel: Single frame TOModel data class.</em></li>
+<li><a href="index.html?q=/ThirdParty/TOMVision2/Model/TOMVisionItemModel.m" id="/ThirdParty/TOMVision2/Model/TOMVisionItemModel.m"><code>TOMVisionItemModel&period;m</code></a> <em>Archive and unarchive TOMVisionItemModel with NSCoding protocol.</em></li>
+</ul>
+</li>
+<li><span hierarchy="3" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/ThirdParty/TOMVision2/Panel/"><code>Panel</code></strong> <em>Customizable TOMVision2 Panel for video control and settings</em></span><ul>
+<li><a href="index.html?q=/ThirdParty/TOMVision2/Panel/TVPanelView.h" id="/ThirdParty/TOMVision2/Panel/TVPanelView.h"><code>TVPanelView&period;h</code></a> <em>TVPanelView: UIView subclass for playback control panel</em></li>
+<li><a href="index.html?q=/ThirdParty/TOMVision2/Panel/TVPanelView.m" id="/ThirdParty/TOMVision2/Panel/TVPanelView.m"><code>TVPanelView&period;m</code></a> <em>TVPanelView: Video playback, UI actions, list management.</em></li>
+<li><a href="index.html?q=/ThirdParty/TOMVision2/Panel/TVSettingWindow.h" id="/ThirdParty/TOMVision2/Panel/TVSettingWindow.h"><code>TVSettingWindow&period;h</code></a> <em>TVSettingWindow: UIView subclass with 4 Boolean props &amp; window control methods.</em></li>
+<li><a href="index.html?q=/ThirdParty/TOMVision2/Panel/TVSettingWindow.m" id="/ThirdParty/TOMVision2/Panel/TVSettingWindow.m"><code>TVSettingWindow&period;m</code></a> <em>Initialize, handle open/close, update colors, define button actions, use auto layout.</em></li>
+<li><a href="index.html?q=/ThirdParty/TOMVision2/Panel/TVideoWindow.h" id="/ThirdParty/TOMVision2/Panel/TVideoWindow.h"><code>TVideoWindow&period;h</code></a> <em>TVideoWindow: UIView with delegate, file ops, open/close methods.</em></li>
+<li><a href="index.html?q=/ThirdParty/TOMVision2/Panel/TVideoWindow.m" id="/ThirdParty/TOMVision2/Panel/TVideoWindow.m"><code>TVideoWindow&period;m</code></a> <em>Manages TVideoWindow view, sorts video paths by creation time.</em></li>
+</ul>
+</li>
+<li><a href="index.html?q=/ThirdParty/TOMVision2/README.md" id="/ThirdParty/TOMVision2/README.md"><code>README&period;md</code></a> <em>TOMVision2: Visualizing &amp; Animating Multiple Frames of Working Memory Trees.</em></li>
+<li><a href="index.html?q=/ThirdParty/TOMVision2/TOMVision2.h" id="/ThirdParty/TOMVision2/TOMVision2.h"><code>TOMVision2&period;h</code></a> <em>TOMVision2 UIView class definition with methods for frame updates and network control.</em></li>
+<li><a href="index.html?q=/ThirdParty/TOMVision2/TOMVision2.m" id="/ThirdParty/TOMVision2/TOMVision2.m"><code>TOMVision2&period;m</code></a> <em>TOMVision2: View size, focus, events management.</em></li>
+<li><span hierarchy="3" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/ThirdParty/TOMVision2/Util/"><code>Util</code></strong> <em>TOMVision2 Utilities: TVUtil for model updates and operations.</em></span><ul>
+<li><a href="index.html?q=/ThirdParty/TOMVision2/Util/TVUtil.h" id="/ThirdParty/TOMVision2/Util/TVUtil.h"><code>TVUtil&period;h</code></a> <em>TVUtil.h: Header file with TVUtil class for TOMVisionItemModel updates and operations.</em></li>
+<li><a href="index.html?q=/ThirdParty/TOMVision2/Util/TVUtil.m" id="/ThirdParty/TOMVision2/Util/TVUtil.m"><code>TVUtil&period;m</code></a> <em>TVUtil: Count diffs, dict changes, indices, rect area checks. Objective-C offsets, formats.</em></li>
+</ul>
+</li>
+<li><span hierarchy="3" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/ThirdParty/TOMVision2/View/"><code>View</code></strong> <em>UI components &amp; scaling in TOMVision2 View</em></span><ul>
+<li><a href="index.html?q=/ThirdParty/TOMVision2/View/TOMVisionAlgView.h" id="/ThirdParty/TOMVision2/View/TOMVisionAlgView.h"><code>TOMVisionAlgView&period;h</code></a> <em>TOMVisionAlgView: TOMVisionNodeBase subclass header file.</em></li>
+<li><a href="index.html?q=/ThirdParty/TOMVision2/View/TOMVisionAlgView.m" id="/ThirdParty/TOMVision2/View/TOMVisionAlgView.m"><code>TOMVisionAlgView&period;m</code></a> <em>TOMVisionAlgView: Overrides initView, refreshDisplay, getNodeDesc.</em></li>
+<li><a href="index.html?q=/ThirdParty/TOMVision2/View/TOMVisionDemandView.h" id="/ThirdParty/TOMVision2/View/TOMVisionDemandView.h"><code>TOMVisionDemandView&period;h</code></a> <em>TOMVisionDemandView: Class in SMG_NothingIsAll project.</em></li>
+<li><a href="index.html?q=/ThirdParty/TOMVision2/View/TOMVisionDemandView.m" id="/ThirdParty/TOMVision2/View/TOMVisionDemandView.m"><code>TOMVisionDemandView&period;m</code></a> <em>Initializes view, updates display based on data, retrieves matchFo.</em></li>
+<li><a href="index.html?q=/ThirdParty/TOMVision2/View/TOMVisionFoView.h" id="/ThirdParty/TOMVision2/View/TOMVisionFoView.h"><code>TOMVisionFoView&period;h</code></a> <em>TOMVisionFoView: TOMVisionNodeBase subclass header file, created 3/15/2022 by jia.</em></li>
+<li><a href="index.html?q=/ThirdParty/TOMVision2/View/TOMVisionFoView.m" id="/ThirdParty/TOMVision2/View/TOMVisionFoView.m"><code>TOMVisionFoView&period;m</code></a> <em>Initializes view, calculates sum, updates UI text.</em></li>
+<li><a href="index.html?q=/ThirdParty/TOMVision2/View/TOMVisionNodeBase.h" id="/ThirdParty/TOMVision2/View/TOMVisionNodeBase.h"><code>TOMVisionNodeBase&period;h</code></a> <em>TOMVisionNodeBase: UIView subclass with props &amp; methods for node display, refresh, compare, and scaling.</em></li>
+<li><a href="index.html?q=/ThirdParty/TOMVision2/View/TOMVisionNodeBase.m" id="/ThirdParty/TOMVision2/View/TOMVisionNodeBase.m"><code>TOMVisionNodeBase&period;m</code></a> <em>Initializes and configures TOMVisionNodeBase with subviews and resizing methods.</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><span hierarchy="2" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/ThirdParty/TOModelVision/"><code>TOModelVision</code></strong> <em>Visualizing TOModelBase memory models</em></span><ul>
+<li><a href="index.html?q=/ThirdParty/TOModelVision/README.md" id="/ThirdParty/TOModelVision/README.md"><code>README&period;md</code></a> <em>TOModelVision: Initial Memory Visualization - Unordered Sequence Logs</em></li>
+<li><a href="index.html?q=/ThirdParty/TOModelVision/TOModelVision.h" id="/ThirdParty/TOModelVision/TOModelVision.h"><code>TOModelVision&period;h</code></a> <em>TOModelVision: Class for visualizing memory models' relationships.</em></li>
+<li><a href="index.html?q=/ThirdParty/TOModelVision/TOModelVision.m" id="/ThirdParty/TOModelVision/TOModelVision.m"><code>TOModelVision&period;m</code></a> <em>Converts current model to sub-visualization log.</em></li>
+<li><a href="index.html?q=/ThirdParty/TOModelVision/TOModelVisionUtil.h" id="/ThirdParty/TOModelVision/TOModelVisionUtil.h"><code>TOModelVisionUtil&period;h</code></a> <em>Utility class for TOModelVision, converts current model to unordered list model array</em></li>
+<li><a href="index.html?q=/ThirdParty/TOModelVision/TOModelVisionUtil.m" id="/ThirdParty/TOModelVision/TOModelVisionUtil.m"><code>TOModelVisionUtil&period;m</code></a> <em>Converts TOModelBase to UnorderedItemModel arrays, returns hierarchical structure.</em></li>
+<li><a href="index.html?q=/ThirdParty/TOModelVision/UnorderItemModel.h" id="/ThirdParty/TOModelVision/UnorderItemModel.h"><code>UnorderItemModel&period;h</code></a> <em>UnorderedItemModel class in Objective-C</em></li>
+<li><a href="index.html?q=/ThirdParty/TOModelVision/UnorderItemModel.m" id="/ThirdParty/TOModelVision/UnorderItemModel.m"><code>UnorderItemModel&period;m</code></a> <em>Declares "UnorderItemModel" class for SMG_NothingIsAll project, ©2021 XiaoGang.</em></li>
+</ul>
+</li>
+<li><span hierarchy="2" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/ThirdParty/XGConfig/"><code>XGConfig</code></strong> <em>Real-time config management for HE system, singleton, defaults, directories, config changes.</em></span><ul>
+<li><a href="index.html?q=/ThirdParty/XGConfig/README.md" id="/ThirdParty/XGConfig/README.md"><code>README&period;md</code></a> <em>Custom config file, real-time value changes, HE system.</em></li>
+<li><a href="index.html?q=/ThirdParty/XGConfig/XGConfig.h" id="/ThirdParty/XGConfig/XGConfig.h"><code>XGConfig&period;h</code></a> <em>XGConfig: Configuration access and management.</em></li>
+<li><a href="index.html?q=/ThirdParty/XGConfig/XGConfig.m" id="/ThirdParty/XGConfig/XGConfig.m"><code>XGConfig&period;m</code></a> <em>XGConfig: Singleton, defaults, directories, config changes.</em></li>
+</ul>
+</li>
+<li><span hierarchy="2" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/ThirdParty/XGDebug/"><code>XGDebug</code></strong> <em>XGDebug: Performance Debugging Tools &amp; Custom UIView</em></span><ul>
+<li><a href="index.html?q=/ThirdParty/XGDebug/README.md" id="/ThirdParty/XGDebug/README.md"><code>README&period;md</code></a> <em>Analyze slow code blocks, display percentage of execution time, TableView format.</em></li>
+<li><a href="index.html?q=/ThirdParty/XGDebug/XGDebug.h" id="/ThirdParty/XGDebug/XGDebug.h"><code>XGDebug&period;h</code></a> <em>Performance debugging tool for disk operations and modules.</em></li>
+<li><a href="index.html?q=/ThirdParty/XGDebug/XGDebug.m" id="/ThirdParty/XGDebug/XGDebug.m"><code>XGDebug&period;m</code></a> <em>XGDebug: Debugging utility for XGDebugModel objects.</em></li>
+<li><a href="index.html?q=/ThirdParty/XGDebug/XGDebugModel.h" id="/ThirdParty/XGDebug/XGDebugModel.h"><code>XGDebugModel&period;h</code></a> <em>XGDebugModel: Key, Time, Count, Read/Write.</em></li>
+<li><a href="index.html?q=/ThirdParty/XGDebug/XGDebugModel.m" id="/ThirdParty/XGDebug/XGDebugModel.m"><code>XGDebugModel&period;m</code></a> <em>XGDebugModel implementation by jia, 2022.</em></li>
+<li><a href="index.html?q=/ThirdParty/XGDebug/XGDebugTV.h" id="/ThirdParty/XGDebug/XGDebugTV.h"><code>XGDebugTV&period;h</code></a> <em>XGDebugTV: UITableView subclass with data update method.</em></li>
+<li><a href="index.html?q=/ThirdParty/XGDebug/XGDebugTV.m" id="/ThirdParty/XGDebug/XGDebugTV.m"><code>XGDebugTV&period;m</code></a> <em>XGDebugTV: Table View Class with UITableViewDelegate/DataSource.</em></li>
+<li><a href="index.html?q=/ThirdParty/XGDebug/XGLabCell.h" id="/ThirdParty/XGDebug/XGLabCell.h"><code>XGLabCell&period;h</code></a> <em>Customizable UITableViewCell class in SMG project</em></li>
+<li><a href="index.html?q=/ThirdParty/XGDebug/XGLabCell.m" id="/ThirdParty/XGDebug/XGLabCell.m"><code>XGLabCell&period;m</code></a> <em>XGLabCell: UIView subclass with customizable UILabel.</em></li>
+</ul>
+</li>
+<li><span hierarchy="2" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/ThirdParty/XGLog/"><code>XGLog</code></strong> <em>Third-party log utility and UI tool directory.</em></span><ul>
+<li><a href="index.html?q=/ThirdParty/XGLog/HeLogHeader.h" id="/ThirdParty/XGLog/HeLogHeader.h"><code>HeLogHeader&period;h</code></a> <em>XiaoGang's SMG_NothingIsAll project header file.</em></li>
+<li><a href="index.html?q=/ThirdParty/XGLog/HeLogModel.h" id="/ThirdParty/XGLog/HeLogModel.h"><code>HeLogModel&period;h</code></a> <em>HeLogModel: XGWedis log model with add, retrieve, clear capabilities.</em></li>
+<li><a href="index.html?q=/ThirdParty/XGLog/HeLogModel.m" id="/ThirdParty/XGLog/HeLogModel.m"><code>HeLogModel&period;m</code></a> <em>HeLogModel: Initializes, sets timer, methods, MD5 hashing, disk saving.</em></li>
+<li><a href="index.html?q=/ThirdParty/XGLog/HeLogUtil.h" id="/ThirdParty/XGLog/HeLogUtil.h"><code>HeLogUtil&period;h</code></a> <em>Logging utility class for filtering, generating data identifiers, and calculating MD5 values.</em></li>
+<li><a href="index.html?q=/ThirdParty/XGLog/HeLogUtil.m" id="/ThirdParty/XGLog/HeLogUtil.m"><code>HeLogUtil&period;m</code></a> <em>Filter, find identifiers and MD5 hashes in timestamps.</em></li>
+<li><a href="index.html?q=/ThirdParty/XGLog/HeLogView.h" id="/ThirdParty/XGLog/HeLogView.h"><code>HeLogView&period;h</code></a> <em>HeLogView: UIView class for log management and display.</em></li>
+<li><a href="index.html?q=/ThirdParty/XGLog/HeLogView.m" id="/ThirdParty/XGLog/HeLogView.m"><code>HeLogView&period;m</code></a> <em>HeLogView: Display, Filter, Manage Logs</em></li>
+<li><a href="index.html?q=/ThirdParty/XGLog/README.md" id="/ThirdParty/XGLog/README.md"><code>README&period;md</code></a> <em>HELog: Logging tool, UI display, filtering, PINCache/MASConstraint dependencies</em></li>
+</ul>
+</li>
+<li><span hierarchy="2" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/ThirdParty/XGRedis/"><code>XGRedis</code></strong> <em>Redis optimization and utilities with Objective-C binary search</em></span><ul>
+<li><a href="index.html?q=/ThirdParty/XGRedis/README.md" id="/ThirdParty/XGRedis/README.md"><code>README&period;md</code></a> <em>Automatic memory caching for db performance.</em></li>
+<li><a href="index.html?q=/ThirdParty/XGRedis/XGRedis.h" id="/ThirdParty/XGRedis/XGRedis.h"><code>XGRedis&period;h</code></a> <em>XGRedis: Class for Redis Database Interaction</em></li>
+<li><a href="index.html?q=/ThirdParty/XGRedis/XGRedis.m" id="/ThirdParty/XGRedis/XGRedis.m"><code>XGRedis&period;m</code></a> <em>Singleton XGRedis class with cache management methods</em></li>
+<li><a href="index.html?q=/ThirdParty/XGRedis/XGRedisDictionary.h" id="/ThirdParty/XGRedis/XGRedisDictionary.h"><code>XGRedisDictionary&period;h</code></a> <em>XGRedisDictionary: Custom Sync Dictionary with Recycling GC</em></li>
+<li><a href="index.html?q=/ThirdParty/XGRedis/XGRedisDictionary.m" id="/ThirdParty/XGRedis/XGRedisDictionary.m"><code>XGRedisDictionary&period;m</code></a> <em>Redis key-value storage with methods, async handling</em></li>
+<li><a href="index.html?q=/ThirdParty/XGRedis/XGRedisUtil.h" id="/ThirdParty/XGRedis/XGRedisUtil.h"><code>XGRedisUtil&period;h</code></a> <em>XGRedisUtil: Comparison, Binary Search Functions</em></li>
+<li><a href="index.html?q=/ThirdParty/XGRedis/XGRedisUtil.m" id="/ThirdParty/XGRedis/XGRedisUtil.m"><code>XGRedisUtil&period;m</code></a> <em>Binary search utilities for Objective-C.</em></li>
+</ul>
+</li>
+<li><span hierarchy="2" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/ThirdParty/XGWedis/"><code>XGWedis</code></strong> <em>Asynchronous, interval support, Redis command handler, thread management, dictionary saving.</em></span><ul>
+<li><a href="index.html?q=/ThirdParty/XGWedis/README.md" id="/ThirdParty/XGWedis/README.md"><code>README&period;md</code></a> <em>Asynchronous write function with interval support in XGWedis.</em></li>
+<li><a href="index.html?q=/ThirdParty/XGWedis/XGWedis.h" id="/ThirdParty/XGWedis/XGWedis.h"><code>XGWedis&period;h</code></a> <em>Asynchronous persistence with saveBlock customization. Deprecated delegates, observers.</em></li>
+<li><a href="index.html?q=/ThirdParty/XGWedis/XGWedis.m" id="/ThirdParty/XGWedis/XGWedis.m"><code>XGWedis&period;m</code></a> <em>XGWedis: Redis command handler, thread management, dictionary saving.</em></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+    </article>
+    <script type="text/javascript">
+        function getQueryParams() {
+            var search = window.location.search.substring(1); // Remove leading '?'
+            var queryParams = {};
+            search.split('&').forEach(function (pair) {
+                var parts = pair.split('=');
+                var key = decodeURIComponent(parts[0]);
+                var value = decodeURIComponent(parts[1]);
+                queryParams[key] = value;
+            });
+            return queryParams;
+        }
+
+        const queryParams = getQueryParams(window.location.search);
+        const show_full = queryParams.full == "true";
+        if (!show_full) {
+            const spans = document.querySelectorAll('span');
+            for (let span of spans) {
+                if (span.getAttribute("hierarchy") == '0') { continue }
+
+                toggleVisibility(span);
+            }
+        }
+    </script>
+</body>
+
+</html>

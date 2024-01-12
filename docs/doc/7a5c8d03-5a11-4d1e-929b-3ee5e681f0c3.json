@@ -1,0 +1,10 @@
+{
+    "summary": "This file, BorderLabel.h, is a header file for the class BorderLabel, which is a subclass of UILabel in the UIKit framework. It adds properties for border color and width to be customized by the user.",
+    "details": [
+        {
+            "comment": "This file, BorderLabel.h, is a header file for the class BorderLabel, which is a subclass of UILabel in the UIKit framework. It adds properties for border color and width to be customized by the user.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Demo/Extension/BorderLabel.h\":0-15",
+            "content": "//\n//  BorderLabel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/8/7.\n//  Copyright \u00a9 2019\u5e74 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n@interface BorderLabel : UILabel\n@property (nonatomic,strong) UIColor *borderColor;\n@property (nonatomic,assign) CGFloat borderWidth;\n@end"
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+{
+    "summary": "This file, HEView.h, defines a subclass of UIView called HEView. It has an additional property, initTime, which is used to ensure the view's uniqueness by marking it with a \"visibleTag\" and checking its initialization time (to avoid memory address-based uniqueness issues).",
+    "details": [
+        {
+            "comment": "This file, HEView.h, defines a subclass of UIView called HEView. It has an additional property, initTime, which is used to ensure the view's uniqueness by marking it with a \"visibleTag\" and checking its initialization time (to avoid memory address-based uniqueness issues).",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Demo/Extension/HEView.h\":0-20",
+            "content": "//\n//  HEView.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2020/8/6.\n//  Copyright \u00a9 2020\u5e74 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n/**\n *  MARK:--------------------\u89c6\u89c9\u53ef\u89c1\u7684view--------------------\n *  @desc\n *      1. tag\u6253visibleTag\u6807\u8bb0;\n *      2. \u52a0\u4e86initTime,\u505a\u552f\u4e00\u6027\u5224\u65ad (\u56e0\u4e3aios\u5df2\u9500\u6bc1\u7684view\u4f1a\u590d\u7528,\u5bfc\u81f4\u5185\u5b58\u5730\u5740\u5e76\u4e0d\u8868\u793a\u552f\u4e00\u6027) (\u53c2\u800320151-BUG11);\n */\n@interface HEView : UIView\n@property (assign, nonatomic) long long initTime;\n@end"
+        }
+    ]
+}

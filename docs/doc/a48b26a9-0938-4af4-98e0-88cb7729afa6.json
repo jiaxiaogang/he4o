@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines the `ImvAlgsHurtModel` class, which is a subclass of `ImvBadModel`. It appears to be a part of the \"SMG_NothingIsAll\" codebase and was created by the developer named \"jia\" on January 16, 2021. The copyright belongs to XiaoGang for the year 2021.",
+    "details": [
+        {
+            "comment": "This code defines the `ImvAlgsHurtModel` class, which is a subclass of `ImvBadModel`. It appears to be a part of the \"SMG_NothingIsAll\" codebase and was created by the developer named \"jia\" on January 16, 2021. The copyright belongs to XiaoGang for the year 2021.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/CortexAlgorithms/Imv/ImvAlgsHurtModel.h\":0-15",
+            "content": "//\n//  ImvAlgsHurtModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/1/16.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import \"ImvBadModel.h\"\n/**\n *  MARK:--------------------\u75db\u611f\u6a21\u578b--------------------\n */\n@interface ImvAlgsHurtModel : ImvBadModel\n@end"
+        }
+    ]
+}

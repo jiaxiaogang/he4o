@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines a class \"RTQueueModel\" which is a subclass of NSObject in the Foundation framework. It has two properties, name and arg0, both of which are optional. The class also provides a method for creating an instance with specified parameters.",
+    "details": [
+        {
+            "comment": "This code defines a class \"RTQueueModel\" which is a subclass of NSObject in the Foundation framework. It has two properties, name and arg0, both of which are optional. The class also provides a method for creating an instance with specified parameters.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/RLTrainer/Model/RTQueueModel.h\":0-17",
+            "content": "//\n//  RTQueueModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/2/12.\n//  Copyright \u00a9 2023\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface RTQueueModel : NSObject\n+(RTQueueModel*) newWithName:(NSString*)name arg0:(id)arg0;\n@property (strong, nonatomic) NSString *name;\n@property (strong, nonatomic) id arg0;\n@end"
+        }
+    ]
+}

@@ -1,0 +1,546 @@
+{
+    "1400": {
+        "file_id": 144,
+        "content": "//\n//  TCEffect.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/5/22.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import \"TCEffect.h\"\n@implementation TCEffect\n/**\n *  MARK:--------------------R任务有效率--------------------\n *  @version\n *      2022.05.22: 初版,任务有效率强化 (将ES状态更新至任务pFo下的effectDic中) (参考26095-1&2);\n *      2022.05.27: 将effect改为行为化首帧O反省 (参考26127-TODO1);\n *      2022.05.28: 不需要effect做首帧反省了,tcActYes支持每帧O反省 (参考26136-方案);\n *      2023.02.14: 当前effect仅对取得solution的pFo有效 (参考28076);\n *      2023.04.19: 支持canset迁移的EFF统计 (参考29069-todo11);\n *      2023.05.18: BUG_修复fatherCanset更新的scene错误导致EFF更新错误问题 (参考29095-修复);\n */\n+(void) rEffect:(TOFoModel*)rSolution{\n    [theTC updateOperCount:kFILENAME];\n    Debug();\n    //1. 取deltaTime;\n    ReasonDemandModel *rDemand = (ReasonDemandModel*)rSolution.baseOrGroup;\n    AIMatchFoModel *pFo = (AIMatchFoModel*)rSolution.basePFoOrTargetFoModel;\n    AIFoNodeBase *baseFo = [SMGUtils searchNode:pFo.matchFo];\n    double deltaTime = [TOUtils getSumDeltaTime2Mv:baseFo cutIndex:pFo.cutIndex];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCEffect/TCEffect.m:1-30"
+    },
+    "1401": {
+        "file_id": 144,
+        "content": "This function `rEffect` updates the task efficiency by passing the solution as a parameter. It also calls other functions such as `updateOperCount`, `Debug`, and `searchNode`. The code retrieves delta time, searches for nodes based on matchFo, and calculates the total sum of delta time up to a specific cutIndex.",
+        "type": "comment"
+    },
+    "1402": {
+        "file_id": 144,
+        "content": "    double triggerTime = deltaTime * 3.0f;\n    //2. 触发器;\n    NSLog(@\"---//rEffect触发器新增:%p (%@ | 触发时间:%.2f)\",rDemand,TOStatus2Str(rDemand.status),triggerTime);\n    [AITime setTimeTrigger:triggerTime trigger:^{\n        //2. 取有效性 (默认即有效);\n        EffectStatus es = rDemand.effectStatus == ES_NoEff ? ES_NoEff : ES_HavEff;\n        //3. 有效,则解决方案成功 & 任务成功;\n        //if (tp == ATPlus) {\n        if (es == ES_HavEff) {\n            rSolution.status = TOModelStatus_Finish;\n            rDemand.status = TOModelStatus_Finish;\n        }\n        //4. 取出所有需要eff更新的cansets;\n        NSArray *tModels = [rSolution getRethinkEffectCansets];\n        for (AITransferModel *tModel in tModels) {\n            //5. 更新effectDic;\n            //[solutionFo updateSPStrong:solutionFo.count type:tp];\n            AIFoNodeBase *baseScene = [SMGUtils searchNode:tModel.scene];\n            AIEffectStrong *strong = [baseScene updateEffectStrong:baseScene.count solutionFo:tModel.canset status:es];\n            IFTitleLog(@\"rEffect\", @\"\\n%p Scene:%@ (",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCEffect/TCEffect.m:31-53"
+    },
+    "1403": {
+        "file_id": 144,
+        "content": "Trigger a timer to check the validity of an effect. If it's effective, mark the solution and demand as finished. Then, update all cansets that require effect updates on a base scene using a specific status.",
+        "type": "comment"
+    },
+    "1404": {
+        "file_id": 144,
+        "content": "有效性:%@ 任务状态:%@)\\nEff更新Scene:F%ld S:%@ (index:%ld H%ldN%ld)\",rDemand,Fo2FStr(baseScene),EffectStatus2Str(es),TOStatus2Str(rDemand.status),baseScene.pId,Pit2FStr(tModel.canset),baseScene.count,strong.hStrong,strong.nStrong);\n            //6. 对抽象也更新eff (此处canset.count应该和rSolution.targetIndex是一样的) (参考29069-todo11.5);\n            AIFoNodeBase *canset = [SMGUtils searchNode:tModel.canset];\n            [TCRethinkUtil spEff4Abs:canset curFoIndex:canset.count itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {\n                AIEffectStrong *strong = [baseScene updateEffectStrong:baseScene.count solutionFo:absFo.pointer status:es];\n                NSLog(@\"\\tEff更新scene:F%ld absS:%@ (index:%ld H%ldN%ld)\",baseScene.pId,Fo2FStr(absFo),baseScene.count,strong.hStrong,strong.nStrong);\n            }];\n        }\n    }];\n    DebugE();\n}\n/**\n *  MARK:--------------------H任务有效率--------------------\n *  @version\n *      2022.05.22: 初版,任务有效率强化 (将ES状态更新至任务targetFo下的effectDic中) (参考26095-4&5);\n *      2022.05.27: 将effect改为行为化首帧O反省 (参考26127-TODO1);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCEffect/TCEffect.m:53-70"
+    },
+    "1405": {
+        "file_id": 144,
+        "content": "Updates the effect and abstract (canset) for each task in the baseScene, and logs the updated information. It calls TCRethinkUtil to update the abstraction for each task, then updates the effect strength using AIEffectStrong. The code is related to improving task effectiveness and has been updated several times since May 2022.",
+        "type": "comment"
+    },
+    "1406": {
+        "file_id": 144,
+        "content": " *      2022.05.28: 不需要effect做首帧反省了,tcActYes支持每帧O反省 (参考26136-方案);\n *      2023.04.19: 支持canset迁移的EFF统计 (参考29069-todo11);\n */\n+(void) hEffect:(TOFoModel*)hSolution{\n    [theTC updateOperCount:kFILENAME];\n    Debug();\n    //1. 取deltaTime;\n    AIFoNodeBase *solutionFo = [SMGUtils searchNode:hSolution.content_p];\n    double deltaTime = [TOUtils getSumDeltaTime:solutionFo startIndex:0 endIndex:hSolution.targetSPIndex];\n    //2. 数据准备;\n    HDemandModel *hDemand = (HDemandModel*)hSolution.baseOrGroup;\n    TOFoModel *targetFo = (TOFoModel*)hDemand.baseOrGroup.baseOrGroup;\n    AIFoNodeBase *targetFoNode = [SMGUtils searchNode:targetFo.content_p];\n    //3. 触发器;\n    deltaTime *= 3.0f;\n    NSLog(@\"---//hEffect触发器新增:%p (%@ | 触发时间:%.2f)\",hSolution,TOStatus2Str(hDemand.status),deltaTime);\n    [AITime setTimeTrigger:deltaTime trigger:^{\n        //4. 取有效性 (默认即无效);\n        EffectStatus es = hDemand.effectStatus == ES_HavEff ? ES_HavEff : ES_NoEff;\n        //5. 无效,则当前方案失败;\n        if (es == ES_NoEff) hSolution.status = TOModelStatus_ActNo;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCEffect/TCEffect.m:71-94"
+    },
+    "1407": {
+        "file_id": 144,
+        "content": "The code updates the operation count, calculates delta time for a given solution, and handles effect status determination. It adds a trigger for a specific action based on the calculated delta time. If the effect is invalid, the current solution's status is set to ActNo.",
+        "type": "comment"
+    },
+    "1408": {
+        "file_id": 144,
+        "content": "        //if (tp == ATSub) hSolution.status = TOModelStatus_ActNo;\n        //6. 取出所有需要eff更新的cansets;\n        AIKVPointer *canset_p = hSolution.content_p;\n        //7. 更新effectDic;\n        [targetFoNode updateEffectStrong:targetFo.actionIndex solutionFo:canset_p status:es];\n        //[targetFoNode updateSPStrong:targetFo.actionIndex type:tp];\n        //8. 对抽象也更新eff (参考29069-todo11.5);\n        AIFoNodeBase *canset = [SMGUtils searchNode:canset_p];\n        [TCRethinkUtil spEff4Abs:canset curFoIndex:hSolution.targetSPIndex itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {\n            [targetFoNode updateEffectStrong:targetFo.actionIndex solutionFo:absFo.pointer status:es];\n        }];\n        //8. log\n        AIEffectStrong *strong = [TOUtils getEffectStrong:targetFoNode effectIndex:targetFo.actionIndex solutionFo:canset_p];\n        IFTitleLog(@\"hEffect\", @\"\\n%p S:%@ (有效性:%@ 当前方案状态:%@)\",hSolution,Pit2FStr(canset_p),EffectStatus2Str(es),TOStatus2Str(hSolution.status));\n        NSLog(@\"\\t=>targetF",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCEffect/TCEffect.m:95-113"
+    },
+    "1409": {
+        "file_id": 144,
+        "content": "Updates the effect for a given action index in a specific canset, and logs information related to the action's effectiveness.",
+        "type": "comment"
+    },
+    "1410": {
+        "file_id": 144,
+        "content": "o:%@ (index:%ld H%ldN%ld)\",Fo2FStr(targetFoNode),targetFo.actionIndex,strong.hStrong,strong.nStrong);\n    }];\n    DebugE();\n}\n///**\n// *  MARK:--------------------输入期eff有效率 (参考28182-todo6&7)--------------------\n// */\n//+(void) rInEffect:(AIFoNodeBase*)pFo matchRFos:(NSArray*)matchRFos es:(EffectStatus)es{\n//    [theTC updateOperCount:kFILENAME];\n//    Debug();\n//    //1. 取交集: matchFo下的cansets与matchRFos取交集 (参考28182-todo6-场景判断);\n//    NSArray *cansets = [pFo getConCansets:pFo.count];\n//    NSArray *cansetRFos = [SMGUtils filterArr:matchRFos checkValid:^BOOL(AIMatchFoModel *item) {\n//        return [cansets containsObject:item.matchFo];\n//    }];\n//    \n//    //2. 对交集canset进行effect计数更新;\n//    for (AIMatchFoModel *item in cansetRFos) {\n//        AIEffectStrong *strong = [pFo updateEffectStrong:pFo.count solutionFo:item.matchFo status:es];\n//        IFTitleLog(@\"rInEffect\", @\"\\nS:%@ (有效性:%@)\\n\\tfromPFo:%@ (index:%ld H%ldN%ld)\",Pit2FStr(item.matchFo),EffectStatus2Str(es),Fo2FStr(pFo),pFo.count,strong.hStrong,strong.nStrong);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCEffect/TCEffect.m:113-133"
+    },
+    "1411": {
+        "file_id": 144,
+        "content": "This code updates the oper count and logs the effective rate of a certain input period effect. It first filters matchRFos based on their matching can sets, then calculates and logs the valid effects for each RFo in the filtered set. This is used to update the effect status of the FoNodeBase and debug the information.",
+        "type": "comment"
+    },
+    "1412": {
+        "file_id": 144,
+        "content": "//    }\n//    DebugE();\n//}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCEffect/TCEffect.m:134-138"
+    },
+    "1413": {
+        "file_id": 144,
+        "content": "This code snippet is likely part of a larger method, as it only contains the closing curly brace and comments. The 'DebugE()' function call suggests that this section may be used for debugging purposes or displaying information for testing. The code appears to have reached the end of its execution block, indicated by the closing brace '}'.",
+        "type": "comment"
+    },
+    "1414": {
+        "file_id": 145,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/TCFeedback.h",
+        "type": "filepath"
+    },
+    "1415": {
+        "file_id": 145,
+        "content": "This is the header file for the TCFeedback class in the SMG_NothingIsAll project, which contains four feedback methods: feedbackTIR, feedbackTIP, feedbackTOR, and feedbackTOP. These methods are used to handle different types of feedback related to short-match models, fo nodes, and cmv nodes. The author notes that these methods have been updated on specific dates in the past.",
+        "type": "summary"
+    },
+    "1416": {
+        "file_id": 145,
+        "content": "//\n//  TCFeedback.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/12/2.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------反馈--------------------\n *  @desc 四个feedback分别对应四个rethink反省 (参考25031-12);\n *  @version\n *      2021.12.02: 把四个OPushM反馈方法移过来 (先移了三个,tor有PM算法调用,先不移,后面脱离了PM再移);\n *      2022.11.23: 把最后一个TOR也移过来 (为了放一块容易看和改代码);\n */\n@interface TCFeedback : NSObject\n+(void) feedbackTIR:(AIShortMatchModel*)model;\n+(void) feedbackTIP:(AIFoNodeBase*)protoFo cmvNode:(AICMVNode*)cmvNode;\n+(void) feedbackTOR:(AIShortMatchModel*)model;\n+(void) feedbackTOP:(AICMVNode*)cmvNode;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/TCFeedback.h:1-25"
+    },
+    "1417": {
+        "file_id": 145,
+        "content": "This is the header file for the TCFeedback class in the SMG_NothingIsAll project, which contains four feedback methods: feedbackTIR, feedbackTIP, feedbackTOR, and feedbackTOP. These methods are used to handle different types of feedback related to short-match models, fo nodes, and cmv nodes. The author notes that these methods have been updated on specific dates in the past.",
+        "type": "comment"
+    },
+    "1418": {
+        "file_id": 146,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/TCFeedback.m",
+        "type": "filepath"
+    },
+    "1419": {
+        "file_id": 146,
+        "content": "TCFeedback manages memory updates and end-of-sequence cases, handles task recognition, execution, and improved feedback with validation, processing, and calculation of matching degrees. It updates algorithms' status, collects data, performs regrouping, and manages feedback in a task management system involving ML/AI models, HDemand filters, and bug fixes for index dictionaries and UI synchronization.",
+        "type": "summary"
+    },
+    "1420": {
+        "file_id": 146,
+        "content": "//\n//  TCFeedback.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/12/2.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import \"TCFeedback.h\"\n@implementation TCFeedback\n/**\n *  MARK:--------------------\"外层输入\" 推进 \"中层循环\" 决策--------------------\n *  @title 外层输入对In短时记忆的影响处理 (参考22052-2);\n *  @param model : 新帧的model;\n *  @version\n *      2021.01.24: 多时序识别支持,使之更全面的支持每个matchFo的status更新 (参考22073-todo6);\n *      2021.10.17: 支持IRT的理性失效,场景更新时,状态设为OutBackReason (参考24059&24061-方案2);\n *      2021.12.25: 针对理性IRT反省的支持 (判断非末位为理性预测中) (参考25021-②);\n *      2022.03.05: BUG_将仅末位才反馈,改成非末位才反馈 (原来逻辑写反了);\n *      2022.05.02: 用matchAlgs+partAlgs替代mIsC (参考25234-8);\n *      2022.09.05: 将theTC.inModels改成roots.pFos (参考27096-方案2);\n *      2022.09.06: TC流程调整_直接调用TCDemand,将感理性反省预置都后置到Demand中 (参考27096-实践1);\n *      2022.09.18: 反馈匹配时,及时处理反省和任务推进帧 (参考27098-todo2&todo3);\n *      2023.02.09: 反馈不匹配时(只要没调用到匹配,即调用不匹配),也要记录protoAlg到pFo里的实际发生帧 (参考28063-todo1);\n *  @status\n *      xxxx.xx.xx: 非启动状态,因为时序识别中,未涵盖HNGL类型,所以并未对HNGL进行预测;\n *      2021.10.17: 启动,支持对IRT的理性失效 (参考24059&24061-方案2);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/TCFeedback.m:1-29"
+    },
+    "1421": {
+        "file_id": 146,
+        "content": "TCFeedback handles input from the outer layer to impact In short-term memory's status updates in a multi-sequence recognition system. It supports IRT's rational failure, and now considers non-terminal predictions for reflection.",
+        "type": "comment"
+    },
+    "1422": {
+        "file_id": 146,
+        "content": " */\n+(void) feedbackTIR:(AIShortMatchModel*)model{\n    //1. 取所有lastWait模型,并与新输入的概念做mIsC判断;\n    [theTC updateOperCount:kFILENAME];\n    Debug();\n    IFTitleLog(@\"feedbackTIR\", @\"\\n输入ProtoA:%@ (识别matchAlgs数:%ld)\",Alg2FStr(model.protoAlg),model.matchAlgs.count);\n    NSArray *recognitionAlgs = [TIUtils getMatchAndPartAlgPsByModel:model];\n    //1. fbTIR对roots进行反馈判断 (参考27096-方案2);\n    NSArray *roots = [theTC.outModelManager.getAllDemand copy];\n    for (ReasonDemandModel *root in roots) {\n        //2. 仅支持ReasonDemandModel类型的反馈,因为PerceptDemandModel已经发生完毕,不需要反馈;\n        if (!ISOK(root, ReasonDemandModel.class)) continue;\n        //3. 对pFos做理性反馈;\n        for (AIMatchFoModel *waitModel in root.validPFos) {\n            //4. 取出等待中的_非wait状态的,不处理;\n            NSInteger status = [waitModel getStatusForCutIndex:waitModel.cutIndex];\n            if (status != TIModelStatus_LastWait) {\n                //调用1: 只要没调用到pushFrame,就调用此方法记录protoA;\n                [waitModel feedbackOtherFrame:model.protoAlg.pointer];\n                continue;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/TCFeedback.m:30-53"
+    },
+    "1423": {
+        "file_id": 146,
+        "content": "This code updates the operating count, logs input data, retrieves recognition algorithms, checks for eligible feedback roots, and performs rational feedback on non-wait status models.",
+        "type": "comment"
+    },
+    "1424": {
+        "file_id": 146,
+        "content": "            }\n            AIFoNodeBase *matchFo = [SMGUtils searchNode:waitModel.matchFo];\n            if (Log4TIROPushM) NSLog(@\"==> checkTIModel=MatchFo: %@\",Fo2FStr(matchFo));\n            //5. 末位跳过,不需要反馈 (参考25031-2 & 25134-方案2);\n            NSInteger maxCutIndex = matchFo.count - 1;\n            if (waitModel.cutIndex >= maxCutIndex){\n                //调用2: 只要没调用到pushFrame,就调用此方法记录protoA;\n                [waitModel feedbackOtherFrame:model.protoAlg.pointer];\n                continue;\n            }\n            AIKVPointer *waitAlg_p = ARR_INDEX(matchFo.content_ps, waitModel.cutIndex + 1);\n            //6. 判断protoAlg与waitAlg之间匹配,成立则OutBackYes;\n            [AITest test11:model waitAlg_p:waitAlg_p];//测下2523c-此处是否会导致匹配不到;\n//            BOOL mIsC = [TOUtils mIsC_1:model.protoAlg.pointer c:waitAlg_p];\n            BOOL mIsC = [recognitionAlgs containsObject:waitAlg_p];\n            if (mIsC) {\n                //6. 有反馈时,进行P反省: 进行理性IRT反省;\n                [TCRethink reasonInRethink:waitModel cutIndex:waitModel.cutIndex type:ATPlus];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/TCFeedback.m:54-73"
+    },
+    "1425": {
+        "file_id": 146,
+        "content": "Code snippet handles the case when the matching position is at the end of the sequence, and it doesn't require feedback. It checks if the current cut index is greater than or equal to the maximum cut index of matchFo. If true, it calls feedbackOtherFrame method to record protoA, and continues with next iteration. Otherwise, it compares protoAlg and waitAlg for matching, and if matched, triggers a rational IRT reflection process.",
+        "type": "comment"
+    },
+    "1426": {
+        "file_id": 146,
+        "content": "                //7. pFo任务顺利: 推进帧;\n                [waitModel feedbackPushFrame:model.protoAlg.pointer];\n                dispatch_async(dispatch_get_main_queue(), ^{//30083回同步\n                    [theTV updateFrame];\n                });\n                NSLog(@\"tir_OPushM: waitFo场景更新,原IRT理性失效\");\n            } else {\n                //调用3: 只要没调用到pushFrame,就调用此方法记录protoA;\n                [waitModel feedbackOtherFrame:model.protoAlg.pointer];\n            }\n        }\n    }\n    //7. 传给TOR,做下一步处理: R任务_预测mv价值变化;\n    //2021.12.01: R任务(新架构应在forecastIRT之后,调用rForecastBack.rDemand,但旧架构在前面,先不动,等测没影响再改后面);\n    //2021.12.05: 将tor移到概念识别后了,此处front和back合并 (参考24171-9);\n    DebugE();\n}\n/**\n *  MARK:--------------------\"外层输入\" 推进 \"中层循环\" 认知--------------------\n *  @title 外层输入对In短时记忆的影响处理 (参考22052-2);\n *  @param cmvNode : 新输入的mv;\n *  @version\n *      2021.01.24: 对多时序识别结果支持,及时全面的改变status为OutBackYes (参考22073-todo5);\n *      2021.02.04: In反省支持虚mv,所以此处也要支持虚mv的OPush判断 (参考22108);\n *      2021.12.25: 废弃虚mv的代码 (因为虚mv早已不在时序识别的结果中,并且整个dsFo都已废弃掉了) (参考Note24);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/TCFeedback.m:75-101"
+    },
+    "1427": {
+        "file_id": 146,
+        "content": "This code appears to be part of a larger system that involves tasks, feedback loops, and model updates. It seems to handle various scenarios where the input mv (motion vector) changes. If the task is completed successfully, it pushes a frame and updates the TV. If not, it calls another method to record protoA. The code also mentions other functions like \"forecastIRT,\" \"rDemand,\" and \"probRecog\" that may be called in different contexts or architectures. It also references various tickets and notes for further information or changes. Overall, this code seems to be involved in updating a model and making decisions based on input changes.",
+        "type": "comment"
+    },
+    "1428": {
+        "file_id": 146,
+        "content": " *      2021.12.25: 针对感性IRT反省的支持 (判断末位为感性预测中) (参考25022-②);\n *      2022.09.05: 将theTC.inModels改成roots.pFos (参考27096-方案2);\n *      2022.09.18: 有反馈时,及时处理反省和任务失效 (参考27098-todo2);\n *      2023.04.19: 改到TCTransfer迁移后调用canset识别类比 (参考29069-todo12);\n *      2023.09.01: 打开canset失败时调用canset识别类比,并eff-1 (参考30124-todo1&todo2);\n *  @bug\n *      2021.01.25: 修复witMatchFo.cmvNode_p空判断逻辑反了,导致无法执行修改状态为OutBackYes,从而反省类比永远为\"逆\";\n */\n+(void) feedbackTIP:(AIFoNodeBase*)protoFo cmvNode:(AICMVNode*)cmvNode {\n    //1. 数据检查\n    [theTC updateOperCount:kFILENAME];\n    Debug();\n    IFTitleLog(@\"feedbackTIP\", @\"\\n输入MV:%@\",Mv2FStr(cmvNode));\n    //2. 判断最近一次input是否与等待中pFo感性结果相匹配 (匹配,比如吃,确定自己是否真吃了);\n    //2. fbTIP对roots进行反馈判断 (参考27096-方案2);\n    NSArray *roots = [theTC.outModelManager.getAllDemand copy];\n    for (ReasonDemandModel *root in roots) {\n        //2. 仅支持ReasonDemandModel类型的反馈,因为PerceptDemandModel已经发生完毕,不需要反馈;\n        if (!ISOK(root, ReasonDemandModel.class)) continue;\n        //3. 对pFos做理性反馈;\n        for (AIMatchFoModel *waitModel in root.validPFos) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/TCFeedback.m:102-125"
+    },
+    "1429": {
+        "file_id": 146,
+        "content": "This code performs the following actions:\n1. Updates oper count and debugging.\n2. Judges if recent input matches with waiting pFo results (matches, confirms if action happened).\n3. Checks for ReasonDemandModel feedback type and provides rational feedback.",
+        "type": "comment"
+    },
+    "1430": {
+        "file_id": 146,
+        "content": "            //3. 数据准备;\n            AIFoNodeBase *waitMatchFo = [SMGUtils searchNode:waitModel.matchFo];\n            NSInteger maxCutIndex = waitMatchFo.count - 1;\n            //4. 非等待中的跳过;\n            NSInteger status = [waitModel getStatusForCutIndex:waitModel.cutIndex];\n            if (Log4OPushM) NSLog(@\"==> checkTIModel=MatchFo: %@ (%@)\",Fo2FStr(waitMatchFo),TIStatus2Str(status));\n            if (status != TIModelStatus_LastWait) continue;\n            //5. 非末位跳过 (参考25031-2);\n            if (waitModel.cutIndex < maxCutIndex) continue;\n            //6. 等待中的inModel_判断hope(wait)和real(new)之间是否相符 (仅标记同区同向反馈);\n            if ([AIScore sameIdenSameScore:waitMatchFo.cmvNode_p mv2:cmvNode.pointer]) {\n                [waitModel setStatus:TIModelStatus_OutBackSameDelta forCutIndex:waitModel.cutIndex];\n                AIFoNodeBase *waitMatchFo = [SMGUtils searchNode:waitModel.matchFo];\n                //10. 有反馈;\n                CGFloat score = [AIScore score4MV:waitMatchFo.cmvNode_p ratio:1.0f];\n                //b. 正mv反馈为P(好) 或 负mv反馈为S(坏);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/TCFeedback.m:127-147"
+    },
+    "1431": {
+        "file_id": 146,
+        "content": "This code is part of a larger program. It prepares data and checks if the current model is in a waiting state for feedback. If it's not in a waiting state, the code skips to the next iteration. If it's in a waiting state, the code compares the \"hope\" (expected) feedback with the new \"real\" feedback to see if they match. If they do, the code updates the model status and stores the score of the feedback for further use. The code also seems to handle positive feedback as \"good\" (P) and negative feedback as \"bad\" (S).",
+        "type": "comment"
+    },
+    "1432": {
+        "file_id": 146,
+        "content": "                if (score != 0) {\n                    AnalogyType type = score > 0 ? ATPlus : ATSub;\n                    //11. 则进行感性IRT反省;\n                    [TCRethink perceptInRethink:waitModel type:type];\n                    NSLog(@\"---//IP反省触发器执行:%p F%ld 状态:%@\",waitMatchFo,waitMatchFo.pointer.pointerId,TIStatus2Str(TIModelStatus_OutBackSameDelta));\n                    //12. 有mv反馈时,做Canset识别 (参考28185-todo5);\n                    //[TCEffect rInEffect:waitMatchFo matchRFos:waitModel.baseFrameModel.matchRFos es:es];\n                    //EffectStatus es = score > 0 ? ES_HavEff : ES_NoEff;\n                    //[TIUtils recognitionCansetFo:protoFo.pointer sceneFo:waitMatchFo.pointer es:es];\n                }\n                //13. pFo任务失效 (参考27093-条件1 & 27095-1);\n                waitModel.isExpired = true;\n                dispatch_async(dispatch_get_main_queue(), ^{//30083回同步\n                    [theTV updateFrame];\n                });\n                NSLog(@\"tip_OPushM: 实MV 正向反馈\");\n            }\n        }",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/TCFeedback.m:148-168"
+    },
+    "1433": {
+        "file_id": 146,
+        "content": "If score is not zero, determine if the type is positive or negative analogy and perform heuristic IRT reflection. If there is mv feedback, perform Canset recognition (todo5 reference). Mark waitModel as expired and update frame on main queue. Log message for positive MV feedback.",
+        "type": "comment"
+    },
+    "1434": {
+        "file_id": 146,
+        "content": "    }\n    DebugE();\n}\n//MARK:===============================================================\n//MARK:                     < TO部分 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------\"外层输入\" 推进 \"中层循环\" 决策--------------------\n *  @title 外层输入对Out短时记忆的影响处理:\n *  @实例1: 原本我要上战场,预测危险不去,结果突然看到一辆坦克,为什么我会想到驾驶坦克上战场?\n *          a. 发现坦克前: 短时记忆的父子枝结构为: 物体去战场 -> 我做为物体去战场;\n *          b. 发现坦克后: 短时记忆的父子枝结构为: 坦克去战场 -> 我开着坦克去战场 (feedback后重组反思_坦克替代物体);\n *          说明: 通过feedback,已经重刷新了记忆树的一大部分;\n *          问题: 此处如何把坦克替换到人的?因为物体在更抽象父中,而上战场在更子中 (物体和战场可能不在同一时序中);\n *  @callers : 所有的ActYes都会使用此处来收集外循环反馈;\n *      1. HNGL\n *      2. Demand\n *      3. 静默成功说明 (例:穿越森林,出门前备好枪,老虎冲出来时,开枪吓跑它):\n *          a. 备好枪后,等待老虎 (进入来的及,actYes状态);\n *          b. 当静默成功返回outBack时,会在isNormal代码处判断到mIsC成立 (如老虎冲出来了);\n *          c. 并在此方法最后提交到PM流程中 (判断这只老虎的特征是否符合被吓跑的可能);\n *          d. 流程控制自行继续推进dsFo,使之阻止R预测发生 (如在老虎咬人前,我们开枪吓跑它);\n //因为dsFo的继续推进,未必需要PM,而此处PM的推进,能否流程控制自己递归到dsFo推进?需要明天查下此代码;\n *  @desc\n *      1. 最新一帧,与上轮循环做匹配 (对单帧匹配到任务Finish的,要推动决策跳转下帧);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/TCFeedback.m:169-196"
+    },
+    "1435": {
+        "file_id": 146,
+        "content": "This code segment appears to be handling external inputs for the \"Out\" short-term memory in a loop decision-making process. It seems to involve a feedback mechanism where an initial input is compared against the previous round's data, and if there's a difference, it will update the memory structure accordingly. The code is used by various callers such as HNGL, Demand, and silent success scenarios.",
+        "type": "comment"
+    },
+    "1436": {
+        "file_id": 146,
+        "content": " *      2. 未输出行为,等待中的,也要进行下轮匹配,比如等开饭,等来开饭了; (等待的status是ActNo还是Runing?)\n *      3. 流程说明: OPushM成功时,调用PM继续推进流程;\n *      4. 流程说明: OPushM失败时,待生物钟触发器触发反省类比,再推进流程;\n *  @desc 外循环回来,把各自实际输入的概念,存入到TOAlgModel.realAlg中;\n *      1. 三种ActYes方式: (HNGL,isOut输出,demand完成);\n *      2. 其中,\"isOut输出\"和\"demand完成\"和\"HNGL.H\"时的ActYes直接根据mIsC判断外循环输入是否符合即可;\n *      3. 而HNGL.GL需要根据输入的稀疏码变化是否符合GL来判断 (base.base可找到期望稀疏码,参考:20204);\n *  @todo\n *      1. 此处在for循环中,所以有可能推进多条,比如我有了一只狗,可以拉雪撬,或者送给爷爷陪爷爷 (涉及多任务间的价值自由竞争),暂仅支持一条,后再支持;\n *      2020.08.23: 在inputMv时,支持当前actYes的fo进行抵消 (或设置为Finish) (T 由demandManager完成);\n *      2020.08.23: 在waitModel为ActYes且为HNGL时,仅判定其是否符合HNGL变化; T\n *      2020.08.23: 对realAlg进行收集,收集到waitTOAlgModel.feedbackAlg下; T\n *      2020.08.26: 在GL时,需要判断其\"期望\"与\"真实\"概念间是否是同一物体 (参考20204-示例);\n *  @version\n *      xxxx.xx.xx: 返回pushMiddle是否成功,如果推进成功,则不再执行TOP四模式;\n *      2020.08.05: waitModel.pm_Score的赋值改为取demand.score取负 (因为demand一般为负,而解决任务为正);\n *                  而此处,从waitModel的base中找fo较麻烦,所以省事儿,就直接取-demand.score得了;\n *      2020.08.24: 从tor_OPushM中独立出来,独立调用,处理realAlg和HNGL的变化相符判断;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/TCFeedback.m:197-214"
+    },
+    "1437": {
+        "file_id": 146,
+        "content": "This code is a part of a larger program that deals with task recognition and execution. It handles various types of ActYes, including HNGL, which involves checking whether the input matches the expected change in sparse code. The code also collects real algorithms and stores them in the feedbackAlg section of waitTOAlgModel. The code has some todo items, such as supporting multiple tasks and handling trombone scenarios (T).",
+        "type": "comment"
+    },
+    "1438": {
+        "file_id": 146,
+        "content": " *      2020.12.21: 重新将commitFromOuterInputReason与OuterPushMiddleLoop()合并 (参考21185);\n *      2020.12.22: 在以往isNormal之外,再支持对isH,isGL的节点进行PM理性评价;\n *      2020.12.22: 将所有waitModel有效的返回都赋值OuterBack,而仅将首个focusModel进行PM理性评价;\n *      2020.12.28: waitModels仅对ActYes响应,将Runing去掉,因为Running应该到任务推进中自行进行PM匹配mModel,而非此处 (参考21208);\n *      2021.01.02: 无论GL变化type是否与waitType符合,都对新的变化进行保留到feedbackAlg (参考2120B-BUG1);\n *      2021.01.02: GL中mIsC对matchAlgs的全面支持,因为有时洽逢C不是matchAlgs首个,而致mIsC失败;\n *      2021.03.17: 将latestAlg和waitAlg之间的mIsC判断由1层改为2层 (因为在22173BUG时,发现此处输入了隔层mIsC);\n *      2021.05.09: 对OPushM反馈的GL触发ORT反省 (参考23071-方案2);\n *      2021.05.12: 整理tor_OPushM的代码易读性;\n *      2021.05.12: GL返回时,直接调用focus.base(即C).begin() (参考23075-方案);\n *      2021.05.14: 将reModel.content由matchA改成protoA后,此处GL时mIsC判断仅判断pIsM即可 (参考23076);\n *      2021.05.18: 将GL返回时,更新baseGLFo和basebaseValue的status,以使ORT中可以判断其finish状态 (参考23065-474示图);\n *      2021.05.20: 在waitModels收集中,将任何层的actNo之下都切断收集,避免距21飞错又飞回来,重复相符判断 (参考23073-假想2);\n *      2021.05.20: 当GL相符判断有结果后,targetModel(replaceAlg)也设为finish或actNo,以便_GL()中做不应期判断 (参考23079);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/TCFeedback.m:215-228"
+    },
+    "1439": {
+        "file_id": 146,
+        "content": "This code is annotated with comments in Chinese, detailing the changes made on various dates. It appears to be related to a system involving input, evaluation of models and feedback mechanisms. The changes seem to involve improvements in logic for matching algorithms and handling different types of inputs.",
+        "type": "comment"
+    },
+    "1440": {
+        "file_id": 146,
+        "content": " *      2021.12.05: 将feedbackTOR前置到概念识别后,所以推进成功,才执行TOP四模式的逻辑作废 (参考24171-9);\n *      2021.12.23: feedback时,将root设回runing状态 (参考24212-8);\n *      2021.12.26: 废弃HN后,类型判断处理 & 兼容hActYes输出 (参考25032-6);\n *      2021.12.26: waitModels由currentDemand改为支持所有rootDemands (新螺旋架构迭代了短时记忆树,全树更新);\n *      2021.12.27: 当H反馈成功时,把hDemand设为finish;\n *      2022.01.08: HDemand时,非actYes状态也处理反馈 (参考25054);\n *      2022.03.13: 将mIsC改成proto或matchAlgs中任一条mIsC成立即可 (参考25146-转疑3-方案);\n *      2022.05.02: 用matchAlgs+partAlgs替代mIsC (参考25234-8);\n *      2022.05.22: H任务有效性反馈状态更新 (参考26095-6);\n *      2022.06.01: 有反馈时,不改root的runing状态 (参考26185-TODO1);\n *      2022.06.01: H反馈中段和末帧改的状态不同处理;\n *      2022.06.01: 有反馈时,继续调用TCScore (参考26185-TODO2);\n *      2022.06.01: HDemand.targetAlg提前反馈时,HDemand设为finish状态 (参考26185-TODO6);\n *      2022.11.27: H任务完成时,H当前正执行的S提前完成,并进行外类比 (参考27206c-H任务);\n *      2022.11.27: H解决方案再类比时,为其生成indexDic (参考27206d-方案2);\n *      2023.10.27: 用共同抽象判断cansetAlg反馈: 取出targetAlg的abs层,并与识别的matchAlgs判断交集 (参考3014c-todo1);\n *      2023.12.09: 预想与实际类比构建absCanset以场景内防重 (参考3101b-todo6);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/TCFeedback.m:229-245"
+    },
+    "1441": {
+        "file_id": 146,
+        "content": "This code contains various updates and changes made over time to improve the functionality of the TCFeedback class in the AIThinkingControl module. It includes modifications for feedback handling, improvements in recognition algorithms, and adjustments in task completion behavior.",
+        "type": "comment"
+    },
+    "1442": {
+        "file_id": 146,
+        "content": " *      2024.01.10: 改为在feedbackTOR有反馈\"RCansetA有效\"时,直接生成newHCanset,避免原本在OR反省时后面会有无关帧排到后段的问题 (参考31061-todo1);\n *      2024.01.11: H支持持续反馈 (参考31063-todo1);\n *  @bug\n *      2020.09.22: 加上cutStopStatus,避免同一waitModel被多次触发,导致BUG (参考21042);\n *      2020.12.26: GL时,waitType的判断改为bFo,因为只有bFo才携带了waitTypeDS (参考21204);\n *      2020.12.26: GL时,在21204BUG修复后训练时,发现mIsC有时是cIsM,所以都判断下;\n *      2020.12.26: 在OPushM继续PM前,replaceAlg时,重新赋值JustPValues=P-C (参考21206);\n *      2023.11.07: 预想与实际类比,实际hCanset采用pFo.maskRealFo来生成 (参考30154-todo2);\n */\n+(void) feedbackTOR:(AIShortMatchModel*)model{\n    //1. 将新一帧数据报告给TOR,以进行短时记忆的更新,比如我输出行为\"打\",短时记忆由此知道输出\"打\"成功 (外循环入->推进->中循环出);\n    [theTC updateOperCount:kFILENAME];\n    Debug();\n    NSMutableArray *waitModels = [[NSMutableArray alloc] init];\n    NSArray *recognitionAlgs = [TIUtils getMatchAndPartAlgPsByModel:model];\n    NSArray *roots = [theTC.outModelManager.getAllDemand copy];\n    for (ReasonDemandModel *root in roots) {\n        [waitModels addObjectsFromArray:[TOUtils getSubOutModels_AllDeep:root validStatus:nil]];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/TCFeedback.m:246-263"
+    },
+    "1443": {
+        "file_id": 146,
+        "content": "This code updates the TOR with a new frame and performs short-term memory update. It also initializes waitModels array and gets recognition algorithms for a given model, iterates through deep out models of roots and adds them to waitModels.",
+        "type": "comment"
+    },
+    "1444": {
+        "file_id": 146,
+        "content": "    }\n    IFTitleLog(@\"feedbackTOR\", @\"\\n输入ProtoA:%@ (识别matchAlgs数:%ld)\\n等待中任务数:%lu\",Alg2FStr(model.protoAlg),recognitionAlgs.count,(long)waitModels.count);\n    //2. 保留/更新实际发生到outModel (通过了有效判断的,将实际概念直接存留到waitModel);\n    for (TOAlgModel *waitModel in waitModels) {\n        //3. waitModel有效检查;\n        if (!ISOK(waitModel, TOAlgModel.class) || !ISOK(waitModel.baseOrGroup, TOFoModel.class)) continue;\n        //if (Log4OPushM) NSLog(@\"==> checkTOModel: %@\",Pit2FStr(waitModel.content_p));\n        //4. ============= H返回的有效判断 =============\n        if (ISOK(waitModel.baseOrGroup.baseOrGroup, HDemandModel.class)) {\n            //5. HDemand即使waitModel不是actYes状态也处理反馈;\n            TOFoModel *solutionModel = (TOFoModel*)waitModel.baseOrGroup;    //h解决方案;\n            HDemandModel *hDemand = (HDemandModel*)solutionModel.baseOrGroup;//h需求模型\n            TOAlgModel *targetAlg = (TOAlgModel*)hDemand.baseOrGroup;   //hDemand的目标alg;\n            TOFoModel *targetFo = (TOFoModel*)targetAlg.baseOrGroup;    //hDemand的目标alg所在的fo;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/TCFeedback.m:264-281"
+    },
+    "1445": {
+        "file_id": 146,
+        "content": "The code checks the validity of waitModels, continues if it is not valid, and processes feedback for valid models. It also handles HDemandModel and retrieves targetAlg and targetFo from it.",
+        "type": "comment"
+    },
+    "1446": {
+        "file_id": 146,
+        "content": "            //6. 判断input是否与hAlg相匹配 (匹配,比如找锤子,看到锤子了);\n            [AITest test11:model waitAlg_p:targetAlg.content_p];//测下2523c-此处是否会导致匹配不到;\n            BOOL mcIsBro = [TOUtils mcIsBro:recognitionAlgs cansetA:targetAlg.content_p]; //用共同抽象判断cansetAlg反馈 (参考3014c-todo1);\n            if (Log4OPushM) NSLog(@\"HCansetA有效:M(A%ld) C:%@ 结果:%d\",model.protoAlg.pId,Pit2FStr(targetAlg.content_p),mcIsBro);\n            if (mcIsBro) {\n                //6. 记录feedbackAlg (参考27204-1);\n                waitModel.feedbackAlg = model.protoAlg.pointer;\n                waitModel.status = TOModelStatus_OuterBack;\n                BOOL isEndFrame = solutionModel.actionIndex == solutionModel.targetSPIndex;\n                //a. H反馈中段: 标记OuterBack,solutionFo继续;\n                if (!isEndFrame) {\n                    solutionModel.status = TOModelStatus_Runing;\n                    hDemand.status = TOModelStatus_Runing;\n                }else{\n                    //b. H反馈末帧:\n                    solutionModel.status = TOModelStatus_Finish;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/TCFeedback.m:283-299"
+    },
+    "1447": {
+        "file_id": 146,
+        "content": "This code is checking if the input matches the algorithm (hAlg). It tests the model using a specific waitAlg and then determines if the recognitionAlgs match the targetAlg. If they do, it sets the feedbackAlg and status to OuterBack for the next frame in case of a continuing action or Finish if it's the last frame.",
+        "type": "comment"
+    },
+    "1448": {
+        "file_id": 146,
+        "content": "                    hDemand.status = TOModelStatus_Finish;\n                    targetAlg.status = TOModelStatus_OuterBack;\n                    targetAlg.feedbackAlg = model.protoAlg.pointer;\n                    targetFo.status = TOModelStatus_Runing;\n                }\n                //c. 最终反馈了feedbackAlg时,重组 & 反思;\n                dispatch_async(dispatch_get_main_queue(), ^{//30083回同步\n                    [theTV updateFrame];\n                });\n                if (isEndFrame) [TCRegroup feedbackRegroup:targetFo feedbackFrameOfMatchAlgs:model.matchAlgs];\n                DebugE();\n                [TCScore scoreFromIfTCNeed];\n            }\n        }\n        //7. ============= \"行为输出\" 和 \"demand.ActYes\" 和 \"静默成功 的有效判断 =============\n        //此处有两种frameAlg,第1种是isOut为true的行为反馈,第2种是hDemand.baseAlg;\n        if (ISOK(waitModel.baseOrGroup.baseOrGroup, ReasonDemandModel.class)) {\n            //8. RDemand只处理ActYes状态的;\n            //2024.01.11: H支持持续反馈 (参考31063-todo1);\n            if (waitModel.status != TOModelStatus_ActYes && waitModel.status != TOModelStatus_OuterBack) continue;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/TCFeedback.m:300-322"
+    },
+    "1449": {
+        "file_id": 146,
+        "content": "Updates the frame, triggers feedback regrouping and scoring if necessary, handles two types of frameAlgs (behavior output, and hDemand's ActYes state), checks for successful silence judgments.",
+        "type": "comment"
+    },
+    "1450": {
+        "file_id": 146,
+        "content": "            TOAlgModel *frameAlg = waitModel;                          //等待中的目标alg;\n            TOFoModel *solutionModel = (TOFoModel*)frameAlg.baseOrGroup;    //目标alg所在的fo;\n            HDemandModel *subHDemand = [SMGUtils filterSingleFromArr:frameAlg.subDemands checkValid:^BOOL(id item) {\n                return ISOK(item, HDemandModel.class);\n            }];\n            //9. 判断input是否与等待中waitModel相匹配 (匹配,比如吃,确定自己是否真吃了);\n            [AITest test11:model waitAlg_p:frameAlg.content_p];//测下2523c-此处是否会导致匹配不到;\n            BOOL mcIsBro = [TOUtils mcIsBro:recognitionAlgs cansetA:frameAlg.content_p]; //用共同抽象判断cansetAlg反馈 (参考3014c-todo1);\n            if (Log4OPushM) NSLog(@\"RCansetA有效:M(A%ld) C(A%ld) 结果:%d CAtFo:%@\",model.protoAlg.pointer.pointerId,frameAlg.content_p.pointerId,mcIsBro,Pit2FStr(solutionModel.content_p));\n            if (mcIsBro) {\n                //TODOTOMORROW20240111:\n                //a. 判断本次反馈是否比旧有反馈更匹配 (参考31063-todo2);\n                //  现结构. protoAlg和cansetA在abs有交集: 交集与protoA的匹配度可计算 & 交集与cansetA的匹配度可计算;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/TCFeedback.m:323-336"
+    },
+    "1451": {
+        "file_id": 146,
+        "content": "This code block is checking if the input matches with the waitModel (frameAlg). It also tests whether the recognitionAlgs are valid and then uses the common abstract (cansetA) to determine the feedback. If the feedback is true, it will compare it with previous feedbacks and calculate the matching degree between them.",
+        "type": "comment"
+    },
+    "1452": {
+        "file_id": 146,
+        "content": "                //  方案1. protoA和cansetA,分别与交集,计算平均匹配度,二者相乘得到综合匹配度;\n                //  方案2. protoA和cansetA,分别与交集中的每一条计算两个匹配度,并将两个匹配度相乘,找出相乘值最大的,做为最终匹配度;\n                //a. 赋值\n                frameAlg.status = TOModelStatus_OuterBack;\n                frameAlg.feedbackAlg = model.protoAlg.pointer;\n                solutionModel.status = TOModelStatus_Runing;\n                //b. 当waitModel为hDemand.targetAlg时,此处提前反馈了,hDemand改为finish状态 (参考26185-TODO6);\n                if (subHDemand) subHDemand.status = TOModelStatus_Finish;\n                //c. 收集真实发生realMaskFo,收集成hCanset (参考30131-todo1 & 30132-方案);\n                //2023.12.29: mcIsBro=true时,生成新hCanset (做31026-第2步时临时起意改的);\n                if (ISOK(solutionModel.basePFoOrTargetFoModel, AIMatchFoModel.class)) {\n                    AIFoNodeBase *rCanset = [SMGUtils searchNode:solutionModel.content_p];\n                    AIMatchFoModel *basePFo = (AIMatchFoModel*)solutionModel.basePFoOrTargetFoModel;\n                    NSArray *order = [basePFo convertOrders4NewCansetV2];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/TCFeedback.m:337-355"
+    },
+    "1453": {
+        "file_id": 146,
+        "content": "This code sets the frameAlg's status to OuterBack, assigns the protoAlg pointer to feedbackAlg, sets solutionModel's status to Runing. If subHDemand is present, it changes its status to Finish. It collects realMaskFo and generates a new hCanset when mcIsBro equals true. This code also searches for a specific node within solutionModel's content and retrieves the convertOrders4NewCansetV2 from basePFo.",
+        "type": "comment"
+    },
+    "1454": {
+        "file_id": 146,
+        "content": "                    if (ARRISOK(order) && solutionModel.actionIndex < rCanset.count) {\n                        AIFoNodeBase *hCanset = [theNet createConFoForCanset:order sceneFo:rCanset sceneTargetIndex:solutionModel.actionIndex];\n                        [rCanset updateConCanset:hCanset.pointer targetIndex:solutionModel.actionIndex];\n                        NSLog(@\"1.feedbackTOR为rScene:%@\\n2.rCanset:%@... 的第%ld帧:%@\\n3.挂载NewHCanset:%@\",Pit2FStr(basePFo.matchFo),SUBSTR2INDEX(Fo2FStr(rCanset), 50),solutionModel.actionIndex+1,Pit2FStr(ARR_INDEX(rCanset.content_ps, solutionModel.actionIndex)),Fo2FStr(hCanset));\n                    }\n                }\n                //c. 重组\n                dispatch_async(dispatch_get_main_queue(), ^{//30083回同步\n                    [theTV updateFrame];\n                });\n                DebugE();\n                [TCRegroup feedbackRegroup:solutionModel feedbackFrameOfMatchAlgs:model.matchAlgs];\n                [TCScore scoreFromIfTCNeed];\n            }\n        }\n    }\n    //2. ============== 对HDemand反馈判断 ==============",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/TCFeedback.m:356-374"
+    },
+    "1455": {
+        "file_id": 146,
+        "content": "The code block checks if an order is successful and updates the current scene feedback set with a new one. It then logs relevant information and proceeds to reassemble and update the TV frame, score, and perform regrouping based on the solution model's match algorithms.",
+        "type": "comment"
+    },
+    "1456": {
+        "file_id": 146,
+        "content": "    //a. 收集所有工作记忆树的H任务;\n    NSMutableArray *allHDemands = [[NSMutableArray alloc] init];\n    for (DemandModel *root in roots) {\n        NSArray *singleHDemands = [SMGUtils filterArr:[TOUtils getSubOutModels_AllDeep:root validStatus:nil] checkValid:^BOOL(TOModelBase *item) {\n            return ISOK(item, HDemandModel.class);\n        }];\n        [allHDemands addObjectsFromArray:singleHDemands];\n    }\n    //b. 反馈匹配 (比如找锤子,看到锤子了);\n    for (HDemandModel *hDemand in allHDemands) {\n        TOAlgModel *targetAlg = (TOAlgModel*)hDemand.baseOrGroup;   //hDemand的目标alg;\n        BOOL mcIsBro = [TOUtils mcIsBro:recognitionAlgs cansetA:targetAlg.content_p]; //用共同抽象判断cansetAlg反馈 (参考3014c-todo1);\n        if (mcIsBro) {\n            //c. 明确有效;\n            targetAlg.feedbackAlg = model.protoAlg.pointer;\n            hDemand.effectStatus = ES_HavEff;\n            hDemand.status = TOModelStatus_Finish;\n            //8. H任务完成时,H当前正执行的S提前完成,并进行外类比 (参考27206c-H任务);\n            //2023.11.03: 即使失败也可以触发\"预想与实际\"的类比抽象;\n            for (TOFoModel *solutionModel in hDemand.actionFoModels) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/TCFeedback.m:375-397"
+    },
+    "1457": {
+        "file_id": 146,
+        "content": "Collecting all working memory H tasks:\nThis code retrieves all HDemand models from the working memory tree and stores them in a mutable array. It also filters out any non-HDemand model items.",
+        "type": "comment"
+    },
+    "1458": {
+        "file_id": 146,
+        "content": "                [AITest test17];\n                if (solutionModel.status == TOModelStatus_ActYes || solutionModel.status == TOModelStatus_Runing || solutionModel.status == TOModelStatus_ActNo) {\n                    //a. 数据准备;\n                    AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.content_p];\n                    TOFoModel *targetFoModel = (TOFoModel*)hDemand.baseOrGroup;\n                    AIFoNodeBase *targetFo = [SMGUtils searchNode:targetFoModel.content_p];\n                    AIMatchFoModel *pFo = [TOUtils getBasePFoWithSubOutModel:solutionModel];\n                    //b. 用realMaskFo & realDeltaTimes生成protoFo (参考30154-todo2);\n                    NSArray *orders = [pFo convertOrders4NewCansetV2];\n                    AIFoNodeBase *newHCanset = [theNet createConFo:orders];\n                    if (newHCanset.count <= 1) continue;\n                    //h. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);\n                    NSLog(@\"HCanset预想与实际类比: (状态:%@",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/TCFeedback.m:398-412"
+    },
+    "1459": {
+        "file_id": 146,
+        "content": "This code snippet appears to be part of a machine learning or AI model, specifically for feedback and evaluation. It prepares the necessary data, generates a protoFo using realMaskFo & realDeltaTimes, converts orders based on a pFo, creates a newHCanset, checks its count, and then compares the HCanset with the actual state and logs it. This seems to be part of a larger process involving targetFoModel, TOModelStatus, SMGUtils, and TOUtils.",
+        "type": "comment"
+    },
+    "1460": {
+        "file_id": 146,
+        "content": " fromTargetFo:F%ld) \\n\\t当前Canset:%@\",TOStatus2Str(solutionModel.status),targetFoModel.content_p.pointerId,Pit2FStr(solutionModel.content_p));\n                    NSArray *noRepeatArea_ps = [targetFo getConCansets:targetFoModel.actionIndex];\n                    AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:newHCanset assFo:solutionFo type:ATDefault noRepeatArea_ps:noRepeatArea_ps];\n                    BOOL updateCansetSuccess = [targetFo updateConCanset:absCansetFo.pointer targetIndex:targetFoModel.actionIndex];\n                    [AITest test101:absCansetFo proto:newHCanset conCanset:solutionFo];\n                    if (updateCansetSuccess) {\n                        //j. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);\n                        NSDictionary *newIndexDic = [solutionModel convertOldIndexDic2NewIndexDic:targetFoModel.content_p];\n                        [absCansetFo updateIndexDic:targetFo indexDic:newIndexDic];\n                        [AITest test18:newIndexDic newCanset:absCansetFo absFo:targetFo];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/TCFeedback.m:412-422"
+    },
+    "1461": {
+        "file_id": 146,
+        "content": "Updates the content-pointer and converts the old index dictionary to a new one for a specific action index, then updates the index dictionary of the resultant content.",
+        "type": "comment"
+    },
+    "1462": {
+        "file_id": 146,
+        "content": "                        //k. 算出spDic (参考27213-5);\n                        [absCansetFo updateSPDic:[solutionModel convertOldSPDic2NewSPDic]];\n                        [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];\n                    }\n                } else {\n                    NSLog(@\"HCanset预想与实际类比未执行,F%ld 状态:%ld\",solutionModel.content_p.pointerId,solutionModel.status);\n                }\n            }\n        }\n    }\n    DebugE();\n}\n/**\n *  MARK:--------------------\"外层输入\" 推进 \"中层循环\" 决策--------------------\n *  @title 外层输入对Out短时记忆的ReasonDemandModel影响处理 (参考22061-8);\n *  @version\n *      2021.02.04: 将R同区同向(会导致永远为false因为虚mv得分为0)判断,改为同区反向判断 (参考22115BUG & 22108虚mv反馈判断方法);\n *      2021.12.23: feedback时,将root设回runing状态 (参考24212-8);\n *      2021.12.24: 应对整个工作记忆树进行支持,而不是仅rootDemands (参考25032-6);\n *      2021.12.26: 针对rSolution的感性反馈 (参考25031-11 & 25032-6);\n *      2022.05.22: R任务有效性反馈状态更新 (参考26095-3);\n *      2022.05.29: 反馈与demand.mv对比匹配,而不是solutionFo (参考26141-BUG1);\n *      2022.06.03: 将roots浅复制,避免强训过程中因loopCache变化而闪退;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/TCFeedback.m:424-447"
+    },
+    "1463": {
+        "file_id": 146,
+        "content": "This code appears to be part of a larger program that involves decision-making and feedback processing. It seems to involve updating an `absCansetFo` object with a new SPDIC, testing it, and performing some decision-making based on the status of a `solutionModel`. The comments also mention multiple updates and bug fixes, suggesting ongoing development and maintenance of this code.",
+        "type": "comment"
+    },
+    "1464": {
+        "file_id": 146,
+        "content": " *      2022.09.06: TC流程调整_直接调用TCDemand (参考27096-实践1);\n *      2022.11.23: 记录feedbackMv (参考27204-2);\n */\n+(void) feedbackTOP:(AICMVNode*)cmvNode{\n    //1. 数据检查\n    NSInteger delta = [NUMTOOK([AINetIndex getData:cmvNode.delta_p]) integerValue];\n    if (delta == 0) return;\n    [theTC updateOperCount:kFILENAME];\n    Debug();\n    IFTitleLog(@\"feedbackTOP\", @\"\\n输入MV:%@\",Mv2FStr(cmvNode));\n    //2. ============== 对所有等待中的任务尝试处理 (R-任务); ==============\n    NSArray *roots = [theTC.outModelManager.getAllDemand copy];\n    for (ReasonDemandModel *root in roots) {\n        NSArray *waitModels = [TOUtils getSubOutModels_AllDeep:root validStatus:@[@(TOModelStatus_ActYes)]];\n        for (TOFoModel *waitModel in waitModels) {\n            //3. wait不为fo解决方案时不处理;\n            if (!ISOK(waitModel, TOFoModel.class)) continue;\n            //4. 非R也非P任务时,不处理;\n            if (!ISOK(waitModel.baseOrGroup, ReasonDemandModel.class) && !ISOK(waitModel.baseOrGroup, PerceptDemandModel.class)) continue;\n            //5. 非actYes状态不处理;\n            if (waitModel.status != TOModelStatus_ActYes) continue;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/TCFeedback.m:448-472"
+    },
+    "1465": {
+        "file_id": 146,
+        "content": "This code performs the following actions:\n1. Checks for valid input data (delta).\n2. Updates the operating count of the Task Controller.\n3. Logs feedbackTOP with the MV information.\n4. Tries to process all waiting tasks (Reason and Percept demands).\n5. Skips non-FO solutions, non-R, and non-P tasks.\n6. Skips tasks not in ActYes status.",
+        "type": "comment"
+    },
+    "1466": {
+        "file_id": 146,
+        "content": "            //6. 未到末尾,不处理;\n            AIFoNodeBase *waitFo = [SMGUtils searchNode:waitModel.content_p];\n            if (waitModel.actionIndex < waitFo.count) continue;\n            //7. waitFo是为了解决任务,所以要取出原任务的mv标识来比较;\n            //7. 判断hope(wait)和real(new)之间是否相符 (当反馈了\"同区反向\"时,即表明任务失败,为S);\n            DemandModel *demand = (DemandModel*)waitModel.baseOrGroup;\n            BOOL sameIden = [cmvNode.pointer.algsType isEqualToString:demand.algsType];\n            if (sameIden) {\n                //7. 记录feedbackMv (参考27204-2);\n                waitModel.feedbackMv = cmvNode.pointer;\n                //7. 同向匹配 (比如撞疼,确定疼了);\n                CGFloat score = [AIScore score4MV:cmvNode.pointer ratio:1.0f];\n                if (score < 0) {\n                    waitModel.status = TOModelStatus_OuterBack;\n                    NSLog(@\"top_OPushM: 方案失败反馈OutBack\");\n                    //7. root设回runing\n                    demand.status = TOModelStatus_Runing;\n                    root.status = TOModelStatus_Runing;\n                }else{",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/TCFeedback.m:474-496"
+    },
+    "1467": {
+        "file_id": 146,
+        "content": "This code is part of a larger system that appears to be involved in task management and feedback processing. The code seems to be checking if the current wait model (a specific task) has reached its end, and if not, it continues without processing. It then compares the hope (wait) with the new feedback and checks if they are the same or different. If they are the same, it records the feedbackMv and proceeds to check if there is a match. If the match fails, the status of the task model is set to OuterBack, indicating a failed attempt. The root status is also reset back to running.",
+        "type": "comment"
+    },
+    "1468": {
+        "file_id": 146,
+        "content": "                    //8. solutionFo反馈好时,baseDemand为完成状态;\n                    waitModel.baseOrGroup.status = TOModelStatus_Finish;\n                }\n                dispatch_async(dispatch_get_main_queue(), ^{//30083回同步\n                    [theTV updateFrame];\n                });\n            }\n        }\n    }\n    //2. ============== 对Demand反馈判断 ==============\n    //a. 收集所有工作记忆树的R任务;\n    NSMutableArray *allRDemands = [[NSMutableArray alloc] init];\n    for (ReasonDemandModel *root in roots) {\n        NSArray *singleRDemands = [SMGUtils filterArr:[TOUtils getSubOutModels_AllDeep:root validStatus:nil] checkValid:^BOOL(TOModelBase *item) {\n            return ISOK(item, ReasonDemandModel.class);\n        }];\n        [allRDemands addObjectsFromArray:singleRDemands];\n    }\n    //b. 反馈匹配 => 同区判断 且 都为负价值 (比如撞疼,确定疼了);\n    for (ReasonDemandModel *rDemand in allRDemands) {\n        if ([rDemand.algsType isEqualToString:cmvNode.pointer.algsType]) {\n            CGFloat newMvScore = [AIScore score4MV:cmvNode.pointer ratio:1.0f];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/TCFeedback.m:497-520"
+    },
+    "1469": {
+        "file_id": 146,
+        "content": "This code section is responsible for updating the feedback status in a model based on various conditions. It collects all work memory tasks of type R, compares their matching status, and updates the corresponding model's status accordingly. If the feedback score is high enough, it triggers synchronization to update the UI on the main queue.",
+        "type": "comment"
+    },
+    "1470": {
+        "file_id": 146,
+        "content": "            if (newMvScore < 0) {\n                //c. 明确无效;\n                rDemand.effectStatus = ES_NoEff;\n                rDemand.status = TOModelStatus_ActNo;\n            }\n        }\n    }\n    //3. p任务;\n    DebugE();\n    [TCDemand pDemand:cmvNode];\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/TCFeedback.m:521-534"
+    },
+    "1471": {
+        "file_id": 146,
+        "content": "The code checks if the new movement score (newMvScore) is less than 0. If it is, then it sets the effect status of rDemand to ES_NoEff and its status to TOModelStatus_ActNo. This indicates that the demand is clearly ineffective. Additionally, this section of code is associated with task p and includes a DebugE() function call and pDemand method for cmvNode.",
+        "type": "comment"
+    },
+    "1472": {
+        "file_id": 147,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCForecast/TCForecast.h",
+        "type": "filepath"
+    },
+    "1473": {
+        "file_id": 147,
+        "content": "This code is the header file of TCForecast class in SMG_NothingIsAll project, which contains two forecast methods: forecast_Multi for multiple new roots and forecast_Single for a single item.",
+        "type": "summary"
+    },
+    "1474": {
+        "file_id": 147,
+        "content": "//\n//  TCForecast.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/11/28.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------反省触发器--------------------\n */\n@interface TCForecast : NSObject\n+(void) forecast_Multi:(NSArray*)newRoots;\n+(void) forecast_Single:(AIMatchFoModel*)item;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCForecast/TCForecast.h:1-19"
+    },
+    "1475": {
+        "file_id": 147,
+        "content": "This code is the header file of TCForecast class in SMG_NothingIsAll project, which contains two forecast methods: forecast_Multi for multiple new roots and forecast_Single for a single item.",
+        "type": "comment"
+    },
+    "1476": {
+        "file_id": 148,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCForecast/TCForecast.m",
+        "type": "filepath"
+    },
+    "1477": {
+        "file_id": 148,
+        "content": "This code improves thinking control forecasts, supports multi-trigger types and feedback adjustments, distinguishes emotional/rational predictions, forecasts single items, checks cut indexes, manages triggers for opinion frames, updates item status based on score, performs perceptual reflection if needed, marks item as expired, and pushes frame finish.",
+        "type": "summary"
+    },
+    "1478": {
+        "file_id": 148,
+        "content": "//\n//  TCForecast.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/11/28.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import \"TCForecast.h\"\n@implementation TCForecast\n/**\n *  MARK:--------------------反省触发器--------------------\n *  @desc\n *      1. 对任务下一帧预测的等待反馈 (触发器等待反省);\n *  @version\n *      2021.01.27: 非末位也支持mv触发器 (参考22074-BUG2);\n *      2021.02.01: 支持反向反馈外类比 (参考22107);\n *      2021.02.04: 虚mv不会触发In反省,否则几乎永远为逆 (因为本来虚mv就不会有输入的);\n *      2021.02.04: 虚mv也要支持In反省,否则无法形成对R-模式助益 (参考22108);\n *      2021.10.12: SP的定义由顺逆改为好坏,所以此处相应触发SP的反省改正 (参考24054-实践);\n *      2021.10.17: IRT触发器理性失效时,不进行反省 (参考24061-方案2);\n *      2021.11.30: 将IRT触发器交由任务树来完成,即每条输入更新到任务树,任务树里每个分支都自带IRT预测;\n *                  > 弃做,何必绕圈子,原有做法: 时序预测直接做触发器就行;\n *      2021.12.25: 支持理性IRT反省;\n *      2022.03.05: 将forecastIRT分裂成感性和理性两个部分,分别处理不同的识别prFos结果,触发不同的反省 (参考25134-方案2-B预测);\n *      2023.03.15: 支持matchRFos也进行预测并统计SP (参考28182-todo2);\n *  @todo\n *      2021.03.22: 迭代提高预测的准确性(1.以更具象为准(猴子怕虎,悟空不怕) 2.以更全面为准(猴子有麻醉枪不怕虎)) (参考22182);\n *  @status\n *      1. 后半部分\"有mv判断\"生效中;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCForecast/TCForecast.m:1-32"
+    },
+    "1479": {
+        "file_id": 148,
+        "content": "This code implements a thinking control forecast module in a project. It has multiple updates and improvements, including support for different types of triggers and feedbacks, adjustments based on feedback, and separation of emotional and rational IRT predictions with distinct trigger responses. The code also includes TODO items for future improvements to increase prediction accuracy.",
+        "type": "comment"
+    },
+    "1480": {
+        "file_id": 148,
+        "content": " *      2. 前半部分\"HNGL末位判断\"未启用 (因为matchFos中未涵盖HNGL类型);\n */\n+(void) forecast_Multi:(NSArray*)matchPRFos{\n    //1. 数据检查 (参考25031-1);\n    [theTC updateOperCount:kFILENAME];\n    Debug();\n    ISTitleLog(@\"matchFos预测\");\n    matchPRFos = ARRTOOK(matchPRFos);\n    //2. 每个pFo的预测处理;\n    for (AIMatchFoModel *prFo in matchPRFos) {\n        //3. 已发生: 补上当前进度前面的SP计数P+1 (参考27213-4);\n        AIFoNodeBase *matchFo = [SMGUtils searchNode:prFo.matchFo];\n        [matchFo updateSPStrong:0 end:prFo.cutIndex type:ATPlus];\n        //4. 预测帧: 下帧预测触发器; (参考25031-2) ->feedbackTIR;\n        [self forecast_Single:prFo];\n    }\n    DebugE();\n}\n/**\n *  MARK:--------------------单条prFo处理--------------------\n *  @desc 可自动根据cutIndex判断触发理性或感性: 反省触发器;\n *  @callers : 1. 用于新root调用; 2. 用于反省顺利时推进到下一帧的触发器;\n *  @version\n *      2022.09.18: 有反馈时移至feedback及时处理 (参考27098-todo2&3&4);\n *      2023.03.15: 支持rFos的预测 (参考28182-todo2);\n *      2023.03.15: rFos预测推进失败不设为Canset(因为它失败并不意味着解决了pFo) (参考28182-todo3);\n *      2023.03.21: 修复: pFo先失效,导致后面生成Canset时,未执行到此pFo的问题 (参考29011-问题);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCForecast/TCForecast.m:33-62"
+    },
+    "1481": {
+        "file_id": 148,
+        "content": "This code defines a method for forecasting multi-match PRFos and includes single match PRFo processing. It updates the SP count, predicts frames using triggers, and supports rFos predictions.",
+        "type": "comment"
+    },
+    "1482": {
+        "file_id": 148,
+        "content": " */\n+(void) forecast_Single:(AIMatchFoModel*)item{\n    //1. 数据准备;\n    AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];\n    NSInteger maxCutIndex = matchFo.count - 1;\n    NSInteger curCutIndex = item.cutIndex;\n    //2. ========> 非末位时,理性反省 (参考25031-2);\n    if (curCutIndex < maxCutIndex) {\n        //4. 设为等待反馈状态 & 构建反省触发器;\n        [item setStatus:TIModelStatus_LastWait forCutIndex:curCutIndex];\n        double deltaTime = [NUMTOOK(ARR_INDEX(matchFo.deltaTimes, curCutIndex + 1)) doubleValue];\n        NSLog(@\"---//理性IRT触发器新增等待反馈:%p (%@ | useTime:%.2f)\",matchFo,Fo2FStr(matchFo),deltaTime);\n        [AITime setTimeTrigger:deltaTime trigger:^{\n            //5. 如果状态还是Wait,则无反馈:\n            TIModelStatus status = [item getStatusForCutIndex:curCutIndex];\n            if (status == TIModelStatus_LastWait) {\n                NSLog(@\"---//IR反省触发器执行:%p F%ld 状态:%@\",matchFo,matchFo.pointer.pointerId,TIStatus2Str(status));\n                //6. 则进行理性IRT反省;\n                [TCRethink reasonInRethink:item cutIndex:curCutIndex type:ATSub];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCForecast/TCForecast.m:63-85"
+    },
+    "1483": {
+        "file_id": 148,
+        "content": "This code is responsible for forecasting a single item. It prepares the data and checks if it's not the last cut position. If not, it sets the status to \"LastWait\" and constructs a rationality trigger, which waits for feedback. If the status remains as \"LastWait\", then the code performs rationality reflections on the item with the current cut index and type \"ATSub\".",
+        "type": "comment"
+    },
+    "1484": {
+        "file_id": 148,
+        "content": "                //7. 失败状态标记;\n                [item setStatus:TIModelStatus_OutBackNone forCutIndex:curCutIndex];\n                //8. 只有pFo时,才设定失效,以及将推进失败的完全时序设为protoCanset (参考28182-todo3);\n                if (matchFo.cmvNode_p) {\n                    //10. 中间帧推进失败时,即提前达到终点,即处理推进为完全时序 (参考27183);\n                    [item pushFrameFinish];\n                    //9. 失效判断: pFo任务失效 (参考27093-条件2 & 27095-2);\n                    item.isExpired = true;\n                }\n            }\n        }];\n    }\n    //3. ========> 末位感性反省 (参考25031-2) ->feedbackTIP;\n    else if(item.cutIndex == maxCutIndex){\n        //4. 有mv时才感性反省;\n        if (!matchFo.cmvNode_p) return;\n        //9. 设为等待反馈状态 & 构建反省触发器;\n        [item setStatus:TIModelStatus_LastWait forCutIndex:curCutIndex];\n        double deltaTime = matchFo.mvDeltaTime;\n        NSLog(@\"---//感性IRT触发器新增等待反馈:%p (%@ | useTime:%.2f)\",matchFo,Fo2FStr(matchFo),deltaTime);\n        [AITime setTimeTrigger:deltaTime trigger:^{\n            //10. 如果状态已改成OutBack,说明有反馈;\n            TIModelStatus status = [item getStatusForCutIndex:curCutIndex];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCForecast/TCForecast.m:87-115"
+    },
+    "1485": {
+        "file_id": 148,
+        "content": "This code snippet checks if the item has reached its final cut index. If it has, it proceeds to check if there is a matching frame of opinion (pFo). If a pFo exists, the code marks the task as expired and pushes the frame as finished. If the item's status is not the maximum cut index, it checks if there is a matching frame of opinion that isn't complete. If such an opinion exists, it sets the item to wait for feedback and constructs a feedback trigger with the delta time of the opinion. This trigger will later trigger if the item's status has changed to OutBack.",
+        "type": "comment"
+    },
+    "1486": {
+        "file_id": 148,
+        "content": "            CGFloat score = [AIScore score4MV:matchFo.cmvNode_p ratio:1.0f];\n            if (status == TIModelStatus_LastWait) {\n                if (score != 0) {\n                    //10. 正mv未反馈为S(坏) 或负mv未反馈为P(好);\n                    AnalogyType type = score > 0 ? ATSub : ATPlus;\n                    //11. 则进行感性IRT反省;\n                    [TCRethink perceptInRethink:item type:type];\n                    NSLog(@\"---//IP反省触发器执行:%p F%ld 状态:%@\",matchFo,matchFo.pointer.pointerId,TIStatus2Str(status));\n                }\n                //12. 失败状态标记;\n                [item setStatus:TIModelStatus_OutBackNone forCutIndex:curCutIndex];\n            }\n            //14. 最末帧推进完全时,无论成败都算终点,则处理推进为完全时序 (参考27183);\n            [item pushFrameFinish];\n            //13. pFo任务失效 (参考27093-条件1 & 27095-1);\n            item.isExpired = true;\n        }];\n    }\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCForecast/TCForecast.m:116-141"
+    },
+    "1487": {
+        "file_id": 148,
+        "content": "This code updates the item status based on its score and performs a perceptual reflection if necessary. If the item's status is \"LastWait\" and the score is not zero, it determines whether the item is a positive or negative example and triggers a perceptual rethink accordingly. After that, it marks the item as expired and pushes the frame finish for further processing.",
+        "type": "comment"
+    },
+    "1488": {
+        "file_id": 149,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCInput/TCInput.h",
+        "type": "filepath"
+    },
+    "1489": {
+        "file_id": 149,
+        "content": "This code file, TCInput.h, is a header file for the TCInput class in the SMG_NothingIsAll project. It defines three methods: rInput, pInput, and hInput, which are used to input data into different parts of the AI system. The except_ps parameter is an array of excluded parameters for the rInput method. The AIAlgNodeBase, AICMVNodeBase, and TOAlgModel classes are used as input parameters in these methods.",
+        "type": "summary"
+    },
+    "1490": {
+        "file_id": 149,
+        "content": "//\n//  TCInput.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/11/28.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface TCInput : NSObject\n+(void) rInput:(AIAlgNodeBase*)algNode except_ps:(NSArray*)except_ps;\n+(void) pInput:(AICMVNodeBase*)mv;\n+(void) hInput:(TOAlgModel*)algModel;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCInput/TCInput.h:1-17"
+    },
+    "1491": {
+        "file_id": 149,
+        "content": "This code file, TCInput.h, is a header file for the TCInput class in the SMG_NothingIsAll project. It defines three methods: rInput, pInput, and hInput, which are used to input data into different parts of the AI system. The except_ps parameter is an array of excluded parameters for the rInput method. The AIAlgNodeBase, AICMVNodeBase, and TOAlgModel classes are used as input parameters in these methods.",
+        "type": "comment"
+    },
+    "1492": {
+        "file_id": 150,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCInput/TCInput.m",
+        "type": "filepath"
+    },
+    "1493": {
+        "file_id": 150,
+        "content": "This code improves AI thinking control in SMG_NothingIsAll, handling updates and triggers. It prepares data, identifies concepts, filters feedback, and passes to TOR module. The code manages pInput, including continuous processing with protoFo4PInput, recognition, learning, decision-making, and introspection triggers for matchPFos & matchRFos.",
+        "type": "summary"
+    },
+    "1494": {
+        "file_id": 150,
+        "content": "//\n//  TCInput.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/11/28.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import \"TCInput.h\"\n@implementation TCInput\n/**\n *  MARK:--------------------输入非mv信息时--------------------\n *  @todo\n *      1. 远古TODO: 看到西瓜会开心 : 对自身状态的判断, (比如,看到西瓜,想吃,那么当前状态是否饿)\n *          > 已解决,废弃了useNode,并由mModel替代,且会交由demandManager做此处理;\n *      2. TODOWAIT: TIR_Alg识别后,要进行类比,并构建网络关联; (参考n16p7)\n *      3. 点击饥饿,再点击乱投,此处返回了matchFo:nil matchValue:0;\n *          > 已解决,因为fromMemShort是4层alg,而fromRethink是两层;\n *  @version\n *      20200416 - 修复时序识别的bug: 因概念节点去重不够,导致即使概念内容一致,在时序识别时,也会无法匹配 (参考n19p5-A组BUG4);\n *      20200731 - 将protoFo和matchAFo的构建改为isMem=false (因为构建到内存的话,在内类比构建时序具象指向为空,参考20151-BUG);\n *      20200817 - 赋值protoAlg和matchAlg即是存瞬时记忆,因为瞬时与短时整合了;\n *      20201019 - 将mModel更提前保留至mModelManager中;\n *      20201112 - TIR_Fo支持不应其except_ps,将protoF和matchAF都设为不应期,避免AF识别P回来 (参考21144);\n *      20201113 - 构建matchAFo时,MatchA为空时,兼容取part首条,否则会导致时序识别失败 (参考21144);\n *      20210118 - 支持生物钟触发器 (未完成) (参考22052-1);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCInput/TCInput.m:1-28"
+    },
+    "1495": {
+        "file_id": 150,
+        "content": "This code is for the TCInput class in the SMG_NothingIsAll project. It handles input when mv information is not available, with various TODOs and version updates. The changes made include fixing bugs related to concept node deduplication, updating protoFo and matchAFo construction to exclude memory, preserving mModel earlier, and supporting biological clock triggers (incomplete).",
+        "type": "comment"
+    },
+    "1496": {
+        "file_id": 150,
+        "content": " *      20210119 - 支持TIR_OPushM (参考22052-2);\n *      20211016 - 将预测调整到R决策之后,因为R决策总会卡住,而预测中将来的UI变化迟迟不来 (参考24058-方案1);\n *      20211017 - 在执行决策前,先到OPushM将TIModel.status更新了,因为有些IRT触发器已经失效了 (参考24061);\n *      20230301 - 输出行为不必再触发`时序识别&学习&任务&反省` (参考28137-修复);\n *      20230531 - r时序识别结束后,调用识别二次过滤器 (参考29107-todo3);\n *      20231107 - 将feedbackTIR调整到feedbackTOR之前 (参考30154-todo4.2);\n */\n+(void) rInput:(AIAlgNodeBase*)algNode except_ps:(NSArray*)except_ps{\n    ISGroupLog(@\"input R\");\n    [theTC updateLoopId];\n    [theTC updateOperCount:kFILENAME];\n    Debug();\n    //1. 数据准备 (瞬时记忆,理性匹配出的模型);\n    __block AIShortMatchModel *mModel = [[AIShortMatchModel alloc] init];\n    mModel.protoAlg = algNode;\n    mModel.inputTime = [[NSDate date] timeIntervalSince1970];\n    //2. 识别概念;\n    [TIUtils TIR_Alg:algNode.pointer except_ps:except_ps inModel:mModel];\n    //3. 将mModel保留 (只有先保留后,构建时序时,才会含新帧概念);\n    [theTC.inModelManager add:mModel];\n    DebugE();\n    //4. 概念反馈 -> TIR反馈;\n    //todo: 加了二次过滤后,此处过滤后,仅剩几条了 (可能导致tir太难feedback成功了) (先不改,等测得具体有影响的bug时再改);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCInput/TCInput.m:29-54"
+    },
+    "1497": {
+        "file_id": 150,
+        "content": "This code performs input processing for AI thinking control. It prepares data, identifies concepts using TIR algorithms, adds the model to memory, and filters concept feedback before passing it to the TOR module.",
+        "type": "comment"
+    },
+    "1498": {
+        "file_id": 150,
+        "content": "    [TCFeedback feedbackTIR:mModel];\n    //4. 概念反馈 -> 重组 & 反思;\n    //todo: 加了二次过滤后,此处过滤前,可能太杂了,毕竟pAlgs过过滤了50% (可能导致tor才容易feedback成功了) (先不改,等测得具体有影响的bug时再改);\n    [TCFeedback feedbackTOR:mModel];\n    //5. 转regroup生成protoFo;\n    [TCRegroup rRegroup:mModel];\n    AIFoNodeBase *protoFo = ARRISOK(mModel.matchAlgs) ? mModel.protoFo : mModel.matchAFo;\n    //6. 行为不触发识别和学习 (参考28137-修复);\n    if (!algNode.pointer.isOut || Switch4IsOutReIn) {\n        //7. 时序识别\n        [TCRecognition rRecognition:mModel];\n        //8. 识别二次过滤器;\n        [AIFilter secondRecognitionFilter:mModel];\n        //8. 学习;\n        [TCLearning rLearning:mModel protoFo:protoFo];\n    }\n    //10. 行为不构建任务和预测 (参考28137-修复);\n    if (!algNode.pointer.isOut || Switch4IsOutReIn) {\n        //11. 任务;\n        [TCDemand rDemand:mModel protoFo:mModel.protoFo];\n        //12. 为新matchPFos & matchRFos构建反省触发器;\n        [TCForecast forecast_Multi:mModel.matchPFos];\n        [TCForecast forecast_Multi:mModel.matchRFos];\n    }\n    //13. 转继续决策;\n    [TCScore scoreFromIfTCNeed];\n}\n/**\n *  MARK:--------------------pInput--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCInput/TCInput.m:55-92"
+    },
+    "1499": {
+        "file_id": 150,
+        "content": "This code snippet appears to handle various aspects of AI thinking control in the context of an input. It includes feedback, regrouping, recognition, learning, demand generation, forecasting, and decision-making for continuous processing. It also implements second-level filters and manages protoFos (prototypical fragments) for matching algorithms.",
+        "type": "comment"
+    }
+}

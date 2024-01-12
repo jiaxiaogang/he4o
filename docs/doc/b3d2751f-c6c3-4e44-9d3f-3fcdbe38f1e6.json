@@ -1,0 +1,10 @@
+{
+    "summary": "This code is for an asynchronous write function in XGWedis, which supports specifying a time interval to write the database, helping avoid performance issues caused by frequent file updates.",
+    "details": [
+        {
+            "comment": "This code is for an asynchronous write function in XGWedis, which supports specifying a time interval to write the database, helping avoid performance issues caused by frequent file updates.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/XGWedis/README.md\":0-2",
+            "content": "#  \u5f02\u6b65\u5199XGWedis\n1. \u652f\u6301\u6307\u5b9a\u65f6\u95f4\u5199\u4e00\u6b21db (\u907f\u514d\u53d8\u52a8\u9891\u7e41\u7684\u6587\u4ef6\u91cd\u590d\u5199\u5165,\u5e26\u6765\u7684\u6027\u80fd\u95ee\u9898);"
+        }
+    ]
+}

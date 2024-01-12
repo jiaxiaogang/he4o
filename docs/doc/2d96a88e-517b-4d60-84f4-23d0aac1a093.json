@@ -1,0 +1,10 @@
+{
+    "summary": "This file contains the implementation of FrontIndexDicModel class which inherits from a superclass, likely in another file. It has a designated initializer method that takes protoIndex, cansetIndex and transferAlg as parameters and returns an instance of the class with these values assigned. The instance variables are protected by private or protected access modifiers to prevent direct manipulation from outside the class.",
+    "details": [
+        {
+            "comment": "This file contains the implementation of FrontIndexDicModel class which inherits from a superclass, likely in another file. It has a designated initializer method that takes protoIndex, cansetIndex and transferAlg as parameters and returns an instance of the class with these values assigned. The instance variables are protected by private or protected access modifiers to prevent direct manipulation from outside the class.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/FrontIndexDicModel.m\":0-20",
+            "content": "//\n//  FrontIndexDicModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/4/30.\n//  Copyright \u00a9 2023\u5e74 XiaoGang. All rights reserved.\n//\n#import \"FrontIndexDicModel.h\"\n@implementation FrontIndexDicModel\n+(FrontIndexDicModel*) newWithProtoIndex:(NSInteger)protoIndex cansetIndex:(NSInteger)cansetIndex transferAlg:(AIKVPointer*)transferAlg_p {\n    FrontIndexDicModel *result = [[FrontIndexDicModel alloc] init];\n    result.protoIndex = protoIndex;\n    result.cansetIndex = cansetIndex;\n    result.transferAlg_p = transferAlg_p;\n    return result;\n}\n@end"
+        }
+    ]
+}

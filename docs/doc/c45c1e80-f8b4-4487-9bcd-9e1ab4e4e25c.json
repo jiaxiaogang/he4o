@@ -1,0 +1,10 @@
+{
+    "summary": "This code snippet is for a memory manager, designed to backup, restore, clear memory related to HE. It serves as a tool to manage and maintain HE's memory operations.",
+    "details": [
+        {
+            "comment": "This code snippet is for a memory manager, designed to backup, restore, clear memory related to HE. It serves as a tool to manage and maintain HE's memory operations.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/MemManager/README.md\":0-2",
+            "content": "#  \u8bb0\u5fc6\u7ba1\u7406\u5668\n\u7528\u6765\u5bf9HE\u7684\u8bb0\u5fc6\u8fdb\u884c\u5907\u4efd,\u6062\u590d,\u6e05\u7a7a\u7b49\u64cd\u4f5c;"
+        }
+    ]
+}

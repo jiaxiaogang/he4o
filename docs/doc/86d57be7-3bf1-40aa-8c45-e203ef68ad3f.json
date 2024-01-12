@@ -1,0 +1,10 @@
+{
+    "summary": "This is the header file for AIStringAlgs class in the AIFoundation module. The class contains an interface for string algorithms and a model for storing the result of the algorithm applied to strings.",
+    "details": [
+        {
+            "comment": "This is the header file for AIStringAlgs class in the AIFoundation module. The class contains an interface for string algorithms and a model for storing the result of the algorithm applied to strings.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIAlg/AIStringAlgs.h\":0-41",
+            "content": "//\n//  StringAlgs.h\n//  SMG_NothingIsAll\n//\n//  Created by \u8d3e  on 2017/9/17.\n//  Copyright \u00a9 2017\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------String\u7b97\u6cd5--------------------\n */\n@interface AIStringAlgs : NSObject\n+(void) commitInput:(NSString*)input;\n@end\n//MARK:===============================================================\n//MARK:                     < String\u7b97\u6cd5\u7ed3\u679c\u6a21\u578b >\n//MARK:===============================================================\n@interface AIStringAlgsModel : NSObject\n@property (strong,nonatomic) NSString *str;\n@property (assign, nonatomic) NSUInteger length;\n@property (strong,nonatomic) NSArray *spell;\n@end\n//MARK:===============================================================\n//MARK:                     < char\u7b97\u6cd5\u7ed3\u679c\u6a21\u578b >\n//MARK:===============================================================\n@interface AICharAlgsModel : NSObject\n@property (assign,nonatomic) char c;\n@end"
+        }
+    ]
+}

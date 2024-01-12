@@ -1,0 +1,10 @@
+{
+    "summary": "This code imports the HDemandModel class and defines a method called newWithAlgModel, which returns an instance of HDemandModel initialized with a TOAlgModel parameter.",
+    "details": [
+        {
+            "comment": "This code imports the HDemandModel class and defines a method called newWithAlgModel, which returns an instance of HDemandModel initialized with a TOAlgModel parameter.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/HDemandModel.m\":0-19",
+            "content": "//\n//  HDemandModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/11/28.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import \"HDemandModel.h\"\n@implementation HDemandModel\n+(HDemandModel*) newWithAlgModel:(TOAlgModel*)base{\n    HDemandModel *result = [[HDemandModel alloc] init];\n    result.baseOrGroup = base;\n    [base.subDemands addObject:result];\n    return result;\n}\n@end"
+        }
+    ]
+}

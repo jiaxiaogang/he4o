@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines a PerceptDemandModel class that inherits from DemandModel, with no specific functionality provided. It marks the beginning of the \"\u611f\u6027\u9700\u6c42\u6a21\u578b\" (Percept Demand Model) section and imports the DemandModel class.",
+    "details": [
+        {
+            "comment": "This code defines a PerceptDemandModel class that inherits from DemandModel, with no specific functionality provided. It marks the beginning of the \"\u611f\u6027\u9700\u6c42\u6a21\u578b\" (Percept Demand Model) section and imports the DemandModel class.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/PerceptDemandModel.h\":0-15",
+            "content": "//\n//  PerceptDemandModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/1/21.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import \"DemandModel.h\"\n/**\n *  MARK:--------------------\u611f\u6027\u9700\u6c42\u6a21\u578b--------------------\n */\n@interface PerceptDemandModel : DemandModel\n@end"
+        }
+    ]
+}

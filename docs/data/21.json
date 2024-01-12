@@ -1,0 +1,542 @@
+{
+    "2100": {
+        "file_id": 211,
+        "content": "#  感官算法\n1. 可api接入新的感官;\n2. 把输入单帧图像音频等转成模型;\n3. 最小稀疏码单位;\n4. 模型是三维数组,从内到外三层分别为:\"稀疏码层,同区码组(用于学习特征),同时码组(用于学习概念)\";\n5. 当前只支持二维数组 (因为v2的虚拟场景没现实世界那么复杂,不必要,等v3时开放成三维);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/CortexAlgorithms/README.md:1-7"
+    },
+    "2101": {
+        "file_id": 211,
+        "content": "This code describes a sensory algorithm that can be accessed via API. It converts input single frames of image and audio into models, using a sparse coding unit. The model is a three-dimensional array with layers representing sparse codes, regional codes (for learning features), and concurrent codes (for learning concepts). Currently, only two-dimensional arrays are supported due to the simplicity of virtual scenes in V2. The author plans to extend support for three-dimensional arrays in future versions.",
+        "type": "comment"
+    },
+    "2102": {
+        "file_id": 212,
+        "content": "/SMG_NothingIsAll/CortexAlgorithms/Vision/AIVisionAlgs.h",
+        "type": "filepath"
+    },
+    "2103": {
+        "file_id": 212,
+        "content": "This code defines the AIVisionAlgs class, which contains vision algorithms for a virtual scene rather than real camera input. The class has properties such as size, color, shape, position, and speed. It also includes a method commitView that takes two UIViews and a rect as parameters to perform some action related to vision algorithms.",
+        "type": "summary"
+    },
+    "2104": {
+        "file_id": 212,
+        "content": "//\n//  AIVisionAlgs.h\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/11/15.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------视觉算法--------------------\n *  1. 大小 : size\n *  2. 颜色 : color\n *  3. 形状(圆角) : radius\n *  4. 相对位置 : origin\n *  5. 相对速度 : speed\n *  @desc\n *      1. 目前HE为虚拟场景伪视觉,并非真正摄像头视觉;\n *      2. 目前内核稀疏码不支持模糊匹配,所以很多算法值,采用整型,而非float;\n */\n@interface AIVisionAlgs : NSObject\n+(void) commitView:(UIView*)selfView targetView:(UIView*)targetView rect:(CGRect)rect;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/CortexAlgorithms/Vision/AIVisionAlgs.h:1-26"
+    },
+    "2105": {
+        "file_id": 212,
+        "content": "This code defines the AIVisionAlgs class, which contains vision algorithms for a virtual scene rather than real camera input. The class has properties such as size, color, shape, position, and speed. It also includes a method commitView that takes two UIViews and a rect as parameters to perform some action related to vision algorithms.",
+        "type": "comment"
+    },
+    "2106": {
+        "file_id": 213,
+        "content": "/SMG_NothingIsAll/CortexAlgorithms/Vision/AIVisionAlgs.m",
+        "type": "filepath"
+    },
+    "2107": {
+        "file_id": 213,
+        "content": "The code enhances AIVisionAlgs by adding a commit method, preparing data, creating vision algorithm models, measuring speed and distance for Redis collision detection. It also defines methods to calculate UIView distances, border widths, and positions.",
+        "type": "summary"
+    },
+    "2108": {
+        "file_id": 213,
+        "content": "//\n//  AIVisionAlgs.m\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/11/15.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"AIVisionAlgs.h\"\n#import \"AIVisionAlgsModel.h\"\n#import \"XGRedis.h\"\n#import \"UIView+Extension.h\"\n#import \"NSObject+Extension.h\"\n@implementation AIVisionAlgs\n/**\n *  MARK:--------------------新视觉帧--------------------\n *  @version\n *      2021.09.07: 取消rect限制 (因为木棒或鸟都有可能飞出屏幕);\n *      2021.09.14: 废弃速度,因为HE视觉是离散的,速度不重要 (参考24017-问题1);\n *      2022.06.04: 废弃X值和方向,新增X距 (参考26196);\n *      2022.06.05: 回退26196-方案3 (参考26196-尝试1);\n *      2023.03.08: 废除客观特征posXY (参考28161-方案5);\n *      2023.03.13: 用距离和方向替代XY距 (参考28173-方案3);\n */\n+(void) commitView:(UIView*)selfView targetView:(UIView*)targetView rect:(CGRect)rect{\n    //1. 数据准备;\n    if (!selfView || !targetView) {\n        return;\n    }\n    NSMutableArray *dics = [[NSMutableArray alloc] init];\n    NSMutableArray *views = [targetView subViews_AllDeep];//subViews_AllDeepWithRect:rect];\n    views = [SMGUtils filterArr:views checkValid:^BOOL(UIView *item) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/CortexAlgorithms/Vision/AIVisionAlgs.m:1-34"
+    },
+    "2109": {
+        "file_id": 213,
+        "content": "This code implements a method in the AIVisionAlgs class to commit a new view with its target view and rect. It prepares data by checking if selfView and targetView are valid, and filters views under targetView using the SMGUtils filterArr function.",
+        "type": "comment"
+    },
+    "2110": {
+        "file_id": 213,
+        "content": "        return item.tag == visibleTag && item.alpha > 0;\n    }];\n    if (ARRISOK(views)) ISTitleLog(@\"感官算法\");\n    //2. 生成model\n    for (HEView *curView in views) {\n        BOOL curViewIsShow = curView.alpha > 0 && !curView.hidden;\n        if (curView.tag == visibleTag && curViewIsShow) {\n            AIVisionAlgsModel *model = [[AIVisionAlgsModel alloc] init];\n            //model.sizeWidth = [self sizeWidth:curView];\n            model.sizeHeight = [self sizeHeight:curView];\n            //model.colorRed = [self colorRed:curView];\n            //model.colorGreen = [self colorGreen:curView];\n            //model.colorBlue = [self colorBlue:curView];\n            //model.radius = [self radius:curView];\n            //model.speed = [self speed:curView];\n            model.direction = [self direction:selfView target:curView];\n            model.distance = [self distance:selfView target:curView];\n            //model.distanceX = [self distanceX:selfView target:curView];\n            //model.distanceY = [self distanceY:selfView target:curView];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/CortexAlgorithms/Vision/AIVisionAlgs.m:35-54"
+    },
+    "2111": {
+        "file_id": 213,
+        "content": "Code generates a model for each visible view with the specified tag and alpha greater than 0. It initializes an AIVisionAlgsModel instance and sets its properties such as sizeHeight, colorRed, colorGreen, colorBlue, radius, speed, direction, distance based on the current view (curView).",
+        "type": "comment"
+    },
+    "2112": {
+        "file_id": 213,
+        "content": "            model.border = [self border:curView];\n            //model.posX = [self posX:curView];\n            //model.posY = [self posY:curView];\n            //NSLog(@\"视觉目标 [距离:%ld 角度:%f 宽:%f 高:%f 皮:%f 圆角:%f]\",(long)model.distance,model.direction,model.sizeWidth,model.sizeHeight,model.border,model.radius);\n            NSLog(@\"视觉目标 [方向:%ld 距离:%ld 高:%ld 皮:%ld]\",model.direction,model.distance,model.sizeHeight,model.border);\n            NSMutableDictionary *modelDic = [NSObject getDic:model containParent:true];\n            //for (NSString *key in modelDic.allKeys) {\n            //    if ([NUMTOOK([modelDic objectForKey:key]) isEqualToNumber:@(0)]) {\n            //        [modelDic removeObjectForKey:key];\n            //    }\n            //}\n            [dics addObject:modelDic];\n        }\n    }\n    //3. 传给thinkingControl\n    [theTC commitInputWithModelsAsync:dics algsType:NSStringFromClass(self)];\n}\n//MARK:===============================================================\n//MARK:                     < 视觉算法 >\n//MARK:===============================================================",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/CortexAlgorithms/Vision/AIVisionAlgs.m:55-76"
+    },
+    "2113": {
+        "file_id": 213,
+        "content": "This code is part of a vision algorithm and it seems to be creating a model with properties like border, position, and distance. It then logs the model's direction, distance, height, and border information. The model dictionary is added to an array and passed as input to thinkingControl using commitInputWithModelsAsync method. The code also has comments for removing zero-valued keys from the model dictionary, but they are not being used in this version of the code.",
+        "type": "comment"
+    },
+    "2114": {
+        "file_id": 213,
+        "content": "//size\n+(NSInteger) sizeWidth:(UIView*)target{\n    if (target) return (int)target.showW;\n    return 0;\n}\n+(NSInteger) sizeHeight:(UIView*)target{\n    if (target) return (int)target.showH;\n    return 0;\n}\n//color\n+(NSInteger) colorRed:(UIView*)target{\n    if (target) return target.backgroundColor.red * 255.0f;\n    return 0;\n}\n+(NSInteger) colorGreen:(UIView*)target{\n    if (target){\n        return target.backgroundColor.green * 255.0f;\n    }\n    return 0;\n}\n+(NSInteger) colorBlue:(UIView*)target{\n    if (target) return target.backgroundColor.blue * 255.0f;\n    return 0;\n}\n//radius\n+(NSInteger) radius:(UIView*)target{\n    if (target) return (int)(target.layer.cornerRadius * 100);//精度100\n    return 0;\n}\n/**\n *  MARK:--------------------速度--------------------\n *  @desc 目前简单粗暴两桢差值 (随后有需要改用微积分)\n *  @version\n *      2020.07.07: 将主观速度,改为客观速度 (因为主观速度对识别略有影响,虽可克服,但懒得设计训练步骤,正好改成客观速度更符合今后的设计);\n *      2020.08.06: 将lastXY位置记录,加上initTime,因为ios的复用机制,会导致复用已销毁同内存地址的view (参考20151-BUG11);\n *      2021.09.14: 废弃速度,因为HE视觉是离散的,速度不重要 (参考24017-问题1);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/CortexAlgorithms/Vision/AIVisionAlgs.m:78-116"
+    },
+    "2115": {
+        "file_id": 213,
+        "content": "This code defines methods for obtaining the width, height, red, green, blue color values, and corner radius of a UIView. The speed computation has been deprecated as it is not necessary for HE vision, which is discrete in nature.",
+        "type": "comment"
+    },
+    "2116": {
+        "file_id": 213,
+        "content": " */\n//+(NSInteger) speed:(HEView*)target{\n//    //>> 主观速度代码;\n//    //CGFloat speed = 0;\n//    //CGPoint targetPoint = [UIView convertWorldPoint:target];\n//    //CGPoint selfPoint = [UIView convertWorldPoint:selfView];\n//    //CGFloat distanceX = (targetPoint.x - selfPoint.x);\n//    //CGFloat distanceY = (targetPoint.y - selfPoint.y);\n//    //CGFloat distance = sqrt(powf(distanceX, 2) + powf(distanceY, 2));\n//    //\n//    //NSString *key = STRFORMAT(@\"lastDistanceOf_%p_%p\",selfView,target);\n//    //NSObject *lastDistanceNum = [[XGRedis sharedInstance] objectForKey:key];\n//    //if (ISOK(lastDistanceNum, NSNumber.class)) {\n//    //    CGFloat lastDistance = [((NSNumber*)lastDistanceNum) floatValue];\n//    //    speed = distance - lastDistance;\n//    //}\n//    //[[XGRedis sharedInstance] setObject:[NSNumber numberWithFloat:distance] forKey:key time:cRTDefault];\n//    //return (NSInteger)speed;\n//\n//    //1. 当前位置\n//    CGFloat speed = 0;\n//    CGPoint targetPoint = [UIView convertWorldPoint:target];\n//    //2. 上帧位置",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/CortexAlgorithms/Vision/AIVisionAlgs.m:117-139"
+    },
+    "2117": {
+        "file_id": 213,
+        "content": "This function calculates the speed of a target view relative to the current view. It first converts both views' coordinates and then measures the distance between them. The last recorded distance is stored in Redis with the views as keys, and the new distance is subtracted from it to get the speed. Finally, the speed is returned.",
+        "type": "comment"
+    },
+    "2118": {
+        "file_id": 213,
+        "content": "//    NSString *lastXKey = STRFORMAT(@\"lastX_%p_%lld\",target,target.initTime);\n//    NSString *lastYKey = STRFORMAT(@\"lastY_%p_%lld\",target,target.initTime);\n//    NSObject *lastXObj = [[XGRedis sharedInstance] objectForKey:lastXKey];\n//    NSObject *lastYObj = [[XGRedis sharedInstance] objectForKey:lastYKey];\n//    if (ISOK(lastXObj, NSNumber.class) && ISOK(lastYObj, NSNumber.class)) {\n//        CGFloat lastX = [((NSNumber*)lastXObj) floatValue];\n//        CGFloat lastY = [((NSNumber*)lastYObj) floatValue];\n//\n//        //3. 计算位置差\n//        CGFloat distanceX = (targetPoint.x - lastX);\n//        CGFloat distanceY = (targetPoint.y - lastY);\n//        speed = sqrt(powf(distanceX, 2) + powf(distanceY, 2));\n//    }\n//\n//    //4. 存位置下帧用\n//    [[XGRedis sharedInstance] setObject:[NSNumber numberWithFloat:targetPoint.x] forKey:lastXKey time:cRTDefault];\n//    [[XGRedis sharedInstance] setObject:[NSNumber numberWithFloat:targetPoint.y] forKey:lastYKey time:cRTDefault];\n//\n//    //5. 返回结果 (保留整数位)\n//    return (NSInteger)speed;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/CortexAlgorithms/Vision/AIVisionAlgs.m:140-159"
+    },
+    "2119": {
+        "file_id": 213,
+        "content": "Calculates the distance between current and previous target points, stores the current point for future reference, and returns speed as an integer.",
+        "type": "comment"
+    },
+    "2120": {
+        "file_id": 213,
+        "content": "//}\n/**\n *  MARK:--------------------direction--------------------\n *  @version\n *      2023.03.13: 打开方向码 (参考28174-todo1);\n */\n+(NSInteger) direction:(UIView*)selfView target:(UIView*)target{\n    //1. 取距离\n    CGPoint distanceP = [UIView distancePoint:selfView target:target];\n    //2. 将距离转成角度-PI -> PI (从右至左,上面为-0 -> -3.14 / 从右至左,下面为0 -> 3.14)\n    CGFloat rads = atan2f(distanceP.y,distanceP.x);\n    //3. 将(-PI到PI) 转换成 (0到1)\n    float protoParam = (rads / M_PI + 1) / 2;\n    //4. 8向(0-1)版本: 返回8向:\n    ////4. 将(0到1)转成四舍五入整数(0-8);\n    //int paramInt = (int)roundf(protoParam * 8.0f);\n    //\n    ////5. 如果是8,也是0;\n    //return (paramInt % 8) / 8.0f;\n    //4. 360向(0-360)版本: 返回360向;\n    NSInteger result = (NSInteger)roundf(protoParam * 360.0f);\n    if (Log4CortexAlgs) NSLog(@\"视觉目标 方向角度:%.2f (%.2f) 返回:%ld\",rads / M_PI * 180,protoParam,result);\n    return result;\n}\n/**\n *  MARK:--------------------distance--------------------\n *  @version\n *      2021.05.07: 有时距离明明是0,但却吃不到 (小鸟是方的不是圆的,所以在距离判断上,与eat方法保持一致) (无笔记,怀疑是此处导致就改了);\n */\n+(NSInteger) distance:(UIView*)selfView target:(UIView*)target{",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/CortexAlgorithms/Vision/AIVisionAlgs.m:160-195"
+    },
+    "2121": {
+        "file_id": 213,
+        "content": "This code calculates the angle and distance between two UIView objects. The direction function takes in two views, calculates the angle in radians, converts it to a value between 0 and 1, and then returns an 8-directional angle (0-1) representing the angle from right to left or top to bottom. The distance function calculates the Euclidean distance between the two views and returns it as an NSInteger.",
+        "type": "comment"
+    },
+    "2122": {
+        "file_id": 213,
+        "content": "    CGPoint disPoint = [UIView distancePoint:selfView target:target];\n    CGFloat disFloat = sqrt(powf(disPoint.x, 2) + powf(disPoint.y, 2));\n    NSInteger distance = (NSInteger)(disFloat / 3.0f);\n    //与身体重叠,则距离为0;\n    if (fabs(disPoint.x) <= 15.0f && fabs(disPoint.y) <= 15.0f) {\n        distance = 0;\n    }\n    return distance;\n}\n/**\n *  MARK:--------------------distanceY--------------------\n *  @version\n *      2021.01.23: 改为返回真实距离 (什么距离可以被撞到,由反省类比自行学习);\n *      2021.01.24: 真实距离导致DisY在多向飞行的VRS评价容易为否,所以先停掉 (随时防撞训练时,需要再打开,因为多向飞行向上下飞,应该可以不怕此问题);\n *      2021.01.24: 经分析评价为否是因为很少经历多变的DisY,所以将直投到乌鸦身上的位置更随机些,此处又改为真实距离了 (经训练多向飞行ok);\n */\n+(NSInteger) distanceY:(UIView*)selfView target:(UIView*)target{\n    return selfView.showY - target.showY;\n    //1. 数据准备;\n    //CGFloat selfY = [UIView convertWorldRect:selfView].origin.y;\n    //CGFloat selfMaxY = selfY + selfView.height;\n    //CGFloat targetY = [UIView convertWorldRect:target].origin.y;\n    //CGFloat targetMaxY = targetY + target.height;\n    //\n    ////2. self在下方时;\n    //if (selfY > targetMaxY) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/CortexAlgorithms/Vision/AIVisionAlgs.m:196-222"
+    },
+    "2123": {
+        "file_id": 213,
+        "content": "This method calculates the distance between two UIViews and returns a real distance for collision detection. The previous implementation was changed several times, with comments explaining the changes in each version.",
+        "type": "comment"
+    },
+    "2124": {
+        "file_id": 213,
+        "content": "    //    return selfY - targetMaxY;\n    //}else if(targetY > selfMaxY){\n    //    //3. self在上方时;\n    //    return targetY - selfMaxY;\n    //}\n    ////4. 有重叠时,直接返回0;\n    //return 0;\n}\n+(NSInteger) distanceX:(UIView*)selfView target:(UIView*)target{\n    return selfView.showX - target.showX;\n}\n//border\n+(NSInteger) border:(UIView*)target{\n    if (target) return (int)(target.layer.borderWidth * 100);//精度100\n    return 0;\n}\n//posX\n+(NSInteger) posX:(UIView*)target{\n    if (target) return (NSInteger)[UIView convertWorldPoint:target].x;\n    return 0;\n}\n//posY\n+(NSInteger) posY:(UIView*)target{\n    if (target) return (NSInteger)[UIView convertWorldPoint:target].y;\n    return 0;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/CortexAlgorithms/Vision/AIVisionAlgs.m:223-253"
+    },
+    "2125": {
+        "file_id": 213,
+        "content": "This code defines several methods to calculate the distance between two UIViews, border width, and position X and Y. The distance calculation takes into account the positions of the views relative to each other, while the other methods directly retrieve the border width or position values from a single view.",
+        "type": "comment"
+    },
+    "2126": {
+        "file_id": 214,
+        "content": "/SMG_NothingIsAll/CortexAlgorithms/Vision/AIVisionAlgsModel.h",
+        "type": "filepath"
+    },
+    "2127": {
+        "file_id": 214,
+        "content": "This code updates the `AIVisionAlgsModel` class by modifying properties, removing distanceX and distanceY in favor of a single distance property, updating border, posX, and posY with notes on changes, and removing all objective features.",
+        "type": "summary"
+    },
+    "2128": {
+        "file_id": 214,
+        "content": "//\n//  AIVisionAlgsModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/11/19.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------视觉算法结果模型--------------------\n *  1. 用于输入到ThinkingControl;\n *  @version\n *      2021.09.14: 废弃速度,因为HE视觉是离散的,速度不重要 (参考24017-问题1);\n *      2022.06.04: 加上X距,废弃posX和方向 (参考26196-方案3);\n *      2022.06.05: 回退26196-方案3 (废弃X距,打开posX和方向) (参考26196-尝试1);\n *      2022.06.05: 太近时方向不稳定,所以废弃,改成X距 (参考26196-尝试3-结果);\n */\n@interface AIVisionAlgsModel : NSObject\n//size\n//@property (assign,nonatomic) NSInteger sizeWidth;\n@property (assign,nonatomic) NSInteger sizeHeight;\n//color\n//@property (assign,nonatomic) NSInteger colorRed;\n//@property (assign,nonatomic) NSInteger colorGreen;\n//@property (assign,nonatomic) NSInteger colorBlue;\n//radius\n//@property (assign,nonatomic) NSInteger radius;\n//speed\n//@property (assign,nonatomic) NSInteger speed;\n//direction\n@property (assign,nonatomic) NSInteger direction;\n//distance\n//20230308: 去掉距离 (因为与Y距X距重复);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/CortexAlgorithms/Vision/AIVisionAlgsModel.h:1-42"
+    },
+    "2129": {
+        "file_id": 214,
+        "content": "This code defines the `AIVisionAlgsModel` class, which represents a model for vision algorithms. The model includes properties such as size width and height, color values (red, green, blue), radius, speed, direction, and distance. The comments provide version history and updates on each property, including their introduction, removal, or changes.",
+        "type": "comment"
+    },
+    "2130": {
+        "file_id": 214,
+        "content": "//20230313: 用距离替代XY距 (参考28174-todo3);\n@property (assign,nonatomic) NSInteger distance;\n//@property (assign,nonatomic) NSInteger distanceX;\n//@property (assign,nonatomic) NSInteger distanceY;\n//border\n@property (assign,nonatomic) NSInteger border;\n//20190723: originX和originY由direction和distance替代;\n//20200317: 二测训练时,再打开,与distance共存,并更名为posX/Y;\n//20230308: 客观特征全去掉 (参考28161-方案5);\n//@property (assign,nonatomic) NSInteger posX;\n//@property (assign,nonatomic) NSInteger posY;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/CortexAlgorithms/Vision/AIVisionAlgsModel.h:43-57"
+    },
+    "2131": {
+        "file_id": 214,
+        "content": "This code is updating the properties of a class. It replaces the distanceX and distanceY with just the distance property. The border, posX, and posY properties are also being updated with notes on when they were last changed and how they relate to the distance property. Additionally, all objective features have been removed.",
+        "type": "comment"
+    },
+    "2132": {
+        "file_id": 215,
+        "content": "/SMG_NothingIsAll/CortexAlgorithms/Vision/AIVisionAlgsModel.m",
+        "type": "filepath"
+    },
+    "2133": {
+        "file_id": 215,
+        "content": "This code file AIVisionAlgsModel.m is part of the SMG_NothingIsAll project and contains an implementation class named AIVisionAlgsModel which inherits from \"AIVisionAlgsModel\". It was created on 2018/11/19 by XiaoGang, who also holds all rights to this code.",
+        "type": "summary"
+    },
+    "2134": {
+        "file_id": 215,
+        "content": "//\n//  AIVisionAlgsModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/11/19.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"AIVisionAlgsModel.h\"\n@implementation AIVisionAlgsModel\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/CortexAlgorithms/Vision/AIVisionAlgsModel.m:1-13"
+    },
+    "2135": {
+        "file_id": 215,
+        "content": "This code file AIVisionAlgsModel.m is part of the SMG_NothingIsAll project and contains an implementation class named AIVisionAlgsModel which inherits from \"AIVisionAlgsModel\". It was created on 2018/11/19 by XiaoGang, who also holds all rights to this code.",
+        "type": "comment"
+    },
+    "2136": {
+        "file_id": 216,
+        "content": "/SMG_NothingIsAll/Demo/Adapter/DemoCharge.h",
+        "type": "filepath"
+    },
+    "2137": {
+        "file_id": 216,
+        "content": "This header file defines the DemoCharge class, which is a subclass of NSObject. It has a commit method that takes a HungerState parameter and does not return anything.",
+        "type": "summary"
+    },
+    "2138": {
+        "file_id": 216,
+        "content": "//\n//  DemoCharge.h\n//  SMG_NothingIsAll\n//\n//  Created by 贾  on 2017/12/14.\n//  Copyright © 2017年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface DemoCharge : NSObject\n-(void) commit:(HungerState)state ;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Adapter/DemoCharge.h:1-15"
+    },
+    "2139": {
+        "file_id": 216,
+        "content": "This header file defines the DemoCharge class, which is a subclass of NSObject. It has a commit method that takes a HungerState parameter and does not return anything.",
+        "type": "comment"
+    },
+    "2140": {
+        "file_id": 217,
+        "content": "/SMG_NothingIsAll/Demo/Adapter/DemoCharge.m",
+        "type": "filepath"
+    },
+    "2141": {
+        "file_id": 217,
+        "content": "The code initializes a DemoCharge object, sets up battery monitoring using UIDevice and AIInput, and defines class methods including dealloc and commit.",
+        "type": "summary"
+    },
+    "2142": {
+        "file_id": 217,
+        "content": "//\n//  DemoCharge.m\n//  SMG_NothingIsAll\n//\n//  Created by 贾  on 2017/12/14.\n//  Copyright © 2017年 XiaoGang. All rights reserved.\n//\n#import \"DemoCharge.h\"\n#import \"AIInput.h\"\n@interface DemoCharge ()\n@end\n@implementation DemoCharge\n-(id) init{\n    self = [super init];\n    if (self) {\n        [self initRun];\n    }\n    return self;\n}\n-(void) initRun{\n    [UIDevice currentDevice].batteryMonitoringEnabled = YES;\n    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(observerHungerStateChanged) name:UIDeviceBatteryStateDidChangeNotification object:nil];\n}\n/**\n *  MARK:--------------------method--------------------\n */\n-(void) observerHungerStateChanged{\n    //2,传给Input\n    HungerState state;\n    if ([UIDevice currentDevice].batteryState == UIDeviceBatteryStateUnplugged) {//未充电\n        state = HungerState_Unplugged;\n    }else if ([UIDevice currentDevice].batteryState == UIDeviceBatteryStateCharging) {//充电中\n        state = HungerState_Charging;\n    }\n    [AIInput commitCustom:CustomInputType_Charge value:3];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Adapter/DemoCharge.m:1-43"
+    },
+    "2143": {
+        "file_id": 217,
+        "content": "This code initializes a DemoCharge object and sets up battery monitoring. It uses UIDevice to check the current battery state and notifies when it changes. The battery state is then passed to AIInput with HungerState as the value.",
+        "type": "comment"
+    },
+    "2144": {
+        "file_id": 217,
+        "content": "}\n-(void) dealloc{\n    [[NSNotificationCenter defaultCenter] removeObserver:self];\n}\n-(void) commit:(HungerState)state {\n    //为方便调试:假设:充一下;加一格电;\n    [AIInput commitCustom:CustomInputType_Charge value:3];\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Adapter/DemoCharge.m:44-55"
+    },
+    "2145": {
+        "file_id": 217,
+        "content": "This code is defining a class and its methods. The \"dealloc\" method removes the observer, ensuring proper memory management. The \"commit\" method sends a custom command to the AIInput object, indicating it should charge with a value of 3. This could be for debugging purposes or other specific actions.",
+        "type": "comment"
+    },
+    "2146": {
+        "file_id": 218,
+        "content": "/SMG_NothingIsAll/Demo/Adapter/DemoHunger.h",
+        "type": "filepath"
+    },
+    "2147": {
+        "file_id": 218,
+        "content": "Header file for DemoHunger class, defines commit method with level and state parameters.",
+        "type": "summary"
+    },
+    "2148": {
+        "file_id": 218,
+        "content": "//\n//  DemoHunger.h\n//  SMG_NothingIsAll\n//\n//  Created by 贾  on 2017/12/14.\n//  Copyright © 2017年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------Mind元:饥饿--------------------\n */\n@interface DemoHunger : NSObject\n-(void) commit:(CGFloat)level state:(UIDeviceBatteryState)state;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Adapter/DemoHunger.h:1-18"
+    },
+    "2149": {
+        "file_id": 218,
+        "content": "Header file for DemoHunger class, defines commit method with level and state parameters.",
+        "type": "comment"
+    },
+    "2150": {
+        "file_id": 219,
+        "content": "/SMG_NothingIsAll/Demo/Adapter/DemoHunger.m",
+        "type": "filepath"
+    },
+    "2151": {
+        "file_id": 219,
+        "content": "This code initializes and monitors battery levels, converting them to hunger levels, and calculates values for further AI processing.",
+        "type": "summary"
+    },
+    "2152": {
+        "file_id": 219,
+        "content": "//\n//  DemoHunger.m\n//  SMG_NothingIsAll\n//\n//  Created by 贾  on 2017/12/14.\n//  Copyright © 2017年 XiaoGang. All rights reserved.\n//\n#import \"DemoHunger.h\"\n@interface DemoHunger ()\n@end\n@implementation DemoHunger\n-(id) init{\n    self = [super init];\n    if (self) {\n        [self initRun];\n    }\n    return self;\n}\n-(void) initRun{\n    [UIDevice currentDevice].batteryMonitoringEnabled = YES;\n    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(observerHungerLevelChanged:) name:UIDeviceBatteryLevelDidChangeNotification object:nil];\n}\n/**\n *  MARK:--------------------method--------------------\n */\n-(void) observerHungerLevelChanged:(NSNotification*)notification{\n    [self commit:[UIDevice currentDevice].batteryLevel state:[UIDevice currentDevice].batteryState];\n}\n-(void) commit:(CGFloat)level state:(UIDeviceBatteryState)state{\n    //1,电量取值\n    CGFloat toLevel = MIN(1, MAX(0, level));\n    CGFloat fromLevel = state == UIDeviceBatteryStateCharging ? toLevel - 0.1f : toLevel + 0.1f;\n    //2. 转换为0-10的饥饿度;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Adapter/DemoHunger.m:1-42"
+    },
+    "2153": {
+        "file_id": 219,
+        "content": "This code initializes and monitors the battery level of a device, converting it to a hunger level between 0 and 10. It sets up the battery monitoring and adds an observer for battery level changes. The observer method commits the current battery level and state, adjusting the battery level based on charging status before transforming it into a hunger level.",
+        "type": "comment"
+    },
+    "2154": {
+        "file_id": 219,
+        "content": "    CGFloat from = [MathUtils getZero2TenWithOriRange:UIFloatRangeMake(0, 1) oriValue:1 - fromLevel];\n    CGFloat to = [MathUtils getZero2TenWithOriRange:UIFloatRangeMake(0, 1) oriValue:1 - toLevel];\n    //3. 传给Input\n    [AIInput commitIMV:MVType_Hunger from:from to:to];\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Adapter/DemoHunger.m:43-50"
+    },
+    "2155": {
+        "file_id": 219,
+        "content": "This code calculates two values between 0 and 1 based on the input parameters \"fromLevel\" and \"toLevel\". These values are then passed to the \"AIInput\" function for further processing.",
+        "type": "comment"
+    },
+    "2156": {
+        "file_id": 220,
+        "content": "/SMG_NothingIsAll/Demo/BirdGrowPage/BirdGrowPage.h",
+        "type": "filepath"
+    },
+    "2157": {
+        "file_id": 220,
+        "content": "This code is the header file of BirdGrowPage class, which inherits from HEViewController. It declares a property 'birdBirthPos' of type CGPoint, representing the birth position of a bird in the view controller.",
+        "type": "summary"
+    },
+    "2158": {
+        "file_id": 220,
+        "content": "//\n//  BirdGrowPage.h\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/11/13.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"HEViewController.h\"\n@interface BirdGrowPage : HEViewController\n@property (assign, nonatomic) CGPoint birdBirthPos;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/BirdGrowPage/BirdGrowPage.h:1-15"
+    },
+    "2159": {
+        "file_id": 220,
+        "content": "This code is the header file of BirdGrowPage class, which inherits from HEViewController. It declares a property 'birdBirthPos' of type CGPoint, representing the birth position of a bird in the view controller.",
+        "type": "comment"
+    },
+    "2160": {
+        "file_id": 221,
+        "content": "/SMG_NothingIsAll/Demo/BirdGrowPage/BirdGrowPage.m",
+        "type": "filepath"
+    },
+    "2161": {
+        "file_id": 221,
+        "content": "The BirdGrowPage class manages bird actions, view initialization, food interaction, state updates, training exercises, and user input-controlled movement. It includes wood-throwing, bird detection, button handling, animation events, progress tracking, collision detection, message logging, and bird-fruit interactions in the game implementation.",
+        "type": "summary"
+    },
+    "2162": {
+        "file_id": 221,
+        "content": "//\n//  BirdGrowPage.m\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/11/13.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"BirdGrowPage.h\"\n#import \"BirdView.h\"\n#import \"FoodView.h\"\n#import \"UIView+Extension.h\"\n#import \"DemoHunger.h\"\n#import \"NVViewUtil.h\"\n#import \"WoodView.h\"\n#import \"HitItemModel.h\"\n@interface BirdGrowPage ()<UIGestureRecognizerDelegate,BirdViewDelegate,WoodViewDelegate>\n@property (strong,nonatomic) BirdView *birdView;\n@property (strong,nonatomic) UITapGestureRecognizer *singleTap;\n@property (strong,nonatomic) UITapGestureRecognizer *doubleTap;\n@property (strong,nonatomic) UITapGestureRecognizer *threeTap;\n@property (weak, nonatomic) IBOutlet UIView *farView;\n@property (weak, nonatomic) IBOutlet UIView *borderView;\n@property (weak, nonatomic) IBOutlet UIButton *throwWoodBtn;\n@property (strong, nonatomic) WoodView *woodView;\n@property (assign, nonatomic) BOOL waitHiting; //碰撞检测中 (当扔木棒中时,做碰撞检测);\n@property (assign, nonatomic) BOOL isHited; //检测撞到了;\n@property (strong, nonatomic) HitItemModel *lastHitModel;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/BirdGrowPage/BirdGrowPage.m:1-31"
+    },
+    "2163": {
+        "file_id": 221,
+        "content": "This code is for the \"BirdGrowPage\" class in a project called \"SMG_NothingIsAll\". It imports several other files and declares properties such as birdView, tap gesture recognizers, UI views, and a WoodView. It also sets up properties like waitHiting, isHited, and lastHitModel for interaction with the user interface.",
+        "type": "comment"
+    },
+    "2164": {
+        "file_id": 221,
+        "content": "@property (assign, nonatomic) CGRect lastWoodFrame;//用于木棒食物碰撞检测\n@end\n@implementation BirdGrowPage\n-(void) initView{\n    [super initView];\n    //1. self\n    self.title = @\"小鸟成长演示\";\n    //2. birdView\n    self.birdView = [[BirdView alloc] init];\n    [self.view addSubview:self.birdView];\n    [self.birdView setCenter:[self getBirdBirthPos]];\n    self.birdView.delegate = self;\n    self.birdView.userInteractionEnabled = false;\n    //3. threeTap\n    self.threeTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(threeTap:)];\n    self.threeTap.numberOfTapsRequired = 3;\n    self.threeTap.numberOfTouchesRequired = 1;\n    self.threeTap.delegate = self;\n    //3. doubleTap\n    self.doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(doubleTap:)];\n    self.doubleTap.numberOfTapsRequired = 2;\n    self.doubleTap.numberOfTouchesRequired = 1;\n    self.doubleTap.delegate = self;\n    [self.doubleTap requireGestureRecognizerToFail:self.threeTap];\n    //4. singleTap\n    self.singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTap:)];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/BirdGrowPage/BirdGrowPage.m:32-64"
+    },
+    "2165": {
+        "file_id": 221,
+        "content": "This code initializes the view, sets title, creates birdView as a subview, positions and assigns delegate to it, and sets up tap gesture recognizers for double-tap, single-tap, and triple-tap interactions. It also configures the number of taps and touches required, and specifies that the triple-tap should fail if not recognized first.",
+        "type": "comment"
+    },
+    "2166": {
+        "file_id": 221,
+        "content": "    self.singleTap.numberOfTapsRequired = 1;\n    self.singleTap.numberOfTouchesRequired  = 1;\n    self.singleTap.delegate = self;\n    [self.singleTap requireGestureRecognizerToFail:self.doubleTap];\n    [self.singleTap requireGestureRecognizerToFail:self.threeTap];\n    //4. farView\n    [self.farView addGestureRecognizer:self.singleTap];\n    //5. borderView\n    [self.borderView.layer setBorderColor:[UIColor grayColor].CGColor];\n    [self.borderView addGestureRecognizer:self.singleTap];\n    [self.borderView addGestureRecognizer:self.doubleTap];\n    [self.borderView addGestureRecognizer:self.threeTap];\n    [self.borderView.layer setBorderWidth:20];\n    //6. woodView\n    self.woodView = [[WoodView alloc] init];\n    self.woodView.delegate = self;\n    [self.view addSubview:self.woodView];\n}\n-(void) initData{\n    [super initData];\n    [theRT regist:kFlySEL target:self selector:@selector(touchWingBlock:)];\n    [theRT regist:kWoodLeftSEL target:self selector:@selector(throwWood_Left)];\n    [theRT regist:kWoodRdmSEL target:self selector:@selector(throwWood_Rdm)];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/BirdGrowPage/BirdGrowPage.m:65-91"
+    },
+    "2167": {
+        "file_id": 221,
+        "content": "This code sets up gesture recognizers for different views, adds them to the views, and registers callbacks for events on a WoodView. It also initializes data and configures UI elements like border color and width.",
+        "type": "comment"
+    },
+    "2168": {
+        "file_id": 221,
+        "content": "    [theRT regist:kHungerSEL target:self selector:@selector(rtHungerBlock)];\n    [theRT regist:kFoodRdmSEL target:self selector:@selector(randomThrowFood4Screen:)];\n    [theRT regist:kFoodRdmNearSEL target:self selector:@selector(randomThrowFood4Near)];\n}\n-(void)viewWillDisappear:(BOOL)animated {\n    [super viewWillDisappear:animated];\n    self.birdView.waitEat = false;\n}\n//MARK:===============================================================\n//MARK:                     < onclick >\n//MARK:===============================================================\n/**\n *  MARK:--------------------直投--------------------\n *  @version\n *      2021.01.24: 使直投到乌鸦身上的坚果位置更随机些 (参考视觉DisY算法中20210124注释);\n */\n- (IBAction)nearFeedingBtnOnClick:(id)sender {\n    [theApp.heLogView addDemoLog:@\"直投\"];\n    DemoLog(@\"直投\")\n    FoodView *foodView = [[FoodView alloc] init];\n    [foodView hit];\n    [foodView setOrigin:CGPointMake(ScreenWidth * 0.375f, ScreenHeight - 66)];\n    [self.view addSubview:foodView];\n    CGFloat targetX = self.birdView.center.x + (arc4random() % 20 - 10);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/BirdGrowPage/BirdGrowPage.m:92-118"
+    },
+    "2169": {
+        "file_id": 221,
+        "content": "This code registers three selectors for bird actions and sets the waitEat flag to false when the view disappears. It also handles a \"nearFeedingBtnOnClick\" event by adding a new FoodView, setting its origin, and adding it to the current view. The food will land on the bird at a random x-coordinate.",
+        "type": "comment"
+    },
+    "2170": {
+        "file_id": 221,
+        "content": "    CGFloat targetY = self.birdView.center.y + (arc4random() % 20 - 10);\n    CGPoint targetPoint = CGPointMake(targetX, targetY);\n    [UIView animateWithDuration:0.3f animations:^{\n        [foodView setCenter:targetPoint];\n    }completion:^(BOOL finished) {\n        //0. 扔后判断能吃到哪些坚果;\n        self.birdView.hitFoods = [self birdView_GetFoodOnHit:self.birdView.frame birdEnd:self.birdView.frame status:FoodStatus_Eat];\n        //1. 吃前视觉\n        [self.birdView see:self.view];\n        //2. 触碰到鸟嘴;\n        [self.birdView touchMouth];\n    }];\n}\n//MARK:===============================================================\n//MARK:                     < method >\n//MARK:===============================================================\n/**\n *  MARK:--------------------随机屏内扔个坚果--------------------\n */\n-(void) randomThrowFood4Screen:(NSNumber*)statusNum {\n    //1. 数据准备;\n    int randomX = 20 + (arc4random() % (int)(ScreenWidth - 40));//屏内x为20到screenW-20;\n    int randomY = 84 + (arc4random() % (int)(ScreenHeight - 168));//屏内y为84到screenW-84;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/BirdGrowPage/BirdGrowPage.m:119-144"
+    },
+    "2171": {
+        "file_id": 221,
+        "content": "This code snippet is from the \"BirdGrowPage.m\" file in a mobile app, and it appears to be responsible for randomizing the position of food items on the screen by throwing them within the boundaries of the screen. It then proceeds to animate the food item's movement, check if the bird can eat it, update the visual before the bird eats it, and finally, make the bird interact with the thrown food.",
+        "type": "comment"
+    },
+    "2172": {
+        "file_id": 221,
+        "content": "    FoodStatus status = NUMTOOK(statusNum).intValue;\n    //2. 投食物\n    [self food2Pos:CGPointMake(randomX, randomY) caller4RL:kFoodRdmSEL status:status];\n}\n/**\n *  MARK:--------------------随机附近扔个坚果--------------------\n *  @desc 在鸟的八个方向,随机3飞距离内投个坚果;\n *          1. 不允许投在鸟身上;\n *          2. 投的位置要随机抖动一些,避免完全的直或斜;\n */\n-(void) randomThrowFood4Near {\n    //1. 数据准备;\n    int random = arc4random() % 8;\n    //2. 随机方向扔食物\n    [self food2Pos:[self convertDirection2FoodPos:random] caller4RL:kFoodRdmNearSEL status:FoodStatus_Eat];\n}\n/**\n *  MARK:--------------------坚果方向转成坚果坐标--------------------\n *  @version\n *      2023.06.16: 坚果扔近些 (参考30024-修复);\n */\n-(CGPoint) convertDirection2FoodPos:(int)direction {\n    //1. 数据准备;\n    CGPoint birdPos = self.birdView.center;\n    int ziDis = 15 + 8 + (arc4random() % 14);//直线时,距离为23 -> 37之间;\n    int xieDis = 15 + 8 + (arc4random() % 5);//斜线时,距离为23 -> 28之间;\n    int douDon1 = (arc4random() % 6) - 3;//抖动距离正负3;\n    int douDon2 = (arc4random() % 6) - 3;//抖动距离正负3;\n    //2. 随机方向扔食物\n    if (direction == 0) return CGPointMake(birdPos.x - ziDis + douDon1, birdPos.y + douDon2);//左",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/BirdGrowPage/BirdGrowPage.m:145-179"
+    },
+    "2173": {
+        "file_id": 221,
+        "content": "This code defines several methods for handling food-related actions in a game. It converts a direction into a food position, randomly throws food near the bird, and handles different types of food statuses. The code also includes randomization logic to avoid throwing food directly at the bird and to introduce slight variations in the thrown food's position.",
+        "type": "comment"
+    },
+    "2174": {
+        "file_id": 221,
+        "content": "    else if (direction == 1) return CGPointMake(birdPos.x - xieDis + douDon1, birdPos.y - xieDis + douDon2);//左上\n    else if (direction == 2) return CGPointMake(birdPos.x + douDon1, birdPos.y - ziDis + douDon2);//上\n    else if (direction == 3) return CGPointMake(birdPos.x + xieDis + douDon1, birdPos.y - xieDis + douDon2);\n    else if (direction == 4) return CGPointMake(birdPos.x + ziDis + douDon1, birdPos.y + douDon2);\n    else if (direction == 5) return CGPointMake(birdPos.x + xieDis + douDon1, birdPos.y + xieDis + douDon2);\n    else if (direction == 6) return CGPointMake(birdPos.x + douDon1, birdPos.y + ziDis + douDon2);\n    else if (direction == 7) return CGPointMake(birdPos.x - xieDis + douDon1, birdPos.y + xieDis + douDon2);\n    return birdPos;\n}\n//单击投食\n- (void)singleTap:(UITapGestureRecognizer *)tapRecognizer{\n    [self clickTap4Food_General:tapRecognizer status:FoodStatus_Eat];\n}\n//因点击而投食\n- (void)clickTap4Food_General:(UITapGestureRecognizer *)tapRecognizer status:(FoodStatus)status{\n    //1. 计算距离和角度",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/BirdGrowPage/BirdGrowPage.m:180-197"
+    },
+    "2175": {
+        "file_id": 221,
+        "content": "This code calculates the position for a bird based on different directions and returns it. It is part of a method that handles single taps to feed the bird, which then calls another method to handle the feeding action with specific status. The methods involve calculating distance and angle.",
+        "type": "comment"
+    },
+    "2176": {
+        "file_id": 221,
+        "content": "    UIView *tapView = tapRecognizer.view;\n    CGPoint point = [tapRecognizer locationInView:tapView];                 //点击坐标\n    CGPoint targetPoint = CGPointZero;\n    ISTitleLog(@\"现实世界\");\n    //2. 远投按键,计算映射坐标;\n    if ([self.farView isEqual:tapView]) {\n        CGFloat xRate = point.x / tapView.width;\n        CGFloat yRate = point.y / tapView.height;\n        CGFloat targetX = 30 + (ScreenWidth - 60) * xRate;\n        CGFloat targetY = 94 + (ScreenHeight - 60 - 128) * yRate;\n        targetPoint = CGPointMake(targetX, targetY);\n    }else if([self.borderView isEqual:tapView]){\n        //3. 全屏触摸_计算触摸点世界坐标 (self.view本来就是全屏,所以不用转换坐标);\n        targetPoint = [tapView convertPoint:point toView:theApp.window];   //点击世界坐标\n    }\n    //4. 投食 & 打日志;\n    if (targetPoint.x != 0 && targetPoint.y != 0) {\n        DemoLog(@\"远投 (X:%.2f Y:%.2f)\",targetPoint.x,targetPoint.y);\n        [theApp.heLogView addDemoLog:STRFORMAT(@\"远投 (X:%.2f Y:%.2f)\",targetPoint.x,targetPoint.y)];\n        [self food2Pos:targetPoint caller4RL:nil status:status];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/BirdGrowPage/BirdGrowPage.m:198-219"
+    },
+    "2177": {
+        "file_id": 221,
+        "content": "This code handles tap gestures and calculates the corresponding 2D target point in the world coordinates based on the tap location. It differentiates between taps on \"farView\" and \"borderView\", and logs the result. If the target point is not (0, 0), it calls a method to position the food accordingly.",
+        "type": "comment"
+    },
+    "2178": {
+        "file_id": 221,
+        "content": "    }\n}\n//双击投带皮坚果\n- (void)doubleTap:(UITapGestureRecognizer *)tapRecognizer{\n    [self clickTap4Food_General:tapRecognizer status:FoodStatus_Border];\n}\n//三击飞行\n- (void)threeTap:(UITapGestureRecognizer *)tapRecognizer{\n    //1. 计算距离和角度\n    UIView *tapView = tapRecognizer.view;\n    CGPoint point = [tapRecognizer locationInView:tapView];                 //点击坐标\n    CGPoint tapPoint = [tapView convertPoint:point toView:theApp.window];   //点击世界坐标\n    CGPoint birdPoint = [self.birdView.superview convertPoint:self.birdView.center toView:theApp.window];//鸟世界坐标\n    CGFloat angle = [NVViewUtil angleZero2OnePoint:birdPoint second:tapPoint];\n    //2. 飞行\n    angle = [NVViewUtil convertAngle2Direction_8:angle];\n    int direction = (int)(angle * 8.0f);\n    [self.birdView touchWing:direction];\n}\n- (IBAction)foodLeftOnClick:(id)sender {\n    [self animationFlash:sender];\n    DemoLog(@\"远投-左\");\n    [self food2Pos:[self convertDirection2FoodPos:0] caller4RL:nil status:FoodStatus_Eat];\n}\n- (IBAction)foodLeftUpOnClick:(id)sender {\n    [self animationFlash:sender];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/BirdGrowPage/BirdGrowPage.m:220-249"
+    },
+    "2179": {
+        "file_id": 221,
+        "content": "1. Double tap triggers a method to click the food border.\n2. Three taps initiate flight based on distance, angle, and direction.\n3. Left food button animation flashes and calls \"food2Pos\" for left food position.",
+        "type": "comment"
+    },
+    "2180": {
+        "file_id": 221,
+        "content": "    DemoLog(@\"远投-左上\");\n    [self food2Pos:[self convertDirection2FoodPos:1] caller4RL:nil status:FoodStatus_Eat];\n}\n- (IBAction)foodUpOnClick:(id)sender {\n    [self animationFlash:sender];\n    DemoLog(@\"远投-上\");\n    [self food2Pos:[self convertDirection2FoodPos:2] caller4RL:nil status:FoodStatus_Eat];\n}\n- (IBAction)foodRightUpOnClick:(id)sender {\n    [self animationFlash:sender];\n    DemoLog(@\"远投-右上\");\n    [self food2Pos:[self convertDirection2FoodPos:3] caller4RL:nil status:FoodStatus_Eat];\n}\n- (IBAction)foodRightOnClick:(id)sender {\n    [self animationFlash:sender];\n    DemoLog(@\"远投-右\");\n    [self food2Pos:[self convertDirection2FoodPos:4] caller4RL:nil status:FoodStatus_Eat];\n}\n- (IBAction)foodRightDownOnClick:(id)sender {\n    [self animationFlash:sender];\n    DemoLog(@\"远投-右下\");\n    [self food2Pos:[self convertDirection2FoodPos:5] caller4RL:nil status:FoodStatus_Eat];\n}\n- (IBAction)foodDownOnClick:(id)sender {\n    [self animationFlash:sender];\n    DemoLog(@\"远投-下\");\n    [self food2Pos:[self convertDirection2FoodPos:6] caller4RL:nil status:FoodStatus_Eat];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/BirdGrowPage/BirdGrowPage.m:250-276"
+    },
+    "2181": {
+        "file_id": 221,
+        "content": "This code contains multiple IBAction methods that handle food positioning based on different button clicks. When a specific button is clicked, the animationFlash method is called and a DemoLog message with a specific direction is logged. The corresponding food2Pos method is then invoked with the converted food position and the status set to FoodStatus_Eat.",
+        "type": "comment"
+    },
+    "2182": {
+        "file_id": 221,
+        "content": "}\n- (IBAction)foodLeftDownOnClick:(id)sender {\n    [self animationFlash:sender];\n    DemoLog(@\"远投-左下\");\n    [self food2Pos:[self convertDirection2FoodPos:7] caller4RL:nil status:FoodStatus_Eat];\n}\n/**\n *  MARK:--------------------饥饿是连续的mv输入 (参考28171-todo2)--------------------\n *  @version\n *      2023.06.16: 更饿间隔由5调长成8 (参考30024-修复);\n *      2023.06.26: 支持持续饿感 (参考30042-todo1);\n *      2023.06.26: 支持饿后视觉 (参考30042-todo2);\n */\n- (IBAction)hungerBtnOnClick:(id)sender {\n    ISTitleLog(@\"感官输入\");\n    //DemoLog(@\"马上饿onClick\");\n    //[theApp.heLogView addDemoLog:@\"马上饿onClick\"];\n    //2. 触发饿感 (手动的执行999轮)\n    self.birdView.waitEat = true;\n    [self hungerSingle:999];\n}\n- (void) rtHungerBlock {\n    ISTitleLog(@\"感官输入\");\n    //2. 触发饿感 (强训仅执行3轮)\n    self.birdView.waitEat = true;\n    [self hungerSingle:3];\n    //3. 强训工具需要等待第2次更饿后,才能继续训练下轮;\n    [theRT appendPauseNames:@[kMainPageSEL]];\n    //4. 报强训结束标记;\n    [theRT invoked:kHungerSEL];\n}\n-(void) hungerSingle:(int)invokedCount {\n    //0. 数据准备;\n    if (!self.birdView.waitEat) {\n        [theRT clearPauseNames];//吃上坚果后,就不等待持续饿循环了;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/BirdGrowPage/BirdGrowPage.m:277-318"
+    },
+    "2183": {
+        "file_id": 221,
+        "content": "This code handles inputs for hunger and food, triggering the bird to eat. It updates the bird's state based on the input and can be used for both manual feeding and strong training exercises. The code also includes functions for continuous hunger inputs, waiting for the right moment to continue training, and clearing pause names when the bird has eaten a hard nut.",
+        "type": "comment"
+    },
+    "2184": {
+        "file_id": 221,
+        "content": "        return;\n    }\n    //1. 先感觉到饿: 从0.7饿到0.6 (按0.6计算得迫切度为16);\n    [[[DemoHunger alloc] init] commit:0.6 state:UIDeviceBatteryStateUnplugged];\n    NSLog(@\"触发饿感:%d\",invokedCount);\n    //2. 执行计数 (执行完后,强训工具继续);\n    invokedCount--;\n    if (invokedCount <= 0) {\n        [theRT clearPauseNames];\n        return;\n    }\n    //3. 五秒后更饿: 从0.6饿到0.5 (按0.5计算得迫切度为25);\n    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(8 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{\n        [self hungerSingle:invokedCount];\n    });\n    //4. 饿后视觉 (参考30042-todo2);\n    [self.birdView see:self.view];\n}\n- (IBAction)touchWingBtnOnClick:(id)sender {\n    [self touchWingBlock:nil];\n}\n- (void)touchWingBlock:(NSNumber*)direction {\n    ISTitleLog(@\"现实世界\");\n    DemoLog(@\"摸翅膀onClick\");\n    [theApp.heLogView addDemoLog:@\"摸翅膀onClick\"];\n    //1. 计算random\n    long random = 0;\n    if ([self birdLeftOut]) {\n        //2. 左屏外,仅向3,4,5飞;\n        random = arc4random() % 3 + 3;\n    }else if([self birdRightOut]){\n        //3. 右屏外,仅向7,0,1飞;\n        random = ((arc4random() % 3) + 7) % 8;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/BirdGrowPage/BirdGrowPage.m:319-357"
+    },
+    "2185": {
+        "file_id": 221,
+        "content": "Bird grows hungry and triggers hunger state; countdown executed, pause names cleared. Bird view shows after five seconds; touch wing button performs touchWingBlock action. Calculates random number to determine which direction the bird flies in if it is outside of screen boundaries.",
+        "type": "comment"
+    },
+    "2186": {
+        "file_id": 221,
+        "content": "    }else if([self birdTopOut]) {\n        //4. 上屏外,仅向5,6,7飞;\n        random = arc4random() % 3 + 5;\n    }else if([self birdBottomOut]){\n        //5. 下屏外,仅向1,2,3飞;\n        random = arc4random() % 3 + 1;\n    }else {\n        //6. 屏中,任意方向;\n        random = arc4random() % 8;\n    }\n    //7. 指定方向参数时;\n    if (direction) {\n        random = NUMTOOK(direction).longValue;\n        NSLog(@\"强训fly >> %@\",[NVHeUtil getLightStr_Value:random / 8.0f algsType:FLY_RDS dataSource:@\"\"]);\n    }\n    [self.birdView touchWing:random];\n}\n- (IBAction)touchWingLeftOnClick:(id)sender {\n    [self animationFlash:sender];\n    DemoLog(@\"摸翅膀onClick-左\");\n    [self.birdView touchWing:0];\n}\n- (IBAction)touchWingLeftUpOnClick:(id)sender {\n    [self animationFlash:sender];\n    DemoLog(@\"摸翅膀onClick-左上\");\n    [self.birdView touchWing:1];\n}\n- (IBAction)touchWingUpOnClick:(id)sender {\n    [self animationFlash:sender];\n    DemoLog(@\"摸翅膀onClick-上\");\n    [self.birdView touchWing:2];\n}\n- (IBAction)touchWingRightUpOnClick:(id)sender {\n    [self animationFlash:sender];\n    DemoLog(@\"摸翅膀onClick-右上\");",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/BirdGrowPage/BirdGrowPage.m:358-393"
+    },
+    "2187": {
+        "file_id": 221,
+        "content": "This code determines the bird's movement direction based on its position and user input. If the bird is outside the screen, it will fly towards a specific direction. If the bird is inside the screen, it can fly in any direction. The touchWing methods handle the left/right/up wing clicks and trigger corresponding animations.",
+        "type": "comment"
+    },
+    "2188": {
+        "file_id": 221,
+        "content": "    [self.birdView touchWing:3];\n}\n- (IBAction)touchWingRightOnClick:(id)sender {\n    [self animationFlash:sender];\n    DemoLog(@\"摸翅膀onClick-右\");\n    [self.birdView touchWing:4];\n}\n- (IBAction)touchWingRightDownOnClick:(id)sender {\n    [self animationFlash:sender];\n    DemoLog(@\"摸翅膀onClick-右下\");\n    [self.birdView touchWing:5];\n}\n- (IBAction)touchWingDownOnClick:(id)sender {\n    [self animationFlash:sender];\n    DemoLog(@\"摸翅膀onClick-下\");\n    [self.birdView touchWing:6];\n}\n- (IBAction)touchWingLeftDownOnClick:(id)sender {\n    [self animationFlash:sender];\n    DemoLog(@\"摸翅膀onClick-左下\");\n    [self.birdView touchWing:7];\n}\n//MARK:===============================================================\n//MARK:                     < 摸脚按钮 >\n//MARK:===============================================================\n- (IBAction)touchFootBtnOnClick:(id)sender {\n    [self touchFootBlock:nil];\n}\n- (void)touchFootBlock:(NSNumber*)direction {\n    ISTitleLog(@\"现实世界\");\n    DemoLog(@\"摸脚onClick\");\n    //1. 计算random\n    long random = arc4random() % 8;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/BirdGrowPage/BirdGrowPage.m:394-428"
+    },
+    "2189": {
+        "file_id": 221,
+        "content": "This code includes various IBAction methods for handling bird wing touches and foot button clicks. When a wing is touched, it triggers an animation flash and calls the birdView's touchWing method with corresponding arguments. The touchFootBtnOnClick method handles the foot button click by calling the touchFootBlock method with a random direction number between 0-7.",
+        "type": "comment"
+    },
+    "2190": {
+        "file_id": 221,
+        "content": "    //7. 指定方向参数时;\n    if (direction) {\n        random = NUMTOOK(direction).longValue;\n        NSLog(@\"强训kick >> %@\",[NVHeUtil getLightStr_Value:random / 8.0f algsType:KICK_RDS dataSource:@\"\"]);\n    }\n    [self.birdView touchFoot:random];\n}\n- (IBAction)touchFootLeftOnClick:(id)sender {\n    [self animationFlash:sender];\n    DemoLog(@\"摸脚onClick-左\");\n    [self.birdView touchFoot:0];\n}\n- (IBAction)touchFootLeftUpOnClick:(id)sender {\n    [self animationFlash:sender];\n    DemoLog(@\"摸脚onClick-左上\");\n    [self.birdView touchFoot:1];\n}\n- (IBAction)touchFootUpOnClick:(id)sender {\n    [self animationFlash:sender];\n    DemoLog(@\"摸脚onClick-上\");\n    [self.birdView touchFoot:2];\n}\n- (IBAction)touchFootRightUpOnClick:(id)sender {\n    [self animationFlash:sender];\n    DemoLog(@\"摸脚onClick-右上\");\n    [self.birdView touchFoot:3];\n}\n- (IBAction)touchFootRightOnClick:(id)sender {\n    [self animationFlash:sender];\n    DemoLog(@\"摸脚onClick-右\");\n    [self.birdView touchFoot:4];\n}\n- (IBAction)touchFootRightDownOnClick:(id)sender {\n    [self animationFlash:sender];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/BirdGrowPage/BirdGrowPage.m:430-463"
+    },
+    "2191": {
+        "file_id": 221,
+        "content": "This code defines five IBAction methods that handle foot click events for different directions (left, up, right) with or without the direction parameter specified. The methods log event details and call a touchFoot method on the birdView object to update its state based on the direction parameter.",
+        "type": "comment"
+    },
+    "2192": {
+        "file_id": 221,
+        "content": "    DemoLog(@\"摸脚onClick-右下\");\n    [self.birdView touchFoot:5];\n}\n- (IBAction)touchFootDownOnClick:(id)sender {\n    [self animationFlash:sender];\n    DemoLog(@\"摸脚onClick-下\");\n    [self.birdView touchFoot:6];\n}\n- (IBAction)touchFootLeftDownOnClick:(id)sender {\n    [self animationFlash:sender];\n    DemoLog(@\"摸脚onClick-左下\");\n    [self.birdView touchFoot:7];\n}\n/**\n *  MARK:--------------------扔木棒--------------------\n *  @version\n *      2021.01.16: 用NSTimer替代after延时,因为after时间不准,总会推后150ms左右,而timer非常准时;\n *      2021.02.26: NSTimer改为SEL方式,因为block方式在模拟器运行闪退;\n *      2022.04.27: 将扔出木棒速度变慢 (参考25222);\n *      2022.06.04: 支持随机点扔出木棒 (参考26196-方案2);\n */\n- (IBAction)throwWoodOnClick:(id)sender {\n    [self throwWood_Left];\n}\n-(void) throwWood_Rdm{\n    int randomX = arc4random() % (int)ScreenWidth;\n    [self throwWood:randomX invoked:^{\n        [theRT invoked:kWoodRdmSEL];\n    }];\n}\n-(void) throwWood_Left{\n    [self throwWood:0 invoked:^{\n        [theRT invoked:kWoodLeftSEL];\n    }];\n}\n/**\n *  MARK:--------------------扔木棒--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/BirdGrowPage/BirdGrowPage.m:464-502"
+    },
+    "2193": {
+        "file_id": 221,
+        "content": "These methods handle different touch actions on a bird view and throw wood blocks. The code includes logic for flashing animation, logging events, and handling various touch types such as up, down, left down, and click. It also utilizes NSTimer for precise timing and supports randomized wood throwing.",
+        "type": "comment"
+    },
+    "2194": {
+        "file_id": 221,
+        "content": " *  @version\n *      xxxx.xx.xx: v1版本,分前后两段扔;\n *      2023.05.19: 迭代v2,改为用物理仿真碰撞检测,因为原来的二段式判断太简略且可能判错 (参考29096-问题2);\n *      2023.05.21: 废弃v2物理仿真: \"飞行卡循环,木棒扔不全\" (参考29097);\n *      2023.05.21: 迭代v3,将动画改为count个step来执行 (后测count越多,一顿一顿的,改成v4) (参考29097-新方案);\n *      2023.05.21: 迭代v4,碰撞检测交由setFrame来完成,step动画仅执行一轮 (参考29098-方案3-步骤1 & 步骤4);\n *      2023.06.02: 调慢扔的速度_因为v4,一次动画全跑完,有点太顺当,导致鸟经常来不急反应飞躲开,所以调慢,从5秒调整成8秒 (参考29109-测得1);\n */\n-(void) throwWood:(CGFloat)x invoked:(void(^)())invoked {\n    [self throwWoodV4:x invoked:invoked];\n}\n-(void) throwWoodV4:(CGFloat)x invoked:(void(^)())invoked{\n    //0. 鸟不在,则跳过;\n    if ([self birdOut]) {\n        invoked();\n        return;\n    }\n    //1. 复位木棒\n    [self.woodView reset:false x:x];\n    //2. 扔前木棒视觉帧\n    DemoLog(@\"木棒扔前视觉\");\n    [self.birdView see:self.woodView];\n    //3. 扔前数据准备\n    CGFloat allDistance = ScreenWidth - self.woodView.x; //动画扔多远;\n    CGFloat allTime = allDistance / ScreenWidth * ThrowTime; //动画总时长\n    DemoLog(@\"扔木棒 (时:%.2f 距:%.2f)\",allTime,allDistance);\n    self.waitHiting = true;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/BirdGrowPage/BirdGrowPage.m:503-533"
+    },
+    "2195": {
+        "file_id": 221,
+        "content": "This code implements a wood-throwing feature in a game, with a history of iterations for improved functionality. It first checks if the bird is not present and skips the throw if true. Then, it resets the wood view, shows the wood view to the bird, prepares data for the throwing animation, and sets a flag indicating that the wood is being thrown.",
+        "type": "comment"
+    },
+    "2196": {
+        "file_id": 221,
+        "content": "    //4. 扔出: step动画仅执行一轮 (参考29098-方案3-步骤4);\n    [self.woodView throwV5:x time:allTime distance:allDistance invoked:invoked];\n}\n- (IBAction)stopWoodBtnOnClick:(id)sender {\n    CGRect frame = [self.woodView showFrame];\n    [self.woodView.layer removeAllAnimations];\n    [self.woodView setFrame:frame];\n}\n- (IBAction)miniResetBtnClick:(id)sender {\n    [theTC clear];\n}\n- (IBAction)miniBackBtnClick:(id)sender {\n    [self.navigationController popToRootViewControllerAnimated:YES];\n}\n/**\n *  MARK:--------------------BirdViewDelegate--------------------\n */\n-(NSArray *)birdView_GetFoodOnHit:(CGRect)birdStart birdEnd:(CGRect)birdEnd status:(FoodStatus)status{\n    return [self runCheckHit4BirdFood:birdStart birdEnd:birdEnd status:status];\n}\n-(UIView*) birdView_GetPageView{\n    return self.view;\n}\n-(CGRect)birdView_GetSeeRect{\n    return CGRectMake(0, 64, ScreenWidth, ScreenHeight - 64 - 64);//naviBar和btmBtn\n}\n//2023.06.04: 废弃_将setFramed换成动画开始,二者是同时触发的,但setFramed有两个问题,1是无法传过来动画时间,2是它会触发两次;\n-(void)birdView_SetFramed {\n    //[self runCheckHit4WoodBird:@\"鸟位置变化\"];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/BirdGrowPage/BirdGrowPage.m:535-568"
+    },
+    "2197": {
+        "file_id": 221,
+        "content": "1. Method called when the stopWoodBtn is clicked, stops the woodView's step animation and resets its frame.\n2. Method called when the miniResetBtn is clicked, clears the theTC object.\n3. Method called when the miniBackBtn is clicked, pops back to the root view controller.\n4. Implements BirdViewDelegate methods: GetFoodOnHit, GetPageView, and GetSeeRect.\n5. BirdView_SetFramed method has been deprecated in favor of starting an animation.",
+        "type": "comment"
+    },
+    "2198": {
+        "file_id": 221,
+        "content": "}\n-(void)birdView_FlyAnimationFinish {\n    //[self runCheckHit4WoodBird:0 woodDuration:0 hiterDesc:@\"鸟飞结束\"];//动画执行完后,要调用下碰撞检测,因为UIView动画后不会立马更新frame (参考29098-追BUG1);\n}\n-(void) birdView_FlyAnimationBegin:(CGFloat)aniDuration {\n    //[self runCheckHit4WoodBird:aniDuration woodDuration:0 hiterDesc:@\"鸟飞开始\"];\n}\n/**\n *  MARK:--------------------WoodViewDelegate--------------------\n */\n//2023.06.04: 废弃_将setFramed换成动画开始,二者是同时触发的,但setFramed有两个问题,1是无法传过来动画时间,2是它会触发两次;\n-(void)woodView_SetFramed {\n    [self runCheckHit4WoodBird:0 woodDuration:0 hiterDesc:@\"棒扔位置变化\"];\n    [self runCheckHit4WoodFood];\n}\n-(void) woodView_WoodAnimationFinish {\n    [self runCheckHit4WoodBird:0 woodDuration:0 hiterDesc:@\"棒扔结束\"];//动画执行完后,要调用下碰撞检测,因为UIView动画后不会立马更新frame (参考29098-追BUG1);\n    self.waitHiting = false;//木棒动画结束时,同时碰撞检测也结束;\n}\n-(void) woodView_FlyAnimationBegin:(CGFloat)aniDuration {\n    //[self runCheckHit4WoodBird:0 woodDuration:aniDuration hiterDesc:@\"棒扔开始\"];\n}\n//MARK:===============================================================\n//MARK:                     < privateMethod >",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/BirdGrowPage/BirdGrowPage.m:569-599"
+    },
+    "2199": {
+        "file_id": 221,
+        "content": "These methods handle animation events related to flying birds and wooden sticks. The bird's fly animation begins and finishes are tracked, as well as the wooden stick's animation. Additionally, woodView delegate functions such as setFramed and woodAnimationFinish are defined. After an animation finishes, a check for hits is performed.",
+        "type": "comment"
+    }
+}

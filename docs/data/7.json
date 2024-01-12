@@ -1,0 +1,536 @@
+{
+    "700": {
+        "file_id": 70,
+        "content": "//\n//  AIFrontOrderNode.m\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/7/26.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"AIFrontOrderNode.h\"\n@implementation AIFrontOrderNode\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIFrontOrderNode.m:1-13"
+    },
+    "701": {
+        "file_id": 70,
+        "content": "AIFrontOrderNode.m is a part of the SMG_NothingIsAll codebase, where it declares and implements AIFrontOrderNode class.",
+        "type": "comment"
+    },
+    "702": {
+        "file_id": 71,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AINetAbsFoNode.h",
+        "type": "filepath"
+    },
+    "703": {
+        "file_id": 71,
+        "content": "This file, AINetAbsFoNode.h, defines a class called AINetAbsFoNode which is derived from the base class AIFoNodeBase in the SMG_NothingIsAll project. This class represents an abstract sequential node for network analysis.",
+        "type": "summary"
+    },
+    "704": {
+        "file_id": 71,
+        "content": "//\n//  AINetAbsFoNode.h\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/7/26.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------抽象时序节点--------------------\n */\n@interface AINetAbsFoNode : AIFoNodeBase\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AINetAbsFoNode.h:1-16"
+    },
+    "705": {
+        "file_id": 71,
+        "content": "This file, AINetAbsFoNode.h, defines a class called AINetAbsFoNode which is derived from the base class AIFoNodeBase in the SMG_NothingIsAll project. This class represents an abstract sequential node for network analysis.",
+        "type": "comment"
+    },
+    "706": {
+        "file_id": 72,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AINetAbsFoNode.m",
+        "type": "filepath"
+    },
+    "707": {
+        "file_id": 72,
+        "content": "This code file contains the implementation of AINetAbsFoNode class, which is part of SMG_NothingIsAll project and created on July 26, 2018 by iMac. All rights reserved to XiaoGang.",
+        "type": "summary"
+    },
+    "708": {
+        "file_id": 72,
+        "content": "//\n//  AINetAbsFoNode.m\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/7/26.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"AINetAbsFoNode.h\"\n@implementation AINetAbsFoNode\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AINetAbsFoNode.m:1-13"
+    },
+    "709": {
+        "file_id": 72,
+        "content": "This code file contains the implementation of AINetAbsFoNode class, which is part of SMG_NothingIsAll project and created on July 26, 2018 by iMac. All rights reserved to XiaoGang.",
+        "type": "comment"
+    },
+    "710": {
+        "file_id": 73,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AINodeBase.h",
+        "type": "filepath"
+    },
+    "711": {
+        "file_id": 73,
+        "content": "This code defines the AINodeBase class, a base class for nodes in a system with properties like pointers and ports, used for connecting nodes and organizing data flow. It also includes AIKVPointer class with content ports, pointer, and ID properties, along with accessor methods.",
+        "type": "summary"
+    },
+    "712": {
+        "file_id": 73,
+        "content": "//\n//  AINodeBase.h\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/9/26.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------节点基类--------------------\n *  1. 有指针地址;\n *  2. 可被抽象;\n *  @todo\n *      1. 需要将analogyType转为的ds,改为独立的type属性;\n *          > 比如GL类型的Alg节点,其at是稀疏码的皮层算法名(如size),但而ds则是analogyType转来,这导致皮层算法区名未被纳入(如AIVersionAlgs);\n *          > 如果有一天,视区和声区,都有一个叫\"size\"的算法,则会混乱;\n */\n@interface AINodeBase : NSObject <NSCoding>\n@property (strong, nonatomic) AIKVPointer *pointer;     //自身存储地址\n@property (strong, nonatomic) NSMutableArray *conPorts; //具象关联端口\n@property (strong, nonatomic) NSMutableArray *absPorts; //抽象方向的端口;\n/**\n *  MARK:--------------------组端口--------------------\n *  @desc : 组分关联的 \"组\";\n *  1. 用于fo: 在imv前发生的noMV的algs数据序列;(前因序列)(使用kvp而不是port的原因是cmvModel的强度不变:参考n12p16)\n *  2. 用于alg: 稀疏码微信息组;(微信息/嵌套概念)指针组 (以pointer默认排序) (去重,否则在局部识别全含时,判定content.count=matchingCount时会失效)\n *  @version\n *      2022.12.25: 将content_ps改成contentPorts (参考2722f-todo11);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AINodeBase.h:1-32"
+    },
+    "713": {
+        "file_id": 73,
+        "content": "This code is the header file of a class named AINodeBase. It serves as a base class for nodes in a system and includes properties such as pointer, concrete ports, and abstract ports. These ports are used for connecting nodes and organizing data flow. The comments provide additional context about the purpose of this node class and some planned changes or optimizations for the future.",
+        "type": "comment"
+    },
+    "714": {
+        "file_id": 73,
+        "content": " */\n@property (strong, nonatomic,nonnull) NSMutableArray *contentPorts;\n-(NSMutableArray *)content_ps;\n-(void) setContent_ps:(NSArray*)content_ps;\n-(void) setContent_ps:(NSArray*)content_ps getStrongBlock:(NSInteger(^)(AIKVPointer *item_p))getStrongBlock;\n/**\n *  MARK:--------------------返回content长度--------------------\n */\n-(NSInteger) count;\n-(AIKVPointer*) p;\n-(NSInteger) pId;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AINodeBase.h:33-46"
+    },
+    "715": {
+        "file_id": 73,
+        "content": "This code declares a class named AIKVPointer, which has properties for content ports, content length, a pointer, and its ID. It provides methods to access and set these properties, as well as a method to retrieve the strong block of an item.",
+        "type": "comment"
+    },
+    "716": {
+        "file_id": 74,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AINodeBase.m",
+        "type": "filepath"
+    },
+    "717": {
+        "file_id": 74,
+        "content": "The AINodeBase.m file contains the implementation of the AINodeBase class, responsible for managing ports and arrays in SMG_NothingIsAll. The class provides functions for connections, count, content_ps, and port initialization using getStrongBlock function. It also includes a pointer comparison method, implements NSCoding protocol, and adds copying of ports to avoid crashes on December 27th update.",
+        "type": "summary"
+    },
+    "718": {
+        "file_id": 74,
+        "content": "//\n//  AINodeBase.m\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/9/26.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"AINodeBase.h\"\n#import \"AIKVPointer.h\"\n@implementation AINodeBase\n-(NSMutableArray *)conPorts{\n    if (!ISOK(_conPorts, NSMutableArray.class)) _conPorts = [[NSMutableArray alloc] initWithArray:_conPorts];\n    return _conPorts;\n}\n-(NSMutableArray *)absPorts{\n    if (!ISOK(_absPorts, NSMutableArray.class)) _absPorts = [[NSMutableArray alloc] initWithArray:_absPorts];\n    return _absPorts;\n}\n-(NSMutableArray *)contentPorts{\n    if (_contentPorts == nil) _contentPorts = [[NSMutableArray alloc] init];\n    return _contentPorts;\n}\n//MARK:===============================================================\n//MARK:                     < publicMethod >\n//MARK:===============================================================\n-(NSInteger) count{\n    return self.content_ps.count;\n}\n-(NSMutableArray *)content_ps{\n    return [SMGUtils convertArr:self.contentPorts convertBlock:^id(AIPort *obj) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AINodeBase.m:1-37"
+    },
+    "719": {
+        "file_id": 74,
+        "content": "AINodeBase.m file contains implementation of AINodeBase class, which is a part of SMG_NothingIsAll project. The class provides methods for working with ports and port content arrays. Methods include `conPorts`, `absPorts`, and `contentPorts` to manage connections and absolute ports. The class also includes public methods such as `count` and `content_ps`.",
+        "type": "comment"
+    },
+    "720": {
+        "file_id": 74,
+        "content": "        return obj.target_p;\n    }];\n}\n-(void) setContent_ps:(NSArray*)content_ps {\n    [self setContent_ps:content_ps getStrongBlock:^NSInteger(AIKVPointer *item_p) {\n        return 1;\n    }];\n}\n-(AIKVPointer*) p {\n    return self.pointer;\n}\n-(NSInteger) pId {\n    return self.pointer.pointerId;\n}\n/**\n *  MARK:--------------------设置引用--------------------\n *  @version\n *      2023.04.15: BUG_此处header应该以alg元素为准;\n *      2023.06.18: 支持mvNode取content_ps为delta_p和urgent_p,避免nil生成header,导致分不清mv和空概念 (参考30026-修复);\n */\n-(void) setContent_ps:(NSArray*)content_ps getStrongBlock:(NSInteger(^)(AIKVPointer *item_p))getStrongBlock{\n    content_ps = ARRTOOK(content_ps);\n    self.contentPorts = [SMGUtils convertArr:content_ps convertBlock:^id(AIKVPointer *obj) {\n        //1. 数据准备: 求出header\n        AIAlgNodeBase *alg = [SMGUtils searchNode:obj];\n        NSArray *sortValue_ps = ARRTOOK([SMGUtils sortPointers:alg.content_ps]);\n        NSString *header = [NSString md5:[SMGUtils convertPointers2String:sortValue_ps]];\n        //2. 生成port",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AINodeBase.m:38-70"
+    },
+    "721": {
+        "file_id": 74,
+        "content": "This code sets the content_ps of an AIKVPointer object and assigns a getStrongBlock to be called when needed. It ensures that header is correctly calculated from sorted content pointers, and generates ports based on this information.",
+        "type": "comment"
+    },
+    "722": {
+        "file_id": 74,
+        "content": "        AIPort *port = [[AIPort alloc] init];\n        port.target_p = obj;\n        port.header = header;\n        port.strong.value = getStrongBlock(obj);\n        return port;\n    }];\n}\n//MARK:===============================================================\n//MARK:                     < privateMethod >\n//MARK:===============================================================\n-(BOOL)isEqual:(AINodeBase*)object{\n    return [self.pointer isEqual:object.pointer];\n}\n/**\n *  MARK:--------------------NSCoding--------------------\n */\n- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {\n    self = [super init];\n    if (self) {\n        self.pointer = [aDecoder decodeObjectForKey:@\"pointer\"];\n        self.conPorts = [aDecoder decodeObjectForKey:@\"conPorts\"];\n        self.absPorts = [aDecoder decodeObjectForKey:@\"absPorts\"];\n        self.contentPorts = [aDecoder decodeObjectForKey:@\"contentPorts\"];\n    }\n    return self;\n}\n/**\n *  MARK:--------------------序列化--------------------\n *  @bug\n *      2020.07.10: 最近老闪退,前段时间XGWedis异步存由10s改为2s,有UMeng看是这里闪的,打try也能捕获这里抛了异常,将ports加了copy试下,应该好了;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AINodeBase.m:71-104"
+    },
+    "723": {
+        "file_id": 74,
+        "content": "This code appears to be part of a class implementation for an AI node base. It initializes a port object and assigns target, header, and strong values using getStrongBlock function. The code also includes a private method that compares two AINodeBase objects based on their pointers. Additionally, the code implements NSCoding protocol methods for decoding and encoding instances of this class.",
+        "type": "comment"
+    },
+    "724": {
+        "file_id": 74,
+        "content": " *      2020.12.27: 老闪退,将ports加了copy应该就好了 (原来就有过类似问题,这次全局conPorts,absPorts和refPorts都加了copy);\n */\n- (void)encodeWithCoder:(NSCoder *)aCoder {\n    [aCoder encodeObject:self.pointer forKey:@\"pointer\"];\n    [aCoder encodeObject:[self.conPorts copy] forKey:@\"conPorts\"];\n    [aCoder encodeObject:[self.absPorts copy] forKey:@\"absPorts\"];\n    [aCoder encodeObject:[self.contentPorts copy] forKey:@\"contentPorts\"];\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AINodeBase.m:105-114"
+    },
+    "725": {
+        "file_id": 74,
+        "content": "This method encodes the object's properties using an NSCoder. The changes made on December 27th were to add copying of the ports to prevent crashes. The conPorts, absPorts, and refPorts arrays all have been copied to avoid potential issues.",
+        "type": "comment"
+    },
+    "726": {
+        "file_id": 75,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AIPointer/AIKVPointer.h",
+        "type": "filepath"
+    },
+    "727": {
+        "file_id": 75,
+        "content": "The `AIKVPointer` class inherits from `AIPointer`, defines properties for folder name, algorithm type, data source, isOut flag, and type, and provides methods to set/get these properties. It returns the file path based on a custom folder name.",
+        "type": "summary"
+    },
+    "728": {
+        "file_id": 75,
+        "content": "//\n//  AIKVPointer.h\n//  SMG_NothingIsAll\n//\n//  Created by 贾  on 2017/9/7.\n//  Copyright © 2017年 XiaoGang. All rights reserved.\n//\n#import \"AIPointer.h\"\n/**\n *  MARK:--------------------KV指针--------------------\n *  1. TODO: 将isOut去除,以大小脑网络区分微信息是否输出; (以广播标识符来标识canOut);\n *  2. isMemNet : 是否存到内存网络 (默认false,存硬盘)\n *  @version\n *      2021.09.17: 集成type (参考24018-线索2);\n */\n@interface AIKVPointer : AIPointer\n+(AIKVPointer*) newWithPointerId:(NSInteger)pointerId folderName:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut type:(AnalogyType)type;\n//MARK:===============================================================\n//MARK:                     < 单属性取值 >\n//MARK:===============================================================\n-(NSString*) folderName;    //神经网络根目录 | 索引根目录\n-(NSString*) algsType;      //算法类型_分区\n-(NSString*) dataSource;    //数据源(AIData的来源:如inputModel中的某属性targetType等)\n-(BOOL) isOut;              //是否outPointer(默认false);\n-(NSString*) typeStr;       //节点类型\n-(AnalogyType) type;        //节点类型",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIPointer/AIKVPointer.h:1-30"
+    },
+    "729": {
+        "file_id": 75,
+        "content": "This header file defines a class `AIKVPointer` that inherits from `AIPointer`. It has properties for folder name, algorithm type, data source, isOut flag, and type. The class also provides methods to set and get these properties.",
+        "type": "comment"
+    },
+    "730": {
+        "file_id": 75,
+        "content": "-(NSString*) filePath:(NSString*)customFolderName;  //取自定义folderName的filePath;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIPointer/AIKVPointer.h:31-33"
+    },
+    "731": {
+        "file_id": 75,
+        "content": "This method returns the file path based on a custom folder name.",
+        "type": "comment"
+    },
+    "732": {
+        "file_id": 76,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AIPointer/AIKVPointer.m",
+        "type": "filepath"
+    },
+    "733": {
+        "file_id": 76,
+        "content": "The code initializes an AIKVPointer object and defines a class with getter methods for file paths, identifiers, and properties based on input parameters. It formats a string using instance variables and includes single attribute getters.",
+        "type": "summary"
+    },
+    "734": {
+        "file_id": 76,
+        "content": "//\n//  AIKVPointer.m\n//  SMG_NothingIsAll\n//\n//  Created by 贾  on 2017/9/7.\n//  Copyright © 2017年 XiaoGang. All rights reserved.\n//\n#import \"AIKVPointer.h\"\n@implementation AIKVPointer\n+(AIKVPointer*) newWithPointerId:(NSInteger)pointerId folderName:(NSString*)folderName algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut type:(AnalogyType)type{\n    AIKVPointer *pointer = [[AIKVPointer alloc] init];\n    pointer.pointerId = pointerId;\n    [pointer.params setObject:STRTOOK(folderName) forKey:@\"folderName\"];\n    [pointer.params setObject:STRTOOK(algsType) forKey:@\"algsType\"];\n    [pointer.params setObject:STRTOOK(dataSource) forKey:@\"dataSource\"];\n    [pointer.params setObject:STRFORMAT(@\"%d\",isOut) forKey:@\"isOut\"];\n    [pointer.params setObject:STRFORMAT(@\"%ld\",(long)type) forKey:@\"type\"];\n    //自检;\n    [AITest test2:pointer type:type at:algsType ds:dataSource];\n    [AITest test3:pointer type:type ds:dataSource];\n    [AITest test4:pointer at:algsType isOut:isOut];\n    [AITest test5:pointer type:type at:algsType];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIPointer/AIKVPointer.m:1-26"
+    },
+    "735": {
+        "file_id": 76,
+        "content": "The code initializes an object of AIKVPointer class with a given pointerId, folderName, algsType, dataSource, and type. It also sets the corresponding parameters for the object, performs some self-checking tests, and assigns the object to its class method.",
+        "type": "comment"
+    },
+    "736": {
+        "file_id": 76,
+        "content": "    return pointer;\n}\n//MARK:===============================================================\n//MARK:                     < method >\n//MARK:===============================================================\n-(NSString*) filePath:(NSString*)customFolderName{\n    NSString *bakFolderName = [self.params objectForKey:@\"folderName\"];\n    [self.params setObject:STRTOOK(customFolderName) forKey:@\"folderName\"];\n    NSString *filePath = [self filePath];\n    [self.params setObject:STRTOOK(bakFolderName) forKey:@\"folderName\"];\n    return filePath;\n}\n-(NSString*) filePath{\n    NSString *pIdStr = STRFORMAT(@\"%ld\",self.pointerId);\n    NSString *cachePath = kCachePath;\n    NSMutableString *fileRootPath = [[NSMutableString alloc] initWithFormat:@\"%@/%@/%@/%@/%@/%d\",cachePath,self.folderName,self.typeStr,self.algsType,self.dataSource,self.isOut];\n    for (NSInteger j = 0; j < pIdStr.length; j++) {\n        [fileRootPath appendFormat:@\"/%@\",[pIdStr substringWithRange:NSMakeRange(j, 1)]];\n    }\n    return fileRootPath;\n}\n-(NSString*) identifier{",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIPointer/AIKVPointer.m:28-52"
+    },
+    "737": {
+        "file_id": 76,
+        "content": "The code snippet defines a class with methods for getting a file path and identifier based on certain parameters. The `filePath` method constructs the file path by combining different strings using formatters, while the `filePath:customFolderName` method allows setting a custom folder name. The `identifier` method returns an identifier string.",
+        "type": "comment"
+    },
+    "738": {
+        "file_id": 76,
+        "content": "    return STRFORMAT(@\"%@_%@_%@_%d\",self.typeStr,self.algsType,self.dataSource,self.isOut);\n}\n//MARK:===============================================================\n//MARK:                     < 单属性取值 >\n//MARK:===============================================================\n-(NSString*) folderName{\n    return [self.params objectForKey:@\"folderName\"];\n}\n-(NSString*) algsType{\n    return [self.params objectForKey:@\"algsType\"];\n}\n-(NSString*) dataSource{\n    return [self.params objectForKey:@\"dataSource\"];\n}\n-(BOOL) isOut{\n    return [STRTOOK([self.params objectForKey:@\"isOut\"]) boolValue];\n}\n-(NSString*) typeStr{\n    return ATType2Str(self.type);\n}\n-(AnalogyType) type{\n    return [STRTOOK([self.params objectForKey:@\"type\"]) intValue];\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIPointer/AIKVPointer.m:53-84"
+    },
+    "739": {
+        "file_id": 76,
+        "content": "This code appears to be a class definition that contains getter methods for several properties. The `return STRFORMAT` statement at line 52 likely formats a string based on four instance variables and returns it. The next section of the code (marked as \"单属性取值\") includes getter methods for folderName, algsType, dataSource, isOut, typeStr, and type properties, which return corresponding values from an instance variable called `self.params`.",
+        "type": "comment"
+    },
+    "740": {
+        "file_id": 77,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AIPointer/AIPointer.h",
+        "type": "filepath"
+    },
+    "741": {
+        "file_id": 77,
+        "content": "This code is defining a class called AIPointer which acts as a pointer to any item in a table. It has properties like pointerId, params and methods to retrieve filePath and identifier. The params property allows for partitioning the data for efficient binary search.",
+        "type": "summary"
+    },
+    "742": {
+        "file_id": 77,
+        "content": "//\n//  AIPointer.h\n//  SMG_NothingIsAll\n//\n//  Created by 贾  on 2017/5/20.\n//  Copyright © 2017年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------指针基类--------------------\n *  1. 可以指向任何表的任一项;\n *  2. 指针的字段,是为指针的使用者而设的;例如A有B的指针,则需要B指针描述B的确切位置;\n *  @version\n *      2022.10.09: 废弃isMem (参考27124-todo1);\n */\n@interface AIPointer : NSObject <NSCoding,NSCopying>\n@property (assign, nonatomic) NSInteger pointerId;          //指针地址(Id)\n@property (strong, nonatomic) NSMutableDictionary *params;  //用于分区(在二分查巨量队列,params越细分,越有利性能)\n-(NSString*) filePath;                                      //文件路径(可以是key,或者path,或者sql表和行号等)\n/**\n *  MARK:--------------------分区标识--------------------\n *  @组成: 一般由 \"algsType\" + \"dataSource/Source\" 组成;\n *  @result notnull\n */\n-(NSString*) identifier;\n-(id) paramForKey:(NSString*)key;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIPointer/AIPointer.h:1-32"
+    },
+    "743": {
+        "file_id": 77,
+        "content": "This code is defining a class called AIPointer which acts as a pointer to any item in a table. It has properties like pointerId, params and methods to retrieve filePath and identifier. The params property allows for partitioning the data for efficient binary search.",
+        "type": "comment"
+    },
+    "744": {
+        "file_id": 78,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AIPointer/AIPointer.m",
+        "type": "filepath"
+    },
+    "745": {
+        "file_id": 78,
+        "content": "The AIPointer class enables object comparison, parameter access/modification, and provides methods for file path and identifier retrieval. It conforms to NSCoding and NSCopying protocols for encoding, decoding, and copying capabilities.",
+        "type": "summary"
+    },
+    "746": {
+        "file_id": 78,
+        "content": "//\n//  AIPointer.m\n//  SMG_NothingIsAll\n//\n//  Created by 贾  on 2017/5/20.\n//  Copyright © 2017年 XiaoGang. All rights reserved.\n//\n#import \"AIPointer.h\"\n@implementation AIPointer\n/**\n *  MARK:--------------------public--------------------\n */\n-(BOOL) isEqual:(AIPointer*)object{//重写指针对比地址方法;\n    if (POINTERISOK(object)) {\n        //1. 对比\n        if (self.pointerId == object.pointerId && self.params.count == object.params.count) {\n            for (NSString *key in self.params.allKeys) {\n                BOOL itemEqual = STRTOOK([self.params objectForKey:key]).hash == STRTOOK([object.params objectForKey:key]).hash;\n                if (!itemEqual) {\n                    return false;//发现不同\n                }\n            }\n            return true;//未发现不同,全一样;\n        }\n    }\n    return false;\n}\n-(NSMutableDictionary *)params{\n    if (_params == nil) {\n        _params = [[NSMutableDictionary alloc] init];\n    }\n    return _params;\n}\n-(NSString*) filePath{\n    return STRFORMAT(@\"%@_%ld\",self.params,(long)self.pointerId);\n}\n-(NSString*) identifier{",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIPointer/AIPointer.m:1-43"
+    },
+    "747": {
+        "file_id": 78,
+        "content": "This code defines a class AIPointer with methods for object comparison, accessing and modifying parameters, and retrieving the file path and identifier. The isEqual method compares pointer IDs and parameter hashes to determine if two objects are equal.",
+        "type": "comment"
+    },
+    "748": {
+        "file_id": 78,
+        "content": "    return STRFORMAT(@\"%@\",self.params);\n}\n/**\n *  MARK:--------------------NSCoding--------------------\n */\n- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {\n    self = [super init];\n    if (self) {\n        self.pointerId = [aDecoder decodeIntegerForKey:@\"pointerId\"];\n        self.params = [aDecoder decodeObjectForKey:@\"params\"];\n    }\n    return self;\n}\n- (void)encodeWithCoder:(NSCoder *)aCoder {\n    [aCoder encodeInteger:self.pointerId forKey:@\"pointerId\"];\n    [aCoder encodeObject:self.params forKey:@\"params\"];\n}\n-(id) paramForKey:(NSString*)key{\n    return [DICTOOK(self.params) objectForKey:STRTOOK(key)];\n}\n/**\n *  MARK:--------------------NSCopying--------------------\n */\n- (id)copyWithZone:(NSZone __unused *)zone {\n    AIPointer *copy = [[AIPointer alloc] init];\n    copy.pointerId = self.pointerId;\n    copy.params = self.params;\n    return copy;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIPointer/AIPointer.m:44-78"
+    },
+    "749": {
+        "file_id": 78,
+        "content": "AIPointer class conforms to NSCoding and NSCopying protocols, allowing it to be encoded, decoded, and copied. It has an init method for initializing with a coder, encodeWithCoder for encoding its data, paramForKey for retrieving specific params by key, and copyWithZone for making copies of AIPointer objects.",
+        "type": "comment"
+    },
+    "750": {
+        "file_id": 79,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AIPointer/AISqlPointer.h",
+        "type": "filepath"
+    },
+    "751": {
+        "file_id": 79,
+        "content": "This code defines a class \"AISqlPointer\" that inherits from \"AIPointer\". It initializes the pointer with a given class and id, and includes two properties - pClass (string) for the pointer type and pId (integer) for the pointer address. The comments suggest it is used for managing database pointers in the SMG_NothingIsAll project.",
+        "type": "summary"
+    },
+    "752": {
+        "file_id": 79,
+        "content": "////\n////  AISqlPointer.h\n////  SMG_NothingIsAll\n////\n////  Created by 贾  on 2017/9/7.\n////  Copyright © 2017年 XiaoGang. All rights reserved.\n////\n//\n//#import \"AIPointer.h\"\n//\n///**\n// *  MARK:--------------------数据库指针--------------------\n// */\n//@interface AISqlPointer : AIPointer\n//\n//+(AISqlPointer*) initWithClass:(Class)pC withId:(NSInteger)pI ;\n//-(id) initWithPId:(NSInteger)pId;\n//\n//@property (strong,nonatomic) NSString *pClass;    //指针类型\n//@property (assign, nonatomic) NSInteger pId;  //指针地址(Id)\n//\n//@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIPointer/AISqlPointer.h:1-22"
+    },
+    "753": {
+        "file_id": 79,
+        "content": "This code defines a class \"AISqlPointer\" that inherits from \"AIPointer\". It initializes the pointer with a given class and id, and includes two properties - pClass (string) for the pointer type and pId (integer) for the pointer address. The comments suggest it is used for managing database pointers in the SMG_NothingIsAll project.",
+        "type": "comment"
+    },
+    "754": {
+        "file_id": 80,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AIPointer/AISqlPointer.m",
+        "type": "filepath"
+    },
+    "755": {
+        "file_id": 80,
+        "content": "The code initializes `AISqlPointer` with class and ID, creates or retrieves existing value from database. It implements NSCoding protocol for archiving/unarchiving, encoding properties \"pClass\" and \"pId\".",
+        "type": "summary"
+    },
+    "756": {
+        "file_id": 80,
+        "content": "////\n////  AISqlPointer.m\n////  SMG_NothingIsAll\n////\n////  Created by 贾  on 2017/9/7.\n////  Copyright © 2017年 XiaoGang. All rights reserved.\n////\n//\n//#import \"AISqlPointer.h\"\n//\n//@implementation AISqlPointer\n//\n//-(id) initWithPId:(NSInteger)pId{\n//    self = [super init];\n//    if (self) {\n//        self.pId = pId;\n//    }\n//    return self;\n//}\n//\n//+(AISqlPointer*) initWithClass:(Class)pC withId:(NSInteger)pI {\n//\n//    /*\n//     NSDictionary *where = [[NSDictionary alloc] initWithObjectsAndKeys:NSStringFromClass(pC),@\"pClass\",@(pI),@\"pId\", nil];\n//     AIPointer *value = [AIPointer searchSingleWithWhere:where orderBy:nil];\n//     if (value) {\n//     return value;\n//     }else{\n//     value = [[AIPointer alloc] init];\n//     value.pClass = NSStringFromClass(pC);\n//     value.pId = pI;\n//     [AIPointer insertToDB:value];\n//     return value;\n//     }\n//     */\n//\n//    //原先去重并insert了,但其实这个去重会自动作;不需要;并且这里直接insert会出问题;因为此时的PId很多是0;\n//    AISqlPointer *pointer = [[AISqlPointer alloc] init];\n//    pointer.pClass = NSStringFromClass(pC);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIPointer/AISqlPointer.m:1-39"
+    },
+    "757": {
+        "file_id": 80,
+        "content": "The code initializes an instance of AISqlPointer with a specific class and ID. If the value already exists in the database, it returns that existing value; otherwise, it creates a new value, inserts it into the database, and returns the newly created value.",
+        "type": "comment"
+    },
+    "758": {
+        "file_id": 80,
+        "content": "//    pointer.pId = pI;\n//    return pointer;\n//\n//}\n//\n///**\n// *  MARK:--------------------public--------------------\n// */\n//-(BOOL) isEqual:(AISqlPointer*)object{//重写指针对比地址方法;\n//    if (ISOK(object, AISqlPointer.class)) {\n//        BOOL classIsEqual = [STRTOOK(self.pClass) isEqual:((AISqlPointer*)object).pClass];\n//        BOOL idIsEqual = self.pId == ((AISqlPointer*)object).pId;\n//        return classIsEqual && idIsEqual;\n//    }\n//    return false;\n//}\n//\n///**\n// *  MARK:--------------------content--------------------\n// *  @version\n// *      2020.07.09: 暂用不着sql方式,将LKDB依赖去掉,此方法需依赖LKDB,也跟着注掉,哪天要重新启用,再打开即可;\n// */\n////-(id) content{\n////    Class class = NSClassFromString(STRTOOK(self.pClass));\n////    if (class) {\n////        return [class searchSingleWithWhere:[SMGUtils sqlWhere_RowId:self.pId] orderBy:nil];\n////    }\n////    return nil;\n////}\n//\n//\n//\n///**\n// *  MARK:--------------------NSCoding--------------------\n// */\n//- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {\n//    self = [super initWithCoder:aDecoder];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIPointer/AISqlPointer.m:40-76"
+    },
+    "759": {
+        "file_id": 80,
+        "content": "This code defines a class `AISqlPointer` that represents a pointer to an object. It contains methods for setting the object's ID and class, comparing pointers based on their address, and implementing the `NSCoding` protocol for encoding and decoding objects. The content method is currently commented out as it depends on LKDB.",
+        "type": "comment"
+    },
+    "760": {
+        "file_id": 80,
+        "content": "//    if (self) {\n//        self.pClass = [aDecoder decodeObjectForKey:@\"pClass\"];\n//        self.pId = [aDecoder decodeIntegerForKey:@\"pId\"];\n//    }\n//    return self;\n//}\n//\n//- (void)encodeWithCoder:(NSCoder *)aCoder {\n//    [super encodeWithCoder:aCoder];\n//    [aCoder encodeObject:self.pClass forKey:@\"pClass\"];\n//    [aCoder encodeInteger:self.pId forKey:@\"pId\"];\n//}\n//\n//@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIPointer/AISqlPointer.m:77-90"
+    },
+    "761": {
+        "file_id": 80,
+        "content": "This code implements the NSCoding protocol for a class, allowing it to be archived and unarchived using NSKeyedArchiver and NSKeyedUnarchiver. It encodes the object's properties \"pClass\" and \"pId\" when archiving, and decodes them when unarchiving.",
+        "type": "comment"
+    },
+    "762": {
+        "file_id": 81,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AIPort/AIPort.h",
+        "type": "filepath"
+    },
+    "763": {
+        "file_id": 81,
+        "content": "The code creates an AIPort class and three strength-related classes (AIPortStrong, AISPStrong, and AIEffectStrong) to record strengths in various contexts. It also declares a \"nStrong\" property of type NSInteger with assign and nonatomic attributes.",
+        "type": "summary"
+    },
+    "764": {
+        "file_id": 81,
+        "content": "//\n//  AIPort.h\n//  SMG_NothingIsAll\n//\n//  Created by 贾  on 2017/9/7.\n//  Copyright © 2017年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------网络端口类--------------------\n *  用来替代AILine+AIStrong\n *  @desc:\n *      1. 每一个关联,有两个端口;\n *      2. 每一个端口,都有关联强度;\n *  @version\n *      2022.05.11: 新增targetHavMv标记 (参考26022-1);\n */\n@class AIKVPointer,AIPortStrong;\n@interface AIPort : NSObject <NSCoding>\n@property (strong,nonatomic) AIKVPointer *target_p;   //指向目标的地址\n@property (strong,nonatomic) AIPortStrong *strong;\n@property (assign, nonatomic) BOOL targetHavMv;       //指向目标有mv指向;\n/**\n *  MARK:--------------------指向节点的header--------------------\n *  1. 如algNode.absPorts时,就是抽象节点value_ps的md5值\n *  作用: 用来快速匹配port指向的节点的值:(如指向node.content_ps)\n *  替代方案: 也可以用value_ps的值序列来作有序,然后二分法匹配;\n */\n@property (strong,nonatomic) NSString *header;\n-(void) strongPlus;\n@end\n/**\n *  MARK:--------------------端口强度--------------------\n *  注:为简化设计;\n *  1. 由AINode.xxxPorts替代了AILineType\n *  2. 由AIPortStrong替代了AILineStrong",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIPort/AIPort.h:1-44"
+    },
+    "765": {
+        "file_id": 81,
+        "content": "This code defines the AIPort class, which is used to represent network ports and replaces AILine and AIStrong. It has properties for target address (AIKVPointer), port strength (AIPortStrong), a header to quickly match port-pointing node values, and a strongPlus method.",
+        "type": "comment"
+    },
+    "766": {
+        "file_id": 81,
+        "content": " *  3. 互相关联,不表示强度值一致,所以A与B关联,有可能A的强度为3,B却为100;\n */\n@interface AIPortStrong : NSObject <NSCoding>\n@property (assign,nonatomic) NSInteger value;\n/**\n *  MARK:--------------------上次更新强度时间--------------------\n */\n@property (assign, nonatomic) double updateTime;  //更新值时间(18.07.13目前未工作,随后补上)\n//(警告!!!强度不能在strong内部自行改变,不然会影响到第二序列的工作,所以应由第二序列读取到内存时,统一调用处理;)\n-(void) updateValue;//更新衰减值(1,时间衰减; 2,衰减曲线;)(目前先每天减1;)\n@end\n/**\n *  MARK:--------------------SP强度--------------------\n *  @version\n *      2021.12.25: 初版,用于Fo下记录某元素的SP强度值 (也可用于mv的SP强度值) (参考25031-5);\n */\n@interface AISPStrong : NSObject <NSCoding>\n@property (assign,nonatomic) NSInteger sStrong;\n@property (assign,nonatomic) NSInteger pStrong;\n@end\n/**\n *  MARK:--------------------有效强度--------------------\n *  @version\n *      2022.05.22: 初版,用于Fo下记录解决方案的有效性 (参考26094);\n */\n@interface AIEffectStrong : NSObject <NSCoding>\n+(AIEffectStrong*) newWithSolutionFo:(AIKVPointer*)solutionFo;\n@property (strong, nonatomic) AIKVPointer *solutionFo;  //解决方案\n@property (assign,nonatomic) NSInteger hStrong; //有效",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIPort/AIPort.h:45-84"
+    },
+    "767": {
+        "file_id": 81,
+        "content": "This code defines three classes: AIPortStrong, AISPStrong, and AIEffectStrong. AIPortStrong keeps track of a value and update time for strength. AISPStrong stores strong values for s (speed) and p (power). AIEffectStrong represents the effective strength of a solution with a FO pointer and an h (effectiveness) value. These classes are used for recording strengths in various contexts.",
+        "type": "comment"
+    },
+    "768": {
+        "file_id": 81,
+        "content": "@property (assign,nonatomic) NSInteger nStrong; //无效\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIPort/AIPort.h:85-87"
+    },
+    "769": {
+        "file_id": 81,
+        "content": "This code declares a property called \"nStrong\" of type NSInteger with assign and nonatomic attributes. This means that the property will store an integer value, can be assigned a new value directly without using setter or getter methods, and does not provide thread synchronization during assignment or retrieval.",
+        "type": "comment"
+    },
+    "770": {
+        "file_id": 82,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AIPort/AIPort.m",
+        "type": "filepath"
+    },
+    "771": {
+        "file_id": 82,
+        "content": "The code introduces AIPort and AISPStrong classes, conforming to NSCoding protocol with encoding/decoding methods for object initialization and comparison. NSKeyArchiver is used to store solutionFo, hStrong, and nStrong in the AIPort class.",
+        "type": "summary"
+    },
+    "772": {
+        "file_id": 82,
+        "content": "//\n//  AIPort.m\n//  SMG_NothingIsAll\n//\n//  Created by 贾  on 2017/9/7.\n//  Copyright © 2017年 XiaoGang. All rights reserved.\n//\n#import \"AIPort.h\"\n#import \"AIKVPointer.h\"\n@implementation AIPort\n/**\n *  MARK:--------------------NSCoding--------------------\n */\n- (instancetype)initWithCoder:(NSCoder *)coder {\n    self = [super init];\n    if (self) {\n        self.target_p = [coder decodeObjectForKey:@\"target_p\"];\n        self.strong = [coder decodeObjectForKey:@\"strong\"];\n        self.header = [coder decodeObjectForKey:@\"header\"];\n        self.targetHavMv = [coder decodeBoolForKey:@\"targetHavMv\"];\n    }\n    return self;\n}\n- (void)encodeWithCoder:(NSCoder *)coder {\n    [coder encodeObject:self.target_p forKey:@\"target_p\"];\n    [coder encodeObject:self.strong forKey:@\"strong\"];\n    [coder encodeObject:self.header forKey:@\"header\"];\n    [coder encodeBool:self.targetHavMv forKey:@\"targetHavMv\"];\n}\n//MARK:===============================================================\n//MARK:                     < method >\n//MARK:===============================================================",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIPort/AIPort.m:1-37"
+    },
+    "773": {
+        "file_id": 82,
+        "content": "This code is the implementation file of the AIPort class in the SMG_NothingIsAll project. It conforms to the NSCoding protocol and provides methods for encoding and decoding object properties with an NSCoder instance.",
+        "type": "comment"
+    },
+    "774": {
+        "file_id": 82,
+        "content": "-(AIPortStrong *)strong{\n    if (_strong == nil) {\n        _strong = [[AIPortStrong alloc] init];\n    }\n    return _strong;\n}\n-(void) strongPlus{\n    self.strong.value ++;\n}\n-(BOOL) isEqual:(AIPort*)object{\n    if (ISOK(object, AIPort.class)) {\n        if (self.target_p) {\n            return [self.target_p isEqual:object.target_p];\n        }\n    }\n    return false;\n}\n@end\n//MARK:===============================================================\n//MARK:                     < AIPortStrong >\n//MARK:===============================================================\n@implementation AIPortStrong\n//MARK:===============================================================\n//MARK:                     < method >\n//MARK:===============================================================\n-(void) updateValue {\n    long long nowTime = [[NSDate date] timeIntervalSince1970];\n    if (nowTime > self.updateTime) {\n        self.value -= MAX(0, (nowTime - self.updateTime) / 86400);//(目前先每天减1;)\n    }\n    self.updateTime = nowTime;\n}\n/**\n *  MARK:--------------------NSCoding--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIPort/AIPort.m:38-80"
+    },
+    "775": {
+        "file_id": 82,
+        "content": "This code defines a class `AIPortStrong` which has methods to get a strong instance, increment its value, and compare itself with another object. It also contains an implementation for the `NSCoding` protocol. The `updateValue` method updates the value by subtracting the number of days since the last update.",
+        "type": "comment"
+    },
+    "776": {
+        "file_id": 82,
+        "content": " */\n- (instancetype)initWithCoder:(NSCoder *)coder {\n    self = [super init];\n    if (self) {\n        self.value = [coder decodeIntegerForKey:@\"value\"];\n        self.updateTime = [coder decodeDoubleForKey:@\"updateTime\"];\n    }\n    return self;\n}\n- (void)encodeWithCoder:(NSCoder *)coder {\n    [coder encodeInteger:self.value forKey:@\"value\"];\n    [coder encodeDouble:self.updateTime forKey:@\"updateTime\"];\n}\n@end\n//MARK:===============================================================\n//MARK:                     < SP强度模型 >\n//MARK:===============================================================\n@implementation AISPStrong\n-(NSString *)description{\n    return STRFORMAT(@\"S%ldP%ld\",(long)self.sStrong,(long)self.pStrong);\n}\n/**\n *  MARK:--------------------NSCoding--------------------\n */\n- (instancetype)initWithCoder:(NSCoder *)coder {\n    self = [super init];\n    if (self) {\n        self.sStrong = [coder decodeIntegerForKey:@\"sStrong\"];\n        self.pStrong = [coder decodeIntegerForKey:@\"pStrong\"];\n    }\n    return self;\n}\n- (void)encodeWithCoder:(NSCoder *)coder {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIPort/AIPort.m:81-120"
+    },
+    "777": {
+        "file_id": 82,
+        "content": "This code defines an `AISPStrong` class that implements the `NSCoding` protocol. It provides methods for initializing and encoding objects with a coder. The `initWithCoder:` method decodes the object's properties from a coder, while the `encodeWithCoder:` method encodes the object's properties into a coder.",
+        "type": "comment"
+    },
+    "778": {
+        "file_id": 82,
+        "content": "    [coder encodeInteger:self.sStrong forKey:@\"sStrong\"];\n    [coder encodeInteger:self.pStrong forKey:@\"pStrong\"];\n}\n@end\n//MARK:===============================================================\n//MARK:                     < 有效强度模型 >\n//MARK:===============================================================\n@implementation AIEffectStrong\n+(AIEffectStrong*) newWithSolutionFo:(AIKVPointer*)solutionFo{\n    AIEffectStrong *result = [[AIEffectStrong alloc] init];\n    result.solutionFo = solutionFo;\n    return result;\n}\n-(NSString *)description{\n    return STRFORMAT(@\"H%ldN%ld\",(long)self.hStrong,(long)self.nStrong);\n}\n/**\n *  MARK:--------------------NSCoding--------------------\n */\n- (instancetype)initWithCoder:(NSCoder *)coder {\n    self = [super init];\n    if (self) {\n        self.solutionFo = [coder decodeObjectForKey:@\"solutionFo\"];\n        self.hStrong = [coder decodeIntegerForKey:@\"hStrong\"];\n        self.nStrong = [coder decodeIntegerForKey:@\"nStrong\"];\n    }\n    return self;\n}\n- (void)encodeWithCoder:(NSCoder *)coder {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIPort/AIPort.m:121-156"
+    },
+    "779": {
+        "file_id": 82,
+        "content": "This code is implementing a class called AIEffectStrong which conforms to the NSCoding protocol. It includes an initializer withCoder: and an encoder encodeWithCoder: method. The class has properties such as solutionFo, hStrong, and nStrong. It also provides a description method that returns a formatted string. This code is likely used for encoding and decoding AIEffectStrong objects using NSCoder.",
+        "type": "comment"
+    },
+    "780": {
+        "file_id": 82,
+        "content": "    [coder encodeObject:self.solutionFo forKey:@\"solutionFo\"];\n    [coder encodeInteger:self.hStrong forKey:@\"hStrong\"];\n    [coder encodeInteger:self.nStrong forKey:@\"nStrong\"];\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIPort/AIPort.m:157-162"
+    },
+    "781": {
+        "file_id": 82,
+        "content": "Encodes solutionFo, hStrong and nStrong using NSKeyArchiver to store in AIPort class.",
+        "type": "comment"
+    },
+    "782": {
+        "file_id": 83,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AIPort/AITransferPort.h",
+        "type": "filepath"
+    },
+    "783": {
+        "file_id": 83,
+        "content": "Header file for class AITransferPort, inherits from NSObject and conforms to NSCoding protocol. Contains two properties: scene (AIKVPointer type) and canset (AIKVPointer type). Offers a singleton-like method newWithScene:canset: to create instances of AITransferPort with specified parameters.",
+        "type": "summary"
+    },
+    "784": {
+        "file_id": 83,
+        "content": "//\n//  AITransferPort.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/4/16.\n//  Copyright © 2023年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface AITransferPort : NSObject <NSCoding>\n+(AITransferPort*) newWithScene:(AIKVPointer*)scene canset:(AIKVPointer*)canset;\n@property (strong, nonatomic) AIKVPointer *scene;\n@property (strong, nonatomic) AIKVPointer *canset;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIPort/AITransferPort.h:1-18"
+    },
+    "785": {
+        "file_id": 83,
+        "content": "Header file for class AITransferPort, inherits from NSObject and conforms to NSCoding protocol. Contains two properties: scene (AIKVPointer type) and canset (AIKVPointer type). Offers a singleton-like method newWithScene:canset: to create instances of AITransferPort with specified parameters.",
+        "type": "comment"
+    },
+    "786": {
+        "file_id": 84,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AIPort/AITransferPort.m",
+        "type": "filepath"
+    },
+    "787": {
+        "file_id": 84,
+        "content": "This code defines the `AITransferPort` class, a subclass with methods for initializing, setting and comparing objects, and conforming to NSCoding protocol for archiving.",
+        "type": "summary"
+    },
+    "788": {
+        "file_id": 84,
+        "content": "//\n//  AITransferPort.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/4/16.\n//  Copyright © 2023年 XiaoGang. All rights reserved.\n//\n#import \"AITransferPort.h\"\n@implementation AITransferPort\n+(AITransferPort*) newWithScene:(AIKVPointer*)scene canset:(AIKVPointer*)canset {\n    AITransferPort *result = [[AITransferPort alloc] init];\n    result.scene = scene;\n    result.canset = canset;\n    return result;\n}\n-(BOOL) isEqual:(AITransferPort*)object{\n    if (ISOK(object, AITransferPort.class)) {\n        return [self.scene isEqual:object.scene] && [self.canset isEqual:object.canset];\n    }\n    return false;\n}\n/**\n *  MARK:--------------------NSCoding--------------------\n */\n- (instancetype)initWithCoder:(NSCoder *)coder {\n    self = [super init];\n    if (self) {\n        self.scene = [coder decodeObjectForKey:@\"scene\"];\n        self.canset = [coder decodeObjectForKey:@\"canset\"];\n    }\n    return self;\n}\n- (void)encodeWithCoder:(NSCoder *)coder {\n    [coder encodeObject:self.scene forKey:@\"scene\"];\n    [coder encodeObject:self.canset forKey:@\"canset\"];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIPort/AITransferPort.m:1-41"
+    },
+    "789": {
+        "file_id": 84,
+        "content": "This code defines a class `AITransferPort` which is a subclass of some base class, and it implements methods for initializing the object with a scene and can set, compares two objects of the same class for equality, and handles encoding and decoding using NSCoder. The class conforms to the NSCoding protocol, allowing it to be archived and unarchived easily.",
+        "type": "comment"
+    },
+    "790": {
+        "file_id": 84,
+        "content": "}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIPort/AITransferPort.m:42-44"
+    },
+    "791": {
+        "file_id": 84,
+        "content": "This code snippet appears to mark the end of a class or method definition and serves as a closing delimiter.",
+        "type": "comment"
+    },
+    "792": {
+        "file_id": 85,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIOutput/Output.h",
+        "type": "filepath"
+    },
+    "793": {
+        "file_id": 85,
+        "content": "This code defines an Output class that handles various types of outputs such as thought output, reactor output, and mood output. The thought output is triggered by a given algorithm node pointer and returns a result if there are more than one output. Reactor output is called with an identifier and an array of data. Mood output is called with a mood type to trigger specific reactions based on the mood.",
+        "type": "summary"
+    },
+    "794": {
+        "file_id": 85,
+        "content": "//\n//  Output.h\n//  SMG_NothingIsAll\n//\n//  Created by 贾  on 2017/4/27.\n//  Copyright © 2017年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------输出--------------------\n *  1. 把OUTPUT有时间的话;融入到神经网络中...(小脑机制)\n *  2. 共分为两种反射机制; (内核外部的调用output_Reactor:和内部的调用如:output_Face:)\n *  3. 输出从 \"反射输出\" 到 \"主动输出\";\n *\n */\n@class AIKVPointer;\n@interface Output : NSObject\n/**\n *  MARK:--------------------思维输出--------------------\n *  @param algNode_p : 概念节点指针\n *  @result 输出有效(>1条)时,返回true;\n *  如: 吃奶,飞行\n *  注: 后天,主动 (由神经网络后天执行输出: 检查执行微信息输出)\n */\n+(TCResult*) output_FromTC:(AIKVPointer*)algNode_p;\n/**\n *  MARK:--------------------反射输出--------------------\n */\n+(void) output_FromReactor:(NSString*)identify datas:(NSArray*)datas;\n/**\n *  MARK:--------------------mood输出--------------------\n *  @param type : 情绪类型\n *  如: 焦急\n *  注: 先天,主动 (由思维控制器主动调用发泄情绪)\n *  代码实践: 对Anxious情绪,testHungryDemo与birdGrowDemo的反应肯定就不是一样的,所以具体执行的outModel由应用层指定;\n */\n+(void) output_FromMood:(AIMoodType)type;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIOutput/Output.h:1-44"
+    },
+    "795": {
+        "file_id": 85,
+        "content": "This code defines an Output class that handles various types of outputs such as thought output, reactor output, and mood output. The thought output is triggered by a given algorithm node pointer and returns a result if there are more than one output. Reactor output is called with an identifier and an array of data. Mood output is called with a mood type to trigger specific reactions based on the mood.",
+        "type": "comment"
+    },
+    "796": {
+        "file_id": 86,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIOutput/Output.m",
+        "type": "filepath"
+    },
+    "797": {
+        "file_id": 86,
+        "content": "The code includes an output function for a specific algorithm node in a larger mental activity program. It initializes an OutputModel, checks inputs, executes output, and logs to network. The `output_FromMood` method generates outputs based on mood and triggers notifications, ensuring real-world handling, flight visualization, and value triggering scenarios are processed.",
+        "type": "summary"
+    },
+    "798": {
+        "file_id": 86,
+        "content": "//\n//  Output.m\n//  SMG_NothingIsAll\n//\n//  Created by 贾  on 2017/4/27.\n//  Copyright © 2017年 XiaoGang. All rights reserved.\n//\n#import \"Output.h\"\n#import \"OutputUtils.h\"\n@implementation Output\n/**\n *  MARK:--------------------思维行为输出--------------------\n *  @version\n *      2021.02.05: 将概念嵌套的代码注掉,因为概念嵌套早已废弃;\n */\n+(TCResult*) output_FromTC:(AIKVPointer*)algNode_p {\n    //1. 数据\n    AIAlgNodeBase *algNode = [SMGUtils searchNode:algNode_p];\n    if (!ISOK(algNode, AIAlgNodeBase.class)) {\n        return [[[TCResult new:false] mkMsg:@\"output 输出非alg类型错误\"] mkStep:51];\n    }\n    //2. 循环微信息组\n    NSMutableArray *valids = [[NSMutableArray alloc] init];\n    for (AIKVPointer *value_p in algNode.content_ps) {\n        //3. 取dataSource & algsType\n        NSString *identify = value_p.algsType;\n        if (!value_p.isOut) {\n            identify = [OutputUtils convertOutType2dataSource:value_p.algsType];\n            WLog(@\"调试下,何时会输出isOut=false的内容\");\n        }\n        //4. 检查可输出\"某数据类型\"并收集\n        if ([AINetUtils checkCanOutput:identify]) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIOutput/Output.m:1-38"
+    },
+    "799": {
+        "file_id": 86,
+        "content": "This code is implementing an output function for a specific algorithm node. It checks if the input node is of the correct type, iterates through the content pointers of the node, and ensures that the data can be output before processing it further. This function seems to be part of a larger program related to thought process or mental activity.",
+        "type": "comment"
+    }
+}

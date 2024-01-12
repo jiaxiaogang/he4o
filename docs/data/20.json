@@ -1,0 +1,538 @@
+{
+    "2000": {
+        "file_id": 198,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/ThinkingUtils.m",
+        "type": "filepath"
+    },
+    "2001": {
+        "file_id": 198,
+        "content": "ThinkingUtils class contains methods for CMV functionality and demand direction determination. getMvReferenceDirection constructs index direction, calculates value direction using delta, and parses algorithm results. Code defines a class with two methods: one checks if object responds to selector and is on main thread, returning true or false; the other runs block of code in main thread using GCD's dispatch_async function.",
+        "type": "summary"
+    },
+    "2002": {
+        "file_id": 198,
+        "content": "//\n//  ThinkingUtils.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2018/3/23.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"ThinkingUtils.h\"\n#import \"ImvGoodModel.h\"\n#import \"ImvBadModel.h\"\n@implementation ThinkingUtils\n@end\n//MARK:===============================================================\n//MARK:                     < ThinkingUtils (CMV) >\n//MARK:===============================================================\n@implementation ThinkingUtils (CMV)\n+(BOOL) isBadWithAT:(NSString*)algsType{\n    algsType = STRTOOK(algsType);\n    if ([NSClassFromString(algsType) isSubclassOfClass:ImvBadModel.class]) {//饥饿感等\n        return true;\n    }else if ([NSClassFromString(algsType) isSubclassOfClass:ImvGoodModel.class]) {//爽感等;\n        return false;\n    }\n    return false;\n}\n//是否有向下需求 (目标为下,但delta却+) (饿感上升)\n+(BOOL) havDownDemand:(NSString*)algsType delta:(NSInteger)delta {\n    BOOL isBad = [ThinkingUtils isBadWithAT:algsType];\n    return isBad && delta > 0;\n}\n//是否有向上需求 (目标为上,但delta却-) (快乐下降)\n+(BOOL) havUpDemand:(NSString*)algsType delta:(NSInteger)delta {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/ThinkingUtils.m:1-40"
+    },
+    "2003": {
+        "file_id": 198,
+        "content": "The code is part of the \"ThinkingUtils.m\" file in a project called SMG_NothingIsAll. It defines methods for ThinkingUtils, specifically focusing on CMV (Cross Model Validation) functionality. One method checks if an algorithm type is a subclass of ImvBadModel (indicating hunger or other negative feelings). Another method checks if there is a demand for going down (hunger increasing) based on the algorithm type and delta value. Similarly, there's a third method for detecting an upward demand (happiness decreasing) based on the same parameters.",
+        "type": "comment"
+    },
+    "2004": {
+        "file_id": 198,
+        "content": "    BOOL isGood = ![ThinkingUtils isBadWithAT:algsType];\n    return isGood && delta < 0;\n}\n//是否有任意需求 (坏增加 或 好减少);\n+(BOOL) havDemand:(NSString*)algsType delta:(NSInteger)delta{\n    return [self havDownDemand:algsType delta:delta] || [self havUpDemand:algsType delta:delta];\n}\n+(BOOL) havDemand:(AIKVPointer*)cmvNode_p{\n    if (!cmvNode_p) return false;\n    AICMVNodeBase *cmvNode = [SMGUtils searchNode:cmvNode_p];\n    NSInteger delta = [NUMTOOK([AINetIndex getData:cmvNode.delta_p]) integerValue];\n    return [self havDemand:cmvNode_p.algsType delta:delta];\n}\n+(MVDirection) getDemandDirection:(NSString*)algsType delta:(NSInteger)delta {\n    BOOL downDemand = [self havDownDemand:algsType delta:delta];\n    BOOL upDemand = [self havUpDemand:algsType delta:delta];\n    if (downDemand) {\n        return MVDirection_Negative;\n    }else if(upDemand){\n        return MVDirection_Positive;\n    }else{\n        return MVDirection_None;\n    }\n}\n//获取索引方向 (有了索引方向后,可供目标方向取用)\n+(MVDirection) getMvReferenceDirection:(NSInteger)delta {\n    //目前的索引就仅是按照delta正负来构建的;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/ThinkingUtils.m:41-70"
+    },
+    "2005": {
+        "file_id": 198,
+        "content": "This code defines methods to check if there is any demand for a specific algorithm type. It also determines the direction of the demand based on whether it's increasing or decreasing. The getMvReferenceDirection method constructs an index direction based on delta values.",
+        "type": "comment"
+    },
+    "2006": {
+        "file_id": 198,
+        "content": "    if (delta < 0) return MVDirection_Negative;\n    else if(delta > 0) return MVDirection_Positive;\n    else return MVDirection_None;\n}\n/**\n *  MARK:--------------------解析algsMVArr--------------------\n *  cmvAlgsArr->mvValue\n */\n+(void) parserAlgsMVArrWithoutValue:(NSArray*)algsArr success:(void(^)(AIKVPointer *delta_p,AIKVPointer *urgentTo_p,NSString *algsType))success{\n    //1. 数据\n    AIKVPointer *delta_p = nil;\n    AIKVPointer *urgentTo_p = 0;\n    NSString *algsType = DefaultAlgsType;\n    //2. 数据检查\n    for (AIKVPointer *pointer in algsArr) {\n        if ([NSClassFromString(pointer.algsType) isSubclassOfClass:ImvAlgsModelBase.class]) {\n            if ([@\"delta\" isEqualToString:pointer.dataSource]) {\n                delta_p = pointer;\n            }else if ([@\"urgentTo\" isEqualToString:pointer.dataSource]) {\n                urgentTo_p = pointer;\n            }\n        }\n        algsType = pointer.algsType;\n    }\n    //3. 逻辑执行\n    if (success) success(delta_p,urgentTo_p,algsType);\n}\n//cmvAlgsArr->mvValue\n+(void) par",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/ThinkingUtils.m:71-103"
+    },
+    "2007": {
+        "file_id": 198,
+        "content": "This method calculates the direction of a value based on its delta, returning negative, positive, or none accordingly. The following block of code defines a parserAlgsMVArrWithoutValue method that takes an array of pointers and success block as input. It iterates through the pointers, assigning relevant values to delta_p, urgentTo_p, and algsType variables based on their dataSource property. Finally, it calls the success block with these variables if provided.",
+        "type": "comment"
+    },
+    "2008": {
+        "file_id": 198,
+        "content": "serAlgsMVArr:(NSArray*)algsArr success:(void(^)(AIKVPointer *delta_p,AIKVPointer *urgentTo_p,NSInteger delta,NSInteger urgentTo,NSString *algsType))success{\n    //1. 解析\n    [self parserAlgsMVArrWithoutValue:algsArr success:^(AIKVPointer *delta_p, AIKVPointer *urgentTo_p, NSString *algsType) {\n        //2. 转换格式\n        NSInteger delta = [NUMTOOK([AINetIndex getData:delta_p]) integerValue];\n        NSInteger urgentTo = [NUMTOOK([AINetIndex getData:urgentTo_p]) integerValue];\n        //3. 回调\n        if (success) success(delta_p,urgentTo_p,delta,urgentTo,algsType);\n    }];\n}\n@end\n//MARK:===============================================================\n//MARK:                     < ThinkingUtils (In) >\n//MARK:===============================================================\n@implementation ThinkingUtils (In)\n+(BOOL) dataIn_CheckMV:(NSArray*)algResult_ps{\n    for (AIKVPointer *pointer in ARRTOOK(algResult_ps)) {\n        if ([NSClassFromString(pointer.algsType) isSubclassOfClass:ImvAlgsModelBase.class]) {\n            return true;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/ThinkingUtils.m:103-127"
+    },
+    "2009": {
+        "file_id": 198,
+        "content": "This function parses an array of algorithm results and checks if any of them are subclasses of ImvAlgsModelBase. If so, it returns true. The code first transforms the format to integers from objects for delta and urgentTo, then calls a success block passing these values along with the algsType. This function is used to check if there are any inbound algorithm results.",
+        "type": "comment"
+    },
+    "2010": {
+        "file_id": 198,
+        "content": "        }\n    }\n    return false;\n}\n/**\n *  MARK:--------------------在主线程跑act--------------------\n */\n+(void) runAtMainThread:(Act0)act {\n    __block Act0 weakAct = act;\n    dispatch_async(dispatch_get_main_queue(), ^{\n        weakAct();\n    });\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/ThinkingUtils.m:128-143"
+    },
+    "2011": {
+        "file_id": 198,
+        "content": "This code defines a class with two methods. The first method is used to check if an object responds to a selector and is currently on the main thread, returning true or false accordingly. The second method allows running a block of code in the main thread by utilizing GCD's dispatch_async function.",
+        "type": "comment"
+    },
+    "2012": {
+        "file_id": 199,
+        "content": "/SMG_NothingIsAll/AIFoundation/ReadMe.h",
+        "type": "filepath"
+    },
+    "2013": {
+        "file_id": 199,
+        "content": "This code is a header file named ReadMe.h for the project SMG_NothingIsAll. It contains comment instructions and directions for different sections of code. The comments indicate various tasks or features to implement in different versions, as well as suggestions for future development or testing focus.",
+        "type": "summary"
+    },
+    "2014": {
+        "file_id": 199,
+        "content": "//\n//  ReadMe.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/3/8.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n////////////////// 注释说明 //////////////////\n//1. MARK_VALUE:当索引不再去重时,应review此注释处代码;\n//2. TODOv2.0:当v2.0功能开发完成,进行测试前,需要将这些注释处进行处理迭代;\n//3. TODOWAIT:需求时机不成熟,成熟时再实现;\n//4. TODO_TEST_HERE:在下次测试时,重点调试一下此处;\n//5. TODO_FUTURE:未来择机再实现;\n//6. TODO_NEXT_VERSION:下版本迭代;\n////////////////// 向性说明 //////////////////\n//1. ↑ 从下向上 : 从具象向抽象方向 (从模糊具体,到确切本质)\n//2. ↓ 从上向下 : 从抽象向具象方向\n//3. → 从左向右 : 从理性向感性方向 (从细粒度向宏观粒度直至mv方向)\n//4. ← 从右向左 : 从感性向理性方向",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/ReadMe.h:1-22"
+    },
+    "2015": {
+        "file_id": 199,
+        "content": "This code is a header file named ReadMe.h for the project SMG_NothingIsAll. It contains comment instructions and directions for different sections of code. The comments indicate various tasks or features to implement in different versions, as well as suggestions for future development or testing focus.",
+        "type": "comment"
+    },
+    "2016": {
+        "file_id": 200,
+        "content": "/SMG_NothingIsAll/AIFoundation/SMGConfig.h",
+        "type": "filepath"
+    },
+    "2017": {
+        "file_id": 200,
+        "content": "SMGConfig.h provides configuration settings for SMG_NothingIsAll application, controlling node/port behavior and functionality, as well as algorithm aspects including NSLog logging and sequence recognition.",
+        "type": "summary"
+    },
+    "2018": {
+        "file_id": 200,
+        "content": "//\n//  SMGConfig.h\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/7/26.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n//MARK:===============================================================\n//MARK:                     < redisTime >\n//MARK:===============================================================\n/**\n *  MARK:--------------------缓存时间--------------------\n *  @version\n *      2022.10.09: 废弃isMem内存缓存时间的配置 (因为XGRedis早就把它的功能替了,参考27124-todo2);\n */\n#define cRTIndex 315360000  //常驻内存(十年)\n#define cRTData 315360000   //常驻内存(十年)\n#define cRTReference 9999   //微信息索引序列时间;\n#define cRTNode(pointer) PitIsAlg(pointer) ? cRTAlgNode : cRTOtherNode //节点缓存时间\n#define cRTAlgNode 3600     //概念node时间(1小时)\n#define cRTOtherNode 200    //别的node时间(200秒)\n#define cRTDefault 60       //默认,例如:小脑canout序列;\n#define cRTPort 200         //refPorts(概念),absPorts,conPorts的时间;\n#define cRTMvRef 600        //mv方向索引时间;\n//MARK:===============================================================\n//MARK:                     < thinkingControl >",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/SMGConfig.h:1-31"
+    },
+    "2019": {
+        "file_id": 200,
+        "content": "This is the header file for SMGConfig.h, which contains various configuration settings and constants for the SMG_NothingIsAll application. The code defines different cache and time-related configurations such as cRTIndex, cRTData, cRTReference, and more. These constants are used to set specific cache durations for nodes and ports in the application.",
+        "type": "comment"
+    },
+    "2020": {
+        "file_id": 200,
+        "content": "//MARK:===============================================================\n#define cAssDataLimit 2 //应以当前整体思维活跃度,变化为1-3左右;\n#define cMinEnergy 0 //思维活力限低\n#define cMaxEnergy 20 //思维活力限高\n#define cShortMemoryLimit 4 //瞬时记忆最多8条 (20200329训练内类比时,8->4,因为估计4条足够v2.0用了);\n//#define cActiveCacheLimit 50//激活缓存最多50条; (废弃,因为改为瞬时匹配模型)\n//MARK:===============================================================\n//MARK:                     < ThinkOut >\n//MARK:===============================================================\n#define cDataOutAssFoCount 3    //在决策过程中,foScheme横向最大检索条数;\n#define cDataOutAssFoDeep 3     //在决策过程中,foScheme纵向最大检索深度;\n#define cDataOutAssAlgCount 5   //在决策过程中,algScheme横向最大检索条数;\n#define cDataOutAssAlgDeep 2    //在决策过程中,algScheme纵向最大检索深度;\n#define cHavNoneAssFoCount 5    //Hav和None在联想其fo时,最大条数 (getInnerV3迭代后,不需要refPorts了,所以废弃);\n#define cGetInnerAbsLayer 2     //getInner()中,Alg纵向尝试layer层 (20210514改成2,因为1和8层也会直接抽具象关联);\n#define cGetInnerAbsCount 3     //getInner()中,Alg纵向每层取limit个;\n#define cGetInnerByAlgCount 3   //getInnerHN()中,type嵌套取limit条;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/SMGConfig.h:32-51"
+    },
+    "2021": {
+        "file_id": 200,
+        "content": "This code defines various limits and counts for the SMG system, including data limits, thinkout parameters, and getInner function limits. These values are used to control the behavior and functionality of the system.",
+        "type": "comment"
+    },
+    "2022": {
+        "file_id": 200,
+        "content": "#define cGetInnerByFoCount 3    //getInnerGL()中,type嵌套取limit条;\n#define cTOSubModelLimit 2      //在决策中,子模型limit\n#define cMCValue_AbsAssLimit 10 //在MC匹配稀疏码模糊匹配时,向抽象联想个数\n#define cMCValue_ConAssLimit 20 //在MC匹配稀疏码模糊匹配时,向具象联想个数\n#define cPM_RefLimit 20         //在PM理性评价时,取refPorts的个数 (参考20063-A2示图)\n#define cPM_CheckRefLimit 4     //在PM理性评价时,检查有效(有mv指向)refPorts的个数\n#define cPM_CheckSPFoLimit 100    //在PM理性评价时,检查SP时序的个数\n#define cTOPPModeConAssLimit 5  //在TOP的P模式下,下具象联想的条数\n#define cRethinkActBack_AssSPFoLimit 3 //反省_联想ATSubFo的数量\n#define cDemandDeepLimit 8 //短时记忆树最高demand层数;\n//MARK:===============================================================\n//MARK:                     < ThinkIn >\n//MARK:===============================================================\n#define cMvNoneIdent @\"mvNone\"      //mv的默认标识\n/**\n *  MARK:--------------------局部匹配时,检查refPorts数--------------------\n *  @version\n *      2020.07.20: 概念经历太多时,10个太少找不到本该出现的结果,所以改成IntMax,因为无性能问题\n *      2022.06.07: V.refA取30% (参考2619j-TODO1);\n */\n#define cPartMatchingCheckRefPortsLimit_Alg(refCount) MAX(refCount * 0.3f, 5)",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/SMGConfig.h:52-79"
+    },
+    "2023": {
+        "file_id": 200,
+        "content": "This code defines constants for various limits in the SMGConfig.h file. These limits control how many items are considered in different parts of the algorithm, such as submodels, abstract associations, concrete associations, and reference ports during the reasoning process. The code also includes comments that explain the purpose and changes to some of these limits over time.",
+        "type": "comment"
+    },
+    "2024": {
+        "file_id": 200,
+        "content": "#define cPartMatchingThreshold 0.3  //局部匹配时_匹配阀值 (相似度) 20191224ALG改为全含方式 FO懒先不改\n#define cTIRFoAbsIndexLimit 5       //时序识别时,取抽象索引的条数\n//MARK:===============================================================\n//MARK:                     < 窄出 >\n//MARK:===============================================================\n#define cIndexNarrowLimit 1000  //所以每个稀疏码的精度,不允许大于1k;\n#define cRFoNarrowLimit 0\n#define cSolutionNarrowLimit 5\n//MARK:===============================================================\n//MARK:                     < third & demo >\n//MARK:===============================================================\n#define cWedis2DBInterval 600 //2023.07.20: 因多线程常闪退,这里先调成5测段时间;\n#define cHeLog2DBInterval 20\n#define heLogSwitch false //heLog默认开关;\n#define tomV2Switch false //tv默认开关;\n#define defaultScore NSNotFound //默认评分值 (一般用于判断评分是否已经评过,比如用于缓存时只计算一次判断);\n#define defaultMatchValue NSNotFound //默认相似度\n//MARK:===============================================================\n//MARK:                     < 需要改变值的配置 >\n//MARK:===============================================================",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/SMGConfig.h:80-102"
+    },
+    "2025": {
+        "file_id": 200,
+        "content": "This code defines various constants and limits used in the SMGConfig. These include thresholds for local matching, the number of abstract indices to take during sequence recognition, limitations on precision for sparse codes, intervals for logging to a database, default scores and match values, and configuration settings that require changes.",
+        "type": "comment"
+    },
+    "2026": {
+        "file_id": 200,
+        "content": "//不打印NSLog日志开关\nstatic BOOL cNSLogSwitch = true;\n#define cNSLogSwitchIsOpenTypes @[@\"TI\",@\"TO\",@\"MA\",@\"OT\"]",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/SMGConfig.h:104-106"
+    },
+    "2027": {
+        "file_id": 200,
+        "content": "This code defines a switch for turning on/off NSLog logging and includes an array of types that will enable the log when their corresponding value is set to true.",
+        "type": "comment"
+    },
+    "2028": {
+        "file_id": 201,
+        "content": "/SMG_NothingIsAll/AIFoundation/SMGEnum.h",
+        "type": "filepath"
+    },
+    "2029": {
+        "file_id": 201,
+        "content": "The code introduces enums for charging status, AI mood type, input signal type, and target type in SMG_NothingIsAll. It also defines AnalogyType enum, manages app functionality, I/O statuses, model status, deprecates some versions, and adds ATPlus and ATSub.",
+        "type": "summary"
+    },
+    "2030": {
+        "file_id": 201,
+        "content": "//\n//  SMGEnum.h\n//  SMG_NothingIsAll\n//\n//  Created by 贾  on 2017/4/8.\n//  Copyright © 2017年 XiaoGang. All rights reserved.\n//\n/**\n *  MARK:--------------------充电状态--------------------\n */\ntypedef NS_ENUM(NSInteger, HungerState) {\n    HungerState_Unknown     = 0,\n    HungerState_Unplugged   = 1,//未充电\n    HungerState_Charging    = 2,//充电中\n};\ntypedef NS_ENUM(NSInteger, AIMoodType) {\n    AIMoodType_Anxious      = 1,//焦急\n    AIMoodType_Satisfy      = 2,//满意\n};\n/**\n *  MARK:--------------------IMVType(输入imv信号)--------------------\n */\ntypedef NS_ENUM(NSInteger, MVType) {\n    MVType_None     = 0,\n    MVType_Hunger   = 1,\n    MVType_Anxious  = 2,\n    MVType_Hurt  = 3,//痛觉\n};\n/**\n *  MARK:--------------------CustomInputType(自定义输入信号)--------------------\n */\ntypedef NS_ENUM(NSInteger, CustomInputType) {\n    CustomInputType_Charge     = 1,\n};\n/**\n *  MARK:--------------------MV目标类型--------------------\n */\n//typedef NS_ENUM(NSInteger, AITargetType) {\n//    AITargetType_None   = 0,//不变\n//    AITargetType_Up     = 1,//增涨(欲望)\n//    AITargetType_Down   = 2,//下降(饥饿,焦急,疼痛)",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/SMGEnum.h:1-47"
+    },
+    "2031": {
+        "file_id": 201,
+        "content": "This header file defines several enum types for charging status, AI mood type, input signal type and target type. These enums will be used to represent different states and inputs in the SMG_NothingIsAll codebase.",
+        "type": "comment"
+    },
+    "2032": {
+        "file_id": 201,
+        "content": "//    AITargetType_Repeat = 3,//重复(快乐)\n//};\n/**\n *  MARK:--------------------顺逆方向--------------------\n */\ntypedef NS_ENUM(NSInteger, MVDirection) {\n    MVDirection_None        =-1,//无\n    MVDirection_Negative    = 0,//负\n    MVDirection_Positive    = 1,//正\n};\n/**\n *  MARK:--------------------类比类型(大小有无同异)--------------------\n *  @version\n *      2021.10.12: SP的定义由顺逆改为好坏 (参考24054-方案2);\n *      2022.10.28: 除了ATPlus和ATSub用来标记好坏外,此枚举早已弃用;\n */\ntypedef NS_ENUM(NSInteger,  AnalogyType) {\n    ATDefault   = 0,            //默认\n    ATGreater   = INT_MAX - 47, //2147483600    内类比_变大 (已弃用);\n    ATLess      = INT_MIN + 48, //-2147483600   内类比_变小 (已弃用)\n    ATHav       = INT_MAX,      //2147483647    内类比_变有 (已弃用)\n    ATNone      = INT_MIN,      //-2147483648   内类比_变无 (已弃用)\n    ATPlus      = INT_MAX - 147,//2147483500    反省_好\n    ATSub       = INT_MIN + 148,//-2147483500   反省_坏\n    ATSame      = INT_MAX - 247,//2147483400    正向外类比 (仅用于表示是否指向实mv,不做为节点类型使用) (已弃用)\n    ATDiff      = INT_MIN + 247,//-2147483400   反向外类比 (即用于表示是否指向虚mv,也做为节点类型使用) (已弃用)",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/SMGEnum.h:48-76"
+    },
+    "2033": {
+        "file_id": 201,
+        "content": "This code defines an enum called `AnalogyType` with various options representing different types of comparisons. It includes options for greater, lesser, having, none, and positive or negative comparisons. However, most of these options have been deprecated in favor of the ATPlus and ATSub options for marking good and bad respectively.",
+        "type": "comment"
+    },
+    "2034": {
+        "file_id": 201,
+        "content": "};\n/**\n *  MARK:--------------------Output通知前后枚举--------------------\n */\ntypedef NS_ENUM(NSInteger,  OutputObserverType) {\n    OutputObserverType_UseTime = -1,//取行为动作使用时间 (只负责将现实世界行为动作所需时间传回给主线程和TO线程用,禁止UI操作);\n    OutputObserverType_Front   = 0,//前 (动作输出);\n    OutputObserverType_Back    = 1,//后 (世界变化处理 & 价值触发处理);\n};\n/**\n *  MARK:--------------------识别类型--------------------\n *  @desc 优先级说明: self > fuzzy > abs > seem\n *  @version\n *      2020.10.22: TIR_Alg同时支持matchAlg和seemAlg的返回,fuzzy已废弃,所以不再需要MatchType枚举 (参考:21091);\n */\n//typedef NS_ENUM(NSInteger, MatchType) {\n//    MatchType_None  = 0,//无效\n//    MatchType_Seem  = 1,//局部相似\n//    MatchType_Abs   = 2,//全含\n//    MatchType_Fuzzy = 3,//模糊匹配\n//    MatchType_Self  = 4,//自身\n//};\n/**\n *  MARK:--------------------LogHeaderMode--------------------\n */\ntypedef NS_ENUM(NSInteger, LogHeaderMode) {\n    LogHeaderMode_None  = 0,//无header\n    LogHeaderMode_First = 1,//仅首行\n    LogHeaderMode_All   = 2,//所有行\n};\n/**\n *  MARK:--------------------TOModelStatus--------------------\n *  @title 输出模型状态",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/SMGEnum.h:77-113"
+    },
+    "2035": {
+        "file_id": 201,
+        "content": "This code contains various enums (OutputObserverType, LogHeaderMode, TOModelStatus) for managing different aspects of the app's functionality. The OutputObserverType enum is used to specify when during an action output should be observed. MatchType has been deprecated in favor of supporting matchAlg and seemAlg. LogHeaderMode determines whether log headers should be included in the log, and TOModelStatus represents the status of a model used by the app.",
+        "type": "comment"
+    },
+    "2036": {
+        "file_id": 201,
+        "content": " *  @todo 考虑支持ScorePK,即迟疑时,尝试别的方案,与当前方案进行竞争;\n *  @version\n *      2021.12.23: 废弃Wait状态,由Runing替代;\n */\ntypedef NS_ENUM(NSInteger, TOModelStatus) {\n    TOModelStatus_Runing   = 1,//运行中 (其subModel正在尝试行为化中);\n    TOModelStatus_ActYes   = 2,//行为化成功 (等待外循环结果,等待反馈) (预测);\n    TOModelStatus_ActNo    = 3,//行为化失败 (等待条件满足时继续);\n    TOModelStatus_ScoreNo  = 4,//评价失败而中止 (不想干,彻底挂掉,除非demandModel变的更迫切);\n    TOModelStatus_NoNeedAct= 5,//无需行为化\n    TOModelStatus_OuterBack= 6,//外循环结果返回符合的标记 (用于actYes);\n    TOModelStatus_Finish   = 7,//最终成功 (完成后向下帧跳转,发生在事实发生之后,即新的input匹配到);\n    TOModelStatus_VSWait   = 8,//在多任务竞争中,被暂时击退 (等待继续博弈);\n    TOModelStatus_WithOut  = 9,//TCSolution无计可施标记,没S解决方案了;\n};\ntypedef NS_ENUM(NSInteger, EffectStatus) {\n    ES_Default  = 0,//默认\n    ES_HavEff   = 1,//有效反馈 (明确有效了)\n    ES_NoEff    = 2,//无效反馈 (明确无效了)\n};\n/**\n *  MARK:--------------------TIModelStatus--------------------\n *  @title 输入模型状态\n *  @version\n *      2022.09.04: 虚mv早已废弃:所以删除TIModelStatus_OutBackDiffDelta(4),//反馈反向delta (用于虚mv)\n */\ntypedef NS_ENUM(NSInteger, TIModelStatus) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/SMGEnum.h:114-142"
+    },
+    "2037": {
+        "file_id": 201,
+        "content": "This code defines several enumerations for input model status, output status, and task input model status. These statuses represent different stages of the model's execution and can be used to track its progress. The code also mentions some changes in versions and notes on which ones were deprecated or added.",
+        "type": "comment"
+    },
+    "2038": {
+        "file_id": 201,
+        "content": "    TIModelStatus_Default           = 0,//默认值\n    TIModelStatus_LastWait          = 1,//等待下帧(末位时即等待mv) (相当于TO的ActYes状态) (如0是LastWait状态其实是在等待1的反馈);\n    TIModelStatus_OutBackReason     = 2,//反馈理性结果 (用于理性反馈)\n    TIModelStatus_OutBackSameDelta  = 3,//反馈同向delta (用于实mv)\n    TIModelStatus_OutBackNone       = 5,//无反馈\n};\n/**\n *  MARK:--------------------TOType--------------------\n *  @title 决策类型 (其实只有P-和R-存在,另外两个不构成需求);\n */\n//typedef NS_ENUM(NSInteger, TOType) {\n//    TO_PerceptSub = 0,//P- (必须完成,才算完成)\n//    TO_PerceptPlus= 1,//P+ (开心,无需求,暂废弃)\n//    TO_ReasonPlus = 2,//R+ (顺应即可,顺不成也算完成,无需求,暂废弃)\n//    TO_ReasonSub  = 3,//R- (只要阻止,就算完成)\n//};\n/**\n *  MARK:--------------------SceneType (参考29069-todo1)--------------------\n */\ntypedef NS_ENUM(NSInteger,  SceneType) {\n    SceneTypeI         = 0,\n    SceneTypeFather    = 1,\n    SceneTypeBrother   = 2\n};",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/SMGEnum.h:143-168"
+    },
+    "2039": {
+        "file_id": 201,
+        "content": "This code snippet defines several enumerations for various types such as TIModelStatus, TOType, and SceneType. The TIModelStatus enumeration represents different model statuses like default, last wait, and outback reasons. The TOType enumeration categorizes decision types like percept sub and reason sub. Finally, the SceneType enumeration represents different scene types such as I, father, and brother.",
+        "type": "comment"
+    },
+    "2040": {
+        "file_id": 202,
+        "content": "/SMG_NothingIsAll/AppDelegate.h",
+        "type": "filepath"
+    },
+    "2041": {
+        "file_id": 202,
+        "content": "This code defines the \"AppDelegate\" class, which inherits from UIResponder and adopts the UIApplicationDelegate protocol. It includes properties for a window, NVView, HeLogView, TOMVision2, and an integer for bird birth position mode. The class also provides three methods: getTopDisplayViewController, setTipLog, and setNoLogMode.",
+        "type": "summary"
+    },
+    "2042": {
+        "file_id": 202,
+        "content": "//\n//  AppDelegate.h\n//  SMG_NothingIsAll\n//\n//  Created by 贾  on 2017/4/7.\n//  Copyright © 2017年 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n@class NVView,HeLogView,TOMVision2;\n@interface AppDelegate : UIResponder <UIApplicationDelegate>\n@property (strong, nonatomic) UIWindow *window;\n@property (strong, nonatomic) NVView *nvView;\n@property (strong, nonatomic) HeLogView *heLogView;\n@property (strong, nonatomic) TOMVision2 *tv;\n@property (assign, nonatomic) NSInteger birthPosMode;//小鸟出生地 (0随机,1随机偏屏中,2屏中,3安全地带随机);\n-(UIViewController*) getTopDisplayViewController;\n-(void) setTipLog:(NSString*)tipLog;\n-(void)setNoLogMode:(BOOL)noLogMode; //无日志模式;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AppDelegate.h:1-24"
+    },
+    "2043": {
+        "file_id": 202,
+        "content": "This code defines the \"AppDelegate\" class, which inherits from UIResponder and adopts the UIApplicationDelegate protocol. It includes properties for a window, NVView, HeLogView, TOMVision2, and an integer for bird birth position mode. The class also provides three methods: getTopDisplayViewController, setTipLog, and setNoLogMode.",
+        "type": "comment"
+    },
+    "2044": {
+        "file_id": 203,
+        "content": "/SMG_NothingIsAll/AppDelegate.m",
+        "type": "filepath"
+    },
+    "2045": {
+        "file_id": 203,
+        "content": "The code initializes the AppDelegate class, manages UI elements, sets up memory and timer properties, performs Umeng integration, configures navigation controller, view controllers, handles button actions, adds a button to a window, allows for various birth position modes, updates display, checks restart conditions, resets when criteria are met, and sets the button title when idle time is not continuous.",
+        "type": "summary"
+    },
+    "2046": {
+        "file_id": 203,
+        "content": "//\n//  AppDelegate.m\n//  SMG_NothingIsAll\n//\n//  Created by 贾  on 2017/4/7.\n//  Copyright © 2017年 XiaoGang. All rights reserved.\n//\n#import \"AppDelegate.h\"\n#import \"MainPage.h\"\n#import \"AINet.h\"\n#import \"NSObject+Extension.h\"\n#import \"AIKVPointer.h\"\n#import \"NVDelegate_He.h\"\n#import \"HeLogView.h\"\n#import <UMCommon/UMCommon.h>\n#import \"MemManagerWindow.h\"\n#import \"MASConstraint.h\"\n#import \"View+MASAdditions.h\"\n@interface AppDelegate ()\n@property (strong, nonatomic) UILabel *tipLogLab;\n@property (strong, nonatomic) UIView *refreshDot;//因为模拟器下的UI动画老不刷新,所以写个闪动点,来推动UI被动刷新;\n@property (strong, nonatomic) MemManagerWindow *memManagerWindow;\n@property (assign, nonatomic) int waitReset;//0默认或成功 1等待重启 (2,3..N)fps<3连续n次\n//思维状态\n@property (strong, nonatomic) NSTimer *timer;               //间隔计时器\n@property (assign, nonatomic) long long lastOperCount;\n@property (strong, nonatomic) UILabel *thinkFPSLab;\n@property (strong, nonatomic) UIButton *thinkModeBtn;\n@property (strong, nonatomic) UIButton *resetBtn;\n@end\n@implementation AppDelegate",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AppDelegate.m:1-38"
+    },
+    "2047": {
+        "file_id": 203,
+        "content": "This code is the implementation file for the AppDelegate class in an iOS app. It includes properties like UILabel, UIView, and UIButton objects that are used to display information or perform actions within the app. The class also contains properties related to memory management and timer functionality, which may be used to track and optimize app performance.",
+        "type": "comment"
+    },
+    "2048": {
+        "file_id": 203,
+        "content": "- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {\n    //0. 初始化UMeng\n    [UMConfigure initWithAppkey:@\"5f06fadaed3b4408234905b8\" channel:@\"default\"];\n    [UMConfigure setLogEnabled:true];\n    //1. Path\n    NSArray * paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);\n    NSLog(@\"%@\",paths[0]);\n    //2. 初始化UI\n    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];\n    self.window.backgroundColor = [UIColor whiteColor];\n    MainPage *page = [[MainPage alloc] init];\n    UINavigationController *naviC = [[UINavigationController alloc] initWithRootViewController:page];\n    [self.window setRootViewController:naviC];\n    [self.window makeKeyAndVisible];\n    //3. heLogView打开按钮\n    [self createNavBtn:1 title:@\"经历\" action:@selector(openHeLogBtnOnClick:) bg:0];\n    //3. 被动UI刷新\n    self.refreshDot = [[UIView alloc] initWithFrame:CGRectMake(ScreenWidth - 40, 8, 5, 5)];\n    [self.refreshDot setBackgroundColor:UIColorWithRGBHex(0x00FF00)];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AppDelegate.m:40-62"
+    },
+    "2049": {
+        "file_id": 203,
+        "content": "Initializes Umeng, retrieves path to the app's library directory, sets up the UI including a navigation controller and main page view controller, creates a button for opening \"经历\" feature, and sets up passive UI refresh.",
+        "type": "comment"
+    },
+    "2050": {
+        "file_id": 203,
+        "content": "    [self.refreshDot.layer setCornerRadius:2.5f];\n    [self.refreshDot.layer setMasksToBounds:true];\n    [self.window addSubview:self.refreshDot];\n    [self startRefreshDotAnimation];\n    //3. 记忆管理按钮\n    [self createNavBtn:2 title:@\"记忆\" action:@selector(memManagerBtnOnClick:) bg:0];\n    //3. 工作记忆按钮\n    [self createNavBtn:3 title:@\"思维\" action:@selector(tvBtnOnClick:) bg:0];\n    //3. 思维状态\n    self.timer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(timeBlock) userInfo:nil repeats:true];\n    //3. 思维状态显示\n    self.thinkFPSLab = [[UILabel alloc] init];\n    [self.thinkFPSLab setTextColor:[UIColor blackColor]];\n    [self.thinkFPSLab setFont:[UIFont fontWithName:@\"PingFang SC\" size:8.0f]];\n    self.thinkFPSLab.lineBreakMode = NSLineBreakByCharWrapping;\n    [self.thinkFPSLab setNumberOfLines:0];\n    [self.window addSubview:self.thinkFPSLab];\n    [self.thinkFPSLab mas_makeConstraints:^(MASConstraintMaker *make) {\n        make.trailing.mas_equalTo(self.window).offset(-145);\n        make.top.mas_equalTo(self.window).offset(10);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AppDelegate.m:63-86"
+    },
+    "2051": {
+        "file_id": 203,
+        "content": "This code initializes a window, sets corner radius and masks to bounds for the refreshDot view, adds the refreshDot as subview, starts an animation, creates navigation buttons with labels and actions, sets up a timer to update a UILabel displaying thinking status, and adds the UILabel to the window.",
+        "type": "comment"
+    },
+    "2052": {
+        "file_id": 203,
+        "content": "    }];\n    //3. 强化训练按钮\n    [self createNavBtn:4 title:@\"强训\" action:@selector(rtBtnOnClick:) bg:0];\n    //3. 强化训练配置->鸟出生地点;\n    [theRT regist:kBirthPosRdmCentSEL target:self selector:@selector(setBirthPosMode_RdmCent)];\n    [theRT regist:kBirthPosRdmSEL target:self selector:@selector(setBirthPosMode_Rdm)];\n    [theRT regist:kBirthPosCentSEL target:self selector:@selector(setBirthPosMode_Cent)];\n    [theRT regist:kBirthPosRdmSafeSEL target:self selector:@selector(setBirthPosMode_RdmSafe)];\n    //3. 强行停止思考能力按钮\n    NSString *thinkStr = [self getThinkBtnStr];\n    self.thinkModeBtn = [self createNavBtn:5 title:thinkStr action:@selector(stopThinkBtnOnClick:) bg:1];\n    //3. 模拟重启\n    self.resetBtn = [self createNavBtn:6 title:@\"重启\" action:@selector(resetBtnOnClick:) bg:0];\n    //3. 持久化\n    [self createNavBtn:7 title:@\"2DB\" action:@selector(wedisSaveBtnOnClick:) bg:0];\n    //4. 神经网络可视化\n    self.nvView = [[NVView alloc] initWithDelegate:[NVDelegate_He new]];\n    [self.nvView setAlpha:0.9f];\n    [self.window addSubview:self.nvView];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AppDelegate.m:87-111"
+    },
+    "2053": {
+        "file_id": 203,
+        "content": "This code sets up various buttons and functionalities in the application. It creates a \"强训\" button for training, registers different birth position modes, creates a \"停止思考\" button, adds a \"重启\" button, creates a \"2DB\" button for persistent data saving, and initializes a neural network visualization view.",
+        "type": "comment"
+    },
+    "2054": {
+        "file_id": 203,
+        "content": "    //5. heLogView\n    self.heLogView = [[HeLogView alloc] init];\n    [self.window addSubview:self.heLogView];\n    //6. tipLogLab\n    self.tipLogLab = [[UILabel alloc] init];\n    [self.tipLogLab setTextColor:[UIColor redColor]];\n    [self.tipLogLab setFont:[UIFont fontWithName:@\"PingFang SC\" size:8.0f]];\n    self.tipLogLab.lineBreakMode = NSLineBreakByCharWrapping;\n    [self.tipLogLab setNumberOfLines:0];\n    [self.window addSubview:self.tipLogLab];\n    [self.tipLogLab mas_makeConstraints:^(MASConstraintMaker *make) {\n        make.leading.mas_equalTo(self.window).offset(40);\n        make.trailing.mas_equalTo(self.window);\n        make.bottom.mas_equalTo(self.window);\n    }];\n    //7. 记忆管理器\n    self.memManagerWindow = [[MemManagerWindow alloc] init];\n    [self.window addSubview:self.memManagerWindow];\n    //8. 工作记忆可视化\n    self.tv = [[TOMVision2 alloc] init];\n    [self.window addSubview:self.tv];\n    //9. 初始化XGConfig\n    [XGConfig.instance initConfig];\n    return YES;\n}\n- (void)applicationWillResignActive:(UIApplication *)application {}",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AppDelegate.m:113-143"
+    },
+    "2055": {
+        "file_id": 203,
+        "content": "This code initializes various UI elements and sets up the user interface for an app. It creates a HeLogView, adds a UILabel for displaying tips, sets up a MemManagerWindow, and initializes XGConfig. The views are added as subviews to the window.",
+        "type": "comment"
+    },
+    "2056": {
+        "file_id": 203,
+        "content": "- (void)applicationDidEnterBackground:(UIApplication *)application {}\n- (void)applicationWillEnterForeground:(UIApplication *)application {}\n- (void)applicationDidBecomeActive:(UIApplication *)application {}\n- (void)applicationWillTerminate:(UIApplication *)application {}\n//MARK:===============================================================\n//MARK:                     < method >\n//MARK:===============================================================\n-(UIViewController*) getTopDisplayViewController{\n    UINavigationController *navC = (UINavigationController*)[self.window rootViewController];    \n    NSArray *controllers = navC.viewControllers;\n    UIViewController *controller = [controllers lastObject];\n    return controller;\n}\n-(void) setTipLog:(NSString*)tipLog{\n    [self.tipLogLab setText:STRTOOK(tipLog)];\n}\n/**\n *  MARK:--------------------无日志模式--------------------\n *  @version\n *      2022.08.17: 调试训练卡顿是因为theTV的帧记录导致的 (参考27065);\n */\n-(void)setNoLogMode:(BOOL)noLogMode{\n    [theTV setStop:noLogMode];\n    [theHeLog setStop:noLogMode];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AppDelegate.m:145-174"
+    },
+    "2057": {
+        "file_id": 203,
+        "content": "This code contains methods for handling app background and foreground events, retrieving the top view controller, setting tip log text, and enabling/disabling logging.",
+        "type": "comment"
+    },
+    "2058": {
+        "file_id": 203,
+        "content": "    //cNSLogSwitch = noLogMode;\n}\n//MARK:===============================================================\n//MARK:                     < privateMethod >\n//MARK:===============================================================\n-(void) openHeLogBtnOnClick:(id)btn{\n    [self.heLogView open];\n}\n-(void) memManagerBtnOnClick:(id)btn{\n    [self.memManagerWindow open];\n}\n-(void) tvBtnOnClick:(id)btn{\n    [self.tv open];\n}\n-(void) rtBtnOnClick:(id)btn{\n    [theRT open];\n}\n-(void) stopThinkBtnOnClick:(UIButton*)btn{\n    theTC.thinkMode++;\n    theTC.thinkMode %= 3;\n    [btn setTitle:[self getThinkBtnStr] forState:UIControlStateNormal];\n}\n-(void) wedisSaveBtnOnClick:(UIButton*)btn{\n    [[XGWedis sharedInstance] save];\n    //成功提示\n    UIColor *bakColor = btn.titleLabel.textColor;\n    [btn setTitleColor:UIColor.greenColor forState:UIControlStateNormal];\n    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{\n        [btn setTitleColor:bakColor forState:UIControlStateNormal];\n    });",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AppDelegate.m:175-210"
+    },
+    "2059": {
+        "file_id": 203,
+        "content": "This code includes private methods for handling button clicks in the AppDelegate class. The methods open corresponding views or windows and implement functions such as stopping think mode, saving data using a wedis instance, and setting button colors after a successful save operation.",
+        "type": "comment"
+    },
+    "2060": {
+        "file_id": 203,
+        "content": "}\n-(void) resetBtnOnClick:(UIButton*)btn{\n    if (self.waitReset == 0) {\n        self.waitReset = 1;\n        [btn setTitle:@\"等待\" forState:UIControlStateNormal];\n    }\n}\n-(void) startRefreshDotAnimation{\n    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{\n        self.refreshDot.alpha = fabs(self.refreshDot.alpha - 1);\n        [self startRefreshDotAnimation];\n    });\n}\n-(NSString*) getThinkBtnStr {\n    if (theTC.thinkMode == 0) {\n        return @\"动物\";\n    }else if(theTC.thinkMode == 1) {\n        return @\"认知\";\n    }else if(theTC.thinkMode == 2) {\n        return @\"植物\";\n    }\n    return @\"其它\";\n}\n/**\n *  MARK:--------------------创建navBtn--------------------\n *  @param index : 0=40, 1=82, 2=124, 3=166, 4=208, 5=250, 6=292\n *  @param bg : 默认0绿,1红;\n */\n-(UIButton*) createNavBtn:(NSInteger)index title:(NSString*)title action:(SEL)action bg:(int)bg{\n    //1. 数据准备;\n    CGFloat marginRight = index * 40 + 40 + index * 2;\n    CGFloat x = ScreenWidth - marginRight;\n    UIColor *bgColor = bg == 1 ? UIColorWithRGBHex(0xFFEEEE) : UIColorWithRGBHex(0xEEFFEE);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AppDelegate.m:211-247"
+    },
+    "2061": {
+        "file_id": 203,
+        "content": "This code snippet is from the AppDelegate.m file of a project. It contains methods for resetting a button, starting a refresh dot animation, getting a string based on the think mode, and creating a navigation button with specified parameters. The resetBtnOnClick method changes a button's title when waitReset equals 0, while startRefreshDotAnimation is responsible for an animation of a refresh dot every 0.3 seconds. The getThinkBtnStr method returns a string representing different modes depending on the thinkMode value. Lastly, createNavBtn creates a navigation button with specified index, title, action, and background color.",
+        "type": "comment"
+    },
+    "2062": {
+        "file_id": 203,
+        "content": "    //2. 创建btn;\n    UIButton *btn = [[UIButton alloc] initWithFrame:CGRectMake(x, StateBarHeight, 40, 20)];\n    [btn.titleLabel setFont:[UIFont systemFontOfSize:15]];\n    [btn setTitleColor:UIColorWithRGBHex(0x0000EE) forState:UIControlStateNormal];\n    [btn setBackgroundColor:bgColor];\n    [btn setTitle:title forState:UIControlStateNormal];\n    [btn addTarget:self action:action forControlEvents:UIControlEventTouchUpInside];\n    [self.window addSubview:btn];\n    return btn;\n}\n//MARK:===============================================================\n//MARK:                     < 小鸟出生地配置 >\n//MARK:===============================================================\n- (void)setBirthPosMode_Rdm{\n    self.birthPosMode = 0;\n    [theRT invoked:kBirthPosRdmSEL];\n}\n- (void)setBirthPosMode_RdmCent{\n    self.birthPosMode = 1;\n    [theRT invoked:kBirthPosRdmCentSEL];\n}\n- (void)setBirthPosMode_Cent{\n    self.birthPosMode = 2;\n    [theRT invoked:kBirthPosCentSEL];\n}\n- (void)setBirthPosMode_RdmSafe{\n    self.birthPosMode = 3;\n    [theRT invoked:kBirthPosRdmSafeSEL];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AppDelegate.m:249-277"
+    },
+    "2063": {
+        "file_id": 203,
+        "content": "This code snippet creates a button and adds it to the window as a subview. It also provides four methods for setting birth position modes.",
+        "type": "comment"
+    },
+    "2064": {
+        "file_id": 203,
+        "content": "}\n//MARK:===============================================================\n//MARK:                     < block >\n//MARK:===============================================================\n/**\n *  MARK:--------------------每秒思维状态更新--------------------\n *  @version\n *      2023.12.01: 只有思维闲置3秒时才会重启,避免realMaskFo收集未完成导致newRCanset不全的问题 (参考31017-解答4);\n *      2023.12.01: 动物模式时FPS永远>=2,所以等待重启的条件改为: FPS3以下连续5秒;\n */\n-(void) timeBlock {\n    //1. FPS更新显示;\n    [self.thinkFPSLab setText:STRFORMAT(@\"%lld\",theTC.getOperCount - self.lastOperCount)];\n    //2. 思维模式更新显示;\n    [self.thinkModeBtn setTitle:[self getThinkBtnStr] forState:UIControlStateNormal];\n    //3. 如果在待重启状态,且思维闲时=>更新待重启状态;\n    if (self.waitReset != 0) {\n        if (theTC.getOperCount - self.lastOperCount <= 3) {\n            self.waitReset++;\n            //4. 连续5秒闲置后,进行重启;\n            if (self.waitReset >= 6) {\n                [self.resetBtn setTitle:@\"成功\" forState:UIControlStateNormal];\n                [theTC clear];\n                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AppDelegate.m:278-306"
+    },
+    "2065": {
+        "file_id": 203,
+        "content": "This code updates the FPS and thought mode display, checks for a restart condition when in waiting state, and if met, proceeds with resetting. The restart condition is when there are 5 consecutive seconds of idle thinking with FPS less than or equal to 3.",
+        "type": "comment"
+    },
+    "2066": {
+        "file_id": 203,
+        "content": "                    [self.resetBtn setTitle:@\"重启\" forState:UIControlStateNormal];\n                });\n                self.waitReset = 0;\n            }\n        } else {\n            //5. 如果闲置不连续,则重置为0次 (保证必须连续三次才有效);\n            self.waitReset = 1;\n        }\n    }\n    self.lastOperCount = theTC.getOperCount;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AppDelegate.m:307-319"
+    },
+    "2067": {
+        "file_id": 203,
+        "content": "Sets the button title to \"重启\" when idle time is not continuous, resets waitReset to 1 (ensuring three consecutive idle events are required), and updates lastOperCount with current operating count.",
+        "type": "comment"
+    },
+    "2068": {
+        "file_id": 204,
+        "content": "/SMG_NothingIsAll/Base.lproj/LaunchScreen.storyboard",
+        "type": "filepath"
+    },
+    "2069": {
+        "file_id": 204,
+        "content": "The code defines a launch screen view controller layout for an iOS app using Auto Layout and Xcode 8 format, consisting of a rectangular view, white background, and first responder placeholder object.",
+        "type": "summary"
+    },
+    "2070": {
+        "file_id": 204,
+        "content": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<document type=\"com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB\" version=\"3.0\" toolsVersion=\"11134\" systemVersion=\"15F34\" targetRuntime=\"iOS.CocoaTouch\" propertyAccessControl=\"none\" useAutolayout=\"YES\" launchScreen=\"YES\" useTraitCollections=\"YES\" colorMatched=\"YES\" initialViewController=\"01J-lp-oVM\">\n    <dependencies>\n        <plugIn identifier=\"com.apple.InterfaceBuilder.IBCocoaTouchPlugin\" version=\"11106\"/>\n        <capability name=\"documents saved in the Xcode 8 format\" minToolsVersion=\"8.0\"/>\n    </dependencies>\n    <scenes>\n        <!--View Controller-->\n        <scene sceneID=\"EHf-IW-A2E\">\n            <objects>\n                <viewController id=\"01J-lp-oVM\" sceneMemberID=\"viewController\">\n                    <layoutGuides>\n                        <viewControllerLayoutGuide type=\"top\" id=\"Llm-lL-Icb\"/>\n                        <viewControllerLayoutGuide type=\"bottom\" id=\"xb3-aO-Qok\"/>\n                    </layoutGuides>\n                    <view key=\"view\" contentMode=\"scaleToFill\" id=\"Ze5-6b-2t3\">",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Base.lproj/LaunchScreen.storyboard:1-16"
+    },
+    "2071": {
+        "file_id": 204,
+        "content": "The code represents a storyboard file for an iOS app's launch screen. It includes dependencies, scenes, and view controllers, all adhering to the Xcode 8 format. The document is using Auto Layout and is set as a launch screen.",
+        "type": "comment"
+    },
+    "2072": {
+        "file_id": 204,
+        "content": "                        <rect key=\"frame\" x=\"0.0\" y=\"0.0\" width=\"375\" height=\"667\"/>\n                        <autoresizingMask key=\"autoresizingMask\" widthSizable=\"YES\" heightSizable=\"YES\"/>\n                        <color key=\"backgroundColor\" red=\"1\" green=\"1\" blue=\"1\" alpha=\"1\" colorSpace=\"custom\" customColorSpace=\"sRGB\"/>\n                    </view>\n                </viewController>\n                <placeholder placeholderIdentifier=\"IBFirstResponder\" id=\"iYj-Kq-Ea1\" userLabel=\"First Responder\" sceneMemberID=\"firstResponder\"/>\n            </objects>\n            <point key=\"canvasLocation\" x=\"53\" y=\"375\"/>\n        </scene>\n    </scenes>\n</document>",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Base.lproj/LaunchScreen.storyboard:17-27"
+    },
+    "2073": {
+        "file_id": 204,
+        "content": "This code defines a view controller layout for an iOS app's launch screen, with a rectangular view filling the entire screen, autoresizing enabled, and a white background color. It also includes a placeholder object representing the first responder in the scene.",
+        "type": "comment"
+    },
+    "2074": {
+        "file_id": 205,
+        "content": "/SMG_NothingIsAll/CortexAlgorithms/CortexAlgorithmsUtil.h",
+        "type": "filepath"
+    },
+    "2075": {
+        "file_id": 205,
+        "content": "This file, CortexAlgorithmsUtil.h, is a part of the SMG_NothingIsAll codebase and contains methods for performing various algorithms using the Cortex framework. The class CortexAlgorithmsUtil inherits from NSObject in Foundation and provides a method maxOfLoopValue:ds: which takes two strings as arguments and returns a double value.",
+        "type": "summary"
+    },
+    "2076": {
+        "file_id": 205,
+        "content": "//\n//  CortexAlgorithmsUtil.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/3/13.\n//  Copyright © 2023年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface CortexAlgorithmsUtil : NSObject\n+(double) maxOfLoopValue:(NSString*)at ds:(NSString*)ds;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/CortexAlgorithms/CortexAlgorithmsUtil.h:1-15"
+    },
+    "2077": {
+        "file_id": 205,
+        "content": "This file, CortexAlgorithmsUtil.h, is a part of the SMG_NothingIsAll codebase and contains methods for performing various algorithms using the Cortex framework. The class CortexAlgorithmsUtil inherits from NSObject in Foundation and provides a method maxOfLoopValue:ds: which takes two strings as arguments and returns a double value.",
+        "type": "comment"
+    },
+    "2078": {
+        "file_id": 206,
+        "content": "/SMG_NothingIsAll/CortexAlgorithms/CortexAlgorithmsUtil.m",
+        "type": "filepath"
+    },
+    "2079": {
+        "file_id": 206,
+        "content": "This code defines a function `maxOfLoopValue` in the class `CortexAlgorithmsUtil` that returns the maximum value of loop codes. It takes two parameters: a string `at` and a string `ds`. If the string `at` is equal to \"AIVisionAlgs\" and the string `ds` is equal to \"direction\", it returns 360; if the string `at` is equal to \"FLY_RDS\", it returns 1; otherwise, it returns 0.",
+        "type": "summary"
+    },
+    "2080": {
+        "file_id": 206,
+        "content": "//\n//  CortexAlgorithmsUtil.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/3/13.\n//  Copyright © 2023年 XiaoGang. All rights reserved.\n//\n#import \"CortexAlgorithmsUtil.h\"\n@implementation CortexAlgorithmsUtil\n/**\n *  MARK:--------------------返回首尾循环码的最大值--------------------\n *  @desc 值说明 (参考28174-todo2):\n *          1. 首尾相连的稀疏码最小值一般都为0;\n *          2. 因为最大值等于最小值,所以此处将最大值返回,以方便计算差值;\n *  @version\n *      2023.03.14: 飞行方向也是首尾循环码 (参考28174-todo2-另外);\n *  @result 首尾循环的返回最大值,如果不循环的值则返回0;\n */\n+(double) maxOfLoopValue:(NSString*)at ds:(NSString*)ds {\n    //1. 视觉方向有360个值;\n    if ([@\"AIVisionAlgs\" isEqualToString:at] && [@\"direction\" isEqualToString:ds]) {\n        return 360;\n    } else if ([@\"FLY_RDS\" isEqualToString:at]) {\n        return 1;\n    }\n    return 0;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/CortexAlgorithms/CortexAlgorithmsUtil.m:1-32"
+    },
+    "2081": {
+        "file_id": 206,
+        "content": "This code defines a function `maxOfLoopValue` in the class `CortexAlgorithmsUtil` that returns the maximum value of loop codes. It takes two parameters: a string `at` and a string `ds`. If the string `at` is equal to \"AIVisionAlgs\" and the string `ds` is equal to \"direction\", it returns 360; if the string `at` is equal to \"FLY_RDS\", it returns 1; otherwise, it returns 0.",
+        "type": "comment"
+    },
+    "2082": {
+        "file_id": 207,
+        "content": "/SMG_NothingIsAll/CortexAlgorithms/Imv/ImvAlgsHungerModel.h",
+        "type": "filepath"
+    },
+    "2083": {
+        "file_id": 207,
+        "content": "This is the header file for ImvAlgsHungerModel class, which is a subclass of ImvBadModel and contains an interface section. It belongs to SMG_NothingIsAll project, created by jia on 2018/2/6.",
+        "type": "summary"
+    },
+    "2084": {
+        "file_id": 207,
+        "content": "//\n//  ImvAlgsHungerModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2018/2/6.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"ImvBadModel.h\"\n/**\n *  MARK:--------------------饥饿感模型--------------------\n */\n@interface ImvAlgsHungerModel : ImvBadModel\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/CortexAlgorithms/Imv/ImvAlgsHungerModel.h:1-16"
+    },
+    "2085": {
+        "file_id": 207,
+        "content": "This is the header file for ImvAlgsHungerModel class, which is a subclass of ImvBadModel and contains an interface section. It belongs to SMG_NothingIsAll project, created by jia on 2018/2/6.",
+        "type": "comment"
+    },
+    "2086": {
+        "file_id": 208,
+        "content": "/SMG_NothingIsAll/CortexAlgorithms/Imv/ImvAlgsHungerModel.m",
+        "type": "filepath"
+    },
+    "2087": {
+        "file_id": 208,
+        "content": "This code is the implementation file for the \"ImvAlgsHungerModel\" class in the \"SMG_NothingIsAll\" project. It is created by jia on February 6, 2018 and is copyrighted by XiaoGang.",
+        "type": "summary"
+    },
+    "2088": {
+        "file_id": 208,
+        "content": "//\n//  ImvAlgsHungerModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2018/2/6.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"ImvAlgsHungerModel.h\"\n@implementation ImvAlgsHungerModel\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/CortexAlgorithms/Imv/ImvAlgsHungerModel.m:1-13"
+    },
+    "2089": {
+        "file_id": 208,
+        "content": "This code is the implementation file for the \"ImvAlgsHungerModel\" class in the \"SMG_NothingIsAll\" project. It is created by jia on February 6, 2018 and is copyrighted by XiaoGang.",
+        "type": "comment"
+    },
+    "2090": {
+        "file_id": 209,
+        "content": "/SMG_NothingIsAll/CortexAlgorithms/Imv/ImvAlgsHurtModel.h",
+        "type": "filepath"
+    },
+    "2091": {
+        "file_id": 209,
+        "content": "This code defines the `ImvAlgsHurtModel` class, which is a subclass of `ImvBadModel`. It appears to be a part of the \"SMG_NothingIsAll\" codebase and was created by the developer named \"jia\" on January 16, 2021. The copyright belongs to XiaoGang for the year 2021.",
+        "type": "summary"
+    },
+    "2092": {
+        "file_id": 209,
+        "content": "//\n//  ImvAlgsHurtModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/1/16.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import \"ImvBadModel.h\"\n/**\n *  MARK:--------------------痛感模型--------------------\n */\n@interface ImvAlgsHurtModel : ImvBadModel\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/CortexAlgorithms/Imv/ImvAlgsHurtModel.h:1-16"
+    },
+    "2093": {
+        "file_id": 209,
+        "content": "This code defines the `ImvAlgsHurtModel` class, which is a subclass of `ImvBadModel`. It appears to be a part of the \"SMG_NothingIsAll\" codebase and was created by the developer named \"jia\" on January 16, 2021. The copyright belongs to XiaoGang for the year 2021.",
+        "type": "comment"
+    },
+    "2094": {
+        "file_id": 210,
+        "content": "/SMG_NothingIsAll/CortexAlgorithms/Imv/ImvAlgsHurtModel.m",
+        "type": "filepath"
+    },
+    "2095": {
+        "file_id": 210,
+        "content": "This code file, \"ImvAlgsHurtModel.m\", is part of the \"SMG_NothingIsAll\" codebase and was created by user \"jia\" on January 16th, 2021. It is protected by a copyright and belongs to XiaoGang. The code file contains the implementation for the \"ImvAlgsHurtModel\" class, which presumably is used for hurt model algorithms within the larger project.",
+        "type": "summary"
+    },
+    "2096": {
+        "file_id": 210,
+        "content": "//\n//  ImvAlgsHurtModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/1/16.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import \"ImvAlgsHurtModel.h\"\n@implementation ImvAlgsHurtModel\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/CortexAlgorithms/Imv/ImvAlgsHurtModel.m:1-13"
+    },
+    "2097": {
+        "file_id": 210,
+        "content": "This code file, \"ImvAlgsHurtModel.m\", is part of the \"SMG_NothingIsAll\" codebase and was created by user \"jia\" on January 16th, 2021. It is protected by a copyright and belongs to XiaoGang. The code file contains the implementation for the \"ImvAlgsHurtModel\" class, which presumably is used for hurt model algorithms within the larger project.",
+        "type": "comment"
+    },
+    "2098": {
+        "file_id": 211,
+        "content": "/SMG_NothingIsAll/CortexAlgorithms/README.md",
+        "type": "filepath"
+    },
+    "2099": {
+        "file_id": 211,
+        "content": "This code describes a sensory algorithm that can be accessed via API. It converts input single frames of image and audio into models, using a sparse coding unit. The model is a three-dimensional array with layers representing sparse codes, regional codes (for learning features), and concurrent codes (for learning concepts). Currently, only two-dimensional arrays are supported due to the simplicity of virtual scenes in V2. The author plans to extend support for three-dimensional arrays in future versions.",
+        "type": "summary"
+    }
+}

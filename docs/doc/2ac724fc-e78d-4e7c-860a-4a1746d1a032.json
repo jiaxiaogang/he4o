@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines a MemManager class with functions to remove all memory, save all memory with a given name, and read all memory with a specified name.",
+    "details": [
+        {
+            "comment": "This code defines a MemManager class with functions to remove all memory, save all memory with a given name, and read all memory with a specified name.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/MemManager/MemManager.h\":0-31",
+            "content": "//\n//  MemManager.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/6/6.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------\u8bb0\u5fc6\u7ba1\u7406\u5668--------------------\n *  @desc \u7531\u539f\u672c\u6e05\u7a7a\u8bb0\u5fc6\u7684\u529f\u80fd,\u4ee5\u53ca\u8bb0\u5fc6git\u5907\u4efd\u5de5\u5177\u7684\u8bbe\u60f3\u800c\u6765;\n */\n@interface MemManager : NSObject\n/**\n *  MARK:--------------------\u6e05\u9664\u8bb0\u5fc6--------------------\n */\n+(void) removeAllMemory;\n/**\n *  MARK:--------------------\u4fdd\u5b58\u8bb0\u5fc6--------------------\n */\n+(void) saveAllMemory:(NSString*)saveName;\n/**\n *  MARK:--------------------\u6062\u590d\u8bb0\u5fc6--------------------\n */\n+(void) readAllMemory:(NSString*)readName;\n@end"
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+{
+    "summary": "The code is an extension of the NSLog class that provides methods for converting various statuses, types, and classes into descriptive strings. This extension allows for more informative logging by formatting specific input parameters into human-readable descriptions.",
+    "details": [
+        {
+            "comment": "The code is an extension of the NSLog class that provides methods for converting various statuses, types, and classes into descriptive strings. This extension allows for more informative logging by formatting specific input parameters into human-readable descriptions.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Demo/Extension/NSLog+Extension.h\":0-21",
+            "content": "//\n//  NSLog+Extension.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2020/9/21.\n//  Copyright \u00a9 2020\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface NSLog_Extension : NSObject\n+(NSString*) convertTOStatus2Desc:(TOModelStatus)status;\n+(NSString*) convertATType2Desc:(AnalogyType)atType;\n+(NSString*) convertTIStatus2Desc:(TIModelStatus)status;\n+(NSString*) convertEffectStatus2Desc:(EffectStatus)status;\n+(NSString*) convertClass2Desc:(Class)clazz;\n+(NSString*) convertClassName2Desc:(NSString*)className;\n+(NSString*) convertMvp2DeltaDesc:(AIKVPointer*)mv_p;\n+(NSString*) convertSceneType2Desc:(SceneType)type simple:(BOOL)simple;\n@end"
+        }
+    ]
+}

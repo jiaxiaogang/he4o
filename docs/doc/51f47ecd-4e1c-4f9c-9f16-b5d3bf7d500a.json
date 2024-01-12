@@ -1,0 +1,10 @@
+{
+    "summary": "This code file \"OutputUtils.m\" defines a class OutputUtils with a method convertOutType2dataSource, which takes an input string algsType and returns TEXT_RDS if algsType is AICharAlgsModel, otherwise it returns nil as other types are not supported.",
+    "details": [
+        {
+            "comment": "This code file \"OutputUtils.m\" defines a class OutputUtils with a method convertOutType2dataSource, which takes an input string algsType and returns TEXT_RDS if algsType is AICharAlgsModel, otherwise it returns nil as other types are not supported.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIOutput/OutputUtils.m\":0-20",
+            "content": "//\n//  OutputUtils.m\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/7/20.\n//  Copyright \u00a9 2018\u5e74 XiaoGang. All rights reserved.\n//\n#import \"OutputUtils.h\"\n@implementation OutputUtils\n+(NSString*) convertOutType2dataSource:(NSString*)algsType {\n    if ([@\"AICharAlgsModel\" isEqualToString:algsType]) {\n        return TEXT_RDS;\n    }else{\n        return nil;//\u6682\u4e0d\u652f\u6301\u5176\u5b83\u7c7b\u578b\u8f93\u51fa;\n    }\n}\n@end"
+        }
+    ]
+}

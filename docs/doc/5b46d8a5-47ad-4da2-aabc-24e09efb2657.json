@@ -1,0 +1,15 @@
+{
+    "summary": "This code extends NSString with MD5 hash and double to string conversion methods, while another function finds the first \"0\" or \".\" in a reverse string iteration.",
+    "details": [
+        {
+            "comment": "This code defines an extension to the NSString class, specifically including methods for calculating the MD5 hash and converting a double value to a string representation without leading zeros.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Extension/NSString+Extension.m\":0-33",
+            "content": "//\n//  NSString+Extension.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2018/12/29.\n//  Copyright \u00a9 2018\u5e74 XiaoGang. All rights reserved.\n//\n#import \"NSString+Extension.h\"\n#import <CommonCrypto/CommonDigest.h>\n@implementation NSString (MD5)\n+(NSString*) md5:(NSString *)str{\n    const char *cStr = [str UTF8String];\n    unsigned char result[16];\n    CC_MD5(cStr, strlen(cStr), result); // This is the md5 call\n    return [NSString stringWithFormat:\n            @\"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x\",\n            result[0], result[1], result[2], result[3],\n            result[4], result[5], result[6], result[7],\n            result[8], result[9], result[10], result[11],\n            result[12], result[13], result[14], result[15]\n            ];\n}\n+(NSString*) double2Str_NoDotZero:(double)value{\n    //1. \u6570\u636e\u68c0\u67e5\n    NSString *floatStr = STRFORMAT(@\"%f\",value);\n    NSRange dotRange = [floatStr rangeOfString:@\".\"];\n    if (dotRange.location <= 0) return floatStr;\n    //2. \u53d6lastDotOrZeroIndex\n    NSInteger dotOrZeroIndex = floatStr.length;"
+        },
+        {
+            "comment": "This code iterates through a string's characters in reverse order, searching for the first \"0\" or \".\" and returns the substring before it.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Extension/NSString+Extension.m\":34-48",
+            "content": "    for (NSInteger i = floatStr.length - 1; i >= 0; i--) {\n        NSString *iChar = [floatStr substringWithRange:NSMakeRange(i, 1)];\n        if ([@\"0\" isEqualToString:iChar]) {\n            dotOrZeroIndex = i;\n        }else if([@\".\" isEqualToString:iChar]){\n            dotOrZeroIndex = i;\n            break;\n        }else{\n            break;\n        }\n    }\n    return [floatStr substringToIndex:dotOrZeroIndex];\n}\n@end"
+        }
+    ]
+}

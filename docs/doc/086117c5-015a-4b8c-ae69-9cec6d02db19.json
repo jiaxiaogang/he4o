@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines a class TCActYes, which is an Objective-C object. The class contains several methods to trigger behaviors based on different input models such as TOAlgModel and TOFoModel. It also includes a method frameActYes that takes a solution model (presumably a TOFoModel) as its parameter.",
+    "details": [
+        {
+            "comment": "This code defines a class TCActYes, which is an Objective-C object. The class contains several methods to trigger behaviors based on different input models such as TOAlgModel and TOFoModel. It also includes a method frameActYes that takes a solution model (presumably a TOFoModel) as its parameter.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCActYes/TCActYes.h\":0-21",
+            "content": "//\n//  TCActYes.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/12/26.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------\u884c\u4e3a\u5316\u63a8\u8fdb\u89e6\u53d1\u5668--------------------\n */\n@interface TCActYes : NSObject\n//+(void) arsTimeActYes:(TOAlgModel*)algModel;\n//+(void) rActYes:(TOFoModel*)foModel;\n//+(void) hActYes:(TOAlgModel*)algModel;\n//+(void) pActYes:(TOFoModel*)foModel;\n+(void) frameActYes:(TOFoModel*)solutionModel;\n@end"
+        }
+    ]
+}

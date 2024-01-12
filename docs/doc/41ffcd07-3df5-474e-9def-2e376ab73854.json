@@ -1,0 +1,10 @@
+{
+    "summary": "CustomAlgsChargeModel.h: This file defines a custom algorithm charging model class with a value property, likely for machine learning or data analysis purposes.",
+    "details": [
+        {
+            "comment": "CustomAlgsChargeModel.h: This file defines a custom algorithm charging model class with a value property, likely for machine learning or data analysis purposes.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIAlg/AlgsModel/CustomAlgsModel/CustomAlgsChargeModel.h\":0-14",
+            "content": "//\n//  CustomAlgsChargeModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2018/2/6.\n//  Copyright \u00a9 2018\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface CustomAlgsChargeModel : NSObject\n@property (assign,nonatomic) float value;\n@end"
+        }
+    ]
+}

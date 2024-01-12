@@ -1,0 +1,10 @@
+{
+    "summary": "Header file for XGRedisUtil class, includes two methods: a comparison function for strings and a binary search function.",
+    "details": [
+        {
+            "comment": "Header file for XGRedisUtil class, includes two methods: a comparison function for strings and a binary search function.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/XGRedis/XGRedisUtil.h\":0-28",
+            "content": "//\n//  XGRedisUtil.h\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/5/23.\n//  Copyright \u00a9 2018\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface XGRedisUtil : NSObject\n/**\n *  MARK:--------------------\u6bd4\u8f83strA\u662f\u5426\u6bd4strB\u5927(ascii)--------------------\n */\n+(NSComparisonResult) compareStrA:(NSString*)strA strB:(NSString*)strB;\n/**\n *  MARK:--------------------\u4e8c\u5206\u67e5\u627e--------------------\n *  success:\u627e\u5230\u5219\u8fd4\u56de\u76f8\u5e94index\n *  failure:\u5931\u8d25\u5219\u8fd4\u56de\u53ef\u6392\u5230\u7684index\n *  \u8981\u6c42:arr\u6307\u5411\u7684\u503c\u662f\u6b63\u5e8f\u7684;(\u5373\u6570\u7ec4\u4e0b\u6807\u8d8a\u5927,\u503c\u8d8a\u5927)\n */\n+(void) searchIndexWithCompare:(NSComparisonResult (^)(NSInteger checkIndex))compare startIndex:(NSInteger)startIndex endIndex:(NSInteger)endIndex success:(void(^)(NSInteger index))success failure:(void(^)(NSInteger index))failure;\n@end"
+        }
+    ]
+}

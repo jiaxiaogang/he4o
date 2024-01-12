@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines a class AICustomAlgs in the file AICustomAlgs.h, which is part of the SMG_NothingIsAll project. It imports Foundation framework and provides a single method commitCustom:value: that takes in CustomInputType and an integer value as parameters.",
+    "details": [
+        {
+            "comment": "This code defines a class AICustomAlgs in the file AICustomAlgs.h, which is part of the SMG_NothingIsAll project. It imports Foundation framework and provides a single method commitCustom:value: that takes in CustomInputType and an integer value as parameters.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIAlg/AICustomAlgs.h\":0-14",
+            "content": "//\n//  AICustomAlgs.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2018/2/6.\n//  Copyright \u00a9 2018\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface AICustomAlgs : NSObject\n+(void) commitCustom:(CustomInputType)type value:(NSInteger)value;\n@end"
+        }
+    ]
+}

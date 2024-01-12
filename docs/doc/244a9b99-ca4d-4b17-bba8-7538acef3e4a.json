@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines the TVSettingWindow class, a subclass of UIView. It has four Boolean properties representing different switch states and methods to open and close the window.",
+    "details": [
+        {
+            "comment": "This code defines the TVSettingWindow class, a subclass of UIView. It has four Boolean properties representing different switch states and methods to open and close the window.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/TOMVision2/Panel/TVSettingWindow.h\":0-25",
+            "content": "//\n//  TVSettingWindow.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/10/12.\n//  Copyright \u00a9 2022\u5e74 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n/**\n *  MARK:--------------------\u601d\u7ef4\u53ef\u89c6\u5316\u8bbe\u7f6e\u9762\u677f--------------------\n *  @version\n *      2022.10.12: \u521d\u7248,\u652f\u63014\u79cdroot\u7684\u53ef\u89c6\u5316\u5f00\u5173,\u907f\u514d\u4e00\u5806\u6ca1\u5fc5\u8981\u7684\u663e\u793a;\n */\n@interface TVSettingWindow : UIView\n@property (assign, nonatomic) BOOL finishSwitch;\n@property (assign, nonatomic) BOOL expiredSwitch;\n@property (assign, nonatomic) BOOL actYesSwitch;\n@property (assign, nonatomic) BOOL withOutSwitch;\n-(void) open;\n-(void) close;\n@end"
+        }
+    ]
+}

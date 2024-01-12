@@ -1,0 +1,10 @@
+{
+    "summary": "This is a header file for the TCRecognitionUtil class in the SMG_NothingIsAll codebase, which imports Foundation and defines a method getVImportanceDic to obtain a dictionary of V importance values from an input AI model.",
+    "details": [
+        {
+            "comment": "This is a header file for the TCRecognitionUtil class in the SMG_NothingIsAll codebase, which imports Foundation and defines a method getVImportanceDic to obtain a dictionary of V importance values from an input AI model.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/TCRecognitionUtil.h\":0-17",
+            "content": "//\n//  TCRecognitionUtil.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/5/30.\n//  Copyright \u00a9 2023\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface TCRecognitionUtil : NSObject\n/**\n *  MARK:--------------------\u83b7\u53d6V\u91cd\u8981\u6027\u5b57\u5178 (\u53c2\u800329105 & 29106)--------------------\n */\n+(NSDictionary*) getVImportanceDic:(AIShortMatchModel*)inModel;\n@end"
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+{
+    "summary": "This code file, TCCanset.h, appears to define a class TCCanset which has two methods. One method converts sceneModel to override cansets (canset_ps) using algorithm 29069-todo5, and the other method converts canset_p to cansetModel. The class also takes in parameters such as AIKVPointer, AISceneModel, and NSInteger for specific operations within the methods.",
+    "details": [
+        {
+            "comment": "This code file, TCCanset.h, appears to define a class TCCanset which has two methods. One method converts sceneModel to override cansets (canset_ps) using algorithm 29069-todo5, and the other method converts canset_p to cansetModel. The class also takes in parameters such as AIKVPointer, AISceneModel, and NSInteger for specific operations within the methods.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCCanset/TCCanset.h\":0-22",
+            "content": "//\n//  TCCanset.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/4/17.\n//  Copyright \u00a9 2023\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface TCCanset : NSObject\n/**\n *  MARK:--------------------\u5c06sceneModel\u8f6c\u6210canset_ps (override\u7b97\u6cd5) (\u53c2\u800329069-todo5)--------------------\n */\n+(NSArray*) getOverrideCansets:(AISceneModel*)sceneModel sceneTargetIndex:(NSInteger)sceneTargetIndex;\n/**\n *  MARK:--------------------\u5c06canset_p\u8f6c\u6210cansetModel--------------------\n */\n+(AICansetModel*) convert2CansetModel:(AIKVPointer*)cansetFo_p sceneFo:(AIKVPointer*)sceneFo_p basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel ptAleardayCount:(NSInteger)ptAleardayCount isH:(BOOL)isH sceneModel:(AISceneModel*)sceneModel;\n@end"
+        }
+    ]
+}

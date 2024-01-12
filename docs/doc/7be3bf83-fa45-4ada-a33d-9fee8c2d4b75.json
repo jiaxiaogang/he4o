@@ -1,0 +1,10 @@
+{
+    "summary": "This code is the implementation file for HEView class in SMG_NothingIsAll project. It initializes the view, assigns a unique tag, and stores the initialization time in initTime property.",
+    "details": [
+        {
+            "comment": "This code is the implementation file for HEView class in SMG_NothingIsAll project. It initializes the view, assigns a unique tag, and stores the initialization time in initTime property.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Demo/Extension/HEView.m\":0-21",
+            "content": "//\n//  HEView.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2020/8/6.\n//  Copyright \u00a9 2020\u5e74 XiaoGang. All rights reserved.\n//\n#import \"HEView.h\"\n@implementation HEView\n-(id) init {\n    self = [super init];\n    if(self != nil){\n        self.tag = visibleTag;\n        self.initTime = [[NSDate date] timeIntervalSince1970];\n    }\n    return self;\n}\n@end"
+        }
+    ]
+}

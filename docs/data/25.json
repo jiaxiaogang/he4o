@@ -1,0 +1,540 @@
+{
+    "2500": {
+        "file_id": 258,
+        "content": "//MARK:                     < convert坐标 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------转换世界坐标--------------------\n *  @result 世界坐标 : NotNull\n */\n+(CGPoint) convertWorldPoint:(UIView*)selfView;\n+(CGRect) convertWorldRect:(UIView*)selfView;\n//MARK:===============================================================\n//MARK:                     < distance >\n//MARK:===============================================================\n//view距离\n+(CGFloat) distance:(UIView*)selfView target:(UIView*)target;\n+(CGPoint) distancePoint:(UIView*)selfView target:(UIView*)target;\n//点距\n+(CGFloat) distance4DP:(CGPoint)pointA pointB:(CGPoint)pointB;\n+(CGPoint) distance4Point:(CGPoint)pointA pointB:(CGPoint)pointB;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/UIView+Extension.h:65-86"
+    },
+    "2501": {
+        "file_id": 258,
+        "content": "This code defines extension methods for UIView, providing functionality to convert world coordinates and calculate distances between views or points. The \"convertWorldPoint\" and \"convertWorldRect\" methods transform local coordinates into world coordinates, while the \"distance\" and \"distancePoint\" methods calculate the distance and coordinates respectively between two views or points.",
+        "type": "comment"
+    },
+    "2502": {
+        "file_id": 259,
+        "content": "/SMG_NothingIsAll/Demo/Extension/UIView+Extension.m",
+        "type": "filepath"
+    },
+    "2503": {
+        "file_id": 259,
+        "content": "The code enhances UIView with properties and methods for easy frame manipulation, property/subview retrieval, and subview management. It also includes utilities for superview finding, coordinate conversion, and 2D distance calculations, including Euclidean distance between points.",
+        "type": "summary"
+    },
+    "2504": {
+        "file_id": 259,
+        "content": "//\n//  UIView+Extension.m\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/11/8.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"UIView+Extension.h\"\n@implementation UIView (Extension)\n//MARK:===============================================================\n//MARK:                     < frame >\n//MARK:===============================================================\n- (CGFloat)x {\n    return self.frame.origin.x;\n}\n- (void)setX:(CGFloat)x {\n    CGRect frame = self.frame;\n    frame.origin.x = x;\n    self.frame = frame;\n}\n- (CGFloat)y {\n    return self.frame.origin.y;\n}\n- (void)setY:(CGFloat)y {\n    CGRect frame = self.frame;\n    frame.origin.y = y;\n    self.frame = frame;\n}\n- (CGFloat)width {\n    return self.frame.size.width;\n}\n- (void)setWidth:(CGFloat)width{\n    CGRect frame = self.frame;\n    frame.size.width = width;\n    self.frame = frame;\n}\n- (CGFloat)height {\n    return self.frame.size.height;\n}\n- (void)setHeight:(CGFloat)height {\n    CGRect frame = self.frame;\n    frame.size.height = height;\n    self.frame = frame;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/UIView+Extension.m:1-53"
+    },
+    "2505": {
+        "file_id": 259,
+        "content": "This code extends the UIView class by adding properties and methods to manipulate its frame, allowing for easy access to and modification of x, y, width, and height values.",
+        "type": "comment"
+    },
+    "2506": {
+        "file_id": 259,
+        "content": "}\n- (CGPoint)origin {\n    return self.frame.origin;\n}\n- (void)setOrigin:(CGPoint)origin {\n    CGRect frame = self.frame;\n    frame.origin = origin;\n    self.frame = frame;\n}\n- (CGSize)size {\n    return self.frame.size;\n}\n- (void)setSize:(CGSize)size {\n    CGRect frame = self.frame;\n    frame.size = size;\n    self.frame = frame;\n}\n//MARK:===============================================================\n//MARK:                     < show (一般用于动画中,取真实显示数据) >\n//MARK:===============================================================\n- (CGFloat)showX {\n    return self.showOrigin.x;\n}\n- (CGFloat)showY {\n    return self.showOrigin.y;\n}\n- (CGFloat)showW {\n    return self.showSize.width;\n}\n- (CGFloat)showH {\n    return self.showSize.height;\n}\n- (CGRect)showFrame {\n    if (ARRISOK(self.layer.animationKeys)) {\n        return self.layer.presentationLayer.frame;\n    }\n    return self.frame;\n}\n- (CGPoint) showOrigin{\n    return self.showFrame.origin;\n}\n-(CGSize) showSize{\n    return self.showFrame.size;\n}\n- (CGFloat)showMinX {\n    return self.showX;\n}",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/UIView+Extension.m:54-112"
+    },
+    "2507": {
+        "file_id": 259,
+        "content": "This code defines a UIView extension with methods for setting and getting the origin, size, and show properties of the view. The show properties are specifically used in animations to retrieve real-time display data. It also includes a method to get the presentation frame.",
+        "type": "comment"
+    },
+    "2508": {
+        "file_id": 259,
+        "content": "- (CGFloat)showMinY {\n    return self.showY;\n}\n- (CGFloat)showMaxX {\n    return self.showX + self.showW;\n}\n- (CGFloat)showMaxY {\n    return self.showY + self.showH;\n}\n- (CGFloat)showCenX {\n    return self.showX + self.showW * 0.5f;\n}\n- (CGFloat)showCenY {\n    return self.showY + self.showH * 0.5f;\n}\n//MARK:===============================================================\n//MARK:                     < subView >\n//MARK:===============================================================\n-(NSMutableArray*) subViews_AllDeep{\n    NSMutableArray *arr = [[NSMutableArray alloc]init];\n    [self collectSubViews:arr withClass:[UIView class]];\n    return arr;\n}\n-(NSMutableArray*) subViews_AllDeepWithClass:(Class)aClass{\n    NSMutableArray *arr = [[NSMutableArray alloc]init];\n    [self collectSubViews:arr withClass:aClass];\n    return arr;\n}\n-(void) collectSubViews:(NSMutableArray*)arr withClass:(Class)aClass{\n    if (arr != nil && aClass != nil){\n        if ([self isKindOfClass:aClass]) {\n            [arr addObject:self];\n        }\n        if(self.subviews != nil){",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/UIView+Extension.m:114-152"
+    },
+    "2509": {
+        "file_id": 259,
+        "content": "This code defines methods for retrieving various properties related to a UIView, including its minimum and maximum coordinates. It also contains methods for collecting all subviews of a view or a specific class of subviews recursively.",
+        "type": "comment"
+    },
+    "2510": {
+        "file_id": 259,
+        "content": "            for (UIView *childView in self.subviews) {\n                [childView collectSubViews:arr withClass:aClass];\n            }\n        }\n    }\n}\n-(NSMutableArray*) subViews_AllDeepWithRect:(CGRect)rect{\n    NSMutableArray *arr = [[NSMutableArray alloc]init];\n    CGRect sRect = [UIView convertWorldRect:self];\n    if (CGRectGetMinX(sRect) >= CGRectGetMinX(rect) &&\n        CGRectGetMinY(sRect) >= CGRectGetMinY(rect) &&\n        CGRectGetMaxX(sRect) <= CGRectGetMaxX(rect) &&\n        CGRectGetMaxY(sRect) <= CGRectGetMaxY(rect)) {\n        [arr addObject:self];\n    }\n    if(self.subviews != nil){\n        for (UIView *childView in self.subviews) {\n            [arr addObjectsFromArray:[childView subViews_AllDeepWithRect:rect]];\n        }\n    }\n    return arr;\n}\n-(void)removeAllSubviews {\n    while (self.subviews.count) {\n        UIView *child = self.subviews.lastObject;\n        [child removeFromSuperview];\n    }\n}\n//MARK:===============================================================\n//MARK:                     < superView >",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/UIView+Extension.m:153-185"
+    },
+    "2511": {
+        "file_id": 259,
+        "content": "This code is part of a UIView extension that provides methods for retrieving all subviews within a specified rectangular area. The \"subViews_AllDeepWithRect:\" method collects all views recursively within the given rect, adds itself to an array if it falls within the rect, and iterates over its subviews to add their subviews to the array as well. The \"removeAllSubviews\" method removes all subviews from a superview by removing them one-by-one in reverse order.",
+        "type": "comment"
+    },
+    "2512": {
+        "file_id": 259,
+        "content": "//MARK:===============================================================\n-(NSMutableArray*) superViews_AllDeepWithClass:(Class)aClass{\n    NSMutableArray *arr = [[NSMutableArray alloc]init];\n    UIView *curView = self;\n    while (curView.superview) {\n        if ([curView.superview isKindOfClass:aClass]) {\n            [arr addObject:curView.superview];\n        }\n        curView = curView.superview;\n    }\n    return arr;\n}\n//MARK:===============================================================\n//MARK:                     < convert坐标 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------转换世界坐标--------------------\n *  @result 世界坐标 : NotNull\n */\n+(CGPoint) convertWorldPoint:(UIView*)selfView{\n    if(selfView && selfView.superview){\n        CGRect rect = [self convertWorldRect:selfView];\n        return CGPointMake(rect.origin.x + selfView.width / 2.0f, rect.origin.y + selfView.height / 2.0f);\n    }\n    return CGPointZero;\n}\n/**\n *  MARK:--------------------转换世界rect--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/UIView+Extension.m:186-216"
+    },
+    "2513": {
+        "file_id": 259,
+        "content": "This code defines a method that finds all superviews of the current view and adds them to an array if they belong to a specified class. It also provides two functions for converting coordinates: one to convert a given view's local coordinate system to its parent view's coordinate system, and another to convert a global point to a view's local coordinate system.",
+        "type": "comment"
+    },
+    "2514": {
+        "file_id": 259,
+        "content": " *  @version\n *      2021.09.07: 动画中的frame不准确,改为从layer.presentationLayer取才准确;\n */\n+(CGRect) convertWorldRect:(UIView*)selfView{\n    if(selfView && selfView.superview){\n        return [selfView.superview convertRect:selfView.showFrame toView:theApp.window];\n    }\n    return CGRectZero;\n}\n//MARK:===============================================================\n//MARK:                     < distance >\n//MARK:===============================================================\n+(CGFloat) distance:(UIView*)selfView target:(UIView*)target{\n    return [self convertPoint2DP:[self distancePoint:selfView target:target]];\n}\n+(CGPoint) distancePoint:(UIView*)selfView target:(UIView*)target{\n    if (selfView && target) {\n        return [self distance4Point:[UIView convertWorldPoint:selfView] pointB:[UIView convertWorldPoint:target]];\n    }\n    return CGPointZero;\n}\n+(CGFloat) distance4DP:(CGPoint)pointA pointB:(CGPoint)pointB {\n    return [self convertPoint2DP:[self distance4Point:pointA pointB:pointB]];\n}\n+(CGPoint) distance4Point:(CGPoint)pointA pointB:(CGPoint)pointB {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/UIView+Extension.m:217-245"
+    },
+    "2515": {
+        "file_id": 259,
+        "content": "This code snippet provides methods for converting frame rectangles, calculating distances between views, and performing distance calculations in two dimensions. The `convertWorldRect` method takes a view and its superview to convert the view's frame rectangle to the window's coordinate system. The `distance` method calculates the distance between two views using the `distancePoint` method. This method takes both views as parameters, converts their world points to local coordinates, and returns the distance in pixels using the `distance4DP` method. Overall, this code aims to facilitate calculations related to view positions and distances within an app's user interface.",
+        "type": "comment"
+    },
+    "2516": {
+        "file_id": 259,
+        "content": "    CGFloat distanceX = (pointB.x - pointA.x);\n    CGFloat distanceY = (pointB.y - pointA.y);\n    return CGPointMake(distanceX, distanceY);\n}\n//将point距离转成dp距离\n+(CGFloat) convertPoint2DP:(CGPoint)p {\n    CGFloat disFloat = sqrt(powf(p.x, 2) + powf(p.y, 2));\n    CGFloat distance = disFloat / [UIScreen mainScreen].scale;\n    return distance;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/UIView+Extension.m:246-258"
+    },
+    "2517": {
+        "file_id": 259,
+        "content": "This code calculates the Euclidean distance between two points (pointA and pointB) and converts it to a device-independent pixel unit by dividing it with the screen scale.",
+        "type": "comment"
+    },
+    "2518": {
+        "file_id": 260,
+        "content": "/SMG_NothingIsAll/Demo/Extension/XGDelegate.h",
+        "type": "filepath"
+    },
+    "2519": {
+        "file_id": 260,
+        "content": "This code defines various types of block functions (Act0-Act4, Func0-Func4) for different numbers of parameters and return types. The comments explain how to use these blocks as an alternative syntax.",
+        "type": "summary"
+    },
+    "2520": {
+        "file_id": 260,
+        "content": "//\n//  XGDelegate.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/2/26.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------使用说明--------------------\n *  @act使用示例:\n *      本用法: Act0 act = ^(){ //执行代码 },使用时调用act();\n *      相当于: void(^act)() = ^(){ //执行代码 },使用时调用act();\n *  @func使用示例:\n *      本用法: Func1 func = ^(){return yourClass;};,使用时:YourClass yc = func();\n *      相当于: YourClass(^func)() = ^(){ return yourClass; },使用时:YourClass yc = func();\n */\ntypedef void (^Act0)();\ntypedef void (^Act1)(id p1);\ntypedef void (^Act2)(id p2);\ntypedef void (^Act3)(id p3);\ntypedef void (^Act4)(id p4);\ntypedef id (^Func0)();\ntypedef id (^Func1)(id p1);\ntypedef id (^Func2)(id p2);\ntypedef id (^Func3)(id p3);\ntypedef id (^Func4)(id p4);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/XGDelegate.h:1-31"
+    },
+    "2521": {
+        "file_id": 260,
+        "content": "This code defines various types of block functions (Act0-Act4, Func0-Func4) for different numbers of parameters and return types. The comments explain how to use these blocks as an alternative syntax.",
+        "type": "comment"
+    },
+    "2522": {
+        "file_id": 261,
+        "content": "/SMG_NothingIsAll/Demo/Foundation+Log.m",
+        "type": "filepath"
+    },
+    "2523": {
+        "file_id": 261,
+        "content": "This code enhances NSArray's description method for improved log string readability. It formats indentation, handles various object types, and adds comma separation. The function generates the final formatted log string.",
+        "type": "summary"
+    },
+    "2524": {
+        "file_id": 261,
+        "content": "//\n//  Foundation+Log.m\n//\n//  Created by feiyujie on 2016/12/7.\n//  Copyright © 2016年 feiyujie. All rights reserved.\n//\n#ifdef DEBUG\n#import <Foundation/Foundation.h>\nstatic NSInteger dictionaryTabCount = 0;\nstatic NSInteger arrayTabCount = 0;\nstatic NSInteger setTabCount = 0;\n@implementation NSArray(Log)\n- (NSString *)descriptionWithLocale:(id)locale\n{\n    NSString *logStr = [self yj_description:++arrayTabCount];\n    arrayTabCount = 0;\n    return logStr;\n}\n- (NSString *)yj_description:(NSInteger)depth\n{\n    NSMutableString *logStr = [NSMutableString string];\n    [logStr appendFormat:@\"(\\n\"];\n    NSInteger arrayLength = self.count;\n    [self enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {\n        for (NSInteger i = 1; i <= depth; ++i) {\n            [logStr appendFormat:@\"\\t\"];\n        }\n        if ([obj isKindOfClass:[NSArray class]]) {\n            if (idx != arrayLength - 1) {\n                [logStr appendFormat:@\"%@,\\n\", obj];\n            } else {\n                [logStr appendFormat:@\"%@\\n\", obj];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Foundation+Log.m:1-41"
+    },
+    "2525": {
+        "file_id": 261,
+        "content": "This code is an extension of NSArray that adds a custom description method. It increases the indentation level for each array element by adding tabs to the log string. This helps with readability when logging complex data structures. The code also keeps track of tab count variables for dictionaries and sets, suggesting similar functionality may be implemented for those object types as well.",
+        "type": "comment"
+    },
+    "2526": {
+        "file_id": 261,
+        "content": "            }\n            arrayTabCount = depth;\n        } else if ([obj isKindOfClass:[NSDictionary class]]) {\n            dictionaryTabCount = depth;\n            if (idx != arrayLength - 1) {\n                [logStr appendFormat:@\"%@,\\n\", obj];\n            } else {\n                [logStr appendFormat:@\"%@\\n\", obj];\n            }\n        } else if ([obj isKindOfClass:[NSSet class]]) {\n            setTabCount = depth;\n            if (idx != arrayLength - 1) {\n                [logStr appendFormat:@\"%@,\\n\", obj];\n            } else {\n                [logStr appendFormat:@\"%@\\n\", obj];\n            }\n        } else {\n            if (idx != arrayLength - 1) {\n                [logStr appendFormat:@\"%@,\\n\", obj];\n            } else {\n                [logStr appendFormat:@\"%@\\n\", obj];\n            }\n        }\n    }];\n    for (NSInteger i = 1; i < depth; ++i) {\n        [logStr appendFormat:@\"\\t\"];\n    }\n    [logStr appendFormat:@\")\"];\n    return logStr;\n}\n@end;\n@implementation NSDictionary(Log)\n- (NSString *)descriptionWithLocale:(id)locale",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Foundation+Log.m:42-80"
+    },
+    "2527": {
+        "file_id": 261,
+        "content": "Code is determining the type of object and formatting it accordingly in a log string, with indentation based on depth. It checks if the object is an array, dictionary, set or other type, then appends the object to the log string depending on its position in the array and adds the appropriate indentation.",
+        "type": "comment"
+    },
+    "2528": {
+        "file_id": 261,
+        "content": "{\n    NSString *logStr = [self yj_description:++dictionaryTabCount];\n    dictionaryTabCount = 0;\n    return logStr;\n}\n- (NSString *)yj_description:(NSInteger)depth\n{\n    NSMutableString *logStr = [NSMutableString string];\n    [logStr appendFormat:@\"{\\n\"];\n    [self enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {\n        for (NSInteger i = 1; i <= depth; ++i) {\n            [logStr appendFormat:@\"\\t\"];\n        }\n        if ([obj isKindOfClass:[NSArray class]]) {\n            arrayTabCount = depth;\n            [logStr appendFormat:@\"%@ =\\t%@;\\n\", key, obj];\n        } else if ([obj isKindOfClass:[NSDictionary class]]) {\n            [logStr appendFormat:@\"%@ =\\t%@;\\n\", key, obj];\n            dictionaryTabCount = depth;\n        } else if ([obj isKindOfClass:[NSSet class]]) {\n            setTabCount = depth;\n            [logStr appendFormat:@\"%@ =\\t%@;\\n\", key, obj];\n        } else {\n            [logStr appendFormat:@\"%@ = %@;\\n\", key, obj];\n        }\n    }];\n    for (NSInteger i = 1; i < depth; ++i) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Foundation+Log.m:81-111"
+    },
+    "2529": {
+        "file_id": 261,
+        "content": "This code snippet is defining a method that creates a string representation of an object with nested dictionary, array or set values. The method adds indentation to the printed lines based on the depth of the nested objects and checks the class type of each object before appending to the log string.",
+        "type": "comment"
+    },
+    "2530": {
+        "file_id": 261,
+        "content": "        [logStr appendFormat:@\"\\t\"];\n    }\n    [logStr appendFormat:@\"}\"];\n    return logStr;\n}\n@end\n@implementation NSSet(Log)\n- (NSString *)descriptionWithLocale:(id)locale\n{\n    NSString *logStr = [self yj_description:++setTabCount];\n    setTabCount = 0;\n    return logStr;\n}\n- (NSString *)yj_description:(NSInteger)depth\n{\n    NSMutableString *logStr = [NSMutableString string];\n    [logStr appendFormat:@\"{(\\n\"];\n    NSInteger setLength = self.count;\n    __block NSInteger idx = 0;\n    [self enumerateObjectsUsingBlock:^(id  _Nonnull obj, BOOL * _Nonnull stop) {\n        for (NSInteger i = 1; i <= depth; ++i) {\n            [logStr appendFormat:@\"\\t\"];\n        }\n        if ([obj isKindOfClass:[NSArray class]]) {\n            arrayTabCount = depth;\n            if (idx != setLength - 1) {\n                [logStr appendFormat:@\"%@,\\n\", obj];\n            } else {\n                [logStr appendFormat:@\"%@\\n\", obj];\n            }\n        } else if ([obj isKindOfClass:[NSDictionary class]]) {\n            dictionaryTabCount = depth;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Foundation+Log.m:112-152"
+    },
+    "2531": {
+        "file_id": 261,
+        "content": "This code appears to implement custom logging functionality for NSSet objects. It generates a formatted string representation of the set contents, with nested arrays and dictionaries indented accordingly. The yj_description method handles this, taking a depth parameter to control indentation levels. This implementation also tracks array and dictionary tab counts separately.",
+        "type": "comment"
+    },
+    "2532": {
+        "file_id": 261,
+        "content": "            if (idx != setLength - 1) {\n                [logStr appendFormat:@\"%@,\\n\", obj];\n            } else {\n                [logStr appendFormat:@\"%@\\n\", obj];\n            }\n        } else if ([obj isKindOfClass:[NSSet class]]) {\n            if (idx != setLength - 1) {\n                [logStr appendFormat:@\"%@,\\n\", obj];\n            } else {\n                [logStr appendFormat:@\"%@\\n\", obj];\n            }\n            setTabCount = depth;\n        } else {\n            if (idx != setLength - 1) {\n                [logStr appendFormat:@\"%@,\\n\", obj];\n            } else {\n                [logStr appendFormat:@\"%@\\n\", obj];\n            }\n        }\n        ++idx;\n    }];\n    for (NSInteger i = 1; i < depth; ++i) {\n        [logStr appendFormat:@\"\\t\"];\n    }\n    [logStr appendFormat:@\")}\"];\n    return logStr;\n}\n@end\n#endif",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Foundation+Log.m:153-185"
+    },
+    "2533": {
+        "file_id": 261,
+        "content": "This code adds formatting to a log string based on the object type and depth. It appends commas for non-last items, handles NSDictionary, NSArray, NSSet, and other types, and formats indentation. The function returns the final log string.",
+        "type": "comment"
+    },
+    "2534": {
+        "file_id": 262,
+        "content": "/SMG_NothingIsAll/Demo/MainPage/MainPage.h",
+        "type": "filepath"
+    },
+    "2535": {
+        "file_id": 262,
+        "content": "Header file for the MainPage class, inherits from HEViewController and contains no properties or methods. Created by jiaxiaogang in 2018.",
+        "type": "summary"
+    },
+    "2536": {
+        "file_id": 262,
+        "content": "//\n//  MainPage.h\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/10/24.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"HEViewController.h\"\n@interface MainPage : HEViewController\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/MainPage/MainPage.h:1-13"
+    },
+    "2537": {
+        "file_id": 262,
+        "content": "Header file for the MainPage class, inherits from HEViewController and contains no properties or methods. Created by jiaxiaogang in 2018.",
+        "type": "comment"
+    },
+    "2538": {
+        "file_id": 263,
+        "content": "/SMG_NothingIsAll/Demo/MainPage/MainPage.m",
+        "type": "filepath"
+    },
+    "2539": {
+        "file_id": 263,
+        "content": "The code is an implementation file for the MainPage class of SMG_NothingIsAll iOS app, initializing views and data, adding gesture recognizers, setting titles, registering event listeners, pushing view controllers, calculating mapping coordinates, and handling a training step.",
+        "type": "summary"
+    },
+    "2540": {
+        "file_id": 263,
+        "content": "//\n//  MainPage.m\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/10/24.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"MainPage.h\"\n#import \"TestHungryPage.h\"\n#import \"BirdLivePage.h\"\n#import \"BirdGrowPage.h\"\n@interface MainPage()<UIGestureRecognizerDelegate>\n@property (weak, nonatomic) IBOutlet UIView *miniGrowView;\n@end\n@implementation MainPage\n-(void) initView{\n    //1. self\n    [super initView];\n    self.title = @\"和\";\n    //2. 触摸指定扔的位置\n    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(miniGrowTap:)];\n    tap.numberOfTapsRequired = 1;\n    tap.numberOfTouchesRequired  = 1;\n    tap.delegate = self;\n    [self.miniGrowView addGestureRecognizer:tap];\n}\n-(void) initData{\n    [super initData];\n    [theRT regist:kGrowPageSEL target:self selector:@selector(birdGrowBtnOnClick:)];\n}\n//MARK:===============================================================\n//MARK:                     < onclick >\n//MARK:===============================================================",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/MainPage/MainPage.m:1-42"
+    },
+    "2541": {
+        "file_id": 263,
+        "content": "This code is the implementation file for the MainPage class in the SMG_NothingIsAll iOS app. The class conforms to the UIGestureRecognizerDelegate protocol, and initializes the view and data. It adds a tap gesture recognizer to the miniGrowView, sets the title of the page to \"和\", and registers an event listener for the bird grow button click event with the kGrowPageSEL selector.",
+        "type": "comment"
+    },
+    "2542": {
+        "file_id": 263,
+        "content": "- (IBAction)testHungryOnClick:(id)sender {\n    TestHungryPage *page = [[TestHungryPage alloc] init];\n    [self.navigationController pushViewController:page animated:true];\n}\n- (IBAction)birdLiveOnClick:(id)sender {\n    BirdLivePage *page = [[BirdLivePage alloc] init];\n    [self.navigationController pushViewController:page animated:true];\n}\n- (IBAction)birdGrowBtnOnClick:(id)sender {\n    [self pushBrowPage:CGPointZero];\n}\n//MARK:===============================================================\n//MARK:                     < block >\n//MARK:===============================================================\n- (void)miniGrowTap:(UITapGestureRecognizer *)tap{\n    //1. 计算距离和角度\n    UIView *tapView = tap.view;\n    CGPoint point = [tap locationInView:tapView];                 //点击坐标\n    CGFloat xRate = point.x / tapView.width;\n    CGFloat yRate = point.y / tapView.height;\n    //2. 实际路的上中下高宽;\n    CGFloat topH = (ScreenHeight - 128 - 100) / 2.0f, btmH = topH, roadH = 100, roadW = ScreenWidth - 32;\n    //3. 计算映射坐标 (mini图的中间0.4是路中,路上下各0.3);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/MainPage/MainPage.m:43-70"
+    },
+    "2543": {
+        "file_id": 263,
+        "content": "This code snippet defines three methods, `testHungryOnClick`, `birdLiveOnClick`, and `birdGrowBtnOnClick`, which push different view controllers onto the navigation stack. It also includes a `miniGestureTap` method that calculates coordinates, rates, and heights/widths for mapping.",
+        "type": "comment"
+    },
+    "2544": {
+        "file_id": 263,
+        "content": "    CGFloat targetX = 16 + xRate * roadW;\n    if (yRate < 0.3f) {\n        //a. 路上坐标计算\n        CGFloat topRate = yRate / 0.3f;\n        CGFloat targetY = 64 + topRate * topH;\n        [self pushBrowPage:CGPointMake(targetX, targetY)];\n    }else if (yRate < 0.7f) {\n        //b. 路中坐标计算\n        CGFloat roadRate = (yRate - 0.3f) / 0.4f;\n        CGFloat targetY = 64 + topH + roadRate * roadH;\n        [self pushBrowPage:CGPointMake(targetX, targetY)];\n    }else {\n        //c. 路下坐标计算\n        CGFloat btmRate = (yRate - 0.7f) / 0.3f;\n        CGFloat targetY = 64 + topH + roadH + btmRate * btmH;\n        [self pushBrowPage:CGPointMake(targetX, targetY)];\n    }\n}\n//MARK:===============================================================\n//MARK:                     < privateMethod >\n//MARK:===============================================================\n-(void) pushBrowPage:(CGPoint)birdPos {\n    //1. 到成长页;\n    BirdGrowPage *page = [[BirdGrowPage alloc] init];\n    [self.navigationController pushViewController:page animated:true];\n    //2. 指定小鸟出生地点;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/MainPage/MainPage.m:71-98"
+    },
+    "2545": {
+        "file_id": 263,
+        "content": "1. Calculates target coordinates based on yRate value\n2. If yRate < 0.3f, calculates top position (road up)\n3. Else if yRate < 0.7f, calculates middle position (road in)\n4. Else, calculates bottom position (road down)\n5. Uses calculated coordinates to push BirdGrowPage onto navigation stack",
+        "type": "comment"
+    },
+    "2546": {
+        "file_id": 263,
+        "content": "    page.birdBirthPos = birdPos;\n    //3. 标记训练器步骤;\n    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{\n        [theRT invoked:kGrowPageSEL];\n    });\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/MainPage/MainPage.m:99-107"
+    },
+    "2547": {
+        "file_id": 263,
+        "content": "This code updates the bird's birth position, marks a training step, and invokes the \"kGrowPageSEL\" method on the main queue after a 0.5 second delay.",
+        "type": "comment"
+    },
+    "2548": {
+        "file_id": 264,
+        "content": "/SMG_NothingIsAll/Demo/SMGPrefixHeader.pch",
+        "type": "filepath"
+    },
+    "2549": {
+        "file_id": 264,
+        "content": "This precompiled header file includes UIKit, Foundation frameworks and custom libraries for an iOS app, defines macros related to application and UI elements with efficient debugging capabilities.",
+        "type": "summary"
+    },
+    "2550": {
+        "file_id": 264,
+        "content": "//\n//  SMGPrefixHeader.pch\n//  SMG_NothingIsAll\n//\n//  Created by 贾  on 2017/5/3.\n//  Copyright © 2017年 XiaoGang. All rights reserved.\n//\n#import <Availability.h>\n#ifdef __OBJC__\n#import <UIKit/UIKit.h>\n#import <Foundation/Foundation.h>\n#import \"AppDelegate.h\"\n#import <CoreText/CoreText.h>\n#import \"Foundation+Log.m\"\n#import \"UIView+Extension.h\"\n#import \"UIColor+expanded.h\"\n#import \"AIHeader.h\"\n#import \"HEView.h\"\n#import \"NSLog+Extension.h\"\n#import \"AITest.h\"\n#import \"RLTrainer.h\"\n#import \"XGDebug.h\"\n#import \"XGDebugModel.h\"\n#import \"TCDebug.h\"\n#import \"XGConfig.h\"\n#endif\n//MARK:===============================================================\n//MARK:                     < 全局宏/Demo宏 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------application--------------------\n */\n#define theApp ((AppDelegate*)[[UIApplication sharedApplication] delegate])\n#define isSimulator TARGET_OS_SIMULATOR\n/**\n *  MARK:--------------------ui--------------------\n */\n#define ScreenHeight [[UIScreen mainScreen] bounds].size.height",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/SMGPrefixHeader.pch:1-43"
+    },
+    "2551": {
+        "file_id": 264,
+        "content": "This code is a precompiled header file, including various UIKit and Foundation frameworks, as well as custom libraries for an iOS app. It defines some global macros related to the application and UI elements.",
+        "type": "comment"
+    },
+    "2552": {
+        "file_id": 264,
+        "content": "#define ScreenWidth [[UIScreen mainScreen] bounds].size.width\n#define StateBarHeight 20\n/**\n *  MARK:--------------------color--------------------\n */\n//RGB & RGBA\n#define UIColorWithRGB(R, G, B) [UIColor colorWithRed:(R)/255.0 green:(G)/255.0 blue:(B)/255.0 alpha:1]\n#define UIColorWithRGBA(R, G, B, A) [UIColor colorWithRed:(R)/255.0 green:(G)/255.0 blue:(B)/255.0 alpha:A]\n//Hex & HexA\n#define UIColorWithRGBHex(RGB_Hex) UIColorWithRGB((float)((RGB_Hex&0xFF0000)>>16), (float)((RGB_Hex&0xFF00)>>8), (float)(RGB_Hex&0xFF))\n#define UIColorWithRGBHexA(RGB_Hex,A) UIColorWithRGBA((float)((RGB_Hex&0xFF0000)>>16), (float)((RGB_Hex&0xFF00)>>8), (float)(RGB_Hex&0xFF),A)\n//HSB (色相,饱合度,亮度)\n#define UIColorWithHSB(H, S, B) [UIColor colorWithHue:(H)/255.0 saturation:(S)/255.0 brightness:(B)/255.0 alpha:1]\n/**\n *  MARK:--------------------log--------------------\n */\n#define TPLog(a,...) [theApp setTipLog:STRFORMAT(a,##__VA_ARGS__)]\n#define theNV (theApp.nvView)\n#define theTV (theApp.tv)\n#define theRT [RLTrainer sharedInstance]",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/SMGPrefixHeader.pch:44-65"
+    },
+    "2553": {
+        "file_id": 264,
+        "content": "This code defines various color and logging macros for an iOS app. The color macros use RGB, RGBA, Hex, and HSB to define and create UIColor objects. The logging macro, TPLog, allows for formatted log messages with optional parameters. TheApp, nvView, tv, and rlTrainer are used in the logging macro.",
+        "type": "comment"
+    },
+    "2554": {
+        "file_id": 264,
+        "content": "#define theHeLog (theApp.heLogView)\n#define theDebug [XGDebug sharedInstance]\n/**\n *  MARK:--------------------感官算法--------------------\n */\n#define visibleTag 999  //视觉可见标记\n/**\n *  MARK:--------------------Identify标识 (外围方)--------------------\n */\n#define EAT_RDS @\"EAT_RDS\"  //吸吮反射标识\n#define FLY_RDS @\"FLY_RDS\"  //扇翅膀反射标识 (类似抓握反射)\n#define KICK_RDS @\"KICK_RDS\"//脚踢反射标识 (类似膝跳反射)\n/**\n *  MARK:--------------------xgDebug调试模块--------------------\n *  @use 使用方法: 每个模块开始调用Debug(),结束调用DebugE();\n */\n#define DebugParam(p,s) [theDebug debugModuleWithPrefix:p suffix:s] //指定前辍&&后辍\n#define Debug() [theDebug debugModuleWithFileName:FILENAME suffix:nil]\n#define DebugS() [theDebug debugModuleWithFileName:FILENAME suffix:@\"START\"]\n#define DebugE() [theDebug debugModuleWithFileName:FILENAME suffix:@\"END\"]\n#define DebugW() [theDebug debugWrite]\n#define DebugR() [theDebug debugRead]\n#define kFILENAME FILENAME\n#define kLINE __LINE__\n/**\n *  MARK:--------------------xgDebug调试代码块--------------------\n *  @注意事项: 为性能好,调用AddDebugCodeBlock后必须调用PrintDebugCodeBlock(),不然它会一直累计models直至系统变卡;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/SMGPrefixHeader.pch:66-96"
+    },
+    "2555": {
+        "file_id": 264,
+        "content": "This code snippet defines various macros for logging and debugging purposes, such as identifying specific tags, marking different sections of the code, and interacting with the xgDebug module. The macros allow for more efficient debugging by specifying prefixes, suffixes, and file names to track the progress of the code execution.",
+        "type": "comment"
+    },
+    "2556": {
+        "file_id": 264,
+        "content": " *  @use 使用方法:\n *              1. 先在代码块之间调用AddDebugCodeBlock(\"自定义后辍\");\n *              2. 在末尾调用PrintDebugCodeBlock()将结果日志打出;\n *  @desc 前辍说明: 使用当前文件名+循环id;\n */\n//含自定义前辍版本 (适用于多类工作时,根据自定义前辍跨类工作);\n#define AddDebugCodeBlock_Key(key,codeBlockName) [theDebug debugModuleWithPrefix:TCDebugPrefixV2(key) suffix:codeBlockName]\n#define PrintDebugCodeBlock_Key(key) [theDebug print:TCDebugPrefixV2(key) rmPrefix:TCDebugRMPrefixV2(key)]\n/**\n *  MARK:--------------------tcDebug拼接前辍--------------------\n *  @param prefixKey : 一般传文件名,如果要打出所有模块,则只仅TC即可,如果要打所有文件,可以传空字符串;\n */\n#define TCDebugPrefixV2(blockKey) STRFORMAT(@\"DEBUG匹配 => 代码块:%@ 循环圈:%lld\",blockKey,theTC.getLoopId) //TCDebug的前辍=文件名用来匹配的前部分+循环Id\n#define TCDebugRMPrefixV2(blockKey) STRFORMAT(@\"DEBUG匹配 => 代码块:%@\",blockKey) //用于删除所有的prefixKey,不限循环数;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/SMGPrefixHeader.pch:97-111"
+    },
+    "2557": {
+        "file_id": 264,
+        "content": "This code provides a way to add and print debug code blocks with custom prefixes, making it easier to identify the source of debug information in a multi-class work environment. It uses the TCDebugPrefixV2 function to generate the prefix based on the file name or a provided key, along with a loop ID for identification purposes. The PrintDebugCodeBlock_Key and AddDebugCodeBlock_Key macros allow easy integration into code blocks for debugging purposes.",
+        "type": "comment"
+    },
+    "2558": {
+        "file_id": 265,
+        "content": "/SMG_NothingIsAll/Demo/TestHungryPage/TestHungryPage.h",
+        "type": "filepath"
+    },
+    "2559": {
+        "file_id": 265,
+        "content": "Header file for \"TestHungryPage\" class, inherits from \"HEViewController\", and contains no methods or properties.",
+        "type": "summary"
+    },
+    "2560": {
+        "file_id": 265,
+        "content": "//\n//  TestHungryPage.h\n//  SMG_NothingIsAll\n//\n//  Created by 贾  on 2017/7/9.\n//  Copyright © 2017年 XiaoGang. All rights reserved.\n//\n#import \"HEViewController.h\"\n@interface TestHungryPage : HEViewController\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/TestHungryPage/TestHungryPage.h:1-13"
+    },
+    "2561": {
+        "file_id": 265,
+        "content": "Header file for \"TestHungryPage\" class, inherits from \"HEViewController\", and contains no methods or properties.",
+        "type": "comment"
+    },
+    "2562": {
+        "file_id": 266,
+        "content": "/SMG_NothingIsAll/Demo/TestHungryPage/TestHungryPage.m",
+        "type": "filepath"
+    },
+    "2563": {
+        "file_id": 266,
+        "content": "TestHungryPage.m is a part of SMG_NothingIsAll project with UI elements, initializing views, updating labels based on slider value, and including methods for controlling battery level and hunger state, while handling input from a slider, managing text field returns, observing output notifications, and creating arrays for \"ANXIOUS_RDS\".",
+        "type": "summary"
+    },
+    "2564": {
+        "file_id": 266,
+        "content": "//\n//  TestHungryPage.m\n//  SMG_NothingIsAll\n//\n//  Created by 贾  on 2017/7/9.\n//  Copyright © 2017年 XiaoGang. All rights reserved.\n//\n#import \"TestHungryPage.h\"\n#import \"DemoHunger.h\"\n#import \"DemoCharge.h\"\n#import \"AIInput.h\"\n#import \"Output.h\"\n#import \"AIReactorControl.h\"\n@interface TestHungryPage ()<UITextFieldDelegate>\n@property (weak, nonatomic) IBOutlet UIButton *addBtn;\n@property (weak, nonatomic) IBOutlet UIButton *subBtn;\n@property (weak, nonatomic) IBOutlet UIButton *eatStartBtn;\n@property (weak, nonatomic) IBOutlet UIButton *eatStopBtn;\n@property (weak, nonatomic) IBOutlet UIButton *confirmBtn;\n@property (weak, nonatomic) IBOutlet UITextField *tf;\n@property (weak, nonatomic) IBOutlet UISlider *hungerLevelSlider;\n@property (weak, nonatomic) IBOutlet UILabel *hungerLevelLab;\n@property (weak, nonatomic) IBOutlet UIButton *thinkStatusBtn;\n@property (weak, nonatomic) IBOutlet UILabel *aiOutputLab;\n@property (assign, nonatomic) CGFloat lastSliderValue;\n@property (strong,nonatomic) NSTimer *timer;            //计时器",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/TestHungryPage/TestHungryPage.m:1-30"
+    },
+    "2565": {
+        "file_id": 266,
+        "content": "This code file, TestHungryPage.m, is part of the SMG_NothingIsAll project and contains a class called TestHungryPage. It includes various UI elements such as buttons, text fields, sliders, and labels. The class conforms to the UITextFieldDelegate protocol and has properties for storing references to these UI elements, as well as a timer variable.",
+        "type": "comment"
+    },
+    "2566": {
+        "file_id": 266,
+        "content": "@property (strong, nonatomic) NSMutableString *outputMStr;\n@end\n@implementation TestHungryPage\n-(void) initView{\n    //1. self\n    [super initView];\n    self.title = @\"充电演示\";\n    //2. tf\n    self.tf.delegate = self;\n    [self.tf setReturnKeyType:UIReturnKeyGo];\n    //3. hungerLevelLab\n    [self.hungerLevelLab setText:Double2Str_NDZ(self.hungerLevelSlider.value)];\n    [self.hungerLevelLab setTextColor:self.hungerLevelSlider.value > 0.7 ? [UIColor greenColor] : [UIColor redColor]];\n    //4. thinkStatusBtn\n    [self.thinkStatusBtn.layer setCornerRadius:5];\n    [self.thinkStatusBtn.layer setMasksToBounds:true];\n}\n-(void) initData{\n    [super initData];\n    dispatch_async(dispatch_get_main_queue(), ^{\n        self.timer = [NSTimer scheduledTimerWithTimeInterval:0.03f target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];\n    });\n    self.outputMStr = [[NSMutableString alloc] init];\n}\n-(void) initDisplay{\n    [super initDisplay];\n    //1,thinkStatusBtn\n    [self.thinkStatusBtn setBackgroundColor:[UIColor greenColor]];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/TestHungryPage/TestHungryPage.m:31-66"
+    },
+    "2567": {
+        "file_id": 266,
+        "content": "Initializes view and data for TestHungryPage, sets title, configures text field, updates hungerLevelLabel based on slider value, sets thinkStatusBtn corner radius and mask to bounds, and initializes display.",
+        "type": "comment"
+    },
+    "2568": {
+        "file_id": 266,
+        "content": "}\n-(void)viewWillAppear:(BOOL)animated{\n    [super viewWillAppear:animated];\n    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(outputObserver:) name:kOutputObserver object:nil];\n}\n-(void)viewWillDisappear:(BOOL)animated{\n    [super viewWillDisappear:animated];\n    [[NSNotificationCenter defaultCenter] removeObserver:self];\n}\n//MARK:===============================================================\n//MARK:                     < method >\n//MARK:===============================================================\n-(void) refreshDisplay_HungerLevelLab{\n    NSString *value = STRFORMAT(@\"%.3f\",self.hungerLevelSlider.value);\n    [self.hungerLevelLab setText:value];\n    [self.hungerLevelLab setTextColor:self.hungerLevelSlider.value > 0.7 ? [UIColor greenColor] : [UIColor redColor]];\n}\n- (void)notificationTimer{\n    NSString *oldText = self.aiOutputLab.text;\n    if (oldText.length < self.outputMStr.length) {\n        [self.aiOutputLab setText:[self.outputMStr substringToIndex:oldText.length + 1]];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/TestHungryPage/TestHungryPage.m:67-91"
+    },
+    "2569": {
+        "file_id": 266,
+        "content": "This code defines two methods: `viewWillAppear` and `viewWillDisappear`. The `viewWillAppear` method adds an observer to the default notification center for a specific name, kOutputObserver. The `viewWillDisappear` method removes the observer. There is also a `refreshDisplay_HungerLevelLab` method that updates the text and color of a label based on a slider value, and a `notificationTimer` method that updates the text of another label if its length has changed since the previous update.",
+        "type": "comment"
+    },
+    "2570": {
+        "file_id": 266,
+        "content": "    }else{\n        [self.aiOutputLab setText:self.outputMStr];\n    }\n}\n/**\n *  MARK:--------------------onclick--------------------\n */\n- (IBAction)addBtnOnClick:(id)sender {\n    [[[DemoHunger alloc] init] commit:0.9 state:UIDeviceBatteryStateCharging];\n}\n- (IBAction)subBtnOnClick:(id)sender {\n    [[[DemoHunger alloc] init] commit:0.7 state:UIDeviceBatteryStateUnplugged];\n}\n- (IBAction)eatStartBtnOnClick:(id)sender {\n    [[[DemoCharge alloc] init] commit:HungerState_Charging];\n}\n- (IBAction)eatStopBtnOnClick:(id)sender {\n    [[[DemoCharge alloc] init] commit:HungerState_Unplugged];\n}\n- (IBAction)confirmBtnOnClick:(id)sender {\n    if (STRISOK(self.tf.text)) {\n        [AIInput commitText:self.tf.text];\n        self.tf.text = nil;\n    }\n}\n- (IBAction)hungerLevelSliderValueChanged:(id)sender {\n    //1. 数据\n    CGFloat curValue = self.hungerLevelSlider.value;\n    UIDeviceBatteryState state = self.lastSliderValue > curValue ? UIDeviceBatteryStateUnplugged : UIDeviceBatteryStateCharging;\n    //2. 提交变化\n    [[[DemoHunger alloc] init] commit:curValue state:state];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/TestHungryPage/TestHungryPage.m:92-129"
+    },
+    "2571": {
+        "file_id": 266,
+        "content": "The code includes several IBAction methods for various buttons that control the battery level and hunger state. It also has a method for updating the hunger level slider value, which then commits the change to the DemoHunger object with the corresponding state. The confirmBtnOnClick method checks if the text input is valid before committing it to the AIInput object.",
+        "type": "comment"
+    },
+    "2572": {
+        "file_id": 266,
+        "content": "    //3. 记录当前值\n    self.lastSliderValue = curValue;\n}\n- (IBAction)thinkBtnOnClick:(id)sender {\n}\n/**\n *  MARK:--------------------UITextFieldDelegate--------------------\n */\n- (BOOL)textFieldShouldReturn:(UITextField *)textField{\n    [self confirmBtnOnClick:self.confirmBtn];\n    return true;\n}\n//MARK:===============================================================\n//MARK:                     < outputObserver >\n//MARK:===============================================================\n-(void) outputObserver:(NSNotification*)notification{\n    if (notification && ISOK(notification.object, OutputModel.class)) {\n        //1. 取数据\n        OutputModel *model = (OutputModel*)notification.object;\n        //2. 字符串反射\n        if ([TEXT_RDS isEqualToString:model.identify]) {\n            char c = [model.data charValue];\n            [self.outputMStr appendFormat:@\"%c\",c];\n            if (self.outputMStr.length > 100) {\n                NSString *subStr = [self.outputMStr substringFromIndex:self.outputMStr.length - 100];\n                self.outputMStr = [[NSMutableString alloc] initWithString:subStr];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/TestHungryPage/TestHungryPage.m:131-161"
+    },
+    "2573": {
+        "file_id": 266,
+        "content": "This code snippet handles input from a slider, manages text field returns, and observes output notifications. It records the current slider value, handles return key in UITextField, triggers confirmBtnOnClick action, checks if notification matches expected identify string, retrieves data from the model, appends character to outputMStr up to 100 characters, and truncates outputMStr if necessary.",
+        "type": "comment"
+    },
+    "2574": {
+        "file_id": 266,
+        "content": "            }\n        }else if([ANXIOUS_RDS isEqualToString:model.identify]){\n            const char *chars = [@\"T_T\" UTF8String];\n            NSMutableArray *datas = [[NSMutableArray alloc] init];\n            for (NSInteger i = 0; i < 3; i++) {\n                [datas addObject:@(chars[i])];\n            }\n            [AIReactorControl commitReactor:TEXT_RDS datas:datas];\n            //chars = [@\"^_^\" UTF8String];\n        }\n    }\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/TestHungryPage/TestHungryPage.m:162-175"
+    },
+    "2575": {
+        "file_id": 266,
+        "content": "Else if condition for \"ANXIOUS_RDS\" is met, it creates an array of 3 characters from \"@\"T_T\"\" and commits the reactor with TEXT_RDS datas.",
+        "type": "comment"
+    },
+    "2576": {
+        "file_id": 267,
+        "content": "/SMG_NothingIsAll/Extension/AsyncMutableArray.h",
+        "type": "filepath"
+    },
+    "2577": {
+        "file_id": 267,
+        "content": "This code defines a class called AsyncMutableArray that provides thread-safe operations for a mutable array, preventing crashes during multi-threaded usage. It includes methods for basic array manipulation and enumeration, as well as thread-safe iterations using block syntax.",
+        "type": "summary"
+    },
+    "2578": {
+        "file_id": 267,
+        "content": "//\n//  AsyncMutableArray.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/7/17.\n//  Copyright © 2023 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------多线程数组--------------------\n *  @desc 多线程操作时不闪退;\n */\n@interface AsyncMutableArray : NSObject\n- (NSMutableArray *)array;\n- (BOOL)containsObject:(id)anObject;\n- (NSUInteger)count;\n- (id)objectAtIndex:(NSUInteger)index;\n- (NSUInteger)indexOfObject:(id)anObject;\n- (NSEnumerator *)objectEnumerator; //枚举item\n- (void)insertObject:(id)anObject atIndex:(NSUInteger)index;\n- (void)addObject:(id)anObject;\n- (void)addObjectsFromArray:(NSArray*)objs;\n- (void)replaceObjectAtIndex:(NSUInteger)index withObject:(id)anObject;\n- (void)removeObjectAtIndex:(NSUInteger)index;\n- (void)removeObject:(id)anObject;\n- (void)removeLastObject;\n- (void)removeObjectsInRange:(NSRange)range;\n- (void) removeAllObjects;\n- (void) forEach:(void(^)(id))itemBlock;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Extension/AsyncMutableArray.h:1-34"
+    },
+    "2579": {
+        "file_id": 267,
+        "content": "This code defines a class called AsyncMutableArray that provides thread-safe operations for a mutable array, preventing crashes during multi-threaded usage. It includes methods for basic array manipulation and enumeration, as well as thread-safe iterations using block syntax.",
+        "type": "comment"
+    },
+    "2580": {
+        "file_id": 268,
+        "content": "/SMG_NothingIsAll/Extension/AsyncMutableArray.m",
+        "type": "filepath"
+    },
+    "2581": {
+        "file_id": 268,
+        "content": "AsyncMutableArray is a GCD-based thread-safe class for managing asynchronous mutable arrays, offering addObject, removeObject, and forEach methods for concurrency safety.",
+        "type": "summary"
+    },
+    "2582": {
+        "file_id": 268,
+        "content": "//\n//  AsyncMutableArray.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/7/17.\n//  Copyright © 2023 XiaoGang. All rights reserved.\n//\n#import \"AsyncMutableArray.h\"\n@interface AsyncMutableArray()\n@property (strong, nonatomic) dispatch_queue_t syncQueue;\n@property (strong, nonatomic) NSMutableArray *arr;\n@end\n@implementation AsyncMutableArray\n-(instancetype)init {\n    self = [super init];\n    if (self) {\n        NSString *identifier = [NSString stringWithFormat:@\"<AsyncMutableArray>%p\",self];\n        self.syncQueue = dispatch_queue_create([identifier UTF8String], DISPATCH_QUEUE_CONCURRENT);\n        self.arr = [NSMutableArray array];\n    }\n    return self;\n}\n- (NSMutableArray *)array {\n    __block NSMutableArray *safeArray;\n    dispatch_sync(_syncQueue, ^{\n        safeArray = self.arr;\n    });\n    return safeArray;\n}\n- (BOOL)containsObject:(id)anObject {\n    __block BOOL isExist = NO;\n    dispatch_sync(_syncQueue, ^{\n        isExist = [self.arr containsObject:anObject];\n    });\n    return isExist;\n}\n- (NSUInteger)count {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Extension/AsyncMutableArray.m:1-46"
+    },
+    "2583": {
+        "file_id": 268,
+        "content": "AsyncMutableArray is a class that creates and manages an asynchronous mutable array, using concurrent dispatch queues for safe access. It has methods to get the array, check if it contains an object, and count its elements asynchronously.",
+        "type": "comment"
+    },
+    "2584": {
+        "file_id": 268,
+        "content": "    __block NSUInteger count;\n    dispatch_sync(_syncQueue, ^{\n        count = self.arr.count;\n    });\n    return count;\n}\n- (id)objectAtIndex:(NSUInteger)index {\n    __block id obj;\n    dispatch_sync(_syncQueue, ^{\n        if (index < [self.arr count]) {\n            obj = self.arr[index];\n        }\n    });\n    return obj;\n}\n- (NSUInteger)indexOfObject:(id)anObject {\n    __block NSUInteger index = NSNotFound;\n    dispatch_sync(_syncQueue, ^{\n        for (int i = 0; i < [self.arr count]; i ++) {\n            if ([self.arr objectAtIndex:i] == anObject) {\n                index = i;\n                break;\n            }\n        }\n    });\n    return index;\n}\n- (NSEnumerator *)objectEnumerator {\n    __block NSEnumerator *enu;\n    dispatch_sync(_syncQueue, ^{\n        enu = [self.arr objectEnumerator];\n    });\n    return enu;\n}\n- (void)insertObject:(id)anObject atIndex:(NSUInteger)index {\n    dispatch_barrier_async(_syncQueue, ^{\n        if (anObject && index <= [self.arr count]) {\n            [self.arr insertObject:anObject atIndex:index];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Extension/AsyncMutableArray.m:47-88"
+    },
+    "2585": {
+        "file_id": 268,
+        "content": "The code provides a synchronized wrapper around an underlying mutable array, ensuring thread safety. It uses GCD (Grand Central Dispatch) to dispatch operations on a private queue, preventing conflicts and race conditions when accessing the array from multiple threads. Each method performs its operation synchronously within this queue, guaranteeing consistent and safe behavior.",
+        "type": "comment"
+    },
+    "2586": {
+        "file_id": 268,
+        "content": "        }\n    });\n}\n- (void)addObject:(id)anObject {\n    dispatch_barrier_async(_syncQueue, ^{\n        if(anObject){\n            [self.arr addObject:anObject];\n        }\n    });\n}\n- (void)addObjectsFromArray:(NSArray*)objs {\n    dispatch_barrier_async(_syncQueue, ^{\n        if(ARRISOK(objs)){\n            [self.arr addObjectsFromArray:objs];\n        }\n    });\n}\n- (void)replaceObjectAtIndex:(NSUInteger)index withObject:(id)anObject {\n    dispatch_barrier_async(_syncQueue, ^{\n        if (anObject && index < [self.arr count]) {\n            [self.arr replaceObjectAtIndex:index withObject:anObject];\n        }\n    });\n}\n- (void)removeObjectAtIndex:(NSUInteger)index {\n    dispatch_barrier_async(_syncQueue, ^{\n        if (index < [self.arr count]) {\n            [self.arr removeObjectAtIndex:index];\n        }\n    });\n}\n- (void)removeObject:(id)anObject {\n    dispatch_barrier_async(_syncQueue, ^{\n        [self.arr removeObject:anObject];\n    });\n}\n- (void)removeLastObject {\n    dispatch_barrier_async(_syncQueue, ^{\n        [self.arr removeLastObject];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Extension/AsyncMutableArray.m:89-133"
+    },
+    "2587": {
+        "file_id": 268,
+        "content": "This code defines an asynchronous mutable array with thread-safe operations. It uses a GCD dispatch queue to synchronize access to the array, ensuring that each operation is performed atomically. The methods include addObject, addObjectsFromArray, replaceObjectAtIndex, removeObjectAtIndex, removeObject, and removeLastObject, all of which are wrapped in a dispatch_barrier_async block for concurrency safety.",
+        "type": "comment"
+    },
+    "2588": {
+        "file_id": 268,
+        "content": "    });\n}\n- (void)removeObjectsInRange:(NSRange)range {\n    dispatch_barrier_async(_syncQueue, ^{\n        [self.arr removeObjectsInRange:range];\n    });\n}\n- (void) removeAllObjects {\n    dispatch_barrier_async(_syncQueue, ^{\n        [self.arr removeAllObjects];\n    });\n}\n- (void) forEach:(void(^)(id))itemBlock {\n    dispatch_barrier_async(_syncQueue, ^{\n        for (id item in self.arr) {\n            itemBlock(item);\n        }\n    });\n}\n- (void)dealloc {\n    if (_syncQueue) {\n        _syncQueue = NULL;\n    }\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Extension/AsyncMutableArray.m:134-163"
+    },
+    "2589": {
+        "file_id": 268,
+        "content": "AsyncMutableArray class provides synchronized access to an underlying NSMutableArray instance. Methods like removeObjectsInRange, removeAllObjects and forEach are wrapped with GCD dispatch_barrier_async to ensure thread safety when accessing the array from multiple threads. The dealloc method releases the _syncQueue if it exists.",
+        "type": "comment"
+    },
+    "2590": {
+        "file_id": 269,
+        "content": "/SMG_NothingIsAll/Extension/AsyncMutableDictionary.h",
+        "type": "filepath"
+    },
+    "2591": {
+        "file_id": 269,
+        "content": "Header file for AsyncMutableDictionary class, extending NSObject, provides methods to manage mutable dictionaries asynchronously.",
+        "type": "summary"
+    },
+    "2592": {
+        "file_id": 269,
+        "content": "//\n//  AsyncMutableDictionary.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/7/19.\n//  Copyright © 2023 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface AsyncMutableDictionary : NSObject\n- (NSMutableDictionary*)dictionary;\n- (NSInteger)count;\n- (void)removeObjectForKey:(id)aKey;\n- (void)removeAllObjects;\n- (void)setObject:(id)anObject forKey:(id)aKey;\n- (nullable id)objectForKey:(id)aKey;\n- (NSArray *)allKeys;\n- (NSArray *)allValues;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Extension/AsyncMutableDictionary.h:1-22"
+    },
+    "2593": {
+        "file_id": 269,
+        "content": "Header file for AsyncMutableDictionary class, extending NSObject, provides methods to manage mutable dictionaries asynchronously.",
+        "type": "comment"
+    },
+    "2594": {
+        "file_id": 270,
+        "content": "/SMG_NothingIsAll/Extension/AsyncMutableDictionary.m",
+        "type": "filepath"
+    },
+    "2595": {
+        "file_id": 270,
+        "content": "AsyncMutableDictionary is a thread-safe implementation of NSMutableDictionary using GCD's dispatch_queue for synchronized access. It allows safe, concurrent reading and writing from multiple threads with methods to add, remove, and query objects in the dictionary. The dealloc method releases syncQueue if not already null.",
+        "type": "summary"
+    },
+    "2596": {
+        "file_id": 270,
+        "content": "//\n//  AsyncMutableDictionary.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/7/19.\n//  Copyright © 2023 XiaoGang. All rights reserved.\n//\n#import \"AsyncMutableDictionary.h\"\n@interface AsyncMutableDictionary ()\n@property (nonatomic, strong) NSMutableDictionary *dic;\n@property (nonatomic, strong) dispatch_queue_t syncQueue;\n@end\n@implementation AsyncMutableDictionary\n- (instancetype)init {\n    self = [super init];\n    if (self) {\n        _dic = [[NSMutableDictionary alloc] init];\n        _syncQueue = dispatch_queue_create(\"AsyncMutableDictionary\", DISPATCH_QUEUE_CONCURRENT);\n    }\n    return self;\n}\n- (NSMutableDictionary*)dictionary {\n    __block NSMutableDictionary *safeDic;\n    dispatch_sync(_syncQueue, ^{\n        safeDic = self.dic;\n    });\n    return safeDic;\n}\n- (NSInteger)count {\n    __block NSUInteger count;\n    dispatch_sync(self.syncQueue, ^{\n        count = self.dic.count;\n    });\n    return count;\n}\n- (void)removeObjectForKey:(id)aKey {\n    dispatch_barrier_async(self.syncQueue, ^{\n        [self.dic removeObjectForKey:aKey];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Extension/AsyncMutableDictionary.m:1-47"
+    },
+    "2597": {
+        "file_id": 270,
+        "content": "AsyncMutableDictionary.m contains the implementation of a class that extends NSMutableDictionary, providing asynchronous and concurrent operations. It initializes a dictionary and creates a private queue for synchronization. The methods dictionary, count, and removeObjectForKey provide safe access to the dictionary using the provided syncQueue.",
+        "type": "comment"
+    },
+    "2598": {
+        "file_id": 270,
+        "content": "    });\n}\n- (void)removeAllObjects {\n    dispatch_barrier_async(self.syncQueue, ^{\n        [self.dic removeAllObjects];\n    });\n}\n- (void)setObject:(id)anObject forKey:(id)aKey {\n    dispatch_barrier_async(self.syncQueue, ^{\n        [self.dic setObject:anObject forKey:aKey];\n    });\n}\n- (nullable id)objectForKey:(id)aKey {\n    __block id item = nil;\n    dispatch_sync(self.syncQueue, ^{\n        item = [self.dic objectForKey:aKey];\n    });\n    return item;\n}\n- (NSArray *)allKeys {\n    __block NSArray *keys;\n    dispatch_sync(self.syncQueue, ^{\n        keys = [self.dic allKeys];\n    });\n    return keys;\n}\n- (NSArray *)allValues {\n    __block NSArray *values;\n    dispatch_sync(self.syncQueue, ^{\n        values = [self.dic allValues];\n    });\n    return values;\n}\n- (void)dealloc {\n    if (_syncQueue) {\n        _syncQueue = NULL;\n    }\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Extension/AsyncMutableDictionary.m:48-93"
+    },
+    "2599": {
+        "file_id": 270,
+        "content": "AsyncMutableDictionary is a class implementing a thread-safe NSMutableDictionary using GCD's dispatch_queue. It provides synchronized access to the dictionary object, allowing multiple threads to safely read and write values without conflicts. Methods are provided for adding, removing, and querying objects in the dictionary while maintaining synchronization. The dealloc method releases the syncQueue if it is not already null.",
+        "type": "comment"
+    }
+}

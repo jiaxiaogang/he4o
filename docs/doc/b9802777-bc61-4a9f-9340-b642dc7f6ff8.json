@@ -1,0 +1,10 @@
+{
+    "summary": "Header file for SMGNetVision project, includes Foundation and NVView libraries, defines DirectionType enum with values for four directions.",
+    "details": [
+        {
+            "comment": "Header file for SMGNetVision project, includes Foundation and NVView libraries, defines DirectionType enum with values for four directions.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/SMGNetVision/NVHeader.h\":0-25",
+            "content": "//\n//  NVHeader.h\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/9/29.\n//  Copyright \u00a9 2018\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n#import \"NVView.h\"\n#import \"NVHeUtil.h\"\n/**\n *  MARK:--------------------SMG\u5185\u6838\u4e2d\u7f51\u7edc\u53ef\u89c6\u5316\u9879\u76ee--------------------\n *  1. \u76ee\u524d\u653e\u8fd9,\u968f\u540e\u7acb\u4e3a\u5355\u72ec\u9879\u76ee;\n */\n/**\n *  MARK:--------------------\u56db\u4e2a\u65b9\u5411--------------------\n */\ntypedef NS_ENUM(NSInteger, DirectionType) {\n    DirectionType_Top   = 0,\n    DirectionType_Bottom= 1,\n    DirectionType_Left  = 2,\n    DirectionType_Right = 3\n};"
+        }
+    ]
+}

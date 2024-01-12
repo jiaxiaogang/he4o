@@ -1,0 +1,10 @@
+{
+    "summary": "This file contains the header class for LongTipWindow, a subclass of UIView. It includes a setData method which takes in moduleTitle, an AIKVPointer data object, and DirectionType parameter. Created by jia on 2021/8/12 and is under the copyright of XiaoGang.",
+    "details": [
+        {
+            "comment": "This file contains the header class for LongTipWindow, a subclass of UIView. It includes a setData method which takes in moduleTitle, an AIKVPointer data object, and DirectionType parameter. Created by jia on 2021/8/12 and is under the copyright of XiaoGang.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/SMGNetVision/HE/LongTipWindow.h\":0-14",
+            "content": "//\n//  LongTipWindow.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/8/12.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n@interface LongTipWindow : UIView\n-(void) setData:(NSString*)moduleTitle data:(AIKVPointer*)data direction:(DirectionType)type;\n@end"
+        }
+    ]
+}

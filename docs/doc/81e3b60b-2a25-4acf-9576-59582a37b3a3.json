@@ -1,0 +1,10 @@
+{
+    "summary": "This code is the header file of TCForecast class in SMG_NothingIsAll project, which contains two forecast methods: forecast_Multi for multiple new roots and forecast_Single for a single item.",
+    "details": [
+        {
+            "comment": "This code is the header file of TCForecast class in SMG_NothingIsAll project, which contains two forecast methods: forecast_Multi for multiple new roots and forecast_Single for a single item.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCForecast/TCForecast.h\":0-18",
+            "content": "//\n//  TCForecast.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/11/28.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------\u53cd\u7701\u89e6\u53d1\u5668--------------------\n */\n@interface TCForecast : NSObject\n+(void) forecast_Multi:(NSArray*)newRoots;\n+(void) forecast_Single:(AIMatchFoModel*)item;\n@end"
+        }
+    ]
+}

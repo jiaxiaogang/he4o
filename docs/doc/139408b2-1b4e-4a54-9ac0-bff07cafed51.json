@@ -1,0 +1,15 @@
+{
+    "summary": "XGLabCell is a UIView subclass with a UILabel, handling text, color, and font settings. It customizes label appearance through constraints and allows for easy modification. This code sets a label's text to \"text\" in XGLabCell of the XGDebug project.",
+    "details": [
+        {
+            "comment": "XGLabCell is a subclass of UIView that contains a UILabel and handles setting its text, color, and font. It adds the label as a subview with constraints and allows for customization of text, color, and font size.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/XGDebug/XGLabCell.m\":0-43",
+            "content": "//\n//  XGLabCell.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/4/23.\n//  Copyright \u00a9 2022\u5e74 XiaoGang. All rights reserved.\n//\n#import \"XGLabCell.h\"\n#import \"MASConstraint.h\"\n#import \"View+MASAdditions.h\"\n@interface XGLabCell ()\n@property (strong, nonatomic) UILabel *lab;\n@end\n@implementation XGLabCell\n- (void)awakeFromNib {\n    [super awakeFromNib];\n}\n- (void)setSelected:(BOOL)selected animated:(BOOL)animated {\n    [super setSelected:selected animated:animated];\n}\n-(void) setText:(NSString*)text color:(UIColor*)color font:(CGFloat)font{\n    if (!self.lab) {\n        self.lab = [[UILabel alloc] init];\n        [self addSubview:self.lab];\n        [self.lab mas_makeConstraints:^(MASConstraintMaker *make) {\n            make.leading.mas_offset(3).mas_equalTo(self);\n            make.trailing.mas_equalTo(self);\n            make.top.mas_equalTo(self);\n            make.bottom.mas_equalTo(self);\n        }];\n    }\n    if (font > 0) {\n        [self.lab setFont:[UIFont systemFontOfSize:font]];\n    }\n    if (color) {\n        [self.lab setTextColor:color];"
+        },
+        {
+            "comment": "This code snippet sets the text of a label (lab) to a given string \"text\". It belongs to XGLabCell class in XGDebug project.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/XGDebug/XGLabCell.m\":44-48",
+            "content": "    }\n    self.lab.text = text;\n}\n@end"
+        }
+    ]
+}

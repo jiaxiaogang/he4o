@@ -1,0 +1,15 @@
+{
+    "summary": "This code defines class AILine and its methods for creating instances with specified type, pointers or array of AIObjects. It also imports related classes like AIPort, AIPointer, and others for accessing and manipulating pointers.",
+    "details": [
+        {
+            "comment": "This code defines the class AILine and its methods for creating instances of AILine with specified type and pointers or with specified type and array of AIObjects. It also imports other related classes like AIPort, AIPointer, AILineStrong, and AIArray.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AINet/AILine.m\":0-38",
+            "content": "////\n////  AILine.m\n////  SMG_NothingIsAll\n////\n////  Created by \u8d3e  on 2017/6/29.\n////  Copyright \u00a9 2017\u5e74 XiaoGang. All rights reserved.\n////\n//\n//#import \"AILine.h\"\n//#import \"AIPort.h\"\n//#import \"AIPointer.h\"\n//#import \"AILineStrong.h\"\n//#import \"AIArray.h\"\n//\n//@implementation AILine\n//\n//+ (AILine*) newWithType:(AILineType)type pointers:(AIArray*)pointers\n//{\n//    AILine *value = [[self.class alloc] init];\n//    value.type = type;\n//    value.strong = [AILineStrong newWithCount:1];\n//    [value.port.pointers addObjectsFromArray:pointers.content];\n//    \n//    return value;\n//}\n//\n//+ (AILine*) newWithType:(AILineType)type aiObjs:(NSArray*)aiObjs\n//{\n//    AILine *value = [[self.class alloc] init];\n//    value.type = type;\n//    value.strong = [AILineStrong newWithCount:1];\n//    if (ARRISOK(aiObjs)) {\n//        for (AIObject *obj in aiObjs) {\n//            if (ISOK(obj, AIObject.class) && POINTERISOK(obj.pointer)) {\n//                [value.port.pointers addObject:obj.pointer];\n//            }\n//        }\n//    }\n//    "
+        },
+        {
+            "comment": "This code defines a class with methods for accessing and manipulating pointers. The class has a port property that can be accessed using the 'port' method. The 'otherPointers' method returns an array of all pointers except for the specified one.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AINet/AILine.m\":39-66",
+            "content": "//    return value;\n//}\n//\n//\n//-(AIPort *)port {\n//    if (_port == nil) {\n//        _port = [[AIPort alloc] init];\n//    }\n//    return _port;\n//}\n//\n//\n///**\n// *  MARK:--------------------\u53d6\u53e6\u4e00\u5934--------------------\n// */\n//-(NSArray*) otherPointers:(AIPointer*)pointer{\n//    NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:self.port.pointers];\n//    for (AIPointer *item in mArr) {\n//        if (POINTERISOK(item) && [item isEqual:pointer]) {\n//            [mArr removeObject:item];\n//            return mArr;\n//        }\n//    }\n//    return nil;\n//}\n//\n//\n//@end"
+        }
+    ]
+}

@@ -1,0 +1,539 @@
+{
+    "3200": {
+        "file_id": 335,
+        "content": "                    CGFloat subGroupMinX = baseView.x - baseView.width / 3.0f;\n                    //7. 子元素宽度 = base宽度 / 子元素数;\n                    CGFloat subGroupW = baseView.width / 0.6f / subModels.count;\n                    CGFloat subNodeW = subGroupW * 0.6f;// (不需要了,根据sub/root组宽就能算出缩放比例);\n                    //7. nodeX = (左侧空白0.2 + 下标) x 组宽 + groupMinX;\n                    NSInteger index = [subModels indexOfObject:nodeView.data];\n                    CGFloat nodeX = subGroupW * (0.2f + index) + subGroupMinX;\n                    //8. 算出Y坐标 (baseView下方,自身高度的1.8倍);\n                    CGFloat nodeY = CGRectGetMaxY(baseView.frame) + subNodeW / 5 * 1.8f;\n                    //8. sub节点的frame指定;\n                    [nodeView setFrame:CGRectMake(nodeX, nodeY, subNodeW, subNodeW / 5)];\n                    //9. 对nodeView进行缩放 (缩放比例 = 子元素宽度 / rootWidth);\n                    CGFloat scale = subGroupW / rootGroupW;\n                    [nodeView scaleContainer:scale];\n                    //10. 连接线\n                    TVLineView *line = [[TVLineView alloc] init];",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/TOMVision2.m:207-228"
+    },
+    "3201": {
+        "file_id": 335,
+        "content": "This code calculates the position and scale of a sub-view (nodeView) within a base view. It uses variables such as baseView's width, x-coordinate, and its maximum y-coordinate to determine the nodeView's frame. The sub-views are positioned by considering the space needed for each one and adjusting the x-coordinate accordingly. Additionally, the code calculates the scale of the sub-view relative to the base view's width and applies this scale to the sub-view using the `scaleContainer` method.",
+        "type": "comment"
+    },
+    "3202": {
+        "file_id": 335,
+        "content": "                    [self.contentView insertSubview:line atIndex:0];\n                    [line refreshDisplayWithDataA:nodeView nodeB:baseView];\n                }\n            }\n        }\n    }\n    //11. 更新画板;\n    [self autoAdjustContentSize];\n    //12. 更新contentView的变化流数据;\n    [self updateContentViewBezier];\n    //13. 渲染完成_执行聚焦动画;\n    if (focusMode) {\n        [self focusAnimation:changeModel];\n    }\n}\n-(void) clear{\n}\n-(void) setStop:(BOOL)stop{\n    self.panelView.stop = stop;\n}\n-(void) open{\n    [self setHidden:false];\n    [self refreshDisplay];\n}\n-(void) close{\n    [self setHidden:true];\n}\n//MARK:===============================================================\n//MARK:                     < privateMethod >\n//MARK:===============================================================\n-(BOOL) isOpen{\n    return !self.isHidden;\n}\n/**\n *  MARK:--------------------聚焦动画--------------------\n *  @version\n *      2022.03.27: 改变anchor0会导致整个contentView坐标系变成中间0点,subView的xy都得跟着改,所以取消它并重调动画;\n */\n-(void) focusAnimation:(TOModelBase*)focusModel{\n    //1. 取单帧展示时长;",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/TOMVision2.m:229-278"
+    },
+    "3203": {
+        "file_id": 335,
+        "content": "This code appears to be implementing various methods for managing and manipulating a view. It includes methods for opening, closing, clearing, and adjusting the content size of the view. There is also a private method for focus animation that involves changing the anchor point and adjusting subview positions. The comments describe different parts of the code and their functionality in detail.",
+        "type": "comment"
+    },
+    "3204": {
+        "file_id": 335,
+        "content": "    CGFloat time = self.panelView.getFrameShowTime;\n    if (time == 0) return;\n    //2. 取focusView\n    NSArray *subs = [self.contentView subViews_AllDeepWithClass:TOMVisionNodeBase.class];\n    TOMVisionNodeBase *focusView = nil;\n    for (TOMVisionNodeBase *view in subs) {\n        if ([view.data isEqual:focusModel]) {\n            focusView = view;\n            break;\n        }\n    }\n    if (!focusView) return;\n    self.tipLab.text = STRFORMAT(@\"聚焦: %@\",focusView.getNodeDesc);\n    //3. scale只放大(至少100宽),不缩小;\n    CGFloat scale = MAX(100.0f / focusView.width, 1.0f);\n    //4. 第1动画: 重置大小,位置;\n    [UIView animateWithDuration:time / 4.0f animations:^{\n        self.scrollView.zoomScale = 1.0f;\n        self.scrollView.contentOffset = CGPointZero;\n    } completion:^(BOOL finished) {\n        //4. 流程线粗;\n        [self.timeLine setData:self.scrollView.zoomScale];\n        //5. 第2动画: 焦点view显示在屏幕中心;\n        [self animation4Scale:scale focusPoint:focusView.center time:time / 2.0f];\n    }];\n}\n/**\n *  MARK:--------------------创建新节点--------------------",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/TOMVision2.m:279-311"
+    },
+    "3205": {
+        "file_id": 335,
+        "content": "This code segment sets the focus view, scales it to at least 100 width and animates the scroll view's zoom scale and content offset to show the focus view at the center of the screen. It also updates the time line data and creates a new node.",
+        "type": "comment"
+    },
+    "3206": {
+        "file_id": 335,
+        "content": " *  @version\n *      2022.03.19: 将newSubViews和oldSubViews都参与复用 (本帧生成的node也需要复用,否则会找不到刚生成的父枝);\n *  @result notnull\n */\n-(TOMVisionNodeBase*) getOrCreateNode:(id)data oldSubViews:(NSArray*)oldSubViews{\n    //1. 数据准备 (原有和现有子views全用于复用);\n    NSArray *newSubViews = [self.contentView subViews_AllDeepWithClass:TOMVisionNodeBase.class];\n    NSMutableArray *allSubViews = [SMGUtils collectArrA:oldSubViews arrB:newSubViews];\n    //2. 优先找复用;\n    TOMVisionNodeBase *result = ARR_INDEX([SMGUtils filterArr:allSubViews checkValid:^BOOL(TOMVisionNodeBase *subView) {\n        return [subView isEqualByData:data];\n    } limit:1], 0);\n    //3. 没复用则新建;\n    if (!result) {\n        //4. demand节点;\n        if (ISOK(data, DemandModel.class)) {\n            result = [[TOMVisionDemandView alloc] init];\n        }else if(ISOK(data, TOFoModel.class)){\n            result = [[TOMVisionFoView alloc] init];\n        }else if(ISOK(data, TOAlgModel.class)){\n            result = [[TOMVisionAlgView alloc] init];\n        }else{\n            //还没支持的类型,就先返回baseView;",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/TOMVision2.m:312-337"
+    },
+    "3207": {
+        "file_id": 335,
+        "content": "This method gets or creates a TOMVisionNodeBase object using the given data. It first prepares the old and new subviews for reuse. Then, it prioritizes finding a matching subview for reuse among the collected subviews. If no match is found, it creates a new node based on the provided data type (DemandModel, TOFoModel, or TOAlgModel).",
+        "type": "comment"
+    },
+    "3208": {
+        "file_id": 335,
+        "content": "            result = [[TOMVisionNodeBase alloc] init];\n            [result setBackgroundColor:UIColor.redColor];\n        }\n    }\n    //4. 无论是复用,还是新建,都更新data (复用时,每帧同一个data也在更新);\n    [result setData:data];\n    return result;\n}\n//更新画板大小 (避免出屏的拖不到等问题);\n-(void) autoAdjustContentSize{\n    //1. 取最小尺寸;\n    CGFloat contentW = ScreenWidth,contentH = ScreenHeight - 60;\n    //2. 根据subView自动计算尺寸;\n    for (UIView *subV in self.contentView.subviews) {\n        contentW = MAX(contentW, CGRectGetMaxX(subV.frame) + 10.0f);\n        contentH = MAX(contentH, CGRectGetMaxY(subV.frame) + 10.0f);\n    }\n    //3. 更新contentSize;\n    [self.contentView setSize:CGSizeMake(contentW, contentH)];\n    [self.scrollView setContentSize:CGSizeMake(contentW * self.scrollView.zoomScale, contentH * self.scrollView.zoomScale)];\n}\n//更新树生长时间线;\n-(void) updateContentViewBezier {\n    //1. 数据准备;\n    __block NSMutableArray *points = [[NSMutableArray alloc] init];\n    //2. 取出nodes\n    NSArray *subViews = [self.contentView subViews_AllDeepWithClass:TOMVisionNodeBase.class];",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/TOMVision2.m:338-370"
+    },
+    "3209": {
+        "file_id": 335,
+        "content": "Code block 1 creates an instance of TOMVisionNodeBase and sets its background color. Then, it updates the data for the result object and returns it.\n\nCode block 2 adjusts the content size of a scroll view to avoid off-screen dragging issues. It takes the minimum dimensions, then iterates through subviews to update the maximum x and y coordinates. Finally, it sets the new content size.\n\nCode block 3 prepares data for updating the content view's timeline. It creates an array of points and retrieves all instances of TOMVisionNodeBase from the content view.",
+        "type": "comment"
+    },
+    "3210": {
+        "file_id": 335,
+        "content": "    //3. 对变化过程,分别收集坐标;\n    for (NSInteger i = 0; i <= self.changeIndex; i++) {\n        //4. 判断当前changeIndex有没有变化点;\n        [self.panelView getModel:i complete:^(TOMVisionItemModel *_frameModel, TOModelBase *_changeModel) {\n            if (_changeModel) {\n                //5. 有的话,收集它的中心坐标;\n                for (TOMVisionNodeBase *view in subViews) {\n                    if ([view.data isEqual:_changeModel]) {\n                        [points addObject:[NSValue valueWithCGPoint:view.center]];\n                        break;\n                    }\n                }\n            }\n        }];\n    }\n    //6. 将坐标流更新到contentView;\n    self.timeLine.bezierPoints = points;\n    //7. 更新树生长时间线;\n    [self.contentView insertSubview:self.timeLine atIndex:0];\n    [self.timeLine setFrame:self.contentView.frame];\n    [self.timeLine setData:self.scrollView.zoomScale];\n}\n/**\n *  MARK:--------------------缩放动画--------------------\n *  @param focusPoint : contentView上的点,此动画可将此点移到屏幕中心显示;\n */\n-(void) animation4Scale:(CGFloat)newScale focusPoint:(CGPoint)focusPoint time:(CGFloat)time{",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/TOMVision2.m:372-403"
+    },
+    "3211": {
+        "file_id": 335,
+        "content": "1. Loops through changeIndex and collects coordinates related to each change point.\n2. Checks if current changeIndex has a variation point, collects its center coordinate if true.\n3. Updates contentView with the collected coordinates.\n4. Updates timeLine with new data based on scrollView zoomScale.",
+        "type": "comment"
+    },
+    "3212": {
+        "file_id": 335,
+        "content": "    //6. 坐标计算;\n    CGFloat offsetX = newScale * focusPoint.x;\n    CGFloat offsetY = newScale * focusPoint.y;\n    //7. 坐标计算2: 减半屏,使之从左上角移到屏正中 (无论缩放比例多少,左上角中心到屏幕中心,都是半屏距离);\n    CGFloat svW = self.scrollView.width;\n    CGFloat svH = self.scrollView.height;\n    offsetX -= svW / 2;\n    offsetY -= svH / 2;\n    //8. 坐标计算3: 当不缩放 且 offsetXY在左上区间时,则保持原位不居中;\n    if (newScale <= 1.0f) {\n        if (focusPoint.x < svW / 2) offsetX = 0;\n        if (focusPoint.y < svH / 2) offsetY = 0;\n    }\n    //9. 流程线粗\n    [self.timeLine setData:newScale];\n    //9. 动画_执行动画 (居中 & 缩放);\n    [UIView animateWithDuration:time animations:^{\n        self.scrollView.zoomScale = newScale;\n        self.scrollView.contentOffset = CGPointMake(offsetX, offsetY);\n    }];\n}\n//返回手势选中的节点;\n-(TOMVisionNodeBase*) tapedNode:(CGPoint)contentPoint{\n    NSArray *nodes = [self.contentView subViews_AllDeepWithClass:TOMVisionNodeBase.class];\n    for (TOMVisionNodeBase *node in nodes) {\n        if ([TVUtil inRect:node.frame point:contentPoint]) {\n            return node;",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/TOMVision2.m:404-435"
+    },
+    "3213": {
+        "file_id": 335,
+        "content": "Code is calculating coordinates for centering and scaling a selected node in a scroll view, with the possibility of keeping the node's original position if not zoomed. It also sets the time line data and executes an animation to center and scale the node, using UIView animateWithDuration method.",
+        "type": "comment"
+    },
+    "3214": {
+        "file_id": 335,
+        "content": "        }\n    }\n    return nil;\n}\n//MARK:===============================================================\n//MARK:                     < onclick >\n//MARK:===============================================================\n- (void)longTap:(UILongPressGestureRecognizer*)sender{\n    //1. 防止重复触发\n    if (sender.state != UIGestureRecognizerStateBegan) return;\n    //2. 取点击坐标和默认缩放值;\n    CGPoint scrollPoint = [sender locationInView:sender.view];\n    CGPoint contentPoint = [sender.view convertPoint:scrollPoint toView:self.contentView];\n    CGFloat newScale = self.scrollView.zoomScale / 1.5f;\n    //3. 执行动画;\n    [self animation4Scale:newScale focusPoint:contentPoint time:0.5f];\n}\n- (void)doubleTap:(UITapGestureRecognizer *)sender{\n    //1. 取点击坐标和默认缩放值;\n    CGPoint scrollPoint = [sender locationInView:sender.view];\n    CGPoint contentPoint = [sender.view convertPoint:scrollPoint toView:self.contentView];\n    CGFloat newScale = self.scrollView.zoomScale * 1.5f;\n    //2. 点中节点时,强行: 缩放200宽 & 坐标居中;\n    UIView *tapedNode = [self tapedNode:contentPoint];",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/TOMVision2.m:436-464"
+    },
+    "3215": {
+        "file_id": 335,
+        "content": "This code is implementing a gesture recognizer for a UIScrollView, allowing long tap and double tap interactions. The long tap event zooms out the view by 1.5 times the default scale, while the double tap event zooms in by the same factor. Both events execute an animation after calculating the appropriate new scale and focus point from the tap coordinate.",
+        "type": "comment"
+    },
+    "3216": {
+        "file_id": 335,
+        "content": "    if (tapedNode) {\n        newScale = 200 / tapedNode.width;\n        contentPoint = tapedNode.center;\n    }\n    //3. 执行动画;\n    [self animation4Scale:newScale focusPoint:contentPoint time:0.5f];\n}\n- (void)singleTap:(UITapGestureRecognizer *)sender{\n    //1. 取点击坐标;\n    CGPoint scrollPoint = [sender locationInView:sender.view];\n    CGPoint contentPoint = [sender.view convertPoint:scrollPoint toView:self.contentView];\n    //2. 点中节点;\n    TOMVisionNodeBase *tapedNode = [self tapedNode:contentPoint];\n    if (tapedNode) {\n        [self.tipLab setText:tapedNode.getNodeDesc];\n    }\n}\n//MARK:===============================================================\n//MARK:                     < TVPanelViewDelegate >\n//MARK:===============================================================\n-(void) panelPlay:(NSInteger)changeIndex{\n    BOOL focusMode = changeIndex - self.changeIndex == 1;\n    self.changeIndex = changeIndex;\n    [self refreshDisplay:focusMode];\n}\n-(void) panelCloseBtnClicked{\n    [self close];\n}\n-(void) panelScaleChanged:(CGFloat)scale{",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/TOMVision2.m:465-499"
+    },
+    "3217": {
+        "file_id": 335,
+        "content": "Code snippet is a part of a larger codebase for a gesture recognizer implementation. It handles tap gestures, animation scaling on tap, and interactions with a panel view. The `singleTap` method processes tap events by getting the click coordinates and checking if they hit a node in the view, then displaying a description if so. `panelPlay`, `panelCloseBtnClicked`, and `panelScaleChanged` are methods related to interacting with a panel view, allowing the user to control the focus mode, close the panel, and change the panel's scale respectively.",
+        "type": "comment"
+    },
+    "3218": {
+        "file_id": 335,
+        "content": "    self.scrollView.zoomScale = scale;\n    [self autoAdjustContentSize];\n    //流程线粗\n    [self.timeLine setData:self.scrollView.zoomScale];\n}\n//MARK:===============================================================\n//MARK:                     < UIScrollViewDelegate >\n//MARK:===============================================================\n-(UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView{\n    return self.contentView;\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/TOMVision2.m:500-514"
+    },
+    "3219": {
+        "file_id": 335,
+        "content": "This code sets the zoom scale of a scroll view and auto adjusts its content size. It also handles zooming functionality for a UIScrollView delegate method.",
+        "type": "comment"
+    },
+    "3220": {
+        "file_id": 336,
+        "content": "/ThirdParty/TOMVision2/Util/TVUtil.h",
+        "type": "filepath"
+    },
+    "3221": {
+        "file_id": 336,
+        "content": "TVUtil.h is a header file containing the TVUtil class, part of SMG_NothingIsAll, which offers static methods for obtaining updates and operating on TOMVisionItemModel objects, with comments explaining each method's functionality.",
+        "type": "summary"
+    },
+    "3222": {
+        "file_id": 336,
+        "content": "//\n//  TVUtil.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/26.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@class TOMVisionItemModel;\n@interface TVUtil : NSObject\n/**\n *  MARK:--------------------获取所有帧工作记忆的两两更新比对--------------------\n */\n+(NSMutableDictionary*) getChange_List:(NSArray*)models;\n/**\n *  MARK:--------------------获取两帧工作记忆的更新处--------------------\n */\n+(NSArray*) getChange_Item:(TOMVisionItemModel*)itemA itemB:(TOMVisionItemModel*)itemB;\n/**\n *  MARK:--------------------收集roots所有树枝--------------------\n */\n+(NSMutableArray*) collectAllSubTOModelByRoots:(NSArray*)roots;\n/**\n *  MARK:--------------------changeDic的变化总数--------------------\n */\n+(NSInteger) countOfChangeDic:(NSDictionary*)changeDic;\n/**\n *  MARK:--------------------changeIndex转index--------------------\n */\n+(NSInteger) mainIndexOfChangeIndex:(NSInteger)changeIndex changeDic:(NSDictionary*)changeDic;\n+(NSInteger) subIndexOfChangeIndex:(NSInteger)changeIndex changeDic:(NSDictionary*)changeDic;",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Util/TVUtil.h:1-38"
+    },
+    "3223": {
+        "file_id": 336,
+        "content": "TVUtil.h is a header file that declares the TVUtil class, which appears to be part of the SMG_NothingIsAll codebase. This class contains several static methods for obtaining updates in various scenarios and performing operations on TOMVisionItemModel objects. The comments in this file provide a brief overview of each method's functionality.",
+        "type": "comment"
+    },
+    "3224": {
+        "file_id": 336,
+        "content": "+(NSRange) indexOfChangeIndex:(NSInteger)changeIndex changeDic:(NSDictionary*)changeDic;\n/**\n *  MARK:--------------------Y距描述--------------------\n */\n+(NSString*) distanceYDesc:(CGFloat)birdPosY;\n//MARK:===============================================================\n//MARK:                     < 节点描述 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------获取value微信息的light描述--------------------\n */\n+(NSString*) getLightStr:(AIKVPointer*)node_p;\n//MARK:===============================================================\n//MARK:                     < UI与View相关 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------点在框内--------------------\n */\n+(BOOL) inRect:(CGRect)rect point:(CGPoint)point;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Util/TVUtil.h:39-67"
+    },
+    "3225": {
+        "file_id": 336,
+        "content": "This code includes several methods, including getting the distance Y description, obtaining light description for a node, and determining if a point is within a rectangle.",
+        "type": "comment"
+    },
+    "3226": {
+        "file_id": 337,
+        "content": "/ThirdParty/TOMVision2/Util/TVUtil.m",
+        "type": "filepath"
+    },
+    "3227": {
+        "file_id": 337,
+        "content": "This code compares TOMVisionItemModel objects, counts differences, and includes functions for dictionary changes, indices, range calculations, node descriptions, and checks if a point is inside a rectangular area. Objective-C calculates node offsets and formats string representations based on types.",
+        "type": "summary"
+    },
+    "3228": {
+        "file_id": 337,
+        "content": "//\n//  TVUtil.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/26.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import \"TVUtil.h\"\n#import \"TOModelVisionUtil.h\"\n#import \"UnorderItemModel.h\"\n#import \"TOMVisionItemModel.h\"\n@implementation TVUtil\n/**\n *  MARK:--------------------获取所有帧工作记忆的两两更新比对--------------------\n *  @desc 注: 包括首帧时,也要和-1帧nil比对;\n *  @result notnull;\n *      1. 类型: DIC<K:后帧下标, V:变化数组>\n *      2. 范围: key范围为:\"0 -> models.count-1\";\n */\n+(NSMutableDictionary*) getChange_List:(NSArray*)models {\n    //1. 数据检查;\n    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];\n    if (!ARRISOK(models)) return result;\n    //2. 两两比对;\n    for (NSInteger b = 0; b < models.count; b++) {\n        TOMVisionItemModel *itemB = ARR_INDEX(models, b);\n        TOMVisionItemModel *itemA = ARR_INDEX(models, b - 1);\n        NSArray *itemChanges = [self getChange_Item:itemA itemB:itemB];\n        [result setObject:itemChanges forKey:@(b)];\n    }\n    return result;\n}\n/**\n *  MARK:--------------------获取两帧工作记忆的更新处--------------------",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Util/TVUtil.m:1-39"
+    },
+    "3229": {
+        "file_id": 337,
+        "content": "This code is part of the TVUtil class in the SMG_NothingIsAll project. It defines a method called getChange_List which takes an array of models as input and returns a mutable dictionary of changes between each pair of consecutive frames in the model array. The function first checks if the input array is valid, and then iterates through each pair of frames to obtain the differences between them and stores them in the result dictionary.",
+        "type": "comment"
+    },
+    "3230": {
+        "file_id": 337,
+        "content": " *  @result itemB中新增的变化数 notnull;\n */\n+(NSArray*) getChange_Item:(TOMVisionItemModel*)itemA itemB:(TOMVisionItemModel*)itemB{\n    //1. 数据准备;\n    NSArray *subsA = itemA ? [self collectAllSubTOModelByRoots:itemA.roots] : [NSArray new];\n    NSArray *subsB = itemB ? [self collectAllSubTOModelByRoots:itemB.roots] : [NSArray new];\n    //2. 将更新返回 (second包含 & first不包含);\n    return [SMGUtils filterArr:subsB checkValid:^BOOL(id item) {\n        return ![subsA containsObject:item];\n    }];\n}\n//收集roots下面所有的枝叶 notnull;\n+(NSMutableArray*) collectAllSubTOModelByRoots:(NSArray*)roots {\n    //1. 数据准备;\n    NSMutableArray *result = [[NSMutableArray alloc] init];\n    roots = ARRTOOK(roots);\n    //2. 收集\n    for (DemandModel *root in roots) {\n        NSMutableArray *unorderModels = [TOModelVisionUtil convertCur2Sub2UnorderModels:root];\n        [result addObjectsFromArray:[SMGUtils convertArr:unorderModels convertBlock:^id(UnorderItemModel *obj) {\n            return obj.data;\n        }]];\n    }\n    return result;\n}\n/**\n *  MARK:--------------------changeDic的变化总数--------------------",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Util/TVUtil.m:40-70"
+    },
+    "3231": {
+        "file_id": 337,
+        "content": "This code contains a method that compares two TOMVisionItemModel objects, itemA and itemB, to find the changes between them. It prepares data by collecting all sub TO models under each item's roots and returns the count of new items in itemB that are not present in itemA as the result. The method also includes a nested collectAllSubTOModelByRoots function to gather sub-models under specified roots.",
+        "type": "comment"
+    },
+    "3232": {
+        "file_id": 337,
+        "content": " *  @result 取值为1-length\n */\n+(NSInteger) countOfChangeDic:(NSDictionary*)changeDic{\n    //1. 数据准备;\n    changeDic = DICTOOK(changeDic);\n    NSInteger result = 0;\n    //2. 累计changeCount;\n    for (NSArray *value in changeDic.allValues) {\n        result += MAX(1, value.count);\n    }\n    return result;\n}\n/**\n *  MARK:--------------------changeIndex转index--------------------\n *  @result 返回NSRange的第1位表示mainIndex,第2位表示subIndex\n *      1. 未找到结果时为-1;\n *      2. 其中mainIndex和subIndex的范围都是: 0 -> count-1;\n */\n+(NSInteger) mainIndexOfChangeIndex:(NSInteger)changeIndex changeDic:(NSDictionary*)changeDic{\n    return [self indexOfChangeIndex:changeIndex changeDic:changeDic].location;\n}\n+(NSInteger) subIndexOfChangeIndex:(NSInteger)changeIndex changeDic:(NSDictionary*)changeDic{\n    return [self indexOfChangeIndex:changeIndex changeDic:changeDic].length;\n}\n+(NSRange) indexOfChangeIndex:(NSInteger)changeIndex changeDic:(NSDictionary*)changeDic {\n    //1. 数据准备;\n    changeDic = DICTOOK(changeDic);\n    NSInteger sumChangeCount = 0;\n    //2. 累计changeCount (key范围参考getChange_List()的key范围说明);",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Util/TVUtil.m:71-102"
+    },
+    "3233": {
+        "file_id": 337,
+        "content": "The code provides methods to count the number of changes in a dictionary and find the main and sub indices corresponding to a given change index. The \"TVUtil\" class contains functions that operate on dictionaries, accumulate change counts, and retrieve specific indices based on change indices.",
+        "type": "comment"
+    },
+    "3234": {
+        "file_id": 337,
+        "content": "    for (NSInteger k = 0; k < changeDic.count; k++) {\n        NSArray *value = [changeDic objectForKey:@(k)];\n        //3. 目标为changeIndex+1,当前sum+valueCount小于目标时,说明仍未达到,累计并继续for向下找;\n        if (sumChangeCount + MAX(1, value.count) < changeIndex + 1) {\n            sumChangeCount += MAX(1, value.count);\n        }else {\n            //4. 否则,说明要找的目标就在当前key中;\n            NSInteger mainIndex = k;\n            NSInteger subIndex = value.count ? changeIndex - sumChangeCount : -1;\n            return NSMakeRange(mainIndex, subIndex);\n        }\n    }\n    return NSMakeRange(-1, -1);\n}\n+(NSString*) distanceYDesc:(CGFloat)distanceY{\n    //1. 中间点是35,转成中间点为0;\n    CGFloat centerDistanceY = distanceY - 50 + 15;\n    //2. 出屏\n    if(centerDistanceY < -ScreenHeight * 0.5f){\n        return STRFORMAT(@\"上出屏%.0f\",centerDistanceY + ScreenHeight * 0.5f);\n    }else if(centerDistanceY > ScreenHeight * 0.5f) {\n        return STRFORMAT(@\"下出屏%.0f\",centerDistanceY - ScreenHeight * 0.5f);\n    }\n    //2. 屏内\n    CGFloat yPos = [self onRoadDistanceY:distanceY];",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Util/TVUtil.m:103-132"
+    },
+    "3235": {
+        "file_id": 337,
+        "content": "The code is calculating a range based on the count of elements in an array. If the sum of counts does not reach the target index, it accumulates the current count and continues to iterate through the for loop. Otherwise, if the target is reached within the current key, it returns the range starting from that key index. The code also calculates a distanceY description based on whether the value is in-screen or out-of-screen, using formatted strings to display the values.",
+        "type": "comment"
+    },
+    "3236": {
+        "file_id": 337,
+        "content": "    if (yPos > 1) {\n        return STRFORMAT(@\"路下%.1f\",yPos);\n    }else if (yPos > 0) {\n        return STRFORMAT(@\"偏下%.1f\",yPos);\n    }else if (yPos == 0) {\n        return @\"正中\";\n    }else if (yPos > -1) {\n        return STRFORMAT(@\"偏上%.1f\",-yPos);\n    }else{\n        return STRFORMAT(@\"路上%.1f\",-yPos);\n    }\n}\n/**\n *  MARK:--------------------路上的位置: 偏上或偏下--------------------\n *  @result -1到1 (正偏下,负偏上);\n */\n+(CGFloat) onRoadDistanceY:(CGFloat)distanceY{\n    //1. 中间点是35,转成中间点为0;\n    CGFloat centerDistanceY = distanceY - 50 + 15;\n    //2. 出路距离;\n    CGFloat roadH = 100,birdH = 30;\n    CGFloat outRoadDistance = (roadH + birdH) * 0.5f;\n    //2. 偏上为0到-1,偏下为0到1 (0为中心,1和-1是路边缘点);\n    CGFloat result = centerDistanceY / outRoadDistance;\n    return result;\n}\n//MARK:===============================================================\n//MARK:                     < 节点描述 >\n//MARK:===============================================================\n+(NSString*) getLightStr4Ps:(NSArray*)node_ps header:(BOOL)header{\n    //1. 数据检查\n    NSMutableString *result = [[NSMutableString alloc] init];",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Util/TVUtil.m:133-169"
+    },
+    "3237": {
+        "file_id": 337,
+        "content": "The code returns different descriptions based on the y position of a node. It also calculates the distance of a point from the road, returning values between -1 and 1 to represent the degree of being offset above or below the road. Finally, it gets a light string for a given array of nodes and a flag indicating if it's the header node.",
+        "type": "comment"
+    },
+    "3238": {
+        "file_id": 337,
+        "content": "    node_ps = ARRTOOK(node_ps);\n    //2. 拼接返回\n    for (AIKVPointer *item_p in node_ps){\n        NSString *str = [self getLightStr:item_p header:header];\n        if (STRISOK(str)) {\n            [result appendFormat:@\"%@%@\",str,PitIsValue(item_p) ? @\"_\" : @\",\"];\n        }\n    }\n    return SUBSTR2INDEX(result, result.length - 1);\n}\n+(NSString*) getLightStr:(AIKVPointer*)node_p {\n    return [self getLightStr:node_p header:true];\n}\n+(NSString*) getLightStr:(AIKVPointer*)node_p header:(BOOL)header{\n    NSString *lightStr = @\"\";\n    if (ISOK(node_p, AIKVPointer.class)) {\n        if (PitIsValue(node_p)) {\n            lightStr = [self getLightStr_ValueP:node_p];\n        }else if (PitIsAlg(node_p)) {\n            AIAlgNodeBase *algNode = [SMGUtils searchNode:node_p];\n            if (algNode) {\n                lightStr = [self getLightStr4Ps:algNode.content_ps header:header];\n            }\n        }else if(PitIsFo(node_p)){\n            AIFoNodeBase *foNode = [SMGUtils searchNode:node_p];\n            if (foNode) {\n                lightStr = [self getLightStr4Ps:foNode.content_ps header:header];",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Util/TVUtil.m:170-198"
+    },
+    "3239": {
+        "file_id": 337,
+        "content": "This code seems to be part of a larger program written in Objective-C. It appears to be responsible for parsing and formatting data structures into strings. The 'getLightStr' function is used to retrieve a string representation of certain nodes based on their types (value, algorithm, or feature). The main function (assumed to be named \"TVUtil\") concatenates the resulting strings from each node in a list (node_ps), adding \"_\" or \",\" depending on whether the node is a value or not. Finally, it removes the last character if it's an underscore or comma before returning the result.",
+        "type": "comment"
+    },
+    "3240": {
+        "file_id": 337,
+        "content": "            }\n        }else if(PitIsMv(node_p)){\n            CGFloat score = [AIScore score4MV:node_p ratio:1.0f];\n            lightStr = STRFORMAT(@\"%@%@%@\",Mvp2DeltaStr(node_p),Class2Str(NSClassFromString(node_p.algsType)),Double2Str_NDZ(score));\n        }\n    }\n    //2. 返回;\n    if (header) lightStr = [self decoratorHeader:lightStr node_p:node_p];\n    return lightStr;\n}\n//获取value_p的light描述;\n+(NSString*) getLightStr_ValueP:(AIKVPointer*)value_p{\n    if (!value_p) return @\"\";\n    double value = [NUMTOOK([AINetIndex getData:value_p]) doubleValue];\n    NSString *valueStr = [self getLightStr_Value:value algsType:value_p.algsType dataSource:value_p.dataSource];\n    if ([@\"sizeHeight\" isEqualToString:value_p.dataSource]) {\n        if (value == 30) {\n            return @\"鸟\";\n        }else if(value == 100) {\n            return @\"棒\";\n        }else if(value == 5) {\n            return @\"果\";\n        }\n        return STRFORMAT(@\"高%@\",valueStr);\n    }else if ([@\"distanceY\" isEqualToString:value_p.dataSource]) {\n        return [TVUtil distanceYDesc:value];",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Util/TVUtil.m:199-225"
+    },
+    "3241": {
+        "file_id": 337,
+        "content": "This function returns a light string based on the node_p parameter. If node_p represents a MV value, it calculates and formats a score string with additional information. The function then decorates the header if provided and returns the final light string. Another function is defined to retrieve the light description for a specific value_p object by converting its numerical value to a string and adding specific descriptions based on the data source attribute.",
+        "type": "comment"
+    },
+    "3242": {
+        "file_id": 337,
+        "content": "    }else if([FLY_RDS isEqualToString:value_p.algsType]){\n        return STRFORMAT(@\"%@\",valueStr);\n    }else if([KICK_RDS isEqualToString:value_p.algsType]){\n        return STRFORMAT(@\"%@\",valueStr);\n    }\n    return @\"\";//valueStr\n}\n//获取value的light描述;\n+(NSString*) getLightStr_Value:(double)value algsType:(NSString*)algsType dataSource:(NSString*)dataSource{\n    if([FLY_RDS isEqualToString:algsType]){\n        return [NVHeUtil fly2Str:value];\n    }else if([@\"direction\" isEqualToString:dataSource]){\n        return [NVHeUtil direction2Str:value];\n    }else if([KICK_RDS isEqualToString:dataSource]){\n        return STRFORMAT(@\"踢%@\",[NVHeUtil fly2Str:value]);\n    }\n    return Double2Str_NDZ(value);\n}\n//MARK:===============================================================\n//MARK:                     < privateMethod >\n//MARK:===============================================================\n+(NSString*) decoratorHeader:(NSString*)lightStr node_p:(AIKVPointer*)node_p{\n    NSString *pIdStr = node_p ? STRFORMAT(@\"%ld\",node_p.pointerId) : @\"\";",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Util/TVUtil.m:226-250"
+    },
+    "3243": {
+        "file_id": 337,
+        "content": "This code includes several methods that convert numerical values into specific light descriptors or strings based on a given algorithm type and data source. The functions use conditional statements to determine the appropriate conversion method, such as \"fly2Str\", \"direction2Str\", or a default conversion function. These methods are used for decorating headers with pointers and converting various lights' descriptions based on the input parameters like algorithms type, value, and data source.",
+        "type": "comment"
+    },
+    "3244": {
+        "file_id": 337,
+        "content": "    if (PitIsAlg(node_p)) {\n        return lightStr;\n    }else if(PitIsFo(node_p)){\n        return STRFORMAT(@\"[%@]\",lightStr);\n    }else if(PitIsMv(node_p)){\n        return STRFORMAT(@\"M%@{%@}\",pIdStr,lightStr);\n    }\n    return lightStr;\n}\n//MARK:===============================================================\n//MARK:                     < UI与View相关 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------点在框内--------------------\n */\n+(BOOL) inRect:(CGRect)rect point:(CGPoint)point{\n    BOOL inX = point.x >= CGRectGetMinX(rect) && point.x <= CGRectGetMaxX(rect);\n    BOOL inY = point.y >= CGRectGetMinY(rect) && point.y <= CGRectGetMaxY(rect);\n    return inX && inY;\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Util/TVUtil.m:251-274"
+    },
+    "3245": {
+        "file_id": 337,
+        "content": "This code checks the type of a node and returns a formatted string accordingly. If the node is an algorithm, it returns the light string. If the node is a feature object, it formats the light string within square brackets. If the node is a move object, it formats \"M\" followed by the piece id and the light string. Additionally, there's a separate function that checks whether a point is inside a rectangular area.",
+        "type": "comment"
+    },
+    "3246": {
+        "file_id": 338,
+        "content": "/ThirdParty/TOMVision2/View/TOMVisionAlgView.h",
+        "type": "filepath"
+    },
+    "3247": {
+        "file_id": 338,
+        "content": "Header file for TOMVisionAlgView class, subclass of TOMVisionNodeBase.",
+        "type": "summary"
+    },
+    "3248": {
+        "file_id": 338,
+        "content": "//\n//  TOMVisionAlgView.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/18.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import \"TOMVisionNodeBase.h\"\n@interface TOMVisionAlgView : TOMVisionNodeBase\n@end",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/View/TOMVisionAlgView.h:1-13"
+    },
+    "3249": {
+        "file_id": 338,
+        "content": "Header file for TOMVisionAlgView class, subclass of TOMVisionNodeBase.",
+        "type": "comment"
+    },
+    "3250": {
+        "file_id": 339,
+        "content": "/ThirdParty/TOMVision2/View/TOMVisionAlgView.m",
+        "type": "filepath"
+    },
+    "3251": {
+        "file_id": 339,
+        "content": "This code defines a class `TOMVisionAlgView` in the file `TOMVisionAlgView.m`. It overrides three methods: `initView`, `refreshDisplay`, and `getNodeDesc`. The `initView` method sets the background color of the view to hex #AAAAAA, and the `refreshDisplay` method checks data, updates display content, and displays it in the header label. The `getNodeDesc` method returns a node description string.",
+        "type": "summary"
+    },
+    "3252": {
+        "file_id": 339,
+        "content": "//\n//  TOMVisionAlgView.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/18.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import \"TOMVisionAlgView.h\"\n#import \"TVUtil.h\"\n@implementation TOMVisionAlgView\n-(void) initView{\n    //self\n    [super initView];\n    [self setBackgroundColor:UIColorWithRGBHex(0xAAAAAA)];\n}\n-(void) refreshDisplay{\n    //1. 检查数据;\n    [super refreshDisplay];\n    TOAlgModel *data = (TOAlgModel*)self.data;\n    if (!data) return;\n    //2. 内容;\n    NSMutableString *mStr = [[NSMutableString alloc] init];\n    [mStr appendFormat:@\"A%ld\",data.content_p.pointerId];\n    [mStr appendFormat:@\"\\n%@\",[TVUtil getLightStr:data.content_p]];\n    //3. 显示;\n    [self.headerLab setText:mStr];\n}\n-(NSString*) getNodeDesc{\n    return Pit2FStr(self.data.content_p);\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/View/TOMVisionAlgView.m:1-39"
+    },
+    "3253": {
+        "file_id": 339,
+        "content": "This code defines a class `TOMVisionAlgView` in the file `TOMVisionAlgView.m`. It overrides three methods: `initView`, `refreshDisplay`, and `getNodeDesc`. The `initView` method sets the background color of the view to hex #AAAAAA, and the `refreshDisplay` method checks data, updates display content, and displays it in the header label. The `getNodeDesc` method returns a node description string.",
+        "type": "comment"
+    },
+    "3254": {
+        "file_id": 340,
+        "content": "/ThirdParty/TOMVision2/View/TOMVisionDemandView.h",
+        "type": "filepath"
+    },
+    "3255": {
+        "file_id": 340,
+        "content": "This file, TOMVisionDemandView.h, defines a class named TOMVisionDemandView that inherits from TOMVisionNodeBase and appears to be part of the SMG_NothingIsAll project.",
+        "type": "summary"
+    },
+    "3256": {
+        "file_id": 340,
+        "content": "//\n//  TOMVisionDemandView.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/16.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import \"TOMVisionNodeBase.h\"\n@interface TOMVisionDemandView : TOMVisionNodeBase\n@end",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/View/TOMVisionDemandView.h:1-13"
+    },
+    "3257": {
+        "file_id": 340,
+        "content": "This file, TOMVisionDemandView.h, defines a class named TOMVisionDemandView that inherits from TOMVisionNodeBase and appears to be part of the SMG_NothingIsAll project.",
+        "type": "comment"
+    },
+    "3258": {
+        "file_id": 341,
+        "content": "/ThirdParty/TOMVision2/View/TOMVisionDemandView.m",
+        "type": "filepath"
+    },
+    "3259": {
+        "file_id": 341,
+        "content": "This code initializes a view, updates the display based on DemandModel data, and checks types to return a string representation. It retrieves matchFo from ReasonDemandModel's pFos array or baseOrGroup's content_p from HDemandModel using Pit2FStr conversion, returning an empty string if none of these conditions are met.",
+        "type": "summary"
+    },
+    "3260": {
+        "file_id": 341,
+        "content": "//\n//  TOMVisionDemandView.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/16.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import \"TOMVisionDemandView.h\"\n#import \"TVUtil.h\"\n@implementation TOMVisionDemandView\n-(void) initView{\n    //self\n    [super initView];\n    [self setBackgroundColor:UIColorWithRGBHex(0xFFA08D)];\n}\n-(void) refreshDisplay{\n    //1. 检查数据;\n    [super refreshDisplay];\n    DemandModel *data = (DemandModel*)self.data;\n    if (!data) return;\n    CGFloat score = [AIScore score4Demand:data];\n    //2. 类型;\n    NSMutableString *mStr = [[NSMutableString alloc] init];\n    if (ISOK(data, ReasonDemandModel.class)) {\n        ReasonDemandModel *rData = (ReasonDemandModel*)data;\n        AIMatchFoModel *firstPFo = ARR_INDEX(rData.pFos, 0);\n        [mStr appendFormat:@\"R%ld\",firstPFo.matchFo.pointerId];\n    }else if (ISOK(data, PerceptDemandModel.class)) {\n        [mStr appendString:@\"P\"];\n    }else if (ISOK(data, HDemandModel.class)) {\n        HDemandModel *hData = (HDemandModel*)data;\n        [mStr appendFormat:@\"H%ld\",hData.baseOrGroup.content_p.pointerId];",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/View/TOMVisionDemandView.m:1-37"
+    },
+    "3261": {
+        "file_id": 341,
+        "content": "This code snippet is from the TOMVisionDemandView class. It initializes the view and refreshes the display based on a DemandModel data object. The initView method sets the background color, while refreshDisplay checks the data type and updates the view accordingly.",
+        "type": "comment"
+    },
+    "3262": {
+        "file_id": 341,
+        "content": "    }\n    //3. mv描述颜色\n    if (score < 0) {\n        [self.headerLab setTextColor:UIColor.redColor];\n    }else if(score > 0){\n        [self.headerLab setTextColor:UIColor.greenColor];\n    }else {\n        [self.headerLab setTextColor:UIColor.whiteColor];\n    }\n    //4. 类型text\n    if (!ISOK(data, HDemandModel.class)) {\n        [mStr appendString:Class2Str(NSClassFromString(data.algsType))];\n    }\n    //5. 评分\n    if (!ISOK(data, HDemandModel.class)) {\n        [mStr appendFormat:@\"%.1f\",score];\n    }\n    //5. 内容;\n    if (ISOK(data, ReasonDemandModel.class)) {\n        ReasonDemandModel *rData = (ReasonDemandModel*)data;\n        AIMatchFoModel *firstPFo = ARR_INDEX(rData.pFos, 0);\n        [mStr appendFormat:@\"\\n%@\",[TVUtil getLightStr:firstPFo.matchFo]];\n    }else if (ISOK(data, HDemandModel.class)) {\n        HDemandModel *hData = (HDemandModel*)data;\n        [mStr appendFormat:@\"\\n%@\",[TVUtil getLightStr:hData.baseOrGroup.content_p]];\n    }\n    //6. 显示\n    [self.headerLab setText:mStr];\n}\n-(NSString*) getNodeDesc{\n    if (ISOK(self.data, ReasonDemandModel.class)) {",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/View/TOMVisionDemandView.m:38-74"
+    },
+    "3263": {
+        "file_id": 341,
+        "content": "This code sets the header label text based on a score, type, and content of data. It checks if the data is of certain classes and appends appropriate strings to a mutable string. Finally, it sets the header label text using the appended string. The `getNodeDesc` method checks if the data is an instance of ReasonDemandModel and returns the node description accordingly.",
+        "type": "comment"
+    },
+    "3264": {
+        "file_id": 341,
+        "content": "        ReasonDemandModel *rData = (ReasonDemandModel*)self.data;\n        AIMatchFoModel *firstPFo = ARR_INDEX(rData.pFos, 0);\n        return Pit2FStr(firstPFo.matchFo);\n    }else if (ISOK(self.data, HDemandModel.class)) {\n        HDemandModel *hData = (HDemandModel*)self.data;\n        return Pit2FStr(hData.baseOrGroup.content_p);\n    }\n    return @\"\";\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/View/TOMVisionDemandView.m:75-85"
+    },
+    "3265": {
+        "file_id": 341,
+        "content": "This code checks the type of data passed in self.data and returns a string based on the specific model instance, either ReasonDemandModel or HDemandModel. It first retrieves the matchFo field from ReasonDemandModel's pFos array or the baseOrGroup's content_p field from HDemandModel using Pit2FStr conversion function. If none of these conditions are met, it returns an empty string.",
+        "type": "comment"
+    },
+    "3266": {
+        "file_id": 342,
+        "content": "/ThirdParty/TOMVision2/View/TOMVisionFoView.h",
+        "type": "filepath"
+    },
+    "3267": {
+        "file_id": 342,
+        "content": "This is the header file for TOMVisionFoView, a subclass of TOMVisionNodeBase in the SMG_NothingIsAll codebase. It was created on March 15th, 2022 by the developer jia and is protected by copyright law.",
+        "type": "summary"
+    },
+    "3268": {
+        "file_id": 342,
+        "content": "//\n//  TOMVisionFoView.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/15.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import \"TOMVisionNodeBase.h\"\n@interface TOMVisionFoView : TOMVisionNodeBase\n@end",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/View/TOMVisionFoView.h:1-13"
+    },
+    "3269": {
+        "file_id": 342,
+        "content": "This is the header file for TOMVisionFoView, a subclass of TOMVisionNodeBase in the SMG_NothingIsAll codebase. It was created on March 15th, 2022 by the developer jia and is protected by copyright law.",
+        "type": "comment"
+    },
+    "3270": {
+        "file_id": 343,
+        "content": "/ThirdParty/TOMVision2/View/TOMVisionFoView.m",
+        "type": "filepath"
+    },
+    "3271": {
+        "file_id": 343,
+        "content": "This code initializes a view, calculates the sum of SP values for nodes in content, appends relevant information to a mutable string, updates UI text, and provides a node description method.",
+        "type": "summary"
+    },
+    "3272": {
+        "file_id": 343,
+        "content": "//\n//  TOMVisionFoView.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/15.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import \"TOMVisionFoView.h\"\n#import \"TVUtil.h\"\n@implementation TOMVisionFoView\n-(void) initView{\n    //self\n    [super initView];\n    [self setBackgroundColor:UIColorWithRGBHex(0xDDBD08)];\n}\n-(void) refreshDisplay{\n    //1. 检查数据;\n    TOFoModel *data = (TOFoModel*)self.data;\n    [super refreshDisplay];\n    if (!data) return;\n    AIFoNodeBase *fo = [SMGUtils searchNode:data.content_p];\n    //2. SP计数求和;\n    NSInteger sumSP = 0;\n    for (AISPStrong *sp in fo.spDic.allValues) {\n        sumSP += sp.sStrong + sp.pStrong;\n    }\n    //2. 收集要展示的文本;\n    NSMutableString *mStr = [[NSMutableString alloc] init];\n    [mStr appendFormat:@\"F%ld\",data.content_p.pointerId];\n    if (ISOK(data.baseOrGroup, ReasonDemandModel.class)) {\n        //CGFloat spScore = [TOUtils getSPScore:fo startSPIndex:0 endSPIndex:fo.count];\n        [mStr appendFormat:@\" SP:%ld\",sumSP];\n    }else if(ISOK(data.baseOrGroup, HDemandModel.class)){",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/View/TOMVisionFoView.m:1-39"
+    },
+    "3273": {
+        "file_id": 343,
+        "content": "This code initializes a view and refreshes its display. It first checks the data associated with the view, calculates the sum of SP values for each node in the content, and then appends relevant information to a mutable string for display purposes. The data is of type TOFoModel, and the view is a subclass of AIFoNodeBase. The code is part of a larger program called \"SMG_NothingIsAll\" created by user jia in 2022.",
+        "type": "comment"
+    },
+    "3274": {
+        "file_id": 343,
+        "content": "        //CGFloat spScore = [TOUtils getSPScore:fo startSPIndex:0 endSPIndex:data.targetSPIndex];\n        [mStr appendFormat:@\" SP:%ld\",sumSP];\n    }\n    //2. 内容;\n    [mStr appendFormat:@\"\\n%@\",[TVUtil getLightStr:data.content_p]];\n    //3. 刷新UI;\n    [self.headerLab setText:mStr];\n    for (AIKVPointer *alg_p in fo.content_ps) {\n        //可以显示一些容易看懂的,比如某方向飞行,或者吃,果,棒,这些;\n    }\n}\n-(NSString*) getNodeDesc{\n    return Pit2FStr(self.data.content_p);\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/View/TOMVisionFoView.m:40-60"
+    },
+    "3275": {
+        "file_id": 343,
+        "content": "This code calculates the sp score, appends formatted string with SP count and content, updates UI text, and provides a node description method.",
+        "type": "comment"
+    },
+    "3276": {
+        "file_id": 344,
+        "content": "/ThirdParty/TOMVision2/View/TOMVisionNodeBase.h",
+        "type": "filepath"
+    },
+    "3277": {
+        "file_id": 344,
+        "content": "TOMVisionNodeBase is a UIView subclass that contains properties for containerView, headerLab, and statusView. It also provides methods to initialize view and data, update display, refresh display, set data, compare data equality, scale the container view, and get node description.",
+        "type": "summary"
+    },
+    "3278": {
+        "file_id": 344,
+        "content": "//\n//  TOMVisionNodeBase.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/16.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n/**\n *  MARK:--------------------nodeView--------------------\n *  @version\n *      2022.03.20: 将containerView由Constraints改成重写frame (因为nodeView要缩放就不能用autoLayout);\n */\n@interface TOMVisionNodeBase : UIView\n@property (strong, nonatomic) UIView *containerView;\n@property (strong, nonatomic) UILabel *headerLab;\n@property (strong, nonatomic) UIView *statusView;\n-(void) initView;\n-(void) initData;\n-(void) initDisplay;\n-(void) refreshDisplay;\n-(void) setData:(TOModelBase*)value;\n-(TOModelBase *)data;\n-(BOOL) isEqualByData:(TOModelBase*)checkData;\n-(void) scaleContainer:(CGFloat)scale;\n-(NSString*) getNodeDesc;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/View/TOMVisionNodeBase.h:1-32"
+    },
+    "3279": {
+        "file_id": 344,
+        "content": "TOMVisionNodeBase is a UIView subclass that contains properties for containerView, headerLab, and statusView. It also provides methods to initialize view and data, update display, refresh display, set data, compare data equality, scale the container view, and get node description.",
+        "type": "comment"
+    },
+    "3280": {
+        "file_id": 345,
+        "content": "/ThirdParty/TOMVision2/View/TOMVisionNodeBase.m",
+        "type": "filepath"
+    },
+    "3281": {
+        "file_id": 345,
+        "content": "This code initializes a TOMVisionNodeBase object, sets its frame, creates subviews, and configures their appearance for different states. It also handles content width adaptation and includes methods for equality checks and resizing.",
+        "type": "summary"
+    },
+    "3282": {
+        "file_id": 345,
+        "content": "//\n//  TOMVisionNodeBase.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/16.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import \"TOMVisionNodeBase.h\"\n@interface TOMVisionNodeBase ()\n@property (strong, nonatomic) TOModelBase *mData;\n@end\n@implementation TOMVisionNodeBase\n-(id) init {\n    self = [super init];\n    if(self != nil){\n        [self initView];\n        [self initData];\n        [self initDisplay];\n    }\n    return self;\n}\n-(void) initView{\n    //[self.layer setMasksToBounds:true];\n    [self setFrame:CGRectMake(0, 0, 40, 10)];\n    //containerView\n    self.containerView = [[UIView alloc] init];\n    [self addSubview:self.containerView];\n    //statusView\n    self.statusView = [[UIView alloc] init];\n    [self.statusView setOrigin:CGPointZero];\n    [self.containerView addSubview:self.statusView];\n    [self.statusView setBackgroundColor:UIColorWithRGBHexA(0xFFFFFF, 0)];\n    //headerLab\n    self.headerLab = [[UILabel alloc] init];\n    [self.containerView addSubview:self.headerLab];\n    [self.headerLab setFont:[UIFont fontWithName:@\"PingFang SC\" size:8.0f]];",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/View/TOMVisionNodeBase.m:1-46"
+    },
+    "3283": {
+        "file_id": 345,
+        "content": "This code is initializing the view and data for a TOMVisionNodeBase object. It sets the frame, creates subviews, adds them to the containerView, and configures their appearance.",
+        "type": "comment"
+    },
+    "3284": {
+        "file_id": 345,
+        "content": "    [self.headerLab setOrigin:CGPointZero];\n    self.headerLab.adjustsFontSizeToFitWidth = YES;\n    self.headerLab.lineBreakMode = NSLineBreakByCharWrapping;\n    [self.headerLab setTextColor:UIColor.whiteColor];\n}\n-(void) initData{\n}\n-(void) initDisplay{\n}\n-(void) refreshDisplay{\n    if (self.data.status == TOModelStatus_ActYes) {\n        self.statusView.backgroundColor = UIColorWithRGBHexA(0xFFFFFF, 0.8f);\n    }else if (self.data.status == TOModelStatus_ActNo) {\n        self.statusView.backgroundColor = UIColorWithRGBHexA(0xFF0000, 0.8f);\n    }if (self.data.status == TOModelStatus_Finish) {\n        self.statusView.backgroundColor = UIColorWithRGBHexA(0x00FF00, 0.8f);\n    }if (self.data.status == TOModelStatus_OuterBack) {\n        self.statusView.backgroundColor = UIColorWithRGBHexA(0x000000, 0.8f);\n    }\n    //self.statusView.backgroundColor = UIColorWithRGBHexA(0x000000, 0);\n}\n-(void) setData:(TOModelBase*)value{\n    _mData = value;\n    [self refreshDisplay];\n}\n-(TOModelBase *)data{\n    return _mData;\n}\n/**\n *  MARK:--------------------判断一致--------------------",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/View/TOMVisionNodeBase.m:47-81"
+    },
+    "3285": {
+        "file_id": 345,
+        "content": "This code is from the TOMVisionNodeBase.m file and defines methods for initializing, displaying, and updating data in a view-based object. The class handles different states and adjusts its appearance accordingly. It also sets up labels and their properties to adapt to content width. This code seems to be part of a larger class responsible for rendering data from TOModelBase objects.",
+        "type": "comment"
+    },
+    "3286": {
+        "file_id": 345,
+        "content": " *  @desc 用于复用view\n *      1. 现在判断data.Equal而不是content_p的Equal,因为同一content_p也有可能不能复用;\n *      2. 比如: 多帧matchFo都生成了RDemand,但cutIndex等细节有差异,是不能复用的;\n *  @version\n *      2022.03.20: 用内存地址是否匹配来判断equal,因为树上可能同时出现多处同节点,且它们的base也一样 (导致过度复用);\n *      2022.03.23: 改用selfIden替代内存地址 (参考25185-方案1-优点);\n */\n-(BOOL) isEqualByData:(TOModelBase*)checkData{\n    //BOOL dataEqual = [self.data isEqual:checkData];\n    //BOOL baseSeemNil = !self.data.baseOrGroup && !checkData.baseOrGroup;\n    //BOOL baseSeemPit = self.data.baseOrGroup && [self.data.baseOrGroup isEqual:checkData.baseOrGroup];\n    //BOOL baseEqual = baseSeemNil || baseSeemPit;\n    //return dataEqual && baseEqual;\n    return [self.data isEqual:checkData];\n}\n-(void) scaleContainer:(CGFloat)scale{\n    //1. 先拉长;\n    CGFloat conW = (scale == 0) ? 0 : (self.width / scale);\n    CGFloat conH = (scale == 0) ? 0 : (self.height / scale);\n    self.containerView.width = conW;\n    self.containerView.height = conH;\n    //1. 其它view尺寸;\n    [self.headerLab setSize:self.containerView.size];",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/View/TOMVisionNodeBase.m:82-106"
+    },
+    "3287": {
+        "file_id": 345,
+        "content": "This code defines a method isEqualByData that checks if two TOModelBase objects are equal based on their data and returns a boolean value. It also includes a scaleContainer method that resizes the container view and other views within the view.",
+        "type": "comment"
+    },
+    "3288": {
+        "file_id": 345,
+        "content": "    [self.statusView setFrame:CGRectMake(conH * 0.2f, conH * 0.2f, conH * 0.6f, conH * 0.6f)];\n    //2. 缩放是中心缩放的,所以先中心对齐;\n    self.containerView.center = CGPointMake(self.width / 2, self.height / 2);\n    //3. 多次缩放导致bounds和frame大小不统一,所以每次缩放时强行重置bounds尺寸;\n    self.containerView.bounds = CGRectMake(0, 0, self.containerView.width, self.containerView.height);\n    //4. 再缩小;\n    [self.containerView setTransform:CGAffineTransformIdentity];\n    [self.containerView setTransform:CGAffineTransformMakeScale(scale, scale)];\n}\n-(NSString*) getNodeDesc{\n    return self.headerLab.text;\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/View/TOMVisionNodeBase.m:107-124"
+    },
+    "3289": {
+        "file_id": 345,
+        "content": "This code adjusts the frame of a view, centers another view, and performs scaling transformations to achieve desired visual effects. It also includes a method to retrieve a node description as a string.",
+        "type": "comment"
+    },
+    "3290": {
+        "file_id": 346,
+        "content": "/ThirdParty/TOModelVision/README.md",
+        "type": "filepath"
+    },
+    "3291": {
+        "file_id": 346,
+        "content": "This code is for the initial version of memory visualization in TOModelVision, supporting only the current work memory tree and displaying it using unordered sequence logs.",
+        "type": "summary"
+    },
+    "3292": {
+        "file_id": 346,
+        "content": "#  初代工作记忆可视化\n1. 仅支持当前工作记忆树的可视化 (用无序序列日志展示);",
+        "type": "code",
+        "location": "/ThirdParty/TOModelVision/README.md:1-3"
+    },
+    "3293": {
+        "file_id": 346,
+        "content": "This code is for the initial version of memory visualization in TOModelVision, supporting only the current work memory tree and displaying it using unordered sequence logs.",
+        "type": "comment"
+    },
+    "3294": {
+        "file_id": 347,
+        "content": "/ThirdParty/TOModelVision/TOModelVision.h",
+        "type": "filepath"
+    },
+    "3295": {
+        "file_id": 347,
+        "content": "TOModelVision.h file from the codebase contains declarations for the TOModelVision class, which provides methods to visualize memory models. It defines two static methods: cur2Root and cur2Sub, which generate visualizations of a model's relationship from the current node to its root or sub-nodes respectively.",
+        "type": "summary"
+    },
+    "3296": {
+        "file_id": 347,
+        "content": "//\n//  TOModelVision.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/5/11.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------输出短时记忆可视化--------------------\n */\n@class TOModelBase;\n@interface TOModelVision : NSObject\n/**\n *  MARK:--------------------从当前到root可视化日志--------------------\n *  @desc 以层级显示;\n */\n+(NSString*) cur2Root:(TOModelBase*)curModel;\n/**\n *  MARK:--------------------从当前到sub可视化日志--------------------\n *  @desc 以无序列表表示;\n */\n+(NSString*) cur2Sub:(TOModelBase*)curModel;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/TOModelVision/TOModelVision.h:1-29"
+    },
+    "3297": {
+        "file_id": 347,
+        "content": "TOModelVision.h file from the codebase contains declarations for the TOModelVision class, which provides methods to visualize memory models. It defines two static methods: cur2Root and cur2Sub, which generate visualizations of a model's relationship from the current node to its root or sub-nodes respectively.",
+        "type": "comment"
+    },
+    "3298": {
+        "file_id": 348,
+        "content": "/ThirdParty/TOModelVision/TOModelVision.m",
+        "type": "filepath"
+    },
+    "3299": {
+        "file_id": 348,
+        "content": "The `cur2Root` function in the `TOModelVision` class converts a current model to a sub-visualization log, retrieving and formatting values for ReasonDemandModel and TOModelBase classes. It returns the string representation of the model.",
+        "type": "summary"
+    }
+}

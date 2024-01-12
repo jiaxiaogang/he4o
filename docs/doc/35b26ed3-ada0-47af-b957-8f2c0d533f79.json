@@ -1,0 +1,10 @@
+{
+    "summary": "This code is a Podfile for an iOS project. It specifies the platform version as iOS 7.0 and defines a target named 'SMG_NothingIsAll'. The file storage section includes PINCache pod, while the SQL storage section (originally LKDBHelper+Transaction) has been removed due to packaging issues and temporary non-usage. The floating window section used to include MBProgressHUD but is also empty now. The UMCPublic SDK sections include UMCCommon and UMCAnalytics pods for Umeng analytics integration.",
+    "details": [
+        {
+            "comment": "This code is a Podfile for an iOS project. It specifies the platform version as iOS 7.0 and defines a target named 'SMG_NothingIsAll'. The file storage section includes PINCache pod, while the SQL storage section (originally LKDBHelper+Transaction) has been removed due to packaging issues and temporary non-usage. The floating window section used to include MBProgressHUD but is also empty now. The UMCPublic SDK sections include UMCCommon and UMCAnalytics pods for Umeng analytics integration.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/Podfile\":0-17",
+            "content": "platform :ios,'7.0'\ntarget 'SMG_NothingIsAll' do\n#=============== \u6587\u4ef6\u5b58\u50a8 ===============\npod 'PINCache'\n#=============== SQL\u5b58\u50a8 ===============\n#2020.07.09\u5c06LKDB\u53bb\u6389\uff0c\u56e0\u4e3a\u6253\u5305\u65f6\u8fd9\u5305\u62a5\u9519\uff0c\u5e76\u4e14\u6682\u65f6\u4e5f\u4e0d\u7528\u8fd9\u4e2a\n#pod 'LKDBHelper+Transaction','~>1.0.4'\n#=============== \u6d6e\u7a97 ===============\n#pod 'MBProgressHUD'\n#=============== \u53cb\u76df\u7edf\u8ba1 ===============\npod 'UMCCommon'\n#pod 'UMCAnalytics'\nend"
+        }
+    ]
+}

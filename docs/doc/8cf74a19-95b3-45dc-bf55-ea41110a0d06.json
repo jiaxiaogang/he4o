@@ -1,0 +1,15 @@
+{
+    "summary": "AIReactorControl.m provides methods for creating mind value, managing reactions, and committing inputs of various types using imported algorithms. It defines a class with methods for reactors' commitment and outputs handling.",
+    "details": [
+        {
+            "comment": "AIReactorControl.m contains methods for creating mind value, managing reactions, and committing inputs of different types. It uses multiple imported algorithms to process string, IMV, custom, and vision-based inputs, and manage corresponding reactions.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIReactorControl/AIReactorControl.m\":0-44",
+            "content": "//\n//  AIReactorControl.m\n//  SMG_NothingIsAll\n//\n//  Created by \u8d3e  on 2017/12/7.\n//  Copyright \u00a9 2017\u5e74 XiaoGang. All rights reserved.\n//\n#import \"AIReactorControl.h\"\n#import \"AIStringAlgs.h\"\n#import \"AIImvAlgs.h\"\n#import \"AIVisionAlgs.h\"\n#import \"AICustomAlgs.h\"\n@implementation AIReactorControl\n+(ImvAlgsModelBase*) createMindValue:(MVType)type value:(NSInteger)value {\n    //1. \u6839\u636emodel\u5224\u65ad\u662f\u5426createMindValue();\n    //2. \u6839\u636emodel\u5224\u65ad\u662f\u5426\u4f5cReactor();\n    return nil;\n}\n+(void) createReactor:(AIMoodType)moodType{\n    //1. \u80a2\u4f53\u53cd\u5c04\n    //2. createMindValue\n    //3. durationManager\n}\n+(void) commitInput:(id)input{\n    if (ISOK(input, [NSString class])) {\n        [AIStringAlgs commitInput:input];\n    }\n}\n+(void) commitIMV:(MVType)type from:(CGFloat)from to:(CGFloat)to {\n    [AIImvAlgs commitIMV:type from:from to:to];\n}\n+(void) commitCustom:(CustomInputType)type value:(NSInteger)value{\n    [AICustomAlgs commitCustom:type value:value];\n}\n+(void) commitView:(UIView*)selfView targetView:(UIView*)targetView rect:(CGRect)rect{\n    [AIVisionAlgs commitView:selfView targetView:targetView rect:rect];"
+        },
+        {
+            "comment": "This code defines a class with methods for committing a reactor using an identifier and data. The `commitReactor` method takes only the identifier, while the second overloaded version also accepts data as an array. The output from the reactor is handled by the `output_FromReactor` function.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIReactorControl/AIReactorControl.m\":45-54",
+            "content": "}\n+(void) commitReactor:(NSString*)identify{\n    [self commitReactor:identify datas:@[@(1)]];\n}\n+(void) commitReactor:(NSString*)identify datas:(NSArray*)datas{\n    [Output output_FromReactor:identify datas:datas];\n}\n@end"
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+{
+    "summary": "This code snippet is the implementation file for the XGDebugModel class in a project called SMG_NothingIsAll. It was created by a developer named jia on April 23, 2022. The copyright belongs to XiaoGang, and all rights are reserved.",
+    "details": [
+        {
+            "comment": "This code snippet is the implementation file for the XGDebugModel class in a project called SMG_NothingIsAll. It was created by a developer named jia on April 23, 2022. The copyright belongs to XiaoGang, and all rights are reserved.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/XGDebug/XGDebugModel.m\":0-12",
+            "content": "//\n//  XGDebugModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/4/23.\n//  Copyright \u00a9 2022\u5e74 XiaoGang. All rights reserved.\n//\n#import \"XGDebugModel.h\"\n@implementation XGDebugModel\n@end"
+        }
+    ]
+}

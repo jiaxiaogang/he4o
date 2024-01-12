@@ -1,0 +1,10 @@
+{
+    "summary": "This code is the header file for a class called AIAbsCMVNode, which inherits from AICMVNodeBase. The class represents an abstract value node and has an array of input ports (conPorts). It is part of the SMG_NothingIsAll project created by iMac in 2018.",
+    "details": [
+        {
+            "comment": "This code is the header file for a class called AIAbsCMVNode, which inherits from AICMVNodeBase. The class represents an abstract value node and has an array of input ports (conPorts). It is part of the SMG_NothingIsAll project created by iMac in 2018.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAbsCMVNode.h\":0-17",
+            "content": "//\n//  AIAbsCMVNode.h\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/7/26.\n//  Copyright \u00a9 2018\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------\u62bd\u8c61\u4ef7\u503c\u8282\u70b9--------------------\n *  1. \u4eca\u540e\u53ef\u8003\u8651\u5c06conPorts\u62c6\u5206,(\u6ce8\u610f,\u5916\u754c\u4e0d\u9700\u8981\u77e5\u9053\u6709\u8fd9\u6837\u7684\u62c6\u5206)(\u5c01\u88c5\u4e2a\u6bdb,\u9ebb\u70e6)\n */\n@interface AIAbsCMVNode : AICMVNodeBase\n@end"
+        }
+    ]
+}

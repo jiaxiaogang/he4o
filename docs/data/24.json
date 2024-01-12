@@ -1,0 +1,545 @@
+{
+    "2400": {
+        "file_id": 252,
+        "content": "/SMG_NothingIsAll/Demo/Extension/NSLog+Extension.h",
+        "type": "filepath"
+    },
+    "2401": {
+        "file_id": 252,
+        "content": "The code is an extension of the NSLog class that provides methods for converting various statuses, types, and classes into descriptive strings. This extension allows for more informative logging by formatting specific input parameters into human-readable descriptions.",
+        "type": "summary"
+    },
+    "2402": {
+        "file_id": 252,
+        "content": "//\n//  NSLog+Extension.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2020/9/21.\n//  Copyright © 2020年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface NSLog_Extension : NSObject\n+(NSString*) convertTOStatus2Desc:(TOModelStatus)status;\n+(NSString*) convertATType2Desc:(AnalogyType)atType;\n+(NSString*) convertTIStatus2Desc:(TIModelStatus)status;\n+(NSString*) convertEffectStatus2Desc:(EffectStatus)status;\n+(NSString*) convertClass2Desc:(Class)clazz;\n+(NSString*) convertClassName2Desc:(NSString*)className;\n+(NSString*) convertMvp2DeltaDesc:(AIKVPointer*)mv_p;\n+(NSString*) convertSceneType2Desc:(SceneType)type simple:(BOOL)simple;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/NSLog+Extension.h:1-22"
+    },
+    "2403": {
+        "file_id": 252,
+        "content": "The code is an extension of the NSLog class that provides methods for converting various statuses, types, and classes into descriptive strings. This extension allows for more informative logging by formatting specific input parameters into human-readable descriptions.",
+        "type": "comment"
+    },
+    "2404": {
+        "file_id": 253,
+        "content": "/SMG_NothingIsAll/Demo/Extension/NSLog+Extension.m",
+        "type": "filepath"
+    },
+    "2405": {
+        "file_id": 253,
+        "content": "This code defines methods for converting model status, analogy type, and other enum values to descriptive strings using helper methods based on specific types or classes. It also includes an extension for NSLog with three conversion methods: class name, AIKVPointer state change, and SceneType.",
+        "type": "summary"
+    },
+    "2406": {
+        "file_id": 253,
+        "content": "//\n//  NSLog+Extension.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2020/9/21.\n//  Copyright © 2020年 XiaoGang. All rights reserved.\n//\n#import \"NSLog+Extension.h\"\n#import \"ImvAlgsHungerModel.h\"\n#import \"ImvAlgsHurtModel.h\"\n#import \"AINetIndex.h\"\n@implementation NSLog_Extension\n+(NSString*) convertTOStatus2Desc:(TOModelStatus)status {\n    if(status == TOModelStatus_Runing){\n        return @\"Runing\";\n    }else if(status == TOModelStatus_ActYes){\n        return @\"ActYes\";\n    }else if(status == TOModelStatus_ActNo){\n        return @\"ActNo\";\n    }else if(status == TOModelStatus_ScoreNo){\n        return @\"ScoreNo\";\n    }else if(status == TOModelStatus_NoNeedAct){\n        return @\"NoNeedAct\";\n    }else if(status == TOModelStatus_OuterBack){\n        return @\"OuterBack\";\n    }else if(status == TOModelStatus_Finish){\n        return @\"Finish\";\n    }\n    return @\"Other\";\n}\n+(NSString*) convertATType2Desc:(AnalogyType)atType{\n    if (atType == ATHav) return @\"有\";\n    if (atType == ATNone) return @\"无\";\n    if (atType == ATGreater) return @\"大\";",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/NSLog+Extension.m:1-38"
+    },
+    "2407": {
+        "file_id": 253,
+        "content": "This code defines methods to convert model status and analogy type enums into descriptive strings. The \"convertTOStatus2Desc\" method maps TOModelStatus enum values to their corresponding string descriptions, while the \"convertATType2Desc\" method does the same for AnalogyType enum values. Both methods return a string representing the description of the respective enum value.",
+        "type": "comment"
+    },
+    "2408": {
+        "file_id": 253,
+        "content": "    if (atType == ATLess) return @\"小\";\n    if (atType == ATSub) return @\"坏\";\n    if (atType == ATPlus) return @\"好\";\n    if (atType == ATDiff) return @\"虚\";\n    if (atType == ATSame) return @\"实\";\n    return @\"普\";\n}\n+(NSString*) convertTIStatus2Desc:(TIModelStatus)status{\n    if(status == TIModelStatus_LastWait){\n        return @\"等待反馈\";\n    }else if(status == TIModelStatus_OutBackReason){\n        return @\"理性反馈\";\n    }else if(status == TIModelStatus_OutBackSameDelta){\n        return @\"同向反馈\";\n    }else if(status == TIModelStatus_OutBackNone){\n        return @\"无反馈\";\n    }\n    return @\"Default\";\n}\n+(NSString*) convertEffectStatus2Desc:(EffectStatus)status{\n    if(status == ES_NoEff){\n        return @\"无效\";\n    }else if(status == ES_HavEff){\n        return @\"有效\";\n    }\n    return @\"Default\";\n}\n+(NSString*) convertClass2Desc:(Class)clazz{\n    if ([ImvAlgsHungerModel.class isEqual:clazz]) {\n        return @\"饿\";\n    }else if ([ImvAlgsHurtModel.class isEqual:clazz]) {\n        return @\"疼\";\n    }\n    return @\"无\";\n}\n+(NSString*) convertClassName2Desc:(NSString*)className {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/NSLog+Extension.m:39-78"
+    },
+    "2409": {
+        "file_id": 253,
+        "content": "This code contains multiple helper methods that convert specific values to descriptive strings. The conversion is based on different types or classes, such as ATLess, ATSame, ImvAlgsHungerModel, and ImvAlgsHurtModel. Each if-else statement returns a corresponding string describing the value or class.",
+        "type": "comment"
+    },
+    "2410": {
+        "file_id": 253,
+        "content": "    return [self convertClass2Desc:NSClassFromString(className)];\n}\n+(NSString*) convertMvp2DeltaDesc:(AIKVPointer*)mv_p{\n    AICMVNodeBase *mv = [SMGUtils searchNode:mv_p];\n    if (mv) {\n        NSInteger delta = [NUMTOOK([AINetIndex getData:mv.delta_p]) integerValue];\n        if (delta > 0) return @\"↑\";\n        else if(delta < 0) return @\"↓\";\n    }\n    return @\"⇅\";\n}\n+(NSString*) convertSceneType2Desc:(SceneType)type simple:(BOOL)simple{\n    if (type == SceneTypeI) return @\"I\";\n    if (type == SceneTypeFather) return simple ? @\"F\" : @\"Father\";\n    if (type == SceneTypeBrother) return simple ? @\"B\" : @\"Brother\";\n    return @\"\";\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/NSLog+Extension.m:79-99"
+    },
+    "2411": {
+        "file_id": 253,
+        "content": "This code defines an extension for the NSLog class, which includes three methods. The first method returns a string representing the converted class name using the NSClassFromString function. The second method takes an AIKVPointer object and converts it to a string representing its MVP state change (Δ). The third method takes a SceneType as input and converts it to a string representing the type in different formats depending on whether it's in simple mode or not.",
+        "type": "comment"
+    },
+    "2412": {
+        "file_id": 254,
+        "content": "/SMG_NothingIsAll/Demo/Extension/RuntimeInvoker.h",
+        "type": "filepath"
+    },
+    "2413": {
+        "file_id": 254,
+        "content": "This code defines a category on NSObject and an NSString category, RuntimeInvoker, enabling instance invocation of selectors with or without arguments, and class method invocation using string selectors.",
+        "type": "summary"
+    },
+    "2414": {
+        "file_id": 254,
+        "content": "//\n//  RuntimeInvoker.h\n//  RuntimeInvoker\n//\n//  Created by cyan on 16/5/27.\n//  Copyright © 2016年 cyan. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface NSObject (RuntimeInvoker)\n/**\n *  Invoke a selector with name\n *\n *  @param selector Selector name\n *\n *  @return Return value\n */\n- (id)invoke:(NSString *)selector;\n/**\n *  Invoke a selector with name and args\n *\n *  @param selector Selector name\n *  @param arg      Arguments list (end with nil)\n *\n *  @return Return value\n */\n- (id)invoke:(NSString *)selector args:(id)arg, ... ;\n/**\n *  Invoke a selector with name and args\n *\n *  @param selector  Selector name\n *  @param arguments Arguments list\n *\n *  @return Return value\n */\n- (id)invoke:(NSString *)selector arguments:(NSArray *)arguments;\n/**\n *  Invoke a selector with name (Class Method)\n *\n *  @param selector Selector name\n *\n *  @return Return value\n */\n+ (id)invoke:(NSString *)selector;\n/**\n *  Invoke a selector with name and args (Class Method)\n *\n *  @param selector Selector name\n *  @param arg      Arguments list (end with nil)",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/RuntimeInvoker.h:1-55"
+    },
+    "2415": {
+        "file_id": 254,
+        "content": "This code defines a category on NSObject, allowing instances to invoke selectors with or without arguments. It also includes class methods for invoking selectors.",
+        "type": "comment"
+    },
+    "2416": {
+        "file_id": 254,
+        "content": " *\n *  @return Return value\n */\n+ (id)invoke:(NSString *)selector args:(id)arg, ... ;\n/**\n *  Invoke a selector with name and args (Class Method)\n *\n *  @param selector  Selector name\n *  @param arguments Arguments list\n *\n *  @return Return value\n */\n+ (id)invoke:(NSString *)selector arguments:(NSArray *)arguments;\n@end\n/**\n NSString Category for Class Method\n */\n@interface NSString (RuntimeInvoker)\n/**\n Invoke class method with NSString\n @param selector Selector name\n @return Return value\n */\n- (id)invokeClassMethod:(NSString *)selector;\n/**\n Invoke class method with NSString\n @param selector Selector name\n @param arg Arguments list (end with nil)\n @return Return value\n */\n- (id)invokeClassMethod:(NSString *)selector args:(id)arg, ... ;\n/**\n Invoke class method with NSString\n @param selector Selector name\n @param arguments Arguments list\n @return Return value\n */\n- (id)invokeClassMethod:(NSString *)selector arguments:(NSArray *)arguments;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/RuntimeInvoker.h:56-107"
+    },
+    "2417": {
+        "file_id": 254,
+        "content": "This code defines an NSString category called RuntimeInvoker, which allows invoking class methods using a string selector. The category provides several methods: invokeClassMethod: to invoke a class method by passing the selector as a parameter; invokeClassMethod:args: to invoke a class method with arguments passed as a variable number of parameters; and invokeClassMethod:arguments: to invoke a class method with arguments passed as an array. These methods return the result of the invoked method.",
+        "type": "comment"
+    },
+    "2418": {
+        "file_id": 255,
+        "content": "/SMG_NothingIsAll/Demo/Extension/RuntimeInvoker.m",
+        "type": "filepath"
+    },
+    "2419": {
+        "file_id": 255,
+        "content": "RuntimeInvoker class handles NSInvocation object argument conversion and setup, creating an NSInvocation category for managing method invocations and handling return values based on argument types using a switch statement.",
+        "type": "summary"
+    },
+    "2420": {
+        "file_id": 255,
+        "content": "//\n//  RuntimeInvoker.m\n//  RuntimeInvoker\n//\n//  Created by cyan on 16/5/27.\n//  Copyright © 2016年 cyan. All rights reserved.\n//\n#import \"RuntimeInvoker.h\"\n#import <UIKit/UIKit.h>\n#define _DEFINE_ARRAY(arg) \\\nNSMutableArray *array = [NSMutableArray arrayWithObject:arg];\\\nva_list args;\\\nva_start(args, arg);\\\nid next = nil;\\\nwhile ((next = va_arg(args,id))) {\\\n    [array addObject:next];\\\n}\\\nva_end(args);\\\n#pragma mark - NSMethodSignature Category\n//  Objective-C type encoding: http://nshipster.com/type-encodings/\ntypedef NS_ENUM(NSInteger, RIMethodArgumentType) {\n    RIMethodArgumentTypeUnknown             = 0,\n    RIMethodArgumentTypeChar,\n    RIMethodArgumentTypeInt,\n    RIMethodArgumentTypeShort,\n    RIMethodArgumentTypeLong,\n    RIMethodArgumentTypeLongLong,\n    RIMethodArgumentTypeUnsignedChar,\n    RIMethodArgumentTypeUnsignedInt,\n    RIMethodArgumentTypeUnsignedShort,\n    RIMethodArgumentTypeUnsignedLong,\n    RIMethodArgumentTypeUnsignedLongLong,\n    RIMethodArgumentTypeFloat,\n    RIMethodArgumentTypeDouble,\n    RIMethodArgumentTypeBool,",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/RuntimeInvoker.m:1-39"
+    },
+    "2421": {
+        "file_id": 255,
+        "content": "Code file \"RuntimeInvoker.m\" contains a class named RuntimeInvoker that includes method signature category, NSMethodSignature, and defines an array using NSMutableArray. It also utilizes Objective-C type encoding and uses va_list for variable arguments.",
+        "type": "comment"
+    },
+    "2422": {
+        "file_id": 255,
+        "content": "    RIMethodArgumentTypeVoid,\n    RIMethodArgumentTypeCharacterString,\n    RIMethodArgumentTypeCGPoint,\n    RIMethodArgumentTypeCGSize,\n    RIMethodArgumentTypeCGRect,\n    RIMethodArgumentTypeUIEdgeInsets,\n    RIMethodArgumentTypeObject,\n    RIMethodArgumentTypeClass,\n    RIMethodArgumentTypeSEL,\n    RIMethodArgumentTypeIMP,\n};\n@implementation NSMethodSignature (RuntimeInvoker)\n/**\n *  Get type of return value\n *\n *  @return Return value type\n */\n- (RIMethodArgumentType)returnType {\n    return [NSMethodSignature argumentTypeWithEncode:[self methodReturnType]];\n}\n/**\n *  Type encoding for argument\n *\n *  @param encode Encode for argument\n *\n *  @return RIMethodArgumentType\n */\n+ (RIMethodArgumentType)argumentTypeWithEncode:(const char *)encode {\n    if (strcmp(encode, @encode(char)) == 0) {\n        return RIMethodArgumentTypeChar;\n    } else if (strcmp(encode, @encode(int)) == 0) {\n        return RIMethodArgumentTypeInt;\n    } else if (strcmp(encode, @encode(short)) == 0) {\n        return RIMethodArgumentTypeShort;\n    } else if (strcmp(encode, @encode(long)) == 0) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/RuntimeInvoker.m:40-78"
+    },
+    "2423": {
+        "file_id": 255,
+        "content": "This code is from the \"he4o/SMG_NothingIsAll\" project. It defines a set of argument types and implements two methods for retrieving the return type and encoding of an argument. The return type method returns the type of the return value using the \"methodReturnType\" property. The argument type with encode method takes an encode parameter, compares it to various data types using strcmp function, and returns a corresponding RIMethodArgumentType.",
+        "type": "comment"
+    },
+    "2424": {
+        "file_id": 255,
+        "content": "        return RIMethodArgumentTypeLong;\n    } else if (strcmp(encode, @encode(long long)) == 0) {\n        return RIMethodArgumentTypeLongLong;\n    } else if (strcmp(encode, @encode(unsigned char)) == 0) {\n        return RIMethodArgumentTypeUnsignedChar;\n    } else if (strcmp(encode, @encode(unsigned int)) == 0) {\n        return RIMethodArgumentTypeUnsignedInt;\n    } else if (strcmp(encode, @encode(unsigned short)) == 0) {\n        return RIMethodArgumentTypeUnsignedShort;\n    } else if (strcmp(encode, @encode(unsigned long)) == 0) {\n        return RIMethodArgumentTypeUnsignedLong;\n    } else if (strcmp(encode, @encode(unsigned long long)) == 0) {\n        return RIMethodArgumentTypeUnsignedLongLong;\n    } else if (strcmp(encode, @encode(float)) == 0) {\n        return RIMethodArgumentTypeFloat;\n    } else if (strcmp(encode, @encode(double)) == 0) {\n        return RIMethodArgumentTypeDouble;\n    } else if (strcmp(encode, @encode(BOOL)) == 0) {\n        return RIMethodArgumentTypeBool;\n    } else if (strcmp(encode, @encode(void)) == 0) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/RuntimeInvoker.m:79-98"
+    },
+    "2425": {
+        "file_id": 255,
+        "content": "This code checks the string representation of a variable type and returns the corresponding RIMethodArgumentType enum value. It handles types such as long, unsigned char, float, double, BOOL, etc., and returns the appropriate type for further processing.",
+        "type": "comment"
+    },
+    "2426": {
+        "file_id": 255,
+        "content": "        return RIMethodArgumentTypeVoid;\n    } else if (strcmp(encode, @encode(char *)) == 0) {\n        return RIMethodArgumentTypeCharacterString;\n    } else if (strcmp(encode, @encode(id)) == 0) {\n        return RIMethodArgumentTypeObject;\n    } else if (strcmp(encode, @encode(Class)) == 0) {\n        return RIMethodArgumentTypeClass;\n    } else if (strcmp(encode, @encode(CGPoint)) == 0) {\n        return RIMethodArgumentTypeCGPoint;\n    } else if (strcmp(encode, @encode(CGSize)) == 0) {\n        return RIMethodArgumentTypeCGSize;\n    } else if (strcmp(encode, @encode(CGRect)) == 0) {\n        return RIMethodArgumentTypeCGRect;\n    } else if (strcmp(encode, @encode(UIEdgeInsets)) == 0) {\n        return RIMethodArgumentTypeUIEdgeInsets;\n    } else if (strcmp(encode, @encode(SEL)) == 0) {\n        return RIMethodArgumentTypeSEL;\n    }  else if (strcmp(encode, @encode(IMP))) {\n        return RIMethodArgumentTypeIMP;\n    } else {\n        return RIMethodArgumentTypeUnknown;\n    }\n}\n/**\n *  Get type of argument at index",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/RuntimeInvoker.m:99-124"
+    },
+    "2427": {
+        "file_id": 255,
+        "content": "This code compares the given \"encode\" parameter to various encoded types and returns the corresponding RIMethodArgumentType if a match is found. If no match is found, it returns RIMethodArgumentTypeUnknown.",
+        "type": "comment"
+    },
+    "2428": {
+        "file_id": 255,
+        "content": " *\n *  @param index Argument index\n *\n *  @return Return value type\n */\n- (RIMethodArgumentType)argumentTypeAtIndex:(NSInteger)index {\n    const char *encode = [self getArgumentTypeAtIndex:index];\n    return [NSMethodSignature argumentTypeWithEncode:encode];\n}\n/**\n *  Setup arguments for invocation\n *\n *  @param arguments Arguments\n *\n *  @return NSInvocation\n */\n- (NSInvocation *)invocationWithArguments:(NSArray *)arguments {\n    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:self];\n    NSAssert(arguments == nil || [arguments isKindOfClass:[NSArray class]], @\"# RuntimeInvoker # arguments is not an array\");\n    [arguments enumerateObjectsUsingBlock:^(id  _Nonnull argument, NSUInteger idx, BOOL * _Nonnull stop) {\n        NSInteger index = idx + 2; // start with 2\n        RIMethodArgumentType type = [self argumentTypeAtIndex:index];\n        switch (type) {\n            case RIMethodArgumentTypeChar: {\n                char value = [argument charValue];\n                [invocation setArgument:&value atIndex:index];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/RuntimeInvoker.m:125-156"
+    },
+    "2429": {
+        "file_id": 255,
+        "content": "This code defines a class, RuntimeInvoker, which provides methods to retrieve and set up arguments for invocation. The argumentTypeAtIndex method returns the return value type based on the given index from the encoded string, while the invocationWithArguments method sets up an NSInvocation object using the provided arguments array. This class seems to be part of a larger system that involves setting up invocations with specific types of arguments.",
+        "type": "comment"
+    },
+    "2430": {
+        "file_id": 255,
+        "content": "            } break;\n            case RIMethodArgumentTypeInt: {\n                int value = [argument intValue];\n                [invocation setArgument:&value atIndex:index];\n            } break;\n            case RIMethodArgumentTypeShort: {\n                short value = [argument shortValue];\n                [invocation setArgument:&value atIndex:index];\n            } break;\n            case RIMethodArgumentTypeLong: {\n                long value = [argument longValue];\n                [invocation setArgument:&value atIndex:index];\n            } break;\n            case RIMethodArgumentTypeLongLong: {\n                long long value = [argument longLongValue];\n                [invocation setArgument:&value atIndex:index];\n            } break;\n            case RIMethodArgumentTypeUnsignedChar: {\n                unsigned char value = [argument unsignedCharValue];\n                [invocation setArgument:&value atIndex:index];\n            } break;\n            case RIMethodArgumentTypeUnsignedInt: {\n                unsigned int value = [argument unsignedIntValue];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/RuntimeInvoker.m:157-179"
+    },
+    "2431": {
+        "file_id": 255,
+        "content": "This code is handling different method argument types in a switch statement. It converts the argument to the appropriate data type (int, short, long, etc.) and sets it as an invocation argument at the specified index.",
+        "type": "comment"
+    },
+    "2432": {
+        "file_id": 255,
+        "content": "                [invocation setArgument:&value atIndex:index];\n            } break;\n            case RIMethodArgumentTypeUnsignedShort: {\n                unsigned short value = [argument unsignedShortValue];\n                [invocation setArgument:&value atIndex:index];\n            } break;\n            case RIMethodArgumentTypeUnsignedLong: {\n                unsigned long value = [argument unsignedLongValue];\n                [invocation setArgument:&value atIndex:index];\n            } break;\n            case RIMethodArgumentTypeUnsignedLongLong: {\n                unsigned long long value = [argument unsignedLongLongValue];\n                [invocation setArgument:&value atIndex:index];\n            } break;\n            case RIMethodArgumentTypeFloat: {\n                float value = [argument floatValue];\n                [invocation setArgument:&value atIndex:index];\n            } break;\n            case RIMethodArgumentTypeDouble: {\n                double value = [argument doubleValue];\n                [invocation setArgument:&value atIndex:index];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/RuntimeInvoker.m:180-200"
+    },
+    "2433": {
+        "file_id": 255,
+        "content": "This code is handling different types of arguments for a method invocation. It checks the argument type and assigns corresponding values to the invocation using switch statements. Types handled include: BOOL, char, short, int, long, long long, float, and double. Each case sets the appropriate value for the given argument type in the invocation at the specified index.",
+        "type": "comment"
+    },
+    "2434": {
+        "file_id": 255,
+        "content": "            } break;\n            case RIMethodArgumentTypeBool: {\n                BOOL value = [argument boolValue];\n                [invocation setArgument:&value atIndex:index];\n            } break;\n            case RIMethodArgumentTypeVoid: {\n            } break;\n            case RIMethodArgumentTypeCharacterString: {\n                const char *value = [argument UTF8String];\n                [invocation setArgument:&value atIndex:index];\n            } break;\n            case RIMethodArgumentTypeObject: {\n                [invocation setArgument:&argument atIndex:index];\n            } break;\n            case RIMethodArgumentTypeClass: {\n                Class value = [argument class];\n                [invocation setArgument:&value atIndex:index];\n            } break;\n            case RIMethodArgumentTypeIMP: {\n                IMP imp = [argument pointerValue];\n                [invocation setArgument:&imp atIndex:index];\n            } break;\n            case RIMethodArgumentTypeSEL: {\n                SEL sel = [argument pointerValue];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/RuntimeInvoker.m:201-225"
+    },
+    "2435": {
+        "file_id": 255,
+        "content": "This code is handling different types of method arguments and converting them for use in the invocation. It supports argument types such as int, bool, void, NSString, Class, IMP, and SEL, converting them to appropriate formats for passing to the invocation object. This ensures compatibility with various argument types in the invocation method.",
+        "type": "comment"
+    },
+    "2436": {
+        "file_id": 255,
+        "content": "                [invocation setArgument:&sel atIndex:index];\n            } break;\n            default: break;\n        }\n    }];\n    return invocation;\n}\n@end\n#pragma mark - NSInvocation Category\n@implementation NSInvocation (RuntimeInvoker)\n/**\n *  Invoke a selector\n *\n *  @param target   Target\n *  @param selector Selector\n *  @param type     Return value type\n *\n *  @return Return value\n */\n- (id)invoke:(id)target selector:(SEL)selector returnType:(RIMethodArgumentType)type {\n    self.target = target;\n    self.selector = selector;\n    [self invoke];\n    return [self returnValueForType:type];\n}\n/**\n *  Boxing returnType of NSMethodSignature\n *\n *  @param type Signature\n *\n *  @return Boxed value\n */\n- (id)returnValueForType:(RIMethodArgumentType)type {\n    __unsafe_unretained id returnValue;\n    switch (type) {\n        case RIMethodArgumentTypeChar: {\n            char value;\n            [self getReturnValue:&value];\n            returnValue = @(value);\n        } break;\n        case RIMethodArgumentTypeInt:  {\n            int value;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/RuntimeInvoker.m:226-276"
+    },
+    "2437": {
+        "file_id": 255,
+        "content": "This code defines a category on NSInvocation that allows invoking a selector and returns the result of the invocation for specific return types. It also implements boxing for different return types like char, int, etc. The invoke method is used to trigger the selector on the target object and returns the result using returnValueForType method based on the return type specified.",
+        "type": "comment"
+    },
+    "2438": {
+        "file_id": 255,
+        "content": "            [self getReturnValue:&value];\n            returnValue = @(value);\n        } break;\n        case RIMethodArgumentTypeShort:  {\n            short value;\n            [self getReturnValue:&value];\n            returnValue = @(value);\n        } break;\n        case RIMethodArgumentTypeLong:  {\n            long value;\n            [self getReturnValue:&value];\n            returnValue = @(value);\n        } break;\n        case RIMethodArgumentTypeLongLong:  {\n            long long value;\n            [self getReturnValue:&value];\n            returnValue = @(value);\n        } break;\n        case RIMethodArgumentTypeUnsignedChar:  {\n            unsigned char value;\n            [self getReturnValue:&value];\n            returnValue = @(value);\n        } break;\n        case RIMethodArgumentTypeUnsignedInt:  {\n            unsigned int value;\n            [self getReturnValue:&value];\n            returnValue = @(value);\n        } break;\n        case RIMethodArgumentTypeUnsignedShort:  {\n            unsigned short value;\n            [self getReturnValue:&value];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/RuntimeInvoker.m:277-307"
+    },
+    "2439": {
+        "file_id": 255,
+        "content": "This code handles different data types for return values in the runtime invoker. It uses switch cases to determine the appropriate data type and assigns values accordingly. The getReturnValue method is called to retrieve the value, which is then wrapped in an NSNumber object and assigned to returnValue.",
+        "type": "comment"
+    },
+    "2440": {
+        "file_id": 255,
+        "content": "            returnValue = @(value);\n        } break;\n        case RIMethodArgumentTypeUnsignedLong:  {\n            unsigned long value;\n            [self getReturnValue:&value];\n            returnValue = @(value);\n        } break;\n        case RIMethodArgumentTypeUnsignedLongLong:  {\n            unsigned long long value;\n            [self getReturnValue:&value];\n            returnValue = @(value);\n        } break;\n        case RIMethodArgumentTypeFloat:  {\n            float value;\n            [self getReturnValue:&value];\n            returnValue = @(value);\n        } break;\n        case RIMethodArgumentTypeDouble:  {\n            double value;\n            [self getReturnValue:&value];\n            returnValue = @(value);\n        } break;\n        case RIMethodArgumentTypeBool: {\n            BOOL value;\n            [self getReturnValue:&value];\n            returnValue = @(value);\n        } break;\n        case RIMethodArgumentTypeCharacterString: {\n            const char *value;\n            [self getReturnValue:&value];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/RuntimeInvoker.m:308-337"
+    },
+    "2441": {
+        "file_id": 255,
+        "content": "This code handles method invocations and converts return values based on the argument type, using a switch statement for various types like unsigned long, double, bool, and character string.",
+        "type": "comment"
+    },
+    "2442": {
+        "file_id": 255,
+        "content": "            returnValue = [NSString stringWithUTF8String:value];\n        } break;\n        case RIMethodArgumentTypeCGPoint: {\n            CGPoint value;\n            [self getReturnValue:&value];\n            returnValue = [NSValue valueWithCGPoint:value];\n        } break;\n        case RIMethodArgumentTypeCGSize: {\n            CGSize value;\n            [self getReturnValue:&value];\n            returnValue = [NSValue valueWithCGSize:value];\n        } break;\n        case RIMethodArgumentTypeCGRect: {\n            CGRect value;\n            [self getReturnValue:&value];\n            returnValue = [NSValue valueWithCGRect:value];\n        } break;\n        case RIMethodArgumentTypeUIEdgeInsets: {\n            UIEdgeInsets value;\n            [self getReturnValue:&value];\n            returnValue = [NSValue valueWithUIEdgeInsets:value];\n        } break;\n        case RIMethodArgumentTypeSEL: {\n            SEL sel;\n            [self getReturnValue:&sel];\n            returnValue = [NSValue valueWithPointer:sel];\n        } break;\n        case RIMethodArgumentTypeIMP: {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/RuntimeInvoker.m:338-365"
+    },
+    "2443": {
+        "file_id": 255,
+        "content": "This code block maps different argument types to their corresponding NSValue counterparts, using a switch statement based on the RIMethodArgumentType. It retrieves the value and creates an appropriate NSValue object for each case, then assigns it to returnValue.",
+        "type": "comment"
+    },
+    "2444": {
+        "file_id": 255,
+        "content": "            IMP imp;\n            [self getReturnValue:&imp];\n            returnValue = [NSValue valueWithPointer:imp];\n        } break;\n        case RIMethodArgumentTypeObject:\n        case RIMethodArgumentTypeClass:\n            [self getReturnValue:&returnValue];\n            break;\n        default: break;\n    }\n    return returnValue;\n}\n@end\n#pragma mark - NSObject Category\n@implementation NSObject (RuntimeInvoker)\nid _invoke(id target, NSString *selector, NSArray *arguments) {\n    SEL sel = NSSelectorFromString(selector);\n    NSMethodSignature *signature = [target methodSignatureForSelector:sel];\n    if (signature) {\n        NSInvocation *invocation = [signature invocationWithArguments:arguments];\n        id returnValue = [invocation invoke:target selector:sel returnType:signature.returnType];\n        return returnValue;\n    } else {\n        NSLog(@\"# RuntimeInvoker # selector: \\\"%@\\\" NOT FOUND\", selector);\n        return nil;\n    }\n}\n- (id)invoke:(NSString *)selector arguments:(NSArray *)arguments {\n    return _invoke(self, selector, arguments);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/RuntimeInvoker.m:366-399"
+    },
+    "2445": {
+        "file_id": 255,
+        "content": "The code defines an invocation method to call a selector on an object and pass in arguments, returning the return value. The implementation uses NSInvocation and method signatures for the invocation process. It handles various argument types and logs if a selector is not found.",
+        "type": "comment"
+    },
+    "2446": {
+        "file_id": 255,
+        "content": "}\n- (id)invoke:(NSString *)selector {\n    return [self invoke:selector arguments:nil];\n}\n- (id)invoke:(NSString *)selector args:(id)arg, ... {\n    _DEFINE_ARRAY(arg);\n    return [self invoke:selector arguments:array];\n}\n+ (id)invoke:(NSString *)selector {\n    return [self.class invoke:selector arguments:nil];\n}\n+ (id)invoke:(NSString *)selector args:(id)arg, ... {\n    _DEFINE_ARRAY(arg);\n    return [self.class invoke:selector arguments:array];\n}\n+ (id)invoke:(NSString *)selector arguments:(NSArray *)arguments {\n    return _invoke(self.class, selector, arguments);\n}\n@end\n@implementation NSString (RuntimeInvoker)\n- (id)invokeClassMethod:(NSString *)selector {\n    return [self invokeClassMethod:selector arguments:nil];\n}\n- (id)invokeClassMethod:(NSString *)selector args:(id)arg, ... {\n    _DEFINE_ARRAY(arg);\n    return [self invokeClassMethod:selector arguments:array];\n}\n- (id)invokeClassMethod:(NSString *)selector arguments:(NSArray *)arguments {\n    return [NSClassFromString(self) invoke:selector arguments:arguments];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/RuntimeInvoker.m:400-438"
+    },
+    "2447": {
+        "file_id": 255,
+        "content": "The code defines methods for invoking instance and class methods with optional arguments. It provides convenience methods to invoke methods on objects, including class methods using NSClassFromString, with the ability to pass in nil or a defined array of arguments.",
+        "type": "comment"
+    },
+    "2448": {
+        "file_id": 255,
+        "content": "}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/RuntimeInvoker.m:439-441"
+    },
+    "2449": {
+        "file_id": 255,
+        "content": "This code snippet marks the end of a class or block of code within the \"RuntimeInvoker.m\" file in the SMG_NothingIsAll project's Demo/Extension folder.",
+        "type": "comment"
+    },
+    "2450": {
+        "file_id": 256,
+        "content": "/SMG_NothingIsAll/Demo/Extension/UIColor+expanded.h",
+        "type": "filepath"
+    },
+    "2451": {
+        "file_id": 256,
+        "content": "This UIColor extension provides methods for RGB manipulation, luminance mapping, and color representation, as well as undocumented APIs for creating colors from hex strings and names.",
+        "type": "summary"
+    },
+    "2452": {
+        "file_id": 256,
+        "content": "/****\n VOORBEELDEN\n [UIColor colorWithRGBHex:0xff00ff];\n [UIColor colorWithHexString:@\"0xff00ff\"]\n *******/\n#import <UIKit/UIKit.h>\n#define SUPPORTS_UNDOCUMENTED_API\t0\n@interface UIColor (UIColor_Expanded)\n@property (nonatomic, readonly) CGColorSpaceModel colorSpaceModel;\n@property (nonatomic, readonly) BOOL canProvideRGBComponents;\n@property (nonatomic, readonly) CGFloat red; // Only valid if canProvideRGBComponents is YES\n@property (nonatomic, readonly) CGFloat green; // Only valid if canProvideRGBComponents is YES\n@property (nonatomic, readonly) CGFloat blue; // Only valid if canProvideRGBComponents is YES\n@property (nonatomic, readonly) CGFloat white; // Only valid if colorSpaceModel == kCGColorSpaceModelMonochrome\n@property (nonatomic, readonly) CGFloat alpha;\n@property (nonatomic, readonly) UInt32 rgbHex;\n- (NSString *)colorSpaceString;\n- (NSArray *)arrayFromRGBAComponents;\n- (BOOL)red:(CGFloat *)r green:(CGFloat *)g blue:(CGFloat *)b alpha:(CGFloat *)a;\n- (UIColor *)colorByLuminanceMapping;\n- (UICo",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/UIColor+expanded.h:2-31"
+    },
+    "2453": {
+        "file_id": 256,
+        "content": "This code defines a UIColor category named UIColor_Expanded which adds several read-only properties and methods to the UIColor class. The properties include colorSpaceModel, canProvideRGBComponents, red, green, blue, white, and alpha, while the methods provide functionality such as converting RGB components into hex format, returning an array of RGB components, and mapping luminance.",
+        "type": "comment"
+    },
+    "2454": {
+        "file_id": 256,
+        "content": "lor *)colorByMultiplyingByRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha;\n- (UIColor *)       colorByAddingRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha;\n- (UIColor *) colorByLighteningToRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha;\n- (UIColor *)  colorByDarkeningToRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha;\n- (UIColor *)colorByMultiplyingBy:(CGFloat)f;\n- (UIColor *)       colorByAdding:(CGFloat)f;\n- (UIColor *) colorByLighteningTo:(CGFloat)f;\n- (UIColor *)  colorByDarkeningTo:(CGFloat)f;\n- (UIColor *)colorByMultiplyingByColor:(UIColor *)color;\n- (UIColor *)       colorByAddingColor:(UIColor *)color;\n- (UIColor *) colorByLighteningToColor:(UIColor *)color;\n- (UIColor *)  colorByDarkeningToColor:(UIColor *)color;\n- (NSString *)stringFromColor;\n- (NSString *)hexStringFromColor;\n+ (UIColor *)randomColor;\n+ (UIColor *)colorWithRGBHex:(UInt32)hex;\n+ (UIColor *)colorWithTheHexString:(NSString *)stringToConvert;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/UIColor+expanded.h:31-51"
+    },
+    "2455": {
+        "file_id": 256,
+        "content": "Extension of UIColor with methods to manipulate colors by RGB values, lighten or darken, multiply or add, and generate random or hex string representation.",
+        "type": "comment"
+    },
+    "2456": {
+        "file_id": 256,
+        "content": "+ (UIColor *)colorWithHexString:(NSString *)color alpha:(CGFloat)alpha;\n+ (UIColor *)colorWithHexString:(NSString *)color ;\n+ (UIColor *)colorWithName:(NSString *)cssColorName;\n@end\n#if SUPPORTS_UNDOCUMENTED_API\n// UIColor_Undocumented_Expanded\n// Methods which rely on undocumented methods of UIColor\n@interface UIColor (UIColor_Undocumented_Expanded)\n- (NSString *)fetchStyleString;\n- (UIColor *)rgbColor; // Via Poltras\n@end\n#endif // SUPPORTS_UNDOCUMENTED_API",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/UIColor+expanded.h:52-65"
+    },
+    "2457": {
+        "file_id": 256,
+        "content": "This code defines a class extension for UIColor, adding three methods to create colors from hex strings and a name. It also includes an optional section for undocumented methods related to color creation using undocumented APIs.",
+        "type": "comment"
+    },
+    "2458": {
+        "file_id": 257,
+        "content": "/SMG_NothingIsAll/Demo/Extension/UIColor+expanded.m",
+        "type": "filepath"
+    },
+    "2459": {
+        "file_id": 257,
+        "content": "This code allows manipulation of UIColor, offering darkening, conversions, random generation, and parsing. It also caches color names, handles invalid inputs, and provides CSS name-based RGB search functionality.",
+        "type": "summary"
+    },
+    "2460": {
+        "file_id": 257,
+        "content": "#import \"UIColor+Expanded.h\"\n/*\n Thanks to Poltras, Millenomi, Eridius, Nownot, WhatAHam, jberry,\n and everyone else who helped out but whose name is inadvertantly omitted\n */\n/*\n Current outstanding request list:\n - PolarBearFarm - color descriptions ([UIColor warmGrayWithHintOfBlueTouchOfRedAndSplashOfYellowColor])\n - Crayola color set\n - Eridius - UIColor needs a method that takes 2 colors and gives a third complementary one\n - Consider UIMutableColor that can be adjusted (brighter, cooler, warmer, thicker-alpha, etc)\n */\n/*\n FOR REFERENCE: Color Space Models: enum CGColorSpaceModel {\n kCGColorSpaceModelUnknown = -1,\n kCGColorSpaceModelMonochrome,\n kCGColorSpaceModelRGB,\n kCGColorSpaceModelCMYK,\n kCGColorSpaceModelLab,\n kCGColorSpaceModelDeviceN,\n kCGColorSpaceModelIndexed,\n kCGColorSpaceModelPattern\n };\n */\n// Static cache of looked up color names. Used with +colorWithName:\nstatic NSMutableDictionary *colorNameCache = nil;\n#if SUPPORTS_UNDOCUMENTED_API\n// UIColor_Undocumented\n// Undocumented methods of UIColor",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/UIColor+expanded.m:1-37"
+    },
+    "2461": {
+        "file_id": 257,
+        "content": "Code imports a header file and includes a comment thanking contributors, a list of requested features, and reference information about color space models. It also initializes a static cache for looked-up color names and provides a note about undocumented methods of UIColor.",
+        "type": "comment"
+    },
+    "2462": {
+        "file_id": 257,
+        "content": "@interface UIColor (UIColor_Undocumented)\n- (NSString *)styleString;\n@end\n#endif // SUPPORTS_UNDOCUMENTED_API\n@interface UIColor (UIColor_Expanded_Support)\n+ (UIColor *)searchForColorByName:(NSString *)cssColorName;\n@end\n#pragma mark -\n@implementation UIColor (UIColor_Expanded)\n- (CGColorSpaceModel)colorSpaceModel {\n\treturn CGColorSpaceGetModel(CGColorGetColorSpace(self.CGColor));\n}\n- (NSString *)colorSpaceString {\n\tswitch (self.colorSpaceModel) {\n\t\tcase kCGColorSpaceModelUnknown:\n\t\t\treturn @\"kCGColorSpaceModelUnknown\";\n\t\tcase kCGColorSpaceModelMonochrome:\n\t\t\treturn @\"kCGColorSpaceModelMonochrome\";\n\t\tcase kCGColorSpaceModelRGB:\n\t\t\treturn @\"kCGColorSpaceModelRGB\";\n\t\tcase kCGColorSpaceModelCMYK:\n\t\t\treturn @\"kCGColorSpaceModelCMYK\";\n\t\tcase kCGColorSpaceModelLab:\n\t\t\treturn @\"kCGColorSpaceModelLab\";\n\t\tcase kCGColorSpaceModelDeviceN:\n\t\t\treturn @\"kCGColorSpaceModelDeviceN\";\n\t\tcase kCGColorSpaceModelIndexed:\n\t\t\treturn @\"kCGColorSpaceModelIndexed\";\n\t\tcase kCGColorSpaceModelPattern:\n\t\t\treturn @\"kCGColorSpaceModelPattern\";\n\t\tdefault:",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/UIColor+expanded.m:38-73"
+    },
+    "2463": {
+        "file_id": 257,
+        "content": "This code adds two methods to the UIColor class: `styleString` and `searchForColorByName`. It also includes a method that returns the color space model of a UIColor object as a CGColorSpaceModel enum. The possible color spaces are kCGColorSpaceModelUnknown, kCGColorSpaceModelMonochrome, kCGColorSpaceModelRGB, kCGColorSpaceModelCMYK, kCGColorSpaceModelLab, kCGColorSpaceModelDeviceN, and kCGColorSpaceModelIndexed.",
+        "type": "comment"
+    },
+    "2464": {
+        "file_id": 257,
+        "content": "\t\t\treturn @\"Not a valid color space\";\n\t}\n}\n- (BOOL)canProvideRGBComponents {\n\tswitch (self.colorSpaceModel) {\n\t\tcase kCGColorSpaceModelRGB:\n\t\tcase kCGColorSpaceModelMonochrome:\n\t\t\treturn YES;\n\t\tdefault:\n\t\t\treturn NO;\n\t}\n}\n- (NSArray *)arrayFromRGBAComponents {\n\tNSAssert(self.canProvideRGBComponents, @\"Must be an RGB color to use -arrayFromRGBAComponents\");\n\tCGFloat r,g,b,a;\n\tif (![self red:&r green:&g blue:&b alpha:&a]) return nil;\n\treturn [NSArray arrayWithObjects:\n\t\t\t[NSNumber numberWithFloat:r],\n\t\t\t[NSNumber numberWithFloat:g],\n\t\t\t[NSNumber numberWithFloat:b],\n\t\t\t[NSNumber numberWithFloat:a],\n\t\t\tnil];\n}\n- (BOOL)red:(CGFloat *)red green:(CGFloat *)green blue:(CGFloat *)blue alpha:(CGFloat *)alpha {\n\tconst CGFloat *components = CGColorGetComponents(self.CGColor);\n\tCGFloat r,g,b,a;\n\tswitch (self.colorSpaceModel) {\n\t\tcase kCGColorSpaceModelMonochrome:\n\t\t\tr = g = b = components[0];\n\t\t\ta = components[1];\n\t\t\tbreak;\n\t\tcase kCGColorSpaceModelRGB:\n\t\t\tr = components[0];\n\t\t\tg = components[1];\n\t\t\tb = components[2];\n\t\t\ta = components[3];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/UIColor+expanded.m:74-116"
+    },
+    "2465": {
+        "file_id": 257,
+        "content": "This code defines a category on UIColor class that checks if the color is RGB or monochrome and returns an array of its components. It also validates if the color is valid for the method it's being used in.",
+        "type": "comment"
+    },
+    "2466": {
+        "file_id": 257,
+        "content": "\t\t\tbreak;\n\t\tdefault:\t// We don't know how to handle this model\n\t\t\treturn NO;\n\t}\n\tif (red) *red = r;\n\tif (green) *green = g;\n\tif (blue) *blue = b;\n\tif (alpha) *alpha = a;\n\treturn YES;\n}\n- (CGFloat)red {\n\tNSAssert(self.canProvideRGBComponents, @\"Must be an RGB color to use -red\");\n\tconst CGFloat *c = CGColorGetComponents(self.CGColor);\n\treturn c[0];\n}\n- (CGFloat)green {\n\tNSAssert(self.canProvideRGBComponents, @\"Must be an RGB color to use -green\");\n\tconst CGFloat *c = CGColorGetComponents(self.CGColor);\n\tif (self.colorSpaceModel == kCGColorSpaceModelMonochrome) return c[0];\n\treturn c[1];\n}\n- (CGFloat)blue {\n\tNSAssert(self.canProvideRGBComponents, @\"Must be an RGB color to use -blue\");\n\tconst CGFloat *c = CGColorGetComponents(self.CGColor);\n\tif (self.colorSpaceModel == kCGColorSpaceModelMonochrome) return c[0];\n\treturn c[2];\n}\n- (CGFloat)white {\n\tNSAssert(self.colorSpaceModel == kCGColorSpaceModelMonochrome, @\"Must be a Monochrome color to use -white\");\n\tconst CGFloat *c = CGColorGetComponents(self.CGColor);\n\treturn c[0];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/UIColor+expanded.m:117-153"
+    },
+    "2467": {
+        "file_id": 257,
+        "content": "This code is a part of the UIColor class and provides functions for accessing RGB and white color components. It handles different model colors and returns appropriate values. The code also performs assertions to ensure the correct usage of each function.",
+        "type": "comment"
+    },
+    "2468": {
+        "file_id": 257,
+        "content": "}\n- (CGFloat)alpha {\n\treturn CGColorGetAlpha(self.CGColor);\n}\n- (UInt32)rgbHex {\n\tNSAssert(self.canProvideRGBComponents, @\"Must be a RGB color to use rgbHex\");\n\tCGFloat r,g,b,a;\n\tif (![self red:&r green:&g blue:&b alpha:&a]) return 0;\n\tr = MIN(MAX(self.red, 0.0f), 1.0f);\n\tg = MIN(MAX(self.green, 0.0f), 1.0f);\n\tb = MIN(MAX(self.blue, 0.0f), 1.0f);\n\treturn (((int)roundf(r * 255)) << 16)\n\t| (((int)roundf(g * 255)) << 8)\n\t| (((int)roundf(b * 255)));\n}\n#pragma mark Arithmetic operations\n- (UIColor *)colorByLuminanceMapping {\n\tNSAssert(self.canProvideRGBComponents, @\"Must be a RGB color to use arithmatic operations\");\n\tCGFloat r,g,b,a;\n\tif (![self red:&r green:&g blue:&b alpha:&a]) return nil;\n\t// http://en.wikipedia.org/wiki/Luma_(video)\n\t// Y = 0.2126 R + 0.7152 G + 0.0722 B\n\treturn [UIColor colorWithWhite:r*0.2126f + g*0.7152f + b*0.0722f\n\t\t\t\t\t\t\t alpha:a];\n}\n- (UIColor *)colorByMultiplyingByRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha {\n\tNSAssert(self.canProvideRGBComponents, @\"Must be a RGB color to use arithmatic operations\");",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/UIColor+expanded.m:154-191"
+    },
+    "2469": {
+        "file_id": 257,
+        "content": "This code defines a UIColor subclass with methods for getting the alpha value, converting RGB values to hex, performing arithmetic operations on RGB values, and creating new colors based on those operations. The code asserts that the color is in RGB format before performing these operations.",
+        "type": "comment"
+    },
+    "2470": {
+        "file_id": 257,
+        "content": "\tCGFloat r,g,b,a;\n\tif (![self red:&r green:&g blue:&b alpha:&a]) return nil;\n\treturn [UIColor colorWithRed:MAX(0.0, MIN(1.0, r * red))\n\t\t\t\t\t\t   green:MAX(0.0, MIN(1.0, g * green)) \n\t\t\t\t\t\t\tblue:MAX(0.0, MIN(1.0, b * blue))\n\t\t\t\t\t\t   alpha:MAX(0.0, MIN(1.0, a * alpha))];\n}\n- (UIColor *)colorByAddingRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha {\n\tNSAssert(self.canProvideRGBComponents, @\"Must be a RGB color to use arithmatic operations\");\n\tCGFloat r,g,b,a;\n\tif (![self red:&r green:&g blue:&b alpha:&a]) return nil;\n\treturn [UIColor colorWithRed:MAX(0.0, MIN(1.0, r + red))\n\t\t\t\t\t\t   green:MAX(0.0, MIN(1.0, g + green)) \n\t\t\t\t\t\t\tblue:MAX(0.0, MIN(1.0, b + blue))\n\t\t\t\t\t\t   alpha:MAX(0.0, MIN(1.0, a + alpha))];\n}\n- (UIColor *)colorByLighteningToRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha {\n\tNSAssert(self.canProvideRGBComponents, @\"Must be a RGB color to use arithmatic operations\");\n\tCGFloat r,g,b,a;\n\tif (![self red:&r green:&g blue:&b alpha:&a]) return nil;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/UIColor+expanded.m:193-218"
+    },
+    "2471": {
+        "file_id": 257,
+        "content": "This code defines a category on UIColor that adds methods to modify the color by adding or lightening its RGB components. It first checks if the color is an RGB color, and then performs the requested operations within bounds of 0-1 range.",
+        "type": "comment"
+    },
+    "2472": {
+        "file_id": 257,
+        "content": "\treturn [UIColor colorWithRed:MAX(r, red)\n\t\t\t\t\t\t   green:MAX(g, green)\n\t\t\t\t\t\t\tblue:MAX(b, blue)\n\t\t\t\t\t\t   alpha:MAX(a, alpha)];\n}\n- (UIColor *)colorByDarkeningToRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha {\n\tNSAssert(self.canProvideRGBComponents, @\"Must be a RGB color to use arithmatic operations\");\n\tCGFloat r,g,b,a;\n\tif (![self red:&r green:&g blue:&b alpha:&a]) return nil;\n\treturn [UIColor colorWithRed:MIN(r, red)\n\t\t\t\t\t\t   green:MIN(g, green)\n\t\t\t\t\t\t\tblue:MIN(b, blue)\n\t\t\t\t\t\t   alpha:MIN(a, alpha)];\n}\n- (UIColor *)colorByMultiplyingBy:(CGFloat)f {\n\treturn [self colorByMultiplyingByRed:f green:f blue:f alpha:1.0f];\n}\n- (UIColor *)colorByAdding:(CGFloat)f {\n\treturn [self colorByMultiplyingByRed:f green:f blue:f alpha:0.0f];\n}\n- (UIColor *)colorByLighteningTo:(CGFloat)f {\n\treturn [self colorByLighteningToRed:f green:f blue:f alpha:0.0f];\n}\n- (UIColor *)colorByDarkeningTo:(CGFloat)f {\n\treturn [self colorByDarkeningToRed:f green:f blue:f alpha:1.0f];\n}\n- (UIColor *)colorByMultiplyingByColor:(UIColor *)color {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/UIColor+expanded.m:220-254"
+    },
+    "2473": {
+        "file_id": 257,
+        "content": "This code defines various methods to manipulate UIColor by adjusting its RGB and alpha values. The `colorByDarkeningToRed`, `colorByLighteningToRed`, etc. methods use MAX, MIN, and arithmetic operations to adjust the color accordingly. The `colorByMultiplyingByColor` method takes another UIColor object as an input and adjusts the color based on its RGB values.",
+        "type": "comment"
+    },
+    "2474": {
+        "file_id": 257,
+        "content": "\tNSAssert(self.canProvideRGBComponents, @\"Must be a RGB color to use arithmatic operations\");\n\tCGFloat r,g,b,a;\n\tif (![self red:&r green:&g blue:&b alpha:&a]) return nil;\n\treturn [self colorByMultiplyingByRed:r green:g blue:b alpha:1.0f];\n}\n- (UIColor *)colorByAddingColor:(UIColor *)color {\n\tNSAssert(self.canProvideRGBComponents, @\"Must be a RGB color to use arithmatic operations\");\n\tCGFloat r,g,b,a;\n\tif (![self red:&r green:&g blue:&b alpha:&a]) return nil;\n\treturn [self colorByAddingRed:r green:g blue:b alpha:0.0f];\n}\n- (UIColor *)colorByLighteningToColor:(UIColor *)color {\n\tNSAssert(self.canProvideRGBComponents, @\"Must be a RGB color to use arithmatic operations\");\n\tCGFloat r,g,b,a;\n\tif (![self red:&r green:&g blue:&b alpha:&a]) return nil;\n\treturn [self colorByLighteningToRed:r green:g blue:b alpha:0.0f];\n}\n- (UIColor *)colorByDarkeningToColor:(UIColor *)color {\n\tNSAssert(self.canProvideRGBComponents, @\"Must be a RGB color to use arithmatic operations\");\n\tCGFloat r,g,b,a;\n\tif (![self red:&r green:&g blue:&b alpha:&a]) return nil;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/UIColor+expanded.m:255-285"
+    },
+    "2475": {
+        "file_id": 257,
+        "content": "The code includes four methods that perform arithmetic operations on RGB colors, including multiplying, adding, and lightening/darkening. It ensures the color being used is RGB by checking if it can provide its components. If not, it returns nil.",
+        "type": "comment"
+    },
+    "2476": {
+        "file_id": 257,
+        "content": "\treturn [self colorByDarkeningToRed:r green:g blue:b alpha:1.0f];\n}\n#pragma mark String utilities\n- (NSString *)stringFromColor {\n\tNSAssert(self.canProvideRGBComponents, @\"Must be an RGB color to use -stringFromColor\");\n\tNSString *result;\n\tswitch (self.colorSpaceModel) {\n\t\tcase kCGColorSpaceModelRGB:\n\t\t\tresult = [NSString stringWithFormat:@\"{%0.3f, %0.3f, %0.3f, %0.3f}\", self.red, self.green, self.blue, self.alpha];\n\t\t\tbreak;\n\t\tcase kCGColorSpaceModelMonochrome:\n\t\t\tresult = [NSString stringWithFormat:@\"{%0.3f, %0.3f}\", self.white, self.alpha];\n\t\t\tbreak;\n\t\tdefault:\n\t\t\tresult = nil;\n\t}\n\treturn result;\n}\n- (NSString *)hexStringFromColor {\n\treturn [NSString stringWithFormat:@\"%0.6X\", self.rgbHex];\n}\n#pragma mark Class methods\n+ (UIColor *)randomColor {\n\treturn [UIColor colorWithRed:(CGFloat)RAND_MAX / random()\n\t\t\t\t\t\t   green:(CGFloat)RAND_MAX / random()\n\t\t\t\t\t\t\tblue:(CGFloat)RAND_MAX / random()\n\t\t\t\t\t\t   alpha:1.0f];\n}\n+ (UIColor *)colorWithRGBHex:(UInt32)hex {\n\tint r = (hex >> 16) & 0xFF;\n\tint g = (hex >> 8) & 0xFF;\n\tint b = (hex) & 0xFF;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/UIColor+expanded.m:287-324"
+    },
+    "2477": {
+        "file_id": 257,
+        "content": "The code provides a UIColor class with methods to create colors by darkening red, green, and blue values, convert color to string representation in different formats (RGB or hex), generate random colors, and create colors from RGB hex value.",
+        "type": "comment"
+    },
+    "2478": {
+        "file_id": 257,
+        "content": "\treturn [UIColor colorWithRed:r / 255.0f\n\t\t\t\t\t\t   green:g / 255.0f\n\t\t\t\t\t\t\tblue:b / 255.0f\n\t\t\t\t\t\t   alpha:1.0f];\n}\n// Returns a UIColor by scanning the string for a hex number and passing that to +[UIColor colorWithRGBHex:]\n// Skips any leading whitespace and ignores any trailing characters\n+ (UIColor *)colorWithTheHexString:(NSString *)stringToConvert {\n\tNSScanner *scanner = [NSScanner scannerWithString:stringToConvert];\n\tunsigned hexNum;\n\tif (![scanner scanHexInt:&hexNum]) return nil;\n\treturn [UIColor colorWithRGBHex:hexNum];\n}\n+ (UIColor *)colorWithHexString:(NSString *)color alpha:(CGFloat)alpha {\n    // 删除字符串中的空格\n    NSString * colorStr = [[color stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] uppercaseString];\n    // String should be 6 or 8 characters\n    if ([colorStr length] < 6) {\n        return [UIColor clearColor];\n    }\n    // strip 0X if it appears\n    // 如果是0x开头的，那么截取字符串，字符串从索引为2的位置开始，一直到末尾\n    if ([colorStr hasPrefix:@\"0X\"]) {\n        colorStr = [colorStr substringFromIndex:2];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/UIColor+expanded.m:326-353"
+    },
+    "2479": {
+        "file_id": 257,
+        "content": "This code defines methods for creating UIColor objects from hex string representation. The first method takes a red, green, and blue value as parameters to create the color. The second method scans an input string for a valid hex number and returns a corresponding color using the +[UIColor colorWithRGBHex:] method. The third method further accepts an alpha channel parameter and trims any whitespace from the input string before creating a color object using the previously defined methods.",
+        "type": "comment"
+    },
+    "2480": {
+        "file_id": 257,
+        "content": "    }\n    // 如果是#开头的，那么截取字符串，字符串从索引为1的位置开始，一直到末尾\n    if ([colorStr hasPrefix:@\"#\"]) {\n        colorStr = [colorStr substringFromIndex:1];\n    }\n    // 除去所有开头字符后 再判断字符串长度\n    if ([colorStr length] != 6) {\n        return [UIColor clearColor];\n    }\n    // Separate into r, g, b substrings\n    NSRange range;\n    range.location = 0;\n    range.length = 2;\n    //red\n    NSString * redStr = [colorStr substringWithRange:range];\n    //green\n    range.location = 2;\n    NSString * greenStr = [colorStr substringWithRange:range];\n    //blue\n    range.location = 4;\n    NSString * blueStr = [colorStr substringWithRange:range];\n    // Scan values 将十六进制转换成二进制\n    unsigned int r, g, b;\n    [[NSScanner scannerWithString:redStr] scanHexInt:&r];\n    [[NSScanner scannerWithString:greenStr] scanHexInt:&g];\n    [[NSScanner scannerWithString:blueStr] scanHexInt:&b];\n    return [UIColor colorWithRed:((float)r / 255.0f) green:((float)g / 255.0f) blue:((float)b / 255.0f) alpha:alpha];\n}\n+ (UIColor *)colorWithHexString:(NSString *)color {\n    return [self colorWithHexString:color alpha:1.0f];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/UIColor+expanded.m:354-388"
+    },
+    "2481": {
+        "file_id": 257,
+        "content": "The code converts a hexadecimal color string into a UIColor object. It first checks if the string starts with '#' and removes it, then extracts separate substrings for red, green, and blue components. The code then uses NSScanner to convert each substring into an integer representing the corresponding component's value in hexadecimal format. Finally, the code creates a new UIColor object with the extracted RGB values and the specified alpha channel.",
+        "type": "comment"
+    },
+    "2482": {
+        "file_id": 257,
+        "content": "}\n// Lookup a color using css 3/svg color name\n+ (UIColor *)colorWithName:(NSString *)cssColorName {\n\tUIColor *color;\n\t@synchronized(colorNameCache) {\n\t\t// Look for the color in the cache\n\t\tcolor = [colorNameCache objectForKey:cssColorName];\n\t\tif ((id)color == [NSNull null]) {\n\t\t\t// If it wasn't there previously, it's still not there now\n\t\t\tcolor = nil;\n\t\t} else if (!color) {\n\t\t\t// Color not in cache, so search for it now\n\t\t\tcolor = [self searchForColorByName:cssColorName];\n\t\t\t// Set the value in cache, storing NSNull on failure\n\t\t\t[colorNameCache setObject:(color ?: (id)[NSNull null])\n\t\t\t\t\t\t\t   forKey:cssColorName];\n\t\t}\n\t}\n\treturn color;\n}\n#pragma mark UIColor_Expanded initialization\n+ (void)load {\n\tcolorNameCache = [[NSMutableDictionary alloc] init];\n}\n@end\n#pragma mark -\n#if SUPPORTS_UNDOCUMENTED_API\n@implementation UIColor (UIColor_Undocumented_Expanded)\n- (NSString *)fetchStyleString {\n\treturn [self styleString];\n}\n// Convert a color into RGB Color space, courtesy of Poltras\n// via http://ofcodeandmen.poltras.com/2009/01/22/convert-a-cgcolorref-to-another-cgcolorspaceref/",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/UIColor+expanded.m:389-431"
+    },
+    "2483": {
+        "file_id": 257,
+        "content": "This code defines a method for getting UIColor from a CSS/SVG color name and initializes the cache when loading. It uses a cache to store previously looked-up colors and searches for colors if they are not found in the cache. The cache is implemented using an NSMutableDictionary, and it stores either the actual color or NSNull if there was a failure in searching for the color. Additionally, the code provides a method for fetching the style string of a UIColor object, possibly making use of an undocumented API.",
+        "type": "comment"
+    },
+    "2484": {
+        "file_id": 257,
+        "content": "//\n- (UIColor *)rgbColor {\n\t// Call to undocumented method \"styleString\".\n\tNSString *style = [self styleString];\n\tNSScanner *scanner = [NSScanner scannerWithString:style];\n\tCGFloat red, green, blue;\n\tif (![scanner scanString:@\"rgb(\" intoString:NULL]) return nil;\n\tif (![scanner scanFloat:&red]) return nil;\n\tif (![scanner scanString:@\",\" intoString:NULL]) return nil;\n\tif (![scanner scanFloat:&green]) return nil;\n\tif (![scanner scanString:@\",\" intoString:NULL]) return nil;\n\tif (![scanner scanFloat:&blue]) return nil;\n\tif (![scanner scanString:@\")\" intoString:NULL]) return nil;\n\tif (![scanner isAtEnd]) return nil;\n\treturn [UIColor colorWithRed:red green:green blue:blue alpha:self.alpha];\n}\n@end\n#endif // SUPPORTS_UNDOCUMENTED_API\n@implementation UIColor (UIColor_Expanded_Support)\n/*\n * Database of color names and hex rgb values, derived\n * from the css 3 color spec:\n *\thttp://www.w3.org/TR/css3-color/\n *\n * We think this is a very compact way of storing\n * this information, and relatively cheap to lookup.\n *\n * Note that we search for color names starting with ','",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/UIColor+expanded.m:432-461"
+    },
+    "2485": {
+        "file_id": 257,
+        "content": "This method defines a custom rgbColor property for UIColor class, which parses the color string \"rgb(red, green, blue)\" and returns a UIColor object. It uses an undocumented method \"styleString\" to obtain the color string and scans it using NSScanner. If the scanning process fails at any step, it returns nil indicating an invalid color string. Finally, if the color string is valid, it creates and returns a new UIColor object with the provided red, green, blue values and the alpha value from self.alpha property.",
+        "type": "comment"
+    },
+    "2486": {
+        "file_id": 257,
+        "content": " * and terminated by '#', so that we don't get false matches.\n * For this reason, the database begins with ','.\n */\nstatic const char *colorNameDB = \",\"\n\"aliceblue#f0f8ff,antiquewhite#faebd7,aqua#00ffff,aquamarine#7fffd4,azure#f0ffff,\"\n\"beige#f5f5dc,bisque#ffe4c4,black#000000,blanchedalmond#ffebcd,blue#0000ff,\"\n\"blueviolet#8a2be2,brown#a52a2a,burlywood#deb887,cadetblue#5f9ea0,chartreuse#7fff00,\"\n\"chocolate#d2691e,coral#ff7f50,cornflowerblue#6495ed,cornsilk#fff8dc,crimson#dc143c,\"\n\"cyan#00ffff,darkblue#00008b,darkcyan#008b8b,darkgoldenrod#b8860b,darkgray#a9a9a9,\"\n\"darkgreen#006400,darkgrey#a9a9a9,darkkhaki#bdb76b,darkmagenta#8b008b,\"\n\"darkolivegreen#556b2f,darkorange#ff8c00,darkorchid#9932cc,darkred#8b0000,\"\n\"darksalmon#e9967a,darkseagreen#8fbc8f,darkslateblue#483d8b,darkslategray#2f4f4f,\"\n\"darkslategrey#2f4f4f,darkturquoise#00ced1,darkviolet#9400d3,deeppink#ff1493,\"\n\"deepskyblue#00bfff,dimgray#696969,dimgrey#696969,dodgerblue#1e90ff,\"\n\"firebrick#b22222,floralwhite#fffaf0,forestgreen#228b22,fuchsia#ff00ff,\"",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/UIColor+expanded.m:462-476"
+    },
+    "2487": {
+        "file_id": 257,
+        "content": "This code contains a static const char array, named colorNameDB, which stores the expanded names of various colors along with their respective color codes. Each color entry is terminated by '#', and the database begins with a ',' to avoid false matches.",
+        "type": "comment"
+    },
+    "2488": {
+        "file_id": 257,
+        "content": "\"gainsboro#dcdcdc,ghostwhite#f8f8ff,gold#ffd700,goldenrod#daa520,gray#808080,\"\n\"green#008000,greenyellow#adff2f,grey#808080,honeydew#f0fff0,hotpink#ff69b4,\"\n\"indianred#cd5c5c,indigo#4b0082,ivory#fffff0,khaki#f0e68c,lavender#e6e6fa,\"\n\"lavenderblush#fff0f5,lawngreen#7cfc00,lemonchiffon#fffacd,lightblue#add8e6,\"\n\"lightcoral#f08080,lightcyan#e0ffff,lightgoldenrodyellow#fafad2,lightgray#d3d3d3,\"\n\"lightgreen#90ee90,lightgrey#d3d3d3,lightpink#ffb6c1,lightsalmon#ffa07a,\"\n\"lightseagreen#20b2aa,lightskyblue#87cefa,lightslategray#778899,\"\n\"lightslategrey#778899,lightsteelblue#b0c4de,lightyellow#ffffe0,lime#00ff00,\"\n\"limegreen#32cd32,linen#faf0e6,magenta#ff00ff,maroon#800000,mediumaquamarine#66cdaa,\"\n\"mediumblue#0000cd,mediumorchid#ba55d3,mediumpurple#9370db,mediumseagreen#3cb371,\"\n\"mediumslateblue#7b68ee,mediumspringgreen#00fa9a,mediumturquoise#48d1cc,\"\n\"mediumvioletred#c71585,midnightblue#191970,mintcream#f5fffa,mistyrose#ffe4e1,\"\n\"moccasin#ffe4b5,navajowhite#ffdead,navy#000080,oldlace#fdf5e6,olive#808000,\"\n\"olivedrab#6b8e23,orange#ffa500,orangered#ff4500,orchid#da70d6,palegoldenrod#eee8aa,\"",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/UIColor+expanded.m:477-490"
+    },
+    "2489": {
+        "file_id": 257,
+        "content": "This code contains a string of hexadecimal values, each representing different colors in the RGB color model. These colors can be used as input for various UI-related functions or operations.",
+        "type": "comment"
+    },
+    "2490": {
+        "file_id": 257,
+        "content": "\"palegreen#98fb98,paleturquoise#afeeee,palevioletred#db7093,papayawhip#ffefd5,\"\n\"peachpuff#ffdab9,peru#cd853f,pink#ffc0cb,plum#dda0dd,powderblue#b0e0e6,\"\n\"purple#800080,red#ff0000,rosybrown#bc8f8f,royalblue#4169e1,saddlebrown#8b4513,\"\n\"salmon#fa8072,sandybrown#f4a460,seagreen#2e8b57,seashell#fff5ee,sienna#a0522d,\"\n\"silver#c0c0c0,skyblue#87ceeb,slateblue#6a5acd,slategray#708090,slategrey#708090,\"\n\"snow#fffafa,springgreen#00ff7f,steelblue#4682b4,tan#d2b48c,teal#008080,\"\n\"thistle#d8bfd8,tomato#ff6347,turquoise#40e0d0,violet#ee82ee,wheat#f5deb3,\"\n\"white#ffffff,whitesmoke#f5f5f5,yellow#ffff00,yellowgreen#9acd32\";\n+ (UIColor *)searchForColorByName:(NSString *)cssColorName {\n\tUIColor *result = nil;\n\t// Compile the string we'll use to search against the database\n\t// We search for \",<colorname>#\" to avoid false matches\n\tconst char *searchString = [[NSString stringWithFormat:@\",%@#\", cssColorName] UTF8String];\n\t// Search for the color name\n\tconst char *found = strstr(colorNameDB, searchString);\n\t// If found, step past the search string and grab the hex representation",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/UIColor+expanded.m:491-510"
+    },
+    "2491": {
+        "file_id": 257,
+        "content": "This code defines a method `searchForColorByName:` that takes a CSS color name as input, searches for the corresponding hex representation in a pre-compiled string, and returns a UIColor object if found. The code compiles a search string to avoid false matches and uses strstr() to find the color name within the colorNameDB string.",
+        "type": "comment"
+    },
+    "2492": {
+        "file_id": 257,
+        "content": "\tif (found) {\n\t\tconst char *after = found + strlen(searchString);\n\t\tint hex;\n\t\tif (sscanf(after, \"%x\", &hex) == 1) {\n\t\t\tresult = [self colorWithRGBHex:hex];\n\t\t}\n\t}\n\treturn result;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/UIColor+expanded.m:511-521"
+    },
+    "2493": {
+        "file_id": 257,
+        "content": "This code checks if a found string contains a valid hex color code after the search string. If so, it converts the hex to an UIColor object using the 'colorWithRGBHex' method of UIColor class and assigns it to the result variable.",
+        "type": "comment"
+    },
+    "2494": {
+        "file_id": 258,
+        "content": "/SMG_NothingIsAll/Demo/Extension/UIView+Extension.h",
+        "type": "filepath"
+    },
+    "2495": {
+        "file_id": 258,
+        "content": "This Objective-C code extends UIView, providing read-only properties for size, position, and center point, along with methods to perform subviews operations, find superviews by class, and convert/calculate coordinates.",
+        "type": "summary"
+    },
+    "2496": {
+        "file_id": 258,
+        "content": "//\n//  UIView+Extension.h\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/11/8.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n@interface UIView (Extension)\n//MARK:===============================================================\n//MARK:                     < frame >\n//MARK:===============================================================\n@property (nonatomic) CGFloat x;\n@property (nonatomic) CGFloat y;\n@property (nonatomic) CGFloat width;\n@property (nonatomic) CGFloat height;\n@property (nonatomic) CGPoint origin;\n@property (nonatomic) CGSize size;\n//MARK:===============================================================\n//MARK:                     < show (一般用于动画中,取真实显示数据) >\n//MARK:===============================================================\n@property (nonatomic,readonly) CGFloat showX;\n@property (nonatomic,readonly) CGFloat showY;\n@property (nonatomic,readonly) CGFloat showW;\n@property (nonatomic,readonly) CGFloat showH;\n@property (nonatomic,readonly) CGRect showFrame;\n@property (nonatomic,readonly) CGPoint showOrigin;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/UIView+Extension.h:1-31"
+    },
+    "2497": {
+        "file_id": 258,
+        "content": "This code is for extending the UIView class in Objective-C by adding new properties for frame and show data. The properties allow easy access to frame and show values, including x, y, width, height, origin, size, showX, showY, showW, showH, and showFrame, which can be used for animations or display adjustments.",
+        "type": "comment"
+    },
+    "2498": {
+        "file_id": 258,
+        "content": "@property (nonatomic,readonly) CGSize showSize;\n@property (nonatomic,readonly) CGFloat showMinX;\n@property (nonatomic,readonly) CGFloat showMinY;\n@property (nonatomic,readonly) CGFloat showMaxX;\n@property (nonatomic,readonly) CGFloat showMaxY;\n- (CGFloat)showCenX;\n- (CGFloat)showCenY;\n//MARK:===============================================================\n//MARK:                     < subView >\n//MARK:===============================================================\n/**\n *  MARK:--------------------返回指定subViews--------------------\n *  @result : notnull\n */\n-(NSMutableArray*) subViews_AllDeep;\n-(NSMutableArray*) subViews_AllDeepWithClass:(Class)aClass;\n-(NSMutableArray*) subViews_AllDeepWithRect:(CGRect)rect;\n-(void)removeAllSubviews;\n//MARK:===============================================================\n//MARK:                     < superView >\n//MARK:===============================================================\n-(NSMutableArray*) superViews_AllDeepWithClass:(Class)aClass;\n//MARK:===============================================================",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/UIView+Extension.h:32-64"
+    },
+    "2499": {
+        "file_id": 258,
+        "content": "This code defines a class with readonly properties for the view's size, position, and center point. It also includes methods for retrieving all subviews recursively, removing all subviews, and finding superviews by class.",
+        "type": "comment"
+    }
+}

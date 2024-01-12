@@ -1,0 +1,10 @@
+{
+    "summary": "Supports automatic memory caching for db (prevents performance issues caused by frequent readings of frequently operated files).",
+    "details": [
+        {
+            "comment": "Supports automatic memory caching for db (prevents performance issues caused by frequent readings of frequently operated files).",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/XGRedis/README.md\":0-2",
+            "content": "#  XGRedis\n1. \u652f\u6301\u5bf9db\u81ea\u52a8\u505a\u5185\u5b58\u7f13\u5b58 (\u4ee5\u9632\u6b62\u5728\u9891\u7e41\u64cd\u4f5c\u7684\u6587\u4ef6,\u91cd\u590d\u8bfb\u53d6\u5e26\u6765\u7684\u6027\u80fd\u95ee\u9898);"
+        }
+    ]
+}

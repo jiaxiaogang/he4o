@@ -1,0 +1,538 @@
+{
+    "800": {
+        "file_id": 86,
+        "content": "            OutputModel *model = [[OutputModel alloc] init];\n            model.identify = identify;\n            model.data = NUMTOOK([AINetIndex getData:value_p]);\n            [valids addObject:model];\n        }\n    }\n    //5. 执行输出\n    if (ARRISOK(valids)) {\n        return [self output_General:valids logBlock:^{\n            //6. 将输出入网\n            [theTC commitOutputLogAsync:valids];\n        }];\n    }\n    return [[[TCResult new:false] mkMsg:@\"output输出无效而失败\"] mkStep:52];\n}\n+(void) output_FromReactor:(NSString*)identify datas:(NSArray*)datas{\n    //1. 转为outModel\n    NSMutableArray *models = [[NSMutableArray alloc] init];\n    for (NSNumber *data in ARRTOOK(datas)) {\n        OutputModel *model = [[OutputModel alloc] init];\n        model.identify = STRTOOK(identify);\n        model.data = NUMTOOK(data);\n        [models addObject:model];\n    }\n    //2. 传递到output执行\n    if (ARRISOK(models)) {\n        [Output output_General:models logBlock:^{\n            //3. 将输出入网\n            [theTC commitOutputLogAsync:models];\n        }];\n    }",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIOutput/Output.m:39-72"
+    },
+    "801": {
+        "file_id": 86,
+        "content": "The code initializes an OutputModel, sets its identify and data properties based on input values, adds the model to a valid array, checks if any invalid inputs exist, executes output, sends it to network for logging.",
+        "type": "comment"
+    },
+    "802": {
+        "file_id": 86,
+        "content": "}\n/**\n *  MARK:--------------------情绪反射--------------------\n *  @todo\n *      2021.02.05: 将AIMoodType_Satisfy改为调用output_General()输出;\n */\n+(void) output_FromMood:(AIMoodType)type{\n    if (type == AIMoodType_Anxious) {\n        //1. 生成outputModel\n        OutputModel *model = [[OutputModel alloc] init];\n        model.identify = ANXIOUS_RDS;\n        model.data = @(1);\n        //2. 输出\n        [self output_General:@[model] logBlock:^{\n            //3. 将输出mood提交给tc\n            [AIInput commitIMV:MVType_Anxious from:10 to:3];\n        }];\n    }else if(type == AIMoodType_Satisfy){\n        OutputModel *model = [[OutputModel alloc] init];\n        model.identify = SATISFY_RDS;\n        [[NSNotificationCenter defaultCenter] postNotificationName:kOutputObserver object:model];\n    }\n}\n//MARK:===============================================================\n//MARK:                     < privateMethod >\n//MARK:===============================================================\n/**\n *  MARK:--------------------actions输出--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIOutput/Output.m:73-104"
+    },
+    "803": {
+        "file_id": 86,
+        "content": "This code defines a method called `output_FromMood` that takes in an AIMoodType as a parameter and outputs different types of data based on the mood. If the mood is AIMoodType_Anxious, it generates an OutputModel with the identify ANXIOUS_RDS and data 1, then calls `output_General` to output this model. It also submits the mood to the AIInput object. If the mood is AIMoodType_Satisfy, it generates an OutputModel with the identify SATISFY_RDS and posts it using a notification. This code includes other methods for different actions but is not relevant in this chunk.",
+        "type": "comment"
+    },
+    "804": {
+        "file_id": 86,
+        "content": " *  @desc 含: 反射被动输出 和 TC主动输出\n *  @param outputModels : OutputModel数组;\n *  如: 吸吮,抓握\n *  注: 先天,被动\n *  @version\n *      2021.02.05: 改为front取回useTime触发行为开始,到back再执行行为后视觉等触发 (参考22117);\n *      2021.02.26: 将timer改为SEL方式,因为block方式在模拟器运行会闪退;\n *      2023.07.22: 行为执行所需要时间返回到TCResult (参考30084-todo1);\n */\n+(TCResult*) output_General:(NSArray*)outputModels logBlock:(void(^)())logBlock{\n    //0. 输出行为输出到UI时,重新调用回主线程;\n    __block NSArray *weakOutputModels = outputModels;\n    __block Act0 weakLogBlock = logBlock;\n    __block double useTime = 0;//从同步主线程取回所需要时间;\n    //1. 取useTime\n    for (OutputModel *model in ARRTOOK(weakOutputModels)) {\n        model.type = OutputObserverType_UseTime;\n        [[NSNotificationCenter defaultCenter] postNotificationName:kOutputObserver object:model];\n        useTime = MAX(model.useTime, useTime);\n    }\n    dispatch_async(dispatch_get_main_queue(), ^{\n        //1. 广播执行行为开始 (执行行为动画,返回执行用时);\n        for (OutputModel *model in ARRTOOK(weakOutputModels)) {\n            model.type = OutputObserverType_Front;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIOutput/Output.m:105-130"
+    },
+    "805": {
+        "file_id": 86,
+        "content": "This code is responsible for the general output of different attack behaviors in a game. It takes an array of OutputModel objects and a log block as parameters. It calculates the use time needed to execute each behavior, posts notifications to update the model's type, and then broadcasts the execution start on the main queue.",
+        "type": "comment"
+    },
+    "806": {
+        "file_id": 86,
+        "content": "            [[NSNotificationCenter defaultCenter] postNotificationName:kOutputObserver object:model];\n        }\n        //2. 行为输出完成后;\n        [NSTimer scheduledTimerWithTimeInterval:useTime target:self selector:@selector(notificationTimer:) userInfo:^(){\n            //3. 将输出入网\n            weakLogBlock();\n            //4. 广播执行输出后 (现实世界处理 & 飞后视觉 & 价值触发等);\n            for (OutputModel *model in ARRTOOK(weakOutputModels)) {\n                model.type = OutputObserverType_Back;\n                [[NSNotificationCenter defaultCenter] postNotificationName:kOutputObserver object:model];\n            }\n        } repeats:false];\n    });\n    return [[[[TCResult new:true] mkMsg:@\"output输出成功\"] mkDelay:useTime] mkStep:61];\n}\n+(void)notificationTimer:(NSTimer*)timer{\n    Act0 invokeBlock = timer.userInfo;\n    invokeBlock();\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIOutput/Output.m:131-154"
+    },
+    "807": {
+        "file_id": 86,
+        "content": "The code schedules a timer to post a notification after the behavior output is completed. The notification triggers the weak block and broadcasts the execution of output in different contexts. This ensures that the output is processed in real-world handling, flight visualization, and value triggering scenarios.",
+        "type": "comment"
+    },
+    "808": {
+        "file_id": 87,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIOutput/OutputModel.h",
+        "type": "filepath"
+    },
+    "809": {
+        "file_id": 87,
+        "content": "The code defines an interface for OutputModel class, which represents an output model with properties such as identify, data (a single parameter value), type (output stage), and useTime. The identify property currently represents the algorithm type (e.g., EAT_RDS) but may be refined later when structuring the output.",
+        "type": "summary"
+    },
+    "810": {
+        "file_id": 87,
+        "content": "//\n//  OutputModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/1/9.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------输出模型--------------------\n */\n@interface OutputModel : NSObject\n/**\n *  MARK:--------------------通知标识符--------------------\n *  注: 目前输出是单值的,所以此处rds其实就是algsType,比如EAT_RDS,以后有了结构化后,再细分拆开;\n */\n@property (strong,nonatomic) NSString *identify;\n//参数值 (目前仅支持1个) (应通过网络来实现组,而不是多参数)\n@property (strong,nonatomic) NSNumber *data;\n//输出类型 (阶段)\n@property (assign, nonatomic) OutputObserverType type;\n//输出所需时间\n@property (assign, nonatomic) CGFloat useTime;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIOutput/OutputModel.h:1-31"
+    },
+    "811": {
+        "file_id": 87,
+        "content": "The code defines an interface for OutputModel class, which represents an output model with properties such as identify, data (a single parameter value), type (output stage), and useTime. The identify property currently represents the algorithm type (e.g., EAT_RDS) but may be refined later when structuring the output.",
+        "type": "comment"
+    },
+    "812": {
+        "file_id": 88,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIOutput/OutputModel.m",
+        "type": "filepath"
+    },
+    "813": {
+        "file_id": 88,
+        "content": "This file contains the implementation of the OutputModel class in the SMG_NothingIsAll project. It is created by jia on January 9th, 2019, and is protected by a copyright for XiaoGang. The header file \"OutputModel.h\" is imported for this implementation.",
+        "type": "summary"
+    },
+    "814": {
+        "file_id": 88,
+        "content": "//\n//  OutputModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/1/9.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import \"OutputModel.h\"\n@implementation OutputModel\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIOutput/OutputModel.m:1-13"
+    },
+    "815": {
+        "file_id": 88,
+        "content": "This file contains the implementation of the OutputModel class in the SMG_NothingIsAll project. It is created by jia on January 9th, 2019, and is protected by a copyright for XiaoGang. The header file \"OutputModel.h\" is imported for this implementation.",
+        "type": "comment"
+    },
+    "816": {
+        "file_id": 89,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIOutput/OutputUtils.h",
+        "type": "filepath"
+    },
+    "817": {
+        "file_id": 89,
+        "content": "This code is the header file for OutputUtils class, which converts data type to \"输出算法标识\" (output algorithm identifier). It currently only supports one-to-one mapping but plans to support multiple outputs in the future. The function convertOutType2dataSource takes a data type string as input and returns an NSString representing the output algorithm identifier.",
+        "type": "summary"
+    },
+    "818": {
+        "file_id": 89,
+        "content": "//\n//  OutputUtils.h\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/7/20.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface OutputUtils : NSObject\n/**\n *  MARK:--------------------转换数据类型为\"输出算法标识\"--------------------\n *  注:目前仅支持一一对应,随后支持多个后,return改为Array;\n *  注:所有output类型都应由先天反射转后天主动,所以此处写死的方法不应存在;\n *  解: 应该以后天学习映射关系到网络的方式,来解决这个问题;TODO\n */\n+(NSString*) convertOutType2dataSource:(NSString*)dataType;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIOutput/OutputUtils.h:1-22"
+    },
+    "819": {
+        "file_id": 89,
+        "content": "This code is the header file for OutputUtils class, which converts data type to \"输出算法标识\" (output algorithm identifier). It currently only supports one-to-one mapping but plans to support multiple outputs in the future. The function convertOutType2dataSource takes a data type string as input and returns an NSString representing the output algorithm identifier.",
+        "type": "comment"
+    },
+    "820": {
+        "file_id": 90,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIOutput/OutputUtils.m",
+        "type": "filepath"
+    },
+    "821": {
+        "file_id": 90,
+        "content": "This code file \"OutputUtils.m\" defines a class OutputUtils with a method convertOutType2dataSource, which takes an input string algsType and returns TEXT_RDS if algsType is AICharAlgsModel, otherwise it returns nil as other types are not supported.",
+        "type": "summary"
+    },
+    "822": {
+        "file_id": 90,
+        "content": "//\n//  OutputUtils.m\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/7/20.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"OutputUtils.h\"\n@implementation OutputUtils\n+(NSString*) convertOutType2dataSource:(NSString*)algsType {\n    if ([@\"AICharAlgsModel\" isEqualToString:algsType]) {\n        return TEXT_RDS;\n    }else{\n        return nil;//暂不支持其它类型输出;\n    }\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIOutput/OutputUtils.m:1-21"
+    },
+    "823": {
+        "file_id": 90,
+        "content": "This code file \"OutputUtils.m\" defines a class OutputUtils with a method convertOutType2dataSource, which takes an input string algsType and returns TEXT_RDS if algsType is AICharAlgsModel, otherwise it returns nil as other types are not supported.",
+        "type": "comment"
+    },
+    "824": {
+        "file_id": 91,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIReactorControl/AIReactorControl.h",
+        "type": "filepath"
+    },
+    "825": {
+        "file_id": 91,
+        "content": "The AIReactorControl class manages data transmission to the algorithm layer, processes information and includes methods for creating mind values, reacting to emotions, submitting reflex reactions, and committing inputs to teach \"he\" autonomous use of external functions.",
+        "type": "summary"
+    },
+    "826": {
+        "file_id": 91,
+        "content": "//\n//  AIReactorControl.h\n//  SMG_NothingIsAll\n//\n//  Created by 贾  on 2017/12/7.\n//  Copyright © 2017年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------反应控制器 (中脑)--------------------\n *  1. 主要负责信息向算法皮层传递;\n *  2. 及对信息的反射做出处理;\n */\n@class ImvAlgsModelBase;\n@interface AIReactorControl : NSObject\n/**\n *  MARK:--------------------先天mindValue工厂--------------------\n */\n+(ImvAlgsModelBase*) createMindValue:(MVType)type value:(NSInteger)value;\n/**\n *  MARK:--------------------反射情绪--------------------\n */\n+(void) createReactor:(AIMoodType)moodType;\n+(void) commitInput:(id)input;\n+(void) commitIMV:(MVType)type from:(CGFloat)from to:(CGFloat)to;\n+(void) commitCustom:(CustomInputType)type value:(NSInteger)value;\n+(void) commitView:(UIView*)selfView targetView:(UIView*)targetView rect:(CGRect)rect;\n/**\n *  MARK:--------------------提交反射反应--------------------\n *  1. 由外围神经提交一个反射信号;\n *  2. ReactorControl在收到信号后,响应反射;\n *  3. 并把反射执行的outLog构建到网络中;\n *\n *  目的: 是让he学会自主使用某外围功能;\n *  备注: 目前支持1个nsnumber参数; (也可以暂不支持参数)",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIReactorControl/AIReactorControl.h:1-43"
+    },
+    "827": {
+        "file_id": 91,
+        "content": "This code defines the AIReactorControl class, which handles transmitting information to the algorithm layer and processing it. It also includes methods for creating mind values, reacting to emotions, committing inputs, and submitting reflex reactions. The purpose is to teach the \"he\" to use external functions autonomously.",
+        "type": "comment"
+    },
+    "828": {
+        "file_id": 91,
+        "content": " *\n *  @param identify : 反射标识\n *  @param datas    : 要反射执行的参数 (吸吮力度或哭的表情)\n *\n */\n+(void) commitReactor:(NSString*)identify datas:(NSArray*)datas;\n+(void) commitReactor:(NSString*)identify;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIReactorControl/AIReactorControl.h:44-52"
+    },
+    "829": {
+        "file_id": 91,
+        "content": "This function allows the user to commit a reactor with specified identify and data, or only with the identify parameter.",
+        "type": "comment"
+    },
+    "830": {
+        "file_id": 92,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIReactorControl/AIReactorControl.m",
+        "type": "filepath"
+    },
+    "831": {
+        "file_id": 92,
+        "content": "AIReactorControl.m provides methods for creating mind value, managing reactions, and committing inputs of various types using imported algorithms. It defines a class with methods for reactors' commitment and outputs handling.",
+        "type": "summary"
+    },
+    "832": {
+        "file_id": 92,
+        "content": "//\n//  AIReactorControl.m\n//  SMG_NothingIsAll\n//\n//  Created by 贾  on 2017/12/7.\n//  Copyright © 2017年 XiaoGang. All rights reserved.\n//\n#import \"AIReactorControl.h\"\n#import \"AIStringAlgs.h\"\n#import \"AIImvAlgs.h\"\n#import \"AIVisionAlgs.h\"\n#import \"AICustomAlgs.h\"\n@implementation AIReactorControl\n+(ImvAlgsModelBase*) createMindValue:(MVType)type value:(NSInteger)value {\n    //1. 根据model判断是否createMindValue();\n    //2. 根据model判断是否作Reactor();\n    return nil;\n}\n+(void) createReactor:(AIMoodType)moodType{\n    //1. 肢体反射\n    //2. createMindValue\n    //3. durationManager\n}\n+(void) commitInput:(id)input{\n    if (ISOK(input, [NSString class])) {\n        [AIStringAlgs commitInput:input];\n    }\n}\n+(void) commitIMV:(MVType)type from:(CGFloat)from to:(CGFloat)to {\n    [AIImvAlgs commitIMV:type from:from to:to];\n}\n+(void) commitCustom:(CustomInputType)type value:(NSInteger)value{\n    [AICustomAlgs commitCustom:type value:value];\n}\n+(void) commitView:(UIView*)selfView targetView:(UIView*)targetView rect:(CGRect)rect{\n    [AIVisionAlgs commitView:selfView targetView:targetView rect:rect];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIReactorControl/AIReactorControl.m:1-45"
+    },
+    "833": {
+        "file_id": 92,
+        "content": "AIReactorControl.m contains methods for creating mind value, managing reactions, and committing inputs of different types. It uses multiple imported algorithms to process string, IMV, custom, and vision-based inputs, and manage corresponding reactions.",
+        "type": "comment"
+    },
+    "834": {
+        "file_id": 92,
+        "content": "}\n+(void) commitReactor:(NSString*)identify{\n    [self commitReactor:identify datas:@[@(1)]];\n}\n+(void) commitReactor:(NSString*)identify datas:(NSArray*)datas{\n    [Output output_FromReactor:identify datas:datas];\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIReactorControl/AIReactorControl.m:46-55"
+    },
+    "835": {
+        "file_id": 92,
+        "content": "This code defines a class with methods for committing a reactor using an identifier and data. The `commitReactor` method takes only the identifier, while the second overloaded version also accepts data as an array. The output from the reactor is handled by the `output_FromReactor` function.",
+        "type": "comment"
+    },
+    "836": {
+        "file_id": 93,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/AIThinkingControl.h",
+        "type": "filepath"
+    },
+    "837": {
+        "file_id": 93,
+        "content": "The code defines a class AIThinkingControl with properties and methods for managing thinking operations, energy consumption, memory, and activeness. It includes methods for updating/retrieving energy value, operation count, loop ID, and clearing all information.",
+        "type": "summary"
+    },
+    "838": {
+        "file_id": 93,
+        "content": "//\n//  AIThinkingControl.h\n//  SMG_NothingIsAll\n//\n//  Created by 贾  on 2017/11/12.\n//  Copyright © 2017年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n#define tiQueueLab @\"ThinkInQueue\"\n#define toQueueLab @\"ThinkOutQueue\"\n/**\n *  MARK:--------------------思维控制器--------------------\n *  1. 主要负责思维 (前额叶) 功能;\n *  2. 次要负责分发激活等 (丘脑) 功能;\n */\n@class ShortMatchManager,DemandManager,TCDebug;\n@interface AIThinkingControl : NSObject\n+(AIThinkingControl*) shareInstance;\n@property (strong, nonatomic) TCDebug *tcDebug;\n@property (strong, nonatomic) dispatch_queue_t tiQueue; //TI异步线程\n@property (strong, nonatomic) dispatch_queue_t toQueue; //TO异步线程\n/**\n *  MARK:--------------------思维模式--------------------\n *  @desc 0动物模式(IO都启), 1认知模式(I启O停), 2植物模式(IO都停);\n *  @desc 强行停止思维工作 (参考27084-TODO4);\n *          1. TO通过energyValid返false阻断TCSolution来实现;\n *          2. TI通过阻断Input感知来实现;\n */\n@property (assign, nonatomic) int thinkMode;\n//MARK:===============================================================\n//MARK:                     < 输入流程 >",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/AIThinkingControl.h:1-37"
+    },
+    "839": {
+        "file_id": 93,
+        "content": "This code defines a class AIThinkingControl that manages thinking operations. It has an instance, tiQueue for TI asynchronous thread and toQueue for TO asynchronous thread. The thinkMode property determines the cognitive mode (0-animal mode, 1-cognitive mode, 2-plant mode) and allows stopping thought processes. Input flow operations are also defined in this class.",
+        "type": "comment"
+    },
+    "840": {
+        "file_id": 93,
+        "content": "//MARK:===============================================================\n/**\n *  MARK:--------------------流入input--------------------\n */\n-(void) commitInputAsync:(NSObject*)algsModel;\n-(void) commitInputWithModelsAsync:(NSArray*)dics algsType:(NSString*)algsType;\n/**\n *  MARK:--------------------输出的日志入网(输入小脑)--------------------\n *  @param outputModels : 输出内容(如:eat)\n *  注: 大脑为引,小脑为行\n */\n-(void) commitOutputLogAsync:(NSArray*)outputModels;\n//MARK:===============================================================\n//MARK:                     < 短时记忆 >\n//MARK:===============================================================\n-(ShortMatchManager*) inModelManager;\n-(DemandManager*) outModelManager;\n//MARK:===============================================================\n//MARK:                     < 活跃度 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------消耗活跃度--------------------\n */\n-(void) updateEnergyDelta:(CGFloat)delta;\n/**\n *  MARK:--------------------设新活跃度--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/AIThinkingControl.h:38-71"
+    },
+    "841": {
+        "file_id": 93,
+        "content": "This code appears to define a class with methods for handling input and output, memory management, and energy consumption. The commitInputAsync method allows the user to provide input models, while commitOutputLogAsync sends output models to the network. The class also contains ShortMatchManager and DemandManager for short-term memory tasks. Additionally, there are methods for updating energy levels and managing activeness.",
+        "type": "comment"
+    },
+    "842": {
+        "file_id": 93,
+        "content": " *  @desc 只有当新的更大时,才有效;\n */\n-(void) updateEnergyValue:(CGFloat)value;\n-(BOOL) energyValid;\n//MARK:===============================================================\n//MARK:                     < 操作计数 >\n//MARK:===============================================================\n-(void) updateOperCount:(NSString*)operater;\n-(void) updateOperCount:(NSString*)operater min:(NSInteger)min;\n-(long long) getOperCount;\n//MARK:===============================================================\n//MARK:                     < 循环Id >\n//MARK:===============================================================\n-(void) updateLoopId;\n-(long long) getLoopId;\n//MARK:===============================================================\n//MARK:                     < 清思维 >\n//MARK:===============================================================\n-(void) clear;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/AIThinkingControl.h:72-95"
+    },
+    "843": {
+        "file_id": 93,
+        "content": "This code defines a class with methods for updating energy value, retrieving the valid status of energy, updating and retrieving operation count, updating and retrieving loop ID, and clearing all information.",
+        "type": "comment"
+    },
+    "844": {
+        "file_id": 94,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/AIThinkingControl.m",
+        "type": "filepath"
+    },
+    "845": {
+        "file_id": 94,
+        "content": "The `AIThinkingControl` class handles input data, processes AbsAlgNode, and manages energy levels for an entity with validation and control methods. It also includes clear and updateThinkMode for real-time system management.",
+        "type": "summary"
+    },
+    "846": {
+        "file_id": 94,
+        "content": "//\n//  AIThinkingControl.m\n//  SMG_NothingIsAll\n//\n//  Created by 贾  on 2017/11/12.\n//  Copyright © 2017年 XiaoGang. All rights reserved.\n//\n#import \"AIThinkingControl.h\"\n#import \"NSObject+Extension.h\"\n/**\n *  MARK:--------------------思维控制器--------------------\n *\n *\n *  >> assExp\n *  1. 在联想中,遇到的数据,都存到thinkFeedCache;\n *  2. 在联想中,遇到的mv,都叠加到当前demand下;\n *\n */\n@interface AIThinkingControl()\n@property (strong, nonatomic) DemandManager *demandManager;         //OUT短时记忆 (输出数据管理器);\n@property (strong, nonatomic) ShortMatchManager *shortMatchManager; //IN短时记忆 (输入数据管理器);\n@property (assign, nonatomic) long long operCount;                  //思维操作计数;\n@property (assign, nonatomic) long long loopId;                     //思维循环Id;\n@property (assign, nonatomic) long long toLoopId;                   //TO循环Id;\n/**\n *  MARK:--------------------当前能量值--------------------\n *  1. 激活: mv输入时激活;\n *  2. 消耗: 思维的循环中消耗;\n *      1. 构建\"概念节点\"消耗0.1;\n *      2. 构建\"时序节点\"消耗1;\n *\n *  3. 范围: 0-20;\n */\n@property (assign, nonatomic) CGFloat energy;\n@end\n@implementation AIThinkingControl",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/AIThinkingControl.m:1-42"
+    },
+    "847": {
+        "file_id": 94,
+        "content": "This code is defining a class named `AIThinkingControl` that has properties like `demandManager`, `shortMatchManager`, `operCount`, `loopId`, `toLoopId`, and `energy`. The `energy` property represents the current energy level which can be activated by mv input, consumed during thinking loops, and ranges from 0 to 20.",
+        "type": "comment"
+    },
+    "848": {
+        "file_id": 94,
+        "content": "static AIThinkingControl *_instance;\n+(AIThinkingControl*) shareInstance{\n    if (_instance == nil) {\n        _instance = [[AIThinkingControl alloc] init];\n    }\n    return _instance;\n}\n-(id) init{\n    self = [super init];\n    if (self) {\n        [self initData];\n        [self initDisplay];\n    }\n    return self;\n}\n/**\n *  MARK:--------------------initData--------------------\n *  @version\n *      2023.07.19: tc线程由串行改为并行,因为虚拟世界输入信号是随时的,不应该排队 (如果TC在忙,大可在思维中因为优先级不够而中断,但确不该排队) (参考30083-todo4);\n */\n-(void) initData{\n    self.tiQueue = dispatch_queue_create([tiQueueLab UTF8String], DISPATCH_QUEUE_SERIAL);\n    self.toQueue = dispatch_queue_create([toQueueLab UTF8String], DISPATCH_QUEUE_SERIAL);\n    self.demandManager = [[DemandManager alloc] init];\n    self.shortMatchManager = [[ShortMatchManager alloc] init];\n    [theRT regist:kClearTCSEL target:self selector:@selector(clear)];\n    [theRT regist:kThinkModeSEL target:self selector:@selector(updateThinkMode:)];\n    self.tcDebug = [[TCDebug alloc] init];\n}\n-(void) initDisplay {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/AIThinkingControl.m:44-76"
+    },
+    "849": {
+        "file_id": 94,
+        "content": "This code initializes the AIThinkingControl class, creating and returning a shared instance, initializing data by creating dispatch queues for handling tasks in parallel, managing demands and short matches, registering events, and initializing display.",
+        "type": "comment"
+    },
+    "850": {
+        "file_id": 94,
+        "content": "    [self runToLoop];\n}\n//MARK:===============================================================\n//MARK:                     < 输入流程 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------数据输入--------------------\n *  说明: 单model (普通算法模型 或 imv模型)\n *  @version\n *      2022.10.09: 新输入直接存硬盘而不是isMem内存 (参考27124-todo6);\n */\n-(void) commitInputAsync:(NSObject*)algsModel {\n    __block NSObject *weakAlgsModel = algsModel;\n    dispatch_async(self.tiQueue, ^{//30083去异步\n        [self commitInput:weakAlgsModel];\n    });\n}\n-(void) commitInput:(NSObject*)algsModel{\n    //1. 植物模式阻断感知;\n    if (self.thinkMode == 2) return;\n    //0. 将algModel转为modelDic;\n    NSDictionary *modelDic = [NSObject getDic:algsModel containParent:true];\n    NSString *algsType = NSStringFromClass(algsModel.class);\n    //1. 装箱(除mv有两个元素外一般仅有一个元素)\n    NSArray *algsArr = [theNet algModelConvert2Pointers:modelDic algsType:algsType];\n    //2. 检测imv\n    BOOL findMV = [ThinkingUtils dataIn_CheckMV:algsArr];\n    //3. 分流_mv时",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/AIThinkingControl.m:77-109"
+    },
+    "851": {
+        "file_id": 94,
+        "content": "This code defines a method `commitInputAsync` that asynchronously commits input data to the model. It first creates a weak reference of the `algsModel` object and then dispatches an async task on the `tiQueue`. Inside this async task, the `commitInput` method is called, which checks if the thinking mode is plant mode (2) and returns early if it is. Next, it converts the `algsModel` to a dictionary `modelDic`, extracts the algorithm type, converts the model data to an array `algsArr`, checks if it's an imv by calling `dataIn_CheckMV`, and finally splits the flow based on whether it is an imv.",
+        "type": "comment"
+    },
+    "852": {
+        "file_id": 94,
+        "content": "    if (findMV) {\n        //1. 打包cmvNode;\n        AICMVNodeBase *mvNode = [theNet createConMv:algsArr];\n        //2. 加入瞬时记忆 & 生成时序指向mv等;\n        [TCInput pInput:mvNode];\n    }else{\n        //1. 打包成algTypeNode;\n        AIAlgNodeBase *algNode = [theNet createAbsAlg_NoRepeat:algsArr conAlgs:nil isOut:false at:nil ds:nil type:ATDefault];\n        //2. 加入瞬时记忆 & 识别等;\n        [TCInput rInput:algNode except_ps:nil];\n    }\n}\n/**\n *  MARK:--------------------数据输入--------------------\n *  @param dics : 多model (models仅含普通算法model -> 目前没有imv和普通信息掺杂在models中的情况;)\n *  步骤说明:\n *  1. 先构建具象parent节点,再构建抽象sub节点;\n *  2. 仅parent添加到瞬时记忆;\n *  3. 每个subAlg都要单独进行识别操作;\n *\n *  @version\n *      2020.07.19: 空场景时,不将空场景概念加到瞬时记忆序列中 (因为现在的内类比HN已经不再使用空场景做任何参考,所以其存在无意义,反而会影响到时序全含判断,因为记忆时序中的空场景,往往无法被新的时序包含);\n *      2022.10.09: 新输入直接存硬盘而不是isMem内存 (参考27124-todo6);\n *      2023.02.01: 不可识别自身,因为此处自身几乎全是新概念,识别自身似乎目前没啥用 (参考28041-BUG1-思路1-修复);\n *\n *  TODOWAIT:\n *  1. 默认为按边缘(ios的view层级)分组,随后可扩展概念内类比,按别的维度分组; 参考: n16p7\n */\n-(void) commitInputWithModelsAsync:(NSArray*)dics algsType:(NSString*)algsType {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/AIThinkingControl.m:110-141"
+    },
+    "853": {
+        "file_id": 94,
+        "content": "This code checks if it is dealing with multi-view or regular algorithm models. If multi-view, it creates a conMv node and adds it to the temporary input. If not, it creates an abstract algorithm node and adds it to the recognition process. The input is then committed asynchronously.",
+        "type": "comment"
+    },
+    "854": {
+        "file_id": 94,
+        "content": "    __block NSArray *weakDics = dics;\n    __block NSString *weakAT = algsType;\n    dispatch_async(self.tiQueue, ^{//30083去异步\n        [self commitInputWithModels:weakDics algsType:weakAT];\n    });\n}\n-(void) commitInputWithModels:(NSArray*)dics algsType:(NSString*)algsType{\n    //1. 植物模式阻断感知;\n    if (self.thinkMode == 2) return;\n    //1. 数据检查 (小鸟不能仅传入foodView,而要传入整个视角场景)\n    dics = ARRTOOK(dics);\n    ISTitleLog(@\"皮层输入\");\n    //2. 收集所有具象父概念的value_ps\n    NSMutableArray *parentValue_ps = [[NSMutableArray alloc] init];\n    NSMutableArray *subValuePsArr = [[NSMutableArray alloc] init];//2维数组\n    for (NSDictionary *item in dics) {\n        NSArray *item_ps = [theNet algModelConvert2Pointers:item algsType:algsType];\n        [parentValue_ps addObjectsFromArray:item_ps];\n        [subValuePsArr addObject:item_ps];\n    }\n    //3. 构建父概念 & 将空场景加入瞬时记忆;\n    AIAbsAlgNode *parentAlgNode = [theNet createAbsAlg_NoRepeat:parentValue_ps conAlgs:nil isOut:false at:nil ds:nil type:ATDefault];\n    //if (parentValue_ps.count == 0) [self.delegate aiThinkIn_AddToShortMemory:parentAlgNode.pointer isMatch:false];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/AIThinkingControl.m:142-166"
+    },
+    "855": {
+        "file_id": 94,
+        "content": "The code is checking if the thinking mode is 2, then verifying the input data and collecting all the child concepts' values. It creates a parent algorithm node using the collected values and adds it to the short-term memory.",
+        "type": "comment"
+    },
+    "856": {
+        "file_id": 94,
+        "content": "    if (Log4TCInput) NSLog(@\"---> 构建InputParent节点:%@\",Alg2FStr(parentAlgNode));\n    //4. 收集本组中,所有概念节点;\n    NSMutableArray *fromGroup_ps = [[NSMutableArray alloc] init];\n    //5. 构建子概念 (抽象概念,并嵌套);\n    for (NSArray *subValue_ps in subValuePsArr) {\n        AIAbsAlgNode *subAlgNode = [theNet createAbsAlg_NoRepeat:subValue_ps conAlgs:@[parentAlgNode] at:nil ds:nil type:ATDefault];\n        [fromGroup_ps addObject:subAlgNode.pointer];\n        //6. 将所有子概念添加到瞬时记忆 (2020.08.17: 由短时记忆替代);\n        NSLog(@\"InputSub:%@\",Alg2FStr(subAlgNode));\n    }\n    //6. NoMv处理;\n    for (AIKVPointer *alg_p in fromGroup_ps) {\n        [TCInput rInput:[SMGUtils searchNode:alg_p] except_ps:fromGroup_ps];\n    }\n}\n/**\n *  MARK:--------------------行为输出转输入--------------------\n *  @desc 目前行为进行时序识别,也进行概念识别;\n *  @version\n *      20200414 - 将输出参数集value_ps转到ThinkIn,去进行识别,保留ShortMatchModel,内类比等流程;\n */\n-(void) commitOutputLogAsync:(NSArray*)outputModels {\n    __block NSArray *weakOutputModels = outputModels;\n    dispatch_async(self.tiQueue, ^{//30083去异步",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/AIThinkingControl.m:167-195"
+    },
+    "857": {
+        "file_id": 94,
+        "content": "This code is processing a group of input values by building input parent nodes and nested child concepts. It then collects all concept nodes within the group, creates abstract child concepts, and adds them to short-term memory. Finally, it performs some \"NoMv\" processing and converts behavior output into input for further recognition processes. The code is executed asynchronously in a separate queue.",
+        "type": "comment"
+    },
+    "858": {
+        "file_id": 94,
+        "content": "        [self commitOutputLog:weakOutputModels];\n    });\n}\n-(void) commitOutputLog:(NSArray*)outputModels{\n    //1. 植物模式阻断感知;\n    if (self.thinkMode == 2) return;\n    //1. 数据\n    NSMutableArray *value_ps = [[NSMutableArray alloc] init];\n    for (OutputModel *model in ARRTOOK(outputModels)) {\n        //2. 装箱\n        AIKVPointer *output_p = [theNet getOutputIndex:model.identify outputObj:model.data];\n        if (output_p) {\n            [value_ps addObject:output_p];\n        }\n        //4. 记录可输出canout (当前善未形成node,所以无法建议索引;(检查一下,当outLog形成node后,索引的建立))\n        [AINetUtils setCanOutput:model.identify];\n    }\n    //2. 提交到ThinkIn进行识别_构建概念\n    AIAbsAlgNode *outAlg = [theNet createAbsAlg_NoRepeat:value_ps conAlgs:nil isOut:true at:nil type:ATDefault];\n    //3. 提交到ThinkIn进行识别_加瞬时记忆 & 进行识别\n    [TCInput rInput:outAlg except_ps:nil];\n}\n//MARK:===============================================================\n//MARK:                     < 输出流程 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------TO循环--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/AIThinkingControl.m:196-227"
+    },
+    "859": {
+        "file_id": 94,
+        "content": "This code snippet is responsible for committing the output log and involves the following steps:\n1. Stops plant mode if active.\n2. Gathers data from outputModels into a mutable array, value_ps.\n3. Boxes each model's output data using getOutputIndex method from theNet object and adds it to value_ps if not null.\n4. Records the canOutput for each identified item in outputModels.\n5. Submits the collected data (value_ps) to ThinkIn for recognition, building concepts with AbsAlgNode, and excludes except_ps.\n6. Inputs the recognized AbsAlgNode into TCInput for further processing.",
+        "type": "comment"
+    },
+    "860": {
+        "file_id": 94,
+        "content": " *  @desc 无论当前轮是否成功执行,都调用下轮循环继续TO线程;\n *  @version\n *      2023.07.22: 初版 (参考30084-todo2);\n */\n-(void) runToLoop {\n    //1. 启动TO线程 (参考30084-方案);\n    dispatch_async(_toQueue, ^{\n        while (true) {\n            if (self.thinkMode == 1 || self.thinkMode == 2) {\n                [NSThread sleepForTimeInterval:1];\n            }else{\n                TCResult *result = [TCScore scoreFromTOQueue];\n                if (result.step > 21) {\n                    NSLog(@\"TO上轮:%@ 等待:%.1f 下轮:%lld 消息:%@\",result.success?@\"成功\":@\"失败\",result.delay,++self.toLoopId,result.msg);\n                }\n                [NSThread sleepForTimeInterval:1 + result.delay];\n            }\n        }\n    });\n}\n//MARK:===============================================================\n//MARK:                     < 短时记忆 >\n//MARK:===============================================================\n-(ShortMatchManager*) inModelManager{\n    return self.shortMatchManager;\n}\n-(DemandManager*) outModelManager{\n    return self.demandManager;\n}\n//MARK:===============================================================",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/AIThinkingControl.m:228-261"
+    },
+    "861": {
+        "file_id": 94,
+        "content": "This code defines a method, runToLoop, that starts a TO thread and continuously loops through it. If the thinkMode is 1 or 2, it sleeps for 1 second; otherwise, it retrieves a result from the TO queue, logs it if the step is greater than 21, and sleeps for 1 second plus the delay time. The code also provides short model manager methods inModelManager and outModelManager.",
+        "type": "comment"
+    },
+    "862": {
+        "file_id": 94,
+        "content": "//MARK:                     < 活跃度 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------消耗活跃度--------------------\n */\n-(void) updateEnergyDelta:(CGFloat)delta{\n    self.energy = MAX(cMinEnergy, MIN(cMaxEnergy, self.energy + delta));\n    NSLog(@\"energy > delta:%.2f = energy:%.2f\",delta,self.energy);\n}\n/**\n *  MARK:--------------------设新活跃度--------------------\n *  @desc 只有当新的更大时,才有效;\n */\n-(void) updateEnergyValue:(CGFloat)value{\n    if (value > self.energy) {\n        self.energy = MAX(cMinEnergy, MIN(cMaxEnergy, value));\n        NSLog(@\"energy > newValue:%.2f = energy:%.2f\",value,self.energy);\n    }\n}\n/**\n *  MARK:--------------------活跃度有效判断--------------------\n *  @version\n *      2022.05.04: 工作记忆树在限宽基础上,又加上限深后,此处弃用,都返回true (参考2523c-分析代码2);\n *      2022.05.22: roots又有循环卡顿问题,此处加上强行停止思考的功能,以方便调试);\n */\n-(BOOL) energyValid{\n    if (self.thinkMode == 1 || self.thinkMode == 2) {\n        return false;\n    }\n    return self.energy > 0;\n}\n//MARK:===============================================================",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/AIThinkingControl.m:262-297"
+    },
+    "863": {
+        "file_id": 94,
+        "content": "This code segment deals with the management of an entity's \"energy\" level. It provides functions to consume, set new and judge the validity of the energy value. Consuming or setting a new energy value is only effective if it's greater than the current energy. The energy must be greater than 0 to be considered valid, otherwise, the value returned by this function will always be true.",
+        "type": "comment"
+    },
+    "864": {
+        "file_id": 94,
+        "content": "//MARK:                     < 操作计数 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------对任何TC操作算一次操作计数--------------------\n *  @param operater : 调用者名称 (调用者方法进入时,调用此方法);\n *  @version\n *      2022.08.08: 判断卡顿状态时,转入植物模式 (参考27063);\n *      2022.08.08: 去掉<200ms的快速执行带来的影响: 仅>200ms时才统计;\n *      2022.08.17: 记录和调试实际last调用者的性能 (参考27064-跟进);\n */\n-(void) updateOperCount:(NSString*)operater{\n    [self updateOperCount:operater min:200];\n}\n-(void) updateOperCount:(NSString*)operater min:(NSInteger)min{\n    self.operCount++;\n    [self.tcDebug updateOperCount:operater min:min];\n}\n-(long long) getOperCount{\n    return _operCount;\n}\n//MARK:===============================================================\n//MARK:                     < 循环Id >\n//MARK:===============================================================\n//循环Id (参考26183);\n-(void) updateLoopId{\n    self.loopId++;\n    [XGConfig.instance responseXGConfig2HE];\n    [self.tcDebug updateLoopId];\n}\n-(long long) getLoopId{\n    return _loopId;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/AIThinkingControl.m:298-333"
+    },
+    "865": {
+        "file_id": 94,
+        "content": "This code manages operation count and loop ID. The updateOperCount method increments the operation count, while updateLoopId increments the loop ID. The getOperCount and getLoopId methods return the respective counts.",
+        "type": "comment"
+    },
+    "866": {
+        "file_id": 94,
+        "content": "}\n//MARK:===============================================================\n//MARK:                     < 清思维 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------清思维--------------------\n *  @desc 模拟重启 (参考26014-4);\n */\n-(void) clear{\n    [self.inModelManager clear];\n    [self.outModelManager clear];\n    self.energy = 0;\n    [theRT invoked:kClearTCSEL];\n}\n-(void) updateThinkMode:(NSNumber*)value {\n    if (NUMISOK(value)) {\n        self.thinkMode = value.intValue;\n    }\n    [theRT invoked:kThinkModeSEL];\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/AIThinkingControl.m:334-358"
+    },
+    "867": {
+        "file_id": 94,
+        "content": "This code contains a clear method and an updateThinkMode method for the AIThinkingControl class. The clear method restarts the model managers, resets energy to 0, and sends a kClearTCSEL signal to the real-time system. The updateThinkMode method updates the think mode based on the provided value and sends a kThinkModeSEL signal to the real-time system.",
+        "type": "comment"
+    },
+    "868": {
+        "file_id": 95,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIMatchAlgModel.h",
+        "type": "filepath"
+    },
+    "869": {
+        "file_id": 95,
+        "content": "The code defines the class AIMatchAlgModel in Objective-C which represents a single match algorithm model. It has properties for matchAlg, matchCount, sumNear (total similarity), nearCount (number of similarities less than 1) and sumRefStrong (total reference strength). The class provides methods to get the similarity value and the strong value.",
+        "type": "summary"
+    },
+    "870": {
+        "file_id": 95,
+        "content": "//\n//  AIMatchAlgModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/1/15.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------单条matchAlg模型--------------------\n */\n@interface AIMatchAlgModel : NSObject\n//+(AIMatchAlgModel*) newWithMatchAlg:(AIKVPointer*)matchAlg matchCount:(int)matchCount sumNear:(CGFloat)sumNear nearCount:(int)nearCount sumRefStrong:(int)sumRefStrong;\n@property (strong, nonatomic) AIKVPointer *matchAlg;//匹配概念\n@property (assign, nonatomic) int matchCount;       //匹配数\n@property (assign, nonatomic) CGFloat sumNear;      //总相近度 (参考25082-公式2分子部分) (20230119改为默认1参考28035-todo1);\n@property (assign, nonatomic) int nearCount;        //相近度<1的相近个数\n@property (assign, nonatomic) int sumRefStrong;     //总引用强度 (稀疏码被此概念引用的强度和);\n/**\n *  MARK:--------------------获取相近度--------------------\n */\n-(CGFloat) matchValue;\n/**\n *  MARK:--------------------获取强度--------------------\n */\n-(CGFloat) strongValue;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIMatchAlgModel.h:1-33"
+    },
+    "871": {
+        "file_id": 95,
+        "content": "The code defines the class AIMatchAlgModel in Objective-C which represents a single match algorithm model. It has properties for matchAlg, matchCount, sumNear (total similarity), nearCount (number of similarities less than 1) and sumRefStrong (total reference strength). The class provides methods to get the similarity value and the strong value.",
+        "type": "comment"
+    },
+    "872": {
+        "file_id": 96,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIMatchAlgModel.m",
+        "type": "filepath"
+    },
+    "873": {
+        "file_id": 96,
+        "content": "The code defines a class, AIMatchAlgModel, with two initializer methods and calculates similarity and average reference strength values. It also includes NSCoding implementation for serialization/deserialization.",
+        "type": "summary"
+    },
+    "874": {
+        "file_id": 96,
+        "content": "//\n//  AIMatchAlgModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/1/15.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import \"AIMatchAlgModel.h\"\n@implementation AIMatchAlgModel\n-(id) init {\n    self = [super init];\n    if (self != nil) {\n        self.sumNear = 1;\n    }\n    return self;\n}\n//+(AIMatchAlgModel*) newWithMatchAlg:(AIKVPointer*)matchAlg matchCount:(int)matchCount sumNear:(CGFloat)sumNear nearCount:(int)nearCount sumRefStrong:(int)sumRefStrong{\n//    AIMatchAlgModel *model = [[AIMatchAlgModel alloc] init];\n//    model.matchCount = matchCount;\n//    model.matchAlg = matchAlg;\n//    model.sumNear = sumNear;\n//    model.nearCount = nearCount;\n//    model.sumRefStrong = sumRefStrong;\n//    return model;\n//}\n/**\n *  MARK:--------------------获取相近度--------------------\n *  @version\n *      2023.01.18: 相乘的值就是相似度直接返回 (参考28035-todo1);\n */\n-(CGFloat) matchValue {\n    return self.sumNear;\n    //return self.nearCount > 0 ? self.sumNear / self.nearCount : 1;\n}\n/**\n *  MARK:--------------------获取强度--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIMatchAlgModel.m:1-42"
+    },
+    "875": {
+        "file_id": 96,
+        "content": "This code defines a class called AIMatchAlgModel. It has an initializer method and a newWithMatchAlg:matchCount:sumNear:nearCount:sumRefStrong initializer method. The matchValue method calculates the similarity value based on sumNear and nearCount.",
+        "type": "comment"
+    },
+    "876": {
+        "file_id": 96,
+        "content": " *  @desc 获取概念引用强度,求出平均值 (参考2722d-todo4);\n */\n-(CGFloat) strongValue {\n    return self.nearCount > 0 ? self.sumRefStrong / self.nearCount : 1;\n}\n/**\n *  MARK:--------------------NSCoding--------------------\n */\n- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {\n    self = [super init];\n    if (self) {\n        self.matchAlg = [aDecoder decodeObjectForKey:@\"matchAlg\"];\n        self.matchCount = [aDecoder decodeIntForKey:@\"matchCount\"];\n        self.sumNear = [aDecoder decodeFloatForKey:@\"sumNear\"];\n        self.nearCount = [aDecoder decodeIntForKey:@\"nearCount\"];\n        self.sumRefStrong = [aDecoder decodeIntForKey:@\"sumRefStrong\"];\n    }\n    return self;\n}\n- (void)encodeWithCoder:(NSCoder *)aCoder {\n    [aCoder encodeObject:self.matchAlg forKey:@\"matchAlg\"];\n    [aCoder encodeInt:self.matchCount forKey:@\"matchCount\"];\n    [aCoder encodeFloat:self.sumNear forKey:@\"sumNear\"];\n    [aCoder encodeInt:self.nearCount forKey:@\"nearCount\"];\n    [aCoder encodeInt:self.sumRefStrong forKey:@\"sumRefStrong\"];\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIMatchAlgModel.m:43-72"
+    },
+    "877": {
+        "file_id": 96,
+        "content": "This code defines a class with two methods. The first method, strongValue, calculates the average reference strength based on nearCount and sumRefStrong variables. The second part of the code provides NSCoding implementation for serializing and deserializing objects.",
+        "type": "comment"
+    },
+    "878": {
+        "file_id": 97,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIMatchCansetModel.h",
+        "type": "filepath"
+    },
+    "879": {
+        "file_id": 97,
+        "content": "This code defines the AIMatchCansetModel class, which represents a single barcode recognition result. It takes in a matchFo (detected old Canset Fo) and indexDic (mapping between new and old Cansets) as parameters and initializes the corresponding properties.",
+        "type": "summary"
+    },
+    "880": {
+        "file_id": 97,
+        "content": "//\n//  AIMatchCansetModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/3/29.\n//  Copyright © 2023年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------Canset单条识别结果--------------------\n */\n@interface AIMatchCansetModel : NSObject\n+(AIMatchCansetModel*) newWithMatchFo:(AIFoNodeBase*)matchFo indexDic:(NSDictionary*)indexDic;\n//识别到的oldCansetFo;\n@property (strong, nonatomic) AIFoNodeBase *matchFo;\n//新旧Canset映射;\n@property (strong, nonatomic) NSDictionary *indexDic;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIMatchCansetModel.h:1-24"
+    },
+    "881": {
+        "file_id": 97,
+        "content": "This code defines the AIMatchCansetModel class, which represents a single barcode recognition result. It takes in a matchFo (detected old Canset Fo) and indexDic (mapping between new and old Cansets) as parameters and initializes the corresponding properties.",
+        "type": "comment"
+    },
+    "882": {
+        "file_id": 98,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIMatchCansetModel.m",
+        "type": "filepath"
+    },
+    "883": {
+        "file_id": 98,
+        "content": "This code is for creating a new instance of AIMatchCansetModel, initializing its matchFo and indexDic properties from provided parameters.",
+        "type": "summary"
+    },
+    "884": {
+        "file_id": 98,
+        "content": "//\n//  AIMatchCansetModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/3/29.\n//  Copyright © 2023年 XiaoGang. All rights reserved.\n//\n#import \"AIMatchCansetModel.h\"\n@implementation AIMatchCansetModel\n+(AIMatchCansetModel*) newWithMatchFo:(AIFoNodeBase*)matchFo indexDic:(NSDictionary*)indexDic {\n    AIMatchCansetModel *model = [[AIMatchCansetModel alloc] init];\n    model.matchFo = matchFo;\n    model.indexDic = indexDic;\n    return model;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIMatchCansetModel.m:1-20"
+    },
+    "885": {
+        "file_id": 98,
+        "content": "This code is for creating a new instance of AIMatchCansetModel, initializing its matchFo and indexDic properties from provided parameters.",
+        "type": "comment"
+    },
+    "886": {
+        "file_id": 99,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIMatchFoModel.h",
+        "type": "filepath"
+    },
+    "887": {
+        "file_id": 99,
+        "content": "The AIMatchFoModel class is for time-series recognition tasks, storing match index mapping and cut points. It has methods for feedback handling, calculating match strength, and constructing protoFo. The `@end` code snippet ends a class or block's scope, maintaining code organization and clarity.",
+        "type": "summary"
+    },
+    "888": {
+        "file_id": 99,
+        "content": "//\n//  AIMatchFoModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/1/23.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------单条matchFo模型--------------------\n *  @version\n *      2021.06.29: 将cutIndex拆分为lastMatchIndex和cutIndex两个,即新增cutIndex已发生截点 (参考23152);\n *      2022.09.06: 将匹配度matchFoValue改成单存分子分母两个值,更新时分母+1,分子计算当前的相近度即可 (参考27095-8);\n *      2022.09.15: 因为maskFo(本体为protoFo/regroupFo),它其实在反省推进时会变化的,所以改成realMaskFo (参考27097);\n */\n@class AIFoNodeBase;\n@interface AIMatchFoModel : NSObject\n+(AIMatchFoModel*) newWithMatchFo:(AIKVPointer*)matchFo protoOrRegroupFo:(AIKVPointer*)protoOrRegroupFo sumNear:(CGFloat)sumNear nearCount:(NSInteger)nearCount indexDic:(NSDictionary*)indexDic cutIndex:(NSInteger)cutIndex sumRefStrong:(NSInteger)sumRefStrong baseFrameModel:(AIShortMatchModel*)baseFrameModel;\n@property (weak, nonatomic) ReasonDemandModel *baseRDemand; //记录其挂载在哪个R任务下 (weak不允许序列化,避免循环序列化);\n//@property (weak, nonatomic) AIShortMatchModel *baseFrameModel;//记录其挂载在哪个frameModel下;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIMatchFoModel.h:1-24"
+    },
+    "889": {
+        "file_id": 99,
+        "content": "This code defines the `AIMatchFoModel` class, which represents a single matchFo model. It has properties such as `baseRDemand`, `baseFrameModel`, and instance methods for initializing the object with specific values including `matchFo`, `protoOrRegroupFo`, `sumNear`, `nearCount`, `indexDic`, `cutIndex`, and `sumRefStrong`. It also has annotations describing changes made to the class over time.",
+        "type": "comment"
+    },
+    "890": {
+        "file_id": 99,
+        "content": "@property (strong, nonatomic) AIKVPointer *matchFo;     //匹配时序\n/**\n *  MARK:--------------------识别时为protoFo,反思时为regroupFo--------------------\n *  @title 实际经历;\n *  @desc 状态: 启用,初始化时为maskFo,但后续可随着反省触发器和cutIndex的推进更新;\n *  @desc 元素初始化时为protoFo/regroupFo的content_ps,后续随着更新附加到尾部;\n */\n@property (strong, nonatomic) NSMutableArray *realMaskFo; //List<protoAlg_p>\n@property (strong, nonatomic) NSMutableArray *realDeltaTimes; //List<deltaTime> (用来完全时序时,构建protoFo时使用);\n@property (assign, nonatomic) NSTimeInterval lastFrameTime; // 最后一帧的时间 (用来记录上一帧,以记录下(新)帧时的deltaTime值);\n@property (assign, nonatomic) CGFloat sumNear;          //时序元素相近度总和\n@property (assign, nonatomic) NSInteger nearCount;      //时序元素相近数\n@property (assign, nonatomic) BOOL isExpired;           //过期状态 (参考n27p09)\n//MARK:===============================================================\n//MARK:                     < status每帧状态 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------状态--------------------\n *  @version",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIMatchFoModel.h:26-48"
+    },
+    "891": {
+        "file_id": 99,
+        "content": "This code defines a class with various properties related to time-series recognition and reflection. The \"matchFo\" property is used for matching the time series, while \"realMaskFo\" and \"realDeltaTimes\" store information about the actual experience in real-time. The \"lastFrameTime\" records the time of the last frame, and \"sumNear\" and \"nearCount\" keep track of the similarity between time-series elements. The \"isExpired\" property indicates if the data has expired.",
+        "type": "comment"
+    },
+    "892": {
+        "file_id": 99,
+        "content": " *      2022.09.17: status迭代为每帧一个 (参考27098-todo1);\n */\n@property (strong, nonatomic) NSMutableDictionary *status;//每帧状态 <K:cutIndex, V:TIModelStatus>\n-(TIModelStatus) getStatusForCutIndex:(NSInteger)cutIndex;\n-(void) setStatus:(TIModelStatus)status forCutIndex:(NSInteger)cutIndex;\n/**\n *  MARK:--------------------匹配下标映射--------------------\n *  @desc 其描述了match与mask匹配到的每一位的下标映射 <K:matchFoIndex,V:maskFoIndex>;\n *  @caller\n *      1. 当为瞬时识别时,lastMatchIndex与已发生cutIndex同值 (因为瞬时时,判断的本来就是当前已经发生的事);\n *      2. 当为反思识别时,lastMatchIndex与已发生cutIndex不同值 (因为反思是一种假设,并判断假设这么做会怎么样);\n *  @version\n *      2022.06.11: 将lastMatchIndex迭代成indexDic,即从末位改成记录所有 (参考26232-TODO2);\n */\n@property (strong, nonatomic) NSMutableDictionary *indexDic2;\n/**\n *  MARK:--------------------已发生截点--------------------\n *  @desc 已发生与预测的截点 (0开始,已发生含cutIndex);\n *          1. 识别时为indexDic的长度-1,即全已发生;\n *          2. 反思时为-1,无效数据 (反思要从foModel.actionIndex随变随取);\n */\n@property (assign, nonatomic) NSInteger cutIndex;\n/**\n *  MARK:--------------------时序识别中被引用强度--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIMatchFoModel.h:49-75"
+    },
+    "893": {
+        "file_id": 99,
+        "content": "This code defines properties for storing match index mapping, already occurred cut points, and a mutable dictionary for each frame's status. The code also mentions that the status iteration is for each frame, and there are distinctions between instant recognition and reflection recognition.",
+        "type": "comment"
+    },
+    "894": {
+        "file_id": 99,
+        "content": " *  @version\n *      2022.12.28: 改为indexDic匹配已发生部分的综合强度 (参考2722f-todo13);\n */\n@property (assign, nonatomic) NSInteger sumRefStrong;\n/**\n *  MARK:--------------------AIMatchFoModel的评分(懒加载)缓存--------------------\n *  @desc 初始未计算时 = NSNotFound;\n *  @version\n *      2022.08.19: 初版,因为demand评分常慢(>1s),跑会训练就卡的很,所以加了这个评分缓存 (参考27065);\n */\n@property (assign, nonatomic) CGFloat scoreCache;\n//MARK:===============================================================\n//MARK:                     < publicMethod >\n//MARK:===============================================================\n//有反馈且匹配当前帧\n-(void) feedbackPushFrame:(AIKVPointer*)fbProtoAlg;\n//有反馈但不匹配当前帧\n-(void) feedbackOtherFrame:(AIKVPointer*)otherProtoAlg;\n//匹配度计算;\n-(CGFloat) matchFoValue;\n//推进帧结束(完全帧)时总结 (参考27201-5);\n-(void) pushFrameFinish;\n/**\n *  MARK:--------------------获取强度--------------------\n *  @desc 获取概念引用强度,求出平均值 (参考2722d-todo4);\n */\n-(CGFloat) strongValue;\n/**\n *  MARK:--------------------在发生完全后,构建完全protoFo时使用获取orders--------------------\n */\n-(NSArray*) convertOrders4NewCansetV2;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIMatchFoModel.h:76-115"
+    },
+    "895": {
+        "file_id": 99,
+        "content": "This code defines a class `AIMatchFoModel` with properties such as `sumRefStrong` and `scoreCache`. It also includes methods for handling feedback, calculating match strength, getting reference strength, and constructing complete protoFo. The methods are designed to be used in specific situations like matching frames or after a frame is finished.",
+        "type": "comment"
+    },
+    "896": {
+        "file_id": 99,
+        "content": "@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIMatchFoModel.h:117-117"
+    },
+    "897": {
+        "file_id": 99,
+        "content": "The code snippet `@end` is used to end the scope of a previously defined class or block, indicating that the current section has reached its conclusion. This helps to maintain code organization and clarity by separating different sections within the code.",
+        "type": "comment"
+    },
+    "898": {
+        "file_id": 100,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIMatchFoModel.m",
+        "type": "filepath"
+    },
+    "899": {
+        "file_id": 100,
+        "content": "This code contains a class for model-based similarity computation, including conversion methods and functions for frame processing, status updates, time differences, feedback management, and AI canset classification tasks. It increases efficiency, performs comparisons and manipulations, logs errors, and encodes NSCoder variables.",
+        "type": "summary"
+    }
+}

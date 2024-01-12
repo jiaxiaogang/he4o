@@ -1,0 +1,542 @@
+{
+    "2700": {
+        "file_id": 283,
+        "content": "/ThirdParty/MemManager/README.md",
+        "type": "filepath"
+    },
+    "2701": {
+        "file_id": 283,
+        "content": "This code snippet is for a memory manager, designed to backup, restore, clear memory related to HE. It serves as a tool to manage and maintain HE's memory operations.",
+        "type": "summary"
+    },
+    "2702": {
+        "file_id": 283,
+        "content": "#  记忆管理器\n用来对HE的记忆进行备份,恢复,清空等操作;",
+        "type": "code",
+        "location": "/ThirdParty/MemManager/README.md:1-3"
+    },
+    "2703": {
+        "file_id": 283,
+        "content": "This code snippet is for a memory manager, designed to backup, restore, clear memory related to HE. It serves as a tool to manage and maintain HE's memory operations.",
+        "type": "comment"
+    },
+    "2704": {
+        "file_id": 284,
+        "content": "/ThirdParty/RLTrainer/Model/RTModel.h",
+        "type": "filepath"
+    },
+    "2705": {
+        "file_id": 284,
+        "content": "The code is a header file for the RTModel class, which defines properties and methods, including register, queue, invoke, clear, and retrieve total execution time functions. It also includes an NSArray of queues and public methods to manage pause names.",
+        "type": "summary"
+    },
+    "2706": {
+        "file_id": 284,
+        "content": "//\n//  RTModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/31.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@protocol RTModelDelegate <NSObject>\n-(BOOL) rtModel_Playing;\n-(void) rtModel_Invoked;\n-(void) rtModel_Finished;\n@end\n@class RTQueueModel;\n@interface RTModel : NSObject\n@property (weak, nonatomic) id<RTModelDelegate> delegate;\n//MARK:===============================================================\n//MARK:                     < getset >\n//MARK:===============================================================\n-(NSMutableArray *)queues;\n-(NSInteger)queueIndex;\n//MARK:===============================================================\n//MARK:                     < publicMethod >\n//MARK:===============================================================\n-(void) regist:(NSString*)name target:(NSObject*)target selector:(SEL)selector;\n-(void) queue:(NSArray*)queues count:(NSInteger)count;\n-(void) invoked:(NSString*)name;\n-(void) clear;\n-(long long) getTotalUseTimed;\n//MARK:===============================================================",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/Model/RTModel.h:1-39"
+    },
+    "2707": {
+        "file_id": 284,
+        "content": "This code is the header file for a class named RTModel. It defines properties, methods, and a protocol RTModelDelegate. The class has getter and setter methods (getset), public methods to register, queue, invoke, clear, and retrieve total execution time. It also uses an NSArray of queues.",
+        "type": "comment"
+    },
+    "2708": {
+        "file_id": 284,
+        "content": "//MARK:               < publicMethod: 触发暂停命令 >\n//MARK:===============================================================\n-(void) appendPauseNames:(NSArray*)value;\n-(void) clearPauseNames;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/Model/RTModel.h:40-45"
+    },
+    "2709": {
+        "file_id": 284,
+        "content": "This code segment defines a class with two public methods, \"appendPauseNames\" and \"clearPauseNames\", which are used to manage pause names in the system.",
+        "type": "comment"
+    },
+    "2710": {
+        "file_id": 285,
+        "content": "/ThirdParty/RLTrainer/Model/RTModel.m",
+        "type": "filepath"
+    },
+    "2711": {
+        "file_id": 285,
+        "content": "The RTModel class manages training queues and execution with pause, register, report, queue management methods. It includes an `invoke` method for handling invocation attempts. The code initializes lastStartTime and handles waiting for commands to execute, considering busy status, advancing in the training model.",
+        "type": "summary"
+    },
+    "2712": {
+        "file_id": 285,
+        "content": "//\n//  RTModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/31.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import \"RTModel.h\"\n#define TimerInterval 0.6f\n@interface RTModel ()\n@property (strong, nonatomic) NSMutableDictionary *dic;     //技能字典\n@property (strong, nonatomic) NSMutableArray *queues;       //训练队列\n@property (assign, nonatomic) NSInteger queueIndex;         //训练进度\n@property (strong, nonatomic) NSTimer *timer;               //间隔计时器\n@property (assign, nonatomic) long long lastOperCount;      //思维操作计数\n@property (assign, nonatomic) long long useTimed;           //已使用时间\n@property (assign, nonatomic) long long lastStartTime;      //最后一次开始时间\n@property (strong, nonatomic) NSString *invokingName;       //当前执行中name;\n@property (strong, nonatomic) NSMutableArray *pauseNames;   //需要停下等待的命令;\n@end\n@implementation RTModel\n-(id) init {\n    self = [super init];\n    if(self != nil){\n        [self initData];\n    }\n    return self;\n}\n-(void) initData{\n    self.dic = [[NSMutableDictionary alloc] init];\n    self.queues = [[NSMutableArray alloc] init];",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/Model/RTModel.m:1-39"
+    },
+    "2713": {
+        "file_id": 285,
+        "content": "This code defines the RTModel class, which contains properties like a skill dictionary, training queues, progress index, and timers. The class also initializes data during initialization.",
+        "type": "comment"
+    },
+    "2714": {
+        "file_id": 285,
+        "content": "    self.pauseNames = [[NSMutableArray alloc] init];\n    dispatch_async(dispatch_get_main_queue(), ^{\n       self.timer = [NSTimer scheduledTimerWithTimeInterval:TimerInterval target:self selector:@selector(timeBlock) userInfo:nil repeats:true];\n    });\n}\n//MARK:===============================================================\n//MARK:                     < getset >\n//MARK:===============================================================\n-(NSMutableArray *)queues{\n    return _queues;\n}\n-(NSInteger)queueIndex{\n    return _queueIndex;\n}\n//MARK:===============================================================\n//MARK:                     < publicMethod >\n//MARK:===============================================================\n-(void) regist:(NSString*)name target:(NSObject*)target selector:(SEL)selector{\n    //1. 获得类和方法的签名\n    NSMethodSignature *methodSignature = [[target class] instanceMethodSignatureForSelector:selector];\n    //2. 反射器;\n    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:methodSignature];",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/Model/RTModel.m:40-66"
+    },
+    "2715": {
+        "file_id": 285,
+        "content": "This code initializes a pauseNames array and sets up a timer on the main queue. It also provides getter methods for queues and queueIndex, and a public method regist to register a name, target, and selector using reflection.",
+        "type": "comment"
+    },
+    "2716": {
+        "file_id": 285,
+        "content": "    //3. 从签名获得调用对象\n    [invocation setTarget:target];\n    invocation.target = target;\n    invocation.selector = selector;\n    //4. 收集备用;\n    [self.dic setObject:invocation forKey:name];\n}\n-(void) queue:(NSArray*)queues count:(NSInteger)count{\n    //1. 数据检查;\n    queues = ARRTOOK(queues);\n    //2. 更新训练队列;\n    for (NSInteger i = 0; i < count; i++) {\n        for (RTQueueModel *queue in queues) {\n            [self.queues addObject:queue];\n        }\n    }\n}\n//单步训练执行完成报告;\n-(void) invoked:(NSString*)name{\n    if ([STRTOOK(name) isEqualToString:self.invokingName]) {\n        self.invokingName = nil;\n    }\n}\n-(void) clear{\n    [self.queues removeAllObjects];\n    self.queueIndex = 0;\n    self.useTimed = 0;\n    self.lastStartTime = 0;\n}\n//返回useTimed + 现在播放中已用时;\n-(long long) getTotalUseTimed{\n    if (self.lastStartTime > 0) {\n        long long now = [[NSDate new] timeIntervalSince1970];\n        return self.useTimed + now - self.lastStartTime;\n    }\n    return self.useTimed;\n}\n//MARK:===============================================================",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/Model/RTModel.m:68-112"
+    },
+    "2717": {
+        "file_id": 285,
+        "content": "This code appears to be part of an object that manages training queues and execution. It handles invocations, updates the training queue, clears the queues, tracks total use timed, and provides methods for invoked reporting and queue management.",
+        "type": "comment"
+    },
+    "2718": {
+        "file_id": 285,
+        "content": "//MARK:               < publicMethod: 触发暂停命令 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------增加暂停命令 (参考28172-todo1.1)--------------------\n *  @desc 用于有些预约指令需要时间等待执行,防止强训工具提前退出本次训练 (所以一般用于防止回到MainPage或模拟重启);\n */\n-(void) appendPauseNames:(NSArray*)value {\n    [self.pauseNames addObjectsFromArray:value];\n}\n-(void) clearPauseNames {\n    [self.pauseNames removeAllObjects];\n}\n//MARK:===============================================================\n//MARK:                     < privateMethod >\n//MARK:===============================================================\n-(void) invoke:(RTQueueModel*)queue {\n    NSInvocation *invc = [self.dic objectForKey:queue.name];\n    if (queue.arg0) {\n        id arg0 = queue.arg0;\n        [invc setArgument:&arg0 atIndex:2];\n    }\n    @try {\n        [invc invoke];\n    }@catch (NSException *exception) {\n        NSLog(@\"%@\", exception);\n    }\n}\n//暂停时,把最后一次训练用时收集到已用时:useTimed中;\n-(void) pauseCollectUseTimed{\n    if (self.lastStartTime > 0) {",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/Model/RTModel.m:113-146"
+    },
+    "2719": {
+        "file_id": 285,
+        "content": "This code defines methods for adding and clearing pause commands, as well as a private method for invoking a queue. The `appendPauseNames` and `clearPauseNames` methods add or remove objects from the `pauseNames` array. The `invoke` method sets arguments for an invocation object and attempts to invoke it, catching any exceptions that may occur. The `pauseCollectUseTimed` method collects the last training time if a pause occurs.",
+        "type": "comment"
+    },
+    "2720": {
+        "file_id": 285,
+        "content": "        long long now = [[NSDate new] timeIntervalSince1970];\n        self.useTimed += now - self.lastStartTime;\n        self.lastStartTime = 0;\n    }\n}\n//开始播放时,记下开始播放的时间;\n-(void) playSetLastStartTime{\n    if (self.lastStartTime == 0) {\n        self.lastStartTime = [[NSDate new] timeIntervalSince1970];\n    }\n}\n//MARK:===============================================================\n//MARK:                     < block >\n//MARK:===============================================================\n/**\n *  MARK:--------------------强训执行器--------------------\n *  @version\n *      2023.02.11: 在等待上条命名,或思维空载时,kFlySEL继续执行 (参考28066-todo2);\n *      2023.02.11: BUG_多次飞的动画似乎有一点交叉,改为行为输出时,必须等上条执行完,才能执行下条;\n */\n-(void) timeBlock {\n    //1. 不用执行: 非播放状态,return;\n    if (![self.delegate rtModel_Playing]) {\n        [self pauseCollectUseTimed];\n        return;\n    }\n    //2. 不用执行: 执行播放完时,return;\n    if (self.queueIndex == self.queues.count){\n        [self pauseCollectUseTimed];\n        [self.delegate rtModel_Finished];\n        return;\n    }\n    //3. 意外>count时处理;",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/Model/RTModel.m:147-184"
+    },
+    "2721": {
+        "file_id": 285,
+        "content": "This code sets the lastStartTime to 0 if it's currently 0 and records the current time in seconds since 1970. This is used in a block section of code where it checks the state of the model, stops execution if not playing or if the queue has finished playing, and then proceeds to execute the next command in the queue.",
+        "type": "comment"
+    },
+    "2722": {
+        "file_id": 285,
+        "content": "    if (self.queueIndex > self.queues.count) return;\n    [self playSetLastStartTime];\n    //3. 暂停命令等待;\n    RTQueueModel *queue = ARR_INDEX(self.queues, self.queueIndex);\n    if ([self.pauseNames containsObject:queue.name]) {\n        NSLog(@\"----> 强化训练_遇到暂停命令 -> 等待\");\n        return;\n    }\n    //4. 行为输出时,会即刻执行;\n    BOOL curNeedWait = ![kFlySEL isEqualToString:queue.name];\n    BOOL lastNeedCurWait = [kFlySEL isEqualToString:self.invokingName];\n    //5. (a || b) && c => 需要等待上一命令执行完;\n    //  a. 这步要求等待 = curNeedWait;\n    //  b. 上步要求这步等它 = lastNeedCurWait (上条命令是行为);\n    //  c. 这步执行中 = STRISOK(self.invokingName);\n    if ((curNeedWait || lastNeedCurWait) && STRISOK(self.invokingName)) {\n        NSLog(@\"----> 强化训练_上帧执行中 -> 等待\");\n        return;\n    }\n    //6. 非即刻执行的命令 => 等待思维空载;\n    if (curNeedWait) {\n        //7. 思维忙时没轮到下帧: TC忙碌状态则返回 (计数速率(负载)>10时,为忙状态);\n        NSInteger operDelta = theTC.getOperCount - self.lastOperCount;\n        self.lastOperCount = theTC.getOperCount;\n        BOOL busyStatus = operDelta > 0;\n        if (busyStatus) {",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/Model/RTModel.m:185-214"
+    },
+    "2723": {
+        "file_id": 285,
+        "content": "This code snippet handles waiting for previous commands to execute and checking the current command's execution status in a reinforcement learning training. It also considers waiting for the right frame, preventing immediate execution of some commands, and accounting for the Thinker's busy status. The code determines whether or not to wait based on conditions involving current and previous commands, as well as the Thinker's operational count.",
+        "type": "comment"
+    },
+    "2724": {
+        "file_id": 285,
+        "content": "            NSLog(@\"----> 强化训练_思维负载(%ld) -> 等待\",operDelta);\n            return;\n        }\n    }\n    //8. 执行下帧;\n    NSLog(@\"强化训练 -> 执行:%@ (%ld/%ld)\",queue.name,self.queueIndex+1,self.queues.count);\n    self.queueIndex++;\n    self.invokingName = queue.name;\n    [self invoke:queue];\n    [self.delegate rtModel_Invoked];\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/Model/RTModel.m:215-228"
+    },
+    "2725": {
+        "file_id": 285,
+        "content": "This code is part of a reinforcement learning training model. It logs when it reaches a certain state and then waits, eventually executing the next step in the training process by incrementing the queue index, setting the invoking name, and invoking the queue's function while notifying the delegate.",
+        "type": "comment"
+    },
+    "2726": {
+        "file_id": 286,
+        "content": "/ThirdParty/RLTrainer/Model/RTQueueModel.h",
+        "type": "filepath"
+    },
+    "2727": {
+        "file_id": 286,
+        "content": "This code defines a class \"RTQueueModel\" which is a subclass of NSObject in the Foundation framework. It has two properties, name and arg0, both of which are optional. The class also provides a method for creating an instance with specified parameters.",
+        "type": "summary"
+    },
+    "2728": {
+        "file_id": 286,
+        "content": "//\n//  RTQueueModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/2/12.\n//  Copyright © 2023年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface RTQueueModel : NSObject\n+(RTQueueModel*) newWithName:(NSString*)name arg0:(id)arg0;\n@property (strong, nonatomic) NSString *name;\n@property (strong, nonatomic) id arg0;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/Model/RTQueueModel.h:1-18"
+    },
+    "2729": {
+        "file_id": 286,
+        "content": "This code defines a class \"RTQueueModel\" which is a subclass of NSObject in the Foundation framework. It has two properties, name and arg0, both of which are optional. The class also provides a method for creating an instance with specified parameters.",
+        "type": "comment"
+    },
+    "2730": {
+        "file_id": 287,
+        "content": "/ThirdParty/RLTrainer/Model/RTQueueModel.m",
+        "type": "filepath"
+    },
+    "2731": {
+        "file_id": 287,
+        "content": "This code defines a class RTQueueModel in the header file RTQueueModel.h, and provides an initializer method newWithName:arg0: that creates an instance of the class with specified name and arg0 values.",
+        "type": "summary"
+    },
+    "2732": {
+        "file_id": 287,
+        "content": "//\n//  RTQueueModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/2/12.\n//  Copyright © 2023年 XiaoGang. All rights reserved.\n//\n#import \"RTQueueModel.h\"\n@implementation RTQueueModel\n+(RTQueueModel*) newWithName:(NSString*)name arg0:(id)arg0 {\n    RTQueueModel *result = [[RTQueueModel alloc] init];\n    result.name = name;\n    result.arg0 = arg0;\n    return result;\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/Model/RTQueueModel.m:1-20"
+    },
+    "2733": {
+        "file_id": 287,
+        "content": "This code defines a class RTQueueModel in the header file RTQueueModel.h, and provides an initializer method newWithName:arg0: that creates an instance of the class with specified name and arg0 values.",
+        "type": "comment"
+    },
+    "2734": {
+        "file_id": 288,
+        "content": "/ThirdParty/RLTrainer/README.md",
+        "type": "filepath"
+    },
+    "2735": {
+        "file_id": 288,
+        "content": "This code is for a reinforcement learning trainer, which automates demo running and ensures training stability.",
+        "type": "summary"
+    },
+    "2736": {
+        "file_id": 288,
+        "content": "#  强化学习训练器\n> 用于自动化的跑demo,强化训练稳定性;",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/README.md:1-3"
+    },
+    "2737": {
+        "file_id": 288,
+        "content": "This code is for a reinforcement learning trainer, which automates demo running and ensures training stability.",
+        "type": "comment"
+    },
+    "2738": {
+        "file_id": 289,
+        "content": "/ThirdParty/RLTrainer/RLTrainer.h",
+        "type": "filepath"
+    },
+    "2739": {
+        "file_id": 289,
+        "content": "This code defines game selectors and actions, along with a reinforcement learning trainer class for registering items, adding sequences, and controlling training functionality. It also includes two public methods for handling pause commands: \"appendPauseNames\" and \"clearPauseNames\".",
+        "type": "summary"
+    },
+    "2740": {
+        "file_id": 289,
+        "content": "//\n//  RLTrainer.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/31.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n#define kGrowPageSEL @\"GrowPage\"                //成长页\n#define kMainPageSEL @\"MainPage\"                //回主页\n#define kFlySEL @\"Fly\"                          //飞 (可传0-7 long参数: 飞行方向)\n#define kWoodLeftSEL @\"Wood\"                    //扔木棒\n#define kWoodRdmSEL @\"WoodRdm\"                  //随机地点_扔木棒\n#define kEatSEL @\"Eat\"                          //吃\n#define kClearTCSEL @\"ClearTC\"                  //模拟重启\n#define kKickSEL @\"Kick\"                        //踢 (可传0-7 long参数: 踢方向)\n#define kBirthPosRdmSEL @\"BirthPosRdm\"          //出生在随机\n#define kBirthPosRdmCentSEL @\"BirthPosRdmCent\"  //出生在随机偏中间\n#define kBirthPosCentSEL @\"BirthPosCent\"        //出生在中间\n#define kBirthPosRdmSafeSEL @\"BirthPosRdmSafeSEL\"//出生在随机安全地带\n#define kHungerSEL @\"Hunger\"                    //马上饿\n#define kFoodRdmSEL @\"FoodRdm\"                  //随机地点_投食物\n#define kFoodRdmNearSEL @\"FoodRdmNear\"          //随机在鸟附近_投食物",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/RLTrainer.h:1-27"
+    },
+    "2741": {
+        "file_id": 289,
+        "content": "This code defines various selectors or actions that can be performed in a game, such as growing a page, flying, kicking, eating, and more. The selectors are identified with unique names and can take optional parameters for direction or position.",
+        "type": "comment"
+    },
+    "2742": {
+        "file_id": 289,
+        "content": "#define kThinkModeSEL @\"ThinkMode\"              //认知模式 (可传int参数: 思维模式值)\n/**\n *  MARK:--------------------强化训练器--------------------\n *  @use 使用说明: 每个训练项,必须调用以下三个方法:\n *          1. 先通过regist()注册训练项;\n *          2. 再通过queue()新增训练序列;\n *          3. 再通过invoked()标记训练项执行完成;\n */\n@class RTQueueModel;\n@interface RLTrainer : NSObject\n+(RLTrainer*) sharedInstance;\n/**\n *  MARK:--------------------注册可执行训练项--------------------\n */\n-(void) regist:(NSString*)name target:(NSObject*)target selector:(SEL)selector;\n/**\n *  MARK:--------------------新增训练序列--------------------\n */\n-(void) queue1:(RTQueueModel*)queue;\n-(void) queue1:(RTQueueModel*)queue count:(NSInteger)count;\n-(void) queueN:(NSArray*)queues count:(NSInteger)count;\n/**\n *  MARK:--------------------单步训练执行完成报告--------------------\n */\n-(void) invoked:(NSString*)name;\n/**\n *  MARK:--------------------打开控制台--------------------\n */\n-(void) open;\n/**\n *  MARK:--------------------暂停或继续训练--------------------\n */\n-(void)setPlaying:(BOOL)playing;\n//MARK:===============================================================",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/RLTrainer.h:29-70"
+    },
+    "2743": {
+        "file_id": 289,
+        "content": "This code defines a class `RLTrainer` that provides a reinforcement learning trainer functionality. It allows registering executable training items, adding training sequences, marking training completion, opening the console, and pausing/resuming training. The `regist`, `queue1`, `queueN`, `invoked`, `open`, and `setPlaying` are methods to interact with these functionalities.",
+        "type": "comment"
+    },
+    "2744": {
+        "file_id": 289,
+        "content": "//MARK:               < publicMethod: 触发暂停命令 >\n//MARK:===============================================================\n-(void) appendPauseNames:(NSArray*)value;\n-(void) clearPauseNames;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/RLTrainer.h:71-76"
+    },
+    "2745": {
+        "file_id": 289,
+        "content": "This code segment is within the RLTrainer project. It includes two public methods: \"appendPauseNames\" and \"clearPauseNames\". These methods are related to handling pause commands in the program.",
+        "type": "comment"
+    },
+    "2746": {
+        "file_id": 290,
+        "content": "/ThirdParty/RLTrainer/RLTrainer.m",
+        "type": "filepath"
+    },
+    "2747": {
+        "file_id": 290,
+        "content": "This Singleton class in Objective-C initializes instance variables and delegates for RTModel and RLTPanel, manages queues, interacts with panels, and controls training processes, while defining methods for delegate communication and data consistency.",
+        "type": "summary"
+    },
+    "2748": {
+        "file_id": 290,
+        "content": "//\n//  RLTrainer.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/31.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import \"RLTrainer.h\"\n#import \"RTModel.h\"\n#import \"RLTPanel.h\"\n@interface RLTrainer () <RTModelDelegate,RLTPanelDelegate>\n@property (strong, nonatomic) RTModel *model;\n@property (strong, nonatomic) RLTPanel *panel;\n@end\n@implementation RLTrainer\nstatic RLTrainer *_instance;\n+(RLTrainer*) sharedInstance{\n    if (_instance == nil) {\n        _instance = [[RLTrainer alloc] init];\n    }\n    return _instance;\n}\n-(id) init {\n    self = [super init];\n    if(self != nil){\n        [self initData];\n    }\n    return self;\n}\n-(void) initData{\n    self.model = [[RTModel alloc] init];\n    self.model.delegate = self;\n    self.panel = [[RLTPanel alloc] init];\n    self.panel.delegate = self;\n    [theApp.window addSubview:self.panel];\n}\n//MARK:===============================================================\n//MARK:                     < publicMethod >\n//MARK:===============================================================",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/RLTrainer.m:1-48"
+    },
+    "2749": {
+        "file_id": 290,
+        "content": "This code is part of the RLTrainer class in Objective-C, which appears to be a Singleton design pattern implementation. It initializes instance variables and sets up delegates for the RTModel and RLTPanel classes. The sharedInstance method returns the single instance of RLTrainer.",
+        "type": "comment"
+    },
+    "2750": {
+        "file_id": 290,
+        "content": "-(void) regist:(NSString*)name target:(NSObject*)target selector:(SEL)selector{\n    [self.model regist:name target:target selector:selector];\n}\n-(void) queue1:(RTQueueModel*)queue{\n    [self queueN:@[queue] count:1];\n}\n-(void) queue1:(RTQueueModel*)queue count:(NSInteger)count{\n    [self queueN:@[queue] count:count];\n}\n-(void) queueN:(NSArray*)queues count:(NSInteger)count{\n    [self.panel open];\n    [self.model queue:queues count:count];\n    [self.panel reloadData];\n}\n-(void) invoked:(NSString*)name{\n    [self.model invoked:name];\n}\n-(void) open{\n    [self.panel open];\n}\n/**\n *  MARK:--------------------暂停或继续训练--------------------\n */\n-(void)setPlaying:(BOOL)playing{\n    [self.panel setPlaying:playing];\n}\n//MARK:===============================================================\n//MARK:               < publicMethod: 触发暂停命令 >\n//MARK:===============================================================\n-(void) appendPauseNames:(NSArray*)value {\n    [self.model appendPauseNames:value];\n}\n-(void) clearPauseNames {\n    [self.model clearPauseNames];",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/RLTrainer.m:49-84"
+    },
+    "2751": {
+        "file_id": 290,
+        "content": "This code defines a class with several methods to manage a queue of objects, interact with a panel, and control the training process. It allows for adding, removing, or pausing queues as well as opening/closing the panel. The methods are organized using markdown comments for better readability.",
+        "type": "comment"
+    },
+    "2752": {
+        "file_id": 290,
+        "content": "}\n//MARK:===============================================================\n//MARK:                     < RTModelDelegate >\n//MARK:===============================================================\n-(BOOL) rtModel_Playing{\n    return self.panel.playing;\n}\n-(void) rtModel_Invoked{\n    [self.panel reloadData];\n}\n-(void) rtModel_Finished{\n    //1. 强训完成后,恢复日志开关;\n    [theApp setNoLogMode:false];\n    //2. 强训完成后,强行持久化保存一次,避免丢数据;\n    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{\n        [[XGWedis sharedInstance] save];\n    });\n}\n//MARK:===============================================================\n//MARK:                     < RLTPanelDelegate >\n//MARK:===============================================================\n-(void) rltPanel_Stop{\n    [self.model clear];\n    [self.panel reloadData];\n}\n-(NSArray*) rltPanel_getQueues{\n    return self.model.queues;\n}\n-(NSInteger) rltPanel_getQueueIndex{\n    return self.model.queueIndex;\n}\n-(double) rltPanel_getUseTimed{\n    return self.model.getTotalUseTimed;",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/RLTrainer.m:85-125"
+    },
+    "2753": {
+        "file_id": 290,
+        "content": "This code defines methods for the `RTModelDelegate` and `RLTPanelDelegate`, which handle playing, invoking, and finishing events in a training model. It also includes methods for stopping the panel, getting queues, and retrieving queue index and usage time. The delegate methods allow communication between the training model and associated panel, and ensure data consistency and persistence.",
+        "type": "comment"
+    },
+    "2754": {
+        "file_id": 290,
+        "content": "}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/RLTrainer.m:126-128"
+    },
+    "2755": {
+        "file_id": 290,
+        "content": "This code block represents the end of a class definition in Objective-C, marked by the \"@end\" directive. It signifies the closure of the class declaration and marks the end of any methods or properties defined within it. In this case, it indicates that the RLTrainer class has reached its conclusion.",
+        "type": "comment"
+    },
+    "2756": {
+        "file_id": 291,
+        "content": "/ThirdParty/RLTrainer/View/RLTPanel.h",
+        "type": "filepath"
+    },
+    "2757": {
+        "file_id": 291,
+        "content": "This code is the header file for RLTPanel, a UIView subclass that acts as a reinforcement learning training panel. It has a delegate protocol with methods to stop the panel and get queue information. The panel can be opened or closed, and data can be reloaded.",
+        "type": "summary"
+    },
+    "2758": {
+        "file_id": 291,
+        "content": "//\n//  RLTPanel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/4/15.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n@protocol RLTPanelDelegate <NSObject>\n-(void) rltPanel_Stop;\n-(NSArray*) rltPanel_getQueues;\n-(NSInteger) rltPanel_getQueueIndex;\n-(double) rltPanel_getUseTimed;\n@end\n/**\n *  MARK:--------------------强化训练控制台--------------------\n */\n@interface RLTPanel : UIView\n@property (weak, nonatomic) id<RLTPanelDelegate> delegate;\n@property (assign, nonatomic) BOOL playing;\n-(void) reloadData;\n-(void) open;\n-(void) close;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/View/RLTPanel.h:1-31"
+    },
+    "2759": {
+        "file_id": 291,
+        "content": "This code is the header file for RLTPanel, a UIView subclass that acts as a reinforcement learning training panel. It has a delegate protocol with methods to stop the panel and get queue information. The panel can be opened or closed, and data can be reloaded.",
+        "type": "comment"
+    },
+    "2760": {
+        "file_id": 292,
+        "content": "/ThirdParty/RLTrainer/View/RLTPanel.m",
+        "type": "filepath"
+    },
+    "2761": {
+        "file_id": 292,
+        "content": "The RLTPanel class manages game layout, UI updates, and controls a 300-round game with object actions, character growth, random births, wooden stick throwing, and obstacle avoidance skills training.",
+        "type": "summary"
+    },
+    "2762": {
+        "file_id": 292,
+        "content": "//\n//  RLTPanel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/4/15.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import \"RLTPanel.h\"\n#import \"MASConstraint.h\"\n#import \"View+MASAdditions.h\"\n#import \"TOMVisionItemModel.h\"\n#import \"PINDiskCache.h\"\n#import \"TVideoWindow.h\"\n#import \"TVUtil.h\"\n#import \"XGDebugTV.h\"\n#import \"XGLabCell.h\"\n#import \"FoodView.h\"\n@interface RLTPanel () <UITableViewDelegate,UITableViewDataSource>\n@property (strong, nonatomic) IBOutlet UIView *containerView;\n@property (weak, nonatomic) IBOutlet UITableView *tv;\n@property (weak, nonatomic) IBOutlet XGDebugTV *debugTV;\n@property (weak, nonatomic) IBOutlet UILabel *mvScoreLab;\n@property (weak, nonatomic) IBOutlet UILabel *spScoreLab;\n@property (weak, nonatomic) IBOutlet UILabel *sStrongLab;\n@property (weak, nonatomic) IBOutlet UILabel *pStrongLab;\n@property (weak, nonatomic) IBOutlet UILabel *solutionLab;\n@property (weak, nonatomic) IBOutlet UILabel *progressLab;\n@property (weak, nonatomic) IBOutlet UILabel *timeLab;\n@property (weak, nonatomic) IBOutlet UIButton *playBtn;",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/View/RLTPanel.m:1-32"
+    },
+    "2763": {
+        "file_id": 292,
+        "content": "This code declares the class RLTPanel, which inherits from UITableViewDelegate and UITableViewDataSource. It has several IBOutlet properties for UI elements like labels and views. The file also imports multiple other header files for different functionalities used in this view controller.",
+        "type": "comment"
+    },
+    "2764": {
+        "file_id": 292,
+        "content": "@property (weak, nonatomic) IBOutlet UIButton *stopBtn;\n@property (strong, nonatomic) NSArray *tvDatas;\n@property (assign, nonatomic) NSInteger tvIndex;\n@end\n@implementation RLTPanel\n-(id) init {\n    self = [super init];\n    if(self != nil){\n        [self initView];\n        [self initData];\n        [self initDisplay];\n    }\n    return self;\n}\n-(void) initView{\n    //self\n    [self setAlpha:0.7f];\n    CGFloat width = 350;//ScreenWidth * 0.667f;\n    [self setFrame:CGRectMake(ScreenWidth - width - 20, 64, width, ScreenHeight - 128)];\n    //containerView\n    [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];\n    [self addSubview:self.containerView];\n    [self.containerView mas_makeConstraints:^(MASConstraintMaker *make) {\n        make.leading.mas_equalTo(self);\n        make.trailing.mas_equalTo(self);\n        make.top.mas_equalTo(self);\n        make.bottom.mas_equalTo(self);\n    }];\n    [self.containerView.layer setCornerRadius:8.0f];\n    [self.containerView.layer setBorderWidth:1.0f];",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/View/RLTPanel.m:33-67"
+    },
+    "2765": {
+        "file_id": 292,
+        "content": "Initializing view properties and layout for RLTPanel. Setting alpha, width, frame, loading nib, adding subview, setting constraints, and adjusting corner radius and border width for the containerView.",
+        "type": "comment"
+    },
+    "2766": {
+        "file_id": 292,
+        "content": "    [self.containerView.layer setBorderColor:UIColorWithRGBHex(0x000000).CGColor];\n    //tv\n    self.tv.delegate = self;\n    self.tv.dataSource = self;\n    [self.tv.layer setBorderWidth:1.0f];\n    [self.tv.layer setBorderColor:UIColorWithRGBHex(0x0000FF).CGColor];\n    [self.tv registerClass:[UITableViewCell class] forCellReuseIdentifier:@\"spaceCell\"];\n    [self.tv registerClass:[XGLabCell class] forCellReuseIdentifier:@\"queueCell\"];\n    //debugTV\n    [self.debugTV.layer setBorderWidth:1.0f];\n    [self.debugTV.layer setBorderColor:UIColorWithRGBHex(0x0000FF).CGColor];\n}\n-(void) initData{\n    self.playing = false;\n}\n-(void) initDisplay{\n    [self close];\n}\n-(void) refreshDisplay{\n    //1. 取数据\n    self.tvDatas = ARRTOOK([self.delegate rltPanel_getQueues]);\n    self.tvIndex = [self.delegate rltPanel_getQueueIndex];\n    //2. tv\n    [self.tv reloadData];\n    if (self.tvIndex < self.tvDatas.count) {\n        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{\n  ",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/View/RLTPanel.m:68-100"
+    },
+    "2767": {
+        "file_id": 292,
+        "content": "- Sets the border color and width for table view (tv)\n- Registers cell classes for reuse identifiers \"spaceCell\" and \"queueCell\"\n- Initializes data array with getQueues from delegate and sets queueIndex to getQueueIndex from delegate\n- Reloads tv data on main queue after 0.2 seconds",
+        "type": "comment"
+    },
+    "2768": {
+        "file_id": 292,
+        "content": "          [self.tv scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.tvIndex inSection:1] atScrollPosition:UITableViewScrollPositionMiddle animated:true];\n        });\n    }\n    //3. progressLab\n    self.progressLab.text = STRFORMAT(@\"%ld / %ld\",self.tvIndex,self.tvDatas.count);\n    //4. 使用时间;\n    double useTimed = [self.delegate rltPanel_getUseTimed];\n    double totalTime = self.tvIndex == 0 ? 0 : useTimed * self.tvDatas.count / self.tvIndex;\n    int useT = (int)useTimed, totT = (int)totalTime;\n    NSString *timeStr = STRFORMAT(@\"%d:%d / %d:%d\", useT / 60, useT % 60, totT / 60, totT % 60);\n    [self.timeLab setText:timeStr];\n    //5. 综评分;\n    NSString *scoreStr = [self mvScoreStr];\n    [self.mvScoreLab setText:scoreStr];\n    //6. 稳定性 & 平均SP强度;\n    __block typeof(self) weakSelf = self;\n    [self spStr:^(CGFloat rateSPScore, CGFloat rateSStrong, CGFloat ratePStrong) {\n        [weakSelf.spScoreLab setText:STRFORMAT(@\"%.1f\",rateSPScore)];\n        [weakSelf.sStrongLab setText:STRFORMAT(@\"%.1f\",rateSStrong)];",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/View/RLTPanel.m:100-122"
+    },
+    "2769": {
+        "file_id": 292,
+        "content": "Updates UI elements based on the current index and delegate data: scrolls table view to specific row, sets progress label, calculates and displays time used/total time, shows machine vision score and stability/average SP strength.",
+        "type": "comment"
+    },
+    "2770": {
+        "file_id": 292,
+        "content": "        [weakSelf.pStrongLab setText:STRFORMAT(@\"%.1f\",ratePStrong)];\n    }];\n    //7. 有解率;\n    CGFloat rateSolution = [self solutionStr];\n    [self.solutionLab setText:STRFORMAT(@\"%.0f％\",rateSolution * 100)];\n    //8. 性能分析;\n    [self.debugTV updateModels];\n}\n//MARK:===============================================================\n//MARK:                     < getset >\n//MARK:===============================================================\n-(void)setPlaying:(BOOL)playing{\n    _playing = playing;\n    [self.playBtn setTitle: self.playing ? @\"暂停\" : @\"播放\" forState:UIControlStateNormal];\n}\n//MARK:===============================================================\n//MARK:                     < publicMethod >\n//MARK:===============================================================\n-(void) reloadData{\n    [self refreshDisplay];\n}\n-(void) open{\n    [self setHidden:false];\n}\n-(void) close{\n    [self setHidden:true];\n}\n//MARK:===============================================================\n//MARK:                     < privateMethod >",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/View/RLTPanel.m:123-156"
+    },
+    "2771": {
+        "file_id": 292,
+        "content": "1. Fetches ratePStrong from weakSelf and updates label text.\n2. Calculates solution rate and sets label text to display percentage.\n3. Updates debugTV models.\n4. Setter method for playing state, updates playBtn title accordingly.\n5. Reloads data and refreshes display.\n6. Opens panel and makes it visible.\n7. Closes panel and hides it.",
+        "type": "comment"
+    },
+    "2772": {
+        "file_id": 292,
+        "content": "//MARK:===============================================================\n-(NSString*) cellStr:(RTQueueModel*)queue {\n    if ([kGrowPageSEL isEqualToString:queue.name]) {\n        return @\"进入成长页\";\n    }else if ([kFlySEL isEqualToString:queue.name]) {\n        if (NUMISOK(queue.arg0)) {\n            return STRFORMAT(@\"%@飞\",[NVHeUtil fly2Str:NUMTOOK(queue.arg0).longValue / 8.0f]);\n        }\n        return @\"随机飞\";\n    }else if ([kWoodLeftSEL isEqualToString:queue.name]) {\n        return @\"扔木棒\";\n    }else if ([kWoodRdmSEL isEqualToString:queue.name]) {\n        return @\"随机扔木棒\";\n    }else if ([kMainPageSEL isEqualToString:queue.name]) {\n        return @\"回主页\";\n    }else if ([kClearTCSEL isEqualToString:queue.name]) {\n        return @\"重启\";\n    }else if ([kBirthPosRdmSEL isEqualToString:queue.name]) {\n        return @\"出生地随机\";\n    }else if ([kBirthPosRdmCentSEL isEqualToString:queue.name]) {\n        return @\"出生地随机偏路中\";\n    }else if ([kBirthPosCentSEL isEqualToString:queue.name]) {\n        return @\"出生在中间\";\n    }else if ([kBirthPosRdmSafeSEL isEqualToString:queue.name]) {",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/View/RLTPanel.m:157-180"
+    },
+    "2773": {
+        "file_id": 292,
+        "content": "This function returns a string representing the action associated with a given queue model. It checks the name of the queue and returns corresponding actions like \"进入成长页\", \"飞\", \"扔木棒\", etc.",
+        "type": "comment"
+    },
+    "2774": {
+        "file_id": 292,
+        "content": "        return @\"出生在随机安全地带\";\n    }else if ([kHungerSEL isEqualToString:queue.name]) {\n        return @\"饿\";\n    }else if ([kFoodRdmSEL isEqualToString:queue.name]) {\n        return @\"随机投食\";\n    }else if ([kFoodRdmNearSEL isEqualToString:queue.name]) {\n        return @\"附近投食\";\n    }else if ([kThinkModeSEL isEqualToString:queue.name]) {\n        if (NUMTOOK(queue.arg0).intValue == 0) {\n            return @\"动物模式\";\n        }else if (NUMTOOK(queue.arg0).intValue == 1) {\n            return @\"认知模式\";\n        }else if (NUMTOOK(queue.arg0).intValue == 1) {\n            return @\"植物模式\";\n        }\n    }\n    return @\"\";\n}\n-(CGFloat) queueCellHeight{\n    CGFloat maskHeight = 10.0f;//大概计算10左右高;\n    int size = (int)(self.tv.height / maskHeight);\n    size = size / 2 * 2 + 1;\n    return self.tv.height / size;\n}\n-(CGFloat) spaceCellHeight{\n    CGFloat cellH = [self queueCellHeight];\n    return (self.tv.height - cellH) * 0.5f;\n}\n-(NSString*) mvScoreStr {\n    //1. 数据准备;\n    NSArray *roots = [theTC.outModelManager.getAllDemand copy];\n    NSMutableString *mStr = [[NSMutableString alloc] init];",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/View/RLTPanel.m:181-215"
+    },
+    "2775": {
+        "file_id": 292,
+        "content": "This code is related to a view controller that manages the display of cells in a table view. It returns different strings based on the cell's name, calculates cell heights, and prepares data for a table cell. The table cell can be either a queue cell or a space cell, each with its own specific height calculation. The code also deals with data retrieval from an outModelManager and converts it into an NSString representation.",
+        "type": "comment"
+    },
+    "2776": {
+        "file_id": 292,
+        "content": "    //2. 分别对每个根任务,进行评分;\n    for (DemandModel *root in roots) {\n        //3. 取最佳解决方案;\n        NSMutableDictionary *scoreDic = [[NSMutableDictionary alloc] init];\n        TOFoModel *bestFo = [TCScore score_Multi:root.actionFoModels scoreDic:scoreDic];\n        //4. 综合评分 = 最佳解决方案评分 + 任务评分;\n        double rootScore = [AIScore score4Demand:root];\n        double bestFoScore = [NUMTOOK([scoreDic objectForKey:TOModel2Key(bestFo)]) doubleValue];\n        //5. 收集结果;\n        [mStr appendFormat:@\"%.1f \",rootScore + bestFoScore];\n    }\n    return mStr;\n}\n-(void) spStr:(void(^)(CGFloat rateSPScore, CGFloat rateSStrong, CGFloat ratePStrong))complete{\n    //0. 数据准备;\n    NSMutableArray *spScoreArr = [[NSMutableArray alloc] init];\n    NSMutableArray *spStrongArr = [[NSMutableArray alloc] init];\n    //1. 收集根下所有树枝;\n    NSArray *roots = [theTC.outModelManager.getAllDemand copy];\n    NSArray *branchs = [TVUtil collectAllSubTOModelByRoots:roots];\n    NSArray *solutions = [SMGUtils filterArr:branchs checkValid:^BOOL(TOModelBase *item) {",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/View/RLTPanel.m:217-242"
+    },
+    "2777": {
+        "file_id": 292,
+        "content": "This code calculates scores for each root task by taking the best solution and combining it with a task score. It then collects the results and returns them as a string. The code also prepares data, gathers all branches from the roots, and filters valid solutions using a block.",
+        "type": "comment"
+    },
+    "2778": {
+        "file_id": 292,
+        "content": "        return ISOK(item, TOFoModel.class);\n    }];\n    //2. 逐一对任务,的解决方案树枝进行sp计算;\n    for (TOFoModel *solution in solutions) {\n        //3. 计算spIndex;\n        AIFoNodeBase *fo = [SMGUtils searchNode:solution.content_p];\n        NSInteger spIndex = -1;\n        if (ISOK(solution.baseOrGroup, HDemandModel.class)) {\n            HDemandModel *hDemand = (HDemandModel*)solution.baseOrGroup;\n            AIAlgNodeBase *hAlg = [SMGUtils searchNode:hDemand.baseOrGroup.content_p];\n            spIndex = [TOUtils indexOfConOrAbsItem:hAlg.pointer atContent:fo.content_ps layerDiff:1 startIndex:0 endIndex:NSUIntegerMax];\n        }else if(ISOK(solution.baseOrGroup, ReasonDemandModel.class)){\n            spIndex = fo.count;\n        }\n        //4. 根据spIndex计算稳定性和SP统计;\n        if (spIndex > 0) {\n            //5. 计入sp分;\n            CGFloat checkSPScore = [TOUtils getSPScore:fo startSPIndex:0 endSPIndex:spIndex];\n            [spScoreArr addObject:@(checkSPScore)];\n            //6. 计入sp值;\n            for (NSInteger i = 0; i <= spIndex; i++) {",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/View/RLTPanel.m:243-268"
+    },
+    "2779": {
+        "file_id": 292,
+        "content": "This code searches for nodes in a solution, calculates the spIndex based on the type of solution (HDemand or ReasonDemand), computes stability and SP scores using these indices, and adds them to relevant arrays.",
+        "type": "comment"
+    },
+    "2780": {
+        "file_id": 292,
+        "content": "                AISPStrong *spStrong = [fo.spDic objectForKey:@(i)];\n                if (spStrong) {\n                    [spStrongArr addObject:spStrong];\n                }\n            }\n        }\n    }\n    //7. 得出平均结果,并返回;\n    CGFloat sumSPScore = 0,sumSStrong = 0,sumPStrong = 0;\n    for (NSNumber *item in spScoreArr){\n        sumSPScore += item.floatValue;\n    }\n    for (AISPStrong *item in spStrongArr){\n        sumSStrong += item.sStrong;\n        sumPStrong += item.pStrong;\n    }\n    CGFloat rateSPScore = spScoreArr.count == 0 ? 0 : sumSPScore / spScoreArr.count;\n    CGFloat rateSStrong = spStrongArr.count == 0 ? 0 : sumSStrong / spStrongArr.count;\n    CGFloat ratePStrong = spStrongArr.count == 0 ? 0 : sumPStrong / spStrongArr.count;\n    complete(rateSPScore,rateSStrong,ratePStrong);\n}\n-(CGFloat) solutionStr{\n    //1. 收集根下所有树枝;\n    NSArray *roots = [theTC.outModelManager.getAllDemand copy];\n    NSArray *branchs = [TVUtil collectAllSubTOModelByRoots:roots];\n    NSArray *demands = [SMGUtils filterArr:branchs checkValid:^BOOL(TOModelBase *item) {",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/View/RLTPanel.m:269-296"
+    },
+    "2781": {
+        "file_id": 292,
+        "content": "This code retrieves the average values for SPScore, SStrong, and PStrong from arrays spScoreArr and spStrongArr. It then calculates the rates of these averages and passes them to the complete function. The code also collects roots, branches, and demands by using several functions.",
+        "type": "comment"
+    },
+    "2782": {
+        "file_id": 292,
+        "content": "        return ISOK(item, DemandModel.class);\n    }];\n    //2. 统计有解率;\n    NSInteger havSolutionCount = 0;\n    for (DemandModel *demand in demands) {\n        if (ARRISOK(demand.actionFoModels)) {\n            havSolutionCount++;\n        }\n    }\n    return demands.count > 0 ? (float)havSolutionCount / demands.count : 0;\n}\n//MARK:===============================================================\n//MARK:                     < onclick >\n//MARK:===============================================================\n- (IBAction)playBtnOnClick:(id)sender {\n    self.playing = !self.playing;\n}\n- (IBAction)stopBtnOnClick:(id)sender {\n    [self.delegate rltPanel_Stop];\n}\n- (IBAction)closeBtnOnClick:(id)sender {\n    [self close];\n}\n//MARK:===============================================================\n//MARK:                     < 防撞训练 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------第1步 学被撞--------------------\n *  @desc\n *      1. 说明: 学被撞 (出生随机位置,被随机扔出的木棒撞 x 300);\n *      2. 作用: 主要用于训练识别功能 (耗时约50min) (参考26197-1);",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/View/RLTPanel.m:297-333"
+    },
+    "2783": {
+        "file_id": 292,
+        "content": "This code checks if the given item is an instance of DemandModel.class and calculates the solution rate for demands. It also contains IBAction methods for play, stop, and close buttons, as well as a comment describing training for collision recognition (consuming around 50 minutes).",
+        "type": "comment"
+    },
+    "2784": {
+        "file_id": 292,
+        "content": " *  @version\n *      2022.06.05: 调整 (参考26197-1&2);\n */\n- (IBAction)loadHitBtnOnClick:(id)sender {\n    [theRT queue1:Queue(kBirthPosRdmSEL)];\n    [theRT queueN:@[Queue(kGrowPageSEL),Queue(kWoodRdmSEL),Queue(kMainPageSEL),Queue(kClearTCSEL)] count:200];\n    [theRT queueN:@[Queue(kGrowPageSEL),Queue(kWoodLeftSEL),Queue(kMainPageSEL),Queue(kClearTCSEL)] count:100];\n}\n/**\n *  MARK:--------------------第2步 学飞躲--------------------\n *  @desc\n *      1. 说明: 学飞躲 (出生随机偏中位置,左棒,随机飞x2,左棒 x 100);\n *      2. 作用: 从中习得防撞能力,躲避危险;\n *  @version\n *      2022.08.07: 将原100轮,拆分为10轮x10次 (参考27061-更新);\n *      2022.10.10: 测着比较稳了,改回些,改成33轮x3次 (参考27142-步骤2);\n *      2022.12.15: 改回100轮x1次 (参考2722c-步骤2);\n *      2023.02.11: 学飞躲改即刻执行: 改为扔出木棒,然后随机5次飞 (参考28066-todo1);\n */\n//步骤参考26029-加长版强化加训 (参考26031-2);\n- (IBAction)loadFlyBtnOnClick:(id)sender {\n    //0. 无日志模式;\n    //[theApp setNoLogMode:true];\n    //0. 认知模式\n    [theRT queue1:Queue0(kThinkModeSEL, @(1))];\n    //0. 出生在随机偏中位置 (以方便训练被撞和躲开经验);\n    [theRT queue1:Queue(kBirthPosRdmCentSEL)];\n    //0. 加长版训练100轮",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/View/RLTPanel.m:334-365"
+    },
+    "2785": {
+        "file_id": 292,
+        "content": "This code is for a game that involves training a character to learn different skills, such as flying and avoiding obstacles. The `loadHitBtnOnClick` method is responsible for triggering the character's birth in random positions and queuing up various actions. The `loadFlyBtnOnClick` method is used to enable flying and avoidance skills. It sets a no-logging mode, switches the thinking mode, sets the character's position to be randomly centered for training purposes, and initiates a 100-round training session.",
+        "type": "comment"
+    },
+    "2786": {
+        "file_id": 292,
+        "content": "    for (int j = 0; j < 100; j++) {\n        //1. 进入训练页\n        NSMutableArray *queues = [[NSMutableArray alloc] init];\n        [queues addObject:Queue(kGrowPageSEL)];\n        [queues addObject:Queue(kWoodLeftSEL)];\n        //2. 随机飞或扔木棒,五步;\n        //6. 屏中,任意方向;\n        NSNumber *flyDirection = @(arc4random() % 8);\n        for (int i = 0; i < 3; i++) {\n            [queues addObject:Queue0(kFlySEL, flyDirection)];\n        }\n        //3. 退到主页,模拟重启;\n        [queues addObjectsFromArray:@[Queue(kMainPageSEL),Queue(kClearTCSEL)]];\n        //4. 训练names;\n        [theRT queueN:queues count:1];\n    }\n    //5. 正常模式\n    [theRT queue1:Queue0(kThinkModeSEL, @(0))];\n}\n/**\n *  MARK:--------------------训练识别 (参考28034)--------------------\n */\n- (IBAction)loadRecognitionBtnClick:(id)sender {\n    //0. 训练300轮 (每条训练项都包含: 进入训练页 & 退出主页);\n    for (NSInteger i = 0; i < 300; i++) {\n        //1. 随机出生位置;\n        [theRT queue1:Queue(kBirthPosRdmSEL)];\n        //2. 随机位置扔木棒;\n        [theRT queueN:@[Queue(kGrowPageSEL),Queue(kWoodRdmSEL),Queue(kMainPageSEL),Queue(kClearTCSEL)] count:1];",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/View/RLTPanel.m:366-401"
+    },
+    "2787": {
+        "file_id": 292,
+        "content": "This code is part of a training application for an unknown subject, possibly related to a game or simulation. It includes multiple actions such as entering and exiting pages, randomly generating positions and throwing objects, and simulating app restarts. The training consists of 300 rounds with specific steps.",
+        "type": "comment"
+    },
+    "2788": {
+        "file_id": 292,
+        "content": "        //3. 左侧扔木棒;\n        [theRT queueN:@[Queue(kGrowPageSEL),Queue(kWoodLeftSEL),Queue(kMainPageSEL),Queue(kClearTCSEL)] count:1];\n        //4. 随机偏中出生位置;\n        [theRT queue1:Queue(kBirthPosRdmCentSEL)];\n        //5. 随机飞或扔木棒,五步;\n        [theRT queue1:Queue(kGrowPageSEL)];\n        for (int i = 0; i < 5; i++) {\n            NSArray *randomNames = @[Queue(kFlySEL),Queue(kWoodLeftSEL)];\n            int randomIndex = arc4random() % 2;\n            NSString *randomName = ARR_INDEX(randomNames, randomIndex);\n            [theRT queue1:Queue(randomName)];\n        }\n        [theRT queueN:@[Queue(kMainPageSEL),Queue(kClearTCSEL)] count:1];\n    }\n}\n/**\n *  MARK:--------------------第3步 试错训练--------------------\n *  @desc 与学撞训练步骤一致,此处其实就是各种撞它,让它自己尝试躲避 (类似学步婴儿尝试走路);\n */\n- (IBAction)loadTryOutOfWay:(id)sender {\n    [self loadHitBtnOnClick:nil];\n}\n//MARK:===============================================================\n//MARK:                     < 训练项 >\n//MARK:===============================================================\n//步骤参考26011-基础版强化训练;",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/View/RLTPanel.m:403-432"
+    },
+    "2789": {
+        "file_id": 292,
+        "content": "The code is performing a training process for an object, specifically a \"try out of way\" action. It first discards the racket on the left side and then generates a random birth position. Next, it makes the object perform random actions of flying or discarding the racket, repeating this five times. Finally, it concludes with other queue commands. The code also mentions to refer to the step 26011 basic version reinforcement training for more context on this process.",
+        "type": "comment"
+    },
+    "2790": {
+        "file_id": 292,
+        "content": "-(void) trainer1{\n    [theRT queue1:Queue(kGrowPageSEL)];\n    [theRT queueN:@[Queue(kFlySEL),Queue(kWoodLeftSEL)] count:5];\n}\n//步骤参考xxxxx\n-(void) trainer2{\n    [theRT queueN:@[Queue(kGrowPageSEL),Queue(kFlySEL),Queue(kFlySEL),Queue(kWoodLeftSEL),Queue(kMainPageSEL),Queue(kClearTCSEL)] count:20];\n}\n/**\n *  MARK:-------------------- 训练躲避 --------------------\n *  @version\n *      xxxx.xx.xx: 初版 (参考26081-2);\n *      2022.05.26: 少飞一步,变成[棒,飞,飞,棒],因为瞬时记忆只有4条;\n */\n-(void) trainer5{\n    //0. 出生在随机偏中位置 (以方便训练被撞和躲开经验);\n    [theRT queue1:Queue(kBirthPosRdmCentSEL)];\n    //1. 加长版训练100轮\n    [theRT queueN:@[Queue(kGrowPageSEL),Queue(kWoodLeftSEL),Queue(kFlySEL),Queue(kFlySEL),Queue(kWoodLeftSEL),Queue(kMainPageSEL),Queue(kClearTCSEL)] count:100];\n}\n//MARK:===============================================================\n//MARK:                     < 觅食训练 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------第1步学饿--------------------\n *  @desc 参考28172-第1步;\n *  @version\n *      2023.06.26: 因为加了饿后视觉,重新规划学饿训练步骤 (参考30042-todo3);",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/View/RLTPanel.m:433-464"
+    },
+    "2791": {
+        "file_id": 292,
+        "content": "This code is defining four different training methods for a game character. Each method involves queuing specific actions to be performed, such as flying or changing pages. The \"trainer5\" function uses 100 repetitions of a sequence of actions for training avoidance, and the \"第1步学饿\" section describes a step in predatory training that references another version.",
+        "type": "comment"
+    },
+    "2792": {
+        "file_id": 292,
+        "content": " *      2023.06.27: 将昨天的改动回滚 (参考30042-todo3-回滚 & 30043-方案);\n */\n- (IBAction)eat1BtnClick:(id)sender {\n    //1. 随机出生;\n    [theRT queue1:Queue(kBirthPosRdmSEL)];\n    //2. 饥饿,随机扔个坚果 x 200次;\n    [theRT queueN:@[Queue(kGrowPageSEL),Queue(kHungerSEL),Queue0(kFoodRdmSEL,@(FoodStatus_Eat)),Queue(kMainPageSEL),Queue(kClearTCSEL)] count:200];\n}\n/**\n *  MARK:--------------------第2步学吃--------------------\n *  @desc 参考28172-第2步;\n */\n- (IBAction)eat2BtnClick:(id)sender {\n    //1. 随机出生;\n    [theRT queue1:Queue(kBirthPosRdmSEL)];\n    for (NSInteger i = 0; i < 100; i++) {\n        //2. 进入训练页 & 饥饿 & 附近投坚果;\n        NSMutableArray *queues = [[NSMutableArray alloc] init];\n        [queues addObject:Queue(kGrowPageSEL)];\n        [queues addObject:Queue(kHungerSEL)];\n        [queues addObject:Queue(kFoodRdmNearSEL)];\n        //3. 随机飞个方向连续3步;\n        NSNumber *flyDirection = @(arc4random() % 8);\n        for (int i = 0; i < 3; i++) {\n            [queues addObject:Queue0(kFlySEL, flyDirection)];\n        }\n        //4. 退到主页,模拟重启;\n        [queues addObjectsFromArray:@[Queue(kMainPageSEL),Queue(kClearTCSEL)]];",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/View/RLTPanel.m:465-496"
+    },
+    "2793": {
+        "file_id": 292,
+        "content": "This code appears to be controlling the actions of a game character. It randomly generates the position of birth and then performs various tasks like feeding, flying, and restarting based on user interactions. The `eat1BtnClick` method simulates eating one fruit, while the `eat2BtnClick` method simulates learning to eat by performing different actions over 100 rounds.",
+        "type": "comment"
+    },
+    "2794": {
+        "file_id": 292,
+        "content": "        //5. 训练names;\n        [theRT queueN:queues count:1];\n    }\n}\n/**\n *  MARK:--------------------第3步试错--------------------\n */\n- (IBAction)eat3BtnClick:(id)sender {\n}\n//MARK:===============================================================\n//MARK:                     < 搬运训练 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------第1步带皮果学饿--------------------\n *  @desc 参考30092-步骤1 & 30145-步骤1;\n */\n- (IBAction)kick1BtnClick:(id)sender {\n    //0. 认知模式\n    [theRT queue1:Queue0(kThinkModeSEL, @(1))];\n    //1. 随机出生;\n    [theRT queue1:Queue(kBirthPosRdmSEL)];\n    //2. 饥饿,随机扔个坚果 x 200次;\n    [theRT queueN:@[Queue(kGrowPageSEL),Queue(kHungerSEL),Queue0(kFoodRdmSEL,@(FoodStatus_Border)),Queue(kMainPageSEL),Queue(kClearTCSEL)] count:200];\n}\n/**\n *  MARK:--------------------第2步学认木棒--------------------\n *  @desc 参考30145-步骤2;\n */\n- (IBAction)kick2BtnClick:(id)sender {\n    //0. 认知模式\n    [theRT queue1:Queue0(kThinkModeSEL, @(1))];\n    //1. 随机出生;\n    [theRT queue1:Queue(kBirthPosRdmSafeSEL)];",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/View/RLTPanel.m:498-538"
+    },
+    "2795": {
+        "file_id": 292,
+        "content": "Training names;\nqueue N: queues count: 1",
+        "type": "comment"
+    },
+    "2796": {
+        "file_id": 292,
+        "content": "    //2. 扔木棒 x 300次;\n    [theRT queueN:@[Queue(kGrowPageSEL),\n                    Queue(kWoodLeftSEL), //扔木棒\n                    Queue(kMainPageSEL),Queue(kClearTCSEL)] count:300];\n}\n/**\n *  MARK:--------------------第2.5步饿了更饿--------------------\n *  @desc 参考31018-步骤2.5;\n */\n- (IBAction)kickHungerThanHungerBtnClick:(id)sender {\n    //0. 认知模式\n    [theRT queue1:Queue0(kThinkModeSEL, @(1))];\n    //1. 随机出生;\n    [theRT queue1:Queue(kBirthPosRdmSEL)];\n    //2. 饥饿 x 20次;\n    [theRT queueN:@[Queue(kGrowPageSEL),Queue(kHungerSEL),Queue(kMainPageSEL),Queue(kClearTCSEL)] count:20];\n}\n/**\n *  MARK:--------------------第3步学H去皮--------------------\n *  @desc 学什么时候能压到,什么时候压不到 (参考30142-步骤3自 & 30145-步骤4);\n */\n- (IBAction)kick3BtnClick:(id)sender {\n    //1. 随机出生;\n    [theRT queue1:Queue(kBirthPosRdmSafeSEL)];\n    //2. 饥饿,随机扔个坚果,扔木棒 x 200次;\n    [theRT queueN:@[Queue(kGrowPageSEL),\n                    Queue(kHungerSEL), //饿\n                    Queue0(kFoodRdmSEL,@(FoodStatus_Border)), //随机扔有皮果\n                    Queue(kWoodLeftSEL), //扔木棒",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/View/RLTPanel.m:540-573"
+    },
+    "2797": {
+        "file_id": 292,
+        "content": "This code is related to a game where the character needs to grow by randomly being born, getting hungry, and throwing a wooden stick 300 times. It also includes actions for thinking, random birth positions, and learning when to press and when not to press certain buttons.",
+        "type": "comment"
+    },
+    "2798": {
+        "file_id": 292,
+        "content": "                    Queue(kMainPageSEL),Queue(kClearTCSEL)] count:70];\n}\n//MARK:===============================================================\n//MARK:       < UITableViewDataSource &  UITableViewDelegate>\n//MARK:===============================================================\n- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{\n    return 3;\n}\n- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{\n    if (section == 1) {\n        return self.tvDatas.count;\n    }\n    return 1;\n}\n- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{\n    //1. 返回spaceCell\n    if (indexPath.section != 1) {\n        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@\"spaceCell\"];\n        [cell setFrame:CGRectMake(0, 0, self.tv.width, [self spaceCellHeight])];\n        return cell;\n    }else {\n        //2. 正常返回queueCell_数据准备;\n        RTQueueModel *queue = ARR_INDEX(self.tvDatas, indexPath.row);\n        NSString *cellStr = STRFORMAT(@\"%ld. %@\",indexPath.row+1, [self cellStr:queue]);",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/View/RLTPanel.m:574-599"
+    },
+    "2799": {
+        "file_id": 292,
+        "content": "This code is implementing UITableViewDataSource and UITableViewDelegate protocols to set up a table view with three sections. The first section displays the count of items in tvDatas array, while the second section shows a space cell. The third section always has one row. The cellForRowAtIndexPath method returns the appropriate cell based on the section and row index.",
+        "type": "comment"
+    }
+}

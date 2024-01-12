@@ -1,0 +1,10 @@
+{
+    "summary": "This code file is for the \"ImvBadModel\" class in the SMG_NothingIsAll project. It imports its header file and provides an implementation.",
+    "details": [
+        {
+            "comment": "This code file is for the \"ImvBadModel\" class in the SMG_NothingIsAll project. It imports its header file and provides an implementation.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIAlg/AlgsModel/ImvAlgsModel/ImvBadModel.m\":0-12",
+            "content": "//\n//  ImvBadModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/1/16.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import \"ImvBadModel.h\"\n@implementation ImvBadModel\n@end"
+        }
+    ]
+}

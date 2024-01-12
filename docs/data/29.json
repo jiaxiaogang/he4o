@@ -1,0 +1,544 @@
+{
+    "2900": {
+        "file_id": 304,
+        "content": "/ThirdParty/SMGNetVision/Core/View/NVNodeView.m",
+        "type": "filepath"
+    },
+    "2901": {
+        "file_id": 304,
+        "content": "The NVNodeView class in SMG_NothingIsAll codebase manages views, touch events, scrolling, and delegate protocol, implementing properties for initialization, constraints, and more. It also handles click functions, invoking delegates if necessary, and logs click data using TPLog.",
+        "type": "summary"
+    },
+    "2902": {
+        "file_id": 304,
+        "content": "//\n//  NVNodeView.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/6/11.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import \"NVNodeView.h\"\n#import \"MASConstraint.h\"\n#import \"View+MASAdditions.h\"\n#import \"BorderLabel.h\"\n#import \"NVConfig.h\"\n#import \"NVViewUtil.h\"\n@interface NVNodeView ()\n@property (strong,nonatomic) IBOutlet UIView *containerView;\n@property (weak, nonatomic) IBOutlet UIControl *contentView;\n@property (strong, nonatomic) UIView *customSubView;\n@property (strong, nonatomic) UIButton *topBtn;\n@property (strong, nonatomic) UIButton *bottomBtn;\n@property (strong, nonatomic) UIButton *leftBtn;\n@property (strong, nonatomic) UIButton *rightBtn;\n@property (weak, nonatomic) IBOutlet BorderLabel *lightLab;\n@property (weak, nonatomic) IBOutlet UILabel *titleLab;\n@property (strong, nonatomic) UIView *touchMoveView;\n@end\n@implementation NVNodeView\n-(id) init {\n    self = [super init];\n    if(self != nil){\n        [self initView];\n        [self initDisplay];\n    }\n    return self;\n}\n-(void) initView{\n    //self",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVNodeView.m:1-43"
+    },
+    "2903": {
+        "file_id": 304,
+        "content": "This file, NVNodeView.m, is part of the SMG_NothingIsAll codebase and contains the implementation for NVNodeView class which has various properties such as containerView, contentView, customSubView, topBtn, bottomBtn, leftBtn, rightBtn, lightLab, titleLab, and touchMoveView. The class initializes its view and display in the init function.",
+        "type": "comment"
+    },
+    "2904": {
+        "file_id": 304,
+        "content": "    [self setBackgroundColor:[UIColor clearColor]];\n    [self setFrame:CGRectMake(0, 0, cNodeSize, cNodeSize)];\n    //containerView\n    [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];\n    [self addSubview:self.containerView];\n    [self.containerView mas_makeConstraints:^(MASConstraintMaker *make) {\n        make.leading.mas_equalTo(self);\n        make.trailing.mas_equalTo(self);\n        make.top.mas_equalTo(self);\n        make.bottom.mas_equalTo(self);\n    }];\n    //contentView\n    [self.contentView.layer setMasksToBounds:true];\n    [self.contentView.layer setCornerRadius:cNodeSize * 0.5f];\n    [self.contentView.layer setBorderColor:UIColorWithRGBHex(0xAAAAAA).CGColor];\n    [self.contentView.layer setBorderWidth:1];\n    //edgeBtnSize\n    CGFloat btnW = cNodeSize * 0.6f;\n    CGFloat btnL = cNodeSize * 0.8f;\n    CGFloat btnMargin = (cNodeSize - btnL) * 0.5f;\n    CGRect leftF = CGRectMake(btnW * -0.5f, btnMargin, btnW, btnL);\n    CGRect rightF = CGRectMake(cNodeSize + btnW * -0.5f,btnMargin, btnW, btnL);",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVNodeView.m:44-68"
+    },
+    "2905": {
+        "file_id": 304,
+        "content": "Sets background color to clear, sets frame size, loads nib and adds subview with constraints, sets content view layer properties, calculates button sizes and frames.",
+        "type": "comment"
+    },
+    "2906": {
+        "file_id": 304,
+        "content": "    CGRect topF = CGRectMake(btnMargin,btnW * -0.5f,btnL,btnW);\n    CGRect bottomF = CGRectMake(btnMargin,btnW * -0.5f + cNodeSize,btnL,btnW);\n    //createEdgeBtn\n    self.leftBtn = [self createEdgeBtn:leftF onClick:@selector(leftBtnOnClick:) longClick:@selector(btnLongClick:)];\n    self.rightBtn = [self createEdgeBtn:rightF onClick:@selector(rightBtnOnClick:) longClick:@selector(btnLongClick:)];\n    self.topBtn = [self createEdgeBtn:topF onClick:@selector(topBtnOnClick:) longClick:@selector(btnLongClick:)];\n    self.bottomBtn = [self createEdgeBtn:bottomF onClick:@selector(bottomBtnOnClick:) longClick:@selector(btnLongClick:)];\n    //ligthLab\n    [self.lightLab setUserInteractionEnabled:false];\n    self.lightLab.borderColor = [UIColor whiteColor];\n    self.lightLab.borderWidth = 3.0f / [UIScreen mainScreen].scale;\n    if (!isSimulator) {\n        [self.contentView setUserInteractionEnabled:false];\n        [self.leftBtn setUserInteractionEnabled:false];\n        [self.rightBtn setUserInteractionEnabled:false];",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVNodeView.m:69-86"
+    },
+    "2907": {
+        "file_id": 304,
+        "content": "Creates four button instances for left, top, right, and bottom edges with specific frame coordinates. Disables user interaction for light label and buttons if not running on a simulator.",
+        "type": "comment"
+    },
+    "2908": {
+        "file_id": 304,
+        "content": "        [self.topBtn setUserInteractionEnabled:false];\n        [self.bottomBtn setUserInteractionEnabled:false];\n    }\n    //touchMoveView\n    self.touchMoveView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 5, 5)];\n    [self.touchMoveView setBackgroundColor:UIColorWithRGBHex(0x000000)];\n    [self.touchMoveView.layer setMasksToBounds:true];\n    [self.touchMoveView.layer setCornerRadius:2.5f];\n    [self.containerView addSubview:self.touchMoveView];\n    [self.touchMoveView setHidden:true];\n}\n-(void) initDisplay{\n}\n//MARK:===============================================================\n//MARK:                     < method >\n//MARK:===============================================================\n-(void) setDataWithNodeData:(id)nodeData{\n    _data = nodeData;\n    [self refreshDisplay];\n}\n-(void) refreshDisplay{\n    //1. 移除旧的subView\n    if (self.customSubView) {\n        [self.customSubView removeFromSuperview];\n    }\n    //2. 优先取自定义subView (默认时不显示)\n    self.customSubView = [self nodeView_GetCustomSubView:self.data];\n    //4. 显示",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVNodeView.m:87-121"
+    },
+    "2909": {
+        "file_id": 304,
+        "content": "This code sets user interaction enabled to false for top and bottom buttons, initializes a touchMoveView UIView with black background, round corners, and adds it as subview. It also includes methods for setting data and refreshing display. The setDataWithNodeData method updates the data and calls refreshDisplay method.",
+        "type": "comment"
+    },
+    "2910": {
+        "file_id": 304,
+        "content": "    if (self.customSubView) {\n        [self.containerView addSubview:self.customSubView];\n        [self.containerView sendSubviewToBack:self.customSubView];\n        [self.customSubView setUserInteractionEnabled:false];\n    }\n    //5. nodeColor\n    UIColor *nodeColor = [self nodeView_GetNodeColor:self.data];\n    if (nodeColor) {\n        [self.contentView setBackgroundColor:nodeColor];\n    }\n    //6. nodeAlpha\n    if (self.delegate && [self.delegate respondsToSelector:@selector(nodeView_GetNodeAlpha:)]) {\n        CGFloat alpha = [self.delegate nodeView_GetNodeAlpha:self.data];\n        [self.contentView setAlpha:alpha];\n    }\n    //7. rightColor\n    UIColor *rightColor = [self.delegate nodeView_GetRightColor:self.data];\n    if (rightColor) {\n        [self.rightBtn setBackgroundColor:rightColor];\n    }\n}\n-(void) light:(NSString*)lightStr{\n    [self.lightLab setText:lightStr];\n}\n-(void) clearLight{\n    [self.lightLab setText:@\"\"];\n}\n-(NSString*) getLightStr{\n    return self.lightLab.text;\n}\n-(void) setTitle:(NSString*)titleStr showTime:(CGFloat)showTime {",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVNodeView.m:122-159"
+    },
+    "2911": {
+        "file_id": 304,
+        "content": "The code checks if there is a custom subview, adds it to the container view, sends it to the back, and disables user interaction. It sets the content view background color based on node color, sets alpha based on delegate's nodeAlpha function, and changes the rightBtn's background color using delegate's nodeRightColor function. The code also provides functions for setting and getting light string value, as well as a function to set the title and show time.",
+        "type": "comment"
+    },
+    "2912": {
+        "file_id": 304,
+        "content": "    [self.titleLab setText:titleStr];\n    if (showTime > 0) {\n        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(showTime * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{\n            [self.titleLab setText:@\"\"];\n        });\n    }\n}\n//MARK:===============================================================\n//MARK:                     < privateMethod >\n//MARK:===============================================================\n-(UIButton*) createEdgeBtn:(CGRect)frame onClick:(SEL)onClick longClick:(SEL)longClick{\n    UIButton *btn = [[UIButton alloc] initWithFrame:frame];\n    [btn setBackgroundColor:[UIColor blackColor]];\n    [btn addTarget:self action:onClick forControlEvents:UIControlEventTouchUpInside];\n    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:longClick];\n    longPress.minimumPressDuration = 0.8;\n    [btn addGestureRecognizer:longPress];\n    [self.contentView addSubview:btn];\n    [btn.layer setCornerRadius:MAX(frame.size.width,frame.size.height) * 0.5f];",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVNodeView.m:160-179"
+    },
+    "2913": {
+        "file_id": 304,
+        "content": "This code sets the title label text and implements a method for creating an edge button with a long press gesture recognizer. If the showTime is greater than 0, it schedules a task to clear the title label after the specified time interval on the main queue.",
+        "type": "comment"
+    },
+    "2914": {
+        "file_id": 304,
+        "content": "    [btn.layer setBorderWidth:1.0f / UIScreen.mainScreen.scale];\n    [btn.layer setBorderColor:[UIColor grayColor].CGColor];\n    return btn;\n}\n//父级scrollView滚动开关\n-(void) setSuperScrollEnable:(BOOL)enable{\n    NSArray *svs = ARRTOOK([self superViews_AllDeepWithClass:UIScrollView.class]);\n    for (UIScrollView *sv in svs) {\n        [sv setScrollEnabled:enable];\n    }\n}\n//MARK:===============================================================\n//MARK:                     < onClick >\n//MARK:===============================================================\n- (IBAction)contentViewOnClick:(UIControl *)sender {\n    [self nodeView_OnClick:self.data];\n    [self animationClick:sender];\n}\n- (void)topBtnOnClick:(UIControl*)sender {\n    [self nodeView_TopClick:self.data];\n    [self animationClick:sender];\n}\n- (void)bottomBtnOnClick:(UIControl*)sender {\n    [self nodeView_BottomClick:self.data];\n    [self animationClick:sender];\n}\n- (void)leftBtnOnClick:(UIControl*)sender {\n    [self nodeView_LeftClick:self.data];\n    [self animationClick:sender];",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVNodeView.m:180-211"
+    },
+    "2915": {
+        "file_id": 304,
+        "content": "This code snippet contains several methods that handle button clicks and scroll view enable/disable settings. It sets the border width and color of a button, returns the modified button, and enables or disables UIScrollView objects within superviews. The onClick methods respond to different types of button clicks, calling corresponding nodeView methods and animationClick function.",
+        "type": "comment"
+    },
+    "2916": {
+        "file_id": 304,
+        "content": "}\n- (void)rightBtnOnClick:(UIControl*)sender {\n    [self nodeView_RightClick:self.data];\n    [self animationClick:sender];\n}\n- (void)btnLongClick:(UILongPressGestureRecognizer*)sender{\n    //1. 防止重复触发\n    if (sender.state != UIGestureRecognizerStateBegan) return;\n    //2. 取方向\n    DirectionType direction = DirectionType_Top;\n    if ([self.leftBtn isEqual:sender.view]) {\n        direction = DirectionType_Left;\n    }else if ([self.rightBtn isEqual:sender.view]) {\n        direction = DirectionType_Right;\n    }else if ([self.bottomBtn isEqual:sender.view]) {\n        direction = DirectionType_Bottom;\n    }\n    //3. 触发事件回调;\n    if (self.delegate && [self.delegate respondsToSelector:@selector(nodeView_LongClick:direction:)]) {\n        [self.delegate nodeView_LongClick:self.data direction:direction];\n    }\n}\n//MARK:===============================================================\n//MARK:                     < animation >\n//MARK:===============================================================\n-(void) animationClick:(UIView*)view{",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVNodeView.m:212-240"
+    },
+    "2917": {
+        "file_id": 304,
+        "content": "This code handles button clicks and long presses in a view, preventing duplicate triggers, determining the direction of click, and triggering appropriate events or animations based on the delegate response.",
+        "type": "comment"
+    },
+    "2918": {
+        "file_id": 304,
+        "content": "    if (view) {\n        [UIView animateWithDuration:0.2f animations:^{\n            [view.layer setTransform:CATransform3DMakeScale(1.2f, 1.2f, 1.2f)];\n        }completion:^(BOOL finished) {\n            [UIView animateWithDuration:0.2f animations:^{\n                [view.layer setTransform:CATransform3DIdentity];\n            }];\n        }];\n    }\n}\n//MARK:===============================================================\n//MARK:                     < touchOverride >\n//MARK:===============================================================\n-(void) touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{\n    [super touchesBegan:touches withEvent:event];\n    [self setSuperScrollEnable:false];\n}\n-(void) touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{\n    //1. 取touch坐标\n    [super touchesMoved:touches withEvent:event];\n    CGPoint touchLocation = [[touches anyObject] locationInView:self];\n    //2. 计算距离和角度\n    CGPoint center = CGPointMake(cNodeSize*0.5f, cNodeSize*0.5f);\n    CGFloat distance = [NVViewUtil distancePoint:center second:touchLocation];",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVNodeView.m:241-267"
+    },
+    "2919": {
+        "file_id": 304,
+        "content": "Animates the view's layer transform with a scale effect, followed by returning it to its original transform upon completion. Disables super scrolling on touch began event and calculates the distance between the center and touch location points in touches moved event.",
+        "type": "comment"
+    },
+    "2920": {
+        "file_id": 304,
+        "content": "    CGFloat angle = [NVViewUtil angleZero2OnePoint:center second:touchLocation];\n    //3. 设置touchMoveView的显示\n    [self.touchMoveView setHidden:distance < cNodeGesDistance];\n    if (angle > 0.125f && angle < 0.375f) {\n        [self.touchMoveView setCenter:CGPointMake(center.x + 0, center.y + -cNodeGesDistance)];//上\n    }else if (angle > 0.375f && angle < 0.625f) {\n        [self.touchMoveView setCenter:CGPointMake(center.x + cNodeGesDistance, center.y + 0)];//右\n    }else if (angle > 0.625f && angle < 0.875f) {\n        [self.touchMoveView setCenter:CGPointMake(center.x + 0, center.y + cNodeGesDistance)];//下\n    }else {\n        [self.touchMoveView setCenter:CGPointMake(center.x + -cNodeGesDistance, center.y + 0)];//左\n    }\n}\n-(void) touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{\n    //1. 取touch坐标\n    [super touchesEnded:touches withEvent:event];\n    CGPoint touchLocation = [[touches anyObject] locationInView:self];\n    //2. 计算距离和角度\n    CGPoint center = CGPointMake(cNodeSize*0.5f, cNodeSize*0.5f);",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVNodeView.m:268-289"
+    },
+    "2921": {
+        "file_id": 304,
+        "content": "Code sets touchMoveView's center based on the angle between two points, showing it if not hidden and distance is within cNodeGesDistance.",
+        "type": "comment"
+    },
+    "2922": {
+        "file_id": 304,
+        "content": "    CGFloat distance = [NVViewUtil distancePoint:center second:touchLocation];\n    CGFloat angle = [NVViewUtil angleZero2OnePoint:center second:touchLocation];\n    //3. 达到距离时,边角点击事件\n    if (distance > cNodeGesDistance) {\n        if (angle > 0.125f && angle < 0.375f) {\n            [self nodeView_TopClick:self.data];//上\n        }else if (angle > 0.375f && angle < 0.625f) {\n            [self nodeView_RightClick:self.data];//右\n        }else if (angle > 0.625f && angle < 0.875f) {\n            [self nodeView_BottomClick:self.data];//下\n        }else {\n            [self nodeView_LeftClick:self.data];//左\n        }\n    }else if(distance < cNodeSize * 0.5f){\n        //4. 在节点内时,节点点击事件;\n        [self nodeView_OnClick:self.data];\n    }\n    //5. 恢复display\n    [self setSuperScrollEnable:true];\n    [self.touchMoveView setHidden:true];\n}\n-(void) touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{\n    [super touchesCancelled:touches withEvent:event];\n    [self setSuperScrollEnable:true];\n    [self.touchMoveView setHidden:true];",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVNodeView.m:290-317"
+    },
+    "2923": {
+        "file_id": 304,
+        "content": "The code handles touch events in a view and performs different actions based on the distance and angle of the touch. If the distance is greater than a certain threshold, it determines the angle to call specific click functions (top, right, bottom, left). If the distance is less than half the node size, it calls an onClick function. Finally, it enables super scroll and hides the touchMoveView.",
+        "type": "comment"
+    },
+    "2924": {
+        "file_id": 304,
+        "content": "}\n//MARK:===============================================================\n//MARK:                     < SelfDelegate >\n//MARK:===============================================================\n-(UIView*) nodeView_GetCustomSubView:(id)nodeData{\n    if (self.delegate && [self.delegate respondsToSelector:@selector(nodeView_GetCustomSubView:)]) {\n        return [self.delegate nodeView_GetCustomSubView:nodeData];\n    }\n    return nil;\n}\n-(UIColor*) nodeView_GetNodeColor:(id)nodeData{\n    if (self.delegate && [self.delegate respondsToSelector:@selector(nodeView_GetNodeColor:)]) {\n        return [self.delegate nodeView_GetNodeColor:nodeData];\n    }\n    return nil;\n}\n-(void) nodeView_TopClick:(id)nodeData{\n    if (self.delegate && [self.delegate respondsToSelector:@selector(nodeView_TopClick:)]) {\n        [self.delegate nodeView_TopClick:nodeData];\n    }\n}\n-(void) nodeView_BottomClick:(id)nodeData{\n    if (self.delegate && [self.delegate respondsToSelector:@selector(nodeView_BottomClick:)]) {\n        [self.delegate nodeView_BottomClick:nodeData];",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVNodeView.m:318-342"
+    },
+    "2925": {
+        "file_id": 304,
+        "content": "This code defines methods for a delegate protocol that allows customization of subviews, colors, and click events for a node view.",
+        "type": "comment"
+    },
+    "2926": {
+        "file_id": 304,
+        "content": "    }\n}\n-(void) nodeView_LeftClick:(id)nodeData{\n    if (self.delegate && [self.delegate respondsToSelector:@selector(nodeView_LeftClick:)]) {\n        [self.delegate nodeView_LeftClick:nodeData];\n    }\n}\n-(void) nodeView_RightClick:(id)nodeData{\n    if (self.delegate && [self.delegate respondsToSelector:@selector(nodeView_RightClick:)]) {\n        [self.delegate nodeView_RightClick:nodeData];\n    }\n}\n-(void) nodeView_OnClick:(id)nodeData{\n    if (self.delegate && [self.delegate respondsToSelector:@selector(nodeView_OnClick:)]) {\n        NSString *desc = [self.delegate nodeView_OnClick:self.data];\n        TPLog(@\"> %@\", desc);\n    }\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVNodeView.m:343-363"
+    },
+    "2927": {
+        "file_id": 304,
+        "content": "This code defines several methods for handling left, right, and regular clicks on a node view. The methods check if the delegate responds to the corresponding click event before calling it with the appropriate data. Additionally, it logs a description of the node click using TPLog.",
+        "type": "comment"
+    },
+    "2928": {
+        "file_id": 305,
+        "content": "/ThirdParty/SMGNetVision/Core/View/NVView.h",
+        "type": "filepath"
+    },
+    "2929": {
+        "file_id": 305,
+        "content": "The code creates a `NVViewDelegate` protocol and `NVView` class for handling node data, adding nodes, and enabling force mode in the SMGNetVision project. It includes methods to clear and get node descriptions, as well as invoke force mode execution blocks.",
+        "type": "summary"
+    },
+    "2930": {
+        "file_id": 305,
+        "content": "//\n//  NVView.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/6/11.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n@class NVModuleView;\n@protocol NVViewDelegate <NSObject>\n//获取自定义节点view\n-(UIView *)nv_GetCustomSubNodeView:(id)nodeData;\n//获取节点颜色\n-(UIColor *)nv_GetNodeColor:(id)nodeData;\n-(UIColor *)nv_GetRightColor:(id)nodeData;\n//获取节点透明度\n-(CGFloat)nv_GetNodeAlpha:(id)nodeData;\n//获取节点描述\n-(NSString*)nv_NodeOnClick:(id)nodeData;\n//获取模块Id\n-(NSArray*)nv_GetModuleIds;\n-(NSString*)nv_GetModuleId:(id)nodeData;\n//获取节点的被引用序列\n-(NSArray*)nv_GetRefNodeDatas:(id)nodeData;\n//获取节点的引用序列(内容)\n-(NSArray*)nv_ContentNodeDatas:(id)nodeData;\n//获取节点的抽象序列\n-(NSArray*)nv_AbsNodeDatas:(id)nodeData;\n//获取节点的具象序列\n-(NSArray*)nv_ConNodeDatas:(id)nodeData;\n//追加节点\n-(void)nv_AddNodeOnClick;\n//报名\n-(NSString*)nv_ShowName:(id)data;\n//获取节点指向target的强度\n-(NSInteger)nv_GetPortStrong:(id)mainNodeData target:(id)targetNodeData;\n//directionClick\n-(void)nv_DirectionClick:(int)type mView:(NVModuleView*)mView nData:(id)nData targetDatas:(NSArray*)targetDatas;",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVView.h:1-53"
+    },
+    "2931": {
+        "file_id": 305,
+        "content": "This code is a part of the NVView.h file in the SMGNetVision project. It defines a protocol NVViewDelegate which provides methods to get custom subnode views, node colors, node alpha values, node descriptions, module IDs, referenced and abstract/concrete node sequences, adds nodes, gets names, gets port strengths, and handles direction clicks.",
+        "type": "comment"
+    },
+    "2932": {
+        "file_id": 305,
+        "content": "//longClick\n-(void)nv_LongClick:(int)type mView:(NVModuleView*)mView nData:(id)nData;\n@end\n/**\n *  MARK:--------------------NetVision主view--------------------\n *  1. 默认为关闭状态,点\"放开\"时再展开窗口;\n */\n@interface NVView : UIView\n@property (assign, nonatomic) BOOL forceMode; //强力模式 (在此模式下,即使UI未展示,也会强行加入node);\n-(id) initWithDelegate:(id<NVViewDelegate>)delegate;\n/**\n *  MARK:--------------------设置内容--------------------\n */\n-(void) setNodeData:(id)nodeData;\n-(void) setNodeDatas:(NSArray*)nodeDatas;\n-(void) setNodeData:(id)nodeData lightStr:(NSString*)lightStr;\n-(void) setNodeData:(id)nodeData appendLightStr:(NSString*)appendLightStr;\n/**\n *  MARK:--------------------移除内容--------------------\n */\n-(void) removeNodeDatas:(NSArray*)nodeDatas;\n/**\n *  MARK:--------------------清空网络--------------------\n */\n-(void) clear;\n/**\n *  MARK:--------------------节点描述--------------------\n */\n-(void) lightNode:(id)nodeData str:(NSString*)str;\n/**\n *  MARK:--------------------线描述--------------------\n */\n-(void) lightLine:(id)nodeDataA nodeDataB:(id)nodeDataB str:(NSString*)str;",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVView.h:55-95"
+    },
+    "2933": {
+        "file_id": 305,
+        "content": "This code defines the `NVView` class, which is a subclass of `UIView`. It has properties and methods to handle node data, clear network connections, and describe nodes and lines. The class also supports a force mode for adding nodes even when the UI is not visible.",
+        "type": "comment"
+    },
+    "2934": {
+        "file_id": 305,
+        "content": "-(void) lightLineStrong:(id)nodeDataA nodeDataB:(id)nodeDataB;\n/**\n *  MARK:--------------------清空节点描述--------------------\n */\n-(void) clearLight;\n-(void) clearLight:(NSString*)moduleId;\n/**\n *  MARK:--------------------获取节点描述--------------------\n */\n-(NSString*) getLightStr:(id)nodeData;\n/**\n *  MARK:--------------------在强行工作模式下执行block--------------------\n */\n-(void) invokeForceMode:(void(^)())block;\n+(void) invokeForceMode:(void(^)())block;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVView.h:96-115"
+    },
+    "2935": {
+        "file_id": 305,
+        "content": "This code defines a class with methods for clearing and getting node descriptions, as well as executing a block in force mode. The `clearLight` method can be called without arguments to clear all node descriptions or with a moduleId argument to clear only the specified module's node description. The `getLightStr` method retrieves the node description for a given nodeData object. The `invokeForceMode` methods execute a block in force mode, either on the instance of the class or on the entire class itself.",
+        "type": "comment"
+    },
+    "2936": {
+        "file_id": 306,
+        "content": "/ThirdParty/SMGNetVision/Core/View/NVView.m",
+        "type": "filepath"
+    },
+    "2937": {
+        "file_id": 306,
+        "content": "This code initializes a network visualization view controller in Objective-C, handling hierarchical data and providing methods for user interaction, force mode activation, and button click event handling.",
+        "type": "summary"
+    },
+    "2938": {
+        "file_id": 306,
+        "content": "//\n//  NVView.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/6/11.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import \"NVView.h\"\n#import \"MASConstraint.h\"\n#import \"View+MASAdditions.h\"\n#import \"NVModuleView.h\"\n#import \"NVNodeView.h\"\n#import \"NVLineView.h\"\n#import \"NVViewUtil.h\"\n#import \"NVConfig.h\"\n#import \"AIKVPointer.h\"\n@interface NVView () <NVModuleViewDelegate>\n@property (strong,nonatomic) IBOutlet UIView *containerView;\n@property (strong, nonatomic) UIScrollView *scrollView;\n@property (assign, nonatomic) BOOL isOpen;\n@property (weak, nonatomic) IBOutlet UIButton *openCloseBtn;\n@property (strong, nonatomic) id<NVViewDelegate> delegate;\n@property (strong, nonatomic) UIView *contentView;\n@end\n@implementation NVView\n-(id) initWithDelegate:(id<NVViewDelegate>)delegate {\n    self = [super init];\n    if(self != nil){\n        self.delegate = delegate;\n        [self initView];\n        [self initData];\n        [self initDisplay];\n    }\n    return self;\n}\n-(void) initView{\n    //self\n    [self setFrame:CGRectMake(ScreenWidth - 40, StateBarHeight, 40, 20)];",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVView.m:1-45"
+    },
+    "2939": {
+        "file_id": 306,
+        "content": "NVView class declaration with properties and delegate, initializer method for setting delegate and calling initialization methods, sets frame for self.",
+        "type": "comment"
+    },
+    "2940": {
+        "file_id": 306,
+        "content": "    //containerView\n    [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];\n    [self addSubview:self.containerView];\n    [self.containerView mas_makeConstraints:^(MASConstraintMaker *make) {\n        make.leading.mas_equalTo(self);\n        make.trailing.mas_equalTo(self);\n        make.top.mas_equalTo(self);\n        make.bottom.mas_equalTo(self);\n    }];\n    //scrollView\n    self.scrollView = [[UIScrollView alloc] init];\n    [self.containerView addSubview:self.scrollView];\n    [self.scrollView setFrame:CGRectMake(0, 20, ScreenWidth, cNVHeight - 20)];\n    [self.scrollView setShowsVerticalScrollIndicator:NO];\n    [self.scrollView setShowsHorizontalScrollIndicator:NO];\n    //contentView\n    self.contentView = [[UIView alloc] init];\n    [self.scrollView addSubview:self.contentView];\n    [self.contentView setBackgroundColor:[UIColor clearColor]];\n    //moduleViews\n    NSArray *moduleIds = [self nv_GetModuleIds];\n    if (ARRISOK(moduleIds)) {\n        CGFloat curModuleX = 2;\n        for (NSString *moduleId in moduleIds) {",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVView.m:47-73"
+    },
+    "2941": {
+        "file_id": 306,
+        "content": "Creates a view hierarchy with containerView, scrollView, and contentView. Loads nib file and adds it as subview to containerView. Sets up constraints for containerView within the self view. Initializes scrollView, sets its frame, and disables scroll indicators. Creates contentView and adds it as subview to scrollView, setting its background color to clear. Retrieves moduleIds from a method and initializes the x position for modules in the scrollView.",
+        "type": "comment"
+    },
+    "2942": {
+        "file_id": 306,
+        "content": "            NVModuleView *moduleView = [[NVModuleView alloc] init];\n            moduleView.delegate = self;\n            [moduleView setDataWithModuleId:moduleId];\n            [moduleView setFrame:CGRectMake(curModuleX, 2, cModuleWidth, cModuleHeight)];\n            [self.contentView addSubview:moduleView];\n            curModuleX += (cModuleWidth + 2);\n        }\n        [self.scrollView setContentSize:CGSizeMake(curModuleX, cModuleHeight)];\n        [self.contentView setFrame:CGRectMake(0, 0, curModuleX, cModuleHeight)];\n    }\n}\n-(void) initData{\n}\n-(void) initDisplay{\n}\n//MARK:===============================================================\n//MARK:                     < method >\n//MARK:===============================================================\n-(void) setNodeData:(id)nodeData{\n    if (nodeData) {\n        [self setNodeDatas:@[nodeData]];\n    }\n}\n-(void) setNodeDatas:(NSArray*)nodeDatas{\n    //1. 数据准备\n    if (!self.isOpen && !self.forceMode) return;\n    nodeDatas = ARRTOOK(nodeDatas);\n    NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVView.m:74-106"
+    },
+    "2943": {
+        "file_id": 306,
+        "content": "This code initializes a view and sets its frame, adds it to the content view of a scroll view, and updates the scroll view's content size when adding multiple views. It also includes methods for setting node data and possibly preparing data before displaying it in the view.",
+        "type": "comment"
+    },
+    "2944": {
+        "file_id": 306,
+        "content": "    //2. 分组\n    for (id data in nodeDatas) {\n        NSString *mId = STRTOOK([self nv_GetModuleId:data]);\n        NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:[dic objectForKey:mId]];\n        [mArr addObject:data];\n        [dic setObject:mArr forKey:mId];\n    }\n    //3. 显示\n    for (NSString *mId in dic.allKeys) {\n        NVModuleView *mView = [self getNVModuleViewWithModuleId:mId];\n        if (mView) {\n            [mView setDataWithNodeDatas:[dic objectForKey:mId]];\n        }\n    }\n}\n-(void) setNodeData:(id)nodeData lightStr:(NSString*)lightStr{\n    [self setNodeData:nodeData];\n    [self lightNode:nodeData str:lightStr];\n}\n-(void) setNodeData:(id)nodeData appendLightStr:(NSString*)appendLightStr{\n    NSString *lightStr = STRFORMAT(@\"%@ %@\",[self getLightStr:nodeData],appendLightStr);\n    [self setNodeData:nodeData lightStr:lightStr];\n}\n-(void) removeNodeDatas:(NSArray*)nodeDatas{\n    //1. 数据准备\n    nodeDatas = ARRTOOK(nodeDatas);\n    NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];\n    //2. 分组",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVView.m:108-140"
+    },
+    "2945": {
+        "file_id": 306,
+        "content": "This code groups data into modules and displays the grouped data in corresponding module views. It also sets node data with light strings, appends light strings, and removes node data.",
+        "type": "comment"
+    },
+    "2946": {
+        "file_id": 306,
+        "content": "    for (id data in nodeDatas) {\n        NSString *mId = STRTOOK([self nv_GetModuleId:data]);\n        NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:[dic objectForKey:mId]];\n        [mArr addObject:data];\n        [dic setObject:mArr forKey:mId];\n    }\n    //3. 移除节点;\n    for (NSString *mId in dic.allKeys) {\n        NVModuleView *mView = [self getNVModuleViewWithModuleId:mId];\n        if (mView) {\n            [mView removeNodeDatas:[dic objectForKey:mId]];\n        }\n    }\n    //4. 移除线段;\n    [self moduleView_ClearLine:nodeDatas];\n}\n-(void) clear{\n    //1. 清模块\n    NSArray *mViews = ARRTOOK([self subViews_AllDeepWithClass:NVModuleView.class]);\n    for (NVModuleView *mView in mViews) {\n        [mView clear];\n    }\n    //2. 清线\n    NSArray *lViews = ARRTOOK([self subViews_AllDeepWithClass:NVLineView.class]);\n    for (NVLineView *lView in lViews) {\n        [lView removeFromSuperview];\n    }\n}\n-(void) lightNode:(id)nodeData str:(NSString*)str{\n    NVNodeView *nv = [self findNodeView:nodeData];\n    if (nv) [nv light:str];",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVView.m:141-176"
+    },
+    "2947": {
+        "file_id": 306,
+        "content": "This code clears all modules and lines from a view, iterates through the nodeDatas array to update it, removes nodes from each module's associated array, and then clears any existing lines.",
+        "type": "comment"
+    },
+    "2948": {
+        "file_id": 306,
+        "content": "}\n-(void) lightLine:(id)nodeDataA nodeDataB:(id)nodeDataB str:(NSString*)str{\n    NVLineView *lv = [self findLineView:nodeDataA nodeDataB:nodeDataB];\n    if (lv) [lv light:str];\n}\n-(void) lightLineStrong:(id)nodeDataA nodeDataB:(id)nodeDataB {\n    NVLineView *lv = [self findLineView:nodeDataA nodeDataB:nodeDataB];\n    if (lv) {\n        NSInteger aStrong = [self.delegate nv_GetPortStrong:nodeDataA target:nodeDataB];\n        NSInteger bStrong = [self.delegate nv_GetPortStrong:nodeDataB target:nodeDataA];\n        [lv light:STRFORMAT(@\"<%ld  %ld>\",(long)aStrong,(long)bStrong)];\n    }\n}\n-(void) clearLight{\n    [self clearLightFromParentView:self];\n}\n-(void) clearLight:(NSString*)moduleId{\n    NVModuleView *mView = [self getNVModuleViewWithModuleId:moduleId];\n    [self clearLightFromParentView:mView];\n}\n-(NSString*) getLightStr:(id)nodeData{\n    NVNodeView *nv = [self findNodeView:nodeData];\n    return nv ? [nv getLightStr] : @\"\";\n}\n-(void) invokeForceMode:(void(^)())block{\n    if (block) {\n        BOOL bakForceMode = self.forceMode;",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVView.m:177-209"
+    },
+    "2949": {
+        "file_id": 306,
+        "content": "This code defines methods for interacting with line views and module views in a view controller. It includes methods to light a line, clear the light from a parent view, get the light string of a node, and invoke a force mode block.",
+        "type": "comment"
+    },
+    "2950": {
+        "file_id": 306,
+        "content": "        [self setForceMode:true];\n        block();\n        [self setForceMode:bakForceMode];\n    }\n}\n+(void) invokeForceMode:(void(^)())block{\n    if (block) {\n        __block Act0 weakAct = block;\n        dispatch_async(dispatch_get_main_queue(), ^{\n            [theNV invokeForceMode:weakAct];\n        });\n    }\n}\n//MARK:===============================================================\n//MARK:                     < privateMethod >\n//MARK:===============================================================\n-(void) clearLightFromParentView:(UIView*)parentView{\n    if (parentView) {\n        NSArray *nvs = ARRTOOK([parentView subViews_AllDeepWithClass:NVNodeView.class]);\n        for (NVNodeView *nv in nvs) {\n            [nv clearLight];\n        }\n    }\n}\n/**\n *  MARK:--------------------获取nodeData所属的模块--------------------\n */\n-(NVModuleView*) getNVModuleViewWithModuleId:(NSString*)moduleId{\n    moduleId = STRTOOK(moduleId);\n    for (NVModuleView *mView in self.contentView.subviews) {\n        if (ISOK(mView, NVModuleView.class) && [moduleId isEqualToString:mView.moduleId]) {",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVView.m:210-243"
+    },
+    "2951": {
+        "file_id": 306,
+        "content": "This code snippet contains methods for setting and invoking the force mode, clearing lights from a parent view, and retrieving an NVModuleView based on its module ID. The invokeForceMode method asynchronously calls a block of code on the main queue. The clearLightFromParentView method recursively searches through subviews to find and clear lights. The getNVModuleViewWithModuleId method iterates over subviews, searching for an NVModuleView with a matching module ID.",
+        "type": "comment"
+    },
+    "2952": {
+        "file_id": 306,
+        "content": "            return mView;\n        }\n    }\n    return nil;\n}\n-(NVNodeView*) findNodeView:(id)nodeData{\n    if (nodeData) {\n        NSArray *nvs = ARRTOOK([self subViews_AllDeepWithClass:NVNodeView.class]);\n        for (NVNodeView *nv in nvs) {\n            if ([nodeData isEqual:nv.data]) {\n                return nv;\n            }\n        }\n    }\n    return nil;\n}\n-(NVLineView*) findLineView:(id)nodeDataA nodeDataB:(id)nodeDataB{\n    if (nodeDataA && nodeDataB) {\n        NSArray *vs = ARRTOOK([self subViews_AllDeepWithClass:NVLineView.class]);\n        for (NVLineView *n in vs) {\n            if ([n.data containsObject:nodeDataA] && [n.data containsObject:nodeDataB]) {\n                return n;\n            }\n        }\n    }\n    return nil;\n}\n//MARK:===============================================================\n//MARK:                     < onclick >\n//MARK:===============================================================\n- (IBAction)openCloseBtnOnClick:(id)sender {\n    self.isOpen = !self.isOpen;\n    self.height = self.isOpen ? cNVHeight : 20;",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVView.m:244-279"
+    },
+    "2953": {
+        "file_id": 306,
+        "content": "This code defines methods for finding a specific view or line view within a hierarchy of views. The `findNodeView:` method searches for an NVNodeView with the provided data and returns it if found, otherwise returns nil. Similarly, the `findLineView:` method searches for an NVLineView whose data array contains both the provided nodeDataA and nodeDataB, and returns it if found, otherwise returns nil. The code also includes an IBAction method for handling a button click event that toggles the isOpen property of the view and updates its height accordingly.",
+        "type": "comment"
+    },
+    "2954": {
+        "file_id": 306,
+        "content": "    self.x = self.isOpen ? 0 : ScreenWidth - 40;\n    self.width = self.isOpen ? ScreenWidth : 40;\n    [self.openCloseBtn setTitle:(self.isOpen ? @\"关闭\" : @\"网络\") forState:UIControlStateNormal];\n}\n- (IBAction)clearBtnOnClick:(id)sender {\n    [self clear];\n}\n- (IBAction)addBtnOnClick:(id)sender {\n    [self nv_AddNodeOnClick];\n}\n/**\n *  MARK:--------------------NVModuleViewDelegate--------------------\n */\n-(UIView *)moduleView_GetCustomSubView:(id)nodeData{\n    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_GetCustomSubNodeView:)]) {\n        return [self.delegate nv_GetCustomSubNodeView:nodeData];\n    }\n    return nil;\n}\n-(UIColor *)moduleView_GetNodeColor:(id)nodeData{\n    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_GetNodeColor:)]) {\n        return [self.delegate nv_GetNodeColor:nodeData];\n    }\n    return nil;\n}\n-(UIColor *)moduleView_GetRightColor:(id)nodeData{\n    return [self.delegate nv_GetRightColor:nodeData];\n}\n-(CGFloat)moduleView_GetNodeAlpha:(id)nodeData{\n    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_GetNodeAlpha:)]) {",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVView.m:280-313"
+    },
+    "2955": {
+        "file_id": 306,
+        "content": "This code defines a view controller for a network visualization, with buttons to clear and add nodes. It also conforms to the NVModuleViewDelegate protocol to provide custom subviews and colors for nodes.",
+        "type": "comment"
+    },
+    "2956": {
+        "file_id": 306,
+        "content": "        return [self.delegate nv_GetNodeAlpha:nodeData];\n    }\n    return 1.0f;\n}\n-(NSString*)moduleView_NodeOnClick:(id)nodeData{\n    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_NodeOnClick:)]) {\n        return [self.delegate nv_NodeOnClick:nodeData];\n    }\n    return nil;\n}\n-(NSArray*)moduleView_AbsNodeDatas:(id)nodeData{\n    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_AbsNodeDatas:)]) {\n        return [self.delegate nv_AbsNodeDatas:nodeData];\n    }\n    return nil;\n}\n-(NSArray*)moduleView_ConNodeDatas:(id)nodeData{\n    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_ConNodeDatas:)]) {\n        return [self.delegate nv_ConNodeDatas:nodeData];\n    }\n    return nil;\n}\n-(NSArray*)moduleView_ContentNodeDatas:(id)nodeData{\n    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_ContentNodeDatas:)]) {\n        return [self.delegate nv_ContentNodeDatas:nodeData];\n    }\n    return nil;\n}\n-(NSArray*)moduleView_RefNodeDatas:(id)nodeData{\n    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_GetRefNodeDatas:)]) {",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVView.m:314-348"
+    },
+    "2957": {
+        "file_id": 306,
+        "content": "These methods delegate interactions to an unknown object if it responds to the corresponding selector. If not, they return default values (1.0f or nil).",
+        "type": "comment"
+    },
+    "2958": {
+        "file_id": 306,
+        "content": "        return [self.delegate nv_GetRefNodeDatas:nodeData];\n    }\n    return nil;\n}\n-(NSArray*)moduleView_GetAllNetDatas{\n    NSMutableArray *netDatas = [[NSMutableArray alloc] init];\n    NSArray *moduleViews = ARRTOOK([self subViews_AllDeepWithClass:NVModuleView.class]);\n    for (NVModuleView *mView in moduleViews) {\n        [netDatas addObjectsFromArray:mView.nodeArr];\n    }\n    return netDatas;\n}\n-(void)moduleView_SetNetDatas:(NSArray*)datas{\n    [self setNodeDatas:datas];\n}\n-(void)moduleView_DrawLine:(NSArray*)lineDatas{\n    //1. 数据准备\n    lineDatas = ARRTOOK(lineDatas);\n    NSArray *nodeViews = ARRTOOK([self subViews_AllDeepWithClass:NVNodeView.class]);\n    NSArray *lineViews = ARRTOOK([self subViews_AllDeepWithClass:NVLineView.class]);\n    //2. 逐根画线\n    for (NSArray *lineData in lineDatas) {\n        //3. 准备两端的数据\n        id dataA = ARR_INDEX(lineData, 0);\n        id dataB = ARR_INDEX(lineData, 1);\n        if (dataA && dataB) {\n            //4. 是否有旧的\n            BOOL find = false;\n            for (NVLineView *lView in lineViews) {",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVView.m:349-383"
+    },
+    "2959": {
+        "file_id": 306,
+        "content": "This code contains several methods, including `nv_GetRefNodeData`, `moduleView_GetAllNetDatas`, `moduleView_SetNetDatas`, and `moduleView_DrawLine`. The first method retrieves reference node data from a delegate. The second method retrieves all network data from module views by iterating over subviews of a specific class. The third method sets the network data for a view, and the fourth method draws lines based on provided line data.",
+        "type": "comment"
+    },
+    "2960": {
+        "file_id": 306,
+        "content": "                if ([lView.data containsObject:dataA] && [lView.data containsObject:dataB]) {\n                    find = true;\n                }\n            }\n            //5. draw\n            if (!find) {\n                NVLineView *lView = [[NVLineView alloc] init];\n                [lView setDataWithDataA:dataA dataB:dataB];\n                [self.contentView addSubview:lView];\n            }\n        }\n    }\n    //6. 逐根修正坐标\n    lineViews = ARRTOOK([self subViews_AllDeepWithClass:NVLineView.class]);\n    for (NVLineView *lView in lineViews) {\n        //7. 准备两端的数据\n        id dataA = ARR_INDEX(lView.data, 0);\n        id dataB = ARR_INDEX(lView.data, 1);\n        if (dataA && dataB) {\n            //8. 获取两端的坐标\n            CGPoint pointA = CGPointZero;\n            CGPoint pointB = CGPointZero;\n            for (NVNodeView *nView in nodeViews) {\n                if ([dataA isEqual:nView.data]) {\n                    pointA = [nView.superview convertPoint:nView.center toView:self.contentView];\n                }else if([dataB isEqual:nView.data]){",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVView.m:384-413"
+    },
+    "2961": {
+        "file_id": 306,
+        "content": "This code appears to be part of a larger program that involves view manipulation and data management. Specifically, it checks if two data objects (dataA and dataB) are present in the \"lView\" object's data array. If not, it creates an instance of NVLineView with these two data objects and adds it to the content view. Then, it retrieves the coordinates for these two data objects by iterating through another array of node views, converting their centers to the content view's coordinate system. This seems to be part of a process that involves organizing and positioning views based on the given data.",
+        "type": "comment"
+    },
+    "2962": {
+        "file_id": 306,
+        "content": "                    pointB = [nView.superview convertPoint:nView.center toView:self.contentView];\n                }\n            }\n            //9. 画线\n            if (!CGPointEqualToPoint(pointA, CGPointZero) && !CGPointEqualToPoint(pointB, CGPointZero)) {\n                //10. 计算线长度\n                float width = [NVViewUtil distancePoint:pointA second:pointB];\n                //11. 计算线中心位置\n                float centerX = (pointA.x + pointB.x) / 2.0f;\n                float centerY = (pointA.y + pointB.y) / 2.0f;\n                //12. 旋转角度\n                CGFloat angle = [NVViewUtil anglePIPoint:pointA second:pointB];\n                //13. draw\n                [lView.layer setTransform:CATransform3DMakeRotation(0, 0, 0, 1)];\n                lView.width = width;\n                [lView.layer setTransform:CATransform3DMakeRotation(angle, 0, 0, 1)];\n                lView.center = CGPointMake(centerX, centerY);\n            }\n        }\n    }\n}\n-(void)moduleView_ClearLine:(NSArray*)datas{\n    //1. 数据准备\n    datas = ARRTOOK(datas);",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVView.m:414-442"
+    },
+    "2963": {
+        "file_id": 306,
+        "content": "This code checks if there are two non-zero points, calculates the line's width and center position, determines the rotation angle, clears any previous line in a view, and then sets up a new line with the calculated values. The `moduleView_ClearLine` method prepares data for the lines.",
+        "type": "comment"
+    },
+    "2964": {
+        "file_id": 306,
+        "content": "    NSArray *lineViews = ARRTOOK([self subViews_AllDeepWithClass:NVLineView.class]);\n    //2. 遍历找到含有nodeData的线,并清除\n    for (NSArray *nodeData in datas) {\n        for (NVLineView *lView in lineViews) {\n            if ([lView.data containsObject:nodeData]) {\n                [lView removeFromSuperview];\n            }\n        }\n    }\n}\n-(NSString*)moduleView_ShowName:(id)data{\n    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_ShowName:)]) {\n        return [self.delegate nv_ShowName:data];\n    }\n    return nil;\n}\n-(void)moduleView_DirectionClick:(DirectionType)type mView:(NVModuleView*)mView nData:(id)nData targetDatas:(NSArray*)targetDatas{\n    [self.delegate nv_DirectionClick:type mView:mView nData:nData targetDatas:targetDatas];\n}\n-(void)moduleView_LongClick:(DirectionType)type mView:(NVModuleView*)mView nData:(id)nData{\n    [self.delegate nv_LongClick:type mView:mView nData:nData];\n}\n//MARK:===============================================================\n//MARK:                     < SelfDelegate >",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVView.m:443-471"
+    },
+    "2965": {
+        "file_id": 306,
+        "content": "This code is traversing through the subviews of a view and removing those that contain certain data. It also includes several delegate methods for handling events such as showing name, direction click, and long click. The code is written in Objective-C and seems to be part of an iOS app's view controller logic.",
+        "type": "comment"
+    },
+    "2966": {
+        "file_id": 306,
+        "content": "//MARK:===============================================================\n-(NSArray*)nv_GetModuleIds{\n    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_GetModuleIds)]) {\n        return [self.delegate nv_GetModuleIds];\n    }\n    return nil;\n}\n-(NSString*)nv_GetModuleId:(id)nodeData{\n    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_GetModuleId:)]) {\n        return [self.delegate nv_GetModuleId:nodeData];\n    }\n    return nil;\n}\n-(void)nv_AddNodeOnClick{\n    if (self.delegate && [self.delegate respondsToSelector:@selector(nv_AddNodeOnClick)]) {\n        return [self.delegate nv_AddNodeOnClick];\n    }\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVView.m:472-491"
+    },
+    "2967": {
+        "file_id": 306,
+        "content": "This code defines three methods: `nv_GetModuleIds`, `nv_GetModuleId:`, and `nv_AddNodeOnClick`. These methods check if the delegate responds to the corresponding selectors, and if so, call the respective method on the delegate. Otherwise, they return nil or do nothing.",
+        "type": "comment"
+    },
+    "2968": {
+        "file_id": 307,
+        "content": "/ThirdParty/SMGNetVision/HE/CustomAddNodeWindow.h",
+        "type": "filepath"
+    },
+    "2969": {
+        "file_id": 307,
+        "content": "This is the header file for a custom UIView class called CustomAddNodeWindow, which is a part of the SMG_NothingIsAll codebase. It likely contains properties and methods to manage an interface for adding nodes in a graph or network system.",
+        "type": "summary"
+    },
+    "2970": {
+        "file_id": 307,
+        "content": "//\n//  CustomAddNodeWindow.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/7/1.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n@interface CustomAddNodeWindow : UIView\n@end",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/CustomAddNodeWindow.h:1-13"
+    },
+    "2971": {
+        "file_id": 307,
+        "content": "This is the header file for a custom UIView class called CustomAddNodeWindow, which is a part of the SMG_NothingIsAll codebase. It likely contains properties and methods to manage an interface for adding nodes in a graph or network system.",
+        "type": "comment"
+    },
+    "2972": {
+        "file_id": 308,
+        "content": "/ThirdParty/SMGNetVision/HE/CustomAddNodeWindow.m",
+        "type": "filepath"
+    },
+    "2973": {
+        "file_id": 308,
+        "content": "A UIViewController subclass with class properties and init method initializes the view, data, and display. The \"commitBtnOnClick\" handles button clicks and populates folderNames array based on moduleSegment selection. Code assigns parameters to AIKVPointer object for network submission, verifies nodes, marks them as valid/invalid, and closes window accordingly.",
+        "type": "summary"
+    },
+    "2974": {
+        "file_id": 308,
+        "content": "//\n//  CustomAddNodeWindow.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/7/1.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import \"CustomAddNodeWindow.h\"\n#import \"MASConstraint.h\"\n#import \"View+MASAdditions.h\"\n#import \"AIKVPointer.h\"\n#import \"ImvAlgsHungerModel.h\"\n#import \"ImvAlgsHurtModel.h\"\n@interface CustomAddNodeWindow ()\n@property (strong,nonatomic) IBOutlet UIView *containerView;\n@property (weak, nonatomic) IBOutlet UISegmentedControl *moduleSegment;\n@property (weak, nonatomic) IBOutlet UITextField *pointerIdTF;\n@property (weak, nonatomic) IBOutlet UITextField *algsTypeTF;\n@property (weak, nonatomic) IBOutlet UITextField *dataSourceTF;\n@end\n@implementation CustomAddNodeWindow\n-(id) init {\n    self = [super init];\n    if(self != nil){\n        [self initView];\n        [self initData];\n        [self initDisplay];\n    }\n    return self;\n}\n-(void) initView{\n    //self\n    float height = 380;\n    [self setFrame:CGRectMake((ScreenWidth - 300) / 2.0f, (ScreenHeight - height) / 2.0f,300, height)];\n    //containerView",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/CustomAddNodeWindow.m:1-43"
+    },
+    "2975": {
+        "file_id": 308,
+        "content": "Class definition and properties for a UIViewController subclass, initializes view, data, and display in its init method.",
+        "type": "comment"
+    },
+    "2976": {
+        "file_id": 308,
+        "content": "    [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];\n    [self addSubview:self.containerView];\n    [self.containerView mas_makeConstraints:^(MASConstraintMaker *make) {\n        make.leading.mas_equalTo(self);\n        make.trailing.mas_equalTo(self);\n        make.top.mas_equalTo(self);\n        make.bottom.mas_equalTo(self);\n    }];\n}\n-(void) initData{\n}\n-(void) initDisplay{\n}\n//MARK:===============================================================\n//MARK:                     < onclick >\n//MARK:===============================================================\n- (IBAction)commitBtnOnClick:(id)sender {\n    //2. folderName\n    NSArray *folderNames = nil;\n    if (self.moduleSegment.selectedSegmentIndex == 0) {\n        folderNames = @[kPN_VALUE];\n    }else if (self.moduleSegment.selectedSegmentIndex == 1) {\n        folderNames = @[kPN_ALG_ABS_NODE,kPN_ALG_NODE];\n    }else if (self.moduleSegment.selectedSegmentIndex == 2) {\n        folderNames = @[kPN_FO_ABS_NODE,kPN_FRONT_ORDER_NODE];",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/CustomAddNodeWindow.m:44-72"
+    },
+    "2977": {
+        "file_id": 308,
+        "content": "This code sets up a window with a container view, and initializes data and display. The \"commitBtnOnClick\" method is an action triggered when the commit button is clicked. Depending on the selected segment index in the moduleSegment, it populates the folderNames array with different values.",
+        "type": "comment"
+    },
+    "2978": {
+        "file_id": 308,
+        "content": "    }else if (self.moduleSegment.selectedSegmentIndex == 3) {\n        folderNames = @[kPN_ABS_CMV_NODE,kPN_CMV_NODE];\n    }\n    //3. pointerId\n    NSInteger pointerId = [STRTOOK(self.pointerIdTF.text) integerValue];\n    //6. algsType\n    NSArray *ats = nil;\n    if (STRISOK(self.algsTypeTF.text)) {\n        ats = @[self.algsTypeTF.text];\n    }else if (self.moduleSegment.selectedSegmentIndex == 3) {\n        ats = @[@\"ImvAlgsHungerModel\",@\"ImvAlgsHurtModel\"];\n    }else {\n        ats = @[DefaultAlgsType];\n    }\n    //7. dataSource\n    NSString *dataSource = STRISOK(self.dataSourceTF.text) ? self.dataSourceTF.text : DefaultDataSource;\n    //8. 提交到网络\n    for (NSNumber *isOut in @[@(true),@(false)]) {\n        for (NSString *fn in folderNames) {\n            for (NSString *at in ats) {\n                AIKVPointer *node_p = [AIKVPointer newWithPointerId:pointerId\n                                                         folderName:fn\n                                                           algsType:at\n                                                         dataSource:dataSource",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/CustomAddNodeWindow.m:73-100"
+    },
+    "2979": {
+        "file_id": 308,
+        "content": "This code checks the selected segment index from a module and based on that, assigns folder names, algorithm types, pointer ID, and data source. It then creates an AIKVPointer object using these parameters and iterates through different combinations of outgoing and incoming pointers to submit the information to the network.",
+        "type": "comment"
+    },
+    "2980": {
+        "file_id": 308,
+        "content": "                                                              isOut:isOut.boolValue\n                                                               type:ATDefault];\n                //9. 验证是否存在;\n                BOOL isValid = false;\n                if (PitIsValue(node_p)) {\n                    isValid = NUMISOK([AINetIndex getData:node_p]);//稀疏码读value类型\n                }else{\n                    isValid = [SMGUtils searchNode:node_p];//读node类型\n                }\n                //11. 追加到网;\n                if (isValid) {\n                    [theNV setNodeData:node_p];\n                    TPLog(@\"追加节点:%@\",Pit2FStr(node_p));\n                }\n            }\n        }\n    }\n    //9. 关闭窗口\n    [self removeFromSuperview];\n}\n- (IBAction)closeBtnOnClick:(id)sender {\n    [self removeFromSuperview];\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/CustomAddNodeWindow.m:101-129"
+    },
+    "2981": {
+        "file_id": 308,
+        "content": "100-128: This code verifies if a node exists, sets it as valid, and adds it to the network. If invalid, it closes the window.",
+        "type": "comment"
+    },
+    "2982": {
+        "file_id": 309,
+        "content": "/ThirdParty/SMGNetVision/HE/LongTipWindow.h",
+        "type": "filepath"
+    },
+    "2983": {
+        "file_id": 309,
+        "content": "This file contains the header class for LongTipWindow, a subclass of UIView. It includes a setData method which takes in moduleTitle, an AIKVPointer data object, and DirectionType parameter. Created by jia on 2021/8/12 and is under the copyright of XiaoGang.",
+        "type": "summary"
+    },
+    "2984": {
+        "file_id": 309,
+        "content": "//\n//  LongTipWindow.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/8/12.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n@interface LongTipWindow : UIView\n-(void) setData:(NSString*)moduleTitle data:(AIKVPointer*)data direction:(DirectionType)type;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/LongTipWindow.h:1-15"
+    },
+    "2985": {
+        "file_id": 309,
+        "content": "This file contains the header class for LongTipWindow, a subclass of UIView. It includes a setData method which takes in moduleTitle, an AIKVPointer data object, and DirectionType parameter. Created by jia on 2021/8/12 and is under the copyright of XiaoGang.",
+        "type": "comment"
+    },
+    "2986": {
+        "file_id": 310,
+        "content": "/ThirdParty/SMGNetVision/HE/LongTipWindow.m",
+        "type": "filepath"
+    },
+    "2987": {
+        "file_id": 310,
+        "content": "The code initializes a LongTipWindow, positions it, and handles clicks. It manages node data in a network visualization app for filtering and recalling nodes using specific criteria functions. The code checks the `self.type` value to perform different actions.",
+        "type": "summary"
+    },
+    "2988": {
+        "file_id": 310,
+        "content": "//\n//  LongTipWindow.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/8/12.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import \"LongTipWindow.h\"\n#import \"MASConstraint.h\"\n#import \"View+MASAdditions.h\"\n#import \"AIKVPointer.h\"\n#import \"AINetUtils.h\"\n@interface LongTipWindow ()\n@property (strong,nonatomic) IBOutlet UIView *containerView;\n@property (weak, nonatomic) IBOutlet UILabel *titleLab;\n@property (strong, nonatomic) AIKVPointer *data;\n@property (assign, nonatomic) DirectionType type;\n@end\n@implementation LongTipWindow\n-(id) init {\n    self = [super init];\n    if(self != nil){\n        [self initView];\n    }\n    return self;\n}\n-(void) initView{\n    //self\n    [self setFrame:CGRectMake(0, 0,ScreenWidth, ScreenHeight)];\n    //containerView\n    [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];\n    [self addSubview:self.containerView];\n    [self.containerView mas_makeConstraints:^(MASConstraintMaker *make) {\n        make.leading.mas_equalTo(self);\n        make.trailing.mas_equalTo(self);",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/LongTipWindow.m:1-43"
+    },
+    "2989": {
+        "file_id": 310,
+        "content": "Code snippet for LongTipWindow.m file, initializes the view and sets up constraints for containerView within LongTipWindow class.",
+        "type": "comment"
+    },
+    "2990": {
+        "file_id": 310,
+        "content": "        make.top.mas_equalTo(self);\n        make.bottom.mas_equalTo(self);\n    }];\n}\n//MARK:===============================================================\n//MARK:                     < publieMethod >\n//MARK:===============================================================\n-(void) close{\n    [self removeFromSuperview];\n}\n-(void) setData:(NSString*)moduleTitle data:(AIKVPointer*)data direction:(DirectionType)type{\n    //1. 保留数据\n    self.data = data;\n    self.type = type;\n    //2. 重置显示\n    NSString *directionStr = @\"\";\n    if (type == DirectionType_Top) {\n        directionStr = @\"上\";\n    }else if (type == DirectionType_Bottom) {\n        directionStr = @\"下\";\n    }else if (type == DirectionType_Left) {\n        directionStr = @\"左\";\n    }else if (type == DirectionType_Right) {\n        directionStr = @\"右\";\n    }\n    [self.titleLab setText:STRFORMAT(@\"%@%ld (%@)\",moduleTitle,data.pointerId,directionStr)];\n}\n//MARK:===============================================================\n//MARK:                     < onclick >\n//MARK:===============================================================",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/LongTipWindow.m:44-76"
+    },
+    "2991": {
+        "file_id": 310,
+        "content": "This code defines a class with methods to open, close, and set data for a window. It also has a method to handle clicks on the window. The window is positioned at the top or bottom of its parent view depending on the direction type.",
+        "type": "comment"
+    },
+    "2992": {
+        "file_id": 310,
+        "content": "- (IBAction)normalClick:(UIButton*)sender {\n    [self generalClick:sender filter:^NSArray *(NSArray *ports) {\n        return [SMGUtils filterPorts_Normal:ports];\n    }];\n}\n- (IBAction)hnClick:(UIButton*)sender {\n    [self generalClick:sender filter:^NSArray *(NSArray *ports) {\n        return [SMGUtils filterPorts:ports havTypes:@[@(ATHav),@(ATNone)] noTypes:nil];\n    }];\n}\n- (IBAction)glClick:(UIButton*)sender {\n    [self generalClick:sender filter:^NSArray *(NSArray *ports) {\n        return [SMGUtils filterPorts:ports havTypes:@[@(ATGreater),@(ATLess)] noTypes:nil];\n    }];\n}\n- (IBAction)spClick:(UIButton*)sender {\n    [self generalClick:sender filter:^NSArray *(NSArray *ports) {\n        return [SMGUtils filterPorts:ports havTypes:@[@(ATSub),@(ATPlus)] noTypes:nil];\n    }];\n}\n- (IBAction)dsdfClick:(UIButton*)sender {\n    NSLog(@\"%@\",sender.titleLabel.text);\n    //目前仅top方向的fo支持dsPorts;\n    if (PitIsFo(self.data) && self.type == DirectionType_Top) {\n        AIFoNodeBase *node = [SMGUtils searchNode:self.data];\n        NSArray *dsPorts = @[];",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/LongTipWindow.m:77-102"
+    },
+    "2993": {
+        "file_id": 310,
+        "content": "This code defines multiple IBAction methods for button clicks, each triggering a specific filtering operation on an array of ports using the `filterPorts_Normal`, `filterPorts`, or `searchNode` functions from the `SMGUtils` class. The purpose is to filter and perform actions based on the type of ports (e.g., normal, ATHav, ATNone, ATGreater, ATLess, ATSub, ATPlus). In the last part, if it's a fo-type data in the top direction, it retrieves the first node using `searchNode` and initializes an empty array of dsPorts.",
+        "type": "comment"
+    },
+    "2994": {
+        "file_id": 310,
+        "content": "        [theNV setNodeDatas:Ports2Pits(dsPorts)];\n    }\n    [self close];\n}\n- (IBAction)recallClick:(UIButton*)sender {\n    NSLog(@\"%@\",sender.titleLabel.text);\n    NSArray *removeDatas = [self generalGetDatas:^NSArray *(NSArray *ports) {\n        return ports;\n    }];\n    [theNV removeNodeDatas:removeDatas];\n    [self close];\n}\n- (IBAction)closeClick:(id)sender {\n    [self close];\n}\n-(void)generalClick:(UIButton*)sender filter:(NSArray*(^)(NSArray *ports))filter{\n    //1. 数据准备;\n    NSLog(@\"%@\",sender.titleLabel.text);\n    //2. 取新增节点;\n    NSArray *addDatas = [self generalGetDatas:filter];\n    //3. 显示到网络可视化;\n    [theNV setNodeDatas:addDatas];\n    //4. 关闭\n    [self close];\n}\n-(NSArray*)generalGetDatas:(NSArray*(^)(NSArray *ports))filter{\n    //1. 数据准备;\n    AINodeBase *node = [SMGUtils searchNode:self.data];\n    NSArray *result = nil;\n    //2. 取新增节点;\n    if (self.type == DirectionType_Top) {\n        result = Ports2Pits(filter([AINetUtils absPorts_All:node]));\n    }else if (self.type == DirectionType_Bottom) {\n        result = Ports2Pits(filter([AINetUtils conPorts_All:node]));",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/LongTipWindow.m:103-142"
+    },
+    "2995": {
+        "file_id": 310,
+        "content": "This code contains functions for handling button clicks and managing node data in a network visualization app. It allows the user to recall, add, or close nodes based on specific filter criteria. The \"generalClick\" function prepares data, calls a filter function to retrieve new node data, displays it in the network visualization, and then closes. The \"generalGetDatas\" function prepares data, filters for new nodes based on direction type, and returns the result.",
+        "type": "comment"
+    },
+    "2996": {
+        "file_id": 310,
+        "content": "    }else if (self.type == DirectionType_Left) {\n        result = node.content_ps;\n    }else if (self.type == DirectionType_Right) {\n        result = Ports2Pits(filter([AINetUtils refPorts_All:self.data]));\n    }\n    return result;\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/LongTipWindow.m:143-151"
+    },
+    "2997": {
+        "file_id": 310,
+        "content": "This code checks the value of `self.type` and performs different actions based on its value. If `self.type` is equal to `DirectionType_Left`, it sets `result` as `node.content_ps`. If `self.type` is equal to `DirectionType_Right`, it applies a filter on `self.data` using `AINetUtils refPorts_All` and then calls the `Ports2Pits` function. Finally, it returns the value of `result`.",
+        "type": "comment"
+    },
+    "2998": {
+        "file_id": 311,
+        "content": "/ThirdParty/SMGNetVision/HE/NVDelegate_He.h",
+        "type": "filepath"
+    },
+    "2999": {
+        "file_id": 311,
+        "content": "This code is for an NVDelegate_He class that acts as a delegate for He's neural network visualization in the SMG_NothingIsAll project. It inherits from NSObject and conforms to the NVViewDelegate protocol, allowing for other neural networks' visualization with extension NVDelegate_Other.",
+        "type": "summary"
+    }
+}

@@ -1,0 +1,10 @@
+{
+    "summary": "This code is a header file for TOModelVisionUtil class, which is a part of the SMG_NothingIsAll project. It provides methods to convert a current model to an unordered list model array across all branches and retrieve the prefix symbol for an unordered list based on tab number.",
+    "details": [
+        {
+            "comment": "This code is a header file for TOModelVisionUtil class, which is a part of the SMG_NothingIsAll project. It provides methods to convert a current model to an unordered list model array across all branches and retrieve the prefix symbol for an unordered list based on tab number.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/TOModelVision/TOModelVisionUtil.h\":0-26",
+            "content": "//\n//  TOModelVisionUtil.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/6/3.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------\u8f93\u51fa\u77ed\u65f6\u53ef\u89c6\u5316\u5de5\u5177\u7c7b--------------------\n */\n@class TOModelBase;\n@interface TOModelVisionUtil : NSObject\n/**\n *  MARK:--------------------\u4ece\u5f53\u524d\u5411\u6240\u6709\u5206\u652f,\u8f6c\u4e3a\u65e0\u5e8f\u5217\u8868\u6a21\u578b\u6570\u7ec4--------------------\n */\n+(NSMutableArray*) convertCur2Sub2UnorderModels:(TOModelBase*)curModel;\n/**\n *  MARK:--------------------\u83b7\u53d6\u65e0\u5e8f\u5217\u8868\u7684\u524d\u7f00\u7b26\u53f7--------------------\n */\n+(NSString*) getUnorderPrefix:(int)tabNum;\n@end"
+        }
+    ]
+}

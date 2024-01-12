@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines a class TCSolution that represents a solution to a problem. It is part of the SMG_NothingIsAll project and requires an instance of TOModelBase as input, along with an endScore. The class follows a markdown format for documentation and has some notes about keeping the solution within its intended context.",
+    "details": [
+        {
+            "comment": "This code defines a class TCSolution that represents a solution to a problem. It is part of the SMG_NothingIsAll project and requires an instance of TOModelBase as input, along with an endScore. The class follows a markdown format for documentation and has some notes about keeping the solution within its intended context.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/TCSolution.h\":0-20",
+            "content": "//\n//  TCSolution.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/11/28.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------\u89e3\u51b3\u65b9\u6848--------------------\n *  @\u6ce8\u610f:\n *      1. \u53d6\u89e3\u51b3\u65b9\u6848-\u4e0d\u5f97\u8131\u79bb\u573a\u666f;\n *      2. \u884c\u4e3a\u5316\u8fc7\u7a0b-\u4e0d\u5f97\u8131\u79bb\u573a\u666f;\n */\n@interface TCSolution : NSObject\n+(TCResult*) solution:(TOModelBase*)endBranch endScore:(double)endScore;\n@end"
+        }
+    ]
+}

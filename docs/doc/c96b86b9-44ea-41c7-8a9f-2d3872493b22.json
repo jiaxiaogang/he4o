@@ -1,0 +1,15 @@
+{
+    "summary": "The code initializes a BirdLivePage view with bird, road, and tree subviews, sets delegates for roadView and birdView, and retrieves all FoodView subviews of the tree view.",
+    "details": [
+        {
+            "comment": "The code initializes the view of a BirdLivePage by adding bird, road, and tree views as subviews. It also sets delegates for the roadView and birdView to the same instance of BirdLivePage. The title of the page is set to \"\u5c0f\u9e1f\u751f\u5b58\u6f14\u793a\".",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Demo/BirdLivePage/BirdLivePage.m\":0-46",
+            "content": "//\n//  BirdLivePage.m\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/10/24.\n//  Copyright \u00a9 2018\u5e74 XiaoGang. All rights reserved.\n//\n#import \"BirdLivePage.h\"\n#import \"BirdView.h\"\n#import \"RoadView.h\"\n#import \"TreeView.h\"\n#import \"FoodView.h\"\n#import \"UIView+Extension.h\"\n@interface BirdLivePage ()<RoadViewDelegate,BirdViewDelegate>\n@property (strong,nonatomic) BirdView *birdView;\n@property (strong,nonatomic) RoadView *roadView;\n@property (strong,nonatomic) TreeView *treeView;\n@end\n@implementation BirdLivePage\n-(void) initView{\n    [super initView];\n    //1. self\n    self.title = @\"\u5c0f\u9e1f\u751f\u5b58\u6f14\u793a\";\n    //2. birdView\n    self.birdView = [[BirdView alloc] init];\n    [self.view addSubview:self.birdView];\n    self.birdView.delegate = self;\n    //3. roadView\n    self.roadView = [[RoadView alloc] init];\n    [self.view addSubview:self.roadView];\n    self.roadView.delegate = self;\n    //4. treeView\n    self.treeView = [[TreeView alloc] init];\n    [self.view addSubview:self.treeView];\n}\n/**\n *  MARK:--------------------RoadViewDelegate--------------------"
+        },
+        {
+            "comment": "This method retrieves all subviews of the tree view with a class of FoodView.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Demo/BirdLivePage/BirdLivePage.m\":47-52",
+            "content": " */\n-(NSArray *)roadView_GetFoodInLoad{\n    return [self.treeView subViews_AllDeepWithClass:FoodView.class];\n}\n@end"
+        }
+    ]
+}

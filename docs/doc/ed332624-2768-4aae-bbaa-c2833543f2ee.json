@@ -1,0 +1,10 @@
+{
+    "summary": "This code describes a sensory algorithm that can be accessed via API. It converts input single frames of image and audio into models, using a sparse coding unit. The model is a three-dimensional array with layers representing sparse codes, regional codes (for learning features), and concurrent codes (for learning concepts). Currently, only two-dimensional arrays are supported due to the simplicity of virtual scenes in V2. The author plans to extend support for three-dimensional arrays in future versions.",
+    "details": [
+        {
+            "comment": "This code describes a sensory algorithm that can be accessed via API. It converts input single frames of image and audio into models, using a sparse coding unit. The model is a three-dimensional array with layers representing sparse codes, regional codes (for learning features), and concurrent codes (for learning concepts). Currently, only two-dimensional arrays are supported due to the simplicity of virtual scenes in V2. The author plans to extend support for three-dimensional arrays in future versions.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/CortexAlgorithms/README.md\":0-6",
+            "content": "#  \u611f\u5b98\u7b97\u6cd5\n1. \u53efapi\u63a5\u5165\u65b0\u7684\u611f\u5b98;\n2. \u628a\u8f93\u5165\u5355\u5e27\u56fe\u50cf\u97f3\u9891\u7b49\u8f6c\u6210\u6a21\u578b;\n3. \u6700\u5c0f\u7a00\u758f\u7801\u5355\u4f4d;\n4. \u6a21\u578b\u662f\u4e09\u7ef4\u6570\u7ec4,\u4ece\u5185\u5230\u5916\u4e09\u5c42\u5206\u522b\u4e3a:\"\u7a00\u758f\u7801\u5c42,\u540c\u533a\u7801\u7ec4(\u7528\u4e8e\u5b66\u4e60\u7279\u5f81),\u540c\u65f6\u7801\u7ec4(\u7528\u4e8e\u5b66\u4e60\u6982\u5ff5)\";\n5. \u5f53\u524d\u53ea\u652f\u6301\u4e8c\u7ef4\u6570\u7ec4 (\u56e0\u4e3av2\u7684\u865a\u62df\u573a\u666f\u6ca1\u73b0\u5b9e\u4e16\u754c\u90a3\u4e48\u590d\u6742,\u4e0d\u5fc5\u8981,\u7b49v3\u65f6\u5f00\u653e\u6210\u4e09\u7ef4);"
+        }
+    ]
+}

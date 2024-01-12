@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines the TVideoWindow class, a UIView subclass with a delegate that conforms to the TVideoWindowDelegate protocol. The delegate can call methods for clearing models, saving, and reading files. The class also provides open and close methods.",
+    "details": [
+        {
+            "comment": "This code defines the TVideoWindow class, a UIView subclass with a delegate that conforms to the TVideoWindowDelegate protocol. The delegate can call methods for clearing models, saving, and reading files. The class also provides open and close methods.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/TOMVision2/Panel/TVideoWindow.h\":0-24",
+            "content": "//\n//  MemManagerWindow.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/6/6.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n@protocol TVideoWindowDelegate <NSObject>\n-(void) tvideo_ClearModels;\n-(void) tvideo_Save:(NSString*)fileName;\n-(void) tvideo_Read:(NSString*)fileName;\n@end\n@interface TVideoWindow : UIView\n@property (weak, nonatomic) id<TVideoWindowDelegate> delegate;\n-(void) open;\n-(void) close;\n@end"
+        }
+    ]
+}

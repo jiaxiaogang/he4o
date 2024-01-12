@@ -1,0 +1,10 @@
+{
+    "summary": "Header file for the MainPage class, inherits from HEViewController and contains no properties or methods. Created by jiaxiaogang in 2018.",
+    "details": [
+        {
+            "comment": "Header file for the MainPage class, inherits from HEViewController and contains no properties or methods. Created by jiaxiaogang in 2018.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Demo/MainPage/MainPage.h\":0-12",
+            "content": "//\n//  MainPage.h\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/10/24.\n//  Copyright \u00a9 2018\u5e74 XiaoGang. All rights reserved.\n//\n#import \"HEViewController.h\"\n@interface MainPage : HEViewController\n@end"
+        }
+    ]
+}

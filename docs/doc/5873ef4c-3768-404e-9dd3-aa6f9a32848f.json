@@ -1,0 +1,10 @@
+{
+    "summary": "The code declares a class named \"ImvGoodModel\" that inherits from \"ImvAlgsModelBase\". It represents a good IMV (In-Memory Virtualization) parent model, providing features such as fullness and refreshing sensations.",
+    "details": [
+        {
+            "comment": "The code declares a class named \"ImvGoodModel\" that inherits from \"ImvAlgsModelBase\". It represents a good IMV (In-Memory Virtualization) parent model, providing features such as fullness and refreshing sensations.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIAlg/AlgsModel/ImvAlgsModel/ImvGoodModel.h\":0-16",
+            "content": "//\n//  ImvGoodModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/1/16.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import \"ImvAlgsModelBase.h\"\n/**\n *  MARK:--------------------\u57fa\u4e8e\u597d\u7684imv\u7236\u6a21\u578b--------------------\n *  @desc \u4f8b\u5982: \u9971\u611f,\u723d\u611f\u7b49;\n */\n@interface ImvGoodModel : ImvAlgsModelBase\n@end"
+        }
+    ]
+}

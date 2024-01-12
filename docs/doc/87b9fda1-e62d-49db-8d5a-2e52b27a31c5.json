@@ -1,0 +1,10 @@
+{
+    "summary": "This code is a header file for PerceptDemandModel, which is part of the SMG_NothingIsAll project. It was created by jia on January 21, 2021 and is copyrighted by XiaoGang in 2021.",
+    "details": [
+        {
+            "comment": "This code is a header file for PerceptDemandModel, which is part of the SMG_NothingIsAll project. It was created by jia on January 21, 2021 and is copyrighted by XiaoGang in 2021.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCDemand/Model/PerceptDemandModel.m\":0-12",
+            "content": "//\n//  PerceptDemandModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/1/21.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import \"PerceptDemandModel.h\"\n@implementation PerceptDemandModel\n@end"
+        }
+    ]
+}

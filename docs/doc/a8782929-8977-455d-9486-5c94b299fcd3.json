@@ -1,0 +1,15 @@
+{
+    "summary": "The code defines a launch screen view controller layout for an iOS app using Auto Layout and Xcode 8 format, consisting of a rectangular view, white background, and first responder placeholder object.",
+    "details": [
+        {
+            "comment": "The code represents a storyboard file for an iOS app's launch screen. It includes dependencies, scenes, and view controllers, all adhering to the Xcode 8 format. The document is using Auto Layout and is set as a launch screen.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Base.lproj/LaunchScreen.storyboard\":0-15",
+            "content": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<document type=\"com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB\" version=\"3.0\" toolsVersion=\"11134\" systemVersion=\"15F34\" targetRuntime=\"iOS.CocoaTouch\" propertyAccessControl=\"none\" useAutolayout=\"YES\" launchScreen=\"YES\" useTraitCollections=\"YES\" colorMatched=\"YES\" initialViewController=\"01J-lp-oVM\">\n    <dependencies>\n        <plugIn identifier=\"com.apple.InterfaceBuilder.IBCocoaTouchPlugin\" version=\"11106\"/>\n        <capability name=\"documents saved in the Xcode 8 format\" minToolsVersion=\"8.0\"/>\n    </dependencies>\n    <scenes>\n        <!--View Controller-->\n        <scene sceneID=\"EHf-IW-A2E\">\n            <objects>\n                <viewController id=\"01J-lp-oVM\" sceneMemberID=\"viewController\">\n                    <layoutGuides>\n                        <viewControllerLayoutGuide type=\"top\" id=\"Llm-lL-Icb\"/>\n                        <viewControllerLayoutGuide type=\"bottom\" id=\"xb3-aO-Qok\"/>\n                    </layoutGuides>\n                    <view key=\"view\" contentMode=\"scaleToFill\" id=\"Ze5-6b-2t3\">"
+        },
+        {
+            "comment": "This code defines a view controller layout for an iOS app's launch screen, with a rectangular view filling the entire screen, autoresizing enabled, and a white background color. It also includes a placeholder object representing the first responder in the scene.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Base.lproj/LaunchScreen.storyboard\":16-26",
+            "content": "                        <rect key=\"frame\" x=\"0.0\" y=\"0.0\" width=\"375\" height=\"667\"/>\n                        <autoresizingMask key=\"autoresizingMask\" widthSizable=\"YES\" heightSizable=\"YES\"/>\n                        <color key=\"backgroundColor\" red=\"1\" green=\"1\" blue=\"1\" alpha=\"1\" colorSpace=\"custom\" customColorSpace=\"sRGB\"/>\n                    </view>\n                </viewController>\n                <placeholder placeholderIdentifier=\"IBFirstResponder\" id=\"iYj-Kq-Ea1\" userLabel=\"First Responder\" sceneMemberID=\"firstResponder\"/>\n            </objects>\n            <point key=\"canvasLocation\" x=\"53\" y=\"375\"/>\n        </scene>\n    </scenes>\n</document>"
+        }
+    ]
+}

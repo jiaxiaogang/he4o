@@ -1,0 +1,10 @@
+{
+    "summary": "This is the header file for a custom UIView class called CustomAddNodeWindow, which is a part of the SMG_NothingIsAll codebase. It likely contains properties and methods to manage an interface for adding nodes in a graph or network system.",
+    "details": [
+        {
+            "comment": "This is the header file for a custom UIView class called CustomAddNodeWindow, which is a part of the SMG_NothingIsAll codebase. It likely contains properties and methods to manage an interface for adding nodes in a graph or network system.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/SMGNetVision/HE/CustomAddNodeWindow.h\":0-12",
+            "content": "//\n//  CustomAddNodeWindow.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/7/1.\n//  Copyright \u00a9 2019\u5e74 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n@interface CustomAddNodeWindow : UIView\n@end"
+        }
+    ]
+}

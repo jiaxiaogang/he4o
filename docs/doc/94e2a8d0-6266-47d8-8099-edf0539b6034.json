@@ -1,0 +1,10 @@
+{
+    "summary": "This code is the header file for a class called AINoRepeatRun, which prevents multiple executions of a certain action by marking it as completed once executed. The class provides two methods: sign and run. Sign registers a key for preventing duplicate execution, while run takes a key and a block to execute when the key is not already registered.",
+    "details": [
+        {
+            "comment": "This code is the header file for a class called AINoRepeatRun, which prevents multiple executions of a certain action by marking it as completed once executed. The class provides two methods: sign and run. Sign registers a key for preventing duplicate execution, while run takes a key and a block to execute when the key is not already registered.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIClass/AINoRepeatRun.h\":0-27",
+            "content": "//\n//  AINoRepeatRun.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/5/9.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------\u9632\u91cd\u89e6\u53d1\u5668--------------------\n *  @desc \u65e0\u8bba\u767b\u8bb0\u591a\u5c11\u6b21,\u4ec5\u6267\u884c\u4e00\u6b21;\n *  @property key : \u9632\u91cd\u6807\u8bc6\u7801;\n */\n@interface AINoRepeatRun : NSObject\n/**\n *  MARK:--------------------\u62a5\u540d--------------------\n */\n+(void) sign:(id)key;\n/**\n *  MARK:--------------------\u6267\u884c--------------------\n */\n+(void) run:(id)key block:(void(^)())block;\n@end"
+        }
+    ]
+}

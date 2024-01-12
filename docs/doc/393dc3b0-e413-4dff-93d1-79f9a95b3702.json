@@ -1,0 +1,10 @@
+{
+    "summary": "This is the header file for the TCFeedback class in the SMG_NothingIsAll project, which contains four feedback methods: feedbackTIR, feedbackTIP, feedbackTOR, and feedbackTOP. These methods are used to handle different types of feedback related to short-match models, fo nodes, and cmv nodes. The author notes that these methods have been updated on specific dates in the past.",
+    "details": [
+        {
+            "comment": "This is the header file for the TCFeedback class in the SMG_NothingIsAll project, which contains four feedback methods: feedbackTIR, feedbackTIP, feedbackTOR, and feedbackTOP. These methods are used to handle different types of feedback related to short-match models, fo nodes, and cmv nodes. The author notes that these methods have been updated on specific dates in the past.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCFeedback/TCFeedback.h\":0-24",
+            "content": "//\n//  TCFeedback.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/12/2.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------\u53cd\u9988--------------------\n *  @desc \u56db\u4e2afeedback\u5206\u522b\u5bf9\u5e94\u56db\u4e2arethink\u53cd\u7701 (\u53c2\u800325031-12);\n *  @version\n *      2021.12.02: \u628a\u56db\u4e2aOPushM\u53cd\u9988\u65b9\u6cd5\u79fb\u8fc7\u6765 (\u5148\u79fb\u4e86\u4e09\u4e2a,tor\u6709PM\u7b97\u6cd5\u8c03\u7528,\u5148\u4e0d\u79fb,\u540e\u9762\u8131\u79bb\u4e86PM\u518d\u79fb);\n *      2022.11.23: \u628a\u6700\u540e\u4e00\u4e2aTOR\u4e5f\u79fb\u8fc7\u6765 (\u4e3a\u4e86\u653e\u4e00\u5757\u5bb9\u6613\u770b\u548c\u6539\u4ee3\u7801);\n */\n@interface TCFeedback : NSObject\n+(void) feedbackTIR:(AIShortMatchModel*)model;\n+(void) feedbackTIP:(AIFoNodeBase*)protoFo cmvNode:(AICMVNode*)cmvNode;\n+(void) feedbackTOR:(AIShortMatchModel*)model;\n+(void) feedbackTOP:(AICMVNode*)cmvNode;\n@end"
+        }
+    ]
+}

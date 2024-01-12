@@ -1,0 +1,10 @@
+{
+    "summary": "Header file for TOMVisionAlgView class, subclass of TOMVisionNodeBase.",
+    "details": [
+        {
+            "comment": "Header file for TOMVisionAlgView class, subclass of TOMVisionNodeBase.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/TOMVision2/View/TOMVisionAlgView.h\":0-12",
+            "content": "//\n//  TOMVisionAlgView.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/18.\n//  Copyright \u00a9 2022\u5e74 XiaoGang. All rights reserved.\n//\n#import \"TOMVisionNodeBase.h\"\n@interface TOMVisionAlgView : TOMVisionNodeBase\n@end"
+        }
+    ]
+}

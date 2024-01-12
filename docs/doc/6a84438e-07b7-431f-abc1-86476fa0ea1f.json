@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines the XGDebugModel class, which has properties for key, sumTime (total time spent), sumCount (total execution count), sumWriteCount (total write disk count), and sumReadCount (total read disk count).",
+    "details": [
+        {
+            "comment": "This code defines the XGDebugModel class, which has properties for key, sumTime (total time spent), sumCount (total execution count), sumWriteCount (total write disk count), and sumReadCount (total read disk count).",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/XGDebug/XGDebugModel.h\":0-18",
+            "content": "//\n//  XGDebugModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/4/23.\n//  Copyright \u00a9 2022\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface XGDebugModel : NSObject\n@property (strong, nonatomic) NSString *key;            //key\n@property (assign, nonatomic) NSTimeInterval sumTime;   //\u603b\u8017\u65f6\n@property (assign, nonatomic) NSInteger sumCount;       //\u603b\u6267\u884c\u6b21\u6570\n@property (assign, nonatomic) NSInteger sumWriteCount;  //\u5199\u786c\u76d8\u6570\n@property (assign, nonatomic) NSInteger sumReadCount;   //\u8bfb\u786c\u76d8\u6570\n@end"
+        }
+    ]
+}

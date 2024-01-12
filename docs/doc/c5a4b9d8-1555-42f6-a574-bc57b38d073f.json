@@ -1,0 +1,15 @@
+{
+    "summary": "The TCSolutionUtil class offers fast and slow thinking solutions, utilizing demand models as input and returning AICansetModel outputs. The code includes the \"getRAleardayCount\" method that takes ReasonDemandModel and AIMatchFoModel parameters to calculate an alearday count.",
+    "details": [
+        {
+            "comment": "This file contains a class called TCSolutionUtil, which provides methods for fast and slow thinking solutions. It takes in demand models as input and returns an AICansetModel as output. The fast and slow thinking solutions are implemented differently and have different method names.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/Util/TCSolutionUtil.h\":0-25",
+            "content": "//\n//  TCSolutionUtil.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/6/5.\n//  Copyright \u00a9 2022\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@class HDemandModel,ReasonDemandModel;\n@interface TCSolutionUtil : NSObject\n//MARK:===============================================================\n//MARK:                     < \u5feb\u601d\u8003 >\n//MARK:===============================================================\n+(AICansetModel*) rSolution_Fast:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps;\n+(AICansetModel*) hSolution_Fast:(HDemandModel *)hDemand except_ps:(NSArray*)except_ps;\n//MARK:===============================================================\n//MARK:                     < \u6162\u601d\u8003 >\n//MARK:===============================================================\n+(AICansetModel*) hSolution_SlowV2:(HDemandModel *)demand except_ps:(NSArray*)except_ps;\n+(AICansetModel*) hSolution_SlowV4:(HDemandModel *)demand except_ps:(NSArray*)except_ps;\n+(AICansetModel*) rSolution_Slow:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps;"
+        },
+        {
+            "comment": "This code defines a method named \"getRAleardayCount\" which takes two parameters: \"rDemand\" of type ReasonDemandModel and \"pFo\" of type AIMatchFoModel. The method returns an NSInteger value representing the alearday count for these parameters.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/Util/TCSolutionUtil.h\":27-32",
+            "content": "/**\n *  MARK:--------------------\u83b7\u53d6aleardayCount--------------------\n */\n+(NSInteger) getRAleardayCount:(ReasonDemandModel*)rDemand pFo:(AIMatchFoModel*)pFo;\n@end"
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+{
+    "summary": "This code is for a reinforcement learning trainer, which automates demo running and ensures training stability.",
+    "details": [
+        {
+            "comment": "This code is for a reinforcement learning trainer, which automates demo running and ensures training stability.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/RLTrainer/README.md\":0-2",
+            "content": "#  \u5f3a\u5316\u5b66\u4e60\u8bad\u7ec3\u5668\n> \u7528\u4e8e\u81ea\u52a8\u5316\u7684\u8dd1demo,\u5f3a\u5316\u8bad\u7ec3\u7a33\u5b9a\u6027;"
+        }
+    ]
+}

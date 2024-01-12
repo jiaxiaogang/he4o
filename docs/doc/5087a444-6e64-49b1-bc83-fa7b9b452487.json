@@ -1,0 +1,10 @@
+{
+    "summary": "Header file for TVLineView class, inherits from UIView, includes a method to refresh display with data for nodes A and B.",
+    "details": [
+        {
+            "comment": "Header file for TVLineView class, inherits from UIView, includes a method to refresh display with data for nodes A and B.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/TOMVision2/Line/TVLineView.h\":0-14",
+            "content": "//\n//  TVLineView.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/21.\n//  Copyright \u00a9 2022\u5e74 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n@interface TVLineView : UIView\n-(void) refreshDisplayWithDataA:(UIView*)nodeA nodeB:(UIView*)nodeB;\n@end"
+        }
+    ]
+}

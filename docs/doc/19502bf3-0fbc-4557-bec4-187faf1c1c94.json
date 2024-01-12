@@ -1,0 +1,10 @@
+{
+    "summary": "Header file for AsyncMutableDictionary class, extending NSObject, provides methods to manage mutable dictionaries asynchronously.",
+    "details": [
+        {
+            "comment": "Header file for AsyncMutableDictionary class, extending NSObject, provides methods to manage mutable dictionaries asynchronously.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Extension/AsyncMutableDictionary.h\":0-21",
+            "content": "//\n//  AsyncMutableDictionary.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/7/19.\n//  Copyright \u00a9 2023 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface AsyncMutableDictionary : NSObject\n- (NSMutableDictionary*)dictionary;\n- (NSInteger)count;\n- (void)removeObjectForKey:(id)aKey;\n- (void)removeAllObjects;\n- (void)setObject:(id)anObject forKey:(id)aKey;\n- (nullable id)objectForKey:(id)aKey;\n- (NSArray *)allKeys;\n- (NSArray *)allValues;\n@end"
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+{
+    "summary": "This is the header file for ImvAlgsHungerModel class, which is a subclass of ImvBadModel and contains an interface section. It belongs to SMG_NothingIsAll project, created by jia on 2018/2/6.",
+    "details": [
+        {
+            "comment": "This is the header file for ImvAlgsHungerModel class, which is a subclass of ImvBadModel and contains an interface section. It belongs to SMG_NothingIsAll project, created by jia on 2018/2/6.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/CortexAlgorithms/Imv/ImvAlgsHungerModel.h\":0-15",
+            "content": "//\n//  ImvAlgsHungerModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2018/2/6.\n//  Copyright \u00a9 2018\u5e74 XiaoGang. All rights reserved.\n//\n#import \"ImvBadModel.h\"\n/**\n *  MARK:--------------------\u9965\u997f\u611f\u6a21\u578b--------------------\n */\n@interface ImvAlgsHungerModel : ImvBadModel\n@end"
+        }
+    ]
+}

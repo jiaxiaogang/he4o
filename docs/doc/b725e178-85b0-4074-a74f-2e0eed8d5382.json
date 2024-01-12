@@ -1,0 +1,10 @@
+{
+    "summary": "This file contains the interface for TCAction, which is a subclass of NSObject. It defines a class method action that takes in a TOFoModel object and returns a TCResult object. The file was created by jia on November 28th, 2021 and is protected by copyright law.",
+    "details": [
+        {
+            "comment": "This file contains the interface for TCAction, which is a subclass of NSObject. It defines a class method action that takes in a TOFoModel object and returns a TCResult object. The file was created by jia on November 28th, 2021 and is protected by copyright law.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCAction/TCAction.h\":0-14",
+            "content": "//\n//  TCAction.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/11/28.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface TCAction : NSObject\n+(TCResult*) action:(TOFoModel*)foModel;\n@end"
+        }
+    ]
+}

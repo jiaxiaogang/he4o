@@ -1,0 +1,10 @@
+{
+    "summary": "This is the header file for the AIAlgNode class, a concrete concept node inheriting from AIAlgNodeBase, and it's part of the SMG_NothingIsAll project created by jia in 2018.",
+    "details": [
+        {
+            "comment": "This is the header file for the AIAlgNode class, a concrete concept node inheriting from AIAlgNodeBase, and it's part of the SMG_NothingIsAll project created by jia in 2018.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAlgNode.h\":0-15",
+            "content": "//\n//  AIAlgNode.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2018/12/7.\n//  Copyright \u00a9 2018\u5e74 XiaoGang. All rights reserved.\n//\n#import \"AIAlgNodeBase.h\"\n/**\n *  MARK:--------------------\u5177\u8c61\u6982\u5ff5\u8282\u70b9--------------------\n */\n@interface AIAlgNode : AIAlgNodeBase\n@end"
+        }
+    ]
+}

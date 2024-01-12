@@ -1,0 +1,10 @@
+{
+    "summary": "TOMVisionNodeBase is a UIView subclass that contains properties for containerView, headerLab, and statusView. It also provides methods to initialize view and data, update display, refresh display, set data, compare data equality, scale the container view, and get node description.",
+    "details": [
+        {
+            "comment": "TOMVisionNodeBase is a UIView subclass that contains properties for containerView, headerLab, and statusView. It also provides methods to initialize view and data, update display, refresh display, set data, compare data equality, scale the container view, and get node description.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/TOMVision2/View/TOMVisionNodeBase.h\":0-31",
+            "content": "//\n//  TOMVisionNodeBase.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/16.\n//  Copyright \u00a9 2022\u5e74 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n/**\n *  MARK:--------------------nodeView--------------------\n *  @version\n *      2022.03.20: \u5c06containerView\u7531Constraints\u6539\u6210\u91cd\u5199frame (\u56e0\u4e3anodeView\u8981\u7f29\u653e\u5c31\u4e0d\u80fd\u7528autoLayout);\n */\n@interface TOMVisionNodeBase : UIView\n@property (strong, nonatomic) UIView *containerView;\n@property (strong, nonatomic) UILabel *headerLab;\n@property (strong, nonatomic) UIView *statusView;\n-(void) initView;\n-(void) initData;\n-(void) initDisplay;\n-(void) refreshDisplay;\n-(void) setData:(TOModelBase*)value;\n-(TOModelBase *)data;\n-(BOOL) isEqualByData:(TOModelBase*)checkData;\n-(void) scaleContainer:(CGFloat)scale;\n-(NSString*) getNodeDesc;\n@end"
+        }
+    ]
+}

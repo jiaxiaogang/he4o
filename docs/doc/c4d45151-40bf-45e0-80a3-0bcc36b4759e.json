@@ -1,0 +1,10 @@
+{
+    "summary": "Header file for WoodView class, defining ThrowTime constant, protocol for WoodViewDelegate with methods for setting frame, finishing wood animation, and beginning fly animation. WoodView methods include reset, throwV5, and more.",
+    "details": [
+        {
+            "comment": "Header file for WoodView class, defining ThrowTime constant, protocol for WoodViewDelegate with methods for setting frame, finishing wood animation, and beginning fly animation. WoodView methods include reset, throwV5, and more.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Demo/BirdLivePage/View/WoodView.h\":0-34",
+            "content": "//\n//  WoodView.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/1/16.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n#define ThrowTime 8.0f //\u6ee1\u5c4f\u98de\u8fc7\u7528\u65f6\n@protocol WoodViewDelegate <NSObject>\n-(void) woodView_SetFramed;\n-(void) woodView_WoodAnimationFinish;\n-(void) woodView_FlyAnimationBegin:(CGFloat)aniDuration;\n@end\n@interface WoodView : HEView\n@property (weak, nonatomic) id<WoodViewDelegate> delegate;\n//\u590d\u4f4d\n-(void) reset:(BOOL)hidden x:(CGFloat)x;\n-(void) reset4StartAnimation:(CGFloat)throwX;\n-(void) reset4EndAnimation;\n/**\n *  MARK:--------------------\u6254\u51fa--------------------\n */\n-(void) throwV5:(CGFloat)throwX time:(CGFloat)time distance:(CGFloat)distance invoked:(void(^)())invoked;\n@end"
+        }
+    ]
+}

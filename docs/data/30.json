@@ -1,0 +1,540 @@
+{
+    "3000": {
+        "file_id": 311,
+        "content": "//\n//  NVDelegate_He.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/6/11.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n#import \"NVView.h\"\n/**\n *  MARK:--------------------He的神经网络可视化代理部分--------------------\n *  1. 此delegate仅是he的相关代理实现;\n *  2. 本NVView可支持别的神经网络的可视化,可扩展写NVDelegate_Other;\n */\n@interface NVDelegate_He : NSObject<NVViewDelegate>\n@end",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/NVDelegate_He.h:1-19"
+    },
+    "3001": {
+        "file_id": 311,
+        "content": "This code is for an NVDelegate_He class that acts as a delegate for He's neural network visualization in the SMG_NothingIsAll project. It inherits from NSObject and conforms to the NVViewDelegate protocol, allowing for other neural networks' visualization with extension NVDelegate_Other.",
+        "type": "comment"
+    },
+    "3002": {
+        "file_id": 312,
+        "content": "/ThirdParty/SMGNetVision/HE/NVDelegate_He.m",
+        "type": "filepath"
+    },
+    "3003": {
+        "file_id": 312,
+        "content": "This code handles different node types, searches for nodes, manages subviews, and processes MV and FO nodes. It also creates CustomAddNodeWindow, logs counts and empty indices, defines UI colors, and supports port strength retrieval, validation, and click/long press events.",
+        "type": "summary"
+    },
+    "3004": {
+        "file_id": 312,
+        "content": "//\n//  NVDelegate_He.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/6/11.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import \"NVDelegate_He.h\"\n#import \"AIKVPointer.h\"\n#import \"AIAbsAlgNode.h\"\n#import \"AINetAbsFoNode.h\"\n#import \"AIAbsCMVNode.h\"\n#import \"AINetIndex.h\"\n#import \"ThinkingUtils.h\"\n#import \"CustomAddNodeWindow.h\"\n#import \"NVHeUtil.h\"\n#import \"NVModuleView.h\"\n#import \"NVNodeView.h\"\n#import \"AINetUtils.h\"\n#import \"AIPort.h\"\n#import \"TOUtils.h\"\n#import \"LongTipWindow.h\"\n#import \"TVUtil.h\"\n#define ModuleName_Value @\"稀疏码\"\n#define ModuleName_Alg @\"概念网络\"\n#define ModuleName_Fo @\"时序网络\"\n#define ModuleName_Mv @\"价值网络\"\n#define ColorH UIColorWithRGBHex(0xFFFFFF)//有白\n#define ColorN UIColorWithRGBHex(0x000000)//无黑\n#define ColorG UIColorWithRGBHex(0x0000FF)//大蓝\n#define ColorL UIColorWithRGBHex(0xFFFF00)//小黄\n#define ColorP UIColorWithRGBHex(0x00FF00)//好绿\n#define ColorS UIColorWithRGBHex(0xFF0000)//坏红\n@implementation NVDelegate_He\n/**\n *  MARK:--------------------NVViewDelegate--------------------\n */\n- (UIView *)nv_GetCustomSubNodeView:(AIKVPointer*)node_p{",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/NVDelegate_He.m:1-43"
+    },
+    "3005": {
+        "file_id": 312,
+        "content": "This code imports necessary headers and defines various colors. It is likely part of a delegate implementation that provides custom subnode views for AI nodes in the SMG_NothingIsAll app. The custom subnode view can be accessed via `nv_GetCustomSubNodeView` method.",
+        "type": "comment"
+    },
+    "3006": {
+        "file_id": 312,
+        "content": "    return nil;\n}\n-(UIColor *)nv_GetNodeColor:(AIKVPointer*)node_p{\n    //1. mv节点:(上升为绿&下降为红)\n    if ([NVHeUtil isMv:node_p]) {\n        AICMVNodeBase *mvNode = [SMGUtils searchNode:node_p];\n        if (mvNode) {\n            NSInteger delta = [NUMTOOK([AINetIndex getData:mvNode.delta_p]) integerValue];\n            MVDirection demand = [ThinkingUtils getDemandDirection:node_p.algsType delta:delta];\n            return (demand == MVDirection_None) ? UIColorWithRGBHex(0x00FF00) : UIColorWithRGBHex(0xFF0000);\n        }\n    }\n    //2. HNGLSP节点指定颜色;\n    if ([TOUtils isHNGLSP:node_p]) {\n        if ([TOUtils isH:node_p]) return ColorH;\n        else if ([TOUtils isN:node_p]) return ColorN;\n        else if ([TOUtils isG:node_p]) return ColorG;\n        else if ([TOUtils isL:node_p]) return ColorL;\n        else if ([TOUtils isS:node_p]) return ColorS;\n        else if ([TOUtils isP:node_p]) return ColorP;\n    }\n    //2. 坚果显示偏绿色 (抽象黄绿&具象蓝绿)\n    if ([NVHeUtil isAlg:node_p]) {\n        AIAlgNodeBase *algNode = [SMGUtils searchNode:node_p];",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/NVDelegate_He.m:44-70"
+    },
+    "3007": {
+        "file_id": 312,
+        "content": "Method nv_GetNodeColor returns UIColor based on the type of node passed as parameter. If it's a mv node, it checks if it's rising or falling and returns corresponding color. If it's HNGLSP node, it returns specific colors based on its state. If it's an alg node, it performs search to return appropriate color depending on the abstract/concrete status of the node.",
+        "type": "comment"
+    },
+    "3008": {
+        "file_id": 312,
+        "content": "        if (algNode) {\n            if ([NVHeUtil isHeight:5 fromContent_ps:algNode.content_ps]) {\n                if ([NVHeUtil isAbs:node_p]) {\n                    return UIColorWithRGBHex(0xCCFF00);\n                }else{\n                    return UIColorWithRGBHex(0x00DDFF);\n                }\n            }\n        }\n    }\n    //3. 抽象显示黄色\n    if ([NVHeUtil isAbs:node_p]) {\n        return UIColorWithRGBHex(0xFFFF00);\n    }\n    return nil;\n}\n-(UIColor *)nv_GetRightColor:(id)nodeData{\n    if (PitIsFo(nodeData)) {\n        AIFoNodeBase *fo = [SMGUtils searchNode:nodeData];\n        CGFloat score = [AIScore score4MV:fo.cmvNode_p ratio:1.0f];\n        if (score > 0) {\n            return UIColorWithRGBHex(0xAAFFAA);\n        }else if(score < 0) {\n            return UIColorWithRGBHex(0xFFAAAA);\n        }\n    }\n    return nil;\n}\n-(CGFloat)nv_GetNodeAlpha:(AIKVPointer*)node_p{\n    return 1.0f;\n}\n-(NSString*)nv_NodeOnClick:(AIKVPointer*)node_p{\n    //1. light自己;\n    //[theApp.nvView setNodeData:node_p appendLightStr:[NVHeUtil getLightStr:node_p]];",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/NVDelegate_He.m:71-108"
+    },
+    "3009": {
+        "file_id": 312,
+        "content": "Code snippet checks if a node is an algorithm or not, and returns colors based on various conditions such as node position, content, score, etc. It also calculates node's alpha value and provides a method to handle node click events.",
+        "type": "comment"
+    },
+    "3010": {
+        "file_id": 312,
+        "content": "    //1. value时,返回 \"iden+value值\";\n    if ([NVHeUtil isValue:node_p]) {\n        NSInteger hdRefCount = ARRTOOK([SMGUtils searchObjectForPointer:node_p fileName:kFNRefPorts time:cRTPort]).count;\n        NSNumber *value = NUMTOOK([AINetIndex getData:node_p]);\n        return STRFORMAT(@\"V%ld AT:%@ DS:%@ 值:%@ REF:h%ld\",(long)node_p.pointerId,node_p.algsType,node_p.typeStr,value,(long)hdRefCount);\n    }\n    //2. algNode时,返回content_ps的 \"微信息数+嵌套数\";\n    if([NVHeUtil isAlg:node_p]){\n        AIAlgNodeBase *algNode = [SMGUtils searchNode:node_p];\n        if (algNode) {\n            ///1. 依次点亮content;\n            [theNV clearLight:ModuleName_Value];\n            for (NSInteger i = 0; i < algNode.content_ps.count; i++) {\n                AIKVPointer *item = ARR_INDEX(algNode.content_ps, i);\n                [theNV lightNode:item str:[NVHeUtil getLightStr:item]];\n            }\n            ///2. 返回描述;\n            NSInteger hdConCount = ISOK(algNode, AIAbsAlgNode.class) ? ((AIAbsAlgNode*)algNode).conPorts.count : 0;\n       ",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/NVDelegate_He.m:110-129"
+    },
+    "3011": {
+        "file_id": 312,
+        "content": "Checking if the node is a value or algorithm type, returning \"iden+value\" or \"微信息数+嵌套数\" respectively.",
+        "type": "comment"
+    },
+    "3012": {
+        "file_id": 312,
+        "content": "     return STRFORMAT(@\"A%ld AT:%@ DS:%@ 数:%ld REF:%lu ABS:%lu CON:%ld 内容:%@\",(long)node_p.pointerId,node_p.algsType,node_p.typeStr,(long)algNode.count,(unsigned long)algNode.refPorts.count,(unsigned long)algNode.absPorts.count,(long)hdConCount,Alg2FStr(algNode));\n        }\n    }\n    //3. foNode时,返回 \"order_kvp数\"\n    if([NVHeUtil isFo:node_p]){\n        AIFoNodeBase *foNode = [SMGUtils searchNode:node_p];\n        if (foNode) {\n            ///1. 依次点亮orders;\n            [theNV clearLight:ModuleName_Alg];\n            for (NSInteger i = 0; i < foNode.content_ps.count; i++) {\n                AIKVPointer *item = ARR_INDEX(foNode.content_ps, i);\n                [theNV lightNode:item str:STRFORMAT(@\"%ld%@\",(long)i,[TVUtil getLightStr:item])];\n            }\n            ///2. 返回描述;\n            NSInteger hdConCount = ISOK(foNode, AINetAbsFoNode.class) ? ((AINetAbsFoNode*)foNode).conPorts.count : 0;\n            return STRFORMAT(@\"F%ld AT:%@ DS:%@ 数:%lu ABS:%lu CON:%ld 内容:%@\",(long)node_p.pointerId,node_p.algsType,",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/NVDelegate_He.m:129-144"
+    },
+    "3013": {
+        "file_id": 312,
+        "content": "This code is handling a node and determines whether it is an algorithm or a function node. For algorithm nodes, it illuminates the orders one by one and returns a description with relevant data. For function nodes, it illuminates the content nodes and returns the count of the function node's connection ports.",
+        "type": "comment"
+    },
+    "3014": {
+        "file_id": 312,
+        "content": "node_p.typeStr,(unsigned long)foNode.content_ps.count,(unsigned long)foNode.absPorts.count,(long)hdConCount,Fo2FStr(foNode));\n        }\n    }\n    //4. mv时,返回 \"类型+升降\";\n    if([NVHeUtil isMv:node_p]){\n        AICMVNodeBase *mvNode = [SMGUtils searchNode:node_p];\n        if (mvNode) {\n            ///1. 取数据\n            NSInteger urgentTo = [NUMTOOK([AINetIndex getData:mvNode.urgentTo_p]) integerValue];\n            NSInteger delta = [NUMTOOK([AINetIndex getData:mvNode.delta_p]) integerValue];\n            NSInteger hdConCount = ISOK(mvNode, AIAbsCMVNode.class) ? ((AIAbsCMVNode*)mvNode).conPorts.count : 0;\n            ///2. 返回\n            return STRFORMAT(@\"M%ld iden:%@_%@ urgentTo:%ld delta:%ld ABS:%lu CON:%ld\",(long)node_p.pointerId,node_p.algsType,node_p.typeStr,(long)urgentTo,(long)delta,(unsigned long)mvNode.absPorts.count,(long)hdConCount);\n        }\n    }\n    return nil;\n}\n-(NSArray*)nv_GetModuleIds{\n    return @[ModuleName_Value,ModuleName_Alg,ModuleName_Fo,ModuleName_Mv];\n}\n-(NSString*)nv_GetModuleId:(AIKVPointer*)node_p{",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/NVDelegate_He.m:144-167"
+    },
+    "3015": {
+        "file_id": 312,
+        "content": "This code appears to be part of a larger system that handles networking and data communication. It checks the type of node (Value, Alg, Fo, Mv) and returns relevant information about it. For Mv nodes, it retrieves urgentTo and delta values, as well as the number of abstract and concrete ports, and formats them into a string for return. The class also provides methods for getting module IDs and specific node IDs.",
+        "type": "comment"
+    },
+    "3016": {
+        "file_id": 312,
+        "content": "    //判断node_p的类型,并返回;\n    if ([NVHeUtil isValue:node_p]) {\n        return ModuleName_Value;\n    }else if ([NVHeUtil isAlg:node_p]) {\n        return ModuleName_Alg;\n    }else if ([NVHeUtil isFo:node_p]) {\n        return ModuleName_Fo;\n    }else if ([NVHeUtil isMv:node_p]) {\n        return ModuleName_Mv;\n    }\n    return nil;\n}\n-(NSArray*)nv_GetRefNodeDatas:(AIKVPointer*)node_p{\n    if (node_p) {\n        if ([NVHeUtil isValue:node_p]) {\n            NSArray *allPorts = [AINetUtils refPorts_All4Value:node_p];\n            return [SMGUtils convertPointersFromPorts:allPorts];\n        }else if ([NVHeUtil isAlg:node_p]) {\n            //2. 如果是algNode则返回.refPorts;\n            AIAlgNodeBase *node = [SMGUtils searchNode:node_p];\n            NSArray *allPorts = [AINetUtils refPorts_All4Alg:node];\n            return [SMGUtils convertPointersFromPorts:allPorts];\n        }else if ([NVHeUtil isFo:node_p]) {\n            //3. 如果是foNode则返回mv基本模型指向cmvNode_p;\n            AIFoNodeBase *foNode = [SMGUtils searchNode:node_p];\n            if (ISOK(foNode, AIFoNodeBase.class) && foNode.cmvNode_p) {",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/NVDelegate_He.m:168-194"
+    },
+    "3017": {
+        "file_id": 312,
+        "content": "This code is determining the type of a node and returning corresponding values or arrays, with different branches for value, algorithm, and FO nodes. It also searches for nodes based on their type and performs additional checks for FO nodes.",
+        "type": "comment"
+    },
+    "3018": {
+        "file_id": 312,
+        "content": "                return @[foNode.cmvNode_p];\n            }\n        }else if ([NVHeUtil isMv:node_p]) {\n            AICMVNodeBase *mvNode = [SMGUtils searchNode:node_p];\n            NSArray *refPorts = [AINetUtils refPorts_All4Alg:mvNode];\n            NSString *nilDesc = @\"\";\n            for (NSInteger i = 0; i < refPorts.count; i++) {\n                AIPort *item = ARR_INDEX(refPorts, i);\n                if (!item) nilDesc = STRFORMAT(@\" %ld\",i);\n            }\n            TPLog(@\"> ref条数: %ld 空下标:%@\",refPorts.count,nilDesc);\n        }\n    }\n    return nil;\n}\n-(NSArray*)nv_ContentNodeDatas:(AIKVPointer*)node_p{\n    if (node_p) {\n        if ([NVHeUtil isAlg:node_p]) {\n            //1. algNode时返回content_ps\n            AIAlgNodeBase *node = [SMGUtils searchNode:node_p];\n            if (ISOK(node, AIAlgNodeBase.class)) {\n                return node.content_ps;\n            }\n        }else if ([NVHeUtil isFo:node_p]) {\n            //2. foNode时返回order_kvp\n            AIFoNodeBase *foNode = [SMGUtils searchNode:node_p];\n            if (ISOK(foNode, AIFoNodeBase.class)) {",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/NVDelegate_He.m:195-222"
+    },
+    "3019": {
+        "file_id": 312,
+        "content": "This code checks if the given node is an AIKVPointer, and then proceeds to check two conditions: if it's an AlgNode or a FoNode. If it's an AlgNode, it returns content_ps array. If it's a FoNode, it returns order_kvp. It also logs the count of reference ports and any empty indices found for the MV node case.",
+        "type": "comment"
+    },
+    "3020": {
+        "file_id": 312,
+        "content": "                return foNode.content_ps;\n            }\n        }else if ([NVHeUtil isMv:node_p]) {\n            //3. 如果是mvNode则返回mv指向foNode_p;\n            AICMVNodeBase *mvNode = [SMGUtils searchNode:node_p];\n            if (ISOK(mvNode, AICMVNodeBase.class)) {\n                return Ports2Pits(ARR_SUB(mvNode.foPorts, 0, 10));\n            }\n        }\n    }\n    return nil;\n}\n-(NSArray*)nv_AbsNodeDatas:(AIKVPointer*)node_p{\n    NSMutableArray *result = [[NSMutableArray alloc] init];\n    if (node_p) {\n        //1. 如果是algNode/foNode/mvNode则返回.absPorts;\n        if ([NVHeUtil isAlg:node_p] || [NVHeUtil isFo:node_p] || [NVHeUtil isMv:node_p]) {\n            //3. hdAbsPorts\n            AINodeBase *node = [SMGUtils searchNode:node_p];\n            if (ISOK(node, AINodeBase.class)) {\n                [result addObjectsFromArray:[SMGUtils convertPointersFromPorts:node.absPorts]];\n            }\n        }\n    }\n    return result;\n}\n-(NSArray*)nv_ConNodeDatas:(AIKVPointer*)node_p{\n    NSMutableArray *result = [[NSMutableArray alloc] init];",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/NVDelegate_He.m:223-253"
+    },
+    "3021": {
+        "file_id": 312,
+        "content": "This code searches for a node based on the input pointer and retrieves relevant data from it, such as content_ps, foNode ports, or absolute node data. If no valid node is found, it returns nil.",
+        "type": "comment"
+    },
+    "3022": {
+        "file_id": 312,
+        "content": "    if (node_p) {\n        if ([NVHeUtil isAlg:node_p]) {\n            //2. algNode_HdConPorts\n            AIAbsAlgNode *absAlgNode = [SMGUtils searchNode:node_p];\n            if (ISOK(absAlgNode, AIAbsAlgNode.class)) {\n                [result addObjectsFromArray:[SMGUtils convertPointersFromPorts:absAlgNode.conPorts]];\n            }\n        }else if ([NVHeUtil isFo:node_p]) {\n            //3. foNode_HdConPorts\n            AINetAbsFoNode *foNode = [SMGUtils searchNode:node_p];\n            if (ISOK(foNode, AINetAbsFoNode.class)) {\n                [result addObjectsFromArray:[SMGUtils convertPointersFromPorts:foNode.conPorts]];\n            }\n        }else if ([NVHeUtil isMv:node_p]) {\n            //4. mvNode_HdConPorts\n            AIAbsCMVNode *mvNode = [SMGUtils searchNode:node_p];\n            if (ISOK(mvNode, AIAbsCMVNode.class)) {\n                [result addObjectsFromArray:[SMGUtils convertPointersFromPorts:mvNode.conPorts]];\n            }\n        }\n    }\n    return result;\n}\n//追加节点\n-(void)nv_AddNodeOnClick{\n    NSArray *subViews = [theApp.window subViews_AllDeepWithClass:CustomAddNodeWindow.class];",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/NVDelegate_He.m:254-280"
+    },
+    "3023": {
+        "file_id": 312,
+        "content": "This code checks if the given node belongs to a specific type and then retrieves its connection ports. If the node is an algorithm, it adds the converted port pointers to the result array. Similarly, it handles nodes of \"fo\" and \"mv\" types. The code also shows a method for adding a new node on click.",
+        "type": "comment"
+    },
+    "3024": {
+        "file_id": 312,
+        "content": "    if (ARRISOK(subViews)) {\n        for (CustomAddNodeWindow *subView in subViews) {\n            [subView removeFromSuperview];\n        }\n    }else{\n        CustomAddNodeWindow *addNodeWindow = [[CustomAddNodeWindow alloc] init];\n        [theApp.window addSubview:addNodeWindow];\n    }\n}\n-(NSString*)nv_ShowName:(AIKVPointer*)data_p{\n    return STRFORMAT(@\"%ld\",(long)data_p.pointerId);\n}\n-(NSInteger)nv_GetPortStrong:(AIKVPointer*)mainNodeData target:(AIKVPointer*)targetNodeData{\n    AINodeBase *mainNode = [SMGUtils searchNode:mainNodeData];\n    if (mainNode && targetNodeData) {\n        //1. 找抽象\n        for (AIPort *itemPort in [AINetUtils absPorts_All:mainNode]) {\n            if ([itemPort.target_p isEqual:targetNodeData]) {\n                return itemPort.strong.value;\n            }\n        }\n        //2. 找具象\n        for (AIPort *itemPort in [AINetUtils conPorts_All:mainNode]) {\n            if ([itemPort.target_p isEqual:targetNodeData]) {\n                return itemPort.strong.value;\n            }\n        }\n        //3. 找被引用",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/NVDelegate_He.m:281-310"
+    },
+    "3025": {
+        "file_id": 312,
+        "content": "This code checks if an array of subviews exists and either removes them or creates a new CustomAddNodeWindow if none exist. It also includes functions for showing node names and retrieving port strength.",
+        "type": "comment"
+    },
+    "3026": {
+        "file_id": 312,
+        "content": "        if (ISOK(mainNode, AIAlgNodeBase.class)) {\n            for (AIPort *itemPort in [AINetUtils refPorts_All4Alg:(AIAlgNodeBase*)mainNode]) {\n                if ([itemPort.target_p isEqual:targetNodeData]) {\n                    return itemPort.strong.value;\n                }\n            }\n        }\n    }\n    return 0;\n}\n//方向触发角点击事件;\n-(void)nv_DirectionClick:(int)type mView:(NVModuleView*)mView nData:(id)nData targetDatas:(NSArray *)targetDatas{\n    //1. 触发角时,显示出关联强度;\n    targetDatas = ARRTOOK(targetDatas);\n    for (id absData in targetDatas) {\n        [theNV lightLineStrong:nData nodeDataB:absData];\n    }\n}\n//方向触发角长按事件;\n-(void)nv_LongClick:(int)type mView:(NVModuleView*)mView nData:(id)nData{\n    LongTipWindow *window = [[LongTipWindow alloc] init];\n    [theApp.window addSubview:window];\n    [window setData:mView.moduleId data:nData direction:type];\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/NVDelegate_He.m:311-339"
+    },
+    "3027": {
+        "file_id": 312,
+        "content": "This code defines a function that checks if a main node is valid and retrieves the strong value from an item port if its target matches the specified targetNodeData. It also includes two event handler functions for directional clicks and long presses, which display outgoing connection strength or show a LongTipWindow with moduleId and data information respectively.",
+        "type": "comment"
+    },
+    "3028": {
+        "file_id": 313,
+        "content": "/ThirdParty/SMGNetVision/HE/NVHeUtil.h",
+        "type": "filepath"
+    },
+    "3029": {
+        "file_id": 313,
+        "content": "The header file defines the `NVHeUtil` class with methods for node size judgment and light description, as well as a section for identifying node types. It also includes functions for algorithm type identification and value conversion to string.",
+        "type": "summary"
+    },
+    "3030": {
+        "file_id": 313,
+        "content": "//\n//  NVHeUtil.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/7/2.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface NVHeUtil : NSObject\n/**\n *  MARK:--------------------判断是否节点尺寸为height--------------------\n */\n+(BOOL) isHeight:(CGFloat)height fromContent_ps:(NSArray*)fromContent_ps;\n/**\n *  MARK:--------------------获取value微信息的light描述--------------------\n */\n+(NSString*) getLightStr4Ps:(NSArray*)node_ps;\n+(NSString*) getLightStr4Ps:(NSArray*)node_ps simple:(BOOL)simple header:(BOOL)header sep:(NSString*)sep;\n+(NSString*) getLightStr:(AIKVPointer*)node_p;\n+(NSString*) getLightStr:(AIKVPointer*)node_p simple:(BOOL)simple header:(BOOL)header;\n+(NSString*) getLightStr_Value:(double)value algsType:(NSString*)algsType dataSource:(NSString*)dataSource;\n//MARK:===============================================================\n//MARK:                     < 节点类型判断 >\n//MARK:===============================================================\n+(BOOL) isValue:(AIKVPointer*)node_p;",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/NVHeUtil.h:1-32"
+    },
+    "3031": {
+        "file_id": 313,
+        "content": "This header file defines the `NVHeUtil` class, which contains several methods for judging node size and obtaining light descriptions. It also includes a section specifically for node type determination.",
+        "type": "comment"
+    },
+    "3032": {
+        "file_id": 313,
+        "content": "+(BOOL) isAlg:(AIKVPointer*)node_p;\n+(BOOL) isFo:(AIKVPointer*)node_p;\n+(BOOL) isMv:(AIKVPointer*)node_p;\n+(BOOL) isAbs:(AIKVPointer*)node_p;\n/**\n *  MARK:--------------------稀疏码转str--------------------\n */\n+(NSString*) direction2Str:(CGFloat)value;\n+(NSString*) fly2Str:(CGFloat)value;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/NVHeUtil.h:33-44"
+    },
+    "3033": {
+        "file_id": 313,
+        "content": "Defines several methods for identifying algorithm type (isAlg, isFo, isMv, isAbs) and converts values to string (direction2Str, fly2Str).",
+        "type": "comment"
+    },
+    "3034": {
+        "file_id": 314,
+        "content": "/ThirdParty/SMGNetVision/HE/NVHeUtil.m",
+        "type": "filepath"
+    },
+    "3035": {
+        "file_id": 314,
+        "content": "This code processes data in \"SMG_NothingIsAll\" using arrays, retrieves light descriptions, checks node types, and converts values to strings.",
+        "type": "summary"
+    },
+    "3036": {
+        "file_id": 314,
+        "content": "//\n//  NVHeUtil.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/7/2.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import \"NVHeUtil.h\"\n#import \"AINetIndex.h\"\n#import \"AIKVPointer.h\"\n#import \"AIAlgNodeBase.h\"\n#import \"NSString+Extension.h\"\n#import \"ThinkingUtils.h\"\n#import \"AIScore.h\"\n#import \"TVUtil.h\"\n#import \"ImvAlgsHungerModel.h\"\n#import \"ImvAlgsHurtModel.h\"\n@implementation NVHeUtil\n+(BOOL) isHeight:(CGFloat)height fromContent_ps:(NSArray*)fromContent_ps {\n    for (AIKVPointer *p in ARRTOOK(fromContent_ps)) {\n        if ([p.dataSource isEqualToString:@\"sizeHeight\"]) {\n            if ([NUMTOOK([AINetIndex getData:p]) floatValue] == 5) {\n                return true;\n            }\n        }\n    }\n    return false;\n}\n+(NSString*) getLightStr4Ps:(NSArray*)node_ps{\n    return [self getLightStr4Ps:node_ps simple:true header:true sep:@\",\"];\n}\n+(NSString*) getLightStr4Ps:(NSArray*)node_ps simple:(BOOL)simple header:(BOOL)header sep:(NSString*)sep{\n    //1. 数据检查\n    NSMutableString *result = [[NSMutableString alloc] init];",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/NVHeUtil.m:1-38"
+    },
+    "3037": {
+        "file_id": 314,
+        "content": "Code is from the file \"NVHeUtil.m\" in a codebase called \"SMG_NothingIsAll\". It defines methods for handling and manipulating data related to height, node, and strings. The methods are used with arrays as parameters and return boolean or string values depending on specific conditions.",
+        "type": "comment"
+    },
+    "3038": {
+        "file_id": 314,
+        "content": "    node_ps = ARRTOOK(node_ps);\n    sep = STRTOOK(sep);\n    //2. 拼接返回\n    for (AIKVPointer *item_p in node_ps){\n        NSString *str = [NVHeUtil getLightStr:item_p simple:simple header:header from:node_ps];\n        if (STRISOK(str)) {\n            [result appendFormat:@\"%@%@\",str,sep];\n        }\n    }\n    return SUBSTR2INDEX(result, result.length - sep.length);\n}\n+(NSString*) getLightStr:(AIKVPointer*)node_p {\n    return [self getLightStr:node_p simple:true header:false];\n}\n+(NSString*) getLightStr:(AIKVPointer*)node_p simple:(BOOL)simple header:(BOOL)header {\n    return [self getLightStr:node_p simple:simple header:header from:nil];\n}\n+(NSString*) getLightStr:(AIKVPointer*)node_p simple:(BOOL)simple header:(BOOL)header from:(NSArray*)from{\n    NSString *lightStr = @\"\";\n    if (ISOK(node_p, AIKVPointer.class)) {\n        if ([self isValue:node_p]) {\n            lightStr = [self getLightStr_ValueP:node_p from:from];\n        }else if ([self isAlg:node_p]) {\n            AIAlgNodeBase *algNode = [SMGUtils searchNode:node_p];",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/NVHeUtil.m:39-64"
+    },
+    "3039": {
+        "file_id": 314,
+        "content": "This code appears to be a method that concatenates strings from an array and returns a substring. It includes nested methods for different conditions of the input node_p, checking if it is a value or algorithm node. The AIKVPointer and NSArray data types are used throughout the code.",
+        "type": "comment"
+    },
+    "3040": {
+        "file_id": 314,
+        "content": "            if (algNode) {\n                if (simple) {\n                    NSString *firstValueStr = [self getLightStr_ValueP:ARR_INDEX(algNode.content_ps, 0) from:algNode.content_ps];\n                    lightStr = STRFORMAT(@\"%@%@\",firstValueStr,(algNode.content_ps.count > 1) ? @\"...\" : @\"\");\n                }else{\n                    lightStr = [self getLightStr4Ps:algNode.content_ps simple:simple header:header sep:@\",\"];\n                }\n                //简化日志1: 概念加后辍\n                int height = NUMTOOK([AINetIndex getData:[SMGUtils filterSingleFromArr:algNode.content_ps checkValid:^BOOL(AIKVPointer *item) {\n                    return [@\"sizeHeight\" isEqualToString:item.dataSource];\n                }]]).intValue;\n                int border = NUMTOOK([AINetIndex getData:[SMGUtils filterSingleFromArr:algNode.content_ps checkValid:^BOOL(AIKVPointer *item) {\n                    return [@\"border\" isEqualToString:item.dataSource];\n                }]]).intValue;\n                if (height == 100) {\n                    lightStr = STRFORMAT(@\"%@,棒\",lightStr);",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/NVHeUtil.m:65-81"
+    },
+    "3041": {
+        "file_id": 314,
+        "content": "This code checks if a specific node exists and depending on its content, it retrieves the light string. It also retrieves values for height and border from the same node's content. If the height is 100, it adds an extra text to the light string. This appears to be part of a larger function used for data processing or manipulation.",
+        "type": "comment"
+    },
+    "3042": {
+        "file_id": 314,
+        "content": "                } else if (height == 30) {\n                    lightStr = STRFORMAT(@\"%@,鸟\",lightStr);\n                } else if (height == 5) {\n                    if (border > 0) lightStr = STRFORMAT(@\"%@,皮果\",lightStr);\n                    else lightStr = STRFORMAT(@\"%@,果\",lightStr);\n                }\n                //简化日志2: 飞不加header\n                if ([SMGUtils filterSingleFromArr:algNode.content_ps checkValid:^BOOL(AIKVPointer *item) {\n                    return [FLY_RDS isEqualToString:item.algsType] || [KICK_RDS isEqualToString:item.algsType];\n                }]) {\n                    header = false;\n                }\n            }\n        }else if([self isFo:node_p]){\n            AIFoNodeBase *foNode = [SMGUtils searchNode:node_p];\n            if (foNode) {\n                lightStr = [self getLightStr4Ps:foNode.content_ps simple:simple header:header sep:@\",\"];\n            }\n        }else if([self isMv:node_p]){\n            CGFloat score = [AIScore score4MV:node_p ratio:1.0f];\n            lightSt",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/NVHeUtil.m:82-103"
+    },
+    "3043": {
+        "file_id": 314,
+        "content": "The code is checking the height and border values of a node and applying specific conditions to set the value of \"lightStr\". If the node contains certain algorithms (FLY_RDS or KICK_RDS), it sets the header variable to false. Then, it checks if the current object is an FO or MV node and performs corresponding actions.",
+        "type": "comment"
+    },
+    "3044": {
+        "file_id": 314,
+        "content": "r = STRFORMAT(@\"%@%@%@\",Mvp2DeltaStr(node_p),Class2Str(NSClassFromString(node_p.algsType)),Double2Str_NDZ(score));\n        }\n    }\n    //2. 返回;\n    if (header) lightStr = [self decoratorHeader:lightStr node_p:node_p];\n    return lightStr;\n}\n//获取value_p的light描述;\n+(NSString*) getLightStr_ValueP:(AIKVPointer*)value_p from:(NSArray*)from{\n    if (!value_p) return @\"\";\n    double value = [NUMTOOK([AINetIndex getData:value_p]) doubleValue];\n    NSString *valueStr = [self getLightStr_Value:value algsType:value_p.algsType dataSource:value_p.dataSource];\n    if ([@\"sizeWidth\" isEqualToString:value_p.dataSource]) {\n        return STRFORMAT(@\"宽%@\",valueStr);\n    }else if ([@\"sizeHeight\" isEqualToString:value_p.dataSource]) {\n        return @\"\";//STRFORMAT(@\"高%@\",valueStr);\n    }else if ([@\"colorRed\" isEqualToString:value_p.dataSource]) {\n        return STRFORMAT(@\"红%@\",valueStr);\n    }else if ([@\"colorBlue\" isEqualToString:value_p.dataSource]) {\n        return STRFORMAT(@\"蓝%@\",valueStr);\n    }else if ([@\"colorGreen\" isEqualToString:value_p.dataSource]) {",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/NVHeUtil.m:103-124"
+    },
+    "3045": {
+        "file_id": 314,
+        "content": "This code retrieves a light description string for a given value_p, depending on the data source. It formats and returns the string with appropriate values using the getLightStr_Value:algsType:dataSource method, which returns a formatted NSString.",
+        "type": "comment"
+    },
+    "3046": {
+        "file_id": 314,
+        "content": "        return STRFORMAT(@\"绿%@\",valueStr);\n    }else if ([@\"radius\" isEqualToString:value_p.dataSource]) {\n        return STRFORMAT(@\"形%@\",valueStr);\n    }else if ([@\"direction\" isEqualToString:value_p.dataSource]) {\n        return STRFORMAT(@\"向%@\",valueStr);\n    }else if ([@\"distance\" isEqualToString:value_p.dataSource]) {\n        return STRFORMAT(@\"距%@\",valueStr);\n    }else if ([@\"distanceX\" isEqualToString:value_p.dataSource]) {\n        return STRFORMAT(@\"X距%@\",valueStr);\n    }else if ([@\"distanceY\" isEqualToString:value_p.dataSource]) {\n        if (ARRISOK(from) && NUMTOOK(ARR_INDEX([SMGUtils convertArr:from convertBlock:^id(AIKVPointer *item) {\n            if ([@\"sizeHeight\" isEqualToString:item.dataSource]) return NUMTOOK([AINetIndex getData:item]);\n            return nil;\n        }], 0)).doubleValue == 100) return STRFORMAT(@\"Y距_%@_%@\",[TVUtil distanceYDesc:value],valueStr);\n        return STRFORMAT(@\"Y距%@\",valueStr);\n    }else if ([@\"speed\" isEqualToString:value_p.dataSource]) {\n        return STRFORMAT(@\"速%@\",valueStr);",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/NVHeUtil.m:125-141"
+    },
+    "3047": {
+        "file_id": 314,
+        "content": "This code seems to be part of a larger function and appears to be checking the value of a data source string. Depending on the data source, it returns a formatted string using STRFORMAT. For example, if the datasource is \"radius\", it will return a formatted string with the word \"形\" followed by the valueStr. The code also includes logic for other possible data sources such as direction, distance, distanceX, and speed. If the value from the \"sizeHeight\" data source equals 100, it returns a different formatted string for the \"distanceY\" case.",
+        "type": "comment"
+    },
+    "3048": {
+        "file_id": 314,
+        "content": "    }else if ([@\"border\" isEqualToString:value_p.dataSource]) {\n        return @\"\";//STRFORMAT(@\"皮%@\",valueStr);\n    }else if ([@\"posX\" isEqualToString:value_p.dataSource]) {\n        return STRFORMAT(@\"X%@\",valueStr);\n    }else if ([@\"posY\" isEqualToString:value_p.dataSource]) {\n        return STRFORMAT(@\"Y%@\",valueStr);\n    }else if([EAT_RDS isEqualToString:value_p.algsType]){\n        return STRFORMAT(@\"吃%@\",valueStr);\n    }else if([FLY_RDS isEqualToString:value_p.algsType]){\n        return STRFORMAT(@\"飞%@\",valueStr);\n    }else if([KICK_RDS isEqualToString:value_p.algsType]){\n        return STRFORMAT(@\"踢%@\",valueStr);\n    }else if([NSStringFromClass(ImvAlgsHungerModel.class) isEqualToString:value_p.algsType] && [@\"urgentTo\" isEqualToString:value_p.dataSource]){\n        return STRFORMAT(@\"饿%@\",valueStr);\n    }else if([NSStringFromClass(ImvAlgsHurtModel.class) isEqualToString:value_p.algsType] && [@\"urgentTo\" isEqualToString:value_p.dataSource]){\n        return STRFORMAT(@\"疼%@\",valueStr);\n    }\n    return valueStr;",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/NVHeUtil.m:142-159"
+    },
+    "3049": {
+        "file_id": 314,
+        "content": "This code is comparing the value of `value_p.dataSource` with various strings, and returning a formatted string based on the match. It seems to be handling different types of events or actions, such as \"border\", \"posX\", \"posY\", and others like eating, flying, kicking, etc. The code also handles urgent events related to hunger and hurt models.",
+        "type": "comment"
+    },
+    "3050": {
+        "file_id": 314,
+        "content": "}\n//获取value的light描述;\n+(NSString*) getLightStr_Value:(double)value algsType:(NSString*)algsType dataSource:(NSString*)dataSource{\n    if(value == ATHav || value == ATNone || value == ATGreater ||\n       value == ATLess || value == ATPlus || value == ATSub){\n        return [NSLog_Extension convertATType2Desc:value];\n    }else if([FLY_RDS isEqualToString:algsType]){\n        return [NVHeUtil fly2Str:value];\n    }else if([KICK_RDS isEqualToString:algsType]){\n        return [NVHeUtil fly2Str:value];\n    }else if([@\"direction\" isEqualToString:dataSource]){\n        return [NVHeUtil direction2Str:value];\n    }\n    return Double2Str_NDZ(value);\n}\n//MARK:===============================================================\n//MARK:                     < 节点类型判断 >\n//MARK:===============================================================\n+(BOOL) isValue:(AIKVPointer*)node_p{\n    return [kPN_VALUE isEqualToString:node_p.folderName] || [kPN_DATA isEqualToString:node_p.folderName] || [kPN_INDEX isEqualToString:node_p.folderName];\n}\n+(BOOL) isAlg:(AIKVPointer*)node_p{",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/NVHeUtil.m:160-185"
+    },
+    "3051": {
+        "file_id": 314,
+        "content": "This method gets the light description of a given value based on its algorithm type and data source. It has separate implementations for ATHav, ATNone, ATGreater, ATLess, ATPlus, ATSub, FLY_RDS, KICK_RDS, direction, and other values. Additionally, there are helper methods to convert the values to their respective descriptions.",
+        "type": "comment"
+    },
+    "3052": {
+        "file_id": 314,
+        "content": "    return [kPN_ALG_NODE isEqualToString:node_p.folderName] || [kPN_ALG_ABS_NODE isEqualToString:node_p.folderName];\n}\n+(BOOL) isFo:(AIKVPointer*)node_p{\n    return [kPN_FRONT_ORDER_NODE isEqualToString:node_p.folderName] || [kPN_FO_ABS_NODE isEqualToString:node_p.folderName];\n}\n+(BOOL) isMv:(AIKVPointer*)node_p{\n    return [kPN_CMV_NODE isEqualToString:node_p.folderName] || [kPN_ABS_CMV_NODE isEqualToString:node_p.folderName];\n}\n+(BOOL) isAbs:(AIKVPointer*)node_p{\n    return [kPN_FO_ABS_NODE isEqualToString:node_p.folderName] || [kPN_ABS_CMV_NODE isEqualToString:node_p.folderName] || [kPN_ALG_ABS_NODE isEqualToString:node_p.folderName];\n}\n//MARK:===============================================================\n//MARK:                     < privateMethod >\n//MARK:===============================================================\n+(NSString*) decoratorHeader:(NSString*)lightStr node_p:(AIKVPointer*)node_p{\n    NSString *pIdStr = node_p ? STRFORMAT(@\"%ld\",node_p.pointerId) : @\"\";\n    if ([self isAlg:node_p]) {",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/NVHeUtil.m:186-206"
+    },
+    "3053": {
+        "file_id": 314,
+        "content": "This code defines several methods for checking if a given node matches certain predefined strings. These methods are used to determine the type of a node and return its corresponding identifier string. The decoratorHeader method takes a lightString and a node pointer as arguments, extracts the pointer id as a string, and checks if the node is of type ALG using the isAlg method.",
+        "type": "comment"
+    },
+    "3054": {
+        "file_id": 314,
+        "content": "        return STRFORMAT(@\"A%@(%@)\",pIdStr,lightStr);\n    }else if([self isFo:node_p]){\n        return STRFORMAT(@\"F%@[%@]\",pIdStr,lightStr);\n    }else if([self isMv:node_p]){\n        return STRFORMAT(@\"M%@{%@}\",pIdStr,lightStr);\n    }\n    return lightStr;\n}\n/**\n *  MARK:--------------------方向--------------------\n *  @version\n *      2023.03.13: 飞方向有8向,但视觉方向改为360向了 (因为早已支持相近匹配了);\n */\n+(NSString*) direction2Str:(CGFloat)value{\n    return STRFORMAT(@\"%.0f\",value);\n}\n+(NSString*) fly2Str:(CGFloat)value{\n    int caseValue = value * 8;\n    switch (caseValue) {\n        case 0: return @\"←\";\n        case 1: return @\"↖\";\n        case 2: return @\"↑\";\n        case 3: return @\"↗\";\n        case 4: return @\"→\";\n        case 5: return @\"↘\";\n        case 6: return @\"↓\";\n        case 7: return @\"↙\";\n    }\n    return @\"\";\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/HE/NVHeUtil.m:207-240"
+    },
+    "3055": {
+        "file_id": 314,
+        "content": "This code contains a set of functions that convert different input values into strings. The `direction2Str:` function converts a directional value to a string representation of a whole number, while the `fly2Str:` function converts a fly directional value to one of eight corresponding arrow symbols. The code also includes two conditional statements that return specific strings based on the input type and values.",
+        "type": "comment"
+    },
+    "3056": {
+        "file_id": 315,
+        "content": "/ThirdParty/SMGNetVision/NVConfig.h",
+        "type": "filepath"
+    },
+    "3057": {
+        "file_id": 315,
+        "content": "Defines constants for node size, module width and height, notification bar height, show name duration, layer spacing, node horizontal and vertical spacing, and node swipe distance.",
+        "type": "summary"
+    },
+    "3058": {
+        "file_id": 315,
+        "content": "//\n//  NVConfig.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/8/13.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#define cNodeSize (isSimulator ? 23 : 27)\n#define cModuleWidth MAX(ScreenWidth * 0.25,235)\n#define cModuleHeight cNVHeight - 24\n#define cNVHeight MAX(ScreenHeight * 0.7,280)\n#define cShowNameTime 3000\n#define cLayerSpace 3.0f * cNodeSize    //层间距\n#define cXSpace 0.9f * cNodeSize        //节点横间距\n#define cYSpace 0.5f * cNodeSize        //同层纵间距\n#define cNodeGesDistance cNodeSize      //节点滑动操作距离",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/NVConfig.h:1-19"
+    },
+    "3059": {
+        "file_id": 315,
+        "content": "Defines constants for node size, module width and height, notification bar height, show name duration, layer spacing, node horizontal and vertical spacing, and node swipe distance.",
+        "type": "comment"
+    },
+    "3060": {
+        "file_id": 316,
+        "content": "/ThirdParty/SMGNetVision/NVHeader.h",
+        "type": "filepath"
+    },
+    "3061": {
+        "file_id": 316,
+        "content": "Header file for SMGNetVision project, includes Foundation and NVView libraries, defines DirectionType enum with values for four directions.",
+        "type": "summary"
+    },
+    "3062": {
+        "file_id": 316,
+        "content": "//\n//  NVHeader.h\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/9/29.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n#import \"NVView.h\"\n#import \"NVHeUtil.h\"\n/**\n *  MARK:--------------------SMG内核中网络可视化项目--------------------\n *  1. 目前放这,随后立为单独项目;\n */\n/**\n *  MARK:--------------------四个方向--------------------\n */\ntypedef NS_ENUM(NSInteger, DirectionType) {\n    DirectionType_Top   = 0,\n    DirectionType_Bottom= 1,\n    DirectionType_Left  = 2,\n    DirectionType_Right = 3\n};",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/NVHeader.h:1-26"
+    },
+    "3063": {
+        "file_id": 316,
+        "content": "Header file for SMGNetVision project, includes Foundation and NVView libraries, defines DirectionType enum with values for four directions.",
+        "type": "comment"
+    },
+    "3064": {
+        "file_id": 317,
+        "content": "/ThirdParty/SMGNetVision/ReadMe.md",
+        "type": "filepath"
+    },
+    "3065": {
+        "file_id": 317,
+        "content": "v1.0 - Displays network content in console using strings (0-33). \nv2.0 - Visualizes entire network with interactive, dynamically expandable graphical representation (Assets/神经网络可视化示图.png). \nv2.1 - UI adjustments, improved performance, and he proxy enhancements (神经网络可视化v2.1演示.gif).",
+        "type": "summary"
+    },
+    "3066": {
+        "file_id": 317,
+        "content": "## v1.0 可视化-字符串\n> 直接使用\"字符串\"来打印控制台显示网络内容;\n***\n## v2.0 可视化-图形\n![](Assets/神经网络可视化示图.png)\n> 使用\"view图形化\"来显示整个网络的缩影;\n> 1. 可操作\n> 2. 动态扩展\n* 说明\n  - NVDelegate_He是He的可视化代理实现范例,同样你也可以写你自己的代理实现,来支持你们自己的神经网络;\n* 项目结构为:\n  * 网络的总可视化窗口:NVView\n  * 一个网络含多个模块:NVModuleView\n  * 一个NVModuleView含多个节点:NVNodeView\n  * 所有节点间,可能包含多个关联NVLine\n***\n## v2.1 可视化优化\n![](Assets/神经网络可视化v2.1演示.gif)\n> **更新日志:**\n> 1. UI调节与排版美化;\n> 2. setDatas()和clear()功能;\n> 3. 性能优化\n> 4. 完善he代理;",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/ReadMe.md:1-34"
+    },
+    "3067": {
+        "file_id": 317,
+        "content": "v1.0 - Displays network content in console using strings (0-33). \nv2.0 - Visualizes entire network with interactive, dynamically expandable graphical representation (Assets/神经网络可视化示图.png). \nv2.1 - UI adjustments, improved performance, and he proxy enhancements (神经网络可视化v2.1演示.gif).",
+        "type": "comment"
+    },
+    "3068": {
+        "file_id": 318,
+        "content": "/ThirdParty/TCDebug/README.md",
+        "type": "filepath"
+    },
+    "3069": {
+        "file_id": 318,
+        "content": "This code is a README for the TCDebug debugging tool, which builds upon XGDebug and specializes in analyzing the performance of TC modules. It supports comprehensive analysis of multiple TC operations, automatic switching to plant mode when reaching a slow threshold, and debugging specific slow areas while printing results during slow periods.",
+        "type": "summary"
+    },
+    "3070": {
+        "file_id": 318,
+        "content": "#  TCDebug调试工具\n### 说明: 在XGDebug的基础上再封装一层,专用于分析TC模块的性能;\n1. 支持对多次TC操作综合分析耗时;\n2. 支持在达到慢阈值时,自动切到植物模式;\n3. 支持在慢时,将具体慢的地方也调试出来,并打印结果;",
+        "type": "code",
+        "location": "/ThirdParty/TCDebug/README.md:1-7"
+    },
+    "3071": {
+        "file_id": 318,
+        "content": "This code is a README for the TCDebug debugging tool, which builds upon XGDebug and specializes in analyzing the performance of TC modules. It supports comprehensive analysis of multiple TC operations, automatic switching to plant mode when reaching a slow threshold, and debugging specific slow areas while printing results during slow periods.",
+        "type": "comment"
+    },
+    "3072": {
+        "file_id": 319,
+        "content": "/ThirdParty/TCDebug/TCDebug.h",
+        "type": "filepath"
+    },
+    "3073": {
+        "file_id": 319,
+        "content": "This code defines a class `TCDebug` for debugging the performance of single modules. It has properties to track hard disk read and write counts, methods to update operation counts, and a method to reset loop IDs. It is used within a specific module, recording data until the next module starts.",
+        "type": "summary"
+    },
+    "3074": {
+        "file_id": 319,
+        "content": "//\n//  TCDebug.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/8/20.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------单次模块Debug性能调试器--------------------\n *  @desc 1. 使用方法: TCDebug(@\"R8\");TCDebug(@\"R9\");\n *        2. 使用说明: 每条显示的用时为,当上条到当前条执行间的代码用时;\n *  @常用 1. 常用于仅记录当前操作的统计情况; (使用方法:[theTC.tcDebug updateOperCount:@\"youCodeBlockName\"])\n *       2. 用于思维控制器中,将循环数,操作计数等记下来,相当于在XGDebug上封装了TC所需的一层附带数据 (但并没有由TCDebug调用XGDebug);\n *  @特性 1. 仅当前模块;   2. 每个TC在开头调用,结尾不调用(所以可查看当前TC的所有数据,直至下个TC开始);\n */\n@interface TCDebug : NSObject\n@property (assign, nonatomic) NSInteger lastRCount;//硬盘读数 (因为HD读写往往与性能关系密切,所以记录下)\n@property (assign, nonatomic) NSInteger lastWCount;//硬盘写数 (因为HD读写往往与性能关系密切,所以记录下)\n/**\n *  MARK:--------------------代码块报告--------------------\n */\n-(void) updateOperCount:(NSString*)operater min:(NSInteger)min;\n-(void) updateLoopId;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/TCDebug/TCDebug.h:1-30"
+    },
+    "3075": {
+        "file_id": 319,
+        "content": "This code defines a class `TCDebug` for debugging the performance of single modules. It has properties to track hard disk read and write counts, methods to update operation counts, and a method to reset loop IDs. It is used within a specific module, recording data until the next module starts.",
+        "type": "comment"
+    },
+    "3076": {
+        "file_id": 320,
+        "content": "/ThirdParty/TCDebug/TCDebug.m",
+        "type": "filepath"
+    },
+    "3077": {
+        "file_id": 320,
+        "content": "The TCDebug class is used for iOS app debugging, tracking operation time, detecting freezes, and allowing log categories. The code checks execution thresholds, logs information, switches to \"plant mode\" if criteria are met, and manages last operation times.",
+        "type": "summary"
+    },
+    "3078": {
+        "file_id": 320,
+        "content": "//\n//  TCDebug.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/8/20.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import \"TCDebug.h\"\n//判断卡了功能->开关\n#define TCDebugKaleSwitch false\n//调试中的TC名称 (当前调试哪个,就改成哪个名称);\n#define DebugingTC @\"TCRecognition.m\"\n//结果打印的TC名称们 (当前要打印哪些结果,就纳入哪些名称);\n#define LogingTCs @[@\"TCRecognition.m\", @\"TIUtils.m\",@\"AINetUtils.m\",@\"SMGUtils.m\"]\n//对最后多少条时间汇总分析\n#define DebugLastOperesNum 3\n//判断为卡状态的阈值 (单位:ms)\n#define DebugKaleTime 1600\n@interface TCDebug()\n//最后几次调试中操作用时记录;\n@property (strong, nonatomic) NSMutableArray *lastOperesTimeArr;\n@property (assign, nonatomic) NSTimeInterval lastOperTime;\n@property (assign, nonatomic) NSTimeInterval lastLoopTime;\n@property (strong, nonatomic) NSString *lastOperater;\n@end\n@implementation TCDebug\n/**\n *  MARK:--------------------代码块报告--------------------\n *  @desc 说明:\n *          1. 调试用时: 大于min时,才算达到\"分析表\"入门资格;\n *          2. 调试卡顿:\n *              a. 记录当前正在调试的DebugingTC最后DebugLastOperesNum(10条);\n *              b. 平均用时超过DebugKaleTime(800ms)时,则判定为卡顿状态;",
+        "type": "code",
+        "location": "/ThirdParty/TCDebug/TCDebug.m:1-44"
+    },
+    "3079": {
+        "file_id": 320,
+        "content": "This code defines a class TCDebug, which helps analyze and report the debugging process. It tracks the operation time, detects if the app is stuck, and allows specifying specific log categories to print. The class also has properties for storing the last few operations' time, the most recent operation time, loop time, and operator.",
+        "type": "comment"
+    },
+    "3080": {
+        "file_id": 320,
+        "content": " *              c. 判断卡顿时,转为植物状态,并暂停强化训练;\n *  @use 使用说明:\n *          1. 调试TC的操作 (用于每个思维TC模块开始时调用);\n *          2. 调试代码块的操作 (每次代码块执行的性能报告);\n *  @param min : Oper操作剔除最小数的阈值 (单位:ms) (超过这个值时会打印,不超过不打印);\n */\n-(void) updateOperCount:(NSString*)operater min:(NSInteger)min {\n    //功能1: ============ 调试用时 ============\n    NSTimeInterval now = [NSDate new].timeIntervalSince1970 * 1000;\n    NSTimeInterval useTime = now - self.lastOperTime;\n    BOOL thanMin = useTime > min;\n    if (self.lastOperTime > 0 && thanMin) {\n        //1. 打印计数日志;\n        NSString *useTimeStr = @\"\";\n        for (int i = 0; i < (int)(useTime / 100); i++) {useTimeStr = STRFORMAT(@\"%@*\",useTimeStr);}\n        NSLog(@\"[%@ => %@] 操作计数:%lld 用时:%@ (%.0f) (读:%ld 写:%ld)\",self.lastOperater,operater,theTC.getOperCount,useTimeStr,useTime,self.lastRCount,self.lastWCount);\n    }\n    //功能2: ============ 判断卡顿 ============\n    if (TCDebugKaleSwitch && thanMin && [self.lastOperater containsString:DebugingTC]) {\n        //1. 存10条;\n        [self.lastOperesTimeArr addObject:@(useTime)];",
+        "type": "code",
+        "location": "/ThirdParty/TCDebug/TCDebug.m:45-68"
+    },
+    "3081": {
+        "file_id": 320,
+        "content": "This code snippet is part of a debugging function for TC (possibly Thinking Creature) in an iOS app. It updates the operation count and checks if the execution time exceeds a given threshold. If it does, it logs information about the operation count, execution time, and reading/writing counts. Additionally, it monitors for any potential freezes by checking if the previous operation is related to debugging TC and storing the operation times in an array.",
+        "type": "comment"
+    },
+    "3082": {
+        "file_id": 320,
+        "content": "        if (self.lastOperesTimeArr.count > DebugLastOperesNum) {\n            [self.lastOperesTimeArr removeObjectAtIndex:0];\n        }\n        //2. 算出10条总耗时;\n        double sumUseTime = 0;\n        for (NSNumber *item in self.lastOperesTimeArr) {\n            sumUseTime += item.doubleValue;\n        }\n        //3. 平均耗时>800ms时,属于卡顿状态;\n        BOOL lastKale = sumUseTime > DebugKaleTime * self.lastOperesTimeArr.count;\n        //4. 达到10次,才判断是否卡;\n        BOOL lastLimited = self.lastOperesTimeArr.count >= DebugLastOperesNum;\n        //5. 思维控制器工作正常,且判断卡住时,转入植物状态;\n        if (theTC.thinkMode == 0 && lastLimited && lastKale) {\n            //a. 设为植物模式;\n            NSLog(@\"操作计数判断当前为: 卡顿状态,转为植物模式\");\n            theTC.thinkMode = 2;\n            //b. 并暂停强化训练;\n            [theRT setPlaying:false];\n            //d. 调试具体慢原因性能;\n            for (NSString *logingTC in LogingTCs) {\n                [theDebug print:TCDebugPrefixV2(logingTC) rmPrefix:TCDebugRMPrefixV2(logingTC)];\n            }\n        }\n    }\n    //5. 记录lastOperater\n    self.lastOperTime = now;",
+        "type": "code",
+        "location": "/ThirdParty/TCDebug/TCDebug.m:69-103"
+    },
+    "3083": {
+        "file_id": 320,
+        "content": "Code snippet checks if the count of `lastOperesTimeArr` is greater than a predefined limit, calculates the total time spent in `self.lastOperesTimeArr`, and determines if the average usage time exceeds a specified threshold (800ms). If the count is sufficient and the average time meets the criteria, it switches to \"plant mode\" and pauses training. Additionally, it debugs specific slow reasons for performance.",
+        "type": "comment"
+    },
+    "3084": {
+        "file_id": 320,
+        "content": "    self.lastOperater = operater;\n    self.lastRCount = 0;\n    self.lastWCount = 0;\n}\n/**\n *  MARK:--------------------调试TC的循环--------------------\n */\n-(void) updateLoopId {\n    //调试用时\n    NSTimeInterval now = [NSDate new].timeIntervalSince1970 * 1000;\n    NSTimeInterval useTime = now - self.lastLoopTime;\n    if (self.lastLoopTime > 0 && useTime > 2000)\n        NSLog(@\"循环计数更新:%lld 用时:%.0f ========================================\",theTC.getLoopId,useTime);\n    self.lastLoopTime = now;\n}\n//MARK:===============================================================\n//MARK:                     < privateMethod >\n//MARK:===============================================================\n-(NSMutableArray*) lastOperesTimeArr {\n    if (!_lastOperesTimeArr) {\n        _lastOperesTimeArr = [[NSMutableArray alloc] init];\n    }\n    return _lastOperesTimeArr;\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/TCDebug/TCDebug.m:104-131"
+    },
+    "3085": {
+        "file_id": 320,
+        "content": "This code snippet initializes a class instance and provides a method for updating the loop ID. It also includes a private method for managing an array of last operation times.",
+        "type": "comment"
+    },
+    "3086": {
+        "file_id": 321,
+        "content": "/ThirdParty/TOMVision2/Line/TVLineView.h",
+        "type": "filepath"
+    },
+    "3087": {
+        "file_id": 321,
+        "content": "Header file for TVLineView class, inherits from UIView, includes a method to refresh display with data for nodes A and B.",
+        "type": "summary"
+    },
+    "3088": {
+        "file_id": 321,
+        "content": "//\n//  TVLineView.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/21.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n@interface TVLineView : UIView\n-(void) refreshDisplayWithDataA:(UIView*)nodeA nodeB:(UIView*)nodeB;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Line/TVLineView.h:1-15"
+    },
+    "3089": {
+        "file_id": 321,
+        "content": "Header file for TVLineView class, inherits from UIView, includes a method to refresh display with data for nodes A and B.",
+        "type": "comment"
+    },
+    "3090": {
+        "file_id": 322,
+        "content": "/ThirdParty/TOMVision2/Line/TVLineView.m",
+        "type": "filepath"
+    },
+    "3091": {
+        "file_id": 322,
+        "content": "The TVLineView class, part of TOMVision2 library, is a UIView that initializes properties and subviews, calculates line length, position, rotation angle, and refreshes display. It likely handles line operations/visualization within the application.",
+        "type": "summary"
+    },
+    "3092": {
+        "file_id": 322,
+        "content": "//\n//  TVLineView.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/21.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import \"TVLineView.h\"\n#import \"NVConfig.h\"\n#import \"NVViewUtil.h\"\n@interface TVLineView ()\n@property (strong,nonatomic) UIView *lineView;\n@end\n@implementation TVLineView\n-(id) init {\n    self = [super init];\n    if(self != nil){\n        [self initView];\n        [self initData];\n        [self initDisplay];\n    }\n    return self;\n}\n-(void) initView{\n    //self\n    [self setBackgroundColor:[UIColor clearColor]];\n    self.height = 1.0f;\n    [self setUserInteractionEnabled:false];\n    [self.layer setMasksToBounds:true];\n    [self.layer setMasksToBounds:false];\n    //lineView\n    self.lineView = [[UIView alloc] init];\n    [self.lineView setBackgroundColor:UIColorWithRGBHex(0xDDDDDD)];\n    [self addSubview:self.lineView];\n    [self.lineView setAlpha:0.8f];\n    [self.lineView.layer setMasksToBounds:false];\n}\n-(void) initData{\n}\n-(void) initDisplay{\n}\n//MARK:===============================================================",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Line/TVLineView.m:1-53"
+    },
+    "3093": {
+        "file_id": 322,
+        "content": "TVLineView is a custom UIView that initializes its properties and subviews. It sets the background color to clear, height to 1.0f, disables user interaction, and configures layer properties such as masksToBounds. It also adds a lineView as a subview with specific background color and alpha value. initData and initDisplay methods are empty in this implementation.",
+        "type": "comment"
+    },
+    "3094": {
+        "file_id": 322,
+        "content": "//MARK:                     < method >\n//MARK:===============================================================\n-(void) refreshDisplayWithDataA:(UIView*)nodeA nodeB:(UIView*)nodeB{\n    //1. 获取两端的坐标\n    CGPoint pointA = nodeA.center;\n    CGPoint pointB = nodeB.center;\n    //pointA = [nodeA.superview convertPoint:nodeA.center toView:self.contentView];\n    //2. 画线_计算线长度\n    float width = [NVViewUtil distancePoint:pointA second:pointB];\n    //3. 计算线中心位置\n    float centerX = (pointA.x + pointB.x) / 2.0f;\n    float centerY = (pointA.y + pointB.y) / 2.0f;\n    //4. 旋转角度\n    CGFloat angle = [NVViewUtil anglePIPoint:pointA second:pointB];\n    //5. 线框长度;\n    [self.layer setTransform:CATransform3DMakeRotation(0, 0, 0, 1)];\n    self.width = width;\n    self.height = (nodeA.height + nodeB.height) * 0.05f;\n    //6. 线显示长度;\n    [self.lineView setFrame:CGRectMake(0, 0, self.width, self.height)];\n    //7. 旋转指向方向;\n    [self.layer setTransform:CATransform3DMakeRotation(angle, 0, 0, 1)];\n    self.center = CGPointMake(centerX, centerY);",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Line/TVLineView.m:54-82"
+    },
+    "3095": {
+        "file_id": 322,
+        "content": "This code refreshes the display of a line view by obtaining the coordinates of two nodes, calculating line length and center position, determining rotation angle, setting frame size and rotation transform, and finally setting the line's center.",
+        "type": "comment"
+    },
+    "3096": {
+        "file_id": 322,
+        "content": "}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/TOMVision2/Line/TVLineView.m:83-85"
+    },
+    "3097": {
+        "file_id": 322,
+        "content": "These lines define the end of a class named \"TVLineView\" in Objective-C, which appears to be part of TOMVision2 library. The class likely handles line-related operations or visualization within the application.",
+        "type": "comment"
+    },
+    "3098": {
+        "file_id": 323,
+        "content": "/ThirdParty/TOMVision2/Line/TVTimeLine.h",
+        "type": "filepath"
+    },
+    "3099": {
+        "file_id": 323,
+        "content": "This code defines a UIView class named TVTimeLine with a bezierPoints property, which is an array of NSValue(CGPoint) used for drawing a \"tree\" growth timeline. The setData method takes a scale parameter and can be used to update the view.",
+        "type": "summary"
+    }
+}

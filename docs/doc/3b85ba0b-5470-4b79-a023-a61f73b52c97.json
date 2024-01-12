@@ -1,0 +1,10 @@
+{
+    "summary": "TCResult is a class for representing the result of a task, allowing the creation of new instances and chaining methods to set various properties.",
+    "details": [
+        {
+            "comment": "TCResult is a class for representing the result of a task, allowing the creation of new instances and chaining methods to set various properties.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/Model/TCResult.m\":0-33",
+            "content": "//\n//  TCResult.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/7/22.\n//  Copyright \u00a9 2023 XiaoGang. All rights reserved.\n//\n#import \"TCResult.h\"\n@implementation TCResult\n+(TCResult*) new:(BOOL)success {\n    TCResult *result = [[TCResult alloc] init];\n    result.success = success;\n    return result;\n}\n-(TCResult*) mkMsg:(NSString*)msg {\n    self.msg = msg;\n    return self;\n}\n-(TCResult*) mkDelay:(CGFloat)delay {\n    self.delay = delay;\n    return self;\n}\n-(TCResult*) mkStep:(NSInteger)step {\n    self.step = step;\n    return self;\n}\n@end"
+        }
+    ]
+}

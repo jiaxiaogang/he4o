@@ -1,0 +1,15 @@
+{
+    "summary": "The header file defines the `NVHeUtil` class with methods for node size judgment and light description, as well as a section for identifying node types. It also includes functions for algorithm type identification and value conversion to string.",
+    "details": [
+        {
+            "comment": "This header file defines the `NVHeUtil` class, which contains several methods for judging node size and obtaining light descriptions. It also includes a section specifically for node type determination.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/SMGNetVision/HE/NVHeUtil.h\":0-31",
+            "content": "//\n//  NVHeUtil.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/7/2.\n//  Copyright \u00a9 2019\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface NVHeUtil : NSObject\n/**\n *  MARK:--------------------\u5224\u65ad\u662f\u5426\u8282\u70b9\u5c3a\u5bf8\u4e3aheight--------------------\n */\n+(BOOL) isHeight:(CGFloat)height fromContent_ps:(NSArray*)fromContent_ps;\n/**\n *  MARK:--------------------\u83b7\u53d6value\u5fae\u4fe1\u606f\u7684light\u63cf\u8ff0--------------------\n */\n+(NSString*) getLightStr4Ps:(NSArray*)node_ps;\n+(NSString*) getLightStr4Ps:(NSArray*)node_ps simple:(BOOL)simple header:(BOOL)header sep:(NSString*)sep;\n+(NSString*) getLightStr:(AIKVPointer*)node_p;\n+(NSString*) getLightStr:(AIKVPointer*)node_p simple:(BOOL)simple header:(BOOL)header;\n+(NSString*) getLightStr_Value:(double)value algsType:(NSString*)algsType dataSource:(NSString*)dataSource;\n//MARK:===============================================================\n//MARK:                     < \u8282\u70b9\u7c7b\u578b\u5224\u65ad >\n//MARK:===============================================================\n+(BOOL) isValue:(AIKVPointer*)node_p;"
+        },
+        {
+            "comment": "Defines several methods for identifying algorithm type (isAlg, isFo, isMv, isAbs) and converts values to string (direction2Str, fly2Str).",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/SMGNetVision/HE/NVHeUtil.h\":32-43",
+            "content": "+(BOOL) isAlg:(AIKVPointer*)node_p;\n+(BOOL) isFo:(AIKVPointer*)node_p;\n+(BOOL) isMv:(AIKVPointer*)node_p;\n+(BOOL) isAbs:(AIKVPointer*)node_p;\n/**\n *  MARK:--------------------\u7a00\u758f\u7801\u8f6cstr--------------------\n */\n+(NSString*) direction2Str:(CGFloat)value;\n+(NSString*) fly2Str:(CGFloat)value;\n@end"
+        }
+    ]
+}

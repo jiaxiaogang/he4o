@@ -1,0 +1,15 @@
+{
+    "summary": "The code is a header file for the RTModel class, which defines properties and methods, including register, queue, invoke, clear, and retrieve total execution time functions. It also includes an NSArray of queues and public methods to manage pause names.",
+    "details": [
+        {
+            "comment": "This code is the header file for a class named RTModel. It defines properties, methods, and a protocol RTModelDelegate. The class has getter and setter methods (getset), public methods to register, queue, invoke, clear, and retrieve total execution time. It also uses an NSArray of queues.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/RLTrainer/Model/RTModel.h\":0-38",
+            "content": "//\n//  RTModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/31.\n//  Copyright \u00a9 2022\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@protocol RTModelDelegate <NSObject>\n-(BOOL) rtModel_Playing;\n-(void) rtModel_Invoked;\n-(void) rtModel_Finished;\n@end\n@class RTQueueModel;\n@interface RTModel : NSObject\n@property (weak, nonatomic) id<RTModelDelegate> delegate;\n//MARK:===============================================================\n//MARK:                     < getset >\n//MARK:===============================================================\n-(NSMutableArray *)queues;\n-(NSInteger)queueIndex;\n//MARK:===============================================================\n//MARK:                     < publicMethod >\n//MARK:===============================================================\n-(void) regist:(NSString*)name target:(NSObject*)target selector:(SEL)selector;\n-(void) queue:(NSArray*)queues count:(NSInteger)count;\n-(void) invoked:(NSString*)name;\n-(void) clear;\n-(long long) getTotalUseTimed;\n//MARK:==============================================================="
+        },
+        {
+            "comment": "This code segment defines a class with two public methods, \"appendPauseNames\" and \"clearPauseNames\", which are used to manage pause names in the system.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/RLTrainer/Model/RTModel.h\":39-44",
+            "content": "//MARK:               < publicMethod: \u89e6\u53d1\u6682\u505c\u547d\u4ee4 >\n//MARK:===============================================================\n-(void) appendPauseNames:(NSArray*)value;\n-(void) clearPauseNames;\n@end"
+        }
+    ]
+}

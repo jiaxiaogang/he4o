@@ -1,0 +1,15 @@
+{
+    "summary": "This code is an interface for the AIAnalyst class in SMG_NothingIsAll project, containing methods to analyze and compare values. It has been updated with improved algorithms and functions. Sets a protocol variable protoV at a specific address using data source and output information.",
+    "details": [
+        {
+            "comment": "This code is an interface for the class AIAnalyst in the SMG_NothingIsAll project. It contains methods to compare and analyze values between cansetFo and protoFo, as well as provide analysis reports. The code has been updated over time with various algorithms and changes to improve its functionality.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/AIAnalyst.h\":0-30",
+            "content": "//\n//  AIAnalyst.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/6/10.\n//  Copyright \u00a9 2022\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------\u5206\u6790\u5e08--------------------\n *  @desc \u7528\u4e8e\u6838\u9a8c\u6bd4\u5bf9cansetFo\u4e0eprotoFo,\u5e76\u7ed9\u51fa\u5206\u6790\u62a5\u544a;\n *  @version\n *      2019.xx.xx: PM\u7b97\u6cd5 (\u53c2\u8003\u624b\u7a3fPM\u76f8\u5173\u6d89\u53ca);\n *      2022.05.xx: \u6bd4\u5bf9\u7b97\u6cd5 (\u53c2\u800326122);\n *      2022.11.30: \u5728\u524d\u6bb5\u65f6\u95f4\u6539indexDic\u548cmatchValue\u590d\u7528\u540e,\u6b64\u5904TI\u8c03\u7528alg\u76f8\u4f3c\u5ea6\u65e9\u5df2\u5e9f\u5f03,\u4eca\u5929\u5f7b\u5e95\u5220\u6389\u5b83\u7684\u4ee3\u7801;\n *      2023.02.17: \u5c06\u65f6\u5e8f\u6bd4\u5bf9\u79fb\u5230TCSolutionUtil\u4e2d (\u56e0\u4e3a\u5b83\u73b0\u5728\u5176\u5b9e\u5c31\u662f\u4e2a\u83b7\u53d6SolutionModel\u7684\u7b97\u6cd5,\u800c\u4e0d\u662f\u6bd4\u5bf9\u4e86) (\u53c2\u800328084-1);\n *      2023.02.19: \u5c06\u6982\u5ff5\u6bd4\u5bf9\u5220\u6389,\u5b83\u73b0\u5728\u5728AINetUtils.getNearData()\u4e2d;\n */\n@interface AIAnalyst : NSObject\n//MARK:===============================================================\n//MARK:                     < Value\u76f8\u8fd1\u5ea6 (\u7531TI\u8c03\u7528) >\n//MARK:===============================================================\n/**\n *  MARK:--------------------\u6bd4\u5bf9\u7a00\u758f\u7801\u76f8\u8fd1\u5ea6--------------------\n */\n+(CGFloat) compareCansetValue:(AIKVPointer*)cansetV_p protoValue:(AIKVPointer*)protoV_p vInfo:(AIValueInfo*)vInfo;\n+(CGFloat) compareCansetValue:(dou"
+        },
+        {
+            "comment": "Sets the value of a protocol variable protoV at a specific address (at) with data source (ds), indicating if it is output (isOut) and storing its information (vInfo).",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/AIAnalyst.h\":30-32",
+            "content": "ble)cansetV protoV:(double)protoV at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut vInfo:(AIValueInfo*)vInfo;\n@end"
+        }
+    ]
+}

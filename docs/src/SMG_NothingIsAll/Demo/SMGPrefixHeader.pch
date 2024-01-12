@@ -1,0 +1,111 @@
+//
+//  SMGPrefixHeader.pch
+//  SMG_NothingIsAll
+//
+//  Created by 贾  on 2017/5/3.
+//  Copyright © 2017年 XiaoGang. All rights reserved.
+//
+
+#import <Availability.h>
+
+#ifdef __OBJC__
+#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+#import "AppDelegate.h"
+#import <CoreText/CoreText.h>
+#import "Foundation+Log.m"
+#import "UIView+Extension.h"
+#import "UIColor+expanded.h"
+#import "AIHeader.h"
+#import "HEView.h"
+#import "NSLog+Extension.h"
+#import "AITest.h"
+#import "RLTrainer.h"
+#import "XGDebug.h"
+#import "XGDebugModel.h"
+#import "TCDebug.h"
+#import "XGConfig.h"
+#endif
+
+//MARK:===============================================================
+//MARK:                     < 全局宏/Demo宏 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------application--------------------
+ */
+#define theApp ((AppDelegate*)[[UIApplication sharedApplication] delegate])
+#define isSimulator TARGET_OS_SIMULATOR
+
+/**
+ *  MARK:--------------------ui--------------------
+ */
+#define ScreenHeight [[UIScreen mainScreen] bounds].size.height
+#define ScreenWidth [[UIScreen mainScreen] bounds].size.width
+#define StateBarHeight 20
+
+/**
+ *  MARK:--------------------color--------------------
+ */
+//RGB & RGBA
+#define UIColorWithRGB(R, G, B) [UIColor colorWithRed:(R)/255.0 green:(G)/255.0 blue:(B)/255.0 alpha:1]
+#define UIColorWithRGBA(R, G, B, A) [UIColor colorWithRed:(R)/255.0 green:(G)/255.0 blue:(B)/255.0 alpha:A]
+//Hex & HexA
+#define UIColorWithRGBHex(RGB_Hex) UIColorWithRGB((float)((RGB_Hex&0xFF0000)>>16), (float)((RGB_Hex&0xFF00)>>8), (float)(RGB_Hex&0xFF))
+#define UIColorWithRGBHexA(RGB_Hex,A) UIColorWithRGBA((float)((RGB_Hex&0xFF0000)>>16), (float)((RGB_Hex&0xFF00)>>8), (float)(RGB_Hex&0xFF),A)
+//HSB (色相,饱合度,亮度)
+#define UIColorWithHSB(H, S, B) [UIColor colorWithHue:(H)/255.0 saturation:(S)/255.0 brightness:(B)/255.0 alpha:1]
+
+/**
+ *  MARK:--------------------log--------------------
+ */
+#define TPLog(a,...) [theApp setTipLog:STRFORMAT(a,##__VA_ARGS__)]
+#define theNV (theApp.nvView)
+#define theTV (theApp.tv)
+#define theRT [RLTrainer sharedInstance]
+#define theHeLog (theApp.heLogView)
+#define theDebug [XGDebug sharedInstance]
+
+/**
+ *  MARK:--------------------感官算法--------------------
+ */
+#define visibleTag 999  //视觉可见标记
+
+/**
+ *  MARK:--------------------Identify标识 (外围方)--------------------
+ */
+#define EAT_RDS @"EAT_RDS"  //吸吮反射标识
+#define FLY_RDS @"FLY_RDS"  //扇翅膀反射标识 (类似抓握反射)
+#define KICK_RDS @"KICK_RDS"//脚踢反射标识 (类似膝跳反射)
+
+/**
+ *  MARK:--------------------xgDebug调试模块--------------------
+ *  @use 使用方法: 每个模块开始调用Debug(),结束调用DebugE();
+ */
+#define DebugParam(p,s) [theDebug debugModuleWithPrefix:p suffix:s] //指定前辍&&后辍
+#define Debug() [theDebug debugModuleWithFileName:FILENAME suffix:nil]
+#define DebugS() [theDebug debugModuleWithFileName:FILENAME suffix:@"START"]
+#define DebugE() [theDebug debugModuleWithFileName:FILENAME suffix:@"END"]
+#define DebugW() [theDebug debugWrite]
+#define DebugR() [theDebug debugRead]
+#define kFILENAME FILENAME
+#define kLINE __LINE__
+
+/**
+ *  MARK:--------------------xgDebug调试代码块--------------------
+ *  @注意事项: 为性能好,调用AddDebugCodeBlock后必须调用PrintDebugCodeBlock(),不然它会一直累计models直至系统变卡;
+ *  @use 使用方法:
+ *              1. 先在代码块之间调用AddDebugCodeBlock("自定义后辍");
+ *              2. 在末尾调用PrintDebugCodeBlock()将结果日志打出;
+ *  @desc 前辍说明: 使用当前文件名+循环id;
+ */
+//含自定义前辍版本 (适用于多类工作时,根据自定义前辍跨类工作);
+#define AddDebugCodeBlock_Key(key,codeBlockName) [theDebug debugModuleWithPrefix:TCDebugPrefixV2(key) suffix:codeBlockName]
+#define PrintDebugCodeBlock_Key(key) [theDebug print:TCDebugPrefixV2(key) rmPrefix:TCDebugRMPrefixV2(key)]
+
+/**
+ *  MARK:--------------------tcDebug拼接前辍--------------------
+ *  @param prefixKey : 一般传文件名,如果要打出所有模块,则只仅TC即可,如果要打所有文件,可以传空字符串;
+ */
+#define TCDebugPrefixV2(blockKey) STRFORMAT(@"DEBUG匹配 => 代码块:%@ 循环圈:%lld",blockKey,theTC.getLoopId) //TCDebug的前辍=文件名用来匹配的前部分+循环Id
+#define TCDebugRMPrefixV2(blockKey) STRFORMAT(@"DEBUG匹配 => 代码块:%@",blockKey) //用于删除所有的prefixKey,不限循环数;

@@ -1,0 +1,15 @@
+{
+    "summary": "This code initializes and monitors battery levels, converting them to hunger levels, and calculates values for further AI processing.",
+    "details": [
+        {
+            "comment": "This code initializes and monitors the battery level of a device, converting it to a hunger level between 0 and 10. It sets up the battery monitoring and adds an observer for battery level changes. The observer method commits the current battery level and state, adjusting the battery level based on charging status before transforming it into a hunger level.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Demo/Adapter/DemoHunger.m\":0-41",
+            "content": "//\n//  DemoHunger.m\n//  SMG_NothingIsAll\n//\n//  Created by \u8d3e  on 2017/12/14.\n//  Copyright \u00a9 2017\u5e74 XiaoGang. All rights reserved.\n//\n#import \"DemoHunger.h\"\n@interface DemoHunger ()\n@end\n@implementation DemoHunger\n-(id) init{\n    self = [super init];\n    if (self) {\n        [self initRun];\n    }\n    return self;\n}\n-(void) initRun{\n    [UIDevice currentDevice].batteryMonitoringEnabled = YES;\n    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(observerHungerLevelChanged:) name:UIDeviceBatteryLevelDidChangeNotification object:nil];\n}\n/**\n *  MARK:--------------------method--------------------\n */\n-(void) observerHungerLevelChanged:(NSNotification*)notification{\n    [self commit:[UIDevice currentDevice].batteryLevel state:[UIDevice currentDevice].batteryState];\n}\n-(void) commit:(CGFloat)level state:(UIDeviceBatteryState)state{\n    //1,\u7535\u91cf\u53d6\u503c\n    CGFloat toLevel = MIN(1, MAX(0, level));\n    CGFloat fromLevel = state == UIDeviceBatteryStateCharging ? toLevel - 0.1f : toLevel + 0.1f;\n    //2. \u8f6c\u6362\u4e3a0-10\u7684\u9965\u997f\u5ea6;"
+        },
+        {
+            "comment": "This code calculates two values between 0 and 1 based on the input parameters \"fromLevel\" and \"toLevel\". These values are then passed to the \"AIInput\" function for further processing.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Demo/Adapter/DemoHunger.m\":42-49",
+            "content": "    CGFloat from = [MathUtils getZero2TenWithOriRange:UIFloatRangeMake(0, 1) oriValue:1 - fromLevel];\n    CGFloat to = [MathUtils getZero2TenWithOriRange:UIFloatRangeMake(0, 1) oriValue:1 - toLevel];\n    //3. \u4f20\u7ed9Input\n    [AIInput commitIMV:MVType_Hunger from:from to:to];\n}\n@end"
+        }
+    ]
+}

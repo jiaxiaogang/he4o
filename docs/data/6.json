@@ -1,0 +1,537 @@
+{
+    "600": {
+        "file_id": 56,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAbsAlgNode.m",
+        "type": "filepath"
+    },
+    "601": {
+        "file_id": 56,
+        "content": "This file contains the implementation of AIAbsAlgNode class, which is part of SMG_NothingIsAll project. It was created on December 7th, 2018 by jia and is copyrighted by XiaoGang.",
+        "type": "summary"
+    },
+    "602": {
+        "file_id": 56,
+        "content": "//\n//  AIAbsAlgNode.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2018/12/7.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"AIAbsAlgNode.h\"\n@implementation AIAbsAlgNode\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAbsAlgNode.m:1-13"
+    },
+    "603": {
+        "file_id": 56,
+        "content": "This file contains the implementation of AIAbsAlgNode class, which is part of SMG_NothingIsAll project. It was created on December 7th, 2018 by jia and is copyrighted by XiaoGang.",
+        "type": "comment"
+    },
+    "604": {
+        "file_id": 57,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAbsCMVNode.h",
+        "type": "filepath"
+    },
+    "605": {
+        "file_id": 57,
+        "content": "This code is the header file for a class called AIAbsCMVNode, which inherits from AICMVNodeBase. The class represents an abstract value node and has an array of input ports (conPorts). It is part of the SMG_NothingIsAll project created by iMac in 2018.",
+        "type": "summary"
+    },
+    "606": {
+        "file_id": 57,
+        "content": "//\n//  AIAbsCMVNode.h\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/7/26.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------抽象价值节点--------------------\n *  1. 今后可考虑将conPorts拆分,(注意,外界不需要知道有这样的拆分)(封装个毛,麻烦)\n */\n@interface AIAbsCMVNode : AICMVNodeBase\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAbsCMVNode.h:1-18"
+    },
+    "607": {
+        "file_id": 57,
+        "content": "This code is the header file for a class called AIAbsCMVNode, which inherits from AICMVNodeBase. The class represents an abstract value node and has an array of input ports (conPorts). It is part of the SMG_NothingIsAll project created by iMac in 2018.",
+        "type": "comment"
+    },
+    "608": {
+        "file_id": 58,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAbsCMVNode.m",
+        "type": "filepath"
+    },
+    "609": {
+        "file_id": 58,
+        "content": "This code imports necessary headers and provides an empty implementation for the AIAbsCMVNode class, possibly serving as a base class or placeholder for future functionality.",
+        "type": "summary"
+    },
+    "610": {
+        "file_id": 58,
+        "content": "//\n//  AIAbsCMVNode.m\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/7/26.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"AIAbsCMVNode.h\"\n#import \"AIPort.h\"\n#import \"AIPointer.h\"\n//MARK:===============================================================\n//MARK:                     < AIAbsCMVNode >\n//MARK:===============================================================\n@implementation AIAbsCMVNode\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAbsCMVNode.m:1-18"
+    },
+    "611": {
+        "file_id": 58,
+        "content": "This code imports necessary headers and provides an empty implementation for the AIAbsCMVNode class, possibly serving as a base class or placeholder for future functionality.",
+        "type": "comment"
+    },
+    "612": {
+        "file_id": 59,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAlgNode.h",
+        "type": "filepath"
+    },
+    "613": {
+        "file_id": 59,
+        "content": "This is the header file for the AIAlgNode class, a concrete concept node inheriting from AIAlgNodeBase, and it's part of the SMG_NothingIsAll project created by jia in 2018.",
+        "type": "summary"
+    },
+    "614": {
+        "file_id": 59,
+        "content": "//\n//  AIAlgNode.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2018/12/7.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"AIAlgNodeBase.h\"\n/**\n *  MARK:--------------------具象概念节点--------------------\n */\n@interface AIAlgNode : AIAlgNodeBase\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAlgNode.h:1-16"
+    },
+    "615": {
+        "file_id": 59,
+        "content": "This is the header file for the AIAlgNode class, a concrete concept node inheriting from AIAlgNodeBase, and it's part of the SMG_NothingIsAll project created by jia in 2018.",
+        "type": "comment"
+    },
+    "616": {
+        "file_id": 60,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAlgNode.m",
+        "type": "filepath"
+    },
+    "617": {
+        "file_id": 60,
+        "content": "This code file AIAlgNode.m contains the implementation of the class AIAlgNode, which is a part of SMG_NothingIsAll project. It was created by jia on December 7th, 2018 and is copyrighted by XiaoGang.",
+        "type": "summary"
+    },
+    "618": {
+        "file_id": 60,
+        "content": "//\n//  AIAlgNode.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2018/12/7.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"AIAlgNode.h\"\n@implementation AIAlgNode\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAlgNode.m:1-13"
+    },
+    "619": {
+        "file_id": 60,
+        "content": "This code file AIAlgNode.m contains the implementation of the class AIAlgNode, which is a part of SMG_NothingIsAll project. It was created by jia on December 7th, 2018 and is copyrighted by XiaoGang.",
+        "type": "comment"
+    },
+    "620": {
+        "file_id": 61,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAlgNodeBase.h",
+        "type": "filepath"
+    },
+    "621": {
+        "file_id": 61,
+        "content": "AIAlgNodeBase is the base class for algorithm nodes in SMG_NothingIsAll, with properties for ports and dictionaries. It has methods to update and retrieve match values. The \"getAbsMatchValue\" method retrieves absolute match value using AIKVPointer*.",
+        "type": "summary"
+    },
+    "622": {
+        "file_id": 61,
+        "content": "//\n//  AIAlgNodeBase.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/1/3.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import \"AINodeBase.h\"\n/**\n *  MARK:--------------------概念节点基类--------------------\n *  1. TODO: 将概念添加isOut,或将foNode.orders中添加每个元素的isOut;\n *  2. TODOv2.0: 将refPorts独立成文件;\n *  3. 概念嵌套: 目前不进行概念嵌套,因太复杂,而由抽具象或组分关联来替代; (组分关联即嵌套?参考嵌套相关文档再决定)\n *  @todo\n *      2021.03.24: 将OutRT反省构建的SP节点,从absPorts中迁至此处,独立定义为ports;\n */\n@interface AIAlgNodeBase : AINodeBase\n@property (strong, nonatomic) NSMutableArray *refPorts; //引用序列\n@property (strong, nonatomic) NSMutableDictionary *absMatchDic; //抽象匹配度字典 <K:对方pId, V:相似度> (参考27153-todo2);\n@property (strong, nonatomic) NSMutableDictionary *conMatchDic; //具象匹配度字典 <K:对方pId, V:相似度> (参考27153-todo2);\n/**\n *  MARK:--------------------更新抽具象相似度--------------------\n *  @param absAlg : 传抽象节点进来,而self为具象节点;\n */\n-(void) updateMatchValue:(AIAlgNodeBase*)absAlg matchValue:(CGFloat)matchValue;\n/**\n *  MARK:--------------------取抽或具象的相近度--------------------\n */\n-(CGFloat) getConMatchValue:(AIKVPointer*)con_p;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAlgNodeBase.h:1-34"
+    },
+    "623": {
+        "file_id": 61,
+        "content": "AIAlgNodeBase is a class that serves as the base for algorithm nodes in SMG_NothingIsAll. It has properties for reference ports, abstract and concrete matching dictionaries, and methods for updating match values and retrieving concrete match values.",
+        "type": "comment"
+    },
+    "624": {
+        "file_id": 61,
+        "content": "-(CGFloat) getAbsMatchValue:(AIKVPointer*)abs_p;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAlgNodeBase.h:35-37"
+    },
+    "625": {
+        "file_id": 61,
+        "content": "This code declares a method called \"getAbsMatchValue\" which is likely used to retrieve the absolute match value of a specific input parameter. The method takes an AIKVPointer* named \"abs_p\" as its argument, and returns a CGFloat value.",
+        "type": "comment"
+    },
+    "626": {
+        "file_id": 62,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAlgNodeBase.m",
+        "type": "filepath"
+    },
+    "627": {
+        "file_id": 62,
+        "content": "The code introduces the AIAlgNodeBase class, a machine learning tool for pattern recognition tasks involving abstract and concrete nodes. It handles object matching, bug fixes, and improves performance using NSCoder and copying methods.",
+        "type": "summary"
+    },
+    "628": {
+        "file_id": 62,
+        "content": "//\n//  AIAlgNodeBase.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/1/3.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import \"AIAlgNodeBase.h\"\n@implementation AIAlgNodeBase\n-(NSMutableArray *)refPorts{\n    if (!ISOK(_refPorts, NSMutableArray.class)) {\n        _refPorts = [[NSMutableArray alloc] initWithArray:_refPorts];\n    }\n    return _refPorts;\n}\n-(NSMutableDictionary *)absMatchDic{\n    if (!ISOK(_absMatchDic, NSMutableDictionary.class)) _absMatchDic = [[NSMutableDictionary alloc] initWithDictionary:_absMatchDic];\n    return _absMatchDic;\n}\n-(NSMutableDictionary *)conMatchDic{\n    if (!ISOK(_conMatchDic, NSMutableDictionary.class)) _conMatchDic = [[NSMutableDictionary alloc] initWithDictionary:_conMatchDic];\n    return _conMatchDic;\n}\n//MARK:===============================================================\n//MARK:                     < publicMethod >\n//MARK:===============================================================\n/**\n *  MARK:--------------------更新抽具象相似度--------------------\n *  @param absAlg : 传抽象节点进来,而self为具象节点;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAlgNodeBase.m:1-36"
+    },
+    "629": {
+        "file_id": 62,
+        "content": "This code defines a class AIAlgNodeBase in the SMG_NothingIsAll project. It provides three methods: `refPorts`, `absMatchDic`, and `conMatchDic`. These methods check if the instance variables _refPorts, _absMatchDic, and _conMatchDic are already initialized as NSMutableArray and NSMutableDictionary respectively. If not, they initialize them with their corresponding existing arrays or dictionaries. The code also contains a public method to update abstract similarity based on an input abstract node.",
+        "type": "comment"
+    },
+    "630": {
+        "file_id": 62,
+        "content": " *  @version\n *      2022.10.24: 将algNode的抽具象关系也存上相似度 (参考27153-todo2);\n */\n-(void) updateMatchValue:(AIAlgNodeBase*)absAlg matchValue:(CGFloat)matchValue{\n    //1. 更新抽象相似度;\n    [self.absMatchDic setObject:@(matchValue) forKey:@(absAlg.pointer.pointerId)];\n    //2. 更新具象相似度;\n    [absAlg.conMatchDic setObject:@(matchValue) forKey:@(self.pointer.pointerId)];\n    //3. 保存节点;\n    [SMGUtils insertNode:self];\n    [SMGUtils insertNode:absAlg];\n}\n/**\n *  MARK:--------------------取抽或具象的相近度--------------------\n *  @version\n *      2022.12.04: 当二者相等时,默认返回1 (因为时序识别时mIsC1有自身判断,所以取相似度时要兼容支持下);\n */\n-(CGFloat) getConMatchValue:(AIKVPointer*)con_p {\n    if (PitIsMv(self.pointer) && PitIsMv(con_p)) return [self getMatchValue4Mv:con_p];\n    if ([self.pointer isEqual:con_p]) return 1;\n    [AITest test26:self.conMatchDic checkA:con_p];\n    return NUMTOOK([self.conMatchDic objectForKey:@(con_p.pointerId)]).floatValue;\n}\n-(CGFloat) getAbsMatchValue:(AIKVPointer*)abs_p {\n    if (PitIsMv(self.pointer) && PitIsMv(abs_p)) return [self getMatchValue4Mv:abs_p];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAlgNodeBase.m:37-64"
+    },
+    "631": {
+        "file_id": 62,
+        "content": "This code updates the match values for both abstract and concrete nodes, saves the nodes, and provides methods to get the similarity value between the current node and a given node. The code is part of a machine learning algorithm that involves abstract and concrete nodes in pattern recognition or similar tasks.",
+        "type": "comment"
+    },
+    "632": {
+        "file_id": 62,
+        "content": "    if ([self.pointer isEqual:abs_p]) return 1;\n    [AITest test26:self.absMatchDic checkA:abs_p];\n    return NUMTOOK([self.absMatchDic objectForKey:@(abs_p.pointerId)]).floatValue;\n}\n/**\n *  MARK:--------------------mv匹配度 (参考28171-todo9)--------------------\n *  @desc mv的匹配度就是匹配度的相近度;\n */\n-(CGFloat) getMatchValue4Mv:(AIKVPointer*)otherMv_p {\n    if ([self.pointer.algsType isEqualToString:otherMv_p.algsType]) {\n        AICMVNodeBase *selfMv = (AICMVNodeBase*)self;\n        AICMVNodeBase *otherMv = [SMGUtils searchNode:otherMv_p];\n        return [AIAnalyst compareCansetValue:selfMv.urgentTo_p protoValue:otherMv.urgentTo_p vInfo:nil];\n    }\n    return 0;\n}\n/**\n *  MARK:--------------------NSCoding--------------------\n */\n- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {\n    self = [super initWithCoder:aDecoder];\n    if (self) {\n        self.refPorts = [aDecoder decodeObjectForKey:@\"refPorts\"];\n        self.absMatchDic = [aDecoder decodeObjectForKey:@\"absMatchDic\"];\n        self.conMatchDic = [aDecoder decodeObjectForKey:@\"conMatchDic\"];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAlgNodeBase.m:65-91"
+    },
+    "633": {
+        "file_id": 62,
+        "content": "This code defines methods for a class that handles matching and comparison between objects. It checks if the pointers are equal, retrieves match values for mv matching, and initializes the object with encoded data.",
+        "type": "comment"
+    },
+    "634": {
+        "file_id": 62,
+        "content": "    }\n    return self;\n}\n/**\n *  MARK:--------------------序列化--------------------\n *  @bug\n *      2020.07.10: 最近老闪退,前段时间XGWedis异步存由10s改为2s,有UMeng看是这里闪的,打try也能捕获这里抛了异常,将ports加了copy试下,应该好了;\n */\n- (void)encodeWithCoder:(NSCoder *)aCoder {\n    [super encodeWithCoder:aCoder];\n    [aCoder encodeObject:[self.refPorts copy] forKey:@\"refPorts\"];\n    [aCoder encodeObject:[self.absMatchDic copy] forKey:@\"absMatchDic\"];\n    [aCoder encodeObject:[self.conMatchDic copy] forKey:@\"conMatchDic\"];\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAlgNodeBase.m:92-108"
+    },
+    "635": {
+        "file_id": 62,
+        "content": "This method encodes the object using an NSCoder and copies the refPorts, absMatchDic, and conMatchDic before encoding them with the provided coder. It is marked as potentially having bugs from July 10th and mentions issues related to crashes and UMeng. The code adds copying to avoid exceptions and improves performance.",
+        "type": "comment"
+    },
+    "636": {
+        "file_id": 63,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AICMVNode.h",
+        "type": "filepath"
+    },
+    "637": {
+        "file_id": 63,
+        "content": "This code file, AICMVNode.h, defines a class called AICMVNode which inherits from AICMVNodeBase. It is part of the SMG_NothingIsAll project created by iMac and is copyrighted under XiaoGang.",
+        "type": "summary"
+    },
+    "638": {
+        "file_id": 63,
+        "content": "//\n//  AICMVNode.h\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/7/26.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------具象价值节点--------------------\n */\n@interface AICMVNode : AICMVNodeBase\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AICMVNode.h:1-16"
+    },
+    "639": {
+        "file_id": 63,
+        "content": "This code file, AICMVNode.h, defines a class called AICMVNode which inherits from AICMVNodeBase. It is part of the SMG_NothingIsAll project created by iMac and is copyrighted under XiaoGang.",
+        "type": "comment"
+    },
+    "640": {
+        "file_id": 64,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AICMVNode.m",
+        "type": "filepath"
+    },
+    "641": {
+        "file_id": 64,
+        "content": "This code is part of the AICMVNode implementation file in the SMG_NothingIsAll project. It contains a class called AICMVNode, which seems to be related to CMV nodes. The code is imported from the AICMVNode.h header file and marked with comments for easier navigation.",
+        "type": "summary"
+    },
+    "642": {
+        "file_id": 64,
+        "content": "//\n//  AICMVNode.m\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/7/26.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"AICMVNode.h\"\n//MARK:===============================================================\n//MARK:                     < cmv节点 >\n//MARK:===============================================================\n@implementation AICMVNode\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AICMVNode.m:1-17"
+    },
+    "643": {
+        "file_id": 64,
+        "content": "This code is part of the AICMVNode implementation file in the SMG_NothingIsAll project. It contains a class called AICMVNode, which seems to be related to CMV nodes. The code is imported from the AICMVNode.h header file and marked with comments for easier navigation.",
+        "type": "comment"
+    },
+    "644": {
+        "file_id": 65,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AICMVNodeBase.h",
+        "type": "filepath"
+    },
+    "645": {
+        "file_id": 65,
+        "content": "This code defines the class AICMVNodeBase, which is a subclass of AIAlgNodeBase. It has three properties: urgentTo_p (a pointer to the urgent value), delta_p (a pointer to the change value), and foPorts (an array of forwarding ports). The class also includes a brief description and notes for future improvements.",
+        "type": "summary"
+    },
+    "646": {
+        "file_id": 65,
+        "content": "//\n//  AICMVNodeBase.h\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/9/26.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"AIAlgNodeBase.h\"\n/**\n *  MARK:--------------------价值节点基类--------------------\n *  1. 有指针地址;\n *  2. 有迫切度;\n *  3. 有变化;\n *  TODO: 可考虑将cmv的抽具象去掉;\n *  @version\n *      2023.03.11: 价值节点也是概念的一种 (参考28171-todo7);\n *      2023.08.10: 把foNode改成数组ports (参考30095-todo2);\n */\n@interface AICMVNodeBase : AIAlgNodeBase\n@property (strong, nonatomic) AIKVPointer *urgentTo_p;  //迫切度数据指针;(指向urgentValue的值存储地址)\n@property (strong, nonatomic) AIKVPointer *delta_p;     //变化指针;(指向变化值存储地址)\n@property (strong, nonatomic) NSMutableArray *foPorts;  //前因数据\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AICMVNodeBase.h:1-27"
+    },
+    "647": {
+        "file_id": 65,
+        "content": "This code defines the class AICMVNodeBase, which is a subclass of AIAlgNodeBase. It has three properties: urgentTo_p (a pointer to the urgent value), delta_p (a pointer to the change value), and foPorts (an array of forwarding ports). The class also includes a brief description and notes for future improvements.",
+        "type": "comment"
+    },
+    "648": {
+        "file_id": 66,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AICMVNodeBase.m",
+        "type": "filepath"
+    },
+    "649": {
+        "file_id": 66,
+        "content": "Class AICMVNodeBase with methods for initialization, encoding, and decoding properties; utility functions to create arrays and check array validity. Encodes delta_p and foPorts for key storage.",
+        "type": "summary"
+    },
+    "650": {
+        "file_id": 66,
+        "content": "//\n//  AICMVNodeBase.m\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/9/26.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"AICMVNodeBase.h\"\n@implementation AICMVNodeBase\n-(NSMutableArray *)content_ps{\n    return [[NSMutableArray alloc] initWithObjects:self.delta_p,self.urgentTo_p, nil];\n}\n-(NSMutableArray *)foPorts{\n    if (!ISOK(_foPorts, NSMutableArray.class)) {\n        _foPorts = [[NSMutableArray alloc] initWithArray:_foPorts];\n    }\n    return _foPorts;\n}\n/**\n *  MARK:--------------------NSCoding--------------------\n */\n- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {\n    self = [super initWithCoder:aDecoder];\n    if (self) {\n        self.urgentTo_p = [aDecoder decodeObjectForKey:@\"urgentTo_p\"];\n        self.delta_p = [aDecoder decodeObjectForKey:@\"delta_p\"];\n        self.foPorts = [aDecoder decodeObjectForKey:@\"foPorts\"];\n    }\n    return self;\n}\n- (void)encodeWithCoder:(NSCoder *)aCoder {\n    [super encodeWithCoder:aCoder];\n    [aCoder encodeObject:self.urgentTo_p forKey:@\"urgentTo_p\"];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AICMVNodeBase.m:1-39"
+    },
+    "651": {
+        "file_id": 66,
+        "content": "This code defines a class AICMVNodeBase and implements methods for initializing, encoding, and decoding its properties. It also includes utility functions to create arrays and check if an array is valid.",
+        "type": "comment"
+    },
+    "652": {
+        "file_id": 66,
+        "content": "    [aCoder encodeObject:self.delta_p forKey:@\"delta_p\"];\n    [aCoder encodeObject:self.foPorts forKey:@\"foPorts\"];\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AICMVNodeBase.m:40-44"
+    },
+    "653": {
+        "file_id": 66,
+        "content": "Encodes the delta_p and foPorts properties for key storage.",
+        "type": "comment"
+    },
+    "654": {
+        "file_id": 67,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIFoNodeBase.h",
+        "type": "filepath"
+    },
+    "655": {
+        "file_id": 67,
+        "content": "The code provides a time-series node base class with transfer and constraint ports, and includes functionality for deltaTimes groups, strength value storage, and property updating. It also defines a class for managing candidate sets in abstract and concrete scenes, enabling migration between different scene contexts.",
+        "type": "summary"
+    },
+    "656": {
+        "file_id": 67,
+        "content": "//\n//  AIFoNodeBase.h\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/10/19.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------时序节点基类--------------------\n *  @name 前因序列\n *  1. 是frontOrderNode和absNode的基类;\n */\n@class AIEffectStrong;\n@interface AIFoNodeBase : AINodeBase\n/**\n *  MARK:--------------------迁移关联 (上传) (参考29069-todo10.2)--------------------\n *  @desc 工作在场景fo下,在cansetFo下不工作;\n */\n@property (strong, nonatomic) NSMutableArray *transferAbsPorts;\n/**\n *  MARK:--------------------迁移关联 (下承) (参考29069-todo10.2)--------------------\n *  @desc 工作在场景fo下,在cansetFo下不工作;\n */\n@property (strong, nonatomic) NSMutableArray *transferConPorts;\n/**\n *  MARK:--------------------cmvNode_p结果--------------------\n *  @desc 指向mv基本模型的价值影响节点;\n */\n@property (strong, nonatomic) AIKVPointer *cmvNode_p;\n//MARK:===============================================================\n//MARK:                     < deltaTimes组 >\n//MARK:===============================================================",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIFoNodeBase.h:1-40"
+    },
+    "657": {
+        "file_id": 67,
+        "content": "This code defines a class called AIFoNodeBase, which is a base class for time-series nodes. It has properties for transfer ports, constraint ports, and a cmvNode_p pointer to a basic model value influence node. The code also mentions deltaTimes groups as part of its functionality.",
+        "type": "comment"
+    },
+    "658": {
+        "file_id": 67,
+        "content": "/**\n *  MARK:--------------------生物钟时间间隔记录--------------------\n *  @desc\n *      1. 功能: 用于记录时序中,每元素间的生物钟间隔 (单位:s);\n *      2. 比如: [我,打,豆豆]->{mv+},记录成deltaTime后为[0,1,100,0];\n *      3. 表示: 我用1ms打了,100ms豆豆,0ms内就感受到了爽;\n *      4. 首位: 首位总是0,因为本序列采用了首位参照,所以为0;\n *  @deltaTimes元素有可能为0的情况;\n *      1. 首位为0;\n *      2. 末位为N或L时,为0 (因为N和L抽象自frontAlg);\n *      3. isOut=true时,为0,比如反射反应触发\"吃\",是即时触发的,自然是0;\n *  _result 2021.12.26: 传入index,取出的结果为:\"从index-1到index的时间\";\n */\n@property (strong, nonatomic) NSMutableArray *deltaTimes;\n@property (assign, nonatomic) NSTimeInterval mvDeltaTime;\n//MARK:===============================================================\n//MARK:                     < spDic组 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------SP强度值--------------------\n *  @desc <key:spIndex, value:spStrong> (其中mv的key为content.count) (参考25031-3);\n */\n@property (strong, nonatomic) NSMutableDictionary *spDic;\n/**\n *  MARK:--------------------更新SP强度值--------------------\n *  @param spIndex : 当前要更新sp强度值的下标 (参考25031-3);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIFoNodeBase.h:42-71"
+    },
+    "659": {
+        "file_id": 67,
+        "content": "This code is defining properties for a class, which includes an NSMutableArray called \"deltaTimes\" to record time intervals between elements in a sequence, and an NSMutableDictionary called \"spDic\" to store the strength values of SP. The code also provides methods for updating the strength value at a specific index in the spDic dictionary.",
+        "type": "comment"
+    },
+    "660": {
+        "file_id": 67,
+        "content": " *                    1. 表示责任帧下标,比如为1时,则表示第2帧的责任;\n *                    2. 如果是mv则输入content.count;\n */\n-(void) updateSPStrong:(NSInteger)spIndex type:(AnalogyType)type;\n-(void) updateSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type;\n/**\n *  MARK:--------------------从start到end都计一次S或P--------------------\n */\n-(void) updateSPStrong:(NSInteger)start end:(NSInteger)end type:(AnalogyType)type;\n/**\n *  MARK:--------------------更新整个spDic--------------------\n */\n-(void) updateSPDic:(NSDictionary*)newSPDic;\n//MARK:===============================================================\n//MARK:                     < effectDic组 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------有效率--------------------\n *  @desc <key:effectIndex, value:effectStrong> (其中mv的key为content.count) (参考26094);\n *  @todo\n *      2022.11.23: 待废除 (参考27205);\n */\n@property (strong, nonatomic) NSMutableDictionary *effectDic;\n/**\n *  MARK:--------------------更新有效率值--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIFoNodeBase.h:72-102"
+    },
+    "661": {
+        "file_id": 67,
+        "content": "This code is responsible for updating various properties within a class, such as responsibility frames and strong parameters. It also includes methods to update different parts of the spDic dictionary. The class has an effectDic mutable dictionary property used to store effective rates.",
+        "type": "comment"
+    },
+    "662": {
+        "file_id": 67,
+        "content": " */\n-(AIEffectStrong*) updateEffectStrong:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo status:(EffectStatus)status;\n/**\n *  MARK:--------------------获取canset的effStrong--------------------\n */\n-(AIEffectStrong*) getEffectStrong:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo;\n/**\n *  MARK:--------------------取effIndex下有效的Effs--------------------\n */\n-(NSArray*) getValidEffs:(NSInteger)effIndex;\n//MARK:===============================================================\n//MARK:                     < indexDic组 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------指向抽/具象indexDic的持久化--------------------\n *  @desc <K:指向的PId, V:与指向fo的indexDic映射> (其中indexDic为<K:absIndex,V:conIndex>);\n */\n@property (strong, nonatomic) NSMutableDictionary *absIndexDDic;\n@property (strong, nonatomic) NSMutableDictionary *conIndexDDic;\n/**\n *  MARK:--------------------返回self的抽/具象的indexDic--------------------\n */\n-(NSDictionary*) getAbsIndexDic:(AIKVPointer*)abs_p;\n-(NSDictionary*) getConIndexDic:(AIKVPointer*)con_p;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIFoNodeBase.h:103-132"
+    },
+    "663": {
+        "file_id": 67,
+        "content": "This code defines a class with three methods: updateEffectStrong, getEffectStrong, and getValidEffs. It also has two properties, absIndexDDic and conIndexDDic, which are mutable dictionaries used to store indexDic information. The class provides methods for retrieving abstract and concrete indexDics using their respective pointers.",
+        "type": "comment"
+    },
+    "664": {
+        "file_id": 67,
+        "content": "/**\n *  MARK:--------------------更新抽具象indexDic存储--------------------\n */\n-(void) updateIndexDic:(AIFoNodeBase*)absFo indexDic:(NSDictionary*)indexDic;\n//MARK:===============================================================\n//MARK:                     < conCansets组 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------S候选集--------------------\n *  @desc 在proto发生完全时,将它记录到此处,在sulution慢思考时,取做S候选集;\n *  @desc 来源:\n *          1. 末尾帧: R任务的解决方案来源,是源于TI阶段预测pFo未发生时,认为当时真实发生的事肯定有所帮助,所以才没发生,所以将其记录在此;\n *          2. 中间帧: H任务的解决方案来源,是源于在行为化后,它真实有效时,抽象出H帧的解决方案,并记录在此;\n *  @version\n *      2022.11.23: 将conCansets更新成conCansetsDic (参考;\n *  @result 类型: <K:targetIndex, V: List<AIKVPointer>> 注: 当targetIndex=self.count时,则为R任务的解决方案候选集;\n */\n@property (strong, nonatomic) NSMutableDictionary *conCansetsDic;\n/**\n *  MARK:--------------------获取所有候选集--------------------\n */\n-(NSArray*) getConCansets:(NSInteger)targetIndex;\n/**\n *  MARK:--------------------更新一条候选--------------------\n */\n-(BOOL) updateConCanset:(AIKVPointer*)newConCansetFo targetIndex:(NSInteger)targetIndex;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIFoNodeBase.h:134-164"
+    },
+    "665": {
+        "file_id": 67,
+        "content": "This code defines a class with properties and methods related to storing candidate sets (conCansets) for abstract nodes. The `updateIndexDic` method updates the index dictionary, while the `conCansetsDic` property stores candidate sets as a mutable dictionary. The `getConCansets` method retrieves all candidate sets based on a target index. The `updateConCanset` method updates a single candidate set in the conCansetsDic.",
+        "type": "comment"
+    },
+    "666": {
+        "file_id": 67,
+        "content": "//MARK:===============================================================\n//MARK:                     < transfer组 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------找出交层场景中,有哪些canset是与当前fo迁移关联的--------------------\n */\n-(NSArray*) getTransferAbsCansets:(AIKVPointer*)absScene_p;\n/**\n *  MARK:--------------------找出似层场景中,有哪些canset是与当前fo迁移关联的--------------------\n */\n-(NSArray*) getTransferConCansets:(AIKVPointer*)conScene_p;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIFoNodeBase.h:166-180"
+    },
+    "667": {
+        "file_id": 67,
+        "content": "This code defines two methods, `getTransferAbsCansets` and `getTransferConCansets`, which return arrays of related cansets in abstract and concrete scenes respectively. These methods can be used to find the cansets connected to a specific fo migration within different scene contexts.",
+        "type": "comment"
+    },
+    "668": {
+        "file_id": 68,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIFoNodeBase.m",
+        "type": "filepath"
+    },
+    "669": {
+        "file_id": 68,
+        "content": "This code initializes mutable arrays and dictionaries, updates SP strength values, uses AIFoundation library, handles bug 29094, defines AI foundation, updates cansets, adds new ones, and ensures NSCoding compliance.",
+        "type": "summary"
+    },
+    "670": {
+        "file_id": 68,
+        "content": "//\n//  AIFoNodeBase.m\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/10/19.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"AIFoNodeBase.h\"\n@implementation AIFoNodeBase\n-(NSMutableArray *)deltaTimes{\n    if (!_deltaTimes) _deltaTimes = [[NSMutableArray alloc] init];\n    return _deltaTimes;\n}\n-(NSMutableDictionary *)spDic{\n    if (!ISOK(_spDic, NSMutableDictionary.class)) _spDic = [[NSMutableDictionary alloc] initWithDictionary:_spDic];\n    return _spDic;\n}\n-(NSMutableDictionary *)effectDic{\n    if (!ISOK(_effectDic, NSMutableDictionary.class)) _effectDic = [[NSMutableDictionary alloc] initWithDictionary:_effectDic];\n    return _effectDic;\n}\n-(NSMutableDictionary *)absIndexDDic{\n    if (!ISOK(_absIndexDDic, NSMutableDictionary.class)) _absIndexDDic = [[NSMutableDictionary alloc] initWithDictionary:_absIndexDDic];\n    return _absIndexDDic;\n}\n-(NSMutableDictionary *)conIndexDDic{\n    if (!ISOK(_conIndexDDic, NSMutableDictionary.class)) _conIndexDDic = [[NSMutableDictionary alloc] initWithDictionary:_conIndexDDic];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIFoNodeBase.m:1-34"
+    },
+    "671": {
+        "file_id": 68,
+        "content": "This code defines methods for accessing and initializing mutable arrays and dictionaries within the AIFoNodeBase class. The ISOK function checks if the variable is nil and allocates a new instance of the specified class if it is.",
+        "type": "comment"
+    },
+    "672": {
+        "file_id": 68,
+        "content": "    return _conIndexDDic;\n}\n-(NSMutableDictionary *)conCansetsDic {\n    if (!ISOK(_conCansetsDic, NSMutableDictionary.class)) _conCansetsDic = [[NSMutableDictionary alloc] initWithDictionary:_conCansetsDic];\n    return _conCansetsDic;\n}\n-(NSMutableArray *)transferAbsPorts{\n    if (!ISOK(_transferAbsPorts, NSMutableArray.class)) _transferAbsPorts = [[NSMutableArray alloc] initWithArray:_transferAbsPorts];\n    return _transferAbsPorts;\n}\n-(NSMutableArray *)transferConPorts{\n    if (!ISOK(_transferConPorts, NSMutableArray.class)) _transferConPorts = [[NSMutableArray alloc] initWithArray:_transferConPorts];\n    return _transferConPorts;\n}\n//MARK:===============================================================\n//MARK:                     < spDic组 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------更新SP强度值--------------------\n *  @param spIndex : 当前要更新sp强度值的下标 (参考25031-3);\n *                    1. 表示责任帧下标,比如为1时,则表示第2帧的责任;\n *                    2. 如果是mv则输入content.count;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIFoNodeBase.m:35-61"
+    },
+    "673": {
+        "file_id": 68,
+        "content": "This code contains methods that return mutable dictionaries and arrays, and a comment for an incomplete method. The comment refers to updating SP strength values based on a given index, which can represent responsibility frames or MV content count. The code also includes sections marked as \"spDic组\" which may contain related functions or variables.",
+        "type": "comment"
+    },
+    "674": {
+        "file_id": 68,
+        "content": " */\n-(void) updateSPStrong:(NSInteger)spIndex type:(AnalogyType)type {\n    [self updateSPStrong:spIndex difStrong:1 type:type];\n}\n-(void) updateSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type {\n    //1. 取kv;\n    NSNumber *key = @(spIndex);\n    AISPStrong *value = [self.spDic objectForKey:key];\n    if (!value) value = [[AISPStrong alloc] init];\n    //2. 更新强度_线性+1 (参考25031-7);\n    if (type == ATSub) {\n        value.sStrong += difStrong;\n    }else if(type == ATPlus){\n        value.pStrong += difStrong;\n    }\n    [self.spDic setObject:value forKey:key];\n    //3. 保存fo\n    [SMGUtils insertNode:self];\n}\n/**\n *  MARK:--------------------从start到end都计一次P--------------------\n *  @desc 含start 也含end;\n */\n-(void) updateSPStrong:(NSInteger)start end:(NSInteger)end type:(AnalogyType)type{\n    for (NSInteger i = start; i <= end; i++) {\n        [self updateSPStrong:i type:type];\n    }\n}\n/**\n *  MARK:--------------------更新整个spDic--------------------\n */\n-(void) updateSPDic:(NSDictionary*)newSPDic {\n    newSPDic = DICTOOK(newSPDic);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIFoNodeBase.m:62-98"
+    },
+    "675": {
+        "file_id": 68,
+        "content": "This code defines methods to update the strength of SP (Strong Points) in a data structure called spDic. The updateSPStrong method takes an index and updates the strong value linearly or parameter-wise based on the type parameter. There is also a convenience method updateSPStrong:end:type: that iterates over a range of indices to update their strength values. Finally, there is a method updateSPDic: that replaces the entire spDic dictionary with a new one.",
+        "type": "comment"
+    },
+    "676": {
+        "file_id": 68,
+        "content": "    for (NSNumber *newIndex in newSPDic) {\n        AISPStrong *newStrong = [newSPDic objectForKey:newIndex];\n        [self updateSPStrong:newIndex.integerValue difStrong:newStrong.sStrong type:ATSub];\n        [self updateSPStrong:newIndex.integerValue difStrong:newStrong.pStrong type:ATPlus];\n    }\n}\n//MARK:===============================================================\n//MARK:                     < effectDic组 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------更新有效率值--------------------\n *  @version\n *      2022.05.27; 废弃,eff改成反省的一种了,所以不再需要effDic了 (参考26127-TODO1);\n *  @result 将更新后的strong模型返回;\n */\n-(AIEffectStrong*) updateEffectStrong:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo status:(EffectStatus)status{\n    //1. 取kv (无则新建);\n    NSNumber *key = @(effectIndex);\n    NSMutableArray *value = [[NSMutableArray alloc] initWithArray:[self.effectDic objectForKey:key]];\n    [self.effectDic setObject:value forKey:key];\n    //2. 取旧有strong (无则新建);\n ",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIFoNodeBase.m:99-123"
+    },
+    "677": {
+        "file_id": 68,
+        "content": "This code is iterating over a new dictionary and updating the strong models in the SP dictionary. It also includes comments on an outdated method for updating effect strengths that has been deprecated.",
+        "type": "comment"
+    },
+    "678": {
+        "file_id": 68,
+        "content": "   AIEffectStrong *strong = [SMGUtils filterSingleFromArr:value checkValid:^BOOL(AIEffectStrong *item) {\n        return [item.solutionFo isEqual:solutionFo];\n    }];\n    if (!strong) {\n        strong = [AIEffectStrong newWithSolutionFo:solutionFo];\n        [value addObject:strong];\n    }\n    //3. 更新强度_线性+1 (参考25031-7);\n    if (status == ES_NoEff) {\n        strong.nStrong++;\n    }else if(status == ES_HavEff){\n        strong.hStrong++;\n    }\n    //3. 保存fo\n    [SMGUtils insertNode:self];\n    return strong;\n}\n/**\n *  MARK:--------------------获取canset的effStrong--------------------\n *  @param effectIndex : 当R任务时传self.count,当H任务时将相应targetIndex传过来;\n */\n-(AIEffectStrong*) getEffectStrong:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo {\n    //1. 取有效率解决方案数组;\n    NSArray *strongs = [ARRTOOK([self.effectDic objectForKey:@(effectIndex)]) copy];\n    //2. 取得匹配的strong;\n    AIEffectStrong *strong = [SMGUtils filterSingleFromArr:strongs checkValid:^BOOL(AIEffectStrong *item) {\n        return [item.solutionFo isEqual:solutionFo];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIFoNodeBase.m:123-153"
+    },
+    "679": {
+        "file_id": 68,
+        "content": "This method retrieves a strong effect for the given solution Fo. It checks if an existing strong effect matches the provided solution Fo, and increments the strong count accordingly. It also inserts the current node into the SMGUtils array before returning the strong effect. This method is called to get the effStrong for a specific task index with the corresponding solution Fo.",
+        "type": "comment"
+    },
+    "680": {
+        "file_id": 68,
+        "content": "    }];\n    //3. 返回有效率;\n    return strong;\n}\n/**\n *  MARK:--------------------取effIndex下有效的Effs--------------------\n *  @result 返回有效结果: 排除有效率为0的 (参考26192);\n */\n-(NSArray*) getValidEffs:(NSInteger)effIndex{\n    int minHStrong = 0;//最小h强度要求 (曾用5: 参考26199-TODO2);\n    NSArray *effs = [self.effectDic objectForKey:@(effIndex)];\n    return [SMGUtils filterArr:effs checkValid:^BOOL(AIEffectStrong *item) {\n        return item.hStrong > minHStrong;\n    }];\n}\n//MARK:===============================================================\n//MARK:                     < indexDic组 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------返回self的抽/具象的indexDic--------------------\n *  @result indexDic<K:absIndex,V:conIndex>;\n */\n-(NSDictionary*) getAbsIndexDic:(AIKVPointer*)abs_p {\n    return DICTOOK([self.absIndexDDic objectForKey:@(abs_p.pointerId)]);\n}\n-(NSDictionary*) getConIndexDic:(AIKVPointer*)con_p {\n    return DICTOOK([self.conIndexDDic objectForKey:@(con_p.pointerId)]);\n}\n/**\n *  MARK:--------------------更新抽具象indexDic存储--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIFoNodeBase.m:154-189"
+    },
+    "681": {
+        "file_id": 68,
+        "content": "This code snippet is from the AIFoundation library and contains methods for getting valid effects, abstract index dictionary, and concrete index dictionary. The getValidEffs method filters out effects with a weaker hStrong value than a minimum threshold. The getAbsIndexDic and getConIndexDic methods retrieve abstract and concrete index dictionaries from data dictionaries using a given pointer ID.",
+        "type": "comment"
+    },
+    "682": {
+        "file_id": 68,
+        "content": " *  @param absFo : 传抽象节点进来,而self为具象节点;\n *  @version\n *      2022.11.15: 将抽具象关系也存上匹配映射 (参考27177-todo5);\n */\n-(void) updateIndexDic:(AIFoNodeBase*)absFo indexDic:(NSDictionary*)indexDic {\n    //1. 更新抽具象两个indexDDic;\n    [self.absIndexDDic setObject:indexDic forKey:@(absFo.pointer.pointerId)];\n    [absFo.conIndexDDic setObject:indexDic forKey:@(self.pointer.pointerId)];\n    //2. 保存节点;\n    [SMGUtils insertNode:self];\n    [SMGUtils insertNode:absFo];\n}\n//MARK:===============================================================\n//MARK:                     < conCansets组 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------获取所有候选集--------------------\n *  @desc 将>=targetIndex下标对应的解决方案候选集打包返回 (参考27204b);\n *  @version\n *      2023.09.10: H任务时,>targetIndex的未必包含targetIndex,所以加上H任务时,canset中必须包含targetIndex对应帧;\n *  @result notnull\n */\n-(NSArray*) getConCansets:(NSInteger)targetIndex {\n    NSMutableArray *result = [[NSMutableArray alloc] init];\n    BOOL forH = targetIndex < self.count;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIFoNodeBase.m:190-217"
+    },
+    "683": {
+        "file_id": 68,
+        "content": "This code updates the abstract and concrete index dictionaries for a node and its corresponding abstract node. It also inserts both nodes into a set of nodes for future reference. Additionally, it retrieves all candidate sets greater than or equal to a specific target index and potentially includes them if the task is an H task.",
+        "type": "comment"
+    },
+    "684": {
+        "file_id": 68,
+        "content": "    for (NSInteger i = targetIndex; i <= self.count; i++) {\n        NSArray *itemArr = ARRTOOK([self.conCansetsDic objectForKey:@(i)]);\n        if (forH) { //H任务时,要求canset中必须包含targetIndex映射帧;\n            itemArr = [SMGUtils filterArr:itemArr checkValid:^BOOL(AIKVPointer *item) {\n                NSDictionary *indexDic = [self getConIndexDic:item];\n                return [indexDic objectForKey:@(targetIndex)];\n            }];\n        }\n        [result addObjectsFromArray:itemArr];\n    }\n    return [SMGUtils removeRepeat:result];\n}\n/**\n *  MARK:--------------------更新一条候选--------------------\n *  @version\n *      2023.06.16: 修复更新updateEffectStrong的targetIndex传错了,每次都传的1的问题 (参考30023-修复);\n *  @result 将是否保存成功返回 (长度为1及以下的没后段,所以直接不存了) (参考28052-4 && 29094-BUG1);\n */\n-(BOOL) updateConCanset:(AIKVPointer*)newConCansetFo targetIndex:(NSInteger)targetIndex {\n    //0. canset没后段的直接不存了 (没可行为化的东西) (参考28052-4);\n    AIFoNodeBase *newCanset = [SMGUtils searchNode:newConCansetFo];\n    if (newCanset.count <= 1) return false;\n    //1. 更新一条候选;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIFoNodeBase.m:218-242"
+    },
+    "685": {
+        "file_id": 68,
+        "content": "Updates a candidate in the given `newConCansetFo` by filtering and adding it to the result array. If the target index exists, returns true; otherwise, false. If the new canset has only one or less elements, the method returns false as there is no behavior to be extracted (referenced issue numbers: 28052-4, 29094-BUG1).",
+        "type": "comment"
+    },
+    "686": {
+        "file_id": 68,
+        "content": "    NSMutableArray *conCansets = [[NSMutableArray alloc] initWithArray:[self.conCansetsDic objectForKey:@(targetIndex)]];\n    if (![conCansets containsObject:newConCansetFo]) {\n        [conCansets addObject:newConCansetFo];\n        [self.conCansetsDic setObject:conCansets forKey:@(targetIndex)];\n        [SMGUtils insertNode:self];\n    }\n    //2. 更新后 (新的默认eff.h=1,旧的eff则增强+1);\n    [self updateEffectStrong:targetIndex solutionFo:newConCansetFo status:ES_HavEff];\n    return true;\n}\n//MARK:===============================================================\n//MARK:                     < transfer组 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------找出交层场景中,有哪些canset是与当前fo迁移关联的--------------------\n */\n-(NSArray*) getTransferAbsCansets:(AIKVPointer*)absScene_p {\n    return [self filterCansetsWithScene:absScene_p fromTransferPorts:self.transferAbsPorts];\n}\n/**\n *  MARK:--------------------找出似层场景中,有哪些canset是与当前fo迁移关联的--------------------\n */\n-(NSArray*) getTransferConCansets:(AIKVPointer*)conScene_p {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIFoNodeBase.m:243-268"
+    },
+    "687": {
+        "file_id": 68,
+        "content": "This code appears to be part of an AI foundation, specifically within the context of a node base. It retrieves transfer-related cansets from scenes and updates their effect strength. If the new canset is not already included in the array of cansets for the target index, it adds it and updates the dictionary. Finally, it calls a method to insert the node and returns true.",
+        "type": "comment"
+    },
+    "688": {
+        "file_id": 68,
+        "content": "    return [self filterCansetsWithScene:conScene_p fromTransferPorts:self.transferConPorts];\n}\n//MARK:===============================================================\n//MARK:                     < privateMethod >\n//MARK:===============================================================\n/**\n *  MARK:--------------------从fromTransferPorts中筛选出: 场景是scene的并转成cansets格式--------------------\n */\n-(NSArray*) filterCansetsWithScene:(AIKVPointer*)scene fromTransferPorts:(NSArray*)fromTransferPorts {\n    return [SMGUtils convertArr:[SMGUtils filterArr:fromTransferPorts checkValid:^BOOL(AITransferPort *port) {\n        return [port.scene isEqual:scene];\n    }] convertBlock:^id(AITransferPort *port) {\n        return port.canset;\n    }];\n}\n/**\n *  MARK:--------------------NSCoding--------------------\n */\n- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {\n    self = [super initWithCoder:aDecoder];\n    if (self) {\n        self.cmvNode_p = [aDecoder decodeObjectForKey:@\"cmvNode_p\"];\n        self.deltaTimes = [aDecoder decodeObjectForKey:@\"deltaTimes\"];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIFoNodeBase.m:269-294"
+    },
+    "689": {
+        "file_id": 68,
+        "content": "This code is defining a private method that filters transfer ports based on a specific scene and converts the resulting cansets into an array. The filtering process is done using SMGUtils, which checks for port scene equality and performs conversions. The code also includes an initWithCoder method for NSCoding compliance.",
+        "type": "comment"
+    },
+    "690": {
+        "file_id": 68,
+        "content": "        self.mvDeltaTime = [aDecoder decodeDoubleForKey:@\"mvDeltaTime\"];\n        self.spDic = [aDecoder decodeObjectForKey:@\"spDic\"];\n        self.effectDic = [aDecoder decodeObjectForKey:@\"effectDic\"];\n        self.absIndexDDic = [aDecoder decodeObjectForKey:@\"absIndexDDic\"];\n        self.conIndexDDic = [aDecoder decodeObjectForKey:@\"conIndexDDic\"];\n        self.conCansetsDic = [aDecoder decodeObjectForKey:@\"conCansetsDic\"];\n        self.transferAbsPorts = [aDecoder decodeObjectForKey:@\"transferAbsPorts\"];\n        self.transferConPorts = [aDecoder decodeObjectForKey:@\"transferConPorts\"];\n    }\n    return self;\n}\n- (void)encodeWithCoder:(NSCoder *)aCoder {\n    [super encodeWithCoder:aCoder];\n    [aCoder encodeObject:self.cmvNode_p forKey:@\"cmvNode_p\"];\n    [aCoder encodeObject:self.deltaTimes forKey:@\"deltaTimes\"];\n    [aCoder encodeDouble:self.mvDeltaTime forKey:@\"mvDeltaTime\"];\n    [aCoder encodeObject:[self.spDic copy] forKey:@\"spDic\"];\n    [aCoder encodeObject:[self.effectDic copy] forKey:@\"effectDic\"];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIFoNodeBase.m:295-313"
+    },
+    "691": {
+        "file_id": 68,
+        "content": "This code is decoding and encoding object properties using NSCoder in Objective-C. It saves and restores the state of the object for archiving and unarchiving operations. The properties being encoded include cmvNode_p, deltaTimes, mvDeltaTime, spDic (copy), and effectDic.",
+        "type": "comment"
+    },
+    "692": {
+        "file_id": 68,
+        "content": "    [aCoder encodeObject:[self.absIndexDDic copy] forKey:@\"absIndexDDic\"];\n    [aCoder encodeObject:[self.conIndexDDic copy] forKey:@\"conIndexDDic\"];\n    [aCoder encodeObject:[self.conCansetsDic copy] forKey:@\"conCansetsDic\"];\n    [aCoder encodeObject:[self.transferAbsPorts copy] forKey:@\"transferAbsPorts\"];\n    [aCoder encodeObject:[self.transferConPorts copy] forKey:@\"transferConPorts\"];\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIFoNodeBase.m:314-321"
+    },
+    "693": {
+        "file_id": 68,
+        "content": "Encodes object values of absIndexDDic, conIndexDDic, conCansetsDic, transferAbsPorts, and transferConPorts for key storage.",
+        "type": "comment"
+    },
+    "694": {
+        "file_id": 69,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIFrontOrderNode.h",
+        "type": "filepath"
+    },
+    "695": {
+        "file_id": 69,
+        "content": "This code defines the \"AIFrontOrderNode\" class, a concrete sequence node that inherits from \"AIFoNodeBase\", likely used in an artificial intelligence or machine learning framework. The header file is part of the \"AINet\" module in the \"SMG_NothingIsAll\" project and was created on July 26, 2018 by iMac.",
+        "type": "summary"
+    },
+    "696": {
+        "file_id": 69,
+        "content": "//\n//  AIFrontOrderNode.h\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/7/26.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------具象时序节点--------------------\n */\n@interface AIFrontOrderNode : AIFoNodeBase\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIFrontOrderNode.h:1-16"
+    },
+    "697": {
+        "file_id": 69,
+        "content": "This code defines the \"AIFrontOrderNode\" class, a concrete sequence node that inherits from \"AIFoNodeBase\", likely used in an artificial intelligence or machine learning framework. The header file is part of the \"AINet\" module in the \"SMG_NothingIsAll\" project and was created on July 26, 2018 by iMac.",
+        "type": "comment"
+    },
+    "698": {
+        "file_id": 70,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIFrontOrderNode.m",
+        "type": "filepath"
+    },
+    "699": {
+        "file_id": 70,
+        "content": "AIFrontOrderNode.m is a part of the SMG_NothingIsAll codebase, where it declares and implements AIFrontOrderNode class.",
+        "type": "summary"
+    }
+}

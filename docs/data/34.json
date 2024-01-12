@@ -1,0 +1,535 @@
+{
+    "3400": {
+        "file_id": 366,
+        "content": "/ThirdParty/XGLog/HeLogModel.h",
+        "type": "filepath"
+    },
+    "3401": {
+        "file_id": 366,
+        "content": "This code is the header file for HeLogModel class, which implements a log model. It allows adding logs, retrieving data, clearing logs, and getting the number of logs. The XGWedis feature supports different persistent methods including delegate, observer, and block.",
+        "type": "summary"
+    },
+    "3402": {
+        "file_id": 366,
+        "content": "//\n//  HeLog.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2020/3/12.\n//  Copyright © 2020年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n#define kTime @\"t\"\n#define kLog @\"l\"\n#define kPath_HeLog @\"helog\"\n#define kFile_HeLog @\"datas\"\n/**\n *  MARK:--------------------XGWedis--------------------\n *  说明:\n *  1. XGWedis用来做异步持久化;\n *  2. 目前每10s持久化一次;\n *  3. XGWedis支持delegate/observer/block三种持久化方式;\n *\n */\n@interface HeLogModel : NSObject\n/**\n *  MARK:--------------------重加载--------------------\n */\n-(void) reloadData;\n/**\n *  MARK:--------------------addLog--------------------\n */\n-(NSDictionary*) addLog:(NSString*)log;\n-(NSArray*) getDatas;\n-(void) clear;\n-(NSInteger) count;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/XGLog/HeLogModel.h:1-39"
+    },
+    "3403": {
+        "file_id": 366,
+        "content": "This code is the header file for HeLogModel class, which implements a log model. It allows adding logs, retrieving data, clearing logs, and getting the number of logs. The XGWedis feature supports different persistent methods including delegate, observer, and block.",
+        "type": "comment"
+    },
+    "3404": {
+        "file_id": 367,
+        "content": "/ThirdParty/XGLog/HeLogModel.m",
+        "type": "filepath"
+    },
+    "3405": {
+        "file_id": 367,
+        "content": "HeLogModel initializes internal properties, sets up a timer for notifications and includes methods like reloadData, addLog, getDatas, clear, count, and the private method \"notificationTimer\". This method performs MD5 hashing to prevent duplicate writing, saves new data to disk using PINDiskCache, and updates the MD5 hash.",
+        "type": "summary"
+    },
+    "3406": {
+        "file_id": 367,
+        "content": "//\n//  HeLog.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2020/3/12.\n//  Copyright © 2020年 XiaoGang. All rights reserved.\n//\n#import \"HeLogModel.h\"\n#import \"PINCache.h\"\n#import \"SMGUtils+General.h\"\n#import \"HeLogUtil.h\"\n@interface HeLogModel ()\n@property (strong, nonatomic) NSMutableArray *datas;\n@property (strong,nonatomic) NSTimer *timer;            //计时器\n@property (strong, nonatomic) NSString *diskDataIden;   //现持久化数据的标识\n@end\n@implementation HeLogModel\n-(id) init{\n    self = [super init];\n    if (self) {\n        [self initData];\n    }\n    return self;\n}\n-(void) initData{\n    //1. 初始化内存datas等;\n    self.datas = [[NSMutableArray alloc] init];\n    dispatch_async(dispatch_get_main_queue(), ^{\n        self.timer = [NSTimer scheduledTimerWithTimeInterval:cHeLog2DBInterval target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];\n    });\n    //2. 重新加载硬盘;\n    [self reloadData];\n    NSLog(@\"===========HeLog Init Data %ld============\",self.datas.count);\n}\n//MARK:===============================================================",
+        "type": "code",
+        "location": "/ThirdParty/XGLog/HeLogModel.m:1-45"
+    },
+    "3407": {
+        "file_id": 367,
+        "content": "HeLogModel is initializing its internal properties and functions. It sets up a mutable array 'datas', initializes a timer to trigger 'notificationTimer' every cHeLog2DBInterval, and reloads data from disk.",
+        "type": "comment"
+    },
+    "3408": {
+        "file_id": 367,
+        "content": "//MARK:                     < publicMethod >\n//MARK:===============================================================\n/**\n *  MARK:--------------------重加载--------------------\n */\n-(void) reloadData{\n    PINDiskCache *cache = [[PINDiskCache alloc] initWithName:kPath_HeLog];\n    id file = [cache objectForKey:kFile_HeLog];\n    [self.datas removeAllObjects];\n    [self.datas addObjectsFromArray:file];\n    self.diskDataIden = [HeLogUtil idenByData:self.datas];\n}\n/**\n *  MARK:--------------------addLog--------------------\n */\n-(NSDictionary*) addLog:(NSString*)log{\n    log = STRTOOK(log);\n    long long nowTime = [[NSDate new] timeIntervalSince1970] * 1000L;\n    NSDictionary *addDic = @{kTime:@(nowTime),kLog:log};\n    [self.datas addObject:addDic];\n    return addDic;\n}\n-(NSArray*) getDatas{\n    return self.datas;\n}\n-(void) clear{\n    [self.datas removeAllObjects];\n    PINDiskCache *cache = [[PINDiskCache alloc] initWithName:kPath_HeLog];\n    [cache removeObjectForKey:kFile_HeLog];\n}\n-(NSInteger) count{\n    return self.datas.count;",
+        "type": "code",
+        "location": "/ThirdParty/XGLog/HeLogModel.m:46-79"
+    },
+    "3409": {
+        "file_id": 367,
+        "content": "The code contains methods for managing data in a HeLogModel instance. It includes a reloadData method to retrieve and update the model's data from disk, addLog method to append new log entries, getDatas method to retrieve all log entries, clear method to remove all log entries, and count method to retrieve the number of log entries.",
+        "type": "comment"
+    },
+    "3410": {
+        "file_id": 367,
+        "content": "}\n//MARK:===============================================================\n//MARK:                     < privateMethod >\n//MARK:===============================================================\n/**\n *  MARK:--------------------持久化--------------------\n */\n- (void)notificationTimer{\n    //1. md5去重,同样内容避免重复写硬盘;\n    NSString *memDatasIden = [HeLogUtil idenByData:self.datas];\n    if ([memDatasIden isEqualToString:self.diskDataIden]) {\n        return;\n    }\n    //2. 存储 (随后需支持文件流广告写入);\n    PINDiskCache *cache = [[PINDiskCache alloc] initWithName:kPath_HeLog];\n    [cache setObject:self.datas forKey:kFile_HeLog];\n    //3. 记录硬盘日志文件的md5;\n    self.diskDataIden = memDatasIden;\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/XGLog/HeLogModel.m:80-104"
+    },
+    "3411": {
+        "file_id": 367,
+        "content": "This code defines a private method called \"notificationTimer\" in the class. It first performs MD5 hashing on the data to ensure no duplicate writing to disk and checks if the MD5 hash is equal to a previously stored value. If they are equal, it returns without performing any further actions. If not, it saves the new data to disk using PINDiskCache and updates the MD5 hash for future reference.",
+        "type": "comment"
+    },
+    "3412": {
+        "file_id": 368,
+        "content": "/ThirdParty/XGLog/HeLogUtil.h",
+        "type": "filepath"
+    },
+    "3413": {
+        "file_id": 368,
+        "content": "Header file for logging utility class HeLogUtil, includes methods to filter logs by time, keyword, generate data identifiers, and calculate MD5 values.",
+        "type": "summary"
+    },
+    "3414": {
+        "file_id": 368,
+        "content": "//\n//  HeLogUtil.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2020/3/14.\n//  Copyright © 2020年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface HeLogUtil : NSObject\n/**\n *  MARK:--------------------filter--------------------\n *  @param startT : 格式为yyyyMMddHHmmssSSS 如: 20201230235959000\n */\n+(NSArray*) filterByTime:(NSString*)startT endT:(NSString*)endT checkDatas:(NSArray*)checkDatas;\n+(NSArray*) filterByKeyword:(NSString*)keyword checkDatas:(NSArray*)checkDatas;\n/**\n *  MARK:--------------------数据的标识--------------------\n */\n+(NSString*) idenByData:(NSMutableArray*)datas;\n/**\n *  MARK:--------------------NSData MD5--------------------\n */\n+(NSString *)md5ByData:(NSData*)data;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/XGLog/HeLogUtil.h:1-30"
+    },
+    "3415": {
+        "file_id": 368,
+        "content": "Header file for logging utility class HeLogUtil, includes methods to filter logs by time, keyword, generate data identifiers, and calculate MD5 values.",
+        "type": "comment"
+    },
+    "3416": {
+        "file_id": 369,
+        "content": "/ThirdParty/XGLog/HeLogUtil.m",
+        "type": "filepath"
+    },
+    "3417": {
+        "file_id": 369,
+        "content": "This code includes methods for filtering an array of dictionaries based on timestamps, finding identifiers and MD5 hashes of data.",
+        "type": "summary"
+    },
+    "3418": {
+        "file_id": 369,
+        "content": "//\n//  HeLogUtil.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2020/3/14.\n//  Copyright © 2020年 XiaoGang. All rights reserved.\n//\n#import \"HeLogUtil.h\"\n#import <CommonCrypto/CommonCrypto.h>\n@implementation HeLogUtil\n/**\n *  MARK:--------------------filter--------------------\n */\n+(NSArray*) filterByTime:(NSString*)startT endT:(NSString*)endT checkDatas:(NSArray*)checkDatas{\n    //1. 转换startT和endT的时间戳;\n    checkDatas = ARRTOOK(checkDatas);\n    long long startTime = [SMGUtils timestampFromStr_yyyyMMddHHmmssSSS:startT defaultResult:0];\n    long long endTime = [SMGUtils timestampFromStr_yyyyMMddHHmmssSSS:endT defaultResult:LONG_LONG_MAX];\n    //2. 找起始index\n    NSInteger startIndex = checkDatas.count;\n    NSInteger endIndex = -1;\n    for (NSInteger i = 0; i < checkDatas.count; i++) {\n        NSDictionary *item = checkDatas[i];\n        long long itemTime = [NUMTOOK([item objectForKey:kTime]) longLongValue];\n        if (itemTime >= startTime && startIndex == checkDatas.count) {\n            startIndex = i;\n        }\n        if (itemTime == endTime) {",
+        "type": "code",
+        "location": "/ThirdParty/XGLog/HeLogUtil.m:1-32"
+    },
+    "3419": {
+        "file_id": 369,
+        "content": "This function filters an array of dictionaries based on start and end time strings. It converts the input times to timestamps, finds the index of the first item starting at or after start time, then loops through the array to find the last item equal to end time.",
+        "type": "comment"
+    },
+    "3420": {
+        "file_id": 369,
+        "content": "            endIndex = i;\n        }else if(itemTime < endTime){\n            endIndex = i - 1;\n        }\n    }\n    //3. 截取\n    NSInteger length = endIndex - startIndex + 1;\n    return ARR_SUB(checkDatas, startIndex,length);\n}\n+(NSArray*) filterByKeyword:(NSString*)keyword checkDatas:(NSArray*)checkDatas{\n    //1. 数据准备\n    checkDatas = ARRTOOK(checkDatas);\n    if (!STRISOK(keyword)) {\n        return checkDatas;\n    }\n    NSMutableArray *result = [[NSMutableArray alloc] init];\n    NSString *sep = @\"&\";\n    NSArray *kws = STRTOARR(keyword, sep);\n    //2. 筛选\n    for (NSDictionary *item in checkDatas) {\n        NSString *log = [item objectForKey:kLog];\n        //3. 判断包含所有关键字:kws\n        BOOL contains = true;\n        for (NSString *kw in kws) {\n            if (![log containsString:kw]) {\n                contains = false;\n                break;\n            }\n        }\n        if (contains) {\n            [result addObject:item];\n        }\n    }\n    return result;\n}\n/**\n *  MARK:--------------------数据的标识--------------------\n *  @version",
+        "type": "code",
+        "location": "/ThirdParty/XGLog/HeLogUtil.m:33-75"
+    },
+    "3421": {
+        "file_id": 369,
+        "content": "This code defines a method \"filterByKeyword:checkDatas:\" that takes in a keyword and an array of dictionaries called \"checkDatas\". It prepares the data by converting the checkDatas to an immutable array, and checks if the input keyword is not empty. If it's not empty, it splits the keyword into an array of keywords using \"&\" as a separator. Then, it loops through each dictionary in the checkDatas array, checks if the log string from each dictionary contains all the keywords, and adds the dictionary to a mutable result array if it does. Finally, it returns the filtered result array.",
+        "type": "comment"
+    },
+    "3422": {
+        "file_id": 369,
+        "content": " *      xxxx.xx.xx: 初版: 使用md5=> STRTOOK([HeLogUtil md5ByData:OBJ2DATA(datas)]);\n *      2022.06.05: v2使用末位时间戳;\n *  @result notnull;\n */\n+(NSString*) idenByData:(NSMutableArray*)datas{\n    NSDictionary *lastDic = DICTOOK(ARR_INDEX_REVERSE(datas, 0));\n    long long lastTime = [NUMTOOK([lastDic objectForKey:kTime]) longLongValue];\n    return STRFORMAT(@\"%lld\",lastTime);\n}\n+(NSString *)md5ByData:(NSData*)data{\n    //1: 创建一个MD5对象\n    CC_MD5_CTX md5;\n    //2: 初始化MD5\n    CC_MD5_Init(&md5);\n    //3: 准备MD5加密\n    CC_MD5_Update(&md5, data.bytes, (CC_LONG)data.length);\n    //4: 准备一个字符串数组, 存储MD5加密之后的数据\n    unsigned char result[CC_MD5_DIGEST_LENGTH];\n    //5: 结束MD5加密\n    CC_MD5_Final(result, &md5);\n    NSMutableString *resultString = [NSMutableString string];\n    //6:从result数组中获取最终结果\n    for (int i = 0; i < CC_MD5_DIGEST_LENGTH; i++) {\n        [resultString appendFormat:@\"%02X\", result[i]];\n    }\n    return resultString;\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/XGLog/HeLogUtil.m:76-105"
+    },
+    "3423": {
+        "file_id": 369,
+        "content": "This code defines two methods, `idenByData:` and `md5ByData:`, which respectively return an identifier based on the first dictionary in the given array and a MD5 hash of the provided data. The `idenByData:` method retrieves the last dictionary from the array and returns its timestamp as a string. The `md5ByData:` method initializes an MD5 context, updates it with the input data, finalizes the digest, and converts it to a hexadecimal string.",
+        "type": "comment"
+    },
+    "3424": {
+        "file_id": 370,
+        "content": "/ThirdParty/XGLog/HeLogView.h",
+        "type": "filepath"
+    },
+    "3425": {
+        "file_id": 370,
+        "content": "HeLogView is a UIView class that provides methods to add logs, open/close the view, clear logs, and get log count. It also includes properties for stop flag and reloading data with option for reloading HD logs.",
+        "type": "summary"
+    },
+    "3426": {
+        "file_id": 370,
+        "content": "//\n//  HeLogView.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2020/3/12.\n//  Copyright © 2020年 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n@interface HeLogView : UIView\n@property (assign, nonatomic) BOOL stop;//停止工作;\n-(void) addLog:(NSString*)log;\n-(void) addDemoLog:(NSString*)log;\n-(void) open;\n-(void) close;\n-(void) clear;\n-(NSInteger) count;\n-(void) reloadData:(BOOL)reloadHd;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/XGLog/HeLogView.h:1-23"
+    },
+    "3427": {
+        "file_id": 370,
+        "content": "HeLogView is a UIView class that provides methods to add logs, open/close the view, clear logs, and get log count. It also includes properties for stop flag and reloading data with option for reloading HD logs.",
+        "type": "comment"
+    },
+    "3428": {
+        "file_id": 371,
+        "content": "/ThirdParty/XGLog/HeLogView.m",
+        "type": "filepath"
+    },
+    "3429": {
+        "file_id": 371,
+        "content": "The code initializes a HeLogView object to display logs, filter by time and keyword, manage view, clear logs, and reload data upon keyword input in the text field.",
+        "type": "summary"
+    },
+    "3430": {
+        "file_id": 371,
+        "content": "//\n//  HeLogView.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2020/3/12.\n//  Copyright © 2020年 XiaoGang. All rights reserved.\n//\n#import \"HeLogView.h\"\n#import \"HeLogModel.h\"\n#import \"MASConstraint.h\"\n#import \"View+MASAdditions.h\"\n#import \"HeLogUtil.h\"\n@interface HeLogView () <UITextFieldDelegate>\n@property (strong, nonatomic) IBOutlet UIView *containerView;\n@property (weak, nonatomic) IBOutlet UITextView *textView;\n@property (weak, nonatomic) IBOutlet UITextField *startTF;\n@property (weak, nonatomic) IBOutlet UITextField *endTF;\n@property (weak, nonatomic) IBOutlet UITextField *keywordTF;\n@property (weak, nonatomic) IBOutlet UIButton *closeBtn;\n@property (weak, nonatomic) IBOutlet UIButton *filterBtn;\n@property (strong, nonatomic) NSMutableString *str;\n@property (weak, nonatomic) IBOutlet UILabel *countLab;\n@property (strong, nonatomic) HeLogModel *model;\n@property (assign, nonatomic) BOOL isOpen;\n@end\n@implementation HeLogView\n-(id) init {\n    self = [super init];\n    if(self != nil){\n        [self initView];\n        [self initData];",
+        "type": "code",
+        "location": "/ThirdParty/XGLog/HeLogView.m:1-37"
+    },
+    "3431": {
+        "file_id": 371,
+        "content": "HeLogView is a class implementing UITextFieldDelegate, with properties for UI elements and model data. It initializes the view and data upon instantiation.",
+        "type": "comment"
+    },
+    "3432": {
+        "file_id": 371,
+        "content": "    }\n    return self;\n}\n-(void) initView{\n    //self\n    [self setFrame:CGRectMake(0, StateBarHeight, ScreenWidth, ScreenHeight - StateBarHeight)];\n    [self setHidden:true];\n    //containerView\n    [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];\n    [self addSubview:self.containerView];\n    [self.containerView mas_makeConstraints:^(MASConstraintMaker *make) {\n        make.leading.mas_equalTo(self);\n        make.trailing.mas_equalTo(self);\n        make.top.mas_equalTo(self);\n        make.bottom.mas_equalTo(self);\n    }];\n    //tf\n    self.keywordTF.delegate = self;\n    self.startTF.delegate = self;\n    self.endTF.delegate = self;\n}\n-(void) initData{\n    self.isOpen = false;\n    self.stop = !heLogSwitch;\n    self.model = [[HeLogModel alloc] init];\n    self.str = [[NSMutableString alloc] init];\n}\n//MARK:===============================================================\n//MARK:                     < publicMethod >\n//MARK:===============================================================",
+        "type": "code",
+        "location": "/ThirdParty/XGLog/HeLogView.m:38-72"
+    },
+    "3433": {
+        "file_id": 371,
+        "content": "This code initializes the view and data for a HeLogView object. It sets the frame, makes it hidden initially, loads the nib file, adds the container view as a subview, applies constraints, sets delegate methods for text fields, initializes variables for open state, stop status, model object, and mutable string.",
+        "type": "comment"
+    },
+    "3434": {
+        "file_id": 371,
+        "content": "-(void) addLog:(NSString*)log{\n    if (self.stop) {\n        return;\n    }\n    if (log) {\n        NSDictionary *addDic = [self.model addLog:log];\n        if (self.isOpen) {\n            //[self appendData:@[addDic]];(实时加一行的性能问题,现在懒得解决,故先去掉)\n        }\n    }\n}\n-(void) addDemoLog:(NSString*)log{\n    if (self.stop) {\n        return;\n    }\n    log = STRFORMAT(@\"********************************************* %@ *********************************************\",log);\n    [self.model addLog:log];\n}\n-(void) open{\n    [self setHidden:false];\n    self.isOpen = true;\n    [self reloadData:false];\n}\n-(void) close{\n    [self setHidden:true];\n    self.isOpen = false;\n}\n-(void) clear{\n    [self.model clear];\n}\n-(NSInteger) count{\n    return self.model.count;\n}\n-(void) reloadData:(BOOL)reloadHd{\n    //0. 工作状态\n    if (self.stop) {\n        return;\n    }\n    //1. 重新加载硬盘;\n    if (reloadHd) {\n        [self.model reloadData];\n    }\n    //2. UI清空 & 重加载\n    [self.str setString:@\"\"];\n    [self appendData:self.model.getDatas];\n}\n//MARK:===============================================================",
+        "type": "code",
+        "location": "/ThirdParty/XGLog/HeLogView.m:73-128"
+    },
+    "3435": {
+        "file_id": 371,
+        "content": "This code is from the HeLogView.m file and contains functions to add log entries, open/close the view, clear logs, and reload data. The addLog function adds a log entry if stop flag is not set and if the log is not empty. The addDemoLog function formats the log entry with formatting. The open function sets the view as visible and sets isOpen to true, while close hides the view and sets isOpen to false. The clear function clears all logs using the model's clear method. The reloadData function stops if stop flag is set and reloads data for reloadHd if true. It clears the UI and adds data from the model.",
+        "type": "comment"
+    },
+    "3436": {
+        "file_id": 371,
+        "content": "//MARK:                     < privateMethod >\n//MARK:===============================================================\n-(void) appendData:(NSArray*)datas{\n    //1. 筛选 (时间 & 关键字)\n    NSArray *timeValids = [HeLogUtil filterByTime:self.startTF.text endT:self.endTF.text checkDatas:datas];\n    NSArray *keywordValids = [HeLogUtil filterByKeyword:self.keywordTF.text checkDatas:datas];\n    //2. 有效并集 (用dic去重基于hash,比NSArray要快许多);\n    NSMutableArray *valids = [[NSMutableArray alloc] init];\n    NSMutableDictionary *timeDic = [[NSMutableDictionary alloc] init];\n    for (NSDictionary *timeItem in timeValids)\n        [timeDic setObject:timeItem forKey:STRFORMAT(@\"%p\",timeItem)];\n    for (NSDictionary *keywordItem in keywordValids){\n        if ([timeDic objectForKey:STRFORMAT(@\"%p\",keywordItem)]) {\n            [valids addObject:keywordItem];\n        }\n    }\n    //3. 重拼接赋值\n    for (NSDictionary *valid in valids) {\n        double time = [NUMTOOK([valid objectForKey:kTime]) doubleValue];\n        NSString *log = [valid objectForKey:kLog];",
+        "type": "code",
+        "location": "/ThirdParty/XGLog/HeLogView.m:129-150"
+    },
+    "3437": {
+        "file_id": 371,
+        "content": "This method filters log data by time and keyword, then combines the valid entries into a mutable array. The filtered entries are stored in separate dictionaries based on their timestamp and keywords. The valid entries are checked for uniqueness and added to the final result array. The final result is then used to update the displayed log view.",
+        "type": "comment"
+    },
+    "3438": {
+        "file_id": 371,
+        "content": "        NSString *timeStr = [SMGUtils date2yyyyMMddHHmmssSSS:[[NSDate alloc] initWithTimeIntervalSince1970:(time / 1000.0f)]];\n        [self.str appendFormat:@\"%@: %@\\n\",timeStr,log];\n    }\n    //4. 刷新显示\n    [self refreshDisplay];\n}\n-(void) refreshDisplay{\n    //1. textView\n    [self.textView setText:self.str];\n    //2. countLab\n    NSString *sep = @\"\\n\";\n    [self.countLab setText:STRFORMAT(@\"共计:%ld条\",STRTOARR(self.str, sep).count - 1)];\n}\n//MARK:===============================================================\n//MARK:                     < onClick >\n//MARK:===============================================================\n- (IBAction)filterBtnOnClick:(id)sender {\n    [self reloadData:false];\n}\n- (IBAction)closeBtnOnClick:(id)sender {\n    [self close];\n}\n//MARK:===============================================================\n//MARK:                     < UITextFieldDelegate >\n//MARK:===============================================================\n- (BOOL)textFieldShouldReturn:(UITextField *)textField{\n    if (textField == self.startTF) {",
+        "type": "code",
+        "location": "/ThirdParty/XGLog/HeLogView.m:151-182"
+    },
+    "3439": {
+        "file_id": 371,
+        "content": "This code is implementing a logging view with a text view and counter label, supporting filtering and closing the view. The timestamp and log are appended to a string and displayed in the text view. Count of logs is displayed in the counter label. Filtering clears the existing logs and reloads the data. Closing the view dismisses it. Text field returns allow the user to interact with the startTF text field.",
+        "type": "comment"
+    },
+    "3440": {
+        "file_id": 371,
+        "content": "        [self.endTF becomeFirstResponder];\n    }else if (textField == self.endTF) {\n        [self.keywordTF becomeFirstResponder];\n    }else if (textField == self.keywordTF) {\n        [self reloadData:false];\n    }\n    return true;\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/XGLog/HeLogView.m:183-192"
+    },
+    "3441": {
+        "file_id": 371,
+        "content": "This code is handling text field events in a view controller. If the endTF is selected, it becomes the first responder. If the keyboardTF is selected, it moves focus to the endTF. If the keywordTF is selected, it reloads data. The method returns true on all cases.",
+        "type": "comment"
+    },
+    "3442": {
+        "file_id": 372,
+        "content": "/ThirdParty/XGLog/README.md",
+        "type": "filepath"
+    },
+    "3443": {
+        "file_id": 372,
+        "content": "This code is for HELog, a logging tool that allows recording logs to the hard drive and displaying them through a UI. It also has filtering capabilities for past logs. The dependencies are PINCache and MASConstraint. The TODO list includes optimizing real-time display performance for single log entries and supporting file stream write method.",
+        "type": "summary"
+    },
+    "3444": {
+        "file_id": 372,
+        "content": "#  HELog 日志记录\n###  功能说明:\n1. 可将日志记录至硬盘;\n2. 可UI显示日志,以及筛选以往日志;\n### 依赖说明:\n1. PINCache\n2. MASConstraint\n### TODOLIST:\n1. 优化addLog单条实时显示的性能;\n2. 支持文件流的方式进行写入;",
+        "type": "code",
+        "location": "/ThirdParty/XGLog/README.md:1-13"
+    },
+    "3445": {
+        "file_id": 372,
+        "content": "This code is for HELog, a logging tool that allows recording logs to the hard drive and displaying them through a UI. It also has filtering capabilities for past logs. The dependencies are PINCache and MASConstraint. The TODO list includes optimizing real-time display performance for single log entries and supporting file stream write method.",
+        "type": "comment"
+    },
+    "3446": {
+        "file_id": 373,
+        "content": "/ThirdParty/XGRedis/README.md",
+        "type": "filepath"
+    },
+    "3447": {
+        "file_id": 373,
+        "content": "Supports automatic memory caching for db (prevents performance issues caused by frequent readings of frequently operated files).",
+        "type": "summary"
+    },
+    "3448": {
+        "file_id": 373,
+        "content": "#  XGRedis\n1. 支持对db自动做内存缓存 (以防止在频繁操作的文件,重复读取带来的性能问题);",
+        "type": "code",
+        "location": "/ThirdParty/XGRedis/README.md:1-3"
+    },
+    "3449": {
+        "file_id": 373,
+        "content": "Supports automatic memory caching for db (prevents performance issues caused by frequent readings of frequently operated files).",
+        "type": "comment"
+    },
+    "3450": {
+        "file_id": 374,
+        "content": "/ThirdParty/XGRedis/XGRedis.h",
+        "type": "filepath"
+    },
+    "3451": {
+        "file_id": 374,
+        "content": "This code defines a class XGRedis that acts as an interface for interacting with Redis database. It provides methods to set objects with keys and specify a time parameter, retrieve objects by key, clear all stored data, and obtain the count of recorded items. The class is part of the SMG_NothingIsAll project.",
+        "type": "summary"
+    },
+    "3452": {
+        "file_id": 374,
+        "content": "//\n//  XGRedis.h\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/5/23.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n#define kXGRedisGCObserver @\"kXGRedisGCObserver\"    //xgRedis在GC时,会发送广播\n/**\n *  MARK:--------------------XGRedis--------------------\n *  注:time只针对设置时的key,并在倒计时后,找到key并remove;(设置time后,不可撤销)\n *  @version\n *      2023.07.20: 简化_模型改为直接用NSDictionary (操作更简单);\n *\n */\n@interface XGRedis : NSObject\n+(XGRedis*) sharedInstance;\n/**\n *  MARK:--------------------setObject--------------------\n *  @param obj : 数据\n *  @param key : 唯一识别符\n */\n-(void) setObject:(NSObject*)obj forKey:(NSString*)key;\n/**\n *  MARK:--------------------setObject--------------------\n *  @param time : 当time <= 0时,会移除旧的obj,并且不会添加新的;\n */\n-(void) setObject:(NSObject*)obj forKey:(NSString*)key time:(double)time;\n//取\n-(id) objectForKey:(NSString*)key;\n//清\n-(void) clear;\n//记忆数\n-(NSInteger) count;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/XGRedis/XGRedis.h:1-46"
+    },
+    "3453": {
+        "file_id": 374,
+        "content": "This code defines a class XGRedis that acts as an interface for interacting with Redis database. It provides methods to set objects with keys and specify a time parameter, retrieve objects by key, clear all stored data, and obtain the count of recorded items. The class is part of the SMG_NothingIsAll project.",
+        "type": "comment"
+    },
+    "3454": {
+        "file_id": 375,
+        "content": "/ThirdParty/XGRedis/XGRedis.m",
+        "type": "filepath"
+    },
+    "3455": {
+        "file_id": 375,
+        "content": "The code initializes a singleton XGRedis class with internal data structures and defines methods for setting/getting objects with expiration, clearing cache, and getting size. It deletes expired keys from a dictionary by iterating through gcMarks, removing keys whose timestamps are less than the current time.",
+        "type": "summary"
+    },
+    "3456": {
+        "file_id": 375,
+        "content": "//\n//  XGRedis.m\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/5/23.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"XGRedis.h\"\n#import \"XGRedisUtil.h\"\n#import \"XGRedisDictionary.h\"\n#import \"AIKVPointer.h\"\n@interface XGRedis ()\n@property (strong, nonatomic) AsyncMutableDictionary *dic;   //核心字典\n@property (strong, nonatomic) AsyncMutableDictionary *gcMarks;  //回收时间记录;(时间从先到后_有序)\n@property (strong,nonatomic) NSTimer *timer;            //计时器\n@end\n@implementation XGRedis\nstatic XGRedis *_instance;\n+(XGRedis*) sharedInstance{\n    if (_instance == nil) {\n        _instance = [[XGRedis alloc] init];\n    }\n    return _instance;\n}\n-(id) init{\n    self = [super init];\n    if (self) {\n        [self initData];\n    }\n    return self;\n}\n-(void) initData{\n    self.dic = [[AsyncMutableDictionary alloc] init];\n    dispatch_async(dispatch_get_main_queue(), ^{\n        self.timer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];\n    });\n    self.gcMarks = [[AsyncMutableDictionary alloc] init];",
+        "type": "code",
+        "location": "/ThirdParty/XGRedis/XGRedis.m:1-45"
+    },
+    "3457": {
+        "file_id": 375,
+        "content": "This code is initializing a singleton instance of the XGRedis class and setting up its internal data structures. It creates an async mutable dictionary for storing data, initializes a timer to trigger a notification every second, and sets up a gcMarks dictionary to record garbage collection times in ascending order.",
+        "type": "comment"
+    },
+    "3458": {
+        "file_id": 375,
+        "content": "}\n//MARK:===============================================================\n//MARK:                     < publicMethod >\n//MARK:===============================================================\n-(void) setObject:(NSObject*)obj forKey:(NSString*)key {\n    [self setObject:obj forKey:key time:NSNotFound];\n}\n-(void) setObject:(NSObject*)obj forKey:(NSString*)key time:(double)time{\n    long long gcTime = (long long)([[NSDate date] timeIntervalSince1970] + MAX(0, time));\n    [self.dic setObject:obj forKey:key];\n    [self.gcMarks setObject:@(gcTime) forKey:key];\n}\n-(id) objectForKey:(NSString*)key{\n    return [self.dic objectForKey:key];\n}\n-(void) clear{\n    [self.dic removeAllObjects];\n    [self.gcMarks removeAllObjects];\n}\n-(NSInteger) count{\n    return self.dic.count;\n}\n//MARK:===============================================================\n//MARK:                     < privateMethod >\n//MARK:===============================================================\n- (void)notificationTimer{\n    //1. 计时器执行\n    double now = [[NSDate date] timeIntervalSince1970];",
+        "type": "code",
+        "location": "/ThirdParty/XGRedis/XGRedis.m:46-79"
+    },
+    "3459": {
+        "file_id": 375,
+        "content": "This code defines a class that implements a cache system. It has public and private methods for setting and getting objects with optional time expiration, as well as clearing the cache and getting its size. The private method handles a timer notification.",
+        "type": "comment"
+    },
+    "3460": {
+        "file_id": 375,
+        "content": "    //2. 找到需要销毁的并销毁;\n    NSArray *gcMarkKeys = [self.gcMarks.allKeys copy];\n    for (NSString *key in gcMarkKeys) {\n        long long gcTime = NUMTOOK([self.gcMarks objectForKey:key]).longLongValue;\n        if (gcTime < now) {\n            [self.dic removeObjectForKey:key];\n            [self.gcMarks removeObjectForKey:key];\n        }\n    }\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/XGRedis/XGRedis.m:81-92"
+    },
+    "3461": {
+        "file_id": 375,
+        "content": "This code is deleting expired keys from a dictionary. It first copies all the keys in the gcMarks dictionary, then loops through them and checks if their corresponding timestamps are less than the current time (now). If they are, it removes the key from the dictionary and also removes its timestamp from the gcMarks dictionary.",
+        "type": "comment"
+    },
+    "3462": {
+        "file_id": 376,
+        "content": "/ThirdParty/XGRedis/XGRedisDictionary.h",
+        "type": "filepath"
+    },
+    "3463": {
+        "file_id": 376,
+        "content": "This code defines a custom dictionary class called XGRedisDictionary, which uses arrays of keys and values for synchronous operations. It has methods to retrieve the number of objects in the dictionary, remove an object at a given index, insert an object at a specific index, get the key for an index, and retrieve the value for an index. Additionally, it includes a separate class XGRedisGCMark with properties for time and key used for recycling models.",
+        "type": "summary"
+    },
+    "3464": {
+        "file_id": 376,
+        "content": "//\n//  XGRedisDictionary.h\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/5/23.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------有序字典--------------------\n *  以key和value两个分别的数组,同步操作;\n *  自定义字典的原因:可以直接根据index下标操作,而不必一一对比key\n */\n@interface XGRedisDictionary : NSObject\n-(NSArray*) allKeys;//copy keys;\n-(NSInteger) count;\n-(BOOL) removeObjectAtIndex:(NSInteger)index;\n-(BOOL) addObject:(NSObject*)obj forKey:(NSString*)key;\n-(BOOL) insertObject:(NSObject*)obj key:(NSString*)key atIndex:(NSInteger)index;\n-(NSString*) keyForIndex:(NSInteger)index;\n-(id) valueForIndex:(NSInteger)index;\n-(void) clear;\n@end\n//MARK:===============================================================\n//MARK:                     < 回收模型 >\n//MARK:===============================================================\n@interface XGRedisGCMark : NSObject\n@property (assign, nonatomic) long long time;  //销毁时间\n@property (strong, nonatomic) NSString *key;//销毁的key\n@end",
+        "type": "code",
+        "location": "/ThirdParty/XGRedis/XGRedisDictionary.h:1-38"
+    },
+    "3465": {
+        "file_id": 376,
+        "content": "This code defines a custom dictionary class called XGRedisDictionary, which uses arrays of keys and values for synchronous operations. It has methods to retrieve the number of objects in the dictionary, remove an object at a given index, insert an object at a specific index, get the key for an index, and retrieve the value for an index. Additionally, it includes a separate class XGRedisGCMark with properties for time and key used for recycling models.",
+        "type": "comment"
+    },
+    "3466": {
+        "file_id": 377,
+        "content": "/ThirdParty/XGRedis/XGRedisDictionary.m",
+        "type": "filepath"
+    },
+    "3467": {
+        "file_id": 377,
+        "content": "The code defines a class XGRedisDictionary for storing key-value pairs in Redis, and provides methods to retrieve keys, count pairs, remove objects, and handle asynchronous data. Another unimplemented class XGRedisGCMark is also defined.",
+        "type": "summary"
+    },
+    "3468": {
+        "file_id": 377,
+        "content": "//\n//  XGRedisDictionary.m\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/5/23.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"XGRedisDictionary.h\"\n#import \"XGRedisUtil.h\"\n@interface XGRedisDictionary()\n@property (strong, nonatomic) AsyncMutableArray *keys;\n@property (strong, nonatomic) AsyncMutableArray *values;\n@end\n@implementation XGRedisDictionary\n-(id) init{\n    self = [super init];\n    if (self) {\n        [self initData];\n    }\n    return self;\n}\n-(void) initData{\n    _keys = [[AsyncMutableArray alloc] init];\n    _values = [[AsyncMutableArray alloc] init];\n}\n//MARK:===============================================================\n//MARK:                     < publicMethod >\n//MARK:===============================================================\n-(NSArray*) allKeys{\n    return [self.keys.array copy];\n}\n-(NSInteger) count{\n    return self.keys.count;\n}\n-(BOOL) removeObjectAtIndex:(NSInteger)index{\n    if (index >= 0 && index < self.count) {\n        [self.keys removeObjectAtIndex:index];\n        [self.values removeObjectAtIndex:index];",
+        "type": "code",
+        "location": "/ThirdParty/XGRedis/XGRedisDictionary.m:1-49"
+    },
+    "3469": {
+        "file_id": 377,
+        "content": "This code defines a class called XGRedisDictionary, which is used to store key-value pairs in Redis. It initializes the keys and values arrays in its init method, and provides public methods to retrieve all keys, count the number of key-value pairs, and remove an object at a specified index. The class uses AsyncMutableArray for efficient asynchronous handling of the data.",
+        "type": "comment"
+    },
+    "3470": {
+        "file_id": 377,
+        "content": "        return true;\n    }\n    return false;\n}\n//add\n-(BOOL) addObject:(NSObject*)obj forKey:(NSString*)key{\n    if (obj && STRISOK(key)) {\n        [self.keys addObject:key];\n        [self.values addObject:obj];\n        return true;\n    }\n    return false;\n}\n//insert\n-(BOOL) insertObject:(NSObject*)obj key:(NSString*)key atIndex:(NSInteger)index{\n    if (index < self.count && obj && STRISOK(key)) {\n        [self.keys insertObject:key atIndex:index];\n        [self.values insertObject:obj atIndex:index];\n        return true;\n    }\n    return false;\n}\n-(NSString*) keyForIndex:(NSInteger)index{\n    return ARR_INDEX(self.keys.array, index);\n}\n-(id) valueForIndex:(NSInteger)index{\n    return ARR_INDEX(self.values.array, index);\n}\n-(void) clear{\n    [self.keys removeAllObjects];\n    [self.values removeAllObjects];\n}\n@end\n//MARK:===============================================================\n//MARK:                     < 回收模型 >\n//MARK:===============================================================\n@implementation XGRedisGCMark\n@end",
+        "type": "code",
+        "location": "/ThirdParty/XGRedis/XGRedisDictionary.m:50-97"
+    },
+    "3471": {
+        "file_id": 377,
+        "content": "This code defines a class, XGRedisDictionary, that allows for adding and inserting objects with keys or at specific indices. It also provides methods to retrieve the corresponding key and value for an index. Additionally, there is another class, XGRedisGCMark, defined but no implementation provided.",
+        "type": "comment"
+    },
+    "3472": {
+        "file_id": 378,
+        "content": "/ThirdParty/XGRedis/XGRedisUtil.h",
+        "type": "filepath"
+    },
+    "3473": {
+        "file_id": 378,
+        "content": "Header file for XGRedisUtil class, includes two methods: a comparison function for strings and a binary search function.",
+        "type": "summary"
+    },
+    "3474": {
+        "file_id": 378,
+        "content": "//\n//  XGRedisUtil.h\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/5/23.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface XGRedisUtil : NSObject\n/**\n *  MARK:--------------------比较strA是否比strB大(ascii)--------------------\n */\n+(NSComparisonResult) compareStrA:(NSString*)strA strB:(NSString*)strB;\n/**\n *  MARK:--------------------二分查找--------------------\n *  success:找到则返回相应index\n *  failure:失败则返回可排到的index\n *  要求:arr指向的值是正序的;(即数组下标越大,值越大)\n */\n+(void) searchIndexWithCompare:(NSComparisonResult (^)(NSInteger checkIndex))compare startIndex:(NSInteger)startIndex endIndex:(NSInteger)endIndex success:(void(^)(NSInteger index))success failure:(void(^)(NSInteger index))failure;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/XGRedis/XGRedisUtil.h:1-29"
+    },
+    "3475": {
+        "file_id": 378,
+        "content": "Header file for XGRedisUtil class, includes two methods: a comparison function for strings and a binary search function.",
+        "type": "comment"
+    },
+    "3476": {
+        "file_id": 379,
+        "content": "/ThirdParty/XGRedis/XGRedisUtil.m",
+        "type": "filepath"
+    },
+    "3477": {
+        "file_id": 379,
+        "content": "The XGRedisUtil class offers comparison and binary search methods for Objective-C, implementing a binary search algorithm to find target index in an array while handling asynchronous operations and error/failure callbacks.",
+        "type": "summary"
+    },
+    "3478": {
+        "file_id": 379,
+        "content": "//\n//  XGRedisUtil.m\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/5/23.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"XGRedisUtil.h\"\n@implementation XGRedisUtil\n/**\n *  MARK:--------------------比较strA是否比strB大(ascii)--------------------\n */\n+(NSComparisonResult) compareStrA:(NSString*)strA strB:(NSString*)strB{\n    //1. 数据检查 & 准备\n    strA = STRTOOK(strA);\n    strB = STRTOOK(strB);\n    NSInteger aLength = strA.length;\n    NSInteger bLength = strB.length;\n    //2. 比较大小\n    for (NSInteger i = 0; i < MIN(aLength, bLength); i++) {\n        unichar cA = [strA characterAtIndex:i];\n        unichar cB = [strB characterAtIndex:i];\n        if (cA > cB) {\n            return NSOrderedAscending;\n        }else if(cA < cB){\n            return NSOrderedDescending;\n        }\n    }\n    //3. 前面都一样\n    return aLength > bLength ? NSOrderedAscending : aLength < bLength ? NSOrderedDescending : NSOrderedSame;\n}\n/**\n *  MARK:--------------------二分查找--------------------\n *  success:找到则返回相应index\n *  failure:失败则返回可排到的index\n *  要求:arr指向的值是正序的;(即数组下标越大,值越大)",
+        "type": "code",
+        "location": "/ThirdParty/XGRedis/XGRedisUtil.m:1-42"
+    },
+    "3479": {
+        "file_id": 379,
+        "content": "This code is for the XGRedisUtil class, which seems to provide comparison and binary search methods. The `compareStrA:strB:` method compares two strings (stripped of special characters) lexicographically and returns NSOrderedAscending if strA > strB, NSOrderedDescending if strA < strB, or NSOrderedSame if they are equal in length. The `binarySearchForValue:inArray:` method performs a binary search on an array of values that are sorted in ascending order and returns the index where the value is located (or the closest possible index if found).",
+        "type": "comment"
+    },
+    "3480": {
+        "file_id": 379,
+        "content": " */\n+(void) searchIndexWithCompare:(NSComparisonResult (^)(NSInteger checkIndex))compare startIndex:(NSInteger)startIndex endIndex:(NSInteger)endIndex success:(void(^)(NSInteger index))success failure:(void(^)(NSInteger index))failure {\n    if (compare && endIndex >= 0) {\n        //1. index越界检查\n        startIndex = MAX(0, startIndex);\n        //2. 相邻或相等时,直接对比返回\n        if (labs(startIndex - endIndex) <= 1) {\n            //3. 与start对比\n            NSComparisonResult result = compare(startIndex);\n            if (result == NSOrderedDescending) {      //比小的小\n                if (failure) failure(startIndex);\n            }else if (result == NSOrderedSame){       //相等\n                if (success) success(startIndex);\n            }else {                                   //比小的大\n                if(startIndex == endIndex) {\n                    if (failure) failure(startIndex + 1);\n                }else{\n                    //4. 与end对比\n                    NSComparisonResult result = compare(endIndex);\n                    if (result == NSOrderedAscending) { //比大的大",
+        "type": "code",
+        "location": "/ThirdParty/XGRedis/XGRedisUtil.m:43-63"
+    },
+    "3481": {
+        "file_id": 379,
+        "content": "This code defines a method, searchIndexWithCompare, which takes in a comparison function and two indices. It checks for out-of-boundary conditions and compares the values at the specified range with a provided comparison block. The result is then determined by comparing the start and end indices. If there are any failures or successes based on the comparison results, the corresponding callback functions are invoked.",
+        "type": "comment"
+    },
+    "3482": {
+        "file_id": 379,
+        "content": "                        if (failure) failure(endIndex + 1);\n                    }else if (result == NSOrderedSame){ //相等\n                        if (success) success(endIndex);\n                    }else {                             //比大的小\n                        if (failure) failure(endIndex);\n                    }\n                }\n            }\n        }else{\n            //5. 与mid对比\n            NSInteger midIndex = (startIndex + endIndex) / 2;\n            NSComparisonResult result = compare(midIndex);\n            if (result == NSOrderedAscending) { //比中心大(检查mid到endIndex)\n                [self searchIndexWithCompare:compare startIndex:midIndex endIndex:endIndex success:success failure:failure];\n            }else if (result == NSOrderedSame){ //相等\n                if (success) success(midIndex);\n            }else {                             //比中心小(检查startIndex到mid)\n                [self searchIndexWithCompare:compare startIndex:startIndex endIndex:midIndex success:success failure:failure];\n            }",
+        "type": "code",
+        "location": "/ThirdParty/XGRedis/XGRedisUtil.m:64-82"
+    },
+    "3483": {
+        "file_id": 379,
+        "content": "This code is implementing a binary search algorithm to find the target index in an array. It takes a startIndex, endIndex, compare block, success and failure callbacks as input parameters. The code compares the mid index with the target value and recursively calls the function to narrow down the search range until it finds the target or the range is empty.",
+        "type": "comment"
+    },
+    "3484": {
+        "file_id": 379,
+        "content": "        }\n    }else{\n        if (failure) failure(0);\n    }\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/XGRedis/XGRedisUtil.m:83-89"
+    },
+    "3485": {
+        "file_id": 379,
+        "content": "This code appears to be a part of a function handling asynchronous operations in Objective-C. If an error occurs (error is not nil), it calls the error callback with the error. If not, it checks if there was a failure and calls the failure callback with 0 if it exists.",
+        "type": "comment"
+    },
+    "3486": {
+        "file_id": 380,
+        "content": "/ThirdParty/XGWedis/README.md",
+        "type": "filepath"
+    },
+    "3487": {
+        "file_id": 380,
+        "content": "This code is for an asynchronous write function in XGWedis, which supports specifying a time interval to write the database, helping avoid performance issues caused by frequent file updates.",
+        "type": "summary"
+    },
+    "3488": {
+        "file_id": 380,
+        "content": "#  异步写XGWedis\n1. 支持指定时间写一次db (避免变动频繁的文件重复写入,带来的性能问题);",
+        "type": "code",
+        "location": "/ThirdParty/XGWedis/README.md:1-3"
+    },
+    "3489": {
+        "file_id": 380,
+        "content": "This code is for an asynchronous write function in XGWedis, which supports specifying a time interval to write the database, helping avoid performance issues caused by frequent file updates.",
+        "type": "comment"
+    },
+    "3490": {
+        "file_id": 381,
+        "content": "/ThirdParty/XGWedis/XGWedis.h",
+        "type": "filepath"
+    },
+    "3491": {
+        "file_id": 381,
+        "content": "The XGWedis class in the header file provides asynchronous persistence functionality, supporting delegates, observers, or block methods for saving data. It saves data every 10 seconds and allows customization through a saveBlock. Deprecated are delegates and broadcast methods for persistence.",
+        "type": "summary"
+    },
+    "3492": {
+        "file_id": 381,
+        "content": "//\n//  XGWedis.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/5/7.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\ntypedef void (^XGWedisSaveBlock)(id dic);\n/**\n *  MARK:--------------------XGWedis--------------------\n *  说明:\n *  1. XGWedis用来做异步持久化;\n *  2. 目前每10s持久化一次;\n *  3. XGWedis支持delegate/observer/block三种持久化方式;\n *  @version\n *      2023.07.20: 废弃delegate和广播方式持久化 (也没用,留着费眼看代码);\n */\n@interface XGWedis : NSObject\n+(XGWedis*) sharedInstance;\n/**\n *  MARK:--------------------setObject--------------------\n *  @param obj : 数据\n *  @param key : 唯一识别符\n */\n-(void) setObject:(NSObject*)obj forKey:(NSString*)key;\n-(id) objectForKey:(NSString*)key;\n/**\n *  MARK:--------------------指定持久化saveBlock--------------------\n */\n-(void)setSaveBlock:(XGWedisSaveBlock)saveBlock;\n/**\n *  MARK:--------------------清空--------------------\n */\n-(void) clear;\n/**\n *  MARK:--------------------记忆长度--------------------\n */\n-(NSInteger) count;\n/**\n *  MARK:--------------------调用一次保存--------------------\n */\n-(void) save;",
+        "type": "code",
+        "location": "/ThirdParty/XGWedis/XGWedis.h:1-52"
+    },
+    "3493": {
+        "file_id": 381,
+        "content": "This header file defines the XGWedis class, which provides asynchronous persistence functionality. It supports saving data using a delegate, observer, or block method. The code also mentions that delegates and broadcast methods for persistence have been deprecated. XGWedis saves data every 10 seconds and allows users to specify a saveBlock for customization.",
+        "type": "comment"
+    },
+    "3494": {
+        "file_id": 381,
+        "content": "@end",
+        "type": "code",
+        "location": "/ThirdParty/XGWedis/XGWedis.h:54-54"
+    },
+    "3495": {
+        "file_id": 381,
+        "content": "The code signals the end of a section or class, indicating that the following content should not be associated with the previous one.",
+        "type": "comment"
+    },
+    "3496": {
+        "file_id": 382,
+        "content": "/ThirdParty/XGWedis/XGWedis.m",
+        "type": "filepath"
+    },
+    "3497": {
+        "file_id": 382,
+        "content": "This code initializes XGWedis singleton instance, sets properties, and provides methods for handling Redis commands, managing main thread, and saving data to a dictionary.",
+        "type": "summary"
+    },
+    "3498": {
+        "file_id": 382,
+        "content": "//\n//  XGWedis.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/5/7.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import \"XGWedis.h\"\n#import \"XGRedisUtil.h\"\n#import \"XGRedisDictionary.h\"\n#import \"AIKVPointer.h\"\n@interface XGWedis ()\n@property (strong, nonatomic) AsyncMutableDictionary *dic; //异步持久化核心字典\n@property (strong,nonatomic) NSTimer *timer;            //计时器\n@property (nonatomic, copy) XGWedisSaveBlock saveBlock; //持久化block\n@end\n@implementation XGWedis\nstatic XGWedis *_instance;\n+(XGWedis*) sharedInstance{\n    if (_instance == nil) {\n        _instance = [[XGWedis alloc] init];\n    }\n    return _instance;\n}\n-(id) init{\n    self = [super init];\n    if (self) {\n        [self initData];\n    }\n    return self;\n}\n-(void) initData{\n    self.dic = [[AsyncMutableDictionary alloc] init];\n    dispatch_async(dispatch_get_main_queue(), ^{\n        self.timer = [NSTimer scheduledTimerWithTimeInterval:cWedis2DBInterval target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];\n    });\n}\n//MARK:===============================================================",
+        "type": "code",
+        "location": "/ThirdParty/XGWedis/XGWedis.m:1-47"
+    },
+    "3499": {
+        "file_id": 382,
+        "content": "This code is initializing the XGWedis singleton instance and setting up its properties. It creates an AsyncMutableDictionary for core dictionary, sets a timer for notifications, and defines a saveBlock to handle persistence operations. The class also implements methods for handling Redis commands and managing the main thread.",
+        "type": "comment"
+    }
+}

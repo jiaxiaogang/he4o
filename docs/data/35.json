@@ -1,0 +1,13 @@
+{
+    "3500": {
+        "file_id": 382,
+        "content": "//MARK:                     < publicMethod >\n//MARK:===============================================================\n-(void) setObject:(NSObject*)obj forKey:(NSString*)key {\n    if (obj && STRISOK(key)) {\n        [self.dic setObject:obj forKey:key];\n    }\n}\n-(id) objectForKey:(NSString*)key{\n    return [self.dic objectForKey:key];\n}\n-(void)setSaveBlock:(XGWedisSaveBlock)saveBlock{\n    _saveBlock = saveBlock;\n}\n-(void) clear{\n    [self.dic removeAllObjects];\n}\n-(NSInteger) count{\n    return self.dic.count;\n}\n/**\n *  MARK:--------------------持久化--------------------\n *  @version\n *      2023.07.20: 内存提前回收问题 (1.加_block 2.不采用异步存) (因为TC线程本来是并行的,所以选用2,将此处异步废弃掉);\n */\n-(void) save {\n    if (self.saveBlock) {\n        self.saveBlock(self.dic);\n    }\n    [self.dic removeAllObjects];\n}\n//MARK:===============================================================\n//MARK:                     < privateMethod >\n//MARK:===============================================================\n- (void)notificationTimer{\n    [self save];\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/XGWedis/XGWedis.m:48-91"
+    },
+    "3501": {
+        "file_id": 382,
+        "content": "This code defines a class `XGWedis` that provides methods for setting and retrieving objects with keys, clearing the stored data, counting the number of items, and saving the data to a dictionary. The class also has a method for triggering the save action on a timer.",
+        "type": "comment"
+    }
+}

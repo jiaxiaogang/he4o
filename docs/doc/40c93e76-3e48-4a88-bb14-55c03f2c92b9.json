@@ -1,0 +1,10 @@
+{
+    "summary": "This file contains the implementation of AIShortMatchModel_Simple class, which is a part of the SMG_NothingIsAll codebase. It defines a new method that creates an instance of AIShortMatchModel_Simple and initializes its properties with provided arguments.",
+    "details": [
+        {
+            "comment": "This file contains the implementation of AIShortMatchModel_Simple class, which is a part of the SMG_NothingIsAll codebase. It defines a new method that creates an instance of AIShortMatchModel_Simple and initializes its properties with provided arguments.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIShortMatchModel_Simple.m\":0-20",
+            "content": "//\n//  AIShortMatchModel_Simple.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2020/8/20.\n//  Copyright \u00a9 2020\u5e74 XiaoGang. All rights reserved.\n//\n#import \"AIShortMatchModel_Simple.h\"\n@implementation AIShortMatchModel_Simple\n+(AIShortMatchModel_Simple*) newWithAlg_p:(AIKVPointer*)alg_p inputTime:(NSTimeInterval)inputTime isTimestamp:(BOOL)isTimestamp{\n    AIShortMatchModel_Simple *result = [[AIShortMatchModel_Simple alloc] init];\n    result.alg_p = alg_p;\n    result.inputTime = inputTime;\n    result.isTimestamp = isTimestamp;\n    return result;\n}\n@end"
+        }
+    ]
+}

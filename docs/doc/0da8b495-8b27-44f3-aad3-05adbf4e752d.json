@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines the class \"ImvAlgsModelBase\" in a header file, which is used for modeling algorithms related to the IMV model. The class has two properties: delta and urgentTo, both of which are integers representing values transformed through algos. Delta represents the change after algos conversion (e.g., hunger state to urgency), while urgentTo holds values for all kinds of transformations with urgency.",
+    "details": [
+        {
+            "comment": "This code defines the class \"ImvAlgsModelBase\" in a header file, which is used for modeling algorithms related to the IMV model. The class has two properties: delta and urgentTo, both of which are integers representing values transformed through algos. Delta represents the change after algos conversion (e.g., hunger state to urgency), while urgentTo holds values for all kinds of transformations with urgency.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIAlg/AlgsModel/ImvAlgsModel/ImvAlgsModelBase.h\":0-18",
+            "content": "//\n//  ImvAlgsModelBase.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2018/2/6.\n//  Copyright \u00a9 2018\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------Imv\u6a21\u578b\u57fa\u7c7b--------------------\n */\n@interface ImvAlgsModelBase : NSObject\n@property (assign, nonatomic)  NSInteger delta;     //\u7ecfalgs\u8f6c\u5316\u540e\u7684\u503c;\u4f8b\u5982(\u9965\u997f\u72b6\u6001\u5411\u6025\u5207\u5ea6\u7684\u53d8\u5316)\n@property (assign, nonatomic)  NSInteger urgentTo;  //\u7ecfalgs\u8f6c\u5316\u540e\u7684\u503c,\u6240\u6709\u7684\u53d8\u5316,\u90fd\u6709\u8feb\u5207\u5ea6;\n@end"
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+{
+    "summary": "This code file, ImvAlgsModelBase.m, is part of the SMG_NothingIsAll project and contains the implementation of the ImvAlgsModelBase class. It was created by jia on February 6th, 2018 and is protected by a copyright owned by XiaoGang.",
+    "details": [
+        {
+            "comment": "This code file, ImvAlgsModelBase.m, is part of the SMG_NothingIsAll project and contains the implementation of the ImvAlgsModelBase class. It was created by jia on February 6th, 2018 and is protected by a copyright owned by XiaoGang.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIAlg/AlgsModel/ImvAlgsModel/ImvAlgsModelBase.m\":0-12",
+            "content": "//\n//  ImvAlgsModelBase.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2018/2/6.\n//  Copyright \u00a9 2018\u5e74 XiaoGang. All rights reserved.\n//\n#import \"ImvAlgsModelBase.h\"\n@implementation ImvAlgsModelBase\n@end"
+        }
+    ]
+}

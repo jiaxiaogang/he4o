@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines a class TCRethinkUtil in the SMG_NothingIsAll project. It contains a static method spEff4Abs that takes a curFo and its index, along with an itemRunBlock. This method seems to perform some operation on the curFo node and then executes the provided itemRunBlock passing the updated FoNode and its new index. The purpose of this method and the project it belongs to is not clear from this code snippet alone.",
+    "details": [
+        {
+            "comment": "This code defines a class TCRethinkUtil in the SMG_NothingIsAll project. It contains a static method spEff4Abs that takes a curFo and its index, along with an itemRunBlock. This method seems to perform some operation on the curFo node and then executes the provided itemRunBlock passing the updated FoNode and its new index. The purpose of this method and the project it belongs to is not clear from this code snippet alone.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRethink/TCRethinkUtil.h\":0-14",
+            "content": "//\n//  TCRethinkUtil.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/4/20.\n//  Copyright \u00a9 2023\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface TCRethinkUtil : NSObject\n+(void) spEff4Abs:(AIFoNodeBase*)curFo curFoIndex:(NSInteger)curFoIndex itemRunBlock:(void(^)(AIFoNodeBase *absFo,NSInteger absIndex))itemRunBlock;\n@end"
+        }
+    ]
+}

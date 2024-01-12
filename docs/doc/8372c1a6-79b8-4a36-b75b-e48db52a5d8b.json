@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines the protocol ITryActionFoDelegate for a solution interface, used to attach R, P, HN, and GL tasks. It also provides a method actionFoModels that returns an array of fo models. This is part of the SMG_NothingIsAll project and was created by \"air\" on May 28th, 2020. The code has been updated on March 27th, 2021 to support reflection for sub-tasks when outFoModel implements this interface.",
+    "details": [
+        {
+            "comment": "This code defines the protocol ITryActionFoDelegate for a solution interface, used to attach R, P, HN, and GL tasks. It also provides a method actionFoModels that returns an array of fo models. This is part of the SMG_NothingIsAll project and was created by \"air\" on May 28th, 2020. The code has been updated on March 27th, 2021 to support reflection for sub-tasks when outFoModel implements this interface.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/ITryActionFoDelegate.h\":0-24",
+            "content": "//\n//  ITryActionFoDelegate.h\n//  SMG_NothingIsAll\n//\n//  Created by air on 2020/5/28.\n//  Copyright \u00a9 2020\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------fo\u89e3\u51b3\u65b9\u6848\u63a5\u53e3--------------------\n *  @implement\n *      1. DemandModel  : \u7528\u4e8e\u6302\u8f7dR\u548cP\u4efb\u52a1\u7684\u89e3\u51b3\u65b9\u6848;\n *      2. TOAlgModel   : \u7528\u4e8e\u6302\u8f7dHN\u89e3\u51b3\u65b9\u6848;\n *      3. TOValueModel : \u7528\u4e8e\u6302\u8f7dGL\u89e3\u51b3\u65b9\u6848;\n *  @version\n *      2020.05.28: \u7528\u4e8eR-,P-,GL,Hav\u56db\u5904\u65f6\u5e8f\u6784\u5efa\u5b50outModel\u6a21\u578b;\n *      2021.03.27: \u652f\u6301\u53cd\u601d\u5b50\u4efb\u52a1 (\u5f53outFoModel\u5b9e\u73b0\u6b64\u63a5\u53e3\u65f6,\u4e0b\u65b9\u4e3a\u5b50\u4efb\u52a1) (\u53c2\u800322193);\n */\n@protocol ITryActionFoDelegate <NSObject>\n-(NSMutableArray*) actionFoModels;\n@end"
+        }
+    ]
+}

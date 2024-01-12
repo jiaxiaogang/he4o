@@ -1,0 +1,15 @@
+{
+    "summary": "The code defines an `NVNodeView` class inheriting from `UIView`, with a delegate protocol for view configuration and associated data object. Additionally, there are methods for handling light string, title, and show time management.",
+    "details": [
+        {
+            "comment": "This code defines a `NVNodeView` class that inherits from `UIView` and includes a delegate protocol named `NVNodeViewDelegate`. The delegate protocol has methods for configuring various aspects of the view, such as its subview, color, alpha, and click event handling. The `NVNodeView` instance is associated with a data object, which is typically a pointer.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/SMGNetVision/Core/View/NVNodeView.h\":0-36",
+            "content": "//\n//  NVNodeView.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/6/11.\n//  Copyright \u00a9 2019\u5e74 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n/**\n *  MARK:--------------------NodeView\u4ee3\u7406--------------------\n *  @desc : \u8fd0\u884c\u5728nv.core\u5185\u90e8,nodeView\u7684\u6bcf\u4e2a\u65b9\u6cd5\u5fc5\u987b\u88ab\u5b9e\u73b0;\n */\n@protocol NVNodeViewDelegate <NSObject>\n-(UIView*) nodeView_GetCustomSubView:(id)nodeData;\n-(UIColor *)nodeView_GetNodeColor:(id)nodeData;\n-(UIColor *)nodeView_GetRightColor:(id)nodeData;\n-(CGFloat)nodeView_GetNodeAlpha:(id)nodeData;\n-(NSString*) nodeView_OnClick:(id)nodeData;\n-(void) nodeView_TopClick:(id)nodeData;\n-(void) nodeView_BottomClick:(id)nodeData;\n-(void) nodeView_LeftClick:(id)nodeData;\n-(void) nodeView_RightClick:(id)nodeData;\n-(void) nodeView_LongClick:(id)nodeData direction:(DirectionType)direction;\n@end\n/**\n *  MARK:--------------------\u8282\u70b9view--------------------\n */\n@interface NVNodeView : UIView\n@property (readonly,strong, nonatomic) id data;//\u4e00\u822c\u4e3a\u4e00\u4e2a\u6307\u9488\n@property (weak, nonatomic) id<NVNodeViewDelegate> delegate;\n-(void) setDataWithNodeData:(id)nodeData;"
+        },
+        {
+            "comment": "The code defines a class with methods for setting and clearing the light string, getting the current light string, and setting the title and show time.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/SMGNetVision/Core/View/NVNodeView.h\":38-47",
+            "content": "/**\n *  MARK:--------------------\u95ea\u70c1--------------------\n */\n-(void) light:(NSString*)lightStr;\n-(void) clearLight;\n-(NSString*) getLightStr;\n-(void) setTitle:(NSString*)titleStr showTime:(CGFloat)showTime;\n@end"
+        }
+    ]
+}

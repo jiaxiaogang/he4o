@@ -1,0 +1,10 @@
+{
+    "summary": "TOModelVision.h file from the codebase contains declarations for the TOModelVision class, which provides methods to visualize memory models. It defines two static methods: cur2Root and cur2Sub, which generate visualizations of a model's relationship from the current node to its root or sub-nodes respectively.",
+    "details": [
+        {
+            "comment": "TOModelVision.h file from the codebase contains declarations for the TOModelVision class, which provides methods to visualize memory models. It defines two static methods: cur2Root and cur2Sub, which generate visualizations of a model's relationship from the current node to its root or sub-nodes respectively.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/TOModelVision/TOModelVision.h\":0-28",
+            "content": "//\n//  TOModelVision.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/5/11.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------\u8f93\u51fa\u77ed\u65f6\u8bb0\u5fc6\u53ef\u89c6\u5316--------------------\n */\n@class TOModelBase;\n@interface TOModelVision : NSObject\n/**\n *  MARK:--------------------\u4ece\u5f53\u524d\u5230root\u53ef\u89c6\u5316\u65e5\u5fd7--------------------\n *  @desc \u4ee5\u5c42\u7ea7\u663e\u793a;\n */\n+(NSString*) cur2Root:(TOModelBase*)curModel;\n/**\n *  MARK:--------------------\u4ece\u5f53\u524d\u5230sub\u53ef\u89c6\u5316\u65e5\u5fd7--------------------\n *  @desc \u4ee5\u65e0\u5e8f\u5217\u8868\u8868\u793a;\n */\n+(NSString*) cur2Sub:(TOModelBase*)curModel;\n@end"
+        }
+    ]
+}

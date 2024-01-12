@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines the `AIAbsAlgNode` class, which is an extension of the `AIAlgNodeBase` class. It mentions two features: 1) The removal of duplicates in `absAlgNode's` dependence index and 2) support for values_p (potentially representing a circle formed by micro-information).",
+    "details": [
+        {
+            "comment": "This code defines the `AIAbsAlgNode` class, which is an extension of the `AIAlgNodeBase` class. It mentions two features: 1) The removal of duplicates in `absAlgNode's` dependence index and 2) support for values_p (potentially representing a circle formed by micro-information).",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAbsAlgNode.h\":0-17",
+            "content": "//\n//  AIAbsAlgNode.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2018/12/7.\n//  Copyright \u00a9 2018\u5e74 XiaoGang. All rights reserved.\n//\n#import \"AIAlgNodeBase.h\"\n/**\n *  MARK:--------------------\u62bd\u8c61\u6982\u5ff5\u8282\u70b9--------------------\n *  1. absAlgNode\u7684\u53bb\u91cd\u4f9d\u8d56index\u7d22\u5f15\u4e2d\u7684\u53bb\u91cd;\n *  2. value_p\u4ee5\u540e\u8981\u518d\u6269\u5c55\u652f\u6301values_p (\u5982:\u4e00\u4e2a\u5706\u5f62\u7531\u5fae\u4fe1\u606fabcdefg\u7ec4\u6210)\n */\n@interface AIAbsAlgNode : AIAlgNodeBase\n@end"
+        }
+    ]
+}

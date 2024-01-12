@@ -1,0 +1,10 @@
+{
+    "summary": "This file, TOMVision2.h, is part of the \"SMG_NothingIsAll\" project and defines a UIView class called TOMVision2 with methods for updating frame, clearing network, stopping work, opening, and closing. It is copyrighted by XiaoGang in 2022.",
+    "details": [
+        {
+            "comment": "This file, TOMVision2.h, is part of the \"SMG_NothingIsAll\" project and defines a UIView class called TOMVision2 with methods for updating frame, clearing network, stopping work, opening, and closing. It is copyrighted by XiaoGang in 2022.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/TOMVision2/TOMVision2.h\":0-31",
+            "content": "//\n//  TOMVision2.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/13.\n//  Copyright \u00a9 2022\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface TOMVision2 : UIView\n/**\n *  MARK:--------------------\u8bbe\u7f6e\u5185\u5bb9--------------------\n */\n-(void) updateFrame;\n/**\n *  MARK:--------------------\u6e05\u7a7a\u7f51\u7edc--------------------\n */\n-(void) clear;\n/**\n *  MARK:--------------------\u505c\u6b62\u5de5\u4f5c--------------------\n */\n-(void) setStop:(BOOL)stop;\n//\u5f00\u5173\n-(void) open;\n-(void) close;\n@end"
+        }
+    ]
+}

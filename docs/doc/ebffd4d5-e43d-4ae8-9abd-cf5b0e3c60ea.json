@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines the AIVisionAlgs class, which contains vision algorithms for a virtual scene rather than real camera input. The class has properties such as size, color, shape, position, and speed. It also includes a method commitView that takes two UIViews and a rect as parameters to perform some action related to vision algorithms.",
+    "details": [
+        {
+            "comment": "This code defines the AIVisionAlgs class, which contains vision algorithms for a virtual scene rather than real camera input. The class has properties such as size, color, shape, position, and speed. It also includes a method commitView that takes two UIViews and a rect as parameters to perform some action related to vision algorithms.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/CortexAlgorithms/Vision/AIVisionAlgs.h\":0-25",
+            "content": "//\n//  AIVisionAlgs.h\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/11/15.\n//  Copyright \u00a9 2018\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------\u89c6\u89c9\u7b97\u6cd5--------------------\n *  1. \u5927\u5c0f : size\n *  2. \u989c\u8272 : color\n *  3. \u5f62\u72b6(\u5706\u89d2) : radius\n *  4. \u76f8\u5bf9\u4f4d\u7f6e : origin\n *  5. \u76f8\u5bf9\u901f\u5ea6 : speed\n *  @desc\n *      1. \u76ee\u524dHE\u4e3a\u865a\u62df\u573a\u666f\u4f2a\u89c6\u89c9,\u5e76\u975e\u771f\u6b63\u6444\u50cf\u5934\u89c6\u89c9;\n *      2. \u76ee\u524d\u5185\u6838\u7a00\u758f\u7801\u4e0d\u652f\u6301\u6a21\u7cca\u5339\u914d,\u6240\u4ee5\u5f88\u591a\u7b97\u6cd5\u503c,\u91c7\u7528\u6574\u578b,\u800c\u975efloat;\n */\n@interface AIVisionAlgs : NSObject\n+(void) commitView:(UIView*)selfView targetView:(UIView*)targetView rect:(CGRect)rect;\n@end"
+        }
+    ]
+}

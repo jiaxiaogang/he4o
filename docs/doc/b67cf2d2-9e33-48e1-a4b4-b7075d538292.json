@@ -1,0 +1,10 @@
+{
+    "summary": "This code is the header file for TCPlan class in SMG_NothingIsAll project. It defines a method plan:rootDemand:rootFo:scoreDic: that takes a root demand, root Fo model and a score dictionary as parameters, and returns a TCResult object containing the result of the plan execution. The comment indicates that this method replaces the old dataOut method from the previous architecture (referencing 24195). The method was first moved to TCSolution class on November 28th, and then later separated into its own independent TCPlan class on December 15th.",
+    "details": [
+        {
+            "comment": "This code is the header file for TCPlan class in SMG_NothingIsAll project. It defines a method plan:rootDemand:rootFo:scoreDic: that takes a root demand, root Fo model and a score dictionary as parameters, and returns a TCResult object containing the result of the plan execution. The comment indicates that this method replaces the old dataOut method from the previous architecture (referencing 24195). The method was first moved to TCSolution class on November 28th, and then later separated into its own independent TCPlan class on December 15th.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCPlan/TCPlan.h\":0-21",
+            "content": "//\n//  TCPlan.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/12/15.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------TCPlan\u8ba1\u5212--------------------\n *  @desc \u5373\u65e7\u67b6\u6784\u4e2d\u7684dataOut\u65b9\u6cd5 (\u53c2\u800324195);\n *  @version\n *      2021.11.28: \u5c06dataOut\u8fc1\u79fb\u5230TCSolution\u4e2d\u505a\u4e3a\u5165\u53e3\u65b9\u6cd5;\n *      2021.12.15: \u518d\u5c06\u5b83\u8fc1\u79fb\u5230TCPlan\u72ec\u7acb\u51fa\u6765;\n */\n@interface TCPlan : NSObject\n+(TCResult*) plan:(DemandModel*)rootDemand rootFo:(TOFoModel*)rootFo scoreDic:(NSMutableDictionary*)scoreDic;\n@end"
+        }
+    ]
+}

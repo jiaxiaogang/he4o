@@ -1,0 +1,20 @@
+{
+    "summary": "The TVLineView class, part of TOMVision2 library, is a UIView that initializes properties and subviews, calculates line length, position, rotation angle, and refreshes display. It likely handles line operations/visualization within the application.",
+    "details": [
+        {
+            "comment": "TVLineView is a custom UIView that initializes its properties and subviews. It sets the background color to clear, height to 1.0f, disables user interaction, and configures layer properties such as masksToBounds. It also adds a lineView as a subview with specific background color and alpha value. initData and initDisplay methods are empty in this implementation.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/TOMVision2/Line/TVLineView.m\":0-52",
+            "content": "//\n//  TVLineView.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/21.\n//  Copyright \u00a9 2022\u5e74 XiaoGang. All rights reserved.\n//\n#import \"TVLineView.h\"\n#import \"NVConfig.h\"\n#import \"NVViewUtil.h\"\n@interface TVLineView ()\n@property (strong,nonatomic) UIView *lineView;\n@end\n@implementation TVLineView\n-(id) init {\n    self = [super init];\n    if(self != nil){\n        [self initView];\n        [self initData];\n        [self initDisplay];\n    }\n    return self;\n}\n-(void) initView{\n    //self\n    [self setBackgroundColor:[UIColor clearColor]];\n    self.height = 1.0f;\n    [self setUserInteractionEnabled:false];\n    [self.layer setMasksToBounds:true];\n    [self.layer setMasksToBounds:false];\n    //lineView\n    self.lineView = [[UIView alloc] init];\n    [self.lineView setBackgroundColor:UIColorWithRGBHex(0xDDDDDD)];\n    [self addSubview:self.lineView];\n    [self.lineView setAlpha:0.8f];\n    [self.lineView.layer setMasksToBounds:false];\n}\n-(void) initData{\n}\n-(void) initDisplay{\n}\n//MARK:==============================================================="
+        },
+        {
+            "comment": "This code refreshes the display of a line view by obtaining the coordinates of two nodes, calculating line length and center position, determining rotation angle, setting frame size and rotation transform, and finally setting the line's center.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/TOMVision2/Line/TVLineView.m\":53-81",
+            "content": "//MARK:                     < method >\n//MARK:===============================================================\n-(void) refreshDisplayWithDataA:(UIView*)nodeA nodeB:(UIView*)nodeB{\n    //1. \u83b7\u53d6\u4e24\u7aef\u7684\u5750\u6807\n    CGPoint pointA = nodeA.center;\n    CGPoint pointB = nodeB.center;\n    //pointA = [nodeA.superview convertPoint:nodeA.center toView:self.contentView];\n    //2. \u753b\u7ebf_\u8ba1\u7b97\u7ebf\u957f\u5ea6\n    float width = [NVViewUtil distancePoint:pointA second:pointB];\n    //3. \u8ba1\u7b97\u7ebf\u4e2d\u5fc3\u4f4d\u7f6e\n    float centerX = (pointA.x + pointB.x) / 2.0f;\n    float centerY = (pointA.y + pointB.y) / 2.0f;\n    //4. \u65cb\u8f6c\u89d2\u5ea6\n    CGFloat angle = [NVViewUtil anglePIPoint:pointA second:pointB];\n    //5. \u7ebf\u6846\u957f\u5ea6;\n    [self.layer setTransform:CATransform3DMakeRotation(0, 0, 0, 1)];\n    self.width = width;\n    self.height = (nodeA.height + nodeB.height) * 0.05f;\n    //6. \u7ebf\u663e\u793a\u957f\u5ea6;\n    [self.lineView setFrame:CGRectMake(0, 0, self.width, self.height)];\n    //7. \u65cb\u8f6c\u6307\u5411\u65b9\u5411;\n    [self.layer setTransform:CATransform3DMakeRotation(angle, 0, 0, 1)];\n    self.center = CGPointMake(centerX, centerY);"
+        },
+        {
+            "comment": "These lines define the end of a class named \"TVLineView\" in Objective-C, which appears to be part of TOMVision2 library. The class likely handles line-related operations or visualization within the application.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/TOMVision2/Line/TVLineView.m\":82-84",
+            "content": "}\n@end"
+        }
+    ]
+}

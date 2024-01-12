@@ -1,0 +1,10 @@
+{
+    "summary": "This code file contains the interface for the TCRefrection class, which is part of the AIThinkingControl module. It has two methods: refrection that takes an AICansetModel and a DemandModel as parameters, and actionRefrection that takes a TOFoModel as a parameter. Both methods return a boolean value.",
+    "details": [
+        {
+            "comment": "This code file contains the interface for the TCRefrection class, which is part of the AIThinkingControl module. It has two methods: refrection that takes an AICansetModel and a DemandModel as parameters, and actionRefrection that takes a TOFoModel as a parameter. Both methods return a boolean value.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRefrection/TCRefrection.h\":0-16",
+            "content": "//\n//  TCRefrection.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/8/23.\n//  Copyright \u00a9 2022\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@class AICansetModel,DemandModel;\n@interface TCRefrection : NSObject\n+(BOOL) refrection:(AICansetModel*)checkCanset demand:(DemandModel*)demand;\n+(BOOL) actionRefrection:(TOFoModel*)baseFoModel;\n@end"
+        }
+    ]
+}

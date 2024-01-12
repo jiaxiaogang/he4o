@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines the TCEffect class, which is used to record the efficiency of Demand solutions. It provides two methods, rEffect and hEffect, which take a TOFoModel as a parameter. These methods are likely called when creating Demand tasks or evaluating their effectiveness over time. The resulting effectiveness data is stored in the effectDic of the task's source fos.",
+    "details": [
+        {
+            "comment": "This code defines the TCEffect class, which is used to record the efficiency of Demand solutions. It provides two methods, rEffect and hEffect, which take a TOFoModel as a parameter. These methods are likely called when creating Demand tasks or evaluating their effectiveness over time. The resulting effectiveness data is stored in the effectDic of the task's source fos.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCEffect/TCEffect.h\":0-23",
+            "content": "//\n//  TCEffect.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/5/22.\n//  Copyright \u00a9 2022\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------\u8bb0\u5f55Demand\u7684\u89e3\u51b3\u65b9\u6848\u6709\u6548\u7387--------------------\n *  @desc \u5bf9\u65b0\u7684\u89e3\u51b3\u65b9\u6848\u6709\u6548\u6027\u7684\u53cd\u7701 (\u53c2\u800326094 & 26095);\n *      1. \u6784\u5efaDemand\u4efb\u52a1\u65f6\u8c03\u7528;\n *      2. \u6709\u6548\u6027\u5012\u8ba1\u65f6\u89e6\u53d1;\n *      3. \u6839\u636edemand.status\u72b6\u6001\u5224\u65ad\u6709\u6548\u6027;\n *      4. \u5c06\u6709\u6548\u6027,\u8ba1\u5165\u4efb\u52a1\u6e90fos\u7684effectDic\u4e2d;\n */\n@interface TCEffect : NSObject\n+(void) rEffect:(TOFoModel*)rSolution;\n+(void) hEffect:(TOFoModel*)hSolution;\n@end"
+        }
+    ]
+}

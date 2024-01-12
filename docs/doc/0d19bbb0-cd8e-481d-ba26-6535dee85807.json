@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines the \"AppDelegate\" class, which inherits from UIResponder and adopts the UIApplicationDelegate protocol. It includes properties for a window, NVView, HeLogView, TOMVision2, and an integer for bird birth position mode. The class also provides three methods: getTopDisplayViewController, setTipLog, and setNoLogMode.",
+    "details": [
+        {
+            "comment": "This code defines the \"AppDelegate\" class, which inherits from UIResponder and adopts the UIApplicationDelegate protocol. It includes properties for a window, NVView, HeLogView, TOMVision2, and an integer for bird birth position mode. The class also provides three methods: getTopDisplayViewController, setTipLog, and setNoLogMode.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AppDelegate.h\":0-23",
+            "content": "//\n//  AppDelegate.h\n//  SMG_NothingIsAll\n//\n//  Created by \u8d3e  on 2017/4/7.\n//  Copyright \u00a9 2017\u5e74 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n@class NVView,HeLogView,TOMVision2;\n@interface AppDelegate : UIResponder <UIApplicationDelegate>\n@property (strong, nonatomic) UIWindow *window;\n@property (strong, nonatomic) NVView *nvView;\n@property (strong, nonatomic) HeLogView *heLogView;\n@property (strong, nonatomic) TOMVision2 *tv;\n@property (assign, nonatomic) NSInteger birthPosMode;//\u5c0f\u9e1f\u51fa\u751f\u5730 (0\u968f\u673a,1\u968f\u673a\u504f\u5c4f\u4e2d,2\u5c4f\u4e2d,3\u5b89\u5168\u5730\u5e26\u968f\u673a);\n-(UIViewController*) getTopDisplayViewController;\n-(void) setTipLog:(NSString*)tipLog;\n-(void)setNoLogMode:(BOOL)noLogMode; //\u65e0\u65e5\u5fd7\u6a21\u5f0f;\n@end"
+        }
+    ]
+}

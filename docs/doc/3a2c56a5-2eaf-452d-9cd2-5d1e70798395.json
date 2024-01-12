@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines the AIMatchCansetModel class, which represents a single barcode recognition result. It takes in a matchFo (detected old Canset Fo) and indexDic (mapping between new and old Cansets) as parameters and initializes the corresponding properties.",
+    "details": [
+        {
+            "comment": "This code defines the AIMatchCansetModel class, which represents a single barcode recognition result. It takes in a matchFo (detected old Canset Fo) and indexDic (mapping between new and old Cansets) as parameters and initializes the corresponding properties.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/Model/AIMatchCansetModel.h\":0-23",
+            "content": "//\n//  AIMatchCansetModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/3/29.\n//  Copyright \u00a9 2023\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------Canset\u5355\u6761\u8bc6\u522b\u7ed3\u679c--------------------\n */\n@interface AIMatchCansetModel : NSObject\n+(AIMatchCansetModel*) newWithMatchFo:(AIFoNodeBase*)matchFo indexDic:(NSDictionary*)indexDic;\n//\u8bc6\u522b\u5230\u7684oldCansetFo;\n@property (strong, nonatomic) AIFoNodeBase *matchFo;\n//\u65b0\u65e7Canset\u6620\u5c04;\n@property (strong, nonatomic) NSDictionary *indexDic;\n@end"
+        }
+    ]
+}

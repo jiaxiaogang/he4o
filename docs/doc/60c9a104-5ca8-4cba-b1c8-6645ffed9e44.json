@@ -1,0 +1,10 @@
+{
+    "summary": "This header file defines the NSFile_Extension class, which provides methods to collect all subfiles, subfolders, and both subfiles and folders in a given path. These methods are useful for retrieving comprehensive information about a directory structure.",
+    "details": [
+        {
+            "comment": "This header file defines the NSFile_Extension class, which provides methods to collect all subfiles, subfolders, and both subfiles and folders in a given path. These methods are useful for retrieving comprehensive information about a directory structure.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Demo/Extension/NSFile+Extension.h\":0-22",
+            "content": "//\n//  NSFile+Extension.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2020/12/9.\n//  Copyright \u00a9 2020\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface NSFile_Extension : NSObject\n//\u6240\u6709\u5b50\u6587\u4ef6\u6536\u96c6 notnull\n+(NSArray*)subFiles:(NSString*)path;\n+ (NSArray*)subFiles_AllDeep:(NSString*)dirString;\n//\u6240\u6709\u5b50\u6587\u4ef6\u5939\u6536\u96c6 notnull;\n+(NSArray*)subFolders:(NSString*)path;\n//\u6240\u6709\u5b50\u6587\u4ef6\u4e0e\u6587\u4ef6\u5939\u5168\u6536\u96c6 notnull;\n+(NSArray*)subPaths:(NSString*)path;\n@end"
+        }
+    ]
+}

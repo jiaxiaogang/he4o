@@ -1,0 +1,10 @@
+{
+    "summary": "The code outlines the changes and improvements made to the architecture, such as deprecating p tasks and effect modules. It suggests a structured code layout with TC sections for input, recognition, learning, demand, output, score, plan, can set, scene, solution, transfer, and action. The goal is to organize Util and Model files in their respective locations.",
+    "details": [
+        {
+            "comment": "The code outlines the changes and improvements made to the architecture, such as deprecating p tasks and effect modules. It suggests a structured code layout with TC sections for input, recognition, learning, demand, output, score, plan, can set, scene, solution, transfer, and action. The goal is to organize Util and Model files in their respective locations.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/README.md\":0-32",
+            "content": "### version\n* 2021.11.28: \u91cd\u6784\u4e3a2021TC\u67b6\u6784 (\u53c2\u800324164\u67b6\u6784\u56fe);\n### \u5f85\u6539\u52a8\n1. \u5e9f\u5f03p\u4efb\u52a1;\n2. \u5e9f\u5f03effect\u6a21\u5757 (\u53c2\u800327205);\n3. \u67b6\u6784\u6574\u7406: \u4ee3\u7801\u7ed3\u6784\u5e94\u8be5\u4e5f\u662f\u7ed3\u6784\u5316\u4e00\u5206\u4e8c\u5206\u56db\u5206\u516b\u5982\u4e0b:\n    * TC\n        * IN\n            * \u5165(\u611f\u77e5)\n                * TCInput\n            * \u8ba4(\u8bc6\u522b)\n                * TCRecognition\n            * \u77e5(\u5b66\u4e60)\n                * TCLearning\n            * \u9700(\u4efb\u52a1)\n                * TCDemand\n        * OUT\n            * \u6c42(\u8ba1\u5212)\n                * TCScore\n                * TCPlan\n            * \u51b3(\u6c42\u89e3)\n                * TCCanset\n                * TCScene\n                * TCSolution\n            * \u7b56(\u8fc1\u79fb)\n                * TCTransfer\n            * \u51fa(\u884c\u4e3a)\n                * TCAction\n4. \u67b6\u6784\u6574\u7406: \u7136\u540e\u5c06\u5404\u7ea7\u7684Util\u548cModel\u90fd\u6574\u7406\u5230\u81ea\u5df1\u7684\u4f4d\u7f6e;"
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+{
+    "summary": "Defines constants for node size, module width and height, notification bar height, show name duration, layer spacing, node horizontal and vertical spacing, and node swipe distance.",
+    "details": [
+        {
+            "comment": "Defines constants for node size, module width and height, notification bar height, show name duration, layer spacing, node horizontal and vertical spacing, and node swipe distance.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/SMGNetVision/NVConfig.h\":0-18",
+            "content": "//\n//  NVConfig.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/8/13.\n//  Copyright \u00a9 2019\u5e74 XiaoGang. All rights reserved.\n//\n#define cNodeSize (isSimulator ? 23 : 27)\n#define cModuleWidth MAX(ScreenWidth * 0.25,235)\n#define cModuleHeight cNVHeight - 24\n#define cNVHeight MAX(ScreenHeight * 0.7,280)\n#define cShowNameTime 3000\n#define cLayerSpace 3.0f * cNodeSize    //\u5c42\u95f4\u8ddd\n#define cXSpace 0.9f * cNodeSize        //\u8282\u70b9\u6a2a\u95f4\u8ddd\n#define cYSpace 0.5f * cNodeSize        //\u540c\u5c42\u7eb5\u95f4\u8ddd\n#define cNodeGesDistance cNodeSize      //\u8282\u70b9\u6ed1\u52a8\u64cd\u4f5c\u8ddd\u79bb"
+        }
+    ]
+}

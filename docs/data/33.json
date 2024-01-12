@@ -1,0 +1,535 @@
+{
+    "3300": {
+        "file_id": 348,
+        "content": "//\n//  TOModelVision.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/5/11.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import \"TOModelVision.h\"\n#import \"TOModelBase.h\"\n#import \"PerceptDemandModel.h\"\n#import \"ReasonDemandModel.h\"\n#import \"AIMatchFoModel.h\"\n#import \"TOModelVisionUtil.h\"\n#import \"UnorderItemModel.h\"\n@implementation TOModelVision\n+(NSString*) cur2Root:(TOModelBase*)curModel{\n    //1. 数据准备\n    NSMutableString *mStr = [[NSMutableString alloc] init];\n    TOModelBase *single = curModel;\n    //2. 递归取值\n    while (single) {\n        NSString *singleStr = [self singleVision:single];\n        //3. 当前/base有效时,插入首部一行;\n        if (STRISOK(singleStr)) {\n            if (STRISOK(mStr)) [mStr insertString:@\"\\n   ↑\\n\" atIndex:0];\n            [mStr insertString:singleStr atIndex:0];\n        }\n        single = single.baseOrGroup;\n    }\n    //4. 头尾\n    [mStr insertString:@\"\\n︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹\\n\" atIndex:0];\n    [mStr appendString:@\"\\n︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺\\n\"];",
+        "type": "code",
+        "location": "/ThirdParty/TOModelVision/TOModelVision.m:1-38"
+    },
+    "3301": {
+        "file_id": 348,
+        "content": "This code defines a function `cur2Root` in the class `TOModelVision`. It prepares data by creating an empty mutable string, initializes the current model as `single`, and then recursively retrieves values from each nested model until reaching the root model. The retrieved values are inserted at the beginning of the string with a specific format, and the string is also appended with additional characters at the beginning and end.",
+        "type": "comment"
+    },
+    "3302": {
+        "file_id": 348,
+        "content": "    return mStr;\n}\n/**\n *  MARK:--------------------从当前到sub可视化日志--------------------\n *  @version\n *      2021.06.03: 修复singleDesc为空时,appendString:nil,闪退的问题;\n */\n+(NSString*) cur2Sub:(TOModelBase*)curModel{\n    //1. 数据准备\n    NSMutableString *result = [[NSMutableString alloc] init];\n    //2. 转为无序列表模型\n    NSMutableArray *unorderModels = [TOModelVisionUtil convertCur2Sub2UnorderModels:curModel];\n    //3. 转为logStr\n    for (UnorderItemModel *unorder in unorderModels) {\n        //4. 将unorderModel转为line日志;\n        NSMutableString *line = [[NSMutableString alloc] init];\n        [line appendString:@\"\\n\"];//换行\n        for (int i = 0; i < unorder.tabNum; i++) [line appendString:@\"  \"];//缩进\n        [line appendString:STRFORMAT(@\"%@ \",[TOModelVisionUtil getUnorderPrefix:unorder.tabNum])];//无序列标\n        [line appendString:STRTOOK([self singleVision:unorder.data])];//内容\n        //5. 收集line\n        [result appendString:line];\n    }\n    //6. 头尾\n    [result insertString:@\"\\n︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹︹\" atIndex:0];",
+        "type": "code",
+        "location": "/ThirdParty/TOModelVision/TOModelVision.m:39-69"
+    },
+    "3303": {
+        "file_id": 348,
+        "content": "This function converts a current model to a sub-visualization log. It prepares the data, converts it to an unordered list of models, then for each unordered model, creates a line log with indentation and content, finally appending it to the result string. The result string is enclosed by special characters at the beginning and end.",
+        "type": "comment"
+    },
+    "3304": {
+        "file_id": 348,
+        "content": "    [result appendString:@\"\\n︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺︺\\n\"];\n    return result;\n}\n/**\n *  MARK:--------------------单model转str--------------------\n *  @version\n *      2021.06.01: 支持ReasonDemandModel;\n *  @result notnull\n */\n+(NSString*) singleVision:(TOModelBase*)model{\n    //1. 取content_p\n    AIKVPointer *content_p = nil;\n    if (ISOK(model, ReasonDemandModel.class)) {\n        ReasonDemandModel *rData = (ReasonDemandModel*)model;\n        content_p = rData.protoOrRegroupFo;\n    }else if(ISOK(model, TOModelBase.class)){\n        content_p = model.content_p;\n    }\n    //2. 转成str\n    if (content_p) {\n        if (PitIsFo(content_p)) {\n            AIFoNodeBase *node = [SMGUtils searchNode:content_p];\n            return STRFORMAT(@\"%@: %@->%@ (%@ | %@)\",NSStringFromClass(model.class),Pit2FStr(content_p),Mvp2Str(node.cmvNode_p),content_p.typeStr,TOStatus2Str(model.status));\n        }else{\n            return STRFORMAT(@\"%@: %@ (%@ | %@)\",NSStringFromClass(model.class),Pit2FStr(content_p),content_p.typeStr,TOStatus2Str(model.status));",
+        "type": "code",
+        "location": "/ThirdParty/TOModelVision/TOModelVision.m:70-96"
+    },
+    "3305": {
+        "file_id": 348,
+        "content": "This function converts a model to a string representation, supporting both ReasonDemandModel and TOModelBase classes. It retrieves the content_p pointer from the input model and converts it to a string, including additional information about the model's class and status. The result is then returned as a formatted NSString.",
+        "type": "comment"
+    },
+    "3306": {
+        "file_id": 348,
+        "content": "        }\n    }else{\n        return STRFORMAT(@\"%@\",NSStringFromClass(model.class));\n    }\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/TOModelVision/TOModelVision.m:97-104"
+    },
+    "3307": {
+        "file_id": 348,
+        "content": "If class is a subclass of model, return nil; otherwise, format string with NSStringFromClass.",
+        "type": "comment"
+    },
+    "3308": {
+        "file_id": 349,
+        "content": "/ThirdParty/TOModelVision/TOModelVisionUtil.h",
+        "type": "filepath"
+    },
+    "3309": {
+        "file_id": 349,
+        "content": "This code is a header file for TOModelVisionUtil class, which is a part of the SMG_NothingIsAll project. It provides methods to convert a current model to an unordered list model array across all branches and retrieve the prefix symbol for an unordered list based on tab number.",
+        "type": "summary"
+    },
+    "3310": {
+        "file_id": 349,
+        "content": "//\n//  TOModelVisionUtil.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/6/3.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------输出短时可视化工具类--------------------\n */\n@class TOModelBase;\n@interface TOModelVisionUtil : NSObject\n/**\n *  MARK:--------------------从当前向所有分支,转为无序列表模型数组--------------------\n */\n+(NSMutableArray*) convertCur2Sub2UnorderModels:(TOModelBase*)curModel;\n/**\n *  MARK:--------------------获取无序列表的前缀符号--------------------\n */\n+(NSString*) getUnorderPrefix:(int)tabNum;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/TOModelVision/TOModelVisionUtil.h:1-27"
+    },
+    "3311": {
+        "file_id": 349,
+        "content": "This code is a header file for TOModelVisionUtil class, which is a part of the SMG_NothingIsAll project. It provides methods to convert a current model to an unordered list model array across all branches and retrieve the prefix symbol for an unordered list based on tab number.",
+        "type": "comment"
+    },
+    "3312": {
+        "file_id": 350,
+        "content": "/ThirdParty/TOModelVision/TOModelVisionUtil.m",
+        "type": "filepath"
+    },
+    "3313": {
+        "file_id": 350,
+        "content": "The code defines a method that converts TOModelBase objects into arrays of UnorderItemModel, handling sub-models with increasing tab numbers. It also returns a list of strings representing the hierarchical structure of an ordered list using a mapping function.",
+        "type": "summary"
+    },
+    "3314": {
+        "file_id": 350,
+        "content": "//\n//  TOModelVisionUtil.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/6/3.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import \"TOModelVisionUtil.h\"\n#import \"UnorderItemModel.h\"\n#import \"TOModelBase.h\"\n#import \"TOUtils.h\"\n@implementation TOModelVisionUtil\n+(NSMutableArray*) convertCur2Sub2UnorderModels:(TOModelBase*)curModel{\n    return [self convertCur2Sub2UnorderModels:curModel curTabNum:0];\n}\n+(NSMutableArray*) convertCur2Sub2UnorderModels:(TOModelBase*)curModel curTabNum:(int)curTabNum{\n    //1. 数据准备;\n    NSMutableArray *result = [[NSMutableArray alloc] init];\n    if (!curModel) return result;\n    //2. 收集当前\n    UnorderItemModel *model = [[UnorderItemModel alloc] init];\n    model.data = curModel;\n    model.tabNum = curTabNum;\n    [result addObject:model];\n    //3. 取所有分支;\n    NSMutableArray *subModels = [TOUtils getSubOutModels:curModel];\n    for (TOModelBase *subModel in subModels) {\n        //4. 分支再递归其分支 (并缩进+1);\n        NSMutableArray *subAllDeep = [self convertCur2Sub2UnorderModels:subModel curTabNum:curTabNum + 1];",
+        "type": "code",
+        "location": "/ThirdParty/TOModelVision/TOModelVisionUtil.m:1-35"
+    },
+    "3315": {
+        "file_id": 350,
+        "content": "This code is part of the TOModelVisionUtil class in the SMG_NothingIsAll codebase. It defines a method called convertCur2Sub2UnorderModels that converts a given model into an array of UnorderItemModel objects, recursively handling sub-models with increasing tab numbers to represent depth levels. The method takes a TOModelBase object and an integer representing the current tab number as inputs, and returns an NSMutableArray containing the converted models. It initializes an empty result array, checks if the input model is valid, creates an UnorderItemModel for the input model with the current tab number, adds it to the result array, retrieves all sub-models of the input model, and recursively calls itself on each sub-model with the next tab number.",
+        "type": "comment"
+    },
+    "3316": {
+        "file_id": 350,
+        "content": "        [result addObjectsFromArray:subAllDeep];\n    }\n    return result;\n}\n/**\n *  MARK:--------------------获取无序列表的前缀符号--------------------\n */\n+(NSString*) getUnorderPrefix:(int)tabNum{\n    if (tabNum % 5 == 0) {\n        return @\"*\";\n    }else if (tabNum % 5 == 1) {\n        return @\">\";\n    }else if (tabNum % 5 == 2) {\n        return @\"-\";\n    }else if (tabNum % 5 == 3) {\n        return @\"#\";\n    }else if (tabNum % 5 == 4) {\n        return @\"⊙\";\n    }\n    return @\"符号错误\";\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/TOModelVision/TOModelVisionUtil.m:36-59"
+    },
+    "3317": {
+        "file_id": 350,
+        "content": "This method returns a list of strings that represent the hierarchical structure of an ordered list, with each element represented by its index in the list. The strings are constructed using a mapping function that maps each index to a unique symbol based on its position modulo 5. If the index is not divisible by 5, a default \"符号错误\" string is returned.",
+        "type": "comment"
+    },
+    "3318": {
+        "file_id": 351,
+        "content": "/ThirdParty/TOModelVision/UnorderItemModel.h",
+        "type": "filepath"
+    },
+    "3319": {
+        "file_id": 351,
+        "content": "This code defines the \"UnorderItemModel\" class in Objective-C, which is a subclass of NSObject. It has two properties: \"tabNum\", an integer representing the indentation level, and \"data\", an id type variable storing the data for each line of the unordered list item.",
+        "type": "summary"
+    },
+    "3320": {
+        "file_id": 351,
+        "content": "//\n//  UnorderItemModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/6/3.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------无序列表item模型--------------------\n */\n@interface UnorderItemModel : NSObject\n@property (assign, nonatomic) int tabNum;//缩进数\n@property (strong, nonatomic) id data;   //本行数据\n@end",
+        "type": "code",
+        "location": "/ThirdParty/TOModelVision/UnorderItemModel.h:1-19"
+    },
+    "3321": {
+        "file_id": 351,
+        "content": "This code defines the \"UnorderItemModel\" class in Objective-C, which is a subclass of NSObject. It has two properties: \"tabNum\", an integer representing the indentation level, and \"data\", an id type variable storing the data for each line of the unordered list item.",
+        "type": "comment"
+    },
+    "3322": {
+        "file_id": 352,
+        "content": "/ThirdParty/TOModelVision/UnorderItemModel.m",
+        "type": "filepath"
+    },
+    "3323": {
+        "file_id": 352,
+        "content": "The code declares a class named \"UnorderItemModel\" in the file UnorderItemModel.m, which is part of the SMG_NothingIsAll project and was created by the developer jia on June 3rd, 2021. The code is protected by copyright owned by XiaoGang.",
+        "type": "summary"
+    },
+    "3324": {
+        "file_id": 352,
+        "content": "//\n//  UnorderItemModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/6/3.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import \"UnorderItemModel.h\"\n@implementation UnorderItemModel\n@end",
+        "type": "code",
+        "location": "/ThirdParty/TOModelVision/UnorderItemModel.m:1-13"
+    },
+    "3325": {
+        "file_id": 352,
+        "content": "The code declares a class named \"UnorderItemModel\" in the file UnorderItemModel.m, which is part of the SMG_NothingIsAll project and was created by the developer jia on June 3rd, 2021. The code is protected by copyright owned by XiaoGang.",
+        "type": "comment"
+    },
+    "3326": {
+        "file_id": 353,
+        "content": "/ThirdParty/XGConfig/README.md",
+        "type": "filepath"
+    },
+    "3327": {
+        "file_id": 353,
+        "content": "Custom file configuration (refer to 27084-TODO1);\nLocated in the sandbox's root directory, within the xgConfig folder, there is a config.txt file;\nUtilizes a dictionary to write configuration files, enabling real-time value changes during HE operation for altering its behavior;\nResponds to configuration file updates every round in the HE system.",
+        "type": "summary"
+    },
+    "3328": {
+        "file_id": 353,
+        "content": "#  自定义文件配置 (参考27084-TODO1);\n#### 功能说明:\n1. 在沙盒根目录下的xgConfig文件夹下的config.txt文件;\n2. 用字典写入配置文件,用于在HE跑的过程中,及时更改值,以改变HE运行等;\n3. 每轮循环时,响应配置文件的变化到HE系统;",
+        "type": "code",
+        "location": "/ThirdParty/XGConfig/README.md:1-6"
+    },
+    "3329": {
+        "file_id": 353,
+        "content": "Custom file configuration (refer to 27084-TODO1);\nLocated in the sandbox's root directory, within the xgConfig folder, there is a config.txt file;\nUtilizes a dictionary to write configuration files, enabling real-time value changes during HE operation for altering its behavior;\nResponds to configuration file updates every round in the HE system.",
+        "type": "comment"
+    },
+    "3330": {
+        "file_id": 354,
+        "content": "/ThirdParty/XGConfig/XGConfig.h",
+        "type": "filepath"
+    },
+    "3331": {
+        "file_id": 354,
+        "content": "Header file for XGConfig class, provides instance method for accessing and managing configuration. Contains constants for specific configuration keys and paths. Offers methods to initialize and respond to configuration changes. Provides read and write functionality for config values.",
+        "type": "summary"
+    },
+    "3332": {
+        "file_id": 354,
+        "content": "//\n//  XGConfig.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/8/25.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n#define xgConfigPath @\"xgConfig\"\n#define xgConfigFile @\"config.txt\"\n#define xgConfigKeyZiWuMode @\"植物模式\"\n#define xgConfigKeyTest @\"还牛逼不?\"\n#define xgConfigKeyPauseRLT @\"暂停强化训练\"\n@interface XGConfig : NSObject\n+(XGConfig*) instance;\n/**\n *  MARK:--------------------初始配置--------------------\n */\n-(void) initConfig;\n/**\n *  MARK:--------------------响应配置变化到系统--------------------\n */\n-(void) responseXGConfig2HE;\n//读写配置\n-(id) valueForKey:(NSString*)key reloadIden:(NSString*)reloadIden;\n-(void) setValue:(id)value forKey:(NSString*)key;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/XGConfig/XGConfig.h:1-35"
+    },
+    "3333": {
+        "file_id": 354,
+        "content": "Header file for XGConfig class, provides instance method for accessing and managing configuration. Contains constants for specific configuration keys and paths. Offers methods to initialize and respond to configuration changes. Provides read and write functionality for config values.",
+        "type": "comment"
+    },
+    "3334": {
+        "file_id": 355,
+        "content": "/ThirdParty/XGConfig/XGConfig.m",
+        "type": "filepath"
+    },
+    "3335": {
+        "file_id": 355,
+        "content": "This code initializes a singleton XGConfig instance, sets default config values, creates directories, logs file paths, and handles configuration changes. It defines methods for obtaining key values, URLs, and folders from the config dictionary, reloading if necessary.",
+        "type": "summary"
+    },
+    "3336": {
+        "file_id": 355,
+        "content": "//\n//  XGConfig.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/8/25.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import \"XGConfig.h\"\n@interface XGConfig ()\n@property (strong, nonatomic) NSString *lastReloadIden;         //加载标识 (当标识变化时,会触发重新加载);\n@property (strong, nonatomic) NSMutableDictionary *configDic;   //配置字典;\n@end\n@implementation XGConfig\nstatic id mInstance;\n+(XGConfig*) instance{\n    if (mInstance == nil) mInstance = [[XGConfig alloc] init];\n    return mInstance;\n}\n/**\n *  MARK:--------------------初始配置--------------------\n */\n-(void) initConfig{\n    self.configDic = [[NSMutableDictionary alloc] initWithObjectsAndKeys:\n                      @(false),xgConfigKeyZiWuMode,\n                      @(true),xgConfigKeyTest,\n                      @(false),xgConfigKeyPauseRLT,\n                      nil];\n    NSLog(@\"%@\",[self url].path);\n    [[NSFileManager defaultManager] createDirectoryAtPath:[self folder] withIntermediateDirectories:false attributes:nil error:nil];\n    BOOL success = [self.configDic writeToURL:[self url] atomically:true];",
+        "type": "code",
+        "location": "/ThirdParty/XGConfig/XGConfig.m:1-37"
+    },
+    "3337": {
+        "file_id": 355,
+        "content": "This code initializes a singleton instance of the XGConfig class, sets default config values, and creates the necessary directory for storing configuration files. The code also logs the path to the current file and writes the default config values to disk atomically.",
+        "type": "comment"
+    },
+    "3338": {
+        "file_id": 355,
+        "content": "    NSLog(@\"======> XGConfig初始化%@\",success ? @\"成功\" : @\"失败\");\n}\n/**\n *  MARK:--------------------响应配置变化到系统--------------------\n */\n-(void) responseXGConfig2HE {\n    //1. 重加载\n    [self reloadConfigDic];\n    //2. 更新配置导致的变化到系统;\n    if (NUMTOOK([self.configDic objectForKey:xgConfigKeyZiWuMode]).boolValue) {\n        theTC.thinkMode = 2;\n        NSLog(@\"======> XGConfig响应: 进入植物模式\");\n    }\n    //b. 暂停强化训练;\n    if (NUMTOOK([self.configDic objectForKey:xgConfigKeyPauseRLT]).boolValue) {\n        [theRT setPlaying:false];\n        NSLog(@\"======> XGConfig响应: 暂停强化训练\");\n    }\n}\n/**\n *  MARK:--------------------写配置--------------------\n */\n-(void) setValue:(id)value forKey:(NSString*)key{\n    //1. 未加载过,则先初始化加载;\n    if (!self.configDic) {\n        [self reloadConfigDic];\n    }\n    //2. 新值写入;\n    [self.configDic setObject:value forKey:key];\n    BOOL success = [self.configDic writeToURL:[self url] atomically:true];\n    NSLog(@\"======> 配置写入K:%@ V:%@ (%@)\",key,value,success ? @\"成功\" : @\"失败\");\n}\n/**\n *  MARK:--------------------读配置--------------------",
+        "type": "code",
+        "location": "/ThirdParty/XGConfig/XGConfig.m:38-77"
+    },
+    "3339": {
+        "file_id": 355,
+        "content": "This code initializes XGConfig, responds to configuration changes by updating the system and temporarily pausing reinforcement learning training. It also allows setting and writing values into the configuration dictionary and logging success or failure of these operations.",
+        "type": "comment"
+    },
+    "3340": {
+        "file_id": 355,
+        "content": " */\n-(id) valueForKey:(NSString*)key reloadIden:(NSString*)reloadIden{\n    if (![STRTOOK(self.lastReloadIden) isEqualToString:reloadIden]) {\n        [self reloadConfigDic];\n    }\n    id value = [self.configDic objectForKey:key];\n    NSLog(@\"======> 配置取值K:%@ V:%@\",key,value);\n    return value;\n}\n//MARK:===============================================================\n//MARK:                     < privateMethod >\n//MARK:===============================================================\n//重加载数据;\n-(void) reloadConfigDic{\n    //1. 取数据;\n    @try {\n        NSDictionary *db = DICTOOK([NSDictionary dictionaryWithContentsOfURL:[self url]]);\n        self.configDic = [[NSMutableDictionary alloc] initWithDictionary:db];\n    }@catch (NSException *exception) {}\n}\n// notnull\n-(NSURL*) url{\n    return [NSURL fileURLWithPath:STRFORMAT(@\"%@/%@\",[self folder],xgConfigFile)];\n}\n-(NSString*) folder{\n    NSString *cachePath = kCachePath;\n    return STRFORMAT(@\"%@/%@\",cachePath,xgConfigPath);\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/XGConfig/XGConfig.m:78-111"
+    },
+    "3341": {
+        "file_id": 355,
+        "content": "This code defines a method for retrieving the value of a key from a configuration dictionary. If the reloadIden has changed, it reloads the config dictionary. The class also includes methods for obtaining the URL and folder associated with the configuration.",
+        "type": "comment"
+    },
+    "3342": {
+        "file_id": 356,
+        "content": "/ThirdParty/XGDebug/README.md",
+        "type": "filepath"
+    },
+    "3343": {
+        "file_id": 356,
+        "content": "This code is for a debug tool that analyzes slow code blocks, displaying the percentage of execution time they take up in the overall system. It supports counting read/write DB operations, total time consumption, average time consumption, and showing results in a TableView format.",
+        "type": "summary"
+    },
+    "3344": {
+        "file_id": 356,
+        "content": "#  调试慢代码块工具;\n#### 单例模式: 用于分析慢代码块,以及慢代码在整体中慢的占比;\n1. 支持读写DB次数统计;\n2. 支持总时耗,平均时耗,执行次数等;\n3. 支持TableView展示结果;",
+        "type": "code",
+        "location": "/ThirdParty/XGDebug/README.md:1-6"
+    },
+    "3345": {
+        "file_id": 356,
+        "content": "This code is for a debug tool that analyzes slow code blocks, displaying the percentage of execution time they take up in the overall system. It supports counting read/write DB operations, total time consumption, average time consumption, and showing results in a TableView format.",
+        "type": "comment"
+    },
+    "3346": {
+        "file_id": 357,
+        "content": "/ThirdParty/XGDebug/XGDebug.h",
+        "type": "filepath"
+    },
+    "3347": {
+        "file_id": 357,
+        "content": "This code provides a performance debugging tool, XGDebug, with methods for tracking disk operations and module functionality. It includes features for preventing duplicate entries, initiating debugging with file names or prefixes, incrementing write/read counters, and printing results.",
+        "type": "summary"
+    },
+    "3348": {
+        "file_id": 357,
+        "content": "//\n//  XGDebug.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/4/23.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------整体模块Debug性能调试器--------------------\n *  @use 使用说明: 每条显示的用时为,当前条到下条执行间的代码用时;\n *  @callers 用于调试性能,是TCDebug工具的底层核心;\n *  @desc XGDebug主要关注整体性能的统计情况;\n *  @常用: 1. 常用于观察每个代码块在当前循环loopId内的性能,并可打印;\n *              > 使用方法1. AddDebugCodeBlock_Key(@\"代码块KEY\", @\"步骤\"); PrintDebugCodeBlock_Key(@\"代码块KEY\");\n *        2. 被用到DebugS()和DebugE(),用来长时间统计每个TC的执行性能情况;\n *  @特性: 1. 长时间整体统计;   2. 在TC中有S有E两个夹着;\n */\n@class XGDebugModel;\n@interface XGDebug : NSObject\n+(XGDebug*) sharedInstance;\n//MARK:===============================================================\n//MARK:                     < IN >\n//MARK:===============================================================\n/**\n *  MARK:--------------------追加一条记录--------------------\n *  @param fileName : 调用者类名 (参考防重);\n *  @param suffix   : 调用者后辍 (参与防重);\n *  _param prefix   : 调用者前辍 (参考防重);\n *  @desc 参数说明: 一般容易写死判断匹配的作为前辍 (如FILENAME或LoopId),常变不易匹配的用作后辍(如代码块标识:\"R1.1\");",
+        "type": "code",
+        "location": "/ThirdParty/XGDebug/XGDebug.h:1-35"
+    },
+    "3349": {
+        "file_id": 357,
+        "content": "This code appears to be the header file for a performance debugging tool called XGDebug, which focuses on overall performance statistics. It provides methods to add and print debug code blocks as well as being used in DebugS() and DebugE() for long-term performance tracking of tasks (TCs). The file includes methods to append records with parameters such as file name, suffix, and prefix for preventing duplicate entries.",
+        "type": "comment"
+    },
+    "3350": {
+        "file_id": 357,
+        "content": " */\n-(void) debugModuleWithFileName:(NSString*)fileName suffix:(NSString*)suffix;\n-(void) debugModuleWithPrefix:(NSString*)prefix suffix:(NSString*)suffix;\n/**\n *  MARK:--------------------磁盘读写计数器--------------------\n *  @desc 每次磁盘读写操作时,调用DebugW或DebugR来计数+1;\n */\n-(void) debugWrite;\n-(void) debugRead;\n-(NSMutableArray *)models; //notnull\n//MARK:===============================================================\n//MARK:                     < OUT >\n//MARK:===============================================================\n/**\n *  MARK:--------------------打印结果--------------------\n */\n-(void) print:(NSString*)prefix rmPrefix:(NSString*)rmPrefix;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/XGDebug/XGDebug.h:36-57"
+    },
+    "3351": {
+        "file_id": 357,
+        "content": "This code appears to define methods for debugging module functionality, tracking disk read/write operations, and printing results. The \"debugModuleWithFileName\" and \"debugModuleWithPrefix\" methods likely initiate debugging for a specified file or with a given prefix, respectively. The \"debugWrite\" and \"debugRead\" methods increment counters for write and read disk operations. The \"models\" method returns an array of model objects. Lastly, the \"print\" method allows printing results with optional prefix and suffix removal options.",
+        "type": "comment"
+    },
+    "3352": {
+        "file_id": 358,
+        "content": "/ThirdParty/XGDebug/XGDebug.m",
+        "type": "filepath"
+    },
+    "3353": {
+        "file_id": 358,
+        "content": "XGDebug is a debugging utility that tracks frame statistics, improves performance and crash prevention in the XGDebug library by filtering and printing results. It calculates statistics for XGDebugModel objects, displays summary stats, and removes matching weakRMPrefix models. The 'XGDebug' class includes debugging functions using blocks and conditional statements based on debug flag.",
+        "type": "summary"
+    },
+    "3354": {
+        "file_id": 358,
+        "content": "//\n//  XGDebug.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/4/23.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import \"XGDebug.h\"\n#import \"XGDebugModel.h\"\n@interface XGDebug ()\n@property (assign, nonatomic) NSTimeInterval lastTime;\n@property (strong, nonatomic) NSString *lastKey;\n@property (strong, nonatomic) NSMutableArray *models;   //List<XGDebugModel>\n@property (assign, nonatomic) NSInteger lastWriteCount;\n@property (assign, nonatomic) NSInteger lastReadCount;\n@end\n@implementation XGDebug\nstatic XGDebug *_instance;\n+(XGDebug*) sharedInstance{\n    if (_instance == nil) _instance = [[XGDebug alloc] init];\n    return _instance;\n}\n//MARK:===============================================================\n//MARK:                     < IN >\n//MARK:===============================================================\n/**\n *  MARK:--------------------追加一条记录--------------------\n *  @version\n *      2022.08.09: 废弃line代码行号,因为它做不参与到key防重,所以不唯一,所以不准且没用;\n *      2023.07.20: 几次pointer being free was not allocated因为多线程把String回收导致闪退 (改为全在主线程执行);",
+        "type": "code",
+        "location": "/ThirdParty/XGDebug/XGDebug.m:1-38"
+    },
+    "3355": {
+        "file_id": 358,
+        "content": "This code appears to be part of a debugging utility called XGDebug, which is implemented in the file \"XGDebug.m\". The class provides methods for adding records and managing an array of XGDebugModel objects, as well as tracking last operation timestamps, keys, write counts, and read counts. It also notes a previous change in the code to remove the use of line numbers for unique keys.",
+        "type": "comment"
+    },
+    "3356": {
+        "file_id": 358,
+        "content": " */\n-(void) debugModuleWithFileName:(NSString*)fileName suffix:(NSString*)suffix {\n    fileName = STRTOOK(fileName);\n    NSString *prefix = SUBSTR2INDEX(fileName, fileName.length - 2);\n    [self debugModuleWithPrefix:prefix suffix:suffix];\n}\n-(void) debugModuleWithPrefix:(NSString*)prefix suffix:(NSString*)suffix {\n    __block NSString *weakPrefix = prefix;\n    __block NSString *weakSuffix = suffix;\n    //__block typeof(self) weakSelf = self;\n    dispatch_async(dispatch_get_main_queue(), ^{\n        //0. 数据准备;\n        weakPrefix = STRTOOK(weakPrefix);\n        NSString *key = STRISOK(weakSuffix) ? STRFORMAT(@\"%@ 代码块:%@\",weakPrefix,weakSuffix) : weakPrefix;\n        //1. 上帧结算;\n        NSTimeInterval now = [[NSDate date] timeIntervalSince1970] * 1000;\n        if (self.lastKey && self.lastTime > 0) {\n            //a. 旧有model;\n            XGDebugModel *lastModel = ARR_INDEX([SMGUtils filterArr:self.models checkValid:^BOOL(XGDebugModel *item) {\n                return [item.key isEqualToString:self.lastKey];\n            }], 0);",
+        "type": "code",
+        "location": "/ThirdParty/XGDebug/XGDebug.m:39-62"
+    },
+    "3357": {
+        "file_id": 358,
+        "content": "This function takes a file name and suffix, splits the prefix and suffix, and then calls another function with these parameters. The code performs string manipulation on the prefix and suffix, prepares data for processing, and handles previous frame settlement by filtering an array of debug models based on the last key and time interval. It also accesses the last model from this filtered array.",
+        "type": "comment"
+    },
+    "3358": {
+        "file_id": 358,
+        "content": "            //b. 无则新建;\n            if (!lastModel) {\n                lastModel = [[XGDebugModel alloc] init];\n                [self.models addObject:lastModel];\n            }\n            //c. 统计更新;\n            lastModel.key = self.lastKey;\n            lastModel.sumTime += now - self.lastTime;\n            lastModel.sumCount++;\n            lastModel.sumWriteCount += self.lastWriteCount;\n            lastModel.sumReadCount += self.lastReadCount;\n        }\n        //2. 当前帧记录;\n        self.lastKey = key;\n        self.lastTime = now;\n        self.lastWriteCount = 0;\n        self.lastReadCount = 0;\n    });\n}\n-(void) debugWrite{\n    dispatch_async(dispatch_get_main_queue(), ^{\n        self.lastWriteCount++;\n    });\n}\n-(void) debugRead{\n    dispatch_async(dispatch_get_main_queue(), ^{\n        self.lastReadCount++;\n    });\n}\n-(NSMutableArray *)models{\n    if (!_models) {\n        _models = [[NSMutableArray alloc] init];\n    }\n    return _models;\n}\n//MARK:===============================================================\n//MARK:                     < OUT >",
+        "type": "code",
+        "location": "/ThirdParty/XGDebug/XGDebug.m:64-106"
+    },
+    "3359": {
+        "file_id": 358,
+        "content": "This code appears to be part of a debugger implementation. It maintains a list of models and tracks frame statistics, including the key, time spent, count, write count, and read count. The code also includes methods for debugging writes and reads, which increment the respective counters asynchronously on the main queue. The `models` method returns an array of models if it hasn't been initialized yet.",
+        "type": "comment"
+    },
+    "3360": {
+        "file_id": 358,
+        "content": "//MARK:===============================================================\n/**\n *  MARK:--------------------根据前辍取debugModels--------------------\n *  @desc 用于获取结果输出;\n *  @version\n *      2023.12.25: 去掉本方法异步主线程: 这个方法只有self.print()在调用,而print()本来就在主线程中,这里就不进主线程了,不然闪退 (应该是嵌套异步导致的,未确认,但改后确实不闪了);\n *  @result notnull\n */\n-(NSArray*) getDebugModels:(NSString*)prefix {\n    prefix = STRTOOK(prefix);\n    return [SMGUtils filterArr:self.models checkValid:^BOOL(XGDebugModel *item) {\n        NSString *itemPrefix = [item.key substringWithRange:NSMakeRange(0, MIN(prefix.length, item.key.length))];\n        return [prefix isEqualToString:itemPrefix];\n    }];\n}\n/**\n *  MARK:--------------------打印结果--------------------\n *  @version\n *      2023.06.13: 支持打印后直接将结果删除,因为代码块debug工具以loopId拼接key,这models越来越多,性能会变差 (参考30022-优化5);\n */\n-(void) print:(NSString*)prefix rmPrefix:(NSString*)rmPrefix {\n    __block NSString *weakPrefix = prefix;\n    __block NSString *weakRMPrefix = rmPrefix;\n    dispatch_async(dispatch_get_main_queue(), ^{\n        NSArray *debugModels = [self getDebugModels:weakPrefix];",
+        "type": "code",
+        "location": "/ThirdParty/XGDebug/XGDebug.m:107-133"
+    },
+    "3361": {
+        "file_id": 358,
+        "content": "This code is a part of the XGDebug library, defining methods to get debug models and print results. It filters a collection of models based on a given prefix, and then prints the filtered results in the main thread. Changes were made to optimize performance and avoid crashes due to nested asynchronous operations.",
+        "type": "comment"
+    },
+    "3362": {
+        "file_id": 358,
+        "content": "        if (!ARRISOK(debugModels)) return;\n        XGDebugModel *sum = [[XGDebugModel alloc] init];\n        for (XGDebugModel *model in debugModels) {\n            NSLog(@\"%@ 计数:%ld 均耗:%.2f = 总耗:%.0f 读:%ld 写:%ld\",model.key,model.sumCount,model.sumTime / model.sumCount,model.sumTime,model.sumReadCount,model.sumWriteCount);\n            sum.sumCount += model.sumCount;\n            sum.sumTime += model.sumTime;\n            sum.sumReadCount += model.sumReadCount;\n            sum.sumWriteCount += model.sumWriteCount;\n        }\n        NSLog(@\"DEBUG匹配 => 总计数:%ld 均耗:%.2f = 总耗:%.0f 读:%ld 写:%ld\",sum.sumCount,sum.sumTime / sum.sumCount,sum.sumTime,sum.sumReadCount,sum.sumWriteCount);\n        //支持打印后将结果删除;\n        if (STRISOK(weakRMPrefix)) {\n            NSArray *rmModels = [self getDebugModels:weakRMPrefix];\n            for (XGDebugModel *model in rmModels) {\n                [self.models removeObject:model];\n            }\n            //NSLog(@\"%@ -> 打印条数:%ld 删除条数:%lu 还剩条数: %lu\",weakRMPrefix,debugModels.count,rmModels.count,self.models.count);",
+        "type": "code",
+        "location": "/ThirdParty/XGDebug/XGDebug.m:134-151"
+    },
+    "3363": {
+        "file_id": 358,
+        "content": "This code calculates the total counts and times for all XGDebugModel objects in debugModels array, then displays summary statistics. It also removes any matching weakRMPrefix models from self.models.",
+        "type": "comment"
+    },
+    "3364": {
+        "file_id": 358,
+        "content": "        }\n    });\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/XGDebug/XGDebug.m:152-156"
+    },
+    "3365": {
+        "file_id": 358,
+        "content": "The code defines a class 'XGDebug' and its methods to handle debugging functions such as logging and displaying messages on the screen. It uses blocks and conditional statements to execute commands only if the debug flag is enabled.",
+        "type": "comment"
+    },
+    "3366": {
+        "file_id": 359,
+        "content": "/ThirdParty/XGDebug/XGDebugModel.h",
+        "type": "filepath"
+    },
+    "3367": {
+        "file_id": 359,
+        "content": "This code defines the XGDebugModel class, which has properties for key, sumTime (total time spent), sumCount (total execution count), sumWriteCount (total write disk count), and sumReadCount (total read disk count).",
+        "type": "summary"
+    },
+    "3368": {
+        "file_id": 359,
+        "content": "//\n//  XGDebugModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/4/23.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface XGDebugModel : NSObject\n@property (strong, nonatomic) NSString *key;            //key\n@property (assign, nonatomic) NSTimeInterval sumTime;   //总耗时\n@property (assign, nonatomic) NSInteger sumCount;       //总执行次数\n@property (assign, nonatomic) NSInteger sumWriteCount;  //写硬盘数\n@property (assign, nonatomic) NSInteger sumReadCount;   //读硬盘数\n@end",
+        "type": "code",
+        "location": "/ThirdParty/XGDebug/XGDebugModel.h:1-19"
+    },
+    "3369": {
+        "file_id": 359,
+        "content": "This code defines the XGDebugModel class, which has properties for key, sumTime (total time spent), sumCount (total execution count), sumWriteCount (total write disk count), and sumReadCount (total read disk count).",
+        "type": "comment"
+    },
+    "3370": {
+        "file_id": 360,
+        "content": "/ThirdParty/XGDebug/XGDebugModel.m",
+        "type": "filepath"
+    },
+    "3371": {
+        "file_id": 360,
+        "content": "This code snippet is the implementation file for the XGDebugModel class in a project called SMG_NothingIsAll. It was created by a developer named jia on April 23, 2022. The copyright belongs to XiaoGang, and all rights are reserved.",
+        "type": "summary"
+    },
+    "3372": {
+        "file_id": 360,
+        "content": "//\n//  XGDebugModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/4/23.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import \"XGDebugModel.h\"\n@implementation XGDebugModel\n@end",
+        "type": "code",
+        "location": "/ThirdParty/XGDebug/XGDebugModel.m:1-13"
+    },
+    "3373": {
+        "file_id": 360,
+        "content": "This code snippet is the implementation file for the XGDebugModel class in a project called SMG_NothingIsAll. It was created by a developer named jia on April 23, 2022. The copyright belongs to XiaoGang, and all rights are reserved.",
+        "type": "comment"
+    },
+    "3374": {
+        "file_id": 361,
+        "content": "/ThirdParty/XGDebug/XGDebugTV.h",
+        "type": "filepath"
+    },
+    "3375": {
+        "file_id": 361,
+        "content": "XGDebugTV is a subclass of UITableView with an updateModels method for managing table view data.",
+        "type": "summary"
+    },
+    "3376": {
+        "file_id": 361,
+        "content": "//\n//  XGDebugTV.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/4/23.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n@interface XGDebugTV : UITableView\n-(void) updateModels;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/XGDebug/XGDebugTV.h:1-15"
+    },
+    "3377": {
+        "file_id": 361,
+        "content": "XGDebugTV is a subclass of UITableView with an updateModels method for managing table view data.",
+        "type": "comment"
+    },
+    "3378": {
+        "file_id": 362,
+        "content": "/ThirdParty/XGDebug/XGDebugTV.m",
+        "type": "filepath"
+    },
+    "3379": {
+        "file_id": 362,
+        "content": "The code creates a class XGDebugTV for a table view, registering cell reuse identifiers and conforming to UITableViewDelegate/DataSource protocols. It updates models, calculates statistics, and reloads data, while also providing formatted text in cells with fixed row heights.",
+        "type": "summary"
+    },
+    "3380": {
+        "file_id": 362,
+        "content": "//\n//  XGDebugTV.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/4/23.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import \"XGDebugTV.h\"\n#import \"XGDebugModel.h\"\n#import \"XGLabCell.h\"\n@interface XGDebugTV () <UITableViewDelegate,UITableViewDataSource>\n@property (strong, nonatomic) NSMutableArray *models;       //刷新显示时的models;\n@property (assign, nonatomic) NSTimeInterval modelsSumTime; //刷新显示时的总耗时;\n@property (assign, nonatomic) NSTimeInterval modelsOnceTime;//models的平均时间之和;\n@end\n@implementation XGDebugTV\n-(id) initWithCoder:(NSCoder *)aDecoder {\n    self = [super initWithCoder:aDecoder];\n    if(self != nil){\n        [self initView];\n        [self initData];\n    }\n    return self;\n}\n-(void) initView{\n    self.delegate = self;\n    self.dataSource = self;\n    [self registerClass:[XGLabCell class] forCellReuseIdentifier:@\"debugCell\"];\n}\n-(void) initData{\n    self.models = [[NSMutableArray alloc] init];\n}\n//MARK:===============================================================\n//MARK:                     < publicMethod >",
+        "type": "code",
+        "location": "/ThirdParty/XGDebug/XGDebugTV.m:1-43"
+    },
+    "3381": {
+        "file_id": 362,
+        "content": "This code is for class XGDebugTV in the SMG_NothingIsAll project. It implements methods for initializing view and data, registering cell reuse identifiers, and conforms to UITableViewDelegate and UITableViewDataSource protocols.",
+        "type": "comment"
+    },
+    "3382": {
+        "file_id": 362,
+        "content": "//MARK:===============================================================\n-(void) updateModels{\n    //1. 数据准备;\n    [self.models removeAllObjects];\n    self.modelsSumTime = 0;\n    self.modelsOnceTime = 0;\n    //2. 更新数据;\n    [self.models addObjectsFromArray:theDebug.models];\n    for (XGDebugModel *model in self.models) {\n        self.modelsSumTime += model.sumTime;\n        self.modelsOnceTime += model.sumTime / model.sumCount;\n    }\n    //3. 刷新显示;\n    [self reloadData];\n}\n//MARK:===============================================================\n//MARK:       < UITableViewDataSource &  UITableViewDelegate>\n//MARK:===============================================================\n- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{\n    return self.models.count;\n}\n- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{\n    //1. 数据准备;\n    XGDebugModel *model = ARR_INDEX(self.models, indexPath.row);\n    NSTimeInterval onceTime = model.sumTime / model.sumCount;",
+        "type": "code",
+        "location": "/ThirdParty/XGDebug/XGDebugTV.m:44-71"
+    },
+    "3383": {
+        "file_id": 362,
+        "content": "This code defines a method that updates the models in a table view, calculates and updates statistics, and reloads the data. The method removes all existing objects from the models array, adds new objects from \"theDebug.models\" to it, calculates the sum time and average once time for each model, and finally calls \"reloadData\" on the table view to refresh the display. The code also includes two table view delegate methods that return the number of rows in a section and create a cell for a given row index path. The methods prepare data by accessing model objects from the models array.",
+        "type": "comment"
+    },
+    "3384": {
+        "file_id": 362,
+        "content": "    double onceRate = onceTime / self.modelsOnceTime * 100;\n    NSInteger onceR = model.sumReadCount / model.sumCount;\n    NSInteger onceW = model.sumWriteCount / model.sumCount;\n    NSTimeInterval sumTime = model.sumTime / 1000;\n    double sumRate = model.sumTime / self.modelsSumTime * 100;\n    NSString *cellStr = STRFORMAT(@\"%@ 次:%ld x 均耗:%.0f (%.0f％ 读:%ld 写:%ld) = 总耗:%.1f (%.0f％)\",model.key,model.sumCount,onceTime,onceRate,onceR,onceW,sumTime,sumRate);\n    //2. 创建cell;\n    XGLabCell *cell = [tableView dequeueReusableCellWithIdentifier:@\"debugCell\"];\n    [cell setText:STRFORMAT(@\"%ld. %@\",indexPath.row+1, cellStr) color:nil font:6];\n    return cell;\n}\n- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{\n    return 10;\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/XGDebug/XGDebugTV.m:72-88"
+    },
+    "3385": {
+        "file_id": 362,
+        "content": "This code calculates statistics for a table cell, including read and write counts, time consumption, and rates. It then creates a cell with the calculated information and sets the text using the provided format. Additionally, it provides a fixed height of 10 for each row in the table view.",
+        "type": "comment"
+    },
+    "3386": {
+        "file_id": 363,
+        "content": "/ThirdParty/XGDebug/XGLabCell.h",
+        "type": "filepath"
+    },
+    "3387": {
+        "file_id": 363,
+        "content": "This code file, XGLabCell.h, is part of the SMG_NothingIsAll project and is written by jia on April 23, 2022. It imports UIKit and defines a UITableViewCell subclass called XGLabCell with a setText:color:font method for customization.",
+        "type": "summary"
+    },
+    "3388": {
+        "file_id": 363,
+        "content": "//\n//  XGLabCell.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/4/23.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n@interface XGLabCell : UITableViewCell\n-(void) setText:(NSString*)text color:(UIColor*)color font:(CGFloat)font;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/XGDebug/XGLabCell.h:1-15"
+    },
+    "3389": {
+        "file_id": 363,
+        "content": "This code file, XGLabCell.h, is part of the SMG_NothingIsAll project and is written by jia on April 23, 2022. It imports UIKit and defines a UITableViewCell subclass called XGLabCell with a setText:color:font method for customization.",
+        "type": "comment"
+    },
+    "3390": {
+        "file_id": 364,
+        "content": "/ThirdParty/XGDebug/XGLabCell.m",
+        "type": "filepath"
+    },
+    "3391": {
+        "file_id": 364,
+        "content": "XGLabCell is a UIView subclass with a UILabel, handling text, color, and font settings. It customizes label appearance through constraints and allows for easy modification. This code sets a label's text to \"text\" in XGLabCell of the XGDebug project.",
+        "type": "summary"
+    },
+    "3392": {
+        "file_id": 364,
+        "content": "//\n//  XGLabCell.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/4/23.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import \"XGLabCell.h\"\n#import \"MASConstraint.h\"\n#import \"View+MASAdditions.h\"\n@interface XGLabCell ()\n@property (strong, nonatomic) UILabel *lab;\n@end\n@implementation XGLabCell\n- (void)awakeFromNib {\n    [super awakeFromNib];\n}\n- (void)setSelected:(BOOL)selected animated:(BOOL)animated {\n    [super setSelected:selected animated:animated];\n}\n-(void) setText:(NSString*)text color:(UIColor*)color font:(CGFloat)font{\n    if (!self.lab) {\n        self.lab = [[UILabel alloc] init];\n        [self addSubview:self.lab];\n        [self.lab mas_makeConstraints:^(MASConstraintMaker *make) {\n            make.leading.mas_offset(3).mas_equalTo(self);\n            make.trailing.mas_equalTo(self);\n            make.top.mas_equalTo(self);\n            make.bottom.mas_equalTo(self);\n        }];\n    }\n    if (font > 0) {\n        [self.lab setFont:[UIFont systemFontOfSize:font]];\n    }\n    if (color) {\n        [self.lab setTextColor:color];",
+        "type": "code",
+        "location": "/ThirdParty/XGDebug/XGLabCell.m:1-44"
+    },
+    "3393": {
+        "file_id": 364,
+        "content": "XGLabCell is a subclass of UIView that contains a UILabel and handles setting its text, color, and font. It adds the label as a subview with constraints and allows for customization of text, color, and font size.",
+        "type": "comment"
+    },
+    "3394": {
+        "file_id": 364,
+        "content": "    }\n    self.lab.text = text;\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/XGDebug/XGLabCell.m:45-49"
+    },
+    "3395": {
+        "file_id": 364,
+        "content": "This code snippet sets the text of a label (lab) to a given string \"text\". It belongs to XGLabCell class in XGDebug project.",
+        "type": "comment"
+    },
+    "3396": {
+        "file_id": 365,
+        "content": "/ThirdParty/XGLog/HeLogHeader.h",
+        "type": "filepath"
+    },
+    "3397": {
+        "file_id": 365,
+        "content": "This code file, HeLogHeader.h, contains the header declarations for classes used in the SMG_NothingIsAll project, created by jia on 2020/3/12, and is copyrighted by XiaoGang. It imports Foundation.h, HeLogModel.h, and HeLogView.h files.",
+        "type": "summary"
+    },
+    "3398": {
+        "file_id": 365,
+        "content": "//\n//  HeLogHeader.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2020/3/12.\n//  Copyright © 2020年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n#import \"HeLogModel.h\"\n#import \"HeLogView.h\"",
+        "type": "code",
+        "location": "/ThirdParty/XGLog/HeLogHeader.h:1-11"
+    },
+    "3399": {
+        "file_id": 365,
+        "content": "This code file, HeLogHeader.h, contains the header declarations for classes used in the SMG_NothingIsAll project, created by jia on 2020/3/12, and is copyrighted by XiaoGang. It imports Foundation.h, HeLogModel.h, and HeLogView.h files.",
+        "type": "comment"
+    }
+}

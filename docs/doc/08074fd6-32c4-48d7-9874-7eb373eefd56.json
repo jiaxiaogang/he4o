@@ -1,0 +1,10 @@
+{
+    "summary": "This file contains the implementation of AIAbsAlgNode class, which is part of SMG_NothingIsAll project. It was created on December 7th, 2018 by jia and is copyrighted by XiaoGang.",
+    "details": [
+        {
+            "comment": "This file contains the implementation of AIAbsAlgNode class, which is part of SMG_NothingIsAll project. It was created on December 7th, 2018 by jia and is copyrighted by XiaoGang.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAbsAlgNode.m\":0-12",
+            "content": "//\n//  AIAbsAlgNode.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2018/12/7.\n//  Copyright \u00a9 2018\u5e74 XiaoGang. All rights reserved.\n//\n#import \"AIAbsAlgNode.h\"\n@implementation AIAbsAlgNode\n@end"
+        }
+    ]
+}

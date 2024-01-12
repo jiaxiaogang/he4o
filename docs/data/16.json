@@ -1,0 +1,540 @@
+{
+    "1600": {
+        "file_id": 162,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/AIAnalyst.m",
+        "type": "filepath"
+    },
+    "1601": {
+        "file_id": 162,
+        "content": "This code, from the AIAnalyst.m file of a larger project named SMG_NothingIsAll, calculates similarity between two sparse codes using \"compareCansetValue\" algorithm and returns a value representing closeness.",
+        "type": "summary"
+    },
+    "1602": {
+        "file_id": 162,
+        "content": "//\n//  AIAnalyst.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/6/10.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import \"AIAnalyst.h\"\n@implementation AIAnalyst\n//MARK:===============================================================\n//MARK:                     < Alg匹配度 (由TO调用) >\n//MARK: @desc 目前写在AINetUtils.getNearData()中,回头看整理到此处;\n//MARK:===============================================================\n//MARK:===============================================================\n//MARK:                     < Value相近度 (由TI调用) >\n//MARK:===============================================================\n/**\n *  MARK:--------------------比对稀疏码相近度--------------------\n *  @result 返回0到1 (0:稀疏码完全不同, 1稀疏码完全相同) (参考26127-TODO6);\n *  @param vInfo 为性能优化复用vInfo (为空时,此方法会自取);\n *  @version\n *      2023.03.13: 支持循环码时的相近度计算 (参考28174-todo2);\n *      2023.03.16: 修复首尾差值算错的BUG (因为测得360左右度和180左右度相近度是0.9以上);\n */\n+(CGFloat) compareCansetValue:(AIKVPointer*)cansetV_p protoValue:(AIKVPointer*)protoV_p vInfo:(AIValueInfo*)vInfo{\n    //1. 取稀疏码值;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/AIAnalyst.m:1-31"
+    },
+    "1603": {
+        "file_id": 162,
+        "content": "This code is from the AIAnalyst.m file, which appears to be part of a larger project named SMG_NothingIsAll. This function calculates the similarity between two sparse codes using an algorithm called \"compareCansetValue\". It takes three parameters: cansetV_p (a pointer to the first sparse code), protoV_p (a pointer to the second sparse code), and vInfo (an optional AIValueInfo object). The function returns a value between 0 and 1, representing the similarity between the two codes.",
+        "type": "comment"
+    },
+    "1604": {
+        "file_id": 162,
+        "content": "    double cansetData = [NUMTOOK([AINetIndex getData:cansetV_p]) doubleValue];\n    double protoData = [NUMTOOK([AINetIndex getData:protoV_p]) doubleValue];\n    //2. 计算相近度返回;\n    return [self compareCansetValue:cansetData protoV:protoData at:cansetV_p.algsType ds:cansetV_p.dataSource isOut:protoV_p.isOut vInfo:vInfo];\n}\n+(CGFloat) compareCansetValue:(double)cansetV protoV:(double)protoV at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut vInfo:(AIValueInfo*)vInfo{\n    //1. 数据准备;\n    if (!vInfo) vInfo = [AINetIndex getValueInfo:at ds:ds isOut:isOut];\n    if (vInfo.span == 0) return 1;\n    double delta = [AINetIndexUtils deltaWithValueA:cansetV valueB:protoV at:at ds:ds isOut:isOut vInfo:vInfo];\n    //2. 循环时: 计算出nearV相近度 (参考28174-todo2);\n    if (vInfo.loop) {\n        return 1 - delta / (vInfo.span / 2);\n    }\n    //3. 线性时: 计算出nearV相近度 (参考25082-公式1);\n    return 1 - delta / vInfo.span;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/AIAnalyst.m:32-54"
+    },
+    "1605": {
+        "file_id": 162,
+        "content": "This code calculates the similarity between two data sets and returns a value indicating how close they are. It prepares the data, calculates the difference between the two values, and then applies different formulas depending on whether it is in a loop or in a linear state to determine the closeness of the data sets.",
+        "type": "comment"
+    },
+    "1606": {
+        "file_id": 163,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/TCRecognition.h",
+        "type": "filepath"
+    },
+    "1607": {
+        "file_id": 163,
+        "content": "This header file contains the declaration of the TCRecognition class, which provides methods for recognition and learning tasks in a system. The methods include rRecognition, pRecognition, feedbackRecognition, and actionRecognition that operate on different types of models and data.",
+        "type": "summary"
+    },
+    "1608": {
+        "file_id": 163,
+        "content": "//\n//  TCRecognition.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/11/28.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------识别 & 学习--------------------\n */\n@interface TCRecognition : NSObject\n+(void) rRecognition:(AIShortMatchModel*)model;\n+(void) pRecognition:(AIShortMatchModel*)model;\n+(void) feedbackRecognition:(AIFoNodeBase*)regroupFo foModel:(TOFoModel*)foModel feedbackFrameOfMatchAlgs:(NSArray*)feedbackFrameOfMatchAlgs;\n+(void) actionRecognition:(AIFoNodeBase*)regroupFo baseActionFo:(TOFoModel*)baseActionFo regroupCutIndex:(NSInteger)regroupCutIndex;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/TCRecognition.h:1-21"
+    },
+    "1609": {
+        "file_id": 163,
+        "content": "This header file contains the declaration of the TCRecognition class, which provides methods for recognition and learning tasks in a system. The methods include rRecognition, pRecognition, feedbackRecognition, and actionRecognition that operate on different types of models and data.",
+        "type": "comment"
+    },
+    "1610": {
+        "file_id": 164,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/TCRecognition.m",
+        "type": "filepath"
+    },
+    "1611": {
+        "file_id": 164,
+        "content": "This code snippet is for AI sequence recognition, updating operation count and performing recognition using generic method with two distinct methods. It implements a rethinking algorithm, adjusting urgency based on similarity and entropy, submitting results to the demand manager for time series recognition feedback. The code performs behavior recognition, reflexive thinking before executing an action and updates short-term memory tree without learning or feedback.",
+        "type": "summary"
+    },
+    "1612": {
+        "file_id": 164,
+        "content": "//\n//  TCRecognition.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/11/28.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import \"TCRecognition.h\"\n@implementation TCRecognition\n/**\n *  MARK:--------------------瞬时时序识别--------------------\n *  @param model : 当前帧输入期短时记忆;\n *  @version\n *      20200414 - protoFo由瞬时proto概念组成,改成瞬时match概念组成 (本方法中,去掉proto概念层到match层的联想);\n *      20200717 - 换上新版partMatching_FoV2时序识别算法;\n *      20210119 - 支持预测-触发器和反向反馈类比 (22052-1&3);\n *      20210124 - In反省类比触发器,支持多时序识别matchFos (参考22073-todo3);\n *      20210413 - TIRFoFromShortMem的参数由matchAFo改为protoFo (参考23014-分析2);\n *      20210414 - 将TIRFo参数改为matchAlg有效则protoFo,否则matchAFo (参考23015);\n *      20210421 - 加强RFos的抽具象关联,对rFo与protoFo进行类比抽象;\n *      20210422 - 将absRFo收集到inModel中 (用于GL联想assFo时方便使用,参考23041-示图);\n *  @bug\n *      2020.11.10: 在21141训练第一步,发现外类比不执行BUG,因为传入无用的matchAlg参数判空return了 (参考21142);\n *  @todo\n *      2021.12.12: 随后把时序识别的代码移过来,现在旧有反思代码在调用,就先不移了;\n */\n+(void) rRecognition:(AIShortMatchModel*)model{\n    //1. 数据准备;\n    NSArray *except_ps = @[model.protoFo.pointer,model.matchAFo.pointer];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/TCRecognition.m:1-32"
+    },
+    "1613": {
+        "file_id": 164,
+        "content": "This code is for the \"rRecognition\" method in the TCRecognition class, which performs sequential recognition. It takes a model as input and prepares data by excluding certain pointers (pointer to protoFo and matchAFo). The method has gone through several updates and bug fixes since April 2020, with the latest update on April 22, 2021.",
+        "type": "comment"
+    },
+    "1614": {
+        "file_id": 164,
+        "content": "    AIFoNodeBase *protoFo = ARRISOK(model.matchAlgs) ? model.protoFo : model.matchAFo;\n    [theTC updateOperCount:kFILENAME];\n    Debug();\n    IFTitleLog(@\"时序识别\", @\"\\nprotoFo:%@->%@\",Fo2FStr(protoFo),Mvp2Str(protoFo.cmvNode_p));\n    //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)\n    [TIUtils recognitionFo:protoFo except_ps:except_ps decoratorInModel:model fromRegroup:false matchAlgs:model.matchAlgs protoOrRegroupCutIndex:protoFo.count - 1 debugMode:false];\n    DebugE();\n}\n+(void) pRecognition:(AIShortMatchModel*)model{\n    NSArray *except_ps = @[model.protoFo.pointer,model.protoFo4PInput.pointer];\n    AIFoNodeBase *protoFo = model.protoFo4PInput;\n    [theTC updateOperCount:kFILENAME];\n    Debug();\n    IFTitleLog(@\"时序识别\", @\"\\nprotoFo4PInput:%@\",Fo2FStr(protoFo));\n    [TIUtils recognitionFo:protoFo except_ps:except_ps decoratorInModel:model fromRegroup:false matchAlgs:nil protoOrRegroupCutIndex:protoFo.count - 1 debugMode:true];\n    DebugE();\n}\n/**\n *  MARK:--------------------重组时序识别--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/TCRecognition.m:33-54"
+    },
+    "1615": {
+        "file_id": 164,
+        "content": "This code snippet is for sequence recognition in an AI model. It first updates the operation count and then performs sequence recognition using a generic method. Two different recognition methods are defined: one for protoFo and another for protoFo4PInput. Both methods update the operation count, log information, and call TIUtils to perform the actual recognition with additional parameters. One method uses matchAlgs while the other doesn't. Debugging is used in some parts of the code.",
+        "type": "comment"
+    },
+    "1616": {
+        "file_id": 164,
+        "content": " *  @desc 即以前的反思,\n *  _param protoAlg_ps : RTFo\n *      1. 传入原始瞬时记忆序列 90% ,还是识别后的概念序列 10%;\n *      2. 传入行为化中的rethinkLSP重组fo;\n *  _param baseDemand : 参数fo所处的r任务 (有可能非R任务,或者为nil,所以此参数用前需先做防错判断);\n *  @desc 向性:\n *      1. ↑\n *      2. →\n *\n *  @desc 代码步骤:\n *      1. 用内类比的方式,发现概念的变化与有无; (理性结果)\n *      2. 用外类比的方式,匹配出靠前limit个中最相似抽象时序,并取到预测mv结果; (感性结果)\n *      3. 根据时序相似性 与 微信息差异度 得出 修正mv的紧迫度; (综合预测)\n *      4. 将fixMv添加到任务序列demandManager,做TOR处理;\n *\n *  @desc 举例步骤:\n *      1. 通过,内类比发现有一物体:方向不变 & 越来越近;\n *      2. 通过,识别概念,发现此物体是汽车; (注:已识别过,可以直接查看抽象指向);\n *      3. 通过,外类比,发现以此下去,\"汽车距离变0\"会撞到疼痛;\n *      4. 通过,\"车-0-撞-疼\"来计算时序相似度x% 与 通过\"车距\"y 计算= zMv;\n *      5. 将zMv提交给demandManager,做TOR处理;\n *  @version\n *      2020.04.03 : 将assFoIndexAlg由proto.lastIndex改为replaceMatchAlg来代替 (因为lastAlg索引失败率太高);\n *      2020.07.17 : 换上新版partMatching_FoV2时序识别算法;\n *      2021.04.13 : 将装饰AIShortMatchModel改为result返回 & 参数由order直接改为fo传入;\n *      2021.07.07 : 反思时,cutIndex全部返-1 (参考23156);\n *      2023.01.21 : regroupFo调用时序识别,传入反馈帧概念识别的结果matchAlgs (参考28103-2.2);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/TCRecognition.m:55-81"
+    },
+    "1617": {
+        "file_id": 164,
+        "content": "This code implements a rethinking algorithm for recognizing and predicting changes in concepts. It uses both rational and emotional reasoning, and adjusts the urgency of the prediction based on similarity and information entropy. The results are then submitted to the demand manager for further processing.",
+        "type": "comment"
+    },
+    "1618": {
+        "file_id": 164,
+        "content": " *  @todo :\n *      2020.04.03: 支持识别到多个时序 T;\n *      2020.04.03: 以识别到的多个时序,得到多个价值预测 (支持更多元的评价);\n *  @status\n *      1. 输出反思已废弃;\n *      2. 输入反思功能整合回正向识别中 (即由重组,来调用识别实现);\n */\n+(void) feedbackRecognition:(AIFoNodeBase*)regroupFo foModel:(TOFoModel*)foModel feedbackFrameOfMatchAlgs:(NSArray*)feedbackFrameOfMatchAlgs{\n    //1. 数据检查\n    AIShortMatchModel *result = [[AIShortMatchModel alloc] init];\n    result.regroupFo = regroupFo;\n    [theTC updateOperCount:kFILENAME];\n    Debug();\n    IFTitleLog(@\"feedback时序识别\", @\"\\nprotoFo:%@\",Fo2FStr(regroupFo));\n    //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)\n    [TIUtils recognitionFo:regroupFo except_ps:@[regroupFo.pointer] decoratorInModel:result fromRegroup:true matchAlgs:feedbackFrameOfMatchAlgs protoOrRegroupCutIndex:foModel.actionIndex - 1 debugMode:false];\n    //NSLog(@\"反思时序: Finish >> %@\",Fo2FStr(result.matchFo));\n    //3. 调用更新到短时记忆树 (不用学习和反馈,直接构建子任务);\n    DebugE();\n    [TCDemand subDemand:result foModel:foModel];\n}\n/**\n *  MARK:--------------------行为化前反思识别--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/TCRecognition.m:82-107"
+    },
+    "1619": {
+        "file_id": 164,
+        "content": "This code appears to be related to time series recognition and feedback, with a focus on multiple sequences and multi-element evaluation. It checks the input data, calls a generic time series recognition method, and then updates the short-term memory tree without learning or feedback. The code also includes debugging logs and references other methods in the AIFoundation library.",
+        "type": "comment"
+    },
+    "1620": {
+        "file_id": 164,
+        "content": " *  @desc 在行为化输出前,先反思识别一下,如果这么做,会导致什么子任务 (参考30054-另外2&todo4);\n *  @version\n *      2023.07.13: 支持二次行为化前反思识别过滤器 (参考30059);\n */\n+(void) actionRecognition:(AIFoNodeBase*)regroupFo baseActionFo:(TOFoModel*)baseActionFo regroupCutIndex:(NSInteger)regroupCutIndex {\n    //1. 数据检查\n    AIShortMatchModel *result = [[AIShortMatchModel alloc] init];\n    result.regroupFo = regroupFo;\n    [theTC updateOperCount:kFILENAME];\n    Debug();\n    IFTitleLog(@\"行为化前 反思识别\", @\"\\nregroupFo:%@\",Fo2FStr(regroupFo));\n    //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层) (参考30054-todo4);\n    [TIUtils recognitionFo:regroupFo except_ps:@[regroupFo.pointer] decoratorInModel:result fromRegroup:true matchAlgs:nil protoOrRegroupCutIndex:regroupCutIndex debugMode:false];\n    //3. 识别二次过滤器;\n    [AIFilter secondActionRecognitionFilter:result];\n    //3. 调用更新到短时记忆树 (不用学习和反馈,直接构建子任务) (参考30054-todo5);\n    DebugE();\n    [TCDemand subDemand:result foModel:baseActionFo];\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/TCRecognition.m:108-131"
+    },
+    "1621": {
+        "file_id": 164,
+        "content": "This code performs behavior recognition and reflexive thinking before executing an action. It checks for data, calls a generic temporal sequence recognition method, applies a second-action recognition filter, and updates the short-term memory tree without learning or feedback.",
+        "type": "comment"
+    },
+    "1622": {
+        "file_id": 165,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/TCRecognitionUtil.h",
+        "type": "filepath"
+    },
+    "1623": {
+        "file_id": 165,
+        "content": "This is a header file for the TCRecognitionUtil class in the SMG_NothingIsAll codebase, which imports Foundation and defines a method getVImportanceDic to obtain a dictionary of V importance values from an input AI model.",
+        "type": "summary"
+    },
+    "1624": {
+        "file_id": 165,
+        "content": "//\n//  TCRecognitionUtil.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/5/30.\n//  Copyright © 2023年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface TCRecognitionUtil : NSObject\n/**\n *  MARK:--------------------获取V重要性字典 (参考29105 & 29106)--------------------\n */\n+(NSDictionary*) getVImportanceDic:(AIShortMatchModel*)inModel;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/TCRecognitionUtil.h:1-18"
+    },
+    "1625": {
+        "file_id": 165,
+        "content": "This is a header file for the TCRecognitionUtil class in the SMG_NothingIsAll codebase, which imports Foundation and defines a method getVImportanceDic to obtain a dictionary of V importance values from an input AI model.",
+        "type": "comment"
+    },
+    "1626": {
+        "file_id": 166,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/TCRecognitionUtil.m",
+        "type": "filepath"
+    },
+    "1627": {
+        "file_id": 166,
+        "content": "The code optimizes performance, logs debug info and performs array calculations for object recognition software. It converts data, handles duplicates, adjusts for competition, prepares data, calculates cooling time, and scales importance dictionary values for comparison and analysis.",
+        "type": "summary"
+    },
+    "1628": {
+        "file_id": 166,
+        "content": "//\n//  TCRecognitionUtil.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/5/30.\n//  Copyright © 2023年 XiaoGang. All rights reserved.\n//\n#import \"TCRecognitionUtil.h\"\n@implementation TCRecognitionUtil\n/**\n *  MARK:--------------------获取V重要性字典 (参考29105 & 29106)--------------------\n *  @result 返回结果为重要性字典<K:稀疏码标识,V:重要性值> & 做了最小值1的缩放处理 (参考29107-步骤1);\n *  @version\n *      2023.06.02: 优化vInfo在循环中,导致的性能问题,把vInfo移到尽可以循环外,然后传进去复用后性能ok (参考29109-测得2);\n *      2023.06.12: 优化取得同级场景的条数,避免条数太多导致卡 (参考30022-优化3);\n */\n+(NSDictionary*) getVImportanceDic:(AIShortMatchModel*)inModel {\n    //1. 数据准备;\n    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];\n    BOOL debugMode = false;\n    if (debugMode) AddDebugCodeBlock_Key(@\"a\", STRFORMAT(@\"1 pFos:%ld条\",inModel.matchPFos.count));\n    NSMutableDictionary *cutIndexOfConFo = [[NSMutableDictionary alloc] init]; //收集所有同级fo的cutIndex\n    //2. 逐个收集pFos的同级(抽象的具象)->抽象部分 (参考29105-方案改);\n    NSMutableArray *allConPorts1 = [self collectAbsFosThenConFos:inModel.matchPFos outCutIndexDic:cutIndexOfConFo];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/TCRecognitionUtil.m:1-28"
+    },
+    "1629": {
+        "file_id": 166,
+        "content": "This code appears to be a part of a larger program. The specific section being discussed is calculating the importance dictionary for a given AI model, in this case, TCRecognitionUtil. It prepares the necessary data and collects all abstract parts of concrete (abstracted) PFos from the input model. There are also mentions of performance optimizations and debug mode.",
+        "type": "comment"
+    },
+    "1630": {
+        "file_id": 166,
+        "content": "    if (debugMode) AddDebugCodeBlock_Key(@\"a\", STRFORMAT(@\"2 同层场景:%ld条\",allConPorts1.count));\n    //6. 排序,并取前20% (参考29105-todo2);\n    NSArray *sortOfStrong3 = [SMGUtils sortBig2Small:allConPorts1 compareBlock:^double(AIPort *obj) {\n        return obj.strong.value;\n    }];\n    if (debugMode) AddDebugCodeBlock_Key(@\"a\", @\"3\");\n    NSInteger goodLimit = MIN(30, sortOfStrong3.count * 0.2f);\n    NSArray *goodPorts4 = ARR_SUB(sortOfStrong3, 0, goodLimit);\n    if (debugMode) AddDebugCodeBlock_Key(@\"a\", STRFORMAT(@\"4 强度前20%%: %ld条\",goodPorts4.count));\n    //7. 分别根据protoV找到在goodPorts4中最相近的那一条,最接近那条的强度即算做protoV的强度 (参考29105-todo3-方案4);\n    NSMutableString *zunjieLog = [[NSMutableString alloc] init];\n    for (AIKVPointer *protoV_p in inModel.protoAlg.content_ps) {\n        if (debugMode) AddDebugCodeBlock_Key(@\"a\", @\"7\");\n        //8. 节约性能: 全程只有一个固定值的打酱油码,不做处理 (参考29105-todo4);\n        AIValueInfo *info = [AINetIndex getValueInfo:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut];\n        if (debugMode) AddDebugCodeBlock_Key(@\"a\", STRFORMAT(@\"8 参与xy轴字典: %ld条\",goodPorts4.count));",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/TCRecognitionUtil.m:29-46"
+    },
+    "1631": {
+        "file_id": 166,
+        "content": "This code is sorting a list of ports based on their strength, then taking the first 20% of the sorted list. It is also logging information about each step in debug mode.",
+        "type": "comment"
+    },
+    "1632": {
+        "file_id": 166,
+        "content": "        if (info.span == 0) continue;\n        //9. 求出全部xy轴;\n        NSDictionary *xyDic = [self convertConFoPorts2XYDic:goodPorts4 cutIndexDic:cutIndexOfConFo protoV:protoV_p];\n        if (debugMode) AddDebugCodeBlock_Key(@\"a\", @\"9\");\n        if (!DICISOK(xyDic)) continue;\n        //10. 均匀取样100份,求出平均值 (参考29106-解均值);\n        double sumTemplateY = 0;//所有样本总Y值;\n        NSMutableArray *quXianYArr = [[NSMutableArray alloc] init];\n        for (int i = 0; i < 100; i++) {\n            if (debugMode) AddDebugCodeBlock_Key(@\"a\", @\"10\");\n            double itemSpan = info.span / 100;\n            double curX = (i + 0.5f) * itemSpan;\n            if (debugMode) AddDebugCodeBlock_Key(@\"a\", @\"11\");\n            CGFloat curY = [self getY:xyDic checkX:curX at:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut vInfo:info];\n            if (debugMode) AddDebugCodeBlock_Key(@\"a\", @\"12\");\n            sumTemplateY += curY;\n            [quXianYArr addObject:@(curY)];\n            if (debugMode) AddDebugCodeBlock_Key(@\"a\", @\"13\");",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/TCRecognitionUtil.m:47-66"
+    },
+    "1633": {
+        "file_id": 166,
+        "content": "Continue loop if span of info is 0. Calculate xy coordinates from goodPorts4 and cutIndexOfConFo using convertConFoPorts2XYDic method. If xyDic is not valid, continue loop. Iterate through each sample in 100 parts and calculate average Y value. Store current Y values in an array quXianYArr for later use.",
+        "type": "comment"
+    },
+    "1634": {
+        "file_id": 166,
+        "content": "        }\n        double averageY = sumTemplateY / 100;\n        if (debugMode) AddDebugCodeBlock_Key(@\"a\", @\"14\");\n        //11. 根据protoV的值,求出protoV的Y轴强度值;\n        double protoV = NUMTOOK([AINetIndex getData:protoV_p]).doubleValue;\n        if (debugMode) AddDebugCodeBlock_Key(@\"a\", @\"15\");\n        CGFloat protoY = [self getY:xyDic checkX:protoV at:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut vInfo:info];\n        if (debugMode) AddDebugCodeBlock_Key(@\"a\", @\"16\");\n        //12. debugLog\n        //for (AIPort *conFoPort in goodPorts4) NSLog(@\"\\t\\t > conFo: %@ 强度%ld\",Pit2FStr(conFoPort.target_p),conFoPort.strong.value);\n        int maxY = (int)protoY;\n        for (NSNumber *item in quXianYArr) {\n            if (maxY < (int)item.doubleValue) maxY = (int)item.doubleValue;\n        }\n        if (debugMode) AddDebugCodeBlock_Key(@\"a\", @\"17\");\n        for (int row = maxY; row >= 1; row--) {//一行行打印\n            NSMutableString *line = [[NSMutableString alloc] init];\n            if (row % 2 == 1) continue;//高度缩小为50%;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/TCRecognitionUtil.m:67-86"
+    },
+    "1635": {
+        "file_id": 166,
+        "content": "This code segment calculates the average Y value of a template, computes the Y-axis strength value for protoV based on its indexed data, and finds the maximum Y value in an array. It then iterates through the array from the maximum Y value to 1, printing each line with alternating heights.",
+        "type": "comment"
+    },
+    "1636": {
+        "file_id": 166,
+        "content": "            for (int column = 0; column < quXianYArr.count; column++) {\n                int quXianY = NUMTOOK(ARR_INDEX(quXianYArr, column)).doubleValue;\n                double protoX = (protoV / info.span) * 100; //protoX需要由真实v值,转为0-100的x轴值;\n                BOOL isProto = fabs(row - protoY) <= 2 && fabs(column - protoX) <= 1;//放大proto点打印(更显眼)\n                BOOL border = column == 0;\n                NSString *spc = isProto ? @\"●\" : border ? @\"|\" : @\" \";\n                NSString *dot = isProto ? @\"●\" : row / 2 == ((int)averageY) / 2 ? @\"-\" : @\"o\";\n                [line appendString:quXianY >= row ? dot : spc];\n            }\n            if (debugMode) NSLog(@\"%@\",line);\n        }\n        if (debugMode) AddDebugCodeBlock_Key(@\"a\", @\"18\");\n        //13. 算出当前码的重要性 (参考29105-todo5);\n        double vImportance = protoY / averageY;\n        if (debugMode) NSLog(@\"------------------------------------------ %@ 重要性:%.3f ------------------------------------------\\n\",Pit2FStr(protoV_p),vImportance);\n        [zunjieLog appendFormat:@\"%@ = %.3f; \",Pit2FStr(protoV_p),vImportance];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/TCRecognitionUtil.m:87-103"
+    },
+    "1637": {
+        "file_id": 166,
+        "content": "In this code snippet, a loop iterates through each column in an array and performs calculations to determine whether to display a \"●\", \"|\", or \"o\" symbol. The results are then printed or logged, depending on the debug mode setting. Finally, the importance of the current code is calculated and displayed.",
+        "type": "comment"
+    },
+    "1638": {
+        "file_id": 166,
+        "content": "        [result setObject:@(vImportance) forKey:protoV_p.identifier];\n    }\n    if (debugMode) AddDebugCodeBlock_Key(@\"a\", @\"19\");\n    NSLog(@\"重要性结果: %@\",zunjieLog);\n    //14. 缩放处理并返回 (参考29107-步骤1);\n    if (debugMode) PrintDebugCodeBlock_Key(@\"a\");\n    return [self scala4ImportanceDic:result];\n}\n//MARK:===============================================================\n//MARK:                     < privateMethod >\n//MARK:===============================================================\n/**\n *  MARK:--------------------收集pFos的同层fos (抽象后具象)--------------------\n *  @param outCutIndexDic 将结果对应的cutIndex也返回;\n *  @version\n *      2023.06.11: 返回结果防重,提前防重性能好 (参考30022-优化1);\n *  @result notnull\n */\n+(NSMutableArray*) collectAbsFosThenConFos:(NSArray*)pFoModels outCutIndexDic:(NSMutableDictionary*)outCutIndexDic{\n    //1. 数据检查;\n    BOOL debugMode = false;\n    NSMutableArray *result = [[NSMutableArray alloc] init];\n    pFoModels = ARRTOOK(pFoModels);\n    //2. 依次对pFo取同层;\n    for (AIMatchFoModel *pFoM in pFoModels) {\n        AIFoNodeBase *pFo = [SMGUtils searchNode:pFoM.matchFo];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/TCRecognitionUtil.m:104-133"
+    },
+    "1639": {
+        "file_id": 166,
+        "content": "This code snippet is part of a larger program that handles matching and recognition of certain objects. It collects pFo models, performs checks on the data and collects same-layer Fos. The method also includes debugging options for logging and printing. A result is returned after scaling processing.",
+        "type": "comment"
+    },
+    "1640": {
+        "file_id": 166,
+        "content": "        NSArray *abs_ps = Ports2Pits([AINetUtils absPorts_All:pFo]);\n        if (debugMode) NSLog(@\"from pFo: %@\",Fo2FStr(pFo));\n        for (AIKVPointer *abs_p in abs_ps) {\n            //3. 判断抽象中有对应的cutIndex帧;\n            NSDictionary *indexDic = [pFo getAbsIndexDic:abs_p];\n            NSNumber *absCutIndexKey = ARR_INDEX([indexDic allKeysForObject:@(pFoM.cutIndex)], 0);\n            if (!absCutIndexKey) continue;\n            //4. 逐个收集pFos的同级(抽象的具象)->具象部分 (参考29105-方案改);\n            AIFoNodeBase *absFo = [SMGUtils searchNode:abs_p];\n            if (!absFo.cmvNode_p) continue;//无mv指向则略过;\n            if (debugMode) NSLog(@\"\\t > absFo: %@->%@\",Pit2FStr(abs_p),Pit2FStr(absFo.cmvNode_p));\n            NSArray *conPorts = [AINetUtils conPorts_All:absFo];\n            for (AIPort *conPort in conPorts) {\n                //4. 防重 (根据outCutIndexDic防重,性能更好) (参考29105-todo1);\n                if ([outCutIndexDic objectForKey:@(conPort.target_p.pointerId)]) continue;\n                //4. 防无效;\n                NSDictionary *indexDic2 = [absFo getConIndexDic:conPort.target_p];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/TCRecognitionUtil.m:134-152"
+    },
+    "1641": {
+        "file_id": 166,
+        "content": "Iterates through abstract ports and their associated parts, checks for a corresponding cutIndex frame, filters out unnecessary parts, and prevents duplicate or invalid parts.",
+        "type": "comment"
+    },
+    "1642": {
+        "file_id": 166,
+        "content": "                NSNumber *conCutIndexValue = [indexDic2 objectForKey:absCutIndexKey];\n                if (!conCutIndexValue) continue;\n                //5. 分别收集同级port,和记录它的conCutIndex;\n                [outCutIndexDic setObject:conCutIndexValue forKey:@(conPort.target_p.pointerId)];\n                [result addObject:conPort];\n            }\n        }\n    }\n    return result;\n}\n/**\n *  MARK:--------------------将conFoPorts转成xy轴数据 (x轴为v值,y轴为强度) (参考29106-解曲线)--------------------\n *  @version\n *      2023.06.12: 性能优化,将protoDataDic和protoIdentifier在for循环外复用 (参考30022);\n */\n+(NSDictionary*) convertConFoPorts2XYDic:(NSArray*)conFoPorts cutIndexDic:(NSDictionary*)cutIndexDic protoV:(AIKVPointer*)protoV_p {\n    //1. 数据准备;\n    BOOL debugMode = false;\n    if (debugMode) AddDebugCodeBlock_Key(@\"b\", @\"0\");\n    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];\n    NSDictionary *protoDataDic = [AINetIndexUtils searchDataDic:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut];//为性能,在for中复用\n    NSString *protoIdentifier = protoV_p.identifier;//为性能,在for中复用",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/TCRecognitionUtil.m:153-176"
+    },
+    "1643": {
+        "file_id": 166,
+        "content": "This code converts force port data into an xy-coordinate dictionary. It first prepares the necessary data and then iterates over each force port, collecting their x and y values, along with the corresponding cut index. The collected data is stored in a dictionary where the key is the pointer's ID and the value is the xy coordinate pair. The code also includes performance optimizations like reusing protoDataDic and protoIdentifier within a for loop to avoid unnecessary memory allocations.",
+        "type": "comment"
+    },
+    "1644": {
+        "file_id": 166,
+        "content": "    if (debugMode) AddDebugCodeBlock_Key(@\"b\", @\"1\");\n    //2. 转成conFo中对应的概念帧conAlg;\n    for (AIPort *conFoPort in conFoPorts) {\n        if (debugMode) AddDebugCodeBlock_Key(@\"b\", @\"2\");\n        AIFoNodeBase *conFo = [SMGUtils searchNode:conFoPort.target_p];\n        if (debugMode) AddDebugCodeBlock_Key(@\"b\", @\"3\");\n        NSInteger conCutIndex = NUMTOOK([cutIndexDic objectForKey:@(conFo.pId)]).integerValue;\n        if (debugMode) AddDebugCodeBlock_Key(@\"b\", @\"4\");\n        AIKVPointer *conAlg_p = ARR_INDEX(conFo.content_ps, conCutIndex);\n        if (debugMode) AddDebugCodeBlock_Key(@\"b\", @\"5\");\n        AIAlgNodeBase *conAlg = [SMGUtils searchNode:conAlg_p];\n        if (debugMode) AddDebugCodeBlock_Key(@\"b\", @\"6\");\n        //3. 在conAlg中找着同区码 (用来取xy轴);\n        AIKVPointer *findSameIdenConValue_p = [SMGUtils filterSingleFromArr:conAlg.content_ps checkValid:^BOOL(AIKVPointer *conValue_p) {\n            return [protoIdentifier isEqualToString:conValue_p.identifier];\n        }];\n        if (debugMode) AddDebugCodeBlock_Key(@\"b\", @\"7\");",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/TCRecognitionUtil.m:177-195"
+    },
+    "1645": {
+        "file_id": 166,
+        "content": "This code is part of a larger program that involves multiple layers and components. It appears to be searching for specific nodes, identifying corresponding concepts in `conFo`, and extracting information from those concepts. The `debugMode` variable seems to control the inclusion of debugging messages in the process. Overall, it's difficult to provide more context or a detailed explanation without further information about the codebase as a whole.",
+        "type": "comment"
+    },
+    "1646": {
+        "file_id": 166,
+        "content": "        if (!findSameIdenConValue_p) continue;\n        //4. 得出xy轴值,用于计算特征强度曲线 (参考29106-解曲线);\n        double x = NUMTOOK([AINetIndex getData:findSameIdenConValue_p fromDataDic:protoDataDic]).doubleValue;\n        if (debugMode) AddDebugCodeBlock_Key(@\"b\", @\"8\");\n        NSInteger y = conFoPort.strong.value;\n        [result setObject:@(y) forKey:@(x)];\n        if (debugMode) AddDebugCodeBlock_Key(@\"b\", @\"9\");\n    }\n    if (debugMode) AddDebugCodeBlock_Key(@\"b\", @\"10\");\n    if (debugMode) PrintDebugCodeBlock_Key(@\"b\");\n    return result;\n}\n/**\n *  MARK:--------------------根据xyDic和x值计算出y值 (参考29106-解曲线)--------------------\n *  @param vInfo notnull 为性能好,提前取好valueInfo传过来复用;\n *  @version\n *      2023.05.30: 增强竞争: 将辐射由50%改为33%,环境温度由30%改为10% (参考29106-todo7.1);\n *      2023.05.30: 增强竞争: 加上可视化曲线后,边调整边看曲线,调整为辐射50%,环境温度5% (后再激烈点,调成3%);\n */\n+(CGFloat) getY:(NSDictionary*)xyDic checkX:(double)checkX at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut vInfo:(AIValueInfo*)vInfo{\n    CGFloat resultY = 0;\n    for (NSNumber *key in xyDic.allKeys) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/TCRecognitionUtil.m:196-219"
+    },
+    "1647": {
+        "file_id": 166,
+        "content": "This code calculates a feature intensity curve using x and y values, and returns a dictionary of x-y pairs. It also includes debugging code blocks and provides a method to calculate y value based on given x value in a dictionary. The code is version controlled with recent updates increasing competition by adjusting radiation and environment temperature percentages.",
+        "type": "comment"
+    },
+    "1648": {
+        "file_id": 166,
+        "content": "        //1. 数据准备;\n        double templateX = key.doubleValue;\n        NSInteger y = NUMTOOK([xyDic objectForKey:key]).integerValue;\n        //2. 已冷却时长;\n        double delta = [AINetIndexUtils deltaWithValueA:templateX valueB:checkX at:at ds:ds isOut:isOut vInfo:vInfo];\n        //3. span的50%时冷却完成,环境温度30% (参考29106-解曲线);\n        CGFloat cooledValue = [MathUtils getCooledValue:vInfo.span / 4 pastTime:delta finishValue:0.005f];\n        //4. 将checkX的强度值累计起来,用于返回;\n        resultY += y * cooledValue;\n    }\n    return resultY;\n}\n/**\n *  MARK:--------------------字典缩放处理--------------------\n *  @desc 缩放至最小值为1 (参考29107-步骤1);\n */\n+(NSDictionary*) scala4ImportanceDic:(NSDictionary*)importanceDic {\n    //1. 数据检查;\n    importanceDic = DICTOOK(importanceDic);\n    //2. 缩放重要性字典: 找到最小值 (参考29107-步骤1);\n    double min = MAXFLOAT;\n    for (NSNumber *value in importanceDic.allValues) {\n        if (min > value.doubleValue) min = value.doubleValue;\n    }\n    //3. 缩放重要性字典: 缩放至最小值为1 (参考29107-步骤1);\n    for (NSString *key in importanceDic.allKeys) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/TCRecognitionUtil.m:220-251"
+    },
+    "1649": {
+        "file_id": 166,
+        "content": "This code snippet performs data preparation, calculates the cooling time based on the input values and uses a scaling method to process an importance dictionary. The scaling method scales the dictionary values to have a minimum value of 1, which is useful for comparison and analysis in various contexts.",
+        "type": "comment"
+    },
+    "1650": {
+        "file_id": 166,
+        "content": "        double value = NUMTOOK([importanceDic objectForKey:key]).doubleValue;\n        [importanceDic setValue:@(value / min) forKey:key];\n    }\n    return importanceDic;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/TCRecognitionUtil.m:252-258"
+    },
+    "1651": {
+        "file_id": 166,
+        "content": "Computes a normalized value for each key in the dictionary using NUMTOK function and stores it back in the dictionary with values divided by min. Returns the modified dictionary.",
+        "type": "comment"
+    },
+    "1652": {
+        "file_id": 167,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRefrection/TCRefrection.h",
+        "type": "filepath"
+    },
+    "1653": {
+        "file_id": 167,
+        "content": "This code file contains the interface for the TCRefrection class, which is part of the AIThinkingControl module. It has two methods: refrection that takes an AICansetModel and a DemandModel as parameters, and actionRefrection that takes a TOFoModel as a parameter. Both methods return a boolean value.",
+        "type": "summary"
+    },
+    "1654": {
+        "file_id": 167,
+        "content": "//\n//  TCRefrection.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/8/23.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@class AICansetModel,DemandModel;\n@interface TCRefrection : NSObject\n+(BOOL) refrection:(AICansetModel*)checkCanset demand:(DemandModel*)demand;\n+(BOOL) actionRefrection:(TOFoModel*)baseFoModel;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRefrection/TCRefrection.h:1-17"
+    },
+    "1655": {
+        "file_id": 167,
+        "content": "This code file contains the interface for the TCRefrection class, which is part of the AIThinkingControl module. It has two methods: refrection that takes an AICansetModel and a DemandModel as parameters, and actionRefrection that takes a TOFoModel as a parameter. Both methods return a boolean value.",
+        "type": "comment"
+    },
+    "1656": {
+        "file_id": 168,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRefrection/TCRefrection.m",
+        "type": "filepath"
+    },
+    "1657": {
+        "file_id": 168,
+        "content": "The \"反思\" method calculates reflection scores for protoCansets, updates various functions, and determines if the reflection passes or fails by comparing task percentages to a threshold value. It logs results using DebugE().",
+        "type": "summary"
+    },
+    "1658": {
+        "file_id": 168,
+        "content": "//\n//  TCRefrection.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/8/23.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import \"TCRefrection.h\"\n@implementation TCRefrection\n//MARK:===============================================================\n//MARK:                     < publicMethod >\n//MARK:===============================================================\n/**\n *  MARK:--------------------反思--------------------\n *  @desc 反思评分 (本方法中,根据checkCanset自身的spDic,前段相似度,懒值等,共同算出综合评分);\n *  _param protoCansets : 所在的源候选集 (原始proto候选集);\n *  @param demand   : 所在的源demand;\n *  @version\n *      2022.07.16: 写S评分pk (参考27048-TODO3 & 27049-TODO4);\n *      2022.09.26: cansets由可用方案候选集,改成原始候选集 (参考27123-问题3-方案);\n *      2022.09.26: 将limit保留最少3条 (因为发生了明明有1条,反而只限高没限低,导致被截剩0条了的问题);\n *      2022.11.30: 反思不需要识别,因为cansets都是同级,没法复用indexDic等,并且相似也不表示同场景 (而现在相似的抽具象已支持) (参考27211-todo2);\n *      2023.05.26: 计算canset稳定性改为有效性(sp改为eff得分),因为canset复现率低,几乎全是0分 (参考2909a-todo2);\n *      2023.05.26: BUG_修复计算cansetFenXianScore时,取cansetFo.cmvNode_p导致怎么都算出来是0分问题;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRefrection/TCRefrection.m:1-29"
+    },
+    "1659": {
+        "file_id": 168,
+        "content": "This code is for a public method called \"反思\" (Reflection) in the TCRefrection class. It calculates the reflection score for a given set of protoCansets and demand by considering various factors such as similarity, spDic, laziness, etc. The method has gone through several changes and improvements since its initial implementation in July 2022.",
+        "type": "comment"
+    },
+    "1660": {
+        "file_id": 168,
+        "content": " */\n+(BOOL) refrection:(AICansetModel*)checkCanset demand:(DemandModel*)demand{\n    //1. 数据准备;\n    [theTC updateOperCount:kFILENAME];\n    Debug();\n    AIFoNodeBase *cansetFo = [SMGUtils searchNode:checkCanset.cansetFo];\n    AIFoNodeBase *sceneFo = [SMGUtils searchNode:checkCanset.sceneFo];\n    //4. 算出如果canset无效,会带来的风险;\n    CGFloat nEffScore = 1 - [TOUtils getEffectScore:sceneFo effectIndex:checkCanset.sceneTargetIndex solutionFo:checkCanset.cansetFo];\n    OFTitleLog(@\"TCRefrection反思\", @\"\\n%@ CUT:%ld 前匹配度%.2f 无效率:%.2f\",Pit2FStr(checkCanset.cansetFo),(long)checkCanset.cutIndex,checkCanset.frontMatchValue,nEffScore);\n    //5. 算出因canset无效,带来的风险分 = Eff为N的概率 x scene的mv评分;\n    CGFloat canestFenXianScore = [AIScore score4MV:sceneFo.cmvNode_p ratio:nEffScore];\n    //7. 算出后段的\"懒\"评分;\n    CGFloat lazyScore = 0;\n    for (NSInteger i = checkCanset.cutIndex + 1; i < cansetFo.count; i++) {\n        //8. 遍历后半段中的\"isOut=true\"的行为,各指定\"懒\"评分;\n        AIKVPointer *alg_p = ARR_INDEX(cansetFo.content_ps, i);\n        if (alg_p && alg_p.isOut) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRefrection/TCRefrection.m:30-50"
+    },
+    "1661": {
+        "file_id": 168,
+        "content": "This code performs the following actions:\n1. Prepares data by updating the operation count for a filename, debugging, and retrieving two nodes (cansetFo and sceneFo) from a given set of inputs.\n2. Calculates the risk if the canset is deemed invalid by subtracting the effect score from 1.\n3. Displays log information with relevant data about the canset, cut index, front match value, and risk score.\n4. Computes the risk factor caused by a canset being invalid by multiplying the probability of it being ineffective (represented by 'nEffScore') with the scene's mv evaluation score.\n5. Calculates the score for the lazy segment (a segment after the cut index) by iterating over the remaining elements and assigning a \"lazy\" score to any that have 'isOut' set to true.",
+        "type": "comment"
+    },
+    "1662": {
+        "file_id": 168,
+        "content": "            lazyScore -= 0.5f;\n        }\n    }\n    //10. 计算解决任务奖励评分: 取负的baseRDemand评分 (参考27057);\n    NSArray *rootDemands = [TOUtils getBaseDemands_AllDeep:demand];\n    rootDemands = [SMGUtils filterArr:rootDemands checkValid:^BOOL(id item) {\n        return ISOK(item, ReasonDemandModel.class);\n    }];\n    ReasonDemandModel *baseRDemand = ARR_INDEX_REVERSE(rootDemands, 0);\n    CGFloat demandJianLiScore = -[AIScore score4Demand:baseRDemand];\n    //11. S评分PK: pk通过 = 任务评分 - 方案评分 - 懒评分 > 0;\n    //12. 三个评分都是负的,所以公式为以下 (result = 收益(负任务分) + mv的负分 + lazy的负分 > 0);\n    CGFloat sumScore = demandJianLiScore + canestFenXianScore + lazyScore;\n    BOOL result = sumScore > 0;\n    NSLog(@\"反思评价结果:%@通过 (解决任务奖励分%.1f Canset风险:%.2f 懒分:%.1f = %.1f)\",result?@\"已\":@\"未\",demandJianLiScore,canestFenXianScore,lazyScore,sumScore);\n    [AITest test21:result];\n    DebugE();\n    return result;\n}\n/**\n *  MARK:--------------------行为化反思--------------------\n *  @desc 对比当前foModel能解决的任务分 与 子任务带来的最严重负分 => 得出反思结果 (参考30054-todo6);\n *  @version\n *      2023.07.14: 子任务评分降权至60%,以增强连续行为化意愿 (参考3005a-方案1);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRefrection/TCRefrection.m:51-77"
+    },
+    "1663": {
+        "file_id": 168,
+        "content": "This function calculates the reflection score by comparing the task score with the solution score and lazy score. If the sum of these scores is greater than zero, the result is considered to be true; otherwise, it's false. The function also logs the reflection evaluation result.",
+        "type": "comment"
+    },
+    "1664": {
+        "file_id": 168,
+        "content": " */\n+(BOOL) actionRefrection:(TOFoModel*)baseFoModel {\n    //1. 根据foModel向上找出rDemand的评分;\n    [theTC updateOperCount:kFILENAME];\n    Debug();\n    OSTitleLog(@\"行为化前 反思评价\");\n    ReasonDemandModel *baseRDemand = ARR_INDEX([TOUtils getBaseRDemands_AllDeep:baseFoModel], 0);\n    if (!baseRDemand) return true;\n    CGFloat demandScore = [AIScore score4Demand:baseRDemand];\n    //2. 根据foModel向下取出subDemands的评分 (取最严重的一条subDemand分);\n    CGFloat zuiYanZonSubDemandScore = 0;\n    NSString *zuiYanZonDemandTypeStr = @\"\";\n    for (DemandModel *item in baseFoModel.subDemands) {\n        CGFloat curSubScore = [AIScore score4Demand:item];\n        if (zuiYanZonSubDemandScore > curSubScore) {\n            zuiYanZonSubDemandScore = curSubScore;\n            zuiYanZonDemandTypeStr = ClassName2Str(item.algsType);\n        }\n    }\n    //2. 子任务评分降权至70% (参考3005a-方案1);\n    zuiYanZonSubDemandScore *= 0.7f;\n    //3. 对比二者,得出反思是否通过 (最严重也不比当前重要时,反思通过) (参考30054-todo6);\n    BOOL result = zuiYanZonSubDemandScore > demandScore;\n    NSLog(@\"> 最严重子任务分(%@",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRefrection/TCRefrection.m:78-104"
+    },
+    "1665": {
+        "file_id": 168,
+        "content": "This code compares the demand score of a foModel and the most severe subDemand score, adjusts the subDemand score by 70%, and determines whether to pass the reflection based on their comparison.",
+        "type": "comment"
+    },
+    "1666": {
+        "file_id": 168,
+        "content": "):%.2f > 当前任务分(%@):%.2f =====> %@通过\",zuiYanZonDemandTypeStr,zuiYanZonSubDemandScore,ClassName2Str(baseRDemand.algsType),demandScore,result?@\"已\":@\"未\");\n    DebugE();\n    return result;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRefrection/TCRefrection.m:104-109"
+    },
+    "1667": {
+        "file_id": 168,
+        "content": "This method compares the current task's percentage to a threshold value and returns either \"已\" (passed) or \"未\" (failed) based on whether it exceeds that threshold. The result is then logged with additional information using DebugE().",
+        "type": "comment"
+    },
+    "1668": {
+        "file_id": 169,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRegroup/TCRegroup.h",
+        "type": "filepath"
+    },
+    "1669": {
+        "file_id": 169,
+        "content": "Header file for TCRegroup class in SMG_NothingIsAll project, defines methods to regroup short match models and feedback frames of match algorithms.",
+        "type": "summary"
+    },
+    "1670": {
+        "file_id": 169,
+        "content": "//\n//  TCRegroup.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/11/28.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface TCRegroup : NSObject\n+(void) rRegroup:(AIShortMatchModel*)shortModel;\n+(void) pRegroup:(AICMVNodeBase*)mv shortModel:(AIShortMatchModel*)shortModel;\n+(void) feedbackRegroup:(TOFoModel*)foModel feedbackFrameOfMatchAlgs:(NSArray*)feedbackFrameOfMatchAlgs;\n+(void) actionRegroup:(TOFoModel*)actionFoModel;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRegroup/TCRegroup.h:1-18"
+    },
+    "1671": {
+        "file_id": 169,
+        "content": "Header file for TCRegroup class in SMG_NothingIsAll project, defines methods to regroup short match models and feedback frames of match algorithms.",
+        "type": "comment"
+    },
+    "1672": {
+        "file_id": 170,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRegroup/TCRegroup.m",
+        "type": "filepath"
+    },
+    "1673": {
+        "file_id": 170,
+        "content": "The TCRegroup class assists in regrouping short-term memory, processing CMV nodes, constructing time sequences, and handling reverse feedback for tir_OPush() action recognition.",
+        "type": "summary"
+    },
+    "1674": {
+        "file_id": 170,
+        "content": "//\n//  TCRegroup.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/11/28.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import \"TCRegroup.h\"\n@implementation TCRegroup\n+(void) rRegroup:(AIShortMatchModel*)shortModel{\n    //1. 构建时序 (把每次dic输入,都作为一个新的内存时序);\n    [theTC updateOperCount:kFILENAME];\n    Debug();\n    NSArray *matchAShortMem = [theTC.inModelManager shortCache:true];\n    shortModel.matchAFo = [theNet createConFo:matchAShortMem];\n    NSArray *protoAShortMem = [theTC.inModelManager shortCache:false];\n    shortModel.protoFo = [theNet createConFo:protoAShortMem];\n    DebugE();\n}\n/**\n *  MARK:--------------------入口--------------------\n *  @version\n *      20200120 - 构建protoFo后,瞬时记忆改为不清空,为解决外层死循环问题 (因为外层循环需要行为输出后,将时序连起来) 参考n18p5-BUG9\n *      20200416 - 将先\"mv需求处理\"后\"学习\",改为先\"学习\"后\"mv需求处理\",因为外层死循环 (参考n19p5-B组BUG2);\n *      20210120 - 支持tir_OPush()反向反馈类比;\n */\n+(void) pRegroup:(AICMVNodeBase*)mv shortModel:(AIShortMatchModel*)shortModel{\n    //1. 联想到mv时,创建CmvModel取到FoNode;\n    [theTC updateOperCount:kFILENAME];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRegroup/TCRegroup.m:1-33"
+    },
+    "1675": {
+        "file_id": 170,
+        "content": "This code defines a `TCRegroup` class with methods for regrouping short-term memory and processing CMV (Command/Motion Vision) nodes. The `rRegroup` method constructs time sequences using input data, updates the model's operating count, and retrieves matching and prototype short-term memories to create ConFos. The `pRegroup` method processes CMV nodes by creating a CmvModel and updating the model's operating count. It also handles support for tir_OPush() reverse feedback.",
+        "type": "comment"
+    },
+    "1676": {
+        "file_id": 170,
+        "content": "    Debug();\n    //2. 创建CmvModel取到FoNode;\n    shortModel.protoFo = [theNet createCMVFo:shortModel.inputTime order:[theTC.inModelManager shortCache:false] mv:mv];\n    //[self.shortMemory clear] (参考注释2020.01.20);\n    DebugE();\n}\n/**\n *  MARK:--------------------feedbackTOR后重组--------------------\n *  @desc\n *      说明: 在foModel下找到subAlgModel,其中feedbackAlg有值的,替换到foModel中,并重组成新的时序;\n *      例如: [我要吃水果],结果反馈了榴莲,重组成[我要吃榴莲];\n *  @param feedbackFrameOfMatchAlgs : 触发调用此反馈重组方法的protoAlg的识别matchAlgs结果 (参考28103-2.2);\n *  @version\n *      2023.07.08: 写了action行为化反思后,这里已经没用了,所以关掉 (参考30054-另外);\n */\n+(void) feedbackRegroup:(TOFoModel*)foModel feedbackFrameOfMatchAlgs:(NSArray*)feedbackFrameOfMatchAlgs {\n    //1. 数据准备;\n    if (!Switch4FeedbackRegroup) return;\n    [theTC updateOperCount:kFILENAME];\n    Debug();\n    //3. 数据准备 (收集除末位外的content为order);\n    NSArray *order = [foModel getOrderUseMatchAndFeedbackAlg:true];\n    //6. 将时序元素生成新时序;\n    AIFoNodeBase *regroupFo = [theNet createConFo:order];\n    //7. 识别时序 (预测到鸡蛋变脏,或者cpu损坏) (理性预测影响评价即理性评价);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRegroup/TCRegroup.m:34-63"
+    },
+    "1677": {
+        "file_id": 170,
+        "content": "Creates a CMV model, finds FoNode, and clears short-term memory.",
+        "type": "comment"
+    },
+    "1678": {
+        "file_id": 170,
+        "content": "    DebugE();\n    [TCRecognition feedbackRecognition:regroupFo foModel:foModel feedbackFrameOfMatchAlgs:feedbackFrameOfMatchAlgs];\n}\n/**\n *  MARK:--------------------action输出前重组--------------------\n *  @desc 将瞬时记忆几帧 + canset要cutIndex之后要输出的几帧 = 拼接起来 (参考30054-方案&另外1);\n *  @version\n *      2023.07.09: 修复上帧为输出或mv时,未生成protoFo,导致收集不到前半部分order的问题 (参考30056);\n *      2023.07.09: 修复order的时间错乱的问题 (将前后部分统一为时间戳,以使regroupFo生成deltaTimes正确);\n *      2023.11.16: 修复order的inputTime时间前大后小的BUG (每次循环后更新lastInputTime即可);\n *      2023.11.16: 简化代码: 直接改成isTimestamp=false方式来收集后半部分;\n */\n+(void) actionRegroup:(TOFoModel*)actionFoModel {\n    //1. 数据准备;\n    [theTC updateOperCount:kFILENAME];\n    Debug();\n    NSMutableArray *order = [[NSMutableArray alloc] init];\n    //2. 收集瞬时记忆\"刚已发生的protoFo\"做为前半部分 (参考30054-todo1);\n    [order addObjectsFromArray:[theTC.inModelManager shortCache:false]];\n    NSInteger regroupCutIndex = order.count - 1;\n    //3. 收集cansetFo\"即将行为化的部分\"做为后半部分 (参考30054-todo2);\n    AIFoNodeBase *actionFo = [SMGUtils searchNode:actionFoModel.content_p];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRegroup/TCRegroup.m:64-88"
+    },
+    "1679": {
+        "file_id": 170,
+        "content": "This code is performing action regrouping in a TCRecognition system. It collects the recent fo models, adds them to an order array, and then appends the forthcoming fo model's protoFo as the latter part of the sequence. This method is called with an action foModel.",
+        "type": "comment"
+    },
+    "1680": {
+        "file_id": 170,
+        "content": "    for (NSInteger i = actionFoModel.actionIndex; i <= MIN(actionFoModel.targetSPIndex, actionFo.count - 1); i++) {\n        AIKVPointer *item_p = ARR_INDEX(actionFo.content_ps, i);\n        NSTimeInterval deltaTime = [NUMTOOK(ARR_INDEX(actionFo.deltaTimes, i)) doubleValue];\n        [order addObject:[AIShortMatchModel_Simple newWithAlg_p:item_p inputTime:deltaTime isTimestamp:false]];\n    }\n    //4. 将时序元素生成新时序 (参考30054-todo3);\n    AIFoNodeBase *regroupFo = [theNet createConFo:order];\n    //5. 识别时序 (预测到鸡蛋变脏,或者cpu损坏) (理性预测影响评价即理性评价) (参考30054-todo3);\n    DebugE();\n    [TCRecognition actionRecognition:regroupFo baseActionFo:actionFoModel regroupCutIndex:regroupCutIndex];\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRegroup/TCRegroup.m:89-103"
+    },
+    "1681": {
+        "file_id": 170,
+        "content": "This code is iterating through action indices and creating short match models with input time from delta times. These models are then added to an order. The order is used to create a new sequential element. This new element is recognized by the TCRecognition method, which takes the newly created sequential element, the original action model, and a regroup cut index as parameters. This process seems to be related to recognizing actions in a sequence and possibly making predictions or evaluations based on those actions.",
+        "type": "comment"
+    },
+    "1682": {
+        "file_id": 171,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRethink/TCRethink.h",
+        "type": "filepath"
+    },
+    "1683": {
+        "file_id": 171,
+        "content": "This code defines a class TCRethink that involves two types of reflection: rational and emotional. It has four feedback-based rethinking methods, split into reasoning and perception categories. The model and type parameters are used to specify the input for each method.",
+        "type": "summary"
+    },
+    "1684": {
+        "file_id": 171,
+        "content": "//\n//  TCRethink.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/12/25.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------反省--------------------\n *  @desc 分裂成理性反省 和 感性反省 (参考n24p02);\n *  @desc 四个feedback分别对应四个rethink反省 (参考25031-12);\n */\n@interface TCRethink : NSObject\n+(void) reasonInRethink:(AIMatchFoModel*)model cutIndex:(NSInteger)cutIndex type:(AnalogyType)type;\n+(void) perceptInRethink:(AIMatchFoModel*)model type:(AnalogyType)type;\n+(void) reasonOutRethink:(TOFoModel*)model actionIndex:(NSInteger)actionIndex type:(AnalogyType)type;\n+(void) perceptOutRethink:(TOFoModel*)model type:(AnalogyType)type;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRethink/TCRethink.h:1-23"
+    },
+    "1685": {
+        "file_id": 171,
+        "content": "This code defines a class TCRethink that involves two types of reflection: rational and emotional. It has four feedback-based rethinking methods, split into reasoning and perception categories. The model and type parameters are used to specify the input for each method.",
+        "type": "comment"
+    },
+    "1686": {
+        "file_id": 172,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRethink/TCRethink.m",
+        "type": "filepath"
+    },
+    "1687": {
+        "file_id": 172,
+        "content": "This code updates a machine learning model's reasoning system by performing abstract updates based on cutIndex and type, with debugging and logging features.",
+        "type": "summary"
+    },
+    "1688": {
+        "file_id": 172,
+        "content": "//\n//  TCRethink.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/12/25.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import \"TCRethink.h\"\n@implementation TCRethink\n/**\n *  MARK:--------------------IR反省器--------------------\n *  @version\n *      2023.03.04: 修复反省未保留以往帧cutIndex (参考28144-另外);\n */\n+(void) reasonInRethink:(AIMatchFoModel*)model cutIndex:(NSInteger)cutIndex type:(AnalogyType)type{\n    AIFoNodeBase *matchFo = [SMGUtils searchNode:model.matchFo];\n    [theTC updateOperCount:kFILENAME];\n    Debug();\n    NSString *spFrom = STRFORMAT(@\"%@\",[matchFo.spDic objectForKey:@(cutIndex + 1)]);\n    [matchFo updateSPStrong:cutIndex + 1 type:type];\n    IFTitleLog(@\"IR反省\", @\"\\nspIndex:%ld -> (%@) %@->%@ %@\",cutIndex + 1,ATType2Str(type),spFrom,[matchFo.spDic objectForKey:@(cutIndex + 1)],Fo2FStr(matchFo));\n    //2. 抽象也更新 (参考29069-todo11.4);\n    [TCRethinkUtil spEff4Abs:matchFo curFoIndex:cutIndex + 1 itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {\n        [absFo updateSPStrong:absIndex type:type];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRethink/TCRethink.m:1-27"
+    },
+    "1689": {
+        "file_id": 172,
+        "content": "This code appears to be implementing a reasoning system for a machine learning model. It seems to update the strong sparse representation of the model and perform an abstract update based on a given cutIndex and type. The code also includes debugging and logging functionality, as well as a reference to TCRethinkUtil.",
+        "type": "comment"
+    },
+    "1690": {
+        "file_id": 172,
+        "content": "    }];\n    DebugE();\n}\n+(void) perceptInRethink:(AIMatchFoModel*)model type:(AnalogyType)type{\n    AIFoNodeBase *matchFo = [SMGUtils searchNode:model.matchFo];\n    [theTC updateOperCount:kFILENAME];\n    Debug();\n    NSString *spFrom = STRFORMAT(@\"%@\",[matchFo.spDic objectForKey:@(matchFo.count)]);\n    [matchFo updateSPStrong:matchFo.count type:type];\n    IFTitleLog(@\"IP反省\", @\"\\nspIndex:%ld -> (%@) %@->%@ %@\",matchFo.count,ATType2Str(type),spFrom,[matchFo.spDic objectForKey:@(matchFo.count)],Fo2FStr(matchFo));\n    //2. 抽象也更新 (参考29069-todo11.4);\n    [TCRethinkUtil spEff4Abs:matchFo curFoIndex:matchFo.count itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {\n        [absFo updateSPStrong:absIndex type:type];\n    }];\n    DebugE();\n}\n/**\n *  MARK:--------------------OR反省器--------------------\n *  @version\n *      2023.03.04: 修复反省未保留以往帧actionIndex,导致反省时错误的BUG (参考28144-todo);\n *      2023.04.19: 支持canset迁移时的SP统计 (参考29069-todo11);\n *      2023.09.15: 增强SP可解释性 & 为rCanset生成hCanset (参考30131-todo1);\n */\n+(void) reasonOutRethink:(TOFoModel*)model actionIndex:(NSInteger)actionIndex type:(AnalogyType)type{",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRethink/TCRethink.m:28-54"
+    },
+    "1691": {
+        "file_id": 172,
+        "content": "This code seems to be part of a larger system that performs reasoning and analysis on some data. The \"perceptInRethink\" function appears to update the strong association between certain nodes, while the \"reasonOutRethink\" function seems to perform some type of analysis related to an actionIndex and AnalogyType. Both functions call various debugging or updating methods and appear to be part of a larger system involving SMGUtils and TCRethinkUtil.",
+        "type": "comment"
+    },
+    "1692": {
+        "file_id": 172,
+        "content": "    [theTC updateOperCount:kFILENAME];\n    Debug();\n    NSArray *tModels = [model getRethinkEffectCansets];\n    for (AITransferModel *tModel in tModels) {\n        AIFoNodeBase *canset = [SMGUtils searchNode:tModel.canset];\n        NSString *spFrom = STRFORMAT(@\"%@\",[canset.spDic objectForKey:@(actionIndex)]);\n        [canset updateSPStrong:actionIndex type:type];\n        IFTitleLog(@\"OR反省\", @\"\\nspIndex:%ld -> (%@) %@->%@ %@\",actionIndex,ATType2Str(type),spFrom,[canset.spDic objectForKey:@(actionIndex)],Fo2FStr(canset));\n        //2. 抽象也更新 (参考29069-todo11.4);\n        [TCRethinkUtil spEff4Abs:canset curFoIndex:actionIndex itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {\n            [absFo updateSPStrong:absIndex type:type];\n            //NSLog(@\"> 更新absFo spIndex:%ld -> (%@) %@ %@\",actionIndex,ATType2Str(type),[absFo.spDic objectForKey:@(absIndex)],Fo2FStr(absFo));\n        }];\n    }\n    DebugE();\n}\n+(void) perceptOutRethink:(TOFoModel*)model type:(AnalogyType)type{\n    [theTC updateOperCount:kFILENAME];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRethink/TCRethink.m:55-74"
+    },
+    "1693": {
+        "file_id": 172,
+        "content": "This code updates the strong point (SP) string of a specific canset and its related abstract foam (absFo). It also logs relevant information, such as the action index, type, and foams' SP strings before and after update.",
+        "type": "comment"
+    },
+    "1694": {
+        "file_id": 172,
+        "content": "    Debug();\n    NSArray *tModels = [model getRethinkEffectCansets];\n    for (AITransferModel *tModel in tModels) {\n        AIFoNodeBase *canset = [SMGUtils searchNode:tModel.canset];\n        NSString *spFrom = STRFORMAT(@\"%@\",[canset.spDic objectForKey:@(canset.count)]);\n        [canset updateSPStrong:canset.count type:type];\n        IFTitleLog(@\"OP反省\", @\"\\nspIndex:%ld -> (%@) %@->%@ %@\",canset.count,ATType2Str(type),spFrom,[canset.spDic objectForKey:@(canset.count)],Fo2FStr(canset));\n        //2. 抽象也更新 (参考29069-todo11.4);\n        [TCRethinkUtil spEff4Abs:canset curFoIndex:canset.count itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {\n            [absFo updateSPStrong:absIndex type:type];\n        }];\n    }\n    DebugE();\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRethink/TCRethink.m:75-91"
+    },
+    "1695": {
+        "file_id": 172,
+        "content": "This code calls the Debug() function, retrieves a list of rethink effect cansets from the model, and then iterates over each canset. For each canset, it updates its strong point (SP) string, logs information about the update, and optionally updates the SP string for any abstract fo (abstract figure) that is associated with the canset. Finally, it calls DebugE() to end the debug session.",
+        "type": "comment"
+    },
+    "1696": {
+        "file_id": 173,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRethink/TCRethinkUtil.h",
+        "type": "filepath"
+    },
+    "1697": {
+        "file_id": 173,
+        "content": "This code defines a class TCRethinkUtil in the SMG_NothingIsAll project. It contains a static method spEff4Abs that takes a curFo and its index, along with an itemRunBlock. This method seems to perform some operation on the curFo node and then executes the provided itemRunBlock passing the updated FoNode and its new index. The purpose of this method and the project it belongs to is not clear from this code snippet alone.",
+        "type": "summary"
+    },
+    "1698": {
+        "file_id": 173,
+        "content": "//\n//  TCRethinkUtil.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/4/20.\n//  Copyright © 2023年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface TCRethinkUtil : NSObject\n+(void) spEff4Abs:(AIFoNodeBase*)curFo curFoIndex:(NSInteger)curFoIndex itemRunBlock:(void(^)(AIFoNodeBase *absFo,NSInteger absIndex))itemRunBlock;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRethink/TCRethinkUtil.h:1-15"
+    },
+    "1699": {
+        "file_id": 173,
+        "content": "This code defines a class TCRethinkUtil in the SMG_NothingIsAll project. It contains a static method spEff4Abs that takes a curFo and its index, along with an itemRunBlock. This method seems to perform some operation on the curFo node and then executes the provided itemRunBlock passing the updated FoNode and its new index. The purpose of this method and the project it belongs to is not clear from this code snippet alone.",
+        "type": "comment"
+    }
+}

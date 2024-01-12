@@ -1,0 +1,10 @@
+{
+    "summary": "This code is for the TCScore class, which is a part of the SMG_NothingIsAll project. It contains methods to calculate and get a comprehensive score from other modules such as TC and TOQueue. The class also has a method to derive a score dictionary using arrays of foModels and a mutable dictionary.",
+    "details": [
+        {
+            "comment": "This code is for the TCScore class, which is a part of the SMG_NothingIsAll project. It contains methods to calculate and get a comprehensive score from other modules such as TC and TOQueue. The class also has a method to derive a score dictionary using arrays of foModels and a mutable dictionary.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCScore/TCScore.h\":0-27",
+            "content": "//\n//  TCScore.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/12/19.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------\u7efc\u5408\u8bc4\u5206--------------------\n *  @todo\n *      2021.12.26: \u652f\u6301\u591a\u6761hSolution\u5171\u540c\u884c\u4e3a\u5316: hSolution\u6267\u884c\u5b8c\u6210\u65f6,\u5b83\u7684baseRDemand\u53ef\u80fd\u5b8c\u6210\u4e86\u4e00\u5b9a\u6bd4\u7387;\n *                  > \u4e00\u6761S\u672a\u5fc5\u5168\u6548,\u5373\u53ea\u89e3\u51b3\u4e86\u4e00\u5b9a\u7387,\u6b64\u65f6\u8fd8\u53ef\u4ee5\u7ee7\u7eed\u522b\u7684\u65b9\u6848 (\u6bd4\u5982\u4e3a\u4e86\u5b89\u5168,\u5373\u5e26\u67aa\u53c8\u7a7f\u9632\u5f39\u8863);\n */\n@interface TCScore : NSObject\n//\u4eceTC\u5404\u5904\u8c03\u7528;\n+(void) scoreFromIfTCNeed;\n//\u4eceTOQueue\u8c03\u7528;\n+(TCResult*) scoreFromTOQueue;\n//\u5f97\u51fa\u7efc\u8bc4\u5b57\u5178;\n+(TOFoModel*) score_Multi:(NSArray*)foModels scoreDic:(NSMutableDictionary*)scoreDic;\n@end"
+        }
+    ]
+}

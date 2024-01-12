@@ -1,0 +1,10 @@
+{
+    "summary": "HeLogView is a UIView class that provides methods to add logs, open/close the view, clear logs, and get log count. It also includes properties for stop flag and reloading data with option for reloading HD logs.",
+    "details": [
+        {
+            "comment": "HeLogView is a UIView class that provides methods to add logs, open/close the view, clear logs, and get log count. It also includes properties for stop flag and reloading data with option for reloading HD logs.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/XGLog/HeLogView.h\":0-22",
+            "content": "//\n//  HeLogView.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2020/3/12.\n//  Copyright \u00a9 2020\u5e74 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n@interface HeLogView : UIView\n@property (assign, nonatomic) BOOL stop;//\u505c\u6b62\u5de5\u4f5c;\n-(void) addLog:(NSString*)log;\n-(void) addDemoLog:(NSString*)log;\n-(void) open;\n-(void) close;\n-(void) clear;\n-(NSInteger) count;\n-(void) reloadData:(BOOL)reloadHd;\n@end"
+        }
+    ]
+}

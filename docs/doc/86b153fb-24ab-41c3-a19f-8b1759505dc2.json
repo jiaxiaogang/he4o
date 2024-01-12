@@ -1,0 +1,10 @@
+{
+    "summary": "This code file, AIImvAlgs.h, is a part of the SMG_NothingIsAll project and includes functions for converting input mindValue between different value domains. It takes a type (MVType) and two CGFloat values as parameters to map the input value to a range of 0-10.",
+    "details": [
+        {
+            "comment": "This code file, AIImvAlgs.h, is a part of the SMG_NothingIsAll project and includes functions for converting input mindValue between different value domains. It takes a type (MVType) and two CGFloat values as parameters to map the input value to a range of 0-10.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIAlg/AIImvAlgs.h\":0-18",
+            "content": "//\n//  AIImvAlgs.h\n//  SMG_NothingIsAll\n//\n//  Created by \u8d3e  on 2017/12/21.\n//  Copyright \u00a9 2017\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface AIImvAlgs : NSObject\n/**\n *  MARK:--------------------\u8f93\u5165mindValue--------------------\n *  \u6240\u6709\u503c\u57df,\u8f6c\u6362\u4e3a0-10;(\u4f8b\u5982:hunger\u65f60\u4e3a\u4e0d\u997f,10\u4e3a\u975e\u5e38\u997f)\n */\n+(void) commitIMV:(MVType)type from:(CGFloat)from to:(CGFloat)to;\n@end"
+        }
+    ]
+}

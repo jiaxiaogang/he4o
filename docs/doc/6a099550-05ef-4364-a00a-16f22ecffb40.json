@@ -1,0 +1,10 @@
+{
+    "summary": "This is a header file for the MapModel class, which represents a model to store two values (v1 and v2) instead of using an array.",
+    "details": [
+        {
+            "comment": "This is a header file for the MapModel class, which represents a model to store two values (v1 and v2) instead of using an array.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIClass/Model/MapModel.h\":0-20",
+            "content": "//\n//  MapModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/12/26.\n//  Copyright \u00a9 2023 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------\u5b58\u51e0\u4e2a\u503c\u7684\u6a21\u578b (\u603b\u6bd4\u7528\u6570\u7ec4\u65b9\u4fbf)--------------------\n */\n@interface MapModel : NSObject\n+(MapModel*) newWithV1:(id)v1 v2:(id)v2;\n@property (strong, nonatomic) id v1;\n@property (strong, nonatomic) id v2;\n@end"
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+{
+    "summary": "The code is implementing a custom UILabel subclass, BorderLabel, with the ability to draw a text in rectangle with a border and shadow. The drawing mode of the context is set to stroke for the border color and fill for the text color. The original text color and shadow offset are saved before modification. This allows the label to display both the border and the text while preserving its original appearance.",
+    "details": [
+        {
+            "comment": "The code is implementing a custom UILabel subclass, BorderLabel, with the ability to draw a text in rectangle with a border and shadow. The drawing mode of the context is set to stroke for the border color and fill for the text color. The original text color and shadow offset are saved before modification. This allows the label to display both the border and the text while preserving its original appearance.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Demo/Extension/BorderLabel.m\":0-28",
+            "content": "//\n//  BorderLabel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/8/7.\n//  Copyright \u00a9 2019\u5e74 XiaoGang. All rights reserved.\n//\n#import \"BorderLabel.h\"\n@implementation BorderLabel\n-(void)drawTextInRect:(CGRect)rect {\n    CGSize shadowOffset = self.shadowOffset;\n    UIColor *textColor = self.textColor;\n    CGContextRef c = UIGraphicsGetCurrentContext();\n    CGContextSetLineWidth(c, _borderWidth);\n    CGContextSetLineJoin(c, kCGLineJoinRound);\n    CGContextSetTextDrawingMode(c, kCGTextStroke);\n    self.textColor = _borderColor;\n    [super drawTextInRect:rect];\n    CGContextSetTextDrawingMode(c, kCGTextFill);\n    self.textColor = textColor;\n    self.shadowOffset = CGSizeMake(0, 0);\n    [super drawTextInRect:rect];\n    self.shadowOffset = shadowOffset;\n}\n@end"
+        }
+    ]
+}

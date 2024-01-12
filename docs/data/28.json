@@ -1,0 +1,541 @@
+{
+    "2800": {
+        "file_id": 292,
+        "content": "        BOOL trained = indexPath.row < self.tvIndex;\n        UIColor *color = trained ? UIColor.blackColor : UIColor.redColor;\n        //3. 创建cell;\n        XGLabCell *cell = [tableView dequeueReusableCellWithIdentifier:@\"queueCell\"];\n        [cell setText:cellStr color:color font:8];\n        return cell;\n    }\n}\n- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{\n    if (indexPath.section == 1) {\n        return [self queueCellHeight];\n    }else{\n        return [self spaceCellHeight];\n    }\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/RLTrainer/View/RLTPanel.m:600-617"
+    },
+    "2801": {
+        "file_id": 292,
+        "content": "This code sets the cell color based on whether it has been trained and configures the cell's text, font, and height for a specific section in a table view.",
+        "type": "comment"
+    },
+    "2802": {
+        "file_id": 293,
+        "content": "/ThirdParty/SMGNetVision/Core/Model/NodeCompareModel.h",
+        "type": "filepath"
+    },
+    "2803": {
+        "file_id": 293,
+        "content": "This header file defines the NodeCompareModel class, which can be initialized with two nodes (big and small) and has a method to determine if a given node A and B together form this model.",
+        "type": "summary"
+    },
+    "2804": {
+        "file_id": 293,
+        "content": "//\n//  NodeCompareModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/6/14.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface NodeCompareModel : NSObject\n+(NodeCompareModel*) newWithBig:(id)big small:(id)small;\n@property (strong, nonatomic) id bigNodeData;\n@property (strong, nonatomic) id smallNodeData;\n//本模型是否由a和b组成;\n-(BOOL)isA:(id)a andB:(id)b;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/Model/NodeCompareModel.h:1-20"
+    },
+    "2805": {
+        "file_id": 293,
+        "content": "This header file defines the NodeCompareModel class, which can be initialized with two nodes (big and small) and has a method to determine if a given node A and B together form this model.",
+        "type": "comment"
+    },
+    "2806": {
+        "file_id": 294,
+        "content": "/ThirdParty/SMGNetVision/Core/Model/NodeCompareModel.m",
+        "type": "filepath"
+    },
+    "2807": {
+        "file_id": 294,
+        "content": "This code defines the `NodeCompareModel` class, which compares two objects (a and b) against a stored big node data and small node data. It returns true if either object is equal to one of the stored node data, with a condition that if a is equal to big node data and b is equal to small node data or vice versa, then it returns true; otherwise, false.",
+        "type": "summary"
+    },
+    "2808": {
+        "file_id": 294,
+        "content": "//\n//  NodeCompareModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/6/14.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import \"NodeCompareModel.h\"\n@implementation NodeCompareModel\n+(NodeCompareModel*) newWithBig:(id)big small:(id)small{\n    NodeCompareModel *model = [NodeCompareModel new];\n    model.bigNodeData = big;\n    model.smallNodeData = small;\n    return model;\n}\n-(BOOL)isA:(id)a andB:(id)b{\n    if (a && b) {\n        BOOL aIsBig = [a isEqual:self.bigNodeData];\n        BOOL aIsSmall = [a isEqual:self.smallNodeData];\n        BOOL bIsBig = [b isEqual:self.bigNodeData];\n        BOOL bIsSmall = [b isEqual:self.smallNodeData];\n        if ((aIsBig && bIsSmall) || (aIsSmall && bIsBig)) {\n            return true;\n        }\n    }\n    return false;\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/Model/NodeCompareModel.m:1-33"
+    },
+    "2809": {
+        "file_id": 294,
+        "content": "This code defines the `NodeCompareModel` class, which compares two objects (a and b) against a stored big node data and small node data. It returns true if either object is equal to one of the stored node data, with a condition that if a is equal to big node data and b is equal to small node data or vice versa, then it returns true; otherwise, false.",
+        "type": "comment"
+    },
+    "2810": {
+        "file_id": 295,
+        "content": "/ThirdParty/SMGNetVision/Core/NVViewUtil.h",
+        "type": "filepath"
+    },
+    "2811": {
+        "file_id": 295,
+        "content": "The file NVViewUtil.h contains utility functions for 2D line and point operations, including duplicate checking, distance calculation, angle measurement, and direction conversion. It also has two class methods \"convertAngle2Direction_4\" and \"convertAngle2Direction_8\" for different precision directions.",
+        "type": "summary"
+    },
+    "2812": {
+        "file_id": 295,
+        "content": "//\n//  NVViewUtil.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/6/17.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface NVViewUtil : NSObject\n/**\n *  MARK:--------------------lineDatas的收集防重--------------------\n */\n+(BOOL) containsLineData:(NSArray*)checkLineData fromLineDatas:(NSArray*)lineDatas;\n/**\n *  MARK:--------------------两点距离--------------------\n */\n+(CGFloat) distancePoint:(CGPoint)first second:(CGPoint)second;\n/**\n *  MARK:--------------------两点角度--------------------\n *  0 -> 1 (从左开始0顺时针,一圈为0到1)\n */\n+(CGFloat) angleZero2OnePoint:(CGPoint)first second:(CGPoint)second;\n/**\n *  MARK:--------------------两点角度--------------------\n *  -PI -> PI (从右至左,上面为-0 -> -3.14 / 从右至左,下面为0 -> 3.14)\n */\n+(CGFloat) anglePIPoint:(CGPoint)first second:(CGPoint)second;\n/**\n *  MARK:--------------------将angle转为方向值--------------------\n *  @param angle : angle为左向顺时针0-1 (含0,不含1);\n *  @param directionCount : 方向数 (一般为4或8向);\n */\n+(CGFloat) convertAngle2Direction:(CGFloat)angle directionCount:(int)directionCount;",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/NVViewUtil.h:1-42"
+    },
+    "2813": {
+        "file_id": 295,
+        "content": "This file, NVViewUtil.h, contains several utility functions for working with lines and points in a two-dimensional space. The functions include checking if an array of line data already contains another set of line data to prevent duplicates, calculating the distance between two points, calculating the angle between two points measured from the starting point (0-1 range), and calculating the angle between two points measured from the ending point (-π to π range). There is also a function that converts an angle to a direction value given the number of directions (usually 4 or 8 directions).",
+        "type": "comment"
+    },
+    "2814": {
+        "file_id": 295,
+        "content": "+(CGFloat) convertAngle2Direction_4:(CGFloat)angle;\n+(CGFloat) convertAngle2Direction_8:(CGFloat)angle;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/NVViewUtil.h:43-46"
+    },
+    "2815": {
+        "file_id": 295,
+        "content": "This code defines two class methods in the NVViewUtil class, named \"convertAngle2Direction_4\" and \"convertAngle2Direction_8\". These methods take an angle as input and return a direction in CGFloat format. The difference between the two methods lies in their precision, with \"_4\" being less precise (rounded to 0 decimal places) and \"_8\" being more precise (rounded to 2 decimal places).",
+        "type": "comment"
+    },
+    "2816": {
+        "file_id": 296,
+        "content": "/ThirdParty/SMGNetVision/Core/NVViewUtil.m",
+        "type": "filepath"
+    },
+    "2817": {
+        "file_id": 296,
+        "content": "This code defines methods in a category on `NVViewUtil` class to check for line data presence, calculate Euclidean distance and angle conversion for 4/8-direction grids.",
+        "type": "summary"
+    },
+    "2818": {
+        "file_id": 296,
+        "content": "//\n//  NVViewUtil.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/6/17.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import \"NVViewUtil.h\"\n@implementation NVViewUtil\n+(BOOL) containsLineData:(NSArray*)checkLineData fromLineDatas:(NSArray*)lineDatas{\n    if (ARRISOK(checkLineData) && checkLineData.count == 2 && ARRISOK(lineDatas)) {\n        for (NSArray *parentItem in lineDatas) {\n            id checkA = ARR_INDEX(checkLineData, 0);\n            id checkB = ARR_INDEX(checkLineData, 1);\n            if ([parentItem containsObject:checkA] && [parentItem containsObject:checkB]) {\n                return true;\n            }\n        }\n    }\n    return false;\n}\n+(CGFloat) distancePoint:(CGPoint)first second:(CGPoint)second {\n    CGFloat deltaX = fabs(second.x - first.x);\n    CGFloat deltaY = fabs(second.y - first.y);\n    return sqrtf(deltaX * deltaX + deltaY * deltaY);\n}\n+(CGFloat) angleZero2OnePoint:(CGPoint)first second:(CGPoint)second {\n    //1. 取PI角度;\n    CGPoint distance = CGPointMake(second.x - first.x, second.y - first.y);",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/NVViewUtil.m:1-34"
+    },
+    "2819": {
+        "file_id": 296,
+        "content": "This code is a part of the NVViewUtil.m file from the SMG_NothingIsAll codebase, created by jia in 2019. It defines two methods: `containsLineData` and `distancePoint`. The former checks if an array of two items exists within another array of line data, while the latter calculates the Euclidean distance between two points on a plane.",
+        "type": "comment"
+    },
+    "2820": {
+        "file_id": 296,
+        "content": "    CGFloat anglePI = atan2f(distance.y,distance.x);\n    //2. 将(-PI到PI) 转换成 (0到1)\n    float result = (anglePI / M_PI + 1) / 2;\n    return result;\n}\n+(CGFloat) anglePIPoint:(CGPoint)first second:(CGPoint)second {\n    CGFloat height = second.y - first.y;\n    CGFloat width = first.x - second.x;\n    CGFloat rads = atan(height/width);\n    return -rads;\n}\n/**\n *  MARK:--------------------将angle转为方向值--------------------\n *  @param angle : angle为左向顺时针0-1 (含0,不含1);\n *  @param directionCount : 方向数 (一般为4或8向);\n */\n+(CGFloat) convertAngle2Direction:(CGFloat)angle directionCount:(int)directionCount{\n    //1. 当8向时,x8x2=(0,1,2...15);\n    int intAngle = (int)(angle * directionCount * 2);\n    //2. 再+1=(15,0,1,2...14),此时0-1为左上,2-3为上...14-15为左;\n    intAngle += 1;\n    //3. 再/2=(0,1...7),此时0为左上,1为上...7为左;\n    intAngle /= 2;\n    //4. 将(0-7)除以8.0f,转换成0-1;\n    CGFloat result = intAngle / (float)directionCount;\n    result = result == 1.0f ? 0 : result;\n    return result;\n}\n+(CGFloat) convertAngle2Direction_4:(CGFloat)angle{\n    return [self convertAngle2Direction:angle directionCount:4];",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/NVViewUtil.m:35-70"
+    },
+    "2821": {
+        "file_id": 296,
+        "content": "1. Function calculates angle in radians and converts it to a direction value ranging from 0 to 1, considering both 4-direction and 8-direction cases.\n2. Uses trigonometry to calculate the angle between two points, then converts angle to a direction.",
+        "type": "comment"
+    },
+    "2822": {
+        "file_id": 296,
+        "content": "}\n+(CGFloat) convertAngle2Direction_8:(CGFloat)angle{\n    return [self convertAngle2Direction:angle directionCount:8];\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/NVViewUtil.m:71-76"
+    },
+    "2823": {
+        "file_id": 296,
+        "content": "This code snippet defines a category on `NVViewUtil` class that adds a method to convert an angle into a direction for a 8-direction grid. The method takes in an angle and returns a CGFloat representing the corresponding direction index.",
+        "type": "comment"
+    },
+    "2824": {
+        "file_id": 297,
+        "content": "/ThirdParty/SMGNetVision/Core/Util/NVModuleUtil.h",
+        "type": "filepath"
+    },
+    "2825": {
+        "file_id": 297,
+        "content": "The `NVModuleUtil` class offers utility functions for managing data groups, with methods such as creating or retrieving a group, checking relationships between instances based on compare models, and identifying if a group contains an instance related to a specific checkData. A method is also provided to convert an array of compareModels into an index dictionary.",
+        "type": "summary"
+    },
+    "2826": {
+        "file_id": 297,
+        "content": "//\n//  NVModuleUtil.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/7/10.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface NVModuleUtil : NSObject\n//将data装成group并返回; (groups已有,则返回包含data的group)\n+(NSArray*) getOrCreateGroupWithData:(id)data groups:(NSMutableArray*)groups;\n+(BOOL) isRelateWithData1:(id)data1 data2:(id)data2 compareModels:(NSArray*)compareModels;\n/**\n *  MARK:--------------------比较nodeData1和2的抽具象关系--------------------\n *  @result : 抽象为大,具象为小,无关系为相等\n *  @desc : 排序规则: (从具象到抽象 / 从小到大)\n */\n+(NSComparisonResult)compareNodeData1:(id)n1 nodeData2:(id)n2 indexDic:(NSDictionary*)indexDic;\n/**\n *  MARK:--------------------获取dataArr的排版分组--------------------\n *  注: 其中最具象为0,抽象往上,越抽象值越大,越具象值越小;\n *  @result : 二维数组,元素为组,组中具象在前,抽象在后;\n */\n+(NSMutableArray*) getSortGroups:(NSArray*)nodeArr compareModels:(NSArray*)compareModels indexDic:(NSDictionary*)indexDic;\n/**\n *  MARK:--------------------检查group中有没有和checkData有关系的--------------------\n */\n+(BOOL) containsRelateWithData:(id)checkData fromGroup:(NSArray*)group compareModels:(NSArray*)compareModels;",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/Util/NVModuleUtil.h:1-36"
+    },
+    "2827": {
+        "file_id": 297,
+        "content": "This file contains the `NVModuleUtil` class, which provides utility methods for working with groups of data. The methods include creating or getting a group with data, checking if two data instances are related based on compare models, comparing abstract and concrete relationships between data instances, and checking if a group contains an instance related to a specific checkData instance.",
+        "type": "comment"
+    },
+    "2828": {
+        "file_id": 297,
+        "content": "/**\n *  MARK:--------------------compareModels转为indexDic--------------------\n *  @result nutnull\n */\n+(NSDictionary*)convertIndexDicWithCompareModels:(NSArray*)compareModels;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/Util/NVModuleUtil.h:39-45"
+    },
+    "2829": {
+        "file_id": 297,
+        "content": "This method converts a given array of compareModels into an index dictionary.",
+        "type": "comment"
+    },
+    "2830": {
+        "file_id": 298,
+        "content": "/ThirdParty/SMGNetVision/Core/Util/NVModuleUtil.m",
+        "type": "filepath"
+    },
+    "2831": {
+        "file_id": 298,
+        "content": "The code defines a class with methods for creating/retrieving groups, comparing and merging nodes using compatibility algorithms. It is part of the SMGNetVision framework that includes functions for dataset comparison, model conversion, and finding minimum/maximum values recursively. The methods find models based on data size and comparison with other models.",
+        "type": "summary"
+    },
+    "2832": {
+        "file_id": 298,
+        "content": "//\n//  NVModuleUtil.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/7/10.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import \"NVModuleUtil.h\"\n#import \"NodeCompareModel.h\"\n@implementation NVModuleUtil\n+(NSArray*) getOrCreateGroupWithData:(id)data groups:(NSMutableArray*)groups{\n    //1. 无效则返nil;\n    if (!data) {\n        return nil;\n    }\n    //2. 找已有,则取出;\n    if (ISOK(groups, NSMutableArray.class)) {\n        for (NSArray *oldGroup in groups) {\n            if ([oldGroup containsObject:data]) {\n                return oldGroup;\n            }\n        }\n    }\n    //3. 没找到,则新建\n    NSArray *newGroup = @[data];\n    [groups addObject:newGroup];\n    return newGroup;\n}\n+(BOOL) isRelateWithData1:(id)data1 data2:(id)data2 compareModels:(NSArray*)compareModels{\n    //1. 数据检查\n    compareModels = ARRTOOK(compareModels);\n    if (data1 && data2) {\n        //2. 检查data1和data2是否有关系\n        for (NodeCompareModel *model in compareModels) {\n            if ([model isA:data1 andB:data2]) {\n                return true;\n            }",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/Util/NVModuleUtil.m:1-43"
+    },
+    "2833": {
+        "file_id": 298,
+        "content": "This code defines an NVModuleUtil class with two methods. The first method, `getOrCreateGroupWithData:groups:` takes in data and an array of groups, checks if the data is valid and already exists within any of the existing groups, and if not, creates a new group containing the data. The second method, `isRelateWithData1:data2:compareModels:` takes in two pieces of data and an array of compare models to check if they are related according to the compare models.",
+        "type": "comment"
+    },
+    "2834": {
+        "file_id": 298,
+        "content": "        }\n    }\n    return false;\n}\n/**\n *  MARK:--------------------对比n1和n2的大小--------------------\n *  说明:\n *      1. 在compareModels中,数据是一对一的元素,如:[a>b,b>c,c>d,d>e];\n *      2. 我们要的结果可能是对比a与e;\n *      3. 我们先找出含a的元素,得出b;\n *      4. 再找出含b的元素得出c,以此类推,直到找出e;\n *      总结:先找出包含a的元素,并小的向小找,大的向大找,直到找出结果;\n *\n *  异常:\n *      1. 死亡环:(即a>b & b>a的情况),导致的互相引用;\n *      2. 解决:万一有死亡环,仅会导致排版错误;\n *\n *  BUG记录:\n *      1. 因n1,n2并非直接大小,而是间隔了很多个model,导致的返回same排版错误;\n *      2. 复现提示,先直投3个,然后记下最大的conAlgNode,单独追加进来,然后追加其absPorts,直至全纵向加载进来;\n *\n */\n+(NSComparisonResult)compareNodeData1:(id)n1 nodeData2:(id)n2 indexDic:(NSDictionary*)indexDic{\n    indexDic = DICTOOK(indexDic);\n    if (n1 && n2) {\n        NSData *key1 = OBJ2DATA(n1);\n        NSData *key2 = OBJ2DATA(n2);\n        int index1 = [NUMTOOK([indexDic objectForKey:key1]) intValue];\n        int index2 = [NUMTOOK([indexDic objectForKey:key2]) intValue];\n        return (index1 == index2) ? NSOrderedSame : ((index1 < index2) ? NSOrderedAscending : NSOrderedDescending);\n    }\n    return NSOrderedSame;",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/Util/NVModuleUtil.m:44-76"
+    },
+    "2835": {
+        "file_id": 298,
+        "content": "This method compares two nodes, n1 and n2, based on their corresponding indexes in a dictionary. It first converts the objects to data and retrieves their respective indexes. If the indexes are equal, it returns NSOrderedSame; otherwise, it determines whether n1 is less than or greater than n2 and returns the appropriate comparison result (NSOrderedAscending or NSOrderedDescending). If either n1 or n2 is nil, it returns NSOrderedSame.",
+        "type": "comment"
+    },
+    "2836": {
+        "file_id": 298,
+        "content": "}\n+(NSMutableArray*) getSortGroups:(NSArray*)nodeArr compareModels:(NSArray*)compareModels indexDic:(NSDictionary*)indexDic{\n    //1. 数据检查\n    indexDic = DICTOOK(indexDic);\n    compareModels = ARRTOOK(compareModels);\n    nodeArr = ARRTOOK(nodeArr);\n    NSMutableArray *groups = [[NSMutableArray alloc] init];\n    //2. 用相容算法,分组 (一一对比,并合并);\n    for (NSInteger i = 0; i < nodeArr.count; i++) {\n        id iData = ARR_INDEX(nodeArr, i);\n        NSArray *iGroup = [NVModuleUtil getOrCreateGroupWithData:iData groups:groups];\n        for (NSInteger j = i + 1; j < nodeArr.count; j++) {\n            id jData = ARR_INDEX(nodeArr, j);\n            NSArray *jGroup = [NVModuleUtil getOrCreateGroupWithData:jData groups:groups];\n            ///1. 当iData和jData有关系时;\n            if (![iGroup isEqual:jGroup] && [NVModuleUtil isRelateWithData1:iData data2:jData compareModels:compareModels]) {\n                ///2. 有关系,则移除合并前的group;\n                [groups removeObject:iGroup];\n                [groups removeObject:jGroup];\n                ///3. 并将iGroup和jGroup合并,加到groups;",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/Util/NVModuleUtil.m:77-101"
+    },
+    "2837": {
+        "file_id": 298,
+        "content": "The code checks data integrity, then uses a compatibility algorithm to group nodes (one-to-one comparison and merging). If two nodes are related according to the compareModels, it removes the previous groups and adds the merged one.",
+        "type": "comment"
+    },
+    "2838": {
+        "file_id": 298,
+        "content": "                NSMutableArray *mergeGroup = [[NSMutableArray alloc] init];\n                [mergeGroup addObjectsFromArray:iGroup];\n                [mergeGroup addObjectsFromArray:jGroup];\n                [groups addObject:mergeGroup];\n                ///4. 需要重新获取新的iGroup;\n                iGroup = [NVModuleUtil getOrCreateGroupWithData:iData groups:groups];\n            }\n        }\n    }\n    //3. 对groups中,每一组进行独立排序,并取编号结果; (排序:从具象到抽象)\n    NSMutableArray *sortGroups = [[NSMutableArray alloc] init];\n    for (NSArray *group in groups) {\n        NSArray *sortGroup = [group sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {\n            return [NVModuleUtil compareNodeData1:obj1 nodeData2:obj2 indexDic:indexDic];\n        }];\n        [sortGroups addObject:sortGroup];\n    }\n    return sortGroups;\n}\n+(BOOL) containsRelateWithData:(id)checkData fromGroup:(NSArray*)group compareModels:(NSArray*)compareModels{\n    //1. 数据检查\n    group = ARRTOOK(group);\n    //2. 检查group中,是否有元素与checkData有关系;",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/Util/NVModuleUtil.m:102-128"
+    },
+    "2839": {
+        "file_id": 298,
+        "content": "Code processes groups of data, merges them, reorders and sorts the merged groups. It checks if a specific data is related to any group and returns the sorted groups.",
+        "type": "comment"
+    },
+    "2840": {
+        "file_id": 298,
+        "content": "    if (checkData) {\n        for (id groupData in group) {\n            if ([NVModuleUtil isRelateWithData1:checkData data2:groupData compareModels:compareModels]) {\n                return true;\n            }\n        }\n    }\n    return false;\n}\n/**\n *  MARK:--------------------compareModels转为indexDic--------------------\n *  @result nutnull\n */\n+(NSDictionary*)convertIndexDicWithCompareModels:(NSArray*)compareModels{\n    //1. 数据准备\n    compareModels = ARRTOOK(compareModels);\n    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];\n    //2. 找出最具象\n    for (NodeCompareModel *model in compareModels) {\n        //3. 假设当前为最小\n        NSArray *smallers = @[model.smallNodeData];\n        do {\n            NSMutableArray *newSmallers = [[NSMutableArray alloc] init];\n            for (id smaller in smallers) {\n                //4. 尝试找比假设的最小更小;\n                NSArray *models = [self findModelsWithBigData:smaller compareModels:compareModels];\n                if (!ARRISOK(models)) {\n                    //5. 找不到更小,smaller已经是最小了;",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/Util/NVModuleUtil.m:129-158"
+    },
+    "2841": {
+        "file_id": 298,
+        "content": "This code appears to be part of a larger system, specifically the SMGNetVision framework. The function in question, `isRelateWithData1:data2:compareModels:`, checks if there is any relation between two data sets within a group using specified compare models. If a relation is found, it returns true; otherwise, false. The code also contains another function, `convertIndexDicWithCompareModels:`, which seems to prepare and process data in order to convert 'compareModels' into an index dictionary (possibly for further use).",
+        "type": "comment"
+    },
+    "2842": {
+        "file_id": 298,
+        "content": "                    [result setObject:@(0) forKey:OBJ2DATA(smaller)];\n                }else{\n                    //6. 有更小,则收集并再假设为最小,继续递归查更小;\n                    for (NodeCompareModel *model in models) {\n                        [newSmallers addObject:model.smallNodeData];\n                    }\n                }\n            }\n            //7. 使用新的smallers假设,并递归找更小;\n            smallers = newSmallers;\n        } while (ARRISOK(smallers));\n    }\n    //8. 列其它index;\n    for (NSData *key in result.allKeys) {\n        id smaller = DATA2OBJ(key);\n        //3. 假设当前为最小\n        NSArray *smallers = @[smaller];\n        do {\n            NSMutableArray *newSmallers = [[NSMutableArray alloc] init];\n            for (id smaller in smallers) {\n                //4. 尝试找比假设的最小更大;\n                NSArray *models = [self findModelsWithSmallData:smaller compareModels:compareModels];\n                if (ARRISOK(models)) {\n                    //6. 有更大,则index+1;\n                    for (NodeCompareModel *model in models) {\n                        int smallIndex = [NUMTOOK([result objectForKey:OBJ2DATA(smaller)]) intValue];",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/Util/NVModuleUtil.m:159-186"
+    },
+    "2843": {
+        "file_id": 298,
+        "content": "This code implements a comparison algorithm to find the minimum index in an array. It iteratively compares the current smallest with other nodes, assumes the smallest node is updated as the new smallest, and recurs until all possible smaller nodes are considered. Finally, it lists the other indices while keeping the minimum index intact.",
+        "type": "comment"
+    },
+    "2844": {
+        "file_id": 298,
+        "content": "                        int bigIndex = smallIndex + 1;\n                        //7. 存到result中;\n                        int oldIndex = [NUMTOOK([result objectForKey:OBJ2DATA(model.bigNodeData)]) intValue];\n                        int newIndex = MAX(oldIndex, bigIndex);\n                        [result setObject:@(newIndex) forKey:OBJ2DATA(model.bigNodeData)];\n                        //8. 收集新的smallers并递归找更大;\n                        [newSmallers addObject:model.bigNodeData];\n                    }\n                }\n            }\n            //7. 使用新的smallers假设,并递归找更小;\n            smallers = newSmallers;\n        } while (ARRISOK(smallers));\n    }\n    return result;\n}\n//MARK:===============================================================\n//MARK:                     < PrivateMethod >\n//MARK:===============================================================\n/**\n *  MARK:--------------------找出 \"抽象/具象\" 方向,有关系的models--------------------\n */\n+(NSArray*) findModelsWithBigData:(id)bigData compareModels:(NSArray*)compareModels{",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/Util/NVModuleUtil.m:187-214"
+    },
+    "2845": {
+        "file_id": 298,
+        "content": "This code snippet seems to be implementing a method that finds the maximum value among small and big data items, and then recursively searches for smaller or larger values depending on the given condition. It utilizes methods like NUMTOOK, OBJ2DATA, ARRISOK, result object manipulation, and array operations. The code also includes private methods for finding related models with big data and compare models.",
+        "type": "comment"
+    },
+    "2846": {
+        "file_id": 298,
+        "content": "    return [self findModelsWithData:bigData dataIsBig:true compareModels:compareModels];\n}\n+(NSArray*) findModelsWithSmallData:(id)smallData compareModels:(NSArray*)compareModels{\n    return [self findModelsWithData:smallData dataIsBig:false compareModels:compareModels];\n}\n+(NSArray*) findModelsWithData:(id)data dataIsBig:(BOOL)dataIsBig compareModels:(NSArray*)compareModels{\n    NSMutableArray *result = [[NSMutableArray alloc] init];\n    if (data && ARRISOK(compareModels)) {\n        for (NodeCompareModel *model in compareModels) {\n            if ([data isEqual:(dataIsBig ? model.bigNodeData : model.smallNodeData)]) {\n                [result addObject:model];\n            }\n        }\n    }\n    return result;\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/Util/NVModuleUtil.m:215-232"
+    },
+    "2847": {
+        "file_id": 298,
+        "content": "This code defines three methods to find models based on data size and comparison with other models. It takes a data parameter, a boolean indicating if the data is big or small, and an array of compareModels. The methods return an array of models that match the given criteria. If data and compareModels are valid, it iterates through each model in compareModels and adds the matching ones to the result array.",
+        "type": "comment"
+    },
+    "2848": {
+        "file_id": 299,
+        "content": "/ThirdParty/SMGNetVision/Core/View/NVLineView.h",
+        "type": "filepath"
+    },
+    "2849": {
+        "file_id": 299,
+        "content": "This code defines a UIView subclass called NVLineView with properties for data, light, and setData. The data property is an array of two elements (dataA and dataB), and there are methods to interact with the light state and set the data.",
+        "type": "summary"
+    },
+    "2850": {
+        "file_id": 299,
+        "content": "//\n//  NVLineView.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/6/17.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n/**\n *  MARK:--------------------网络线--------------------\n *  1. 一根线,具有两个端口数据: dataA & dataB;\n */\n@interface NVLineView : UIView\n@property (nonnull,readonly,strong, nonatomic) NSMutableArray *data;//元素为2的数据;\n-(void) light:(NSString*)lightStr;\n-(void) setDataWithDataA:(id)dataA dataB:(id)dataB;\n-(void) setDataWithData:(NSArray*)data;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVLineView.h:1-22"
+    },
+    "2851": {
+        "file_id": 299,
+        "content": "This code defines a UIView subclass called NVLineView with properties for data, light, and setData. The data property is an array of two elements (dataA and dataB), and there are methods to interact with the light state and set the data.",
+        "type": "comment"
+    },
+    "2852": {
+        "file_id": 300,
+        "content": "/ThirdParty/SMGNetVision/Core/View/NVLineView.m",
+        "type": "filepath"
+    },
+    "2853": {
+        "file_id": 300,
+        "content": "The code initializes a NVLineView, configures its properties, and creates a UIView and UILabel. It defines the setFrame method for adjusting the view's layout when frame is changed.",
+        "type": "summary"
+    },
+    "2854": {
+        "file_id": 300,
+        "content": "//\n//  NVLineView.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/6/17.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import \"NVLineView.h\"\n#import \"NVConfig.h\"\n#import \"MASConstraint.h\"\n#import \"View+MASAdditions.h\"\n@interface NVLineView ()\n@property (strong,nonatomic) UIView *lineView;\n@property (strong, nonatomic) UILabel *lightLab;\n@end\n@implementation NVLineView\n-(id) init {\n    self = [super init];\n    if(self != nil){\n        [self initView];\n        [self initData];\n        [self initDisplay];\n    }\n    return self;\n}\n-(void) initView{\n    //self\n    [self setBackgroundColor:[UIColor clearColor]];\n    self.height = 1.0f;\n    [self setUserInteractionEnabled:false];\n    [self.layer setMasksToBounds:true];\n    [self.layer setMasksToBounds:false];\n    //lineView\n    self.lineView = [[UIView alloc] init];\n    [self.lineView setBackgroundColor:UIColorWithRGBHex(0xBB5500)];\n    [self addSubview:self.lineView];\n    [self.lineView setAlpha:0.2f];\n    [self.lineView.layer setMasksToBounds:false];\n    //strongLab",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVLineView.m:1-48"
+    },
+    "2855": {
+        "file_id": 300,
+        "content": "This code initializes the NVLineView by setting its background color, height, user interaction enabled status, and layer properties. It also creates a UIView called lineView with a specific background color, adds it as a subview of NVLineView, sets its alpha value, and configures its layer properties.",
+        "type": "comment"
+    },
+    "2856": {
+        "file_id": 300,
+        "content": "    self.lightLab = [[UILabel alloc] init];\n    [self.lightLab setTextColor:UIColorWithRGBHex(0xFF0000)];\n    [self addSubview:self.lightLab];\n    [self.lightLab setAlpha:0.2f];\n    [self.lightLab setHeight:10];\n    [self.lightLab setTextAlignment:NSTextAlignmentCenter];\n    [self.lightLab setFont:[UIFont systemFontOfSize:8]];\n}\n-(void) initData{\n    _data = [[NSMutableArray alloc] init];\n}\n-(void) initDisplay{\n}\n//MARK:===============================================================\n//MARK:                     < method >\n//MARK:===============================================================\n-(void) light:(NSString*)lightStr{\n    [self.lightLab setText:lightStr];\n}\n-(void) setDataWithDataA:(id)dataA dataB:(id)dataB{\n    if (dataA && dataB) {\n        [self setDataWithData:@[dataA,dataB]];\n    }\n}\n-(void) setDataWithData:(NSArray*)data{\n    if (ARRISOK(data) && data.count == 2) {\n        [self.data removeAllObjects];\n        [self.data addObjectsFromArray:data];\n        [self refreshDisplay];\n    }\n}\n-(void) refreshDisplay{",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVLineView.m:49-87"
+    },
+    "2857": {
+        "file_id": 300,
+        "content": "Creates a UILabel for displaying a light label with specific properties and initializes data array.",
+        "type": "comment"
+    },
+    "2858": {
+        "file_id": 300,
+        "content": "}\n/**\n *  MARK:--------------------setFrame--------------------\n *  @version\n *      2021.08.05: 修复lightLab排版错乱的问题;\n */\n-(void)setFrame:(CGRect)frame{\n    [super setFrame:frame];\n    [self.lineView setFrame:CGRectMake(cNodeSize * 0.5f, 0, self.width - cNodeSize, self.height)];\n    [self.lightLab setWidth:self.width];\n    [self.lightLab setCenter:CGPointMake(self.width / 2.0f, self.height / 2.0f)];\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVLineView.m:89-103"
+    },
+    "2859": {
+        "file_id": 300,
+        "content": "This code defines the setFrame method for a view, which updates the frame of the view and its subviews when the frame of the view is changed. It fixes an issue with text layout in the lightLab subview, adjusts the frame of the lineView, and sets the width and center position of the lightLab label.",
+        "type": "comment"
+    },
+    "2860": {
+        "file_id": 301,
+        "content": "/ThirdParty/SMGNetVision/Core/View/NVModuleView.h",
+        "type": "filepath"
+    },
+    "2861": {
+        "file_id": 301,
+        "content": "This code declares two interfaces, one for module view's name and click events, and another for a network module view. The NVModuleView class defines properties like moduleId, nodeArr, delegate, setData methods with different data types, removeNodeDatas, and clear.",
+        "type": "summary"
+    },
+    "2862": {
+        "file_id": 301,
+        "content": "//\n//  NVModuleView.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/6/12.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@class NVModuleView;\n@protocol NVModuleViewDelegate <NSObject>\n//获取自定义nodeView\n-(UIView *)moduleView_GetCustomSubView:(id)nodeData;\n//获取节点颜色\n-(UIColor *)moduleView_GetNodeColor:(id)nodeData;\n-(UIColor *)moduleView_GetRightColor:(id)nodeData;\n//获取节点透明度\n-(CGFloat)moduleView_GetNodeAlpha:(id)nodeData;\n//获取节点描述\n-(NSString*)moduleView_NodeOnClick:(id)nodeData;\n//获取节点的抽象序列\n-(NSArray*)moduleView_AbsNodeDatas:(id)nodeData;\n//获取节点的具象序列\n-(NSArray*)moduleView_ConNodeDatas:(id)nodeData;\n//获取节点的引用序列(内容)\n-(NSArray*)moduleView_ContentNodeDatas:(id)nodeData;\n//获取节点的被引用序列\n-(NSArray*)moduleView_RefNodeDatas:(id)nodeData;\n//获取所有网络中的节点数据 (判定关联)\n-(NSArray*)moduleView_GetAllNetDatas;\n//向可视化中,追加datas;\n-(void)moduleView_SetNetDatas:(NSArray*)datas;\n//获取所有网络中的节点数据 (判定关联)\n-(void)moduleView_DrawLine:(NSArray*)lineDatas;\n//清除所有网络中的有关的线\n-(void)moduleView_ClearLine:(NSArray*)datas;\n//报名",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVModuleView.h:1-51"
+    },
+    "2863": {
+        "file_id": 301,
+        "content": "Header file for NVModuleView class, defining delegate protocol and methods for custom subview, node color, alpha, description, abstract/concrete sequences, content/reference sequences, network data retrieval/manipulation.",
+        "type": "comment"
+    },
+    "2864": {
+        "file_id": 301,
+        "content": "-(NSString*)moduleView_ShowName:(id)data;\n//directionClick\n-(void)moduleView_DirectionClick:(DirectionType)type mView:(NVModuleView*)mView nData:(id)nData targetDatas:(NSArray*)targetDatas;\n//longClick\n-(void)moduleView_LongClick:(DirectionType)type mView:(NVModuleView*)mView nData:(id)nData;\n@end\n/**\n *  MARK:--------------------模块View--------------------\n *  网络模块View;\n */\n@interface NVModuleView : UIView\n@property (readonly,strong, nonatomic) NSString *moduleId;\n@property (readonly,strong, nonatomic) NSMutableArray *nodeArr;\n@property (weak, nonatomic) id<NVModuleViewDelegate> delegate;\n-(void) setDataWithModuleId:(NSString*)moduleId;\n-(void) setDataWithNodeData:(id)nodeData;\n-(void) setDataWithNodeDatas:(NSArray*)nodeDatas;\n-(void) removeNodeDatas:(NSArray*)nodeDatas;\n-(void) clear;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVModuleView.h:52-77"
+    },
+    "2865": {
+        "file_id": 301,
+        "content": "This code declares two interfaces: one for module view's show name method and long/direction click events, and another for a network module view. The module view interface includes properties such as moduleId, nodeArr, delegate, setData methods with different data types, removeNodeDatas, and clear. These interfaces define the basic functionalities of the NVModuleView class.",
+        "type": "comment"
+    },
+    "2866": {
+        "file_id": 302,
+        "content": "/ThirdParty/SMGNetVision/Core/View/NVModuleView.m",
+        "type": "filepath"
+    },
+    "2867": {
+        "file_id": 302,
+        "content": "The code defines classes for module-related data display and node views with default values, click event methods, delegate interface, and interaction. It handles subviews, sorts algorithms, calculates coordinates, tracks nodes, collects relationships, and draws network connections.",
+        "type": "summary"
+    },
+    "2868": {
+        "file_id": 302,
+        "content": "//\n//  NVModuleView.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/6/12.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import \"NVModuleView.h\"\n#import \"MASConstraint.h\"\n#import \"View+MASAdditions.h\"\n#import \"NVNodeView.h\"\n#import \"NodeCompareModel.h\"\n#import \"NVViewUtil.h\"\n#import \"NVModuleUtil.h\"\n#import \"NVConfig.h\"\n@interface NVModuleView ()<NVNodeViewDelegate>\n@property (strong,nonatomic) IBOutlet UIView *containerView;\n@property (weak, nonatomic) IBOutlet UILabel *titleLab;\n@end\n@implementation NVModuleView\n-(id) init {\n    self = [super init];\n    if(self != nil){\n        [self initView];\n        [self initData];\n        [self initDisplay];\n    }\n    return self;\n}\n-(void) initView{\n    //self\n    [self setBackgroundColor:[UIColor clearColor]];\n    //containerView\n    [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];\n    [self addSubview:self.containerView];\n    [self.containerView mas_makeConstraints:^(MASConstraintMaker *make) {\n        make.leading.mas_equalTo(self);",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVModuleView.m:1-45"
+    },
+    "2869": {
+        "file_id": 302,
+        "content": "Initializing the NVModuleView, setting background color to clear, loading nib and adding subview, applying constraints for leading edge alignment.",
+        "type": "comment"
+    },
+    "2870": {
+        "file_id": 302,
+        "content": "        make.trailing.mas_equalTo(self);\n        make.top.mas_equalTo(self);\n        make.bottom.mas_equalTo(self);\n    }];\n}\n-(void) initData{\n    _nodeArr = [[NSMutableArray alloc] init];\n}\n-(void) initDisplay{\n}\n//MARK:===============================================================\n//MARK:                     < method >\n//MARK:===============================================================\n-(void) setDataWithModuleId:(NSString*)moduleId{\n    _moduleId = moduleId;\n    [self.titleLab setText:STRTOOK(self.moduleId)];\n}\n-(void) setDataWithNodeData:(id)nodeData{\n    if (nodeData) {\n        [self setDataWithNodeDatas:@[nodeData]];\n    }\n}\n-(void) setDataWithNodeDatas:(NSArray*)nodeDatas{\n    NSMutableArray *validDatas = [[NSMutableArray alloc] init];\n    if (ARRISOK(nodeDatas)) {\n        for (id item in nodeDatas) {\n            if (![self.nodeArr containsObject:item]) {\n                [self.nodeArr addObject:item];\n                [validDatas addObject:item];\n            }\n        }\n        [self refreshDisplayWithNodeDatas:validDatas];",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVModuleView.m:46-83"
+    },
+    "2871": {
+        "file_id": 302,
+        "content": "This code defines a class, likely for displaying data related to modules. It initializes the data array and provides methods to set the module ID or node data for this view. The setDataWithNodeDatas: method filters out any duplicate node data in order to only add unique items to the nodeArr array. Finally, it calls refreshDisplayWithNodeDatas: method with the valid datas.",
+        "type": "comment"
+    },
+    "2872": {
+        "file_id": 302,
+        "content": "    }\n}\n-(void) refreshDisplayWithNodeDatas:(NSArray*)nodeDatas{\n    //1. 显示新节点\n    for (id nodeData in ARRTOOK(nodeDatas)) {\n        NVNodeView *nodeView = [[NVNodeView alloc] init];\n        nodeView.delegate = self;\n        [nodeView setDataWithNodeData:nodeData];\n        [self.containerView addSubview:nodeView];\n    }\n    //2. 节点排版算法,重置计算所有节点坐标;\n    [self refreshDisplay_Node];\n    //3. 重绘关联线\n    [self refreshDisplay_Line:nodeDatas];\n}\n/**\n *  MARK:--------------------移除节点--------------------\n *  @version\n *      2021.08.13: 修复removeArr方法错误,导致移除不全面,改用removeSub_ps方法后ok;\n */\n-(void) removeNodeDatas:(NSArray*)nodeDatas{\n    //1. 数据检查;\n    nodeDatas = ARRTOOK(nodeDatas);\n    //2. 取到符合的NodeView\n    NSArray *allNode = [self.containerView subViews_AllDeepWithClass:NVNodeView.class];\n    allNode = [SMGUtils filterArr:allNode checkValid:^BOOL(NVNodeView *item) {\n        return [nodeDatas containsObject:item.data];\n    }];\n    //3. 删除数据,删除NodeView;\n    _nodeArr = [SMGUtils removeSub_ps:nodeDatas parent_ps:self.nodeArr];\n    for (UIView *view in allNode) {",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVModuleView.m:84-120"
+    },
+    "2873": {
+        "file_id": 302,
+        "content": "This code is responsible for displaying new nodes, rearranging existing nodes with layout algorithms, and removing specified nodes from the view. It uses a containerView to manage subviews of type NVNodeView and maintains an internal array of node data called \"nodeArr\". The code includes methods to refresh the display with new or updated node data (refreshDisplayWithNodeDatas) and remove specific node data from the view (removeNodeDatas).",
+        "type": "comment"
+    },
+    "2874": {
+        "file_id": 302,
+        "content": "        [view removeFromSuperview];\n    }\n    //4. 节点排版算法,重置计算所有节点坐标;\n    [self refreshDisplay_Node];\n    //5. 刷新即有线的坐标;\n    [self refreshDisplay_Line:self.nodeArr];\n}\n-(void) clear{\n    //1. 清数据\n    [self.nodeArr removeAllObjects];\n    //2. 清节点\n    NSArray *nodeViews = ARRTOOK([self subViews_AllDeepWithClass:NVNodeView.class]);\n    for (NVNodeView *nodeView in nodeViews) {\n        [nodeView removeFromSuperview];\n    }\n}\n//MARK:===============================================================\n//MARK:                     < Node >\n//MARK:===============================================================\n/**\n *  MARK:--------------------节点排版算法--------------------\n *  1. 有可能,a组与b组间没抽具象关系;此时只能默认往底部排;\n */\n-(void) refreshDisplay_Node{\n    //1. 找出所有有关系的NodeCompareModel\n    NSArray *compareModels = [self getNodeCompareModels];\n    NSDictionary *indexDic = [NVModuleUtil convertIndexDicWithCompareModels:compareModels];\n    //2. 获取分组数据;\n    NSArray *sortGroups = [NVModuleUtil getSortGroups:self.nodeArr compareModels:compareModels indexDic:indexDic];",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVModuleView.m:121-155"
+    },
+    "2875": {
+        "file_id": 302,
+        "content": "This code appears to be implementing a node layout algorithm for a view, involving clearing and refreshing the display of nodes and lines. It also has methods for handling nodes and clearing data. The code contains functions for getting sort groups, converting index dictionaries with compare models, and retrieving all subviews of a specific class.",
+        "type": "comment"
+    },
+    "2876": {
+        "file_id": 302,
+        "content": "    //3. 根据编号计算坐标;\n    NSArray *nodeViews = ARRTOOK([self subViews_AllDeepWithClass:NVNodeView.class]);\n    //4. 同层计数器 (本层节点个数)\n    NSMutableDictionary *yLayerCountDic = [[NSMutableDictionary alloc] init];\n    int curX = -1;\n    for (NSArray *sortGroup in sortGroups) {\n        for (id sortItem in sortGroup) {\n            for (NVNodeView *nodeView in nodeViews) {\n                if ([nodeView.data isEqual:sortItem]) {\n                    //5. 取xIndex和yIndex;\n                    NSData *key = OBJ2DATA(nodeView.data);\n                    NSInteger x = ++curX;\n                    NSInteger y = [NUMTOOK([indexDic objectForKey:key]) integerValue];\n                    //6. 同层y值偏移量 (交错3 & 偏移8)\n                    NSInteger layerCount = [NUMTOOK([yLayerCountDic objectForKey:@(y)]) intValue];\n                    [yLayerCountDic setObject:@(layerCount + 1) forKey:@(y)];\n                    //7. 节点坐标\n                    float spaceX = MIN(cXSpace, (self.width - cNodeSize) / nodeViews.count);\n                    nodeView.x = x * spaceX;",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVModuleView.m:157-178"
+    },
+    "2877": {
+        "file_id": 302,
+        "content": "This code iterates through an array of nodes and their corresponding positions, calculating x and y coordinates for each node view based on the input data. It also keeps track of the number of nodes in the same layer to calculate the correct y-coordinate offsets.",
+        "type": "comment"
+    },
+    "2878": {
+        "file_id": 302,
+        "content": "                    nodeView.y = (self.height - cNodeSize) - (y * cLayerSpace) - (layerCount % 3) * cYSpace;\n                }\n            }\n        }\n    }\n}\n/**\n *  MARK:--------------------收集所有nodeData的关系模型--------------------\n */\n-(NSArray*)getNodeCompareModels {\n    //1. 进行一一比较,并收集;\n    NSMutableArray *result = [[NSMutableArray alloc] init];\n    for (NSInteger i = 0; i < self.nodeArr.count; i++) {\n        for (NSInteger j = i + 1; j < self.nodeArr.count; j++) {\n            id iData = ARR_INDEX(self.nodeArr, i);\n            id jData = ARR_INDEX(self.nodeArr, j);\n            if (iData && jData) {\n                //2. n1抽象指向n2\n                NSArray *iAbs = ARRTOOK([self moduleView_AbsNodeDatas:iData]);\n                if ([iAbs containsObject:jData]) {\n                    [result addObject:[NodeCompareModel newWithBig:jData small:iData]];\n                    continue;\n                }\n                //3. n1具象指向n2\n                NSArray *iCon = ARRTOOK([self moduleView_ConNodeDatas:iData]);\n                if ([iCon containsObject:jData]) {",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVModuleView.m:179-205"
+    },
+    "2879": {
+        "file_id": 302,
+        "content": "This code is part of a view implementation for an object called SMGNetVision. It collects relationships between nodes in the form of NodeCompareModels. The outer loop iterates over each node, and the inner loop compares it with all subsequent nodes. For each pair, it checks if one node abstractly points to the other or if one node concretely points to the other, adding a NodeCompareModel instance to the result array if necessary.",
+        "type": "comment"
+    },
+    "2880": {
+        "file_id": 302,
+        "content": "                    [result addObject:[NodeCompareModel newWithBig:iData small:jData]];\n                }\n            }\n        }\n    }\n    return result;\n}\n//MARK:===============================================================\n//MARK:                     < Line >\n//MARK:===============================================================\n-(void) refreshDisplay_Line:(NSArray*)newNodeDatas{\n    //1. 收集所有线的数据 (元素为长度为2的数组);\n    NSMutableArray *lineDatas = [[NSMutableArray alloc] init];\n    newNodeDatas = ARRTOOK(newNodeDatas);\n    //2. 逐个节点进行关联判断;\n    NSArray *netDatas = ARRTOOK([self moduleView_GetAllNetDatas]);\n    for (id item in newNodeDatas) {\n        //3. 取四种关联端口;\n        NSArray *absDatas = ARRTOOK([self moduleView_AbsNodeDatas:item]);\n        NSArray *conDatas = ARRTOOK([self moduleView_ConNodeDatas:item]);\n        NSArray *contentDatas = ARRTOOK([self moduleView_ContentNodeDatas:item]);\n        NSArray *refDatas = ARRTOOK([self moduleView_RefNodeDatas:item]);\n        //4. 对网络中各节点,判定关联 (非本身 & 有关系 & 未重复)\n        for (id netItem in netDatas) {",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVModuleView.m:206-233"
+    },
+    "2881": {
+        "file_id": 302,
+        "content": "This code calculates the associations between nodes in a network. It collects all line data as arrays of length 2, iterates through each node's data, gathers related node data, and checks if they are not self, have a relationship, and are not duplicates. Finally, it returns the resulting array.",
+        "type": "comment"
+    },
+    "2882": {
+        "file_id": 302,
+        "content": "            BOOL havRelate = ([absDatas containsObject:netItem] || [conDatas containsObject:netItem] || [contentDatas containsObject:netItem] || [refDatas containsObject:netItem]);\n            if (![item isEqual:netItem] && havRelate && ![NVViewUtil containsLineData:@[item,netItem] fromLineDatas:lineDatas]) {\n                [lineDatas addObject:@[item,netItem]];\n            }\n        }\n    }\n    //5. 画线\n    [self moduleView_DrawLine:lineDatas];\n}\n//MARK:===============================================================\n//MARK:                     < onclick >\n//MARK:===============================================================\n- (IBAction)clearBtnOnClick:(id)sender {\n    //1. 清线\n    [self.delegate moduleView_ClearLine:self.nodeArr];\n    //2. 清数据和节点\n    [self clear];\n}\n- (IBAction)showNameBtnOnClick:(id)sender {\n    NSArray *nViews = ARRTOOK([self subViews_AllDeepWithClass:NVNodeView.class]);\n    for (NVNodeView *nodeView in nViews) {\n        if (self.delegate && [self.delegate respondsToSelector:@selector(moduleView_ShowName:)]) {",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVModuleView.m:234-258"
+    },
+    "2883": {
+        "file_id": 302,
+        "content": "Code snippet initializes a boolean variable `havRelate` indicating if `netItem` is related to `absDatas`, `conDatas`, `contentDatas`, or `refDatas`. If the `item` is not equal to `netItem` and `havRelate` is true, adds `[item, netItem]` to `lineDatas`. Finally, calls `moduleView_DrawLine:lineDatas` to draw lines.",
+        "type": "comment"
+    },
+    "2884": {
+        "file_id": 302,
+        "content": "            NSString *showName = [self.delegate moduleView_ShowName:nodeView.data];\n            [nodeView setTitle:showName showTime:cShowNameTime];\n        }\n    }\n}\n/**\n *  MARK:--------------------NVNodeViewDelegate--------------------\n */\n-(UIView *)nodeView_GetCustomSubView:(id)nodeData{\n    return [self moduleView_GetCustomSubView:nodeData];\n}\n-(UIColor *)nodeView_GetNodeColor:(id)nodeData{\n    return [self moduleView_GetNodeColor:nodeData];\n}\n-(UIColor *)nodeView_GetRightColor:(id)nodeData{\n    return [self.delegate moduleView_GetRightColor:nodeData];\n}\n-(CGFloat)nodeView_GetNodeAlpha:(id)nodeData{\n    if (self.delegate && [self.delegate respondsToSelector:@selector(moduleView_GetNodeAlpha:)]) {\n        return [self.delegate moduleView_GetNodeAlpha:nodeData];\n    }\n    return 1.0f;\n}\n-(NSString*) nodeView_OnClick:(id)nodeData{\n    if (self.delegate && [self.delegate respondsToSelector:@selector(moduleView_NodeOnClick:)]) {\n        return [self.delegate moduleView_NodeOnClick:nodeData];\n    }\n    return nil;",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVModuleView.m:259-287"
+    },
+    "2885": {
+        "file_id": 302,
+        "content": "This code defines a class that implements the NVNodeViewDelegate protocol. It provides delegate methods for getting custom subviews, node colors, right colors, and node alpha values. If delegate methods are not implemented, default values are used. The class also handles a node click event if the delegate responds to the appropriate method.",
+        "type": "comment"
+    },
+    "2886": {
+        "file_id": 302,
+        "content": "}\n-(void) nodeView_TopClick:(id)nodeData{\n    NSArray *absNodeDatas = [self moduleView_AbsNodeDatas:nodeData];\n    [self setDataWithNodeDatas:absNodeDatas];\n    TPLog(@\"absPorts:%lu\",(unsigned long)absNodeDatas.count);\n    [self.delegate moduleView_DirectionClick:DirectionType_Top mView:self nData:nodeData targetDatas:absNodeDatas];\n}\n-(void) nodeView_BottomClick:(id)nodeData{\n    NSArray *conNodeDatas = [self moduleView_ConNodeDatas:nodeData];\n    [self setDataWithNodeDatas:conNodeDatas];\n    TPLog(@\"conPorts:%lu\",(unsigned long)conNodeDatas.count);\n    [self.delegate moduleView_DirectionClick:DirectionType_Bottom mView:self nData:nodeData targetDatas:conNodeDatas];\n}\n-(void) nodeView_LeftClick:(id)nodeData{\n    NSArray *contentNodeDatas = [self moduleView_ContentNodeDatas:nodeData];\n    [self.delegate moduleView_SetNetDatas:contentNodeDatas];\n    TPLog(@\"contentPorts:%lu\",(unsigned long)contentNodeDatas.count);\n    [self.delegate moduleView_DirectionClick:DirectionType_Left mView:self nData:nodeData targetDatas:contentNodeDatas];",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVModuleView.m:288-305"
+    },
+    "2887": {
+        "file_id": 302,
+        "content": "This code defines three methods for handling click events on nodes in the view. When a node is clicked, it retrieves related data and updates the UI accordingly. It logs the count of ports for each direction. The delegate is called to handle the direction and pass the necessary data.",
+        "type": "comment"
+    },
+    "2888": {
+        "file_id": 302,
+        "content": "}\n-(void) nodeView_RightClick:(id)nodeData{\n    NSArray *refNodeDatas = [self moduleView_RefNodeDatas:nodeData];\n    [self.delegate moduleView_SetNetDatas:refNodeDatas];\n    TPLog(@\"refPorts:%lu\",(unsigned long)refNodeDatas.count);\n    [self.delegate moduleView_DirectionClick:DirectionType_Right mView:self nData:nodeData targetDatas:refNodeDatas];\n}\n-(void) nodeView_LongClick:(id)nodeData direction:(DirectionType)direction{\n    [self.delegate moduleView_LongClick:direction mView:self nData:nodeData];\n}\n//MARK:===============================================================\n//MARK:                     < SelfDelegate >\n//MARK:===============================================================\n-(UIView *)moduleView_GetCustomSubView:(id)nodeData{\n    if (self.delegate && [self.delegate respondsToSelector:@selector(moduleView_GetCustomSubView:)]) {\n        return [self.delegate moduleView_GetCustomSubView:nodeData];\n    }\n    return nil;\n}\n-(UIColor *)moduleView_GetNodeColor:(id)nodeData{\n    if (self.delegate && [self.delegate respondsToSelector:@selector(moduleView_GetNodeColor:)]) {",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVModuleView.m:306-327"
+    },
+    "2889": {
+        "file_id": 302,
+        "content": "This code defines methods for handling right and long clicks on node data. It also includes a custom delegate interface for retrieving the custom subview and node color of each node data object. The delegate methods are only called if they exist and are properly implemented by the delegate object.",
+        "type": "comment"
+    },
+    "2890": {
+        "file_id": 302,
+        "content": "        return [self.delegate moduleView_GetNodeColor:nodeData];\n    }\n    return nil;\n}\n-(NSArray*)moduleView_AbsNodeDatas:(id)nodeData{\n    if (self.delegate && [self.delegate respondsToSelector:@selector(moduleView_AbsNodeDatas:)]) {\n        return [self.delegate moduleView_AbsNodeDatas:nodeData];\n    }\n    return nil;\n}\n-(NSArray*)moduleView_ConNodeDatas:(id)nodeData{\n    if (self.delegate && [self.delegate respondsToSelector:@selector(moduleView_ConNodeDatas:)]) {\n        return [self.delegate moduleView_ConNodeDatas:nodeData];\n    }\n    return nil;\n}\n-(NSArray*)moduleView_ContentNodeDatas:(id)nodeData{\n    if (self.delegate && [self.delegate respondsToSelector:@selector(moduleView_ContentNodeDatas:)]) {\n        return [self.delegate moduleView_ContentNodeDatas:nodeData];\n    }\n    return nil;\n}\n-(NSArray*)moduleView_RefNodeDatas:(id)nodeData{\n    if (self.delegate && [self.delegate respondsToSelector:@selector(moduleView_RefNodeDatas:)]) {\n        return [self.delegate moduleView_RefNodeDatas:nodeData];\n    }",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVModuleView.m:328-356"
+    },
+    "2891": {
+        "file_id": 302,
+        "content": "This code defines four methods, each checking if the delegate responds to a specific selector and then calling it with the given nodeData. If the delegate doesn't respond or is nil, it returns nil. This suggests that the class interacts with a delegate to get different types of node data based on the input nodeData.",
+        "type": "comment"
+    },
+    "2892": {
+        "file_id": 302,
+        "content": "    return nil;\n}\n-(NSArray*)moduleView_GetAllNetDatas{\n    if (self.delegate && [self.delegate respondsToSelector:@selector(moduleView_GetAllNetDatas)]) {\n        return [self.delegate moduleView_GetAllNetDatas];\n    }\n    return nil;\n}\n-(void)moduleView_DrawLine:(NSArray*)lineDatas{\n    if (self.delegate && [self.delegate respondsToSelector:@selector(moduleView_DrawLine:)]) {\n        [self.delegate moduleView_DrawLine:lineDatas];\n    }\n}\n@end",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVModuleView.m:357-373"
+    },
+    "2893": {
+        "file_id": 302,
+        "content": "This code provides a delegate pattern to interact with the SMGNetVision module view. It defines three methods for retrieving all network data, drawing lines with provided data, and returns nil if the delegate does not respond to the respective selector.",
+        "type": "comment"
+    },
+    "2894": {
+        "file_id": 303,
+        "content": "/ThirdParty/SMGNetVision/Core/View/NVNodeView.h",
+        "type": "filepath"
+    },
+    "2895": {
+        "file_id": 303,
+        "content": "The code defines an `NVNodeView` class inheriting from `UIView`, with a delegate protocol for view configuration and associated data object. Additionally, there are methods for handling light string, title, and show time management.",
+        "type": "summary"
+    },
+    "2896": {
+        "file_id": 303,
+        "content": "//\n//  NVNodeView.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/6/11.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n/**\n *  MARK:--------------------NodeView代理--------------------\n *  @desc : 运行在nv.core内部,nodeView的每个方法必须被实现;\n */\n@protocol NVNodeViewDelegate <NSObject>\n-(UIView*) nodeView_GetCustomSubView:(id)nodeData;\n-(UIColor *)nodeView_GetNodeColor:(id)nodeData;\n-(UIColor *)nodeView_GetRightColor:(id)nodeData;\n-(CGFloat)nodeView_GetNodeAlpha:(id)nodeData;\n-(NSString*) nodeView_OnClick:(id)nodeData;\n-(void) nodeView_TopClick:(id)nodeData;\n-(void) nodeView_BottomClick:(id)nodeData;\n-(void) nodeView_LeftClick:(id)nodeData;\n-(void) nodeView_RightClick:(id)nodeData;\n-(void) nodeView_LongClick:(id)nodeData direction:(DirectionType)direction;\n@end\n/**\n *  MARK:--------------------节点view--------------------\n */\n@interface NVNodeView : UIView\n@property (readonly,strong, nonatomic) id data;//一般为一个指针\n@property (weak, nonatomic) id<NVNodeViewDelegate> delegate;\n-(void) setDataWithNodeData:(id)nodeData;",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVNodeView.h:1-37"
+    },
+    "2897": {
+        "file_id": 303,
+        "content": "This code defines a `NVNodeView` class that inherits from `UIView` and includes a delegate protocol named `NVNodeViewDelegate`. The delegate protocol has methods for configuring various aspects of the view, such as its subview, color, alpha, and click event handling. The `NVNodeView` instance is associated with a data object, which is typically a pointer.",
+        "type": "comment"
+    },
+    "2898": {
+        "file_id": 303,
+        "content": "/**\n *  MARK:--------------------闪烁--------------------\n */\n-(void) light:(NSString*)lightStr;\n-(void) clearLight;\n-(NSString*) getLightStr;\n-(void) setTitle:(NSString*)titleStr showTime:(CGFloat)showTime;\n@end",
+        "type": "code",
+        "location": "/ThirdParty/SMGNetVision/Core/View/NVNodeView.h:39-48"
+    },
+    "2899": {
+        "file_id": 303,
+        "content": "The code defines a class with methods for setting and clearing the light string, getting the current light string, and setting the title and show time.",
+        "type": "comment"
+    }
+}

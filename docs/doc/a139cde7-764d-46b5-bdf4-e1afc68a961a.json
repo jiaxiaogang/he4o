@@ -1,0 +1,10 @@
+{
+    "summary": "This code is the header file of BirdGrowPage class, which inherits from HEViewController. It declares a property 'birdBirthPos' of type CGPoint, representing the birth position of a bird in the view controller.",
+    "details": [
+        {
+            "comment": "This code is the header file of BirdGrowPage class, which inherits from HEViewController. It declares a property 'birdBirthPos' of type CGPoint, representing the birth position of a bird in the view controller.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Demo/BirdGrowPage/BirdGrowPage.h\":0-14",
+            "content": "//\n//  BirdGrowPage.h\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/11/13.\n//  Copyright \u00a9 2018\u5e74 XiaoGang. All rights reserved.\n//\n#import \"HEViewController.h\"\n@interface BirdGrowPage : HEViewController\n@property (assign, nonatomic) CGPoint birdBirthPos;\n@end"
+        }
+    ]
+}

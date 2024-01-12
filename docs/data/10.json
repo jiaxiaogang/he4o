@@ -1,0 +1,545 @@
+{
+    "1000": {
+        "file_id": 108,
+        "content": "    NSArray *validPAlgs = [self TIR_Alg_CheckFoValidMatchV2:protoPDic.allValues protoAlgCount:protoAlg.count];\n    NSArray *validRAlgs = [self TIR_Alg_CheckFoValidMatchV2:protoRDic.allValues protoAlgCount:protoAlg.count];\n    //13. 识别过滤器 (参考28109-todo2);\n    NSArray *filterPAlgs = [AIFilter recognitionAlgFilter:validPAlgs radio:0.5f];\n    NSArray *filterRAlgs = [AIFilter recognitionAlgFilter:validRAlgs radio:0.16f];\n    //14. 识别竞争机制 (参考2722d-方案2);\n    //14. 按nearA排序 (参考25083-2&公式2 & 25084-1);\n    NSArray *sortPAlgs = [AIRank recognitionAlgRank:filterPAlgs];\n    NSArray *sortRAlgs = [AIRank recognitionAlgRank:filterRAlgs];\n    //15. 未将全含返回,则返回最相似 (2020.10.22: 全含返回,也要返回seemAlg) (2022.01.15: 支持相近匹配后,全是全含没局部了);\n    //15. 合并后赋值给matchAlgs (参考29108-2.2);\n    NSArray *allSortAlgs = [SMGUtils collectArrA:sortPAlgs arrB:sortRAlgs];\n    inModel.matchAlgs = allSortAlgs;\n    //16. debugLog\n    NSLog(@\"\\n概念识别结果 (%ld条) protoAlg:%@\",allSortAlgs.count,Alg2FStr(protoAlg));\n    for (AIMatchAlgModel *item in allSortAlgs) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIUtils.m:224-243"
+    },
+    "1001": {
+        "file_id": 108,
+        "content": "This code is filtering and ranking recognition algorithms for concept detection. It applies filters based on valid matching algorithms, sorts them using a ranking mechanism, and then merges the sorted results before assigning them to the model's matchAlgs property. The code also includes debug logging to display the final concept detection results.",
+        "type": "comment"
+    },
+    "1002": {
+        "file_id": 108,
+        "content": "        NSString *fromDesc = [sortPAlgs containsObject:item] ? @\"P\" : @\"R\";\n        if (Log4MAlg) NSLog(@\"%@-->>>(%d) 全含item: %@   \\t相近度 => %.2f (count:%d)\",fromDesc,item.sumRefStrong,Pit2FStr(item.matchAlg),item.matchValue,item.matchCount);\n    }\n}\n/**\n *  MARK:--------------------概念识别全含判断--------------------\n */\n+(NSArray*) TIR_Alg_CheckFoValidMatchV2:(NSArray*)protoPRModels protoAlgCount:(NSInteger)protoAlgCount{\n    //1. 全含判断: 从大到小,依次取到对应的node和matchingCount (注: 支持相近后,应该全是全含了,参考25084-1);\n    return [SMGUtils filterArr:protoPRModels checkValid:^BOOL(AIMatchAlgModel *item) {\n        //2. 过滤掉匹配度<85%的;\n        //if (item.matchValue < 0.60f) return false;\n        //3. 过滤掉非全含的 (当count!=matchCount时为局部匹配: 局部匹配partAlgs已废弃);\n        AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item.matchAlg];\n        if (itemAlg.count != item.matchCount) return false;\n        //4. 过滤掉非似层的 (参考29064-todo1);\n        if (itemAlg.count != protoAlgCount) return false;\n        return true;\n    }];\n}\n//MARK:===============================================================",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIUtils.m:244-268"
+    },
+    "1003": {
+        "file_id": 108,
+        "content": "This code snippet filters an array of matching models based on certain conditions. It first checks if the match value is above 60% and then verifies if the model is a complete match by comparing its count to the match count and ensuring it belongs to the correct layer. The function returns only the valid matching models.",
+        "type": "comment"
+    },
+    "1004": {
+        "file_id": 108,
+        "content": "//MARK:                     < 时序识别 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------时序局部匹配算法--------------------\n *\n *  --------------------V1--------------------\n *  参考: n17p7 TIR_FO模型到代码\n *  _param assFoIndexAlg    : 用来联想fo的索引概念 (shortMem的第3层 或 rethink的第1层) (match层,参考n18p2)\n *  _param assFoBlock       : 联想fos (联想有效的5个)\n *  _param checkItemValid   : 检查item(fo.alg)的有效性 notnull (可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)\n *  @param inModel          : 装饰结果到inModel中;\n *  _param indexProtoAlg    : assFoIndexAlg所对应的protoAlg,用来在不明确时,用其独特稀疏码指引向具象时序找\"明确\"预测;\n *  _param fromRegroup      : 调用者\n *                              1. 正常识别时: cutIndex=lastAssIndex;\n *                              2. 源自regroup时: cutIndex需从父任务中判断 (默认为-1);\n *  _param maskFo           : 识别时:protoFo中的概念元素为parent层, 而在反思时,其元素为match层;\n *  @param matchAlgs        : 触发此识别时的那一帧的概念识别结果 (参考28103-2);\n *  @param protoOrRegroupCutIndex : proto或regroup当前已经进展到哪里,发进来cutIndex (proto时一般是全已发生);\n *  TODO_TEST_HERE:调试Pointer能否indexOfObject",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIUtils.m:269-288"
+    },
+    "1005": {
+        "file_id": 108,
+        "content": "This code appears to contain a time series recognition algorithm. It uses an assFoIndexAlg parameter for associating concepts, and the assFoBlock parameter contains five associated fos. The checkItemValid parameter checks the item's validity, while inModel is used to decorate the result. IndexProtoAlg refers to the corresponding protoAlg, and fromRegroup indicates whether it's a normal recognition or derived from regrouping. MaskFo differentiates between parent and match layers, and matchAlgs contains the results of concept recognition for a specific frame. The protoOrRegroupCutIndex parameter identifies the progress of proto or regroup.",
+        "type": "comment"
+    },
+    "1006": {
+        "file_id": 108,
+        "content": " *  TODO_TEST_HERE:调试下item_p在indexOfObject中,有多个时,怎么办;\n *  TODO_TEST_HERE:测试下cPartMatchingThreshold配置值是否合理;\n *  @desc1: 在类比中,仅针对最后一个元素,与前面元素进行类比;\n *  @desc2: 内类比大小,将要取消(由外类比取代),此处不再支持;而内类比有无,此处理性概念全是\"有\";\n *  @desc:\n *      1. 根据最后一个节点,取refPorts,\n *      2. 对共同引用者的,顺序,看是否是正确的从左到右顺序;\n *      3. 能够匹配到更多个概念节点,越预测准确;\n *  TODO_FUTURE:判断概念匹配,目前仅支持一层抽象判断,是否要支持多层?实现方式比如(索引 / TIRAlg和TIRFo的协作);\n *\n *  @version:\n *      20191231: 测试到,点击饥饿,再点击乱投,返回matchFo:nil matchValue:0;所以针对此识别失败问题,发现了_fromShortMem和_fromRethink的不同,且支持了两层assFo,与全含;(参考:n18p2)\n *      20200627: 支持明确价值预测 & 支持更匹配的时序预测 (参考:20052);\n *      20200703: 废弃明确价值预测功能,因为认知期要广入,决策期再细修 (参考20063);\n *\n *  --------------------V1.5--------------------\n *  @desc\n *      1. 由v1整理而来,逻辑与v1一致 (将v1中checkItemValid和assFoBlock回调,直接写在方法中,而不由外界传入);\n *      2. 时序识别v1.5 (在V1的基础上改的,与V2最大的区别,是其未按照索引计数排序);\n *\n *  @status 启用,因为v2按照countDic排序的方式,不利于找出更确切的抽象结果;\n *\n *  --------------------v2--------------------\n *  @desc 功能说明:\n *      1. 本次v2迭代,主要在识别率上进行改进,因为v1识别率太低 (参考20111),所以迭代了v2版 (参考20112);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIUtils.m:289-313"
+    },
+    "1007": {
+        "file_id": 108,
+        "content": "This code segment is related to a comparison-based recognition algorithm. It checks the order of connected nodes and matches them to determine the most likely concept. The algorithm has evolved from version 1.5 to version 2, with improvements in recognition rates. However, supporting multiple layers of abstract judgment is still under consideration.",
+        "type": "comment"
+    },
+    "1008": {
+        "file_id": 108,
+        "content": " *      2. 目前判断有效引用,不支持\"必须包含某protoAlg\" (代码第5步),以前需要再支持即可;\n *  @desc 执行步骤:\n *      1. 原始时序protoFo的每个元素都是索引;\n *      2. 对每个元素protoAlg自身1条 + 抽象5条 = 共6条做索引;\n *      3. 根据6条取refPorts引用时序;\n *      4. 对所有引用的时序,做计数判断,引用了越多的原始元素protoAlg,排在越前面;\n *      5. 从前开始找,找出引用即多,又全含的结果返回;\n *  @version 候选集\n *      2020.07.18: 将整个allRef_2拍平成一维数组,并去重 (即所有帧的refFos都算做候选集);\n *      2020.07.19: 改为仅取最后一位的refFos (因为最后一位是焦点帧,并且全含判断算法也需要支持仅末位候选集);\n *      2020.11.12: 支持except_ps参数,因为在FromShortMem时,matchAFo会识别protoFo返回,所以将protoFo不应期掉 (参考21144);\n *      2021.01.18: 联想matchFo时,由原本只获取Normal类型,改为将HNGL也加入其中 (参考22052-1a,实测未影响原多向飞行训练);\n *      2021.01.23: 支持多识别 (参考22072BUG & TIR_Fo_FromRethink注释todo更多元的评价 & 22073-todo1);\n *      2021.01.24: 改回仅识别Normal类型,因为HNGL太多了,不那么必要,还特麻烦,太多matchFos导致性能差 (参考22052-改1);\n *      2021.01.24: 将无mv指向的,算无效 (因为有大量未执行的正向反馈类比) (参考22072);\n *      2021.01.26: 为多时序识别结果做去重 (参考22074-BUG3);\n *      2021.01.31: 将无mv指向的,放开 (因为R-模式需要) (等支持反向反馈外类比后,再关掉) (参考n22p10);\n *      2021.02.03: 反向反馈外类比已支持,将无mv指向的关掉 (参考version上条);\n *      2021.02.04: 将matchFos中的虚mv筛除掉,因为现在R-模式不使用matchFos做解决方案,现在留着没用,等有用时再打开;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIUtils.m:314-332"
+    },
+    "1009": {
+        "file_id": 108,
+        "content": "This code block outlines the steps involved in executing a function, including indexing each element of the original time series (protoFo), creating references to other time series (protoAlg), and then performing a count judgement on the referenced time series to determine the result. The code also includes various version-specific modifications made over time.",
+        "type": "comment"
+    },
+    "1010": {
+        "file_id": 108,
+        "content": " *      2021.04.15: 无mv指向的支持返回为matchRFos,原来有mv指向的重命名为matchPFos (参考23014-分析1&23016);\n *      2021.06.30: 支持cutIndex回调,识别和反思时,分别走不同逻辑 (参考23152);\n *      2021.08.19: 结果PFos和RFos按(强度x匹配度)排序 (参考23222-BUG2);\n *      2022.01.16: 仅保留10条rFos和pFos (因为在十四测中,发现它们太多了,都有40条rFos的时候,依窄出原则,太多没必要);\n *      2022.03.05: 将保留10条改为全保留,因为不同调用处,需要不同的筛选排序方式 (参考25134-方案2);\n *      2022.03.09: 将排序规则由\"强度x匹配度\",改成直接由SP综合评分来做 (参考25142 & 25114-TODO2);\n *      2022.04.30: 识别时assIndexes取proto+matchs+parts (参考25234-1);\n *      2022.05.12: 仅识别有mv指向的结果 (参考26022-3);\n *      2022.05.18: 把pFo排序因子由评分绝对值,改成取负,因为正价值不构成任务,所以把它排到最后去;\n *      2022.05.20: 1. 废弃仅识别有mv指向的 (参考26073-TODO7);\n *      2022.05.20: 2. RFos排序,不受被引用强度影响 (参考26073-TODO9);\n *      2022.05.20: 3. prFos排序,以SP稳定性为准 (参考26073-TODO8);\n *      2022.05.20: 4. 提升识别准确度: 窄入,调整结果20条为NarrowLimit=5条 (参考26073-TODO6);\n *      2022.05.23: 将稳定性低的识别结果过滤掉 (参考26096-BUG4);\n *      2022.05.24: 稳定性支持衰减 (参考26104-方案);\n *      2022.06.07: cRFoNarrowLimit调整为0,即关掉RFos结果 (参考2619j-TODO3);\n *      2022.06.08: 排序公式改为sumNear / nearCount (参考26222-TODO1);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIUtils.m:333-349"
+    },
+    "1011": {
+        "file_id": 108,
+        "content": "This code has undergone several updates and modifications since April 2021. It initially separated support for matchRFos when there was no mv indication, renamed matchPFos for those with mv indication (referencing 23014-analysis 1 & 23016). In June 2021, it supported cutIndex callback and differentiated logic for identification and reflection (reference 23152).\n\nFrom August 2021, the code sorted result PFos and RFos based on strength multiplied by match rate. In January 2022, it only retained 10 bars of rFos and pFos because, during testing, they found too many (reference 23222-BUG2). However, this was changed in March 2022 to keep all results for different filtering needs (reference 25134-method 2).\n\nFrom April 2022, the assIndexes considered proto, matches, and parts during identification (reference 25234-1). From May 2022, only results with mv indication were recognized (reference 26022-3). The pFos sorting factor changed to negative absolute value, and RFos sorting was not influenced by reference strength (references 26073-TODO7, TODO8, and TODO9).\n\nFrom May 2022, the code aimed to enhance identification accuracy by narrowing results to 5, adjusting result count to NarrowLimit (reference 26073-TODO6). From May 2022, it filtered out recognition results with low stability (reference 26096-BUG4). In June 2022, it supported stability decay (reference 26104-method). The sorting formula changed to sumNear divided by nearCount in June 2022 (reference 26222-TODO1). Finally, from June 2022, RFos results were turned off with cRFoNarrowLimit set to 0 (reference 2619j-TODO3).",
+        "type": "comment"
+    },
+    "1012": {
+        "file_id": 108,
+        "content": " *      2022.11.10: 因为最近加强了抽具象多层多样性,所以从matchAlgs+partAlgs取改为从lastAlg.absPorts取 (效用一样);\n *      2022.11.10: 时序识别中alg相似度复用-准备部分 & 参数调整 (参考27175-5);\n *      2022.11.15: 对识别结果,直接构建抽具象关联 (参考27177-todo6);\n *      2022.12.28: 求出匹配部分的综合引用强度值,并参与到综合竞争中 (参考2722f-todo13&todo14);\n *      2022.12.29: 时序识别后,增强indexDic已发生部分的refStrong和contentStrong (参考2722f-todo32&todo33);\n *      2023.02.21: 废弃收集proto的lastAlg当索引,因为它只被protoFo一条时序引用,所以在时序识别中没什么用 (参考28103-4另);\n *      2023.02.21: 传入触发帧概念识别结果matchAlgs的前10条做为时序识别的索引 (参考28103-2);\n *      2023.02.24: 提升时序识别成功率: 把索引改成所有proto帧的抽象alg (参考28107-todo1);\n *      2023.02.24: 提升时序识别成功率: 废弃matchRFos (其实早废弃了,借着这次改,彻底此处相关代码删掉);\n *      2023.02.24: 提升时序识别成功率: 时序结果保留20% (参考28107-todo4);\n *      2023.03.15: 打开matchRFos (参考28181-方案3);\n *      2023.03.17: 关闭matchRFos (参考28184-原因1&2);\n *      2023.07.11: 行为化反思时,将regroupCutIndex传进来,并根据它计算出absMatchFo的cutIndex,避免因此而计算sp率等不准确;\n *      2023.07.19: TC线程_因为数组多线程导致,导致foreach中闪退问题 (改加上copy);\n *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIUtils.m:350-364"
+    },
+    "1013": {
+        "file_id": 108,
+        "content": "This code contains several changes and improvements made to the code over time, focusing on enhancing abstractness, improving temporal recognition success rate, and adjusting parameters. The final status of this code is abandoned due to its inability to provide precise and comprehensive results.",
+        "type": "comment"
+    },
+    "1014": {
+        "file_id": 108,
+        "content": " */\n+(void) recognitionFo:(AIFoNodeBase*)protoOrRegroupFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel fromRegroup:(BOOL)fromRegroup matchAlgs:(NSArray*)matchAlgs protoOrRegroupCutIndex:(NSInteger)protoOrRegroupCutIndex debugMode:(BOOL)debugMode{\n    //1. 数据准备;\n    except_ps = ARRTOOK(except_ps);\n    NSMutableArray *protoPModels = [[NSMutableArray alloc] init];\n    NSMutableArray *protoRModels = [[NSMutableArray alloc] init];\n    //2. 广入: 对每个元素,分别取索引序列 (参考25083-1);\n    NSArray *protoOrRegroupContent_ps = [protoOrRegroupFo.content_ps copy];\n    for (AIKVPointer *proto_p in protoOrRegroupContent_ps) {\n        AIAlgNodeBase *protoAlg = [SMGUtils searchNode:proto_p];\n        //4. 每个abs_p分别索引;\n        NSArray *protoAlgAbs_ps = ISOK(protoAlg, AICMVNodeBase.class) ? @[proto_p] : Ports2Pits([protoAlg.absPorts copy]);\n        for (AIKVPointer *absAlg_p in protoAlgAbs_ps) {\n            //6. 第2_取abs_p的refPorts (参考28107-todo2);\n            AIAlgNodeBase *absAlg = [SMGUtils searchNode:absAlg_p];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIUtils.m:365-381"
+    },
+    "1015": {
+        "file_id": 108,
+        "content": "Prepares data for recognition by copying content_ps, iterating through each element, and indexing them. It searches nodes based on pointers, and separately indexes the refPorts of the absAlg nodes.",
+        "type": "comment"
+    },
+    "1016": {
+        "file_id": 108,
+        "content": "            NSArray *refPorts = [[AINetUtils refPorts_All4Alg_Normal:absAlg] copy];\n            //6. RFo的长度>1才有意义 (参考28183-BUG1);\n            refPorts = [SMGUtils filterArr:refPorts checkValid:^BOOL(AIPort *item) {\n                if (Switch4RecognitionMatchRFos) {\n                    //a. 打开pFos和rFos;\n                    AIFoNodeBase *refFo = [SMGUtils searchNode:item.target_p];\n                    return item.targetHavMv || refFo.count > 1;\n                } else {\n                    //b. 只打开matchPFos;\n                    return item.targetHavMv;\n                }\n            }];\n            //7. 每个refPort做两件事:\n            for (AIPort *refPort in refPorts) {\n                //8. 不应期 -> 不可激活 & 收集到不应期同一fo仅处理一次;\n                if ([SMGUtils containsSub_p:refPort.target_p parent_ps:except_ps]) continue;\n                except_ps = [SMGUtils collectArrA:except_ps arrB:@[refPort.target_p]];\n                //7. 全含判断;\n                AIFoNodeBase *refFo = [SMGUtils searchNode:refPort.target_p];\n            ",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIUtils.m:382-405"
+    },
+    "1017": {
+        "file_id": 108,
+        "content": "This code filters a list of reference ports, ensuring that only valid ones are included. It also checks if the port's parent is already in an exception list and performs operations on each reference port.",
+        "type": "comment"
+    },
+    "1018": {
+        "file_id": 108,
+        "content": "    NSDictionary *indexDic = [self TIR_Fo_CheckFoValidMatchV2:refFo protoOrRegroupFo:protoOrRegroupFo fromRegroup:fromRegroup];\n                if (!DICISOK(indexDic)) continue;\n                //7. 取absCutIndex, 说明: cutIndex指已发生到的index,后面则为时序预测; matchValue指匹配度(0-1)\n                NSInteger cutIndex = [AINetUtils getCutIndexByIndexDicV2:indexDic protoOrRegroupCutIndex:protoOrRegroupCutIndex];\n                //7. 根据indexDic取nearCount & sumNear;\n                NSArray *nearData = [AINetUtils getNearDataByIndexDic:indexDic absFo:refFo.pointer conFo:protoOrRegroupFo.pointer callerIsAbs:false];\n                int nearCount = NUMTOOK(ARR_INDEX(nearData, 0)).intValue;\n                CGFloat sumNear = NUMTOOK(ARR_INDEX(nearData, 1)).floatValue;\n                //8. 被引用强度;\n                NSInteger sumRefStrong = [AINetUtils getSumRefStrongByIndexDic:indexDic matchFo:refFo.pointer];\n                //7. 实例化识别结果AIMatchFoModel;\n                AIMatchFoModel *newMatchFo = [AIMatchFoModel newWithMatchFo",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIUtils.m:405-420"
+    },
+    "1019": {
+        "file_id": 108,
+        "content": "This code appears to be part of a larger system that utilizes AI for processing data. In this section, it is checking the validity of an index dictionary and then extracting relevant information from it such as cutIndex, nearCount, sumNear, and sumRefStrong. It also initializes a new instance of AIMatchFoModel with matchFo. The purpose or outcome of these operations within the larger context is not clear without further understanding of the surrounding code.",
+        "type": "comment"
+    },
+    "1020": {
+        "file_id": 108,
+        "content": ":refFo.pointer protoOrRegroupFo:protoOrRegroupFo.pointer sumNear:sumNear nearCount:nearCount indexDic:indexDic cutIndex:cutIndex sumRefStrong:sumRefStrong baseFrameModel:inModel];\n                if (Log4MFo) NSLog(@\"时序识别itemSUCCESS 匹配度:%f %@->%@\",newMatchFo.matchFoValue,Fo2FStr(refFo),Mvp2Str(refFo.cmvNode_p));\n                //9. 收集到pFos/rFos;\n                if (refFo.cmvNode_p) {\n                    [protoPModels addObject:newMatchFo];\n                } else {\n                    [protoRModels addObject:newMatchFo];\n                }\n            }\n        }\n    }\n    //10. 过滤强度前20% (参考28111-todo1);\n    NSArray *filterPModels = [AIFilter recognitionFoFilter:protoPModels];\n    NSArray *filterRModels = [AIFilter recognitionFoFilter:protoRModels];\n    //10. 按照 (强度x匹配度) 排序,强度最重要,包含了价值初始和使用频率,其次匹配度也重要 (参考23222-BUG2);\n    NSArray *sortPs = [AIRank recognitionFoRank:filterPModels];\n    NSArray *sortRs = [AIRank recognitionFoRank:filterRModels];\n    inModel.matchPFos = [[NSMutableArray alloc] initWithArray:sortPs];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIUtils.m:420-440"
+    },
+    "1021": {
+        "file_id": 108,
+        "content": "This code collects matched prototype models into two arrays, one for strong matches (protoPModels) and one for weak matches (protoRModels). It then filters the models based on strength and sorts them by a combination of strength and matching degree. The filtered and sorted results are stored in inModel's matchPFos array.",
+        "type": "comment"
+    },
+    "1022": {
+        "file_id": 108,
+        "content": "    inModel.matchRFos = [[NSMutableArray alloc] initWithArray:sortRs];\n    //11. 调试日志;\n    NSArray *allMatchFos = [[SMGUtils collectArrA:inModel.matchPFos arrB:inModel.matchRFos] copy];\n    NSLog(@\"\\n时序识别结果 P(%ld条) R(%ld条)\",inModel.matchPFos.count,inModel.matchRFos.count);\n    if (debugMode) {\n        for (AIMatchFoModel *item in allMatchFos) {\n            AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];\n            NSLog(@\"%@强度:(%ld)\\t> %@->{%.2f} (SP:%@) indexDic:%@ 匹配度 => %.2f\",matchFo.cmvNode_p?@\"P\":@\"\",item.sumRefStrong,Fo2FStr(matchFo),[AIScore score4MV_v2FromCache:item],CLEANSTR(matchFo.spDic),CLEANSTR(item.indexDic2),item.matchFoValue);\n        }\n    }\n    //12. 关联处理,直接protoFo抽象指向matchFo,并持久化indexDic (参考27177-todo6);\n    for (AIMatchFoModel *item in allMatchFos) {\n        //4. 识别到时,refPorts -> 更新/加强微信息的引用序列\n        AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];\n        [AINetUtils updateRefStrongByIndexDic:item.indexDic2 matchFo:item.matchFo];\n        [AINetUtils updateContentStrongByIndexDic:item.indexDic2 matchFo:item.matchFo];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIUtils.m:441-458"
+    },
+    "1023": {
+        "file_id": 108,
+        "content": "The code snippet is related to ASR (Automatic Speech Recognition) model for temporal speech recognition. It collects the match results from both P and R models, logs them, and associates the abstracted protoFo with the corresponding matchFo while strengthening the reference sequence and content of the indexDic. This helps improve the accuracy and performance of the ASR system.",
+        "type": "comment"
+    },
+    "1024": {
+        "file_id": 108,
+        "content": "        //5. 存储matchFo与protoFo之间的indexDic映射 (参考27177-todo5);\n        [protoOrRegroupFo updateIndexDic:matchFo indexDic:item.indexDic2];\n        //6. 对proto直接抽象指向matchAlg,并增强强度值 (为保证抽象多样性,所以相近的也抽具象关联) (参考27153-3);\n        [AINetUtils relateFoAbs:matchFo conNodes:@[protoOrRegroupFo] isNew:false];\n    }\n}\n/**\n *  MARK:--------------------时序识别之: protoFo&assFo匹配判断--------------------\n *  要求: protoFo必须全含assFo对应的last匹配下标之前的所有元素,即:\n *       1. proto的末帧,必须在assFo中找到 (并记录找到的assIndex为cutIndex截点);\n *       2. assFo在cutIndex截点前的部分,必须在protoFo中找到 (找到即全含,否则为整体失败);\n *  例如: 如: protFo:[abcde] 全含 assFo:[acefg]\n *  名词说明:\n *      1. 全含: 指从lastAssIndex向前,所有的assItemAlg都匹配成功;\n *      2. 非全含: 指从lastAssIndex向前,只要有一个assItemAlg匹配失败,则非全含;\n *  _param outOfFos : 用于计算衰减值; (未知何时已废弃)\n *  @version\n *      2022.04.30: 将每帧的matchAlgs和partAlgs用于全含判断,而不是单纯用protoFo来判断 (参考25234-6);\n *      2022.05.23: 反思时,改回旧有mIsC判断方式 (参考26096-BUG6);\n *      2022.05.25: 将衰后稳定性计算集成到全含判断方法中 (这样性能好些);\n *      2022.06.08: 稳定性低的不过滤了,因为学时统计,不关稳定性(概率)的事儿 (参考26222-TODO1);\n *      2022.06.08: 排序公式改为sumNear / nearCount (参考26222-TODO1);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIUtils.m:460-483"
+    },
+    "1025": {
+        "file_id": 108,
+        "content": "This code section is responsible for matching a \"protoFo\" with an \"assFo\" and determining if the \"protoFo\" fully contains the \"assFo\". It does this by checking if the last frame of the \"assFo\" is found in the \"protoFo\" and if all frames before the cut point are matched. If successful, it strengthens the link between the matched \"protoFo\" and \"matchAlg\". This code has gone through multiple updates and improvements since its initial implementation.",
+        "type": "comment"
+    },
+    "1026": {
+        "file_id": 108,
+        "content": " *      2022.09.15: 修复indexDic收集的KV反了的BUG (与pFo.indexDic的定义不符);\n *      2022.11.10: 复用alg相似度,且原本比对相似度的性能问题自然也ok了 (参考27175-5);\n *      2022.11.11: 全改回用mIsC判断,因为等效 (matchAlgs全是protoAlg的抽象,且mIsC是有缓存的,无性能问题),且全用mIsC后代码更精简;\n *      2022.11.11: 将找末位,和找全含两个部分,合而为一,使算法代码更精简易读 (参考27175-7);\n *      2022.11.11: BUG_indexDic中有重复的Value (一个protoA对应多个assA): 将nextMaxForProtoIndex改为protoIndex-1后ok (参考27175-8);\n *      2022.11.13: 迭代V2: 仅返回indexDic (参考27177);\n *      2023.07.11: 仅普通正向protoFo时序识别时,才要求末帧必含,regroup则不必如此 (参考30057-修复);\n *  @result 判断protoFo是否全含assFo: 成功时返回indexDic / 失败时返回空dic;\n */\n+(NSDictionary*) TIR_Fo_CheckFoValidMatchV2:(AIFoNodeBase*)assFo protoOrRegroupFo:(AIFoNodeBase*)protoOrRegroupFo fromRegroup:(BOOL)fromRegroup {\n    if (Log4MFo) NSLog(@\"------------------------ 时序全含检查 ------------------------\\nass:%@->%@\",Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));\n    //1. 数据准备;\n    NSMutableDictionary *indexDic = [[NSMutableDictionary alloc] init]; //记录protoIndex和assIndex的映射字典 <K:assIndex, V:protoIndex>;\n    //3. 用于找着时:记录下进度,下次循环时,这个进度已处理过的不再处理;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIUtils.m:484-498"
+    },
+    "1027": {
+        "file_id": 108,
+        "content": "This code snippet is responsible for checking if a given \"assFo\" (audio speech frame object) is fully contained within the \"protoOrRegroupFo\" (prototype or regrouped audio speech frame object). It performs this check by creating an index dictionary that maps each \"assIndex\" to its corresponding \"protoIndex\". The code also considers special cases such as whether it should require the last frame of a normal protoFo to be contained or not, and returns an empty dictionary if the check fails. The logging is used for debugging purposes.",
+        "type": "comment"
+    },
+    "1028": {
+        "file_id": 108,
+        "content": "    NSInteger nextMaxForProtoIndex = protoOrRegroupFo.count - 1;\n    //4. 从后向前倒着一帧帧,找assFo的元素,要求如下:\n    for (NSInteger assIndex = assFo.count - 1; assIndex >= 0; assIndex--) {\n        AIKVPointer *assAlg_p = ARR_INDEX(assFo.content_ps, assIndex);\n        BOOL itemSuccess = false;\n        for (NSInteger protoIndex = nextMaxForProtoIndex; protoIndex >= 0; protoIndex--) {\n            //5. mIsC判断匹配\n            //此处proto抽象仅指向刚识别的matchAlgs,所以与contains等效;\n            AIKVPointer *protoAlg_p = ARR_INDEX(protoOrRegroupFo.content_ps, protoIndex);\n            BOOL mIsC = [TOUtils mIsC_1:protoAlg_p c:assAlg_p];\n            if (mIsC) {\n                //7. 匹配时_记录下次循环proto时,从哪帧开始倒序循环: nextMaxForProtoIndex进度\n                nextMaxForProtoIndex = protoIndex - 1;\n                //8. 匹配时_记录本条成功标记;\n                itemSuccess = true;\n                //9. 匹配时_记录indexDic映射\n                [indexDic setObject:@(protoIndex) forKey:@(assIndex)];\n                if (Log4MFo)NSLog(@\"时序识别: item有效+1\");\n                break;\n            } else {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIUtils.m:499-523"
+    },
+    "1029": {
+        "file_id": 108,
+        "content": "This code is iterating over two arrays of algorithms in reverse order to find matches. It checks if each algorithm in the second array \"matches\" with any algorithm in the first array based on a given condition (mIsC). If a match is found, it updates the nextMaxForProtoIndex and sets itemSuccess as true. It also records the indexDic mapping. The Log4MFo is used to log a message when an item is considered valid.",
+        "type": "comment"
+    },
+    "1030": {
+        "file_id": 108,
+        "content": "                //11. proto的末帧必须找到,所以不匹配时,直接break,继续ass循环找它... (参考: 注释要求1);\n                if (!fromRegroup && protoIndex == protoOrRegroupFo.count - 1) break;\n            }\n        }\n        //12. 非全含 (一个失败,全盘皆输);\n        if (!itemSuccess) {\n            if (Log4MFo) NSLog(@\"末帧时,找不着则联想时就:有BUG === 非末帧时,则ass未在proto中找到:非全含\");\n            return [NSMutableDictionary new];\n        }\n    }\n    //13. 到此全含成功: 返回success\n    return indexDic;\n}\n//MARK:===============================================================\n//MARK:                     < Canset识别 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------Canset概念识别--------------------\n *  @desc Canset场景内概念识别算法 (参考3014a-方案 & 3014b);\n *  @param sceneFo : 当前canset所在的sceneFo (cansetAlg识别是要限定于场景内的,sceneFo就是这个场景);\n *  @version\n *      2023.10.26: 废弃 (参考3014a-追加结果);\n */\n//+(void) recognitionCansetAlg:(AIAlgNodeBase*)protoAlg sceneFo:(AIFoNodeBase*)sceneFo inModel:(AIShortMatchModel*)inModel {\n//    //1. 关于调用者:\n//    //  a. 哪里在调用cansetFo识别,哪里就在fo识别前先调用下这个;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIUtils.m:524-553"
+    },
+    "1031": {
+        "file_id": 108,
+        "content": "This code snippet is a part of the AIThinkingControl module in the AIFoundation framework. It contains functions for recognizing and analyzing Canset concepts within specific scenes. The first function checks if an item is successfully found in the proto sequence and returns a dictionary with success indexes or an empty dictionary on failure. The second part marks this function as deprecated, indicating it should not be used anymore.",
+        "type": "comment"
+    },
+    "1032": {
+        "file_id": 108,
+        "content": "//    //  b. 或者再提前点,调用普通alg识别时,结合下工作记忆,顺带把这个也跑了;\n//}\n/**\n *  MARK:--------------------Canset时序识别--------------------\n *  @desc 功能说明:\n *          1. 识别: 用条件满足来实现类似全含判断功能 (参考28185-todo3);\n *          2. 增强: 识别结果增强sp和eff (参考28185-todo4);\n *        现状说明:\n *          调用者1. newCanset有效时,会调用canset识别,类比,sp+1,eff+1;\n *          调用者2. 反馈canset无效时,会调用canset识别,不类比,sp+1,eff-1;\n *          调用者3. 迁移时,会调用canset识别,类比,sp+0,eff+0;\n *          注: 反馈无效时,sp也会+1的代码是以前的,此处未改,但它是否合理,待测出不合理时再来改正;\n *  @version\n *      2023.03.18: 失败时,也调用Canset识别,并将es计负分 (参考28185-todo5);\n *      2023.03.30: 支持过滤器 (参考29042);\n *      2023.04.04: 将Canset过滤器改为根据indexDic映射数来 (参考29055);\n *      2023.04.07: 因为性能原因,并且newCanset时就识别类比的意义也没找着,所以关闭Canset识别 (后面会改为在迁移时进行懒识别类比) (参考29059-改动 & 29067-todo2);\n *      2023.04.19: TCTransfer迁移后调用Canset识别类比,但不对SPEFF+1 (参考29069-todo12 & todo12.1);\n *      2023.09.01: 因为场景单一时不会触发transfer导致canset识别类比永远不会发生,所以改回newCanset时即刻触发canset识别类比 (参考30124-原则&todo1);\n *      2023.09.01: newCanset触发时,EFF根据\"有效或无效\",更新+-1,TCTransfer触发时EFF不变 (参考30124-todo2&todo3);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIUtils.m:554-574"
+    },
+    "1033": {
+        "file_id": 108,
+        "content": "This code contains the logic for Canset serial recognition. It supports newCanset, feedback, and transfer scenarios. NewCanset triggers a Canset recognition, increasing Eff and potentially Effect (based on validity). Feedback triggers a Canset recognition without type comparison. Transfer triggers a Canset recognition with type comparison but does not affect Eff or Effect. The code has undergone several updates for improvements and bug fixes.",
+        "type": "comment"
+    },
+    "1034": {
+        "file_id": 108,
+        "content": " *      2023.10.23: 关闭canset识别和类比 (参考3014b-方案5 & 3014c-todo2);\n *      2023.10.26: 废弃canset识别 (参考3014c-todo2);\n */\n//+(void) recognitionCansetFo:(AIKVPointer*)newCanset_p sceneFo:(AIKVPointer*)sceneFo_p es:(EffectStatus)es {\n//    if (!Switch4RecognitionCansetFo) return;\n//    //1. 取出旧有候选集;\n//    AIFoNodeBase *newCanset = [SMGUtils searchNode:newCanset_p];\n//    AIFoNodeBase *sceneFo = [SMGUtils searchNode:sceneFo_p];\n//\n//    //TODO20231003: 此处为hCanset时: (因canset识别被关闭,此todo先不做)\n//    //1. 取oldCanset用的index应该不同 (随后做下处理);\n//    //2. 打日志时,把当前是rCanset还是hCanset打出来,以便调试canset的竞争成长相关;\n//\n//    NSArray *oldCansets = [sceneFo getConCansets:sceneFo.count];\n//    NSLog(@\"\\n----------- Canset识别 (EFF:%@ 候选数:%ld) -----------\\nnewCanset:%@\\nsceneFo:%@\",EffectStatus2Str(es),oldCansets.count,Fo2FStr(newCanset),Fo2FStr(sceneFo));\n//    NSMutableArray *matchModels = [[NSMutableArray alloc] init];\n//\n//    //2. 旧有候选集: 作为识别池;\n//    for (AIKVPointer *oldCanset in oldCansets) {\n//        //3. 不应期 (不识别自身);\n//        if ([newCanset.pointer isEqual:oldCanset]) continue;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIUtils.m:575-595"
+    },
+    "1035": {
+        "file_id": 108,
+        "content": "Function to perform canset recognition with parameter for the new canset, scene Fo, and effect status. Disables canset recognition as of 2023.10.26. Takes old cansets from sceneFo, logs details, and initializes a matchModels array. Skips self-recognition.",
+        "type": "comment"
+    },
+    "1036": {
+        "file_id": 108,
+        "content": "//        AIFoNodeBase *oldCansetFo = [SMGUtils searchNode:oldCanset];\n//\n//        //4. 判断newCanset全含cansetFo (返回全含indexDic) (参考29025-23c);\n//        NSDictionary *indexDic = [self checkFoValidMatch_NewCanset:newCanset oldCanset:oldCansetFo sceneFo:sceneFo];\n//        if (!DICISOK(indexDic)) continue;\n//\n//        //5. 收集;\n//        [matchModels addObject:[AIMatchCansetModel newWithMatchFo:oldCansetFo indexDic:indexDic]];\n//    }\n//\n//    //6. AIFilter过滤 (参考29042);\n//    NSArray *filterModels = [AIFilter recognitionCansetFilter:matchModels sceneFo:sceneFo];\n//\n//    //7. 日志\n//    NSLog(@\"\\nCanset识别结果: %ld条\",filterModels.count);\n//    for (AIMatchCansetModel *model in filterModels) {\n//        AIEffectStrong *eff = [sceneFo getEffectStrong:model.matchFo.count solutionFo:model.matchFo.pointer];\n//        NSLog(@\"-->>> %@ SP:%@ EFF:%@\",Fo2FStr(model.matchFo),CLEANSTR(model.matchFo.spDic),CLEANSTR(eff));\n//    }\n//\n//    //8. 识别后处理: 外类比 & 增强SP & 增强EFF;\n//    for (AIMatchCansetModel *model in filterModels) {\n//        //9. 只要全含 & 非无效newCanset => 对二者进行外类比 (参考29025-24 & 29027-方案3);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIUtils.m:596-618"
+    },
+    "1037": {
+        "file_id": 108,
+        "content": "This code is performing canset recognition and filtering. It searches for a node, checks if newCanset contains it, collects the results in matchModels, filters using AIFilter, logs the result with the count of filtered models, and then performs post-recognition processing on each filtered model by comparing the full containment and non-invalid newCanset.",
+        "type": "comment"
+    },
+    "1038": {
+        "file_id": 108,
+        "content": "//        if (es != ES_NoEff) {\n//            [AIAnalogy analogyCansetFo:model.indexDic newCanset:newCanset oldCanset:model.matchFo sceneFo:sceneFo es:es];\n//        }\n//\n//        //10. 条件满足的都算识别结果 (更新sp和eff) (参考28185-todo4);\n//        if (es != ES_Default) {\n//            [model.matchFo updateSPStrong:0 end:model.matchFo.count - 1 type:ATPlus];\n//            [sceneFo updateEffectStrong:sceneFo.count solutionFo:model.matchFo.pointer status:es];\n//        }\n//    }\n//}\n/**\n *  MARK:--------------------Canset的全含判断 (参考29025-23)--------------------\n *  @desc 全含说明: 要求newCanset包含oldCanset,才返回肯定结果; \n *          示例: 比如:新[1,3,5,7,9a]和旧[1,5,9b]和场景[1,5] = 是全含的,并最终返回<1:1, 2:3, 3:5>; //其中9a和9b有共同抽象\n *  @version\n *      2023.04.10: 场景包含帧判断全含时,改用mIsC而不是绝对同一个节点 (因为场景内canset可类比抽象) (参考29067-todo1.1);\n *      2023.10.26: 废弃canset识别 (参考3014c-todo2);\n *  @result 全含时,返回二者的indexDic;\n */\n//+(NSDictionary*) checkFoValidMatch_NewCanset:(AIFoNodeBase*)newCanset oldCanset:(AIFoNodeBase*)oldCanset sceneFo:(AIFoNodeBase*)sceneFo {\n//    //1. 数据准备;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIUtils.m:619-641"
+    },
+    "1039": {
+        "file_id": 108,
+        "content": "This code snippet is for updating the recognition result based on a specific es value. If es is not equal to ES_Default, it updates the strong and end values of the matchFo object and the effect strength and solutionFo of the sceneFo object. The code also defines a method called checkFoValidMatch_NewCanset that checks if newCanset contains oldCanset and returns a dictionary with the indexDic values if it is a full containment match.",
+        "type": "comment"
+    },
+    "1040": {
+        "file_id": 108,
+        "content": "//    NSMutableDictionary *indexDic = [[NSMutableDictionary alloc] init];\n//    NSDictionary *newIndexDic = [sceneFo getConIndexDic:newCanset.pointer];\n//    NSDictionary *oldIndexDic = [sceneFo getConIndexDic:oldCanset.pointer];\n//\n//    //3. 说明: 所有帧,都要判断新的全含旧的,只要有一帧失败就全失败 (参考29025-23a);\n//    NSInteger protoMin = 0;\n//    for (NSInteger oldIndex = 0; oldIndex < oldCanset.count; oldIndex ++) {\n//        AIKVPointer *oldAlg = ARR_INDEX(oldCanset.content_ps, oldIndex);\n//        BOOL findItem = false;\n//        for (NSInteger newIndex = protoMin; newIndex < newCanset.count; newIndex++) {\n//            AIKVPointer *newAlg = ARR_INDEX(newCanset.content_ps, newIndex);\n//\n//            //4. 分别判断old和new这一帧是否被sceneFo场景包含 (参考29025-23b);\n//            NSNumber *oldKey = ARR_INDEX([oldIndexDic allKeysForObject:@(oldIndex)], 0);\n//            NSNumber *newKey = ARR_INDEX([newIndexDic allKeysForObject:@(newIndex)], 0);\n//\n//            //5. 如果二者都包含=>即场景包含帧: (因为canset都优先取matchAlg,所以oldAlg和newAlg一般是同一节点) (参考29025-23b);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIUtils.m:642-658"
+    },
+    "1041": {
+        "file_id": 108,
+        "content": "This code is iterating through each frame in oldCanset and newCanset, comparing if the frames are included in the scene using indexDictionaries. If a frame from oldCanset is found in newCanset, it updates the protoMin variable to start checking from that index in newCanset for the next iteration. The code ensures that all frames in oldCanset are present in newCanset before considering the scene as valid.",
+        "type": "comment"
+    },
+    "1042": {
+        "file_id": 108,
+        "content": "//            if (oldKey && newKey) {\n//                //5. 但因为会类比抽象所以有时不是同一节点: 此时要求new抽象指向old: 算匹配成功 (参考29067-todo1.1);\n//                if ([TOUtils mIsC_1:newAlg c:oldAlg]) {\n//                    findItem = true;\n//                }\n//            } else if (oldKey != newKey) {\n//                //6. 如果二者有一个包含,则此帧失败 (参考29025-23b2 & 23c3);\n//                break;\n//            } else {\n//                //7. 如果二者都不包含,则判断二者有没有共同的抽象 (参考29025-23c);\n//                //2023.10.17: 关闭mc共同抽象为依据 (参考30148-todo1.1);\n//                BOOL mcIsBro = false;//[TOUtils mcIsBro:newAlg c:oldAlg];\n//                if (mcIsBro) {\n//                    //8. 有共同抽象=>则此帧成功 (参考29025-23c);\n//                    findItem = true;\n//                } else {\n//                    //9. 无共同抽象,则继续找newCanset的下帧,看能不能有共同抽象 (参考29025-23c2);\n//                }\n//            }\n//\n//            //10. 此帧成功: 记录newIndex & 并记录protoMin (参考29025-23d);\n//            if (findItem) {\n//                protoMin = newIndex + 1;\n//                [indexDic setObject:@(newIndex) forKey:@(oldIndex)];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIUtils.m:659-682"
+    },
+    "1043": {
+        "file_id": 108,
+        "content": "This code is responsible for checking the similarity between two algorithms. It compares the new and old algorithms to determine if they are abstracts of each other, share common abstracts, or have a shared index. The code sets a flag indicating whether a match was found, updates the protoMin value, and stores the new index in the indexDic dictionary for the corresponding old index.",
+        "type": "comment"
+    },
+    "1044": {
+        "file_id": 108,
+        "content": "//                if (Log4SceneIsOk) NSLog(@\"\\t第%ld帧,条件满足通过 canset:%@ (fromProto:F%ldA%ld)\",oldIndex,Pit2FStr(oldAlg),newCanset.pointer.pointerId,newAlg.pointerId);\n//                break;\n//            }\n//        }\n//\n//        //11. 有一条失败,则全失败 (参考29025-23e);\n//        if (!findItem) {\n//            if (Log4SceneIsOk) NSLog(@\"\\t第%ld帧,条件满足未通过 canset:%@ (fromProtoFo:F%ld)\",oldIndex,Pit2FStr(oldAlg),newCanset.pointer.pointerId);\n//            return nil;\n//        }\n//    }\n//\n//    //12. 全找到,则成功;\n//    if (Log4SceneIsOk) NSLog(@\"条件满足通过:%@ (fromProtoFo:%ld)\",Fo2FStr(oldCanset),newCanset.pointer.pointerId);\n//    return indexDic;\n//}\n/**\n *  MARK:--------------------获取某帧shortModel的matchAlgs+partAlgs--------------------\n */\n+(NSArray*) getMatchAndPartAlgPsByModel:(AIShortMatchModel*)frameModel {\n    NSArray *matchAlg_ps = [SMGUtils convertArr:frameModel.matchAlgs convertBlock:^id(AIMatchAlgModel *o) {\n        return o.matchAlg;\n    }];\n    return [SMGUtils collectArrA:matchAlg_ps arrB:Nodes2Pits(frameModel.partAlgs)];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIUtils.m:683-707"
+    },
+    "1045": {
+        "file_id": 108,
+        "content": "This code is searching for a specific condition to be met in a scene. If the condition is not met, it returns nil; if the condition is met, it returns indexDic. The code also retrieves matchAlg_ps from frameModel.matchAlgs and collects Nodes2Pits from frameModel.partAlgs.",
+        "type": "comment"
+    },
+    "1046": {
+        "file_id": 108,
+        "content": "}\n/**\n *  MARK:--------------------获取某帧Index的matchAlgs+partAlgs--------------------\n *  @status 废弃状态 (如果2023.10之前未用,则删除);\n */\n+(NSArray*) getMatchAndPartAlgPs:(NSInteger)frameIndex {\n    AIShortMatchModel *inModel = [theTC.inModelManager getFrameModel:frameIndex];\n    return [self getMatchAndPartAlgPsByModel:inModel];\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/In/TIUtils.m:708-719"
+    },
+    "1047": {
+        "file_id": 108,
+        "content": "This code defines a method, `getMatchAndPartAlgPs:frameIndex`, that retrieves match and part algorithms for a given frame index from an input model. The method is marked as \"abandoned\" and will be deleted if not used by 2023.10.",
+        "type": "comment"
+    },
+    "1048": {
+        "file_id": 109,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/ISubDemandDelegate.h",
+        "type": "filepath"
+    },
+    "1049": {
+        "file_id": 109,
+        "content": "This file defines the ISubDemandDelegate protocol, which has a single method subDemands() that returns an array of sub tasks (TOFoModel) for the main task. It is used to mount and manage child tasks, such as when analyzing potential harms from an action.",
+        "type": "summary"
+    },
+    "1050": {
+        "file_id": 109,
+        "content": "//\n//  ISubDemandDelegate.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/3/28.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------子任务接口--------------------\n *  @implement\n *      1. TOFoModel    : 用于挂载子任务们 (比如反思到此举可能有三害,那么就有3个子任务);\n */\n@protocol ISubDemandDelegate <NSObject>\n-(NSMutableArray*) subDemands;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/ISubDemandDelegate.h:1-20"
+    },
+    "1051": {
+        "file_id": 109,
+        "content": "This file defines the ISubDemandDelegate protocol, which has a single method subDemands() that returns an array of sub tasks (TOFoModel) for the main task. It is used to mount and manage child tasks, such as when analyzing potential harms from an action.",
+        "type": "comment"
+    },
+    "1052": {
+        "file_id": 110,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/ISubModelsDelegate.h",
+        "type": "filepath"
+    },
+    "1053": {
+        "file_id": 110,
+        "content": "This file, \"ISubModelsDelegate.h,\" defines a protocol for submodels delegates in the SMG_NothingIsAll project. It specifies that submodels can be concepts within a time-series FoOutModel or the sparse codes and attempted Havs from an AlgModel's SP method.",
+        "type": "summary"
+    },
+    "1054": {
+        "file_id": 110,
+        "content": "//\n//  ISubModelsDelegate.h\n//  SMG_NothingIsAll\n//\n//  Created by air on 2020/5/28.\n//  Copyright © 2020年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------子元素接口--------------------\n *  @desc 比如时序FoOutModel下的元素即是概念AlgOutModel;\n */\n@protocol ISubModelsDelegate <NSObject>\n/**\n *  MARK:--------------------subModels--------------------\n *  1. 在TOFoModel时,subModels为其content_ps中的概念们;\n *  2. 在TOAlgModel时,subModels为其SP方法中保留的稀疏码对比GLDic的subValues 和 尝试整体Hav的那些subAlgs;\n */\n-(NSMutableArray*) subModels;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/ISubModelsDelegate.h:1-24"
+    },
+    "1055": {
+        "file_id": 110,
+        "content": "This file, \"ISubModelsDelegate.h,\" defines a protocol for submodels delegates in the SMG_NothingIsAll project. It specifies that submodels can be concepts within a time-series FoOutModel or the sparse codes and attempted Havs from an AlgModel's SP method.",
+        "type": "comment"
+    },
+    "1056": {
+        "file_id": 111,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/ITryActionFoDelegate.h",
+        "type": "filepath"
+    },
+    "1057": {
+        "file_id": 111,
+        "content": "This code defines the protocol ITryActionFoDelegate for a solution interface, used to attach R, P, HN, and GL tasks. It also provides a method actionFoModels that returns an array of fo models. This is part of the SMG_NothingIsAll project and was created by \"air\" on May 28th, 2020. The code has been updated on March 27th, 2021 to support reflection for sub-tasks when outFoModel implements this interface.",
+        "type": "summary"
+    },
+    "1058": {
+        "file_id": 111,
+        "content": "//\n//  ITryActionFoDelegate.h\n//  SMG_NothingIsAll\n//\n//  Created by air on 2020/5/28.\n//  Copyright © 2020年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------fo解决方案接口--------------------\n *  @implement\n *      1. DemandModel  : 用于挂载R和P任务的解决方案;\n *      2. TOAlgModel   : 用于挂载HN解决方案;\n *      3. TOValueModel : 用于挂载GL解决方案;\n *  @version\n *      2020.05.28: 用于R-,P-,GL,Hav四处时序构建子outModel模型;\n *      2021.03.27: 支持反思子任务 (当outFoModel实现此接口时,下方为子任务) (参考22193);\n */\n@protocol ITryActionFoDelegate <NSObject>\n-(NSMutableArray*) actionFoModels;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/ITryActionFoDelegate.h:1-25"
+    },
+    "1059": {
+        "file_id": 111,
+        "content": "This code defines the protocol ITryActionFoDelegate for a solution interface, used to attach R, P, HN, and GL tasks. It also provides a method actionFoModels that returns an array of fo models. This is part of the SMG_NothingIsAll project and was created by \"air\" on May 28th, 2020. The code has been updated on March 27th, 2021 to support reflection for sub-tasks when outFoModel implements this interface.",
+        "type": "comment"
+    },
+    "1060": {
+        "file_id": 112,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOAlgModel.h",
+        "type": "filepath"
+    },
+    "1061": {
+        "file_id": 112,
+        "content": "This code defines a `TOAlgModel` class for AI decision-making models, inheriting from `TOModelBase` and conforming to `ITryActionFoDelegate`. It includes properties for algorithm control and updates the \"feedbackAlg\" property for process control.",
+        "type": "summary"
+    },
+    "1062": {
+        "file_id": 112,
+        "content": "//\n//  TOAlgModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/4/12.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import \"TOModelBase.h\"\n#import \"ITryActionFoDelegate.h\"\n#import \"ISubModelsDelegate.h\"\n#import \"ISubDemandDelegate.h\"\n/**\n *  MARK:--------------------决策中的概念模型--------------------\n *  1. 将content_p中的概念进行行为化;\n *  2. content_p : AIAlgNodeBase_p\n *  @相对其它outModel模型特殊说明:\n *      1. TOAlgModel在_SP方法中,即尝试了本身的_Hav,也可以尝试其同层节点的_Hav,在失败时,还可以对SP尝试_GL,几种方式有一个达成,即可Act_Yes;\n *      2.1 所以在单种方式失败时,要调用下一种方式尝试行为化;\n *      2.2 所以在方案(一)的_Hav方式失败时,要调用方案(二)方式尝试GL行为化;\n *      3. 几种方式本身就会竞争,一次只单种,用ScorePK状态,进行方案竞争;\n *      4. 在Act_Yes后,外循环有了结果后,要先进行方案(三)的理性评价,才可以转为Finish;\n */\n@class TOFoModel;\n@interface TOAlgModel : TOModelBase <ITryActionFoDelegate,ISubModelsDelegate,ISubDemandDelegate>\n+(TOAlgModel*) newWithAlg_p:(AIKVPointer*)alg_p group:(TOModelBase<ISubModelsDelegate>*)group;\n/**\n *  MARK:-------------------- 一: 保留params之replaceAlgs短记--------------------\n *  @desc\n *      1. 因为TOAction.SP算法执行时,将checkAlg和checkAlg的同层可替代的替身存于此,只要成功一个即可,不过失败时,方便转移;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOAlgModel.h:1-33"
+    },
+    "1063": {
+        "file_id": 112,
+        "content": "This code defines a class `TOAlgModel` that inherits from `TOModelBase`, and conforms to the protocols `ITryActionFoDelegate`, `ISubModelsDelegate`, and `ISubDemandDelegate`. The class represents a decision-making model in an AI algorithm. It provides methods for initializing an instance with an AI algorithm pointer and a group object, as well as implementing various delegate methods.",
+        "type": "comment"
+    },
+    "1064": {
+        "file_id": 112,
+        "content": " *      2. 在Action._Hav中,将每一次尝试PM的reModel存于此,下次再执行时,用作不应期,避免死循环;\n */\n//@property (strong, nonatomic) NSMutableArray *replaceAlgs;\n/**\n *  MARK:-------------------- 二: 保留params之cGLDic短记--------------------\n *  @desc 因为TOAction.SP算法执行时,将cGLDic存此,以便其中一个稀疏码成功时,顺利转移下一个;\n */\n//@property (strong, nonatomic) NSMutableDictionary *cGLDic;\n//在TOAction.SP算法执行时,将pAlg存此,TOValueAlg转移时调用_GL方法会用到 (2021.01.23: 发出也没调用,仅在PM跳转GL行为化时有赋值而已);\n//@property (strong, nonatomic) AIAlgNodeBase *sp_P;\n/**\n *  MARK:-------------------- 三: 对alg进行理性评价 (稀疏码检查) --------------------\n *  @desc 当一,或者二,转行为化后,外界输入回来,由此处对其进行理性评价;\n *  @desc\n *      1. 说明: 将新输入的protoAlg与matchAlg进行比较,理性评价,从而对稀疏码特征进行修正;\n *      2. 比如: 吃瓜子,得到带皮瓜子,就得先去皮再吃;\n *      3. 在理性评价时,将要用到的MatchAlg就是当前模型中的content_p;\n *      4. 在理性评价时,将要用到的MatchFo就是当前模型中.baseOrGroup中包含的时序;\n *  @todo\n *      2021.05.13: 随后改为用self(reModel) 减去 base(C) = 得出justPValues (参考23076中已将reModel.content改为protoA);\n */\n//@property (strong, nonatomic) NSMutableArray *justPValues;\n//保留字段 (score用于存M所在matchFo的价值分,mvAT用于存M所在的matchFo的价值at标识);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOAlgModel.h:34-59"
+    },
+    "1065": {
+        "file_id": 112,
+        "content": "This code appears to define various properties and markers for a class, possibly related to artificial intelligence algorithms. The properties include replaceAlgs, cGLDic, sp_P, justPValues, and others which seem to be used for algorithm evaluation, parameter retention, and preventing dead loops. There are also markers for different sections of the code including rational assessment of algorithms (sparse codes), matching algorithms, and a reference to an existing codebase 23076. The purpose and specific functionality of these properties and markers is unclear without further context.",
+        "type": "comment"
+    },
+    "1066": {
+        "file_id": 112,
+        "content": "//@property (assign, nonatomic) float pm_Score;\n//@property (strong, nonatomic) NSString *pm_MVAT;\n//MARK:===============================================================\n//MARK:                     < pm保留信息 >\n//MARK: @todo: 原本不应有这些保留信息,而是对输出期短时记忆树追加层,以使之可用或用别的方法来替代之;\n//MARK:===============================================================\n/**\n *  MARK:--------------------pmFo--------------------\n *  @desc 用来取conPorts的Fo\n *      1. _Hav中P-模式时,为参数outModel的base (即当前正在行为化的Fo);\n *      2. tor_OPushM()中为focusModel.base;\n *      3. _Hav中R-模式时,为参数outModel的base (即SFo);\n */\n//@property (strong, nonatomic) AIKVPointer *pm_Fo;          //当前解决方案fo (=baseAlg.baseFo);\n/**\n *  MARK:--------------------pmProtoAlg--------------------\n *  @desc\n *      1. 来源: 当前对应短时记忆中protoAlg\n *      2. 用途: getInnerAlg时,用作联想参考 (已由maskFo替代(参考22211));\n *      3. 赋值说明: _SP时,将pAlg传入 (旧注释,时效存疑);\n *      4. 赋值说明: _PM时,将M传入 (旧注释,时效存疑);\n */\n//@property (strong, nonatomic) AIAlgNodeBase *pm_ProtoAlg;\n/**\n *  MARK:--------------------当前短时记忆--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOAlgModel.h:60-88"
+    },
+    "1067": {
+        "file_id": 112,
+        "content": "This code defines three properties: pm\\_Score, pm\\_MVAT, and pm\\_Fo. The comments describe the usage and purpose of these properties in the context of AI algorithm control. They also note that some parts of the code are outdated or may be replaced in future versions.",
+        "type": "comment"
+    },
+    "1068": {
+        "file_id": 112,
+        "content": " *  @desc\n *      1. 用途: getInnerV3用,用来从mFo更理性联想;\n */\n//@property (strong, nonatomic) AIShortMatchModel *pm_InModel;\n/**\n *  MARK:--------------------实际发生的概念保留--------------------\n *  @desc\n *      1. 在tor_OPushM中进行保留;\n *      2. 在ActYes流程控制中,生物钟触发器触发时,进行使用,用于反省类比;\n *  @version\n *      2022.03.23: 改成AIKVPointer类型,为了防止序列化时冗余导致的性能问题;\n */\n@property (strong, nonatomic) AIKVPointer *feedbackAlg;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOAlgModel.h:89-104"
+    },
+    "1069": {
+        "file_id": 112,
+        "content": "This code defines a property called \"feedbackAlg\" of type AIKVPointer, which is used in the ActYes process control for genetic clock trigger activation. It was previously used in tor_OPushM and has been modified to use AIKVPointer to avoid redundancy issues during serialization.",
+        "type": "comment"
+    },
+    "1070": {
+        "file_id": 113,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOAlgModel.m",
+        "type": "filepath"
+    },
+    "1071": {
+        "file_id": 113,
+        "content": "This code defines a class with properties for storing models and demands, conforming to NSCoding protocol for encoding/decoding. It encodes instance properties in the encode method for later retrieval or transmission.",
+        "type": "summary"
+    },
+    "1072": {
+        "file_id": 113,
+        "content": "//\n//  TOAlgModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/4/12.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import \"TOAlgModel.h\"\n@interface TOAlgModel()\n@property (strong, nonatomic) NSMutableArray *actionFoModels;\n@property (strong, nonatomic) NSMutableArray *subModels;    //旧版本用于存subValueModel;\n@property (strong, nonatomic) NSMutableArray *subDemands;   //新版用于放hDemand;\n@end\n@implementation TOAlgModel\n+(TOAlgModel*) newWithAlg_p:(AIKVPointer*)alg_p group:(TOModelBase<ISubModelsDelegate>*)group {\n    TOAlgModel *result = [[TOAlgModel alloc] initWithContent_p:alg_p];\n    result.status = TOModelStatus_Runing;\n    if (group) [group.subModels addObject:result];\n    result.baseOrGroup = group;\n    return result;\n}\n-(NSMutableArray *)actionFoModels{\n    if (_actionFoModels == nil) _actionFoModels = [[NSMutableArray alloc] init];\n    return _actionFoModels;\n}\n-(NSMutableArray *)subModels {\n    if (_subModels == nil) _subModels = [[NSMutableArray alloc] init];\n    return _subModels;\n}\n-(NSMutableArray*) subDemands{",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOAlgModel.m:1-39"
+    },
+    "1073": {
+        "file_id": 113,
+        "content": "This code defines a class TOAlgModel with properties actionFoModels, subModels, and subDemands. It also provides an instance method newWithAlg_p:group: that initializes a TOAlgModel object with a given algorithm pointer and model group. The methods actionFoModels, subModels, and subDemands return mutable arrays used to store different types of models or demands.",
+        "type": "comment"
+    },
+    "1074": {
+        "file_id": 113,
+        "content": "    if (_subDemands == nil) _subDemands = [[NSMutableArray alloc] init];\n    return _subDemands;\n}\n//-(NSMutableDictionary *)cGLDic{\n//    if (!_cGLDic) _cGLDic = [[NSMutableDictionary alloc] init];\n//    return _cGLDic;\n//}\n//-(NSMutableArray *)replaceAlgs{\n//    if (!_replaceAlgs) _replaceAlgs = [[NSMutableArray alloc] init];\n//    return _replaceAlgs;\n//}\n//-(NSMutableArray *)justPValues{\n//    if (!_justPValues) _justPValues = [[NSMutableArray alloc] init];\n//    return _justPValues;\n//}\n/**\n *  MARK:--------------------NSCoding--------------------\n */\n- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {\n    self = [super initWithCoder:aDecoder];\n    if (self) {\n        self.subModels = [aDecoder decodeObjectForKey:@\"subModels\"];\n        self.subDemands = [aDecoder decodeObjectForKey:@\"subDemands\"];\n        self.actionFoModels = [aDecoder decodeObjectForKey:@\"actionFoModels\"];\n        self.feedbackAlg = [aDecoder decodeObjectForKey:@\"feedbackAlg\"];\n    }\n    return self;\n}\n- (void)encodeWithCoder:(NSCoder *)aCoder {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOAlgModel.m:40-71"
+    },
+    "1075": {
+        "file_id": 113,
+        "content": "This code defines a class with properties for subModels, subDemands, actionFoModels, and feedbackAlg. It also includes getter methods for these properties, which initialize them as nil if they are not already set. The class conforms to the NSCoding protocol, providing an initWithCoder method for decoding from a coder and an encodeWithCoder method for encoding to a coder.",
+        "type": "comment"
+    },
+    "1076": {
+        "file_id": 113,
+        "content": "    [super encodeWithCoder:aCoder];\n    [aCoder encodeObject:self.subModels forKey:@\"subModels\"];\n    [aCoder encodeObject:self.subDemands forKey:@\"subDemands\"];\n    [aCoder encodeObject:self.actionFoModels forKey:@\"actionFoModels\"];\n    [aCoder encodeObject:self.feedbackAlg forKey:@\"feedbackAlg\"];\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOAlgModel.m:72-79"
+    },
+    "1077": {
+        "file_id": 113,
+        "content": "This code is part of the encode method, which stores an instance's properties for later retrieval or transmission. It encodes the subModels, subDemands, actionFoModels, and feedbackAlg into aCoder using key values.",
+        "type": "comment"
+    },
+    "1078": {
+        "file_id": 114,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOFoModel.h",
+        "type": "filepath"
+    },
+    "1079": {
+        "file_id": 114,
+        "content": "This code defines a TOFoModel class for time sequence decision-making models and an AI model for handling scene data in the SMG_NothingIsAll project, including properties, methods, and arrays for reflection or effective statistics.",
+        "type": "summary"
+    },
+    "1080": {
+        "file_id": 114,
+        "content": "//\n//  TOFoModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/1/30.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import \"TOModelBase.h\"\n#import \"ISubModelsDelegate.h\"\n#import \"ITryActionFoDelegate.h\"\n#import \"ISubDemandDelegate.h\"\n/**\n *  MARK:--------------------决策中的时序模型--------------------\n *  1. content_p : 存AIFoNodeBase_p\n *  2. 再通过algScheme联想把具象可执行的具体任务存到memOrder;\n *  3. 其间,如果有执行失败,无效等概念节点,存到except_ps不应期;\n *  4. 不应期会上报给上一级except_ps (或许由TOModelStatus来替代此功能);\n *  @version\n *      2021.03.27: 实现ITryActionFoDelegate接口,因为每个fo都有可能是子任务 (参考22193);\n */\n@class AISceneModel,AITransferModel;\n@interface TOFoModel : TOModelBase <ISubModelsDelegate,ISubDemandDelegate,NSCoding>\n+(TOFoModel*) newWithFo_p:(AIKVPointer*)fo_p base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel;\n/**\n *  MARK:--------------------行为化数据--------------------\n *  @version\n *      2020.08.27: 将actions行为化数据字段去掉,因为现在行为化数据在每一个isOut=true的TOAlgModel中;\n */\n//@property (strong, nonatomic) NSMutableArray *actions;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOFoModel.h:1-33"
+    },
+    "1081": {
+        "file_id": 114,
+        "content": "This code defines a class TOFoModel that inherits from TOModelBase and conforms to ISubModelsDelegate, ISubDemandDelegate, and NSCoding protocols. It is used for decision-making time sequence models in the SMG_NothingIsAll project. The model stores AI nodes and has properties related to actions and exceptions.",
+        "type": "comment"
+    },
+    "1082": {
+        "file_id": 114,
+        "content": "/**\n *  MARK:--------------------当前正在行为化的下标--------------------\n *  @todo 将actionIndex赋值,改为生成TOAlgModel模型,并挂在subModels下;\n *  @desc actionIndex表示当前从执行到执行下帧前 (即actionIndex一般表示已执行);\n */\n@property (assign, nonatomic) NSInteger actionIndex;\n/**\n *  MARK:--------------------执行目标index--------------------\n *  @desc foModel要行为化的index目标 (默认目标为mv_即全执行);\n *      1. 如全执行完,则是为了mv结果;\n *      2. 如执行到某一帧,则是为了实现HDemand;\n *      3. 注: 其中要执行的不包括targetIndex,比如为1时,则目标为1,只执行到0(第1帧),为content.count时,则目标为mv;\n */\n@property (assign, nonatomic) NSInteger targetSPIndex;\n//@property (strong, nonatomic) NSMutableDictionary *itemSubModels;   //每个下标,对应的subModels字典;\n/**\n *  MARK:--------------------当前正在激活中的subModel--------------------\n *  可由status来替代此功能 (status可支持多个激活状态的fo);\n */\n//@property (strong, nonatomic) TOModelBase *activateSubModel;\n/**\n *  MARK:--------------------最终反馈的protoMv--------------------\n *  @desc 当前fo的目标为mv时,如果反馈了mv,即记录到此处 (可用于生成实际发生protoFo时用到);\n */\n@property (strong, nonatomic) AIKVPointer *feedbackMv;\n/**\n *  MARK:--------------------此解决方案基于哪个pFo/targetFo--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOFoModel.h:35-67"
+    },
+    "1083": {
+        "file_id": 114,
+        "content": "This code defines a class with properties representing the current behavior index, target execution index, active submodels, feedback proto-mv, and the model it is based on. It seems to be related to AI thinking control and generating models for behaviors.",
+        "type": "comment"
+    },
+    "1084": {
+        "file_id": 114,
+        "content": " */\n@property (weak, nonatomic) id basePFoOrTargetFoModel;//R任务时为pFoModel,H任务时为targetFoModel;\n/**\n *  MARK:--------------------从决策中一步步传过来 (参考29069-todo7)--------------------\n */\n@property (strong, nonatomic) AISceneModel *baseSceneModel;\n/**\n *  MARK:--------------------反思未通过标记--------------------\n */\n@property (assign, nonatomic) BOOL refrectionNo;\n/**\n *  MARK:--------------------将每帧反馈转成orders,以构建protoFo--------------------\n */\n-(NSArray*) getOrderUseMatchAndFeedbackAlg:(BOOL)fromRegroup;\n/**\n *  MARK:--------------------算出新的indexDic--------------------\n */\n-(NSDictionary*) convertOldIndexDic2NewIndexDic:(AIKVPointer*)targetOrPFo_p;\n/**\n *  MARK:--------------------算出新的spDic--------------------\n */\n-(NSDictionary*) convertOldSPDic2NewSPDic;\n//MARK:===============================================================\n//MARK:                     < for 三级场景 >\n//MARK:===============================================================\n-(void) setDataWithSceneModel:(AISceneModel*)baseSceneModel brother:(AITransferModel*)brother father:(AITransferModel*)father i:(AITransferModel*)i;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOFoModel.h:68-99"
+    },
+    "1085": {
+        "file_id": 114,
+        "content": "This code defines a class with several properties and methods. It seems to handle scene data for AI tasks and involves converting old indices and SP dictionaries, as well as setting data for three-level scenes.",
+        "type": "comment"
+    },
+    "1086": {
+        "file_id": 114,
+        "content": "@property (strong, nonatomic) AITransferModel *brother;\n@property (strong, nonatomic) AITransferModel *father;\n@property (strong, nonatomic) AITransferModel *i;\n/**\n *  MARK:--------------------返回需用于反省或有效统计的cansets (参考29069-todo11 && todo11.2)--------------------\n */\n-(NSArray*) getRethinkEffectCansets;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOFoModel.h:100-109"
+    },
+    "1087": {
+        "file_id": 114,
+        "content": "This code declares three properties: \"brother\", \"father\", and \"i\" of type AITransferModel, with nonatomic access. The method getRethinkEffectCansets returns an array of cansets used for reflection or effective statistics, referencing 29069-todo11 && todo11.2.",
+        "type": "comment"
+    },
+    "1088": {
+        "file_id": 115,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOFoModel.m",
+        "type": "filepath"
+    },
+    "1089": {
+        "file_id": 115,
+        "content": "The code initializes a TOFoModel class, calculates scores, adds submodels, and updates dictionaries. It also creates a class method for retrieving scene content, includes NSCoding implementation, and encodes an object 'i' and boolean value 'refrectionNo' in aCoder.",
+        "type": "summary"
+    },
+    "1090": {
+        "file_id": 115,
+        "content": "//\n//  TOFoModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/1/30.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import \"TOFoModel.h\"\n@interface TOFoModel()\n@property (strong, nonatomic) NSMutableArray *subModels;\n@property (strong, nonatomic) NSMutableArray *subDemands;\n@end\n@implementation TOFoModel\n+(TOFoModel*) newWithFo_p:(AIKVPointer*)fo_p base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel {\n    //1. 数据准备;\n    AIFoNodeBase *fo = [SMGUtils searchNode:fo_p];\n    TOFoModel *result = [[TOFoModel alloc] initWithContent_p:fo_p];\n    //2. 赋值;\n    result.status = TOModelStatus_Runing;\n    if (base) [base.actionFoModels addObject:result];\n    result.baseOrGroup = base;\n    result.actionIndex = -1;//默认为头(-1),r和h任务自行重赋值;\n    result.targetSPIndex = fo.count;//默认到尾(foCount),h任务自行重赋值;\n    result.basePFoOrTargetFoModel = basePFoOrTargetFoModel;\n    return result;\n}\n/**\n *  MARK:--------------------每层第一名之和分值--------------------\n *  @desc 跨fo的综合评分,\n *          1. 比如打篮球去?还是k歌去,打篮球考虑到有没有球,球场是否远,自己是否累,天气是否好, k歌也考虑到自己会唱歌不,嗓子是否舒服;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOFoModel.m:1-38"
+    },
+    "1091": {
+        "file_id": 115,
+        "content": "This code defines the `TOFoModel` class, which is a model for managing sub-models and demands. It also initializes an instance of `TOFoModel` with given parameters and assigns default values to various properties. Additionally, it includes a comment about calculating a comprehensive score across different FOs.",
+        "type": "comment"
+    },
+    "1092": {
+        "file_id": 115,
+        "content": " *          2. 当对二者进行综合评分,选择时,涉及到结构化下的综合评分;\n *          3. 目前用不着,以后可能也用不着;\n *\n */\n//-(CGFloat) allNiceScore{\n//    //TOModelBase *subModel = [self itemSubModels];\n//    //if (subModel) {\n//    //    return self.score + [subModel allNiceScore];\n//    //}\n//    //1. 从当前actionIndex\n//    //2. 找itemSubModels下\n//    //3. 所有status未中止的\n//    //4. 那些时序的评分总和\n//    return self.score;\n//}\n-(NSMutableArray *)subModels {\n    if (_subModels == nil) _subModels = [[NSMutableArray alloc] init];\n    return _subModels;\n}\n-(NSMutableArray *)subDemands{\n    if (_subDemands == nil) _subDemands = [[NSMutableArray alloc] init];\n    return _subDemands;\n}\n//-(void)setActionIndex:(NSInteger)actionIndex{\n//    NSLog(@\"toFo.setActionIndex:%ld -> %ld\",self.actionIndex,actionIndex);\n//    _actionIndex = actionIndex;\n//}\n/**\n *  MARK:--------------------将每帧反馈转成orders,以构建protoFo--------------------\n *  @param fromRegroup : 从TCRegroup调用时未发生部分也取, 而用于canset抽象时仅取已发生部分;\n *  @version\n *      2022.11.25: 转regroupFo时收集默认content_p内容(代码不变),canset再类比时仅获取feedback反馈的alg (参考27207-1);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOFoModel.m:39-73"
+    },
+    "1093": {
+        "file_id": 115,
+        "content": "This function calculates the overall score by summing up the scores of all submodels and sets the action index. It also provides methods to add submodels and subdemands, and converts feedback into orders for building protoFo.",
+        "type": "comment"
+    },
+    "1094": {
+        "file_id": 115,
+        "content": " *      2023.02.12: 返回改为: matchFo的前段+执行部分反馈帧 (参考28068-方案1);\n */\n-(NSArray*) getOrderUseMatchAndFeedbackAlg:(BOOL)fromRegroup {\n    //1. 数据准备 (收集除末位外的content为order);\n    AIFoNodeBase *fo = [SMGUtils searchNode:self.content_p];\n    NSMutableArray *order = [[NSMutableArray alloc] init];\n    NSArray *feedbackIndexArr = [self getIndexArrIfHavFeedback];\n    NSInteger max = fromRegroup ? fo.count : self.actionIndex;\n    //2. 将fo逐帧收集真实发生的alg;\n    for (NSInteger i = 0; i < max; i++) {\n        //3. 找到当前帧alg_p;\n        AIKVPointer *matchAlg_p = ARR_INDEX(fo.content_ps, i);\n        //4. 如果有反馈feedbackAlg,则优先取反馈;\n        AIKVPointer *findAlg_p = matchAlg_p;\n        if ([feedbackIndexArr containsObject:@(i)]) {\n            findAlg_p = [self getFeedbackAlgWithSolutionIndex:i];\n        }\n        //5. 生成时序元素;\n        if (findAlg_p) {\n            NSTimeInterval inputTime = [NUMTOOK(ARR_INDEX(fo.deltaTimes, i)) doubleValue];\n            [order addObject:[AIShortMatchModel_Simple newWithAlg_p:findAlg_p inputTime:inputTime isTimestamp:false]];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOFoModel.m:74-97"
+    },
+    "1095": {
+        "file_id": 115,
+        "content": "This code retrieves a list of algorithms from a given set, prioritizing feedback algorithms if available. It collects the real occurrences of the algorithms and creates a new instance of AIShortMatchModel_Simple for each, adding it to an array.",
+        "type": "comment"
+    },
+    "1096": {
+        "file_id": 115,
+        "content": "        }\n    }\n    return order;\n}\n/**\n *  MARK:--------------------算出新的indexDic--------------------\n *  @desc 用旧indexDic和feedbackAlg计算出新的indexDic (参考27206d-方案2);\n */\n-(NSDictionary*) convertOldIndexDic2NewIndexDic:(AIKVPointer*)targetOrPFo_p {\n    //1. 数据准备;\n    AIFoNodeBase *targetOrPFo = [SMGUtils searchNode:targetOrPFo_p];\n    AIKVPointer *solutionFo = self.content_p;\n    //2. 将fo逐帧收集有反馈的conIndex (参考27207-7);\n    NSArray *feedbackIndexArr = [self getIndexArrIfHavFeedback];\n    //3. 取出solutionFo旧有的indexDic (参考27207-8);\n    NSDictionary *oldIndexDic = [targetOrPFo getConIndexDic:solutionFo];\n    //4. 筛选出有反馈的absIndex数组 (参考27207-9);\n    NSArray *feedbackAbsIndexArr = [SMGUtils filterArr:oldIndexDic.allKeys checkValid:^BOOL(NSNumber *absIndexKey) {\n        NSNumber *conIndexValue = NUMTOOK([oldIndexDic objectForKey:absIndexKey]);\n        return [feedbackIndexArr containsObject:conIndexValue];\n    }];\n    //5. 转成newIndexDic (参考27207-10);\n    NSMutableDictionary *newIndexDic = [[NSMutableDictionary alloc] init];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOFoModel.m:98-125"
+    },
+    "1097": {
+        "file_id": 115,
+        "content": "This code snippet is converting an old index dictionary (indexDic) to a new one using feedback information from a solutionFo and targetOrPFo. The process involves collecting frames of feedback, retrieving the old index dictionary, filtering out only the relevant keys (absIndex), and then creating a new index dictionary (newIndexDic).",
+        "type": "comment"
+    },
+    "1098": {
+        "file_id": 115,
+        "content": "    for (NSInteger i = 0; i < feedbackAbsIndexArr.count; i++) {\n        NSNumber *absIndex = ARR_INDEX(feedbackAbsIndexArr, i);\n        [newIndexDic setObject:@(i) forKey:absIndex];\n    }\n    return newIndexDic;\n}\n/**\n *  MARK:--------------------算出新的spDic--------------------\n *  @desc 用旧spDic和feedbackAlg计算出新的spDic (参考27211-todo1);\n *  @version\n *      2023.04.01: 修复算出的S可能为负的BUG,改为直接从conSolution继承对应帧的SP值 (参考27214);\n *  @result notnull (建议返回后,检查一下spDic和absCansetFo的长度是否一致,不一致时来查BUG);\n */\n-(NSDictionary*) convertOldSPDic2NewSPDic {\n    //1. 数据准备 (收集除末位外的content为order) (参考27212-步骤1);\n    AIFoNodeBase *solutionFo = [SMGUtils searchNode:self.content_p];\n    NSArray *feedbackIndexArr = [self getIndexArrIfHavFeedback];\n    NSMutableDictionary *newSPDic = [[NSMutableDictionary alloc] init];\n    //2. sulutionIndex都是有反馈的帧,\n    for (NSInteger i = 0; i < feedbackIndexArr.count; i++) {\n        //3. 数据准备: 有反馈的帧,在solution对应的index (参考27212-步骤1);\n        NSNumber *solutionIndex = ARR_INDEX(feedbackIndexArr, i);\n        //4. 取得具象solutionFo的spStrong (参考27213-2&3);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOFoModel.m:126-151"
+    },
+    "1099": {
+        "file_id": 115,
+        "content": "This code is converting the old SP dictionary to a new one by collecting data for each frame and using feedback index. It prepares the solution, iterates through feedback indexes, retrieves specific solution frame's strong value, and then returns the new dictionary.",
+        "type": "comment"
+    }
+}

@@ -1,0 +1,10 @@
+{
+    "summary": "Header file for \"TestHungryPage\" class, inherits from \"HEViewController\", and contains no methods or properties.",
+    "details": [
+        {
+            "comment": "Header file for \"TestHungryPage\" class, inherits from \"HEViewController\", and contains no methods or properties.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Demo/TestHungryPage/TestHungryPage.h\":0-12",
+            "content": "//\n//  TestHungryPage.h\n//  SMG_NothingIsAll\n//\n//  Created by \u8d3e  on 2017/7/9.\n//  Copyright \u00a9 2017\u5e74 XiaoGang. All rights reserved.\n//\n#import \"HEViewController.h\"\n@interface TestHungryPage : HEViewController\n@end"
+        }
+    ]
+}

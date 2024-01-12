@@ -1,0 +1,545 @@
+{
+    "1900": {
+        "file_id": 190,
+        "content": "        AIAlgNodeBase *matchAlg = [SMGUtils searchNode:item.matchAlg];\n        for (AIKVPointer *protoV_p in inModel.protoAlg.content_ps) {\n            for (AIKVPointer *matchV_p in matchAlg.content_ps) {\n                if ([protoV_p.identifier isEqualToString:matchV_p.identifier]) {\n                    //3. 二次过滤V相近度 = 原V相近度 的 重要性次方 (参考29107-步骤2);\n                    CGFloat nearV = [AIAnalyst compareCansetValue:matchV_p protoValue:protoV_p vInfo:nil];\n                    double importance = NUMTOOK_DV([importanceDic objectForKey:protoV_p.identifier],1).doubleValue;\n                    secondMatchValue *= powf(nearV, importance);\n                }\n            }\n        }\n        [secondMatchValueDic setObject:@(secondMatchValue) forKey:@(matchAlg.pId)];\n    }\n    //4. 概念识别的二次排序过滤 (保留60% & 至少保留4条) (参考29107-todo1);\n    NSArray *sort = [SMGUtils sortBig2Small:inModel.matchAlgs compareBlock:^double(AIMatchAlgModel *obj) {\n        return NUMTOOK([secondMatchValueDic objectForKey:@(obj.matchAlg.pointerId)]).doubleValue;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIFilter.m:108-125"
+    },
+    "1901": {
+        "file_id": 190,
+        "content": "This code performs a second-level filtering on the concept recognition results, where it iterates through each match algorithm and calculates the secondMatchValue by considering the importance of the corresponding prototype values. Then, it sorts the matchAlgs based on their secondMatchValues in descending order to apply the second-level filter.",
+        "type": "comment"
+    },
+    "1902": {
+        "file_id": 190,
+        "content": "    }];\n    if (debugMode) for (AIMatchAlgModel *item in sort) NSLog(@\"看不重要的被排到了后面日志: %ld 现匹配度:%.2f (原%.2f) %@\",[sort indexOfObject:item],NUMTOOK([secondMatchValueDic objectForKey:@(item.matchAlg.pointerId)]).doubleValue,item.matchValue,Pit2FStr(item.matchAlg));\n    //5. 保留时序30% & 至少4条;\n    [AITest test28:inModel];\n    NSMutableArray *filterAlgs = [[NSMutableArray alloc] init];\n    NSMutableArray *filterFos = [[NSMutableArray alloc] init];\n    for (AIMatchAlgModel *aItem in sort) {\n        //6. 将当前aItem收集;\n        [filterAlgs addObject:aItem];\n        //7. 并收集aItem它对应的pFos (收集够foLimit条时break) (参考29107-todo2 & 29109-测得4);\n        [filterFos addObjectsFromArray:[SMGUtils filterArr:inModel.matchPFos checkValid:^BOOL(AIMatchFoModel *item) {\n            AIFoNodeBase *pFo = [SMGUtils searchNode:item.matchFo];\n            AIKVPointer *cutIndexAlg_p = ARR_INDEX(pFo.content_ps, item.cutIndex);//取刚发生的alg;\n            return [cutIndexAlg_p isEqual:aItem.matchAlg];\n        }]];\n        if (filterFos.count >= foLimit) break;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIFilter.m:126-143"
+    },
+    "1903": {
+        "file_id": 190,
+        "content": "Code chunk initializes two empty arrays, filterAlgs and filterFos. It then iterates through each item in the sorted array, adding the current item to filterAlgs and collecting its corresponding pFos (stopping when there are enough foLimit items).",
+        "type": "comment"
+    },
+    "1904": {
+        "file_id": 190,
+        "content": "    }\n    //7. debugLog\n    NSLog(@\"概念二次过滤后条数: 原%ld 剩%ld >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\",inModel.matchAlgs.count,filterAlgs.count);\n    for (AIMatchAlgModel *item in filterAlgs) if (debugMode) NSLog(@\"\\t%ld. %@ (现匹配度:%.2f 原%.2f)\",[filterAlgs indexOfObject:item] + 1,Pit2FStr(item.matchAlg),NUMTOOK([secondMatchValueDic objectForKey:@(item.matchAlg.pointerId)]).doubleValue,item.matchValue);\n    NSLog(@\"\\n时序二次过滤后条数: 原%ld 剩%ld >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\",inModel.matchPFos.count,filterFos.count);\n    for (AIMatchFoModel *item in filterFos) NSLog(@\"\\t%ld. %@\",[filterFos indexOfObject:item] + 1,Pit2FStr(item.matchFo));\n    //8. 存下结果;\n    inModel.matchAlgs = filterAlgs;\n    inModel.matchPFos = filterFos;\n}\n/**\n *  MARK:--------------------行为化前反思识别过滤器 (参考30059)--------------------\n *  @desc 根据mv类型分组,然后过滤出每组迫切度最强的一条 (参考30059-方案);\n *  @version\n *      2023.07.13: 改成matchPFos默认排序方式不变,仅截取每种mv类型的前3条 (参考30059-方案2);\n */\n+(void) secondActionRecognitionFilter:(AIShortMatchModel*)inModel {  ",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIFilter.m:144-163"
+    },
+    "1905": {
+        "file_id": 190,
+        "content": "This code snippet performs a second-level filter on the match algorithms and time-series data for a given model. It logs the number of matches before and after filtering, then stores the filtered results in the model's matchAlgs and matchPFos arrays. The function secondActionRecognitionFilter takes an AIShortMatchModel as input, groups the match data by type, and selects the most urgent item for each group.",
+        "type": "comment"
+    },
+    "1906": {
+        "file_id": 190,
+        "content": "    //1. 按照mv分组,每组按pFos默认的强度排序;\n    NSMutableDictionary *groupDic = [[NSMutableDictionary alloc] init];\n    for (AIMatchFoModel *pFo in inModel.matchPFos) {\n        AIFoNodeBase *fo = [SMGUtils searchNode:pFo.matchFo];\n        //2. 取分组;\n        NSMutableArray *itemArr = [groupDic objectForKey:fo.cmvNode_p.algsType];\n        if (!itemArr) itemArr = [[NSMutableArray alloc] init];\n        //3. 收集到分组;\n        [itemArr addObject:pFo];\n        [groupDic setObject:itemArr forKey:fo.cmvNode_p.algsType];\n    }\n    //4. 清空matchPFos,然后重新收集过滤后部分;\n    [inModel.matchPFos removeAllObjects];\n    //5. 把每组最迫切的一条收集起来 (过滤仅保留每组最迫切的一条);\n    for (NSArray *groupPFos in groupDic.allValues) {\n        NSArray *mostPFo = ARR_SUB(groupPFos, 0, 3);\n        if (ARRISOK(mostPFo)) [inModel.matchPFos addObjectsFromArray:mostPFo];\n    }\n    NSLog(@\"\\n时序二次过滤后条数: 剩%ld >>>>>>>>>>>>>>>>>>>>>\",inModel.matchPFos.count);\n    for (AIMatchFoModel *item in inModel.matchPFos) NSLog(@\"\\t%ld. %@\",[inModel.matchPFos indexOfObject:item] + 1,Pit2FStr(item.matchFo));",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIFilter.m:164-187"
+    },
+    "1907": {
+        "file_id": 190,
+        "content": "This code groups matchPFos by their algsType, sorts each group by strength, collects them into a dictionary, clears matchPFos, and finally re-collects only the most urgent matchPFo from each group to perform secondary filtering.",
+        "type": "comment"
+    },
+    "1908": {
+        "file_id": 190,
+        "content": "}\n/**\n *  MARK:--------------------Scene求解过滤器 (参考2908a-todo2)--------------------\n *  @param type : protoScene的类型,i时向抽象取ports,father时向具象取ports;\n *  @version\n *      2023.05.08: BUG_father没conCanset被过滤,导致它的brother全没机会激活 (改为仅brother时才要求必须有cansets指向);\n *      2023.05.15: 改为强度为主,匹配度为辅进行过滤 (参考29094-BUG3-方案2);\n */\n+(NSArray*) rSolutionSceneFilter:(AIFoNodeBase*)protoScene type:(SceneType)type {\n    //1. 数据准备: 向着isAbs方向取得抽具关联场景;\n    BOOL toAbs = type != SceneTypeFather;\n    NSArray *otherScenePorts = toAbs ? [AINetUtils absPorts_All:protoScene] : [AINetUtils conPorts_All:protoScene];\n    //2. 根据是否有conCanset过滤 (目前仅支持R任务,所以直接用fo.count做targetIndex) (参考29089-解答1-补充 & 2908a-todo5);\n    otherScenePorts = [SMGUtils filterArr:otherScenePorts checkValid:^BOOL(AIPort *item) {\n        AIFoNodeBase *fo = [SMGUtils searchNode:item.target_p];//500ms R90 3455次\n        BOOL mvIdenOK = [fo.cmvNode_p.identifier isEqualToString:protoScene.cmvNode_p.identifier];//mv要求必须同区; //77ms 3455次\n        BOOL havCansetsOK = type != SceneTypeBrother || ARRISOK([fo getConCansets:fo.count]);//非brother时要求必须有cansets; //43ms 3455次",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIFilter.m:188-206"
+    },
+    "1909": {
+        "file_id": 190,
+        "content": "This code filters the solution scene based on the type of protoScene. It prepares data by fetching abstract or concrete ports depending on the type, then filters out invalid ports based on having the same mvNode and a required number of cansets for specific types.",
+        "type": "comment"
+    },
+    "1910": {
+        "file_id": 190,
+        "content": "        return mvIdenOK && havCansetsOK; //43ms 3455次\n    }];\n    //3. 根据强度为主,匹配度为辅进行过滤: 取20% & 至少尝试取3条 (参考29094-BUG3-方案2);\n    otherScenePorts = [self filterTwice:otherScenePorts mainBlock:^double(AIPort *item) {\n        //4. 根据强度,进行主要过滤 (参考29094-BUG3-方案2);\n        return item.strong.value;//mainBlock 135ms 11540次\n    } subBlock:^double(AIPort *item) {\n        //5. 根据indexDic复用匹配度进行辅助过滤 (参考2908a-todo2);\n        if (toAbs) {\n            return [AINetUtils getMatchByIndexDic:[protoScene getAbsIndexDic:item.target_p] absFo:item.target_p conFo:protoScene.pointer callerIsAbs:false];//113ms 4038次\n        }\n        return [AINetUtils getMatchByIndexDic:[protoScene getConIndexDic:item.target_p] absFo:protoScene.pointer conFo:item.target_p callerIsAbs:true];//1436ms 3878次\n    } radio:0.2f min:4 max:20 debugMode:false];\n    return Ports2Pits(otherScenePorts);\n}\n/**\n *  MARK:--------------------hScene求解过滤器 (参考2908a-todo2 & 30127)--------------------\n *  _param type : protoScene的类型,i时向抽象取ports,father时向具象取ports;\n *  _param protoTargetIndex : H任务时的targetIndex不是fo.count,所以传入其对应的值 (后发现,其实就是protoScene.cutIndex+1);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIFilter.m:207-227"
+    },
+    "1911": {
+        "file_id": 190,
+        "content": "This function filters otherScenePorts based on strength and match index dictionary. It first checks if the ID exists and has candidate sets, then filters by strength (mainBlock) and matching index dictionary (subBlock). The resulting ports are returned after conversion to Ports2Pits format.",
+        "type": "comment"
+    },
+    "1912": {
+        "file_id": 190,
+        "content": " *  @version\n *      2023.09.09: 初版,hDemand支持TCScene (参考30127);\n */\n+(NSArray*) hSolutionSceneFilter:(AISceneModel*)protoScene {\n    //1. 数据准备: 向着isAbs方向取得抽具关联场景;\n    NSInteger protoTargetIndex = protoScene.cutIndex + 1;\n    BOOL toAbs = protoScene.type != SceneTypeFather;\n    AIFoNodeBase *sceneFo = [SMGUtils searchNode:protoScene.scene];\n    NSArray *otherScenePorts = toAbs ? [AINetUtils absPorts_All:sceneFo] : [AINetUtils conPorts_All:sceneFo];\n    //2. 根据是否有conCanset过滤 (目前仅支持R任务,所以直接用fo.count做targetIndex) (参考29089-解答1-补充 & 2908a-todo5);\n    otherScenePorts = [SMGUtils filterArr:otherScenePorts checkValid:^BOOL(AIPort *item) {\n        //a. 取联想到的assScene对应的targetIndex;\n        NSDictionary *indexDic = toAbs ? [sceneFo getAbsIndexDic:item.target_p] : [sceneFo getConIndexDic:item.target_p];\n        NSNumber *assSceneTargetIndex = nil;\n        if (toAbs) {\n            assSceneTargetIndex = ARR_INDEX([indexDic allKeysForObject:@(protoTargetIndex)], 0);\n        } else {\n            assSceneTargetIndex = [indexDic objectForKey:@(protoTargetIndex)];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIFilter.m:228-246"
+    },
+    "1913": {
+        "file_id": 190,
+        "content": "This code filters the other scene ports based on whether there is a conCanset and supports R tasks. It takes the target index of protoScene, checks if it's an absolute or conditional scene, searches for associated scene ports, and filters them based on their corresponding assScene target index.",
+        "type": "comment"
+    },
+    "1914": {
+        "file_id": 190,
+        "content": "        }\n        //b. 要求必须有联想到的scene必须包含对应protoTargetIndex的帧;\n        if (!assSceneTargetIndex) {\n            return false;\n        }\n        //c. 要求联想到的scene必须有cansets;\n        AIFoNodeBase *assScene = [SMGUtils searchNode:item.target_p];//500ms R90 3455次\n        BOOL havCansetsOK = protoScene.type != SceneTypeBrother || ARRISOK([assScene getConCansets:assSceneTargetIndex.integerValue]);//非brother时要求必须有cansets; //43ms 3455次\n        return havCansetsOK; //43ms 3455次\n    }];\n    //3. 根据强度为主,匹配度为辅进行过滤: 取20% & 至少尝试取3条 (参考29094-BUG3-方案2);\n    otherScenePorts = [self filterTwice:otherScenePorts mainBlock:^double(AIPort *item) {\n        //4. 根据强度,进行主要过滤 (参考29094-BUG3-方案2);\n        return item.strong.value;//mainBlock 135ms 11540次\n    } subBlock:^double(AIPort *item) {\n        //5. 仅截出前段参与匹配度计算 (不含targetIndex的indexDic部分);\n        NSDictionary *indexDic = toAbs ? [sceneFo getAbsIndexDic:item.target_p] : [sceneFo getConIndexDic:item.target_p];\n        indexDic = [SMGUtils filterDic:indexDic checkValid:^BOOL(NSNumber *key, NSNumber *value) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIFilter.m:247-267"
+    },
+    "1915": {
+        "file_id": 190,
+        "content": "Code snippet checks for valid scene index based on the given conditions: a. The requested scene must have at least one frame; b. The requested scene must contain corresponding protoTargetIndex frames; c. If the requested scene is not of type \"Brother\", it must have cansets. It then performs a filtering process, prioritizing strength and matching degree to select 20% of the strongest items with at least three tries (referring to 29094-BUG3-方案2). The matching degree is computed by considering only the initial segment of target indices and excluding the protoTargetIndex index.",
+        "type": "comment"
+    },
+    "1916": {
+        "file_id": 190,
+        "content": "            return (toAbs ? value.integerValue : key.integerValue) < protoTargetIndex;\n        }];\n        //6. 根据indexDic复用匹配度进行辅助过滤 (参考2908a-todo2);\n        if (toAbs) {\n            return [AINetUtils getMatchByIndexDic:indexDic absFo:item.target_p conFo:sceneFo.p callerIsAbs:false];//113ms 4038次\n        }\n        return [AINetUtils getMatchByIndexDic:indexDic absFo:sceneFo.p conFo:item.target_p callerIsAbs:true];//1436ms 3878次\n    } radio:0.2f min:4 max:20 debugMode:false];\n    return Ports2Pits(otherScenePorts);\n}\n//MARK:===============================================================\n//MARK:                     < privateMethod >\n//MARK:===============================================================\n/**\n *  MARK:--------------------同时符合两项过滤器的前xx% (参考28152-方案3)--------------------\n *  @desc 公式说明:\n *      1. 要求: 总过滤数20 = 总数30 - 结果数10;\n *      2. 主辅任务力度: 等于4:1时: 主过滤掉16条,辅过滤掉4条 即可;\n *      3. 主辅过滤条数: 主过滤后,剩下14(30-16)条; 辅过滤后剩下10(14-4)条;\n *      4. 主辅过滤率: \"主过滤率 = 剩下14 / 总数30\",\"辅过滤率 = 剩下10 / 剩下14\";\n *      5. 最终成功留下结果10条;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIFilter.m:268-291"
+    },
+    "1917": {
+        "file_id": 190,
+        "content": "This code snippet filters items based on two criteria: indexDic and the absolute or relative value of a parameter. It uses the AINetUtils function to get the matching index based on the indexDic. The function then applies two different filters based on whether the input is absolute or relative, and returns the filtered list of items. Additionally, there's a private method for calculating the ratio between primary and secondary filters to keep 50% of items after applying both filters.",
+        "type": "comment"
+    },
+    "1918": {
+        "file_id": 190,
+        "content": " *  @desc 可配置项 (注:每项数字可调):\n *      1. 结果数: 越大返回越多;\n *      2. 主辅任务比例: 越大主过滤器作用越大;\n *      3. 最小条数百分比: 值越小越准;\n *  @desc 现配置: 结果数为16%,主辅过滤力度20:1,即主过滤掉80%,辅再过滤掉剩下的20%;\n *  @param radio : 过滤率 (传值范围0-1),越小越精准,但剩余结果越少,反之其效亦反;\n *  @param min : 最小返回条数;\n *\n *  @version\n *      2023.03.06: 过滤前20%改为35% (参考28152-方案3-todo2);\n *      2023.03.07: 减少过滤结果条数(从10到3),避免过滤器久久不生效 (参考28152b-todo1);\n *      2023.03.07: 过滤率改成动态计算,使其条数少时,两个过滤器也都能生效 (参考28152b-todo2);\n *      2023.03.07: 修改主辅过滤器为嵌套执行 (参考28152b-todo3);\n *      2023.03.07: 结果保留改为16%,将主辅力度调整为20:1 (因为实测4:1时,真实主过滤率=37%左右,太高了);\n *      2023.03.18: 加上radio参数,方便对概念和时序的过滤器分别指定不同的过滤度 (参考28186-方案1-结果);\n *      2023.06.12: 加上max条件上限 (避免结果过多,导致性能问题) (参考30022-优化2);\n */\n+(NSArray*) filterTwice:(NSArray*)protoArr mainBlock:(double(^)(id item))mainBlock subBlock:(double(^)(id item))subBlock radio:(CGFloat)radio min:(NSInteger)min max:(NSInteger)max debugMode:(BOOL)debugMode {\n    //0. 数据准备;\n    if (!ARRISOK(protoArr)) return protoArr;\n    //1. 条数 (参考注释公式说明-1);\n    NSInteger resultNum = [self getResultNum:protoArr.count radio:radio min:min max:max];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIFilter.m:292-314"
+    },
+    "1919": {
+        "file_id": 190,
+        "content": "This code filters an array twice, using a main and sub block. It takes in an array of objects, two filter blocks, radio value (filter rate), minimum number of results, maximum number of results, and a debug mode flag. The code prepares the data, calculates the result count based on the radio and minimum values, applies the filters twice in a nested fashion, and returns the filtered results.",
+        "type": "comment"
+    },
+    "1920": {
+        "file_id": 190,
+        "content": "    //2. 过滤任务和力度 (参考注释公式说明-2);\n    NSInteger filterNum = protoArr.count - resultNum;               //总过滤任务 (比如共30条,剩10条,过滤任务就是20条);\n    CGFloat zuFilterForce = 20, fuFilterForce = 1;                  //主辅两过滤器的力度权重 (一般主力度要大于辅力度多倍);\n    CGFloat totalForce = zuFilterForce + fuFilterForce;             //总过滤力量份数 (比如: 主4 + 辅1 = 总力5份);\n    //3. 主辅过滤条数 (参考注释公式说明-3);\n    CGFloat fuFilterNum = filterNum / totalForce * fuFilterForce;   //辅过滤条数;\n    CGFloat zuFilterNum = filterNum - fuFilterNum;                  //主过滤条数;\n    //4. 主辅过滤率 (参考注释公式说明-4);\n    CGFloat zuRate = (protoArr.count - zuFilterNum) / protoArr.count;   //主过滤率;\n    CGFloat fuRate = resultNum / (protoArr.count - zuFilterNum);        //辅过滤率;\n    //5. 主中辅,嵌套过滤 (参考28152b-todo3);\n    NSArray *filter1 = ARR_SUB([SMGUtils sortBig2Small:protoArr compareBlock:mainBlock], 0, protoArr.count * zuRate);\n    NSArray *filter2 = ARR_SUB([SMGUtils sortBig2Small:filter1 compareBlock:subBlock], 0, filter1.count * fuRate);\n    if (debugMode) NSLog(@\"过滤器: 总%ld需%ld",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIFilter.m:316-332"
+    },
+    "1921": {
+        "file_id": 190,
+        "content": "This code performs a filtering process on an array of data, dividing the task into five steps. It calculates the total number of filters needed based on the remaining items in the array, assigns weights to the primary and secondary filters, determines how many times each filter should be applied, calculates the ratios for each filter, and finally sorts the data using two sorting blocks with nested filter applications.",
+        "type": "comment"
+    },
+    "1922": {
+        "file_id": 190,
+        "content": " 主:%.2f => 剩:%ld 辅:%.2f => 剩:%ld\",protoArr.count,resultNum,zuRate,filter1.count,fuRate,filter2.count);\n    //6. 返回结果 (参考注释公式说明-5);\n    return filter2;\n}\n+(NSArray*) filterOnce:(NSArray*)protoArr mainBlock:(double(^)(id item))mainBlock radio:(CGFloat)radio min:(NSInteger)min max:(NSInteger)max{\n    //0. 数据准备;\n    if (!ARRISOK(protoArr)) return protoArr;\n    NSInteger resultNum = [self getResultNum:protoArr.count radio:radio min:min max:max];\n    CGFloat realRate = (float)resultNum / protoArr.count;       //实际过滤率;\n    //2. 过滤并返回结果;\n    NSArray *filter = ARR_SUB([SMGUtils sortBig2Small:protoArr compareBlock:mainBlock], 0, protoArr.count * realRate);\n    NSLog(@\"过滤器: 总%ld需%ld 主:%.2f => 剩:%ld\",protoArr.count,resultNum,realRate,filter.count);\n    return filter;\n}\n/**\n *  MARK:--------------------算出过滤器保留结果数--------------------\n */\n+(NSInteger) getResultNum:(NSInteger)protoNum radio:(CGFloat)radio min:(NSInteger)min max:(NSInteger)max {\n    NSInteger resultNum = (NSInteger)(radio * protoNum);  //建议条数 (建议16%,值越小越准);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIFilter.m:332-354"
+    },
+    "1923": {
+        "file_id": 190,
+        "content": "1. Prepares the data for filtering.\n2. Calculates the result number based on given radio, min, and max values.\n3. Filters the protoArr using the mainBlock compare method.\n4. Returns the filtered array as a result.",
+        "type": "comment"
+    },
+    "1924": {
+        "file_id": 190,
+        "content": "    resultNum = MIN(max, MAX(min, resultNum));            //结果需 >=min && <=max;\n    resultNum = MIN(protoNum, MAX(0, resultNum));         //结果需 >=0 && <= protoCount;\n    return resultNum;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIFilter.m:355-360"
+    },
+    "1925": {
+        "file_id": 190,
+        "content": "This code ensures that the result is within a specific range by first limiting it to be between min and max values, then ensuring it's also within the bounds of 0 and protoCount. The function returns this validated result value.",
+        "type": "comment"
+    },
+    "1926": {
+        "file_id": 191,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIRank.h",
+        "type": "filepath"
+    },
+    "1927": {
+        "file_id": 191,
+        "content": "This code file is for a class called AIRank, which focuses on calculating and ranking in areas of concept recognition, time series recognition, and solution finding. The functions within the class provide methods to calculate rankings based on different algorithms for these tasks.",
+        "type": "summary"
+    },
+    "1928": {
+        "file_id": 191,
+        "content": "//\n//  AIRank.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/12/19.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n//MARK:===============================================================\n//MARK:                     < 综合竞争 >\n//MARK:===============================================================\n@interface AIRank : NSObject\n/**\n *  MARK:--------------------概念识别综合排名 (参考2722d-方案2-todo2)--------------------\n */\n+(NSArray*) recognitionAlgRank:(NSArray*)matchAlgModels;\n/**\n *  MARK:--------------------时序识别综合排名 (参考2722d-方案2-todo2 & 2722f-todo14)--------------------\n */\n+(NSArray*) recognitionFoRank:(NSArray*)matchFoModels;\n/**\n *  MARK:--------------------S综合排名--------------------\n */\n//+(NSArray*) solutionFoRankingV2:(NSArray*)solutionModels needBack:(BOOL)needBack fromSlow:(BOOL)fromSlow;\n+(NSArray*) solutionFoRankingV3:(NSArray*)solutionModels;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIRank.h:1-32"
+    },
+    "1929": {
+        "file_id": 191,
+        "content": "This code file is for a class called AIRank, which focuses on calculating and ranking in areas of concept recognition, time series recognition, and solution finding. The functions within the class provide methods to calculate rankings based on different algorithms for these tasks.",
+        "type": "comment"
+    },
+    "1930": {
+        "file_id": 192,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIRank.m",
+        "type": "filepath"
+    },
+    "1931": {
+        "file_id": 192,
+        "content": "This code integrates recognition and sequence algorithms, divides models into segments, calculates ranks using three methods, optimizes with caching, and returns updated models. It computes cooled ranks for two models, sorts results, logs debug information, and iterates through the array to calculate a combined ranking.",
+        "type": "summary"
+    },
+    "1932": {
+        "file_id": 192,
+        "content": "//\n//  AIRank.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/12/19.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import \"AIRank.h\"\n@implementation AIRank\n/**\n *  MARK:--------------------概念识别综合排名 (参考2722d-方案2-todo2)--------------------\n *  @result 返回排名名次: <matchAlg.pId, 综合排名值(越小越靠前)>;\n *  @version\n *      2023.01.31: 单项权重新增牛顿冷却曲线 (参考28042-思路2-3);\n *      2023.03.06: 识别排名器当前无用,关闭它 (参考28152-方案5 & todo6);\n */\n+(NSArray*) recognitionAlgRank:(NSArray*)matchAlgModels {\n    if (!Switch4RecognitionRank) return matchAlgModels;//开关关闭则直接返回;\n    return [self getCooledRankTwice:matchAlgModels itemScoreBlock1:^CGFloat(AIMatchAlgModel *item) {\n        return [item matchValue]; //匹配度项;\n    } itemScoreBlock2:^CGFloat(AIMatchAlgModel *item) {\n        return [item strongValue]; //强度项;\n    } itemKeyBlock:^id(AIMatchAlgModel *item) {\n        return @(item.matchAlg.pointerId);\n    }];\n}\n/**\n *  MARK:--------------------时序识别综合排名 (参考2722d-方案2-todo2 & 2722f-todo14)--------------------\n *  @result 返回排名名次: <matchFo.pId, 综合排名值(越小越靠前)>;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIRank.m:1-33"
+    },
+    "1933": {
+        "file_id": 192,
+        "content": "The code implements a method for obtaining the recognition and sequence algorithms' combined ranking. The method takes an array of matchAlgModels as input, returns their combined ranking with name and value, and provides options to customize scoring based on matching and strong values. Additionally, there is a switch that can disable the recognition rank if needed.",
+        "type": "comment"
+    },
+    "1934": {
+        "file_id": 192,
+        "content": " *  @version\n *      2023.01.31: 单项权重新增牛顿冷却曲线 (参考28042-思路2-3);\n *      2023.03.06: 识别排名器当前无用,关闭它 (参考28152-方案5 & todo6);\n */\n+(NSArray*) recognitionFoRank:(NSArray*)matchFoModels {\n    if (!Switch4RecognitionRank) return matchFoModels;//开关关闭则直接返回;\n    return [self getCooledRankTwice:matchFoModels itemScoreBlock1:^CGFloat(AIMatchFoModel *item) {\n        return [item matchFoValue]; //匹配度项;\n    } itemScoreBlock2:^CGFloat(AIMatchFoModel *item) {\n        return [item strongValue]; //强度项;\n    } itemKeyBlock:^id(AIMatchFoModel *item) {\n        return @(item.matchFo.pointerId);\n    }];\n}\n/**\n *  MARK:--------------------S综合排名--------------------\n *  @desc 对前中后段分别排名,然后综合排名 (参考26222-TODO2);\n *  @desc 此处综合S的三个竞争器,顺序为:后->中->前 (参考28080-决策 & 结论2);\n *  @param needBack : 是否排后段: H传true需要,R传false不需要;\n *  @param fromSlow : 是否源于慢思考: 慢思考传true中段用stable排,快思考传false中段用effect排;\n *  @version\n *      2023.02.18: V2迭代: 把三项排名改成三次排序+漏斗 (参考28080-结论2);\n *      2023.02.19: 正式启用v2,并且动态计算每次保留比例;\n *      2023.05.23: 迭代v3,改为仅根据稳定性和有效性排名 (参考29099-方案);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIRank.m:34-58"
+    },
+    "1935": {
+        "file_id": 192,
+        "content": "This code contains a method for recognition ranking in an AI system. It takes an array of match FO models and returns the ranking based on item weights using Newton cooling curves. The ranking is done in three stages: back, middle, and front. It also supports slow (stable) and fast (effect) thinking modes. The code has gone through multiple iterations, with V2 using three rounds of sorting and a funnel, while V3 only considers stability and effectiveness for ranking.",
+        "type": "comment"
+    },
+    "1936": {
+        "file_id": 192,
+        "content": " *  @result 返回排名结果;\n */\n//+(NSArray*) solutionFoRankingV2:(NSArray*)solutionModels needBack:(BOOL)needBack fromSlow:(BOOL)fromSlow{\n//    //0. 数据准备;\n//    CGFloat resultNum = 6;\n//    NSInteger rankNum = needBack ? 3 : 2;//排名几次;\n//    CGFloat singleRate = MIN(1, powf(resultNum / solutionModels.count, 1.0f / rankNum));//每次保留条数比例;\n//\n//    //1. 后段排名;\n//    if (needBack) {\n//        solutionModels = [AIRank solutionBackRank:solutionModels];\n//        solutionModels = ARR_SUB(solutionModels, 0, solutionModels.count * singleRate);\n//    }\n//\n//    //2. 中段排名;\n//    solutionModels = [AIRank solutionMidRank:solutionModels];\n//    solutionModels = ARR_SUB(solutionModels, 0, solutionModels.count * singleRate);\n//\n//\n//    //3. 前段排名;\n//    solutionModels = [AIRank solutionFrontRank:solutionModels];\n//    solutionModels = ARR_SUB(solutionModels, 0, solutionModels.count * singleRate);\n//\n//    //4. 返回;\n//    return solutionModels;\n//}\n//\n///**\n// *  MARK:--------------------求解S前段排名 (参考28083-方案2 & 28084-5)--------------------\n// */",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIRank.m:59-88"
+    },
+    "1937": {
+        "file_id": 192,
+        "content": "This code performs ranking on a set of solution models, dividing them into front, middle, and back segments based on a given ratio. It takes an array of solutionModels as input, determines the number of ranks needed (2 or 3) based on the needBack flag, calculates the single rate for each rank, performs ranking operations in three steps (front, middle, back), and finally returns the updated array of solution models with the specified ranking.",
+        "type": "comment"
+    },
+    "1938": {
+        "file_id": 192,
+        "content": "//+(NSArray*) solutionFrontRank:(NSArray*)solutionModels {\n//    return [self getCooledRankTwice:solutionModels itemScoreBlock1:^CGFloat(AICansetModel *item) {\n//        return item.frontMatchValue; //前段匹配度项;\n//    } itemScoreBlock2:^CGFloat(AICansetModel *item) {\n//        return item.frontStrongValue; //前段强度项;\n//    } itemKeyBlock:^id(AICansetModel *item) {\n//        return @(item.cansetFo.pointerId);\n//    }];\n//}\n//\n///**\n// *  MARK:--------------------求解S后段排名 (参考28092-方案 & todo3)--------------------\n// */\n//+(NSArray*) solutionBackRank:(NSArray*)solutionModels {\n//    return [self getCooledRankTwice:solutionModels itemScoreBlock1:^CGFloat(AICansetModel *item) {\n//        return item.backMatchValue; //匹配度项;\n//    } itemScoreBlock2:^CGFloat(AICansetModel *item) {\n//        return item.backStrongValue; //强度项;\n//    } itemKeyBlock:^id(AICansetModel *item) {\n//        return @(item.cansetFo.pointerId);\n//    }];\n//}\n//\n///**\n// *  MARK:--------------------求解S中段排名 (参考28092-方案 & todo3)--------------------\n// */\n//+(NSArray*) solutionMidRank:(NSArray*)solutionModels {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIRank.m:89-115"
+    },
+    "1939": {
+        "file_id": 192,
+        "content": "This code defines three methods: solutionFrontRank, solutionBackRank, and solutionMidRank, which calculate the rank for a given set of solution models based on their front, back, and middle segments respectively. The getCooledRankTwice method is used to calculate the score for each segment using itemScoreBlock1 and itemScoreBlock2, and the itemKeyBlock is used to assign unique keys to each item in the array.",
+        "type": "comment"
+    },
+    "1940": {
+        "file_id": 192,
+        "content": "//    return [self getCooledRankTwice:solutionModels itemScoreBlock1:^CGFloat(AICansetModel *item) {\n//        return item.midStableScore; //中断稳定性项;\n//    } itemScoreBlock2:^CGFloat(AICansetModel *item) {\n//        return item.midEffectScore; //中段有效性项;\n//    } itemKeyBlock:^id(AICansetModel *item) {\n//        return @(item.cansetFo.pointerId);\n//    }];\n//}\n/**\n *  MARK:--------------------求解S排名器 (参考29099-方案)--------------------\n *  @version\n *      2023.05.23: BUG_用sceneId_cansetId做key,会有重复的,导致算漏的BUG,改用内存地址来做唯一key;\n *      2023.05.24: BUG_修复此处将sceneTargetIndex用错成cansetTargetIndex的问题 (会导致取到eff几乎全是错的0);\n *      2023.05.26: BUG_修复SP总是取到0的问题,改为eff为主排序,sp仅取下一帧稳定性做二级排序,H值三级排序 (参考2909a-方案2);\n *      2023.12.26: 优化sort性能,把getEffectStrong()提出来提前取好 (参考31025-代码段-问题1) //共三处优化,此乃其一;\n */\n+(NSArray*) solutionFoRankingV3:(NSArray*)solutionModels {\n    //0. 将effStrong提前取出来,存到mapModel中;\n    NSArray *mapArr = [SMGUtils convertArr:solutionModels convertBlock:^id(AICansetModel *item) {\n        AIFoNodeBase *sceneFo = [SMGUtils searchNode:item.sceneFo];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIRank.m:116-136"
+    },
+    "1941": {
+        "file_id": 192,
+        "content": "The code calculates the ranking of solution models v3. It first precomputes the effect strength for each model, then sorts the models based on their mid-effect and mid-stability scores, with a tiebreaker on their memory address. The function optimizes performance by caching the effect strength in an array before sorting.",
+        "type": "comment"
+    },
+    "1942": {
+        "file_id": 192,
+        "content": "        AIEffectStrong *strong = [TOUtils getEffectStrong:sceneFo effectIndex:item.sceneTargetIndex solutionFo:item.cansetFo];\n        return [MapModel newWithV1:item v2:strong];\n    }];\n    //1. 根据cutIndex到target之间的稳定性和有效性来排名 (参考29099-todo1 & todo2);\n    NSArray *sort = [SMGUtils sortBig2Small:mapArr compareBlock1:^double(MapModel *item) {\n        return [TOUtils getEffectScore:item.v2];//后段有效性 (参考2909a-todo1);\n    } compareBlock2:^double(MapModel *item) {\n        AICansetModel *cansetModel = item.v1;\n        AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetModel.cansetFo];\n        return [TOUtils getStableScore:cansetFo startSPIndex:cansetModel.cutIndex + 1 endSPIndex:cansetModel.cutIndex + 1];//下帧稳定性\n    } compareBlock3:^double(MapModel *item) {\n        AIEffectStrong *strong = item.v2;\n        return strong.hStrong;//H值 (参考2909a-todo3);\n    }];\n    //2. 将mapModel转回AICansetModel数组;\n    sort = [SMGUtils convertArr:sort convertBlock:^id(MapModel *obj) {\n        return obj.v1;\n    }];\n    //2. debug日志",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIRank.m:137-158"
+    },
+    "1943": {
+        "file_id": 192,
+        "content": "This code sorts a list of MapModel objects based on their stability and effectiveness, using a custom sorting algorithm. It converts the sorted MapModels back to AICansetModel objects. The sorting is done by calculating scores for each MapModel's stability, effectiveness, and an H value. These scores are then used in the custom comparison block provided.",
+        "type": "comment"
+    },
+    "1944": {
+        "file_id": 192,
+        "content": "    for (AICansetModel *obj in ARR_SUB(sort, 0, 5)) {\n        AIFoNodeBase *sceneFo = [SMGUtils searchNode:obj.sceneFo];\n        AIEffectStrong *effStrong = [TOUtils getEffectStrong:sceneFo effectIndex:sceneFo.count solutionFo:obj.cansetFo];\n        CGFloat effScore = [TOUtils getEffectScore:effStrong];\n        AIFoNodeBase *cansetFo = [SMGUtils searchNode:obj.cansetFo];\n        CGFloat spScore = [TOUtils getStableScore:cansetFo startSPIndex:obj.cutIndex + 1 endSPIndex:obj.cutIndex + 1];\n        if (Log4AIRank) NSLog(@\"%ld. %@<F%ld %@> %@:(分:%.2f) %@:(分:%.2f)\",[sort indexOfObject:obj],SceneType2Str(obj.baseSceneModel.type),obj.sceneFo.pointerId,Fo2FStr(cansetFo),\n                              CLEANSTR(cansetFo.spDic),spScore,effStrong.description,effScore);\n    }\n    return sort;\n}\n//MARK:===============================================================\n//MARK:                     < privateMethod >\n//MARK:===============================================================\n/**\n *  MARK:--------------------单项models冷却后竞争值--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIRank.m:159-176"
+    },
+    "1945": {
+        "file_id": 192,
+        "content": "This code is iterating over the first 5 elements of the \"sort\" array. For each element, it retrieves two nodes (sceneFo and cansetFo) based on the obj's properties. It then calculates a stability score (spScore) and an effect score (effScore). If the Log4AIRank flag is set, it logs the information including the scores for each node and their respective values. Finally, it returns the sorted array.",
+        "type": "comment"
+    },
+    "1946": {
+        "file_id": 192,
+        "content": " *  @desc 单项一般包含多条,如匹配度项竞争,比如: 三班的语文考试;\n *  @version\n *      2023.05.23: 修复归1化后小数写成了int型,导致只有0和1的BUG;\n *  @todo : 其实这里的排名再冷却,有点麻烦,可以直接改成排名的名次相加来计算,但目前也没啥问题,所以先不动了 (如果哪天发现现做法有问题时再这么改);\n */\n+(NSDictionary*) getCooledValueDic:(NSArray*)models itemScoreBlock:(CGFloat(^)(id item))itemScoreBlock itemKeyBlock:(id(^)(id item))itemKeyBlock {\n    //1. 数据准备;\n    models = ARRTOOK(models);\n    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];\n    //2. 分别按相似度和强度排序;\n    NSArray *rank = [SMGUtils sortBig2Small:models compareBlock:^double(id obj) {\n        return itemScoreBlock(obj);\n    }];\n    //3. 求出综合排名;\n    for (id item in rank) {\n        //4. 取单科排名下标;\n        NSInteger index4Rank = [rank indexOfObject:item];\n        //5. 各自归1化;\n        CGFloat normalized4Rank = (float)index4Rank / rank.count;\n        //5. 单条model根据28原则冷却后的值 (单条仅一条,比如: 张三的语文考试) (参考28042-思路2-3);\n        CGFloat cool4Rank = [MathUtils getCooledValue_28:normalized4Rank];\n        //6. 计算综合排名;\n        id key = itemKeyBlock(item);\n        [result setObject:@(cool4Rank) forKey:key];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIRank.m:177-205"
+    },
+    "1947": {
+        "file_id": 192,
+        "content": "This method gets a list of models, calculates their scores using an itemScoreBlock, and assigns them a rank. It then cools down the ranks using a MathUtils function and stores the results in a dictionary with corresponding keys from another block.",
+        "type": "comment"
+    },
+    "1948": {
+        "file_id": 192,
+        "content": "    }\n    if (Log4AIRankDebugMode) NSLog(@\"AIRank-单项排名: %@\",CLEANSTR([SMGUtils convertArr:rank convertBlock:^id(id obj) {return itemKeyBlock(obj);}]));\n    return result;\n}\n/**\n *  MARK:--------------------两项models冷却后竞争值--------------------\n *  @desc 包含两项, 比如: 三班的语数竞赛;\n *  @version\n *      2023.05.24: BUG_热度应该是越高越好,排反了,改为从大到小排;\n */\n+(NSArray*) getCooledRankTwice:(NSArray*)models itemScoreBlock1:(CGFloat(^)(id item))itemScoreBlock1 itemScoreBlock2:(CGFloat(^)(id item))itemScoreBlock2 itemKeyBlock:(id(^)(id item))itemKeyBlock{\n    //1. 两个冷却后字典计算;\n    NSDictionary *cooledDic1 = [self getCooledValueDic:models itemScoreBlock:itemScoreBlock1 itemKeyBlock:itemKeyBlock];\n    NSDictionary *cooledDic2 = [self getCooledValueDic:models itemScoreBlock:itemScoreBlock2 itemKeyBlock:itemKeyBlock];\n    //2. 求出综合竞争值并排序 (参考25083-2&公式2 & 25084-1);\n    NSArray *result = [SMGUtils sortBig2Small:models compareBlock:^double(id obj) {\n        id key = itemKeyBlock(obj);\n        float coolScore1 = NUMTOOK([cooledDic1 objectForKey:key]).floatValue;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIRank.m:206-225"
+    },
+    "1949": {
+        "file_id": 192,
+        "content": "This code calculates the cooled rank for two models using item score blocks and key blocks. It first gets the cooled values for each model, then computes the comprehensive competition value, and finally sorts the results in descending order based on the competition value. The code also includes a log for debugging purposes when in debug mode.",
+        "type": "comment"
+    },
+    "1950": {
+        "file_id": 192,
+        "content": "        float coolScore2 = NUMTOOK([cooledDic2 objectForKey:key]).floatValue;\n        return coolScore1 * coolScore2; //返回排序后的sortArr时;\n    }];\n    //3. debug日志\n    for (AICansetModel *obj in result) {\n        id key = itemKeyBlock(obj);\n        AIFoNodeBase *sceneFo = [SMGUtils searchNode:obj.sceneFo];\n        AIEffectStrong *effStrong = [TOUtils getEffectStrong:sceneFo effectIndex:sceneFo.count solutionFo:obj.cansetFo];\n        AIFoNodeBase *cansetFo = [SMGUtils searchNode:obj.cansetFo];\n        float coolScore1 = NUMTOOK([cooledDic1 objectForKey:key]).floatValue,coolScore2 = NUMTOOK([cooledDic2 objectForKey:key]).floatValue;\n        CGFloat spScore = itemScoreBlock1(obj), effScore = itemScoreBlock2(obj);\n        if (ISOK(obj, AICansetModel.class)) {\n            if (Log4AIRank) NSLog(@\"%ld. %@:(分:%.2f) %@:(分:%.2f) %@<F%ld %@>\",[result indexOfObject:obj],\n                                  CLEANSTR(cansetFo.spDic),spScore,effStrong.description,effScore,\n                                  SceneType2Str(obj.baseSceneModel.type),obj.sceneFo.pointerId,Fo2FStr(cansetFo));",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIRank.m:226-241"
+    },
+    "1951": {
+        "file_id": 192,
+        "content": "Iterates through each object in the result array and logs relevant information for debugging, including the index of the object in the result array, the cleaned string representation of the scene dictionary, the scene type, and the pointer ID and Fo representation of the canset model. The log includes the scores for the item (spScore) and the effect (effScore), as well as the descriptions of the effect strong and canset models.",
+        "type": "comment"
+    },
+    "1952": {
+        "file_id": 192,
+        "content": "            if (Log4AIRankDebugMode) NSLog(@\"\\t> %@ sp排名:%.5f eff排名:%.5f => 综合排名:%.5f\",key,coolScore1,coolScore2,coolScore1 * coolScore2);\n        }\n    }\n    return result;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIRank.m:242-249"
+    },
+    "1953": {
+        "file_id": 192,
+        "content": "This code snippet checks the rank of two items based on their scores and calculates a combined ranking. If Log4AIRankDebugMode is enabled, it logs the individual ranks, scores, and the resulting composite score. Finally, it returns the overall rank.",
+        "type": "comment"
+    },
+    "1954": {
+        "file_id": 193,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIScore.h",
+        "type": "filepath"
+    },
+    "1955": {
+        "file_id": 193,
+        "content": "This code defines a class, AIScore, for evaluating AI performance in emotional and rational assessments. It provides various parameter-based methods for CMV score evaluation, including urgency levels, algorithms, Demand, PFos calculations, and AIKVPointer object comparison functions for determining same or opposite directions within the same zone.",
+        "type": "summary"
+    },
+    "1956": {
+        "file_id": 193,
+        "content": "//\n//  AIScore.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/1/5.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n//MARK:===============================================================\n//MARK:                     < 评价器 >\n//MARK: 从最初版本开始,已经支持评价器,只是一直未整理,此类将各评价器整理进来,分以下几种 (参考n22p1):\n//MARK: 1. 感性评价 (反思)\n//MARK:     > FPS & MPS\n//MARK: 2. 理性评价 (反省)\n//MARK:     > VRS & ARS & FRS\n//MARK:===============================================================\n@class AIShortMatchModel,TOFoModel,ReasonDemandModel,DemandModel,AIMatchFoModel,AICansetModel;\n@interface AIScore : NSObject\n//MARK:===============================================================\n//MARK:                     < 下标不急评价 >\n//MARK:===============================================================\n//+(BOOL) ARS_Time:(TOFoModel*)dsFoModel demand:(ReasonDemandModel*)demand;\n//+(void) score4ARSTime:(TOFoModel*)dsFoModel demand:(ReasonDemandModel*)demand finishBlock:(void(^)(NSInteger _dsIndex,NSInteger _demandIndex))finishBlock;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIScore.h:1-26"
+    },
+    "1957": {
+        "file_id": 193,
+        "content": "This code defines a class called AIScore that is used for evaluating different aspects of AI performance. The class supports two types of evaluation: emotional assessment and rational assessment. The rational assessment has three subtypes (VRS, ARS, FRS). The code provides methods to score based on these evaluations and allows users to specify a demand model and finish block for further processing.",
+        "type": "comment"
+    },
+    "1958": {
+        "file_id": 193,
+        "content": "//MARK:===============================================================\n//MARK:                     < 时间不急评价 >\n//MARK:===============================================================\n+(BOOL) FRS_Time:(DemandModel*)demand solutionModel:(AICansetModel*)solutionModel;\n/**\n *  MARK:--------------------指定ratio的评价重载--------------------\n *  @desc 旧有说明: 获取到cmvNode的评价力;\n *  @desc 对MC的评价时:\n *      1. 理性评价: 由MC匹配方法中,进行类比ms&cs&mcs决定;\n *      2. 感性评价: 由此处进行计算得出;\n *          如: 判断变脏后,不能吃; 参考17202表中示图 (被吃mv为负 (理性是间接的感性) (导致负价值))\n *          如: 判断cpu损坏,会浪费钱;\n *          如: 带皮坚果,不能吃, (根本,不能吃,比如坚果皮 (抽象为:吃皮,导致负mv))\n *\n *  @desc 对ExpOut评价时:\n *      1. 以默认ratio=0.2,进行评价;\n */\n+(CGFloat) score4MV:(AIKVPointer*)cmvNode_p ratio:(CGFloat)ratio;\n+(CGFloat) score4MV:(NSString*)algsType urgentTo_p:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p ratio:(CGFloat)ratio;\n+(CGFloat) score4MV:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta ratio:(CGFloat)ratio;\n+(CGFloat) score4MV_v2:(AIMatchFoModel*)inModel;\n+(CGFloat) score4MV_v2FromCache:(AIMatchFoModel*)inModel;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIScore.h:29-51"
+    },
+    "1959": {
+        "file_id": 193,
+        "content": "This code defines various methods for evaluating the score of a CMV (Certain-Match Value) node based on different parameters and ratios. These methods are used to evaluate the rating of time-based, specified ratio, urgent situations, and other scenarios. The code also includes methods for scoring CMVs using various algorithms, urgency levels, and deltas.",
+        "type": "comment"
+    },
+    "1960": {
+        "file_id": 193,
+        "content": "/**\n *  MARK:--------------------对Demand综合评分--------------------\n *  @param demand : 仅支持PR两种类型\n */\n+(CGFloat) score4Demand:(DemandModel*)demand;\n/**\n *  MARK:--------------------求pFos的平均价值分--------------------\n */\n+(CGFloat) score4PFos:(NSArray*)pFos;\n/**\n *  MARK:--------------------获取mv1和mv2是否同向或反向--------------------\n *  @result 默认返回false;\n */\n//同区且同向\n+(BOOL) sameIdenSameScore:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p;\n//同区不同向\n+(BOOL) sameIdenNoSameScore:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p;\n//同区且同向\n+(BOOL) sameIdenSameDelta:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p;\n//同区且反向\n+(BOOL) sameIdenDiffDelta:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIScore.h:53-77"
+    },
+    "1961": {
+        "file_id": 193,
+        "content": "This code defines functions for calculating scores related to Demand, PFos, and comparing AIKVPointer objects. It also provides methods for determining whether two AIKVPointer objects have the same direction or opposite directions within the same zone.",
+        "type": "comment"
+    },
+    "1962": {
+        "file_id": 194,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIScore.m",
+        "type": "filepath"
+    },
+    "1963": {
+        "file_id": 194,
+        "content": "The code handles urgent situations in AI game environments, optimizes using caching, and compares AIKVPointer objects based on ID, direction, and score.",
+        "type": "summary"
+    },
+    "1964": {
+        "file_id": 194,
+        "content": "//\n//  AIScore.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/1/5.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import \"AIScore.h\"\n@implementation AIScore\n//MARK:===============================================================\n//MARK:                     < 下标不急评价 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------下标不急(弄巧成拙)评价--------------------\n *  @desc\n *          1. 说明: R子任务来的及评价 (后续考虑支持rootR任务) (参考22194 & 22195 & 22198);\n *          2. 决策时序AB 在 任务未发生部分D 中找mIsC (找到AB中index,index及之后需要等待静默成功,之前的可实行行为化) (参考22198);\n *          3. 必要性: ARSTime来的及评价是针对某帧的,而决策中,外界条件会变化,所以必须每帧都单独评价;\n *  @param dsFoModel : 当前正在推进的解决方案,其中actionIndex为当前帧;\n *  @param demand : 当前任务;\n *  @result (参考22194示图 & 22198) (默认为ture);\n *      true    : 提前可预备部分:返回true以进行_hav实时行为化 (比如:在穿越森林前,在遇到老虎前,我们先带枪);\n *      false   : 来的及返回false则ActYes等待静默成功,并继续推进主任务 (比如:枪已取到,现在先穿越森林,等老虎出现时,再吓跑它);\n *  @version\n *      2022.05.19: 废弃 (参考26051);\n */\n//+(BOOL) ARS_Time:(TOFoModel*)dsFoModel demand:(ReasonDemandModel*)demand{",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIScore.m:1-31"
+    },
+    "1965": {
+        "file_id": 194,
+        "content": "This code defines a method that evaluates whether a subtask has been completed in time. It takes in a current solution and demand model as parameters, and returns true if the subtask can be executed immediately or false if it needs to wait for silent success before proceeding.",
+        "type": "comment"
+    },
+    "1966": {
+        "file_id": 194,
+        "content": "//    //1. 找下标;\n//    __block NSInteger dsIndex = -1;\n//    __block NSInteger demandIndex = -1;\n//    [self score4ARSTime:dsFoModel demand:demand finishBlock:^(NSInteger _dsIndex, NSInteger _demandIndex) {\n//        dsIndex = _dsIndex;\n//        demandIndex = _demandIndex;\n//    }];\n//\n//    //2. 下标有效时,返回ARSTime结果 (参考22194示图 & 22198);;\n//    if (demandIndex != -1) {\n//        //3a. ds下标后的dsFo部分,需要静默等待 (会导致弄巧成拙,评价为否->ActYes);\n//        //3b. ds下标前的dsFo部分,可直接行为化 (当dsAlg在demand预测中已发生时,评价为是->立马行为化修正);\n//        return dsFoModel.actionIndex < dsIndex;\n//    }\n//    return true;\n//}\n/**\n *  MARK:--------------------来的及评分--------------------\n *  @desc 对dsFo的从前到后所有元素,在demand的预测中未发生的部分,找下标返回 (参考22198示图);\n *  @param finishBlock notnull : 根据dsFo的哪个下标,发现了在demand预测fo中的哪个下标,使用说明如下;\n */\n//+(void) score4ARSTime:(TOFoModel*)dsFoModel demand:(ReasonDemandModel*)demand finishBlock:(void(^)(NSInteger _dsIndex,NSInteger _demandIndex))finishBlock{\n//    //1. 数据检查;\n//    if (!dsFoModel || !demand) return;\n//    AIFoNodeBase *dsFo = [SMGUtils searchNode:dsFoModel.content_p];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIScore.m:32-57"
+    },
+    "1967": {
+        "file_id": 194,
+        "content": "This code is finding the index of a specific dsFo model and demand, and then checks if the demand has occurred before the given index. If so, it returns whether the actionIndex is before or after that index. If not, it simply returns true. The function takes a TOFoModel and ReasonDemandModel as parameters and uses a block to return the indices.",
+        "type": "comment"
+    },
+    "1968": {
+        "file_id": 194,
+        "content": "//\n//    //2. 找下标 (参考注释@desc);\n//    for (NSInteger i = 0; i < dsFo.count; i++) {\n//        AIKVPointer *dsAlg_p = ARR_INDEX(dsFo.content_ps, i);\n//        AIFoNodeBase *demandMFo = [SMGUtils searchNode:demand.mModel.matchFo];\n//        NSInteger demandIndex = [TOUtils indexOfConOrAbsItem:dsAlg_p atContent:demandMFo.content_ps layerDiff:2 startIndex:demand.mModel.cutIndex2 + 1 endIndex:NSUIntegerMax];\n//\n//        //3. 根据dsIndex发现demandIndex成功 (仅需发现一个下标即可);\n//        if (demandIndex != -1) {\n//            finishBlock(i,demandIndex);  //根据i发现了result\n//            return;\n//        }\n//    }\n//}\n//MARK:===============================================================\n//MARK:                     < 时间不急评价 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------时间不急评价--------------------\n *  @desc 时间不急评价: 紧急情况 = 解决方案所需时间 > 父任务能给的时间 (参考:24057-方案3,24171-7);\n *  @param demand : 当前任务\n *  @version\n *      2022.01.19: 从action前置到rSolution中,因为三条全紧急,就完蛋了,放到action则不受此限制 (参考25106);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIScore.m:58-82"
+    },
+    "1969": {
+        "file_id": 194,
+        "content": "This code is iterating over an array of objects, checking if any object's index matches a specific demand's index in another array. If there's a match, the function returns early with the corresponding indices. The purpose appears to be evaluating urgent situations based on time constraints for a task.",
+        "type": "comment"
+    },
+    "1970": {
+        "file_id": 194,
+        "content": " *      2022.02.22: 将needTime取到mv改为仅取下帧,因为很多solution只需要一帧就改到正确的道路上了 (参考25113-方案2);\n *      2022.05.28: 判断目标向后一帧 (参考26132-方案2);\n *      2022.05.31: 兼容支持H任务 (参考26161-6);\n *      2022.05.31: 中段为0条时,评价直接通过 (参考26161-7);\n *  @result 返回是否时间不急 (默认为true);\n *      true    : 不急,时间够用,这方案可继续act;\n *      false   : 紧急,这方案来不及执行,直接ActNo掉;\n */\n+(BOOL) FRS_Time:(DemandModel*)demand solutionModel:(AICansetModel*)solutionModel{\n    //1. 中段为0条时,直接返回true,评价通过;\n    if (solutionModel.targetIndex - solutionModel.cutIndex <= 1) {\n        return true;\n    }\n    //2. 最近的R任务 (R任务时取自身,H任务时取最近的baseRDemand);\n    ReasonDemandModel *nearRDemand = [SMGUtils filterSingleFromArr:[TOUtils getBaseOutModels_AllDeep:demand] checkValid:^BOOL(id item) {\n        return ISOK(item, ReasonDemandModel.class);\n    }];\n    if (!nearRDemand) return false;\n    //3. 取解决方案所需时间;\n    AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.cansetFo];\n    double needTime = [TOUtils getSumDeltaTime:solutionFo startIndex:solutionModel.cutIndex + 1 endIndex:solutionModel.cutIndex + 2];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIScore.m:83-105"
+    },
+    "1971": {
+        "file_id": 194,
+        "content": "This code snippet checks if the time is sufficient for a given solution by evaluating the demand model and comparing it to the solution model. It first checks if there are only 1 or fewer segments in the solution, in which case it immediately returns true. Then, it determines the nearest R task (taking self for R tasks and baseRDemand for H tasks) and calculates the time needed for the given solution. If the calculated time is less than or equal to the time of the nearest R task, it returns false indicating urgency; otherwise, it returns true indicating that there is no hurry and the solution can be acted upon.",
+        "type": "comment"
+    },
+    "1972": {
+        "file_id": 194,
+        "content": "    //4. 取父任务能给的时间;\n    AIMatchFoModel *firstPFo = ARR_INDEX(nearRDemand.validPFos, 0);\n    AIFoNodeBase *pFo = [SMGUtils searchNode:firstPFo.matchFo];\n    double giveTime = [TOUtils getSumDeltaTime2Mv:pFo cutIndex:firstPFo.cutIndex];\n    //5. 判断是否时间不急;\n    BOOL timeIsEnough = needTime <= giveTime;\n    if (Log4Score && timeIsEnough) NSLog(@\"> 时间不急%d = 方案T:%.2f <= 任务T:%.2f\",timeIsEnough,needTime,giveTime);\n    return timeIsEnough;\n}\n//MARK:===============================================================\n//MARK:                     < MPS评分 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------MPS评分--------------------\n *  @result 负价值返回负分,正价值返回正分;\n */\n+(CGFloat) score4MV:(AIKVPointer*)cmvNode_p ratio:(CGFloat)ratio{\n    AICMVNodeBase *cmvNode = [SMGUtils searchNode:cmvNode_p];\n    if (ISOK(cmvNode, AICMVNodeBase.class)) {\n        return [AIScore score4MV:cmvNode.pointer.algsType urgentTo_p:cmvNode.urgentTo_p delta_p:cmvNode.delta_p ratio:ratio];\n    }\n    return 0;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIScore.m:107-130"
+    },
+    "1973": {
+        "file_id": 194,
+        "content": "This code searches for a node based on a given pointer and checks if there is enough time to complete the task. It returns true if time is not urgent (greater than or equal to the task's required time). The score4MV function scores an MV node and returns its score, using a ratio input.",
+        "type": "comment"
+    },
+    "1974": {
+        "file_id": 194,
+        "content": "}\n+(CGFloat) score4MV:(NSString*)algsType urgentTo_p:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p ratio:(CGFloat)ratio{\n    //1. 检查absCmvNode是否顺心\n    NSInteger delta = [NUMTOOK([AINetIndex getData:delta_p]) integerValue];\n    NSInteger urgentTo = [NUMTOOK([AINetIndex getData:urgentTo_p]) integerValue];\n    return [self score4MV:algsType urgentTo:urgentTo delta:delta ratio:ratio];\n}\n+(CGFloat) score4MV:(NSString*)algsType urgentTo:(NSInteger)urgentTo delta:(NSInteger)delta ratio:(CGFloat)ratio{\n    //1. 检查absCmvNode是否顺心\n    BOOL havDemand = [ThinkingUtils havDemand:algsType delta:delta];\n    //2. 根据检查到的数据取到score;\n    ratio = MIN(1,MAX(ratio,0));\n    if (havDemand) {\n        return  -urgentTo * ratio;\n    }else{\n        return urgentTo * ratio;\n    }\n}\n/**\n *  MARK:--------------------对预测价值时序评分V2--------------------\n *  @desc score = spScore * mvScore (即将原匹配度,改为由spScore来替代);\n *  @result 1. 返回评分越低说明越不好,越高越好;\n *          2. 返回正值为正mv,返回负值为负mv;\n */\n+(CGFloat) score4MV_v2:(AIMatchFoModel*)inModel{\n    AIFoNodeBase *mFo = [SMGUtils searchNode:inModel.matchFo];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIScore.m:131-158"
+    },
+    "1975": {
+        "file_id": 194,
+        "content": "This code calculates a score based on the given algsType, urgentTo, delta, and ratio. It first checks if there is demand for the given algsType and delta. If there is demand, it returns a negative score proportional to urgentTo and ratio. Otherwise, it returns a positive score proportional to urgentTo and ratio. The code also mentions another function called `score4MV_v2` that calculates a score using an AIMatchFoModel input and returns a positive value for positive match factors and negative values for negative match factors.",
+        "type": "comment"
+    },
+    "1976": {
+        "file_id": 194,
+        "content": "    BOOL isBadMv = [ThinkingUtils havDemand:mFo.cmvNode_p];\n    CGFloat spScore = [TOUtils getSPScore:mFo startSPIndex:inModel.cutIndex + 1 endSPIndex:mFo.count];\n    CGFloat ratio = isBadMv ? (1 - spScore) : spScore;\n    return [AIScore score4MV:mFo.cmvNode_p ratio:ratio];//价值迫切度 * 匹配度\n}\n/**\n *  MARK:--------------------对预测价值时序评分v2 from cache--------------------\n *  @version\n *      2022.08.19: 性能优化缓存版 (参考27065);\n */\n+(CGFloat) score4MV_v2FromCache:(AIMatchFoModel*)inModel {\n    if (inModel.scoreCache == defaultScore) {\n        inModel.scoreCache = [self score4MV_v2:inModel];\n    }\n    [AITest test12:inModel.scoreCache];\n    return inModel.scoreCache;\n}\n/**\n *  MARK:--------------------对Demand综合评分--------------------\n *  @param demand : 仅支持PR两种类型\n *  @version\n *      2022.05.19: demand的评分,继承firstPFo的评分 (参考26042-TODO4);\n *      2022.05.21: demand的评分,改为综合sumPFoScore评分 (参考26076);\n *      2022.06.08: demand的评分,改为综合sumMvScore / pFos.count (参考2619j-TODO6);\n */\n+(CGFloat) score4Demand:(DemandModel*)demand{\n    if (ISOK(demand, ReasonDemandModel.class) ) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIScore.m:159-187"
+    },
+    "1977": {
+        "file_id": 194,
+        "content": "This code calculates the score for a match (MV) or demand based on various factors and caches the scores for optimization. The score4MV function takes in an AIMatchFoModel, checks if the cache is defaultScore, recalculates the score using v2 method, stores it in the cache, tests the new score, and returns it. The score4Demand function calculates a score for DemandModel objects based on their type and count of pFos, returning the average MV score if applicable.",
+        "type": "comment"
+    },
+    "1978": {
+        "file_id": 194,
+        "content": "        ReasonDemandModel *rDemand = (ReasonDemandModel*)demand;\n        return [self score4PFos:rDemand.validPFos];\n    }else if (ISOK(demand, PerceptDemandModel.class) ) {\n        PerceptDemandModel *pDemand = (PerceptDemandModel*)demand;\n        return [AIScore score4MV:pDemand.algsType urgentTo:pDemand.urgentTo delta:pDemand.delta ratio:1.0f];\n    }\n    return 0;\n}\n/**\n *  MARK:--------------------求pFos的平均价值分--------------------\n */\n+(CGFloat) score4PFos:(NSArray*)pFos {\n    pFos = ARRTOOK(pFos);\n    CGFloat sumScore = 0;\n    for (AIMatchFoModel *pFo in pFos) {\n        sumScore += [AIScore score4MV_v2FromCache:pFo];\n    }\n    return pFos.count > 0 ? sumScore / pFos.count : 0;\n}\n//MARK:===============================================================\n//MARK:                     < MPS评价 >\n//MARK:===============================================================\n//同区且同向\n+(BOOL) sameIdenSameScore:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p{\n    if ([self sameIdentifierOfMV1:mv1_p mv2:mv2_p]) {\n        CGFloat mScore = [AIScore score4MV:mv1_p ratio:1.0f];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIScore.m:188-216"
+    },
+    "1979": {
+        "file_id": 194,
+        "content": "This code snippet appears to calculate the average value of a set of potential friendly objects (pFos) and returns it. It also includes a nested function that evaluates whether two MVs have the same identifier, and if so, calculates their scores. The main function handles different types of demands, including ReasonDemandModel and PerceptDemandModel. The code seems to be part of an artificial intelligence framework used for decision-making in a game or simulation environment.",
+        "type": "comment"
+    },
+    "1980": {
+        "file_id": 194,
+        "content": "        CGFloat sScore = [AIScore score4MV:mv2_p ratio:1.0f];\n        return [self sameDire:mScore v2:sScore];\n    }\n    return false;\n}\n//同区不同向\n+(BOOL) sameIdenNoSameScore:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p{\n    CGFloat ratio = 1.0f;\n    return [self sameIdentifierOfMV1:mv1_p mv2:mv2_p] && ![self sameDire:Mvp2Score(mv1_p, ratio) v2:Mvp2Score(mv2_p, ratio)];\n}\n//同区且同向\n+(BOOL) sameIdenSameDelta:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p{\n    return [self sameIdentifierOfMV1:mv1_p mv2:mv2_p] && [self sameDire:Mvp2Delta(mv1_p) v2:Mvp2Delta(mv2_p)];\n    return false;\n}\n//同区且反向\n+(BOOL) sameIdenDiffDelta:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p{\n    return [self sameIdentifierOfMV1:mv1_p mv2:mv2_p] && [self diffDire:Mvp2Delta(mv1_p) v2:Mvp2Delta(mv2_p)];\n}\n//MARK:===============================================================\n//MARK:                     < 单纯同区同向判断 >\n//MARK:===============================================================\n//同区\n+(BOOL) sameIdentifierOfMV1:(AIKVPointer*)mv1_p mv2:(AIKVPointer*)mv2_p{",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIScore.m:217-244"
+    },
+    "1981": {
+        "file_id": 194,
+        "content": "This code contains various helper functions used for comparing AIKVPointer objects based on their ID, direction, and score. Each function returns a BOOL value indicating whether the given objects are in the same region (sameIdentifierOfMV1), have different directions but the same score (sameIdenNoSameScore), share both the same region and direction (sameIdenSameDelta), or share the same region but opposite directions (sameIdenDiffDelta).",
+        "type": "comment"
+    },
+    "1982": {
+        "file_id": 194,
+        "content": "    return mv1_p && mv2_p && [mv1_p.identifier isEqualToString:mv2_p.identifier];\n}\n//同向\n+(BOOL) sameDire:(NSInteger)v1 v2:(NSInteger)v2{\n    return (v1 > 0 && v2 > 0) || (v1 < 0 && v2 < 0);\n}\n//反向\n+(BOOL) diffDire:(NSInteger)v1 v2:(NSInteger)v2{\n    return (v1 > 0 && v2 < 0) || (v1 < 0 && v2 > 0);\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIScore.m:245-256"
+    },
+    "1983": {
+        "file_id": 194,
+        "content": "This code defines three methods, all of which compare two values and return a boolean value based on the comparison. The first method compares whether two objects have the same identifier. The second method checks if both values are positive or both are negative (i.e., the same direction). The third method checks if one value is positive and the other is negative (i.e., opposite directions).",
+        "type": "comment"
+    },
+    "1984": {
+        "file_id": 195,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/Model/TCResult.h",
+        "type": "filepath"
+    },
+    "1985": {
+        "file_id": 195,
+        "content": "This code declares a new class \"TCResult\" for storing TO execution results, which includes success status, message, delay time, and step information. It provides convenience methods to set these properties and serves as a data model for TO executions.",
+        "type": "summary"
+    },
+    "1986": {
+        "file_id": 195,
+        "content": "//\n//  TCResult.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/7/22.\n//  Copyright © 2023 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------TO执行结果--------------------\n *  @desc 用于TO执行结果的数据返回 (是否成功,消息,是否需等待会);\n *  @version\n *      2023.07.22: 初版 (参考30084-todo3);\n */\n@interface TCResult : NSObject\n+(TCResult*) new:(BOOL)success;\n@property (assign, nonatomic) BOOL success;\n@property (strong, nonatomic) NSString *msg;\n@property (assign, nonatomic) CGFloat delay;\n@property (assign, nonatomic) NSInteger step;\n/**\n *  MARK:--------------------装饰方法--------------------\n */\n-(TCResult*) mkMsg:(NSString*)msg;\n-(TCResult*) mkDelay:(CGFloat)delay;\n-(TCResult*) mkStep:(NSInteger)step;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/Model/TCResult.h:1-33"
+    },
+    "1987": {
+        "file_id": 195,
+        "content": "This code declares a new class \"TCResult\" for storing TO execution results, which includes success status, message, delay time, and step information. It provides convenience methods to set these properties and serves as a data model for TO executions.",
+        "type": "comment"
+    },
+    "1988": {
+        "file_id": 196,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/Model/TCResult.m",
+        "type": "filepath"
+    },
+    "1989": {
+        "file_id": 196,
+        "content": "TCResult is a class for representing the result of a task, allowing the creation of new instances and chaining methods to set various properties.",
+        "type": "summary"
+    },
+    "1990": {
+        "file_id": 196,
+        "content": "//\n//  TCResult.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/7/22.\n//  Copyright © 2023 XiaoGang. All rights reserved.\n//\n#import \"TCResult.h\"\n@implementation TCResult\n+(TCResult*) new:(BOOL)success {\n    TCResult *result = [[TCResult alloc] init];\n    result.success = success;\n    return result;\n}\n-(TCResult*) mkMsg:(NSString*)msg {\n    self.msg = msg;\n    return self;\n}\n-(TCResult*) mkDelay:(CGFloat)delay {\n    self.delay = delay;\n    return self;\n}\n-(TCResult*) mkStep:(NSInteger)step {\n    self.step = step;\n    return self;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/Model/TCResult.m:1-34"
+    },
+    "1991": {
+        "file_id": 196,
+        "content": "TCResult is a class for representing the result of a task, allowing the creation of new instances and chaining methods to set various properties.",
+        "type": "comment"
+    },
+    "1992": {
+        "file_id": 197,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/ThinkingUtils.h",
+        "type": "filepath"
+    },
+    "1993": {
+        "file_id": 197,
+        "content": "The ThinkingUtils class provides utility functions for an AI system, including CMV methods and data checking methods for MV detection. The code snippet marks the end of the class or function defined earlier in the file.",
+        "type": "summary"
+    },
+    "1994": {
+        "file_id": 197,
+        "content": "//\n//  ThinkingUtils.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2018/3/23.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@class AIFrontOrderNode,AIAlgNodeBase,AIShortMatchModel,TOAlgModel;\n@interface ThinkingUtils : NSObject\n@end\n//MARK:===============================================================\n//MARK:                     < ThinkingUtils (CMV) >\n//MARK:===============================================================\n@interface ThinkingUtils (CMV)\n/**\n *  MARK:--------------------取mvType或algsType对应的targetType--------------------\n */\n+(BOOL) isBadWithAT:(NSString*)algsType;\n/**\n *  MARK:--------------------检查有没需求--------------------\n *  @result 返回为目标方向: 向上任务(delta>0),向下任务(delta<0),和无任务;\n */\n+(BOOL) havDownDemand:(NSString*)algsType delta:(NSInteger)delta;\n+(BOOL) havDemand:(AIKVPointer*)cmvNode_p;\n+(BOOL) havUpDemand:(NSString*)algsType delta:(NSInteger)delta;\n+(BOOL) havDemand:(NSString*)algsType delta:(NSInteger)delta;\n+(MVDirection) getDemandDirection:(NSString*)algsType delta:(NSInteger)delta;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/ThinkingUtils.h:1-37"
+    },
+    "1995": {
+        "file_id": 197,
+        "content": "The code defines a class called ThinkingUtils, which contains utility functions for an AI system. The CMV category within the class provides methods to check and retrieve demand direction and type based on different parameters.",
+        "type": "comment"
+    },
+    "1996": {
+        "file_id": 197,
+        "content": "/**\n *  MARK:--------------------转为direction--------------------\n */\n//获取索引方向 (有了索引方向后,可供目标方向取用)\n+(MVDirection) getMvReferenceDirection:(NSInteger)delta;\n/**\n *  MARK:--------------------解析algsMVArr--------------------\n *  cmvAlgsArr->mvValue\n */\n+(void) parserAlgsMVArrWithoutValue:(NSArray*)algsArr success:(void(^)(AIKVPointer *delta_p,AIKVPointer *urgentTo_p,NSString *algsType))success;\n+(void) parserAlgsMVArr:(NSArray*)algsArr success:(void(^)(AIKVPointer *delta_p,AIKVPointer *urgentTo_p,NSInteger delta,NSInteger urgentTo,NSString *algsType))success;\n@end\n//MARK:===============================================================\n//MARK:                     < ThinkingUtils (In) >\n//MARK:===============================================================\n@interface ThinkingUtils (In)\n/**\n *  MARK:--------------------检测算法结果的result_ps是否为mv输入--------------------\n *  (饿或不饿)\n */\n+(BOOL) dataIn_CheckMV:(NSArray*)algResult_ps;\n/**\n *  MARK:--------------------在主线程跑act--------------------\n */\n+(void) runAtMainThread:(Act0)act;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/ThinkingUtils.h:39-69"
+    },
+    "1997": {
+        "file_id": 197,
+        "content": "This code contains methods for getting the reference direction, parsing algorithm MV array, and checking if input data is for MV. The `getMvReferenceDirection` method returns the MVDirection based on a given delta value. The `parserAlgsMVArrWithoutValue` and `parserAlgsMVArr` methods parse an array of algorithm MV values and return relevant information including the delta, urgentTo, algsType. The `dataIn_CheckMV` method checks if input data is for MV detection. Finally, the `runAtMainThread` method runs a given action on the main thread.",
+        "type": "comment"
+    },
+    "1998": {
+        "file_id": 197,
+        "content": "@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/ThinkingUtils.h:71-71"
+    },
+    "1999": {
+        "file_id": 197,
+        "content": "This code snippet marks the end of the class or function defined earlier in the file. It signals to the compiler that the current block of code is complete and moves on to the next section or terminates execution if at the global scope.",
+        "type": "comment"
+    }
+}

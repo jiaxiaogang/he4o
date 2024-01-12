@@ -1,0 +1,15 @@
+{
+    "summary": "The `AINetDirectionReference` class contains methods to retrieve node pointers from a direction reference file and filter an input array.",
+    "details": [
+        {
+            "comment": "This code defines the `AINetDirectionReference` class and implements two methods: `getNodePointersFromDirectionReference` that retrieves node pointers from a direction reference file, and another method that takes an additional filter block as input. The first method creates a pointer for the given direction and mv type and returns an array of node pointers.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetDirectionReference.m\":0-26",
+            "content": "//\n//  AINetDirectionReference.m\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/7/11.\n//  Copyright \u00a9 2018\u5e74 XiaoGang. All rights reserved.\n//\n#import \"AINetDirectionReference.h\"\n#import \"PINCache.h\"\n@implementation AINetDirectionReference\n//MARK:===============================================================\n//MARK:                     < publicMethod >\n//MARK:===============================================================\n-(NSArray*) getNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction limit:(NSInteger)limit {\n    return [self getNodePointersFromDirectionReference:mvAlgsType direction:direction filter:^NSArray *(NSArray *protoArr) {\n        return ARR_SUB(protoArr, 0, limit);\n    }];\n}\n-(NSArray*) getNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction filter:(NSArray*(^)(NSArray *protoArr))filter{\n    //1. \u53d6mv\u5206\u533a\u7684\u5f15\u7528\u5e8f\u5217\u6587\u4ef6;\n    AIKVPointer *mvReference_p = [SMGUtils createPointerForDirection:mvAlgsType direction:direction];\n    "
+        },
+        {
+            "comment": "This method takes an input array and applies a filter if one is provided, returning the filtered or original array accordingly.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetDirectionReference.m\":26-36",
+            "content": "NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:mvReference_p fileName:kFNRefPorts time:cRTMvRef]];\n    //2. \u7b5b\u9009\u5668 (\u65e0\u7b5b\u9009\u5668\u65f6,\u8fd4\u56de\u6240\u6709);\n    if (filter) {\n        return filter(mArr);\n    }\n    return mArr;\n}\n@end"
+        }
+    ]
+}

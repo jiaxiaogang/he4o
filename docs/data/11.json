@@ -1,0 +1,545 @@
+{
+    "1100": {
+        "file_id": 115,
+        "content": "        AISPStrong *conSPStrong = [solutionFo.spDic objectForKey:@(solutionIndex.integerValue)];\n        //5. 直接继承solutionFo对应帧的SP值 (参考27214-方案);\n        AISPStrong *absSPStrong = conSPStrong ? conSPStrong : [[AISPStrong alloc] init];\n        [AITest test19:absSPStrong];\n        //6. 新的spDic收集一帧: 抽象canset的帧=i (因为比如有3帧有反馈,那么这三帧就是0,1,2) (参考27207-10);\n        NSInteger absCansetIndex = i;\n        [newSPDic setObject:absSPStrong forKey:@(absCansetIndex)];\n    }\n    return newSPDic;\n}\n//MARK:===============================================================\n//MARK:                     < privateMthod >\n//MARK:===============================================================\n/**\n *  MARK:--------------------获取当前solution中有反馈的下标数组--------------------\n *  @result <K:有反馈的下标,V:有反馈的feedbackAlg_p>\n */\n-(NSMutableArray*) getIndexArrIfHavFeedback {\n    //1. 数据准备;\n    AIFoNodeBase *solutionFo = [SMGUtils searchNode:self.content_p];\n    NSMutableArray *result = [[NSMutableArray alloc] init];\n    //2. 将fo逐帧收集有反馈的conIndex (参考27207-7);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOFoModel.m:152-178"
+    },
+    "1101": {
+        "file_id": 115,
+        "content": "This code is part of a method that collects feedback indices from a solution and creates an NSMutableDictionary (newSPDic) containing the corresponding SP values. The getIndexArrIfHavFeedback method prepares data for collecting the feedback indices, searching the node in the content_p and creating an array called \"result\".",
+        "type": "comment"
+    },
+    "1102": {
+        "file_id": 115,
+        "content": "    for (NSInteger i = 0; i < solutionFo.count; i++) {\n        AIKVPointer *solutionAlg_p = ARR_INDEX(solutionFo.content_ps, i);\n        for (TOAlgModel *item in self.subModels) {\n            if (item.status == TOModelStatus_OuterBack && [item.content_p isEqual:solutionAlg_p] && item.feedbackAlg) {\n                [result addObject:@(i)];\n                break;\n            }\n        }\n    }\n    return result;\n}\n/**\n *  MARK:--------------------根据solutionIndex取feedbackAlg--------------------\n */\n-(AIKVPointer*) getFeedbackAlgWithSolutionIndex:(NSInteger)solutionIndex {\n    //1. 数据准备;\n    AIFoNodeBase *solutionFo = [SMGUtils searchNode:self.content_p];\n    AIKVPointer *solutionAlg_p = ARR_INDEX(solutionFo.content_ps, solutionIndex);\n    //2. 找出反馈返回;\n    for (TOAlgModel *item in self.subModels) {\n        if (item.status == TOModelStatus_OuterBack && [item.content_p isEqual:solutionAlg_p] && item.feedbackAlg) {\n            return item.feedbackAlg;\n        }\n    }\n    return nil;\n}\n//MARK:===============================================================",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOFoModel.m:179-208"
+    },
+    "1103": {
+        "file_id": 115,
+        "content": "This code retrieves a feedback algorithm based on the given solution index. It first prepares data by finding the solution Fo node and then searches for an outer back model with a matching content pointer in the subModels array. If found, it returns the feedback algorithm of that model; otherwise, it returns nil.",
+        "type": "comment"
+    },
+    "1104": {
+        "file_id": 115,
+        "content": "//MARK:                     < for 三级场景 >\n//MARK:===============================================================\n-(void) setDataWithSceneModel:(AISceneModel*)baseSceneModel brother:(AITransferModel*)brother father:(AITransferModel*)father i:(AITransferModel*)i {\n    self.baseSceneModel = baseSceneModel;\n    self.brother = brother;\n    self.father = father;\n    self.i = i;\n}\n/**\n *  MARK:--------------------有iCanset直接返回进行行为化等 (参考29069-todo9 & todo10.1b)--------------------\n */\n-(AIKVPointer *)content_p {\n    if (_i) return _i.canset;\n    return super.content_p;\n}\n/**\n *  MARK:--------------------返回需用于反省或有效统计的cansets (参考29069-todo11 && todo11.2)--------------------\n *  @result notnull\n */\n-(NSArray*) getRethinkEffectCansets {\n    NSMutableArray *result = [[NSMutableArray alloc] init];\n    //1. father和i两级canset有值时,收集 (参考29069-todo11.2);\n    if (self.father) [result addObject:self.father];\n    if (self.i) [result addObject:self.i];\n    //2. 三级canset都无值时,默认返回content_p;\n    if (!ARRISOK(result)) [result addObject:[AITransferModel newWithScene:[self getContentScene] canset:self.content_p]];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOFoModel.m:209-239"
+    },
+    "1105": {
+        "file_id": 115,
+        "content": "This code sets the data for a three-level scene model and retrieves cansets for reflection or effective statistics. It checks if father, i, and content_p cansets have values, adding them to an array. If none of these cansets has a value, it adds a default canset from the content_p's scene.",
+        "type": "comment"
+    },
+    "1106": {
+        "file_id": 115,
+        "content": "    return result;\n}\n//MARK:===============================================================\n//MARK:                     < privateMethod >\n//MARK:===============================================================\n-(AIKVPointer*) getContentScene {\n    //1. R任务时,返回content所在的scene;\n    if (ISOK(self.baseOrGroup, ReasonDemandModel.class)) {\n        AIMatchFoModel *pFo = (AIMatchFoModel*)self.basePFoOrTargetFoModel;\n        return pFo.matchFo;\n    }\n    //2. H任务时,返回content所在的scene;\n    if (ISOK(self.baseOrGroup, HDemandModel.class)) {\n        HDemandModel *hDemand = (HDemandModel*)self.baseOrGroup;\n        TOFoModel *targetFo = (TOFoModel*)hDemand.baseOrGroup.baseOrGroup;\n        return targetFo.content_p;\n    }\n    return nil;\n}\n/**\n *  MARK:--------------------NSCoding--------------------\n */\n- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {\n    self = [super initWithCoder:aDecoder];\n    if (self) {\n        self.subModels = [aDecoder decodeObjectForKey:@\"subModels\"];\n        self.actionIndex = [aDecoder decodeIntegerForKey:@\"actionIndex\"];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOFoModel.m:240-270"
+    },
+    "1107": {
+        "file_id": 115,
+        "content": "This code defines a class method \"getContentScene\" which returns the scene containing the content, based on whether it is an R task or H task. If it's an R task, it retrieves the matching FO model and returns its corresponding scene. If it's an H task, it accesses the target FO model through a series of nested baseOrGroup properties, and returns its content pointer. The code also includes the implementation of the \"initWithCoder\" method for NSCoding conformance, initializing instance variables with decoded data from the coder object.",
+        "type": "comment"
+    },
+    "1108": {
+        "file_id": 115,
+        "content": "        self.targetSPIndex = [aDecoder decodeIntegerForKey:@\"targetSPIndex\"];\n        self.subDemands = [aDecoder decodeObjectForKey:@\"subDemands\"];\n        self.feedbackMv = [aDecoder decodeObjectForKey:@\"feedbackMv\"];\n        self.brother = [aDecoder decodeObjectForKey:@\"brother\"];\n        self.father = [aDecoder decodeObjectForKey:@\"father\"];\n        self.i = [aDecoder decodeObjectForKey:@\"i\"];\n        self.refrectionNo = [aDecoder decodeBoolForKey:@\"refrectionNo\"];\n    }\n    return self;\n}\n- (void)encodeWithCoder:(NSCoder *)aCoder {\n    [super encodeWithCoder:aCoder];\n    [aCoder encodeObject:self.subModels forKey:@\"subModels\"];\n    [aCoder encodeInteger:self.actionIndex forKey:@\"actionIndex\"];\n    [aCoder encodeInteger:self.targetSPIndex forKey:@\"targetSPIndex\"];\n    [aCoder encodeObject:self.subDemands forKey:@\"subDemands\"];\n    [aCoder encodeObject:self.feedbackMv forKey:@\"feedbackMv\"];\n    [aCoder encodeObject:self.brother forKey:@\"brother\"];\n    [aCoder encodeObject:self.father forKey:@\"father\"];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOFoModel.m:271-290"
+    },
+    "1109": {
+        "file_id": 115,
+        "content": "Decoding and encoding object properties using NSCoder for key-value storage.",
+        "type": "comment"
+    },
+    "1110": {
+        "file_id": 115,
+        "content": "    [aCoder encodeObject:self.i forKey:@\"i\"];\n    [aCoder encodeBool:self.refrectionNo forKey:@\"refrectionNo\"];\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOFoModel.m:291-295"
+    },
+    "1111": {
+        "file_id": 115,
+        "content": "Encodes object 'i' for key \"i\" and encodes boolean value of 'refrectionNo' for key \"refrectionNo\" in aCoder.",
+        "type": "comment"
+    },
+    "1112": {
+        "file_id": 116,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOModelBase.h",
+        "type": "filepath"
+    },
+    "1113": {
+        "file_id": 116,
+        "content": "TOModelBase is a subclass of NSObject and implements NSCoding, representing a base model with properties like content_p, baseOrGroup, and score sorting factors. It uses optimized strategies for decision-making and has methods callable from other classes such as TOFoModel, TOAlgModel, TOValueModel, and DemandModel. The class also includes properties like score, status, except_ps, params, and selfIden with the isEqual method for equality comparison.",
+        "type": "summary"
+    },
+    "1114": {
+        "file_id": 116,
+        "content": "//\n//  TOModelBase.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/4/26.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------ThinkOut模型--------------------\n *  1. 优中选优策略,即当前仅可找到得分第一位的,进行决策;\n *  2. 不可跳层进行score计算; 95%采用\n *  3. 可跳层进行综合计算; 5%采用\n *  @desc\n *      1. 集成原则: 在方法被调用前,将outModel实例化好,并当参数传递进去,在方法执行中status变化的,重新对status赋值即可;\n */\n@interface TOModelBase : NSObject <NSCoding>\n-(id) initWithContent_p:(AIKVPointer*)content_p;\n@property (strong, nonatomic) AIKVPointer *content_p;\n/**\n *  MARK:--------------------base--------------------\n *  @desc 因为决策短时记忆是结构化的,而baseOrGroup表示了其父节点;\n *  @callers\n *      1. TOFoModel时,base为: P满足/R避免/HNGL加工任务\n *      2. TOAlgModel时,base为: 时序\n *      3. TOValueModel时,base为: 概念\n *      4. DemandModel时,baes为: 产生子任务基于的哪个时序 (一般为反思时序);\n */\n@property (weak, nonatomic) TOModelBase *baseOrGroup;\n/**\n *  MARK:--------------------score排序因子--------------------\n *  1. order是实时变化的,(如,因为懒而order-,导致某任务决定放弃)\n *  2. 懒运算,\n *  注: 后续添加对时间衰减的支持",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOModelBase.h:1-41"
+    },
+    "1115": {
+        "file_id": 116,
+        "content": "TOModelBase.h is a header file for the TOModelBase class in the SMG_NothingIsAll project. It is a subclass of NSObject and implements NSCoding. The class represents a base model with properties like content_p, baseOrGroup, and score sorting factors. It uses optimized strategies for decision-making and has methods that can be called from other classes such as TOFoModel, TOAlgModel, TOValueModel, and DemandModel.",
+        "type": "comment"
+    },
+    "1116": {
+        "file_id": 116,
+        "content": " */\n//@property (assign, nonatomic) CGFloat score;            //评分\n/**\n *  MARK:--------------------对比是否相等--------------------\n */\n-(BOOL) isEqual:(TOModelBase*)object;\n/**\n *  MARK:--------------------当前model的状态--------------------\n */\n@property (assign, nonatomic) TOModelStatus status;\n/**\n *  MARK:--------------------下级不应期收集--------------------\n *  @暂不需要: 目前用不着,因为直接从actionFoModels中取指针即可;\n */\n//@property (strong, nonatomic) NSMutableArray *except_ps;\n/**\n *  MARK:--------------------参数保留--------------------\n *  @desc 用于再决策: 当下层尝试失败时,会递归回来再决策,再决策时会用到这些参数,以调用行为化中的相应方法;\n *  @暂不开放: 目前用不着,再决策时,只需要传TOModel即可,而需要配合的mModel,也可以实时从短时记忆取;\n */\n//@property (strong, nonatomic) NSDictionary *params;\n/**\n *  MARK:--------------------来源标识--------------------\n *  @desc 初次实例化时的内存地址,此后序列化过,也保留此值 (参考25185-方案1);\n *  @version\n *      2022.03.23: 来源标识为: TOModel初次实例化时的内存地址 (参考25185-方案1-实践1);\n */\n@property (strong, nonatomic) NSString *selfIden;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOModelBase.h:42-77"
+    },
+    "1117": {
+        "file_id": 116,
+        "content": "This code defines a class named TOModelBase which has properties such as score, status, except_ps, params and selfIden. The isEqual method compares two objects of this class for equality. The except_ps property was marked as \"暂不需要\" indicating it's not required at the moment. The params property is used to preserve parameters for decision making in case of failure. The selfIden property stores the source identifier which remains even after serialization.",
+        "type": "comment"
+    },
+    "1118": {
+        "file_id": 117,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOModelBase.m",
+        "type": "filepath"
+    },
+    "1119": {
+        "file_id": 117,
+        "content": "This code creates a model base class implementing NSCoding protocol, with initializer, equality checker, and status setter. It initializes objects using decode methods from a decoder and encodes properties for archiving.",
+        "type": "summary"
+    },
+    "1120": {
+        "file_id": 117,
+        "content": "//\n//  TOModelBase.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/4/26.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import \"TOModelBase.h\"\n@implementation TOModelBase\n-(id) initWithContent_p:(AIKVPointer*)content_p{\n    self = [super init];\n    if (self) {\n        self.content_p = content_p;\n    }\n    return self;\n}\n/**\n *  MARK:--------------------来源标识--------------------\n */\n-(NSString *)selfIden{\n    if (!_selfIden) {\n        _selfIden = STRFORMAT(@\"%p\",self);\n    }\n    return _selfIden;\n}\n/**\n *  MARK:--------------------isEqual--------------------\n *  @version\n *      2022.03.19: content_p为空时,返回super.Equal(),因为Demand的content_p全是空的;\n *      2022.03.23: 改成用selfIden对比,因为它是初次内存唯一,content_p一致并不能说明一致;\n */\n-(BOOL) isEqual:(TOModelBase*)object{\n    return [self.selfIden isEqualToString:object.selfIden];\n}\n-(void)setStatus:(TOModelStatus)status{\n    _status = status;\n}\n/**\n *  MARK:--------------------NSCoding--------------------\n */\n- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {\n    self = [super init];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOModelBase.m:1-49"
+    },
+    "1121": {
+        "file_id": 117,
+        "content": "TOModelBase.m: Implementation of a model base class, including initializer, self identifier, equality checker, and status setter.",
+        "type": "comment"
+    },
+    "1122": {
+        "file_id": 117,
+        "content": "    if (self) {\n        self.content_p = [aDecoder decodeObjectForKey:@\"content_p\"];\n        self.status = [aDecoder decodeIntegerForKey:@\"status\"];\n        self.baseOrGroup = [aDecoder decodeObjectForKey:@\"baseOrGroup\"];\n        self.selfIden = [aDecoder decodeObjectForKey:@\"selfIden\"];\n    }\n    return self;\n}\n- (void)encodeWithCoder:(NSCoder *)aCoder {\n    [aCoder encodeObject:self.content_p forKey:@\"content_p\"];\n    [aCoder encodeInteger:self.status forKey:@\"status\"];\n    [aCoder encodeObject:self.baseOrGroup forKey:@\"baseOrGroup\"];\n    [aCoder encodeObject:self.selfIden forKey:@\"selfIden\"];\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/TOModelBase.m:50-66"
+    },
+    "1123": {
+        "file_id": 117,
+        "content": "This code implements a model class that conforms to NSCoding protocol. It initializes the object properties using decode methods from a decoder in its init method, and encodes the object's properties for archiving with encodeWithCoder method.",
+        "type": "comment"
+    },
+    "1124": {
+        "file_id": 118,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.h",
+        "type": "filepath"
+    },
+    "1125": {
+        "file_id": 118,
+        "content": "This code defines methods for concept relationships, item searching, abstract reasoning, and matching algorithms within the \"SMG_NothingIsAll\" project. It includes utility functions for game object properties, time calculations, score computations, and effect scores.",
+        "type": "summary"
+    },
+    "1126": {
+        "file_id": 118,
+        "content": "//\n//  TOUtils.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2020/4/2.\n//  Copyright © 2020年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@class AIAlgNodeBase,DemandModel,TOFoModel,AIShortMatchModel,TOModelBase,TOAlgModel,AICansetModel,AIEffectStrong;\n@interface TOUtils : NSObject\n/**\n *  MARK:--------------------判断mIsC--------------------\n *  @desc 从M向上,找匹配C,支持三层 (含本层):\n *  @version\n *      2020.06.12 : 将取absPorts_All_Normal改为absPorts_All(),以支持innerTypeNode的mIsC判断;\n */\n+(BOOL) mIsC:(AIKVPointer*)m c:(AIKVPointer*)c layerDiff:(int)layerDiff;\n+(BOOL) mIsC_0:(AIKVPointer*)m c:(AIKVPointer*)c;\n+(BOOL) mIsC_1:(AIKVPointer*)m c:(AIKVPointer*)c;\n+(BOOL) mIsC_2:(AIKVPointer*)m c:(AIKVPointer*)c;\n+(BOOL) mIsC_1:(NSArray*)ms cs:(NSArray*)cs;\n/**\n *  MARK:--------------------判断mc有共同抽象--------------------\n */\n+(BOOL) mcIsBro:(AIKVPointer*)m c:(AIKVPointer*)c;\n+(BOOL) mcIsBro:(NSArray*)matchAlg_ps cansetA:(AIKVPointer*)cansetA_p;\n/**\n *  MARK:--------------------在具象Content中定位抽象Item的下标--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.h:1-34"
+    },
+    "1127": {
+        "file_id": 118,
+        "content": "This code defines methods for determining if an abstract concept (m) is related to a specific concept (c) and whether there is common abstraction between them in the context of a project called \"SMG_NothingIsAll\". It also includes methods to find the index of an abstract item within a specific content. These methods are useful for abstract reasoning, matching algorithms, and identifying relationships among concepts.",
+        "type": "comment"
+    },
+    "1128": {
+        "file_id": 118,
+        "content": " *  @result 如果找不到,默认返回-1;\n *  _param layerDiff: 检查层数,默认为1,支持0,1,2;\n */\n+(NSInteger) indexOfAbsItem:(AIKVPointer*)absItem atConContent:(NSArray*)conContent;\n/**\n *  MARK:--------------------下面3个方法的参数说明--------------------\n *  @param startIndex : 起始index:含 (不限制传0);\n *  @param endIndex : 终止index:含 (不限制传IntegerMax);\n */\n//absItem是content中的抽象一员,返回index;\n+(NSInteger) indexOfAbsItem:(AIKVPointer*)absItem atConContent:(NSArray*)conContent layerDiff:(int)layerDiff startIndex:(NSInteger)startIndex endIndex:(NSInteger)endIndex;\n//conItem是content中的具象一员,返回index;\n+(NSInteger) indexOfConItem:(AIKVPointer*)conItem atAbsContent:(NSArray*)content layerDiff:(int)layerDiff startIndex:(NSInteger)startIndex endIndex:(NSInteger)endIndex;\n//conItem是content中的具象或抽象一员,返回index;\n+(NSInteger) indexOfConOrAbsItem:(AIKVPointer*)item atContent:(NSArray*)content layerDiff:(int)layerDiff startIndex:(NSInteger)startIndex endIndex:(NSInteger)endIndex;\n//MARK:===============================================================\n//MARK:                     < 从TO短时记忆取demand >",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.h:35-56"
+    },
+    "1129": {
+        "file_id": 118,
+        "content": "This code contains several methods that search for items within a given array, returning the index of the found item. The methods have parameters specifying start and end indices for the search range, as well as layer difference and item type (absItem, conItem, or either concrete or abstract item).",
+        "type": "comment"
+    },
+    "1130": {
+        "file_id": 118,
+        "content": "//MARK:===============================================================\n//获取subOutModel所在的pFo\n+(AIMatchFoModel*) getBasePFoWithSubOutModel:(TOModelBase*)subOutModel;\n/**\n *  MARK:--------------------获取subOutModel的demand--------------------\n */\n+(DemandModel*) getRootDemandModelWithSubOutModel:(TOModelBase*)subOutModel;\n/**\n *  MARK:--------------------向着某方向取所有demands--------------------\n *  @result 含子任务和root任务 notnull;\n */\n+(NSMutableArray*) getBaseDemands_AllDeep:(TOModelBase*)subModel;//base方向;\n+(NSInteger) getBaseDemandsDeepCount:(TOModelBase*)subModel;\n+(NSMutableArray*) getBaseRDemands_AllDeep:(TOModelBase*)subModel;\n//MARK:===============================================================\n//MARK:                     < 从TO短时记忆取outModel >\n//MARK:===============================================================\n/**\n *  MARK:--------------------找出已行为输出等待外循环结果的outModels--------------------\n *  @result notnull NSArray<TOModelBase#>\n *  @param validStatus : 为nil时,将收集一切类型;\n *  _param cutStopStatus : 为nil时,不进行任何中断;\n *  @result notnull",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.h:57-84"
+    },
+    "1131": {
+        "file_id": 118,
+        "content": "This code contains functions for retrieving subOutModel, getting the root demand of a subOutModel, and obtaining demands in a specific direction. It also includes methods to retrieve all demands deep from a subModel and get the deep count of base demands. Additionally, it has functions related to getting outModels from short-term memory, including finding valid outModels and collecting them based on valid status and cutStopStatus.",
+        "type": "comment"
+    },
+    "1132": {
+        "file_id": 118,
+        "content": " */\n+(NSArray*) getSubOutModels_AllDeep:(TOModelBase*)outModel validStatus:(NSArray*)validStatus;\n+(NSArray*) getSubOutModels_AllDeep:(TOModelBase*)outModel validStatus:(NSArray*)validStatus cutStopStatus:(NSArray*)cutStopStatus;\n+(NSMutableArray*) getSubOutModels:(TOModelBase*)outModel;\n+(NSMutableArray*) getBaseOutModels_AllDeep:(TOModelBase*)subModel;\n//MARK:===============================================================\n//MARK:                     < convert >\n//MARK:===============================================================\n/**\n *  MARK:--------------------将TOModels转为Pointers--------------------\n *  @result notnull\n */\n+(NSMutableArray*) convertPointersFromTOModels:(NSArray*)toModels;\n//R时返回pFo.matchFo,H时返回targetFo;\n+(AIKVPointer*) convertBaseFoFromBasePFoOrTargetFoModel:(id)basePFoOrTargetFoModel;\n/**\n *  MARK:--------------------是否HNGL节点--------------------\n *  @desc 其中isHNGL主要支持fo,alg都是hnglConAlg (参考21115);\n *  @todo\n *      2020.12.17: 此处对alg的支持,需要迭代 (否则原来调用这五个方法isHNGL,isH,isN,isG,isL的alg都会不准确);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.h:85-109"
+    },
+    "1133": {
+        "file_id": 118,
+        "content": "This code contains methods for getting sub out models, converting TO Models to Pointers and checking if a node is an HNGL node. The methods use parameters like outModel, validStatus, cutStopStatus, toModels, basePFoOrTargetFoModel, etc. It also mentions that there's a need for further iteration regarding alg support in the isHNGL method.",
+        "type": "comment"
+    },
+    "1134": {
+        "file_id": 118,
+        "content": " */\n+(BOOL) isHNGL:(AIKVPointer*)p;\n+(BOOL) isHNGLSP:(AIKVPointer*)p;\n+(BOOL) isH:(AIKVPointer*)p;\n+(BOOL) isN:(AIKVPointer*)p;\n+(BOOL) isG:(AIKVPointer*)p;\n+(BOOL) isL:(AIKVPointer*)p;\n+(BOOL) isS:(AIKVPointer*)p;\n+(BOOL) isP:(AIKVPointer*)p;\n/**\n *  MARK:--------------------求fo的deltaTime之和--------------------\n */\n+(double) getSumDeltaTime2Mv:(AIFoNodeBase*)fo cutIndex:(NSInteger)cutIndex;\n/**\n *  MARK:--------------------获取指定获取的deltaTime之和--------------------\n *  _param startIndex   : 下标(不含);\n *  _param endIndex     : 下标(含);\n */\n+(double) getSumDeltaTime:(AIFoNodeBase*)fo startIndex:(NSInteger)startIndex endIndex:(NSInteger)endIndex;\n/**\n *  MARK:--------------------toModel转key--------------------\n *  @desc 用于字典数据的key,可以避免因pointer防重失效 (比如scoreDic) (参考25056);\n *  @param toModel : notnull\n */\n+(NSString*) toModel2Key:(TOModelBase*)toModel;\n/**\n *  MARK:--------------------effectDic的HN求和--------------------\n */\n+(NSRange) getSumEffectHN:(NSDictionary*)effectDic;\n/**\n *  MARK:--------------------稳定性评分--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.h:110-145"
+    },
+    "1135": {
+        "file_id": 118,
+        "content": "This code includes several utility methods for handling various game object properties and time calculations. It also converts a TOModelBase to a key for dictionary usage, and calculates the sum of specific effects' HN values.",
+        "type": "comment"
+    },
+    "1136": {
+        "file_id": 118,
+        "content": " *  @param endSPIndex   : 目标index,比如感性mv时,则为fo.count (求结果时,需包含endSPIndex);\n *  @param startSPIndex : 起始index,比如理性时,常为0到fo.count-1之间 (求结果时,需包含startSPIndex);\n */\n+(CGFloat) getStableScore:(AIFoNodeBase*)fo startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex;\n/**\n *  MARK:--------------------SP好坏评分--------------------\n *  @param endSPIndex   : 目标index,比如感性mv时,则为fo.count (求结果时,需包含endSPIndex);\n *  @param startSPIndex : 起始index,比如理性时,常为0到fo.count-1之间 (求结果时,需包含startSPIndex);\n */\n+(CGFloat) getSPScore:(AIFoNodeBase*)fo startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex;\n/**\n *  MARK:--------------------有效率评分--------------------\n *  @param demandFo     : R任务时传pFo即可, H任务时传hDemand.base.baseFo;\n *  @param effectIndex  : R任务时传demandFo.count, H任务时传hDemand.base.baseFo.actionIndex;\n *  @param solutionFo   : 用于检查有效率的solutionFo;\n */\n+(CGFloat) getEffectScore:(AIFoNodeBase*)demandFo effectIndex:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo;\n+(CGFloat) getEffectScore:(AIEffectStrong*)strong;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.h:146-165"
+    },
+    "1137": {
+        "file_id": 118,
+        "content": "This code contains three methods: `getStableScore`, `getSPScore`, and `getEffectScore`. The first two methods calculate scores based on a given start and end index for the provided AI FoNodeBase. The last method calculates an effect score, taking into account demandFo, effectIndex, and solutionFo. The code also includes helper methods to calculate effect scores for AIEffectStrong objects.",
+        "type": "comment"
+    },
+    "1138": {
+        "file_id": 118,
+        "content": "+(AIEffectStrong*) getEffectStrong:(AIFoNodeBase*)demandFo effectIndex:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo;\n+(NSString*) getEffectDesc:(AIFoNodeBase*)demandFo effectIndex:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo;\n/**\n *  MARK:--------------------获取fo衰减后的值--------------------\n *  @param fo_p         : 计算fo的衰减后的值;\n *  @param outOfFo_ps   : fo的竞争者 (包含fo);\n */\n+(double) getColValue:(AIKVPointer*)fo_p outOfFos:(NSArray*)outOfFo_ps ;\n/**\n *  MARK:--------------------获取衰减后的稳定性--------------------\n */\n+(CGFloat) getColStableScore:(AIFoNodeBase*)fo outOfFos:(NSArray*)outOfFo_ps startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex;\n/**\n *  MARK:--------------------获取衰减后的SP好坏评分--------------------\n */\n+(CGFloat) getColSPScore:(AIFoNodeBase*)fo outOfFos:(NSArray*)outOfFo_ps startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex;\n/**\n *  MARK:--------------------检查某toModel的末枝有没有ActYes状态--------------------\n */\n+(BOOL) endHavActYes:(TOModelBase*)curModel;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.h:166-190"
+    },
+    "1139": {
+        "file_id": 118,
+        "content": "This code contains various utility functions, including ones for getting the effect strength, description, and calculating col values, stability scores, and SP scores. It also includes a function to check if an end node of a TOModel has \"ActYes\" state.",
+        "type": "comment"
+    },
+    "1140": {
+        "file_id": 118,
+        "content": "/**\n *  MARK:--------------------将cansets中同fo的strong合并--------------------\n */\n+(NSArray*) mergeCansets:(NSArray*)protoCansets;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.h:192-197"
+    },
+    "1141": {
+        "file_id": 118,
+        "content": "This code snippet defines a class method \"mergeCansets\" which takes an array of protoCansets as input and merges the strong cansets within them.",
+        "type": "comment"
+    },
+    "1142": {
+        "file_id": 119,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.m",
+        "type": "filepath"
+    },
+    "1143": {
+        "file_id": 119,
+        "content": "The TOUtils class offers equality checking and retrieval for demands, tasks, and sub-models in the SMG_NothingIsAll project. It includes AIKVPointer type checks, HNGL node detection, stability score computation, effective rating scores, object stability decay, \"ActYes\" status verification, array merging, and strength value updates.",
+        "type": "summary"
+    },
+    "1144": {
+        "file_id": 119,
+        "content": "//\n//  TOUtils.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2020/4/2.\n//  Copyright © 2020年 XiaoGang. All rights reserved.\n//\n#import \"TOUtils.h\"\n@implementation TOUtils\n+(BOOL) mIsC:(AIKVPointer*)m c:(AIKVPointer*)c layerDiff:(int)layerDiff{\n    if (layerDiff == 0) return [self mIsC_0:m c:c];\n    if (layerDiff == 1) return [self mIsC_1:m c:c];\n    if (layerDiff == 2) return [self mIsC_2:m c:c];\n    return false;\n}\n/**\n *  MARK:--------------------mIsC--------------------\n *  @version\n *      2023.03.11: 兼容mv的判断 (参考28171-todo8);\n *      2023.11.18: mv时也判断抽象关联,而不是直接返回false (修复判断M1{↑饿-16}和A13(饿16,7)的抽具象关系总失败);\n */\n+(BOOL) mIsC_0:(AIKVPointer*)m c:(AIKVPointer*)c{\n    if (m && c) {\n        //0. 判断mv的相等;\n        //if (PitIsMv(m) && PitIsMv(c)) return [m.algsType isEqualToString:c.algsType];\n        //1. 判断本级相等;\n        BOOL equ0 = [m isEqual:c];\n        if (equ0) return true;\n    }\n    return false;\n}\n+(BOOL) mIsC_1:(AIKVPointer*)m c:(AIKVPointer*)c{\n    if (m && c) {\n        //1. 判断本级相等;\n        if ([self mIsC_0:m c:c]) return true;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.m:1-40"
+    },
+    "1145": {
+        "file_id": 119,
+        "content": "The code is a part of the SMG_NothingIsAll project's TOUtils class implementation. It contains several methods for checking equality between two AIKVPointer objects. The methods first check if the objects are mv (matching variable) types, and then compare their algorithms types. If they are not mv types, it simply compares if they are equal at the current level.",
+        "type": "comment"
+    },
+    "1146": {
+        "file_id": 119,
+        "content": "        //1. 在mIsC0判断mv不相等时,还有mv类型直接返回false;\n        //if (PitIsMv(m) || PitIsMv(c)) return false;\n        //2. 判断一级抽象;\n        NSArray *mAbs = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:[SMGUtils searchNode:m]]];\n        BOOL equ1 = [mAbs containsObject:c];\n        if (equ1) return true;\n    }\n    return false;\n}\n+(BOOL) mIsC_2:(AIKVPointer*)m c:(AIKVPointer*)c{\n    if (m && c) {\n        //1. 判断0-1级抽象;\n        if ([self mIsC_1:m c:c]) return true;\n        //1. 在mIsC0判断mv不相等时,还有mv类型直接返回false;\n        //if (PitIsMv(m) || PitIsMv(c)) return false;\n        //2. 判断二级抽象;\n        NSArray *mAbs = [SMGUtils convertPointersFromPorts:[AINetUtils absPorts_All:[SMGUtils searchNode:m]]];\n        NSArray *cCon = [SMGUtils convertPointersFromPorts:[AINetUtils conPorts_All:[SMGUtils searchNode:c]]];\n        BOOL equ2 = [SMGUtils filterArrA:mAbs arrB:cCon].count > 0;\n        if (equ2) return true;\n    }\n    return false;\n}\n+(BOOL) mIsC_1:(NSArray*)ms cs:(NSArray*)cs{\n    ms = ARRTOOK(ms);\n    cs = ARRTOOK(cs);\n    for (AIKVPointer *c in cs) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.m:42-72"
+    },
+    "1147": {
+        "file_id": 119,
+        "content": "These code snippets define two methods, `mIsC_2` and `mIsC_1`, that check if a pointer `m` is connected to another pointer `c`. The methods use different approaches for 0-1 level and 2-level abstractions. They first convert the pointers to their corresponding abstract representations and then compare them, returning true if they are connected and false otherwise.",
+        "type": "comment"
+    },
+    "1148": {
+        "file_id": 119,
+        "content": "        for (AIKVPointer *m in ms) {\n            if ([TOUtils mIsC_1:m c:c]) {\n                return true;\n            }\n        }\n    }\n    return false;\n}\n/**\n *  MARK:--------------------判断mc有共同抽象--------------------\n */\n+(BOOL) mcIsBro:(AIKVPointer*)m c:(AIKVPointer*)c {\n    NSMutableArray *mAbs_ps = [[NSMutableArray alloc] initWithArray:Ports2Pits([AINetUtils absPorts_All:[SMGUtils searchNode:m]])];\n    [mAbs_ps addObject:m];\n    NSMutableArray *cAbs_ps = [[NSMutableArray alloc] initWithArray:Ports2Pits([AINetUtils absPorts_All:[SMGUtils searchNode:c]])];\n    [cAbs_ps addObject:c];\n    return [SMGUtils filterSingleFromArr:mAbs_ps checkValid:^BOOL(AIKVPointer *item) {\n        return [cAbs_ps containsObject:item];\n    }];\n}\n+(BOOL) mcIsBro:(NSArray*)matchAlg_ps cansetA:(AIKVPointer*)cansetA_p {\n    //用共同抽象判断cansetA的匹配: 判断新输入的matchAlgs和cansetA的抽象是否有匹配;\n    AIAlgNodeBase *cansetAlg = [SMGUtils searchNode:cansetA_p];\n    NSMutableArray *cansetAbses = [[NSMutableArray alloc] initWithArray:Ports2Pits([AINetUtils absPorts_All:cansetAlg])];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.m:73-98"
+    },
+    "1149": {
+        "file_id": 119,
+        "content": "The code checks if the arrays of abstracts for two given objects have any common elements, and returns true if there is at least one match. The code is part of a larger system that likely uses these methods to determine relationships between various objects in its domain.",
+        "type": "comment"
+    },
+    "1150": {
+        "file_id": 119,
+        "content": "    [cansetAbses addObject:cansetA_p];\n    return ARRISOK([SMGUtils filterArrA:matchAlg_ps arrB:cansetAbses]);\n}\n/**\n *  MARK:--------------------判断indexOf (支持本级+一级抽象)--------------------\n *  @bug 2020.06.12 : TOR.R-中firstAt_Plus取值为-1,经查因为mIsC方法取absPorts_Normal,对plus/sub不支持导致,改后好了;\n *  @version\n *      2020.09.10: 支持layerDiff和startIndex;\n *\n */\n+(NSInteger) indexOfAbsItem:(AIKVPointer*)absItem atConContent:(NSArray*)conContent{\n    return [self indexOfAbsItem:absItem atConContent:conContent layerDiff:1 startIndex:0 endIndex:NSUIntegerMax];\n}\n//absItem是content中的抽象一员,返回index;\n+(NSInteger) indexOfAbsItem:(AIKVPointer*)absItem atConContent:(NSArray*)conContent layerDiff:(int)layerDiff startIndex:(NSInteger)startIndex endIndex:(NSInteger)endIndex{\n    conContent = ARRTOOK(conContent);\n    endIndex = MIN(endIndex, conContent.count - 1);\n    for (NSInteger i = startIndex; i <= endIndex; i++) {\n        AIKVPointer *item_p = ARR_INDEX(conContent, i);\n        if ([TOUtils mIsC:item_p c:absItem layerDiff:layerDiff]) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.m:99-120"
+    },
+    "1151": {
+        "file_id": 119,
+        "content": "This code defines two methods in the TOUtils class. The first method, `indexOfAbsItem:atConContent:layerDiff:startIndex:endIndex:`, searches for an abstract item (`absItem`) within a given content array (`conContent`). It takes into account layers and indexes, returning the index of the found item. The second method, `mIsC:c:`, checks if two AIKVPointer objects are equal based on their value and layer difference. The code also includes filtering and error handling.",
+        "type": "comment"
+    },
+    "1152": {
+        "file_id": 119,
+        "content": "            return i;\n        }\n    }\n    return -1;\n}\n//conItem是content中的具象一员,返回index;\n+(NSInteger) indexOfConItem:(AIKVPointer*)conItem atAbsContent:(NSArray*)content layerDiff:(int)layerDiff startIndex:(NSInteger)startIndex endIndex:(NSInteger)endIndex{\n    content = ARRTOOK(content);\n    endIndex = MIN(endIndex, content.count - 1);\n    for (NSInteger i = startIndex; i <= endIndex; i++) {\n        AIKVPointer *item_p = ARR_INDEX(content, i);\n        if ([TOUtils mIsC:conItem c:item_p layerDiff:layerDiff]) {\n            return i;\n        }\n    }\n    return -1;\n}\n//conItem是content中的具象或抽象一员,返回index;\n+(NSInteger) indexOfConOrAbsItem:(AIKVPointer*)item atContent:(NSArray*)content layerDiff:(int)layerDiff startIndex:(NSInteger)startIndex endIndex:(NSInteger)endIndex{\n    NSInteger findIndex = [TOUtils indexOfAbsItem:item atConContent:content layerDiff:layerDiff startIndex:startIndex endIndex:endIndex];\n    if (findIndex == -1) {\n        findIndex = [TOUtils indexOfConItem:item atAbsContent:content layerDiff:layerDiff startIndex:startIndex endIndex:endIndex];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.m:121-144"
+    },
+    "1153": {
+        "file_id": 119,
+        "content": "This code defines two methods, both searching for a specific object (conItem or item) within an array (content) and returning its index if found. The search considers the layerDiff parameter, which seems to represent a difference in layers between the objects being compared. The first method returns -1 if the object is not found, while the second method continues searching if the first method returns -1.",
+        "type": "comment"
+    },
+    "1154": {
+        "file_id": 119,
+        "content": "    }\n    return findIndex;\n}\n//MARK:===============================================================\n//MARK:                     < 从TO短时记忆取demand >\n//MARK:===============================================================\n//获取subOutModel所在的pFo\n+(AIMatchFoModel*) getBasePFoWithSubOutModel:(TOModelBase*)subOutModel {\n    //1. 最终没找着,返回nil;\n    if (!subOutModel) return nil;\n    //2. 当前是fo且有指向pFo时: 找到了,返回;\n    if (ISOK(subOutModel, TOFoModel.class)) {\n        TOFoModel *foModel = (TOFoModel*)subOutModel;\n        if (ISOK(foModel.basePFoOrTargetFoModel, AIMatchFoModel.class)) {\n            return foModel.basePFoOrTargetFoModel;\n        }\n    }\n    //3. 当前没找到pFo,则继续顺着base找上去;\n    return [self getBasePFoWithSubOutModel:subOutModel.baseOrGroup];\n}\n/**\n *  MARK:--------------------获取subOutModel的demand--------------------\n */\n+(DemandModel*) getRootDemandModelWithSubOutModel:(TOModelBase*)subOutModel{\n    NSMutableArray *demands = [self getBaseDemands_AllDeep:subOutModel];\n    return ARR_INDEX_REVERSE(demands, 0);\n}\n/**\n *  MARK:--------------------向着某方向取所有demands--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.m:145-180"
+    },
+    "1155": {
+        "file_id": 119,
+        "content": "This code contains several methods: `getBasePFoWithSubOutModel`, `getRootDemandModelWithSubOutModel`, and `getBaseDemands_AllDeep`. The first method searches for the base Parent-Fo (pFo) of a given sub-model, returning nil if no pFo is found. The second method retrieves the root demand model from a given sub-out-model by extracting all demands in its path and selecting the first one in reverse order. The third method gets all base demands for a given sub-out-model recursively.",
+        "type": "comment"
+    },
+    "1156": {
+        "file_id": 119,
+        "content": " *  @version\n *      2021.06.01: 因为R子任务时baseOrGroup为空,导致链条中断获取不全的BUG修复 (参考23094);\n *      2021.06.01: 支持getSubDemands_AllDeep (子方向);\n *  @result 含子任务和root任务 notnull;\n *  @rank : base在后,sub在前;\n */\n+(NSMutableArray*) getBaseDemands_AllDeep:(TOModelBase*)subModel{\n    return [SMGUtils filterArr:[self getBaseOutModels_AllDeep:subModel] checkValid:^BOOL(id item) {\n        return ISOK(item, DemandModel.class);\n    }];\n}\n+(NSInteger) getBaseDemandsDeepCount:(TOModelBase*)subModel{\n    return [self getBaseDemands_AllDeep:subModel].count;\n}\n+(NSMutableArray*) getBaseRDemands_AllDeep:(TOModelBase*)subModel{\n    return [SMGUtils filterArr:[self getBaseOutModels_AllDeep:subModel] checkValid:^BOOL(id item) {\n        return ISOK(item, ReasonDemandModel.class);\n    }];\n}\n/**\n *  MARK:--------------------获取rDemand的来源同伴--------------------\n *  @version\n *      2022.03.23: 初版 (参考25184-方案2-分析);\n *  @result notnull\n */\n//+(NSArray*) getSeemFromIdenRDemands:(ReasonDemandModel*)rDemand{\n//    //1. 数据准备;\n//    NSString *fromIden = STRTOOK(rDemand.fromIden);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.m:181-209"
+    },
+    "1157": {
+        "file_id": 119,
+        "content": "This code retrieves base and sub tasks, and counts the number of base demands in each category (demands and reason demands) from a given model. It also provides methods to filter and retrieve related reason demands based on the provided model. The code is part of a larger project focused on task management and organization.",
+        "type": "comment"
+    },
+    "1158": {
+        "file_id": 119,
+        "content": "//    NSMutableArray *result = [[NSMutableArray alloc] init];\n//\n//    //2. 分别从root出发,收集同fromIden的RDemands;\n//    for (DemandModel *item in theTC.outModelManager.getAllDemand) {\n//        NSArray *subs = [self getSubOutModels_AllDeep:item validStatus:nil cutStopStatus:nil];\n//        NSArray *validSubs = [SMGUtils filterArr:subs checkValid:^BOOL(ReasonDemandModel *sub) {\n//            return ISOK(sub, ReasonDemandModel.class) && [fromIden isEqualToString:sub.fromIden];\n//        }];\n//        [result addObjectsFromArray:validSubs];\n//    }\n//result = [SMGUtils filterArr:result checkValid:^BOOL(ReasonDemandModel *item) {\n//    AIFoNodeBase *itemFo = [SMGUtils searchNode:item.mModel.matchFo];\n//    AIFoNodeBase *demandFo = [SMGUtils searchNode:demand.mModel.matchFo];\n//    return [demandFo.cmvNode_p.identifier isEqualToString:itemFo.cmvNode_p.identifier];\n//}];\n//    return result;\n//}\n//MARK:===============================================================\n//MARK:                     < 从TO短时记忆取outModel >\n//MARK:===============================================================",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.m:210-231"
+    },
+    "1159": {
+        "file_id": 119,
+        "content": "This code retrieves all `DemandModel` objects from the `outModelManager` and iterates through them, collecting their child `subOutModels` that match a specific `fromIden`. It then filters the collected `subOutModels` based on a custom condition. Finally, it filters the entire result list using another custom condition before returning the result.",
+        "type": "comment"
+    },
+    "1160": {
+        "file_id": 119,
+        "content": "+(NSArray*) getSubOutModels_AllDeep:(TOModelBase*)outModel validStatus:(NSArray*)validStatus{\n    return [self getSubOutModels_AllDeep:outModel validStatus:validStatus cutStopStatus:@[@(TOModelStatus_Finish)]];\n}\n+(NSArray*) getSubOutModels_AllDeep:(TOModelBase*)outModel validStatus:(NSArray*)validStatus cutStopStatus:(NSArray*)cutStopStatus{\n    //1. 数据准备\n    validStatus = ARRTOOK(validStatus);\n    cutStopStatus = ARRTOOK(cutStopStatus);\n    NSMutableArray *result = [[NSMutableArray alloc] init];\n    if (!outModel) return result;\n    //2. 收集当前 (当valid为空时,全收集);\n    if (!ARRISOK(validStatus) || [validStatus containsObject:@(outModel.status)]) {\n        [result addObject:outModel];\n    }\n    //3. Finish负责截停递归;\n    if (![cutStopStatus containsObject:@(outModel.status)]) {\n        //3. 找出子集\n        NSMutableArray *subs = [self getSubOutModels:outModel];\n        //4. 递归收集子集;\n        for (TOModelBase *sub in subs) {\n            [result addObjectsFromArray:[self getSubOutModels_AllDeep:sub validStatus:validStatus cutStopStatus:cutStopStatus]];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.m:232-255"
+    },
+    "1161": {
+        "file_id": 119,
+        "content": "This method retrieves all sub models of the given `outModel` with a specific status, including their descendants. It takes optional arrays for valid and cut-stop statuses as parameters. It first prepares the data by converting the status arrays to immutable ones and initializes an empty array called 'result'. If no outModel is provided, it returns the result immediately. Then, it checks if the given model's status matches any of the valid statuses or if there are no valid statuses specified. If so, it adds the current model to the result array. Finally, if the current model's status is not one of the cut-stop statuses, it recursively calls itself for all sub-models and adds their results to the 'result' array.",
+        "type": "comment"
+    },
+    "1162": {
+        "file_id": 119,
+        "content": "        }\n    }\n    return result;\n}\n/**\n *  MARK:--------------------获取子models--------------------\n *  @version\n *      2021.06.03: 将实现接口判断,改为使用conformsToProtocol,而非判断类名 (因为类名方式有新的类再实现后,易出bug);\n *  @result notnull\n */\n+(NSMutableArray*) getSubOutModels:(TOModelBase*)outModel {\n    //1. 数据准备\n    NSMutableArray *result = [[NSMutableArray alloc] init];\n    if (!outModel) return result;\n    //2. 找出子集 (Finish负责截停递归);\n    if ([outModel conformsToProtocol:@protocol(ITryActionFoDelegate)]) {\n        id<ITryActionFoDelegate> tryActionObj = (id<ITryActionFoDelegate>)outModel;\n        [result addObjectsFromArray:tryActionObj.actionFoModels];\n    }\n    if ([outModel conformsToProtocol:@protocol(ISubModelsDelegate)]) {\n        id<ISubModelsDelegate> subModelsObj = (id<ISubModelsDelegate>)outModel;\n        [result addObjectsFromArray:subModelsObj.subModels];\n    }\n    if ([outModel conformsToProtocol:@protocol(ISubDemandDelegate)]) {\n        id<ISubDemandDelegate> subDemandsObj = (id<ISubDemandDelegate>)outModel;\n        [result addObjectsFromArray:subDemandsObj.subDemands];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.m:256-283"
+    },
+    "1163": {
+        "file_id": 119,
+        "content": "This code gets a parent model and returns a mutable array of its submodels. It checks if the parent model conforms to three protocols: ITryActionFoDelegate, ISubModelsDelegate, and ISubDemandDelegate. If it does, it adds the corresponding models to the result array.",
+        "type": "comment"
+    },
+    "1164": {
+        "file_id": 119,
+        "content": "    }\n    return result;\n}\n+(NSMutableArray*) getBaseOutModels_AllDeep:(TOModelBase*)subModel{\n    //1. 数据准备;\n    NSMutableArray *result = [[NSMutableArray alloc] init];\n    if (!subModel) return result;\n    //2. 向base取;\n    TOModelBase *checkModel = subModel;\n    while (checkModel) {\n        [result addObject:checkModel];\n        checkModel = checkModel.baseOrGroup;\n    }\n    return result;\n}\n//MARK:===============================================================\n//MARK:                     < convert >\n//MARK:===============================================================\n/**\n *  MARK:--------------------将TOModels转为Pointers--------------------\n *  @result notnull\n */\n+(NSMutableArray*) convertPointersFromTOModels:(NSArray*)toModels{\n    //1. 收集返回 (不收集content_p为空的部分,如:TOValueModel的目标pValue有时为空);\n    return [SMGUtils convertArr:toModels convertBlock:^id(TOModelBase *obj) {\n        return obj.content_p;\n    }];\n}\n//R时返回pFo.matchFo,H时返回targetFo;\n+(AIKVPointer*) convertBaseFoFromBasePFoOrTargetFoModel:(id)basePFoOrTargetFoModel {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.m:284-318"
+    },
+    "1165": {
+        "file_id": 119,
+        "content": "This method is used to retrieve a list of base models from a given model sub-tree. The code first checks if the sub-model is valid and then iterates through the sub-tree, adding each base or group model to a result array. Finally, it returns this array containing all base models found in the sub-tree.",
+        "type": "comment"
+    },
+    "1166": {
+        "file_id": 119,
+        "content": "    if (ISOK(basePFoOrTargetFoModel, AIMatchFoModel.class)) {\n        AIMatchFoModel *pFo = (AIMatchFoModel*)basePFoOrTargetFoModel;\n        return pFo.matchFo;\n    } else if(ISOK(basePFoOrTargetFoModel, TOFoModel.class)){\n        TOFoModel *targetFo = (TOFoModel*)basePFoOrTargetFoModel;\n        return targetFo.content_p;\n    }\n    return nil;\n}\n/**\n *  MARK:--------------------是否HNGL节点--------------------\n *  @version\n *      2020.12.16: 增加toAlgModel判断的重载 (因为21115的改动,hngl并不直接由alg判断,而是由fo来判断);\n *  @bug\n *      2020.12.24: isL写成了isN,导致L节点无法判定为HNGL,也导致无法ActYes并触发反省类比;\n */\n+(BOOL) isHNGL:(AIKVPointer*)p{\n    return [self isH:p] || [self isN:p] || [self isG:p] || [self isL:p];\n}\n+(BOOL) isHNGLSP:(AIKVPointer*)p{\n    return [self isH:p] || [self isN:p] || [self isG:p] || [self isL:p] || [self isS:p] || [self isP:p];\n}\n+(BOOL) isH:(AIKVPointer*)p{\n    return p && p.type == ATHav;\n}\n+(BOOL) isN:(AIKVPointer*)p{\n    return p && p.type == ATNone;\n}\n+(BOOL) isG:(AIKVPointer*)p{\n    return p && p.type == ATGreater;\n}\n+(BOOL) isL:(AIKVPointer*)p{",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.m:319-351"
+    },
+    "1167": {
+        "file_id": 119,
+        "content": "This code checks the type of a given AIKVPointer and returns its match or content value. It also contains utility functions to check if the pointer is of type H, N, G, L, S or P. These functions are used to determine if a node is an HNGL node, which could be used in decision making or further processing.",
+        "type": "comment"
+    },
+    "1168": {
+        "file_id": 119,
+        "content": "    return p && p.type == ATLess;\n}\n+(BOOL) isS:(AIKVPointer*)p{\n    return p && p.type == ATSub;\n}\n+(BOOL) isP:(AIKVPointer*)p{\n    return p && p.type == ATPlus;\n}\n/**\n *  MARK:--------------------求fo的deltaTime之和--------------------\n */\n//从cutIndex取到mvDeltaTime;\n+(double) getSumDeltaTime2Mv:(AIFoNodeBase*)fo cutIndex:(NSInteger)cutIndex{\n    return [self getSumDeltaTime:fo startIndex:cutIndex endIndex:fo.count];\n}\n/**\n *  MARK:--------------------获取指定获取的deltaTime之和--------------------\n *  _param startIndex   : 下标(不含);\n *  _param endIndex     : 下标(含);\n *  @templete : 如[0,1,2,3],因不含s和含e,取1到3位时,得出结果应该是2+3=5,即range应该是(2到4),所以range=(s+1,e-s);\n *  @bug\n *      2020.09.10: 原来取range(s,e-s)不对,更正为:range(s+1,e-s);\n */\n+(double) getSumDeltaTime:(AIFoNodeBase*)fo startIndex:(NSInteger)startIndex endIndex:(NSInteger)endIndex{\n    double result = 0;\n    if (fo) {\n        //1. 累计deltaTimes中值;\n        NSArray *valids = ARR_SUB(fo.deltaTimes, startIndex + 1, endIndex - startIndex);\n        for (NSNumber *valid in valids) {\n            result += [valid doubleValue];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.m:352-383"
+    },
+    "1169": {
+        "file_id": 119,
+        "content": "This code contains several methods for checking the type of AIKVPointer, and a method for calculating the sum of deltaTimes in a specified range of AIFoNodeBase. The getSumDeltaTime method takes a start index and end index as parameters to calculate the sum of deltaTimes within that range.",
+        "type": "comment"
+    },
+    "1170": {
+        "file_id": 119,
+        "content": "        }\n        //2. 累计mvDeltaTime值;\n        if (endIndex >= fo.count) {\n            result += fo.mvDeltaTime;\n        }\n    }\n    return result;\n}\n+(NSString*) toModel2Key:(TOModelBase*)toModel{\n    return STRFORMAT(@\"%p_%@\",toModel,Pit2FStr(toModel.content_p));\n}\n/**\n *  MARK:--------------------effectDic的HN求和--------------------\n */\n+(NSRange) getSumEffectHN:(NSDictionary*)effectDic{\n    int sumH = 0,sumN = 0;\n    for (NSArray *value in effectDic.allValues) {\n        for (AIEffectStrong *strong in value) {\n            sumH += strong.hStrong;\n            sumN += strong.nStrong;\n        }\n    }\n    return NSMakeRange(sumH, sumN);\n}\n/**\n *  MARK:--------------------稳定性评分--------------------\n *  @desc 根据SP计算\"稳定性\"分 (稳定性指顺,就是能顺利发生的率);\n *  @version\n *      2022.05.23: 初版 (参考26096-BUG1);\n *      2022.06.02: 每一帧的稳定性默认为0.5,而不是1 (参考26191);\n *  @result 1. 负价值时序时返回多坏(0-1);\n *          2. 正价值时序时返回多好(0-1);\n *          3. 无价值时序时返回多顺(0-1);\n */\n+(CGFloat) getStableScore:(AIFoNodeBase*)fo startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex{",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.m:384-422"
+    },
+    "1171": {
+        "file_id": 119,
+        "content": "This function calculates the cumulative mvDeltaTime value for a given sequence of objects, returns an NSString representation of TOModelBase by converting its address and content_p value, defines getSumEffectHN to calculate the sum of effectDic's horizontal and numerical values, provides a stable score calculation method that takes in AIFoNodeBase, startSPIndex, and endSPIndex as parameters, and returns CGFloat representing the stability score.",
+        "type": "comment"
+    },
+    "1172": {
+        "file_id": 119,
+        "content": "    //1. 数据检查 & 稳定性默认为1分 & 正负mv的公式是不同的 (参考25122-公式);\n    if (!fo) return 0;\n    CGFloat totalSPScore = 1.0f;\n    BOOL isBadMv = [ThinkingUtils havDemand:fo.cmvNode_p];\n    //2. 从start到end各计算spScore;\n    for (NSInteger i = startSPIndex; i <= endSPIndex; i++) {\n        AISPStrong *spStrong = [fo.spDic objectForKey:@(i)];\n        //3. 当sp经历都为0条时 (正mv时,表示多好评分 | 负mv时,表示多坏评分) 默认评分都为0.5;\n        CGFloat itemSPScore = 0.5f;\n        //4. SP有效且其中之一不为0时,计算稳定性评分;\n        if (spStrong && spStrong.pStrong + spStrong.sStrong > 0) {\n            //4. 取\"多好\"程度;\n            CGFloat pRate = spStrong.pStrong / (float)(spStrong.sStrong + spStrong.pStrong);\n            //5.1 在感性的负mv时,itemSPScore = 1 - pRate (参考25122-负公式);\n            if (i == fo.count && isBadMv) {\n                itemSPScore = 1 - pRate;\n            }else{\n                //5.2 在理性评分中,pStrong表示顺利程度,与mv正负成正比;\n                //5.3 在感性正mv时,pRate与它的稳定性评分一致;\n                itemSPScore = pRate;\n            }\n        }\n        //6. 将itemSPScore计入综合评分 (参考25114 & 25122-公式);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.m:423-452"
+    },
+    "1173": {
+        "file_id": 119,
+        "content": "Checks data integrity and initializes stability score to 1. Calculates spScore for each section from start to end index. If all sp values are 0, sets default score to 0.5. If any sp value is not zero, calculates the steadiness score. Uses the ratio of positive to total sp values and applies it to itemSPScore based on mv type. Finally, adds itemSPScore to totalSPScore.",
+        "type": "comment"
+    },
+    "1174": {
+        "file_id": 119,
+        "content": "        totalSPScore *= itemSPScore;\n    }\n    //9. 返回SP评分 (多坏或多好);\n    return totalSPScore;\n}\n/**\n *  MARK:--------------------SP好坏评分--------------------\n *  @desc 根据综合稳定性计算\"多好\"评分 (参考25114 & 25122-负公式);\n *  @version\n *      2022.02.20: 改为综合评分,替代掉RSResultModelBase;\n *      2022.02.22: 修复明明S有值,P为0,但综评为1分的问题 (||写成了&&导致的);\n *      2022.02.24: 支持负mv时序的稳定性评分公式 (参考25122-负公式);\n *      2022.02.24: 修复因代码逻辑错误,导致负mv在全顺状态下,评为1分的BUG (修复: 明确itemSPScore的定义,整理代码后ok);\n *      2022.05.02: 修复因Int值类型,导致返回result只可能是0或1的问题;\n *      2022.05.14: 当SP全为0时,默认返回0.5 (参考26026-BUG2);\n *  @result 返回spScore稳定性综合评分: 越接近1分越好,越接近0分越差;\n */\n+(CGFloat) getSPScore:(AIFoNodeBase*)fo startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex{\n    //1. 获取稳定性评分;\n    CGFloat stableScore = [self getStableScore:fo startSPIndex:startSPIndex endSPIndex:endSPIndex];\n    //2. 负mv的公式是: 1-stableScore (参考25122-公式&负公式);\n    BOOL isBadMv = [ThinkingUtils havDemand:fo.cmvNode_p];\n    if (isBadMv) {\n        stableScore = 1 - stableScore;\n    }\n    //3. 返回好坏评分;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.m:453-482"
+    },
+    "1175": {
+        "file_id": 119,
+        "content": "Calculates the overall stability score based on the given start and end indices for the stability parameters, considers negative motion vectors, and returns a value between 0 and 1 indicating how good or bad the stability is.",
+        "type": "comment"
+    },
+    "1176": {
+        "file_id": 119,
+        "content": "    return stableScore;\n}\n/**\n *  MARK:--------------------有效率评分--------------------\n *  @desc 计算有效率性评分 (参考26095-8);\n *  @param demandFo     : R任务时传pFo即可, H任务时传hDemand.base.baseFo;\n *  @param effectIndex  : R任务时传demandFo.count, H任务时传hDemand.base.baseFo.actionIndex;\n *  @param solutionFo   : 用于检查有效率的solutionFo;\n *  @version\n *      2022.05.22: 初版,可返回解决方案的有效率 (参考26095-8);\n */\n+(CGFloat) getEffectScore:(AIFoNodeBase*)demandFo effectIndex:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo{\n    AIEffectStrong *strong = [self getEffectStrong:demandFo effectIndex:effectIndex solutionFo:solutionFo];\n    return [self getEffectScore:strong];\n}\n+(CGFloat) getEffectScore:(AIEffectStrong*)strong{\n    if (strong) {\n        if (strong.hStrong + strong.nStrong > 0) {\n            return (float)strong.hStrong / (strong.hStrong + strong.nStrong);\n        }else{\n            return 0.0f;\n        }\n    }\n    return 0;\n}\n+(AIEffectStrong*) getEffectStrong:(AIFoNodeBase*)demandFo effectIndex:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo{",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.m:483-509"
+    },
+    "1177": {
+        "file_id": 119,
+        "content": "This code calculates the effective rating score based on the given demand, effect index, and solution Fo. It returns the stable score calculated in the previous section. The getEffectScore method takes parameters demandFo, effectIndex, and solutionFo to calculate the effective rating score using getEffectScore:getEffectStrong: methods.",
+        "type": "comment"
+    },
+    "1178": {
+        "file_id": 119,
+        "content": "    return [demandFo getEffectStrong:effectIndex solutionFo:solutionFo];\n}\n+(NSString*) getEffectDesc:(AIFoNodeBase*)demandFo effectIndex:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo{\n    AIEffectStrong *strong = [self getEffectStrong:demandFo effectIndex:effectIndex solutionFo:solutionFo];\n    return STRFORMAT(@\"%ld/%ld\",strong.hStrong,strong.hStrong + strong.nStrong);\n}\n//MARK:===============================================================\n//MARK:                     < 衰减曲线 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------获取fo衰减后的值--------------------\n *  @param fo_p         : 计算fo的衰减后的值;\n *  @param outOfFo_ps   : fo的竞争者 (包含fo);\n *  @desc 使用牛顿冷却函数,步骤说明:\n *      1. 根据F指针地址排序,比如(F1,F3,F5,F7,F9)\n *      2. 默认衰减时间为F总数,即5;\n *      3. 当sp强度都为1时,最新的F9为热度为1,最旧的F1热度为minValue;\n *      4. 当sp强度>1时,衰减时长 = 默认时长5 * 根号sp强度;\n *  @version\n *      2022.05.24: 初版,用于解决fo的衰减,避免时序识别时,明明fo很老且SP都是0,却可以排在很前面 (参考26104-方案);\n */\n+(double) getColValue:(AIKVPointer*)fo_p outOfFos:(NSArray*)outOfFo_ps {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.m:510-533"
+    },
+    "1179": {
+        "file_id": 119,
+        "content": "This code snippet is for retrieving the effect description and handling decay curves to calculate the final value of a given fo. It involves getting an effect strong object, formatting a string with the strong values, and using Newton's cooling function to compute the final value after factoring in competing fos.",
+        "type": "comment"
+    },
+    "1180": {
+        "file_id": 119,
+        "content": "    //0. 数据检查;\n    if (!fo_p || ![outOfFo_ps containsObject:fo_p]) {\n        return 1.0f;\n    }\n    //1. 对fos排序 & 计算衰减区 (从1到minValue的默认区间: 即每强度系数单位可支撑区间);\n    outOfFo_ps = [SMGUtils sortBig2Small:outOfFo_ps compareBlock:^double(AIKVPointer *obj) {\n        return obj.pointerId;\n    }];\n    float defaultColSpace = outOfFo_ps.count;\n    //2. 计算fo的sp强度系数 (总强度 + 1,然后开根号);\n    AIFoNodeBase *fo = [SMGUtils searchNode:fo_p];\n    int sumSPStrong = 1;\n    for (AISPStrong *item in fo.spDic.allValues) sumSPStrong += (item.sStrong + item.pStrong);\n    float strongXiSu = sqrtf(sumSPStrong);\n    //3. fo的实际衰减区间 (默认区间 x 强度系数);\n    float colSpace = defaultColSpace * strongXiSu;\n    //4. 衰减系数 (在colTime结束后,衰减到最小值);\n    float minValue = 0.1f;\n    double colXiSu = log(minValue) / colSpace;\n    //5. 取当前fo的age & 计算牛顿衰减后的值;\n    NSInteger foAge = [outOfFo_ps indexOfObject:fo_p];\n    double result = exp(colXiSu * foAge);\n    return result;\n}\n/**\n *  MARK:--------------------获取衰减后的稳定性--------------------\n */\n+(CGFloat) getColStableScore:(A",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.m:534-567"
+    },
+    "1181": {
+        "file_id": 119,
+        "content": "This function calculates the decay value for an object's stability score based on its age and a set of other objects, using exponential decay formula. It first checks if the input object is valid, then sorts the set of objects by their pointerId in descending order, calculates the decay space based on the sum of strong values from all SPStrongs in the Fo node, determines the actual decay range as default range multiplied by strong value, computes the decay factor using logarithm with minValue as base and current index, finally returns the exponential result of decay factor times age.",
+        "type": "comment"
+    },
+    "1182": {
+        "file_id": 119,
+        "content": "IFoNodeBase*)fo outOfFos:(NSArray*)outOfFo_ps startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex {\n    double colValue = [TOUtils getColValue:fo.pointer outOfFos:outOfFo_ps];\n    CGFloat stableScore = [TOUtils getStableScore:fo startSPIndex:startSPIndex endSPIndex:endSPIndex];\n    return colValue * stableScore;\n}\n/**\n *  MARK:--------------------获取衰减后的SP好坏评分--------------------\n */\n+(CGFloat) getColSPScore:(AIFoNodeBase*)fo outOfFos:(NSArray*)outOfFo_ps startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex{\n    CGFloat stableScore = [self getColStableScore:fo outOfFos:outOfFo_ps startSPIndex:startSPIndex endSPIndex:endSPIndex];\n    return [ThinkingUtils havDemand:fo.cmvNode_p] ? 1 - stableScore : stableScore;\n}\n/**\n *  MARK:--------------------检查某toModel的末枝有没有ActYes状态--------------------\n *  @desc 因为actYes向上传染,不向下,所以末枝有actYes,即当前curModel也不应响应 (参考26184-原则);\n *  @version\n *      2023.03.04: 判断末枝要排除subDemand的影响 (参考28143-回测 & 修复);\n *      2023.08.19: 末枝不排除hDemandModel (参考30113-todo1);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.m:567-586"
+    },
+    "1183": {
+        "file_id": 119,
+        "content": "This code calculates the stable score and colSPScore of a given foNodeBase, taking into account outOfFos and SP indices. It also checks if the toModel has any ActYes state at the end branch, considering subDemand and hDemandModel.",
+        "type": "comment"
+    },
+    "1184": {
+        "file_id": 119,
+        "content": " */\n+(BOOL) endHavActYes:(TOModelBase*)curModel{\n    NSArray *allSubModels = [TOUtils getSubOutModels_AllDeep:curModel validStatus:nil];\n    BOOL endHavActYes = [SMGUtils filterSingleFromArr:allSubModels checkValid:^BOOL(TOModelBase *item) {\n        //1. 判断是ActYes状态;\n        if (item.status == TOModelStatus_ActYes) {\n            //2. 判断是末枝 (其下有Demand不算) (参考28143-修复);\n            NSArray *subModels = [TOUtils getSubOutModels:item];\n            subModels = [SMGUtils filterArr:subModels checkValid:^BOOL(id item) {\n                return !ISOK(item, ReasonDemandModel.class);\n            }];\n            return subModels.count == 0;\n        }\n        return false;\n    }];\n    return endHavActYes;\n}\n/**\n *  MARK:--------------------将cansets中同fo的strong合并--------------------\n */\n+(NSArray*) mergeCansets:(NSArray*)protoCansets{\n    NSMutableDictionary *cansetsDic = [[NSMutableDictionary alloc] init];\n    for (AIEffectStrong *item in protoCansets) {\n        //a. 取旧;\n        id key = @(item.solutionFo.pointerId);\n        AIEffectStrong *old = [cansetsDic objectForKey:key];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.m:587-613"
+    },
+    "1185": {
+        "file_id": 119,
+        "content": "This code seems to be part of a larger program and contains two separate methods. The first method, `endHavActYes`, checks if there is any valid \"ActYes\" status sub-model at the deepest level in the provided model hierarchy. The second method, `mergeCansets`, takes an array of \"AIEffectStrong\" objects (presumably representing different solutions or options) and merges them based on a shared \"fo\" parameter. Both methods seem to be unrelated to each other in terms of functionality.",
+        "type": "comment"
+    },
+    "1186": {
+        "file_id": 119,
+        "content": "        if (!old) old = [AIEffectStrong newWithSolutionFo:item.solutionFo];\n        //b. 更新;\n        old.hStrong += item.hStrong;\n        old.nStrong += item.nStrong;\n        [cansetsDic setObject:old forKey:key];\n    }\n    return cansetsDic.allValues;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/TOUtils.m:614-625"
+    },
+    "1187": {
+        "file_id": 119,
+        "content": "The code adds an effect to an existing item, updating its strength values and storing it in a dictionary.",
+        "type": "comment"
+    },
+    "1188": {
+        "file_id": 120,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/README.md",
+        "type": "filepath"
+    },
+    "1189": {
+        "file_id": 120,
+        "content": "The code outlines the changes and improvements made to the architecture, such as deprecating p tasks and effect modules. It suggests a structured code layout with TC sections for input, recognition, learning, demand, output, score, plan, can set, scene, solution, transfer, and action. The goal is to organize Util and Model files in their respective locations.",
+        "type": "summary"
+    },
+    "1190": {
+        "file_id": 120,
+        "content": "### version\n* 2021.11.28: 重构为2021TC架构 (参考24164架构图);\n### 待改动\n1. 废弃p任务;\n2. 废弃effect模块 (参考27205);\n3. 架构整理: 代码结构应该也是结构化一分二分四分八如下:\n    * TC\n        * IN\n            * 入(感知)\n                * TCInput\n            * 认(识别)\n                * TCRecognition\n            * 知(学习)\n                * TCLearning\n            * 需(任务)\n                * TCDemand\n        * OUT\n            * 求(计划)\n                * TCScore\n                * TCPlan\n            * 决(求解)\n                * TCCanset\n                * TCScene\n                * TCSolution\n            * 策(迁移)\n                * TCTransfer\n            * 出(行为)\n                * TCAction\n4. 架构整理: 然后将各级的Util和Model都整理到自己的位置;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/README.md:1-33"
+    },
+    "1191": {
+        "file_id": 120,
+        "content": "The code outlines the changes and improvements made to the architecture, such as deprecating p tasks and effect modules. It suggests a structured code layout with TC sections for input, recognition, learning, demand, output, score, plan, can set, scene, solution, transfer, and action. The goal is to organize Util and Model files in their respective locations.",
+        "type": "comment"
+    },
+    "1192": {
+        "file_id": 121,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCActYes/TCActYes.h",
+        "type": "filepath"
+    },
+    "1193": {
+        "file_id": 121,
+        "content": "This code defines a class TCActYes, which is an Objective-C object. The class contains several methods to trigger behaviors based on different input models such as TOAlgModel and TOFoModel. It also includes a method frameActYes that takes a solution model (presumably a TOFoModel) as its parameter.",
+        "type": "summary"
+    },
+    "1194": {
+        "file_id": 121,
+        "content": "//\n//  TCActYes.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/12/26.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------行为化推进触发器--------------------\n */\n@interface TCActYes : NSObject\n//+(void) arsTimeActYes:(TOAlgModel*)algModel;\n//+(void) rActYes:(TOFoModel*)foModel;\n//+(void) hActYes:(TOAlgModel*)algModel;\n//+(void) pActYes:(TOFoModel*)foModel;\n+(void) frameActYes:(TOFoModel*)solutionModel;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCActYes/TCActYes.h:1-22"
+    },
+    "1195": {
+        "file_id": 121,
+        "content": "This code defines a class TCActYes, which is an Objective-C object. The class contains several methods to trigger behaviors based on different input models such as TOAlgModel and TOFoModel. It also includes a method frameActYes that takes a solution model (presumably a TOFoModel) as its parameter.",
+        "type": "comment"
+    },
+    "1196": {
+        "file_id": 122,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCActYes/TCActYes.m",
+        "type": "filepath"
+    },
+    "1197": {
+        "file_id": 122,
+        "content": "The TCActYes class in Swift programs predicts tor_Forecast, updates demand models, triggers perception rethink, and performs reflective analysis for ActYes situations, while processing TOFoModel data and handling roots as part of feedback processing.",
+        "type": "summary"
+    },
+    "1198": {
+        "file_id": 122,
+        "content": "//\n//  TCActYes.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/12/26.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import \"TCActYes.h\"\n@implementation TCActYes\n/**\n *  @desc : 预测tor_Forecast: 当ActYes时,一般等待外循环反馈,而此处构建生物钟触发器,用于超时时触发反省类比;\n *      1. 调用AITime触发器 (为了Out反省);\n *      2. 当生物钟触发器触发时,如果未输入有效\"理性推进\" 或 \"感性抵消\",则对这些期望与实际的差距进行反省类比;\n *  @callers\n *      1. demand.ActYes处\n *      2. 行为化Hav().HNGL.ActYes处\n *      3. 行为输出ActYes处\n *  @todo\n *      2020.08.31: 对isOut触发的,先不做处理,因为一般都能直接行为输出并匹配上,所以暂不处理;\n *  @version\n *      2020.10.17: 在生物钟触发器触发器,做有根判定,任务失效时,不进行反省 (参考note21-todolist-1);\n *      2020.12.18: HNGL失败时再调用Begin会死循环的问题,改为HNGL.ActYes失败时,则直接调用FC.Failure(hnglAlg);\n *      2021.01.27: R-模式的ActYes仅赋值,不在此处做触发器 (参考22081-todo4);\n *      2021.01.28: R-模式的ActYes在此处触发Out反省,与昨天思考的In反省触发不冲突 (参考22082);\n *      2021.01.28: ReasonDemand触发后,无论成功失败,都移出任务池 (参考22081-todo2&3);\n *      2021.03.11: 支持第四个触发器,R-模式时理性帧推进的触发 (参考n22p15-静默成功);\n *      2021.05.09: 对HNGL的触发,采用AINoRepeatRun防重触发 (参考23071-方案2);\n *      2021.06.09: 修复静默成功任务的deltaTime一直为0的BUG (参考23125);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCActYes/TCActYes.m:1-31"
+    },
+    "1199": {
+        "file_id": 122,
+        "content": "This code is part of the TCActYes class implementation and defines its functionality. It is responsible for predicting tor_Forecast when ActYes is triggered, calling the AITime trigger if out, and building a biological clock trigger for timeout-based reflection if inputs for rational progress or emotional offsets are not present. The code also includes various notes and todo items related to updates and fixes made over time.",
+        "type": "comment"
+    }
+}

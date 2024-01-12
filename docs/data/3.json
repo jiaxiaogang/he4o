@@ -1,0 +1,539 @@
+{
+    "300": {
+        "file_id": 31,
+        "content": "//\n//  AINetAbsCMVUtil.h\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/7/27.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface AINetAbsCMVUtil : NSObject\n/**\n *  MARK:--------------------取aNode和bNode的抽象urgentTo值--------------------\n */\n+(NSInteger) getAbsUrgentTo:(NSArray*)mvNodes;\n/**\n *  MARK:--------------------取aNode和bNode的抽象delta值--------------------\n */\n+(NSInteger) getAbsDelta:(NSArray*)mvNodes;\n/**\n *  MARK:--------------------获取抽象mv的初始方向索引强度--------------------\n *  @version:\n *      最初版 - 报告添加direction引用 (difStrong暂时先x2;(因为一般是两个相抽象))\n *      20200425前 - 使用absMv的urgentTo做初始强度;\n *      20200425后 - 使用具象中最强的方向索引强度+1 (参考n19p13);\n */\n+(NSInteger) getDefaultStrong_Index:(AIAbsCMVNode*)absMv conMvs:(NSArray*)conMvs;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIAbsCMVManager/AINetAbsCMVUtil.h:1-34"
+    },
+    "301": {
+        "file_id": 31,
+        "content": "This file, AINetAbsCMVUtil.h, defines a class for various methods related to abstracting and working with motion vectors (mvNodes). It provides functions to get the absolute urgentTo and delta values of two mv nodes, as well as to calculate the initial direction index strength of an abstract mv. This file has undergone changes over time, including updates to how the default strong index is determined.",
+        "type": "comment"
+    },
+    "302": {
+        "file_id": 32,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AIAbsCMVManager/AINetAbsCMVUtil.m",
+        "type": "filepath"
+    },
+    "303": {
+        "file_id": 32,
+        "content": "This code retrieves urgentTo and delta values from mvNodes arrays using methods that iterate through nodes, check validity, and determine reference directions. The method takes an array of nodes and a block, calculates the sum for each node, and returns the average value.",
+        "type": "summary"
+    },
+    "304": {
+        "file_id": 32,
+        "content": "//\n//  AINetAbsCMVUtil.m\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/7/27.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"AINetAbsCMVUtil.h\"\n#import \"AIKVPointer.h\"\n#import \"AINetIndex.h\"\n#import \"AIAbsCMVNode.h\"\n#import \"AIPort.h\"\n#import \"ThinkingUtils.h\"\n@implementation AINetAbsCMVUtil\n//MARK:===============================================================\n//MARK:                     < publicMethod >\n//MARK:===============================================================\n/**\n *  MARK:--------------------取aNode和bNode的抽象urgentTo值--------------------\n */\n+(NSInteger) getAbsUrgentTo:(NSArray*)mvNodes {\n    return [self getAbsValue:mvNodes singleValueBlock:^NSInteger(AICMVNodeBase *mvNode) {\n        if (ISOK(mvNode, AICMVNodeBase.class)) {\n            return [NUMTOOK([AINetIndex getData:mvNode.urgentTo_p]) integerValue];\n        }\n        return 0;\n    }];\n}\n/**\n *  MARK:--------------------取aNode和bNode的抽象delta值--------------------\n */\n+(NSInteger) getAbsDelta:(NSArray*)mvNodes {\n    return [self getAbsValue:mvNodes singleValueBlock:^NSInteger(AICMVNodeBase *mvNode) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIAbsCMVManager/AINetAbsCMVUtil.m:1-40"
+    },
+    "305": {
+        "file_id": 32,
+        "content": "This code file, AINetAbsCMVUtil.m, defines public methods for retrieving abstract urgentTo and delta values from arrays of mvNodes. These methods use singleValueBlock to iterate through the nodes, check if they are valid instances of AICMVNodeBase, and return their corresponding integer values.",
+        "type": "comment"
+    },
+    "306": {
+        "file_id": 32,
+        "content": "        if (ISOK(mvNode, AICMVNodeBase.class)) {\n            return [NUMTOOK([AINetIndex getData:mvNode.delta_p]) integerValue];\n        }\n        return 0;\n    }];\n}\n+(NSInteger) getDefaultStrong_Index:(AIAbsCMVNode*)absMv conMvs:(NSArray*)conMvs{\n    if (absMv && ARRISOK(conMvs)) {\n        //1. 取出方向索引;\n        NSInteger delta = [NUMTOOK([AINetIndex getData:absMv.delta_p]) integerValue];\n        MVDirection direction = [ThinkingUtils getMvReferenceDirection:delta];\n        NSArray *indexes = [theNet getNetNodePointersFromDirectionReference:absMv.pointer.algsType direction:direction limit:INT_MAX];\n        //2. 筛出最强方向索引强度;\n        NSInteger maxStrong = 0;\n        for (__block AICMVNodeBase *weakConMv in conMvs) {\n            AIPort *findPort = ARR_INDEX([SMGUtils filterArr:indexes checkValid:^BOOL(AIPort *item) {\n                return [item.target_p isEqual:weakConMv.pointer];\n            }], 0);\n            if (findPort && maxStrong < findPort.strong.value) {\n                maxStrong = findPort.strong.value;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIAbsCMVManager/AINetAbsCMVUtil.m:41-62"
+    },
+    "307": {
+        "file_id": 32,
+        "content": "This method retrieves the default strong index for a given AIAbsCMVNode. It first checks if the input node is valid, and then converts its delta to an integer. The code determines the reference direction using ThinkingUtils, and retrieves the net node pointers from that direction. Finally, it iterates over conMvs to find the strongest connection based on port strong values, returning the default strong index.",
+        "type": "comment"
+    },
+    "308": {
+        "file_id": 32,
+        "content": "            }\n        }\n        return maxStrong + 1;\n    }\n    return 1;\n}\n//MARK:===============================================================\n//MARK:                     < privateMethod >\n//MARK:===============================================================\n/**\n *  MARK:--------------------获取平均值方法--------------------\n */\n+(NSInteger) getAbsValue:(NSArray*)mvNodes singleValueBlock:(NSInteger(^)(AICMVNodeBase*))singleValueBlock{\n    //1. 数据检查\n    if (!ARRISOK(mvNodes) || !singleValueBlock) {\n        return 0;\n    }\n    //2. 取SUM(urgentTo | delta)\n    NSInteger sum = 0;\n    for (AICMVNodeBase *mvNode in mvNodes) {\n        NSInteger singleValue = singleValueBlock(mvNode);\n        sum += singleValue;\n    }\n    //3. 取absUrgentTo | absDelta; (//由MIN(aUrgentTo, bUrgentTo)改为平均)\n    NSInteger absValue = sum / (int)mvNodes.count;\n    return absValue;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIAbsCMVManager/AINetAbsCMVUtil.m:63-95"
+    },
+    "309": {
+        "file_id": 32,
+        "content": "This method takes in an array of nodes and a single-value block. It checks if the input is valid, then calculates the sum of urgentTo or delta for each node. Finally, it returns the average value by dividing the total sum by the count of nodes.",
+        "type": "comment"
+    },
+    "310": {
+        "file_id": 33,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AIAbsFoManager/AIAbsFoManager.h",
+        "type": "filepath"
+    },
+    "311": {
+        "file_id": 33,
+        "content": "This code is the interface of AIAbsFoManager, which is a class in the SMG_NothingIsAll project. It contains a method called \"create_NoRepeat\" that takes parameters such as content_ps, protoFo, assFo, difStrong, type, protoIndexDic, assIndexDic, outConAbsIsRelate, and noRepeatArea_ps to create a fo version that is not repeated. The method returns an instance of AINetAbsFoNode.",
+        "type": "summary"
+    },
+    "312": {
+        "file_id": 33,
+        "content": "//\n//  AIAbsFoManager.h\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/5/30.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n//MARK:===============================================================\n//MARK:                     < AINetAbs管理器 >\n//MARK:===============================================================\n@class AINetAbsFoNode,AIFoNodeBase;\n@interface AIAbsFoManager : NSObject\n/**\n *  MARK:--------------------构建fo_防重版--------------------\n *  @param difStrong : 构建fo的被引用初始强度;\n */\n-(AINetAbsFoNode*) create_NoRepeat:(NSArray*)content_ps protoFo:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo difStrong:(NSInteger)difStrong type:(AnalogyType)type protoIndexDic:(NSDictionary*)protoIndexDic assIndexDic:(NSDictionary*)assIndexDic outConAbsIsRelate:(BOOL*)outConAbsIsRelate noRepeatArea_ps:(NSArray*)noRepeatArea_ps;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIAbsFoManager/AIAbsFoManager.h:1-23"
+    },
+    "313": {
+        "file_id": 33,
+        "content": "This code is the interface of AIAbsFoManager, which is a class in the SMG_NothingIsAll project. It contains a method called \"create_NoRepeat\" that takes parameters such as content_ps, protoFo, assFo, difStrong, type, protoIndexDic, assIndexDic, outConAbsIsRelate, and noRepeatArea_ps to create a fo version that is not repeated. The method returns an instance of AINetAbsFoNode.",
+        "type": "comment"
+    },
+    "314": {
+        "file_id": 34,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AIAbsFoManager/AIAbsFoManager.m",
+        "type": "filepath"
+    },
+    "315": {
+        "file_id": 34,
+        "content": "The code constructs an AINetAbsFoNode object, handles nested ranges, performs absolute matching, strengthens or creates new nodes, and returns the created abstract fact with related flags.",
+        "type": "summary"
+    },
+    "316": {
+        "file_id": 34,
+        "content": "//\n//  AINetAbs.m\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/5/30.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"AIAbsFoManager.h\"\n#import \"AIMvFoManager.h\"\n#import \"AINetAbsFoUtils.h\"\n@implementation AIAbsFoManager\n/**\n *  MARK:--------------------在foNode基础上构建抽象--------------------\n *  @params orderSames  : algNode组\n *  注: 转移: 仅概念支持内存网络向硬盘网络的转移,fo不进行转移;\n *\n *  @version\n *      2020.08.18: 支持deltaTimes (抽象时序的deltaTime全部由conFos得出,参考:20201);\n *      2021.01.03: 判断abs已存在抽象节点时,加上ATDS的匹配判断,因为不同类型节点不必去重 (参考2120B-BUG2);\n *      2022.12.27: 构建抽象fo时,从源assFo复用contentPort的强度 (参考2722f-todo12);\n *      2023.03.28: 将assFo和absFo是否本来就有关联通过&conAbsIsRelate返回 (参考29032-todo2.1);\n *  @result : notnull\n */\n-(AINetAbsFoNode*) create:(NSArray*)orderSames protoFo:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo difStrong:(NSInteger)difStrong at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type conAbsIsRelate:(BOOL*)conAbsIsRelate{\n    //1. 数据准备\n    NSArray *conFos = @[protoFo,assFo];\n    if(!at) at = DefaultAlgsType;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIAbsFoManager/AIAbsFoManager.m:1-30"
+    },
+    "317": {
+        "file_id": 34,
+        "content": "This code is creating an abstract node based on existing foNodes, supporting deltaTimes and considering whether the assFo and absFo are related. It also reuses contentPort strength from source assFo and checks if the assFo and absFo are already connected through conAbsIsRelate.",
+        "type": "comment"
+    },
+    "318": {
+        "file_id": 34,
+        "content": "    if(!ds) ds = DefaultDataSource;\n    orderSames = ARRTOOK(orderSames);\n    NSString *samesStr = [SMGUtils convertPointers2String:orderSames];\n    NSString *samesMd5 = STRTOOK([NSString md5:samesStr]);\n    //2. 判断algA.absPorts和absB.absPorts中的header,是否已存在algSames的抽象节点;\n    AINetAbsFoNode *findAbsNode = nil;\n    NSMutableArray *allAbsPorts = [[NSMutableArray alloc] init];\n    for (AIFoNodeBase *conItem in conFos) {\n        [allAbsPorts addObjectsFromArray:[AINetUtils absPorts_All:conItem]];\n    }\n    for (AIPort *port in allAbsPorts) {\n        if ([samesMd5 isEqualToString:port.header] && [port.target_p.algsType isEqualToString:at] && [port.target_p.dataSource isEqualToString:ds] && port.target_p.type == type) {\n            findAbsNode = [SMGUtils searchNode:port.target_p];\n            break;\n        }\n    }\n    //3. 无则创建\n    BOOL isNew = false;\n    if (!findAbsNode) {\n        isNew = true;\n        findAbsNode = [[AINetAbsFoNode alloc] init];\n        findAbsNode.pointer = [SMGUtils createPointerForFo:kPN_FO_ABS_NODE at:at ds:ds type:type];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIAbsFoManager/AIAbsFoManager.m:31-54"
+    },
+    "319": {
+        "file_id": 34,
+        "content": "Checks if the input port with given header, algorithm type, data source, and type already exists in allAbsPorts array. If not found, creates a new AINetAbsFoNode object.",
+        "type": "comment"
+    },
+    "320": {
+        "file_id": 34,
+        "content": "        //3. 收集order_ps\n        [findAbsNode setContent_ps:orderSames getStrongBlock:^NSInteger(AIKVPointer *item_p) {\n            //4. 复用类比orderSames的assFo中的原content强度 (参考2722f-todo12);\n            for (AIPort *port in assFo.contentPorts) {\n                if ([port.target_p isEqual:item_p]) return port.strong.value + 1;\n            }\n            return 1;\n        }];\n        //4. order_ps更新概念节点引用序列;\n        [AINetUtils insertRefPorts_AllFoNode:findAbsNode.pointer order_ps:findAbsNode.content_ps ps:findAbsNode.content_ps difStrong:difStrong];\n    }\n    //4. 节点非新的:absFo早就和assFo有关联,否则反之 (参考29032-todo2.1);\n    if (conAbsIsRelate) *conAbsIsRelate = !isNew;\n    //4. 具象节点&抽象节点_关联 & 存储;\n    [AINetUtils relateFoAbs:findAbsNode conNodes:conFos isNew:isNew];\n    //5. 提取findAbsNode的deltaTimes & 存储;\n    findAbsNode.deltaTimes = [AINetAbsFoUtils getDeltaTimes:conFos absFo:findAbsNode];\n    [SMGUtils insertNode:findAbsNode];\n    [AITest test7:findAbsNode.content_ps type:type];\n    [AITest test8:findAbsNode.content_ps type:type];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIAbsFoManager/AIAbsFoManager.m:56-80"
+    },
+    "321": {
+        "file_id": 34,
+        "content": "This code segment collects order_ps and updates the reference ports for a concept node. It also checks if the node is new or already related, relates abstract and concrete nodes, extracts delta times, and stores the information. Finally, it runs tests 7 and 8 on the content_ps.",
+        "type": "comment"
+    },
+    "322": {
+        "file_id": 34,
+        "content": "    return findAbsNode;\n}\n/**\n *  MARK:--------------------构建fo_防重版--------------------\n *  @callers : 被外类比构建器调用;\n *  @功能说明: 1. 未支持内存去重;\n *  @param difStrong : 构建fo的被引用初始强度;\n *  _param ds : 新构建时传入指定ds,尤其是GL类型时,一般要将value.dataSource传递过来 (参考24019-概念部分);\n *              非新构建时,可传nil,此时尝试从conFos继承获取 (如果它们有共同的ds);\n *  @param outConAbsIsRelate : 将con和abs是否本来就有关联返回 (参考29032-todo2.1);\n *  @param noRepeatArea_ps : 结果防重范围\n *  @version\n *      2020.04.26: 去掉时序的全局去重;\n *      2021.04.25: 打开防重,仅对content_ps防重,但没有对ds做同区要求判断 (参考23054-疑点);\n *      2021.04.25: 把ThinkingUtils.createAbsFo_NoRepeat_General()搬至此处;\n *      2021.04.28: 修复当content_ps为空时,不构建新时序的BUG (参考23057);\n *      2021.05.22: 对SP类型仅在当时场景下防重 (参考2307b-方案3);\n *      2021.05.23: 对GL类型仅在当前场景下防重 (参考23081);\n *      2021.09.22: fo支持type防重 (参考24019);\n *      2021.09.23: fo支持从conFos中继承ds,如果conFos的ds都相同的话 (参考24019-时序部分);\n *      2023.03.28: 将两条具象与absFo的indexDic映射传过来 (用于继承sp和eff) (参考29032-todo1);\n *      2023.03.28: 支持判断ass和abs本来无关联时,继承ass的SPEFF (参考29032-todo2.1 & todo2.2);\n *      2023.03.28: 将outConAbsIsRelate返回 (因为只有Canset类比时才更新EFF,需要返回这个值判断) (参考29032-todo2.4);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIAbsFoManager/AIAbsFoManager.m:81-104"
+    },
+    "323": {
+        "file_id": 34,
+        "content": "This code builds a unique \"fo\" (likely a struct or class) without duplicates based on input parameters such as the initial strength, data source, and whether the constructor and absolute are related. It performs prevention of duplicate \"fo\" structures for specific types and scenarios, considering inheritance from other \"fo\" structures if they have the same data source. The code has undergone various updates and improvements since April 2020.",
+        "type": "comment"
+    },
+    "324": {
+        "file_id": 34,
+        "content": " *  @status\n *      2021.04.25: 打开后,gl经验全为0条,所以先关掉,后续测试打开后为什么为0条;\n */\n-(AINetAbsFoNode*) create_NoRepeat:(NSArray*)content_ps protoFo:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo difStrong:(NSInteger)difStrong type:(AnalogyType)type protoIndexDic:(NSDictionary*)protoIndexDic assIndexDic:(NSDictionary*)assIndexDic outConAbsIsRelate:(BOOL*)outConAbsIsRelate noRepeatArea_ps:(NSArray*)noRepeatArea_ps{\n    //1. 数据准备\n    NSArray *conFos = @[protoFo,assFo];\n    NSString *at = DefaultAlgsType; //[AINetUtils getDSFromConNodes:conFos type:type];\n    NSString *ds = DefaultDataSource; //[AINetUtils getATFromConNodes:conFos type:type];\n    content_ps = ARRTOOK(content_ps);\n    AINetAbsFoNode *result = nil;\n    //2. 防重_SP类型时,嵌套范围内绝对匹配;\n    if (type == ATSub || type == ATPlus || type == ATGreater || type == ATLess) {\n        NSMutableArray *validPorts = [[NSMutableArray alloc] init];\n        for (AIFoNodeBase *conItem in conFos) {\n            [validPorts addObjectsFromArray:[AINetUtils absPorts_All:conItem type:type]];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIAbsFoManager/AIAbsFoManager.m:105-120"
+    },
+    "325": {
+        "file_id": 34,
+        "content": "This method creates an AINetAbsFoNode object without repeating any nodes. It first prepares the data, including the content_ps array, and determines if it's a nested range with SP-type. If so, it generates validPorts for each node in conFos using AINetUtils function absPorts_All.",
+        "type": "comment"
+    },
+    "326": {
+        "file_id": 34,
+        "content": "        }\n        result = [AINetIndexUtils getAbsoluteMatching_ValidPorts:validPorts sort_ps:content_ps except_ps:Nodes2Pits(conFos) at:at ds:ds type:type];\n    }else{\n        //3. 防重_其它类型时,全局绝对匹配;\n        result = [AINetIndexUtils getAbsoluteMatching_ValidPs:content_ps sort_ps:content_ps except_ps:Nodes2Pits(conFos) noRepeatArea_ps:noRepeatArea_ps getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {\n            AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];\n            return [AINetUtils refPorts_All4Alg:itemAlg];\n        } at:at ds:ds type:type];\n    }\n    //4. 在下面的ifelse中,判断下具象和抽象时序是否本来就有关联 (参考29032-todo2.1);\n    BOOL conAbsIsRelate = false;\n    //5. 有则加强关联;\n    if (ISOK(result, AINetAbsFoNode.class)) {\n        conAbsIsRelate = [Ports2Pits(assFo.absPorts) containsObject:result.pointer];\n        [AINetUtils relateFoAbs:result conNodes:conFos isNew:false];\n        [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];\n    }else{\n        //6. 无则新构建;\n",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIAbsFoManager/AIAbsFoManager.m:121-141"
+    },
+    "327": {
+        "file_id": 34,
+        "content": "In this section of code, if the type is not a repeat area, it performs an absolute matching for all content ports and sorts them. It also checks if the other type of node is related to the abstract node. If there's a match, it strengthens the relationship between the two nodes; otherwise, it constructs a new node.",
+        "type": "comment"
+    },
+    "328": {
+        "file_id": 34,
+        "content": "        result = [self create:content_ps protoFo:protoFo assFo:assFo difStrong:difStrong at:at ds:ds type:type conAbsIsRelate:&conAbsIsRelate];\n    }\n    //7. 继承sp和eff (参考29032-todo2.2);\n    if (!conAbsIsRelate) {\n        [AINetUtils extendSPByIndexDic:assIndexDic assFo:assFo absFo:result];\n    }\n    //8. 把protoFo给absFo的SP+1 (参考29032-todo2.3);\n    [AINetUtils updateSPByIndexDic:protoIndexDic conFo:protoFo absFo:result];\n    //9. 存下conFo与absFo的indexDic (参考29032-todo3);\n    [protoFo updateIndexDic:result indexDic:protoIndexDic];\n    [assFo updateIndexDic:result indexDic:assIndexDic];\n    //10. 将结果outConAbsIsRelate和absFo返回;\n    if (outConAbsIsRelate) *outConAbsIsRelate = conAbsIsRelate;\n    return result;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIAbsFoManager/AIAbsFoManager.m:141-161"
+    },
+    "329": {
+        "file_id": 34,
+        "content": "This code snippet is part of a method that creates an \"absFo\" (abstract fact) and performs several operations on it. It first creates the \"absFo\" with given parameters, then extends its \"SP\" (strength) based on a dictionary, updates the \"SP\" of another \"conFo\" (context fact) by referring to a second dictionary, stores index dictionaries for both \"conFo\" and \"assFo\", and finally returns the created \"absFo\" along with a flag indicating if it is related to the \"conFo\".",
+        "type": "comment"
+    },
+    "330": {
+        "file_id": 35,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AIAbsFoManager/AINetAbsFoUtils.h",
+        "type": "filepath"
+    },
+    "331": {
+        "file_id": 35,
+        "content": "This file, AINetAbsUtils.h, contains a class AINetAbsFoUtils with three methods: getDeltaTimes, convertOrder2Alg_ps, and convertOrder2DeltaTimes. These methods are used to extract deltaTimes from conFos, convert order into alg_ps, and convert order into deltaTimes respectively.",
+        "type": "summary"
+    },
+    "332": {
+        "file_id": 35,
+        "content": "//\n//  AINetAbsUtils.h\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/6/6.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@class AIKVPointer,AIPort;\n@interface AINetAbsFoUtils : NSObject\n/**\n *  MARK:--------------------从conFos中提取deltaTimes--------------------\n *  @result notnull\n */\n+(NSMutableArray*) getDeltaTimes:(NSArray*)conFos absFo:(AIFoNodeBase*)absFo;\n/**\n *  MARK:--------------------将order转换成alg_ps--------------------\n */\n+(NSMutableArray*) convertOrder2Alg_ps:(NSArray*)order;\n/**\n *  MARK:--------------------将order转成deltaTimes--------------------\n */\n+(NSMutableArray*) convertOrder2DeltaTimes:(NSArray*)order;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIAbsFoManager/AINetAbsFoUtils.h:1-30"
+    },
+    "333": {
+        "file_id": 35,
+        "content": "This file, AINetAbsUtils.h, contains a class AINetAbsFoUtils with three methods: getDeltaTimes, convertOrder2Alg_ps, and convertOrder2DeltaTimes. These methods are used to extract deltaTimes from conFos, convert order into alg_ps, and convert order into deltaTimes respectively.",
+        "type": "comment"
+    },
+    "334": {
+        "file_id": 36,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AIAbsFoManager/AINetAbsFoUtils.m",
+        "type": "filepath"
+    },
+    "335": {
+        "file_id": 36,
+        "content": "This method retrieves delta times from conFos and an absFo, with potential issues, stores max delta time, and returns relevant information. It also handles simple objects by adding current time differences to a list for further processing.",
+        "type": "summary"
+    },
+    "336": {
+        "file_id": 36,
+        "content": "//\n//  AINetAbsUtils.m\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/6/6.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"AINetAbsFoUtils.h\"\n@implementation AINetAbsFoUtils\n/**\n *  MARK:--------------------从conFos中提取deltaTimes--------------------\n *  @result notnull\n *  @bug\n *      2020.09.01: 返回空result的BUG,发现是数据准备时,检查条件判断错误导致 T;\n *      2020.09.10: findIndex有时会失败 (因为HNGL时,需要index判断两层) T;\n *      2020.09.10: maxDeltaTime在非0位时,有可能取到0的BUG (记录lastIndex,但并未彻底解决) (发现NL时为0正常) T;\n *      2020.09.15: 多个conFos,却只记录了一个lastIndex导致错乱找不到findIndex的bug; T\n *      2023.11.18: 修复判断M1{↑饿-16}和A13(饿16,7)的抽具象关系因mIsC算法BUG导致总失败,导致取deltaTime为0;\n *  @todo\n *      2021.01.21: 当构建SPFo时,conFos中可能不包含所有的deltaTime (比如乌鸦带交警时,车不敢撞,具象时序中是无交警的);\n *      2023.11.18: 随后废弃此方法,改到AIAbsFoManager.create_NoRepeat()中根据indexDic计算deltaTimes (现在这么做也没啥问题,先不改,后需要时再改);\n */\n+(NSMutableArray*) getDeltaTimes:(NSArray*)conFos absFo:(AIFoNodeBase*)absFo{\n    //1. 数据准备;\n    NSMutableArray *result = [[NSMutableArray alloc] init];\n    if (!ARRISOK(conFos) || !absFo) return result;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIAbsFoManager/AINetAbsFoUtils.m:1-29"
+    },
+    "337": {
+        "file_id": 36,
+        "content": "This method retrieves deltaTimes from a list of conFos and an absFo object. It first prepares the data and then performs calculations based on certain conditions. The code contains various bug fixes and improvements, but it may still have issues with multiple conFos and incorrect extraction of deltaTimes in some cases. The method has been marked for potential future changes to improve its functionality.",
+        "type": "comment"
+    },
+    "338": {
+        "file_id": 36,
+        "content": "    //2. 提取 (absFo有可能本来deltaTimes不为空,也要参与到竞争Max(A,B)中来;\n    NSMutableDictionary *lastIndexDic = [[NSMutableDictionary alloc] init];\n    for (NSInteger i = 0; i < absFo.count; i++) {\n        AIKVPointer *absAlg_p = ARR_INDEX(absFo.content_ps, i);\n        //3. 从每个conFo中找到对应absAlg_p的元素下标;\n        double maxDeltaTime = 0;\n        for (AIFoNodeBase *conFo in conFos) {\n            //a. 找到当前所处下标;\n            NSData *lastIndexKey = OBJ2DATA(conFo.pointer);\n            NSInteger lastIndex = [NUMTOOK_DV([lastIndexDic objectForKey:lastIndexKey], -1) integerValue];\n            BOOL isHNGL = [TOUtils isHNGL:absAlg_p];\n            NSInteger findIndex = [TOUtils indexOfAbsItem:absAlg_p atConContent:conFo.content_ps layerDiff:isHNGL ? 2 : 1 startIndex:lastIndex + 1 endIndex:NSIntegerMax];\n            if (findIndex != -1) {\n                //b. 将有效间隔取出,并提取最大的deltaTime;\n                double sumDeltaTime = [TOUtils getSumDeltaTime:conFo startIndex:lastIndex endIndex:findIndex];\n                maxDeltaTime = MAX(maxDeltaTime, sumDeltaTime);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIAbsFoManager/AINetAbsFoUtils.m:31-48"
+    },
+    "339": {
+        "file_id": 36,
+        "content": "Extracts the maximum delta time from each conFo and stores it in maxDeltaTime.",
+        "type": "comment"
+    },
+    "340": {
+        "file_id": 36,
+        "content": "                //c. 将新发现的下标记录 (1. lastIndex+1用于indexOfAbsItem 2. lastIndex用于sumDeltaTime);\n                [lastIndexDic setObject:@(findIndex) forKey:lastIndexKey];\n                //deltaTime为0的BUG测试;\n                //BOOL nOk = [absFo.content_ps indexOfObject:absAlg_p] == absFo.content_ps.count - 1 && [TOUtils isN:conFo.pointer];\n                //if (findIndex != 0 && sumDeltaTime == 0 && !nOk) {\n                //    NSLog(@\"%@\",Fo2FStr(conFo));\n                //}\n            }else if(![TOUtils isN:absAlg_p] && ![TOUtils isL:absAlg_p]){\n                //NL找不到,是正常的,因为\"内类比无/小\"时,本身具象只是frontConAlg,并且本来就是瞬间变\"无/小\"的;\n                if (![TOUtils isHNGL:absFo.pointer] && ([absFo.content_ps indexOfObject:absAlg_p] == absFo.count - 1))\n                    WLog(@\"末帧没找着detailTime AbsA:%@ (%ld,%ld)\\n\\tAbsF:%@\\n\\tConF:%@\",AlgP2FStr(absAlg_p),(long)findIndex,(long)lastIndex,Fo2FStr(absFo),Fo2FStr(conFo));\n            }\n        }\n        //4. 首条时加入0,否则加入maxDeltaTime;\n        if (i == 0) {\n            [result addObject:@(0.0f)];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIAbsFoManager/AINetAbsFoUtils.m:50-67"
+    },
+    "341": {
+        "file_id": 36,
+        "content": "This code is part of a function that appears to be comparing two arrays and tracking the indexes of found items. It sets a new record for the last index found and checks if there are any issues with delta time. If the index found is not zero, sum delta time is zero, and a certain condition is not met, it logs information about the current frame. Finally, it adds either 0 or the maximum delta time to an array of results depending on the iteration number.",
+        "type": "comment"
+    },
+    "342": {
+        "file_id": 36,
+        "content": "        }else{\n            [result addObject:@(maxDeltaTime)];\n        }\n    }\n    [AITest test31:result];\n    return result;\n}\n+(NSMutableArray*) convertOrder2Alg_ps:(NSArray*)order{\n    //1. 数据准备\n    NSMutableArray *result = [[NSMutableArray alloc] init];\n    order = ARRTOOK(order);\n    //2. 提取返回\n    for (AIShortMatchModel_Simple *simple in order) {\n        if (simple.alg_p) [result addObject:simple.alg_p];\n    }\n    return result;\n}\n/**\n *  MARK:--------------------将order转成deltaTimes--------------------\n *  @bug\n *      2020.08.21: 将收集inputTime修正成收集deltaTime;\n */\n+(NSMutableArray*) convertOrder2DeltaTimes:(NSArray*)order{\n    //1. 数据准备\n    NSMutableArray *result = [[NSMutableArray alloc] init];\n    order = ARRTOOK(order);\n    //2. 提取返回\n    NSTimeInterval lastInputTime = 0;\n    for (NSInteger i = 0; i < order.count; i++) {\n        AIShortMatchModel_Simple *simple = ARR_INDEX(order, i);\n        if (i == 0) {\n            [result addObject:@(0)];\n        }else{\n            NSTimeInterval deltaTime = simple.isTimestamp ? MAX(simple.inputTime - lastInputTime, 0) : simple.inputTime;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIAbsFoManager/AINetAbsFoUtils.m:68-105"
+    },
+    "343": {
+        "file_id": 36,
+        "content": "The code converts an order array into three different types of output arrays: \"alg\" values, \"deltaTimes\", and \"maxDeltaTime\". It first prepares the data by initializing a result array and ensuring the input order array is not nil. Then it iterates through each element in the order array, extracting either the \"alg\" value or calculating the delta time between consecutive elements, adding them to the result array. Finally, it calls test31 function with the result array and returns it.",
+        "type": "comment"
+    },
+    "344": {
+        "file_id": 36,
+        "content": "            [result addObject:@(deltaTime)];\n        }\n        lastInputTime = simple.inputTime;\n    }\n    [AITest test31:result];\n    return result;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIAbsFoManager/AINetAbsFoUtils.m:106-115"
+    },
+    "345": {
+        "file_id": 36,
+        "content": "Iterates over simple objects, adds current time difference to a list, and returns the result. Finally, calls AITest with test31 and the result for further processing.",
+        "type": "comment"
+    },
+    "346": {
+        "file_id": 37,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AIAlgNodeManager/AIAlgNodeManager.h",
+        "type": "filepath"
+    },
+    "347": {
+        "file_id": 37,
+        "content": "The AIAlgNodeManager.h file contains the interface for creating and managing abstract algorithms within the SMG_NothingIsAll project, with methods for building abstract concepts and empty concepts with non-repeating implementation.",
+        "type": "summary"
+    },
+    "348": {
+        "file_id": 37,
+        "content": "//\n//  AIAlgNodeManager.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2018/12/14.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@class AIAbsAlgNode;\n@interface AIAlgNodeManager : NSObject\n/**\n *  MARK:--------------------构建抽象概念_防重版--------------------\n *  @result notnull\n */\n+(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs at:(NSString*)at ds:(NSString*)ds isOutBlock:(BOOL(^)())isOutBlock type:(AnalogyType)type;\n/**\n *  MARK:--------------------构建空概念_防重 (参考29027-方案3)--------------------\n */\n+(AIAlgNodeBase*)createEmptyAlg_NoRepeat:(NSArray*)conAlgs;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIAlgNodeManager/AIAlgNodeManager.h:1-25"
+    },
+    "349": {
+        "file_id": 37,
+        "content": "The AIAlgNodeManager.h file contains the interface for creating and managing abstract algorithms within the SMG_NothingIsAll project, with methods for building abstract concepts and empty concepts with non-repeating implementation.",
+        "type": "comment"
+    },
+    "350": {
+        "file_id": 38,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AIAlgNodeManager/AIAlgNodeManager.m",
+        "type": "filepath"
+    },
+    "351": {
+        "file_id": 38,
+        "content": "This code constructs abstract concepts in AIAlgNodeManager, ensuring no duplication by checking input data and local matches, creating or strengthening nodes, preventing duplicates, and managing connections between algorithms and nodes.",
+        "type": "summary"
+    },
+    "352": {
+        "file_id": 38,
+        "content": "//\n//  AIAlgNodeManager.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2018/12/14.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"AIAlgNodeManager.h\"\n@implementation AIAlgNodeManager\n/**\n *  MARK:--------------------构建抽象概念--------------------\n *  @param value_ps     : 要构建absAlgNode的content_ps (稀疏码组) notnull;\n *  @param conAlgs      : 具象AIAlgNode数组:(外类比时的algA&algB / 内类比时仅有一个元素) //不可为空数组\n *  _param dataSource   : 概念节点的dataSource就是稀疏码信息的algsType; (不传时,从algsArr提取) (废弃,参考24021);\n *  @param ds           : 为nil时,默认为DefaultDataSource;\n *  @param isOutBlock   : 指定isOut (默认从conAlgs获取) (概念节点的isOut状态; (思维控制器知道它是行为还是认知));\n *\n *  @问题记录:\n *    1. 思考下,conAlgs中去重,能不能将md5匹配的conAlg做为absAlg的问题?\n *      a. 不能: (参考: 思考计划2/191126更新表)\n *      b. 能: (则导致会形成坚果是坚果的多层抽象)\n *      c. 结论: 能,问题转移到n17p19\n *  注: TODO:判断algSames是否就是algsA或algB本身; (等conAlgNode和absAlgNode统一不区分后,再判断本身)\n *  @version\n *      2021.01.03: 判断abs已存在抽象节点时,加上ATDS的匹配判断,因为不同类型节点不必去重 (参考2120B-BUG2);\n *      2021.09.26: 从conAlgs中防重返回时,要判断at&ds&type (参考24022-BUG3);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIAlgNodeManager/AIAlgNodeManager.m:1-29"
+    },
+    "353": {
+        "file_id": 38,
+        "content": "This code defines a method for building abstract concepts in the AIAlgNodeManager class. The method takes content_ps (sparse code vectors), concrete AIAlgNodes, dataSource (for the concept node's data), and isOutBlock (to specify the abstract or concrete concept) as parameters. It aims to avoid duplication by checking if an abstract concept already exists before creating a new one.",
+        "type": "comment"
+    },
+    "354": {
+        "file_id": 38,
+        "content": " *  @result notnull\n */\n+(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs at:(NSString*)at ds:(NSString*)ds isOutBlock:(BOOL(^)())isOutBlock type:(AnalogyType)type{\n    //1. 数据准备\n    BOOL isOut = isOutBlock ? isOutBlock() : [AINetUtils checkAllOfOut:conAlgs];\n    conAlgs = ARRTOOK(conAlgs);\n    value_ps = ARRTOOK(value_ps);\n    if (!at) at = DefaultAlgsType;\n    if (!ds) ds = DefaultDataSource;\n    NSArray *sortSames = ARRTOOK([SMGUtils sortPointers:value_ps]);\n    NSString *samesStr = [SMGUtils convertPointers2String:sortSames];\n    NSString *samesMd5 = STRTOOK([NSString md5:samesStr]);\n    NSMutableArray *validConAlgs = [[NSMutableArray alloc] initWithArray:conAlgs];\n    AIAbsAlgNode *result = nil;\n    //2. 判断具象节点中,已有一个抽象sames节点,则不需要再构建新的;\n    for (AIAbsAlgNode *checkNode in conAlgs) {\n        //a. checkNode是抽象节点时;\n        if (ISOK(checkNode, AIAbsAlgNode.class)) {\n            //b. 并且md5与orderSames相同时,即发现checkNode本身就是抽象节点;\n            NSString *checkMd5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:[SMGUtils sortPointers:checkNode.content_ps]]]);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIAlgNodeManager/AIAlgNodeManager.m:30-51"
+    },
+    "355": {
+        "file_id": 38,
+        "content": "Prepares input data, checks for existing abstract nodes and builds a new one if not found.",
+        "type": "comment"
+    },
+    "356": {
+        "file_id": 38,
+        "content": "            if ([samesMd5 isEqualToString:checkMd5] && [checkNode.pointer.algsType isEqualToString:at] && [checkNode.pointer.dataSource isEqualToString:ds] && checkNode.pointer.type == type) {\n                //c. 则把conAlgs去掉checkNode;\n                [validConAlgs removeObject:checkNode];\n                //d. 找到result\n                result = checkNode;\n            }\n        }\n    }\n    //2. 判断具象节点的absPorts中,是否已有一个\"sames\"节点,有则无需构建新的;\n    if (!result) {\n        for (AIAlgNodeBase *conNode in conAlgs) {\n            NSArray *absPorts_All = [AINetUtils absPorts_All:conNode];\n            for (AIPort *absPort in absPorts_All) {\n                //1> 遍历找抽象是否已存在;\n                if ([samesMd5 isEqualToString:absPort.header] && [absPort.target_p.algsType isEqualToString:at] && [absPort.target_p.dataSource isEqualToString:ds] && absPort.target_p.type == type) {\n                    AIAbsAlgNode *absNode = [SMGUtils searchNode:absPort.target_p];\n                    //3> findAbsNode成功;\n                    result = absNode;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIAlgNodeManager/AIAlgNodeManager.m:52-73"
+    },
+    "357": {
+        "file_id": 38,
+        "content": "This code checks if the current node matches the specified criteria and if not, it searches for an existing abstract node with the same parameters. If found, the corresponding abstract node is assigned to \"result\" variable.",
+        "type": "comment"
+    },
+    "358": {
+        "file_id": 38,
+        "content": "                    if (!ISOK(absNode, AIAbsAlgNode.class) ) {\n                        WLog(@\"发现非抽象类型的抽象节点错误,,,请检查出现此情况的原因;\");\n                    }\n                    break;\n                }\n            }\n        }\n    }\n    //3. 无则创建\n    BOOL absIsNew = false;\n    if (!result) {\n        absIsNew = true;\n        result = [[AIAbsAlgNode alloc] init];\n        result.pointer = [SMGUtils createPointerForAlg:kPN_ALG_ABS_NODE at:at dataSource:ds isOut:isOut type:type];\n        [result setContent_ps:sortSames];\n        NSLog(@\"构建新概念:A%ld fromConAlgs:%@\",result.pointer.pointerId,CLEANSTR([SMGUtils convertArr:conAlgs convertBlock:^id(AIAlgNodeBase *obj) {\n            return STRFORMAT(@\"A%ld\",obj.pointer.pointerId);\n        }]));\n    }\n    //4. value.refPorts (更新/加强微信息的引用序列)\n    NSInteger difStrong = 1;//absIsNew ? validConAlgs.count : 1;//20200106改回1,自由竞争无论是抽象还是具象;世上没有两片一样的树叶,所以对于抽象来说,本来就是讨便宜,易联想匹配的;\n    [AINetUtils insertRefPorts_AllAlgNode:result.pointer content_ps:result.content_ps difStrong:difStrong];\n    //5. 关联 & 存储",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIAlgNodeManager/AIAlgNodeManager.m:74-99"
+    },
+    "359": {
+        "file_id": 38,
+        "content": "This code snippet creates or updates an abstract node in the AI algorithm network. It first checks if the `absNode` is an instance of `AIAbsAlgNode` class. If it's not, a warning log is generated. Then, it either uses the existing `result` object (if it exists) or creates a new `AIAbsAlgNode` instance and sets its properties accordingly. The code then inserts reference ports into the newly created or existing node using the `AINetUtils` class function.",
+        "type": "comment"
+    },
+    "360": {
+        "file_id": 38,
+        "content": "    [AINetUtils relateAlgAbs:result conNodes:validConAlgs isNew:absIsNew];\n    //[theApp.heLogView addLog:STRFORMAT(@\"构建抽象概念:%@,内容:%@\",result.pointer.identifier,Alg2FStr(result))];\n    [SMGUtils insertNode:result];\n    return result;\n}\n/**\n *  MARK:--------------------构建抽象概念_防重--------------------\n *  @todo\n *      2021.04.25: alg暂不支持对ds不同区间的防重,以后可考虑支持 (参考getAbsoluteMatching_General的ds参数);\n *  @version\n *      2021.08.06: 本地去重,支持ds防重,因为不去重导致同内容的S和P混乱 (参考23205);\n *      2021.09.22: 支持type防重 (参考24019);\n */\n+(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs at:(NSString*)at ds:(NSString*)ds isOutBlock:(BOOL(^)())isOutBlock type:(AnalogyType)type{\n    //1. 数据检查\n    value_ps = ARRTOOK(value_ps);\n    NSArray *sort_ps = [SMGUtils sortPointers:value_ps];\n    if (!at) at = DefaultAlgsType;\n    if (!ds) ds = DefaultDataSource;\n    //2. 去重找本地 (仅抽象);\n    AIAbsAlgNode *localAlg = [AINetIndexUtils getAbsoluteMatching_General:value_ps sort_ps:sort_ps except_ps:nil getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIAlgNodeManager/AIAlgNodeManager.m:100-122"
+    },
+    "361": {
+        "file_id": 38,
+        "content": "This code creates an abstract concept by building on given values and preventing duplicates. It first checks the input data, then searches for a local match using AIIndexUtils, and inserts the result into the SMGUtils.",
+        "type": "comment"
+    },
+    "362": {
+        "file_id": 38,
+        "content": "        NSArray *refPorts = [AINetUtils refPorts_All4Value:item_p];\n        NSMutableArray *result = [[NSMutableArray alloc] init];\n        for (AIPort *refPort in refPorts) {\n            if ([kPN_ALG_ABS_NODE isEqualToString:refPort.target_p.folderName]) {\n                [result addObject:refPort];\n            }\n        }\n        return result;\n    } at:at ds:ds type:type];\n    //3. 有则加强;\n    if (ISOK(localAlg, AIAbsAlgNode.class)) {\n        [AINetUtils relateAlgAbs:localAlg conNodes:conAlgs isNew:false];\n        return localAlg;\n    }else{\n        //4. 无则构建\n        return [self createAbsAlgNode:value_ps conAlgs:conAlgs at:at ds:ds isOutBlock:isOutBlock type:type];\n    }\n}\n/**\n *  MARK:--------------------构建空概念_防重 (参考29027-方案3)--------------------\n *  @version\n *      2023.03.31: 迭代空概念防重机制为场景内同抽象仅生成一条空概念 (参考29044-todo1 & todo2);\n *      2023.04.01: 废弃原来的ds防重,因为它无效 (参考29044-todo3);\n *      2023.04.01: 废弃ds拼接,因为它本来也没啥用了 (参数29044-todo4);\n *  @result notnull\n */\n+(AIAlgNodeBase*)createEmptyAlg_NoRepeat:(NSArray*)conAlgs {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIAlgNodeManager/AIAlgNodeManager.m:123-151"
+    },
+    "363": {
+        "file_id": 38,
+        "content": "This code is creating an abstract node if it already doesn't exist, or strengthening the existing one. It also mentions iterative changes to prevent duplicate concepts within a scene and notes the deprecation of specific methods due to ineffectiveness or lack of usefulness.",
+        "type": "comment"
+    },
+    "364": {
+        "file_id": 38,
+        "content": "    //1. 当有一条是空概念 && 且别的都已经抽象指向它时 => 则复用 (参考29044-todo2);\n    AIAlgNodeBase *localAlg = nil;\n    for (AIAlgNodeBase *conAlgA in conAlgs) {\n        if (!ARRISOK(conAlgA.content_ps) && !ARRISOK([SMGUtils filterSingleFromArr:conAlgs checkValid:^BOOL(AIAlgNodeBase *item) {\n            return ![TOUtils mIsC_1:item.pointer c:conAlgA.pointer];\n        }])) {\n            localAlg = conAlgA;\n            break;\n        }\n    }\n    //2. 根据具象conAlgs取得共同抽象;\n    NSArray *absAlgPorts = nil;\n    for (AIAlgNodeBase *conAlg in conAlgs) {\n        NSArray *itemAbsPorts = [AINetUtils absPorts_All:conAlg];\n        if (!absAlgPorts) {\n            absAlgPorts = itemAbsPorts;\n        } else {\n            absAlgPorts = [SMGUtils filterArrA:itemAbsPorts arrB:absAlgPorts];\n        }\n    }\n    [AITest test24:absAlgPorts];\n    if (!localAlg) {\n        //3. 从共同抽象中找已有空概念: 防重 (参考29044-todo1);\n        AIPort *localPort = [SMGUtils filterSingleFromArr:absAlgPorts checkValid:^BOOL(AIPort *item) {\n            return [item.header isEqualToString:[NSString md5:@\"\"]];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIAlgNodeManager/AIAlgNodeManager.m:152-178"
+    },
+    "365": {
+        "file_id": 38,
+        "content": "This code is checking if there is a shared abstract from the given concrete algorithms. If no shared abstract exists, it creates a new one. Otherwise, it checks for an existing empty concept and avoids creating duplicates by using an already existing one.",
+        "type": "comment"
+    },
+    "366": {
+        "file_id": 38,
+        "content": "        }];\n        if (localPort) {\n            localAlg = [SMGUtils searchNode:localPort.target_p];\n        }\n    }\n    //4. 找到本地防重的则加强: 具象指向conAlgs & 抽象指向absAlgs (参考29031-todo2 & todo3);\n    if (ISOK(localAlg, AIAlgNodeBase.class)) {\n        [AINetUtils relateAlgAbs:localAlg conNodes:conAlgs isNew:false];\n        [AINetUtils relateGeneralCon:localAlg absNodes:Ports2Pits(absAlgPorts)];\n        return localAlg;\n    }\n    //5. 无则构建: 具象指向conAlgs(在构建方法已集成) & 抽象指向absAlgs (参考29031-todo1 & todo3);\n    AIAlgNodeBase *createAlg = [self createAbsAlgNode:@[] conAlgs:conAlgs at:nil ds:DefaultDataSource isOutBlock:nil type:ATDefault];\n    [AINetUtils relateGeneralCon:createAlg absNodes:Ports2Pits(absAlgPorts)];\n    return createAlg;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIAlgNodeManager/AIAlgNodeManager.m:179-198"
+    },
+    "367": {
+        "file_id": 38,
+        "content": "This code checks if a local algorithm exists and strengthens its connections to concrete and abstract nodes. If no local algorithm is found, it creates a new one and establishes the necessary connections.",
+        "type": "comment"
+    },
+    "368": {
+        "file_id": 39,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AICerebel/AICerebel.h",
+        "type": "filepath"
+    },
+    "369": {
+        "file_id": 39,
+        "content": "Header file for AICerebel class in SMG_NothingIsAll project, created by jiaxiaogang on 2018/10/9.",
+        "type": "summary"
+    },
+    "370": {
+        "file_id": 39,
+        "content": "////\n////  AICerebel.h\n////  SMG_NothingIsAll\n////\n////  Created by jiaxiaogang on 2018/10/9.\n////  Copyright © 2018年 XiaoGang. All rights reserved.\n////\n//\n//#import <Foundation/Foundation.h>\n//\n//@interface AICerebel : NSObject\n//\n//@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AICerebel/AICerebel.h:1-13"
+    },
+    "371": {
+        "file_id": 39,
+        "content": "Header file for AICerebel class in SMG_NothingIsAll project, created by jiaxiaogang on 2018/10/9.",
+        "type": "comment"
+    },
+    "372": {
+        "file_id": 40,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AICerebel/AICerebel.m",
+        "type": "filepath"
+    },
+    "373": {
+        "file_id": 40,
+        "content": "This file contains the implementation of the AICerebel class in the SMG_NothingIsAll project, created by jiaxiaogang on 2018/10/9. It imports the \"AICerebel.h\" header file and provides the implementation for its methods.",
+        "type": "summary"
+    },
+    "374": {
+        "file_id": 40,
+        "content": "////\n////  AICerebel.m\n////  SMG_NothingIsAll\n////\n////  Created by jiaxiaogang on 2018/10/9.\n////  Copyright © 2018年 XiaoGang. All rights reserved.\n////\n//\n//#import \"AICerebel.h\"\n//\n//@implementation AICerebel\n//\n//@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AICerebel/AICerebel.m:1-13"
+    },
+    "375": {
+        "file_id": 40,
+        "content": "This file contains the implementation of the AICerebel class in the SMG_NothingIsAll project, created by jiaxiaogang on 2018/10/9. It imports the \"AICerebel.h\" header file and provides the implementation for its methods.",
+        "type": "comment"
+    },
+    "376": {
+        "file_id": 41,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AILine.h",
+        "type": "filepath"
+    },
+    "377": {
+        "file_id": 41,
+        "content": "The AILine class represents a neural network line with strength, type, and port properties. It is connected to at least two AI pointers and forms a \"neural network\" when combined with other lines. The 'otherPointers' method returns an array of pointers from the other end.",
+        "type": "summary"
+    },
+    "378": {
+        "file_id": 41,
+        "content": "////\n////  AILine.h\n////  SMG_NothingIsAll\n////\n////  Created by 贾  on 2017/6/29.\n////  Copyright © 2017年 XiaoGang. All rights reserved.\n////\n//\n//#import <Foundation/Foundation.h>\n//#import \"AIObject.h\"\n//\n///**\n// *  MARK:--------------------网线--------------------\n// *  1,指向任何2+个AIPointer\n// *  2,形成\"神经网络\"的网络线\n// *  3,自带强度及衰减强化策略\n// *  4,单独存表\n// *  5,销毁时,通知GC;GC去回收已经没有指向的数据;\n// */\n//@class AILineStrong,AIPort,AIPointer;\n//@interface AILine : AIObject\n//\n///**\n// *  MARK:--------------------new--------------------\n// *  @param obj... : 需要传入obj是已存储过的\n// *  //估计将要删掉AILineType;不灵活...AILineType本身应该也是一个抽象节点;\n// *  //准备开发多维网络(像多维数组的概念)\n// */\n//+ (AILine*) newWithType:(AILineType)type aiObjs:(NSArray*)aiObjs;\n//\n////@property (strong,nonatomic) NSMutableArray *pointers;//count=2\n//@property (strong,nonatomic) AILineStrong *strong;   //网络强度\n//@property (assign, nonatomic) AILineType type;       //因\"知识表示\"的泛化要求;必须简化\"树形知识表示\"结构;而更加依赖AILine;而AILaw和AILogic也可以使用AILine来代替;(参考N4P1)\n//@property (strong,nonatomic) AIPort *port;          //接口",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AILine.h:1-34"
+    },
+    "379": {
+        "file_id": 41,
+        "content": "This code defines the AILine class in the SMG_NothingIsAll project. It represents a neural network line with properties such as strength, type, and a port. The line is connected to at least two AI pointers and can form a \"neural network\" when combined with other lines. When destroyed, it notifies the garbage collector to clean up any data that is no longer referenced.",
+        "type": "comment"
+    },
+    "380": {
+        "file_id": 41,
+        "content": "//\n///**\n// *  MARK:--------------------取另一头--------------------\n// */\n//-(NSArray*) otherPointers:(AIPointer*)pointer;\n//\n//@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AILine.h:35-41"
+    },
+    "381": {
+        "file_id": 41,
+        "content": "This code defines a method 'otherPointers' that takes an AIPointer object as parameter and returns an NSArray of pointers from the other end.",
+        "type": "comment"
+    },
+    "382": {
+        "file_id": 42,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AILine.m",
+        "type": "filepath"
+    },
+    "383": {
+        "file_id": 42,
+        "content": "This code defines class AILine and its methods for creating instances with specified type, pointers or array of AIObjects. It also imports related classes like AIPort, AIPointer, and others for accessing and manipulating pointers.",
+        "type": "summary"
+    },
+    "384": {
+        "file_id": 42,
+        "content": "////\n////  AILine.m\n////  SMG_NothingIsAll\n////\n////  Created by 贾  on 2017/6/29.\n////  Copyright © 2017年 XiaoGang. All rights reserved.\n////\n//\n//#import \"AILine.h\"\n//#import \"AIPort.h\"\n//#import \"AIPointer.h\"\n//#import \"AILineStrong.h\"\n//#import \"AIArray.h\"\n//\n//@implementation AILine\n//\n//+ (AILine*) newWithType:(AILineType)type pointers:(AIArray*)pointers\n//{\n//    AILine *value = [[self.class alloc] init];\n//    value.type = type;\n//    value.strong = [AILineStrong newWithCount:1];\n//    [value.port.pointers addObjectsFromArray:pointers.content];\n//    \n//    return value;\n//}\n//\n//+ (AILine*) newWithType:(AILineType)type aiObjs:(NSArray*)aiObjs\n//{\n//    AILine *value = [[self.class alloc] init];\n//    value.type = type;\n//    value.strong = [AILineStrong newWithCount:1];\n//    if (ARRISOK(aiObjs)) {\n//        for (AIObject *obj in aiObjs) {\n//            if (ISOK(obj, AIObject.class) && POINTERISOK(obj.pointer)) {\n//                [value.port.pointers addObject:obj.pointer];\n//            }\n//        }\n//    }\n//    ",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AILine.m:1-39"
+    },
+    "385": {
+        "file_id": 42,
+        "content": "This code defines the class AILine and its methods for creating instances of AILine with specified type and pointers or with specified type and array of AIObjects. It also imports other related classes like AIPort, AIPointer, AILineStrong, and AIArray.",
+        "type": "comment"
+    },
+    "386": {
+        "file_id": 42,
+        "content": "//    return value;\n//}\n//\n//\n//-(AIPort *)port {\n//    if (_port == nil) {\n//        _port = [[AIPort alloc] init];\n//    }\n//    return _port;\n//}\n//\n//\n///**\n// *  MARK:--------------------取另一头--------------------\n// */\n//-(NSArray*) otherPointers:(AIPointer*)pointer{\n//    NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:self.port.pointers];\n//    for (AIPointer *item in mArr) {\n//        if (POINTERISOK(item) && [item isEqual:pointer]) {\n//            [mArr removeObject:item];\n//            return mArr;\n//        }\n//    }\n//    return nil;\n//}\n//\n//\n//@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AILine.m:40-67"
+    },
+    "387": {
+        "file_id": 42,
+        "content": "This code defines a class with methods for accessing and manipulating pointers. The class has a port property that can be accessed using the 'port' method. The 'otherPointers' method returns an array of all pointers except for the specified one.",
+        "type": "comment"
+    },
+    "388": {
+        "file_id": 43,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AIMvFoManager/AIMvFoManager.h",
+        "type": "filepath"
+    },
+    "389": {
+        "file_id": 43,
+        "content": "The AIMvFoManager header file declares a class for managing foNode->cmvNode models, constructing mvs, and building conFos in the SMG_NothingIsAll codebase.",
+        "type": "summary"
+    },
+    "390": {
+        "file_id": 43,
+        "content": "//\n//  AIMvFoManager.h\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/5/6.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------foNode->cmvNode的模型--------------------\n */\n@class AIFrontOrderNode,AICMVNode;\n@interface AIMvFoManager : NSObject\n/**\n *  MARK:--------------------create foNode->cmvNode 基本模型--------------------\n *  @param mv : 触发了create的mv;\n *  @param order : 瞬时记忆序列\n *  @result : 返回foNode;\n */\n-(AIFrontOrderNode*) create:(NSTimeInterval)inputTime order:(NSArray*)order mv:(AICMVNodeBase*)mv;\n/**\n *  MARK:--------------------构建具象mv--------------------\n */\n-(AICMVNodeBase*) createConMv:(NSArray*)imvAlgsArr;\n-(AICMVNodeBase*) createConMv:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p at:(NSString*)at;\n/**\n *  MARK:--------------------构建conFo--------------------\n *  @result notnull\n */\n+(AIFrontOrderNode*) createConFo:(NSArray*)order;\n+(AIFoNodeBase*) createConFo_NoRepeat:(NSArray*)order;\n+(AIFoNodeBase*) createConFoForCanset:(NSArray*)order sceneFo:(AIFoNodeBase*)sceneFo sceneTargetIndex:(NSInteger)sceneTargetIndex;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIMvFoManager/AIMvFoManager.h:1-37"
+    },
+    "391": {
+        "file_id": 43,
+        "content": "AIMvFoManager.h is a header file containing the class declaration for AIMvFoManager, which handles creating and managing foNode->cmvNode models, constructing concrete mvs, and building conFos in the SMG_NothingIsAll codebase.",
+        "type": "comment"
+    },
+    "392": {
+        "file_id": 43,
+        "content": "@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIMvFoManager/AIMvFoManager.h:39-39"
+    },
+    "393": {
+        "file_id": 43,
+        "content": "Ending the class declaration for AIMvFoManager.",
+        "type": "comment"
+    },
+    "394": {
+        "file_id": 44,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AIMvFoManager/AIMvFoManager.m",
+        "type": "filepath"
+    },
+    "395": {
+        "file_id": 44,
+        "content": "This code creates FrontOrderNode and CMVNodeBase objects, manages MV nodes in AIMvFoManager, supports limiting repeat range with noRepeatArea_ps array, and strengthens front order nodes based on an array of orders.",
+        "type": "summary"
+    },
+    "396": {
+        "file_id": 44,
+        "content": "//\n//  AIMvFoManager.m\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/5/6.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"AIMvFoManager.h\"\n#import \"AINetAbsFoUtils.h\"\n@implementation AIMvFoManager\n/**\n *  MARK:--------------------创建fo和mv的指向--------------------\n *  @param mv notnull\n */\n-(AIFrontOrderNode*) create:(NSTimeInterval)inputTime order:(NSArray*)order mv:(AICMVNodeBase*)mv{\n    //1. foNode;\n    NSInteger urgentTo = [NUMTOOK([AINetIndex getData:mv.urgentTo_p]) integerValue];\n    AIFrontOrderNode *foNode = [AIMvFoManager createConFo:order difStrong:urgentTo];\n    //2. 将mv.inputTime传入,在relateFo之前,将inputTime赋值fo.mvDeltaTime;\n    if (ARRISOK(order)) {\n        AIShortMatchModel_Simple *lastOrderTime = ARR_INDEX_REVERSE(order, 0);\n        foNode.mvDeltaTime = inputTime - lastOrderTime.inputTime;\n    }\n    //3. 互指向\n    [AINetUtils relateFo:foNode mv:mv];\n    //4. 返回给thinking\n    return foNode;\n}\n-(AICMVNodeBase*) createConMv:(NSArray*)imvAlgsArr {\n    //1. 数据解析 & 打包cmvNode;\n    __block AICMVNodeBase *cmvNode = nil;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIMvFoManager/AIMvFoManager.m:1-38"
+    },
+    "397": {
+        "file_id": 44,
+        "content": "This code appears to be part of a class called AIMvFoManager, which is creating FrontOrderNode and CMVNodeBase objects. The create method takes in an inputTime, order array, and mv object as parameters. It creates a FrontOrderNode, assigns the inputTime to mvDeltaTime if there is an order, relates the Fo and Mv nodes, and then returns the created Fo node. The createConMv method seems to be responsible for creating CMVNodeBase objects by parsing data and packing it into cmvNode.",
+        "type": "comment"
+    },
+    "398": {
+        "file_id": 44,
+        "content": "    [ThinkingUtils parserAlgsMVArr:imvAlgsArr success:^(AIKVPointer *delta_p, AIKVPointer *urgentTo_p, NSInteger delta, NSInteger urgentTo, NSString *algsType) {\n        //2. 打包cmvNode (imv的价值节点先放内存中);\n        cmvNode = [self createConMv:urgentTo_p delta_p:delta_p at:algsType];\n    }];\n    return cmvNode;\n}\n/**\n *  MARK:--------------------mvNode构建器--------------------\n *  @version\n *      2023.08.09: 支持全局防重 (参考30095-方案3);\n */\n-(AICMVNodeBase*) createConMv:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p at:(NSString*)at {\n    //1. 数据\n    if (!urgentTo_p || !delta_p || !at) return nil;\n    NSInteger urgentTo = [NUMTOOK([AINetIndex getData:urgentTo_p]) integerValue];\n    NSArray *content_ps = @[urgentTo_p, delta_p];\n    NSArray *sort_ps = [SMGUtils sortPointers:content_ps];\n    //2. 全局防重;\n    AICMVNodeBase *result = [AINetIndexUtils getAbsoluteMatching_General:content_ps sort_ps:sort_ps except_ps:nil getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {\n        return [AINetUtils refPorts_All4Value:item_p];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIMvFoManager/AIMvFoManager.m:39-60"
+    },
+    "399": {
+        "file_id": 44,
+        "content": "This code creates a CMV node by constructing an AICMVNodeBase object using given parameters for urgentTo, delta_p, and at. It first checks if the input parameters are valid and then sorts them before getting the absolute matching using global deduplication to prevent duplicates. Finally, it returns the constructed AICMVNodeBase object.",
+        "type": "comment"
+    }
+}

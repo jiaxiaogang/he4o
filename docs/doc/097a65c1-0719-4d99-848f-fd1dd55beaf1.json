@@ -1,0 +1,10 @@
+{
+    "summary": "\"MemManagerWindow.h\" is a header file for a UIView class in the \"SMG_NothingIsAll\" project, containing open and close methods for managing a window.",
+    "details": [
+        {
+            "comment": "\"MemManagerWindow.h\" is a header file for a UIView class in the \"SMG_NothingIsAll\" project, containing open and close methods for managing a window.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/MemManager/MemManagerWindow.h\":0-15",
+            "content": "//\n//  MemManagerWindow.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/6/6.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n@interface MemManagerWindow : UIView\n-(void) open;\n-(void) close;\n@end"
+        }
+    ]
+}

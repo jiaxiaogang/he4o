@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines the \"AIFrontOrderNode\" class, a concrete sequence node that inherits from \"AIFoNodeBase\", likely used in an artificial intelligence or machine learning framework. The header file is part of the \"AINet\" module in the \"SMG_NothingIsAll\" project and was created on July 26, 2018 by iMac.",
+    "details": [
+        {
+            "comment": "This code defines the \"AIFrontOrderNode\" class, a concrete sequence node that inherits from \"AIFoNodeBase\", likely used in an artificial intelligence or machine learning framework. The header file is part of the \"AINet\" module in the \"SMG_NothingIsAll\" project and was created on July 26, 2018 by iMac.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIFrontOrderNode.h\":0-15",
+            "content": "//\n//  AIFrontOrderNode.h\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/7/26.\n//  Copyright \u00a9 2018\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------\u5177\u8c61\u65f6\u5e8f\u8282\u70b9--------------------\n */\n@interface AIFrontOrderNode : AIFoNodeBase\n@end"
+        }
+    ]
+}

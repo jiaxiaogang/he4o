@@ -1,0 +1,20 @@
+{
+    "summary": "The code initializes a NVLineView, configures its properties, and creates a UIView and UILabel. It defines the setFrame method for adjusting the view's layout when frame is changed.",
+    "details": [
+        {
+            "comment": "This code initializes the NVLineView by setting its background color, height, user interaction enabled status, and layer properties. It also creates a UIView called lineView with a specific background color, adds it as a subview of NVLineView, sets its alpha value, and configures its layer properties.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/SMGNetVision/Core/View/NVLineView.m\":0-47",
+            "content": "//\n//  NVLineView.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/6/17.\n//  Copyright \u00a9 2019\u5e74 XiaoGang. All rights reserved.\n//\n#import \"NVLineView.h\"\n#import \"NVConfig.h\"\n#import \"MASConstraint.h\"\n#import \"View+MASAdditions.h\"\n@interface NVLineView ()\n@property (strong,nonatomic) UIView *lineView;\n@property (strong, nonatomic) UILabel *lightLab;\n@end\n@implementation NVLineView\n-(id) init {\n    self = [super init];\n    if(self != nil){\n        [self initView];\n        [self initData];\n        [self initDisplay];\n    }\n    return self;\n}\n-(void) initView{\n    //self\n    [self setBackgroundColor:[UIColor clearColor]];\n    self.height = 1.0f;\n    [self setUserInteractionEnabled:false];\n    [self.layer setMasksToBounds:true];\n    [self.layer setMasksToBounds:false];\n    //lineView\n    self.lineView = [[UIView alloc] init];\n    [self.lineView setBackgroundColor:UIColorWithRGBHex(0xBB5500)];\n    [self addSubview:self.lineView];\n    [self.lineView setAlpha:0.2f];\n    [self.lineView.layer setMasksToBounds:false];\n    //strongLab"
+        },
+        {
+            "comment": "Creates a UILabel for displaying a light label with specific properties and initializes data array.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/SMGNetVision/Core/View/NVLineView.m\":48-86",
+            "content": "    self.lightLab = [[UILabel alloc] init];\n    [self.lightLab setTextColor:UIColorWithRGBHex(0xFF0000)];\n    [self addSubview:self.lightLab];\n    [self.lightLab setAlpha:0.2f];\n    [self.lightLab setHeight:10];\n    [self.lightLab setTextAlignment:NSTextAlignmentCenter];\n    [self.lightLab setFont:[UIFont systemFontOfSize:8]];\n}\n-(void) initData{\n    _data = [[NSMutableArray alloc] init];\n}\n-(void) initDisplay{\n}\n//MARK:===============================================================\n//MARK:                     < method >\n//MARK:===============================================================\n-(void) light:(NSString*)lightStr{\n    [self.lightLab setText:lightStr];\n}\n-(void) setDataWithDataA:(id)dataA dataB:(id)dataB{\n    if (dataA && dataB) {\n        [self setDataWithData:@[dataA,dataB]];\n    }\n}\n-(void) setDataWithData:(NSArray*)data{\n    if (ARRISOK(data) && data.count == 2) {\n        [self.data removeAllObjects];\n        [self.data addObjectsFromArray:data];\n        [self refreshDisplay];\n    }\n}\n-(void) refreshDisplay{"
+        },
+        {
+            "comment": "This code defines the setFrame method for a view, which updates the frame of the view and its subviews when the frame of the view is changed. It fixes an issue with text layout in the lightLab subview, adjusts the frame of the lineView, and sets the width and center position of the lightLab label.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/SMGNetVision/Core/View/NVLineView.m\":88-102",
+            "content": "}\n/**\n *  MARK:--------------------setFrame--------------------\n *  @version\n *      2021.08.05: \u4fee\u590dlightLab\u6392\u7248\u9519\u4e71\u7684\u95ee\u9898;\n */\n-(void)setFrame:(CGRect)frame{\n    [super setFrame:frame];\n    [self.lineView setFrame:CGRectMake(cNodeSize * 0.5f, 0, self.width - cNodeSize, self.height)];\n    [self.lightLab setWidth:self.width];\n    [self.lightLab setCenter:CGPointMake(self.width / 2.0f, self.height / 2.0f)];\n}\n@end"
+        }
+    ]
+}

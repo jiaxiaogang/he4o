@@ -1,0 +1,15 @@
+{
+    "summary": "The code initializes a DemoCharge object, sets up battery monitoring using UIDevice and AIInput, and defines class methods including dealloc and commit.",
+    "details": [
+        {
+            "comment": "This code initializes a DemoCharge object and sets up battery monitoring. It uses UIDevice to check the current battery state and notifies when it changes. The battery state is then passed to AIInput with HungerState as the value.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Demo/Adapter/DemoCharge.m\":0-42",
+            "content": "//\n//  DemoCharge.m\n//  SMG_NothingIsAll\n//\n//  Created by \u8d3e  on 2017/12/14.\n//  Copyright \u00a9 2017\u5e74 XiaoGang. All rights reserved.\n//\n#import \"DemoCharge.h\"\n#import \"AIInput.h\"\n@interface DemoCharge ()\n@end\n@implementation DemoCharge\n-(id) init{\n    self = [super init];\n    if (self) {\n        [self initRun];\n    }\n    return self;\n}\n-(void) initRun{\n    [UIDevice currentDevice].batteryMonitoringEnabled = YES;\n    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(observerHungerStateChanged) name:UIDeviceBatteryStateDidChangeNotification object:nil];\n}\n/**\n *  MARK:--------------------method--------------------\n */\n-(void) observerHungerStateChanged{\n    //2,\u4f20\u7ed9Input\n    HungerState state;\n    if ([UIDevice currentDevice].batteryState == UIDeviceBatteryStateUnplugged) {//\u672a\u5145\u7535\n        state = HungerState_Unplugged;\n    }else if ([UIDevice currentDevice].batteryState == UIDeviceBatteryStateCharging) {//\u5145\u7535\u4e2d\n        state = HungerState_Charging;\n    }\n    [AIInput commitCustom:CustomInputType_Charge value:3];"
+        },
+        {
+            "comment": "This code is defining a class and its methods. The \"dealloc\" method removes the observer, ensuring proper memory management. The \"commit\" method sends a custom command to the AIInput object, indicating it should charge with a value of 3. This could be for debugging purposes or other specific actions.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Demo/Adapter/DemoCharge.m\":43-54",
+            "content": "}\n-(void) dealloc{\n    [[NSNotificationCenter defaultCenter] removeObserver:self];\n}\n-(void) commit:(HungerState)state {\n    //\u4e3a\u65b9\u4fbf\u8c03\u8bd5:\u5047\u8bbe:\u5145\u4e00\u4e0b;\u52a0\u4e00\u683c\u7535;\n    [AIInput commitCustom:CustomInputType_Charge value:3];\n}\n@end"
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+{
+    "summary": "This is the header file for the TCOut class, a part of the SMG_NothingIsAll project. It imports Foundation and defines a method run: that takes an TOAlgModel object as input and returns a TCResult object.",
+    "details": [
+        {
+            "comment": "This is the header file for the TCOut class, a part of the SMG_NothingIsAll project. It imports Foundation and defines a method run: that takes an TOAlgModel object as input and returns a TCResult object.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCOut/TCOut.h\":0-14",
+            "content": "//\n//  TCOut.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/11/28.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface TCOut : NSObject\n+(TCResult*) run:(TOAlgModel*)algModel;\n@end"
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines a class FoodView that inherits from HEView. It includes an enum FoodStatus, which represents different states of food like having skin or being edible. The class also has a property for the current status and a method hit() to handle the food when it is hit.",
+    "details": [
+        {
+            "comment": "This code defines a class FoodView that inherits from HEView. It includes an enum FoodStatus, which represents different states of food like having skin or being edible. The class also has a property for the current status and a method hit() to handle the food when it is hit.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Demo/BirdLivePage/View/FoodView.h\":0-31",
+            "content": "//\n//  FoodView.h\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/11/9.\n//  Copyright \u00a9 2018\u5e74 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n/**\n *  MARK:--------------------FoodStatus--------------------\n */\ntypedef NS_ENUM(NSInteger, FoodStatus) {\n    FoodStatus_Border = 0,    //\u6709\u76ae\n    FoodStatus_Eat = 1,       //\u53ef\u5403\n    FoodStatus_Remove = 2,    //\u538b\u70c2\n};\n/**\n *  MARK:--------------------\u575a\u679c\u7c7b--------------------\n *  1. \u6c7d\u8f66\u538b\u4e00\u6b21\u6d88\u76ae,\u538b\u4e24\u6b21\u62a5\u5e9f;\n */\n@interface FoodView : HEView\n@property (assign,nonatomic) FoodStatus status;\n//\u88ab\u649e\u51fb\n-(void) hit;\n@end"
+        }
+    ]
+}

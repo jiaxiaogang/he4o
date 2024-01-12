@@ -1,0 +1,10 @@
+{
+    "summary": "This code adds a method to the NSObject class called getDic, which converts an object into a dictionary. The containParent parameter specifies whether to include parent class properties in the conversion, and the returned value is a mutable dictionary.",
+    "details": [
+        {
+            "comment": "This code adds a method to the NSObject class called getDic, which converts an object into a dictionary. The containParent parameter specifies whether to include parent class properties in the conversion, and the returned value is a mutable dictionary.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Extension/NSObject+Extension.h\":0-19",
+            "content": "//\n//  NSObject+Extension.h\n//  SMG_NothingIsAll\n//\n//  Created by \u8d3e  on 2017/9/22.\n//  Copyright \u00a9 2017\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface NSObject (PrintConvertDicOrJson)\n/**\n *  MARK:--------------------\u5c06obj\u8f6c\u4e3adic\u7c7b\u578b--------------------\n *  @param containParent : \u662f\u5426\u8f6c\u6362\u7236\u7c7b\u4e2d\u7684\u5c5e\u6027\n *  @result notnull\n */\n+ (NSMutableDictionary*) getDic:(NSObject*)obj containParent:(BOOL)containParent;\n@end"
+        }
+    ]
+}

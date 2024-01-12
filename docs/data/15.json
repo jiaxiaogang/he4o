@@ -1,0 +1,541 @@
+{
+    "1500": {
+        "file_id": 150,
+        "content": " *  @desc pInput时:\n *          1. 生成的protoFo构建指向mv的时序,并用于learning学习;\n *          2. 生成的protoFo4PInput构建mv放到content末帧的时序,并用于pInput时的时序识别 (参考30094-todo3);\n *  @version\n *      2023.03.11: mv也生成shortModel,并加入瞬时序列 (参考28171-todo6);\n *      2023.03.11: 捋一下mv输入不需要概念识别和时序识别 (参考28171-todo5);\n *      2023.08.08: pInput时支持时序识别 & 构建任务 & 预测 (参考30094-todo3 & todo5);\n */\n+(void) pInput:(AICMVNodeBase*)mv{\n    ISGroupLog(@\"input P\");\n    [theTC updateLoopId];\n    [theTC updateOperCount:kFILENAME];\n    Debug();\n    //1. 数据准备 (瞬时记忆,理性匹配出的模型);\n    __block AIShortMatchModel *shortModel = [[AIShortMatchModel alloc] init];\n    shortModel.protoAlg = mv;\n    shortModel.inputTime = [[NSDate date] timeIntervalSince1970];\n    DebugE();\n    //2. 识别概念;\n    [TIUtils TIR_Alg:mv.pointer except_ps:nil inModel:shortModel];\n    //2. 转regroup生成protoFo;\n    [TCRegroup pRegroup:mv shortModel:shortModel];\n    //3. P不需要概念识别,但可以直接生成AIShortMatchModel,并收集到瞬时序列 => 将mModel保留 (只有先保留后,构建时序时,才会含新帧概念);\n    [theTC.inModelManager add:shortModel];\n    //4. protoFo4PInput是以mv为结尾构建时序,然后又想以mv为一帧来识别 (参考30093-方案1-改动点 & 30094-todo3);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCInput/TCInput.m:93-121"
+    },
+    "1501": {
+        "file_id": 150,
+        "content": "This code is responsible for handling \"pInput\" input type in the AIThinkingControl component of a codebase. It prepares data by generating short-term models, identifies concepts using the model, converts to regroup and generates protoFo, adds the model to the instantaneous sequence list, and performs other tasks related to pInput handling.",
+        "type": "comment"
+    },
+    "1502": {
+        "file_id": 150,
+        "content": "    shortModel.protoFo4PInput = [theNet createConFo:[theTC.inModelManager shortCache:false]];\n    //5. P不需要时序识别,但可以触发学习 => 提交学习识别;\n    [TCRecognition pRecognition:shortModel];\n    //6. 学习\n    [TCLearning pLearning:shortModel.protoFo];\n    //7. 取cmvNode: tip反馈: tip_OPushM & top_OPushM;\n    AICMVNode *cmvNode = [SMGUtils searchNode:shortModel.protoFo.cmvNode_p];\n    if (!ISOK(cmvNode, AICMVNode.class)) {\n        return;\n    }\n    [TCFeedback feedbackTIP:shortModel.protoFo cmvNode:cmvNode];\n    [TCFeedback feedbackTOP:cmvNode];\n    //8. 任务=>生成p任务: 行为不构建任务和预测 (参考28137-修复);\n    [TCDemand rDemand:shortModel protoFo:shortModel.protoFo4PInput];\n    //9. 为新matchPFos & matchRFos构建反省触发器;\n    [TCForecast forecast_Multi:shortModel.matchPFos];\n    [TCForecast forecast_Multi:shortModel.matchRFos];\n}\n+(void) hInput:(TOAlgModel*)algModel{\n    ISGroupLog(@\"input H\");\n    [theTC updateLoopId];\n    [theTC updateOperCount:kFILENAME];\n    Debug();\n    DebugE();\n    [TCDemand hDemand:algModel];\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCInput/TCInput.m:122-155"
+    },
+    "1503": {
+        "file_id": 150,
+        "content": "1. Create protoFo4PInput from net and inModelManager's shortCache.\n2. Submit recognition for TCRecognition.\n3. Trigger learning with shortModel.protoFo.\n4. Search cmvNode for tip feedback.\n5. If cmvNode is not valid, return.\n6. Provide tip and top feedback with cmvNode.\n7. Generate p-demand for TCDemand.\n8. Build introspection triggers for matchPFos & matchRFos.",
+        "type": "comment"
+    },
+    "1504": {
+        "file_id": 151,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/AIAnalogy.h",
+        "type": "filepath"
+    },
+    "1505": {
+        "file_id": 151,
+        "content": "This code defines a class called AIAnalogy with outer and inner types of analogies for reasoning, using Fo pattern for Canset type. It contains methods for creating AINetAbsFoNode with indexDic, newCanset, oldCanset, sceneFo, and EffectStatus (es).",
+        "type": "summary"
+    },
+    "1506": {
+        "file_id": 151,
+        "content": "//\n//  AIAnalogy.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/3/20.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------类比器--------------------\n *  @desc\n *      1. 外类比 (复用方法)\n *      2. 内类比 (主入口)\n *      3. 反馈类比 (主入口)\n *      4. 反省类比 (主入口)\n *  @callers\n *      1. InReasonSame: 调用内类比\n *      2. InPerceptSame: 调用正向反馈外类比\n *      3. InPerceptDiff: 调用反向反馈外类比\n *      4. InReasonDiff: 调用InRethink类比\n *      5. Out三种ActYes: 调用OutRethink类比\n *  @version\n *      2021.12.26: 仅留下外类比,其它全废弃删掉 (参考Note24-TC新螺旋架构整理);\n */\n@interface AIAnalogy : NSObject\n//MARK:===============================================================\n//MARK:                     < 外类比时序 >\n//MARK:===============================================================\n+(AINetAbsFoNode*) analogyOutside:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type;\n+(AINetAbsFoNode*) analogyOutside:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type noRepeatArea_ps:(NSArray*)noRepeatArea_ps;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/AIAnalogy.h:1-33"
+    },
+    "1507": {
+        "file_id": 151,
+        "content": "This code defines a class called AIAnalogy, which contains methods for analogy reasoning. It has two main types of analogies: outer type (external comparison) and inner type (internal comparison). The outer type is further divided into four categories: external comparison, feedback, reflection, and rethinking. These analogies can be used in various scenarios such as InReasonSame, InPerceptSame, InPerceptDiff, etc.",
+        "type": "comment"
+    },
+    "1508": {
+        "file_id": 151,
+        "content": "/**\n *  MARK:--------------------Canset类比 (参考29025-24)--------------------\n */\n//+(AINetAbsFoNode*) analogyCansetFo:(NSDictionary*)indexDic newCanset:(AIFoNodeBase*)newCanset oldCanset:(AIFoNodeBase*)oldCanset sceneFo:(AIFoNodeBase*)sceneFo es:(EffectStatus)es;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/AIAnalogy.h:35-40"
+    },
+    "1509": {
+        "file_id": 151,
+        "content": "This code defines a class analogy for Canset type using the Fo (Feature Object) pattern, referencing example 29025-24. It has a method to create an AINetAbsFoNode using indexDic, newCanset, oldCanset, sceneFo, and EffectStatus (es).",
+        "type": "comment"
+    },
+    "1510": {
+        "file_id": 152,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/AIAnalogy.m",
+        "type": "filepath"
+    },
+    "1511": {
+        "file_id": 152,
+        "content": "The `orderSames` function creates abstract relationships between Fo nodes, updates jMax in a dictionary, and logs results. It also compares responsibility ratios using machine learning algorithms and analogy, mapping with scene objects and enhancing eff values.",
+        "type": "summary"
+    },
+    "1512": {
+        "file_id": 152,
+        "content": "//\n//  AIAnalogy.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/3/20.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import \"AIAnalogy.h\"\n#import \"AINetAbsCMVUtil.h\"\n@implementation AIAnalogy\n//MARK:===============================================================\n//MARK:                     < 外类比时序 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------fo外类比 (找相同算法)--------------------\n *  @desc                   : orderSames用于构建absFo\n *  @callers\n *      1. analogy_Feedback_Same()  : 同向反馈类比\n *      2. analogyInner()           : 内类比\n *      3. reasonRethink()          : 反省类比\n *\n *  1. 连续信号中,找重复;(连续也是拆分,多事务处理的)\n *  2. 两条信息中,找交集;\n *  3. 在连续信号的处理中,实时将拆分单信号存储到内存区,并提供可检索等,其形态与最终存硬盘是一致的;\n *  4. 类比处理(瓜是瓜)\n *  注: 类比的处理,是足够细化的,对思维每个信号作类比操作;(而将类比到的最基本的结果,输出给thinking,以供为构建网络的依据,最终是以网络为目的的)\n *  注: 随后可以由一个sames改为多个sames并实时使用block抽象 (并消耗energy);\n *  _param noRepeatArea_ps : 类比结果absFo的防重范围 (默认传nil时,会全局防重);\n *\n *  @version\n *      20200215: 有序外类比: 将forin循环fo和assFo改为反序,并记录上次类比位置jMax (因出现了[果,果,吃,吃]这样的异常时序) 参考n18p11;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/AIAnalogy.m:1-35"
+    },
+    "1513": {
+        "file_id": 152,
+        "content": "This code is part of the AIAnalogy class implementation. It contains a function called `orderSames` which builds the `absFo` for order analogies by finding common elements between two sequences and also handling continuous signals. This information is then used in functions like `analogy_Feedback_Same`, `analogyInner`, and `reasonRethink`. The code also includes some notes about preventing duplication and using blocks to abstract multiple sames.",
+        "type": "comment"
+    },
+    "1514": {
+        "file_id": 152,
+        "content": " *      20200831: 支持反省外类比,得出更确切的ATSub原因,参考:20205-步骤4;\n *      20201203: 修复21175BUG (因createAbsAlgBlock忘记调用,导致absAlg和glAlg间未关联) (参考21115);\n *      20210819: 修复长1和长2类比时,类比出长2的BUG (参考23221-BUG2);\n *      20210926: 修复glFo外类比时非末位alg类比构建absAlg时,也使用了GLType的问题 (参考24022-BUG1);\n *      20221028: 用mIsC判断替代sameValue_ps (参考27153-todo4);\n *      20230322: 打开外类比,支持(根据相近度将主要责任的码抽象掉)共同点抽象 (参考29025-11);\n *      20230327: 支持得出protoFo/assFo 与 absFo的indexDic映射 (参考29032-todo1.2);\n */\n+(AINetAbsFoNode*) analogyOutside:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type {\n    return [self analogyOutside:protoFo assFo:assFo type:type noRepeatArea_ps:nil];\n}\n+(AINetAbsFoNode*) analogyOutside:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type noRepeatArea_ps:(NSArray*)noRepeatArea_ps {\n    //1. 类比orders的规律\n    if (Log4OutAna) NSLog(@\"\\n----------- 外类比(%@) -----------\\nfo:%@ \\nassFo:%@\",ATType2Str(type),Fo2FStr(protoFo),Fo2FStr(assFo));\n    NSMutableArray *orderSames = [[NSMutableArray alloc] init];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/AIAnalogy.m:36-50"
+    },
+    "1515": {
+        "file_id": 152,
+        "content": "This code defines two methods for performing analogy outside with given prototype and associated fo nodes, and type. It includes functionality to support outside analogy, shared points abstraction, mapping protoFo/assFo indexDic, and noRepeatArea_ps.",
+        "type": "comment"
+    },
+    "1516": {
+        "file_id": 152,
+        "content": "    NSMutableDictionary *protoAssIndexDic = [NSMutableDictionary new];//收集proto和ass的映射;\n    if (protoFo && assFo) {\n        //2. 外类比有序进行 (记录jMax & 反序)\n        NSInteger jMax = assFo.count - 1;\n        for (NSInteger i = protoFo.count - 1; i >= 0; i--) {\n            for (NSInteger j = jMax; j >= 0; j--) {\n                AIKVPointer *protoA_p = protoFo.content_ps[i];\n                AIKVPointer *assA_p = assFo.content_ps[j];\n                //3. B源于matchFo,此处只判断B是1层抽象 (参考27161-调试1&调试2);\n                //此处proto抽象仅指向刚识别的matchAlgs,所以与contains等效;\n                BOOL mIsC = [TOUtils mIsC_1:protoA_p c:assA_p];\n                if (Log4OutAna) NSLog(@\"proto的第%ld: A%ld 类比 ass的第%ld: A%ld (%@)\",i,protoA_p.pointerId,j,assA_p.pointerId,mIsC?@\"成功\":@\"失败\");\n                if (mIsC) {\n                    //4. 即使mIsC匹配,也要进行共同点抽象 (参考29025-11);\n                    AIAlgNodeBase *absA = [self analogyAlg:protoA_p assA:assA_p];\n                    //5. 收集并更新jMax;\n                    [protoAssIndexDic setObject:@(i) forKey:@(j)];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/AIAnalogy.m:51-71"
+    },
+    "1517": {
+        "file_id": 152,
+        "content": "This code collects the mapping between proto and ass, performs ordered comparison for analogy learning, checks if B is 1 level of abstraction, creates an abstract representation of matching algorithms, updates jMax and stores it in a dictionary.",
+        "type": "comment"
+    },
+    "1518": {
+        "file_id": 152,
+        "content": "                    [orderSames insertObject:absA.pointer atIndex:0];\n                    jMax = j - 1;\n                    break;\n                }\n            }\n        }\n    }\n    //6. 生成protoIndexDic 和 assIndexDic  (参考29032-todo1.2);\n    NSDictionary *assAbsIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:protoAssIndexDic.allKeys];\n    NSDictionary *protoAbsIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:protoAssIndexDic.allValues];\n    //7. 外类比构建\n    return [self analogyOutside_Creater:orderSames protoFo:protoFo assFo:assFo type:type protoIndexDic:protoAbsIndexDic assIndexDic:assAbsIndexDic noRepeatArea_ps:noRepeatArea_ps];\n}\n/**\n *  MARK:--------------------外类比的构建器--------------------\n *  1. 构建absFo\n *  2. 构建absCmv\n *  @todo\n *      20200416 - TODO_NEXT_VERSION:方法中absFo是防重的,如果absFo并非新构建,而又为其构建了absMv,则会有多个mv指向同一个fo的问题;\n *  @version\n *      2020.07.22: 在外类比无需构建时 (即具象和抽象一致时),其方向索引强度+1;\n *      2021.08.10: 在RFos的再抽象调用时,有可能将防重的带mvDeltaTime的值重置为0的BUG (参考23212-问题2);\n *      2021.09.23: 构建fo时,新增type参数,废弃原foDS(typeStr)的做法 (参考24019-时序部分);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/AIAnalogy.m:72-97"
+    },
+    "1519": {
+        "file_id": 152,
+        "content": "This code appears to be part of a larger program related to analogy construction and learning. It generates dictionaries for absolute indexes, builds an outside analogy, and adjusts the direction strength index based on similarities between abstract and concrete elements.",
+        "type": "comment"
+    },
+    "1520": {
+        "file_id": 152,
+        "content": " *      2021.09.26: 仅构建glFo时才从conNodes取at&ds值,避免SFo也有值的问题 (参考24022-BUG2);\n *      2021.09.28: ATSame和ATDiff两个type是描述是否包含cmv指向的,改为传ATDefault过来 (参考24022-BUG5);\n *      2023.07.28: 把mvDeltaTime改成偏移修正方式 (参考30087-分析1);\n */\n+(AINetAbsFoNode*)analogyOutside_Creater:(NSArray*)orderSames protoFo:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type protoIndexDic:(NSDictionary*)protoIndexDic assIndexDic:(NSDictionary*)assIndexDic noRepeatArea_ps:(NSArray*)noRepeatArea_ps{\n    //2. 数据检查;\n    AINetAbsFoNode *result = nil;\n    if (ARRISOK(orderSames) && ISOK(protoFo, AIFoNodeBase.class) && ISOK(assFo, AIFoNodeBase.class)) {\n        //3. fo和assFo本来就是抽象关系时_直接关联即可;\n        BOOL samesEqualAssFo = orderSames.count == assFo.count && [SMGUtils containsSub_ps:orderSames parent_ps:assFo.content_ps];\n        BOOL jumpForAbsAlreadyHav = (ISOK(assFo, AINetAbsFoNode.class) && samesEqualAssFo);\n        if (jumpForAbsAlreadyHav) {\n            result = (AINetAbsFoNode*)assFo;\n            [AINetUtils relateFoAbs:result conNodes:@[protoFo] isNew:false];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/AIAnalogy.m:98-112"
+    },
+    "1521": {
+        "file_id": 152,
+        "content": "The code creates an abstract relationship between two Fo nodes based on a set of orderSames. It checks if the assFo is already an abstract relationship and if so, directly associates it with the protoFo.",
+        "type": "comment"
+    },
+    "1522": {
+        "file_id": 152,
+        "content": "            [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];\n            if (result.cmvNode_p) [theNet setMvNodeToDirectionReference:[SMGUtils searchNode:result.cmvNode_p] difStrong:1];\n        }else{\n            //4. 取foDifStrong\n            NSInteger foDifStrong = 1;\n            AICMVNodeBase *foMv = [SMGUtils searchNode:protoFo.cmvNode_p];\n            AICMVNodeBase *assMv = [SMGUtils searchNode:assFo.cmvNode_p];\n            if (foMv && assMv) {\n                NSArray *conMvs = [SMGUtils searchNodes:@[protoFo.cmvNode_p,assFo.cmvNode_p]];\n                NSInteger absUrgentTo = [AINetAbsCMVUtil getAbsUrgentTo:conMvs];\n                foDifStrong = absUrgentTo;\n            }\n            //5. 构建absFoNode (当GL时,传入at&ds);\n            result = [theNet createAbsFo_NoRepeat:orderSames protoFo:protoFo assFo:assFo difStrong:foDifStrong type:type protoIndexDic:protoIndexDic assIndexDic:assIndexDic outConAbsIsRelate:nil noRepeatArea_ps:noRepeatArea_ps];\n            //6. 算出具象总强度,其和已经是累计了此次类比的新关联强度 (参考30087-todo6);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/AIAnalogy.m:113-129"
+    },
+    "1523": {
+        "file_id": 152,
+        "content": "This code creates an abstract concept node (absFoNode) and calculates its total strength. It checks the reference ports for a result pointer, sets the direction reference based on a specified node, or retrieves foDifStrong from two nodes. It then constructs absFoNode with given parameters, computes the total strength considering accumulated related strengths.",
+        "type": "comment"
+    },
+    "1524": {
+        "file_id": 152,
+        "content": "            NSArray *conPorts = [AINetUtils conPorts_All:result];\n            NSInteger sumStrong = 0;\n            for (AIPort *item in conPorts) sumStrong += item.strong.value;\n            [AITest test30:sumStrong];\n            CGFloat frontMvDeltaTime4Log = result.mvDeltaTime;\n            //6.1. 将protoFo的mvDeltaTime偏移量计入 (参考30087-todo5&6);\n            result.mvDeltaTime += (protoFo.mvDeltaTime - result.mvDeltaTime) / (sumStrong - 1);\n            //6.2. 将assFo的mvDeltaTime偏移量计入 (参考30087-todo5&6);\n            result.mvDeltaTime += (assFo.mvDeltaTime - result.mvDeltaTime) / sumStrong;\n            NSLog(@\"偏移mvDeltaTime (从%.2f到%.2f) (总强度:%ld con1:%.2f con2:%.2f) \",frontMvDeltaTime4Log,result.mvDeltaTime,sumStrong,protoFo.mvDeltaTime,assFo.mvDeltaTime);\n            //6. createAbsCmvNode (当正向类比,且result没有cmv指向时);\n            if (protoFo.cmvNode_p && assMv && !result.cmvNode_p) {\n                AIAbsCMVNode *resultMv = [theNet createAbsCMVNode_Outside:nil aMv_p:protoFo.cmvNode_p bMv_p:assMv.pointer];\n                [AINetUtils relateFo:result mv:resultMv];//cmv模型连接;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/AIAnalogy.m:130-146"
+    },
+    "1525": {
+        "file_id": 152,
+        "content": "This code calculates the average mvDeltaTime between two Fo (Focus of Attention) objects, protoFo and assFo, adjusts the result's mvDeltaTime accordingly, and checks if a new AIAbsCMVNode needs to be created. The sum of strong values from connected ports is used in these calculations.",
+        "type": "comment"
+    },
+    "1526": {
+        "file_id": 152,
+        "content": "            }\n        }\n    }\n    //调试短时序; (先仅打外类比日志);\n    NSInteger foStrong = [AINetUtils getStrong:result atConNode:protoFo type:type];\n    NSInteger assFoStrong = [AINetUtils getStrong:result atConNode:assFo type:type];\n    NSLog(@\"1. 新proto: %@\\n2. 与ass: %@ \\n3. 外类比构建时序: %@->{%@} from: (protoFo(%ld):assFo(%ld))\",Fo2FStr(protoFo),Fo2FStr(assFo),Fo2FStr(result),Mvp2Str(result.cmvNode_p),foStrong,assFoStrong);\n    return result;\n}\n/**\n *  MARK:--------------------概念类比--------------------\n *  @desc 概念类比: 将相近度低的(负主要责任的)过滤掉 (参考29025-12);\n *        作用范围: 仅适用于protoA和assA有抽具象关系时的概念类比;\n *  @version\n *      2023.05.10: 修复此处抽具象匹配度未储存,导致复用时取不到的问题 (参考29091);\n */\n+(AIAlgNodeBase*) analogyAlg:(AIKVPointer*)protoA_p assA:(AIKVPointer*)assA_p {\n    //1. 数据准备;\n    AIAlgNodeBase *protoA = [SMGUtils searchNode:protoA_p];\n    AIAlgNodeBase *assA = [SMGUtils searchNode:assA_p];\n    NSMutableArray *sameValue_ps = [[NSMutableArray alloc] init];\n    AIMatchAlgModel *protoAbsModel4MatchValue = [[AIMatchAlgModel alloc] init];//此模型仅用于收集proto和abs的相近度,用于计算matchValue;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/AIAnalogy.m:147-169"
+    },
+    "1527": {
+        "file_id": 152,
+        "content": "This code is filtering out concept analogies with low similarity between protoA and assA, applicable only when they have abstract relations. It prepares data by searching nodes, initializes match models, and logs the final results for debugging.",
+        "type": "comment"
+    },
+    "1528": {
+        "file_id": 152,
+        "content": "    //2. 分别对protoA和assA的稀疏码进行对比;\n    for (AIKVPointer *protoV_p in protoA.content_ps) {\n        for (AIKVPointer *assV_p in assA.content_ps) {\n            //3. 二者同区时;\n            if ([protoV_p.dataSource isEqualToString:assV_p.dataSource] && [protoV_p.algsType isEqualToString:assV_p.algsType]) {\n                //4. 二者相似度较高时 (计算当前码的责任比例: 比如:1*0.8*0.7时,当前码=0.7时,它的责任比例=(1-0.7)/(1-0.8 + 1-0.7)=60%) (参考29025-13);\n                CGFloat algMatchValue = [protoA getAbsMatchValue:assA_p];\n                CGFloat valueMatchValue = [AIAnalyst compareCansetValue:protoV_p protoValue:assV_p vInfo:nil];\n                CGFloat otherValueMatchValue = valueMatchValue > 0 ? algMatchValue / valueMatchValue : 1;   //别的码相乘是0.xx;\n                CGFloat otherQueKou = 1 - otherValueMatchValue;                                             //别的码缺口;\n                CGFloat curQueKou = 1 - valueMatchValue;                                                    //当前码缺口;\n                CGFloat sumQueKou = otherQueKou + curQueKou;                                                //总缺口;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/AIAnalogy.m:171-184"
+    },
+    "1529": {
+        "file_id": 152,
+        "content": "This code is calculating the responsibility ratio of a current code by comparing it with another one (protoA and assA). It determines if they are in the same area and have similar algorithms. Then, it calculates their match values and computes the responsibility ratio based on these values and missing parts.",
+        "type": "comment"
+    },
+    "1530": {
+        "file_id": 152,
+        "content": "                CGFloat curRate = sumQueKou > 0 ? curQueKou / sumQueKou : 0;                                //算出当前码责任比例;\n                //5. 当前码责任<50%时 (次要责任时,免责);\n                if (curRate < 0.5) {\n                    [sameValue_ps addObject:assV_p];\n                    //6. 相近度个数nearCount & 相近度sumNear\n                    protoAbsModel4MatchValue.nearCount++;\n                    protoAbsModel4MatchValue.sumNear *= valueMatchValue;\n                } else {\n                    NSLog(@\"> 当前A%ld<%@>比A%ld<%@>的缺口:%.2f / 总缺口%.2f = 当前责任%.2f\",(long)protoA_p.pointerId,Pit2FStr(protoV_p),(long)assA_p.pointerId,Pit2FStr(assV_p),curQueKou,sumQueKou,curRate);\n                }\n                //6. break继续判断proto的下个V码;\n                break;\n            }\n        }\n    }\n    //7. 将相近度善可的构建成抽象概念返回;\n    [AITest test29:protoA assA:assA];\n    AIAbsAlgNode *absA = [theNet createAbsAlg_NoRepeat:sameValue_ps conAlgs:@[protoA,assA]];\n    //8. 将抽象概念与具象的匹配度存下来 (参考29091BUG);\n    [protoA updateMatchValue:absA matchValue:protoAbsModel4MatchValue.matchValue];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/AIAnalogy.m:185-209"
+    },
+    "1531": {
+        "file_id": 152,
+        "content": "The code calculates the current responsibility ratio based on the sum of QueKou values. If it's below 50%, it adds a value to sameValue_ps and increments nearCount and sumNear for protoAbsModel4MatchValue. Otherwise, it logs the difference between A and V codes along with their pointer IDs. It then builds an abstract concept from similar values and updates its match value.",
+        "type": "comment"
+    },
+    "1532": {
+        "file_id": 152,
+        "content": "    [assA updateMatchValue:absA matchValue:1];\n    return absA;\n}\n/**\n *  MARK:--------------------Canset类比 (参考29025-24 & 29027-方案3)--------------------\n *  @version\n *      2023.03.27: 支持得出newCansetFo/oldCansetFo 与 absCansetFo的indexDic映射 (参考29032-todo1.1);\n *      2023.04.07: 关闭Canset类比 (参考29059-改动);\n *      2023.04.10: 场景包含帧的类比用mIsC判断成立后,直接采用absAlg (参考29067-todo1.1);\n *      2023.04.19: 取消EFF+1,因为迁移完成不表示已正向发生 (参考29069-todo12.1);\n *      2023.04.29: 得出absCanset和scene的indexDic (参考29076-todo2);\n *      2023.09.01: 迁移完成时EFF不变(参数传ES_Default),但newCanset有用时+1,无用时-1 (参考30124-todo2 & todo3);\n *      2023.09.03: 修复dic.keys无序会导致此处生成的absFo序列也错乱的问题;\n *      2023.10.26: 废弃canset类比 (参考3014c-todo2);\n */\n//+(AINetAbsFoNode*) analogyCansetFo:(NSDictionary*)indexDic newCanset:(AIFoNodeBase*)newCanset oldCanset:(AIFoNodeBase*)oldCanset sceneFo:(AIFoNodeBase*)sceneFo es:(EffectStatus)es {\n//    //1. 类比orders的规律\n//    if (!Switch4AnalogyCansetFo) return nil;\n//    AIEffectStrong *newEffStrong = [sceneFo getEffectStrong:sceneFo.count solutionFo:newCanset.pointer];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/AIAnalogy.m:210-229"
+    },
+    "1533": {
+        "file_id": 152,
+        "content": "This function returns a net analogy node based on the canset comparison. It checks if the switch for this type of analogy is enabled, and then calculates and returns the new analogy net effect strong. This function has undergone several updates over time, including support for deriving newCansetFo/oldCansetFo indexDic mapping, disabling canset comparison, and adjusting EFF+1 based on transfer completion status. It also fixes an issue with generating a sorted list of absFo sequences due to the unordered keys in dic. Finally, this function has been deprecated.",
+        "type": "comment"
+    },
+    "1534": {
+        "file_id": 152,
+        "content": "//    AIEffectStrong *oldEffStrong = [sceneFo getEffectStrong:sceneFo.count solutionFo:oldCanset.pointer];\n//    if (Log4OutCansetAna) NSLog(@\"\\n----------- Canset类比 -----------\\nnew:%@ SP:%@ EFF:%@ \\nold:%@ SP:%@ EFF:%@\",\n//                                Fo2FStr(newCanset),CLEANSTR(newCanset.spDic),CLEANSTR(newEffStrong),\n//                                Fo2FStr(oldCanset),CLEANSTR(oldCanset.spDic),CLEANSTR(oldEffStrong));\n//    NSMutableArray *orderSames = [[NSMutableArray alloc] init];\n//\n//    //2. 根据新旧的映射indexDic分别进行概念类比 (参考29025-24a);\n//    NSArray *allKeys = [SMGUtils sortSmall2Big:indexDic.allKeys compareBlock:^double(NSNumber *obj) {\n//        return obj.doubleValue;\n//    }];\n//    for (NSNumber *key in allKeys) {\n//        NSInteger oldIndex = key.integerValue;\n//        NSInteger newIndex = NUMTOOK([indexDic objectForKey:key]).integerValue;\n//        AIKVPointer *oldAlg_p = ARR_INDEX(oldCanset.content_ps, oldIndex);\n//        AIKVPointer *newAlg_p = ARR_INDEX(newCanset.content_ps, newIndex);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/AIAnalogy.m:230-244"
+    },
+    "1535": {
+        "file_id": 152,
+        "content": "This code is comparing a new and old set of data by mapping them using an index dictionary. It logs the before and after sets, and then iterates through the keys in sorted order to compare the corresponding indices between the two sets. The sorted keys are obtained from the index dictionary's allKeys property. For each key, it extracts the old and new indices from the dictionary, retrieves the corresponding AIKVPointer objects from the content_ps arrays of the old and new Cansets respectively.",
+        "type": "comment"
+    },
+    "1536": {
+        "file_id": 152,
+        "content": "//\n//        //3. mIsC成立时,直接收集oldA (即absAlg) (参考29067-todo1.1);\n//        //AIAlgNodeBase *oldAlg = [SMGUtils searchNode:oldAlg_p];\n//        //AIAlgNodeBase *newAlg = [SMGUtils searchNode:newAlg_p];\n//        //if ([TOUtils mIsC_1:newAlg_p c:oldAlg_p]) {\n//        //    [orderSames addObject:oldAlg_p];\n//        //} else {\n//        //    //4. 直接构建空概念 (参考29027-方案3);\n//        //    //4. 2023.04.11: 后废弃,后又启用 (参考29068-todo1);\n//        //    AIAlgNodeBase *absA = [theNet createEmptyAlg_NoRepeat:@[oldAlg,newAlg]];\n//        //\n//        //    //5. 收集;\n//        //    [orderSames addObject:absA.pointer];\n//        //}\n//        //2023.10.17: 改为只要indexDic的都类比下 (现在的indexDic中必然都是mIsC关系) (参考30148-todo1.2);\n//        AIAlgNodeBase *absA = [AIAnalogy analogyAlg:newAlg_p assA:oldAlg_p];\n//        [orderSames addObject:absA.pointer];\n//    }\n//\n//    //6. 取得newIndexDic和oldIndexDic (参考29032-todo1.1);\n//    NSDictionary *newIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:indexDic.allValues];\n//    NSDictionary *oldIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:indexDic.allKeys];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/AIAnalogy.m:245-266"
+    },
+    "1537": {
+        "file_id": 152,
+        "content": "This code is part of a machine learning algorithm that uses analogy to find relationships between data points. It creates an abstract concept (absA) by comparing two input nodes (oldAlg and newAlg). The code then adds the newly created absA to the orderSames list, which holds all the abstract concepts. The code also collects newIndexDic and oldIndexDic for further processing.",
+        "type": "comment"
+    },
+    "1538": {
+        "file_id": 152,
+        "content": "//\n//    //7. 外类比构建\n//    BOOL outConAbsIsRelate = true;\n//    AINetAbsFoNode *absFo = [theNet createAbsFo_NoRepeat:orderSames protoFo:newCanset assFo:oldCanset difStrong:1 type:ATDefault protoIndexDic:newIndexDic assIndexDic:oldIndexDic outConAbsIsRelate:&outConAbsIsRelate];\n//\n//    //8. 将抽象Canset挂到sceneFo下;\n//    BOOL updateCansetSuccess = [sceneFo updateConCanset:absFo.pointer targetIndex:sceneFo.count];\n//    if (updateCansetSuccess) {\n//        //9. 根据scene与oldCanset的映射 与 oldCanset与absCanset的映射 得出 absCanset与scene的映射 (参考29076-todo2);\n//        NSDictionary *sceneNewCansetIndexDic = [sceneFo getConIndexDic:newCanset.p];\n//        NSMutableDictionary *sceneAbsCansetIndexDic = [[NSMutableDictionary alloc] init];\n//        for (id sceneIndex in sceneNewCansetIndexDic.allKeys) {\n//            id newCansetIndex = [sceneNewCansetIndexDic objectForKey:sceneIndex];\n//            id absCansetIndex = ARR_INDEX([newIndexDic allKeysForObject:newCansetIndex], 0);\n//            if (absCansetIndex) {\n//                [sceneAbsCansetIndexDic setObject:absCansetIndex forKey:sceneIndex];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/AIAnalogy.m:267-282"
+    },
+    "1539": {
+        "file_id": 152,
+        "content": "Creates an abstract comparison using outclass analogy, adds it to the scene FO, and derives a mapping between the abstract FO and the scene FO.",
+        "type": "comment"
+    },
+    "1540": {
+        "file_id": 152,
+        "content": "//            }\n//        }\n//        [absFo updateIndexDic:sceneFo indexDic:sceneAbsCansetIndexDic];\n//        [AITest test27:sceneFo oldCanset:oldCanset.p oldIndexDic:oldIndexDic compareIndexDicFromNewCanset:sceneAbsCansetIndexDic];\n//\n//        //10. oldCanset与absCanset新关联时: 取出ass中旧有的effStrong模型继承给absFo (参考29032-todo2.2);\n//        if (!outConAbsIsRelate) {\n//            AIEffectStrong *effStrong = [sceneFo getEffectStrong:sceneFo.count solutionFo:oldCanset.pointer];\n//            [sceneFo updateEffectStrong:effStrong.hStrong solutionFo:absFo.pointer status:ES_HavEff];\n//            [sceneFo updateEffectStrong:effStrong.nStrong solutionFo:absFo.pointer status:ES_NoEff];\n//        }\n//\n//        //11. 抽象fo时: 根据protoCansetFo增强absFo的Eff值+-1 (参考29032-todo2.3);\n//        //2023.09.01: 打开eff+-1 (参考30124-todo2);\n//        AIEffectStrong *endEffStrong = [sceneFo updateEffectStrong:sceneFo.count solutionFo:absFo.pointer status:es];\n//        NSInteger newFoStrong = [AINetUtils getStrong:absFo atConNode:newCanset type:ATDefault];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/AIAnalogy.m:283-298"
+    },
+    "1541": {
+        "file_id": 152,
+        "content": "This code is updating the effect strong of a solution fo and comparing index dictionaries from old and new cansets. It also checks if the abstract fo is related, updates the effect strong in the scene fo, and retrieves the new fo strong value based on the proto canset fo for enhancing the abstract fo's eff value by +-1.",
+        "type": "comment"
+    },
+    "1542": {
+        "file_id": 152,
+        "content": "//        NSInteger oldFoStrong = [AINetUtils getStrong:absFo atConNode:oldCanset type:ATDefault];\n//        NSLog(@\"sceneFo:F%ld 构建absCanset:%@ SP:%@ EFF:%@ 强度:new=%ld old=%ld\",sceneFo.pointer.pointerId,Fo2FStr(absFo),CLEANSTR(absFo.spDic),CLEANSTR(endEffStrong),newFoStrong,oldFoStrong);\n//    }\n//    return absFo;\n//}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/AIAnalogy.m:299-305"
+    },
+    "1543": {
+        "file_id": 152,
+        "content": "The code sets the old Fo strong value using AINetUtils, logs information about sceneFo and absFo, and returns the updated absFo.",
+        "type": "comment"
+    },
+    "1544": {
+        "file_id": 153,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/TCLearning.h",
+        "type": "filepath"
+    },
+    "1545": {
+        "file_id": 153,
+        "content": "This file contains the TCLearning.h header, which defines a class for learning algorithms in the SMG_NothingIsAll project. It includes two methods: pLearning and rLearning, used for learning with protoFo as input.",
+        "type": "summary"
+    },
+    "1546": {
+        "file_id": 153,
+        "content": "//\n//  TCLearning.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/12/2.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface TCLearning : NSObject\n+(void) pLearning:(AIFoNodeBase*)protoFo;\n+(void) rLearning:(AIShortMatchModel*)model protoFo:(AIFoNodeBase*)protoFo;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/TCLearning.h:1-16"
+    },
+    "1547": {
+        "file_id": 153,
+        "content": "This file contains the TCLearning.h header, which defines a class for learning algorithms in the SMG_NothingIsAll project. It includes two methods: pLearning and rLearning, used for learning with protoFo as input.",
+        "type": "comment"
+    },
+    "1548": {
+        "file_id": 154,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/TCLearning.m",
+        "type": "filepath"
+    },
+    "1549": {
+        "file_id": 154,
+        "content": "The pLearning method in the TCLearning class updates operation count, logs input ProtoFo information and performs outlier comparison using stored memories for decision-making. It iterates through a list of models, checks for protoFo existence, executes R decisions, and reinforces abstract concept associations.",
+        "type": "summary"
+    },
+    "1550": {
+        "file_id": 154,
+        "content": "//\n//  TCLearning.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/12/2.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import \"TCLearning.h\"\n@implementation TCLearning\n/**\n *  MARK:--------------------学习--------------------\n *  @desc 外类比;\n *  @desc 输入mv时调用,执行OPushM + 更新P任务池 + 执行P决策;\n *  @desc 由TIP调用,执行条件为:当imv与预测mv相符时,执行类比;\n *  @desc 如: (距20,经233) 与 (距20,经244) 可类比为: (距20)->{mv};\n *  解释:\n *   1. 无需求时,找出以往同样经历,类比规律,抽象出更确切的意义;\n *   2. 注:此方法为abs方向的思维方法总入口;(与其相对的决策处\n *  步骤:\n *   > 联想->类比->规律->抽象->关联->网络\n *  @param protoFo : 传瞬时记忆的protoFo;\n *  @version\n *      2020.03.04: a.去掉外类比; b.外类比拆分为:正向类比和反向类比;\n *      2021.01.24: 支持多时序识别,更全面的触发外类比 (参考22073-todo4);\n *      2021.09.28: ATSame改为传ATDefault (参考24022-BUG5);\n *      2021.12.02: 将TCLearning独立成类 (参考24164);\n */\n+(void) pLearning:(AIFoNodeBase*)protoFo{\n    [theTC updateOperCount:kFILENAME];\n    Debug();\n    //1. 获取最近的识别模型;\n    IFTitleLog(@\"pLearning\", @\"\\n输入ProtoFo:%@->%@\", Fo2FStr(protoFo),Mvp2Str(protoFo.cmvNode_p));\n    NSArray *inModels = [theTC.inModelManager.models copy];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/TCLearning.m:1-36"
+    },
+    "1551": {
+        "file_id": 154,
+        "content": "This code snippet is a part of the TCLearning class in the SMG_NothingIsAll project. It defines the pLearning method, which performs outlier comparison using previously stored memories. The method updates the operation count, retrieves recent recognition models from the inModelManager, and logs input ProtoFo information. This step is part of the abstract thinking control for learning and decision-making processes.",
+        "type": "comment"
+    },
+    "1552": {
+        "file_id": 154,
+        "content": "    for (AIShortMatchModel *item in inModels) {\n        for (AIMatchFoModel *pFo in item.fos4PLearning) {\n            //2. 检查同向;\n            AIFoNodeBase *matchFo = [SMGUtils searchNode:pFo.matchFo];\n            BOOL isSame = [AIScore sameIdenSameScore:matchFo.cmvNode_p mv2:protoFo.cmvNode_p];\n            if (!isSame) continue;\n            //3. 正向反馈类比 (外类比);\n            [AIAnalogy analogyOutside:protoFo assFo:matchFo type:ATDefault];\n        }\n    }\n}\n/**\n *  MARK:--------------------理性noMv输入处理--------------------\n *  @desc 输入noMv时调用,执行OPushM + 更新R任务池 + 执行R决策;\n *  联想网络杏仁核得来的则false;\n *  @version\n *      2020.10.19: 将add至ShortMatchManager代码前迁;\n *      2021.12.05: 将feedbackTOR前迁到概念识别之后 (参考24171-9);\n *      2021.12.26: GL和HN已全废弃了,所以删掉内类比调用 (参考Note24 & Note25);\n *      2022.01.17: BUG_找不到hSolution经验的问题,将P树R树衔接,共参与抽象 (参考25104);\n *      2022.01.18: 改成使用ATDefault类型,因为ATSame已废弃;\n *      2022.11.16: R帧为不完全时序,不进行类比 (参考27181-改动);\n */\n+(void) rLearning:(AIShortMatchModel*)model protoFo:(AIFoNodeBase*)protoFo{\n    [theTC updateOperCount:kFILENAME];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/TCLearning.m:37-63"
+    },
+    "1553": {
+        "file_id": 154,
+        "content": "The code iterates through a list of models and, for each model, checks if the protoFo exists in the fos4PLearning list. If it does, it performs forward feedback analogy (outside comparison) between protoFo and matchFo. It also updates R tasks pool and executes R decisions.",
+        "type": "comment"
+    },
+    "1554": {
+        "file_id": 154,
+        "content": "    Debug();\n    IFTitleLog(@\"rLearning\",@\"\\nprotoFo: %@->%@\",Fo2FStr(protoFo),Mvp2Str(protoFo.cmvNode_p));\n    //1. 学习 for prFos: 加强pFos的抽具象关联;\n    //NSLog(@\"\\npFo外类比 =>\");\n    //for (AIMatchFoModel *item in model.fos4RLearning) {\n    //    AIFoNodeBase *itemMFo = [SMGUtils searchNode:item.matchFo];\n    //    [AIAnalogy analogyOutside:protoFo assFo:itemMFo type:ATDefault];\n    //}\n    DebugE();\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/TCLearning.m:64-75"
+    },
+    "1555": {
+        "file_id": 154,
+        "content": "This code snippet is part of a learning module, specifically working on reinforcing abstract concept associations (pFos) in the model's fos4RLearning list. It performs outside class comparison using AIAnalogy for each item in the list and uses SMGUtils to search for matching nodes.",
+        "type": "comment"
+    },
+    "1556": {
+        "file_id": 155,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCOut/TCOut.h",
+        "type": "filepath"
+    },
+    "1557": {
+        "file_id": 155,
+        "content": "This is the header file for the TCOut class, a part of the SMG_NothingIsAll project. It imports Foundation and defines a method run: that takes an TOAlgModel object as input and returns a TCResult object.",
+        "type": "summary"
+    },
+    "1558": {
+        "file_id": 155,
+        "content": "//\n//  TCOut.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/11/28.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface TCOut : NSObject\n+(TCResult*) run:(TOAlgModel*)algModel;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCOut/TCOut.h:1-15"
+    },
+    "1559": {
+        "file_id": 155,
+        "content": "This is the header file for the TCOut class, a part of the SMG_NothingIsAll project. It imports Foundation and defines a method run: that takes an TOAlgModel object as input and returns a TCResult object.",
+        "type": "comment"
+    },
+    "1560": {
+        "file_id": 156,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCOut/TCOut.m",
+        "type": "filepath"
+    },
+    "1561": {
+        "file_id": 156,
+        "content": "This code is part of the \"TCOut\" class in \"SMG_NothingIsAll\" and handles output processing for an AI model. The run method updates status based on algorithm model and energy state, while checking for HDemand to complete frames.",
+        "type": "summary"
+    },
+    "1562": {
+        "file_id": 156,
+        "content": "//\n//  TCOut.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/11/28.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import \"TCOut.h\"\n@implementation TCOut\n/**\n *  MARK:--------------------新螺旋架构out--------------------\n *  @version\n *      2021.11.26: 最终未输出时,转给TCInput.jump();\n *      2021.12.26: H类型达到目标帧时,不会调用out,而是在action()中直接判断为末帧,并调用hActYes了 (参考25031-9);\n *      2021.12.26: 下标不急(弄巧成拙)评价,避免多余输出: 将代码前移到out输出前 (参考25031-10);\n */\n+(TCResult*) run:(TOAlgModel*)algModel{\n    //1. 无论是P-模式的Alg,还是R-中非S的Alg,都要走以下第1,第2,第3级流程;\n    [theTC updateOperCount:kFILENAME];\n    Debug();\n    if (algModel.content_p.isOut) {\n        //2. 第1级: 本身即是isOut时,直接行为化返回;\n        OFTitleLog(@\"行为输出\", @\"\\n%@\",AlgP2FStr(algModel.content_p));\n        //2. 输出前改为ActYes (避免重复决策当前demand) (isOut=true暂无需反省类比);\n        algModel.status = TOModelStatus_ActYes;\n        //2. 消耗活跃度并输出\n        [theTC updateEnergyDelta:-1.0f];\n        //3. 输出_用旧有代码->输出后转给TCInput.rInput();\n        dispatch_async(dispatch_get_main_queue(), ^{//30083回同步\n            [theTV updateFrame];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCOut/TCOut.m:1-35"
+    },
+    "1563": {
+        "file_id": 156,
+        "content": "This code is part of the \"TCOut\" class in a project called \"SMG_NothingIsAll\". It handles the output functionality for a specific algorithm model. The method \"run\" is responsible for processing the output and updating the status accordingly. It checks if the algorithm model is set to be out, updates the energy state, and notifies other components to process the output.",
+        "type": "comment"
+    },
+    "1564": {
+        "file_id": 156,
+        "content": "        });\n        DebugE();\n        return [Output output_FromTC:algModel.content_p];\n    }else{\n        //8. notOut转jump;\n        DebugE();\n        [TCInput hInput:algModel];\n        return [[[TCResult new:true] mkMsg:@\"out 此帧需要HDemand来完成,已转为h任务\"] mkStep:41];\n    }\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCOut/TCOut.m:36-47"
+    },
+    "1565": {
+        "file_id": 156,
+        "content": "This code segment handles an AI model's output. If the output is not null, it returns the output and calls DebugE(). Otherwise, if it's not out, it sets the input for TC and returns a message indicating that HDemand is needed to complete this frame, converting it to an h task.",
+        "type": "comment"
+    },
+    "1566": {
+        "file_id": 157,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCPlan/TCPlan.h",
+        "type": "filepath"
+    },
+    "1567": {
+        "file_id": 157,
+        "content": "This code is the header file for TCPlan class in SMG_NothingIsAll project. It defines a method plan:rootDemand:rootFo:scoreDic: that takes a root demand, root Fo model and a score dictionary as parameters, and returns a TCResult object containing the result of the plan execution. The comment indicates that this method replaces the old dataOut method from the previous architecture (referencing 24195). The method was first moved to TCSolution class on November 28th, and then later separated into its own independent TCPlan class on December 15th.",
+        "type": "summary"
+    },
+    "1568": {
+        "file_id": 157,
+        "content": "//\n//  TCPlan.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/12/15.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------TCPlan计划--------------------\n *  @desc 即旧架构中的dataOut方法 (参考24195);\n *  @version\n *      2021.11.28: 将dataOut迁移到TCSolution中做为入口方法;\n *      2021.12.15: 再将它迁移到TCPlan独立出来;\n */\n@interface TCPlan : NSObject\n+(TCResult*) plan:(DemandModel*)rootDemand rootFo:(TOFoModel*)rootFo scoreDic:(NSMutableDictionary*)scoreDic;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCPlan/TCPlan.h:1-22"
+    },
+    "1569": {
+        "file_id": 157,
+        "content": "This code is the header file for TCPlan class in SMG_NothingIsAll project. It defines a method plan:rootDemand:rootFo:scoreDic: that takes a root demand, root Fo model and a score dictionary as parameters, and returns a TCResult object containing the result of the plan execution. The comment indicates that this method replaces the old dataOut method from the previous architecture (referencing 24195). The method was first moved to TCSolution class on November 28th, and then later separated into its own independent TCPlan class on December 15th.",
+        "type": "comment"
+    },
+    "1570": {
+        "file_id": 158,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCPlan/TCPlan.m",
+        "type": "filepath"
+    },
+    "1571": {
+        "file_id": 158,
+        "content": "This code uses a planning method for an AI model with four modes, employing cached data to optimize model selection. It determines the best path by considering score and demand, handling fork scenarios in optimal paths and evaluates subtasks while selecting the optimal path and logging its score.",
+        "type": "summary"
+    },
+    "1572": {
+        "file_id": 158,
+        "content": "//\n//  TCPlan.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/12/15.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import \"TCPlan.h\"\n@implementation TCPlan\n/**\n *  --------------------旧有plan方法--------------------\n *  注:assExp联想经验(饿了找瓜)(递归)\n *  注:loopAssExp中本身已经是内心活动联想到的mv\n *  @desc\n *      1. 四种(2x2)TOP模式 (优先取同区工作模式,不行再以不同区工作模式);\n *      2. 调用者只管调用触发,模型生成,参数保留;\n *  @desc P决策模式 (框架: index -> mvNode -> foNode -> algNode -> action);\n *      3. 不指定model (从cmvCache取) (旧注释)\n *      4. 每一轮循环不仅是想下一个singleMvPort;也有可能在当前port上,进行二次思考; (旧注释)\n *      5. 从expCache下,根据可行性,选定一个解决方案; (旧注释)\n *      6. 有需求时,找出outMvModel,尝试决策并解决; (旧注释)\n *  @version\n *      20200430 : v2,四种工作模式版;\n *      20200824 : 将外循环输入推进中循环,改到上一步aiThinkIn_CommitNoMv2TC()中;\n *  @todo\n *      1. 集成活跃度的判断和消耗;\n *      2. 集成outModel;\n *      2021.01.22: 对ActYes或者OutBack的Demand进行不应期处理 (未完成);\n *  @status\n *      1. R+模式: 废弃状态,此模式暂时用不着;\n *      2. R-模式: 启用状态;\n *      3. P+模式: 废弃状态,此模式暂时用不着;\n *      4. P-模式: 启用状态;\n *\n *  MARK:--------------------新螺旋架构plan入口--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCPlan/TCPlan.m:1-38"
+    },
+    "1573": {
+        "file_id": 158,
+        "content": "The code is implementing a planning method for an AI model. It consists of four modes (R+, R-, P+, and P-) with different decision-making strategies and involves using cached data for model selection and solution based on feasibility. The method is still under development as there are TODOs and some parts are marked as not yet complete or discarded.",
+        "type": "comment"
+    },
+    "1574": {
+        "file_id": 158,
+        "content": " *  @param rootDemand   : 当前执行的根任务;\n *  @param rootFo       : 当前选定的根任务下的解决方案;\n *  @version\n *      2022.03.11: 将demand综合评分,改为score4Demand方法 (参考25142-TODO4);\n *  @todo\n *      2021.12.08: 后续solution行为化处理,根据>cutIndex筛选 (参考24185-方案1-代码);\n */\n+(TCResult*) plan:(DemandModel*)rootDemand rootFo:(TOFoModel*)rootFo scoreDic:(NSMutableDictionary*)scoreDic{\n    //1. 根据得分字典,从root向sub,取最优路径 (参考24195-3);\n    [theTC updateOperCount:kFILENAME];\n    Debug();\n    double demandScore = [AIScore score4Demand:rootDemand];\n    TOModelBase *endBranch = [self bestEndBranch4Plan:scoreDic curDemand:rootDemand demandScore:demandScore];\n    //2. 从最优路径末枝的解决方案,转给TCSolution执行 (参考24195-4);\n    double endBranchScore = [NUMTOOK([scoreDic objectForKey:TOModel2Key(endBranch)]) doubleValue];\n    DebugE();\n    return [TCSolution solution:endBranch endScore:endBranchScore];\n}\n/**\n *  MARK:--------------------取当前要执行的解决方案--------------------\n *  @desc 从最优路径的末尾取 (最优路径可能有在subRDemands处分叉口,那么依次解决叉口任务);\n *  @version\n *      2021.12.28: 工作记忆树任务下_首条S的支持 (参考25042);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCPlan/TCPlan.m:39-63"
+    },
+    "1575": {
+        "file_id": 158,
+        "content": "This function plans the execution of a root task by selecting the best path from the root to its subtasks based on scores and then passes the chosen solution to TCSolution for execution. It also handles fork scenarios in the optimal path.",
+        "type": "comment"
+    },
+    "1576": {
+        "file_id": 158,
+        "content": " *      2021.12.28: 重新整理整个方法,参考评分字典数据结构做最优路径 (参考24196-示图);\n *      2022.06.02: 中层为actYes时,不向下传染,继续找路径 (参考26185-TODO7);\n *      2022.06.02: BUG_过滤掉actNo的结果,不然给solution一个actNo的最佳路径尴尬了;\n *      2023.02.28: R子任务不求解 (参考28135-2);\n *      2023.07.09: 打开子任务开关,因为明明有子任务却不激活的话,有可能它的父任务不断反思出子任务再回来又激活父任务,不断生成子任务,导致死循环 (参考30055);\n *      2023.08.21: 调整子任务的优先级: 反思通过时子H任务优先,反思不通过时子R任务优先 (参考30114-todo2);\n *  @result\n *      1. 返回空S的Demand时,执行solution找解决方案;\n *      2. 返回路径末枝BestFo时,执行action行为化;\n *      3. 返回nil时,中止决策继续等待;\n */\n+(TOModelBase*) bestEndBranch4Plan:(NSMutableDictionary*)scoreDic curDemand:(DemandModel*)curDemand demandScore:(double)demandScore{\n    //1. 如果curDemand为空S,则直接返回 (参考25042-5);\n    NSArray *validActionFos = [SMGUtils filterArr:curDemand.actionFoModels checkValid:^BOOL(TOFoModel *obj) {\n        return obj.status != TOModelStatus_ActNo;\n    }];\n    if (!ARRISOK(validActionFos)) return curDemand;\n    //2. 从actionFoModels找出最好的分支继续 (参考24196-示图 & 25042-6);\n    TOFoModel *bestFo = nil;\n    for (TOFoModel *itemFo in validActionFos) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCPlan/TCPlan.m:64-85"
+    },
+    "1577": {
+        "file_id": 158,
+        "content": "This code finds the best branch for a plan based on a score dictionary and current demand. It checks if the curDemand is empty and returns if it is, filters valid actionFoModels, selects the best fo from them, and continues with the chosen fo to find the optimal solution.",
+        "type": "comment"
+    },
+    "1578": {
+        "file_id": 158,
+        "content": "        double itemScore = [NUMTOOK([scoreDic objectForKey:TOModel2Key(itemFo)]) doubleValue];\n        double bestScore = [NUMTOOK([scoreDic objectForKey:TOModel2Key(bestFo)]) doubleValue];\n        if (!bestFo || itemScore > bestScore) bestFo = itemFo;\n    }\n    //3. 感性淘汰则中止深入 (判断条件 = bestFo得分 < demandScore) (参考25042-7);\n    double bestScore = [NUMTOOK([scoreDic objectForKey:TOModel2Key(bestFo)]) doubleValue];\n    if (bestScore < demandScore) return curDemand;\n    //4. 感性未淘汰则继续深入分支 (判断条件 = bestFo得分 > demandScore) (参考25042-6);\n    //4. 未感性淘汰,那么它的子R和H任务中,肯定有一个是未\"理性淘汰\"的: 收集R和H任务;\n    NSMutableArray *allSubDemands = [[NSMutableArray alloc] init];\n    //5. 数据准备: 子R和子H任务;\n    NSArray *subRDemands = bestFo.subDemands;\n    NSArray *subHDemands = [SMGUtils convertArr:bestFo.subModels convertBlock:^id(TOAlgModel *item) {\n        HDemandModel *hDemand = ARR_INDEX(item.subDemands, 0);\n        return hDemand;\n    }];\n    //6. 优先级: 反思通过时子H任务优先,反思不通过时子R任务优先 (参考30114-todo2);\n    if (bestFo.refrectionNo) {\n        [allSubDemands addObjectsFromArray:subRDemands];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCPlan/TCPlan.m:86-108"
+    },
+    "1579": {
+        "file_id": 158,
+        "content": "This code checks if a specific item's score is greater than the best score, updates the best score and item accordingly. It then judges whether to continue or end the process based on the best score's relation to the demand score. If the process continues, it gathers subR and subH demands, prioritizing subH if the model passed reflection and subR if it didn't.",
+        "type": "comment"
+    },
+    "1580": {
+        "file_id": 158,
+        "content": "        [allSubDemands addObjectsFromArray:subHDemands];\n    } else {\n        [allSubDemands addObjectsFromArray:subHDemands];\n        [allSubDemands addObjectsFromArray:subRDemands];\n    }\n    //7. 向末枝路径探索: 从R到H逐一尝试最优路径,从中找出那个未\"理性淘汰\"的,递归判断;\n    for (DemandModel *subDemand in allSubDemands) {\n        //8. 判断subDemand.status是否已finish -> 无需解决 (参考25042-2);\n        if (subDemand.status == TOModelStatus_Finish) continue;\n        //9. 判断subDemand.status是withOut状态 -> 无解认命 (参考25042-2);\n        if (subDemand.status == TOModelStatus_WithOut) continue;\n        //10. 判断subDemand.status是actYes状态 -> 继续等待 (参考25042-3);\n        //if (subDemand.status == TOModelStatus_ActYes) return nil;\n        //11. 未感性淘汰的,一条路走到黑(递归循环),然后把最后的结果return返回;\n        return [self bestEndBranch4Plan:scoreDic curDemand:subDemand demandScore:demandScore];\n    }\n    //12. bestFo没有子任务subDemands可决策的,则直接执行bestFo为末枝 (参考25042-8);\n    NSLog(@\"取分: K:%@ => V:%@分\",TOModel2Key(bestFo),[scoreDic objectForKey:TOModel2Key(bestFo)]);\n    [AITest test10:bestFo];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCPlan/TCPlan.m:109-132"
+    },
+    "1581": {
+        "file_id": 158,
+        "content": "This code is part of a decision-making algorithm that explores different paths and selects the optimal one. It checks the status of each subtask, eliminates those with \"WithOut\" or \"Finish\" status, and continues to explore until it finds the best end branch for the current demand. If no suitable subtasks are found, it returns nil. Finally, it logs a test message with the selected path score.",
+        "type": "comment"
+    },
+    "1582": {
+        "file_id": 158,
+        "content": "    return bestFo;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCPlan/TCPlan.m:133-136"
+    },
+    "1583": {
+        "file_id": 158,
+        "content": "The given code segment returns the bestFo value after evaluating it within a class.",
+        "type": "comment"
+    },
+    "1584": {
+        "file_id": 159,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRealact/TCRealact.h",
+        "type": "filepath"
+    },
+    "1585": {
+        "file_id": 159,
+        "content": "TCRealact.h is a header file that imports Foundation. It defines an interface for the TCRealact class, which checks the real-act of the best result in AICanSetModel and replaces it if needed, based on the given fromCansets array.",
+        "type": "summary"
+    },
+    "1586": {
+        "file_id": 159,
+        "content": "//\n//  TCRealact.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/4/17.\n//  Copyright © 2023年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------realact: 对TCSolution最佳输出的可行性检查--------------------\n *  @desc TCSolution最后输出最佳result之前,检查result如果太抽象(含空概念)则不可行,那么向具象重新找个可行的;\n */\n@interface TCRealact : NSObject\n/**\n *  MARK:--------------------TCSolution最佳输出的可行性检查--------------------\n */\n+(AICansetModel*) checkRealactAndReplaceIfNeed:(AICansetModel*)bestResult fromCansets:(NSArray*)fromCansets;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRealact/TCRealact.h:1-22"
+    },
+    "1587": {
+        "file_id": 159,
+        "content": "TCRealact.h is a header file that imports Foundation. It defines an interface for the TCRealact class, which checks the real-act of the best result in AICanSetModel and replaces it if needed, based on the given fromCansets array.",
+        "type": "comment"
+    },
+    "1588": {
+        "file_id": 160,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRealact/TCRealact.m",
+        "type": "filepath"
+    },
+    "1589": {
+        "file_id": 160,
+        "content": "The code ensures that the best result contains non-empty and specific can sets, choosing from prototype can sets based on competition among protoModels. It replaces empty concepts with more specific ones if necessary before outputting the best solution.",
+        "type": "summary"
+    },
+    "1590": {
+        "file_id": 160,
+        "content": "//\n//  TCRealact.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/4/17.\n//  Copyright © 2023年 XiaoGang. All rights reserved.\n//\n#import \"TCRealact.h\"\n@implementation TCRealact\n/**\n *  MARK:--------------------TCSolution最佳输出的可行性检查--------------------\n *  @title 判断包含空概念时,取用具象一级的canset (过滤掉具象也含空概念的部分) (参考29069-todo8);\n *  @desc 将最佳输出含空概念时,转成具象一层的另一个TCCansetModel;\n *  @desc 当前bestResult含空概念时,此方法负责拦截,并向它的具象取出不含空概念的一条,做为TCSolutionUtil的最佳输出;\n *      1. 要求: 取具象也要符合它在protoCansets中 (因为本来就是拿protoCansets中的另一个来替换);\n *      2. 防空: 取具象不能再含空概念了;\n *      3. 竞争: 取protoModels中符合条件的首条;\n *  @desc 模块调用位置说明:\n *      1. 因为替换后的actionIndex和targetIndex等都需要用,所以这个代码写在TCSolutionUtil输出最佳S之前调用;\n *  @param bestResult : 传入TCSolutionUtil最佳方案bestResult模型;\n *  @param fromCansets : 传入TCSolutionUtil输出最佳result时,result所在的全集sortModels数组;\n *  @result 如有必要,将替换可行后的新bestResult返回;\n */\n+(AICansetModel*) checkRealactAndReplaceIfNeed:(AICansetModel*)bestResult fromCansets:(NSArray*)fromCansets {\n    if (bestResult.baseSceneModel) {\n        //1. 判断包含空概念;\n        if ([AINetUtils foHasEmptyAlg:bestResult.cansetFo]) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRealact/TCRealact.m:1-30"
+    },
+    "1591": {
+        "file_id": 160,
+        "content": "This code checks if the best result contains empty concepts and replaces it with a more specific can set (filtering out the ones with empty concepts) if necessary. It ensures that the new best result is derived from the prototype can sets, does not contain empty concepts, and is chosen based on competition among protoModels. This function is called before TCSolutionUtil outputs the best solution.",
+        "type": "comment"
+    },
+    "1592": {
+        "file_id": 160,
+        "content": "            //2. 取具象一级cansets (用空概念经验的具象,与当前场景的overrideCansets取交集得出);\n            AIFoNodeBase *bestCansetFo = [SMGUtils searchNode:bestResult.cansetFo];\n            NSArray *conCansets = Ports2Pits([AINetUtils conPorts_All:bestCansetFo]);\n            return [SMGUtils filterSingleFromArr:fromCansets checkValid:^BOOL(AICansetModel *item) {\n                //a. 过滤掉非best具象的;\n                if (![conCansets containsObject:item.cansetFo]) return false;\n                //b. 过滤掉具象亦含空概念的;\n                if ([AINetUtils foHasEmptyAlg:item.cansetFo]) return false;\n                //c. 闯关成功,返回这条;\n                return true;\n            }];\n        }\n        //2. 不含空概念时,不替换;\n        return bestResult;\n    } else {\n        //3. 非场景时,不替换;\n        return bestResult;\n    }\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRealact/TCRealact.m:32-54"
+    },
+    "1593": {
+        "file_id": 160,
+        "content": "This code searches for a specific concrete canset (using the bestResult.cansetFo), filters out non-best concretes and those containing empty concepts, and returns the first matching one. If no matching canset is found or the canset contains an empty concept, it keeps the original bestResult. If it's not a scene, it doesn't replace anything and also returns the original bestResult.",
+        "type": "comment"
+    },
+    "1594": {
+        "file_id": 161,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/AIAnalyst.h",
+        "type": "filepath"
+    },
+    "1595": {
+        "file_id": 161,
+        "content": "This code is an interface for the AIAnalyst class in SMG_NothingIsAll project, containing methods to analyze and compare values. It has been updated with improved algorithms and functions. Sets a protocol variable protoV at a specific address using data source and output information.",
+        "type": "summary"
+    },
+    "1596": {
+        "file_id": 161,
+        "content": "//\n//  AIAnalyst.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/6/10.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------分析师--------------------\n *  @desc 用于核验比对cansetFo与protoFo,并给出分析报告;\n *  @version\n *      2019.xx.xx: PM算法 (参考手稿PM相关涉及);\n *      2022.05.xx: 比对算法 (参考26122);\n *      2022.11.30: 在前段时间改indexDic和matchValue复用后,此处TI调用alg相似度早已废弃,今天彻底删掉它的代码;\n *      2023.02.17: 将时序比对移到TCSolutionUtil中 (因为它现在其实就是个获取SolutionModel的算法,而不是比对了) (参考28084-1);\n *      2023.02.19: 将概念比对删掉,它现在在AINetUtils.getNearData()中;\n */\n@interface AIAnalyst : NSObject\n//MARK:===============================================================\n//MARK:                     < Value相近度 (由TI调用) >\n//MARK:===============================================================\n/**\n *  MARK:--------------------比对稀疏码相近度--------------------\n */\n+(CGFloat) compareCansetValue:(AIKVPointer*)cansetV_p protoValue:(AIKVPointer*)protoV_p vInfo:(AIValueInfo*)vInfo;\n+(CGFloat) compareCansetValue:(dou",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/AIAnalyst.h:1-31"
+    },
+    "1597": {
+        "file_id": 161,
+        "content": "This code is an interface for the class AIAnalyst in the SMG_NothingIsAll project. It contains methods to compare and analyze values between cansetFo and protoFo, as well as provide analysis reports. The code has been updated over time with various algorithms and changes to improve its functionality.",
+        "type": "comment"
+    },
+    "1598": {
+        "file_id": 161,
+        "content": "ble)cansetV protoV:(double)protoV at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut vInfo:(AIValueInfo*)vInfo;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCRecognition/AIAnalyst.h:31-33"
+    },
+    "1599": {
+        "file_id": 161,
+        "content": "Sets the value of a protocol variable protoV at a specific address (at) with data source (ds), indicating if it is output (isOut) and storing its information (vInfo).",
+        "type": "comment"
+    }
+}

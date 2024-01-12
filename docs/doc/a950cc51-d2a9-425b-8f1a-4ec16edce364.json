@@ -1,0 +1,10 @@
+{
+    "summary": "This code declares a new class \"TCResult\" for storing TO execution results, which includes success status, message, delay time, and step information. It provides convenience methods to set these properties and serves as a data model for TO executions.",
+    "details": [
+        {
+            "comment": "This code declares a new class \"TCResult\" for storing TO execution results, which includes success status, message, delay time, and step information. It provides convenience methods to set these properties and serves as a data model for TO executions.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/Model/TCResult.h\":0-32",
+            "content": "//\n//  TCResult.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/7/22.\n//  Copyright \u00a9 2023 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------TO\u6267\u884c\u7ed3\u679c--------------------\n *  @desc \u7528\u4e8eTO\u6267\u884c\u7ed3\u679c\u7684\u6570\u636e\u8fd4\u56de (\u662f\u5426\u6210\u529f,\u6d88\u606f,\u662f\u5426\u9700\u7b49\u5f85\u4f1a);\n *  @version\n *      2023.07.22: \u521d\u7248 (\u53c2\u800330084-todo3);\n */\n@interface TCResult : NSObject\n+(TCResult*) new:(BOOL)success;\n@property (assign, nonatomic) BOOL success;\n@property (strong, nonatomic) NSString *msg;\n@property (assign, nonatomic) CGFloat delay;\n@property (assign, nonatomic) NSInteger step;\n/**\n *  MARK:--------------------\u88c5\u9970\u65b9\u6cd5--------------------\n */\n-(TCResult*) mkMsg:(NSString*)msg;\n-(TCResult*) mkDelay:(CGFloat)delay;\n-(TCResult*) mkStep:(NSInteger)step;\n@end"
+        }
+    ]
+}

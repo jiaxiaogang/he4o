@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines an extension for the MBProgressHUD class, adding several convenience methods to show error or success messages with various customization options such as view and hide delay.",
+    "details": [
+        {
+            "comment": "This code defines an extension for the MBProgressHUD class, adding several convenience methods to show error or success messages with various customization options such as view and hide delay.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Demo/Extension/MBProgressHUD+Add.h\":0-18",
+            "content": "////\n////  MBProgressHUD+Add.h\n////  \u89c6\u9891\u5ba2\u6237\u7aef\n////\n////  Created by mj on 13-4-18.\n////  Copyright (c) 2013\u5e74 itcast. All rights reserved.\n////\n//\n//#import \"MBProgressHUD.h\"\n//\n//@interface MBProgressHUD (Add)\n//+ (void)showError:(NSString *)error toView:(UIView *)view;\n//+ (void)showSuccess:(NSString *)success toView:(UIView *)view;\n//+ (void)showError:(NSString *)error toView:(UIView *)view withHideDelay:(CGFloat)hideDelay;\n//+ (void)showSuccess:(NSString *)success toView:(UIView *)view withHideDelay:(CGFloat)hideDelay;\n//\n//+ (MBProgressHUD *)showMessag:(NSString *)message toView:(UIView *)view;\n//\n//@end"
+        }
+    ]
+}

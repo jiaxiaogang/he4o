@@ -1,0 +1,15 @@
+{
+    "summary": "The Info.plist file contains properties for an iOS app, including development region, display name, executable name, bundle identifier, version info, OS requirements, interface orientations, and launch screen settings; the provided lines close the XML structure of the plist format.",
+    "details": [
+        {
+            "comment": "This is an Info.plist file containing various properties for the iOS app, specifying development region, display name, executable name, bundle identifier, version info, OS requirements, interface orientations, and launch screen settings.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Info.plist\":0-34",
+            "content": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n\t<key>CFBundleDevelopmentRegion</key>\n\t<string>en</string>\n\t<key>CFBundleDisplayName</key>\n\t<string>he</string>\n\t<key>CFBundleExecutable</key>\n\t<string>$(EXECUTABLE_NAME)</string>\n\t<key>CFBundleIdentifier</key>\n\t<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>\n\t<key>CFBundleInfoDictionaryVersion</key>\n\t<string>6.0</string>\n\t<key>CFBundleName</key>\n\t<string>$(PRODUCT_NAME)</string>\n\t<key>CFBundlePackageType</key>\n\t<string>APPL</string>\n\t<key>CFBundleShortVersionString</key>\n\t<string>2.0</string>\n\t<key>CFBundleVersion</key>\n\t<string>1</string>\n\t<key>LSRequiresIPhoneOS</key>\n\t<true/>\n\t<key>UILaunchStoryboardName</key>\n\t<string>LaunchScreen</string>\n\t<key>UIRequiredDeviceCapabilities</key>\n\t<array>\n\t\t<string>armv7</string>\n\t</array>\n\t<key>UIRequiresFullScreen</key>\n\t<false/>\n\t<key>UISupportedInterfaceOrientations</key>\n\t<array>\n\t\t<string>UIInterfaceOrientationLandscapeLeft</string>"
+        },
+        {
+            "comment": "These lines close the XML structure of an Info.plist file, marking the end of a dictionary and array within the plist format.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Info.plist\":35-37",
+            "content": "\t</array>\n</dict>\n</plist>"
+        }
+    ]
+}

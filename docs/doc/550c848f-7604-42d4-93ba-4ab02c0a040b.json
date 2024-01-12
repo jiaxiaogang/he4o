@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines a class `AINoRepeatRun` that provides shared data and two public methods: `sign:` and `run:block:`. The `sign:` method registers a key in the shared data dictionary, preventing it from being registered again. The `run:block:` method executes a block of code only once if the key has already been registered in the shared data dictionary.",
+    "details": [
+        {
+            "comment": "This code defines a class `AINoRepeatRun` that provides shared data and two public methods: `sign:` and `run:block:`. The `sign:` method registers a key in the shared data dictionary, preventing it from being registered again. The `run:block:` method executes a block of code only once if the key has already been registered in the shared data dictionary.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIClass/AINoRepeatRun.m\":0-43",
+            "content": "//\n//  AINoRepeatRun.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/5/9.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import \"AINoRepeatRun.h\"\n#define theData [AINoRepeatRun sharedData]\n@implementation AINoRepeatRun\nstatic NSMutableDictionary *_data;\n+(NSMutableDictionary*) sharedData{\n    if (_data == nil) _data = [[NSMutableDictionary alloc] init];\n    return _data;\n}\n//MARK:===============================================================\n//MARK:                     < publicMethod >\n//MARK:===============================================================\n/**\n *  MARK:--------------------\u62a5\u540d--------------------\n */\n+(void) sign:(id)key{\n    NSLog(@\"\u9632\u91cd\u767b\u8bb0:%@\",key);\n    [theData setObject:@\"\" forKey:key];\n}\n/**\n *  MARK:--------------------\u6267\u884c--------------------\n */\n+(void) run:(id)key block:(void(^)())block {\n    //\u4ec5\u6267\u884c\u4e00\u6b21,\u5c31\u628a\u767b\u8bb0key\u79fb\u9664\u6389;\n    if ([theData objectForKey:key]) {\n        [theData removeObjectForKey:key];\n        NSLog(@\"\u9632\u91cd\u6267\u884c:%@\",key);\n        if (block) block();\n    }\n}\n@end"
+        }
+    ]
+}

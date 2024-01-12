@@ -1,0 +1,10 @@
+{
+    "summary": "This header file defines the NodeCompareModel class, which can be initialized with two nodes (big and small) and has a method to determine if a given node A and B together form this model.",
+    "details": [
+        {
+            "comment": "This header file defines the NodeCompareModel class, which can be initialized with two nodes (big and small) and has a method to determine if a given node A and B together form this model.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/SMGNetVision/Core/Model/NodeCompareModel.h\":0-19",
+            "content": "//\n//  NodeCompareModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/6/14.\n//  Copyright \u00a9 2019\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface NodeCompareModel : NSObject\n+(NodeCompareModel*) newWithBig:(id)big small:(id)small;\n@property (strong, nonatomic) id bigNodeData;\n@property (strong, nonatomic) id smallNodeData;\n//\u672c\u6a21\u578b\u662f\u5426\u7531a\u548cb\u7ec4\u6210;\n-(BOOL)isA:(id)a andB:(id)b;\n@end"
+        }
+    ]
+}

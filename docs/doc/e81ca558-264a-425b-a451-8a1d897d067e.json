@@ -1,0 +1,15 @@
+{
+    "summary": "This code defines the `AITransferPort` class, a subclass with methods for initializing, setting and comparing objects, and conforming to NSCoding protocol for archiving.",
+    "details": [
+        {
+            "comment": "This code defines a class `AITransferPort` which is a subclass of some base class, and it implements methods for initializing the object with a scene and can set, compares two objects of the same class for equality, and handles encoding and decoding using NSCoder. The class conforms to the NSCoding protocol, allowing it to be archived and unarchived easily.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AINet/AIPort/AITransferPort.m\":0-40",
+            "content": "//\n//  AITransferPort.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/4/16.\n//  Copyright \u00a9 2023\u5e74 XiaoGang. All rights reserved.\n//\n#import \"AITransferPort.h\"\n@implementation AITransferPort\n+(AITransferPort*) newWithScene:(AIKVPointer*)scene canset:(AIKVPointer*)canset {\n    AITransferPort *result = [[AITransferPort alloc] init];\n    result.scene = scene;\n    result.canset = canset;\n    return result;\n}\n-(BOOL) isEqual:(AITransferPort*)object{\n    if (ISOK(object, AITransferPort.class)) {\n        return [self.scene isEqual:object.scene] && [self.canset isEqual:object.canset];\n    }\n    return false;\n}\n/**\n *  MARK:--------------------NSCoding--------------------\n */\n- (instancetype)initWithCoder:(NSCoder *)coder {\n    self = [super init];\n    if (self) {\n        self.scene = [coder decodeObjectForKey:@\"scene\"];\n        self.canset = [coder decodeObjectForKey:@\"canset\"];\n    }\n    return self;\n}\n- (void)encodeWithCoder:(NSCoder *)coder {\n    [coder encodeObject:self.scene forKey:@\"scene\"];\n    [coder encodeObject:self.canset forKey:@\"canset\"];"
+        },
+        {
+            "comment": "This code snippet appears to mark the end of a class or method definition and serves as a closing delimiter.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AINet/AIPort/AITransferPort.m\":41-43",
+            "content": "}\n@end"
+        }
+    ]
+}

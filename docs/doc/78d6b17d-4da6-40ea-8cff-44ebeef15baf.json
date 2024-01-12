@@ -1,0 +1,15 @@
+{
+    "summary": "This code initializes a view, calculates the sum of SP values for nodes in content, appends relevant information to a mutable string, updates UI text, and provides a node description method.",
+    "details": [
+        {
+            "comment": "This code initializes a view and refreshes its display. It first checks the data associated with the view, calculates the sum of SP values for each node in the content, and then appends relevant information to a mutable string for display purposes. The data is of type TOFoModel, and the view is a subclass of AIFoNodeBase. The code is part of a larger program called \"SMG_NothingIsAll\" created by user jia in 2022.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/TOMVision2/View/TOMVisionFoView.m\":0-38",
+            "content": "//\n//  TOMVisionFoView.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/15.\n//  Copyright \u00a9 2022\u5e74 XiaoGang. All rights reserved.\n//\n#import \"TOMVisionFoView.h\"\n#import \"TVUtil.h\"\n@implementation TOMVisionFoView\n-(void) initView{\n    //self\n    [super initView];\n    [self setBackgroundColor:UIColorWithRGBHex(0xDDBD08)];\n}\n-(void) refreshDisplay{\n    //1. \u68c0\u67e5\u6570\u636e;\n    TOFoModel *data = (TOFoModel*)self.data;\n    [super refreshDisplay];\n    if (!data) return;\n    AIFoNodeBase *fo = [SMGUtils searchNode:data.content_p];\n    //2. SP\u8ba1\u6570\u6c42\u548c;\n    NSInteger sumSP = 0;\n    for (AISPStrong *sp in fo.spDic.allValues) {\n        sumSP += sp.sStrong + sp.pStrong;\n    }\n    //2. \u6536\u96c6\u8981\u5c55\u793a\u7684\u6587\u672c;\n    NSMutableString *mStr = [[NSMutableString alloc] init];\n    [mStr appendFormat:@\"F%ld\",data.content_p.pointerId];\n    if (ISOK(data.baseOrGroup, ReasonDemandModel.class)) {\n        //CGFloat spScore = [TOUtils getSPScore:fo startSPIndex:0 endSPIndex:fo.count];\n        [mStr appendFormat:@\" SP:%ld\",sumSP];\n    }else if(ISOK(data.baseOrGroup, HDemandModel.class)){"
+        },
+        {
+            "comment": "This code calculates the sp score, appends formatted string with SP count and content, updates UI text, and provides a node description method.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/TOMVision2/View/TOMVisionFoView.m\":39-59",
+            "content": "        //CGFloat spScore = [TOUtils getSPScore:fo startSPIndex:0 endSPIndex:data.targetSPIndex];\n        [mStr appendFormat:@\" SP:%ld\",sumSP];\n    }\n    //2. \u5185\u5bb9;\n    [mStr appendFormat:@\"\\n%@\",[TVUtil getLightStr:data.content_p]];\n    //3. \u5237\u65b0UI;\n    [self.headerLab setText:mStr];\n    for (AIKVPointer *alg_p in fo.content_ps) {\n        //\u53ef\u4ee5\u663e\u793a\u4e00\u4e9b\u5bb9\u6613\u770b\u61c2\u7684,\u6bd4\u5982\u67d0\u65b9\u5411\u98de\u884c,\u6216\u8005\u5403,\u679c,\u68d2,\u8fd9\u4e9b;\n    }\n}\n-(NSString*) getNodeDesc{\n    return Pit2FStr(self.data.content_p);\n}\n@end"
+        }
+    ]
+}

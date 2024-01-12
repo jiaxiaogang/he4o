@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines a UIView class named TVTimeLine with a bezierPoints property, which is an array of NSValue(CGPoint) used for drawing a \"tree\" growth timeline. The setData method takes a scale parameter and can be used to update the view.",
+    "details": [
+        {
+            "comment": "This code defines a UIView class named TVTimeLine with a bezierPoints property, which is an array of NSValue(CGPoint) used for drawing a \"tree\" growth timeline. The setData method takes a scale parameter and can be used to update the view.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/TOMVision2/Line/TVTimeLine.h\":0-22",
+            "content": "//\n//  TVTimeLine.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/29.\n//  Copyright \u00a9 2022\u5e74 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n/**\n *  MARK:--------------------\u6811\u751f\u957f\u65f6\u95f4\u7ebf--------------------\n */\n@interface TVTimeLine : UIView\n/**\n *  MARK:--------------------\u66f2\u7ebf\u6d41\u7a0b List<NSValue(CGPoint)>--------------------\n *  @desc \u7528\u4e8e\u7ed8\u5236\"\u6811\"\u751f\u957f\u65f6\u95f4\u7ebf;\n */\n@property (strong, nonatomic) NSArray *bezierPoints;\n-(void)setData:(CGFloat)scale;\n@end"
+        }
+    ]
+}

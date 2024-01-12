@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines a class \"AISqlPointer\" that inherits from \"AIPointer\". It initializes the pointer with a given class and id, and includes two properties - pClass (string) for the pointer type and pId (integer) for the pointer address. The comments suggest it is used for managing database pointers in the SMG_NothingIsAll project.",
+    "details": [
+        {
+            "comment": "This code defines a class \"AISqlPointer\" that inherits from \"AIPointer\". It initializes the pointer with a given class and id, and includes two properties - pClass (string) for the pointer type and pId (integer) for the pointer address. The comments suggest it is used for managing database pointers in the SMG_NothingIsAll project.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AINet/AIPointer/AISqlPointer.h\":0-21",
+            "content": "////\n////  AISqlPointer.h\n////  SMG_NothingIsAll\n////\n////  Created by \u8d3e  on 2017/9/7.\n////  Copyright \u00a9 2017\u5e74 XiaoGang. All rights reserved.\n////\n//\n//#import \"AIPointer.h\"\n//\n///**\n// *  MARK:--------------------\u6570\u636e\u5e93\u6307\u9488--------------------\n// */\n//@interface AISqlPointer : AIPointer\n//\n//+(AISqlPointer*) initWithClass:(Class)pC withId:(NSInteger)pI ;\n//-(id) initWithPId:(NSInteger)pId;\n//\n//@property (strong,nonatomic) NSString *pClass;    //\u6307\u9488\u7c7b\u578b\n//@property (assign, nonatomic) NSInteger pId;  //\u6307\u9488\u5730\u5740(Id)\n//\n//@end"
+        }
+    ]
+}

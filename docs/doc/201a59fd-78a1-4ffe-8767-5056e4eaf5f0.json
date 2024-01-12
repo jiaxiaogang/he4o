@@ -1,0 +1,10 @@
+{
+    "summary": "This code file, TCInput.h, is a header file for the TCInput class in the SMG_NothingIsAll project. It defines three methods: rInput, pInput, and hInput, which are used to input data into different parts of the AI system. The except_ps parameter is an array of excluded parameters for the rInput method. The AIAlgNodeBase, AICMVNodeBase, and TOAlgModel classes are used as input parameters in these methods.",
+    "details": [
+        {
+            "comment": "This code file, TCInput.h, is a header file for the TCInput class in the SMG_NothingIsAll project. It defines three methods: rInput, pInput, and hInput, which are used to input data into different parts of the AI system. The except_ps parameter is an array of excluded parameters for the rInput method. The AIAlgNodeBase, AICMVNodeBase, and TOAlgModel classes are used as input parameters in these methods.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCInput/TCInput.h\":0-16",
+            "content": "//\n//  TCInput.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/11/28.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface TCInput : NSObject\n+(void) rInput:(AIAlgNodeBase*)algNode except_ps:(NSArray*)except_ps;\n+(void) pInput:(AICMVNodeBase*)mv;\n+(void) hInput:(TOAlgModel*)algModel;\n@end"
+        }
+    ]
+}

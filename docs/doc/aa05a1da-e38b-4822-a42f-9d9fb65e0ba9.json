@@ -1,0 +1,10 @@
+{
+    "summary": "This code is for an NVDelegate_He class that acts as a delegate for He's neural network visualization in the SMG_NothingIsAll project. It inherits from NSObject and conforms to the NVViewDelegate protocol, allowing for other neural networks' visualization with extension NVDelegate_Other.",
+    "details": [
+        {
+            "comment": "This code is for an NVDelegate_He class that acts as a delegate for He's neural network visualization in the SMG_NothingIsAll project. It inherits from NSObject and conforms to the NVViewDelegate protocol, allowing for other neural networks' visualization with extension NVDelegate_Other.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/SMGNetVision/HE/NVDelegate_He.h\":0-18",
+            "content": "//\n//  NVDelegate_He.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/6/11.\n//  Copyright \u00a9 2019\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n#import \"NVView.h\"\n/**\n *  MARK:--------------------He\u7684\u795e\u7ecf\u7f51\u7edc\u53ef\u89c6\u5316\u4ee3\u7406\u90e8\u5206--------------------\n *  1. \u6b64delegate\u4ec5\u662fhe\u7684\u76f8\u5173\u4ee3\u7406\u5b9e\u73b0;\n *  2. \u672cNVView\u53ef\u652f\u6301\u522b\u7684\u795e\u7ecf\u7f51\u7edc\u7684\u53ef\u89c6\u5316,\u53ef\u6269\u5c55\u5199NVDelegate_Other;\n */\n@interface NVDelegate_He : NSObject<NVViewDelegate>\n@end"
+        }
+    ]
+}

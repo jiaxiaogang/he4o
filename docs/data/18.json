@@ -1,0 +1,545 @@
+{
+    "1800": {
+        "file_id": 184,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/Util/TCSolutionUtil.m",
+        "type": "filepath"
+    },
+    "1801": {
+        "file_id": 184,
+        "content": "The code optimizes facial recognition and image analysis tasks by filtering, sorting, outputting solutions, logging scene counts, and updating AI performance. It also selects optimal candidate sets based on stability scores and calculates task hierarchy actions.",
+        "type": "summary"
+    },
+    "1802": {
+        "file_id": 184,
+        "content": "//\n//  TCSolutionUtil.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/6/5.\n//  Copyright © 2022年 XiaoGang. All rights reserved.\n//\n#import \"TCSolutionUtil.h\"\n@implementation TCSolutionUtil\n//MARK:===============================================================\n//MARK:                     < 快思考 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------R快思考--------------------\n *  @desc 习惯 (参考26142);\n *  @version\n *      2022.11.30: 先关掉快思考功能,因为慢思考有了indexDic和相似度复用后并不慢,并且effectDic和SP等效 (参考27205);\n */\n+(AICansetModel*) rSolution_Fast:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps{\n    if (!Switch4FastSolution) return nil;\n    //1. 数据准备;\n    except_ps = ARRTOOK(except_ps);\n    //2. 收集所有解决方案候选集;\n    NSArray *cansetModels = [SMGUtils convertArr:demand.validPFos convertItemArrBlock:^NSArray *(AIMatchFoModel *pFoM) {\n        //a. 取出pFo的effectDic候选集;\n        AIFoNodeBase *pFo = [SMGUtils searchNode:pFoM.matchFo];\n        NSArray *cansetFos = [pFo getValidEffs:pFo.count];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/Util/TCSolutionUtil.m:1-33"
+    },
+    "1803": {
+        "file_id": 184,
+        "content": "This code is implementing a fast solution algorithm for a reasoning demand model. It prepares data, collects all candidate sets from the given problem, and retrieves the valid effect dictionaries of each candidate set.",
+        "type": "comment"
+    },
+    "1804": {
+        "file_id": 184,
+        "content": "        if (Log4Solution_Fast && ARRISOK(cansetFos)) NSLog(@\"\\tF%ld的第%ld帧取: %@\",pFo.pointer.pointerId,pFo.count,CLEANSTR(cansetFos));\n        //b. 分析analyst结果 & 排除掉不适用当前场景的(为nil) (参考26232-TODO8);\n        return [SMGUtils convertArr:cansetFos convertBlock:^id(AIEffectStrong *eff) {\n            //c. 分析比对结果;\n            NSInteger rAleardayCount = [self getRAleardayCount:demand pFo:pFoM];\n            AICansetModel *sModel = [TCCanset convert2CansetModel:eff.solutionFo sceneFo:pFoM.matchFo basePFoOrTargetFoModel:pFoM ptAleardayCount:rAleardayCount isH:true sceneModel:nil];\n            return sModel;\n        }];\n    }];\n    //3. 快思考算法;\n    return [TCSolutionUtil generalSolution_Fast:demand cansets:cansetModels except_ps:except_ps];\n}\n/**\n *  MARK:--------------------H快思考--------------------\n *  @desc 习惯 (参考26142);\n *  @version\n *      2022.11.30: 先关掉快思考功能,因为慢思考有了indexDic和相似度复用后并不慢,并且effectDic和SP等效 (参考27205);\n */\n+(AICansetModel*) hSolution_Fast:(HDemandModel *)hDemand except_ps:(NSArray*)except_ps{\n    if (!Switch4FastSolution) return nil;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/Util/TCSolutionUtil.m:34-56"
+    },
+    "1805": {
+        "file_id": 184,
+        "content": "This code block appears to implement a fast thinking solution for analyzing and converting analyst results, excluding items not applicable to the current scenario. It then performs fast reasoning using the H-thinking approach (turned off currently) and returns the result as an AICansetModel object if the Switch4FastSolution is enabled.",
+        "type": "comment"
+    },
+    "1806": {
+        "file_id": 184,
+        "content": "    //1. 数据准备;\n    TOFoModel *targetFoM = (TOFoModel*)hDemand.baseOrGroup.baseOrGroup;\n    AIFoNodeBase *targetFo = [SMGUtils searchNode:targetFoM.content_p];\n    //2. 从targetFo取解决方案候选集;\n    NSArray *cansetFos = [targetFo.effectDic objectForKey:@(targetFoM.actionIndex)];\n    //3. 分析analyst结果 & 排除掉不适用当前场景的(为nil) (参考26232-TODO8);\n    NSArray *cansetModels = [SMGUtils convertArr:cansetFos convertBlock:^id(AIEffectStrong *eff) {\n        //a. 分析比对结果;\n        NSInteger hAleardayCount = [self getHAleardayCount:targetFoM];\n        AICansetModel *sModel = [TCCanset convert2CansetModel:eff.solutionFo sceneFo:targetFoM.content_p basePFoOrTargetFoModel:targetFoM ptAleardayCount:hAleardayCount isH:true sceneModel:nil];\n        return sModel;\n    }];\n    //3. 快思考算法;\n    return [TCSolutionUtil generalSolution_Fast:hDemand cansets:cansetModels except_ps:except_ps];\n}\n/**\n *  MARK:--------------------快思考--------------------\n *  @desc 习惯 (参考26142);\n *  @version\n *      2022.06.03: 将cansets中hnStrong合并,一直这么设计的,今发现写没实现,补上;\n *      2022.06.03: 排除掉候选方案不适用当前场景的 (参考26192);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/Util/TCSolutionUtil.m:57-81"
+    },
+    "1807": {
+        "file_id": 184,
+        "content": "This code prepares the data and retrieves a solution candidate set from a target node. It then analyzes analyst results, excludes candidates not applicable to the current scene, and applies the fast thinking algorithm to find the best solution.",
+        "type": "comment"
+    },
+    "1808": {
+        "file_id": 184,
+        "content": " *      2022.06.05: 支持三个阈值 (参考26199);\n *      2022.06.05: 将R快思考和H快思考整理成通用快思考算法;\n *      2022.06.09: 废弃阈值方案和H>5的要求 (参考26222-TODO3);\n *      2022.06.09: 弃用阈值方案,改为综合排名 (参考26222-TODO2);\n *      2022.06.12: 废弃同cansetFo的effStrong累计 (参考26232-TODO8);\n *      2022.06.12: 每个pFo独立做analyst比对,转为cansetModels (参考26232-TODO8);\n *      2022.10.15: 快思考支持反思,不然因为一点点小任务就死循环 (参考27143-问题2);\n */\n+(AICansetModel*) generalSolution_Fast:(DemandModel *)demand cansets:(NSArray*)cansets except_ps:(NSArray*)except_ps{\n    //1. 数据准备;\n    except_ps = ARRTOOK(except_ps);\n    BOOL havBack = ISOK(demand, HDemandModel.class); //H有后段,别的没有;\n    NSLog(@\"1. 快思考protoCansets数:%ld\",cansets.count);\n    //2. solutionModels过滤器;\n    cansets = [SMGUtils filterArr:cansets checkValid:^BOOL(AICansetModel *item) {\n        //a. 排除不应期;\n        if([except_ps containsObject:item.cansetFo]) return false;\n        //b. 时间不急评价: 不急 = 解决方案所需时间 <= 父任务能给的时间 (参考:24057-方案3,24171-7);\n        if (![AIScore FRS_Time:demand solutionModel:item]) return false;\n        ////2. 后段-目标匹配 (阈值>80%) (参考26199-TODO1);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/Util/TCSolutionUtil.m:82-104"
+    },
+    "1809": {
+        "file_id": 184,
+        "content": "This code is part of the TCSolutionUtil class and appears to be a general solution function for a demand model using cansets. It prepares data, filters solution models based on specific conditions, and evaluates time-related factors. The code also includes references to various related issues or tasks.",
+        "type": "comment"
+    },
+    "1810": {
+        "file_id": 184,
+        "content": "        //if (item.backMatchValue < 0.8f) return false;\n        //\n        ////3. 中段-按有效率 (effectScore>0) (参考26199-TODO2);\n        //if (item.effectScore <= 0) return false;\n        //\n        ////4. 前段-场景匹配 (阈值>80%) (参考26199-TODO3);\n        //if (item.frontMatchValue < 0.8) return false;\n        //5. 闯关成功;\n        return true;\n    }];\n    NSLog(@\"2. (不应期 & FRSTime & 后中后段阈值)过滤后:%ld\",cansets.count);\n    //6. 对候选集排序;\n    NSArray *sortCansets = [AIRank solutionFoRankingV3:cansets];\n    NSLog(@\"3. 有效率排序后:%ld\",cansets.count);\n    if (Log4Solution_Fast) for (AICansetModel *m in ARR_SUB(sortCansets, 0, 5)) {\n        NSLog(@\"\\t(前%.2f 中%.2f 后%.2f) %@\",m.frontMatchValue,m.midEffectScore,m.backMatchValue,Pit2FStr(m.cansetFo));\n    }\n    //6. 逐条S反思;\n    AICansetModel *result = nil;\n    for (AICansetModel *item in sortCansets) {\n        BOOL score = [TCRefrection refrection:item demand:demand];\n        if (score) {\n            result = item;\n            break;\n        }\n    }\n    //7. 日志及更新强度值等;\n    if (result) {\n        if (",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/Util/TCSolutionUtil.m:105-137"
+    },
+    "1811": {
+        "file_id": 184,
+        "content": "This code is implementing a filtering and sorting process for candidate solutions. It checks three conditions: the effect score, front match value, and back match value. The code then sorts the valid candidates and applies a reverse thinking process to find the best solution. Finally, it logs relevant information and updates the strength value if a valid solution is found.",
+        "type": "comment"
+    },
+    "1812": {
+        "file_id": 184,
+        "content": "Log4Solution && result) NSLog(@\"4. 快思考最佳结果:F%ld (前%.2f 中%.2f 后%.2f\",result.cansetFo.pointerId,result.frontMatchValue,result.midEffectScore,result.backMatchValue);\n        //8. 更新其前段帧的con和abs抽具象强度 (参考28086-todo2);\n        [AINetUtils updateConAndAbsStrongByIndexDic:result.matchFrontIndexDic matchFo:result.sceneFo cansetFo:result.cansetFo];\n        //16. 更新后段的的具象强度 (参考28092-todo4);\n        [AINetUtils updateConAndAbsStrongByIndexDic:result.backIndexDic matchFo:result.sceneFo cansetFo:result.cansetFo];\n    }\n    //8. 将首条最佳方案返回;\n    return result;\n}\n//MARK:===============================================================\n//MARK:                     < 慢思考 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------H慢思考--------------------\n *  @version\n *      2023.09.10: 升级v2,支持TCScene和TCCanset (参考30127);\n */\n+(AICansetModel*) hSolution_SlowV2:(HDemandModel *)demand except_ps:(NSArray*)except_ps {\n    //1. 收集cansetModels候选集;\n    NSArray *sceneModels = [TCScene hGetSceneTree:demand];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/Util/TCSolutionUtil.m:137-162"
+    },
+    "1813": {
+        "file_id": 184,
+        "content": "This code appears to be related to a facial recognition or analysis system. It is implementing a slow thinking function, likely using machine learning algorithms for object detection and recognition. The code first gathers candidate sets of objects and then uses these sets to find the best match, updating the confidence levels of matches in the front and back segments. This information could be used to inform facial recognition systems or similar image analysis tasks.",
+        "type": "comment"
+    },
+    "1814": {
+        "file_id": 184,
+        "content": "    TOFoModel *targetFoM = (TOFoModel*)demand.baseOrGroup.baseOrGroup;\n    //2. 每个cansetModel转solutionModel;\n    NSArray *cansetModels = [SMGUtils convertArr:sceneModels convertItemArrBlock:^NSArray *(AISceneModel *sceneModel) {\n        //3. 取出overrideCansets;\n        NSArray *cansets = ARRTOOK([TCCanset getOverrideCansets:sceneModel sceneTargetIndex:sceneModel.cutIndex + 1]);//127ms\n        NSArray *itemCansetModels = [SMGUtils convertArr:cansets convertBlock:^id(AIKVPointer *canset) {\n            //4. 过滤器 & 转cansetModels候选集 (参考26128-第1步 & 26161-1&2&3);\n            NSInteger aleardayCount = sceneModel.cutIndex + 1;\n            return [TCCanset convert2CansetModel:canset sceneFo:sceneModel.scene basePFoOrTargetFoModel:targetFoM ptAleardayCount:aleardayCount isH:true sceneModel:sceneModel];//245ms\n        }];\n        if (Log4GetCansetResult4H && cansets.count > 0) NSLog(@\"\\t item场景(%@):%@ 取得候选数:%ld 转成候选模型数:%ld\",SceneType2Str(sceneModel.type),Pit2FStr(sceneModel.scene),cansets.count,itemCansetModels.count);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/Util/TCSolutionUtil.m:163-175"
+    },
+    "1815": {
+        "file_id": 184,
+        "content": "Code converts sceneModels to cansetModels by filtering overrideCansets and converting them into cansetModel candidates. It also logs the count of original cansets and converted cansetModel candidates for item scenes if Log4GetCansetResult4H is enabled.",
+        "type": "comment"
+    },
+    "1816": {
+        "file_id": 184,
+        "content": "        return itemCansetModels;\n    }];\n    //TODOTOMORROW20231004:\n    //查下,这里hSolution总是输出无计可施,而此时\"皮果\"已经有了,按道理说,前段条件满足已经满足了;\n    //日志: 第1步 H场景树枝点数 I:1 + Father:0 + Brother:0 = 总:1 (这里总是取到hCanset=0条);\n    NSLog(@\"第2步 转为候选集 总数:%ld\",cansetModels.count);\n    //5. 慢思考;\n    return [self generalSolution_Slow:demand cansetModels:cansetModels except_ps:except_ps];//400ms\n}\n+(AICansetModel*) hSolution_SlowV3:(HDemandModel *)demand except_ps:(NSArray*)except_ps {\n    //1. 数据准备;\n    TOFoModel *targetFoM = (TOFoModel*)demand.baseOrGroup.baseOrGroup;\n    ReasonDemandModel *baseRDemand = (ReasonDemandModel*)targetFoM.baseOrGroup;//取出rDemand\n    //2. 再根据rDemand取出场景树;\n    NSArray *sceneModels = [TCScene rGetSceneTree:baseRDemand];\n    //3. 再根据r场景树,找出cansets;\n    //2. 每个cansetModel转solutionModel;\n    NSArray *cansetModels = [SMGUtils convertArr:sceneModels convertItemArrBlock:^NSArray *(AISceneModel *sceneModel) {\n        //3. 取出overrideCansets;\n        NSArray *cansets = ARRTOOK([TCCanset getOverrideCansets:sceneModel sceneTargetIndex:sceneModel.cutIndex + 1]);//127ms",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/Util/TCSolutionUtil.m:176-202"
+    },
+    "1817": {
+        "file_id": 184,
+        "content": "This code performs the following actions:\n1. Prepares the necessary data for slow solution calculation.\n2. Retrieves relevant scene trees based on a demand model.\n3. Finds candidate sets (cansets) from the retrieved scene trees.\n4. Converts canset models to solution models and returns them as output.",
+        "type": "comment"
+    },
+    "1818": {
+        "file_id": 184,
+        "content": "        NSArray *itemCansetModels = [SMGUtils convertArr:cansets convertBlock:^id(AIKVPointer *canset) {\n            //4. 过滤器 & 转cansetModels候选集 (参考26128-第1步 & 26161-1&2&3);\n            NSInteger aleardayCount = sceneModel.cutIndex + 1;\n            //TODOTOMORROW20240106: 测下h任务也从r场景树迁移 (参考31053);\n            //1. 从cansets中过滤出与hDemand有抽具象关系的 (用hAlg取抽具象关系的,判断交集即可);\n            //问题: 此处再跑一次R的流程有点浪费,并且R流程也不行,得再改代码,往H再深入一层,有点复杂且麻烦;\n            return [TCCanset convert2CansetModel:canset sceneFo:sceneModel.scene basePFoOrTargetFoModel:targetFoM ptAleardayCount:aleardayCount isH:true sceneModel:sceneModel];//245ms\n        }];\n        if (Log4GetCansetResult4H && cansets.count > 0) NSLog(@\"\\t item场景(%@):%@ 取得候选数:%ld 转成候选模型数:%ld\",SceneType2Str(sceneModel.type),Pit2FStr(sceneModel.scene),cansets.count,itemCansetModels.count);\n        return itemCansetModels;\n    }];\n    NSLog(@\"第2步 转为候选集 总数:%ld\",cansetModels.count);\n    //5. 慢思考;\n    return [self generalSolution_Slow:demand cansetModels:cansetModels except_ps:except_ps];//400ms",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/Util/TCSolutionUtil.m:203-223"
+    },
+    "1819": {
+        "file_id": 184,
+        "content": "This code is filtering and converting cansets to cansetModels, related to the H demand. It checks for relationships with hDemand in cansets, filters out the ones that match, and converts them into cansetModels. The filtered cansetModels are then returned. Additionally, a log message is logged if the Log4GetCansetResult4H flag is set and cansets count is greater than 0. Finally, generalSolution_Slow method is called with cansetModels and except_ps as parameters.",
+        "type": "comment"
+    },
+    "1820": {
+        "file_id": 184,
+        "content": "}\n+(AICansetModel*) hSolution_SlowV4:(HDemandModel *)demand except_ps:(NSArray*)except_ps {\n    return [self hSolution_SlowV2:demand except_ps:except_ps];\n    //1. 取出rSolution的成果,在它的基础上继续做hSolution;\n    ReasonDemandModel *rDemand = (ReasonDemandModel*)demand.baseOrGroup.baseOrGroup.baseOrGroup;\n    NSArray *rCansetModels = rDemand.rCansetModels;\n    NSLog(@\"第1步 rCansetModels数: %ld\",rCansetModels.count);\n    //2. 根据当前hAlg取抽具象树;\n    TOAlgModel *hAlgModel = (TOAlgModel*)demand.baseOrGroup;\n    AIFoNodeBase *hAlg = [SMGUtils searchNode:hAlgModel.content_p];\n    NSArray *absHAlgs = Ports2Pits([AINetUtils absPorts_All:hAlg]);\n    NSArray *conHAlgs = [SMGUtils convertArr:absHAlgs convertItemArrBlock:^NSArray *(AIKVPointer *obj) {\n        AIAlgNodeBase *absHAlg = [SMGUtils searchNode:obj];\n        return Ports2Pits([AINetUtils conPorts_All:absHAlg]);\n    }];\n    NSMutableArray *allHAlgs = [[NSMutableArray alloc] init];\n    [allHAlgs addObject:hAlg.pointer];\n    [allHAlgs addObjectsFromArray:absHAlgs];\n    [allHAlgs addObjectsFromArray:conHAlgs];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/Util/TCSolutionUtil.m:224-246"
+    },
+    "1821": {
+        "file_id": 184,
+        "content": "The code is taking the results of a previous solution (rSolution) and building upon it to create another solution (hSolution). It first extracts the rCansetModels from the previous demand, logs the count, and then searches for the hAlg model based on the current algorithm. It then abstracts the hAlgs into absolute and connected HAlgs, and adds them all to a mutable array before continuing with the subsequent steps.",
+        "type": "comment"
+    },
+    "1822": {
+        "file_id": 184,
+        "content": "    NSLog(@\"第2步 absHAlg数:%ld conHAlg数:%ld HAlg树总数:%ld\",absHAlgs.count,conHAlgs.count,allHAlgs.count);\n//    NSLog(@\"=====> %@\",CLEANSTR([SMGUtils convertArr:allHAlgs convertBlock:^id(AIKVPointer *obj) {\n//        return STRFORMAT(@\"F%ld\",obj.pointerId);\n//    }]));\n    NSString *hAlgStr = Alg2FStr(hAlg);\n    NSMutableArray *havHCansetOfRCanset = [[NSMutableArray alloc] init];\n    if ([hAlgStr containsString:@\"皮果\"]) {\n        NSLog(@\"直接调试以下,rCanset中就没有包含 果 的...\");\n        //1. 可是不对啊,都生成皮果hDemand了,怎么可能rCanset里没一个有\"果\"的呢?\n        //2. 即使就真的全没果,那么只好再多训练一些newHCanset出来了...\n        //3. 可是下面havHAlgRCansetModelsCount又显示计数5,就奇怪了...,既然没有\"果\",又哪里计到5呢?\n        NSInteger step1 = 0,step2 = 0;\n        for (AICansetModel *item in rCansetModels) {\n            AIFoNodeBase *rCanset = [SMGUtils searchNode:item.cansetFo];\n            for (NSInteger i = 0; i < rCanset.count; i++) {\n                AIKVPointer *rCansetAlg = ARR_INDEX(rCanset.content_ps, i);\n                NSString *rCansetAlgStr = Pit2FStr(rCansetAlg);\n                if (![rCansetAlgStr containsString:@\"皮果\"]) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/Util/TCSolutionUtil.m:247-267"
+    },
+    "1823": {
+        "file_id": 184,
+        "content": "Code snippet checks if the hAlg string contains \"皮果\". If it does, it starts debugging and counts the number of hCansets without the \"果\" element in rCansetModels. It then loops through each rCansetModel, searching for nodes with no \"皮果\" algorithm. This is likely part of a larger debug process to ensure that all necessary elements are present in the algorithms.",
+        "type": "comment"
+    },
+    "1824": {
+        "file_id": 184,
+        "content": "                    step1++;\n                    continue;\n                }\n                NSArray *hCansets = [rCanset getConCansets:i];\n                if (!ARRISOK(hCansets)) {\n                    step2++;\n                    continue;\n                }\n                [havHCansetOfRCanset addObject:item];\n                NSLog(@\"挂载有hCanset Success\");\n            }\n        }\n        NSLog(@\"==============>>> %ld %ld\",step1,step2);//包含有皮果的rCanset共192条,但它们全部都没有挂截hCanset;\n    }\n    //3. 从所有rCanset中,筛选出包含hAlg抽具象树的;\n    __block NSMutableArray *havHAlgRCansetModels = [[NSMutableArray alloc] init];\n    NSArray *hCansets = [SMGUtils convertArr:rCansetModels convertItemArrBlock:^NSArray *(AICansetModel *item) {\n        //a. 从每条rCanset中,找是否包含hAlg树的任何一个枝叶;\n        AIFoNodeBase *rCansetFo = [SMGUtils searchNode:item.cansetFo];\n        NSInteger findIndex = -1;\n        for (NSInteger i = 0; i < rCansetFo.count; i++) {\n            AIKVPointer *rCansetAlg = ARR_INDEX(rCansetFo.content_ps, i);\n            if ([allHAlgs containsObject:rCansetAlg]) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/Util/TCSolutionUtil.m:268-294"
+    },
+    "1825": {
+        "file_id": 184,
+        "content": "This code checks each rCanset for the presence of an hAlg tree, increments counters based on whether it has hCansets or not, and filters out rCansets that contain the hAlg tree. It then stores these rCansets in havHAlgRCansetModels array.",
+        "type": "comment"
+    },
+    "1826": {
+        "file_id": 184,
+        "content": "                findIndex = i;\n                break;\n            }\n        }\n        if (findIndex == -1) return nil;//找hAlg树枝叶失败: 则此rCanset不具备迁移给hScene.hAlg帧的条件;\n        [havHAlgRCansetModels addObject:item];\n        //b. 从所有rCanset中,筛选出有hAlg的hCanset解的部分;\n        NSArray *hCansets = [rCansetFo getConCansets:findIndex];\n        if (!ARRISOK(hCansets)) return nil;//rCanset这帧无H解: 则它没任何hCanset可迁移给hScene.hAlg;\n        return hCansets;\n    }];\n    NSLog(@\"第3步 包含HAlg树的rCansetModels数:%ld \\n%@\",havHAlgRCansetModels.count,CLEANSTR([SMGUtils convertArr:havHAlgRCansetModels convertBlock:^id(AICansetModel *obj) {\n        return STRFORMAT(@\"F%ld\",obj.cansetFo.pointerId);\n    }]));\n    NSLog(@\"第4步 找到hCansets数:%ld\",hCansets.count);\n    //5. 对有解的部分进行竞争;\n    //6. 将最好的hCanset解返回 (改写H版本的generalSolution_Slow());\n    return nil;\n    //7. 返回后,将hCanset打包成foModel,并迁移;\n}\n/**\n *  MARK:--------------------R慢思考--------------------\n *  @version\n *      2023.12.26: 提前在for之前取scene所在的pFo,以优化其性能 (参考31025-代码段-问题1) //共三处优化,此乃其一;\n */\n+(AICansetModel*) rSolution_Slow:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/Util/TCSolutionUtil.m:295-325"
+    },
+    "1827": {
+        "file_id": 184,
+        "content": "This code is finding and selecting the best hCanset solution from a set of rCansets for a given demand. It first filters out the rCansets containing an H alg tree, then selects the hCansets within these rCansets, competes between them to find the best one, and returns it. This process is part of the \"R慢思考\" (slow reasoning) method for solving problems in the AI system. The code also optimizes performance by pre-fetching the scene's pFo earlier in the loop.",
+        "type": "comment"
+    },
+    "1828": {
+        "file_id": 184,
+        "content": "    //1. 收集cansetModels候选集;\n    NSArray *sceneModels = [TCScene rGetSceneTree:demand];//600ms\n    //2. 每个cansetModel转solutionModel;\n    NSArray *cansetModels = [SMGUtils convertArr:sceneModels convertItemArrBlock:^NSArray *(AISceneModel *sceneModel) {\n        //3. 取出overrideCansets;\n        AIFoNodeBase *sceneFo = [SMGUtils searchNode:sceneModel.scene];\n        NSArray *cansets = ARRTOOK([TCCanset getOverrideCansets:sceneModel sceneTargetIndex:sceneFo.count]);//127ms\n        AIMatchFoModel *pFo = [SMGUtils filterSingleFromArr:demand.validPFos checkValid:^BOOL(AIMatchFoModel *item) {\n            return [item.matchFo isEqual:sceneModel.getRoot.scene];\n        }];\n        NSArray *itemCansetModels = [SMGUtils convertArr:cansets convertBlock:^id(AIKVPointer *canset) {\n            //4. cansetModel转换器参数准备;\n            NSInteger aleardayCount = sceneModel.cutIndex + 1;\n            //4. 过滤器 & 转cansetModels候选集 (参考26128-第1步 & 26161-1&2&3);\n            return [TCCanset convert2CansetModel:canset sceneFo:sceneM",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/Util/TCSolutionUtil.m:326-342"
+    },
+    "1829": {
+        "file_id": 184,
+        "content": "Collecting candidate scene models and converting them to solution models. It retrieves overrideCansets, filters for the matching fo model, and prepares conversion parameters before generating candidate canset models.",
+        "type": "comment"
+    },
+    "1830": {
+        "file_id": 184,
+        "content": "odel.scene basePFoOrTargetFoModel:pFo ptAleardayCount:aleardayCount isH:false sceneModel:sceneModel];//1200ms/600次执行\n        }];\n        if (Log4GetCansetResult4R && cansets.count > 0) NSLog(@\"\\t item场景(%@):%@ 取得候选数:%ld 转成候选模型数:%ld\",SceneType2Str(sceneModel.type),Pit2FStr(sceneModel.scene),cansets.count,itemCansetModels.count);\n        return itemCansetModels;\n    }];\n    NSLog(@\"第2步 转为候选集 总数:%ld\",cansetModels.count);\n    //5. 慢思考;\n    return [self generalSolution_Slow:demand cansetModels:cansetModels except_ps:except_ps];//400ms\n}\n/**\n *  MARK:--------------------慢思考--------------------\n *  @desc 思考求解: 前段匹配,中段加工,后段静默 (参考26127);\n *  @version\n *      2022.06.04: 修复结果与当前场景相差甚远BUG: 分三级排序窄出 (参考26194 & 26195);\n *      2022.06.09: 将R和H的慢思考封装成同一方法,方便调用和迭代;\n *      2022.06.09: 弃用阈值方案,改为综合排名 (参考26222-TODO2);\n *      2022.06.12: 每个pFo独立做analyst比对,转为cansetModels (参考26232-TODO8);\n *      2023.02.19: 最终激活后,将match和canset的前段抽具象强度+1 (参考28086-todo2);\n */\n+(AICansetModel*) generalSolution_Slow:(DemandModel *)demand cansetModels:(NSArray*)cansetModels except_ps:(NSArray*)except_ps {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/Util/TCSolutionUtil.m:342-364"
+    },
+    "1831": {
+        "file_id": 184,
+        "content": "The code performs a slow thinking solution by converting demand into canset models and then ranking them based on comprehensive criteria. It also discards results significantly different from the current scene, and if a pFo is activated, it increases the abstract strength of match and canset's first part.",
+        "type": "comment"
+    },
+    "1832": {
+        "file_id": 184,
+        "content": "    //1. 数据准备;\n    [AITest test13:cansetModels];\n    except_ps = ARRTOOK(except_ps);\n    AICansetModel *result = nil;\n    NSLog(@\"第5步 Anaylst匹配成功:%ld\",cansetModels.count);//测时94条\n    //8. 排除不应期;\n    cansetModels = [SMGUtils filterArr:cansetModels checkValid:^BOOL(AICansetModel *item) {\n        return ![except_ps containsObject:item.cansetFo];\n    }];\n    NSLog(@\"第6步 排除不应期:%ld\",cansetModels.count);//测时xx条\n    //9. 对下一帧做时间不急评价: 不急 = 解决方案所需时间 <= 父任务能给的时间 (参考:24057-方案3,24171-7);\n    cansetModels = [SMGUtils filterArr:cansetModels checkValid:^BOOL(AICansetModel *item) {\n        return [AIScore FRS_Time:demand solutionModel:item];\n    }];\n    NSLog(@\"第7步 排除FRSTime来不及的:%ld\",cansetModels.count);//测时xx条\n    //10. 计算衰后stableScore并筛掉为0的 (参考26128-2-1 & 26161-5);\n    //NSArray *outOfFos = [SMGUtils convertArr:cansetModels convertBlock:^id(AICansetModel *obj) {\n    //    return obj.cansetFo;\n    //}];\n    //for (AICansetModel *model in cansetModels) {\n    //    AIFoNodeBase *cansetFo = [SMGUtils searchNode:model.cansetFo];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/Util/TCSolutionUtil.m:365-388"
+    },
+    "1833": {
+        "file_id": 184,
+        "content": "This code block is preparing the data, filtering out non-applicable items, evaluating next frame urgency, and calculating stable scores for remaining solutions. It logs the counts at each step for testing purposes.",
+        "type": "comment"
+    },
+    "1834": {
+        "file_id": 184,
+        "content": "    //    model.stableScore = [TOUtils getColStableScore:cansetFo outOfFos:outOfFos startSPIndex:model.cutIndex + 1 endSPIndex:model.targetIndex];\n    //}\n    //cansetModels = [SMGUtils filterArr:cansetModels checkValid:^BOOL(AICansetModel *item) {\n    //    return item.stableScore > 0;\n    //}];\n    //NSLog(@\"第8步 排序中段稳定性<=0的:%ld\",cansetModels.count);//测时xx条\n    //11. 根据候选集综合分排序 (参考26128-2-2 & 26161-4);\n    NSArray *sortModels = [AIRank solutionFoRankingV3:cansetModels];\n    demand.rCansetModels = sortModels;\n    //13. 取通过S反思的最佳S;\n    for (AICansetModel *item in sortModels) {\n        BOOL score = [TCRefrection refrection:item demand:demand];\n        if (!score) continue;\n        //14. 闯关成功,取出最佳,跳出循环;\n        result = item;\n        break;\n    }\n    //13. 输出前: 可行性检查;\n    result = [TCRealact checkRealactAndReplaceIfNeed:result fromCansets:sortModels];\n    //14. 返回最佳解决方案;\n    if (result) {\n        AIFoNodeBase *resultFo = [SMGUtils searchNode:result.cansetFo];\n        NSLog(@\"慢思考最佳结果:F%ld (前%.2f 中%.2f 后%.2f) %@",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/Util/TCSolutionUtil.m:389-416"
+    },
+    "1835": {
+        "file_id": 184,
+        "content": "In this code snippet, the algorithm filters and sorts candidate sets based on their stability scores. It then ranks these candidate sets using a solution ranking method and selects the best candidate set according to reflection and real-act checks. Finally, it returns the optimal solution.",
+        "type": "comment"
+    },
+    "1836": {
+        "file_id": 184,
+        "content": "\",result.cansetFo.pointerId,result.frontMatchValue,result.midStableScore,result.backMatchValue,CLEANSTR(resultFo.spDic));\n        //15. 更新其前段帧的con和abs抽具象强度 (参考28086-todo2);\n        [AINetUtils updateConAndAbsStrongByIndexDic:result.matchFrontIndexDic matchFo:result.sceneFo cansetFo:result.cansetFo];\n        //16. 更新后段的的具象强度 (参考28092-todo4);\n        [AINetUtils updateConAndAbsStrongByIndexDic:result.backIndexDic matchFo:result.sceneFo cansetFo:result.cansetFo];\n        //17. 更新其前段alg引用value的强度;\n        [AINetUtils updateAlgRefStrongByIndexDic:result.protoFrontIndexDic matchFo:result.cansetFo];\n    }\n    return result;\n}\n//MARK:===============================================================\n//MARK:                     < privateMethod >\n//MARK:===============================================================\n+(NSInteger) getRAleardayCount:(ReasonDemandModel*)rDemand pFo:(AIMatchFoModel*)pFo{\n    //1. 数据准备;\n    BOOL isRoot = !rDemand.baseOrGroup;\n    TOFoModel *demandBaseFo = (TOFoModel*)rDemand.baseOrGroup;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/Util/TCSolutionUtil.m:416-437"
+    },
+    "1837": {
+        "file_id": 184,
+        "content": "1. Updates the confidence and absolute strength of the front segment using index dictionaries (referenced in 28086).\n2. Updates the confidence and absolute strength of the back segment (referenced in 28092).\n3. Updates the algorithm reference strength by index dictionary for the front segment.\n4. Private method to get RAlearday count for a reason demand model and a match fo model.",
+        "type": "comment"
+    },
+    "1838": {
+        "file_id": 184,
+        "content": "    //3. 取pFo已发生个数 (参考26232-TODO3);\n    NSInteger pFoAleardayCount = 0;\n    if (isRoot) {\n        //a. 根R任务时 (参考26232-TODO5);\n        pFoAleardayCount = pFo.cutIndex + 1;\n    }else{\n        //b. 子R任务时 (参考26232-TODO6);\n        pFoAleardayCount = [SMGUtils filterArr:pFo.indexDic2.allValues checkValid:^BOOL(NSNumber *item) {\n            int maskIndex = item.intValue;\n            return maskIndex <= demandBaseFo.actionIndex;\n        }].count;\n    }\n    return pFoAleardayCount;\n}\n+(NSInteger) getHAleardayCount:(TOFoModel*)targetFoM {\n    //1. 已发生个数 (targetFo已行为化部分即已发生) (参考26161-模型);\n    NSInteger targetFoAleardayCount = targetFoM.actionIndex;\n    return targetFoAleardayCount;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCSolution/Util/TCSolutionUtil.m:439-460"
+    },
+    "1839": {
+        "file_id": 184,
+        "content": "This code calculates the number of already occurred actions for a given FO (Functional Object) in a task hierarchy. It differentiates between root and sub-tasks, and returns the count accordingly. The `getHAleardayCount` method retrieves the already occurred action count for a specific target FO model.",
+        "type": "comment"
+    },
+    "1840": {
+        "file_id": 185,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCTransfer/AITransferModel.h",
+        "type": "filepath"
+    },
+    "1841": {
+        "file_id": 185,
+        "content": "This code defines a class `AITransferModel` that represents the relationship between a scene and a canset in an AI system. The model is initialized with a scene and a canset, both of which are pointers to some AI data structure (`AIKVPointer`). The purpose of this model is to maintain a correspondence between the scene and canset, likely for analysis or processing purposes.",
+        "type": "summary"
+    },
+    "1842": {
+        "file_id": 185,
+        "content": "//\n//  AITransferModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/5/18.\n//  Copyright © 2023年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------canset与scene对应模型--------------------\n *      2023.05.18: 随着迁移执行,canset与scene改为对应模型结果,避免后面更新eff+1时对应错 (参考29095-修复);\n */\n@interface AITransferModel : NSObject <NSCoding>\n+(AITransferModel*) newWithScene:(AIKVPointer*)scene canset:(AIKVPointer*)canset;\n@property (strong, nonatomic) AIKVPointer *scene;\n@property (strong, nonatomic) AIKVPointer *canset;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCTransfer/AITransferModel.h:1-22"
+    },
+    "1843": {
+        "file_id": 185,
+        "content": "This code defines a class `AITransferModel` that represents the relationship between a scene and a canset in an AI system. The model is initialized with a scene and a canset, both of which are pointers to some AI data structure (`AIKVPointer`). The purpose of this model is to maintain a correspondence between the scene and canset, likely for analysis or processing purposes.",
+        "type": "comment"
+    },
+    "1844": {
+        "file_id": 186,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCTransfer/AITransferModel.m",
+        "type": "filepath"
+    },
+    "1845": {
+        "file_id": 186,
+        "content": "This code defines a class `AITransferModel` that conforms to the NSCoding protocol, allowing it to be encoded and decoded using NSKeyedArchiver and NSKeyedUnarchiver. It provides an initializer method `newWithScene:canset:` for creating instances of this class with specified scene and canset values. The code also includes implementations of the required NSCoding methods, `initWithCoder:` for decoding object properties from a coder and `encodeWithCoder:` for encoding object properties to a coder.",
+        "type": "summary"
+    },
+    "1846": {
+        "file_id": 186,
+        "content": "//\n//  AITransferModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/5/18.\n//  Copyright © 2023年 XiaoGang. All rights reserved.\n//\n#import \"AITransferModel.h\"\n@implementation AITransferModel\n+(AITransferModel*) newWithScene:(AIKVPointer*)scene canset:(AIKVPointer*)canset {\n    AITransferModel *result = [[AITransferModel alloc] init];\n    result.scene = scene;\n    result.canset = canset;\n    return result;\n}\n/**\n *  MARK:--------------------NSCoding--------------------\n */\n- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {\n    self = [super init];\n    if (self) {\n        self.scene = [aDecoder decodeObjectForKey:@\"scene\"];\n        self.canset = [aDecoder decodeObjectForKey:@\"canset\"];\n    }\n    return self;\n}\n- (void)encodeWithCoder:(NSCoder *)aCoder {\n    [aCoder encodeObject:self.scene forKey:@\"scene\"];\n    [aCoder encodeObject:self.canset forKey:@\"canset\"];\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCTransfer/AITransferModel.m:1-37"
+    },
+    "1847": {
+        "file_id": 186,
+        "content": "This code defines a class `AITransferModel` that conforms to the NSCoding protocol, allowing it to be encoded and decoded using NSKeyedArchiver and NSKeyedUnarchiver. It provides an initializer method `newWithScene:canset:` for creating instances of this class with specified scene and canset values. The code also includes implementations of the required NSCoding methods, `initWithCoder:` for decoding object properties from a coder and `encodeWithCoder:` for encoding object properties to a coder.",
+        "type": "comment"
+    },
+    "1848": {
+        "file_id": 187,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCTransfer/TCTransfer.h",
+        "type": "filepath"
+    },
+    "1849": {
+        "file_id": 187,
+        "content": "This code defines the `TCTransfer` class, which is responsible for handling the migration of a specific feature in the SMG_NothingIsAll project. The class provides two methods: `transfer:` and `transferAlg:`. The `transfer:` method performs the canset migration algorithm outlined in 29069-todo10, while the `transferAlg:` method implements the canset migration algorithm from 29075-方案3. Both methods take specific parameters and have completion handlers to handle the results of the migration process.",
+        "type": "summary"
+    },
+    "1850": {
+        "file_id": 187,
+        "content": "//\n//  TCTransfer.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/4/17.\n//  Copyright © 2023年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------迁移器--------------------\n *  @desc 负责Canset的迁移功能 (参考29069-todo10.1 & todo10.2 & 688示图);\n *  @desc 目前仅R任务支持迁移器,H任务暂未支持;\n */\n@interface TCTransfer : NSObject\n/**\n *  MARK:--------------------canset迁移算法 (29069-todo10)--------------------\n */\n+(void) transfer:(AICansetModel*)bestCansetModel complate:(void(^)(AITransferModel *brother,AITransferModel *father,AITransferModel *i))complate;\n/**\n *  MARK:--------------------cansetAlg迁移算法 (29075-方案3)--------------------\n */\n+(AIKVPointer*) transferAlg:(AISceneModel*)sceneModel canset:(AIFoNodeBase*)canset cansetIndex:(NSInteger)cansetIndex;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCTransfer/TCTransfer.h:1-28"
+    },
+    "1851": {
+        "file_id": 187,
+        "content": "This code defines the `TCTransfer` class, which is responsible for handling the migration of a specific feature in the SMG_NothingIsAll project. The class provides two methods: `transfer:` and `transferAlg:`. The `transfer:` method performs the canset migration algorithm outlined in 29069-todo10, while the `transferAlg:` method implements the canset migration algorithm from 29075-方案3. Both methods take specific parameters and have completion handlers to handle the results of the migration process.",
+        "type": "comment"
+    },
+    "1852": {
+        "file_id": 188,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCTransfer/TCTransfer.m",
+        "type": "filepath"
+    },
+    "1853": {
+        "file_id": 188,
+        "content": "The `transfer` and `transferJiCen` functions manage canset transfers between scenes, updating counts, involving Father and I scenes. They use data preparation, two-level mappings, scene element transfers, AIFoNodeBase methods, index mapping, object conversion, and search algorithms.",
+        "type": "summary"
+    },
+    "1854": {
+        "file_id": 188,
+        "content": "//\n//  TCTransfer.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/4/17.\n//  Copyright © 2023年 XiaoGang. All rights reserved.\n//\n#import \"TCTransfer.h\"\n@implementation TCTransfer\n/**\n *  MARK:--------------------canset迁移算法 (29069-todo10)--------------------\n *  @desc 用于将canset从brother迁移到father再迁移到i场景下;\n *  @version\n *      2023.04.19: TCTranfer执行后,调用Canset识别类比 (参考29069-todo12);\n */\n+(void) transfer:(AICansetModel*)bestCansetModel complate:(void(^)(AITransferModel *brother,AITransferModel *father,AITransferModel *i))complate {\n    //0. 数据准备;\n    [theTC updateOperCount:kFILENAME];\n    Debug();\n    OFTitleLog(@\"TCTransfer迁移\", @\" from%@\",SceneType2Str(bestCansetModel.baseSceneModel.type));\n    AITransferModel *brotherResult = nil, *fatherResult = nil, *iResult = nil;\n    NSInteger targetIndex = bestCansetModel.targetIndex; //因为推举和继承的canset全是等长,所以他们仨的targetIndex也一样;\n    //1. 无base场景 或 type==I时 => 直接将cansetFo设为iCanset;\n    if (!bestCansetModel || bestCansetModel.baseSceneModel.type == SceneTypeI) {\n        AIKVPointer *iScene = bestCansetModel.sceneFo;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCTransfer/TCTransfer.m:1-29"
+    },
+    "1855": {
+        "file_id": 188,
+        "content": "This code is defining a function `transfer` that takes in a `bestCansetModel` and a completion block, and it is used to transfer a `canset` from a brother scene to a father scene, and finally to an i scene. It also updates the operation count for a specific file name and logs information about the transfer process. The function checks if there's a base scene or if the type is I, in which case it directly sets the `cansetFo` to the i `Canset`.",
+        "type": "comment"
+    },
+    "1856": {
+        "file_id": 188,
+        "content": "        AIKVPointer *iCanset = bestCansetModel.cansetFo;\n        iResult = [AITransferModel newWithScene:iScene canset:iCanset];\n    }\n    //2. canset迁移之: father继承给i (参考29069-todo10.1);\n    if (bestCansetModel.baseSceneModel.type == SceneTypeFather) {\n        //a. 生成father结果;\n        AIKVPointer *fatherScene = bestCansetModel.baseSceneModel.scene;\n        AIKVPointer *fatherCanset = bestCansetModel.cansetFo;\n        fatherResult = [AITransferModel newWithScene:fatherScene canset:fatherCanset];\n        //b. 生成i结果;\n        AIKVPointer *iScene = bestCansetModel.baseSceneModel.base.scene;\n        AIKVPointer *iCanset = [self transferJiCen:fatherCanset fatherCansetTargetIndex:targetIndex fatherScene:fatherScene iScene_p:iScene];\n        iResult = [AITransferModel newWithScene:iScene canset:iCanset];\n        //c. 调用Canset识别类比 (参考29069-todo12);\n        //[TIUtils recognitionCansetFo:iCanset sceneFo:iScene es:ES_Default];\n    }\n    //3. canset迁移之: brother推举到father,再继承给i (参考29069-todo10.1);\n    if (bestCansetModel.baseSceneModel.type == SceneTypeBrother) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCTransfer/TCTransfer.m:30-49"
+    },
+    "1857": {
+        "file_id": 188,
+        "content": "This code is responsible for transferring a canset, which represents a specific scene, from one object to another. It checks the type of the baseSceneModel and performs different actions accordingly. If the type is Father, it generates results for both Father and I, and calls Canset recognition. If the type is Brother, it further transfers the canset to Father and then to I. The code is part of a larger system that handles scene transfer and comparison using AI models.",
+        "type": "comment"
+    },
+    "1858": {
+        "file_id": 188,
+        "content": "        //a. 得出brother结果;\n        AIKVPointer *brotherScene = bestCansetModel.baseSceneModel.scene;\n        AIKVPointer *brotherCanset = bestCansetModel.cansetFo;\n        brotherResult = [AITransferModel newWithScene:brotherScene canset:brotherCanset];\n        //b. 得出father结果;\n        AIKVPointer *fatherScene = bestCansetModel.baseSceneModel.base.scene;\n        AIKVPointer *fatherCanset = [self transfer4TuiJu:brotherCanset brotherCansetTargetIndex:targetIndex brotherScene:brotherScene fatherScene_p:fatherScene];\n        fatherResult = [AITransferModel newWithScene:fatherScene canset:fatherCanset];\n        //c. 得出i结果\n        AIKVPointer *iScene = bestCansetModel.baseSceneModel.base.base.scene;\n        AIKVPointer *iCanset = [self transferJiCen:fatherCanset fatherCansetTargetIndex:targetIndex fatherScene:fatherScene iScene_p:iScene];\n        iResult = [AITransferModel newWithScene:iScene canset:iCanset];\n        //d. 调用Canset识别类比 (参考29069-todo12);\n        //[TIUtils recognitionCansetFo:fatherCanset sceneFo:fatherScene es:ES_Default];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCTransfer/TCTransfer.m:50-66"
+    },
+    "1859": {
+        "file_id": 188,
+        "content": "Derives 'brother', 'father' and 'i' results by extracting corresponding scene and canset objects, creating AITransferModel instances with them, and calling a Canset recognition method.",
+        "type": "comment"
+    },
+    "1860": {
+        "file_id": 188,
+        "content": "        //[TIUtils recognitionCansetFo:iCanset sceneFo:iScene es:ES_Default];\n    }\n    if (brotherResult) NSLog(@\"迁移结果: brotherScene:F%ld Canset:%@\",brotherResult.scene.pointerId,Pit2FStr(brotherResult.canset));\n    if (fatherResult) NSLog(@\"迁移结果: fatherScene:F%ld Canset:%@\",fatherResult.scene.pointerId,Pit2FStr(fatherResult.canset));\n    if (iResult) NSLog(@\"迁移结果: iScene:F%ld Canset:%@\",iResult.scene.pointerId,Pit2FStr(iResult.canset));\n    DebugE();\n    complate(brotherResult,fatherResult,iResult);\n}\n/**\n *  MARK:--------------------canset继承算法 (29069-todo10.1推举算法示图&步骤)--------------------\n *  @desc 用于将canset从father继承到i场景下;\n *  @param fatherCansetTargetIndex : 前后canset同长度,所以传前者targetIndex即可;\n *  @version\n *      2023.05.11: BUG_canset的targetIndex是执行目标,而scene的targetIndex是任务目标,用错修复 (参考29093-线索 & 方案);\n *      2023.12.09: 迁移出的新canset改为仅在场景内防重 (参考3101b-todo5);\n */\n+(AIKVPointer*) transferJiCen:(AIKVPointer*)fatherCanset fatherCansetTargetIndex:(NSInteger)fatherCansetTargetIndex fatherScene:(AIKVPointer*)fatherScene_p iScene_p:(AIKVPointer*)iScene_p {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCTransfer/TCTransfer.m:67-84"
+    },
+    "1861": {
+        "file_id": 188,
+        "content": "This code appears to be a part of an algorithm that transfers a canset (a set of objects) from a \"father\" scene to another scene, called the \"iScene\". The function `transferJiCen` takes three parameters: `fatherCanset`, which is the canset being transferred, `fatherCansetTargetIndex`, which is an index indicating the target position within the father scene, and two scene pointers (`fatherScene_p` and `iScene_p`) representing the father scene and the i scene respectively. The code then logs information about the transfer results and calls another function called `DebugE()`.",
+        "type": "comment"
+    },
+    "1862": {
+        "file_id": 188,
+        "content": "    //1. 数据准备;\n    AIFoNodeBase *iCanset = nil;\n    AIFoNodeBase *fatherScene = [SMGUtils searchNode:fatherScene_p];\n    AIFoNodeBase *iScene = [SMGUtils searchNode:iScene_p];\n    //2. 取两级映射 (参考29069-todo10.1推举算法示图);\n    NSDictionary *indexDic1 = [fatherScene getConIndexDic:fatherCanset];\n    NSDictionary *indexDic2 = [fatherScene getConIndexDic:iScene_p];\n    //3. 新生成fatherCanset (参考29069-todo10.1推举算法示图&步骤);\n    AIFoNodeBase *fatherCansetNode = [SMGUtils searchNode:fatherCanset];\n    NSMutableArray *orders = [[NSMutableArray alloc] init];\n    NSMutableDictionary *iSceneCansetIndexDic = [[NSMutableDictionary alloc] init];\n    //========================= 算法关键代码 START =========================\n    for (NSInteger i = 0; i < fatherCansetNode.content_ps.count; i++) {\n        //4. 判断映射链: (参考29069-todo10.1-步骤2);\n        NSNumber *fatherSceneIndex = ARR_INDEX([indexDic1 allKeysForObject:@(i)], 0);\n        NSNumber *iSceneIndex = [indexDic2 objectForKey:fatherSceneIndex];\n        double deltaTime = [NUMTOOK(ARR_INDEX(fatherCansetNode.deltaTimes, i)) doubleValue];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCTransfer/TCTransfer.m:85-104"
+    },
+    "1863": {
+        "file_id": 188,
+        "content": "This code prepares data, retrieves two-level mappings, generates a new fatherCanset, and then loops through each element to determine the mapping chain between the two sets of indices. The algorithm's key step involves checking if there exists any non-empty mapping chain connecting the elements from fatherScene to iScene in the given fatherCanset.",
+        "type": "comment"
+    },
+    "1864": {
+        "file_id": 188,
+        "content": "        if (iSceneIndex) {\n            //5. 通过则收集迁移后scene元素 (参考29069-todo10.1-步骤3);\n            id order = [AIShortMatchModel_Simple newWithAlg_p:ARR_INDEX(iScene.content_ps, iSceneIndex.intValue) inputTime:deltaTime isTimestamp:false];\n            [orders addObject:order];\n            //5. 只有最终迁移成功的帧,记录新的indexDic;\n            [iSceneCansetIndexDic setObject:@(i) forKey:iSceneIndex];\n        } else {\n            //6. 不通过则收集迁移前canset元素 (参考29069-todo10.1-步骤4);\n            id order = [AIShortMatchModel_Simple newWithAlg_p:ARR_INDEX(fatherCansetNode.content_ps, i) inputTime:deltaTime isTimestamp:false];\n            [orders addObject:order];\n        }\n    }\n    //========================= 算法关键代码 END =========================\n    //7. 将canset执行目标转成scene任务目标targetIndex (参考29093-方案);\n    NSInteger sceneTargetIndex = iScene.count;\n    if (fatherCansetTargetIndex < fatherCansetNode.count) {\n        NSArray *keys = [iSceneCansetIndexDic allKeysForObject:@(fatherCansetTargetIndex)];\n        if (ARRISOK(keys)) {\n            sceneTargetIndex = NUMTOOK(ARR_INDEX(keys, 0)).integerValue;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCTransfer/TCTransfer.m:105-125"
+    },
+    "1865": {
+        "file_id": 188,
+        "content": "This code handles the transfer of elements between scenes based on matching algorithms. It checks if a scene index is present, and depending on that, it collects either migrated or original elements to create orders. Finally, it converts the target for the transferred canset into a scene's task target index.",
+        "type": "comment"
+    },
+    "1866": {
+        "file_id": 188,
+        "content": "        }\n    }\n    //7. 构建result & 场景内防重;\n    iCanset = [theNet createConFoForCanset:orders sceneFo:iScene sceneTargetIndex:sceneTargetIndex];\n    //8. 新生成fatherPort;\n    AITransferPort *newIPort = [AITransferPort newWithScene:iScene_p canset:iCanset.p];\n    //9. 防重 (其实不可能重复,因为如果重复在override算法中当前cansetModel就已经被过滤了);\n    if (![fatherScene.transferConPorts containsObject:newIPort]) {\n        //10. 将newIPort挂到iScene下;\n        AIFoNodeBase *iScene = [SMGUtils searchNode:iScene_p];\n        BOOL updateCansetSuccess = [iScene updateConCanset:iCanset.p targetIndex:sceneTargetIndex];\n        if (updateCansetSuccess) {\n            //11. 为迁移后iCanset加上与iScene的indexDic (参考29075-todo4);\n            [iCanset updateIndexDic:iScene indexDic:iSceneCansetIndexDic];\n            //11. SP值也继承 (参考3101b-todo1);\n            if (fatherCansetNode.count == iCanset.count) {\n                [iCanset updateSPDic:fatherCansetNode.spDic];\n            }\n            [AITest test32:fatherCansetNode newCanset:iCanset];\n            //12. 并进行迁移关联",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCTransfer/TCTransfer.m:126-152"
+    },
+    "1867": {
+        "file_id": 188,
+        "content": "- Constructing a transfer port based on the current scene and canset.\n- Checking if the new transfer port already exists in fatherScene's transferConPorts list.\n- Updating the connection set for the current scene with the new transfer port.\n- Updating the index dictionary for the updated canset.\n- Inheriting SP values from the original canset to the new one if their counts are equal.\n- Testing and performing transfer migration.",
+        "type": "comment"
+    },
+    "1868": {
+        "file_id": 188,
+        "content": "            [AINetUtils relateTransfer:fatherScene_p absCanset:fatherCanset conScene:iScene_p conCanset:iCanset.p];\n        }\n    }\n    return iCanset.p;\n}\n/**\n *  MARK:--------------------canset推举算法 (29069-todo10.1推举算法示图&步骤)--------------------\n *  @desc 用于将canset从brother推举到father场景下;\n *  @version\n *      2023.05.04: 通过fo全局防重实现推举防重 (参考29081-todo32);\n *      2023.12.09: 迁移出的新canset改为仅在场景内防重 (参考3101b-todo5);\n */\n+(AIKVPointer*) transfer4TuiJu:(AIKVPointer*)brotherCanset brotherCansetTargetIndex:(NSInteger)brotherCansetTargetIndex brotherScene:(AIKVPointer*)brotherScene_p fatherScene_p:(AIKVPointer*)fatherScene_p {\n    //1. 数据准备;\n    AIFoNodeBase *fatherCanset = nil;\n    AIFoNodeBase *brotherScene = [SMGUtils searchNode:brotherScene_p];\n    AIFoNodeBase *fatherScene = [SMGUtils searchNode:fatherScene_p];\n    //2. 取两级映射 (参考29069-todo10.1推举算法示图);\n    NSDictionary *indexDic1 = [brotherScene getConIndexDic:brotherCanset];\n    NSDictionary *indexDic2 = [brotherScene getAbsIndexDic:fatherScene_p];\n    //3. 新生成fatherCanset (参考29069-todo10.1推举算法示图&步骤);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCTransfer/TCTransfer.m:153-176"
+    },
+    "1869": {
+        "file_id": 188,
+        "content": "The code snippet is from the file \"TCTransfer.m\" and is responsible for transferring a canset (a data structure used in the AI Foundation library) from a brother scene to a father scene, while preventing duplication. It prepares the necessary data by searching for the nodes corresponding to the father and brother scenes, and then uses these nodes to generate a new father canset using a two-level mapping technique. The code also provides brief comments describing each step of the algorithm.",
+        "type": "comment"
+    },
+    "1870": {
+        "file_id": 188,
+        "content": "    AIFoNodeBase *brotherCansetNode = [SMGUtils searchNode:brotherCanset];\n    NSMutableArray *orders = [[NSMutableArray alloc] init];\n    NSMutableDictionary *fatherSceneCansetIndexDic = [[NSMutableDictionary alloc] init];\n    //========================= 算法关键代码 START =========================\n    for (NSInteger i = 0; i < brotherCansetNode.content_ps.count; i++) {\n        //4. 判断映射链: (参考29069-todo10.1-步骤2);\n        NSNumber *brotherSceneIndex = ARR_INDEX([indexDic1 allKeysForObject:@(i)], 0);\n        NSNumber *fatherSceneIndex = ARR_INDEX([indexDic2 allKeysForObject:brotherSceneIndex], 0);\n        double deltaTime = [NUMTOOK(ARR_INDEX(brotherCansetNode.deltaTimes, i)) doubleValue];\n        if (fatherSceneIndex) {\n            //5. 通过则收集迁移后scene元素 (参考29069-todo10.1-步骤3);\n            id order = [AIShortMatchModel_Simple newWithAlg_p:ARR_INDEX(fatherScene.content_ps, fatherSceneIndex.intValue) inputTime:deltaTime isTimestamp:false];\n            [orders addObject:order];\n            //5. 只有最终迁移成功的帧,记录新的indexDic;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCTransfer/TCTransfer.m:177-192"
+    },
+    "1871": {
+        "file_id": 188,
+        "content": "The code is iterating through the content_ps of brotherCansetNode and mapping the indexes from indexDic1 and indexDic2. It calculates the delta time for each element and checks if fatherSceneIndex exists. If it does, a new order is created with the corresponding p value and input time, added to the orders array, and the new indexDic is recorded.",
+        "type": "comment"
+    },
+    "1872": {
+        "file_id": 188,
+        "content": "            [fatherSceneCansetIndexDic setObject:@(i) forKey:fatherSceneIndex];\n        } else {\n            //6. 不通过则收集迁移前canset元素 (参考29069-todo10.1-步骤4);\n            id order = [AIShortMatchModel_Simple newWithAlg_p:ARR_INDEX(brotherCansetNode.content_ps, i) inputTime:deltaTime isTimestamp:false];\n            [orders addObject:order];\n        }\n    }\n    //========================= 算法关键代码 END =========================\n    //7. 构建result;\n    fatherCanset = [theNet createConFoForCanset:orders sceneFo:fatherScene sceneTargetIndex:fatherScene.count];\n    //8. 新生成fatherPort;\n    AITransferPort *newFatherPort = [AITransferPort newWithScene:fatherScene_p canset:fatherCanset.p];\n    //9. 防重 (其实不可能重复,因为如果重复在override算法中当前cansetModel就已经被过滤了);\n    if (![brotherScene.transferAbsPorts containsObject:newFatherPort]) {\n        //10. 将newFatherCanset挂到fatherScene下;\n        AIFoNodeBase *fatherScene = [SMGUtils searchNode:fatherScene_p];\n        BOOL updateCansetSuccess = [fatherScene updateConCanset:fatherCanset.p targetIndex:fatherScene.count];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCTransfer/TCTransfer.m:193-212"
+    },
+    "1873": {
+        "file_id": 188,
+        "content": "This code is part of a transfer process in a scene. It either sets the index of a specific object or collects migration information if unsuccessful. Then, it builds a result using the collected orders and creates a new transfer port. The code also checks for duplicates and updates the father scene with the new father set.",
+        "type": "comment"
+    },
+    "1874": {
+        "file_id": 188,
+        "content": "        if (updateCansetSuccess) {\n            //11. 为迁移后fatherCanset加上与fatherScene的indexDic (参考29075-todo4);\n            [fatherCanset updateIndexDic:fatherScene indexDic:fatherSceneCansetIndexDic];\n            //11. SP值也推举 (参考3101b-todo2);\n            if (brotherCansetNode.count == fatherCanset.count) {\n                [fatherCanset updateSPDic:brotherCansetNode.spDic];\n            }\n            [AITest test32:brotherCansetNode newCanset:fatherCanset];\n            //12. 并进行迁移关联\n            [AINetUtils relateTransfer:fatherScene_p absCanset:fatherCanset.p conScene:brotherScene_p conCanset:brotherCanset];\n        }\n    }\n    return fatherCanset.p;\n}\n//MARK:===============================================================\n//MARK:                     < transferAlg >\n//MARK:===============================================================\n/**\n *  MARK:--------------------cansetAlg迁移算法 (29075-方案3)--------------------\n *  _param 参数说明 : canset的cansetIndex帧,延着sceneModel向base最终找着transferIAlg返回;\n *  @desc 用于将brother或father的canset转成iAlg返回;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCTransfer/TCTransfer.m:214-238"
+    },
+    "1875": {
+        "file_id": 188,
+        "content": "This code is part of a transfer algorithm for canset, which involves updating the index dictionary and SP values after migration. It also includes tests and relates the transfer between scenes. The goal is to convert brother or father cansets into iAlg format for further processing.",
+        "type": "comment"
+    },
+    "1876": {
+        "file_id": 188,
+        "content": " *  @desc 代码说明: 此算法逐步用indexDic映射来判断,全成功则最终返回iAlg,中途失败则返回中断时的resultAlg;\n */\n+(AIKVPointer*) transferAlg:(AISceneModel*)sceneModel canset:(AIFoNodeBase*)canset cansetIndex:(NSInteger)cansetIndex {\n    //1. 数据准备;\n    if (!sceneModel) return ARR_INDEX(canset.content_ps, cansetIndex);\n    AIKVPointer *curScene_p = sceneModel.scene;//当前scene\n    AIKVPointer *stopResult = nil;//中途中断时,把结果out过来return下;\n    //2. canset到当前scene映射检查 (不通过则直接返回cansetAlg);\n    NSNumber *curSceneIndex = [self transferAlg4GetAbsIndex:canset.pointer absFo:curScene_p conIndex:cansetIndex stopResult:&stopResult];\n    if (!curSceneIndex) return stopResult;\n    //3. ===================== brother时 (参考29075-todo2) =====================\n    if (sceneModel.type == SceneTypeBrother) {\n        //a. 数据准备;\n        AIKVPointer *father_p = sceneModel.base.scene;\n        AIKVPointer *i_p = sceneModel.base.base.scene;\n        //b. brother到father映射检查 (不通过则直接返回brotherAlg);\n        NSNumber *fatherIndex = [self transferAlg4GetAbsIndex:curScene_p absFo:father_p conIndex:curSceneIndex.integerValue stopResult:&stopResult];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCTransfer/TCTransfer.m:239-258"
+    },
+    "1877": {
+        "file_id": 188,
+        "content": "This code is a method that transfers an algorithm from one object to another based on mapping. It first prepares the data and checks if the current scene matches the given canset's index. If it doesn't, it returns the canset's algorithm. If it does, it then checks if the scene model is a brother type. If so, it prepares additional data and checks the brother to father mapping before returning the result.",
+        "type": "comment"
+    },
+    "1878": {
+        "file_id": 188,
+        "content": "        if (!fatherIndex) return stopResult;\n        //c. father到i映射检查 (不通过则直接返回stopResult);\n        NSNumber *iIndex = [self transferAlg4GetConIndex:father_p conFo:i_p absIndex:fatherIndex.integerValue stopResult:&stopResult];\n        if (!iIndex) return stopResult;\n        //d. 全通过,返回iAlg\n        AIFoNodeBase *i = [SMGUtils searchNode:i_p];\n        return ARR_INDEX(i.content_ps, iIndex.integerValue);\n    }\n    //4. ===================== father时 (参考29075-todo3) =====================\n    else if (sceneModel.type == SceneTypeFather) {\n        //a. 数据准备;\n        AIKVPointer *i_p = sceneModel.base.scene;\n        //b. father到i映射检查 (不通过则直接返回fatherAlg);\n        NSNumber *iIndex = [self transferAlg4GetConIndex:curScene_p conFo:i_p absIndex:curSceneIndex.integerValue stopResult:&stopResult];\n        if (!iIndex) return stopResult;\n        //c. 全通过,返回iAlg\n        AIFoNodeBase *i = [SMGUtils searchNode:i_p];\n        return ARR_INDEX(i.content_ps, iIndex.integerValue);\n    }\n    //5. ===================== i时 =====================",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCTransfer/TCTransfer.m:259-282"
+    },
+    "1879": {
+        "file_id": 188,
+        "content": "This code appears to be part of a larger function, potentially involved in some sort of algorithm or system. The code handles three different scenarios: father, i, and an unspecified \"else\". \nIn the first scenario, if 'fatherIndex' is not defined, the function returns 'stopResult'. In the second scenario, if 'sceneModel' type is 'Father', it prepares data and checks a mapping from 'curScene_p' to 'i_p'. If the mapping fails, it returns 'stopResult', otherwise it retrieves the corresponding node using 'SMGUtils' and returns its index. In the third scenario, if 'sceneModel' type is 'i', it prepares data and performs a similar check and retrieval process as in the second scenario.",
+        "type": "comment"
+    },
+    "1880": {
+        "file_id": 188,
+        "content": "    else if (sceneModel.type == SceneTypeI) {\n        AIFoNodeBase *i = [SMGUtils searchNode:curScene_p];\n        return ARR_INDEX(i.content_ps, curSceneIndex.integerValue);\n    }\n    return ARR_INDEX(canset.content_ps, cansetIndex);\n}\n/**\n *  MARK:--------------------absIndex 2 conIndex (参考29075-todo1)--------------------\n *  @desc 从上到下找映射并返回 (将迁移前的algResult也out出去);\n */\n+(NSNumber*) transferAlg4GetConIndex:(AIKVPointer*)absFo_p conFo:(AIKVPointer*)conFo_p absIndex:(NSInteger)absIndex stopResult:(AIKVPointer**)stopResult{\n    AIFoNodeBase *absFo = [SMGUtils searchNode:absFo_p];\n    NSDictionary *indexDic = [absFo getConIndexDic:conFo_p];\n    *stopResult = ARR_INDEX(absFo.content_ps, absIndex);\n    return [indexDic objectForKey:@(absIndex)];\n}\n/**\n *  MARK:--------------------conIndex 2 absIndex (参考29075-todo1)--------------------\n *  @desc 从下到上找映射并返回 (将迁移前的algResult也out出去);\n */\n+(NSNumber*) transferAlg4GetAbsIndex:(AIKVPointer*)conFo_p absFo:(AIKVPointer*)absFo_p conIndex:(NSInteger)conIndex stopResult:(AIKVPointer**)stopResult{",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCTransfer/TCTransfer.m:283-305"
+    },
+    "1881": {
+        "file_id": 188,
+        "content": "This code appears to contain various functions for transferring and mapping indexes between abstract and concrete objects in a system. It uses search and getConIndexDic methods from AIFoNodeBase class, which seems to be part of a larger object-oriented architecture. The comments are marked with MARK: and provide brief descriptions about the functionality of different sections of code. The code also includes parameters like absFo_p, conFo_p, absIndex, conIndex, stopResult, etc., indicating that these are pointers or other types of object references. Overall, the code seems to be focused on transferring and mapping indexes in a specific context or application.",
+        "type": "comment"
+    },
+    "1882": {
+        "file_id": 188,
+        "content": "    AIFoNodeBase *conFo = [SMGUtils searchNode:conFo_p];\n    NSDictionary *indexDic = [conFo getAbsIndexDic:absFo_p];\n    *stopResult = ARR_INDEX(conFo.content_ps, conIndex);\n    return ARR_INDEX([indexDic allKeysForObject:@(conIndex)], 0);\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCTransfer/TCTransfer.m:306-312"
+    },
+    "1883": {
+        "file_id": 188,
+        "content": "This code searches for a node, retrieves its absolute index dictionary, and returns the index of a specific content using arrays.",
+        "type": "comment"
+    },
+    "1884": {
+        "file_id": 189,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIFilter.h",
+        "type": "filepath"
+    },
+    "1885": {
+        "file_id": 189,
+        "content": "The code defines a class AIFilter with multiple filtering methods for concept recognition, temporal recognition, Canset recognition, Canset solving, scene solving, and additional filtering techniques.",
+        "type": "summary"
+    },
+    "1886": {
+        "file_id": 189,
+        "content": "//\n//  AIFilter.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/2/25.\n//  Copyright © 2023年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------过滤器 (参考28109-todo1)--------------------\n */\n@interface AIFilter : NSObject\n/**\n *  MARK:--------------------概念识别过滤器 (参考28109-todo2)--------------------\n */\n+(NSArray*) recognitionAlgFilter:(NSArray*)matchAlgModels radio:(CGFloat)radio;\n/**\n *  MARK:--------------------时序识别过滤器 (参考28111-todo1)--------------------\n */\n+(NSArray*) recognitionFoFilter:(NSArray*)matchModels;\n/**\n *  MARK:--------------------Canset识别过滤器 (参考29042)--------------------\n */\n//+(NSArray*) recognitionCansetFilter:(NSArray*)matchModels sceneFo:(AIFoNodeBase*)sceneFo;\n/**\n *  MARK:--------------------Canset求解过滤器 (参考29081-todo41)--------------------\n */\n+(NSArray*) solutionCansetFilter:(AIFoNodeBase*)sceneFo targetIndex:(NSInteger)targetIndex;\n/**\n *  MARK:--------------------Scene求解过滤器 (参考2908a-todo2)--------------------\n */\n+(NSArray*) rSolutionSceneFilter:(AIFoNodeBase*)protoScene type:(SceneType)type;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIFilter.h:1-39"
+    },
+    "1887": {
+        "file_id": 189,
+        "content": "This code defines the class AIFilter and provides several filtering methods, including recognitionAlgFilter, recognitionFoFilter, recognitionCansetFilter, solutionCansetFilter, and rSolutionSceneFilter. These filters are used for concept recognition, temporal recognition, Canset recognition, Canset solving, and scene solving respectively.",
+        "type": "comment"
+    },
+    "1888": {
+        "file_id": 189,
+        "content": "+(NSArray*) hSolutionSceneFilter:(AISceneModel*)protoScene;\n/**\n *  MARK:--------------------识别二次过滤器--------------------\n */\n+(void) secondRecognitionFilter:(AIShortMatchModel*)inModel;\n/**\n *  MARK:--------------------行为化前反思识别过滤器 (参考30059)--------------------\n */\n+(void) secondActionRecognitionFilter:(AIShortMatchModel*)inModel;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIFilter.h:40-52"
+    },
+    "1889": {
+        "file_id": 189,
+        "content": "This code defines three methods for filtering: hSolutionSceneFilter, secondRecognitionFilter, and secondActionRecognitionFilter. The first method filters scenes, the second recognizes again, and the third applies a pre-reflection recognition filter.",
+        "type": "comment"
+    },
+    "1890": {
+        "file_id": 190,
+        "content": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIFilter.m",
+        "type": "filepath"
+    },
+    "1891": {
+        "file_id": 190,
+        "content": "The code optimizes filtering and sorting for concept recognition, limits matches to 4, calculates values, deprecates old functions, and selects strongest items in Ports2Pits format with valid scene conditions using a 5-step process and ensures result is within specified range.",
+        "type": "summary"
+    },
+    "1892": {
+        "file_id": 190,
+        "content": "//\n//  AIFilter.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/2/25.\n//  Copyright © 2023年 XiaoGang. All rights reserved.\n//\n#import \"AIFilter.h\"\n@implementation AIFilter\n/**\n *  MARK:--------------------概念识别过滤器--------------------\n *  @version\n *      2023.03.06: 概念识别过滤器匹配度为主,强度为辅 (参考28152-方案4-todo4);\n *      2023.06.01: BUG_有了识别二次过滤后,过滤太强导致最后的pFos剩下0-2条太少了,所以此处减弱一下过滤力度;\n *      2023.06.01: pAlgs和rAlgs支持传入不同的radio过滤值 (参考29108-2.1);\n */\n+(NSArray*) recognitionAlgFilter:(NSArray*)matchAlgModels radio:(CGFloat)radio {\n    return [self filterTwice:matchAlgModels mainBlock:^double(AIMatchAlgModel *item) {\n        return item.matchValue;\n    } subBlock:^double(AIMatchAlgModel *item) {\n        return item.strongValue;\n    } radio:radio min:10 max:20 debugMode:true];\n}\n/**\n *  MARK:--------------------时序识别过滤器--------------------\n *  @version\n *      2023.03.06: 时序识别过滤器强度为主,匹配度为辅 (参考28152-方案4-todo5);\n *      2023.03.18. 由0.16调整为0.6 (概念已经很准了,时序只要把不准部分切了就行,不需要过滤太多);\n *      2023.06.01: 加上识别二次过滤后,第一次不需要过滤匹配度了,仅排除一下强度太弱的末尾即可 (参考29108-1);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIFilter.m:1-33"
+    },
+    "1893": {
+        "file_id": 190,
+        "content": "This code contains two filter methods: recognitionAlgFilter and timeSequenceFilter, which are used for concept recognition and time sequence recognition. The recognitionAlgFilter uses a matching value and strong value to filter the matchAlgModels array, while the timeSequenceFilter filters the time sequence models based on matching value and strong value. Both filters can be adjusted with different radio values, min and max limits, and debug mode options.",
+        "type": "comment"
+    },
+    "1894": {
+        "file_id": 190,
+        "content": " */\n+(NSArray*) recognitionFoFilter:(NSArray*)matchModels {\n    return [self filterOnce:matchModels mainBlock:^double(AIMatchFoModel *item) {\n        return item.strongValue;\n    } radio:0.8f min:8 max:20];\n}\n/**\n *  MARK:--------------------Canset识别过滤器 (参考29042)--------------------\n *  @desc 初版Canset识别因为结果太多再类比时性能差,加过滤器体现竞争 (参考29042);\n *  @version\n *      2023.04.04: 将过滤器由SP主EFF辅,改为映射数为主SP为辅 (参考29055-方案);\n *      2023.10.26: 废弃canset识别 (参考3014c-todo2);\n */\n//+(NSArray*) recognitionCansetFilter:(NSArray*)matchModels sceneFo:(AIFoNodeBase*)sceneFo {\n//    CGFloat radio = 0.2f;\n//    NSArray *result = ARR_SUB([SMGUtils sortBig2Small:matchModels compareBlock:^double(AIMatchCansetModel *obj) {\n//        return obj.indexDic.count;\n//    }], 0, matchModels.count * radio);\n//    NSLog(@\"Canset识别过滤器: 总%ld * 需%.0f%% => 剩:%ld\",matchModels.count,radio * 100,result.count);\n//    return result;\n//}\n/**\n *  MARK:--------------------Canset求解过滤器 (参考29081-todo41)--------------------\n *  @version\n *      2023.09.04: 加上hStrong做二级排序因子 (参考30125-方案);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIFilter.m:34-60"
+    },
+    "1895": {
+        "file_id": 190,
+        "content": "This method `recognitionFoFilter` applies a filter to the given `matchModels` array, returning only a subset of items based on their \"strongValue\" property. The `mainBlock` is used to extract this value from each item in the array. Additionally, there are comments mentioning previous versions and changes made to the code over time.\n\nCode comments suggest that this function was initially developed for Canset recognition but is now deprecated (as of 2023.10.26). Another function called `recognitionCansetFilter` was previously used for Canset recognition filtering, sorting the `matchModels` array based on each item's \"indexDic\" count and then applying a radio-based filter. This function is also deprecated now (as of 2023.10.26).\n\nFinally, there is an ongoing task to develop a Canset solving filter as mentioned in `recognitionCansetSolveFilter` with a todo number `29081-todo41`.",
+        "type": "comment"
+    },
+    "1896": {
+        "file_id": 190,
+        "content": " *      2023.12.26: 优化sort性能,把getEffectStrong()提出来提前取好 (参考31025-代码段-问题1) //共三处优化,此乃其一;\n */\n+(NSArray*) solutionCansetFilter:(AIFoNodeBase*)sceneFo targetIndex:(NSInteger)targetIndex {\n    NSArray *protoConCansets = [sceneFo getConCansets:targetIndex];\n    //1. canset数组转成mapModel (提前把strong都取出来,避免后面在排序时访问太多次而卡性能);\n    NSArray *mapArr = [SMGUtils convertArr:protoConCansets convertBlock:^id(AIKVPointer *canset) {\n        AIEffectStrong *strong = [TOUtils getEffectStrong:sceneFo effectIndex:targetIndex solutionFo:canset];\n        return [MapModel newWithV1:canset v2:strong];\n    }];\n    //2. 对mapModelArr排序;\n    NSArray *sorts = [SMGUtils sortBig2Small:mapArr compareBlock1:^double(MapModel *mapModel) {\n        return [TOUtils getEffectScore:mapModel.v2];\n    } compareBlock2:^double(MapModel *mapModel) {\n        AIEffectStrong *strong = mapModel.v2;\n        return strong.hStrong;\n    }];\n    //3. sort再转回canset数组;\n    sorts = [SMGUtils convertArr:sorts convertBlock:^id(MapModel *obj) {\n        return obj.v1;\n    }];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIFilter.m:61-83"
+    },
+    "1897": {
+        "file_id": 190,
+        "content": "Code optimizes sort performance by prefetching getEffectStrong(), converts canset array to MapModel, sorts the models based on effect scores and strong values, then converts back to canset array.",
+        "type": "comment"
+    },
+    "1898": {
+        "file_id": 190,
+        "content": "    NSInteger limit = MAX(3, protoConCansets.count * 0.2f);//取20% & 至少尝试取3条;\n    return ARR_SUB(sorts, 0, limit);\n}\n/**\n *  MARK:--------------------识别二次过滤器--------------------\n *  @version\n *      2023.05.31: 回测概念识别二次过滤ok,就是保留60%有点多,调成40%;\n *      2023.06.04: BUG_修复时序过滤条数有不确定性 (参考29109-测得4);\n *      2023.06.06: 过滤出20%的结果依然太多,直接改成4条,小于4条时直接return不过滤 (参考30013);\n */\n+(void) secondRecognitionFilter:(AIShortMatchModel*)inModel {\n    //1. 获取V重要性字典;\n    [theTC updateOperCount:kFILENAME];\n    NSInteger foLimit = 4;//MAX(4, inModel.matchPFos.count * 0.2f);\n    if (inModel.matchPFos.count <= foLimit) return;//小于limit条时,不用二次过滤;\n    IFTitleLog(@\"识别二次过滤\",@\"\\nfrom protoFo:%@\",Fo2FStr(inModel.protoFo));\n    BOOL debugMode = false;\n    NSDictionary *importanceDic = [TCRecognitionUtil getVImportanceDic:inModel];\n    //2. 根据重要性加权计算二次过滤匹配度 (参考29107-步骤2) (性能: 耗时42ms);\n    NSMutableDictionary *secondMatchValueDic = [[NSMutableDictionary alloc] init];\n    for (AIMatchAlgModel *item in inModel.matchAlgs) {\n        double secondMatchValue = 1;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIFilter.m:84-107"
+    },
+    "1899": {
+        "file_id": 190,
+        "content": "This code filters second-round matches for a model using recognition utilities, updating the operation count, and setting a limit of 4 matches. If there are less than 4 matches, no further filtering is done. The code then gets a dictionary of importance values from the recognizer utility based on the input model and calculates second-round match values for each algorithm in the model.",
+        "type": "comment"
+    }
+}

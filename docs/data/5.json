@@ -1,0 +1,549 @@
+{
+    "500": {
+        "file_id": 52,
+        "content": "    //1. 取出所有索引序列;\n    NSMutableArray *models = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:[SMGUtils createPointerForIndex] fileName:kFNIndex(isOut) time:cRTIndex]];\n    //2. 将旧同标识model移除;\n    models = [SMGUtils filterArr:models checkValid:^BOOL(AINetIndexModel *item) {\n        return ![item.dataSource isEqualToString:model.dataSource] || ![item.algsType isEqualToString:model.algsType];\n    }];\n    //3. 将新的model加入;\n    [models addObject:model];\n    //4. 存新models;\n    [SMGUtils insertObject:models pointer:[SMGUtils createPointerForIndex] fileName:kFNIndex(isOut) time:cRTIndex];\n}\n/**\n *  MARK:--------------------稀疏码值字典--------------------\n *  @result notnull\n */\n+(NSDictionary*) searchDataDic:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut{\n    return DICTOOK([SMGUtils searchObjectForPointer:[SMGUtils createPointerForData:at dataSource:ds isOut:isOut] fileName:kFNData(isOut) time:cRTData]);\n}\n+(void) insertDataDic:(NSDictionary*)dataDic at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut{",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetIndexUtils.m:127-150"
+    },
+    "501": {
+        "file_id": 52,
+        "content": "This code retrieves all index sequences, removes any old identical models, adds a new model, and stores the updated models. It also provides functions for searching and inserting data dictionaries.",
+        "type": "comment"
+    },
+    "502": {
+        "file_id": 52,
+        "content": "    [SMGUtils insertObject:DICTOOK(dataDic) pointer:[SMGUtils createPointerForData:at dataSource:ds isOut:isOut] fileName:kFNData(isOut) time:cRTData];\n}\n/**\n *  MARK:--------------------取两个V差值--------------------\n *  @param vInfo notnull 为性能好,提前取好valueInfo传过来复用;\n */\n+(CGFloat) deltaWithValueA:(double)valueA valueB:(double)valueB at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut vInfo:(AIValueInfo*)vInfo {\n    //1. 计算两个V差值;\n    double delta = fabs(valueA - valueB);\n    //2. 如果是循环V时,正反取小;\n    if (vInfo.loop && delta > (vInfo.span / 2)) {\n        delta = vInfo.max - delta;\n    }\n    return delta;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetIndexUtils.m:151-169"
+    },
+    "503": {
+        "file_id": 52,
+        "content": "This code calculates the absolute difference between two values and applies additional conditions if the values are from a looping V (variable) type. It then returns the calculated delta value. The `SMGUtils` is used to insert an object into storage, and `AIValueInfo` provides information about the variable being measured.",
+        "type": "comment"
+    },
+    "504": {
+        "file_id": 53,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.h",
+        "type": "filepath"
+    },
+    "505": {
+        "file_id": 53,
+        "content": "The code defines a class AINetUtils in Objective-C for an AI framework, offering methods for managing ports and connections, abstract strong value algorithms, index dictionaries, and state prediction updates in the context of AIKVPointer operations.",
+        "type": "summary"
+    },
+    "506": {
+        "file_id": 53,
+        "content": "//\n//  AINetUtils.h\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/9/30.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@class AIAbsAlgNode,AINetAbsFoNode,AIAbsCMVNode;\n@interface AINetUtils : NSObject\n//MARK:===============================================================\n//MARK:                     < CanOutput >\n//MARK:===============================================================\n/**\n *  MARK:--------------------检查是否可以输出algsType&dataSource--------------------\n *  1. 有过输出记录,即可输出;\n */\n+(BOOL) checkCanOutput:(NSString*)dataSource;\n/**\n *  MARK:--------------------标记canout--------------------\n *  @param identify     : 输出标识 (algsType不需要,因为都是Output)\n */\n+(void) setCanOutput:(NSString*)identify ;\n//MARK:===============================================================\n//MARK:                     < Other >\n//MARK:===============================================================\n/**\n *  MARK:--------------------检查conAlgs指针isOut都是true--------------------\n */\n+(BOOL) checkAllOfOut:(NSArray*)conAlgs;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.h:1-38"
+    },
+    "507": {
+        "file_id": 53,
+        "content": "This code defines a class AINetUtils in the SMG_NothingIsAll project, which includes methods for checking if output is possible and marking whether it's possible. It also has methods for checking if all conAlgs indicators are set to true. The code is written in Objective-C language for iOS app development.",
+        "type": "comment"
+    },
+    "508": {
+        "file_id": 53,
+        "content": "/**\n *  MARK:--------------------获取具象关联最强的强度--------------------\n */\n+(NSInteger) getConMaxStrong:(AINodeBase*)node;\n+(NSInteger) getMaxStrong:(NSArray*)ports;\n/**\n *  MARK:--------------------获取absNode被conNode指向的强度--------------------\n */\n+(NSInteger) getStrong:(AINodeBase*)absNode atConNode:(AINodeBase*)conNode type:(AnalogyType)type;\n/**\n *  MARK:--------------------是否虚mv--------------------\n */\n+(BOOL) isVirtualMv:(AIKVPointer*)mv_p;\n/**\n *  MARK:--------------------获取mv的delta--------------------\n */\n+(NSInteger) getDeltaFromMv:(AIKVPointer*)mv_p;\n//MARK:===============================================================\n//MARK:                     < 取at&ds&type >\n//MARK:===============================================================\n/**\n *  MARK:--------------------从conNodes中取at&ds&type--------------------\n */\n+(AnalogyType) getTypeFromConNodes:(NSArray*)conNodes;\n+(NSString*) getDSFromConNodes:(NSArray*)conNodes type:(AnalogyType)type;\n+(NSString*) getATFromConNodes:(NSArray*)conNodes type:(AnalogyType)type;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.h:40-73"
+    },
+    "509": {
+        "file_id": 53,
+        "content": "This code contains several utility methods for an AI framework. It includes functions for getting the maximum strength of a node, finding the strength of an abstract node linked to a concrete node, determining if a pointer is virtual, and extracting delta from a pointer. Additionally, it has methods to get specific attributes (AT, DS, type) from a set of concrete nodes.",
+        "type": "comment"
+    },
+    "510": {
+        "file_id": 53,
+        "content": "@interface AINetUtils (Insert)\n//MARK:===============================================================\n//MARK:                     < 引用插线 (外界调用,支持alg/fo/mv) >\n//MARK:===============================================================\n/**\n *  MARK:--------------------概念_引用_微信息--------------------\n *  @desc               : 将algNode插线到value_ps的refPorts\n *  @param algNode_p    : 引用微信息的algNode\n *  @param content_ps   : 微信息组 (需要去重)\n *  @paramer ps         : 生成md5的ps (需要有序)\n *  @param difStrong    : 构建具象alg时,默认为1,构建抽象时,默认为具象节点数(这个以后不合理再改规则,比如改为平均,或者具象强度之和等);\n */\n+(void) insertRefPorts_AllAlgNode:(AIKVPointer*)algNode_p content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong;\n/**\n *  MARK:--------------------时序_引用_概念--------------------\n *  @desc               : 将algNode插线到value_ps的refPorts\n *  @param foNode_p     : 引用algNode的foNode\n *  @param order_ps     : orders节点组 (需要去重)\n *  @param ps           : 生成md5的ps (本来就有序)\n */\n+(void) insertRefPorts_AllFoNode:(AIKVPointer*)foNode_p order_ps:(NSArray*)order_ps ps:(NSArray*)ps;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.h:77-101"
+    },
+    "511": {
+        "file_id": 53,
+        "content": "This code defines methods to insert references in AINetUtils. The first method, \"insertRefPorts_AllAlgNode\", inserts referenced content into an AIKVPointer* algNode's refPorts based on a provided content group and a difStrong parameter. The second method, \"insertRefPorts_AllFoNode\", inserts orders nodes into an AIKVPointer* foNode's refPorts based on order and ps parameters. Both methods generate MD5 for the ps parameter.",
+        "type": "comment"
+    },
+    "512": {
+        "file_id": 53,
+        "content": "+(void) insertRefPorts_AllFoNode:(AIKVPointer*)foNode_p order_ps:(NSArray*)order_ps ps:(NSArray*)ps difStrong:(NSInteger)difStrong;\n/**\n *  MARK:--------------------mv_引用_微信息--------------------\n *  @param difStrong    : mvNode的方向索引序列传urgent正相关值 / delta和urgent传1;\n *  @param value_p      : 有三种值; 1:delta 2:urgent 3:DirectionReference地址;\n *  注:目前在使用NetRefrence,所以此处不用;\n */\n+(void) insertRefPorts_AllMvNode:(AICMVNodeBase*)mvNode value_p:(AIPointer*)value_p difStrong:(NSInteger)difStrong;\n//MARK:===============================================================\n//MARK:                     < 通用 仅插线到ports >\n//MARK:===============================================================\n/**\n *  MARK:--------------------硬盘插线到强度ports序列--------------------\n *  @param pointer  : 把这个插到ports\n *  @param ports    : 把pointer插到这儿;\n *  @param ps       : pointer是alg时,传alg.content_ps | pointer是fo时,传fo.orders; (用来计算md5.header)\n */\n+(void) insertPointer_Hd:(AIKVPointer*)pointer toPorts:(NSMutableArray*)ports ps:(NSArray*)ps;\n//MARK:===============================================================",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.h:102-126"
+    },
+    "513": {
+        "file_id": 53,
+        "content": "This code defines several methods for inserting pointers into different types of ports, such as all Fo nodes, MV nodes, and general ports. The methods take in parameters like the pointer to be inserted, the target ports, and an optional strength value. These methods are used for various purposes, including calculating MD5 headers.",
+        "type": "comment"
+    },
+    "514": {
+        "file_id": 53,
+        "content": "//MARK:                     < 找出port >\n//MARK:===============================================================\n+(AIPort*) findPort:(AIKVPointer*)pointer fromPorts:(NSArray*)fromPorts;\n//MARK:===============================================================\n//MARK:                     < 抽具象关联 Relate (外界调用,支持alg/fo) >\n//MARK:===============================================================\n/**\n *  MARK:--------------------关联具象部分--------------------\n *  @param absNode  : 抽象概念\n *  @param conNodes : 具象概念们\n *  注: 抽具象的difStrong默认都为1;\n */\n+(void) relateAlgAbs:(AIAlgNodeBase*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew;\n+(void) relateFoAbs:(AIFoNodeBase*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew;\n+(void) relateMvAbs:(AIAbsCMVNode*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew;\n+(void) relateFoAbs:(AINetAbsFoNode*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew strongPorts:(NSArray*)strongPorts;\n/**\n *  MARK:--------------------关联抽象通用方法 (参考29031-todo3)--------------------\n */\n+(void) relateGeneralCon:(AINodeBase*)conNode absNodes:(NSArray*)absNode_ps;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.h:127-150"
+    },
+    "515": {
+        "file_id": 53,
+        "content": "This code includes several methods related to abstract and specific concepts in a system. It provides functions for finding ports, relating general concepts, and more specialized concept relationships such as \"alg,\" \"fo,\" and \"mv.\" These methods can be used to create connections between different nodes in the system. The strongPorts argument is only used with the AIAlgNodeBase.",
+        "type": "comment"
+    },
+    "516": {
+        "file_id": 53,
+        "content": "//MARK:===============================================================\n//MARK:                     < 关联mv基本模型 >\n//MARK:===============================================================\n+(void) relateFo:(AIFoNodeBase*)foNode mv:(AICMVNodeBase*)mvNode;\n@end\n//MARK:===============================================================\n//MARK:                     < Port >\n//MARK:===============================================================\n@interface AINetUtils (Port)\n/**\n *  MARK:--------------------取hdAbsPorts + memAbsPorts--------------------\n *  @result notnull\n */\n+(NSArray*) absPorts_All:(AINodeBase*)node;\n+(NSArray*) absPorts_All_Normal:(AINodeBase*)node;\n+(NSArray*) absPorts_All:(AINodeBase*)node type:(AnalogyType)type;\n+(NSArray*) absPorts_All:(AINodeBase*)node havTypes:(NSArray*)havTypes noTypes:(NSArray*)noTypes;\n/**\n *  MARK:--------------------返回abs+自己的指针数组--------------------\n */\n+(NSArray*) absAndMePits:(AINodeBase*)node;\n/**\n *  MARK:--------------------取hdConPorts + memConPorts--------------------\n *  @result notnull",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.h:152-181"
+    },
+    "517": {
+        "file_id": 53,
+        "content": "This code snippet appears to contain various methods for working with ports, particularly absolute and memory ports. The \"relateFo:mv:\" method likely relates FO and mv nodes. The \"absAndMePits:\" method returns an array of pointers containing both absolute and self ports. Other methods such as \"absPorts_All:\", \"absPorts_All_Normal:\", \"absPorts_All:\", and \"absPorts_All:\" allow filtering by type or specific port types, providing the ability to retrieve various combinations of ports.",
+        "type": "comment"
+    },
+    "518": {
+        "file_id": 53,
+        "content": " */\n+(NSArray*) conPorts_All:(AINodeBase*)node;\n+(NSArray*) conPorts_All_Normal:(AINodeBase*)node;\n+(NSArray*) conPorts_All:(AINodeBase*)node havTypes:(NSArray*)havTypes noTypes:(NSArray*)noTypes;\n/**\n *  MARK:--------------------取hdRefPorts + memRefPorts--------------------\n *  @desc 目前仅支持alg,对于微信息的支持,随后再加;\n *  @result notnull\n */\n+(NSArray*) refPorts_All4Alg:(AIAlgNodeBase*)node;\n+(NSArray*) refPorts_All4Alg_Normal:(AIAlgNodeBase*)node;\n+(NSArray*) refPorts_All4Value:(AIKVPointer*)value_p;\n+(NSArray*) refPorts_All:(AIKVPointer*)node_p;\n/**\n *  MARK:--------------------对fo.content.refPort标记havMv--------------------\n */\n+(void) maskHavMv_AlgWithFo:(AIFoNodeBase*)foNode;\n@end\n//MARK:===============================================================\n//MARK:                     < Node >\n//MARK:===============================================================\n@interface AINetUtils (Node)\n/**\n *  MARK:--------------------获取cutIndex--------------------\n */\n+(NSInteger) getCutIndexByIndexDic:(NSDictionary*)indexDic;\n+(NSIn",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.h:182-213"
+    },
+    "519": {
+        "file_id": 53,
+        "content": "This code defines methods for getting all connection ports, reference ports, and setting a havMv mark on fo nodes in the AI framework. It includes methods for obtaining all connection ports of a node, normal connection ports of a node, connection ports of a node with specific data types, reference ports of an alg node, reference ports of a value object, and getting cut index from an index dictionary.",
+        "type": "comment"
+    },
+    "520": {
+        "file_id": 53,
+        "content": "teger) getCutIndexByIndexDicV2:(NSDictionary*)indexDic protoOrRegroupCutIndex:(NSInteger)protoOrRegroupCutIndex;\n/**\n *  MARK:--------------------获取near数据 (直传fo版)--------------------\n */\n+(CGFloat) getMatchByIndexDic:(NSDictionary*)indexDic absFo:(AIKVPointer*)absFo_p conFo:(AIKVPointer*)conFo_p callerIsAbs:(BOOL)callerIsAbs;\n+(NSArray*) getNearDataByIndexDic:(NSDictionary*)indexDic absFo:(AIKVPointer*)absFo_p conFo:(AIKVPointer*)conFo_p callerIsAbs:(BOOL)callerIsAbs;\n/**\n *  MARK:--------------------获取near数据 (回调版)--------------------\n */\n+(NSArray*) getNearDataByIndexDic:(NSDictionary*)indexDic getAbsAlgBlock:(AIKVPointer*(^)(NSInteger absIndex))getAbsAlgBlock getConAlgBlock:(AIKVPointer*(^)(NSInteger conIndex))getConAlgBlock callerIsAbs:(BOOL)callerIsAbs;\n//MARK:===============================================================\n//MARK:                     < Fo引用强度RefStrong的取值和更新 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------获取sumRefStrong已发生部分强度--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.h:213-231"
+    },
+    "521": {
+        "file_id": 53,
+        "content": "This code defines functions for getting near data using index dictionaries, with options for direct and callback versions. The code also includes functions for managing Fo reference strength (RefStrong) values.",
+        "type": "comment"
+    },
+    "522": {
+        "file_id": 53,
+        "content": " */\n+(NSInteger) getSumRefStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p;\n/**\n *  MARK:--------------------根据indexDic更新refPort强度值 (参考2722f-todo33)--------------------\n */\n+(void) updateRefStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p;\n/**\n *  MARK:--------------------根据indexDic更新contentPort强度值 (参考2722f-todo32)--------------------\n */\n+(void) updateContentStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p;\n//MARK:===============================================================\n//MARK:                     < Alg抽具象强度ConStrong的取值和更新 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------获取sumConStrong已发生部分强度--------------------\n */\n+(NSInteger) getSumConStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p cansetFo:(AIKVPointer*)cansetFo_p;\n/**\n *  MARK:--------------------根据indexDic更新conPort和absPort强度值 (参考28086)--------------------\n */\n+(void) updateConAndAbsStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p cansetFo:(AIKVPointer*)cansetFo_p;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.h:232-257"
+    },
+    "523": {
+        "file_id": 53,
+        "content": "This code defines several methods for updating and getting strength values in a dictionary. The methods include getting the sum of reference strength by index dictionary, updating reference strength by index dictionary, updating content strength by index dictionary, getting the sum of already occurred content strength, and updating both content and absolute strength by index dictionary. These methods seem to be part of an abstract strong value algorithm.",
+        "type": "comment"
+    },
+    "524": {
+        "file_id": 53,
+        "content": "//MARK:===============================================================\n//MARK:                     < Alg引用强度RefStrong更新 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------根据indexDic更新refPort强度值 (参考28103-3)--------------------\n */\n+(void) updateAlgRefStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p;\n/**\n *  MARK:--------------------类比出absFo时,此处取得具象fo与absFo的indexDic映射--------------------\n */\n+(NSDictionary*) getIndexDic4AnalogyAbsFo:(NSArray*)conFoIndexes;\n//MARK:===============================================================\n//MARK:                     < 抽象Fo时,更新SP值 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------absFo根据indexDic继承conFo的sp值 (参考29032-todo2.2)--------------------\n */\n+(void) extendSPByIndexDic:(NSDictionary*)assIndexDic assFo:(AIFoNodeBase*)assFo absFo:(AIFoNodeBase*)absFo;\n/**\n *  MARK:--------------------抽象fo时: 根据protoFo增强absFo的SP值+1 (参考29032-todo2.3)--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.h:259-283"
+    },
+    "525": {
+        "file_id": 53,
+        "content": "This code appears to be a part of an artificial intelligence foundation, specifically related to updating reference strength and extending support values in the AIKVPointer class. The functions mentioned here seem to handle index dictionaries for abstracting concepts and maintaining reference strengths and support values during these processes.",
+        "type": "comment"
+    },
+    "526": {
+        "file_id": 53,
+        "content": " */\n+(void) updateSPByIndexDic:(NSDictionary*)conIndexDic conFo:(AIFoNodeBase*)conFo absFo:(AIFoNodeBase*)absFo;\n/**\n *  MARK:--------------------判断时序中有空概念--------------------\n */\n+(BOOL) foHasEmptyAlg:(AIKVPointer*)fo_p;\n@end\n//MARK:===============================================================\n//MARK:                     < Canset >\n//MARK:===============================================================\n@interface AINetUtils (Canset)\n/**\n *  MARK:--------------------新增迁移关联--------------------\n */\n+(void) relateTransfer:(AIKVPointer*)absScene absCanset:(AIKVPointer*)absCanset conScene:(AIKVPointer*)conScene conCanset:(AIKVPointer*)conCanset;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.h:284-304"
+    },
+    "527": {
+        "file_id": 53,
+        "content": "This code includes methods for updating state prediction, checking if a concept is empty, and relating transfer sets in an AI foundation library.",
+        "type": "comment"
+    },
+    "528": {
+        "file_id": 54,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m",
+        "type": "filepath"
+    },
+    "529": {
+        "file_id": 54,
+        "content": "This code manages AI framework components and database operations, updating reference strength values in the library. It performs analogy in a recommendation system using pattern matching algorithms to handle ports. The `relateTransfer` method prepares data, inserts transfer ports into scene nodes, and adds new ports to arrays if needed.",
+        "type": "summary"
+    },
+    "530": {
+        "file_id": 54,
+        "content": "//\n//  AINetUtils.m\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/9/30.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"AINetUtils.h\"\n#import \"AIKVPointer.h\"\n#import \"AIPort.h\"\n#import \"XGRedisUtil.h\"\n#import \"NSString+Extension.h\"\n#import \"AIAbsAlgNode.h\"\n#import \"AINetAbsFoNode.h\"\n#import \"AIAbsCMVNode.h\"\n#import \"ThinkingUtils.h\"\n#import \"AINetIndex.h\"\n@implementation AINetUtils\n//MARK:===============================================================\n//MARK:                     < CanOutput >\n//MARK:===============================================================\n+(BOOL) checkCanOutput:(NSString*)identify {\n    AIKVPointer *canout_p = [SMGUtils createPointerForCerebelCanOut];\n    NSArray *arr = [SMGUtils searchObjectForFilePath:canout_p.filePath fileName:kFNDefault time:cRTDefault];\n    return ARRISOK(arr) && [arr containsObject:STRTOOK(identify)];\n}\n+(void) setCanOutput:(NSString*)dataSource {\n    //1. 取mv分区的引用序列文件;\n    AIKVPointer *canout_p = [SMGUtils createPointerForCerebelCanOut];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m:1-35"
+    },
+    "531": {
+        "file_id": 54,
+        "content": "This code is from the \"AINetUtils.m\" file in a project called \"SMG_NothingIsAll\". It defines two methods, \"checkCanOutput:\" and \"setCanOutput:\", for managing the output capabilities of data sources in a system. The methods involve interacting with a database or configuration file to determine if a given data source is allowed to produce output, and setting the output capabilities for a data source respectively.",
+        "type": "comment"
+    },
+    "532": {
+        "file_id": 54,
+        "content": "    NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForFilePath:canout_p.filePath fileName:kFNDefault time:cRTDefault]];\n    NSString *identifier = STRTOOK(dataSource);\n    if (![mArr containsObject:identifier]) {\n        [mArr addObject:identifier];\n        [SMGUtils insertObject:mArr rootPath:canout_p.filePath fileName:kFNDefault time:cRTDefault saveDB:true];\n    }\n}\n//MARK:===============================================================\n//MARK:                     < Other >\n//MARK:===============================================================\n+(BOOL) checkAllOfOut:(NSArray*)conAlgs{\n    if (ARRISOK(conAlgs)) {\n        for (AIAbsAlgNode *checkNode in conAlgs) {\n            if (!checkNode.pointer.isOut) {\n                return false;\n            }\n        }\n        return true;\n    }\n    return false;\n}\n+(NSInteger) getConMaxStrong:(AINodeBase*)node{\n    NSInteger result = 1;\n    if (node) {\n        AIPort *firstPort = ARR_INDEX([self conPorts_All:node], 0);\n        if (firstPort) result = firstPort.strong.value + 1;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m:36-64"
+    },
+    "533": {
+        "file_id": 54,
+        "content": "This code snippet initializes an NSMutableArray with search results for a file path, checks if the identifier is already in the array, and if not, adds it to the array and inserts the array into a database. The code also includes two additional methods: one to check if all objects in an array have a certain property value, and another to get the maximum strong value of a node's first port.",
+        "type": "comment"
+    },
+    "534": {
+        "file_id": 54,
+        "content": "    }\n    return result;\n}\n+(NSInteger) getMaxStrong:(NSArray*)ports{\n    NSInteger result = 1;\n    ports = ARRTOOK(ports);\n    for (AIPort *port in ports) {\n        if (port.strong.value > result) {\n            result = port.strong.value;\n        }\n    }\n    return result;\n}\n/**\n *  MARK:--------------------获取absNode被conNode指向的强度--------------------\n */\n+(NSInteger) getStrong:(AINodeBase*)absNode atConNode:(AINodeBase*)conNode type:(AnalogyType)type{\n    if (absNode && conNode) {\n        NSArray *absPorts = [AINetUtils absPorts_All:conNode type:type];\n        AIPort *absPort = [AINetUtils findPort:absNode.pointer fromPorts:absPorts];\n        if (absPort) return absPort.strong.value;\n    }\n    return 0;\n}\n/**\n *  MARK:--------------------是否虚mv--------------------\n *  @desc 虚mv判断标准 (迫切度是否为0);\n *  @status 2022.11.10: 应该早就是弃用状态,整个虚mv功能应该早没用了;\n */\n+(BOOL) isVirtualMv:(AIKVPointer*)mv_p{\n    AICMVNodeBase *mv = [SMGUtils searchNode:mv_p];\n    if (mv) {\n        NSInteger urgentTo = [NUMTOOK([AINetIndex getData:mv.urgentTo_p]) integerValue];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m:65-100"
+    },
+    "535": {
+        "file_id": 54,
+        "content": "This code contains utility functions for working with AI nodes and ports. It retrieves maximum strong values from a list of ports, gets the strength between two nodes, and checks if a pointer is a virtual MV node.",
+        "type": "comment"
+    },
+    "536": {
+        "file_id": 54,
+        "content": "        return urgentTo == 0;\n    }\n    return false;\n}\n/**\n *  MARK:--------------------获取mv的delta--------------------\n */\n+(NSInteger) getDeltaFromMv:(AIKVPointer*)mv_p{\n    AICMVNodeBase *mv = [SMGUtils searchNode:mv_p];\n    if (mv) {\n        return [NUMTOOK([AINetIndex getData:mv.delta_p]) integerValue];\n    }\n    return 0;\n}\n//MARK:===============================================================\n//MARK:                     < 取at&ds&type >\n//MARK:===============================================================\n/**\n *  MARK:--------------------从conNodes中取type--------------------\n *  @desc 具象是什么类型,抽象就是什么类型;\n *  @callers 目前在外类比中,任何type类型都可能调用;\n */\n+(AnalogyType) getTypeFromConNodes:(NSArray*)conNodes{\n    NSArray *types = [SMGUtils removeRepeat:[SMGUtils convertArr:conNodes convertBlock:^id(AINodeBase *obj) {\n        return @(obj.pointer.type);\n    }]];\n    [AITest test6:types];\n    if (types.count == 1) {\n        return [NUMTOOK(ARR_INDEX(types, 0)) intValue];\n    }\n    return ATDefault;\n}\n/**\n *  MARK:--------------------从conNodes中取ds--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m:101-138"
+    },
+    "537": {
+        "file_id": 54,
+        "content": "This code appears to be a part of AI framework, containing functions for retrieving values from certain data structures. It has methods to check if a parameter is urgent, get the delta value from an AIKVPointer object, and retrieve the type from an array of nodes in the context of an analogy. The code also includes test functions and error handling.",
+        "type": "comment"
+    },
+    "538": {
+        "file_id": 54,
+        "content": " *  @desc 具象是什么类型,抽象就是什么类型;\n *  @callers 目前在外类比中,仅GL类型会调用;\n */\n+(NSString*) getDSFromConNodes:(NSArray*)conNodes type:(AnalogyType)type{\n    if (type == ATGreater || type == ATLess) {\n        NSArray *dsList = [SMGUtils removeRepeat:[SMGUtils convertArr:conNodes convertBlock:^id(AIFoNodeBase *obj) {\n            return obj.pointer.dataSource;\n        }]];\n        [AITest test6:dsList];\n        if (dsList.count == 1) {\n            return ARR_INDEX(dsList, 0);\n        }\n    }\n    return DefaultDataSource;\n}\n/**\n *  MARK:--------------------从conNodes中取ds--------------------\n *  @desc 具象是什么类型,抽象就是什么类型;\n *  @callers 目前在外类比中,仅GL类型会调用;\n */\n+(NSString*) getATFromConNodes:(NSArray*)conNodes type:(AnalogyType)type{\n    if (type == ATGreater || type == ATLess) {\n        NSArray *atList = [SMGUtils removeRepeat:[SMGUtils convertArr:conNodes convertBlock:^id(AIFoNodeBase *obj) {\n            return obj.pointer.algsType;\n        }]];\n        [AITest test6:atList];\n        if (atList.count == 1) {\n            return ARR_INDEX(atList, 0);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m:139-167"
+    },
+    "539": {
+        "file_id": 54,
+        "content": "This code retrieves the data source (DS) and algorithm type (AT) from a given array of nodes, with a specified type. It checks if the array contains only one element and returns it, otherwise, it returns the default value. This function is used in external comparison, primarily called by GL type.",
+        "type": "comment"
+    },
+    "540": {
+        "file_id": 54,
+        "content": "        }\n    }\n    return DefaultAlgsType;\n}\n@end\n@implementation AINetUtils (Insert)\n//MARK:===============================================================\n//MARK:                     < 引用插线 (外界调用,支持alg/fo/mv) >\n//MARK:===============================================================\n/**\n *  MARK:--------------------概念_引用_微信息--------------------\n *  @version\n *      2020.08.05: content_ps添加去重功能,避免同一个\"分\"信息,被多次报引用强度叠加;\n */\n+(void) insertRefPorts_AllAlgNode:(AIKVPointer*)algNode_p content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong{\n    content_ps = [SMGUtils removeRepeat:content_ps];\n    if (algNode_p && ARRISOK(content_ps)) {\n        NSArray *sort_ps = [SMGUtils sortPointers:content_ps];\n        //1. 遍历value_p微信息,添加引用;\n        for (AIPointer *value_p in content_ps) {\n            //2. 硬盘网络时,取出refPorts -> 并二分法强度序列插入 -> 存XGWedis;\n            [self insertRefPorts_HdNode:algNode_p passiveRefValue_p:value_p ps:sort_ps difStrong:difStrong];\n        }\n    }\n}\n/**\n *  MARK:--------------------时序_引用_概念--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m:168-200"
+    },
+    "541": {
+        "file_id": 54,
+        "content": "This code is a method in the class AINetUtils, specifically within the Insert category. It allows for inserting reference ports for all algorithm nodes, taking an array of content pointers and a differential strength parameter. The content pointers are checked for duplicates before sorting and looping through each one to insert into the hard drive node with binary search-based strong sequence insertion.",
+        "type": "comment"
+    },
+    "542": {
+        "file_id": 54,
+        "content": " *  @version\n *      2020.08.05: order_ps添加去重功能,避免同一个\"分\"信息,被多次报引用强度叠加;\n */\n+(void) insertRefPorts_AllFoNode:(AIKVPointer*)foNode_p order_ps:(NSArray*)order_ps ps:(NSArray*)ps {\n    order_ps = [SMGUtils removeRepeat:order_ps];\n    for (AIKVPointer *order_p in ARRTOOK(order_ps)) {\n        [self insertRefPorts_AllFoNode:foNode_p order_p:order_p ps:ps difStrong:1];\n    }\n}\n+(void) insertRefPorts_AllFoNode:(AIKVPointer*)foNode_p order_ps:(NSArray*)order_ps ps:(NSArray*)ps difStrong:(NSInteger)difStrong{\n    order_ps = [SMGUtils removeRepeat:order_ps];\n    for (AIKVPointer *order_p in ARRTOOK(order_ps)) {\n        [self insertRefPorts_AllFoNode:foNode_p order_p:order_p ps:ps difStrong:difStrong];\n    }\n}\n+(void) insertRefPorts_AllFoNode:(AIKVPointer*)foNode_p order_p:(AIKVPointer*)order_p ps:(NSArray*)ps difStrong:(NSInteger)difStrong{\n    AIAlgNodeBase *algNode = [SMGUtils searchObjectForPointer:order_p fileName:kFNNode time:cRTNode(order_p)];\n    if (ISOK(algNode, AIAlgNodeBase.class)) {\n        [AINetUtils insertPointer_Hd:foNode_p toPorts:algNode.refPorts ps:ps difStrong:difStrong];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m:201-219"
+    },
+    "543": {
+        "file_id": 54,
+        "content": "This code is part of a function that inserts reference ports for all FO nodes in an array. It first removes any duplicate elements from the order_ps array to avoid adding redundant information. Then, it iterates through each element and calls itself recursively to insert the reference ports for the corresponding FO node. The code also checks if the searched object is valid before proceeding with the insertion of pointer.",
+        "type": "comment"
+    },
+    "544": {
+        "file_id": 54,
+        "content": "        [SMGUtils insertObject:algNode pointer:algNode.pointer fileName:kFNNode time:cRTNode(algNode.pointer)];\n    }\n}\n/**\n *  MARK:--------------------mv和它的稀疏码(delta和urgent)插线--------------------\n *  @version\n *      2023.06.18: 支持ps生成header,原来是nil,导致分不清mv和空概念 (参考30026-修复);\n */\n+(void) insertRefPorts_AllMvNode:(AICMVNodeBase*)mvNode value_p:(AIPointer*)value_p difStrong:(NSInteger)difStrong{\n    if (mvNode && value_p) {\n        //0. mv的ps也不为nil,传delta和urgent生成 (本来这俩就是它的内容,只是现在单独存着两个字段而已);\n        NSArray *sort_ps = [SMGUtils sortPointers:mvNode.content_ps];\n        //1. 硬盘网络时,取出refPorts -> 并二分法强度序列插入 -> 存XGWedis;\n        [self insertRefPorts_HdNode:mvNode.pointer passiveRefValue_p:value_p ps:sort_ps difStrong:difStrong];\n    }\n}\n/**\n *  MARK:--------------------硬盘节点_引用_微信息_插线 通用方法--------------------\n */\n+(void) insertRefPorts_HdNode:(AIKVPointer*)hdNode_p passiveRefValue_p:(AIPointer*)passiveRefValue_p ps:(NSArray*)ps difStrong:(NSInteger)difStrong{\n    if (ISOK(hdNode_p, AIKVPointer.class) && ISOK(passiveRefValue_p, AIKVPointer.class)) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m:220-242"
+    },
+    "545": {
+        "file_id": 54,
+        "content": "This code inserts refPorts of mvNode and its sparse data (delta and urgent) into the network. It first sorts the content pointers, then inserts them into the XGWedis database if the mvNode and value_p are valid. This is a general method for inserting reference ports into the hard disk node using binary search for strength sorting.",
+        "type": "comment"
+    },
+    "546": {
+        "file_id": 54,
+        "content": "        NSArray *fnRefPorts = ARRTOOK([SMGUtils searchObjectForFilePath:passiveRefValue_p.filePath fileName:kFNRefPorts time:cRTReference]);\n        NSMutableArray *refPorts = [[NSMutableArray alloc] initWithArray:fnRefPorts];\n        [AINetUtils insertPointer_Hd:hdNode_p toPorts:refPorts ps:ps difStrong:difStrong];\n        [SMGUtils insertObject:refPorts rootPath:passiveRefValue_p.filePath fileName:kFNRefPorts time:cRTReference saveDB:true];\n    }\n}\n//MARK:===============================================================\n//MARK:                     < 通用 仅插线到ports >\n//MARK:===============================================================\n+(void) insertPointer_Hd:(AIKVPointer*)pointer toPorts:(NSMutableArray*)ports ps:(NSArray*)ps{\n    [self insertPointer_Hd:pointer toPorts:ports ps:ps difStrong:1];\n}\n+(void) insertPointer_Hd:(AIKVPointer*)pointer toPorts:(NSMutableArray*)ports ps:(NSArray*)ps difStrong:(NSInteger)difStrong{\n    if (ISOK(pointer, AIPointer.class) && ISOK(ports, NSMutableArray.class)) {\n        //1. 找到/新建port",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m:243-259"
+    },
+    "547": {
+        "file_id": 54,
+        "content": "This code searches for a file path and extracts the corresponding ports, then inserts these ports into another array. The function is called to insert pointers into ports with different strength levels. It checks if the pointer and ports are valid before proceeding.",
+        "type": "comment"
+    },
+    "548": {
+        "file_id": 54,
+        "content": "        AIPort *findPort = [self findPort:pointer fromPorts:ports ps:ps];\n        if (!findPort) {\n            return;\n        }\n        //TODOTOMORROW: 对强度>100的打断点,重新训练,查20151-BUG9方向索引强度异常的问题;\n        if (difStrong > 1 && [kPN_CMV_NODE isEqualToString:pointer.folderName] && findPort.strong.value > 1) {\n            NSLog(@\"------引用强度异常更新 %@_%ld: %ld + %ld = %ld\",findPort.target_p.folderName,findPort.target_p.pointerId,difStrong,findPort.strong.value,findPort.strong.value + difStrong);\n        }\n        //2. 强度更新\n        findPort.strong.value += difStrong;\n        //3. 二分插入\n        [XGRedisUtil searchIndexWithCompare:^NSComparisonResult(NSInteger checkIndex) {\n            AIPort *checkPort = ARR_INDEX(ports, checkIndex);\n            return [SMGUtils comparePortA:findPort portB:checkPort];\n        } startIndex:0 endIndex:ports.count - 1 success:^(NSInteger index) {\n            NSLog(@\"警告!!! bug:在第二序列的ports中发现了两次port目标___pointerId为:%ld\",(long)findPort.target_p.pointerId);\n        } failure:^(NSInteger index) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m:260-279"
+    },
+    "549": {
+        "file_id": 54,
+        "content": "Updates the strength of a found port based on differences calculated, performs binary search for inserting the updated port into an array, and logs a warning if the same pointerId is encountered twice in the second sequence.",
+        "type": "comment"
+    },
+    "550": {
+        "file_id": 54,
+        "content": "            if (ARR_INDEXISOK(ports, index)) {\n                [ports insertObject:findPort atIndex:index];\n            }else{\n                [ports addObject:findPort];\n            }\n        }];\n    }\n}\n//MARK:===============================================================\n//MARK:                     < 找出port >\n//MARK:===============================================================\n//找出port (并从ports中移除 & 无则新建);\n+(AIPort*) findPort:(AIKVPointer*)pointer fromPorts:(NSMutableArray*)fromPorts ps:(NSArray*)ps{\n    if (ISOK(pointer, AIPointer.class) && ISOK(fromPorts, NSMutableArray.class)) {\n        //1. 找出旧有;\n        AIPort *findPort = [self findPort:pointer fromPorts:fromPorts];\n        if (findPort) [fromPorts removeObject:findPort];\n        //2. 无则新建port;\n        if (!findPort) {\n            findPort = [[AIPort alloc] init];\n            findPort.target_p = pointer;\n            findPort.header = [NSString md5:[SMGUtils convertPointers2String:ps]];\n        }\n        return findPort;\n    }\n    return nil;\n}\n//找出port",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m:280-310"
+    },
+    "551": {
+        "file_id": 54,
+        "content": "This code searches for a port and if found, removes it from the ports array. If not found, creates a new port with the given pointer and header information. The method takes an AIKVPointer object, a mutable array of AIPort objects, and an NSArray of pointers as parameters. It returns an AIPort object.",
+        "type": "comment"
+    },
+    "552": {
+        "file_id": 54,
+        "content": "+(AIPort*) findPort:(AIKVPointer*)pointer fromPorts:(NSArray*)fromPorts{\n    fromPorts = ARRTOOK(fromPorts);\n    NSArray *cp = [fromPorts copy];\n    for (AIPort *port in cp) {\n        if ([port.target_p isEqual:pointer]) {\n            return port;\n        }\n    }\n    return nil;\n}\n//MARK:===============================================================\n//MARK:                     < 抽具象关联 Relate (外界调用,支持alg/fo) >\n//MARK:===============================================================\n+(void) relateAlgAbs:(AIAlgNodeBase*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew{\n    [self relateGeneralAbs:absNode absConPorts:absNode.conPorts conNodes:conNodes isNew:isNew difStrong:1];\n    [AITest test25:absNode conAlgs:conNodes];\n}\n+(void) relateFoAbs:(AIFoNodeBase*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew{\n    [self relateGeneralAbs:absNode absConPorts:absNode.conPorts conNodes:conNodes isNew:isNew difStrong:1];\n}\n+(void) relateMvAbs:(AIAbsCMVNode*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew{",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m:311-333"
+    },
+    "553": {
+        "file_id": 54,
+        "content": "This code contains functions for relating abstract nodes with concrete nodes and testing. It defines methods for relating alg/fo/mv abs nodes with con nodes, copies arrays, finds ports, and tests method 25 on absNode conAlgs.",
+        "type": "comment"
+    },
+    "554": {
+        "file_id": 54,
+        "content": "    [self relateGeneralAbs:absNode absConPorts:absNode.conPorts conNodes:conNodes isNew:isNew difStrong:1];\n}\n+(void) relateFoAbs:(AINetAbsFoNode*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew strongPorts:(NSArray*)strongPorts{\n    NSInteger difStrong = [self getMaxStrong:strongPorts];\n    [self relateGeneralAbs:absNode absConPorts:absNode.conPorts conNodes:conNodes isNew:isNew difStrong:difStrong];\n}\n/**\n *  MARK:--------------------抽具象关联通用方法--------------------\n *  @param absConPorts : notnull\n *  @param isNew : absNode是否为新构建;\n *  @version\n *      2021.01.11: 当SP节点时,difStrong为1 (参考22032);\n */\n+(void) relateGeneralAbs:(AINodeBase*)absNode absConPorts:(NSMutableArray*)absConPorts conNodes:(NSArray*)conNodes isNew:(BOOL)isNew difStrong:(NSInteger)difStrong{\n    if (ISOK(absNode, AINodeBase.class)) {\n        //1. 具象节点的 关联&存储\n        conNodes = ARRTOOK(conNodes);\n        for (AINodeBase *conNode in conNodes) {\n            //1. con与abs必须不同;\n            if ([absNode isEqual:conNode]) continue;\n            NSArray *absContent_ps = absNode.content_ps;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m:334-356"
+    },
+    "555": {
+        "file_id": 54,
+        "content": "This code is defining a method that relates a general abstract node with a set of concrete nodes. It takes in the abstract node, its associated ports, and an array of concrete nodes to relate. The method iterates through each concrete node, skipping any that are equal to the abstract node. If the difference between the maximum strong port count and the current node's strong port count is 1, it performs a specific relation for SP nodes, otherwise it does a general relation.",
+        "type": "comment"
+    },
+    "556": {
+        "file_id": 54,
+        "content": "            NSArray *conContent_ps = conNode.content_ps;\n            //2. 计算disStrong (默认为1 & 当新节点且不是SP时从具象取maxStrong);\n            AnalogyType type = absNode.pointer.type;//DS2ATType(absNode.pit.ds);\n            if (isNew && type != ATSub && type != ATPlus) {\n                difStrong = [self getConMaxStrong:conNode];\n            }\n            //2. hd_具象节点插\"抽象端口\";\n            [AINetUtils insertPointer_Hd:absNode.pointer toPorts:conNode.absPorts ps:absContent_ps difStrong:difStrong];\n            //3. hd_抽象节点插\"具象端口\";\n            [AINetUtils insertPointer_Hd:conNode.pointer toPorts:absConPorts ps:conContent_ps difStrong:difStrong];\n            //4. hd_存储\n            [SMGUtils insertObject:conNode pointer:conNode.pointer fileName:kFNNode time:cRTNode(conNode.pointer)];\n        }\n        //7. 抽象节点的 关联&存储\n        [SMGUtils insertNode:absNode];\n    }\n}\n/**\n *  MARK:--------------------抽具象关联通用方法 (参考29031-todo3)--------------------\n */\n+(void) relateGeneralCon:(AINodeBase*)conNode absNodes:(NSArray*)absNode_ps {\n    //1. 数据准备;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m:357-382"
+    },
+    "557": {
+        "file_id": 54,
+        "content": "Calculates the maximum strong from connected nodes, inserts abstract ports into concrete nodes and vice versa, then stores the resulting objects.",
+        "type": "comment"
+    },
+    "558": {
+        "file_id": 54,
+        "content": "    absNode_ps = ARRTOOK(absNode_ps);\n    if (!ISOK(conNode, AINodeBase.class)) return;\n    //2. 依次关联;\n    for (AIKVPointer *absNode_p in absNode_ps) {\n        //1. con与abs必须不同;\n        AINodeBase *absNode = [SMGUtils searchNode:absNode_p];\n        if ([conNode isEqual:absNode]) continue;\n        //2. hd_具象节点插\"抽象端口\";\n        [AINetUtils insertPointer_Hd:absNode.pointer toPorts:conNode.absPorts ps:absNode.content_ps difStrong:1];\n        //3. hd_抽象节点插\"具象端口\";\n        [AINetUtils insertPointer_Hd:conNode.pointer toPorts:absNode.conPorts ps:conNode.content_ps difStrong:1];\n        //4. hd_存储\n        [SMGUtils insertNode:absNode];\n        [SMGUtils insertNode:conNode];\n    }\n}\n/**\n *  MARK:--------------------cmv基本模型--------------------\n *  @version\n *      2022.05.11: cmv模型relate时,将foNode的content.refPort标记mv指向 (参考26022-2);\n *      2023.08.11: mv支持多个指向foNode (参考30095-todo2);\n */\n+(void) relateFo:(AIFoNodeBase*)foNode mv:(AICMVNodeBase*)mvNode{\n    if (foNode && mvNode) {\n        //1. 互指向\n        [AINetUtils insertPointer_Hd:foNode.pointer toPorts:mvNode.foPorts ps:foNode.content_ps difStrong:1];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m:383-411"
+    },
+    "559": {
+        "file_id": 54,
+        "content": "This code is associating an abstract node (absNode) with a concrete node (conNode) by inserting their respective ports into each other's content and storing them.",
+        "type": "comment"
+    },
+    "560": {
+        "file_id": 54,
+        "content": "        foNode.cmvNode_p = mvNode.pointer;\n        //2. 对content.refPort标记mv;\n        [AINetUtils maskHavMv_AlgWithFo:foNode];\n        //3. 存储foNode & cmvNode\n        [SMGUtils insertNode:mvNode];\n        [SMGUtils insertNode:foNode];\n    }\n}\n@end\n//MARK:===============================================================\n//MARK:                     < Port >\n//MARK:===============================================================\n@implementation AINetUtils (Port)\n+(NSArray*) absPorts_All:(AINodeBase*)node{\n    NSMutableArray *allPorts = [[NSMutableArray alloc] init];\n    if (ISOK(node, AINodeBase.class)) {\n        [allPorts addObjectsFromArray:node.absPorts];\n    }\n    return allPorts;\n}\n+(NSArray*) absPorts_All_Normal:(AINodeBase*)node{\n    NSArray *allPorts = [self absPorts_All:node];\n    return [SMGUtils filterPorts_Normal:allPorts];\n}\n+(NSArray*) absPorts_All:(AINodeBase*)node type:(AnalogyType)type{\n    return [self absPorts_All:node havTypes:@[@(type)] noTypes:nil];\n}\n+(NSArray*) absPorts_All:(AINodeBase*)node havTypes:(NSArray*)havTypes noTypes:(NSArray*)noTypes{",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m:412-445"
+    },
+    "561": {
+        "file_id": 54,
+        "content": "This code appears to be a part of a class called \"AINetUtils\". It seems to define methods related to \"Ports\" for the class. The code includes implementations for finding all ports, filtering normal ports, and finding ports with specific types. It also includes a method that inserts nodes into some sort of storage or database. Overall, this code appears to be involved in managing and organizing data about different types of ports within a network system.",
+        "type": "comment"
+    },
+    "562": {
+        "file_id": 54,
+        "content": "    NSArray *allPorts = [self absPorts_All:node];\n    return [SMGUtils filterPorts:allPorts havTypes:havTypes noTypes:noTypes];\n}\n+(NSArray*) absAndMePits:(AINodeBase*)node{\n    NSMutableArray *result = [[NSMutableArray alloc] initWithObjects:node.pointer, nil];\n    [result addObjectsFromArray:Ports2Pits([self absPorts_All:node])];\n    return result;\n}\n+(NSArray*) conPorts_All:(AINodeBase*)node{\n    NSMutableArray *allPorts = [[NSMutableArray alloc] init];\n    if (ISOK(node, AIAbsAlgNode.class)) {\n        [allPorts addObjectsFromArray:((AIAbsAlgNode*)node).conPorts];\n    }else if (ISOK(node, AINetAbsFoNode.class)) {\n        [allPorts addObjectsFromArray:((AINetAbsFoNode*)node).conPorts];\n    }\n    return allPorts;\n}\n+(NSArray*) conPorts_All_Normal:(AINodeBase*)node{\n    NSArray *allPorts = [self conPorts_All:node];\n    return [SMGUtils filterPorts_Normal:allPorts];\n}\n+(NSArray*) conPorts_All:(AINodeBase*)node havTypes:(NSArray*)havTypes noTypes:(NSArray*)noTypes{\n    NSArray *allPorts = [self conPorts_All:node];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m:446-469"
+    },
+    "563": {
+        "file_id": 54,
+        "content": "This code appears to be a part of an AI foundation library. It defines various methods for handling ports in a network, including filtering and organizing them based on their types. The methods include absPorts_All, conPorts_All, absAndMePits, and filterPorts_Normal. These methods seem to handle different aspects of working with ports in the AI network model.",
+        "type": "comment"
+    },
+    "564": {
+        "file_id": 54,
+        "content": "    return [SMGUtils filterPorts:allPorts havTypes:havTypes noTypes:noTypes];\n}\n/**\n *  MARK:--------------------refPorts--------------------\n *  @version\n *      2022.08.22: 因为防重性能差,优化\"并集\"防重算法 (参考27082-慢代码1);\n *      2022.10.09: 仅保留硬盘的refPorts (参考27124-todo4);\n */\n+(NSArray*) refPorts_All4Alg:(AIAlgNodeBase*)node{\n    NSMutableArray *allPorts = [[NSMutableArray alloc] init];\n    if (ISOK(node, AIAlgNodeBase.class)) {\n        //2023.11.29: refPorts中有空元素,导致闪退...\n        for (NSInteger i = 0; i < node.refPorts.count; i++) {\n            AIPort *item = ARR_INDEX(node.refPorts, i);\n            if (!item) {\n                AIFoNodeBase *itemNode = [SMGUtils searchNode:item.target_p];\n                ELog(@\"以前没空过,突然这里闪退了,但不复现,以后复现时断点在这里,查下原因:%@ %@ %ld/%ld\",Alg2FStr(node),Fo2FStr(itemNode),i,node.refPorts.count);\n                NSLog(@\"\");\n            }\n        }\n        [allPorts addObjectsFromArray:node.refPorts];\n    }\n    return allPorts;\n}\n+(NSArray*) refPorts_All4Alg_Normal:(AIAlgNodeBase*)node{\n    NSArray *allPorts = [self refPorts_All4Alg:node];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m:470-497"
+    },
+    "565": {
+        "file_id": 54,
+        "content": "This code is part of a larger project and appears to be related to filtering and collecting ports, specifically refPorts, in the AIAlgNodeBase class. The code contains two methods: \"refPorts_All4Alg\" and \"refPorts_All4Alg_Normal\". The former method initializes an array of all ports, checks if the node is valid, and adds the node's refPorts to the array. It also includes a check for empty elements in refPorts to prevent crashes. The latter method simply returns the result of calling \"refPorts_All4Alg\".",
+        "type": "comment"
+    },
+    "566": {
+        "file_id": 54,
+        "content": "    return [SMGUtils filterPorts_Normal:allPorts];\n}\n+(NSArray*) refPorts_All:(AIKVPointer*)node_p{\n    if (PitIsValue(node_p)) {\n        return [self refPorts_All4Value:node_p];\n    }else if(PitIsAlg(node_p)){\n        return [self refPorts_All4Alg:[SMGUtils searchNode:node_p]];\n    }\n    return nil;\n}\n+(NSArray*) refPorts_All4Value:(AIKVPointer*)value_p {\n    if (!value_p) return nil;\n    return [SMGUtils searchObjectForFilePath:value_p.filePath fileName:kFNRefPorts time:cRTReference];\n}\n/**\n *  MARK:--------------------对fo.content.refPort标记havMv--------------------\n *  @desc 根据fo标记alg.refPort的havMv (参考26022-2);\n */\n+(void) maskHavMv_AlgWithFo:(AIFoNodeBase*)foNode{\n    //1. 标记alg.refPort;\n    for (AIKVPointer *alg_p in foNode.content_ps) {\n        AIAlgNodeBase *algNode = [SMGUtils searchNode:alg_p];\n        NSArray *algRefPorts = [AINetUtils refPorts_All4Alg:algNode];\n        for (AIPort *algRefPort in algRefPorts) {\n            //2. 当refPort是当前fo,则标记为true;\n            if ([algRefPort.target_p isEqual:foNode.pointer]) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m:498-527"
+    },
+    "567": {
+        "file_id": 54,
+        "content": "This code filters the ports of a given node and returns a new array containing only the reference ports. If the node is a value, it searches for the reference ports in the file system. For algorithm nodes, it iterates through their content's reference ports and marks the ones that are equal to the current foNode pointer as true.",
+        "type": "comment"
+    },
+    "568": {
+        "file_id": 54,
+        "content": "                algRefPort.targetHavMv = true;\n                //3. 保存algRefPorts到db;\n                [SMGUtils insertNode:algNode];\n                //4. 继续向微观标记;\n                [self maskHavMv_ValueWithAlg:algNode];\n            }\n        }\n    }\n}\n/**\n *  MARK:--------------------对alg.content.refPort标记havMv--------------------\n *  @desc 根据alg标记value.refPort的havMv (参考26022-2);\n *  @test 取了db+mem的refPorts,但保存时,都保存到了db中 (但应该没啥影响,先不管);\n *  @version\n *      2022.05.13: 将refPorts_All4Value()中防重处理,避免此处存到db后有重复 (参考26023);\n */\n+(void) maskHavMv_ValueWithAlg:(AIAlgNodeBase*)algNode{\n    //1. 标记value.refPort;\n    for (AIKVPointer *value_p in algNode.content_ps) {\n        NSArray *valueRefPorts = [AINetUtils refPorts_All4Value:value_p];\n        for (AIPort *valueRefPort in valueRefPorts) {\n            //2. 当refPort是当前alg,则标记为true;\n            if ([valueRefPort.target_p isEqual:algNode.pointer]) {\n                valueRefPort.targetHavMv = true;\n                //3. 保存valueRefPorts到db;\n                [SMGUtils insertObject:valueRefPorts rootPath:value_p.filePath fileName:kFNRefPorts time:cRTReference saveDB:true];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m:528-557"
+    },
+    "569": {
+        "file_id": 54,
+        "content": "Code snippet marks a value's reference ports with havMv in AIAlgNodeBase and saves the refPorts to db. It loops through each value_p, checks if its target is the current algNode, and sets the targetHavMv to true. The code also inserts the valueRefPorts into the database.",
+        "type": "comment"
+    },
+    "570": {
+        "file_id": 54,
+        "content": "            }\n        }\n    }\n}\n@end\n//MARK:===============================================================\n//MARK:                     < Node >\n//MARK:===============================================================\n@implementation AINetUtils (Node)\n/**\n *  MARK:--------------------获取cutIndex--------------------\n *  @title 根据indexDic取得截点cutIndex (参考27177-todo2);\n *  @desc\n *      1. 已发生截点 (含cutIndex已发生,所以cutIndex应该就是proto末位在assFo中匹配到的assIndex下标);\n *      2. 取用方式1: 取最大的key即是cutIndex (目前选用,因为它省得取出conFo);\n *      3. 取用方式2: 取protoFo末位为value,对应的key即为:cutIndex;\n *  @version\n *      2023.07.11: v2-根据protoOrRegroupCutIndex在indexDic中取absMatchFo.cutIndex并返回;\n *  @result 返回截点cutIndex (注: 此处永远返回抽象Fo的截点,因为具象在时序识别中没截点);\n */\n+(NSInteger) getCutIndexByIndexDic:(NSDictionary*)indexDic {\n    //1. 取indexDic;\n    NSInteger result = -1;\n    indexDic = DICTOOK(indexDic);\n    //2. 取最大的key,即为cutIndex;\n    for (NSNumber *absIndex in indexDic.allKeys) {\n        if (result < absIndex.integerValue) result = absIndex.integerValue;\n    }\n    return result;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m:558-591"
+    },
+    "571": {
+        "file_id": 54,
+        "content": "This function `getCutIndexByIndexDic` returns the cut index by taking a dictionary `indexDic`. It checks for an existing cut point by considering two methods: taking the maximum key value or finding the protoFo's endpoint. This function returns the abstract Fo's cut point, as concrete cuts do not exist in time-series recognition.",
+        "type": "comment"
+    },
+    "572": {
+        "file_id": 54,
+        "content": "}\n+(NSInteger) getCutIndexByIndexDicV2:(NSDictionary*)indexDic protoOrRegroupCutIndex:(NSInteger)protoOrRegroupCutIndex {\n    //1. 找出<=且最接近protoOrRegroupCutIndex的value;\n    NSInteger mostNear = -1;\n    for (NSNumber *value in indexDic.allValues) {\n        NSInteger conIndex = value.integerValue;\n        //2. 当前conIndex大于已知 & 且<=protoOrRegroupCutIndex(必须<=已发生);\n        if (conIndex > mostNear && conIndex <= protoOrRegroupCutIndex) {\n            mostNear = conIndex;\n        }\n    }\n    //2. mostNear对应的absIndex就是要返回的cutIndex;\n    for (NSNumber *key in indexDic.allKeys) {\n        NSInteger conIndex = NUMTOOK([indexDic objectForKey:key]).integerValue;\n        if (conIndex == mostNear) {\n            return key.integerValue;\n        }\n    }\n    //3. 如果一条没找着,说明matchFo一帧都没已发生;\n    return -1;\n}\n/**\n *  MARK:--------------------获取near数据 (直传fo版)--------------------\n *  @desc 调用说明: 对于有明确的absFo和conFo的,可以调用fo版;\n *  @desc 根据indexDic取得nearCount&sumNear (参考27177-todo3);\n *  @version\n *      2023.01.18: 相似度默认值为1,且相似度改为相乘 (参考28035-todo2);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m:592-622"
+    },
+    "573": {
+        "file_id": 54,
+        "content": "This function `getCutIndexByIndexDicV2` finds the index most near to a given value in a dictionary, and returns it as the cut index. If not found, it returns -1. The code can be used for cases where there are clear absFo and conFo values.",
+        "type": "comment"
+    },
+    "574": {
+        "file_id": 54,
+        "content": " *  @param callerIsAbs : 调用者是否是抽象;\n *  @result notnull 必有两个元素,格式为: [nearCount, sumNear],二者都是0时,则为无效返回;\n */\n+(CGFloat) getMatchByIndexDic:(NSDictionary*)indexDic absFo:(AIKVPointer*)absFo_p conFo:(AIKVPointer*)conFo_p callerIsAbs:(BOOL)callerIsAbs {\n    return NUMTOOK(ARR_INDEX([self getNearDataByIndexDic:indexDic absFo:absFo_p conFo:conFo_p callerIsAbs:callerIsAbs], 1)).floatValue;\n}\n+(NSArray*) getNearDataByIndexDic:(NSDictionary*)indexDic absFo:(AIKVPointer*)absFo_p conFo:(AIKVPointer*)conFo_p callerIsAbs:(BOOL)callerIsAbs{\n    AIFoNodeBase *absFo = [SMGUtils searchNode:absFo_p];//400ms 4000次\n    AIFoNodeBase *conFo = [SMGUtils searchNode:conFo_p];//400ms 4000次\n    return [self getNearDataByIndexDic:indexDic getAbsAlgBlock:^AIKVPointer *(NSInteger absIndex) {\n        return ARR_INDEX(absFo.content_ps, absIndex);\n    } getConAlgBlock:^AIKVPointer *(NSInteger conIndex) {\n        return ARR_INDEX(conFo.content_ps, conIndex);\n    } callerIsAbs:callerIsAbs];\n}\n/**\n *  MARK:--------------------获取near数据 (回调版)--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m:623-640"
+    },
+    "575": {
+        "file_id": 54,
+        "content": "This code defines two methods, `getMatchByIndexDic` and `getNearDataByIndexDic`. The first method returns a CGFloat value based on the provided index dictionary, abstract (absFo) and conditional (conFo) pointers, and whether the caller is an abstract. It retrieves the data from the second method, which takes an index dictionary, absFo and conFo pointers, and a boolean for whether the caller is abstract. The method searches for AIFoNodeBase nodes using SMGUtils and then calls another method `getNearDataByIndexDic` with callback functions to get the data for the abstract and conditional fo values. The `getNearDataByIndexDic` method returns an array of near data based on the provided index dictionary, pointers, and whether the caller is abstract.",
+        "type": "comment"
+    },
+    "576": {
+        "file_id": 54,
+        "content": " *  @desc 调用说明: 对于未生成明确的absFo或conFo的调用回调版 (比如: canset在transferAlg时,还没有生成为fo供传参,此处用回调去取Alg元素);\n *  @param indexDic 根据此dic逐条取itemNear数据;\n *  @param getAbsAlgBlock : 根据absIndex取对应的absAlg回调\n *  @param getConAlgBlock : 根据conIndex取对应的conAlg回调\n */\n+(NSArray*) getNearDataByIndexDic:(NSDictionary*)indexDic getAbsAlgBlock:(AIKVPointer*(^)(NSInteger absIndex))getAbsAlgBlock getConAlgBlock:(AIKVPointer*(^)(NSInteger conIndex))getConAlgBlock callerIsAbs:(BOOL)callerIsAbs {\n    //1. 数据准备;\n    int nearCount = 0;  //总相近数 (匹配值<1)\n    indexDic = DICTOOK(indexDic);\n    CGFloat sumNear = indexDic.count > 0 ? 1 : 0;//总相近度 (有数据时默认1,无数据时默认0);\n    //2. 逐个统计;\n    for (NSNumber *key in indexDic.allKeys) {\n        NSInteger absIndex = key.integerValue;\n        NSInteger conIndex = NUMTOOK([indexDic objectForKey:key]).integerValue;\n        AIKVPointer *absA_p = getAbsAlgBlock(absIndex);\n        AIKVPointer *conA_p = getConAlgBlock(conIndex);\n        //3. 复用取near值;\n        CGFloat near = 0;\n        if (callerIsAbs) {\n            //5. 当前是抽象时_从抽象取复用;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m:641-662"
+    },
+    "577": {
+        "file_id": 54,
+        "content": "This method retrieves near data by index dictionary and provides callback functions for getting abstract and concrete algorithm elements. It calculates the total similarity count and sum of similarities for each key-value pair in the index dictionary. If the caller is an abstraction, it gets the near value from the abstract algorithm element.",
+        "type": "comment"
+    },
+    "578": {
+        "file_id": 54,
+        "content": "            AIAlgNodeBase *absA = [SMGUtils searchNode:absA_p];//590ms 5000次\n            near = [absA getConMatchValue:conA_p];//100ms 5000次\n        }else{\n            //4. 当前是具象时_从具象取复用;\n            AIAlgNodeBase *conA = [SMGUtils searchNode:conA_p];\n            near = [conA getAbsMatchValue:absA_p];\n        }\n        //7. 只记录near<1的 (取<1的原因未知,参考2619j-todo5);\n        if (near < 1) {\n            [AITest test14:near];\n            sumNear *= near;\n            nearCount++;\n        }\n    }\n    return @[@(nearCount), @(sumNear)];\n}\n//MARK:===============================================================\n//MARK:                     < Fo引用强度RefStrong的取值和更新 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------获取sumRefStrong已发生部分强度--------------------\n *  @desc 根据indexDic取得sumRefStrong (参考2722f-todo13);\n */\n+(NSInteger) getSumRefStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p {\n    //1. 数据准备;\n    NSInteger sumRefStrong = 0;  //总强度\n    AIFoNodeBase *matchFo = [SMGUtils searchNode:matchFo_p];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m:663-692"
+    },
+    "579": {
+        "file_id": 54,
+        "content": "This code is related to an algorithm for pattern matching and seems to calculate a metric called 'near' using the Absolute and Concrete nodes found from the searchNode function. It also calculates the sum of reference strength based on a dictionary index.",
+        "type": "comment"
+    },
+    "580": {
+        "file_id": 54,
+        "content": "    //2. 逐个统计;\n    for (NSNumber *key in indexDic.allKeys) {\n        NSInteger absIndex = key.integerValue;\n        AIPort *itemPort = ARR_INDEX(matchFo.contentPorts, absIndex);\n        sumRefStrong += itemPort.strong.value;\n    }\n    return sumRefStrong;\n}\n/**\n *  MARK:--------------------根据indexDic更新refPort强度值 (参考2722f-todo33)--------------------\n */\n+(void) updateRefStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p {\n    //1. 根据indexDic取出已发生部分content_ps;\n    AIFoNodeBase *matchFo = [SMGUtils searchNode:matchFo_p];\n    NSArray *frontContent_ps = [self filterContentAlgPsByIndexDic:indexDic matchFo:matchFo];\n    //3. 将已发生部分增强refStrong;\n    [AINetUtils insertRefPorts_AllFoNode:matchFo_p order_ps:frontContent_ps ps:matchFo.content_ps];\n}\n/**\n *  MARK:--------------------根据indexDic更新contentPort强度值 (参考2722f-todo32)--------------------\n */\n+(void) updateContentStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p {\n    //1. 数据准备;\n    AIFoNodeBase *matchFo = [SMGUtils searchNode:matchFo_p];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m:694-720"
+    },
+    "581": {
+        "file_id": 54,
+        "content": "This code contains three functions: `updateRefStrongByIndexDic`, `updateContentStrongByIndexDic`, and a helper function that is not shown. The first two functions update the strength of \"refPort\" and \"contentPort\" based on an index dictionary and a match object, respectively. The third function calculates the total reference strength by iterating through each key in the index dictionary and adding its associated value to a sum.",
+        "type": "comment"
+    },
+    "582": {
+        "file_id": 54,
+        "content": "    //2. 根据indexDic更新contentPort强度值 & 保存;\n    for (NSNumber *key in indexDic.allKeys) {\n        NSInteger absIndex = key.integerValue;\n        AIPort *itemPort = ARR_INDEX(matchFo.contentPorts, absIndex);\n        itemPort.strong.value++;\n    }\n    [SMGUtils insertNode:matchFo];\n}\n//MARK:===============================================================\n//MARK:                     < Alg抽具象强度ConStrong的取值和更新 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------获取sumConStrong已发生部分强度--------------------\n *  @desc 根据indexDic取得sumConStrong (参考28086-todo1);\n */\n+(NSInteger) getSumConStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p cansetFo:(AIKVPointer*)cansetFo_p{\n    //1. 数据准备;\n    NSInteger sumStrong = 0;  //总强度\n    AIFoNodeBase *matchFo = [SMGUtils searchNode:matchFo_p];\n    AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];\n    //2. 逐个统计;\n    for (NSNumber *key in indexDic.allKeys) {\n        NSInteger absIndex = key.integerValue;\n        NSInteger conIndex = NUMTOOK([indexDic objectForKey:key]).integerValue;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m:722-748"
+    },
+    "583": {
+        "file_id": 54,
+        "content": "This code updates the strength value of contentPorts based on indexDic and saves it. It also calculates the sumConStrong by iterating through the indexDic and retrieving matching and canSet nodes.",
+        "type": "comment"
+    },
+    "584": {
+        "file_id": 54,
+        "content": "        AIAlgNodeBase *absAlg = [SMGUtils searchNode:ARR_INDEX(matchFo.content_ps, absIndex)];\n        AIKVPointer *conAlg = ARR_INDEX(cansetFo.content_ps, conIndex);\n        AIPort *findPort = [AINetUtils findPort:conAlg fromPorts:absAlg.conPorts];\n        sumStrong += findPort.strong.value;\n    }\n    return sumStrong;\n}\n/**\n *  MARK:--------------------根据indexDic更新conPort和absPort强度值--------------------\n *  @desc canset方案最终激活时,将其conPorts和absPorts的强度+1 (参考28086-todo2);\n */\n+(void) updateConAndAbsStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p cansetFo:(AIKVPointer*)cansetFo_p{\n    //1. 数据准备;\n    AIFoNodeBase *matchFo = [SMGUtils searchNode:matchFo_p];\n    AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];\n    //2. 将已发生部分增强refStrong;\n    for (NSNumber *key in indexDic.allKeys) {\n        NSInteger absIndex = key.integerValue;\n        NSInteger conIndex = NUMTOOK([indexDic objectForKey:key]).integerValue;\n        AIAlgNodeBase *absAlg = [SMGUtils searchNode:ARR_INDEX(matchFo.content_ps, absIndex)];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m:749-770"
+    },
+    "585": {
+        "file_id": 54,
+        "content": "This code updates the strength values of conPorts and absPorts in a canset method. It searches for nodes based on indices, then iterates through an index dictionary to find the corresponding nodes and update their strong values by adding 1. The code assumes that matching and canSet FOs are provided.",
+        "type": "comment"
+    },
+    "586": {
+        "file_id": 54,
+        "content": "        AIAlgNodeBase *conAlg = [SMGUtils searchNode:ARR_INDEX(cansetFo.content_ps, conIndex)];\n        [AINetUtils relateAlgAbs:absAlg conNodes:@[conAlg] isNew:false];\n    }\n}\n//MARK:===============================================================\n//MARK:                     < Alg引用强度RefStrong更新 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------根据indexDic更新refPort强度值 (参考28103-3)--------------------\n */\n+(void) updateAlgRefStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p {\n    //1. 根据indexDic取出已发生部分content_ps;\n    AIFoNodeBase *matchFo = [SMGUtils searchNode:matchFo_p];\n    NSArray *frontContent_ps = [self filterContentAlgPsByIndexDic:indexDic matchFo:matchFo];\n    //2. 将已发生部分Alg增强refStrong;\n    for (AIKVPointer *item in frontContent_ps) {\n        AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item];\n        [AINetUtils insertRefPorts_AllAlgNode:item content_ps:itemAlg.content_ps difStrong:1];\n    }\n}\n//MARK:===============================================================",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m:771-795"
+    },
+    "587": {
+        "file_id": 54,
+        "content": "This code appears to be a part of an algorithm for updating reference strength values in a content-based recommendation system. It searches for nodes based on index dictionary and updates the refPort strength of related algorithms accordingly.",
+        "type": "comment"
+    },
+    "588": {
+        "file_id": 54,
+        "content": "//MARK:                     < PrivateMethod >\n//MARK:===============================================================\n/**\n *  MARK:--------------------根据indexDic筛选fo的content--------------------\n */\n+(NSArray*) filterContentAlgPsByIndexDic:(NSDictionary*)indexDic matchFo:(AIFoNodeBase*)matchFo {\n    //2. 根据indexDic取出已发生部分content_ps;\n    NSArray *filterContent_ps = [SMGUtils convertArr:indexDic.allKeys convertBlock:^id(NSNumber *key) {\n        NSInteger absIndex = key.integerValue;\n        return ARR_INDEX(matchFo.content_ps, absIndex);\n    }];\n    return filterContent_ps;\n}\n/**\n *  MARK:--------------------类比出absFo时,此处取得具象fo与absFo的indexDic映射--------------------\n *  @desc 作用1: 生成抽象canset与conCanset的indexDic (参考29032-todo1.1)\n *  @desc 作用2: 生成外类比AnalogyOutside()里的absFo与protoFo/assFo的映射 (参考29032-todo1.2);\n *  @desc 比如输入[3,5,1],则返回<1:1, 2:3, 3:5>;\n *  @param conFoIndexes : 具象帧的下标数组 (每个元素,都对应了抽象的一帧);\n */\n+(NSDictionary*) getIndexDic4AnalogyAbsFo:(NSArray*)conFoIndexes {\n    NSMutableDictionary *result = [NSMutableDictionary new];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m:796-819"
+    },
+    "589": {
+        "file_id": 54,
+        "content": "This code filters content_ps based on the indexDic and matchFo. It also generates an indexDic mapping for abstract fo and protoFo/assFo in analogy outside.",
+        "type": "comment"
+    },
+    "590": {
+        "file_id": 54,
+        "content": "    //1. 具象下标数组从小到大排序下 (比如3,5,1排成1,3,5);\n    NSArray *sort = [SMGUtils sortSmall2Big:conFoIndexes compareBlock:^double(NSNumber *obj) {\n        return obj.integerValue;\n    }];\n    //2. 根据每帧映射生成indexDic结果返回;\n    for (NSInteger i = 0; i < sort.count; i++) {\n        [result setObject:ARR_INDEX(sort, i) forKey:@(i)];\n    }\n    return result;\n}\n//MARK:===============================================================\n//MARK:                     < 抽象Fo时,更新SP值 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------absFo根据indexDic继承conFo的sp值 (参考29032-todo2.2)--------------------\n */\n+(void) extendSPByIndexDic:(NSDictionary*)assIndexDic assFo:(AIFoNodeBase*)assFo absFo:(AIFoNodeBase*)absFo {\n    //1. ass与abs的每条映射都要继承;\n    for (NSNumber *absIndex in assIndexDic.allKeys) {\n        //2. 取出ass中旧有的spStrong模型;\n        NSNumber *assIndex = [assIndexDic objectForKey:absIndex];\n        AISPStrong *spStrong = [assFo.spDic objectForKey:assIndex];\n        //3. 将spStrong继承给absFo;\n        [absFo updateSPStrong:absIndex.integerValue difStrong:spStrong.sStrong type:ATSub];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m:820-847"
+    },
+    "591": {
+        "file_id": 54,
+        "content": "This code sorts the concrete foundation indexes in ascending order, then maps them back to the abstract foundation indexes and extends the sp values from the associated foundation to the abstract foundation. The sorted indexes are used to update the spStrong of the abstract foundation with the corresponding sp value from the associated foundation.",
+        "type": "comment"
+    },
+    "592": {
+        "file_id": 54,
+        "content": "        [absFo updateSPStrong:absIndex.integerValue difStrong:spStrong.pStrong type:ATPlus];\n    }\n}\n/**\n *  MARK:--------------------抽象fo时: 根据protoFo增强absFo的SP值+1 (参考29032-todo2.3)--------------------\n */\n+(void) updateSPByIndexDic:(NSDictionary*)conIndexDic conFo:(AIFoNodeBase*)conFo absFo:(AIFoNodeBase*)absFo {\n    for (NSNumber *absIndex in conIndexDic.allKeys) {\n        [absFo updateSPStrong:absIndex.integerValue difStrong:1 type:ATPlus];\n    }\n}\n/**\n *  MARK:--------------------判断时序中有空概念--------------------\n */\n+(BOOL) foHasEmptyAlg:(AIKVPointer*)fo_p {\n    AIFoNodeBase *fo = [SMGUtils searchNode:fo_p];\n    return [SMGUtils filterSingleFromArr:fo.contentPorts checkValid:^BOOL(AIPort *item) {\n        return [item.header isEqualToString:[NSString md5:@\"\"]];\n    }];\n}\n@end\n//MARK:===============================================================\n//MARK:                     < Canset >\n//MARK:===============================================================\n@implementation AINetUtils (Canset)\n/**\n *  MARK:--------------------迁移关联--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m:848-879"
+    },
+    "593": {
+        "file_id": 54,
+        "content": "This code appears to be part of a larger class, `AINetUtils`, that deals with AI networking utilities. It includes methods for updating an abstract concept's SP value based on a dictionary of concept indices, and checking if a given concept contains an empty algorithm. The code seems to be written in Objective-C or a similar language.",
+        "type": "comment"
+    },
+    "594": {
+        "file_id": 54,
+        "content": " */\n+(void) relateTransfer:(AIKVPointer*)absScene absCanset:(AIKVPointer*)absCanset conScene:(AIKVPointer*)conScene conCanset:(AIKVPointer*)conCanset {\n    //1. 数据准备;\n    AIFoNodeBase *absSconeNode = [SMGUtils searchNode:absScene];\n    AIFoNodeBase *conSceneNode = [SMGUtils searchNode:conScene];\n    AITransferPort *absPort = [AITransferPort newWithScene:absScene canset:absCanset];\n    AITransferPort *conPort = [AITransferPort newWithScene:conScene canset:conCanset];\n    //2. 插入传节点的承端口;\n    if (![absSconeNode.transferConPorts containsObject:conPort]) {\n        [absSconeNode.transferConPorts addObject:conPort];\n        [SMGUtils insertNode:absSconeNode];\n    }\n    //3. 插入承节点的传端口;\n    if (![conSceneNode.transferAbsPorts containsObject:absPort]) {\n        [conSceneNode.transferAbsPorts addObject:absPort];\n        [SMGUtils insertNode:conSceneNode];\n    }\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetUtils.m:880-901"
+    },
+    "595": {
+        "file_id": 54,
+        "content": "The code defines a method `relateTransfer` that prepares data and inserts transfer ports into scene nodes. It creates two port objects using the provided scenes and cansets, and then checks if each transfer port is already contained in the respective transfer port arrays of the scene nodes. If not, it adds the new port to the array and inserts the scene node back into the system.",
+        "type": "comment"
+    },
+    "596": {
+        "file_id": 55,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAbsAlgNode.h",
+        "type": "filepath"
+    },
+    "597": {
+        "file_id": 55,
+        "content": "This code defines the `AIAbsAlgNode` class, which is an extension of the `AIAlgNodeBase` class. It mentions two features: 1) The removal of duplicates in `absAlgNode's` dependence index and 2) support for values_p (potentially representing a circle formed by micro-information).",
+        "type": "summary"
+    },
+    "598": {
+        "file_id": 55,
+        "content": "//\n//  AIAbsAlgNode.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2018/12/7.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"AIAlgNodeBase.h\"\n/**\n *  MARK:--------------------抽象概念节点--------------------\n *  1. absAlgNode的去重依赖index索引中的去重;\n *  2. value_p以后要再扩展支持values_p (如:一个圆形由微信息abcdefg组成)\n */\n@interface AIAbsAlgNode : AIAlgNodeBase\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINode/AIAbsAlgNode.h:1-18"
+    },
+    "599": {
+        "file_id": 55,
+        "content": "This code defines the `AIAbsAlgNode` class, which is an extension of the `AIAlgNodeBase` class. It mentions two features: 1) The removal of duplicates in `absAlgNode's` dependence index and 2) support for values_p (potentially representing a circle formed by micro-information).",
+        "type": "comment"
+    }
+}

@@ -1,0 +1,15 @@
+{
+    "summary": "The AIMvFoManager header file declares a class for managing foNode->cmvNode models, constructing mvs, and building conFos in the SMG_NothingIsAll codebase.",
+    "details": [
+        {
+            "comment": "AIMvFoManager.h is a header file containing the class declaration for AIMvFoManager, which handles creating and managing foNode->cmvNode models, constructing concrete mvs, and building conFos in the SMG_NothingIsAll codebase.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AINet/AIMvFoManager/AIMvFoManager.h\":0-36",
+            "content": "//\n//  AIMvFoManager.h\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/5/6.\n//  Copyright \u00a9 2018\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------foNode->cmvNode\u7684\u6a21\u578b--------------------\n */\n@class AIFrontOrderNode,AICMVNode;\n@interface AIMvFoManager : NSObject\n/**\n *  MARK:--------------------create foNode->cmvNode \u57fa\u672c\u6a21\u578b--------------------\n *  @param mv : \u89e6\u53d1\u4e86create\u7684mv;\n *  @param order : \u77ac\u65f6\u8bb0\u5fc6\u5e8f\u5217\n *  @result : \u8fd4\u56defoNode;\n */\n-(AIFrontOrderNode*) create:(NSTimeInterval)inputTime order:(NSArray*)order mv:(AICMVNodeBase*)mv;\n/**\n *  MARK:--------------------\u6784\u5efa\u5177\u8c61mv--------------------\n */\n-(AICMVNodeBase*) createConMv:(NSArray*)imvAlgsArr;\n-(AICMVNodeBase*) createConMv:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p at:(NSString*)at;\n/**\n *  MARK:--------------------\u6784\u5efaconFo--------------------\n *  @result notnull\n */\n+(AIFrontOrderNode*) createConFo:(NSArray*)order;\n+(AIFoNodeBase*) createConFo_NoRepeat:(NSArray*)order;\n+(AIFoNodeBase*) createConFoForCanset:(NSArray*)order sceneFo:(AIFoNodeBase*)sceneFo sceneTargetIndex:(NSInteger)sceneTargetIndex;"
+        },
+        {
+            "comment": "Ending the class declaration for AIMvFoManager.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AINet/AIMvFoManager/AIMvFoManager.h\":38-38",
+            "content": "@end"
+        }
+    ]
+}

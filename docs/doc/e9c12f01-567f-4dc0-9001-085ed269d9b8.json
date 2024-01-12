@@ -1,0 +1,10 @@
+{
+    "summary": "This code is the header file for OutputUtils class, which converts data type to \"\u8f93\u51fa\u7b97\u6cd5\u6807\u8bc6\" (output algorithm identifier). It currently only supports one-to-one mapping but plans to support multiple outputs in the future. The function convertOutType2dataSource takes a data type string as input and returns an NSString representing the output algorithm identifier.",
+    "details": [
+        {
+            "comment": "This code is the header file for OutputUtils class, which converts data type to \"\u8f93\u51fa\u7b97\u6cd5\u6807\u8bc6\" (output algorithm identifier). It currently only supports one-to-one mapping but plans to support multiple outputs in the future. The function convertOutType2dataSource takes a data type string as input and returns an NSString representing the output algorithm identifier.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIOutput/OutputUtils.h\":0-21",
+            "content": "//\n//  OutputUtils.h\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/7/20.\n//  Copyright \u00a9 2018\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface OutputUtils : NSObject\n/**\n *  MARK:--------------------\u8f6c\u6362\u6570\u636e\u7c7b\u578b\u4e3a\"\u8f93\u51fa\u7b97\u6cd5\u6807\u8bc6\"--------------------\n *  \u6ce8:\u76ee\u524d\u4ec5\u652f\u6301\u4e00\u4e00\u5bf9\u5e94,\u968f\u540e\u652f\u6301\u591a\u4e2a\u540e,return\u6539\u4e3aArray;\n *  \u6ce8:\u6240\u6709output\u7c7b\u578b\u90fd\u5e94\u7531\u5148\u5929\u53cd\u5c04\u8f6c\u540e\u5929\u4e3b\u52a8,\u6240\u4ee5\u6b64\u5904\u5199\u6b7b\u7684\u65b9\u6cd5\u4e0d\u5e94\u5b58\u5728;\n *  \u89e3: \u5e94\u8be5\u4ee5\u540e\u5929\u5b66\u4e60\u6620\u5c04\u5173\u7cfb\u5230\u7f51\u7edc\u7684\u65b9\u5f0f,\u6765\u89e3\u51b3\u8fd9\u4e2a\u95ee\u9898;TODO\n */\n+(NSString*) convertOutType2dataSource:(NSString*)dataType;\n@end"
+        }
+    ]
+}

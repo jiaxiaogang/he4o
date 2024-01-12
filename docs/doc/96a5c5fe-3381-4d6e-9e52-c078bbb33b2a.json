@@ -1,0 +1,10 @@
+{
+    "summary": "This file contains the TCLearning.h header, which defines a class for learning algorithms in the SMG_NothingIsAll project. It includes two methods: pLearning and rLearning, used for learning with protoFo as input.",
+    "details": [
+        {
+            "comment": "This file contains the TCLearning.h header, which defines a class for learning algorithms in the SMG_NothingIsAll project. It includes two methods: pLearning and rLearning, used for learning with protoFo as input.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/TCLearning/TCLearning.h\":0-15",
+            "content": "//\n//  TCLearning.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/12/2.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface TCLearning : NSObject\n+(void) pLearning:(AIFoNodeBase*)protoFo;\n+(void) rLearning:(AIShortMatchModel*)model protoFo:(AIFoNodeBase*)protoFo;\n@end"
+        }
+    ]
+}

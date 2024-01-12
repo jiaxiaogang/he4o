@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines the \"UnorderItemModel\" class in Objective-C, which is a subclass of NSObject. It has two properties: \"tabNum\", an integer representing the indentation level, and \"data\", an id type variable storing the data for each line of the unordered list item.",
+    "details": [
+        {
+            "comment": "This code defines the \"UnorderItemModel\" class in Objective-C, which is a subclass of NSObject. It has two properties: \"tabNum\", an integer representing the indentation level, and \"data\", an id type variable storing the data for each line of the unordered list item.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/TOModelVision/UnorderItemModel.h\":0-18",
+            "content": "//\n//  UnorderItemModel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/6/3.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------\u65e0\u5e8f\u5217\u8868item\u6a21\u578b--------------------\n */\n@interface UnorderItemModel : NSObject\n@property (assign, nonatomic) int tabNum;//\u7f29\u8fdb\u6570\n@property (strong, nonatomic) id data;   //\u672c\u884c\u6570\u636e\n@end"
+        }
+    ]
+}

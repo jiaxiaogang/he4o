@@ -1,0 +1,15 @@
+{
+    "summary": "The XGWedis class in the header file provides asynchronous persistence functionality, supporting delegates, observers, or block methods for saving data. It saves data every 10 seconds and allows customization through a saveBlock. Deprecated are delegates and broadcast methods for persistence.",
+    "details": [
+        {
+            "comment": "This header file defines the XGWedis class, which provides asynchronous persistence functionality. It supports saving data using a delegate, observer, or block method. The code also mentions that delegates and broadcast methods for persistence have been deprecated. XGWedis saves data every 10 seconds and allows users to specify a saveBlock for customization.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/XGWedis/XGWedis.h\":0-51",
+            "content": "//\n//  XGWedis.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/5/7.\n//  Copyright \u00a9 2019\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\ntypedef void (^XGWedisSaveBlock)(id dic);\n/**\n *  MARK:--------------------XGWedis--------------------\n *  \u8bf4\u660e:\n *  1. XGWedis\u7528\u6765\u505a\u5f02\u6b65\u6301\u4e45\u5316;\n *  2. \u76ee\u524d\u6bcf10s\u6301\u4e45\u5316\u4e00\u6b21;\n *  3. XGWedis\u652f\u6301delegate/observer/block\u4e09\u79cd\u6301\u4e45\u5316\u65b9\u5f0f;\n *  @version\n *      2023.07.20: \u5e9f\u5f03delegate\u548c\u5e7f\u64ad\u65b9\u5f0f\u6301\u4e45\u5316 (\u4e5f\u6ca1\u7528,\u7559\u7740\u8d39\u773c\u770b\u4ee3\u7801);\n */\n@interface XGWedis : NSObject\n+(XGWedis*) sharedInstance;\n/**\n *  MARK:--------------------setObject--------------------\n *  @param obj : \u6570\u636e\n *  @param key : \u552f\u4e00\u8bc6\u522b\u7b26\n */\n-(void) setObject:(NSObject*)obj forKey:(NSString*)key;\n-(id) objectForKey:(NSString*)key;\n/**\n *  MARK:--------------------\u6307\u5b9a\u6301\u4e45\u5316saveBlock--------------------\n */\n-(void)setSaveBlock:(XGWedisSaveBlock)saveBlock;\n/**\n *  MARK:--------------------\u6e05\u7a7a--------------------\n */\n-(void) clear;\n/**\n *  MARK:--------------------\u8bb0\u5fc6\u957f\u5ea6--------------------\n */\n-(NSInteger) count;\n/**\n *  MARK:--------------------\u8c03\u7528\u4e00\u6b21\u4fdd\u5b58--------------------\n */\n-(void) save;"
+        },
+        {
+            "comment": "The code signals the end of a section or class, indicating that the following content should not be associated with the previous one.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/XGWedis/XGWedis.h\":53-53",
+            "content": "@end"
+        }
+    ]
+}

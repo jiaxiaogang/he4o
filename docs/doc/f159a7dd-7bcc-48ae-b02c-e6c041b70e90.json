@@ -1,0 +1,10 @@
+{
+    "summary": "This is the header file for TOMVisionFoView, a subclass of TOMVisionNodeBase in the SMG_NothingIsAll codebase. It was created on March 15th, 2022 by the developer jia and is protected by copyright law.",
+    "details": [
+        {
+            "comment": "This is the header file for TOMVisionFoView, a subclass of TOMVisionNodeBase in the SMG_NothingIsAll codebase. It was created on March 15th, 2022 by the developer jia and is protected by copyright law.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/TOMVision2/View/TOMVisionFoView.h\":0-12",
+            "content": "//\n//  TOMVisionFoView.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/3/15.\n//  Copyright \u00a9 2022\u5e74 XiaoGang. All rights reserved.\n//\n#import \"TOMVisionNodeBase.h\"\n@interface TOMVisionFoView : TOMVisionNodeBase\n@end"
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+{
+    "summary": "This code is the implementation file for the \"ImvAlgsHungerModel\" class in the \"SMG_NothingIsAll\" project. It is created by jia on February 6, 2018 and is copyrighted by XiaoGang.",
+    "details": [
+        {
+            "comment": "This code is the implementation file for the \"ImvAlgsHungerModel\" class in the \"SMG_NothingIsAll\" project. It is created by jia on February 6, 2018 and is copyrighted by XiaoGang.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/CortexAlgorithms/Imv/ImvAlgsHungerModel.m\":0-12",
+            "content": "//\n//  ImvAlgsHungerModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2018/2/6.\n//  Copyright \u00a9 2018\u5e74 XiaoGang. All rights reserved.\n//\n#import \"ImvAlgsHungerModel.h\"\n@implementation ImvAlgsHungerModel\n@end"
+        }
+    ]
+}

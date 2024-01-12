@@ -1,0 +1,10 @@
+{
+    "summary": "The AIAlgNodeManager.h file contains the interface for creating and managing abstract algorithms within the SMG_NothingIsAll project, with methods for building abstract concepts and empty concepts with non-repeating implementation.",
+    "details": [
+        {
+            "comment": "The AIAlgNodeManager.h file contains the interface for creating and managing abstract algorithms within the SMG_NothingIsAll project, with methods for building abstract concepts and empty concepts with non-repeating implementation.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AINet/AIAlgNodeManager/AIAlgNodeManager.h\":0-24",
+            "content": "//\n//  AIAlgNodeManager.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2018/12/14.\n//  Copyright \u00a9 2018\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@class AIAbsAlgNode;\n@interface AIAlgNodeManager : NSObject\n/**\n *  MARK:--------------------\u6784\u5efa\u62bd\u8c61\u6982\u5ff5_\u9632\u91cd\u7248--------------------\n *  @result notnull\n */\n+(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs at:(NSString*)at ds:(NSString*)ds isOutBlock:(BOOL(^)())isOutBlock type:(AnalogyType)type;\n/**\n *  MARK:--------------------\u6784\u5efa\u7a7a\u6982\u5ff5_\u9632\u91cd (\u53c2\u800329027-\u65b9\u68483)--------------------\n */\n+(AIAlgNodeBase*)createEmptyAlg_NoRepeat:(NSArray*)conAlgs;\n@end"
+        }
+    ]
+}

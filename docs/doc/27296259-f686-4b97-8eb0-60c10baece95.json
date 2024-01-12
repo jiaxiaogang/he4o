@@ -1,0 +1,15 @@
+{
+    "summary": "This code creates an NSObject class extension with a method to get a recursive dictionary representation of an object's properties, allowing for optional parent property inclusion and memory management.",
+    "details": [
+        {
+            "comment": "This code defines an extension for the NSObject class and provides a method to get a dictionary representation of an object, which recursively iterates through its properties. The dictionary contains property names and values, including optional parent properties if specified.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Extension/NSObject+Extension.m\":0-32",
+            "content": "//\n//  NSObject+Extension.m\n//  SMG_NothingIsAll\n//\n//  Created by \u8d3e  on 2017/9/22.\n//  Copyright \u00a9 2017\u5e74 XiaoGang. All rights reserved.\n//\n#import \"NSObject+Extension.h\"\n#import <objc/runtime.h>\n@implementation NSObject (PrintConvertDicOrJson)\n/**\n *  MARK:--------------------\u5f15\u81eaLKDB\u4e2dLKModel--------------------\n */\n+ (NSMutableDictionary*) getDic:(NSObject*)obj containParent:(BOOL)containParent{\n    NSMutableDictionary *mDic = [[NSMutableDictionary alloc] init];\n    if (obj) {\n        [obj getDic:mDic appendPropertyStringWithClass:obj.class containParent:containParent];\n    }\n    return mDic;\n}\n- (void)getDic:(NSMutableDictionary *)outDic appendPropertyStringWithClass:(Class)clazz containParent:(BOOL)containParent {\n    if (clazz == [NSObject class] || outDic == nil) {\n        return;\n    }\n    unsigned int outCount = 0, i = 0;\n    objc_property_t *properties = class_copyPropertyList(clazz, &outCount);\n    for (i = 0; i < outCount; i++) {\n        objc_property_t property = properties[i];\n        NSString *propertyName = [NSString stringWithCString:property_getName(property) encoding:NSUTF8StringEncoding];"
+        },
+        {
+            "comment": "Setting object's value for specified property name in output dictionary and freeing memory allocated for \"properties\". If containParent is true, recursively call method to get parent class properties.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/Extension/NSObject+Extension.m\":33-41",
+            "content": "        [outDic setObject:[self valueForKey:propertyName] forKey:propertyName];\n    }\n    free(properties);\n    if (containParent) {\n        [self getDic:outDic appendPropertyStringWithClass:clazz.superclass containParent:containParent];\n    }\n}\n@end"
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+{
+    "summary": "This code is the header file for HeLogModel class, which implements a log model. It allows adding logs, retrieving data, clearing logs, and getting the number of logs. The XGWedis feature supports different persistent methods including delegate, observer, and block.",
+    "details": [
+        {
+            "comment": "This code is the header file for HeLogModel class, which implements a log model. It allows adding logs, retrieving data, clearing logs, and getting the number of logs. The XGWedis feature supports different persistent methods including delegate, observer, and block.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/XGLog/HeLogModel.h\":0-38",
+            "content": "//\n//  HeLog.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2020/3/12.\n//  Copyright \u00a9 2020\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n#define kTime @\"t\"\n#define kLog @\"l\"\n#define kPath_HeLog @\"helog\"\n#define kFile_HeLog @\"datas\"\n/**\n *  MARK:--------------------XGWedis--------------------\n *  \u8bf4\u660e:\n *  1. XGWedis\u7528\u6765\u505a\u5f02\u6b65\u6301\u4e45\u5316;\n *  2. \u76ee\u524d\u6bcf10s\u6301\u4e45\u5316\u4e00\u6b21;\n *  3. XGWedis\u652f\u6301delegate/observer/block\u4e09\u79cd\u6301\u4e45\u5316\u65b9\u5f0f;\n *\n */\n@interface HeLogModel : NSObject\n/**\n *  MARK:--------------------\u91cd\u52a0\u8f7d--------------------\n */\n-(void) reloadData;\n/**\n *  MARK:--------------------addLog--------------------\n */\n-(NSDictionary*) addLog:(NSString*)log;\n-(NSArray*) getDatas;\n-(void) clear;\n-(NSInteger) count;\n@end"
+        }
+    ]
+}

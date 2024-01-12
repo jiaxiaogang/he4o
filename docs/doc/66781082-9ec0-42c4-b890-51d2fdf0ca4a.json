@@ -1,0 +1,10 @@
+{
+    "summary": "This code file is for a class called AIRank, which focuses on calculating and ranking in areas of concept recognition, time series recognition, and solution finding. The functions within the class provide methods to calculate rankings based on different algorithms for these tasks.",
+    "details": [
+        {
+            "comment": "This code file is for a class called AIRank, which focuses on calculating and ranking in areas of concept recognition, time series recognition, and solution finding. The functions within the class provide methods to calculate rankings based on different algorithms for these tasks.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Util/AIRank.h\":0-31",
+            "content": "//\n//  AIRank.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2022/12/19.\n//  Copyright \u00a9 2022\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n//MARK:===============================================================\n//MARK:                     < \u7efc\u5408\u7ade\u4e89 >\n//MARK:===============================================================\n@interface AIRank : NSObject\n/**\n *  MARK:--------------------\u6982\u5ff5\u8bc6\u522b\u7efc\u5408\u6392\u540d (\u53c2\u80032722d-\u65b9\u68482-todo2)--------------------\n */\n+(NSArray*) recognitionAlgRank:(NSArray*)matchAlgModels;\n/**\n *  MARK:--------------------\u65f6\u5e8f\u8bc6\u522b\u7efc\u5408\u6392\u540d (\u53c2\u80032722d-\u65b9\u68482-todo2 & 2722f-todo14)--------------------\n */\n+(NSArray*) recognitionFoRank:(NSArray*)matchFoModels;\n/**\n *  MARK:--------------------S\u7efc\u5408\u6392\u540d--------------------\n */\n//+(NSArray*) solutionFoRankingV2:(NSArray*)solutionModels needBack:(BOOL)needBack fromSlow:(BOOL)fromSlow;\n+(NSArray*) solutionFoRankingV3:(NSArray*)solutionModels;\n@end"
+        }
+    ]
+}

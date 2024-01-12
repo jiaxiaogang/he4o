@@ -1,0 +1,10 @@
+{
+    "summary": "This code is for a debug tool that analyzes slow code blocks, displaying the percentage of execution time they take up in the overall system. It supports counting read/write DB operations, total time consumption, average time consumption, and showing results in a TableView format.",
+    "details": [
+        {
+            "comment": "This code is for a debug tool that analyzes slow code blocks, displaying the percentage of execution time they take up in the overall system. It supports counting read/write DB operations, total time consumption, average time consumption, and showing results in a TableView format.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/ThirdParty/XGDebug/README.md\":0-5",
+            "content": "#  \u8c03\u8bd5\u6162\u4ee3\u7801\u5757\u5de5\u5177;\n#### \u5355\u4f8b\u6a21\u5f0f: \u7528\u4e8e\u5206\u6790\u6162\u4ee3\u7801\u5757,\u4ee5\u53ca\u6162\u4ee3\u7801\u5728\u6574\u4f53\u4e2d\u6162\u7684\u5360\u6bd4;\n1. \u652f\u6301\u8bfb\u5199DB\u6b21\u6570\u7edf\u8ba1;\n2. \u652f\u6301\u603b\u65f6\u8017,\u5e73\u5747\u65f6\u8017,\u6267\u884c\u6b21\u6570\u7b49;\n3. \u652f\u6301TableView\u5c55\u793a\u7ed3\u679c;"
+        }
+    ]
+}

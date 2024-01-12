@@ -1,0 +1,544 @@
+{
+    "400": {
+        "file_id": 44,
+        "content": "    } at:at ds:DefaultDataSource type:ATDefault];\n    //3. 无则新构建;\n    if (!ISOK(result, AICMVNodeBase.class)) {\n        result = [[AICMVNode alloc] init];\n        result.pointer = [SMGUtils createPointer:kPN_CMV_NODE algsType:at dataSource:DefaultDataSource isOut:false type:ATDefault];\n        result.delta_p = delta_p;\n        result.urgentTo_p = urgentTo_p;\n    }\n    //4. 增强关联;\n    [AINetUtils insertRefPorts_AllMvNode:result value_p:result.delta_p difStrong:1];//引用插线\n    [AINetUtils insertRefPorts_AllMvNode:result value_p:result.urgentTo_p difStrong:1];//引用插线\n    [theNet setMvNodeToDirectionReference:result difStrong:urgentTo];//difStrong暂时先相等;\n    //5. 存储cmvNode\n    [SMGUtils insertNode:result];\n    return result;\n}\n/**\n *  MARK:--------------------构建conFo--------------------\n *  @result notnull\n *  @callers\n *      1. 新帧输入时,构建matchAFo;\n *      2. 新帧输入时,构建protoFo;\n */\n+(AIFrontOrderNode*) createConFo:(NSArray*)order{\n    return [self createConFo:order difStrong:1];\n}\n+(AIFoNodeBase*) createConFo_NoRepeat:(NSArray*)order {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIMvFoManager/AIMvFoManager.m:61-92"
+    },
+    "401": {
+        "file_id": 44,
+        "content": "This code snippet is responsible for creating and managing MV nodes in the AIMvFoManager class. It initializes a new MV node if none exists, strengthens its reference ports, and stores it in SMGUtils. The createConFo function creates a new AIFoNodeBase by either calling createConFo or createConFo_NoRepeat with an array of order parameters.",
+        "type": "comment"
+    },
+    "402": {
+        "file_id": 44,
+        "content": "    return [self createConFo_General:order noRepeatArea_ps:nil];\n}\n/**\n *  MARK:--------------------创建具象cansetFo (支持场景内防重)--------------------\n *  @desc 构建canset时不应全局防重,而是只以场景内防重 (不然这些canset的SPEFF值就窜了,比如在北京吃龙虾不行,在家是可以的) (参考3101b-todo5);\n */\n+(AIFoNodeBase*) createConFoForCanset:(NSArray*)order sceneFo:(AIFoNodeBase*)sceneFo sceneTargetIndex:(NSInteger)sceneTargetIndex {\n    NSArray *oldCansets = [sceneFo getConCansets:sceneTargetIndex];\n    return [self createConFo_General:order noRepeatArea_ps:oldCansets];\n}\n/**\n *  MARK:--------------------通用创建具象fo方法 (支持限定防重范围)--------------------\n *  @param noRepeatArea_ps : 防重范围;\n */\n+(AIFoNodeBase*) createConFo_General:(NSArray*)order noRepeatArea_ps:(NSArray*)noRepeatArea_ps {\n    //1. 防重_取本地全局绝对匹配;\n    NSArray *content_ps = [AINetAbsFoUtils convertOrder2Alg_ps:order];\n    AIFoNodeBase *result = [AINetIndexUtils getAbsoluteMatching_ValidPs:content_ps sort_ps:content_ps except_ps:nil noRepeatArea_ps:noRepeatArea_ps getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIMvFoManager/AIMvFoManager.m:93-112"
+    },
+    "403": {
+        "file_id": 44,
+        "content": "This code creates a generic method to build specific fo objects, supporting limiting the repeat range. It takes an order array as input and optionally specifies a noRepeatArea_ps array for preventing duplicate objects within a specified range. The method converts the order array into an absolute matching format and returns an AIFoNodeBase object after applying the necessary logic to prevent duplicates.",
+        "type": "comment"
+    },
+    "404": {
+        "file_id": 44,
+        "content": "        AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];\n        return [AINetUtils refPorts_All4Alg:itemAlg];\n    } at:DefaultAlgsType ds:DefaultDataSource type:ATDefault];\n    //2. 有则加强关联;\n    if (ISOK(result, AINetAbsFoNode.class)) {\n        [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];\n    }else{\n        //3. 无则新构建;\n        result = [self createConFo:order];\n    }\n    return result;\n}\n+(AIFrontOrderNode*) createConFo:(NSArray*)order difStrong:(NSInteger)difStrong{\n    //1. foNode\n    AIFrontOrderNode *foNode = [[AIFrontOrderNode alloc] init];\n    //2. pointer (最终生成conFo时,全是ATDefault类型);\n    foNode.pointer = [SMGUtils createPointer:kPN_FRONT_ORDER_NODE algsType:DefaultAlgsType dataSource:DefaultDataSource isOut:false type:ATDefault];\n    //3. content_ps\n    NSArray *content_ps = [AINetAbsFoUtils convertOrder2Alg_ps:order];\n    //4. foNode.orders收集\n    [foNode setContent_ps:content_ps];\n    //5. foNode引用conAlg;\n    [AINetUtils insertRefPorts_AllFoNode:foNode.pointer order_ps:foNode.content_ps ps:foNode.content_ps difStrong:difStrong];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIMvFoManager/AIMvFoManager.m:113-141"
+    },
+    "405": {
+        "file_id": 44,
+        "content": "This code creates or strengthens a front order node (AIFrontOrderNode) based on an array of orders (NSArray*). It first checks if there is an existing related AIFrontOrderNode and either reinforces the connection if it exists or creates a new one. The function also sets the pointer to be of type ATDefault, collects the content_ps from the order array, and inserts references to the corresponding algorithm nodes using AINetUtils.",
+        "type": "comment"
+    },
+    "406": {
+        "file_id": 44,
+        "content": "    //6. 提取findAbsNode的deltaTimes;\n    foNode.deltaTimes = [AINetAbsFoUtils convertOrder2DeltaTimes:order];\n    //7. 存储foNode\n    [SMGUtils insertNode:foNode];\n    [AITest test8:foNode.content_ps type:ATDefault];\n    return foNode;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AIMvFoManager/AIMvFoManager.m:143-152"
+    },
+    "407": {
+        "file_id": 44,
+        "content": "In this code block, the function finds the absolute node based on the order and returns it. It then extracts the deltaTimes from the found Absolute Node using AINetAbsFoUtils. The foNode is stored with SMGUtils, and AITest tests the content_ps of the foNode with ATDefault type. Finally, the function returns the foNode.",
+        "type": "comment"
+    },
+    "408": {
+        "file_id": 45,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AINet.h",
+        "type": "filepath"
+    },
+    "409": {
+        "file_id": 45,
+        "content": "AINet is a network operations class providing indexing, model conversion, and data packaging. It references sequences, creates nodes, defines objects with specific parameters, and uses AIAlgNode for unique concept node creation while preventing duplicates.",
+        "type": "summary"
+    },
+    "410": {
+        "file_id": 45,
+        "content": "//\n//  AINet.h\n//  SMG_NothingIsAll\n//\n//  Created by 贾  on 2017/9/17.\n//  Copyright © 2017年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------AINet面板--------------------\n *  @desc 整理各种网络操作的总入口,供系统别处调用;\n *  @关联强度\n *      1. 方向索引: setMvNodeToDirectionReference:difStrong:\n */\n@class AIImvAlgsModel,AIPointer,AIKVPointer,AIPort,AIFrontOrderNode,AINetAbsFoNode,AIAbsCMVNode,AIAlgNode,AIAbsAlgNode,AIAlgNodeBase,AICMVNode;\n@interface AINet : NSObject\n+(AINet*) sharedInstance;\n//MARK:===============================================================\n//MARK:                     < index >\n//MARK:===============================================================\n/**\n *  MARK:--------------------算法模型的装箱--------------------\n *  转为指针数组(每个值都是指针)(在dataIn后第一件事就是装箱)\n *  @result notnull\n */\n-(NSMutableArray*) algModelConvert2Pointers:(NSDictionary*)modelDic algsType:(NSString*)algsType;\n-(AIKVPointer*) getNetDataPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut;//单data装箱",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINet.h:1-32"
+    },
+    "411": {
+        "file_id": 45,
+        "content": "AINet is a class that provides network operations and serves as an entry point for other parts of the system to call. It organizes various network functions and allows for indexing, converting algorithm models to pointer arrays, and handling data packaging.",
+        "type": "comment"
+    },
+    "412": {
+        "file_id": 45,
+        "content": "//MARK:===============================================================\n//MARK:                     < reference >\n//MARK:===============================================================\n/**\n *  MARK:--------------------引用序列--------------------\n *  @param indexPointer : value地址\n *  @param target_p : 引用者地址(如:xxNode.pointer)\n *\n *  注:\n *  1. 暂不支持output;\n *  2. 由AINetUtils.insertRefPorts_AllMvNode()取代\n */\n//-(void) setNetReference:(AIKVPointer*)value_p target_p:(AIKVPointer*)target_p difValue:(int)difValue;\n//获取算法单结果的第二序列联想;\n//-(NSArray*) getNetReference:(AIKVPointer*)pointer limit:(NSInteger)limit;\n//MARK:===============================================================\n//MARK:                     < cmv >\n//MARK:===============================================================\n-(AIFrontOrderNode*) createCMVFo:(NSTimeInterval)inputTime order:(NSArray*)order mv:(AICMVNodeBase*)mv;\n-(AICMVNodeBase*) createConMv:(NSArray*)imvAlgsArr;\n-(AICMVNodeBase*) createConMv:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p at:(NSString*)at;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINet.h:35-59"
+    },
+    "413": {
+        "file_id": 45,
+        "content": "This code contains methods related to referencing sequences, creating CMV (Common Motion Vector) nodes, and creating CON (Connection) motion vector nodes. The `setNetReference` method is deprecated, while `getNetReference` retrieves the second sequence association for an algorithm's results. The `createCMVFo` and `createConMv` methods create CMV and CON nodes respectively.",
+        "type": "comment"
+    },
+    "414": {
+        "file_id": 45,
+        "content": "//MARK:===============================================================\n//MARK:                     < conFo >\n//MARK:===============================================================\n-(AIFrontOrderNode*) createConFo:(NSArray*)order;\n-(AIFoNodeBase*) createConFo_NoRepeat:(NSArray*)order;\n-(AIFoNodeBase*) createConFoForCanset:(NSArray*)order sceneFo:(AIFoNodeBase*)sceneFo sceneTargetIndex:(NSInteger)sceneTargetIndex;\n//MARK:===============================================================\n//MARK:                     < absFo >\n//MARK:===============================================================\n//-(AINetAbsFoNode*) createAbsFo_General:(NSArray*)conFos content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong ds:(NSString*)ds;\n-(AINetAbsFoNode*) createAbsFo_NoRepeat:(NSArray*)content_ps protoFo:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo difStrong:(NSInteger)difStrong type:(AnalogyType)type protoIndexDic:(NSDictionary*)protoIndexDic assIndexDic:(NSDictionary*)assIndexDic outConAbsIsRelate:(BOOL*)outConAbsIsRelate noRepeatArea_ps:(NSArray*)noRepeatArea_ps;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINet.h:62-74"
+    },
+    "415": {
+        "file_id": 45,
+        "content": "This code defines methods for creating AIFoNodeBase and AIFrontOrderNode objects, as well as an AIFrontOrderNode object with specific parameters. It also includes a method to create AIAbsFoNode object with additional parameters. Some methods are marked for not repeating certain elements or areas.",
+        "type": "comment"
+    },
+    "416": {
+        "file_id": 45,
+        "content": "//MARK:===============================================================\n//MARK:                     < directionReference >\n//MARK:===============================================================\n-(NSArray*) getNetNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction limit:(int)limit;\n-(NSArray*) getNetNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction filter:(NSArray*(^)(NSArray *protoArr))filter;\n/**\n *  MARK:--------------------mvNode的方向索引--------------------\n *  @param difStrong    : mv的迫切度越高,越强;\n *  @param cmvNode      : cmvNode有可能还在create阶段,未存硬盘,所以不能传指针进来;\n *  @desc 加强关联强度;\n */\n-(void) setMvNodeToDirectionReference:(AICMVNodeBase*)cmvNode difStrong:(NSInteger)difStrong;\n//MARK:===============================================================\n//MARK:                     < AINetOutputIndex >\n//MARK:===============================================================\n//小脑索引\n-(AIKVPointer*) getOutputIndex:(NSString*)algsType outputObj:(NSNumber*)outputObj;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINet.h:76-96"
+    },
+    "417": {
+        "file_id": 45,
+        "content": "This code defines methods for working with direction references and AINetOutputIndex. The getNetNodePointers method retrieves node pointers from a direction reference, while the setMvNodeToDirectionReference method sets a mvNode's direction reference strength. The getOutputIndex method retrieves an output index for an AIKVPointer.",
+        "type": "comment"
+    },
+    "418": {
+        "file_id": 45,
+        "content": "//MARK:===============================================================\n//MARK:                     < absCmv >\n//MARK:===============================================================\n-(AIAbsCMVNode*) createAbsCMVNode_Outside:(AIKVPointer*)absFo_p aMv_p:(AIKVPointer*)aMv_p bMv_p:(AIKVPointer*)bMv_p;\n//MARK:===============================================================\n//MARK:                     < algNode >\n//MARK:===============================================================\n/**\n *  MARK:--------------------构建抽象概念_防重--------------------\n *  @desc 要做到全局防重,所以废弃具象AIAlgNode,只使用AIAbsAlgNode;\n */\n-(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs;\n-(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs at:(NSString*)at type:(AnalogyType)type;\n-(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type;\n-(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isOut:(BOOL)isOut at:(NSString*)at type:(AnalogyType)type;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINet.h:99-116"
+    },
+    "419": {
+        "file_id": 45,
+        "content": "This code defines functions for creating abstract concept nodes and implementing global prevention of duplicate algorithms using AIAbsAlgNode instead of AIAlgNode. The functions take in parameters such as input values, constraint algorithms, and other necessary data to create the desired node with unique algorithms.",
+        "type": "comment"
+    },
+    "420": {
+        "file_id": 45,
+        "content": "-(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isOut:(BOOL)isOut at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type;\n/**\n *  MARK:--------------------构建空概念_防重 (参考29031-todo1)--------------------\n */\n-(AIAlgNodeBase*)createEmptyAlg_NoRepeat:(NSArray*)conAlgs;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINet.h:117-124"
+    },
+    "421": {
+        "file_id": 45,
+        "content": "Creates an AI algorithm node for building empty concepts, preventing duplicate creation.",
+        "type": "comment"
+    },
+    "422": {
+        "file_id": 46,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AINet.m",
+        "type": "filepath"
+    },
+    "423": {
+        "file_id": 46,
+        "content": "AINet.m is a singleton class in SMG_NothingIsAll codebase, utilizing dictionaries for model data conversion and defining methods related to nodes, network data pointers, output indexes, and algorithms management, while avoiding algorithm repetition using parameters. The 'createEmptyAlg_NoRepeat' method creates an empty algorithm node that does not repeat any of the provided connected algorithms in class 'AIAlgNodeManager'.",
+        "type": "summary"
+    },
+    "424": {
+        "file_id": 46,
+        "content": "//\n//  AINet.m\n//  SMG_NothingIsAll\n//\n//  Created by 贾  on 2017/9/17.\n//  Copyright © 2017年 XiaoGang. All rights reserved.\n//\n#import \"AINet.h\"\n#import \"AIPointer.h\"\n#import \"AINetIndex.h\"\n#import \"AIMvFoManager.h\"\n#import \"AIPort.h\"\n#import \"AIAbsFoManager.h\"\n#import \"AINetDirectionReference.h\"\n#import \"AIAbsCMVManager.h\"\n#import \"AIAbsCMVNode.h\"\n#import \"AIKVPointer.h\"\n#import \"AIFrontOrderNode.h\"\n#import \"AINetUtils.h\"\n#import \"AIAlgNodeManager.h\"\n#import \"Output.h\"\n#import \"AIAlgNode.h\"\n#import \"NSString+Extension.h\"\n#import \"AIAbsAlgNode.h\"\n#import \"ThinkingUtils.h\"\n@interface AINet ()\n//@property (strong, nonatomic) AINetIndex *netIndex; //索引区(皮层/海马)\n@property (strong, nonatomic) AIMvFoManager *mvFoManager;     //网络树根(杏仁核)\n@property (strong, nonatomic) AIAbsFoManager *absFoManager; //抽象时序管理器\n@property (strong, nonatomic) AINetDirectionReference *netDirectionReference;\n@property (strong, nonatomic) AIAbsCMVManager *absCmvManager;//抽象mv管理器;\n@end\n@implementation AINet\nstatic AINet *_instance;\n+(AINet*) sharedInstance{",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINet.m:1-42"
+    },
+    "425": {
+        "file_id": 46,
+        "content": "AINet.m is a file in the SMG_NothingIsAll codebase, containing an interface and implementation for the AINet class. The class has properties including a net index, mvFoManager, absFoManager, netDirectionReference, and absCmvManager. It also has a sharedInstance method.",
+        "type": "comment"
+    },
+    "426": {
+        "file_id": 46,
+        "content": "    if (_instance == nil) {\n        _instance = [[AINet alloc] init];\n    }\n    return _instance;\n}\n-(id) init{\n    self = [super init];\n    if (self) {\n        [self initData];\n    }\n    return self;\n}\n-(void) initData{\n    //self.netIndex = [[AINetIndex alloc] init];\n    self.mvFoManager = [[AIMvFoManager alloc] init];\n    self.absFoManager = [[AIAbsFoManager alloc] init];\n    self.netDirectionReference = [[AINetDirectionReference alloc] init];\n    self.absCmvManager = [[AIAbsCMVManager alloc] init];\n}\n//MARK:===============================================================\n//MARK:                     < index >\n//MARK:===============================================================\n-(NSMutableArray*) algModelConvert2Pointers:(NSDictionary*)modelDic algsType:(NSString*)algsType{\n    //1. 数据准备\n    NSMutableArray *algsArr = [[NSMutableArray alloc] init];\n    modelDic = DICTOOK(modelDic);\n    //2. 循环装箱\n    for (NSString *dataSource in modelDic.allKeys) {\n        //3. 存储索引 & data;\n        NSNumber *data = NUMTOOK([modelDic objectForKey:dataSource]);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINet.m:43-79"
+    },
+    "427": {
+        "file_id": 46,
+        "content": "This code implements a singleton design pattern and initializes various managers and references. It also provides a method to convert model data into pointers using dictionary manipulation. The function prepares data, loops through the dictionary keys, stores indices and data, and converts them into pointers.",
+        "type": "comment"
+    },
+    "428": {
+        "file_id": 46,
+        "content": "        AIPointer *pointer = [AINetIndex getDataPointerWithData:data algsType:algsType dataSource:dataSource isOut:false];\n        if (pointer) {\n            [algsArr addObject:pointer];\n        }\n    }\n    return algsArr;\n}\n//单data装箱\n-(AIKVPointer*) getNetDataPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut{\n    return [AINetIndex getDataPointerWithData:data algsType:algsType dataSource:dataSource isOut:isOut];\n}\n//小脑索引\n-(AIKVPointer*) getOutputIndex:(NSString*)algsType outputObj:(NSNumber*)outputObj {\n    if (outputObj) {\n        return [AINetIndex getDataPointerWithData:outputObj algsType:algsType dataSource:DefaultDataSource isOut:true];\n    }\n    return nil;\n}\n//MARK:===============================================================\n//MARK:                     < cmv >\n//MARK:===============================================================\n-(AIFrontOrderNode*) createCMVFo:(NSTimeInterval)inputTime order:(NSArray*)order mv:(AICMVNodeBase*)mv{\n    return [self.mvFoManager create:inputTime order:order mv:mv];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINet.m:80-106"
+    },
+    "429": {
+        "file_id": 46,
+        "content": "Method returns an array of AIPointer objects based on the input data, algorithms type, and data source. It also provides a method to get a single data pointer and creates a CMV front order node. The code contains methods for getting network data pointers, output indexes, and creating CMV front order nodes.",
+        "type": "comment"
+    },
+    "430": {
+        "file_id": 46,
+        "content": "}\n-(AICMVNodeBase*) createConMv:(NSArray*)imvAlgsArr{\n    return [self.mvFoManager createConMv:imvAlgsArr];\n}\n-(AICMVNodeBase*) createConMv:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p at:(NSString*)at {\n    return [self.mvFoManager createConMv:urgentTo_p delta_p:delta_p at:at];\n}\n//MARK:===============================================================\n//MARK:                     < conFo >\n//MARK:===============================================================\n/**\n *  MARK:--------------------构建conFo--------------------\n *  @result notnull\n */\n-(AIFrontOrderNode*) createConFo:(NSArray*)order{\n    return [AIMvFoManager createConFo:order];\n}\n-(AIFoNodeBase*) createConFo_NoRepeat:(NSArray*)order{\n    return [AIMvFoManager createConFo_NoRepeat:order];\n}\n-(AIFoNodeBase*) createConFoForCanset:(NSArray*)order sceneFo:(AIFoNodeBase*)sceneFo sceneTargetIndex:(NSInteger)sceneTargetIndex {\n    return [AIMvFoManager createConFoForCanset:order sceneFo:sceneFo sceneTargetIndex:sceneTargetIndex];\n}\n//MARK:===============================================================",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINet.m:107-136"
+    },
+    "431": {
+        "file_id": 46,
+        "content": "This code appears to define methods for creating various types of nodes, specifically CMV (conMv) and Fo (FrontOrder and FoBase) nodes. The createConFo method creates a FrontOrder node from an order array, while createConFo_NoRepeat creates one without repeating any nodes and createConFoForCanset creates one for a canSet with optional sceneFo and targetIndex parameters. The code uses the mvFoManager object to perform these creations.",
+        "type": "comment"
+    },
+    "432": {
+        "file_id": 46,
+        "content": "//MARK:                     < absFo >\n//MARK:===============================================================\n//-(AINetAbsFoNode*) createAbsFo_General:(NSArray*)conFos content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong ds:(NSString*)ds{\n//    return [self.absFoManager create:conFos orderSames:content_ps difStrong:difStrong dsBlock:^NSString *{\n//        return ds;\n//    }];\n//}\n-(AINetAbsFoNode*) createAbsFo_NoRepeat:(NSArray*)content_ps protoFo:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo difStrong:(NSInteger)difStrong type:(AnalogyType)type protoIndexDic:(NSDictionary*)protoIndexDic assIndexDic:(NSDictionary*)assIndexDic outConAbsIsRelate:(BOOL*)outConAbsIsRelate noRepeatArea_ps:(NSArray*)noRepeatArea_ps{\n    return [self.absFoManager create_NoRepeat:content_ps protoFo:protoFo assFo:assFo difStrong:difStrong type:type protoIndexDic:protoIndexDic assIndexDic:assIndexDic outConAbsIsRelate:outConAbsIsRelate noRepeatArea_ps:noRepeatArea_ps];\n}\n//MARK:===============================================================",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINet.m:137-148"
+    },
+    "433": {
+        "file_id": 46,
+        "content": "This code defines a method `createAbsFo_NoRepeat` that creates an AINetAbsFoNode without repeating any content. It takes in several parameters including content_ps, protoFo, assFo, difStrong, type, protoIndexDic, assIndexDic, outConAbsIsRelate, and noRepeatArea_ps. The method calls `[self.absFoManager create_NoRepeat:content_ps protoFo:protoFo assFo:assFo difStrong:difStrong type:type protoIndexDic:protoIndexDic assIndexDic:assIndexDic outConAbsIsRelate:outConAbsIsRelate noRepeatArea_ps:noRepeatArea_ps]` to create the AINetAbsFoNode without repeating any content.",
+        "type": "comment"
+    },
+    "434": {
+        "file_id": 46,
+        "content": "//MARK:                     < directionReference >\n//MARK:===============================================================\n-(NSArray*) getNetNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction limit:(int)limit {\n    return [self.netDirectionReference getNodePointersFromDirectionReference:mvAlgsType direction:direction limit:limit];\n}\n-(NSArray*) getNetNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction filter:(NSArray*(^)(NSArray *protoArr))filter{\n    return [self.netDirectionReference getNodePointersFromDirectionReference:mvAlgsType direction:direction filter:filter];\n}\n-(void) setMvNodeToDirectionReference:(AICMVNodeBase*)cmvNode difStrong:(NSInteger)difStrong {\n    //1. 数据检查\n    if (cmvNode) {\n        //2. 取方向(delta的正负)\n        NSInteger delta = [NUMTOOK([AINetIndex getData:cmvNode.delta_p]) integerValue];\n        MVDirection direction = [ThinkingUtils getMvReferenceDirection:delta];\n        //3. 取mv方向索引;\n        AIKVPoint",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINet.m:149-169"
+    },
+    "435": {
+        "file_id": 46,
+        "content": "This code defines three methods for working with direction references in a network. One method retrieves net node pointers based on a given direction reference and limit, another allows filtering of the returned array using a block parameter, and the third sets an MV node's direction reference based on its delta and returns the corresponding MV direction index.",
+        "type": "comment"
+    },
+    "436": {
+        "file_id": 46,
+        "content": "er *mvReference_p = [SMGUtils createPointerForDirection:cmvNode.pointer.algsType direction:direction];\n        //4. 将mvNode地址,插入到强度序列,并存储;\n        [AINetUtils insertRefPorts_AllMvNode:cmvNode value_p:mvReference_p difStrong:difStrong];\n    }\n}\n//MARK:===============================================================\n//MARK:                     < absCmv >\n//MARK:===============================================================\n-(AIAbsCMVNode*) createAbsCMVNode_Outside:(AIKVPointer*)absFo_p aMv_p:(AIKVPointer*)aMv_p bMv_p:(AIKVPointer*)bMv_p{\n    return [self.absCmvManager create:absFo_p aMv_p:aMv_p bMv_p:bMv_p];\n}\n//MARK:===============================================================\n//MARK:                     < algNode >\n//MARK:===============================================================\n/**\n *  MARK:--------------------构建抽象概念_防重--------------------\n */\n-(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs {\n    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs at:nil ds:nil isOutBlock:nil type:ATDefault];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINet.m:169-193"
+    },
+    "437": {
+        "file_id": 46,
+        "content": "This code is part of the AINet module in a larger codebase. It involves creating pointers for directions, inserting reference ports for mvNode, and working with AIKVPointer and AIAlgNodeManager classes. The code also includes functions for creating AbsCMVNode, AbsAlgNode, and managing abstract concepts to prevent duplication.",
+        "type": "comment"
+    },
+    "438": {
+        "file_id": 46,
+        "content": "}\n-(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs at:(NSString*)at type:(AnalogyType)type{\n    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs at:at ds:nil isOutBlock:nil type:type];\n}\n-(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type{\n    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs at:at ds:ds isOutBlock:nil type:type];\n}\n-(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isOut:(BOOL)isOut at:(NSString*)at type:(AnalogyType)type{\n    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs at:at ds:nil isOutBlock:^BOOL{\n        return isOut;\n    } type:type];\n}\n-(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs isOut:(BOOL)isOut at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type{\n    return [AIAlgNodeManager createAbsAlg_NoRepeat:value_ps conAlgs:conAlgs at:at ds:ds isOutBlock:^BOOL{",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINet.m:194-207"
+    },
+    "439": {
+        "file_id": 46,
+        "content": "This code defines various methods for creating an AIAbsAlgNode without repeating the same algorithm. The parameters include input values, related algorithms, specific position, optional data, and a flag for determining if it should be excluded from generation. These methods delegate the actual creation to AIAlgNodeManager.",
+        "type": "comment"
+    },
+    "440": {
+        "file_id": 46,
+        "content": "        return isOut;\n    } type:type];\n}\n/**\n *  MARK:--------------------构建空概念_防重 (参考29031-todo1)--------------------\n */\n-(AIAlgNodeBase*)createEmptyAlg_NoRepeat:(NSArray*)conAlgs {\n    return [AIAlgNodeManager createEmptyAlg_NoRepeat:conAlgs];\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINet.m:208-219"
+    },
+    "441": {
+        "file_id": 46,
+        "content": "Method 'createEmptyAlg_NoRepeat' in class 'AIAlgNodeManager' creates an empty algorithm node that does not repeat any of the provided connected algorithms.",
+        "type": "comment"
+    },
+    "442": {
+        "file_id": 47,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetDirectionReference.h",
+        "type": "filepath"
+    },
+    "443": {
+        "file_id": 47,
+        "content": "AINetDirectionReference class defines methods for finding node addresses in a given mvAlgsType and direction, and retrieving port based on filter.",
+        "type": "summary"
+    },
+    "444": {
+        "file_id": 47,
+        "content": "//\n//  AINetDirectionReference.h\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/7/11.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------CMV方向索引--------------------\n *  1. 用于mvNode的唯一抽象;(+或-的\n *  2. 每种类型的mindValue仅有一个+,一个-;所以无需引用序列;\n *  3. 每种类型的mindValue仅有一个+和-值,所以无需索引序列;\n *  4. 在本类中,分别存储每个mv类型的正负两个序列,将所有类型的mv的+和-的节点地址,以有序的方式依次存入;(strong从小到大)\n *  5. mv的索引序列与引用序列都在本类中;因为direction没有值,只有方向;\n *  6. 每个mv区的引用序列,以(按引用数排序)(如吃饭,比吃苹果引用数高很多)\n */\n@interface AINetDirectionReference : NSObject\n/**\n *  MARK:--------------------查找direction引用的节点的node_p地址--------------------\n *  @param limit : 最多少个\n *  @param mvAlgsType : 分区标识(mv类型)\n *  @param direction : mv变化方向\n */\n-(NSArray*) getNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction limit:(NSInteger)limit;\n/**\n *  MARK:--------------------根据筛选器,将方向mv的port返回--------------------\n *  @param filter : 指定筛选器\n *  @param mvAlgsType : 分区标识(mv类型)\n *  @param direction : mv变化方向\n */\n-",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetDirectionReference.h:1-38"
+    },
+    "445": {
+        "file_id": 47,
+        "content": "This code defines a class called AINetDirectionReference, which provides methods for finding the node addresses of directions in a specific mvAlgsType and direction. The class also has a method to retrieve port based on a filter, mvAlgsType, and direction.",
+        "type": "comment"
+    },
+    "446": {
+        "file_id": 47,
+        "content": "(NSArray*) getNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction filter:(NSArray*(^)(NSArray *protoArr))filter;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetDirectionReference.h:38-41"
+    },
+    "447": {
+        "file_id": 47,
+        "content": "Method to retrieve node pointers from a direction reference, using an optional filter function.",
+        "type": "comment"
+    },
+    "448": {
+        "file_id": 48,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetDirectionReference.m",
+        "type": "filepath"
+    },
+    "449": {
+        "file_id": 48,
+        "content": "The `AINetDirectionReference` class contains methods to retrieve node pointers from a direction reference file and filter an input array.",
+        "type": "summary"
+    },
+    "450": {
+        "file_id": 48,
+        "content": "//\n//  AINetDirectionReference.m\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/7/11.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"AINetDirectionReference.h\"\n#import \"PINCache.h\"\n@implementation AINetDirectionReference\n//MARK:===============================================================\n//MARK:                     < publicMethod >\n//MARK:===============================================================\n-(NSArray*) getNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction limit:(NSInteger)limit {\n    return [self getNodePointersFromDirectionReference:mvAlgsType direction:direction filter:^NSArray *(NSArray *protoArr) {\n        return ARR_SUB(protoArr, 0, limit);\n    }];\n}\n-(NSArray*) getNodePointersFromDirectionReference:(NSString*)mvAlgsType direction:(MVDirection)direction filter:(NSArray*(^)(NSArray *protoArr))filter{\n    //1. 取mv分区的引用序列文件;\n    AIKVPointer *mvReference_p = [SMGUtils createPointerForDirection:mvAlgsType direction:direction];\n    ",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetDirectionReference.m:1-27"
+    },
+    "451": {
+        "file_id": 48,
+        "content": "This code defines the `AINetDirectionReference` class and implements two methods: `getNodePointersFromDirectionReference` that retrieves node pointers from a direction reference file, and another method that takes an additional filter block as input. The first method creates a pointer for the given direction and mv type and returns an array of node pointers.",
+        "type": "comment"
+    },
+    "452": {
+        "file_id": 48,
+        "content": "NSMutableArray *mArr = [[NSMutableArray alloc] initWithArray:[SMGUtils searchObjectForPointer:mvReference_p fileName:kFNRefPorts time:cRTMvRef]];\n    //2. 筛选器 (无筛选器时,返回所有);\n    if (filter) {\n        return filter(mArr);\n    }\n    return mArr;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetDirectionReference.m:27-37"
+    },
+    "453": {
+        "file_id": 48,
+        "content": "This method takes an input array and applies a filter if one is provided, returning the filtered or original array accordingly.",
+        "type": "comment"
+    },
+    "454": {
+        "file_id": 49,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetIndex.h",
+        "type": "filepath"
+    },
+    "455": {
+        "file_id": 49,
+        "content": "The code defines the AINetIndex class for data indexing and retrieval, with methods to get indices and retrieve values using keys. It also introduces the AINetIndexModel class with properties like pointerIds and algsType, and defines three properties: min, max, loop, and the method span without implementation.",
+        "type": "summary"
+    },
+    "456": {
+        "file_id": 49,
+        "content": "//\n//  AINetIndex.h\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/4/20.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------微信息索引--------------------\n *  1. Input索引 (海马)\n *      >\n *      >\n *\n *  2. Output索引 (小脑)\n *      > 装箱 (用于将outLog信息进行装索引)\n *          AIKVPointer *output_p = [theNet getOutputIndex:algsType dataSource:dataSource outputObj:outputObj];\n *\n *      > 记录可输出reference (用于将指针,索引到引用序列)\n *          [theNet setNetNodePointerToOutputReference:output_p algsType:algsType dataSource:dataSource difStrong:1];\n */\n@class AIPointer,AIKVPointer,AIValueInfo;\n@interface AINetIndex : NSObject\n/**\n *  MARK:--------------------根据data直接查找value_p--------------------\n *  1. 如果未找到,则创建一个,并返回;\n */\n+(AIKVPointer*) getDataPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut;\n/**\n *  MARK:--------------------取微信息值--------------------\n */\n+(NSNumber*) getData:(AIKVPointer*)value_p;\n+(NSNumber*) getData:(AIKVPointer*)value_p fromDataDic:(NSDictionary*)dataDic;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetIndex.h:1-40"
+    },
+    "457": {
+        "file_id": 49,
+        "content": "This code defines a class AINetIndex, which is responsible for handling data indexing and retrieval in the SMG_NothingIsAll project. It includes methods to get input and output indices, as well as to directly retrieve values using keys.",
+        "type": "comment"
+    },
+    "458": {
+        "file_id": 49,
+        "content": "/**\n *  MARK:--------------------获取索引序列--------------------\n */\n+(NSArray*) getIndex_ps:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut;\n/**\n *  MARK:--------------------获取某标识索引序列的值域--------------------\n */\n+(double) getIndexSpan:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut;\n/**\n *  MARK:--------------------获取值的信息--------------------\n *  @result notnull;\n */\n+(AIValueInfo*) getValueInfo:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut;\n@end\n/**\n *  MARK:--------------------内存DataSortModel (一组index)--------------------\n *  1. 排序是根据\"值\"大小排;\n *  2. pointerIds里存的是\"值的指针\"的pointerId;\n */\n@interface AINetIndexModel : NSObject <NSCoding>\n@property (strong,nonatomic) NSMutableArray *pointerIds;\n@property (strong,nonatomic) NSString *algsType;\n@property (strong,nonatomic) NSString *dataSource;\n@end\n//MARK:===============================================================\n//MARK:                     < 码域信息 >\n//MARK:===============================================================\n@interface AIValueInfo : NSObject\n+(AIValueInfo*) newWithMin:(double)min max:(double)max loop:(BOOL)loop;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetIndex.h:42-80"
+    },
+    "459": {
+        "file_id": 49,
+        "content": "This code defines methods for getting index sequences, retrieving the value domain of a certain identifier, and obtaining information about a value. It also introduces an AINetIndexModel class with properties like pointerIds, algsType, and dataSource. The AIValueInfo class is used to store minimum, maximum values, and loop information.",
+        "type": "comment"
+    },
+    "460": {
+        "file_id": 49,
+        "content": "@property (assign, nonatomic) double min; //最大值\n@property (assign, nonatomic) double max; //最小值\n@property (assign, nonatomic) BOOL loop; //是否循环码\n-(double) span;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetIndex.h:82-87"
+    },
+    "461": {
+        "file_id": 49,
+        "content": "These lines define three properties: min, max, and loop. Min represents the minimum value, while max denotes the maximum value. Loop is a Boolean variable that indicates whether the code should loop or not. The method span is also defined but without its implementation.",
+        "type": "comment"
+    },
+    "462": {
+        "file_id": 50,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetIndex.m",
+        "type": "filepath"
+    },
+    "463": {
+        "file_id": 50,
+        "content": "The code uses binary search for retrieving index sequences and converts them into sparse code pointers, supports V indices restrictions, and efficient memory management. It extracts value info and utilizes serialization in classes conforming to NSCoding protocol.",
+        "type": "summary"
+    },
+    "464": {
+        "file_id": 50,
+        "content": "//\n//  AINetIndex.m\n//  SMG_NothingIsAll\n//\n//  Created by iMac on 2018/4/20.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"AINetIndex.h\"\n#import \"PINCache.h\"\n#import \"XGRedisUtil.h\"\n@implementation AINetIndex\n//MARK:===============================================================\n//MARK:                     < method >\n//MARK:===============================================================\n+(AIKVPointer*) getDataPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut{\n    //1. 数据准备\n    if (!ISOK(data, NSNumber.class)) {\n        return nil;\n    }\n    //2. 取索引序列 和 稀疏码值字典;\n    AINetIndexModel *model = [AINetIndexUtils searchIndexModel:algsType ds:dataSource isOut:isOut];\n    NSMutableDictionary *dataDic = [[NSMutableDictionary alloc] initWithDictionary:[AINetIndexUtils searchDataDic:algsType ds:dataSource isOut:isOut]];\n    //3. 使用二分法查找data\n    __block AIKVPointer *resultPointer;\n    [XGRedisUtil searchIndexWithCompare:^NSComparisonResult(NSInteger checkIndex) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetIndex.m:1-30"
+    },
+    "465": {
+        "file_id": 50,
+        "content": "This method retrieves the data pointer for a specific data using a binary search. It first prepares the data and then searches for it using XGRedisUtil with a compare function to determine the result index. If found, returns the corresponding AIKVPointer, otherwise nil.",
+        "type": "comment"
+    },
+    "466": {
+        "file_id": 50,
+        "content": "        NSNumber *checkPointerIdNumber = ARR_INDEX(model.pointerIds, checkIndex);\n        long checkPointerId = [NUMTOOK(checkPointerIdNumber) longValue];\n        AIKVPointer *checkValue_p = [SMGUtils createPointerForValue:checkPointerId algsType:algsType dataSource:dataSource isOut:isOut];\n        NSString *key = STRFORMAT(@\"%ld\",(long)checkValue_p.pointerId);\n        NSNumber *checkValue = [dataDic objectForKey:key];\n        NSComparisonResult compareResult = [NUMTOOK(checkValue) compare:data];\n        return compareResult;\n    } startIndex:0 endIndex:model.pointerIds.count - 1 success:^(NSInteger index) {\n        NSNumber *pointerIdNum = ARR_INDEX(model.pointerIds, index);\n        long pointerId = [NUMTOOK(pointerIdNum) longValue];\n        AIKVPointer *value_p = [SMGUtils createPointerForValue:pointerId algsType:algsType dataSource:dataSource isOut:isOut];\n        resultPointer = value_p;\n    } failure:^(NSInteger index) {\n        //4. 未找到;创建一个;\n        AIKVPointer *value_p = [SMGUtils createPointerForValue:algsType dataSource:dataSource isOut:isOut];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetIndex.m:31-45"
+    },
+    "467": {
+        "file_id": 50,
+        "content": "Creates a pointer for the given data source, type, and index. Checks if the pointer id matches the data value, returns comparison result. If not found, creates a new pointer with default values.",
+        "type": "comment"
+    },
+    "468": {
+        "file_id": 50,
+        "content": "        NSString *key = STRFORMAT(@\"%ld\",(long)value_p.pointerId);\n        [dataDic setObject:data forKey:key];\n        resultPointer = value_p;\n        if (model.pointerIds.count <= index) {\n            [model.pointerIds addObject:@(value_p.pointerId)];\n        }else{\n            [model.pointerIds insertObject:@(value_p.pointerId) atIndex:index];\n        }\n        //5. 存\n        [AINetIndexUtils insertIndexModel:model isOut:isOut];\n        [AINetIndexUtils insertDataDic:dataDic at:algsType ds:dataSource isOut:isOut];\n    }];\n    return resultPointer;\n}\n/**\n *  MARK:--------------------获取稀疏码值--------------------\n *  _param fromDataDic 为性能好,可提前缓存好dataDic,传入进来便于复用;\n */\n+(NSNumber*) getData:(AIKVPointer*)value_p{\n    return [self getData:value_p fromDataDic:nil];\n}\n+(NSNumber*) getData:(AIKVPointer*)value_p fromDataDic:(NSDictionary*)dataDic {\n    if (!DICISOK(dataDic)) dataDic = [AINetIndexUtils searchDataDic:value_p.algsType ds:value_p.dataSource isOut:value_p.isOut];\n    return [dataDic objectForKey:STRFORMAT(@\"%ld\",(long)value_p.pointerId)];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetIndex.m:46-73"
+    },
+    "469": {
+        "file_id": 50,
+        "content": "The code adds and retrieves data from a dictionary with pointer IDs, using the `AINetIndexUtils` class for index operations. The `getData:` method retrieves a value from the dictionary based on the given pointer, while the main block of code adds data to the dictionary along with updating the pointer ID array in the `model` object and storing the changes using `AINetIndexUtils`.",
+        "type": "comment"
+    },
+    "470": {
+        "file_id": 50,
+        "content": "}\n/**\n *  MARK:--------------------获取索引序列--------------------\n *  @desc 将索引序列转为稀疏码指针数组返回;\n *  @version\n *      2022.05.20: 支持宽入窄出,仅返回前NarrowLimit条 (参考26073-TODO1);\n *      2022.05.21: V索引不能太窄,改成1000 (参考26075);\n *  @result notnull\n */\n+(NSArray*) getIndex_ps:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut{\n    //1. 取出索引序列;\n    AINetIndexModel *indexModel = [AINetIndexUtils searchIndexModel:at ds:ds isOut:isOut];\n    //2. 转为稀疏码指针数组返回;\n    NSArray *nears = [SMGUtils convertArr:indexModel.pointerIds convertBlock:^id(NSNumber *obj) {\n        return [SMGUtils createPointerForValue:[NUMTOOK(obj) longValue] algsType:at dataSource:ds isOut:isOut];\n    }];\n    //3. 窄出,仅返回前NarrowLimit条;\n    return ARR_SUB(nears, 0, cIndexNarrowLimit);\n}\n/**\n *  MARK:--------------------获取某标识索引序列的值域--------------------\n *  @desc 获取索引序列的值域 (参考25082-公式1);\n *  @result 值域不为负\n */\n+(double) getIndexSpan:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut {\n    AIValueInfo *info = [self getValueInfo:at ds:ds isOut:isOut];\n    return info.span;\n}\n/**\n *  MARK:--------------------获取值的信息--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetIndex.m:74-108"
+    },
+    "471": {
+        "file_id": 50,
+        "content": "This code defines a class method `getIndex_ps` that retrieves an index sequence and converts it into a sparse code pointer array. It also includes methods for getting the value range of an index sequence and obtaining information about the values. The code supports wide-to-narrow conversion, has restrictions on V indices, and returns only the first N narrow limit bars.",
+        "type": "comment"
+    },
+    "472": {
+        "file_id": 50,
+        "content": " *  @result notnull;\n */\n+(AIValueInfo*) getValueInfo:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut {\n    //0. 如果是循环码时,直接返回指定数;\n    double maxLoopValue = [CortexAlgorithmsUtil maxOfLoopValue:at ds:ds];\n    if (maxLoopValue > 0) {\n        return [AIValueInfo newWithMin:0 max:maxLoopValue loop:true];\n    }\n    //1. 取索引序列 & 稀疏码值字典;\n    AINetIndexModel *model = [AINetIndexUtils searchIndexModel:at ds:ds isOut:isOut];\n    NSDictionary *dataDic = [AINetIndexUtils searchDataDic:at ds:ds isOut:isOut];\n    //2. 取出最大最小pointerId;\n    long minPId = [NUMTOOK(ARR_INDEX(model.pointerIds, 0)) longValue];\n    long maxPId = [NUMTOOK(ARR_INDEX_REVERSE(model.pointerIds, 0)) longValue];\n    //3. 取出最大最小的稀疏码值;\n    NSNumber *minData = [dataDic objectForKey:STRFORMAT(@\"%ld\",minPId)];\n    NSNumber *maxData = [dataDic objectForKey:STRFORMAT(@\"%ld\",maxPId)];\n    if (!NUMISOK(minData) || !NUMISOK(maxData)) {\n        return [AIValueInfo newWithMin:0 max:0 loop:false];\n    }\n    return [AIValueInfo newWithMin:minData.doubleValue max:maxData.doubleValue loop:false];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetIndex.m:109-132"
+    },
+    "473": {
+        "file_id": 50,
+        "content": "This code retrieves the value info for a given address and dataset. It first checks if it is loop code, returning a specified number if so. Then, it retrieves the index model and data dictionary. It extracts minimum and maximum pointerIds to find corresponding sparse values and returns an AIValueInfo object with these values. If any of the values are not valid, it returns 0 as min/max value.",
+        "type": "comment"
+    },
+    "474": {
+        "file_id": 50,
+        "content": "}\n//MARK:===============================================================\n//MARK:                     < output >\n//MARK:===============================================================\n//暂时不实现小脑网络;\n//-(void) setIndexReference:(AIKVPointer*)indexPointer target_p:(AIKVPointer*)target_p difValue:(int)difValue{\n//    //    [self.outReference setNodePointerToOutputReference:nil algsType:nil dataSource:nil difStrong:0];\n//    //    [outReference setReference:indexPointer target_p:target_p difValue:difValue];\n//}\n//-(NSArray*) getIndexReference:(AIKVPointer*)indexPointer limit:(NSInteger)limit{\n//    //    self.outReference getNodePointersFromOutputReference:algsType dataSource:dataSource limit:333333\n//    //    return [self.outReference getReference:indexPointer limit:limit];\n//    return nil;\n//}\n@end\n//MARK:===============================================================\n//MARK:                     < 内存DataSortModel (一组index) >\n//MARK:===============================================================\n@implementation AINetIndexModel : NSObject",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetIndex.m:133-156"
+    },
+    "475": {
+        "file_id": 50,
+        "content": "This code snippet is for a class named AINetIndexModel, which seems to be related to AIKVPointer and AIKVReference objects. It has two methods: setIndexReference and getIndexReference, both of which are currently not implemented (commented out). The class also appears to have a data model (MemoryDataSortModel) associated with it.",
+        "type": "comment"
+    },
+    "476": {
+        "file_id": 50,
+        "content": "//MARK:===============================================================\n//MARK:                     < method >\n//MARK:===============================================================\n-(NSMutableArray *)pointerIds{\n    if (!ISOK(_pointerIds, NSMutableArray.class)) _pointerIds = [[NSMutableArray alloc] initWithArray:_pointerIds];\n    return _pointerIds;\n}\n/**\n *  MARK:--------------------NSCoding--------------------\n */\n- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {\n    self = [super init];\n    if (self) {\n        self.pointerIds = [aDecoder decodeObjectForKey:@\"pointerIds\"];\n        self.algsType = [aDecoder decodeObjectForKey:@\"algsType\"];\n        self.dataSource = [aDecoder decodeObjectForKey:@\"dataSource\"];\n    }\n    return self;\n}\n- (void)encodeWithCoder:(NSCoder *)aCoder {\n    [aCoder encodeObject:[self.pointerIds copy] forKey:@\"pointerIds\"];\n    [aCoder encodeObject:self.algsType forKey:@\"algsType\"];\n    [aCoder encodeObject:self.dataSource forKey:@\"dataSource\"];\n}\n@end\n//MARK:===============================================================",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetIndex.m:158-187"
+    },
+    "477": {
+        "file_id": 50,
+        "content": "This code defines a class that conforms to the NSCoding protocol, providing methods for initializing and encoding objects. The class has an array of pointer IDs, an algorithm type, and a data source. It uses NSMutableArray and NSCoder for efficient memory management and data serialization.",
+        "type": "comment"
+    },
+    "478": {
+        "file_id": 50,
+        "content": "//MARK:                     < 码域信息 >\n//MARK:===============================================================\n@implementation AIValueInfo : NSObject\n+(AIValueInfo*) newWithMin:(double)min max:(double)max loop:(BOOL)loop {\n    AIValueInfo *info = [[AIValueInfo alloc] init];\n    info.min = min;\n    info.max = max;\n    info.loop = loop;\n    return info;\n}\n-(double) span {\n    return self.max - self.min;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetIndex.m:188-204"
+    },
+    "479": {
+        "file_id": 50,
+        "content": "This code defines a class named AIValueInfo, which has properties for min, max, and loop values. It also provides methods to initialize an instance of this class with the given minimum, maximum, and loop parameters, as well as calculating the span (difference) between the maximum and minimum values.",
+        "type": "comment"
+    },
+    "480": {
+        "file_id": 51,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetIndexUtils.h",
+        "type": "filepath"
+    },
+    "481": {
+        "file_id": 51,
+        "content": "The AINetIndexUtils class includes methods for indexing and searching concepts, time sequences, absolute matching, range-limited search, reference ports, and sparse data dictionaries. It also declares a method to insert a dictionary at a specific location and returns the value difference between two values.",
+        "type": "summary"
+    },
+    "482": {
+        "file_id": 51,
+        "content": "//\n//  AINetIndexUtils.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/10/31.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------索引工具类--------------------\n */\n@interface AINetIndexUtils : NSObject\n//MARK:===============================================================\n//MARK:                     < 绝对匹配 (概念/时序) 通用方法 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------alg/fo 绝对匹配通用方法--------------------\n *  @todo\n *      1. 随后支持只匹配抽象alg/fo (可由checkItemValid来实现) (可用于概念识别,因为概念识别为具象时,会导致无法建立抽具象关联);\n *          说明: 不过随后抽具象节点类会统一,所以如果这个影响不到v2.0则可不做;\n *  @param ds : 当有ds防重要求时,传入ds (如fo的不同inner类型无需去重) (为empty时,不做防重要求);\n */\n+(id) getAbsoluteMatching_General:(NSArray*)content_ps sort_ps:(NSArray*)sort_ps except_ps:(NSArray*)except_ps getRefPortsBlock:(NSArray*(^)(AIKVPointer *item_p))getRefPortsBlock at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type;\n/**\n *  MARK:--------------------绝对匹配 + 限定范围--------------------",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetIndexUtils.h:1-31"
+    },
+    "483": {
+        "file_id": 51,
+        "content": "This code defines a class AINetIndexUtils that provides methods for indexing and searching concepts and time sequences. The class has a general absolute matching method, which takes in content, sort preferences, exclusion preferences, and optional parameters to retrieve reference ports. It also supports limiting the range of the search.",
+        "type": "comment"
+    },
+    "484": {
+        "file_id": 51,
+        "content": " */\n+(id) getAbsoluteMatching_ValidPs:(NSArray*)content_ps sort_ps:(NSArray*)sort_ps except_ps:(NSArray*)except_ps noRepeatArea_ps:(NSArray*)noRepeatArea_ps getRefPortsBlock:(NSArray*(^)(AIKVPointer *item_p))getRefPortsBlock at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type;\n/**\n *  MARK:--------------------从指定范围中获取绝对匹配--------------------\n *  @param validPorts : 指定范围域;\n */\n+(id) getAbsoluteMatching_ValidPorts:(NSArray*)validPorts sort_ps:(NSArray*)sort_ps except_ps:(NSArray*)except_ps at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type;\n//MARK:===============================================================\n//MARK:                     < 索引序列 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------索引序列--------------------\n */\n+(AINetIndexModel*) searchIndexModel:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut;\n+(void) insertIndexModel:(AINetIndexModel*)model isOut:(BOOL)isOut;\n/**\n *  MARK:--------------------稀疏码值字典--------------------\n */\n+(NSDictionary*) searchDataDic:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetIndexUtils.h:32-53"
+    },
+    "485": {
+        "file_id": 51,
+        "content": "This code defines two methods for getting absolute matching from specified ranges, a method for searching index models, and another method for retrieving sparse data dictionaries.",
+        "type": "comment"
+    },
+    "486": {
+        "file_id": 51,
+        "content": "+(void) insertDataDic:(NSDictionary*)dataDic at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut;\n/**\n *  MARK:--------------------取两个V差值--------------------\n */\n+(CGFloat) deltaWithValueA:(double)valueA valueB:(double)valueB at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut vInfo:(AIValueInfo*)vInfo;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetIndexUtils.h:54-61"
+    },
+    "487": {
+        "file_id": 51,
+        "content": "This code declares a method that inserts a data dictionary at a specific location and returns the value difference between two values. The method takes a dictionary, a location string, a dataset string, an output flag, and a value info object as parameters. It calculates the value difference for a given location and dataset.",
+        "type": "comment"
+    },
+    "488": {
+        "file_id": 52,
+        "content": "/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetIndexUtils.m",
+        "type": "filepath"
+    },
+    "489": {
+        "file_id": 52,
+        "content": "The `getAbsoluteMatching_General` method performs absolute matching with general parameters, supports duplication prevention and requires specific inputs to return an object. It retrieves the index model for a given algorithm and data source, filters existing models, creates a new one if none match, manages index sequences, removes duplicates, calculates absolute difference between values, and provides functions for searching and inserting data dictionaries.",
+        "type": "summary"
+    },
+    "490": {
+        "file_id": 52,
+        "content": "//\n//  AINetIndexUtils.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/10/31.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import \"AINetIndexUtils.h\"\n#import \"NSString+Extension.h\"\n@implementation AINetIndexUtils\n//MARK:===============================================================\n//MARK:                     < 绝对匹配 (概念/时序) 通用方法 >\n//MARK:===============================================================\n/**\n *  MARK:--------------------alg/fo 绝对匹配通用方法--------------------\n *  @version\n *      2021.04.25: 支持ds同区判断 (参考23054-疑点);\n *      2021.04.27: 修复因ds为空时默认dsSeem为true逻辑错误,导致alg防重失败,永远返回nil的BUG;\n *      2021.09.22: 支持type防重;\n */\n+(id) getAbsoluteMatching_General:(NSArray*)content_ps sort_ps:(NSArray*)sort_ps except_ps:(NSArray*)except_ps getRefPortsBlock:(NSArray*(^)(AIKVPointer *item_p))getRefPortsBlock at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type{\n    return [self getAbsoluteMatching_ValidPs:content_ps sort_ps:sort_ps except_ps:except_ps noRepeatArea_ps:nil getRefPortsBlock:getRefPortsBlock at:at ds:ds type:type];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetIndexUtils.m:1-27"
+    },
+    "491": {
+        "file_id": 52,
+        "content": "This code defines a method `getAbsoluteMatching_General` that performs an absolute matching operation with general parameters. It takes in content, sorting, and exclusion lists as well as a block to get reference ports. The method returns an object after performing the matching operation. It has been updated several times for bug fixes and now supports type-based duplication prevention.",
+        "type": "comment"
+    },
+    "492": {
+        "file_id": 52,
+        "content": "}\n/**\n *  MARK:--------------------绝对匹配 + 限定范围--------------------\n *  @param noRepeatArea_ps 限定范围: 结果必须从valid_ps中找 (限定范围时不得传nil,不限定时直接传nil即可);\n */\n+(id) getAbsoluteMatching_ValidPs:(NSArray*)content_ps sort_ps:(NSArray*)sort_ps except_ps:(NSArray*)except_ps noRepeatArea_ps:(NSArray*)noRepeatArea_ps getRefPortsBlock:(NSArray*(^)(AIKVPointer *item_p))getRefPortsBlock at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type{\n    //1. 数据检查\n    if (!getRefPortsBlock) return nil;\n    content_ps = ARRTOOK(content_ps);\n    NSString *md5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:sort_ps]]);\n    except_ps = ARRTOOK(except_ps);\n    //2. 依次找content_ps的被引用序列,并判断header匹配;\n    for (AIKVPointer *item_p in content_ps) {\n        //3. 取refPorts;\n        NSArray *refPorts = ARRTOOK(getRefPortsBlock(item_p));\n        //4. 判定refPort.header是否一致;\n        for (AIPort *refPort in refPorts) {\n            //5. ds防重 (ds无效时,默认为true);\n            BOOL atSeem = STRISOK(at) ? [at isEqualToString:refPort.target_p.algsType] : true;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetIndexUtils.m:28-49"
+    },
+    "493": {
+        "file_id": 52,
+        "content": "This method performs absolute matching and limits the search range by providing a list of valid pointers. It takes content, sorting, exception pointers, noRepeatArea, a block to get reference ports, an identifier string, data type, and returns an object if valid parameters are provided.",
+        "type": "comment"
+    },
+    "494": {
+        "file_id": 52,
+        "content": "            BOOL dsSeem = STRISOK(ds) ? [ds isEqualToString:refPort.target_p.dataSource] : true;\n            BOOL typeSeem = type == refPort.target_p.type;\n            //6. ds同区 & 将md5匹配header & 不在except_ps的找到并返回;\n            if (atSeem && dsSeem && typeSeem && ![except_ps containsObject:refPort.target_p] && [md5 isEqualToString:refPort.header]) {\n                //7. 当valid_ps不为空时,要求必须包含在valid_ps中;\n                if (noRepeatArea_ps) {\n                    if ([noRepeatArea_ps containsObject:refPort.target_p]) {\n                        return [SMGUtils searchNode:refPort.target_p];\n                    }\n                }else {\n                    return [SMGUtils searchNode:refPort.target_p];\n                }\n            }\n        }\n    }\n    return nil;\n}\n/**\n *  MARK:--------------------从指定范围中获取绝对匹配--------------------\n *  @param validPorts : 指定范围域;\n *  @version\n *      2021.09.23: 指定范围获取绝对匹配,也要判断type类型 (但有时传入的validPorts本来就是已筛选过type的) (参考24019);\n */\n+(id) getAbsoluteMatching_ValidPorts:(NSArray*)validPor",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetIndexUtils.m:50-76"
+    },
+    "495": {
+        "file_id": 52,
+        "content": "This code checks if the given data source and type match a reference port. If they do, it ensures that the reference port is not in the except_ps list and its MD5 matches the header. If these conditions are met, the code searches for the node using SMGUtils. If valid_ps is provided, the node must be included in it; otherwise, any matching node will be returned. The code also provides a method to get an absolute match from a specified range of ports by filtering based on type.",
+        "type": "comment"
+    },
+    "496": {
+        "file_id": 52,
+        "content": "ts sort_ps:(NSArray*)sort_ps except_ps:(NSArray*)except_ps at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type{\n    //1. 数据检查\n    NSString *md5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:sort_ps]]);\n    except_ps = ARRTOOK(except_ps);\n    //2. 从指定的validPorts中依次找header匹配;\n    for (AIPort *validPort in validPorts) {\n        //5. ds防重 (ds无效时,默认为true);\n        BOOL atSeem = STRISOK(at) ? [at isEqualToString:validPort.target_p.algsType] : true;\n        BOOL dsSeem = STRISOK(ds) ? [ds isEqualToString:validPort.target_p.dataSource] : true;\n        BOOL typeSeem = type == validPort.target_p.type;\n        //6. ds同区 & 将md5匹配header & 不在except_ps的找到并返回;\n        if (atSeem && dsSeem && typeSeem && ![except_ps containsObject:validPort.target_p] && [md5 isEqualToString:validPort.header]) {\n            return [SMGUtils searchNode:validPort.target_p];\n        }\n    }\n    return nil;\n}\n//MARK:===============================================================\n//MARK:                     < 索引序列 >\n//MARK:===============================================================",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetIndexUtils.m:76-98"
+    },
+    "497": {
+        "file_id": 52,
+        "content": "This method finds a matching port from the validPorts array based on specific conditions such as at, ds, and type. It first checks the input data, then iterates through each valid port and checks if it matches the specified conditions without being in the except_ps list. If a match is found, it returns the corresponding index node, otherwise it returns nil.",
+        "type": "comment"
+    },
+    "498": {
+        "file_id": 52,
+        "content": "/**\n *  MARK:--------------------索引序列--------------------\n *  @desc 取现有索引序列 (无则新建);\n *  @version\n *      2023.07.19: 因为索引序列为空,导致闪退问题 (检查索引fnIndexArr不得为空);\n *  @result notnull\n */\n+(AINetIndexModel*) searchIndexModel:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut{\n    //1. 取出所有索引序列;\n    NSArray *fnIndexArr = ARRTOOK([SMGUtils searchObjectForPointer:[SMGUtils createPointerForIndex] fileName:kFNIndex(isOut) time:cRTIndex]);\n    NSMutableArray *indexModels = [[NSMutableArray alloc] initWithArray:fnIndexArr];\n    //2. 找出同标识相符的;\n    AINetIndexModel *model = ARR_INDEX([SMGUtils filterArr:indexModels checkValid:^BOOL(AINetIndexModel *item) {\n        return [item.algsType isEqualToString:at] && [item.dataSource isEqualToString:ds];\n    }], 0);\n    //3. 找不到则新建\n    if (model == nil) {\n        model = [[AINetIndexModel alloc] init];\n        model.algsType = at;\n        model.dataSource = ds;\n        [indexModels addObject:model];\n    }\n    return model;\n}\n+(void) insertIndexModel:(AINetIndexModel*)model isOut:(BOOL)isOut{",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/AIFoundation/AINet/AINetIndex/AINetIndexUtils.m:99-126"
+    },
+    "499": {
+        "file_id": 52,
+        "content": "This function retrieves the index model for a given algorithm type and data source. It first collects all existing index sequences, then filters the models based on the provided algorithm type and data source. If no matching model is found, it creates a new one and adds it to the list of index models. Finally, it returns the selected or newly created model.",
+        "type": "comment"
+    }
+}

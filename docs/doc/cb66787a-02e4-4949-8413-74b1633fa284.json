@@ -1,0 +1,10 @@
+{
+    "summary": "This file defines the ISubDemandDelegate protocol, which has a single method subDemands() that returns an array of sub tasks (TOFoModel) for the main task. It is used to mount and manage child tasks, such as when analyzing potential harms from an action.",
+    "details": [
+        {
+            "comment": "This file defines the ISubDemandDelegate protocol, which has a single method subDemands() that returns an array of sub tasks (TOFoModel) for the main task. It is used to mount and manage child tasks, such as when analyzing potential harms from an action.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIThinkingControl/Out/Model/ISubDemandDelegate.h\":0-19",
+            "content": "//\n//  ISubDemandDelegate.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/3/28.\n//  Copyright \u00a9 2021\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n/**\n *  MARK:--------------------\u5b50\u4efb\u52a1\u63a5\u53e3--------------------\n *  @implement\n *      1. TOFoModel    : \u7528\u4e8e\u6302\u8f7d\u5b50\u4efb\u52a1\u4eec (\u6bd4\u5982\u53cd\u601d\u5230\u6b64\u4e3e\u53ef\u80fd\u6709\u4e09\u5bb3,\u90a3\u4e48\u5c31\u67093\u4e2a\u5b50\u4efb\u52a1);\n */\n@protocol ISubDemandDelegate <NSObject>\n-(NSMutableArray*) subDemands;\n@end"
+        }
+    ]
+}

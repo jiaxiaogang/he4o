@@ -1,0 +1,10 @@
+{
+    "summary": "Header file for class AITransferPort, inherits from NSObject and conforms to NSCoding protocol. Contains two properties: scene (AIKVPointer type) and canset (AIKVPointer type). Offers a singleton-like method newWithScene:canset: to create instances of AITransferPort with specified parameters.",
+    "details": [
+        {
+            "comment": "Header file for class AITransferPort, inherits from NSObject and conforms to NSCoding protocol. Contains two properties: scene (AIKVPointer type) and canset (AIKVPointer type). Offers a singleton-like method newWithScene:canset: to create instances of AITransferPort with specified parameters.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AINet/AIPort/AITransferPort.h\":0-17",
+            "content": "//\n//  AITransferPort.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/4/16.\n//  Copyright \u00a9 2023\u5e74 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface AITransferPort : NSObject <NSCoding>\n+(AITransferPort*) newWithScene:(AIKVPointer*)scene canset:(AIKVPointer*)canset;\n@property (strong, nonatomic) AIKVPointer *scene;\n@property (strong, nonatomic) AIKVPointer *canset;\n@end"
+        }
+    ]
+}

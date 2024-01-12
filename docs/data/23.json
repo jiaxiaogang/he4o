@@ -1,0 +1,534 @@
+{
+    "2300": {
+        "file_id": 233,
+        "content": "//\n//  LightView.m\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/11/9.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"LightView.h\"\n#import \"MASConstraint.h\"\n#import \"View+MASAdditions.h\"\n@interface LightView ()\n@property (strong,nonatomic) IBOutlet UIView *containerView;\n@property (strong,nonatomic) NSTimer *timer;            //计时器\n@end\n@implementation LightView\n-(id) init {\n    self = [super init];\n    if(self != nil){\n        [self initView];\n        [self initData];\n        [self initDisplay];\n    }\n    return self;\n}\n-(void) initView{\n    //self\n    [self setFrame:CGRectMake(ScreenWidth - 25, 60, 30, 30)];\n    [self.layer setCornerRadius:15];\n    [self.layer setMasksToBounds:true];\n    //containerView\n    [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];\n    [self addSubview:self.containerView];\n    [self.containerView mas_makeConstraints:^(MASConstraintMaker *make) {\n        make.leading.mas_equalTo(self);\n        make.trailing.mas_equalTo(self);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/BirdLivePage/View/LightView.m:1-43"
+    },
+    "2301": {
+        "file_id": 233,
+        "content": "This code initializes a view, sets its frame and corner radius, loads the nib file, adds the subview to itself, and sets constraints for the subview.",
+        "type": "comment"
+    },
+    "2302": {
+        "file_id": 233,
+        "content": "        make.top.mas_equalTo(self);\n        make.bottom.mas_equalTo(self);\n    }];\n}\n-(void) initData{\n    self.curLightIsGreen = true;\n    dispatch_async(dispatch_get_main_queue(), ^{\n        self.timer = [NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];\n    });\n}\n-(void) initDisplay{\n    [self refreshDisplay];\n}\n//MARK:===============================================================\n//MARK:                     < method >\n//MARK:===============================================================\n-(void) refreshDisplay{\n    [self setBackgroundColor:self.curLightIsGreen ? [UIColor greenColor] : [UIColor redColor]];\n}\n- (void)notificationTimer{\n    //data\n    self.curLightIsGreen = !self.curLightIsGreen;\n    //ui\n    [self refreshDisplay];\n    //delegate\n    if (self.curLightIsGreen && self.delegate && [self.delegate respondsToSelector:@selector(lightView_ChangeToGreen)]) {\n        [self.delegate lightView_ChangeToGreen];\n    }\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/BirdLivePage/View/LightView.m:44-81"
+    },
+    "2303": {
+        "file_id": 233,
+        "content": "This code is an implementation of a light view controller in iOS. The light view controller manages a green/red light display and uses a timer to toggle between the two colors every 10 seconds. It also has a delegate that can be notified when the color changes to green.",
+        "type": "comment"
+    },
+    "2304": {
+        "file_id": 234,
+        "content": "/SMG_NothingIsAll/Demo/BirdLivePage/View/RoadView.h",
+        "type": "filepath"
+    },
+    "2305": {
+        "file_id": 234,
+        "content": "RoadView.h file containing a class for RoadView, inherits from HEView and has a delegate that conforms to RoadViewDelegate protocol, allowing access to food data through roadView_GetFoodInLoad method.",
+        "type": "summary"
+    },
+    "2306": {
+        "file_id": 234,
+        "content": "//\n//  RoadView.h\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/11/9.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n@protocol RoadViewDelegate <NSObject>\n-(NSArray*) roadView_GetFoodInLoad;\n@end\n@interface RoadView : HEView\n@property (weak,nonatomic) id<RoadViewDelegate> delegate;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/BirdLivePage/View/RoadView.h:1-21"
+    },
+    "2307": {
+        "file_id": 234,
+        "content": "RoadView.h file containing a class for RoadView, inherits from HEView and has a delegate that conforms to RoadViewDelegate protocol, allowing access to food data through roadView_GetFoodInLoad method.",
+        "type": "comment"
+    },
+    "2308": {
+        "file_id": 235,
+        "content": "/SMG_NothingIsAll/Demo/BirdLivePage/View/RoadView.m",
+        "type": "filepath"
+    },
+    "2309": {
+        "file_id": 235,
+        "content": "The code initializes RoadView, sets properties, conforms to CarViewDelegate and LightViewDelegate protocols, provides display refresh and food retrieval methods. It also has a lightView_ChangeToGreen method to start the car view.",
+        "type": "summary"
+    },
+    "2310": {
+        "file_id": 235,
+        "content": "//\n//  RoadView.m\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/11/9.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"RoadView.h\"\n#import \"MASConstraint.h\"\n#import \"View+MASAdditions.h\"\n#import \"LightView.h\"\n#import \"CarView.h\"\n@interface RoadView ()<CarViewDelegate,LightViewDelegate>\n@property (strong,nonatomic) IBOutlet UIView *containerView;\n@property (strong,nonatomic) LightView *lightView;\n@property (strong,nonatomic) CarView *carView;\n@end\n@implementation RoadView\n-(id) init {\n    self = [super init];\n    if(self != nil){\n        [self initView];\n        [self initData];\n        [self initDisplay];\n    }\n    return self;\n}\n-(void) initView{\n    //1. self\n    [self setFrame:CGRectMake(0, ScreenHeight - 200, ScreenWidth, 150)];\n    [self setBackgroundColor:[UIColor clearColor]];\n    //2. containerView\n    [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];\n    [self addSubview:self.containerView];\n    [self.containerView mas_makeConstraints:^(MASConstraintMaker *make) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/BirdLivePage/View/RoadView.m:1-43"
+    },
+    "2311": {
+        "file_id": 235,
+        "content": "This code is initializing the view, setting frame and background color for RoadView. It also loads a nib named as its class and adds it as a subview with constraints. It conforms to CarViewDelegate and LightViewDelegate protocols.",
+        "type": "comment"
+    },
+    "2312": {
+        "file_id": 235,
+        "content": "        make.leading.mas_equalTo(self);\n        make.trailing.mas_equalTo(self);\n        make.top.mas_equalTo(self);\n        make.bottom.mas_equalTo(self);\n    }];\n    //3. carView\n    self.carView = [[CarView alloc] init];\n    [self addSubview:self.carView];\n    self.carView.delegate = self;\n    //4. lightView\n    self.lightView = [[LightView alloc] init];\n    [self addSubview:self.lightView];\n    self.lightView.delegate = self;\n}\n-(void) initData{\n}\n-(void) initDisplay{\n    [self refreshDisplay];\n    [self.carView run];\n}\n//MARK:===============================================================\n//MARK:                     < method >\n//MARK:===============================================================\n-(void) refreshDisplay{\n}\n/**\n *  MARK:--------------------CarViewDelegate--------------------\n */\n- (BOOL)carView_CanRun{\n    return self.lightView.curLightIsGreen;\n}\n-(NSArray*) carView_GetFoodInLoad{\n    NSMutableArray *mArr = [[NSMutableArray alloc] init];\n    if (self.delegate && [self.delegate respondsToSelector:@selector(roadView_GetFoodInLoad)]) {",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/BirdLivePage/View/RoadView.m:44-86"
+    },
+    "2313": {
+        "file_id": 235,
+        "content": "This code is a part of the RoadView class in an iOS app. It sets up subviews (carView and lightView) with delegates, initializes data, and provides methods for refreshing display and retrieving food in load from delegate.",
+        "type": "comment"
+    },
+    "2314": {
+        "file_id": 235,
+        "content": "        NSArray *foods = ARRTOOK([self.delegate roadView_GetFoodInLoad]);\n        for (UIView *food in foods) {\n            if (food.y >= 200 && food.y <= 345) {\n                [mArr addObject:food];\n            }\n        }\n    }\n    return mArr;\n}\n/**\n *  MARK:--------------------LightViewDelegate--------------------\n */\n- (void)lightView_ChangeToGreen{\n    [self.carView run];\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/BirdLivePage/View/RoadView.m:87-104"
+    },
+    "2315": {
+        "file_id": 235,
+        "content": "This method retrieves an array of food views from the delegate and adds those within a certain y-range to another array. It then returns this new array. The class also has a lightView_ChangeToGreen method that starts the car view when called.",
+        "type": "comment"
+    },
+    "2316": {
+        "file_id": 236,
+        "content": "/SMG_NothingIsAll/Demo/BirdLivePage/View/TreeView.h",
+        "type": "filepath"
+    },
+    "2317": {
+        "file_id": 236,
+        "content": "This file, \"TreeView.h\", is a header file for the TreeView class that inherits from the HEView class in UIKit. It was created by the user jiaxiaogang on November 9th, 2018, and is protected by copyright law.",
+        "type": "summary"
+    },
+    "2318": {
+        "file_id": 236,
+        "content": "//\n//  TreeView.h\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/11/9.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n@interface TreeView : HEView\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/BirdLivePage/View/TreeView.h:1-13"
+    },
+    "2319": {
+        "file_id": 236,
+        "content": "This file, \"TreeView.h\", is a header file for the TreeView class that inherits from the HEView class in UIKit. It was created by the user jiaxiaogang on November 9th, 2018, and is protected by copyright law.",
+        "type": "comment"
+    },
+    "2320": {
+        "file_id": 237,
+        "content": "/SMG_NothingIsAll/Demo/BirdLivePage/View/TreeView.m",
+        "type": "filepath"
+    },
+    "2321": {
+        "file_id": 237,
+        "content": "This code sets up a TreeView UI view, adds it to the owner class, loads a nib file, and centers the view. It also initializes a timer for food notifications, uses an NSTreeController to manage content, and responds to reloadData and selection events.",
+        "type": "summary"
+    },
+    "2322": {
+        "file_id": 237,
+        "content": "//\n//  TreeView.m\n//  SMG_NothingIsAll\n//\n//  Created by jiaxiaogang on 2018/11/9.\n//  Copyright © 2018年 XiaoGang. All rights reserved.\n//\n#import \"TreeView.h\"\n#import \"MASConstraint.h\"\n#import \"View+MASAdditions.h\"\n#import \"FoodView.h\"\n@interface TreeView ()\n@property (strong,nonatomic) IBOutlet UIView *containerView;\n@property (strong,nonatomic) NSTimer *timer;            //计时器(3s)\n@property (assign,nonatomic) CGFloat dropY;             //果实掉落位置(75,125,175,225,275)\n@end\n@implementation TreeView\n-(id) init {\n    self = [super init];\n    if(self != nil){\n        [self initView];\n        [self initData];\n        [self initDisplay];\n    }\n    return self;\n}\n-(void) initView{\n    //self\n    [self setFrame:CGRectMake((ScreenWidth * 0.5f - 100) / 2 + ScreenWidth * 0.5f, 64, 100, 50)];\n    //containerView\n    [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:self options:nil];\n    [self addSubview:self.containerView];\n    [self.containerView mas_makeConstraints:^(MASConstraintMaker *make) {\n        make.leading.mas_equalTo(self);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/BirdLivePage/View/TreeView.m:1-42"
+    },
+    "2323": {
+        "file_id": 237,
+        "content": "This code is for the init method of a view named TreeView. It sets up the view's frame and adds it as a subview to its owner class, which is itself. The code then loads a nib file with the same name as the class and adds the containerView from that nib to itself as a subview, setting constraints for the leading edge of the containerView to be aligned with the leading edge of the view. It also declares properties for a timer, dropY position, and an IBOutlet UIView named containerView. The view's size is set to 100x50 pixels and it is centered on the screen by offsetting its frame by (ScreenWidth * 0.5f - 100) / 2 + ScreenWidth * 0.5f.",
+        "type": "comment"
+    },
+    "2324": {
+        "file_id": 237,
+        "content": "        make.trailing.mas_equalTo(self);\n        make.top.mas_equalTo(self);\n        make.bottom.mas_equalTo(self);\n    }];\n    [self.containerView.layer setCornerRadius:15];\n    [self.containerView.layer setMasksToBounds:true];\n}\n-(void) initData{\n    dispatch_async(dispatch_get_main_queue(), ^{\n        self.timer = [NSTimer scheduledTimerWithTimeInterval:6 target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];\n    });\n    self.dropY = 75;\n}\n-(void) initDisplay{\n    [self refreshDisplay];\n}\n//MARK:===============================================================\n//MARK:                     < method >\n//MARK:===============================================================\n-(void) refreshDisplay{\n}\n- (void)notificationTimer{\n    //掉落果实 (3s掉一个)\n    FoodView *foodView = [[FoodView alloc] init];\n    foodView.x = 50 - 2.5f;\n    self.dropY += 50;\n    if (self.dropY > 275) {\n        self.dropY = 75;\n    }\n    [self addSubview:foodView];\n    [UIView animateWithDuration:self.dropY / 275.0f animations:^{\n        foodView.y = self.dropY;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/BirdLivePage/View/TreeView.m:43-79"
+    },
+    "2325": {
+        "file_id": 237,
+        "content": "Code initializes and sets up the UI view, schedules a timer to drop food notifications, and refreshes display.",
+        "type": "comment"
+    },
+    "2326": {
+        "file_id": 237,
+        "content": "    }];\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/BirdLivePage/View/TreeView.m:80-83"
+    },
+    "2327": {
+        "file_id": 237,
+        "content": "This code defines a class named \"TreeView\" which is likely a subclass of NSView. It implements the \"initWithFrame:\" method, which initializes the view and sets up its child views. The view uses an NSTreeController to manage its content and responds to reloadData and selection events by sending appropriate messages to the tree controller.",
+        "type": "comment"
+    },
+    "2328": {
+        "file_id": 238,
+        "content": "/SMG_NothingIsAll/Demo/BirdLivePage/View/WoodView.h",
+        "type": "filepath"
+    },
+    "2329": {
+        "file_id": 238,
+        "content": "Header file for WoodView class, defining ThrowTime constant, protocol for WoodViewDelegate with methods for setting frame, finishing wood animation, and beginning fly animation. WoodView methods include reset, throwV5, and more.",
+        "type": "summary"
+    },
+    "2330": {
+        "file_id": 238,
+        "content": "//\n//  WoodView.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/1/16.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n#define ThrowTime 8.0f //满屏飞过用时\n@protocol WoodViewDelegate <NSObject>\n-(void) woodView_SetFramed;\n-(void) woodView_WoodAnimationFinish;\n-(void) woodView_FlyAnimationBegin:(CGFloat)aniDuration;\n@end\n@interface WoodView : HEView\n@property (weak, nonatomic) id<WoodViewDelegate> delegate;\n//复位\n-(void) reset:(BOOL)hidden x:(CGFloat)x;\n-(void) reset4StartAnimation:(CGFloat)throwX;\n-(void) reset4EndAnimation;\n/**\n *  MARK:--------------------扔出--------------------\n */\n-(void) throwV5:(CGFloat)throwX time:(CGFloat)time distance:(CGFloat)distance invoked:(void(^)())invoked;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/BirdLivePage/View/WoodView.h:1-35"
+    },
+    "2331": {
+        "file_id": 238,
+        "content": "Header file for WoodView class, defining ThrowTime constant, protocol for WoodViewDelegate with methods for setting frame, finishing wood animation, and beginning fly animation. WoodView methods include reset, throwV5, and more.",
+        "type": "comment"
+    },
+    "2332": {
+        "file_id": 239,
+        "content": "/SMG_NothingIsAll/Demo/BirdLivePage/View/WoodView.m",
+        "type": "filepath"
+    },
+    "2333": {
+        "file_id": 239,
+        "content": "WoodView class manages view and display properties, includes reset and animation methods, utilizes CADisplayLink for frame-based animation with collision detection, and handles progress, finish, and reset while logging stick animation completion.",
+        "type": "summary"
+    },
+    "2334": {
+        "file_id": 239,
+        "content": "//\n//  WoodView.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2021/1/16.\n//  Copyright © 2021年 XiaoGang. All rights reserved.\n//\n#import \"WoodView.h\"\n#import \"UIView+Extension.h\"\n@interface WoodView ()\n@property (strong, nonatomic) CADisplayLink *displayLink;\n@property (assign, nonatomic) float aniBeginX;\n@property (assign, nonatomic) float aniDeltaX;\n@property (assign, nonatomic) double aniBeginTime;\n@property (assign, nonatomic) double aniDeltaTime;\n@property (assign, nonatomic) Act0 aniInvoked;\n@end\n@implementation WoodView\n-(id) init {\n    self = [super init];\n    if(self != nil){\n        [self initView];\n        [self initDisplay];\n    }\n    return self;\n}\n-(void) initView{\n    //self\n    [self setFrame:CGRectMake(0, (ScreenHeight - 100) * 0.5f, 5, 100)];\n    [self setBackgroundColor:UIColorWithRGBHex(0x825528)];\n}\n-(void) initDisplay{\n    [self reset:true x:0];\n}\n//MARK:===============================================================\n//MARK:                     < method >\n//MARK:===============================================================",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/BirdLivePage/View/WoodView.m:1-46"
+    },
+    "2335": {
+        "file_id": 239,
+        "content": "This code is for a class called WoodView. The class initializes the view and display properties. It also contains a method that resets and animates the view.",
+        "type": "comment"
+    },
+    "2336": {
+        "file_id": 239,
+        "content": "//复位\n-(void) reset:(BOOL)hidden x:(CGFloat)x{\n    self.x = x;\n    self.alpha = hidden ? 0 : 1;\n}\n//复位\n-(void) reset4StartAnimation:(CGFloat)throwX {\n    //1. 扔出前复位 (并移除可能还在进行中的动画);\n    [self reset:false x:throwX];\n    [self removeDisplayLink];\n}\n//复位\n-(void) reset4EndAnimation {\n    [self reset:true x:0];\n}\n/**\n *  MARK:--------------------扔出--------------------\n *  @version\n *      2021.09.08: 支持两段动画,并在中段和尾段分别进行碰撞检测;\n *      2022.04.27: 调慢木棒动画 (参考25222);\n *      2022.06.04: 支持随机扔出点 (参考26196-方案2);\n *      2023.05.22: 迭代v4:动画结束时,调用下碰撞检测啥的 (参考29098-方案3);\n *      2023.07.26: 迭代v5:使用displayLink帧动画,使碰撞检查更加及时 (参考30087-分析2-todo1);\n */\n-(void) throwV5:(CGFloat)throwX time:(CGFloat)time distance:(CGFloat)distance invoked:(void(^)())invoked {\n    //1. 扔出前复位 (并移除可能还在进行中的动画);\n    [self reset4StartAnimation:throwX];\n    //2. 保留动画参数;\n    self.aniBeginX = self.x;\n    self.aniDeltaX = distance;\n    self.aniBeginTime = CACurrentMediaTime();\n    self.aniDeltaTime = time;\n    self.aniInvoked = invoked;\n    //3. 执行动画;\n    self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkFrame)];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/BirdLivePage/View/WoodView.m:48-89"
+    },
+    "2337": {
+        "file_id": 239,
+        "content": "Resets the view to initial position, removes ongoing animation, and stores parameters for throwV5 method. Uses CADisplayLink for frame-based animation with collision detection after animation completes.",
+        "type": "comment"
+    },
+    "2338": {
+        "file_id": 239,
+        "content": "    [self.displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];\n    self.displayLink.paused = NO;\n}\n- (void)setFrame:(CGRect)frame {\n    [super setFrame:frame];\n    //NSLog(@\"碰撞检测\");\n    [self.delegate woodView_SetFramed];\n}\n-(void) displayLinkFrame {\n    //1. 动画进度计算\n    double now = CACurrentMediaTime();\n    double radio = (now - self.aniBeginTime) / self.aniDeltaTime;;\n    if (radio < 1.0) {\n        //2. 动画中...\n        self.x = self.aniBeginX + self.aniDeltaX * radio;\n    } else {\n        //3. 动画结束时,回调,执行block;\n        self.x = self.aniBeginX + self.aniDeltaX;\n        [self.delegate woodView_WoodAnimationFinish];\n        [self reset4EndAnimation];\n        self.aniInvoked();\n        NSLog(@\"扔木棒 动画结束\");\n        //4. 停止displayLink;\n        [self removeDisplayLink];\n    }\n}\n-(void) removeDisplayLink {\n    self.displayLink.paused = YES;\n    [self.displayLink invalidate];\n    self.displayLink = nil;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/BirdLivePage/View/WoodView.m:90-126"
+    },
+    "2339": {
+        "file_id": 239,
+        "content": "This code sets up and manages a display link for animation, performing collision detection on setting the frame, and handling the animation's progress, finish, and reset. It also logs the completion of throwing the wooden stick in the animation.",
+        "type": "comment"
+    },
+    "2340": {
+        "file_id": 240,
+        "content": "/SMG_NothingIsAll/Demo/Extension/BorderLabel.h",
+        "type": "filepath"
+    },
+    "2341": {
+        "file_id": 240,
+        "content": "This file, BorderLabel.h, is a header file for the class BorderLabel, which is a subclass of UILabel in the UIKit framework. It adds properties for border color and width to be customized by the user.",
+        "type": "summary"
+    },
+    "2342": {
+        "file_id": 240,
+        "content": "//\n//  BorderLabel.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/8/7.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n@interface BorderLabel : UILabel\n@property (nonatomic,strong) UIColor *borderColor;\n@property (nonatomic,assign) CGFloat borderWidth;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/BorderLabel.h:1-16"
+    },
+    "2343": {
+        "file_id": 240,
+        "content": "This file, BorderLabel.h, is a header file for the class BorderLabel, which is a subclass of UILabel in the UIKit framework. It adds properties for border color and width to be customized by the user.",
+        "type": "comment"
+    },
+    "2344": {
+        "file_id": 241,
+        "content": "/SMG_NothingIsAll/Demo/Extension/BorderLabel.m",
+        "type": "filepath"
+    },
+    "2345": {
+        "file_id": 241,
+        "content": "The code is implementing a custom UILabel subclass, BorderLabel, with the ability to draw a text in rectangle with a border and shadow. The drawing mode of the context is set to stroke for the border color and fill for the text color. The original text color and shadow offset are saved before modification. This allows the label to display both the border and the text while preserving its original appearance.",
+        "type": "summary"
+    },
+    "2346": {
+        "file_id": 241,
+        "content": "//\n//  BorderLabel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/8/7.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import \"BorderLabel.h\"\n@implementation BorderLabel\n-(void)drawTextInRect:(CGRect)rect {\n    CGSize shadowOffset = self.shadowOffset;\n    UIColor *textColor = self.textColor;\n    CGContextRef c = UIGraphicsGetCurrentContext();\n    CGContextSetLineWidth(c, _borderWidth);\n    CGContextSetLineJoin(c, kCGLineJoinRound);\n    CGContextSetTextDrawingMode(c, kCGTextStroke);\n    self.textColor = _borderColor;\n    [super drawTextInRect:rect];\n    CGContextSetTextDrawingMode(c, kCGTextFill);\n    self.textColor = textColor;\n    self.shadowOffset = CGSizeMake(0, 0);\n    [super drawTextInRect:rect];\n    self.shadowOffset = shadowOffset;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/BorderLabel.m:1-29"
+    },
+    "2347": {
+        "file_id": 241,
+        "content": "The code is implementing a custom UILabel subclass, BorderLabel, with the ability to draw a text in rectangle with a border and shadow. The drawing mode of the context is set to stroke for the border color and fill for the text color. The original text color and shadow offset are saved before modification. This allows the label to display both the border and the text while preserving its original appearance.",
+        "type": "comment"
+    },
+    "2348": {
+        "file_id": 242,
+        "content": "/SMG_NothingIsAll/Demo/Extension/HEView.h",
+        "type": "filepath"
+    },
+    "2349": {
+        "file_id": 242,
+        "content": "This file, HEView.h, defines a subclass of UIView called HEView. It has an additional property, initTime, which is used to ensure the view's uniqueness by marking it with a \"visibleTag\" and checking its initialization time (to avoid memory address-based uniqueness issues).",
+        "type": "summary"
+    },
+    "2350": {
+        "file_id": 242,
+        "content": "//\n//  HEView.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2020/8/6.\n//  Copyright © 2020年 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n/**\n *  MARK:--------------------视觉可见的view--------------------\n *  @desc\n *      1. tag打visibleTag标记;\n *      2. 加了initTime,做唯一性判断 (因为ios已销毁的view会复用,导致内存地址并不表示唯一性) (参考20151-BUG11);\n */\n@interface HEView : UIView\n@property (assign, nonatomic) long long initTime;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/HEView.h:1-21"
+    },
+    "2351": {
+        "file_id": 242,
+        "content": "This file, HEView.h, defines a subclass of UIView called HEView. It has an additional property, initTime, which is used to ensure the view's uniqueness by marking it with a \"visibleTag\" and checking its initialization time (to avoid memory address-based uniqueness issues).",
+        "type": "comment"
+    },
+    "2352": {
+        "file_id": 243,
+        "content": "/SMG_NothingIsAll/Demo/Extension/HEView.m",
+        "type": "filepath"
+    },
+    "2353": {
+        "file_id": 243,
+        "content": "This code is the implementation file for HEView class in SMG_NothingIsAll project. It initializes the view, assigns a unique tag, and stores the initialization time in initTime property.",
+        "type": "summary"
+    },
+    "2354": {
+        "file_id": 243,
+        "content": "//\n//  HEView.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2020/8/6.\n//  Copyright © 2020年 XiaoGang. All rights reserved.\n//\n#import \"HEView.h\"\n@implementation HEView\n-(id) init {\n    self = [super init];\n    if(self != nil){\n        self.tag = visibleTag;\n        self.initTime = [[NSDate date] timeIntervalSince1970];\n    }\n    return self;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/HEView.m:1-22"
+    },
+    "2355": {
+        "file_id": 243,
+        "content": "This code is the implementation file for HEView class in SMG_NothingIsAll project. It initializes the view, assigns a unique tag, and stores the initialization time in initTime property.",
+        "type": "comment"
+    },
+    "2356": {
+        "file_id": 244,
+        "content": "/SMG_NothingIsAll/Demo/Extension/HEViewController.h",
+        "type": "filepath"
+    },
+    "2357": {
+        "file_id": 244,
+        "content": "This code defines the `HEViewController` class, which is a subclass of `UIViewController`. It has three methods: `initView`, `initData`, and `initDisplay`. These methods are used for initializing view, data, and display respectively.",
+        "type": "summary"
+    },
+    "2358": {
+        "file_id": 244,
+        "content": "//\n//  HEViewController.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/8/15.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import <UIKit/UIKit.h>\n@interface HEViewController : UIViewController\n-(void) initView;\n-(void) initData;\n-(void) initDisplay;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/HEViewController.h:1-17"
+    },
+    "2359": {
+        "file_id": 244,
+        "content": "This code defines the `HEViewController` class, which is a subclass of `UIViewController`. It has three methods: `initView`, `initData`, and `initDisplay`. These methods are used for initializing view, data, and display respectively.",
+        "type": "comment"
+    },
+    "2360": {
+        "file_id": 245,
+        "content": "/SMG_NothingIsAll/Demo/Extension/HEViewController.m",
+        "type": "filepath"
+    },
+    "2361": {
+        "file_id": 245,
+        "content": "This code defines the HEViewController class, which loads and initializes views, data, and display when viewDidLoad is called. It also sets the status bar to be always visible and provides a method for navigating back to the main page.",
+        "type": "summary"
+    },
+    "2362": {
+        "file_id": 245,
+        "content": "//\n//  HEViewController.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/8/15.\n//  Copyright © 2019年 XiaoGang. All rights reserved.\n//\n#import \"HEViewController.h\"\n@interface HEViewController ()\n@end\n@implementation HEViewController\n- (void)viewDidLoad {\n    [super viewDidLoad];\n    [self initView];\n    [self initData];\n    [self initDisplay];\n}\n-(void) initView{\n    [theRT regist:kMainPageSEL target:self selector:@selector(popToMainPage)];\n}\n-(void) initData{}\n-(void) initDisplay{}\n- (BOOL)prefersStatusBarHidden {\n    return NO;\n}\n-(void) popToMainPage{\n    [self.navigationController popToRootViewControllerAnimated:YES];\n    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{\n        [theRT invoked:kMainPageSEL];\n    });\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/HEViewController.m:1-42"
+    },
+    "2363": {
+        "file_id": 245,
+        "content": "This code defines the HEViewController class, which loads and initializes views, data, and display when viewDidLoad is called. It also sets the status bar to be always visible and provides a method for navigating back to the main page.",
+        "type": "comment"
+    },
+    "2364": {
+        "file_id": 246,
+        "content": "/SMG_NothingIsAll/Demo/Extension/MBProgressHUD+Add.h",
+        "type": "filepath"
+    },
+    "2365": {
+        "file_id": 246,
+        "content": "This code defines an extension for the MBProgressHUD class, adding several convenience methods to show error or success messages with various customization options such as view and hide delay.",
+        "type": "summary"
+    },
+    "2366": {
+        "file_id": 246,
+        "content": "////\n////  MBProgressHUD+Add.h\n////  视频客户端\n////\n////  Created by mj on 13-4-18.\n////  Copyright (c) 2013年 itcast. All rights reserved.\n////\n//\n//#import \"MBProgressHUD.h\"\n//\n//@interface MBProgressHUD (Add)\n//+ (void)showError:(NSString *)error toView:(UIView *)view;\n//+ (void)showSuccess:(NSString *)success toView:(UIView *)view;\n//+ (void)showError:(NSString *)error toView:(UIView *)view withHideDelay:(CGFloat)hideDelay;\n//+ (void)showSuccess:(NSString *)success toView:(UIView *)view withHideDelay:(CGFloat)hideDelay;\n//\n//+ (MBProgressHUD *)showMessag:(NSString *)message toView:(UIView *)view;\n//\n//@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/MBProgressHUD+Add.h:1-19"
+    },
+    "2367": {
+        "file_id": 246,
+        "content": "This code defines an extension for the MBProgressHUD class, adding several convenience methods to show error or success messages with various customization options such as view and hide delay.",
+        "type": "comment"
+    },
+    "2368": {
+        "file_id": 247,
+        "content": "/SMG_NothingIsAll/Demo/Extension/MBProgressHUD+Add.m",
+        "type": "filepath"
+    },
+    "2369": {
+        "file_id": 247,
+        "content": "This code implements a method to display customizable messages with optional icons using MBProgressHUD, and includes methods for different HUD notifications on UIView with optional hide delays.",
+        "type": "summary"
+    },
+    "2370": {
+        "file_id": 247,
+        "content": "////\n////  MBProgressHUD+Add.m\n////  视频客户端\n////\n////  Created by mj on 13-4-18.\n////  Copyright (c) 2013年 itcast. All rights reserved.\n////\n//\n//#import \"MBProgressHUD+Add.h\"\n//\n//@implementation MBProgressHUD (Add)\n//\n//#pragma mark 显示信息\n//+ (void)show:(NSString *)text icon:(NSString *)icon view:(UIView *)view withHideDelay:(CGFloat)hideDelay\n//{\n//    if (view == nil) view = [UIApplication sharedApplication].keyWindow;\n//    // 快速显示一个提示信息\n//    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:view animated:YES];\n//    hud.labelText = text;\n//    // 设置图片\n//    hud.customView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:[NSString stringWithFormat:@\"MBProgressHUD.bundle/%@\", icon]]];\n//    // 再设置模式\n//    hud.mode = MBProgressHUDModeCustomView;\n//    \n//    // 隐藏时候从父控件中移除\n//    hud.removeFromSuperViewOnHide = YES;\n//    \n//    // 1秒之后再消失\n//    [hud hide:YES afterDelay:hideDelay];\n//}\n//\n//#pragma mark 显示错误信息\n//+ (void)showError:(NSString *)error toView:(UIView *)view{\n//    [self show:error icon:@\"error.png\" view:view withHideDelay:0.7];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/MBProgressHUD+Add.m:1-34"
+    },
+    "2371": {
+        "file_id": 247,
+        "content": "This code implements a method to display a message with an optional icon in the view, with an option to hide after a certain delay. It utilizes MBProgressHUD for iOS and supports showing a custom image based on the specified icon.",
+        "type": "comment"
+    },
+    "2372": {
+        "file_id": 247,
+        "content": "//}\n//\n//+ (void)showSuccess:(NSString *)success toView:(UIView *)view\n//{\n//    [self show:success icon:@\"success.png\" view:view withHideDelay:0.7];\n//}\n//\n//+ (void)showError:(NSString *)error toView:(UIView *)view withHideDelay:(CGFloat)hideDelay{\n//    [self show:error icon:@\"error.png\" view:view withHideDelay:hideDelay];\n//}\n//\n//+ (void)showSuccess:(NSString *)success toView:(UIView *)view withHideDelay:(CGFloat)hideDelay\n//{\n//    [self show:success icon:@\"success.png\" view:view withHideDelay:hideDelay];\n//}\n//\n//#pragma mark 显示一些信息\n//+ (MBProgressHUD *)showMessag:(NSString *)message toView:(UIView *)view {\n//    if (view == nil) view = [UIApplication sharedApplication].keyWindow;\n//    // 快速显示一个提示信息\n//    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:view animated:YES];\n//    hud.labelText = message;\n//    // 隐藏时候从父控件中移除\n//    hud.removeFromSuperViewOnHide = YES;\n//    // YES代表需要蒙版效果\n//    hud.dimBackground = YES;\n//    return hud;\n//}\n//@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/MBProgressHUD+Add.m:35-63"
+    },
+    "2373": {
+        "file_id": 247,
+        "content": "This code includes various methods for displaying different types of HUD notifications on a UIView. It has separate methods for showing success, error, and custom messages with optional hide delays. The showMessag method quickly displays a message on the keyWindow and allows the HUD to be removed when hidden.",
+        "type": "comment"
+    },
+    "2374": {
+        "file_id": 248,
+        "content": "/SMG_NothingIsAll/Demo/Extension/MathUtils.h",
+        "type": "filepath"
+    },
+    "2375": {
+        "file_id": 248,
+        "content": "The MathUtils class provides utility methods for data range transformation and rect operations, while the code defines three functions for calculating cooled values based on cooling time and other parameters.",
+        "type": "summary"
+    },
+    "2376": {
+        "file_id": 248,
+        "content": "//\n//  MathUtils.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/5/21.\n//  Copyright © 2023年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface MathUtils : NSObject\n//数据范围变换\n+(CGFloat) getNegativeTen2TenWithOriRange:(UIFloatRange)oriRange oriValue:(CGFloat)oriValue;\n+(CGFloat) getZero2TenWithOriRange:(UIFloatRange)oriRange oriValue:(CGFloat)oriValue;\n+(CGFloat) getValueWithOriRange:(UIFloatRange)oriRange targetRange:(UIFloatRange)targetRange oriValue:(CGFloat)oriValue;\n//MARK:===============================================================\n//MARK:                     < rect >\n//MARK:===============================================================\n/**\n *  MARK:--------------------取rect并集--------------------\n */\n+(CGRect) collectRectA:(CGRect)rectA rectB:(CGRect)rectB;\n/**\n *  MARK:--------------------取rect交集--------------------\n */\n+(CGRect) filterRectA:(CGRect)rectA rectB:(CGRect)rectB;\n/**\n *  MARK:--------------------取start到end之间百分比处的值--------------------\n */\n+(CGRect) radioRect:(CGRect)startRect endRect:(CGRect)endRect radio:(CGFloat)radio;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/MathUtils.h:1-35"
+    },
+    "2377": {
+        "file_id": 248,
+        "content": "This header file defines the MathUtils class that provides utility methods for data range transformation and rect operations. It includes functions to convert data ranges, collect rects, filter rects, and get rects at specific ratios.",
+        "type": "comment"
+    },
+    "2378": {
+        "file_id": 248,
+        "content": "/**\n *  MARK:--------------------牛顿冷却--------------------\n *  @param totalCoolTime 总冷却时间\n *  @param pastTime 已冷却时间\n *  @param finishValue 最终冷却温度 (当28原则时,为0.000322f)\n */\n+(CGFloat) getCooledValue:(CGFloat)totalCoolTime pastTime:(CGFloat)pastTime finishValue:(CGFloat)finishValue;\n+(CGFloat) getCooledValue_28:(CGFloat)pastRate;\n+(CGFloat) getCooledValue:(CGFloat)pastRate finishValue:(CGFloat)finishValue;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/MathUtils.h:37-47"
+    },
+    "2379": {
+        "file_id": 248,
+        "content": "This code defines three functions for calculating cooled values based on total cooling time, past cooling time, and a finish value. The first function takes these parameters directly while the second function uses a \"pastRate\" parameter instead of past time. The third function calculates the cooled value using both past rate and finish value.",
+        "type": "comment"
+    },
+    "2380": {
+        "file_id": 249,
+        "content": "/SMG_NothingIsAll/Demo/Extension/MathUtils.m",
+        "type": "filepath"
+    },
+    "2381": {
+        "file_id": 249,
+        "content": "This code contains MathUtils methods for value transformation and CGRect manipulation, including getValueWithOriRange, getNegativeTen2TenWithOriRange, getZero2TenWithOriRange, collectRect, filterRect, radioRect, a function for calculating rectangle height based on radio value, and functions for temperature adjustment using exponential decay.",
+        "type": "summary"
+    },
+    "2382": {
+        "file_id": 249,
+        "content": "//\n//  MathUtils.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2023/5/21.\n//  Copyright © 2023年 XiaoGang. All rights reserved.\n//\n#import \"MathUtils.h\"\n@implementation MathUtils\n+(CGFloat) getNegativeTen2TenWithOriRange:(UIFloatRange)oriRange oriValue:(CGFloat)oriValue{\n    return [self getValueWithOriRange:oriRange targetRange:UIFloatRangeMake(-10, 10) oriValue:oriValue];\n}\n+(CGFloat) getZero2TenWithOriRange:(UIFloatRange)oriRange oriValue:(CGFloat)oriValue{\n    return [self getValueWithOriRange:oriRange targetRange:UIFloatRangeMake(0, 10) oriValue:oriValue];\n}\n+(CGFloat) getValueWithOriRange:(UIFloatRange)oriRange targetRange:(UIFloatRange)targetRange oriValue:(CGFloat)oriValue{\n    //1,数据范围检查;\n    oriValue = MAX(oriValue, MIN(oriValue, oriRange.maximum));\n    //2,checkValue所在的值\n    CGFloat percent = 0;\n    if (oriRange.minimum != oriValue) {\n        percent = (oriValue - oriRange.minimum) / (oriRange.maximum - oriRange.minimum);\n    }\n    //3,返回变换值\n    return (targetRange.maximum - targetRange.minimum) * percent + targetRange.minimum;",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/MathUtils.m:1-28"
+    },
+    "2383": {
+        "file_id": 249,
+        "content": "Method `MathUtils.m` contains 3 static methods for value transformation, where `getNegativeTen2TenWithOriRange` and `getZero2TenWithOriRange` are specific cases of `getValueWithOriRange`. The methods check if the input value is within the given range and then calculate a new value within another specified range based on the percentage of the original value in its original range.",
+        "type": "comment"
+    },
+    "2384": {
+        "file_id": 249,
+        "content": "}\n//MARK:===============================================================\n//MARK:                     < rect >\n//MARK:===============================================================\n/**\n *  MARK:--------------------取rect并集--------------------\n */\n+(CGRect) collectRectA:(CGRect)rectA rectB:(CGRect)rectB {\n    return CGRectUnion(rectA, rectB);\n}\n/**\n *  MARK:--------------------取rect交集--------------------\n */\n+(CGRect) filterRectA:(CGRect)rectA rectB:(CGRect)rectB {\n    //注意: 有时候CGRectIntersects()返回的是一个+-inf的xy\n    return CGRectIntersection(rectA, rectB);\n}\n/**\n *  MARK:--------------------取start到end之间百分比处的值--------------------\n */\n+(CGRect) radioRect:(CGRect)startRect endRect:(CGRect)endRect radio:(CGFloat)radio{\n    CGFloat x = [self radioFloat:CGRectGetMinX(startRect) endFloat:CGRectGetMinX(endRect) radio:radio];\n    CGFloat y = [self radioFloat:CGRectGetMinY(startRect) endFloat:CGRectGetMinY(endRect) radio:radio];\n    CGFloat w = [self radioFloat:CGRectGetWidth(startRect) endFloat:CGRectGetWidth(endRect) radio:radio];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/MathUtils.m:29-56"
+    },
+    "2385": {
+        "file_id": 249,
+        "content": "This code contains several methods for manipulating CGRect objects. The first method \"collectRect\" combines two rectangles by taking their union. The second method \"filterRect\" returns the intersection of two rectangles, useful for finding overlapping areas. Finally, the \"radioRect\" method finds a specific point within a rectangle based on a given percentage between two other rectangles.",
+        "type": "comment"
+    },
+    "2386": {
+        "file_id": 249,
+        "content": "    CGFloat h = [self radioFloat:CGRectGetHeight(startRect) endFloat:CGRectGetHeight(endRect) radio:radio];\n    return CGRectMake(x, y, w, h);\n}\n//用radio取float从start到end之间的值;\n+(CGFloat) radioFloat:(CGFloat)startFloat endFloat:(CGFloat)endFloat radio:(CGFloat)radio{\n    return startFloat + (endFloat - startFloat) * radio;\n}\n/**\n *  MARK:--------------------牛顿冷却--------------------\n *  @param totalCoolTime 总冷却时间 (需>0)\n *  @param pastTime 已冷却时间\n *  _param pastRate : 已冷却百分比时间;\n *  @param finishValue 环境温度 (输出百分比即可: 0%时冷却到0,100%时不冷却) (当28原则时,为0.000322f)\n *  @result 返回剩下温度百分比 (此值 <= 1 && > finishValue);\n */\n+(CGFloat) getCooledValue:(CGFloat)totalCoolTime pastTime:(CGFloat)pastTime finishValue:(CGFloat)finishValue {\n    return [self getCooledValue:pastTime / totalCoolTime finishValue:finishValue];\n}\n+(CGFloat) getCooledValue_28:(CGFloat)pastRate {\n    return [self getCooledValue:pastRate finishValue:0.000322f];\n}\n+(CGFloat) getCooledValue:(CGFloat)pastRate finishValue:(CGFloat)finishValue {\n    //2. 冷却系数\n    CGFloat coefficient = -logf(finishValue);",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/MathUtils.m:57-84"
+    },
+    "2387": {
+        "file_id": 249,
+        "content": "This code defines a function that takes in a start rectangle and an end rectangle, along with a radio value. It calculates the height of the new rectangle based on the radio value and returns a new rectangle with the same x, y coordinates and width as the original rectangle, but with the calculated height. The code also includes functions to calculate cooled values using Newton's cooling method for temperature adjustment.",
+        "type": "comment"
+    },
+    "2388": {
+        "file_id": 249,
+        "content": "    //3. 计算出冷却后的值;\n    CGFloat cooledValue = expf(-coefficient * pastRate);\n    return cooledValue;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/MathUtils.m:86-91"
+    },
+    "2389": {
+        "file_id": 249,
+        "content": "Calculates the exponential decay of a value, taking into account the coefficient and past rate. Returns the cooled value after applying the exponential decay formula.",
+        "type": "comment"
+    },
+    "2390": {
+        "file_id": 250,
+        "content": "/SMG_NothingIsAll/Demo/Extension/NSFile+Extension.h",
+        "type": "filepath"
+    },
+    "2391": {
+        "file_id": 250,
+        "content": "This header file defines the NSFile_Extension class, which provides methods to collect all subfiles, subfolders, and both subfiles and folders in a given path. These methods are useful for retrieving comprehensive information about a directory structure.",
+        "type": "summary"
+    },
+    "2392": {
+        "file_id": 250,
+        "content": "//\n//  NSFile+Extension.h\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2020/12/9.\n//  Copyright © 2020年 XiaoGang. All rights reserved.\n//\n#import <Foundation/Foundation.h>\n@interface NSFile_Extension : NSObject\n//所有子文件收集 notnull\n+(NSArray*)subFiles:(NSString*)path;\n+ (NSArray*)subFiles_AllDeep:(NSString*)dirString;\n//所有子文件夹收集 notnull;\n+(NSArray*)subFolders:(NSString*)path;\n//所有子文件与文件夹全收集 notnull;\n+(NSArray*)subPaths:(NSString*)path;\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/NSFile+Extension.h:1-23"
+    },
+    "2393": {
+        "file_id": 250,
+        "content": "This header file defines the NSFile_Extension class, which provides methods to collect all subfiles, subfolders, and both subfiles and folders in a given path. These methods are useful for retrieving comprehensive information about a directory structure.",
+        "type": "comment"
+    },
+    "2394": {
+        "file_id": 251,
+        "content": "/SMG_NothingIsAll/Demo/Extension/NSFile+Extension.m",
+        "type": "filepath"
+    },
+    "2395": {
+        "file_id": 251,
+        "content": "This code defines methods for retrieving non-directory files and folders in specified paths, as well as filtering file path arrays based on directory types.",
+        "type": "summary"
+    },
+    "2396": {
+        "file_id": 251,
+        "content": "//\n//  NSFile+Extension.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2020/12/9.\n//  Copyright © 2020年 XiaoGang. All rights reserved.\n//\n#import \"NSFile+Extension.h\"\n@implementation NSFile_Extension\n+(NSArray*)subFiles:(NSString*)path{\n    //1. 数据准备\n    NSArray *subPaths = [self subPaths:path];\n    //2. 筛选文件夹返回\n    return [SMGUtils filterArr:subPaths checkValid:^BOOL(NSString *subPath) {\n        BOOL isDirectory = YES;\n        return [[NSFileManager defaultManager] fileExistsAtPath:subPath isDirectory:&isDirectory] && !isDirectory;\n    }];\n}\n+ (NSArray*)subFiles_AllDeep:(NSString*)path{\n    //1. 数据准备\n    NSMutableArray *array = [[NSMutableArray alloc] init];\n    NSArray *subPaths = [self subPaths:path];\n    //2. 分别收集子文件;\n    for (NSString *subPath in subPaths) {\n        BOOL isDirectory = YES;\n        if ([[NSFileManager defaultManager] fileExistsAtPath:subPath isDirectory:&isDirectory]) {\n            //3. 文件夹时递归收集;\n            if (isDirectory) {\n                [array addObjectsFromArray:[self subFiles_AllDeep:subPath]];",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/NSFile+Extension.m:1-35"
+    },
+    "2397": {
+        "file_id": 251,
+        "content": "This code defines a category on NSFile, which provides two methods: subFiles and subFiles_AllDeep. The subFiles method returns an array of non-directory files in the specified path, while subFiles_AllDeep recursively collects all non-directory files within directories found at the specified path.",
+        "type": "comment"
+    },
+    "2398": {
+        "file_id": 251,
+        "content": "            }else{\n                //4. 文件时,直接收集;\n                [array addObject:subPath];\n            }\n        }\n    }\n    return array;\n}\n+(NSArray*)subFolders:(NSString*)path{\n    //1. 数据准备\n    NSArray *subPaths = [self subPaths:path];\n    //2. 筛选文件夹返回\n    return [SMGUtils filterArr:subPaths checkValid:^BOOL(NSString *subPath) {\n        BOOL isDirectory = YES;\n        return [[NSFileManager defaultManager] fileExistsAtPath:subPath isDirectory:&isDirectory] && isDirectory;\n    }];\n}\n//所有子文件与文件夹全收集 notnull;\n+(NSArray*)subPaths:(NSString*)path{\n    //1. 数据准备\n    NSMutableArray *array = [[NSMutableArray alloc] init];\n    NSArray *subFileNames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:nil];\n    //2. 分别收集子文件;\n    for (NSString *fileName in subFileNames) {\n        NSString *fullPath = [path stringByAppendingPathComponent:fileName];\n        [array addObject:fullPath];\n    }\n    return array;\n}\n@end",
+        "type": "code",
+        "location": "/SMG_NothingIsAll/Demo/Extension/NSFile+Extension.m:36-70"
+    },
+    "2399": {
+        "file_id": 251,
+        "content": "This code defines three methods: subPaths, subFolders, and filterArr. The `subPaths` method returns an array of full paths to all files and folders in a specified directory. The `subFolders` method filters the results returned by `subPaths` to only include folders. Lastly, the `filterArr` method filters an array based on a provided validation block. Overall, this code provides functionality for collecting and filtering file paths based on their directory type.",
+        "type": "comment"
+    }
+}

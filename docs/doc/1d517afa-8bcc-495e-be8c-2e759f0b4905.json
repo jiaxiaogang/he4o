@@ -1,0 +1,10 @@
+{
+    "summary": "This file contains the implementation of the OutputModel class in the SMG_NothingIsAll project. It is created by jia on January 9th, 2019, and is protected by a copyright for XiaoGang. The header file \"OutputModel.h\" is imported for this implementation.",
+    "details": [
+        {
+            "comment": "This file contains the implementation of the OutputModel class in the SMG_NothingIsAll project. It is created by jia on January 9th, 2019, and is protected by a copyright for XiaoGang. The header file \"OutputModel.h\" is imported for this implementation.",
+            "location": "\"/media/root/Prima/works/he4o/docs/src/SMG_NothingIsAll/AIFoundation/AIOutput/OutputModel.m\":0-12",
+            "content": "//\n//  OutputModel.m\n//  SMG_NothingIsAll\n//\n//  Created by jia on 2019/1/9.\n//  Copyright \u00a9 2019\u5e74 XiaoGang. All rights reserved.\n//\n#import \"OutputModel.h\"\n@implementation OutputModel\n@end"
+        }
+    ]
+}
