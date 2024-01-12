@@ -67,7 +67,7 @@
  *  A2: 190910概念嵌套已取消,正在做结构化识别,此次改动是为了完善ThinkReason细节;
  *
  *  @todo
- *      1. 看到西瓜会开心 : TODO: 对自身状态的判断, (比如,看到西瓜,想吃,那么当前状态是否饿)
+ *      1. 看到西瓜会开心 : 对自身状态的判断, (比如,看到西瓜,想吃,那么当前状态是否饿)
  *          > 已解决,将useNode去掉,并且由mModel替代后,会提交给demandManager进行这些处理;
  *
  *  @version 迭代记录:
@@ -79,7 +79,7 @@
  *      20200703: 废弃fuzzy模糊匹配功能,因为识别期要广入 (参考20062);
  *      20201022: 同时支持matchAlg和seemAlg结果 (参考21091);
  *      20201022: 将seem的抽象搬过来,且支持三种关联处理 (参考21091-蓝绿黄三种线);
- *      20220115: 识别结果可为自身,参考partMatching_Alg(),所以不需要此处再add(self)了;
+ *      20220115: 识别结果可为自身,参考recognitionAlg_Run(),所以不需要此处再add(self)了;
  *      20220116: 全含可能也只是相似,由直接构建抽具象关联,改成概念外类比 (参考25105);
  *      20220528: 把概念外类比关掉 (参考26129-方案2-1);
  *      20221018: 对proto直接抽象指向matchAlg (参考27153-todo3);
@@ -89,7 +89,7 @@
  *      xxxx.xx.xx: completeBlock : 共支持三种返回: 匹配效果从高到低分别为:fuzzyAlg废弃,matchAlg全含,seemAlg局部;
  *      2022.01.16: 改为直接传入inModel模型,识别后赋值到inModel中即可;
  */
-+(void) TIR_Alg:(AIKVPointer*)algNode_p except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel{
++(void) recognitionAlg:(AIKVPointer*)algNode_p except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel{
     //1. 数据准备
     AIAlgNodeBase *protoAlg = [SMGUtils searchNode:algNode_p];
     if (protoAlg == nil) return;
@@ -97,10 +97,10 @@
     
     ///3. 局部匹配 -> 内存网络;
     ///200116注掉,因为识别仅是建立抽象关联,此处会极易匹配到内存中大量的具象alg,导致无法建立关联,而在硬盘网络时,这种几率则低许多;
-    //if (!assAlgNode) assAlgNode = [AINetIndexUtils partMatching_Alg:algNode isMem:true except_ps:except_ps];
+    //if (!assAlgNode) assAlgNode = [AINetIndexUtils recognitionAlg_Run:algNode isMem:true except_ps:except_ps];
     
     ///4. 局部匹配 (Abs匹配 和 Seem匹配);
-    [self partMatching_Alg:protoAlg except_ps:except_ps inModel:inModel];
+    [self recognitionAlg_Run:protoAlg except_ps:except_ps inModel:inModel];
     
     //5. 关联处理 & 外类比 (这样后面TOR理性决策时,才可以直接对当前瞬时实物进行很好的理性评价) (参考21091-蓝线);
     for (AIMatchAlgModel *matchModel in inModel.matchAlgs) {
@@ -160,7 +160,7 @@
  *      2023.06.02 - 性能优化_复用vInfo (在识别二次过滤器中测得,这个vInfo在循环中时性能影响挺大的);
  *      2023.06.03 - 性能优化_复用cacheDataDic到循环外 & cacheProtoData到循环外 & proto收集防重用dic (参考29109-测得3);
  */
-+(void) partMatching_Alg:(AIAlgNodeBase*)protoAlg except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel{
++(void) recognitionAlg_Run:(AIAlgNodeBase*)protoAlg except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel{
     //0. 数据准备;
     if (!ISOK(protoAlg, AIAlgNodeBase.class)) return;
     except_ps = ARRTOOK(except_ps);
@@ -221,8 +221,8 @@
     }
     
     //12. 全含判断: 从大到小,依次取到对应的node和matchingCount (注: 支持相近后,应该全是全含了,参考25084-1) (性能:无缓存时读400耗400ms,有缓存时30ms);
-    NSArray *validPAlgs = [self TIR_Alg_CheckFoValidMatchV2:protoPDic.allValues protoAlgCount:protoAlg.count];
-    NSArray *validRAlgs = [self TIR_Alg_CheckFoValidMatchV2:protoRDic.allValues protoAlgCount:protoAlg.count];
+    NSArray *validPAlgs = [self recognitionAlg_CheckValid:protoPDic.allValues protoAlgCount:protoAlg.count];
+    NSArray *validRAlgs = [self recognitionAlg_CheckValid:protoRDic.allValues protoAlgCount:protoAlg.count];
     
     //13. 识别过滤器 (参考28109-todo2);
     NSArray *filterPAlgs = [AIFilter recognitionAlgFilter:validPAlgs radio:0.5f];
@@ -249,7 +249,7 @@
 /**
  *  MARK:--------------------概念识别全含判断--------------------
  */
-+(NSArray*) TIR_Alg_CheckFoValidMatchV2:(NSArray*)protoPRModels protoAlgCount:(NSInteger)protoAlgCount{
++(NSArray*) recognitionAlg_CheckValid:(NSArray*)protoPRModels protoAlgCount:(NSInteger)protoAlgCount{
     //1. 全含判断: 从大到小,依次取到对应的node和matchingCount (注: 支持相近后,应该全是全含了,参考25084-1);
     return [SMGUtils filterArr:protoPRModels checkValid:^BOOL(AIMatchAlgModel *item) {
         //2. 过滤掉匹配度<85%的;
@@ -402,7 +402,7 @@
                 
                 //7. 全含判断;
                 AIFoNodeBase *refFo = [SMGUtils searchNode:refPort.target_p];
-                NSDictionary *indexDic = [self TIR_Fo_CheckFoValidMatchV2:refFo protoOrRegroupFo:protoOrRegroupFo fromRegroup:fromRegroup];
+                NSDictionary *indexDic = [self recognitionFo_CheckValid:refFo protoOrRegroupFo:protoOrRegroupFo fromRegroup:fromRegroup];
                 if (!DICISOK(indexDic)) continue;
                 
                 //7. 取absCutIndex, 说明: cutIndex指已发生到的index,后面则为时序预测; matchValue指匹配度(0-1)
@@ -490,7 +490,7 @@
  *      2023.07.11: 仅普通正向protoFo时序识别时,才要求末帧必含,regroup则不必如此 (参考30057-修复);
  *  @result 判断protoFo是否全含assFo: 成功时返回indexDic / 失败时返回空dic;
  */
-+(NSDictionary*) TIR_Fo_CheckFoValidMatchV2:(AIFoNodeBase*)assFo protoOrRegroupFo:(AIFoNodeBase*)protoOrRegroupFo fromRegroup:(BOOL)fromRegroup {
++(NSDictionary*) recognitionFo_CheckValid:(AIFoNodeBase*)assFo protoOrRegroupFo:(AIFoNodeBase*)protoOrRegroupFo fromRegroup:(BOOL)fromRegroup {
     if (Log4MFo) NSLog(@"------------------------ 时序全含检查 ------------------------\nass:%@->%@",Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
     //1. 数据准备;
     NSMutableDictionary *indexDic = [[NSMutableDictionary alloc] init]; //记录protoIndex和assIndex的映射字典 <K:assIndex, V:protoIndex>;
