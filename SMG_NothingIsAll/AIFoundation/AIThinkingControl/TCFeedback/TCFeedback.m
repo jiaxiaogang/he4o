@@ -334,7 +334,11 @@
             //TODOTOMORROW20240112: feedbackHAlg反思识别评价;
             //1. 提前调用下feedbackRegroup;
             //2. 调用convertOrders4NewCansetV2生成regroupFo?
+            //  > feedbackTOR是反馈给RCanset的,应该按feedbackAlg来重组regroupFo (现在的feedbackRegroup就是这么做的);
             //3. 调用识别,支持限定候选集内识别;
+            //  > 明天支持下,将限定候选集传进去;
+            
+            
             
             
             
