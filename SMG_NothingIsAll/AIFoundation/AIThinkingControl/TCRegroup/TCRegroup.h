@@ -13,6 +13,7 @@
 +(void) rRegroup:(AIShortMatchModel*)shortModel;
 +(void) pRegroup:(AICMVNodeBase*)mv shortModel:(AIShortMatchModel*)shortModel;
 +(void) feedbackRegroup:(TOFoModel*)foModel feedbackFrameOfMatchAlgs:(NSArray*)feedbackFrameOfMatchAlgs;
++(void) feedbackRegroupForRCansetA:(TOFoModel*)foModel feedbackFrameOfMatchAlgs:(NSArray*)feedbackFrameOfMatchAlgs;
 +(void) actionRegroup:(TOFoModel*)actionFoModel;
 
 @end

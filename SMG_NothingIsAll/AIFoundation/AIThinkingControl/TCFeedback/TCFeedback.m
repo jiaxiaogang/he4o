@@ -330,18 +330,6 @@
             [AITest test11:model waitAlg_p:frameAlg.content_p];//测下2523c-此处是否会导致匹配不到;
             BOOL mcIsBro = [TOUtils mcIsBro:recognitionAlgs cansetA:frameAlg.content_p]; //用共同抽象判断cansetAlg反馈 (参考3014c-todo1);
             if (Log4OPushM) NSLog(@"RCansetA有效:M(A%ld) C(A%ld) 结果:%d CAtFo:%@",model.protoAlg.pointer.pointerId,frameAlg.content_p.pointerId,mcIsBro,Pit2FStr(solutionModel.content_p));
-            
-            //TODOTOMORROW20240112: feedbackHAlg反思识别评价;
-            //1. 提前调用下feedbackRegroup;
-            //2. 调用convertOrders4NewCansetV2生成regroupFo?
-            //  > feedbackTOR是反馈给RCanset的,应该按feedbackAlg来重组regroupFo (现在的feedbackRegroup就是这么做的);
-            //3. 调用识别,支持限定候选集内识别;
-            //  > 明天支持下,将限定候选集传进去;
-            
-            
-            
-            
-            
             if (mcIsBro) {
                 //a. 赋值
                 frameAlg.status = TOModelStatus_OuterBack;
