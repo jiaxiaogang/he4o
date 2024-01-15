@@ -331,10 +331,21 @@
             BOOL mcIsBro = [TOUtils mcIsBro:recognitionAlgs cansetA:frameAlg.content_p]; //用共同抽象判断cansetAlg反馈 (参考3014c-todo1);
             if (Log4OPushM) NSLog(@"RCansetA有效:M(A%ld) C(A%ld) 结果:%d CAtFo:%@",model.protoAlg.pointer.pointerId,frameAlg.content_p.pointerId,mcIsBro,Pit2FStr(solutionModel.content_p));
             if (mcIsBro) {
+                //a. 保留上次的旧反馈alg;
+                AIKVPointer *oldFeedbackAlg = frameAlg.feedbackAlg;
+                
                 //a. 赋值
                 frameAlg.status = TOModelStatus_OuterBack;
                 frameAlg.feedbackAlg = model.protoAlg.pointer;
                 solutionModel.status = TOModelStatus_Runing;
+                
+                
+                //TODOTOMORROW20240115: 评价下先;
+                [TCRegroup feedbackRegroupForRCansetA:solutionModel feedbackFrameOfMatchAlgs:model.matchAlgs];
+                BOOL scoreWin = false;//评价通过则生成newHCanset等 | 评价不通过则把oldFeedbackAlg改回去;
+                
+                
+                
                 
                 //b. 当waitModel为hDemand.targetAlg时,此处提前反馈了,hDemand改为finish状态 (参考26185-TODO6);
                 if (subHDemand) subHDemand.status = TOModelStatus_Finish;

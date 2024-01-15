@@ -697,6 +697,23 @@
 //    return indexDic;
 //}
 
+
+//MARK:===============================================================
+//MARK:                     < RCansetA识别 >
+//MARK:===============================================================
++(void) recognitionFoForRCansetA:(NSArray*)regroupOrder fromRCansetFoModel:(TOFoModel*)rCansetFoModel {
+    ReasonDemandModel *rDemand = (ReasonDemandModel*)rCansetFoModel.baseOrGroup;
+    for (AICansetModel *rCansetModel in rDemand.rCansetModels) {
+        //rCansetModel.baseSceneModel.type
+        //2. 参考Transfer代码和上面的canset识别代码,看下这里怎么判断indexDic;
+        
+    }
+    
+    //TODOTOMORROW20240115: 明天继续;
+    
+    
+}
+
 /**
  *  MARK:--------------------获取某帧shortModel的matchAlgs+partAlgs--------------------
  */
