@@ -704,14 +704,39 @@
 +(void) recognitionFoForRCansetA:(NSArray*)regroupOrder fromRCansetFoModel:(TOFoModel*)rCansetFoModel {
     ReasonDemandModel *rDemand = (ReasonDemandModel*)rCansetFoModel.baseOrGroup;
     for (AICansetModel *rCansetModel in rDemand.rCansetModels) {
-        //rCansetModel.baseSceneModel.type
-        //2. 参考Transfer代码和上面的canset识别代码,看下这里怎么判断indexDic;
+        //TODOTOMORROW20240116: 明天继续;
+        //参考Transfer代码和上面的canset识别代码,看下这里怎么判断indexDic;
+        //1. =====================参考:TCTransfer.transfer()方法,当不同type时,不同处理;=====================
+        if (rCansetModel.baseSceneModel.type == SceneTypeI) {
+            //不用处理
+            AIKVPointer *iCanset = rCansetModel.cansetFo;
+        }else if(rCansetModel.baseSceneModel.type == SceneTypeFather) {
+            //a. 取father数据;
+            AIKVPointer *fatherScene = rCansetModel.baseSceneModel.scene;
+            AIKVPointer *fatherCanset = rCansetModel.cansetFo;
+            AIKVPointer *iScene = rCansetModel.baseSceneModel.base.scene;
+            
+            //b. 参考继承代码,不继承的情况下,得到i的indexDic;
+            //AIKVPointer *iCanset = [self transferJiCen:fatherCanset fatherCansetTargetIndex:targetIndex fatherScene:fatherScene iScene_p:iScene];
+        }else if(rCansetModel.baseSceneModel.type == SceneTypeBrother) {
+            //a. 取brother数据;
+            AIKVPointer *brotherScene = rCansetModel.baseSceneModel.scene;
+            AIKVPointer *brotherCanset = rCansetModel.cansetFo;
+            
+            //b. 参考推举代码,不推举的情况下,得到f的indexDic;
+            AIKVPointer *fatherScene = rCansetModel.baseSceneModel.base.scene;
+            //AIKVPointer *fatherCanset = [self transfer4TuiJu:brotherCanset brotherCansetTargetIndex:targetIndex brotherScene:brotherScene fatherScene_p:fatherScene];
+            
+            //c. 参考继承代码,不继承的情况下,得到i的indexDic;
+            AIKVPointer *iScene = rCansetModel.baseSceneModel.base.base.scene;
+            //AIKVPointer *iCanset = [self transferJiCen:fatherCanset fatherCansetTargetIndex:targetIndex fatherScene:fatherScene iScene_p:iScene];
+        }
+        
+        //rCansetModels的一次示例日志记录 (用于边参考数据结构,边写代码用);
+        //0. I<F1351 F4003[M1{↑饿-16},A1348(距47,向147,皮果),A3958(距51,向27,棒),A3962(距23,向87,棒),A3963(向92,距10,果),飞↑,A3972(向154,距35,棒),A3973(向98,距0,果),A3978(向159,距36,棒),A3981(吃1)]> {}:(分:0.50) H1N1:(分:0.50)
+        //1. I<F1351 F4061[M1{↑饿-16},A1348(距47,向147,皮果),A4018(距98,向14,棒),A4022(距23,向88,棒),A4023(向91,距10,果),飞↑,A4031(向156,距37,棒),A4032(向95,距0,果),A4037(向160,距38,棒),A3981(吃1)]> {}:(分:0.50) H1N1:(分:0.50)
         
     }
-    
-    //TODOTOMORROW20240115: 明天继续;
-    
-    
 }
 
 /**
