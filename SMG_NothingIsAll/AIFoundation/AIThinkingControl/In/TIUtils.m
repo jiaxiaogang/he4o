@@ -728,7 +728,9 @@
             //  [iCanset updateSPDic:fatherCansetNode.spDic];
             //4. 明天查下,这里的fatherCansetTargetIndex应该传哪个数据;
             
-            TCJiCenModel *jiCenModel = [TCTransfer transferJiCenForModel:fatherCanset fatherCansetTargetIndex:0 fatherScene:fatherScene iScene:iScene];
+            //d. 取targetIndex (因为是father类型,所以取father的目标,我们最终是要求达到目标的,所以伪继承也要以目标为目的);
+            NSInteger fatherCansetTargetIndex = rCansetModel.targetIndex;
+            TCJiCenModel *jiCenModel = [TCTransfer transferJiCenForModel:fatherCanset fatherCansetTargetIndex:fatherCansetTargetIndex fatherScene:fatherScene iScene:iScene];
             //AIKVPointer *iCanset = [self transferJiCen:fatherCanset fatherCansetTargetIndex:targetIndex fatherScene:fatherScene iScene_p:iScene];
         }else if(rCansetModel.baseSceneModel.type == SceneTypeBrother) {
             //a. 取brother数据;

@@ -15,6 +15,6 @@
 
 @property (strong, nonatomic) NSArray *iCansetOrders;
 @property (strong, nonatomic) NSDictionary *iSceneCansetIndexDic;
-@property (assign, nonatomic) NSInteger sceneTargetIndex;
+@property (assign, nonatomic) NSInteger iSceneTargetIndex;
 
 @end

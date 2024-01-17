@@ -122,24 +122,27 @@
     //========================= 算法关键代码 END =========================
     
     //7. 将canset执行目标转成scene任务目标targetIndex (参考29093-方案);
-    NSInteger sceneTargetIndex = iScene.count;
+    NSInteger iSceneTargetIndex = iScene.count;
     if (fatherCansetTargetIndex < fatherCanset.count) {
-        NSArray *keys = [iSceneCansetIndexDic allKeysForObject:@(fatherCansetTargetIndex)];
+        
+        //8. iCanset和fatherCanset长度一致;
+        NSInteger iCansetTargetIndex = fatherCansetTargetIndex;
+        NSArray *keys = [iSceneCansetIndexDic allKeysForObject:@(iCansetTargetIndex)];
         if (ARRISOK(keys)) {
-            sceneTargetIndex = NUMTOOK(ARR_INDEX(keys, 0)).integerValue;
+            iSceneTargetIndex = NUMTOOK(ARR_INDEX(keys, 0)).integerValue;
         }
     }
     
-    //8. 打包数据model返回;
+    //9. 打包数据model返回;
     result.iCansetOrders = orders;
     result.iSceneCansetIndexDic = iSceneCansetIndexDic;
-    result.sceneTargetIndex = sceneTargetIndex;
+    result.iSceneTargetIndex = iSceneTargetIndex;
     return result;
 }
 
 +(AIFoNodeBase*) transferJiCenForCreate:(TCJiCenModel*)jiCenModel iScene:(AIFoNodeBase*)iScene fatherScene:(AIFoNodeBase*)fatherScene fatherCanset:(AIFoNodeBase*)fatherCanset {
     //7. 构建result & 场景内防重;
-    AIFoNodeBase *iCanset = [theNet createConFoForCanset:jiCenModel.iCansetOrders sceneFo:iScene sceneTargetIndex:jiCenModel.sceneTargetIndex];
+    AIFoNodeBase *iCanset = [theNet createConFoForCanset:jiCenModel.iCansetOrders sceneFo:iScene sceneTargetIndex:jiCenModel.iSceneTargetIndex];
     
     //8. 新生成fatherPort;
     AITransferPort *newIPort = [AITransferPort newWithScene:iScene.p canset:iCanset.p];
@@ -148,7 +151,7 @@
     if (![fatherScene.transferConPorts containsObject:newIPort]) {
         
         //10. 将newIPort挂到iScene下;
-        BOOL updateCansetSuccess = [iScene updateConCanset:iCanset.p targetIndex:jiCenModel.sceneTargetIndex];
+        BOOL updateCansetSuccess = [iScene updateConCanset:iCanset.p targetIndex:jiCenModel.iSceneTargetIndex];
         
         if (updateCansetSuccess) {
             //11. 为迁移后iCanset加上与iScene的indexDic (参考29075-todo4);
@@ -174,6 +177,7 @@
  *      2023.05.04: 通过fo全局防重实现推举防重 (参考29081-todo32);
  *      2023.12.09: 迁移出的新canset改为仅在场景内防重 (参考3101b-todo5);
  *      2024.01.17: 拆分成两步: 先用(用来取model),后体(用来构建fatherCanset节点和构建关联继承spDic);
+ *      2024.01.17: 补上推举算法中fatherSceneTargetIndex一直是错误的问题 (原来的值一直是fatherScene.count);
  */
 +(AIFoNodeBase*) transferTuiJu:(AIFoNodeBase*)brotherCanset brotherCansetTargetIndex:(NSInteger)brotherCansetTargetIndex brotherScene:(AIFoNodeBase*)brotherScene fatherScene:(AIFoNodeBase*)fatherScene {
     TCTuiJuModel *tuiJuModel = [self transferTuiJuForModel:brotherCanset brotherCansetTargetIndex:brotherCansetTargetIndex brotherScene:brotherScene fatherScene:fatherScene];
@@ -215,9 +219,22 @@
     }
     //========================= 算法关键代码 END =========================
     
-    //7. 打包数据model返回;
+    //7. 将canset执行目标转成scene任务目标targetIndex (参考29093-方案);
+    NSInteger fatherSceneTargetIndex = fatherScene.count;
+    if (brotherCansetTargetIndex < brotherCanset.count) {
+        
+        //8. fatherCanset和brotherCanset长度一致;
+        NSInteger fatherCansetTargetIndex = brotherCansetTargetIndex;
+        NSArray *keys = [fatherSceneCansetIndexDic allKeysForObject:@(fatherCansetTargetIndex)];
+        if (ARRISOK(keys)) {
+            fatherSceneTargetIndex = NUMTOOK(ARR_INDEX(keys, 0)).integerValue;
+        }
+    }
+    
+    //9. 打包数据model返回;
     result.fatherCansetOrders = orders;
     result.fatherSceneCansetIndexDic = fatherSceneCansetIndexDic;
+    result.fatherSceneTargetIndex = fatherSceneTargetIndex;
     return result;
 }
 
@@ -231,7 +248,7 @@
     //9. 防重 (其实不可能重复,因为如果重复在override算法中当前cansetModel就已经被过滤了);
     if (![brotherScene.transferAbsPorts containsObject:newFatherPort]) {
         //10. 将newFatherCanset挂到fatherScene下;
-        BOOL updateCansetSuccess = [fatherScene updateConCanset:fatherCanset.p targetIndex:fatherScene.count];
+        BOOL updateCansetSuccess = [fatherScene updateConCanset:fatherCanset.p targetIndex:tuiJuModel.fatherSceneTargetIndex];
         
         if (updateCansetSuccess) {
             //11. 为迁移后fatherCanset加上与fatherScene的indexDic (参考29075-todo4);
