@@ -702,11 +702,15 @@
 //MARK:                     < RCansetA识别 >
 //MARK:===============================================================
 +(void) recognitionFoForRCansetA:(NSArray*)regroupOrder fromRCansetFoModel:(TOFoModel*)rCansetFoModel {
+    //1. 数据准备;
     ReasonDemandModel *rDemand = (ReasonDemandModel*)rCansetFoModel.baseOrGroup;
     for (AICansetModel *rCansetModel in rDemand.rCansetModels) {
-        //TODOTOMORROW20240116: 明天继续;
-        //参考Transfer代码和上面的canset识别代码,看下这里怎么判断indexDic;
-        //1. =====================参考:TCTransfer.transfer()方法,当不同type时,不同处理;=====================
+        
+        //2. 取cansetTargetIndex (无论是ifb哪个类型,目前推进到了哪一帧,我们最终都是要求达到目标的,所以本方法虽然都是伪迁移,但也要以最终目标为目的);
+        NSInteger cansetTargetIndex = rCansetModel.targetIndex;//ifb三种类型的cansetTargetIndex是一致的,因为它们迁移长度一致;
+        
+        //3. =====================参考:TCTransfer.transfer()方法,当不同type时,不同处理;=====================
+        //4. 三种type,使用模拟迁移的方法,取到iScene和iCanset的indexDic映射 (参考31066-TODO5);
         if (rCansetModel.baseSceneModel.type == SceneTypeI) {
             //不用处理
             AIKVPointer *iCanset = rCansetModel.cansetFo;
@@ -716,9 +720,8 @@
             AIFoNodeBase *fatherCanset = [SMGUtils searchNode:rCansetModel.cansetFo];
             AIFoNodeBase *iScene = [SMGUtils searchNode:rCansetModel.baseSceneModel.base.scene];
             
-            //b. 参考继承代码,不继承的情况下,得到i的indexDic;
             
-            //TODOTOMORROW20240117:
+            //TODOTOMORROW20240116: 参考Transfer代码和上面的canset识别代码,看下这里怎么判断indexDic;
             //继承时,取这些数据;
             //1. iCanset在iScene的targetIndex (其实并未真正生成);
             //  sceneTargetIndex
@@ -728,22 +731,37 @@
             //  [iCanset updateSPDic:fatherCansetNode.spDic];
             //4. 明天查下,这里的fatherCansetTargetIndex应该传哪个数据;
             
-            //d. 取targetIndex (因为是father类型,所以取father的目标,我们最终是要求达到目标的,所以伪继承也要以目标为目的);
-            NSInteger fatherCansetTargetIndex = rCansetModel.targetIndex;
-            TCJiCenModel *jiCenModel = [TCTransfer transferJiCenForModel:fatherCanset fatherCansetTargetIndex:fatherCansetTargetIndex fatherScene:fatherScene iScene:iScene];
-            //AIKVPointer *iCanset = [self transferJiCen:fatherCanset fatherCansetTargetIndex:targetIndex fatherScene:fatherScene iScene_p:iScene];
+            //b. 模拟继承生成模型代码;
+            TCJiCenModel *jiCenModel = [TCTransfer transferJiCenForModel:fatherCanset fatherCansetTargetIndex:cansetTargetIndex fatherScene:fatherScene iScene:iScene];
+            
+            //c. 从继承模型,得到i的indexDic;
+            //  jiCenModel.iSceneCansetIndexDic
+            
+            
         }else if(rCansetModel.baseSceneModel.type == SceneTypeBrother) {
             //a. 取brother数据;
-            AIKVPointer *brotherScene = rCansetModel.baseSceneModel.scene;
-            AIKVPointer *brotherCanset = rCansetModel.cansetFo;
+            AIFoNodeBase *brotherScene = [SMGUtils searchNode:rCansetModel.baseSceneModel.scene];
+            AIFoNodeBase *brotherCanset = [SMGUtils searchNode:rCansetModel.cansetFo];
+            AIFoNodeBase *iScene = [SMGUtils searchNode:rCansetModel.baseSceneModel.base.base.scene];
             
-            //b. 参考推举代码,不推举的情况下,得到f的indexDic;
-            AIKVPointer *fatherScene = rCansetModel.baseSceneModel.base.scene;
-            //AIKVPointer *fatherCanset = [self transfer4TuiJu:brotherCanset brotherCansetTargetIndex:targetIndex brotherScene:brotherScene fatherScene_p:fatherScene];
+            //b. 模拟推举生成模型代码;
+            AIFoNodeBase *fatherScene = [SMGUtils searchNode:rCansetModel.baseSceneModel.base.scene];
+            TCTuiJuModel *tuiJuModel = [TCTransfer transferTuiJuForModel:brotherCanset brotherCansetTargetIndex:cansetTargetIndex brotherScene:brotherScene fatherScene:fatherScene];
             
-            //c. 参考继承代码,不继承的情况下,得到i的indexDic;
-            AIKVPointer *iScene = rCansetModel.baseSceneModel.base.base.scene;
-            //AIKVPointer *iCanset = [self transferJiCen:fatherCanset fatherCansetTargetIndex:targetIndex fatherScene:fatherScene iScene_p:iScene];
+            //c. 从tuiJuModel取继承所需的father内容数据 (含content & deltaTimes & indexDic三种内容);
+            NSArray *fatherContent_ps = [SMGUtils convertArr:tuiJuModel.fatherCansetOrders convertBlock:^id(AIShortMatchModel_Simple *obj) {
+                return obj.alg_p;
+            }];
+            NSArray *fatherDeltaTimes = [SMGUtils convertArr:tuiJuModel.fatherCansetOrders convertBlock:^id(AIShortMatchModel_Simple *obj) {
+                return @(obj.inputTime);
+            }];
+            NSDictionary *fatherSceneCansetIndexDic = tuiJuModel.fatherSceneCansetIndexDic;//从推举模型,得到f的indexDic;
+            
+            //d. 模拟继承生成模型代码;
+            TCJiCenModel *jiCenModel = [TCTransfer transferJiCenForModel:fatherContent_ps fatherCansetDeltaTimes:fatherDeltaTimes fatherSceneCansetIndexDic:fatherSceneCansetIndexDic fatherCansetTargetIndex:cansetTargetIndex fatherScene:fatherScene iScene:iScene];
+            
+            //e. 从继承模型,得到i的indexDic;
+            //  jiCenModel.iSceneCansetIndexDic;
         }
         
         //rCansetModels的一次示例日志记录 (用于边参考数据结构,边写代码用);

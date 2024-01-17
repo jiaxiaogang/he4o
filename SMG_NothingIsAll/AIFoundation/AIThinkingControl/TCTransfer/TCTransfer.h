@@ -20,10 +20,13 @@
  */
 +(void) transfer:(AICansetModel*)bestCansetModel complate:(void(^)(AITransferModel *brother,AITransferModel *father,AITransferModel *i))complate;
 
-//取继承model
+//取继承model: 传fatherCanset节点版本
 +(TCJiCenModel*) transferJiCenForModel:(AIFoNodeBase*)fatherCanset fatherCansetTargetIndex:(NSInteger)fatherCansetTargetIndex fatherScene:(AIFoNodeBase*)fatherScene iScene:(AIFoNodeBase*)iScene;
 
-//取推举model
+//取继承model: 传fatherCanset的内容版本
++(TCJiCenModel*) transferJiCenForModel:(NSArray*)fatherCansetContent_ps fatherCansetDeltaTimes:(NSArray*)fatherCansetDeltaTimes fatherSceneCansetIndexDic:(NSDictionary*)fatherSceneCansetIndexDic fatherCansetTargetIndex:(NSInteger)fatherCansetTargetIndex fatherScene:(AIFoNodeBase*)fatherScene iScene:(AIFoNodeBase*)iScene;
+
+//取推举model: 传brotherCanset节点版本
 +(TCTuiJuModel*) transferTuiJuForModel:(AIFoNodeBase*)brotherCanset brotherCansetTargetIndex:(NSInteger)brotherCansetTargetIndex brotherScene:(AIFoNodeBase*)brotherScene fatherScene:(AIFoNodeBase*)fatherScene;
 
 /**

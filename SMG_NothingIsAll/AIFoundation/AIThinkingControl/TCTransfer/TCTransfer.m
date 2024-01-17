@@ -73,6 +73,10 @@
     complate(brotherResult,fatherResult,iResult);
 }
 
+//MARK:===============================================================
+//MARK:                     < 继承算法 >
+//MARK:===============================================================
+
 /**
  *  MARK:--------------------canset继承算法 (29069-todo10.1推举算法示图&步骤)--------------------
  *  @desc 用于将canset从father继承到i场景下;
@@ -81,6 +85,7 @@
  *      2023.05.11: BUG_canset的targetIndex是执行目标,而scene的targetIndex是任务目标,用错修复 (参考29093-线索 & 方案);
  *      2023.12.09: 迁移出的新canset改为仅在场景内防重 (参考3101b-todo5);
  *      2024.01.17: 拆分成两步: 先用(用来取model),后体(用来构建iCanset节点和构建关联继承spDic);
+ *      2024.01.18: 把jiCenForModel加个重载 (因为如果fatherCanset本来就是推举来的,它压根没构建成时序,但这些该有的内容数据它一个不缺);
  */
 +(AIFoNodeBase*) transferJiCen:(AIFoNodeBase*)fatherCanset fatherCansetTargetIndex:(NSInteger)fatherCansetTargetIndex fatherScene:(AIFoNodeBase*)fatherScene iScene:(AIFoNodeBase*)iScene {
     TCJiCenModel *jiCenModel = [self transferJiCenForModel:fatherCanset fatherCansetTargetIndex:fatherCansetTargetIndex fatherScene:fatherScene iScene:iScene];
@@ -88,12 +93,18 @@
     return iCanset;
 }
 
+//取继承model: 传fatherCanset节点版本
 +(TCJiCenModel*) transferJiCenForModel:(AIFoNodeBase*)fatherCanset fatherCansetTargetIndex:(NSInteger)fatherCansetTargetIndex fatherScene:(AIFoNodeBase*)fatherScene iScene:(AIFoNodeBase*)iScene {
+    NSDictionary *fatherSceneCansetIndexDic = [fatherScene getConIndexDic:fatherCanset.p];
+    return [self transferJiCenForModel:fatherCanset.content_ps fatherCansetDeltaTimes:fatherCanset.deltaTimes fatherSceneCansetIndexDic:fatherSceneCansetIndexDic fatherCansetTargetIndex:fatherCansetTargetIndex fatherScene:fatherScene iScene:iScene];
+}
+
+//取继承model: 传fatherCanset的内容版本
++(TCJiCenModel*) transferJiCenForModel:(NSArray*)fatherCansetContent_ps fatherCansetDeltaTimes:(NSArray*)fatherCansetDeltaTimes fatherSceneCansetIndexDic:(NSDictionary*)fatherSceneCansetIndexDic fatherCansetTargetIndex:(NSInteger)fatherCansetTargetIndex fatherScene:(AIFoNodeBase*)fatherScene iScene:(AIFoNodeBase*)iScene {
     //1. 数据准备;
     TCJiCenModel *result = [[TCJiCenModel alloc] init];
     
     //2. 取两级映射 (参考29069-todo10.1推举算法示图);
-    NSDictionary *indexDic1 = [fatherScene getConIndexDic:fatherCanset.p];
     NSDictionary *indexDic2 = [fatherScene getConIndexDic:iScene.p];
     
     //3. 新生成fatherCanset (参考29069-todo10.1推举算法示图&步骤);
@@ -101,11 +112,11 @@
     NSMutableDictionary *iSceneCansetIndexDic = [[NSMutableDictionary alloc] init];
     
     //========================= 算法关键代码 START =========================
-    for (NSInteger i = 0; i < fatherCanset.content_ps.count; i++) {
+    for (NSInteger i = 0; i < fatherCansetContent_ps.count; i++) {
         //4. 判断映射链: (参考29069-todo10.1-步骤2);
-        NSNumber *fatherSceneIndex = ARR_INDEX([indexDic1 allKeysForObject:@(i)], 0);
+        NSNumber *fatherSceneIndex = ARR_INDEX([fatherSceneCansetIndexDic allKeysForObject:@(i)], 0);
         NSNumber *iSceneIndex = [indexDic2 objectForKey:fatherSceneIndex];
-        double deltaTime = [NUMTOOK(ARR_INDEX(fatherCanset.deltaTimes, i)) doubleValue];
+        double deltaTime = [NUMTOOK(ARR_INDEX(fatherCansetDeltaTimes, i)) doubleValue];
         if (iSceneIndex) {
             //5. 通过则收集迁移后scene元素 (参考29069-todo10.1-步骤3);
             id order = [AIShortMatchModel_Simple newWithAlg_p:ARR_INDEX(iScene.content_ps, iSceneIndex.intValue) inputTime:deltaTime isTimestamp:false];
@@ -115,7 +126,7 @@
             [iSceneCansetIndexDic setObject:@(i) forKey:iSceneIndex];
         } else {
             //6. 不通过则收集迁移前canset元素 (参考29069-todo10.1-步骤4);
-            id order = [AIShortMatchModel_Simple newWithAlg_p:ARR_INDEX(fatherCanset.content_ps, i) inputTime:deltaTime isTimestamp:false];
+            id order = [AIShortMatchModel_Simple newWithAlg_p:ARR_INDEX(fatherCansetContent_ps, i) inputTime:deltaTime isTimestamp:false];
             [orders addObject:order];
         }
     }
@@ -123,7 +134,7 @@
     
     //7. 将canset执行目标转成scene任务目标targetIndex (参考29093-方案);
     NSInteger iSceneTargetIndex = iScene.count;
-    if (fatherCansetTargetIndex < fatherCanset.count) {
+    if (fatherCansetTargetIndex < fatherCansetContent_ps.count) {
         
         //8. iCanset和fatherCanset长度一致;
         NSInteger iCansetTargetIndex = fatherCansetTargetIndex;
@@ -170,6 +181,10 @@
     return iCanset;
 }
 
+//MARK:===============================================================
+//MARK:                     < 推举算法 >
+//MARK:===============================================================
+
 /**
  *  MARK:--------------------canset推举算法 (29069-todo10.1推举算法示图&步骤)--------------------
  *  @desc 用于将canset从brother推举到father场景下;
@@ -185,6 +200,7 @@
     return fatherCanset;
 }
 
+//取推举model: 传brotherCanset节点版本
 +(TCTuiJuModel*) transferTuiJuForModel:(AIFoNodeBase*)brotherCanset brotherCansetTargetIndex:(NSInteger)brotherCansetTargetIndex brotherScene:(AIFoNodeBase*)brotherScene fatherScene:(AIFoNodeBase*)fatherScene {
     //1. 数据准备;
     AIFoNodeBase *fatherCanset = nil;
