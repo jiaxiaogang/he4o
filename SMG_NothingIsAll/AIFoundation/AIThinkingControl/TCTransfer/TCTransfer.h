@@ -20,10 +20,11 @@
  */
 +(void) transfer:(AICansetModel*)bestCansetModel complate:(void(^)(AITransferModel *brother,AITransferModel *father,AITransferModel *i))complate;
 
-/**
- *  MARK:--------------------取继承model--------------------
- */
+//取继承model
 +(TCJiCenModel*) transferJiCenForModel:(AIFoNodeBase*)fatherCanset fatherCansetTargetIndex:(NSInteger)fatherCansetTargetIndex fatherScene:(AIFoNodeBase*)fatherScene iScene:(AIFoNodeBase*)iScene;
+
+//取推举model
++(TCTuiJuModel*) transferTuiJuForModel:(AIFoNodeBase*)brotherCanset brotherCansetTargetIndex:(NSInteger)brotherCansetTargetIndex brotherScene:(AIFoNodeBase*)brotherScene fatherScene:(AIFoNodeBase*)fatherScene;
 
 /**
  *  MARK:--------------------cansetAlg迁移算法 (29075-方案3)--------------------

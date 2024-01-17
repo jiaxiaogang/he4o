@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 /**
- *  MARK:--------------------继承/推举 的准备数据--------------------
+ *  MARK:--------------------继承数据模型--------------------
  */
 @interface TCJiCenModel : NSObject
 

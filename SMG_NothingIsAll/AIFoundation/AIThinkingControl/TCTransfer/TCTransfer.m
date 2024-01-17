@@ -34,13 +34,13 @@
     //2. canset迁移之: father继承给i (参考29069-todo10.1);
     if (bestCansetModel.baseSceneModel.type == SceneTypeFather) {
         //a. 生成father结果;
-        AIKVPointer *fatherScene = bestCansetModel.baseSceneModel.scene;
-        AIKVPointer *fatherCanset = bestCansetModel.cansetFo;
-        fatherResult = [AITransferModel newWithScene:fatherScene canset:fatherCanset];
+        AIFoNodeBase *fatherScene = [SMGUtils searchNode:bestCansetModel.baseSceneModel.scene];
+        AIFoNodeBase *fatherCanset = [SMGUtils searchNode:bestCansetModel.cansetFo];
+        fatherResult = [AITransferModel newWithScene:fatherScene.p canset:fatherCanset.p];
         //b. 生成i结果;
-        AIKVPointer *iScene = bestCansetModel.baseSceneModel.base.scene;
+        AIFoNodeBase *iScene = [SMGUtils searchNode:bestCansetModel.baseSceneModel.base.scene];
         AIFoNodeBase *iCanset = [self transferJiCen:fatherCanset fatherCansetTargetIndex:targetIndex fatherScene:fatherScene iScene:iScene];
-        iResult = [AITransferModel newWithScene:iScene canset:iCanset.p];
+        iResult = [AITransferModel newWithScene:iScene.p canset:iCanset.p];
         //c. 调用Canset识别类比 (参考29069-todo12);
         //[TIUtils recognitionCansetFo:iCanset sceneFo:iScene es:ES_Default];
     }
@@ -48,19 +48,19 @@
     //3. canset迁移之: brother推举到father,再继承给i (参考29069-todo10.1);
     if (bestCansetModel.baseSceneModel.type == SceneTypeBrother) {
         //a. 得出brother结果;
-        AIKVPointer *brotherScene = bestCansetModel.baseSceneModel.scene;
-        AIKVPointer *brotherCanset = bestCansetModel.cansetFo;
-        brotherResult = [AITransferModel newWithScene:brotherScene canset:brotherCanset];
+        AIFoNodeBase *brotherScene = [SMGUtils searchNode:bestCansetModel.baseSceneModel.scene];
+        AIFoNodeBase *brotherCanset = [SMGUtils searchNode:bestCansetModel.cansetFo];
+        brotherResult = [AITransferModel newWithScene:brotherScene.p canset:brotherCanset.p];
         
         //b. 得出father结果;
-        AIKVPointer *fatherScene = bestCansetModel.baseSceneModel.base.scene;
-        AIKVPointer *fatherCanset = [self transfer4TuiJu:brotherCanset brotherCansetTargetIndex:targetIndex brotherScene:brotherScene fatherScene_p:fatherScene];
-        fatherResult = [AITransferModel newWithScene:fatherScene canset:fatherCanset];
+        AIFoNodeBase *fatherScene = [SMGUtils searchNode:bestCansetModel.baseSceneModel.base.scene];
+        AIFoNodeBase *fatherCanset = [self transferTuiJu:brotherCanset brotherCansetTargetIndex:targetIndex brotherScene:brotherScene fatherScene:fatherScene];
+        fatherResult = [AITransferModel newWithScene:fatherScene.p canset:fatherCanset.p];
         
         //c. 得出i结果
-        AIKVPointer *iScene = bestCansetModel.baseSceneModel.base.base.scene;
+        AIFoNodeBase *iScene = [SMGUtils searchNode:bestCansetModel.baseSceneModel.base.base.scene];
         AIFoNodeBase *iCanset = [self transferJiCen:fatherCanset fatherCansetTargetIndex:targetIndex fatherScene:fatherScene iScene:iScene];
-        iResult = [AITransferModel newWithScene:iScene canset:iCanset.p];
+        iResult = [AITransferModel newWithScene:iScene.p canset:iCanset.p];
         
         //d. 调用Canset识别类比 (参考29069-todo12);
         //[TIUtils recognitionCansetFo:fatherCanset sceneFo:fatherScene es:ES_Default];
@@ -82,12 +82,9 @@
  *      2023.12.09: 迁移出的新canset改为仅在场景内防重 (参考3101b-todo5);
  *      2024.01.17: 拆分成两步: 先用(用来取model),后体(用来构建iCanset节点和构建关联继承spDic);
  */
-+(AIFoNodeBase*) transferJiCen:(AIKVPointer*)fatherCanset_p fatherCansetTargetIndex:(NSInteger)fatherCansetTargetIndex fatherScene:(AIKVPointer*)fatherScene_p iScene:(AIKVPointer*)iScene_p {
-    AIFoNodeBase *fatherCanset = [SMGUtils searchNode:fatherCanset_p];
-    AIFoNodeBase *fatherScene = [SMGUtils searchNode:fatherScene_p];
-    AIFoNodeBase *iScene = [SMGUtils searchNode:iScene_p];
++(AIFoNodeBase*) transferJiCen:(AIFoNodeBase*)fatherCanset fatherCansetTargetIndex:(NSInteger)fatherCansetTargetIndex fatherScene:(AIFoNodeBase*)fatherScene iScene:(AIFoNodeBase*)iScene {
     TCJiCenModel *jiCenModel = [self transferJiCenForModel:fatherCanset fatherCansetTargetIndex:fatherCansetTargetIndex fatherScene:fatherScene iScene:iScene];
-    AIFoNodeBase *iCanset = [self transferJiCenForCreate:jiCenModel iScene:iScene fatherScene:fatherScene fatherCanset:fatherCanset fatherCansetTargetIndex:fatherCansetTargetIndex];
+    AIFoNodeBase *iCanset = [self transferJiCenForCreate:jiCenModel iScene:iScene fatherScene:fatherScene fatherCanset:fatherCanset];
     return iCanset;
 }
 
@@ -140,7 +137,7 @@
     return result;
 }
 
-+(AIFoNodeBase*) transferJiCenForCreate:(TCJiCenModel*)jiCenModel iScene:(AIFoNodeBase*)iScene fatherScene:(AIFoNodeBase*)fatherScene fatherCanset:(AIFoNodeBase*)fatherCanset fatherCansetTargetIndex:(NSInteger)fatherCansetTargetIndex {
++(AIFoNodeBase*) transferJiCenForCreate:(TCJiCenModel*)jiCenModel iScene:(AIFoNodeBase*)iScene fatherScene:(AIFoNodeBase*)fatherScene fatherCanset:(AIFoNodeBase*)fatherCanset {
     //7. 构建result & 场景内防重;
     AIFoNodeBase *iCanset = [theNet createConFoForCanset:jiCenModel.iCansetOrders sceneFo:iScene sceneTargetIndex:jiCenModel.sceneTargetIndex];
     
@@ -176,28 +173,33 @@
  *  @version
  *      2023.05.04: 通过fo全局防重实现推举防重 (参考29081-todo32);
  *      2023.12.09: 迁移出的新canset改为仅在场景内防重 (参考3101b-todo5);
+ *      2024.01.17: 拆分成两步: 先用(用来取model),后体(用来构建fatherCanset节点和构建关联继承spDic);
  */
-+(AIKVPointer*) transfer4TuiJu:(AIKVPointer*)brotherCanset brotherCansetTargetIndex:(NSInteger)brotherCansetTargetIndex brotherScene:(AIKVPointer*)brotherScene_p fatherScene_p:(AIKVPointer*)fatherScene_p {
++(AIFoNodeBase*) transferTuiJu:(AIFoNodeBase*)brotherCanset brotherCansetTargetIndex:(NSInteger)brotherCansetTargetIndex brotherScene:(AIFoNodeBase*)brotherScene fatherScene:(AIFoNodeBase*)fatherScene {
+    TCTuiJuModel *tuiJuModel = [self transferTuiJuForModel:brotherCanset brotherCansetTargetIndex:brotherCansetTargetIndex brotherScene:brotherScene fatherScene:fatherScene];
+    AIFoNodeBase *fatherCanset = [self transferTuiJuForCreate:tuiJuModel fatherScene:fatherScene brotherScene:brotherScene brotherCanset:brotherCanset];
+    return fatherCanset;
+}
+
++(TCTuiJuModel*) transferTuiJuForModel:(AIFoNodeBase*)brotherCanset brotherCansetTargetIndex:(NSInteger)brotherCansetTargetIndex brotherScene:(AIFoNodeBase*)brotherScene fatherScene:(AIFoNodeBase*)fatherScene {
     //1. 数据准备;
     AIFoNodeBase *fatherCanset = nil;
-    AIFoNodeBase *brotherScene = [SMGUtils searchNode:brotherScene_p];
-    AIFoNodeBase *fatherScene = [SMGUtils searchNode:fatherScene_p];
+    TCTuiJuModel *result = [[TCTuiJuModel alloc] init];
     
     //2. 取两级映射 (参考29069-todo10.1推举算法示图);
-    NSDictionary *indexDic1 = [brotherScene getConIndexDic:brotherCanset];
-    NSDictionary *indexDic2 = [brotherScene getAbsIndexDic:fatherScene_p];
+    NSDictionary *indexDic1 = [brotherScene getConIndexDic:brotherCanset.p];
+    NSDictionary *indexDic2 = [brotherScene getAbsIndexDic:fatherScene.p];
     
     //3. 新生成fatherCanset (参考29069-todo10.1推举算法示图&步骤);
-    AIFoNodeBase *brotherCansetNode = [SMGUtils searchNode:brotherCanset];
     NSMutableArray *orders = [[NSMutableArray alloc] init];
     NSMutableDictionary *fatherSceneCansetIndexDic = [[NSMutableDictionary alloc] init];
     
     //========================= 算法关键代码 START =========================
-    for (NSInteger i = 0; i < brotherCansetNode.content_ps.count; i++) {
+    for (NSInteger i = 0; i < brotherCanset.content_ps.count; i++) {
         //4. 判断映射链: (参考29069-todo10.1-步骤2);
         NSNumber *brotherSceneIndex = ARR_INDEX([indexDic1 allKeysForObject:@(i)], 0);
         NSNumber *fatherSceneIndex = ARR_INDEX([indexDic2 allKeysForObject:brotherSceneIndex], 0);
-        double deltaTime = [NUMTOOK(ARR_INDEX(brotherCansetNode.deltaTimes, i)) doubleValue];
+        double deltaTime = [NUMTOOK(ARR_INDEX(brotherCanset.deltaTimes, i)) doubleValue];
         if (fatherSceneIndex) {
             //5. 通过则收集迁移后scene元素 (参考29069-todo10.1-步骤3);
             id order = [AIShortMatchModel_Simple newWithAlg_p:ARR_INDEX(fatherScene.content_ps, fatherSceneIndex.intValue) inputTime:deltaTime isTimestamp:false];
@@ -207,39 +209,45 @@
             [fatherSceneCansetIndexDic setObject:@(i) forKey:fatherSceneIndex];
         } else {
             //6. 不通过则收集迁移前canset元素 (参考29069-todo10.1-步骤4);
-            id order = [AIShortMatchModel_Simple newWithAlg_p:ARR_INDEX(brotherCansetNode.content_ps, i) inputTime:deltaTime isTimestamp:false];
+            id order = [AIShortMatchModel_Simple newWithAlg_p:ARR_INDEX(brotherCanset.content_ps, i) inputTime:deltaTime isTimestamp:false];
             [orders addObject:order];
         }
     }
     //========================= 算法关键代码 END =========================
     
+    //7. 打包数据model返回;
+    result.fatherCansetOrders = orders;
+    result.fatherSceneCansetIndexDic = fatherSceneCansetIndexDic;
+    return result;
+}
+
++(AIFoNodeBase*) transferTuiJuForCreate:(TCTuiJuModel*)tuiJuModel fatherScene:(AIFoNodeBase*)fatherScene brotherScene:(AIFoNodeBase*)brotherScene brotherCanset:(AIFoNodeBase*)brotherCanset {
     //7. 构建result;
-    fatherCanset = [theNet createConFoForCanset:orders sceneFo:fatherScene sceneTargetIndex:fatherScene.count];
+    AIFoNodeBase *fatherCanset = [theNet createConFoForCanset:tuiJuModel.fatherCansetOrders sceneFo:fatherScene sceneTargetIndex:fatherScene.count];
     
     //8. 新生成fatherPort;
-    AITransferPort *newFatherPort = [AITransferPort newWithScene:fatherScene_p canset:fatherCanset.p];
+    AITransferPort *newFatherPort = [AITransferPort newWithScene:fatherScene.p canset:fatherCanset.p];
     
     //9. 防重 (其实不可能重复,因为如果重复在override算法中当前cansetModel就已经被过滤了);
     if (![brotherScene.transferAbsPorts containsObject:newFatherPort]) {
         //10. 将newFatherCanset挂到fatherScene下;
-        AIFoNodeBase *fatherScene = [SMGUtils searchNode:fatherScene_p];
         BOOL updateCansetSuccess = [fatherScene updateConCanset:fatherCanset.p targetIndex:fatherScene.count];
         
         if (updateCansetSuccess) {
             //11. 为迁移后fatherCanset加上与fatherScene的indexDic (参考29075-todo4);
-            [fatherCanset updateIndexDic:fatherScene indexDic:fatherSceneCansetIndexDic];
+            [fatherCanset updateIndexDic:fatherScene indexDic:tuiJuModel.fatherSceneCansetIndexDic];
             
             //11. SP值也推举 (参考3101b-todo2);
-            if (brotherCansetNode.count == fatherCanset.count) {
-                [fatherCanset updateSPDic:brotherCansetNode.spDic];
+            if (brotherCanset.count == fatherCanset.count) {
+                [fatherCanset updateSPDic:brotherCanset.spDic];
             }
-            [AITest test32:brotherCansetNode newCanset:fatherCanset];
+            [AITest test32:brotherCanset newCanset:fatherCanset];
             
             //12. 并进行迁移关联
-            [AINetUtils relateTransfer:fatherScene_p absCanset:fatherCanset.p conScene:brotherScene_p conCanset:brotherCanset];
+            [AINetUtils relateTransfer:fatherScene.p absCanset:fatherCanset.p conScene:brotherScene.p conCanset:brotherCanset.p];
         }
     }
-    return fatherCanset.p;
+    return fatherCanset;
 }
 
 //MARK:===============================================================

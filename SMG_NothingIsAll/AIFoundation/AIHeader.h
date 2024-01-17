@@ -63,6 +63,7 @@
 #import "FrontIndexDicModel.h"
 #import "AITransferModel.h"
 #import "TCJiCenModel.h"
+#import "TCTuiJuModel.h"
 #import "TCResult.h"
 
 //网络
