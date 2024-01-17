@@ -166,6 +166,7 @@
 		08C6C2632518E49400DDE6BF /* NSLog+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C6C2622518E49400DDE6BF /* NSLog+Extension.m */; };
 		08C7539225A3EEB800BCF011 /* AIScore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C7539125A3EEB800BCF011 /* AIScore.m */; };
 		08C84A8E1E9A866200897D8B /* AIInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C84A8D1E9A866200897D8B /* AIInput.m */; };
+		08C9360C2B58086D003CBFFE /* TCJiCenModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C9360B2B58086D003CBFFE /* TCJiCenModel.m */; };
 		08CEAFAD22B317A800CD1D91 /* NodeCompareModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08CEAFAC22B317A800CD1D91 /* NodeCompareModel.m */; };
 		08D01CA228F70296003688ED /* TVSettingWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D01CA128F70296003688ED /* TVSettingWindow.m */; };
 		08D01CA428F702B0003688ED /* TVSettingWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 08D01CA328F702B0003688ED /* TVSettingWindow.xib */; };
@@ -542,6 +543,8 @@
 		08C7539125A3EEB800BCF011 /* AIScore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIScore.m; sourceTree = "<group>"; };
 		08C84A8C1E9A866200897D8B /* AIInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIInput.h; sourceTree = "<group>"; };
 		08C84A8D1E9A866200897D8B /* AIInput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIInput.m; sourceTree = "<group>"; };
+		08C9360A2B58086D003CBFFE /* TCJiCenModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCJiCenModel.h; sourceTree = "<group>"; };
+		08C9360B2B58086D003CBFFE /* TCJiCenModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCJiCenModel.m; sourceTree = "<group>"; };
 		08CB89B82231EAB200EC1181 /* ReadMe.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReadMe.h; sourceTree = "<group>"; };
 		08CEAFAB22B317A800CD1D91 /* NodeCompareModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NodeCompareModel.h; sourceTree = "<group>"; };
 		08CEAFAC22B317A800CD1D91 /* NodeCompareModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NodeCompareModel.m; sourceTree = "<group>"; };
@@ -1631,6 +1634,8 @@
 				08F27D6D29ED8FC60063E71B /* TCTransfer.m */,
 				08B91E8E2A15B1B700B8AC59 /* AITransferModel.h */,
 				08B91E8F2A15B1B700B8AC59 /* AITransferModel.m */,
+				08C9360A2B58086D003CBFFE /* TCJiCenModel.h */,
+				08C9360B2B58086D003CBFFE /* TCJiCenModel.m */,
 			);
 			path = TCTransfer;
 			sourceTree = "<group>";
@@ -2105,6 +2110,7 @@
 				08C159C02808F47100983717 /* RLTPanel.m in Sources */,
 				087705BD2753748A00BA4EFB /* TCOut.m in Sources */,
 				88A43F40210957C300281348 /* AINetAbsFoNode.m in Sources */,
+				08C9360C2B58086D003CBFFE /* TCJiCenModel.m in Sources */,
 				08E8CF5825B2F07100AA18DB /* ImvAlgsHurtModel.m in Sources */,
 				08A5D5DD22AF21B000E56BB4 /* NVNodeView.m in Sources */,
 				0871C27926685DA200CB3889 /* UnorderItemModel.m in Sources */,

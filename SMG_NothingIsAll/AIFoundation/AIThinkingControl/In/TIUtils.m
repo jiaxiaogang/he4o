@@ -712,11 +712,23 @@
             AIKVPointer *iCanset = rCansetModel.cansetFo;
         }else if(rCansetModel.baseSceneModel.type == SceneTypeFather) {
             //a. 取father数据;
-            AIKVPointer *fatherScene = rCansetModel.baseSceneModel.scene;
-            AIKVPointer *fatherCanset = rCansetModel.cansetFo;
-            AIKVPointer *iScene = rCansetModel.baseSceneModel.base.scene;
+            AIFoNodeBase *fatherScene = [SMGUtils searchNode:rCansetModel.baseSceneModel.scene];
+            AIFoNodeBase *fatherCanset = [SMGUtils searchNode:rCansetModel.cansetFo];
+            AIFoNodeBase *iScene = [SMGUtils searchNode:rCansetModel.baseSceneModel.base.scene];
             
             //b. 参考继承代码,不继承的情况下,得到i的indexDic;
+            
+            //TODOTOMORROW20240117:
+            //继承时,取这些数据;
+            //1. iCanset在iScene的targetIndex (其实并未真正生成);
+            //  sceneTargetIndex
+            //2. iCanset和iScene的indexDic (其实并未真正关联);
+            //  iSceneCansetIndexDic
+            //3. iCanset的初始spDic (当fatherCanset和iCanset等长时);
+            //  [iCanset updateSPDic:fatherCansetNode.spDic];
+            //4. 明天查下,这里的fatherCansetTargetIndex应该传哪个数据;
+            
+            TCJiCenModel *jiCenModel = [TCTransfer transferJiCenForModel:fatherCanset fatherCansetTargetIndex:0 fatherScene:fatherScene iScene:iScene];
             //AIKVPointer *iCanset = [self transferJiCen:fatherCanset fatherCansetTargetIndex:targetIndex fatherScene:fatherScene iScene_p:iScene];
         }else if(rCansetModel.baseSceneModel.type == SceneTypeBrother) {
             //a. 取brother数据;
