@@ -14,7 +14,7 @@
  *      1. 主要作用是用于TCSolution竞争值和做竞争用;
  *      2. 次要作用是参数传递: fromAISceneModel -> toTOFoModel;
  */
-@class AISceneModel;
+@class AISceneModel,TCJiCenModel,TCTuiJuModel;
 @interface AICansetModel : NSObject
 
 /**
@@ -94,5 +94,9 @@
 @property (assign, nonatomic) NSInteger targetIndex;    //cansetFo执行目标index (R时为fo.count,H时为目标帧下标);
 @property (assign, nonatomic) NSInteger sceneCutIndex;  //sceneFo已发生截点 (含cutIndex也已发生);
 @property (assign, nonatomic) NSInteger sceneTargetIndex;//sceneFo任务目标index (R时为fo.count,H时为目标帧下标);
+
+@property (strong, nonatomic) TCJiCenModel *jiCenModel;
+@property (strong, nonatomic) TCTuiJuModel *tuiJuModel;
+
 
 @end

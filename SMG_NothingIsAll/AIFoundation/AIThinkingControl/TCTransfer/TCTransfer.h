@@ -20,6 +20,11 @@
  */
 +(void) transfer:(AICansetModel*)bestCansetModel complate:(void(^)(AITransferModel *brother,AITransferModel *father,AITransferModel *i))complate;
 
+/**
+ *  MARK:--------------------伪迁移 (仅得出模型) (参考31073-TODO1)--------------------
+ */
++(void) transferForModel:(AICansetModel*)rCansetModel;
+
 //取继承model: 传fatherCanset节点版本
 +(TCJiCenModel*) transferJiCenForModel:(AIFoNodeBase*)fatherCanset fatherCansetTargetIndex:(NSInteger)fatherCansetTargetIndex fatherScene:(AIFoNodeBase*)fatherScene iScene:(AIFoNodeBase*)iScene;
 

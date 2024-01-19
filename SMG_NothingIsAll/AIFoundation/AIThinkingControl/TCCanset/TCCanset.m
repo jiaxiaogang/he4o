@@ -87,6 +87,7 @@
  *      2023.03.18: 惰性期阈值改为eff>2时脱离惰性期 (参考28185-todo6);
  *      2023.04.22: 关闭惰性期 (参考29073-方案);
  *      2023.04.30: 用迁移后cansetA与protoA来计算前段匹配度值 (参考29075-todo5);
+ *      2024.01.19: 为每个CansetModel生成jiCenModel和tuiJuModel (参考31073-TODO1);
  *  @result 返回cansetFo前段匹配度 & 以及已匹配的cutIndex截点;
  */
 +(AICansetModel*) convert2CansetModel:(AIKVPointer*)cansetFo_p sceneFo:(AIKVPointer*)sceneFo_p basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel ptAleardayCount:(NSInteger)ptAleardayCount isH:(BOOL)isH sceneModel:(AISceneModel*)sceneModel {
@@ -181,7 +182,7 @@
                        basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel];
     }else{
         //11. 后段: R不判断后段;
-        return [AICansetModel newWithCansetFo:cansetFo_p sceneFo:sceneFo_p
+        AICansetModel *result = [AICansetModel newWithCansetFo:cansetFo_p sceneFo:sceneFo_p
                            protoFrontIndexDic:protoFrontIndexDic matchFrontIndexDic:matchFrontIndexDic
                               frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue
                                midEffectScore:midEffectScore midStableScore:midStableScore
@@ -189,6 +190,9 @@
                                      cutIndex:cansetCutIndex sceneCutIndex:matchCutIndex
                                   targetIndex:cansetFo.count sceneTargetIndex:matchTargetIndex
                        basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel];
+        //12. 伪迁移;
+        [TCTransfer transferForModel:result];
+        return result;
     }
 }
 
