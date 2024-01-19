@@ -393,6 +393,10 @@
     //}];
     //NSLog(@"第8步 排序中段稳定性<=0的:%ld",cansetModels.count);//测时xx条
 
+    //TODOTOMORROW20240119: 这里确定能响应到feedback和cutIndex变化后,看能否对排序评分,带来分值变化 (参考31073-TODO2);
+    
+    
+    
     //11. 根据候选集综合分排序 (参考26128-2-2 & 26161-4);
     NSArray *sortModels = [AIRank solutionFoRankingV3:cansetModels];
     demand.rCansetModels = sortModels;

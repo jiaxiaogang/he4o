@@ -340,7 +340,7 @@
                 solutionModel.status = TOModelStatus_Runing;
                 
                 
-                //TODOTOMORROW20240115: 评价下先;
+                //TODOTOMORROW20240119: 看下这里,能不能改成mIsC然后让Cansets及时响应到feedback和cutIndex+1 (参考31073-TODO1);
                 [TCRegroup feedbackRegroupForRCansetA:solutionModel feedbackFrameOfMatchAlgs:model.matchAlgs];
                 BOOL scoreWin = false;//评价通过则生成newHCanset等 | 评价不通过则把oldFeedbackAlg改回去;
                 
