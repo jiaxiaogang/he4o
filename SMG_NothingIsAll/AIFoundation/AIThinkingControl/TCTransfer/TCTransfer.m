@@ -93,15 +93,6 @@
         AIFoNodeBase *fatherCanset = [SMGUtils searchNode:rCansetModel.cansetFo];
         AIFoNodeBase *iScene = [SMGUtils searchNode:rCansetModel.baseSceneModel.base.scene];
         
-        
-        //TODOTOMORROW20240119: 随后看可以把这个方法,直接改成取TCJiCenModel和TCTuiJuModel的方法;
-        //1. iCanset在iScene的targetIndex (其实并未真正生成);
-        //  sceneTargetIndex
-        //2. iCanset和iScene的indexDic (其实并未真正关联);
-        //  iSceneCansetIndexDic
-        //3. iCanset的初始spDic (当fatherCanset和iCanset等长时);
-        //  [iCanset updateSPDic:fatherCansetNode.spDic];
-        
         //b. 模拟继承生成模型代码;
         rCansetModel.jiCenModel = [TCTransfer transferJiCenForModel:fatherCanset fatherCansetTargetIndex:cansetTargetIndex fatherScene:fatherScene iScene:iScene];
         
@@ -266,7 +257,6 @@
 //取推举model: 传brotherCanset节点版本
 +(TCTuiJuModel*) transferTuiJuForModel:(AIFoNodeBase*)brotherCanset brotherCansetTargetIndex:(NSInteger)brotherCansetTargetIndex brotherScene:(AIFoNodeBase*)brotherScene fatherScene:(AIFoNodeBase*)fatherScene {
     //1. 数据准备;
-    AIFoNodeBase *fatherCanset = nil;
     TCTuiJuModel *result = [[TCTuiJuModel alloc] init];
     
     //2. 取两级映射 (参考29069-todo10.1推举算法示图);
