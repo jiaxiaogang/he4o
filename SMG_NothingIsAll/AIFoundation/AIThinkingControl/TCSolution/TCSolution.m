@@ -121,16 +121,8 @@
         return obj.matchFo;
     }]];
     
-    //3. 前3条,优先快思考;
-    AICansetModel *bestResult = nil;
-    if (demand.actionFoModels.count <= 3) {
-        bestResult = [TCSolutionUtil rSolution_Fast:demand except_ps:except_ps];
-    }
-    
     //4. 快思考无果或后2条,再做慢思考;
-    if (!bestResult) {
-        bestResult = [TCSolutionUtil rSolution_Slow:demand except_ps:except_ps];
-    }
+    AICansetModel *bestResult = [TCSolutionUtil rSolution_Slow:demand except_ps:except_ps];
 
     //6. 转流程控制_有解决方案则转begin;
     DebugE();
@@ -302,16 +294,8 @@
     //1. 数据准备;
     NSArray *except_ps = [TOUtils convertPointersFromTOModels:hDemand.actionFoModels];
     
-    //3. 前3条,优先快思考;
-    AICansetModel *bestResult = nil;
-    if (hDemand.actionFoModels.count <= 3) {
-        bestResult = [TCSolutionUtil hSolution_Fast:hDemand except_ps:except_ps];
-    }
-    
     //4. 快思考无果或后2条,再做慢思考;
-    if (!bestResult) {
-        bestResult = [TCSolutionUtil hSolution_SlowV4:hDemand except_ps:except_ps];
-    }
+    AICansetModel *bestResult = [TCSolutionUtil hSolution_SlowV4:hDemand except_ps:except_ps];
     
     //8. 新解决方案_的结果处理;
     DebugE();

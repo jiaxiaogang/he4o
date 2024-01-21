@@ -12,14 +12,7 @@
 @interface TCSolutionUtil : NSObject
 
 //MARK:===============================================================
-//MARK:                     < 快思考 >
-//MARK:===============================================================
-+(AICansetModel*) rSolution_Fast:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps;
-+(AICansetModel*) hSolution_Fast:(HDemandModel *)hDemand except_ps:(NSArray*)except_ps;
-
-
-//MARK:===============================================================
-//MARK:                     < 慢思考 >
+//MARK:                     < 思考 >
 //MARK:===============================================================
 +(AICansetModel*) hSolution_SlowV2:(HDemandModel *)demand except_ps:(NSArray*)except_ps;
 +(AICansetModel*) hSolution_SlowV4:(HDemandModel *)demand except_ps:(NSArray*)except_ps;
