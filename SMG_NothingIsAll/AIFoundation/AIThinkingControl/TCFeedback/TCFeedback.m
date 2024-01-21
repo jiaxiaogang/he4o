@@ -374,6 +374,18 @@
         }
     }
     
+    //2. ============== 对Demand.cansetModels的反馈判断 (参考31073-TODO2: Cansets实时竞争) ==============
+    NSMutableArray *allDemands = [SMGUtils convertArr:roots convertItemArrBlock:^NSArray *(DemandModel *root) {
+        return [SMGUtils filterArr:[TOUtils getSubOutModels_AllDeep:root validStatus:nil] checkValid:^BOOL(TOModelBase *item) {
+            return ISOK(item, DemandModel.class);
+        }];
+    }];
+    for (DemandModel *demand in allDemands) {
+        for (AICansetModel *cansetModel in demand.rCansetModels) {
+            [cansetModel check4FeedbackTOR:recognitionAlgs];
+        }
+    }
+    
     //2. ============== 对HDemand反馈判断 ==============
     //a. 收集所有工作记忆树的H任务;
     NSMutableArray *allHDemands = [[NSMutableArray alloc] init];
