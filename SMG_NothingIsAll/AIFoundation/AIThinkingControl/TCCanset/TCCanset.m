@@ -58,7 +58,7 @@
  *                                  3. H.actionIndex前已发生;
  *                                  改: 在支持sceneTree后,统一传sceneModel.cutIndex + 1;
  *  @param sceneFo_p            : 当前cansetFo_p挂在哪个场景fo下就传哪个;
- *  @param basePFoOrTargetFoModel : 一用来取protoFo用,二用来传参给结果AICansetModel用;
+ *  @param basePFoOrTargetFoModel : 一用来取protoFo用,二用来传参给结果cansetModel用;
  *  @param sceneModel           : 此cansetModel是基于哪个sceneModel的就传哪个;
  *  @version
  *      2022.05.30: 匹配度公式改成: 匹配度总和/proto长度 (参考26128-1-4);
@@ -90,7 +90,7 @@
  *      2024.01.19: 为每个CansetModel生成jiCenModel和tuiJuModel (参考31073-TODO1);
  *  @result 返回cansetFo前段匹配度 & 以及已匹配的cutIndex截点;
  */
-+(AICansetModel*) convert2CansetModel:(AIKVPointer*)cansetFo_p sceneFo:(AIKVPointer*)sceneFo_p basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel ptAleardayCount:(NSInteger)ptAleardayCount isH:(BOOL)isH sceneModel:(AISceneModel*)sceneModel {
++(TOFoModel*) convert2CansetModel:(AIKVPointer*)cansetFo_p sceneFo:(AIKVPointer*)sceneFo_p basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel ptAleardayCount:(NSInteger)ptAleardayCount isH:(BOOL)isH sceneModel:(AISceneModel*)sceneModel {
     //1. 数据准备 & 复用indexDic & 取出pFoOrTargetFo;
     AIFoNodeBase *matchFo = [SMGUtils searchNode:sceneFo_p];
     AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
@@ -172,7 +172,7 @@
         NSInteger backStrongValue = [AINetUtils getSumConStrongByIndexDic:backIndexDic matchFo:sceneFo_p cansetFo:cansetFo_p];
         
         //9. 后段成功;
-        return [AICansetModel newWithCansetFo:cansetFo_p sceneFo:sceneFo_p
+        return [TOFoModel newWithCansetFo:cansetFo_p sceneFo:sceneFo_p
                            protoFrontIndexDic:protoFrontIndexDic matchFrontIndexDic:matchFrontIndexDic
                               frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue
                                midEffectScore:midEffectScore midStableScore:midStableScore
@@ -182,7 +182,7 @@
                        basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel];
     }else{
         //11. 后段: R不判断后段;
-        AICansetModel *result = [AICansetModel newWithCansetFo:cansetFo_p sceneFo:sceneFo_p
+        TOFoModel *result = [TOFoModel newWithCansetFo:cansetFo_p sceneFo:sceneFo_p
                            protoFrontIndexDic:protoFrontIndexDic matchFrontIndexDic:matchFrontIndexDic
                               frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue
                                midEffectScore:midEffectScore midStableScore:midStableScore

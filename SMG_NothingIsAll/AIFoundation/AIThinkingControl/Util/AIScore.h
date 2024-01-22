@@ -16,7 +16,7 @@
 //MARK: 2. 理性评价 (反省)
 //MARK:     > VRS & ARS & FRS
 //MARK:===============================================================
-@class AIShortMatchModel,TOFoModel,ReasonDemandModel,DemandModel,AIMatchFoModel,AICansetModel;
+@class AIShortMatchModel,TOFoModel,ReasonDemandModel,DemandModel,AIMatchFoModel;
 @interface AIScore : NSObject
 
 //MARK:===============================================================
@@ -29,7 +29,7 @@
 //MARK:===============================================================
 //MARK:                     < 时间不急评价 >
 //MARK:===============================================================
-+(BOOL) FRS_Time:(DemandModel*)demand solutionModel:(AICansetModel*)solutionModel;
++(BOOL) FRS_Time:(DemandModel*)demand solutionModel:(TOFoModel*)solutionModel;
 
 /**
  *  MARK:--------------------指定ratio的评价重载--------------------

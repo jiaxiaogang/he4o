@@ -122,7 +122,7 @@
     }]];
     
     //4. 快思考无果或后2条,再做慢思考;
-    AICansetModel *bestResult = [TCSolutionUtil rSolution_Slow:demand except_ps:except_ps];
+    TOFoModel *bestResult = [TCSolutionUtil rSolution_Slow:demand except_ps:except_ps];
 
     //6. 转流程控制_有解决方案则转begin;
     DebugE();
@@ -295,7 +295,7 @@
     NSArray *except_ps = [TOUtils convertPointersFromTOModels:hDemand.actionFoModels];
     
     //4. 快思考无果或后2条,再做慢思考;
-    AICansetModel *bestResult = [TCSolutionUtil hSolution_SlowV4:hDemand except_ps:except_ps];
+    TOFoModel *bestResult = [TCSolutionUtil hSolution_SlowV4:hDemand except_ps:except_ps];
     
     //8. 新解决方案_的结果处理;
     DebugE();

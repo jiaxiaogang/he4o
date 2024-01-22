@@ -16,7 +16,7 @@
  *  @version
  *      2023.04.19: TCTranfer执行后,调用Canset识别类比 (参考29069-todo12);
  */
-+(void) transfer:(AICansetModel*)bestCansetModel complate:(void(^)(AITransferModel *brother,AITransferModel *father,AITransferModel *i))complate {
++(void) transfer:(TOFoModel*)bestCansetModel complate:(void(^)(AITransferModel *brother,AITransferModel *father,AITransferModel *i))complate {
     //0. 数据准备;
     [theTC updateOperCount:kFILENAME];
     Debug();
@@ -78,7 +78,7 @@
  *  @desc 为了方便Cansets实现实时竞争 (每次反馈时,可以根据伪迁移来判断反馈成立);
  *      2024.01.19: 初版-为每个CansetModel生成且只生成jiCenModel和tuiJuModel (参考31073-TODO1);
  */
-+(void) transferForModel:(AICansetModel*)rCansetModel {
++(void) transferForModel:(TOFoModel*)rCansetModel {
     //2. 取cansetTargetIndex (无论是ifb哪个类型,目前推进到了哪一帧,我们最终都是要求达到目标的,所以本方法虽然都是伪迁移,但也要以最终目标为目的);
     NSInteger cansetTargetIndex = rCansetModel.targetIndex;//ifb三种类型的cansetTargetIndex是一致的,因为它们迁移长度一致;
     

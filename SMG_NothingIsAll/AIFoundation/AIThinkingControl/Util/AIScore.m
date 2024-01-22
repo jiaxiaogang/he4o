@@ -88,7 +88,7 @@
  *      true    : 不急,时间够用,这方案可继续act;
  *      false   : 紧急,这方案来不及执行,直接ActNo掉;
  */
-+(BOOL) FRS_Time:(DemandModel*)demand solutionModel:(AICansetModel*)solutionModel{
++(BOOL) FRS_Time:(DemandModel*)demand solutionModel:(TOFoModel*)solutionModel{
     //1. 中段为0条时,直接返回true,评价通过;
     if (solutionModel.targetIndex - solutionModel.cutIndex <= 1) {
         return true;

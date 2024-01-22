@@ -19,7 +19,7 @@
  *  @version
  *      2023.09.10: 升级v2,支持TCScene和TCCanset (参考30127);
  */
-+(AICansetModel*) hSolution_SlowV2:(HDemandModel *)demand except_ps:(NSArray*)except_ps {
++(TOFoModel*) hSolution_SlowV2:(HDemandModel *)demand except_ps:(NSArray*)except_ps {
     //1. 收集cansetModels候选集;
     NSArray *sceneModels = [TCScene hGetSceneTree:demand];
     TOFoModel *targetFoM = (TOFoModel*)demand.baseOrGroup.baseOrGroup;
@@ -49,7 +49,7 @@
     return [self generalSolution_Slow:demand cansetModels:cansetModels except_ps:except_ps];//400ms
 }
 
-+(AICansetModel*) hSolution_SlowV3:(HDemandModel *)demand except_ps:(NSArray*)except_ps {
++(TOFoModel*) hSolution_SlowV3:(HDemandModel *)demand except_ps:(NSArray*)except_ps {
     //1. 数据准备;
     TOFoModel *targetFoM = (TOFoModel*)demand.baseOrGroup.baseOrGroup;
     ReasonDemandModel *baseRDemand = (ReasonDemandModel*)targetFoM.baseOrGroup;//取出rDemand
@@ -85,7 +85,7 @@
     return [self generalSolution_Slow:demand cansetModels:cansetModels except_ps:except_ps];//400ms
 }
 
-+(AICansetModel*) hSolution_SlowV4:(HDemandModel *)demand except_ps:(NSArray*)except_ps {
++(TOFoModel*) hSolution_SlowV4:(HDemandModel *)demand except_ps:(NSArray*)except_ps {
     return [self hSolution_SlowV2:demand except_ps:except_ps];
     
     //1. 取出rSolution的成果,在它的基础上继续做hSolution;
@@ -121,7 +121,7 @@
         
         
         NSInteger step1 = 0,step2 = 0;
-        for (AICansetModel *item in rCansetModels) {
+        for (TOFoModel *item in rCansetModels) {
             AIFoNodeBase *rCanset = [SMGUtils searchNode:item.cansetFo];
             for (NSInteger i = 0; i < rCanset.count; i++) {
                 AIKVPointer *rCansetAlg = ARR_INDEX(rCanset.content_ps, i);
@@ -147,7 +147,7 @@
     
     //3. 从所有rCanset中,筛选出包含hAlg抽具象树的;
     __block NSMutableArray *havHAlgRCansetModels = [[NSMutableArray alloc] init];
-    NSArray *hCansets = [SMGUtils convertArr:rCansetModels convertItemArrBlock:^NSArray *(AICansetModel *item) {
+    NSArray *hCansets = [SMGUtils convertArr:rCansetModels convertItemArrBlock:^NSArray *(TOFoModel *item) {
         //a. 从每条rCanset中,找是否包含hAlg树的任何一个枝叶;
         AIFoNodeBase *rCansetFo = [SMGUtils searchNode:item.cansetFo];
         NSInteger findIndex = -1;
@@ -166,7 +166,7 @@
         if (!ARRISOK(hCansets)) return nil;//rCanset这帧无H解: 则它没任何hCanset可迁移给hScene.hAlg;
         return hCansets;
     }];
-    NSLog(@"第3步 包含HAlg树的rCansetModels数:%ld \n%@",havHAlgRCansetModels.count,CLEANSTR([SMGUtils convertArr:havHAlgRCansetModels convertBlock:^id(AICansetModel *obj) {
+    NSLog(@"第3步 包含HAlg树的rCansetModels数:%ld \n%@",havHAlgRCansetModels.count,CLEANSTR([SMGUtils convertArr:havHAlgRCansetModels convertBlock:^id(TOFoModel *obj) {
         return STRFORMAT(@"F%ld",obj.cansetFo.pointerId);
     }]));
     NSLog(@"第4步 找到hCansets数:%ld",hCansets.count);
@@ -184,7 +184,7 @@
  *  @version
  *      2023.12.26: 提前在for之前取scene所在的pFo,以优化其性能 (参考31025-代码段-问题1) //共三处优化,此乃其一;
  */
-+(AICansetModel*) rSolution_Slow:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps {
++(TOFoModel*) rSolution_Slow:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps {
     //1. 收集cansetModels候选集;
     NSArray *sceneModels = [TCScene rGetSceneTree:demand];//600ms
     
@@ -223,34 +223,34 @@
  *      2022.06.12: 每个pFo独立做analyst比对,转为cansetModels (参考26232-TODO8);
  *      2023.02.19: 最终激活后,将match和canset的前段抽具象强度+1 (参考28086-todo2);
  */
-+(AICansetModel*) generalSolution_Slow:(DemandModel *)demand cansetModels:(NSArray*)cansetModels except_ps:(NSArray*)except_ps {
++(TOFoModel*) generalSolution_Slow:(DemandModel *)demand cansetModels:(NSArray*)cansetModels except_ps:(NSArray*)except_ps {
     //1. 数据准备;
     [AITest test13:cansetModels];
     except_ps = ARRTOOK(except_ps);
-    AICansetModel *result = nil;
+    TOFoModel *result = nil;
     NSLog(@"第5步 Anaylst匹配成功:%ld",cansetModels.count);//测时94条
 
     //8. 排除不应期;
-    cansetModels = [SMGUtils filterArr:cansetModels checkValid:^BOOL(AICansetModel *item) {
+    cansetModels = [SMGUtils filterArr:cansetModels checkValid:^BOOL(TOFoModel *item) {
         return ![except_ps containsObject:item.cansetFo];
     }];
     NSLog(@"第6步 排除不应期:%ld",cansetModels.count);//测时xx条
 
     //9. 对下一帧做时间不急评价: 不急 = 解决方案所需时间 <= 父任务能给的时间 (参考:24057-方案3,24171-7);
-    cansetModels = [SMGUtils filterArr:cansetModels checkValid:^BOOL(AICansetModel *item) {
+    cansetModels = [SMGUtils filterArr:cansetModels checkValid:^BOOL(TOFoModel *item) {
         return [AIScore FRS_Time:demand solutionModel:item];
     }];
     NSLog(@"第7步 排除FRSTime来不及的:%ld",cansetModels.count);//测时xx条
 
     //10. 计算衰后stableScore并筛掉为0的 (参考26128-2-1 & 26161-5);
-    //NSArray *outOfFos = [SMGUtils convertArr:cansetModels convertBlock:^id(AICansetModel *obj) {
+    //NSArray *outOfFos = [SMGUtils convertArr:cansetModels convertBlock:^id(TOFoModel *obj) {
     //    return obj.cansetFo;
     //}];
-    //for (AICansetModel *model in cansetModels) {
+    //for (TOFoModel *model in cansetModels) {
     //    AIFoNodeBase *cansetFo = [SMGUtils searchNode:model.cansetFo];
     //    model.stableScore = [TOUtils getColStableScore:cansetFo outOfFos:outOfFos startSPIndex:model.cutIndex + 1 endSPIndex:model.targetIndex];
     //}
-    //cansetModels = [SMGUtils filterArr:cansetModels checkValid:^BOOL(AICansetModel *item) {
+    //cansetModels = [SMGUtils filterArr:cansetModels checkValid:^BOOL(TOFoModel *item) {
     //    return item.stableScore > 0;
     //}];
     //NSLog(@"第8步 排序中段稳定性<=0的:%ld",cansetModels.count);//测时xx条
@@ -264,7 +264,7 @@
     demand.rCansetModels = sortModels;
 
     //13. 取通过S反思的最佳S;
-    for (AICansetModel *item in sortModels) {
+    for (TOFoModel *item in sortModels) {
         BOOL score = [TCRefrection refrection:item demand:demand];
         if (!score) continue;
 

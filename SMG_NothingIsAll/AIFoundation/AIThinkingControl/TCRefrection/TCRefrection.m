@@ -28,7 +28,7 @@
  *      2023.05.26: 计算canset稳定性改为有效性(sp改为eff得分),因为canset复现率低,几乎全是0分 (参考2909a-todo2);
  *      2023.05.26: BUG_修复计算cansetFenXianScore时,取cansetFo.cmvNode_p导致怎么都算出来是0分问题;
  */
-+(BOOL) refrection:(AICansetModel*)checkCanset demand:(DemandModel*)demand{
++(BOOL) refrection:(TOFoModel*)checkCanset demand:(DemandModel*)demand{
     //1. 数据准备;
     [theTC updateOperCount:kFILENAME];
     Debug();

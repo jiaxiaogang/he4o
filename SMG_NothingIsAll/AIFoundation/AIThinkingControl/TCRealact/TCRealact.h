@@ -17,6 +17,6 @@
 /**
  *  MARK:--------------------TCSolution最佳输出的可行性检查--------------------
  */
-+(AICansetModel*) checkRealactAndReplaceIfNeed:(AICansetModel*)bestResult fromCansets:(NSArray*)fromCansets;
++(TOFoModel*) checkRealactAndReplaceIfNeed:(TOFoModel*)bestResult fromCansets:(NSArray*)fromCansets;
 
 @end

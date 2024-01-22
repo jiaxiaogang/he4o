@@ -704,7 +704,7 @@
 +(void) recognitionFoForRCansetA:(NSArray*)regroupOrder fromRCansetFoModel:(TOFoModel*)rCansetFoModel {
     //1. 数据准备;
     ReasonDemandModel *rDemand = (ReasonDemandModel*)rCansetFoModel.baseOrGroup;
-    for (AICansetModel *rCansetModel in rDemand.rCansetModels) {
+    for (TOFoModel *rCansetModel in rDemand.rCansetModels) {
         
         
         

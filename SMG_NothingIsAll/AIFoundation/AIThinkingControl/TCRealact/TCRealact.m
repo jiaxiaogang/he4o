@@ -24,7 +24,7 @@
  *  @param fromCansets : 传入TCSolutionUtil输出最佳result时,result所在的全集sortModels数组;
  *  @result 如有必要,将替换可行后的新bestResult返回;
  */
-+(AICansetModel*) checkRealactAndReplaceIfNeed:(AICansetModel*)bestResult fromCansets:(NSArray*)fromCansets {
++(TOFoModel*) checkRealactAndReplaceIfNeed:(TOFoModel*)bestResult fromCansets:(NSArray*)fromCansets {
     if (bestResult.baseSceneModel) {
         //1. 判断包含空概念;
         if ([AINetUtils foHasEmptyAlg:bestResult.cansetFo]) {
@@ -32,7 +32,7 @@
             //2. 取具象一级cansets (用空概念经验的具象,与当前场景的overrideCansets取交集得出);
             AIFoNodeBase *bestCansetFo = [SMGUtils searchNode:bestResult.cansetFo];
             NSArray *conCansets = Ports2Pits([AINetUtils conPorts_All:bestCansetFo]);
-            return [SMGUtils filterSingleFromArr:fromCansets checkValid:^BOOL(AICansetModel *item) {
+            return [SMGUtils filterSingleFromArr:fromCansets checkValid:^BOOL(TOFoModel *item) {
                 //a. 过滤掉非best具象的;
                 if (![conCansets containsObject:item.cansetFo]) return false;
                 

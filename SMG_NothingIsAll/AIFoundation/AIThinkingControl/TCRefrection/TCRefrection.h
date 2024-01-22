@@ -8,10 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
-@class AICansetModel,DemandModel;
+@class TOFoModel,DemandModel;
 @interface TCRefrection : NSObject
 
-+(BOOL) refrection:(AICansetModel*)checkCanset demand:(DemandModel*)demand;
++(BOOL) refrection:(TOFoModel*)checkCanset demand:(DemandModel*)demand;
 +(BOOL) actionRefrection:(TOFoModel*)baseFoModel;
 
 @end

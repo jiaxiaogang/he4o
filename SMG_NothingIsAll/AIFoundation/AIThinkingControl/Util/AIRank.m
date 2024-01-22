@@ -87,11 +87,11 @@
 // *  MARK:--------------------求解S前段排名 (参考28083-方案2 & 28084-5)--------------------
 // */
 //+(NSArray*) solutionFrontRank:(NSArray*)solutionModels {
-//    return [self getCooledRankTwice:solutionModels itemScoreBlock1:^CGFloat(AICansetModel *item) {
+//    return [self getCooledRankTwice:solutionModels itemScoreBlock1:^CGFloat(TOFoModel *item) {
 //        return item.frontMatchValue; //前段匹配度项;
-//    } itemScoreBlock2:^CGFloat(AICansetModel *item) {
+//    } itemScoreBlock2:^CGFloat(TOFoModel *item) {
 //        return item.frontStrongValue; //前段强度项;
-//    } itemKeyBlock:^id(AICansetModel *item) {
+//    } itemKeyBlock:^id(TOFoModel *item) {
 //        return @(item.cansetFo.pointerId);
 //    }];
 //}
@@ -100,11 +100,11 @@
 // *  MARK:--------------------求解S后段排名 (参考28092-方案 & todo3)--------------------
 // */
 //+(NSArray*) solutionBackRank:(NSArray*)solutionModels {
-//    return [self getCooledRankTwice:solutionModels itemScoreBlock1:^CGFloat(AICansetModel *item) {
+//    return [self getCooledRankTwice:solutionModels itemScoreBlock1:^CGFloat(TOFoModel *item) {
 //        return item.backMatchValue; //匹配度项;
-//    } itemScoreBlock2:^CGFloat(AICansetModel *item) {
+//    } itemScoreBlock2:^CGFloat(TOFoModel *item) {
 //        return item.backStrongValue; //强度项;
-//    } itemKeyBlock:^id(AICansetModel *item) {
+//    } itemKeyBlock:^id(TOFoModel *item) {
 //        return @(item.cansetFo.pointerId);
 //    }];
 //}
@@ -113,11 +113,11 @@
 // *  MARK:--------------------求解S中段排名 (参考28092-方案 & todo3)--------------------
 // */
 //+(NSArray*) solutionMidRank:(NSArray*)solutionModels {
-//    return [self getCooledRankTwice:solutionModels itemScoreBlock1:^CGFloat(AICansetModel *item) {
+//    return [self getCooledRankTwice:solutionModels itemScoreBlock1:^CGFloat(TOFoModel *item) {
 //        return item.midStableScore; //中断稳定性项;
-//    } itemScoreBlock2:^CGFloat(AICansetModel *item) {
+//    } itemScoreBlock2:^CGFloat(TOFoModel *item) {
 //        return item.midEffectScore; //中段有效性项;
-//    } itemKeyBlock:^id(AICansetModel *item) {
+//    } itemKeyBlock:^id(TOFoModel *item) {
 //        return @(item.cansetFo.pointerId);
 //    }];
 //}
@@ -132,7 +132,7 @@
  */
 +(NSArray*) solutionFoRankingV3:(NSArray*)solutionModels {
     //0. 将effStrong提前取出来,存到mapModel中;
-    NSArray *mapArr = [SMGUtils convertArr:solutionModels convertBlock:^id(AICansetModel *item) {
+    NSArray *mapArr = [SMGUtils convertArr:solutionModels convertBlock:^id(TOFoModel *item) {
         AIFoNodeBase *sceneFo = [SMGUtils searchNode:item.sceneFo];
         AIEffectStrong *strong = [TOUtils getEffectStrong:sceneFo effectIndex:item.sceneTargetIndex solutionFo:item.cansetFo];
         return [MapModel newWithV1:item v2:strong];
@@ -142,7 +142,7 @@
     NSArray *sort = [SMGUtils sortBig2Small:mapArr compareBlock1:^double(MapModel *item) {
         return [TOUtils getEffectScore:item.v2];//后段有效性 (参考2909a-todo1);
     } compareBlock2:^double(MapModel *item) {
-        AICansetModel *cansetModel = item.v1;
+        TOFoModel *cansetModel = item.v1;
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetModel.cansetFo];
         return [TOUtils getStableScore:cansetFo startSPIndex:cansetModel.cutIndex + 1 endSPIndex:cansetModel.cutIndex + 1];//下帧稳定性
     } compareBlock3:^double(MapModel *item) {
@@ -150,13 +150,13 @@
         return strong.hStrong;//H值 (参考2909a-todo3);
     }];
     
-    //2. 将mapModel转回AICansetModel数组;
+    //2. 将mapModel转回cansetModel数组;
     sort = [SMGUtils convertArr:sort convertBlock:^id(MapModel *obj) {
         return obj.v1;
     }];
     
     //2. debug日志
-    for (AICansetModel *obj in ARR_SUB(sort, 0, 5)) {
+    for (TOFoModel *obj in ARR_SUB(sort, 0, 5)) {
         AIFoNodeBase *sceneFo = [SMGUtils searchNode:obj.sceneFo];
         AIEffectStrong *effStrong = [TOUtils getEffectStrong:sceneFo effectIndex:sceneFo.count solutionFo:obj.cansetFo];
         CGFloat effScore = [TOUtils getEffectScore:effStrong];
@@ -228,14 +228,14 @@
     }];
 
     //3. debug日志
-    for (AICansetModel *obj in result) {
+    for (TOFoModel *obj in result) {
         id key = itemKeyBlock(obj);
         AIFoNodeBase *sceneFo = [SMGUtils searchNode:obj.sceneFo];
         AIEffectStrong *effStrong = [TOUtils getEffectStrong:sceneFo effectIndex:sceneFo.count solutionFo:obj.cansetFo];
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:obj.cansetFo];
         float coolScore1 = NUMTOOK([cooledDic1 objectForKey:key]).floatValue,coolScore2 = NUMTOOK([cooledDic2 objectForKey:key]).floatValue;
         CGFloat spScore = itemScoreBlock1(obj), effScore = itemScoreBlock2(obj);
-        if (ISOK(obj, AICansetModel.class)) {
+        if (ISOK(obj, TOFoModel.class)) {
             if (Log4AIRank) NSLog(@"%ld. %@:(分:%.2f) %@:(分:%.2f) %@<F%ld %@>",[result indexOfObject:obj],
                                   CLEANSTR(cansetFo.spDic),spScore,effStrong.description,effScore,
                                   SceneType2Str(obj.baseSceneModel.type),obj.sceneFo.pointerId,Fo2FStr(cansetFo));
