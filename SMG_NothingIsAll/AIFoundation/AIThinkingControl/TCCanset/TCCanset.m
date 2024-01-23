@@ -160,6 +160,7 @@
     CGFloat midStableScore = [TOUtils getStableScore:cansetFo startSPIndex:cansetCutIndex + 1 endSPIndex:cansetTargetIndex];
     
     //6. 后段: 找canset后段目标 和 后段匹配度 (H需要后段匹配, R不需要);
+    TOFoModel *result = nil;
     if (isH) {
         //7. 后段匹配度 (后段不匹配时,直接返nil);
         NSDictionary *backIndexDic = [SMGUtils filterDic:indexDic checkValid:^BOOL(NSNumber *key, id value) {
@@ -172,7 +173,7 @@
         NSInteger backStrongValue = [AINetUtils getSumConStrongByIndexDic:backIndexDic matchFo:sceneFo_p cansetFo:cansetFo_p];
         
         //9. 后段成功;
-        return [TOFoModel newWithCansetFo:cansetFo_p sceneFo:sceneFo_p base:demand
+        result = [TOFoModel newWithCansetFo:cansetFo_p sceneFo:sceneFo_p base:demand
                            protoFrontIndexDic:protoFrontIndexDic matchFrontIndexDic:matchFrontIndexDic
                               frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue
                                midEffectScore:midEffectScore midStableScore:midStableScore
@@ -182,7 +183,7 @@
                        basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel];
     }else{
         //11. 后段: R不判断后段;
-        TOFoModel *result = [TOFoModel newWithCansetFo:cansetFo_p sceneFo:sceneFo_p base:demand
+        result = [TOFoModel newWithCansetFo:cansetFo_p sceneFo:sceneFo_p base:demand
                            protoFrontIndexDic:protoFrontIndexDic matchFrontIndexDic:matchFrontIndexDic
                               frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue
                                midEffectScore:midEffectScore midStableScore:midStableScore
@@ -190,10 +191,12 @@
                                      cutIndex:cansetCutIndex sceneCutIndex:matchCutIndex
                                   targetIndex:cansetFo.count sceneTargetIndex:matchTargetIndex
                        basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel];
-        //12. 伪迁移;
-        [TCTransfer transferForModel:result];
-        return result;
+        
     }
+    
+    //12. 伪迁移;
+    [TCTransfer transferForModel:result];
+    return result;
 }
 
 //MARK:===============================================================

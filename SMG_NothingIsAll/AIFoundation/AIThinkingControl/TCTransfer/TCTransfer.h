@@ -16,27 +16,22 @@
 @interface TCTransfer : NSObject
 
 //MARK:===============================================================
-//MARK:                     < 用体整体迁移算法 >
-//MARK:===============================================================
-
-/**
- *  MARK:--------------------canset迁移算法 (29069-todo10)--------------------
- */
-+(void) transfer:(TOFoModel*)bestCansetModel complate:(void(^)(AITransferModel *brother,AITransferModel *father,AITransferModel *i))complate;
-
-//MARK:===============================================================
 //MARK:                     < 一用一体迁移算法 >
 //MARK:===============================================================
 
 /**
  *  MARK:--------------------伪迁移 (仅得出模型) (参考31073-TODO1)--------------------
  */
-+(void) transferForModel:(TOFoModel*)rCansetModel;
++(void) transferForModel:(TOFoModel*)cansetModel;
 
 /**
  *  MARK:--------------------迁移之体 (仅构建节点和初始spDic) (参考31073-TODO2c)--------------------
  */
 +(void) transferForCreate:(TOFoModel*)cansetModel;
+
+//MARK:===============================================================
+//MARK:                     < 概念迁移算法 >
+//MARK:===============================================================
 
 /**
  *  MARK:--------------------cansetAlg迁移算法 (29075-方案3)--------------------

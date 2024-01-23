@@ -14,9 +14,9 @@
 //MARK:===============================================================
 //MARK:                     < 思考 >
 //MARK:===============================================================
-+(TOFoModel*) hSolution_SlowV2:(HDemandModel *)demand except_ps:(NSArray*)except_ps;
-+(TOFoModel*) hSolution_SlowV4:(HDemandModel *)demand except_ps:(NSArray*)except_ps;
-+(TOFoModel*) rSolution_Slow:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps;
++(TOFoModel*) hSolutionV2:(HDemandModel *)demand except_ps:(NSArray*)except_ps;
++(TOFoModel*) hSolutionV4:(HDemandModel *)demand except_ps:(NSArray*)except_ps;
++(TOFoModel*) rSolution:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps;
 
 /**
  *  MARK:--------------------获取aleardayCount--------------------

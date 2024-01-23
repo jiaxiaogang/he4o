@@ -15,11 +15,11 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------H慢思考--------------------
+ *  MARK:--------------------H求解--------------------
  *  @version
  *      2023.09.10: 升级v2,支持TCScene和TCCanset (参考30127);
  */
-+(TOFoModel*) hSolution_SlowV2:(HDemandModel *)demand except_ps:(NSArray*)except_ps {
++(TOFoModel*) hSolutionV2:(HDemandModel *)demand except_ps:(NSArray*)except_ps {
     //1. 收集cansetModels候选集;
     NSArray *sceneModels = [TCScene hGetSceneTree:demand];
     TOFoModel *targetFoM = (TOFoModel*)demand.baseOrGroup.baseOrGroup;
@@ -45,11 +45,11 @@
     
     NSLog(@"第2步 转为候选集 总数:%ld",cansetModels.count);
 
-    //5. 慢思考;
-    return [self generalSolution_Slow:demand cansetModels:cansetModels except_ps:except_ps];//400ms
+    //5. 求解;
+    return [self generalSolution:demand cansetModels:cansetModels except_ps:except_ps];//400ms
 }
 
-+(TOFoModel*) hSolution_SlowV3:(HDemandModel *)demand except_ps:(NSArray*)except_ps {
++(TOFoModel*) hSolutionV3:(HDemandModel *)demand except_ps:(NSArray*)except_ps {
     //1. 数据准备;
     TOFoModel *targetFoM = (TOFoModel*)demand.baseOrGroup.baseOrGroup;
     ReasonDemandModel *baseRDemand = (ReasonDemandModel*)targetFoM.baseOrGroup;//取出rDemand
@@ -81,12 +81,12 @@
     }];
     NSLog(@"第2步 转为候选集 总数:%ld",cansetModels.count);
 
-    //5. 慢思考;
-    return [self generalSolution_Slow:demand cansetModels:cansetModels except_ps:except_ps];//400ms
+    //5. 求解;
+    return [self generalSolution:demand cansetModels:cansetModels except_ps:except_ps];//400ms
 }
 
-+(TOFoModel*) hSolution_SlowV4:(HDemandModel *)demand except_ps:(NSArray*)except_ps {
-    return [self hSolution_SlowV2:demand except_ps:except_ps];
++(TOFoModel*) hSolutionV4:(HDemandModel *)demand except_ps:(NSArray*)except_ps {
+    return [self hSolutionV2:demand except_ps:except_ps];
     
     //1. 取出rSolution的成果,在它的基础上继续做hSolution;
     ReasonDemandModel *rDemand = (ReasonDemandModel*)demand.baseOrGroup.baseOrGroup.baseOrGroup;
@@ -173,18 +173,18 @@
     
     //5. 对有解的部分进行竞争;
     
-    //6. 将最好的hCanset解返回 (改写H版本的generalSolution_Slow());
+    //6. 将最好的hCanset解返回 (改写H版本的generalSolution());
     return nil;
     
     //7. 返回后,将hCanset打包成foModel,并迁移;
 }
 
 /**
- *  MARK:--------------------R慢思考--------------------
+ *  MARK:--------------------R求解--------------------
  *  @version
  *      2023.12.26: 提前在for之前取scene所在的pFo,以优化其性能 (参考31025-代码段-问题1) //共三处优化,此乃其一;
  */
-+(TOFoModel*) rSolution_Slow:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps {
++(TOFoModel*) rSolution:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps {
     //1. 收集cansetModels候选集;
     NSArray *sceneModels = [TCScene rGetSceneTree:demand];//600ms
     
@@ -209,21 +209,21 @@
     }];
     NSLog(@"第2步 转为候选集 总数:%ld",cansetModels.count);
 
-    //5. 慢思考;
-    return [self generalSolution_Slow:demand cansetModels:cansetModels except_ps:except_ps];//400ms
+    //5. 求解;
+    return [self generalSolution:demand cansetModels:cansetModels except_ps:except_ps];//400ms
 }
 
 /**
- *  MARK:--------------------慢思考--------------------
+ *  MARK:--------------------求解--------------------
  *  @desc 思考求解: 前段匹配,中段加工,后段静默 (参考26127);
  *  @version
  *      2022.06.04: 修复结果与当前场景相差甚远BUG: 分三级排序窄出 (参考26194 & 26195);
- *      2022.06.09: 将R和H的慢思考封装成同一方法,方便调用和迭代;
+ *      2022.06.09: 将R和H的求解封装成同一方法,方便调用和迭代;
  *      2022.06.09: 弃用阈值方案,改为综合排名 (参考26222-TODO2);
  *      2022.06.12: 每个pFo独立做analyst比对,转为cansetModels (参考26232-TODO8);
  *      2023.02.19: 最终激活后,将match和canset的前段抽具象强度+1 (参考28086-todo2);
  */
-+(TOFoModel*) generalSolution_Slow:(DemandModel *)demand cansetModels:(NSArray*)cansetModels except_ps:(NSArray*)except_ps {
++(TOFoModel*) generalSolution:(DemandModel *)demand cansetModels:(NSArray*)cansetModels except_ps:(NSArray*)except_ps {
     //1. 数据准备;
     [AITest test13:cansetModels];
     except_ps = ARRTOOK(except_ps);
@@ -279,7 +279,7 @@
     //14. 返回最佳解决方案;
     if (result) {
         AIFoNodeBase *resultFo = [SMGUtils searchNode:result.cansetFo];
-        NSLog(@"慢思考最佳结果:F%ld (前%.2f 中%.2f 后%.2f) %@",result.cansetFo.pointerId,result.frontMatchValue,result.midStableScore,result.backMatchValue,CLEANSTR(resultFo.spDic));
+        NSLog(@"求解最佳结果:F%ld (前%.2f 中%.2f 后%.2f) %@",result.cansetFo.pointerId,result.frontMatchValue,result.midStableScore,result.backMatchValue,CLEANSTR(resultFo.spDic));
 
         //15. 更新其前段帧的con和abs抽具象强度 (参考28086-todo2);
         [AINetUtils updateConAndAbsStrongByIndexDic:result.matchFrontIndexDic matchFo:result.sceneFo cansetFo:result.cansetFo];

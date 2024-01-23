@@ -149,7 +149,7 @@
 +(void) test13:(NSArray*)slowSolutionCansets {
     if (!Switch4AITest) return;
     if (slowSolutionCansets && slowSolutionCansets.count > 1000) {
-        ELog(@"自检13: 慢思考候选集太长,建议限limit");
+        ELog(@"自检13: 求解候选集太长,建议限limit");
     }
 }
 

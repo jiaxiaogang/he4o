@@ -387,8 +387,6 @@
 //Score
 #define Log4Score false
 #define Log4Solution true
-#define Log4Solution_Slow true
-#define Log4Solution_Fast true
 
 //TCCanset日志开关
 #define Log4TCCanset false
@@ -409,8 +407,6 @@
 #define Switch4PS false
 //P任务开关 (20230301早没用P任务了,关掉)
 #define Switch4PDemand false
-//快思考开关
-#define Switch4FastSolution false
 //行为再输入开关 (参考28133-1 & 28137-修复)
 #define Switch4IsOutReIn false
 //识别排名器开关 (参考28152-方案5)

@@ -96,7 +96,8 @@
  *      2022.05.22: 窄出排序方式,改为有效率排序 (参考26095-9);
  *      2022.05.27: 集成新的取S的方法 (参考26128);
  *      2022.05.27: 新解决方案从cutIndex开始行为化,而不是-1 (参考26127-TODO9);
- *      2022.05.29: 前3条优先取快思考,后2条或快思考无效时,再取慢思考 (参考26143-TODO2);
+ *      2022.05.29: 前3条优先取快思考,后2条或快思考无效时,再取求解 (参考26143-TODO2);
+ *      2024.01.23: bestResult由用转体 (参考31073-TODO2c);
  *  @callers : 用于RDemand.Begin时调用;
  */
 +(TCResult*) rSolution:(ReasonDemandModel*)demand {
@@ -121,8 +122,8 @@
         return obj.matchFo;
     }]];
     
-    //4. 快思考无果或后2条,再做慢思考;
-    TOFoModel *bestResult = [TCSolutionUtil rSolution_Slow:demand except_ps:except_ps];
+    //4. 快思考无果或后2条,再做求解;
+    TOFoModel *bestResult = [TCSolutionUtil rSolution:demand except_ps:except_ps];
 
     //6. 转流程控制_有解决方案则转begin;
     DebugE();
@@ -131,10 +132,8 @@
         [theTC updateEnergyDelta:-1];
         
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
-        //b) bestResult的迁移 (todo: 改成由用转体);
-        [TCTransfer transfer:bestResult complate:^(AITransferModel *brother, AITransferModel *father, AITransferModel *i) {
-            [bestResult setDataWithSceneModel:brother father:father i:i];
-        }];
+        //b) bestResult由用转体迁移;
+        [TCTransfer transferForCreate:bestResult];
         
         //c) 调试;
         AIFoNodeBase *sceneFo = [SMGUtils searchNode:bestResult.sceneFo];
@@ -271,6 +270,7 @@
  *      2022.05.04: 树限宽也限深 (参考2523c-分析代码1);
  *      2022.05.22: 窄出排序方式改为有效率为准 (参考26095-9);
  *      2022.05.31: 支持快慢思考 (参考26161 & 26162);
+ *      2024.01.23: bestResult由用转体 (参考31073-TODO2c);
  */
 +(TCResult*) hSolution:(HDemandModel*)hDemand{
     //0. S数达到limit时设为WithOut;
@@ -291,8 +291,8 @@
     //1. 数据准备;
     NSArray *except_ps = [TOUtils convertPointersFromTOModels:hDemand.actionFoModels];
     
-    //4. 快思考无果或后2条,再做慢思考;
-    TOFoModel *bestResult = [TCSolutionUtil hSolution_SlowV4:hDemand except_ps:except_ps];
+    //4. 快思考无果或后2条,再做求解;
+    TOFoModel *bestResult = [TCSolutionUtil hSolutionV4:hDemand except_ps:except_ps];
     
     //8. 新解决方案_的结果处理;
     DebugE();
@@ -301,10 +301,8 @@
         [theTC updateEnergyDelta:-1];
         
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
-        //b) bestResult的迁移 (todo: 改成由用转体);
-        [TCTransfer transfer:bestResult complate:^(AITransferModel *brother, AITransferModel *father, AITransferModel *i) {
-            [bestResult setDataWithSceneModel:brother father:father i:i];
-        }];
+        //b) bestResult由用转体迁移;
+        [TCTransfer transferForCreate:bestResult];
         
         //c) 调试;
         AIFoNodeBase *sceneFo = [SMGUtils searchNode:bestResult.sceneFo];
