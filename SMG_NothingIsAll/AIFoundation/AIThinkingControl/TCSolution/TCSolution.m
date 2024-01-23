@@ -135,6 +135,12 @@
         //b) bestResult由用转体迁移;
         [TCTransfer transferForCreate:bestResult];
         
+        //TODOTOMORROW20240124: 明天继续写这个;
+        //c) 更新状态besting和bested;
+        for (TOFoModel *cansetModel in demand.actionFoModels) {
+            
+        }
+        
         //c) 调试;
         AIFoNodeBase *sceneFo = [SMGUtils searchNode:bestResult.sceneFo];
         AIEffectStrong *effStrong = [TOUtils getEffectStrong:sceneFo effectIndex:sceneFo.count solutionFo:bestResult.cansetFo];

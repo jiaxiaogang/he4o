@@ -20,6 +20,12 @@
  *      2023.09.10: 升级v2,支持TCScene和TCCanset (参考30127);
  */
 +(TOFoModel*) hSolutionV2:(HDemandModel *)demand except_ps:(NSArray*)except_ps {
+    //0. 初始化一次,后面只执行generalSolution部分;
+    if (demand.alreadyInitCansetModels) {
+        return [self generalSolution:demand cansetModels:demand.actionFoModels except_ps:except_ps];//400ms
+    }
+    demand.alreadyInitCansetModels = true;
+    
     //1. 收集cansetModels候选集;
     NSArray *sceneModels = [TCScene hGetSceneTree:demand];
     TOFoModel *targetFoM = (TOFoModel*)demand.baseOrGroup.baseOrGroup;
@@ -45,11 +51,17 @@
     
     NSLog(@"第2步 转为候选集 总数:%ld",cansetModels.count);
 
-    //5. 求解;
+    //5. 竞争求解;
     return [self generalSolution:demand cansetModels:cansetModels except_ps:except_ps];//400ms
 }
 
 +(TOFoModel*) hSolutionV3:(HDemandModel *)demand except_ps:(NSArray*)except_ps {
+    //0. 初始化一次,后面只执行generalSolution部分;
+    if (demand.alreadyInitCansetModels) {
+        return [self generalSolution:demand cansetModels:demand.actionFoModels except_ps:except_ps];//400ms
+    }
+    demand.alreadyInitCansetModels = true;
+    
     //1. 数据准备;
     TOFoModel *targetFoM = (TOFoModel*)demand.baseOrGroup.baseOrGroup;
     ReasonDemandModel *baseRDemand = (ReasonDemandModel*)targetFoM.baseOrGroup;//取出rDemand
@@ -81,11 +93,17 @@
     }];
     NSLog(@"第2步 转为候选集 总数:%ld",cansetModels.count);
 
-    //5. 求解;
+    //5. 竞争求解;
     return [self generalSolution:demand cansetModels:cansetModels except_ps:except_ps];//400ms
 }
 
 +(TOFoModel*) hSolutionV4:(HDemandModel *)demand except_ps:(NSArray*)except_ps {
+    //0. 初始化一次,后面只执行generalSolution部分;
+    if (demand.alreadyInitCansetModels) {
+        return [self generalSolution:demand cansetModels:demand.actionFoModels except_ps:except_ps];//400ms
+    }
+    demand.alreadyInitCansetModels = true;
+    
     return [self hSolutionV2:demand except_ps:except_ps];
     
     //1. 取出rSolution的成果,在它的基础上继续做hSolution;
@@ -183,8 +201,15 @@
  *  MARK:--------------------R求解--------------------
  *  @version
  *      2023.12.26: 提前在for之前取scene所在的pFo,以优化其性能 (参考31025-代码段-问题1) //共三处优化,此乃其一;
+ *      2024.01.24: 只初始化一次,避免重复生成actionFoModels (参考31073-TODO2f);
  */
 +(TOFoModel*) rSolution:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps {
+    //0. 初始化一次,后面只执行generalSolution部分;
+    if (demand.alreadyInitCansetModels) {
+        return [self generalSolution:demand cansetModels:demand.actionFoModels except_ps:except_ps];//400ms
+    }
+    demand.alreadyInitCansetModels = true;
+    
     //1. 收集cansetModels候选集;
     NSArray *sceneModels = [TCScene rGetSceneTree:demand];//600ms
     
@@ -209,7 +234,7 @@
     }];
     NSLog(@"第2步 转为候选集 总数:%ld",cansetModels.count);
 
-    //5. 求解;
+    //5. 竞争求解;
     return [self generalSolution:demand cansetModels:cansetModels except_ps:except_ps];//400ms
 }
 

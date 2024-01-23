@@ -46,5 +46,6 @@
  *  @desc 这个数据里将所有获取rCanset的数据存下来了,可以用于从中寻找可供迁移的hCanset;
  */
 @property (strong, nonatomic) NSArray *rCansetModels;
+@property (assign, nonatomic) BOOL alreadyInitCansetModels;
 
 @end
