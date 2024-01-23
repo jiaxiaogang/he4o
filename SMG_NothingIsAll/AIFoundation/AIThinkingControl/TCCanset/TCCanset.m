@@ -90,7 +90,7 @@
  *      2024.01.19: 为每个CansetModel生成jiCenModel和tuiJuModel (参考31073-TODO1);
  *  @result 返回cansetFo前段匹配度 & 以及已匹配的cutIndex截点;
  */
-+(TOFoModel*) convert2CansetModel:(AIKVPointer*)cansetFo_p sceneFo:(AIKVPointer*)sceneFo_p basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel ptAleardayCount:(NSInteger)ptAleardayCount isH:(BOOL)isH sceneModel:(AISceneModel*)sceneModel {
++(TOFoModel*) convert2CansetModel:(AIKVPointer*)cansetFo_p sceneFo:(AIKVPointer*)sceneFo_p basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel ptAleardayCount:(NSInteger)ptAleardayCount isH:(BOOL)isH sceneModel:(AISceneModel*)sceneModel demand:(DemandModel*)demand{
     //1. 数据准备 & 复用indexDic & 取出pFoOrTargetFo;
     AIFoNodeBase *matchFo = [SMGUtils searchNode:sceneFo_p];
     AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
@@ -172,7 +172,7 @@
         NSInteger backStrongValue = [AINetUtils getSumConStrongByIndexDic:backIndexDic matchFo:sceneFo_p cansetFo:cansetFo_p];
         
         //9. 后段成功;
-        return [TOFoModel newWithCansetFo:cansetFo_p sceneFo:sceneFo_p
+        return [TOFoModel newWithCansetFo:cansetFo_p sceneFo:sceneFo_p base:demand
                            protoFrontIndexDic:protoFrontIndexDic matchFrontIndexDic:matchFrontIndexDic
                               frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue
                                midEffectScore:midEffectScore midStableScore:midStableScore
@@ -182,7 +182,7 @@
                        basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel];
     }else{
         //11. 后段: R不判断后段;
-        TOFoModel *result = [TOFoModel newWithCansetFo:cansetFo_p sceneFo:sceneFo_p
+        TOFoModel *result = [TOFoModel newWithCansetFo:cansetFo_p sceneFo:sceneFo_p base:demand
                            protoFrontIndexDic:protoFrontIndexDic matchFrontIndexDic:matchFrontIndexDic
                               frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue
                                midEffectScore:midEffectScore midStableScore:midStableScore

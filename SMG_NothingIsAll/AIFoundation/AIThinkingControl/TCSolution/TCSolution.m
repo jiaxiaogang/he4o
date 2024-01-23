@@ -131,13 +131,10 @@
         [theTC updateEnergyDelta:-1];
         
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
-        TOFoModel *foModel = [TOFoModel newWithFo_p:bestResult.cansetFo base:demand basePFoOrTargetFoModel:bestResult.basePFoOrTargetFoModel];
-        
-        //b) bestResult的迁移;
+        //b) bestResult的迁移 (todo: 改成由用转体);
         [TCTransfer transfer:bestResult complate:^(AITransferModel *brother, AITransferModel *father, AITransferModel *i) {
-            [foModel setDataWithSceneModel:bestResult.baseSceneModel brother:brother father:father i:i];
+            [bestResult setDataWithSceneModel:brother father:father i:i];
         }];
-        foModel.actionIndex = bestResult.cutIndex;
         
         //c) 调试;
         AIFoNodeBase *sceneFo = [SMGUtils searchNode:bestResult.sceneFo];
@@ -147,11 +144,11 @@
         NSLog(@"> newS 第%ld例: eff:%@ sp:%@ %@ scene:F%ld canset:F%ld (前%.2f 中%.2f 后%.2f)",demand.actionFoModels.count,effDesc,CLEANSTR(cansetFo.spDic),SceneType2Str(bestResult.baseSceneModel.type),sceneFo.pId,cansetFo.pId,bestResult.frontMatchValue,bestResult.midStableScore,bestResult.backMatchValue);
         
         //a) 有效率
-        [TCEffect rEffect:foModel];
+        [TCEffect rEffect:bestResult];
         dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
             [theTV updateFrame];
         });
-        return [TCAction action:foModel];
+        return [TCAction action:bestResult];
     }else{
         //b) 下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);
         demand.status = TOModelStatus_WithOut;
@@ -239,7 +236,7 @@
             AIFoNodeBase *fo = [SMGUtils searchNode:firstFoPort.target_p];
             
             //a. 构建TOFoModel
-            TOFoModel *toFoModel = [TOFoModel newWithFo_p:fo.pointer base:demandModel basePFoOrTargetFoModel:nil];
+            TOFoModel *toFoModel = nil;//[TOFoModel newWithFo_p:fo.pointer base:demandModel basePFoOrTargetFoModel:nil];
             
             //b. 取自身,实现吃,则可不饿 (提交C给TOR行为化);
             //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
@@ -304,14 +301,10 @@
         [theTC updateEnergyDelta:-1];
         
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
-        TOFoModel *foModel = [TOFoModel newWithFo_p:bestResult.cansetFo base:hDemand basePFoOrTargetFoModel:bestResult.basePFoOrTargetFoModel];
-        
-        //b) bestResult的迁移;
+        //b) bestResult的迁移 (todo: 改成由用转体);
         [TCTransfer transfer:bestResult complate:^(AITransferModel *brother, AITransferModel *father, AITransferModel *i) {
-            [foModel setDataWithSceneModel:bestResult.baseSceneModel brother:brother father:father i:i];
+            [bestResult setDataWithSceneModel:brother father:father i:i];
         }];
-        foModel.actionIndex = bestResult.cutIndex;
-        foModel.targetSPIndex = bestResult.targetIndex;
         
         //c) 调试;
         AIFoNodeBase *sceneFo = [SMGUtils searchNode:bestResult.sceneFo];
@@ -321,11 +314,11 @@
         NSLog(@"> newH 第%ld例: eff:%@ sp:%@ %@ scene:F%ld canset:F%ld (cutIndex:%ld=>targetIndex:%ld) (前%.2f 中%.2f 后%.2f)",hDemand.actionFoModels.count,effDesc,CLEANSTR(cansetFo.spDic),SceneType2Str(bestResult.baseSceneModel.type),sceneFo.pId,cansetFo.pId,bestResult.cutIndex,bestResult.targetIndex,bestResult.frontMatchValue,bestResult.midStableScore,bestResult.backMatchValue);
         
         //a) 有效率
-        [TCEffect hEffect:foModel];
+        [TCEffect hEffect:bestResult];
         dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
             [theTV updateFrame];
         });
-        return [TCAction action:foModel];
+        return [TCAction action:bestResult];
     }else{
         //b) 下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);
         hDemand.status = TOModelStatus_WithOut;

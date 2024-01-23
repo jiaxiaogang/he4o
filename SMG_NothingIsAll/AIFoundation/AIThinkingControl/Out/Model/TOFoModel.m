@@ -17,24 +17,17 @@
 
 @implementation TOFoModel
 
-+(TOFoModel*) newWithCansetFo:(AIKVPointer*)cansetFo
-                            sceneFo:(AIKVPointer*)sceneFo
-                 protoFrontIndexDic:(NSDictionary *)protoFrontIndexDic
-                 matchFrontIndexDic:(NSDictionary *)matchFrontIndexDic
-                    frontMatchValue:(CGFloat)frontMatchValue
-                   frontStrongValue:(CGFloat)frontStrongValue
-                     midEffectScore:(CGFloat)midEffectScore
-                     midStableScore:(CGFloat)midStableScore
-                       backIndexDic:(NSDictionary*)backIndexDic
-                     backMatchValue:(CGFloat)backMatchValue
-                    backStrongValue:(CGFloat)backStrongValue
-                           cutIndex:(NSInteger)cutIndex
-                      sceneCutIndex:(NSInteger)sceneCutIndex
-                        targetIndex:(NSInteger)targetIndex
-                   sceneTargetIndex:(NSInteger)sceneTargetIndex
-             basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel
-                     baseSceneModel:(AISceneModel*)baseSceneModel {
++(TOFoModel*) newWithCansetFo:(AIKVPointer*)cansetFo sceneFo:(AIKVPointer*)sceneFo base:(TOModelBase<ITryActionFoDelegate>*)base
+           protoFrontIndexDic:(NSDictionary *)protoFrontIndexDic matchFrontIndexDic:(NSDictionary *)matchFrontIndexDic
+              frontMatchValue:(CGFloat)frontMatchValue frontStrongValue:(CGFloat)frontStrongValue
+               midEffectScore:(CGFloat)midEffectScore midStableScore:(CGFloat)midStableScore
+                 backIndexDic:(NSDictionary*)backIndexDic backMatchValue:(CGFloat)backMatchValue backStrongValue:(CGFloat)backStrongValue
+                     cutIndex:(NSInteger)cutIndex sceneCutIndex:(NSInteger)sceneCutIndex
+                  targetIndex:(NSInteger)targetIndex sceneTargetIndex:(NSInteger)sceneTargetIndex
+       basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel {
     TOFoModel *model = [[TOFoModel alloc] init];
+    
+    //1. 原CansetModel相关赋值;
     model.cansetFo = cansetFo;
     model.sceneFo = sceneFo;
     model.basePFoOrTargetFoModel = basePFoOrTargetFoModel;
@@ -50,22 +43,13 @@
     model.cutIndex = cutIndex;
     model.targetIndex = targetIndex;
     model.sceneTargetIndex = sceneTargetIndex;
-    return model;
-}
-
-+(TOFoModel*) newWithFo_p:(AIKVPointer*)fo_p base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel {
-    //1. 数据准备;
-    AIFoNodeBase *fo = [SMGUtils searchNode:fo_p];
-    TOFoModel *result = [[TOFoModel alloc] initWithContent_p:fo_p];
     
-    //2. 赋值;
-    result.status = TOModelStatus_Runing;
-    if (base) [base.actionFoModels addObject:result];
-    result.baseOrGroup = base;
-    result.actionIndex = -1;//默认为头(-1),r和h任务自行重赋值;
-    result.targetSPIndex = fo.count;//默认到尾(foCount),h任务自行重赋值;
-    result.basePFoOrTargetFoModel = basePFoOrTargetFoModel;
-    return result;
+    //2. TOFoModel相关赋值;
+    model.content_p = cansetFo;
+    model.status = TOModelStatus_Runing;
+    if (base) [base.actionFoModels addObject:model];
+    model.baseOrGroup = base;
+    return model;
 }
 
 /**
@@ -81,7 +65,7 @@
 //    //if (subModel) {
 //    //    return self.score + [subModel allNiceScore];
 //    //}
-//    //1. 从当前actionIndex
+//    //1. 从当前cutIndex
 //    //2. 找itemSubModels下
 //    //3. 所有status未中止的
 //    //4. 那些时序的评分总和
@@ -97,11 +81,6 @@
     return _subDemands;
 }
 
-//-(void)setActionIndex:(NSInteger)actionIndex{
-//    NSLog(@"toFo.setActionIndex:%ld -> %ld",self.actionIndex,actionIndex);
-//    _actionIndex = actionIndex;
-//}
-
 /**
  *  MARK:--------------------将每帧反馈转成orders,以构建protoFo--------------------
  *  @param fromRegroup : 从TCRegroup调用时未发生部分也取, 而用于canset抽象时仅取已发生部分;
@@ -114,7 +93,7 @@
     AIFoNodeBase *fo = [SMGUtils searchNode:self.content_p];
     NSMutableArray *order = [[NSMutableArray alloc] init];
     NSArray *feedbackIndexArr = [self getIndexArrIfHavFeedback];
-    NSInteger max = fromRegroup ? fo.count : self.actionIndex;
+    NSInteger max = fromRegroup ? fo.count : self.cutIndex;
     
     //2. 将fo逐帧收集真实发生的alg;
     for (NSInteger i = 0; i < max; i++) {
@@ -245,8 +224,7 @@
 //MARK:                     < for 三级场景 >
 //MARK:===============================================================
 
--(void) setDataWithSceneModel:(AISceneModel*)baseSceneModel brother:(AITransferModel*)brother father:(AITransferModel*)father i:(AITransferModel*)i {
-    self.baseSceneModel = baseSceneModel;
+-(void) setDataWithSceneModel:(AITransferModel*)brother father:(AITransferModel*)father i:(AITransferModel*)i {
     self.brother = brother;
     self.father = father;
     self.i = i;
@@ -357,8 +335,8 @@
     self = [super initWithCoder:aDecoder];
     if (self) {
         self.subModels = [aDecoder decodeObjectForKey:@"subModels"];
-        self.actionIndex = [aDecoder decodeIntegerForKey:@"actionIndex"];
-        self.targetSPIndex = [aDecoder decodeIntegerForKey:@"targetSPIndex"];
+        self.cutIndex = [aDecoder decodeIntegerForKey:@"cutIndex"];
+        self.targetIndex = [aDecoder decodeIntegerForKey:@"targetIndex"];
         self.subDemands = [aDecoder decodeObjectForKey:@"subDemands"];
         self.feedbackMv = [aDecoder decodeObjectForKey:@"feedbackMv"];
         self.brother = [aDecoder decodeObjectForKey:@"brother"];
@@ -372,8 +350,8 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [super encodeWithCoder:aCoder];
     [aCoder encodeObject:self.subModels forKey:@"subModels"];
-    [aCoder encodeInteger:self.actionIndex forKey:@"actionIndex"];
-    [aCoder encodeInteger:self.targetSPIndex forKey:@"targetSPIndex"];
+    [aCoder encodeInteger:self.cutIndex forKey:@"cutIndex"];
+    [aCoder encodeInteger:self.targetIndex forKey:@"targetIndex"];
     [aCoder encodeObject:self.subDemands forKey:@"subDemands"];
     [aCoder encodeObject:self.feedbackMv forKey:@"feedbackMv"];
     [aCoder encodeObject:self.brother forKey:@"brother"];

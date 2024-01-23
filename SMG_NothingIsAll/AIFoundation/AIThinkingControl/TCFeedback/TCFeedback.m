@@ -288,7 +288,7 @@
                 //6. 记录feedbackAlg (参考27204-1);
                 waitModel.feedbackAlg = model.protoAlg.pointer;
                 waitModel.status = TOModelStatus_OuterBack;
-                BOOL isEndFrame = solutionModel.actionIndex == solutionModel.targetSPIndex;
+                BOOL isEndFrame = solutionModel.cutIndex == solutionModel.targetIndex;
                 
                 //a. H反馈中段: 标记OuterBack,solutionFo继续;
                 if (!isEndFrame) {
@@ -356,10 +356,10 @@
                     AIFoNodeBase *rCanset = [SMGUtils searchNode:solutionModel.content_p];
                     AIMatchFoModel *basePFo = (AIMatchFoModel*)solutionModel.basePFoOrTargetFoModel;
                     NSArray *order = [basePFo convertOrders4NewCansetV2];
-                    if (ARRISOK(order) && solutionModel.actionIndex < rCanset.count) {
-                        AIFoNodeBase *hCanset = [theNet createConFoForCanset:order sceneFo:rCanset sceneTargetIndex:solutionModel.actionIndex];
-                        [rCanset updateConCanset:hCanset.pointer targetIndex:solutionModel.actionIndex];
-                        NSLog(@"1.feedbackTOR为rScene:%@\n2.rCanset:%@... 的第%ld帧:%@\n3.挂载NewHCanset:%@",Pit2FStr(basePFo.matchFo),SUBSTR2INDEX(Fo2FStr(rCanset), 50),solutionModel.actionIndex+1,Pit2FStr(ARR_INDEX(rCanset.content_ps, solutionModel.actionIndex)),Fo2FStr(hCanset));
+                    if (ARRISOK(order) && solutionModel.cutIndex < rCanset.count) {
+                        AIFoNodeBase *hCanset = [theNet createConFoForCanset:order sceneFo:rCanset sceneTargetIndex:solutionModel.cutIndex];
+                        [rCanset updateConCanset:hCanset.pointer targetIndex:solutionModel.cutIndex];
+                        NSLog(@"1.feedbackTOR为rScene:%@\n2.rCanset:%@... 的第%ld帧:%@\n3.挂载NewHCanset:%@",Pit2FStr(basePFo.matchFo),SUBSTR2INDEX(Fo2FStr(rCanset), 50),solutionModel.cutIndex+1,Pit2FStr(ARR_INDEX(rCanset.content_ps, solutionModel.cutIndex)),Fo2FStr(hCanset));
                     }
                 }
                 
@@ -425,9 +425,9 @@
                     
                     //h. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
                     NSLog(@"HCanset预想与实际类比: (状态:%@ fromTargetFo:F%ld) \n\t当前Canset:%@",TOStatus2Str(solutionModel.status),targetFoModel.content_p.pointerId,Pit2FStr(solutionModel.content_p));
-                    NSArray *noRepeatArea_ps = [targetFo getConCansets:targetFoModel.actionIndex];
+                    NSArray *noRepeatArea_ps = [targetFo getConCansets:targetFoModel.cutIndex];
                     AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:newHCanset assFo:solutionFo type:ATDefault noRepeatArea_ps:noRepeatArea_ps];
-                    BOOL updateCansetSuccess = [targetFo updateConCanset:absCansetFo.pointer targetIndex:targetFoModel.actionIndex];
+                    BOOL updateCansetSuccess = [targetFo updateConCanset:absCansetFo.pointer targetIndex:targetFoModel.cutIndex];
                     [AITest test101:absCansetFo proto:newHCanset conCanset:solutionFo];
                     
                     if (updateCansetSuccess) {
@@ -488,7 +488,7 @@
             
             //6. 未到末尾,不处理;
             AIFoNodeBase *waitFo = [SMGUtils searchNode:waitModel.content_p];
-            if (waitModel.actionIndex < waitFo.count) continue;
+            if (waitModel.cutIndex < waitFo.count) continue;
             
             //7. waitFo是为了解决任务,所以要取出原任务的mv标识来比较;
             //7. 判断hope(wait)和real(new)之间是否相符 (当反馈了"同区反向"时,即表明任务失败,为S);

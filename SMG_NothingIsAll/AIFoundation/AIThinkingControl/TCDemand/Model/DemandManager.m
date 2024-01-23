@@ -206,10 +206,10 @@
         CGFloat maxProgressScore = 0;
         for (TOFoModel *actionFo in obj.actionFoModels) {
             if (actionFo.status != TOModelStatus_Runing && actionFo.status != TOModelStatus_ActYes) continue;
-            CGFloat progress = (float)actionFo.actionIndex / actionFo.targetSPIndex;//参考31052-公式1
+            CGFloat progress = (float)actionFo.cutIndex / actionFo.targetIndex;//参考31052-公式1
             CGFloat hot = 1 - [MathUtils getCooledValue_28:progress];//参考31052-公式2
             CGFloat progressScore = demandScore * hot;//参考31052-公式3
-            //NSLog(@"cansetFo: F%ld %@ (%ld/%ld)",actionFo.content_p.pointerId,TOStatus2Str(actionFo.status),actionFo.actionIndex+1,actionFo.targetSPIndex);
+            //NSLog(@"cansetFo: F%ld %@ (%ld/%ld)",actionFo.content_p.pointerId,TOStatus2Str(actionFo.status),actionFo.actionIndex+1,actionFo.targetIndex);
             //NSLog(@"进度:%.2f 热度:%.2f 进度分:%.2f",progress,hot,progressScore);
             maxProgressScore = MAX(maxProgressScore, progressScore);
         }

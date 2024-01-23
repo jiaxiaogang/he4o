@@ -171,7 +171,7 @@
 //    root.status = TOModelStatus_ActYes;
 //
 //    //2. 如果TOAlgModel为HNGL时 (所需时间为"target-1到target"时间);
-//    double deltaTime = [NUMTOOK(ARR_INDEX(foNode.deltaTimes, foModel.targetSPIndex)) doubleValue];
+//    double deltaTime = [NUMTOOK(ARR_INDEX(foNode.deltaTimes, foModel.targetIndex)) doubleValue];
 //    [AINoRepeatRun sign:STRFORMAT(@"%p",algModel)];
 //
 //    //3. 触发器 (触发条件:未等到实际输入);
@@ -255,7 +255,7 @@
     //0. 数据准备 (从上到下,取demand,solutionFo,frameAlg);
     DemandModel *demand = (DemandModel*)solutionModel.baseOrGroup;
     AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.content_p];
-    NSInteger curActionIndex = solutionModel.actionIndex;
+    NSInteger curActionIndex = solutionModel.cutIndex;
     AIKVPointer *frameAlg_p = ARR_INDEX(solutionFo.content_ps, curActionIndex);
     TOAlgModel *frameModel = [SMGUtils filterSingleFromArr:solutionModel.subModels checkValid:^BOOL(TOAlgModel *item) {
         return [item.content_p isEqual:frameAlg_p];

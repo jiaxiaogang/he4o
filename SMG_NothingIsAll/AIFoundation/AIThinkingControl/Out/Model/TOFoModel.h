@@ -24,9 +24,6 @@
  *  @version
  *      2021.03.27: 实现ITryActionFoDelegate接口,因为每个fo都有可能是子任务 (参考22193);
  */
-/**
- 
- */
 @class AISceneModel,AITransferModel,TCJiCenModel,TCTuiJuModel;
 @interface TOFoModel : TOModelBase <ISubModelsDelegate,ISubDemandDelegate,NSCoding>
 
@@ -36,24 +33,14 @@
  *      1. R任务时,backMatchValue和targetIndex两个参数无用;
  *      2. H任务时,所有参数都有效;
  */
-+(TOFoModel*) newWithCansetFo:(AIKVPointer*)cansetFo
-                            sceneFo:(AIKVPointer*)sceneFo
-                 protoFrontIndexDic:(NSDictionary *)protoFrontIndexDic
-                 matchFrontIndexDic:(NSDictionary *)matchFrontIndexDic
-                    frontMatchValue:(CGFloat)frontMatchValue
-                   frontStrongValue:(CGFloat)frontStrongValue
-                     midEffectScore:(CGFloat)midEffectScore
-                     midStableScore:(CGFloat)midStableScore
-                       backIndexDic:(NSDictionary*)backIndexDic
-                     backMatchValue:(CGFloat)backMatchValue
-                    backStrongValue:(CGFloat)backStrongValue
-                           cutIndex:(NSInteger)cutIndex
-                      sceneCutIndex:(NSInteger)sceneCutIndex
-                        targetIndex:(NSInteger)targetIndex
-                   sceneTargetIndex:(NSInteger)sceneTargetIndex
-             basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel
-                     baseSceneModel:(AISceneModel*)baseSceneModel;
-+(TOFoModel*) newWithFo_p:(AIKVPointer*)fo_p base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel;
++(TOFoModel*) newWithCansetFo:(AIKVPointer*)cansetFo sceneFo:(AIKVPointer*)sceneFo base:(TOModelBase<ITryActionFoDelegate>*)base
+           protoFrontIndexDic:(NSDictionary *)protoFrontIndexDic matchFrontIndexDic:(NSDictionary *)matchFrontIndexDic
+              frontMatchValue:(CGFloat)frontMatchValue frontStrongValue:(CGFloat)frontStrongValue
+               midEffectScore:(CGFloat)midEffectScore midStableScore:(CGFloat)midStableScore
+                 backIndexDic:(NSDictionary*)backIndexDic backMatchValue:(CGFloat)backMatchValue backStrongValue:(CGFloat)backStrongValue
+                     cutIndex:(NSInteger)cutIndex sceneCutIndex:(NSInteger)sceneCutIndex
+                  targetIndex:(NSInteger)targetIndex sceneTargetIndex:(NSInteger)sceneTargetIndex
+       basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel;
 
 /**
  *  MARK:--------------------行为化数据--------------------
@@ -61,22 +48,6 @@
  *      2020.08.27: 将actions行为化数据字段去掉,因为现在行为化数据在每一个isOut=true的TOAlgModel中;
  */
 //@property (strong, nonatomic) NSMutableArray *actions;
-
-/**
- *  MARK:--------------------当前正在行为化的下标--------------------
- *  @todo 将actionIndex赋值,改为生成TOAlgModel模型,并挂在subModels下;
- *  @desc actionIndex表示当前从执行到执行下帧前 (即actionIndex一般表示已执行);
- */
-@property (assign, nonatomic) NSInteger actionIndex;
-
-/**
- *  MARK:--------------------执行目标index--------------------
- *  @desc foModel要行为化的index目标 (默认目标为mv_即全执行);
- *      1. 如全执行完,则是为了mv结果;
- *      2. 如执行到某一帧,则是为了实现HDemand;
- *      3. 注: 其中要执行的不包括targetIndex,比如为1时,则目标为1,只执行到0(第1帧),为content.count时,则目标为mv;
- */
-@property (assign, nonatomic) NSInteger targetSPIndex;
 
 //@property (strong, nonatomic) NSMutableDictionary *itemSubModels;   //每个下标,对应的subModels字典;
 
@@ -92,16 +63,6 @@
  *  @desc 当前fo的目标为mv时,如果反馈了mv,即记录到此处 (可用于生成实际发生protoFo时用到);
  */
 @property (strong, nonatomic) AIKVPointer *feedbackMv;
-
-/**
- *  MARK:--------------------此解决方案基于哪个pFo/targetFo--------------------
- */
-@property (weak, nonatomic) id basePFoOrTargetFoModel;//R任务时为pFoModel,H任务时为targetFoModel;
-
-/**
- *  MARK:--------------------从决策中一步步传过来 (参考29069-todo7)--------------------
- */
-@property (strong, nonatomic) AISceneModel *baseSceneModel;
 
 /**
  *  MARK:--------------------反思未通过标记--------------------
@@ -126,7 +87,7 @@
 //MARK:===============================================================
 //MARK:                     < for 三级场景 >
 //MARK:===============================================================
--(void) setDataWithSceneModel:(AISceneModel*)baseSceneModel brother:(AITransferModel*)brother father:(AITransferModel*)father i:(AITransferModel*)i;
+-(void) setDataWithSceneModel:(AITransferModel*)brother father:(AITransferModel*)father i:(AITransferModel*)i;
 @property (strong, nonatomic) AITransferModel *brother;
 @property (strong, nonatomic) AITransferModel *father;
 @property (strong, nonatomic) AITransferModel *i;
@@ -144,7 +105,7 @@
 @property (strong, nonatomic) AIKVPointer *sceneFo;     //迁移前候选集所在的scene
 
 /**
- *  MARK:--------------------basePFoOrTargetFoModel--------------------
+ *  MARK:--------------------此解决方案基于哪个pFo/targetFo--------------------
  *  @desc R任务时为pFoModel,H任务时为targetFoModel;
  *  @callers:
  *      1. 用于构建TOFoModel时,传过去;
@@ -189,7 +150,20 @@
 @property (assign, nonatomic) CGFloat midStableScore;    //中段稳定性分;
 @property (assign, nonatomic) CGFloat midEffectScore;    //整体有效率分;
 
-@property (assign, nonatomic) NSInteger cutIndex;       //cansetFo已发生截点 (含cutIndex也已发生);
+/**
+ *  MARK:--------------------cansetFo已发生截点--------------------
+ *  @todo 将cutIndex赋值,改为生成TOAlgModel模型,并挂在subModels下;
+ *  @desc cutIndex表示当前从执行到执行下帧前 (即cutIndex一般表示已执行 / 含cutIndex也已发生);
+ */
+@property (assign, nonatomic) NSInteger cutIndex;
+
+/**
+ *  MARK:--------------------执行目标index--------------------
+ *  @desc foModel要行为化的index目标 (默认目标为mv_即全执行);
+ *      1. 如全执行完,则是为了mv结果;
+ *      2. 如执行到某一帧,则是为了实现HDemand;
+ *      3. 注: 其中要执行的不包括targetIndex,比如为1时,则目标为1,只执行到0(第1帧),为content.count时,则目标为mv;
+ */
 @property (assign, nonatomic) NSInteger targetIndex;    //cansetFo执行目标index (R时为fo.count,H时为目标帧下标);
 @property (assign, nonatomic) NSInteger sceneCutIndex;  //sceneFo已发生截点 (含cutIndex也已发生);
 @property (assign, nonatomic) NSInteger sceneTargetIndex;//sceneFo任务目标index (R时为fo.count,H时为目标帧下标);

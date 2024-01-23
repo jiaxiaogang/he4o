@@ -37,7 +37,7 @@
         //CGFloat spScore = [TOUtils getSPScore:fo startSPIndex:0 endSPIndex:fo.count];
         [mStr appendFormat:@" SP:%ld",sumSP];
     }else if(ISOK(data.baseOrGroup, HDemandModel.class)){
-        //CGFloat spScore = [TOUtils getSPScore:fo startSPIndex:0 endSPIndex:data.targetSPIndex];
+        //CGFloat spScore = [TOUtils getSPScore:fo startSPIndex:0 endSPIndex:data.targetIndex];
         [mStr appendFormat:@" SP:%ld",sumSP];
     }
     
