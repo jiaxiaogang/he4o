@@ -15,24 +15,28 @@
  */
 @interface TCTransfer : NSObject
 
+//MARK:===============================================================
+//MARK:                     < 用体整体迁移算法 >
+//MARK:===============================================================
+
 /**
  *  MARK:--------------------canset迁移算法 (29069-todo10)--------------------
  */
 +(void) transfer:(TOFoModel*)bestCansetModel complate:(void(^)(AITransferModel *brother,AITransferModel *father,AITransferModel *i))complate;
+
+//MARK:===============================================================
+//MARK:                     < 一用一体迁移算法 >
+//MARK:===============================================================
 
 /**
  *  MARK:--------------------伪迁移 (仅得出模型) (参考31073-TODO1)--------------------
  */
 +(void) transferForModel:(TOFoModel*)rCansetModel;
 
-//取继承model: 传fatherCanset节点版本
-+(TCJiCenModel*) transferJiCenForModel:(AIFoNodeBase*)fatherCanset fatherCansetTargetIndex:(NSInteger)fatherCansetTargetIndex fatherScene:(AIFoNodeBase*)fatherScene iScene:(AIFoNodeBase*)iScene;
-
-//取继承model: 传fatherCanset的内容版本
-+(TCJiCenModel*) transferJiCenForModel:(NSArray*)fatherCansetContent_ps fatherCansetDeltaTimes:(NSArray*)fatherCansetDeltaTimes fatherSceneCansetIndexDic:(NSDictionary*)fatherSceneCansetIndexDic fatherCansetTargetIndex:(NSInteger)fatherCansetTargetIndex fatherScene:(AIFoNodeBase*)fatherScene iScene:(AIFoNodeBase*)iScene;
-
-//取推举model: 传brotherCanset节点版本
-+(TCTuiJuModel*) transferTuiJuForModel:(AIFoNodeBase*)brotherCanset brotherCansetTargetIndex:(NSInteger)brotherCansetTargetIndex brotherScene:(AIFoNodeBase*)brotherScene fatherScene:(AIFoNodeBase*)fatherScene;
+/**
+ *  MARK:--------------------迁移之体 (仅构建节点和初始spDic) (参考31073-TODO2c)--------------------
+ */
++(void) transferForCreate:(TOFoModel*)cansetModel;
 
 /**
  *  MARK:--------------------cansetAlg迁移算法 (29075-方案3)--------------------
