@@ -87,7 +87,6 @@
 //MARK:===============================================================
 //MARK:                     < for 三级场景 >
 //MARK:===============================================================
--(void) setDataWithSceneModel:(AITransferModel*)brother father:(AITransferModel*)father i:(AITransferModel*)i;
 @property (strong, nonatomic) AITransferModel *brother;
 @property (strong, nonatomic) AITransferModel *father;
 @property (strong, nonatomic) AITransferModel *i;

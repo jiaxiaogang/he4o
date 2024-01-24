@@ -224,12 +224,6 @@
 //MARK:                     < for 三级场景 >
 //MARK:===============================================================
 
--(void) setDataWithSceneModel:(AITransferModel*)brother father:(AITransferModel*)father i:(AITransferModel*)i {
-    self.brother = brother;
-    self.father = father;
-    self.i = i;
-}
-
 /**
  *  MARK:--------------------有iCanset直接返回进行行为化等 (参考29069-todo9 & todo10.1b)--------------------
  */
@@ -319,13 +313,12 @@
     BOOL mIsC = [feedbackMatchAlg_ps containsObject:cansetWaitAlg_p];
     if (!mIsC) return;
     
-    //TODOTOMORROW20240121:
-    //3. 有效时,推进cutIndex+1等;
-    //1. 为了方便记录feedbackAlg等,明天可以考虑把CansetModel转成TOFoModel;
-    //2. 但为了不触发:由用转体,需要处理一下TOFoModel里的iCanset看怎么弄比较好;
-    //3. 说白了,CansetModel,TOFoModel有它们的共同点,与不同阶段: 是否已转体 只是一个进化阶段;
-    //4. 看把CansetModel和TOFoModel写成继承和具象类关系...什么的,
-    //5. 即CansetModel在初始化时,就构建到actionFos中,有baseGroupOrDemand的指向什么的;
+    //TODOTOMORROW20240124:
+    //1. 有效时,推进cutIndex+1等;
+    //2. 为了方便记录feedbackAlg,应该需要提前生成TOAlgModel;
+    //3. 完后把整个feedbackTOR迭代一下,因为这些改动挺大的,看下应该可以重构一下feedbackTOR,使之代码更简单些;
+    
+    
 }
 
 /**

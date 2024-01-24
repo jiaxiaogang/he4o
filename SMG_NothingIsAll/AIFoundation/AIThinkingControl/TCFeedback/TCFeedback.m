@@ -381,7 +381,7 @@
         }];
     }];
     for (DemandModel *demand in allDemands) {
-        for (TOFoModel *cansetModel in demand.rCansetModels) {
+        for (TOFoModel *cansetModel in demand.actionFoModels) {
             [cansetModel check4FeedbackTOR:recognitionAlgs];
         }
     }
