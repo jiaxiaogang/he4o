@@ -23,4 +23,9 @@
  */
 +(NSInteger) getRAleardayCount:(ReasonDemandModel*)rDemand pFo:(AIMatchFoModel*)pFo;
 
+/**
+ *  MARK:--------------------更新状态besting和bested (参考31073-TODO2d)--------------------
+ */
++(void) updateCansetStatus:(TOFoModel*)bestCanset demand:(DemandModel*)demand;
+
 @end

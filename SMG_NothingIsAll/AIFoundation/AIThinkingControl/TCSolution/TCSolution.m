@@ -135,11 +135,8 @@
         //b) bestResult由用转体迁移;
         [TCTransfer transferForCreate:bestResult];
         
-        //TODOTOMORROW20240124: 明天继续写这个;
-        //c) 更新状态besting和bested;
-        for (TOFoModel *cansetModel in demand.actionFoModels) {
-            
-        }
+        //c) 更新状态besting和bested (参考31073-TODO2d);
+        [TCSolutionUtil updateCansetStatus:bestResult demand:demand];
         
         //c) 调试;
         AIFoNodeBase *sceneFo = [SMGUtils searchNode:bestResult.sceneFo];
@@ -309,6 +306,9 @@
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
         //b) bestResult由用转体迁移;
         [TCTransfer transferForCreate:bestResult];
+        
+        //c) 更新状态besting和bested (参考31073-TODO2d);
+        [TCSolutionUtil updateCansetStatus:bestResult demand:hDemand];
         
         //c) 调试;
         AIFoNodeBase *sceneFo = [SMGUtils searchNode:bestResult.sceneFo];

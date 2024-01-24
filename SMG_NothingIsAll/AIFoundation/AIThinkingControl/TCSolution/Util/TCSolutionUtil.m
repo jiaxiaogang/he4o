@@ -342,4 +342,17 @@
     return pFoAleardayCount;
 }
 
+/**
+ *  MARK:--------------------更新状态besting和bested (参考31073-TODO2d)--------------------
+ *  @desc best设成besting & 曾best的设为bested & 其它的默认为none状态;
+ */
++(void) updateCansetStatus:(TOFoModel*)bestCanset demand:(DemandModel*)demand {
+    for (TOFoModel *cansetModel in demand.actionFoModels) {
+        if (cansetModel.cansetStatus == CS_Besting) {
+            cansetModel.cansetStatus = CS_Bested;
+        }
+    }
+    bestCanset.cansetStatus = CS_Besting;
+}
+
 @end

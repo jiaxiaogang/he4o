@@ -127,6 +127,12 @@ typedef NS_ENUM(NSInteger, TOModelStatus) {
     TOModelStatus_WithOut  = 9,//TCSolution无计可施标记,没S解决方案了;
 };
 
+typedef NS_ENUM(NSInteger, CansetStatus) {
+    CS_None                 = 0,//CansetModels池子里
+    CS_Besting              = 1,//正在行为化中
+    CS_Bested               = 2,//行为化过
+};
+
 typedef NS_ENUM(NSInteger, EffectStatus) {
     ES_Default  = 0,//默认
     ES_HavEff   = 1,//有效反馈 (明确有效了)

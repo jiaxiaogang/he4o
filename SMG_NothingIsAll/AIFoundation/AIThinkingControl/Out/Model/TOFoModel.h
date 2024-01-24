@@ -177,4 +177,9 @@
  */
 -(void) check4FeedbackTOR:(NSArray*)feedbackMatchAlg_ps;
 
+/**
+ *  MARK:--------------------方案状态--------------------
+ */
+@property (assign, nonatomic) CansetStatus cansetStatus;
+
 @end
