@@ -280,6 +280,8 @@
     //3. 触发器;
     NSLog(@"---//构建行为化帧触发器:%p for:%@ time:%.2f",actYes4Mv?solutionModel:frameModel,ClassName2Str(demand.algsType),deltaTime);
     [AITime setTimeTrigger:deltaTime trigger:^{
+        //4. 只有besting的才触发反省等,别的早已被打断了 (参考31073-TODO2e);
+        if (solutionModel.cansetStatus != CS_Besting) return;
         
         //4. 末尾为mv感性目标;
         if (curActionIndex >= solutionFo.count) {
@@ -317,8 +319,8 @@
                 [TCScore scoreFromIfTCNeed];
             }
         }
-        DebugE();
     }];
+    DebugE();
 }
 
 @end
