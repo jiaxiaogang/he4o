@@ -30,6 +30,7 @@
  *      2022.12.16: 修复多执行了一帧的问题 (即target帧不必行为化,自然发生即可);
  *      2023.07.08: 为避免输出行为捡了芝麻丢了西瓜,在行为化之前,先调用一下反思 (参考30054);
  *      2023.08.21: 将反思通过与否保留下来,用于后面决策时激活其子R还是子H任务做判断依据 (参考30114-todo1);
+ *      2024.01.25: 把cutIndex++和挂载TOAlgModel前置到构建CansetModel后就执行 (参考31073-TODO2g);
  *  @callers : 可以供_Demand和_Hav等调用;
  */
 +(TCResult*) action:(TOFoModel*)foModel{
@@ -37,7 +38,6 @@
     AIFoNodeBase *curFo = [SMGUtils searchNode:foModel.content_p];
     
     //2. Alg转移 (下帧),每次调用action立马先跳下actionIndex为当前正准备行为化的那一帧;
-    foModel.cutIndex++;
     OFTitleLog(@"行为化Fo", @"\n第 %ld/%ld 个,时序:%@",foModel.cutIndex+1,curFo.count,Fo2FStr(curFo));
     
     //3. 进行反思识别,如果不通过时,回到TCScore可能会尝试先解决子任务,通过时继续行为化 (参考30054-todo7);
@@ -72,6 +72,8 @@
         //}
         //6. 转下帧: 理性帧则生成TOAlgModel;
         AIKVPointer *move_p = ARR_INDEX(curFo.content_ps, foModel.cutIndex);
+        
+        //TODOTOMORROW20240125明天继续删这些...
         TOAlgModel *moveAlg = [TOAlgModel newWithAlg_p:move_p group:foModel];
         
         //7. 调用frameActYes();

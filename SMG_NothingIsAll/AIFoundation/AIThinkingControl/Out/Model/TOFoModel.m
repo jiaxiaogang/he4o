@@ -300,6 +300,38 @@
 //}
 
 /**
+ *  MARK:--------------------下帧初始化 (可接受反馈) (参考31073-TODO2g)--------------------
+ *  @desc 上帧推进完成时调用: 1.更新cutIndex++ 2.挂载下帧TOAlgModel
+ *  @version
+ *      2024.01.25: 初版: 此方法逻辑与TCAction一致,只是为了允许被反馈和记录feedbackAlg,所以把这些代码前置了 (参考31073-TODO2g);
+ */
+-(TOAlgModel*) pushNextFrame {
+    //1. 数据准备;
+    AIFoNodeBase *cansetFo = [SMGUtils searchNode:self.content_p];
+    
+    //2. 更新cutIndex;
+    self.cutIndex ++;
+    BOOL isH = ISOK(self.baseOrGroup, HDemandModel.class);
+    NSInteger endActionIndex = isH ? self.targetIndex - 1 : self.targetIndex - 2;//只执行
+    
+    //3. 挂载TOAlgModel;
+    if (self.cutIndex < self.targetIndex - 1) {
+        //6. 转下帧: 理性帧则生成TOAlgModel;
+        AIKVPointer *nextCansetA_p = ARR_INDEX(cansetFo.content_ps, self.cutIndex);
+        return [TOAlgModel newWithAlg_p:nextCansetA_p group:self];
+    }else{
+        if (ISOK(self.baseOrGroup, ReasonDemandModel.class)) {
+            return nil;
+        }else if(ISOK(self.baseOrGroup, HDemandModel.class)){
+            //9. H目标帧只需要等 (转hActYes) (参考25031-9);
+            AIKVPointer *hTarget_p = ARR_INDEX(cansetFo.content_ps, self.cutIndex);
+            return [TOAlgModel newWithAlg_p:hTarget_p group:self];
+        }
+    }
+    return nil;
+}
+
+/**
  *  MARK:--------------------feedbackTOR有反馈,看是否对这个CansetModel有效 (参考31073-TODO2)--------------------
  */
 -(void) check4FeedbackTOR:(NSArray*)feedbackMatchAlg_ps {

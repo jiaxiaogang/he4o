@@ -191,11 +191,13 @@
                                      cutIndex:cansetCutIndex sceneCutIndex:matchCutIndex
                                   targetIndex:cansetFo.count sceneTargetIndex:matchTargetIndex
                        basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel];
-        
     }
     
     //12. 伪迁移;
     [TCTransfer transferForModel:result];
+    
+    //13. 下帧初始化 (可接受反馈);
+    [result pushNextFrame];
     return result;
 }
 
