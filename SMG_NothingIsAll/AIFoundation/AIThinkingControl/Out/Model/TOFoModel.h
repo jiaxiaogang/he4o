@@ -174,7 +174,12 @@
 /**
  *  MARK:--------------------下帧初始化 (可接受反馈) (参考31073-TODO2g)--------------------
  */
--(TOAlgModel*) pushNextFrame;
+-(void) pushNextFrame;
+
+/**
+ *  MARK:--------------------获取当前正在推进中的帧--------------------
+ */
+-(TOAlgModel*) getCurFrame;
 
 /**
  *  MARK:--------------------feedbackTOR有反馈,看是否对这个CansetModel有效 (参考31073-TODO2)--------------------

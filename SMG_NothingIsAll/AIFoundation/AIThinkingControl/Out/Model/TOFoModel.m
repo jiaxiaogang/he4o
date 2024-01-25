@@ -305,30 +305,40 @@
  *  @version
  *      2024.01.25: 初版: 此方法逻辑与TCAction一致,只是为了允许被反馈和记录feedbackAlg,所以把这些代码前置了 (参考31073-TODO2g);
  */
--(TOAlgModel*) pushNextFrame {
+-(void) pushNextFrame {
     //1. 数据准备;
     AIFoNodeBase *cansetFo = [SMGUtils searchNode:self.content_p];
     
     //2. 更新cutIndex;
     self.cutIndex ++;
-    BOOL isH = ISOK(self.baseOrGroup, HDemandModel.class);
-    NSInteger endActionIndex = isH ? self.targetIndex - 1 : self.targetIndex - 2;//只执行
     
     //3. 挂载TOAlgModel;
     if (self.cutIndex < self.targetIndex - 1) {
         //6. 转下帧: 理性帧则生成TOAlgModel;
         AIKVPointer *nextCansetA_p = ARR_INDEX(cansetFo.content_ps, self.cutIndex);
-        return [TOAlgModel newWithAlg_p:nextCansetA_p group:self];
+        [TOAlgModel newWithAlg_p:nextCansetA_p group:self];
     }else{
-        if (ISOK(self.baseOrGroup, ReasonDemandModel.class)) {
-            return nil;
-        }else if(ISOK(self.baseOrGroup, HDemandModel.class)){
+        if(ISOK(self.baseOrGroup, HDemandModel.class)){
             //9. H目标帧只需要等 (转hActYes) (参考25031-9);
             AIKVPointer *hTarget_p = ARR_INDEX(cansetFo.content_ps, self.cutIndex);
-            return [TOAlgModel newWithAlg_p:hTarget_p group:self];
+            [TOAlgModel newWithAlg_p:hTarget_p group:self];
         }
     }
-    return nil;
+}
+
+/**
+ *  MARK:--------------------获取当前正在推进中的帧--------------------
+ */
+-(TOAlgModel*) getCurFrame {
+    //方法1. 从subModels中找出cutIndex对应的那一条返回;
+    AIFoNodeBase *cansetFo = [SMGUtils searchNode:self.content_p];
+    AIKVPointer *curCansetA_p = ARR_INDEX(cansetFo.content_ps, self.cutIndex);
+    return [SMGUtils filterSingleFromArr:self.subModels checkValid:^BOOL(TOAlgModel *item) {
+        return [item.content_p isEqual:curCansetA_p];
+    }];
+    
+    //方法2. 直接取subModels的最后一条 (按道理最后一条就是当前正在推进中的,但严谨上说目前不太确定,所以先用方法1)
+    //return ARR_INDEX_REVERSE(self.subModels, 0);
 }
 
 /**
@@ -345,9 +355,14 @@
     BOOL mIsC = [feedbackMatchAlg_ps containsObject:cansetWaitAlg_p];
     if (!mIsC) return;
     
+    //3. 有效时: 记录feedbackAlg;
+    TOAlgModel *curAlgModel = [self getCurFrame];
+    //curAlgModel.feedbackAlg = ...
+    
+    //4. 并推进到下帧 (参考31073-TODO2g-3);
+    [self pushNextFrame];
+    
     //TODOTOMORROW20240124:
-    //1. 有效时,推进cutIndex+1等;
-    //2. 为了方便记录feedbackAlg,应该需要提前生成TOAlgModel;
     //3. 完后把整个feedbackTOR迭代一下,因为这些改动挺大的,看下应该可以重构一下feedbackTOR,使之代码更简单些;
     
     

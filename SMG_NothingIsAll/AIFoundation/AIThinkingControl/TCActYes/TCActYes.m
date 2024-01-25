@@ -254,12 +254,10 @@
     Debug();
     //0. 数据准备 (从上到下,取demand,solutionFo,frameAlg);
     DemandModel *demand = (DemandModel*)solutionModel.baseOrGroup;
+    
     AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.content_p];
     NSInteger curActionIndex = solutionModel.cutIndex;
-    AIKVPointer *frameAlg_p = ARR_INDEX(solutionFo.content_ps, curActionIndex);
-    TOAlgModel *frameModel = [SMGUtils filterSingleFromArr:solutionModel.subModels checkValid:^BOOL(TOAlgModel *item) {
-        return [item.content_p isEqual:frameAlg_p];
-    }];
+    TOAlgModel *frameModel = [solutionModel getCurFrame];
     
     //1. 设为actYes
     solutionModel.status = TOModelStatus_ActYes;
@@ -305,7 +303,7 @@
             //a. 反省类比(成功/未成功)的主要原因,进行RORT反省;
             AnalogyType type = (frameModel.status == TOModelStatus_ActYes) ? ATSub : ATPlus;
             [TCRethink reasonOutRethink:solutionModel actionIndex:curActionIndex type:type];
-            NSLog(@"---//行为化帧触发理性反省:%p A%ld 状态:%@",frameModel,frameAlg_p.pointerId,TOStatus2Str(frameModel.status));
+            NSLog(@"---//行为化帧触发理性反省:%p A%ld 状态:%@",frameModel,frameModel.content_p.pointerId,TOStatus2Str(frameModel.status));
             
             //5. 失败时_继续决策 (成功时,由feedback的IN流程继续);
             if (frameModel.status == TOModelStatus_ActYes) {

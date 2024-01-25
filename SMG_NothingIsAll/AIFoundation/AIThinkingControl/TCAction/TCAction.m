@@ -70,18 +70,14 @@
         //        return;
         //    }
         //}
-        //6. 转下帧: 理性帧则生成TOAlgModel;
-        AIKVPointer *move_p = ARR_INDEX(curFo.content_ps, foModel.cutIndex);
         
-        //TODOTOMORROW20240125明天继续删这些...
-        TOAlgModel *moveAlg = [TOAlgModel newWithAlg_p:move_p group:foModel];
-        
-        //7. 调用frameActYes();
+        //7. 构建触发器: 调用frameActYes();
         [TCActYes frameActYes:foModel];
         
         //8. 当前帧是理性帧时: 尝试行为当前帧;
+        TOAlgModel *curFrameModel = [foModel getCurFrame];
         DebugE();
-        return [TCOut run:moveAlg];
+        return [TCOut run:curFrameModel];
     }else{
         //8. R成功,转actYes等待反馈 & 触发反省 (原递归参考流程控制Finish的注释version-20200916 / 参考22061-7);
         DebugE();
@@ -91,9 +87,7 @@
             [TCActYes frameActYes:foModel];
             //[TCScore scoreFromIfTCNeed];//r输出完成时,继续决策;
         }else if(ISOK(foModel.baseOrGroup, HDemandModel.class)){
-            //9. H目标帧只需要等 (转hActYes) (参考25031-9);
-            AIKVPointer *hTarget_p = ARR_INDEX(curFo.content_ps, foModel.cutIndex);
-            [TOAlgModel newWithAlg_p:hTarget_p group:foModel];
+            //9. 构建触发器: H目标帧只需要等 (转hActYes) (参考25031-9);
             [TCActYes frameActYes:foModel];//h输出成功时,等待反馈;
         }else if(ISOK(foModel.baseOrGroup, PerceptDemandModel.class)){
             [TCActYes frameActYes:foModel];//p输出成功时,等待反馈;
