@@ -103,19 +103,6 @@
     [TCDemand subDemand:result foModel:foModel];
 }
 
-+(void) feedbackRecognitionForRCansetA:(NSArray*)regroupOrder foModel:(TOFoModel*)foModel feedbackFrameOfMatchAlgs:(NSArray*)feedbackFrameOfMatchAlgs{
-    //1. 数据检查
-    [theTC updateOperCount:kFILENAME];
-    Debug();
-    IFTitleLog(@"feedback时序识别", @"\nprotoFo:%@",Pits2FStr([SMGUtils convertArr:regroupOrder convertBlock:^id(AIShortMatchModel_Simple *obj) {
-        return obj.alg_p;
-    }]));
-    
-    //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
-    [TIUtils recognitionFoForRCansetA:regroupOrder fromRCansetFoModel:foModel];
-    DebugE();
-}
-
 /**
  *  MARK:--------------------行为化前反思识别--------------------
  *  @desc 在行为化输出前,先反思识别一下,如果这么做,会导致什么子任务 (参考30054-另外2&todo4);

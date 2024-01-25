@@ -28,11 +28,6 @@
 //+(void) recognitionCansetAlg:(AIAlgNodeBase*)protoAlg sceneFo:(AIFoNodeBase*)sceneFo inModel:(AIShortMatchModel*)inModel;
 //+(void) recognitionCansetFo:(AIKVPointer*)newCanset_p sceneFo:(AIKVPointer*)sceneFo_p es:(EffectStatus)es;
 
-//MARK:===============================================================
-//MARK:                     < RCansetA识别 >
-//MARK:===============================================================
-+(void) recognitionFoForRCansetA:(NSArray*)regroupOrder fromRCansetFoModel:(TOFoModel*)rCansetFoModel;
-
 /**
  *  MARK:--------------------获取某帧shortModel的matchAlgs+partAlgs--------------------
  */

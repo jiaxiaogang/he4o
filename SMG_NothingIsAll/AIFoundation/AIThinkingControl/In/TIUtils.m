@@ -697,24 +697,6 @@
 //    return indexDic;
 //}
 
-
-//MARK:===============================================================
-//MARK:                     < RCansetA识别 >
-//MARK:===============================================================
-+(void) recognitionFoForRCansetA:(NSArray*)regroupOrder fromRCansetFoModel:(TOFoModel*)rCansetFoModel {
-    //1. 数据准备;
-    ReasonDemandModel *rDemand = (ReasonDemandModel*)rCansetFoModel.baseOrGroup;
-    for (TOFoModel *rCansetModel in rDemand.rCansetModels) {
-        
-        
-        
-        //rCansetModels的一次示例日志记录 (用于边参考数据结构,边写代码用);
-        //0. I<F1351 F4003[M1{↑饿-16},A1348(距47,向147,皮果),A3958(距51,向27,棒),A3962(距23,向87,棒),A3963(向92,距10,果),飞↑,A3972(向154,距35,棒),A3973(向98,距0,果),A3978(向159,距36,棒),A3981(吃1)]> {}:(分:0.50) H1N1:(分:0.50)
-        //1. I<F1351 F4061[M1{↑饿-16},A1348(距47,向147,皮果),A4018(距98,向14,棒),A4022(距23,向88,棒),A4023(向91,距10,果),飞↑,A4031(向156,距37,棒),A4032(向95,距0,果),A4037(向160,距38,棒),A3981(吃1)]> {}:(分:0.50) H1N1:(分:0.50)
-        
-    }
-}
-
 /**
  *  MARK:--------------------获取某帧shortModel的matchAlgs+partAlgs--------------------
  */

@@ -264,116 +264,6 @@
     }
     IFTitleLog(@"feedbackTOR", @"\n输入ProtoA:%@ (识别matchAlgs数:%ld)\n等待中任务数:%lu",Alg2FStr(model.protoAlg),recognitionAlgs.count,(long)waitModels.count);
     
-    //2. 保留/更新实际发生到outModel (通过了有效判断的,将实际概念直接存留到waitModel);
-    for (TOAlgModel *waitModel in waitModels) {
-        
-        //3. waitModel有效检查;
-        if (!ISOK(waitModel, TOAlgModel.class) || !ISOK(waitModel.baseOrGroup, TOFoModel.class)) continue;
-        //if (Log4OPushM) NSLog(@"==> checkTOModel: %@",Pit2FStr(waitModel.content_p));
-        
-        //4. ============= H返回的有效判断 =============
-        if (ISOK(waitModel.baseOrGroup.baseOrGroup, HDemandModel.class)) {
-            
-            //5. HDemand即使waitModel不是actYes状态也处理反馈;
-            TOFoModel *solutionModel = (TOFoModel*)waitModel.baseOrGroup;    //h解决方案;
-            HDemandModel *hDemand = (HDemandModel*)solutionModel.baseOrGroup;//h需求模型
-            TOAlgModel *targetAlg = (TOAlgModel*)hDemand.baseOrGroup;   //hDemand的目标alg;
-            TOFoModel *targetFo = (TOFoModel*)targetAlg.baseOrGroup;    //hDemand的目标alg所在的fo;
-            
-            //6. 判断input是否与hAlg相匹配 (匹配,比如找锤子,看到锤子了);
-            [AITest test11:model waitAlg_p:targetAlg.content_p];//测下2523c-此处是否会导致匹配不到;
-            BOOL mcIsBro = [TOUtils mcIsBro:recognitionAlgs cansetA:targetAlg.content_p]; //用共同抽象判断cansetAlg反馈 (参考3014c-todo1);
-            if (Log4OPushM) NSLog(@"HCansetA有效:M(A%ld) C:%@ 结果:%d",model.protoAlg.pId,Pit2FStr(targetAlg.content_p),mcIsBro);
-            if (mcIsBro) {
-                //6. 记录feedbackAlg (参考27204-1);
-                waitModel.feedbackAlg = model.protoAlg.pointer;
-                waitModel.status = TOModelStatus_OuterBack;
-                BOOL isEndFrame = solutionModel.cutIndex == solutionModel.targetIndex;
-                
-                //a. H反馈中段: 标记OuterBack,solutionFo继续;
-                if (!isEndFrame) {
-                    solutionModel.status = TOModelStatus_Runing;
-                    hDemand.status = TOModelStatus_Runing;
-                }else{
-                    //b. H反馈末帧:
-                    solutionModel.status = TOModelStatus_Finish;
-                    hDemand.status = TOModelStatus_Finish;
-                    targetAlg.status = TOModelStatus_OuterBack;
-                    targetAlg.feedbackAlg = model.protoAlg.pointer;
-                    targetFo.status = TOModelStatus_Runing;
-                }
-                
-                //c. 最终反馈了feedbackAlg时,重组 & 反思;
-                dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
-                    [theTV updateFrame];
-                });
-                if (isEndFrame) [TCRegroup feedbackRegroup:targetFo feedbackFrameOfMatchAlgs:model.matchAlgs];
-                DebugE();
-                [TCScore scoreFromIfTCNeed];
-            }
-        }
-        
-        //7. ============= "行为输出" 和 "demand.ActYes" 和 "静默成功 的有效判断 =============
-        //此处有两种frameAlg,第1种是isOut为true的行为反馈,第2种是hDemand.baseAlg;
-        if (ISOK(waitModel.baseOrGroup.baseOrGroup, ReasonDemandModel.class)) {
-            
-            //8. RDemand只处理ActYes状态的;
-            //2024.01.11: H支持持续反馈 (参考31063-todo1);
-            if (waitModel.status != TOModelStatus_ActYes && waitModel.status != TOModelStatus_OuterBack) continue;
-            TOAlgModel *frameAlg = waitModel;                          //等待中的目标alg;
-            TOFoModel *solutionModel = (TOFoModel*)frameAlg.baseOrGroup;    //目标alg所在的fo;
-            HDemandModel *subHDemand = [SMGUtils filterSingleFromArr:frameAlg.subDemands checkValid:^BOOL(id item) {
-                return ISOK(item, HDemandModel.class);
-            }];
-            
-            //9. 判断input是否与等待中waitModel相匹配 (匹配,比如吃,确定自己是否真吃了);
-            [AITest test11:model waitAlg_p:frameAlg.content_p];//测下2523c-此处是否会导致匹配不到;
-            BOOL mcIsBro = [TOUtils mcIsBro:recognitionAlgs cansetA:frameAlg.content_p]; //用共同抽象判断cansetAlg反馈 (参考3014c-todo1);
-            if (Log4OPushM) NSLog(@"RCansetA有效:M(A%ld) C(A%ld) 结果:%d CAtFo:%@",model.protoAlg.pointer.pointerId,frameAlg.content_p.pointerId,mcIsBro,Pit2FStr(solutionModel.content_p));
-            if (mcIsBro) {
-                //a. 保留上次的旧反馈alg;
-                AIKVPointer *oldFeedbackAlg = frameAlg.feedbackAlg;
-                
-                //a. 赋值
-                frameAlg.status = TOModelStatus_OuterBack;
-                frameAlg.feedbackAlg = model.protoAlg.pointer;
-                solutionModel.status = TOModelStatus_Runing;
-                
-                
-                //TODOTOMORROW20240119: 看下这里,能不能改成mIsC然后让Cansets及时响应到feedback和cutIndex+1 (参考31073-TODO2);
-                [TCRegroup feedbackRegroupForRCansetA:solutionModel feedbackFrameOfMatchAlgs:model.matchAlgs];
-                BOOL scoreWin = false;//评价通过则生成newHCanset等 | 评价不通过则把oldFeedbackAlg改回去;
-                
-                
-                
-                
-                //b. 当waitModel为hDemand.targetAlg时,此处提前反馈了,hDemand改为finish状态 (参考26185-TODO6);
-                if (subHDemand) subHDemand.status = TOModelStatus_Finish;
-                
-                //c. 收集真实发生realMaskFo,收集成hCanset (参考30131-todo1 & 30132-方案);
-                //2023.12.29: mcIsBro=true时,生成新hCanset (做31026-第2步时临时起意改的);
-                if (ISOK(solutionModel.basePFoOrTargetFoModel, AIMatchFoModel.class)) {
-                    AIFoNodeBase *rCanset = [SMGUtils searchNode:solutionModel.content_p];
-                    AIMatchFoModel *basePFo = (AIMatchFoModel*)solutionModel.basePFoOrTargetFoModel;
-                    NSArray *order = [basePFo convertOrders4NewCansetV2];
-                    if (ARRISOK(order) && solutionModel.cutIndex < rCanset.count) {
-                        AIFoNodeBase *hCanset = [theNet createConFoForCanset:order sceneFo:rCanset sceneTargetIndex:solutionModel.cutIndex];
-                        [rCanset updateConCanset:hCanset.pointer targetIndex:solutionModel.cutIndex];
-                        NSLog(@"1.feedbackTOR为rScene:%@\n2.rCanset:%@... 的第%ld帧:%@\n3.挂载NewHCanset:%@",Pit2FStr(basePFo.matchFo),SUBSTR2INDEX(Fo2FStr(rCanset), 50),solutionModel.cutIndex+1,Pit2FStr(ARR_INDEX(rCanset.content_ps, solutionModel.cutIndex)),Fo2FStr(hCanset));
-                    }
-                }
-                
-                //c. 重组
-                dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
-                    [theTV updateFrame];
-                });
-                DebugE();
-                [TCRegroup feedbackRegroup:solutionModel feedbackFrameOfMatchAlgs:model.matchAlgs];
-                [TCScore scoreFromIfTCNeed];
-            }
-        }
-    }
-    
     //2. ============== 对Demand.cansetModels的反馈判断 (参考31073-TODO2: Cansets实时竞争) ==============
     NSMutableArray *allDemands = [SMGUtils convertArr:roots convertItemArrBlock:^NSArray *(DemandModel *root) {
         return [SMGUtils filterArr:[TOUtils getSubOutModels_AllDeep:root validStatus:nil] checkValid:^BOOL(TOModelBase *item) {
@@ -382,68 +272,11 @@
     }];
     for (DemandModel *demand in allDemands) {
         for (TOFoModel *cansetModel in demand.actionFoModels) {
-            [cansetModel check4FeedbackTOR:recognitionAlgs];
-        }
-    }
-    
-    //2. ============== 对HDemand反馈判断 ==============
-    //a. 收集所有工作记忆树的H任务;
-    NSMutableArray *allHDemands = [[NSMutableArray alloc] init];
-    for (DemandModel *root in roots) {
-        NSArray *singleHDemands = [SMGUtils filterArr:[TOUtils getSubOutModels_AllDeep:root validStatus:nil] checkValid:^BOOL(TOModelBase *item) {
-            return ISOK(item, HDemandModel.class);
-        }];
-        [allHDemands addObjectsFromArray:singleHDemands];
-    }
-    
-    //b. 反馈匹配 (比如找锤子,看到锤子了);
-    for (HDemandModel *hDemand in allHDemands) {
-        TOAlgModel *targetAlg = (TOAlgModel*)hDemand.baseOrGroup;   //hDemand的目标alg;
-        BOOL mcIsBro = [TOUtils mcIsBro:recognitionAlgs cansetA:targetAlg.content_p]; //用共同抽象判断cansetAlg反馈 (参考3014c-todo1);
-        if (mcIsBro) {
+            //3. 反馈判断 (参考31073-TODO2);
+            [cansetModel check4FeedbackTOR:recognitionAlgs protoAlg:model.protoAlg.p];
             
-            //c. 明确有效;
-            targetAlg.feedbackAlg = model.protoAlg.pointer;
-            hDemand.effectStatus = ES_HavEff;
-            hDemand.status = TOModelStatus_Finish;
-            
-            //8. H任务完成时,H当前正执行的S提前完成,并进行外类比 (参考27206c-H任务);
-            //2023.11.03: 即使失败也可以触发"预想与实际"的类比抽象;
-            for (TOFoModel *solutionModel in hDemand.actionFoModels) {
-                [AITest test17];
-                if (solutionModel.status == TOModelStatus_ActYes || solutionModel.status == TOModelStatus_Runing || solutionModel.status == TOModelStatus_ActNo) {
-                    //a. 数据准备;
-                    AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.content_p];
-                    TOFoModel *targetFoModel = (TOFoModel*)hDemand.baseOrGroup;
-                    AIFoNodeBase *targetFo = [SMGUtils searchNode:targetFoModel.content_p];
-                    AIMatchFoModel *pFo = [TOUtils getBasePFoWithSubOutModel:solutionModel];
-                    
-                    //b. 用realMaskFo & realDeltaTimes生成protoFo (参考30154-todo2);
-                    NSArray *orders = [pFo convertOrders4NewCansetV2];
-                    AIFoNodeBase *newHCanset = [theNet createConFo:orders];
-                    if (newHCanset.count <= 1) continue;
-                    
-                    //h. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
-                    NSLog(@"HCanset预想与实际类比: (状态:%@ fromTargetFo:F%ld) \n\t当前Canset:%@",TOStatus2Str(solutionModel.status),targetFoModel.content_p.pointerId,Pit2FStr(solutionModel.content_p));
-                    NSArray *noRepeatArea_ps = [targetFo getConCansets:targetFoModel.cutIndex];
-                    AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:newHCanset assFo:solutionFo type:ATDefault noRepeatArea_ps:noRepeatArea_ps];
-                    BOOL updateCansetSuccess = [targetFo updateConCanset:absCansetFo.pointer targetIndex:targetFoModel.cutIndex];
-                    [AITest test101:absCansetFo proto:newHCanset conCanset:solutionFo];
-                    
-                    if (updateCansetSuccess) {
-                        //j. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);
-                        NSDictionary *newIndexDic = [solutionModel convertOldIndexDic2NewIndexDic:targetFoModel.content_p];
-                        [absCansetFo updateIndexDic:targetFo indexDic:newIndexDic];
-                        [AITest test18:newIndexDic newCanset:absCansetFo absFo:targetFo];
-                        
-                        //k. 算出spDic (参考27213-5);
-                        [absCansetFo updateSPDic:[solutionModel convertOldSPDic2NewSPDic]];
-                        [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
-                    }
-                } else {
-                    NSLog(@"HCanset预想与实际类比未执行,F%ld 状态:%ld",solutionModel.content_p.pointerId,solutionModel.status);
-                }
-            }
+            //4. 
+            [cansetModel feedbackPushFrameThenStep:model.protoAlg.p];
         }
     }
     DebugE();

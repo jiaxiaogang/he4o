@@ -65,19 +65,6 @@
     [TCRecognition feedbackRecognition:regroupFo foModel:foModel feedbackFrameOfMatchAlgs:feedbackFrameOfMatchAlgs];
 }
 
-+(void) feedbackRegroupForRCansetA:(TOFoModel*)foModel feedbackFrameOfMatchAlgs:(NSArray*)feedbackFrameOfMatchAlgs {
-    //1. 数据准备;
-    [theTC updateOperCount:kFILENAME];
-    Debug();
-    
-    //3. 数据准备 (收集除末位外的content为order);
-    NSArray *order = [foModel getOrderUseMatchAndFeedbackAlg:true];
-    
-    //7. 识别时序 (预测到鸡蛋变脏,或者cpu损坏) (理性预测影响评价即理性评价);
-    DebugE();
-    [TCRecognition feedbackRecognitionForRCansetA:order foModel:foModel feedbackFrameOfMatchAlgs:feedbackFrameOfMatchAlgs];
-}
-
 /**
  *  MARK:--------------------action输出前重组--------------------
  *  @desc 将瞬时记忆几帧 + canset要cutIndex之后要输出的几帧 = 拼接起来 (参考30054-方案&另外1);
