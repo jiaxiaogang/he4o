@@ -108,7 +108,14 @@
     
     //1. 取出rSolution的成果,在它的基础上继续做hSolution;
     ReasonDemandModel *rDemand = (ReasonDemandModel*)demand.baseOrGroup.baseOrGroup.baseOrGroup;
-    NSArray *rCansetModels = rDemand.rCansetModels;
+    
+    //2. CansetModels可用于从中寻找可供迁移的hCanset;
+    //TODOTOMORROW20240126: 随时继续做这里,当时应该有手稿
+    //  1. 这里的rCansetModels其实就是scene树
+    //  2. 到时候分析一下它和scene树的区别,前者元素是TOFoModel,后者是AISceneModel;
+    //  3. 但前者可能只是用非体阶段,即H的迁移比R中要复杂一两层的;
+    
+    NSArray *rCansetModels = rDemand.actionFoModels;
     NSLog(@"第1步 rCansetModels数: %ld",rCansetModels.count);
     
     //2. 根据当前hAlg取抽具象树;
@@ -286,7 +293,6 @@
     
     //11. 根据候选集综合分排序 (参考26128-2-2 & 26161-4);
     NSArray *sortModels = [AIRank solutionFoRankingV3:cansetModels];
-    demand.rCansetModels = sortModels;
 
     //13. 取通过S反思的最佳S;
     for (TOFoModel *item in sortModels) {
