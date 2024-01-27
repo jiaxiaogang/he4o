@@ -19,10 +19,10 @@
  *  @version
  *      2023.09.10: 升级v2,支持TCScene和TCCanset (参考30127);
  */
-+(TOFoModel*) hSolutionV2:(HDemandModel *)demand except_ps:(NSArray*)except_ps {
++(TOFoModel*) hSolutionV2:(HDemandModel *)demand {
     //0. 初始化一次,后面只执行generalSolution部分;
     if (demand.alreadyInitCansetModels) {
-        return [self generalSolution:demand cansetModels:demand.actionFoModels except_ps:except_ps];//400ms
+        return [self generalSolution:demand cansetModels:demand.actionFoModels];//400ms
     }
     demand.alreadyInitCansetModels = true;
     
@@ -52,13 +52,13 @@
     NSLog(@"第2步 转为候选集 总数:%ld",cansetModels.count);
 
     //5. 竞争求解;
-    return [self generalSolution:demand cansetModels:cansetModels except_ps:except_ps];//400ms
+    return [self generalSolution:demand cansetModels:cansetModels];//400ms
 }
 
-+(TOFoModel*) hSolutionV3:(HDemandModel *)demand except_ps:(NSArray*)except_ps {
++(TOFoModel*) hSolutionV3:(HDemandModel *)demand {
     //0. 初始化一次,后面只执行generalSolution部分;
     if (demand.alreadyInitCansetModels) {
-        return [self generalSolution:demand cansetModels:demand.actionFoModels except_ps:except_ps];//400ms
+        return [self generalSolution:demand cansetModels:demand.actionFoModels];//400ms
     }
     demand.alreadyInitCansetModels = true;
     
@@ -94,17 +94,17 @@
     NSLog(@"第2步 转为候选集 总数:%ld",cansetModels.count);
 
     //5. 竞争求解;
-    return [self generalSolution:demand cansetModels:cansetModels except_ps:except_ps];//400ms
+    return [self generalSolution:demand cansetModels:cansetModels];//400ms
 }
 
-+(TOFoModel*) hSolutionV4:(HDemandModel *)demand except_ps:(NSArray*)except_ps {
++(TOFoModel*) hSolutionV4:(HDemandModel *)demand {
     //0. 初始化一次,后面只执行generalSolution部分;
     if (demand.alreadyInitCansetModels) {
-        return [self generalSolution:demand cansetModels:demand.actionFoModels except_ps:except_ps];//400ms
+        return [self generalSolution:demand cansetModels:demand.actionFoModels];//400ms
     }
     demand.alreadyInitCansetModels = true;
     
-    return [self hSolutionV2:demand except_ps:except_ps];
+    return [self hSolutionV2:demand];
     
     //1. 取出rSolution的成果,在它的基础上继续做hSolution;
     ReasonDemandModel *rDemand = (ReasonDemandModel*)demand.baseOrGroup.baseOrGroup.baseOrGroup;
@@ -210,10 +210,10 @@
  *      2023.12.26: 提前在for之前取scene所在的pFo,以优化其性能 (参考31025-代码段-问题1) //共三处优化,此乃其一;
  *      2024.01.24: 只初始化一次,避免重复生成actionFoModels (参考31073-TODO2f);
  */
-+(TOFoModel*) rSolution:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps {
++(TOFoModel*) rSolution:(ReasonDemandModel *)demand {
     //0. 初始化一次,后面只执行generalSolution部分;
     if (demand.alreadyInitCansetModels) {
-        return [self generalSolution:demand cansetModels:demand.actionFoModels except_ps:except_ps];//400ms
+        return [self generalSolution:demand cansetModels:demand.actionFoModels];//400ms
     }
     demand.alreadyInitCansetModels = true;
     
@@ -242,7 +242,7 @@
     NSLog(@"第2步 转为候选集 总数:%ld",cansetModels.count);
 
     //5. 竞争求解;
-    return [self generalSolution:demand cansetModels:cansetModels except_ps:except_ps];//400ms
+    return [self generalSolution:demand cansetModels:cansetModels];//400ms
 }
 
 /**
@@ -254,17 +254,18 @@
  *      2022.06.09: 弃用阈值方案,改为综合排名 (参考26222-TODO2);
  *      2022.06.12: 每个pFo独立做analyst比对,转为cansetModels (参考26232-TODO8);
  *      2023.02.19: 最终激活后,将match和canset的前段抽具象强度+1 (参考28086-todo2);
+ *      2024.01.28: 改为无计可施的失败TOFoModel,计为不应期 (参考31073-TODO8);
  */
-+(TOFoModel*) generalSolution:(DemandModel *)demand cansetModels:(NSArray*)cansetModels except_ps:(NSArray*)except_ps {
++(TOFoModel*) generalSolution:(DemandModel *)demand cansetModels:(NSArray*)cansetModels {
     //1. 数据准备;
     [AITest test13:cansetModels];
-    except_ps = ARRTOOK(except_ps);
     TOFoModel *result = nil;
     NSLog(@"第5步 Anaylst匹配成功:%ld",cansetModels.count);//测时94条
 
+    //2. 不应期 (可以考虑) (源于:反思且子任务失败的 或 fo行为化最终失败的,参考24135);
     //8. 排除不应期;
     cansetModels = [SMGUtils filterArr:cansetModels checkValid:^BOOL(TOFoModel *item) {
-        return ![except_ps containsObject:item.cansetFo];
+        return item.status != TOModelStatus_WithOut;//无计可施的失败TOFoModel计为不应期 (参考31073-TODO8);
     }];
     NSLog(@"第6步 排除不应期:%ld",cansetModels.count);//测时xx条
 

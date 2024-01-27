@@ -109,14 +109,8 @@
     [theTC updateOperCount:kFILENAME];
     Debug();
     
-    //2. 不应期 (可以考虑) (源于:反思且子任务失败的 或 fo行为化最终失败的,参考24135);
-    NSMutableArray *except_ps = [TOUtils convertPointersFromTOModels:demand.actionFoModels];
-    [except_ps addObjectsFromArray:[SMGUtils convertArr:demand.validPFos convertBlock:^id(AIMatchFoModel *obj) {
-        return obj.matchFo;
-    }]];
-    
     //4. 快思考无果或后2条,再做求解;
-    TOFoModel *bestResult = [TCSolutionUtil rSolution:demand except_ps:except_ps];
+    TOFoModel *bestResult = [TCSolutionUtil rSolution:demand];
 
     //6. 转流程控制_有解决方案则转begin;
     DebugE();
@@ -196,12 +190,7 @@
     Debug();
     
     //2. =======以下: 调用通用diff模式方法 (以下代码全是由diff模式方法迁移而来);
-    //3. 不应期 (考虑改为所有actionFoModels都不应期);
-    NSArray *exceptFoModels = [SMGUtils filterArr:demandModel.actionFoModels checkValid:^BOOL(TOModelBase *item) {
-        return item.status == TOModelStatus_ActNo || item.status == TOModelStatus_ScoreNo || item.status == TOModelStatus_ActYes;
-    }];
-    NSArray *except_ps = [TOUtils convertPointersFromTOModels:exceptFoModels];
-    if (Log4DirecRef) NSLog(@"------->>>>>> Fo已有方案数:%lu 不应期数:%lu",(long)demandModel.actionFoModels.count,(long)except_ps.count);
+    if (Log4DirecRef) NSLog(@"------->>>>>> Fo已有方案数:%lu",(long)demandModel.actionFoModels.count);
     
     //3. =======以下: 调用方向索引,找解决方案代码
     //2. 方向索引,用方向索引找normalFo解决方案 (P例:饿了,该怎么办 S例:累了,肿么肥事);
@@ -225,25 +214,23 @@
         if (Log4DirecRef) NSLog(@"方向索引_尝试_索引强度:%ld 方案:%@",item.strong.value,FoP2FStr(firstFoPort.target_p));
         
         //5. 方向索引找到一条normalFo解决方案 (P例:吃可以解决饿; S例:运动导致累);
-        if (![except_ps containsObject:firstFoPort.target_p]) {
-            //8. 消耗活跃度;
-            [theTC updateEnergyDelta:-1];
-            AIFoNodeBase *fo = [SMGUtils searchNode:firstFoPort.target_p];
-            
-            //a. 构建TOFoModel
-            TOFoModel *toFoModel = nil;//[TOFoModel newWithFo_p:fo.pointer base:demandModel basePFoOrTargetFoModel:nil];
-            
-            //b. 取自身,实现吃,则可不饿 (提交C给TOR行为化);
-            //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
-            NSLog(@">>>>>> pSolution 新增第%ld例解决方案: %@->%@",demandModel.actionFoModels.count,Fo2FStr(fo),Mvp2Str(fo.cmvNode_p));
-            dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
-                [theTV updateFrame];
-            });
-            DebugE();
-            
-            //8. 只要有一次tryResult成功,中断回调循环;
-            return [TCAction action:toFoModel];//[theTOR singleLoopBackWithBegin:toFoModel];
-        }
+        //8. 消耗活跃度;
+        [theTC updateEnergyDelta:-1];
+        AIFoNodeBase *fo = [SMGUtils searchNode:firstFoPort.target_p];
+        
+        //a. 构建TOFoModel
+        TOFoModel *toFoModel = nil;//[TOFoModel newWithFo_p:fo.pointer base:demandModel basePFoOrTargetFoModel:nil];
+        
+        //b. 取自身,实现吃,则可不饿 (提交C给TOR行为化);
+        //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
+        NSLog(@">>>>>> pSolution 新增第%ld例解决方案: %@->%@",demandModel.actionFoModels.count,Fo2FStr(fo),Mvp2Str(fo.cmvNode_p));
+        dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
+            [theTV updateFrame];
+        });
+        DebugE();
+        
+        //8. 只要有一次tryResult成功,中断回调循环;
+        return [TCAction action:toFoModel];//[theTOR singleLoopBackWithBegin:toFoModel];
     }
     
     //9. 无计可施,下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);
@@ -284,11 +271,8 @@
     [theTC updateOperCount:kFILENAME];
     Debug();
     
-    //1. 数据准备;
-    NSArray *except_ps = [TOUtils convertPointersFromTOModels:hDemand.actionFoModels];
-    
     //4. 快思考无果或后2条,再做求解;
-    TOFoModel *bestResult = [TCSolutionUtil hSolutionV4:hDemand except_ps:except_ps];
+    TOFoModel *bestResult = [TCSolutionUtil hSolutionV4:hDemand];
     
     //8. 新解决方案_的结果处理;
     DebugE();

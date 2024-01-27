@@ -14,9 +14,9 @@
 //MARK:===============================================================
 //MARK:                     < 求解 >
 //MARK:===============================================================
-+(TOFoModel*) hSolutionV2:(HDemandModel *)demand except_ps:(NSArray*)except_ps;
-+(TOFoModel*) hSolutionV4:(HDemandModel *)demand except_ps:(NSArray*)except_ps;
-+(TOFoModel*) rSolution:(ReasonDemandModel *)demand except_ps:(NSArray*)except_ps;
++(TOFoModel*) hSolutionV2:(HDemandModel *)demand;
++(TOFoModel*) hSolutionV4:(HDemandModel *)demand;
++(TOFoModel*) rSolution:(ReasonDemandModel *)demand;
 
 /**
  *  MARK:--------------------获取aleardayCount--------------------
