@@ -47,21 +47,11 @@
         DemandModel *baseDemand = (DemandModel*)endBranch.baseOrGroup;
         TOFoModel *solutionFo = (TOFoModel*)endBranch;
         
-        //4. endBranch >= 0分时,执行TCAction (参考24203-1);
-        if (endScore >= 0)
-            return [TCAction action:solutionFo];
-        
         //5. 无更多S时_直接TCAction行为化 (参考24203-2b);
-        else if(baseDemand.status == TOModelStatus_WithOut)
-            return [TCAction action:solutionFo];
+        if(baseDemand.status == TOModelStatus_WithOut) return [TCAction action:solutionFo];
         
-        //6. 末枝S达到3条时,则最优执行TCAction (参考24203-3);
-        else if(baseDemand.actionFoModels.count >= cSolutionNarrowLimit)
-            return [TCAction action:solutionFo];
-        
-        //7. endBranch < 0分时,且末枝S小于3条,执行TCSolution取下一方案 (参考24203-2);
-        else if (baseDemand.status != TOModelStatus_WithOut && baseDemand.actionFoModels.count < cSolutionNarrowLimit)
-            return runSolutionAct(baseDemand);
+        //6. 只要还不是WithOut状态,就每次TO时都执行CansetModels实时竞争 (参考31073-TODO4);
+        return runSolutionAct(baseDemand);
     }
     
     //8. 传入demand时,且demand还可继续时,尝试执行TCSolution取下一方案 (参考24203);
@@ -107,7 +97,10 @@
     
     //1. 树限宽且限深;
     NSInteger deepCount = [TOUtils getBaseDemandsDeepCount:demand];
-    if (deepCount >= cDemandDeepLimit || demand.actionFoModels.count >= cSolutionNarrowLimit) {
+    NSInteger bestCount = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
+        return item.cansetStatus == CS_Bested || item.cansetStatus == CS_Besting;
+    }].count;
+    if (deepCount >= cDemandDeepLimit || bestCount >= cSolutionNarrowLimit) {
         demand.status = TOModelStatus_WithOut;
         [TCScore scoreFromIfTCNeed];
         NSLog(@">>>>>> rSolution 已达limit条 (S数:%ld 层数:%ld)",demand.actionFoModels.count,deepCount);
