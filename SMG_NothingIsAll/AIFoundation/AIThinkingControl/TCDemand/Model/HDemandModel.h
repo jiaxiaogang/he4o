@@ -20,4 +20,9 @@
 
 +(HDemandModel*) newWithAlgModel:(TOAlgModel*)base;
 
+/**
+ *  MARK:--------------------H任务无计可施时调用--------------------
+ */
+-(void) setStatus2WithOut;
+
 @end

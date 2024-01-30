@@ -254,6 +254,7 @@
  *      2022.05.22: 窄出排序方式改为有效率为准 (参考26095-9);
  *      2022.05.31: 支持快慢思考 (参考26161 & 26162);
  *      2024.01.23: bestResult由用转体 (参考31073-TODO2c);
+ *      2024.01.30: hDemand在WithOut时,向父级和兄弟传染 (参考31073-TODO8b & TODO8c);
  */
 +(TCResult*) hSolution:(HDemandModel*)hDemand{
     //0. S数达到limit时设为WithOut;
@@ -263,7 +264,7 @@
     //1. 树限宽且限深;
     NSInteger deepCount = [TOUtils getBaseDemandsDeepCount:hDemand];
     if (deepCount >= cDemandDeepLimit || hDemand.actionFoModels.count >= cSolutionNarrowLimit) {
-        hDemand.status = TOModelStatus_WithOut;
+        [hDemand setStatus2WithOut];
         [TCScore scoreFromIfTCNeed];
         NSLog(@"------->>>>>> hSolution 已达limit条");
         return [[[TCResult new:false] mkMsg:@"hSolution > limit"] mkStep:22];
@@ -302,7 +303,7 @@
         return [TCAction action:bestResult];
     }else{
         //b) 下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);
-        hDemand.status = TOModelStatus_WithOut;
+        [hDemand setStatus2WithOut];
         NSLog(@">>>>>> hSolution 无计可施");
         [TCScore scoreFromIfTCNeed];
         return [[[TCResult new:false] mkMsg:@"hSolution无计可施"] mkStep:23];
