@@ -72,16 +72,14 @@
  *      3. 返回nil时,中止决策继续等待;
  */
 +(TOModelBase*) bestEndBranch4Plan:(NSMutableDictionary*)scoreDic curDemand:(DemandModel*)curDemand demandScore:(double)demandScore{
-    
-    //1. 如果curDemand为空S,则直接返回 (参考25042-5);
-    NSArray *validActionFos = [SMGUtils filterArr:curDemand.actionFoModels checkValid:^BOOL(TOFoModel *obj) {
-        return obj.status != TOModelStatus_ActNo && obj.status != TOModelStatus_WithOut;
-    }];
-    if (!ARRISOK(validActionFos)) return curDemand;
+    //1. 如果curDemand未初始化Cansets,则直接返回 => 返回后会进行solution初始化Cansets和竞争求解;
+    if (!curDemand.alreadyInitCansetModels) {
+        return curDemand;
+    }
     
     //2. 从actionFoModels找出最好的分支继续 (参考24196-示图 & 25042-6);
     TOFoModel *bestFo = nil;
-    for (TOFoModel *itemFo in validActionFos) {
+    for (TOFoModel *itemFo in curDemand.bestCansets) {
         double itemScore = [NUMTOOK([scoreDic objectForKey:TOModel2Key(itemFo)]) doubleValue];
         double bestScore = [NUMTOOK([scoreDic objectForKey:TOModel2Key(bestFo)]) doubleValue];
         if (!bestFo || itemScore > bestScore) bestFo = itemFo;
@@ -98,8 +96,11 @@
     //4. bestScore > 0时: 才继续递归推进它的子任务什么的;
     //5. bestScore = 0时: 要实时竞争下;然后推进胜者的子任务;
     //6. bestScore < 0时: 优先重新实时竞争一个新方案出来;
-    //7. 如果没新方案了,bestScore > demandScore,则忍受负作用但继续推进action;
-    //8. 如果没新方案了,bestScore < demandScore,则任务改成ScoreNo或ActNo状态,并传染下?
+    //7. 如果没新方案了;
+    //      a. 则尝试解决负作用: 尝试解决它的子任务 (递归它的子任务);
+    //      b. 如果没子任务或子任务也没解
+    //          a. 如果bestScore > demandScore: 则利大于弊,忍痛执行bestFo.action();
+    //          b. 如果bestScore < demandScore: 则忍无可忍,任务改成ScoreNo或ActNo状态,并传染下?
     
     //9. 看用不用把来不及的,反思不通过的,全都改成ScoreNo或actNo状态,然后,在实时竞争时,及时过滤掉;
     
