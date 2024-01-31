@@ -31,6 +31,17 @@
     return _actionFoModels;
 }
 
+/**
+ *  MARK:--------------------取出besting/bested的解决方案--------------------
+ *  @desc 作用: 过滤出best过的Cansets;
+ *        起因: 只有best过的,才有必要计算评分,别的Cansets都是默认分 (参考31083-TODO1);
+ */
+-(NSArray*) bestCansets {
+    return [SMGUtils filterArr:self.actionFoModels checkValid:^BOOL(TOFoModel *actionFo) {
+        return actionFo.cansetStatus == CS_Besting || actionFo.cansetStatus == CS_Bested;
+    }];
+}
+
 //-(id) getCurSubModel{
 //    TOFoModel *maxModel = nil;
 //    for (TOModelBase *model in self.subModels) {

@@ -204,7 +204,7 @@
         
         //2. 计算进度分 (参考31052-todo1);
         CGFloat maxProgressScore = 0;
-        for (TOFoModel *actionFo in obj.actionFoModels) {
+        for (TOFoModel *actionFo in obj.bestCansets) {
             if (actionFo.status != TOModelStatus_Runing && actionFo.status != TOModelStatus_ActYes) continue;
             CGFloat progress = (float)actionFo.cutIndex / actionFo.targetIndex;//参考31052-公式1
             CGFloat hot = 1 - [MathUtils getCooledValue_28:progress];//参考31052-公式2
@@ -234,6 +234,8 @@
  *      2021.12.23: 最优末枝处在actYes状态时,继续secondRoot (参考24212-7);
  *      2022.06.01: 末端actYes时,root不应期,因为actYes是向上传染不向下 (参考26185-TODO3);
  *      2022.09.24: 失效处理: 根任务失效时,不进行决策 (参考27123-问题2-todo2);
+ *  @todo
+ *      2024.01.31: 以后可以考虑把root的sort也改到TCScore中处理竞争 (但注意一点: 要把refreshCmvCacheSort()中的进度分等也集成过去);
  */
 -(DemandModel*) getCanDecisionDemand{
     //1. 数据检查

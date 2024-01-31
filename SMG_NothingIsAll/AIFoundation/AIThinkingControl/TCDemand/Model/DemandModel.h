@@ -25,6 +25,11 @@
 @property (assign, nonatomic) EffectStatus effectStatus;//任务解决是否有效状态;
 
 /**
+ *  MARK:--------------------取出besting/bested的解决方案--------------------
+ */
+-(NSArray*) bestCansets;
+
+/**
  *  MARK:--------------------获取当前最强的outSubModel--------------------
  *  @result 返回TOModelBase或其子类型;
  */

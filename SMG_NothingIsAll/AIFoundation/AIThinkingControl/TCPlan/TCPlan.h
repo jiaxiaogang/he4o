@@ -17,6 +17,6 @@
  */
 @interface TCPlan : NSObject
 
-+(TCResult*) plan:(DemandModel*)rootDemand rootFo:(TOFoModel*)rootFo scoreDic:(NSMutableDictionary*)scoreDic;
++(TCResult*) plan:(DemandModel*)rootDemand scoreDic:(NSMutableDictionary*)scoreDic;
 
 @end

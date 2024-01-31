@@ -37,13 +37,12 @@
  *
  *  MARK:--------------------新螺旋架构plan入口--------------------
  *  @param rootDemand   : 当前执行的根任务;
- *  @param rootFo       : 当前选定的根任务下的解决方案;
  *  @version
  *      2022.03.11: 将demand综合评分,改为score4Demand方法 (参考25142-TODO4);
  *  @todo
  *      2021.12.08: 后续solution行为化处理,根据>cutIndex筛选 (参考24185-方案1-代码);
  */
-+(TCResult*) plan:(DemandModel*)rootDemand rootFo:(TOFoModel*)rootFo scoreDic:(NSMutableDictionary*)scoreDic{
++(TCResult*) plan:(DemandModel*)rootDemand scoreDic:(NSMutableDictionary*)scoreDic{
     //1. 根据得分字典,从root向sub,取最优路径 (参考24195-3);
     [theTC updateOperCount:kFILENAME];
     Debug();

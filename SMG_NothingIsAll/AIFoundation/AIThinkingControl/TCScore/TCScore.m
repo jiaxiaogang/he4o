@@ -32,11 +32,11 @@
     
     //2. 对firstRootDemand取得分字典 (参考24195-2 & 24196示图);
     NSMutableDictionary *scoreDic = [[NSMutableDictionary alloc] init];
-    TOFoModel *foModel = [self score_Multi:demand.actionFoModels scoreDic:scoreDic];
+    [self score_Multi:demand.bestCansets scoreDic:scoreDic];
     
     //3. 转给TCPlan取最优路径;
     DebugE();
-    return [TCPlan plan:demand rootFo:foModel scoreDic:scoreDic];
+    return [TCPlan plan:demand scoreDic:scoreDic];
 }
 
 //MARK:===============================================================
@@ -67,7 +67,7 @@
     double modelScore = 0;
     
     //2. ===== 第0部分: foModel自身理性淘汰判断 (比如时间不急评否后,为actNo状态) (参考24053);
-    if (model.status == TOModelStatus_ActNo) {
+    if (model.status == TOModelStatus_ActNo || model.status == TOModelStatus_WithOut) {
         [scoreDic setObject:@(INT_MIN) forKey:TOModel2Key(model)];
         NSLog(@"评分1: 因actNo直接评最小分: K:%@",TOModel2Key(model));
         return;
@@ -110,13 +110,8 @@
     //1. 当demand失效时,不计分;
     if (ISOK(demand, ReasonDemandModel.class) && ((ReasonDemandModel*)demand).isExpired) return 0;
 
-    //2. 取出还未理性失败的解决方案;
-    NSArray *validActionFos = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOFoModel *actionFo) {
-        return actionFo.status != TOModelStatus_ActNo;
-    }];
-
     //3. 当demand已经withOut状态,且其解决方案全部actNo时,则理性淘汰 (参考24192-H14);
-    if (demand.status == TOModelStatus_WithOut && !ARRISOK(validActionFos)) {
+    if (demand.status == TOModelStatus_WithOut) {
         
         if (ISOK(demand, HDemandModel.class)) {
             //4. H无解决方案时,直接计min分计入modelScore;
@@ -127,7 +122,7 @@
         }
     }else{
         //6. demand有解决方案时,对S竞争,并将最高分计入modelScore;
-        TOFoModel *bestSS = [self score_Multi:validActionFos scoreDic:scoreDic];
+        TOFoModel *bestSS = [self score_Multi:demand.bestCansets scoreDic:scoreDic];
         
         //7. 并将竞争最高分胜者计入modelScore;
         return [NUMTOOK([scoreDic objectForKey:TOModel2Key(bestSS)]) doubleValue];
