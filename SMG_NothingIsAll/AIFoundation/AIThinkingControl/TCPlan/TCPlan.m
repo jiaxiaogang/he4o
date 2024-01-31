@@ -75,7 +75,7 @@
     
     //1. 如果curDemand为空S,则直接返回 (参考25042-5);
     NSArray *validActionFos = [SMGUtils filterArr:curDemand.actionFoModels checkValid:^BOOL(TOFoModel *obj) {
-        return obj.status != TOModelStatus_ActNo;
+        return obj.status != TOModelStatus_ActNo && obj.status != TOModelStatus_WithOut;
     }];
     if (!ARRISOK(validActionFos)) return curDemand;
     
@@ -86,6 +86,23 @@
         double bestScore = [NUMTOOK([scoreDic objectForKey:TOModel2Key(bestFo)]) doubleValue];
         if (!bestFo || itemScore > bestScore) bestFo = itemFo;
     }
+    
+    //TODOTOMORROW20240131:
+    //===== 现逻辑 =====
+    //1. 本方法本来就有的逻辑: 实在感性淘汰时: (bestScore < demandScore)
+    //      > 会直接返回curDemand,即在solution()可以从actionFoModels中重新竞争一个新的出来;
+    //2. 然后: 只要还可以接受,就去先解决它的子任务;
+    //3. 再然后: 子任务都完成或无解了,可以返回best最高分的方案,继续推进action去;
+    
+    //===== 迭代点 =====
+    //4. bestScore > 0时: 才继续递归推进它的子任务什么的;
+    //5. bestScore = 0时: 要实时竞争下;然后推进胜者的子任务;
+    //6. bestScore < 0时: 优先重新实时竞争一个新方案出来;
+    //7. 如果没新方案了,bestScore > demandScore,则忍受负作用但继续推进action;
+    //8. 如果没新方案了,bestScore < demandScore,则任务改成ScoreNo或ActNo状态,并传染下?
+    
+    //9. 看用不用把来不及的,反思不通过的,全都改成ScoreNo或actNo状态,然后,在实时竞争时,及时过滤掉;
+    
     
     //3. 感性淘汰则中止深入 (判断条件 = bestFo得分 < demandScore) (参考25042-7);
     double bestScore = [NUMTOOK([scoreDic objectForKey:TOModel2Key(bestFo)]) doubleValue];
