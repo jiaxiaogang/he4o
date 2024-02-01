@@ -58,6 +58,12 @@
 /**
  *  MARK:--------------------取当前要执行的解决方案--------------------
  *  @desc 从最优路径的末尾取 (最优路径可能有在subRDemands处分叉口,那么依次解决叉口任务);
+ *  @desc V1版本代码逻辑说明:
+ *          1. 实在感性淘汰时: (bestScore < demandScore)
+ *              > 会直接返回curDemand,即在solution()可以从actionFoModels中重新竞争一个新的出来;
+ *          2. 然后: 只要还可以接受,就去先解决它的子任务;
+ *          3. 再然后: 子任务都完成或无解了,可以返回best最高分的方案,继续推进action去;
+ *  @desc V2版本代码逻辑说明:
  *  @version
  *      2021.12.28: 工作记忆树任务下_首条S的支持 (参考25042);
  *      2021.12.28: 重新整理整个方法,参考评分字典数据结构做最优路径 (参考24196-示图);
@@ -71,6 +77,12 @@
  *      2. 返回路径末枝BestFo时,执行action行为化;
  *      3. 返回nil时,中止决策继续等待;
  */
++(TOModelBase*) bestEndBranch4PlanV2:(NSMutableDictionary*)scoreDic curDemand:(DemandModel*)curDemand demandScore:(double)demandScore {
+    //1. 看用不用把来不及的,反思不通过的,全都改成ScoreNo或actNo状态,然后,在实时竞争时,及时过滤掉;
+    
+    
+    return nil;
+}
 +(TOModelBase*) bestEndBranch4Plan:(NSMutableDictionary*)scoreDic curDemand:(DemandModel*)curDemand demandScore:(double)demandScore{
     //1. 如果curDemand未初始化Cansets,则直接返回 => 返回后会进行solution初始化Cansets和竞争求解;
     if (!curDemand.alreadyInitCansetModels) {
@@ -84,26 +96,6 @@
         double bestScore = [NUMTOOK([scoreDic objectForKey:TOModel2Key(bestFo)]) doubleValue];
         if (!bestFo || itemScore > bestScore) bestFo = itemFo;
     }
-    
-    //TODOTOMORROW20240131:
-    //===== 现逻辑 =====
-    //1. 本方法本来就有的逻辑: 实在感性淘汰时: (bestScore < demandScore)
-    //      > 会直接返回curDemand,即在solution()可以从actionFoModels中重新竞争一个新的出来;
-    //2. 然后: 只要还可以接受,就去先解决它的子任务;
-    //3. 再然后: 子任务都完成或无解了,可以返回best最高分的方案,继续推进action去;
-    
-    //===== 迭代点 =====
-    //4. bestScore > 0时: 才继续递归推进它的子任务什么的;
-    //5. bestScore = 0时: 要实时竞争下;然后推进胜者的子任务;
-    //6. bestScore < 0时: 优先重新实时竞争一个新方案出来;
-    //7. 如果没新方案了;
-    //      a. 则尝试解决负作用: 尝试解决它的子任务 (递归它的子任务);
-    //      b. 如果没子任务或子任务也没解
-    //          a. 如果bestScore > demandScore: 则利大于弊,忍痛执行bestFo.action();
-    //          b. 如果bestScore < demandScore: 则忍无可忍,任务改成ScoreNo或ActNo状态,并传染下?
-    
-    //9. 看用不用把来不及的,反思不通过的,全都改成ScoreNo或actNo状态,然后,在实时竞争时,及时过滤掉;
-    
     
     //3. 感性淘汰则中止深入 (判断条件 = bestFo得分 < demandScore) (参考25042-7);
     double bestScore = [NUMTOOK([scoreDic objectForKey:TOModel2Key(bestFo)]) doubleValue];
