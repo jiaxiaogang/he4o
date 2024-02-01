@@ -28,7 +28,8 @@
 11. 性能要求：可运行于单机终端（当前是ios设备）。
 
 > 手稿：<https://github.com/jiaxiaogang/HELIX_THEORY>  
-> 网站：<http://https://jiaxiaogang.github.io>
+> 网站：<http://https://jiaxiaogang.github.io>  
+> 文档：<https://james4ever0.github.io/he4o> 由James4Ever0提供，感谢❤
 
 [![](https://img.shields.io/badge/%20QQGroup-528053635%20-orange.svg)](tencent://message/?uin=283636001&Site=&Menu=yes)
 [![](https://img.shields.io/badge/%20QQ-在线交谈%20-orange.svg)](http://wpa.qq.com/msgrd?v=3&uin=283636001&site=qq&menu=yes)
@@ -91,7 +92,7 @@
 ### 6. -------------时间线-------------
 
 > ##### 2023.12.28 `至今`
-> - 解决方案实时竞争：`支持持续反馈 & 持续反馈评价`、`Cansets实时竞争`
+> - 解决方案实时竞争：`支持持续反馈 & 持续反馈评价`、`Cansets实时竞争`、`迭代TCPlan`
 
 > ##### 2023.12.28 `耗时12天`
 > - 搬运训练：`搬运动机训练`、`学会搬运`、`运用搬运`、`Root竞争进度分加权`、`hCanset迁移优化: 基于r场景树和hAlg抽具象树实现迁移`
