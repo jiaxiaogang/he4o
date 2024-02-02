@@ -109,6 +109,7 @@
         //1. 看把response写成模型,然后subDemand可能一条得失通过,多条时得失就不通过了;
         //  a. 可以先综合计算下无解的几条,看加起来是不是已经over了;
         //  b. 或者在TCScore里已经综合算过了,此处只需要从scoreDic中取即可;
+        //2. 改下TOFoModel的分低于任务分,直接pass,因为在TCScore中得出的就是综合评分,它低于任务分,说明已经无解的部分,已经得不偿失;
         
         for (DemandModel *subDemand in subDemands) {
             TOModelBase *nextBranch = [self bestEndBranch4PlanV2:scoreDic curDemand:subDemand rootScore:rootScore];
