@@ -293,7 +293,7 @@
     
     
     //11. 根据候选集综合分排序 (参考26128-2-2 & 26161-4);
-    NSArray *sortModels = [AIRank solutionFoRankingV3:cansetModels];
+    NSArray *sortModels = [AIRank solutionFoRankingV4:cansetModels zonHeScoreBlock:nil];
 
     //13. 取通过S反思的最佳S;
     for (TOFoModel *item in sortModels) {

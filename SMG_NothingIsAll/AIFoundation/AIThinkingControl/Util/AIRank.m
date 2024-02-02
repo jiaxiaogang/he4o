@@ -124,29 +124,34 @@
 
 /**
  *  MARK:--------------------求解S排名器 (参考29099-方案)--------------------
+ *  @param zonHeScoreBlock 工作记忆中,这一条TOFoModel的感性综合评分 (由TCScore提供,计算此方案及向子任务方向递归综合计算得出);
  *  @version
  *      2023.05.23: BUG_用sceneId_cansetId做key,会有重复的,导致算漏的BUG,改用内存地址来做唯一key;
  *      2023.05.24: BUG_修复此处将sceneTargetIndex用错成cansetTargetIndex的问题 (会导致取到eff几乎全是错的0);
  *      2023.05.26: BUG_修复SP总是取到0的问题,改为eff为主排序,sp仅取下一帧稳定性做二级排序,H值三级排序 (参考2909a-方案2);
  *      2023.12.26: 优化sort性能,把getEffectStrong()提出来提前取好 (参考31025-代码段-问题1) //共三处优化,此乃其一;
  *      2024.01.26: 还未推进的中后段SP稳定性做第一竞争因子 (参考31073-TODO3);
+ *      2024.02.02: V4_新增感性综合评分为第一竞争因子 (参考31083-TODO4.1);
  */
-+(NSArray*) solutionFoRankingV3:(NSArray*)solutionModels {
++(NSArray*) solutionFoRankingV4:(NSArray*)solutionModels zonHeScoreBlock:(double(^)(TOFoModel *obj))zonHeScoreBlock {
     //0. 将effStrong提前取出来,存到mapModel中;
     NSArray *mapArr = [SMGUtils convertArr:solutionModels convertBlock:^id(TOFoModel *item) {
         AIFoNodeBase *sceneFo = [SMGUtils searchNode:item.sceneFo];
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:item.cansetFo];
         AIEffectStrong *strong = [TOUtils getEffectStrong:sceneFo effectIndex:item.sceneTargetIndex solutionFo:item.cansetFo];//提前取出effStrong有效性;
         CGFloat stableScore = [TOUtils getStableScore:cansetFo startSPIndex:item.cutIndex + 1 endSPIndex:item.targetIndex];//提前算出还未推进的中后段sp稳定性;
-        return [MapModel newWithV1:item v2:strong v3:@(stableScore)];
+        double zonHeScore = zonHeScoreBlock ? zonHeScoreBlock(item) : 0;
+        return [MapModel newWithV1:item v2:strong v3:@(stableScore) v4:@(zonHeScore)];
     }];
     
     //1. 根据cutIndex到target之间的稳定性和有效性来排名 (参考29099-todo1 & todo2);
     NSArray *sort = [SMGUtils sortBig2Small:mapArr compareBlock1:^double(MapModel *item) {
-        return NUMTOOK(item.v3).floatValue;//还未推进的中后段SP稳定性;
+        return NUMTOOK(item.v4).doubleValue;//感性综合评分 (由TCScore字典提供);
     } compareBlock2:^double(MapModel *item) {
-        return [TOUtils getEffectScore:item.v2];//后段有效性 (参考2909a-todo1);
+        return NUMTOOK(item.v3).floatValue;//还未推进的中后段SP稳定性;
     } compareBlock3:^double(MapModel *item) {
+        return [TOUtils getEffectScore:item.v2];//后段有效性 (参考2909a-todo1);
+    } compareBlock4:^double(MapModel *item) {
         AIEffectStrong *strong = item.v2;
         return strong.hStrong;//H值 (参考2909a-todo3);
     }];

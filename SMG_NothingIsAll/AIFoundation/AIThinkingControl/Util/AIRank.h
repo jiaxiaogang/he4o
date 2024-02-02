@@ -26,7 +26,6 @@
 /**
  *  MARK:--------------------S综合排名--------------------
  */
-//+(NSArray*) solutionFoRankingV2:(NSArray*)solutionModels needBack:(BOOL)needBack fromSlow:(BOOL)fromSlow;
-+(NSArray*) solutionFoRankingV3:(NSArray*)solutionModels;
++(NSArray*) solutionFoRankingV4:(NSArray*)solutionModels zonHeScoreBlock:(double(^)(TOFoModel *obj))zonHeScoreBlock;
 
 @end

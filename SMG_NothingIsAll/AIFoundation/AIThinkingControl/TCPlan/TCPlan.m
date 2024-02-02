@@ -81,23 +81,34 @@
     //1. 看用不用把来不及的,反思不通过的,全都改成ScoreNo或actNo状态,然后,在实时竞争时,及时过滤掉;
     
     
-    return nil;
-}
-+(TOModelBase*) bestEndBranch4Plan:(NSMutableDictionary*)scoreDic curDemand:(DemandModel*)curDemand demandScore:(double)demandScore{
     //1. 如果curDemand未初始化Cansets,则直接返回 => 返回后会进行solution初始化Cansets和竞争求解;
     if (!curDemand.alreadyInitCansetModels) {
         return curDemand;
     }
     
-    //2. 从actionFoModels找出最好的分支继续 (参考24196-示图 & 25042-6);
-    TOFoModel *bestFo = nil;
-    for (TOFoModel *itemFo in curDemand.bestCansets) {
-        double itemScore = [NUMTOOK([scoreDic objectForKey:TOModel2Key(itemFo)]) doubleValue];
-        double bestScore = [NUMTOOK([scoreDic objectForKey:TOModel2Key(bestFo)]) doubleValue];
-        if (!bestFo || itemScore > bestScore) bestFo = itemFo;
+    //2. 过滤掉actNo,withOut,scoreNo,finish这些状态的;
+    NSArray *validCansets = [SMGUtils filterArr:curDemand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
+        return item.status != TOModelStatus_ActNo && item.status != TOModelStatus_ScoreNo && item.status != TOModelStatus_WithOut && item.status != TOModelStatus_Finish;
+    }];
+    if (!ARRISOK(validCansets)) {
+        //TODOTOMORROW20240202: 此处改状态为无计可施,没有合格的了,明天分析下:
+        //看应该返回curDemand.base?继续执行父级?
+        //还是直接改为失败,当前root直接全失败了?
+        
     }
     
+    //2. 从actionFoModels找出最好的分支继续 (参考24196-示图 & 25042-6);
+    NSArray *sortCansets = [AIRank solutionFoRankingV4:validCansets zonHeScoreBlock:^double(TOFoModel *obj) {
+        return [NUMTOOK([scoreDic objectForKey:TOModel2Key(obj)]) doubleValue];
+    }];
+    
+    
+    //TODOTOMORROW20240202:
+    //排序后,取第一条,递归尝试它的子任务 (参考31083-TODO4.2);
+    //当子任务全无解时的更新状态 (31083-TODO4.3);
+    
     //3. 感性淘汰则中止深入 (判断条件 = bestFo得分 < demandScore) (参考25042-7);
+    TOFoModel *bestFo = ARR_INDEX(sortCansets, 0);
     double bestScore = [NUMTOOK([scoreDic objectForKey:TOModel2Key(bestFo)]) doubleValue];
     if (bestScore < demandScore) return curDemand;
     

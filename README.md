@@ -28,7 +28,7 @@
 11. 性能要求：可运行于单机终端（当前是ios设备）。
 
 > 手稿：<https://github.com/jiaxiaogang/HELIX_THEORY>  
-> 网站：<http://https://jiaxiaogang.github.io>  
+> 网站：<https://jiaxiaogang.github.io>  
 > 文档：<https://james4ever0.github.io/he4o> 由James4Ever0提供，感谢❤
 
 [![](https://img.shields.io/badge/%20QQGroup-528053635%20-orange.svg)](tencent://message/?uin=283636001&Site=&Menu=yes)
