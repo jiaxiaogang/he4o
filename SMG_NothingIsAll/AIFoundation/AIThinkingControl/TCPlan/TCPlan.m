@@ -104,6 +104,12 @@
         //3.1 取下层子任务们 (子任务们是并列的,即找到下层只要有一条能走通的路就行);
         //3.1 未感性淘汰的,一条路走到黑(递归循环),然后把最后的结果return返回;
         NSArray *subDemands = [self getSubDemandsWithCurLevelBestFo:bestFo];
+        
+        //TODOTOMORROW20240202: 此处改状态为无计可施,没有合格的了,明天分析下:
+        //1. 看把response写成模型,然后subDemand可能一条得失通过,多条时得失就不通过了;
+        //  a. 可以先综合计算下无解的几条,看加起来是不是已经over了;
+        //  b. 或者在TCScore里已经综合算过了,此处只需要从scoreDic中取即可;
+        
         for (DemandModel *subDemand in subDemands) {
             TOModelBase *nextBranch = [self bestEndBranch4PlanV2:scoreDic curDemand:subDemand rootScore:rootScore];
             
@@ -125,20 +131,21 @@
     //(四) ============ Demand无解: 比对得失 ============
     else {
         //4.1 当前任务无解,则中止深入 (得失通过 = curDemandScore得分 < rootScore) (参考31083-TODO4.3);
-        double curDemandScore = [NUMTOOK([scoreDic objectForKey:TOModel2Key(curDemand)]) doubleValue];
-        if (curDemandScore > rootScore) {
-            return ISOK(curDemand, HDemandModel.class) ? curDemand.baseOrGroup.baseOrGroup : curDemand.baseOrGroup; //强行执行;
+        
+        //4.2 H任务时,直接表示targetFo失败,从base找出最近的RDemand?
+        //或直接. 当子任务全无解时的更新状态 (31083-TODO4.3) 看用不用把来不及的,反思不通过的,全都改成ScoreNo或actNo状态,然后,在实时竞争时,及时过滤掉;
+        if (ISOK(curDemand, HDemandModel.class)) {
+            TOModelBase *baseBestFo = curDemand.baseOrGroup.baseOrGroup;//上一级最好的canset
         } else {
-            return nil; //中断执行;
+            double curDemandScore = [NUMTOOK([scoreDic objectForKey:TOModel2Key(curDemand)]) doubleValue];
+            if (curDemandScore > rootScore) {
+                return curDemand.baseOrGroup; //强行执行: 上一级最好的canset;
+            } else {
+                return nil; //中断执行;
+            }
         }
-        
-        //TODOTOMORROW20240202: 此处改状态为无计可施,没有合格的了,明天分析下:
-        //看应该返回curDemand.base?继续执行父级?
-        //还是直接改为失败,当前root直接全失败了?
-        //当子任务全无解时的更新状态 (31083-TODO4.3);
-        
-        //1. 看用不用把来不及的,反思不通过的,全都改成ScoreNo或actNo状态,然后,在实时竞争时,及时过滤掉;
     }
+    return nil;
 }
 
 /**
