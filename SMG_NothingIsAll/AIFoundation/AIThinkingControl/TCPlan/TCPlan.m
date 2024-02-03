@@ -65,7 +65,13 @@
  *              > 会直接返回curDemand,即在solution()可以从actionFoModels中重新竞争一个新的出来;
  *          2. 然后: 只要还可以接受,就去先解决它的子任务;
  *          3. 再然后: 子任务都完成或无解了,可以返回best最高分的方案,继续推进action去;
- *  @desc V2版本代码逻辑说明:
+ *  @desc V2版本代码逻辑说明 (参考31083):
+ *          1. 未初始化过则初始化Cansets;
+ *          2. 初始化过则Cansets实时竞争;
+ *          3. 无解 => 则递归到上一层;
+ *          4. 有解但得不偿失 => 则递归到上一层;
+ *          5. 有解且得大于失 => 则继续向下一层;
+ *          6. 有解且得大于失 且 下层全失败 => 强行执行这一层的最佳Canset;
  *  @version
  *      2021.12.28: 工作记忆树任务下_首条S的支持 (参考25042);
  *      2021.12.28: 重新整理整个方法,参考评分字典数据结构做最优路径 (参考24196-示图);
@@ -81,78 +87,74 @@
  */
 +(TOModelBase*) bestEndBranch4PlanV2:(NSMutableDictionary*)scoreDic curDemand:(DemandModel*)curDemand rootScore:(double)rootScore {
     //(一) ============ Demand未求解过: 进行求解 ============
-    //1.1 如果curDemand未初始化Cansets,则直接返回 => 返回后会进行solution初始化Cansets和竞争求解;
+    //1. 如果curDemand未初始化Cansets,则直接返回 => 返回后会进行solution初始化Cansets和竞争求解;
     if (!curDemand.alreadyInitCansetModels) {
         return curDemand;
     }
     
     //(二) ============ Demand求解过: 实时竞争 ============
-    //2.1 过滤掉actNo,withOut,scoreNo,finish这些状态的;
+    //1. 过滤掉actNo,withOut,scoreNo,finish这些状态的;
     NSArray *validCansets = [SMGUtils filterArr:curDemand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
         return item.status != TOModelStatus_ActNo && item.status != TOModelStatus_ScoreNo && item.status != TOModelStatus_WithOut && item.status != TOModelStatus_Finish;
     }];
     
-    //2.2 从actionFoModels找出最好的分支继续 (参考24196-示图 & 25042-6 & 31083-TODO4.2);
+    //2. 从actionFoModels找出最好的分支继续 (参考24196-示图 & 25042-6 & 31083-TODO4.2);
     NSArray *sortCansets = [AIRank solutionFoRankingV4:validCansets zonHeScoreBlock:^double(TOFoModel *obj) {
         return [NUMTOOK([scoreDic objectForKey:TOModel2Key(obj)]) doubleValue];
     }];
     TOFoModel *bestFo = ARR_INDEX(sortCansets, 0);
     
-    //(三) ============ Demand有解: 向sub下一层递归 ============
-    if (bestFo) {
-        
-        //3.1 取下层子任务们 (子任务们是并列的,即找到下层只要有一条能走通的路就行);
-        //3.1 未感性淘汰的,一条路走到黑(递归循环),然后把最后的结果return返回;
-        NSArray *subDemands = [self getSubDemandsWithCurLevelBestFo:bestFo];
-        
-        //TODOTOMORROW20240202: 此处改状态为无计可施,没有合格的了,明天分析下:
-        //1. 看把response写成模型,然后subDemand可能一条得失通过,多条时得失就不通过了;
-        //  a. 可以先综合计算下无解的几条,看加起来是不是已经over了;
-        //  b. 或者在TCScore里已经综合算过了,此处只需要从scoreDic中取即可;
-        //2. 改下TOFoModel的分低于任务分,直接pass,因为在TCScore中得出的就是综合评分,它低于任务分,说明已经无解的部分,已经得不偿失;
-        
-        for (DemandModel *subDemand in subDemands) {
-            TOModelBase *nextBranch = [self bestEndBranch4PlanV2:scoreDic curDemand:subDemand rootScore:rootScore];
-            
-            //3.2 子任务有解,递归返回;
-            if (nextBranch) return nextBranch;
-        }
-        
-        //3.3 循环完子任务全是nil,则会执行到此处: 即子任务无解,则比对得失;
-        //3.3 bestFo没有子任务subDemands可决策的,则直接执行bestFo为末枝 (参考25042-8);
-        //3.3 感性淘汰则中止深入 (得失通过 = bestFo得分 < rootScore) (参考25042-7 & 31083-TODO4.3);
-        double bestScore = [NUMTOOK([scoreDic objectForKey:TOModel2Key(bestFo)]) doubleValue];
-        if (bestScore > rootScore) {
-            return bestFo;
-        } else {
-            return nil;
-        }
-    }
-    
-    //(四) ============ Demand无解: 比对得失 ============
-    else {
-        //4.1 当前任务无解,则中止深入 (得失通过 = curDemandScore得分 < rootScore) (参考31083-TODO4.3);
-        
-        //4.2 H任务时,直接表示targetFo失败,从base找出最近的RDemand?
-        //或直接. 当子任务全无解时的更新状态 (31083-TODO4.3) 看用不用把来不及的,反思不通过的,全都改成ScoreNo或actNo状态,然后,在实时竞争时,及时过滤掉;
+    //(三) ============ Demand无解: 更新状态 & 返回nil(递归到上一层) ============
+    if (!bestFo) {
+        //1. H任务无解时,改状态: 直接传染到tagetAlg & targetFo失败 & baseRDemand失败 (参考31083-TODO4.6);
         if (ISOK(curDemand, HDemandModel.class)) {
             TOModelBase *baseBestFo = curDemand.baseOrGroup.baseOrGroup;//上一级最好的canset
-        } else {
-            double curDemandScore = [NUMTOOK([scoreDic objectForKey:TOModel2Key(curDemand)]) doubleValue];
-            if (curDemandScore > rootScore) {
-                return curDemand.baseOrGroup; //强行执行: 上一级最好的canset;
-            } else {
-                return nil; //中断执行;
-            }
+            curDemand.status = TOModelStatus_WithOut;
+            baseBestFo.status = TOModelStatus_ActNo;
         }
+        
+        //2. R任务时,改curDemand状态为无解 (参考31083-TODO4.5);
+        if (ISOK(curDemand, ReasonDemandModel.class)) {
+            curDemand.status = TOModelStatus_WithOut;
+        }
+        
+        //3. 当前任务curDemand无解失败时,则中止深入 (直接更新相关工作记忆节点的状态,并返回nil),说明: 子任务返回nil,父bestFo则会强行执行 (参考31083-TODO4.5);
+        return nil;
     }
-    return nil;
+        
+    //(四) ============ Demand有解: 得不偿失,则返回nil(递归到上一层) ============
+    //1. 循环完子任务全是nil,则会执行到此处: 即子任务无解,则比对得失;
+    //1. bestFo没有子任务subDemands可决策的,则直接执行bestFo为末枝 (参考25042-8);
+    //1. 感性淘汰则中止深入 (得失通过 = bestFo得分 < rootScore) (参考25042-7 & 31083-TODO4.3);
+    //1. 改下TOFoModel的分低于任务分,直接pass,因为在TCScore中得出的就是综合评分,它低于任务分,说明已经无解的部分,已经得不偿失;
+    double bestScore = [NUMTOOK([scoreDic objectForKey:TOModel2Key(bestFo)]) doubleValue];
+    if (bestScore < rootScore) {
+        bestFo.status = TOModelStatus_ScoreNo;
+        curDemand.status = TOModelStatus_WithOut;
+        return nil;
+    }
+    
+    //(五) ============ Demand有解: 得大于失,则取子任务(继续向下一层) ============
+    //1. 未感性淘汰的,一条路走到黑(递归循环),然后把最后的结果return返回;
+    //1. 取下层子任务们 (子任务们是并列的,即找到下层只要有一条能走通的路就行);
+    NSArray *subDemands = [self getSubDemandsWithCurLevelBestFo:bestFo];
+    for (DemandModel *subDemand in subDemands) {
+        TOModelBase *nextBranch = [self bestEndBranch4PlanV2:scoreDic curDemand:subDemand rootScore:rootScore];
+        
+        //2. 有一条子任务有解: 则递归返回 (参考31083-TODO4.2);
+        if (nextBranch) return nextBranch;
+    }
+    
+    //3. 所有子任务全无解: 仍可以因得大于失,而强行执行bestFo (参考31083-TODO4.4);
+    return bestFo;
 }
 
 /**
  *  MARK:--------------------取下一层子任务数组--------------------
  *  @param bestFo 当前这一层的战胜者;
  *  @desc 本方法取当前层战胜者的所有子任务,用于继续将竞争推进到sub下一层 (参考31083-TODO4.2);
+ *  @version
+ *      2024.02.03: H任务只取当前正在处理的这一条,往帧只要最终有效闯过来了,不追究;
  */
 +(NSArray*) getSubDemandsWithCurLevelBestFo:(TOFoModel*)bestFo {
     //4. 感性未淘汰则继续深入分支 (判断条件 = bestFo得分 > demandScore) (参考25042-6);
@@ -161,10 +163,7 @@
     
     //5. 数据准备: 子R和子H任务;
     NSArray *subRDemands = bestFo.subDemands;
-    NSArray *subHDemands = [SMGUtils convertArr:bestFo.subModels convertBlock:^id(TOAlgModel *item) {
-        HDemandModel *hDemand = ARR_INDEX(item.subDemands, 0);
-        return hDemand;
-    }];
+    NSArray *subHDemands = bestFo.getCurFrame.subDemands;
     
     //6. 优先级: 反思通过时子H任务优先,反思不通过时子R任务优先 (参考30114-todo2);
     if (bestFo.refrectionNo) {

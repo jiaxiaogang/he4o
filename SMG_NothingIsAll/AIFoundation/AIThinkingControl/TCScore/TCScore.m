@@ -67,7 +67,7 @@
     double modelScore = 0;
     
     //2. ===== 第0部分: foModel自身理性淘汰判断 (比如时间不急评否后,为actNo状态) (参考24053);
-    if (model.status == TOModelStatus_ActNo || model.status == TOModelStatus_WithOut) {
+    if (model.status == TOModelStatus_ActNo || model.status == TOModelStatus_WithOut || model.status == TOModelStatus_ScoreNo) {
         [scoreDic setObject:@(INT_MIN) forKey:TOModel2Key(model)];
         NSLog(@"评分1: 因actNo直接评最小分: K:%@",TOModel2Key(model));
         return;
@@ -111,7 +111,7 @@
     if (ISOK(demand, ReasonDemandModel.class) && ((ReasonDemandModel*)demand).isExpired) return 0;
 
     //3. 当demand已经withOut状态,且其解决方案全部actNo时,则理性淘汰 (参考24192-H14);
-    if (demand.status == TOModelStatus_WithOut) {
+    if (demand.status == TOModelStatus_WithOut || demand.status == TOModelStatus_ActNo || demand.status == TOModelStatus_ScoreNo) {
         
         if (ISOK(demand, HDemandModel.class)) {
             //4. H无解决方案时,直接计min分计入modelScore;
