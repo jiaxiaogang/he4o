@@ -45,6 +45,7 @@
     foModel.refrectionNo = ![TCRefrection actionRefrection:foModel];
     if (foModel.refrectionNo) {
         [TCScore scoreFromIfTCNeed];
+        foModel.status = TOModelStatus_ScoreNo;//反思不通过时直接改为ScoreNo (参考31083-TODO5);
         return [[[TCResult new:false] mkMsg:@"action反思不通过"] mkStep:31];
     }
     

@@ -18,49 +18,43 @@
  *      2021.12.28: 对首条S的支持 (参考25042);
  *      2021.12.28: 支持actYes时最优路径末枝为nil,并中止决策 (参考25042-3);
  *      2022.06.02: 如果endBranch的末枝正在等待actYes,则继续等待,不进行决策 (参考26185-TODO4);
+ *      2024.02.04: Cansets实时竞争放到TCPlan中了,此处实时竞争的代码删掉;
  */
 +(TCResult*) solution:(TOModelBase*)endBranch endScore:(double)endScore{
     //1. 无末枝时 (可能正在ActYes等待状态),中断决策;
     if (!endBranch) return [[[TCResult new:false] mkMsg:@"无末枝"] mkStep:11];
     
-    //1. 判断endBranch如果是actYes状态,则不处理,继续静默;
+    //2. 判断endBranch如果是actYes状态,则不处理,继续静默;
     BOOL endHavActYes = [TOUtils endHavActYes:endBranch];
     if (endHavActYes) return [[[TCResult new:false] mkMsg:@"末枝ActYes状态"] mkStep:12];
     
-    //2. 尝试取更多S;
-    Func1 runSolutionAct = ^(DemandModel *demand){
-        if (ISOK(demand, ReasonDemandModel.class)) {
-            //a. R任务继续取解决方案 (参考24203-2);
-            return [self rSolution:(ReasonDemandModel*)demand];
-        }else if (ISOK(demand, PerceptDemandModel.class)) {
-            //b. P任务继续取解决方案 (参考24203-2);
-            return [self pSolution:demand];
-        }else if (ISOK(demand, HDemandModel.class)) {
-            //c. H任务继续取解决方案 (参考24203-2);
-            return [self hSolution:(HDemandModel*)demand];
-        }
-        return [[[TCResult new:false] mkMsg:@"solution 任务类型不同RPH任一种"] mkStep:13];
-    };
-    
-    //3. 传入solutionFo时;
+    //3. 传入solutionFo时: 直接执行action();
     if (ISOK(endBranch, TOFoModel.class)) {
-        DemandModel *baseDemand = (DemandModel*)endBranch.baseOrGroup;
-        TOFoModel *solutionFo = (TOFoModel*)endBranch;
-        
-        //5. 无更多S时_直接TCAction行为化 (参考24203-2b);
-        if(baseDemand.status == TOModelStatus_WithOut) return [TCAction action:solutionFo];
-        
-        //6. 只要还不是WithOut状态,就每次TO时都执行CansetModels实时竞争 (参考31073-TODO4);
-        return runSolutionAct(baseDemand);
+        TOFoModel *actionFo = (TOFoModel*)endBranch;
+        return [TCAction action:actionFo];
     }
     
-    //8. 传入demand时,且demand还可继续时,尝试执行TCSolution取下一方案 (参考24203);
+    //4. 传入demand时,且demand还可继续时,尝试执行TCSolution取下一方案 (参考24203);
     if (ISOK(endBranch, DemandModel.class)) {
-        if (endBranch.status != TOModelStatus_ActNo && endBranch.status != TOModelStatus_ActYes && endBranch.status != TOModelStatus_WithOut) {
-            return runSolutionAct((DemandModel*)endBranch);
+        //5. 任务状态已失败不应再决策
+        if (endBranch.status == TOModelStatus_ActNo || endBranch.status == TOModelStatus_ActYes || endBranch.status == TOModelStatus_WithOut) {
+            return [[[TCResult new:false] mkMsg:@"任务状态已失败不应再决策"] mkStep:13];
         }
+        
+        //6. 分发到xSolution(): 初始化Cansets & 行为化;
+        if (ISOK(endBranch, ReasonDemandModel.class)) {
+            //a. R任务继续取解决方案 (参考24203-2);
+            return [self rSolution:(ReasonDemandModel*)endBranch];
+        }else if (ISOK(endBranch, PerceptDemandModel.class)) {
+            //b. P任务继续取解决方案 (参考24203-2);
+            return [self pSolution:(PerceptDemandModel*)endBranch];
+        }else if (ISOK(endBranch, HDemandModel.class)) {
+            //c. H任务继续取解决方案 (参考24203-2);
+            return [self hSolution:(HDemandModel*)endBranch];
+        }
+        return [[[TCResult new:false] mkMsg:@"solution 任务类型不同RPH任一种"] mkStep:14];
     }
-    return [[[TCResult new:false] mkMsg:@"solution末枝非foModel也非demandModel"] mkStep:14];
+    return [[[TCResult new:false] mkMsg:@"solution末枝非foModel也非demandModel"] mkStep:15];
 }
 
 /**
@@ -119,12 +113,6 @@
         [theTC updateEnergyDelta:-1];
         
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
-        //b) bestResult由用转体迁移;
-        [TCTransfer transferForCreate:bestResult];
-        
-        //c) 更新状态besting和bested (参考31073-TODO2d);
-        [TCSolutionUtil updateCansetStatus:bestResult demand:demand];
-        
         //c) 调试;
         AIFoNodeBase *sceneFo = [SMGUtils searchNode:bestResult.sceneFo];
         AIEffectStrong *effStrong = [TOUtils getEffectStrong:sceneFo effectIndex:sceneFo.count solutionFo:bestResult.cansetFo];
@@ -273,7 +261,7 @@
     Debug();
     
     //4. 快思考无果或后2条,再做求解;
-    TOFoModel *bestResult = [TCSolutionUtil hSolutionV4:hDemand];
+    TOFoModel *bestResult = [TCSolutionUtil hSolutionV2:hDemand];
     
     //8. 新解决方案_的结果处理;
     DebugE();
@@ -282,12 +270,6 @@
         [theTC updateEnergyDelta:-1];
         
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
-        //b) bestResult由用转体迁移;
-        [TCTransfer transferForCreate:bestResult];
-        
-        //c) 更新状态besting和bested (参考31073-TODO2d);
-        [TCSolutionUtil updateCansetStatus:bestResult demand:hDemand];
-        
         //c) 调试;
         AIFoNodeBase *sceneFo = [SMGUtils searchNode:bestResult.sceneFo];
         AIEffectStrong *effStrong = [TOUtils getEffectStrong:sceneFo effectIndex:sceneFo.count solutionFo:bestResult.cansetFo];

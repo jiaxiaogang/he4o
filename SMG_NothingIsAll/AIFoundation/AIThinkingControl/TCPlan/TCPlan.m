@@ -80,6 +80,7 @@
  *      2023.02.28: R子任务不求解 (参考28135-2);
  *      2023.07.09: 打开子任务开关,因为明明有子任务却不激活的话,有可能它的父任务不断反思出子任务再回来又激活父任务,不断生成子任务,导致死循环 (参考30055);
  *      2023.08.21: 调整子任务的优先级: 反思通过时子H任务优先,反思不通过时子R任务优先 (参考30114-todo2);
+ *      2024.02.04: 逐层Cansets都支持实时竞争 (参考31083);
  *  @result
  *      1. 返回空S的Demand时,执行solution找解决方案;
  *      2. 返回路径末枝BestFo时,执行action行为化;
@@ -93,16 +94,10 @@
     }
     
     //(二) ============ Demand求解过: 实时竞争 ============
-    //1. 过滤掉actNo,withOut,scoreNo,finish这些状态的;
-    NSArray *validCansets = [SMGUtils filterArr:curDemand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
-        return item.status != TOModelStatus_ActNo && item.status != TOModelStatus_ScoreNo && item.status != TOModelStatus_WithOut && item.status != TOModelStatus_Finish;
-    }];
-    
-    //2. 从actionFoModels找出最好的分支继续 (参考24196-示图 & 25042-6 & 31083-TODO4.2);
-    NSArray *sortCansets = [AIRank solutionFoRankingV4:validCansets zonHeScoreBlock:^double(TOFoModel *obj) {
+    //1. 从actionFoModels找出最好的分支继续 (参考24196-示图 & 25042-6 & 31083-TODO4.2);
+    TOFoModel *bestFo = [TCSolutionUtil realTimeRankSolution:curDemand zonHeScoreBlock:^double(TOFoModel *obj) {
         return [NUMTOOK([scoreDic objectForKey:TOModel2Key(obj)]) doubleValue];
-    }];
-    TOFoModel *bestFo = ARR_INDEX(sortCansets, 0);
+    }];;
     
     //(三) ============ Demand无解: 更新状态 & 返回nil(递归到上一层) ============
     if (!bestFo) {

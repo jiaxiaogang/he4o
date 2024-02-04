@@ -139,6 +139,7 @@
         AIFoNodeBase *sceneFo = [SMGUtils searchNode:item.sceneFo];
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:item.cansetFo];
         AIEffectStrong *strong = [TOUtils getEffectStrong:sceneFo effectIndex:item.sceneTargetIndex solutionFo:item.cansetFo];//提前取出effStrong有效性;
+        //TODOTOMORROW20240119: 测下这里确定能响应到feedback和cutIndex变化后,看能否对排序评分,带来分值变化 (参考31073-TODO3);
         CGFloat stableScore = [TOUtils getStableScore:cansetFo startSPIndex:item.cutIndex + 1 endSPIndex:item.targetIndex];//提前算出还未推进的中后段sp稳定性;
         double zonHeScore = zonHeScoreBlock ? zonHeScoreBlock(item) : 0;
         return [MapModel newWithV1:item v2:strong v3:@(stableScore) v4:@(zonHeScore)];

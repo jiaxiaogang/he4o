@@ -15,8 +15,13 @@
 //MARK:                     < 求解 >
 //MARK:===============================================================
 +(TOFoModel*) hSolutionV2:(HDemandModel *)demand;
-+(TOFoModel*) hSolutionV4:(HDemandModel *)demand;
++(TOFoModel*) debugHSolution:(HDemandModel *)demand;
 +(TOFoModel*) rSolution:(ReasonDemandModel *)demand;
+
+/**
+ *  MARK:--------------------Cansets实时竞争--------------------
+ */
++(TOFoModel*) realTimeRankSolution:(DemandModel *)demand zonHeScoreBlock:(double(^)(TOFoModel *obj))zonHeScoreBlock;
 
 /**
  *  MARK:--------------------获取aleardayCount--------------------
