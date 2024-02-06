@@ -95,7 +95,7 @@
     
     //(二) ============ Demand求解过: 实时竞争 ============
     //1. 从actionFoModels找出最好的分支继续 (参考24196-示图 & 25042-6 & 31083-TODO4.2);
-    TOFoModel *bestFo = [TCSolutionUtil realTimeRankSolution:curDemand zonHeScoreBlock:^double(TOFoModel *obj) {
+    TOFoModel *bestFo = [TCSolutionUtil realTimeRankCansets:curDemand zonHeScoreBlock:^double(TOFoModel *obj) {
         return [NUMTOOK([scoreDic objectForKey:TOModel2Key(obj)]) doubleValue];
     }];;
     

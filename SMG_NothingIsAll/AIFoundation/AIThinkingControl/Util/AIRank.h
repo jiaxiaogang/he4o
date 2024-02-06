@@ -26,6 +26,6 @@
 /**
  *  MARK:--------------------S综合排名--------------------
  */
-+(NSArray*) solutionFoRankingV4:(NSArray*)solutionModels zonHeScoreBlock:(double(^)(TOFoModel *obj))zonHeScoreBlock;
++(NSArray*) cansetsRankingV4:(NSArray*)cansets zonHeScoreBlock:(double(^)(TOFoModel *obj))zonHeScoreBlock;
 
 @end

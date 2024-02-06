@@ -53,7 +53,7 @@
     NSLog(@"第2步 转为候选集 总数:%ld",cansetModels.count);
 
     //5. 竞争求解;
-    return [self realTimeRankSolution:demand zonHeScoreBlock:nil];//400ms
+    return [self realTimeRankCansets:demand zonHeScoreBlock:nil];//400ms
 }
 
 +(TOFoModel*) hSolutionV3:(HDemandModel *)demand {
@@ -96,7 +96,7 @@
     NSLog(@"第2步 转为候选集 总数:%ld",cansetModels.count);
 
     //5. 竞争求解;
-    return [self realTimeRankSolution:demand zonHeScoreBlock:nil];//400ms
+    return [self realTimeRankCansets:demand zonHeScoreBlock:nil];//400ms
 }
 
 +(TOFoModel*) debugHSolution:(HDemandModel *)demand {
@@ -237,7 +237,7 @@
     NSLog(@"第2步 转为候选集 总数:%ld",cansetModels.count);
 
     //5. 竞争求解;
-    return [self realTimeRankSolution:demand zonHeScoreBlock:nil];//400ms
+    return [self realTimeRankCansets:demand zonHeScoreBlock:nil];//400ms
 }
 
 /**
@@ -252,7 +252,7 @@
  *      2024.01.28: 改为无计可施的失败TOFoModel,计为不应期 (参考31073-TODO8);
  *      2024.02.04: 直接重命名为Cansets实时竞争;
  */
-+(TOFoModel*) realTimeRankSolution:(DemandModel *)demand zonHeScoreBlock:(double(^)(TOFoModel *obj))zonHeScoreBlock {
++(TOFoModel*) realTimeRankCansets:(DemandModel *)demand zonHeScoreBlock:(double(^)(TOFoModel *obj))zonHeScoreBlock {
     //1. 数据准备;
     [AITest test13:demand.actionFoModels];
     TOFoModel *result = nil;
@@ -286,7 +286,7 @@
     //NSLog(@"第8步 排序中段稳定性<=0的:%ld",cansetModels.count);//测时xx条
     
     //11. 根据候选集综合分排序 (参考26128-2-2 & 26161-4);
-    NSArray *sortModels = [AIRank solutionFoRankingV4:cansetModels zonHeScoreBlock:zonHeScoreBlock];
+    NSArray *sortModels = [AIRank cansetsRankingV4:cansetModels zonHeScoreBlock:zonHeScoreBlock];
 
     //13. 取通过S反思的最佳S;
     for (TOFoModel *item in sortModels) {

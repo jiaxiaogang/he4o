@@ -133,9 +133,9 @@
  *      2024.01.26: 还未推进的中后段SP稳定性做第一竞争因子 (参考31073-TODO3);
  *      2024.02.02: V4_新增感性综合评分为第一竞争因子 (参考31083-TODO4.1);
  */
-+(NSArray*) solutionFoRankingV4:(NSArray*)solutionModels zonHeScoreBlock:(double(^)(TOFoModel *obj))zonHeScoreBlock {
++(NSArray*) cansetsRankingV4:(NSArray*)cansets zonHeScoreBlock:(double(^)(TOFoModel *obj))zonHeScoreBlock {
     //0. 将effStrong提前取出来,存到mapModel中;
-    NSArray *mapArr = [SMGUtils convertArr:solutionModels convertBlock:^id(TOFoModel *item) {
+    NSArray *mapArr = [SMGUtils convertArr:cansets convertBlock:^id(TOFoModel *item) {
         AIFoNodeBase *sceneFo = [SMGUtils searchNode:item.sceneFo];
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:item.cansetFo];
         AIEffectStrong *strong = [TOUtils getEffectStrong:sceneFo effectIndex:item.sceneTargetIndex solutionFo:item.cansetFo];//提前取出effStrong有效性;
