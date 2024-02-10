@@ -93,6 +93,11 @@
             //  e. 关键3-画图分析下,然后看把h时该重构的地方重构下,尽量全复用;
             //  f. 所以: 相当于,hSolution,迁移,实时竞争,等代码,都兼容下H任务;
             //  结果: 先画图对比下H和R的结构区别,分析迁移区别,和hSolutionV3该怎么写;
+            //      分析: 根据记忆网络结构分析: hCansets怎么取?
+            //      1. 从rCansets中取所有hCanset;
+            //      2. 需要各自>cutIndex的 且 <cutIndex+1的所有hCansets: 或者说,本来就是取cutIndex+1的hCansets;
+            //      3. 应该是当前RCanset的cutIndex+1对应的rScene树上别的场景的那一帧的hCansets;
+            //      4. 即从当前rCanset出发,找rScene,然后再...画下图,应该是不通的,得根据mIsC来判断?
             
             
             
