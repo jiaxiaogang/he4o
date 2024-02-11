@@ -98,6 +98,9 @@
             //      2. 需要各自>cutIndex的 且 <cutIndex+1的所有hCansets: 或者说,本来就是取cutIndex+1的hCansets;
             //      3. 应该是当前RCanset的cutIndex+1对应的rScene树上别的场景的那一帧的hCansets;
             //      4. 即从当前rCanset出发,找rScene,然后再...画下图,应该是不通的,得根据mIsC来判断?
+            //即: 取hCanset时
+            //  1. 用cutIndex来限定位置;
+            //  2. 用mIsC来判断是否相符;
             
             
             
