@@ -101,6 +101,10 @@
             //即: 取hCanset时
             //  1. 用cutIndex来限定位置;
             //  2. 用mIsC来判断是否相符;
+            //与RSolution区别巨大:
+            //  3. RScenes和RCansets已经有了;
+            //  4. 只需从RCansets中判断下一帧(cutIndex+1),是否与当前hAlg有mIsC关系: 有关系时,取HCansets;
+            //  5. 示例: 如需要饭时,未必真的要做饭,如果现在所处的场景可以买到饭,或者让厨师帮忙做饭,都可以推进当前任务中的HAlg(饭);
             
             
             
