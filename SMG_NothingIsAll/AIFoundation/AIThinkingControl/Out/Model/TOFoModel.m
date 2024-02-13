@@ -478,6 +478,14 @@
     }
 }
 
+//取候选集未迁移前的本体Canset和Scene;
+-(AITransferModel*) getProtoTransferModel {
+    if (self.baseSceneModel.type == SceneTypeI) return self.i;
+    if (self.baseSceneModel.type == SceneTypeFather) return self.father;
+    if (self.baseSceneModel.type == SceneTypeBrother) return self.brother;
+    return nil;
+}
+
 /**
  *  MARK:--------------------NSCoding--------------------
  */

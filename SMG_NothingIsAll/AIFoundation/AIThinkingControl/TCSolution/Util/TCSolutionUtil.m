@@ -68,6 +68,21 @@
     TOFoModel *targetFoM = (TOFoModel*)demand.baseOrGroup.baseOrGroup;
     ReasonDemandModel *baseRDemand = (ReasonDemandModel*)targetFoM.baseOrGroup;//取出rDemand
     
+    //2. 取出rCansets;
+    NSArray *rCansets = baseRDemand.actionFoModels;
+    for (TOFoModel *rCanset in rCansets) {
+        AITransferModel *transferModel = rCanset.getProtoTransferModel;
+        AIFoNodeBase *rCansetFo = [SMGUtils searchNode:transferModel.canset];
+        
+        //a. 当前targetAlg在targetFo中的index与它的scene有映射;
+        //b. 各scene之间因为ifb是有映射的 (取出targetFo和别的scene之间: 下一帧有映射的index2);
+        //c. 在别的scene中,取cutIndex到index2之间的所有hCansets;
+        //d. 只要这些hCansets的目标 与 targetAlg 有mIsC关系,则列为有效hCansets;
+        //e. 对有效hCansets进行实时竞争;
+        
+        NSArray *hCansets = [rCansetFo getConCansets:rCanset.cutIndex + 1];
+    }
+    
     //2. 再根据rDemand取出场景树;
     NSArray *sceneModels = [TCScene rGetSceneTree:baseRDemand];
     //3. 再根据r场景树,找出cansets;

@@ -196,4 +196,7 @@
  */
 @property (assign, nonatomic) CansetStatus cansetStatus;
 
+//取候选集未迁移前的本体Canset和Scene;
+-(AITransferModel*) getProtoTransferModel;
+
 @end
