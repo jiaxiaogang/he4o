@@ -74,10 +74,24 @@
         AITransferModel *transferModel = rCanset.getProtoTransferModel;
         AIFoNodeBase *rCansetFo = [SMGUtils searchNode:transferModel.canset];
         
+        //Step1 -> 取有效的hCansets (以下x个方案取hCansets分析下用哪个);
+        //Step1 -> 方案1. 从cutIndex到有映射有效下帧之间的hCansets;
         //a. 当前targetAlg在targetFo中的index与它的scene有映射;
         //b. 各scene之间因为ifb是有映射的 (取出targetFo和别的scene之间: 下一帧有映射的index2);
         //c. 在别的scene中,取cutIndex到index2之间的所有hCansets;
         //d. 只要这些hCansets的目标 与 targetAlg 有mIsC关系,则列为有效hCansets;
+        
+        //Step1 -> 方案2. 从cutIndex到targetIndex之间的hCansets;
+        //a. 直接取cutIndex到targetIndex之间的所有rAlg与targetAlg有mIsC关系;
+        //b. 取出有关系的这些hCansets,计为有效hCansets;
+        
+        //Step1 -> 分析:
+        //a. 对比: 方案1看起来更严谨,而方案2更简单;
+        //b. 宽窄分析: 严谨带来窄出效果,以宽入窄出原则来看,此时激活hCansets最好是能宽入,而非窄出;
+        //c. 简繁分析: 且方案1会带来代码复杂,要先判断下帧的下标等,会让代码更复杂许多;
+        //d. 综合: 根据以上分析,先用方案2;
+        
+        //Step2 -> 取到有效hCansets后的步骤:
         //e. 对有效hCansets进行实时竞争;
         
         NSArray *hCansets = [rCansetFo getConCansets:rCanset.cutIndex + 1];
