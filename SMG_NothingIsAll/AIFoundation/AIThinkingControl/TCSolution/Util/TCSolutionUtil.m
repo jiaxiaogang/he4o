@@ -83,6 +83,12 @@
         
         //Step1 -> 方案2. 从cutIndex到targetIndex之间的hCansets;
         //a. 直接取cutIndex到targetIndex之间的所有rAlg与targetAlg有mIsC关系;
+        //  * 是mIsC关系吗?
+        //  * 迁移包含帧,可能是mIsC也可能是isBro判断;
+        //  * 对于迁移不包含帧呢?比如: 如果targetAlg是鸡米花,而brotherCanset中有爆米花,那么,我们会尝试用做爆米花的方式做鸡米花吗?
+        //  * 这里的关键在于: 它似乎脱离了ifb那一套sceneTree,而鸡米花和爆米花又是isBro关系;
+        //  * 分析: 会不会爆玉米花和爆大米花,已经抽象成了,爆食物成米花的canset?如果是这样,那么其实就是mIsC结构在起作用,而不是bro;
+        //  * 说明: 即迁移不包含帧,却又是isBro关系,如何实现迁移?
         //b. 取出有关系的这些hCansets,计为有效hCansets;
         
         //Step1 -> 分析:
@@ -94,6 +100,7 @@
         //Step2 -> 取到有效hCansets后的步骤:
         //e. 对有效hCansets进行实时竞争;
         
+        //此方法应改一下,支持判断mIsC;
         NSArray *hCansets = [rCansetFo getConCansets:rCanset.cutIndex + 1];
     }
     
