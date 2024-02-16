@@ -74,33 +74,17 @@
         AITransferModel *transferModel = rCanset.getProtoTransferModel;
         AIFoNodeBase *rCansetFo = [SMGUtils searchNode:transferModel.canset];
         
-        //Step1 -> 取有效的hCansets (以下x个方案取hCansets分析下用哪个);
-        //Step1 -> 方案1. 从cutIndex到有映射有效下帧之间的hCansets;
-        //a. 当前targetAlg在targetFo中的index与它的scene有映射;
-        //b. 各scene之间因为ifb是有映射的 (取出targetFo和别的scene之间: 下一帧有映射的index2);
-        //c. 在别的scene中,取cutIndex到index2之间的所有hCansets;
-        //d. 只要这些hCansets的目标 与 targetAlg 有mIsC关系,则列为有效hCansets;
+        //Step1 -> 取hCansets: 从cutIndex到targetIndex之间的hCansets;
+        //a. 直接取cutIndex到targetIndex之间的所有hCansets;
         
-        //Step1 -> 方案2. 从cutIndex到targetIndex之间的hCansets;
-        //a. 直接取cutIndex到targetIndex之间的所有rAlg与targetAlg有mIsC关系;
-        //  * 是mIsC关系吗?
-        //  * 迁移包含帧,可能是mIsC也可能是isBro判断;
-        //  * 对于迁移不包含帧呢?比如: 如果targetAlg是鸡米花,而brotherCanset中有爆米花,那么,我们会尝试用做爆米花的方式做鸡米花吗?
-        //  * 这里的关键在于: 它似乎脱离了ifb那一套sceneTree,而鸡米花和爆米花又是isBro关系;
-        //  * 分析: 会不会爆玉米花和爆大米花,已经抽象成了,爆食物成米花的canset?如果是这样,那么其实就是mIsC结构在起作用,而不是bro;
-        //  * 说明: 即迁移不包含帧,却又是isBro关系,如何实现迁移?
-        //b. 取出有关系的这些hCansets,计为有效hCansets;
+        //Step2 -> 筛选有效hCansets: rAlg与targetAlg有isBro关系 (迁移可以宽,但评价一定要跟上,这样才能避免幼稚的事一再发生);
+        //a. 取出有关系的这些hCansets,计为有效hCansets;
         
-        //Step1 -> 分析:
-        //a. 对比: 方案1看起来更严谨,而方案2更简单;
-        //b. 宽窄分析: 严谨带来窄出效果,以宽入窄出原则来看,此时激活hCansets最好是能宽入,而非窄出;
-        //c. 简繁分析: 且方案1会带来代码复杂,要先判断下帧的下标等,会让代码更复杂许多;
-        //d. 综合: 根据以上分析,先用方案2;
+        //Step3 -> 怎么迁移;
         
-        //Step2 -> 取到有效hCansets后的步骤:
-        //e. 对有效hCansets进行实时竞争;
+        //Step4 -> 实时竞争hCansets:
+        //a. 对有效hCansets进行实时竞争;
         
-        //此方法应改一下,支持判断mIsC;
         NSArray *hCansets = [rCansetFo getConCansets:rCanset.cutIndex + 1];
     }
     
