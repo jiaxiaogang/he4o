@@ -157,7 +157,6 @@
  *  MARK:--------------------获取所有候选集--------------------
  */
 -(NSArray*) getConCansets:(NSInteger)targetIndex;
--(NSDictionary*) getConCansetsDic:(NSInteger)targetIndex;
 
 /**
  *  MARK:--------------------更新一条候选--------------------
