@@ -214,6 +214,15 @@
  */
 -(NSArray*) getConCansets:(NSInteger)targetIndex {
     NSMutableArray *result = [[NSMutableArray alloc] init];
+    NSDictionary *dic = [self getConCansetsDic:targetIndex];
+    for (NSArray *itemArr in dic.allValues) {
+        [result addObjectsFromArray:itemArr];
+    }
+    return [SMGUtils removeRepeat:result];
+}
+//返回cansetsDic <下标是key,下标下的候选集是value>
+-(NSDictionary*) getConCansetsDic:(NSInteger)targetIndex {
+    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
     BOOL forH = targetIndex < self.count;
     for (NSInteger i = targetIndex; i <= self.count; i++) {
         NSArray *itemArr = ARRTOOK([self.conCansetsDic objectForKey:@(i)]);
@@ -223,9 +232,9 @@
                 return [indexDic objectForKey:@(targetIndex)];
             }];
         }
-        [result addObjectsFromArray:itemArr];
+        [result setObject:itemArr forKey:@(i)];
     }
-    return [SMGUtils removeRepeat:result];
+    return result;
 }
 
 /**

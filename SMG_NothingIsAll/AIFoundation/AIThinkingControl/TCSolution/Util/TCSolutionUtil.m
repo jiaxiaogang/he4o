@@ -65,7 +65,8 @@
     demand.alreadyInitCansetModels = true;
     
     //1. 数据准备;
-    TOFoModel *targetFoM = (TOFoModel*)demand.baseOrGroup.baseOrGroup;
+    TOAlgModel *targetAlgM = (TOAlgModel*)demand.baseOrGroup;
+    TOFoModel *targetFoM = (TOFoModel*)targetAlgM.baseOrGroup;
     ReasonDemandModel *baseRDemand = (ReasonDemandModel*)targetFoM.baseOrGroup;//取出rDemand
     
     //2. 取出rCansets;
@@ -74,18 +75,28 @@
         AITransferModel *transferModel = rCanset.getProtoTransferModel;
         AIFoNodeBase *rCansetFo = [SMGUtils searchNode:transferModel.canset];
         
-        //Step1 -> 取hCansets: 从cutIndex到targetIndex之间的hCansets;
-        //a. 直接取cutIndex到targetIndex之间的所有hCansets;
+        //第1步: 取hCansets: 从cutIndex到sceneFo.count之间的hCansets (参考31102);
+        NSInteger hSceneTargetIndex = rCanset.cutIndex + 1;
+        NSArray *hCansets = [rCansetFo getConCansets:hSceneTargetIndex];
         
-        //Step2 -> 筛选有效hCansets: rAlg与targetAlg有isBro关系 (迁移可以宽,但评价一定要跟上,这样才能避免幼稚的事一再发生);
-        //a. 取出有关系的这些hCansets,计为有效hCansets;
+        //第2步: 筛选有效hCansets: hCanset的targetAlg帧 与 h任务targetAlg有isBro关系 (参考31103);
+        hCansets = [SMGUtils filterArr:hCansets checkValid:^BOOL(AIKVPointer *hCanset) {
+            //a. 根据hScene和hCanset的映射,取出hCanset的目标帧;
+            AIFoNodeBase *hCansetFo = [SMGUtils searchNode:hCanset];
+            NSDictionary *indexDic = [rCansetFo getConIndexDic:hCanset];
+            NSInteger hCansetTargetIndex = NUMTOOK([indexDic objectForKey:@(hSceneTargetIndex)]).integerValue;
+            AIKVPointer *hCansetTargetAlg = ARR_INDEX(hCansetFo.content_ps, hCansetTargetIndex);
+            
+            //b. 判断hCanset目标帧与当前任务targetAlg目标,有mcIsBro关系;
+            return [TOUtils mcIsBro:hCansetTargetAlg c:targetAlgM.content_p];
+        }];
         
         //Step3 -> 怎么迁移;
         
         //Step4 -> 实时竞争hCansets:
         //a. 对有效hCansets进行实时竞争;
         
-        NSArray *hCansets = [rCansetFo getConCansets:rCanset.cutIndex + 1];
+        
     }
     
     //2. 再根据rDemand取出场景树;
