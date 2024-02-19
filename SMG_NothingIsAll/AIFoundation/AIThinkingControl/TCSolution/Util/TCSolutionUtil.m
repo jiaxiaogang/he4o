@@ -91,7 +91,9 @@
             return [TOUtils mcIsBro:hCansetTargetAlg c:targetAlgM.content_p];
         }];
         
-        //Step3 -> 怎么迁移;
+        //第3步: 迁移: 场景包含帧用indexDic映射来迁移替换,场景不包含帧用迁移前的为准 (参考31104);
+        //a. 明天看下,在TCTransfer模块里写h迁移代码;
+        
         
         //Step4 -> 实时竞争hCansets:
         //a. 对有效hCansets进行实时竞争;
