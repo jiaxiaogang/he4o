@@ -93,6 +93,7 @@
         
         //第3步: 迁移: 场景包含帧用indexDic映射来迁移替换,场景不包含帧用迁移前的为准 (参考31104);
         //a. 明天看下,在TCTransfer模块里写h迁移代码;
+        //b. 回顾下TCCanset.convert2CansetModel()代码,看需要怎么改下,然后最后调用transfer伪迁移;
         
         
         //Step4 -> 实时竞争hCansets:
@@ -112,35 +113,6 @@
         NSArray *itemCansetModels = [SMGUtils convertArr:cansets convertBlock:^id(AIKVPointer *canset) {
             //4. 过滤器 & 转cansetModels候选集 (参考26128-第1步 & 26161-1&2&3);
             NSInteger aleardayCount = sceneModel.cutIndex + 1;
-            
-            
-            //TODOTOMORROW20240106: 测下h任务也从r场景树迁移 (参考31053);
-            //1. 从cansets中过滤出与hDemand有抽具象关系的 (用hAlg取抽具象关系的,判断交集即可);
-            //问题: 此处再跑一次R的流程有点浪费,并且R流程也不行,得再改代码,往H再深入一层,有点复杂且麻烦;
-            
-            //2. 此处有RCansets初始化后,可以试下直接顺着它迁移过来...
-            //  a. Cansets大多数还是用非体状态
-            //  b. 所以最好可以从sceneModel的原canset下,找hCanset;
-            //  c. 关键1-要怎么判断这个hCanset是否适用于当前hDemand;
-            //  d. 关键2-要怎么迁移下 (也是有用有体两步);
-            //  e. 关键3-画图分析下,然后看把h时该重构的地方重构下,尽量全复用;
-            //  f. 所以: 相当于,hSolution,迁移,实时竞争,等代码,都兼容下H任务;
-            //  结果: 先画图对比下H和R的结构区别,分析迁移区别,和hSolutionV3该怎么写;
-            //      分析: 根据记忆网络结构分析: hCansets怎么取?
-            //      1. 从rCansets中取所有hCanset;
-            //      2. 需要各自>cutIndex的 且 <cutIndex+1的所有hCansets: 或者说,本来就是取cutIndex+1的hCansets;
-            //      3. 应该是当前RCanset的cutIndex+1对应的rScene树上别的场景的那一帧的hCansets;
-            //      4. 即从当前rCanset出发,找rScene,然后再...画下图,应该是不通的,得根据mIsC来判断?
-            //即: 取hCanset时
-            //  1. 用cutIndex来限定位置;
-            //  2. 用mIsC来判断是否相符;
-            //与RSolution区别巨大:
-            //  3. RScenes和RCansets已经有了;
-            //  4. 只需从RCansets中判断下一帧(cutIndex+1),是否与当前hAlg有mIsC关系: 有关系时,取HCansets;
-            //  5. 示例: 如需要饭时,未必真的要做饭,如果现在所处的场景可以买到饭,或者让厨师帮忙做饭,都可以推进当前任务中的HAlg(饭);
-            
-            
-            
             return [TCCanset convert2CansetModel:canset sceneFo:sceneModel.scene basePFoOrTargetFoModel:targetFoM ptAleardayCount:aleardayCount isH:true sceneModel:sceneModel demand:demand];//245ms
         }];
         
