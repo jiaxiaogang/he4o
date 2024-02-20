@@ -92,8 +92,8 @@
         }];
         
         //第3步: 迁移: 场景包含帧用indexDic映射来迁移替换,场景不包含帧用迁移前的为准 (参考31104);
-        //a. 明天看下,在TCTransfer模块里写h迁移代码;
-        //b. 回顾下TCCanset.convert2CansetModel()代码,看需要怎么改下,然后最后调用transfer伪迁移;
+        //a. TCCanset.convert2CansetModel()直接为H重写下: 仅计算hCanset的cutIndex和targetIndex,然后生成为TOFoModel即可;
+        //b. 在TCTransfer模块里写h的transfer伪迁移: TCTransfer的h迁移先单独复制写着,写完后,再考虑复用部分;
         
         
         //Step4 -> 实时竞争hCansets:
