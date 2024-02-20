@@ -20,4 +20,9 @@
  */
 +(TOFoModel*) convert2CansetModel:(AIKVPointer*)cansetFo_p sceneFo:(AIKVPointer*)sceneFo_p basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel ptAleardayCount:(NSInteger)ptAleardayCount isH:(BOOL)isH sceneModel:(AISceneModel*)sceneModel demand:(DemandModel*)demand;
 
+/**
+ *  MARK:--------------------HSolution转CansetModel--------------------
+ */
++(TOFoModel*) convert2HCansetModel:(AIKVPointer*)hCanset_p hSceneFo:(AIFoNodeBase*)hSceneFo targetFoModel:(TOFoModel*)targetFoModel hSceneCutIndex:(NSInteger)hSceneCutIndex rSceneModel:(AISceneModel*)rSceneModel hDemand:(HDemandModel*)hDemand;
+
 @end

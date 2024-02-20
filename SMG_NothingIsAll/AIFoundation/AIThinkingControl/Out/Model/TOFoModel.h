@@ -42,6 +42,11 @@
                   targetIndex:(NSInteger)targetIndex sceneTargetIndex:(NSInteger)sceneTargetIndex
        basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel;
 
++(TOFoModel*) newForHCansetFo:(AIKVPointer*)canset sceneFo:(AIKVPointer*)scene base:(TOModelBase<ITryActionFoDelegate>*)base
+               cansetCutIndex:(NSInteger)cutIndex sceneCutIndex:(NSInteger)sceneCutIndex
+            cansetTargetIndex:(NSInteger)targetIndex sceneTargetIndex:(NSInteger)sceneTargetIndex
+       basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel;
+
 /**
  *  MARK:--------------------行为化数据--------------------
  *  @version

@@ -201,6 +201,35 @@
     return result;
 }
 
+/**
+ *  MARK:--------------------HSolution转CansetModel--------------------
+ *  @param rSceneModel 复用R的SceneModel,因为H任务没有独立的R场景树,它本来就是复用的R任务的场景树等;
+ *  @version
+ *      2024.02.21: V2-在迭代hSolutionV3时,将H任务转cansetModel单独写个方法,并将此方法中多余代码统统去掉不写;
+ */
++(TOFoModel*) convert2HCansetModel:(AIKVPointer*)hCanset_p hSceneFo:(AIFoNodeBase*)hSceneFo targetFoModel:(TOFoModel*)targetFoModel hSceneCutIndex:(NSInteger)hSceneCutIndex rSceneModel:(AISceneModel*)rSceneModel hDemand:(HDemandModel*)hDemand {
+    //1. 根据hScene和hCanset的映射,取出hCanset的目标帧等数据;
+    AIFoNodeBase *hCansetFo = [SMGUtils searchNode:hCanset_p];
+    NSDictionary *indexDic = [hSceneFo getConIndexDic:hCanset_p];
+    NSInteger hSceneTargetIndex = hSceneCutIndex + 1;//H任务的目标其实就是下一帧;
+    NSInteger hCansetTargetIndex = NUMTOOK([indexDic objectForKey:@(hSceneTargetIndex)]).integerValue;
+    NSInteger hCansetCutIndex = [TOUtils goBackToFindConIndexByAbsIndex:indexDic absIndex:hSceneCutIndex];
+    
+    //2. 转为TOFoModel;
+    TOFoModel *result = [TOFoModel newForHCansetFo:hCanset_p sceneFo:hSceneFo.p base:hDemand
+                       cansetCutIndex:hCansetCutIndex sceneCutIndex:hSceneCutIndex
+                    cansetTargetIndex:hCansetTargetIndex sceneTargetIndex:hSceneCutIndex + 1
+               basePFoOrTargetFoModel:targetFoModel baseSceneModel:rSceneModel];
+    
+    //3. 伪迁移;
+    //TODOTOMORROW20240221: 明日继续看下hTransfer方法要重写下;
+    [TCTransfer transferForModel:result];
+    
+    //4. 下帧初始化 (可接受反馈);
+    [result pushNextFrame];
+    return result;
+}
+
 //MARK:===============================================================
 //MARK:                     < privateMethod >
 //MARK:===============================================================

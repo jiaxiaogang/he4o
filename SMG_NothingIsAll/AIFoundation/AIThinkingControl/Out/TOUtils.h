@@ -194,4 +194,9 @@
  */
 +(NSArray*) mergeCansets:(NSArray*)protoCansets;
 
+/**
+ *  MARK:--------------------从absIndex向前找,直到找到有conIndex映射的那一条返回--------------------
+ */
++(NSInteger) goBackToFindConIndexByAbsIndex:(NSDictionary*)indexDic absIndex:(NSInteger)absIndex;
+
 @end

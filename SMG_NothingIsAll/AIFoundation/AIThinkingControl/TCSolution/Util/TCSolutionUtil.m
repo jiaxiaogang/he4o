@@ -94,14 +94,16 @@
         //第3步: 迁移: 场景包含帧用indexDic映射来迁移替换,场景不包含帧用迁移前的为准 (参考31104);
         //a. TCCanset.convert2CansetModel()直接为H重写下: 仅计算hCanset的cutIndex和targetIndex,然后生成为TOFoModel即可;
         //b. 在TCTransfer模块里写h的transfer伪迁移: TCTransfer的h迁移先单独复制写着,写完后,再考虑复用部分;
-        
+        hCansets = [SMGUtils convertArr:hCansets convertBlock:^id(AIKVPointer *hCanset) {
+            return [TCCanset convert2HCansetModel:hCanset hSceneFo:rCansetFo targetFoModel:targetFoM hSceneCutIndex:rCanset.cutIndex rSceneModel:rCanset.baseSceneModel hDemand:demand];
+        }];
         
         //Step4 -> 实时竞争hCansets:
         //a. 对有效hCansets进行实时竞争;
         
         
     }
-    
+   
     //2. 再根据rDemand取出场景树;
     NSArray *sceneModels = [TCScene rGetSceneTree:baseRDemand];
     //3. 再根据r场景树,找出cansets;

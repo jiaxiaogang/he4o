@@ -621,5 +621,21 @@
     return cansetsDic.allValues;
 }
 
+/**
+ *  MARK:--------------------从absIndex向前找,直到找到有conIndex映射的那一条返回--------------------
+ */
++(NSInteger) goBackToFindConIndexByAbsIndex:(NSDictionary*)indexDic absIndex:(NSInteger)absIndex {
+    indexDic = DICTOOK(indexDic);
+    //1. 从absIndex向前找,找到有映射的一条;
+    for (NSInteger i = absIndex; i >= 0; i--) {
+        NSNumber *conIndex = [indexDic objectForKey:@(i)];
+        if (conIndex) {
+            //2. 如果找到一条有映射的,就直接返回;
+            return conIndex.integerValue;
+        }
+    }
+    //3. 如果直至第一条,最终也没找到,就返回-1;
+    return -1;
+}
 
 @end
