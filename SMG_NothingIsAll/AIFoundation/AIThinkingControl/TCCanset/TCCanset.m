@@ -225,6 +225,97 @@
     //TODOTOMORROW20240221: 明日继续看下hTransfer方法要重写下;
     [TCTransfer transferForModel:result];
     
+    
+    //================= 迁移START
+    TOFoModel *cansetModel = result;
+    //2. 取cansetTargetIndex (无论是ifb哪个类型,目前推进到了哪一帧,我们最终都是要求达到目标的,所以本方法虽然都是伪迁移,但也要以最终目标为目的);
+    NSInteger cansetTargetIndex = cansetModel.targetIndex;//ifb三种类型的cansetTargetIndex是一致的,因为它们迁移长度一致;
+    
+    //3. =====================参考:TCTransfer.transfer()方法,当不同type时,不同处理;=====================
+    //4. 三种type,使用模拟迁移的方法,取到iScene和iCanset的indexDic映射 (参考31066-TODO5);
+    if (cansetModel.baseSceneModel.type == SceneTypeI) {
+        //不用处理
+        AIKVPointer *iCanset = cansetModel.cansetFo;
+    }else if(cansetModel.baseSceneModel.type == SceneTypeFather) {
+        //a. 取father数据;
+        AIFoNodeBase *fatherScene = [SMGUtils searchNode:cansetModel.sceneFo];
+        AIFoNodeBase *fatherCanset = [SMGUtils searchNode:cansetModel.cansetFo];
+        AIFoNodeBase *iScene = [SMGUtils searchNode:targetFoModel.content_p];
+        
+        //b. 模拟继承生成模型代码;
+        //cansetModel.jiCenModel = [TCTransfer transferJiCenForModel:fatherCanset fatherCansetTargetIndex:cansetTargetIndex fatherScene:fatherScene iScene:iScene];
+        
+        //1. 数据准备;
+        TCJiCenModel *result = [[TCJiCenModel alloc] init];
+
+        
+        //从fatherScene=rCanset 和 iScene=rCanset(targetFoM)之间,应该是没有抽具象关系的;
+        //所以也没法复用indexDic,这倒是一个问题...
+        //father这个rCanset所在的RScene一支有: 从RScene->RCanset->HCanset三重indexDic;
+        //而targetFo这个rCanset所在的RScene这一支也有: 从RScene->RCanset->HCanset三重indexDic;
+        //而这两个RScene之间,有R场景树;
+        
+        //所以此处要想推进,首先得写个方法,能够承载各种indexDic在R场景树之中的indexDic计算....最终算出indexDic关系...
+        
+        
+        //2. 取两级映射 (参考29069-todo10.1推举算法示图);
+        NSDictionary *indexDic2 = [fatherScene getConIndexDic:iScene.p];
+        
+        //3. 新生成fatherCanset (参考29069-todo10.1推举算法示图&步骤);
+        NSMutableArray *orders = [[NSMutableArray alloc] init];
+        NSMutableDictionary *iSceneCansetIndexDic = [[NSMutableDictionary alloc] init];
+        
+        //========================= 算法关键代码 START =========================
+
+        for (NSInteger i = 0; i < fatherCansetContent_ps.count; i++) {
+            //4. 判断映射链: (参考29069-todo10.1-步骤2);
+            NSNumber *fatherSceneIndex = ARR_INDEX([fatherSceneCansetIndexDic allKeysForObject:@(i)], 0);
+            NSNumber *iSceneIndex = [indexDic2 objectForKey:fatherSceneIndex];
+            double deltaTime = [NUMTOOK(ARR_INDEX(fatherCansetDeltaTimes, i)) doubleValue];
+            if (iSceneIndex) {
+                //5. 通过则收集迁移后scene元素 (参考29069-todo10.1-步骤3);
+                id order = [AIShortMatchModel_Simple newWithAlg_p:ARR_INDEX(iScene.content_ps, iSceneIndex.intValue) inputTime:deltaTime isTimestamp:false];
+                [orders addObject:order];
+                
+                //5. 只有最终迁移成功的帧,记录新的indexDic;
+                [iSceneCansetIndexDic setObject:@(i) forKey:iSceneIndex];
+            } else {
+                //6. 不通过则收集迁移前canset元素 (参考29069-todo10.1-步骤4);
+                id order = [AIShortMatchModel_Simple newWithAlg_p:ARR_INDEX(fatherCansetContent_ps, i) inputTime:deltaTime isTimestamp:false];
+                [orders addObject:order];
+            }
+        }
+        //========================= 算法关键代码 END =========================
+        
+        
+        
+    }else if(cansetModel.baseSceneModel.type == SceneTypeBrother) {
+        //a. 取brother数据;
+        AIFoNodeBase *brotherScene = [SMGUtils searchNode:cansetModel.baseSceneModel.scene];
+        AIFoNodeBase *brotherCanset = [SMGUtils searchNode:cansetModel.cansetFo];
+        AIFoNodeBase *iScene = [SMGUtils searchNode:cansetModel.baseSceneModel.base.base.scene];
+        
+        //b. 模拟推举生成模型代码;
+        AIFoNodeBase *fatherScene = [SMGUtils searchNode:cansetModel.baseSceneModel.base.scene];
+        cansetModel.tuiJuModel = [TCTransfer transferTuiJuForModel:brotherCanset brotherCansetTargetIndex:cansetTargetIndex brotherScene:brotherScene fatherScene:fatherScene];
+        
+        //c. 从tuiJuModel取继承所需的father内容数据 (含content & deltaTimes & indexDic三种内容);
+        NSArray *fatherContent_ps = [SMGUtils convertArr:cansetModel.tuiJuModel.fatherCansetOrders convertBlock:^id(AIShortMatchModel_Simple *obj) {
+            return obj.alg_p;
+        }];
+        NSArray *fatherDeltaTimes = [SMGUtils convertArr:cansetModel.tuiJuModel.fatherCansetOrders convertBlock:^id(AIShortMatchModel_Simple *obj) {
+            return @(obj.inputTime);
+        }];
+        NSDictionary *fatherSceneCansetIndexDic = cansetModel.tuiJuModel.fatherSceneCansetIndexDic;//从推举模型,得到f的indexDic;
+        
+        //d. 模拟继承生成模型代码;
+        cansetModel.jiCenModel = [TCTransfer transferJiCenForModel:fatherContent_ps fatherCansetDeltaTimes:fatherDeltaTimes fatherSceneCansetIndexDic:fatherSceneCansetIndexDic fatherCansetTargetIndex:cansetTargetIndex fatherScene:fatherScene iScene:iScene];
+    }
+    //================= END
+    
+    
+    
+    
     //4. 下帧初始化 (可接受反馈);
     [result pushNextFrame];
     return result;
