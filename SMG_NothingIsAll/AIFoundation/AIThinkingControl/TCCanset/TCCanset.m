@@ -223,7 +223,36 @@
     
     //3. 伪迁移;
     //TODOTOMORROW20240221: 明日继续看下hTransfer方法要重写下;
-    [TCTransfer transferForModel:result];
+    //5. 从当前取到hCanset的rScene向当前正在推进中的rCanset下面迁移 (参考31112&31113);
+    //a. 迁移源RScene一支有: 从RScene -> RCanset -> HCanset三重indexDic;
+    AIKVPointer *rSceneFrom = rSceneModel.scene;
+    AIFoNodeBase *hSceneFrom = hSceneFo;
+    AIKVPointer *hCansetFrom = hCanset_p;
+    
+    //b. 迁移目标RScene一支也有: 从RScene -> RCanset -> HCanset三重indexDic;
+    AIKVPointer *rSceneTo = targetFoModel.i.scene;
+    AIKVPointer *hSceceTo = targetFoModel.i.canset;
+    
+    //c. 迁移源和迁移目标之间,有场景树关系;
+    AISceneModel *sceneTreeFrom = rSceneModel;
+    AISceneModel *sceneTreeTo = targetFoModel.baseSceneModel;
+    if (true) {
+        //二者是同一个;
+    } else if (true) {
+        //问题: 先分析一下场景树是多颗pFo生成I的,来分析其可能往往无法迁移过来;
+    }
+    
+    if (sceneTreeTo.type == SceneTypeI) {
+        
+    }else if(sceneTreeTo.type == SceneTypeFather) {
+        
+        
+    }else if(sceneTreeTo.type == SceneTypeBrother) {
+        
+    }
+    
+    //d. 将以上abc三个结构的indexDic,通过综合计算,最终算出indexDic关系;
+    
     
     
     //================= 迁移START
@@ -247,16 +276,6 @@
         
         //1. 数据准备;
         TCJiCenModel *result = [[TCJiCenModel alloc] init];
-
-        
-        //从fatherScene=rCanset 和 iScene=rCanset(targetFoM)之间,应该是没有抽具象关系的;
-        //所以也没法复用indexDic,这倒是一个问题...
-        //father这个rCanset所在的RScene一支有: 从RScene->RCanset->HCanset三重indexDic;
-        //而targetFo这个rCanset所在的RScene这一支也有: 从RScene->RCanset->HCanset三重indexDic;
-        //而这两个RScene之间,有R场景树;
-        
-        //所以此处要想推进,首先得写个方法,能够承载各种indexDic在R场景树之中的indexDic计算....最终算出indexDic关系...
-        
         
         //2. 取两级映射 (参考29069-todo10.1推举算法示图);
         NSDictionary *indexDic2 = [fatherScene getConIndexDic:iScene.p];
