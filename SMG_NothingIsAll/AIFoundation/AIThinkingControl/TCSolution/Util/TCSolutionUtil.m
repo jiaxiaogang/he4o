@@ -68,9 +68,14 @@
     TOAlgModel *targetAlgM = (TOAlgModel*)demand.baseOrGroup;
     TOFoModel *targetFoM = (TOFoModel*)targetAlgM.baseOrGroup;
     ReasonDemandModel *baseRDemand = (ReasonDemandModel*)targetFoM.baseOrGroup;//取出rDemand
+    AIKVPointer *targetPFo = targetFoM.baseSceneModel.getRoot.scene;
     
-    //2. 取出rCansets;
-    NSArray *rCansets = baseRDemand.actionFoModels;
+    //2. 取出rCansets (仅取当前pFo树下的) (参考31113-TODO4);
+    NSArray *rCansets = [SMGUtils filterArr:baseRDemand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
+        return [targetPFo isEqual:item.baseSceneModel.getRoot.scene];
+    }];
+    
+    //3. 依次从rCanset下取hCansets (参考31102);
     for (TOFoModel *rCanset in rCansets) {
         AITransferModel *transferModel = rCanset.getProtoTransferModel;
         AIFoNodeBase *rCansetFo = [SMGUtils searchNode:transferModel.canset];
