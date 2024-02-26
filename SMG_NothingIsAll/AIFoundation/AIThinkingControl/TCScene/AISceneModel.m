@@ -37,4 +37,44 @@
     return false;
 }
 
+//向base方向自动取fatherScene
+-(AIKVPointer*) getFatherScene {
+    AISceneModel *fatherSceneModel = [self getFatherSceneModel];
+    if (fatherSceneModel) return fatherSceneModel.scene;
+    return nil;
+}
+-(AISceneModel*) getFatherSceneModel {
+    if (self.type == SceneTypeFather) {
+        return self;
+    } else if (self.type == SceneTypeBrother) {
+        return self.base;
+    }
+    return nil;
+}
+
+//向base方向自动取brotherScene
+-(AIKVPointer*) getBrotherScene {
+    return (self.type == SceneTypeBrother) ? self.scene : nil;
+}
+-(AISceneModel*) getBrotherSceneModel {
+    return (self.type == SceneTypeBrother) ? self : nil;
+}
+
+//向base方向自动取iScene
+-(AIKVPointer*) getIScene {
+    AISceneModel *iSceneModel = [self getISceneModel];
+    if (iSceneModel) return iSceneModel.scene;
+    return nil;
+}
+-(AISceneModel*) getISceneModel {
+    if (self.type == SceneTypeI) {
+        return self;
+    } else if (self.type == SceneTypeFather) {
+        return self.base;
+    } else if (self.type == SceneTypeBrother) {
+        return self.base.base;
+    }
+    return nil;
+}
+
 @end

@@ -118,6 +118,7 @@
 
 /**
  *  MARK:--------------------从决策中一步步传过来 (参考29069-todo7)--------------------
+ *  @desc 无论是R还是H,它的baseSceneModel都是rSceneModel;
  */
 @property (strong, nonatomic) AISceneModel *baseSceneModel;
 

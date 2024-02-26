@@ -54,4 +54,16 @@
  */
 @property (assign, nonatomic) NSInteger cutIndex;
 
+//向base方向自动取fatherScene
+-(AIKVPointer*) getFatherScene;
+-(AISceneModel*) getFatherSceneModel;
+
+//向base方向自动取brotherScene
+-(AIKVPointer*) getBrotherScene;
+-(AISceneModel*) getBrotherSceneModel;
+
+//向base方向自动取iScene
+-(AIKVPointer*) getIScene;
+-(AISceneModel*) getISceneModel;
+
 @end
