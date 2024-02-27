@@ -203,12 +203,16 @@
 
 /**
  *  MARK:--------------------HSolution转CansetModel--------------------
- *  @param rSceneModel 复用R的SceneModel,因为H任务没有独立的R场景树,它本来就是复用的R任务的场景树等;
+ *  @desc 把rCanset下的hCanset_p转成CansetModel;
  *  @version
  *      2024.02.21: V2-在迭代hSolutionV3时,将H任务转cansetModel单独写个方法,并将此方法中多余代码统统去掉不写;
  */
-+(TOFoModel*) convert2HCansetModel:(AIKVPointer*)hCanset_p hSceneFo:(AIFoNodeBase*)hSceneFo targetFoModel:(TOFoModel*)targetFoModel hSceneCutIndex:(NSInteger)hSceneCutIndex rSceneModel:(AISceneModel*)rSceneModel hDemand:(HDemandModel*)hDemand {
++(TOFoModel*) convert2HCansetModel:(AIKVPointer*)hCanset_p hDemand:(HDemandModel*)hDemand rCanset:(TOFoModel*)rCanset {
     //1. 根据hScene和hCanset的映射,取出hCanset的目标帧等数据;
+    TOFoModel *targetFoModel = (TOFoModel*)hDemand.baseOrGroup.baseOrGroup;//targetFo就是当前h任务的base(targetAlg).base(targetFo);
+    NSInteger hSceneCutIndex = rCanset.cutIndex;//hScene的推进进度;
+    AISceneModel *rSceneModel = rCanset.baseSceneModel;//复用R的SceneModel,因为H任务没有独立的R场景树,它本来就是复用的R任务的场景树等;
+    AIFoNodeBase *hSceneFo = [SMGUtils searchNode:rCanset.cansetFo];
     AIFoNodeBase *hCansetFo = [SMGUtils searchNode:hCanset_p];
     NSDictionary *indexDic = [hSceneFo getConIndexDic:hCanset_p];
     NSInteger hSceneTargetIndex = hSceneCutIndex + 1;//H任务的目标其实就是下一帧;

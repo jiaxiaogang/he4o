@@ -56,16 +56,16 @@
     return [self realTimeRankCansets:demand zonHeScoreBlock:nil];//400ms
 }
 
-+(TOFoModel*) hSolutionV3:(HDemandModel *)demand {
++(TOFoModel*) hSolutionV3:(HDemandModel *)hDemand {
     //0. 初始化一次,后面只执行generalSolution部分;
-    if (demand.alreadyInitCansetModels) {
+    if (hDemand.alreadyInitCansetModels) {
         ELog(@"solution()应该只执行一次,别的全从TCPlan来分发和实时竞争,此处如果重复执行,查下原因");
         return nil;
     }
-    demand.alreadyInitCansetModels = true;
+    hDemand.alreadyInitCansetModels = true;
     
     //1. 数据准备;
-    TOAlgModel *targetAlgM = (TOAlgModel*)demand.baseOrGroup;
+    TOAlgModel *targetAlgM = (TOAlgModel*)hDemand.baseOrGroup;
     TOFoModel *targetFoM = (TOFoModel*)targetAlgM.baseOrGroup;
     ReasonDemandModel *baseRDemand = (ReasonDemandModel*)targetFoM.baseOrGroup;//取出rDemand
     AIKVPointer *targetPFo = targetFoM.baseSceneModel.getRoot.scene;
@@ -77,8 +77,7 @@
     
     //3. 依次从rCanset下取hCansets (参考31102);
     for (TOFoModel *rCanset in rCansets) {
-        AITransferModel *transferModel = rCanset.getProtoTransferModel;
-        AIFoNodeBase *rCansetFo = [SMGUtils searchNode:transferModel.canset];
+        AIFoNodeBase *rCansetFo = [SMGUtils searchNode:rCanset.cansetFo];
         
         //第1步: 取hCansets: 从cutIndex到sceneFo.count之间的hCansets (参考31102);
         NSInteger hSceneTargetIndex = rCanset.cutIndex + 1;
@@ -100,7 +99,7 @@
         //a. TCCanset.convert2CansetModel()直接为H重写下: 仅计算hCanset的cutIndex和targetIndex,然后生成为TOFoModel即可;
         //b. 在TCTransfer模块里写h的transfer伪迁移: TCTransfer的h迁移先单独复制写着,写完后,再考虑复用部分;
         hCansets = [SMGUtils convertArr:hCansets convertBlock:^id(AIKVPointer *hCanset) {
-            return [TCCanset convert2HCansetModel:hCanset hSceneFo:rCansetFo targetFoModel:targetFoM hSceneCutIndex:rCanset.cutIndex rSceneModel:rCanset.baseSceneModel hDemand:demand];
+            return [TCCanset convert2HCansetModel:hCanset hDemand:hDemand rCanset:rCanset];
         }];
         
         //Step4 -> 实时竞争hCansets:
@@ -120,7 +119,7 @@
         NSArray *itemCansetModels = [SMGUtils convertArr:cansets convertBlock:^id(AIKVPointer *canset) {
             //4. 过滤器 & 转cansetModels候选集 (参考26128-第1步 & 26161-1&2&3);
             NSInteger aleardayCount = sceneModel.cutIndex + 1;
-            return [TCCanset convert2CansetModel:canset sceneFo:sceneModel.scene basePFoOrTargetFoModel:targetFoM ptAleardayCount:aleardayCount isH:true sceneModel:sceneModel demand:demand];//245ms
+            return [TCCanset convert2CansetModel:canset sceneFo:sceneModel.scene basePFoOrTargetFoModel:targetFoM ptAleardayCount:aleardayCount isH:true sceneModel:sceneModel demand:hDemand];//245ms
         }];
         
         if (Log4GetCansetResult4H && cansets.count > 0) NSLog(@"\t item场景(%@):%@ 取得候选数:%ld 转成候选模型数:%ld",SceneType2Str(sceneModel.type),Pit2FStr(sceneModel.scene),cansets.count,itemCansetModels.count);
@@ -129,7 +128,7 @@
     NSLog(@"第2步 转为候选集 总数:%ld",cansetModels.count);
 
     //5. 竞争求解;
-    return [self realTimeRankCansets:demand zonHeScoreBlock:nil];//400ms
+    return [self realTimeRankCansets:hDemand zonHeScoreBlock:nil];//400ms
 }
 
 +(TOFoModel*) debugHSolution:(HDemandModel *)demand {

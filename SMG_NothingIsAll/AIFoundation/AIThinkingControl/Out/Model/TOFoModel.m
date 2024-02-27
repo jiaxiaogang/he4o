@@ -501,7 +501,7 @@
     }
 }
 
-//取候选集未迁移前的本体Canset和Scene;
+//取候选集由用转体后的本体Canset和Scene;
 -(AITransferModel*) getProtoTransferModel {
     if (self.baseSceneModel.type == SceneTypeI) return self.i;
     if (self.baseSceneModel.type == SceneTypeFather) return self.father;

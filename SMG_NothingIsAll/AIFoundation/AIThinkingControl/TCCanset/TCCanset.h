@@ -23,6 +23,6 @@
 /**
  *  MARK:--------------------HSolution转CansetModel--------------------
  */
-+(TOFoModel*) convert2HCansetModel:(AIKVPointer*)hCanset_p hSceneFo:(AIFoNodeBase*)hSceneFo targetFoModel:(TOFoModel*)targetFoModel hSceneCutIndex:(NSInteger)hSceneCutIndex rSceneModel:(AISceneModel*)rSceneModel hDemand:(HDemandModel*)hDemand;
++(TOFoModel*) convert2HCansetModel:(AIKVPointer*)hCanset_p hDemand:(HDemandModel*)hDemand rCanset:(TOFoModel*)rCanset;
 
 @end
