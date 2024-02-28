@@ -205,4 +205,9 @@
 //取候选集未迁移前的本体Canset和Scene;
 -(AITransferModel*) getProtoTransferModel;
 
+/**
+ *  MARK:--------------------此方案是用于什么任务 (true=H false=R)--------------------
+ */
+-(BOOL) isH;
+
 @end

@@ -510,6 +510,14 @@
 }
 
 /**
+ *  MARK:--------------------此方案是用于什么任务 (true=H false=R)--------------------
+ */
+-(BOOL) isH {
+    //目前判断方式为: pFo的任务是R,targetFoM的任务是H;
+    return ISOK(self.basePFoOrTargetFoModel, AIMatchFoModel.class);
+}
+
+/**
  *  MARK:--------------------NSCoding--------------------
  */
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {

@@ -302,19 +302,30 @@
     //1. 数据准备;
     AISceneModel *rSceneModel = cansetModel.baseSceneModel;//无论是R还是H,它的baseSceneModel都是rSceneModel;
     AIFoNodeBase *fatherRScene = [SMGUtils searchNode:rSceneModel.getFatherScene];//R时为当前fatherSceneModel的scene;
-    AIFoNodeBase *brotherHScene = nil;//R时为当前nil, H时为当前迁移源from的hScene;
     AIFoNodeBase *brotherRScene = [SMGUtils searchNode:rSceneModel.getBrotherScene];
+    AIFoNodeBase *brotherHScene = [SMGUtils searchNode:cansetModel.sceneFo];//HScene=RCanset (R时为rCanset, H时为当前迁移源from的hScene);
     
     //2. 数据准备之cansetTargetIndex: 无论是ifb哪个类型,目前推进到了哪一帧,我们最终都是要求达到目标的,所以本方法虽然都是伪迁移,但也要以最终目标为目的;
     NSInteger brotherCansetTargetIndex = cansetModel.targetIndex;//ifb三种类型的cansetTargetIndex是一致的,因为它们迁移长度一致;
     
     //a. 取brother数据;
-    AIFoNodeBase *brotherCanset = [SMGUtils searchNode:cansetModel.cansetFo];
+    AIFoNodeBase *brotherCanset = [SMGUtils searchNode:cansetModel.cansetFo];//迁移源hCanset
     
     //1. 数据准备;
     TCTuiJuModel *result = [[TCTuiJuModel alloc] init];
     
     //2. 取两级映射 (参考29069-todo10.1推举算法示图);
+    if (cansetModel.isH) {
+        //H时是三级映射,R时是两级映射,看封装一个方法,自动对二者进行区分;
+        NSDictionary *indexDic0 = [brotherHScene getConIndexDic:brotherCanset.p];
+        NSDictionary *indexDic1 = [brotherRScene getConIndexDic:brotherHScene.p];
+        NSDictionary *indexDic2 = [brotherRScene getAbsIndexDic:fatherRScene.p];
+        //将三个indexDic综合成一个,这样在后面的for循环中,用着能统一下代码,方便些;
+        
+        
+        
+    }
+    
     NSDictionary *indexDic1 = [brotherRScene getConIndexDic:brotherCanset.p];
     NSDictionary *indexDic2 = [brotherRScene getAbsIndexDic:fatherRScene.p];
     
