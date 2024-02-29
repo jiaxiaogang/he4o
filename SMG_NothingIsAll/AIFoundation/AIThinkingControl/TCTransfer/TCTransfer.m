@@ -297,6 +297,7 @@
  *      2024.01.17: 拆分成两步: 先用(用来取model),后体(用来构建fatherCanset节点和构建关联继承spDic);
  *      2024.01.17: 补上推举算法中fatherSceneTargetIndex一直是错误的问题 (原来的值一直是fatherScene.count);
  *      2024.02.27: 重构简化下代码,参数只传cansetModel,在方法内自行取参数;
+ *      2024.02.29: 支持indexDic综合计算 (参考31113-TODO7&TODO8);
  */
 +(TCTuiJuModel*) transferTuiJuForModel:(TOFoModel*)cansetModel {
     //1. 数据准备;
@@ -314,20 +315,20 @@
     //1. 数据准备;
     TCTuiJuModel *result = [[TCTuiJuModel alloc] init];
     
-    //2. 取两级映射 (参考29069-todo10.1推举算法示图);
+    //4. 将x个indexDic综合成一个 (H时是三级映射,R时是两级映射);
+    NSDictionary *zonHeIndexDic = nil;
     if (cansetModel.isH) {
-        //H时是三级映射,R时是两级映射,看封装一个方法,自动对二者进行区分;
+        //5. H时取三级映射 (参考31113-TODO7示图);
         NSDictionary *indexDic0 = [brotherHScene getConIndexDic:brotherCanset.p];
         NSDictionary *indexDic1 = [brotherRScene getConIndexDic:brotherHScene.p];
         NSDictionary *indexDic2 = [brotherRScene getAbsIndexDic:fatherRScene.p];
-        //将三个indexDic综合成一个,这样在后面的for循环中,用着能统一下代码,方便些;
-        
-        
-        
+        zonHeIndexDic = [TOUtils zonHeIndexDic:@[indexDic2,indexDic1,indexDic0]];
+    } else {
+        //6. R时取两级映射 (参考29069-todo10.1推举算法示图);
+        NSDictionary *indexDic1 = [brotherRScene getConIndexDic:brotherCanset.p];
+        NSDictionary *indexDic2 = [brotherRScene getAbsIndexDic:fatherRScene.p];
+        zonHeIndexDic = [TOUtils zonHeIndexDic:@[indexDic2,indexDic1]];
     }
-    
-    NSDictionary *indexDic1 = [brotherRScene getConIndexDic:brotherCanset.p];
-    NSDictionary *indexDic2 = [brotherRScene getAbsIndexDic:fatherRScene.p];
     
     //3. 新生成fatherCanset (参考29069-todo10.1推举算法示图&步骤);
     NSMutableArray *orders = [[NSMutableArray alloc] init];
@@ -335,9 +336,12 @@
     
     //========================= 算法关键代码 START =========================
     for (NSInteger i = 0; i < brotherCanset.content_ps.count; i++) {
-        //4. 判断映射链: (参考29069-todo10.1-步骤2);
-        NSNumber *brotherSceneIndex = ARR_INDEX([indexDic1 allKeysForObject:@(i)], 0);
-        NSNumber *fatherSceneIndex = ARR_INDEX([indexDic2 allKeysForObject:brotherSceneIndex], 0);
+        //4. 判断映射链: (参考29069-todo10.1-步骤2 & 31113-TODO8);
+        NSNumber *fatherSceneIndex = ARR_INDEX([zonHeIndexDic allKeysForObject:@(i)], 0);
+        
+        //TODOTOMORROW20240229: 从此处代码继续往下筛查,兼容H后,需要改下哪些代码;
+        
+        
         double deltaTime = [NUMTOOK(ARR_INDEX(brotherCanset.deltaTimes, i)) doubleValue];
         if (fatherSceneIndex) {
             //5. 通过则收集迁移后scene元素 (参考29069-todo10.1-步骤3);

@@ -199,4 +199,9 @@
  */
 +(NSInteger) goBackToFindConIndexByAbsIndex:(NSDictionary*)indexDic absIndex:(NSInteger)absIndex;
 
+/**
+ *  MARK:--------------------indexDic综合计算 (参考31113-TODO8)--------------------
+ */
++(NSDictionary*) zonHeIndexDic:(NSArray*)indexDicArr;
+
 @end
