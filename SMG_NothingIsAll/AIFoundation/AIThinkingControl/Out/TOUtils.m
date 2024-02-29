@@ -639,10 +639,10 @@
 }
 
 /**
- *  MARK:--------------------indexDic综合计算 (参考31113-TODO8)--------------------
+ *  MARK:--------------------1字型indexDic综合计算 (参考31113-TODO8)--------------------
  *  @param indexDicArr 传入所有indexDic映射,要求排序规则为: 抽象的在前,具象的在后,且indexDic层层之间链条完整,不能有断层;
  */
-+(NSDictionary*) zonHeIndexDic:(NSArray*)indexDicArr {
++(NSDictionary*) zonHeIndexDic1:(NSArray*)indexDicArr {
     //1. 数据准备;
     NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
     
@@ -663,6 +663,63 @@
         
         //7. 直到这条链的最后还有值,说明它全通过,收集到结果Dic中;
         if (endValue) [result setObject:endValue forKey:firstKey];
+    }
+    return result;
+}
+
+/**
+ *  MARK:--------------------8字型indexDic综合计算 (参考31113-TODO9-方案2)--------------------
+ *  @result 返回结果中,默认indexDic1中的v为key,indexDic2中的v为value;
+ */
++(NSDictionary*) zonHeIndexDic8:(NSDictionary*)indexDic1 indexDic2:(NSDictionary*)indexDic2 {
+    return [SMGUtils convertArr2Dic:indexDic1.allKeys kvBlock:^NSArray *(id obj) {
+        id v1 = [indexDic1 objectForKey:obj];
+        id v2 = [indexDic2 objectForKey:obj];
+        return (v1 && v2) ? @[v1,v2] : nil;//默认第1分支为key,第2分支为value返回;
+    }];
+}
+
+/**
+ *  MARK:--------------------indexDic综合计算--------------------
+ *  @result 返回结果中,默认首个dic的边缘端口为key,最后一个dic的边缘端口为value;
+ *  @version
+ *      2024.02.29: 支持各种转向,传入的参数也是带方向的 (参考31113-TODO9-方案2);
+ */
++(NSDictionary*) zonHeIndexDic:(NSArray*)directDics {
+    //1. 数据准备;
+    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
+    
+    //2. 取第一条的边缘posts,然后依次往下一层层检查链条是否连着;
+    DirectIndexDic *firstDirectDic = ARR_INDEX(directDics, 0);
+    NSDictionary *firstDic = firstDirectDic.indexDic;
+    NSArray *firstPosts = firstDirectDic.toAbs ? firstDic.allValues : firstDic.allKeys;//如果向上con是边缘,向下就abs是边缘;
+    
+    //3. 对第一个边缘,逐个对它的元素找链条;
+    for (NSNumber *startPost in firstPosts) {
+        id lastPost = startPost;//默认从第一个indexDic的边缘端口开始查起;
+        BOOL lastToAbs = firstDirectDic.toAbs;
+        for (DirectIndexDic *stepDirectDic in directDics) {
+            NSDictionary *stepDic = stepDirectDic.indexDic;
+            
+            //4. 如果上一条是被向上找来的,就用con(values)对接它,如果上一条是向下找来的,就用abs(keys)对接它;
+            if (lastToAbs) {
+                lastPost = ARR_INDEX([stepDic allKeysForObject:lastPost], 0);
+            } else {
+                lastPost = [stepDic objectForKey:lastPost];
+            }
+            
+            //5. 更新lastToAbs (下次循环中第4步要用);
+            lastToAbs = stepDirectDic.toAbs;
+            
+            //6. 如果有一层衔接不上断了,那这一整个链条计为不通;
+            if (!lastPost) break;
+        }
+        
+        //7. 最后一层的边缘端口 = 最后得出的post;
+        id endPost = lastPost;
+        
+        //8. 直到这条链的最后还有值,说明它全通过,收集到结果Dic中;
+        if (endPost) [result setObject:endPost forKey:startPost];
     }
     return result;
 }

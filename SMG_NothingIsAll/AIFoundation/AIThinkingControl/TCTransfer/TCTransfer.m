@@ -322,12 +322,15 @@
         NSDictionary *indexDic0 = [brotherHScene getConIndexDic:brotherCanset.p];
         NSDictionary *indexDic1 = [brotherRScene getConIndexDic:brotherHScene.p];
         NSDictionary *indexDic2 = [brotherRScene getAbsIndexDic:fatherRScene.p];
-        zonHeIndexDic = [TOUtils zonHeIndexDic:@[indexDic2,indexDic1,indexDic0]];
+        zonHeIndexDic = [TOUtils zonHeIndexDic1:@[indexDic2,indexDic1,indexDic0]];
+        
+        //6. H时有8字拐角: 顶部为fatherRScene,左侧为brotherHCanset,右侧为fatherRCanset (参考31113-TODO9);
+        zonHeIndexDic = [TOUtils zonHeIndexDic8:zonHeIndexDic indexDic2:nil];
     } else {
         //6. R时取两级映射 (参考29069-todo10.1推举算法示图);
         NSDictionary *indexDic1 = [brotherRScene getConIndexDic:brotherCanset.p];
         NSDictionary *indexDic2 = [brotherRScene getAbsIndexDic:fatherRScene.p];
-        zonHeIndexDic = [TOUtils zonHeIndexDic:@[indexDic2,indexDic1]];
+        zonHeIndexDic = [TOUtils zonHeIndexDic1:@[indexDic2,indexDic1]];
     }
     
     //3. 新生成fatherCanset (参考29069-todo10.1推举算法示图&步骤);

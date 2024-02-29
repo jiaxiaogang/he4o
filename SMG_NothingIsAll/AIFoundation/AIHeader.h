@@ -64,6 +64,7 @@
 #import "TCJiCenModel.h"
 #import "TCTuiJuModel.h"
 #import "TCResult.h"
+#import "DirectIndexDic.h"
 
 //网络
 #import "AINetUtils.h"

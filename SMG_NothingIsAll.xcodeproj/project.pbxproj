@@ -195,6 +195,7 @@
 		08F27D7A29ED98C50063E71B /* TCRealact.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F27D7929ED98C50063E71B /* TCRealact.m */; };
 		08F3E9312241B6E800545795 /* AIAnalogy.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F3E9302241B6E800545795 /* AIAnalogy.m */; };
 		08F4C98E1EA7A03900F3EDA8 /* SMGUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F4C98D1EA7A03900F3EDA8 /* SMGUtils.m */; };
+		08F506242B90CF3800ECE977 /* DirectIndexDic.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F506232B90CF3800ECE977 /* DirectIndexDic.m */; };
 		08F5334027DE3A8F0038812E /* TOMVision2.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F5333F27DE3A8F0038812E /* TOMVision2.m */; };
 		08F738051F7C714F005EAD56 /* AIKVPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F737FF1F7C714F005EAD56 /* AIKVPointer.m */; };
 		08F738061F7C714F005EAD56 /* AIPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F738011F7C714F005EAD56 /* AIPointer.m */; };
@@ -601,6 +602,8 @@
 		08F3E9302241B6E800545795 /* AIAnalogy.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIAnalogy.m; sourceTree = "<group>"; };
 		08F4C98C1EA7A03900F3EDA8 /* SMGUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMGUtils.h; sourceTree = "<group>"; };
 		08F4C98D1EA7A03900F3EDA8 /* SMGUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMGUtils.m; sourceTree = "<group>"; };
+		08F506222B90CF3800ECE977 /* DirectIndexDic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DirectIndexDic.h; sourceTree = "<group>"; };
+		08F506232B90CF3800ECE977 /* DirectIndexDic.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DirectIndexDic.m; sourceTree = "<group>"; };
 		08F5333E27DE3A8F0038812E /* TOMVision2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOMVision2.h; sourceTree = "<group>"; };
 		08F5333F27DE3A8F0038812E /* TOMVision2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOMVision2.m; sourceTree = "<group>"; };
 		08F737FE1F7C714F005EAD56 /* AIKVPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIKVPointer.h; sourceTree = "<group>"; };
@@ -1638,6 +1641,8 @@
 				08C9360B2B58086D003CBFFE /* TCJiCenModel.m */,
 				08C9360D2B5810F4003CBFFE /* TCTuiJuModel.h */,
 				08C9360E2B5810F4003CBFFE /* TCTuiJuModel.m */,
+				08F506222B90CF3800ECE977 /* DirectIndexDic.h */,
+				08F506232B90CF3800ECE977 /* DirectIndexDic.m */,
 			);
 			path = TCTransfer;
 			sourceTree = "<group>";
@@ -2103,6 +2108,7 @@
 				08EF706421E5743F009B5194 /* OutputModel.m in Sources */,
 				0832AD4325BC5AEF001B4DB1 /* AIMatchFoModel.m in Sources */,
 				08EA48D1202932E70038B982 /* AICustomAlgs.m in Sources */,
+				08F506242B90CF3800ECE977 /* DirectIndexDic.m in Sources */,
 				0808D34822B6FDD100D383BA /* NVViewUtil.m in Sources */,
 				88A43F3A2109571300281348 /* AIAbsCMVNode.m in Sources */,
 				08D4EC512160501000DA646B /* AINetUtils.m in Sources */,
