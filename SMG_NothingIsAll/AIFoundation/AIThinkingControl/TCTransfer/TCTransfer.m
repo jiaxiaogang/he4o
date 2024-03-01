@@ -197,6 +197,12 @@
         fatherCansetContent_ps = fatherCansetFrom.content_ps;
         fatherCansetDeltaTimes = fatherCansetFrom.deltaTimes;
         fatherSceneCansetIndexDic = [fatherRScene getConIndexDic:fatherCansetFrom.p];
+        
+        if (cansetModel.isH) {
+            //第1种: type=father & H时(二上二下),从fatherHCanset向上->fatherRCanset->fatherRScene,再向下->iRScene->iRCanset: 求出综合indexDic;
+        } else {
+            //第2种: type=father & R时(一上一下),从fatherRCanset向上->fatherRScene,再向下->iRScene: 求出综合indexDic;
+        }
     } else if (cansetModel.baseSceneModel.type == SceneTypeBrother) {
         //b. brother时: 从tuiJuModel取继承所需的father内容数据 (含content & deltaTimes & indexDic三种内容);
         TCTuiJuModel *tuiJuModel = cansetModel.tuiJuModel; //已经推举过;
@@ -206,6 +212,13 @@
         fatherCansetDeltaTimes = [SMGUtils convertArr:tuiJuModel.fatherCansetOrders convertBlock:^id(AIShortMatchModel_Simple *obj) {
             return @(obj.inputTime);
         }];
+        
+        if (cansetModel.isH) {
+            //第3种: type=brother & H时(一上二下),从fatherHCanset向上->fatherRScene,再向下->iRScene->iRCanset: 求出综合indexDic;
+        } else {
+            //第4种: type=brother & R时(一上一下),从fatherRCanset向上->fatherRScene,再向下->iRScene: 求出综合indexDic;
+        }
+        
         fatherSceneCansetIndexDic = tuiJuModel.fatherSceneCansetIndexDic;//从推举模型,得到f的indexDic;
     } else {
         return nil;
