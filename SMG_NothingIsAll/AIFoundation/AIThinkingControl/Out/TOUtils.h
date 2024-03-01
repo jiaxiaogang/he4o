@@ -200,16 +200,6 @@
 +(NSInteger) goBackToFindConIndexByAbsIndex:(NSDictionary*)indexDic absIndex:(NSInteger)absIndex;
 
 /**
- *  MARK:--------------------indexDic综合计算 (参考31113-TODO8)--------------------
- */
-+(NSDictionary*) zonHeIndexDic1:(NSArray*)indexDicArr;
-
-/**
- *  MARK:--------------------8字型indexDic综合计算--------------------
- */
-+(NSDictionary*) zonHeIndexDic8:(NSDictionary*)indexDic1 indexDic2:(NSDictionary*)indexDic2;\
-
-/**
  *  MARK:--------------------indexDic综合计算--------------------
  */
 +(NSDictionary*) zonHeIndexDic:(NSArray*)directDics;

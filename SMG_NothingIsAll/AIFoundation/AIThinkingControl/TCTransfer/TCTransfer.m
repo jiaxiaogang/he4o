@@ -325,7 +325,7 @@
     //4. 将x个indexDic综合成一个 (H时是三级映射,R时是两级映射);
     NSDictionary *zonHeIndexDic = nil;
     if (cansetModel.isH) {
-        //5. H时取三级映射 (参考31113-TODO7示图);
+        //5. H时取三级映射 (参考31114-示图&TODO);
         DirectIndexDic *indexDic0 = [DirectIndexDic newNoToAbs:[brotherHScene getConIndexDic:brotherCanset.p]];
         DirectIndexDic *indexDic1 = [DirectIndexDic newNoToAbs:[brotherRScene getConIndexDic:brotherHScene.p]];
         DirectIndexDic *indexDic2 = [DirectIndexDic newNoToAbs:[brotherRScene getAbsIndexDic:fatherRScene.p]];

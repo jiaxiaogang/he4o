@@ -639,47 +639,6 @@
 }
 
 /**
- *  MARK:--------------------1字型indexDic综合计算 (参考31113-TODO8)--------------------
- *  @param indexDicArr 传入所有indexDic映射,要求排序规则为: 抽象的在前,具象的在后,且indexDic层层之间链条完整,不能有断层;
- */
-+(NSDictionary*) zonHeIndexDic1:(NSArray*)indexDicArr {
-    //1. 数据准备;
-    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
-    
-    //2. 取最抽象一条的keys,然后一个个key往下一层层检查链条是否连着;
-    NSDictionary *firstDic = ARR_INDEX(indexDicArr, 0);
-    for (NSNumber *firstKey in firstDic.allKeys) {
-        id nextK = firstKey;//默认从第一个indexDic开始查起,第一个key就是它的key;
-        for (NSDictionary *stepDic in indexDicArr) {
-            //3. 一层层传递,下层key取得的value,再做为下下层的key;
-            nextK = [stepDic objectForKey:nextK];
-            
-            //4. 如果有一层衔接不上断了,那这一整个链条计为不通;
-            if (!nextK) break;
-        }
-        
-        //6. 最后一层的V = 下层K;
-        id endValue = nextK;
-        
-        //7. 直到这条链的最后还有值,说明它全通过,收集到结果Dic中;
-        if (endValue) [result setObject:endValue forKey:firstKey];
-    }
-    return result;
-}
-
-/**
- *  MARK:--------------------8字型indexDic综合计算 (参考31113-TODO9-方案2)--------------------
- *  @result 返回结果中,默认indexDic1中的v为key,indexDic2中的v为value;
- */
-+(NSDictionary*) zonHeIndexDic8:(NSDictionary*)indexDic1 indexDic2:(NSDictionary*)indexDic2 {
-    return [SMGUtils convertArr2Dic:indexDic1.allKeys kvBlock:^NSArray *(id obj) {
-        id v1 = [indexDic1 objectForKey:obj];
-        id v2 = [indexDic2 objectForKey:obj];
-        return (v1 && v2) ? @[v1,v2] : nil;//默认第1分支为key,第2分支为value返回;
-    }];
-}
-
-/**
  *  MARK:--------------------indexDic综合计算--------------------
  *  @result 返回结果中,默认首个dic的边缘端口为key,最后一个dic的边缘端口为value;
  *  @version
