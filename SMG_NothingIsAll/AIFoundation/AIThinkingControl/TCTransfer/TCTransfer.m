@@ -93,15 +93,10 @@
     //3. =====================参考:TCTransfer.transfer()方法,当不同type时,不同处理;=====================
     //4. 三种type,使用模拟迁移的方法,取到iScene和iCanset的indexDic映射 (参考31066-TODO5);
     if (cansetModel.baseSceneModel.type == SceneTypeI) {
-        //不用处理
+        //TODOTOMORROW20240302: R时不用处理 & H时也要从hSceneFrom迁移到hSceneTo;
+        
         //AIKVPointer *iCanset = cansetModel.cansetFo;
     }else if(cansetModel.baseSceneModel.type == SceneTypeFather) {
-        
-        //TODOTOMORROW20240226: 在H时,此处要区分fatherCanset,二者都表示迁移源,其中: 一者表示rCanset,一者表示hCanset;
-        //  * 算indexDic关系: 可以用override来表示H和R分别取不同的indexDic映射等;
-        //  * 将此处各种参数,尽量只传像cansetModel或sceneModel进去,别的尽量别传,不然参数太多乱,导致代码易读性差;
-        
-        
         //b. 模拟继承生成模型代码;
         cansetModel.jiCenModel = [TCTransfer transferJiCenForModel:cansetModel];
     }else if(cansetModel.baseSceneModel.type == SceneTypeBrother) {
@@ -170,15 +165,9 @@
  *      2024.01.17: 拆分成两步: 先用(用来取model),后体(用来构建iCanset节点和构建关联继承spDic);
  *      2024.01.18: 把jiCenForModel加个重载 (因为如果fatherCanset本来就是推举来的,它压根没构建成时序,但这些该有的内容数据它一个不缺);
  *      2024.02.27: 重构简化下代码,参数只传cansetModel,在方法内自行取参数;
+ *      2024.03.02: 支持H时,继承算法的迭代 (参考31115);
  */
 +(TCJiCenModel*) transferJiCenForModel:(TOFoModel*)cansetModel {
-    
-    //TODOTOMORROW20240301: 从此处代码继续往下筛查,兼容H后,需要改下哪些代码;
-    //R时从fatherRScene向下继承;
-    //H且为type=father时,从fatherRCanset先向上,后向下继承;
-    //H且为type=brother时,从tuiJuModel取数据向下继承;
-    
-    
     //1. 数据准备;
     TOFoModel *targetFoM = (TOFoModel*)cansetModel.basePFoOrTargetFoModel;//当前如果是H,这表示正在推进中targetFoM;
     AIKVPointer *hSceceTo = ISOK(targetFoM, TOFoModel.class) ? targetFoM.i.canset : nil;//当前如果是H,从targetFoM取hSceneTo迁移目标;
@@ -192,14 +181,12 @@
     //2. 数据准备之cansetTargetIndex: 无论是ifb哪个类型,目前推进到了哪一帧,我们最终都是要求达到目标的,所以本方法虽然都是伪迁移,但也要以最终目标为目的;
     NSInteger fatherCansetTargetIndex = cansetModel.targetIndex;//ifb三种类型的cansetTargetIndex是一致的,因为它们迁移长度一致;
     
-    //3. 数据准备之迁移源数据: 取fatherContent_ps(迁移源content_ps) & fatherDeltaTimes(迁移源deltaTimes) & fatherSceneCansetIndexDic;
+    //3. 数据准备之迁移源数据: 取fatherContent_ps(迁移源content_ps) & fatherDeltaTimes(迁移源deltaTimes);
     NSArray *fatherCansetContent_ps = nil, *fatherCansetDeltaTimes = nil;
-    NSDictionary *fatherSceneCansetIndexDic = nil;
     if (cansetModel.baseSceneModel.type == SceneTypeFather) {
         //a. father时: 从迁移源cansetFrom取继承所需的father内容数据 (含content & deltaTimes & indexDic三种内容);
         fatherCansetContent_ps = cansetFrom.content_ps;
         fatherCansetDeltaTimes = cansetFrom.deltaTimes;
-        fatherSceneCansetIndexDic = [fatherRScene getConIndexDic:cansetFrom.p];
     } else if (cansetModel.baseSceneModel.type == SceneTypeBrother) {
         //b. brother时: 从tuiJuModel取继承所需的father内容数据 (含content & deltaTimes & indexDic三种内容);
         fatherCansetContent_ps = [SMGUtils convertArr:tuiJuModel.fatherCansetOrders convertBlock:^id(AIShortMatchModel_Simple *obj) {
@@ -208,12 +195,11 @@
         fatherCansetDeltaTimes = [SMGUtils convertArr:tuiJuModel.fatherCansetOrders convertBlock:^id(AIShortMatchModel_Simple *obj) {
             return @(obj.inputTime);
         }];
-        fatherSceneCansetIndexDic = tuiJuModel.fatherSceneCansetIndexDic;//从推举模型,得到f的indexDic;
     } else {
         return nil;
     }
     
-    //4. 数据准备之迁移源数据: indexDic综合计算;
+    //4. 数据准备之迁移源数据: indexDic综合计算 (参考31115-TODO1-4);
     NSDictionary *zonHeIndexDic = nil;
     if (cansetModel.baseSceneModel.type == SceneTypeFather && cansetModel.isH) {
         //第1种: type=father & H时(二上二下),从fatherHCanset向上->fatherRCanset->fatherRScene,再向下->iRScene->iRCanset: 求出综合indexDic;
