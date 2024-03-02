@@ -186,7 +186,8 @@
     AIFoNodeBase *fatherRScene = [SMGUtils searchNode:rSceneModel.getFatherScene];//R时为当前fatherSceneModel的scene;
     AIFoNodeBase *fatherHScene = [SMGUtils searchNode:cansetModel.sceneFo];//HScene=RCanset (R时为rCanset, H时为当前迁移源from的hScene);
     AIFoNodeBase *iRScene = [SMGUtils searchNode:rSceneModel.getIScene];
-    AIFoNodeBase *cansetFrom = [SMGUtils searchNode:cansetModel.cansetFo];//cansetFrom (R时为rCanset,H时为hCanset) (type=father时可用,=brother时用tuiJuModel中的);
+    AIFoNodeBase *cansetFrom = [SMGUtils searchNode:cansetModel.cansetFo];//cansetFrom (R时为rCanset,H时为hCanset) (type=father时可用);
+    TCTuiJuModel *tuiJuModel = cansetModel.tuiJuModel; //已经推举的值 (type=brother时可用);
     
     //2. 数据准备之cansetTargetIndex: 无论是ifb哪个类型,目前推进到了哪一帧,我们最终都是要求达到目标的,所以本方法虽然都是伪迁移,但也要以最终目标为目的;
     NSInteger fatherCansetTargetIndex = cansetModel.targetIndex;//ifb三种类型的cansetTargetIndex是一致的,因为它们迁移长度一致;
@@ -201,7 +202,6 @@
         fatherSceneCansetIndexDic = [fatherRScene getConIndexDic:cansetFrom.p];
     } else if (cansetModel.baseSceneModel.type == SceneTypeBrother) {
         //b. brother时: 从tuiJuModel取继承所需的father内容数据 (含content & deltaTimes & indexDic三种内容);
-        TCTuiJuModel *tuiJuModel = cansetModel.tuiJuModel; //已经推举过;
         fatherCansetContent_ps = [SMGUtils convertArr:tuiJuModel.fatherCansetOrders convertBlock:^id(AIShortMatchModel_Simple *obj) {
             return obj.alg_p;
         }];
@@ -213,48 +213,49 @@
         return nil;
     }
     
-    //3. 数据准备之迁移源数据: indexDic综合计算;
+    //4. 数据准备之迁移源数据: indexDic综合计算;
+    NSDictionary *zonHeIndexDic = nil;
     if (cansetModel.baseSceneModel.type == SceneTypeFather && cansetModel.isH) {
         //第1种: type=father & H时(二上二下),从fatherHCanset向上->fatherRCanset->fatherRScene,再向下->iRScene->iRCanset: 求出综合indexDic;
         DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:[fatherHScene getConIndexDic:cansetFrom.p]];
         DirectIndexDic *dic2 = [DirectIndexDic newOkToAbs:[fatherRScene getConIndexDic:fatherHScene.p]];
         DirectIndexDic *dic3 = [DirectIndexDic newNoToAbs:[fatherRScene getConIndexDic:iRScene.p]];
         DirectIndexDic *dic4 = [DirectIndexDic newNoToAbs:[iRScene getConIndexDic:hSceceTo]];
-        NSDictionary *zonHeIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2,dic3,dic4]];
+        zonHeIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2,dic3,dic4]];
     } else if (cansetModel.baseSceneModel.type == SceneTypeFather && !cansetModel.isH) {
         //第2种: type=father & R时(一上一下),从fatherRCanset向上->fatherRScene,再向下->iRScene: 求出综合indexDic;
         DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:[fatherRScene getConIndexDic:cansetFrom.p]];
         DirectIndexDic *dic2 = [DirectIndexDic newNoToAbs:[fatherRScene getConIndexDic:iRScene.p]];
-        NSDictionary *zonHeIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2]];
+        zonHeIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2]];
     } else if (cansetModel.baseSceneModel.type == SceneTypeBrother && cansetModel.isH) {
         //第3种: type=brother & H时(一上二下),从fatherHCanset向上->fatherRScene,再向下->iRScene->iRCanset: 求出综合indexDic;
+        DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:tuiJuModel.fatherSceneCansetIndexDic];//从推举模型,得到f的indexDic;
+        DirectIndexDic *dic2 = [DirectIndexDic newNoToAbs:[fatherRScene getConIndexDic:iRScene.p]];
+        DirectIndexDic *dic3 = [DirectIndexDic newNoToAbs:[iRScene getConIndexDic:hSceceTo]];
+        zonHeIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2,dic3]];
     } else if (cansetModel.baseSceneModel.type == SceneTypeBrother && !cansetModel.isH) {
         //第4种: type=brother & R时(一上一下),从fatherRCanset向上->fatherRScene,再向下->iRScene: 求出综合indexDic;
+        DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:tuiJuModel.fatherSceneCansetIndexDic];//从推举模型,得到f的indexDic;
+        DirectIndexDic *dic2 = [DirectIndexDic newNoToAbs:[fatherRScene getConIndexDic:iRScene.p]];
+        zonHeIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2]];
     }
+    zonHeIndexDic = DICTOOK(zonHeIndexDic);
     
     //1. 数据准备;
     TCJiCenModel *result = [[TCJiCenModel alloc] init];
     
-    //2. 取两级映射 (参考29069-todo10.1推举算法示图);
-    NSDictionary *indexDic2 = [fatherRScene getConIndexDic:iRScene.p];
-    
     //3. 新生成fatherCanset (参考29069-todo10.1推举算法示图&步骤);
     NSMutableArray *orders = [[NSMutableArray alloc] init];
-    NSMutableDictionary *iSceneCansetIndexDic = [[NSMutableDictionary alloc] init];
     
     //========================= 算法关键代码 START =========================
     for (NSInteger i = 0; i < fatherCansetContent_ps.count; i++) {
         //4. 判断映射链: (参考29069-todo10.1-步骤2);
-        NSNumber *fatherSceneIndex = ARR_INDEX([fatherSceneCansetIndexDic allKeysForObject:@(i)], 0);
-        NSNumber *iSceneIndex = [indexDic2 objectForKey:fatherSceneIndex];
+        NSNumber *iSceneIndex = [zonHeIndexDic objectForKey:@(i)];
         double deltaTime = [NUMTOOK(ARR_INDEX(fatherCansetDeltaTimes, i)) doubleValue];
         if (iSceneIndex) {
             //5. 通过则收集迁移后scene元素 (参考29069-todo10.1-步骤3);
             id order = [AIShortMatchModel_Simple newWithAlg_p:ARR_INDEX(iRScene.content_ps, iSceneIndex.intValue) inputTime:deltaTime isTimestamp:false];
             [orders addObject:order];
-            
-            //5. 只有最终迁移成功的帧,记录新的indexDic;
-            [iSceneCansetIndexDic setObject:@(i) forKey:iSceneIndex];
         } else {
             //6. 不通过则收集迁移前canset元素 (参考29069-todo10.1-步骤4);
             id order = [AIShortMatchModel_Simple newWithAlg_p:ARR_INDEX(fatherCansetContent_ps, i) inputTime:deltaTime isTimestamp:false];
@@ -269,15 +270,17 @@
         
         //8. iCanset和fatherCanset长度一致;
         NSInteger iCansetTargetIndex = fatherCansetTargetIndex;
-        NSArray *keys = [iSceneCansetIndexDic allKeysForObject:@(iCansetTargetIndex)];
-        if (ARRISOK(keys)) {
-            iSceneTargetIndex = NUMTOOK(ARR_INDEX(keys, 0)).integerValue;
+        NSNumber *iSceneTargetNum = [zonHeIndexDic objectForKey:@(iCansetTargetIndex)];
+        if (iSceneTargetNum) {
+            iSceneTargetIndex = iSceneTargetNum.integerValue;
         }
     }
     
-    //9. 打包数据model返回;
+    //9. 打包数据model返回 (映射需要返过来因为前面cansetFrom在前,现在是cansetTo在后);
     result.iCansetOrders = orders;
-    result.iSceneCansetIndexDic = iSceneCansetIndexDic;
+    result.iSceneCansetIndexDic = [SMGUtils convertDic:zonHeIndexDic kvBlock:^NSArray *(id protoK, id protoV) {
+        return @[protoV,protoK];
+    }];
     result.iSceneTargetIndex = iSceneTargetIndex;
     return result;
 }
@@ -357,6 +360,7 @@
         DirectIndexDic *indexDic2 = [DirectIndexDic newNoToAbs:[brotherRScene getAbsIndexDic:fatherRScene.p]];
         zonHeIndexDic = [TOUtils zonHeIndexDic:@[indexDic2,indexDic1]];
     }
+    zonHeIndexDic = DICTOOK(zonHeIndexDic);
     
     //3. 新生成fatherCanset (参考29069-todo10.1推举算法示图&步骤);
     NSMutableArray *orders = [[NSMutableArray alloc] init];

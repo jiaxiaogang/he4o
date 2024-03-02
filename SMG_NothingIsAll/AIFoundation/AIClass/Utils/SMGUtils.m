@@ -600,6 +600,20 @@
 }
 
 /**
+ *  MARK:--------------------将dic转成dic--------------------
+ */
++(NSDictionary*) convertDic:(NSDictionary*)protoDic kvBlock:(NSArray*(^)(id protoK,id protoV))kvBlock {
+    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
+    for (id protoK in protoDic.allKeys) {
+        id protoV = [protoDic objectForKey:protoK];
+        NSArray *kvArr = kvBlock(protoK,protoV);
+        id k = ARR_INDEX(kvArr, 0), v = ARR_INDEX(kvArr, 1);
+        if (k && v) [result setObject:v forKey:k];
+    }
+    return result;
+}
+
+/**
  *  MARK:--------------------从foPorts中找出含valueIden的元素并返回--------------------
  *  @desc 每个fo,仅判断首条符合的alg;
  */

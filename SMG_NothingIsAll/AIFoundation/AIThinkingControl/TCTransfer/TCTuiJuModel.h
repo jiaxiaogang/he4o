@@ -14,7 +14,7 @@
 @interface TCTuiJuModel : NSObject
 
 @property (strong, nonatomic) NSArray *fatherCansetOrders;
-@property (strong, nonatomic) NSDictionary *fatherSceneCansetIndexDic;//表示fatherScene和要迁移的Canset迁移源的映射 (R时=rCansetFrom H时=hCansetFrom);
+@property (strong, nonatomic) NSDictionary *fatherSceneCansetIndexDic;//表示fatherRScene和要迁移的rhCansetFrom迁移源的映射
 @property (assign, nonatomic) NSInteger fatherSceneTargetIndex;
 
 @end

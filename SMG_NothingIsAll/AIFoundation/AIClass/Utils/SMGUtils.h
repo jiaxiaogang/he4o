@@ -163,6 +163,8 @@
 +(NSMutableArray*) convertArr:(NSArray*)arr convertItemArrBlock:(NSArray*(^)(id obj))convertItemArrBlock;
 //将arr转成dic
 +(NSDictionary*) convertArr2Dic:(NSArray*)objs kvBlock:(NSArray*(^)(id obj))kvBlock;
+//将dic转成dic
++(NSDictionary*) convertDic:(NSDictionary*)protoDic kvBlock:(NSArray*(^)(id protoK,id protoV))kvBlock;
 
 /**
  *  MARK:--------------------从foPorts中找出含valueIden的元素并返回--------------------
