@@ -180,9 +180,11 @@
     
     
     //1. 数据准备;
+    TOFoModel *targetFoM = (TOFoModel*)cansetModel.basePFoOrTargetFoModel;//当前如果是H,这表示正在推进中targetFoM;
+    AIKVPointer *hSceceTo = ISOK(targetFoM, TOFoModel.class) ? targetFoM.i.canset : nil;//当前如果是H,从targetFoM取hSceneTo迁移目标;
     AISceneModel *rSceneModel = cansetModel.baseSceneModel;//无论是R还是H,它的baseSceneModel都是rSceneModel;
     AIFoNodeBase *fatherRScene = [SMGUtils searchNode:rSceneModel.getFatherScene];//R时为当前fatherSceneModel的scene;
-    AIFoNodeBase *fatherHScene = nil;//R时为当前nil, H时为当前迁移源from的hScene;
+    AIFoNodeBase *fatherHScene = [SMGUtils searchNode:cansetModel.sceneFo];//HScene=RCanset (R时为rCanset, H时为当前迁移源from的hScene);
     AIFoNodeBase *iScene = [SMGUtils searchNode:rSceneModel.getIScene];
     
     //2. 数据准备之cansetTargetIndex: 无论是ifb哪个类型,目前推进到了哪一帧,我们最终都是要求达到目标的,所以本方法虽然都是伪迁移,但也要以最终目标为目的;
@@ -193,15 +195,21 @@
     NSDictionary *fatherSceneCansetIndexDic = nil;
     if (cansetModel.baseSceneModel.type == SceneTypeFather) {
         //a. father时: 从迁移源cansetFrom取继承所需的father内容数据 (含content & deltaTimes & indexDic三种内容);
-        AIFoNodeBase *fatherCansetFrom = [SMGUtils searchNode:cansetModel.cansetFo];//a. 取father数据;
+        AIFoNodeBase *fatherCansetFrom = [SMGUtils searchNode:cansetModel.cansetFo];//cansetFrom (R时为rCanset,H时为hCanset);
         fatherCansetContent_ps = fatherCansetFrom.content_ps;
         fatherCansetDeltaTimes = fatherCansetFrom.deltaTimes;
-        fatherSceneCansetIndexDic = [fatherRScene getConIndexDic:fatherCansetFrom.p];
+        
         
         if (cansetModel.isH) {
             //第1种: type=father & H时(二上二下),从fatherHCanset向上->fatherRCanset->fatherRScene,再向下->iRScene->iRCanset: 求出综合indexDic;
+            DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:[fatherHScene getConIndexDic:fatherCansetFrom.p]];
+            DirectIndexDic *dic2 = [DirectIndexDic newOkToAbs:[fatherRScene getConIndexDic:fatherHScene.p]];
+            DirectIndexDic *dic3 = [DirectIndexDic newNoToAbs:[fatherRScene getConIndexDic:iScene.p]];
+            DirectIndexDic *dic4 = [DirectIndexDic newNoToAbs:[iScene getConIndexDic:hSceceTo]];
+            NSDictionary *zonHeIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2,dic3,dic4]];
         } else {
             //第2种: type=father & R时(一上一下),从fatherRCanset向上->fatherRScene,再向下->iRScene: 求出综合indexDic;
+            fatherSceneCansetIndexDic = [fatherRScene getConIndexDic:fatherCansetFrom.p];
         }
     } else if (cansetModel.baseSceneModel.type == SceneTypeBrother) {
         //b. brother时: 从tuiJuModel取继承所需的father内容数据 (含content & deltaTimes & indexDic三种内容);
