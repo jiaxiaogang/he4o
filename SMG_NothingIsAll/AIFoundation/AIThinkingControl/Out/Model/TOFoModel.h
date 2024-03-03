@@ -175,6 +175,7 @@
 
 @property (strong, nonatomic) TCJiCenModel *jiCenModel;
 @property (strong, nonatomic) TCTuiJuModel *tuiJuModel;
+@property (strong, nonatomic) TCTiDhModel *tiDhModel;
 //@property NSDictionary *weiTransferDefaultSPDic;//伪迁移初始SPDic,就是当前cansetFo字段的spDic (因为ifb的canset等长,且初始spDic都是从当前迁移过去的);
 
 /**

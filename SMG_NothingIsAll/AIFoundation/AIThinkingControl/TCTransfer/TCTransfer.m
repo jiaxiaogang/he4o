@@ -93,9 +93,8 @@
     //3. =====================参考:TCTransfer.transfer()方法,当不同type时,不同处理;=====================
     //4. 三种type,使用模拟迁移的方法,取到iScene和iCanset的indexDic映射 (参考31066-TODO5);
     if (cansetModel.baseSceneModel.type == SceneTypeI) {
-        //TODOTOMORROW20240302: R时不用处理 & H时也要从hSceneFrom迁移到hSceneTo;
-        
-        //AIKVPointer *iCanset = cansetModel.cansetFo;
+        //a. R时不用处理 & H时也要从hCansetFrom迁移到hSceneTo;
+        cansetModel.tiDhModel = [TCTransfer transferTiDhForModel:cansetModel];
     }else if(cansetModel.baseSceneModel.type == SceneTypeFather) {
         //b. 模拟继承生成模型代码;
         cansetModel.jiCenModel = [TCTransfer transferJiCenForModel:cansetModel];
@@ -414,6 +413,75 @@
         }
     }
     return fatherCanset;
+}
+
+//MARK:===============================================================
+//MARK:                     < TiDH迁移 (type=I 任务=H时调用 >
+//MARK:===============================================================
++(TCTiDhModel*) transferTiDhForModel:(TOFoModel*)cansetModel {
+    //1. 数据准备;
+    TOFoModel *targetFoM = (TOFoModel*)cansetModel.basePFoOrTargetFoModel;//当前如果是H,这表示正在推进中targetFoM;
+    AISceneModel *rSceneModel = cansetModel.baseSceneModel;//无论是R还是H,它的baseSceneModel都是rSceneModel;
+    
+    //2. 数据准备: 取知识网络结构;
+    AIFoNodeBase *hCansetFrom = [SMGUtils searchNode:cansetModel.cansetFo];
+    AIFoNodeBase *hSceneFrom = [SMGUtils searchNode:cansetModel.sceneFo];
+    AIFoNodeBase *iRScene = [SMGUtils searchNode:rSceneModel.getIScene];
+    AIFoNodeBase *hSceneTo = [SMGUtils searchNode:targetFoM.i.canset];
+    if (cansetModel.baseSceneModel.type != SceneTypeI || !cansetModel.isH || [hSceneFrom isEqual:hSceneTo]) {
+        return nil;
+    }
+    
+    //3. 数据准备之cansetTargetIndex: 无论是ifb哪个类型,目前推进到了哪一帧,我们最终都是要求达到目标的,所以本方法虽然都是伪迁移,但也要以最终目标为目的;
+    NSInteger hCansetFromTargetIndex = cansetModel.targetIndex;//ifb三种类型的cansetTargetIndex是一致的,因为它们迁移长度一致;
+    
+    //4. 数据准备之迁移源数据: 取fatherContent_ps(迁移源content_ps) & fatherDeltaTimes(迁移源deltaTimes);
+    NSArray *hCansetFromContent_ps = hCansetFrom.content_ps;
+    NSArray *hCansetFromDeltaTimes = hCansetFrom.deltaTimes;
+    
+    //5. 数据准备之迁移源数据: indexDic综合计算 (参考31115-TODO1-4);
+    //第5种: type=i & H时(二上一下),从hCansetFrom向上->hSceneFrom->iRScene,再向下->hSceneTo: 求出综合indexDic;
+    DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:[hSceneFrom getConIndexDic:hCansetFrom.p]];
+    DirectIndexDic *dic2 = [DirectIndexDic newOkToAbs:[iRScene getConIndexDic:hSceneFrom.p]];
+    DirectIndexDic *dic3 = [DirectIndexDic newNoToAbs:[iRScene getConIndexDic:hSceneTo.p]];
+    NSDictionary *zonHeIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2,dic3]];
+    
+    //6. 计算cansetToOrders
+    NSMutableArray *orders = [[NSMutableArray alloc] init];
+    for (NSInteger i = 0; i < hCansetFromContent_ps.count; i++) {
+        //a. 判断映射链: (参考29069-todo10.1-步骤2);
+        NSNumber *hSceneToIndex = [zonHeIndexDic objectForKey:@(i)];
+        double deltaTime = [NUMTOOK(ARR_INDEX(hCansetFromDeltaTimes, i)) doubleValue];
+        if (hSceneToIndex) {
+            //b. 通过则收集迁移后scene元素 (参考29069-todo10.1-步骤3);
+            //TODOTOMORROW20240303: 查下别处这里的hSceneTo传的参数对不对;
+            id order = [AIShortMatchModel_Simple newWithAlg_p:ARR_INDEX(hSceneTo.content_ps, hSceneToIndex.intValue) inputTime:deltaTime isTimestamp:false];
+            [orders addObject:order];
+        } else {
+            //c. 不通过则收集迁移前canset元素 (参考29069-todo10.1-步骤4);
+            id order = [AIShortMatchModel_Simple newWithAlg_p:ARR_INDEX(hCansetFromContent_ps, i) inputTime:deltaTime isTimestamp:false];
+            [orders addObject:order];
+        }
+    }
+    
+    //7. 将canset执行目标转成scene任务目标targetIndex (参考29093-方案);
+    //TODOTOMORROW20240303: 整理下别处,这里的取值,看有没问题,把定义重命名顺了,避免混乱命名;
+    NSInteger sceneToTargetIndex = hSceneTo.count;
+    if (hCansetFromTargetIndex < hCansetFrom.count) {
+        
+        //8. iCanset和fatherCanset长度一致;
+        NSNumber *sceneToTargetNum = [zonHeIndexDic objectForKey:@(hCansetFromTargetIndex)];
+        if (sceneToTargetNum) {
+            sceneToTargetIndex = sceneToTargetNum.integerValue;
+        }
+    }
+    
+    //9. 打包数据model返回 (映射需要返过来因为前面cansetFrom在前,现在是cansetTo在后);
+    TCTiDhModel *result = [[TCTiDhModel alloc] init];
+    result.cansetToOrders = orders;
+    result.sceneToCansetToIndexDic = [SMGUtils reverseDic:zonHeIndexDic];
+    result.sceneToTargetIndex = sceneToTargetIndex;
+    return result;
 }
 
 //MARK:===============================================================

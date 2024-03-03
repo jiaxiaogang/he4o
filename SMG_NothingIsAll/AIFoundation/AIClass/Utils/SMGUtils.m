@@ -613,6 +613,12 @@
     return result;
 }
 
++(NSDictionary*) reverseDic:(NSDictionary*)protoDic {
+    return [self convertDic:protoDic kvBlock:^NSArray *(id protoK, id protoV) {
+        return @[protoV,protoK];
+    }];
+}
+
 /**
  *  MARK:--------------------从foPorts中找出含valueIden的元素并返回--------------------
  *  @desc 每个fo,仅判断首条符合的alg;

@@ -643,6 +643,7 @@
  *  @result 返回结果中,默认首个dic的边缘端口为key,最后一个dic的边缘端口为value;
  *  @version
  *      2024.02.29: 支持各种转向,传入的参数也是带方向的 (参考31113-TODO9-方案2);
+ *  @result notnull
  */
 +(NSDictionary*) zonHeIndexDic:(NSArray*)directDics {
     //1. 数据准备;
