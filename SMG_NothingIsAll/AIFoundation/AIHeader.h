@@ -63,7 +63,7 @@
 #import "AITransferModel.h"
 #import "TCJiCenModel.h"
 #import "TCTuiJuModel.h"
-#import "TCTiDhModel.h"
+#import "TCTransferXvModel.h"
 #import "TCResult.h"
 #import "DirectIndexDic.h"
 

@@ -24,7 +24,7 @@
  *  @version
  *      2021.03.27: 实现ITryActionFoDelegate接口,因为每个fo都有可能是子任务 (参考22193);
  */
-@class AISceneModel,AITransferModel,TCJiCenModel,TCTuiJuModel;
+@class AISceneModel,AITransferModel,TCJiCenModel,TCTuiJuModel,TCTransferXvModel;
 @interface TOFoModel : TOModelBase <ISubModelsDelegate,ISubDemandDelegate,NSCoding>
 
 /**
@@ -175,7 +175,8 @@
 
 @property (strong, nonatomic) TCJiCenModel *jiCenModel;
 @property (strong, nonatomic) TCTuiJuModel *tuiJuModel;
-@property (strong, nonatomic) TCTiDhModel *tiDhModel;
+@property (strong, nonatomic) TCTransferXvModel *tiDhModel;
+@property (strong, nonatomic) TCTransferXvModel *transferXvModel;
 //@property NSDictionary *weiTransferDefaultSPDic;//伪迁移初始SPDic,就是当前cansetFo字段的spDic (因为ifb的canset等长,且初始spDic都是从当前迁移过去的);
 
 /**

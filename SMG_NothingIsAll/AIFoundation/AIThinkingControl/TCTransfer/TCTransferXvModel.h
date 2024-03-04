@@ -1,5 +1,5 @@
 //
-//  TCTiDhModel.h
+//  TCTransferXvModel.h
 //  SMG_NothingIsAll
 //
 //  Created by mac on 2024/3/3.
@@ -11,7 +11,7 @@
 /**
  *  MARK:--------------------TypeI DemandH迁移模型--------------------
  */
-@interface TCTiDhModel : NSObject
+@interface TCTransferXvModel : NSObject
 
 @property (strong, nonatomic) NSArray *cansetToOrders;//表示迁移目标的方案时序的内容;
 @property (strong, nonatomic) NSDictionary *sceneToCansetToIndexDic;//表示迁移目标canset和scene之间的映射;
