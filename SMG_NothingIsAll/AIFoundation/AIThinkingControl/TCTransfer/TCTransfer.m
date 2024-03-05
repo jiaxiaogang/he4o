@@ -539,19 +539,48 @@
     
     //5. 数据准备之迁移源数据: indexDic综合计算 (参考31115-TODO1-4);
     //第5种: type=i & H时(二上一下),从hCansetFrom向上->hSceneFrom->iRScene,再向下->hSceneTo: 求出综合indexDic;
-    DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:[hSceneFrom getConIndexDic:cansetFrom.p]];
-    DirectIndexDic *dic2 = [DirectIndexDic newOkToAbs:[iRScene getConIndexDic:hSceneFrom.p]];
+    DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:[cansetFrom getAbsIndexDic:hSceneFrom.p]];
+    DirectIndexDic *dic2 = [DirectIndexDic newOkToAbs:[hSceneFrom getAbsIndexDic:iRScene.p]];
     DirectIndexDic *dic3 = [DirectIndexDic newNoToAbs:[iRScene getConIndexDic:sceneTo.p]];
     NSDictionary *zonHeIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2,dic3]];
-    
     return nil;
 }
 
 +(TCTransferXvModel*) transferXv_FR:(TOFoModel*)cansetModel {
+    //1. 数据准备;
+    TOFoModel *targetFoM = (TOFoModel*)cansetModel.basePFoOrTargetFoModel;//当前如果是H,这表示正在推进中targetFoM;
+    AISceneModel *rSceneModel = cansetModel.baseSceneModel;//无论是R还是H,它的baseSceneModel都是rSceneModel;
+    
+    //2. 数据准备: 取知识网络结构;
+    AIFoNodeBase *cansetFrom = [SMGUtils searchNode:cansetModel.cansetFo];//cansetFrom (R时为rCanset,H时为hCanset);
+    AIFoNodeBase *fatherRScene = [SMGUtils searchNode:rSceneModel.getFatherScene];//R时为当前fatherSceneModel的scene;
+    AIFoNodeBase *sceneTo = [SMGUtils searchNode:rSceneModel.getIScene];
+    
+    //3. FH映射: indexDic综合计算 (参考31115-TODO1-4);
+    DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:[cansetFrom getAbsIndexDic:fatherRScene.p]];
+    DirectIndexDic *dic2 = [DirectIndexDic newNoToAbs:[fatherRScene getConIndexDic:sceneTo.p]];
+    NSDictionary *zonHeIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2]];
     return nil;
 }
 
 +(TCTransferXvModel*) transferXv_FH:(TOFoModel*)cansetModel {
+    //1. 数据准备;
+    TOFoModel *targetFoM = (TOFoModel*)cansetModel.basePFoOrTargetFoModel;//当前如果是H,这表示正在推进中targetFoM;
+    AISceneModel *rSceneModel = cansetModel.baseSceneModel;//无论是R还是H,它的baseSceneModel都是rSceneModel;
+    
+    //2. 数据准备: 取知识网络结构;
+    AIFoNodeBase *cansetFrom = [SMGUtils searchNode:cansetModel.cansetFo];//cansetFrom (R时为rCanset,H时为hCanset);
+    AIFoNodeBase *fatherHScene = [SMGUtils searchNode:cansetModel.sceneFo];//HScene=RCanset (R时为rCanset, H时为当前迁移源from的hScene);
+    AIFoNodeBase *fatherRScene = [SMGUtils searchNode:rSceneModel.getFatherScene];//R时为当前fatherSceneModel的scene;
+    AIFoNodeBase *iRScene = [SMGUtils searchNode:rSceneModel.getIScene];
+    AIFoNodeBase *sceneTo = [SMGUtils searchNode:targetFoM.i.canset];
+    
+    //3. FH映射: indexDic综合计算 (参考31115-TODO1-4);
+    DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:[cansetFrom getAbsIndexDic:fatherHScene.p]];
+    DirectIndexDic *dic2 = [DirectIndexDic newOkToAbs:[fatherHScene getAbsIndexDic:fatherRScene.p]];
+    DirectIndexDic *dic3 = [DirectIndexDic newNoToAbs:[fatherRScene getConIndexDic:iRScene.p]];
+    DirectIndexDic *dic4 = [DirectIndexDic newNoToAbs:[iRScene getConIndexDic:sceneTo.p]];
+    NSDictionary *zonHeIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2,dic3,dic4]];
     return nil;
 }
 
@@ -563,12 +592,12 @@
     AIFoNodeBase *cansetFrom = [SMGUtils searchNode:cansetModel.cansetFo];//迁移源hCanset
     AIFoNodeBase *brotherRScene = [SMGUtils searchNode:rSceneModel.getBrotherScene];
     AIFoNodeBase *fatherRScene = [SMGUtils searchNode:rSceneModel.getFatherScene];//R时为当前fatherSceneModel的scene (无论是R还是H都迁移到fatherRScene下);
-    AIFoNodeBase *iRScene = [SMGUtils searchNode:rSceneModel.getIScene];
+    AIFoNodeBase *sceneTo = [SMGUtils searchNode:rSceneModel.getIScene];
     
     //3. BR映射 (参考29069-todo10.1推举算法示图);
     DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:[cansetFrom getAbsIndexDic:brotherRScene.p]];
     DirectIndexDic *dic2 = [DirectIndexDic newOkToAbs:[brotherRScene getAbsIndexDic:fatherRScene.p]];
-    DirectIndexDic *dic3 = [DirectIndexDic newNoToAbs:[fatherRScene getAbsIndexDic:iRScene.p]];
+    DirectIndexDic *dic3 = [DirectIndexDic newNoToAbs:[fatherRScene getConIndexDic:sceneTo.p]];
     NSDictionary *zonHeIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2,dic3]];
     return nil;
 }
