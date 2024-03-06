@@ -176,8 +176,12 @@
 @property (strong, nonatomic) TCJiCenModel *jiCenModel;
 @property (strong, nonatomic) TCTuiJuModel *tuiJuModel;
 @property (strong, nonatomic) TCTransferXvModel *tiDhModel;
+
+/**
+ *  MARK:--------------------虚实v2模型--------------------
+ */
 @property (strong, nonatomic) TCTransferXvModel *transferXvModel;
-//@property NSDictionary *weiTransferDefaultSPDic;//伪迁移初始SPDic,就是当前cansetFo字段的spDic (因为ifb的canset等长,且初始spDic都是从当前迁移过去的);
+@property (strong, nonatomic) AITransferModel *transferSiModel;
 
 /**
  *  MARK:--------------------下帧初始化 (可接受反馈) (参考31073-TODO2g)--------------------

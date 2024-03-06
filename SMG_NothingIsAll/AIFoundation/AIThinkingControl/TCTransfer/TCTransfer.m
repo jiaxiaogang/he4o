@@ -620,6 +620,63 @@
 }
 
 //MARK:===============================================================
+//MARK:                     < 实V2 >
+//MARK:===============================================================
++(AIFoNodeBase*) transferSi:(TCTransferXvModel*)xvModel cansetModel:(TOFoModel*)cansetModel iScene:(AIFoNodeBase*)iScene fatherScene:(AIFoNodeBase*)fatherScene fatherCanset:(AIFoNodeBase*)fatherCanset {
+    //7. 构建result & 场景内防重;
+    AIFoNodeBase *sceneTo = [SMGUtils searchNode:cansetModel.sceneTo];
+    AIFoNodeBase *cansetTo = [theNet createConFoForCanset:xvModel.cansetToOrders sceneFo:sceneTo sceneTargetIndex:xvModel.sceneToTargetIndex];
+    cansetModel.transferSiModel = [AITransferModel newWithScene:sceneTo.p canset:cansetTo.p];
+    
+    //8. 新生成fatherPort;
+    AITransferPort *newIPort = [AITransferPort newWithScene:iScene.p canset:iCanset.p];
+    
+    //9. 防重 (其实不可能重复,因为如果重复在override算法中当前cansetModel就已经被过滤了);
+    if (![fatherScene.transferConPorts containsObject:newIPort]) {
+        
+        //10. 将newIPort挂到iScene下;
+        BOOL updateCansetSuccess = [iScene updateConCanset:iCanset.p targetIndex:jiCenModel.iSceneTargetIndex];
+        
+        if (updateCansetSuccess) {
+            //11. 为迁移后iCanset加上与iScene的indexDic (参考29075-todo4);
+            [iCanset updateIndexDic:iScene indexDic:jiCenModel.iSceneCansetIndexDic];
+            
+            //11. SP值也继承 (参考3101b-todo1);
+            if (fatherCanset.count == iCanset.count) {
+                [iCanset updateSPDic:fatherCanset.spDic];
+            }
+            [AITest test32:fatherCanset newCanset:iCanset];
+            
+            //12. 并进行迁移关联
+            [AINetUtils relateTransfer:fatherScene.p absCanset:fatherCanset.p conScene:iScene.p conCanset:iCanset.p];
+        }
+    }
+    return iCanset;
+    
+    
+    //9. 防重 (其实不可能重复,因为如果重复在override算法中当前cansetModel就已经被过滤了);
+    if (![brotherScene.transferAbsPorts containsObject:newFatherPort]) {
+        //10. 将newFatherCanset挂到fatherScene下;
+        BOOL updateCansetSuccess = [fatherScene updateConCanset:fatherCanset.p targetIndex:tuiJuModel.fatherSceneTargetIndex];
+        
+        if (updateCansetSuccess) {
+            //11. 为迁移后fatherCanset加上与fatherScene的indexDic (参考29075-todo4);
+            [fatherCanset updateIndexDic:fatherScene indexDic:tuiJuModel.fatherSceneCansetIndexDic];
+            
+            //11. SP值也推举 (参考3101b-todo2);
+            if (brotherCanset.count == fatherCanset.count) {
+                [fatherCanset updateSPDic:brotherCanset.spDic];
+            }
+            [AITest test32:brotherCanset newCanset:fatherCanset];
+            
+            //12. 并进行迁移关联
+            [AINetUtils relateTransfer:fatherScene.p absCanset:fatherCanset.p conScene:brotherScene.p conCanset:brotherCanset.p];
+        }
+    }
+    return fatherCanset;
+}
+
+//MARK:===============================================================
 //MARK:                     < 概念迁移算法 >
 //MARK:===============================================================
 
