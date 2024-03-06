@@ -515,6 +515,19 @@
 -(BOOL) isH {
     //目前判断方式为: pFo的任务是R,targetFoM的任务是H;
     return ISOK(self.basePFoOrTargetFoModel, AIMatchFoModel.class);
+    //return self.targetIndex < self.cansetFo.count; //用目标帧位置来判断;
+}
+
+/**
+ *  MARK:--------------------取此方案迁移目标--------------------
+ */
+-(AIKVPointer*) sceneTo {
+    if (self.isH) {
+        TOFoModel *targetFoM = (TOFoModel*)self.basePFoOrTargetFoModel;//当前如果是H,这表示正在推进中targetFoM;
+        return targetFoM.i.canset;
+    } else {
+        return self.baseSceneModel.getIScene;//无论是R还是H,它的baseSceneModel都是rSceneModel;
+    }
 }
 
 /**
