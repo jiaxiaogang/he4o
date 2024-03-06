@@ -40,14 +40,14 @@
     return _conCansetsDic;
 }
 
--(NSMutableArray *)transferAbsPorts{
-    if (!ISOK(_transferAbsPorts, NSMutableArray.class)) _transferAbsPorts = [[NSMutableArray alloc] initWithArray:_transferAbsPorts];
-    return _transferAbsPorts;
+-(NSMutableArray *)transferFromPorts{
+    if (!ISOK(_transferFromPorts, NSMutableArray.class)) _transferFromPorts = [[NSMutableArray alloc] initWithArray:_transferFromPorts];
+    return _transferFromPorts;
 }
 
--(NSMutableArray *)transferConPorts{
-    if (!ISOK(_transferConPorts, NSMutableArray.class)) _transferConPorts = [[NSMutableArray alloc] initWithArray:_transferConPorts];
-    return _transferConPorts;
+-(NSMutableArray *)transferToPorts{
+    if (!ISOK(_transferToPorts, NSMutableArray.class)) _transferToPorts = [[NSMutableArray alloc] initWithArray:_transferToPorts];
+    return _transferToPorts;
 }
 
 //MARK:===============================================================
@@ -260,13 +260,13 @@
  *  MARK:--------------------找出交层场景中,有哪些canset是与当前fo迁移关联的--------------------
  */
 -(NSArray*) getTransferAbsCansets:(AIKVPointer*)absScene_p {
-    return [self filterCansetsWithScene:absScene_p fromTransferPorts:self.transferAbsPorts];
+    return [self filterCansetsWithScene:absScene_p fromTransferPorts:self.transferFromPorts];
 }
 /**
  *  MARK:--------------------找出似层场景中,有哪些canset是与当前fo迁移关联的--------------------
  */
 -(NSArray*) getTransferConCansets:(AIKVPointer*)conScene_p {
-    return [self filterCansetsWithScene:conScene_p fromTransferPorts:self.transferConPorts];
+    return [self filterCansetsWithScene:conScene_p fromTransferPorts:self.transferToPorts];
 }
 
 //MARK:===============================================================
@@ -298,8 +298,8 @@
         self.absIndexDDic = [aDecoder decodeObjectForKey:@"absIndexDDic"];
         self.conIndexDDic = [aDecoder decodeObjectForKey:@"conIndexDDic"];
         self.conCansetsDic = [aDecoder decodeObjectForKey:@"conCansetsDic"];
-        self.transferAbsPorts = [aDecoder decodeObjectForKey:@"transferAbsPorts"];
-        self.transferConPorts = [aDecoder decodeObjectForKey:@"transferConPorts"];
+        self.transferFromPorts = [aDecoder decodeObjectForKey:@"transferFromPorts"];
+        self.transferToPorts = [aDecoder decodeObjectForKey:@"transferToPorts"];
     }
     return self;
 }
@@ -314,8 +314,8 @@
     [aCoder encodeObject:[self.absIndexDDic copy] forKey:@"absIndexDDic"];
     [aCoder encodeObject:[self.conIndexDDic copy] forKey:@"conIndexDDic"];
     [aCoder encodeObject:[self.conCansetsDic copy] forKey:@"conCansetsDic"];
-    [aCoder encodeObject:[self.transferAbsPorts copy] forKey:@"transferAbsPorts"];
-    [aCoder encodeObject:[self.transferConPorts copy] forKey:@"transferConPorts"];
+    [aCoder encodeObject:[self.transferFromPorts copy] forKey:@"transferFromPorts"];
+    [aCoder encodeObject:[self.transferToPorts copy] forKey:@"transferToPorts"];
 }
 
 @end

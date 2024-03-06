@@ -20,13 +20,13 @@
  *  MARK:--------------------迁移关联 (上传) (参考29069-todo10.2)--------------------
  *  @desc 工作在场景fo下,在cansetFo下不工作;
  */
-@property (strong, nonatomic) NSMutableArray *transferAbsPorts;
+@property (strong, nonatomic) NSMutableArray *transferFromPorts;
 
 /**
  *  MARK:--------------------迁移关联 (下承) (参考29069-todo10.2)--------------------
  *  @desc 工作在场景fo下,在cansetFo下不工作;
  */
-@property (strong, nonatomic) NSMutableArray *transferConPorts;
+@property (strong, nonatomic) NSMutableArray *transferToPorts;
 
 /**
  *  MARK:--------------------cmvNode_p结果--------------------

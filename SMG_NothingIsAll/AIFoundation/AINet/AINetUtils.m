@@ -878,23 +878,21 @@
 /**
  *  MARK:--------------------迁移关联--------------------
  */
-+(void) relateTransfer:(AIKVPointer*)absScene absCanset:(AIKVPointer*)absCanset conScene:(AIKVPointer*)conScene conCanset:(AIKVPointer*)conCanset {
++(void) relateTransfer:(AIFoNodeBase*)sceneFrom cansetFrom:(AIFoNodeBase*)cansetFrom sceneTo:(AIFoNodeBase*)sceneTo cansetTo:(AIFoNodeBase*)cansetTo {
     //1. 数据准备;
-    AIFoNodeBase *absSconeNode = [SMGUtils searchNode:absScene];
-    AIFoNodeBase *conSceneNode = [SMGUtils searchNode:conScene];
-    AITransferPort *absPort = [AITransferPort newWithScene:absScene canset:absCanset];
-    AITransferPort *conPort = [AITransferPort newWithScene:conScene canset:conCanset];
+    AITransferPort *portFrom = [AITransferPort newWithScene:sceneFrom.p canset:cansetFrom.p];
+    AITransferPort *portTo = [AITransferPort newWithScene:sceneTo.p canset:cansetTo.p];
     
     //2. 插入传节点的承端口;
-    if (![absSconeNode.transferConPorts containsObject:conPort]) {
-        [absSconeNode.transferConPorts addObject:conPort];
-        [SMGUtils insertNode:absSconeNode];
+    if (![sceneFrom.transferToPorts containsObject:portTo]) {
+        [sceneFrom.transferToPorts addObject:portTo];
+        [SMGUtils insertNode:sceneFrom];
     }
     
     //3. 插入承节点的传端口;
-    if (![conSceneNode.transferAbsPorts containsObject:absPort]) {
-        [conSceneNode.transferAbsPorts addObject:absPort];
-        [SMGUtils insertNode:conSceneNode];
+    if (![sceneTo.transferFromPorts containsObject:portFrom]) {
+        [sceneTo.transferFromPorts addObject:portFrom];
+        [SMGUtils insertNode:sceneTo];
     }
 }
 
