@@ -89,13 +89,6 @@
  */
 -(NSDictionary*) convertOldSPDic2NewSPDic;
 
-//MARK:===============================================================
-//MARK:                     < for 三级场景 >
-//MARK:===============================================================
-@property (strong, nonatomic) AITransferModel *brother;
-@property (strong, nonatomic) AITransferModel *father;
-@property (strong, nonatomic) AITransferModel *i;
-
 /**
  *  MARK:--------------------返回需用于反省或有效统计的cansets (参考29069-todo11 && todo11.2)--------------------
  */
@@ -207,9 +200,6 @@
  *  MARK:--------------------方案状态--------------------
  */
 @property (assign, nonatomic) CansetStatus cansetStatus;
-
-//取候选集未迁移前的本体Canset和Scene;
--(AITransferModel*) getProtoTransferModel;
 
 /**
  *  MARK:--------------------此方案是用于什么任务 (true=H false=R)--------------------

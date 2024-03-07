@@ -70,46 +70,45 @@
     TOAlgModel *targetAlgM = (TOAlgModel*)hDemand.baseOrGroup;
     TOFoModel *targetFoM = (TOFoModel*)targetAlgM.baseOrGroup;
     ReasonDemandModel *baseRDemand = (ReasonDemandModel*)targetFoM.baseOrGroup;//取出rDemand
-    AIKVPointer *targetPFo = targetFoM.baseSceneModel.getRoot.scene;
+    AIKVPointer *targetPFo = targetFoM.baseSceneModel.getIScene;
+    
+    //2. targetFoM转实后的canset就是真正R在推进行为化中的RCanset(也即HScene);
+    //结构说明: 其中IScene是RScene,这个sceneTo是挂在IScene下的;
+    AIFoNodeBase *sceneTo = [SMGUtils searchNode:targetFoM.transferSiModel.canset];
     
     //2. 取出rCansets (仅取当前pFo树下的) (参考31113-TODO4);
     NSArray *rCansets = [SMGUtils filterArr:baseRDemand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
-        return [targetPFo isEqual:item.baseSceneModel.getRoot.scene];
+        return [targetPFo isEqual:item.baseSceneModel.getIScene];
     }];
     
     //3. 依次从rCanset下取hCansets (参考31102);
     for (TOFoModel *rCanset in rCansets) {
-        AIFoNodeBase *rCansetFo = [SMGUtils searchNode:rCanset.cansetFo];
+        AIFoNodeBase *sceneFrom = [SMGUtils searchNode:rCanset.cansetFo];
         
-        //第1步: 取hCansets: 从cutIndex到sceneFo.count之间的hCansets (参考31102);
-        NSInteger hSceneTargetIndex = rCanset.cutIndex + 1;
-        
-        //TODOTOMORROW20240307: 改成用override取cansets;
-        
-        
-        
-        
-        NSArray *hCansets = [rCansetFo getConCansets:hSceneTargetIndex];
+        //第1步: 取hCansets(用override取cansets): 从cutIndex到sceneFo.count之间的hCansets (参考31102);
+        NSInteger sceneFromTargetIndex = rCanset.cutIndex + 1;
+        NSArray *hCansets = [TCCanset getOverrideCansets:sceneFrom sceneFromTargetIndex:sceneFromTargetIndex sceneTo:sceneTo];
         
         //第2步: 筛选有效hCansets: hCanset的targetAlg帧 与 h任务targetAlg有isBro关系 (参考31103);
         hCansets = [SMGUtils filterArr:hCansets checkValid:^BOOL(AIKVPointer *hCanset) {
             //a. 根据hScene和hCanset的映射,取出hCanset的目标帧;
             AIFoNodeBase *hCansetFo = [SMGUtils searchNode:hCanset];
-            NSDictionary *indexDic = [rCansetFo getConIndexDic:hCanset];
-            NSInteger hCansetTargetIndex = NUMTOOK([indexDic objectForKey:@(hSceneTargetIndex)]).integerValue;
-            AIKVPointer *hCansetTargetAlg = ARR_INDEX(hCansetFo.content_ps, hCansetTargetIndex);
+            NSDictionary *indexDic = [sceneFrom getConIndexDic:hCanset];
+            NSInteger cansetFromTargetIndex = NUMTOOK([indexDic objectForKey:@(sceneFromTargetIndex)]).integerValue;
+            AIKVPointer *cansetFromTargetAlg = ARR_INDEX(hCansetFo.content_ps, cansetFromTargetIndex);
             
             //b. 判断hCanset目标帧与当前任务targetAlg目标,有mcIsBro关系;
-            return [TOUtils mcIsBro:hCansetTargetAlg c:targetAlgM.content_p];
+            return [TOUtils mcIsBro:cansetFromTargetAlg c:targetAlgM.content_p];
         }];
         
-        //第3步: 迁移: 场景包含帧用indexDic映射来迁移替换,场景不包含帧用迁移前的为准 (参考31104);
-        //a. TCCanset.convert2CansetModel()直接为H重写下: 仅计算hCanset的cutIndex和targetIndex,然后生成为TOFoModel即可;
-        //b. 在TCTransfer模块里写h的transfer伪迁移: TCTransfer的h迁移先单独复制写着,写完后,再考虑复用部分;
+        //第3步: 转为cansetModel格式;
         hCansets = [SMGUtils convertArr:hCansets convertBlock:^id(AIKVPointer *hCanset) {
             return [TCCanset convert2HCansetModel:hCanset hDemand:hDemand rCanset:rCanset];
         }];
         if (Log4GetCansetResult4H && hCansets.count > 0) NSLog(@"\t item场景(%@):%@ 取得候选数:%ld",SceneType2Str(rCanset.baseSceneModel.type),Pit2FStr(rCanset.baseSceneModel.scene),hCansets.count);
+        
+        
+        //TODOTOMORROW20240307: 明天继续这儿;
         
         //Step4 -> 实时竞争hCansets:
         //a. 对有效hCansets进行实时竞争;

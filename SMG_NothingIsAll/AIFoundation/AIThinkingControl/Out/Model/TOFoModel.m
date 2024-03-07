@@ -251,7 +251,7 @@
  *  MARK:--------------------有iCanset直接返回进行行为化等 (参考29069-todo9 & todo10.1b)--------------------
  */
 -(AIKVPointer *)content_p {
-    if (_i) return _i.canset;
+    if (_transferSiModel) return _transferSiModel.canset;
     return super.content_p;
 }
 
@@ -263,64 +263,12 @@
     NSMutableArray *result = [[NSMutableArray alloc] init];
     
     //1. father和i两级canset有值时,收集 (参考29069-todo11.2);
-    if (self.father) [result addObject:self.father];
-    if (self.i) [result addObject:self.i];
+    if (self.transferSiModel) [result addObject:self.transferSiModel];
     
     //2. 三级canset都无值时,默认返回content_p;
-    if (!ARRISOK(result)) [result addObject:[AITransferModel newWithScene:[self getContentScene] canset:self.content_p]];
+    if (!ARRISOK(result)) [result addObject:[AITransferModel newWithScene:self.sceneFo canset:self.cansetFo]];
     return result;
 }
-
-//MARK:===============================================================
-//MARK:                     < privateMethod >
-//MARK:===============================================================
-
--(AIKVPointer*) getContentScene {
-    //1. R任务时,返回content所在的scene;
-    if (ISOK(self.baseOrGroup, ReasonDemandModel.class)) {
-        AIMatchFoModel *pFo = (AIMatchFoModel*)self.basePFoOrTargetFoModel;
-        return pFo.matchFo;
-    }
-    
-    //2. H任务时,返回content所在的scene;
-    if (ISOK(self.baseOrGroup, HDemandModel.class)) {
-        HDemandModel *hDemand = (HDemandModel*)self.baseOrGroup;
-        TOFoModel *targetFo = (TOFoModel*)hDemand.baseOrGroup.baseOrGroup;
-        return targetFo.content_p;
-    }
-    return nil;
-}
-
-//MARK:===============================================================
-//MARK:                     < CansetModel >
-//MARK:===============================================================
-//在TCTransfer中暂时不用这个,现在直接取base.base...在取用;
-//-(AIKVPointer*) getIScene {
-//    if (self.baseSceneModel.type == SceneTypeI) {
-//        return self.sceneFo;
-//    } else if (self.baseSceneModel.type == SceneTypeFather) {
-//        return self.baseSceneModel.base.scene;
-//    } else if (self.baseSceneModel.type == SceneTypeBrother) {
-//        return self.baseSceneModel.base.base.scene;
-//    }
-//    return nil;
-//}
-//
-//-(AIKVPointer*) getFatherScene {
-//    if (self.baseSceneModel.type == SceneTypeFather) {
-//        return self.baseSceneModel.scene;
-//    } else if (self.baseSceneModel.type == SceneTypeBrother) {
-//        return self.baseSceneModel.base.scene;
-//    }
-//    return nil;
-//}
-//
-//-(AIKVPointer*) getBrotherScene {
-//    if (self.baseSceneModel.type == SceneTypeBrother) {
-//        return self.baseSceneModel.scene;
-//    }
-//    return nil;
-//}
 
 /**
  *  MARK:--------------------下帧初始化 (可接受反馈) (参考31073-TODO2g)--------------------
@@ -461,16 +409,16 @@
             //2024.01.25: 只有正在推进中的才有资格做"预想与实际"的类比抽象;
             if (self.cansetStatus == CS_Besting && orders.count > 1) {
                 //13. 数据准备;
-                AIFoNodeBase *iCansetFo = [SMGUtils searchNode:self.i.canset];
+                AIFoNodeBase *siCansetFo = [SMGUtils searchNode:self.transferSiModel.canset];
                 AIFoNodeBase *targetFo = [SMGUtils searchNode:targetFoModel.content_p];
                 AIFoNodeBase *newHCanset = [theNet createConFo:orders];
                 
                 //14. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
                 NSLog(@"HCanset预想与实际类比:(状态:%@ fromTargetFo:F%ld) \n\t当前Canset:%@",TOStatus2Str(self.status),targetFoModel.content_p.pointerId,Pit2FStr(self.content_p));
                 NSArray *noRepeatArea_ps = [targetFo getConCansets:targetFoModel.cutIndex];
-                AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:newHCanset assFo:iCansetFo type:ATDefault noRepeatArea_ps:noRepeatArea_ps];
+                AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:newHCanset assFo:siCansetFo type:ATDefault noRepeatArea_ps:noRepeatArea_ps];
                 BOOL updateCansetSuccess = [targetFo updateConCanset:absCansetFo.pointer targetIndex:targetFoModel.cutIndex];
-                [AITest test101:absCansetFo proto:newHCanset conCanset:iCansetFo];
+                [AITest test101:absCansetFo proto:newHCanset conCanset:siCansetFo];
                 
                 if (updateCansetSuccess) {
                     //15. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);
@@ -501,14 +449,6 @@
     }
 }
 
-//取候选集由用转体后的本体Canset和Scene;
--(AITransferModel*) getProtoTransferModel {
-    if (self.baseSceneModel.type == SceneTypeI) return self.i;
-    if (self.baseSceneModel.type == SceneTypeFather) return self.father;
-    if (self.baseSceneModel.type == SceneTypeBrother) return self.brother;
-    return nil;
-}
-
 /**
  *  MARK:--------------------此方案是用于什么任务 (true=H false=R)--------------------
  */
@@ -524,7 +464,7 @@
 -(AIKVPointer*) sceneTo {
     if (self.isH) {
         TOFoModel *targetFoM = (TOFoModel*)self.basePFoOrTargetFoModel;//当前如果是H,这表示正在推进中targetFoM;
-        return targetFoM.i.canset;
+        return targetFoM.transferSiModel.canset;
     } else {
         return self.baseSceneModel.getIScene;//无论是R还是H,它的baseSceneModel都是rSceneModel;
     }
@@ -541,9 +481,8 @@
         self.targetIndex = [aDecoder decodeIntegerForKey:@"targetIndex"];
         self.subDemands = [aDecoder decodeObjectForKey:@"subDemands"];
         self.feedbackMv = [aDecoder decodeObjectForKey:@"feedbackMv"];
-        self.brother = [aDecoder decodeObjectForKey:@"brother"];
-        self.father = [aDecoder decodeObjectForKey:@"father"];
-        self.i = [aDecoder decodeObjectForKey:@"i"];
+        self.transferXvModel = [aDecoder decodeObjectForKey:@"transferXvModel"];
+        self.transferSiModel = [aDecoder decodeObjectForKey:@"transferSiModel"];
         self.refrectionNo = [aDecoder decodeBoolForKey:@"refrectionNo"];
     }
     return self;
@@ -556,9 +495,8 @@
     [aCoder encodeInteger:self.targetIndex forKey:@"targetIndex"];
     [aCoder encodeObject:self.subDemands forKey:@"subDemands"];
     [aCoder encodeObject:self.feedbackMv forKey:@"feedbackMv"];
-    [aCoder encodeObject:self.brother forKey:@"brother"];
-    [aCoder encodeObject:self.father forKey:@"father"];
-    [aCoder encodeObject:self.i forKey:@"i"];
+    [aCoder encodeObject:self.transferXvModel forKey:@"transferXvModel"];
+    [aCoder encodeObject:self.transferSiModel forKey:@"transferSiModel"];
     [aCoder encodeBool:self.refrectionNo forKey:@"refrectionNo"];
 }
 

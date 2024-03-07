@@ -277,6 +277,7 @@
     AIFoNodeBase *sceneTo = [SMGUtils searchNode:cansetModel.sceneTo];
     
     //6. 计算cansetToOrders
+    //说明: 场景包含帧用indexDic映射来迁移替换,场景不包含帧用迁移前的为准 (参考31104);
     NSMutableArray *orders = [[NSMutableArray alloc] init];
     for (NSInteger i = 0; i < cansetFrom.count; i++) {
         //a. 判断映射链: (参考29069-todo10.1-步骤2 & 31113-TODO8);
