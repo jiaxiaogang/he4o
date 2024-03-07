@@ -257,16 +257,16 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------找出交层场景中,有哪些canset是与当前fo迁移关联的--------------------
+ *  MARK:--------------------找出从sceneFrom已经迁移过来了哪些cansetFroms (由sceneTo调用)--------------------
  */
--(NSArray*) getTransferAbsCansets:(AIKVPointer*)absScene_p {
-    return [self filterCansetsWithScene:absScene_p fromTransferPorts:self.transferFromPorts];
+-(NSArray*) getTransferedCansetFroms:(AIKVPointer*)sceneFrom_p {
+    return [self findTransferRecord:sceneFrom_p inTransferPorts:self.transferFromPorts];
 }
 /**
- *  MARK:--------------------找出似层场景中,有哪些canset是与当前fo迁移关联的--------------------
+ *  MARK:--------------------找出sceneTo的哪些cansetTos是self迁移过去的 (由sceneFrom调用)--------------------
  */
--(NSArray*) getTransferConCansets:(AIKVPointer*)conScene_p {
-    return [self filterCansetsWithScene:conScene_p fromTransferPorts:self.transferToPorts];
+-(NSArray*) getTransferedCansetTos:(AIKVPointer*)sceneTo_p {
+    return [self findTransferRecord:sceneTo_p inTransferPorts:self.transferToPorts];
 }
 
 //MARK:===============================================================
@@ -276,9 +276,9 @@
 /**
  *  MARK:--------------------从fromTransferPorts中筛选出: 场景是scene的并转成cansets格式--------------------
  */
--(NSArray*) filterCansetsWithScene:(AIKVPointer*)scene fromTransferPorts:(NSArray*)fromTransferPorts {
-    return [SMGUtils convertArr:[SMGUtils filterArr:fromTransferPorts checkValid:^BOOL(AITransferPort *port) {
-        return [port.scene isEqual:scene];
+-(NSArray*) findTransferRecord:(AIKVPointer*)findScene inTransferPorts:(NSArray*)inTransferPorts {
+    return [SMGUtils convertArr:[SMGUtils filterArr:inTransferPorts checkValid:^BOOL(AITransferPort *port) {
+        return [port.scene isEqual:findScene];
     }] convertBlock:^id(AITransferPort *port) {
         return port.canset;
     }];

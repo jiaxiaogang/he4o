@@ -168,13 +168,13 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------找出交层场景中,有哪些canset是与当前fo迁移关联的--------------------
+ *  MARK:--------------------找出从sceneFrom已经迁移过来了哪些cansetFroms (由sceneTo调用)--------------------
  */
--(NSArray*) getTransferAbsCansets:(AIKVPointer*)absScene_p;
+-(NSArray*) getTransferedCansetFroms:(AIKVPointer*)sceneFrom_p;
 
 /**
- *  MARK:--------------------找出似层场景中,有哪些canset是与当前fo迁移关联的--------------------
+ *  MARK:--------------------找出sceneTo的哪些cansetTos是self迁移过去的 (由sceneFrom调用)--------------------
  */
--(NSArray*) getTransferConCansets:(AIKVPointer*)conScene_p;
+-(NSArray*) getTransferedCansetTos:(AIKVPointer*)sceneTo_p;
 
 @end
