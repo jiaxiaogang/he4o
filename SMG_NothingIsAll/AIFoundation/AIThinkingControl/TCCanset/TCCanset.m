@@ -194,7 +194,7 @@
     }
     
     //12. 伪迁移;
-    [TCTransfer transferForModel:result];
+    [TCTransfer transferXv:result];
     
     //13. 下帧初始化 (可接受反馈);
     [result pushNextFrame];
@@ -207,49 +207,25 @@
  *  @version
  *      2024.02.21: V2-在迭代hSolutionV3时,将H任务转cansetModel单独写个方法,并将此方法中多余代码统统去掉不写;
  */
-+(TOFoModel*) convert2HCansetModel:(AIKVPointer*)hCanset_p hDemand:(HDemandModel*)hDemand rCanset:(TOFoModel*)rCanset {
++(TOFoModel*) convert2HCansetModel:(AIKVPointer*)cansetFrom_p hDemand:(HDemandModel*)hDemand rCanset:(TOFoModel*)rCanset {
     //1. 根据hScene和hCanset的映射,取出hCanset的目标帧等数据;
     TOFoModel *targetFoModel = (TOFoModel*)hDemand.baseOrGroup.baseOrGroup;//targetFo就是当前h任务的base(targetAlg).base(targetFo);
     NSInteger hSceneCutIndex = rCanset.cutIndex;//hScene的推进进度;
     AISceneModel *rSceneModel = rCanset.baseSceneModel;//复用R的SceneModel,因为H任务没有独立的R场景树,它本来就是复用的R任务的场景树等;
-    AIFoNodeBase *hSceneFo = [SMGUtils searchNode:rCanset.cansetFo];
-    AIFoNodeBase *hCansetFo = [SMGUtils searchNode:hCanset_p];
-    NSDictionary *indexDic = [hSceneFo getConIndexDic:hCanset_p];
+    AIFoNodeBase *sceneFrom = [SMGUtils searchNode:rCanset.cansetFo];
+    NSDictionary *indexDic = [sceneFrom getConIndexDic:cansetFrom_p];
     NSInteger hSceneTargetIndex = hSceneCutIndex + 1;//H任务的目标其实就是下一帧;
     NSInteger hCansetTargetIndex = NUMTOOK([indexDic objectForKey:@(hSceneTargetIndex)]).integerValue;
     NSInteger hCansetCutIndex = [TOUtils goBackToFindConIndexByAbsIndex:indexDic absIndex:hSceneCutIndex];
     
     //2. 转为TOFoModel;
-    TOFoModel *result = [TOFoModel newForHCansetFo:hCanset_p sceneFo:hSceneFo.p base:hDemand
+    TOFoModel *result = [TOFoModel newForHCansetFo:cansetFrom_p sceneFo:sceneFrom.p base:hDemand
                        cansetCutIndex:hCansetCutIndex sceneCutIndex:hSceneCutIndex
                     cansetTargetIndex:hCansetTargetIndex sceneTargetIndex:hSceneCutIndex + 1
                basePFoOrTargetFoModel:targetFoModel baseSceneModel:rSceneModel];
     
     //3. 伪迁移;
-    //TODOTOMORROW20240221: 明日继续看下hTransfer方法要重写下;
-    //5. 从当前取到hCanset的rScene向当前正在推进中的rCanset下面迁移 (参考31112&31113);
-    //a. 迁移源RScene一支有: 从RScene -> RCanset -> HCanset三重indexDic;
-    AIKVPointer *rSceneFrom = rSceneModel.scene;
-    AIFoNodeBase *hSceneFrom = hSceneFo;
-    AIFoNodeBase *hCansetFrom = [SMGUtils searchNode:hCanset_p];
-    
-    //b. 迁移目标RScene一支也有: 从RScene -> RCanset -> HCanset三重indexDic;
-    AIKVPointer *rSceneTo = targetFoModel.i.scene;
-    AIKVPointer *hSceceTo = targetFoModel.i.canset;
-    
-    //c. 迁移源和迁移目标之间,有场景树关系;
-    AISceneModel *sceneTreeFrom = rSceneModel;
-    AISceneModel *sceneTreeTo = targetFoModel.baseSceneModel;
-    
-    if (sceneTreeTo.type == SceneTypeI) {
-        
-    }else if(sceneTreeTo.type == SceneTypeFather) {
-        
-        
-    }else if(sceneTreeTo.type == SceneTypeBrother) {
-        
-    }
-    
+    [TCTransfer transferXv:result];
     
     //4. 下帧初始化 (可接受反馈);
     [result pushNextFrame];

@@ -346,7 +346,7 @@
         NSLog(@"求解最佳结果:F%ld (前%.2f 中%.2f 后%.2f) %@",result.cansetFo.pointerId,result.frontMatchValue,result.midStableScore,result.backMatchValue,CLEANSTR(resultFo.spDic));
         
         //15. bestResult由用转体迁移;
-        [TCTransfer transferForCreate:result];
+        [TCTransfer transferSi:result];
 
         //15. 更新其前段帧的con和abs抽具象强度 (参考28086-todo2);
         [AINetUtils updateConAndAbsStrongByIndexDic:result.matchFrontIndexDic matchFo:result.sceneFo cansetFo:result.cansetFo];
