@@ -13,7 +13,7 @@
 /**
  *  MARK:--------------------将sceneModel转成canset_ps (override算法) (参考29069-todo5)--------------------
  */
-+(NSArray*) getOverrideCansets:(AISceneModel*)sceneModel sceneTargetIndex:(NSInteger)sceneTargetIndex;
++(NSArray*) getOverrideCansets:(AIFoNodeBase*)sceneFrom sceneFromTargetIndex:(NSInteger)sceneFromTargetIndex sceneTo:(AIFoNodeBase*)sceneTo;
 
 /**
  *  MARK:--------------------将canset_p转成cansetModel--------------------

@@ -17,36 +17,21 @@
  *      2023.04.23: BUG_修复差集取成了交集,导致总返回0条;
  *      2023.09.10: 支持H任务时的override算法 (指定targetIndex即可) (参考30127);
  */
-+(NSArray*) getOverrideCansets:(AISceneModel*)sceneModel sceneTargetIndex:(NSInteger)sceneTargetIndex {
-    //1. 数据准备;
-    AIFoNodeBase *selfFo = [SMGUtils searchNode:sceneModel.scene];
-    
++(NSArray*) getOverrideCansets:(AIFoNodeBase*)sceneFrom sceneFromTargetIndex:(NSInteger)sceneFromTargetIndex sceneTo:(AIFoNodeBase*)sceneTo {
+    //1. 取所有protoCansets;
     //2023.12.24: 性能测试记录 (结果: 此方法很卡) (参考31025-代码段-问题1);
     //  a. 记录此处为brother时,   共执行了: 300次 x 每次10ms     = 3s;
     //  b. 记录此处为father时,    共执行了: 16次  x 每次1ms      = 16ms;
     //  c. 记录此处为i时,         共执行了: 16次  x 每次125ms    = 2s;
-    //2. 不同type的公式不同 (参考29069-todo5.3 & 5.4 & 5.5);
-    if (sceneModel.type == SceneTypeBrother) {
-        //3. 当前是brother时: (brother有效canset = brother.conCansets - 与father有迁移关联部分) (参考29069-todo5.3);
-        NSArray *brotherConCansets = [AIFilter solutionCansetFilter:selfFo targetIndex:sceneTargetIndex];
-        NSArray *brotherFilter_ps = [TCCanset getAlreadyTransfered_ps:sceneModel];
-        NSArray *result = [SMGUtils removeSub_ps:brotherFilter_ps parent_ps:brotherConCansets];
-        if (Log4TCCanset && result.count > 0) NSLog(@"测下override过滤生效 (B-F): 原有%ld - 过滤%ld => 结果%ld",brotherConCansets.count,brotherFilter_ps.count,result.count);
-        return result;
-    } else if (sceneModel.type == SceneTypeFather) {
-        //4. 当前是father时: (father有效canset = father.conCansets - 与i有迁移关联部分) (参考29069-todo5.4);
-        NSArray *fatherConCansets = [AIFilter solutionCansetFilter:selfFo targetIndex:sceneTargetIndex];
-        NSArray *fatherFilter_ps = [TCCanset getAlreadyTransfered_ps:sceneModel];
-        NSArray *result = [SMGUtils removeSub_ps:fatherFilter_ps parent_ps:fatherConCansets];
-        if (Log4TCCanset && result.count > 0) NSLog(@"测下override过滤生效 (F-I): 原有%ld - 过滤%ld => 结果%ld",fatherConCansets.count,fatherFilter_ps.count,result.count);
-        return result;
-    } else if (sceneModel.type == SceneTypeI) {
-        //4. 当前是i时: (i有效canset = i.conCansets) (参考29069-todo5.5);
-        NSArray *iConCansets = [AIFilter solutionCansetFilter:selfFo targetIndex:sceneTargetIndex];
-        if (Log4TCCanset && iConCansets.count > 0) NSLog(@"测下override过滤生效 (I): 结果%ld",iConCansets.count);
-        return iConCansets;
-    }
-    return nil;
+    NSArray *protoCansetFroms = [AIFilter solutionCansetFilter:sceneFrom targetIndex:sceneFromTargetIndex];
+    
+    //2. 获取已经迁移过的 (override用来过滤避免重复迁移) (参考29069-todo5.2)
+    NSArray *alreadyTransfered_Cansets = [sceneTo getTransferedCansetFroms:sceneFrom.p];
+    
+    //3. 防重,并将防重后结果返回;
+    NSArray *result = [SMGUtils removeSub_ps:alreadyTransfered_Cansets parent_ps:protoCansetFroms];
+    if (Log4TCCanset && result.count > 0) NSLog(@"测下override过滤生效 (F-I): 原有%ld - 过滤%ld => 结果%ld",protoCansetFroms.count,alreadyTransfered_Cansets.count,result.count);
+    return result;
 }
 
 /**
@@ -235,19 +220,6 @@
 //MARK:===============================================================
 //MARK:                     < privateMethod >
 //MARK:===============================================================
-
-/**
- *  MARK:--------------------获取已经迁移过的 (override用来过滤避免重复迁移) (参考29069-todo5.2)--------------------
- *  @desc 取father过滤部分 (用于mIsC过滤) (参考29069-todo5.1);
- *  @version
- *      2023.04.23: BUG_修复抽具象关联取不到过滤结果,改为用迁移关联取 (参考29074);
- *      2024.03.07: 因推举和继承合并: 重构简化代码;
- */
-+(NSArray*) getAlreadyTransfered_ps:(AISceneModel*)sceneModel {
-    AIKVPointer *sceneFrom = sceneModel.scene;
-    AIFoNodeBase *sceneTo = [SMGUtils searchNode:sceneModel.getIScene];
-    return [sceneTo getTransferedCansetFroms:sceneFrom];
-}
 
 /**
  *  MARK:--------------------递归找出pFo (参考28025-todo8)--------------------

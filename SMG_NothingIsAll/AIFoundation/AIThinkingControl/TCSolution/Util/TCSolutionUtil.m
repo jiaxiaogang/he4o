@@ -34,7 +34,9 @@
     //2. 每个cansetModel转solutionModel;
     NSArray *cansetModels = [SMGUtils convertArr:sceneModels convertItemArrBlock:^NSArray *(AISceneModel *sceneModel) {
         //3. 取出overrideCansets;
-        NSArray *cansets = ARRTOOK([TCCanset getOverrideCansets:sceneModel sceneTargetIndex:sceneModel.cutIndex + 1]);//127ms
+        AIFoNodeBase *sceneFrom = [SMGUtils searchNode:sceneModel.scene];
+        AIFoNodeBase *sceneTo = [SMGUtils searchNode:sceneModel.getIScene];
+        NSArray *cansets = ARRTOOK([TCCanset getOverrideCansets:sceneFrom sceneFromTargetIndex:sceneModel.cutIndex + 1 sceneTo:sceneTo]);//127ms
         NSArray *itemCansetModels = [SMGUtils convertArr:cansets convertBlock:^id(AIKVPointer *canset) {
             //4. 过滤器 & 转cansetModels候选集 (参考26128-第1步 & 26161-1&2&3);
             NSInteger aleardayCount = sceneModel.cutIndex + 1;
@@ -81,6 +83,12 @@
         
         //第1步: 取hCansets: 从cutIndex到sceneFo.count之间的hCansets (参考31102);
         NSInteger hSceneTargetIndex = rCanset.cutIndex + 1;
+        
+        //TODOTOMORROW20240307: 改成用override取cansets;
+        
+        
+        
+        
         NSArray *hCansets = [rCansetFo getConCansets:hSceneTargetIndex];
         
         //第2步: 筛选有效hCansets: hCanset的targetAlg帧 与 h任务targetAlg有isBro关系 (参考31103);
@@ -101,31 +109,15 @@
         hCansets = [SMGUtils convertArr:hCansets convertBlock:^id(AIKVPointer *hCanset) {
             return [TCCanset convert2HCansetModel:hCanset hDemand:hDemand rCanset:rCanset];
         }];
+        if (Log4GetCansetResult4H && hCansets.count > 0) NSLog(@"\t item场景(%@):%@ 取得候选数:%ld",SceneType2Str(rCanset.baseSceneModel.type),Pit2FStr(rCanset.baseSceneModel.scene),hCansets.count);
         
         //Step4 -> 实时竞争hCansets:
         //a. 对有效hCansets进行实时竞争;
         
         
     }
-   
-    //2. 再根据rDemand取出场景树;
-    NSArray *sceneModels = [TCScene rGetSceneTree:baseRDemand];
-    //3. 再根据r场景树,找出cansets;
     
-    //2. 每个cansetModel转solutionModel;
-    NSArray *cansetModels = [SMGUtils convertArr:sceneModels convertItemArrBlock:^NSArray *(AISceneModel *sceneModel) {
-        //3. 取出overrideCansets;
-        NSArray *cansets = ARRTOOK([TCCanset getOverrideCansets:sceneModel sceneTargetIndex:sceneModel.cutIndex + 1]);//127ms
-        NSArray *itemCansetModels = [SMGUtils convertArr:cansets convertBlock:^id(AIKVPointer *canset) {
-            //4. 过滤器 & 转cansetModels候选集 (参考26128-第1步 & 26161-1&2&3);
-            NSInteger aleardayCount = sceneModel.cutIndex + 1;
-            return [TCCanset convert2CansetModel:canset sceneFo:sceneModel.scene basePFoOrTargetFoModel:targetFoM ptAleardayCount:aleardayCount isH:true sceneModel:sceneModel demand:hDemand];//245ms
-        }];
-        
-        if (Log4GetCansetResult4H && cansets.count > 0) NSLog(@"\t item场景(%@):%@ 取得候选数:%ld 转成候选模型数:%ld",SceneType2Str(sceneModel.type),Pit2FStr(sceneModel.scene),cansets.count,itemCansetModels.count);
-        return itemCansetModels;
-    }];
-    NSLog(@"第2步 转为候选集 总数:%ld",cansetModels.count);
+    NSLog(@"第2步 转为候选集 总数:%ld",targetAlgM.actionFoModels.count);
 
     //5. 竞争求解;
     return [self realTimeRankCansets:hDemand zonHeScoreBlock:nil];//400ms
@@ -250,8 +242,9 @@
     //2. 每个cansetModel转solutionModel;
     NSArray *cansetModels = [SMGUtils convertArr:sceneModels convertItemArrBlock:^NSArray *(AISceneModel *sceneModel) {
         //3. 取出overrideCansets;
-        AIFoNodeBase *sceneFo = [SMGUtils searchNode:sceneModel.scene];
-        NSArray *cansets = ARRTOOK([TCCanset getOverrideCansets:sceneModel sceneTargetIndex:sceneFo.count]);//127ms
+        AIFoNodeBase *sceneFrom = [SMGUtils searchNode:sceneModel.scene];
+        AIFoNodeBase *sceneTo = [SMGUtils searchNode:sceneModel.getIScene];
+        NSArray *cansets = ARRTOOK([TCCanset getOverrideCansets:sceneFrom sceneFromTargetIndex:sceneFrom.count sceneTo:sceneTo]);//127ms
         AIMatchFoModel *pFo = [SMGUtils filterSingleFromArr:demand.validPFos checkValid:^BOOL(AIMatchFoModel *item) {
             return [item.matchFo isEqual:sceneModel.getRoot.scene];
         }];
