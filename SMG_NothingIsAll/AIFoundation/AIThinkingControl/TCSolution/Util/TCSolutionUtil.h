@@ -14,8 +14,7 @@
 //MARK:===============================================================
 //MARK:                     < 求解 >
 //MARK:===============================================================
-+(TOFoModel*) hSolutionV2:(HDemandModel *)demand;
-+(TOFoModel*) debugHSolution:(HDemandModel *)demand;
++(TOFoModel*) hSolutionV3:(HDemandModel *)demand;
 +(TOFoModel*) rSolution:(ReasonDemandModel *)demand;
 
 /**
@@ -27,10 +26,5 @@
  *  MARK:--------------------获取aleardayCount--------------------
  */
 +(NSInteger) getRAleardayCount:(ReasonDemandModel*)rDemand pFo:(AIMatchFoModel*)pFo;
-
-/**
- *  MARK:--------------------更新状态besting和bested (参考31073-TODO2d)--------------------
- */
-+(void) updateCansetStatus:(TOFoModel*)bestCanset demand:(DemandModel*)demand;
 
 @end

@@ -18,47 +18,14 @@
  *  MARK:--------------------H求解--------------------
  *  @version
  *      2023.09.10: 升级v2,支持TCScene和TCCanset (参考30127);
+ *      2024.02.xx: 升级v3:
+ *                  1. HCansetFrom的取值从从pFo下的sceneTree下的rCanset下找 (参考hSolutionV3中筛选出targetPFo,并以此筛选出hSceneFrom);
+ *                  2. H与R的迁移路径不同的处理 (H比R的首尾各多一层,参考TCTransferV3);
  */
-+(TOFoModel*) hSolutionV2:(HDemandModel *)demand {
-    //0. 初始化一次,后面只执行generalSolution部分;
-    if (demand.alreadyInitCansetModels) {
-        ELog(@"solution()应该只执行一次,别的全从TCPlan来分发和实时竞争,此处如果重复执行,查下原因");
-        return nil;
-    }
-    demand.alreadyInitCansetModels = true;
-    
-    //1. 收集cansetModels候选集;
-    NSArray *sceneModels = [TCScene hGetSceneTree:demand];
-    TOFoModel *targetFoM = (TOFoModel*)demand.baseOrGroup.baseOrGroup;
-
-    //2. 每个cansetModel转solutionModel;
-    NSArray *cansetModels = [SMGUtils convertArr:sceneModels convertItemArrBlock:^NSArray *(AISceneModel *sceneModel) {
-        //3. 取出overrideCansets;
-        AIFoNodeBase *sceneFrom = [SMGUtils searchNode:sceneModel.scene];
-        AIFoNodeBase *sceneTo = [SMGUtils searchNode:sceneModel.getIScene];
-        NSArray *cansets = ARRTOOK([TCCanset getOverrideCansets:sceneFrom sceneFromTargetIndex:sceneModel.cutIndex + 1 sceneTo:sceneTo]);//127ms
-        NSArray *itemCansetModels = [SMGUtils convertArr:cansets convertBlock:^id(AIKVPointer *canset) {
-            //4. 过滤器 & 转cansetModels候选集 (参考26128-第1步 & 26161-1&2&3);
-            NSInteger aleardayCount = sceneModel.cutIndex + 1;
-            return [TCCanset convert2CansetModel:canset sceneFo:sceneModel.scene basePFoOrTargetFoModel:targetFoM ptAleardayCount:aleardayCount isH:true sceneModel:sceneModel demand:demand];//245ms
-        }];
-        
-        if (Log4GetCansetResult4H && cansets.count > 0) NSLog(@"\t item场景(%@):%@ 取得候选数:%ld 转成候选模型数:%ld",SceneType2Str(sceneModel.type),Pit2FStr(sceneModel.scene),cansets.count,itemCansetModels.count);
-        return itemCansetModels;
-    }];
++(TOFoModel*) hSolutionV3:(HDemandModel *)hDemand {
     //TODOTOMORROW20231004:
     //查下,这里hSolution总是输出无计可施,而此时"皮果"已经有了,按道理说,前段条件满足已经满足了;
-    //日志: 第1步 H场景树枝点数 I:1 + Father:0 + Brother:0 = 总:1 (这里总是取到hCanset=0条);
     
-    
-    
-    NSLog(@"第2步 转为候选集 总数:%ld",cansetModels.count);
-
-    //5. 竞争求解;
-    return [self realTimeRankCansets:demand zonHeScoreBlock:nil];//400ms
-}
-
-+(TOFoModel*) hSolutionV3:(HDemandModel *)hDemand {
     //0. 初始化一次,后面只执行generalSolution部分;
     if (hDemand.alreadyInitCansetModels) {
         ELog(@"solution()应该只执行一次,别的全从TCPlan来分发和实时竞争,此处如果重复执行,查下原因");
@@ -102,124 +69,20 @@
         }];
         
         //第3步: 转为cansetModel格式;
-        hCansets = [SMGUtils convertArr:hCansets convertBlock:^id(AIKVPointer *hCanset) {
-            return [TCCanset convert2HCansetModel:hCanset hDemand:hDemand rCanset:rCanset];
-        }];
+        for (AIKVPointer *cansetFrom in hCansets) {
+            [TCCanset convert2HCansetModel:cansetFrom hDemand:hDemand rCanset:rCanset];
+        }
         if (Log4GetCansetResult4H && hCansets.count > 0) NSLog(@"\t item场景(%@):%@ 取得候选数:%ld",SceneType2Str(rCanset.baseSceneModel.type),Pit2FStr(rCanset.baseSceneModel.scene),hCansets.count);
         
+        //第4步: TODOTOMORROW20240308-看此处补齐hCanset关于alg匹配度,等的过滤竞争机制;
         
-        //TODOTOMORROW20240307: 明天继续这儿;
-        
-        //Step4 -> 实时竞争hCansets:
-        //a. 对有效hCansets进行实时竞争;
         
         
     }
+    NSLog(@"第2步 转为候选集 总数:%ld",hDemand.actionFoModels.count);
     
-    NSLog(@"第2步 转为候选集 总数:%ld",targetAlgM.actionFoModels.count);
-
-    //5. 竞争求解;
+    //4. 竞争求解: 对hCansets进行实时竞争;
     return [self realTimeRankCansets:hDemand zonHeScoreBlock:nil];//400ms
-}
-
-+(TOFoModel*) debugHSolution:(HDemandModel *)demand {
-    
-    //1. 取出rSolution的成果,在它的基础上继续做hSolution;
-    ReasonDemandModel *rDemand = (ReasonDemandModel*)demand.baseOrGroup.baseOrGroup.baseOrGroup;
-    
-    //2. CansetModels可用于从中寻找可供迁移的hCanset;
-    //TODOTOMORROW20240126: 随时继续做这里,当时应该有手稿
-    //  1. 这里的rCansetModels其实就是scene树
-    //  2. 到时候分析一下它和scene树的区别,前者元素是TOFoModel,后者是AISceneModel;
-    //  3. 但前者可能只是用非体阶段,即H的迁移比R中要复杂一两层的;
-    
-    NSArray *rCansetModels = rDemand.actionFoModels;
-    NSLog(@"第1步 rCansetModels数: %ld",rCansetModels.count);
-    
-    //2. 根据当前hAlg取抽具象树;
-    TOAlgModel *hAlgModel = (TOAlgModel*)demand.baseOrGroup;
-    AIFoNodeBase *hAlg = [SMGUtils searchNode:hAlgModel.content_p];
-    NSArray *absHAlgs = Ports2Pits([AINetUtils absPorts_All:hAlg]);
-    NSArray *conHAlgs = [SMGUtils convertArr:absHAlgs convertItemArrBlock:^NSArray *(AIKVPointer *obj) {
-        AIAlgNodeBase *absHAlg = [SMGUtils searchNode:obj];
-        return Ports2Pits([AINetUtils conPorts_All:absHAlg]);
-    }];
-    
-    NSMutableArray *allHAlgs = [[NSMutableArray alloc] init];
-    [allHAlgs addObject:hAlg.pointer];
-    [allHAlgs addObjectsFromArray:absHAlgs];
-    [allHAlgs addObjectsFromArray:conHAlgs];
-    NSLog(@"第2步 absHAlg数:%ld conHAlg数:%ld HAlg树总数:%ld",absHAlgs.count,conHAlgs.count,allHAlgs.count);
-//    NSLog(@"=====> %@",CLEANSTR([SMGUtils convertArr:allHAlgs convertBlock:^id(AIKVPointer *obj) {
-//        return STRFORMAT(@"F%ld",obj.pointerId);
-//    }]));
-    
-    NSString *hAlgStr = Alg2FStr(hAlg);
-    NSMutableArray *havHCansetOfRCanset = [[NSMutableArray alloc] init];
-    if ([hAlgStr containsString:@"皮果"]) {
-        NSLog(@"直接调试以下,rCanset中就没有包含 果 的...");
-        //1. 可是不对啊,都生成皮果hDemand了,怎么可能rCanset里没一个有"果"的呢?
-        //2. 即使就真的全没果,那么只好再多训练一些newHCanset出来了...
-        //3. 可是下面havHAlgRCansetModelsCount又显示计数5,就奇怪了...,既然没有"果",又哪里计到5呢?
-        
-        
-        NSInteger step1 = 0,step2 = 0;
-        for (TOFoModel *item in rCansetModels) {
-            AIFoNodeBase *rCanset = [SMGUtils searchNode:item.cansetFo];
-            for (NSInteger i = 0; i < rCanset.count; i++) {
-                AIKVPointer *rCansetAlg = ARR_INDEX(rCanset.content_ps, i);
-                NSString *rCansetAlgStr = Pit2FStr(rCansetAlg);
-                if (![rCansetAlgStr containsString:@"皮果"]) {
-                    step1++;
-                    continue;
-                }
-                
-                NSArray *hCansets = [rCanset getConCansets:i];
-                if (!ARRISOK(hCansets)) {
-                    step2++;
-                    continue;
-                }
-                
-                [havHCansetOfRCanset addObject:item];
-                NSLog(@"挂载有hCanset Success");
-            }
-        }
-        NSLog(@"==============>>> %ld %ld",step1,step2);//包含有皮果的rCanset共192条,但它们全部都没有挂截hCanset;
-    }
-    
-    
-    //3. 从所有rCanset中,筛选出包含hAlg抽具象树的;
-    __block NSMutableArray *havHAlgRCansetModels = [[NSMutableArray alloc] init];
-    NSArray *hCansets = [SMGUtils convertArr:rCansetModels convertItemArrBlock:^NSArray *(TOFoModel *item) {
-        //a. 从每条rCanset中,找是否包含hAlg树的任何一个枝叶;
-        AIFoNodeBase *rCansetFo = [SMGUtils searchNode:item.cansetFo];
-        NSInteger findIndex = -1;
-        for (NSInteger i = 0; i < rCansetFo.count; i++) {
-            AIKVPointer *rCansetAlg = ARR_INDEX(rCansetFo.content_ps, i);
-            if ([allHAlgs containsObject:rCansetAlg]) {
-                findIndex = i;
-                break;
-            }
-        }
-        if (findIndex == -1) return nil;//找hAlg树枝叶失败: 则此rCanset不具备迁移给hScene.hAlg帧的条件;
-        [havHAlgRCansetModels addObject:item];
-        
-        //b. 从所有rCanset中,筛选出有hAlg的hCanset解的部分;
-        NSArray *hCansets = [rCansetFo getConCansets:findIndex];
-        if (!ARRISOK(hCansets)) return nil;//rCanset这帧无H解: 则它没任何hCanset可迁移给hScene.hAlg;
-        return hCansets;
-    }];
-    NSLog(@"第3步 包含HAlg树的rCansetModels数:%ld \n%@",havHAlgRCansetModels.count,CLEANSTR([SMGUtils convertArr:havHAlgRCansetModels convertBlock:^id(TOFoModel *obj) {
-        return STRFORMAT(@"F%ld",obj.cansetFo.pointerId);
-    }]));
-    NSLog(@"第4步 找到hCansets数:%ld",hCansets.count);
-    
-    //5. 对有解的部分进行竞争;
-    
-    //6. 将最好的hCanset解返回 (改写H版本的generalSolution());
-    return nil;
-    
-    //7. 返回后,将hCanset打包成foModel,并迁移;
 }
 
 /**
@@ -267,6 +130,7 @@
 /**
  *  MARK:--------------------Cansets实时竞争--------------------
  *  @desc 思考求解: 前段匹配,中段加工,后段静默 (参考26127);
+ *  @param zonHeScoreBlock TCSolution初次求解调用时传nil & 非初次求解:TCPlan调用时传TCScore算出的综合得分;
  *  @version
  *      2022.06.04: 修复结果与当前场景相差甚远BUG: 分三级排序窄出 (参考26194 & 26195);
  *      2022.06.09: 将R和H的求解封装成同一方法,方便调用和迭代;

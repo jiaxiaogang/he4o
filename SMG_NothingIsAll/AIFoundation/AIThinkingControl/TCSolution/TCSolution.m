@@ -261,7 +261,7 @@
     Debug();
     
     //4. 快思考无果或后2条,再做求解;
-    TOFoModel *bestResult = [TCSolutionUtil hSolutionV2:hDemand];
+    TOFoModel *bestResult = [TCSolutionUtil hSolutionV3:hDemand];
     
     //8. 新解决方案_的结果处理;
     DebugE();
