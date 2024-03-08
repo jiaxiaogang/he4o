@@ -326,9 +326,9 @@
     feedbackMatchAlg_ps = ARRTOOK(feedbackMatchAlg_ps);
     
     //2. 判断反馈mIsC是否有效 (比如找锤子,看到锤子了 & 再如吃,确定自己是否真吃了);
-    NSArray *iCansetContent_ps = [self getICansetContent_ps];
-    AIKVPointer *cansetWaitAlg_p = ARR_INDEX(iCansetContent_ps, self.cutIndex + 1);
-    BOOL mIsC = [feedbackMatchAlg_ps containsObject:cansetWaitAlg_p];
+    NSArray *cansetToContent_ps = [self getCansetToContent_ps];
+    AIKVPointer *cansetToWaitAlg_p = ARR_INDEX(cansetToContent_ps, self.cutIndex + 1);
+    BOOL mIsC = [feedbackMatchAlg_ps containsObject:cansetToWaitAlg_p];
     if (!mIsC) return;
     
     //3. 有效时: 记录feedbackAlg;
@@ -437,8 +437,8 @@
     }
 }
 
-//无论现在self是体是用阶段,此方法都能顺利返回iCanset的content_ps;
--(NSArray*) getICansetContent_ps {
+//无论现在self是体是用阶段,此方法都能顺利返回实际: cansetTo最终行为化时的canset的content_ps;
+-(NSArray*) getCansetToContent_ps {
     if (!self.transferXvModel) {
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:self.cansetFo];
         return cansetFo.content_ps;
