@@ -61,8 +61,6 @@
 #import "AISceneModel.h"
 #import "FrontIndexDicModel.h"
 #import "AITransferModel.h"
-#import "TCJiCenModel.h"
-#import "TCTuiJuModel.h"
 #import "TCTransferXvModel.h"
 #import "TCResult.h"
 #import "DirectIndexDic.h"

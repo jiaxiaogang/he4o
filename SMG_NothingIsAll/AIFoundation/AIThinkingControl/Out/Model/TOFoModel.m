@@ -439,11 +439,11 @@
 
 //无论现在self是体是用阶段,此方法都能顺利返回iCanset的content_ps;
 -(NSArray*) getICansetContent_ps {
-    if (self.baseSceneModel.type == SceneTypeI) {
+    if (!self.transferXvModel) {
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:self.cansetFo];
         return cansetFo.content_ps;
     } else {
-        return [SMGUtils convertArr:self.jiCenModel.iCansetOrders convertBlock:^id(AIShortMatchModel_Simple *obj) {
+        return [SMGUtils convertArr:self.transferXvModel.cansetToOrders convertBlock:^id(AIShortMatchModel_Simple *obj) {
             return obj.alg_p;
         }];
     }

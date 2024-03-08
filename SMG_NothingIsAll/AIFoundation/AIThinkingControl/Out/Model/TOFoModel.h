@@ -24,7 +24,7 @@
  *  @version
  *      2021.03.27: 实现ITryActionFoDelegate接口,因为每个fo都有可能是子任务 (参考22193);
  */
-@class AISceneModel,AITransferModel,TCJiCenModel,TCTuiJuModel,TCTransferXvModel;
+@class AISceneModel,AITransferModel,TCTransferXvModel;
 @interface TOFoModel : TOModelBase <ISubModelsDelegate,ISubDemandDelegate,NSCoding>
 
 /**
@@ -166,8 +166,6 @@
 @property (assign, nonatomic) NSInteger sceneCutIndex;  //sceneFo已发生截点 (含cutIndex也已发生);
 @property (assign, nonatomic) NSInteger sceneTargetIndex;//sceneFo任务目标index (R时为fo.count,H时为目标帧下标);
 
-@property (strong, nonatomic) TCJiCenModel *jiCenModel;
-@property (strong, nonatomic) TCTuiJuModel *tuiJuModel;
 @property (strong, nonatomic) TCTransferXvModel *tiDhModel;
 
 /**
