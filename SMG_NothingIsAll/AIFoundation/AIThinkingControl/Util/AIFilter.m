@@ -60,7 +60,7 @@
  *      2023.09.04: 加上hStrong做二级排序因子 (参考30125-方案);
  *      2023.12.26: 优化sort性能,把getEffectStrong()提出来提前取好 (参考31025-代码段-问题1) //共三处优化,此乃其一;
  */
-+(NSArray*) solutionCansetFilter:(AIFoNodeBase*)sceneFo targetIndex:(NSInteger)targetIndex {
++(NSArray*) solutionRCansetFilter:(AIFoNodeBase*)sceneFo targetIndex:(NSInteger)targetIndex {
     NSArray *protoConCansets = [sceneFo getConCansets:targetIndex];
     
     //1. canset数组转成mapModel (提前把strong都取出来,避免后面在排序时访问太多次而卡性能);

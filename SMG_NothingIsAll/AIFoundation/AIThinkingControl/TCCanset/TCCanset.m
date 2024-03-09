@@ -11,30 +11,6 @@
 @implementation TCCanset
 
 /**
- *  MARK:--------------------将sceneModel转成canset_ps (override算法) (参考29069-todo5)--------------------
- *  @desc 当前下面挂载的且有效的cansets: (当前cansets - 用优先级更高一级cansets);
- *  @version
- *      2023.04.23: BUG_修复差集取成了交集,导致总返回0条;
- *      2023.09.10: 支持H任务时的override算法 (指定targetIndex即可) (参考30127);
- */
-+(NSArray*) getOverrideCansets:(AIFoNodeBase*)sceneFrom sceneFromTargetIndex:(NSInteger)sceneFromTargetIndex sceneTo:(AIFoNodeBase*)sceneTo {
-    //1. 取所有protoCansets;
-    //2023.12.24: 性能测试记录 (结果: 此方法很卡) (参考31025-代码段-问题1);
-    //  a. 记录此处为brother时,   共执行了: 300次 x 每次10ms     = 3s;
-    //  b. 记录此处为father时,    共执行了: 16次  x 每次1ms      = 16ms;
-    //  c. 记录此处为i时,         共执行了: 16次  x 每次125ms    = 2s;
-    NSArray *protoCansetFroms = [AIFilter solutionCansetFilter:sceneFrom targetIndex:sceneFromTargetIndex];
-    
-    //2. 获取已经迁移过的 (override用来过滤避免重复迁移) (参考29069-todo5.2)
-    NSArray *alreadyTransfered_Cansets = [sceneTo getTransferedCansetFroms:sceneFrom.p];
-    
-    //3. 防重,并将防重后结果返回;
-    NSArray *result = [SMGUtils removeSub_ps:alreadyTransfered_Cansets parent_ps:protoCansetFroms];
-    if (Log4TCCanset && result.count > 0) NSLog(@"测下override过滤生效 (F-I): 原有%ld - 过滤%ld => 结果%ld",protoCansetFroms.count,alreadyTransfered_Cansets.count,result.count);
-    return result;
-}
-
-/**
  *  MARK:--------------------将canset_p转成cansetModel--------------------
  *  @desc 初步比对候选集是否适用于protoFo (参考26128-第1步);
  *  @param ptAleardayCount      : ptFo已发生个数: 即取得"canset的basePFoOrTargetFo推进到哪了"的截点 (aleardayCount = cutIndex+1 或 actionIndex);

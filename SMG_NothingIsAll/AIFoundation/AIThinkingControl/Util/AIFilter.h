@@ -31,7 +31,7 @@
 /**
  *  MARK:--------------------Canset求解过滤器 (参考29081-todo41)--------------------
  */
-+(NSArray*) solutionCansetFilter:(AIFoNodeBase*)sceneFo targetIndex:(NSInteger)targetIndex;
++(NSArray*) solutionRCansetFilter:(AIFoNodeBase*)sceneFo targetIndex:(NSInteger)targetIndex;
 
 /**
  *  MARK:--------------------Scene求解过滤器 (参考2908a-todo2)--------------------
