@@ -59,12 +59,12 @@
         NSArray *cansetFroms2 = [SMGUtils removeSub_ps:alreadyTransfered_Cansets parent_ps:cansetFroms1];
         
         //6. 筛选有效hCansets: hCanset的targetAlg帧 与 h任务targetAlg有isBro关系 (参考31103-第2步);
-        NSArray *cansetFroms3 = [SMGUtils filterArr:cansetFroms2 checkValid:^BOOL(AIKVPointer *hCanset) {
+        NSArray *cansetFroms3 = [SMGUtils filterArr:cansetFroms2 checkValid:^BOOL(AIKVPointer *cansetFrom_p) {
             //a. 根据hScene和hCanset的映射,取出hCanset的目标帧;
-            AIFoNodeBase *hCansetFo = [SMGUtils searchNode:hCanset];
-            NSDictionary *indexDic = [sceneFrom getConIndexDic:hCanset];
+            AIFoNodeBase *cansetFrom = [SMGUtils searchNode:cansetFrom_p];
+            NSDictionary *indexDic = [sceneFrom getConIndexDic:cansetFrom_p];
             NSInteger cansetFromTargetIndex = NUMTOOK([indexDic objectForKey:@(sceneFromTargetIndex)]).integerValue;
-            AIKVPointer *cansetFromTargetAlg = ARR_INDEX(hCansetFo.content_ps, cansetFromTargetIndex);
+            AIKVPointer *cansetFromTargetAlg = ARR_INDEX(cansetFrom.content_ps, cansetFromTargetIndex);
             
             //b. 判断hCanset目标帧与当前任务targetAlg目标,有mcIsBro关系;
             return [TOUtils mcIsBro:cansetFromTargetAlg c:targetAlgM.content_p];
