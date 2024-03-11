@@ -887,6 +887,31 @@
 }
 
 /**
+ *  MARK:--------------------找出最大的--------------------
+ *  @param scoreBlock 单条评分 notnull
+ *  @result 返回maxObj和maxScore;
+ */
++(id) filterBestObj:(NSArray*)arr scoreBlock:(CGFloat(^)(id item))scoreBlock {
+    return [SMGUtils filterBest:arr scoreBlock:scoreBlock].v1;
+}
++(CGFloat) filterBestScore:(NSArray*)arr scoreBlock:(CGFloat(^)(id item))scoreBlock {
+    return NUMTOOK([SMGUtils filterBest:arr scoreBlock:scoreBlock].v2).floatValue;
+}
++(MapModel*) filterBest:(NSArray*)arr scoreBlock:(CGFloat(^)(id item))scoreBlock {
+    arr = ARRTOOK(arr);
+    CGFloat bestScore = CGFLOAT_MIN;
+    id bestObj = nil;
+    for (AIKVPointer *curObj in arr) {
+        CGFloat curScore = scoreBlock(curObj);
+        if (bestObj == nil || curScore > bestScore) {
+            bestObj = curObj;
+            bestScore = curScore;
+        }
+    }
+    return [MapModel newWithV1:bestObj v2:@(bestScore)];
+}
+
+/**
  *  MARK:--------------------筛选alg by 指定标识--------------------
  *  @desc 从alg_ps中查找含valueIdentifier标识稀疏码的概念并返回;
  *  @result 逐条返回 + 中断前所有收集全返回;

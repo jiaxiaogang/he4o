@@ -29,6 +29,7 @@
  */
 +(BOOL) mcIsBro:(AIKVPointer*)m c:(AIKVPointer*)c;
 +(BOOL) mcIsBro:(NSArray*)matchAlg_ps cansetA:(AIKVPointer*)cansetA_p;
++(NSArray*) dataOfMcIsBro:(AIKVPointer*)m c:(AIKVPointer*)c;
 
 /**
  *  MARK:--------------------在具象Content中定位抽象Item的下标--------------------

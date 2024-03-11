@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 
-@class AIPointer,AIKVPointer,AIObject,AIArray,ThinkModel,AIPort,AINodeBase,AIAlgNodeBase;
+@class AIPointer,AIKVPointer,AIObject,AIArray,ThinkModel,AIPort,AINodeBase,AIAlgNodeBase,MapModel;
 @interface SMGUtils : NSObject
 
 
@@ -267,6 +267,13 @@
  *  MARK:--------------------查找单条--------------------
  */
 +(id) filterSingleFromArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid;
+
+/**
+ *  MARK:--------------------找出最大的--------------------
+ */
++(id) filterBestObj:(NSArray*)arr scoreBlock:(CGFloat(^)(id item))scoreBlock;
++(CGFloat) filterBestScore:(NSArray*)arr scoreBlock:(CGFloat(^)(id item))scoreBlock;
++(MapModel*) filterBest:(NSArray*)arr scoreBlock:(CGFloat(^)(id item))scoreBlock;
 
 /**
  *  MARK:--------------------筛选alg by 指定标识--------------------

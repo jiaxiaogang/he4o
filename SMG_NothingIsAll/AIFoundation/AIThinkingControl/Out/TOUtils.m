@@ -83,13 +83,8 @@
  *  MARK:--------------------判断mc有共同抽象--------------------
  */
 +(BOOL) mcIsBro:(AIKVPointer*)m c:(AIKVPointer*)c {
-    NSMutableArray *mAbs_ps = [[NSMutableArray alloc] initWithArray:Ports2Pits([AINetUtils absPorts_All:[SMGUtils searchNode:m]])];
-    [mAbs_ps addObject:m];
-    NSMutableArray *cAbs_ps = [[NSMutableArray alloc] initWithArray:Ports2Pits([AINetUtils absPorts_All:[SMGUtils searchNode:c]])];
-    [cAbs_ps addObject:c];
-    return [SMGUtils filterSingleFromArr:mAbs_ps checkValid:^BOOL(AIKVPointer *item) {
-        return [cAbs_ps containsObject:item];
-    }];
+    NSArray *data = [TOUtils dataOfMcIsBro:m c:c];
+    return ARRISOK(data);
 }
 
 +(BOOL) mcIsBro:(NSArray*)matchAlg_ps cansetA:(AIKVPointer*)cansetA_p {
@@ -98,6 +93,14 @@
     NSMutableArray *cansetAbses = [[NSMutableArray alloc] initWithArray:Ports2Pits([AINetUtils absPorts_All:cansetAlg])];
     [cansetAbses addObject:cansetA_p];
     return ARRISOK([SMGUtils filterArrA:matchAlg_ps arrB:cansetAbses]);
+}
+
++(NSArray*) dataOfMcIsBro:(AIKVPointer*)m c:(AIKVPointer*)c {
+    NSMutableArray *mAbs_ps = [[NSMutableArray alloc] initWithArray:Ports2Pits([AINetUtils absPorts_All:[SMGUtils searchNode:m]])];
+    [mAbs_ps addObject:m];
+    NSMutableArray *cAbs_ps = [[NSMutableArray alloc] initWithArray:Ports2Pits([AINetUtils absPorts_All:[SMGUtils searchNode:c]])];
+    [cAbs_ps addObject:c];
+    return [SMGUtils filterArrA:mAbs_ps arrB:cAbs_ps];
 }
 
 /**

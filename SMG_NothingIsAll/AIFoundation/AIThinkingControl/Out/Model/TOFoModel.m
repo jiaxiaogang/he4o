@@ -70,7 +70,6 @@
     //2. TOFoModel相关赋值;
     model.content_p = canset;
     model.status = TOModelStatus_Runing;
-    if (base) [base.actionFoModels addObject:model];
     model.baseOrGroup = base;
     return model;
 }
