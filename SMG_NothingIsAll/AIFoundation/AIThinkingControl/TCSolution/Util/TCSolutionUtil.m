@@ -72,6 +72,11 @@
         
         //TODOTOMORROW20240308-看此处补齐hCanset关于alg匹配度,等的过滤竞争机制 (参考31105-第4步);
         //在第二步mcIsBro时将相似度存下来,此处用28原则过滤掉相似度低的部分 (看是否剔除20%匹配度低的);
+        //其实这里也未必是mcIsBro关系,因为从from到to其实有许多层,而后面综合indexDic时,不就把各种路径求出来了;
+        //那么,我们能不能通过zonHeIndexDic来求出匹配度,以实现过滤 (直接从actionFoModels中过滤无效的cansetModel);
+        
+        //问题: rCanset推进到cutIndex,不表示targetFoM也是,targetFoM如果有一些独有的帧,它的cutIndex早已+1好几回了,
+        //所以: 后面加个targetAlg的匹配度过滤器才重要,先把匹配度为0的全过滤掉,再把低的20%也过滤掉;
         
         //8. 转为cansetModel格式 (参考31104-第3步);
         for (AIKVPointer *cansetFrom in cansetFroms3) {

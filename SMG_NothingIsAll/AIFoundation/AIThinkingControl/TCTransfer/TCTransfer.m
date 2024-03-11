@@ -58,15 +58,7 @@
     AIFoNodeBase *sceneTo = [SMGUtils searchNode:cansetModel.sceneTo];
     if ([hSceneFrom isEqual:sceneTo]) return nil;
     
-    //3. 数据准备之cansetTargetIndex: 无论是ifb哪个类型,目前推进到了哪一帧,我们最终都是要求达到目标的,所以本方法虽然都是伪迁移,但也要以最终目标为目的;
-    NSInteger cansetFromTargetIndex = cansetModel.targetIndex;//ifb三种类型的cansetTargetIndex是一致的,因为它们迁移长度一致;
-    
-    //4. 数据准备之迁移源数据: 取fatherContent_ps(迁移源content_ps) & fatherDeltaTimes(迁移源deltaTimes);
-    NSArray *cansetFromContent_ps = cansetFrom.content_ps;
-    NSArray *cansetFromDeltaTimes = cansetFrom.deltaTimes;
-    
-    //5. 数据准备之迁移源数据: indexDic综合计算 (参考31115-TODO1-4);
-    //第5种: type=i & H时(二上一下),从hCansetFrom向上->hSceneFrom->iRScene,再向下->hSceneTo: 求出综合indexDic;
+    //3. IH映射: indexDic综合计算 (参考31115-TODO1-4);
     DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:[cansetFrom getAbsIndexDic:hSceneFrom.p]];
     DirectIndexDic *dic2 = [DirectIndexDic newOkToAbs:[hSceneFrom getAbsIndexDic:iRScene.p]];
     DirectIndexDic *dic3 = [DirectIndexDic newNoToAbs:[iRScene getConIndexDic:sceneTo.p]];
@@ -295,6 +287,8 @@
     }
     
     //7. 将canset执行目标转成scene任务目标targetIndex (参考29093-方案);
+    //> ifb三种类型的cansetTargetIndex是一致的,因为它们迁移长度一致;
+    //> 无论是ifb哪个类型,目前推进到了哪一帧,我们最终都是要求达到目标的,所以本方法虽是伪迁移,但也要以最终目标为目的;
     BOOL isHAndTargetMapValid = cansetModel.isH && [zonHeIndexDic objectForKey:@(cansetModel.targetIndex)];
     NSInteger sceneToTargetIndex = isHAndTargetMapValid ? NUMTOOK([zonHeIndexDic objectForKey:@(cansetModel.targetIndex)]).integerValue : sceneTo.count;
     
