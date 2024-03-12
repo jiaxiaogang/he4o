@@ -52,27 +52,19 @@
         AIFoNodeBase *sceneFrom = [SMGUtils searchNode:rCanset.cansetFo];
         
         //4. 取hCansets(用override取cansets): 从cutIndex到sceneFo.count之间的hCansets (参考31102-第1步);
-        NSInteger sceneFromTargetIndex = rCanset.cutIndex + 1;
-        NSArray *cansetFroms1 = [sceneFrom getConCansets:sceneFromTargetIndex];
+        //取: 从rCanset.cutIndex + 1到count末尾,之间所有的canset都是来的及尝试执行的;
+        NSArray *cansetFroms1 = [sceneFrom getConCansets:rCanset.cutIndex + 1];
         
         //5. Override过滤器: 防重已经迁移过的 (override用来过滤避免重复迁移) (参考29069-todo5.2);
         NSArray *alreadyTransfered_Cansets = [sceneTo getTransferedCansetFroms:sceneFrom.p];
         NSArray *cansetFroms2 = [SMGUtils removeSub_ps:alreadyTransfered_Cansets parent_ps:cansetFroms1];
-        
-        //TODOTOMORROW20240308-看此处补齐hCanset关于alg匹配度,等的过滤竞争机制 (参考31105-第4步);
-        //在第二步mcIsBro时将相似度存下来,此处用28原则过滤掉相似度低的部分 (看是否剔除20%匹配度低的);
-        //其实这里也未必是mcIsBro关系,因为从from到to其实有许多层,而后面综合indexDic时,不就把各种路径求出来了;
-        //那么,我们能不能通过zonHeIndexDic来求出匹配度,以实现过滤 (直接从actionFoModels中过滤无效的cansetModel);
-        
-        //问题: rCanset推进到cutIndex,不表示targetFoM也是,targetFoM如果有一些独有的帧,它的cutIndex早已+1好几回了,
-        //所以: 后面加个targetAlg的匹配度过滤器才重要,先把匹配度为0的全过滤掉,再把低的20%也过滤掉;
         
         //6. 转为cansetModel格式 (参考31104-第3步);
         NSArray *cansetFroms3 = [SMGUtils convertArr:cansetFroms2 convertBlock:^id(AIKVPointer *cansetFrom) {
             return [TCCanset convert2HCansetModel:cansetFrom hDemand:hDemand rCanset:rCanset];
         }];
         
-        //7. 求出匹配度,转为评分模型 (把每个cansetFrom的综合匹配度算出来,用于后面过滤);
+        //7. 求出匹配度,转为评分模型 (把每个cansetFrom的综合匹配度算出来,用于后面过滤) (参考31121-TODO3 & TODO4);
         NSArray *cansetFrom4 = [SMGUtils convertArr:cansetFroms3 convertBlock:^id(TOFoModel *obj) {
             //a. 取出当前cansetTo的目标帧;
             AIShortMatchModel_Simple *cansetToOrder = ARR_INDEX(obj.transferXvModel.cansetToOrders, obj.targetIndex);
@@ -81,35 +73,28 @@
             //b. 如果是mcIsBro关系,先取出共同的sameAbs;
             NSArray *sameAbses = [TOUtils dataOfMcIsBro:targetAlgM.content_p c:cansetToAlg.p];
             
-            //c. 然后再依次判断下和mc二者的匹配度,相乘,取最大值为其综合匹配度,找出综合匹配度最好的值: 即最匹配的;
+            //c. 然后再依次判断下和mc二者的匹配度,相乘,取最大值为其综合匹配度,找出综合匹配度最好的值: 即最匹配的 (参考31121-TODO3);
             CGFloat bestScore = [SMGUtils filterBestScore:sameAbses scoreBlock:^CGFloat(AIKVPointer *item) {
                 return [targetAlg getAbsMatchValue:item] * [cansetToAlg getAbsMatchValue:item];
             }];
             return [MapModel newWithV1:obj v2:@(bestScore)];
         }];
         
-        //8. 过滤掉匹配度为0的 (只要不为0,肯定是有mcIsBro关系的) (参考31103-第2步);
-        NSArray *cansetFrom5 = [SMGUtils filterArr:cansetFrom4 checkValid:^BOOL(MapModel *item) {
-            CGFloat bestScore = NUMTOOK(item.v2).floatValue;
-            return bestScore > 0;
-        }];
+        //8. 过滤掉匹配度为0的 (只要不为0,肯定是有mcIsBro关系的) (参考31103-第2步 & 31121-TODO4);
+        NSArray *cansetFrom5 = [SMGUtils filterArr:cansetFrom4 checkValid:^BOOL(MapModel *item) { return NUMTOOK(item.v2).floatValue > 0; }];
         
         //9. 把末尾20%过滤掉 (末尾淘汰制) (参考31121-TODO2);
-        NSArray *cansetFrom6 = [SMGUtils sortBig2Small:cansetFrom5 compareBlock:^double(MapModel *obj) {
-            return NUMTOOK(obj.v2).floatValue;
-        }];
+        NSArray *cansetFrom6 = [SMGUtils sortBig2Small:cansetFrom5 compareBlock:^double(MapModel *obj) { return NUMTOOK(obj.v2).floatValue; }];
         cansetFrom6 = ARR_SUB(cansetFrom6, 0, cansetFrom6.count * 0.8f);
         
         //10. 更新到actionFoModels;
-        NSArray *cansetFromFinish = [SMGUtils convertArr:cansetFrom6 convertBlock:^id(MapModel *obj) {
-            return obj.v1;
-        }];
+        NSArray *cansetFromFinish = [SMGUtils convertArr:cansetFrom6 convertBlock:^id(MapModel *obj) { return obj.v1; }];
         [hDemand.actionFoModels addObjectsFromArray:cansetFromFinish];
         if (Log4GetCansetResult4H && cansetFroms3.count > 0) NSLog(@"\t item场景(%@):%@ 取得候选数:%ld",SceneType2Str(rCanset.baseSceneModel.type),Pit2FStr(rCanset.baseSceneModel.scene),cansetFromFinish.count);
     }
     NSLog(@"第2步 转为候选集 总数:%ld",hDemand.actionFoModels.count);
     
-    //4. 竞争求解: 对hCansets进行实时竞争;
+    //11. 竞争求解: 对hCansets进行实时竞争 (参考31122);
     return [self realTimeRankCansets:hDemand zonHeScoreBlock:nil];//400ms
 }
 

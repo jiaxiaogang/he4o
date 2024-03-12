@@ -889,7 +889,7 @@
 /**
  *  MARK:--------------------找出最大的--------------------
  *  @param scoreBlock 单条评分 notnull
- *  @result 返回maxObj和maxScore;
+ *  @result 返回bestObj和bestScore;
  */
 +(id) filterBestObj:(NSArray*)arr scoreBlock:(CGFloat(^)(id item))scoreBlock {
     return [SMGUtils filterBest:arr scoreBlock:scoreBlock].v1;
