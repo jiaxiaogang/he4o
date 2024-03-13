@@ -48,7 +48,7 @@
     Debug();
     double demandScore = [AIScore score4Demand:rootDemand];
     TOModelBase *endBranch = [self bestEndBranch4PlanV2:scoreDic curDemand:rootDemand rootScore:demandScore];
-    NSLog(@"取得最终胜利的末枝 >> 取分: K:%@ => V:%@分",TOModel2Key(endBranch),[scoreDic objectForKey:TOModel2Key(endBranch)]);
+    if (endBranch) NSLog(@"取得最终胜利的末枝 >> 取分: K:%@ => V:%@分",TOModel2Key(endBranch),[scoreDic objectForKey:TOModel2Key(endBranch)]);
     [AITest test10:endBranch];
     
     //2. 从最优路径末枝的解决方案,转给TCSolution执行 (参考24195-4);
