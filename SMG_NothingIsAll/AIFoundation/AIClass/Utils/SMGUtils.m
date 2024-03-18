@@ -662,7 +662,7 @@
     return [SMGUtils sortBig2Small:arr compareBlock1:compareBlock1 compareBlock2:compareBlock2 compareBlock3:nil];
 }
 +(NSArray*) sortBig2Small:(NSArray*)arr compareBlock1:(double(^)(id obj))compareBlock1 compareBlock2:(double(^)(id obj))compareBlock2 compareBlock3:(double(^)(id obj))compareBlock3 {
-    return [self sortBig2Small:arr compareBlock1:compareBlock1 compareBlock2:compareBlock2 compareBlock3:compareBlock3];
+    return [self sortBig2Small:arr compareBlock1:compareBlock1 compareBlock2:compareBlock2 compareBlock3:compareBlock3 compareBlock4:nil];
 }
 +(NSArray*) sortBig2Small:(NSArray*)arr compareBlock1:(double(^)(id obj))compareBlock1 compareBlock2:(double(^)(id obj))compareBlock2 compareBlock3:(double(^)(id obj))compareBlock3 compareBlock4:(double(^)(id obj))compareBlock4 {
     //1. 数据检查;
