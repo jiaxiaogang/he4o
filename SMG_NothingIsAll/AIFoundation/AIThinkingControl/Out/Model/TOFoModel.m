@@ -453,7 +453,7 @@
  */
 -(BOOL) isH {
     //目前判断方式为: pFo的任务是R,targetFoM的任务是H;
-    return ISOK(self.basePFoOrTargetFoModel, AIMatchFoModel.class);
+    return !ISOK(self.basePFoOrTargetFoModel, AIMatchFoModel.class);
     //return self.targetIndex < self.cansetFo.count; //用目标帧位置来判断;
 }
 
