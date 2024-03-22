@@ -357,6 +357,12 @@
         HDemandModel *subHDemand = [SMGUtils filterSingleFromArr:curAlgModel.subDemands checkValid:^BOOL(id item) {
             return ISOK(item, HDemandModel.class);
         }];
+        
+        //TODOTOMORROW20240322: BUG-此处没为algModel生成hDemand,所以subHDemand=nil;
+        //这也可能是正常的,因为cansetModel未必是besting状态;
+        NSLog(@"CansetStatus: %@ %ld",subHDemand,self.cansetStatus);
+        
+        
         if (subHDemand) subHDemand.status = TOModelStatus_Finish;
         if (Log4OPushM) NSLog(@"RCansetA有效:M(A%ld) C(A%ld) CAtFo:%@",protoAlg_p.pointerId,curAlgModel.content_p.pointerId,Pit2FStr(self.content_p));
         self.status = TOModelStatus_Runing;
