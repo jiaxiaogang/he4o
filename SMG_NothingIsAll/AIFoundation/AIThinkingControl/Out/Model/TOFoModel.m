@@ -313,38 +313,36 @@
 }
 
 /**
- *  MARK:--------------------feedbackTOR有反馈,看是否对这个CansetModel有效 (参考31073-TODO2)--------------------
+ *  MARK:--------------------检查feedbackTOR反馈是否对此CansetModel有效 (参考31073-TODO2)--------------------
  */
--(void) check4FeedbackTOR:(NSArray*)feedbackMatchAlg_ps protoAlg:(AIKVPointer*)protoAlg_p {
+-(BOOL) step1_CheckFeedbackTORIsValid:(NSArray*)feedbackMatchAlg_ps protoAlg:(AIKVPointer*)protoAlg_p {
     //2024.01.11: 此处可以考虑支持持续反馈 (参考31063-todo1);
     //2024.01.25: 现在应该能支持仅靠匹配度来竞争了,因为CansetModels已经支持实时竞争了,但现在接受一次反馈后,就会pushNextFrame,是不支持以往帧持续反馈的,随后再改支持吧);
     //AIKVPointer *oldFeedbackAlg = curAlgModel.feedbackAlg;//新旧反馈用匹配度竞争一下: 更匹配则替换等 | 否则则把oldFeedbackAlg改回去;
     
     //1. 未达到targetIndex才接受反馈;
-    if (self.cutIndex >= self.targetIndex) return;
+    if (self.cutIndex >= self.targetIndex) return false;
     feedbackMatchAlg_ps = ARRTOOK(feedbackMatchAlg_ps);
     
     //2. 判断反馈mIsC是否有效 (比如找锤子,看到锤子了 & 再如吃,确定自己是否真吃了);
     NSArray *cansetToContent_ps = [self getCansetToContent_ps];
     AIKVPointer *cansetToWaitAlg_p = ARR_INDEX(cansetToContent_ps, self.cutIndex + 1);
     BOOL mIsC = [feedbackMatchAlg_ps containsObject:cansetToWaitAlg_p];
-    if (!mIsC) return;
+    if (!mIsC) return false;
     
     //3. 有效时: 记录feedbackAlg;
     TOAlgModel *curAlgModel = [self getCurFrame];
     curAlgModel.feedbackAlg = protoAlg_p;
     curAlgModel.status = TOModelStatus_OuterBack;
-    
-    //4. 并推进到下帧 (参考31073-TODO2g-3);
-    [self pushNextFrame];
+    return true;
 }
 
 /**
- *  MARK:--------------------feedback推进一帧后: 构建newHCanset和absHCanset (参考31073-TODO7)--------------------
+ *  MARK:--------------------feedback有效后: 构建newHCanset和absHCanset (参考31073-TODO7)--------------------
  *  @desc 此方法代码是从feedbackTOR搬过来的,原来的代码有点乱,整理了下使之易读些,并搬到了这里 (参考31073-TODO7);
  *  @param protoAlg_p feedbackTOR方法中的protoAlg传过来;
  */
--(void) feedbackPushFrameThenStep:(AIKVPointer*)protoAlg_p {
+-(void) step2_FeedbackThenCreateHCanset:(AIKVPointer*)protoAlg_p {
     //1. 数据准备;
     TOAlgModel *curAlgModel = [self getCurFrame];
     
@@ -357,15 +355,7 @@
         HDemandModel *subHDemand = [SMGUtils filterSingleFromArr:curAlgModel.subDemands checkValid:^BOOL(id item) {
             return ISOK(item, HDemandModel.class);
         }];
-        
-        //TODOTOMORROW20240322: BUG-此处没为algModel生成hDemand,所以subHDemand=nil;
-        //这也可能是正常的,因为cansetModel未必是besting状态;
-        NSLog(@"CansetStatus: %@ %ld",subHDemand,self.cansetStatus);
-        
-        //这里得再核实下逻辑,上一帧已经反馈为OutBack状态,并且推进到了下一帧...
-        //而此处的curAlgModel其实已经是下一帧,此方法的一些操作是不是已经错误...随后查下...
-        
-        
+        //注: 此处非CS_None状态的cansetModel,subHDemand一般为nil;
         if (subHDemand) subHDemand.status = TOModelStatus_Finish;
         if (Log4OPushM) NSLog(@"RCansetA有效:M(A%ld) C(A%ld) CAtFo:%@",protoAlg_p.pointerId,curAlgModel.content_p.pointerId,Pit2FStr(self.content_p));
         self.status = TOModelStatus_Runing;

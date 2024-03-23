@@ -185,14 +185,14 @@
 -(TOAlgModel*) getCurFrame;
 
 /**
- *  MARK:--------------------feedbackTOR有反馈,看是否对这个CansetModel有效 (参考31073-TODO2)--------------------
+ *  MARK:--------------------检查feedbackTOR反馈是否对此CansetModel有效 (参考31073-TODO2)--------------------
  */
--(void) check4FeedbackTOR:(NSArray*)feedbackMatchAlg_ps protoAlg:(AIKVPointer*)protoAlg_p;
+-(BOOL) step1_CheckFeedbackTORIsValid:(NSArray*)feedbackMatchAlg_ps protoAlg:(AIKVPointer*)protoAlg_p;
 
 /**
- *  MARK:--------------------feedback推进一帧后: 构建newHCanset和absHCanset (参考31073-TODO7)--------------------
+ *  MARK:--------------------feedback有效后: 构建newHCanset和absHCanset (参考31073-TODO7)--------------------
  */
--(void) feedbackPushFrameThenStep:(AIKVPointer*)protoAlg_p;
+-(void) step2_FeedbackThenCreateHCanset:(AIKVPointer*)protoAlg_p;
 
 /**
  *  MARK:--------------------方案状态--------------------

@@ -273,10 +273,15 @@
     for (DemandModel *demand in allDemands) {
         for (TOFoModel *cansetModel in demand.actionFoModels) {
             //3. 反馈判断 (参考31073-TODO2);
-            [cansetModel check4FeedbackTOR:recognitionAlgs protoAlg:model.protoAlg.p];
+            BOOL feedbackValid = [cansetModel step1_CheckFeedbackTORIsValid:recognitionAlgs protoAlg:model.protoAlg.p];
             
-            //4. 
-            [cansetModel feedbackPushFrameThenStep:model.protoAlg.p];
+            //4. 如果反反馈有效,构建hCanset;
+            if (feedbackValid) {
+                [cansetModel step2_FeedbackThenCreateHCanset:model.protoAlg.p];
+                
+                //5. 并推进到下帧 (参考31073-TODO2g-3);
+                [cansetModel pushNextFrame];
+            }
         }
     }
     DebugE();
