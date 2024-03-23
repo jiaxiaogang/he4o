@@ -362,6 +362,9 @@
         //这也可能是正常的,因为cansetModel未必是besting状态;
         NSLog(@"CansetStatus: %@ %ld",subHDemand,self.cansetStatus);
         
+        //这里得再核实下逻辑,上一帧已经反馈为OutBack状态,并且推进到了下一帧...
+        //而此处的curAlgModel其实已经是下一帧,此方法的一些操作是不是已经错误...随后查下...
+        
         
         if (subHDemand) subHDemand.status = TOModelStatus_Finish;
         if (Log4OPushM) NSLog(@"RCansetA有效:M(A%ld) C(A%ld) CAtFo:%@",protoAlg_p.pointerId,curAlgModel.content_p.pointerId,Pit2FStr(self.content_p));
