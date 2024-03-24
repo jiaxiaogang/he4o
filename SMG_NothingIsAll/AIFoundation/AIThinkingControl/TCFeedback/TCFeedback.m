@@ -270,18 +270,11 @@
             return ISOK(item, DemandModel.class);
         }];
     }];
+    
+    //3. 每个Canset都支持持续反馈: 反馈有效时,构建或类比抽象HCanset,并推进到下一帧;
     for (DemandModel *demand in allDemands) {
         for (TOFoModel *cansetModel in demand.actionFoModels) {
-            //3. 反馈判断 (参考31073-TODO2);
-            BOOL feedbackValid = [cansetModel step1_CheckFeedbackTORIsValid:recognitionAlgs protoAlg:model.protoAlg.p];
-            
-            //4. 如果反反馈有效,构建hCanset;
-            if (feedbackValid) {
-                [cansetModel step2_FeedbackThenCreateHCanset:model.protoAlg.p];
-                
-                //5. 并推进到下帧 (参考31073-TODO2g-3);
-                [cansetModel pushNextFrame];
-            }
+            [cansetModel commit4FeedbackTOR:recognitionAlgs protoAlg:model.protoAlg.p];
         }
     }
     DebugE();

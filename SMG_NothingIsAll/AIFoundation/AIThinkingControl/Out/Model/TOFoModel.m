@@ -313,6 +313,21 @@
 }
 
 /**
+ *  MARK:--------------------feedbackTOR反馈时触发,用于每个cansetFo都可以接受持续反馈推进--------------------
+ */
+-(void) commit4FeedbackTOR:(NSArray*)feedbackMatchAlg_ps protoAlg:(AIKVPointer*)protoAlg_p {
+    //1. 反馈判断,无反馈直接return (参考31073-TODO2);
+    BOOL feedbackValid = [self step1_CheckFeedbackTORIsValid:feedbackMatchAlg_ps protoAlg:protoAlg_p];
+    if (!feedbackValid) return;
+    
+    //2. 反馈有效: 构建hCanset;
+    [self step2_FeedbackThenCreateHCanset:protoAlg_p];
+        
+    //3. 并推进到下帧 (参考31073-TODO2g-3);
+    [self pushNextFrame];
+}
+
+/**
  *  MARK:--------------------检查feedbackTOR反馈是否对此CansetModel有效 (参考31073-TODO2)--------------------
  */
 -(BOOL) step1_CheckFeedbackTORIsValid:(NSArray*)feedbackMatchAlg_ps protoAlg:(AIKVPointer*)protoAlg_p {
