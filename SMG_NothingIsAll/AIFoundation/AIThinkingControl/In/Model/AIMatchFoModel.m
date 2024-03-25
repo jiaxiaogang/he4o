@@ -243,7 +243,8 @@
     
     //2. =================解决方案执行有效(再类比): 有actYes的时,归功于解决方案,执行canset再类比 (参考27206c-R任务)=================
     //TODO待查BUG20231028: 应该是在feedbackTOR中和hCanset一样,已经被改成了OuterBack状态,导致这里执行不到 (参考3014a-问题3);
-    for (TOFoModel *solutionModel in self.baseRDemand.actionFoModels) {
+    NSArray *actionFoModels = [self.baseRDemand.actionFoModels copy];
+    for (TOFoModel *solutionModel in actionFoModels) {
         //b. 非当前pFo下的解决方案,不做canset再类比;
         if (![solutionModel.basePFoOrTargetFoModel isEqual:self]) continue;
         
