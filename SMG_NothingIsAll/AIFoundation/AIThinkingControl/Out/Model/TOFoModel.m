@@ -320,6 +320,9 @@
     BOOL feedbackValid = [self step1_CheckFeedbackTORIsValid:feedbackMatchAlg_ps protoAlg:protoAlg_p];
     if (!feedbackValid) return;
     
+    //TODOTOMORROW20240325: 查下"测8.2"的训练,此处从未反馈true过;
+    
+    
     //2. 反馈有效: 构建hCanset;
     [self step2_FeedbackThenCreateHCanset:protoAlg_p];
         
