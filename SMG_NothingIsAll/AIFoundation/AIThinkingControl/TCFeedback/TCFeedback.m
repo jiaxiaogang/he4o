@@ -256,13 +256,9 @@
     //1. 将新一帧数据报告给TOR,以进行短时记忆的更新,比如我输出行为"打",短时记忆由此知道输出"打"成功 (外循环入->推进->中循环出);
     [theTC updateOperCount:kFILENAME];
     Debug();
-    NSMutableArray *waitModels = [[NSMutableArray alloc] init];
     NSArray *recognitionAlgs = [TIUtils getMatchAndPartAlgPsByModel:model];
     NSArray *roots = [theTC.outModelManager.getAllDemand copy];
-    for (ReasonDemandModel *root in roots) {
-        [waitModels addObjectsFromArray:[TOUtils getSubOutModels_AllDeep:root validStatus:nil]];
-    }
-    IFTitleLog(@"feedbackTOR", @"\n输入ProtoA:%@ (识别matchAlgs数:%ld)\n等待中任务数:%lu",Alg2FStr(model.protoAlg),recognitionAlgs.count,(long)waitModels.count);
+    IFTitleLog(@"feedbackTOR", @"\n输入ProtoA:%@ 识别matchAlgs数:%ld",Alg2FStr(model.protoAlg),recognitionAlgs.count);
     
     //2. ============== 对Demand.cansetModels的反馈判断 (参考31073-TODO2: Cansets实时竞争) ==============
     NSMutableArray *allDemands = [SMGUtils convertArr:roots convertItemArrBlock:^NSArray *(DemandModel *root) {
@@ -270,10 +266,13 @@
             return ISOK(item, DemandModel.class);
         }];
     }];
+    NSLog(@"工作记忆root数:%ld 含任务数:%ld",roots.count,allDemands.count);
     
     //3. 每个Canset都支持持续反馈: 反馈有效时,构建或类比抽象HCanset,并推进到下一帧;
     for (DemandModel *demand in allDemands) {
-        for (TOFoModel *cansetModel in demand.actionFoModels) {
+        NSArray *actionFoModels = [demand.actionFoModels copy];
+        NSLog(@"---> item任务:%@ 含方案数:%ld",Pit2FStr(demand.content_p),actionFoModels.count);
+        for (TOFoModel *cansetModel in actionFoModels) {
             [cansetModel commit4FeedbackTOR:recognitionAlgs protoAlg:model.protoAlg.p];
         }
     }
