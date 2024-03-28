@@ -224,6 +224,26 @@
     NSArray *validPAlgs = [self recognitionAlg_CheckValid:protoPDic.allValues protoAlgCount:protoAlg.count];
     NSArray *validRAlgs = [self recognitionAlg_CheckValid:protoRDic.allValues protoAlgCount:protoAlg.count];
     
+    //13. 似层交层分开进行竞争 (分开竞争是以前就一向如此的,因为同质竞争才公平) (为什么要保留交层: 参考31134-TODO1);
+    NSArray *validPSAlgs = [SMGUtils filterArr:validPAlgs checkValid:^BOOL(AIMatchAlgModel *item) {
+        AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item.matchAlg];
+        return itemAlg.count == protoAlg.count;
+    }];
+    NSArray *validPJAlgs = [SMGUtils filterArr:validPAlgs checkValid:^BOOL(AIMatchAlgModel *item) {
+        AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item.matchAlg];
+        return itemAlg.count != protoAlg.count;
+    }];
+    NSArray *validRSAlgs = [SMGUtils filterArr:validRAlgs checkValid:^BOOL(AIMatchAlgModel *item) {
+        AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item.matchAlg];
+        return itemAlg.count == protoAlg.count;
+    }];
+    NSArray *validRJAlgs = [SMGUtils filterArr:validRAlgs checkValid:^BOOL(AIMatchAlgModel *item) {
+        AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item.matchAlg];
+        return itemAlg.count != protoAlg.count;
+    }];
+    
+    //TODOTOMORROW20240328: 继续写这里...
+    
     //13. 识别过滤器 (参考28109-todo2);
     NSArray *filterPAlgs = [AIFilter recognitionAlgFilter:validPAlgs radio:0.5f];
     NSArray *filterRAlgs = [AIFilter recognitionAlgFilter:validRAlgs radio:0.16f];
@@ -260,7 +280,8 @@
         if (itemAlg.count != item.matchCount) return false;
         
         //4. 过滤掉非似层的 (参考29064-todo1);
-        if (itemAlg.count != protoAlgCount) return false;
+        //2024.03.28: 交似层都返回 (参考31134-TODO1);
+        //if (itemAlg.count != protoAlgCount) return false;
         return true;
     }];
 }
