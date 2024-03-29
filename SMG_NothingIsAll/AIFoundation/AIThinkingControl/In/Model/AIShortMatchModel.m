@@ -14,6 +14,24 @@
     return ARR_INDEX(self.matchAlgs, 0);
 }
 
+/**
+ *  MARK:--------------------取概念识别结果--------------------
+ */
+//返回似层 (默认) notnull;
+-(NSArray*) matchAlgs {
+    //合并PR的似层返回 (参考29108-2.2);
+    return [SMGUtils collectArrA:self.matchAlgs_PS arrB:self.matchAlgs_RS];
+}
+
+//返回交层 notnull;
+-(NSArray*) matchAlgs_Jiao {
+    return [SMGUtils collectArrA:self.matchAlgs_PJ arrB:self.matchAlgs_RJ];
+}
+//返回全部 notnull;
+-(NSArray*) matchAlgs_All {
+    return [SMGUtils collectArrA:self.matchAlgs arrB:self.matchAlgs_Jiao];
+}
+
 -(NSMutableArray *)matchPFos{
     if (!_matchPFos) _matchPFos = [[NSMutableArray alloc] init];
     return _matchPFos;

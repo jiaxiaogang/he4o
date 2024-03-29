@@ -242,27 +242,26 @@
         return itemAlg.count != protoAlg.count;
     }];
     
-    //TODOTOMORROW20240328: 继续写这里...
-    
     //13. 识别过滤器 (参考28109-todo2);
-    NSArray *filterPAlgs = [AIFilter recognitionAlgFilter:validPAlgs radio:0.5f];
-    NSArray *filterRAlgs = [AIFilter recognitionAlgFilter:validRAlgs radio:0.16f];
+    NSArray *filterPSAlgs = [AIFilter recognitionAlgFilter:validPSAlgs radio:0.5f];
+    NSArray *filterPJAlgs = [AIFilter recognitionAlgFilter:validPJAlgs radio:0.5f];
+    NSArray *filterRSAlgs = [AIFilter recognitionAlgFilter:validRSAlgs radio:0.16f];
+    NSArray *filterRJAlgs = [AIFilter recognitionAlgFilter:validRJAlgs radio:0.16f];
     
     //14. 识别竞争机制 (参考2722d-方案2);
     //14. 按nearA排序 (参考25083-2&公式2 & 25084-1);
-    NSArray *sortPAlgs = [AIRank recognitionAlgRank:filterPAlgs];
-    NSArray *sortRAlgs = [AIRank recognitionAlgRank:filterRAlgs];
-    
     //15. 未将全含返回,则返回最相似 (2020.10.22: 全含返回,也要返回seemAlg) (2022.01.15: 支持相近匹配后,全是全含没局部了);
-    //15. 合并后赋值给matchAlgs (参考29108-2.2);
-    NSArray *allSortAlgs = [SMGUtils collectArrA:sortPAlgs arrB:sortRAlgs];
-    inModel.matchAlgs = allSortAlgs;
+    inModel.matchAlgs_PS = [AIRank recognitionAlgRank:filterPSAlgs];
+    inModel.matchAlgs_PJ = [AIRank recognitionAlgRank:filterPJAlgs];
+    inModel.matchAlgs_RS = [AIRank recognitionAlgRank:filterRSAlgs];
+    inModel.matchAlgs_RJ = [AIRank recognitionAlgRank:filterRJAlgs];
     
     //16. debugLog
-    NSLog(@"\n概念识别结果 (%ld条) protoAlg:%@",allSortAlgs.count,Alg2FStr(protoAlg));
-    for (AIMatchAlgModel *item in allSortAlgs) {
-        NSString *fromDesc = [sortPAlgs containsObject:item] ? @"P" : @"R";
-        if (Log4MAlg) NSLog(@"%@-->>>(%d) 全含item: %@   \t相近度 => %.2f (count:%d)",fromDesc,item.sumRefStrong,Pit2FStr(item.matchAlg),item.matchValue,item.matchCount);
+    NSLog(@"\n概念识别结果 (感似:%ld条 理似:%ld条 感交:%ld 理交:%ld) protoAlg:%@",inModel.matchAlgs_PS.count,inModel.matchAlgs_RS.count,inModel.matchAlgs_PJ.count,inModel.matchAlgs_RJ.count,Alg2FStr(protoAlg));
+    for (AIMatchAlgModel *item in inModel.matchAlgs_All) {
+        NSString *prDesc = [inModel.matchAlgs_RS containsObject:item] || [inModel.matchAlgs_RJ containsObject:item] ? @"R" : @"P";
+        NSString *sjDesc = [inModel.matchAlgs containsObject:item] ? @"S" : @"J";
+        if (Log4MAlg) NSLog(@"%@%@-->>>(%d) 全含item: %@   \t相近度 => %.2f (count:%d)",prDesc,sjDesc,item.sumRefStrong,Pit2FStr(item.matchAlg),item.matchValue,item.matchCount);
     }
 }
 

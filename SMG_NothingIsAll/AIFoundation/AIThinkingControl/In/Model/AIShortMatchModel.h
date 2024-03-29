@@ -34,7 +34,9 @@
 @property (strong, nonatomic) AIAlgNodeBase *protoAlg;  //原始概念
 
 /**
- *  MARK:--------------------匹配概念--------------------
+ *  MARK:--------------------概念识别结果 (元素为AIMatchAlgModel)--------------------
+ *  @readme 1. 感: 最终有价值指向; 理: 最终无价值指向;
+ *          2. 似: 较具象,所含元素相似但未抛除; 交: 较抽象,所含元素相似度低已在类比中有过抛除 (它的判断标准并非是否抽象具象,而是是否有抛除元素);
  *  @version
  *      2020.10.30前: 一般为全含抽象节点,但在无全含时,就是partAlgs的首个节点;
  *      2020.10.30: 仅为全含抽象节点 (如果v2四测中,发现此处变动有影响,则反过来考虑此改动是否合理);
@@ -42,8 +44,14 @@
  *  @desc
  *      排序方式: 按照matchCount特征匹配数从大到小排序 (匹配数最多的,一般也最具象);
  */
-@property (strong, nonatomic) NSArray *matchAlgs; //概念识别结果 (元素为AIMatchAlgModel)
+@property (strong, nonatomic) NSArray *matchAlgs_PS; //概念识别结果 (感似层)
+@property (strong, nonatomic) NSArray *matchAlgs_PJ; //概念识别结果 (理交层)
+@property (strong, nonatomic) NSArray *matchAlgs_RS; //概念识别结果 (感似层)
+@property (strong, nonatomic) NSArray *matchAlgs_RJ; //概念识别结果 (理交层)
 @property (strong, nonatomic) AIMatchAlgModel *firstMatchAlg;//默认为matchAlgs首条;
+-(NSArray*) matchAlgs;      //返回似层 (默认) notnull;
+-(NSArray*) matchAlgs_Jiao; //返回交层 notnull;
+-(NSArray*) matchAlgs_All;  //返回全部 notnull;
 
 /**
  *  MARK:--------------------局部匹配概念--------------------
