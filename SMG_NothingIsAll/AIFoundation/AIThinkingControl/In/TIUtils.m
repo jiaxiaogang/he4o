@@ -103,7 +103,7 @@
     [self recognitionAlg_Run:protoAlg except_ps:except_ps inModel:inModel];
     
     //5. 关联处理 & 外类比 (这样后面TOR理性决策时,才可以直接对当前瞬时实物进行很好的理性评价) (参考21091-蓝线);
-    for (AIMatchAlgModel *matchModel in inModel.matchAlgs) {
+    for (AIMatchAlgModel *matchModel in inModel.matchAlgs_All) {
         //4. 识别到时,value.refPorts -> 更新/加强微信息的引用序列
         AIAbsAlgNode *matchAlg = [SMGUtils searchNode:matchModel.matchAlg];
         [AINetUtils insertRefPorts_AllAlgNode:matchModel.matchAlg content_ps:matchAlg.content_ps difStrong:1];

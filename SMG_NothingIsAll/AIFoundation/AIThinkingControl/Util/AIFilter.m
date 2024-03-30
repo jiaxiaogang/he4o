@@ -91,8 +91,12 @@
  *      2023.05.31: 回测概念识别二次过滤ok,就是保留60%有点多,调成40%;
  *      2023.06.04: BUG_修复时序过滤条数有不确定性 (参考29109-测得4);
  *      2023.06.06: 过滤出20%的结果依然太多,直接改成4条,小于4条时直接return不过滤 (参考30013);
+ *      2024.03.30: 现在此方法仅对matchAlgs_PS做过滤,别的暂不予支持 (因为此方法只对matchPFos进行二次过滤了,原来的matchAlgs拆分成了matchAlgs_PS和matchAlgs_RS,RS在概念识别中是关着的,这里只需要支持PS即可);
  */
 +(void) secondRecognitionFilter:(AIShortMatchModel*)inModel {
+    //0. 现在在时序识别时,仅识别有mv指向的,所以此处仅需要对matchAlgs_PS进行二次过滤即可;
+    NSArray *protoMatchAlgs = inModel.matchAlgs_PS;
+    
     //1. 获取V重要性字典;
     [theTC updateOperCount:kFILENAME];
     NSInteger foLimit = 4;//MAX(4, inModel.matchPFos.count * 0.2f);
@@ -103,7 +107,7 @@
     
     //2. 根据重要性加权计算二次过滤匹配度 (参考29107-步骤2) (性能: 耗时42ms);
     NSMutableDictionary *secondMatchValueDic = [[NSMutableDictionary alloc] init];
-    for (AIMatchAlgModel *item in inModel.matchAlgs) {
+    for (AIMatchAlgModel *item in protoMatchAlgs) {
         double secondMatchValue = 1;
         AIAlgNodeBase *matchAlg = [SMGUtils searchNode:item.matchAlg];
         for (AIKVPointer *protoV_p in inModel.protoAlg.content_ps) {
@@ -121,7 +125,7 @@
     }
     
     //4. 概念识别的二次排序过滤 (保留60% & 至少保留4条) (参考29107-todo1);
-    NSArray *sort = [SMGUtils sortBig2Small:inModel.matchAlgs compareBlock:^double(AIMatchAlgModel *obj) {
+    NSArray *sort = [SMGUtils sortBig2Small:protoMatchAlgs compareBlock:^double(AIMatchAlgModel *obj) {
         return NUMTOOK([secondMatchValueDic objectForKey:@(obj.matchAlg.pointerId)]).doubleValue;
     }];
     if (debugMode) for (AIMatchAlgModel *item in sort) NSLog(@"看不重要的被排到了后面日志: %ld 现匹配度:%.2f (原%.2f) %@",[sort indexOfObject:item],NUMTOOK([secondMatchValueDic objectForKey:@(item.matchAlg.pointerId)]).doubleValue,item.matchValue,Pit2FStr(item.matchAlg));
@@ -150,7 +154,7 @@
     for (AIMatchFoModel *item in filterFos) NSLog(@"\t%ld. %@",[filterFos indexOfObject:item] + 1,Pit2FStr(item.matchFo));
     
     //8. 存下结果;
-    inModel.matchAlgs = filterAlgs;
+    inModel.matchAlgs_PS = filterAlgs;
     inModel.matchPFos = filterFos;
 }
 
