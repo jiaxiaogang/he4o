@@ -92,6 +92,9 @@
         [hDemand.actionFoModels addObjectsFromArray:cansetFromFinish];
         if (Log4GetCansetResult4H && cansetFroms3.count > 0) NSLog(@"\t item场景(%@):%@ 取得候选数:%ld",SceneType2Str(rCanset.baseSceneModel.type),Pit2FStr(rCanset.baseSceneModel.scene),cansetFromFinish.count);
     }
+    
+    //TODOTOMORROW20240402: 跑到这全是0条,查下原因,是不是前面hSolutionV3有bug,没取到数据 (参考31135-训练跟进);
+    
     NSLog(@"第2步 转为候选集 总数:%ld",hDemand.actionFoModels.count);
     
     //11. 竞争求解: 对hCansets进行实时竞争 (参考31122);
