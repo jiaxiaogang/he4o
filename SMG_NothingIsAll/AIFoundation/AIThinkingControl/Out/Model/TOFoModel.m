@@ -394,7 +394,7 @@
             if (ARRISOK(order) && self.cutIndex < rCanset.count) {
                 AIFoNodeBase *hCanset = [theNet createConFoForCanset:order sceneFo:rCanset sceneTargetIndex:self.cutIndex];
                 [rCanset updateConCanset:hCanset.pointer targetIndex:self.cutIndex];
-                NSLog(@"1.feedbackTOR为rScene:%@\n2.rCanset:%@... 的第%ld帧:%@\n3.挂载NewHCanset:%@",Pit2FStr(basePFo.matchFo),SUBSTR2INDEX(Fo2FStr(rCanset), 50),self.cutIndex+1,Pit2FStr(ARR_INDEX(rCanset.content_ps, self.cutIndex)),Fo2FStr(hCanset));
+                NSLog(@"Canset演化> NewHCanset:%@ 挂载在: \n2.rScene:%@\n3.rCanset:%@... 的第%ld帧:%@",Fo2FStr(hCanset),Pit2FStr(basePFo.matchFo),SUBSTR2INDEX(Fo2FStr(rCanset), 50),self.cutIndex+1,Pit2FStr(ARR_INDEX(rCanset.content_ps, self.cutIndex)));
             }
         }
     }
@@ -437,7 +437,7 @@
                 AIFoNodeBase *newHCanset = [theNet createConFo:orders];
                 
                 //14. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
-                NSLog(@"HCanset预想与实际类比:(状态:%@ fromTargetFo:F%ld) \n\t当前Canset:%@",TOStatus2Str(self.status),targetFoModel.content_p.pointerId,Pit2FStr(self.content_p));
+                NSLog(@"Canset演化> AbsHCanset:(状态:%@ fromTargetFo:F%ld) \n\t当前Canset:%@",TOStatus2Str(self.status),targetFoModel.content_p.pointerId,Pit2FStr(self.content_p));
                 NSArray *noRepeatArea_ps = [targetFo getConCansets:targetFoModel.cutIndex];
                 AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:newHCanset assFo:siCansetFo type:ATDefault noRepeatArea_ps:noRepeatArea_ps];
                 BOOL updateCansetSuccess = [targetFo updateConCanset:absCansetFo.pointer targetIndex:targetFoModel.cutIndex];
