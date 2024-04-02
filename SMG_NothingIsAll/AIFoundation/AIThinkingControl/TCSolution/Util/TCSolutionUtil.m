@@ -54,6 +54,9 @@
         //4. 取hCansets(用override取cansets): 从cutIndex到sceneFo.count之间的hCansets (参考31102-第1步);
         //取: 从rCanset.cutIndex + 1到count末尾,之间所有的canset都是来的及尝试执行的;
         NSArray *cansetFroms1 = [sceneFrom getConCansets:rCanset.cutIndex + 1];
+        if (ARRISOK(cansetFroms1)) {
+            NSLog(@"TODOTOMORROW20240402: 跑两三轮31135的训练步骤试下,看这里能不能取到hCanset...");
+        }
         
         //5. Override过滤器: 防重已经迁移过的 (override用来过滤避免重复迁移) (参考29069-todo5.2);
         NSArray *alreadyTransfered_Cansets = [sceneTo getTransferedCansetFroms:sceneFrom.p];
