@@ -218,9 +218,6 @@
     
     //13. 输出前: 可行性检查;
     result = [TCRealact checkRealactAndReplaceIfNeed:result fromCansets:sortModels];
-
-    //13. 更新状态besting和bested (参考31073-TODO2d);
-    [TCSolutionUtil updateCansetStatus:result demand:demand];
     
     //14. 只在初次best时执行一次由虚转实,以及因激活更新强度等 (避免每次实时竞争导致重复跑这些);
     if (result && result.cansetStatus == CS_None) {
@@ -239,6 +236,9 @@
         //17. 更新其前段alg引用value的强度;
         [AINetUtils updateAlgRefStrongByIndexDic:result.protoFrontIndexDic matchFo:result.cansetFo];
     }
+    
+    //15. 更新状态besting和bested (参考31073-TODO2d);
+    [TCSolutionUtil updateCansetStatus:result demand:demand];
     
     //19. 返回最佳解决方案;
     return result;
