@@ -222,12 +222,12 @@
     //13. 更新状态besting和bested (参考31073-TODO2d);
     [TCSolutionUtil updateCansetStatus:result demand:demand];
     
-    //14. 只在初次best时执行一次由用转体,以及因激活更新强度等 (避免每次实时竞争导致重复跑这些);
+    //14. 只在初次best时执行一次由虚转实,以及因激活更新强度等 (避免每次实时竞争导致重复跑这些);
     if (result && result.cansetStatus == CS_None) {
         AIFoNodeBase *resultFo = [SMGUtils searchNode:result.cansetFo];
         NSLog(@"求解最佳结果:F%ld (前%.2f 中%.2f 后%.2f) %@",result.cansetFo.pointerId,result.frontMatchValue,result.midStableScore,result.backMatchValue,CLEANSTR(resultFo.spDic));
         
-        //15. bestResult由用转体迁移;
+        //15. bestResult由虚转实迁移;
         [TCTransfer transferSi:result];
 
         //15. 更新其前段帧的con和abs抽具象强度 (参考28086-todo2);

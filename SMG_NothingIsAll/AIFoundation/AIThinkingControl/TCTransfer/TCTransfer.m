@@ -147,6 +147,12 @@
 //MARK:===============================================================
 
 +(void) transferSi:(TOFoModel*)cansetModel {
+    //0. IR时没有虚,直接构建实;
+    if (cansetModel.baseSceneModel.type == SceneTypeI && !cansetModel.isH) {
+        cansetModel.transferSiModel = [AITransferModel newWithScene:cansetModel.sceneFo canset:cansetModel.cansetFo];
+        return;
+    }
+    
     //1. 数据准备;
     if (!cansetModel.transferXvModel) return;
     TCTransferXvModel *xvModel = cansetModel.transferXvModel;

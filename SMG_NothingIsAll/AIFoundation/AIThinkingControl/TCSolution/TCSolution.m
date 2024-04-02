@@ -81,7 +81,7 @@
  *      2022.05.27: 集成新的取S的方法 (参考26128);
  *      2022.05.27: 新解决方案从cutIndex开始行为化,而不是-1 (参考26127-TODO9);
  *      2022.05.29: 前3条优先取快思考,后2条或快思考无效时,再取求解 (参考26143-TODO2);
- *      2024.01.23: bestResult由用转体 (参考31073-TODO2c);
+ *      2024.01.23: bestResult由虚转实 (参考31073-TODO2c);
  *  @callers : 用于RDemand.Begin时调用;
  */
 +(TCResult*) rSolution:(ReasonDemandModel*)demand {
@@ -241,7 +241,7 @@
  *      2022.05.04: 树限宽也限深 (参考2523c-分析代码1);
  *      2022.05.22: 窄出排序方式改为有效率为准 (参考26095-9);
  *      2022.05.31: 支持快慢思考 (参考26161 & 26162);
- *      2024.01.23: bestResult由用转体 (参考31073-TODO2c);
+ *      2024.01.23: bestResult由虚转实 (参考31073-TODO2c);
  *      2024.01.30: hDemand在WithOut时,向父级和兄弟传染 (参考31073-TODO8b & TODO8c);
  */
 +(TCResult*) hSolution:(HDemandModel*)hDemand{

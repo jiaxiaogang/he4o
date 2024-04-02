@@ -166,8 +166,6 @@
 @property (assign, nonatomic) NSInteger sceneCutIndex;  //sceneFo已发生截点 (含cutIndex也已发生);
 @property (assign, nonatomic) NSInteger sceneTargetIndex;//sceneFo任务目标index (R时为fo.count,H时为目标帧下标);
 
-@property (strong, nonatomic) TCTransferXvModel *tiDhModel;
-
 /**
  *  MARK:--------------------虚实v2模型--------------------
  */
