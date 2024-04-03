@@ -343,16 +343,6 @@
     NSArray *cansetToContent_ps = [self getCansetToContent_ps];
     AIKVPointer *cansetToWaitAlg_p = ARR_INDEX(cansetToContent_ps, self.cutIndex + 1);
     BOOL mIsC = [feedbackMatchAlg_ps containsObject:cansetToWaitAlg_p];
-    
-    //TODOTOMORROW20240325: 查下"测8.2"的训练,此处从未反馈true过;
-    //1. 此处等待反馈的都很具象,应该都是似层;
-    //2. 反馈的matchAlgs也都是具象似层;
-    //3. 以前这块写持续反馈时,应该是希望群对群,导致总有能反馈上的,即使没有,也能慢慢竞争出..
-    //4. 所以:
-    //      a. 现在反馈不上可能是正常的,毕竟还没做搬运训练;
-    //      b. 回顾并分析下,我们设定的竞争演化路线,是否能实际跑的通;
-    NSLog(@"     等待反馈: %@",Pit2FStr(cansetToWaitAlg_p));
-    
     if (!mIsC) return false;
     
     //3. 有效时: 记录feedbackAlg;
