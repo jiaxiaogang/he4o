@@ -56,6 +56,12 @@
         NSArray *cansetFroms1 = [sceneFrom getConCansets:rCanset.cutIndex + 1];
         if (ARRISOK(cansetFroms1)) {
             NSLog(@"TODOTOMORROW20240402: 跑两三轮31135的训练步骤试下,看这里能不能取到hCanset...");
+            //通过以下四步来测试:
+            //1. 先生成NewHCanset (完成);
+            //2. 能激活HCanset;
+            //  测试方法: 把所有训练生成的RCanset和对应的HCanset记录一下日志,然后再重启后分析激活到的RCanset含不含HCanset等;
+            //3. 能反馈到行为化中的HCanset;
+            //4. 能生成AbsHCanset;
         }
         
         //5. Override过滤器: 防重已经迁移过的 (override用来过滤避免重复迁移) (参考29069-todo5.2);
@@ -95,9 +101,6 @@
         [hDemand.actionFoModels addObjectsFromArray:cansetFromFinish];
         if (Log4GetCansetResult4H && cansetFroms3.count > 0) NSLog(@"\t item场景(%@):%@ 取得候选数:%ld",SceneType2Str(rCanset.baseSceneModel.type),Pit2FStr(rCanset.baseSceneModel.scene),cansetFromFinish.count);
     }
-    
-    //TODOTOMORROW20240402: 跑到这全是0条,查下原因,是不是前面hSolutionV3有bug,没取到数据 (参考31135-训练跟进);
-    
     NSLog(@"第2步 转为候选集 总数:%ld",hDemand.actionFoModels.count);
     
     //11. 竞争求解: 对hCansets进行实时竞争 (参考31122);
