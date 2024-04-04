@@ -384,7 +384,8 @@
             if (ARRISOK(order) && self.cutIndex < rCanset.count) {
                 AIFoNodeBase *hCanset = [theNet createConFoForCanset:order sceneFo:rCanset sceneTargetIndex:self.cutIndex];
                 [rCanset updateConCanset:hCanset.pointer targetIndex:self.cutIndex];
-                NSLog(@"Canset演化> NewHCanset:%@ 挂载在: \n2.rScene:%@\n3.rCanset:%@... 的第%ld帧:%@",Fo2FStr(hCanset),Pit2FStr(basePFo.matchFo),SUBSTR2INDEX(Fo2FStr(rCanset), 50),self.cutIndex+1,Pit2FStr(ARR_INDEX(rCanset.content_ps, self.cutIndex)));
+                AIKVPointer *cutIndexAlg_p = ARR_INDEX(rCanset.content_ps, self.cutIndex);
+                NSLog(@"Canset演化> NewHCanset:%@ 挂载在: rScene:F%ld rCanset:F%ld 的第%ld帧:A%ld",Fo2FStr(hCanset),basePFo.matchFo.pointerId,rCanset.pId,self.cutIndex+1,cutIndexAlg_p.pointerId);
             }
         }
     }
