@@ -42,6 +42,7 @@
 #import "MathUtils.h"
 #import "XGDebug.h"
 #import "TCDebug.h"
+#import "TVUtil_Short.h"
 
 //任务池
 #import "ReasonDemandModel.h"
@@ -224,6 +225,10 @@
 #define AlgP2FStr(a_p) [NVHeUtil getLightStr:a_p simple:false header:true]
 #define FoP2FStr(f_p) [NVHeUtil getLightStr:f_p simple:false header:true]
 #define Mvp2Str(m_p) [NVHeUtil getLightStr:m_p simple:false header:true]
+
+//节点转字符串 (短)
+#define ShortDesc4Node(n) [TVUtil_Short desc4Node:n]
+#define ShortDesc4Pit(p) [TVUtil_Short desc4Pit:p]
 
 //稀疏码值转字符串
 #define Data2FStr(data,at,ds) [NVHeUtil getLightStr_Value:data algsType:at dataSource:ds]

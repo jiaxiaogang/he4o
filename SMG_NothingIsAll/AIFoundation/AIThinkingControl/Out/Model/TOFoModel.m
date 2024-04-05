@@ -385,7 +385,7 @@
                 AIFoNodeBase *hCanset = [theNet createConFoForCanset:order sceneFo:rCanset sceneTargetIndex:self.cutIndex];
                 [rCanset updateConCanset:hCanset.pointer targetIndex:self.cutIndex];
                 AIKVPointer *cutIndexAlg_p = ARR_INDEX(rCanset.content_ps, self.cutIndex);
-                NSLog(@"Canset演化> NewHCanset:%@ 挂载在: rScene:F%ld rCanset:F%ld 的第%ld帧:A%ld",Fo2FStr(hCanset),basePFo.matchFo.pointerId,rCanset.pId,self.cutIndex+1,cutIndexAlg_p.pointerId);
+                NSLog(@"Canset演化> NewHCanset:%@ 挂载在: rScene:F%ld rCanset:F%ld 的第%ld帧:A%ld",ShortDesc4Node(hCanset),basePFo.matchFo.pointerId,rCanset.pId,self.cutIndex+1,cutIndexAlg_p.pointerId);
             }
         }
     }
