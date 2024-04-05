@@ -36,9 +36,9 @@
     //2. 内容
     for (AIKVPointer *item_p in fo.content_ps){
         if (STRISOK(result)) {
-            [result appendFormat:@",(%@)",[self desc4Alg:item_p]];
+            [result appendFormat:@",%@",[self desc4Alg:item_p]];
         }
-        [result appendFormat:@"(%@)",[self desc4Alg:item_p]];
+        [result appendFormat:@"%@",[self desc4Alg:item_p]];
     }
     return result;
 }
