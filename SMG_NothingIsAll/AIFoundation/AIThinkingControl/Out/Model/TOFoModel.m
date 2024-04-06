@@ -385,6 +385,12 @@
                 AIFoNodeBase *hCanset = [theNet createConFoForCanset:order sceneFo:rCanset sceneTargetIndex:self.cutIndex];
                 [rCanset updateConCanset:hCanset.pointer targetIndex:self.cutIndex];
                 AIKVPointer *cutIndexAlg_p = ARR_INDEX(rCanset.content_ps, self.cutIndex);
+                
+                //TODOTOMORROW20240406: 看这里怎么把rCanset和hCanset的indexDic映射补上;
+//                //15. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);
+//                NSDictionary *newIndexDic = [self convertOldIndexDic2NewIndexDic:targetFoModel.content_p];
+//                [absCansetFo updateIndexDic:targetFo indexDic:newIndexDic];
+                
                 NSLog(@"Canset演化> NewHCanset:%@ 挂载在: rScene:F%ld rCanset:F%ld 的第%ld帧:A%ld",ShortDesc4Node(hCanset),basePFo.matchFo.pointerId,rCanset.pId,self.cutIndex+1,cutIndexAlg_p.pointerId);
             }
         }
