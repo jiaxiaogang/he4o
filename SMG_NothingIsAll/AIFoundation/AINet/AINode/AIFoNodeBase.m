@@ -218,10 +218,14 @@
     for (NSInteger i = targetIndex; i <= self.count; i++) {
         NSArray *itemArr = ARRTOOK([self.conCansetsDic objectForKey:@(i)]);
         if (forH) { //H任务时,要求canset中必须包含targetIndex映射帧;
+            if (ARRISOK(itemArr)) {
+                NSLog(@"getConCanset过滤前:%ld",itemArr.count);//很多次，都是有解，但这里全过滤完了，成了0。
+            }
             itemArr = [SMGUtils filterArr:itemArr checkValid:^BOOL(AIKVPointer *item) {
                 NSDictionary *indexDic = [self getConIndexDic:item];
                 return [indexDic objectForKey:@(targetIndex)];
             }];
+            NSLog(@"getConCanset过滤后:%ld",itemArr.count);
         }
         [result addObjectsFromArray:itemArr];
     }
