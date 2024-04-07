@@ -140,6 +140,7 @@
 /**
  *  MARK:--------------------算出新的indexDic--------------------
  *  @desc 用旧indexDic和feedbackAlg计算出新的indexDic (参考27206d-方案2);
+ *  @param targetOrPFo_p 传sceneTo,因为要用它与cansetTo取旧的indexDic的;
  */
 -(NSDictionary*) convertOldIndexDic2NewIndexDic:(AIKVPointer*)targetOrPFo_p {
     //1. 数据准备;

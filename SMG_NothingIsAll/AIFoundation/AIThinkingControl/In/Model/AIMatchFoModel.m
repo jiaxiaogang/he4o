@@ -274,6 +274,9 @@
         if (updateCansetSuccess) {
             //g. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);
             NSDictionary *newIndexDic = [solutionModel convertOldIndexDic2NewIndexDic:pFo.pointer];
+            
+            //TODOTOMORROW20240407: 查下这里,看AbsRCanset生成时,是不是indexDic就是空;
+            
             [absCansetFo updateIndexDic:pFo indexDic:newIndexDic];
             [AITest test18:newIndexDic newCanset:absCansetFo absFo:pFo];
             
