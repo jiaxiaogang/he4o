@@ -144,13 +144,13 @@
 -(NSDictionary*) convertOldIndexDic2NewIndexDic:(AIKVPointer*)targetOrPFo_p {
     //1. 数据准备;
     AIFoNodeBase *targetOrPFo = [SMGUtils searchNode:targetOrPFo_p];
-    AIKVPointer *solutionFo = self.content_p;
+    AIKVPointer *cansetToFo = self.content_p;//行为化中的siFo
     
     //2. 将fo逐帧收集有反馈的conIndex (参考27207-7);
     NSArray *feedbackIndexArr = [self getIndexArrIfHavFeedback];
     
     //3. 取出solutionFo旧有的indexDic (参考27207-8);
-    NSDictionary *oldIndexDic = [targetOrPFo getConIndexDic:solutionFo];
+    NSDictionary *oldIndexDic = [targetOrPFo getConIndexDic:cansetToFo];
     
     //4. 筛选出有反馈的absIndex数组 (参考27207-9);
     NSArray *feedbackAbsIndexArr = [SMGUtils filterArr:oldIndexDic.allKeys checkValid:^BOOL(NSNumber *absIndexKey) {
@@ -382,16 +382,16 @@
             AIMatchFoModel *basePFo = (AIMatchFoModel*)self.basePFoOrTargetFoModel;
             NSArray *order = [basePFo convertOrders4NewCansetV2];
             if (ARRISOK(order) && self.cutIndex < rCanset.count) {
-                AIFoNodeBase *hCanset = [theNet createConFoForCanset:order sceneFo:rCanset sceneTargetIndex:self.cutIndex];
-                [rCanset updateConCanset:hCanset.pointer targetIndex:self.cutIndex];
+                AIFoNodeBase *newHCanset = [theNet createConFoForCanset:order sceneFo:rCanset sceneTargetIndex:self.cutIndex];
+                [rCanset updateConCanset:newHCanset.pointer targetIndex:self.cutIndex];
                 AIKVPointer *cutIndexAlg_p = ARR_INDEX(rCanset.content_ps, self.cutIndex);
                 
                 //TODOTOMORROW20240406: 看这里怎么把rCanset和hCanset的indexDic映射补上;
-//                //15. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);
-//                NSDictionary *newIndexDic = [self convertOldIndexDic2NewIndexDic:targetFoModel.content_p];
-//                [absCansetFo updateIndexDic:targetFo indexDic:newIndexDic];
+                //15. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);
+                NSDictionary *newIndexDic = [self convertOldIndexDic2NewIndexDic:basePFo.matchFo];
+                [newHCanset updateIndexDic:rCanset indexDic:newIndexDic];
                 
-                NSLog(@"Canset演化> NewHCanset:%@ 挂载在: rScene:F%ld rCanset:F%ld 的第%ld帧:A%ld",ShortDesc4Node(hCanset),basePFo.matchFo.pointerId,rCanset.pId,self.cutIndex+1,cutIndexAlg_p.pointerId);
+                NSLog(@"Canset演化> NewHCanset:%@ 挂载在: rScene:F%ld rCanset:F%ld 的第%ld帧:A%ld",ShortDesc4Node(newHCanset),basePFo.matchFo.pointerId,rCanset.pId,self.cutIndex+1,cutIndexAlg_p.pointerId);
             }
         }
     }
