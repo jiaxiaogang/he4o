@@ -276,6 +276,20 @@
             NSDictionary *newIndexDic = [solutionModel convertOldIndexDic2NewIndexDic:pFo.pointer];
             
             //TODOTOMORROW20240407: 查下这里,看AbsRCanset生成时,是不是indexDic就是空;
+            //> 这里把FZ924重跑了下,然后oldIndexDic不再是空了,但newIndexDic还是空,再查下;
+            //oldIndexDic:{0 = 0;1 = 1;} newIndexDic:{}
+            //oldIndexDic:{0 = 0;1 = 1;} newIndexDic:{}
+            //oldIndexDic:{0 = 0;1 = 1;} newIndexDic:{}
+            //oldIndexDic:{0 = 0;} newIndexDic:{}
+            //oldIndexDic:{0 = 0;} newIndexDic:{}
+            //oldIndexDic:{0 = 0;} newIndexDic:{}
+            //oldIndexDic:{0 = 0;} newIndexDic:{}
+            //oldIndexDic:{0 = 0;} newIndexDic:{}
+            //oldIndexDic:{0 = 0;} newIndexDic:{}
+            //oldIndexDic:{0 = 0;1 = 1;} newIndexDic:{}
+            //oldIndexDic:{0 = 0;1 = 1;} newIndexDic:{}
+            //oldIndexDic:{0 = 0;1 = 1;} newIndexDic:{}
+            //oldIndexDic:{0 = 0;1 = 1;} newIndexDic:{}
             
             [absCansetFo updateIndexDic:pFo indexDic:newIndexDic];
             [AITest test18:newIndexDic newCanset:absCansetFo absFo:pFo];

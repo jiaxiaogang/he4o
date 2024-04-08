@@ -165,6 +165,7 @@
         NSNumber *absIndex = ARR_INDEX(feedbackAbsIndexArr, i);
         [newIndexDic setObject:@(i) forKey:absIndex];
     }
+    NSLog(@"oldIndexDic:%@ newIndexDic:%@",CLEANSTR(oldIndexDic),CLEANSTR(newIndexDic));
     return newIndexDic;
 }
 
