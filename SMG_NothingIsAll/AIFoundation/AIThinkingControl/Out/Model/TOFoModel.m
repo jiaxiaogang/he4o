@@ -166,6 +166,15 @@
         [newIndexDic setObject:@(i) forKey:absIndex];
     }
     NSLog(@"oldIndexDic:%@ newIndexDic:%@",CLEANSTR(oldIndexDic),CLEANSTR(newIndexDic));
+    if (oldIndexDic.count > 0 && newIndexDic.count == 0) {
+        NSLog(@"查下,为什么总是取到空映射");
+        //第1步: 来自于NewRCanset的映射 (有值);
+        //第2步: 在TCTransfer.xv中有映射;
+        //第3步: 在TCTransfer.si中有映射;
+        //第4步: 在此处oldIndexDic有映射 (有值);
+        //第5步: 在此处newIndexDic有映射;
+        //TODOTOMORROW20240408: 明天继续查下这里,看为什么旧的indexDic都有值,新的indexDic却没值;
+    }
     return newIndexDic;
 }
 
