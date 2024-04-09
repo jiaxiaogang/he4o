@@ -54,7 +54,7 @@
 
 /**
  *  MARK:--------------------匹配下标映射--------------------
- *  @desc 其描述了match与mask匹配到的每一位的下标映射 <K:matchFoIndex,V:maskFoIndex>;
+ *  @desc 其描述了match(pFo)与mask(实际反馈)匹配到的每一位的下标映射 <K:matchFoIndex,V:maskFoIndex>;
  *  @caller
  *      1. 当为瞬时识别时,lastMatchIndex与已发生cutIndex同值 (因为瞬时时,判断的本来就是当前已经发生的事);
  *      2. 当为反思识别时,lastMatchIndex与已发生cutIndex不同值 (因为反思是一种假设,并判断假设这么做会怎么样);

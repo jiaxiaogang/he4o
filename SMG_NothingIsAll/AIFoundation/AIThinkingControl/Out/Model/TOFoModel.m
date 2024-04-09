@@ -397,6 +397,13 @@
                 [rCanset updateConCanset:newHCanset.pointer targetIndex:self.cutIndex];
                 AIKVPointer *cutIndexAlg_p = ARR_INDEX(rCanset.content_ps, self.cutIndex);
                 
+                
+                //现有资源1: pFo与实际反馈的映射: basePFo.indexDic2
+                //现有资源2: self(RCanset)与pFo的映射: self.xvModel.sceneToCansetToIndexDic
+                //需要得到3: 实际反馈 与 RCanset之间的映射;
+                //实现方式4: 可以看下,调用indexDic综合计算算法来算这里的映射;
+                
+                
                 //TODOTOMORROW20240406: 看这里怎么把rCanset和hCanset的indexDic映射补上;
                 //15. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);
                 NSDictionary *newIndexDic = [self convertOldIndexDic2NewIndexDic:basePFo.matchFo];
