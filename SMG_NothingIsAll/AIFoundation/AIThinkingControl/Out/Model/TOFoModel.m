@@ -398,8 +398,14 @@
                 AIKVPointer *cutIndexAlg_p = ARR_INDEX(rCanset.content_ps, self.cutIndex);
                 
                 
-                //现有资源1: pFo与实际反馈的映射: basePFo.indexDic2
-                //现有资源2: self(RCanset)与pFo的映射: self.xvModel.sceneToCansetToIndexDic
+                //5. 综合indexDic计算,流程为: rCanset -> rScene(pFo) -> hCanset(实际反馈realMask);
+                //a. self(RCanset)与pFo的映射: self.xvModel.sceneToCansetToIndexDic
+                DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:self.transferXvModel.sceneToCansetToIndexDic];
+                
+                //b. pFo与实际反馈的映射: basePFo.indexDic2
+                DirectIndexDic *dic2 = [DirectIndexDic newNoToAbs:basePFo.indexDic2];
+                [TOUtils zonHeIndexDic:@[dic1,dic2]];
+                
                 //需要得到3: 实际反馈 与 RCanset之间的映射;
                 //实现方式4: 可以看下,调用indexDic综合计算算法来算这里的映射;
                 
