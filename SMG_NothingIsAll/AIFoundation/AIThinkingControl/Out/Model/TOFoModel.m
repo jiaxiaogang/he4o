@@ -397,23 +397,18 @@
                 [rCanset updateConCanset:newHCanset.pointer targetIndex:self.cutIndex];
                 AIKVPointer *cutIndexAlg_p = ARR_INDEX(rCanset.content_ps, self.cutIndex);
                 
-                
                 //5. 综合indexDic计算,流程为: rCanset -> rScene(pFo) -> hCanset(实际反馈realMask);
                 //a. self(RCanset)与pFo的映射: self.xvModel.sceneToCansetToIndexDic
                 DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:self.transferXvModel.sceneToCansetToIndexDic];
                 
                 //b. pFo与实际反馈的映射: basePFo.indexDic2
                 DirectIndexDic *dic2 = [DirectIndexDic newNoToAbs:basePFo.indexDic2];
-                [TOUtils zonHeIndexDic:@[dic1,dic2]];
                 
-                //需要得到3: 实际反馈 与 RCanset之间的映射;
-                //实现方式4: 可以看下,调用indexDic综合计算算法来算这里的映射;
+                //c. 实际反馈(为V) 与 RCanset(为K) => 之间的映射;
+                NSDictionary *zonHeIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2]];
+                [newHCanset updateIndexDic:rCanset indexDic:zonHeIndexDic];
                 
-                
-                //TODOTOMORROW20240406: 看这里怎么把rCanset和hCanset的indexDic映射补上;
-                //15. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);
-                NSDictionary *newIndexDic = [self convertOldIndexDic2NewIndexDic:basePFo.matchFo];
-                [newHCanset updateIndexDic:rCanset indexDic:newIndexDic];
+                //TODOTOMORROW20240409: 测下这里能得到正确的indexDic,然后测下convertOldIndexDic2NewIndexDic()能不能得到正确的indexDic;
                 
                 NSLog(@"Canset演化> NewHCanset:%@ 挂载在: rScene:F%ld rCanset:F%ld 的第%ld帧:A%ld",ShortDesc4Node(newHCanset),basePFo.matchFo.pointerId,rCanset.pId,self.cutIndex+1,cutIndexAlg_p.pointerId);
             }
