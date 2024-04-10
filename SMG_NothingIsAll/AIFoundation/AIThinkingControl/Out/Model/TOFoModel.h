@@ -24,7 +24,7 @@
  *  @version
  *      2021.03.27: 实现ITryActionFoDelegate接口,因为每个fo都有可能是子任务 (参考22193);
  */
-@class AISceneModel,AITransferModel,TCTransferXvModel;
+@class AISceneModel,AITransferModel,TCTransferXvModel,AIRealModel;
 @interface TOFoModel : TOModelBase <ISubModelsDelegate,ISubDemandDelegate,NSCoding>
 
 /**
@@ -201,5 +201,10 @@
  *  MARK:--------------------取此方案迁移目标--------------------
  */
 -(AIKVPointer*) sceneTo;
+
+/**
+ *  MARK:--------------------实际反馈记录--------------------
+ */
+@property (strong, nonatomic) AIRealModel *realModel;
 
 @end

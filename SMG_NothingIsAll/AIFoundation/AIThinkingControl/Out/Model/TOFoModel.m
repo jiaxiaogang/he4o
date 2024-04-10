@@ -409,6 +409,8 @@
                 [newHCanset updateIndexDic:rCanset indexDic:zonHeIndexDic];
                 
                 //TODOTOMORROW20240409: 测下这里能得到正确的indexDic,然后测下convertOldIndexDic2NewIndexDic()能不能得到正确的indexDic;
+                //5. indexDic计算,应该由: sceneTo和cansetTo的映射 + 实际反馈部分的映射;
+                //self.realModel;
                 
                 NSLog(@"Canset演化> NewHCanset:%@ 挂载在: rScene:F%ld rCanset:F%ld 的第%ld帧:A%ld",ShortDesc4Node(newHCanset),basePFo.matchFo.pointerId,rCanset.pId,self.cutIndex+1,cutIndexAlg_p.pointerId);
             }
