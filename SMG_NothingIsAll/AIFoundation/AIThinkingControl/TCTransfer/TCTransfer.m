@@ -45,7 +45,22 @@
     }
 }
 
-+(TCTransferXvModel*) transferXv_IR:(TOFoModel*)cansetModel { return nil; }
++(TCTransferXvModel*) transferXv_IR:(TOFoModel*)cansetModel {
+    //说明: 其实IR是不需要迁移的,这里填充xvModel,只是为了后续访问方便;
+    //注: IR的cansetFrom和To是同一个,sceneFrom和sceneTo也是同一个;
+    AIFoNodeBase *cansetFromTo = [SMGUtils searchNode:cansetModel.cansetFo];
+    AIFoNodeBase *sceneFromTo = [SMGUtils searchNode:cansetModel.sceneFo];
+    NSArray *orders = [SMGUtils convertArr:cansetFromTo.content_ps iConvertBlock:^id(NSInteger i, AIKVPointer *obj) {
+        double deltaTime = [NUMTOOK(ARR_INDEX(cansetFromTo.deltaTimes, i)) doubleValue];
+        return [AIShortMatchModel_Simple newWithAlg_p:obj inputTime:deltaTime isTimestamp:false];
+    }];
+    
+    TCTransferXvModel *result = [[TCTransferXvModel alloc] init];
+    result.cansetToOrders = orders;
+    result.sceneToCansetToIndexDic = [sceneFromTo getConIndexDic:cansetFromTo.p];
+    result.sceneToTargetIndex = cansetModel.sceneTargetIndex;
+    return result;
+}
 
 +(TCTransferXvModel*) transferXv_IH:(TOFoModel*)cansetModel {
     //1. 数据准备;
@@ -147,7 +162,7 @@
 //MARK:===============================================================
 
 +(void) transferSi:(TOFoModel*)cansetModel {
-    //0. IR时没有虚,直接构建实;
+    //0. IR不需要迁移,这里生成siModel,便于后续使用;
     if (cansetModel.baseSceneModel.type == SceneTypeI && !cansetModel.isH) {
         cansetModel.transferSiModel = [AITransferModel newWithScene:cansetModel.sceneFo canset:cansetModel.cansetFo];
         return;

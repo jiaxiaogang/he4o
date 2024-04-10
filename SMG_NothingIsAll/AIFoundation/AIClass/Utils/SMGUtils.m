@@ -573,6 +573,20 @@
     return result;
 }
 
++(NSMutableArray*) convertArr:(NSArray*)arr iConvertBlock:(id(^)(NSInteger i, id obj))iConvertBlock {
+    //1. 数据准备;
+    arr = ARRTOOK(arr);
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    
+    //2. 转换
+    for (NSInteger i = 0; i < arr.count; i++) {
+        id obj = ARR_INDEX(arr, i);
+        id convertItem = iConvertBlock(i,obj);
+        if (convertItem) [result addObject:convertItem];
+    }
+    return result;
+}
+
 +(NSMutableArray*) convertArr:(NSArray*)arr convertItemArrBlock:(NSArray*(^)(id obj))convertItemArrBlock{
     //1. 数据准备;
     arr = ARRTOOK(arr);
