@@ -10,11 +10,18 @@
 
 /**
  *  MARK:--------------------实际反馈记录--------------------
+ *  @desc 此模型起因: 在TI中,早就有realMaskFo和realDeltaTimes的做法,并且indexDic映射也够用,但在TO中,测出了构建RHCanset时,其indexDic或不准,或为空的问题;
+ *                  而写这个RealModel模型,就是为了整理这一流程,将其数据整理过来,使之相关代码看着顺当简洁,也解决TO中indexDic不准等问题;
+ *  @desc RealModel分两步:
+ *          1. 初始:
+ *              1.1 在TI中,时序识别预测后,将预测matchFo和实际发生maskFo中已发生的部分存下来;
+ *              1.2 在TO中,cansetFo迁移xv之后(xvModel赋值后),将sceneTo和cansetTo已发生部分的映射存下来;
+ *                  TODO: 可以考虑把初始内容记一个initCutIndex;
+ *          2. 更新:
+ *              1.1 在TI中,每一次feedbackTIR反馈后,再更新之;
+ *              1.2 在TO中,后续每次cansetFo有反馈时,再更新之;
  */
 @interface AIRealModel : NSObject
-
-
-//可以把初始内容也计入其中,然后记一个initCutIndex;
 
 /**
  *  MARK:--------------------识别时为protoFo,反思时为regroupFo--------------------
