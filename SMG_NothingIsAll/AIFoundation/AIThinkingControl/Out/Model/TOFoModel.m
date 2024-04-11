@@ -17,6 +17,9 @@
 
 @implementation TOFoModel
 
+/**
+ *  MARK:--------------------New时还没迁移,所以new时所有参数都表示cansetFrom或sceneFrom而非to--------------------
+ */
 +(TOFoModel*) newWithCansetFo:(AIKVPointer*)cansetFo sceneFo:(AIKVPointer*)sceneFo base:(TOModelBase<ITryActionFoDelegate>*)base
            protoFrontIndexDic:(NSDictionary *)protoFrontIndexDic matchFrontIndexDic:(NSDictionary *)matchFrontIndexDic
               frontMatchValue:(CGFloat)frontMatchValue frontStrongValue:(CGFloat)frontStrongValue
@@ -80,6 +83,7 @@
  */
 -(void) initRealModel {
     self.realModel = [[AIRealModel alloc] init];
+    
     
 }
 

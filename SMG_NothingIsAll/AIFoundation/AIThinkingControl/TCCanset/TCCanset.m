@@ -70,19 +70,19 @@
     }
     
     //5. 根据sceneFo取得与canset的indexDic映射;
-    NSDictionary *indexDic = [cansetFo getAbsIndexDic:sceneFo_p];
+    NSDictionary *cansetFromSceneFromIndexDic = [cansetFo getAbsIndexDic:sceneFo_p];
     [AITest test102:cansetFo];
     
     //2. 计算出canset的cutIndex (canset的cutIndex,也已在proto中发生) (参考26128-1-1);
     //7. 根据ptAleardayCount取出对应的cansetIndex,做为中段截点 (aleardayCount - 1 = cutIndex);
     NSInteger matchCutIndex = ptAleardayCount - 1;
-    NSInteger cansetCutIndex = NUMTOOK([indexDic objectForKey:@(matchCutIndex)]).integerValue;
+    NSInteger cansetFromCutIndex = NUMTOOK([cansetFromSceneFromIndexDic objectForKey:@(matchCutIndex)]).integerValue;
     
     //8. canset目标下标 (R时canset没有mv,所以要用count-1);
-    NSInteger cansetTargetIndex = isH ? NUMTOOK([indexDic objectForKey:@(ptAleardayCount)]).integerValue : cansetFo.count - 1;
-    if (cansetCutIndex < matchCutIndex) return nil; //过滤2: 判断canset前段是否有遗漏 (参考27224);
+    NSInteger cansetTargetIndex = isH ? NUMTOOK([cansetFromSceneFromIndexDic objectForKey:@(ptAleardayCount)]).integerValue : cansetFo.count - 1;
+    if (cansetFromCutIndex < matchCutIndex) return nil; //过滤2: 判断canset前段是否有遗漏 (参考27224);
     
-    if (cansetFo.count <= cansetCutIndex + 1) return nil; //过滤3: 过滤掉canset没后段的 (没可行为化的东西) (参考28052-4);
+    if (cansetFo.count <= cansetFromCutIndex + 1) return nil; //过滤3: 过滤掉canset没后段的 (没可行为化的东西) (参考28052-4);
     
     //9. 递归找到protoFo;
     AIMatchFoModel *pFo = [self getPFo:cansetFo_p basePFoOrTargetFoModel:basePFoOrTargetFoModel];
@@ -90,7 +90,7 @@
     AIFoNodeBase *protoFo = [SMGUtils searchNode:protoFo_p];
     
     //10. 判断protoFo对cansetFo条件满足 (返回条件满足的每帧间映射);
-    NSArray *frontIndexDicModels = [self getFrontIndexDic:protoFo cansetFo:cansetFo cansetCutIndex:cansetCutIndex sceneModel:sceneModel];
+    NSArray *frontIndexDicModels = [self getFrontIndexDic:protoFo cansetFo:cansetFo cansetCutIndex:cansetFromCutIndex sceneModel:sceneModel];
     NSDictionary *protoFrontIndexDic = [SMGUtils convertArr2Dic:frontIndexDicModels kvBlock:^NSArray *(FrontIndexDicModel *obj) {
         return @[@(obj.cansetIndex),@(obj.protoIndex)];
     }];
@@ -110,7 +110,7 @@
     if (frontMatchValue == 0) return nil; //过滤5: 前段不匹配时,直接返回nil (参考26128-1-3);
     
     //5. 计算前段竞争值之强度竞争值 (参考28086-todo1);
-    NSDictionary *matchFrontIndexDic = [SMGUtils filterDic:indexDic checkValid:^BOOL(NSNumber *key, id value) {
+    NSDictionary *matchFrontIndexDic = [SMGUtils filterDic:cansetFromSceneFromIndexDic checkValid:^BOOL(NSNumber *key, id value) {
         return key.integerValue <= matchCutIndex;
     }];
     NSInteger sumStrong = [AINetUtils getSumConStrongByIndexDic:matchFrontIndexDic matchFo:sceneFo_p cansetFo:cansetFo_p];
@@ -118,13 +118,13 @@
     
     //6. 计算中断竞争值;
     CGFloat midEffectScore = [TOUtils getEffectScore:matchFo effectIndex:matchTargetIndex solutionFo:cansetFo_p];
-    CGFloat midStableScore = [TOUtils getStableScore:cansetFo startSPIndex:cansetCutIndex + 1 endSPIndex:cansetTargetIndex];
+    CGFloat midStableScore = [TOUtils getStableScore:cansetFo startSPIndex:cansetFromCutIndex + 1 endSPIndex:cansetTargetIndex];
     
     //6. 后段: 找canset后段目标 和 后段匹配度 (H需要后段匹配, R不需要);
     TOFoModel *result = nil;
     if (isH) {
         //7. 后段匹配度 (后段不匹配时,直接返nil);
-        NSDictionary *backIndexDic = [SMGUtils filterDic:indexDic checkValid:^BOOL(NSNumber *key, id value) {
+        NSDictionary *backIndexDic = [SMGUtils filterDic:cansetFromSceneFromIndexDic checkValid:^BOOL(NSNumber *key, id value) {
             return key.integerValue == ptAleardayCount;
         }];
         CGFloat backMatchValue = [AINetUtils getMatchByIndexDic:backIndexDic absFo:sceneFo_p conFo:cansetFo_p callerIsAbs:true];
@@ -139,7 +139,7 @@
                               frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue
                                midEffectScore:midEffectScore midStableScore:midStableScore
                                  backIndexDic:backIndexDic backMatchValue:backMatchValue backStrongValue:backStrongValue
-                                     cutIndex:cansetCutIndex sceneCutIndex:matchCutIndex
+                                     cutIndex:cansetFromCutIndex sceneCutIndex:matchCutIndex
                                   targetIndex:cansetTargetIndex sceneTargetIndex:matchTargetIndex
                        basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel];
     }else{
@@ -149,7 +149,7 @@
                               frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue
                                midEffectScore:midEffectScore midStableScore:midStableScore
                                  backIndexDic:nil backMatchValue:1 backStrongValue:0
-                                     cutIndex:cansetCutIndex sceneCutIndex:matchCutIndex
+                                     cutIndex:cansetFromCutIndex sceneCutIndex:matchCutIndex
                                   targetIndex:cansetFo.count sceneTargetIndex:matchTargetIndex
                        basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel];
     }
