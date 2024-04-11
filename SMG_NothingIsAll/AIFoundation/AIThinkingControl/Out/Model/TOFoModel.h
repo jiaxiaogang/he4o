@@ -38,7 +38,7 @@
               frontMatchValue:(CGFloat)frontMatchValue frontStrongValue:(CGFloat)frontStrongValue
                midEffectScore:(CGFloat)midEffectScore midStableScore:(CGFloat)midStableScore
                  backIndexDic:(NSDictionary*)backIndexDic backMatchValue:(CGFloat)backMatchValue backStrongValue:(CGFloat)backStrongValue
-                     cutIndex:(NSInteger)cutIndex sceneCutIndex:(NSInteger)sceneCutIndex
+               cansetCutIndex:(NSInteger)cansetCutIndex sceneCutIndex:(NSInteger)sceneCutIndex
                   targetIndex:(NSInteger)targetIndex sceneTargetIndex:(NSInteger)sceneTargetIndex
        basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel;
 
@@ -153,7 +153,7 @@
  *  @todo 将cutIndex赋值,改为生成TOAlgModel模型,并挂在subModels下;
  *  @desc cutIndex表示当前从执行到执行下帧前 (即cutIndex一般表示已执行 / 含cutIndex也已发生);
  */
-@property (assign, nonatomic) NSInteger cutIndex;
+@property (assign, nonatomic) NSInteger cansetCutIndex;
 
 /**
  *  MARK:--------------------执行目标index--------------------

@@ -98,19 +98,19 @@
         AIKVPointer *canset_p = hSolution.content_p;
         
         //7. 更新effectDic;
-        [targetFoNode updateEffectStrong:targetFo.cutIndex solutionFo:canset_p status:es];
+        [targetFoNode updateEffectStrong:targetFo.cansetCutIndex solutionFo:canset_p status:es];
         //[targetFoNode updateSPStrong:targetFo.actionIndex type:tp];
         
         //8. 对抽象也更新eff (参考29069-todo11.5);
         AIFoNodeBase *canset = [SMGUtils searchNode:canset_p];
         [TCRethinkUtil spEff4Abs:canset curFoIndex:hSolution.targetIndex itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {
-            [targetFoNode updateEffectStrong:targetFo.cutIndex solutionFo:absFo.pointer status:es];
+            [targetFoNode updateEffectStrong:targetFo.cansetCutIndex solutionFo:absFo.pointer status:es];
         }];
         
         //8. log
-        AIEffectStrong *strong = [TOUtils getEffectStrong:targetFoNode effectIndex:targetFo.cutIndex solutionFo:canset_p];
+        AIEffectStrong *strong = [TOUtils getEffectStrong:targetFoNode effectIndex:targetFo.cansetCutIndex solutionFo:canset_p];
         IFTitleLog(@"hEffect", @"\n%p S:%@ (有效性:%@ 当前方案状态:%@)",hSolution,Pit2FStr(canset_p),EffectStatus2Str(es),TOStatus2Str(hSolution.status));
-        NSLog(@"\t=>targetFo:%@ (index:%ld H%ldN%ld)",Fo2FStr(targetFoNode),targetFo.cutIndex,strong.hStrong,strong.nStrong);
+        NSLog(@"\t=>targetFo:%@ (index:%ld H%ldN%ld)",Fo2FStr(targetFoNode),targetFo.cansetCutIndex,strong.hStrong,strong.nStrong);
     }];
     DebugE();
 }

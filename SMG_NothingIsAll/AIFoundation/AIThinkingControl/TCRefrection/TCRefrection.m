@@ -37,14 +37,14 @@
     
     //4. 算出如果canset无效,会带来的风险;
     CGFloat nEffScore = 1 - [TOUtils getEffectScore:sceneFo effectIndex:checkCanset.sceneTargetIndex solutionFo:checkCanset.cansetFo];
-    OFTitleLog(@"TCRefrection反思", @"\n%@ CUT:%ld 前匹配度%.2f 无效率:%.2f",Pit2FStr(checkCanset.cansetFo),(long)checkCanset.cutIndex,checkCanset.frontMatchValue,nEffScore);
+    OFTitleLog(@"TCRefrection反思", @"\n%@ CUT:%ld 前匹配度%.2f 无效率:%.2f",Pit2FStr(checkCanset.cansetFo),(long)checkCanset.cansetCutIndex,checkCanset.frontMatchValue,nEffScore);
     
     //5. 算出因canset无效,带来的风险分 = Eff为N的概率 x scene的mv评分;
     CGFloat canestFenXianScore = [AIScore score4MV:sceneFo.cmvNode_p ratio:nEffScore];
     
     //7. 算出后段的"懒"评分;
     CGFloat lazyScore = 0;
-    for (NSInteger i = checkCanset.cutIndex + 1; i < cansetFo.count; i++) {
+    for (NSInteger i = checkCanset.cansetCutIndex + 1; i < cansetFo.count; i++) {
         //8. 遍历后半段中的"isOut=true"的行为,各指定"懒"评分;
         AIKVPointer *alg_p = ARR_INDEX(cansetFo.content_ps, i);
         if (alg_p && alg_p.isOut) {

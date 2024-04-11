@@ -256,7 +256,7 @@
     DemandModel *demand = (DemandModel*)solutionModel.baseOrGroup;
     
     AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.content_p];
-    NSInteger curActionIndex = solutionModel.cutIndex;
+    NSInteger curActionIndex = solutionModel.cansetCutIndex;
     TOAlgModel *frameModel = [solutionModel getCurFrame];
     
     //1. 设为actYes

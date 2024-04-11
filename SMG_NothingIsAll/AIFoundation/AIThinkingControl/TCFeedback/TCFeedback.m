@@ -318,7 +318,7 @@
             
             //6. 未到末尾,不处理;
             AIFoNodeBase *waitFo = [SMGUtils searchNode:waitModel.content_p];
-            if (waitModel.cutIndex < waitFo.count) continue;
+            if (waitModel.cansetCutIndex < waitFo.count) continue;
             
             //7. waitFo是为了解决任务,所以要取出原任务的mv标识来比较;
             //7. 判断hope(wait)和real(new)之间是否相符 (当反馈了"同区反向"时,即表明任务失败,为S);

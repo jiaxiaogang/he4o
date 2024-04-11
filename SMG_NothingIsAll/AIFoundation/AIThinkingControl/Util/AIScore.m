@@ -90,7 +90,7 @@
  */
 +(BOOL) FRS_Time:(DemandModel*)demand solutionModel:(TOFoModel*)solutionModel{
     //1. 中段为0条时,直接返回true,评价通过;
-    if (solutionModel.targetIndex - solutionModel.cutIndex <= 1) {
+    if (solutionModel.targetIndex - solutionModel.cansetCutIndex <= 1) {
         return true;
     }
 
@@ -102,7 +102,7 @@
     
     //3. 取解决方案所需时间;
     AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.cansetFo];
-    double needTime = [TOUtils getSumDeltaTime:solutionFo startIndex:solutionModel.cutIndex + 1 endIndex:solutionModel.cutIndex + 2];
+    double needTime = [TOUtils getSumDeltaTime:solutionFo startIndex:solutionModel.cansetCutIndex + 1 endIndex:solutionModel.cansetCutIndex + 2];
     
     //4. 取父任务能给的时间;
     AIMatchFoModel *firstPFo = ARR_INDEX(nearRDemand.validPFos, 0);

@@ -25,7 +25,7 @@
               frontMatchValue:(CGFloat)frontMatchValue frontStrongValue:(CGFloat)frontStrongValue
                midEffectScore:(CGFloat)midEffectScore midStableScore:(CGFloat)midStableScore
                  backIndexDic:(NSDictionary*)backIndexDic backMatchValue:(CGFloat)backMatchValue backStrongValue:(CGFloat)backStrongValue
-                     cutIndex:(NSInteger)cutIndex sceneCutIndex:(NSInteger)sceneCutIndex
+               cansetCutIndex:(NSInteger)cansetCutIndex sceneCutIndex:(NSInteger)sceneCutIndex
                   targetIndex:(NSInteger)targetIndex sceneTargetIndex:(NSInteger)sceneTargetIndex
        basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel {
     TOFoModel *model = [[TOFoModel alloc] init];
@@ -43,7 +43,7 @@
     model.midStableScore = midStableScore;
     model.backMatchValue = backMatchValue;
     model.backStrongValue = backStrongValue;
-    model.cutIndex = cutIndex;
+    model.cansetCutIndex = cansetCutIndex;
     model.targetIndex = targetIndex;
     model.sceneTargetIndex = sceneTargetIndex;
     
@@ -66,7 +66,7 @@
     model.sceneFo = scene;
     model.basePFoOrTargetFoModel = basePFoOrTargetFoModel;
     model.baseSceneModel = baseSceneModel;//H任务时,其实是复用了R任务的RSceneModel;
-    model.cutIndex = cansetCutIndex;//H任务时,cansetCutIndex其实是顺着scene找上一帧有映射的 (参考TOUtils.goBackToFindConIndexByAbsIndex());
+    model.cansetCutIndex = cansetCutIndex;//H任务时,cansetCutIndex其实是顺着scene找上一帧有映射的 (参考TOUtils.goBackToFindConIndexByAbsIndex());
     model.targetIndex = cansetTargetIndex;
     model.sceneTargetIndex = sceneTargetIndex;//H任务时,其实hScene的目标就是hScene的下一帧 (即目标 = hScene.cutIndex + 1);
     
@@ -83,7 +83,7 @@
  */
 -(void) initRealModel {
     self.realModel = [[AIRealModel alloc] init];
-    
+    //self.cansetCutIndex
     
 }
 
@@ -128,7 +128,7 @@
     AIFoNodeBase *fo = [SMGUtils searchNode:self.content_p];
     NSMutableArray *order = [[NSMutableArray alloc] init];
     NSArray *feedbackIndexArr = [self getIndexArrIfHavFeedback];
-    NSInteger max = fromRegroup ? fo.count : self.cutIndex;
+    NSInteger max = fromRegroup ? fo.count : self.cansetCutIndex;
     
     //2. 将fo逐帧收集真实发生的alg;
     for (NSInteger i = 0; i < max; i++) {
@@ -302,20 +302,20 @@
 -(void) pushNextFrame {
     //1. 数据准备;
     AIFoNodeBase *cansetFo = [SMGUtils searchNode:self.content_p];
-    NSInteger actionIndex = self.cutIndex + 1; //现在正在行为化中的帧下标 (随后验证一下这里的index是不是搞乱了,都修正下);
+    NSInteger actionIndex = self.cansetCutIndex + 1; //现在正在行为化中的帧下标 (随后验证一下这里的index是不是搞乱了,都修正下);
     
     //2. 更新cutIndex;
-    self.cutIndex ++;
+    self.cansetCutIndex ++;
     
     //3. 挂载TOAlgModel;
-    if (self.cutIndex < self.targetIndex - 1) {
+    if (self.cansetCutIndex < self.targetIndex - 1) {
         //6. 转下帧: 理性帧则生成TOAlgModel;
-        AIKVPointer *nextCansetA_p = ARR_INDEX(cansetFo.content_ps, self.cutIndex);
+        AIKVPointer *nextCansetA_p = ARR_INDEX(cansetFo.content_ps, self.cansetCutIndex);
         [TOAlgModel newWithAlg_p:nextCansetA_p group:self];
     }else{
         if(ISOK(self.baseOrGroup, HDemandModel.class)){
             //9. H目标帧只需要等 (转hActYes) (参考25031-9);
-            AIKVPointer *hTarget_p = ARR_INDEX(cansetFo.content_ps, self.cutIndex);
+            AIKVPointer *hTarget_p = ARR_INDEX(cansetFo.content_ps, self.cansetCutIndex);
             [TOAlgModel newWithAlg_p:hTarget_p group:self];
         }
     }
@@ -327,7 +327,7 @@
 -(TOAlgModel*) getCurFrame {
     //方法1. 从subModels中找出cutIndex对应的那一条返回;
     AIFoNodeBase *cansetFo = [SMGUtils searchNode:self.content_p];
-    AIKVPointer *curCansetA_p = ARR_INDEX(cansetFo.content_ps, self.cutIndex);
+    AIKVPointer *curCansetA_p = ARR_INDEX(cansetFo.content_ps, self.cansetCutIndex);
     return [SMGUtils filterSingleFromArr:self.subModels checkValid:^BOOL(TOAlgModel *item) {
         return [item.content_p isEqual:curCansetA_p];
     }];
@@ -360,12 +360,12 @@
     //AIKVPointer *oldFeedbackAlg = curAlgModel.feedbackAlg;//新旧反馈用匹配度竞争一下: 更匹配则替换等 | 否则则把oldFeedbackAlg改回去;
     
     //1. 未达到targetIndex才接受反馈;
-    if (self.cutIndex >= self.targetIndex) return false;
+    if (self.cansetCutIndex >= self.targetIndex) return false;
     feedbackMatchAlg_ps = ARRTOOK(feedbackMatchAlg_ps);
     
     //2. 判断反馈mIsC是否有效 (比如找锤子,看到锤子了 & 再如吃,确定自己是否真吃了);
     NSArray *cansetToContent_ps = [self getCansetToContent_ps];
-    AIKVPointer *cansetToWaitAlg_p = ARR_INDEX(cansetToContent_ps, self.cutIndex + 1);
+    AIKVPointer *cansetToWaitAlg_p = ARR_INDEX(cansetToContent_ps, self.cansetCutIndex + 1);
     BOOL mIsC = [feedbackMatchAlg_ps containsObject:cansetToWaitAlg_p];
     if (!mIsC) return false;
     
@@ -405,10 +405,10 @@
             AIFoNodeBase *rCanset = [SMGUtils searchNode:self.content_p];
             AIMatchFoModel *basePFo = (AIMatchFoModel*)self.basePFoOrTargetFoModel;
             NSArray *order = [basePFo convertOrders4NewCansetV2];
-            if (ARRISOK(order) && self.cutIndex < rCanset.count) {
-                AIFoNodeBase *newHCanset = [theNet createConFoForCanset:order sceneFo:rCanset sceneTargetIndex:self.cutIndex];
-                [rCanset updateConCanset:newHCanset.pointer targetIndex:self.cutIndex];
-                AIKVPointer *cutIndexAlg_p = ARR_INDEX(rCanset.content_ps, self.cutIndex);
+            if (ARRISOK(order) && self.cansetCutIndex < rCanset.count) {
+                AIFoNodeBase *newHCanset = [theNet createConFoForCanset:order sceneFo:rCanset sceneTargetIndex:self.cansetCutIndex];
+                [rCanset updateConCanset:newHCanset.pointer targetIndex:self.cansetCutIndex];
+                AIKVPointer *cutIndexAlg_p = ARR_INDEX(rCanset.content_ps, self.cansetCutIndex);
                 
                 //5. 综合indexDic计算,流程为: rCanset -> rScene(pFo) -> hCanset(实际反馈realMask);
                 //a. self(RCanset)与pFo的映射: self.xvModel.sceneToCansetToIndexDic
@@ -425,7 +425,7 @@
                 //5. indexDic计算,应该由: sceneTo和cansetTo的映射 + 实际反馈部分的映射;
                 //self.realModel;
                 
-                NSLog(@"Canset演化> NewHCanset:%@ 挂载在: rScene:F%ld rCanset:F%ld 的第%ld帧:A%ld",ShortDesc4Node(newHCanset),basePFo.matchFo.pointerId,rCanset.pId,self.cutIndex+1,cutIndexAlg_p.pointerId);
+                NSLog(@"Canset演化> NewHCanset:%@ 挂载在: rScene:F%ld rCanset:F%ld 的第%ld帧:A%ld",ShortDesc4Node(newHCanset),basePFo.matchFo.pointerId,rCanset.pId,self.cansetCutIndex+1,cutIndexAlg_p.pointerId);
             }
         }
     }
@@ -441,7 +441,7 @@
         if (Log4OPushM) NSLog(@"HCansetA有效:M(A%ld) C:%@",protoAlg_p.pointerId,Pit2FStr(targetAlgModel.content_p));
         
         //7. 记录feedbackAlg (参考27204-1);
-        BOOL isEndFrame = self.cutIndex == self.targetIndex;
+        BOOL isEndFrame = self.cansetCutIndex == self.targetIndex;
         
         //8. 旧有那些改状态status的代码,整理在此处 (参考31073-TODO7-4);
         //9. H反馈中段: 标记OuterBack,solutionFo继续;
@@ -469,9 +469,9 @@
                 
                 //14. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
                 NSLog(@"Canset演化> AbsHCanset:(状态:%@ fromTargetFo:F%ld) \n\t当前Canset:%@",TOStatus2Str(self.status),targetFoModel.content_p.pointerId,Pit2FStr(self.content_p));
-                NSArray *noRepeatArea_ps = [targetFo getConCansets:targetFoModel.cutIndex];
+                NSArray *noRepeatArea_ps = [targetFo getConCansets:targetFoModel.cansetCutIndex];
                 AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:newHCanset assFo:siCansetFo type:ATDefault noRepeatArea_ps:noRepeatArea_ps];
-                BOOL updateCansetSuccess = [targetFo updateConCanset:absCansetFo.pointer targetIndex:targetFoModel.cutIndex];
+                BOOL updateCansetSuccess = [targetFo updateConCanset:absCansetFo.pointer targetIndex:targetFoModel.cansetCutIndex];
                 [AITest test101:absCansetFo proto:newHCanset conCanset:siCansetFo];
                 
                 if (updateCansetSuccess) {
@@ -531,7 +531,7 @@
     self = [super initWithCoder:aDecoder];
     if (self) {
         self.subModels = [aDecoder decodeObjectForKey:@"subModels"];
-        self.cutIndex = [aDecoder decodeIntegerForKey:@"cutIndex"];
+        self.cansetCutIndex = [aDecoder decodeIntegerForKey:@"cansetCutIndex"];
         self.targetIndex = [aDecoder decodeIntegerForKey:@"targetIndex"];
         self.subDemands = [aDecoder decodeObjectForKey:@"subDemands"];
         self.feedbackMv = [aDecoder decodeObjectForKey:@"feedbackMv"];
@@ -545,7 +545,7 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [super encodeWithCoder:aCoder];
     [aCoder encodeObject:self.subModels forKey:@"subModels"];
-    [aCoder encodeInteger:self.cutIndex forKey:@"cutIndex"];
+    [aCoder encodeInteger:self.cansetCutIndex forKey:@"cansetCutIndex"];
     [aCoder encodeInteger:self.targetIndex forKey:@"targetIndex"];
     [aCoder encodeObject:self.subDemands forKey:@"subDemands"];
     [aCoder encodeObject:self.feedbackMv forKey:@"feedbackMv"];

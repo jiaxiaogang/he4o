@@ -121,7 +121,7 @@
     NSMutableArray *fatherModels = [[NSMutableArray alloc] init];
     NSMutableArray *brotherModels = [[NSMutableArray alloc] init];
     TOFoModel *targetFoM = (TOFoModel*)demand.baseOrGroup.baseOrGroup;
-    NSInteger targetIndex = targetFoM.cutIndex;
+    NSInteger targetIndex = targetFoM.cansetCutIndex;
     
     //2. 取自己级;
     AISceneModel *iModel = [AISceneModel newWithBase:nil type:SceneTypeI scene:targetFoM.content_p cutIndex:targetIndex - 1];

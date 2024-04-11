@@ -76,13 +76,13 @@
     //2. 计算出canset的cutIndex (canset的cutIndex,也已在proto中发生) (参考26128-1-1);
     //7. 根据ptAleardayCount取出对应的cansetIndex,做为中段截点 (aleardayCount - 1 = cutIndex);
     NSInteger matchCutIndex = ptAleardayCount - 1;
-    NSInteger cansetFromCutIndex = NUMTOOK([cansetFromSceneFromIndexDic objectForKey:@(matchCutIndex)]).integerValue;
+    NSInteger cansetCutIndex = NUMTOOK([cansetFromSceneFromIndexDic objectForKey:@(matchCutIndex)]).integerValue;
     
     //8. canset目标下标 (R时canset没有mv,所以要用count-1);
     NSInteger cansetTargetIndex = isH ? NUMTOOK([cansetFromSceneFromIndexDic objectForKey:@(ptAleardayCount)]).integerValue : cansetFo.count - 1;
-    if (cansetFromCutIndex < matchCutIndex) return nil; //过滤2: 判断canset前段是否有遗漏 (参考27224);
+    if (cansetCutIndex < matchCutIndex) return nil; //过滤2: 判断canset前段是否有遗漏 (参考27224);
     
-    if (cansetFo.count <= cansetFromCutIndex + 1) return nil; //过滤3: 过滤掉canset没后段的 (没可行为化的东西) (参考28052-4);
+    if (cansetFo.count <= cansetCutIndex + 1) return nil; //过滤3: 过滤掉canset没后段的 (没可行为化的东西) (参考28052-4);
     
     //9. 递归找到protoFo;
     AIMatchFoModel *pFo = [self getPFo:cansetFo_p basePFoOrTargetFoModel:basePFoOrTargetFoModel];
@@ -90,7 +90,7 @@
     AIFoNodeBase *protoFo = [SMGUtils searchNode:protoFo_p];
     
     //10. 判断protoFo对cansetFo条件满足 (返回条件满足的每帧间映射);
-    NSArray *frontIndexDicModels = [self getFrontIndexDic:protoFo cansetFo:cansetFo cansetCutIndex:cansetFromCutIndex sceneModel:sceneModel];
+    NSArray *frontIndexDicModels = [self getFrontIndexDic:protoFo cansetFo:cansetFo cansetCutIndex:cansetCutIndex sceneModel:sceneModel];
     NSDictionary *protoFrontIndexDic = [SMGUtils convertArr2Dic:frontIndexDicModels kvBlock:^NSArray *(FrontIndexDicModel *obj) {
         return @[@(obj.cansetIndex),@(obj.protoIndex)];
     }];
@@ -118,7 +118,7 @@
     
     //6. 计算中断竞争值;
     CGFloat midEffectScore = [TOUtils getEffectScore:matchFo effectIndex:matchTargetIndex solutionFo:cansetFo_p];
-    CGFloat midStableScore = [TOUtils getStableScore:cansetFo startSPIndex:cansetFromCutIndex + 1 endSPIndex:cansetTargetIndex];
+    CGFloat midStableScore = [TOUtils getStableScore:cansetFo startSPIndex:cansetCutIndex + 1 endSPIndex:cansetTargetIndex];
     
     //6. 后段: 找canset后段目标 和 后段匹配度 (H需要后段匹配, R不需要);
     TOFoModel *result = nil;
@@ -139,7 +139,7 @@
                               frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue
                                midEffectScore:midEffectScore midStableScore:midStableScore
                                  backIndexDic:backIndexDic backMatchValue:backMatchValue backStrongValue:backStrongValue
-                                     cutIndex:cansetFromCutIndex sceneCutIndex:matchCutIndex
+                               cansetCutIndex:cansetCutIndex sceneCutIndex:matchCutIndex
                                   targetIndex:cansetTargetIndex sceneTargetIndex:matchTargetIndex
                        basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel];
     }else{
@@ -149,7 +149,7 @@
                               frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue
                                midEffectScore:midEffectScore midStableScore:midStableScore
                                  backIndexDic:nil backMatchValue:1 backStrongValue:0
-                                     cutIndex:cansetFromCutIndex sceneCutIndex:matchCutIndex
+                               cansetCutIndex:cansetCutIndex sceneCutIndex:matchCutIndex
                                   targetIndex:cansetFo.count sceneTargetIndex:matchTargetIndex
                        basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel];
     }
@@ -171,7 +171,7 @@
 +(TOFoModel*) convert2HCansetModel:(AIKVPointer*)cansetFrom_p hDemand:(HDemandModel*)hDemand rCanset:(TOFoModel*)rCanset {
     //1. 根据hScene和hCanset的映射,取出hCanset的目标帧等数据;
     TOFoModel *targetFoModel = (TOFoModel*)hDemand.baseOrGroup.baseOrGroup;//targetFo就是当前h任务的base(targetAlg).base(targetFo);
-    NSInteger hSceneCutIndex = rCanset.cutIndex;//hScene的推进进度;
+    NSInteger hSceneCutIndex = rCanset.cansetCutIndex;//hScene的推进进度;
     AISceneModel *rSceneModel = rCanset.baseSceneModel;//复用R的SceneModel,因为H任务没有独立的R场景树,它本来就是复用的R任务的场景树等;
     AIFoNodeBase *sceneFrom = [SMGUtils searchNode:rCanset.cansetFo];
     NSDictionary *indexDic = [sceneFrom getConIndexDic:cansetFrom_p];
