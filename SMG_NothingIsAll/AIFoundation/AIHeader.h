@@ -181,7 +181,7 @@
 #define ARR_INDEX(a,i) [SMGUtils arrIndex:a index:i]                    //数组取子防闪
 #define ARR_INDEX_REVERSE(a,i) [SMGUtils arrTransIndex:a index:i]       //数组反序取子防闪
 #define ARR_INDEXISOK(a,i) [SMGUtils arrIndexIsOk:a index:i]            //数组可移除i
-#define ARR_SUB(a,s,l) [SMGUtils arrSub:a start:s length:l]             //数组截取 (arr start length)
+#define ARR_SUB(a,s,l) [SMGUtils arrSub:a start:s length:l]             //数组截取 (arr start length) (含前不含后)
 #define ARRTOSTR(arr,mPre,mSep) [SMGUtils arrToStr:arr prefix:mPre sep:mSep]         //数组接成字符串
 
 //NSNumber

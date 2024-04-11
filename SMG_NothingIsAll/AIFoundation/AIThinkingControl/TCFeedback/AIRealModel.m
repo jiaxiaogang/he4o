@@ -10,4 +10,14 @@
 
 @implementation AIRealModel
 
+-(NSMutableArray *)realOrders {
+    if (!_realOrders) _realOrders = [[NSMutableArray alloc] init];
+    return _realOrders;
+}
+
+-(NSMutableDictionary *)realSceneIndexDic {
+    if (!_realSceneIndexDic) _realSceneIndexDic = [[NSMutableDictionary alloc] init];
+    return _realSceneIndexDic;
+}
+
 @end

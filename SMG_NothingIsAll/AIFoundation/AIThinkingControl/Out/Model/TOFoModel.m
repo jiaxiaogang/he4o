@@ -77,13 +77,31 @@
     return model;
 }
 
+//MARK:===============================================================
+//MARK:                     < RealModel部分 >
+//MARK:===============================================================
+
 /**
- *  MARK:--------------------realModel--------------------
+ *  MARK:--------------------RealModel第1步: 初始数据--------------------
  *  @desc 在xvModel赋值后执行 (参考RealModel的类注释);
  */
 -(void) initRealModel {
+    //1. 初始化;
     self.realModel = [[AIRealModel alloc] init];
-    //self.cansetCutIndex
+    
+    //2. 已发生部分做为初始之: sceneTo和cansetTo的indexDic已发生部分初始赋值;
+    self.realModel.realSceneIndexDic = [SMGUtils filterDic:self.transferXvModel.sceneToCansetToIndexDic checkValid:^BOOL(NSNumber *key, id value) {
+        return key.integerValue <= self.cansetCutIndex;
+    }];
+    
+    //3. 已发生部分做为初始之: cansetTo已发生部分初始赋值;
+    [self.realModel.realOrders addObjectsFromArray:ARR_SUB(self.transferXvModel.cansetToOrders, 0, self.cansetCutIndex + 1)];
+}
+
+/**
+ *  MARK:--------------------RealModel第2步: 逐帧更新--------------------
+ */
+-(void) updateRealModel {
     
 }
 
