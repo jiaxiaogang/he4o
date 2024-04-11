@@ -95,6 +95,14 @@
     }];
     
     //3. 已发生部分做为初始之: cansetTo已发生部分初始赋值;
+    //TODOTOMORROW20240411: 这里应该从reakMask来取protoAlg做order,而不是从cansetToOrders来取...
+    //如果是这样,那映射关系不该这么简单,而是先从pFo取反馈,然后一级级综合计算过来...
+    //方法1: 从basePFo取maskFo,难点在于任务不知道嵌套了多少层,都得计算综合indexDic;
+    //      如果R子任务H,再子任务R,再子任务H这样多层嵌套呢?事实上,只有一层,H不会再有H子任务,而如果是R,则已经是下一个pFo了...
+    //方法2: 每一个cansetFo单独处理反馈和记录realOrders,
+    //      需要回顾一下h任务的cutIndex哪里来的,前段的内容和indexDic怎么取?
+    //方法3: 每个cansetFo都复用pFo的realMaskFo这一份,但每个indexDic要单独存在cansetFo中,因为各是各的反馈匹配情况,不能一概而存;
+    //      每一分枝层,都有它已发生部分的indexDic,这么一综合计算下来复杂度高的,还不如每次生成子枝一层时,直接把父级别的indexDic和realMaskOrders继承过来了;
     [self.realModel.realOrders addObjectsFromArray:ARR_SUB(self.transferXvModel.cansetToOrders, 0, self.cansetCutIndex + 1)];
 }
 
@@ -179,18 +187,22 @@
     AIKVPointer *cansetToFo = self.content_p;//行为化中的siFo
     
     //2. 将fo逐帧收集有反馈的conIndex (参考27207-7);
+    //比如: 现在推进到5了,其中2,3,4应该都有反馈,这里取到的结果就是[2,3,4];
     NSArray *feedbackIndexArr = [self getIndexArrIfHavFeedback];
     
     //3. 取出solutionFo旧有的indexDic (参考27207-8);
+    //比如: 取出场景与cansetTo的映射;
     NSDictionary *oldIndexDic = [targetOrPFo getConIndexDic:cansetToFo];
     
     //4. 筛选出有反馈的absIndex数组 (参考27207-9);
+    //比如: 场景的2,5与cansetToFo的2,4两帧有映射,那么这里得到[2,5];
     NSArray *feedbackAbsIndexArr = [SMGUtils filterArr:oldIndexDic.allKeys checkValid:^BOOL(NSNumber *absIndexKey) {
         NSNumber *conIndexValue = NUMTOOK([oldIndexDic objectForKey:absIndexKey]);
         return [feedbackIndexArr containsObject:conIndexValue];
     }];
     
     //5. 转成newIndexDic (参考27207-10);
+    //BUG: 此处应该有问题,因为realMaskFo的下标肯定不会是i值(像0,1,2,3,4这样),realMaskFo有更多细节帧才对;
     NSMutableDictionary *newIndexDic = [[NSMutableDictionary alloc] init];
     for (NSInteger i = 0; i < feedbackAbsIndexArr.count; i++) {
         NSNumber *absIndex = ARR_INDEX(feedbackAbsIndexArr, i);
