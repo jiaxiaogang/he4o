@@ -64,6 +64,12 @@
 @property (strong, nonatomic) NSMutableDictionary *indexDic2;
 
 /**
+ *  MARK:--------------------初始化时的截点--------------------
+ *  @desc 用于今后取indexDic时,可以根据这个截点,取已发生部分;
+ */
+@property (assign, nonatomic) NSInteger initCutIndex;
+
+/**
  *  MARK:--------------------已发生截点--------------------
  *  @desc 已发生与预测的截点 (0开始,已发生含cutIndex);
  *          1. 识别时为indexDic的长度-1,即全已发生;

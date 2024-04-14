@@ -34,6 +34,7 @@
     model.sumNear = sumNear;
     model.nearCount = nearCount;
     model.indexDic2 = [[NSMutableDictionary alloc] initWithDictionary:indexDic];
+    model.initCutIndex = cutIndex;
     model.cutIndex = cutIndex;
     model.sumRefStrong = sumRefStrong;
     model.scoreCache = defaultScore; //评分缓存默认值;
@@ -323,6 +324,7 @@
         self.nearCount = [aDecoder decodeIntegerForKey:@"nearCount"];
         self.status = [aDecoder decodeObjectForKey:@"status"];
         self.indexDic2 = [aDecoder decodeObjectForKey:@"indexDic2"];
+        self.initCutIndex = [aDecoder decodeIntegerForKey:@"initCutIndex"];
         self.cutIndex = [aDecoder decodeIntegerForKey:@"cutIndex"];
         self.sumRefStrong = [aDecoder decodeIntegerForKey:@"sumRefStrong"];
         self.scoreCache = [aDecoder decodeFloatForKey:@"scoreCache"];
@@ -339,6 +341,7 @@
     [aCoder encodeInteger:self.nearCount forKey:@"nearCount"];
     [aCoder encodeObject:self.status forKey:@"status"];
     [aCoder encodeObject:self.indexDic2 forKey:@"indexDic2"];
+    [aCoder encodeInteger:self.initCutIndex forKey:@"initCutIndex"];
     [aCoder encodeInteger:self.cutIndex forKey:@"cutIndex"];
     [aCoder encodeInteger:self.sumRefStrong forKey:@"sumRefStrong"];
     [aCoder encodeFloat:self.scoreCache forKey:@"scoreCache"];

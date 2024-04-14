@@ -89,6 +89,17 @@
     //1. 初始化;
     self.realModel = [[AIRealModel alloc] init];
     
+    if (self.isH) {
+        //1. 取得realMaskAlgs与RCanset已发生部分的映射 (RCanset已发生截点是容易取得的);
+        //      a. pFo.indexDic2记录的是pFo与realMask之间的映射,这里需要转一下,转成realMask与rCanset的映射;
+        //2. 后续feedbackTOR反馈匹配时,更新这个字典;
+    } else {
+        //1. 得得realMaskAlgs与pFo已发生部分的映射 (pFo已发生部分是容易取得的);
+        //2. 后续feedbackTIR反馈匹配时,更新这个字典;
+        AIMatchFoModel *pFo = (AIMatchFoModel*)self.basePFoOrTargetFoModel;
+    }
+    
+    
     //2. 已发生部分做为初始之: sceneTo和cansetTo的indexDic已发生部分初始赋值;
     self.realModel.realSceneIndexDic = [SMGUtils filterDic:self.transferXvModel.sceneToCansetToIndexDic checkValid:^BOOL(NSNumber *key, id value) {
         return key.integerValue <= self.cansetCutIndex;
