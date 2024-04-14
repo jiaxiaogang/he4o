@@ -96,7 +96,6 @@
     if (!self.isH) {
         //1. 得得realMaskAlgs与pFo已发生部分的映射 (pFo已发生部分是容易取得的);
         AIMatchFoModel *pFo = (AIMatchFoModel*)self.basePFoOrTargetFoModel;
-        pFo.realMaskFo
         NSDictionary *initDic = [SMGUtils filterDic:pFo.indexDic2 checkValid:^BOOL(NSNumber *key, id value) {
             return key.integerValue <= pFo.cutIndex;
         }];
@@ -108,6 +107,20 @@
     //===================== H任务 =====================
     else {
         TOFoModel *targetFo = self.basePFoOrTargetFoModel;
+        TOModelBase *basebase = targetFo.basePFoOrTargetFoModel;
+        
+        //取到base的sceneTo与cansetTo的映射关系;
+        //targetFo.transferXvModel.sceneToCansetToIndexDic;
+        
+        //取到base的sceneTo与realMaskFo的映射关系;
+        //targetFo.realSceneIndexDic;
+        
+        //将以上两个映射综合计算出: cansetTo与realMaskFo的映射关系;
+        //[TOUtils zonHeIndexDic:@[]];
+        
+        //无需过滤已发生部分: 因为realSceneIndexDic里包含的,就一定是已经发生的;
+        
+        
         [SMGUtils filterDic:targetFo.realSceneIndexDic checkValid:^BOOL(NSNumber *key, id value) {
             return key.integerValue <= targetFo.cansetCutIndex;
         }];
