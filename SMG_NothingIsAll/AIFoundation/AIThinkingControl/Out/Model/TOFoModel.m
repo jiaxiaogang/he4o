@@ -99,7 +99,7 @@
         NSDictionary *initDic = [SMGUtils filterDic:pFo.indexDic2 checkValid:^BOOL(NSNumber *key, id value) {
             return key.integerValue <= pFo.cutIndex;
         }];
-        self.realSceneToIndexDic = [[NSMutableDictionary alloc] initWithDictionary:initDic];
+        self.realCansetToIndexDic = [[NSMutableDictionary alloc] initWithDictionary:initDic];
     }
     
     //===================== H任务 =====================
@@ -109,14 +109,14 @@
         //1. 把base.base和real的映射,处理成base和real的映射 (参考31156示图);
         //说明: targetFo.realSceneToIndexDic记录的是base.base与realMask的映射,这里需要转成base与realMask的映射;
         //取到base的sceneTo与cansetTo的映射关系;
-        DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:targetFo.transferXvModel.sceneToCansetToIndexDic];
+        DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:self.transferXvModel.sceneToCansetToIndexDic];
         //取到base的sceneTo与realMaskFo的映射关系;
-        DirectIndexDic *dic2 = [DirectIndexDic newNoToAbs:targetFo.realSceneToIndexDic];
+        DirectIndexDic *dic2 = [DirectIndexDic newNoToAbs:targetFo.realCansetToIndexDic];
         //将以上两个映射综合计算出: cansetTo与realMaskFo的映射关系;
         NSDictionary *zonHeDic = [TOUtils zonHeIndexDic:@[dic1,dic2]];
         
         //2. 把base整个indexDic继承过来 (无需过滤已发生部分,base.realSceneToIndexDic里包含的,就一定是已经发生的;
-        self.realSceneToIndexDic = [[NSMutableDictionary alloc] initWithDictionary:zonHeDic];
+        self.realCansetToIndexDic = [[NSMutableDictionary alloc] initWithDictionary:zonHeDic];
     }
 }
 
