@@ -207,9 +207,9 @@
  *  MARK:--------------------实际与场景之间的映射--------------------
  *  @desc 场景表示sceneTo & 实际发生表示pFo.realMaskFo;
  *          1. R时表示realMaskFo与matchFo(pFo)场景的映射;
- *          2. H时表示realMaskFo与hScene(rCanset)场景的映射;
+ *          2. H时表示realMaskFo与hSceneTo(rCanset)场景的映射;
  *  @desc 用于记录实际反馈与cansetTo的映射 (每反馈一帧,记录一帧) <K:场景 V:实际>;
  */
-@property (strong, nonatomic) NSMutableDictionary *realSceneIndexDic;
+@property (strong, nonatomic) NSMutableDictionary *realSceneToIndexDic;
 
 @end

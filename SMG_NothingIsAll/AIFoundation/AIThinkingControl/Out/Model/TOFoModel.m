@@ -84,12 +84,12 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------RealModel第1步: 初始数据--------------------
+ *  MARK:--------------------Real映射第1步: 初始数据 (参考31154-方案2-todo1)--------------------
  *  @本算法示图: https://github.com/jiaxiaogang/HELIX_THEORY/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/assets/717_Canset%E7%9A%84%E5%88%9D%E5%A7%8BIndexDic%E5%88%86%E6%9E%90.png?raw=true
  *             说明: 此图说明了,此方法中base和self的关系,及初始indexDic计算方式
  *  @desc 在xvModel赋值后执行:
- *      1.1 在TI中,时序识别预测后,将预测matchFo和实际发生maskFo中已发生的部分存下来;
- *      1.2 在TO中,cansetFo迁移xv之后(xvModel赋值后),将sceneTo和cansetTo已发生部分的映射存下来;
+ *      1.1 在TI中,时序识别预测后,将预测matchFo和实际发生maskFo中已发生的部分存下来 (不在此方法中,在AIMatchFoModel的realMaskFo和indexDic2中);
+ *      1.2 在TO中,cansetFo迁移xv之后(xvModel赋值后),将sceneTo和cansetTo已发生部分的映射存下来 (参考31154-方案2-todo1);
  */
 -(void) initRealModel {
     //===================== R任务 =====================
@@ -99,56 +99,48 @@
         NSDictionary *initDic = [SMGUtils filterDic:pFo.indexDic2 checkValid:^BOOL(NSNumber *key, id value) {
             return key.integerValue <= pFo.cutIndex;
         }];
-        self.realSceneIndexDic = [[NSMutableDictionary alloc] initWithDictionary:initDic];
-        
-        //2. 后续feedbackTIR反馈匹配时,更新这个字典;
+        self.realSceneToIndexDic = [[NSMutableDictionary alloc] initWithDictionary:initDic];
     }
     
     //===================== H任务 =====================
     else {
         TOFoModel *targetFo = self.basePFoOrTargetFoModel;
-        TOModelBase *basebase = targetFo.basePFoOrTargetFoModel;
         
+        //1. 把base.base和real的映射,处理成base和real的映射 (参考31156示图);
+        //说明: targetFo.realSceneToIndexDic记录的是base.base与realMask的映射,这里需要转成base与realMask的映射;
         //取到base的sceneTo与cansetTo的映射关系;
-        //targetFo.transferXvModel.sceneToCansetToIndexDic;
-        
+        DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:targetFo.transferXvModel.sceneToCansetToIndexDic];
         //取到base的sceneTo与realMaskFo的映射关系;
-        //targetFo.realSceneIndexDic;
-        
+        DirectIndexDic *dic2 = [DirectIndexDic newNoToAbs:targetFo.realSceneToIndexDic];
         //将以上两个映射综合计算出: cansetTo与realMaskFo的映射关系;
-        //[TOUtils zonHeIndexDic:@[]];
+        NSDictionary *zonHeDic = [TOUtils zonHeIndexDic:@[dic1,dic2]];
         
-        //无需过滤已发生部分: 因为realSceneIndexDic里包含的,就一定是已经发生的;
-        
-        
-        [SMGUtils filterDic:targetFo.realSceneIndexDic checkValid:^BOOL(NSNumber *key, id value) {
-            return key.integerValue <= targetFo.cansetCutIndex;
-        }];
-        //1. 取得realMaskAlgs与RCanset已发生部分的映射 (RCanset已发生截点是容易取得的);
-        //      a. pFo.indexDic2记录的是pFo与realMask之间的映射,这里需要转一下,转成realMask与rCanset的映射;
-        //2. 后续feedbackTOR反馈匹配时,更新这个字典;
+        //2. 把base整个indexDic继承过来 (无需过滤已发生部分,base.realSceneToIndexDic里包含的,就一定是已经发生的;
+        self.realSceneToIndexDic = [[NSMutableDictionary alloc] initWithDictionary:zonHeDic];
     }
-    
-    
-    //2. 已发生部分做为初始之: sceneTo和cansetTo的indexDic已发生部分初始赋值;
-    self.realModel.realSceneIndexDic = [SMGUtils filterDic:self.transferXvModel.sceneToCansetToIndexDic checkValid:^BOOL(NSNumber *key, id value) {
-        return key.integerValue <= self.cansetCutIndex;
-    }];
-    
-    //3. 已发生部分做为初始之: cansetTo已发生部分初始赋值;
-    [self.realModel.realOrders addObjectsFromArray:ARR_SUB(self.transferXvModel.cansetToOrders, 0, self.cansetCutIndex + 1)];
-    
-    //TODOTOMORROW20240413:
-    //实践下31155方案3 (看把生成canset的综合indexDic计算,写成单独的类);
 }
 
 /**
- *  MARK:--------------------RealModel第2步: 逐帧更新--------------------
- *      1.1 在TI中,每一次feedbackTIR反馈后,再更新之;
- *      1.2 在TO中,后续每次cansetFo有反馈时,再更新之;
+ *  MARK:--------------------Real映射第2步: 逐帧更新 (参考31154-方案2-todo2)--------------------
+ *  @desc 后续feedbackTOR反馈匹配时,更新映射:
+ *      1. 在TO中,self为RCanset且反馈匹配有更新时: 更新self.realSceneToIndexDic(pFo与realMask)的映射 (参考31154-方案2-todo2);
+ *      2. 在TO中,self为HCanset且反馈匹配有更新时: 更新self.realSceneToIndexDic(hSceneTo与realMask)的映射 (参考31154-方案2-todo2);
+ *      另. 在TI中,每一次feedbackTIR反馈后,更新pFo中的indexDic2映射 (这一条在feedbackPushFrame()中实现,不在此方法中);
  */
 -(void) updateRealModel {
     
+    //TODOTOMORROW20240414: 现在的step1_CheckFeedbackTORIsValid判断的是cansetTo的反馈匹配,但此处要的却是: sceneTo和realMask的映射
+    //  要再分析下,这里的数据结构,别给弄错了,下面在匹配后,是要建立NewHCanset的,这个NewHCanset是挂在cansetTo而不是sceneTo下...所以,是不是上面init时的结构想错了?要分析下先再...
+    
+    //===================== R任务 =====================
+    if (!self.isH) {
+        
+    }
+    
+    //===================== H任务 =====================
+    else {
+        TOFoModel *targetFo = self.basePFoOrTargetFoModel;
+    }
 }
 
 /**
