@@ -78,25 +78,42 @@
 }
 
 //MARK:===============================================================
-//MARK:                     < RealModel部分 >
+//MARK:                     < CansetIndexDic映射部分 >
+//写此处代码起因:  在TI中,早就有realMaskFo和realDeltaTimes的做法,并且indexDic映射也够用,但在TO中,测出了构建RHCanset时,其indexDic或不准,或为空的问题;
+//              而写这个RealModel模型,就是为了整理这一流程,将其数据整理过来,使之相关代码看着顺当简洁,也解决TO中indexDic不准等问题;
 //MARK:===============================================================
 
 /**
  *  MARK:--------------------RealModel第1步: 初始数据--------------------
- *  @desc 在xvModel赋值后执行 (参考RealModel的类注释);
+ *  @本算法示图: https://github.com/jiaxiaogang/HELIX_THEORY/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/assets/717_Canset%E7%9A%84%E5%88%9D%E5%A7%8BIndexDic%E5%88%86%E6%9E%90.png?raw=true
+ *             说明: 此图说明了,此方法中base和self的关系,及初始indexDic计算方式
+ *  @desc 在xvModel赋值后执行:
+ *      1.1 在TI中,时序识别预测后,将预测matchFo和实际发生maskFo中已发生的部分存下来;
+ *      1.2 在TO中,cansetFo迁移xv之后(xvModel赋值后),将sceneTo和cansetTo已发生部分的映射存下来;
  */
 -(void) initRealModel {
-    //1. 初始化;
-    self.realModel = [[AIRealModel alloc] init];
+    //===================== R任务 =====================
+    if (!self.isH) {
+        //1. 得得realMaskAlgs与pFo已发生部分的映射 (pFo已发生部分是容易取得的);
+        AIMatchFoModel *pFo = (AIMatchFoModel*)self.basePFoOrTargetFoModel;
+        pFo.realMaskFo
+        NSDictionary *initDic = [SMGUtils filterDic:pFo.indexDic2 checkValid:^BOOL(NSNumber *key, id value) {
+            return key.integerValue <= pFo.cutIndex;
+        }];
+        self.realSceneIndexDic = [[NSMutableDictionary alloc] initWithDictionary:initDic];
+        
+        //2. 后续feedbackTIR反馈匹配时,更新这个字典;
+    }
     
-    if (self.isH) {
+    //===================== H任务 =====================
+    else {
+        TOFoModel *targetFo = self.basePFoOrTargetFoModel;
+        [SMGUtils filterDic:targetFo.realSceneIndexDic checkValid:^BOOL(NSNumber *key, id value) {
+            return key.integerValue <= targetFo.cansetCutIndex;
+        }];
         //1. 取得realMaskAlgs与RCanset已发生部分的映射 (RCanset已发生截点是容易取得的);
         //      a. pFo.indexDic2记录的是pFo与realMask之间的映射,这里需要转一下,转成realMask与rCanset的映射;
         //2. 后续feedbackTOR反馈匹配时,更新这个字典;
-    } else {
-        //1. 得得realMaskAlgs与pFo已发生部分的映射 (pFo已发生部分是容易取得的);
-        //2. 后续feedbackTIR反馈匹配时,更新这个字典;
-        AIMatchFoModel *pFo = (AIMatchFoModel*)self.basePFoOrTargetFoModel;
     }
     
     
@@ -114,6 +131,8 @@
 
 /**
  *  MARK:--------------------RealModel第2步: 逐帧更新--------------------
+ *      1.1 在TI中,每一次feedbackTIR反馈后,再更新之;
+ *      1.2 在TO中,后续每次cansetFo有反馈时,再更新之;
  */
 -(void) updateRealModel {
     
@@ -300,6 +319,14 @@
         }
     }
     return nil;
+}
+
+//递归取basePFo (即使是H任务的basePFoOrTargetFoModel再basePFoOrTargetFoModel不断递归能找到最终R任务的pFo);
+-(AIMatchFoModel*) basePFo {
+    if (ISOK(self.basePFoOrTargetFoModel, AIMatchFoModel.class)) {
+        return self.basePFoOrTargetFoModel;
+    }
+    return self.basePFo;
 }
 
 //MARK:===============================================================

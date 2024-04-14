@@ -106,7 +106,6 @@
 		0860A3BB22C9851800A48682 /* CustomAddNodeWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 0860A3BA22C9851800A48682 /* CustomAddNodeWindow.m */; };
 		0860A3BD22C9859200A48682 /* CustomAddNodeWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0860A3BC22C9859200A48682 /* CustomAddNodeWindow.xib */; };
 		08616986284CF2D300A39473 /* TCSolutionUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 08616985284CF2D300A39473 /* TCSolutionUtil.m */; };
-		0861B4682BC61FD100820C25 /* AIRealModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0861B4672BC61FD100820C25 /* AIRealModel.m */; };
 		0864936127E216B5003EF661 /* TOMVisionNodeBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 0864936027E216B5003EF661 /* TOMVisionNodeBase.m */; };
 		086BFF382BC043F600CB77B0 /* TVUtil_Short.m in Sources */ = {isa = PBXBuildFile; fileRef = 086BFF372BC043F600CB77B0 /* TVUtil_Short.m */; };
 		086D93371F8CA782002BAF3F /* RuntimeInvoker.m in Sources */ = {isa = PBXBuildFile; fileRef = 086D93361F8CA782002BAF3F /* RuntimeInvoker.m */; };
@@ -422,8 +421,6 @@
 		0860A3BC22C9859200A48682 /* CustomAddNodeWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CustomAddNodeWindow.xib; sourceTree = "<group>"; };
 		08616984284CF2D300A39473 /* TCSolutionUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCSolutionUtil.h; sourceTree = "<group>"; };
 		08616985284CF2D300A39473 /* TCSolutionUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCSolutionUtil.m; sourceTree = "<group>"; };
-		0861B4662BC61FD100820C25 /* AIRealModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIRealModel.h; sourceTree = "<group>"; };
-		0861B4672BC61FD100820C25 /* AIRealModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIRealModel.m; sourceTree = "<group>"; };
 		0864935F27E216B5003EF661 /* TOMVisionNodeBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOMVisionNodeBase.h; sourceTree = "<group>"; };
 		0864936027E216B5003EF661 /* TOMVisionNodeBase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOMVisionNodeBase.m; sourceTree = "<group>"; };
 		086BFF362BC043F600CB77B0 /* TVUtil_Short.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TVUtil_Short.h; sourceTree = "<group>"; };
@@ -1529,8 +1526,6 @@
 			children = (
 				0819F4F227583AA9007396D0 /* TCFeedback.h */,
 				0819F4F327583AA9007396D0 /* TCFeedback.m */,
-				0861B4662BC61FD100820C25 /* AIRealModel.h */,
-				0861B4672BC61FD100820C25 /* AIRealModel.m */,
 			);
 			path = TCFeedback;
 			sourceTree = "<group>";
@@ -2019,7 +2014,6 @@
 				88BC09DD20B4F67E0006ABEF /* XGRedisDictionary.m in Sources */,
 				0881DC2228B798FD00408986 /* XGConfig.m in Sources */,
 				0858C5D32194F8B000951BA5 /* View+MASAdditions.m in Sources */,
-				0861B4682BC61FD100820C25 /* AIRealModel.m in Sources */,
 				08E8CF5E25B2F64900AA18DB /* ImvBadModel.m in Sources */,
 				8868F6EE210AA00B000EAC9B /* AINetAbsCMVUtil.m in Sources */,
 				08497A9921C32E17009E7D69 /* AIAlgNodeManager.m in Sources */,
