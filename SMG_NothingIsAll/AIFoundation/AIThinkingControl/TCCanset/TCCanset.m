@@ -157,6 +157,9 @@
     //12. 伪迁移;
     [TCTransfer transferXv:result];
     
+    //13. 初始化result的cansetTo与real的映射;
+    [result initRealCansetToDic];
+    
     //13. 下帧初始化 (可接受反馈);
     [result pushNextFrame];
     return result;
@@ -187,6 +190,9 @@
     
     //3. 伪迁移;
     [TCTransfer transferXv:result];
+    
+    //4. 初始化result的cansetTo与real的映射;
+    [result initRealCansetToDic];
     
     //4. 下帧初始化 (可接受反馈);
     [result pushNextFrame];

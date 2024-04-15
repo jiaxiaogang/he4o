@@ -50,6 +50,7 @@
     [theTC.inModelManager add:mModel];
     DebugE();
     
+    //==== 说明: 此处需要先调用feedbackTIR再调用feedbackTOR (因为在TOR中创建映射时,会调用pFo.realMaskFo的长度,只有先调用前者,这个长度才会更新,如果以后要改这俩的顺序,需要先把这个问题也兼容处理下) ====
     //4. 概念反馈 -> TIR反馈;
     //todo: 加了二次过滤后,此处过滤后,仅剩几条了 (可能导致tir太难feedback成功了) (先不改,等测得具体有影响的bug时再改);
     [TCFeedback feedbackTIR:mModel];

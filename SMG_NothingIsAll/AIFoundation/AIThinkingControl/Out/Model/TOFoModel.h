@@ -209,5 +209,7 @@
  *  @desc 用于记录实际反馈与cansetTo的映射 (每反馈一帧,记录一帧) <K:场景 V:实际>;
  */
 @property (strong, nonatomic) NSMutableDictionary *realCansetToIndexDic;
+-(void) initRealCansetToDic;    //初始化已发生映射;
+-(void) updateRealCansetToDic;  //更新反馈匹配映射;
 
 @end
