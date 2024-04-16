@@ -205,6 +205,7 @@
 /**
  *  MARK:--------------------算出新的indexDic--------------------
  *  @desc 用旧indexDic和feedbackAlg计算出新的indexDic (参考27206d-方案2);
+ *  @desc 此方法,专用于给absRCanset/absHCanset与sceneTo之间计算映射 (这方法从实际反馈找出哪些有反馈,然后得出结果,也正确,但这方法毕竟复杂不易读,随后废弃掉);
  *  @param targetOrPFo_p 传sceneTo,因为要用它与cansetTo取旧的indexDic的;
  */
 -(NSDictionary*) convertOldIndexDic2NewIndexDic:(AIKVPointer*)targetOrPFo_p {
@@ -228,7 +229,6 @@
     }];
     
     //5. 转成newIndexDic (参考27207-10);
-    //BUG: 此处应该有问题,因为realMaskFo的下标肯定不会是i值(像0,1,2,3,4这样),realMaskFo有更多细节帧才对;
     NSMutableDictionary *newIndexDic = [[NSMutableDictionary alloc] init];
     for (NSInteger i = 0; i < feedbackAbsIndexArr.count; i++) {
         NSNumber *absIndex = ARR_INDEX(feedbackAbsIndexArr, i);
@@ -237,12 +237,6 @@
     NSLog(@"oldIndexDic:%@ newIndexDic:%@",CLEANSTR(oldIndexDic),CLEANSTR(newIndexDic));
     if (oldIndexDic.count > 0 && newIndexDic.count == 0) {
         NSLog(@"查下,为什么总是取到空映射");
-        //第1步: 来自于NewRCanset的映射 (有值);
-        //第2步: 在TCTransfer.xv中有映射;
-        //第3步: 在TCTransfer.si中有映射;
-        //第4步: 在此处oldIndexDic有映射 (有值);
-        //第5步: 在此处newIndexDic有映射;
-        //TODOTOMORROW20240408: 明天继续查下这里,看为什么旧的indexDic都有值,新的indexDic却没值;
     }
     return newIndexDic;
 }
@@ -517,26 +511,32 @@
             
             //12. H任务完成时,H当前正执行的S提前完成,并进行外类比 (参考27206c-H任务);
             if (orders.count > 1) {
-                //13. 数据准备;
-                AIFoNodeBase *siCansetFo = [SMGUtils searchNode:self.transferSiModel.canset];
-                AIFoNodeBase *targetFo = [SMGUtils searchNode:targetFoModel.content_p];
+                //13. 数据准备 (当前sceneTo就是targetFoModel.cansetTo);
+                AIFoNodeBase *cansetTo = [SMGUtils searchNode:self.transferSiModel.canset];
+                AIFoNodeBase *sceneTo = [SMGUtils searchNode:self.transferSiModel.scene];
                 AIFoNodeBase *newHCanset = [theNet createConFo:orders];
                 
                 //14. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
-                NSLog(@"Canset演化> AbsHCanset:(状态:%@ fromTargetFo:F%ld) \n\t当前Canset:%@",TOStatus2Str(self.status),targetFoModel.content_p.pointerId,Pit2FStr(self.content_p));
-                NSArray *noRepeatArea_ps = [targetFo getConCansets:targetFoModel.cansetCutIndex];
-                AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:newHCanset assFo:siCansetFo type:ATDefault noRepeatArea_ps:noRepeatArea_ps];
-                BOOL updateCansetSuccess = [targetFo updateConCanset:absCansetFo.pointer targetIndex:targetFoModel.cansetCutIndex];
-                [AITest test101:absCansetFo proto:newHCanset conCanset:siCansetFo];
+                NSLog(@"Canset演化> AbsHCanset:(状态:%@ fromSceneTo:F%ld) \n\t当前cansetTo:%@",TOStatus2Str(self.status),sceneTo.pId,Fo2FStr(cansetTo));
+                NSArray *noRepeatArea_ps = [sceneTo getConCansets:targetFoModel.cansetCutIndex];
+                AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:newHCanset assFo:cansetTo type:ATDefault noRepeatArea_ps:noRepeatArea_ps];
+                BOOL updateCansetSuccess = [sceneTo updateConCanset:absCansetFo.pointer targetIndex:targetFoModel.cansetCutIndex];
+                [AITest test101:absCansetFo proto:newHCanset conCanset:cansetTo];
                 
                 if (updateCansetSuccess) {
                     //15. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);
+                    //2024.04.16: 此处简化了下,把用convertOldIndexDic2NewIndexDic()取映射,改成用zonHeDic来计算;
+                    //a. 从sceneTo向下到cansetTo;
+                    DirectIndexDic *dic1 = [DirectIndexDic newNoToAbs:[sceneTo getConIndexDic:cansetTo.p]];
                     
-                    //TODOTOMORROW20240416: 回顾下代码,在absHCanset和absRCanset这里用convertOldIndexDic2NewIndexDic()能不能取到正确的indexDic映射;
+                    //b. 从cansetTo向上到absCansetTo;
+                    DirectIndexDic *dic2 = [DirectIndexDic newOkToAbs:[cansetTo getAbsIndexDic:absCansetFo.p]];
                     
-                    NSDictionary *newIndexDic = [self convertOldIndexDic2NewIndexDic:targetFoModel.content_p];
-                    [absCansetFo updateIndexDic:targetFo indexDic:newIndexDic];
-                    [AITest test18:newIndexDic newCanset:absCansetFo absFo:targetFo];
+                    //c. 综合求出absHCanset与场景的映射;
+                    NSDictionary *absHCansetSceneToIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2]];
+                    
+                    [absCansetFo updateIndexDic:sceneTo indexDic:absHCansetSceneToIndexDic];
+                    [AITest test18:absHCansetSceneToIndexDic newCanset:absCansetFo absFo:sceneTo];
                     
                     //16. 算出spDic (参考27213-5);
                     [absCansetFo updateSPDic:[self convertOldSPDic2NewSPDic]];
