@@ -447,13 +447,20 @@
  *  @param protoAlg_p feedbackTOR方法中的protoAlg传过来;
  */
 -(void) step2_FeedbackThenCreateHCanset:(AIKVPointer*)protoAlg_p {
+    //2023.11.03: 即使已失败也可以触发"预想与实际"的类比抽象;
+    //2024.01.25: 只有正在推进中的才有资格做"预想与实际"的类比抽象;
+    //2024.04.16: 非激活状态的也不构建NewHCanset (它都没激活,我们没必要喂饭吃 (避免强行经验带来场景不符合等问题),毕竟有迁移后续也不怕缺H经验用);
+    if (self.cansetStatus != CS_Besting) {
+        return;
+    }
+    
     //1. 数据准备;
     TOAlgModel *curAlgModel = [self getCurFrame];
     
     //========== 第1部分: 当R任务有理性帧推进时,生成newHCanset ==========
     //"行为输出" 和 "demand.ActYes" 和 "静默成功 的有效判断
     //此处有两种frameAlg,第1种是isOut为true的行为反馈,第2种是hDemand.baseAlg;
-    if (ISOK(self.baseOrGroup, ReasonDemandModel.class)) {
+    if (!self.isH) {
         //2. 旧有那些改状态status的代码,整理在此处 (参考31073-TODO7-4);
         //3. 当waitModel为hDemand.targetAlg时,此处提前反馈了,hDemand改为finish状态 (参考26185-TODO6);
         HDemandModel *subHDemand = [SMGUtils filterSingleFromArr:curAlgModel.subDemands checkValid:^BOOL(id item) {
@@ -466,30 +473,23 @@
         
         //4. 收集真实发生realMaskFo,收集成hCanset (参考30131-todo1 & 30132-方案);
         //2023.12.29: mcIsBro=true时,生成新hCanset (做31026-第2步时临时起意改的);
-        if (ISOK(self.basePFoOrTargetFoModel, AIMatchFoModel.class)) {
-            AIFoNodeBase *rCanset = [SMGUtils searchNode:self.content_p];
-            AIMatchFoModel *basePFo = (AIMatchFoModel*)self.basePFoOrTargetFoModel;
-            NSArray *order = [basePFo convertOrders4NewCansetV2];
-            if (ARRISOK(order) && self.cansetCutIndex < rCanset.count) {
-                AIFoNodeBase *newHCanset = [theNet createConFoForCanset:order sceneFo:rCanset sceneTargetIndex:self.cansetCutIndex];
-                [rCanset updateConCanset:newHCanset.pointer targetIndex:self.cansetCutIndex];
-                AIKVPointer *cutIndexAlg_p = ARR_INDEX(rCanset.content_ps, self.cansetCutIndex);
-                
-                //5. 综合indexDic计算: 当前cansetTo与real之间的映射;
-                [newHCanset updateIndexDic:rCanset indexDic:self.realCansetToIndexDic];
-                
-                //TODOTOMORROW20240415:
-                //1. 分析下这里未由虚转实时,应该构建NewHCanset吗?如果需要,那么挂在sceneFrom上?
-                //2. 测下这里能得到正确的indexDic;
-                
-                NSLog(@"Canset演化> NewHCanset:%@ 挂载在: rScene:F%ld rCanset:F%ld 的第%ld帧:A%ld",ShortDesc4Node(newHCanset),basePFo.matchFo.pointerId,rCanset.pId,self.cansetCutIndex+1,cutIndexAlg_p.pointerId);
-            }
+        AIFoNodeBase *rCanset = [SMGUtils searchNode:self.transferSiModel.canset];
+        AIMatchFoModel *basePFo = (AIMatchFoModel*)self.basePFoOrTargetFoModel;
+        NSArray *order = [basePFo convertOrders4NewCansetV2];
+        if (ARRISOK(order) && self.cansetCutIndex < rCanset.count) {
+            AIFoNodeBase *newHCanset = [theNet createConFoForCanset:order sceneFo:rCanset sceneTargetIndex:self.cansetCutIndex];
+            [rCanset updateConCanset:newHCanset.pointer targetIndex:self.cansetCutIndex];
+            AIKVPointer *cutIndexAlg_p = ARR_INDEX(rCanset.content_ps, self.cansetCutIndex);
+            
+            //5. 综合indexDic计算: 当前cansetTo与real之间的映射;
+            [newHCanset updateIndexDic:rCanset indexDic:self.realCansetToIndexDic];
+            NSLog(@"Canset演化> NewHCanset:%@ 挂载在: rScene:F%ld rCanset:F%ld 的第%ld帧:A%ld",ShortDesc4Node(newHCanset),basePFo.matchFo.pointerId,rCanset.pId,self.cansetCutIndex+1,cutIndexAlg_p.pointerId);
         }
     }
     
     //========== 第2部分: 当H任务推进到最终target时,触发预想与实际类比absHCanset ==========
     //5. H返回的有效判断
-    if (ISOK(self.baseOrGroup, HDemandModel.class)) {
+    if (self.isH) {
         
         //6. HDemand即使waitModel不是actYes状态也处理反馈;
         HDemandModel *hDemand = (HDemandModel*)self.baseOrGroup;//h需求模型
@@ -516,9 +516,7 @@
             NSArray *orders = [pFo convertOrders4NewCansetV2];
             
             //12. H任务完成时,H当前正执行的S提前完成,并进行外类比 (参考27206c-H任务);
-            //2023.11.03: 即使已失败也可以触发"预想与实际"的类比抽象;
-            //2024.01.25: 只有正在推进中的才有资格做"预想与实际"的类比抽象;
-            if (self.cansetStatus == CS_Besting && orders.count > 1) {
+            if (orders.count > 1) {
                 //13. 数据准备;
                 AIFoNodeBase *siCansetFo = [SMGUtils searchNode:self.transferSiModel.canset];
                 AIFoNodeBase *targetFo = [SMGUtils searchNode:targetFoModel.content_p];
@@ -533,6 +531,9 @@
                 
                 if (updateCansetSuccess) {
                     //15. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);
+                    
+                    //TODOTOMORROW20240416: 回顾下代码,在absHCanset和absRCanset这里用convertOldIndexDic2NewIndexDic()能不能取到正确的indexDic映射;
+                    
                     NSDictionary *newIndexDic = [self convertOldIndexDic2NewIndexDic:targetFoModel.content_p];
                     [absCansetFo updateIndexDic:targetFo indexDic:newIndexDic];
                     [AITest test18:newIndexDic newCanset:absCansetFo absFo:targetFo];
@@ -567,6 +568,7 @@
     //目前判断方式为: pFo的任务是R,targetFoM的任务是H;
     return !ISOK(self.basePFoOrTargetFoModel, AIMatchFoModel.class);
     //return self.targetIndex < self.cansetFo.count; //用目标帧位置来判断;
+    //return ISOK(self.baseOrGroup, HDemandModel.class); //用baseIsRDemand来判断;
 }
 
 /**
