@@ -80,14 +80,9 @@
 -(NSArray*) getOrderUseMatchAndFeedbackAlg:(BOOL)fromRegroup;
 
 /**
- *  MARK:--------------------算出新的indexDic--------------------
- */
--(NSDictionary*) convertOldIndexDic2NewIndexDic:(AIKVPointer*)targetOrPFo_p;
-
-/**
  *  MARK:--------------------算出新的spDic--------------------
  */
--(NSDictionary*) convertOldSPDic2NewSPDic;
+-(NSDictionary*) convertSPDicFromConCanset2AbsCanset;
 
 /**
  *  MARK:--------------------返回需用于反省或有效统计的cansets (参考29069-todo11 && todo11.2)--------------------

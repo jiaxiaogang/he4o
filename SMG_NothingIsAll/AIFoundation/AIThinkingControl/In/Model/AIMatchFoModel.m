@@ -252,6 +252,8 @@
         //1. 判断处在actYes状态的解决方案 && 解决方案是属性当前pFo决策取得的 (参考27206c-综上&多S问题);
         //a. 非actYes和runing状态的不做canset再类比;
         //b. 2023.11.03: 即使失败也可以触发"预想与实际"的类比抽象;
+        //c. 2024.04.17: 非激活状态的也不构建AbsRCanset (它都没激活,我们没必要喂饭吃 (避免强行经验带来场景不符合等问题),毕竟有迁移后续也不怕缺canset用);
+        if (solutionModel.cansetStatus != CS_Besting) continue;
         if (solutionModel.status != TOModelStatus_ActYes && solutionModel.status != TOModelStatus_Runing && solutionModel.status != TOModelStatus_ActNo) {
             NSLog(@"RCanset预想与实际类比未执行,F%ld 状态:%ld",solutionModel.content_p.pointerId,solutionModel.status);
             continue;
@@ -273,30 +275,20 @@
         NSLog(@"Canset演化> AbsRCanset:%@ (curS:F%ld 状态:%@ fromPFo:F%ld 帧:%ld)",Fo2FStr(absCansetFo),solutionFo.pointer.pointerId,TOStatus2Str(solutionModel.status),basePFoOrTargetFo_p.pointerId,pFo.count);
         
         if (updateCansetSuccess) {
-            //g. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);
-            NSDictionary *newIndexDic = [solutionModel convertOldIndexDic2NewIndexDic:pFo.pointer];
+            //2024.04.17: 此处简化了下,把用convertOldIndexDic2NewIndexDic()取映射,改成用zonHeDic来计算;
+            //a. 从sceneTo向下到cansetTo;
+            DirectIndexDic *dic1 = [DirectIndexDic newNoToAbs:[pFo getConIndexDic:solutionFo.p]];
             
-            //TODOTOMORROW20240407: 查下这里,看AbsRCanset生成时,是不是indexDic就是空;
-            //> 这里把FZ924重跑了下,然后oldIndexDic不再是空了,但newIndexDic还是空,再查下;
-            //oldIndexDic:{0 = 0;1 = 1;} newIndexDic:{}
-            //oldIndexDic:{0 = 0;1 = 1;} newIndexDic:{}
-            //oldIndexDic:{0 = 0;1 = 1;} newIndexDic:{}
-            //oldIndexDic:{0 = 0;} newIndexDic:{}
-            //oldIndexDic:{0 = 0;} newIndexDic:{}
-            //oldIndexDic:{0 = 0;} newIndexDic:{}
-            //oldIndexDic:{0 = 0;} newIndexDic:{}
-            //oldIndexDic:{0 = 0;} newIndexDic:{}
-            //oldIndexDic:{0 = 0;} newIndexDic:{}
-            //oldIndexDic:{0 = 0;1 = 1;} newIndexDic:{}
-            //oldIndexDic:{0 = 0;1 = 1;} newIndexDic:{}
-            //oldIndexDic:{0 = 0;1 = 1;} newIndexDic:{}
-            //oldIndexDic:{0 = 0;1 = 1;} newIndexDic:{}
+            //b. 从cansetTo向上到absCansetTo;
+            DirectIndexDic *dic2 = [DirectIndexDic newOkToAbs:[solutionFo getAbsIndexDic:absCansetFo.p]];
             
-            [absCansetFo updateIndexDic:pFo indexDic:newIndexDic];
-            [AITest test18:newIndexDic newCanset:absCansetFo absFo:pFo];
+            //c. 综合求出absHCanset与场景的映射;
+            NSDictionary *absRCansetSceneToIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2]];
+            [absCansetFo updateIndexDic:pFo indexDic:absRCansetSceneToIndexDic];
+            [AITest test18:absRCansetSceneToIndexDic newCanset:absCansetFo absFo:pFo];
             
             //h. 算出spDic (参考27213-5);
-            [absCansetFo updateSPDic:[solutionModel convertOldSPDic2NewSPDic]];
+            [absCansetFo updateSPDic:[solutionModel convertSPDicFromConCanset2AbsCanset]];
             [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
         }
     }

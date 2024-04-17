@@ -203,54 +203,16 @@
 }
 
 /**
- *  MARK:--------------------算出新的indexDic--------------------
- *  @desc 用旧indexDic和feedbackAlg计算出新的indexDic (参考27206d-方案2);
- *  @desc 此方法,专用于给absRCanset/absHCanset与sceneTo之间计算映射 (这方法从实际反馈找出哪些有反馈,然后得出结果,也正确,但这方法毕竟复杂不易读,随后废弃掉);
- *  @param targetOrPFo_p 传sceneTo,因为要用它与cansetTo取旧的indexDic的;
- */
--(NSDictionary*) convertOldIndexDic2NewIndexDic:(AIKVPointer*)targetOrPFo_p {
-    //1. 数据准备;
-    AIFoNodeBase *targetOrPFo = [SMGUtils searchNode:targetOrPFo_p];
-    AIKVPointer *cansetToFo = self.content_p;//行为化中的siFo
-    
-    //2. 将fo逐帧收集有反馈的conIndex (参考27207-7);
-    //比如: 现在推进到5了,其中2,3,4应该都有反馈,这里取到的结果就是[2,3,4];
-    NSArray *feedbackIndexArr = [self getIndexArrIfHavFeedback];
-    
-    //3. 取出solutionFo旧有的indexDic (参考27207-8);
-    //比如: 取出场景与cansetTo的映射;
-    NSDictionary *oldIndexDic = [targetOrPFo getConIndexDic:cansetToFo];
-    
-    //4. 筛选出有反馈的absIndex数组 (参考27207-9);
-    //比如: 场景的2,5与cansetToFo的2,4两帧有映射,那么这里得到[2,5];
-    NSArray *feedbackAbsIndexArr = [SMGUtils filterArr:oldIndexDic.allKeys checkValid:^BOOL(NSNumber *absIndexKey) {
-        NSNumber *conIndexValue = NUMTOOK([oldIndexDic objectForKey:absIndexKey]);
-        return [feedbackIndexArr containsObject:conIndexValue];
-    }];
-    
-    //5. 转成newIndexDic (参考27207-10);
-    NSMutableDictionary *newIndexDic = [[NSMutableDictionary alloc] init];
-    for (NSInteger i = 0; i < feedbackAbsIndexArr.count; i++) {
-        NSNumber *absIndex = ARR_INDEX(feedbackAbsIndexArr, i);
-        [newIndexDic setObject:@(i) forKey:absIndex];
-    }
-    NSLog(@"oldIndexDic:%@ newIndexDic:%@",CLEANSTR(oldIndexDic),CLEANSTR(newIndexDic));
-    if (oldIndexDic.count > 0 && newIndexDic.count == 0) {
-        NSLog(@"查下,为什么总是取到空映射");
-    }
-    return newIndexDic;
-}
-
-/**
  *  MARK:--------------------算出新的spDic--------------------
  *  @desc 用旧spDic和feedbackAlg计算出新的spDic (参考27211-todo1);
+ *  @desc 适用范围: 因为此方法只给匹配的几帧,分别指定了下标0,1,2...这样的方式,所以只能适用于构建absRHCanset时使用 (因为只有absRHCanset的下标会在类比时取交,是0,1,2...这样的);
  *  @version
  *      2023.04.01: 修复算出的S可能为负的BUG,改为直接从conSolution继承对应帧的SP值 (参考27214);
  *  @result notnull (建议返回后,检查一下spDic和absCansetFo的长度是否一致,不一致时来查BUG);
  */
--(NSDictionary*) convertOldSPDic2NewSPDic {
+-(NSDictionary*) convertSPDicFromConCanset2AbsCanset {
     //1. 数据准备 (收集除末位外的content为order) (参考27212-步骤1);
-    AIFoNodeBase *solutionFo = [SMGUtils searchNode:self.content_p];
+    AIFoNodeBase *solutionFo = [SMGUtils searchNode:self.transferSiModel.canset];
     NSArray *feedbackIndexArr = [self getIndexArrIfHavFeedback];
     NSMutableDictionary *newSPDic = [[NSMutableDictionary alloc] init];
     
@@ -539,7 +501,7 @@
                     [AITest test18:absHCansetSceneToIndexDic newCanset:absCansetFo absFo:sceneTo];
                     
                     //16. 算出spDic (参考27213-5);
-                    [absCansetFo updateSPDic:[self convertOldSPDic2NewSPDic]];
+                    [absCansetFo updateSPDic:[self convertSPDicFromConCanset2AbsCanset]];
                     [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
                 }
             } else {
