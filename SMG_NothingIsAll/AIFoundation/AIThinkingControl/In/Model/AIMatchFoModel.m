@@ -235,6 +235,10 @@
         //d. 将item.indexDic挂载到matchFo的conIndexDDic下 (参考27201-3);
         [newRCanset updateIndexDic:matchFo indexDic:self.indexDic2];
         
+        if (self.indexDic2 == 0) {
+            NSLog(@"NewRCanset Dic Is Nil");
+        }
+        
         //3. =================生成新方案后 IN有效率+1 (参考28182-todo6)=================
         //[TCEffect rInEffect:matchFo matchRFos:self.baseFrameModel.matchRFos es:ES_HavEff];
         
@@ -285,6 +289,9 @@
             //c. 综合求出absHCanset与场景的映射;
             NSDictionary *absRCansetSceneToIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2]];
             [absCansetFo updateIndexDic:pFo indexDic:absRCansetSceneToIndexDic];
+            if (absRCansetSceneToIndexDic.count == 0) {
+                NSLog(@"AbsRCanset Dic Is Nil");
+            }
             [AITest test18:absRCansetSceneToIndexDic newCanset:absCansetFo absFo:pFo];
             
             //h. 算出spDic (参考27213-5);

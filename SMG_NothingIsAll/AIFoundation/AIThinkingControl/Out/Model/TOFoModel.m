@@ -437,6 +437,10 @@
             [rCanset updateConCanset:newHCanset.pointer targetIndex:self.cansetCutIndex];
             AIKVPointer *cutIndexAlg_p = ARR_INDEX(rCanset.content_ps, self.cansetCutIndex);
             
+            if (self.realCansetToIndexDic.count == 0) {
+                NSLog(@"NewHCanset Dic Is Nil");
+            }
+            
             //5. 综合indexDic计算: 当前cansetTo与real之间的映射;
             [newHCanset updateIndexDic:rCanset indexDic:self.realCansetToIndexDic];
             NSLog(@"Canset演化> NewHCanset:%@ 挂载在: rScene:F%ld rCanset:F%ld 的第%ld帧:A%ld",ShortDesc4Node(newHCanset),basePFo.matchFo.pointerId,rCanset.pId,self.cansetCutIndex+1,cutIndexAlg_p.pointerId);
@@ -496,9 +500,12 @@
                     
                     //c. 综合求出absHCanset与场景的映射;
                     NSDictionary *absHCansetSceneToIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2]];
-                    
                     [absCansetFo updateIndexDic:sceneTo indexDic:absHCansetSceneToIndexDic];
                     [AITest test18:absHCansetSceneToIndexDic newCanset:absCansetFo absFo:sceneTo];
+                    
+                    if (absHCansetSceneToIndexDic.count == 0) {
+                        NSLog(@"AbsHCanset Dic Is Nil");
+                    }
                     
                     //16. 算出spDic (参考27213-5);
                     [absCansetFo updateSPDic:[self convertSPDicFromConCanset2AbsCanset]];
