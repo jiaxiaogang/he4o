@@ -128,7 +128,9 @@
     //2523c-理性反馈,的旧有mIsC方式没问题,但新matchAlgs+partAlgs的方式却有BUG;
     //怀疑是反馈这块有匹配不到的问题,但又复现不了,所以此处写test11来测试下,希望能复现,报到错;
     if (shortModel && waitAlg_p) {
-        NSArray *recognitionAlgs = [TIUtils getMatchAndPartAlgPsByModel:shortModel];
+        NSArray *recognitionAlgs = [SMGUtils convertArr:shortModel.matchAlgs_All convertBlock:^id(AIMatchAlgModel *o) {
+            return o.matchAlg;
+        }];
         NSArray *mAbs = Ports2Pits([AINetUtils absPorts_All:shortModel.protoAlg]);
         BOOL oldMIsC = [mAbs containsObject:waitAlg_p];
         BOOL newMIsC = [recognitionAlgs containsObject:waitAlg_p];

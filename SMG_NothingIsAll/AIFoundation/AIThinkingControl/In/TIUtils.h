@@ -28,9 +28,4 @@
 //+(void) recognitionCansetAlg:(AIAlgNodeBase*)protoAlg sceneFo:(AIFoNodeBase*)sceneFo inModel:(AIShortMatchModel*)inModel;
 //+(void) recognitionCansetFo:(AIKVPointer*)newCanset_p sceneFo:(AIKVPointer*)sceneFo_p es:(EffectStatus)es;
 
-/**
- *  MARK:--------------------获取某帧shortModel的matchAlgs+partAlgs--------------------
- */
-+(NSArray*) getMatchAndPartAlgPsByModel:(AIShortMatchModel*)frameModel;
-
 @end

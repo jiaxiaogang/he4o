@@ -32,8 +32,12 @@
     //1. 取所有lastWait模型,并与新输入的概念做mIsC判断;
     [theTC updateOperCount:kFILENAME];
     Debug();
+    
+    //2024.04.21: 改成取matchAlgs_All判断反馈 (参考31134-交层AbsCanset很难反馈匹配的问题);
     IFTitleLog(@"feedbackTIR", @"\n输入ProtoA:%@ (识别matchAlgs数:%ld)",Alg2FStr(model.protoAlg),model.matchAlgs.count);
-    NSArray *recognitionAlgs = [TIUtils getMatchAndPartAlgPsByModel:model];
+    NSArray *recognitionAlgs = [SMGUtils convertArr:model.matchAlgs_All convertBlock:^id(AIMatchAlgModel *o) {
+        return o.matchAlg;
+    }];
     
     //1. fbTIR对roots进行反馈判断 (参考27096-方案2);
     NSArray *roots = [theTC.outModelManager.getAllDemand copy];
@@ -256,7 +260,11 @@
     //1. 将新一帧数据报告给TOR,以进行短时记忆的更新,比如我输出行为"打",短时记忆由此知道输出"打"成功 (外循环入->推进->中循环出);
     [theTC updateOperCount:kFILENAME];
     Debug();
-    NSArray *recognitionAlgs = [TIUtils getMatchAndPartAlgPsByModel:model];
+    
+    //2024.04.21: 改成取matchAlgs_All判断反馈 (参考31134-交层AbsCanset很难反馈匹配的问题);
+    NSArray *recognitionAlgs = [SMGUtils convertArr:model.matchAlgs_All convertBlock:^id(AIMatchAlgModel *o) {
+        return o.matchAlg;
+    }];
     NSArray *roots = [theTC.outModelManager.getAllDemand copy];
     IFTitleLog(@"feedbackTOR", @"\n输入ProtoA:%@ 识别matchAlgs数:%ld",Alg2FStr(model.protoAlg),recognitionAlgs.count);
     

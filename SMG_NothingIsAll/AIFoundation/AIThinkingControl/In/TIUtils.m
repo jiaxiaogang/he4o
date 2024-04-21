@@ -717,23 +717,4 @@
 //    return indexDic;
 //}
 
-/**
- *  MARK:--------------------获取某帧shortModel的matchAlgs+partAlgs--------------------
- */
-+(NSArray*) getMatchAndPartAlgPsByModel:(AIShortMatchModel*)frameModel {
-    NSArray *matchAlg_ps = [SMGUtils convertArr:frameModel.matchAlgs convertBlock:^id(AIMatchAlgModel *o) {
-        return o.matchAlg;
-    }];
-    return [SMGUtils collectArrA:matchAlg_ps arrB:Nodes2Pits(frameModel.partAlgs)];
-}
-
-/**
- *  MARK:--------------------获取某帧Index的matchAlgs+partAlgs--------------------
- *  @status 废弃状态 (如果2023.10之前未用,则删除);
- */
-+(NSArray*) getMatchAndPartAlgPs:(NSInteger)frameIndex {
-    AIShortMatchModel *inModel = [theTC.inModelManager getFrameModel:frameIndex];
-    return [self getMatchAndPartAlgPsByModel:inModel];
-}
-
 @end
