@@ -318,25 +318,24 @@
  *  @desc 上帧推进完成时调用: 1.更新cutIndex++ 2.挂载下帧TOAlgModel
  *  @version
  *      2024.01.25: 初版: 此方法逻辑与TCAction一致,只是为了允许被反馈和记录feedbackAlg,所以把这些代码前置了 (参考31073-TODO2g);
+ *      2024.04.21: 下帧行为化,只能以迁移后的cansetTo为准 (原来的有取cansetFrom是不对的);
  */
 -(void) pushNextFrame {
-    //1. 数据准备;
-    AIFoNodeBase *cansetFo = [SMGUtils searchNode:self.content_p];
-    NSInteger actionIndex = self.cansetCutIndex + 1; //现在正在行为化中的帧下标 (随后验证一下这里的index是不是搞乱了,都修正下);
-    
-    //2. 更新cutIndex;
+    //1. 更新cutIndex;
     self.cansetCutIndex ++;
+    
+    //2. 取下帧alg数据;
+    AIShortMatchModel_Simple *nextCansetTo = ARR_INDEX(self.transferXvModel.cansetToOrders, self.cansetCutIndex);
+    AIKVPointer *nextCansetTo_p = nextCansetTo.alg_p;
     
     //3. 挂载TOAlgModel;
     if (self.cansetCutIndex < self.targetIndex - 1) {
         //6. 转下帧: 理性帧则生成TOAlgModel;
-        AIKVPointer *nextCansetA_p = ARR_INDEX(cansetFo.content_ps, self.cansetCutIndex);
-        [TOAlgModel newWithAlg_p:nextCansetA_p group:self];
+        [TOAlgModel newWithAlg_p:nextCansetTo_p group:self];
     }else{
         if(ISOK(self.baseOrGroup, HDemandModel.class)){
             //9. H目标帧只需要等 (转hActYes) (参考25031-9);
-            AIKVPointer *hTarget_p = ARR_INDEX(cansetFo.content_ps, self.cansetCutIndex);
-            [TOAlgModel newWithAlg_p:hTarget_p group:self];
+            [TOAlgModel newWithAlg_p:nextCansetTo_p group:self];
         }
     }
 }

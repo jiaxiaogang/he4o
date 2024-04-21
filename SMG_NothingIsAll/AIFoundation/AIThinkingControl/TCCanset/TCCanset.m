@@ -160,6 +160,11 @@
     //13. 初始化result的cansetTo与real的映射;
     [result initRealCansetToDic];
     
+    //此时未转实,这里的nextFrame是?cansetFrom的? (看代码,会优先si,但此时没有si,只能是cansetFrom);
+    //原则是：有si才有newcanset,有预期才有实际类比。
+    //  1，对xv生成algmodel。
+    //  2，生成过simodel的都可以生成子hcanset
+    
     //13. 下帧初始化 (可接受反馈);
     [result pushNextFrame];
     return result;
