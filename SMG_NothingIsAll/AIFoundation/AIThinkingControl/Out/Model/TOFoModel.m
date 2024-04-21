@@ -177,26 +177,24 @@
  */
 -(NSArray*) getOrderUseMatchAndFeedbackAlg:(BOOL)fromRegroup {
     //1. 数据准备 (收集除末位外的content为order);
-    AIFoNodeBase *fo = [SMGUtils searchNode:self.content_p];
     NSMutableArray *order = [[NSMutableArray alloc] init];
     NSArray *feedbackIndexArr = [self getIndexArrIfHavFeedback];
-    NSInteger max = fromRegroup ? fo.count : self.cansetCutIndex;
+    NSInteger max = fromRegroup ? self.transferXvModel.cansetToOrders.count : self.cansetCutIndex;
     
     //2. 将fo逐帧收集真实发生的alg;
     for (NSInteger i = 0; i < max; i++) {
         //3. 找到当前帧alg_p;
-        AIKVPointer *matchAlg_p = ARR_INDEX(fo.content_ps, i);
+        AIShortMatchModel_Simple *cansetToSimple = ARR_INDEX(self.transferXvModel.cansetToOrders, i);
         
         //4. 如果有反馈feedbackAlg,则优先取反馈;
-        AIKVPointer *findAlg_p = matchAlg_p;
+        AIKVPointer *findAlg_p = cansetToSimple.alg_p;
         if ([feedbackIndexArr containsObject:@(i)]) {
             findAlg_p = [self getFeedbackAlgWithSolutionIndex:i];
         }
         
-        //5. 生成时序元素;
+        //5. 生成时序元素 (不管有没有feedbackAlg,deltaTime都延用xvModel.order中的时间);
         if (findAlg_p) {
-            NSTimeInterval inputTime = [NUMTOOK(ARR_INDEX(fo.deltaTimes, i)) doubleValue];
-            [order addObject:[AIShortMatchModel_Simple newWithAlg_p:findAlg_p inputTime:inputTime isTimestamp:false]];
+            [order addObject:[AIShortMatchModel_Simple newWithAlg_p:findAlg_p inputTime:cansetToSimple.inputTime isTimestamp:cansetToSimple.isTimestamp]];
         }
     }
     return order;
@@ -245,14 +243,13 @@
  */
 -(NSMutableArray*) getIndexArrIfHavFeedback {
     //1. 数据准备;
-    AIFoNodeBase *solutionFo = [SMGUtils searchNode:self.content_p];
     NSMutableArray *result = [[NSMutableArray alloc] init];
     
     //2. 将fo逐帧收集有反馈的conIndex (参考27207-7);
-    for (NSInteger i = 0; i < solutionFo.count; i++) {
-        AIKVPointer *solutionAlg_p = ARR_INDEX(solutionFo.content_ps, i);
+    for (NSInteger i = 0; i < self.transferXvModel.cansetToOrders.count; i++) {
+        AIShortMatchModel_Simple *canstToSimple = ARR_INDEX(self.transferXvModel.cansetToOrders, i);
         for (TOAlgModel *item in self.subModels) {
-            if (item.status == TOModelStatus_OuterBack && [item.content_p isEqual:solutionAlg_p] && item.feedbackAlg) {
+            if (item.status == TOModelStatus_OuterBack && [item.content_p isEqual:canstToSimple.alg_p] && item.feedbackAlg) {
                 [result addObject:@(i)];
                 break;
             }
@@ -266,12 +263,11 @@
  */
 -(AIKVPointer*) getFeedbackAlgWithSolutionIndex:(NSInteger)solutionIndex {
     //1. 数据准备;
-    AIFoNodeBase *solutionFo = [SMGUtils searchNode:self.content_p];
-    AIKVPointer *solutionAlg_p = ARR_INDEX(solutionFo.content_ps, solutionIndex);
+    AIShortMatchModel_Simple *cansetToSimple = ARR_INDEX(self.transferXvModel.cansetToOrders, solutionIndex);
     
     //2. 找出反馈返回;
     for (TOAlgModel *item in self.subModels) {
-        if (item.status == TOModelStatus_OuterBack && [item.content_p isEqual:solutionAlg_p] && item.feedbackAlg) {
+        if (item.status == TOModelStatus_OuterBack && [item.content_p isEqual:cansetToSimple.alg_p] && item.feedbackAlg) {
             return item.feedbackAlg;
         }
     }
@@ -345,10 +341,9 @@
  */
 -(TOAlgModel*) getCurFrame {
     //方法1. 从subModels中找出cutIndex对应的那一条返回;
-    AIFoNodeBase *cansetFo = [SMGUtils searchNode:self.content_p];
-    AIKVPointer *curCansetA_p = ARR_INDEX(cansetFo.content_ps, self.cansetCutIndex);
+    AIShortMatchModel_Simple *curCansetTo = ARR_INDEX(self.transferXvModel.cansetToOrders, self.cansetCutIndex);
     return [SMGUtils filterSingleFromArr:self.subModels checkValid:^BOOL(TOAlgModel *item) {
-        return [item.content_p isEqual:curCansetA_p];
+        return [item.content_p isEqual:curCansetTo.alg_p];
     }];
     
     //方法2. 直接取subModels的最后一条 (按道理最后一条就是当前正在推进中的,但严谨上说目前不太确定,所以先用方法1)
