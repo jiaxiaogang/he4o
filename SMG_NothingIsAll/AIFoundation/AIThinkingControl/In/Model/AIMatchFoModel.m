@@ -229,7 +229,7 @@
     
     //c. 将protoFo挂载到matchFo下的conCansets下 (参考27201-2);
     BOOL updateCansetSuccess = [matchFo updateConCanset:newRCanset.pointer targetIndex:matchFo.count];
-    NSLog(@"Canset演化> NewRCanset:%@ (状态:%@ fromPFo:F%ld 帧:%ld)",Fo2FStr(newRCanset),TIStatus2Str(status),self.matchFo.pointerId,matchFo.count);
+    NSLog(@"Canset演化> NewRCanset:%@ toScene:F%ld",ShortDesc4Node(newRCanset),matchFo.pId);
     
     if (updateCansetSuccess) {
         //d. 将item.indexDic挂载到matchFo的conIndexDDic下 (参考27201-3);
@@ -277,7 +277,7 @@
         AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:newRCanset assFo:solutionFo type:ATDefault noRepeatArea_ps:noRepeatArea_ps];
         BOOL updateCansetSuccess = [pFo updateConCanset:absCansetFo.pointer targetIndex:pFo.count];
         [AITest test101:absCansetFo proto:newRCanset conCanset:solutionFo];
-        NSLog(@"Canset演化> AbsRCanset:%@ (curS:F%ld 状态:%@ fromPFo:F%ld 帧:%ld)",Fo2FStr(absCansetFo),solutionFo.pointer.pointerId,TOStatus2Str(solutionModel.status),basePFoOrTargetFo_p.pointerId,pFo.count);
+        NSLog(@"Canset演化> AbsRCanset:%@ toScene:F%ld",ShortDesc4Node(newRCanset),pFo.pId);
         
         if (updateCansetSuccess) {
             //2024.04.17: 此处简化了下,把用convertOldIndexDic2NewIndexDic()取映射,改成用zonHeDic来计算;

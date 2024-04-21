@@ -35,10 +35,12 @@
     
     //2. 内容
     for (AIKVPointer *item_p in fo.content_ps){
-        if (STRISOK(result)) {
-            [result appendFormat:@",%@",[self desc4Alg:item_p]];
+        if (STRISOK(result)) [result appendString:@","];
+        if (PitIsAlg(item_p)) {
+            [result appendFormat:@"%@",[self desc4Alg:item_p]];
+        } else if (PitIsMv(item_p)) {
+            [result appendFormat:@"%@",[self desc4Mv:item_p]];
         }
-        [result appendFormat:@"%@",[self desc4Alg:item_p]];
     }
     return result;
 }
@@ -47,8 +49,10 @@
     AIAlgNodeBase *alg = [SMGUtils searchNode:alg_p];
     NSMutableString *result = [[NSMutableString alloc] init];
     
-    //2. 长度
-    [result appendFormat:@"%ld",alg.count];
+    //2. 长度 (只有>1时才显示,像吃,飞,踢这种单特征的就不显示长度了);
+    if (alg.count > 1) {
+        [result appendFormat:@"%ld",alg.count];
+    }
     
     //3. 内容
     for (AIKVPointer *item_p in alg.content_ps){
@@ -72,6 +76,8 @@
         return STRFORMAT(@"飞%@",[NVHeUtil fly2Str:value]);
     }else if([KICK_RDS isEqualToString:value_p.algsType]){
         return STRFORMAT(@"踢%@",[NVHeUtil fly2Str:value]);
+    }else if([EAT_RDS isEqualToString:value_p.algsType]){
+        return @"吃";
     }
     return @"";
 }
