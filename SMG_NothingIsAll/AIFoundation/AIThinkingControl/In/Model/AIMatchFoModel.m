@@ -255,9 +255,10 @@
         
         //1. 判断处在actYes状态的解决方案 && 解决方案是属性当前pFo决策取得的 (参考27206c-综上&多S问题);
         //a. 非actYes和runing状态的不做canset再类比;
-        //b. 2023.11.03: 即使失败也可以触发"预想与实际"的类比抽象;
-        //c. 2024.04.17: 非激活状态的也不构建AbsRCanset (它都没激活,我们没必要喂饭吃 (避免强行经验带来场景不符合等问题),毕竟有迁移后续也不怕缺canset用);
-        if (solutionModel.cansetStatus != CS_Besting) continue;
+        //2023.11.03: 即使失败也可以触发"预想与实际"的类比抽象;
+        //2024.04.17: 非激活状态的也不构建AbsRCanset (它都没激活,我们没必要喂饭吃 (避免强行经验带来场景不符合等问题),毕竟有迁移后续也不怕缺canset用);
+        //2024.04.21: 改成没激活过(没转实)的,不进行类比 (为了触发更多的类比);
+        if (solutionModel.cansetStatus == CS_None) continue;
         if (solutionModel.status != TOModelStatus_ActYes && solutionModel.status != TOModelStatus_Runing && solutionModel.status != TOModelStatus_ActNo) {
             NSLog(@"RCanset预想与实际类比未执行,F%ld 状态:%ld",solutionModel.content_p.pointerId,solutionModel.status);
             continue;
