@@ -406,9 +406,10 @@
     //2023.11.03: 即使已失败也可以触发"预想与实际"的类比抽象;
     //2024.01.25: 只有正在推进中的才有资格做"预想与实际"的类比抽象;
     //2024.04.16: 非激活状态的也不构建NewHCanset (它都没激活,我们没必要喂饭吃 (避免强行经验带来场景不符合等问题),毕竟有迁移后续也不怕缺H经验用);
-    if (self.cansetStatus != CS_Besting) {
-        return;
-    }
+    //2924.04.21: 非激活状态只要加到候选池了,说明它场景满足,那么NewHCanset可以构建,毕竟它满足了:"当前场景下,又发生预测帧" (洽好newHCanset只需要order即可构建,absHCanset是需要与siModel.cansetTo类比才能产生的);
+    //      TODO: 可是如果它没有转实,生成了NewHCanset挂载在哪呢?
+    BOOL canNewHCanset = !self.isH;// && self.cansetStatus == CS_Besting;
+    BOOL canAbsHCanset = self.isH && self.cansetStatus == CS_Besting;
     
     //1. 数据准备;
     TOAlgModel *curAlgModel = [self getCurFrame];
@@ -416,7 +417,7 @@
     //========== 第1部分: 当R任务有理性帧推进时,生成newHCanset ==========
     //"行为输出" 和 "demand.ActYes" 和 "静默成功 的有效判断
     //此处有两种frameAlg,第1种是isOut为true的行为反馈,第2种是hDemand.baseAlg;
-    if (!self.isH) {
+    if (canNewHCanset) {
         //2. 旧有那些改状态status的代码,整理在此处 (参考31073-TODO7-4);
         //3. 当waitModel为hDemand.targetAlg时,此处提前反馈了,hDemand改为finish状态 (参考26185-TODO6);
         HDemandModel *subHDemand = [SMGUtils filterSingleFromArr:curAlgModel.subDemands checkValid:^BOOL(id item) {
@@ -449,7 +450,7 @@
     
     //========== 第2部分: 当H任务推进到最终target时,触发预想与实际类比absHCanset ==========
     //5. H返回的有效判断
-    if (self.isH) {
+    if (canAbsHCanset) {
         
         //6. HDemand即使waitModel不是actYes状态也处理反馈;
         HDemandModel *hDemand = (HDemandModel*)self.baseOrGroup;//h需求模型
