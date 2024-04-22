@@ -40,6 +40,10 @@
     //2. Alg转移 (下帧),每次调用action立马先跳下actionIndex为当前正准备行为化的那一帧;
     OFTitleLog(@"行为化Fo", @"\n第 %ld/%ld 个,时序:%@",foModel.cansetCutIndex+1,curFo.count,Fo2FStr(curFo));
     
+    if (!foModel.isH) {
+        NSLog(@"aaaaa_Fo行为化第 %ld/%ld 个: %@ rDemand:F%ld",foModel.cansetCutIndex+1,foModel.targetIndex,Fo2FStr(curFo),foModel.basePFo.matchFo.pointerId);
+    }
+    
     //3. 进行反思识别,如果不通过时,回到TCScore可能会尝试先解决子任务,通过时继续行为化 (参考30054-todo7);
     [TCRegroup actionRegroup:foModel];
     foModel.refrectionNo = ![TCRefrection actionRefrection:foModel];
