@@ -150,6 +150,7 @@
  *  @desc cutIndex表示当前从执行到执行下帧前 (即cutIndex一般表示已执行 / 含cutIndex也已发生);
  */
 @property (assign, nonatomic) NSInteger cansetCutIndex;
+- (NSInteger)cansetActIndex;//行为化中截点 = cansetCutIndex+1
 
 /**
  *  MARK:--------------------执行目标index--------------------

@@ -179,10 +179,10 @@
     //1. 数据准备 (收集除末位外的content为order);
     NSMutableArray *order = [[NSMutableArray alloc] init];
     NSArray *feedbackIndexArr = [self getIndexArrIfHavFeedback];
-    NSInteger max = fromRegroup ? self.transferXvModel.cansetToOrders.count : self.cansetCutIndex;
+    NSInteger maxIndex = fromRegroup ? self.transferXvModel.cansetToOrders.count - 1 : self.cansetCutIndex;
     
     //2. 将fo逐帧收集真实发生的alg;
-    for (NSInteger i = 0; i < max; i++) {
+    for (NSInteger i = 0; i <= maxIndex; i++) {
         //3. 找到当前帧alg_p;
         AIShortMatchModel_Simple *cansetToSimple = ARR_INDEX(self.transferXvModel.cansetToOrders, i);
         
@@ -294,6 +294,10 @@
     return super.content_p;
 }
 
+- (NSInteger)cansetActIndex {
+    return self.cansetCutIndex + 1;
+}
+
 /**
  *  MARK:--------------------返回需用于反省或有效统计的cansets (参考29069-todo11 && todo11.2)--------------------
  *  @result notnull
@@ -317,21 +321,23 @@
  *      2024.04.21: 下帧行为化,只能以迁移后的cansetTo为准 (原来的有取cansetFrom是不对的);
  */
 -(void) pushNextFrame {
-    //1. 更新cutIndex;
-    self.cansetCutIndex ++;
+    //1. 如果已经彻底完成,则没有下一帧了;
+    if (self.cansetCutIndex >= self.targetIndex) return;
     
-    //2. 取下帧alg数据;
-    AIShortMatchModel_Simple *nextCansetTo = ARR_INDEX(self.transferXvModel.cansetToOrders, self.cansetCutIndex);
+    //2. 取下帧alg数据 (下帧即已发生+1);
+    AIShortMatchModel_Simple *nextCansetTo = ARR_INDEX(self.transferXvModel.cansetToOrders, self.cansetCutIndex + 1);
     AIKVPointer *nextCansetTo_p = nextCansetTo.alg_p;
     
     //3. 挂载TOAlgModel;
-    if (self.cansetCutIndex < self.targetIndex - 1) {
+    if (self.cansetCutIndex + 1 < self.targetIndex) {
         //6. 转下帧: 理性帧则生成TOAlgModel;
         [TOAlgModel newWithAlg_p:nextCansetTo_p group:self];
     }else{
         if(ISOK(self.baseOrGroup, HDemandModel.class)){
             //9. H目标帧只需要等 (转hActYes) (参考25031-9);
             [TOAlgModel newWithAlg_p:nextCansetTo_p group:self];
+        } else {
+            //R任务的最后一帧nextCansetTo_p是nil,不需要algModel;
         }
     }
 }
@@ -340,8 +346,8 @@
  *  MARK:--------------------获取当前正在推进中的帧--------------------
  */
 -(TOAlgModel*) getCurFrame {
-    //方法1. 从subModels中找出cutIndex对应的那一条返回;
-    AIShortMatchModel_Simple *curCansetTo = ARR_INDEX(self.transferXvModel.cansetToOrders, self.cansetCutIndex);
+    //方法1. 从subModels中找出cutIndex对应的那一条返回 (cutIndex是已发生,推进中是+1);
+    AIShortMatchModel_Simple *curCansetTo = ARR_INDEX(self.transferXvModel.cansetToOrders, self.cansetCutIndex + 1);
     return [SMGUtils filterSingleFromArr:self.subModels checkValid:^BOOL(TOAlgModel *item) {
         return [item.content_p isEqual:curCansetTo.alg_p];
     }];
@@ -388,6 +394,9 @@
     curAlgModel.feedbackAlg = protoAlg_p;
     curAlgModel.status = TOModelStatus_OuterBack;
     [self updateRealCansetToDic];//反馈成立,更新映射;
+    
+    //4. 反馈成立,更新已发生;
+    self.cansetCutIndex ++;
     return true;
 }
 

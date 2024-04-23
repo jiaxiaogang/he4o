@@ -82,11 +82,10 @@
     
     //2. 收集瞬时记忆"刚已发生的protoFo"做为前半部分 (参考30054-todo1);
     [order addObjectsFromArray:[theTC.inModelManager shortCache:false]];
-    NSInteger regroupCutIndex = order.count - 1;
     
     //3. 收集cansetFo"即将行为化的部分"做为后半部分 (参考30054-todo2);
     AIFoNodeBase *actionFo = [SMGUtils searchNode:actionFoModel.content_p];
-    for (NSInteger i = actionFoModel.cansetCutIndex; i <= MIN(actionFoModel.targetIndex, actionFo.count - 1); i++) {
+    for (NSInteger i = actionFoModel.cansetCutIndex + 1; i <= MIN(actionFoModel.targetIndex, actionFo.count - 1); i++) {
         AIKVPointer *item_p = ARR_INDEX(actionFo.content_ps, i);
         NSTimeInterval deltaTime = [NUMTOOK(ARR_INDEX(actionFo.deltaTimes, i)) doubleValue];
         [order addObject:[AIShortMatchModel_Simple newWithAlg_p:item_p inputTime:deltaTime isTimestamp:false]];
@@ -97,7 +96,7 @@
     
     //5. 识别时序 (预测到鸡蛋变脏,或者cpu损坏) (理性预测影响评价即理性评价) (参考30054-todo3);
     DebugE();
-    [TCRecognition actionRecognition:regroupFo baseActionFo:actionFoModel regroupCutIndex:regroupCutIndex];
+    [TCRecognition actionRecognition:regroupFo baseActionFo:actionFoModel];
 }
 
 @end
