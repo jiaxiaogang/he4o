@@ -254,9 +254,7 @@
     Debug();
     //0. 数据准备 (从上到下,取demand,solutionFo,frameAlg);
     DemandModel *demand = (DemandModel*)solutionModel.baseOrGroup;
-    
     AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.content_p];
-    NSInteger curActionIndex = solutionModel.cansetCutIndex;
     TOAlgModel *frameModel = [solutionModel getCurFrame];
     
     //1. 设为actYes
@@ -266,13 +264,13 @@
     
     //2. solutionFo已执行完成,直接取mvDeltaTime做触发器时间;
     double deltaTime = 0;
-    BOOL actYes4Mv = curActionIndex >= solutionFo.count;
+    BOOL actYes4Mv = solutionModel.cansetActIndex >= solutionFo.count;
     if (actYes4Mv) {
         AIKVPointer *basePFoOrTargetFo_p = [TOUtils convertBaseFoFromBasePFoOrTargetFoModel:solutionModel.basePFoOrTargetFoModel];
         AIFoNodeBase *basePFoOrTargetFo = [SMGUtils searchNode:basePFoOrTargetFo_p];
         deltaTime = basePFoOrTargetFo.mvDeltaTime;
     }else{
-        deltaTime = [NUMTOOK(ARR_INDEX(solutionFo.deltaTimes, curActionIndex)) doubleValue];
+        deltaTime = [NUMTOOK(ARR_INDEX(solutionFo.deltaTimes, solutionModel.cansetActIndex)) doubleValue];
     }
     
     //3. 触发器;
@@ -282,7 +280,7 @@
         if (solutionModel.cansetStatus != CS_Besting) return;
         
         //4. 末尾为mv感性目标;
-        if (curActionIndex >= solutionFo.count) {
+        if (actYes4Mv) {
             //a. 如果状态已改成OutBack,说明有反馈(坏),否则未反馈(好) (参考feedbackTOP);
             AnalogyType type = (solutionModel.status == TOModelStatus_OuterBack) ? ATSub : ATPlus;
             
@@ -302,7 +300,7 @@
             
             //a. 反省类比(成功/未成功)的主要原因,进行RORT反省;
             AnalogyType type = (frameModel.status == TOModelStatus_ActYes) ? ATSub : ATPlus;
-            [TCRethink reasonOutRethink:solutionModel actionIndex:curActionIndex type:type];
+            [TCRethink reasonOutRethink:solutionModel actionIndex:solutionModel.cansetActIndex type:type];
             NSLog(@"---//行为化帧触发理性反省:%p A%ld 状态:%@",frameModel,frameModel.content_p.pointerId,TOStatus2Str(frameModel.status));
             
             //5. 失败时_继续决策 (成功时,由feedback的IN流程继续);

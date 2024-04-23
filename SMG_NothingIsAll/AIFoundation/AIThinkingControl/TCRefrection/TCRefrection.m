@@ -42,9 +42,9 @@
     //5. 算出因canset无效,带来的风险分 = Eff为N的概率 x scene的mv评分;
     CGFloat canestFenXianScore = [AIScore score4MV:sceneFo.cmvNode_p ratio:nEffScore];
     
-    //7. 算出后段的"懒"评分;
+    //7. 算出后段的"懒"评分 (最后一帧静默等待不需要行为化,所以小于cansetTargetIndex即可);
     CGFloat lazyScore = 0;
-    for (NSInteger i = checkCanset.cansetCutIndex + 1; i < cansetFo.count; i++) {
+    for (NSInteger i = checkCanset.cansetActIndex; i < checkCanset.targetIndex; i++) {
         //8. 遍历后半段中的"isOut=true"的行为,各指定"懒"评分;
         AIKVPointer *alg_p = ARR_INDEX(cansetFo.content_ps, i);
         if (alg_p && alg_p.isOut) {

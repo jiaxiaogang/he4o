@@ -136,7 +136,7 @@
 -(void) updateRealCansetToDic {
     //"pFo的最后一帧下标"  与  "现cutIndex下一帧(在等待反馈帧)"  之间因为匹配成功而=>  "追加映射";
     AIMatchFoModel *pFo = self.basePFo;
-    [self.realCansetToIndexDic setObject:@(pFo.realMaskFo.count - 1) forKey:@(self.cansetCutIndex + 1)];
+    [self.realCansetToIndexDic setObject:@(pFo.realMaskFo.count - 1) forKey:@(self.cansetActIndex)];
 }
 
 /**
@@ -325,11 +325,11 @@
     if (self.cansetCutIndex >= self.targetIndex) return;
     
     //2. 取下帧alg数据 (下帧即已发生+1);
-    AIShortMatchModel_Simple *nextCansetTo = ARR_INDEX(self.transferXvModel.cansetToOrders, self.cansetCutIndex + 1);
+    AIShortMatchModel_Simple *nextCansetTo = ARR_INDEX(self.transferXvModel.cansetToOrders, self.cansetActIndex);
     AIKVPointer *nextCansetTo_p = nextCansetTo.alg_p;
     
     //3. 挂载TOAlgModel;
-    if (self.cansetCutIndex + 1 < self.targetIndex) {
+    if (self.cansetActIndex < self.targetIndex) {
         //6. 转下帧: 理性帧则生成TOAlgModel;
         [TOAlgModel newWithAlg_p:nextCansetTo_p group:self];
     }else{
@@ -347,7 +347,7 @@
  */
 -(TOAlgModel*) getCurFrame {
     //方法1. 从subModels中找出cutIndex对应的那一条返回 (cutIndex是已发生,推进中是+1);
-    AIShortMatchModel_Simple *curCansetTo = ARR_INDEX(self.transferXvModel.cansetToOrders, self.cansetCutIndex + 1);
+    AIShortMatchModel_Simple *curCansetTo = ARR_INDEX(self.transferXvModel.cansetToOrders, self.cansetActIndex);
     return [SMGUtils filterSingleFromArr:self.subModels checkValid:^BOOL(TOAlgModel *item) {
         return [item.content_p isEqual:curCansetTo.alg_p];
     }];
@@ -367,6 +367,9 @@
     //2. 反馈有效: 构建hCanset;
     [self step2_FeedbackThenCreateHCanset:protoAlg_p];
         
+    //3. 反馈成立,更新已发生;
+    self.cansetCutIndex ++;
+    
     //3. 并推进到下帧 (参考31073-TODO2g-3);
     [self pushNextFrame];
 }
@@ -384,7 +387,7 @@
     feedbackMatchAlg_ps = ARRTOOK(feedbackMatchAlg_ps);
     
     //2. 判断反馈mIsC是否有效 (比如找锤子,看到锤子了 & 再如吃,确定自己是否真吃了);
-    AIShortMatchModel_Simple *cansetToSimple = ARR_INDEX(self.transferXvModel.cansetToOrders, self.cansetCutIndex + 1);
+    AIShortMatchModel_Simple *cansetToSimple = ARR_INDEX(self.transferXvModel.cansetToOrders, self.cansetActIndex);
     BOOL mIsC = [feedbackMatchAlg_ps containsObject:cansetToSimple.alg_p];
     NSLog(@"aaaaa 等待反馈中:%@ 匹配:%d baseCansetFrom:%@",Pit2FStr(cansetToSimple.alg_p),mIsC,ShortDesc4Pit(self.cansetFo));
     if (!mIsC) return false;
@@ -394,9 +397,6 @@
     curAlgModel.feedbackAlg = protoAlg_p;
     curAlgModel.status = TOModelStatus_OuterBack;
     [self updateRealCansetToDic];//反馈成立,更新映射;
-    
-    //4. 反馈成立,更新已发生;
-    self.cansetCutIndex ++;
     return true;
 }
 
@@ -429,10 +429,10 @@
         AIFoNodeBase *rCanset = [SMGUtils searchNode:self.transferSiModel.canset];
         AIMatchFoModel *basePFo = (AIMatchFoModel*)self.basePFoOrTargetFoModel;
         NSArray *order = [basePFo convertOrders4NewCansetV2];
-        if (ARRISOK(order) && self.cansetCutIndex < rCanset.count) {
-            AIFoNodeBase *newHCanset = [theNet createConFoForCanset:order sceneFo:rCanset sceneTargetIndex:self.cansetCutIndex];
-            [rCanset updateConCanset:newHCanset.pointer targetIndex:self.cansetCutIndex];
-            AIKVPointer *cutIndexAlg_p = ARR_INDEX(rCanset.content_ps, self.cansetCutIndex);
+        if (ARRISOK(order)) {
+            AIFoNodeBase *newHCanset = [theNet createConFoForCanset:order sceneFo:rCanset sceneTargetIndex:self.cansetActIndex];
+            [rCanset updateConCanset:newHCanset.pointer targetIndex:self.cansetActIndex];
+            AIKVPointer *actIndexAlg_p = ARR_INDEX(rCanset.content_ps, self.cansetActIndex);
             
             if (self.realCansetToIndexDic.count == 0) {
                 NSLog(@"NewHCanset Dic Is Nil");
@@ -440,7 +440,7 @@
             
             //5. 综合indexDic计算: 当前cansetTo与real之间的映射;
             [newHCanset updateIndexDic:rCanset indexDic:self.realCansetToIndexDic];
-            NSLog(@"aaaaaCanset演化> NewHCanset:%@ toScene:%@ 第%ld帧:A%ld",ShortDesc4Node(newHCanset),ShortDesc4Node(rCanset),self.cansetCutIndex+1,cutIndexAlg_p.pointerId);
+            NSLog(@"aaaaaCanset演化> NewHCanset:%@ toScene:%@ 在%ld帧:A%ld",ShortDesc4Node(newHCanset),ShortDesc4Node(rCanset),self.cansetActIndex,actIndexAlg_p.pointerId);
         }
     }
     
@@ -456,7 +456,7 @@
         if (Log4OPushM) NSLog(@"aaaaaHCansetA有效:M(A%ld) C:%@",protoAlg_p.pointerId,Pit2FStr(targetAlgModel.content_p));
         
         //7. 记录feedbackAlg (参考27204-1);
-        BOOL isEndFrame = self.cansetCutIndex == self.targetIndex;
+        BOOL isEndFrame = self.cansetActIndex == self.targetIndex;
         
         //8. 旧有那些改状态status的代码,整理在此处 (参考31073-TODO7-4);
         //9. H反馈中段: 标记OuterBack,solutionFo继续;
@@ -481,11 +481,11 @@
                 AIFoNodeBase *newHCanset = [theNet createConFo:orders];
                 
                 //14. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
-                NSArray *noRepeatArea_ps = [sceneTo getConCansets:targetFoModel.cansetCutIndex];
+                NSArray *noRepeatArea_ps = [sceneTo getConCansets:targetFoModel.cansetActIndex];
                 AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:newHCanset assFo:cansetTo type:ATDefault noRepeatArea_ps:noRepeatArea_ps];
-                BOOL updateCansetSuccess = [sceneTo updateConCanset:absCansetFo.pointer targetIndex:targetFoModel.cansetCutIndex];
+                BOOL updateCansetSuccess = [sceneTo updateConCanset:absCansetFo.pointer targetIndex:targetFoModel.cansetActIndex];
                 [AITest test101:absCansetFo proto:newHCanset conCanset:cansetTo];
-                NSLog(@"aaaaaCanset演化> AbsHCanset:%@ toScene:%@ 第%ld帧",ShortDesc4Node(absCansetFo),ShortDesc4Node(sceneTo),targetFoModel.cansetCutIndex+1);
+                NSLog(@"aaaaaCanset演化> AbsHCanset:%@ toScene:%@ 在%ld帧",ShortDesc4Node(absCansetFo),ShortDesc4Node(sceneTo),targetFoModel.cansetActIndex);
                 
                 if (updateCansetSuccess) {
                     //15. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);

@@ -57,7 +57,7 @@
         NSArray *allHCanset = [SMGUtils convertArr:sceneFrom.conCansetsDic.allValues convertItemArrBlock:^NSArray *(id obj) {
             return obj;
         }];
-        NSLog(@"取HCanset候选集: 从hScene:F%ld 的第%ld帧开始取,取得HCanset数:%ld/%ld",sceneFrom.pId,rCanset.cansetCutIndex + 1,cansetFroms1.count,allHCanset.count);
+        NSLog(@"取HCanset候选集: 从hScene:F%ld 的在%ld帧开始取,取得HCanset数:%ld/%ld",sceneFrom.pId,rCanset.cansetCutIndex + 1,cansetFroms1.count,allHCanset.count);
         if (ARRISOK(cansetFroms1)) {
             NSLog(@"TODOTOMORROW20240402: 跑两三轮31135的训练步骤试下,看这里能不能取到hCanset...");
             //通过以下四步来测试:
