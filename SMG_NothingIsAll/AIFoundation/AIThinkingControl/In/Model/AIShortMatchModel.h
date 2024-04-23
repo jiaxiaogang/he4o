@@ -49,7 +49,8 @@
 @property (strong, nonatomic) NSArray *matchAlgs_RS; //概念识别结果 (感似层)
 @property (strong, nonatomic) NSArray *matchAlgs_RJ; //概念识别结果 (理交层)
 @property (strong, nonatomic) AIMatchAlgModel *firstMatchAlg;//默认为matchAlgs首条;
--(NSArray*) matchAlgs;      //返回似层 (默认) notnull;
+-(NSArray*) matchAlgs;      //默认似层 notnull;
+-(NSArray*) matchAlgs_Si;   //返回似层 notnull;
 -(NSArray*) matchAlgs_Jiao; //返回交层 notnull;
 -(NSArray*) matchAlgs_All;  //返回全部 notnull;
 

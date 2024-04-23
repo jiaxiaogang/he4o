@@ -72,6 +72,10 @@
         }else if(value == 5) {
             return @"果";
         }
+    }else if([@"border" isEqualToString:value_p.dataSource]){
+        if (value > 0) {
+            return @"皮";
+        }
     }else if([FLY_RDS isEqualToString:value_p.algsType]){
         return STRFORMAT(@"飞%@",[NVHeUtil fly2Str:value]);
     }else if([KICK_RDS isEqualToString:value_p.algsType]){

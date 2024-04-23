@@ -17,8 +17,13 @@
 /**
  *  MARK:--------------------取概念识别结果--------------------
  */
-//返回似层 (默认) notnull;
+//默认返回似层 notnull;
 -(NSArray*) matchAlgs {
+    return self.matchAlgs_Si;
+}
+
+//返回似层 notnull;
+-(NSArray*) matchAlgs_Si {
     //合并PR的似层返回 (参考29108-2.2);
     return [SMGUtils collectArrA:self.matchAlgs_PS arrB:self.matchAlgs_RS];
 }
