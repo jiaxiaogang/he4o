@@ -59,6 +59,9 @@
         }];
         NSLog(@"取HCanset候选集: 从hScene:F%ld 的在%ld帧开始取,取得HCanset数:%ld/%ld",sceneFrom.pId,rCanset.cansetCutIndex + 1,cansetFroms1.count,allHCanset.count);
         if (ARRISOK(cansetFroms1)) {
+            NSLog(@"aaaaa取到HCanset%@",CLEANSTR([SMGUtils convertArr:cansetFroms1 convertBlock:^id(id obj) {
+                return ShortDesc4Pit(obj);
+            }]));
             NSLog(@"TODOTOMORROW20240402: 跑两三轮31135的训练步骤试下,看这里能不能取到hCanset...");
             //通过以下四步来测试:
             //1. 先生成NewHCanset (完成);
@@ -84,6 +87,12 @@
             AIAlgNodeBase *cansetToAlg = [SMGUtils searchNode:cansetToOrder.alg_p];
             
             //b. 如果是mcIsBro关系,先取出共同的sameAbs;
+            if (!targetAlgM || !targetAlgM.content_p) {
+                NSLog(@"这里闪退过,因为这个m或c是空,如果2024.07之前没见过这个错,这里可删");
+            }
+            if (!cansetToAlg || !cansetToAlg.p) {
+                NSLog(@"这里闪退过,因为这个c或m是空,如果2024.07之前没见过这个错,这里可删");
+            }
             NSArray *sameAbses = [TOUtils dataOfMcIsBro:targetAlgM.content_p c:cansetToAlg.p];
             
             //c. 然后再依次判断下和mc二者的匹配度,相乘,取最大值为其综合匹配度,找出综合匹配度最好的值: 即最匹配的 (参考31121-TODO3);

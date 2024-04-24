@@ -389,7 +389,9 @@
     //2. 判断反馈mIsC是否有效 (比如找锤子,看到锤子了 & 再如吃,确定自己是否真吃了);
     AIShortMatchModel_Simple *cansetToSimple = ARR_INDEX(self.transferXvModel.cansetToOrders, self.cansetActIndex);
     BOOL mIsC = [feedbackMatchAlg_ps containsObject:cansetToSimple.alg_p];
-    NSLog(@"aaaaa 等待反馈中:%@ 匹配:%d baseCansetFrom:%@",Pit2FStr(cansetToSimple.alg_p),mIsC,ShortDesc4Pit(self.cansetFo));
+    //TODOTOMORROW20240424: 这里全是false,查下原因... (但连续3次训练别重新run的时候,又能匹配上);
+    //验证下如果匹配上时,这里都是什么状态,因为有一些能newH,有一些没跑上;
+    NSLog(@"aaaaa 等待反馈中:%@ 匹配:%d baseCansetFrom:%@ 状态:%@",Pit2FStr(cansetToSimple.alg_p),mIsC,ShortDesc4Pit(self.cansetFo),CansetStatus2Str(self.cansetStatus));
     if (!mIsC) return false;
     
     //3. 有效时: 记录feedbackAlg;

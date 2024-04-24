@@ -66,6 +66,17 @@
     return @"Default";
 }
 
++(NSString*) convertCansetStatus2Desc:(CansetStatus)status{
+    if(status == CS_None){
+        return @"CS_None";
+    }else if(status == CS_Besting){
+        return @"CS_Besting";
+    }else if(status == CS_Bested){
+        return @"CS_Bested";
+    }
+    return @"CS_Other";
+}
+
 +(NSString*) convertClass2Desc:(Class)clazz{
     if ([ImvAlgsHungerModel.class isEqual:clazz]) {
         return @"饿";
