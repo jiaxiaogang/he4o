@@ -215,6 +215,9 @@
                 model.matchCount++;
                 model.nearCount++;
                 if ([Alg2FStr(protoAlg) containsString:@"果"] && !refPort.targetHavMv) {
+                    if (Pit2FStr(near_p).length == 0 && nearV == 0) {
+                        NSLog(@"此处 高 的相似度为0,,,,");
+                    }
                     model.tempLog = STRFORMAT(@"%@ 因%@累计:%.2f",model.tempLog,Pit2FStr(near_p),nearV);
                 }
                 model.sumNear *= nearV;
