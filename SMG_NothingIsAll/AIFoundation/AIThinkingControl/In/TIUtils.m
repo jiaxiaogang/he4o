@@ -214,6 +214,9 @@
                 //10. 统计匹配度matchCount & 相近度<1个数nearCount & 相近度sumNear & 引用强度sumStrong
                 model.matchCount++;
                 model.nearCount++;
+                if ([Alg2FStr(protoAlg) containsString:@"果"] && !refPort.targetHavMv) {
+                    model.tempLog = STRFORMAT(@"%@ 因%@累计:%.2f",model.tempLog,Pit2FStr(near_p),nearV);
+                }
                 model.sumNear *= nearV;
                 model.sumRefStrong += (int)refPort.strong.value;
             }
@@ -242,6 +245,13 @@
         return itemAlg.count != protoAlg.count;
     }];
     
+    for (AIMatchAlgModel *filterAfter in validRSAlgs) {
+        NSLog(@"RSItem过滤前:%@ 相似度:%.2f 日志: %@",Pit2FStr(filterAfter.matchAlg),filterAfter.matchValue,filterAfter.tempLog);
+    }
+    for (AIMatchAlgModel *filterAfter in validRJAlgs) {
+        NSLog(@"RJItem过滤前:%@ 相似度:%.2f 日志: %@",Pit2FStr(filterAfter.matchAlg),filterAfter.matchValue,filterAfter.tempLog);
+    }
+    
     //13. 识别过滤器 (参考28109-todo2);
     NSArray *filterPSAlgs = [AIFilter recognitionAlgFilter:validPSAlgs radio:0.5f];
     NSArray *filterPJAlgs = [AIFilter recognitionAlgFilter:validPJAlgs radio:0.5f];
@@ -255,6 +265,13 @@
     inModel.matchAlgs_PJ = [AIRank recognitionAlgRank:filterPJAlgs];
     inModel.matchAlgs_RS = [AIRank recognitionAlgRank:filterRSAlgs];
     inModel.matchAlgs_RJ = [AIRank recognitionAlgRank:filterRJAlgs];
+    
+    for (AIMatchAlgModel *filterAfter in inModel.matchAlgs_RS) {
+        NSLog(@"RSItem过滤后:%@ 相似度:%.2f 日志: %@",Pit2FStr(filterAfter.matchAlg),filterAfter.matchValue,filterAfter.tempLog);
+    }
+    for (AIMatchAlgModel *filterAfter in inModel.matchAlgs_RJ) {
+        NSLog(@"RJItem过滤后:%@ 相似度:%.2f 日志: %@",Pit2FStr(filterAfter.matchAlg),filterAfter.matchValue,filterAfter.tempLog);
+    }
     
     //16. debugLog
     NSLog(@"\n概念识别结果 (感似:%ld条 理似:%ld条 感交:%ld 理交:%ld) protoAlg:%@",inModel.matchAlgs_PS.count,inModel.matchAlgs_RS.count,inModel.matchAlgs_PJ.count,inModel.matchAlgs_RJ.count,Alg2FStr(protoAlg));

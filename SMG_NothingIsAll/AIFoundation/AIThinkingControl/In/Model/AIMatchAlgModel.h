@@ -20,6 +20,8 @@
 @property (assign, nonatomic) int nearCount;        //相近度<1的相近个数
 @property (assign, nonatomic) int sumRefStrong;     //总引用强度 (稀疏码被此概念引用的强度和);
 
+@property (strong, nonatomic) NSString *tempLog;
+
 /**
  *  MARK:--------------------获取相近度--------------------
  */
