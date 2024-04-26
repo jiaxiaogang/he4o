@@ -34,6 +34,10 @@
     double maskData = [NUMTOOK([AINetIndex getData:protoV_p]) doubleValue];
     double max = [CortexAlgorithmsUtil maxOfLoopValue:protoV_p.algsType ds:protoV_p.dataSource];
     
+    if ([protoV_p.dataSource isEqualToString:@"sizeHeight"]) {
+        NSLog(@"");
+    }
+    
     //2. 按照相近度排序;
     NSArray *near_ps = [SMGUtils sortSmall2Big:index_ps compareBlock:^double(AIKVPointer *obj) {
         double objData = [NUMTOOK([AINetIndex getData:obj fromDataDic:cacheDataDic]) doubleValue];
@@ -43,10 +47,17 @@
         if (max > 0 && nearDelta > (max / 2)) nearDelta = max - nearDelta;
         return nearDelta;
     }];
+    for (AIKVPointer *item in near_ps) {
+        NSLog(@"nears %.2f",[NUMTOOK([AINetIndex getData:item]) doubleValue]);
+    }
     
     //3. 窄出,仅返回前NarrowLimit条 (最多narrowLimit条,最少1条);
     NSInteger limit = MAX(near_ps.count * 0.8f, 20);
-    return ARR_SUB(near_ps, 0, limit);
+    NSArray *result = ARR_SUB(near_ps, 0, limit);
+    for (AIKVPointer *item in result) {
+        NSLog(@"result %.2f",[NUMTOOK([AINetIndex getData:item]) doubleValue]);
+    }
+    return result;
 }
 
 
@@ -188,6 +199,7 @@
         
             if ([Alg2FStr(protoAlg) containsString:@"果"] && [item_p.dataSource isEqual:@"sizeHeight"]) {
                 if (nearV == 0) {
+                    //C: 另外像这种，高5和高100，相似度为0的情况，用不用起来在这里就pass掉得了。。。
                     NSLog(@"此处 高 的相似度为0,,,,");
                 } else {
                     NSLog(@"此高不为0");
@@ -196,8 +208,47 @@
             
             //6. 第2_取near_p的refPorts (参考25083-1) (性能: 无缓存时读266耗240,有缓存时很快);
             NSArray *refPorts = [AINetUtils refPorts_All4Value:near_p];
+            for (AIPort *item in refPorts) {
+                NSLog(@"过滤前%@",Pit2FStr(item.target_p));
+            }
             refPorts = ARR_SUB(refPorts, 0, cPartMatchingCheckRefPortsLimit_Alg(refPorts.count));
             
+            for (AIPort *item in refPorts) {
+                NSLog(@"过滤后%@",Pit2FStr(item.target_p));//A: 也有过滤后A4177(向88,距12,果)　过滤后A4103(向93,距11,果)　过滤后A5682(向90,距12,皮果)　这样的结果；
+            }
+            
+            /*
+             B: 不过在A4000之后，有不少双向双距的概念，这应该是bug了。。。得修下先。。。
+             过滤前A2450(距84,向324,皮果)
+             过滤前A5682(向90,距12,皮果)
+             过滤前A4406(距11,果)
+             过滤前A4349(向83,距0,果)
+             过滤前A4347(向167,距68,向83,距0,果)
+             过滤前A4339(距38,向88,向142,距12,果)
+             过滤前A4337(距80,向158,果)
+             过滤前A4328(距23,向88,向85,距12,果)
+             过滤前A4277(向164,距61,向85,距0,果)
+             过滤前A4268(向164,距61,向85,距0,果)
+             过滤前A4261(向88,距11,果)
+             过滤前A4259(距24,向88,向85,距11,果)
+             过滤前A4252(向88,距11,皮果)
+             过滤前A4207(向85,距0,果)
+             过滤前A4205(向168,距75,向85,距0,果)
+             过滤前A4196(距51,向88,向153,距12,果)
+             过滤前A4190(向10,果)
+             过滤前A4184(距80,向331,果)
+             过滤前A4175(距23,向88,向86,距12,果)
+             过滤前A4167(向88,距12,皮果)
+             过滤前A4112(向99,距0,果)
+             过滤前A4110(向167,距65,向99,距0,果)
+             过滤前A4101(距23,向89,向93,距11,果)
+             过滤前A4094(向93,距11,皮果)
+             过滤前A4037(距80,向167,向109,距0,果)
+             过滤前A4029(距25,向96,向90,距11,果)
+             过滤前A3978(距81,向162,向96,距11,果)
+             */
+            
+            NSLog(@"");
             //6. 第3_仅保留有mv指向的部分 (参考26022-3);
             //refPorts = [SMGUtils filterArr:refPorts checkValid:^BOOL(AIPort *item) {
             //    return item.targetHavMv;
