@@ -185,6 +185,14 @@
             //5. 第1_计算出nearV (参考25082-公式1) (性能:400次计算,耗100ms很正常);
             double nearData = [NUMTOOK([AINetIndex getData:near_p fromDataDic:cacheDataDic]) doubleValue];
             double nearV = [AIAnalyst compareCansetValue:nearData protoV:cacheProtoData at:item_p.algsType ds:item_p.dataSource isOut:item_p.isOut vInfo:vInfo];
+        
+            if ([Alg2FStr(protoAlg) containsString:@"果"] && [item_p.dataSource isEqual:@"sizeHeight"]) {
+                if (nearV == 0) {
+                    NSLog(@"此处 高 的相似度为0,,,,");
+                } else {
+                    NSLog(@"此高不为0");
+                }
+            }
             
             //6. 第2_取near_p的refPorts (参考25083-1) (性能: 无缓存时读266耗240,有缓存时很快);
             NSArray *refPorts = [AINetUtils refPorts_All4Value:near_p];
@@ -214,11 +222,8 @@
                 //10. 统计匹配度matchCount & 相近度<1个数nearCount & 相近度sumNear & 引用强度sumStrong
                 model.matchCount++;
                 model.nearCount++;
-                if ([Alg2FStr(protoAlg) containsString:@"果"] && !refPort.targetHavMv) {
-                    if (Pit2FStr(near_p).length == 0 && nearV == 0) {
-                        NSLog(@"此处 高 的相似度为0,,,,");
-                    }
-                    model.tempLog = STRFORMAT(@"%@ 因%@累计:%.2f",model.tempLog,Pit2FStr(near_p),nearV);
+                if ([Alg2FStr(protoAlg) containsString:@"皮果"] && [Pit2FStr(refPort.target_p) containsString:@"皮果"]) {
+                    model.tempLog = STRFORMAT(@"%@ 因%@%.1f累计:%.2f",model.tempLog,near_p.dataSource,nearData,nearV);
                 }
                 model.sumNear *= nearV;
                 model.sumRefStrong += (int)refPort.strong.value;
@@ -248,11 +253,23 @@
         return itemAlg.count != protoAlg.count;
     }];
     
+    //这里RS和RJ联想到的,全是棒和无皮果,当然相似度是0...
+    //另外两种,联想出来的相似度也太低了,没几个相似度高的,,,,查下上面代码,怎么导致的;
+    NSLog(@"RS---------------------------");
     for (AIMatchAlgModel *filterAfter in validRSAlgs) {
         NSLog(@"RSItem过滤前:%@ 相似度:%.2f 日志: %@",Pit2FStr(filterAfter.matchAlg),filterAfter.matchValue,filterAfter.tempLog);
     }
+    NSLog(@"RJ---------------------------");
     for (AIMatchAlgModel *filterAfter in validRJAlgs) {
         NSLog(@"RJItem过滤前:%@ 相似度:%.2f 日志: %@",Pit2FStr(filterAfter.matchAlg),filterAfter.matchValue,filterAfter.tempLog);
+    }
+    NSLog(@"PS---------------------------");
+    for (AIMatchAlgModel *filterAfter in validPSAlgs) {
+        NSLog(@"PSItem过滤前:%@ 相似度:%.2f 日志: %@",Pit2FStr(filterAfter.matchAlg),filterAfter.matchValue,filterAfter.tempLog);
+    }
+    NSLog(@"PJ---------------------------");
+    for (AIMatchAlgModel *filterAfter in validPJAlgs) {
+        NSLog(@"PJItem过滤前:%@ 相似度:%.2f 日志: %@",Pit2FStr(filterAfter.matchAlg),filterAfter.matchValue,filterAfter.tempLog);
     }
     
     //13. 识别过滤器 (参考28109-todo2);
