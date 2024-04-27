@@ -30,6 +30,15 @@
  *  @result notnull
  */
 +(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs at:(NSString*)at ds:(NSString*)ds isOutBlock:(BOOL(^)())isOutBlock type:(AnalogyType)type{
+    
+    if ([SMGUtils filterArr:value_ps checkValid:^BOOL(AIKVPointer *item) {
+        return [item.dataSource isEqualToString:@"direction"];
+    }].count > 1) {
+        NSLog(@"这个概念有问题，有两个方向:%@",Pits2FStr(value_ps));
+        NSLog(@"");
+    }
+    
+    
     //1. 数据准备
     BOOL isOut = isOutBlock ? isOutBlock() : [AINetUtils checkAllOfOut:conAlgs];
     conAlgs = ARRTOOK(conAlgs);
