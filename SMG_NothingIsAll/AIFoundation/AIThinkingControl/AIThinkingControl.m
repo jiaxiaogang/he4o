@@ -162,16 +162,17 @@ static AIThinkingControl *_instance;
     }
     
     //3. 构建父概念 & 将空场景加入瞬时记忆;
-    AIAbsAlgNode *parentAlgNode = [theNet createAbsAlg_NoRepeat:parentValue_ps conAlgs:nil isOut:false at:nil ds:nil type:ATDefault];
+    //2024.04.27: 把parentAlg去掉,等下版本写多码特征时再说,现在搞这个没意义;
+    //AIAbsAlgNode *parentAlgNode = [theNet createAbsAlg_NoRepeat:parentValue_ps conAlgs:nil isOut:false at:nil ds:nil type:ATDefault];
     //if (parentValue_ps.count == 0) [self.delegate aiThinkIn_AddToShortMemory:parentAlgNode.pointer isMatch:false];
-    if (Log4TCInput) NSLog(@"---> 构建InputParent节点:%@",Alg2FStr(parentAlgNode));
+    //if (Log4TCInput) NSLog(@"---> 构建InputParent节点:%@",Alg2FStr(parentAlgNode));
     
     //4. 收集本组中,所有概念节点;
     NSMutableArray *fromGroup_ps = [[NSMutableArray alloc] init];
     
     //5. 构建子概念 (抽象概念,并嵌套);
     for (NSArray *subValue_ps in subValuePsArr) {
-        AIAbsAlgNode *subAlgNode = [theNet createAbsAlg_NoRepeat:subValue_ps conAlgs:@[parentAlgNode] at:nil ds:nil type:ATDefault];
+        AIAbsAlgNode *subAlgNode = [theNet createAbsAlg_NoRepeat:subValue_ps conAlgs:@[/*parentAlgNode*/] at:nil ds:nil type:ATDefault];
         [fromGroup_ps addObject:subAlgNode.pointer];
         
         //6. 将所有子概念添加到瞬时记忆 (2020.08.17: 由短时记忆替代);
