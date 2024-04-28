@@ -34,10 +34,6 @@
     double maskData = [NUMTOOK([AINetIndex getData:protoV_p]) doubleValue];
     double max = [CortexAlgorithmsUtil maxOfLoopValue:protoV_p.algsType ds:protoV_p.dataSource];
     
-    if ([protoV_p.dataSource isEqualToString:@"sizeHeight"]) {
-        NSLog(@"");
-    }
-    
     //2. 按照相近度排序;
     NSArray *near_ps = [SMGUtils sortSmall2Big:index_ps compareBlock:^double(AIKVPointer *obj) {
         double objData = [NUMTOOK([AINetIndex getData:obj fromDataDic:cacheDataDic]) doubleValue];
@@ -50,11 +46,7 @@
     
     //3. 窄出,仅返回前NarrowLimit条 (最多narrowLimit条,最少1条);
     NSInteger limit = MAX(near_ps.count * 0.8f, 20);
-    NSArray *result = ARR_SUB(near_ps, 0, limit);
-    for (AIKVPointer *item in result) {
-        NSLog(@"result %@:%.2f",item.dataSource,[NUMTOOK([AINetIndex getData:item]) doubleValue]);
-    }
-    return result;
+    return ARR_SUB(near_ps, 0, limit);
 }
 
 
@@ -204,10 +196,6 @@
             //2024.04.27: BUG_把此处强度淘汰取消掉,不然淘汰70%也太多了,新的概念即使再准也没机会 (比如: 向90跑10左右的有皮果,因为是后期特定训练步骤里才经历的,在这里老是识别不到);
             //refPorts = ARR_SUB(refPorts, 0, cPartMatchingCheckRefPortsLimit_Alg(refPorts.count));
             
-            for (AIPort *item in refPorts) {
-                if (debugMode) NSLog(@"过滤后%@",Pit2FStr(item.target_p));//A: 也有过滤后A4177(向88,距12,果)　过滤后A4103(向93,距11,果)　过滤后A5682(向90,距12,皮果)　这样的结果；
-            }
-            
             //6. 第3_仅保留有mv指向的部分 (参考26022-3);
             //refPorts = [SMGUtils filterArr:refPorts checkValid:^BOOL(AIPort *item) {
             //    return item.targetHavMv;
@@ -232,11 +220,6 @@
                 //10. 统计匹配度matchCount & 相近度<1个数nearCount & 相近度sumNear & 引用强度sumStrong
                 model.matchCount++;
                 model.nearCount++;
-                if (debugMode) {
-                    if ([Alg2FStr(protoAlg) containsString:@"皮果"] && [Pit2FStr(refPort.target_p) containsString:@"皮果"]) {
-                        model.tempLog = STRFORMAT(@"%@ 因%@%.1f累计:%.2f",model.tempLog,near_p.dataSource,nearData,nearV);
-                    }
-                }
                 model.sumNear *= nearV;
                 model.sumRefStrong += (int)refPort.strong.value;
             }
@@ -265,25 +248,6 @@
         return itemAlg.count != protoAlg.count;
     }];
     
-    //这里RS和RJ联想到的,全是棒和无皮果,当然相似度是0...
-    //另外两种,联想出来的相似度也太低了,没几个相似度高的,,,,查下上面代码,怎么导致的;
-    NSLog(@"RS---------------------------");
-    for (AIMatchAlgModel *filterAfter in validRSAlgs) {
-        if (debugMode) NSLog(@"RSItem过滤前:%@ 相似度:%.2f 日志: %@",Pit2FStr(filterAfter.matchAlg),filterAfter.matchValue,filterAfter.tempLog);
-    }
-    NSLog(@"RJ---------------------------");
-    for (AIMatchAlgModel *filterAfter in validRJAlgs) {
-        if (debugMode) NSLog(@"RJItem过滤前:%@ 相似度:%.2f 日志: %@",Pit2FStr(filterAfter.matchAlg),filterAfter.matchValue,filterAfter.tempLog);
-    }
-    NSLog(@"PS---------------------------");
-    for (AIMatchAlgModel *filterAfter in validPSAlgs) {
-        if (debugMode) NSLog(@"PSItem过滤前:%@ 相似度:%.2f 日志: %@",Pit2FStr(filterAfter.matchAlg),filterAfter.matchValue,filterAfter.tempLog);
-    }
-    NSLog(@"PJ---------------------------");
-    for (AIMatchAlgModel *filterAfter in validPJAlgs) {
-        if (debugMode) NSLog(@"PJItem过滤前:%@ 相似度:%.2f 日志: %@",Pit2FStr(filterAfter.matchAlg),filterAfter.matchValue,filterAfter.tempLog);
-    }
-    
     //13. 识别过滤器 (参考28109-todo2);
     NSArray *filterPSAlgs = [AIFilter recognitionAlgFilter:validPSAlgs radio:0.5f];
     NSArray *filterPJAlgs = [AIFilter recognitionAlgFilter:validPJAlgs radio:0.5f];
@@ -298,18 +262,11 @@
     inModel.matchAlgs_RS = [AIRank recognitionAlgRank:filterRSAlgs];
     inModel.matchAlgs_RJ = [AIRank recognitionAlgRank:filterRJAlgs];
     
-    for (AIMatchAlgModel *filterAfter in inModel.matchAlgs_RS) {
-        if (debugMode) NSLog(@"RSItem过滤后:%@ 相似度:%.2f 日志: %@",Pit2FStr(filterAfter.matchAlg),filterAfter.matchValue,filterAfter.tempLog);
-    }
-    for (AIMatchAlgModel *filterAfter in inModel.matchAlgs_RJ) {
-        if (debugMode) NSLog(@"RJItem过滤后:%@ 相似度:%.2f 日志: %@",Pit2FStr(filterAfter.matchAlg),filterAfter.matchValue,filterAfter.tempLog);
-    }
-    
     //16. debugLog
     NSLog(@"\n概念识别结果 (感似:%ld条 理似:%ld条 感交:%ld 理交:%ld) protoAlg:%@",inModel.matchAlgs_PS.count,inModel.matchAlgs_RS.count,inModel.matchAlgs_PJ.count,inModel.matchAlgs_RJ.count,Alg2FStr(protoAlg));
     for (AIMatchAlgModel *item in inModel.matchAlgs_All) {
-        NSString *prDesc = [inModel.matchAlgs_RS containsObject:item] || [inModel.matchAlgs_RJ containsObject:item] ? @"R" : @"P";
-        NSString *sjDesc = [inModel.matchAlgs containsObject:item] ? @"S" : @"J";
+        NSString *prDesc = [inModel.matchAlgs_R containsObject:item] ? @"R" : @"P";
+        NSString *sjDesc = [inModel.matchAlgs_Si containsObject:item] ? @"S" : @"J";
         if (Log4MAlg) NSLog(@"%@%@-->>>(%d) 全含item: %@   \t相近度 => %.2f (count:%d)",prDesc,sjDesc,item.sumRefStrong,Pit2FStr(item.matchAlg),item.matchValue,item.matchCount);
     }
 }

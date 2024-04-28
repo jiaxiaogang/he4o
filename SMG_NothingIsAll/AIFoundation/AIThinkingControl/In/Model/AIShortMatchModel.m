@@ -22,6 +22,10 @@
     return self.matchAlgs_Si;
 }
 
+-(NSArray*) matchAlgs_R {
+    return [SMGUtils collectArrA:self.matchAlgs_RJ arrB:self.matchAlgs_RS];
+}
+
 //返回似层 notnull;
 -(NSArray*) matchAlgs_Si {
     //合并PR的似层返回 (参考29108-2.2);
