@@ -195,61 +195,18 @@
             double nearData = [NUMTOOK([AINetIndex getData:near_p fromDataDic:cacheDataDic]) doubleValue];
             double nearV = [AIAnalyst compareCansetValue:nearData protoV:cacheProtoData at:item_p.algsType ds:item_p.dataSource isOut:item_p.isOut vInfo:vInfo];
             
-            //2024.04.27: 末尾淘汰: 相似度为0的就不收集了先,看下应该也不影响别的什么;
+            //2024.04.27: BUG_这里有nearV为0的,导致后面可能激活一些完全不准确的结果 (修复: 加上末尾淘汰: 相似度为0的就不收集了先,看下应该也不影响别的什么);
             if (nearV == 0) continue;
-            
-            if ([Alg2FStr(protoAlg) containsString:@"果"] && [item_p.dataSource isEqual:@"sizeHeight"]) {
-                //C: 另外像这种，高5和高100，相似度为0的情况，用不用起来在这里就pass掉得了。。。
-                NSLog(@"此处 高 的相似度为:%.2f ,,,,",nearV);
-            }
             
             //6. 第2_取near_p的refPorts (参考25083-1) (性能: 无缓存时读266耗240,有缓存时很快);
             NSArray *refPorts = [AINetUtils refPorts_All4Value:near_p];
             
-            for (AIPort *item in refPorts) {
-                if (debugMode) NSLog(@"过滤前%@",Pit2FStr(item.target_p));
-            }
-            
-            //2024.04.27: 把此处强度淘汰取消掉,不然淘汰70%也太多了,新的概念即使再准也没机会 (比如: 向90跑10左右的有皮果,因为是后期特定训练步骤里才经历的,在这里老是识别不到);
+            //2024.04.27: BUG_把此处强度淘汰取消掉,不然淘汰70%也太多了,新的概念即使再准也没机会 (比如: 向90跑10左右的有皮果,因为是后期特定训练步骤里才经历的,在这里老是识别不到);
             //refPorts = ARR_SUB(refPorts, 0, cPartMatchingCheckRefPortsLimit_Alg(refPorts.count));
             
             for (AIPort *item in refPorts) {
                 if (debugMode) NSLog(@"过滤后%@",Pit2FStr(item.target_p));//A: 也有过滤后A4177(向88,距12,果)　过滤后A4103(向93,距11,果)　过滤后A5682(向90,距12,皮果)　这样的结果；
             }
-            
-            //测得BUG1. 这里nearV为0的没过滤掉,导致很多综合匹配度为0的有资格到后面,甚至最终输出 (先把相似度为0的直接末尾淘汰了);
-            //测得BUG2. 这里有许多有两个向,两个距的概念,尤其是那些向90,距10左右,的无皮果 (因为rInput输入parentAlg导致,先关掉了);
-            //测得BUG3. 我们需要的向90跑10左右的带皮果,这里为什么没有联想到? (因为上面第214行代码把强度淘汰了70%,导致这里最准的但刚经历不多时的,没激活机会);
-            
-            /*
-             B: 不过在A4000之后，有不少双向双距的概念，这应该是bug了。。。得修下先。。。
-             过滤前A2450(距84,向324,皮果)
-             过滤前A5682(向90,距12,皮果)
-             过滤前A4406(距11,果)
-             过滤前A4349(向83,距0,果)
-             过滤前A4347(向167,距68,向83,距0,果)
-             过滤前A4339(距38,向88,向142,距12,果)
-             过滤前A4337(距80,向158,果)
-             过滤前A4328(距23,向88,向85,距12,果)
-             过滤前A4277(向164,距61,向85,距0,果)
-             过滤前A4268(向164,距61,向85,距0,果)
-             过滤前A4261(向88,距11,果)
-             过滤前A4259(距24,向88,向85,距11,果)
-             过滤前A4252(向88,距11,皮果)              过滤前A4207(向85,距0,果)
-             过滤前A4205(向168,距75,向85,距0,果)
-             过滤前A4196(距51,向88,向153,距12,果)
-             过滤前A4190(向10,果)
-             过滤前A4184(距80,向331,果)
-             过滤前A4175(距23,向88,向86,距12,果)
-             过滤前A4167(向88,距12,皮果)
-             过滤前A4112(向99,距0,果)
-             过滤前A4110(向167,距65,向99,距0,果)
-             过滤前A4101(距23,向89,向93,距11,果)
-             过滤前A4094(向93,距11,皮果)
-             过滤前A4037(距80,向167,向109,距0,果)
-             过滤前A4029(距25,向96,向90,距11,果)
-             过滤前A3978(距81,向162,向96,距11,果)
-             */
             
             //6. 第3_仅保留有mv指向的部分 (参考26022-3);
             //refPorts = [SMGUtils filterArr:refPorts checkValid:^BOOL(AIPort *item) {

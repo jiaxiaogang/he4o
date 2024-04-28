@@ -162,7 +162,7 @@ static AIThinkingControl *_instance;
     }
     
     //3. 构建父概念 & 将空场景加入瞬时记忆;
-    //2024.04.27: 把parentAlg去掉,等下版本写多码特征时再说,现在搞这个没意义;
+    //2024.04.27: BUG: 这里的parentAlg会输出两个向,两个距的概念 (修复: 把parentAlg去掉,等下版本写多码特征时再说,现在搞这个没意义);
     //AIAbsAlgNode *parentAlgNode = [theNet createAbsAlg_NoRepeat:parentValue_ps conAlgs:nil isOut:false at:nil ds:nil type:ATDefault];
     //if (parentValue_ps.count == 0) [self.delegate aiThinkIn_AddToShortMemory:parentAlgNode.pointer isMatch:false];
     //if (Log4TCInput) NSLog(@"---> 构建InputParent节点:%@",Alg2FStr(parentAlgNode));
