@@ -269,10 +269,6 @@
     return [self findTransferRecord:sceneTo_p inTransferPorts:self.transferToPorts];
 }
 
-//MARK:===============================================================
-//MARK:                     < privateMethod >
-//MARK:===============================================================
-
 /**
  *  MARK:--------------------从fromTransferPorts中筛选出: 场景是scene的并转成cansets格式--------------------
  */
@@ -281,6 +277,16 @@
         return [port.scene isEqual:findScene];
     }] convertBlock:^id(AITransferPort *port) {
         return port.canset;
+    }];
+}
+
+/**
+ *  MARK:--------------------将当前fo解析成orders返回--------------------
+ */
+-(NSArray*) convert2Orders {
+    return [SMGUtils convertArr:self.content_ps iConvertBlock:^id(NSInteger i, AIKVPointer *obj) {
+        double deltaTime = [NUMTOOK(ARR_INDEX(self.deltaTimes, i)) doubleValue];
+        return [AIShortMatchModel_Simple newWithAlg_p:obj inputTime:deltaTime isTimestamp:false];
     }];
 }
 

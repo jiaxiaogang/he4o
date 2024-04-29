@@ -87,6 +87,8 @@
             AIAlgNodeBase *cansetToAlg = [SMGUtils searchNode:cansetToOrder.alg_p];
             
             //b. 如果是mcIsBro关系,先取出共同的sameAbs;
+            
+            //2024.04.29: 已经修了IH迁移xvModel返回nil的问题 (随后再观察下这里不报错,则删;
             if (!targetAlgM || !targetAlgM.content_p) {
                 NSLog(@"这里闪退过,因为这个m或c是空,如果2024.07之前没见过这个错,这里可删");
             }

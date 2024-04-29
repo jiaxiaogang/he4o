@@ -177,4 +177,9 @@
  */
 -(NSArray*) getTransferedCansetTos:(AIKVPointer*)sceneTo_p;
 
+/**
+ *  MARK:--------------------将当前fo解析成orders返回--------------------
+ */
+-(NSArray*) convert2Orders;
+
 @end

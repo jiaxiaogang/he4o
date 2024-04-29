@@ -50,13 +50,9 @@
     //注: IR的cansetFrom和To是同一个,sceneFrom和sceneTo也是同一个;
     AIFoNodeBase *cansetFromTo = [SMGUtils searchNode:cansetModel.cansetFo];
     AIFoNodeBase *sceneFromTo = [SMGUtils searchNode:cansetModel.sceneFo];
-    NSArray *orders = [SMGUtils convertArr:cansetFromTo.content_ps iConvertBlock:^id(NSInteger i, AIKVPointer *obj) {
-        double deltaTime = [NUMTOOK(ARR_INDEX(cansetFromTo.deltaTimes, i)) doubleValue];
-        return [AIShortMatchModel_Simple newWithAlg_p:obj inputTime:deltaTime isTimestamp:false];
-    }];
     
     TCTransferXvModel *result = [[TCTransferXvModel alloc] init];
-    result.cansetToOrders = orders;
+    result.cansetToOrders = [cansetFromTo convert2Orders];//cansetFrom的orders就是cansetTo的orders;
     result.sceneToCansetToIndexDic = [sceneFromTo getConIndexDic:cansetFromTo.p];
     result.sceneToTargetIndex = cansetModel.sceneTargetIndex;
     return result;
@@ -68,14 +64,23 @@
     
     //2. 数据准备: 取知识网络结构;
     AIFoNodeBase *cansetFrom = [SMGUtils searchNode:cansetModel.cansetFo];
-    AIFoNodeBase *hSceneFrom = [SMGUtils searchNode:cansetModel.sceneFo];
+    AIFoNodeBase *sceneFrom = [SMGUtils searchNode:cansetModel.sceneFo];
     AIFoNodeBase *iRScene = [SMGUtils searchNode:rSceneModel.getIScene];
     AIFoNodeBase *sceneTo = [SMGUtils searchNode:cansetModel.sceneTo];
-    if ([hSceneFrom isEqual:sceneTo]) return nil;
+    
+    //3. sceneFrom和sceneTo是同一个时,不需要迁移 (此时: sceneFrom=sceneTo,cansetFrom=cansetTo) (但也封装一下xvModel以便后面使用);
+    if ([sceneFrom isEqual:sceneTo]) {
+        //2024.04.29: BUG: 修IH无需迁移时xvModel返回nil,导致后期使用xvModel报空指针问题;
+        TCTransferXvModel *result = [[TCTransferXvModel alloc] init];
+        result.cansetToOrders = [cansetFrom convert2Orders];//cansetFrom的orders就是cansetTo的orders;
+        result.sceneToCansetToIndexDic = [sceneFrom getConIndexDic:cansetFrom.p];
+        result.sceneToTargetIndex = cansetModel.sceneTargetIndex;
+        return result;
+    }
     
     //3. IH映射: indexDic综合计算 (参考31115-TODO1-4);
-    DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:[cansetFrom getAbsIndexDic:hSceneFrom.p]];
-    DirectIndexDic *dic2 = [DirectIndexDic newOkToAbs:[hSceneFrom getAbsIndexDic:iRScene.p]];
+    DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:[cansetFrom getAbsIndexDic:sceneFrom.p]];
+    DirectIndexDic *dic2 = [DirectIndexDic newOkToAbs:[sceneFrom getAbsIndexDic:iRScene.p]];
     DirectIndexDic *dic3 = [DirectIndexDic newNoToAbs:[iRScene getConIndexDic:sceneTo.p]];
     NSDictionary *zonHeIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2,dic3]];
     return [self convertZonHeIndexDic2XvModel:cansetModel zonHeIndexDic:zonHeIndexDic];
