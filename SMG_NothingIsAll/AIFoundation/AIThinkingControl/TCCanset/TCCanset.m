@@ -81,7 +81,6 @@
     //8. canset目标下标 (R时canset没有mv,所以要用count-1);
     NSInteger cansetTargetIndex = isH ? NUMTOOK([cansetFromSceneFromIndexDic objectForKey:@(ptAleardayCount)]).integerValue : cansetFo.count - 1;
     if (cansetCutIndex < matchCutIndex) return nil; //过滤2: 判断canset前段是否有遗漏 (参考27224);
-    
     if (cansetFo.count <= cansetCutIndex + 1) return nil; //过滤3: 过滤掉canset没后段的 (没可行为化的东西) (参考28052-4);
     
     //9. 递归找到protoFo;
@@ -94,6 +93,13 @@
     NSDictionary *protoFrontIndexDic = [SMGUtils convertArr2Dic:frontIndexDicModels kvBlock:^NSArray *(FrontIndexDicModel *obj) {
         return @[@(obj.cansetIndex),@(obj.protoIndex)];
     }];
+    
+    //TODOTOMORROW20240502: 把cansetFo打出来,看为什么这里通不过 (查下前段不满足,打出来canset看为什么不满足);
+    if (!DICISOK(protoFrontIndexDic)) {
+        NSLog(@"canset %@",Fo2FStr(cansetFo));
+        NSLog(@"");
+    }
+    
     if (!DICISOK(protoFrontIndexDic)) return nil; //过滤4: 条件不满足时,直接返回nil (参考28052-2 & 28084-3);
     
     //4. 计算前段竞争值之匹配值 (参考28084-4);
