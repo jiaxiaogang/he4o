@@ -59,7 +59,7 @@
         }];
         NSLog(@"取HCanset候选集: 从hScene:F%ld 的在%ld帧开始取,取得HCanset数:%ld/%ld",sceneFrom.pId,rCanset.cansetCutIndex + 1,cansetFroms1.count,allHCanset.count);
         if (ARRISOK(cansetFroms1)) {
-            NSLog(@"ftl1 取到HCanset%@",CLEANSTR([SMGUtils convertArr:cansetFroms1 convertBlock:^id(id obj) {
+            NSLog(@"flt1 取到HCanset%@",CLEANSTR([SMGUtils convertArr:cansetFroms1 convertBlock:^id(id obj) {
                 return ShortDesc4Pit(obj);
             }]));
             NSLog(@"TODOTOMORROW20240402: 跑两三轮31135的训练步骤试下,看这里能不能取到hCanset...");
@@ -205,7 +205,7 @@
     cansetModels = [SMGUtils filterArr:cansetModels checkValid:^BOOL(TOFoModel *item) {
         return [AIScore FRS_Time:demand solutionModel:item];
     }];
-    NSLog(@"ftl2 第7步 排除FRSTime来不及的:%ld for%@",cansetModels.count,ISOK(demand, HDemandModel.class)?@"H":@"R");//测时xx条
+    NSLog(@"flt2 第7步 排除FRSTime来不及的:%ld for%@",cansetModels.count,ISOK(demand, HDemandModel.class)?@"H":@"R");//测时xx条
 
     //10. 计算衰后stableScore并筛掉为0的 (参考26128-2-1 & 26161-5);
     //NSArray *outOfFos = [SMGUtils convertArr:cansetModels convertBlock:^id(TOFoModel *obj) {

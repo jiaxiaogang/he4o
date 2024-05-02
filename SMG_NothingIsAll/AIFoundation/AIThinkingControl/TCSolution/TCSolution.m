@@ -118,7 +118,7 @@
         AIEffectStrong *effStrong = [TOUtils getEffectStrong:sceneFo effectIndex:sceneFo.count solutionFo:bestResult.cansetFo];
         NSString *effDesc = effStrong ? effStrong.description : @"";
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:bestResult.cansetFo];
-        NSLog(@"ftl2 > newS 第%ld例: eff:%@ sp:%@ %@ scene:F%ld canset:F%ld (前%.2f 中%.2f 后%.2f)",demand.actionFoModels.count,effDesc,CLEANSTR(cansetFo.spDic),SceneType2Str(bestResult.baseSceneModel.type),sceneFo.pId,cansetFo.pId,bestResult.frontMatchValue,bestResult.midStableScore,bestResult.backMatchValue);
+        NSLog(@"flt2 > newS 第%ld例: eff:%@ sp:%@ %@ scene:F%ld canset:F%ld (前%.2f 中%.2f 后%.2f)",demand.actionFoModels.count,effDesc,CLEANSTR(cansetFo.spDic),SceneType2Str(bestResult.baseSceneModel.type),sceneFo.pId,cansetFo.pId,bestResult.frontMatchValue,bestResult.midStableScore,bestResult.backMatchValue);
         
         //a) 有效率
         [TCEffect rEffect:bestResult];
@@ -129,7 +129,7 @@
     }else{
         //b) 下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);
         demand.status = TOModelStatus_WithOut;
-        NSLog(@"ftl2 >>>>>> rSolution 无计可施");
+        NSLog(@"flt2 >>>>>> rSolution 无计可施");
         [TCScore scoreFromIfTCNeed];
         return [[[TCResult new:false] mkMsg:@"rSolution 无计可施"] mkStep:23];
     }
