@@ -55,6 +55,29 @@
     return model;
 }
 
++(TOFoModel*) newForRCansetFo:(AIKVPointer*)cansetFrom_p sceneFrom:(AIKVPointer*)sceneFrom_p
+                         base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel
+           cansetFromCutIndex:(NSInteger)cansetFromCutIndex
+        cansetFromTargetIndex:(NSInteger)cansetFromTargetIndex
+         sceneFromTargetIndex:(NSInteger)sceneFromTargetIndex {
+    TOFoModel *model = [[TOFoModel alloc] init];
+    
+    //1. 原CansetModel相关赋值;
+    model.cansetFo = cansetFrom_p;
+    model.sceneFo = sceneFrom_p;
+    model.basePFoOrTargetFoModel = basePFoOrTargetFoModel;
+    model.baseSceneModel = baseSceneModel;//R任务时,即R任务的RSceneModel;
+    model.cansetCutIndex = cansetFromCutIndex;//R任务时,cansetCutIndex其实是顺着scene找上一帧有映射的 (参考TOUtils.goBackToFindConIndexByAbsIndex());
+    model.targetIndex = cansetFromTargetIndex;
+    model.sceneTargetIndex = sceneFromTargetIndex;//R任务时,其实rScene的目标就是最后一帧 (即目标 = rScene.count);
+    
+    //2. TOFoModel相关赋值;
+    model.content_p = cansetFrom_p;
+    model.status = TOModelStatus_Runing;
+    model.baseOrGroup = base;
+    return model;
+}
+
 +(TOFoModel*) newForHCansetFo:(AIKVPointer*)canset sceneFo:(AIKVPointer*)scene base:(TOModelBase<ITryActionFoDelegate>*)base
                cansetCutIndex:(NSInteger)cansetCutIndex sceneCutIndex:(NSInteger)sceneCutIndex
             cansetTargetIndex:(NSInteger)cansetTargetIndex sceneTargetIndex:(NSInteger)sceneTargetIndex

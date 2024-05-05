@@ -214,14 +214,8 @@
     //2. 如果可以这么改,那么取候选集的前20%,也可以直接去掉,毕竟宽入窄出的原则,如果性能允许,还是别一刀切只留20%;
     
     //6. 后段: 找canset后段目标 和 后段匹配度 (H需要后段匹配, R不需要);
-    TOFoModel *result = [TOFoModel newWithCansetFo:cansetFrom_p sceneFo:sceneFrom_p base:demand
-                           protoFrontIndexDic:nil matchFrontIndexDic:nil
-                              frontMatchValue:1 frontStrongValue:1
-                               midEffectScore:1 midStableScore:1
-                                 backIndexDic:nil backMatchValue:1 backStrongValue:0
-                               cansetCutIndex:cansetCutIndex sceneCutIndex:matchCutIndex
-                                  targetIndex:cansetFo.count sceneTargetIndex:sceneFromTargetIndex
-                       basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel];
+    TOFoModel *result = [TOFoModel newForRCansetFo:cansetFrom_p sceneFrom:sceneFrom_p base:demand basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel
+            cansetFromCutIndex:cansetCutIndex cansetFromTargetIndex:cansetFo.count sceneFromTargetIndex:sceneFromTargetIndex];
     
     //12. 伪迁移;
     [TCTransfer transferXv:result];

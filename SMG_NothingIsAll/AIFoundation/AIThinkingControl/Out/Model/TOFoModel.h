@@ -42,6 +42,12 @@
                   targetIndex:(NSInteger)targetIndex sceneTargetIndex:(NSInteger)sceneTargetIndex
        basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel;
 
++(TOFoModel*) newForRCansetFo:(AIKVPointer*)cansetFrom_p sceneFrom:(AIKVPointer*)sceneFrom_p
+                         base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel
+           cansetFromCutIndex:(NSInteger)cansetFromCutIndex
+        cansetFromTargetIndex:(NSInteger)cansetFromTargetIndex
+         sceneFromTargetIndex:(NSInteger)sceneFromTargetIndex;
+
 +(TOFoModel*) newForHCansetFo:(AIKVPointer*)canset sceneFo:(AIKVPointer*)scene base:(TOModelBase<ITryActionFoDelegate>*)base
                cansetCutIndex:(NSInteger)cutIndex sceneCutIndex:(NSInteger)sceneCutIndex
             cansetTargetIndex:(NSInteger)targetIndex sceneTargetIndex:(NSInteger)sceneTargetIndex
