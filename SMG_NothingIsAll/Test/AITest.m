@@ -330,11 +330,11 @@
     WLog(@"必经点测试: 触发canset再抽象执行到;\n\tabsCanset %@ from:\n\tproto:%@\n\tconConset:%@",Fo2FStr(absCansetFo),Fo2FStr(proto),Fo2FStr(conCanset));
 }
 
-+(void) test102:(AIFoNodeBase*)cansetFo {
++(void) test102:(AIKVPointer*)cansetFrom_p {
     if (!Switch4AITest) return;
     //测试27222-1,TCSolution取得抽象canset;
-    if (AINetAbsFoNode.class == cansetFo.class) {
-        WLog(@"必经点测试: 读取到抽象canset: %@",NSStringFromClass(cansetFo.class));
+    if ([cansetFrom_p.dataSource isEqualToString:@"AINetAbsFoNode"]) {
+        WLog(@"必经点测试: 读取到抽象canset: %@",cansetFrom_p.identifier);
     }
 }
 
