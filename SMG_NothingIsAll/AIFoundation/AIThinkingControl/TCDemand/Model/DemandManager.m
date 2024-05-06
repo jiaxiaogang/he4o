@@ -206,7 +206,7 @@
         CGFloat maxProgressScore = 0;
         for (TOFoModel *actionFo in obj.bestCansets) {
             if (actionFo.status != TOModelStatus_Runing && actionFo.status != TOModelStatus_ActYes) continue;
-            CGFloat progress = (float)(actionFo.cansetCutIndex + 1) / (actionFo.targetIndex + 1);//参考31052-公式1
+            CGFloat progress = (float)(actionFo.cansetCutIndex + 1) / (actionFo.cansetTargetIndex + 1);//参考31052-公式1
             CGFloat hot = 1 - [MathUtils getCooledValue_28:progress];//参考31052-公式2
             CGFloat progressScore = demandScore * hot;//参考31052-公式3
             //NSLog(@"cansetFo: F%ld %@ (%ld/%ld)",actionFo.content_p.pointerId,TOStatus2Str(actionFo.status),actionFo.actionIndex+1,actionFo.targetIndex);

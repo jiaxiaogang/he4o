@@ -151,7 +151,7 @@
                                midEffectScore:midEffectScore midStableScore:midStableScore
                                  backIndexDic:backIndexDic backMatchValue:backMatchValue backStrongValue:backStrongValue
                                cansetCutIndex:cansetCutIndex sceneCutIndex:matchCutIndex
-                                  targetIndex:cansetTargetIndex sceneTargetIndex:matchTargetIndex
+                          cansetTargetIndex:cansetTargetIndex sceneTargetIndex:matchTargetIndex
                        basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel];
     }else{
         //11. 后段: R不判断后段;
@@ -161,7 +161,7 @@
                                midEffectScore:midEffectScore midStableScore:midStableScore
                                  backIndexDic:nil backMatchValue:1 backStrongValue:0
                                cansetCutIndex:cansetCutIndex sceneCutIndex:matchCutIndex
-                                  targetIndex:cansetFo.count sceneTargetIndex:matchTargetIndex
+                          cansetTargetIndex:cansetFo.count sceneTargetIndex:matchTargetIndex
                        basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel];
     }
     
@@ -184,6 +184,7 @@
 +(TOFoModel*) convert2RCansetModel:(AIKVPointer*)cansetFrom_p sceneFrom:(AIKVPointer*)sceneFrom_p basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel ptAleardayCount:(NSInteger)ptAleardayCount sceneModel:(AISceneModel*)sceneModel demand:(DemandModel*)demand{
     //1. 数据准备 & 复用indexDic & 取出pFoOrTargetFo;
     AIFoNodeBase *sceneFrom = [SMGUtils searchNode:sceneFrom_p];
+    AIFoNodeBase *cansetFrom = [SMGUtils searchNode:cansetFrom_p];
     NSInteger sceneFromTargetIndex = sceneFrom.count;
     if (Log4SolutionFilter) NSLog(@"S过滤器 checkItem: %@",Pit2FStr(cansetFrom_p));
     //if (cansetFo.count < 1) return nil; //过滤1: 过滤掉长度不够的 (因为前段全含至少要1位,中段修正也至少要0位,后段H目标要1位R要0位);
@@ -215,7 +216,7 @@
     
     //6. 后段: 找canset后段目标 和 后段匹配度 (H需要后段匹配, R不需要);
     TOFoModel *result = [TOFoModel newForRCansetFo:cansetFrom_p sceneFrom:sceneFrom_p base:demand basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel
-            cansetFromCutIndex:cansetCutIndex cansetFromTargetIndex:cansetFo.count sceneFromTargetIndex:sceneFromTargetIndex];
+            cansetCutIndex:cansetCutIndex cansetTargetIndex:cansetFrom.count sceneFromTargetIndex:sceneFromTargetIndex];
     
     //12. 伪迁移;
     [TCTransfer transferXv:result];

@@ -26,7 +26,7 @@
                midEffectScore:(CGFloat)midEffectScore midStableScore:(CGFloat)midStableScore
                  backIndexDic:(NSDictionary*)backIndexDic backMatchValue:(CGFloat)backMatchValue backStrongValue:(CGFloat)backStrongValue
                cansetCutIndex:(NSInteger)cansetCutIndex sceneCutIndex:(NSInteger)sceneCutIndex
-                  targetIndex:(NSInteger)targetIndex sceneTargetIndex:(NSInteger)sceneTargetIndex
+            cansetTargetIndex:(NSInteger)cansetTargetIndex sceneTargetIndex:(NSInteger)sceneTargetIndex
        basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel {
     TOFoModel *model = [[TOFoModel alloc] init];
     
@@ -44,7 +44,7 @@
     model.backMatchValue = backMatchValue;
     model.backStrongValue = backStrongValue;
     model.cansetCutIndex = cansetCutIndex;
-    model.targetIndex = targetIndex;
+    model.cansetTargetIndex = cansetTargetIndex;
     model.sceneTargetIndex = sceneTargetIndex;
     
     //2. TOFoModel相关赋值;
@@ -57,8 +57,8 @@
 
 +(TOFoModel*) newForRCansetFo:(AIKVPointer*)cansetFrom_p sceneFrom:(AIKVPointer*)sceneFrom_p
                          base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel
-           cansetFromCutIndex:(NSInteger)cansetFromCutIndex
-        cansetFromTargetIndex:(NSInteger)cansetFromTargetIndex
+               cansetCutIndex:(NSInteger)cansetCutIndex
+            cansetTargetIndex:(NSInteger)cansetTargetIndex
          sceneFromTargetIndex:(NSInteger)sceneFromTargetIndex {
     TOFoModel *model = [[TOFoModel alloc] init];
     
@@ -67,8 +67,8 @@
     model.sceneFo = sceneFrom_p;
     model.basePFoOrTargetFoModel = basePFoOrTargetFoModel;
     model.baseSceneModel = baseSceneModel;//R任务时,即R任务的RSceneModel;
-    model.cansetCutIndex = cansetFromCutIndex;//R任务时,cansetCutIndex其实是顺着scene找上一帧有映射的 (参考TOUtils.goBackToFindConIndexByAbsIndex());
-    model.targetIndex = cansetFromTargetIndex;
+    model.cansetCutIndex = cansetCutIndex;//R任务时,cansetCutIndex其实是顺着scene找上一帧有映射的 (参考TOUtils.goBackToFindConIndexByAbsIndex());
+    model.cansetTargetIndex = cansetTargetIndex;
     model.sceneTargetIndex = sceneFromTargetIndex;//R任务时,其实rScene的目标就是最后一帧 (即目标 = rScene.count);
     
     //2. TOFoModel相关赋值;
@@ -90,7 +90,7 @@
     model.basePFoOrTargetFoModel = basePFoOrTargetFoModel;
     model.baseSceneModel = baseSceneModel;//H任务时,其实是复用了R任务的RSceneModel;
     model.cansetCutIndex = cansetCutIndex;//H任务时,cansetCutIndex其实是顺着scene找上一帧有映射的 (参考TOUtils.goBackToFindConIndexByAbsIndex());
-    model.targetIndex = cansetTargetIndex;
+    model.cansetTargetIndex = cansetTargetIndex;
     model.sceneTargetIndex = sceneTargetIndex;//H任务时,其实hScene的目标就是hScene的下一帧 (即目标 = hScene.cutIndex + 1);
     
     //2. TOFoModel相关赋值;
@@ -345,14 +345,14 @@
  */
 -(void) pushNextFrame {
     //1. 如果已经彻底完成,则没有下一帧了;
-    if (self.cansetCutIndex >= self.targetIndex) return;
+    if (self.cansetCutIndex >= self.cansetTargetIndex) return;
     
     //2. 取下帧alg数据 (下帧即已发生+1);
     AIShortMatchModel_Simple *nextCansetTo = ARR_INDEX(self.transferXvModel.cansetToOrders, self.cansetActIndex);
     AIKVPointer *nextCansetTo_p = nextCansetTo.alg_p;
     
     //3. 挂载TOAlgModel;
-    if (self.cansetActIndex < self.targetIndex) {
+    if (self.cansetActIndex < self.cansetTargetIndex) {
         //6. 转下帧: 理性帧则生成TOAlgModel;
         [TOAlgModel newWithAlg_p:nextCansetTo_p group:self];
     }else{
@@ -405,8 +405,8 @@
     //2024.01.25: 现在应该能支持仅靠匹配度来竞争了,因为CansetModels已经支持实时竞争了,但现在接受一次反馈后,就会pushNextFrame,是不支持以往帧持续反馈的,随后再改支持吧);
     //AIKVPointer *oldFeedbackAlg = curAlgModel.feedbackAlg;//新旧反馈用匹配度竞争一下: 更匹配则替换等 | 否则则把oldFeedbackAlg改回去;
     
-    //1. 未达到targetIndex才接受反馈;
-    if (self.cansetCutIndex >= self.targetIndex) return false;
+    //1. 未达到cansetTargetIndex才接受反馈;
+    if (self.cansetCutIndex >= self.cansetTargetIndex) return false;
     feedbackMatchAlg_ps = ARRTOOK(feedbackMatchAlg_ps);
     
     //2. 判断反馈mIsC是否有效 (比如找锤子,看到锤子了 & 再如吃,确定自己是否真吃了);
@@ -481,7 +481,7 @@
         if (Log4OPushM) NSLog(@"flt1 HCansetA有效:M(A%ld) C:%@",protoAlg_p.pointerId,Pit2FStr(targetAlgModel.content_p));
         
         //7. 记录feedbackAlg (参考27204-1);
-        BOOL isEndFrame = self.cansetActIndex == self.targetIndex;
+        BOOL isEndFrame = self.cansetActIndex == self.cansetTargetIndex;
         
         //8. 旧有那些改状态status的代码,整理在此处 (参考31073-TODO7-4);
         //9. H反馈中段: 标记OuterBack,solutionFo继续;
@@ -547,7 +547,7 @@
 -(BOOL) isH {
     //目前判断方式为: pFo的任务是R,targetFoM的任务是H;
     return !ISOK(self.basePFoOrTargetFoModel, AIMatchFoModel.class);
-    //return self.targetIndex < self.cansetFo.count; //用目标帧位置来判断;
+    //return self.cansetTargetIndex < self.cansetFo.count; //用目标帧位置来判断;
     //return ISOK(self.baseOrGroup, HDemandModel.class); //用baseIsRDemand来判断;
 }
 
@@ -571,7 +571,7 @@
     if (self) {
         self.subModels = [aDecoder decodeObjectForKey:@"subModels"];
         self.cansetCutIndex = [aDecoder decodeIntegerForKey:@"cansetCutIndex"];
-        self.targetIndex = [aDecoder decodeIntegerForKey:@"targetIndex"];
+        self.cansetTargetIndex = [aDecoder decodeIntegerForKey:@"cansetTargetIndex"];
         self.subDemands = [aDecoder decodeObjectForKey:@"subDemands"];
         self.feedbackMv = [aDecoder decodeObjectForKey:@"feedbackMv"];
         self.transferXvModel = [aDecoder decodeObjectForKey:@"transferXvModel"];
@@ -585,7 +585,7 @@
     [super encodeWithCoder:aCoder];
     [aCoder encodeObject:self.subModels forKey:@"subModels"];
     [aCoder encodeInteger:self.cansetCutIndex forKey:@"cansetCutIndex"];
-    [aCoder encodeInteger:self.targetIndex forKey:@"targetIndex"];
+    [aCoder encodeInteger:self.cansetTargetIndex forKey:@"cansetTargetIndex"];
     [aCoder encodeObject:self.subDemands forKey:@"subDemands"];
     [aCoder encodeObject:self.feedbackMv forKey:@"feedbackMv"];
     [aCoder encodeObject:self.transferXvModel forKey:@"transferXvModel"];

@@ -38,10 +38,10 @@
     AIFoNodeBase *curFo = [SMGUtils searchNode:foModel.content_p];
     
     //2. Alg转移 (下帧),每次调用action立马先跳下actionIndex为当前正准备行为化的那一帧;
-    OFTitleLog(@"行为化Fo", @"\n下标 (%ld/%ld) 时序:%@",foModel.cansetActIndex,foModel.targetIndex,Fo2FStr(curFo));
+    OFTitleLog(@"行为化Fo", @"\n下标 (%ld/%ld) 时序:%@",foModel.cansetActIndex,foModel.cansetTargetIndex,Fo2FStr(curFo));
     
     if (!foModel.isH) {
-        NSLog(@"flt1 _Fo行为化下标: (%ld/%ld) %@ rDemand:F%ld",foModel.cansetActIndex,foModel.targetIndex,Fo2FStr(curFo),foModel.basePFo.matchFo.pointerId);
+        NSLog(@"flt1 _Fo行为化下标: (%ld/%ld) %@ rDemand:F%ld",foModel.cansetActIndex,foModel.cansetTargetIndex,Fo2FStr(curFo),foModel.basePFo.matchFo.pointerId);
     }
     
     //3. 进行反思识别,如果不通过时,回到TCScore可能会尝试先解决子任务,通过时继续行为化 (参考30054-todo7);
@@ -56,8 +56,8 @@
     [theTC updateOperCount:kFILENAME];
     Debug();
     //4. 跳转下帧 (最后一帧为目标,自然发生即可,此前帧则需要行为化实现);
-    if (foModel.cansetActIndex < foModel.targetIndex) {
-        NSLog(@"_Fo行为化下标: (%ld/%ld) %@",foModel.cansetActIndex,foModel.targetIndex,Fo2FStr(curFo));
+    if (foModel.cansetActIndex < foModel.cansetTargetIndex) {
+        NSLog(@"_Fo行为化下标: (%ld/%ld) %@",foModel.cansetActIndex,foModel.cansetTargetIndex,Fo2FStr(curFo));
         
         //@desc: 下标不急评价说明: R模式_Hav首先是为了避免forecastAlg,其次才是为了达成curFo解决方案 (参考22153);
         //5. 下标不急(弄巧成拙)评价_数据准备 (参考24171-12);
@@ -86,7 +86,7 @@
     }else{
         //8. R成功,转actYes等待反馈 & 触发反省 (原递归参考流程控制Finish的注释version-20200916 / 参考22061-7);
         DebugE();
-        NSLog(@"_Fo行为化: Finish (%ld/%ld) 到ActYes",foModel.cansetActIndex,foModel.targetIndex);
+        NSLog(@"_Fo行为化: Finish (%ld/%ld) 到ActYes",foModel.cansetActIndex,foModel.cansetTargetIndex);
         
         if (ISOK(foModel.baseOrGroup, ReasonDemandModel.class)) {
             [TCActYes frameActYes:foModel];

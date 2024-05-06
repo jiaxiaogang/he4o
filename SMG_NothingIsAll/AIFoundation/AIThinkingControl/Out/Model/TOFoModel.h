@@ -30,7 +30,7 @@
 /**
  *  MARK:--------------------newWith--------------------
  *  @desc
- *      1. R任务时,backMatchValue和targetIndex两个参数无用;
+ *      1. R任务时,backMatchValue和cansetTargetIndex两个参数无用;
  *      2. H任务时,所有参数都有效;
  */
 +(TOFoModel*) newWithCansetFo:(AIKVPointer*)cansetFo sceneFo:(AIKVPointer*)sceneFo base:(TOModelBase<ITryActionFoDelegate>*)base
@@ -39,18 +39,18 @@
                midEffectScore:(CGFloat)midEffectScore midStableScore:(CGFloat)midStableScore
                  backIndexDic:(NSDictionary*)backIndexDic backMatchValue:(CGFloat)backMatchValue backStrongValue:(CGFloat)backStrongValue
                cansetCutIndex:(NSInteger)cansetCutIndex sceneCutIndex:(NSInteger)sceneCutIndex
-                  targetIndex:(NSInteger)targetIndex sceneTargetIndex:(NSInteger)sceneTargetIndex
+            cansetTargetIndex:(NSInteger)cansetTargetIndex sceneTargetIndex:(NSInteger)sceneTargetIndex
        basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel;
 
 +(TOFoModel*) newForRCansetFo:(AIKVPointer*)cansetFrom_p sceneFrom:(AIKVPointer*)sceneFrom_p
                          base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel
-           cansetFromCutIndex:(NSInteger)cansetFromCutIndex
-        cansetFromTargetIndex:(NSInteger)cansetFromTargetIndex
+               cansetCutIndex:(NSInteger)cansetCutIndex
+            cansetTargetIndex:(NSInteger)cansetTargetIndex
          sceneFromTargetIndex:(NSInteger)sceneFromTargetIndex;
 
 +(TOFoModel*) newForHCansetFo:(AIKVPointer*)canset sceneFo:(AIKVPointer*)scene base:(TOModelBase<ITryActionFoDelegate>*)base
                cansetCutIndex:(NSInteger)cutIndex sceneCutIndex:(NSInteger)sceneCutIndex
-            cansetTargetIndex:(NSInteger)targetIndex sceneTargetIndex:(NSInteger)sceneTargetIndex
+            cansetTargetIndex:(NSInteger)cansetTargetIndex sceneTargetIndex:(NSInteger)sceneTargetIndex
        basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel;
 
 /**
@@ -163,9 +163,9 @@
  *  @desc foModel要行为化的index目标 (默认目标为mv_即全执行);
  *      1. 如全执行完,则是为了mv结果;
  *      2. 如执行到某一帧,则是为了实现HDemand;
- *      3. 注: 其中要执行的不包括targetIndex,比如为1时,则目标为1,只执行到0(第1帧),为content.count时,则目标为mv;
+ *      3. 注: 其中要执行的不包括cansetTargetIndex,比如为1时,则目标为1,只执行到0(第1帧),为content.count时,则目标为mv;
  */
-@property (assign, nonatomic) NSInteger targetIndex;    //cansetFo执行目标index (R时为fo.count,H时为目标帧下标);
+@property (assign, nonatomic) NSInteger cansetTargetIndex;    //cansetFo执行目标index (R时为fo.count,H时为目标帧下标);
 @property (assign, nonatomic) NSInteger sceneCutIndex;  //sceneFo已发生截点 (含cutIndex也已发生);
 @property (assign, nonatomic) NSInteger sceneTargetIndex;//sceneFo任务目标index (R时为fo.count,H时为目标帧下标);
 

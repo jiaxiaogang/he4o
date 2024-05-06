@@ -90,7 +90,7 @@
  */
 +(BOOL) FRS_Time:(DemandModel*)demand solutionModel:(TOFoModel*)solutionModel{
     //1. 中段为0条时,直接返回true,评价通过;
-    if (solutionModel.cansetActIndex >= solutionModel.targetIndex) {
+    if (solutionModel.cansetActIndex >= solutionModel.cansetTargetIndex) {
         return true;
     }
 

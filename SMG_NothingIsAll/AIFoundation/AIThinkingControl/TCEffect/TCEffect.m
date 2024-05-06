@@ -76,7 +76,7 @@
     Debug();
     //1. 取deltaTime;
     AIFoNodeBase *solutionFo = [SMGUtils searchNode:hSolution.content_p];
-    double deltaTime = [TOUtils getSumDeltaTime:solutionFo startIndex:0 endIndex:hSolution.targetIndex];
+    double deltaTime = [TOUtils getSumDeltaTime:solutionFo startIndex:0 endIndex:hSolution.cansetTargetIndex];
     
     //2. 数据准备;
     HDemandModel *hDemand = (HDemandModel*)hSolution.baseOrGroup;
@@ -104,7 +104,7 @@
         
         //8. 对抽象也更新eff (参考29069-todo11.5);
         AIFoNodeBase *canset = [SMGUtils searchNode:canset_p];
-        [TCRethinkUtil spEff4Abs:canset curFoIndex:hSolution.targetIndex itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {
+        [TCRethinkUtil spEff4Abs:canset curFoIndex:hSolution.cansetTargetIndex itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {
             [targetFoNode updateEffectStrong:targetFoActIndex solutionFo:absFo.pointer status:es];
         }];
         
