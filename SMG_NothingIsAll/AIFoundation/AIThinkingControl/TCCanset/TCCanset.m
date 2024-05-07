@@ -49,6 +49,7 @@
  *      2023.04.22: 关闭惰性期 (参考29073-方案);
  *      2023.04.30: 用迁移后cansetA与protoA来计算前段匹配度值 (参考29075-todo5);
  *      2024.01.19: 为每个CansetModel生成jiCenModel和tuiJuModel (参考31073-TODO1);
+ *      2024.05.07: 前中后段,直接改为由indexDic来判断,而不是重计算现判断,性能天差地别 (参考31175-TODO1);
  *  @result 返回cansetFo前段匹配度 & 以及已匹配的cutIndex截点;
  */
 +(TOFoModel*) convert2CansetModel:(AIKVPointer*)cansetFo_p sceneFo:(AIKVPointer*)sceneFo_p basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel ptAleardayCount:(NSInteger)ptAleardayCount isH:(BOOL)isH sceneModel:(AISceneModel*)sceneModel demand:(DemandModel*)demand{
@@ -183,40 +184,46 @@
 
 +(TOFoModel*) convert2RCansetModel:(AIKVPointer*)cansetFrom_p sceneFrom:(AIKVPointer*)sceneFrom_p basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel ptAleardayCount:(NSInteger)ptAleardayCount sceneModel:(AISceneModel*)sceneModel demand:(DemandModel*)demand{
     //1. 数据准备 & 复用indexDic & 取出pFoOrTargetFo;
-    AIFoNodeBase *sceneFrom = [SMGUtils searchNode:sceneFrom_p];
-    AIFoNodeBase *cansetFrom = [SMGUtils searchNode:cansetFrom_p];
-    NSInteger sceneFromTargetIndex = sceneFrom.count;
-    if (Log4SolutionFilter) NSLog(@"S过滤器 checkItem: %@",Pit2FStr(cansetFrom_p));
-    //if (cansetFo.count < 1) return nil; //过滤1: 过滤掉长度不够的 (因为前段全含至少要1位,中段修正也至少要0位,后段H目标要1位R要0位);
-    
-    //3. 惰性期 (阈值为2: EFF默认值为1,达到阈值时触发) (参考28182-todo9 & 28185-todo6);
-    if (Switch4DuoXinQi) {
-        AIEffectStrong *effStrong = [TOUtils getEffectStrong:sceneFrom effectIndex:sceneFrom.count solutionFo:cansetFrom_p];
-        if (effStrong.hStrong <= 2) return nil;
-        //NSLog(@"惰性期通过:%@",CLEANSTR(cansetFo.spDic));
-    }
-    
-    //5. 根据sceneFo取得与canset的indexDic映射;
-    NSDictionary *cansetFromSceneFromIndexDic = [sceneFrom getConIndexDic:cansetFrom_p];
     [AITest test102:cansetFrom_p];
+    AIFoNodeBase *sceneFrom = [SMGUtils searchNode:sceneFrom_p];
+    NSInteger sceneFromTargetIndex = sceneFrom.count;
     
-    //2. 计算出canset的cutIndex (canset的cutIndex,也已在proto中发生) (参考26128-1-1);
-    //7. 根据ptAleardayCount取出对应的cansetIndex,做为中段截点 (aleardayCount - 1 = cutIndex);
-    NSInteger matchCutIndex = ptAleardayCount - 1;
-    NSInteger cansetCutIndex = NUMTOOK([cansetFromSceneFromIndexDic objectForKey:@(matchCutIndex)]).integerValue;
+    //2. 根据sceneFo取得与canset的indexDic映射;
+    NSDictionary *cansetFromSceneFromIndexDic = [sceneFrom getConIndexDic:cansetFrom_p];
     
-    //8. canset目标下标 (R时canset没有mv,所以要用count-1);
-    //NSInteger cansetFromTargetIndex = cansetFrom.count - 1;
-    if (cansetCutIndex < matchCutIndex) return nil; //过滤2: 判断canset前段是否有遗漏 (参考27224);
-    //if (cansetFo.count <= cansetCutIndex + 1) return nil; //过滤3: 过滤掉canset没后段的 (没可行为化的东西) (参考28052-4);
+    //3. 计算出canset的cutIndex做为中段截点 (canset的cutIndex,也已在proto中发生) (参考26128-1-1);
+    NSInteger cansetCutIndex = NUMTOOK([cansetFromSceneFromIndexDic objectForKey:@(sceneModel.cutIndex)]).integerValue;
+    
+    //4. canset目标下标 (R时取当前场景下的: 最大有效映射帧为目标);
+    NSNumber *maxValue = ARR_INDEX([SMGUtils sortBig2Small:cansetFromSceneFromIndexDic.allValues compareBlock:^double(NSNumber *obj) {
+        return obj.doubleValue;
+    }], 0);
+    NSInteger cansetTargetIndex = NUMTOOK(maxValue).integerValue;
+    
+    //5. 过滤器:
+    //过滤1: 过滤掉长度不够的 (因为前段全含至少要1位,中段修正也至少要0位,后段H目标要1位R要0位);
+    //if (cansetFo.count < 1) return nil;
+    
+    //过滤2: 惰性期过滤器 (阈值为2: EFF默认值为1,达到阈值时触发) (参考28182-todo9 & 28185-todo6);
+    //AIEffectStrong *effStrong = [TOUtils getEffectStrong:sceneFrom effectIndex:sceneFrom.count solutionFo:cansetFrom_p];
+    //if (effStrong.hStrong <= 2) return nil;
+    
+    //过滤3: 判断canset前段是否有遗漏 (参考27224);
+    //if (cansetCutIndex < sceneModel.cutIndex) return nil;
+    
+    //过滤4: 过滤掉canset没后段的 (没可行为化的东西) (参考28052-4);
+    //if (cansetFo.count <= cansetCutIndex + 1) return nil;
+    
+    
+    
     
     //TODOTOMORROW20240502: 把cansetFo打出来,看为什么这里通不过 (查下前段不满足,打出来canset看为什么不满足);
     //1. 先测下,前中后段,能不能直接改为由indexDic来判断,而不是现判断,性能天差地别;
     //2. 如果可以这么改,那么取候选集的前20%,也可以直接去掉,毕竟宽入窄出的原则,如果性能允许,还是别一刀切只留20%;
     
-    //6. 后段: 找canset后段目标 和 后段匹配度 (H需要后段匹配, R不需要);
+    //6. 生成result;
     TOFoModel *result = [TOFoModel newForRCansetFo:cansetFrom_p sceneFrom:sceneFrom_p base:demand basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel
-            cansetCutIndex:cansetCutIndex cansetTargetIndex:cansetFrom.count sceneFromTargetIndex:sceneFromTargetIndex];
+            cansetCutIndex:cansetCutIndex cansetTargetIndex:cansetTargetIndex sceneFromTargetIndex:sceneFromTargetIndex];
     
     //12. 伪迁移;
     [TCTransfer transferXv:result];
