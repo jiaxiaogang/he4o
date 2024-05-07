@@ -37,7 +37,7 @@
     
     //4. 算出如果canset无效,会带来的风险;
     CGFloat nEffScore = 1 - [TOUtils getEffectScore:sceneFo effectIndex:checkCanset.sceneTargetIndex solutionFo:checkCanset.cansetFo];
-    OFTitleLog(@"TCRefrection反思", @"\n%@ CUT:%ld 前匹配度%.2f 无效率:%.2f",Pit2FStr(checkCanset.cansetFo),(long)checkCanset.cansetCutIndex,checkCanset.frontMatchValue,nEffScore);
+    OFTitleLog(@"TCRefrection反思", @"\n%@ CUT:%ld 无效率:%.2f",Pit2FStr(checkCanset.cansetFo),(long)checkCanset.cansetCutIndex,nEffScore);
     
     //5. 算出因canset无效,带来的风险分 = Eff为N的概率 x scene的mv评分;
     CGFloat canestFenXianScore = [AIScore score4MV:sceneFo.cmvNode_p ratio:nEffScore];

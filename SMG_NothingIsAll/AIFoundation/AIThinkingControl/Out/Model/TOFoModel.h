@@ -27,21 +27,6 @@
 @class AISceneModel,AITransferModel,TCTransferXvModel;
 @interface TOFoModel : TOModelBase <ISubModelsDelegate,ISubDemandDelegate,NSCoding>
 
-/**
- *  MARK:--------------------newWith--------------------
- *  @desc
- *      1. R任务时,backMatchValue和cansetTargetIndex两个参数无用;
- *      2. H任务时,所有参数都有效;
- */
-+(TOFoModel*) newWithCansetFo:(AIKVPointer*)cansetFo sceneFo:(AIKVPointer*)sceneFo base:(TOModelBase<ITryActionFoDelegate>*)base
-           protoFrontIndexDic:(NSDictionary *)protoFrontIndexDic matchFrontIndexDic:(NSDictionary *)matchFrontIndexDic
-              frontMatchValue:(CGFloat)frontMatchValue frontStrongValue:(CGFloat)frontStrongValue
-               midEffectScore:(CGFloat)midEffectScore midStableScore:(CGFloat)midStableScore
-                 backIndexDic:(NSDictionary*)backIndexDic backMatchValue:(CGFloat)backMatchValue backStrongValue:(CGFloat)backStrongValue
-               cansetCutIndex:(NSInteger)cansetCutIndex sceneCutIndex:(NSInteger)sceneCutIndex
-            cansetTargetIndex:(NSInteger)cansetTargetIndex sceneTargetIndex:(NSInteger)sceneTargetIndex
-       basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel;
-
 +(TOFoModel*) newForRCansetFo:(AIKVPointer*)cansetFrom_p sceneFrom:(AIKVPointer*)sceneFrom_p
                          base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel
                cansetCutIndex:(NSInteger)cansetCutIndex
@@ -116,39 +101,6 @@
  *  @desc 无论是R还是H,它的baseSceneModel都是rSceneModel;
  */
 @property (strong, nonatomic) AISceneModel *baseSceneModel;
-
-//MARK:===============================================================
-//MARK:                     < 前段部分 >
-//MARK:===============================================================
-
-@property (strong, nonatomic) NSDictionary *protoFrontIndexDic;//前段canset与proto的映射字典 (canset是抽象);
-@property (strong, nonatomic) NSDictionary *matchFrontIndexDic;//前段canset与scene的映射字典 (scene是抽象);
-
-/**
- *  MARK:--------------------前段匹配度--------------------
- *  @desc 目前其表示cansetFo与protoFo的前段匹配度;
- *  @version
- *      2023.01.13: 求乘版: 用canset前段和match的帧映射计算前段匹配度 (参考28035-todo3);
- *      2023.02.18: AIRank细分版: 用canset前段和proto的帧映射计算前段匹配度 (参考28083-方案2);
- */
-@property (assign, nonatomic) CGFloat frontMatchValue;
-
-/**
- *  MARK:--------------------前段强度竞争值 (参考28083-方案2)--------------------
- *  @desc cansetFo的前段部分的refStrong平均强度;
- */
-@property (assign, nonatomic) CGFloat frontStrongValue;
-
-
-//MARK:===============================================================
-//MARK:                     < 后段部分 >
-//MARK:===============================================================
-@property (assign, nonatomic) CGFloat backMatchValue;   //后段匹配度 (R时为1,H时为目标帧相近度) (参考28092-todo1);
-@property (assign, nonatomic) CGFloat backStrongValue;  //后段强度值 (R时为0,H时为目标帧conStrong强度) (参考28092-todo2);
-@property (strong, nonatomic) NSDictionary *backIndexDic;//后段canset与match的映射字典 (match是抽象);
-
-@property (assign, nonatomic) CGFloat midStableScore;    //中段稳定性分;
-@property (assign, nonatomic) CGFloat midEffectScore;    //整体有效率分;
 
 /**
  *  MARK:--------------------cansetFo已发生截点--------------------

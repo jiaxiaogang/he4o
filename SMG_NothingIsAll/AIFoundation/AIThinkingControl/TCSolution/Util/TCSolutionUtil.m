@@ -159,11 +159,8 @@
             return [item.matchFo isEqual:sceneModel.getRoot.scene];
         }];
         NSArray *itemCansetModels = [SMGUtils convertArr:cansetFroms2 convertBlock:^id(AIKVPointer *canset) {
-            //4. cansetModel转换器参数准备;
-            NSInteger aleardayCount = sceneModel.cutIndex + 1;
-            
             //4. 过滤器 & 转cansetModels候选集 (参考26128-第1步 & 26161-1&2&3);
-            return [TCCanset convert2CansetModel:canset sceneFo:sceneModel.scene basePFoOrTargetFoModel:pFo ptAleardayCount:aleardayCount isH:false sceneModel:sceneModel demand:demand];//1200ms/600次执行
+            return [TCCanset convert2RCansetModel:canset sceneFrom:sceneModel.scene basePFoOrTargetFoModel:pFo sceneModel:sceneModel demand:demand];//1200ms/600次执行
         }];
         if (Log4GetCansetResult4R && cansetFroms2.count > 0) NSLog(@"\t item场景(%@):%@ 取得候选数:%ld 转成候选模型数:%ld",SceneType2Str(sceneModel.type),Pit2FStr(sceneModel.scene),cansetFroms2.count,itemCansetModels.count);
         return itemCansetModels;
@@ -243,19 +240,19 @@
     //14. 只在初次best时执行一次由虚转实,以及因激活更新强度等 (避免每次实时竞争导致重复跑这些);
     if (result && result.cansetStatus == CS_None) {
         AIFoNodeBase *resultFo = [SMGUtils searchNode:result.cansetFo];
-        NSLog(@"求解最佳结果:F%ld (前%.2f 中%.2f 后%.2f) %@",result.cansetFo.pointerId,result.frontMatchValue,result.midStableScore,result.backMatchValue,CLEANSTR(resultFo.spDic));
+        NSLog(@"求解最佳结果:F%ld %@",result.cansetFo.pointerId,CLEANSTR(resultFo.spDic));
         
         //15. bestResult由虚转实迁移;
         [TCTransfer transferSi:result];
 
-        //15. 更新其前段帧的con和abs抽具象强度 (参考28086-todo2);
-        [AINetUtils updateConAndAbsStrongByIndexDic:result.matchFrontIndexDic matchFo:result.sceneFo cansetFo:result.cansetFo];
-
-        //16. 更新后段的的具象强度 (参考28092-todo4);
-        [AINetUtils updateConAndAbsStrongByIndexDic:result.backIndexDic matchFo:result.sceneFo cansetFo:result.cansetFo];
+        //16. 更新前中后段con和abs的抽具象强度 (参考28086-todo2 & 28092-todo4);
+        [AINetUtils updateConAndAbsStrongByIndexDic:result.transferXvModel.sceneToCansetToIndexDic matchFo:result.transferSiModel.scene cansetFo:result.transferSiModel.canset];
 
         //17. 更新其前段alg引用value的强度;
-        [AINetUtils updateAlgRefStrongByIndexDic:result.protoFrontIndexDic matchFo:result.cansetFo];
+        NSArray *frontCansetToIndexArr = [SMGUtils filterArr:result.transferXvModel.sceneToCansetToIndexDic.allValues checkValid:^BOOL(NSNumber *item) {
+            return item.intValue <= result.cansetCutIndex;;
+        }];
+        [AINetUtils updateAlgRefStrongByIndexArr:frontCansetToIndexArr fo:result.transferSiModel.canset];
     }
     
     //15. 更新状态besting和bested (参考31073-TODO2d);

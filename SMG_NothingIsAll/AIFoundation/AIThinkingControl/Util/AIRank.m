@@ -88,9 +88,9 @@
 // */
 //+(NSArray*) solutionFrontRank:(NSArray*)solutionModels {
 //    return [self getCooledRankTwice:solutionModels itemScoreBlock1:^CGFloat(TOFoModel *item) {
-//        return item.frontMatchValue; //前段匹配度项;
+//        return ...; //前段匹配度项;
 //    } itemScoreBlock2:^CGFloat(TOFoModel *item) {
-//        return item.frontStrongValue; //前段强度项;
+//        return ...; //前段强度项;
 //    } itemKeyBlock:^id(TOFoModel *item) {
 //        return @(item.cansetFo.pointerId);
 //    }];
@@ -101,9 +101,9 @@
 // */
 //+(NSArray*) solutionBackRank:(NSArray*)solutionModels {
 //    return [self getCooledRankTwice:solutionModels itemScoreBlock1:^CGFloat(TOFoModel *item) {
-//        return item.backMatchValue; //匹配度项;
+//        return ...; //后段匹配度项;
 //    } itemScoreBlock2:^CGFloat(TOFoModel *item) {
-//        return item.backStrongValue; //强度项;
+//        return ...; //后段强度项;
 //    } itemKeyBlock:^id(TOFoModel *item) {
 //        return @(item.cansetFo.pointerId);
 //    }];
@@ -114,9 +114,9 @@
 // */
 //+(NSArray*) solutionMidRank:(NSArray*)solutionModels {
 //    return [self getCooledRankTwice:solutionModels itemScoreBlock1:^CGFloat(TOFoModel *item) {
-//        return item.midStableScore; //中断稳定性项;
+//        return ...; //中断稳定性项;
 //    } itemScoreBlock2:^CGFloat(TOFoModel *item) {
-//        return item.midEffectScore; //中段有效性项;
+//        return ...; //中段有效性项;
 //    } itemKeyBlock:^id(TOFoModel *item) {
 //        return @(item.cansetFo.pointerId);
 //    }];

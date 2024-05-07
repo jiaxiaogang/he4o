@@ -18,7 +18,7 @@
  *                                  2. 子R=父actionIndex对应indexDic条数;
  *                                  3. H.actionIndex前已发生;
  *                                  改: 在支持sceneTree后,统一传sceneModel.cutIndex + 1;
- *  @param sceneFo_p            : 当前cansetFo_p挂在哪个场景fo下就传哪个;
+ *  @param sceneFrom_p            : 当前cansetFo_p挂在哪个场景fo下就传哪个;
  *  @param basePFoOrTargetFoModel : 一用来取protoFo用,二用来传参给结果cansetModel用;
  *  @param sceneModel           : 此cansetModel是基于哪个sceneModel的就传哪个;
  *  @version
@@ -52,137 +52,7 @@
  *      2024.05.07: 前中后段,直接改为由indexDic来判断,而不是重计算现判断,性能天差地别 (参考31175-TODO1);
  *  @result 返回cansetFo前段匹配度 & 以及已匹配的cutIndex截点;
  */
-+(TOFoModel*) convert2CansetModel:(AIKVPointer*)cansetFo_p sceneFo:(AIKVPointer*)sceneFo_p basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel ptAleardayCount:(NSInteger)ptAleardayCount isH:(BOOL)isH sceneModel:(AISceneModel*)sceneModel demand:(DemandModel*)demand{
-    //1. 数据准备 & 复用indexDic & 取出pFoOrTargetFo;
-    AIFoNodeBase *matchFo = [SMGUtils searchNode:sceneFo_p];
-    AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
-    NSInteger matchTargetIndex = isH ? ptAleardayCount : matchFo.count;
-    
-    //2. 判断是否H任务 (H有后段,别的没有);
-    int minCount = isH ? 2 : 1;
-    if (Log4SolutionFilter) NSLog(@"S过滤器 checkItem: %@",Pit2FStr(cansetFo_p));
-    if (cansetFo.count < minCount) return nil; //过滤1: 过滤掉长度不够的 (因为前段全含至少要1位,中段修正也至少要0位,后段H目标要1位R要0位);
-    
-    //3. 惰性期 (阈值为2: EFF默认值为1,达到阈值时触发) (参考28182-todo9 & 28185-todo6);
-    if (Switch4DuoXinQi) {
-        AIEffectStrong *effStrong = [TOUtils getEffectStrong:matchFo effectIndex:matchFo.count solutionFo:cansetFo_p];
-        if (effStrong.hStrong <= 2) return nil;
-        //NSLog(@"惰性期通过:%@",CLEANSTR(cansetFo.spDic));
-    }
-    
-    //5. 根据sceneFo取得与canset的indexDic映射;
-    NSDictionary *cansetFromSceneFromIndexDic = [cansetFo getAbsIndexDic:sceneFo_p];
-    [AITest test102:cansetFo];
-    
-    //2. 计算出canset的cutIndex (canset的cutIndex,也已在proto中发生) (参考26128-1-1);
-    //7. 根据ptAleardayCount取出对应的cansetIndex,做为中段截点 (aleardayCount - 1 = cutIndex);
-    NSInteger matchCutIndex = ptAleardayCount - 1;
-    NSInteger cansetCutIndex = NUMTOOK([cansetFromSceneFromIndexDic objectForKey:@(matchCutIndex)]).integerValue;
-    
-    //8. canset目标下标 (R时canset没有mv,所以要用count-1);
-    NSInteger cansetTargetIndex = isH ? NUMTOOK([cansetFromSceneFromIndexDic objectForKey:@(ptAleardayCount)]).integerValue : cansetFo.count - 1;
-    if (cansetCutIndex < matchCutIndex) return nil; //过滤2: 判断canset前段是否有遗漏 (参考27224);
-    if (cansetFo.count <= cansetCutIndex + 1) return nil; //过滤3: 过滤掉canset没后段的 (没可行为化的东西) (参考28052-4);
-    
-    //9. 递归找到protoFo;
-    AIMatchFoModel *pFo = [self getPFo:cansetFo_p basePFoOrTargetFoModel:basePFoOrTargetFoModel];
-    AIKVPointer *protoFo_p = pFo.baseRDemand.protoOrRegroupFo;
-    AIFoNodeBase *protoFo = [SMGUtils searchNode:protoFo_p];
-    
-    //10. 判断protoFo对cansetFo条件满足 (返回条件满足的每帧间映射);
-    NSArray *frontIndexDicModels = [self getFrontIndexDic:protoFo cansetFo:cansetFo cansetCutIndex:cansetCutIndex sceneModel:sceneModel];
-    NSDictionary *protoFrontIndexDic = [SMGUtils convertArr2Dic:frontIndexDicModels kvBlock:^NSArray *(FrontIndexDicModel *obj) {
-        return @[@(obj.cansetIndex),@(obj.protoIndex)];
-    }];
-    
-    //TODOTOMORROW20240502: 把cansetFo打出来,看为什么这里通不过 (查下前段不满足,打出来canset看为什么不满足);
-    //1. 先测下,前中后段,能不能直接改为由indexDic来判断,而不是现判断,性能天差地别;
-    //2. 如果可以这么改,那么取候选集的前20%,也可以直接去掉,毕竟宽入窄出的原则,如果性能允许,还是别一刀切只留20%;
-    
-    if (!DICISOK(protoFrontIndexDic)) {
-        //看起来这里取到的20%候选集,都是没有"皮果"的,而这些在失败后,没有任何惩罚,导致每一次激活的也都是这20%,,,
-        //如: F3991[A3957(向10,距134,棒),A3960(距23,向86,棒),A3961(向90,距11,果),M1{↑饿-16},A3968(向137,距34,棒),A3961(向90,距11,果),飞↑,A3976(向168,距74,棒),A3977(向89,距0,果),A3982(向170,距76,棒),A3985(吃1)]
-        NSLog(@"canset %@",Fo2FStr(cansetFo));
-        NSLog(@"");
-    }
-    
-    if (!DICISOK(protoFrontIndexDic)) return nil; //过滤4: 条件不满足时,直接返回nil (参考28052-2 & 28084-3);
-    
-    //4. 计算前段竞争值之匹配值 (参考28084-4);
-    NSArray *frontNearData = [AINetUtils getNearDataByIndexDic:protoFrontIndexDic getAbsAlgBlock:^AIKVPointer *(NSInteger absIndex) {
-        FrontIndexDicModel *model = [SMGUtils filterSingleFromArr:frontIndexDicModels checkValid:^BOOL(FrontIndexDicModel *o) {
-            return o.cansetIndex == absIndex;
-        }];
-        if (model) return model.transferAlg_p;
-        return nil;
-    } getConAlgBlock:^AIKVPointer *(NSInteger conIndex) {
-        return ARR_INDEX(protoFo.content_ps, conIndex);
-    } callerIsAbs:true];
-    CGFloat frontMatchValue = NUMTOOK(ARR_INDEX(frontNearData, 1)).floatValue;
-    if (frontMatchValue == 0) return nil; //过滤5: 前段不匹配时,直接返回nil (参考26128-1-3);
-    
-    //5. 计算前段竞争值之强度竞争值 (参考28086-todo1);
-    NSDictionary *matchFrontIndexDic = [SMGUtils filterDic:cansetFromSceneFromIndexDic checkValid:^BOOL(NSNumber *key, id value) {
-        return key.integerValue <= matchCutIndex;
-    }];
-    NSInteger sumStrong = [AINetUtils getSumConStrongByIndexDic:matchFrontIndexDic matchFo:sceneFo_p cansetFo:cansetFo_p];
-    CGFloat frontStrongValue = (float)sumStrong / matchFrontIndexDic.count;
-    
-    //6. 计算中断竞争值;
-    CGFloat midEffectScore = [TOUtils getEffectScore:matchFo effectIndex:matchTargetIndex solutionFo:cansetFo_p];
-    CGFloat midStableScore = [TOUtils getStableScore:cansetFo startSPIndex:cansetCutIndex + 1 endSPIndex:cansetTargetIndex];
-    
-    //6. 后段: 找canset后段目标 和 后段匹配度 (H需要后段匹配, R不需要);
-    TOFoModel *result = nil;
-    if (isH) {
-        //7. 后段匹配度 (后段不匹配时,直接返nil);
-        NSDictionary *backIndexDic = [SMGUtils filterDic:cansetFromSceneFromIndexDic checkValid:^BOOL(NSNumber *key, id value) {
-            return key.integerValue == ptAleardayCount;
-        }];
-        CGFloat backMatchValue = [AINetUtils getMatchByIndexDic:backIndexDic absFo:sceneFo_p conFo:cansetFo_p callerIsAbs:true];
-        if (backMatchValue == 0) return nil; //过滤6: 后段不匹配时,直接返回nil;
-        
-        //7. 后段强度竞争值;
-        NSInteger backStrongValue = [AINetUtils getSumConStrongByIndexDic:backIndexDic matchFo:sceneFo_p cansetFo:cansetFo_p];
-        
-        //9. 后段成功;
-        result = [TOFoModel newWithCansetFo:cansetFo_p sceneFo:sceneFo_p base:demand
-                           protoFrontIndexDic:protoFrontIndexDic matchFrontIndexDic:matchFrontIndexDic
-                              frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue
-                               midEffectScore:midEffectScore midStableScore:midStableScore
-                                 backIndexDic:backIndexDic backMatchValue:backMatchValue backStrongValue:backStrongValue
-                               cansetCutIndex:cansetCutIndex sceneCutIndex:matchCutIndex
-                          cansetTargetIndex:cansetTargetIndex sceneTargetIndex:matchTargetIndex
-                       basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel];
-    }else{
-        //11. 后段: R不判断后段;
-        result = [TOFoModel newWithCansetFo:cansetFo_p sceneFo:sceneFo_p base:demand
-                           protoFrontIndexDic:protoFrontIndexDic matchFrontIndexDic:matchFrontIndexDic
-                              frontMatchValue:frontMatchValue frontStrongValue:frontStrongValue
-                               midEffectScore:midEffectScore midStableScore:midStableScore
-                                 backIndexDic:nil backMatchValue:1 backStrongValue:0
-                               cansetCutIndex:cansetCutIndex sceneCutIndex:matchCutIndex
-                          cansetTargetIndex:cansetFo.count sceneTargetIndex:matchTargetIndex
-                       basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel];
-    }
-    
-    //12. 伪迁移;
-    [TCTransfer transferXv:result];
-    
-    //13. 初始化result的cansetTo与real的映射;
-    [result initRealCansetToDic];
-    
-    //此时未转实,这里的nextFrame是?cansetFrom的? (看代码,会优先si,但此时没有si,只能是cansetFrom);
-    //原则是：有si才有newcanset,有预期才有实际类比。
-    //  1，对xv生成algmodel。
-    //  2，生成过simodel的都可以生成子hcanset
-    
-    //13. 下帧初始化 (可接受反馈);
-    [result pushNextFrame];
-    return result;
-}
-
-+(TOFoModel*) convert2RCansetModel:(AIKVPointer*)cansetFrom_p sceneFrom:(AIKVPointer*)sceneFrom_p basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel ptAleardayCount:(NSInteger)ptAleardayCount sceneModel:(AISceneModel*)sceneModel demand:(DemandModel*)demand{
++(TOFoModel*) convert2RCansetModel:(AIKVPointer*)cansetFrom_p sceneFrom:(AIKVPointer*)sceneFrom_p basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel sceneModel:(AISceneModel*)sceneModel demand:(DemandModel*)demand {
     //1. 数据准备 & 复用indexDic & 取出pFoOrTargetFo;
     [AITest test102:cansetFrom_p];
     AIFoNodeBase *sceneFrom = [SMGUtils searchNode:sceneFrom_p];
@@ -222,8 +92,9 @@
     //2. 如果可以这么改,那么取候选集的前20%,也可以直接去掉,毕竟宽入窄出的原则,如果性能允许,还是别一刀切只留20%;
     
     //6. 生成result;
-    TOFoModel *result = [TOFoModel newForRCansetFo:cansetFrom_p sceneFrom:sceneFrom_p base:demand basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel
-            cansetCutIndex:cansetCutIndex cansetTargetIndex:cansetTargetIndex sceneFromTargetIndex:sceneFromTargetIndex];
+    TOFoModel *result = [TOFoModel newForRCansetFo:cansetFrom_p sceneFrom:sceneFrom_p
+                                              base:demand basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel
+                                    cansetCutIndex:cansetCutIndex cansetTargetIndex:cansetTargetIndex sceneFromTargetIndex:sceneFromTargetIndex];
     
     //12. 伪迁移;
     [TCTransfer transferXv:result];

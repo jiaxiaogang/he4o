@@ -118,7 +118,7 @@
         AIEffectStrong *effStrong = [TOUtils getEffectStrong:sceneFo effectIndex:sceneFo.count solutionFo:bestResult.cansetFo];
         NSString *effDesc = effStrong ? effStrong.description : @"";
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:bestResult.cansetFo];
-        NSLog(@"flt2 > newS 第%ld例: eff:%@ sp:%@ %@ scene:F%ld canset:F%ld (前%.2f 中%.2f 后%.2f)",demand.actionFoModels.count,effDesc,CLEANSTR(cansetFo.spDic),SceneType2Str(bestResult.baseSceneModel.type),sceneFo.pId,cansetFo.pId,bestResult.frontMatchValue,bestResult.midStableScore,bestResult.backMatchValue);
+        NSLog(@"flt2 > newS 第%ld例: eff:%@ sp:%@ %@ scene:F%ld canset:F%ld",demand.actionFoModels.count,effDesc,CLEANSTR(cansetFo.spDic),SceneType2Str(bestResult.baseSceneModel.type),sceneFo.pId,cansetFo.pId);
         
         //a) 有效率
         [TCEffect rEffect:bestResult];
@@ -275,7 +275,7 @@
         AIEffectStrong *effStrong = [TOUtils getEffectStrong:sceneFo effectIndex:sceneFo.count solutionFo:bestResult.cansetFo];
         NSString *effDesc = effStrong ? effStrong.description : @"";
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:bestResult.cansetFo];
-        NSLog(@"> newH 第%ld例: eff:%@ sp:%@ %@ scene:F%ld canset:F%ld (cutIndex:%ld=>targetIndex:%ld) (前%.2f 中%.2f 后%.2f)",hDemand.actionFoModels.count,effDesc,CLEANSTR(cansetFo.spDic),SceneType2Str(bestResult.baseSceneModel.type),sceneFo.pId,cansetFo.pId,bestResult.cansetCutIndex,bestResult.cansetTargetIndex,bestResult.frontMatchValue,bestResult.midStableScore,bestResult.backMatchValue);
+        NSLog(@"> newH 第%ld例: eff:%@ sp:%@ %@ scene:F%ld canset:F%ld (cutIndex:%ld=>targetIndex:%ld)",hDemand.actionFoModels.count,effDesc,CLEANSTR(cansetFo.spDic),SceneType2Str(bestResult.baseSceneModel.type),sceneFo.pId,cansetFo.pId,bestResult.cansetCutIndex,bestResult.cansetTargetIndex);
         
         //a) 有效率
         [TCEffect hEffect:bestResult];

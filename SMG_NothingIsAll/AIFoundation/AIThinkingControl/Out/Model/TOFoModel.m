@@ -17,44 +17,6 @@
 
 @implementation TOFoModel
 
-/**
- *  MARK:--------------------New时还没迁移,所以new时所有参数都表示cansetFrom或sceneFrom而非to--------------------
- */
-+(TOFoModel*) newWithCansetFo:(AIKVPointer*)cansetFo sceneFo:(AIKVPointer*)sceneFo base:(TOModelBase<ITryActionFoDelegate>*)base
-           protoFrontIndexDic:(NSDictionary *)protoFrontIndexDic matchFrontIndexDic:(NSDictionary *)matchFrontIndexDic
-              frontMatchValue:(CGFloat)frontMatchValue frontStrongValue:(CGFloat)frontStrongValue
-               midEffectScore:(CGFloat)midEffectScore midStableScore:(CGFloat)midStableScore
-                 backIndexDic:(NSDictionary*)backIndexDic backMatchValue:(CGFloat)backMatchValue backStrongValue:(CGFloat)backStrongValue
-               cansetCutIndex:(NSInteger)cansetCutIndex sceneCutIndex:(NSInteger)sceneCutIndex
-            cansetTargetIndex:(NSInteger)cansetTargetIndex sceneTargetIndex:(NSInteger)sceneTargetIndex
-       basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel {
-    TOFoModel *model = [[TOFoModel alloc] init];
-    
-    //1. 原CansetModel相关赋值;
-    model.cansetFo = cansetFo;
-    model.sceneFo = sceneFo;
-    model.basePFoOrTargetFoModel = basePFoOrTargetFoModel;
-    model.baseSceneModel = baseSceneModel;
-    model.protoFrontIndexDic = protoFrontIndexDic;
-    model.matchFrontIndexDic = matchFrontIndexDic;
-    model.frontMatchValue = frontMatchValue;
-    model.frontStrongValue = frontStrongValue;
-    model.midEffectScore = midEffectScore;
-    model.midStableScore = midStableScore;
-    model.backMatchValue = backMatchValue;
-    model.backStrongValue = backStrongValue;
-    model.cansetCutIndex = cansetCutIndex;
-    model.cansetTargetIndex = cansetTargetIndex;
-    model.sceneTargetIndex = sceneTargetIndex;
-    
-    //2. TOFoModel相关赋值;
-    model.content_p = cansetFo;
-    model.status = TOModelStatus_Runing;
-    if (base) [base.actionFoModels addObject:model];
-    model.baseOrGroup = base;
-    return model;
-}
-
 +(TOFoModel*) newForRCansetFo:(AIKVPointer*)cansetFrom_p sceneFrom:(AIKVPointer*)sceneFrom_p
                          base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel
                cansetCutIndex:(NSInteger)cansetCutIndex
@@ -74,6 +36,7 @@
     //2. TOFoModel相关赋值;
     model.content_p = cansetFrom_p;
     model.status = TOModelStatus_Runing;
+    if (base) [base.actionFoModels addObject:model];
     model.baseOrGroup = base;
     return model;
 }
@@ -96,6 +59,7 @@
     //2. TOFoModel相关赋值;
     model.content_p = canset;
     model.status = TOModelStatus_Runing;
+    if (base) [base.actionFoModels addObject:model];
     model.baseOrGroup = base;
     return model;
 }

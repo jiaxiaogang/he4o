@@ -263,7 +263,7 @@
 /**
  *  MARK:--------------------根据indexDic更新refPort强度值 (参考28103-3)--------------------
  */
-+(void) updateAlgRefStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p;
++(void) updateAlgRefStrongByIndexArr:(NSArray*)indexArr fo:(AIKVPointer*)fo_p;
 
 /**
  *  MARK:--------------------类比出absFo时,此处取得具象fo与absFo的indexDic映射--------------------
