@@ -846,7 +846,7 @@
     
     //2. 筛选
     for (id item in arr) {
-        if (checkValid && checkValid(item)) {
+        if (item && checkValid && checkValid(item)) {
             [result addObject:item];
             if (result.count >= limit) break;
         }
