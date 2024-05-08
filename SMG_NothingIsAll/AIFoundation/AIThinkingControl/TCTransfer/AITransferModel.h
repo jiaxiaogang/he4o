@@ -14,9 +14,9 @@
  */
 @interface AITransferModel : NSObject <NSCoding>
 
-+(AITransferModel*) newWithScene:(AIKVPointer*)scene canset:(AIKVPointer*)canset;
++(AITransferModel*) newWithCansetTo:(AIKVPointer*)canset;
 
-@property (strong, nonatomic) AIKVPointer *scene;
+//@property (strong, nonatomic) AIKVPointer *scene;
 @property (strong, nonatomic) AIKVPointer *canset;
 
 @end

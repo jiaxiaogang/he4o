@@ -248,7 +248,7 @@
         [TCTransfer transferSi:result];
 
         //16. 更新前中后段con和abs的抽具象强度 (参考28086-todo2 & 28092-todo4);
-        [AINetUtils updateConAndAbsStrongByIndexDic:result.transferXvModel.sceneToCansetToIndexDic matchFo:result.transferSiModel.scene cansetFo:result.transferSiModel.canset];
+        [AINetUtils updateConAndAbsStrongByIndexDic:result.transferXvModel.sceneToCansetToIndexDic matchFo:result.sceneTo cansetFo:result.transferSiModel.canset];
 
         //17. 更新其前段alg引用value的强度;
         NSArray *frontCansetToIndexArr = [SMGUtils filterArr:result.transferXvModel.sceneToCansetToIndexDic.allValues checkValid:^BOOL(NSNumber *item) {

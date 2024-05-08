@@ -10,9 +10,8 @@
 
 @implementation AITransferModel
 
-+(AITransferModel*) newWithScene:(AIKVPointer*)scene canset:(AIKVPointer*)canset {
++(AITransferModel*) newWithCansetTo:(AIKVPointer*)canset {
     AITransferModel *result = [[AITransferModel alloc] init];
-    result.scene = scene;
     result.canset = canset;
     return result;
 }
@@ -23,14 +22,12 @@
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super init];
     if (self) {
-        self.scene = [aDecoder decodeObjectForKey:@"scene"];
         self.canset = [aDecoder decodeObjectForKey:@"canset"];
     }
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
-    [aCoder encodeObject:self.scene forKey:@"scene"];
     [aCoder encodeObject:self.canset forKey:@"canset"];
 }
 

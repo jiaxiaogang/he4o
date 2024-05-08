@@ -466,7 +466,7 @@
             if (orders.count > 1) {
                 //13. 数据准备 (当前sceneTo就是targetFoModel.cansetTo);
                 AIFoNodeBase *cansetTo = [SMGUtils searchNode:self.transferSiModel.canset];
-                AIFoNodeBase *sceneTo = [SMGUtils searchNode:self.transferSiModel.scene];
+                AIFoNodeBase *sceneTo = [SMGUtils searchNode:self.sceneTo];
                 AIFoNodeBase *newHCanset = [theNet createConFo:orders];
                 
                 //14. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
@@ -517,6 +517,7 @@
 
 /**
  *  MARK:--------------------取此方案迁移目标--------------------
+ *  @desc 无论是否转实,都可以取得sceneTo;
  */
 -(AIKVPointer*) sceneTo {
     if (self.isH) {
