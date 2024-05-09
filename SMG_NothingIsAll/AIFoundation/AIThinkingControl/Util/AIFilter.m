@@ -59,31 +59,32 @@
  *  @version
  *      2023.09.04: 加上hStrong做二级排序因子 (参考30125-方案);
  *      2023.12.26: 优化sort性能,把getEffectStrong()提出来提前取好 (参考31025-代码段-问题1) //共三处优化,此乃其一;
+ *      2024.05.08: 废弃,因宽入窄出原则,改为100%激活 (参考31175-TODO3);
  */
-+(NSArray*) solutionRCansetFilter:(AIFoNodeBase*)sceneFo targetIndex:(NSInteger)targetIndex {
-    NSArray *protoConCansets = [sceneFo getConCansets:targetIndex];
-    
-    //1. canset数组转成mapModel (提前把strong都取出来,避免后面在排序时访问太多次而卡性能);
-    NSArray *mapArr = [SMGUtils convertArr:protoConCansets convertBlock:^id(AIKVPointer *canset) {
-        AIEffectStrong *strong = [TOUtils getEffectStrong:sceneFo effectIndex:targetIndex solutionFo:canset];
-        return [MapModel newWithV1:canset v2:strong];
-    }];
-    
-    //2. 对mapModelArr排序;
-    NSArray *sorts = [SMGUtils sortBig2Small:mapArr compareBlock1:^double(MapModel *mapModel) {
-        return [TOUtils getEffectScore:mapModel.v2];
-    } compareBlock2:^double(MapModel *mapModel) {
-        AIEffectStrong *strong = mapModel.v2;
-        return strong.hStrong;
-    }];
-    
-    //3. sort再转回canset数组;
-    sorts = [SMGUtils convertArr:sorts convertBlock:^id(MapModel *obj) {
-        return obj.v1;
-    }];
-    NSInteger limit = MAX(3, protoConCansets.count * 0.2f);//取20% & 至少尝试取3条;
-    return ARR_SUB(sorts, 0, limit);
-}
+//+(NSArray*) solutionRCansetFilter:(AIFoNodeBase*)sceneFo targetIndex:(NSInteger)targetIndex {
+//    NSArray *protoConCansets = [sceneFo getConCansets:targetIndex];
+//
+//    //1. canset数组转成mapModel (提前把strong都取出来,避免后面在排序时访问太多次而卡性能);
+//    NSArray *mapArr = [SMGUtils convertArr:protoConCansets convertBlock:^id(AIKVPointer *canset) {
+//        AIEffectStrong *strong = [TOUtils getEffectStrong:sceneFo effectIndex:targetIndex solutionFo:canset];
+//        return [MapModel newWithV1:canset v2:strong];
+//    }];
+//
+//    //2. 对mapModelArr排序;
+//    NSArray *sorts = [SMGUtils sortBig2Small:mapArr compareBlock1:^double(MapModel *mapModel) {
+//        return [TOUtils getEffectScore:mapModel.v2];
+//    } compareBlock2:^double(MapModel *mapModel) {
+//        AIEffectStrong *strong = mapModel.v2;
+//        return strong.hStrong;
+//    }];
+//
+//    //3. sort再转回canset数组;
+//    sorts = [SMGUtils convertArr:sorts convertBlock:^id(MapModel *obj) {
+//        return obj.v1;
+//    }];
+//    NSInteger limit = MAX(3, protoConCansets.count * 0.2f);//取20% & 至少尝试取3条;
+//    return ARR_SUB(sorts, 0, limit);
+//}
 
 /**
  *  MARK:--------------------识别二次过滤器--------------------

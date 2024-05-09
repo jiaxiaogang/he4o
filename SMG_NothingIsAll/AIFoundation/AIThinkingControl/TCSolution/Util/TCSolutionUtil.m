@@ -149,7 +149,8 @@
         AIFoNodeBase *sceneTo = [SMGUtils searchNode:sceneModel.getIScene];
         
         //2024.05.08: 废弃按"有效和强度"过滤,因为新解往往排最后,这会导致它们永远没机会,这违背了宽入原则 (参考31174-问题2-方案1 & 31175-TODO3);
-        NSArray *cansetFroms1 = [sceneFrom getConCansets:sceneFrom.count];//[AIFilter solutionRCansetFilter:sceneFrom targetIndex:sceneFrom.count];
+        NSArray *cansetFroms1 = [sceneFrom getConCansets:sceneFrom.count];//全激活 (调用rSolution平均耗时700ms)
+        //NSArray *cansetFroms1 = [AIFilter solutionRCansetFilter:sceneFrom targetIndex:sceneFrom.count];//只激活前20% (调用rSolution平均耗时600ms)
         
         //5. Override过滤器: 防重已经迁移过的 (override用来过滤避免重复迁移) (参考29069-todo5.2);
         NSArray *alreadyTransfered_Cansets = [sceneTo getTransferedCansetFroms:sceneFrom.p];
