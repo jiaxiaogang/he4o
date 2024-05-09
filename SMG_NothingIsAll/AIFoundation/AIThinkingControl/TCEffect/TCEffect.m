@@ -43,22 +43,18 @@
             rDemand.status = TOModelStatus_Finish;
         }
         
-        //4. 取出所有需要eff更新的cansets;
         //2024.05.08: 整理代码,此处其实就是给rSolution的sceneTo和cansetTo更新eff值;
-        if (rSolution.transferSiModel) {
-            //5. 更新effectDic;
-            //[solutionFo updateSPStrong:solutionFo.count type:tp];
-            AIFoNodeBase *baseScene = [SMGUtils searchNode:rSolution.sceneTo];
-            AIFoNodeBase *cansetTo = [SMGUtils searchNode:rSolution.transferSiModel.canset];
-            AIEffectStrong *strong = [baseScene updateEffectStrong:baseScene.count solutionFo:cansetTo.p status:es];
-            IFTitleLog(@"rEffect", @"\n%p Scene:%@ (有效性:%@ 任务状态:%@)\nEff更新Scene:F%ld S:%@ (index:%ld H%ldN%ld)",rDemand,Fo2FStr(baseScene),EffectStatus2Str(es),TOStatus2Str(rDemand.status),baseScene.pId,Fo2FStr(cansetTo),baseScene.count,strong.hStrong,strong.nStrong);
-            
-            //6. 对抽象也更新eff (此处canset.count应该和rSolution.targetIndex是一样的) (参考29069-todo11.5);
-            [TCRethinkUtil spEff4Abs:cansetTo curFoIndex:cansetTo.count itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {
-                AIEffectStrong *strong = [baseScene updateEffectStrong:baseScene.count solutionFo:absFo.pointer status:es];
-                NSLog(@"\tEff更新scene:F%ld absS:%@ (index:%ld H%ldN%ld)",baseScene.pId,Fo2FStr(absFo),baseScene.count,strong.hStrong,strong.nStrong);
-            }];
-        }
+        //5. 更新effectDic;
+        AIFoNodeBase *baseScene = [SMGUtils searchNode:rSolution.sceneTo];
+        AIFoNodeBase *cansetTo = [SMGUtils searchNode:rSolution.transferSiModel.canset];
+        AIEffectStrong *strong = [baseScene updateEffectStrong:baseScene.count solutionFo:cansetTo.p status:es];
+        IFTitleLog(@"rEffect", @"\n%p Scene:%@ (有效性:%@ 任务状态:%@)\nEff更新Scene:F%ld S:%@ (index:%ld H%ldN%ld)",rDemand,Fo2FStr(baseScene),EffectStatus2Str(es),TOStatus2Str(rDemand.status),baseScene.pId,Fo2FStr(cansetTo),baseScene.count,strong.hStrong,strong.nStrong);
+        
+        //6. 对抽象也更新eff (此处canset.count应该和rSolution.targetIndex是一样的) (参考29069-todo11.5);
+        [TCRethinkUtil spEff4Abs:cansetTo curFoIndex:cansetTo.count itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {
+            AIEffectStrong *strong = [baseScene updateEffectStrong:baseScene.count solutionFo:absFo.pointer status:es];
+            NSLog(@"\tEff更新scene:F%ld absS:%@ (index:%ld H%ldN%ld)",baseScene.pId,Fo2FStr(absFo),baseScene.count,strong.hStrong,strong.nStrong);
+        }];
     }];
     DebugE();
 }
@@ -96,7 +92,7 @@
         //if (tp == ATSub) hSolution.status = TOModelStatus_ActNo;
         
         //6. 取出所有需要eff更新的cansets;
-        AIKVPointer *canset_p = hSolution.content_p;
+        AIKVPointer *canset_p = hSolution.transferSiModel.canset;
         
         //7. 更新effectDic;
         [targetFoNode updateEffectStrong:targetFoActIndex solutionFo:canset_p status:es];

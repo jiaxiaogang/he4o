@@ -286,21 +286,6 @@
 }
 
 /**
- *  MARK:--------------------返回需用于反省或有效统计的cansets (参考29069-todo11 && todo11.2)--------------------
- *  @result notnull
- */
--(NSArray*) getRethinkEffectCansets {
-    NSMutableArray *result = [[NSMutableArray alloc] init];
-    
-    //1. father和i两级canset有值时,收集 (参考29069-todo11.2);
-    if (self.transferSiModel) [result addObject:self.transferSiModel];
-    
-    //2. 三级canset都无值时,默认返回content_p;
-    if (!ARRISOK(result)) [result addObject:[AITransferModel newWithScene:self.sceneFo canset:self.cansetFo]];
-    return result;
-}
-
-/**
  *  MARK:--------------------下帧初始化 (可接受反馈) (参考31073-TODO2g)--------------------
  *  @desc 上帧推进完成时调用: 1.更新cutIndex++ 2.挂载下帧TOAlgModel
  *  @version
