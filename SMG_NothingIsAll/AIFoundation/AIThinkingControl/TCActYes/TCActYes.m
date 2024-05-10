@@ -292,6 +292,11 @@
             if (solutionModel.status == TOModelStatus_ActYes) {
                 solutionModel.status = TOModelStatus_ActNo;
                 demand.status = TOModelStatus_Runing;
+                
+                //TODOTOMORROW20240410: 这里看指向mv反馈失败,把demand.actionFoModels传染一下 (参考31176-方案);
+                //所有到了末帧在等待mv反馈的 & 且为同区mv => 都可被传染;
+                
+                
                 [TCScore scoreFromIfTCNeed];
             }
         }
@@ -312,6 +317,7 @@
                 NSLog(@"在ReasonOutRethink反省后 solution:F%ld 因超时无效而set actYes to actNo-------->",solutionModel.content_p.pointerId);
                 
                 //TODOTOMORROW20240410: 这里看frameAlgModel反馈失败,把demand.actionFoModels传染一下 (参考31176-方案);
+                //所有下一帧(actIndex帧) & 有mIsC结构的(或干脆是同一个alg的) => 都可被传染;
                 
                 
                 //6. 2021.12.02: 失败时,继续决策;
