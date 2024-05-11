@@ -289,13 +289,13 @@
             [TCRethink perceptOutRethink:solutionModel type:type];
             NSLog(@"---//行为化帧触发感性反省:%p F%ld 状态:%@",solutionModel,solutionFo.pointer.pointerId,TOStatus2Str(solutionModel.status));
             
-            //e. 如果无反馈,则设为失败,并继续决策;
-            if (solutionModel.status == TOModelStatus_ActYes) {
+            //e. 如果有反馈,则设为失败,并停止决策;
+            if (solutionModel.status == TOModelStatus_OuterBack) {
                 solutionModel.status = TOModelStatus_ActNo;
-                demand.status = TOModelStatus_Runing;
+                demand.status = TOModelStatus_ActNo;
                 
-                //f. 这里看指向mv反馈失败,把demand.actionFoModels传染一下 (参考31176-方案 & 31176-TODO2A);
-                //说明: 所有到了末帧在等待mv反馈的 => 都可被传染;
+                //f. 这里看指向mv有反馈则失败,把demand.actionFoModels传染一下 (参考31176-方案 & 31176-TODO2A);
+                //说明: 所有到了末帧在等待mv反馈的 => 都可被传染 (其实整个任务都已经失败了,这里传染也没用);
                 NSArray *actionFoModels = [demand.actionFoModels copy];
                 for (TOFoModel *item in actionFoModels) {
                     BOOL itemWaitingMv = item.cansetActIndex >= item.transferXvModel.cansetToOrders.count;
@@ -315,6 +315,7 @@
             AnalogyType type = (frameModel.status == TOModelStatus_ActYes) ? ATSub : ATPlus;
             [TCRethink reasonOutRethink:solutionModel actionIndex:solutionModel.cansetActIndex type:type];
             NSLog(@"---//行为化帧触发理性反省:%p A%ld 状态:%@",frameModel,frameModel.content_p.pointerId,TOStatus2Str(frameModel.status));
+            NSLog(@"flt8: %@ %d %@",CansetStatus2Str(solutionModel.cansetStatus),actYes4Mv,ATType2Str(type));
             
             //5. 失败时_继续决策 (成功时,由feedback的IN流程继续);
             if (frameModel.status == TOModelStatus_ActYes) {
