@@ -248,13 +248,14 @@
  *      2022.06.01: actYes仅标记自己及所在的demand,不标记root (参考26185-TODO1);
  *      2023.01.01: 修复solutionFo的mvDeltaTime总是0的问题 (参考28013);
  *      2023.03.04: 修复反省未保留以往帧actionIndex,导致反省时错误的BUG (参考28144-todo);
+ *      2024.04.11: 支持Canset池帧反馈失败时的传染机制 (参考31176);
  */
 +(void) frameActYes:(TOFoModel*)solutionModel{
     [theTC updateOperCount:kFILENAME];
     Debug();
     //0. 数据准备 (从上到下,取demand,solutionFo,frameAlg);
     DemandModel *demand = (DemandModel*)solutionModel.baseOrGroup;
-    AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.content_p];
+    AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.transferSiModel.canset];
     TOAlgModel *frameModel = [solutionModel getCurFrame];
     
     //1. 设为actYes
@@ -293,9 +294,16 @@
                 solutionModel.status = TOModelStatus_ActNo;
                 demand.status = TOModelStatus_Runing;
                 
-                //TODOTOMORROW20240410: 这里看指向mv反馈失败,把demand.actionFoModels传染一下 (参考31176-方案);
-                //所有到了末帧在等待mv反馈的 & 且为同区mv => 都可被传染;
-                
+                //f. 这里看指向mv反馈失败,把demand.actionFoModels传染一下 (参考31176-方案 & 31176-TODO2A);
+                //说明: 所有到了末帧在等待mv反馈的 => 都可被传染;
+                NSArray *actionFoModels = [demand.actionFoModels copy];
+                for (TOFoModel *item in actionFoModels) {
+                    BOOL itemWaitingMv = item.cansetActIndex >= item.transferXvModel.cansetToOrders.count;
+                    if (itemWaitingMv) {
+                        item.status = TOModelStatus_ActNo;
+                        item.cansetStatus = CS_Infected;
+                    }
+                }
                 
                 [TCScore scoreFromIfTCNeed];
             }
@@ -316,9 +324,34 @@
                 demand.status = TOModelStatus_Runing;
                 NSLog(@"在ReasonOutRethink反省后 solution:F%ld 因超时无效而set actYes to actNo-------->",solutionModel.content_p.pointerId);
                 
-                //TODOTOMORROW20240410: 这里看frameAlgModel反馈失败,把demand.actionFoModels传染一下 (参考31176-方案);
-                //所有下一帧(actIndex帧) & 有mIsC结构的(或干脆是同一个alg的) => 都可被传染;
-                
+                //6. 这里看frameAlgModel反馈失败,把demand.actionFoModels传染一下 (参考31176-方案 & 31176-TODO2B);
+                //说明: 所有下一帧(actIndex帧) => 能否传染判断方法有两种,如下:
+                NSArray *actionFoModels = [demand.actionFoModels copy];
+                for (TOFoModel *item in actionFoModels) {
+                    TOAlgModel *itemFrameAlg = [solutionModel getCurFrame];
+                    if (!itemFrameAlg) continue;
+                    
+                    //方法1. 本来就是一个alg (参考TODO2B-方法1);
+                    if ([itemFrameAlg.content_p isEqual:frameModel.content_p]) {
+                        itemFrameAlg.status = TOModelStatus_ActNo;
+                        item.status = TOModelStatus_ActNo;
+                        item.cansetStatus = CS_Infected;
+                        continue;
+                    }
+                    
+                    //方法2. 有indexDic映射 (参考TODO2B-方法2);
+                    NSDictionary *actingDic = solutionModel.transferXvModel.sceneToCansetToIndexDic;
+                    NSDictionary *itemDic = item.transferXvModel.sceneToCansetToIndexDic;
+                    //a. 根据对应的sceneTo的映射,取到对应item的映射;
+                    NSNumber *sceneToIndex = ARR_INDEX([actingDic allKeysForObject:@(solutionModel.cansetActIndex)], 0);
+                    NSNumber *itemIndex = [itemDic objectForKey:sceneToIndex];
+                    //b. 当有映射,且洽好在等待反馈,则传染;
+                    if (itemIndex && item.cansetActIndex == itemIndex.integerValue) {
+                        itemFrameAlg.status = TOModelStatus_ActNo;
+                        item.status = TOModelStatus_ActNo;
+                        item.cansetStatus = CS_Infected;
+                    }
+                }
                 
                 //6. 2021.12.02: 失败时,继续决策;
                 [TCScore scoreFromIfTCNeed];

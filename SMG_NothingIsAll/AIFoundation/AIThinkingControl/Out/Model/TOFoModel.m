@@ -318,6 +318,9 @@
  *  MARK:--------------------获取当前正在推进中的帧--------------------
  */
 -(TOAlgModel*) getCurFrame {
+    //1. 已行为化完成,即mv帧,则返回nil;
+    if (self.cansetActIndex >= self.transferXvModel.cansetToOrders.count) return nil;
+    
     //方法1. 从subModels中找出cutIndex对应的那一条返回 (cutIndex是已发生,推进中是+1);
     AIShortMatchModel_Simple *curCansetTo = ARR_INDEX(self.transferXvModel.cansetToOrders, self.cansetActIndex);
     return [SMGUtils filterSingleFromArr:self.subModels checkValid:^BOOL(TOAlgModel *item) {
