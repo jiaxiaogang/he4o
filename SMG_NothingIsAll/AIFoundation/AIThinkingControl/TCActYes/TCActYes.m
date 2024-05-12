@@ -281,6 +281,8 @@
         if (solutionModel.cansetStatus != CS_Besting) return;
         
         //4. 末尾为mv感性目标;
+        NSArray *actionFoModels = [demand.actionFoModels copy];
+        int newInfectedNum = 0;
         if (actYes4Mv) {
             //a. 如果状态已改成OutBack,说明有反馈(坏),否则未反馈(好) (参考feedbackTOP);
             AnalogyType type = (solutionModel.status == TOModelStatus_OuterBack) ? ATSub : ATPlus;
@@ -296,12 +298,13 @@
                 
                 //f. 这里看指向mv有反馈则失败,把demand.actionFoModels传染一下 (参考31176-方案 & 31176-TODO2A);
                 //说明: 所有到了末帧在等待mv反馈的 => 都可被传染 (其实整个任务都已经失败了,这里传染也没用);
-                NSArray *actionFoModels = [demand.actionFoModels copy];
                 for (TOFoModel *item in actionFoModels) {
+                    if (item.cansetStatus == CS_Infected) continue;
                     BOOL itemWaitingMv = item.cansetActIndex >= item.transferXvModel.cansetToOrders.count;
                     if (itemWaitingMv) {
                         item.status = TOModelStatus_ActNo;
                         item.cansetStatus = CS_Infected;
+                        newInfectedNum++;
                     }
                 }
                 
@@ -327,8 +330,8 @@
                 
                 //6. 这里看frameAlgModel反馈失败,把demand.actionFoModels传染一下 (参考31176-方案 & 31176-TODO2B);
                 //说明: 所有下一帧(actIndex帧) => 能否传染判断方法有两种,如下:
-                NSArray *actionFoModels = [demand.actionFoModels copy];
                 for (TOFoModel *item in actionFoModels) {
+                    if (item.cansetStatus == CS_Infected) continue;
                     TOAlgModel *itemFrameAlg = [solutionModel getCurFrame];
                     if (!itemFrameAlg) continue;
                     
@@ -337,6 +340,7 @@
                         itemFrameAlg.status = TOModelStatus_ActNo;
                         item.status = TOModelStatus_ActNo;
                         item.cansetStatus = CS_Infected;
+                        newInfectedNum++;
                         continue;
                     }
                     
@@ -351,6 +355,7 @@
                         itemFrameAlg.status = TOModelStatus_ActNo;
                         item.status = TOModelStatus_ActNo;
                         item.cansetStatus = CS_Infected;
+                        newInfectedNum++;
                     }
                 }
                 
@@ -358,6 +363,20 @@
                 [TCScore scoreFromIfTCNeed];
             }
         }
+        
+        //7. log
+        NSInteger totalInfectedNum = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
+            return item.cansetStatus == CS_Infected;
+        }].count;
+        if (newInfectedNum > 0) NSLog(@"%@帧传染: demand:%p + 新增传染数:%d = 总传染数:%ld (还剩:%ld)",actYes4Mv?@"末":@"中间",demand,newInfectedNum,totalInfectedNum,actionFoModels.count - totalInfectedNum);
+        
+        /*
+         //TODOTOMORROW20240512: 这里测日志,每次末帧传染后,整个任务也挂了,导致下次这个任务起来时,又挂,又启,又挂,一直在重复;
+         末帧传染: demand:0x600001a5cc60 + 新增传染数:166 = 总传染数:166 (还剩:140)
+         末帧传染: demand:0x600001a5def0 + 新增传染数:265 = 总传染数:265 (还剩:115)
+         末帧传染: demand:0x600001a4ed00 + 新增传染数:272 = 总传染数:272 (还剩:116)
+         末帧传染: demand:0x600001a51a70 + 新增传染数:272 = 总传染数:272 (还剩:116)
+         */
     }];
     DebugE();
 }

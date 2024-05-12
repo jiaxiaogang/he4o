@@ -131,7 +131,7 @@ typedef NS_ENUM(NSInteger, CansetStatus) {
     CS_None                 = 0,//CansetModels池子里
     CS_Besting              = 1,//正在行为化中
     CS_Bested               = 2,//行为化过
-    CS_Infected             = 3,//已感染 (因帧条件未满足被传染,在激活前就被提前淘汰掉)
+    CS_Infected             = 3,//已传染 (因帧条件未满足被传染,在激活前就被提前淘汰掉)
 };
 
 typedef NS_ENUM(NSInteger, EffectStatus) {
