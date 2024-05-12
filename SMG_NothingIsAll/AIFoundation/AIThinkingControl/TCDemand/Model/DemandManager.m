@@ -150,21 +150,22 @@
                 NSInteger oldIndex = [self.loopCache indexOfObject:oldRRoot];
                 
                 //7. 判断新旧Root有交集 (参考31024-todo1);
-                NSArray *newPMatchFos = [SMGUtils convertArr:pFosValue convertBlock:^id(AIMatchFoModel *obj) {
-                    return obj.matchFo;
-                }];
-                NSArray *oldPMatchFos = [SMGUtils convertArr:oldRRoot.pFos convertBlock:^id(AIMatchFoModel *obj) {
-                    return obj.matchFo;
-                }];
-                if (ARRISOK([SMGUtils filterArrA:newPMatchFos arrB:oldPMatchFos])) {
-                    NSLog(@"发现同质Root: 旧位置:%ld/%ld 旧枝叶数:%ld pFos数:(旧%ld + 新%ld = %ld)",oldIndex+1,self.loopCache.count,[TOUtils getSubOutModels_AllDeep:oldRRoot validStatus:nil].count,oldRRoot.pFos.count,pFosValue.count,oldRRoot.pFos.count + pFosValue.count);
+                //2024.05.13: 取出新的,只占一部分,则说明有旧的交集 (简化下算法);
+                //NSArray *samePFos = [SMGUtils filterArr:pFosValue arrB:oldRRoot.pFos convertBlock:^id(AIMatchFoModel *item) {return item.matchFo;}];
+                NSArray *newPFosValue = [SMGUtils removeArr:oldRRoot.pFos parentArr:pFosValue convertBlock:^id(AIMatchFoModel *item) { return item.matchFo; }];
+                if (newPFosValue.count < pFosValue.count) {
+                    NSLog(@"发现同质Root: (交集数:%ld) 旧位置:%ld/%ld 旧枝叶数:%ld pFos数:(旧%ld + 新%ld = %ld)",pFosValue.count - newPFosValue.count,oldIndex+1,self.loopCache.count,[TOUtils getSubOutModels_AllDeep:oldRRoot validStatus:nil].count,oldRRoot.pFos.count,newPFosValue.count,oldRRoot.pFos.count + newPFosValue.count);
                     
                     //8. 新旧pFos全保留 (参考31024-todo1);
-                    [pFosValue addObjectsFromArray:oldRRoot.pFos];
+                    pFosValue = [SMGUtils collectArrA:oldRRoot.pFos arrB:newPFosValue];
                     
                     //9. 删掉旧的root (参考31024-todo2);
                     [self.loopCache removeObject:oldRRoot];
                     break;
+                    
+                    //TODOTOMORROW20240513: 旧的pFos就不重复取canset池了,把新加入的pFo追加它们的候选集到canset池中即可;
+                    
+                    
                 }
             }
             

@@ -208,6 +208,9 @@
 +(NSMutableArray*) removeSub_p:(AIPointer*)sub_p parent_ps:(NSArray*)parent_ps;
 +(NSMutableArray*) removeArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid;
 
+//取差集,因为model类型无法判断equal,所以用convertBlock来返回能判断equal的类型 (比如point,long等);
++(NSMutableArray*) removeArr:(NSArray *)removeArr parentArr:(NSArray*)parentArr convertBlock:(id(^)(id item))convertBlock;
+
 /**
  *  MARK:--------------------防重--------------------
  *  _param convertBlock : 用于转换"判断防重的数据类型";
@@ -250,6 +253,9 @@
 +(NSArray*) filterArrA:(NSArray*)arrA arrB:(NSArray*)arrB;
 +(NSMutableArray*) filterArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid;
 +(NSMutableArray*) filterArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid limit:(NSInteger)limit;
+
+//取交集: 因为obj不能全判断equal,所以加上convertBlock方法,使之能转成判断equal的对象,来实现取交集;
++(NSMutableArray*) filterArr:(NSArray *)arrA arrB:(NSArray*)arrB convertBlock:(id(^)(id item))convertBlock;
 
 /**
  *  MARK:--------------------筛选字典--------------------

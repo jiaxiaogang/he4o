@@ -742,6 +742,14 @@
     return result;
 }
 
++(NSMutableArray*) removeArr:(NSArray *)removeArr parentArr:(NSArray*)parentArr convertBlock:(id(^)(id item))convertBlock {
+    NSArray *convertedRemoveArr = [SMGUtils convertArr:removeArr convertBlock:convertBlock];
+    return [SMGUtils filterArr:parentArr checkValid:^BOOL(id item) {
+        id convertedParentItem = convertBlock(item);
+        return ![convertedRemoveArr containsObject:convertedParentItem];
+    }];
+}
+
 /**
  *  MARK:--------------------防重--------------------
  *  _param convertBlock : 用于转换"判断防重的数据类型";
@@ -852,6 +860,16 @@
         }
     }
     return result;
+}
+
++(NSMutableArray*) filterArr:(NSArray *)arrA arrB:(NSArray*)arrB convertBlock:(id(^)(id item))convertBlock {
+    NSArray *convertedArrB = [SMGUtils convertArr:arrB convertBlock:^id(id obj) {
+        return convertBlock(obj);
+    }];
+    return [SMGUtils filterArr:arrA checkValid:^BOOL(id item) {
+        id convertedItemA = convertBlock(item);
+        return [convertedArrB containsObject:convertedItemA];
+    }];
 }
 
 +(NSMutableDictionary*) filterDic:(NSDictionary *)dic checkValid:(BOOL(^)(id key,id value))checkValid {
