@@ -58,12 +58,13 @@
     AIFoNodeBase *sceneFrom = [SMGUtils searchNode:sceneFrom_p];
     AIFoNodeBase *cansetFrom = [SMGUtils searchNode:cansetFrom_p];
     NSInteger sceneFromTargetIndex = sceneFrom.count;
+    NSInteger sceneCutIndex = sceneModel.cutIndex;
     
     //2. 根据sceneFo取得与canset的indexDic映射;
     NSDictionary *cansetFromSceneFromIndexDic = [sceneFrom getConIndexDic:cansetFrom_p];
     
     //3. 计算出canset的cutIndex做为中段截点 (canset的cutIndex,也已在proto中发生) (参考26128-1-1);
-    NSInteger cansetCutIndex = NUMTOOK([cansetFromSceneFromIndexDic objectForKey:@(sceneModel.cutIndex)]).integerValue;
+    NSInteger cansetCutIndex = [TOUtils goBackToFindConIndexByAbsIndex:cansetFromSceneFromIndexDic absIndex:sceneCutIndex];
     
     //5. 过滤器:
     //过滤1: 过滤掉长度不够的 (因为前段全含至少要1位,中段修正也至少要0位,后段H目标要1位R要0位);
@@ -84,9 +85,9 @@
     //2. 如果可以这么改,那么取候选集的前20%,也可以直接去掉,毕竟宽入窄出的原则,如果性能允许,还是别一刀切只留20%;
     
     //6. 生成result (其中cansetTargetIndex: R时全推进完);
-    TOFoModel *result = [TOFoModel newForRCansetFo:cansetFrom_p sceneFrom:sceneFrom_p
-                                              base:demand basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel
-                                    cansetCutIndex:cansetCutIndex cansetTargetIndex:cansetFrom.count sceneFromTargetIndex:sceneFromTargetIndex];
+    TOFoModel *result = [TOFoModel newForRCansetFo:cansetFrom_p sceneFrom:sceneFrom_p base:demand basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel
+                                    sceneCutIndex:sceneCutIndex cansetCutIndex:cansetCutIndex
+                                 cansetTargetIndex:cansetFrom.count sceneFromTargetIndex:sceneFromTargetIndex];
     
     //12. 伪迁移;
     [TCTransfer transferXv:result];

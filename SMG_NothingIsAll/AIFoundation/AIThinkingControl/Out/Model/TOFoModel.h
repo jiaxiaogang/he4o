@@ -29,9 +29,8 @@
 
 +(TOFoModel*) newForRCansetFo:(AIKVPointer*)cansetFrom_p sceneFrom:(AIKVPointer*)sceneFrom_p
                          base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel
-               cansetCutIndex:(NSInteger)cansetCutIndex
-            cansetTargetIndex:(NSInteger)cansetTargetIndex
-         sceneFromTargetIndex:(NSInteger)sceneFromTargetIndex;
+                sceneCutIndex:(NSInteger)sceneCutIndex cansetCutIndex:(NSInteger)cansetCutIndex
+            cansetTargetIndex:(NSInteger)cansetTargetIndex sceneFromTargetIndex:(NSInteger)sceneFromTargetIndex;
 
 +(TOFoModel*) newForHCansetFo:(AIKVPointer*)canset sceneFo:(AIKVPointer*)scene base:(TOModelBase<ITryActionFoDelegate>*)base
                cansetCutIndex:(NSInteger)cutIndex sceneCutIndex:(NSInteger)sceneCutIndex
