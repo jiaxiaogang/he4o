@@ -80,9 +80,10 @@
     //过滤4: 过滤掉canset没后段的 (没可行为化的东西) (参考28052-4);
     //if (cansetFo.count <= cansetCutIndex + 1) return nil;
     
-    //TODOTOMORROW20240502: 把cansetFo打出来,看为什么这里通不过 (查下前段不满足,打出来canset看为什么不满足);
-    //1. 先测下,前中后段,能不能直接改为由indexDic来判断,而不是现判断,性能天差地别;
-    //2. 如果可以这么改,那么取候选集的前20%,也可以直接去掉,毕竟宽入窄出的原则,如果性能允许,还是别一刀切只留20%;
+    //5. 继用: 在工作记忆中防重 (参考31177-方案);
+    TOFoModel *findOldCanset = [self findCansetFromRoots:basePFoOrTargetFoModel];
+    
+    
     
     //6. 生成result (其中cansetTargetIndex: R时全推进完);
     TOFoModel *result = [TOFoModel newForRCansetFo:cansetFrom_p sceneFrom:sceneFrom_p base:demand basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel
@@ -207,6 +208,25 @@
     //6. 全找到,则成功;
     if (Log4SceneIsOk) NSLog(@"\t前段条件满足通过:%@ (cansetCutIndex:%ld fromProtoFo:%ld)",Fo2FStr(cansetFo),cansetCutIndex,protoFo.pointer.pointerId);
     return result;
+}
+
+/**
+ *  MARK:--------------------从工作记忆中找可继用的canset (参考31177-方案)--------------------
+ */
++(TOFoModel*) findCansetFromRoots:(id)basePFoOrTargetFoModel {
+    //1. 取出所有工作记忆中的解;
+    NSArray *allOldCansets = [TOUtils getSubCansets_AllDeep_AllRoots];
+    NSArray *baseCansets = [TOUtils getBaseOutModels_AllDeep:basePFoOrTargetFoModel];
+    
+    //2. 排除掉自己的base一枝 (参考31177-TODO3);
+    allOldCansets = [SMGUtils removeArr:baseCansets parentArr:allOldCansets];
+    
+    //3. 从allCansets中找可继用的解 (参考31177-TODO1);
+    TOFoModel *findOldCanset = [SMGUtils filterSingleFromArr:allOldCansets checkValid:^BOOL(TOFoModel *item) {
+        //TODOTOMORROW20240514: 继续写找防重;
+        return nil;//item.sceneFo == ....
+    }];
+    return findOldCanset;
 }
 
 @end

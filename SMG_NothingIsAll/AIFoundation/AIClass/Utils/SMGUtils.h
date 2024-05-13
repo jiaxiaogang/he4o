@@ -209,6 +209,7 @@
 +(NSMutableArray*) removeArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid;
 
 //取差集,因为model类型无法判断equal,所以用convertBlock来返回能判断equal的类型 (比如point,long等);
++(NSMutableArray*) removeArr:(NSArray *)removeArr parentArr:(NSArray*)parentArr;
 +(NSMutableArray*) removeArr:(NSArray *)removeArr parentArr:(NSArray*)parentArr convertBlock:(id(^)(id item))convertBlock;
 
 /**

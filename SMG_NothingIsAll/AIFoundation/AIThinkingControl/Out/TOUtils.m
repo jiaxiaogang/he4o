@@ -235,6 +235,13 @@
 +(NSArray*) getSubOutModels_AllDeep:(TOModelBase*)outModel validStatus:(NSArray*)validStatus{
     return [self getSubOutModels_AllDeep:outModel validStatus:validStatus cutStopStatus:@[@(TOModelStatus_Finish)]];
 }
+
+/**
+ *  MARK:--------------------收集base所有的子枝叶返回--------------------
+ *  @param validStatus 这些状态才收集 (如果传空,则所有状态都可以收集);
+ *  @param cutStopStatus 这些状态时停止向下收集 (如果传空,则全不停止);
+ *  @return notnull
+ */
 +(NSArray*) getSubOutModels_AllDeep:(TOModelBase*)outModel validStatus:(NSArray*)validStatus cutStopStatus:(NSArray*)cutStopStatus{
     //1. 数据准备
     validStatus = ARRTOOK(validStatus);
@@ -300,6 +307,29 @@
         checkModel = checkModel.baseOrGroup;
     }
     return result;
+}
+
+//MARK:===============================================================
+//MARK:                 < 从整个工作记忆中取枝叶数据 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------取整个工作记中所有的subModels--------------------
+ */
++(NSArray*) getSubOutModels_AllDeep_AllRoots {
+    NSArray *roots = [theTC.outModelManager.getAllDemand copy];
+    return [SMGUtils convertArr:roots convertItemArrBlock:^NSArray *(ReasonDemandModel *root) {
+        return [TOUtils getSubOutModels_AllDeep:root validStatus:nil cutStopStatus:nil];
+    }];
+}
+
+/**
+ *  MARK:--------------------取整个工作记中所有的cansets--------------------
+ */
++(NSArray*) getSubCansets_AllDeep_AllRoots {
+    return [SMGUtils filterArr:[self getSubOutModels_AllDeep_AllRoots] checkValid:^BOOL(TOModelBase *item) {
+        return ISOK(item, TOFoModel.class);
+    }];
 }
 
 //MARK:===============================================================

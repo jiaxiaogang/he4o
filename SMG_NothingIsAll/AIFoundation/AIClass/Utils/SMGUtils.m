@@ -732,7 +732,7 @@
 }
 
 /**
- *  MARK:--------------------移除--------------------
+ *  MARK:--------------------取差集--------------------
  *  @param checkValid : 将要移除的item返回true,保留的返回false;
  */
 +(NSMutableArray*) removeArr:(NSArray *)arr checkValid:(BOOL(^)(id item))checkValid {
@@ -740,6 +740,12 @@
     NSArray *removeItems = [SMGUtils filterArr:arr checkValid:checkValid limit:NSIntegerMax];
     [result removeObjectsInArray:removeItems];
     return result;
+}
+
++(NSMutableArray*) removeArr:(NSArray *)removeArr parentArr:(NSArray*)parentArr {
+    return [self removeArr:removeArr parentArr:parentArr convertBlock:^id(id item) {
+        return item;
+    }];
 }
 
 +(NSMutableArray*) removeArr:(NSArray *)removeArr parentArr:(NSArray*)parentArr convertBlock:(id(^)(id item))convertBlock {
