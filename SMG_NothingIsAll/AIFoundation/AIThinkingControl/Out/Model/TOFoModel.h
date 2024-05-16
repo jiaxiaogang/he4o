@@ -29,27 +29,7 @@
 
 +(TOFoModel*) newForCansetFo:(AIKVPointer*)cansetFrom_p base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel cansetModel:(TCCansetModel*)cansetModel;
 
-//+(TOFoModel*) newForRCansetFo:(AIKVPointer*)cansetFrom_p sceneFrom:(AIKVPointer*)sceneFrom_p
-//                         base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel
-//                sceneCutIndex:(NSInteger)sceneCutIndex cansetCutIndex:(NSInteger)cansetCutIndex
-//            cansetTargetIndex:(NSInteger)cansetTargetIndex sceneFromTargetIndex:(NSInteger)sceneFromTargetIndex;
-//
-//+(TOFoModel*) newForHCansetFo:(AIKVPointer*)canset sceneFo:(AIKVPointer*)scene base:(TOModelBase<ITryActionFoDelegate>*)base
-//               cansetCutIndex:(NSInteger)cutIndex sceneCutIndex:(NSInteger)sceneCutIndex
-//            cansetTargetIndex:(NSInteger)cansetTargetIndex sceneTargetIndex:(NSInteger)sceneTargetIndex
-//       basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel;
-
 @property (strong, nonatomic) TCCansetModel *cansetModel;
-
-/**
- *  MARK:--------------------行为化数据--------------------
- *  @version
- *      2020.08.27: 将actions行为化数据字段去掉,因为现在行为化数据在每一个isOut=true的TOAlgModel中;
- */
-//@property (strong, nonatomic) NSMutableArray *actions;
-
-//@property (strong, nonatomic) NSMutableDictionary *itemSubModels;   //每个下标,对应的subModels字典;
-
 
 /**
  *  MARK:--------------------当前正在激活中的subModel--------------------
@@ -71,7 +51,7 @@
 /**
  *  MARK:--------------------将每帧反馈转成orders,以构建protoFo--------------------
  */
--(NSArray*) getOrderUseMatchAndFeedbackAlg:(BOOL)fromRegroup;
+-(NSArray*) getOrderUseMatchAndFeedbackAlg:(BOOL)fromRegroup;//TODOTOMORROW20240516: 继续从这个开始看,放至fo还是canset中;
 
 /**
  *  MARK:--------------------算出新的spDic--------------------

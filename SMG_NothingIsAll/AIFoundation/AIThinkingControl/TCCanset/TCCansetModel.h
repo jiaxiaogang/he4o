@@ -54,17 +54,6 @@
 //@property (strong, nonatomic) TOModelBase *activateSubModel;
 
 /**
- *  MARK:--------------------最终反馈的protoMv--------------------
- *  @desc 当前fo的目标为mv时,如果反馈了mv,即记录到此处 (可用于生成实际发生protoFo时用到);
- */
-@property (strong, nonatomic) AIKVPointer *feedbackMv;
-
-/**
- *  MARK:--------------------反思未通过标记--------------------
- */
-@property (assign, nonatomic) BOOL refrectionNo;
-
-/**
  *  MARK:--------------------将每帧反馈转成orders,以构建protoFo--------------------
  */
 -(NSArray*) getOrderUseMatchAndFeedbackAlg:(BOOL)fromRegroup;

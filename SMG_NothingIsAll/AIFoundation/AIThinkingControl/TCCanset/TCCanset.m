@@ -88,22 +88,19 @@
         cansetModel = [TCCansetModel newForRCansetFo:cansetFrom_p sceneFrom:sceneFrom_p base:demand basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel
                                         sceneCutIndex:sceneCutIndex cansetCutIndex:cansetCutIndex
                                      cansetTargetIndex:cansetFrom.count sceneFromTargetIndex:sceneFromTargetIndex];
+        
+        //7. 伪迁移;
+        [TCTransfer transferXv:cansetModel];
+        
+        //8. 下帧初始化 (可接受反馈);
+        [cansetModel pushNextFrame];
     }
+    
+    //9. 打包成TOFoModel;
     TOFoModel *result = [TOFoModel newForCansetFo:cansetFrom_p base:demand basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel cansetModel:cansetModel];
     
-    //12. 伪迁移;
-    [TCTransfer transferXv:result];
-    
-    //13. 初始化result的cansetTo与real的映射;
+    //10. 初始化result的cansetTo与real的映射;
     [result initRealCansetToDic];
-    
-    //此时未转实,这里的nextFrame是?cansetFrom的? (看代码,会优先si,但此时没有si,只能是cansetFrom);
-    //原则是：有si才有newcanset,有预期才有实际类比。
-    //  1，对xv生成algmodel。
-    //  2，生成过simodel的都可以生成子hcanset
-    
-    //13. 下帧初始化 (可接受反馈);
-    [result pushNextFrame];
     return result;
 }
 
@@ -133,17 +130,19 @@
                                       cansetCutIndex:hCansetCutIndex sceneCutIndex:hSceneCutIndex
                                    cansetTargetIndex:hCansetTargetIndex sceneTargetIndex:hSceneCutIndex + 1
                               basePFoOrTargetFoModel:targetFoModel baseSceneModel:rSceneModel];
+        
+        //4. 伪迁移;
+        [TCTransfer transferXv:cansetModel];
+        
+        //5. 下帧初始化 (可接受反馈);
+        [cansetModel pushNextFrame];
     }
+    
+    //6. 打包成TOFoModel;
     TOFoModel *result = [TOFoModel newForCansetFo:hCansetFrom_p base:hDemand basePFoOrTargetFoModel:targetFoModel baseSceneModel:rSceneModel cansetModel:cansetModel];
     
-    //3. 伪迁移;
-    [TCTransfer transferXv:result];
-    
-    //4. 初始化result的cansetTo与real的映射;
+    //7. 初始化result的cansetTo与real的映射;
     [result initRealCansetToDic];
-    
-    //4. 下帧初始化 (可接受反馈);
-    [result pushNextFrame];
     return result;
 }
 

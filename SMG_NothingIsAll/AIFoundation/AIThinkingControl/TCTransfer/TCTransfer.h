@@ -23,7 +23,7 @@
 //MARK:                     < 经验迁移-虚实V3 >
 //MARK:===============================================================
 
-+(void) transferXv:(TOFoModel*)cansetModel;
++(void) transferXv:(TCCansetModel*)cansetModel;
 +(void) transferSi:(TOFoModel*)cansetModel;
 
 //MARK:===============================================================

@@ -550,10 +550,8 @@
         self.cansetCutIndex = [aDecoder decodeIntegerForKey:@"cansetCutIndex"];
         self.cansetTargetIndex = [aDecoder decodeIntegerForKey:@"cansetTargetIndex"];
         self.subDemands = [aDecoder decodeObjectForKey:@"subDemands"];
-        self.feedbackMv = [aDecoder decodeObjectForKey:@"feedbackMv"];
         self.transferXvModel = [aDecoder decodeObjectForKey:@"transferXvModel"];
         self.transferSiModel = [aDecoder decodeObjectForKey:@"transferSiModel"];
-        self.refrectionNo = [aDecoder decodeBoolForKey:@"refrectionNo"];
     }
     return self;
 }
@@ -564,10 +562,8 @@
     [aCoder encodeInteger:self.cansetCutIndex forKey:@"cansetCutIndex"];
     [aCoder encodeInteger:self.cansetTargetIndex forKey:@"cansetTargetIndex"];
     [aCoder encodeObject:self.subDemands forKey:@"subDemands"];
-    [aCoder encodeObject:self.feedbackMv forKey:@"feedbackMv"];
     [aCoder encodeObject:self.transferXvModel forKey:@"transferXvModel"];
     [aCoder encodeObject:self.transferSiModel forKey:@"transferSiModel"];
-    [aCoder encodeBool:self.refrectionNo forKey:@"refrectionNo"];
 }
 
 @end
