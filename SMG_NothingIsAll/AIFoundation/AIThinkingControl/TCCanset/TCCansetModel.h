@@ -24,8 +24,8 @@
  *  @version
  *      2021.03.27: 实现ITryActionFoDelegate接口,因为每个fo都有可能是子任务 (参考22193);
  */
-@class TCCansetModel,AISceneModel,AITransferModel,TCTransferXvModel;
-@interface TOFoModel : TOModelBase <ISubModelsDelegate,ISubDemandDelegate,NSCoding>
+@class AISceneModel,AITransferModel,TCTransferXvModel;
+@interface TCCansetModel : TOModelBase <ISubModelsDelegate,ISubDemandDelegate,NSCoding>
 
 +(TOFoModel*) newForRCansetFo:(AIKVPointer*)cansetFrom_p sceneFrom:(AIKVPointer*)sceneFrom_p
                          base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel
@@ -36,8 +36,6 @@
                cansetCutIndex:(NSInteger)cutIndex sceneCutIndex:(NSInteger)sceneCutIndex
             cansetTargetIndex:(NSInteger)cansetTargetIndex sceneTargetIndex:(NSInteger)sceneTargetIndex
        basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel;
-
-@property (strong, nonatomic) TCCansetModel *cansetModel;
 
 /**
  *  MARK:--------------------行为化数据--------------------
@@ -171,3 +169,4 @@
 -(void) updateRealCansetToDic;  //更新反馈匹配映射;
 
 @end
+
