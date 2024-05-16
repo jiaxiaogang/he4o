@@ -17,11 +17,11 @@
 
 @implementation TCCansetModel
 
-+(TOFoModel*) newForRCansetFo:(AIKVPointer*)cansetFrom_p sceneFrom:(AIKVPointer*)sceneFrom_p
++(TCCansetModel*) newForRCansetFo:(AIKVPointer*)cansetFrom_p sceneFrom:(AIKVPointer*)sceneFrom_p
                          base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel
                 sceneCutIndex:(NSInteger)sceneCutIndex cansetCutIndex:(NSInteger)cansetCutIndex
             cansetTargetIndex:(NSInteger)cansetTargetIndex sceneFromTargetIndex:(NSInteger)sceneFromTargetIndex {
-    TOFoModel *model = [[TOFoModel alloc] init];
+    TCCansetModel *model = [[TCCansetModel alloc] init];
     
     //1. 原CansetModel相关赋值;
     model.cansetFo = cansetFrom_p;
@@ -41,11 +41,11 @@
     return model;
 }
 
-+(TOFoModel*) newForHCansetFo:(AIKVPointer*)canset sceneFo:(AIKVPointer*)scene base:(TOModelBase<ITryActionFoDelegate>*)base
++(TCCansetModel*) newForHCansetFo:(AIKVPointer*)canset sceneFo:(AIKVPointer*)scene base:(TOModelBase<ITryActionFoDelegate>*)base
                cansetCutIndex:(NSInteger)cansetCutIndex sceneCutIndex:(NSInteger)sceneCutIndex
             cansetTargetIndex:(NSInteger)cansetTargetIndex sceneTargetIndex:(NSInteger)sceneTargetIndex
        basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel {
-    TOFoModel *model = [[TOFoModel alloc] init];
+    TCCansetModel *model = [[TCCansetModel alloc] init];
     
     //1. 原CansetModel相关赋值;
     model.cansetFo = canset;
@@ -272,8 +272,8 @@
 /**
  *  MARK:--------------------重写isEqual (参考31177-TODO1)--------------------
  */
--(BOOL)isEqual:(TOFoModel *)object {
-    if (!self || ISOK(object, TOFoModel.class)) return false;               //空和类型检查;
+-(BOOL)isEqual:(TCCansetModel *)object {
+    if (!self || ISOK(object, TCCansetModel.class)) return false;               //空和类型检查;
     return [self isEqual:object.sceneTargetIndex cansetCutIndex:object.cansetCutIndex cansetTargetIndex:object.cansetTargetIndex sceneTo:object.sceneTo];
 }
 

@@ -81,15 +81,16 @@
     //if (cansetFo.count <= cansetCutIndex + 1) return nil;
     
     //5. 继用: 在工作记忆中防重 (参考31177-方案 & 31177-TODO1B);
-    AIKVPointer *sceneTo = [TOFoModel rSceneTo:sceneModel];
-    TOFoModel *findOldCanset = [self findCansetFromRoots:basePFoOrTargetFoModel sceneTargetIndex:sceneFromTargetIndex cansetCutIndex:cansetCutIndex cansetTargetIndex:cansetFrom.count sceneTo:sceneTo];
+    AIKVPointer *sceneTo = [TCCansetModel rSceneTo:sceneModel];
+    TCCansetModel *cansetModel = [self findCansetFromRoots:basePFoOrTargetFoModel sceneTargetIndex:sceneFromTargetIndex cansetCutIndex:cansetCutIndex cansetTargetIndex:cansetFrom.count sceneTo:sceneTo];
+    if (!cansetModel) {
+        //6. 生成result (其中cansetTargetIndex: R时全推进完);
+        cansetModel = [TCCansetModel newForRCansetFo:cansetFrom_p sceneFrom:sceneFrom_p base:demand basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel
+                                        sceneCutIndex:sceneCutIndex cansetCutIndex:cansetCutIndex
+                                     cansetTargetIndex:cansetFrom.count sceneFromTargetIndex:sceneFromTargetIndex];
+    }
     
-    
-    
-    //6. 生成result (其中cansetTargetIndex: R时全推进完);
-    TOFoModel *result = [TOFoModel newForRCansetFo:cansetFrom_p sceneFrom:sceneFrom_p base:demand basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel
-                                    sceneCutIndex:sceneCutIndex cansetCutIndex:cansetCutIndex
-                                 cansetTargetIndex:cansetFrom.count sceneFromTargetIndex:sceneFromTargetIndex];
+    TOFoModel *result = [TOFoModel newForCansetFo:cansetFrom_p base:demand basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel cansetModel:cansetModel];
     
     //12. 伪迁移;
     [TCTransfer transferXv:result];
@@ -214,16 +215,23 @@
 /**
  *  MARK:--------------------从工作记忆中找可继用的canset (参考31177-方案 & 31177-TODO1B)--------------------
  */
-+(TOFoModel*) findCansetFromRoots:(id)basePFoOrTargetFoModel sceneTargetIndex:(NSInteger)sceneTargetIndex cansetCutIndex:(NSInteger)cansetCutIndex cansetTargetIndex:(NSInteger)cansetTargetIndex sceneTo:(AIKVPointer*)sceneTo {
++(TCCansetModel*) findCansetFromRoots:(id)basePFoOrTargetFoModel sceneTargetIndex:(NSInteger)sceneTargetIndex cansetCutIndex:(NSInteger)cansetCutIndex cansetTargetIndex:(NSInteger)cansetTargetIndex sceneTo:(AIKVPointer*)sceneTo {
     //1. 取出所有工作记忆中的解;
-    NSArray *allOldCansets = [TOUtils getSubCansets_AllDeep_AllRoots];
-    NSArray *baseCansets = [TOUtils getBaseOutModels_AllDeep:basePFoOrTargetFoModel];
+    NSArray *allOldCansets = [SMGUtils convertArr:[TOUtils getSubCansets_AllDeep_AllRoots] convertBlock:^id(TOFoModel *obj) {
+        return obj.cansetModel;
+    }];
+    NSArray *baseCansets = [SMGUtils convertArr:[TOUtils getBaseOutModels_AllDeep:basePFoOrTargetFoModel] convertBlock:^id(TOFoModel *obj) {
+        if (ISOK(obj, TOFoModel.class)) {
+            return obj.cansetModel;
+        }
+        return nil;
+    }];
     
     //2. 排除掉自己的base一枝 (参考31177-TODO3);
     allOldCansets = [SMGUtils removeArr:baseCansets parentArr:allOldCansets];
     
     //3. 从allCansets中找可继用的解 (参考31177-TODO1);
-    TOFoModel *findOldCanset = [SMGUtils filterSingleFromArr:allOldCansets checkValid:^BOOL(TOFoModel *item) {
+    TCCansetModel *findOldCanset = [SMGUtils filterSingleFromArr:allOldCansets checkValid:^BOOL(TCCansetModel *item) {
         return [item isEqual:sceneTargetIndex cansetCutIndex:cansetCutIndex cansetTargetIndex:cansetTargetIndex sceneTo:sceneTo];
     }];
     return findOldCanset;
