@@ -80,16 +80,15 @@
     //过滤4: 过滤掉canset没后段的 (没可行为化的东西) (参考28052-4);
     //if (cansetFo.count <= cansetCutIndex + 1) return nil;
     
-    //5. 继用: 在工作记忆中防重 (参考31177-方案 & 31177-TODO1B);
+    //5. 复用CansetModel: 在工作记忆中防重 (参考31177-方案 & 31177-TODO1B);
     AIKVPointer *sceneTo = [TCCansetModel rSceneTo:sceneModel];
     TCCansetModel *cansetModel = [self findCansetFromRoots:basePFoOrTargetFoModel sceneTargetIndex:sceneFromTargetIndex cansetCutIndex:cansetCutIndex cansetTargetIndex:cansetFrom.count sceneTo:sceneTo];
     if (!cansetModel) {
-        //6. 生成result (其中cansetTargetIndex: R时全推进完);
+        //6. 新生成CansetModel: (其中cansetTargetIndex: R时全推进完);
         cansetModel = [TCCansetModel newForRCansetFo:cansetFrom_p sceneFrom:sceneFrom_p base:demand basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel
                                         sceneCutIndex:sceneCutIndex cansetCutIndex:cansetCutIndex
                                      cansetTargetIndex:cansetFrom.count sceneFromTargetIndex:sceneFromTargetIndex];
     }
-    
     TOFoModel *result = [TOFoModel newForCansetFo:cansetFrom_p base:demand basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel cansetModel:cansetModel];
     
     //12. 伪迁移;
@@ -124,12 +123,18 @@
     NSInteger hSceneTargetIndex = hSceneCutIndex + 1;//H任务的目标其实就是下一帧;
     NSInteger hCansetTargetIndex = NUMTOOK([indexDic objectForKey:@(hSceneTargetIndex)]).integerValue;
     NSInteger hCansetCutIndex = [TOUtils goBackToFindConIndexByAbsIndex:indexDic absIndex:hSceneCutIndex];
+    AIKVPointer *sceneTo = [TCCansetModel hSceneTo:targetFoModel];
     
-    //2. 转为TOFoModel;
-    TOFoModel *result = [TOFoModel newForHCansetFo:hCansetFrom_p sceneFo:sceneFrom.p base:hDemand
-                       cansetCutIndex:hCansetCutIndex sceneCutIndex:hSceneCutIndex
-                    cansetTargetIndex:hCansetTargetIndex sceneTargetIndex:hSceneCutIndex + 1
-               basePFoOrTargetFoModel:targetFoModel baseSceneModel:rSceneModel];
+    //2. 复用CansetModel: 在工作记忆中防重 (参考31177-方案 & 31177-TODO1B);
+    TCCansetModel *cansetModel = [self findCansetFromRoots:targetFoModel sceneTargetIndex:hSceneTargetIndex cansetCutIndex:hCansetCutIndex cansetTargetIndex:hCansetTargetIndex sceneTo:sceneTo];
+    if (!cansetModel) {
+        //3. 新生成CansetModel: (其中cansetTargetIndex: R时全推进完);
+        cansetModel = [TCCansetModel newForHCansetFo:hCansetFrom_p sceneFo:sceneFrom.p base:hDemand
+                                      cansetCutIndex:hCansetCutIndex sceneCutIndex:hSceneCutIndex
+                                   cansetTargetIndex:hCansetTargetIndex sceneTargetIndex:hSceneCutIndex + 1
+                              basePFoOrTargetFoModel:targetFoModel baseSceneModel:rSceneModel];
+    }
+    TOFoModel *result = [TOFoModel newForCansetFo:hCansetFrom_p base:hDemand basePFoOrTargetFoModel:targetFoModel baseSceneModel:rSceneModel cansetModel:cansetModel];
     
     //3. 伪迁移;
     [TCTransfer transferXv:result];

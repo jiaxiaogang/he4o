@@ -56,29 +56,29 @@
 //    model.baseOrGroup = base;
 //    return model;
 //}
-
-+(TOFoModel*) newForHCansetFo:(AIKVPointer*)canset sceneFo:(AIKVPointer*)scene base:(TOModelBase<ITryActionFoDelegate>*)base
-               cansetCutIndex:(NSInteger)cansetCutIndex sceneCutIndex:(NSInteger)sceneCutIndex
-            cansetTargetIndex:(NSInteger)cansetTargetIndex sceneTargetIndex:(NSInteger)sceneTargetIndex
-       basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel {
-    TOFoModel *model = [[TOFoModel alloc] init];
-    
-    //1. 原CansetModel相关赋值;
-    model.cansetFo = canset;
-    model.sceneFo = scene;
-    model.basePFoOrTargetFoModel = basePFoOrTargetFoModel;
-    model.baseSceneModel = baseSceneModel;//H任务时,其实是复用了R任务的RSceneModel;
-    model.cansetCutIndex = cansetCutIndex;//H任务时,cansetCutIndex其实是顺着scene找上一帧有映射的 (参考TOUtils.goBackToFindConIndexByAbsIndex());
-    model.cansetTargetIndex = cansetTargetIndex;
-    model.sceneTargetIndex = sceneTargetIndex;//H任务时,其实hScene的目标就是hScene的下一帧 (即目标 = hScene.cutIndex + 1);
-    
-    //2. TOFoModel相关赋值;
-    model.content_p = canset;
-    model.status = TOModelStatus_Runing;
-    if (base) [base.actionFoModels addObject:model];
-    model.baseOrGroup = base;
-    return model;
-}
+//
+//+(TOFoModel*) newForHCansetFo:(AIKVPointer*)canset sceneFo:(AIKVPointer*)scene base:(TOModelBase<ITryActionFoDelegate>*)base
+//               cansetCutIndex:(NSInteger)cansetCutIndex sceneCutIndex:(NSInteger)sceneCutIndex
+//            cansetTargetIndex:(NSInteger)cansetTargetIndex sceneTargetIndex:(NSInteger)sceneTargetIndex
+//       basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel {
+//    TOFoModel *model = [[TOFoModel alloc] init];
+//    
+//    //1. 原CansetModel相关赋值;
+//    model.cansetFo = canset;
+//    model.sceneFo = scene;
+//    model.basePFoOrTargetFoModel = basePFoOrTargetFoModel;
+//    model.baseSceneModel = baseSceneModel;//H任务时,其实是复用了R任务的RSceneModel;
+//    model.cansetCutIndex = cansetCutIndex;//H任务时,cansetCutIndex其实是顺着scene找上一帧有映射的 (参考TOUtils.goBackToFindConIndexByAbsIndex());
+//    model.cansetTargetIndex = cansetTargetIndex;
+//    model.sceneTargetIndex = sceneTargetIndex;//H任务时,其实hScene的目标就是hScene的下一帧 (即目标 = hScene.cutIndex + 1);
+//    
+//    //2. TOFoModel相关赋值;
+//    model.content_p = canset;
+//    model.status = TOModelStatus_Runing;
+//    if (base) [base.actionFoModels addObject:model];
+//    model.baseOrGroup = base;
+//    return model;
+//}
 
 //MARK:===============================================================
 //MARK:                     < CansetIndexDic映射部分 >
