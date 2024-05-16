@@ -269,6 +269,22 @@
     return self.basePFo;
 }
 
+/**
+ *  MARK:--------------------重写isEqual (参考31177-TODO1)--------------------
+ */
+-(BOOL)isEqual:(TOFoModel *)object {
+    if (!self || ISOK(object, TOFoModel.class)) return false;               //空和类型检查;
+    return [self isEqual:object.sceneTargetIndex cansetCutIndex:object.cansetCutIndex cansetTargetIndex:object.cansetTargetIndex sceneTo:object.sceneTo];
+}
+
+-(BOOL)isEqual:(NSInteger)sceneTargetIndex cansetCutIndex:(NSInteger)cansetCutIndex cansetTargetIndex:(NSInteger)cansetTargetIndex sceneTo:(AIKVPointer*)sceneTo {
+    if (self.sceneTargetIndex != sceneTargetIndex) return false;     //sceneTargetIndex检查;
+    if (self.cansetCutIndex != cansetCutIndex) return false;         //cansetCutIndex检查;
+    if (self.cansetTargetIndex != cansetTargetIndex) return false;   //cansetTargetIndex检查;
+    if (![self.sceneTo isEqual:sceneTo]) return false;               //sceneTo检查;
+    return true;
+}
+
 //MARK:===============================================================
 //MARK:                     < for 三级场景 >
 //MARK:===============================================================
@@ -510,10 +526,18 @@
 -(AIKVPointer*) sceneTo {
     if (self.isH) {
         TOFoModel *targetFoM = (TOFoModel*)self.basePFoOrTargetFoModel;//当前如果是H,这表示正在推进中targetFoM;
-        return targetFoM.transferSiModel.canset;
+        return [TOFoModel hSceneTo:targetFoM];
     } else {
-        return self.baseSceneModel.getIScene;//无论是R还是H,它的baseSceneModel都是rSceneModel;
+        return [TOFoModel rSceneTo:self.baseSceneModel];//无论是R还是H,self.baseSceneModel都表示rSceneModel;
     }
+}
++(AIKVPointer*) hSceneTo:(TOFoModel*)baseTargetFo {
+    if (!baseTargetFo) return nil;
+    return baseTargetFo.transferSiModel.canset;
+}
++(AIKVPointer*) rSceneTo:(AISceneModel*)rSceneModel {
+    if (!rSceneModel) return nil;
+    return rSceneModel.getIScene;
 }
 
 /**

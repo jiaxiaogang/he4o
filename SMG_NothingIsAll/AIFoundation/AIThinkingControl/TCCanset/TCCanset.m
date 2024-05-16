@@ -80,8 +80,9 @@
     //过滤4: 过滤掉canset没后段的 (没可行为化的东西) (参考28052-4);
     //if (cansetFo.count <= cansetCutIndex + 1) return nil;
     
-    //5. 继用: 在工作记忆中防重 (参考31177-方案);
-    TOFoModel *findOldCanset = [self findCansetFromRoots:basePFoOrTargetFoModel];
+    //5. 继用: 在工作记忆中防重 (参考31177-方案 & 31177-TODO1B);
+    AIKVPointer *sceneTo = [TOFoModel rSceneTo:sceneModel];
+    TOFoModel *findOldCanset = [self findCansetFromRoots:basePFoOrTargetFoModel sceneTargetIndex:sceneFromTargetIndex cansetCutIndex:cansetCutIndex cansetTargetIndex:cansetFrom.count sceneTo:sceneTo];
     
     
     
@@ -211,9 +212,9 @@
 }
 
 /**
- *  MARK:--------------------从工作记忆中找可继用的canset (参考31177-方案)--------------------
+ *  MARK:--------------------从工作记忆中找可继用的canset (参考31177-方案 & 31177-TODO1B)--------------------
  */
-+(TOFoModel*) findCansetFromRoots:(id)basePFoOrTargetFoModel {
++(TOFoModel*) findCansetFromRoots:(id)basePFoOrTargetFoModel sceneTargetIndex:(NSInteger)sceneTargetIndex cansetCutIndex:(NSInteger)cansetCutIndex cansetTargetIndex:(NSInteger)cansetTargetIndex sceneTo:(AIKVPointer*)sceneTo {
     //1. 取出所有工作记忆中的解;
     NSArray *allOldCansets = [TOUtils getSubCansets_AllDeep_AllRoots];
     NSArray *baseCansets = [TOUtils getBaseOutModels_AllDeep:basePFoOrTargetFoModel];
@@ -223,8 +224,7 @@
     
     //3. 从allCansets中找可继用的解 (参考31177-TODO1);
     TOFoModel *findOldCanset = [SMGUtils filterSingleFromArr:allOldCansets checkValid:^BOOL(TOFoModel *item) {
-        //TODOTOMORROW20240514: 继续写找防重;
-        return nil;//item.sceneFo == ....
+        return [item isEqual:sceneTargetIndex cansetCutIndex:cansetCutIndex cansetTargetIndex:cansetTargetIndex sceneTo:sceneTo];
     }];
     return findOldCanset;
 }

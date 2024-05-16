@@ -91,6 +91,12 @@
 -(AIMatchFoModel*) basePFo;//递归取basePFo;
 
 /**
+ *  MARK:--------------------重写isEqual (参考31177-TODO1)--------------------
+ */
+-(BOOL)isEqual:(TOFoModel *)object;
+-(BOOL)isEqual:(NSInteger)sceneTargetIndex cansetCutIndex:(NSInteger)cansetCutIndex cansetTargetIndex:(NSInteger)cansetTargetIndex sceneTo:(AIKVPointer*)sceneTo;
+
+/**
  *  MARK:--------------------从决策中一步步传过来 (参考29069-todo7)--------------------
  *  @desc 无论是R还是H,它的baseSceneModel都是rSceneModel;
  */
@@ -150,6 +156,8 @@
  *  MARK:--------------------取此方案迁移目标--------------------
  */
 -(AIKVPointer*) sceneTo;
++(AIKVPointer*) hSceneTo:(TOFoModel*)baseTargetFo;
++(AIKVPointer*) rSceneTo:(AISceneModel*)rSceneModel;
 
 /**
  *  MARK:--------------------实际与场景之间的映射--------------------
