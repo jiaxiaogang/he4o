@@ -75,7 +75,7 @@
     }
     
     //第2步. 在当前xvModel中取到sceneTo与cansetTo的映射 (参考31155-第2步);
-    NSDictionary *sceneToCansetToDic = self.transferXvModel.sceneToCansetToIndexDic;
+    NSDictionary *sceneToCansetToDic = self.cansetModel.transferXvModel.sceneToCansetToIndexDic;
     
     //第3步. 计算: 根据以上两个映射,计算出: 当前cansetTo和real的映射 (参考31155-第3步);
     DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:sceneToCansetToDic];
@@ -149,6 +149,7 @@
     if (ISOK(self.basePFoOrTargetFoModel, AIMatchFoModel.class)) {
         return self.basePFoOrTargetFoModel;
     }
+    //2024.05.17: 这里有bug,递归没加参数,随后改成用while或整条baseToRoot来取最近的一条pFo得了;
     return self.basePFo;
 }
 

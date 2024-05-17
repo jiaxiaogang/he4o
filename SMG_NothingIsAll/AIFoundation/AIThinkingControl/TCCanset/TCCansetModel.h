@@ -28,14 +28,14 @@
 @interface TCCansetModel : TOModelBase <ISubModelsDelegate,ISubDemandDelegate,NSCoding>
 
 +(TCCansetModel*) newForRCansetFo:(AIKVPointer*)cansetFrom_p sceneFrom:(AIKVPointer*)sceneFrom_p
-                         base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel
+                         base:(TOModelBase<ITryActionFoDelegate>*)base baseSceneModel:(AISceneModel*)baseSceneModel
                 sceneCutIndex:(NSInteger)sceneCutIndex cansetCutIndex:(NSInteger)cansetCutIndex
             cansetTargetIndex:(NSInteger)cansetTargetIndex sceneFromTargetIndex:(NSInteger)sceneFromTargetIndex;
 
 +(TCCansetModel*) newForHCansetFo:(AIKVPointer*)canset sceneFo:(AIKVPointer*)scene base:(TOModelBase<ITryActionFoDelegate>*)base
                cansetCutIndex:(NSInteger)cutIndex sceneCutIndex:(NSInteger)sceneCutIndex
             cansetTargetIndex:(NSInteger)cansetTargetIndex sceneTargetIndex:(NSInteger)sceneTargetIndex
-       basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel;
+               baseSceneModel:(AISceneModel*)baseSceneModel;
 
 /**
  *  MARK:--------------------行为化数据--------------------
@@ -148,14 +148,4 @@
 +(AIKVPointer*) hSceneTo:(TOFoModel*)baseTargetFo;
 +(AIKVPointer*) rSceneTo:(AISceneModel*)rSceneModel;
 
-/**
- *  MARK:--------------------实际与场景之间的映射--------------------
- *  @desc 场景表示当前的cansetTo & 实际发生表示pFo.realMaskFo;
- *  @desc 用于记录实际反馈与cansetTo的映射 (每反馈一帧,记录一帧) <K:场景 V:实际>;
- */
-@property (strong, nonatomic) NSMutableDictionary *realCansetToIndexDic;
--(void) initRealCansetToDic;    //初始化已发生映射;
--(void) updateRealCansetToDic;  //更新反馈匹配映射;
-
 @end
-

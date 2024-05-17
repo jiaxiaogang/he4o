@@ -18,7 +18,7 @@
 @implementation TCCansetModel
 
 +(TCCansetModel*) newForRCansetFo:(AIKVPointer*)cansetFrom_p sceneFrom:(AIKVPointer*)sceneFrom_p
-                         base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel
+                         base:(TOModelBase<ITryActionFoDelegate>*)base baseSceneModel:(AISceneModel*)baseSceneModel
                 sceneCutIndex:(NSInteger)sceneCutIndex cansetCutIndex:(NSInteger)cansetCutIndex
             cansetTargetIndex:(NSInteger)cansetTargetIndex sceneFromTargetIndex:(NSInteger)sceneFromTargetIndex {
     TCCansetModel *model = [[TCCansetModel alloc] init];
@@ -26,7 +26,6 @@
     //1. 原CansetModel相关赋值;
     model.cansetFo = cansetFrom_p;
     model.sceneFo = sceneFrom_p;
-    model.basePFoOrTargetFoModel = basePFoOrTargetFoModel;
     model.baseSceneModel = baseSceneModel;//R任务时,即R任务的RSceneModel;
     model.sceneCutIndex = sceneCutIndex;
     model.cansetCutIndex = cansetCutIndex;//R任务时,cansetCutIndex其实是顺着scene找上一帧有映射的 (参考TOUtils.goBackToFindConIndexByAbsIndex());
@@ -44,13 +43,12 @@
 +(TCCansetModel*) newForHCansetFo:(AIKVPointer*)canset sceneFo:(AIKVPointer*)scene base:(TOModelBase<ITryActionFoDelegate>*)base
                cansetCutIndex:(NSInteger)cansetCutIndex sceneCutIndex:(NSInteger)sceneCutIndex
             cansetTargetIndex:(NSInteger)cansetTargetIndex sceneTargetIndex:(NSInteger)sceneTargetIndex
-       basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel {
+               baseSceneModel:(AISceneModel*)baseSceneModel {
     TCCansetModel *model = [[TCCansetModel alloc] init];
     
     //1. 原CansetModel相关赋值;
     model.cansetFo = canset;
     model.sceneFo = scene;
-    model.basePFoOrTargetFoModel = basePFoOrTargetFoModel;
     model.baseSceneModel = baseSceneModel;//H任务时,其实是复用了R任务的RSceneModel;
     model.cansetCutIndex = cansetCutIndex;//H任务时,cansetCutIndex其实是顺着scene找上一帧有映射的 (参考TOUtils.goBackToFindConIndexByAbsIndex());
     model.cansetTargetIndex = cansetTargetIndex;
@@ -62,68 +60,6 @@
     if (base) [base.actionFoModels addObject:model];
     model.baseOrGroup = base;
     return model;
-}
-
-//MARK:===============================================================
-//MARK:                     < CansetIndexDic映射部分 >
-//写此处代码起因:  在TI中,早就有realMaskFo和realDeltaTimes的做法,并且indexDic映射也够用,但在TO中,测出了构建RHCanset时,其indexDic或不准,或为空的问题;
-//              而写这个realCansetToIndexDic,就是为了整理这一流程,将其数据整理过来,使之相关代码看着顺当简洁,也解决TO中indexDic不准等问题;
-//MARK:===============================================================
-
--(NSMutableDictionary *)realCansetToIndexDic {
-    if (!_realCansetToIndexDic) _realCansetToIndexDic = [[NSMutableDictionary alloc] init];
-    return _realCansetToIndexDic;
-}
-
-/**
- *  MARK:--------------------Real映射第1步: 初始数据 (参考31154-方案2-todo1)--------------------
- *  @本算法示图: https://github.com/jiaxiaogang/HELIX_THEORY/blob/master/%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0/assets/717_Canset%E7%9A%84%E5%88%9D%E5%A7%8BIndexDic%E5%88%86%E6%9E%90.png?raw=true
- *             说明: 此图说明了,此方法中base和self的关系,及初始indexDic计算方式
- *  @desc 在xvModel赋值后执行: 在TO中,cansetFo迁移xv之后(xvModel赋值后),将sceneTo和cansetTo已发生部分的映射存下来 (参考31154-方案2-todo1);
- *        另注: 在TI中,时序识别预测后,也会将预测matchFo和实际发生maskFo中已发生的部分存下来 (不在此方法中,在AIMatchFoModel的realMaskFo和indexDic2中);
- *  @调用说明: 在xvModel执行后,执行这里;
- */
--(void) initRealCansetToDic {
-    //===================== base是pFo时 =====================
-    NSDictionary *realSceneToDic = nil;
-    if (!self.isH) {
-        //第1步. 在basePFo中取到indexDic2 (matchFo与real的映射,也即当前sceneTo与real的映射) (参考31155-第1步);
-        //结构说明: matchFo(pFo)是当前的sceneTo;
-        AIMatchFoModel *pFo = (AIMatchFoModel*)self.basePFoOrTargetFoModel;
-        realSceneToDic = [SMGUtils filterDic:pFo.indexDic2 checkValid:^BOOL(NSNumber *key, id value) {
-            //a. 并过滤已发生部分 (参考31155-第1b步);
-            return key.integerValue <= pFo.cutIndex;
-        }];
-    }
-    
-    //===================== base就是HCanset时 =====================
-    else {
-        //第1步. 在base中取到realCansetToIndexDic (base.cansetTo与real的映射,也即当前sceneTo与real的映射) (参考31155-第1步);
-        //结构说明: base.cansetTo就是当前的sceneTo;
-        //过滤说明: 无需过滤已发生部分,因为base.realCansetToIndexDic里包含的,就一定是已经发生的;
-        TOFoModel *baseTargetFoModel = self.basePFoOrTargetFoModel;
-        realSceneToDic = baseTargetFoModel.realCansetToIndexDic;
-    }
-    
-    //第2步. 在当前xvModel中取到sceneTo与cansetTo的映射 (参考31155-第2步);
-    NSDictionary *sceneToCansetToDic = self.transferXvModel.sceneToCansetToIndexDic;
-    
-    //第3步. 计算: 根据以上两个映射,计算出: 当前cansetTo和real的映射 (参考31155-第3步);
-    DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:sceneToCansetToDic];
-    DirectIndexDic *dic2 = [DirectIndexDic newNoToAbs:realSceneToDic];
-    [self.realCansetToIndexDic setDictionary:[TOUtils zonHeIndexDic:@[dic1,dic2]]];
-}
-
-/**
- *  MARK:--------------------Real映射第2步: 逐帧更新 (参考31154-方案2-todo2)--------------------
- *  @desc feedbackTOR反馈匹配时: 为R/HCanset更新self.realCansetToIndexDic(cansetTo匹配上的帧 与 realMask相应匹配的实际发生)的映射 (参考31154-方案2-todo2 && 31155-后注);
- *      另. 在TI中,每一次feedbackTIR反馈后,更新pFo中的indexDic2映射 (这一条在feedbackPushFrame()中实现,不在此方法中);
- *  @调用说明: 在feedbackTOR匹配成功时,调用这里更新下映射;
- */
--(void) updateRealCansetToDic {
-    //"pFo的最后一帧下标"  与  "现cutIndex下一帧(在等待反馈帧)"  之间因为匹配成功而=>  "追加映射";
-    AIMatchFoModel *pFo = self.basePFo;
-    [self.realCansetToIndexDic setObject:@(pFo.realMaskFo.count - 1) forKey:@(self.cansetActIndex)];
 }
 
 /**
@@ -389,6 +325,9 @@
     TOAlgModel *curAlgModel = [self getCurFrame];
     curAlgModel.feedbackAlg = protoAlg_p;
     curAlgModel.status = TOModelStatus_OuterBack;
+    
+    //TODOTOMORROW20240517: 此处同一个cansetModel可能被反馈多次,要防下重,然后每一条cansetModel被反馈后,应该把所有它的base全给updateRealCansetToDic一下;
+    
     [self updateRealCansetToDic];//反馈成立,更新映射;
     return true;
 }

@@ -85,7 +85,7 @@
     TCCansetModel *cansetModel = [self findCansetFromRoots:basePFoOrTargetFoModel sceneTargetIndex:sceneFromTargetIndex cansetCutIndex:cansetCutIndex cansetTargetIndex:cansetFrom.count sceneTo:sceneTo];
     if (!cansetModel) {
         //6. 新生成CansetModel: (其中cansetTargetIndex: R时全推进完);
-        cansetModel = [TCCansetModel newForRCansetFo:cansetFrom_p sceneFrom:sceneFrom_p base:demand basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel
+        cansetModel = [TCCansetModel newForRCansetFo:cansetFrom_p sceneFrom:sceneFrom_p base:demand baseSceneModel:sceneModel
                                         sceneCutIndex:sceneCutIndex cansetCutIndex:cansetCutIndex
                                      cansetTargetIndex:cansetFrom.count sceneFromTargetIndex:sceneFromTargetIndex];
         
@@ -129,7 +129,7 @@
         cansetModel = [TCCansetModel newForHCansetFo:hCansetFrom_p sceneFo:sceneFrom.p base:hDemand
                                       cansetCutIndex:hCansetCutIndex sceneCutIndex:hSceneCutIndex
                                    cansetTargetIndex:hCansetTargetIndex sceneTargetIndex:hSceneCutIndex + 1
-                              basePFoOrTargetFoModel:targetFoModel baseSceneModel:rSceneModel];
+                                      baseSceneModel:rSceneModel];
         
         //4. 伪迁移;
         [TCTransfer transferXv:cansetModel];
