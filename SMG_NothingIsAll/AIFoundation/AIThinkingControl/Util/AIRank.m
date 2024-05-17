@@ -136,9 +136,9 @@
 +(NSArray*) cansetsRankingV4:(NSArray*)cansets zonHeScoreBlock:(double(^)(TOFoModel *obj))zonHeScoreBlock {
     //0. 将effStrong提前取出来,存到mapModel中;
     NSArray *mapArr = [SMGUtils convertArr:cansets convertBlock:^id(TOFoModel *item) {
-        AIFoNodeBase *sceneFo = [SMGUtils searchNode:item.sceneFo];
-        AIFoNodeBase *cansetFo = [SMGUtils searchNode:item.cansetFo];
-        AIEffectStrong *strong = [TOUtils getEffectStrong:sceneFo effectIndex:item.sceneTargetIndex solutionFo:item.cansetFo];//提前取出effStrong有效性;
+        AIFoNodeBase *sceneFo = [SMGUtils searchNode:item.cansetModel.sceneFo];
+        AIFoNodeBase *cansetFo = [SMGUtils searchNode:item.cansetModel.cansetFo];
+        AIEffectStrong *strong = [TOUtils getEffectStrong:sceneFo effectIndex:item.sceneTargetIndex solutionFo:item.cansetModel.cansetFo];//提前取出effStrong有效性;
         //TODOTOMORROW20240119: 测下这里确定能响应到feedback和cutIndex变化后,看能否对排序评分,带来分值变化 (参考31073-TODO3);
         CGFloat stableScore = [TOUtils getStableScore:cansetFo startSPIndex:item.cansetActIndex endSPIndex:item.cansetTargetIndex];//提前算出还未推进的中后段sp稳定性;
         double zonHeScore = zonHeScoreBlock ? zonHeScoreBlock(item) : 0;
@@ -164,11 +164,11 @@
     
     //2. debug日志
     for (TOFoModel *obj in ARR_SUB(sort, 0, 5)) {
-        AIFoNodeBase *sceneFo = [SMGUtils searchNode:obj.sceneFo];
-        AIEffectStrong *effStrong = [TOUtils getEffectStrong:sceneFo effectIndex:sceneFo.count solutionFo:obj.cansetFo];
+        AIFoNodeBase *sceneFo = [SMGUtils searchNode:obj.cansetModel.sceneFo];
+        AIEffectStrong *effStrong = [TOUtils getEffectStrong:sceneFo effectIndex:sceneFo.count solutionFo:obj.cansetModel.cansetFo];
         CGFloat effScore = [TOUtils getEffectScore:effStrong];
-        AIFoNodeBase *cansetFo = [SMGUtils searchNode:obj.cansetFo];
-        if (Log4AIRank) NSLog(@"%ld. %@<F%ld %@> %@ %@:(分:%.2f)",[sort indexOfObject:obj],SceneType2Str(obj.baseSceneModel.type),obj.sceneFo.pointerId,Fo2FStr(cansetFo),
+        AIFoNodeBase *cansetFo = [SMGUtils searchNode:obj.cansetModel.cansetFo];
+        if (Log4AIRank) NSLog(@"%ld. %@<F%ld %@> %@ %@:(分:%.2f)",[sort indexOfObject:obj],SceneType2Str(obj.baseSceneModel.type),obj.cansetModel.sceneFo.pointerId,Fo2FStr(cansetFo),
                               CLEANSTR(cansetFo.spDic),effStrong.description,effScore);
     }
     return sort;
@@ -236,15 +236,15 @@
     //3. debug日志
     for (TOFoModel *obj in result) {
         id key = itemKeyBlock(obj);
-        AIFoNodeBase *sceneFo = [SMGUtils searchNode:obj.sceneFo];
-        AIEffectStrong *effStrong = [TOUtils getEffectStrong:sceneFo effectIndex:sceneFo.count solutionFo:obj.cansetFo];
-        AIFoNodeBase *cansetFo = [SMGUtils searchNode:obj.cansetFo];
+        AIFoNodeBase *sceneFo = [SMGUtils searchNode:obj.cansetModel.sceneFo];
+        AIEffectStrong *effStrong = [TOUtils getEffectStrong:sceneFo effectIndex:sceneFo.count solutionFo:obj.cansetModel.cansetFo];
+        AIFoNodeBase *cansetFo = [SMGUtils searchNode:obj.cansetModel.cansetFo];
         float coolScore1 = NUMTOOK([cooledDic1 objectForKey:key]).floatValue,coolScore2 = NUMTOOK([cooledDic2 objectForKey:key]).floatValue;
         CGFloat spScore = itemScoreBlock1(obj), effScore = itemScoreBlock2(obj);
         if (ISOK(obj, TOFoModel.class)) {
             if (Log4AIRank) NSLog(@"%ld. %@:(分:%.2f) %@:(分:%.2f) %@<F%ld %@>",[result indexOfObject:obj],
                                   CLEANSTR(cansetFo.spDic),spScore,effStrong.description,effScore,
-                                  SceneType2Str(obj.baseSceneModel.type),obj.sceneFo.pointerId,Fo2FStr(cansetFo));
+                                  SceneType2Str(obj.baseSceneModel.type),obj.cansetModel.sceneFo.pointerId,Fo2FStr(cansetFo));
             if (Log4AIRankDebugMode) NSLog(@"\t> %@ sp排名:%.5f eff排名:%.5f => 综合排名:%.5f",key,coolScore1,coolScore2,coolScore1 * coolScore2);
         }
     }

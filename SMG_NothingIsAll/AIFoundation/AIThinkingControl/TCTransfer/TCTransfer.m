@@ -166,23 +166,23 @@
 //MARK:                     < 经验迁移-实V3 >
 //MARK:===============================================================
 
-+(void) transferSi:(TOFoModel*)cansetModel {
++(void) transferSi:(TOFoModel*)foModel {
     //0. IR不需要迁移,这里生成siModel,便于后续使用;
-    if (cansetModel.baseSceneModel.type == SceneTypeI && !cansetModel.isH) {
-        cansetModel.transferSiModel = [AITransferModel newWithCansetTo:cansetModel.cansetFo];
+    if (foModel.cansetModel.baseSceneModel.type == SceneTypeI && !foModel.isH) {
+        foModel.cansetModel.transferSiModel = [AITransferModel newWithCansetTo:foModel.cansetModel.cansetFo];
         return;
     }
     
     //1. 数据准备;
-    if (!cansetModel.transferXvModel) return;
-    TCTransferXvModel *xvModel = cansetModel.transferXvModel;
-    AIFoNodeBase *sceneFrom = [SMGUtils searchNode:cansetModel.sceneFo];
-    AIFoNodeBase *cansetFrom = [SMGUtils searchNode:cansetModel.cansetFo];
+    if (!foModel.cansetModel.transferXvModel) return;
+    TCTransferXvModel *xvModel = foModel.cansetModel.transferXvModel;
+    AIFoNodeBase *sceneFrom = [SMGUtils searchNode:foModel.cansetModel.sceneFo];
+    AIFoNodeBase *cansetFrom = [SMGUtils searchNode:foModel.cansetModel.cansetFo];
     
     //2. 由虚转实: 构建cansetTo和siModel (支持:场景内防重);
-    AIFoNodeBase *sceneTo = [SMGUtils searchNode:cansetModel.sceneTo];
+    AIFoNodeBase *sceneTo = [SMGUtils searchNode:foModel.sceneTo];
     AIFoNodeBase *cansetTo = [theNet createConFoForCanset:xvModel.cansetToOrders sceneFo:sceneTo sceneTargetIndex:xvModel.sceneToTargetIndex];
-    cansetModel.transferSiModel = [AITransferModel newWithCansetTo:cansetTo.p];
+    foModel.cansetModel.transferSiModel = [AITransferModel newWithCansetTo:cansetTo.p];
     
     //3. 迁移时,顺带把spDic也累计了,但要通过transferPorts进行防重,避免重复累推 (其实不可能重复,因为如果重复在override算法中当前cansetModel就已经被过滤了);
     AITransferPort *portTo = [AITransferPort newWithScene:sceneTo.p canset:cansetTo.p];

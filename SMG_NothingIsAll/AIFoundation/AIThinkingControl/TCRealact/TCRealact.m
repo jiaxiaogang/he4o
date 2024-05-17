@@ -27,17 +27,17 @@
 +(TOFoModel*) checkRealactAndReplaceIfNeed:(TOFoModel*)bestResult fromCansets:(NSArray*)fromCansets {
     if (bestResult.baseSceneModel) {
         //1. 判断包含空概念;
-        if ([AINetUtils foHasEmptyAlg:bestResult.cansetFo]) {
+        if ([AINetUtils foHasEmptyAlg:bestResult.cansetModel.cansetFo]) {
             
             //2. 取具象一级cansets (用空概念经验的具象,与当前场景的overrideCansets取交集得出);
-            AIFoNodeBase *bestCansetFo = [SMGUtils searchNode:bestResult.cansetFo];
+            AIFoNodeBase *bestCansetFo = [SMGUtils searchNode:bestResult.cansetModel.cansetFo];
             NSArray *conCansets = Ports2Pits([AINetUtils conPorts_All:bestCansetFo]);
             return [SMGUtils filterSingleFromArr:fromCansets checkValid:^BOOL(TOFoModel *item) {
                 //a. 过滤掉非best具象的;
-                if (![conCansets containsObject:item.cansetFo]) return false;
+                if (![conCansets containsObject:item.cansetModel.cansetFo]) return false;
                 
                 //b. 过滤掉具象亦含空概念的;
-                if ([AINetUtils foHasEmptyAlg:item.cansetFo]) return false;
+                if ([AINetUtils foHasEmptyAlg:item.cansetModel.cansetFo]) return false;
                 
                 //c. 闯关成功,返回这条;
                 return true;

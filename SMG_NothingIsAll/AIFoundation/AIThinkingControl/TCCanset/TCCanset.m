@@ -115,7 +115,7 @@
     TOFoModel *targetFoModel = (TOFoModel*)hDemand.baseOrGroup.baseOrGroup;//targetFo就是当前h任务的base(targetAlg).base(targetFo);
     NSInteger hSceneCutIndex = rCanset.cansetCutIndex;//hScene的推进进度;
     AISceneModel *rSceneModel = rCanset.baseSceneModel;//复用R的SceneModel,因为H任务没有独立的R场景树,它本来就是复用的R任务的场景树等;
-    AIFoNodeBase *sceneFrom = [SMGUtils searchNode:rCanset.cansetFo];
+    AIFoNodeBase *sceneFrom = [SMGUtils searchNode:rCanset.cansetModel.cansetFo];
     NSDictionary *indexDic = [sceneFrom getConIndexDic:hCansetFrom_p];
     NSInteger hSceneTargetIndex = hSceneCutIndex + 1;//H任务的目标其实就是下一帧;
     NSInteger hCansetTargetIndex = NUMTOOK([indexDic objectForKey:@(hSceneTargetIndex)]).integerValue;

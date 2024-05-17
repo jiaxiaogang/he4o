@@ -48,22 +48,7 @@
  */
 @property (assign, nonatomic) BOOL refrectionNo;
 
-/**
- *  MARK:--------------------将每帧反馈转成orders,以构建protoFo--------------------
- */
--(NSArray*) getOrderUseMatchAndFeedbackAlg:(BOOL)fromRegroup;//TODOTOMORROW20240516: 继续从这个开始看,放至fo还是canset中;
-
-/**
- *  MARK:--------------------算出新的spDic--------------------
- */
--(NSDictionary*) convertSPDicFromConCanset2AbsCanset;
-
-
-//MARK:===============================================================
-//MARK:                     < CansetModel >
-//MARK:===============================================================
-@property (strong, nonatomic) AIKVPointer *cansetFo;    //迁移前候选集fo;
-@property (strong, nonatomic) AIKVPointer *sceneFo;     //迁移前候选集所在的scene
+//TODOTOMORROW20240516: 继续从这个开始看,放至fo还是canset中;
 
 /**
  *  MARK:--------------------此解决方案基于哪个pFo/targetFo--------------------

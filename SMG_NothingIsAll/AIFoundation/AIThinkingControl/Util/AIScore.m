@@ -101,7 +101,7 @@
     if (!nearRDemand) return false;
     
     //3. 取解决方案所需时间;
-    AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.cansetFo];
+    AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.cansetModel.cansetFo];
     double needTime = [TOUtils getSumDeltaTime:solutionFo startIndex:solutionModel.cansetCutIndex endIndex:solutionModel.cansetActIndex];
     
     //4. 取父任务能给的时间;

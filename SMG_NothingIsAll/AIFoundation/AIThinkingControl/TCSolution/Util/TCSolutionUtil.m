@@ -49,7 +49,7 @@
     
     //3. 依次从rCanset下取hCansets (参考31102);
     for (TOFoModel *rCanset in rCansets) {
-        AIFoNodeBase *sceneFrom = [SMGUtils searchNode:rCanset.cansetFo];
+        AIFoNodeBase *sceneFrom = [SMGUtils searchNode:rCanset.cansetModel.cansetFo];
         
         //4. 取hCansets(用override取cansets): 从cutIndex到sceneFo.count之间的hCansets (参考31102-第1步);
         //取: 从rCanset.cutIndex + 1到count末尾,之间所有的canset都是来的及尝试执行的;
@@ -242,8 +242,8 @@
     
     //14. 只在初次best时执行一次由虚转实,以及因激活更新强度等 (避免每次实时竞争导致重复跑这些);
     if (result && result.cansetStatus == CS_None) {
-        AIFoNodeBase *resultFo = [SMGUtils searchNode:result.cansetFo];
-        NSLog(@"求解最佳结果:F%ld %@",result.cansetFo.pointerId,CLEANSTR(resultFo.spDic));
+        AIFoNodeBase *resultFo = [SMGUtils searchNode:result.cansetModel.cansetFo];
+        NSLog(@"求解最佳结果:F%ld %@",result.cansetModel.cansetFo.pointerId,CLEANSTR(resultFo.spDic));
         
         //15. bestResult由虚转实迁移;
         [TCTransfer transferSi:result];
