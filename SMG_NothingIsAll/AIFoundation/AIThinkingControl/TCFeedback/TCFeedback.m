@@ -269,9 +269,9 @@
     IFTitleLog(@"feedbackTOR", @"\n输入ProtoA:%@ 识别matchAlgs数:%ld",Alg2FStr(model.protoAlg),recognitionAlgs.count);
     
     //2. ============== 对Demand.cansetModels的反馈判断 (参考31073-TODO2: Cansets实时竞争) ==============
-    NSMutableArray *allCansets = [SMGUtils convertArr:roots convertItemArrBlock:^NSArray *(DemandModel *root) {
+    NSMutableArray *allDemands = [SMGUtils convertArr:roots convertItemArrBlock:^NSArray *(DemandModel *root) {
         return [SMGUtils filterArr:[TOUtils getSubOutModels_AllDeep:root validStatus:nil] checkValid:^BOOL(TOModelBase *item) {
-            return ISOK(item, TOFoModel.class);
+            return ISOK(item, DemandModel.class);
         }];
     }];
     
@@ -279,11 +279,15 @@
         return STRFORMAT(@"A%ld",obj.pointerId);
     }]));
     
-    NSLog(@"flt1 工作记忆root数:%ld 含解决方案数:%ld",roots.count,allCansets.count);
+    NSLog(@"flt1 工作记忆root数:%ld 含任务数:%ld",roots.count,allDemands.count);
     
     //3. 每个Canset都支持持续反馈: 反馈有效时,构建或类比抽象HCanset,并推进到下一帧;
-    for (TOFoModel *foModel in allCansets) {
-        [foModel commit4FeedbackTOR:recognitionAlgs protoAlg:model.protoAlg.p];
+    for (DemandModel *demand in allDemands) {
+        NSArray *actionFoModels = [demand.actionFoModels copy];
+        NSLog(@"flt1 ---> item任务:%@ 含方案数:%ld",Pit2FStr(demand.content_p),actionFoModels.count);
+        for (TOFoModel *cansetModel in actionFoModels) {
+            [cansetModel commit4FeedbackTOR:recognitionAlgs protoAlg:model.protoAlg.p];
+        }
     }
     DebugE();
 }

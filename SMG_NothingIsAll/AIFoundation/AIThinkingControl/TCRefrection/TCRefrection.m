@@ -32,12 +32,12 @@
     //1. 数据准备;
     [theTC updateOperCount:kFILENAME];
     Debug();
-    AIFoNodeBase *cansetFo = [SMGUtils searchNode:checkCanset.cansetModel.cansetFo];
-    AIFoNodeBase *sceneFo = [SMGUtils searchNode:checkCanset.cansetModel.sceneFo];
+    AIFoNodeBase *cansetFo = [SMGUtils searchNode:checkCanset.cansetFo];
+    AIFoNodeBase *sceneFo = [SMGUtils searchNode:checkCanset.sceneFo];
     
     //4. 算出如果canset无效,会带来的风险;
-    CGFloat nEffScore = 1 - [TOUtils getEffectScore:sceneFo effectIndex:checkCanset.sceneTargetIndex solutionFo:checkCanset.cansetModel.cansetFo];
-    OFTitleLog(@"TCRefrection反思", @"\n%@ CUT:%ld 无效率:%.2f",Pit2FStr(checkCanset.cansetModel.cansetFo),(long)checkCanset.cansetModel.cansetCutIndex,nEffScore);
+    CGFloat nEffScore = 1 - [TOUtils getEffectScore:sceneFo effectIndex:checkCanset.sceneTargetIndex solutionFo:checkCanset.cansetFo];
+    OFTitleLog(@"TCRefrection反思", @"\n%@ CUT:%ld 无效率:%.2f",Pit2FStr(checkCanset.cansetFo),(long)checkCanset.cansetCutIndex,nEffScore);
     
     //5. 算出因canset无效,带来的风险分 = Eff为N的概率 x scene的mv评分;
     CGFloat canestFenXianScore = [AIScore score4MV:sceneFo.cmvNode_p ratio:nEffScore];

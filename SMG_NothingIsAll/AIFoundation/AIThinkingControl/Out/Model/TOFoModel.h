@@ -24,12 +24,28 @@
  *  @version
  *      2021.03.27: 实现ITryActionFoDelegate接口,因为每个fo都有可能是子任务 (参考22193);
  */
-@class TCCansetModel,AISceneModel,AITransferModel,TCTransferXvModel;
+@class AISceneModel,AITransferModel,TCTransferXvModel;
 @interface TOFoModel : TOModelBase <ISubModelsDelegate,ISubDemandDelegate,NSCoding>
 
-+(TOFoModel*) newForCansetFo:(AIKVPointer*)cansetFrom_p base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel cansetModel:(TCCansetModel*)cansetModel;
++(TOFoModel*) newForRCansetFo:(AIKVPointer*)cansetFrom_p sceneFrom:(AIKVPointer*)sceneFrom_p
+                         base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel
+                sceneCutIndex:(NSInteger)sceneCutIndex cansetCutIndex:(NSInteger)cansetCutIndex
+            cansetTargetIndex:(NSInteger)cansetTargetIndex sceneFromTargetIndex:(NSInteger)sceneFromTargetIndex;
 
-@property (strong, nonatomic) TCCansetModel *cansetModel;
++(TOFoModel*) newForHCansetFo:(AIKVPointer*)canset sceneFo:(AIKVPointer*)scene base:(TOModelBase<ITryActionFoDelegate>*)base
+               cansetCutIndex:(NSInteger)cutIndex sceneCutIndex:(NSInteger)sceneCutIndex
+            cansetTargetIndex:(NSInteger)cansetTargetIndex sceneTargetIndex:(NSInteger)sceneTargetIndex
+       basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel;
+
+/**
+ *  MARK:--------------------行为化数据--------------------
+ *  @version
+ *      2020.08.27: 将actions行为化数据字段去掉,因为现在行为化数据在每一个isOut=true的TOAlgModel中;
+ */
+//@property (strong, nonatomic) NSMutableArray *actions;
+
+//@property (strong, nonatomic) NSMutableDictionary *itemSubModels;   //每个下标,对应的subModels字典;
+
 
 /**
  *  MARK:--------------------当前正在激活中的subModel--------------------
@@ -48,7 +64,22 @@
  */
 @property (assign, nonatomic) BOOL refrectionNo;
 
-//TODOTOMORROW20240516: 继续从这个开始看,放至fo还是canset中;
+/**
+ *  MARK:--------------------将每帧反馈转成orders,以构建protoFo--------------------
+ */
+-(NSArray*) getOrderUseMatchAndFeedbackAlg:(BOOL)fromRegroup;
+
+/**
+ *  MARK:--------------------算出新的spDic--------------------
+ */
+-(NSDictionary*) convertSPDicFromConCanset2AbsCanset;
+
+
+//MARK:===============================================================
+//MARK:                     < CansetModel >
+//MARK:===============================================================
+@property (strong, nonatomic) AIKVPointer *cansetFo;    //迁移前候选集fo;
+@property (strong, nonatomic) AIKVPointer *sceneFo;     //迁移前候选集所在的scene
 
 /**
  *  MARK:--------------------此解决方案基于哪个pFo/targetFo--------------------

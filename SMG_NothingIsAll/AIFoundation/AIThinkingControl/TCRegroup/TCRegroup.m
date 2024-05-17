@@ -55,7 +55,7 @@
     Debug();
     
     //3. 数据准备 (收集除末位外的content为order);
-    NSArray *order = [foModel.cansetModel getOrderUseMatchAndFeedbackAlg:true];
+    NSArray *order = [foModel getOrderUseMatchAndFeedbackAlg:true];
     
     //6. 将时序元素生成新时序;
     AIFoNodeBase *regroupFo = [theNet createConFo:order];

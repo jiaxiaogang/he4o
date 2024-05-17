@@ -296,7 +296,7 @@
             [AITest test18:absRCansetSceneToIndexDic newCanset:absCansetFo absFo:pFo];
             
             //h. 算出spDic (参考27213-5);
-            [absCansetFo updateSPDic:[solutionModel.cansetModel convertSPDicFromConCanset2AbsCanset]];
+            [absCansetFo updateSPDic:[solutionModel convertSPDicFromConCanset2AbsCanset]];
             [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
         }
     }

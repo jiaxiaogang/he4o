@@ -19,7 +19,7 @@
  *  @desc 为了方便Cansets实现实时竞争 (每次反馈时,可以根据伪迁移来判断反馈成立);
  *      2024.01.19: 初版-为每个CansetModel生成且只生成jiCenModel和tuiJuModel (参考31073-TODO1);
  */
-+(void) transferXv:(TCCansetModel*)cansetModel {
++(void) transferXv:(TOFoModel*)cansetModel {
     //1. 数据检查;
     if (!cansetModel) return;
     
@@ -45,7 +45,7 @@
     }
 }
 
-+(TCTransferXvModel*) transferXv_IR:(TCCansetModel*)cansetModel {
++(TCTransferXvModel*) transferXv_IR:(TOFoModel*)cansetModel {
     //说明: 其实IR是不需要迁移的,这里填充xvModel,只是为了后续访问方便;
     //注: IR的cansetFrom和To是同一个,sceneFrom和sceneTo也是同一个;
     AIFoNodeBase *cansetFromTo = [SMGUtils searchNode:cansetModel.cansetFo];
@@ -58,7 +58,7 @@
     return result;
 }
 
-+(TCTransferXvModel*) transferXv_IH:(TCCansetModel*)cansetModel {
++(TCTransferXvModel*) transferXv_IH:(TOFoModel*)cansetModel {
     //1. 数据准备;
     AISceneModel *rSceneModel = cansetModel.baseSceneModel;//无论是R还是H,它的baseSceneModel都是rSceneModel;
     
@@ -86,7 +86,7 @@
     return [self convertZonHeIndexDic2XvModel:cansetModel zonHeIndexDic:zonHeIndexDic];
 }
 
-+(TCTransferXvModel*) transferXv_FR:(TCCansetModel*)cansetModel {
++(TCTransferXvModel*) transferXv_FR:(TOFoModel*)cansetModel {
     //1. 数据准备;
     AISceneModel *rSceneModel = cansetModel.baseSceneModel;//无论是R还是H,它的baseSceneModel都是rSceneModel;
     
@@ -102,7 +102,7 @@
     return [self convertZonHeIndexDic2XvModel:cansetModel zonHeIndexDic:zonHeIndexDic];
 }
 
-+(TCTransferXvModel*) transferXv_FH:(TCCansetModel*)cansetModel {
++(TCTransferXvModel*) transferXv_FH:(TOFoModel*)cansetModel {
     //1. 数据准备;
     AISceneModel *rSceneModel = cansetModel.baseSceneModel;//无论是R还是H,它的baseSceneModel都是rSceneModel;
     
@@ -122,7 +122,7 @@
     return [self convertZonHeIndexDic2XvModel:cansetModel zonHeIndexDic:zonHeIndexDic];
 }
 
-+(TCTransferXvModel*) transferXv_BR:(TCCansetModel*)cansetModel {
++(TCTransferXvModel*) transferXv_BR:(TOFoModel*)cansetModel {
     //1. 数据准备;
     AISceneModel *rSceneModel = cansetModel.baseSceneModel;//无论是R还是H,它的baseSceneModel都是rSceneModel;
     
@@ -140,7 +140,7 @@
     return [self convertZonHeIndexDic2XvModel:cansetModel zonHeIndexDic:zonHeIndexDic];
 }
 
-+(TCTransferXvModel*) transferXv_BH:(TCCansetModel*)cansetModel {
++(TCTransferXvModel*) transferXv_BH:(TOFoModel*)cansetModel {
     //1. 数据准备;
     AISceneModel *rSceneModel = cansetModel.baseSceneModel;//无论是R还是H,它的baseSceneModel都是rSceneModel;
     
@@ -166,23 +166,23 @@
 //MARK:                     < 经验迁移-实V3 >
 //MARK:===============================================================
 
-+(void) transferSi:(TOFoModel*)foModel {
++(void) transferSi:(TOFoModel*)cansetModel {
     //0. IR不需要迁移,这里生成siModel,便于后续使用;
-    if (foModel.cansetModel.baseSceneModel.type == SceneTypeI && !foModel.isH) {
-        foModel.cansetModel.transferSiModel = [AITransferModel newWithCansetTo:foModel.cansetModel.cansetFo];
+    if (cansetModel.baseSceneModel.type == SceneTypeI && !cansetModel.isH) {
+        cansetModel.transferSiModel = [AITransferModel newWithCansetTo:cansetModel.cansetFo];
         return;
     }
     
     //1. 数据准备;
-    if (!foModel.cansetModel.transferXvModel) return;
-    TCTransferXvModel *xvModel = foModel.cansetModel.transferXvModel;
-    AIFoNodeBase *sceneFrom = [SMGUtils searchNode:foModel.cansetModel.sceneFo];
-    AIFoNodeBase *cansetFrom = [SMGUtils searchNode:foModel.cansetModel.cansetFo];
+    if (!cansetModel.transferXvModel) return;
+    TCTransferXvModel *xvModel = cansetModel.transferXvModel;
+    AIFoNodeBase *sceneFrom = [SMGUtils searchNode:cansetModel.sceneFo];
+    AIFoNodeBase *cansetFrom = [SMGUtils searchNode:cansetModel.cansetFo];
     
     //2. 由虚转实: 构建cansetTo和siModel (支持:场景内防重);
-    AIFoNodeBase *sceneTo = [SMGUtils searchNode:foModel.sceneTo];
+    AIFoNodeBase *sceneTo = [SMGUtils searchNode:cansetModel.sceneTo];
     AIFoNodeBase *cansetTo = [theNet createConFoForCanset:xvModel.cansetToOrders sceneFo:sceneTo sceneTargetIndex:xvModel.sceneToTargetIndex];
-    foModel.cansetModel.transferSiModel = [AITransferModel newWithCansetTo:cansetTo.p];
+    cansetModel.transferSiModel = [AITransferModel newWithCansetTo:cansetTo.p];
     
     //3. 迁移时,顺带把spDic也累计了,但要通过transferPorts进行防重,避免重复累推 (其实不可能重复,因为如果重复在override算法中当前cansetModel就已经被过滤了);
     AITransferPort *portTo = [AITransferPort newWithScene:sceneTo.p canset:cansetTo.p];
@@ -289,7 +289,7 @@
 /**
  *  MARK:--------------------得出综合映射后: 转为xvModel--------------------
  */
-+(TCTransferXvModel*) convertZonHeIndexDic2XvModel:(TCCansetModel*)cansetModel zonHeIndexDic:(NSDictionary*)zonHeIndexDic {
++(TCTransferXvModel*) convertZonHeIndexDic2XvModel:(TOFoModel*)cansetModel zonHeIndexDic:(NSDictionary*)zonHeIndexDic {
     //1. 数据准备;
     AIFoNodeBase *cansetFrom = [SMGUtils searchNode:cansetModel.cansetFo];
     AIFoNodeBase *sceneTo = [SMGUtils searchNode:cansetModel.sceneTo];
