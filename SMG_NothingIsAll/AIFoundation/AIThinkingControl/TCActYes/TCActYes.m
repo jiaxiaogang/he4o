@@ -364,6 +364,10 @@
             }
         }
         
+        
+        //TODOTOMORROW20240518: 此处支持传染到整个工作记忆树 (所有此处新感染的,都尝试向整树传播);
+        
+        
         //7. log
         NSInteger totalInfectedNum = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
             return item.cansetStatus == CS_Infected;
