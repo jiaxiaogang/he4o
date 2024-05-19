@@ -718,4 +718,24 @@
     return result;
 }
 
+//MARK:===============================================================
+//MARK:                     < infected >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------将infectedAlg传染到工作记忆 (参考31178-TODO1)--------------------
+ */
++(int) infectToAllRootsTree:(AIKVPointer*)infectedAlg {
+    int infectNum = 0;
+    NSArray *allCanset = [TOUtils getSubCansets_AllDeep_AllRoots];
+    for (TOFoModel *canset in allCanset) {
+         TOAlgModel *waitAlg = [canset getCurFrame];
+        if (canset.cansetStatus != CS_Infected && waitAlg && [waitAlg.content_p isEqual:infectedAlg]) {
+            canset.cansetStatus = CS_Infected;
+            infectNum++;
+        }
+    }
+    return infectNum;//将传染数返回;
+}
+
 @end

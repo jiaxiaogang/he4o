@@ -220,4 +220,14 @@
  */
 +(NSDictionary*) zonHeIndexDic:(NSArray*)directDics;
 
+
+//MARK:===============================================================
+//MARK:                     < infected >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------将infectedAlg传染到工作记忆 (参考31178-TODO1)--------------------
+ */
++(int) infectToAllRootsTree:(AIKVPointer*)infectedAlg;
+
 @end

@@ -282,7 +282,7 @@
         
         //4. 末尾为mv感性目标;
         NSArray *actionFoModels = [demand.actionFoModels copy];
-        int newInfectedNum = 0;
+        int newInfectedNum = 0, rootsInfectedNum = 0;
         if (actYes4Mv) {
             //a. 如果状态已改成OutBack,说明有反馈(坏),否则未反馈(好) (参考feedbackTOP);
             AnalogyType type = (solutionModel.status == TOModelStatus_OuterBack) ? ATSub : ATPlus;
@@ -337,9 +337,7 @@
                     
                     //方法1. 本来就是一个alg (参考TODO2B-方法1);
                     if ([itemFrameAlg.content_p isEqual:frameModel.content_p]) {
-                        itemFrameAlg.status = TOModelStatus_ActNo;
-                        item.status = TOModelStatus_ActNo;
-                        item.cansetStatus = CS_Infected;
+                        rootsInfectedNum += [self setInfectStatusForFoModel:item forAlgModel:itemFrameAlg];
                         newInfectedNum++;
                         continue;
                     }
@@ -352,9 +350,7 @@
                     NSNumber *itemIndex = [itemDic objectForKey:sceneToIndex];
                     //b. 当有映射,且洽好在等待反馈,则传染;
                     if (itemIndex && item.cansetActIndex == itemIndex.integerValue) {
-                        itemFrameAlg.status = TOModelStatus_ActNo;
-                        item.status = TOModelStatus_ActNo;
-                        item.cansetStatus = CS_Infected;
+                        rootsInfectedNum += [self setInfectStatusForFoModel:item forAlgModel:itemFrameAlg];
                         newInfectedNum++;
                     }
                 }
@@ -364,15 +360,11 @@
             }
         }
         
-        
-        //TODOTOMORROW20240518: 此处支持传染到整个工作记忆树 (所有此处新感染的,都尝试向整树传播);
-        
-        
         //7. log
         NSInteger totalInfectedNum = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
             return item.cansetStatus == CS_Infected;
         }].count;
-        if (newInfectedNum > 0) NSLog(@"%@帧传染: demand:%p + 新增传染数:%d = 总传染数:%ld (还剩:%ld)",actYes4Mv?@"末":@"中间",demand,newInfectedNum,totalInfectedNum,actionFoModels.count - totalInfectedNum);
+        if (newInfectedNum > 0) NSLog(@"%@帧传染: demand:%p + 新增传染数:%d = 总传染数:%ld (还剩:%ld) (另:传至工作记忆:%d)",actYes4Mv?@"末":@"中间",demand,newInfectedNum,totalInfectedNum,actionFoModels.count - totalInfectedNum,rootsInfectedNum);
         
         /*
          //TODOTOMORROW20240512: 这里测日志,每次末帧传染后,整个任务也挂了,导致下次这个任务起来时,又挂,又启,又挂,一直在重复;
@@ -383,6 +375,19 @@
          */
     }];
     DebugE();
+}
+
+/**
+ *  MARK:--------------------设置传染状态--------------------
+ */
++(int) setInfectStatusForFoModel:(TOFoModel*)forFoModel forAlgModel:(TOAlgModel*)forAlgModel {
+    //1. alg和fo设置状态;
+    forAlgModel.status = TOModelStatus_ActNo;
+    forFoModel.status = TOModelStatus_ActNo;
+    forFoModel.cansetStatus = CS_Infected;
+    
+    //2. frameActYes反馈失败时: 传染到整个工作记忆树 (所有此处新感染的,都尝试向整树传播) (参考31178-TODO1);
+    return [TOUtils infectToAllRootsTree:forAlgModel.content_p];
 }
 
 @end
