@@ -230,4 +230,9 @@
  */
 +(int) infectToAllRootsTree:(AIKVPointer*)infectedAlg;
 
+/**
+ *  MARK:--------------------在rSolution/hSolution初始化Canset池时,也继用下传染状态 (参考31178-TODO3)--------------------
+ */
++(int) initInfectedForCansetPool:(DemandModel*)demand;
+
 @end

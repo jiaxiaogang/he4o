@@ -738,4 +738,30 @@
     return infectNum;//将传染数返回;
 }
 
+/**
+ *  MARK:--------------------在rSolution/hSolution初始化Canset池时,也继用下传染状态 (参考31178-TODO3)--------------------
+ */
++(int) initInfectedForCansetPool:(DemandModel*)demand {
+    int initToInfectedNum = 0;
+    //1. 取出工作记忆中所有传染状态的alg_p;
+    NSArray *allCanset = [TOUtils getSubCansets_AllDeep_AllRoots];
+    allCanset = [SMGUtils filterArr:allCanset checkValid:^BOOL(TOFoModel *item) {
+        return item.isInfected;
+    }];
+    NSArray *isInfectedAlgs = [SMGUtils convertArr:allCanset convertBlock:^id(TOFoModel *obj) {
+        TOAlgModel *alg = [obj getCurFrame];
+        return alg ? alg.content_p : nil;
+    }];
+    
+    //2. 在rSolution/hSolution初始化Canset池时,也继用下传染状态 (参考31178-TODO3);
+    for (TOFoModel *canset in demand.actionFoModels) {
+        TOAlgModel *alg = [canset getCurFrame];
+        if (alg && [isInfectedAlgs containsObject:alg.content_p]) {
+            canset.isInfected = true;
+            initToInfectedNum++;
+        }
+    }
+    return initToInfectedNum;
+}
+
 @end

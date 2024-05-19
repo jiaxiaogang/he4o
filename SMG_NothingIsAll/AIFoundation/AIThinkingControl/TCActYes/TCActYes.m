@@ -386,7 +386,7 @@
     forFoModel.status = TOModelStatus_ActNo;
     forFoModel.isInfected = true;
     
-    //2. frameActYes反馈失败时: 传染到整个工作记忆树 (所有此处新感染的,都尝试向整树传播) (参考31178-TODO1);
+    //2. frameActYes反馈失败时: 传染到整个工作记忆树 (所有此处新传染的,都尝试向整树传播) (参考31178-TODO1);
     return [TOUtils infectToAllRootsTree:forAlgModel.content_p];
 }
 

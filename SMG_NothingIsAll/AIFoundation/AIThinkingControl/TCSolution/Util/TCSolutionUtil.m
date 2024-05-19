@@ -116,9 +116,12 @@
         [hDemand.actionFoModels addObjectsFromArray:cansetFromFinish];
         if (Log4GetCansetResult4H && cansetFroms3.count > 0) NSLog(@"\t item场景(%@):%@ 取得候选数:%ld",SceneType2Str(rCanset.baseSceneModel.type),Pit2FStr(rCanset.baseSceneModel.scene),cansetFromFinish.count);
     }
-    NSLog(@"第2步 转为候选集 总数:%ld",hDemand.actionFoModels.count);
     
-    //11. 竞争求解: 对hCansets进行实时竞争 (参考31122);
+    //11. 在rSolution/hSolution初始化Canset池时,也继用下传染状态 (参考31178-TODO3);
+    int initToInfectedNum = [TOUtils initInfectedForCansetPool:hDemand];
+    NSLog(@"第2步 H转为候选集 总数:%ld 其中被传染数:%d",hDemand.actionFoModels.count,initToInfectedNum);
+    
+    //12. 竞争求解: 对hCansets进行实时竞争 (参考31122);
     return [self realTimeRankCansets:hDemand zonHeScoreBlock:nil];//400ms
 }
 
@@ -168,9 +171,12 @@
         if (Log4GetCansetResult4R && cansetFroms2.count > 0) NSLog(@"\t item场景(%@):%@ 取得候选数:%ld 转成候选模型数:%ld",SceneType2Str(sceneModel.type),Pit2FStr(sceneModel.scene),cansetFroms2.count,itemCansetModels.count);
         return itemCansetModels;
     }];
-    NSLog(@"第2步 转为候选集 总数:%ld",cansetModels.count);
+    
+    //9. 在rSolution/hSolution初始化Canset池时,也继用下传染状态 (参考31178-TODO3);
+    int initToInfectedNum = [TOUtils initInfectedForCansetPool:demand];
+    NSLog(@"第2步 R转为候选集 总数:%ld 其中被传染:%d",cansetModels.count,initToInfectedNum);
 
-    //5. 竞争求解;
+    //10. 竞争求解;
     return [self realTimeRankCansets:demand zonHeScoreBlock:nil];//400ms
 }
 
