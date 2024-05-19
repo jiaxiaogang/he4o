@@ -299,11 +299,11 @@
                 //f. 这里看指向mv有反馈则失败,把demand.actionFoModels传染一下 (参考31176-方案 & 31176-TODO2A);
                 //说明: 所有到了末帧在等待mv反馈的 => 都可被传染 (其实整个任务都已经失败了,这里传染也没用);
                 for (TOFoModel *item in actionFoModels) {
-                    if (item.cansetStatus == CS_Infected) continue;
+                    if (item.isInfected) continue;
                     BOOL itemWaitingMv = item.cansetActIndex >= item.transferXvModel.cansetToOrders.count;
                     if (itemWaitingMv) {
                         item.status = TOModelStatus_ActNo;
-                        item.cansetStatus = CS_Infected;
+                        item.isInfected = true;
                         newInfectedNum++;
                     }
                 }
@@ -331,7 +331,7 @@
                 //6. 这里看frameAlgModel反馈失败,把demand.actionFoModels传染一下 (参考31176-方案 & 31176-TODO2B);
                 //说明: 所有下一帧(actIndex帧) => 能否传染判断方法有两种,如下:
                 for (TOFoModel *item in actionFoModels) {
-                    if (item.cansetStatus == CS_Infected) continue;
+                    if (item.isInfected) continue;
                     TOAlgModel *itemFrameAlg = [solutionModel getCurFrame];
                     if (!itemFrameAlg) continue;
                     
@@ -362,7 +362,7 @@
         
         //7. log
         NSInteger totalInfectedNum = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
-            return item.cansetStatus == CS_Infected;
+            return item.isInfected;
         }].count;
         if (newInfectedNum > 0) NSLog(@"%@帧传染: demand:%p + 新增传染数:%d = 总传染数:%ld (还剩:%ld) (另:传至工作记忆:%d)",actYes4Mv?@"末":@"中间",demand,newInfectedNum,totalInfectedNum,actionFoModels.count - totalInfectedNum,rootsInfectedNum);
         
@@ -384,7 +384,7 @@
     //1. alg和fo设置状态;
     forAlgModel.status = TOModelStatus_ActNo;
     forFoModel.status = TOModelStatus_ActNo;
-    forFoModel.cansetStatus = CS_Infected;
+    forFoModel.isInfected = true;
     
     //2. frameActYes反馈失败时: 传染到整个工作记忆树 (所有此处新感染的,都尝试向整树传播) (参考31178-TODO1);
     return [TOUtils infectToAllRootsTree:forAlgModel.content_p];

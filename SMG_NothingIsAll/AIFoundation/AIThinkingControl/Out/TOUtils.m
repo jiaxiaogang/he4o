@@ -730,8 +730,8 @@
     NSArray *allCanset = [TOUtils getSubCansets_AllDeep_AllRoots];
     for (TOFoModel *canset in allCanset) {
          TOAlgModel *waitAlg = [canset getCurFrame];
-        if (canset.cansetStatus != CS_Infected && waitAlg && [waitAlg.content_p isEqual:infectedAlg]) {
-            canset.cansetStatus = CS_Infected;
+        if (!canset.isInfected && waitAlg && [waitAlg.content_p isEqual:infectedAlg]) {
+            canset.isInfected = true;
             infectNum++;
         }
     }

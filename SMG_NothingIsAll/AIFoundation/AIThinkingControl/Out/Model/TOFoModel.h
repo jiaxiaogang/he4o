@@ -146,6 +146,7 @@
  *  MARK:--------------------方案状态--------------------
  */
 @property (assign, nonatomic) CansetStatus cansetStatus;
+@property (assign, nonatomic) BOOL isInfected;//已传染 (因帧条件未满足被传染,在激活前就被提前淘汰掉)
 
 /**
  *  MARK:--------------------此方案是用于什么任务 (true=H false=R)--------------------

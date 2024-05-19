@@ -389,7 +389,13 @@
     TOAlgModel *curAlgModel = [self getCurFrame];
     curAlgModel.feedbackAlg = protoAlg_p;
     curAlgModel.status = TOModelStatus_OuterBack;
-    [self updateRealCansetToDic];//反馈成立,更新映射;
+    
+    //4. feedbackTOR有反馈时,被传染的支持整个工作记忆树重生 (参考31178-TODO2);
+    self.isInfected = false;
+    self.status = TOModelStatus_Runing;
+    
+    //5. 反馈成立,更新映射;
+    [self updateRealCansetToDic];
     return true;
 }
 
