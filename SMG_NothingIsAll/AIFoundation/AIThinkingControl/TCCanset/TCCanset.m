@@ -80,12 +80,6 @@
     //过滤4: 过滤掉canset没后段的 (没可行为化的东西) (参考28052-4);
     //if (cansetFo.count <= cansetCutIndex + 1) return nil;
     
-    //5. 继用: 在工作记忆中防重 (参考31177-方案 & 31177-TODO1B);
-    AIKVPointer *sceneTo = [TOFoModel rSceneTo:sceneModel];
-    TOFoModel *findOldCanset = [self findCansetFromRoots:basePFoOrTargetFoModel sceneTargetIndex:sceneFromTargetIndex cansetCutIndex:cansetCutIndex cansetTargetIndex:cansetFrom.count sceneTo:sceneTo];
-    
-    
-    
     //6. 生成result (其中cansetTargetIndex: R时全推进完);
     TOFoModel *result = [TOFoModel newForRCansetFo:cansetFrom_p sceneFrom:sceneFrom_p base:demand basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel
                                     sceneCutIndex:sceneCutIndex cansetCutIndex:cansetCutIndex
@@ -96,11 +90,6 @@
     
     //13. 初始化result的cansetTo与real的映射;
     [result initRealCansetToDic];
-    
-    //此时未转实,这里的nextFrame是?cansetFrom的? (看代码,会优先si,但此时没有si,只能是cansetFrom);
-    //原则是：有si才有newcanset,有预期才有实际类比。
-    //  1，对xv生成algmodel。
-    //  2，生成过simodel的都可以生成子hcanset
     
     //13. 下帧初始化 (可接受反馈);
     [result pushNextFrame];
@@ -209,24 +198,6 @@
     //6. 全找到,则成功;
     if (Log4SceneIsOk) NSLog(@"\t前段条件满足通过:%@ (cansetCutIndex:%ld fromProtoFo:%ld)",Fo2FStr(cansetFo),cansetCutIndex,protoFo.pointer.pointerId);
     return result;
-}
-
-/**
- *  MARK:--------------------从工作记忆中找可继用的canset (参考31177-方案 & 31177-TODO1B)--------------------
- */
-+(TOFoModel*) findCansetFromRoots:(id)basePFoOrTargetFoModel sceneTargetIndex:(NSInteger)sceneTargetIndex cansetCutIndex:(NSInteger)cansetCutIndex cansetTargetIndex:(NSInteger)cansetTargetIndex sceneTo:(AIKVPointer*)sceneTo {
-    //1. 取出所有工作记忆中的解;
-    NSArray *allOldCansets = [TOUtils getSubCansets_AllDeep_AllRoots];
-    NSArray *baseCansets = [TOUtils getBaseOutModels_AllDeep:basePFoOrTargetFoModel];
-    
-    //2. 排除掉自己的base一枝 (参考31177-TODO3);
-    allOldCansets = [SMGUtils removeArr:baseCansets parentArr:allOldCansets];
-    
-    //3. 从allCansets中找可继用的解 (参考31177-TODO1);
-    TOFoModel *findOldCanset = [SMGUtils filterSingleFromArr:allOldCansets checkValid:^BOOL(TOFoModel *item) {
-        return [item isEqual:sceneTargetIndex cansetCutIndex:cansetCutIndex cansetTargetIndex:cansetTargetIndex sceneTo:sceneTo];
-    }];
-    return findOldCanset;
 }
 
 @end
