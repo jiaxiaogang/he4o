@@ -335,14 +335,16 @@
                     TOAlgModel *itemFrameAlg = [solutionModel getCurFrame];
                     if (!itemFrameAlg) continue;
                     
-                    //方法1. 本来就是一个alg (参考TODO2B-方法1);
+                    //方法1. 本来就是一个alg (参考31176-TODO2B-方法1);
                     if ([itemFrameAlg.content_p isEqual:frameModel.content_p]) {
                         rootsInfectedNum += [self setInfectStatusForFoModel:item forAlgModel:itemFrameAlg];
                         newInfectedNum++;
                         continue;
                     }
                     
-                    //方法2. 有indexDic映射 (参考TODO2B-方法2);
+                    //方法2. 有indexDic映射 (参考31176-TODO2B-方法2);
+                    //数据检查: 二者不在一颗I场景树下,则无法判断映射,也无法传染 (参考31176-TODO2B-方法2-注);
+                    if (![solutionModel.sceneTo isEqual:item.sceneTo]) continue;
                     NSDictionary *actingDic = solutionModel.transferXvModel.sceneToCansetToIndexDic;
                     NSDictionary *itemDic = item.transferXvModel.sceneToCansetToIndexDic;
                     //a. 根据对应的sceneTo的映射,取到对应item的映射;
