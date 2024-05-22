@@ -724,8 +724,9 @@
 
 /**
  *  MARK:--------------------将infectedAlg传染到工作记忆 (参考31178-TODO1)--------------------
+ *  @desc 白话: 当frameActYes因canset中间帧无反馈,调用此方法 => 将工作记忆中所有同质中间帧cansetAlg都infect下,标记它已条件不满足;
  */
-+(int) infectToAllRootsTree:(AIKVPointer*)infectedAlg {
++(int) infectToAllRootsTree_Alg:(AIKVPointer*)infectedAlg {
     int infectNum = 0;
     NSArray *allCanset = [TOUtils getSubCansets_AllDeep_AllRoots];
     for (TOFoModel *canset in allCanset) {
@@ -736,6 +737,30 @@
         }
     }
     return infectNum;//将传染数返回;
+}
+
+/**
+ *  MARK:--------------------将被解决的rDemand在工作记忆的同质解都重生 (参考31179-TODO2)--------------------
+ *  @desc 白话: 当frameActYes因canset有效而解决了rDemand时,调用此方法 => 将工作记忆中所有同质末帧canset都rewake下,使之可再次尝试它有效;
+ *  @rDemand 将frameActYes中被解决的rDemand传进来 (用于到工作记忆中判断同质r任务);
+ */
++(int) rewakeToAllRootsTree_Mv:(ReasonDemandModel*)rewakeByRDemand {
+    int rewakeNum = 0;
+    NSArray *allCanset = [TOUtils getSubCansets_AllDeep_AllRoots];
+    for (TOFoModel *canset in allCanset) {
+        //1. 非RDemand的解不重生;
+        if (!ISOK(canset.baseOrGroup, ReasonDemandModel.class)) continue;
+        //2. 未到末尾不复生;
+        if (canset.cansetActIndex < canset.transferXvModel.cansetToOrders.count) continue;
+        //3. 非同区不复生;
+        DemandModel *otherDemand = (DemandModel*)canset.baseOrGroup;
+        if (![rewakeByRDemand.algsType isEqualToString:otherDemand.algsType]) continue;
+        if (canset.isInfected) {
+            canset.isInfected = false;
+            rewakeNum++;
+        }
+    }
+    return rewakeNum;//将重生数返回;
 }
 
 /**

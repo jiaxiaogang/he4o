@@ -313,6 +313,7 @@
     IFTitleLog(@"feedbackTOP", @"\n输入MV:%@",Mv2FStr(cmvNode));
     
     //2. ============== 对所有等待中的任务尝试处理 (R-任务); ==============
+    int newInfectedNum = 0;
     NSArray *roots = [theTC.outModelManager.getAllDemand copy];
     for (ReasonDemandModel *root in roots) {
         NSArray *waitModels = [TOUtils getSubOutModels_AllDeep:root validStatus:@[@(TOModelStatus_ActYes)]];
@@ -328,8 +329,7 @@
             //if (waitModel.status != TOModelStatus_ActYes) continue;
             
             //6. 未到末尾,不处理;
-            AIFoNodeBase *waitFo = [SMGUtils searchNode:waitModel.content_p];
-            if (waitModel.cansetActIndex < waitFo.count) continue;
+            if (waitModel.cansetActIndex < waitModel.transferXvModel.cansetToOrders.count) continue;
             
             //7. waitFo是为了解决任务,所以要取出原任务的mv标识来比较;
             //7. 判断hope(wait)和real(new)之间是否相符 (当反馈了"同区反向"时,即表明任务失败,为S);
@@ -344,10 +344,10 @@
                 CGFloat score = [AIScore score4MV:cmvNode.pointer ratio:1.0f];
                 if (score < 0) {
                     waitModel.status = TOModelStatus_OuterBack;
-                    NSLog(@"top_OPushM: 方案失败反馈OutBack");
                     
                     //8. 末帧且反馈到负mv,则被传染 (参考31179-TODO1);
                     waitModel.isInfected = true;
+                    newInfectedNum++;
                     
                     //7. root设回runing
                     demand.status = TOModelStatus_Runing;
@@ -362,6 +362,7 @@
             }
         }
     }
+    NSLog(@"feedbackTOP: 有负mv反馈导致canset末帧无效 传染数:%d",newInfectedNum);
     
     //2. ============== 对Demand反馈判断 ==============
     //a. 收集所有工作记忆树的R任务;

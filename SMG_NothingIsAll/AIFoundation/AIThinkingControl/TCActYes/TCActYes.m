@@ -282,9 +282,9 @@
         
         //4. 末尾为mv感性目标;
         NSArray *actionFoModels = [demand.actionFoModels copy];
-        int newInfectedNum = 0, rootsInfectedNum = 0;
         if (actYes4Mv) {
             //a. 如果状态已改成OutBack,说明有反馈(坏),否则未反馈(好) (参考feedbackTOP);
+            int rootsRewakeNum = 0;
             AnalogyType type = (solutionModel.status == TOModelStatus_OuterBack) ? ATSub : ATPlus;
             
             //d. 则进行感性PORT反省;
@@ -295,26 +295,22 @@
             if (solutionModel.status == TOModelStatus_OuterBack) {
                 solutionModel.status = TOModelStatus_ActNo;
                 demand.status = TOModelStatus_ActNo;
-                
-                //f. 这里看指向mv有反馈则失败,把demand.actionFoModels传染一下 (参考31176-方案 & 31176-TODO2A);
-                //说明: 所有到了末帧在等待mv反馈的 => 都可被传染 (其实整个任务都已经失败了,这里传染也没用);
-                for (TOFoModel *item in actionFoModels) {
-                    if (item.isInfected) continue;
-                    BOOL itemWaitingMv = item.cansetActIndex >= item.transferXvModel.cansetToOrders.count;
-                    if (itemWaitingMv) {
-                        item.status = TOModelStatus_ActNo;
-                        item.isInfected = true;
-                        newInfectedNum++;
-                    }
-                }
-                
                 [TCScore scoreFromIfTCNeed];
+            } else {
+                //f. 如果无反馈,则设为对baseRDemand有效,整个工作记忆同质解都重生一下 (参考31179-TODO2);
+                if (ISOK(solutionModel.baseOrGroup, ReasonDemandModel.class)) {
+                    rootsRewakeNum = [TOUtils rewakeToAllRootsTree_Mv:(ReasonDemandModel*)solutionModel.baseOrGroup];
+                }
             }
+            
+            //g. log
+            if (rootsRewakeNum > 0) NSLog(@"frameActYes末帧复生: demand:%@ 传至工作记忆重生总数:%d",demand.algsType,rootsRewakeNum);
         }
         //5. 中间为帧理性目标;
         else{
             
             //a. 反省类比(成功/未成功)的主要原因,进行RORT反省;
+            int newInfectedNum = 0, rootsInfectedNum = 0;
             AnalogyType type = (frameModel.status == TOModelStatus_ActYes) ? ATSub : ATPlus;
             [TCRethink reasonOutRethink:solutionModel actionIndex:solutionModel.cansetActIndex type:type];
             NSLog(@"---//行为化帧触发理性反省:%p A%ld 状态:%@",frameModel,frameModel.content_p.pointerId,TOStatus2Str(frameModel.status));
@@ -360,13 +356,13 @@
                 //6. 2021.12.02: 失败时,继续决策;
                 [TCScore scoreFromIfTCNeed];
             }
+            
+            //7. log
+            NSInteger totalInfectedNum = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
+                return item.isInfected;
+            }].count;
+            if (newInfectedNum > 0) NSLog(@"frameActYes中间帧传染: demand:%p + 新增传染数:%d = 总传染数:%ld (还剩:%ld) (另:传至工作记忆:%d)",demand,newInfectedNum,totalInfectedNum,actionFoModels.count - totalInfectedNum,rootsInfectedNum);
         }
-        
-        //7. log
-        NSInteger totalInfectedNum = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
-            return item.isInfected;
-        }].count;
-        if (newInfectedNum > 0) NSLog(@"%@帧传染: demand:%p + 新增传染数:%d = 总传染数:%ld (还剩:%ld) (另:传至工作记忆:%d)",actYes4Mv?@"末":@"中间",demand,newInfectedNum,totalInfectedNum,actionFoModels.count - totalInfectedNum,rootsInfectedNum);
         
         /*
          //TODOTOMORROW20240512: 这里测日志,每次末帧传染后,整个任务也挂了,导致下次这个任务起来时,又挂,又启,又挂,一直在重复;
@@ -389,7 +385,7 @@
     forFoModel.isInfected = true;
     
     //2. frameActYes反馈失败时: 传染到整个工作记忆树 (所有此处新传染的,都尝试向整树传播) (参考31178-TODO1);
-    return [TOUtils infectToAllRootsTree:forAlgModel.content_p];
+    return [TOUtils infectToAllRootsTree_Alg:forAlgModel.content_p];
 }
 
 @end

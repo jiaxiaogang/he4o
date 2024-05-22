@@ -227,8 +227,15 @@
 
 /**
  *  MARK:--------------------将infectedAlg传染到工作记忆 (参考31178-TODO1)--------------------
+ *  @desc 白话: 当frameActYes因canset中间帧无反馈,调用此方法 => 将工作记忆中所有同质中间帧cansetAlg都infect下,标记它已条件不满足;
  */
-+(int) infectToAllRootsTree:(AIKVPointer*)infectedAlg;
++(int) infectToAllRootsTree_Alg:(AIKVPointer*)infectedAlg;
+
+/**
+ *  MARK:--------------------将被解决的rDemand在工作记忆的同质解都重生 (参考31179-TODO2)--------------------
+ *  @desc 白话: 当frameActYes因canset有效而解决了rDemand时,调用此方法 => 将工作记忆中所有同质末帧canset都rewake下,使之可再次尝试它有效;
+ */
++(int) rewakeToAllRootsTree_Mv:(ReasonDemandModel*)rewakeByRDemand;
 
 /**
  *  MARK:--------------------在rSolution/hSolution初始化Canset池时,也继用下传染状态 (参考31178-TODO3)--------------------
