@@ -302,6 +302,7 @@
  *      2022.06.03: 将roots浅复制,避免强训过程中因loopCache变化而闪退;
  *      2022.09.06: TC流程调整_直接调用TCDemand (参考27096-实践1);
  *      2022.11.23: 记录feedbackMv (参考27204-2);
+ *      2024.05.23: feedbackTOP: 末帧且反馈到负mv,则被传染 (参考31179-TODO1);
  */
 +(void) feedbackTOP:(AICMVNode*)cmvNode{
     //1. 数据检查
@@ -323,8 +324,8 @@
             //4. 非R也非P任务时,不处理;
             if (!ISOK(waitModel.baseOrGroup, ReasonDemandModel.class) && !ISOK(waitModel.baseOrGroup, PerceptDemandModel.class)) continue;
             
-            //5. 非actYes状态不处理;
-            if (waitModel.status != TOModelStatus_ActYes) continue;
+            //5. 非actYes状态不处理 (canset池的none,best状态都可以传染和复生 参考31179-TODO1);
+            //if (waitModel.status != TOModelStatus_ActYes) continue;
             
             //6. 未到末尾,不处理;
             AIFoNodeBase *waitFo = [SMGUtils searchNode:waitModel.content_p];
@@ -344,6 +345,9 @@
                 if (score < 0) {
                     waitModel.status = TOModelStatus_OuterBack;
                     NSLog(@"top_OPushM: 方案失败反馈OutBack");
+                    
+                    //8. 末帧且反馈到负mv,则被传染 (参考31179-TODO1);
+                    waitModel.isInfected = true;
                     
                     //7. root设回runing
                     demand.status = TOModelStatus_Runing;
