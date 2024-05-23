@@ -238,8 +238,13 @@
 +(int) rewakeToAllRootsTree_Mv:(ReasonDemandModel*)rewakeByRDemand;
 
 /**
- *  MARK:--------------------在rSolution/hSolution初始化Canset池时,也继用下传染状态 (参考31178-TODO3)--------------------
+ *  MARK:--------------------在rSolution/hSolution初始化Canset池时,中间帧继用下传染状态 (参考31178-TODO3)--------------------
  */
-+(int) initInfectedForCansetPool:(DemandModel*)demand;
++(int) initInfectedForCansetPool_Alg:(DemandModel*)demand;
+
+/**
+ *  MARK:--------------------在rSolution初始化Canset池时,末帧继用下传染状态 (参考31179-TODO3)--------------------
+ */
++(int) initInfectedForCansetPool_Mv:(ReasonDemandModel*)newRDemand;
 
 @end

@@ -764,9 +764,9 @@
 }
 
 /**
- *  MARK:--------------------在rSolution/hSolution初始化Canset池时,也继用下传染状态 (参考31178-TODO3)--------------------
+ *  MARK:--------------------在rSolution/hSolution初始化Canset池时,中间帧继用下传染状态 (参考31178-TODO3)--------------------
  */
-+(int) initInfectedForCansetPool:(DemandModel*)demand {
++(int) initInfectedForCansetPool_Alg:(DemandModel*)demand {
     int initToInfectedNum = 0;
     //1. 取出工作记忆中所有传染状态的alg_p;
     NSArray *allCanset = [TOUtils getSubCansets_AllDeep_AllRoots];
@@ -785,6 +785,36 @@
             canset.isInfected = true;
             initToInfectedNum++;
         }
+    }
+    return initToInfectedNum;
+}
+
+/**
+ *  MARK:--------------------在rSolution初始化Canset池时,末帧继用下传染状态 (参考31179-TODO3)--------------------
+ */
++(int) initInfectedForCansetPool_Mv:(ReasonDemandModel*)newRDemand {
+    int initToInfectedNum = 0;
+    //1. 取出工作记忆中所有传染状态的alg_p;
+    NSArray *allCanset = [TOUtils getSubCansets_AllDeep_AllRoots];
+    for (TOFoModel *item in allCanset) {
+        //a. 过滤1
+        if (!ISOK(item.baseOrGroup, ReasonDemandModel.class)) continue;
+        ReasonDemandModel *itemRDemand = (ReasonDemandModel*)item.baseOrGroup;
+        
+        //b. 过滤2
+        BOOL sameDemandAtAndEndFrameAndInfected = item.isInfected && item.cansetActIndex >= item.transferXvModel.cansetToOrders.count && [itemRDemand.algsType isEqual:newRDemand.algsType];
+        if (!sameDemandAtAndEndFrameAndInfected) continue;
+           
+        //c. 在rSolution/hSolution初始化Canset池时,也继用下传染状态 (参考31178-TODO3);
+        for (TOFoModel *newCanset in newRDemand.actionFoModels) {
+            if (newCanset.cansetActIndex >= newCanset.transferXvModel.cansetToOrders.count) {
+                newCanset.isInfected = true;
+                initToInfectedNum++;
+            }
+        }
+        
+        //d. 全闯过,并处理完,则退出循环;
+        break;
     }
     return initToInfectedNum;
 }
