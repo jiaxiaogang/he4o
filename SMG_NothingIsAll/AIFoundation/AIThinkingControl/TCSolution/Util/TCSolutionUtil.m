@@ -135,6 +135,7 @@
     //0. 初始化一次,后面只执行generalSolution部分;
     if (demand.alreadyInitCansetModels) {
         ELog(@"solution()应该只执行一次,别的全从TCPlan来分发和实时竞争,此处如果重复执行,查下原因");
+        return nil;
     }
     demand.alreadyInitCansetModels = true;
     

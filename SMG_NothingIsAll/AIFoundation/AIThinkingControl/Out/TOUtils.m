@@ -796,6 +796,12 @@
     int initToInfectedNum = 0;
     //1. 取出工作记忆中所有传染状态的alg_p;
     NSArray *allCanset = [TOUtils getSubCansets_AllDeep_AllRoots];
+    NSArray *infectedCansets = [SMGUtils filterArr:allCanset checkValid:^BOOL(TOFoModel *item) {
+        return item.isInfected;
+    }];
+    NSLog(@"root数:%ld 总方案数:%ld 已传染数:%ld",theTC.outModelManager.getAllDemand.count,allCanset.count,infectedCansets.count);
+    //TODOTOMORROW20240524: 应该是demand同质合并导致的,此处已传染数总是0;
+    
     for (TOFoModel *item in allCanset) {
         //a. 过滤1
         if (!ISOK(item.baseOrGroup, ReasonDemandModel.class)) continue;
