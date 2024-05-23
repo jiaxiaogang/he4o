@@ -316,7 +316,7 @@
     int newInfectedNum = 0;
     NSArray *roots = [theTC.outModelManager.getAllDemand copy];
     for (ReasonDemandModel *root in roots) {
-        NSArray *waitModels = [TOUtils getSubOutModels_AllDeep:root validStatus:@[@(TOModelStatus_ActYes)]];
+        NSArray *waitModels = [TOUtils getSubOutModels_AllDeep:root validStatus:nil];
         for (TOFoModel *waitModel in waitModels) {
             
             //3. wait不为fo解决方案时不处理;
@@ -349,9 +349,13 @@
                     waitModel.isInfected = true;
                     newInfectedNum++;
                     
-                    //7. root设回runing
-                    demand.status = TOModelStatus_Runing;
+                    //7. root设回runing;
+                    //demand.status = TOModelStatus_Runing;//后面又设为ActNo了,此处无意义
                     root.status = TOModelStatus_Runing;
+                    
+                    //8. 明确无效
+                    demand.effectStatus = ES_NoEff;
+                    demand.status = TOModelStatus_ActNo;
                 }else{
                     //8. solutionFo反馈好时,baseDemand为完成状态;
                     waitModel.baseOrGroup.status = TOModelStatus_Finish;
@@ -363,28 +367,6 @@
         }
     }
     NSLog(@"feedbackTOP: 有负mv反馈导致canset末帧无效 传染数:%d",newInfectedNum);
-    
-    //2. ============== 对Demand反馈判断 ==============
-    //a. 收集所有工作记忆树的R任务;
-    NSMutableArray *allRDemands = [[NSMutableArray alloc] init];
-    for (ReasonDemandModel *root in roots) {
-        NSArray *singleRDemands = [SMGUtils filterArr:[TOUtils getSubOutModels_AllDeep:root validStatus:nil] checkValid:^BOOL(TOModelBase *item) {
-            return ISOK(item, ReasonDemandModel.class);
-        }];
-        [allRDemands addObjectsFromArray:singleRDemands];
-    }
-    
-    //b. 反馈匹配 => 同区判断 且 都为负价值 (比如撞疼,确定疼了);
-    for (ReasonDemandModel *rDemand in allRDemands) {
-        if ([rDemand.algsType isEqualToString:cmvNode.pointer.algsType]) {
-            CGFloat newMvScore = [AIScore score4MV:cmvNode.pointer ratio:1.0f];
-            if (newMvScore < 0) {
-                //c. 明确无效;
-                rDemand.effectStatus = ES_NoEff;
-                rDemand.status = TOModelStatus_ActNo;
-            }
-        }
-    }
     
     //3. p任务;
     DebugE();
