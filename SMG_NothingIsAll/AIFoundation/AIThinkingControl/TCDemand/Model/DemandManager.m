@@ -122,6 +122,7 @@
  *      2022.05.18: 废弃抵消和防重功能,现在root各自工作,共用R和P反馈即可各自工作;
  *      2023.08.15: 传入protoFo,因为在pInput时和rInput时的protoFo是不同的,这个protoFo到决策时还要用 (参考30095代码段2);
  *      2023.12.20: 写同质新旧Root合并 (参考31024);
+ *      2024.05.24: 废弃同质合并,因为有了传染机制后,此处不再需要,相反传染机制需要新旧任务都存在时,工作起来才更简单且顺利 (参考31178&31179);
  *  @result 将新增的root任务收集返回;
  */
 -(NSArray*) updateCMVCache_RMV:(AIShortMatchModel*)inModel protoFo:(AIFoNodeBase*)protoFo{
@@ -146,28 +147,24 @@
             }
             
             //6. 当新旧Root的pFos有交集时,即为同质ROOT: 将oldRoot.pFos合并到newRoot中 (参考31024-todo1);
-            for (ReasonDemandModel *oldRRoot in self.loopCache.array) {
-                NSInteger oldIndex = [self.loopCache indexOfObject:oldRRoot];
-                
-                //7. 判断新旧Root有交集 (参考31024-todo1);
-                //2024.05.13: 取出新的,只占一部分,则说明有旧的交集 (简化下算法);
-                //NSArray *samePFos = [SMGUtils filterArr:pFosValue arrB:oldRRoot.pFos convertBlock:^id(AIMatchFoModel *item) {return item.matchFo;}];
-                NSArray *newPFosValue = [SMGUtils removeArr:oldRRoot.pFos parentArr:pFosValue convertBlock:^id(AIMatchFoModel *item) { return item.matchFo; }];
-                if (newPFosValue.count < pFosValue.count) {
-                    NSLog(@"发现同质Root: (交集数:%ld) 旧位置:%ld/%ld 旧枝叶数:%ld pFos数:(旧%ld + 新%ld = %ld)",pFosValue.count - newPFosValue.count,oldIndex+1,self.loopCache.count,[TOUtils getSubOutModels_AllDeep:oldRRoot validStatus:nil].count,oldRRoot.pFos.count,newPFosValue.count,oldRRoot.pFos.count + newPFosValue.count);
-                    
-                    //8. 新旧pFos全保留 (参考31024-todo1);
-                    pFosValue = [SMGUtils collectArrA:oldRRoot.pFos arrB:newPFosValue];
-                    
-                    //9. 删掉旧的root (参考31024-todo2);
-                    [self.loopCache removeObject:oldRRoot];
-                    break;
-                    
-                    //TODOTOMORROW20240513: 旧的pFos就不重复取canset池了,把新加入的pFo追加它们的候选集到canset池中即可;
-                    
-                    
-                }
-            }
+            //2024.05.24: 关掉同质合并: 因为在alg和mv支持传染后,此处同质合并不再必要,合并后旧的删除掉,反而导致旧任务下的已传染的被删,新任务初始不到传染状态了;
+            //for (ReasonDemandModel *oldRRoot in self.loopCache.array) {
+            //    NSInteger oldIndex = [self.loopCache indexOfObject:oldRRoot];
+            //    7. 判断新旧Root有交集 (参考31024-todo1);
+            //    2024.05.13: 取出新的,只占一部分,则说明有旧的交集 (简化下算法);
+            //    NSArray *samePFos = [SMGUtils filterArr:pFosValue arrB:oldRRoot.pFos convertBlock:^id(AIMatchFoModel *item) {return item.matchFo;}];
+            //    NSArray *newPFosValue = [SMGUtils removeArr:oldRRoot.pFos parentArr:pFosValue convertBlock:^id(AIMatchFoModel *item) { return item.matchFo; }];
+            //    if (newPFosValue.count < pFosValue.count) {
+            //        NSLog(@"发现同质Root: (交集数:%ld) 旧位置:%ld/%ld 旧枝叶数:%ld pFos数:(旧%ld + 新%ld = %ld)",pFosValue.count - newPFosValue.count,oldIndex+1,self.loopCache.count,[TOUtils getSubOutModels_AllDeep:oldRRoot validStatus:nil].count,oldRRoot.pFos.count,newPFosValue.count,oldRRoot.pFos.count + newPFosValue.count);
+            //
+            //        //8. 新旧pFos全保留 (参考31024-todo1);
+            //        pFosValue = [SMGUtils collectArrA:oldRRoot.pFos arrB:newPFosValue];
+            //
+            //        //9. 删掉旧的root (参考31024-todo2);
+            //        [self.loopCache removeObject:oldRRoot];
+            //        break;
+            //    }
+            //}
             
             //7. 有需求时,则加到需求序列中;
             ReasonDemandModel *newItem = [ReasonDemandModel newWithAlgsType:atKey pFos:pFosValue shortModel:inModel baseFo:nil protoFo:protoFo];
