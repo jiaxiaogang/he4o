@@ -363,14 +363,6 @@
             }].count;
             if (newInfectedNum > 0) NSLog(@"frameActYes中间帧传染: demand:%p + 新增传染数:%d = 总传染数:%ld (还剩:%ld) (另:传至工作记忆:%d)",demand,newInfectedNum,totalInfectedNum,actionFoModels.count - totalInfectedNum,rootsInfectedNum);
         }
-        
-        /*
-         //TODOTOMORROW20240512: 这里测日志,每次末帧传染后,整个任务也挂了,导致下次这个任务起来时,又挂,又启,又挂,一直在重复;
-         末帧传染: demand:0x600001a5cc60 + 新增传染数:166 = 总传染数:166 (还剩:140)
-         末帧传染: demand:0x600001a5def0 + 新增传染数:265 = 总传染数:265 (还剩:115)
-         末帧传染: demand:0x600001a4ed00 + 新增传染数:272 = 总传染数:272 (还剩:116)
-         末帧传染: demand:0x600001a51a70 + 新增传染数:272 = 总传染数:272 (还剩:116)
-         */
     }];
     DebugE();
 }

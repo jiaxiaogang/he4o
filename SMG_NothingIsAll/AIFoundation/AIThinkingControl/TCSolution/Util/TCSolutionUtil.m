@@ -119,7 +119,7 @@
     
     //11. 在rSolution/hSolution初始化Canset池时,也继用下传染状态 (参考31178-TODO3);
     int initToInfectedNum = [TOUtils initInfectedForCansetPool_Alg:hDemand];
-    NSLog(@"第2步 H转为候选集 总数:%ld 其中被传染数:%d",hDemand.actionFoModels.count,initToInfectedNum);
+    NSLog(@"第2步 H转为候选集:%ld - 中间帧被初始传染:%d = 有效数:%ld",hDemand.actionFoModels.count,initToInfectedNum,hDemand.actionFoModels.count - initToInfectedNum);
     
     //12. 竞争求解: 对hCansets进行实时竞争 (参考31122);
     return [self realTimeRankCansets:hDemand zonHeScoreBlock:nil];//400ms
@@ -176,7 +176,7 @@
     //9. 在rSolution/hSolution初始化Canset池时,也继用下传染状态 (参考31178-TODO3);
     int initToInfectedNum = [TOUtils initInfectedForCansetPool_Alg:demand];
     int initToInfectedNum_Mv = [TOUtils initInfectedForCansetPool_Mv:demand];
-    NSLog(@"第2步 R转为候选集 总数:%ld 中间帧被传染:%d 末帧被传染:%d",cansetModels.count,initToInfectedNum,initToInfectedNum_Mv);
+    NSLog(@"第2步 R转为候选集:%ld - 中间帧被初始传染:%d - 末帧被初始传染:%d = 有效数:%ld",cansetModels.count,initToInfectedNum,initToInfectedNum_Mv,cansetModels.count - initToInfectedNum - initToInfectedNum_Mv);
 
     //10. 竞争求解;
     return [self realTimeRankCansets:demand zonHeScoreBlock:nil];//400ms
