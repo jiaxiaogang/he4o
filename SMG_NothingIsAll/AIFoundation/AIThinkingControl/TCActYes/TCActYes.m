@@ -361,7 +361,7 @@
             NSInteger totalInfectedNum = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
                 return item.isInfected;
             }].count;
-            if (newInfectedNum > 0) NSLog(@"frameActYes中间帧传染: demand:%p + 新增传染数:%d = 总传染数:%ld (还剩:%ld) (另:传至工作记忆:%d)",demand,newInfectedNum,totalInfectedNum,actionFoModels.count - totalInfectedNum,rootsInfectedNum);
+            if (newInfectedNum > 0) NSLog(@"frameActYes中间帧%@ 传染: demand:%p + 新增传染数:%d = 总传染数:%ld (还剩:%ld) (另:传至工作记忆:%d)",Pit2FStr(frameModel.content_p),demand,newInfectedNum,totalInfectedNum,actionFoModels.count - totalInfectedNum,rootsInfectedNum);
         }
     }];
     DebugE();

@@ -283,9 +283,12 @@
     
     //3. 每个Canset都支持持续反馈: 反馈有效时,构建或类比抽象HCanset,并推进到下一帧;
     NSArray *allCanset = [TOUtils getSubCansets_AllDeep_AllRoots];
+    int rewakeNum = 0;
     for (TOFoModel *cansetModel in allCanset) {
-        [cansetModel commit4FeedbackTOR:recognitionAlgs protoAlg:model.protoAlg.p];
+        BOOL feedbackValid = [cansetModel commit4FeedbackTOR:recognitionAlgs protoAlg:model.protoAlg.p];
+        if (feedbackValid) rewakeNum++;
     }
+    if (rewakeNum > 0) NSLog(@"feedbackTOR反馈:%@ 中间帧传染的alg反馈成立而canset重生:%d",Alg2FStr(model.protoAlg),rewakeNum);
     DebugE();
 }
 
