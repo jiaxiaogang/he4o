@@ -365,9 +365,8 @@
     //2. 判断反馈mIsC是否有效 (比如找锤子,看到锤子了 & 再如吃,确定自己是否真吃了);
     AIShortMatchModel_Simple *cansetToSimple = ARR_INDEX(self.transferXvModel.cansetToOrders, self.cansetActIndex);
     BOOL mIsC = [feedbackMatchAlg_ps containsObject:cansetToSimple.alg_p];
-    //TODOTOMORROW20240424: 这里全是false,查下原因... (但连续3次训练别重新run的时候,又能匹配上);
     //验证下如果匹配上时,这里都是什么状态,因为有一些能newH,有一些没跑上;
-    NSLog(@"flt1 等待反馈中:%@ 匹配:%d baseCansetFrom:%@ 状态:%@",Pit2FStr(cansetToSimple.alg_p),mIsC,ShortDesc4Pit(self.cansetFo),CansetStatus2Str(self.cansetStatus));
+    NSLog(@"等待反馈中:%@ 匹配:%d baseCansetFrom:%@ 状态:%@",Pit2FStr(cansetToSimple.alg_p),mIsC,ShortDesc4Pit(self.cansetFo),CansetStatus2Str(self.cansetStatus));
     if (!mIsC) return false;
     
     //3. 有效时: 记录feedbackAlg;
@@ -405,7 +404,7 @@
         }];
         //注: 此处非CS_None状态的cansetModel,subHDemand一般为nil;
         if (subHDemand) subHDemand.status = TOModelStatus_Finish;
-        if (Log4OPushM) NSLog(@"flt1 RCansetA有效:M(A%ld) C(A%ld) CAtFo:%@",protoAlg_p.pointerId,curAlgModel.content_p.pointerId,Pit2FStr(self.content_p));
+        if (Log4OPushM) NSLog(@"RCansetA有效:M(A%ld) C(A%ld) CAtFo:%@",protoAlg_p.pointerId,curAlgModel.content_p.pointerId,Pit2FStr(self.content_p));
         self.status = TOModelStatus_Runing;
         
         //4. 收集真实发生realMaskFo,收集成hCanset (参考30131-todo1 & 30132-方案);
@@ -424,7 +423,7 @@
             
             //5. 综合indexDic计算: 当前cansetTo与real之间的映射;
             [newHCanset updateIndexDic:rCanset indexDic:self.realCansetToIndexDic];
-            NSLog(@"flt1 Canset演化> NewHCanset:%@ toScene:%@ 在%ld帧:A%ld",Fo2FStr(newHCanset),ShortDesc4Node(rCanset),self.cansetActIndex,actIndexAlg_p.pointerId);
+            NSLog(@"Canset演化> NewHCanset:%@ toScene:%@ 在%ld帧:A%ld",Fo2FStr(newHCanset),ShortDesc4Node(rCanset),self.cansetActIndex,actIndexAlg_p.pointerId);
         }
     }
     
@@ -437,7 +436,7 @@
         HDemandModel *hDemand = (HDemandModel*)self.baseOrGroup;//h需求模型
         TOAlgModel *targetAlgModel = (TOAlgModel*)hDemand.baseOrGroup;   //hDemand的目标alg;
         TOFoModel *targetFoModel = (TOFoModel*)targetAlgModel.baseOrGroup;    //hDemand的目标alg所在的fo;
-        if (Log4OPushM) NSLog(@"flt1 HCansetA有效:M(A%ld) C:%@",protoAlg_p.pointerId,Pit2FStr(targetAlgModel.content_p));
+        if (Log4OPushM) NSLog(@"HCansetA有效:M(A%ld) C:%@",protoAlg_p.pointerId,Pit2FStr(targetAlgModel.content_p));
         
         //7. 记录feedbackAlg (参考27204-1);
         BOOL isEndFrame = self.cansetActIndex == self.cansetTargetIndex;
@@ -469,7 +468,7 @@
                 AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:newHCanset assFo:cansetTo type:ATDefault noRepeatArea_ps:noRepeatArea_ps];
                 BOOL updateCansetSuccess = [sceneTo updateConCanset:absCansetFo.pointer targetIndex:targetFoModel.cansetActIndex];
                 [AITest test101:absCansetFo proto:newHCanset conCanset:cansetTo];
-                NSLog(@"flt1 Canset演化> AbsHCanset:%@ toScene:%@ 在%ld帧",Fo2FStr(absCansetFo),ShortDesc4Node(sceneTo),targetFoModel.cansetActIndex);
+                NSLog(@"Canset演化> AbsHCanset:%@ toScene:%@ 在%ld帧",Fo2FStr(absCansetFo),ShortDesc4Node(sceneTo),targetFoModel.cansetActIndex);
                 
                 if (updateCansetSuccess) {
                     //15. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);
@@ -494,7 +493,7 @@
                     [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
                 }
             } else {
-                NSLog(@"flt1 HCanset预想与实际类比未执行,F%ld 状态:%ld %ld 实际的帧数:%ld",self.content_p.pointerId,self.status,self.cansetStatus,orders.count);
+                NSLog(@"HCanset预想与实际类比未执行,F%ld 状态:%ld %ld 实际的帧数:%ld",self.content_p.pointerId,self.status,self.cansetStatus,orders.count);
             }
         }
     }

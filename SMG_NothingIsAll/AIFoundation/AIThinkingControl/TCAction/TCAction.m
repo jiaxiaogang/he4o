@@ -41,7 +41,7 @@
     OFTitleLog(@"行为化Fo", @"\n下标 (%ld/%ld) 时序:%@",foModel.cansetActIndex,foModel.cansetTargetIndex,Fo2FStr(curFo));
     
     if (!foModel.isH) {
-        NSLog(@"flt1 _Fo行为化下标: (%ld/%ld) %@ from %@ rDemand:F%ld",foModel.cansetActIndex,foModel.cansetTargetIndex,Pit2FStr([foModel getCurFrame].content_p),Fo2FStr(curFo),foModel.basePFo.matchFo.pointerId);
+        NSLog(@"_Fo行为化下标: (%ld/%ld) %@ from %@ rDemand:F%ld",foModel.cansetActIndex,foModel.cansetTargetIndex,Pit2FStr([foModel getCurFrame].content_p),Fo2FStr(curFo),foModel.basePFo.matchFo.pointerId);
     }
     
     //3. 进行反思识别,如果不通过时,回到TCScore可能会尝试先解决子任务,通过时继续行为化 (参考30054-todo7);

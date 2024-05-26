@@ -275,11 +275,11 @@
         }];
     }];
     
-    NSLog(@"flt1 反馈来了:protoA:%@ recognitionAlgs:%@",ShortDesc4Node(model.protoAlg),CLEANSTR([SMGUtils convertArr:recognitionAlgs convertBlock:^id(AIKVPointer *obj) {
+    NSLog(@"反馈来了:protoA:%@ recognitionAlgs:%@",ShortDesc4Node(model.protoAlg),CLEANSTR([SMGUtils convertArr:recognitionAlgs convertBlock:^id(AIKVPointer *obj) {
         return STRFORMAT(@"A%ld",obj.pointerId);
     }]));
     
-    NSLog(@"flt1 工作记忆root数:%ld 含任务数:%ld",roots.count,allDemands.count);
+    NSLog(@"工作记忆root数:%ld 含任务数:%ld",roots.count,allDemands.count);
     
     //3. 每个Canset都支持持续反馈: 反馈有效时,构建或类比抽象HCanset,并推进到下一帧;
     NSArray *allCanset = [TOUtils getSubCansets_AllDeep_AllRoots];
