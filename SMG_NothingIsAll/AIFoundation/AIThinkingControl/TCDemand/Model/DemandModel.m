@@ -37,7 +37,8 @@
  *        起因: 只有best过的,才有必要计算评分,别的Cansets都是默认分 (参考31083-TODO1);
  */
 -(NSArray*) bestCansets {
-    return [SMGUtils filterArr:self.actionFoModels checkValid:^BOOL(TOFoModel *actionFo) {
+    NSArray *actionFoModels = [self.actionFoModels copy];
+    return [SMGUtils filterArr:actionFoModels checkValid:^BOOL(TOFoModel *actionFo) {
         return actionFo.cansetStatus == CS_Besting || actionFo.cansetStatus == CS_Bested;
     }];
 }
