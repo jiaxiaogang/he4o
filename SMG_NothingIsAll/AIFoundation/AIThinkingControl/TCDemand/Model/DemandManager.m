@@ -196,7 +196,8 @@
  *      2024.01.04: 避免徒劳,已经付出努力的价值,计为进度分 (参考31052);
  */
 -(void) refreshCmvCacheSort {
-    NSArray *sort = [SMGUtils sortBig2Small:self.loopCache.array compareBlock1:^double(ReasonDemandModel *obj) {
+    //1. 为了性能好,先算出排序任务分;
+    NSArray *mapArr = [SMGUtils convertArr:self.loopCache.array convertBlock:^id(ReasonDemandModel *obj) {
         //1. 计算任务分;
         CGFloat demandScore = -[AIScore score4Demand:obj];
         
@@ -214,10 +215,18 @@
         
         //3. 求出总分,并用于排序 (参考31052-todo2);
         CGFloat totalScore = maxProgressScore + demandScore;
-        NSLog(@"任务分:%.2f + 最终进度分:%.2f = 总分:%.2f",demandScore,maxProgressScore,totalScore);
-        return totalScore;
-    } compareBlock2:^double(DemandModel *obj) {
-        return obj.initTime;
+        //NSLog(@"任务分:%.2f + 最终进度分:%.2f = 总分:%.2f",demandScore,maxProgressScore,totalScore);
+        return [MapModel newWithV1:obj v2:@(totalScore) v3:@(obj.initTime)];
+    }];
+    
+    //2. 排序 (第一因子得分,第二因子更新任务);
+    NSArray *sort = [SMGUtils sortBig2Small:mapArr compareBlock1:^double(MapModel *obj) {
+        return NUMTOOK(obj.v2).doubleValue;
+    } compareBlock2:^double(MapModel *obj) {
+        return NUMTOOK(obj.v3).doubleValue;
+    }];
+    sort = [SMGUtils convertArr:sort convertBlock:^id(MapModel *obj) {
+        return obj.v1;
     }];
     
     [self.loopCache removeAllObjects];
