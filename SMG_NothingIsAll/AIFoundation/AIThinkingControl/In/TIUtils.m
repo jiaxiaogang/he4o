@@ -265,8 +265,8 @@
     //16. debugLog
     NSLog(@"\n概念识别结果 (感似:%ld条 理似:%ld条 感交:%ld 理交:%ld) protoAlg:%@",inModel.matchAlgs_PS.count,inModel.matchAlgs_RS.count,inModel.matchAlgs_PJ.count,inModel.matchAlgs_RJ.count,Alg2FStr(protoAlg));
     for (AIMatchAlgModel *item in inModel.matchAlgs_All) {
-        NSString *prDesc = [inModel.matchAlgs_R containsObject:item] ? @"R" : @"P";
-        NSString *sjDesc = [inModel.matchAlgs_Si containsObject:item] ? @"S" : @"J";
+        NSString *prDesc = [inModel.matchAlgs_R containsObject:item] ? @"r" : @"p";
+        NSString *sjDesc = [inModel.matchAlgs_Si containsObject:item] ? @"s" : @"j";
         if (Log4MAlg) NSLog(@"%@%@-->>>(%d) 全含item: %@   \t相近度 => %.2f (count:%d)",prDesc,sjDesc,item.sumRefStrong,Pit2FStr(item.matchAlg),item.matchValue,item.matchCount);
     }
 }

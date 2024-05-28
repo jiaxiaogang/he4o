@@ -266,7 +266,7 @@
     if (ISOK(self.basePFoOrTargetFoModel, AIMatchFoModel.class)) {
         return self.basePFoOrTargetFoModel;
     }
-    return self.basePFo;//此处死循环;
+    return ((TOFoModel*)self.basePFoOrTargetFoModel).basePFo;
 }
 
 //MARK:===============================================================

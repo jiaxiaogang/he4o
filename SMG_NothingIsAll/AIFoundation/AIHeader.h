@@ -361,7 +361,7 @@
 //输入思维
 #define Log4TCInput false
 //识别概念
-#define Log4MAlg true
+#define Log4MAlg false
 //模糊匹配
 #define Log4FuzzyAlg false
 //识别时序
