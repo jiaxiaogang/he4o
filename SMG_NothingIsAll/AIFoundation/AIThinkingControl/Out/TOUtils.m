@@ -740,7 +740,7 @@
 }
 
 /**
- *  MARK:--------------------将被解决的rDemand在工作记忆的同质解都重生 (参考31179-TODO2)--------------------
+ *  MARK:--------------------将被解决的rDemand在工作记忆的同质解都唤醒 (参考31179-TODO2)--------------------
  *  @desc 白话: 当frameActYes因canset有效而解决了rDemand时,调用此方法 => 将工作记忆中所有同质末帧canset都rewake下,使之可再次尝试它有效;
  *  @rDemand 将frameActYes中被解决的rDemand传进来 (用于到工作记忆中判断同质r任务);
  */
@@ -748,11 +748,11 @@
     int rewakeNum = 0;
     NSArray *allCanset = [TOUtils getSubCansets_AllDeep_AllRoots];
     for (TOFoModel *canset in allCanset) {
-        //1. 非RDemand的解不重生;
+        //1. 非RDemand的解不唤醒;
         if (!ISOK(canset.baseOrGroup, ReasonDemandModel.class)) continue;
-        //2. 未到末尾不复生;
+        //2. 未到末尾不唤醒;
         if (canset.cansetActIndex < canset.transferXvModel.cansetToOrders.count) continue;
-        //3. 非同区不复生;
+        //3. 非同区不唤醒;
         DemandModel *otherDemand = (DemandModel*)canset.baseOrGroup;
         if (![rewakeByRDemand.algsType isEqualToString:otherDemand.algsType]) continue;
         if (canset.isInfected) {
@@ -760,8 +760,8 @@
             rewakeNum++;
         }
     }
-    NSLog(@"frameActYes触发后,发现:%@ 自然未发生负价值,将已末帧传染的mv同区canset重生:%d",rewakeByRDemand.algsType,rewakeNum);
-    return rewakeNum;//将重生数返回;
+    NSLog(@"frameActYes触发后,发现:%@ 自然未发生负价值,将已末帧传染的mv同区canset唤醒:%d",rewakeByRDemand.algsType,rewakeNum);
+    return rewakeNum;//将唤醒数返回;
 }
 
 /**

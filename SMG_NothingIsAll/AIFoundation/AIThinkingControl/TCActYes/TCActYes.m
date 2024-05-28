@@ -297,14 +297,14 @@
                 demand.status = TOModelStatus_ActNo;
                 [TCScore scoreFromIfTCNeed];
             } else {
-                //f. 如果无反馈,则设为对baseRDemand有效,整个工作记忆同质解都重生一下 (参考31179-TODO2);
+                //f. 如果无反馈,则设为对baseRDemand有效,整个工作记忆同质解都唤醒一下 (参考31179-TODO2);
                 if (ISOK(solutionModel.baseOrGroup, ReasonDemandModel.class)) {
                     rootsRewakeNum = [TOUtils rewakeToAllRootsTree_Mv:(ReasonDemandModel*)solutionModel.baseOrGroup];
                 }
             }
             
             //g. log
-            if (rootsRewakeNum > 0) NSLog(@"frameActYes末帧复生: demand:%@ 传至工作记忆重生总数:%d",demand.algsType,rootsRewakeNum);
+            if (rootsRewakeNum > 0) NSLog(@"frameActYes末帧唤醒: demand:%@ 传至工作记忆唤醒总数:%d",demand.algsType,rootsRewakeNum);
         }
         //5. 中间为帧理性目标;
         else{

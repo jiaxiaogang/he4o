@@ -366,15 +366,12 @@
     AIShortMatchModel_Simple *cansetToSimple = ARR_INDEX(self.transferXvModel.cansetToOrders, self.cansetActIndex);
     BOOL mIsC = [feedbackMatchAlg_ps containsObject:cansetToSimple.alg_p];
     if (!mIsC) return false;
-    NSLog(@"feedbackTOR反馈成立:%@ 匹配:%d baseCansetFrom:%@ 状态:%@",Pit2FStr(cansetToSimple.alg_p),mIsC,ShortDesc4Pit(self.cansetFo),CansetStatus2Str(self.cansetStatus));
+    if (SwitchOfFeedbackTOR) NSLog(@"feedbackTOR反馈成立:%@ 匹配:%d baseCansetFrom:%@ 状态:%@",Pit2FStr(cansetToSimple.alg_p),mIsC,ShortDesc4Pit(self.cansetFo),CansetStatus2Str(self.cansetStatus));
     
     //3. 有效时: 记录feedbackAlg;
     TOAlgModel *curAlgModel = [self getCurFrame];
     curAlgModel.feedbackAlg = protoAlg_p;
     curAlgModel.status = TOModelStatus_OuterBack;
-    
-    //4. feedbackTOR有反馈时,被传染的支持整个工作记忆树重生 (参考31178-TODO2);
-    self.isInfected = false;
     self.status = TOModelStatus_Runing;
     
     //5. 反馈成立,更新映射;

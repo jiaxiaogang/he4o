@@ -232,7 +232,7 @@
 +(int) infectToAllRootsTree_Alg:(AIKVPointer*)infectedAlg;
 
 /**
- *  MARK:--------------------将被解决的rDemand在工作记忆的同质解都重生 (参考31179-TODO2)--------------------
+ *  MARK:--------------------将被解决的rDemand在工作记忆的同质解都唤醒 (参考31179-TODO2)--------------------
  *  @desc 白话: 当frameActYes因canset有效而解决了rDemand时,调用此方法 => 将工作记忆中所有同质末帧canset都rewake下,使之可再次尝试它有效;
  */
 +(int) rewakeToAllRootsTree_Mv:(ReasonDemandModel*)rewakeByRDemand;

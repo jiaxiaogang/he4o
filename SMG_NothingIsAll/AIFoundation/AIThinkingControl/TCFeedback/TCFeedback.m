@@ -283,12 +283,18 @@
     
     //3. 每个Canset都支持持续反馈: 反馈有效时,构建或类比抽象HCanset,并推进到下一帧;
     NSArray *allCanset = [TOUtils getSubCansets_AllDeep_AllRoots];
-    int rewakeNum = 0;
+    int feedbackValidNum = 0, rewakeNum = 0;
     for (TOFoModel *cansetModel in allCanset) {
         BOOL feedbackValid = [cansetModel commit4FeedbackTOR:recognitionAlgs protoAlg:model.protoAlg.p];
-        if (feedbackValid) rewakeNum++;
+        
+        //4. feedbackTOR有反馈有效时,被传染的支持整个工作记忆树唤醒 (参考31178-TODO2);
+        feedbackValidNum += feedbackValid ? 1 : 0;
+        if (feedbackValid && !cansetModel.isInfected) {
+            rewakeNum++;
+            cansetModel.isInfected = false;
+        }
     }
-    if (rewakeNum > 0) NSLog(@"feedbackTOR反馈:%@ 中间帧传染的alg反馈成立而canset重生:%d",Alg2FStr(model.protoAlg),rewakeNum);
+    if (rewakeNum > 0) NSLog(@"feedbackTOR反馈:%@ 反馈有效数:%d 因此中间帧传染唤醒数:%d",Alg2FStr(model.protoAlg),feedbackValidNum,rewakeNum);
     DebugE();
 }
 
@@ -328,7 +334,7 @@
             //4. 非R也非P任务时,不处理;
             if (!ISOK(waitModel.baseOrGroup, ReasonDemandModel.class) && !ISOK(waitModel.baseOrGroup, PerceptDemandModel.class)) continue;
             
-            //5. 非actYes状态不处理 (canset池的none,best状态都可以传染和复生 参考31179-TODO1);
+            //5. 非actYes状态不处理 (canset池的none,best状态都可以传染和唤醒 参考31179-TODO1);
             //if (waitModel.status != TOModelStatus_ActYes) continue;
             
             //6. 未到末尾,不处理;

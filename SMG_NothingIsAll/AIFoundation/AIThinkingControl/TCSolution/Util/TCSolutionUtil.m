@@ -129,7 +129,7 @@
  *  MARK:--------------------R求解--------------------
  *  @version
  *      2023.12.26: 提前在for之前取scene所在的pFo,以优化其性能 (参考31025-代码段-问题1) //共三处优化,此乃其一;
- *      2024.01.24: 只初始化一次,避免重复生成actionFoModels (参考31073-TODO2f);
+ *      2024.01.24: 只初始化一次,避免重唤醒成actionFoModels (参考31073-TODO2f);
  */
 +(TOFoModel*) rSolution:(ReasonDemandModel *)demand {
     //0. 初始化一次,后面只执行generalSolution部分;

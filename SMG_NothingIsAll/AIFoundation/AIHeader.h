@@ -395,7 +395,7 @@
 #define Log4Solution true
 
 //TCCanset日志开关
-#define Log4TCCanset true
+#define Log4TCCanset false
 #define Log4GetCansetResult4R true
 #define Log4GetCansetResult4H true
 
@@ -429,3 +429,6 @@
 #define Switch4DuoXinQi false
 //反馈反思识别开关,只要把它的重组关了,后面的识别也就关了 (参考30054)
 #define Switch4FeedbackRegroup false
+//feedbackTOR日志开关
+#define SwitchOfFeedbackTOR false
+
