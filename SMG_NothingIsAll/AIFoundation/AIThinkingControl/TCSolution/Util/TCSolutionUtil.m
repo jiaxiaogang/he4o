@@ -259,9 +259,16 @@
 
         //TODOTOMORROW20240528: 查下一句因越界闪退的问题;
         AIFoNodeBase *sceneTo = [SMGUtils searchNode:result.sceneTo];
+        AIFoNodeBase *cansetTo = [SMGUtils searchNode:result.transferSiModel.canset];
         for (NSNumber *key in result.transferXvModel.sceneToCansetToIndexDic.allKeys) {
+            NSNumber *value = [result.transferXvModel.sceneToCansetToIndexDic objectForKey:key];
             if (key.integerValue >= sceneTo.count) {
                 NSLog(@"");
+            }
+            if (value.integerValue >= cansetTo.count) {
+                NSLog(@"%ld %ld %ld",value.integerValue,cansetTo.count,result.transferXvModel.cansetToOrders.count);
+                //明天继续查,这里肯定是虚迁移的时候,已经出BUG了;
+                NSLog(@"这里打断点,说明下一步就闪退了,因为它越界导致元素取到了nil,复现方式: 点饿,过四五秒,扔个皮果在头顶路上");
             }
         }
         
