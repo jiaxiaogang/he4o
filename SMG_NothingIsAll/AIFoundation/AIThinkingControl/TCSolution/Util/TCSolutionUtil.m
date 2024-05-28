@@ -57,18 +57,12 @@
         NSArray *allHCanset = [SMGUtils convertArr:sceneFrom.conCansetsDic.allValues convertItemArrBlock:^NSArray *(id obj) {
             return obj;
         }];
-        NSLog(@"取HCanset候选集: 从hScene:F%ld 的在%ld帧开始取,取得HCanset数:%ld/%ld",sceneFrom.pId,rCanset.cansetCutIndex + 1,cansetFroms1.count,allHCanset.count);
+        
+        //log
         if (ARRISOK(cansetFroms1)) {
-            NSLog(@"取到HCanset%@",CLEANSTR([SMGUtils convertArr:cansetFroms1 convertBlock:^id(id obj) {
+            NSLog(@"取HCanset候选集: 从hScene:F%ld(%@) 的在%ld帧开始取,取得HCanset数:%ld/%ld \n\t%@",sceneFrom.pId,SceneType2Str(rCanset.baseSceneModel.type),rCanset.cansetCutIndex + 1,cansetFroms1.count,allHCanset.count,CLEANSTR([SMGUtils convertArr:cansetFroms1 convertBlock:^id(id obj) {
                 return ShortDesc4Pit(obj);
             }]));
-            NSLog(@"TODOTOMORROW20240402: 跑两三轮31135的训练步骤试下,看这里能不能取到hCanset...");
-            //通过以下四步来测试:
-            //1. 先生成NewHCanset (完成);
-            //2. 能激活HCanset;
-            //  测试方法: 把所有训练生成的RCanset和对应的HCanset记录一下日志,然后再重启后分析激活到的RCanset含不含HCanset等;
-            //3. 能反馈到行为化中的HCanset;
-            //4. 能生成AbsHCanset;
         }
         
         //5. Override过滤器: 防重已经迁移过的 (override用来过滤避免重复迁移) (参考29069-todo5.2);
@@ -263,6 +257,14 @@
         //15. bestResult由虚转实迁移;
         [TCTransfer transferSi:result];
 
+        //TODOTOMORROW20240528: 查下一句因越界闪退的问题;
+        AIFoNodeBase *sceneTo = [SMGUtils searchNode:result.sceneTo];
+        for (NSNumber *key in result.transferXvModel.sceneToCansetToIndexDic.allKeys) {
+            if (key.integerValue >= sceneTo.count) {
+                NSLog(@"");
+            }
+        }
+        
         //16. 更新前中后段con和abs的抽具象强度 (参考28086-todo2 & 28092-todo4);
         [AINetUtils updateConAndAbsStrongByIndexDic:result.transferXvModel.sceneToCansetToIndexDic matchFo:result.sceneTo cansetFo:result.transferSiModel.canset];
 
