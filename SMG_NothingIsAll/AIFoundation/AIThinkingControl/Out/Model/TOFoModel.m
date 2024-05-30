@@ -480,10 +480,6 @@
                     [absCansetFo updateIndexDic:sceneTo indexDic:absHCansetSceneToIndexDic];
                     [AITest test18:absHCansetSceneToIndexDic newCanset:absCansetFo absFo:sceneTo];
                     
-                    if (absHCansetSceneToIndexDic.count == 0) {
-                        NSLog(@"AbsHCanset Dic Is Nil");
-                    }
-                    
                     //16. 算出spDic (参考27213-5);
                     [absCansetFo updateSPDic:[self convertSPDicFromConCanset2AbsCanset]];
                     [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];

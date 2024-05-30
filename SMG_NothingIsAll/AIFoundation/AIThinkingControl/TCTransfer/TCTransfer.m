@@ -288,6 +288,7 @@
 
 /**
  *  MARK:--------------------得出综合映射后: 转为xvModel--------------------
+ *  @param zonHeIndexDic 根据从cansetFrom一步步到sceneTo计算得来 (其中cansetFrom为K,sceneTo为V);
  */
 +(TCTransferXvModel*) convertZonHeIndexDic2XvModel:(TOFoModel*)cansetModel zonHeIndexDic:(NSDictionary*)zonHeIndexDic {
     //1. 数据准备;

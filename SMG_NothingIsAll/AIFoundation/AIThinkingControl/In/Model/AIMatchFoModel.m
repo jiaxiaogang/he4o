@@ -290,9 +290,6 @@
             //c. 综合求出absHCanset与场景的映射;
             NSDictionary *absRCansetSceneToIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2]];
             [absCansetFo updateIndexDic:pFo indexDic:absRCansetSceneToIndexDic];
-            if (absRCansetSceneToIndexDic.count == 0) {
-                NSLog(@"AbsRCanset Dic Is Nil");
-            }
             [AITest test18:absRCansetSceneToIndexDic newCanset:absCansetFo absFo:pFo];
             
             //h. 算出spDic (参考27213-5);
