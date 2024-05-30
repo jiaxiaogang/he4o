@@ -677,6 +677,7 @@
  *  @result 返回结果中,默认首个dic的边缘端口为key,最后一个dic的边缘端口为value;
  *  @version
  *      2024.02.29: 支持各种转向,传入的参数也是带方向的 (参考31113-TODO9-方案2);
+ *      2024.05.30: 修复此处取toAbs: 错误取成上一step的toAbs了,应该取当前item的,而不是lastItem的 (会导致返回indexDic错误);
  *  @result notnull
  */
 +(NSDictionary*) zonHeIndexDic:(NSArray*)directDics {
@@ -691,19 +692,18 @@
     //3. 对第一个边缘,逐个对它的元素找链条;
     for (NSNumber *startPost in firstPosts) {
         id lastPost = startPost;//默认从第一个indexDic的边缘端口开始查起;
-        BOOL lastToAbs = firstDirectDic.toAbs;
         for (DirectIndexDic *stepDirectDic in directDics) {
             NSDictionary *stepDic = stepDirectDic.indexDic;
             
-            //4. 如果上一条是被向上找来的,就用con(values)对接它,如果上一条是向下找来的,就用abs(keys)对接它;
-            if (lastToAbs) {
+            //4. 更新stepToAbs (本次循环中下一步要用);
+            BOOL stepToAbs = stepDirectDic.toAbs;
+            
+            //5. 如果上一条是被向上找来的,就用con(values)对接它,如果上一条是向下找来的,就用abs(keys)对接它;
+            if (stepToAbs) {
                 lastPost = ARR_INDEX([stepDic allKeysForObject:lastPost], 0);
             } else {
                 lastPost = [stepDic objectForKey:lastPost];
             }
-            
-            //5. 更新lastToAbs (下次循环中第4步要用);
-            lastToAbs = stepDirectDic.toAbs;
             
             //6. 如果有一层衔接不上断了,那这一整个链条计为不通;
             if (!lastPost) break;
