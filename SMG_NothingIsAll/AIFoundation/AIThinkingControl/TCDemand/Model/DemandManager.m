@@ -197,7 +197,8 @@
  */
 -(void) refreshCmvCacheSort {
     //1. 为了性能好,先算出排序任务分;
-    NSArray *mapArr = [SMGUtils convertArr:self.loopCache.array convertBlock:^id(ReasonDemandModel *obj) {
+    NSArray *roots = [self.loopCache.array copy];
+    NSArray *mapArr = [SMGUtils convertArr:roots convertBlock:^id(ReasonDemandModel *obj) {
         //1. 计算任务分;
         CGFloat demandScore = -[AIScore score4Demand:obj];
         
