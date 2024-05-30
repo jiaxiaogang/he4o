@@ -283,12 +283,22 @@
             //2024.04.17: 此处简化了下,把用convertOldIndexDic2NewIndexDic()取映射,改成用zonHeDic来计算;
             //a. 从sceneTo向下到cansetTo;
             DirectIndexDic *dic1 = [DirectIndexDic newNoToAbs:[pFo getConIndexDic:solutionFo.p]];
+            //0 = 3;
             
             //b. 从cansetTo向上到absCansetTo;
             DirectIndexDic *dic2 = [DirectIndexDic newOkToAbs:[solutionFo getAbsIndexDic:absCansetFo.p]];
+            //0 = 0; 1 = 2; 2 = 4; 3 = 6;
             
             //c. 综合求出absHCanset与场景的映射;
             NSDictionary *absRCansetSceneToIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2]];
+            //0 = 6;
+            //TODOTOMORROW20240530: 此处在FZ913基础上跑训练,成功复现了indexDic越界原因:
+            //说明: 此处取到0=6,是不正确的,按道理来说,应该取到空字典,相关fo如下:
+            //pFo= F3566[↑饿-16]
+            //solutionFo= F3991[A3958(距84,向19,棒),A3961(距26,向86,棒),A3962(向88,距12,果),M1{↑饿-16},A3969(向166,距112,棒),A3962(向88,距12,果),飞↑,A3977(向170,距114,棒),A3978(向85,距0,果),A3983(向172,距117,棒),A3986(吃1)]
+            //newRCanset= F4052[A4011(向15,距95,棒),A4014(距24,向86,棒),A4015(向88,距11,果),M1{↑饿-16},A4022(向164,距92,棒),A4015(向88,距11,果),飞↑,A4030(向175,距201,棒),A3978(向85,距0,果),A4037(向176,距209,棒),A3986(吃1),飞↑]
+            //absCansetFo= F4056[A4055(距84,棒),A4054(向88,果),A4053(向166,棒),飞↑]
+            
             [absCansetFo updateIndexDic:pFo indexDic:absRCansetSceneToIndexDic];
             if (absRCansetSceneToIndexDic.count == 0) {
                 NSLog(@"AbsRCanset Dic Is Nil");

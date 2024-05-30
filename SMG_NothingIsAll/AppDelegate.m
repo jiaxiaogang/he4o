@@ -137,6 +137,11 @@
     
     //9. 初始化XGConfig
     [XGConfig.instance initConfig];
+    
+    DirectIndexDic *d1 = [DirectIndexDic newNoToAbs:@{@(0):@(3)}];
+    DirectIndexDic *d2 = [DirectIndexDic newOkToAbs:@{@(0):@(0), @(1):@(2), @(2):@(4), @(3):@(6)}];
+    NSDictionary *test = [TOUtils zonHeIndexDic:@[d1,d2]];
+    
     return YES;
 }
 
