@@ -80,11 +80,11 @@
         //TODOTOMORROW20240528: 查此处indexDic有越界情况,会导致后面实时竞争时,取到nil的alg,导致闪退的问题;
         for (NSNumber *key in result.sceneToCansetToIndexDic.allKeys) {
             NSNumber *value = [result.sceneToCansetToIndexDic objectForKey:key];
-            if (key.integerValue >= sceneTo.count) {
-                NSLog(@"");
-            }
             if (value.integerValue >= result.cansetToOrders.count) {
                 NSLog(@"%ld %ld %d %@",value.integerValue,result.cansetToOrders.count,cansetModel.isH,SceneType2Str(cansetModel.baseSceneModel.type));
+                NSLog(@"%@",CLEANSTR(result.sceneToCansetToIndexDic));
+                NSLog(@"%@",Fo2FStr(sceneFrom));
+                NSLog(@"%@",Fo2FStr(cansetFrom));
                 //明天继续查,这里肯定是虚迁移的时候,已经出BUG了;
                 NSLog(@"这里打断点,说明下一步就闪退了,因为它越界导致元素取到了nil,复现方式: 点饿,过四五秒,扔个皮果在头顶路上");
             }

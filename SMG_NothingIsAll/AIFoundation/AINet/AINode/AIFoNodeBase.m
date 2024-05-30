@@ -196,6 +196,17 @@
     [self.absIndexDDic setObject:indexDic forKey:@(absFo.pointer.pointerId)];
     [absFo.conIndexDDic setObject:indexDic forKey:@(self.pointer.pointerId)];
     
+    
+    //TODOTOMORROW20240530: 查此处indexDic越界是哪来的;
+    for (NSNumber *key in indexDic.allKeys) {
+        NSNumber *value = [indexDic objectForKey:key];
+        if (value.integerValue >= self.count) {
+            NSLog(@"映射的value越界");
+        } else if (key.integerValue >= absFo.count) {
+            NSLog(@"映射的key越界");
+        }
+    }
+    
     //2. 保存节点;
     [SMGUtils insertNode:self];
     [SMGUtils insertNode:absFo];
