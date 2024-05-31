@@ -24,8 +24,6 @@
  *                  2. H与R的迁移路径不同的处理 (H比R的首尾各多一层,参考TCTransferV3);
  */
 +(TOFoModel*) hSolutionV3:(HDemandModel *)hDemand {
-    BOOL isSwitch = false;
-    if (!isSwitch) return nil;//先关掉,查错误映射的来源;
     //0. 初始化一次,后面只执行generalSolution部分;
     if (hDemand.alreadyInitCansetModels) {
         ELog(@"solution()应该只执行一次,别的全从TCPlan来分发和实时竞争,此处如果重复执行,查下原因");

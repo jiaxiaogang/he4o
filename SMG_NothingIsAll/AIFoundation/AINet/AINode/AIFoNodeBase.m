@@ -201,9 +201,9 @@
     for (NSNumber *key in indexDic.allKeys) {
         NSNumber *value = [indexDic objectForKey:key];
         if (value.integerValue >= self.count) {
-            NSLog(@"映射的value越界");
+            NSLog(@"映射的value越界,已修,复测一段时间,如果到2024.06.20没断过点,则删除此处");
         } else if (key.integerValue >= absFo.count) {
-            NSLog(@"映射的key越界");
+            NSLog(@"映射的key越界,已修,复测一段时间,如果到2024.06.20没断过点,则删除此处");
         }
     }
     
