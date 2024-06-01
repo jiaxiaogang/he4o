@@ -197,7 +197,7 @@
     [absFo.conIndexDDic setObject:indexDic forKey:@(self.pointer.pointerId)];
     
     
-    //TODOTOMORROW20240530: 查此处indexDic越界是哪来的;
+    //TODOTOMORROW20240530: 查此处indexDic越界是哪来的 (在20240530在综合计算indexDic方法中已修复,如果到2024.06.20没断过点,则删除此处);
     for (NSNumber *key in indexDic.allKeys) {
         NSNumber *value = [indexDic objectForKey:key];
         if (value.integerValue >= self.count) {
