@@ -113,6 +113,12 @@
     NSInteger hCansetTargetIndex = NUMTOOK([indexDic objectForKey:@(hSceneTargetIndex)]).integerValue;
     NSInteger hCansetCutIndex = [TOUtils goBackToFindConIndexByAbsIndex:indexDic absIndex:hSceneCutIndex];
     
+    AIFoNodeBase *hCansetFrom = [SMGUtils searchNode:hCansetFrom_p];
+    if (hCansetTargetIndex >= hCansetFrom.count) {
+        NSLog(@"2024.06.02: 此处测得BUG,因cansetTargetIndex=4而cansetToOrder一共才4条,导致越界");
+        //TODOTOMORROW20240602: 此处打上断点,如果下回再发现,或者有了复现方法,到时候查下原因;
+    }
+    
     //2. 转为TOFoModel;
     TOFoModel *result = [TOFoModel newForHCansetFo:hCansetFrom_p sceneFo:sceneFrom.p base:hDemand
                        cansetCutIndex:hCansetCutIndex sceneCutIndex:hSceneCutIndex

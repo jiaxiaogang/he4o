@@ -87,6 +87,7 @@
                 NSLog(@"这里闪退过,因为这个m或c是空,如果2024.07之前没见过这个错,这里可删");
             }
             if (!cansetToAlg || !cansetToAlg.p) {
+                //2024.06.02: 复现一次,因cansetTargetIndex=4而cansetToOrder一共才4条,导致越界,取到nil;
                 NSLog(@"这里闪退过,因为这个c或m是空,如果2024.07之前没见过这个错,这里可删");
             }
             NSArray *sameAbses = [TOUtils dataOfMcIsBro:targetAlgM.content_p c:cansetToAlg.p];
