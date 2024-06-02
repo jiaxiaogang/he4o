@@ -35,14 +35,11 @@
  */
 +(TCResult*) action:(TOFoModel*)foModel{
     //1. 数据准备
-    AIFoNodeBase *curFo = [SMGUtils searchNode:foModel.content_p];
+    AIFoNodeBase *curFo = [SMGUtils searchNode:foModel.transferSiModel.canset];
+    NSString *rhLog = foModel.isH ? @"H" : @"R";
     
     //2. Alg转移 (下帧),每次调用action立马先跳下actionIndex为当前正准备行为化的那一帧;
-    OFTitleLog(@"行为化Fo", @"\n下标 (%ld/%ld) 时序:%@",foModel.cansetActIndex,foModel.cansetTargetIndex,Fo2FStr(curFo));
-    
-    if (!foModel.isH) {
-        NSLog(@"_Fo行为化下标: (%ld/%ld) %@ from %@ rDemand:F%ld",foModel.cansetActIndex,foModel.cansetTargetIndex,Pit2FStr([foModel getCurFrame].content_p),Fo2FStr(curFo),foModel.basePFo.matchFo.pointerId);
-    }
+    OFTitleLog(@"行为化Fo", @"\nflt1 %@行为化下标 (%ld/%ld) %@ from时序:%@",rhLog,foModel.cansetActIndex,foModel.cansetTargetIndex,Pit2FStr([foModel getCurFrame].content_p),Fo2FStr(curFo));
     
     //3. 进行反思识别,如果不通过时,回到TCScore可能会尝试先解决子任务,通过时继续行为化 (参考30054-todo7);
     [TCRegroup actionRegroup:foModel];
