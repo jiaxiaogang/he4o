@@ -430,5 +430,23 @@
 //反馈反思识别开关,只要把它的重组关了,后面的识别也就关了 (参考30054)
 #define Switch4FeedbackRegroup false
 //feedbackTOR日志开关
-#define SwitchOfFeedbackTOR true
+#define Switch4FeedbackTOR true
 
+//MARK:===============================================================
+//MARK:                    < flt流程日志开关 >
+//MARK:===============================================================
+/**
+ * @title absHCanset
+ * @desc 1.H解行为化 2.H的feedbackTOR成立 3.构建newHCanset
+ * @example
+ *  flt1 H行为化下标 (4/4) A5239(向85,距11,果) from时序:F5922[M1{↑饿-16},A5267(向172,距173,棒),A5239(向85,距11,果),M1{↑饿-16},A5239(向85,距11,果)]
+ *  flt2 H feedbackTOR反馈成立:A5239(向85,距11,果) 匹配:1 baseCansetFrom:F5294[↑饿-16,4棒,4果,↑饿-16,4果] 状态:CS_Besting
+ *  flt3 Canset演化> AbsHCanset:F5930[A13(饿16,7),A4899(距11,果),A5929(向85,果)] toScene:F4822[↑饿-16,4果,↑饿-16,4果] 在4帧
+ */
+#define Switch4AbsHCanset false
+
+/**
+ * @title 去皮动机
+ * @desc 1.
+ */
+#define Switch4HDemandOfWuPiGuo true

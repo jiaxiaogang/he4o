@@ -366,7 +366,8 @@
     AIShortMatchModel_Simple *cansetToSimple = ARR_INDEX(self.transferXvModel.cansetToOrders, self.cansetActIndex);
     BOOL mIsC = [feedbackMatchAlg_ps containsObject:cansetToSimple.alg_p];
     if (!mIsC) return false;
-    if (SwitchOfFeedbackTOR) NSLog(@"flt2 %@ feedbackTOR反馈成立:%@ 匹配:%d baseCansetFrom:%@ 状态:%@",self.isH?@"H":@"R",Pit2FStr(cansetToSimple.alg_p),mIsC,ShortDesc4Pit(self.cansetFo),CansetStatus2Str(self.cansetStatus));
+    NSString *fltLog = Switch4AbsHCanset && self.isH ? @"flt2 " : @"";
+    if (Switch4FeedbackTOR) NSLog(@"%@%@ feedbackTOR反馈成立:%@ 匹配:%d baseCansetFrom:%@ 状态:%@",fltLog,self.isH?@"H":@"R",Pit2FStr(cansetToSimple.alg_p),mIsC,ShortDesc4Pit(self.cansetFo),CansetStatus2Str(self.cansetStatus));
     
     //3. 有效时: 记录feedbackAlg;
     TOAlgModel *curAlgModel = [self getCurFrame];
@@ -464,7 +465,8 @@
                 AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:newHCanset assFo:cansetTo type:ATDefault noRepeatArea_ps:noRepeatArea_ps];
                 BOOL updateCansetSuccess = [sceneTo updateConCanset:absCansetFo.pointer targetIndex:targetFoModel.cansetActIndex];
                 [AITest test101:absCansetFo proto:newHCanset conCanset:cansetTo];
-                NSLog(@"flt3 Canset演化> AbsHCanset:%@ toScene:%@ 在%ld帧",Fo2FStr(absCansetFo),ShortDesc4Node(sceneTo),targetFoModel.cansetActIndex);
+                NSString *fltLog = Switch4AbsHCanset ? @"flt3 " : @"";
+                NSLog(@"%@Canset演化> AbsHCanset:%@ toScene:%@ 在%ld帧",fltLog,Fo2FStr(absCansetFo),ShortDesc4Node(sceneTo),targetFoModel.cansetActIndex);
                 
                 if (updateCansetSuccess) {
                     //15. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);
