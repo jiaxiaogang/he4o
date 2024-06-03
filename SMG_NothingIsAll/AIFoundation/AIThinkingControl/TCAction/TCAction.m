@@ -36,11 +36,9 @@
 +(TCResult*) action:(TOFoModel*)foModel{
     //1. 数据准备
     AIFoNodeBase *curFo = [SMGUtils searchNode:foModel.transferSiModel.canset];
-    NSString *rhLog = foModel.isH ? @"H" : @"R";
-    NSString *fltLog = Switch4AbsHCanset && foModel.isH ? @"flt1 " : @"";
     
     //2. Alg转移 (下帧),每次调用action立马先跳下actionIndex为当前正准备行为化的那一帧;
-    OFTitleLog(@"行为化Fo", @"\n%@%@行为化下标 (%ld/%ld) %@ from时序:%@",fltLog,rhLog,foModel.cansetActIndex,foModel.cansetTargetIndex,Pit2FStr([foModel getCurFrame].content_p),Fo2FStr(curFo));
+    OFTitleLog(@"行为化Fo",@"");
     
     //3. 进行反思识别,如果不通过时,回到TCScore可能会尝试先解决子任务,通过时继续行为化 (参考30054-todo7);
     [TCRegroup actionRegroup:foModel];
@@ -55,7 +53,10 @@
     Debug();
     //4. 跳转下帧 (最后一帧为目标,自然发生即可,此前帧则需要行为化实现);
     if (foModel.cansetActIndex < foModel.cansetTargetIndex) {
-        NSLog(@"_Fo行为化下标: (%ld/%ld) %@",foModel.cansetActIndex,foModel.cansetTargetIndex,Fo2FStr(curFo));
+        NSString *rhLog = foModel.isH ? @"H" : @"R";
+        NSString *fltLog1 = FltLog4AbsHCanset(foModel.isH, 1);
+        NSString *fltLog2 = FltLog4HDemandOfWuPiGuo(1);
+        NSLog(@"%@%@%@行为化下标 (%ld/%ld) %@ from时序:%@",fltLog1,fltLog2,rhLog,foModel.cansetActIndex,foModel.cansetTargetIndex,Pit2FStr([foModel getCurFrame].content_p),Fo2FStr(curFo));
         
         //@desc: 下标不急评价说明: R模式_Hav首先是为了避免forecastAlg,其次才是为了达成curFo解决方案 (参考22153);
         //5. 下标不急(弄巧成拙)评价_数据准备 (参考24171-12);

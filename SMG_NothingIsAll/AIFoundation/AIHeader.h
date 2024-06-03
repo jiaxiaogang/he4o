@@ -444,9 +444,25 @@
  *  flt3 Canset演化> AbsHCanset:F5930[A13(饿16,7),A4899(距11,果),A5929(向85,果)] toScene:F4822[↑饿-16,4果,↑饿-16,4果] 在4帧
  */
 #define Switch4AbsHCanset false
+#define FltLog4AbsHCanset(isH,step) isH && Switch4AbsHCanset ? STRFORMAT(@"flt%d ",step) : @""
 
 /**
  * @title 去皮动机
- * @desc 1.
+ * @desc 1.习得RCanset[无皮果,吃] 2.激活RCanset[无皮果,吃] 3.生成H无皮果
  */
 #define Switch4HDemandOfWuPiGuo true
+#define FltLog4HDemandOfWuPiGuo(step) Switch4HDemandOfWuPiGuo ? STRFORMAT(@"flt%d ",step) : @""
+
+/**
+ * @title 学会去皮
+ * @desc 1.在去皮动机生成H无皮果后 2.扔有皮果 3.扔棒去皮 4.feedbackTOR反馈到无皮果 5.生成扔棒去皮H经验
+ */
+#define Switch4YaQuPi true
+#define FltLog4YaQuPi(step) Switch4YaQuPi ? STRFORMAT(@"flt%d ",step) : @""
+
+/**
+ * @title 学会搬运
+ * @desc 1.在去皮经验生成H"路上有皮果"后 2.扔"路下有皮果" 3.快速将有皮果踢到路上 4.feedbackTOR反馈到"路上有皮果" 5.生成搬运到路上H经验
+ */
+#define Switch4XueBanYun true
+#define FltLog4XueBanYun(step) Switch4XueBanYun ? STRFORMAT(@"flt%d ",step) : @""
