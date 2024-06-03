@@ -91,7 +91,8 @@
     //1. 对algModel生成H任务,并挂载在当前短时记忆分支下;
     [theTC updateOperCount:kFILENAME];
     Debug();
-    OFTitleLog(@"hDemand",@"\n%@",Pit2FStr(algModel.content_p));
+    NSString *fltLog = Switch4HDemandOfWuPiGuo ? @"flt1 " : @"";
+    OFTitleLog(@"hDemand",@"\n%@%@",fltLog,Pit2FStr(algModel.content_p));
     [HDemandModel newWithAlgModel:algModel];
     dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
         [theTV updateFrame];
