@@ -438,7 +438,7 @@
 /**
  * @title absHCanset
  * @desc 1.H解行为化 2.H的feedbackTOR成立 3.构建newHCanset
- * @example
+ * @example FZ944x3,按31183步骤慢训练一次,日志如下,存为FZ914x4 (说明: 可见能够执行到构建absHCanset);
  *  flt1 H行为化下标 (4/4) A5239(向85,距11,果) from时序:F5922[M1{↑饿-16},A5267(向172,距173,棒),A5239(向85,距11,果),M1{↑饿-16},A5239(向85,距11,果)]
  *  flt2 H feedbackTOR反馈成立:A5239(向85,距11,果) 匹配:1 baseCansetFrom:F5294[↑饿-16,4棒,4果,↑饿-16,4果] 状态:CS_Besting
  *  flt3 Canset演化> AbsHCanset:F5930[A13(饿16,7),A4899(距11,果),A5929(向85,果)] toScene:F4822[↑饿-16,4果,↑饿-16,4果] 在4帧
@@ -447,8 +447,11 @@
 #define FltLog4AbsHCanset(isH,step) isH && Switch4AbsHCanset ? STRFORMAT(@"flt%d ",step) : @""
 
 /**
- * @title 去皮动机
+ * @title 无皮果动机
  * @desc 1.习得RCanset[无皮果,吃] 2.激活RCanset[无皮果,吃] 3.生成H无皮果
+ * @example FZ944x4,路下出生,点击饿,日志如下 (说明: 可见能够得到无皮果动机);
+ *  flt1 R行为化下标 (3/4) A4807(向90,距11,果) from时序:F4838[M1{↑饿-16},A4807(向90,距11,果),M1{↑饿-16},A4807(向90,距11,果)]
+ *  flt2 A4807(向90,距11,果)
  */
 #define Switch4HDemandOfWuPiGuo true
 #define FltLog4HDemandOfWuPiGuo(step) Switch4HDemandOfWuPiGuo ? STRFORMAT(@"flt%d ",step) : @""
