@@ -436,7 +436,7 @@
 //MARK:                    < flt流程日志开关 >
 //MARK:===============================================================
 /**
- * @title absHCanset
+ * @title absHCanset (参考31183-训练项2)
  * @desc 1.H解行为化 2.H的feedbackTOR成立 3.构建newHCanset
  * @example FZ944x3,按31183步骤慢训练一次,日志如下,存为FZ914x4 (说明: 可见能够执行到构建absHCanset);
  *  flt1 H行为化下标 (4/4) A5239(向85,距11,果) from时序:F5922[M1{↑饿-16},A5267(向172,距173,棒),A5239(向85,距11,果),M1{↑饿-16},A5239(向85,距11,果)]
@@ -447,8 +447,8 @@
 #define FltLog4AbsHCanset(isH,step) isH && Switch4AbsHCanset ? STRFORMAT(@"flt%d ",step) : @""
 
 /**
- * @title 无皮果动机
- * @desc 1.习得RCanset[无皮果,吃] 2.激活RCanset[无皮果,吃] 3.生成H无皮果
+ * @title 无皮果动机 (参考31183-训练项3)
+ * @desc 1.习得RCanset[无皮果,吃] 2.激活RCanset[无皮果,吃] 3.生成H无皮果 (FZ944x4本来就有无皮果动机,所以这个训练步骤没用到);
  * @example FZ944x4,路下出生,点击饿,日志如下 (说明: 可见能够得到无皮果动机);
  *  flt1 R行为化下标 (3/4) A4807(向90,距11,果) from时序:F4838[M1{↑饿-16},A4807(向90,距11,果),M1{↑饿-16},A4807(向90,距11,果)]
  *  flt2 A4807(向90,距11,果)
@@ -457,14 +457,14 @@
 #define FltLog4HDemandOfWuPiGuo(step) Switch4HDemandOfWuPiGuo ? STRFORMAT(@"flt%d ",step) : @""
 
 /**
- * @title 学会去皮
+ * @title 学会去皮 (参考31183-训练项4)
  * @desc 1.在去皮动机生成H无皮果后 2.扔有皮果 3.扔棒去皮 4.feedbackTOR反馈到无皮果 5.生成扔棒去皮H经验
  */
 #define Switch4YaQuPi true
 #define FltLog4YaQuPi(step) Switch4YaQuPi ? STRFORMAT(@"flt%d ",step) : @""
 
 /**
- * @title 学会搬运
+ * @title 学会搬运 (参考31183-训练项5)
  * @desc 1.在去皮经验生成H"路上有皮果"后 2.扔"路下有皮果" 3.快速将有皮果踢到路上 4.feedbackTOR反馈到"路上有皮果" 5.生成搬运到路上H经验
  */
 #define Switch4XueBanYun true
