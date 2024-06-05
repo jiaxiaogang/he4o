@@ -168,8 +168,7 @@
         AIEffectStrong *effStrong = [TOUtils getEffectStrong:sceneFo effectIndex:sceneFo.count solutionFo:obj.cansetFo];
         CGFloat effScore = [TOUtils getEffectScore:effStrong];
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:obj.cansetFo];
-        if (Log4AIRank) NSLog(@"%ld. %@<F%ld %@> %@ %@:(分:%.2f)",[sort indexOfObject:obj],SceneType2Str(obj.baseSceneModel.type),obj.sceneFo.pointerId,Fo2FStr(cansetFo),
-                              CLEANSTR(cansetFo.spDic),effStrong.description,effScore);
+        if (Log4AIRank) NSLog(@"%ld. %@<F%ld %@> %@ %@ %@:(分:%.2f)",[sort indexOfObject:obj],SceneType2Str(obj.baseSceneModel.type),obj.sceneFo.pointerId,Fo2FStr(cansetFo),CLEANSTR(obj.transferXvModel.sceneToCansetToIndexDic),CLEANSTR(cansetFo.spDic),effStrong.description,effScore);
     }
     return sort;
 }

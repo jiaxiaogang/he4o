@@ -271,6 +271,14 @@
         AIFoNodeBase *basePFoOrTargetFo = [SMGUtils searchNode:basePFoOrTargetFo_p];
         deltaTime = basePFoOrTargetFo.mvDeltaTime;
     }else{
+        
+//        =============================== 2 行为化Fo ===============================
+//        R行为化中间帧下标 (0/3) A13(饿16,7) from时序:F6351[A13(饿16,7),A4899(距11,果),A4899(距11,果)]
+//        681 [00:46:32:435 TO          TCActYes.m 278] ---//构建行为化帧触发器:0x6000018e0910 for:饿 time:0.00
+//        682 [00:46:32:435 TO            AITime.m  74] ---> 设定生物钟触发器: deltaTime:0.00 triggerTime:2.00
+        //TODOTOMORROW20240606: 查下此处,为什么时间取到0,导致没法继续到下帧;
+        //0. I<F3611 F6351[A13(饿16,7),A4899(距11,果),A4899(距11,果)]> {0 = S0P1;1 = S0P1;2 = S0P1;} H2N1:(分:0.67) 可以打出来它的sceneToCansetToIndexDic看下它的actIndex真是0么?
+        
         deltaTime = [NUMTOOK(ARR_INDEX(solutionFo.deltaTimes, solutionModel.cansetActIndex)) doubleValue];
     }
     
