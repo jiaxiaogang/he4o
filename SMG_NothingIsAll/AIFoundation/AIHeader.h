@@ -453,15 +453,21 @@
  *  flt1 R行为化下标 (3/4) A4807(向90,距11,果) from时序:F4838[M1{↑饿-16},A4807(向90,距11,果),M1{↑饿-16},A4807(向90,距11,果)]
  *  flt2 A4807(向90,距11,果)
  */
-#define Switch4HDemandOfWuPiGuo true
+#define Switch4HDemandOfWuPiGuo false
 #define FltLog4HDemandOfWuPiGuo(step) Switch4HDemandOfWuPiGuo ? STRFORMAT(@"flt%d ",step) : @""
 
 /**
  * @title 学会去皮 (参考31183-训练项4)
  * @desc 1.在去皮动机生成H无皮果后 2.扔有皮果 3.扔棒去皮 4.feedbackTOR反馈到无皮果 5.生成扔棒去皮H经验
+ * @example FZ944x4,路上出生,点击饿,在生成H无皮果后,扔有皮果,扔木棒去皮,上飞吃掉 (说明: 可见能够生成扔棒去皮H经验);
+ *  flt1 A4807(向90,距11,果)
+ *  flt2 R feedbackTOR反馈成立:A4807(向90,距11,果) 匹配:1 baseCansetFrom:F4838[↑饿-16,4果,↑饿-16,4果] 状态:CS_Besting
+ *  flt3 Canset演化> NewHCanset:F6739[M1{↑饿-16},M1{↑饿-16},A6726(向90,距12,皮果),A6730(向16,距99,棒),A4991(向88,距27,棒),A6734(向90,距12,果)] toScene:F4838[↑饿-16,4果,↑饿-16,4果] 在3帧:A4807
+ *  flt3 Canset演化> AbsHCanset:F6742[A13(饿16,7),A13(饿16,7),A6741(距10,果)] toScene:F4838[↑饿-16,4果,↑饿-16,4果] 在4帧
+ * @result 存为944x5
  */
 #define Switch4YaQuPi true
-#define FltLog4YaQuPi(step) Switch4YaQuPi ? STRFORMAT(@"flt%d ",step) : @""
+#define FltLog4XueQuPi(step) Switch4YaQuPi ? STRFORMAT(@"flt%d ",step) : @""
 
 /**
  * @title 学会搬运 (参考31183-训练项5)
