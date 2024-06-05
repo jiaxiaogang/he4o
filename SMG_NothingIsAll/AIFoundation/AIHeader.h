@@ -470,7 +470,17 @@
 #define FltLog4XueQuPi(step) Switch4YaQuPi ? STRFORMAT(@"flt%d ",step) : @""
 
 /**
- * @title 学会搬运 (参考31183-训练项5)
+ * @title 有皮果动机 (参考31183-训练项5)
+ * @desc FZ944x5已经学会去皮,所以此处只需要看能不能激活"去皮H经验"即可;
+ * @example FZ944x5,路下出生,点击饿,日志如下 (说明: 可见能够激活有皮果动机);
+ *
+ *
+ */
+#define Switch4HDemandOfYouPiGuo true
+#define FltLog4HDemandOfYouPiGuo(step) Switch4HDemandOfYouPiGuo ? STRFORMAT(@"flt%d ",step) : @""
+
+/**
+ * @title 学会搬运 (参考31183-训练项6)
  * @desc 1.在去皮经验生成H"路上有皮果"后 2.扔"路下有皮果" 3.快速将有皮果踢到路上 4.feedbackTOR反馈到"路上有皮果" 5.生成搬运到路上H经验
  */
 #define Switch4XueBanYun true

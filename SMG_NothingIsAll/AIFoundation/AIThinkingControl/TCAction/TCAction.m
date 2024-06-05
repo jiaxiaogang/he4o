@@ -56,7 +56,8 @@
         NSString *rhLog = foModel.isH ? @"H" : @"R";
         NSString *fltLog1 = FltLog4AbsHCanset(foModel.isH, 1);
         NSString *fltLog2 = FltLog4HDemandOfWuPiGuo(1);
-        NSLog(@"%@%@%@行为化下标 (%ld/%ld) %@ from时序:%@",fltLog1,fltLog2,rhLog,foModel.cansetActIndex,foModel.cansetTargetIndex,Pit2FStr([foModel getCurFrame].content_p),Fo2FStr(curFo));
+        NSString *fltLog3 = foModel.isH ? FltLog4HDemandOfYouPiGuo(1) : @"";//调试激活了H有皮果经验;
+        NSLog(@"%@%@%@%@行为化下标 (%ld/%ld) %@ from时序:%@",fltLog1,fltLog2,fltLog3,rhLog,foModel.cansetActIndex,foModel.cansetTargetIndex,Pit2FStr([foModel getCurFrame].content_p),Fo2FStr(curFo));
         
         //@desc: 下标不急评价说明: R模式_Hav首先是为了避免forecastAlg,其次才是为了达成curFo解决方案 (参考22153);
         //5. 下标不急(弄巧成拙)评价_数据准备 (参考24171-12);
