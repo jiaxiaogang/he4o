@@ -466,12 +466,13 @@
  *  flt3 Canset演化> AbsHCanset:F6742[A13(饿16,7),A13(饿16,7),A6741(距10,果)] toScene:F4838[↑饿-16,4果,↑饿-16,4果] 在4帧
  * @result 存为944x5
  */
-#define Switch4YaQuPi true
+#define Switch4YaQuPi false
 #define FltLog4XueQuPi(step) Switch4YaQuPi ? STRFORMAT(@"flt%d ",step) : @""
 
 /**
  * @title 有皮果动机 (参考31183-训练项5)
- * @desc FZ944x5已经学会去皮,所以此处只需要看能不能激活"去皮H经验"即可;
+ * @desc 1.饿 2.生成H无皮果 3.再H找到去皮经验 4.生成H有皮果 (注: 上一个训练项4已经学会去皮,所以此处只需要看能不能激活"去皮H经验"即可);
+ * @desc 主要观察两步: 生成H无皮果 => 生成H有皮果;
  * @example FZ944x5,路下出生,点击饿,日志如下 (说明: 可见能够激活有皮果动机);
  *
  *
