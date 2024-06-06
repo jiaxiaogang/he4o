@@ -280,6 +280,16 @@
         //0. I<F3611 F6351[A13(饿16,7),A4899(距11,果),A4899(距11,果)]> {0 = S0P1;1 = S0P1;2 = S0P1;} H2N1:(分:0.67) 可以打出来它的sceneToCansetToIndexDic看下它的actIndex真是0么?
         
         deltaTime = [NUMTOOK(ARR_INDEX(solutionFo.deltaTimes, solutionModel.cansetActIndex)) doubleValue];
+        if (deltaTime == 0) {
+            NSLog(@"%@",CLEANSTR(solutionFo.deltaTimes));//(0,3.570689916610718,8.149212837219238)
+            //可见此处cansetCutIndex=-1,而cansetActIndex=0,导致取到的时间是0;
+            //1. 感觉这个actIndex=0的情况,应该有资格加载到canset池,但不应该有资格激活besting?
+            //2. 或者就让它besting,也让它取到deltaTime0,只是SP因此而累积为负,或者正常传染别的canset初帧全失败掉;
+            
+            //3. 如果按选择第2条,那在它被负SP或传染后,自然转向更可行的方案激活;
+            //4. 明天继续调试下,会转向怎样的更可行的激活?
+            NSLog(@"");
+        }
     }
     
     //3. 触发器;
