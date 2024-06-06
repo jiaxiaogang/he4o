@@ -478,7 +478,7 @@
  *
  */
 #define Switch4HDemandOfYouPiGuo true
-#define FltLog4HDemandOfYouPiGuo(step) Switch4HDemandOfYouPiGuo ? STRFORMAT(@"flt%d ",step) : @""
+#define FltLog4HDemandOfYouPiGuo(stepStr) Switch4HDemandOfYouPiGuo ? STRFORMAT(@"flt%@ ",stepStr) : @""
 
 /**
  * @title 学会搬运 (参考31183-训练项6)
