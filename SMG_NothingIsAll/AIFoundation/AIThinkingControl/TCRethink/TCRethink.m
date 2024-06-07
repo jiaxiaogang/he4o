@@ -57,7 +57,8 @@
     AIFoNodeBase *canset = [SMGUtils searchNode:model.transferSiModel.canset];
     NSString *spFrom = STRFORMAT(@"%@",[canset.spDic objectForKey:@(actionIndex)]);
     [canset updateSPStrong:actionIndex type:type];
-    IFTitleLog(@"OR反省", @"\nspIndex:%ld -> (%@) %@->%@ %@",actionIndex,ATType2Str(type),spFrom,[canset.spDic objectForKey:@(actionIndex)],Fo2FStr(canset));
+    AIKVPointer *cansetAlg = ARR_INDEX(canset.content_ps, actionIndex);
+    IFTitleLog(@"OR反省", @"\n%@帧:%ld/%ld %@ -> (%@) %@->%@ %@",FltLog4HDemandOfYouPiGuo(@"2_中间帧反省"),actionIndex,canset.count,Pit2FStr(cansetAlg),ATType2Str(type),spFrom,[canset.spDic objectForKey:@(actionIndex)],Fo2FStr(canset));
     
     //2. 抽象也更新 (参考29069-todo11.4);
     [TCRethinkUtil spEff4Abs:canset curFoIndex:actionIndex itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {
