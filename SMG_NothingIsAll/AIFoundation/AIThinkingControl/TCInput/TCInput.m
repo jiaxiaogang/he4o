@@ -136,6 +136,10 @@
     [TCFeedback feedbackTIP:shortModel.protoFo cmvNode:cmvNode];
     [TCFeedback feedbackTOP:cmvNode];
     
+    //8. 在mv输入时,也应判断feedbackTOR的反馈 (起因:为了mv输入时也支持对传染的唤醒机制) (参考31185);
+    //[TCFeedback feedbackTIR:shortModel];//这个也可以考虑调用下,不过现在这个不调也没测到啥问题,所以先不调用;
+    [TCFeedback feedbackTOR:shortModel];
+    
     //8. 任务=>生成p任务: 行为不构建任务和预测 (参考28137-修复);
     [TCDemand rDemand:shortModel protoFo:shortModel.protoFo4PInput];
 
