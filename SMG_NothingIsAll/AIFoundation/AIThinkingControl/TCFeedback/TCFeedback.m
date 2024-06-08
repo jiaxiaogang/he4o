@@ -289,7 +289,7 @@
         
         //4. feedbackTOR有反馈有效时,被传染的支持整个工作记忆树唤醒 (参考31178-TODO2);
         feedbackValidNum += feedbackValid ? 1 : 0;
-        if (feedbackValid && !cansetModel.isInfected) {
+        if (feedbackValid && cansetModel.isInfected) {
             rewakeNum++;
             cansetModel.isInfected = false;
         }
