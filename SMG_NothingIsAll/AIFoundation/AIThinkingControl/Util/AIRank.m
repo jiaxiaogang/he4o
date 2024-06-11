@@ -169,6 +169,9 @@
         CGFloat effScore = [TOUtils getEffectScore:effStrong];
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:obj.cansetFo];
         if (Log4AIRank) NSLog(@"%ld. %@<F%ld %@> %@ %@ %@:(分:%.2f)",[sort indexOfObject:obj],SceneType2Str(obj.baseSceneModel.type),obj.sceneFo.pointerId,Fo2FStr(cansetFo),CLEANSTR(obj.transferXvModel.sceneToCansetToIndexDic),CLEANSTR(cansetFo.spDic),effStrong.description,effScore);
+        if (obj.transferXvModel.sceneToCansetToIndexDic.count == 0) {
+            NSLog(@"查31187为什么映射为空,看下这个canset是abs还是最具象时序,以判断它是NewCanset还是AbsCanset;");
+        }
     }
     return sort;
 }
