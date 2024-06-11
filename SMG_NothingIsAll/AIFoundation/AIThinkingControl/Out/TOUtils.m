@@ -30,6 +30,14 @@
         
         //1. 判断本级相等;
         BOOL equ0 = [m isEqual:c];
+        if (m.pointerId == 13 && c.pointerId == 1) {
+            NSLog(@"%@ %@",Pit2FStr(m),Pit2FStr(c));
+            NSLog(@"");
+        }
+        if (m.pointerId == 1 && c.pointerId == 13) {
+            NSLog(@"%@ %@",Pit2FStr(m),Pit2FStr(c));
+            NSLog(@"");
+        }
         if (equ0) return true;
     }
     return false;
