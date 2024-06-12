@@ -503,6 +503,17 @@
 }
 
 /**
+ *  MARK:--------------------迁移源--------------------
+ */
+-(AIKVPointer*) sceneFrom {
+    return self.sceneFo;
+}
+
+-(AIKVPointer*) cansetFrom {
+    return self.cansetFo;
+}
+
+/**
  *  MARK:--------------------取此方案迁移目标--------------------
  *  @desc 无论是否转实,都可以取得sceneTo;
  */
@@ -521,6 +532,13 @@
 +(AIKVPointer*) rSceneTo:(AISceneModel*)rSceneModel {
     if (!rSceneModel) return nil;
     return rSceneModel.getIScene;
+}
+
+-(AIKVPointer*) cansetTo {
+    if (self.transferSiModel) {
+        return self.transferSiModel.canset;
+    }
+    return nil;
 }
 
 /**

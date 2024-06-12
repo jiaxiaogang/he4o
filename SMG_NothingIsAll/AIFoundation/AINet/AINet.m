@@ -212,8 +212,8 @@ static AINet *_instance;
 /**
  *  MARK:--------------------构建空概念_防重 (参考29031-todo1)--------------------
  */
--(AIAlgNodeBase*)createEmptyAlg_NoRepeat:(NSArray*)conAlgs {
-    return [AIAlgNodeManager createEmptyAlg_NoRepeat:conAlgs];
-}
+//-(AIAlgNodeBase*)createEmptyAlg_NoRepeat:(NSArray*)conAlgs {
+//    return [AIAlgNodeManager createEmptyAlg_NoRepeat:conAlgs];
+//}
 
 @end

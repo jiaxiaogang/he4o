@@ -170,7 +170,10 @@
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:obj.cansetFo];
         if (Log4AIRank) NSLog(@"%ld. %@<F%ld %@> %@ %@ %@:(分:%.2f)",[sort indexOfObject:obj],SceneType2Str(obj.baseSceneModel.type),obj.sceneFo.pointerId,Fo2FStr(cansetFo),CLEANSTR(obj.transferXvModel.sceneToCansetToIndexDic),CLEANSTR(cansetFo.spDic),effStrong.description,effScore);
         if (obj.transferXvModel.sceneToCansetToIndexDic.count == 0) {
-            NSLog(@"查31187为什么映射为空,看下这个canset是abs还是最具象时序,以判断它是NewCanset还是AbsCanset;");
+            NSLog(@"sceneFrom:%@",Pit2FStr(obj.sceneFrom));
+            NSLog(@"cansetFrom:%@",Pit2FStr(obj.cansetFrom));
+            NSLog(@"sceneTo:%@",Pit2FStr(obj.sceneTo));
+            NSLog(@"TODOTOMORROW20230612: 查31187为什么映射为空,看下这个canset是abs还是最具象时序,以判断它是NewCanset还是AbsCanset;");
         }
     }
     return sort;

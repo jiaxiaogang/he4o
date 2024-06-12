@@ -30,6 +30,11 @@
  *  @result notnull
  */
 +(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs at:(NSString*)at ds:(NSString*)ds isOutBlock:(BOOL(^)())isOutBlock type:(AnalogyType)type{
+    BOOL findMV = [ThinkingUtils dataIn_CheckMV:value_ps];
+    if (findMV) {
+        NSLog(@"TODOTOMORROW20240612: 查下为什么M1会被生成A13");
+    }
+    
     //1. 数据准备
     BOOL isOut = isOutBlock ? isOutBlock() : [AINetUtils checkAllOfOut:conAlgs];
     conAlgs = ARRTOOK(conAlgs);
@@ -112,6 +117,13 @@
  *      2021.09.22: 支持type防重 (参考24019);
  */
 +(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs at:(NSString*)at ds:(NSString*)ds isOutBlock:(BOOL(^)())isOutBlock type:(AnalogyType)type{
+    
+    
+    BOOL findMV = [ThinkingUtils dataIn_CheckMV:value_ps];
+    if (findMV) {
+        NSLog(@"TODOTOMORROW20240612: 查下为什么M1会被生成A13");
+    }
+    
     //1. 数据检查
     value_ps = ARRTOOK(value_ps);
     NSArray *sort_ps = [SMGUtils sortPointers:value_ps];
@@ -140,59 +152,59 @@
     }
 }
 
-/**
- *  MARK:--------------------构建空概念_防重 (参考29027-方案3)--------------------
- *  @version
- *      2023.03.31: 迭代空概念防重机制为场景内同抽象仅生成一条空概念 (参考29044-todo1 & todo2);
- *      2023.04.01: 废弃原来的ds防重,因为它无效 (参考29044-todo3);
- *      2023.04.01: 废弃ds拼接,因为它本来也没啥用了 (参数29044-todo4);
- *  @result notnull
- */
-+(AIAlgNodeBase*)createEmptyAlg_NoRepeat:(NSArray*)conAlgs {
-    //1. 当有一条是空概念 && 且别的都已经抽象指向它时 => 则复用 (参考29044-todo2);
-    AIAlgNodeBase *localAlg = nil;
-    for (AIAlgNodeBase *conAlgA in conAlgs) {
-        if (!ARRISOK(conAlgA.content_ps) && !ARRISOK([SMGUtils filterSingleFromArr:conAlgs checkValid:^BOOL(AIAlgNodeBase *item) {
-            return ![TOUtils mIsC_1:item.pointer c:conAlgA.pointer];
-        }])) {
-            localAlg = conAlgA;
-            break;
-        }
-    }
-    
-    //2. 根据具象conAlgs取得共同抽象;
-    NSArray *absAlgPorts = nil;
-    for (AIAlgNodeBase *conAlg in conAlgs) {
-        NSArray *itemAbsPorts = [AINetUtils absPorts_All:conAlg];
-        if (!absAlgPorts) {
-            absAlgPorts = itemAbsPorts;
-        } else {
-            absAlgPorts = [SMGUtils filterArrA:itemAbsPorts arrB:absAlgPorts];
-        }
-    }
-    [AITest test24:absAlgPorts];
-    
-    if (!localAlg) {
-        //3. 从共同抽象中找已有空概念: 防重 (参考29044-todo1);
-        AIPort *localPort = [SMGUtils filterSingleFromArr:absAlgPorts checkValid:^BOOL(AIPort *item) {
-            return [item.header isEqualToString:[NSString md5:@""]];
-        }];
-        if (localPort) {
-            localAlg = [SMGUtils searchNode:localPort.target_p];
-        }
-    }
-    
-    //4. 找到本地防重的则加强: 具象指向conAlgs & 抽象指向absAlgs (参考29031-todo2 & todo3);
-    if (ISOK(localAlg, AIAlgNodeBase.class)) {
-        [AINetUtils relateAlgAbs:localAlg conNodes:conAlgs isNew:false];
-        [AINetUtils relateGeneralCon:localAlg absNodes:Ports2Pits(absAlgPorts)];
-        return localAlg;
-    }
-    
-    //5. 无则构建: 具象指向conAlgs(在构建方法已集成) & 抽象指向absAlgs (参考29031-todo1 & todo3);
-    AIAlgNodeBase *createAlg = [self createAbsAlgNode:@[] conAlgs:conAlgs at:nil ds:DefaultDataSource isOutBlock:nil type:ATDefault];
-    [AINetUtils relateGeneralCon:createAlg absNodes:Ports2Pits(absAlgPorts)];
-    return createAlg;
-}
+///**
+// *  MARK:--------------------构建空概念_防重 (参考29027-方案3)--------------------
+// *  @version
+// *      2023.03.31: 迭代空概念防重机制为场景内同抽象仅生成一条空概念 (参考29044-todo1 & todo2);
+// *      2023.04.01: 废弃原来的ds防重,因为它无效 (参考29044-todo3);
+// *      2023.04.01: 废弃ds拼接,因为它本来也没啥用了 (参数29044-todo4);
+// *  @result notnull
+// */
+//+(AIAlgNodeBase*)createEmptyAlg_NoRepeat:(NSArray*)conAlgs {
+//    //1. 当有一条是空概念 && 且别的都已经抽象指向它时 => 则复用 (参考29044-todo2);
+//    AIAlgNodeBase *localAlg = nil;
+//    for (AIAlgNodeBase *conAlgA in conAlgs) {
+//        if (!ARRISOK(conAlgA.content_ps) && !ARRISOK([SMGUtils filterSingleFromArr:conAlgs checkValid:^BOOL(AIAlgNodeBase *item) {
+//            return ![TOUtils mIsC_1:item.pointer c:conAlgA.pointer];
+//        }])) {
+//            localAlg = conAlgA;
+//            break;
+//        }
+//    }
+//    
+//    //2. 根据具象conAlgs取得共同抽象;
+//    NSArray *absAlgPorts = nil;
+//    for (AIAlgNodeBase *conAlg in conAlgs) {
+//        NSArray *itemAbsPorts = [AINetUtils absPorts_All:conAlg];
+//        if (!absAlgPorts) {
+//            absAlgPorts = itemAbsPorts;
+//        } else {
+//            absAlgPorts = [SMGUtils filterArrA:itemAbsPorts arrB:absAlgPorts];
+//        }
+//    }
+//    [AITest test24:absAlgPorts];
+//    
+//    if (!localAlg) {
+//        //3. 从共同抽象中找已有空概念: 防重 (参考29044-todo1);
+//        AIPort *localPort = [SMGUtils filterSingleFromArr:absAlgPorts checkValid:^BOOL(AIPort *item) {
+//            return [item.header isEqualToString:[NSString md5:@""]];
+//        }];
+//        if (localPort) {
+//            localAlg = [SMGUtils searchNode:localPort.target_p];
+//        }
+//    }
+//    
+//    //4. 找到本地防重的则加强: 具象指向conAlgs & 抽象指向absAlgs (参考29031-todo2 & todo3);
+//    if (ISOK(localAlg, AIAlgNodeBase.class)) {
+//        [AINetUtils relateAlgAbs:localAlg conNodes:conAlgs isNew:false];
+//        [AINetUtils relateGeneralCon:localAlg absNodes:Ports2Pits(absAlgPorts)];
+//        return localAlg;
+//    }
+//    
+//    //5. 无则构建: 具象指向conAlgs(在构建方法已集成) & 抽象指向absAlgs (参考29031-todo1 & todo3);
+//    AIAlgNodeBase *createAlg = [self createAbsAlgNode:@[] conAlgs:conAlgs at:nil ds:DefaultDataSource isOutBlock:nil type:ATDefault];
+//    [AINetUtils relateGeneralCon:createAlg absNodes:Ports2Pits(absAlgPorts)];
+//    return createAlg;
+//}
 
 @end

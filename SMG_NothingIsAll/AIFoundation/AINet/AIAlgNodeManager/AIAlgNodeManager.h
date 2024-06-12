@@ -20,6 +20,6 @@
 /**
  *  MARK:--------------------构建空概念_防重 (参考29027-方案3)--------------------
  */
-+(AIAlgNodeBase*)createEmptyAlg_NoRepeat:(NSArray*)conAlgs;
+//+(AIAlgNodeBase*)createEmptyAlg_NoRepeat:(NSArray*)conAlgs;
 
 @end

@@ -148,11 +148,16 @@
 -(BOOL) isH;
 
 /**
+ *  MARK:--------------------迁移源--------------------
+ */
+-(AIKVPointer*) sceneFrom;
+-(AIKVPointer*) cansetFrom;
+
+/**
  *  MARK:--------------------取此方案迁移目标--------------------
  */
 -(AIKVPointer*) sceneTo;
-+(AIKVPointer*) hSceneTo:(TOFoModel*)baseTargetFo;
-+(AIKVPointer*) rSceneTo:(AISceneModel*)rSceneModel;
+-(AIKVPointer*) cansetTo;
 
 /**
  *  MARK:--------------------实际与场景之间的映射--------------------
