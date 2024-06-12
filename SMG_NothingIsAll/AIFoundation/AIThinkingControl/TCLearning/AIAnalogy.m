@@ -160,8 +160,13 @@
  *        作用范围: 仅适用于protoA和assA有抽具象关系时的概念类比;
  *  @version
  *      2023.05.10: 修复此处抽具象匹配度未储存,导致复用时取不到的问题 (参考29091);
+ *      2024.06.12: 修复M1和M1类比出A13的问题 (因为根据sameValue_ps去进行createAbsAlg_NoRepeat)最终输出的一定是A节点而不是M节点 (参考31187);
+ *                  另: M1和M2还是可能生成为Axx,这个是难免的,随后看全部重新训练时: 彻底废弃Mv节点;
  */
 +(AIAlgNodeBase*) analogyAlg:(AIKVPointer*)protoA_p assA:(AIKVPointer*)assA_p {
+    //0. 如果本就一致;
+    if ([protoA_p isEqual:assA_p]) return [SMGUtils searchNode:protoA_p];
+    
     //1. 数据准备;
     AIAlgNodeBase *protoA = [SMGUtils searchNode:protoA_p];
     AIAlgNodeBase *assA = [SMGUtils searchNode:assA_p];

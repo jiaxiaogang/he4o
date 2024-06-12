@@ -15,6 +15,12 @@
  */
 -(BOOL) isEqual:(AIPointer*)object{//重写指针对比地址方法;
     if (POINTERISOK(object)) {
+        //0. 现在mv有两种节点类型,可能是M也可能是A,所以此处兼容一下,只要algsType和urgent一致,则返回true;
+        //注: 等以后M彻底废弃改用A了,此处可去掉
+        if ((self.pointerId == 1 && object.pointerId == 13) || (self.pointerId == 13 && object.pointerId == 1)) {
+            NSLog(@"TODOTOMORROW20240612: 判断一下二者,能返回true");
+        }
+        
         //1. 对比
         if (self.pointerId == object.pointerId && self.params.count == object.params.count) {
             for (NSString *key in self.params.allKeys) {
