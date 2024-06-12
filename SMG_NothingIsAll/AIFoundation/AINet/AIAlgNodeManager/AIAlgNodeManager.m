@@ -30,11 +30,6 @@
  *  @result notnull
  */
 +(AIAbsAlgNode*) createAbsAlgNode:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs at:(NSString*)at ds:(NSString*)ds isOutBlock:(BOOL(^)())isOutBlock type:(AnalogyType)type{
-    BOOL findMV = [ThinkingUtils dataIn_CheckMV:value_ps];
-    if (findMV) {
-        NSLog(@"TODOTOMORROW20240612: 查下为什么M1会被生成A13");
-    }
-    
     //1. 数据准备
     BOOL isOut = isOutBlock ? isOutBlock() : [AINetUtils checkAllOfOut:conAlgs];
     conAlgs = ARRTOOK(conAlgs);
@@ -117,13 +112,6 @@
  *      2021.09.22: 支持type防重 (参考24019);
  */
 +(AIAbsAlgNode*)createAbsAlg_NoRepeat:(NSArray*)value_ps conAlgs:(NSArray*)conAlgs at:(NSString*)at ds:(NSString*)ds isOutBlock:(BOOL(^)())isOutBlock type:(AnalogyType)type{
-    
-    
-    BOOL findMV = [ThinkingUtils dataIn_CheckMV:value_ps];
-    if (findMV) {
-        NSLog(@"TODOTOMORROW20240612: 查下为什么M1会被生成A13");
-    }
-    
     //1. 数据检查
     value_ps = ARRTOOK(value_ps);
     NSArray *sort_ps = [SMGUtils sortPointers:value_ps];

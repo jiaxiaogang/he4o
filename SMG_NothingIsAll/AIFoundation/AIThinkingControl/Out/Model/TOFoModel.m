@@ -478,6 +478,9 @@
                     
                     //c. 综合求出absHCanset与场景的映射;
                     NSDictionary *absHCansetSceneToIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2]];
+                    if (absHCansetSceneToIndexDic.count == 0) {
+                        NSLog(@"AbsHCanset Dic Is Nil");
+                    }
                     [absCansetFo updateIndexDic:sceneTo indexDic:absHCansetSceneToIndexDic];
                     [AITest test18:absHCansetSceneToIndexDic newCanset:absCansetFo absFo:sceneTo];
                     

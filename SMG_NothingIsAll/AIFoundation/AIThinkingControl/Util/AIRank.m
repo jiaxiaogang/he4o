@@ -173,7 +173,7 @@
             NSLog(@"sceneFrom:%@",Pit2FStr(obj.sceneFrom));
             NSLog(@"cansetFrom:%@",Pit2FStr(obj.cansetFrom));
             NSLog(@"sceneTo:%@",Pit2FStr(obj.sceneTo));
-            NSLog(@"TODOTOMORROW20230612: 查31187为什么映射为空,看下这个canset是abs还是最具象时序,以判断它是NewCanset还是AbsCanset;");
+            NSLog(@"TODOTOMORROW20240612: 查31187为什么映射为空,看下这个canset是abs还是最具象时序,以判断它是NewCanset还是AbsCanset;");
         }
     }
     return sort;
