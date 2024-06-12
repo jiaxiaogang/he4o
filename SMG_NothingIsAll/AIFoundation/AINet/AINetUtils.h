@@ -70,6 +70,12 @@
 +(NSString*) getDSFromConNodes:(NSArray*)conNodes type:(AnalogyType)type;
 +(NSString*) getATFromConNodes:(NSArray*)conNodes type:(AnalogyType)type;
 
+//MARK:===============================================================
+//MARK:                     < pointer >
+//MARK:===============================================================
++(BOOL) equal4PitA:(AIPointer*)pitA pitB:(AIPointer*)pitB;
++(BOOL) equal4Mv:(AIKVPointer*)mv_p alg_p:(AIKVPointer*)alg_p;
+
 @end
 
 

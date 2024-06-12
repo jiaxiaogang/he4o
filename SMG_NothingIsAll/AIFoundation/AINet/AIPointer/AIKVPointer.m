@@ -29,6 +29,23 @@
 }
 
 //MARK:===============================================================
+//MARK:                     < override >
+//MARK:===============================================================
+-(BOOL) isEqual:(AIKVPointer*)object{//重写指针对比地址方法;
+    //1. 现在mv有两种节点类型,可能是M也可能是A,所以此处兼容一下,只要algsType和urgent一致,则返回true;
+    //注: 等以后M彻底废弃改用A了,此处可去掉
+    if (PitIsMv(self) && !PitIsMv(object)) {
+        return [AINetUtils equal4Mv:self alg_p:object];
+    }
+    if (!PitIsMv(self) && PitIsMv(object)) {
+        return [AINetUtils equal4Mv:object alg_p:self];
+    }
+    
+    //2. 正常的pointer判等;
+    return [super isEqual:object];
+}
+
+//MARK:===============================================================
 //MARK:                     < method >
 //MARK:===============================================================
 -(NSString*) filePath:(NSString*)customFolderName{

@@ -170,6 +170,53 @@
     return DefaultAlgsType;
 }
 
+//MARK:===============================================================
+//MARK:                     < pointer >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------pointer的对比算法--------------------
+ *  @desc 之所以单独整理在此处,是为了不想调用equal()又想判断是否相等的时候调用这个 (比如下面的equal4Mv()方法就用这个);
+ */
++(BOOL) equal4PitA:(AIPointer*)pitA pitB:(AIPointer*)pitB {
+    //0. 检查;
+    if (!POINTERISOK(pitA) || !POINTERISOK(pitB)) return false;
+    
+    //1. 对比
+    if (pitA.pointerId == pitB.pointerId && pitA.params.count == pitB.params.count) {
+        for (NSString *key in pitA.params.allKeys) {
+            BOOL itemEqual = STRTOOK([pitA.params objectForKey:key]).hash == STRTOOK([pitB.params objectForKey:key]).hash;
+            if (!itemEqual) {
+                return false;//发现不同
+            }
+        }
+        return true;//未发现不同,全一样;
+    }
+    return false;
+}
+
+/**
+ *  MARK:--------------------对比mv和alg是否equal方法--------------------
+ *  @desc 现在mv有两种节点类型,可能是M也可能是A,所以此处兼容一下,只要algsType和urgent一致,则返回true (参考31187);
+ */
++(BOOL) equal4Mv:(AIKVPointer*)mv_p alg_p:(AIKVPointer*)alg_p {
+    //1. 取出mvNode和其特征的refPorts;
+    AICMVNodeBase *mv = [SMGUtils searchNode:mv_p];
+    NSArray *urgentToRefs = Ports2Pits([AINetUtils refPorts_All4Value:mv.urgentTo_p]);
+    NSArray *deltaRefs = Ports2Pits([AINetUtils refPorts_All4Value:mv.delta_p]);
+    
+    //2. 判断refPorts是否也指向了alg (注:不能用contains判断,因为它也是用equal判断的,会导致死循环);
+    BOOL urgentContains = [SMGUtils filterSingleFromArr:urgentToRefs checkValid:^BOOL(AIKVPointer *item) {
+        return [AINetUtils equal4PitA:alg_p pitB:item];
+    }];
+    BOOL deltaContains = [SMGUtils filterSingleFromArr:deltaRefs checkValid:^BOOL(AIKVPointer *item) {
+        return [AINetUtils equal4PitA:alg_p pitB:item];
+    }];
+    
+    //3. 指向了,则说明mv和alg两个节点一模一样;
+    return urgentContains && deltaContains;
+}
+
 @end
 
 
