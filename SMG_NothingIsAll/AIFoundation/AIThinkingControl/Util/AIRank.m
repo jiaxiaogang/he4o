@@ -169,11 +169,13 @@
         CGFloat effScore = [TOUtils getEffectScore:effStrong];
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:obj.cansetFo];
         if (Log4AIRank) NSLog(@"%ld. %@<F%ld %@> %@ %@ %@:(分:%.2f)",[sort indexOfObject:obj],SceneType2Str(obj.baseSceneModel.type),obj.sceneFo.pointerId,Fo2FStr(cansetFo),CLEANSTR(obj.transferXvModel.sceneToCansetToIndexDic),CLEANSTR(cansetFo.spDic),effStrong.description,effScore);
+        
+        //TODOTOMORROW20240612: 在31187已经修了此BUG,现在还有正常dic is nil的少许情况,但不会大面积发生了,如果此处7天内,测不会再大面积打出问题,即没有啥问题了,此处调试日志可删掉;
         if (obj.transferXvModel.sceneToCansetToIndexDic.count == 0 && [Pit2FStr(obj.sceneTo) containsString:@"饿"] && [Pit2FStr(obj.cansetFrom) containsString:@"饿"]) {
             NSLog(@"sceneFrom:%@",Pit2FStr(obj.sceneFrom));
             NSLog(@"cansetFrom:%@",Pit2FStr(obj.cansetFrom));
             NSLog(@"sceneTo:%@",Pit2FStr(obj.sceneTo));
-            NSLog(@"TODOTOMORROW20240612: 查31187为什么映射为空,看下这个canset是abs还是最具象时序,以判断它是NewCanset还是AbsCanset;");
+            NSLog(@"查31187为什么映射为空,看下这个canset是abs还是最具象时序,以判断它是NewCanset还是AbsCanset;");
         }
     }
     return sort;
