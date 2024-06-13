@@ -169,7 +169,7 @@
         CGFloat effScore = [TOUtils getEffectScore:effStrong];
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:obj.cansetFo];
         if (Log4AIRank) NSLog(@"%ld. %@<F%ld %@> %@ %@ %@:(分:%.2f)",[sort indexOfObject:obj],SceneType2Str(obj.baseSceneModel.type),obj.sceneFo.pointerId,Fo2FStr(cansetFo),CLEANSTR(obj.transferXvModel.sceneToCansetToIndexDic),CLEANSTR(cansetFo.spDic),effStrong.description,effScore);
-        if (obj.transferXvModel.sceneToCansetToIndexDic.count == 0) {
+        if (obj.transferXvModel.sceneToCansetToIndexDic.count == 0 && [Pit2FStr(obj.sceneTo) containsString:@"饿"] && [Pit2FStr(obj.cansetFrom) containsString:@"饿"]) {
             NSLog(@"sceneFrom:%@",Pit2FStr(obj.sceneFrom));
             NSLog(@"cansetFrom:%@",Pit2FStr(obj.cansetFrom));
             NSLog(@"sceneTo:%@",Pit2FStr(obj.sceneTo));

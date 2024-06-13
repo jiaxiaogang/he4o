@@ -289,7 +289,7 @@
             
             //c. 综合求出absHCanset与场景的映射;
             NSDictionary *absRCansetSceneToIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2]];
-            if (absRCansetSceneToIndexDic.count == 0) {
+            if (absRCansetSceneToIndexDic.count == 0 && [Fo2FStr(absCansetFo) containsString:@"饿"] && [Fo2FStr(pFo) containsString:@"饿"]) {
                 NSLog(@"AbsRCanset Dic Is Nil");
             }
             [absCansetFo updateIndexDic:pFo indexDic:absRCansetSceneToIndexDic];
