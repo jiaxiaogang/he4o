@@ -289,8 +289,11 @@
             
             //c. 综合求出absHCanset与场景的映射;
             NSDictionary *absRCansetSceneToIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2]];
-            if (absRCansetSceneToIndexDic.count == 0 && [Fo2FStr(absCansetFo) containsString:@"饿"] && [Fo2FStr(pFo) containsString:@"饿"]) {
-                NSLog(@"AbsRCanset Dic Is Nil");
+            if ([Fo2FStr(absCansetFo) containsString:@"饿"] && [Fo2FStr(pFo) containsString:@"饿"]) {
+                if (absRCansetSceneToIndexDic.count == 0) {
+                    //2024.06.13: 特殊情况说明: 当solution中有两个饿时,此处dic is nil也是正常的,因为solution和abs之间映射了第一个饿,而综合求dic的pFo与solution可能是映射第二个 (这个有可能是因为时序识别 和 类比时的,从后向前匹配啥的有关,但不算什么大问题,可以暂不处理);
+                    NSLog(@"AbsRCanset Dic Is Nil");
+                }
             }
             [absCansetFo updateIndexDic:pFo indexDic:absRCansetSceneToIndexDic];
             [AITest test18:absRCansetSceneToIndexDic newCanset:absCansetFo absFo:pFo];

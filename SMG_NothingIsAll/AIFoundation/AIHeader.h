@@ -443,7 +443,7 @@
  *  flt2 H feedbackTOR反馈成立:A5239(向85,距11,果) 匹配:1 baseCansetFrom:F5294[↑饿-16,4棒,4果,↑饿-16,4果] 状态:CS_Besting
  *  flt3 Canset演化> AbsHCanset:F5930[A13(饿16,7),A4899(距11,果),A5929(向85,果)] toScene:F4822[↑饿-16,4果,↑饿-16,4果] 在4帧
  */
-#define Switch4AbsHCanset false
+#define Switch4AbsHCanset true
 #define FltLog4AbsHCanset(isH,step) isH && Switch4AbsHCanset ? STRFORMAT(@"flt%d ",step) : @""
 
 /**
@@ -477,12 +477,12 @@
  *
  *
  */
-#define Switch4HDemandOfYouPiGuo true
+#define Switch4HDemandOfYouPiGuo false
 #define FltLog4HDemandOfYouPiGuo(stepStr) Switch4HDemandOfYouPiGuo ? STRFORMAT(@"flt%@ ",stepStr) : @""
 
 /**
  * @title 学会搬运 (参考31183-训练项6)
  * @desc 1.在去皮经验生成H"路上有皮果"后 2.扔"路下有皮果" 3.快速将有皮果踢到路上 4.feedbackTOR反馈到"路上有皮果" 5.生成搬运到路上H经验
  */
-#define Switch4XueBanYun true
+#define Switch4XueBanYun false
 #define FltLog4XueBanYun(step) Switch4XueBanYun ? STRFORMAT(@"flt%d ",step) : @""
