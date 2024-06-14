@@ -357,6 +357,9 @@
                     //8. 末帧且反馈到负mv,则被传染 (参考31179-TODO1);
                     waitModel.isInfected = true;
                     newInfectedNum++;
+                    if (waitModel.cansetStatus == CS_Besting && !waitModel.isH) {
+                        NSLog(@"%@feedbackTOP 有负mv反馈",FltLog4Default(@"2b"));
+                    }
                     
                     //7. root设回runing;
                     //demand.status = TOModelStatus_Runing;//后面又设为ActNo了,此处无意义

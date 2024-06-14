@@ -367,7 +367,7 @@
     BOOL mIsC = [feedbackMatchAlg_ps containsObject:cansetToSimple.alg_p];
     if (!mIsC) return false;
     NSString *fltLog = self.cansetStatus != CS_None && !self.isH ? FltLog4XueQuPi(2) : @"";
-    if (Switch4FeedbackTOR) NSLog(@"%@%@%@ feedbackTOR反馈成立:%@ 匹配:%d baseCansetFrom:%@ 状态:%@",FltLog4AbsHCanset(self.isH, 2),fltLog,self.isH?@"H":@"R",Pit2FStr(cansetToSimple.alg_p),mIsC,ShortDesc4Pit(self.cansetFo),CansetStatus2Str(self.cansetStatus));
+    if (Switch4FeedbackTOR) NSLog(@"%@%@%@%@ feedbackTOR反馈成立:%@ 匹配:%d baseCansetFrom:%@ 状态:%@",FltLog4AbsHCanset(self.isH, 2),fltLog,FltLog4DefaultIf(!self.isH&&self.cansetStatus==CS_Besting, @"2a"),self.isH?@"H":@"R",Pit2FStr(cansetToSimple.alg_p),mIsC,ShortDesc4Pit(self.cansetFo),CansetStatus2Str(self.cansetStatus));
     
     //3. 有效时: 记录feedbackAlg;
     TOAlgModel *curAlgModel = [self getCurFrame];

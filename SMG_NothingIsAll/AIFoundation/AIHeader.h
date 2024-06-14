@@ -435,6 +435,14 @@
 //MARK:===============================================================
 //MARK:                    < flt流程日志开关 >
 //MARK:===============================================================
+
+/**
+ *  MARK:--------------------flt default--------------------
+ */
+#define Switch4Default true
+#define FltLog4Default(stepStr) FltLog4DefaultIf(true,stepStr)
+#define FltLog4DefaultIf(ef,stepStr) ef && Switch4Default ? STRFORMAT(@"flt%@ ",stepStr) : @""
+
 /**
  * @title absHCanset (参考31183-训练项2)
  * @desc 1.H解行为化 2.H的feedbackTOR成立 3.构建newHCanset
@@ -443,7 +451,7 @@
  *  flt2 H feedbackTOR反馈成立:A5239(向85,距11,果) 匹配:1 baseCansetFrom:F5294[↑饿-16,4棒,4果,↑饿-16,4果] 状态:CS_Besting
  *  flt3 Canset演化> AbsHCanset:F5930[A13(饿16,7),A4899(距11,果),A5929(向85,果)] toScene:F4822[↑饿-16,4果,↑饿-16,4果] 在4帧
  */
-#define Switch4AbsHCanset true
+#define Switch4AbsHCanset false
 #define FltLog4AbsHCanset(isH,step) isH && Switch4AbsHCanset ? STRFORMAT(@"flt%d ",step) : @""
 
 /**

@@ -58,7 +58,8 @@
     NSString *spFrom = STRFORMAT(@"%@",[canset.spDic objectForKey:@(actionIndex)]);
     [canset updateSPStrong:actionIndex type:type];
     AIKVPointer *cansetAlg = ARR_INDEX(canset.content_ps, actionIndex);
-    IFTitleLog(@"OR反省", @"\n%@帧:%ld/%ld %@ -> (%@) %@->%@ %@",FltLog4HDemandOfYouPiGuo(@"2_中间帧反省"),actionIndex,canset.count,Pit2FStr(cansetAlg),ATType2Str(type),spFrom,[canset.spDic objectForKey:@(actionIndex)],Fo2FStr(canset));
+    
+    IFTitleLog(@"OR反省", @"\n%@%@帧:%ld/%ld %@ -> (%@) %@->%@ %@",FltLog4DefaultIf(!model.isH,@"3a"),FltLog4HDemandOfYouPiGuo(@"2_中间帧反省"),actionIndex,canset.count,Pit2FStr(cansetAlg),ATType2Str(type),spFrom,[canset.spDic objectForKey:@(actionIndex)],Fo2FStr(canset));
     
     //2. 抽象也更新 (参考29069-todo11.4);
     [TCRethinkUtil spEff4Abs:canset curFoIndex:actionIndex itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {
@@ -74,7 +75,7 @@
     AIFoNodeBase *canset = [SMGUtils searchNode:model.transferSiModel.canset];
     NSString *spFrom = STRFORMAT(@"%@",[canset.spDic objectForKey:@(canset.count)]);
     [canset updateSPStrong:canset.count type:type];
-    IFTitleLog(@"OP反省", @"\nspIndex:%ld -> (%@) %@->%@ %@",canset.count,ATType2Str(type),spFrom,[canset.spDic objectForKey:@(canset.count)],Fo2FStr(canset));
+    IFTitleLog(@"OP反省", @"\n%@spIndex:%ld -> (%@) %@->%@ %@",FltLog4DefaultIf(!model.isH, @"3b"),canset.count,ATType2Str(type),spFrom,[canset.spDic objectForKey:@(canset.count)],Fo2FStr(canset));
     
     //2. 抽象也更新 (参考29069-todo11.4);
     [TCRethinkUtil spEff4Abs:canset curFoIndex:canset.count itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {
