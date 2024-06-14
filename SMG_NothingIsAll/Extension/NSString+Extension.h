@@ -20,4 +20,9 @@
  */
 +(NSString*) double2Str_NoDotZero:(double)value;
 
+/**
+ *  MARK:--------------------找字符串在字符串出现次数--------------------
+ */
++(int) countOfSubStr:(NSString*)subStr fromStr:(NSString*)fromStr;
+
 @end

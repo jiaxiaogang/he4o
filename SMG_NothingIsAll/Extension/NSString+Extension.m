@@ -46,4 +46,28 @@
     return [floatStr substringToIndex:dotOrZeroIndex];
 }
 
+/**
+ *  MARK:--------------------找字符串在字符串出现次数--------------------
+ *  @demo NSLog(@"次数:%d",[NSString countOfSubStr:@"abcd=1" fromStr:@"abcdabceabdfaddd"]);
+ *        NSLog(@"次数:%d",[NSString countOfSubStr:@"abc=2" fromStr:@"abcdabceabdfaddd"]);
+ *        NSLog(@"次数:%d",[NSString countOfSubStr:@"ab=3" fromStr:@"abcdabceabdfaddd"]);
+ *        NSLog(@"次数:%d",[NSString countOfSubStr:@"a=4" fromStr:@"abcdabceabdfaddd"]);
+ */
++(int) countOfSubStr:(NSString*)subStr fromStr:(NSString*)fromStr {
+    subStr = STRTOOK(subStr);
+    fromStr = STRTOOK(fromStr);
+    int resultCount = 0;
+    do {
+        NSRange range = [fromStr rangeOfString:subStr];
+        
+        //未发现,退出循环;
+        if (range.location == NSNotFound) break;
+        
+        //发现,则计数+1,并截掉找过的部分;
+        fromStr = [fromStr substringFromIndex:range.location + range.length];
+        resultCount++;
+    } while (true);
+    return resultCount;
+}
+
 @end

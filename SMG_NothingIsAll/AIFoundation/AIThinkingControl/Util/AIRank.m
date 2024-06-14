@@ -174,8 +174,23 @@
         if (obj.transferXvModel.sceneToCansetToIndexDic.count == 0 && [Pit2FStr(obj.sceneTo) containsString:@"饿"] && [Pit2FStr(obj.cansetFrom) containsString:@"饿"]) {
             NSLog(@"sceneFrom:%@",Pit2FStr(obj.sceneFrom));
             NSLog(@"cansetFrom:%@",Pit2FStr(obj.cansetFrom));
+            
+            BOOL notBug = false;//如果具象有重复的情况,不算bug,不允处理;
+            NSArray *conCansetFroms = ARR_SUB([AINetUtils conPorts_All:[SMGUtils searchNode:obj.cansetFrom]], 0, 5);
+            for (AIPort *conCansetFrom in conCansetFroms) {
+                NSString *conCansetFromDesc = Pit2FStr(conCansetFrom.target_p);
+                if ([NSString countOfSubStr:@"饿" fromStr:conCansetFromDesc] > 1) {
+                    notBug = true;
+                }
+                NSLog(@"\tconCansetFrom:%@",conCansetFromDesc);//此日志用于观察它的具象,是否有两个饿
+            }
             NSLog(@"sceneTo:%@",Pit2FStr(obj.sceneTo));
-            NSLog(@"查31187为什么映射为空,看下这个canset是abs还是最具象时序,以判断它是NewCanset还是AbsCanset;");
+            if (!notBug) {
+                //断点时,观察下日志 (像以下也是正常的,因为从后向前匹配,因为顺序问题和别的帧的交叉影响,也很难将两个饿匹配上;
+                //sceneFrom:F4472[A4421(向84,距12,果),M1{↑饿-16},A4421(向84,距12,果),M1{↑饿-16},A4421(向84,距12,果)]
+                //cansetFrom:F4574[A4510(距97,向16,棒),A4518(向86,距27,棒),A4519(向86,距12,果),M1{↑饿-16},A4519(向86,距12,果),飞↑,A4573(向79,距5,果)]
+                NSLog(@"查31187为什么映射为空,看下这个canset是abs还是最具象时序,以判断它是NewCanset还是AbsCanset;");
+            }
         }
     }
     return sort;
