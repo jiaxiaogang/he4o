@@ -65,6 +65,7 @@
  *  @desc <key:spIndex, value:spStrong> (其中mv的key为content.count) (参考25031-3);
  */
 @property (strong, nonatomic) NSMutableDictionary *spDic;
+@property (strong, nonatomic) NSMutableDictionary *outSPDic;
 
 /**
  *  MARK:--------------------更新SP强度值--------------------

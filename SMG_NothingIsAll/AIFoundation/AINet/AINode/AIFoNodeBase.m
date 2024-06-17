@@ -20,6 +20,11 @@
     return _spDic;
 }
 
+-(NSMutableDictionary *)outSPDic{
+    if (!ISOK(_outSPDic, NSMutableDictionary.class)) _outSPDic = [[NSMutableDictionary alloc] initWithDictionary:_outSPDic];
+    return _outSPDic;
+}
+
 -(NSMutableDictionary *)effectDic{
     if (!ISOK(_effectDic, NSMutableDictionary.class)) _effectDic = [[NSMutableDictionary alloc] initWithDictionary:_effectDic];
     return _effectDic;
@@ -311,6 +316,7 @@
         self.deltaTimes = [aDecoder decodeObjectForKey:@"deltaTimes"];
         self.mvDeltaTime = [aDecoder decodeDoubleForKey:@"mvDeltaTime"];
         self.spDic = [aDecoder decodeObjectForKey:@"spDic"];
+        self.outSPDic = [aDecoder decodeObjectForKey:@"outSPDic"];
         self.effectDic = [aDecoder decodeObjectForKey:@"effectDic"];
         self.absIndexDDic = [aDecoder decodeObjectForKey:@"absIndexDDic"];
         self.conIndexDDic = [aDecoder decodeObjectForKey:@"conIndexDDic"];
@@ -327,6 +333,7 @@
     [aCoder encodeObject:self.deltaTimes forKey:@"deltaTimes"];
     [aCoder encodeDouble:self.mvDeltaTime forKey:@"mvDeltaTime"];
     [aCoder encodeObject:[self.spDic copy] forKey:@"spDic"];
+    [aCoder encodeObject:[self.outSPDic copy] forKey:@"outSPDic"];
     [aCoder encodeObject:[self.effectDic copy] forKey:@"effectDic"];
     [aCoder encodeObject:[self.absIndexDDic copy] forKey:@"absIndexDDic"];
     [aCoder encodeObject:[self.conIndexDDic copy] forKey:@"conIndexDDic"];

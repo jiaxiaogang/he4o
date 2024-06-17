@@ -85,3 +85,18 @@
 @property (assign,nonatomic) NSInteger nStrong; //无效
 
 @end
+
+/**
+ *  MARK:--------------------OUT有效强度--------------------
+ *  @version
+ *      2024.06.17: 初版,把In和Out的SP分开,这样可以在转实前就为canset记录SPDic (参考32012);
+ */
+@interface AIOutSPStrong : NSObject <NSCoding>
+
++(AIOutSPStrong*) newWithSceneFrom:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom;
+
+@property (strong, nonatomic) AIKVPointer *sceneFrom; //sceneFrom
+@property (strong, nonatomic) AIKVPointer *cansetFrom; //cansetFrom
+@property (strong, nonatomic) NSMutableDictionary *spDic; //SPDic
+
+@end
