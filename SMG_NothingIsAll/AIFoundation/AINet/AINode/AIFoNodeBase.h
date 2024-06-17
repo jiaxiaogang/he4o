@@ -65,7 +65,6 @@
  *  @desc <key:spIndex, value:spStrong> (其中mv的key为content.count) (参考25031-3);
  */
 @property (strong, nonatomic) NSMutableDictionary *spDic;
-@property (strong, nonatomic) NSMutableDictionary *outSPDic;
 
 /**
  *  MARK:--------------------更新SP强度值--------------------
@@ -85,6 +84,27 @@
  *  MARK:--------------------更新整个spDic--------------------
  */
 -(void) updateSPDic:(NSDictionary*)newSPDic;
+
+
+//MARK:===============================================================
+//MARK:                     < outSPDic组 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------OutSP强度值--------------------
+ *  @desc <key:sceneFromPId_cansetFromPId, value:outSPStrong> (参考32012-TODO2);
+ */
+@property (strong, nonatomic) NSMutableDictionary *outSPDic;
+
+/**
+ *  MARK:--------------------更新OutSPDic强度值--------------------
+ */
+-(void) updateOutSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type sceneFrom:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom;
+
+/**
+ *  MARK:--------------------更新整个outSPDic--------------------
+ */
+-(void) updateOutSPDic:(NSDictionary*)newSPDic sceneFrom:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom;
 
 
 //MARK:===============================================================

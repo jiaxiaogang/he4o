@@ -69,9 +69,16 @@
     [self updateSPStrong:spIndex difStrong:1 type:type];
 }
 -(void) updateSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type {
+    [self updateSPStrong:spIndex difStrong:difStrong type:type forSPDic:self.spDic];
+}
+
+/**
+ *  MARK:--------------------更新SP强度值 (指定SPDic)--------------------
+ */
+-(void) updateSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type forSPDic:(NSMutableDictionary*)forSPDic {
     //1. 取kv;
     NSNumber *key = @(spIndex);
-    AISPStrong *value = [self.spDic objectForKey:key];
+    AISPStrong *value = [forSPDic objectForKey:key];
     if (!value) value = [[AISPStrong alloc] init];
     
     //2. 更新强度_线性+1 (参考25031-7);
@@ -80,7 +87,7 @@
     }else if(type == ATPlus){
         value.pStrong += difStrong;
     }
-    [self.spDic setObject:value forKey:key];
+    [forSPDic setObject:value forKey:key];
     
     //3. 保存fo
     [SMGUtils insertNode:self];
@@ -106,6 +113,48 @@
         [self updateSPStrong:newIndex.integerValue difStrong:newStrong.sStrong type:ATSub];
         [self updateSPStrong:newIndex.integerValue difStrong:newStrong.pStrong type:ATPlus];
     }
+}
+
+//MARK:===============================================================
+//MARK:                     < outSPDic组 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------更新OutSPDic强度值--------------------
+ */
+-(void) updateOutSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type sceneFrom:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom {
+    //1. 取得canstFrom的spStrong;
+    AIOutSPStrong *spStrong = [self getOutSPStrongIfNullNew:sceneFrom cansetFrom:cansetFrom];
+    
+    //2. 更新它的spDic值;
+    [self updateSPStrong:spIndex difStrong:difStrong type:type forSPDic:spStrong.spDic];
+}
+
+/**
+ *  MARK:--------------------更新整个outSPDic--------------------
+ */
+-(void) updateOutSPDic:(NSDictionary*)newSPDic sceneFrom:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom {
+    //1. 数据准备;
+    newSPDic = DICTOOK(newSPDic);
+    //2. 更新spDic;
+    for (NSNumber *newIndex in newSPDic.allKeys) {
+        AISPStrong *newStrong = [newSPDic objectForKey:newIndex];
+        [self updateOutSPStrong:newIndex.integerValue difStrong:newStrong.sStrong type:ATSub sceneFrom:sceneFrom cansetFrom:cansetFrom];
+        [self updateOutSPStrong:newIndex.integerValue difStrong:newStrong.pStrong type:ATPlus sceneFrom:sceneFrom cansetFrom:cansetFrom];
+    }
+}
+
+-(AIOutSPStrong*) getOutSPStrongIfNullNew:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom {
+    //1. 优先取旧;
+    NSString *key = STRFORMAT(@"%ld_%ld",sceneFrom.pointerId,cansetFrom.pointerId);
+    AIOutSPStrong *spStrong = [self.outSPDic objectForKey:key];
+    
+    //2. 无则新建;
+    if (!spStrong) {
+        spStrong = [AIOutSPStrong newWithSceneFrom:sceneFrom cansetFrom:cansetFrom];
+        [self.outSPDic setObject:spStrong forKey:key];
+    }
+    return spStrong;
 }
 
 //MARK:===============================================================
