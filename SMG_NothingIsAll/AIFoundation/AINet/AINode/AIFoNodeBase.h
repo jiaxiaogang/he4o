@@ -97,6 +97,11 @@
 @property (strong, nonatomic) NSMutableDictionary *outSPDic;
 
 /**
+ *  MARK:--------------------初始化整个outSPDic (参考32012-TODO3)--------------------
+ */
+-(void) initItemOutSPDicIfNotInited:(NSDictionary*)newSPDic sceneFrom:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom;
+
+/**
  *  MARK:--------------------更新OutSPDic强度值--------------------
  */
 -(void) updateOutSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type sceneFrom:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom;
@@ -105,7 +110,6 @@
  *  MARK:--------------------更新整个outSPDic--------------------
  */
 -(void) updateOutSPDic:(NSDictionary*)newSPDic sceneFrom:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom;
-
 
 //MARK:===============================================================
 //MARK:                     < effectDic组 >
