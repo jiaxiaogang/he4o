@@ -761,6 +761,13 @@
         //3. 非同区不唤醒;
         DemandModel *otherDemand = (DemandModel*)canset.baseOrGroup;
         if (![rewakeByRDemand.algsType isEqualToString:otherDemand.algsType]) continue;
+        
+        //4. 末帧超时未反馈负价值的,更新outSPDic (参考32012-TODO6);
+        AIFoNodeBase *sceneTo = [SMGUtils searchNode:canset.sceneTo];
+        [sceneTo updateOutSPStrong:canset.cansetActIndex difStrong:1 type:ATPlus sceneFrom:canset.sceneFrom cansetFrom:canset.cansetFrom];//有效:P+1;
+        if (canset.isInfected) [sceneTo updateOutSPStrong:canset.cansetActIndex difStrong:-1 type:ATSub sceneFrom:canset.sceneFrom cansetFrom:canset.cansetFrom];//回滚:S-1;
+        
+        //5. 传染的唤醒下;
         if (canset.isInfected) {
             canset.isInfected = false;
             rewakeNum++;
