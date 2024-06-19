@@ -732,7 +732,13 @@
     for (TOFoModel *canset in allCanset) {
          TOAlgModel *waitAlg = [canset getCurFrame];
         if (!canset.isInfected && waitAlg && [waitAlg.content_p isEqual:infectedAlg]) {
+            
+            //1. 全树同waitAlg全传染掉;
             canset.isInfected = true;
+            
+            //2. 所有传染的都计SP- (参考32012-TODO4);
+            AIFoNodeBase *sceneTo = [SMGUtils searchNode:canset.sceneTo];
+            [sceneTo updateOutSPStrong:canset.cansetActIndex difStrong:1 type:ATSub sceneFrom:canset.sceneFrom cansetFrom:canset.cansetFrom];
             infectNum++;
         }
     }
