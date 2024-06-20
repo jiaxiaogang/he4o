@@ -449,11 +449,24 @@
  *  @version
  *      2022.05.23: 初版 (参考26096-BUG1);
  *      2022.06.02: 每一帧的稳定性默认为0.5,而不是1 (参考26191);
+ *      2024.06.21: 支持OutSPDic,在Canset竞争时由_Out()来计算 (参考32012-TODO8);
+ *  @param fo : In时传sceneFo & Out时传cansetFo;
  *  @result 1. 负价值时序时返回多坏(0-1);
  *          2. 正价值时序时返回多好(0-1);
  *          3. 无价值时序时返回多顺(0-1);
  */
-+(CGFloat) getStableScore:(AIFoNodeBase*)fo startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex{
+//In针对Scene稳定性;
++(CGFloat) getStableScore_In:(AIFoNodeBase*)scene startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex {
+    return [TOUtils getStableScore_General:scene startSPIndex:startSPIndex endSPIndex:endSPIndex spDic:scene.spDic];
+}
+//Out针对Canset稳定性;
++(CGFloat) getStableScore_Out:(TOFoModel*)canset startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex {
+    AIFoNodeBase *sceneTo = [SMGUtils searchNode:canset.sceneTo];
+    AIFoNodeBase *cansetFrom = [SMGUtils searchNode:canset.cansetFrom];//本来应该传cansetTo,不过cansetTo可能未转实,并且cansetFrom效果也一致;
+    NSDictionary *spDic = [sceneTo getItemOutSPDic:canset.sceneFrom cansetFrom:canset.cansetFrom];
+    return [TOUtils getStableScore_General:cansetFrom startSPIndex:startSPIndex endSPIndex:endSPIndex spDic:spDic];
+}
++(CGFloat) getStableScore_General:(AIFoNodeBase*)fo startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex spDic:(NSDictionary*)spDic {
     //1. 数据检查 & 稳定性默认为1分 & 正负mv的公式是不同的 (参考25122-公式);
     if (!fo) return 0;
     CGFloat totalSPScore = 1.0f;
@@ -461,7 +474,7 @@
     
     //2. 从start到end各计算spScore;
     for (NSInteger i = startSPIndex; i <= endSPIndex; i++) {
-        AISPStrong *spStrong = [fo.spDic objectForKey:@(i)];
+        AISPStrong *spStrong = [spDic objectForKey:@(i)];
         
         //3. 当sp经历都为0条时 (正mv时,表示多好评分 | 负mv时,表示多坏评分) 默认评分都为0.5;
         CGFloat itemSPScore = 0.5f;
@@ -505,7 +518,7 @@
  */
 +(CGFloat) getSPScore:(AIFoNodeBase*)fo startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex{
     //1. 获取稳定性评分;
-    CGFloat stableScore = [self getStableScore:fo startSPIndex:startSPIndex endSPIndex:endSPIndex];
+    CGFloat stableScore = [self getStableScore_In:fo startSPIndex:startSPIndex endSPIndex:endSPIndex];
     
     //2. 负mv的公式是: 1-stableScore (参考25122-公式&负公式);
     BOOL isBadMv = [ThinkingUtils havDemand:fo.cmvNode_p];
@@ -600,7 +613,7 @@
  */
 +(CGFloat) getColStableScore:(AIFoNodeBase*)fo outOfFos:(NSArray*)outOfFo_ps startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex {
     double colValue = [TOUtils getColValue:fo.pointer outOfFos:outOfFo_ps];
-    CGFloat stableScore = [TOUtils getStableScore:fo startSPIndex:startSPIndex endSPIndex:endSPIndex];
+    CGFloat stableScore = [TOUtils getStableScore_In:fo startSPIndex:startSPIndex endSPIndex:endSPIndex];
     return colValue * stableScore;
 }
 

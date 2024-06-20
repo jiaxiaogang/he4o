@@ -111,6 +111,11 @@
  */
 -(void) updateOutSPDic:(NSDictionary*)newSPDic sceneFrom:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom;
 
+/**
+ *  MARK:--------------------获取某条outSPDic--------------------
+ */
+-(NSDictionary*) getItemOutSPDic:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom;
+
 //MARK:===============================================================
 //MARK:                     < effectDic组 >
 //MARK:===============================================================

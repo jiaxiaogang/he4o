@@ -158,6 +158,15 @@
     }
 }
 
+/**
+ *  MARK:--------------------获取某条outSPDic--------------------
+ */
+-(NSDictionary*) getItemOutSPDic:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom {
+    NSString *key = STRFORMAT(@"%ld_%ld",sceneFrom.pointerId,cansetFrom.pointerId);
+    AIOutSPStrong *spStrong = [self.outSPDic objectForKey:key];
+    return spStrong.spDic;
+}
+
 -(AIOutSPStrong*) getOutSPStrongIfNullNew:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom {
     //1. 优先取旧;
     NSString *key = STRFORMAT(@"%ld_%ld",sceneFrom.pointerId,cansetFrom.pointerId);
