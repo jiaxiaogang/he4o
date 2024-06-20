@@ -167,7 +167,10 @@
 @implementation AIOutSPStrong
 
 +(AIOutSPStrong*) newWithSceneFrom:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom {
-    return nil;
+    AIOutSPStrong *result = [[AIOutSPStrong alloc] init];
+    result.sceneFrom = sceneFrom;
+    result.cansetFrom = cansetFrom;
+    return result;
 }
 
 -(NSMutableDictionary *)spDic{
