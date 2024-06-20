@@ -723,8 +723,9 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------将infectedAlg传染到工作记忆 (参考31178-TODO1)--------------------
+ *  MARK:--------------------设置传染状态: 将infectedAlg传染到工作记忆 (参考31178-TODO1)--------------------
  *  @desc 白话: 当frameActYes因canset中间帧无反馈,调用此方法 => 将工作记忆中所有同质中间帧cansetAlg都infect下,标记它已条件不满足;
+ *  @desc frameActYes反馈失败时: 传染到整个工作记忆树 (所有此处新传染的,都尝试向整树传播) (参考31178-TODO1);
  */
 +(int) infectToAllRootsTree_Alg:(AIKVPointer*)infectedAlg {
     int infectNum = 0;
@@ -732,6 +733,9 @@
     for (TOFoModel *canset in allCanset) {
          TOAlgModel *waitAlg = [canset getCurFrame];
         if (!canset.isInfected && waitAlg && [waitAlg.content_p isEqual:infectedAlg]) {
+            //0. alg和fo设置状态;
+            waitAlg.status = TOModelStatus_ActNo;
+            canset.status = TOModelStatus_ActNo;
             
             //1. 全树同waitAlg全传染掉;
             canset.isInfected = true;

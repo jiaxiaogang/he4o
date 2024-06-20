@@ -327,12 +327,12 @@
                 //说明: 所有下一帧(actIndex帧) => 能否传染判断方法有两种,如下:
                 for (TOFoModel *item in actionFoModels) {
                     if (item.isInfected) continue;
-                    TOAlgModel *itemFrameAlg = [solutionModel getCurFrame];
+                    TOAlgModel *itemFrameAlg = [item getCurFrame];
                     if (!itemFrameAlg) continue;
                     
                     //方法1. 本来就是一个alg (参考31176-TODO2B-方法1);
                     if ([itemFrameAlg.content_p isEqual:frameModel.content_p]) {
-                        rootsInfectedNum += [self setInfectStatusForFoModel:item forAlgModel:itemFrameAlg];
+                        rootsInfectedNum += [TOUtils infectToAllRootsTree_Alg:itemFrameAlg.content_p];
                         newInfectedNum++;
                         continue;
                     }
@@ -347,7 +347,7 @@
                     NSNumber *itemIndex = [itemDic objectForKey:sceneToIndex];
                     //b. 当有映射,且洽好在等待反馈,则传染;
                     if (itemIndex && item.cansetActIndex == itemIndex.integerValue) {
-                        rootsInfectedNum += [self setInfectStatusForFoModel:item forAlgModel:itemFrameAlg];
+                        rootsInfectedNum += [TOUtils infectToAllRootsTree_Alg:itemFrameAlg.content_p];
                         newInfectedNum++;
                     }
                 }
@@ -364,19 +364,6 @@
         }
     }];
     DebugE();
-}
-
-/**
- *  MARK:--------------------设置传染状态--------------------
- */
-+(int) setInfectStatusForFoModel:(TOFoModel*)forFoModel forAlgModel:(TOAlgModel*)forAlgModel {
-    //1. alg和fo设置状态;
-    forAlgModel.status = TOModelStatus_ActNo;
-    forFoModel.status = TOModelStatus_ActNo;
-    forFoModel.isInfected = true;
-    
-    //2. frameActYes反馈失败时: 传染到整个工作记忆树 (所有此处新传染的,都尝试向整树传播) (参考31178-TODO1);
-    return [TOUtils infectToAllRootsTree_Alg:forAlgModel.content_p];
 }
 
 @end
