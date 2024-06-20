@@ -733,10 +733,6 @@
     for (TOFoModel *canset in allCanset) {
          TOAlgModel *waitAlg = [canset getCurFrame];
         if (!canset.isInfected && waitAlg && [waitAlg.content_p isEqual:infectedAlg]) {
-            //0. alg和fo设置状态;
-            waitAlg.status = TOModelStatus_ActNo;
-            canset.status = TOModelStatus_ActNo;
-            
             //1. 全树同waitAlg全传染掉;
             canset.isInfected = true;
             
@@ -802,6 +798,10 @@
         if (alg && [isInfectedAlgs containsObject:alg.content_p]) {
             canset.isInfected = true;
             initToInfectedNum++;
+            
+            //3. 初始即传染的中间帧也计SP- (参考32012-TODO4);
+            AIFoNodeBase *sceneTo = [SMGUtils searchNode:canset.sceneTo];
+            [sceneTo updateOutSPStrong:canset.cansetActIndex difStrong:1 type:ATSub sceneFrom:canset.sceneFrom cansetFrom:canset.cansetFrom];
         }
     }
     return initToInfectedNum;
@@ -835,6 +835,10 @@
             if (newCanset.cansetActIndex >= newCanset.transferXvModel.cansetToOrders.count) {
                 newCanset.isInfected = true;
                 initToInfectedNum++;
+                
+                //2. 初始即传染的末帧也计SP- (参考32012-TODO4);
+                AIFoNodeBase *sceneTo = [SMGUtils searchNode:newCanset.sceneTo];
+                [sceneTo updateOutSPStrong:newCanset.cansetActIndex difStrong:1 type:ATSub sceneFrom:newCanset.sceneFrom cansetFrom:newCanset.cansetFrom];
             }
         }
         
