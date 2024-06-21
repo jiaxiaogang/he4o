@@ -290,7 +290,7 @@
             //c. 综合求出absHCanset与场景的映射;
             NSDictionary *absRCansetSceneToIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2]];
             if ([Fo2FStr(absCansetFo) containsString:@"饿"] && [Fo2FStr(pFo) containsString:@"饿"]) {
-                if (absRCansetSceneToIndexDic.count == 0) {
+                if (absRCansetSceneToIndexDic.count == 0 && !ISOK(solutionFo, AINetAbsFoNode.class) && DICISOK(dic1.indexDic)) {
                     //2024.06.13: 特殊情况说明: 当solution中有两个饿时,此处dic is nil也是正常的,因为solution和abs之间映射了第一个饿,而综合求dic的pFo与solution可能是映射第二个 (这个有可能是因为时序识别 和 类比时的,从后向前匹配啥的有关,但不算什么大问题,可以暂不处理)即: 当assFo有两条饿时,映射不到是可能的 (不算bug);
                     if ([NSString countOfSubStr:@"饿" fromStr:Fo2FStr(solutionFo)] <= 1) {
                         NSLog(@"AbsRCanset Dic Is Nil");
