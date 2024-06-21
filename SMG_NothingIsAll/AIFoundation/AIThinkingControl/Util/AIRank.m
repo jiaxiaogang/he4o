@@ -137,7 +137,6 @@
     //0. 将effStrong提前取出来,存到mapModel中;
     NSArray *mapArr = [SMGUtils convertArr:cansets convertBlock:^id(TOFoModel *item) {
         AIFoNodeBase *sceneFo = [SMGUtils searchNode:item.sceneFo];
-        AIFoNodeBase *cansetFo = [SMGUtils searchNode:item.cansetFo];
         AIEffectStrong *strong = [TOUtils getEffectStrong:sceneFo effectIndex:item.sceneTargetIndex solutionFo:item.cansetFo];//提前取出effStrong有效性;
         //TODOTOMORROW20240119: 测下这里确定能响应到feedback和cutIndex变化后,看能否对排序评分,带来分值变化 (参考31073-TODO3);
         CGFloat stableScore = [TOUtils getStableScore_Out:item startSPIndex:item.cansetActIndex endSPIndex:item.cansetTargetIndex];//提前算出还未推进的中后段sp稳定性;
@@ -167,8 +166,11 @@
         AIFoNodeBase *sceneFo = [SMGUtils searchNode:obj.sceneFo];
         AIEffectStrong *effStrong = [TOUtils getEffectStrong:sceneFo effectIndex:sceneFo.count solutionFo:obj.cansetFo];
         CGFloat effScore = [TOUtils getEffectScore:effStrong];
-        AIFoNodeBase *cansetFo = [SMGUtils searchNode:obj.cansetFo];
-        if (Log4AIRank) NSLog(@"%ld. %@<F%ld %@> %@ %@ %@:(分:%.2f)",[sort indexOfObject:obj],SceneType2Str(obj.baseSceneModel.type),obj.sceneFo.pointerId,Fo2FStr(cansetFo),CLEANSTR(obj.transferXvModel.sceneToCansetToIndexDic),CLEANSTR(cansetFo.spDic),effStrong.description,effScore);
+        AIFoNodeBase *cansetFrom = [SMGUtils searchNode:obj.cansetFrom];
+        AIFoNodeBase *sceneTo = [SMGUtils searchNode:obj.sceneTo];
+        NSDictionary *spDic = [sceneTo getItemOutSPDic:obj.sceneFrom cansetFrom:obj.cansetFrom];
+        
+        if (Log4AIRank) NSLog(@"%ld. %@<F%ld %@> %@ %@ %@:(分:%.2f)",[sort indexOfObject:obj],SceneType2Str(obj.baseSceneModel.type),obj.sceneFo.pointerId,Fo2FStr(cansetFrom),CLEANSTR(obj.transferXvModel.sceneToCansetToIndexDic),CLEANSTR(spDic),effStrong.description,effScore);
         
         //TODOTOMORROW20240612: 在31187已经修了此BUG,现在还有正常dic is nil的少许情况,但不会大面积发生了,如果此处7天内,测不会再大面积打出问题,即没有啥问题了,此处调试日志可删掉;
         if (obj.transferXvModel.sceneToCansetToIndexDic.count == 0 && [Pit2FStr(obj.sceneTo) containsString:@"饿"] && [Pit2FStr(obj.cansetFrom) containsString:@"饿"]) {
