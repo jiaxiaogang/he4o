@@ -87,7 +87,7 @@
     
     //7. 初始化outSPDic (参考32012-TODO3);
     AIFoNodeBase *sceneTo = [SMGUtils searchNode:result.sceneTo];
-    [sceneTo initItemOutSPDicIfNotInited:cansetFrom.spDic sceneFrom:sceneFrom_p cansetFrom:cansetFrom_p];
+    [sceneTo initItemOutSPDicIfNotInited:sceneFrom_p cansetFrom:cansetFrom_p];
     
     //12. 伪迁移;
     [TCTransfer transferXv:result];
@@ -134,7 +134,7 @@
     
     //4. 初始化outSPDic (参考32012-TODO3);
     AIFoNodeBase *sceneTo = [SMGUtils searchNode:result.sceneTo];
-    [sceneTo initItemOutSPDicIfNotInited:hCansetFrom.spDic sceneFrom:sceneFrom.pointer cansetFrom:hCansetFrom_p];
+    [sceneTo initItemOutSPDicIfNotInited:sceneFrom.pointer cansetFrom:hCansetFrom_p];
     
     //4. 初始化result的cansetTo与real的映射;
     [result initRealCansetToDic];

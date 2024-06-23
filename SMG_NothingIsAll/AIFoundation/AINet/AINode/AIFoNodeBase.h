@@ -99,7 +99,7 @@
 /**
  *  MARK:--------------------初始化整个outSPDic (参考32012-TODO3)--------------------
  */
--(void) initItemOutSPDicIfNotInited:(NSDictionary*)newSPDic sceneFrom:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom;
+-(void) initItemOutSPDicIfNotInited:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom;
 
 /**
  *  MARK:--------------------更新OutSPDic强度值--------------------

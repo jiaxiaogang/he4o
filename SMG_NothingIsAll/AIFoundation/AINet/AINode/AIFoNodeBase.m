@@ -121,16 +121,16 @@
 
 /**
  *  MARK:--------------------初始化整个outSPDic (参考32012-TODO3)--------------------
- *  @newSPDic 传cansetFrom的spDic;
  */
--(void) initItemOutSPDicIfNotInited:(NSDictionary*)newSPDic sceneFrom:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom {
+-(void) initItemOutSPDicIfNotInited:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom {
     //1. 检查有没初始化过 (只初始一次,用于防重);
     NSString *key = STRFORMAT(@"%ld_%ld",sceneFrom.pointerId,cansetFrom.pointerId);
     if ([self.outSPDic objectForKey:key]) return;
     
-    //2. 没初始化过,则初始化;
-    AIFoNodeBase *cansetFromNode = [SMGUtils searchNode:cansetFrom];
-    [self updateOutSPDic:cansetFromNode.spDic sceneFrom:sceneFrom cansetFrom:cansetFrom];
+    //2. 没初始化过,则初始化 (原cansetFrom在sceneFrom下,它自己的outSPDic就存着它自己的canset的outSPDic);
+    AIFoNodeBase *sceneFromNode = [SMGUtils searchNode:sceneFrom];
+    NSDictionary *initOutSPDic = [sceneFromNode getItemOutSPDic:sceneFrom cansetFrom:cansetFrom];
+    [self updateOutSPDic:initOutSPDic sceneFrom:sceneFrom cansetFrom:cansetFrom];
 }
 
 /**
