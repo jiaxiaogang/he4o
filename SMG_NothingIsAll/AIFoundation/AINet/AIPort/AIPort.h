@@ -88,15 +88,13 @@
 
 /**
  *  MARK:--------------------OUT有效强度--------------------
+ *  @desc outSPDic相当于场景下有几百个canset时,针对每个canset都有一个spDic;
+ *        > 所以此处每个AIOutSPStong都是一个独立完整的spDic;
  *  @version
  *      2024.06.17: 初版,把In和Out的SP分开,这样可以在转实前就为canset记录SPDic (参考32012);
  */
 @interface AIOutSPStrong : NSObject <NSCoding>
 
-+(AIOutSPStrong*) newWithSceneFrom:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom;
-
-@property (strong, nonatomic) AIKVPointer *sceneFrom; //sceneFrom
-@property (strong, nonatomic) AIKVPointer *cansetFrom; //cansetFrom
 @property (strong, nonatomic) NSMutableDictionary *spDic; //SPDic
 
 @end

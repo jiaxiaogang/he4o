@@ -166,13 +166,6 @@
 //MARK:===============================================================
 @implementation AIOutSPStrong
 
-+(AIOutSPStrong*) newWithSceneFrom:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom {
-    AIOutSPStrong *result = [[AIOutSPStrong alloc] init];
-    result.sceneFrom = sceneFrom;
-    result.cansetFrom = cansetFrom;
-    return result;
-}
-
 -(NSMutableDictionary *)spDic{
     if (!ISOK(_spDic, NSMutableDictionary.class)) _spDic = [[NSMutableDictionary alloc] initWithDictionary:_spDic];
     return _spDic;
@@ -184,16 +177,12 @@
 - (instancetype)initWithCoder:(NSCoder *)coder {
     self = [super init];
     if (self) {
-        self.sceneFrom = [coder decodeObjectForKey:@"sceneFrom"];
-        self.cansetFrom = [coder decodeObjectForKey:@"cansetFrom"];
         self.spDic = [coder decodeObjectForKey:@"spDic"];
     }
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)coder {
-    [coder encodeObject:self.sceneFrom forKey:@"sceneFrom"];
-    [coder encodeObject:self.cansetFrom forKey:@"cansetFrom"];
     [coder encodeObject:self.spDic forKey:@"spDic"];
 }
 

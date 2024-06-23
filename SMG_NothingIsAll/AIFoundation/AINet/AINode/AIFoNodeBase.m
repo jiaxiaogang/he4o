@@ -174,7 +174,7 @@
     
     //2. 无则新建;
     if (!spStrong) {
-        spStrong = [AIOutSPStrong newWithSceneFrom:sceneFrom cansetFrom:cansetFrom];
+        spStrong = [[AIOutSPStrong alloc] init];
         [self.outSPDic setObject:spStrong forKey:key];
     }
     return spStrong;
