@@ -424,7 +424,8 @@
             }
             
             //5. 综合indexDic计算: 当前cansetTo与real之间的映射;
-            [newHCanset updateIndexDic:rCanset indexDic:self.realCansetToIndexDic];
+            TmpDic *t = [[TmpDic alloc] initWithDictionary:self.realCansetToIndexDic];
+            [newHCanset updateIndexDic:rCanset indexDic:t];
             NSLog(@"%@Canset演化> NewHCanset:%@ toScene:%@ 在%ld帧:A%ld",FltLog4XueQuPi(3),Fo2FStr(newHCanset),ShortDesc4Node(rCanset),self.cansetActIndex,actIndexAlg_p.pointerId);
         }
     }
@@ -488,7 +489,8 @@
                             NSLog(@"AbsHCanset Dic Is Nil");
                         }
                     }
-                    [absCansetFo updateIndexDic:sceneTo indexDic:absHCansetSceneToIndexDic];
+                    TmpDic *t = [[TmpDic alloc] initWithDictionary:absHCansetSceneToIndexDic];
+                    [absCansetFo updateIndexDic:sceneTo indexDic:t];
                     [AITest test18:absHCansetSceneToIndexDic newCanset:absCansetFo absFo:sceneTo];
                     
                     //16. 算出spDic (参考27213-5);

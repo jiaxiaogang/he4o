@@ -107,6 +107,7 @@
 		0860A3BD22C9859200A48682 /* CustomAddNodeWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0860A3BC22C9859200A48682 /* CustomAddNodeWindow.xib */; };
 		08616986284CF2D300A39473 /* TCSolutionUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 08616985284CF2D300A39473 /* TCSolutionUtil.m */; };
 		0864936127E216B5003EF661 /* TOMVisionNodeBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 0864936027E216B5003EF661 /* TOMVisionNodeBase.m */; };
+		086A07B82C2C3BFE003737CA /* TmpDic.m in Sources */ = {isa = PBXBuildFile; fileRef = 086A07B72C2C3BFE003737CA /* TmpDic.m */; };
 		086BFF382BC043F600CB77B0 /* TVUtil_Short.m in Sources */ = {isa = PBXBuildFile; fileRef = 086BFF372BC043F600CB77B0 /* TVUtil_Short.m */; };
 		086D93371F8CA782002BAF3F /* RuntimeInvoker.m in Sources */ = {isa = PBXBuildFile; fileRef = 086D93361F8CA782002BAF3F /* RuntimeInvoker.m */; };
 		0871C27626685D4800CB3889 /* TOModelVisionUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 0871C27526685D4800CB3889 /* TOModelVisionUtil.m */; };
@@ -423,6 +424,8 @@
 		08616985284CF2D300A39473 /* TCSolutionUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCSolutionUtil.m; sourceTree = "<group>"; };
 		0864935F27E216B5003EF661 /* TOMVisionNodeBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOMVisionNodeBase.h; sourceTree = "<group>"; };
 		0864936027E216B5003EF661 /* TOMVisionNodeBase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOMVisionNodeBase.m; sourceTree = "<group>"; };
+		086A07B62C2C3BFE003737CA /* TmpDic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TmpDic.h; sourceTree = "<group>"; };
+		086A07B72C2C3BFE003737CA /* TmpDic.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TmpDic.m; sourceTree = "<group>"; };
 		086BFF362BC043F600CB77B0 /* TVUtil_Short.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TVUtil_Short.h; sourceTree = "<group>"; };
 		086BFF372BC043F600CB77B0 /* TVUtil_Short.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TVUtil_Short.m; sourceTree = "<group>"; };
 		086D93351F8CA782002BAF3F /* RuntimeInvoker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RuntimeInvoker.h; sourceTree = "<group>"; };
@@ -1643,6 +1646,8 @@
 				080EA73A2B94D0BF00764BBF /* TCTransferXvModel.m */,
 				08F506222B90CF3800ECE977 /* DirectIndexDic.h */,
 				08F506232B90CF3800ECE977 /* DirectIndexDic.m */,
+				086A07B62C2C3BFE003737CA /* TmpDic.h */,
+				086A07B72C2C3BFE003737CA /* TmpDic.m */,
 			);
 			path = TCTransfer;
 			sourceTree = "<group>";
@@ -2128,6 +2133,7 @@
 				0858C5D02194F8B000951BA5 /* MASViewConstraint.m in Sources */,
 				087705C32753B9F400BA4EFB /* HDemandModel.m in Sources */,
 				88C20B8220C7696A0076BB52 /* AINetAbsFoUtils.m in Sources */,
+				086A07B82C2C3BFE003737CA /* TmpDic.m in Sources */,
 				08586DE527E80C8B008D2F8C /* TVLineView.m in Sources */,
 				0858C5D22194F8B000951BA5 /* NSLayoutConstraint+MASDebugAdditions.m in Sources */,
 				0800B2BF29F0BF6800CF5E2C /* TCRethinkUtil.m in Sources */,

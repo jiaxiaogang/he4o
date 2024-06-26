@@ -233,7 +233,8 @@
     
     if (updateCansetSuccess) {
         //d. 将item.indexDic挂载到matchFo的conIndexDDic下 (参考27201-3);
-        [newRCanset updateIndexDic:matchFo indexDic:self.indexDic2];
+        TmpDic *t = [[TmpDic alloc] initWithDictionary:self.indexDic2];
+        [newRCanset updateIndexDic:matchFo indexDic:t];
         
         if (self.indexDic2 == 0) {
             NSLog(@"NewRCanset Dic Is Nil");
@@ -297,7 +298,8 @@
                     }
                 }
             }
-            [absCansetFo updateIndexDic:pFo indexDic:absRCansetSceneToIndexDic];
+            TmpDic *t = [[TmpDic alloc] initWithDictionary:absRCansetSceneToIndexDic];
+            [absCansetFo updateIndexDic:pFo indexDic:t];
             [AITest test18:absRCansetSceneToIndexDic newCanset:absCansetFo absFo:pFo];
             
             //h. 算出spDic (参考27213-5);
