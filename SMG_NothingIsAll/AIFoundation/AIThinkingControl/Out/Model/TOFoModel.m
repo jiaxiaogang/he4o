@@ -124,7 +124,6 @@
     //"pFo的最后一帧下标"  与  "现cutIndex下一帧(在等待反馈帧)"  之间因为匹配成功而=>  "追加映射";
     AIMatchFoModel *pFo = self.basePFo;
     [self.realCansetToIndexDic setObject:@(pFo.realMaskFo.count - 1) forKey:@(self.cansetActIndex)];
-    NSLog(@"B indexDic新增 %p %ld %ld",self.realCansetToIndexDic,pFo.realMaskFo.count - 1,self.cansetActIndex);
 }
 
 /**

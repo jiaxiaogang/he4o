@@ -145,7 +145,6 @@
     
     //5. 更新indexDic (V: 末位maskIndex, K: matchIndex);
     [self.indexDic2 setObject:@(maskIndex) forKey:@(matchIndex)];
-    NSLog(@"A indexDic新增 %p %ld %ld",self.indexDic2,maskIndex,matchIndex);
     
     //----------------推进至下帧----------------
     //1. 推进到下一帧_更新: cutIndex & sumNear(匹配度分子) & nearCount(匹配度分母);

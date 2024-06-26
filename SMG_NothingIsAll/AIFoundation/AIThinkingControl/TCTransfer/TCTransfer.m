@@ -73,11 +73,6 @@
         //2024.04.29: BUG: 修IH无需迁移时xvModel返回nil,导致后期使用xvModel报空指针问题;
         TCTransferXvModel *result = [[TCTransferXvModel alloc] init];
         result.cansetToOrders = [cansetFrom convert2Orders];//cansetFrom的orders就是cansetTo的orders;
-        
-        //TODOTOMORROW20240625: 查下indexDic映射越界的问题 (参考32014);
-        NSLog(@"scene:%ld canset:%ld",sceneFrom.pId,cansetFrom.pId);
-        //重新训练下FZ964x3,所有的canset应该都是这个训练步骤来的,查下indexDic越界到底哪来的 (上面调试发现,最具象canset也有越界问题);
-        
         result.sceneToCansetToIndexDic = [sceneFrom getConIndexDic:cansetFrom.p];
         result.sceneToTargetIndex = cansetModel.sceneTargetIndex;
         return result;
