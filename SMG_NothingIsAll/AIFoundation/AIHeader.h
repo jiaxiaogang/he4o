@@ -30,7 +30,6 @@
 #import "XGWedis.h"
 #import "CortexAlgorithmsUtil.h"
 #import "MapModel.h"
-#import "TmpDic.h"
 
 //Util
 #import "ThinkingUtils.h"
@@ -192,7 +191,6 @@
 //Dic
 #define DICISOK(d) [SMGUtils dicIsOk:d]                                 //是否空字典
 #define DICTOOK(d) [SMGUtils dicToOk:d]                                 //dictionary强检查
-//#define TMPDICTOOK(d) [SMGUtils tmpDicToOk:d]
 
 //AIPointer
 #define POINTERISOK(p) [SMGUtils pointerIsOk:p]                         //指针强检查

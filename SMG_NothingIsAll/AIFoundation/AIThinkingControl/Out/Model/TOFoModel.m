@@ -124,6 +124,7 @@
     //"pFo的最后一帧下标"  与  "现cutIndex下一帧(在等待反馈帧)"  之间因为匹配成功而=>  "追加映射";
     AIMatchFoModel *pFo = self.basePFo;
     [self.realCansetToIndexDic setObject:@(pFo.realMaskFo.count - 1) forKey:@(self.cansetActIndex)];
+    NSLog(@"B indexDic新增 %p %ld %ld",self.realCansetToIndexDic,pFo.realMaskFo.count - 1,self.cansetActIndex);
 }
 
 /**
@@ -424,8 +425,8 @@
             }
             
             //5. 综合indexDic计算: 当前cansetTo与real之间的映射;
-            TmpDic *t = [[TmpDic alloc] initWithDictionary:self.realCansetToIndexDic];
-            [newHCanset updateIndexDic:rCanset indexDic:t];
+            //2024.06.26: indexDic有可能指定后还在更新,导致有越界 (参考32014);
+            [newHCanset updateIndexDic:rCanset indexDic:[self.realCansetToIndexDic copy]];
             NSLog(@"%@Canset演化> NewHCanset:%@ toScene:%@ 在%ld帧:A%ld",FltLog4XueQuPi(3),Fo2FStr(newHCanset),ShortDesc4Node(rCanset),self.cansetActIndex,actIndexAlg_p.pointerId);
         }
     }
@@ -489,8 +490,7 @@
                             NSLog(@"AbsHCanset Dic Is Nil");
                         }
                     }
-                    TmpDic *t = [[TmpDic alloc] initWithDictionary:absHCansetSceneToIndexDic];
-                    [absCansetFo updateIndexDic:sceneTo indexDic:t];
+                    [absCansetFo updateIndexDic:sceneTo indexDic:absHCansetSceneToIndexDic];
                     [AITest test18:absHCansetSceneToIndexDic newCanset:absCansetFo absFo:sceneTo];
                     
                     //16. 算出spDic (参考27213-5);

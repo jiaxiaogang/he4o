@@ -145,6 +145,7 @@
     
     //5. 更新indexDic (V: 末位maskIndex, K: matchIndex);
     [self.indexDic2 setObject:@(maskIndex) forKey:@(matchIndex)];
+    NSLog(@"A indexDic新增 %p %ld %ld",self.indexDic2,maskIndex,matchIndex);
     
     //----------------推进至下帧----------------
     //1. 推进到下一帧_更新: cutIndex & sumNear(匹配度分子) & nearCount(匹配度分母);
@@ -233,8 +234,8 @@
     
     if (updateCansetSuccess) {
         //d. 将item.indexDic挂载到matchFo的conIndexDDic下 (参考27201-3);
-        TmpDic *t = [[TmpDic alloc] initWithDictionary:self.indexDic2];
-        [newRCanset updateIndexDic:matchFo indexDic:t];
+        //2024.06.26: indexDic有可能指定后还在更新,导致有越界 (参考32014);
+        [newRCanset updateIndexDic:matchFo indexDic:[self.indexDic2 copy]];
         
         if (self.indexDic2 == 0) {
             NSLog(@"NewRCanset Dic Is Nil");
@@ -298,8 +299,7 @@
                     }
                 }
             }
-            TmpDic *t = [[TmpDic alloc] initWithDictionary:absRCansetSceneToIndexDic];
-            [absCansetFo updateIndexDic:pFo indexDic:t];
+            [absCansetFo updateIndexDic:pFo indexDic:absRCansetSceneToIndexDic];
             [AITest test18:absRCansetSceneToIndexDic newCanset:absCansetFo absFo:pFo];
             
             //h. 算出spDic (参考27213-5);

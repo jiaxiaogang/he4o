@@ -273,7 +273,7 @@
     [self.absIndexDDic setObject:indexDic forKey:@(absFo.pointer.pointerId)];
     [absFo.conIndexDDic setObject:indexDic forKey:@(self.pointer.pointerId)];
     
-    NSLog(@"updateIndexDic:%@ (abs:%ld con:%ld)",indexDic,absFo.pId,self.pId);
+    NSLog(@"updateIndexDic %p = %@ (abs:%ld con:%ld)",indexDic,CLEANSTR(indexDic),absFo.pId,self.pId);
     
     //1. 存的时候,没越界;
     //updateIndexDic:{

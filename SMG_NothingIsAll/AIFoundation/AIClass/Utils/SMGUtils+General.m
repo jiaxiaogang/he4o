@@ -207,9 +207,6 @@
 +(NSDictionary*) dicToOk:(NSDictionary*)d{
     return (d && [d isKindOfClass:[NSDictionary class]]) ? d : [NSDictionary new];
 }
-//+(TmpDic*) tmpDicToOk:(TmpDic*)d {
-//    return (d && [d isKindOfClass:[TmpDic class]]) ? d : [TmpDic new];
-//}
 
 //pointer (pointerId从0开始)
 +(BOOL) pointerIsOk:(AIPointer*)p{
