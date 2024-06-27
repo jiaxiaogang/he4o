@@ -52,8 +52,7 @@
     NSString *fltLog1 = FltLog4AbsHCanset(foModel.isH, 1);
     NSString *fltLog2 = FltLog4HDemandOfWuPiGuo(1);
     NSString *fltLog3 = FltLog4HDemandOfYouPiGuo(STRFORMAT(@"1_%@行为化帧动机",rhLog));//调试激活了H有皮果经验;
-    NSString *fltLog4 = FltLog4Default(@"1");
-    OFTitleLog(@"行为化Fo",@"\n%@%@%@%@%@行为化%@下标 (%ld/%ld) %@ from时序:%@",fltLog1,fltLog2,fltLog3,fltLog4,rhLog,frameLog,foModel.cansetActIndex,foModel.cansetTargetIndex,Pit2FStr([foModel getCurFrame].content_p),Fo2FStr(curFo));
+    OFTitleLog(@"行为化Fo",@"\n%@%@%@%@行为化%@下标 (%ld/%ld) %@ from时序:%@",fltLog1,fltLog2,fltLog3,rhLog,frameLog,foModel.cansetActIndex,foModel.cansetTargetIndex,Pit2FStr([foModel getCurFrame].content_p),Fo2FStr(curFo));
     
     [theTC updateOperCount:kFILENAME];
     Debug();

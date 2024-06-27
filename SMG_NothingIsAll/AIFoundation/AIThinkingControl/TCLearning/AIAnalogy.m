@@ -46,7 +46,7 @@
 }
 +(AINetAbsFoNode*) analogyOutside:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type noRepeatArea_ps:(NSArray*)noRepeatArea_ps {
     //1. 类比orders的规律
-    if (Log4OutAna) NSLog(@"\n----------- 外类比(%@) -----------\nfo:%@ \nassFo:%@",ATType2Str(type),Fo2FStr(protoFo),Fo2FStr(assFo));
+    if (Log4Ana) NSLog(@"\n----------- 外类比(%@) -----------\nfo:%@ \nassFo:%@",ATType2Str(type),Fo2FStr(protoFo),Fo2FStr(assFo));
     NSMutableArray *orderSames = [[NSMutableArray alloc] init];
     NSMutableDictionary *protoAssIndexDic = [NSMutableDictionary new];//收集proto和ass的映射;
     if (protoFo && assFo) {
@@ -61,7 +61,7 @@
                 //3. B源于matchFo,此处只判断B是1层抽象 (参考27161-调试1&调试2);
                 //此处proto抽象仅指向刚识别的matchAlgs,所以与contains等效;
                 BOOL mIsC = [TOUtils mIsC_1:protoA_p c:assA_p];
-                if (Log4OutAna) NSLog(@"proto的第%ld: A%ld 类比 ass的第%ld: A%ld (%@)",i,protoA_p.pointerId,j,assA_p.pointerId,mIsC?@"成功":@"失败");
+                if (Log4Ana) NSLog(@"proto的第%ld: A%ld 类比 ass的第%ld: A%ld (%@)",i,protoA_p.pointerId,j,assA_p.pointerId,mIsC?@"成功":@"失败");
                 if (mIsC) {
                     
                     //4. 即使mIsC匹配,也要进行共同点抽象 (参考29025-11);
@@ -138,7 +138,7 @@
             
             //6.2. 将assFo的mvDeltaTime偏移量计入 (参考30087-todo5&6);
             result.mvDeltaTime += (assFo.mvDeltaTime - result.mvDeltaTime) / sumStrong;
-            NSLog(@"偏移mvDeltaTime (从%.2f到%.2f) (总强度:%ld con1:%.2f con2:%.2f) ",frontMvDeltaTime4Log,result.mvDeltaTime,sumStrong,protoFo.mvDeltaTime,assFo.mvDeltaTime);
+            //NSLog(@"偏移mvDeltaTime (从%.2f到%.2f) (总强度:%ld con1:%.2f con2:%.2f) ",frontMvDeltaTime4Log,result.mvDeltaTime,sumStrong,protoFo.mvDeltaTime,assFo.mvDeltaTime);
             
             //6. createAbsCmvNode (当正向类比,且result没有cmv指向时);
             if (protoFo.cmvNode_p && assMv && !result.cmvNode_p) {
@@ -150,7 +150,7 @@
     //调试短时序; (先仅打外类比日志);
     NSInteger foStrong = [AINetUtils getStrong:result atConNode:protoFo type:type];
     NSInteger assFoStrong = [AINetUtils getStrong:result atConNode:assFo type:type];
-    NSLog(@"1. 新proto: %@\n2. 与ass: %@ \n3. 外类比构建时序: %@->{%@} from: (protoFo(%ld):assFo(%ld))",Fo2FStr(protoFo),Fo2FStr(assFo),Fo2FStr(result),Mvp2Str(result.cmvNode_p),foStrong,assFoStrong);
+    if (Log4Ana) NSLog(@"1. 新proto: %@\n2. 与ass: %@ \n3. 外类比构建时序: %@->{%@} from: (protoFo(%ld):assFo(%ld))",Fo2FStr(protoFo),Fo2FStr(assFo),Fo2FStr(result),Mvp2Str(result.cmvNode_p),foStrong,assFoStrong);
     return result;
 }
 
@@ -197,7 +197,7 @@
                     protoAbsModel4MatchValue.nearCount++;
                     protoAbsModel4MatchValue.sumNear *= valueMatchValue;
                 } else {
-                    NSLog(@"> 当前A%ld<%@>比A%ld<%@>的缺口:%.2f / 总缺口%.2f = 当前责任%.2f",(long)protoA_p.pointerId,Pit2FStr(protoV_p),(long)assA_p.pointerId,Pit2FStr(assV_p),curQueKou,sumQueKou,curRate);
+                    if (Log4Ana) NSLog(@"> 当前A%ld<%@>比A%ld<%@>的缺口:%.2f / 总缺口%.2f = 当前责任%.2f",(long)protoA_p.pointerId,Pit2FStr(protoV_p),(long)assA_p.pointerId,Pit2FStr(assV_p),curQueKou,sumQueKou,curRate);
                 }
                 
                 //6. break继续判断proto的下个V码;

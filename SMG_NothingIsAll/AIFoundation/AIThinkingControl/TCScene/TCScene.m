@@ -109,7 +109,7 @@
     for (AISceneModel *item in result) {
         AIFoNodeBase *sceneFo = [SMGUtils searchNode:item.scene];
         NSArray *itemCansets = [sceneFo getConCansets:sceneFo.count];
-        NSLog(@"取得item场景: %@ %@ 候选集数:%ld",SceneType2Str(item.type),Pit2FStr(item.scene),itemCansets.count);
+        if (Log4GetCansetResult4R) NSLog(@"取得item场景: %@ %@ 候选集数:%ld",SceneType2Str(item.type),Pit2FStr(item.scene),itemCansets.count);
     }
     return result;
 }

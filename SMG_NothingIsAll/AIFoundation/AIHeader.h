@@ -366,25 +366,22 @@
 #define Log4FuzzyAlg false
 //识别时序
 #define Log4MFo false
-//内类比
-#define Log4InAna false
-#define Log4InAnaGL(type) ((type == ATGreater || type == ATLess) && false)
-#define Log4InAnaHN(type) ((type == ATHav || type == ATNone) && false)
-
-//外类比
-#define Log4OutAna false
+//类比
+#define Log4Ana false
 #define Log4OutCansetAna true
 //方向索引
 #define Log4DirecRef true
+//预测日志开关
+#define Log4Forecast false
 //外输入推进中循环
 #define Log4OPushM true
 #define Log4TIROPushM false
 //当前可决策任务:CanDecisionDemand;
 #define Log4CanDecisionDemand false
-//In反省
-#define Log4InRethink true
-#define Log4OutRethink true
-#define Log4Rethink true
+#define Log4NewDemand false
+//反省
+#define Log4Rethink false
+#define Log4Effect false
 //解决方案条件满足
 #define Log4SceneIsOk false
 //S过滤器
@@ -396,8 +393,8 @@
 
 //TCCanset日志开关
 #define Log4TCCanset false
-#define Log4GetCansetResult4R true
-#define Log4GetCansetResult4H true
+#define Log4GetCansetResult4R false
+#define Log4GetCansetResult4H false
 
 //AIRank日志开关
 #define Log4AIRank true

@@ -31,7 +31,7 @@
     double triggerTime = deltaTime * 3.0f;
     
     //2. 触发器;
-    NSLog(@"---//rEffect触发器新增:%p (%@ | 触发时间:%.2f)",rDemand,TOStatus2Str(rDemand.status),triggerTime);
+    if (Log4Effect) NSLog(@"---//rEffect触发器新增:%p (%@ | 触发时间:%.2f)",rDemand,TOStatus2Str(rDemand.status),triggerTime);
     [AITime setTimeTrigger:triggerTime trigger:^{
         //2. 取有效性 (默认即有效);
         EffectStatus es = rDemand.effectStatus == ES_NoEff ? ES_NoEff : ES_HavEff;
@@ -48,12 +48,12 @@
         AIFoNodeBase *baseScene = [SMGUtils searchNode:rSolution.sceneTo];
         AIFoNodeBase *cansetTo = [SMGUtils searchNode:rSolution.transferSiModel.canset];
         AIEffectStrong *strong = [baseScene updateEffectStrong:baseScene.count solutionFo:cansetTo.p status:es];
-        IFTitleLog(@"rEffect", @"\n%p Scene:%@ (有效性:%@ 任务状态:%@)\nEff更新Scene:F%ld S:%@ (index:%ld H%ldN%ld)",rDemand,Fo2FStr(baseScene),EffectStatus2Str(es),TOStatus2Str(rDemand.status),baseScene.pId,Fo2FStr(cansetTo),baseScene.count,strong.hStrong,strong.nStrong);
+        if (Log4Effect) IFTitleLog(@"rEffect", @"\n%p Scene:%@ (有效性:%@ 任务状态:%@)\nEff更新Scene:F%ld S:%@ (index:%ld H%ldN%ld)",rDemand,Fo2FStr(baseScene),EffectStatus2Str(es),TOStatus2Str(rDemand.status),baseScene.pId,Fo2FStr(cansetTo),baseScene.count,strong.hStrong,strong.nStrong);
         
         //6. 对抽象也更新eff (此处canset.count应该和rSolution.targetIndex是一样的) (参考29069-todo11.5);
         [TCRethinkUtil spEff4Abs:cansetTo curFoIndex:cansetTo.count itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {
             AIEffectStrong *strong = [baseScene updateEffectStrong:baseScene.count solutionFo:absFo.pointer status:es];
-            NSLog(@"\tEff更新scene:F%ld absS:%@ (index:%ld H%ldN%ld)",baseScene.pId,Fo2FStr(absFo),baseScene.count,strong.hStrong,strong.nStrong);
+            if (Log4Effect) NSLog(@"\tEff更新scene:F%ld absS:%@ (index:%ld H%ldN%ld)",baseScene.pId,Fo2FStr(absFo),baseScene.count,strong.hStrong,strong.nStrong);
         }];
     }];
     DebugE();
@@ -82,7 +82,7 @@
     
     //3. 触发器;
     deltaTime *= 3.0f;
-    NSLog(@"---//hEffect触发器新增:%p (%@ | 触发时间:%.2f)",hSolution,TOStatus2Str(hDemand.status),deltaTime);
+    if (Log4Effect) NSLog(@"---//hEffect触发器新增:%p (%@ | 触发时间:%.2f)",hSolution,TOStatus2Str(hDemand.status),deltaTime);
     [AITime setTimeTrigger:deltaTime trigger:^{
         //4. 取有效性 (默认即无效);
         EffectStatus es = hDemand.effectStatus == ES_HavEff ? ES_HavEff : ES_NoEff;
@@ -106,7 +106,7 @@
         
         //8. log
         AIEffectStrong *strong = [TOUtils getEffectStrong:targetFoNode effectIndex:targetFoActIndex solutionFo:canset_p];
-        IFTitleLog(@"hEffect", @"\n%p S:%@ (有效性:%@ 当前方案状态:%@)",hSolution,Pit2FStr(canset_p),EffectStatus2Str(es),TOStatus2Str(hSolution.status));
+        if (Log4Effect) IFTitleLog(@"hEffect", @"\n%p S:%@ (有效性:%@ 当前方案状态:%@)",hSolution,Pit2FStr(canset_p),EffectStatus2Str(es),TOStatus2Str(hSolution.status));
         NSLog(@"\t=>targetFo:%@ (index:%ld H%ldN%ld)",Fo2FStr(targetFoNode),targetFoActIndex,strong.hStrong,strong.nStrong);
     }];
     DebugE();

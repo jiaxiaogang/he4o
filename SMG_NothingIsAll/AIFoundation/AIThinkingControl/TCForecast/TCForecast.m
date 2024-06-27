@@ -36,7 +36,7 @@
     //1. 数据检查 (参考25031-1);
     [theTC updateOperCount:kFILENAME];
     Debug();
-    ISTitleLog(@"matchFos预测");
+    if (Log4Forecast) ISTitleLog(@"matchFos预测");
     matchPRFos = ARRTOOK(matchPRFos);
         
     //2. 每个pFo的预测处理;
@@ -74,12 +74,12 @@
         [item setStatus:TIModelStatus_LastWait forCutIndex:curCutIndex];
         double deltaTime = [NUMTOOK(ARR_INDEX(matchFo.deltaTimes, curCutIndex + 1)) doubleValue];
         
-        NSLog(@"---//理性IRT触发器新增等待反馈:%p (%@ | useTime:%.2f)",matchFo,Fo2FStr(matchFo),deltaTime);
+        if (Log4Forecast) NSLog(@"---//理性IRT触发器新增等待反馈:%p (%@ | useTime:%.2f)",matchFo,Fo2FStr(matchFo),deltaTime);
         [AITime setTimeTrigger:deltaTime trigger:^{
             //5. 如果状态还是Wait,则无反馈 (这里只管LastWait状态,即自然未发生的情况下的反省,已反馈的在feedback中已经调用反省了);
             TIModelStatus status = [item getStatusForCutIndex:curCutIndex];
             if (status == TIModelStatus_LastWait) {
-                NSLog(@"---//IR反省触发器执行:%p F%ld 状态:%@",matchFo,matchFo.pointer.pointerId,TIStatus2Str(status));
+                if (Log4Forecast) NSLog(@"---//IR反省触发器执行:%p F%ld 状态:%@",matchFo,matchFo.pointer.pointerId,TIStatus2Str(status));
                 
                 //6. 则进行理性IRT反省;
                 [TCRethink reasonInRethink:item cutIndex:curCutIndex type:ATSub];
@@ -109,7 +109,7 @@
         [item setStatus:TIModelStatus_LastWait forCutIndex:curCutIndex];
         double deltaTime = matchFo.mvDeltaTime;
         
-        NSLog(@"---//感性IRT触发器新增等待反馈:%p (%@ | useTime:%.2f)",matchFo,Fo2FStr(matchFo),deltaTime);
+        if (Log4Forecast) NSLog(@"---//感性IRT触发器新增等待反馈:%p (%@ | useTime:%.2f)",matchFo,Fo2FStr(matchFo),deltaTime);
         [AITime setTimeTrigger:deltaTime trigger:^{
             //10. 如果状态已改成OutBack,说明有反馈 (这里只管LastWait状态,即自然未发生的情况下的反省,已反馈的在feedback中已经调用反省了);
             TIModelStatus status = [item getStatusForCutIndex:curCutIndex];
@@ -122,7 +122,7 @@
                     
                     //11. 则进行感性IRT反省;
                     [TCRethink perceptInRethink:item type:type];
-                    NSLog(@"---//IP反省触发器执行:%p F%ld 状态:%@",matchFo,matchFo.pointer.pointerId,TIStatus2Str(status));
+                    if (Log4Forecast) NSLog(@"---//IP反省触发器执行:%p F%ld 状态:%@",matchFo,matchFo.pointer.pointerId,TIStatus2Str(status));
                 }
                 
                 //12. 失败状态标记;

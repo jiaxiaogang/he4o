@@ -71,7 +71,7 @@
     //2. 用after延迟定时deltaT x 1.3触发;
     CGFloat triggerTime = deltaTime * 1.1f + 2.0f;//当24058-方案1不成时,此处方案2再做为备启用,即将1.0调整为3甚至5;
     triggerTime = MIN(triggerTime, 20.0f);
-    NSLog(@"---> 设定生物钟触发器: deltaTime:%.2f triggerTime:%.2f",deltaTime,triggerTime);
+    //NSLog(@"---> 设定生物钟触发器: deltaTime:%.2f triggerTime:%.2f",deltaTime,triggerTime);
     __block Act0 weakTrigger = trigger;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(triggerTime * NSEC_PER_SEC)), theTC.tiQueue, ^{
         //3. 触发时,判断是否还是actYes状态 (在OuterPushMiddleLoop()中,会将ActYes且符合,且PM算法成功的,改为Finish);

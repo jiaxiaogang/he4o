@@ -143,7 +143,7 @@
             NSLog(@"RMV新需求: %@ (第%ld条 评分:%@)",ClassName2Str(atKey),self.loopCache.count+1,Double2Str_NDZ(score));
             for (AIMatchFoModel *pFo in pFosValue) {
                 AIFoNodeBase *matchFo = [SMGUtils searchNode:pFo.matchFo];
-                NSLog(@"\t pFo:%@->{%.2f} SP:%@ indexDic:%@",Pit2FStr(pFo.matchFo),[AIScore score4MV_v2FromCache:pFo],CLEANSTR(matchFo.spDic),CLEANSTR(pFo.indexDic2));
+                if (Log4NewDemand) NSLog(@"\t pFo:%@->{%.2f} SP:%@ indexDic:%@",Pit2FStr(pFo.matchFo),[AIScore score4MV_v2FromCache:pFo],CLEANSTR(matchFo.spDic),CLEANSTR(pFo.indexDic2));
             }
             
             //6. 当新旧Root的pFos有交集时,即为同质ROOT: 将oldRoot.pFos合并到newRoot中 (参考31024-todo1);
@@ -300,7 +300,7 @@
         NSLog(@"\t第%ld条 %@ 评分%.2f 激活成功 \t{%@}",i+1,ClassName2Str(item.algsType),[AIScore score4Demand:item],itemDesc);
         result = item;
     }
-    NSLog(@"Demand竞争 <<<== %@ 共%ld条",result?@"SUCCESS":@"FAILURE",self.loopCache.count);
+    if (result) NSLog(@"Demand竞争 <<<== %@ 共%ld条",result?@"SUCCESS":@"FAILURE",self.loopCache.count);
     return result;
 }
 

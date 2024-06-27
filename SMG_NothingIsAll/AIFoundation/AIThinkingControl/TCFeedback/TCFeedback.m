@@ -362,7 +362,7 @@
                     waitModel.isInfected = true;
                     newInfectedNum++;
                     if (waitModel.cansetStatus == CS_Besting && !waitModel.isH) {
-                        NSLog(@"%@feedbackTOP 有负mv反馈",FltLog4Default(@"2b"));
+                        NSLog(@"feedbackTOP 有负mv反馈");
                     }
                     
                     //7. root设回runing;

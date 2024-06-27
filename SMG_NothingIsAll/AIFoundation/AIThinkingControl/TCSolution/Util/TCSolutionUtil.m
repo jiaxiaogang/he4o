@@ -60,7 +60,7 @@
         
         //log
         if (ARRISOK(cansetFroms1)) {
-            NSLog(@"取HCanset候选集: 从hScene:F%ld(%@) 的在%ld帧开始取,取得HCanset数:%ld/%ld \n\t%@",sceneFrom.pId,SceneType2Str(rCanset.baseSceneModel.type),rCanset.cansetCutIndex + 1,cansetFroms1.count,allHCanset.count,CLEANSTR([SMGUtils convertArr:cansetFroms1 convertBlock:^id(id obj) {
+            if (Log4GetCansetResult4H) NSLog(@"取HCanset候选集: 从hScene:F%ld(%@) 的在%ld帧开始取,取得HCanset数:%ld/%ld \n\t%@",sceneFrom.pId,SceneType2Str(rCanset.baseSceneModel.type),rCanset.cansetCutIndex + 1,cansetFroms1.count,allHCanset.count,CLEANSTR([SMGUtils convertArr:cansetFroms1 convertBlock:^id(id obj) {
                 return ShortDesc4Pit(obj);
             }]));
         }
