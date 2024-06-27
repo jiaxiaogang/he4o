@@ -427,7 +427,7 @@
 //反馈反思识别开关,只要把它的重组关了,后面的识别也就关了 (参考30054)
 #define Switch4FeedbackRegroup false
 //feedbackTOR日志开关
-#define Switch4FeedbackTOR false
+#define Switch4FeedbackTOR true
 
 //MARK:===============================================================
 //MARK:                    < flt流程日志开关 >
@@ -446,7 +446,7 @@
  * @example FZ944x3,按31183步骤慢训练一次,日志如下,存为FZ914x4 (说明: 可见能够执行到构建absHCanset);
  *  flt1 H行为化下标 (4/4) A5239(向85,距11,果) from时序:F5922[M1{↑饿-16},A5267(向172,距173,棒),A5239(向85,距11,果),M1{↑饿-16},A5239(向85,距11,果)]
  *  flt2 H feedbackTOR反馈成立:A5239(向85,距11,果) 匹配:1 baseCansetFrom:F5294[↑饿-16,4棒,4果,↑饿-16,4果] 状态:CS_Besting
- *  flt3 Canset演化> AbsHCanset:F5930[A13(饿16,7),A4899(距11,果),A5929(向85,果)] toScene:F4822[↑饿-16,4果,↑饿-16,4果] 在4帧
+ *  flt3 Canset演化 AbsHCanset:F5930[A13(饿16,7),A4899(距11,果),A5929(向85,果)] toScene:F4822[↑饿-16,4果,↑饿-16,4果] 在4帧
  */
 #define Switch4AbsHCanset false
 #define FltLog4AbsHCanset(isH,step) isH && Switch4AbsHCanset ? STRFORMAT(@"flt%d ",step) : @""
@@ -467,11 +467,11 @@
  * @example FZ944x4,路上出生,点击饿,在生成H无皮果后,扔有皮果,扔木棒去皮,上飞吃掉 (说明: 可见能够生成扔棒去皮H经验);
  *  flt1 A4807(向90,距11,果)
  *  flt2 R feedbackTOR反馈成立:A4807(向90,距11,果) 匹配:1 baseCansetFrom:F4838[↑饿-16,4果,↑饿-16,4果] 状态:CS_Besting
- *  flt3 Canset演化> NewHCanset:F6739[M1{↑饿-16},M1{↑饿-16},A6726(向90,距12,皮果),A6730(向16,距99,棒),A4991(向88,距27,棒),A6734(向90,距12,果)] toScene:F4838[↑饿-16,4果,↑饿-16,4果] 在3帧:A4807
- *  flt3 Canset演化> AbsHCanset:F6742[A13(饿16,7),A13(饿16,7),A6741(距10,果)] toScene:F4838[↑饿-16,4果,↑饿-16,4果] 在4帧
+ *  flt3 Canset演化 NewHCanset:F6739[M1{↑饿-16},M1{↑饿-16},A6726(向90,距12,皮果),A6730(向16,距99,棒),A4991(向88,距27,棒),A6734(向90,距12,果)] toScene:F4838[↑饿-16,4果,↑饿-16,4果] 在3帧:A4807
+ *  flt3 Canset演化 AbsHCanset:F6742[A13(饿16,7),A13(饿16,7),A6741(距10,果)] toScene:F4838[↑饿-16,4果,↑饿-16,4果] 在4帧
  * @result 存为944x5
  */
-#define Switch4YaQuPi false
+#define Switch4YaQuPi true
 #define FltLog4XueQuPi(step) Switch4YaQuPi ? STRFORMAT(@"flt%d ",step) : @""
 
 /**
