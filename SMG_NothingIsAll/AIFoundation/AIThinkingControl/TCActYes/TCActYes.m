@@ -360,7 +360,7 @@
             NSInteger totalInfectedNum = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
                 return item.isInfected;
             }].count;
-            if (newInfectedNum > 0) NSLog(@"%@%@中间帧传染 %@ from demand:%p + 新增传染数:%d = 总传染数:%ld (还剩:%ld) (另:传至工作记忆:%d)",FltLog4HDemandOfYouPiGuo(@"3_超时传染"),solutionModel.isH?@"H":@"R",Pit2FStr(frameModel.content_p),demand,newInfectedNum,totalInfectedNum,actionFoModels.count - totalInfectedNum,rootsInfectedNum);
+            if (newInfectedNum > 0) NSLog(@"%@中间帧传染 %@ from demand:%p + 新增传染数:%d = 总传染数:%ld (还剩:%ld) (另:传至工作记忆:%d)",solutionModel.isH?@"H":@"R",Pit2FStr(frameModel.content_p),demand,newInfectedNum,totalInfectedNum,actionFoModels.count - totalInfectedNum,rootsInfectedNum);
         }
     }];
     DebugE();

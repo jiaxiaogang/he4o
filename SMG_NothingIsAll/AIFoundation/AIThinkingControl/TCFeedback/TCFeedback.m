@@ -294,7 +294,7 @@
             cansetModel.isInfected = false;
         }
     }
-    if (rewakeNum > 0) NSLog(@"%@feedbackTOR反馈:%@ 反馈有效数:%d 因此中间帧传染唤醒数:%d",FltLog4HDemandOfYouPiGuo(@"4_唤醒"),Alg2FStr(model.protoAlg),feedbackValidNum,rewakeNum);
+    if (rewakeNum > 0) NSLog(@"feedbackTOR反馈:%@ 反馈有效数:%d 因此中间帧传染唤醒数:%d",Alg2FStr(model.protoAlg),feedbackValidNum,rewakeNum);
     DebugE();
 }
 

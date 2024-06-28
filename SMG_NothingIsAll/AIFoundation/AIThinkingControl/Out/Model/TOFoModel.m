@@ -372,7 +372,8 @@
     BOOL mIsC = [feedbackMatchAlg_ps containsObject:cansetToSimple.alg_p];
     if (!mIsC) return false;
     NSString *fltLog = self.cansetStatus != CS_None && !self.isH ? FltLog4XueQuPi(2) : @"";
-    if (Switch4FeedbackTOR) NSLog(@"%@%@%@ feedbackTOR反馈成立:%@ 匹配:%d baseCansetFrom:%@ 状态:%@",FltLog4AbsHCanset(self.isH, 2),fltLog,self.isH?@"H":@"R",Pit2FStr(cansetToSimple.alg_p),mIsC,ShortDesc4Pit(self.cansetFo),CansetStatus2Str(self.cansetStatus));
+    NSString *fltLog2 = [Pit2FStr(protoAlg_p) containsString:@"皮果"] ? FltLog4HDemandOfYouPiGuo(@"3") : @"";
+    if (Switch4FeedbackTOR) NSLog(@"%@%@%@%@ feedbackTOR反馈成立:%@ 匹配:%d baseCansetFrom:%@ 状态:%@",FltLog4AbsHCanset(self.isH, 2),fltLog,fltLog2,self.isH?@"H":@"R",Pit2FStr(cansetToSimple.alg_p),mIsC,ShortDesc4Pit(self.cansetFo),CansetStatus2Str(self.cansetStatus));
     
     //3. 有效时: 记录feedbackAlg;
     TOAlgModel *curAlgModel = [self getCurFrame];
@@ -426,7 +427,7 @@
             //5. 综合indexDic计算: 当前cansetTo与real之间的映射;
             //2024.06.26: indexDic有可能指定后还在更新,导致有越界 (参考32014);
             [newHCanset updateIndexDic:rCanset indexDic:[self.realCansetToIndexDic copy]];
-            NSLog(@"%@Canset演化> NewHCanset:%@ toScene:%@ 在%ld帧:%@",FltLog4XueQuPi(3),Fo2FStr(newHCanset),ShortDesc4Node(rCanset),self.cansetActIndex,Pit2FStr(actIndexAlg_p));
+            NSLog(@"%@%@Canset演化> NewHCanset:%@ toScene:%@ 在%ld帧:%@",FltLog4XueQuPi(3),FltLog4HDemandOfYouPiGuo(@"4"),Fo2FStr(newHCanset),ShortDesc4Node(rCanset),self.cansetActIndex,Pit2FStr(actIndexAlg_p));
         }
     }
     
@@ -471,7 +472,7 @@
                 AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:newHCanset assFo:cansetTo type:ATDefault noRepeatArea_ps:noRepeatArea_ps];
                 BOOL updateCansetSuccess = [sceneTo updateConCanset:absCansetFo.pointer targetIndex:targetFoModel.cansetActIndex];
                 [AITest test101:absCansetFo proto:newHCanset conCanset:cansetTo];
-                NSLog(@"%@%@Canset演化> AbsHCanset:%@ toScene:%@ 在%ld帧:%@",FltLog4AbsHCanset(true, 3),FltLog4XueQuPi(3),Fo2FStr(absCansetFo),ShortDesc4Node(sceneTo),self.cansetActIndex,Pit2FStr(self.getCurFrame.content_p));
+                NSLog(@"%@%@%@Canset演化> AbsHCanset:%@ toScene:%@ 在%ld帧:%@",FltLog4AbsHCanset(true, 3),FltLog4XueQuPi(3),FltLog4HDemandOfYouPiGuo(@"4"),Fo2FStr(absCansetFo),ShortDesc4Node(sceneTo),self.cansetActIndex,Pit2FStr(self.getCurFrame.content_p));
                 
                 if (updateCansetSuccess) {
                     //15. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);

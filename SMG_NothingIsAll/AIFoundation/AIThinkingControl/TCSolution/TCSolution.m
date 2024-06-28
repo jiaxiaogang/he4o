@@ -247,7 +247,7 @@
 +(TCResult*) hSolution:(HDemandModel*)hDemand{
     //0. S数达到limit时设为WithOut;
     if (![theTC energyValid]) return [[[TCResult new:false] mkMsg:@"hSolution能量不足"] mkStep:21];
-    OFTitleLog(@"hSolution", @"\n目标:%@ 已有S数:%ld",Pit2FStr(hDemand.baseOrGroup.content_p),hDemand.actionFoModels.count);
+    OFTitleLog(@"hSolution", @"\n%@目标:%@ 已有S数:%ld",FltLog4HDemandOfYouPiGuo(@"2"),Pit2FStr(hDemand.baseOrGroup.content_p),hDemand.actionFoModels.count);
     
     //1. 树限宽且限深;
     NSInteger deepCount = [TOUtils getBaseDemandsDeepCount:hDemand];

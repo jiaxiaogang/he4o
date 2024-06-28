@@ -471,7 +471,7 @@
  *  flt3 Canset演化 AbsHCanset:F6742[A13(饿16,7),A13(饿16,7),A6741(距10,果)] toScene:F4838[↑饿-16,4果,↑饿-16,4果] 在4帧
  * @result 存为944x5
  */
-#define Switch4YaQuPi true
+#define Switch4YaQuPi false
 #define FltLog4XueQuPi(step) Switch4YaQuPi ? STRFORMAT(@"flt%d ",step) : @""
 
 /**
@@ -482,7 +482,7 @@
  *
  *
  */
-#define Switch4HDemandOfYouPiGuo false
+#define Switch4HDemandOfYouPiGuo true
 #define FltLog4HDemandOfYouPiGuo(stepStr) Switch4HDemandOfYouPiGuo ? STRFORMAT(@"flt%@ ",stepStr) : @""
 
 /**
