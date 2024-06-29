@@ -75,6 +75,7 @@
  *  @desc 对比当前foModel能解决的任务分 与 子任务带来的最严重负分 => 得出反思结果 (参考30054-todo6);
  *  @version
  *      2023.07.14: 子任务评分降权至60%,以增强连续行为化意愿 (参考3005a-方案1);
+ *      2024.06.29: 子任务评分由最严重 改为 平均分 (参考32015-方案2);
  */
 +(BOOL) actionRefrection:(TOFoModel*)baseFoModel {
     //1. 根据foModel向上找出rDemand的评分;
@@ -86,22 +87,20 @@
     CGFloat demandScore = [AIScore score4Demand:baseRDemand];
     
     //2. 根据foModel向下取出subDemands的评分 (取最严重的一条subDemand分);
-    CGFloat zuiYanZonSubDemandScore = 0;
-    NSString *zuiYanZonDemandTypeStr = @"";
+    //2024.06.29: 改为取平均分 (参考32015-方案2);
+    float sumScore = 0;
     for (DemandModel *item in baseFoModel.subDemands) {
         CGFloat curSubScore = [AIScore score4Demand:item];
-        if (zuiYanZonSubDemandScore > curSubScore) {
-            zuiYanZonSubDemandScore = curSubScore;
-            zuiYanZonDemandTypeStr = ClassName2Str(item.algsType);
-        }
+        sumScore += curSubScore;
     }
+    CGFloat averageScore = baseFoModel.subDemands.count > 0 ? sumScore / baseFoModel.subDemands.count : 0;
     
     //2. 子任务评分降权至70% (参考3005a-方案1);
-    zuiYanZonSubDemandScore *= 0.7f;
+    averageScore *= 0.7f;
     
     //3. 对比二者,得出反思是否通过 (最严重也不比当前重要时,反思通过) (参考30054-todo6);
-    BOOL result = zuiYanZonSubDemandScore > demandScore;
-    NSLog(@"> 最严重子任务分(%@):%.2f > 当前任务分(%@):%.2f =====> %@通过",zuiYanZonDemandTypeStr,zuiYanZonSubDemandScore,ClassName2Str(baseRDemand.algsType),demandScore,result?@"已":@"未");
+    BOOL result = averageScore > demandScore;
+    NSLog(@"> 子任务分:%.2f > 当前任务分(%@):%.2f =====> %@通过",averageScore,ClassName2Str(baseRDemand.algsType),demandScore,result?@"已":@"未");
     DebugE();
     return result;
 }
