@@ -41,4 +41,21 @@
 +(NSString*) direction2Str:(CGFloat)value;
 +(NSString*) fly2Str:(CGFloat)value;
 
+/**
+ *  MARK:--------------------checkIs--------------------
+ */
+//fo包含有皮果
++(BOOL) foHavYouPiGuo:(AIKVPointer*)fo_p;
+
+//fo包含无皮果
++(BOOL) foHavWuPiGuo:(AIKVPointer*)fo_p;
+
+//alg是有皮果
++(BOOL) algIsYouPiGuo:(AIKVPointer*)alg_p;
+
+//alg是无皮果
++(BOOL) algIsWuPiGuo:(AIKVPointer*)alg_p;
+
+//取alg中某区码的稀疏码的值 (比如: 取概念的高的值是5);
++(double) findValueFromAlg:(AIKVPointer*)fromAlg_p byDS:(NSString*)byDS;
 @end

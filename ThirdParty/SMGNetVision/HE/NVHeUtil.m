@@ -237,4 +237,47 @@
     return @"";
 }
 
+/**
+ *  MARK:--------------------checkIs--------------------
+ */
+//fo包含有皮果
++(BOOL) foHavYouPiGuo:(AIKVPointer*)fo_p {
+    AIFoNodeBase *fo = [SMGUtils searchNode:fo_p];
+    return [SMGUtils filterSingleFromArr:fo.content_ps checkValid:^BOOL(AIKVPointer *item) {
+        return [self algIsYouPiGuo:item];
+    }];
+}
+
+//fo包含无皮果
++(BOOL) foHavWuPiGuo:(AIKVPointer*)fo_p {
+    AIFoNodeBase *fo = [SMGUtils searchNode:fo_p];
+    return [SMGUtils filterSingleFromArr:fo.content_ps checkValid:^BOOL(AIKVPointer *item) {
+        return [self algIsWuPiGuo:item];
+    }];
+}
+
+//alg是有皮果
++(BOOL) algIsYouPiGuo:(AIKVPointer*)alg_p {
+    BOOL heightIsOk = [self findValueFromAlg:alg_p byDS:@"sizeHeight"] == 5;
+    BOOL borderIsOk = [self findValueFromAlg:alg_p byDS:@"border"] > 0;
+    return heightIsOk && borderIsOk;
+}
+
+//alg是无皮果
++(BOOL) algIsWuPiGuo:(AIKVPointer*)alg_p {
+    BOOL heightIsOk = [self findValueFromAlg:alg_p byDS:@"sizeHeight"] == 5;
+    BOOL borderIsOk = [self findValueFromAlg:alg_p byDS:@"border"] == 0;
+    return heightIsOk && borderIsOk;
+}
+
+//取alg中某区码的稀疏码的值 (比如: 取概念的高的值是5);
++(double) findValueFromAlg:(AIKVPointer*)fromAlg_p byDS:(NSString*)byDS {
+    AIAlgNodeBase *fromAlg = [SMGUtils searchNode:fromAlg_p];
+    AIKVPointer *findValue_p = [SMGUtils filterSingleFromArr:fromAlg.content_ps checkValid:^BOOL(AIKVPointer *item) {
+        return [byDS isEqualToString:item.dataSource];
+    }];
+    if (!findValue_p) return 0;
+    return [NUMTOOK([AINetIndex getData:findValue_p]) doubleValue];
+}
+
 @end
