@@ -98,9 +98,15 @@
     //2. 子任务评分降权至70% (参考3005a-方案1);
     averageScore *= 0.7f;
     
+    //TODOTOMORROW20240630: 查下此处为什么任务分取到0
+    //> 行为化前:F4228 的 子任务分:-10.45 > 当前任务分(饿):0.00 =====> 未通过
+    if (demandScore == 0) {
+        CGFloat demandScore2 = [AIScore score4Demand:baseRDemand];
+    }
+    
     //3. 对比二者,得出反思是否通过 (最严重也不比当前重要时,反思通过) (参考30054-todo6);
     BOOL result = averageScore > demandScore;
-    NSLog(@"> 子任务分:%.2f > 当前任务分(%@):%.2f =====> %@通过",averageScore,ClassName2Str(baseRDemand.algsType),demandScore,result?@"已":@"未");
+    NSLog(@"> 行为化前:F%ld 的 子任务分:%.2f > 当前任务分(%@):%.2f =====> %@通过",baseFoModel.cansetFrom.pointerId,averageScore,ClassName2Str(baseRDemand.algsType),demandScore,result?@"已":@"未");
     DebugE();
     return result;
 }
