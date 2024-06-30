@@ -86,11 +86,24 @@
     if (!baseRDemand) return true;
     CGFloat demandScore = [AIScore score4Demand:baseRDemand];
     
+    //TODOTOMORROW20240630: 这里子任务分好像不太对;
+    //=============================== 13 subDemand ===============================
+    //子任务数:1 baseFo:F6642[M1{↑饿-16},A4227(向91,距13,皮果)]
+    //pFo:F1351[M1{↑饿-16},A1348(距47,向147,皮果)]->{饿-16.00}
+    //pFo:F1323[M1{↑饿-16},A1320(距63,向58,皮果)]->{饿-16.00}
+    //pFo:F518[M1{↑饿-16},A515(距32,向72,皮果)]->{饿-12.80}
+    //=============================== 13 行为化前 反思评价 ===============================
+    //> 行为化前:F4228 的 子任务分:-10.45 > 当前任务分(饿):-10.04 =====> 未通过
+    //问题:
+    //1. 在经验中,饿了不一定会更饿,所以任务分在10.x左右;
+    //2. 而在反思预测中,饿了看到皮果,会更饿却是更大几率的,所以它的评分在15左右;
+    //方案1: 看下多训练几下: 看到有皮果后,去皮并吃到,看能不能把这个几率降低一下;
+    
     //2. 根据foModel向下取出subDemands的评分 (取最严重的一条subDemand分);
     //2024.06.29: 改为取平均分 (参考32015-方案2);
     float sumScore = 0;
     for (DemandModel *item in baseFoModel.subDemands) {
-        CGFloat curSubScore = [AIScore score4Demand:item];
+        CGFloat curSubScore = [AIScore score4Demand_Out:item];
         sumScore += curSubScore;
     }
     CGFloat averageScore = baseFoModel.subDemands.count > 0 ? sumScore / baseFoModel.subDemands.count : 0;
@@ -98,15 +111,9 @@
     //2. 子任务评分降权至70% (参考3005a-方案1);
     averageScore *= 0.7f;
     
-    //TODOTOMORROW20240630: 查下此处为什么任务分取到0
-    //> 行为化前:F4228 的 子任务分:-10.45 > 当前任务分(饿):0.00 =====> 未通过
-    if (demandScore == 0) {
-        CGFloat demandScore2 = [AIScore score4Demand:baseRDemand];
-    }
-    
     //3. 对比二者,得出反思是否通过 (最严重也不比当前重要时,反思通过) (参考30054-todo6);
     BOOL result = averageScore > demandScore;
-    NSLog(@"> 行为化前:F%ld 的 子任务分:%.2f > 当前任务分(%@):%.2f =====> %@通过",baseFoModel.cansetFrom.pointerId,averageScore,ClassName2Str(baseRDemand.algsType),demandScore,result?@"已":@"未");
+    NSLog(@"> F%ld行为化前 的 子任务分:%.2f > 当前任务分(%@):%.2f =====> %@通过",baseFoModel.cansetFrom.pointerId,averageScore,ClassName2Str(baseRDemand.algsType),demandScore,result?@"已":@"未");
     DebugE();
     return result;
 }

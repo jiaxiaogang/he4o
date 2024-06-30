@@ -195,6 +195,22 @@
 }
 
 /**
+ *  MARK:--------------------在决策流程,对Demand综合评分--------------------
+ *  @version
+ *      2024.06.30: 既然激活了,那么在决策流程中,即使失效的pFos也计入任务评分中,因为它虽然失效了,但只要此任务还在执行,那么它的重要性评分就依旧 (如果只计有效,如果全失效了,任务会返回0分);
+ */
++(CGFloat) score4Demand_Out:(DemandModel*)demand {
+    if (ISOK(demand, ReasonDemandModel.class) ) {
+        ReasonDemandModel *rDemand = (ReasonDemandModel*)demand;
+        return [self score4PFos:rDemand.pFos];
+    }else if (ISOK(demand, PerceptDemandModel.class) ) {
+        PerceptDemandModel *pDemand = (PerceptDemandModel*)demand;
+        return [AIScore score4MV:pDemand.algsType urgentTo:pDemand.urgentTo delta:pDemand.delta ratio:1.0f];
+    }
+    return 0;
+}
+
+/**
  *  MARK:--------------------求pFos的平均价值分--------------------
  */
 +(CGFloat) score4PFos:(NSArray*)pFos {

@@ -55,6 +55,7 @@
  *  @param demand : 仅支持PR两种类型
  */
 +(CGFloat) score4Demand:(DemandModel*)demand;
++(CGFloat) score4Demand_Out:(DemandModel*)demand;
 
 /**
  *  MARK:--------------------求pFos的平均价值分--------------------
