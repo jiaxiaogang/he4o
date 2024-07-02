@@ -258,6 +258,14 @@
         ReasonDemandModel *item = ARR_INDEX(self.loopCache.array, j);
         if (Log4CanDecisionDemand) NSLog(@"root(%ld/%ld):%@ (%@) %@",j,self.loopCache.count,Pit2FStr(item.protoFo),[SMGUtils date2Str:kHHmmss timeInterval:item.initTime],[TOModelVision cur2Sub:item]);
     }
+    
+    //TODOTOMORROW20240702: 查为什么H有皮果有动机,但没激活,日志如下:
+    //第1条 饿 评分-10.32 激活成功     {proto:F7597 pFos:(F3871,F3825,F3900,F3566,F3717,F3579,F3597,F3521,F3531,F3543,F3553,F3611,F3629,F3651,F3699,F3644,F3559,F3546,F3534,F3524)}
+    //第2条 饿 评分0.00             {proto:F7592 pFos:(F7304,F7061,F3871,F3825,F3900,F5594,F7175,F3566,F3717,F3579,F3597,F3521,F3531,F3543,F3553,F3611,F3629,F3651,F3699,F3908)}
+    //1. 查下此处,前一个饿任务明明还在推进"H有皮果",为什么会被评分0分 (所有pFo都无效);
+    //2. 然后看下,以前写的任务推进的持续性,能不能有效,帮助他持续推进下去...
+    
+    
     for (NSInteger i = 0; i < self.loopCache.count; i++) {
         ReasonDemandModel *item = ARR_INDEX(self.loopCache.array, i);
         NSArray *pFoTitles = [SMGUtils convertArr:item.pFos convertBlock:^id(AIMatchFoModel *obj) {

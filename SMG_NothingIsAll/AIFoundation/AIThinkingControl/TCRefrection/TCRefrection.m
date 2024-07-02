@@ -84,7 +84,7 @@
     OSTitleLog(@"行为化前 反思评价");
     ReasonDemandModel *baseRDemand = ARR_INDEX([TOUtils getBaseRDemands_AllDeep:baseFoModel], 0);
     if (!baseRDemand) return true;
-    CGFloat demandScore = [AIScore score4Demand:baseRDemand];
+    CGFloat demandScore = [AIScore score4Demand_Out:baseRDemand];
     
     //2. 根据foModel向下取出subDemands的评分 (取最严重的一条subDemand分);
     //2024.06.29: 改为取平均分 (参考32015-方案2);

@@ -282,7 +282,9 @@
     //2. 找出子集 (Finish负责截停递归);
     if ([outModel conformsToProtocol:@protocol(ITryActionFoDelegate)]) {
         id<ITryActionFoDelegate> tryActionObj = (id<ITryActionFoDelegate>)outModel;
-        [result addObjectsFromArray:tryActionObj.actionFoModels];
+        [result addObjectsFromArray:[SMGUtils filterArr:tryActionObj.actionFoModels checkValid:^BOOL(TOFoModel *item) {
+            return item.cansetStatus != CS_None;
+        }]];
     }
     if ([outModel conformsToProtocol:@protocol(ISubModelsDelegate)]) {
         id<ISubModelsDelegate> subModelsObj = (id<ISubModelsDelegate>)outModel;
