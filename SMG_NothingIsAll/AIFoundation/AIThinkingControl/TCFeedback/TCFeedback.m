@@ -163,7 +163,8 @@
                 }
                 
                 //13. pFo任务失效 (参考27093-条件1 & 27095-1);
-                waitModel.isExpired = true;
+                //2024.07.04: pFo发生负价值反馈时: 单发价值=>已不可挽回计为失效 & 持续价值感=>发生后还会再发生不计失效 (参考32041-方案);
+                if (![ThinkingUtils isContinuousWithAT:cmvNode.pointer.algsType]) waitModel.isExpired = true;
                 dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
                     [theTV updateFrame];
                 });

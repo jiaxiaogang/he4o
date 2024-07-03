@@ -9,6 +9,8 @@
 #import "ThinkingUtils.h"
 #import "ImvGoodModel.h"
 #import "ImvBadModel.h"
+#import "ImvAlgsHungerModel.h"
+#import "ImvAlgsHurtModel.h"
 
 @implementation ThinkingUtils
 
@@ -111,6 +113,17 @@
         //3. 回调
         if (success) success(delta_p,urgentTo_p,delta,urgentTo,algsType);
     }];
+}
+
+//判断mv是否为持续价值 (比如:饥饿是持续性,疼痛是单发的) (参考32041-TODO1);
++(BOOL) isContinuousWithAT:(NSString*)algsType {
+    algsType = STRTOOK(algsType);
+    if ([NSStringFromClass(ImvAlgsHungerModel.class) isEqualToString:algsType]) {//持续价值:饿感等;
+        return true;
+    }else if ([NSStringFromClass(ImvAlgsHurtModel.class) isEqualToString:algsType]) {//单发价值:痛感等;
+        return false;
+    }
+    return false;
 }
 
 @end
