@@ -194,13 +194,14 @@
  *      2022.03.15: 将排序方式更新为用score4Demand (参考25142);
  *      2023.03.01: 修复排序反了的BUG: 评分越低越应该优先 (参考28136-修复);
  *      2024.01.04: 避免徒劳,已经付出努力的价值,计为进度分 (参考31052);
+ *      2024.07.03: 改为调用score4Demand_Out避免它超时后,直接为0分,导致激活不了,影响Root的持续性 (参考32017);
  */
 -(void) refreshCmvCacheSort {
     //1. 为了性能好,先算出排序任务分;
     NSArray *roots = [self.loopCache.array copy];
     NSArray *mapArr = [SMGUtils convertArr:roots convertBlock:^id(ReasonDemandModel *obj) {
         //1. 计算任务分;
-        CGFloat demandScore = -[AIScore score4Demand:obj];
+        CGFloat demandScore = -[AIScore score4Demand_Out:obj];
         
         //2. 计算进度分 (参考31052-todo1);
         CGFloat maxProgressScore = 0;
@@ -216,7 +217,7 @@
         
         //3. 求出总分,并用于排序 (参考31052-todo2);
         CGFloat totalScore = maxProgressScore + demandScore;
-        //NSLog(@"任务分:%.2f + 最终进度分:%.2f = 总分:%.2f",demandScore,maxProgressScore,totalScore);
+        NSLog(@"任务分:%.2f + 最终进度分:%.2f = 总分:%.2f",demandScore,maxProgressScore,totalScore);
         return [MapModel newWithV1:obj v2:@(totalScore) v3:@(obj.initTime)];
     }];
     
@@ -226,6 +227,12 @@
     } compareBlock2:^double(MapModel *obj) {
         return NUMTOOK(obj.v3).doubleValue;
     }];
+    
+    //3. log
+    for (MapModel *item in sort) {
+        ReasonDemandModel *root = item.v1;
+        if (Log4CanDecisionDemand) NSLog(@"root(%ld/%ld):%@ 评分:%.2f",[sort indexOfObject:item],sort.count,Pit2FStr(root.protoFo),NUMTOOK(item.v2).doubleValue);
+    }
     sort = [SMGUtils convertArr:sort convertBlock:^id(MapModel *obj) {
         return obj.v1;
     }];
@@ -259,15 +266,6 @@
         if (Log4CanDecisionDemand) NSLog(@"root(%ld/%ld):%@ (%@) %@",j,self.loopCache.count,Pit2FStr(item.protoFo),[SMGUtils date2Str:kHHmmss timeInterval:item.initTime],[TOModelVision cur2Sub:item]);
     }
     
-    //TODOTOMORROW20240702: 查为什么H有皮果有动机,但没激活,日志如下:
-    //第1条 饿 评分-10.32 激活成功     {proto:F7597 pFos:(F3871,F3825,F3900,F3566,F3717,F3579,F3597,F3521,F3531,F3543,F3553,F3611,F3629,F3651,F3699,F3644,F3559,F3546,F3534,F3524)}
-    //第2条 饿 评分0.00             {proto:F7592 pFos:(F7304,F7061,F3871,F3825,F3900,F5594,F7175,F3566,F3717,F3579,F3597,F3521,F3531,F3543,F3553,F3611,F3629,F3651,F3699,F3908)}
-    //1. 查下此处,前一个饿任务明明还在推进"H有皮果",为什么会被评分0分 (所有pFo都无效);
-    //  分析1. 先查下此处挂0的原因: 为什么都无效了,如果有任务在推进中,但是个持续性任务怎么办?新root能快速复用到旧root的成果吗?
-    //2. 然后看下,以前写的任务推进的持续性,能不能有效,帮助他持续推进下去...
-    //  分析2. 以前为保证任务持续性,对root的竞争显然无效,应该在root推进了几层树时,相应的就加几层权,使之可持续;
-    
-    
     for (NSInteger i = 0; i < self.loopCache.count; i++) {
         ReasonDemandModel *item = ARR_INDEX(self.loopCache.array, i);
         NSArray *pFoTitles = [SMGUtils convertArr:item.pFos convertBlock:^id(AIMatchFoModel *obj) {
@@ -277,37 +275,40 @@
         
         //3. 即使已经找到result,也把日志打完,方便调试日志中查看Demand的完整竞争情况;
         if (result) {
-            if (Log4CanDecisionDemand) NSLog(@"\t第%ld条 %@ 评分%.2f \t\t\t{%@}",i+1,ClassName2Str(item.algsType),[AIScore score4Demand:item],itemDesc);
+            if (Log4CanDecisionDemand) NSLog(@"\t第%ld条 %@ 评分%.2f \t\t\t{%@}",i+1,ClassName2Str(item.algsType),[AIScore score4Demand_Out:item],itemDesc);
             continue;
         }
         
         //4. 已完成时,下一个;
         if (item.status == TOModelStatus_Finish) {
-            if (Log4CanDecisionDemand) NSLog(@"\t第%ld条 %@ 评分%.2f 因FINISH 失败 \t{%@}",i+1,ClassName2Str(item.algsType),[AIScore score4Demand:item],itemDesc);
+            if (Log4CanDecisionDemand) NSLog(@"\t第%ld条 %@ 评分%.2f 因FINISH 失败 \t{%@}",i+1,ClassName2Str(item.algsType),[AIScore score4Demand_Out:item],itemDesc);
             continue;
         }
         
         //4. 已无计可施,下一个 (TCPlan会优先从末枝执行,所以当root就是末枝时,说明整个三条大树干全烂透没用了);
         if (item.status == TOModelStatus_WithOut) {
-            if (Log4CanDecisionDemand) NSLog(@"\t第%ld条 %@ 评分%.2f 因WithOut 失败 \t{%@}",i+1,ClassName2Str(item.algsType),[AIScore score4Demand:item],itemDesc);
+            if (Log4CanDecisionDemand) NSLog(@"\t第%ld条 %@ 评分%.2f 因WithOut 失败 \t{%@}",i+1,ClassName2Str(item.algsType),[AIScore score4Demand_Out:item],itemDesc);
             continue;
         }
         
         //4. 当任务失效时,不返回;
         if (ISOK(item, ReasonDemandModel.class) && ((ReasonDemandModel*)item).isExpired) {
-            if (Log4CanDecisionDemand) NSLog(@"\t第%ld条 %@ 评分%.2f 因isExpired 失败 \t{%@}",i+1,ClassName2Str(item.algsType),[AIScore score4Demand:item],itemDesc);
+            
+            //TODOTOMORROW20240702: 查为什么H有皮果有动机,但没激活,日志如下:
+            
+            if (Log4CanDecisionDemand) NSLog(@"\t第%ld条 %@ 评分%.2f 因isExpired 失败 \t{%@}",i+1,ClassName2Str(item.algsType),[AIScore score4Demand_Out:item],itemDesc);
             continue;
         }
         
         //5. 最末枝在actYes状态时,不应期,继续secondRoot;
         BOOL endHavActYes = [TOUtils endHavActYes:item];
         if (endHavActYes){
-            if (Log4CanDecisionDemand) NSLog(@"\t第%ld条 %@ 评分%.2f 因endHavActYes 失败 \t{%@}",i+1,ClassName2Str(item.algsType),[AIScore score4Demand:item],itemDesc);
+            if (Log4CanDecisionDemand) NSLog(@"\t第%ld条 %@ 评分%.2f 因endHavActYes 失败 \t{%@}",i+1,ClassName2Str(item.algsType),[AIScore score4Demand_Out:item],itemDesc);
             continue;
         }
         
         //6. 有效,则记录;
-        NSLog(@"\t第%ld条 %@ 评分%.2f 激活成功 \t{%@}",i+1,ClassName2Str(item.algsType),[AIScore score4Demand:item],itemDesc);
+        NSLog(@"\t第%ld条 %@ 评分%.2f 激活成功 \t{%@}",i+1,ClassName2Str(item.algsType),[AIScore score4Demand_Out:item],itemDesc);
         result = item;
     }
     if (result) NSLog(@"Demand竞争 <<<== %@ 共%ld条",result?@"SUCCESS":@"FAILURE",self.loopCache.count);
