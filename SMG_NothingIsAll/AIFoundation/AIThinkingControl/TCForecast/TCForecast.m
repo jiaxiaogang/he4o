@@ -132,8 +132,13 @@
             //14. 最末帧推进完全时,无论成败都算终点,则处理推进为完全时序 (参考27183);
             [item pushFrameFinish];
             
-            //13. pFo任务失效 (参考27093-条件1 & 27095-1);
-            item.isExpired = true;
+            //13. pFo任务失效;
+            if ([ThinkingUtils isContinuousWithAT:matchFo.cmvNode_p.algsType]) {
+                BOOL pFoIsP = status != TIModelStatus_OutBackSameDelta;//没反馈成负价值,说明是好事儿 (自然未发生负价值);
+                if (pFoIsP) item.isExpired = true;//持续价值到期自然未发生负价值,可计为失效 (参考32041-TODO3);
+            } else {
+                item.isExpired = true;//单发价值到期即失效 (参考27093-条件1 & 27095-1);
+            }
         }];
     }
 }

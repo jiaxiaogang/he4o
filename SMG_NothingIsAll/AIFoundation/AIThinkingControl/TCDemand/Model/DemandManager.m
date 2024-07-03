@@ -293,9 +293,6 @@
         
         //4. 当任务失效时,不返回;
         if (ISOK(item, ReasonDemandModel.class) && ((ReasonDemandModel*)item).isExpired) {
-            
-            //TODOTOMORROW20240702: 查为什么H有皮果有动机,但没激活,日志如下:
-            
             if (Log4CanDecisionDemand) NSLog(@"\t第%ld条 %@ 评分%.2f 因isExpired 失败 \t{%@}",i+1,ClassName2Str(item.algsType),[AIScore score4Demand_Out:item],itemDesc);
             continue;
         }
