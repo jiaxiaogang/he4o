@@ -210,6 +210,31 @@
     return 0;
 }
 
+//返回demand的考虑到进度分的得分 (越在这个任务上推进的多,任务分越严重);
++(CGFloat) progressScore4Demand_Out:(DemandModel*)demand {
+    //1. 计算任务分;
+    CGFloat demandScore = [AIScore score4Demand_Out:demand];
+    
+    //2. 取出最大进度值;
+    CGFloat maxProgress = 0;
+    for (TOFoModel *actionFo in demand.bestCansets) {
+        if (actionFo.status != TOModelStatus_Runing && actionFo.status != TOModelStatus_ActYes) continue;
+        CGFloat progress = (float)(actionFo.cansetCutIndex + 1) / (actionFo.cansetTargetIndex + 1);//参考31052-公式1
+        //NSLog(@"cansetFo: F%ld %@ (%ld/%ld)",actionFo.content_p.pointerId,TOStatus2Str(actionFo.status),actionFo.actionIndex+1,actionFo.targetIndex);
+        //NSLog(@"进度:%.2f 热度:%.2f 进度分:%.2f",progress,hot,progressScore);
+        maxProgress = MAX(maxProgress, progress);
+    }
+    
+    //3. 计算最大的进度分 (参考31052-todo1);
+    CGFloat hot = 1 - [MathUtils getCooledValue_28:maxProgress];//参考31052-公式2
+    CGFloat progressScore = demandScore * hot;//参考31052-公式3
+    
+    //3. 求出总分 (参考31052-todo2);
+    CGFloat totalScore = progressScore + demandScore;
+    NSLog(@"任务分:%.2f + 最终进度分:%.2f = 总分:%.2f",demandScore,progressScore,totalScore);
+    return totalScore;
+}
+
 /**
  *  MARK:--------------------求pFos的平均价值分--------------------
  */

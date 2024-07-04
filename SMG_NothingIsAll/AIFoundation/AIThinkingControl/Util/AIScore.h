@@ -57,6 +57,9 @@
 +(CGFloat) score4Demand:(DemandModel*)demand;
 +(CGFloat) score4Demand_Out:(DemandModel*)demand;
 
+//返回demand的考虑到进度分的得分 (越在这个任务上推进的多,任务分越严重);
++(CGFloat) progressScore4Demand_Out:(DemandModel*)demand;
+
 /**
  *  MARK:--------------------求pFos的平均价值分--------------------
  */

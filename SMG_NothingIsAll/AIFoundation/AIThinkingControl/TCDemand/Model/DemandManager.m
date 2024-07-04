@@ -199,25 +199,10 @@
 -(void) refreshCmvCacheSort {
     //1. 为了性能好,先算出排序任务分;
     NSArray *roots = [self.loopCache.array copy];
+    
+    //2. 先把每个root都求出含进度的总分,并用于排序 (参考31052-todo2);
     NSArray *mapArr = [SMGUtils convertArr:roots convertBlock:^id(ReasonDemandModel *obj) {
-        //1. 计算任务分;
-        CGFloat demandScore = -[AIScore score4Demand_Out:obj];
-        
-        //2. 计算进度分 (参考31052-todo1);
-        CGFloat maxProgressScore = 0;
-        for (TOFoModel *actionFo in obj.bestCansets) {
-            if (actionFo.status != TOModelStatus_Runing && actionFo.status != TOModelStatus_ActYes) continue;
-            CGFloat progress = (float)(actionFo.cansetCutIndex + 1) / (actionFo.cansetTargetIndex + 1);//参考31052-公式1
-            CGFloat hot = 1 - [MathUtils getCooledValue_28:progress];//参考31052-公式2
-            CGFloat progressScore = demandScore * hot;//参考31052-公式3
-            //NSLog(@"cansetFo: F%ld %@ (%ld/%ld)",actionFo.content_p.pointerId,TOStatus2Str(actionFo.status),actionFo.actionIndex+1,actionFo.targetIndex);
-            //NSLog(@"进度:%.2f 热度:%.2f 进度分:%.2f",progress,hot,progressScore);
-            maxProgressScore = MAX(maxProgressScore, progressScore);
-        }
-        
-        //3. 求出总分,并用于排序 (参考31052-todo2);
-        CGFloat totalScore = maxProgressScore + demandScore;
-        NSLog(@"任务分:%.2f + 最终进度分:%.2f = 总分:%.2f",demandScore,maxProgressScore,totalScore);
+        CGFloat totalScore = -[AIScore progressScore4Demand_Out:obj];
         return [MapModel newWithV1:obj v2:@(totalScore) v3:@(obj.initTime)];
     }];
     

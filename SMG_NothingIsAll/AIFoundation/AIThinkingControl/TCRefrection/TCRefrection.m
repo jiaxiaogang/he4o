@@ -76,6 +76,7 @@
  *  @version
  *      2023.07.14: 子任务评分降权至60%,以增强连续行为化意愿 (参考3005a-方案1);
  *      2024.06.29: 子任务评分由最严重 改为 平均分 (参考32015-方案2);
+ *      2024.07.05: 任务分,改为采用含进度影响的任务总分 (参考32042-方案2);
  */
 +(BOOL) actionRefrection:(TOFoModel*)baseFoModel {
     //1. 根据foModel向上找出rDemand的评分;
@@ -84,7 +85,7 @@
     OSTitleLog(@"行为化前 反思评价");
     ReasonDemandModel *baseRDemand = ARR_INDEX([TOUtils getBaseRDemands_AllDeep:baseFoModel], 0);
     if (!baseRDemand) return true;
-    CGFloat demandScore = [AIScore score4Demand_Out:baseRDemand];
+    CGFloat demandScore = [AIScore progressScore4Demand_Out:baseRDemand];
     
     //2. 根据foModel向下取出subDemands的评分 (取最严重的一条subDemand分);
     //2024.06.29: 改为取平均分 (参考32015-方案2);
