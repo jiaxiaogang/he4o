@@ -377,7 +377,7 @@
 #define Log4OPushM true
 #define Log4TIROPushM false
 //当前可决策任务:CanDecisionDemand;
-#define Log4CanDecisionDemand true
+#define Log4CanDecisionDemand false
 #define Log4NewDemand false
 //反省
 #define Log4Rethink false
@@ -479,15 +479,24 @@
  * @desc 1.饿 2.生成H无皮果 3.再H找到去皮经验 4.生成H有皮果 (注: 上一个训练项4已经学会去皮,所以此处只需要看能不能激活"去皮H经验"即可);
  * @desc 主要观察两步: 生成H无皮果 => 生成H有皮果;
  * @example FZ944x5,路下出生,点击饿,日志如下 (说明: 可见能够激活有皮果动机);
- *
- *
+ * @步骤说明: 改为true打开后,筛选flt日志看有依次生成:
+ *          1. 无皮果动机 => TCDemand.m  39] flt1 A4204(距12,果)
+ *          2. 无皮果求解 => AIRank.m 189] flt3 H0. I<F4621 F5841[↑饿-16,4果皮,4棒,4棒,4果]> {0 = 0;} {3 = S0P2;2 = S0P2;1 = S0P3;4 = S0P2;} (null):(分:0.00) [CUT:0=>TAR:4]
+ *          3. F5841第2帧即有皮果,又转为有皮果动机,如下:
+ *          4. 有皮果动机 => TCDemand.m  39] flt1 A3955(向90,距13,皮果)
+ *          5. 有皮果hSolution => TCSolution.m  39] flt2 目标:A3955(向90,距13,皮果) 已有S数:0
  */
-#define Switch4HDemandOfYouPiGuo true
+#define Switch4HDemandOfYouPiGuo false
 #define FltLog4HDemandOfYouPiGuo(stepStr) Switch4HDemandOfYouPiGuo ? STRFORMAT(@"flt%@ ",stepStr) : @""
 
 /**
  * @title 学会搬运 (参考31183-训练项6)
  * @desc 1.在去皮经验生成H"路上有皮果"后 2.扔"路下有皮果" 3.快速将有皮果踢到路上 4.feedbackTOR反馈到"路上有皮果" 5.生成搬运到路上H经验
+ * @步骤说明: 改为true打开后,筛选flt日志看有依次生成:
+ *          1. 有皮果动机 => TCDemand.m  39] flt1 A3955(向90,距13,皮果)
+ *          2. 立马扔路边有皮果,并搬运到路上;
+ *          3. 学会HCanset => flt2 NewHCanset 或 AbsHCanset
+ *          4. ......
  */
-#define Switch4XueBanYun false
+#define Switch4XueBanYun true
 #define FltLog4XueBanYun(step) Switch4XueBanYun ? STRFORMAT(@"flt%d ",step) : @""

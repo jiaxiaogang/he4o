@@ -427,7 +427,7 @@
             //5. 综合indexDic计算: 当前cansetTo与real之间的映射;
             //2024.06.26: indexDic有可能指定后还在更新,导致有越界 (参考32014);
             [newHCanset updateIndexDic:rCanset indexDic:[self.realCansetToIndexDic copy]];
-            NSLog(@"%@%@Canset演化> NewHCanset:%@ toScene:%@ 在%ld帧:%@",FltLog4XueQuPi(3),FltLog4HDemandOfYouPiGuo(@"5"),Fo2FStr(newHCanset),ShortDesc4Node(rCanset),self.cansetActIndex,Pit2FStr(actIndexAlg_p));
+            NSLog(@"%@%@%@Canset演化> NewHCanset:%@ toScene:%@ 在%ld帧:%@",FltLog4XueQuPi(3),FltLog4HDemandOfYouPiGuo(@"5"),FltLog4XueBanYun(2),Fo2FStr(newHCanset),ShortDesc4Node(rCanset),self.cansetActIndex,Pit2FStr(actIndexAlg_p));
         }
     }
     
@@ -472,7 +472,7 @@
                 AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:newHCanset assFo:cansetTo type:ATDefault noRepeatArea_ps:noRepeatArea_ps];
                 BOOL updateCansetSuccess = [sceneTo updateConCanset:absCansetFo.pointer targetIndex:targetFoModel.cansetActIndex];
                 [AITest test101:absCansetFo proto:newHCanset conCanset:cansetTo];
-                NSLog(@"%@%@%@Canset演化> AbsHCanset:%@ toScene:%@ 在%ld帧:%@",FltLog4AbsHCanset(true, 3),FltLog4XueQuPi(3),FltLog4HDemandOfYouPiGuo(@"5"),Fo2FStr(absCansetFo),ShortDesc4Node(sceneTo),self.cansetActIndex,Pit2FStr(self.getCurFrame.content_p));
+                NSLog(@"%@%@%@%@Canset演化> AbsHCanset:%@ toScene:%@ 在%ld帧:%@",FltLog4AbsHCanset(true, 3),FltLog4XueQuPi(3),FltLog4HDemandOfYouPiGuo(@"5"),FltLog4XueBanYun(2),Fo2FStr(absCansetFo),ShortDesc4Node(sceneTo),self.cansetActIndex,Pit2FStr(self.getCurFrame.content_p));
                 
                 if (updateCansetSuccess) {
                     //15. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);
