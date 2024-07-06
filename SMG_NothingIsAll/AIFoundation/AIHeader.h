@@ -431,6 +431,7 @@
 
 //MARK:===============================================================
 //MARK:                    < flt流程日志开关 >
+//MARK: @desc 用于打印关键日志，在各项训练过程中快速观察关键日志。
 //MARK:===============================================================
 
 /**
@@ -490,13 +491,25 @@
 #define FltLog4HDemandOfYouPiGuo(stepStr) Switch4HDemandOfYouPiGuo ? STRFORMAT(@"flt%@ ",stepStr) : @""
 
 /**
- * @title 学会搬运 (参考31183-训练项6)
+ * @title 学会搬运 (参考31183-训练项6 & 32051)
  * @desc 1.在去皮经验生成H"路上有皮果"后 2.扔"路下有皮果" 3.快速将有皮果踢到路上 4.feedbackTOR反馈到"路上有皮果" 5.生成搬运到路上H经验
  * @步骤说明: 改为true打开后,筛选flt日志看有依次生成:
  *          1. 有皮果动机 => TCDemand.m  39] flt1 A3955(向90,距13,皮果)
  *          2. 立马扔路边有皮果,并搬运到路上;
  *          3. 学会HCanset => flt2 NewHCanset 或 AbsHCanset
- *          4. ......
  */
-#define Switch4XueBanYun true
+#define Switch4XueBanYun false
 #define FltLog4XueBanYun(step) Switch4XueBanYun ? STRFORMAT(@"flt%d ",step) : @""
+
+/**
+ * @title 使用搬运 (参考32061)
+ * @desc `FZ977,饿,等看到距0有皮果动机后,扔距0带皮果` -> 然后看它自己把坚果踢到路上;
+ * @步骤说明: 改为true打开后,筛选flt日志看有依次生成:
+ *          1. 从无皮果动机 => TCDemand.m  39] flt1 A3955(向90,距13,果)
+ *          2. 再到有皮果动机 => TCDemand.m  39] flt1 A3955(向90,距13,皮果)
+ *          3. 再到距0有皮果动机 => TCDemand.m  39] flt1 A3955(向90,距0,皮果)
+ *          4. 立马扔距0有皮果;
+ *          5. 执行搬运行为化 => flt2 Axxxx(踢)
+ */
+#define Switch4YonBanYun true
+#define FltLog4YonBanYun(step) Switch4YonBanYun ? STRFORMAT(@"flt%d ",step) : @""

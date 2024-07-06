@@ -56,6 +56,9 @@
 //alg是无皮果
 +(BOOL) algIsWuPiGuo:(AIKVPointer*)alg_p;
 
+//alg是踢行为
++(BOOL) algIsKick:(AIKVPointer*)alg_p;
+
 //取alg中某区码的稀疏码的值 (比如: 取概念的高的值是5);
 +(double) findValueFromAlg:(AIKVPointer*)fromAlg_p byDS:(NSString*)byDS;
 @end

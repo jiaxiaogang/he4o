@@ -270,6 +270,20 @@
     return heightIsOk && borderIsOk;
 }
 
+//alg是踢行为
++(BOOL) algIsKick:(AIKVPointer*)alg_p {
+    return [self checkValueFromAlg:alg_p valueATIs:KICK_RDS];
+}
+
+//判断alg中某区码的稀疏码的at类型是valueATIs (比如: 取概念有踢特征);
++(BOOL) checkValueFromAlg:(AIKVPointer*)fromAlg_p valueATIs:(NSString*)valueATIs {
+    AIAlgNodeBase *fromAlg = [SMGUtils searchNode:fromAlg_p];
+    AIKVPointer *findValue_p = [SMGUtils filterSingleFromArr:fromAlg.content_ps checkValid:^BOOL(AIKVPointer *item) {
+        return [KICK_RDS isEqualToString:item.algsType];
+    }];
+    return findValue_p;
+}
+
 //取alg中某区码的稀疏码的值 (比如: 取概念的高的值是5);
 +(double) findValueFromAlg:(AIKVPointer*)fromAlg_p byDS:(NSString*)byDS {
     AIAlgNodeBase *fromAlg = [SMGUtils searchNode:fromAlg_p];
