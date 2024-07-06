@@ -282,17 +282,18 @@
     //2. 找出子集 (Finish负责截停递归);
     if ([outModel conformsToProtocol:@protocol(ITryActionFoDelegate)]) {
         id<ITryActionFoDelegate> tryActionObj = (id<ITryActionFoDelegate>)outModel;
-        [result addObjectsFromArray:[SMGUtils filterArr:tryActionObj.actionFoModels checkValid:^BOOL(TOFoModel *item) {
+        NSArray *actionFoModels = [tryActionObj.actionFoModels copy];
+        [result addObjectsFromArray:[SMGUtils filterArr:actionFoModels checkValid:^BOOL(TOFoModel *item) {
             return item.cansetStatus != CS_None;
         }]];
     }
     if ([outModel conformsToProtocol:@protocol(ISubModelsDelegate)]) {
-        id<ISubModelsDelegate> subModelsObj = (id<ISubModelsDelegate>)outModel;
-        [result addObjectsFromArray:subModelsObj.subModels];
+        NSArray *subModels = [((id<ISubModelsDelegate>)outModel).subModels copy];
+        [result addObjectsFromArray:subModels];
     }
     if ([outModel conformsToProtocol:@protocol(ISubDemandDelegate)]) {
-        id<ISubDemandDelegate> subDemandsObj = (id<ISubDemandDelegate>)outModel;
-        [result addObjectsFromArray:subDemandsObj.subDemands];
+        NSArray *subDemands = ((id<ISubDemandDelegate>)outModel).subDemands;
+        [result addObjectsFromArray:subDemands];
     }
     return result;
 }
