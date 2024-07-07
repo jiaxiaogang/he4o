@@ -231,7 +231,7 @@
     
     //3. 求出总分 (参考31052-todo2);
     CGFloat totalScore = progressScore + demandScore;
-    NSLog(@"任务分:%.2f + 最终进度分:%.2f = 总分:%.2f",demandScore,progressScore,totalScore);
+    //NSLog(@"任务分:%.2f + 最终进度分:%.2f = 总分:%.2f",demandScore,progressScore,totalScore);
     return totalScore;
 }
 
