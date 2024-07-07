@@ -103,6 +103,7 @@
 		0858C5E921950CAA00951BA5 /* FoodView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0858C5E821950CAA00951BA5 /* FoodView.xib */; };
 		085BA9F4241C421500829450 /* HeLogUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 085BA9F3241C421500829450 /* HeLogUtil.m */; };
 		085F8E1D27EEC46A00836F21 /* TVUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 085F8E1C27EEC46A00836F21 /* TVUtil.m */; };
+		085F91802C3AF1BB00E25AE7 /* TCPlanV2.m in Sources */ = {isa = PBXBuildFile; fileRef = 085F917F2C3AF1BA00E25AE7 /* TCPlanV2.m */; };
 		0860A3BB22C9851800A48682 /* CustomAddNodeWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 0860A3BA22C9851800A48682 /* CustomAddNodeWindow.m */; };
 		0860A3BD22C9859200A48682 /* CustomAddNodeWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0860A3BC22C9859200A48682 /* CustomAddNodeWindow.xib */; };
 		08616986284CF2D300A39473 /* TCSolutionUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 08616985284CF2D300A39473 /* TCSolutionUtil.m */; };
@@ -416,6 +417,8 @@
 		085BA9F3241C421500829450 /* HeLogUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HeLogUtil.m; sourceTree = "<group>"; };
 		085F8E1B27EEC46A00836F21 /* TVUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TVUtil.h; sourceTree = "<group>"; };
 		085F8E1C27EEC46A00836F21 /* TVUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TVUtil.m; sourceTree = "<group>"; };
+		085F917E2C3AF1BA00E25AE7 /* TCPlanV2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCPlanV2.h; sourceTree = "<group>"; };
+		085F917F2C3AF1BA00E25AE7 /* TCPlanV2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCPlanV2.m; sourceTree = "<group>"; };
 		0860A3B922C9851800A48682 /* CustomAddNodeWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomAddNodeWindow.h; sourceTree = "<group>"; };
 		0860A3BA22C9851800A48682 /* CustomAddNodeWindow.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomAddNodeWindow.m; sourceTree = "<group>"; };
 		0860A3BC22C9859200A48682 /* CustomAddNodeWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CustomAddNodeWindow.xib; sourceTree = "<group>"; };
@@ -1436,6 +1439,8 @@
 			children = (
 				08AFC5EE276979D8000BAB26 /* TCPlan.h */,
 				08AFC5EF276979D8000BAB26 /* TCPlan.m */,
+				085F917E2C3AF1BA00E25AE7 /* TCPlanV2.h */,
+				085F917F2C3AF1BA00E25AE7 /* TCPlanV2.m */,
 			);
 			path = TCPlan;
 			sourceTree = "<group>";
@@ -2145,6 +2150,7 @@
 				8868F6EB210A946A000EAC9B /* AIAbsCMVManager.m in Sources */,
 				082B910A27E414FB00EE4DF2 /* TOMVisionAlgView.m in Sources */,
 				0858C5D12194F8B000951BA5 /* NSArray+MASAdditions.m in Sources */,
+				085F91802C3AF1BB00E25AE7 /* TCPlanV2.m in Sources */,
 				087705B72753747300BA4EFB /* TCSolution.m in Sources */,
 				0850859B2A25B26F00ED63F2 /* TCRecognitionUtil.m in Sources */,
 				0858C5CC2194F8B000951BA5 /* MASConstraint.m in Sources */,
