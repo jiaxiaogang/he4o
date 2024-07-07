@@ -54,6 +54,13 @@
     //2. 从最优路径末枝的解决方案,转给TCSolution执行 (参考24195-4);
     double endBranchScore = [NUMTOOK([scoreDic objectForKey:TOModel2Key(endBranch)]) doubleValue];
     DebugE();
+    
+    if (endBranch) {
+        NSLog(@"fltx 取得最终胜利\n%@",[TOModelVision cur2Root:endBranch]);
+    } else {
+        NSLog(@"fltx 取得最终胜利 null");
+    }
+    
     return [TCSolution solution:endBranch endScore:endBranchScore];
 }
 

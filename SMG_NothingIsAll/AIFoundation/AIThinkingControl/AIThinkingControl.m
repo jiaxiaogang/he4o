@@ -241,6 +241,9 @@ static AIThinkingControl *_instance;
                 if (result.step > 21) {
                     NSLog(@"TO上轮:%@ 等待:%.1f 下轮:%lld 消息:%@",result.success?@"成功":@"失败",result.delay,++self.toLoopId,result.msg);
                 }
+                else {
+                    NSLog(@"fltx TO上轮:%@ 等待:%.1f 下轮:%lld 消息:%@",result.success?@"成功":@"失败",result.delay,++self.toLoopId,result.msg);
+                }
                 [NSThread sleepForTimeInterval:1 + result.delay];
             }
         }

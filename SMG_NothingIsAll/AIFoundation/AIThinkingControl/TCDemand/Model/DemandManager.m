@@ -248,7 +248,7 @@
     //3. 逐个判断条件
     for (NSInteger j = 0; j < self.loopCache.count; j++) {
         ReasonDemandModel *item = ARR_INDEX(self.loopCache.array, j);
-        if (Log4CanDecisionDemand) NSLog(@"root(%ld/%ld):%@ (%@) %@",j,self.loopCache.count,Pit2FStr(item.protoFo),[SMGUtils date2Str:kHHmmss timeInterval:item.initTime],[TOModelVision cur2Sub:item]);
+        if (Log4CanDecisionDemand) NSLog(@"fltx root(%ld/%ld):%@ (%@) %@",j,self.loopCache.count,Pit2FStr(item.protoFo),[SMGUtils date2Str:kHHmmss timeInterval:item.initTime],[TOModelVision cur2Sub:item]);
     }
     
     for (NSInteger i = 0; i < self.loopCache.count; i++) {
