@@ -28,7 +28,7 @@
  *      2023.05.26: 计算canset稳定性改为有效性(sp改为eff得分),因为canset复现率低,几乎全是0分 (参考2909a-todo2);
  *      2023.05.26: BUG_修复计算cansetFenXianScore时,取cansetFo.cmvNode_p导致怎么都算出来是0分问题;
  */
-+(BOOL) refrection:(TOFoModel*)checkCanset demand:(DemandModel*)demand{
++(BOOL) refrection:(TOFoModel*)checkCanset demand:(DemandModel*)demand debugMode:(BOOL)debugMode {
     //1. 数据准备;
     [theTC updateOperCount:kFILENAME];
     Debug();
@@ -37,7 +37,7 @@
     
     //4. 算出如果canset无效,会带来的风险;
     CGFloat nEffScore = 1 - [TOUtils getEffectScore:sceneFo effectIndex:checkCanset.sceneTargetIndex solutionFo:checkCanset.cansetFo];
-    OFTitleLog(@"TCRefrection反思", @"\n%@ CUT:%ld 无效率:%.2f",ShortDesc4Pit(checkCanset.cansetFo),(long)checkCanset.cansetCutIndex,nEffScore);
+    if (debugMode) OFTitleLog(@"TCRefrection反思", @"\n%@ CUT:%ld 无效率:%.2f",ShortDesc4Pit(checkCanset.cansetFo),(long)checkCanset.cansetCutIndex,nEffScore);
     
     //5. 算出因canset无效,带来的风险分 = Eff为N的概率 x scene的mv评分;
     CGFloat canestFenXianScore = [AIScore score4MV:sceneFo.cmvNode_p ratio:nEffScore];
@@ -64,7 +64,7 @@
     //12. 三个评分都是负的,所以公式为以下 (result = 收益(负任务分) + mv的负分 + lazy的负分 > 0);
     CGFloat sumScore = demandJianLiScore + canestFenXianScore + lazyScore;
     BOOL result = sumScore > 0;
-    NSLog(@"反思评价结果:%@通过 (解决任务奖励分%.1f Canset风险:%.2f 懒分:%.1f = %.1f)",result?@"已":@"未",demandJianLiScore,canestFenXianScore,lazyScore,sumScore);
+    if (debugMode) NSLog(@"反思评价结果:%@通过 (解决任务奖励分%.1f Canset风险:%.2f 懒分:%.1f = %.1f)",result?@"已":@"未",demandJianLiScore,canestFenXianScore,lazyScore,sumScore);
     [AITest test21:result];
     DebugE();
     return result;

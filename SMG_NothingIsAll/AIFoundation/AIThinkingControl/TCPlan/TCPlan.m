@@ -54,12 +54,7 @@
     //2. 从最优路径末枝的解决方案,转给TCSolution执行 (参考24195-4);
     double endBranchScore = [NUMTOOK([scoreDic objectForKey:TOModel2Key(endBranch)]) doubleValue];
     DebugE();
-    
-    if (endBranch) {
-        NSLog(@"fltx 取得最终胜利\n%@",[TOModelVision cur2Root:endBranch]);
-    } else {
-        NSLog(@"fltx 取得最终胜利 null");
-    }
+    //NSLog(@"fltx 取得最终胜利的sub到root结构: %@",endBranch ? [TOModelVision cur2Root:endBranch] : nil);
     
     return [TCSolution solution:endBranch endScore:endBranchScore];
 }
@@ -104,7 +99,7 @@
     //1. 从actionFoModels找出最好的分支继续 (参考24196-示图 & 25042-6 & 31083-TODO4.2);
     TOFoModel *bestFo = [TCSolutionUtil realTimeRankCansets:curDemand zonHeScoreBlock:^double(TOFoModel *obj) {
         return [NUMTOOK([scoreDic objectForKey:TOModel2Key(obj)]) doubleValue];
-    }];;
+    } debugMode:false];
     
     //(三) ============ Demand无解: 更新状态 & 返回nil(递归到上一层) ============
     if (!bestFo) {

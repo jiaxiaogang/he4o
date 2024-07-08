@@ -117,7 +117,7 @@
     NSLog(@"第2步 H转为候选集:%ld - 中间帧被初始传染:%d = 有效数:%ld",hDemand.actionFoModels.count,initToInfectedNum,hDemand.actionFoModels.count - initToInfectedNum);
     
     //12. 竞争求解: 对hCansets进行实时竞争 (参考31122);
-    return [self realTimeRankCansets:hDemand zonHeScoreBlock:nil];//400ms
+    return [self realTimeRankCansets:hDemand zonHeScoreBlock:nil debugMode:true];//400ms
 }
 
 /**
@@ -174,7 +174,7 @@
     NSLog(@"第2步 R转为候选集:%ld - 中间帧被初始传染:%d - 末帧被初始传染:%d = 有效数:%ld",cansetModels.count,initToInfectedNum,initToInfectedNum_Mv,cansetModels.count - initToInfectedNum - initToInfectedNum_Mv);
 
     //10. 竞争求解;
-    return [self realTimeRankCansets:demand zonHeScoreBlock:nil];//400ms
+    return [self realTimeRankCansets:demand zonHeScoreBlock:nil debugMode:true];//400ms
 }
 
 /**
@@ -190,12 +190,12 @@
  *      2024.01.28: 改为无计可施的失败TOFoModel,计为不应期 (参考31073-TODO8);
  *      2024.02.04: 直接重命名为Cansets实时竞争;
  */
-+(TOFoModel*) realTimeRankCansets:(DemandModel *)demand zonHeScoreBlock:(double(^)(TOFoModel *obj))zonHeScoreBlock {
++(TOFoModel*) realTimeRankCansets:(DemandModel *)demand zonHeScoreBlock:(double(^)(TOFoModel *obj))zonHeScoreBlock debugMode:(BOOL)debugMode{
     //1. 数据准备;
     NSString *rhLog = ISOK(demand, HDemandModel.class)?@"H":@"R";
     [AITest test13:demand.actionFoModels];
     TOFoModel *result = nil;
-    NSLog(@"第5步 %@Anaylst匹配成功:%ld",rhLog,demand.actionFoModels.count);//测时94条
+    if (debugMode) NSLog(@"第5步 %@Anaylst匹配成功:%ld",rhLog,demand.actionFoModels.count);//测时94条
 
     //2. 不应期 (可以考虑) (源于:反思且子任务失败的 或 fo行为化最终失败的,参考24135);
     //8. 排除不应期: 无计可施的失败TOFoModel计为不应期 (参考31073-TODO8);
@@ -203,19 +203,19 @@
     NSArray *cansetModels = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
         return item.status != TOModelStatus_ActNo && item.status != TOModelStatus_ScoreNo && item.status != TOModelStatus_WithOut && item.status != TOModelStatus_Finish;
     }];
-    NSLog(@"第6步 %@排除Status无效的:%ld",rhLog,cansetModels.count);//测时xx条
+    if (debugMode) NSLog(@"第6步 %@排除Status无效的:%ld",rhLog,cansetModels.count);//测时xx条
     
     //3. 2024.05.19: 已被传染的Canset不会激活,直接计为不可行 (参考31178-TODO4);
     cansetModels = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
         return !item.isInfected;
     }];
-    NSLog(@"第7步 %@排除Infected传染掉的:%ld",rhLog,cansetModels.count);
+    if (debugMode) NSLog(@"第7步 %@排除Infected传染掉的:%ld",rhLog,cansetModels.count);
 
     //9. 对下一帧做时间不急评价: 不急 = 解决方案所需时间 <= 父任务能给的时间 (参考:24057-方案3,24171-7);
     cansetModels = [SMGUtils filterArr:cansetModels checkValid:^BOOL(TOFoModel *item) {
         return [AIScore FRS_Time:demand solutionModel:item];
     }];
-    NSLog(@"第8步 %@排除FRSTime来不及的:%ld",rhLog,cansetModels.count);//测时xx条
+    if (debugMode) NSLog(@"第8步 %@排除FRSTime来不及的:%ld",rhLog,cansetModels.count);//测时xx条
 
     //10. 计算衰后stableScore并筛掉为0的 (参考26128-2-1 & 26161-5);
     //NSArray *outOfFos = [SMGUtils convertArr:cansetModels convertBlock:^id(TOFoModel *obj) {
@@ -231,11 +231,11 @@
     //NSLog(@"第8步 排序中段稳定性<=0的:%ld",cansetModels.count);//测时xx条
     
     //11. 根据候选集综合分排序 (参考26128-2-2 & 26161-4);
-    NSArray *sortModels = [AIRank cansetsRankingV4:cansetModels zonHeScoreBlock:zonHeScoreBlock];
+    NSArray *sortModels = [AIRank cansetsRankingV4:cansetModels zonHeScoreBlock:zonHeScoreBlock debugMode:debugMode];
 
     //13. 取通过S反思的最佳S;
     for (TOFoModel *item in sortModels) {
-        BOOL score = [TCRefrection refrection:item demand:demand];
+        BOOL score = [TCRefrection refrection:item demand:demand debugMode:debugMode];
         if (!score) {
             //13. 不通过时,将状态及时改为ScoreNo (参考31083-TODO5);
             item.status = TOModelStatus_ScoreNo;
@@ -253,7 +253,7 @@
     //14. 只在初次best时执行一次由虚转实,以及因激活更新强度等 (避免每次实时竞争导致重复跑这些);
     if (result && result.cansetStatus == CS_None) {
         AIFoNodeBase *resultFo = [SMGUtils searchNode:result.cansetFo];
-        NSLog(@"第9步 %@求解最佳结果:F%ld %@",rhLog,result.cansetFo.pointerId,CLEANSTR(resultFo.spDic));
+        if (debugMode) NSLog(@"第9步 %@求解最佳结果:F%ld %@",rhLog,result.cansetFo.pointerId,CLEANSTR(resultFo.spDic));
         
         //15. bestResult由虚转实迁移;
         [TCTransfer transferSi:result];

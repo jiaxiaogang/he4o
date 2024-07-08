@@ -20,7 +20,7 @@
 /**
  *  MARK:--------------------Cansets实时竞争--------------------
  */
-+(TOFoModel*) realTimeRankCansets:(DemandModel *)demand zonHeScoreBlock:(double(^)(TOFoModel *obj))zonHeScoreBlock;
++(TOFoModel*) realTimeRankCansets:(DemandModel *)demand zonHeScoreBlock:(double(^)(TOFoModel *obj))zonHeScoreBlock debugMode:(BOOL)debugMode;
 
 /**
  *  MARK:--------------------获取aleardayCount--------------------

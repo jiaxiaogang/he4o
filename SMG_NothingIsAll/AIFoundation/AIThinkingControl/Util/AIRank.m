@@ -133,7 +133,7 @@
  *      2024.01.26: 还未推进的中后段SP稳定性做第一竞争因子 (参考31073-TODO3);
  *      2024.02.02: V4_新增感性综合评分为第一竞争因子 (参考31083-TODO4.1);
  */
-+(NSArray*) cansetsRankingV4:(NSArray*)cansets zonHeScoreBlock:(double(^)(TOFoModel *obj))zonHeScoreBlock {
++(NSArray*) cansetsRankingV4:(NSArray*)cansets zonHeScoreBlock:(double(^)(TOFoModel *obj))zonHeScoreBlock debugMode:(BOOL)debugMode {
     //0. 将effStrong提前取出来,存到mapModel中;
     NSArray *mapArr = [SMGUtils convertArr:cansets convertBlock:^id(TOFoModel *item) {
         AIFoNodeBase *sceneFo = [SMGUtils searchNode:item.sceneFo];
@@ -170,23 +170,9 @@
         NSDictionary *spDic = [sceneTo getItemOutSPDic:obj.sceneFrom cansetFrom:obj.cansetFrom];
         AIKVPointer *targetAlg = obj.baseOrGroup.baseOrGroup.content_p;//base(HDemand).base(TargetAlgModel);
         
-        //TODOTOMORROW20240629: 如下日志: 看起来,有皮果动机是有眉目的,只是它没跑出来的原因,还得再查一二;
-        //=============================== 15 hSolution ===============================
-        //flt2 目标:A4628(向89,距11,果) 已有S数:0
-        //第2步 H转为候选集:29 - 中间帧被初始传染:9 = 有效数:20
-        //第5步 HAnaylst匹配成功:29
-        //第6步 H排除Status无效的:29
-        //第7步 H排除Infected传染掉的:20
-        //第8步 H排除FRSTime来不及的:18
-        //H0. I<F3998 F4228[↑饿-16,4果皮]> {0 = 0;}  (null):(分:0.00)
-        //H1. I<F3998 F4241[↑饿-16,4果皮]> {0 = 0;}  (null):(分:0.00)
-        //H2. I<F3998 F4327[↑饿-16,4果皮,4棒]> {0 = 0;}  (null):(分:0.00)
-        //H3. I<F3998 F4249[↑饿-16,4果皮]> {0 = 0;}  (null):(分:0.00)
-        //H4. I<F3998 F4342[↑饿-16,4果皮,4棒]> {0 = 0;}  (null):(分:0.00)
-        
         //fltLog1: 如果当前是H任务,且是在找无皮果,且这个解含有有皮果 => 则这个解可能产生:有皮果动机;
         NSString *fltLog1 = obj.isH && [NVHeUtil algIsWuPiGuo:targetAlg] && [NVHeUtil foHavYouPiGuo:obj.cansetFrom] ? FltLog4HDemandOfYouPiGuo(@"3") : @"";
-        if (Log4AIRank) NSLog(@"%@%@%ld. %@<F%ld %@> %@ %@ %@:(分:%.2f) [CUT:%ld=>TAR:%ld]",fltLog1,obj.isH?@"H":@"R",[sort indexOfObject:obj],SceneType2Str(obj.baseSceneModel.type),obj.sceneFo.pointerId,ShortDesc4Pit(obj.cansetFrom),CLEANSTR(obj.transferXvModel.sceneToCansetToIndexDic),CLEANSTR(spDic),effStrong.description,effScore,obj.cansetCutIndex,obj.cansetTargetIndex);
+        if (debugMode && Log4AIRank) NSLog(@"%@%@%ld. %@<F%ld %@> %@ %@ %@:(分:%.2f) [CUT:%ld=>TAR:%ld]",fltLog1,obj.isH?@"H":@"R",[sort indexOfObject:obj],SceneType2Str(obj.baseSceneModel.type),obj.sceneFo.pointerId,ShortDesc4Pit(obj.cansetFrom),CLEANSTR(obj.transferXvModel.sceneToCansetToIndexDic),CLEANSTR(spDic),effStrong.description,effScore,obj.cansetCutIndex,obj.cansetTargetIndex);
     }
     return sort;
 }
