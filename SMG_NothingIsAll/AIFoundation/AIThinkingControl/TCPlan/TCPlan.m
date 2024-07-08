@@ -54,7 +54,11 @@
     //2. 从最优路径末枝的解决方案,转给TCSolution执行 (参考24195-4);
     double endBranchScore = [NUMTOOK([scoreDic objectForKey:TOModel2Key(endBranch)]) doubleValue];
     DebugE();
-    //NSLog(@"fltx 取得最终胜利的sub到root结构: %@",endBranch ? [TOModelVision cur2Root:endBranch] : nil);
+    
+    //log
+    ReasonDemandModel *root = (ReasonDemandModel*)rootDemand;
+    NSLog(@"fltx1 TCPlan从ROOT:%@ (%@) %@",Pit2FStr(root.protoFo),[SMGUtils date2Str:kHHmmss timeInterval:root.initTime],[TOModelVision cur2Sub:root]);
+    NSLog(@"fltx2 取得最终胜利的sub到root结构: %@",endBranch ? [TOModelVision cur2Root:endBranch] : nil);
     
     return [TCSolution solution:endBranch endScore:endBranchScore];
 }

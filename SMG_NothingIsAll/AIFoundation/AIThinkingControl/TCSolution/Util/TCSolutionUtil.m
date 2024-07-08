@@ -206,16 +206,23 @@
     if (debugMode) NSLog(@"第6步 %@排除Status无效的:%ld",rhLog,cansetModels.count);//测时xx条
     
     //3. 2024.05.19: 已被传染的Canset不会激活,直接计为不可行 (参考31178-TODO4);
-    cansetModels = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
+    cansetModels = [SMGUtils filterArr:cansetModels checkValid:^BOOL(TOFoModel *item) {
         return !item.isInfected;
     }];
     if (debugMode) NSLog(@"第7步 %@排除Infected传染掉的:%ld",rhLog,cansetModels.count);
 
     //9. 对下一帧做时间不急评价: 不急 = 解决方案所需时间 <= 父任务能给的时间 (参考:24057-方案3,24171-7);
-    cansetModels = [SMGUtils filterArr:cansetModels checkValid:^BOOL(TOFoModel *item) {
-        return [AIScore FRS_Time:demand solutionModel:item];
+    //2. 最近的R任务 (R任务时取自身,H任务时取最近的baseRDemand);
+    //2024.07.09: 只有非持续性r任务,才限时间,像持续饿感这种不限时间;
+    ReasonDemandModel *baseRDemand = [SMGUtils filterSingleFromArr:[TOUtils getBaseOutModels_AllDeep:demand] checkValid:^BOOL(id item) {
+        return ISOK(item, ReasonDemandModel.class);
     }];
-    if (debugMode) NSLog(@"第8步 %@排除FRSTime来不及的:%ld",rhLog,cansetModels.count);//测时xx条
+    if (!baseRDemand || ![ThinkingUtils isContinuousWithAT:baseRDemand.algsType]) {
+        cansetModels = [SMGUtils filterArr:cansetModels checkValid:^BOOL(TOFoModel *item) {
+            return [AIScore FRS_Time:demand solutionModel:item];
+        }];
+        if (debugMode) NSLog(@"第8步 %@排除FRSTime来不及的:%ld",rhLog,cansetModels.count);//测时xx条
+    }
 
     //10. 计算衰后stableScore并筛掉为0的 (参考26128-2-1 & 26161-5);
     //NSArray *outOfFos = [SMGUtils convertArr:cansetModels convertBlock:^id(TOFoModel *obj) {
