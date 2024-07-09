@@ -57,8 +57,10 @@
     
     //log
     ReasonDemandModel *root = (ReasonDemandModel*)rootDemand;
-    NSLog(@"fltx1 TCPlan从ROOT:%@ (%@) %@",Pit2FStr(root.protoFo),[SMGUtils date2Str:kHHmmss timeInterval:root.initTime],[TOModelVision cur2Sub:root]);
-    NSLog(@"fltx2 取得最终胜利的sub到root结构: %@",endBranch ? [TOModelVision cur2Root:endBranch] : nil);
+    if (root) {
+        NSLog(@"fltx1 TCPlan从ROOT:%@ (%@) %@",Pit2FStr(root.protoFo),[SMGUtils date2Str:kHHmmss timeInterval:root.initTime],[TOModelVision cur2Sub:root]);
+        NSLog(@"fltx2 取得最终胜利的sub到root结构: %@",endBranch ? [TOModelVision cur2Root:endBranch] : nil);
+    }
     
     return [TCSolution solution:endBranch endScore:endBranchScore];
 }
@@ -181,7 +183,9 @@
         //9. 判断subDemand.status是withOut状态 -> 无解认命 (参考25042-2);
         //10. 判断subDemand.status是actYes状态 -> 继续等待 (参考25042-3);
         //if (subDemand.status == TOModelStatus_ActYes) return nil;
-        return item.status != TOModelStatus_Finish && item.status != TOModelStatus_WithOut && item.status != TOModelStatus_ActNo && item.status != TOModelStatus_ScoreNo;
+        //2024.07.09: actNo时,父R必须是非持续性任务才算数;
+        BOOL isActNo = item.status == TOModelStatus_ActNo && ![ThinkingUtils baseRDemandIsContinuousWithAT:item];
+        return item.status != TOModelStatus_Finish && item.status != TOModelStatus_WithOut && !isActNo && item.status != TOModelStatus_ScoreNo;
     }];
 }
 

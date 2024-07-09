@@ -100,6 +100,13 @@
     });
     if ([NVHeUtil algIsYouPiGuo:algModel.content_p]) {
         NSLog(@"TODOTOMORROW20240709: 有了有皮果动机后,打个断点,查TCPlan总是无法继续这个hDemand的问题");
+        //查明问题: 在HDemand有皮果后,它的父alg直接已经被反馈了,所以它被中断掉了,没继续这个hDemand是正常的;
+        //又有问题:
+        //问题1: 但又测到新的BUG: 目标饿的hSolution输出的canset的target全不是饿,如下:
+        //目标:M1{↑饿-16} 已有S数:0
+        //H0. I<F4115 F4348[↑饿-16,4果皮,4棒]> {}  (null):(分:0.00) [CUT:0=>TAR:2] //注: target2是棒,不是饿;
+        
+        //问题2: 原来的有皮果动机怎么复现不了了?
     }
     
     //2. 调用TCScore继续决策;
