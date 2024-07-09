@@ -68,7 +68,7 @@
     
     //2. ===== 第0部分: foModel自身理性淘汰判断 (比如时间不急评否后,为actNo状态) (参考24053);
     //2024.07.09: 已行为化失败,且父R任务非持续性任务时 => 直接返回最小分;
-    BOOL isActNo = model.status == TOModelStatus_ActNo && ![ThinkingUtils baseRDemandIsContinuousWithAT:model];
+    BOOL isActNo = model.status == TOModelStatus_ActNo;// && ![ThinkingUtils baseRDemandIsContinuousWithAT:model];
     if (isActNo || model.status == TOModelStatus_WithOut || model.status == TOModelStatus_ScoreNo) {
         [scoreDic setObject:@(INT_MIN) forKey:TOModel2Key(model)];
         NSLog(@"评分1: 因 (WithOut) 或 (ScoreNo) 或 (actNo且非持续R任务) => 直接评最小分: K:%@",TOModel2Key(model));
@@ -114,7 +114,7 @@
 
     //3. 当demand已经withOut状态,且其解决方案全部actNo时,则理性淘汰 (参考24192-H14);
     //2024.07.09: 已行为化失败,且父R任务非持续性任务时 => 走无解决方案逻辑;
-    BOOL isActNo = demand.status == TOModelStatus_ActNo && ![ThinkingUtils baseRDemandIsContinuousWithAT:demand];
+    BOOL isActNo = demand.status == TOModelStatus_ActNo;// && ![ThinkingUtils baseRDemandIsContinuousWithAT:demand];
     if (demand.status == TOModelStatus_WithOut || isActNo || demand.status == TOModelStatus_ScoreNo) {
         
         if (ISOK(demand, HDemandModel.class)) {

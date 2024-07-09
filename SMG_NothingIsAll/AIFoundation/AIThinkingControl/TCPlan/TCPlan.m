@@ -184,7 +184,7 @@
         //10. 判断subDemand.status是actYes状态 -> 继续等待 (参考25042-3);
         //if (subDemand.status == TOModelStatus_ActYes) return nil;
         //2024.07.09: actNo时,父R必须是非持续性任务才算数;
-        BOOL isActNo = item.status == TOModelStatus_ActNo && ![ThinkingUtils baseRDemandIsContinuousWithAT:item];
+        BOOL isActNo = item.status == TOModelStatus_ActNo;// && ![ThinkingUtils baseRDemandIsContinuousWithAT:item];
         return item.status != TOModelStatus_Finish && item.status != TOModelStatus_WithOut && !isActNo && item.status != TOModelStatus_ScoreNo;
     }];
 }
