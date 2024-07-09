@@ -98,6 +98,9 @@
     dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
         [theTV updateFrame];
     });
+    if ([NVHeUtil algIsYouPiGuo:algModel.content_p]) {
+        NSLog(@"TODOTOMORROW20240709: 有了有皮果动机后,打个断点,查TCPlan总是无法继续这个hDemand的问题");
+    }
     
     //2. 调用TCScore继续决策;
     DebugE();

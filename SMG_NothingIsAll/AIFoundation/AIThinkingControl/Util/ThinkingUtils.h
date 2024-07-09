@@ -52,6 +52,9 @@
 //判断mv是否为持续价值 (比如:饥饿是持续性,疼痛是单发的) (参考32041-TODO1);
 +(BOOL) isContinuousWithAT:(NSString*)algsType;
 
+//判断当前节点的父RDemand任务是不是持续性价值;
++(BOOL) baseRDemandIsContinuousWithAT:(TOModelBase*)subModel;
+
 @end
 
 

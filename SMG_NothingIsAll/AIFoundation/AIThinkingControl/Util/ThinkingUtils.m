@@ -126,6 +126,15 @@
     return false;
 }
 
+//判断当前节点的父RDemand任务是不是持续性价值;
++(BOOL) baseRDemandIsContinuousWithAT:(TOModelBase*)subModel {
+    ReasonDemandModel *baseRDemand = [SMGUtils filterSingleFromArr:[TOUtils getBaseOutModels_AllDeep:subModel] checkValid:^BOOL(id item) {
+        return ISOK(item, ReasonDemandModel.class);
+    }];
+    if (!baseRDemand) return false;
+    return [ThinkingUtils isContinuousWithAT:baseRDemand.algsType];
+}
+
 @end
 
 
