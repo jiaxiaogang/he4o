@@ -32,7 +32,7 @@
     
     //2. 对firstRootDemand取得分字典 (参考24195-2 & 24196示图);
     NSMutableDictionary *scoreDic = [[NSMutableDictionary alloc] init];
-    [self score_Multi:demand.bestCansets scoreDic:scoreDic];
+    [self score_Multi:demand scoreDic:scoreDic];
     
     //3. 转给TCPlan取最优路径;
     DebugE();
@@ -71,7 +71,7 @@
     BOOL isActNo = model.status == TOModelStatus_ActNo;// && ![ThinkingUtils baseRDemandIsContinuousWithAT:model];
     if (isActNo || model.status == TOModelStatus_WithOut || model.status == TOModelStatus_ScoreNo) {
         [scoreDic setObject:@(INT_MIN) forKey:TOModel2Key(model)];
-        NSLog(@"评分1: 因 (WithOut) 或 (ScoreNo) 或 (actNo且非持续R任务) => 直接评最小分: K:%@",TOModel2Key(model));
+        NSLog(@"item评分: 因 (WithOut) 或 (ScoreNo) 或 (actNo且非持续R任务) => 直接评最小分: K:%@",TOModel2Key(model));
         return;
     }
     
@@ -96,7 +96,7 @@
     
     //5. 将求和得分,计入dic (当没有sr也没有sa子任务 = 0分);
     [scoreDic setObject:@(modelScore) forKey:TOModel2Key(model)];
-    NSLog(@"评分3: K:%@ => V:%@分",TOModel2Key(model),[scoreDic objectForKey:TOModel2Key(model)]);
+    NSLog(@"item评分: K:%@ => V:%@分",TOModel2Key(model),[scoreDic objectForKey:TOModel2Key(model)]);
 }
 
 /**
@@ -126,7 +126,7 @@
         }
     }else{
         //6. demand有解决方案时,对S竞争,并将最高分计入modelScore;
-        TOFoModel *bestSS = [self score_Multi:demand.bestCansets scoreDic:scoreDic];
+        TOFoModel *bestSS = [self score_Multi:demand scoreDic:scoreDic];
         
         //7. 并将竞争最高分胜者计入modelScore;
         return [NUMTOOK([scoreDic objectForKey:TOModel2Key(bestSS)]) doubleValue];
@@ -136,11 +136,22 @@
 /**
  *  MARK:--------------------S解决方案竞争--------------------
  *  @desc 感性竞争 (参考24192-R9);
- *  @param foModels : 解决方案S数,single传入>=1条,plan传入可能为0条;
+ *  _param foModels : 解决方案S数,single传入>=1条,plan传入可能为0条;
  *  @param scoreDic : notnull
  *  @result 将bestFo返回;
  */
-+(TOFoModel*) score_Multi:(NSArray*)foModels scoreDic:(NSMutableDictionary*)scoreDic{
++(TOFoModel*) score_Multi:(DemandModel*)demand scoreDic:(NSMutableDictionary*)scoreDic{
+    //0. 数据准备;
+    NSArray *foModels = demand.bestCansets;
+    if (ISOK(demand, ReasonDemandModel.class)) {
+        ReasonDemandModel *rDemand = (ReasonDemandModel*)demand;
+        NSLog(@"\n====> R item评分cansets竞争 -> 开始:%@",Pit2FStr(rDemand.protoFo));
+    } else {
+        HDemandModel *hDemand = (HDemandModel*)demand;
+        TOAlgModel *targetAlg = (TOAlgModel*)hDemand.baseOrGroup;
+        NSLog(@"\n====> H item评分cansets竞争 -> 开始:%@",Pit2FStr(targetAlg.content_p));
+    }
+    
     //1. 取出子任务的每个解决方案S (竞争);
     TOFoModel *bestFoModel = nil;
     for (TOFoModel *foModel in foModels) {
@@ -154,13 +165,17 @@
         }else{
             double oldScore = [NUMTOOK([scoreDic objectForKey:TOModel2Key(bestFoModel)]) doubleValue];
             double newScore = [NUMTOOK([scoreDic objectForKey:TOModel2Key(foModel)]) doubleValue];
+            NSLog(@"item评分cansets竞争 -> 重排名:新F%ld(%.2f) 旧:F%ld(%.2f)",foModel.cansetFrom.pointerId,newScore,bestFoModel.cansetFrom.pointerId,oldScore);
             if (newScore > oldScore) {
                 bestFoModel = foModel;
             }
         }
+        
+        NSLog(@"item评分cansets竞争 -> 选手:%@ (%.2f)",Pit2FStr(foModel.cansetFrom),[NUMTOOK([scoreDic objectForKey:TOModel2Key(foModel)]) doubleValue]);
     }
     
     //4. 将最优S返回;
+    NSLog(@"====> item评分cansets竞争 -> 胜者:%@",Pit2FStr(bestFoModel.cansetFrom));
     return bestFoModel;
 }
 

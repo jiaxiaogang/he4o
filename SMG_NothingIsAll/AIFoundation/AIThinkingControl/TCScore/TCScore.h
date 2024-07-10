@@ -23,6 +23,6 @@
 +(TCResult*) scoreFromTOQueue;
 
 //得出综评字典;
-+(TOFoModel*) score_Multi:(NSArray*)foModels scoreDic:(NSMutableDictionary*)scoreDic;
++(TOFoModel*) score_Multi:(DemandModel*)demand scoreDic:(NSMutableDictionary*)scoreDic;
 
 @end

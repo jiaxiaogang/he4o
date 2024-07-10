@@ -98,6 +98,15 @@
     dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
         [theTV updateFrame];
     });
+    
+    
+    //log
+    ReasonDemandModel *root = (ReasonDemandModel*)[TOUtils getRootDemandModelWithSubOutModel:algModel];
+    if (root) {
+        NSLog(@"fltx3生成HDemand成功 TCPlan从ROOT:%@ (%@) %@",Pit2FStr(root.protoFo),[SMGUtils date2Str:kHHmmss timeInterval:root.initTime],[TOModelVision cur2Sub:root]);
+    }
+    
+    
     if ([NVHeUtil algIsYouPiGuo:algModel.content_p]) {
         NSLog(@"TODOTOMORROW20240709: 有了有皮果动机后,打个断点,查TCPlan总是无法继续这个hDemand的问题");
         //查明问题: 在HDemand有皮果后,它的父alg直接已经被反馈了,所以它被中断掉了,没继续这个hDemand是正常的;
