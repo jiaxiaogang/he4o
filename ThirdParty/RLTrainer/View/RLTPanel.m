@@ -219,7 +219,7 @@
         
         //3. 取最佳解决方案;
         NSMutableDictionary *scoreDic = [[NSMutableDictionary alloc] init];
-        TOFoModel *bestFo = [TCScore score_Multi:root scoreDic:scoreDic];
+        TOFoModel *bestFo = [TCScore score_Multi:root scoreDic:scoreDic prefixNum:0];
         
         //4. 综合评分 = 最佳解决方案评分 + 任务评分;
         double rootScore = [AIScore score4Demand:root];

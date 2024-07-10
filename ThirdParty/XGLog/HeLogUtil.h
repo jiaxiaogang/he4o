@@ -27,4 +27,10 @@
  */
 +(NSString *)md5ByData:(NSData*)data;
 
+//返回demand打日志时的pointer;
++(AIKVPointer*) demandLogPointer:(DemandModel*)demand;
+
+//缩进的前辍,每缩进单位两个空字符;
++(NSString*) getPrefixStr:(int)prefixNum;
+
 @end

@@ -32,7 +32,9 @@
     
     //2. 对firstRootDemand取得分字典 (参考24195-2 & 24196示图);
     NSMutableDictionary *scoreDic = [[NSMutableDictionary alloc] init];
-    [self score_Multi:demand scoreDic:scoreDic];
+    NSLog(@"----------------------------------------------------------");
+    [self score_Multi:demand scoreDic:scoreDic prefixNum:0];
+    NSLog(@"----------------------------------------------------------");
     
     //3. 转给TCPlan取最优路径;
     DebugE();
@@ -62,7 +64,7 @@
  *
  *  _result 将model及其下有效的分枝评分计算,并收集到评分字典 <K=foModel,V=score>;
  */
-+(void) score_Single:(TOFoModel*)model scoreDic:(NSMutableDictionary*)scoreDic{
++(void) score_Single:(TOFoModel*)model scoreDic:(NSMutableDictionary*)scoreDic prefixNum:(int)prefixNum {
     //1. 数据检查;
     double modelScore = 0;
     
@@ -71,18 +73,23 @@
     BOOL isActNo = model.status == TOModelStatus_ActNo;// && ![ThinkingUtils baseRDemandIsContinuousWithAT:model];
     if (isActNo || model.status == TOModelStatus_WithOut || model.status == TOModelStatus_ScoreNo) {
         [scoreDic setObject:@(INT_MIN) forKey:TOModel2Key(model)];
-        NSLog(@"item评分: 因 (WithOut) 或 (ScoreNo) 或 (actNo且非持续R任务) => 直接评最小分: K:%@",TOModel2Key(model));
+        NSLog(@"%@item评分: 因 (WithOut) 或 (ScoreNo) 或 (actNo且非持续R任务) => 直接评最小分: K:%@",[HeLogUtil getPrefixStr:prefixNum],TOModel2Key(model));
         return;
     }
     
     //3. ===== 第一部分: HDemand在FoModel.subModels下 (有解决方案:参与求和 & 无解决方案:理性淘汰);
     //3. 用每个sa取sh子任务 (求和);
+    
+    //TODOTOMORROW20240711: 查下这里的modelScore为什么是0分,,,,
+    //1. 它的进度分肯定不会是0...
+    //2. 所以这里看下是不是应该改下...把进度考虑进去;
+    
     for (TOAlgModel *sa in model.subModels) {
         
         //3. 取出sh (一条sa最多只能生成一个sh任务);
         HDemandModel *sh = ARR_INDEX(sa.subDemands, 0);
         if (sh) {
-            CGFloat score = [self score_SingleDemand:sh scoreDic:scoreDic];
+            CGFloat score = [self score_SingleDemand:sh scoreDic:scoreDic prefixNum:prefixNum + 1];
             modelScore += score;
         }
     }
@@ -90,13 +97,13 @@
     //4. ===== 第二部分: RDemand在AlgModel.subDemands下 (有解决方案:参与求和 & 无解决方案:R自身计入综合评分中);
     //4. 取出subRDemands子任务 (求和) 综合评价是否放弃当前父任务 (如又累又烦的活,赚钱也不干) (参考24195);
     for (ReasonDemandModel *sr in model.subDemands) {
-        CGFloat score = [self score_SingleDemand:sr scoreDic:scoreDic];
+        CGFloat score = [self score_SingleDemand:sr scoreDic:scoreDic prefixNum:prefixNum + 1];
         modelScore += score;
     }
     
     //5. 将求和得分,计入dic (当没有sr也没有sa子任务 = 0分);
     [scoreDic setObject:@(modelScore) forKey:TOModel2Key(model)];
-    NSLog(@"item评分: K:%@ => V:%@分",TOModel2Key(model),[scoreDic objectForKey:TOModel2Key(model)]);
+    NSLog(@"%@item评分: => 成功得到评分: K:%@ => V:%@分",[HeLogUtil getPrefixStr:prefixNum],TOModel2Key(model),[scoreDic objectForKey:TOModel2Key(model)]);
 }
 
 /**
@@ -105,7 +112,7 @@
  *  @version
  *      2022.09.24: 失效处理: 子任务失效时,不进行决策综评 (参考27123-问题2-todo3);
  */
-+(CGFloat) score_SingleDemand:(DemandModel*)demand scoreDic:(NSMutableDictionary*)scoreDic{
++(CGFloat) score_SingleDemand:(DemandModel*)demand scoreDic:(NSMutableDictionary*)scoreDic prefixNum:(int)prefixNum {
     //1. 当demand在feedbackTOR已finish时,不计分;
     if (demand.status == TOModelStatus_Finish) return 0;
     
@@ -126,7 +133,7 @@
         }
     }else{
         //6. demand有解决方案时,对S竞争,并将最高分计入modelScore;
-        TOFoModel *bestSS = [self score_Multi:demand scoreDic:scoreDic];
+        TOFoModel *bestSS = [self score_Multi:demand scoreDic:scoreDic prefixNum:prefixNum + 1];
         
         //7. 并将竞争最高分胜者计入modelScore;
         return [NUMTOOK([scoreDic objectForKey:TOModel2Key(bestSS)]) doubleValue];
@@ -140,24 +147,19 @@
  *  @param scoreDic : notnull
  *  @result 将bestFo返回;
  */
-+(TOFoModel*) score_Multi:(DemandModel*)demand scoreDic:(NSMutableDictionary*)scoreDic{
++(TOFoModel*) score_Multi:(DemandModel*)demand scoreDic:(NSMutableDictionary*)scoreDic prefixNum:(int)prefixNum {
     //0. 数据准备;
     NSArray *foModels = demand.bestCansets;
-    if (ISOK(demand, ReasonDemandModel.class)) {
-        ReasonDemandModel *rDemand = (ReasonDemandModel*)demand;
-        NSLog(@"\n====> R item评分cansets竞争 -> 开始:%@",Pit2FStr(rDemand.protoFo));
-    } else {
-        HDemandModel *hDemand = (HDemandModel*)demand;
-        TOAlgModel *targetAlg = (TOAlgModel*)hDemand.baseOrGroup;
-        NSLog(@"\n====> H item评分cansets竞争 -> 开始:%@",Pit2FStr(targetAlg.content_p));
-    }
+    NSString *rhLog = ISOK(demand, ReasonDemandModel.class) ? @"R" : @"H";
+    AIKVPointer *demandLogPointer = [HeLogUtil demandLogPointer:demand];
+    NSLog(@"%@%@ item评分cansets竞争 -> 开始:%@",[HeLogUtil getPrefixStr:prefixNum],rhLog,ShortDesc4Pit(demandLogPointer));
     
     //1. 取出子任务的每个解决方案S (竞争);
     TOFoModel *bestFoModel = nil;
     for (TOFoModel *foModel in foModels) {
         
         //2. 评分
-        [self score_Single:foModel scoreDic:scoreDic];
+        [self score_Single:foModel scoreDic:scoreDic prefixNum:prefixNum];
         
         //3. 竞争
         if (!bestFoModel) {
@@ -165,17 +167,17 @@
         }else{
             double oldScore = [NUMTOOK([scoreDic objectForKey:TOModel2Key(bestFoModel)]) doubleValue];
             double newScore = [NUMTOOK([scoreDic objectForKey:TOModel2Key(foModel)]) doubleValue];
-            NSLog(@"item评分cansets竞争 -> 重排名:新F%ld(%.2f) 旧:F%ld(%.2f)",foModel.cansetFrom.pointerId,newScore,bestFoModel.cansetFrom.pointerId,oldScore);
+            NSLog(@"%@item评分cansets竞争 -> 重排名:新F%ld(%.2f) 旧:F%ld(%.2f)",[HeLogUtil getPrefixStr:prefixNum],foModel.content_p.pointerId,newScore,bestFoModel.cansetFrom.pointerId,oldScore);
             if (newScore > oldScore) {
                 bestFoModel = foModel;
             }
         }
         
-        NSLog(@"item评分cansets竞争 -> 选手:%@ (%.2f)",Pit2FStr(foModel.cansetFrom),[NUMTOOK([scoreDic objectForKey:TOModel2Key(foModel)]) doubleValue]);
+        NSLog(@"%@item评分cansets竞争 -> 选手:%@ (%.2f)",[HeLogUtil getPrefixStr:prefixNum],Pit2FStr(foModel.content_p),[NUMTOOK([scoreDic objectForKey:TOModel2Key(foModel)]) doubleValue]);
     }
     
     //4. 将最优S返回;
-    NSLog(@"====> item评分cansets竞争 -> 胜者:%@",Pit2FStr(bestFoModel.cansetFrom));
+    if (bestFoModel) NSLog(@"%@%@ item评分cansets竞争 -> 胜者:%@",[HeLogUtil getPrefixStr:prefixNum],rhLog,Pit2FStr(bestFoModel.content_p));
     return bestFoModel;
 }
 

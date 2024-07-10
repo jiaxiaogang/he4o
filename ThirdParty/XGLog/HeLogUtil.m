@@ -102,4 +102,25 @@
     return resultString;
 }
 
+//返回demand打日志时的pointer
++(AIKVPointer*) demandLogPointer:(DemandModel*)demand {
+    if (ISOK(demand, ReasonDemandModel.class)) {
+        ReasonDemandModel *rDemand = (ReasonDemandModel*)demand;
+        return rDemand.protoOrRegroupFo;//R返回protoFo;
+    } else if (ISOK(demand, HDemandModel.class)) {
+        HDemandModel *hDemand = (HDemandModel*)demand;
+        return hDemand.baseOrGroup.content_p;//H返回targetAlg.content_p
+    }
+    return nil;
+}
+
+//缩进的前辍,每缩进单位两个空字符;
++(NSString*) getPrefixStr:(int)prefixNum {
+    NSString *result = @"";
+    for (int i = 0; i < prefixNum; i++) {
+        result = STRFORMAT(@"%@  ",result);
+    }
+    return result;
+}
+
 @end

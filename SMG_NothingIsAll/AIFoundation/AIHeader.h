@@ -43,6 +43,7 @@
 #import "XGDebug.h"
 #import "TCDebug.h"
 #import "TVUtil_Short.h"
+#import "HeLogUtil.h"
 
 //任务池
 #import "ReasonDemandModel.h"
