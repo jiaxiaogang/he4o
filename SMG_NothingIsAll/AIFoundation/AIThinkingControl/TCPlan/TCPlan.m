@@ -201,17 +201,94 @@
     [theTC updateOperCount:kFILENAME min:1200];
     Debug();
     //OSTitleLog(@"TCScore");
-    DemandModel *demand = [theTC.outModelManager getCanDecisionDemand];
+    NSArray *roots = [theTC.outModelManager getCanDecisionDemandV3];
+    
+    //2. ======== 1级: rDemands竞争排序 ========
+    NSArray *rankRoots = [self plan4RDemands:roots];
+    
+    //3. 依次对rDemand向下尝试或淘汰;
+    for (ReasonDemandModel *rDemand in rankRoots) {
+        if (rDemand.status == TOModelStatus_Finish || rDemand.status == TOModelStatus_WithOut) continue;
+        
+        if (!rDemand.alreadyInitCansetModels) {
+            //> rDemand没初始化过,直接return转rSolultion为它求解;
+        }
+        
+        //4. ======== 2级: cansets竞争排序 ========
+        TOFoModel *bestRCanset = [self plan4Cansets:rDemand];
+        if (!bestRCanset) {
+            //> 一个值都没了,则WithOut失败了 (改为WithOut继续尝试下一个rDemand);
+            rDemand.status = TOModelStatus_WithOut;
+            //TODO: 继续尝试下一个rDemand;
+            continue;
+        }
+        
+        //5. 依次对canset向下尝试或淘汰;
+        HDemandModel *hDemand = ARR_INDEX(bestRCanset.getCurFrame.subDemands, 0);
+        if (!hDemand) {
+            //> 没有hDemand,则应该是BUG,因为algModel初始时,就有hDemand了;
+        }
+        if (!hDemand.alreadyInitCansetModels) {
+            //> hDemand没初始化过,直接return转hSolution为它求解;
+        }
+        
+        //6. ======== 3级: hDemand.cansets竞争排序 ========
+        TOFoModel *bestHCanset = [self plan4Cansets:hDemand];
+        if (!bestHCanset) {
+            //> 一个值都没了,则WithOut失败了 (改为WithOut继续尝试下一个rDemand);
+            hDemand.status = TOModelStatus_WithOut;
+            //TODO: 继续尝试下一个baseDemand.Canset;
+        }
+        
+        //TODO: 这里:
+        //1. 如果失败就回退一层,找下一个baseDemand.bestCanset (重新实时竞争,得出最佳解);
+        //2. 如果成功继续下一层,找下一个subDemand.bestCanset (继续实时竞争,得出最佳解);
+        
+        //7. ======== 3+级: 继续向下hCansets竞争排序 ========
+        //5. 依次对canset向下尝试或淘汰;
+        HDemandModel *hDemand = ARR_INDEX(bestRCanset.getCurFrame.subDemands, 0);
+        if (!hDemand) {
+            //> 没有hDemand,则应该是BUG,因为algModel初始时,就有hDemand了;
+        }
+        if (!hDemand.alreadyInitCansetModels) {
+            //> hDemand没初始化过,直接return转hSolution为它求解;
+        }
+        
+    }
     
     //2. 对firstRootDemand取得分字典 (参考24195-2 & 24196示图);
     NSMutableDictionary *scoreDic = [[NSMutableDictionary alloc] init];
     NSLog(@"----------------------------------------------------------");
-    [self score_Multi:demand scoreDic:scoreDic prefixNum:0];
+    
     NSLog(@"----------------------------------------------------------");
     
     //3. 转给TCPlan取最优路径;
     DebugE();
-    return [TCPlan plan:demand scoreDic:scoreDic];
+    return nil;//return [TCSolution solution:endBranch endScore:endBranchScore];
+}
+
++(NSArray*) plan4RDemands:(NSArray*)rDemands {
+    //1. 为了性能好,先算出排序任务分: 先把每个rDemand都求出含进度的总分,并用于排序 (参考31052-todo2);;
+    NSArray *mapArr = [SMGUtils convertArr:rDemands convertBlock:^id(ReasonDemandModel *obj) {
+        CGFloat totalScore = -[AIScore progressScore4Demand_Out:obj];
+        return [MapModel newWithV1:obj v2:@(totalScore) v3:@(obj.initTime)];
+    }];
+    
+    //2. 排序 (第一因子得分,第二因子更新任务);
+    NSArray *sort = [SMGUtils sortBig2Small:mapArr compareBlock1:^double(MapModel *obj) {
+        return NUMTOOK(obj.v2).doubleValue;
+    } compareBlock2:^double(MapModel *obj) {
+        return NUMTOOK(obj.v3).doubleValue;
+    }];
+    
+    //3. 转回rDemand类型,并返回;
+    return [SMGUtils convertArr:sort convertBlock:^id(MapModel *obj) {
+        return obj.v1;
+    }];
+}
+
++(TOFoModel*) plan4Cansets:(DemandModel*)demand {
+    return [TCSolutionUtil realTimeRankCansets:demand zonHeScoreBlock:nil debugMode:false];
 }
 
 @end

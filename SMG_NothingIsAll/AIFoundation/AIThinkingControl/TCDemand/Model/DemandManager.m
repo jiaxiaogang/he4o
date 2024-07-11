@@ -315,6 +315,10 @@
     }];
 }
 
+-(NSArray*) getCanDecisionDemandV3 {
+    return [self.loopCache.array copy];
+}
+
 /**
  *  MARK:--------------------获取任务 (全部返回: 用于反馈和可视化等)--------------------
  *  @desc 排序方式: 从大到小;

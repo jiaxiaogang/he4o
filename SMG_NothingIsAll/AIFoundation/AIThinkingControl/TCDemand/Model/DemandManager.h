@@ -35,6 +35,7 @@
  */
 -(DemandModel*) getCanDecisionDemand;   //获取当前,可以继续决策的任务 (未完成 & 非等待反馈ActYes);
 -(NSArray*) getCanDecisionDemandV2;
+-(NSArray*) getCanDecisionDemandV3;
 
 
 /**
