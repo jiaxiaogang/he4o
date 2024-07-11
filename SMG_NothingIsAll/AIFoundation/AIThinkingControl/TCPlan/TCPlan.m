@@ -189,4 +189,29 @@
     }];
 }
 
+//MARK:===============================================================
+//MARK:                     < TCPlanV2 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------新螺旋架构score方法--------------------
+ */
++(TCResult*) planV2{
+    //1. 取当前任务 (参考24195-1);
+    [theTC updateOperCount:kFILENAME min:1200];
+    Debug();
+    //OSTitleLog(@"TCScore");
+    DemandModel *demand = [theTC.outModelManager getCanDecisionDemand];
+    
+    //2. 对firstRootDemand取得分字典 (参考24195-2 & 24196示图);
+    NSMutableDictionary *scoreDic = [[NSMutableDictionary alloc] init];
+    NSLog(@"----------------------------------------------------------");
+    [self score_Multi:demand scoreDic:scoreDic prefixNum:0];
+    NSLog(@"----------------------------------------------------------");
+    
+    //3. 转给TCPlan取最优路径;
+    DebugE();
+    return [TCPlan plan:demand scoreDic:scoreDic];
+}
+
 @end

@@ -34,6 +34,7 @@
  *  MARK:--------------------获取任务 (决策部分: 可继续决策的部分)--------------------
  */
 -(DemandModel*) getCanDecisionDemand;   //获取当前,可以继续决策的任务 (未完成 & 非等待反馈ActYes);
+-(NSArray*) getCanDecisionDemandV2;
 
 
 /**

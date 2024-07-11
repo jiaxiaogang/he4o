@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 /**
- *  MARK:--------------------TCPlan计划--------------------
+ *  MARK:--------------------TCPlan规划--------------------
  *  @desc 即旧架构中的dataOut方法 (参考24195);
  *  @version
  *      2021.11.28: 将dataOut迁移到TCSolution中做为入口方法;

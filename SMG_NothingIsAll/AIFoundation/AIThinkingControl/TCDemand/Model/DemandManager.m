@@ -234,6 +234,7 @@
  *      2021.12.23: 最优末枝处在actYes状态时,继续secondRoot (参考24212-7);
  *      2022.06.01: 末端actYes时,root不应期,因为actYes是向上传染不向下 (参考26185-TODO3);
  *      2022.09.24: 失效处理: 根任务失效时,不进行决策 (参考27123-问题2-todo2);
+ *      2024.07.11: 把能决策的root全返回,而不是只返bestRoot一条,因为到TCPlan中可能还要一条条依次淘汰呢 (参考32071-分析2);
  *  @todo
  *      2024.01.31: 以后可以考虑把root的sort也改到TCScore中处理竞争 (但注意一点: 要把refreshCmvCacheSort()中的进度分等也集成过去);
  */
@@ -295,6 +296,23 @@
     }
     if (result) NSLog(@"Demand竞争 <<<== %@ 共%ld条",result?@"SUCCESS":@"FAILURE",self.loopCache.count);
     return result;
+}
+
+-(NSArray*) getCanDecisionDemandV2 {
+    //1. 数据检查
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    if (!ARRISOK(self.loopCache.array)) return nil;
+    
+    //2. 重排序 & 取当前序列最前;
+    [self refreshCmvCacheSort];
+    
+    //3. 过滤掉不可决策的;
+    [result addObjectsFromArray:self.loopCache.array];
+    return [SMGUtils filterArr:result checkValid:^BOOL(ReasonDemandModel *item) {
+        //5. 最末枝在actYes状态时,不应期,继续secondRoot;
+        BOOL endHavActYes = [TOUtils endHavActYes:item];
+        return !endHavActYes && item.status != TOModelStatus_Finish && item.status != TOModelStatus_WithOut && !item.isExpired;
+    }];
 }
 
 /**
