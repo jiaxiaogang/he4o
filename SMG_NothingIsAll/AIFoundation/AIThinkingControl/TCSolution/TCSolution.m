@@ -57,6 +57,20 @@
     return [[[TCResult new:false] mkMsg:@"solution末枝非foModel也非demandModel"] mkStep:15];
 }
 
++(TCResult*) solutionV2:(TOModelBase*)endBranch {
+    if (ISOK(endBranch, ReasonDemandModel.class)) {
+        //1. R任务继续取解决方案 (参考24203-2);
+        return [self rSolution:(ReasonDemandModel*)endBranch];
+    } else if (ISOK(endBranch, HDemandModel.class)) {
+        //2. H任务继续取解决方案 (参考24203-2);
+        return [self hSolution:(HDemandModel*)endBranch];
+    } else if (ISOK(endBranch, TOFoModel.class)) {
+        //3. 传入solutionFo时: 直接执行action();
+        return [TCAction action:(TOFoModel*)endBranch];
+    }
+    return [[[TCResult new:false] mkMsg:@"solution的endBranch: 非R非H也非Canset"] mkStep:19];
+}
+
 /**
  *  MARK:--------------------rSolution--------------------
  *  @desc 参考24154-单轮;

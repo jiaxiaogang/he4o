@@ -194,7 +194,7 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------新螺旋架构TCPlan规划算法--------------------
+ *  MARK:--------------------新螺旋架构TCPlan规划算法 (参考32072-模型图)--------------------
  *  @desc
  *      1. 如果单条失败就尝试下一条,找下一个baseDemand.bestCanset (重新实时竞争,得出最佳解);
  *      2. 如果单条成功就继续下一层,找下一个subDemand.bestCanset (继续实时竞争,得出最佳解);
@@ -206,18 +206,23 @@
     Debug();
     //OSTitleLog(@"TCScore");
     NSLog(@"----------------------------------------------------------");
-    BOOL success = [self plan4RDemands];
+    __block TCResult *result = nil;
+    BOOL success = [self plan4RDemands:^(TCResult *_result) {
+        result = _result;
+    }];
+    if (!result) result = [[[TCResult new:false] mkMsg:@"TCPlanV2返回了nil"] mkStep:10];
     NSLog(@"----------------------------------------------------------");
     
     //3. 转给TCPlan取最优路径;
     DebugE();
-    return nil;//return [TCSolution solution:endBranch endScore:endBranchScore];
+    return result;
 }
 
 /**
- *  MARK:--------------------Roots竞争排序 & 逐条尝试--------------------
+ *  MARK:--------------------Roots竞争排序 & 逐条尝试 (参考32072-模型图)--------------------
+ *  @param complate 把result传回来;
  */
-+(BOOL) plan4RDemands {
++(BOOL) plan4RDemands:(void(^)(TCResult*))complate {
     //1. Roots竞争排序;
     NSArray *roots = [theTC.outModelManager getCanDecisionDemandV3];
     
@@ -230,12 +235,13 @@
         //4. 成功: 当前条 -> 未初始化过,则直接进行solution;
         if (!root.alreadyInitCansetModels) {
             //> rDemand没初始化过,直接return转rSolultion为它求解;
-            [TCSolution solution:root endScore:0];
+            TCResult *re = [TCSolution solutionV2:root];
+            complate(re);
             return true;
         }
         
         //5. 继续: 下一层 -> 当前条继续向枝叶规划;
-        BOOL success = [self plan4Cansets:root];
+        BOOL success = [self plan4Cansets:root complate:complate];
         if (success) {
             return true;
         }
@@ -248,9 +254,9 @@
 }
 
 /**
- *  MARK:--------------------Cansets竞争排序 & 逐条尝试--------------------
+ *  MARK:--------------------Cansets竞争排序 & 逐条尝试 (参考32072-模型图)--------------------
  */
-+(BOOL) plan4Cansets:(DemandModel*)baseDemand {
++(BOOL) plan4Cansets:(DemandModel*)baseDemand complate:(void(^)(TCResult*))complate{
     //说明: 现在Cansets在实时竞争后,转实,以及反思,可行性检查,等都封装在实时竞争算法中了 (所以这里不是for循环的写法,当逐条尝试不通过时,重新调用下实时竞争算法吧);
     //1. ========== 先实时竞争 ==========
     TOFoModel *bestCanset = [TCSolutionUtil realTimeRankCansets:baseDemand zonHeScoreBlock:nil debugMode:false];
@@ -265,6 +271,15 @@
     
     //4. 等待: 继续等 -> 如果bestCanset在ActYes状态,直接返回成功,啥也不用干;
     if (bestCanset.status == TOModelStatus_ActYes) {
+        complate([[[TCResult new:true] mkMsg:@"TCPlan规划: 静默等待状态,继续等即可"] mkStep:11]);
+        return true;
+    }
+    
+    //5. 成功: 当前条 -> 当前Canset战胜了,不过还没行为化过,所以直接调用行为化action();
+    if (bestCanset.alreadyActionActIndex < bestCanset.cansetActIndex) {
+        //> 这里bestCanset的actIndex还没行为化过,所以不可能有subHDemand,此时可以先调用下[TCAction action:];
+        TCResult *re = [TCSolution solutionV2:bestCanset];
+        complate(re);
         return true;
     }
     
@@ -273,22 +288,23 @@
     if (!subHDemand) {
         //> 没有hDemand,则应该是BUG,因为algModel初始时,就有hDemand了;
         bestCanset.status = TOModelStatus_WithOut;
-        return [self plan4Cansets:baseDemand];//返回失败: 继续尝试下一个demand;
+        return [self plan4Cansets:baseDemand complate:complate];//返回失败: 继续尝试下一个demand;
     }
     
     //6. 成功: 当前条 -> 未初始化过,则直接进行solution;
     if (!subHDemand.alreadyInitCansetModels) {
         //> hDemand没初始化过,直接return转hSolution为它求解;
-        [TCSolution solution:subHDemand endScore:0];
+        TCResult *re = [TCSolution solutionV2:subHDemand];
+        complate(re);
         return true;
     }
     
     //7. 继续: 下一层 -> 当前条继续向枝叶规划;
-    BOOL success = [self plan4Cansets:subHDemand];
+    BOOL success = [self plan4Cansets:subHDemand complate:complate];
     
     //8. 驳回: 下一条 -> 当前hDemand的枝叶全失败了,继续尝试baseDemand的下一条 (逐条尝试);
     if (!success) {
-        return [self plan4Cansets:baseDemand];
+        return [self plan4Cansets:baseDemand complate:complate];
     }
     return true;
 }

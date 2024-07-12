@@ -168,4 +168,7 @@
 -(void) initRealCansetToDic;    //初始化已发生映射;
 -(void) updateRealCansetToDic;  //更新反馈匹配映射;
 
+//Action已经执行过了ActIndex;
+@property (assign, nonatomic) NSInteger alreadyActionActIndex;
+
 @end

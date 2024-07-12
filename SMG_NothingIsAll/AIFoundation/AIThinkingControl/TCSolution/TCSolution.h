@@ -17,5 +17,6 @@
 @interface TCSolution : NSObject
 
 +(TCResult*) solution:(TOModelBase*)endBranch endScore:(double)endScore;
++(TCResult*) solutionV2:(TOModelBase*)endBranch;
 
 @end
