@@ -194,72 +194,19 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------新螺旋架构score方法--------------------
+ *  MARK:--------------------新螺旋架构TCPlan规划算法--------------------
+ *  @desc
+ *      1. 如果单条失败就尝试下一条,找下一个baseDemand.bestCanset (重新实时竞争,得出最佳解);
+ *      2. 如果单条成功就继续下一层,找下一个subDemand.bestCanset (继续实时竞争,得出最佳解);
+ *      3. 如果全部失败就退至上一层,找上一个otherBaseDemand (重新实时竞争,得出另一个最佳解);
  */
 +(TCResult*) planV2{
     //1. 取当前任务 (参考24195-1);
     [theTC updateOperCount:kFILENAME min:1200];
     Debug();
     //OSTitleLog(@"TCScore");
-    NSArray *roots = [theTC.outModelManager getCanDecisionDemandV3];
-    
-    //2. ======== 1级: rDemands竞争排序 ========
-    NSArray *rankRoots = [self plan4RDemands:roots];
-    
-    //3. 依次对rDemand向下尝试或淘汰;
-    for (ReasonDemandModel *rDemand in rankRoots) {
-        if (rDemand.status == TOModelStatus_Finish || rDemand.status == TOModelStatus_WithOut) continue;
-        
-        if (!rDemand.alreadyInitCansetModels) {
-            //> rDemand没初始化过,直接return转rSolultion为它求解;
-        }
-        
-        //4. ======== 2级: cansets竞争排序 ========
-        TOFoModel *bestRCanset = [self plan4Cansets:rDemand];
-        if (!bestRCanset) {
-            //> 一个值都没了,则WithOut失败了 (改为WithOut继续尝试下一个rDemand);
-            rDemand.status = TOModelStatus_WithOut;
-            //TODO: 继续尝试下一个rDemand;
-            continue;
-        }
-        
-        //5. 依次对canset向下尝试或淘汰;
-        HDemandModel *hDemand = ARR_INDEX(bestRCanset.getCurFrame.subDemands, 0);
-        if (!hDemand) {
-            //> 没有hDemand,则应该是BUG,因为algModel初始时,就有hDemand了;
-        }
-        if (!hDemand.alreadyInitCansetModels) {
-            //> hDemand没初始化过,直接return转hSolution为它求解;
-        }
-        
-        //6. ======== 3级: hDemand.cansets竞争排序 ========
-        TOFoModel *bestHCanset = [self plan4Cansets:hDemand];
-        if (!bestHCanset) {
-            //> 一个值都没了,则WithOut失败了 (改为WithOut继续尝试下一个rDemand);
-            hDemand.status = TOModelStatus_WithOut;
-            //TODO: 继续尝试下一个baseDemand.Canset;
-        }
-        
-        //TODO: 这里:
-        //1. 如果失败就回退一层,找下一个baseDemand.bestCanset (重新实时竞争,得出最佳解);
-        //2. 如果成功继续下一层,找下一个subDemand.bestCanset (继续实时竞争,得出最佳解);
-        
-        //7. ======== 3+级: 继续向下hCansets竞争排序 ========
-        //5. 依次对canset向下尝试或淘汰;
-        HDemandModel *hDemand = ARR_INDEX(bestRCanset.getCurFrame.subDemands, 0);
-        if (!hDemand) {
-            //> 没有hDemand,则应该是BUG,因为algModel初始时,就有hDemand了;
-        }
-        if (!hDemand.alreadyInitCansetModels) {
-            //> hDemand没初始化过,直接return转hSolution为它求解;
-        }
-        
-    }
-    
-    //2. 对firstRootDemand取得分字典 (参考24195-2 & 24196示图);
-    NSMutableDictionary *scoreDic = [[NSMutableDictionary alloc] init];
     NSLog(@"----------------------------------------------------------");
-    
+    BOOL success = [self plan4RDemands];
     NSLog(@"----------------------------------------------------------");
     
     //3. 转给TCPlan取最优路径;
@@ -267,28 +214,83 @@
     return nil;//return [TCSolution solution:endBranch endScore:endBranchScore];
 }
 
-+(NSArray*) plan4RDemands:(NSArray*)rDemands {
-    //1. 为了性能好,先算出排序任务分: 先把每个rDemand都求出含进度的总分,并用于排序 (参考31052-todo2);;
-    NSArray *mapArr = [SMGUtils convertArr:rDemands convertBlock:^id(ReasonDemandModel *obj) {
-        CGFloat totalScore = -[AIScore progressScore4Demand_Out:obj];
-        return [MapModel newWithV1:obj v2:@(totalScore) v3:@(obj.initTime)];
-    }];
+/**
+ *  MARK:--------------------Roots竞争排序 & 逐条尝试--------------------
+ */
++(BOOL) plan4RDemands {
+    //1. Roots竞争排序;
+    NSArray *roots = [theTC.outModelManager getCanDecisionDemandV3];
     
-    //2. 排序 (第一因子得分,第二因子更新任务);
-    NSArray *sort = [SMGUtils sortBig2Small:mapArr compareBlock1:^double(MapModel *obj) {
-        return NUMTOOK(obj.v2).doubleValue;
-    } compareBlock2:^double(MapModel *obj) {
-        return NUMTOOK(obj.v3).doubleValue;
-    }];
+    //2. 逐条尝试: 依次对root向下尝试或淘汰;
+    for (ReasonDemandModel *root in roots) {
+        
+        //3. 驳回: 下一条 -> 已完成 或 已无解,则尝试下一条Root;
+        if (root.status == TOModelStatus_Finish || root.status == TOModelStatus_WithOut) continue;
+        
+        //4. 成功: 当前条 -> 未初始化过,则直接进行solution;
+        if (!root.alreadyInitCansetModels) {
+            //> rDemand没初始化过,直接return转rSolultion为它求解;
+            [TCSolution solution:root endScore:0];
+            return true;
+        }
+        
+        //5. 继续: 下一层 -> 当前条继续向枝叶规划;
+        BOOL success = [self plan4Cansets:root];
+        if (success) {
+            return true;
+        }
+        
+        //6. 未成功,则继续尝试下一条;
+    }
     
-    //3. 转回rDemand类型,并返回;
-    return [SMGUtils convertArr:sort convertBlock:^id(MapModel *obj) {
-        return obj.v1;
-    }];
+    //7. 全未成功,则返回false;
+    return false;
 }
 
-+(TOFoModel*) plan4Cansets:(DemandModel*)demand {
-    return [TCSolutionUtil realTimeRankCansets:demand zonHeScoreBlock:nil debugMode:false];
+/**
+ *  MARK:--------------------Cansets竞争排序 & 逐条尝试--------------------
+ */
++(BOOL) plan4Cansets:(DemandModel*)baseDemand {
+    //说明: 现在Cansets在实时竞争后,转实,以及反思,可行性检查,等都封装在实时竞争算法中了 (所以这里不是for循环的写法,当逐条尝试不通过时,重新调用下实时竞争算法吧);
+    //1. ========== 先实时竞争 ==========
+    TOFoModel *bestCanset = [TCSolutionUtil realTimeRankCansets:baseDemand zonHeScoreBlock:nil debugMode:false];
+    
+    //2. ========== 依次对canset向下尝试或淘汰 ==========
+    //3. 驳回: 上一层 -> 发现无解,所有Cansts全失败了,退回上一层,重新实时竞争,继续尝试下一条;
+    if (!bestCanset) {
+        //> 一个值都没了,则WithOut失败了 (改为WithOut继续尝试下一个rDemand);
+        baseDemand.status = TOModelStatus_WithOut;
+        return false;//返回失败: 继续尝试下一个demand;
+    }
+    
+    //4. 等待: 继续等 -> 如果bestCanset在ActYes状态,直接返回成功,啥也不用干;
+    if (bestCanset.status == TOModelStatus_ActYes) {
+        return true;
+    }
+    
+    //5. 驳回: 下一条 -> H异常为空?那这条Canset失败,继续尝试baseDemand的下一条 (逐条尝试);
+    HDemandModel *subHDemand = ARR_INDEX(bestCanset.getCurFrame.subDemands, 0);
+    if (!subHDemand) {
+        //> 没有hDemand,则应该是BUG,因为algModel初始时,就有hDemand了;
+        bestCanset.status = TOModelStatus_WithOut;
+        return [self plan4Cansets:baseDemand];//返回失败: 继续尝试下一个demand;
+    }
+    
+    //6. 成功: 当前条 -> 未初始化过,则直接进行solution;
+    if (!subHDemand.alreadyInitCansetModels) {
+        //> hDemand没初始化过,直接return转hSolution为它求解;
+        [TCSolution solution:subHDemand endScore:0];
+        return true;
+    }
+    
+    //7. 继续: 下一层 -> 当前条继续向枝叶规划;
+    BOOL success = [self plan4Cansets:subHDemand];
+    
+    //8. 驳回: 下一条 -> 当前hDemand的枝叶全失败了,继续尝试baseDemand的下一条 (逐条尝试);
+    if (!success) {
+        return [self plan4Cansets:baseDemand];
+    }
+    return true;
 }
 
 @end

@@ -316,6 +316,8 @@
 }
 
 -(NSArray*) getCanDecisionDemandV3 {
+    //1. 重排序 & 然后直接返回;
+    [self refreshCmvCacheSort];
     return [self.loopCache.array copy];
 }
 
