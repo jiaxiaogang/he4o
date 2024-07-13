@@ -32,7 +32,6 @@
     [theTC updateOperCount:kFILENAME min:1200];
     Debug();
     //OSTitleLog(@"TCPlan");
-    NSLog(@"\n---------------------------------------------------------- START");
     __block TCResult *result = nil;
     [self plan4RDemands:^(TCResult *_result) {
         result = _result;
@@ -51,6 +50,7 @@
 +(BOOL) plan4RDemands:(void(^)(TCResult*))complate {
     //1. Roots竞争排序;
     NSArray *roots = [theTC.outModelManager getCanDecisionDemandV3];
+    if (ARRISOK(roots)) NSLog(@"\n---------------------------------------------------------- START");
     
     //2. 逐条尝试: 依次对root向下尝试或淘汰;
     for (ReasonDemandModel *root in roots) {
@@ -79,7 +79,7 @@
     }
     
     //7. 全未成功,则返回false;
-    NSLog(@"planV2 final failure");
+    if (ARRISOK(roots)) NSLog(@"planV2 final failure");
     return false;
 }
 

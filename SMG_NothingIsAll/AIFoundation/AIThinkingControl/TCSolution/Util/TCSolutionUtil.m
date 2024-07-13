@@ -237,7 +237,8 @@
     
     //11. 根据候选集综合分排序 (参考26128-2-2 & 26161-4);
     NSArray *sortModels = [AIRank cansetsRankingV4:cansetModels zonHeScoreBlock:zonHeScoreBlock debugMode:debugMode];
-
+    if (debugMode) NSLog(@"任务%@的实时竞争Top10: %@",ShortDesc4Pit([HeLogUtil demandLogPointer:demand]),CLEANSTR([SMGUtils convertArr:ARR_SUB(sortModels, 0, 10) convertBlock:^id(TOFoModel *obj) {return STRFORMAT(@"F%ld",obj.cansetFrom.pointerId);}]));
+    
     //13. 取通过S反思的最佳S;
     for (TOFoModel *item in sortModels) {
         BOOL score = [TCRefrection refrection:item demand:demand debugMode:debugMode];

@@ -32,6 +32,7 @@
     model.cansetCutIndex = cansetCutIndex;//R任务时,cansetCutIndex其实是顺着scene找上一帧有映射的 (参考TOUtils.goBackToFindConIndexByAbsIndex());
     model.cansetTargetIndex = cansetTargetIndex;
     model.sceneTargetIndex = sceneFromTargetIndex;//R任务时,其实rScene的目标就是最后一帧 (即目标 = rScene.count);
+    model.alreadyActionActIndex = -1;
     
     //2. TOFoModel相关赋值;
     model.content_p = cansetFrom_p;
@@ -55,6 +56,7 @@
     model.cansetCutIndex = cansetCutIndex;//H任务时,cansetCutIndex其实是顺着scene找上一帧有映射的 (参考TOUtils.goBackToFindConIndexByAbsIndex());
     model.cansetTargetIndex = cansetTargetIndex;
     model.sceneTargetIndex = sceneTargetIndex;//H任务时,其实hScene的目标就是hScene的下一帧 (即目标 = hScene.cutIndex + 1);
+    model.alreadyActionActIndex = -1;
     
     //2. TOFoModel相关赋值;
     model.content_p = canset;

@@ -80,11 +80,14 @@
 +(NSString*) singleVision:(TOModelBase*)model{
     //1. 取content_p
     AIKVPointer *content_p = nil;
+    NSString *isInfectedDesc = @"";
     if (ISOK(model, ReasonDemandModel.class)) {
         ReasonDemandModel *rData = (ReasonDemandModel*)model;
         content_p = rData.protoOrRegroupFo;
     } else if(ISOK(model, TOFoModel.class)){
-        content_p = ((TOFoModel*)model).cansetFrom;
+        TOFoModel *foModel = (TOFoModel*)model;
+        content_p = foModel.cansetFrom;
+        isInfectedDesc = foModel.isInfected ? @" 传染" : @" 唤醒";
     } else if(ISOK(model, TOModelBase.class)){
         content_p = model.content_p;
     }
@@ -93,11 +96,10 @@
     if (content_p) {
         if (PitIsFo(content_p)) {
             AIFoNodeBase *node = [SMGUtils searchNode:content_p];
-            return STRFORMAT(@"%@: %@->%@ (%@ | %@)",NSStringFromClass(model.class),Pit2FStr(content_p),Mvp2Str(node.cmvNode_p),content_p.typeStr,TOStatus2Str(model.status));
+            return STRFORMAT(@"%@: %@->%@ (%@ | %@)%@",NSStringFromClass(model.class),Pit2FStr(content_p),Mvp2Str(node.cmvNode_p),content_p.typeStr,TOStatus2Str(model.status),isInfectedDesc);
         }else{
-            return STRFORMAT(@"%@: %@ (%@ | %@)",NSStringFromClass(model.class),Pit2FStr(content_p),content_p.typeStr,TOStatus2Str(model.status));
+            return STRFORMAT(@"%@: %@ (%@ | %@)%@",NSStringFromClass(model.class),Pit2FStr(content_p),content_p.typeStr,TOStatus2Str(model.status),isInfectedDesc);
         }
-        
     }else{
         return STRFORMAT(@"%@",NSStringFromClass(model.class));
     }
