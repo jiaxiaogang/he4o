@@ -83,7 +83,9 @@
     if (ISOK(model, ReasonDemandModel.class)) {
         ReasonDemandModel *rData = (ReasonDemandModel*)model;
         content_p = rData.protoOrRegroupFo;
-    }else if(ISOK(model, TOModelBase.class)){
+    } else if(ISOK(model, TOFoModel.class)){
+        content_p = ((TOFoModel*)model).cansetFrom;
+    } else if(ISOK(model, TOModelBase.class)){
         content_p = model.content_p;
     }
     

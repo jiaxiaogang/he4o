@@ -58,7 +58,6 @@
 }
 
 +(TCResult*) solutionV2:(TOModelBase*)endBranch {
-    NSLog(@"fltx2 取得最终胜利的sub到root结构: %@",endBranch ? [TOModelVision cur2Root:endBranch] : nil);
     if (ISOK(endBranch, ReasonDemandModel.class)) {
         //1. R任务继续取解决方案 (参考24203-2);
         return [self rSolution:(ReasonDemandModel*)endBranch];
