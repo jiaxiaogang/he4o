@@ -39,6 +39,7 @@
     
     //2. 标记cansetActIndex帧已经执行过action();
     foModel.alreadyActionActIndex = foModel.cansetActIndex;
+    NSLog(@"set alreadyActionActIndex:%ld from:F%ld.A%ld",foModel.cansetActIndex,foModel.cansetFrom.pointerId,foModel.getCurFrame.content_p.pointerId);
     
     //3. 进行反思识别,如果不通过时,回到TCScore可能会尝试先解决子任务,通过时继续行为化 (参考30054-todo7);
     [TCRegroup actionRegroup:foModel];

@@ -205,13 +205,12 @@
     [theTC updateOperCount:kFILENAME min:1200];
     Debug();
     //OSTitleLog(@"TCScore");
-    NSLog(@"----------------------------------------------------------");
+    NSLog(@"----------------------------------------------------------START");
     __block TCResult *result = nil;
     [self plan4RDemands:^(TCResult *_result) {
         result = _result;
     }];
     if (!result) result = [[[TCResult new:false] mkMsg:@"TCPlanV2返回了nil"] mkStep:10];
-    NSLog(@"----------------------------------------------------------");
     
     //log
     for (ReasonDemandModel *root in theTC.outModelManager.getAllDemand) {
@@ -233,7 +232,7 @@
     
     //2. 逐条尝试: 依次对root向下尝试或淘汰;
     for (ReasonDemandModel *root in roots) {
-        NSLog(@"itemRoot:%@",Pit2FStr(root.protoOrRegroupFo));
+        NSLog(@"%@itemRoot -> 执行:%@",[HeLogUtil getPrefixStr:0],ShortDesc4Pit([HeLogUtil demandLogPointer:root]));
         
         //3. 驳回: 下一条 -> 已完成 或 已无解,则尝试下一条Root;
         if (root.status == TOModelStatus_Finish || root.status == TOModelStatus_WithOut) continue;
@@ -241,15 +240,14 @@
         //4. 成功: 当前条 -> 未初始化过,则直接进行solution;
         if (!root.alreadyInitCansetModels) {
             //> rDemand没初始化过,直接return转rSolultion为它求解;
+            NSLog(@"planV2 sucess1 执行rootRDemand求解:%@\n---------------------------------------------------------- FINISH",ShortDesc4Pit(root.protoOrRegroupFo));
             TCResult *re = [TCSolution solutionV2:root];
             complate(re);
-            NSLog(@"planV2 sucess1 执行rootRDemand求解:%@",ShortDesc4Pit(root.protoOrRegroupFo));
             return true;
         }
         
         //5. 继续: 下一层 -> 当前条继续向枝叶规划;
-        NSLog(@"%@itemDemand -> 执行:%@",[HeLogUtil getPrefixStr:1],ShortDesc4Pit([HeLogUtil demandLogPointer:root]));
-        BOOL success = [self plan4Cansets:root complate:complate prefixNum:2];
+        BOOL success = [self plan4Cansets:root complate:complate prefixNum:1];
         if (success) {
             return true;
         }
@@ -271,7 +269,6 @@
     TOFoModel *bestCanset = [TCSolutionUtil realTimeRankCansets:baseDemand zonHeScoreBlock:nil debugMode:false];
     NSLog(@"%@item评分cansets竞争 -> 胜者:%@",[HeLogUtil getPrefixStr:prefixNum],Pit2FStr(bestCanset.cansetFrom));
     
-    
     //2. ========== 依次对canset向下尝试或淘汰 ==========
     //3. 驳回: 上一层 -> 发现无解,所有Cansts全失败了,退回上一层,重新实时竞争,继续尝试下一条;
     if (!bestCanset) {
@@ -280,19 +277,20 @@
         return false;//返回失败: 继续尝试下一个demand;
     }
     
+    //TODO: 此处应该是actYes状态,且子全无解时,再选择等待? (比如: 等饭熟,有苹果也会先吃一个垫垫);
     //4. 等待: 继续等 -> 如果bestCanset在ActYes状态,直接返回成功,啥也不用干;
     if (bestCanset.status == TOModelStatus_ActYes) {
+        NSLog(@"planV2 success2 继续bestCanset的静默等待:%@\n---------------------------------------------------------- FINISH",ShortDesc4Pit(bestCanset.cansetFrom));
         complate([[[TCResult new:true] mkMsg:@"TCPlan规划: 静默等待状态,继续等即可"] mkStep:11]);
-        NSLog(@"planV2 success2 继续bestCanset的静默等待:%@",ShortDesc4Pit(bestCanset.cansetFrom));
         return true;
     }
     
     //5. 成功: 当前条 -> 当前Canset战胜了,不过还没行为化过,所以直接调用行为化action();
     if (bestCanset.alreadyActionActIndex < bestCanset.cansetActIndex) {
         //> 这里bestCanset的actIndex还没行为化过,所以不可能有subHDemand,此时可以先调用下[TCAction action:];
+        NSLog(@"planV2 success3 执行bestCanset的求解:%@ %ld %ld\n---------------------------------------------------------- FINISH",ShortDesc4Pit(bestCanset.cansetFrom),bestCanset.alreadyActionActIndex,bestCanset.cansetActIndex);
         TCResult *re = [TCSolution solutionV2:bestCanset];
         complate(re);
-        NSLog(@"planV2 success3 执行bestCanset的求解:%@",ShortDesc4Pit(bestCanset.cansetFrom));
         return true;
     }
     
@@ -307,14 +305,14 @@
     //6. 成功: 当前条 -> 未初始化过,则直接进行solution;
     if (!subHDemand.alreadyInitCansetModels) {
         //> hDemand没初始化过,直接return转hSolution为它求解;
+        NSLog(@"planV2 success4 执行subHDemand的求解:%@\n---------------------------------------------------------- FINISH",ShortDesc4Pit(subHDemand.baseOrGroup.content_p));
         TCResult *re = [TCSolution solutionV2:subHDemand];
         complate(re);
-        NSLog(@"planV2 success4 执行subHDemand的求解:%@",ShortDesc4Pit(subHDemand.baseOrGroup.content_p));
         return true;
     }
     
     //7. 继续: 下一层 -> 当前条继续向枝叶规划;
-    NSLog(@"%@itemDemand -> 执行:%@",[HeLogUtil getPrefixStr:prefixNum + 1],ShortDesc4Pit([HeLogUtil demandLogPointer:subHDemand]));
+    NSLog(@"%@itemHDemand -> 执行:%@",[HeLogUtil getPrefixStr:prefixNum + 1],ShortDesc4Pit([HeLogUtil demandLogPointer:subHDemand]));
     BOOL success = [self plan4Cansets:subHDemand complate:complate prefixNum:prefixNum + 2];
     
     //8. 驳回: 下一条 -> 当前hDemand的枝叶全失败了,继续尝试baseDemand的下一条 (逐条尝试);

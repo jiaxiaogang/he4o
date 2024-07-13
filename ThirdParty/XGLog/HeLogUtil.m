@@ -116,11 +116,11 @@
 
 //缩进的前辍,每缩进单位两个空字符;
 +(NSString*) getPrefixStr:(int)prefixNum {
-    NSString *result = @"";
+    NSString *spaceStr = @"";
     for (int i = 0; i < prefixNum; i++) {
-        result = STRFORMAT(@"%@  ",result);
+        spaceStr = STRFORMAT(@"%@  ",spaceStr);
     }
-    return result;
+    return STRFORMAT(@"%@%@ ",spaceStr,[TOModelVisionUtil getUnorderPrefix:prefixNum]);
 }
 
 @end
