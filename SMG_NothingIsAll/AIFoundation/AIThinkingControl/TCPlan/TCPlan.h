@@ -18,5 +18,6 @@
 @interface TCPlan : NSObject
 
 +(TCResult*) plan:(DemandModel*)rootDemand scoreDic:(NSMutableDictionary*)scoreDic;
++(TCResult*) planV2;
 
 @end
