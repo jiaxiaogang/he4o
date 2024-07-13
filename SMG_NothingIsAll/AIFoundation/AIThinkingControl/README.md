@@ -18,8 +18,7 @@
             * 需(任务)
                 * TCDemand
         * OUT
-            * 求(计划)
-                * TCScore
+            * 求(规划)
                 * TCPlan
             * 决(求解)
                 * TCCanset

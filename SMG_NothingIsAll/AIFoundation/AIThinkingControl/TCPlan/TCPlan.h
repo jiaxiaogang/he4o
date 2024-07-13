@@ -17,7 +17,7 @@
  */
 @interface TCPlan : NSObject
 
-+(TCResult*) plan:(DemandModel*)rootDemand scoreDic:(NSMutableDictionary*)scoreDic;
-+(TCResult*) planV2;
++(void) planFromIfTCNeed;
++(TCResult*) planFromTOQueue;
 
 @end

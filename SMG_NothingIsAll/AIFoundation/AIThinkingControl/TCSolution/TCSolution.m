@@ -110,7 +110,7 @@
     }].count;
     if (deepCount >= cDemandDeepLimit || bestCount >= cSolutionNarrowLimit) {
         demand.status = TOModelStatus_WithOut;
-        [TCScore scoreFromIfTCNeed];
+        [TCPlan planFromIfTCNeed];
         NSLog(@">>>>>> rSolution 已达limit条 (S数:%ld 层数:%ld)",demand.actionFoModels.count,deepCount);
         return [[[TCResult new:false] mkMsg:@"rSolution > limit"] mkStep:22];
     }
@@ -144,7 +144,7 @@
         //b) 下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);
         demand.status = TOModelStatus_WithOut;
         NSLog(@">>>>>> rSolution 无计可施");
-        [TCScore scoreFromIfTCNeed];
+        [TCPlan planFromIfTCNeed];
         return [[[TCResult new:false] mkMsg:@"rSolution 无计可施"] mkStep:23];
     }
 }
@@ -184,7 +184,7 @@
     NSInteger deepCount = [TOUtils getBaseDemandsDeepCount:demandModel];
     if (deepCount >= cDemandDeepLimit || demandModel.actionFoModels.count >= cSolutionNarrowLimit) {
         demandModel.status = TOModelStatus_WithOut;
-        [TCScore scoreFromIfTCNeed];
+        [TCPlan planFromIfTCNeed];
         NSLog(@"------->>>>>> pSolution 已达limit条");
         return [[[TCResult new:false] mkMsg:@"pSolution > limit"] mkStep:22];
     }
@@ -239,7 +239,7 @@
     DebugE();
     demandModel.status = TOModelStatus_WithOut;
     NSLog(@">>>>>> pSolution 无计可施");
-    [TCScore scoreFromIfTCNeed];
+    [TCPlan planFromIfTCNeed];
     return [[[TCResult new:false] mkMsg:@"pSolution 无计可施"] mkStep:23];
 }
 
@@ -267,7 +267,7 @@
     NSInteger deepCount = [TOUtils getBaseDemandsDeepCount:hDemand];
     if (deepCount >= cDemandDeepLimit || hDemand.actionFoModels.count >= cSolutionNarrowLimit) {
         [hDemand setStatus2WithOut];
-        [TCScore scoreFromIfTCNeed];
+        [TCPlan planFromIfTCNeed];
         NSLog(@"------->>>>>> hSolution 已达limit条");
         return [[[TCResult new:false] mkMsg:@"hSolution > limit"] mkStep:22];
     }
@@ -332,7 +332,7 @@
         //b) 下一方案失败时,标记withOut,并下轮循环 (竞争末枝转Action) (参考24203-2b);
         [hDemand setStatus2WithOut];
         NSLog(@">>>>>> hSolution 无计可施");
-        [TCScore scoreFromIfTCNeed];
+        [TCPlan planFromIfTCNeed];
         return [[[TCResult new:false] mkMsg:@"hSolution无计可施"] mkStep:23];
     }
 }

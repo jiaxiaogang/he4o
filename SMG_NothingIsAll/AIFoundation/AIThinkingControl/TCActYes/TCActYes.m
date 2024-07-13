@@ -80,11 +80,11 @@
 //                DebugE();
 //                if (type == ATPlus) {
 //                    algModel.status = TOModelStatus_Finish;
-//                    [TCScore scoreFromIfTCNeed];
+//                    [TCPlan planFromIfTCNeed];
 //                }else{
 //                    //6. 无反馈时,则R预测的坏事自然未发生 (OutBack未返回,静默成功) (参考22153-A22);
 //                    rDemand.status = TOModelStatus_Finish;
-//                    [TCScore scoreFromIfTCNeed];//并继续决策;
+//                    [TCPlan planFromIfTCNeed];//并继续决策;
 //                }
 //            }
 //        }];
@@ -145,7 +145,7 @@
 //                DebugE();
 //                if (foModel.status == TOModelStatus_ActYes) {
 //                    foModel.status = TOModelStatus_ActNo;
-//                    [TCScore scoreFromIfTCNeed];
+//                    [TCPlan planFromIfTCNeed];
 //                }
 //            }
 //        }
@@ -194,7 +194,7 @@
 //            algModel.status = TOModelStatus_ActNo;
 //
 //            //6. 2021.12.02: 失败时,继续决策;
-//            [TCScore scoreFromIfTCNeed];
+//            [TCPlan planFromIfTCNeed];
 //        }
 //    }];
 //}
@@ -234,7 +234,7 @@
 //            DebugE();
 //            if (foModel.status == TOModelStatus_ActYes) {
 //                foModel.status = TOModelStatus_ActNo;
-//                [TCScore scoreFromIfTCNeed];
+//                [TCPlan planFromIfTCNeed];
 //            }
 //        }
 //    }];
@@ -295,7 +295,7 @@
             if (solutionModel.status == TOModelStatus_OuterBack) {
                 solutionModel.status = TOModelStatus_ActNo;
                 demand.status = TOModelStatus_ActNo;
-                [TCScore scoreFromIfTCNeed];
+                [TCPlan planFromIfTCNeed];
             } else {
                 //f. 如果无反馈,则设为对baseRDemand有效,整个工作记忆同质解都唤醒一下 (参考31179-TODO2);
                 if (ISOK(solutionModel.baseOrGroup, ReasonDemandModel.class)) {
@@ -353,7 +353,7 @@
                 }
                 
                 //6. 2021.12.02: 失败时,继续决策;
-                [TCScore scoreFromIfTCNeed];
+                [TCPlan planFromIfTCNeed];
             }
             
             //7. log

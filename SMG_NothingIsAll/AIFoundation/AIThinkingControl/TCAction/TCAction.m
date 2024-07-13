@@ -45,7 +45,7 @@
     [TCRegroup actionRegroup:foModel];
     foModel.refrectionNo = ![TCRefrection actionRefrection:foModel];
     if (foModel.refrectionNo) {
-        [TCScore scoreFromIfTCNeed];
+        [TCPlan planFromIfTCNeed];
         foModel.status = TOModelStatus_ScoreNo;//反思不通过时直接改为ScoreNo (参考31083-TODO5);
         return [[[TCResult new:false] mkMsg:@"action反思不通过"] mkStep:31];
     }
@@ -92,7 +92,7 @@
         
         if (ISOK(foModel.baseOrGroup, ReasonDemandModel.class)) {
             [TCActYes frameActYes:foModel];
-            //[TCScore scoreFromIfTCNeed];//r输出完成时,继续决策;
+            //[TCPlan planFromIfTCNeed];//r输出完成时,继续决策;
         }else if(ISOK(foModel.baseOrGroup, HDemandModel.class)){
             //9. 构建触发器: H目标帧只需要等 (转hActYes) (参考25031-9);
             [TCActYes frameActYes:foModel];//h输出成功时,等待反馈;

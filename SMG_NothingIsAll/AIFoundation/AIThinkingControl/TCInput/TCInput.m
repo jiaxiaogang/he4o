@@ -86,7 +86,7 @@
     }
     
     //13. 转继续决策;
-    [TCScore scoreFromIfTCNeed];
+    [TCPlan planFromIfTCNeed];
 }
 
 /**
