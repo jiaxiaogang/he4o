@@ -380,6 +380,8 @@
 //当前可决策任务:CanDecisionDemand;
 #define Log4CanDecisionDemand false
 #define Log4NewDemand false
+//Plan日志开关
+#define Log4Plan false
 //反省
 #define Log4Rethink false
 #define Log4Effect false
