@@ -116,6 +116,7 @@
     int initToInfectedNum = [TOUtils initInfectedForCansetPool_Alg:hDemand];
     
     //TODOTOMORROW20240716: 此处在工作记忆中demand只有两层时,木棒皮果的H解,有大量只有: 0条或1条的情况 (参考32083);
+    NSLog(@"fltx1 此H的sub到root结构: %@",[TOModelVision cur2Root:hDemand]);
     
     
     
