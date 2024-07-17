@@ -227,6 +227,14 @@
         }];
         if (debugMode) NSLog(@"第8步 %@排除FRSTime来不及的:%ld",rhLog,cansetModels.count);//测时xx条
     }
+    
+    //10. 避免工作记忆纵向同枝上的HDemand重复,导致重复H求解 (参考32084-3-实践);
+    NSArray *baseHAlgs = [SMGUtils convertArr:[TOUtils getBaseDemands_AllDeep:demand] convertBlock:^id(HDemandModel *obj) {
+        return (ISOK(obj, HDemandModel.class)) ? Demand2Pit(obj) : nil;
+    }];
+    cansetModels = [SMGUtils filterArr:cansetModels checkValid:^BOOL(TOFoModel *item) {
+        return ![baseHAlgs containsObject:item.getCurFrame.content_p];
+    }];
 
     //10. 计算衰后stableScore并筛掉为0的 (参考26128-2-1 & 26161-5);
     //NSArray *outOfFos = [SMGUtils convertArr:cansetModels convertBlock:^id(TOFoModel *obj) {
