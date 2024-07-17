@@ -200,6 +200,7 @@
 #define PitIsFo(p) [NVHeUtil isFo:p]                                    //是否时序
 #define PitIsMv(p) [NVHeUtil isMv:p]                                    //是否价值
 #define PitIsAbs(p) [NVHeUtil isAbs:p]                                  //是否抽象节点
+#define Demand2Pit(demand) [HeLogUtil demandLogPointer:demand]          //任务转指针
 
 //ISOK
 #define ISOK(o, c) [SMGUtils isOk:o class:c]                            //obj强检查 (object class)

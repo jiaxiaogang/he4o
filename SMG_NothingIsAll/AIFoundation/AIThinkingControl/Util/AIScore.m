@@ -218,10 +218,13 @@
     //2. 取出最大进度值;
     CGFloat maxProgress = 0;
     for (TOFoModel *actionFo in demand.bestCansets) {
-        if (actionFo.status != TOModelStatus_Runing && actionFo.status != TOModelStatus_ActYes) continue;
+        BOOL statusOK = actionFo.status == TOModelStatus_Runing || actionFo.status == TOModelStatus_ActYes;
+        BOOL infectedOK = !actionFo.isInfected;
+        if (!statusOK || !infectedOK) continue;
         CGFloat progress = (float)(actionFo.cansetCutIndex + 1) / (actionFo.cansetTargetIndex + 1);//参考31052-公式1
         //NSLog(@"cansetFo: F%ld %@ (%ld/%ld)",actionFo.content_p.pointerId,TOStatus2Str(actionFo.status),actionFo.actionIndex+1,actionFo.targetIndex);
         //NSLog(@"进度:%.2f 热度:%.2f 进度分:%.2f",progress,hot,progressScore);
+        //NSLog(@"检查下actionFo状态是否有资格被评进度分: %@ %@ %@",TOStatus2Str(actionFo.status),CansetStatus2Str(actionFo.cansetStatus),actionFo.isInfected ? @"传染" : @"唤醒");
         maxProgress = MAX(maxProgress, progress);
     }
     
@@ -231,7 +234,7 @@
     
     //3. 求出总分 (参考31052-todo2);
     CGFloat totalScore = progressScore + demandScore;
-    //NSLog(@"任务分:%.2f + 最终进度分:%.2f = 总分:%.2f",demandScore,progressScore,totalScore);
+    //NSLog(@"任务分:%.2f + 最终进度分:%.2f = 总分:%.2f \t 任务:%@",demandScore,progressScore,totalScore,Pit2FStr(Demand2Pit(demand)));
     return totalScore;
 }
 
