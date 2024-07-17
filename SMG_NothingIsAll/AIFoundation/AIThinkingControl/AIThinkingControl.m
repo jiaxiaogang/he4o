@@ -75,11 +75,32 @@ static AIThinkingControl *_instance;
 
 -(void) initDisplay {
     [self runToLoop];
+    [self runTiLoop];
 }
 
 //MARK:===============================================================
 //MARK:                     < 输入流程 >
 //MARK:===============================================================
+
+/**
+ *  MARK:--------------------TI循环--------------------
+ *  @desc 每间隔一段时间,就调用一帧视觉输入;
+ *  @version
+ *      2024.07.18: 初版 (参考32102-todo1);
+ */
+-(void) runTiLoop {
+    dispatch_async(_tiQueue, ^{
+        while (true) {
+            //1. 用通知跑一下视觉输入 (动物和认知模式才跑);
+            if (self.thinkMode == 0 || self.thinkMode == 1) {
+                
+            }
+            
+            //2. 等待时间间隔后继续;
+            [NSThread sleepForTimeInterval:1];
+        }
+    });
+}
 
 /**
  *  MARK:--------------------数据输入--------------------
