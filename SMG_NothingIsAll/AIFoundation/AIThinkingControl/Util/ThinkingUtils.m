@@ -155,9 +155,18 @@
 /**
  *  MARK:--------------------在主线程跑act--------------------
  */
++(void) runAtTiThread:(Act0)act {
+    [self runAtThread:theTC.tiQueue act:act];
+}
++(void) runAtToThread:(Act0)act {
+    [self runAtThread:theTC.toQueue act:act];
+}
 +(void) runAtMainThread:(Act0)act {
+    [self runAtThread:dispatch_get_main_queue() act:act];
+}
++(void) runAtThread:(dispatch_queue_t)queue act:(Act0)act {
     __block Act0 weakAct = act;
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(queue, ^{
         weakAct();
     });
 }

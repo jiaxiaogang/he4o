@@ -72,6 +72,9 @@
 /**
  *  MARK:--------------------在主线程跑act--------------------
  */
++(void) runAtTiThread:(Act0)act;
++(void) runAtToThread:(Act0)act;
 +(void) runAtMainThread:(Act0)act;
++(void) runAtThread:(dispatch_queue_t)queue act:(Act0)act;
 
 @end

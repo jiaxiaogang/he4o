@@ -75,7 +75,7 @@ static AIThinkingControl *_instance;
 
 -(void) initDisplay {
     [self runToLoop];
-    [self runTiLoop];
+    [self nextTiLoop];
 }
 
 //MARK:===============================================================
@@ -88,18 +88,18 @@ static AIThinkingControl *_instance;
  *  @version
  *      2024.07.18: 初版 (参考32102-todo1);
  */
--(void) runTiLoop {
-    dispatch_async(_tiQueue, ^{
-        while (true) {
-            //1. 用通知跑一下视觉输入 (动物和认知模式才跑);
-            if (self.thinkMode == 0 || self.thinkMode == 1) {
+-(void) nextTiLoop {
+    [ThinkingUtils runAtThread:self.tiQueue act:^{
+        //1. 等待时间间隔后继续下帧;
+        [NSThread sleepForTimeInterval:10];
+        
+        //2. 用通知跑一下视觉输入 (动物和认知模式才跑);
+        if (self.thinkMode == 0 || self.thinkMode == 1) {
+            [ThinkingUtils runAtMainThread:^{
                 [AIInput inputFromTC];
-            }
-            
-            //2. 等待时间间隔后继续;
-            [NSThread sleepForTimeInterval:1];
+            }];
         }
-    });
+    }];
 }
 
 /**
@@ -113,6 +113,8 @@ static AIThinkingControl *_instance;
     dispatch_async(self.tiQueue, ^{//30083去异步
         [self commitInput:weakAlgsModel];
     });
+    
+    NSLog(@"-2 finishfinish");
 }
 -(void) commitInput:(NSObject*)algsModel{
     //1. 植物模式阻断感知;
@@ -141,6 +143,8 @@ static AIThinkingControl *_instance;
         //2. 加入瞬时记忆 & 识别等;
         [TCInput rInput:algNode except_ps:nil];
     }
+    
+    NSLog(@"-1 finishfinish");
 }
 
 /**
@@ -165,6 +169,8 @@ static AIThinkingControl *_instance;
     dispatch_async(self.tiQueue, ^{//30083去异步
         [self commitInputWithModels:weakDics algsType:weakAT];
     });
+    
+    NSLog(@"0 finishfinish");
 }
 -(void) commitInputWithModels:(NSArray*)dics algsType:(NSString*)algsType{
     //1. 植物模式阻断感知;
@@ -204,6 +210,8 @@ static AIThinkingControl *_instance;
     for (AIKVPointer *alg_p in fromGroup_ps) {
         [TCInput rInput:[SMGUtils searchNode:alg_p] except_ps:fromGroup_ps];
     }
+    
+    NSLog(@"1 finishfinish");
 }
 
 /**
@@ -217,6 +225,8 @@ static AIThinkingControl *_instance;
     dispatch_async(self.tiQueue, ^{//30083去异步
         [self commitOutputLog:weakOutputModels];
     });
+    
+    NSLog(@"2 finishfinish");
 }
 -(void) commitOutputLog:(NSArray*)outputModels{
     //1. 植物模式阻断感知;
@@ -239,6 +249,8 @@ static AIThinkingControl *_instance;
     
     //3. 提交到ThinkIn进行识别_加瞬时记忆 & 进行识别
     [TCInput rInput:outAlg except_ps:nil];
+    
+    NSLog(@"3 finishfinish");
 }
 
 //MARK:===============================================================
