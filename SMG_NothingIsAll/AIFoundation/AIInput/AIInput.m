@@ -11,12 +11,6 @@
 
 @implementation AIInput
 
-//思维控制器触发感官帧输入 (参考32102-TODO1);
-+(void) inputFromTC {
-    //1. 触发视觉;
-    [[NSNotificationCenter defaultCenter] postNotificationName:kInputObserver object:nil];
-}
-
 +(void) commitText:(NSString*)text{
     //2017.04
     //[theThink commitUnderstandByShallowFromInput:text];//从input常规输入的浅度理解即可;(简单且错误,参考N4P2)

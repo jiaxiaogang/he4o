@@ -26,6 +26,11 @@
 @property (assign, nonatomic) long long loopId;                     //思维循环Id;
 @property (assign, nonatomic) long long toLoopId;                   //TO循环Id;
 
+@property (strong, nonatomic) NSTimer *tiLoopTimer;                 //TI执行检查器;
+@property (assign, nonatomic) BOOL tiRuning1;                       //TI执行中
+@property (assign, nonatomic) BOOL tiRuning2;                       //TI执行中
+@property (assign, nonatomic) BOOL tiRuning3;                       //TI执行中
+
 /**
  *  MARK:--------------------当前能量值--------------------
  *  1. 激活: mv输入时激活;
@@ -74,8 +79,13 @@ static AIThinkingControl *_instance;
 }
 
 -(void) initDisplay {
+    //1. TiLoop (因为TI要用到TiQueue和MainQueue两个线程,然后有三个commitInput,所以没法占用TiQueue跑while来做);
+    dispatch_async(dispatch_get_main_queue(), ^{
+       self.tiLoopTimer = [NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(runTiLoop) userInfo:nil repeats:true];
+    });
+    
+    //2. ToLoop
     [self runToLoop];
-    [self nextTiLoop];
 }
 
 //MARK:===============================================================
@@ -88,18 +98,15 @@ static AIThinkingControl *_instance;
  *  @version
  *      2024.07.18: 初版 (参考32102-todo1);
  */
--(void) nextTiLoop {
-    [ThinkingUtils runAtThread:self.tiQueue act:^{
-        //1. 等待时间间隔后继续下帧;
-        [NSThread sleepForTimeInterval:10];
-        
-        //2. 用通知跑一下视觉输入 (动物和认知模式才跑);
-        if (self.thinkMode == 0 || self.thinkMode == 1) {
-            [ThinkingUtils runAtMainThread:^{
-                [AIInput inputFromTC];
-            }];
-        }
-    }];
+-(void) runTiLoop {
+    //1. 有TI在执行中,则跳过本次执行;
+    if (self.tiRuning1 || self.tiRuning2 || self.tiRuning3) return;
+    
+    //2. 植物模式,则不执行认知;
+    if (self.thinkMode == 2) return;
+    
+    //3. 用通知跑一下下帧感官 (视觉输入) (参考32102-TODO1);
+    [[NSNotificationCenter defaultCenter] postNotificationName:kInputObserver object:nil];
 }
 
 /**
@@ -111,10 +118,10 @@ static AIThinkingControl *_instance;
 -(void) commitInputAsync:(NSObject*)algsModel {
     __block NSObject *weakAlgsModel = algsModel;
     dispatch_async(self.tiQueue, ^{//30083去异步
+        self.tiRuning1 = true;
         [self commitInput:weakAlgsModel];
+        self.tiRuning1 = false;
     });
-    
-    NSLog(@"-2 finishfinish");
 }
 -(void) commitInput:(NSObject*)algsModel{
     //1. 植物模式阻断感知;
@@ -143,8 +150,6 @@ static AIThinkingControl *_instance;
         //2. 加入瞬时记忆 & 识别等;
         [TCInput rInput:algNode except_ps:nil];
     }
-    
-    NSLog(@"-1 finishfinish");
 }
 
 /**
@@ -167,10 +172,10 @@ static AIThinkingControl *_instance;
     __block NSArray *weakDics = dics;
     __block NSString *weakAT = algsType;
     dispatch_async(self.tiQueue, ^{//30083去异步
+        self.tiRuning2 = true;
         [self commitInputWithModels:weakDics algsType:weakAT];
+        self.tiRuning2 = false;
     });
-    
-    NSLog(@"0 finishfinish");
 }
 -(void) commitInputWithModels:(NSArray*)dics algsType:(NSString*)algsType{
     //1. 植物模式阻断感知;
@@ -210,8 +215,6 @@ static AIThinkingControl *_instance;
     for (AIKVPointer *alg_p in fromGroup_ps) {
         [TCInput rInput:[SMGUtils searchNode:alg_p] except_ps:fromGroup_ps];
     }
-    
-    NSLog(@"1 finishfinish");
 }
 
 /**
@@ -223,10 +226,10 @@ static AIThinkingControl *_instance;
 -(void) commitOutputLogAsync:(NSArray*)outputModels {
     __block NSArray *weakOutputModels = outputModels;
     dispatch_async(self.tiQueue, ^{//30083去异步
+        self.tiRuning3 = true;
         [self commitOutputLog:weakOutputModels];
+        self.tiRuning3 = false;
     });
-    
-    NSLog(@"2 finishfinish");
 }
 -(void) commitOutputLog:(NSArray*)outputModels{
     //1. 植物模式阻断感知;
@@ -249,8 +252,6 @@ static AIThinkingControl *_instance;
     
     //3. 提交到ThinkIn进行识别_加瞬时记忆 & 进行识别
     [TCInput rInput:outAlg except_ps:nil];
-    
-    NSLog(@"3 finishfinish");
 }
 
 //MARK:===============================================================
