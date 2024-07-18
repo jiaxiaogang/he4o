@@ -43,6 +43,12 @@
     [self.view addSubview:self.treeView];
 }
 
+-(void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    self.birdView.waitEat = false;
+    [self.birdView viewWillDisappear];
+}
+
 /**
  *  MARK:--------------------RoadViewDelegate--------------------
  */

@@ -11,6 +11,12 @@
 
 @implementation AIInput
 
+//思维控制器触发感官帧输入 (参考32102-TODO1);
++(void) inputFromTC {
+    //1. 触发视觉;
+    [[NSNotificationCenter defaultCenter] postNotificationName:kInputObserver object:nil];
+}
+
 +(void) commitText:(NSString*)text{
     //2017.04
     //[theThink commitUnderstandByShallowFromInput:text];//从input常规输入的浅度理解即可;(简单且错误,参考N4P2)
@@ -38,7 +44,8 @@
     [AIReactorControl commitCustom:type value:value];
 }
 
-+(void) commitView:(UIView*)selfView targetView:(UIView*)targetView rect:(CGRect)rect{
++(void) commitView:(UIView*)selfView targetView:(UIView*)targetView rect:(CGRect)rect fromObserver:(BOOL)fromObserver {
+    if (!fromObserver) return;//把非广播触发的视觉关掉;
     [AIReactorControl commitView:selfView targetView:targetView rect:rect];
 }
 

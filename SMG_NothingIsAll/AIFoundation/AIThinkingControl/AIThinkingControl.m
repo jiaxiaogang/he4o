@@ -93,7 +93,7 @@ static AIThinkingControl *_instance;
         while (true) {
             //1. 用通知跑一下视觉输入 (动物和认知模式才跑);
             if (self.thinkMode == 0 || self.thinkMode == 1) {
-                
+                [AIInput inputFromTC];
             }
             
             //2. 等待时间间隔后继续;

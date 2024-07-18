@@ -295,6 +295,7 @@
  */
 //OutputObserverKey
 #define kOutputObserver   @"kOutputObserver"
+#define kInputObserver   @"kInputObserver"
 
 //OutputObjectKey (2021.02.05: 改为直接用OutputModel做obj);
 //#define kOOIdentify @"identify" //输出行为标识

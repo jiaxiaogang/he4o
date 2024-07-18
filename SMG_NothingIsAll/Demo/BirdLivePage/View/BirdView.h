@@ -24,6 +24,7 @@
 @interface BirdView : UIView
 
 @property (weak,nonatomic) id<BirdViewDelegate> delegate;
+-(void) viewWillDisappear;
 
 /**
  *  MARK:--------------------鸟飞过的坚果--------------------
@@ -43,7 +44,7 @@
  *  2. 随后有需要可以改为主动视觉 (0.3s每桢)
  *  3. 主动视觉可以采用计时器和代理scan来实现;
  */
--(void) see:(UIView*)view;
+-(void) see:(UIView*)view fromObserver:(BOOL)fromObserver;
 
 
 /**

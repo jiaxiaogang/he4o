@@ -21,9 +21,12 @@
  */
 @interface AIInput : NSObject
 
+//思维控制器触发感官帧输入 (参考32102-TODO1);
++(void) inputFromTC;
+
 +(void) commitText:(NSString*)text;
 +(void) commitIMV:(MVType)type from:(CGFloat)from to:(CGFloat)to;
 +(void) commitCustom:(CustomInputType)type value:(NSInteger)value;
-+(void) commitView:(UIView*)selfView targetView:(UIView*)targetView rect:(CGRect)rect;
++(void) commitView:(UIView*)selfView targetView:(UIView*)targetView rect:(CGRect)rect fromObserver:(BOOL)fromObserver;
 
 @end

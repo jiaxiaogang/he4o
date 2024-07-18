@@ -97,6 +97,7 @@
 -(void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     self.birdView.waitEat = false;
+    [self.birdView viewWillDisappear];
 }
 
 //MARK:===============================================================
@@ -124,7 +125,7 @@
         //0. 扔后判断能吃到哪些坚果;
         self.birdView.hitFoods = [self birdView_GetFoodOnHit:self.birdView.frame birdEnd:self.birdView.frame status:FoodStatus_Eat];
         //1. 吃前视觉
-        [self.birdView see:self.view];
+        [self.birdView see:self.view fromObserver:false];
         //2. 触碰到鸟嘴;
         [self.birdView touchMouth];
     }];
@@ -336,7 +337,7 @@
     });
     
     //4. 饿后视觉 (参考30042-todo2);
-    [self.birdView see:self.view];
+    [self.birdView see:self.view fromObserver:false];
 }
 
 - (IBAction)touchWingBtnOnClick:(id)sender {
@@ -524,7 +525,7 @@
     
     //2. 扔前木棒视觉帧
     DemoLog(@"木棒扔前视觉");
-    [self.birdView see:self.woodView];
+    [self.birdView see:self.woodView fromObserver:false];
     
     //3. 扔前数据准备
     CGFloat allDistance = ScreenWidth - self.woodView.x; //动画扔多远;
@@ -732,7 +733,7 @@
     
     //9. 触发视觉
     if (ARRISOK(result)) {
-        [self.birdView see:self.view];
+        [self.birdView see:self.view fromObserver:false];
     }
 }
 
@@ -774,7 +775,7 @@
         [foodView setOrigin:targetPoint];
     }completion:^(BOOL finished) {
         //1. 视觉输入
-        [self.birdView see:self.view];
+        [self.birdView see:self.view fromObserver:false];
         
         //2. 投食碰撞检测 (参考28172-todo2.2);
         self.birdView.hitFoods = [self birdView_GetFoodOnHit:self.birdView.frame birdEnd:self.birdView.frame status:FoodStatus_Eat];

@@ -46,6 +46,11 @@
 
 -(void) initDisplay{
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(outputObserver:) name:kOutputObserver object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(inputObserver:) name:kInputObserver object:nil];
+}
+
+-(void) viewWillDisappear {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 //MARK:===============================================================
@@ -98,14 +103,14 @@
 
 -(void) flyResult:(CGFloat)value{
     //1. 飞后视觉
-    [self see:[self.delegate birdView_GetPageView]];
+    [self see:[self.delegate birdView_GetPageView] fromObserver:false];
 }
 
--(void) see:(UIView*)view{
+-(void) see:(UIView*)view fromObserver:(BOOL)fromObserver {
     if (self.delegate && [self.delegate respondsToSelector:@selector(birdView_GetSeeRect)]) {
         //1. 将视觉范围下,的视觉信息输入大脑;
         CGRect rect = [self.delegate birdView_GetSeeRect];
-        [AIInput commitView:self targetView:view rect:rect];
+        [AIInput commitView:self targetView:view rect:rect fromObserver:fromObserver];
     }
 }
 
@@ -210,7 +215,7 @@
     //3. 吃到 或 没吃到 => 的吃后视觉 & waitEat标记;
     if (eated){
         //4. 吃完视觉 (其实啥也看不到);
-        [self see:[self.delegate birdView_GetPageView]];
+        [self see:[self.delegate birdView_GetPageView] fromObserver:false];
         
         //5. 价值变化: 吃上了,不会立马感觉饱,而是不再继续更饿 (参考28171-todo2);
         DemoLog(@"吃上坚果了");
@@ -268,7 +273,7 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------行为输出--------------------
+ *  MARK:--------------------肢体输出--------------------
  *  @version
  *      2023.06.23: 输出吃时: 立马就吃到,而不是等动画结束 (参考30041-记录2);
  */
@@ -328,10 +333,23 @@
             }else if(OutputObserverType_Back == model.type){
                 //b. 飞后 => 视觉;
                 NSLog(@"踢后视觉%p:%@",model,[NVHeUtil fly2Str:model.data.floatValue]);
-                [self see:[self.delegate birdView_GetPageView]];
+                [self see:[self.delegate birdView_GetPageView] fromObserver:false];
             }
         }
     }
+}
+
+//MARK:===============================================================
+//MARK:                     < inputObserver >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------感官输入--------------------
+ *  @version
+ *      2023.06.23: 输出吃时: 立马就吃到,而不是等动画结束 (参考30041-记录2);
+ */
+-(void) inputObserver:(NSNotification*)notification {
+    [self see:[self.delegate birdView_GetPageView] fromObserver:true];
 }
 
 -(void)setFrame:(CGRect)frame {
