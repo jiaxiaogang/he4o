@@ -31,6 +31,31 @@
 }
 
 /**
+ *  MARK:--------------------检查最大条数--------------------
+ *  @desc 相邻matchAlgs交集率高于30%的计为一条 (参考32103-方案);
+ */
+-(void) checkLimit {
+    //1. iItem: 从后往前,倒1到1;
+    for (NSInteger i = self.models.count - 1; i >= 1; i--) {
+        
+        //2. jItem: 从后往前,倒2到0;
+        for (NSInteger j = self.models.count - 2; j >= 0; j--) {
+            AIShortMatchModel *iItem = ARR_INDEX(self.models, i);
+            AIShortMatchModel *jItem = ARR_INDEX(self.models, j);
+            NSArray *iAlgs = [SMGUtils convertArr:iItem.matchAlgs convertBlock:^id (AIMatchAlgModel *obj) { return obj.matchAlg; }];
+            NSArray *jAlgs = [SMGUtils convertArr:jItem.matchAlgs convertBlock:^id (AIMatchAlgModel *obj) { return obj.matchAlg; }];
+            NSArray *sameAlgs = [SMGUtils filterArrA:iAlgs arrB:jAlgs];
+            NSInteger totalCount = MIN(iAlgs.count, jAlgs.count);
+            CGFloat rate = totalCount > 0 ? (float)sameAlgs.count / totalCount : 0;
+            
+            //TODOTOMORROW20240719:
+            //1. >30%则计一条;
+            //2. 计够四条,则剩下的移除掉;
+        }
+    }
+}
+
+/**
  *  MARK:--------------------获取瞬时记忆序列--------------------
  *  @param isMatch
  *      true : matchAlgs返回以后逐步替代shortCache;
