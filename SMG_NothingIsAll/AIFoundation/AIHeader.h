@@ -365,6 +365,8 @@
 #define Log4CortexAlgs false
 //输入思维
 #define Log4TCInput false
+//瞬时记忆长度限制
+#define Log4ShortLimit false
 //识别概念
 #define Log4MAlg false
 //模糊匹配

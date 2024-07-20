@@ -45,10 +45,11 @@
     }
     
     //3. 数据准备;
-    NSInteger findNum = 0;//已发现条数;
+    NSInteger findNum = 1;//已发现条数 (默认为1条,因为初次发现不同时,其实已经是两个了);
     NSInteger minValid = 0;//最小有效的那一条下标;
     
     //4. iItem: 从后往前,倒1到1;
+    if (Log4ShortLimit) NSLog(@"开始检查");
     for (NSInteger i = self.models.count - 1; i >= 1; i--) {
         
         //5. jItem: 即i的前一条;
@@ -59,6 +60,7 @@
         //6. 不是新的一条时,计数+1;
         BOOL isNewOne = [self isNewOneByRateOfAItem:iItem bItem:jItem];
         if (isNewOne) findNum++;
+        if (isNewOne && Log4ShortLimit) NSLog(@"%ld : %ld => 发现数:%ld (%@ : %@)",i,j,findNum,Alg2FStr(iItem.protoAlg),Alg2FStr(jItem.protoAlg));
         
         //7. 超过4条时,停止循环,超过4条的部分全切掉;
         if (findNum > cShortMemoryLimit) {
@@ -66,23 +68,11 @@
             break;
         }
     }
-    
-    //测试
-    if (minValid > 0) {
-        NSLog(@"瞬时记忆切前: %@",CLEANSTR([SMGUtils convertArr:self.models convertBlock:^id(AIShortMatchModel *obj) {
-            return Alg2FStr(obj.protoAlg);
-        }]));
-    }
+    if (minValid > 0 && Log4ShortLimit) NSLog(@"瞬时记忆切前: %@",CLEANSTR([SMGUtils convertArr:self.models convertBlock:^id(AIShortMatchModel *obj) { return Alg2FStr(obj.protoAlg); }]));
     
     //8. 切掉无效部分;
     if (minValid > 0) self.models = [[NSMutableArray alloc] initWithArray:ARR_SUB(self.models, minValid, self.models.count - minValid)];
-    
-    //测试
-    if (minValid > 0) {
-        NSLog(@"瞬时记忆切后: %@",CLEANSTR([SMGUtils convertArr:self.models convertBlock:^id(AIShortMatchModel *obj) {
-            return Alg2FStr(obj.protoAlg);
-        }]));
-    }
+    if (minValid > 0 && Log4ShortLimit) NSLog(@"瞬时记忆切后: %@",CLEANSTR([SMGUtils convertArr:self.models convertBlock:^id(AIShortMatchModel *obj) { return Alg2FStr(obj.protoAlg); }]));
 }
 
 /**
@@ -98,8 +88,8 @@
     CGFloat rate = totalCount > 0 ? (float)sameAlgs.count / totalCount : 0;
     
     //2. 交集率低于30%时,计为新的一条;
-    NSLog(@"isNewOneA(%.2f): %@",rate,Alg2FStr(aItem.protoAlg));
-    NSLog(@"isNewOneB(%.2f): %@",rate,Alg2FStr(bItem.protoAlg));
+    if (Log4ShortLimit) NSLog(@"isNewOneA(%.2f): %@",rate,Alg2FStr(aItem.protoAlg));
+    if (Log4ShortLimit) NSLog(@"isNewOneB(%.2f): %@",rate,Alg2FStr(bItem.protoAlg));
     return rate < 0.3f;
 }
 
