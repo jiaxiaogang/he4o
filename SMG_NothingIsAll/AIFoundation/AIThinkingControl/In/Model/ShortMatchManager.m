@@ -67,8 +67,22 @@
         }
     }
     
+    //测试
+    if (minValid > 0) {
+        NSLog(@"瞬时记忆切前: %@",CLEANSTR([SMGUtils convertArr:self.models convertBlock:^id(AIShortMatchModel *obj) {
+            return Alg2FStr(obj.protoAlg);
+        }]));
+    }
+    
     //8. 切掉无效部分;
     if (minValid > 0) self.models = [[NSMutableArray alloc] initWithArray:ARR_SUB(self.models, minValid, self.models.count - minValid)];
+    
+    //测试
+    if (minValid > 0) {
+        NSLog(@"瞬时记忆切后: %@",CLEANSTR([SMGUtils convertArr:self.models convertBlock:^id(AIShortMatchModel *obj) {
+            return Alg2FStr(obj.protoAlg);
+        }]));
+    }
 }
 
 /**
@@ -84,6 +98,8 @@
     CGFloat rate = totalCount > 0 ? (float)sameAlgs.count / totalCount : 0;
     
     //2. 交集率低于30%时,计为新的一条;
+    NSLog(@"isNewOneA(%.2f): %@",rate,Alg2FStr(aItem.protoAlg));
+    NSLog(@"isNewOneB(%.2f): %@",rate,Alg2FStr(bItem.protoAlg));
     return rate < 0.3f;
 }
 

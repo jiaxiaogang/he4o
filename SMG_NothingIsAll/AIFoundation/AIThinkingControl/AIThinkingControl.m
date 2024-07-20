@@ -81,7 +81,7 @@ static AIThinkingControl *_instance;
 -(void) initDisplay {
     //1. TiLoop (因为TI要用到TiQueue和MainQueue两个线程,然后有三个commitInput,所以没法占用TiQueue跑while来做);
     dispatch_async(dispatch_get_main_queue(), ^{
-       self.tiLoopTimer = [NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(runTiLoop) userInfo:nil repeats:true];
+       self.tiLoopTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(runTiLoop) userInfo:nil repeats:true];
     });
     
     //2. ToLoop
@@ -182,7 +182,7 @@ static AIThinkingControl *_instance;
     if (self.thinkMode == 2) return;
     //1. 数据检查 (小鸟不能仅传入foodView,而要传入整个视角场景)
     dics = ARRTOOK(dics);
-    ISTitleLog(@"皮层输入");
+    if (ARRISOK(dics)) ISTitleLog(@"皮层输入");
     
     //2. 收集所有具象父概念的value_ps
     NSMutableArray *parentValue_ps = [[NSMutableArray alloc] init];
