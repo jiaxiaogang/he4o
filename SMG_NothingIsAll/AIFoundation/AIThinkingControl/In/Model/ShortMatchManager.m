@@ -22,8 +22,7 @@
 }
 -(void) add:(AIShortMatchModel*)model{
     if (model) [self.models addObject:model];
-    if (self.models.count > cShortMemoryLimit)
-        self.models = [[NSMutableArray alloc] initWithArray:ARR_SUB(self.models, self.models.count - cShortMemoryLimit, cShortMemoryLimit)];
+    [self checkRemoveByLimit];//新增一条时,检查有没超过有效limit条数;
 }
 -(AIShortMatchModel*) getFrameModel:(NSInteger)frameIndex {
     NSArray *inModels = self.models;
@@ -31,28 +30,61 @@
 }
 
 /**
- *  MARK:--------------------检查最大条数--------------------
- *  @desc 相邻matchAlgs交集率高于30%的计为一条 (参考32103-方案);
+ *  MARK:--------------------检查最大条数,切掉超过部分--------------------
+ *  @desc 从后往前,保留4条有效条数 (相邻相似的计做一条) (参考32103-TODO2-方案);
  */
--(void) checkLimit {
-    //1. iItem: 从后往前,倒1到1;
+-(void) checkRemoveByLimit {
+    //1. 一共也没四条,则不必执行;
+    if (self.models.count <= cShortMemoryLimit) return;
+    
+    //2. 最后两条假如一样,则说明没新增有效条目,不必执行;
+    if (self.models.count > 2) {
+        AIShortMatchModel *aItem = ARR_INDEX_REVERSE(self.models, 0);
+        AIShortMatchModel *bItem = ARR_INDEX_REVERSE(self.models, 1);
+        if (![self isNewOneByRateOfAItem:aItem bItem:bItem]) return;
+    }
+    
+    //3. 数据准备;
+    NSInteger findNum = 0;//已发现条数;
+    NSInteger minValid = 0;//最小有效的那一条下标;
+    
+    //4. iItem: 从后往前,倒1到1;
     for (NSInteger i = self.models.count - 1; i >= 1; i--) {
         
-        //2. jItem: 从后往前,倒2到0;
-        for (NSInteger j = self.models.count - 2; j >= 0; j--) {
-            AIShortMatchModel *iItem = ARR_INDEX(self.models, i);
-            AIShortMatchModel *jItem = ARR_INDEX(self.models, j);
-            NSArray *iAlgs = [SMGUtils convertArr:iItem.matchAlgs convertBlock:^id (AIMatchAlgModel *obj) { return obj.matchAlg; }];
-            NSArray *jAlgs = [SMGUtils convertArr:jItem.matchAlgs convertBlock:^id (AIMatchAlgModel *obj) { return obj.matchAlg; }];
-            NSArray *sameAlgs = [SMGUtils filterArrA:iAlgs arrB:jAlgs];
-            NSInteger totalCount = MIN(iAlgs.count, jAlgs.count);
-            CGFloat rate = totalCount > 0 ? (float)sameAlgs.count / totalCount : 0;
-            
-            //TODOTOMORROW20240719:
-            //1. >30%则计一条;
-            //2. 计够四条,则剩下的移除掉;
+        //5. jItem: 即i的前一条;
+        NSInteger j = i - 1;
+        AIShortMatchModel *iItem = ARR_INDEX(self.models, i);
+        AIShortMatchModel *jItem = ARR_INDEX(self.models, j);
+        
+        //6. 不是新的一条时,计数+1;
+        BOOL isNewOne = [self isNewOneByRateOfAItem:iItem bItem:jItem];
+        if (isNewOne) findNum++;
+        
+        //7. 超过4条时,停止循环,超过4条的部分全切掉;
+        if (findNum > cShortMemoryLimit) {
+            minValid = i;//i有效,j无效;
+            break;
         }
     }
+    
+    //8. 切掉无效部分;
+    if (minValid > 0) self.models = [[NSMutableArray alloc] initWithArray:ARR_SUB(self.models, minValid, self.models.count - minValid)];
+}
+
+/**
+ *  MARK:--------------------是否新的一条: 根据AIShortMatchModel之间的matchAlgs的交集率计算--------------------
+ *  @desc 相邻matchAlgs交集率高于30%的计为一条 (参考32103-TODO2-方案);
+ */
+-(BOOL) isNewOneByRateOfAItem:(AIShortMatchModel*)aItem bItem:(AIShortMatchModel*)bItem {
+    //1. 计算交集率;
+    NSArray *aAlgs = [SMGUtils convertArr:aItem.matchAlgs convertBlock:^id (AIMatchAlgModel *obj) { return obj.matchAlg; }];
+    NSArray *bAlgs = [SMGUtils convertArr:bItem.matchAlgs convertBlock:^id (AIMatchAlgModel *obj) { return obj.matchAlg; }];
+    NSArray *sameAlgs = [SMGUtils filterArrA:aAlgs arrB:bAlgs];
+    NSInteger totalCount = MIN(aAlgs.count, bAlgs.count);
+    CGFloat rate = totalCount > 0 ? (float)sameAlgs.count / totalCount : 0;
+    
+    //2. 交集率低于30%时,计为新的一条;
+    return rate < 0.3f;
 }
 
 /**
