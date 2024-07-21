@@ -376,7 +376,7 @@
     NSString *fltLog = self.cansetStatus != CS_None && !self.isH ? FltLog4XueQuPi(2) : @"";
     NSString *fltLog2 = [Pit2FStr(protoAlg_p) containsString:@"皮果"] ? FltLog4HDemandOfYouPiGuo(@"4") : @"";
     NSString *fltLog3 = self.cansetStatus != CS_None ? FltLog4YonBanYun(2) : @"";
-    if (Switch4FeedbackTOR) NSLog(@"%@%@%@%@%@ feedbackTOR反馈成立:%@ 匹配:%d baseCansetFrom:%@ 状态:%@",FltLog4AbsHCanset(self.isH, 2),fltLog,fltLog2,self.isH?@"H":@"R",fltLog3,Pit2FStr(cansetToSimple.alg_p),mIsC,ShortDesc4Pit(self.cansetFo),CansetStatus2Str(self.cansetStatus));
+    if (Switch4FeedbackTOR) NSLog(@"%@%@%@%@%@ feedbackTOR反馈成立:%@ 匹配:%d baseCansetFrom:%@ 状态:%@",FltLog4AbsHCanset(self.isH, 2),fltLog,fltLog2,fltLog3,self.isH?@"H":@"R",Pit2FStr(cansetToSimple.alg_p),mIsC,Pit2FStr(self.cansetFrom),CansetStatus2Str(self.cansetStatus));
     
     //3. 有效时: 记录feedbackAlg;
     TOAlgModel *curAlgModel = [self getCurFrame];

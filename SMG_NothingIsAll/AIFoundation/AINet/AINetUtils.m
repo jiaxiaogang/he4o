@@ -476,11 +476,7 @@
 @implementation AINetUtils (Port)
 
 +(NSArray*) absPorts_All:(AINodeBase*)node{
-    NSMutableArray *allPorts = [[NSMutableArray alloc] init];
-    if (ISOK(node, AINodeBase.class)) {
-        [allPorts addObjectsFromArray:node.absPorts];
-    }
-    return allPorts;
+    return [node.absPorts copy];
 }
 +(NSArray*) absPorts_All_Normal:(AINodeBase*)node{
     NSArray *allPorts = [self absPorts_All:node];

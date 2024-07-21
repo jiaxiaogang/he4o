@@ -93,7 +93,8 @@
     Debug();
     NSString *fltLog1 = FltLog4HDemandOfWuPiGuo(2);
     NSString *fltLog2 = FltLog4XueQuPi(1);
-    OFTitleLog(@"hDemand",@"\n%@%@%@%@%@%@",fltLog1,fltLog2,FltLog4HDemandOfYouPiGuo(@"1"),FltLog4XueBanYun(1),FltLog4YonBanYun(1),Pit2FStr(algModel.content_p));
+    TOFoModel *targetFo = (TOFoModel*)algModel.baseOrGroup;
+    OFTitleLog(@"hDemand",@"\n%@%@%@%@%@%@ from:%@",fltLog1,fltLog2,FltLog4HDemandOfYouPiGuo(@"1"),FltLog4XueBanYun(1),FltLog4YonBanYun(1),Pit2FStr(algModel.content_p),Pit2FStr(targetFo.cansetTo));
     [HDemandModel newWithAlgModel:algModel];
     dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
         [theTV updateFrame];
