@@ -278,7 +278,7 @@
         AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:newRCanset assFo:solutionFo type:ATDefault noRepeatArea_ps:noRepeatArea_ps];
         BOOL updateCansetSuccess = [pFo updateConCanset:absCansetFo.pointer targetIndex:pFo.count];
         [AITest test101:absCansetFo proto:newRCanset conCanset:solutionFo];
-        NSLog(@"Canset演化> AbsRCanset:%@ toScene:%@",Fo2FStr(absCansetFo),ShortDesc4Node(pFo));
+        NSLog(@"%@Canset演化> AbsRCanset:%@ toScene:%@",FltLog4YonBanYun(4),Fo2FStr(absCansetFo),ShortDesc4Node(pFo));
         
         if (updateCansetSuccess) {
             //2024.04.17: 此处简化了下,把用convertOldIndexDic2NewIndexDic()取映射,改成用zonHeDic来计算;
