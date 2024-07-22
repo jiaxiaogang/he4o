@@ -264,4 +264,16 @@
     [self.loopCache removeAllObjects];
 }
 
+//把at标识的root全移除掉;
+-(void) expired4PInput:(NSString*)algsType {
+    NSArray *roots = [self.getAllDemand copy];
+    for (ReasonDemandModel *root in roots) {
+        if ([algsType isEqualToString:root.algsType]) {
+            //用expired4PInput的原因: 如果直接remove,好像工作记忆停的太快,导致会有一些执行不到? (比如吃的识别是否还没完成,如果识别完成,发现feedback时root已经没了,那就反馈不到了);
+            root.expired4PInput = true;
+            //[self removeDemand:root];
+        }
+    }
+}
+
 @end

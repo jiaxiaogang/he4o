@@ -31,7 +31,9 @@
  *  @params to : 0-10
  */
 +(void) commitIMV:(MVType)type from:(CGFloat)from to:(CGFloat)to{
-    [AIReactorControl commitIMV:type from:from to:to];
+    //1. 将imv信号转成imvModel并提交给TC;
+    ImvAlgsModelBase *imvModel = [AIImvAlgs commitIMV:type from:from to:to];
+    [theTC commitInputAsync:imvModel];
 }
 
 +(void) commitCustom:(CustomInputType)type value:(NSInteger)value{

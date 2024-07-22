@@ -16,7 +16,7 @@
  *  MARK:--------------------输入mindValue--------------------
  *  @param from | to : 值域,转换为0-10;(例如:hunger时表示饥饿度,10为无电非常饿,0为满电不饿);
  */
-+(void) commitIMV:(MVType)type from:(CGFloat)from to:(CGFloat)to{
++(ImvAlgsModelBase*) commitIMV:(MVType)type from:(CGFloat)from to:(CGFloat)to{
     //1. 数据准备;
     ImvAlgsModelBase *imvModel = nil;
     if (type == MVType_Hunger) {
@@ -35,10 +35,8 @@
         
         //6. 计算delta (ISOK(imvModel, ImvBadModel.class))
         imvModel.delta = imvModel.urgentTo - urgentFrom;    //更痛5 更饿7;
-        
-        //7. 提交;
-        [theTC commitInputAsync:imvModel];
     }
+    return imvModel;
 }
 
 /**

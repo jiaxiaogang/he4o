@@ -577,6 +577,10 @@
     //[self runCheckHit4WoodBird:aniDuration woodDuration:0 hiterDesc:@"鸟飞开始"];
 }
 
+-(void) birdView_HungerEnd {
+    [[[DemoHunger alloc] init] commit:0.7 state:UIDeviceBatteryStateCharging];
+}
+
 /**
  *  MARK:--------------------WoodViewDelegate--------------------
  */

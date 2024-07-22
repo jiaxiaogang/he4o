@@ -8,12 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
+@class ImvAlgsModelBase;
 @interface AIImvAlgs : NSObject
 
 /**
  *  MARK:--------------------输入mindValue--------------------
  *  所有值域,转换为0-10;(例如:hunger时0为不饿,10为非常饿)
  */
-+(void) commitIMV:(MVType)type from:(CGFloat)from to:(CGFloat)to;
++(ImvAlgsModelBase*) commitIMV:(MVType)type from:(CGFloat)from to:(CGFloat)to;
 
 @end

@@ -33,10 +33,6 @@
     }
 }
 
-+(void) commitIMV:(MVType)type from:(CGFloat)from to:(CGFloat)to {
-    [AIImvAlgs commitIMV:type from:from to:to];
-}
-
 +(void) commitCustom:(CustomInputType)type value:(NSInteger)value{
     [AICustomAlgs commitCustom:type value:value];
 }

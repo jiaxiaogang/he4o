@@ -54,10 +54,9 @@
     
     //2. 逐条尝试: 依次对root向下尝试或淘汰;
     for (ReasonDemandModel *root in roots) {
-        NSLog(@"%@itemRoot -> 执行:%@",[HeLogUtil getPrefixStr:0],ShortDesc4Pit([HeLogUtil demandLogPointer:root]));
-        
         //3. 驳回: 下一条 -> 已完成 或 已无解,则尝试下一条Root;
-        if (root.status == TOModelStatus_Finish || root.status == TOModelStatus_WithOut) continue;
+        if (root.status == TOModelStatus_Finish || root.status == TOModelStatus_WithOut || root.expired4PInput) continue;
+        NSLog(@"%@itemRoot -> 执行:%@",[HeLogUtil getPrefixStr:0],ShortDesc4Pit([HeLogUtil demandLogPointer:root]));
         
         //4. 成功: 当前条 -> 未初始化过,则直接进行solution;
         if (!root.alreadyInitCansetModels) {

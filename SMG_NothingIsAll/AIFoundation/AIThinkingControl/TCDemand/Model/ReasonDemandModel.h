@@ -58,5 +58,6 @@
  *  MARK:--------------------任务是否失效--------------------
  */
 -(BOOL) isExpired;
+@property (assign, nonatomic) BOOL expired4PInput;//因pInput已失效;
 
 @end

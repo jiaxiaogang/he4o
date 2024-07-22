@@ -17,6 +17,7 @@
 -(void) birdView_SetFramed;
 -(void) birdView_FlyAnimationFinish;
 -(void) birdView_FlyAnimationBegin:(CGFloat)aniDuration;
+-(void) birdView_HungerEnd; //结束饥饿 (不饿了)
 
 @end
 

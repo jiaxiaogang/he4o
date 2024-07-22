@@ -117,12 +117,6 @@
     Debug();
     IFTitleLog(@"feedbackTIP", @"\n输入MV:%@",Mv2FStr(cmvNode));
     
-    //TODOTOMORROW20240722:
-    //1. 查下root饥饿任务,在被解决后 (吃到坚果后,能够触发正mv,把root标下finish);
-    //2. 不然它完成后,还一直在尝试求解;
-    
-    
-    
     //2. 判断最近一次input是否与等待中pFo感性结果相匹配 (匹配,比如吃,确定自己是否真吃了);
     //2. fbTIP对roots进行反馈判断 (参考27096-方案2);
     NSArray *roots = [theTC.outModelManager.getAllDemand copy];
