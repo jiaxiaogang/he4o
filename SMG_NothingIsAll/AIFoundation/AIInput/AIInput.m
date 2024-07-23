@@ -41,7 +41,8 @@
 }
 
 +(void) commitView:(UIView*)selfView targetView:(UIView*)targetView rect:(CGRect)rect fromObserver:(BOOL)fromObserver {
-    if (!fromObserver) return;//把非广播触发的视觉关掉;
+    //2024.07.23: 先打开被动触发的视觉 (参考32111-方案2);
+    //if (!fromObserver) return;//把非广播触发的视觉关掉;
     [AIReactorControl commitView:selfView targetView:targetView rect:rect];
 }
 
