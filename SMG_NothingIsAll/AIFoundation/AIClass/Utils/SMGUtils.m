@@ -633,6 +633,11 @@
     }];
 }
 
++(NSArray*) reverseArr:(NSArray*)array {
+    NSEnumerator *enumerator = [array reverseObjectEnumerator];
+    return [enumerator allObjects];
+}
+
 /**
  *  MARK:--------------------从foPorts中找出含valueIden的元素并返回--------------------
  *  @desc 每个fo,仅判断首条符合的alg;

@@ -148,6 +148,20 @@
 }
 
 +(void) printFinishLog:(TOModelBase*)endBranch {
+    //把每一次TCPlan完成后的: root->sub打印出来;
+    NSArray *subToRoot = [SMGUtils convertArr:[TOUtils getBaseOutModels_AllDeep:endBranch] convertBlock:^id(TOModelBase *obj) {
+        if (ISOK(obj, TOFoModel.class)) {
+            return STRFORMAT(@"F%ld",((TOFoModel*)obj).cansetFrom.pointerId);
+        } else if (ISOK(obj, TOAlgModel.class)) {
+            return STRFORMAT(@"A%ld",((TOAlgModel*)obj).content_p.pointerId);
+        } else if (ISOK(obj, ReasonDemandModel.class)) {
+            return STRFORMAT(@"(R)F%ld",((ReasonDemandModel*)obj).protoOrRegroupFo.pointerId);
+        }
+        return nil;
+    }];
+    NSArray *rootToSub = [SMGUtils reverseArr:subToRoot];
+    NSLog(@"%@工作记忆活跃线: %@",FltLog4YonBanYun(0),ARRTOSTR(rootToSub, @"", @" -> "));
+    
     if (!Log4Plan) return;
     NSLog(@"---------------------------------------------------------- FINISH\n");
     NSLog(@"fltx1 取得最终胜利的sub到root结构: %@",endBranch ? [TOModelVision cur2Root:endBranch] : nil);
