@@ -148,7 +148,7 @@
 }
 
 +(void) printFinishLog:(TOModelBase*)endBranch {
-    //把每一次TCPlan完成后的: root->sub打印出来;
+    //把每一次TCPlan完成后的: root->sub打印出来 (参考32114-方案3);
     NSArray *subToRoot = [SMGUtils convertArr:[TOUtils getBaseOutModels_AllDeep:endBranch] convertBlock:^id(TOModelBase *obj) {
         if (ISOK(obj, TOFoModel.class)) {
             return STRFORMAT(@"F%ld",((TOFoModel*)obj).cansetFrom.pointerId);
