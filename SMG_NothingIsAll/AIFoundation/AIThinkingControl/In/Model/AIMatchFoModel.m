@@ -216,7 +216,14 @@
     //0. 只有pFo触发时未收到反馈,才执行生成canset或再类比 (参考28077-修复);
     TIModelStatus status = [self getStatusForCutIndex:self.cutIndex];
     if (status != TIModelStatus_OutBackNone) {
+        //TODOTOMORROW20240726: 这里触发有问题,扔坚果饿,然后有行为化后,扔上方无皮果,上飞吃掉;
+        //此时,应该无论是哪个RCanset在执行中,都判定为它有效,触发类比抽象;
+        //但这里并没有进行类比抽象,反而打印了许多这里的日志: "fltAbsRCanset末帧 -> notOutBackNone";
+        //经查原因是: 在更饿发生之后,才发生的吃;
+        //那么,此处还有一个问题: 这种持续饥饿,在更饿发生后,怎么判定它有效解决了? (就像我们持续的疼痛,到底是什么时候突然不疼了的?);其实可能压根没注意到,不知道什么时候不疼了的;
+        //那么,这个触发者,就不能是负没发生,可能是正的发生,比如吃饱了(或没那么饿了);
         log = STRFORMAT(@"%@ -> notOutBackNone",log);
+        NSLog(@"%@",log);
         return;
     }
     
@@ -255,8 +262,8 @@
         NSString *itemLog = STRFORMAT(@"%@",log);
         //b. 非当前pFo下的解决方案,不做canset再类比;
         if (![solutionModel.basePFoOrTargetFoModel isEqual:self]) {
-            itemLog = STRFORMAT(@"%@ -> selfNotBasePFo",itemLog);
-            NSLog(@"%@",itemLog);
+            //itemLog = STRFORMAT(@"%@ -> selfNotBasePFo",itemLog);
+            //NSLog(@"%@",itemLog);
             continue;
         }
         
@@ -267,7 +274,7 @@
         //2024.04.21: 改成没激活过(没转实)的,不进行类比 (为了触发更多的类比);
         if (solutionModel.cansetStatus == CS_None) {
             itemLog = STRFORMAT(@"%@ -> solutionIsCSNone",itemLog);
-            NSLog(@"%@",itemLog);
+            NSLog(@"%@ (F%ld)",itemLog,solutionModel.cansetFrom.pointerId);
             continue;
         }
         if (solutionModel.status != TOModelStatus_ActYes && solutionModel.status != TOModelStatus_Runing && solutionModel.status != TOModelStatus_ActNo) {
