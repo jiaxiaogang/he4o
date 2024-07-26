@@ -107,7 +107,7 @@
 -(CGFloat) matchFoValue;
 
 //推进帧结束(完全帧)时总结 (参考27201-5);
--(void) pushFrameFinish;
+-(void) pushFrameFinish:(NSString*)log;
 
 /**
  *  MARK:--------------------获取强度--------------------
