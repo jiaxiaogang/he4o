@@ -48,7 +48,9 @@
 -(void) removeDemand:(DemandModel*)demand;
 -(void) clear;
 
-//把at标识的root全移除掉;
--(void) expired4PInput:(NSString*)algsType;
+/**
+ *  MARK:--------------------当输入持续mv的正向mv时--------------------
+ */
+-(void) inputForContinueAndGoodMv:(AICMVNodeBase*)mv;
 
 @end

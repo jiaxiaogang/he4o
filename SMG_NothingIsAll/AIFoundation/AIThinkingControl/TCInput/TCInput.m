@@ -100,6 +100,11 @@
  *      2023.08.08: pInput时支持时序识别 & 构建任务 & 预测 (参考30094-todo3 & todo5);
  */
 +(void) pInput:(AICMVNodeBase*)mv{
+    if ([ThinkingUtils isContinuousWithAT:mv.pointer.algsType] && [AIScore score4MV:mv.pointer ratio:1] > 0) {
+        [theTC.outModelManager inputForContinueAndGoodMv:mv];
+        return;
+    }
+    
     ISGroupLog(@"input P");
     [theTC updateLoopId];
     [theTC updateOperCount:kFILENAME];

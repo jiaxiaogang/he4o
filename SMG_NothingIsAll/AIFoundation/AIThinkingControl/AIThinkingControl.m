@@ -141,18 +141,6 @@ static AIThinkingControl *_instance;
         //1. 打包cmvNode;
         AICMVNodeBase *mvNode = [theNet createConMv:algsArr];
         
-        //2. 2024.07.22: 如果输入为正价值,目前不做太深入操作,直接简单的将DemandManager中一样标识的任务对冲移除掉即可;
-        //> 起因: 因为饥饿最近改成了连续任务,更饿也要继续求解,直至好久后解决后,得有个触发,使之停下吃 (不然它完成后,还一直在尝试求解);
-        if ([AIScore score4MV:mvNode.pointer ratio:1] > 0) {
-            
-            //TODOTOMORROW20240726: 对于持续R任务: 比如饥饿R任务现在是连续饥饿状态,所以只能以饥饿状态的减弱为判断 (即正mv输入);
-            
-            
-            
-            [theTC.demandManager expired4PInput:algsType];
-            return;
-        }
-        
         //2. 加入瞬时记忆 & 生成时序指向mv等;
         [TCInput pInput:mvNode];
     }else{
