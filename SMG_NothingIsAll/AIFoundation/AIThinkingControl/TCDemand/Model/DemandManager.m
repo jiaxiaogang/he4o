@@ -286,4 +286,30 @@
     }
 }
 
+/**
+ *  MARK:--------------------当输入非持续mv的负向mv时--------------------
+ */
+-(void) inputForNotContinueAndBadMv:(ReasonDemandModel*)root {
+    //1. 对于非持续R任务: 当它的所有pFo全没反馈负mv时,再为其触发New&AbsRCanset (即所有pFo没有负mv输入) (参考32118-TODO2);
+    double maxDeltaTime = 0;
+    for (AIMatchFoModel *pFo in root.pFos) {
+        AIFoNodeBase *baseFo = [SMGUtils searchNode:pFo.matchFo];
+        double deltaTime = [TOUtils getSumDeltaTime2Mv:baseFo cutIndex:pFo.cutIndex];
+        maxDeltaTime = MAX(maxDeltaTime, deltaTime);
+    }
+    
+    //2. 触发器;
+    double triggerTime = maxDeltaTime * 1.2f;
+    [AITime setTimeTrigger:triggerTime trigger:^{
+        for (AIMatchFoModel *pFo in root.pFos) {
+            AIFoNodeBase *baseFo = [SMGUtils searchNode:pFo.matchFo];
+            NSInteger maxCutIndex = baseFo.count - 1;
+            TIModelStatus status = [pFo getStatusForCutIndex:maxCutIndex];
+            if (status == TIModelStatus_OutBackSameDelta) {
+                //TODOTOMORROW20240728: 只要有一条失败了,就是全盘失败,阻止负mv没成功;
+            }
+        }
+    }];
+}
+
 @end

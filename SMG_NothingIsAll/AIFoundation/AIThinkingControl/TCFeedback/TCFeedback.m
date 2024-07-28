@@ -126,6 +126,7 @@
         if (!ISOK(root, ReasonDemandModel.class)) continue;
         
         //3. 对pFos做理性反馈;
+        //TODOTOMORROW20240728: 此处应该对所有pFos反馈TIModelStatus_OutBackSameDelta状态;
         for (AIMatchFoModel *waitModel in root.validPFos) {
             
             //3. 数据准备;
