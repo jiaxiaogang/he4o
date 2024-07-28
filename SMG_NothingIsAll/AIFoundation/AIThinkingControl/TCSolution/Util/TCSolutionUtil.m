@@ -114,12 +114,7 @@
     
     //11. 在rSolution/hSolution初始化Canset池时,也继用下传染状态 (参考31178-TODO3);
     int initToInfectedNum = [TOUtils initInfectedForCansetPool_Alg:hDemand];
-    
-    //TODOTOMORROW20240716: 此处在工作记忆中demand只有两层时,木棒皮果的H解,有大量只有: 0条或1条的情况 (参考32083);
     //NSLog(@"fltx1 此H的sub到root结构: %@",[TOModelVision cur2Root:hDemand]);
-    
-    
-    
     NSLog(@"第2步 H转为候选集:%ld - 中间帧被初始传染:%d = 有效数:%ld",hDemand.actionFoModels.count,initToInfectedNum,hDemand.actionFoModels.count - initToInfectedNum);
     
     //12. 竞争求解: 对hCansets进行实时竞争 (参考31122);

@@ -211,22 +211,9 @@
  *      2023.09.01: 打开newCanset时调用canset识别类比,并eff+1 (参考30124-todo1&todo2);
  *      2023.11.06: 预想与实际类比的protoFo采用newRCanset (参考30154-todo1);
  *      2023.12.09: 预想与实际类比构建absCanset以场景内防重 (参考3101b-todo6);
+ *      2024.07.29: 不再检查OutBackNone状态,调用者在调用此方法时,自行确定好当前发现了新解,不必再此处判断状态;
  */
 -(void) pushFrameFinish:(NSString*)log {
-    //0. 只有pFo触发时未收到反馈,才执行生成canset或再类比 (参考28077-修复);
-    TIModelStatus status = [self getStatusForCutIndex:self.cutIndex];
-    if (status != TIModelStatus_OutBackNone) {
-        //TODOTOMORROW20240726: 这里触发有问题,扔坚果饿,然后有行为化后,扔上方无皮果,上飞吃掉;
-        //此时,应该无论是哪个RCanset在执行中,都判定为它有效,触发类比抽象;
-        //但这里并没有进行类比抽象,反而打印了许多这里的日志: "fltAbsRCanset末帧 -> notOutBackNone";
-        //经查原因是: 在更饿发生之后,才发生的吃;
-        //那么,此处还有一个问题: 这种持续饥饿,在更饿发生后,怎么判定它有效解决了? (就像我们持续的疼痛,到底是什么时候突然不疼了的?);其实可能压根没注意到,不知道什么时候不疼了的;
-        //那么,这个触发者,就不能是负没发生,可能是正的发生,比如吃饱了(或没那么饿了);
-        log = STRFORMAT(@"%@ -> notOutBackNone(%@)",log,TIStatus2Str(status));
-        NSLog(@"%@",log);
-        return;
-    }
-    
     //1. =================自然未发生(新方案): 无actYes的S时,归功于自然未发生,则新增protoCanset (参考27206c-R任务)=================
     //a. 数据准备;
     AIFoNodeBase *matchFo = [SMGUtils searchNode:self.matchFo];
