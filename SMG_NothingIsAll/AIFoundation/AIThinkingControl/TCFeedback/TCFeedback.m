@@ -141,11 +141,18 @@
             if (waitModel.cutIndex < maxCutIndex) continue;
             
             //6. 等待中的inModel_判断hope(wait)和real(new)之间是否相符 (仅标记同区同向反馈);
-            CGFloat score = [AIScore score4MV:waitMatchFo.cmvNode_p ratio:1.0f];
-            if ([AIScore sameIdenSameScore:waitMatchFo.cmvNode_p mv2:cmvNode.pointer] && score < 0) {
+            if ([AIScore sameIdenSameScore:waitMatchFo.cmvNode_p mv2:cmvNode.pointer]) {
                 AIFoNodeBase *waitMatchFo = [SMGUtils searchNode:waitModel.matchFo];
+                
+                //10. 有反馈;
+                CGFloat score = [AIScore score4MV:waitMatchFo.cmvNode_p ratio:1.0f];
+                
+                //b. 正mv反馈为P(好) 或 负mv反馈为S(坏);
+                if (score != 0) {
+                    AnalogyType type = score > 0 ? ATPlus : ATSub;
+                    
                     //11. 则进行感性IRT反省;
-                    [TCRethink perceptInRethink:waitModel type:ATSub];
+                    [TCRethink perceptInRethink:waitModel type:type];
                     NSLog(@"---//IP反省触发器执行:%p F%ld 状态:%@",waitMatchFo,waitMatchFo.pointer.pointerId,TIStatus2Str(TIModelStatus_OutBackSameDelta));
                     
                     //12. 有mv反馈时,做Canset识别 (参考28185-todo5);
@@ -169,7 +176,7 @@
             AIFoNodeBase *waitMatchFo = [SMGUtils searchNode:waitModel.matchFo];
             //6. 等待中的inModel_判断hope(wait)和real(new)之间是否相符 (仅标记同区同向反馈);
             if ([AIScore sameIdenSameScore:waitMatchFo.cmvNode_p mv2:cmvNode.pointer]) {
-                [waitModel setStatus:TIModelStatus_OutBackSameDelta forCutIndex:waitModel.cutIndex];
+                [waitModel setStatus:TIModelStatus_OutBackSameDelta forCutIndex:waitMatchFo.count - 1];
             }
         }
     }

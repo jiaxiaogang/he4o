@@ -91,8 +91,8 @@
                 if (matchFo.cmvNode_p) {
                     
                     //10. 中间帧推进失败时,即提前达到终点,即处理推进为完全时序 (参考27183);
-                    //TODOTOMORROW20240726: 这里应该不是提前到达终点,应该是从cut到end的deltaTime到了后,还没负mv反馈,才算到达终点;
-                    [item pushFrameFinish:@"fltAbsRCanset中间帧"];
+                    //2024.07.29: 这里应该不是提前到达终点,应该是从cut到end的deltaTime到了后,还没负mv反馈,才算到达终点,废弃此处调用,pFo最终是否有mv反馈,由DemandManager来最终调用 (参考32118);
+                    //[item pushFrameFinish:@"fltAbsRCanset中间帧"];
                     
                     //9. 失效判断: pFo任务失效 (参考27093-条件2 & 27095-2);
                     item.isExpired = true;
@@ -131,7 +131,8 @@
             }
             
             //14. 最末帧推进完全时,无论成败都算终点,则处理推进为完全时序 (参考27183);
-            [item pushFrameFinish:@"fltAbsRCanset末帧"];
+            //2024.07.29: 废弃此处调用,pFo最终是否有mv反馈,由DemandManager来最终调用 (参考32118);
+            //[item pushFrameFinish:@"fltAbsRCanset末帧"];
             
             //13. pFo任务失效;
             if ([ThinkingUtils isContinuousWithAT:matchFo.cmvNode_p.algsType]) {

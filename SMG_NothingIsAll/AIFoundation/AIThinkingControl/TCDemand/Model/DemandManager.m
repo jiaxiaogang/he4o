@@ -175,6 +175,9 @@
             //2021.05.27: 为方便测试,所有imv都给20迫切度 (因为迫切度太低话,还没怎么思考就停了);
             //2022.03.10: 为使鸟躲避及时停下,将迫切度再改回受评分迫切度等影响;
             [theTC updateEnergyValue:-score * 20];
+            
+            //9. 新非连续R任务未输入负mv反馈时 (参考32118-TODO2);
+            [self notInputForNotContinueAndBadMv:newItem];
         }else{
             [theTC updateEnergyValue:-score * 20];
             NSLog(@"当前,预测mv未形成需求:%@ 评分:%f",atKey,score);
@@ -265,7 +268,7 @@
 }
 
 /**
- *  MARK:--------------------当输入持续mv的正向mv时--------------------
+ *  MARK:--------------------当输入持续mv的正向mv时 (参考32118-TODO1)--------------------
  */
 -(void) inputForContinueAndGoodMv:(AICMVNodeBase*)mv {
     NSArray *roots = [self.getAllDemand copy];
@@ -287,9 +290,12 @@
 }
 
 /**
- *  MARK:--------------------当输入非持续mv的负向mv时--------------------
+ *  MARK:--------------------未输入非持续mv的负向mv时 (参考32118-TODO2)--------------------
  */
--(void) inputForNotContinueAndBadMv:(ReasonDemandModel*)root {
+-(void) notInputForNotContinueAndBadMv:(ReasonDemandModel*)root {
+    //0. 数据检查 (本方法仅针对非持续任务);
+    if ([ThinkingUtils isContinuousWithAT:root.algsType]) return;
+    
     //1. 对于非持续R任务: 当它的所有pFo全没反馈负mv时,再为其触发New&AbsRCanset (即所有pFo没有负mv输入) (参考32118-TODO2);
     double maxDeltaTime = 0;
     for (AIMatchFoModel *pFo in root.pFos) {
@@ -301,12 +307,21 @@
     //2. 触发器;
     double triggerTime = maxDeltaTime * 1.2f;
     [AITime setTimeTrigger:triggerTime trigger:^{
+        
+        //3. 判断pFos是否阻止负mv成功了 (只要有一条失败了,就是全盘失败,阻止负mv没成功);
+        BOOL success = true;
         for (AIMatchFoModel *pFo in root.pFos) {
             AIFoNodeBase *baseFo = [SMGUtils searchNode:pFo.matchFo];
-            NSInteger maxCutIndex = baseFo.count - 1;
-            TIModelStatus status = [pFo getStatusForCutIndex:maxCutIndex];
+            TIModelStatus status = [pFo getStatusForCutIndex:baseFo.count - 1];
             if (status == TIModelStatus_OutBackSameDelta) {
-                //TODOTOMORROW20240728: 只要有一条失败了,就是全盘失败,阻止负mv没成功;
+                success = false;
+            }
+        }
+        
+        //4. 如果阻止pFos负mv全成功: 则记录新的NewAbsRCanset;
+        if (success) {
+            for (AIMatchFoModel *pFo in root.pFos) {
+                [pFo pushFrameFinish:@"fltAbsRCanset非持续任务未反馈负mv"];
             }
         }
     }];
