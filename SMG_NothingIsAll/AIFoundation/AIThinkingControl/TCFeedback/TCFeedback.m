@@ -126,7 +126,6 @@
         if (!ISOK(root, ReasonDemandModel.class)) continue;
         
         //3. 对pFos做理性反馈;
-        //TODOTOMORROW20240728: 此处应该对所有pFos反馈TIModelStatus_OutBackSameDelta状态;
         for (AIMatchFoModel *waitModel in root.validPFos) {
             
             //3. 数据准备;
@@ -142,19 +141,11 @@
             if (waitModel.cutIndex < maxCutIndex) continue;
             
             //6. 等待中的inModel_判断hope(wait)和real(new)之间是否相符 (仅标记同区同向反馈);
-            if ([AIScore sameIdenSameScore:waitMatchFo.cmvNode_p mv2:cmvNode.pointer]) {
-                [waitModel setStatus:TIModelStatus_OutBackSameDelta forCutIndex:waitModel.cutIndex];
+            CGFloat score = [AIScore score4MV:waitMatchFo.cmvNode_p ratio:1.0f];
+            if ([AIScore sameIdenSameScore:waitMatchFo.cmvNode_p mv2:cmvNode.pointer] && score < 0) {
                 AIFoNodeBase *waitMatchFo = [SMGUtils searchNode:waitModel.matchFo];
-                
-                //10. 有反馈;
-                CGFloat score = [AIScore score4MV:waitMatchFo.cmvNode_p ratio:1.0f];
-                
-                //b. 正mv反馈为P(好) 或 负mv反馈为S(坏);
-                if (score != 0) {
-                    AnalogyType type = score > 0 ? ATPlus : ATSub;
-                    
                     //11. 则进行感性IRT反省;
-                    [TCRethink perceptInRethink:waitModel type:type];
+                    [TCRethink perceptInRethink:waitModel type:ATSub];
                     NSLog(@"---//IP反省触发器执行:%p F%ld 状态:%@",waitMatchFo,waitMatchFo.pointer.pointerId,TIStatus2Str(TIModelStatus_OutBackSameDelta));
                     
                     //12. 有mv反馈时,做Canset识别 (参考28185-todo5);
@@ -170,6 +161,15 @@
                     [theTV updateFrame];
                 });
                 NSLog(@"tip_OPushM: 实MV 正向反馈");
+            }
+        }
+        
+        //2024.07.28: 此处应该对所有pFos反馈TIModelStatus_OutBackSameDelta状态;
+        for (AIMatchFoModel *waitModel in root.pFos) {
+            AIFoNodeBase *waitMatchFo = [SMGUtils searchNode:waitModel.matchFo];
+            //6. 等待中的inModel_判断hope(wait)和real(new)之间是否相符 (仅标记同区同向反馈);
+            if ([AIScore sameIdenSameScore:waitMatchFo.cmvNode_p mv2:cmvNode.pointer]) {
+                [waitModel setStatus:TIModelStatus_OutBackSameDelta forCutIndex:waitModel.cutIndex];
             }
         }
     }
