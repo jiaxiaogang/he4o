@@ -264,24 +264,27 @@
             NSLog(@"%@ (F%ld)",itemLog,solutionModel.cansetFrom.pointerId);
             continue;
         }
-        if (solutionModel.status != TOModelStatus_ActYes && solutionModel.status != TOModelStatus_Runing && solutionModel.status != TOModelStatus_ActNo) {
-            NSLog(@"RCanset预想与实际类比未执行,F%ld 状态:%ld",solutionModel.content_p.pointerId,solutionModel.status);
-            itemLog = STRFORMAT(@"%@ -> solutionNotActYesRuningActNo",itemLog);
-            NSLog(@"%@",itemLog);
-            continue;
-        }
+        
+        //2024.07.30: 去掉不必要的过滤器 (参考3211a-AbsR);
+        //if (solutionModel.status != TOModelStatus_ActYes && solutionModel.status != TOModelStatus_Runing && solutionModel.status != TOModelStatus_ActNo) {
+        //    NSLog(@"RCanset预想与实际类比未执行,F%ld 状态:%ld",solutionModel.content_p.pointerId,solutionModel.status);
+        //    itemLog = STRFORMAT(@"%@ -> solutionNotActYesRuningActNo",itemLog);
+        //    NSLog(@"%@",itemLog);
+        //    continue;
+        //}
         
         //c. 数据准备;
         AIKVPointer *basePFoOrTargetFo_p = [TOUtils convertBaseFoFromBasePFoOrTargetFoModel:solutionModel.basePFoOrTargetFoModel];
         AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.content_p];
         AIFoNodeBase *pFo = [SMGUtils searchNode:basePFoOrTargetFo_p];
         
+        //2024.07.30: 去掉不必要的过滤器 (参考3211a-AbsR);
         //d. 收集真实发生feedbackAlg (order为0条时,跳过);
-        if (newRCanset.count <= 1) {
-            itemLog = STRFORMAT(@"%@ -> newRCansetCount=1",itemLog);
-            NSLog(@"%@",itemLog);
-            continue;
-        }
+        //if (newRCanset.count <= 1) {
+        //    itemLog = STRFORMAT(@"%@ -> newRCansetCount=1",itemLog);
+        //    NSLog(@"%@",itemLog);
+        //    continue;
+        //}
         
         //f. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
         NSArray *noRepeatArea_ps = [pFo getConCansets:pFo.count];
