@@ -347,8 +347,8 @@
     [sceneTo updateOutSPStrong:self.cansetActIndex difStrong:1 type:ATPlus sceneFrom:self.sceneFrom cansetFrom:self.cansetFrom];//3b. 只要反馈成功的,都进行P+1;
     
     //2. 反馈有效: 构建hCanset;
-    [self step2_FeedbackThenCreateHCanset:protoAlg_p];
-        
+    [self step2_FeedbackThenNewHCanset:protoAlg_p];
+    
     //3. 反馈成立,更新已发生;
     self.cansetCutIndex ++;
     
@@ -394,7 +394,7 @@
  *  @desc 此方法代码是从feedbackTOR搬过来的,原来的代码有点乱,整理了下使之易读些,并搬到了这里 (参考31073-TODO7);
  *  @param protoAlg_p feedbackTOR方法中的protoAlg传过来;
  */
--(void) step2_FeedbackThenCreateHCanset:(AIKVPointer*)protoAlg_p {
+-(void) step2_FeedbackThenNewHCanset:(AIKVPointer*)protoAlg_p {
     //1. 数据准备;
     TOAlgModel *curAlgModel = [self getCurFrame];
     
@@ -431,79 +431,82 @@
             //2024.06.26: indexDic有可能指定后还在更新,导致有越界 (参考32014);
             [newHCanset updateIndexDic:rCanset indexDic:[self.realCansetToIndexDic copy]];
             NSLog(@"%@%@%@Canset演化> NewHCanset:%@ toScene:%@ 在%ld帧:%@",FltLog4XueQuPi(3),FltLog4HDemandOfYouPiGuo(@"5"),FltLog4XueBanYun(2),Fo2FStr(newHCanset),ShortDesc4Node(rCanset),self.cansetActIndex,Pit2FStr(actIndexAlg_p));
+            
+            //6. rCanset的actIndex匹配了,就相当于它curAlgModel的HDemand,下的所有的subHCanset的targetAlg全反馈匹配上了 (参考32119-TODO1);
+            HDemandModel *curHDemand = ARR_INDEX(curAlgModel.subDemands, 0);
+            if (!curHDemand) return;
+            for (TOFoModel *hCanset in curHDemand.actionFoModels) {
+                [hCanset step3_FeedbackThenAbsHCanset:newHCanset];
+            }
+        } else {
+            NSLog(@"New&AbsHCanset都未执行,F%ld 状态:%ld %ld 实际的帧数:%ld",self.content_p.pointerId,self.status,self.cansetStatus,order.count);
         }
     }
-    
+}
+
+/**
+ *  MARK:--------------------反馈上后: 触发类比抽象出AbsHCanset--------------------
+ *  @desc 反馈匹配到targetAlg时,会触发AbsHCanset类比抽象 (可能一帧帧过来,也可能提前直接反馈target) (参考32119-TODO1);
+ *  @param newHCanset 2024.07.29: 复用NewHCanset的生成在此处 (不必再单独生成NewHCanset);
+ */
+-(void) step3_FeedbackThenAbsHCanset:(AIFoNodeBase*)newHCanset {
     //========== 第2部分: 当H任务推进到最终target时,触发预想与实际类比absHCanset ==========
     //5. H返回的有效判断
     //2024.04.21: 激活过(转实)的就能类比 (原则是: 有si即有预期,在此基础上尽可能多的触发预期与实际的类比);
-    if (self.isH && self.cansetStatus != CS_None) {
+    //2024.07.29: 此时,可以直接调用所有best过的hCanset来进行H类比抽象 (并且不需要isEndFrame);
+    if (!self.isH || self.cansetStatus == CS_None) return;
+    if (!newHCanset) return;
         
-        //6. HDemand即使waitModel不是actYes状态也处理反馈;
-        HDemandModel *hDemand = (HDemandModel*)self.baseOrGroup;//h需求模型
-        TOAlgModel *targetAlgModel = (TOAlgModel*)hDemand.baseOrGroup;   //hDemand的目标alg;
-        TOFoModel *targetFoModel = (TOFoModel*)targetAlgModel.baseOrGroup;    //hDemand的目标alg所在的fo;
-        if (Log4OPushM) NSLog(@"HCansetA有效:M(A%ld) C:%@",protoAlg_p.pointerId,Pit2FStr(targetAlgModel.content_p));
+    //6. HDemand即使waitModel不是actYes状态也处理反馈;
+    HDemandModel *hDemand = (HDemandModel*)self.baseOrGroup;//h需求模型
+    TOAlgModel *targetAlgModel = (TOAlgModel*)hDemand.baseOrGroup;   //hDemand的目标alg;
+    TOFoModel *targetFoModel = (TOFoModel*)targetAlgModel.baseOrGroup;    //hDemand的目标alg所在的fo;
+    
+    //8. 旧有那些改状态status的代码,整理在此处 (参考31073-TODO7-4);
+    //9. H反馈中段: 标记OuterBack,solutionFo继续;
+    self.status = TOModelStatus_Finish;
+    hDemand.status = TOModelStatus_Finish;
+    hDemand.effectStatus = ES_HavEff;
+    targetAlgModel.status = TOModelStatus_OuterBack;
+    targetFoModel.status = TOModelStatus_Runing;
+    self.cansetCutIndex = self.cansetTargetIndex;//当前hTargetAlg提前反馈了,直接把cutIndex改成targetIndex;
+    
+    //10. H反馈末帧时: 做触发H"预想与实际"类比的准备;
+    //11. 用realMaskFo & realDeltaTimes生成protoFo (参考30154-todo2);
+    //12. H任务完成时,H当前正执行的S提前完成,并进行外类比 (参考27206c-H任务);
+    //13. 数据准备 (当前sceneTo就是targetFoModel.cansetTo);
+    AIFoNodeBase *cansetTo = [SMGUtils searchNode:self.transferSiModel.canset];
+    AIFoNodeBase *sceneTo = [SMGUtils searchNode:self.sceneTo];
+    
+    //14. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
+    NSArray *noRepeatArea_ps = [sceneTo getConCansets:targetFoModel.cansetActIndex];
+    AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:newHCanset assFo:cansetTo type:ATDefault noRepeatArea_ps:noRepeatArea_ps];
+    BOOL updateCansetSuccess = [sceneTo updateConCanset:absCansetFo.pointer targetIndex:targetFoModel.cansetActIndex];
+    [AITest test101:absCansetFo proto:newHCanset conCanset:cansetTo];
+    NSLog(@"%@%@%@%@%@Canset演化> AbsHCanset:%@ toScene:%@ 在%ld帧:%@",FltLog4AbsHCanset(true, 3),FltLog4XueQuPi(3),FltLog4HDemandOfYouPiGuo(@"5"),FltLog4XueBanYun(2),FltLog4YonBanYun(4),Fo2FStr(absCansetFo),ShortDesc4Node(sceneTo),self.cansetActIndex,Pit2FStr(self.getCurFrame.content_p));
+    
+    if (updateCansetSuccess) {
+        //15. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);
+        //2024.04.16: 此处简化了下,把用convertOldIndexDic2NewIndexDic()取映射,改成用zonHeDic来计算;
+        //a. 从sceneTo向下到cansetTo;
+        DirectIndexDic *dic1 = [DirectIndexDic newNoToAbs:[sceneTo getConIndexDic:cansetTo.p]];
         
-        //7. 记录feedbackAlg (参考27204-1);
-        BOOL isEndFrame = self.cansetActIndex == self.cansetTargetIndex;
+        //b. 从cansetTo向上到absCansetTo;
+        DirectIndexDic *dic2 = [DirectIndexDic newOkToAbs:[cansetTo getAbsIndexDic:absCansetFo.p]];
         
-        //8. 旧有那些改状态status的代码,整理在此处 (参考31073-TODO7-4);
-        //9. H反馈中段: 标记OuterBack,solutionFo继续;
-        self.status = isEndFrame ? TOModelStatus_Finish : TOModelStatus_Runing;
-        hDemand.status = isEndFrame ? TOModelStatus_Finish : TOModelStatus_Runing;
-        if (isEndFrame) {
-            hDemand.effectStatus = ES_HavEff;
-            targetAlgModel.status = TOModelStatus_OuterBack;
-            targetFoModel.status = TOModelStatus_Runing;
-            targetAlgModel.feedbackAlg = protoAlg_p;
-            
-            //10. H反馈末帧时: 做触发H"预想与实际"类比的准备;
-            //11. 用realMaskFo & realDeltaTimes生成protoFo (参考30154-todo2);
-            AIMatchFoModel *pFo = [TOUtils getBasePFoWithSubOutModel:self];
-            NSArray *orders = [pFo convertOrders4NewCansetV2];
-            
-            //12. H任务完成时,H当前正执行的S提前完成,并进行外类比 (参考27206c-H任务);
-            if (orders.count > 1) {
-                //13. 数据准备 (当前sceneTo就是targetFoModel.cansetTo);
-                AIFoNodeBase *cansetTo = [SMGUtils searchNode:self.transferSiModel.canset];
-                AIFoNodeBase *sceneTo = [SMGUtils searchNode:self.sceneTo];
-                AIFoNodeBase *newHCanset = [theNet createConFo:orders];
-                
-                //14. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
-                NSArray *noRepeatArea_ps = [sceneTo getConCansets:targetFoModel.cansetActIndex];
-                AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:newHCanset assFo:cansetTo type:ATDefault noRepeatArea_ps:noRepeatArea_ps];
-                BOOL updateCansetSuccess = [sceneTo updateConCanset:absCansetFo.pointer targetIndex:targetFoModel.cansetActIndex];
-                [AITest test101:absCansetFo proto:newHCanset conCanset:cansetTo];
-                NSLog(@"%@%@%@%@%@Canset演化> AbsHCanset:%@ toScene:%@ 在%ld帧:%@",FltLog4AbsHCanset(true, 3),FltLog4XueQuPi(3),FltLog4HDemandOfYouPiGuo(@"5"),FltLog4XueBanYun(2),FltLog4YonBanYun(4),Fo2FStr(absCansetFo),ShortDesc4Node(sceneTo),self.cansetActIndex,Pit2FStr(self.getCurFrame.content_p));
-                
-                if (updateCansetSuccess) {
-                    //15. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);
-                    //2024.04.16: 此处简化了下,把用convertOldIndexDic2NewIndexDic()取映射,改成用zonHeDic来计算;
-                    //a. 从sceneTo向下到cansetTo;
-                    DirectIndexDic *dic1 = [DirectIndexDic newNoToAbs:[sceneTo getConIndexDic:cansetTo.p]];
-                    
-                    //b. 从cansetTo向上到absCansetTo;
-                    DirectIndexDic *dic2 = [DirectIndexDic newOkToAbs:[cansetTo getAbsIndexDic:absCansetFo.p]];
-                    
-                    //c. 综合求出absHCanset与场景的映射;
-                    NSDictionary *absHCansetSceneToIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2]];
-                    if ([Fo2FStr(absCansetFo) containsString:@"饿"] && [Fo2FStr(sceneTo) containsString:@"饿"]) {
-                        if (absHCansetSceneToIndexDic.count == 0) {
-                            NSLog(@"AbsHCanset Dic Is Nil");
-                        }
-                    }
-                    [absCansetFo updateIndexDic:sceneTo indexDic:absHCansetSceneToIndexDic];
-                    [AITest test18:absHCansetSceneToIndexDic newCanset:absCansetFo absFo:sceneTo];
-                    
-                    //16. 算出spDic (参考27213-5);
-                    [absCansetFo updateSPDic:[self convertSPDicFromConCanset2AbsCanset]];
-                    [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
-                }
-            } else {
-                NSLog(@"HCanset预想与实际类比未执行,F%ld 状态:%ld %ld 实际的帧数:%ld",self.content_p.pointerId,self.status,self.cansetStatus,orders.count);
+        //c. 综合求出absHCanset与场景的映射;
+        NSDictionary *absHCansetSceneToIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2]];
+        if ([Fo2FStr(absCansetFo) containsString:@"饿"] && [Fo2FStr(sceneTo) containsString:@"饿"]) {
+            if (absHCansetSceneToIndexDic.count == 0) {
+                NSLog(@"AbsHCanset Dic Is Nil");
             }
         }
+        [absCansetFo updateIndexDic:sceneTo indexDic:absHCansetSceneToIndexDic];
+        [AITest test18:absHCansetSceneToIndexDic newCanset:absCansetFo absFo:sceneTo];
+        
+        //16. 算出spDic (参考27213-5);
+        [absCansetFo updateSPDic:[self convertSPDicFromConCanset2AbsCanset]];
+        [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
     }
 }
 
