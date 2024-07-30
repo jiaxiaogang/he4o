@@ -283,6 +283,7 @@
             
             //2. 对于持续R任务: 比如饥饿R任务现在是连续饥饿状态,所以只能以饥饿状态的减弱为判断 (即正mv输入) (参考32118-TODO1);
             for (AIMatchFoModel *pFo in root.pFos) {
+                NSLog(@"%@持续任务反馈了正mv给pFo:%@",FltLog4CreateRCanset(2),ShortDesc4Pit(pFo.matchFo));
                 [pFo pushFrameFinish:@"fltAbsRCanset持续任务反馈正mv"];
             }
         }
@@ -321,6 +322,7 @@
         //4. 如果阻止pFos负mv全成功: 则记录新的NewAbsRCanset;
         if (success) {
             for (AIMatchFoModel *pFo in root.pFos) {
+                NSLog(@"%@非持续任务未反馈负mv给pFo:%@",FltLog4CreateRCanset(2),ShortDesc4Pit(pFo.matchFo));
                 [pFo pushFrameFinish:@"fltAbsRCanset非持续任务未反馈负mv"];
             }
         }

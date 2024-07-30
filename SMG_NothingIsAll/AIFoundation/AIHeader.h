@@ -522,5 +522,17 @@
  *          4. 立马扔距0有皮果;
  *          5. 执行搬运行为化 => flt2 Axxxx(踢)
  */
-#define Switch4YonBanYun true
+#define Switch4YonBanYun false
 #define FltLog4YonBanYun(step) Switch4YonBanYun ? STRFORMAT(@"flt%d ",step) : @""
+
+/**
+ *  MARK:--------------------调试构建RCanset (参考32131)--------------------
+ */
+#define Switch4CreateRCanset true
+#define FltLog4CreateRCanset(step) Switch4CreateRCanset ? STRFORMAT(@"flt%d ",step) : @""
+
+/**
+ *  MARK:--------------------调试构建HCanset (参考32131)--------------------
+ */
+#define Switch4CreateHCanset false
+#define FltLog4CreateHCanset(step) Switch4CreateHCanset ? STRFORMAT(@"flt%d ",step) : @""

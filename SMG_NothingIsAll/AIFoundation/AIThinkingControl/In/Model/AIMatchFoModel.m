@@ -224,7 +224,7 @@
     
     //c. 将protoFo挂载到matchFo下的conCansets下 (参考27201-2);
     BOOL updateCansetSuccess = [matchFo updateConCanset:newRCanset.pointer targetIndex:matchFo.count];
-    NSLog(@"Canset演化> NewRCanset:%@ toScene:%@",Fo2FStr(newRCanset),ShortDesc4Node(matchFo));
+    NSLog(@"%@Canset演化> NewRCanset:%@ toScene:%@",FltLog4CreateRCanset(3),Fo2FStr(newRCanset),ShortDesc4Node(matchFo));
     
     if (updateCansetSuccess) {
         //d. 将item.indexDic挂载到matchFo的conIndexDDic下 (参考27201-3);
@@ -246,30 +246,19 @@
     //TODO待查BUG20231028: 应该是在feedbackTOR中和hCanset一样,已经被改成了OuterBack状态,导致这里执行不到 (参考3014a-问题3);
     NSArray *actionFoModels = [self.baseRDemand.actionFoModels copy];
     for (TOFoModel *solutionModel in actionFoModels) {
-        NSString *itemLog = STRFORMAT(@"%@",log);
         //b. 非当前pFo下的解决方案,不做canset再类比;
-        if (![solutionModel.basePFoOrTargetFoModel isEqual:self]) {
-            //itemLog = STRFORMAT(@"%@ -> selfNotBasePFo",itemLog);
-            //NSLog(@"%@",itemLog);
-            continue;
-        }
+        if (![solutionModel.basePFoOrTargetFoModel isEqual:self]) continue;
         
         //1. 判断处在actYes状态的解决方案 && 解决方案是属性当前pFo决策取得的 (参考27206c-综上&多S问题);
         //a. 非actYes和runing状态的不做canset再类比;
         //2023.11.03: 即使失败也可以触发"预想与实际"的类比抽象;
         //2024.04.17: 非激活状态的也不构建AbsRCanset (它都没激活,我们没必要喂饭吃 (避免强行经验带来场景不符合等问题),毕竟有迁移后续也不怕缺canset用);
         //2024.04.21: 改成没激活过(没转实)的,不进行类比 (为了触发更多的类比);
-        if (solutionModel.cansetStatus == CS_None) {
-            itemLog = STRFORMAT(@"%@ -> solutionIsCSNone",itemLog);
-            NSLog(@"%@ (F%ld)",itemLog,solutionModel.cansetFrom.pointerId);
-            continue;
-        }
+        if (solutionModel.cansetStatus == CS_None) continue;
         
         //2024.07.30: 去掉不必要的过滤器 (参考3211a-AbsR);
         //if (solutionModel.status != TOModelStatus_ActYes && solutionModel.status != TOModelStatus_Runing && solutionModel.status != TOModelStatus_ActNo) {
         //    NSLog(@"RCanset预想与实际类比未执行,F%ld 状态:%ld",solutionModel.content_p.pointerId,solutionModel.status);
-        //    itemLog = STRFORMAT(@"%@ -> solutionNotActYesRuningActNo",itemLog);
-        //    NSLog(@"%@",itemLog);
         //    continue;
         //}
         
@@ -280,21 +269,14 @@
         
         //2024.07.30: 去掉不必要的过滤器 (参考3211a-AbsR);
         //d. 收集真实发生feedbackAlg (order为0条时,跳过);
-        //if (newRCanset.count <= 1) {
-        //    itemLog = STRFORMAT(@"%@ -> newRCansetCount=1",itemLog);
-        //    NSLog(@"%@",itemLog);
-        //    continue;
-        //}
+        //if (newRCanset.count <= 1) continue;
         
         //f. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
         NSArray *noRepeatArea_ps = [pFo getConCansets:pFo.count];
         AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:newRCanset assFo:solutionFo type:ATDefault noRepeatArea_ps:noRepeatArea_ps];
         BOOL updateCansetSuccess = [pFo updateConCanset:absCansetFo.pointer targetIndex:pFo.count];
         [AITest test101:absCansetFo proto:newRCanset conCanset:solutionFo];
-        NSLog(@"%@Canset演化> AbsRCanset:%@ toScene:%@",FltLog4YonBanYun(4),Fo2FStr(absCansetFo),ShortDesc4Node(pFo));
-        
-        itemLog = STRFORMAT(@"%@ -> successAbsRCanset",itemLog);
-        NSLog(@"%@",itemLog);
+        NSLog(@"%@%@Canset演化> AbsRCanset:%@ from(F%ld:F%ld) toScene:%@",FltLog4CreateRCanset(4),FltLog4YonBanYun(4),Fo2FStr(absCansetFo),newRCanset.pId,solutionFo.pId,ShortDesc4Node(pFo));
         
         if (updateCansetSuccess) {
             //2024.04.17: 此处简化了下,把用convertOldIndexDic2NewIndexDic()取映射,改成用zonHeDic来计算;

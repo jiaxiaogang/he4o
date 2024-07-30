@@ -55,7 +55,8 @@
     NSString *frameLog = foModel.cansetActIndex < foModel.cansetTargetIndex ? @"中间帧" : @"末帧";
     NSString *fltLog1 = FltLog4AbsHCanset(foModel.isH, 1);
     NSString *fltLog2 = FltLog4HDemandOfWuPiGuo(1);
-    OFTitleLog(@"行为化Fo",@"\n%@%@%@行为化%@下标 (%ld/%ld) %@ from时序:%@",fltLog1,fltLog2,rhLog,frameLog,foModel.cansetActIndex,foModel.cansetTargetIndex,Pit2FStr([foModel getCurFrame].content_p),Fo2FStr(curFo));
+    NSString *fltLog3 = !foModel.isH ? FltLog4CreateRCanset(1) : @"";
+    OFTitleLog(@"行为化Fo",@"\n%@%@%@%@行为化%@下标 (%ld/%ld) %@ from时序:%@",fltLog1,fltLog2,fltLog3,rhLog,frameLog,foModel.cansetActIndex,foModel.cansetTargetIndex,Pit2FStr([foModel getCurFrame].content_p),Fo2FStr(curFo));
     
     [theTC updateOperCount:kFILENAME];
     Debug();
