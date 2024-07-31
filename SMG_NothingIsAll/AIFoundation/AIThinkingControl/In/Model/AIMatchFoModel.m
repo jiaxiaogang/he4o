@@ -224,7 +224,7 @@
     
     //c. 将protoFo挂载到matchFo下的conCansets下 (参考27201-2);
     BOOL updateCansetSuccess = [matchFo updateConCanset:newRCanset.pointer targetIndex:matchFo.count];
-    NSLog(@"%@Canset演化> NewRCanset:%@ toScene:%@ (原因:%@)",FltLog4CreateRCanset(3),Fo2FStr(newRCanset),ShortDesc4Node(matchFo),log);
+    NSLog(@"Canset演化> NewRCanset:%@ toScene:%@ (原因:%@)",Fo2FStr(newRCanset),ShortDesc4Node(matchFo),log);
     
     if (updateCansetSuccess) {
         //d. 将item.indexDic挂载到matchFo的conIndexDDic下 (参考27201-3);
