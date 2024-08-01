@@ -69,6 +69,7 @@
                     
                     //TODOTOMORROW20240801: 查下此处为什么M1(饥饿)和A3955(皮果)会有mIsC关系? (参考32132);
                     //日志: alg类比 ===> M1{↑饿-16} : A3955(向90,距13,皮果) = A9585()
+                    //日志: alg类比 ===> A4467(向92,距12,果) : A3967(飞↑) = A8471()
                     if (Log4Ana) NSLog(@"alg类比 ===> %@ : %@ = %@",Pit2FStr(protoA_p),Pit2FStr(assA_p),Alg2FStr(absA));
                     
                     //5. 收集并更新jMax;

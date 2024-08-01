@@ -371,10 +371,14 @@
 //MARK:                     < 抽具象关联 Relate (外界调用,支持alg/fo) >
 //MARK:===============================================================
 +(void) relateAlgAbs:(AIAlgNodeBase*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew{
-    if ([SMGUtils filterSingleFromArr:conNodes checkValid:^BOOL(AIAlgNodeBase *item) {
-        return [NVHeUtil algIsJiE:item.pointer];
-    }] && ![NVHeUtil algIsJiE:absNode.pointer]) {
-        NSLog(@"当conNodes是饥饿,但absNode不是饥饿时,查下为什么二者会关联起来? (参考32132)");
+    if (isNew) {
+        BOOL absIsJiE = [NVHeUtil algIsJiE:absNode.pointer];
+        BOOL conIsJiE = [SMGUtils filterSingleFromArr:conNodes checkValid:^BOOL(AIAlgNodeBase *item) {
+            return [NVHeUtil algIsJiE:item.pointer];
+        }];
+        if (absIsJiE != conIsJiE) {
+            NSLog(@"当conNodes是饥饿,但absNode不是饥饿时,查下为什么二者会关联起来? (参考32132)");
+        }
     }
     
     [self relateGeneralAbs:absNode absConPorts:absNode.conPorts conNodes:conNodes isNew:isNew difStrong:1];
