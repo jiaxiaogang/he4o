@@ -67,6 +67,10 @@
                     //4. 即使mIsC匹配,也要进行共同点抽象 (参考29025-11);
                     AIAlgNodeBase *absA = [self analogyAlg:protoA_p assA:assA_p];
                     
+                    //TODOTOMORROW20240801: 查下此处为什么M1(饥饿)和A3955(皮果)会有mIsC关系? (参考32132);
+                    //日志: alg类比 ===> M1{↑饿-16} : A3955(向90,距13,皮果) = A9585()
+                    if (Log4Ana) NSLog(@"alg类比 ===> %@ : %@ = %@",Pit2FStr(protoA_p),Pit2FStr(assA_p),Alg2FStr(absA));
+                    
                     //5. 收集并更新jMax;
                     [protoAssIndexDic setObject:@(i) forKey:@(j)];
                     [orderSames insertObject:absA.pointer atIndex:0];

@@ -275,11 +275,25 @@
     return [self checkValueFromAlg:alg_p valueATIs:KICK_RDS];
 }
 
+//alg是饥饿
++(BOOL) algIsJiE:(AIKVPointer*)alg_p {
+    if ([Pit2FStr(alg_p) containsString:@"饿"]) {
+        if (!PitIsMv(alg_p) || alg_p.pointerId != 1) {
+            NSLog(@"查下当alg类型时,怎么判定它是饥饿节点");
+        }
+    }
+    
+    if ([NSStringFromClass(ImvAlgsHungerModel.class) isEqualToString:alg_p.algsType]) {
+        return true;
+    }
+    return false;
+}
+
 //判断alg中某区码的稀疏码的at类型是valueATIs (比如: 取概念有踢特征);
 +(BOOL) checkValueFromAlg:(AIKVPointer*)fromAlg_p valueATIs:(NSString*)valueATIs {
     AIAlgNodeBase *fromAlg = [SMGUtils searchNode:fromAlg_p];
     AIKVPointer *findValue_p = [SMGUtils filterSingleFromArr:fromAlg.content_ps checkValid:^BOOL(AIKVPointer *item) {
-        return [KICK_RDS isEqualToString:item.algsType];
+        return [valueATIs isEqualToString:item.algsType];
     }];
     return findValue_p;
 }
