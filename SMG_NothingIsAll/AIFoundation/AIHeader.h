@@ -528,11 +528,11 @@
 /**
  *  MARK:--------------------调试构建RCanset (参考32131)--------------------
  */
-#define Switch4CreateRCanset true
+#define Switch4CreateRCanset false
 #define FltLog4CreateRCanset(step) Switch4CreateRCanset ? STRFORMAT(@"flt%d ",step) : @""
 
 /**
  *  MARK:--------------------调试构建HCanset (参考32131)--------------------
  */
-#define Switch4CreateHCanset false
+#define Switch4CreateHCanset true
 #define FltLog4CreateHCanset(step) Switch4CreateHCanset ? STRFORMAT(@"flt%d ",step) : @""
