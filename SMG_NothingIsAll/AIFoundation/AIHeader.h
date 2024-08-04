@@ -502,14 +502,14 @@
 #define FltLog4HDemandOfYouPiGuo(stepStr) Switch4HDemandOfYouPiGuo ? STRFORMAT(@"flt%@ ",stepStr) : @""
 
 /**
- * @title 学会搬运 (参考31183-训练项6 & 32051)
+ * @title 学会搬运 (参考31183-训练项6 -> 32051 -> 32141-训练项4)
  * @desc 1.在去皮经验生成H"路上有皮果"后 2.扔"路下有皮果" 3.快速将有皮果踢到路上 4.feedbackTOR反馈到"路上有皮果" 5.生成搬运到路上H经验
  * @步骤说明: 改为true打开后,筛选flt日志看有依次生成:
  *          1. 有皮果动机 => TCDemand.m  39] flt1 A3955(向90,距13,皮果)
  *          2. 立马扔路边有皮果,并搬运到路上;
  *          3. 学会HCanset => flt2 NewHCanset 或 AbsHCanset
  */
-#define Switch4XueBanYun false
+#define Switch4XueBanYun true
 #define FltLog4XueBanYun(step) Switch4XueBanYun ? STRFORMAT(@"flt%d ",step) : @""
 
 /**
@@ -534,5 +534,5 @@
 /**
  *  MARK:--------------------调试构建HCanset (参考32131)--------------------
  */
-#define Switch4CreateHCanset true
+#define Switch4CreateHCanset false
 #define FltLog4CreateHCanset(step) Switch4CreateHCanset ? STRFORMAT(@"flt%d ",step) : @""
