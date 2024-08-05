@@ -592,4 +592,11 @@
     [aCoder encodeBool:self.refrectionNo forKey:@"refrectionNo"];
 }
 
+-(void)setIsInfected:(BOOL)isInfected {
+    if (self.getCurFrame.content_p.pointerId == 5069) {
+        NSLog(@"flt changeIsInfected A5069 from F%ld => %d",self.cansetFrom.pointerId,isInfected);
+    }
+    _isInfected = isInfected;
+}
+
 @end

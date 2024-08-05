@@ -809,6 +809,9 @@
     }];
     
     //2. 在rSolution/hSolution初始化Canset池时,也继用下传染状态 (参考31178-TODO3);
+    NSLog(@"flt 初始时,发现整树已传染:%@",CLEANSTR([SMGUtils convertArr:isInfectedAlgs convertBlock:^id(AIKVPointer *obj) {
+        return STRFORMAT(@"A%ld",obj.pointerId);
+    }]));
     for (TOFoModel *canset in demand.actionFoModels) {
         TOAlgModel *alg = [canset getCurFrame];
         if (alg && [isInfectedAlgs containsObject:alg.content_p]) {
