@@ -22,14 +22,14 @@
         return @"ActNo";
     }else if(status == TOModelStatus_ScoreNo){
         return @"ScoreNo";
-    }else if(status == TOModelStatus_NoNeedAct){
-        return @"NoNeedAct";
     }else if(status == TOModelStatus_OuterBack){
         return @"OuterBack";
     }else if(status == TOModelStatus_Finish){
         return @"Finish";
+    }else if(status == TOModelStatus_WithOut){
+        return @"WithOut";
     }
-    return @"Other";
+    return STRFORMAT(@"Other(%ld)",status);
 }
 
 +(NSString*) convertATType2Desc:(AnalogyType)atType{

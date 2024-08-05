@@ -120,11 +120,9 @@ typedef NS_ENUM(NSInteger, TOModelStatus) {
     TOModelStatus_ActYes   = 2,//行为化成功 (等待外循环结果,等待反馈) (预测);
     TOModelStatus_ActNo    = 3,//行为化失败 (等待条件满足时继续);
     TOModelStatus_ScoreNo  = 4,//评价失败而中止 (不想干,彻底挂掉,除非demandModel变的更迫切);
-    TOModelStatus_NoNeedAct= 5,//无需行为化
-    TOModelStatus_OuterBack= 6,//外循环结果返回符合的标记 (用于actYes);
-    TOModelStatus_Finish   = 7,//最终成功 (完成后向下帧跳转,发生在事实发生之后,即新的input匹配到);
-    TOModelStatus_VSWait   = 8,//在多任务竞争中,被暂时击退 (等待继续博弈);
-    TOModelStatus_WithOut  = 9,//TCSolution无计可施标记,没S解决方案了;
+    TOModelStatus_OuterBack= 5,//外循环结果返回符合的标记 (用于actYes);
+    TOModelStatus_Finish   = 6,//最终成功 (完成后向下帧跳转,发生在事实发生之后,即新的input匹配到);
+    TOModelStatus_WithOut  = 7,//TCSolution无计可施标记,没S解决方案了;
 };
 
 typedef NS_ENUM(NSInteger, CansetStatus) {

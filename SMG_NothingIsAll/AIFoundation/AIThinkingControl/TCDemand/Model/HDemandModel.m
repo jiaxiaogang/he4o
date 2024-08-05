@@ -26,7 +26,9 @@
     self.status = TOModelStatus_WithOut;
     
     //2. 向父级传染 (参考31073-TODO8b);
+    //2024.08.05: 避免它成了OuterBack后,又被改回WithOut状态: 只有targetAlg不是OuterBack"已反馈成功"状态时,才可以向父和兄传染WithOut"无解"状态 (参考32142-TODO2);
     TOAlgModel *targetAlg = (TOAlgModel*)self.baseOrGroup;
+    if (targetAlg.status == TOModelStatus_OuterBack) return;
     targetAlg.status = TOModelStatus_WithOut;
     TOFoModel *targetFo = (TOFoModel*)targetAlg.baseOrGroup;
     targetFo.status = TOModelStatus_WithOut;

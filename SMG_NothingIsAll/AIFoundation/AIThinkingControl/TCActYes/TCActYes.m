@@ -313,7 +313,7 @@
             int newInfectedNum = 0, rootsInfectedNum = 0;
             AnalogyType type = (frameModel.status == TOModelStatus_ActYes) ? ATSub : ATPlus;
             [TCRethink reasonOutRethink:solutionModel actionIndex:solutionModel.cansetActIndex type:type];
-            NSLog(@"---//行为化帧触发理性反省:%p A%ld 状态:%@",frameModel,frameModel.content_p.pointerId,TOStatus2Str(frameModel.status));
+            NSLog(@"flt ---//行为化帧触发理性反省:%p A%ld 状态:%@",frameModel,frameModel.content_p.pointerId,TOStatus2Str(frameModel.status));
             
             //5. 失败时_继续决策 (成功时,由feedback的IN流程继续);
             if (frameModel.status == TOModelStatus_ActYes) {
@@ -322,7 +322,10 @@
                 solutionModel.status = TOModelStatus_ActNo;
                 demand.status = TOModelStatus_Runing;
                 NSLog(@"在ReasonOutRethink反省后 solution:F%ld 因超时无效而set actYes to actNo-------->",solutionModel.content_p.pointerId);
-                
+            }
+            
+            //2024.08.05: 改为只要非OuterBack状态,这里都能传染 (feedbackTOR反馈成功时则为OuterBack状态) (参考32142-TODO1);
+            if (frameModel.status != TOModelStatus_OuterBack) {
                 //6. 这里看frameAlgModel反馈失败,把demand.actionFoModels传染一下 (参考31176-方案 & 31176-TODO2B);
                 //说明: 所有下一帧(actIndex帧) => 能否传染判断方法有两种,如下:
                 for (TOFoModel *item in actionFoModels) {
