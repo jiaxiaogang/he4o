@@ -275,21 +275,11 @@
     }
     
     //3. 触发器;
-    //TODOTOMORROW20240806: 此处有许多比如A5069,只建了触发器,但1.37s后,却没有触发...导致它一直没被传染,也导致这个A5069一直没被传染到 (参考32142);
-    //线索: 如下代码,应该是它不是besting状态了,导致被打断? (查下为什么被打断了?按道理来说它所在的F5211应该能稳定几秒吧?)
-    //思路: 即上一次输出的RCanset,被bested了,查下TCPlanV2的实时竞争,看它是不是没保持住(或者说为什么ActYes状态,没能参与实时竞争,并稳定获胜?),为什么?
-    //R行为化中间帧下标 (4/8) A5069(向172,距185,棒) from时序:F5211[A5042(向84,距14,果),A5056(向171,距172,棒),A5042(向84,距14,果),M1{↑饿-16},A5069(向172,距185,棒),A5042(向84,距14,果),飞↑,A5077(向77,距6,果)]
-    // ---//构建行为化帧触发器:0x600003de43c0 for:饿 time:1.37
-    
-    //跟进: 经查,每一次生成H棒后,在TCPlan中它都稳定激活了,只是这个H棒在hSolution中,都没找到解,导致这个任务立马就WithOut噶了;
-    //1. 查下为什么hSolution(棒)全是无解;
-    //2. 如果确实无解,能不能加训下,使之有解 (有个念想也可以,比如:每次绿灯时,汽车总会冲过来);
-    
-    
     NSLog(@"---//构建行为化帧触发器:%p for:%@ time:%.2f",actYes4Mv?solutionModel:frameModel,ClassName2Str(demand.algsType),deltaTime);
     [AITime setTimeTrigger:deltaTime trigger:^{
         //4. 只有besting的才触发反省等,别的早已被打断了 (参考31073-TODO2e);
-        if (solutionModel.cansetStatus != CS_Besting) return;
+        //2024.08.08: 此处即使无解,或者别的原因转向bested状态,也可以统计S和执行传染 (因为下一帧应自然发生,不必找任何借口) (参考32142-TODO3);
+        //if (solutionModel.cansetStatus != CS_Besting) return;
         
         //4. 末尾为mv感性目标;
         NSArray *actionFoModels = [demand.actionFoModels copy];
