@@ -281,6 +281,10 @@
     //R行为化中间帧下标 (4/8) A5069(向172,距185,棒) from时序:F5211[A5042(向84,距14,果),A5056(向171,距172,棒),A5042(向84,距14,果),M1{↑饿-16},A5069(向172,距185,棒),A5042(向84,距14,果),飞↑,A5077(向77,距6,果)]
     // ---//构建行为化帧触发器:0x600003de43c0 for:饿 time:1.37
     
+    //跟进: 经查,每一次生成H棒后,在TCPlan中它都稳定激活了,只是这个H棒在hSolution中,都没找到解,导致这个任务立马就WithOut噶了;
+    //1. 查下为什么hSolution(棒)全是无解;
+    //2. 如果确实无解,能不能加训下,使之有解 (有个念想也可以,比如:每次绿灯时,汽车总会冲过来);
+    
     
     NSLog(@"---//构建行为化帧触发器:%p for:%@ time:%.2f",actYes4Mv?solutionModel:frameModel,ClassName2Str(demand.algsType),deltaTime);
     [AITime setTimeTrigger:deltaTime trigger:^{

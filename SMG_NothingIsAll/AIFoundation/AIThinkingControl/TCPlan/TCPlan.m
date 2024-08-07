@@ -160,7 +160,7 @@
         return nil;
     }];
     NSArray *rootToSub = [SMGUtils reverseArr:subToRoot];
-    NSLog(@"%@工作记忆活跃线: %@",FltLog4YonBanYun(0),ARRTOSTR(rootToSub, @"", @" -> "));
+    NSLog(@"flt planfinish %@工作记忆活跃线: %@",FltLog4YonBanYun(0),ARRTOSTR(rootToSub, @"", @" -> "));
     
     if (!Log4Plan) return;
     NSLog(@"---------------------------------------------------------- FINISH\n");
