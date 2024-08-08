@@ -314,7 +314,7 @@
             int newInfectedNum = 0, rootsInfectedNum = 0;
             AnalogyType type = (frameModel.status == TOModelStatus_ActYes) ? ATSub : ATPlus;
             [TCRethink reasonOutRethink:solutionModel actionIndex:solutionModel.cansetActIndex type:type];
-            NSLog(@"flt ---//行为化帧触发理性反省:%p A%ld 状态:%@",frameModel,frameModel.content_p.pointerId,TOStatus2Str(frameModel.status));
+            NSLog(@"---//行为化帧触发理性反省:%p A%ld 状态:%@",frameModel,frameModel.content_p.pointerId,TOStatus2Str(frameModel.status));
             
             //5. 失败时_继续决策 (成功时,由feedback的IN流程继续);
             if (frameModel.status == TOModelStatus_ActYes) {

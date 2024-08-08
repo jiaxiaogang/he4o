@@ -740,6 +740,7 @@
 
 /**
  *  MARK:--------------------设置传染状态: 将infectedAlg传染到工作记忆 (参考31178-TODO1)--------------------
+ *  @desc 作用: 从new传染的alg,传染到所有roots树;
  *  @desc 白话: 当frameActYes因canset中间帧无反馈,调用此方法 => 将工作记忆中所有同质中间帧cansetAlg都infect下,标记它已条件不满足;
  *  @desc frameActYes反馈失败时: 传染到整个工作记忆树 (所有此处新传染的,都尝试向整树传播) (参考31178-TODO1);
  */
@@ -795,6 +796,7 @@
 
 /**
  *  MARK:--------------------在rSolution/hSolution初始化Canset池时,中间帧继用下传染状态 (参考31178-TODO3)--------------------
+ *  @desc 作用: 从roots树,传染到newDemand.actionFoModels;
  */
 +(int) initInfectedForCansetPool_Alg:(DemandModel*)demand {
     int initToInfectedNum = 0;
@@ -809,7 +811,7 @@
     }];
     
     //2. 在rSolution/hSolution初始化Canset池时,也继用下传染状态 (参考31178-TODO3);
-    NSLog(@"flt 初始时,发现整树已传染:%@",CLEANSTR([SMGUtils convertArr:isInfectedAlgs convertBlock:^id(AIKVPointer *obj) {
+    NSLog(@"初始时,发现整树已传染:%@",CLEANSTR([SMGUtils convertArr:isInfectedAlgs convertBlock:^id(AIKVPointer *obj) {
         return STRFORMAT(@"A%ld",obj.pointerId);
     }]));
     for (TOFoModel *canset in demand.actionFoModels) {

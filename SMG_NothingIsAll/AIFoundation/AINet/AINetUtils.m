@@ -377,7 +377,8 @@
             return [NVHeUtil algIsJiE:item.pointer];
         }];
         if (absIsJiE != conIsJiE) {
-            NSLog(@"当conNodes是饥饿,但absNode不是饥饿时,查下为什么二者会关联起来? (参考32132)");
+            //TODOTOMORROW20240801: 查下此处为什么M1(饥饿)和A3955(皮果)会有mIsC关系? (参考32132);
+            NSLog(@"当conNodes是饥饿,但absNode不是饥饿时,查下为什么二者会关联起来?此处如果到2024.09.01还没停过,则可删除掉了 (参考32132)");
         }
     }
     

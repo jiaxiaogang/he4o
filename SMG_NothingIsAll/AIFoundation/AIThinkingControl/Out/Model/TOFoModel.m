@@ -486,7 +486,7 @@
     BOOL updateCansetSuccess = [sceneTo updateConCanset:absCansetFo.pointer targetIndex:targetFoModel.cansetActIndex];
     [AITest test101:absCansetFo proto:newHCanset conCanset:cansetTo];
     NSString *fltLog = FltLog4CreateHCanset(4);
-    NSLog(@"%@%@%@%@%@%@Canset演化> AbsHCanset:%@ toScene:%@ 在%ld帧:%@",fltLog,FltLog4AbsHCanset(true, 3),FltLog4XueQuPi(3),FltLog4HDemandOfYouPiGuo(@"5"),FltLog4XueBanYun(2),FltLog4YonBanYun(4),Fo2FStr(absCansetFo),ShortDesc4Node(sceneTo),self.cansetActIndex,Pit2FStr(self.getCurFrame.content_p));
+    NSLog(@"%@%@%@%@%@%@Canset演化> AbsHCanset:%@ toScene:%@ 在%ld帧:%@",fltLog,FltLog4AbsHCanset(true, 3),FltLog4XueQuPi(3),FltLog4HDemandOfYouPiGuo(@"5"),FltLog4XueBanYun(3),FltLog4YonBanYun(4),Fo2FStr(absCansetFo),ShortDesc4Node(sceneTo),self.cansetActIndex,Pit2FStr(self.getCurFrame.content_p));
     
     if (updateCansetSuccess) {
         //15. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);
@@ -590,13 +590,6 @@
     [aCoder encodeObject:self.transferXvModel forKey:@"transferXvModel"];
     [aCoder encodeObject:self.transferSiModel forKey:@"transferSiModel"];
     [aCoder encodeBool:self.refrectionNo forKey:@"refrectionNo"];
-}
-
--(void)setIsInfected:(BOOL)isInfected {
-    if (self.getCurFrame.content_p.pointerId == 5069) {
-        NSLog(@"flt changeIsInfected A5069 from F%ld => %d",self.cansetFrom.pointerId,isInfected);
-    }
-    _isInfected = isInfected;
 }
 
 @end
