@@ -13,10 +13,35 @@
 -(id) init {
     self = [super init];
     if(self != nil){
-        self.tag = visibleTag;
-        self.initTime = [[NSDate date] timeIntervalSince1970];
+        [self initData];
     }
     return self;
+}
+
+/**
+ *  MARK:--------------------用于xib文件中的HEView能被视觉看到--------------------
+ *  @desc 比如要让智能体看到Road道路,只要在xib中将其改成HEView类型即可;
+ */
+-(id) initWithCoder:(NSCoder *)coder {
+    self = [super initWithCoder:coder];
+    if (self != nil) {
+        [self initData];
+    }
+    return self;
+}
+
+-(id) initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:frame];
+    if (self != nil) {
+        [self initData];
+    }
+    return self;
+}
+
+
+-(void) initData {
+    self.tag = visibleTag;
+    self.initTime = [[NSDate date] timeIntervalSince1970];
 }
 
 @end
