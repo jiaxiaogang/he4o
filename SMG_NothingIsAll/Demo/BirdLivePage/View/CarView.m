@@ -19,16 +19,8 @@
 
 @implementation CarView
 
--(id) init {
-    self = [super init];
-    if(self != nil){
-        [self initView];
-        [self initDisplay];
-    }
-    return self;
-}
-
 -(void) initView{
+    [super initView];
     //self
     [self setFrame:CGRectMake(ScreenWidth * 0.5f - 50, 0, 50, 150)];
     [self setBackgroundColor:[UIColor clearColor]];
@@ -45,7 +37,7 @@
 }
 
 -(void) initDisplay{
-    
+    [super initDisplay];
 }
 
 //MARK:===============================================================

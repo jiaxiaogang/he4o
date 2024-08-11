@@ -17,5 +17,8 @@
 @interface HEView : UIView
 
 @property (assign, nonatomic) long long initTime;
+-(void) initView;
+-(void) initData;
+-(void) initDisplay;
 
 @end

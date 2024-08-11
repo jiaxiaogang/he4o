@@ -21,17 +21,8 @@
 
 @implementation TreeView
 
--(id) init {
-    self = [super init];
-    if(self != nil){
-        [self initView];
-        [self initData];
-        [self initDisplay];
-    }
-    return self;
-}
-
 -(void) initView{
+    [super initView];
     //self
     [self setFrame:CGRectMake((ScreenWidth * 0.5f - 100) / 2 + ScreenWidth * 0.5f, 64, 100, 50)];
     
@@ -49,6 +40,7 @@
 }
 
 -(void) initData{
+    [super initData];
     dispatch_async(dispatch_get_main_queue(), ^{
         self.timer = [NSTimer scheduledTimerWithTimeInterval:6 target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];
     });
@@ -56,6 +48,7 @@
 }
 
 -(void) initDisplay{
+    [super initDisplay];
     [self refreshDisplay];
 }
 

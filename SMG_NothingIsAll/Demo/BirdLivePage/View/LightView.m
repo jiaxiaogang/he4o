@@ -19,17 +19,8 @@
 
 @implementation LightView
 
--(id) init {
-    self = [super init];
-    if(self != nil){
-        [self initView];
-        [self initData];
-        [self initDisplay];
-    }
-    return self;
-}
-
 -(void) initView{
+    [super initView];
     //self
     [self setFrame:CGRectMake(ScreenWidth - 25, 60, 30, 30)];
     [self.layer setCornerRadius:15];
@@ -47,6 +38,7 @@
 }
 
 -(void) initData{
+    [super initData];
     self.curLightIsGreen = true;
     dispatch_async(dispatch_get_main_queue(), ^{
         self.timer = [NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(notificationTimer) userInfo:nil repeats:YES];
@@ -54,6 +46,7 @@
 }
 
 -(void) initDisplay{
+    [super initDisplay];
     [self refreshDisplay];
 }
 

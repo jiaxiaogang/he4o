@@ -22,22 +22,15 @@
 
 @implementation WoodView
 
--(id) init {
-    self = [super init];
-    if(self != nil){
-        [self initView];
-        [self initDisplay];
-    }
-    return self;
-}
-
 -(void) initView{
+    [super initView];
     //self
     [self setFrame:CGRectMake(0, (ScreenHeight - 100) * 0.5f, 5, 100)];
     [self setBackgroundColor:UIColorWithRGBHex(0x825528)];
 }
 
 -(void) initDisplay{
+    [super initDisplay];
     [self reset:true x:0];
 }
 

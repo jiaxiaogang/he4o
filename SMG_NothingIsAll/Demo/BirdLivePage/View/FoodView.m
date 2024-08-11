@@ -18,17 +18,8 @@
 
 @implementation FoodView
 
--(id) init {
-    self = [super init];
-    if(self != nil){
-        [self initView];
-        [self initData];
-        [self initDisplay];
-    }
-    return self;
-}
-
 -(void) initView{
+    [super initView];
     //self
     [self setFrame:CGRectMake(0, 50, 5, 5)];
     [self.layer setCornerRadius:2.5f];
@@ -48,10 +39,12 @@
 }
 
 -(void) initData{
+    [super initData];
     self.status = FoodStatus_Border;
 }
 
 -(void) initDisplay{
+    [super initDisplay];
     [self refreshDisplay];
 }
 

@@ -13,7 +13,9 @@
 -(id) init {
     self = [super init];
     if(self != nil){
+        [self initView];
         [self initData];
+        [self initDisplay];
     }
     return self;
 }
@@ -38,10 +40,13 @@
     return self;
 }
 
+-(void) initView{}
 
 -(void) initData {
     self.tag = visibleTag;
     self.initTime = [[NSDate date] timeIntervalSince1970];
 }
+
+-(void) initDisplay{}
 
 @end

@@ -22,17 +22,8 @@
 
 @implementation RoadView
 
--(id) init {
-    self = [super init];
-    if(self != nil){
-        [self initView];
-        [self initData];
-        [self initDisplay];
-    }
-    return self;
-}
-
 -(void) initView{
+    [super initView];
     //1. self
     [self setFrame:CGRectMake(0, ScreenHeight - 200, ScreenWidth, 150)];
     [self setBackgroundColor:[UIColor clearColor]];
@@ -59,10 +50,11 @@
 }
 
 -(void) initData{
-    
+    [super initData];
 }
 
 -(void) initDisplay{
+    [super initDisplay];
     [self refreshDisplay];
     [self.carView run];
 }
