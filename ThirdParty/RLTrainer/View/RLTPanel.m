@@ -464,7 +464,7 @@
     [theRT queue1:Queue(kBirthPosRdmSEL)];
     
     //2. 饥饿,随机扔个坚果 x 200次;
-    [theRT queueN:@[Queue(kGrowPageSEL),Queue(kHungerSEL),Queue0(kFoodRdmSEL,@(FoodStatus_Eat)),Queue(kMainPageSEL),Queue(kClearTCSEL)] count:200];
+    [theRT queueN:@[Queue(kGrowPageSEL),Queue(kHungerSEL),Queue0(kFoodRdmSEL,@(FoodStatus_Eat)),Queue(kMainPageSEL),Queue(kClearTCSEL)] count:50];
 }
 
 /**

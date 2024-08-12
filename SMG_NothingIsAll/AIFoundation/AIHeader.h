@@ -376,7 +376,7 @@
 //识别时序
 #define Log4MFo false
 //类比
-#define Log4Ana true
+#define Log4Ana false
 #define Log4OutCansetAna true
 //方向索引
 #define Log4DirecRef true
