@@ -113,6 +113,7 @@
         
         //6. 对proto直接抽象指向matchAlg,并增强强度值 (为保证抽象多样性,所以相近的也抽具象关联) (参考27153-3);
         [AINetUtils relateAlgAbs:matchAlg conNodes:@[protoAlg] isNew:false];
+        [AITest test25:matchAlg conAlgs:@[protoAlg]];
     }
 }
 

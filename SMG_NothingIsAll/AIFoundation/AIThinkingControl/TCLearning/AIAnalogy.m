@@ -218,6 +218,7 @@
     //8. 将抽象概念与具象的匹配度存下来 (参考29091BUG);
     [protoA updateMatchValue:absA matchValue:protoAbsModel4MatchValue.matchValue];
     [assA updateMatchValue:absA matchValue:1];
+    [AITest test25:absA conAlgs:@[protoA,assA]];
     return absA;
 }
 

@@ -236,15 +236,15 @@
     }
 }
 
+//2024.08.1: 在类比后,构建absAlg后,这里会立马构建关联,此时还没设置抽具象概念的matchValue值,所以改为设置相似度值后,再调用此方法检查;
 +(void) test25:(AIAlgNodeBase*)absAlg conAlgs:(NSArray*)conAlgs {
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        for (AINodeBase *con in conAlgs) {
-            if (absAlg.pId != con.pId && ![absAlg.conMatchDic objectForKey:@(con.pId)]) {
-                //这个错报也没啥事,因为有时卡了,还没存上,就执行了这儿,如果这里的错一直报了,可以查下test26,只要26不报,说明取用时没问题,这个存自然也就没问题;
-                //ELog(@"自检25: 存概念匹配度: alg抽具象关联后: 二者的匹配度未保存,查下为什么匹配度没写存上 abs:%ld con:%ld",absAlg.pId,con.pId);
-            }
+    NSArray *copyConAlgs = [conAlgs copy];
+    for (AINodeBase *con in copyConAlgs) {
+        if (absAlg.pId != con.pId && ![absAlg.conMatchDic objectForKey:@(con.pId)]) {
+            //这个错报也没啥事,因为有时卡了,还没存上,就执行了这儿,如果这里的错一直报了,可以查下test26,只要26不报,说明取用时没问题,这个存自然也就没问题;
+            ELog(@"自检25: 存概念匹配度: alg抽具象关联后: 二者的匹配度未保存,查下为什么匹配度没写存上 abs:%ld con:%ld",absAlg.pId,con.pId);
         }
-    });
+    }
 }
 
 +(void) test26:(NSDictionary*)matchDic checkA:(AIKVPointer*)checkA {
