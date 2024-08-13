@@ -11,7 +11,7 @@
 /**
  *  MARK:--------------------foNode->cmvNode的模型--------------------
  */
-@class AIFrontOrderNode,AICMVNode;
+@class AICMVNode;
 @interface AIMvFoManager : NSObject
 
 /**
@@ -20,7 +20,7 @@
  *  @param order : 瞬时记忆序列
  *  @result : 返回foNode;
  */
--(AIFrontOrderNode*) create:(NSTimeInterval)inputTime order:(NSArray*)order mv:(AICMVNodeBase*)mv;
+-(AIFoNodeBase*) create:(NSTimeInterval)inputTime order:(NSArray*)order mv:(AICMVNodeBase*)mv;
 
 /**
  *  MARK:--------------------构建具象mv--------------------
@@ -32,8 +32,7 @@
  *  MARK:--------------------构建conFo--------------------
  *  @result notnull
  */
-+(AIFrontOrderNode*) createConFo:(NSArray*)order;
-+(AIFoNodeBase*) createConFo_NoRepeat:(NSArray*)order;
++(AIFoNodeBase*) createConFo_NoRepeat:(NSArray*)order noRepeatArea_ps:(NSArray*)noRepeatArea_ps difStrong:(NSInteger)difStrong;
 +(AIFoNodeBase*) createConFoForCanset:(NSArray*)order sceneFo:(AIFoNodeBase*)sceneFo sceneTargetIndex:(NSInteger)sceneTargetIndex;
 
 @end

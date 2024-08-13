@@ -15,9 +15,9 @@
     [theTC updateOperCount:kFILENAME];
     Debug();
     NSArray *matchAShortMem = [theTC.inModelManager shortCache:true];
-    shortModel.matchAFo = [theNet createConFo:matchAShortMem];
+    shortModel.matchAFo = [theNet createConFo_NoRepeat:matchAShortMem];
     NSArray *protoAShortMem = [theTC.inModelManager shortCache:false];
-    shortModel.protoFo = [theNet createConFo:protoAShortMem];
+    shortModel.protoFo = [theNet createConFo_NoRepeat:protoAShortMem];
     DebugE();
 }
 
@@ -58,7 +58,7 @@
     NSArray *order = [foModel getOrderUseMatchAndFeedbackAlg:true];
     
     //6. 将时序元素生成新时序;
-    AIFoNodeBase *regroupFo = [theNet createConFo:order];
+    AIFoNodeBase *regroupFo = [theNet createConFo_NoRepeat:order];
     
     //7. 识别时序 (预测到鸡蛋变脏,或者cpu损坏) (理性预测影响评价即理性评价);
     DebugE();
@@ -92,7 +92,7 @@
     }
     
     //4. 将时序元素生成新时序 (参考30054-todo3);
-    AIFoNodeBase *regroupFo = [theNet createConFo:order];
+    AIFoNodeBase *regroupFo = [theNet createConFo_NoRepeat:order];
     
     //5. 识别时序 (预测到鸡蛋变脏,或者cpu损坏) (理性预测影响评价即理性评价) (参考30054-todo3);
     DebugE();

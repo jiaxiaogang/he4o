@@ -15,10 +15,10 @@
  *  MARK:--------------------创建fo和mv的指向--------------------
  *  @param mv notnull
  */
--(AIFrontOrderNode*) create:(NSTimeInterval)inputTime order:(NSArray*)order mv:(AICMVNodeBase*)mv{
+-(AIFoNodeBase*) create:(NSTimeInterval)inputTime order:(NSArray*)order mv:(AICMVNodeBase*)mv{
     //1. foNode;
     NSInteger urgentTo = [NUMTOOK([AINetIndex getData:mv.urgentTo_p]) integerValue];
-    AIFrontOrderNode *foNode = [AIMvFoManager createConFo:order difStrong:urgentTo];
+    AIFoNodeBase *foNode = [AIMvFoManager createConFo_NoRepeat:order noRepeatArea_ps:nil difStrong:urgentTo];
 
     //2. 将mv.inputTime传入,在relateFo之前,将inputTime赋值fo.mvDeltaTime;
     if (ARRISOK(order)) {
@@ -78,35 +78,21 @@
     return result;
 }
 
-
-/**
- *  MARK:--------------------构建conFo--------------------
- *  @result notnull
- *  @callers
- *      1. 新帧输入时,构建matchAFo;
- *      2. 新帧输入时,构建protoFo;
- */
-+(AIFrontOrderNode*) createConFo:(NSArray*)order{
-    return [self createConFo:order difStrong:1];
-}
-+(AIFoNodeBase*) createConFo_NoRepeat:(NSArray*)order {
-    return [self createConFo_General:order noRepeatArea_ps:nil];
-}
-
 /**
  *  MARK:--------------------创建具象cansetFo (支持场景内防重)--------------------
  *  @desc 构建canset时不应全局防重,而是只以场景内防重 (不然这些canset的SPEFF值就窜了,比如在北京吃龙虾不行,在家是可以的) (参考3101b-todo5);
  */
 +(AIFoNodeBase*) createConFoForCanset:(NSArray*)order sceneFo:(AIFoNodeBase*)sceneFo sceneTargetIndex:(NSInteger)sceneTargetIndex {
     NSArray *oldCansets = [sceneFo getConCansets:sceneTargetIndex];
-    return [self createConFo_General:order noRepeatArea_ps:oldCansets];
+    return [self createConFo_NoRepeat:order noRepeatArea_ps:oldCansets difStrong:1];
 }
 
 /**
  *  MARK:--------------------通用创建具象fo方法 (支持限定防重范围)--------------------
- *  @param noRepeatArea_ps : 防重范围;
+ *  @param noRepeatArea_ps : 防重范围 (传nil时为全局防重);
+ *  @param difStrong : 默认传1,有特别要求时自定传什么值;
  */
-+(AIFoNodeBase*) createConFo_General:(NSArray*)order noRepeatArea_ps:(NSArray*)noRepeatArea_ps {
++(AIFoNodeBase*) createConFo_NoRepeat:(NSArray*)order noRepeatArea_ps:(NSArray*)noRepeatArea_ps difStrong:(NSInteger)difStrong{
     //1. 防重_取本地全局绝对匹配;
     NSArray *content_ps = [AINetAbsFoUtils convertOrder2Alg_ps:order];
     AIFoNodeBase *result = [AINetIndexUtils getAbsoluteMatching_ValidPs:content_ps sort_ps:content_ps except_ps:nil noRepeatArea_ps:noRepeatArea_ps getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
@@ -119,11 +105,22 @@
         [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
     }else{
         //3. 无则新构建;
-        result = [self createConFo:order];
+        result = [self createConFo:order difStrong:difStrong];
     }
     return result;
 }
 
+//MARK:===============================================================
+//MARK:                     < privateMethod >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------构建conFo--------------------
+ *  @result notnull
+ *  @callers
+ *      1. 新帧输入时,构建matchAFo;
+ *      2. 新帧输入时,构建protoFo;
+ */
 +(AIFrontOrderNode*) createConFo:(NSArray*)order difStrong:(NSInteger)difStrong{
     //1. foNode
     AIFrontOrderNode *foNode = [[AIFrontOrderNode alloc] init];

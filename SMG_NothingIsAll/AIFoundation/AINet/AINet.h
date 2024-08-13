@@ -14,7 +14,7 @@
  *  @关联强度
  *      1. 方向索引: setMvNodeToDirectionReference:difStrong:
  */
-@class AIImvAlgsModel,AIPointer,AIKVPointer,AIPort,AIFrontOrderNode,AINetAbsFoNode,AIAbsCMVNode,AIAlgNode,AIAbsAlgNode,AIAlgNodeBase,AICMVNode;
+@class AIImvAlgsModel,AIPointer,AIKVPointer,AIPort,AINetAbsFoNode,AIAbsCMVNode,AIAlgNode,AIAbsAlgNode,AIAlgNodeBase,AICMVNode;
 @interface AINet : NSObject
 
 +(AINet*) sharedInstance;
@@ -54,7 +54,7 @@
 //MARK:===============================================================
 //MARK:                     < cmv >
 //MARK:===============================================================
--(AIFrontOrderNode*) createCMVFo:(NSTimeInterval)inputTime order:(NSArray*)order mv:(AICMVNodeBase*)mv;
+-(AIFoNodeBase*) createCMVFo:(NSTimeInterval)inputTime order:(NSArray*)order mv:(AICMVNodeBase*)mv;
 -(AICMVNodeBase*) createConMv:(NSArray*)imvAlgsArr;
 -(AICMVNodeBase*) createConMv:(AIKVPointer*)urgentTo_p delta_p:(AIKVPointer*)delta_p at:(NSString*)at;
 
@@ -62,7 +62,6 @@
 //MARK:===============================================================
 //MARK:                     < conFo >
 //MARK:===============================================================
--(AIFrontOrderNode*) createConFo:(NSArray*)order;
 -(AIFoNodeBase*) createConFo_NoRepeat:(NSArray*)order;
 -(AIFoNodeBase*) createConFoForCanset:(NSArray*)order sceneFo:(AIFoNodeBase*)sceneFo sceneTargetIndex:(NSInteger)sceneTargetIndex;
 

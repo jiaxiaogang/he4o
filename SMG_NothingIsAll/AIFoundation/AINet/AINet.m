@@ -102,7 +102,7 @@ static AINet *_instance;
 //MARK:===============================================================
 //MARK:                     < cmv >
 //MARK:===============================================================
--(AIFrontOrderNode*) createCMVFo:(NSTimeInterval)inputTime order:(NSArray*)order mv:(AICMVNodeBase*)mv{
+-(AIFoNodeBase*) createCMVFo:(NSTimeInterval)inputTime order:(NSArray*)order mv:(AICMVNodeBase*)mv{
     return [self.mvFoManager create:inputTime order:order mv:mv];
 }
 -(AICMVNodeBase*) createConMv:(NSArray*)imvAlgsArr{
@@ -120,12 +120,8 @@ static AINet *_instance;
  *  MARK:--------------------构建conFo--------------------
  *  @result notnull
  */
--(AIFrontOrderNode*) createConFo:(NSArray*)order{
-    return [AIMvFoManager createConFo:order];
-}
-
 -(AIFoNodeBase*) createConFo_NoRepeat:(NSArray*)order{
-    return [AIMvFoManager createConFo_NoRepeat:order];
+    return [AIMvFoManager createConFo_NoRepeat:order noRepeatArea_ps:nil difStrong:1];
 }
 
 -(AIFoNodeBase*) createConFoForCanset:(NSArray*)order sceneFo:(AIFoNodeBase*)sceneFo sceneTargetIndex:(NSInteger)sceneTargetIndex {
