@@ -101,26 +101,12 @@
     } at:DefaultAlgsType ds:DefaultDataSource type:ATDefault];
     
     //2. 有则加强关联;
-    NSString *orderStr = CLEANSTR([SMGUtils convertArr:content_ps convertBlock:^id(AIKVPointer *obj) {
-        return STRFORMAT(@"A%ld",obj.pointerId);
-    }]);
-    NSString *logPrefix = @"";
     if (ISOK(result, AIFoNodeBase.class)) {
-        logPrefix = @"Old";
         [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
     }else{
         //3. 无则新构建;
         result = [self createConFo:order difStrong:difStrong];
-        logPrefix = @"New";
     }
-    
-    NSString *resultStr = CLEANSTR([SMGUtils convertArr:result.content_ps convertBlock:^id(AIKVPointer *obj) {
-        return STRFORMAT(@"A%ld",obj.pointerId);
-    }]);
-    
-    BOOL right = [orderStr isEqualToString:resultStr];
-    NSLog(@"fltx %@ (%@ <==> %@)  %@",logPrefix,orderStr,resultStr,right?@"SUCCESS":@"LOSE");
-    
     return result;
 }
 
