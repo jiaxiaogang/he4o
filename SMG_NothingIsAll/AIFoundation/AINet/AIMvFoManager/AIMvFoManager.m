@@ -101,20 +101,26 @@
     } at:DefaultAlgsType ds:DefaultDataSource type:ATDefault];
     
     //2. 有则加强关联;
-    if (ISOK(result, AINetAbsFoNode.class)) {
-        NSLog(@"fltx Old: %@ %@",Pits2FStr(content_ps),Fo2FStr(result));
+    NSString *orderStr = CLEANSTR([SMGUtils convertArr:content_ps convertBlock:^id(AIKVPointer *obj) {
+        return STRFORMAT(@"A%ld",obj.pointerId);
+    }]);
+    NSString *logPrefix = @"";
+    if (ISOK(result, AIFoNodeBase.class)) {
+        logPrefix = @"Old";
         [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
     }else{
         //3. 无则新构建;
         result = [self createConFo:order difStrong:difStrong];
-        
-        //TODOTOMORROW20240814: 此处测试不通过 (加上防重后,依然有重复的情况);
-        //fltx New: M1{↑饿-16} F2332[M1{↑饿-16}]
-        //fltx New: M1{↑饿-16} F2375[M1{↑饿-16}]
-        //fltx New: M1{↑饿-16} F2423[M1{↑饿-16}]
-        
-        NSLog(@"fltx New: %@ %@",Pits2FStr(content_ps),Fo2FStr(result));
+        logPrefix = @"New";
     }
+    
+    NSString *resultStr = CLEANSTR([SMGUtils convertArr:result.content_ps convertBlock:^id(AIKVPointer *obj) {
+        return STRFORMAT(@"A%ld",obj.pointerId);
+    }]);
+    
+    BOOL right = [orderStr isEqualToString:resultStr];
+    NSLog(@"fltx %@ (%@ <==> %@)  %@",logPrefix,orderStr,resultStr,right?@"SUCCESS":@"LOSE");
+    
     return result;
 }
 
