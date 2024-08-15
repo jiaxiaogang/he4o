@@ -370,7 +370,7 @@
 //瞬时记忆长度限制
 #define Log4ShortLimit false
 //识别概念
-#define Log4MAlg false
+#define Log4MAlg true
 //模糊匹配
 #define Log4FuzzyAlg false
 //识别时序
