@@ -148,6 +148,9 @@
         if (filterFos.count >= foLimit) break;
     }
     
+    //TODOTOMORROW20240815: 二次过滤后没有"无距有向果场景"了 (参考33015-代码段2);
+    
+    
     //7. debugLog
     NSLog(@"概念二次过滤后条数: 原%ld 剩%ld >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",inModel.matchAlgs.count,filterAlgs.count);
     for (AIMatchAlgModel *item in filterAlgs) if (debugMode) NSLog(@"\t%ld. %@ (现匹配度:%.2f 原%.2f)",[filterAlgs indexOfObject:item] + 1,Pit2FStr(item.matchAlg),NUMTOOK([secondMatchValueDic objectForKey:@(item.matchAlg.pointerId)]).doubleValue,item.matchValue);

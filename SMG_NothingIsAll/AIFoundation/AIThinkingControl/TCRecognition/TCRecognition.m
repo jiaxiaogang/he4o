@@ -33,10 +33,10 @@
     AIFoNodeBase *protoFo = ARRISOK(model.matchAlgs) ? model.protoFo : model.matchAFo;
     [theTC updateOperCount:kFILENAME];
     Debug();
-    IFTitleLog(@"时序识别", @"\nprotoFo:%@->%@",Fo2FStr(protoFo),Mvp2Str(protoFo.cmvNode_p));
+    IFTitleLog(@"rInput时序识别", @"\nprotoFo:%@->%@",Fo2FStr(protoFo),Mvp2Str(protoFo.cmvNode_p));
     
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
-    [TIUtils recognitionFo:protoFo except_ps:except_ps decoratorInModel:model fromRegroup:false matchAlgs:model.matchAlgs protoOrRegroupCutIndex:protoFo.count - 1 debugMode:false];
+    [TIUtils recognitionFo:protoFo except_ps:except_ps decoratorInModel:model fromRegroup:false matchAlgs:model.matchAlgs protoOrRegroupCutIndex:protoFo.count - 1 debugMode:true];
     DebugE();
 }
 
@@ -45,7 +45,7 @@
     AIFoNodeBase *protoFo = model.protoFo4PInput;
     [theTC updateOperCount:kFILENAME];
     Debug();
-    IFTitleLog(@"时序识别", @"\nprotoFo4PInput:%@",Fo2FStr(protoFo));
+    IFTitleLog(@"pInput时序识别", @"\nprotoFo4PInput:%@",Fo2FStr(protoFo));
     [TIUtils recognitionFo:protoFo except_ps:except_ps decoratorInModel:model fromRegroup:false matchAlgs:nil protoOrRegroupCutIndex:protoFo.count - 1 debugMode:true];
     DebugE();
 }

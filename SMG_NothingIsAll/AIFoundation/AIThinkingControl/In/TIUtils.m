@@ -395,12 +395,6 @@
     NSMutableArray *protoPModels = [[NSMutableArray alloc] init];
     NSMutableArray *protoRModels = [[NSMutableArray alloc] init];
     
-    //TODOTOMORROW20240815: 概念识别已经有了,无向果 或 无距果 都有了,但就是时序识别结果一直是0条;
-    //1. 上个月改为连续视觉后,一直没测过识别算法;
-    //2. 查下,它在这里索引到时序了吗?为什么一直是0条;
-    
-    
-    
     //2. 广入: 对每个元素,分别取索引序列 (参考25083-1);
     NSArray *protoOrRegroupContent_ps = [protoOrRegroupFo.content_ps copy];
     for (AIKVPointer *proto_p in protoOrRegroupContent_ps) {
