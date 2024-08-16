@@ -135,6 +135,7 @@
     [AITest test28:inModel];
     NSMutableArray *filterAlgs = [[NSMutableArray alloc] init];
     NSMutableArray *filterFos = [[NSMutableArray alloc] init];
+    foLimit = 100;//测BUG
     for (AIMatchAlgModel *aItem in sort) {
         //6. 将当前aItem收集;
         [filterAlgs addObject:aItem];
