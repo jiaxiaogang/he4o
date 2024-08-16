@@ -93,10 +93,11 @@
  *      2023.06.04: BUG_修复时序过滤条数有不确定性 (参考29109-测得4);
  *      2023.06.06: 过滤出20%的结果依然太多,直接改成4条,小于4条时直接return不过滤 (参考30013);
  *      2024.03.30: 现在此方法仅对matchAlgs_PS做过滤,别的暂不予支持 (因为此方法只对matchPFos进行二次过滤了,原来的matchAlgs拆分成了matchAlgs_PS和matchAlgs_RS,RS在概念识别中是关着的,这里只需要支持PS即可);
+ *      2024.08.17: BUG-原来仅从似层做二次过滤,导致时序里的交层结果全被过滤掉了,改成从似交层都做过滤后好了 (参考33015-问题);
  */
 +(void) secondRecognitionFilter:(AIShortMatchModel*)inModel {
     //0. 现在在时序识别时,仅识别有mv指向的,所以此处仅需要对matchAlgs_PS进行二次过滤即可;
-    NSArray *protoMatchAlgs = inModel.matchAlgs_PS;
+    NSArray *protoMatchAlgs = inModel.matchAlgs_P;
     
     //1. 获取V重要性字典;
     [theTC updateOperCount:kFILENAME];
@@ -135,7 +136,6 @@
     [AITest test28:inModel];
     NSMutableArray *filterAlgs = [[NSMutableArray alloc] init];
     NSMutableArray *filterFos = [[NSMutableArray alloc] init];
-    foLimit = 100;//测BUG
     for (AIMatchAlgModel *aItem in sort) {
         //6. 将当前aItem收集;
         [filterAlgs addObject:aItem];
@@ -149,17 +149,19 @@
         if (filterFos.count >= foLimit) break;
     }
     
-    //TODOTOMORROW20240815: 二次过滤后没有"无距有向果场景"了 (参考33015-代码段2);
+    //8. 得出过滤后matchAlgs_PS & PJ;
+    NSArray *filterMatchAlgs_PS = [SMGUtils filterArrA:inModel.matchAlgs_PS arrB:filterAlgs];
+    NSArray *filterMatchAlgs_PJ = [SMGUtils filterArrA:inModel.matchAlgs_PJ arrB:filterAlgs];
     
-    
-    //7. debugLog
-    NSLog(@"概念二次过滤后条数: 原%ld 剩%ld >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",inModel.matchAlgs.count,filterAlgs.count);
+    //9. debugLog
+    NSLog(@"概念二次过滤后条数: PS(原%ld 剩%ld) PJ(原%ld 剩%ld) >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",inModel.matchAlgs_PS.count,filterMatchAlgs_PS.count,inModel.matchAlgs_PJ.count,filterMatchAlgs_PJ.count);
     for (AIMatchAlgModel *item in filterAlgs) if (debugMode) NSLog(@"\t%ld. %@ (现匹配度:%.2f 原%.2f)",[filterAlgs indexOfObject:item] + 1,Pit2FStr(item.matchAlg),NUMTOOK([secondMatchValueDic objectForKey:@(item.matchAlg.pointerId)]).doubleValue,item.matchValue);
     NSLog(@"\n时序二次过滤后条数: 原%ld 剩%ld >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",inModel.matchPFos.count,filterFos.count);
     for (AIMatchFoModel *item in filterFos) NSLog(@"\t%ld. %@",[filterFos indexOfObject:item] + 1,Pit2FStr(item.matchFo));
     
-    //8. 存下结果;
-    inModel.matchAlgs_PS = filterAlgs;
+    //10. 存下结果;
+    inModel.matchAlgs_PS = filterMatchAlgs_PS;
+    inModel.matchAlgs_PJ = filterMatchAlgs_PJ;
     inModel.matchPFos = filterFos;
 }
 

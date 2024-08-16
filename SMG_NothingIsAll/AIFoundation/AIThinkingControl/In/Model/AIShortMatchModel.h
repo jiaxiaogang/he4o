@@ -51,6 +51,7 @@
 @property (strong, nonatomic) AIMatchAlgModel *firstMatchAlg;//默认为matchAlgs首条;
 -(NSArray*) matchAlgs;      //默认似层 notnull;
 -(NSArray*) matchAlgs_R;    //返回理部分 notnull;
+-(NSArray*) matchAlgs_P;    //返回感部分 notnull;
 -(NSArray*) matchAlgs_Si;   //返回似层 notnull;
 -(NSArray*) matchAlgs_Jiao; //返回交层 notnull;
 -(NSArray*) matchAlgs_All;  //返回全部 notnull;
