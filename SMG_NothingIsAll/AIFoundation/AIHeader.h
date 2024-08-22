@@ -391,7 +391,7 @@
 //Plan日志开关
 #define Log4Plan false
 //反省
-#define Log4Rethink false
+#define Log4Rethink true
 #define Log4Effect false
 //解决方案条件满足
 #define Log4SceneIsOk false
@@ -409,7 +409,7 @@
 
 //AIRank日志开关
 #define Log4AIRank true
-#define Log4AIRankDesc false
+#define Log4AIRankDesc true
 #define Log4AIRankDebugMode false //Rank在BUG调试模式时的日志
 
 //MARK:===============================================================
@@ -510,7 +510,7 @@
  *          2. 立马扔路边有皮果,并搬运到路上;
  *          3. 学会HCanset => flt2 NewHCanset 或 AbsHCanset
  */
-#define Switch4XueBanYun true
+#define Switch4XueBanYun false
 #define FltLog4XueBanYun(step) Switch4XueBanYun ? STRFORMAT(@"flt%d ",step) : @""
 
 /**

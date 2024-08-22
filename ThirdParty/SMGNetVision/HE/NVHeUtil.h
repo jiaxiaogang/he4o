@@ -59,6 +59,9 @@
 //alg是踢行为
 +(BOOL) algIsKick:(AIKVPointer*)alg_p;
 
+//alg是飞行为
++(BOOL) algIsFly:(AIKVPointer*)alg_p;
+
 //alg是饥饿
 +(BOOL) algIsJiE:(AIKVPointer*)alg_p;
 

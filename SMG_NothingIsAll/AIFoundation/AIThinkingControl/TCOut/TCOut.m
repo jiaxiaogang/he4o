@@ -24,7 +24,8 @@
     if (algModel.content_p.isOut) {
         //2. 第1级: 本身即是isOut时,直接行为化返回;
         NSString *fltLog1 = [NVHeUtil algIsKick:algModel.content_p] ? FltLog4YonBanYun(3) : @"";
-        OFTitleLog(@"行为输出", @"\n%@%@",fltLog1,AlgP2FStr(algModel.content_p));
+        NSString *fltLog2 = FltLog4DefaultIf([NVHeUtil algIsFly:algModel.content_p], @"3");
+        OFTitleLog(@"行为输出", @"\n%@%@%@",fltLog1,fltLog2,AlgP2FStr(algModel.content_p));
         //2. 输出前改为ActYes (避免重复决策当前demand) (isOut=true暂无需反省类比);
         algModel.status = TOModelStatus_ActYes;
         

@@ -57,7 +57,8 @@
     NSString *fltLog2 = FltLog4HDemandOfWuPiGuo(1);
     NSString *fltLog3 = !foModel.isH ? FltLog4CreateRCanset(1) : @"";
     NSString *fltLog4 = FltLog4CreateHCanset(1);
-    OFTitleLog(@"行为化Fo",@"\n%@%@%@%@%@行为化%@下标 (%ld/%ld) %@ from时序:%@",fltLog1,fltLog2,fltLog3,fltLog4,rhLog,frameLog,foModel.cansetActIndex,foModel.cansetTargetIndex,Pit2FStr([foModel getCurFrame].content_p),Fo2FStr(curFo));
+    NSString *fltLog5 = FltLog4DefaultIf(!foModel.isH, @"2");
+    OFTitleLog(@"行为化Fo",@"\n%@%@%@%@%@%@行为化%@下标 (%ld/%ld) %@ from时序:%@",fltLog1,fltLog2,fltLog3,fltLog4,fltLog5,rhLog,frameLog,foModel.cansetActIndex,foModel.cansetTargetIndex,Pit2FStr([foModel getCurFrame].content_p),Fo2FStr(curFo));
     
     [theTC updateOperCount:kFILENAME];
     Debug();

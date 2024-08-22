@@ -171,15 +171,17 @@
         AIKVPointer *targetAlg = obj.baseOrGroup.baseOrGroup.content_p;//base(HDemand).base(TargetAlgModel);
         
         //fltLog1: 如果当前是H任务,且是在找无皮果,且这个解含有有皮果 => 则这个解可能产生:有皮果动机;
+        NSInteger index = [sort indexOfObject:obj];
         NSString *fltLog1 = obj.isH && [NVHeUtil algIsWuPiGuo:targetAlg] && [NVHeUtil foHavYouPiGuo:obj.cansetFrom] ? FltLog4HDemandOfYouPiGuo(@"3") : @"";
-        if (debugMode && Log4AIRank) NSLog(@"%@%@%ld. %@<F%ld %@> %@ %@ %@:(分:%.2f) [CUT:%ld=>TAR:%ld]",fltLog1,obj.isH?@"H":@"R",[sort indexOfObject:obj],SceneType2Str(obj.baseSceneModel.type),obj.sceneFo.pointerId,ShortDesc4Pit(obj.cansetFrom),CLEANSTR(obj.transferXvModel.sceneToCansetToIndexDic),CLEANSTR(spDic),effStrong.description,effScore,obj.cansetCutIndex,obj.cansetTargetIndex);
+        NSString *fltLog2 = FltLog4DefaultIf(!obj.isH, @"1");
+        if (debugMode && Log4AIRank) NSLog(@"%@%@%@%ld. %@<F%ld %@> %@ %@ %@:(分:%.2f) [CUT:%ld=>TAR:%ld]",fltLog1,fltLog2,obj.isH?@"H":@"R",index,SceneType2Str(obj.baseSceneModel.type),obj.sceneFo.pointerId,ShortDesc4Pit(obj.cansetFrom),CLEANSTR(obj.transferXvModel.sceneToCansetToIndexDic),CLEANSTR(spDic),effStrong.description,effScore,obj.cansetCutIndex,obj.cansetTargetIndex);
         
         //打印详情日志;
-        if (Log4AIRankDesc) {
+        if (Log4AIRankDesc && index == 0) {
             AIFoNodeBase *sceneFrom = [SMGUtils searchNode:obj.sceneFrom];
-            NSLog(@"sceneFrom: %@",Pit2FStr(obj.sceneFrom));
+            NSLog(@"\t%@sceneFrom: %@",FltLog4DefaultIf(!obj.isH, @"1.1"),Pit2FStr(obj.sceneFrom));
             NSLog(@"cansetFrom: %@",Pit2FStr(obj.cansetFrom));
-            NSLog(@"sceneTo: %@",Pit2FStr(obj.sceneTo));
+            NSLog(@"\t%@sceneTo: %@",FltLog4DefaultIf(!obj.isH, @"1.2"),Pit2FStr(obj.sceneTo));
             NSLog(@"cansetTo: %@",Pits2FStr([SMGUtils convertArr:obj.transferXvModel.cansetToOrders convertBlock:^id(AIShortMatchModel_Simple *obj) { return obj.alg_p; }]));
             NSLog(@"indexDicFrom: %@",CLEANSTR([sceneFrom getConIndexDic:obj.cansetFrom]));
             NSLog(@"indexDicTo: %@",CLEANSTR(obj.transferXvModel.sceneToCansetToIndexDic));

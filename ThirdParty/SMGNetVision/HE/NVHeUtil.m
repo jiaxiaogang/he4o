@@ -275,6 +275,11 @@
     return [self checkValueFromAlg:alg_p valueATIs:KICK_RDS];
 }
 
+//alg是飞行为
++(BOOL) algIsFly:(AIKVPointer*)alg_p {
+    return [self checkValueFromAlg:alg_p valueATIs:FLY_RDS];
+}
+
 //alg是饥饿
 +(BOOL) algIsJiE:(AIKVPointer*)alg_p {
     if ([Pit2FStr(alg_p) containsString:@"饿"]) {
