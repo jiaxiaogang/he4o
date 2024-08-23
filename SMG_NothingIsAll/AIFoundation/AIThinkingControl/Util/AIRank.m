@@ -177,7 +177,8 @@
         if (debugMode && Log4AIRank) NSLog(@"%@%@%@%ld. %@<F%ld %@> %@ %@ %@:(分:%.2f) [CUT:%ld=>TAR:%ld]",fltLog1,fltLog2,obj.isH?@"H":@"R",index,SceneType2Str(obj.baseSceneModel.type),obj.sceneFo.pointerId,ShortDesc4Pit(obj.cansetFrom),CLEANSTR(obj.transferXvModel.sceneToCansetToIndexDic),CLEANSTR(spDic),effStrong.description,effScore,obj.cansetCutIndex,obj.cansetTargetIndex);
         
         //打印详情日志;
-        if (Log4AIRankDesc && index == 0) {
+        //TODOTOMORROW20240823: 先观察无向场景,下的cansetFrom应该被SP否掉,直至无法激活 (参考33017);
+        if (Log4AIRankDesc) {
             AIFoNodeBase *sceneFrom = [SMGUtils searchNode:obj.sceneFrom];
             NSLog(@"\t%@sceneFrom: %@",FltLog4DefaultIf(!obj.isH, @"1.1"),Pit2FStr(obj.sceneFrom));
             NSLog(@"cansetFrom: %@",Pit2FStr(obj.cansetFrom));
