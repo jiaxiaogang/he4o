@@ -178,7 +178,8 @@
         
         //打印详情日志;
         //TODOTOMORROW20240823: 先观察无向场景,下的cansetFrom应该被SP否掉,直至无法激活 (参考33017);
-        if (Log4AIRankDesc) {
+        //1. 查下RCanset:F1418被激活许多次,也没能飞对方向解决饥饿问题,但P反省的flt4b日志一直没打印它;
+        if (debugMode && Log4AIRankDesc) {
             AIFoNodeBase *sceneFrom = [SMGUtils searchNode:obj.sceneFrom];
             NSLog(@"\t%@sceneFrom: %@",FltLog4DefaultIf(!obj.isH, @"1.1"),Pit2FStr(obj.sceneFrom));
             NSLog(@"cansetFrom: %@",Pit2FStr(obj.cansetFrom));
