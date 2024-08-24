@@ -179,6 +179,19 @@
         //打印详情日志;
         //TODOTOMORROW20240823: 先观察无向场景,下的cansetFrom应该被SP否掉,直至无法激活 (参考33017);
         //1. 查下RCanset:F1418被激活许多次,也没能飞对方向解决饥饿问题,但P反省的flt4b日志一直没打印它;
+        
+        //2. 如下日志,Root(F8414)只跑了两下就停下了,导致没能继续推进它的rCanset;
+        // 483 [22:19:40:362 TO          TCAction.m  39] flt2 R行为化中间帧下标 (3/5) 飞↑ from时序:F2236[M1{↑饿-16},A51(,果),A51(,果),飞↑,A2233(距0,向103,果)] fromDemand:F8414
+        // 785 [22:19:41:820 TO          TCAction.m  39] flt2 R行为化中间帧下标 (4/5) A2233(距0,向103,果) from时序:F2236[M1{↑饿-16},A51(,果),A51(,果),飞↑,A2233(距0,向103,果)] fromDemand:F8414
+        //1732 [22:19:45:461 TO          TCAction.m  39] flt2 R行为化末帧下标 (4/4)  from时序:F6341[M1{↑饿-16},A51(,果),飞↑,A51(,果)] fromDemand:F8428
+        
+        //3. 如下日志,在TCPlan中,当时F8414评分不占优,导致被F8428战胜;
+        //root(0/7):F8428[飞↑,A8421(距9,向161,果),M1{↑饿-16},A8426(向175,距8,果)] 评分:9.16
+        //root(4/7):F8414[M1{↑饿-16},A8410(距33,向284,果),A8412(距13,向129,果)] 评分:5.50
+        
+        //4. 明天查下,为什么它没战胜别的Root,它明明已经有所推进了,按理来说,应该是有优势的;
+        
+        
         if (debugMode && Log4AIRankDesc) {
             AIFoNodeBase *sceneFrom = [SMGUtils searchNode:obj.sceneFrom];
             NSLog(@"\t%@sceneFrom: %@",FltLog4DefaultIf(!obj.isH, @"1.1"),Pit2FStr(obj.sceneFrom));
