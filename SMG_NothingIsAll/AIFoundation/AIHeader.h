@@ -399,7 +399,7 @@
 #define Log4SolutionFilter false
 
 //Score
-#define Log4Score false
+#define Log4Score true
 #define Log4Solution true
 
 //TCCanset日志开关
