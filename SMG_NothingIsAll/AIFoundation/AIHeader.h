@@ -386,7 +386,7 @@
 #define Log4OPushM true
 #define Log4TIROPushM false
 //当前可决策任务:CanDecisionDemand;
-#define Log4CanDecisionDemand true
+#define Log4CanDecisionDemand false
 #define Log4NewDemand false
 //Plan日志开关
 #define Log4Plan true
@@ -399,7 +399,7 @@
 #define Log4SolutionFilter false
 
 //Score
-#define Log4Score true
+#define Log4Score false
 #define Log4Solution true
 
 //TCCanset日志开关

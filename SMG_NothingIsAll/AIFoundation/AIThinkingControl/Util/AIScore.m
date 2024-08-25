@@ -218,7 +218,7 @@
     //2. 取出最大进度值;
     CGFloat maxProgress = 0;
     for (TOFoModel *actionFo in demand.bestCansets) {
-        //2024.08.25: 即使被传染,或者没在执行中,也计算进度分 (参考33019);
+        //2024.08.25: 即使被传染,或者没在执行中,也计算进度分 (参考33019-方案2-TODO1);
         //BOOL statusOK = actionFo.status == TOModelStatus_Runing || actionFo.status == TOModelStatus_ActYes;
         //BOOL infectedOK = !actionFo.isInfected;
         //if (!statusOK || !infectedOK) continue;
