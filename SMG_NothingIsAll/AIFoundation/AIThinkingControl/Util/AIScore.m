@@ -218,9 +218,12 @@
     //2. 取出最大进度值;
     CGFloat maxProgress = 0;
     for (TOFoModel *actionFo in demand.bestCansets) {
-        BOOL statusOK = actionFo.status == TOModelStatus_Runing || actionFo.status == TOModelStatus_ActYes;
-        BOOL infectedOK = !actionFo.isInfected;
-        if (!statusOK || !infectedOK) continue;
+        //2024.08.25: 即使被传染,或者没在执行中,也计算进度分 (参考33019);
+        //BOOL statusOK = actionFo.status == TOModelStatus_Runing || actionFo.status == TOModelStatus_ActYes;
+        //BOOL infectedOK = !actionFo.isInfected;
+        //if (!statusOK || !infectedOK) continue;
+        //if (Log4Score) NSLog(@"Demand:F%ld Canset:F%ld 状态:%@ 传染:%d (%ld/%ld=%.2f)",Demand2Pit(demand).pointerId,actionFo.cansetFrom.pointerId,TOStatus2Str(actionFo.status),actionFo.isInfected,actionFo.cansetActIndex,actionFo.cansetTargetIndex + 1,(float)(actionFo.cansetCutIndex + 1) / (actionFo.cansetTargetIndex + 1));
+        
         CGFloat progress = (float)(actionFo.cansetCutIndex + 1) / (actionFo.cansetTargetIndex + 1);//参考31052-公式1
         //NSLog(@"cansetFo: F%ld %@ (%ld/%ld)",actionFo.content_p.pointerId,TOStatus2Str(actionFo.status),actionFo.actionIndex+1,actionFo.targetIndex);
         //NSLog(@"进度:%.2f 热度:%.2f 进度分:%.2f",progress,hot,progressScore);
