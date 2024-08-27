@@ -277,6 +277,8 @@
     //3. 触发器;
     NSLog(@"---//构建行为化帧触发器:%p for:%@ time:%.2f",actYes4Mv?solutionModel:frameModel,ClassName2Str(demand.algsType),deltaTime);
     [AITime setTimeTrigger:deltaTime trigger:^{
+        if (frameModel) frameModel.actYesed = true;//时间已等完;
+        
         //4. 只有besting的才触发反省等,别的早已被打断了 (参考31073-TODO2e);
         //2024.08.08: 此处即使无解,或者别的原因转向bested状态,也可以统计S和执行传染 (因为下一帧应自然发生,不必找任何借口) (参考32142-TODO3);
         //if (solutionModel.cansetStatus != CS_Besting) return;
