@@ -64,7 +64,6 @@
         self.subDemands = [aDecoder decodeObjectForKey:@"subDemands"];
         self.actionFoModels = [aDecoder decodeObjectForKey:@"actionFoModels"];
         self.feedbackAlg = [aDecoder decodeObjectForKey:@"feedbackAlg"];
-        self.actYesed = [aDecoder decodeBoolForKey:@"actYesed"];
     }
     return self;
 }
@@ -75,7 +74,6 @@
     [aCoder encodeObject:self.subDemands forKey:@"subDemands"];
     [aCoder encodeObject:self.actionFoModels forKey:@"actionFoModels"];
     [aCoder encodeObject:self.feedbackAlg forKey:@"feedbackAlg"];
-    [aCoder encodeBool:self.actYesed forKey:@"actYesed"];
 }
 
 @end

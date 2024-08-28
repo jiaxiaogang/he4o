@@ -52,6 +52,7 @@
         self.status = [aDecoder decodeIntegerForKey:@"status"];
         self.baseOrGroup = [aDecoder decodeObjectForKey:@"baseOrGroup"];
         self.selfIden = [aDecoder decodeObjectForKey:@"selfIden"];
+        self.actYesed = [aDecoder decodeBoolForKey:@"actYesed"];
     }
     return self;
 }
@@ -61,6 +62,7 @@
     [aCoder encodeInteger:self.status forKey:@"status"];
     [aCoder encodeObject:self.baseOrGroup forKey:@"baseOrGroup"];
     [aCoder encodeObject:self.selfIden forKey:@"selfIden"];
+    [aCoder encodeBool:self.actYesed forKey:@"actYesed"];
 }
 
 @end

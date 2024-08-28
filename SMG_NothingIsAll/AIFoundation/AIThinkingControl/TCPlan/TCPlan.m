@@ -111,6 +111,12 @@
     }
     
     //TODOTOMORROW20240827: 如果bestCanset已经执行完了呢?它只是在等待看baseRDemand的末帧mv是否会反馈;
+    //6. 末帧
+    AIFoNodeBase *bestCansetFo = [SMGUtils searchNode:bestCanset.cansetFrom];
+    BOOL actYes4Mv = bestCanset.cansetActIndex >= bestCansetFo.count;
+    if (actYes4Mv && bestCanset.feedbackMv && bestCanset.actYesed) {
+        
+    }
     
     
     

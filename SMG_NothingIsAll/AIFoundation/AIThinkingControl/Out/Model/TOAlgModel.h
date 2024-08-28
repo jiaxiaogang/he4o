@@ -101,7 +101,4 @@
  */
 @property (strong, nonatomic) AIKVPointer *feedbackAlg;
 
-//时间已等完 (因为现在TOStatus使用太泛太易变,所以独立此值);
-@property (assign, nonatomic) BOOL actYesed;
-
 @end

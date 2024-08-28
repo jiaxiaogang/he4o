@@ -74,4 +74,12 @@
  */
 @property (strong, nonatomic) NSString *selfIden;
 
+/**
+ *  MARK:--------------------时间已等完--------------------
+ *  @desc 因为现在TOStatus使用太泛太易变,所以独立此值
+ *      1. 用处1. TOAlgModel用来表示alg是否在静默等待中间帧alg反馈;
+ *      2. 用处2. TOFoModel用来表示fo是否在等待末帧mv反馈;
+ */
+@property (assign, nonatomic) BOOL actYesed;
+
 @end

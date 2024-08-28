@@ -277,8 +277,6 @@
     //3. 触发器;
     NSLog(@"---//构建行为化帧触发器:%p for:%@ time:%.2f",actYes4Mv?solutionModel:frameModel,ClassName2Str(demand.algsType),deltaTime);
     [AITime setTimeTrigger:deltaTime trigger:^{
-        if (frameModel) frameModel.actYesed = true;//时间已等完;
-        
         //4. 只有besting的才触发反省等,别的早已被打断了 (参考31073-TODO2e);
         //2024.08.08: 此处即使无解,或者别的原因转向bested状态,也可以统计S和执行传染 (因为下一帧应自然发生,不必找任何借口) (参考32142-TODO3);
         //if (solutionModel.cansetStatus != CS_Besting) return;
@@ -286,6 +284,9 @@
         //4. 末尾为mv感性目标;
         NSArray *actionFoModels = [demand.actionFoModels copy];
         if (actYes4Mv) {
+            //a. 末帧时间已等完;
+            solutionModel.actYesed = true;
+            
             //a. 如果状态已改成OutBack,说明有反馈(坏),否则未反馈(好) (参考feedbackTOP);
             int rootsRewakeNum = 0;
             AnalogyType type = (solutionModel.status == TOModelStatus_OuterBack) ? ATSub : ATPlus;
@@ -311,6 +312,8 @@
         }
         //5. 中间为帧理性目标;
         else{
+            //a. 中间帧时间已等完;
+            frameModel.actYesed = true;
             
             //a. 反省类比(成功/未成功)的主要原因,进行RORT反省;
             int newInfectedNum = 0, rootsInfectedNum = 0;
