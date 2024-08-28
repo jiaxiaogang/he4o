@@ -157,6 +157,17 @@
     return _subDemands;
 }
 
+//MARK:===============================================================
+//MARK:                     < feedbackMv部分 >
+//MARK:===============================================================
+-(BOOL) feedbackMvAndPlus {
+    return self.feedbackMv && [AIScore score4MV:self.feedbackMv ratio:1.0f] > 0;
+}
+
+-(BOOL) feedbackMvAndSub {
+    return self.feedbackMv && [AIScore score4MV:self.feedbackMv ratio:1.0f] < 0;
+}
+
 /**
  *  MARK:--------------------将每帧反馈转成orders,以构建protoFo--------------------
  *  @param fromRegroup : 从TCRegroup调用时未发生部分也取, 而用于canset抽象时仅取已发生部分;

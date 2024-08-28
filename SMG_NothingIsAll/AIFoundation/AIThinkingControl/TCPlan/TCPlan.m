@@ -110,11 +110,40 @@
         return true;
     }
     
-    //TODOTOMORROW20240827: 如果bestCanset已经执行完了呢?它只是在等待看baseRDemand的末帧mv是否会反馈;
-    //6. 末帧
+    //6. 三种情况,分别走三块不同逻辑;
     AIFoNodeBase *bestCansetFo = [SMGUtils searchNode:bestCanset.cansetFrom];
     BOOL actYes4Mv = bestCanset.cansetActIndex >= bestCansetFo.count;
-    if (actYes4Mv && bestCanset.feedbackMv && bestCanset.actYesed) {
+    TOAlgModel *frameAlg = bestCanset.getCurFrame;
+    if (actYes4Mv) {
+        //一. ================ 末帧 ================
+        //说明: bestCanset已经执行完,它只是在等待看baseRDemand的末帧mv是否会反馈;
+        if (bestCanset.feedbackMvAndPlus) {
+            //11. 好的mv反馈,说明当前rRootDemand被解决了,不需要再决策 => 继续尝试下一root;
+            return false;
+            //bestCanset.actYesed
+        } else if (bestCanset.feedbackMvAndSub) {
+            //12. 坏的mv反馈: 如果是持续性任务,则该canset失败,继续尝试下一canset;
+            if ([ThinkingUtils isContinuousWithAT:baseDemand.algsType]) {
+                bestCanset.status = TOModelStatus_ActNo;
+                return [self plan4Cansets:baseDemand complate:complate prefixNum:prefixNum];
+            }
+            //13. 坏的mv反馈: 如果非持续性任务,则该root失败 => 继续尝试下一root;
+            else {
+                return false;
+            }
+        } else if (!bestCanset.actYesed && !bestCanset.feedbackMv) {
+            //14. 还在等待mv反馈中 => 则继续等待即可;
+            return true;
+        } else if (bestCanset.actYesed && !bestCanset.feedbackMv) {
+            //15. 等待结束,避免负mv成功,则该任务完成 => 继续尝试下一root;
+            return false;
+        }
+    } else if (frameAlg.content_p.isOut) {
+        //二. ================ 中间帧_Out ================
+        //TODOTOMORROW20240827: 继续把这里的代码整理进来;
+        
+    } else {
+        //三. ================ 中间帧_非Out ================
         
     }
     
@@ -122,7 +151,6 @@
     
     //11. actYesed && !feedbackAlg -> 当前bestCanset最后也没等到反馈,计为失败,转下一个canset;
     //11. 不管是不是行为输出,只要到期还没收到反馈,都算失败了: 把当前bestCanset否掉,重新找出下一个bestCanset;
-    TOAlgModel *frameAlg = bestCanset.getCurFrame;
     if (frameAlg.actYesed && !frameAlg.feedbackAlg) {
         bestCanset.status = TOModelStatus_ActNo;
         return [self plan4Cansets:baseDemand complate:complate prefixNum:prefixNum];
