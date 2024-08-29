@@ -115,13 +115,19 @@
     BOOL actYes4Mv = bestCanset.cansetActIndex >= bestCansetFo.count;
     TOAlgModel *frameAlg = bestCanset.getCurFrame;
     if (actYes4Mv) {
+        //TODOTOMORROW20240830: 明天继续测下这里:
+        //1. 像这种 "flt2 R行为化末帧下标 (4/4)  from时序:F6341[M1{↑饿-16},A51(,果),飞↑,A51(,果)] fromDemand:F9107"
+        //2. 到了末帧的,看有没等待反馈,然后有没因反馈的顺利与否,有没有对末帧计SPEFF;
+        //3. 看这个日志应该是有计: "flt4b spIndex:4 -> (好) S1P0->S1P1 F6341[M1{↑饿-16},A51(,果),飞↑,A51(,果)]"
+        //4. 再往后,测下别的...看有没啥问题;
+        
+        
         //一. ================================ 末帧 ================================
         
         //说明: bestCanset已经执行完,它只是在等待看baseRDemand的末帧mv是否会反馈;
         if (bestCanset.feedbackMvAndPlus) {
             //11. 好的mv反馈,说明当前rRootDemand被解决了,不需要再决策 => 继续尝试下一root;
             return false;
-            //bestCanset.actYesed
         } else if (bestCanset.feedbackMvAndSub) {
             //12. 坏的mv反馈: 如果是持续性任务,则该canset失败,继续尝试下一canset;
             if ([ThinkingUtils isContinuousWithAT:baseDemand.algsType]) {
@@ -224,13 +230,13 @@
         return nil;
     }];
     NSArray *rootToSub = [SMGUtils reverseArr:subToRoot];
-    NSLog(@"planfinish %@工作记忆活跃线: %@",FltLog4YonBanYun(0),ARRTOSTR(rootToSub, @"", @" -> "));
+    NSLog(@"一. planfinish %@工作记忆活跃线: %@",FltLog4YonBanYun(0),ARRTOSTR(rootToSub, @"", @" -> "));
     
     if (!Log4Plan) return;
     NSLog(@"---------------------------------------------------------- FINISH\n");
-    NSLog(@"fltx1 取得最终胜利的sub到root结构: %@",endBranch ? [TOModelVision cur2Root:endBranch] : nil);
+    NSLog(@"二. 取得最终胜利的sub到root结构: %@",endBranch ? [TOModelVision cur2Root:endBranch] : nil);
     DemandModel *root = [TOUtils getRootDemandModelWithSubOutModel:endBranch];
-    NSLog(@"fltx2 TCPlan结果所在ROOT:%@ (%@) %@",Pit2FStr([HeLogUtil demandLogPointer:root]),[SMGUtils date2Str:kHHmmss timeInterval:root.initTime],[TOModelVision cur2Sub:root]);
+    NSLog(@"三. 结果所在ROOT:%@ (%@) %@",Pit2FStr([HeLogUtil demandLogPointer:root]),[SMGUtils date2Str:kHHmmss timeInterval:root.initTime],[TOModelVision cur2Sub:root]);
 }
 
 @end
