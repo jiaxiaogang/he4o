@@ -115,7 +115,8 @@
     BOOL actYes4Mv = bestCanset.cansetActIndex >= bestCansetFo.count;
     TOAlgModel *frameAlg = bestCanset.getCurFrame;
     if (actYes4Mv) {
-        //一. ================ 末帧 ================
+        //一. ================================ 末帧 ================================
+        
         //说明: bestCanset已经执行完,它只是在等待看baseRDemand的末帧mv是否会反馈;
         if (bestCanset.feedbackMvAndPlus) {
             //11. 好的mv反馈,说明当前rRootDemand被解决了,不需要再决策 => 继续尝试下一root;
@@ -139,74 +140,73 @@
             return false;
         }
     } else if (frameAlg.content_p.isOut) {
-        //二. ================ 中间帧_Out ================
-        //TODOTOMORROW20240827: 继续把这里的代码整理进来;
+        //二. ================================ 中间帧_Out ================================
+        
+        //21. actYesed && !feedbackAlg -> 当前行为输出到期也没等到反馈: 把当前bestCanset否掉,重新找出下一个bestCanset,转下一个canset;
+        if (frameAlg.actYesed && !frameAlg.feedbackAlg) {
+            bestCanset.status = TOModelStatus_ActNo;
+            return [self plan4Cansets:baseDemand complate:complate prefixNum:prefixNum];
+        }
+        
+        //22. feedbackAlg -> 则应该在feedbackTOR()中已经转了下一帧,但如果这里如果取curFrame,发现有反馈,还没转,则先不管它,啥不也不执行吧,等它自己转下一帧 (不管什么状态,只要已经反馈了,就都走这里);
+        if (frameAlg.feedbackAlg) {
+            ELog(@"查下,为什么这里algModel已经有了反馈,但却没转下一帧,curFrame仍然是它");
+            return true;
+        }
+        
+        //23. 等待中的isOut帧,没有subH,只需要等肢体动作执行完成再转输入rInput后,会反馈成功,还在等待说明还没触发,继续等着即可 (行为输出也是需要时间的,比如飞要0.2s,再静默等等) (参考3301a-调试情况2);
+        if (!frameAlg.actYesed) {
+            return true;
+        }
         
     } else {
-        //三. ================ 中间帧_非Out ================
+        //三. ================================ 中间帧_非Out ================================
         
-    }
-    
-    
-    
-    //11. actYesed && !feedbackAlg -> 当前bestCanset最后也没等到反馈,计为失败,转下一个canset;
-    //11. 不管是不是行为输出,只要到期还没收到反馈,都算失败了: 把当前bestCanset否掉,重新找出下一个bestCanset;
-    if (frameAlg.actYesed && !frameAlg.feedbackAlg) {
-        bestCanset.status = TOModelStatus_ActNo;
-        return [self plan4Cansets:baseDemand complate:complate prefixNum:prefixNum];
-    }
-    
-    //12. feedbackAlg -> 则应该在feedbackTOR()中已经转了下一帧,但如果这里如果取curFrame,发现有反馈,还没转,则先不管它,啥不也不执行吧,等它自己转下一帧;
-    //12. 不管是不是还在静默等待,只要已经反馈了,就都走这里;
-    if (frameAlg.feedbackAlg) {
-        ELog(@"查下,为什么这里algModel已经有了反馈,但却没转下一帧,curFrame仍然是它");
-        return true;
-    }
-    
-    //13. ================ isOut等待中,则继续等待即可 ================
-    //13. isOut && actYesing -> 行为输出还没收到反馈,并且还在等待中,说明还没触发,则继续等待反馈即可 (行为输出也是需要时间的,比如飞要0.2s,再静默等等);
-    //13. 当是行为输出帧时,它没有subH,此时只需静等,等肢体动作执行完成,并在commitOutputLog()后,成功反馈即可,而不必再执行solution() (参考3301a-调试情况2);
-    if (frameAlg.content_p.isOut && !frameAlg.actYesed) {
-        return true;
-    }
-    
-    //21. ================ 非Out等待中,则尝试subH求解 ================
-    //21. !isOut && actYesing -> 继续执行subH求解;
-    //22. ===> 防空检查: 非输出帧的subH不应该为空: 驳回: 下一条 -> H异常为空?那这条Canset失败,继续尝试baseDemand的下一条 (逐条尝试);
-    HDemandModel *subHDemand = ARR_INDEX(frameAlg.subDemands, 0);
-    if (!subHDemand) {
-        //> 没有hDemand,则应该是BUG,因为algModel初始时,就有hDemand了;
-        bestCanset.status = TOModelStatus_WithOut;
-        return [self plan4Cansets:baseDemand complate:complate prefixNum:prefixNum];//返回失败: 继续尝试下一个demand;
-    }
-    
-    //23. ===> subH没求解过,则尝试对subH求解: 成功: 当前条 -> 未初始化过,则直接进行solution;
-    if (Log4Plan) NSLog(@"%@itemHDemand -> 执行:%@",[HeLogUtil getPrefixStr:prefixNum + 1],ShortDesc4Pit([HeLogUtil demandLogPointer:subHDemand]));
-    if (!subHDemand.alreadyInitCansetModels) {
-        //> hDemand没初始化过,直接return转hSolution为它求解;
-        if (Log4Plan) NSLog(@"planV2 success3 执行subHDemand的求解:%@",ShortDesc4Pit(subHDemand.baseOrGroup.content_p));
-        [self printFinishLog:subHDemand];
-        TCResult *re = [TCSolution solutionV2:subHDemand];
-        complate(re);
-        return true;
-    }
-    
-    //24. ===> subH求解过,则subH继续深入下一层: 继续: 下一层 -> 当前条继续向枝叶规划;
-    BOOL success = [self plan4Cansets:subHDemand complate:complate prefixNum:prefixNum + 2];
-    
-    //25. ===> 如果subH求解全失败了,则咱不解了,咱等着即可,看它能不能自行反馈到: 等待: 继续等 -> 如果bestCanset枝叶全失败了,而bestCanset自己是ActYes状态,直接返回成功,啥也不用干;
-    //说明: 此处应该是actYes状态,且子全无解时,再选择等待? (比如: 等饭熟,有苹果也会先吃一个垫垫);
-    if (!success && !frameAlg.actYesed) {
-        if (Log4Plan) NSLog(@"planV2 success4 继续bestCanset的静默等待:%@",ShortDesc4Pit(bestCanset.cansetFrom));
-        [self printFinishLog:bestCanset];
-        complate([[[TCResult new:true] mkMsg:@"TCPlan规划: 静默等待状态,继续等即可"] mkStep:11]);
-        return true;
-    }
-    
-    //26. ===> 如果subH求解全失败了,它的等待时间也结束了,则当前bestCanset计为失败: 驳回: 下一条 -> 当前hDemand的枝叶全失败了,继续尝试baseDemand的下一条 (逐条尝试);
-    if (!success && frameAlg.actYesed) {
-        bestCanset.status = TOModelStatus_ActNo;
-        return [self plan4Cansets:baseDemand complate:complate prefixNum:prefixNum];
+        //31. actYesed && !feedbackAlg -> 当前行为输出到期也没等到反馈: 把当前bestCanset否掉,重新找出下一个bestCanset,转下一个canset;
+        if (frameAlg.actYesed && !frameAlg.feedbackAlg) {
+            bestCanset.status = TOModelStatus_ActNo;
+            return [self plan4Cansets:baseDemand complate:complate prefixNum:prefixNum];
+        }
+        
+        //32. feedbackAlg -> 则应该在feedbackTOR()中已经转了下一帧,但如果这里如果取curFrame,发现有反馈,还没转,则先不管它,啥不也不执行吧,等它自己转下一帧 (不管什么状态,只要已经反馈了,就都走这里);
+        if (frameAlg.feedbackAlg) {
+            ELog(@"查下,为什么这里algModel已经有了反馈,但却没转下一帧,curFrame仍然是它");
+            return true;
+        }
+        
+        //33. 非Out帧等待中,则尝试subH求解 -> 防空检查 (非输出帧的subH不应该为空,没有hDemand是BUG,因为algModel初始时,就有hDemand了) (subH为空时,那这条Canset失败,继续尝试baseDemand的下一条 (逐条尝试))
+        HDemandModel *subHDemand = ARR_INDEX(frameAlg.subDemands, 0);
+        if (!subHDemand) {
+            bestCanset.status = TOModelStatus_WithOut;
+            return [self plan4Cansets:baseDemand complate:complate prefixNum:prefixNum];//返回失败: 继续尝试下一个demand;
+        }
+        
+        //34. subH没求解过,则尝试对subH求解: 成功: 当前条 -> hDemand没初始化过,直接return转hSolution为它求解;
+        if (Log4Plan) NSLog(@"%@itemHDemand -> 执行:%@",[HeLogUtil getPrefixStr:prefixNum + 1],ShortDesc4Pit([HeLogUtil demandLogPointer:subHDemand]));
+        if (!subHDemand.alreadyInitCansetModels) {
+            if (Log4Plan) NSLog(@"planV2 success3 执行subHDemand的求解:%@",ShortDesc4Pit(subHDemand.baseOrGroup.content_p));
+            [self printFinishLog:subHDemand];
+            TCResult *re = [TCSolution solutionV2:subHDemand];
+            complate(re);
+            return true;
+        }
+        
+        //35. subH求解过,则subH继续深入下一层: 继续: 下一层 -> 当前条继续向枝叶规划;
+        BOOL success = [self plan4Cansets:subHDemand complate:complate prefixNum:prefixNum + 2];
+        
+        //36. 如果subH求解全失败了,则咱不解了,咱等着即可,看它能不能自行反馈到,则继续等 -> 如果bestCanset枝叶全失败了,还是静默等等状态,直接返回成功,啥也不用干 (比如: 等饭熟,有苹果也会先吃一个垫垫);
+        if (!success && !frameAlg.actYesed) {
+            if (Log4Plan) NSLog(@"planV2 success4 继续bestCanset的静默等待:%@",ShortDesc4Pit(bestCanset.cansetFrom));
+            [self printFinishLog:bestCanset];
+            complate([[[TCResult new:true] mkMsg:@"TCPlan规划: 静默等待状态,继续等即可"] mkStep:11]);
+            return true;
+        }
+        
+        //37. 如果subH求解全失败了,它的等待时间也结束了,则当前bestCanset计为失败: 驳回: 下一条 -> 当前hDemand的枝叶全失败了,继续尝试baseDemand的下一条 (逐条尝试);
+        if (!success && frameAlg.actYesed) {
+            bestCanset.status = TOModelStatus_ActNo;
+            return [self plan4Cansets:baseDemand complate:complate prefixNum:prefixNum];
+        }
     }
     return true;
 }
