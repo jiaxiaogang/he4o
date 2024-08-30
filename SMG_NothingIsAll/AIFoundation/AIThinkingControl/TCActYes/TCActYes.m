@@ -315,11 +315,13 @@
             //a. 中间帧时间已等完;
             frameModel.actYesed = true;
             
+            //TODOTOMORROW20240830: 此处有BUG,cansetActIndex早在有反馈时,已经+1了,它已经不对应frameModel了...
+            
             //a. 反省类比(成功/未成功)的主要原因,进行RORT反省;
             int newInfectedNum = 0, rootsInfectedNum = 0;
             AnalogyType type = (frameModel.status == TOModelStatus_ActYes) ? ATSub : ATPlus;
             [TCRethink reasonOutRethink:solutionModel actionIndex:solutionModel.cansetActIndex type:type];
-            NSLog(@"---//行为化帧触发理性反省:%p A%ld 状态:%@",frameModel,frameModel.content_p.pointerId,TOStatus2Str(frameModel.status));
+            NSLog(@"---//行为化帧触发理性反省:%p %@ 状态:%@",frameModel,Pit2FStr(frameModel.content_p),TOStatus2Str(frameModel.status));
             
             //5. 失败时_继续决策 (成功时,由feedback的IN流程继续);
             if (frameModel.status == TOModelStatus_ActYes) {

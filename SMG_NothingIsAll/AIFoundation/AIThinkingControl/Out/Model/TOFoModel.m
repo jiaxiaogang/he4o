@@ -603,12 +603,4 @@
     [aCoder encodeBool:self.refrectionNo forKey:@"refrectionNo"];
 }
 
--(void)setStatus:(TOModelStatus)status {
-    if (self.cansetFrom.pointerId == 2236 && status == TOModelStatus_WithOut) {
-        NSLog(@"");
-    }
-    
-    [super setStatus:status];
-}
-
 @end

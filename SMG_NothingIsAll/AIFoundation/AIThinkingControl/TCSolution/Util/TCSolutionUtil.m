@@ -202,12 +202,7 @@
     //8. 排除不应期: 无计可施的失败TOFoModel计为不应期 (参考31073-TODO8);
     //1. 过滤掉actNo,withOut,scoreNo,finish这些状态的;
     NSArray *cansetModels = [SMGUtils filterArr:demand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
-        BOOL result = item.status != TOModelStatus_ActNo && item.status != TOModelStatus_ScoreNo && item.status != TOModelStatus_WithOut && item.status != TOModelStatus_Finish;
-        if (!result && item.cansetFrom.pointerId == 2236) {
-            NSLog(@"%@",TOStatus2Str(item.status));
-            NSLog(@"");
-        }
-        return result;
+        return item.status != TOModelStatus_ActNo && item.status != TOModelStatus_ScoreNo && item.status != TOModelStatus_WithOut && item.status != TOModelStatus_Finish;
     }];
     if (debugMode) NSLog(@"第6步 %@排除Status无效的:%ld",rhLog,cansetModels.count);//测时xx条
     
