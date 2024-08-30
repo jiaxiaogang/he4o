@@ -276,6 +276,7 @@
     
     //3. 触发器;
     NSLog(@"---//构建行为化帧触发器:%p for:%@ time:%.2f",actYes4Mv?solutionModel:frameModel,ClassName2Str(demand.algsType),deltaTime);
+    NSInteger frameActIndex = solutionModel.cansetActIndex;//保留actIndex值,因为等触发时,它可能就变了,这里保留下来才准确;
     [AITime setTimeTrigger:deltaTime trigger:^{
         //4. 只有besting的才触发反省等,别的早已被打断了 (参考31073-TODO2e);
         //2024.08.08: 此处即使无解,或者别的原因转向bested状态,也可以统计S和执行传染 (因为下一帧应自然发生,不必找任何借口) (参考32142-TODO3);
@@ -315,12 +316,10 @@
             //a. 中间帧时间已等完;
             frameModel.actYesed = true;
             
-            //TODOTOMORROW20240830: 此处有BUG,cansetActIndex早在有反馈时,已经+1了,它已经不对应frameModel了...
-            
             //a. 反省类比(成功/未成功)的主要原因,进行RORT反省;
             int newInfectedNum = 0, rootsInfectedNum = 0;
             AnalogyType type = (frameModel.status == TOModelStatus_ActYes) ? ATSub : ATPlus;
-            [TCRethink reasonOutRethink:solutionModel actionIndex:solutionModel.cansetActIndex type:type];
+            [TCRethink reasonOutRethink:solutionModel actionIndex:frameActIndex type:type];
             NSLog(@"---//行为化帧触发理性反省:%p %@ 状态:%@",frameModel,Pit2FStr(frameModel.content_p),TOStatus2Str(frameModel.status));
             
             //5. 失败时_继续决策 (成功时,由feedback的IN流程继续);
@@ -354,7 +353,7 @@
                     NSDictionary *actingDic = solutionModel.transferXvModel.sceneToCansetToIndexDic;
                     NSDictionary *itemDic = item.transferXvModel.sceneToCansetToIndexDic;
                     //a. 根据对应的sceneTo的映射,取到对应item的映射;
-                    NSNumber *sceneToIndex = ARR_INDEX([actingDic allKeysForObject:@(solutionModel.cansetActIndex)], 0);
+                    NSNumber *sceneToIndex = ARR_INDEX([actingDic allKeysForObject:@(frameActIndex)], 0);
                     NSNumber *itemIndex = [itemDic objectForKey:sceneToIndex];
                     //b. 当有映射,且洽好在等待反馈,则传染;
                     if (itemIndex && item.cansetActIndex == itemIndex.integerValue) {
