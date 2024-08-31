@@ -290,11 +290,6 @@
             
             //a. 如果状态已改成OutBack,说明有反馈(坏),否则未反馈(好) (参考feedbackTOP);
             int rootsRewakeNum = 0;
-            AnalogyType type = (solutionModel.status == TOModelStatus_OuterBack) ? ATSub : ATPlus;
-            
-            //d. 则进行感性PORT反省;
-            [TCRethink perceptOutRethink:solutionModel type:type];
-            NSLog(@"---//行为化帧触发感性反省:%p F%ld 状态:%@",solutionModel,solutionFo.pointer.pointerId,TOStatus2Str(solutionModel.status));
             
             //e. 如果有反馈,则设为失败,并停止决策;
             if (solutionModel.status == TOModelStatus_OuterBack) {
@@ -318,9 +313,6 @@
             
             //a. 反省类比(成功/未成功)的主要原因,进行RORT反省;
             int newInfectedNum = 0, rootsInfectedNum = 0;
-            AnalogyType type = (frameModel.status == TOModelStatus_ActYes) ? ATSub : ATPlus;
-            [TCRethink reasonOutRethink:solutionModel actionIndex:frameActIndex type:type];
-            NSLog(@"---//行为化帧触发理性反省:%p %@ 状态:%@",frameModel,Pit2FStr(frameModel.content_p),TOStatus2Str(frameModel.status));
             
             //5. 失败时_继续决策 (成功时,由feedback的IN流程继续);
             if (frameModel.status == TOModelStatus_ActYes) {
