@@ -354,8 +354,8 @@
     
     //2. 中间帧反馈成功时,直接计outSPDic为SP+1 (参考32012-TODO5);
     AIFoNodeBase *sceneTo = [SMGUtils searchNode:self.sceneTo];
-    if (self.isInfected) [sceneTo updateOutSPStrong:self.cansetActIndex difStrong:-1 type:ATSub sceneFrom:self.sceneFrom cansetFrom:self.cansetFrom];//3a. 如果传染过,则先回滚一下Sub-1;
-    [sceneTo updateOutSPStrong:self.cansetActIndex difStrong:1 type:ATPlus sceneFrom:self.sceneFrom cansetFrom:self.cansetFrom];//3b. 只要反馈成功的,都进行P+1;
+    if (self.isInfected) [sceneTo updateOutSPStrong:self.cansetActIndex difStrong:-1 type:ATSub sceneFrom:self.sceneFrom cansetFrom:self.cansetFrom debugMode:false];//3a. 如果传染过,则先回滚一下Sub-1;
+    [sceneTo updateOutSPStrong:self.cansetActIndex difStrong:1 type:ATPlus sceneFrom:self.sceneFrom cansetFrom:self.cansetFrom debugMode:true];//3b. 只要反馈成功的,都进行P+1;
     
     //2. 反馈有效: 构建hCanset;
     [self step2_FeedbackThenNewHCanset:protoAlg_p];

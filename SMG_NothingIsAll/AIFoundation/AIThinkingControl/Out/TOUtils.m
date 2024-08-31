@@ -755,7 +755,7 @@
             
             //2. 所有传染的都计SP- (参考32012-TODO4);
             AIFoNodeBase *sceneTo = [SMGUtils searchNode:canset.sceneTo];
-            [sceneTo updateOutSPStrong:canset.cansetActIndex difStrong:1 type:ATSub sceneFrom:canset.sceneFrom cansetFrom:canset.cansetFrom];
+            [sceneTo updateOutSPStrong:canset.cansetActIndex difStrong:1 type:ATSub sceneFrom:canset.sceneFrom cansetFrom:canset.cansetFrom debugMode:true];
             infectNum++;
         }
     }
@@ -781,8 +781,8 @@
         
         //4. 末帧超时未反馈负价值的,更新outSPDic (参考32012-TODO6);
         AIFoNodeBase *sceneTo = [SMGUtils searchNode:canset.sceneTo];
-        [sceneTo updateOutSPStrong:canset.cansetActIndex difStrong:1 type:ATPlus sceneFrom:canset.sceneFrom cansetFrom:canset.cansetFrom];//有效:P+1;
-        if (canset.isInfected) [sceneTo updateOutSPStrong:canset.cansetActIndex difStrong:-1 type:ATSub sceneFrom:canset.sceneFrom cansetFrom:canset.cansetFrom];//回滚:S-1;
+        [sceneTo updateOutSPStrong:canset.cansetActIndex difStrong:1 type:ATPlus sceneFrom:canset.sceneFrom cansetFrom:canset.cansetFrom debugMode:true];//有效:P+1;
+        if (canset.isInfected) [sceneTo updateOutSPStrong:canset.cansetActIndex difStrong:-1 type:ATSub sceneFrom:canset.sceneFrom cansetFrom:canset.cansetFrom debugMode:false];//回滚:S-1;
         
         //5. 传染的唤醒下;
         if (canset.isInfected) {
@@ -822,7 +822,7 @@
             
             //3. 初始即传染的中间帧也计SP- (参考32012-TODO4);
             AIFoNodeBase *sceneTo = [SMGUtils searchNode:canset.sceneTo];
-            [sceneTo updateOutSPStrong:canset.cansetActIndex difStrong:1 type:ATSub sceneFrom:canset.sceneFrom cansetFrom:canset.cansetFrom];
+            [sceneTo updateOutSPStrong:canset.cansetActIndex difStrong:1 type:ATSub sceneFrom:canset.sceneFrom cansetFrom:canset.cansetFrom debugMode:false];
         }
     }
     return initToInfectedNum;
@@ -859,7 +859,7 @@
                 
                 //2. 初始即传染的末帧也计SP- (参考32012-TODO4);
                 AIFoNodeBase *sceneTo = [SMGUtils searchNode:newCanset.sceneTo];
-                [sceneTo updateOutSPStrong:newCanset.cansetActIndex difStrong:1 type:ATSub sceneFrom:newCanset.sceneFrom cansetFrom:newCanset.cansetFrom];
+                [sceneTo updateOutSPStrong:newCanset.cansetActIndex difStrong:1 type:ATSub sceneFrom:newCanset.sceneFrom cansetFrom:newCanset.cansetFrom debugMode:false];
             }
         }
         

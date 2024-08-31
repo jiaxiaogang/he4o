@@ -365,7 +365,7 @@
                     
                     //8. 末帧反馈负价值的,计SP- (参考32012-TODO7);
                     AIFoNodeBase *sceneTo = [SMGUtils searchNode:waitModel.sceneTo];
-                    [sceneTo updateOutSPStrong:waitModel.cansetActIndex difStrong:1 type:ATSub sceneFrom:waitModel.sceneFrom cansetFrom:waitModel.cansetFrom];
+                    [sceneTo updateOutSPStrong:waitModel.cansetActIndex difStrong:1 type:ATSub sceneFrom:waitModel.sceneFrom cansetFrom:waitModel.cansetFrom debugMode:true];
                     
                     //8. 末帧且反馈到负mv,则被传染 (参考31179-TODO1);
                     waitModel.isInfected = true;

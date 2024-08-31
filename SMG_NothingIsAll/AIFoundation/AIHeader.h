@@ -392,6 +392,7 @@
 #define Log4Plan true
 //反省
 #define Log4Rethink true
+#define Log4OutSPDic true
 #define Log4Effect false
 //解决方案条件满足
 #define Log4SceneIsOk false

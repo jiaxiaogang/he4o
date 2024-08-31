@@ -104,7 +104,7 @@
 /**
  *  MARK:--------------------更新OutSPDic强度值--------------------
  */
--(void) updateOutSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type sceneFrom:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom;
+-(void) updateOutSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type sceneFrom:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom debugMode:(BOOL)debugMode;
 
 /**
  *  MARK:--------------------更新整个outSPDic--------------------
