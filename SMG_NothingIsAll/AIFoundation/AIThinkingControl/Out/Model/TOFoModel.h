@@ -177,4 +177,9 @@
 //Action已经执行过了ActIndex (默认为-1);
 @property (assign, nonatomic) NSInteger alreadyActionActIndex;
 
+/**
+ *  MARK:--------------------检查更新OutSPDic强度值--------------------
+ */
+-(void) checkAndUpdateOutSPStrong:(NSInteger)difStrong type:(AnalogyType)type debugMode:(BOOL)debugMode caller:(NSString*)caller;
+
 @end

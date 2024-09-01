@@ -359,9 +359,7 @@
     if (!feedbackValid) return false;
     
     //2. 中间帧反馈成功时,直接计outSPDic为SP+1 (参考32012-TODO5);
-    AIFoNodeBase *sceneTo = [SMGUtils searchNode:self.sceneTo];
-    if (self.isInfected) [sceneTo updateOutSPStrong:self.cansetActIndex difStrong:-1 type:ATSub sceneFrom:self.sceneFrom cansetFrom:self.cansetFrom debugMode:true caller:@"中间帧反馈回滚"];//3a. 如果传染过,则先回滚一下Sub-1;
-    [sceneTo updateOutSPStrong:self.cansetActIndex difStrong:1 type:ATPlus sceneFrom:self.sceneFrom cansetFrom:self.cansetFrom debugMode:true caller:@"中间帧反馈"];//3b. 只要反馈成功的,都进行P+1;
+    [self checkAndUpdateOutSPStrong:1 type:ATPlus debugMode:true caller:@"中间帧反馈"];//3b. 只要反馈成功的,都进行P+1;
     
     //2. 反馈有效: 构建hCanset;
     [self step2_FeedbackThenNewHCanset:protoAlg_p];
@@ -589,26 +587,43 @@
 }
 
 /**
- *  MARK:--------------------反馈更新OutSPDic强度值--------------------
+ *  MARK:--------------------检查更新OutSPDic强度值--------------------
  *  @desc 起因: 因为测得SP计值一直重复执行,每一次负mv反馈,都计一次S,导致重复计数,或者计了S又计P,导致混乱,所以写这个方法,来解决这BUG;
  *  @desc 比单纯的更新强度值,多出以下几个功能:
  *      1. 避免重复 (保证最终真正执行的仅1次,比如多次跑S,只记一次);
  *      2. 避免冲突 (比如:先S后P,以最后一条P为准 => 先把S回滚了,再把P执行了);
  */
--(void) checkAndUpdateOutSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type sceneFrom:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom{
+-(void) checkAndUpdateOutSPStrong:(NSInteger)difStrong type:(AnalogyType)type debugMode:(BOOL)debugMode caller:(NSString*)caller{
     //1. 取得canstFrom的spStrong;
+    NSInteger spIndex = self.cansetActIndex;
     AISPStrong *value = [self.outSPRecord getSPStrongIfNullNew:spIndex];
     
-    //2. 避免重复;
-    BOOL pAleardayRuned = type == ATPlus && value.pStrong > 0;
-    BOOL sAleardayRuned = type == ATSub && value.sStrong > 0;
-    if (pAleardayRuned || sAleardayRuned) {
-        return;
+    //2. 避免重复 (执行过的,不再执行);
+    if (type == ATPlus && value.pStrong > 0) return;
+    if (type == ATSub && value.sStrong > 0) return;
+    
+    //3. 避免冲突 (对立面执行过,回滚);
+    AIKVPointer *cansetFrom = self.cansetFrom;
+    AIKVPointer *sceneFrom = self.sceneFrom;
+    AIFoNodeBase *sceneTo = [SMGUtils searchNode:self.sceneTo];
+    if (type == ATPlus && value.sStrong > 0) {
+        [sceneTo updateOutSPStrong:spIndex difStrong:-value.sStrong type:ATSub sceneFrom:sceneFrom cansetFrom:cansetFrom debugMode:false caller:caller];
+        value.sStrong = 0;
+    }
+    if (type == ATSub && value.pStrong > 0) {
+        [sceneTo updateOutSPStrong:spIndex difStrong:-value.pStrong type:ATPlus sceneFrom:sceneFrom cansetFrom:cansetFrom debugMode:false caller:caller];
+        value.pStrong = 0;
     }
     
-    //TODOTOMORROW20240901: 继续写完这里...
+    //4. 把此次SP更新下;
+    [sceneTo updateOutSPStrong:spIndex difStrong:difStrong type:type sceneFrom:sceneFrom cansetFrom:cansetFrom debugMode:debugMode caller:caller];
     
-    
+    //5. 把此次SP更新值记录到outSPRecord避免下次重复或冲突;
+    if (type == ATSub) {
+        value.sStrong = difStrong;
+    } else {
+        value.pStrong = difStrong;
+    }
 }
 
 /**
