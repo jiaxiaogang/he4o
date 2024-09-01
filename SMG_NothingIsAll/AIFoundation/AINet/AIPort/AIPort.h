@@ -97,4 +97,7 @@
 
 @property (strong, nonatomic) NSMutableDictionary *spDic; //SPDic
 
+//根据spIndex下标取spStrong返回 (若空新建);
+-(AISPStrong*) getSPStrongIfNullNew:(NSInteger)spIndex;
+
 @end

@@ -13,6 +13,12 @@
 @property (strong, nonatomic) NSMutableArray *subModels;
 @property (strong, nonatomic) NSMutableArray *subDemands;
 
+/**
+ *  MARK:--------------------OutSP强度值反馈记录--------------------
+ *  @说明 用于检查:避免重复&避免冲突 (仅放在内存中,不持久化,避免它重复计SP值,或者计了S又计P的冲突);
+ */
+@property (strong, nonatomic) AIOutSPStrong *outSPRecord;
+
 @end
 
 @implementation TOFoModel
@@ -571,6 +577,38 @@
         return self.transferSiModel.canset;
     }
     return nil;
+}
+
+//MARK:===============================================================
+//MARK:                     < OutSP反馈部分 >
+//MARK:===============================================================
+
+-(AIOutSPStrong *)outSPRecord{
+    if (!_outSPRecord) _outSPRecord = [[AIOutSPStrong alloc] init];
+    return _outSPRecord;
+}
+
+/**
+ *  MARK:--------------------反馈更新OutSPDic强度值--------------------
+ *  @desc 起因: 因为测得SP计值一直重复执行,每一次负mv反馈,都计一次S,导致重复计数,或者计了S又计P,导致混乱,所以写这个方法,来解决这BUG;
+ *  @desc 比单纯的更新强度值,多出以下几个功能:
+ *      1. 避免重复 (保证最终真正执行的仅1次,比如多次跑S,只记一次);
+ *      2. 避免冲突 (比如:先S后P,以最后一条P为准 => 先把S回滚了,再把P执行了);
+ */
+-(void) checkAndUpdateOutSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type sceneFrom:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom{
+    //1. 取得canstFrom的spStrong;
+    AISPStrong *value = [self.outSPRecord getSPStrongIfNullNew:spIndex];
+    
+    //2. 避免重复;
+    BOOL pAleardayRuned = type == ATPlus && value.pStrong > 0;
+    BOOL sAleardayRuned = type == ATSub && value.sStrong > 0;
+    if (pAleardayRuned || sAleardayRuned) {
+        return;
+    }
+    
+    //TODOTOMORROW20240901: 继续写完这里...
+    
+    
 }
 
 /**

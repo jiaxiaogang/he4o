@@ -171,6 +171,15 @@
     return _spDic;
 }
 
+//根据spIndex下标取spStrong返回 (若空新建);
+-(AISPStrong*) getSPStrongIfNullNew:(NSInteger)spIndex {
+    id key = @(spIndex);
+    AISPStrong *value = [self.spDic objectForKey:key];
+    if (!value) value = [[AISPStrong alloc] init];
+    [self.spDic setObject:value forKey:key];
+    return value;
+}
+
 /**
  *  MARK:--------------------NSCoding--------------------
  */
