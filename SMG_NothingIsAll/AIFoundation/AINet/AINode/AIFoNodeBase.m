@@ -136,10 +136,10 @@
 /**
  *  MARK:--------------------更新OutSPDic强度值--------------------
  */
--(void) updateOutSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type sceneFrom:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom debugMode:(BOOL)debugMode {
+-(void) updateOutSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type sceneFrom:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom debugMode:(BOOL)debugMode caller:(NSString*)caller{
     //1. 取得canstFrom的spStrong;
     AIOutSPStrong *spStrong = [self getOutSPStrongIfNullNew:sceneFrom cansetFrom:cansetFrom];
-    AISPStrong *spFrom = [spStrong.spDic objectForKey:@(spIndex)];
+    NSString *spFrom = STRFORMAT(@"%@",[spStrong.spDic objectForKey:@(spIndex)]);
     
     //2. 更新它的spDic值;
     [self updateSPStrong:spIndex difStrong:difStrong type:type forSPDic:spStrong.spDic];
@@ -149,7 +149,7 @@
         AIFoNodeBase *cansetFromFo = [SMGUtils searchNode:cansetFrom];
         AISPStrong *spTo = [spStrong.spDic objectForKey:@(spIndex)];
         NSString *flt1 = FltLog4DefaultIf(true, @"4");
-        NSLog(@"%@updateOutSP:%ld/%ld (%@) %@->%@ sceneTo:%ld sceneFrom:F%ld cansetFrom:%@",flt1,spIndex,cansetFromFo.count,ATType2Str(type),spFrom,spTo,self.pId,sceneFrom.pointerId,Pit2FStr(cansetFrom));
+        NSLog(@"%@updateOutSP:%ld/%ld (%@) %@->%@ sceneTo:%ld sceneFrom:F%ld cansetFrom:%@ caller:%@",flt1,spIndex,cansetFromFo.count,ATType2Str(type),spFrom,spTo,self.pId,sceneFrom.pointerId,Pit2FStr(cansetFrom),caller);
     }
 }
 
@@ -162,8 +162,8 @@
     //2. 更新spDic;
     for (NSNumber *newIndex in newSPDic.allKeys) {
         AISPStrong *newStrong = [newSPDic objectForKey:newIndex];
-        [self updateOutSPStrong:newIndex.integerValue difStrong:newStrong.sStrong type:ATSub sceneFrom:sceneFrom cansetFrom:cansetFrom debugMode:false];
-        [self updateOutSPStrong:newIndex.integerValue difStrong:newStrong.pStrong type:ATPlus sceneFrom:sceneFrom cansetFrom:cansetFrom debugMode:false];
+        [self updateOutSPStrong:newIndex.integerValue difStrong:newStrong.sStrong type:ATSub sceneFrom:sceneFrom cansetFrom:cansetFrom debugMode:false caller:@"初始化S值"];
+        [self updateOutSPStrong:newIndex.integerValue difStrong:newStrong.pStrong type:ATPlus sceneFrom:sceneFrom cansetFrom:cansetFrom debugMode:false caller:@"初始化P值"];
     }
 }
 
