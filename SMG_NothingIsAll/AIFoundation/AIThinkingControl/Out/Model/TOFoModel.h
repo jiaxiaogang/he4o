@@ -180,6 +180,7 @@
 /**
  *  MARK:--------------------检查更新OutSPDic强度值--------------------
  */
--(void) checkAndUpdateOutSPStrong:(NSInteger)difStrong type:(AnalogyType)type debugMode:(BOOL)debugMode caller:(NSString*)caller;
+-(void) checkAndUpdateOutSPStrong_Reason:(NSInteger)difStrong type:(AnalogyType)type debugMode:(BOOL)debugMode caller:(NSString*)caller;
+-(void) checkAndUpdateOutSPStrong_Percept:(NSInteger)difStrong type:(AnalogyType)type debugMode:(BOOL)debugMode caller:(NSString*)caller;
 
 @end

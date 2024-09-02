@@ -359,7 +359,7 @@
     if (!feedbackValid) return false;
     
     //2. 中间帧反馈成功时,直接计outSPDic为SP+1 (参考32012-TODO5);
-    [self checkAndUpdateOutSPStrong:1 type:ATPlus debugMode:true caller:@"中间帧反馈"];//3b. 只要反馈成功的,都进行P+1;
+    [self checkAndUpdateOutSPStrong_Reason:1 type:ATPlus debugMode:true caller:@"中间帧反馈"];//3b. 只要反馈成功的,都进行P+1;
     
     //2. 反馈有效: 构建hCanset;
     [self step2_FeedbackThenNewHCanset:protoAlg_p];
@@ -593,9 +593,15 @@
  *      1. 避免重复 (保证最终真正执行的仅1次,比如多次跑S,只记一次);
  *      2. 避免冲突 (比如:先S后P,以最后一条P为准 => 先把S回滚了,再把P执行了);
  */
--(void) checkAndUpdateOutSPStrong:(NSInteger)difStrong type:(AnalogyType)type debugMode:(BOOL)debugMode caller:(NSString*)caller{
+-(void) checkAndUpdateOutSPStrong_Reason:(NSInteger)difStrong type:(AnalogyType)type debugMode:(BOOL)debugMode caller:(NSString*)caller {
+    [self checkAndUpdateOutSPStrong:difStrong spIndex:self.cansetActIndex type:type debugMode:debugMode caller:caller];
+}
+-(void) checkAndUpdateOutSPStrong_Percept:(NSInteger)difStrong type:(AnalogyType)type debugMode:(BOOL)debugMode caller:(NSString*)caller {
+    AIFoNodeBase *cansetFrom = [SMGUtils searchNode:self.cansetFrom];
+    [self checkAndUpdateOutSPStrong:difStrong spIndex:cansetFrom.count type:type debugMode:debugMode caller:caller];
+}
+-(void) checkAndUpdateOutSPStrong:(NSInteger)difStrong spIndex:(NSInteger)spIndex type:(AnalogyType)type debugMode:(BOOL)debugMode caller:(NSString*)caller{
     //1. 取得canstFrom的spStrong;
-    NSInteger spIndex = self.cansetActIndex;
     AISPStrong *value = [self.outSPRecord getSPStrongIfNullNew:spIndex];
     
     //2. 避免重复 (执行过的,不再执行);
