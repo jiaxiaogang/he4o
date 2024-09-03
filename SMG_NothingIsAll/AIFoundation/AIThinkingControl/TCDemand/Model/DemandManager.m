@@ -131,8 +131,15 @@
     if (!inModel || !protoFo || !Switch4RS) return newRootsResult;
     NSDictionary *fos4Demand = inModel.fos4Demand;
     
+    //2. 防止刚解决过饥饿,又立马预测到了一个新的饥饿 (参考33032-BUG1);
+    NSArray *validFosDemandKeys = [SMGUtils filterArr:fos4Demand.allKeys checkValid:^BOOL(NSString *atKey) {
+        return ![SMGUtils filterSingleFromArr:self.loopCache.array checkValid:^BOOL(ReasonDemandModel *oldRoot) {
+            return [oldRoot.algsType isEqualToString:atKey] && oldRoot.expired4PInput;//旧root有同质的且已经解决掉,则直接不构建为新root;
+        }];
+    }];
+    
     //2. 多时序识别预测分别进行处理;
-    for (NSString *atKey in fos4Demand.allKeys) {
+    for (NSString *atKey in validFosDemandKeys) {
         
         //3. 数据准备
         NSMutableArray *pFosValue = [fos4Demand objectForKey:atKey];
