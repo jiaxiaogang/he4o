@@ -276,23 +276,34 @@
 
 /**
  *  MARK:--------------------当输入持续mv的正向mv时 (参考32118-TODO1)--------------------
+ *  @version
+ *      2024.09.03: BUG-因为构建RCanset太慢,导致半天expired4PInput改不成true,导致它又跑了几轮TOQueue才停 (所以改成两个for,先把expired4PInput生效了再执行构建RCanset);
  */
 -(void) inputForContinueAndGoodMv:(AICMVNodeBase*)mv {
+    //1. 数据准备,取出标识同区的roots;
     NSArray *roots = [self.getAllDemand copy];
+    roots = [SMGUtils filterArr:roots checkValid:^BOOL(ReasonDemandModel *root) {
+        return [root.algsType isEqualToString:mv.pointer.algsType];
+    }];
+    
+    //2. expired4PInput: 把at标识的root全移除掉;
+    //> 2024.07.22: 如果输入为正价值,目前不做太深入操作,直接简单的将DemandManager中一样标识的任务对冲移除掉即可;
+    //> 起因: 因为饥饿最近改成了连续任务,更饿也要继续求解,直至好久后解决后,得有个触发,使之停下吃 (不然它完成后,还一直在尝试求解);
+    //用expired4PInput的原因: 如果直接remove,好像工作记忆停的太快,导致会有一些执行不到? (比如吃的识别是否还没完成,如果识别完成,发现feedback时root已经没了,那就反馈不到了);
     for (ReasonDemandModel *root in roots) {
-        if ([mv.pointer.algsType isEqualToString:root.algsType]) {
-            //1. expired4PInput: 把at标识的root全移除掉;
-            //> 2024.07.22: 如果输入为正价值,目前不做太深入操作,直接简单的将DemandManager中一样标识的任务对冲移除掉即可;
-            //> 起因: 因为饥饿最近改成了连续任务,更饿也要继续求解,直至好久后解决后,得有个触发,使之停下吃 (不然它完成后,还一直在尝试求解);
-            //用expired4PInput的原因: 如果直接remove,好像工作记忆停的太快,导致会有一些执行不到? (比如吃的识别是否还没完成,如果识别完成,发现feedback时root已经没了,那就反馈不到了);
-            root.expired4PInput = true;
-            //[self removeDemand:root];
-            
-            //2. 对于持续R任务: 比如饥饿R任务现在是连续饥饿状态,所以只能以饥饿状态的减弱为判断 (即正mv输入) (参考32118-TODO1);
-            NSLog(@"%@持续任务反馈了正mv (pFos数:%ld)",FltLog4CreateRCanset(2),root.pFos.count);
-            for (AIMatchFoModel *pFo in root.pFos) {
-                [pFo pushFrameFinish:@"持续任务反馈正mv"];
-            }
+        root.expired4PInput = true;
+        //[self removeDemand:root];
+    }
+    NSLog(@"因持续任务反馈了正mv设expired4PInput=true (%@)",CLEANSTR([SMGUtils convertArr:roots convertBlock:^id(ReasonDemandModel *root) {
+        return STRFORMAT(@"F%ld",Demand2Pit(root).pointerId);
+    }]));
+    
+    //3. 为这些roots构建RCanset;
+    for (ReasonDemandModel *root in roots) {
+        //2. 对于持续R任务: 比如饥饿R任务现在是连续饥饿状态,所以只能以饥饿状态的减弱为判断 (即正mv输入) (参考32118-TODO1);
+        NSLog(@"%@因持续任务反馈了正mv (ROOT:F%ld) (pFos数:%ld) => 触发构建RCanset",FltLog4CreateRCanset(2),Demand2Pit(root).pointerId,root.pFos.count);
+        for (AIMatchFoModel *pFo in root.pFos) {
+            [pFo pushFrameFinish:@"持续任务反馈正mv"];
         }
     }
 }
