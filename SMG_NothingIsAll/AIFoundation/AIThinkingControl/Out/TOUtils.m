@@ -460,19 +460,21 @@
  */
 //In针对Scene稳定性;
 +(CGFloat) getStableScore_In:(AIFoNodeBase*)scene startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex {
-    return [TOUtils getStableScore_General:scene startSPIndex:startSPIndex endSPIndex:endSPIndex spDic:scene.spDic];
+    HEResult *result = [TOUtils getStableScore_General:scene startSPIndex:startSPIndex endSPIndex:endSPIndex spDic:scene.spDic];
+    return NUMTOOK([result get:@"spScore"]).floatValue;
 }
 //Out针对Canset稳定性;
-+(CGFloat) getStableScore_Out:(TOFoModel*)canset startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex {
++(HEResult*) getStableScore_Out:(TOFoModel*)canset startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex {
     AIFoNodeBase *sceneTo = [SMGUtils searchNode:canset.sceneTo];
     AIFoNodeBase *cansetFrom = [SMGUtils searchNode:canset.cansetFrom];//本来应该传cansetTo,不过cansetTo可能未转实,并且cansetFrom效果也一致;
     NSDictionary *spDic = [sceneTo getItemOutSPDic:canset.sceneFrom cansetFrom:canset.cansetFrom];
     return [TOUtils getStableScore_General:cansetFrom startSPIndex:startSPIndex endSPIndex:endSPIndex spDic:spDic];
 }
-+(CGFloat) getStableScore_General:(AIFoNodeBase*)fo startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex spDic:(NSDictionary*)spDic {
++(HEResult*) getStableScore_General:(AIFoNodeBase*)fo startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex spDic:(NSDictionary*)spDic {
     //1. 数据检查 & 稳定性默认为1分 & 正负mv的公式是不同的 (参考25122-公式);
     if (!fo) return 0;
     CGFloat totalSPScore = 1.0f;
+    NSInteger sumPStong = 0;
     BOOL isBadMv = [ThinkingUtils havDemand:fo.cmvNode_p];
     
     //2. 从start到end各计算spScore;
@@ -501,10 +503,11 @@
         
         //6. 将itemSPScore计入综合评分 (参考25114 & 25122-公式);
         totalSPScore *= itemSPScore;
+        if (spStrong) sumPStong += spStrong.pStrong;
     }
     
     //9. 返回SP评分 (多坏或多好);
-    return totalSPScore;
+    return [[[HEResult newSuccess] mk:@"spScore" v:@(totalSPScore)] mk:@"pStrong" v:@(sumPStong)];
 }
 
 /**

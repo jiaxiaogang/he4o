@@ -66,6 +66,7 @@
 #import "AITransferModel.h"
 #import "TCTransferXvModel.h"
 #import "TCResult.h"
+#import "HEResult.h"
 #import "DirectIndexDic.h"
 
 //网络

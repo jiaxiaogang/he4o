@@ -136,37 +136,34 @@
 +(NSArray*) cansetsRankingV4:(NSArray*)cansets zonHeScoreBlock:(double(^)(TOFoModel *obj))zonHeScoreBlock debugMode:(BOOL)debugMode {
     //0. 将effStrong提前取出来,存到mapModel中;
     NSArray *mapArr = [SMGUtils convertArr:cansets convertBlock:^id(TOFoModel *item) {
-        AIFoNodeBase *sceneFo = [SMGUtils searchNode:item.sceneFo];
-        AIEffectStrong *strong = [TOUtils getEffectStrong:sceneFo effectIndex:item.sceneTargetIndex solutionFo:item.cansetFo];//提前取出effStrong有效性;
         //TODOTOMORROW20240119: 测下这里确定能响应到feedback和cutIndex变化后,看能否对排序评分,带来分值变化 (参考31073-TODO3);
-        CGFloat stableScore = [TOUtils getStableScore_Out:item startSPIndex:item.cansetActIndex endSPIndex:item.cansetTargetIndex];//提前算出还未推进的中后段sp稳定性;
+        HEResult *result = [TOUtils getStableScore_Out:item startSPIndex:item.cansetActIndex endSPIndex:item.cansetTargetIndex];//提前算出还未推进的中后段sp稳定性;
+        CGFloat spScore = NUMTOOK([result get:@"spScore"]).floatValue;
+        NSInteger pStrong = NUMTOOK([result get:@"pStrong"]).integerValue;
         double zonHeScore = zonHeScoreBlock ? zonHeScoreBlock(item) : 0;
-        return [MapModel newWithV1:item v2:strong v3:@(stableScore) v4:@(zonHeScore)];
+        return [MapModel newWithV1:item v2:@(pStrong) v3:@(spScore) v4:@(zonHeScore)];
     }];
     
     //1. 根据cutIndex到target之间的稳定性和有效性来排名 (参考29099-todo1 & todo2);
-    NSArray *sort = [SMGUtils sortBig2Small:mapArr compareBlock1:^double(MapModel *item) {
+    NSArray *sortMapArr = [SMGUtils sortBig2Small:mapArr compareBlock1:^double(MapModel *item) {
         return NUMTOOK(item.v4).doubleValue;//感性综合评分 (由TCScore字典提供);
     } compareBlock2:^double(MapModel *item) {
         return NUMTOOK(item.v3).floatValue;//还未推进的中后段SP稳定性;
     } compareBlock3:^double(MapModel *item) {
-        return [TOUtils getEffectScore:item.v2];//后段有效性 (参考2909a-todo1);
-    } compareBlock4:^double(MapModel *item) {
-        AIEffectStrong *strong = item.v2;
-        return strong.hStrong;//H值 (参考2909a-todo3);
+        return NUMTOOK(item.v2).integerValue;//P值;
     }];
     
     //2. 将mapModel转回cansetModel数组;
-    sort = [SMGUtils convertArr:sort convertBlock:^id(MapModel *obj) {
+    NSArray *sort = [SMGUtils convertArr:sortMapArr convertBlock:^id(MapModel *obj) {
         return obj.v1;
     }];
     
     //2. debug日志
-    for (TOFoModel *obj in ARR_SUB(sort, 0, 5)) {
-        AIFoNodeBase *sceneFo = [SMGUtils searchNode:obj.sceneFo];
-        AIEffectStrong *effStrong = [TOUtils getEffectStrong:sceneFo effectIndex:sceneFo.count solutionFo:obj.cansetFo];
-        CGFloat effScore = [TOUtils getEffectScore:effStrong];
+    for (MapModel *mapModel in ARR_SUB(sortMapArr, 0, 5)) {
+        TOFoModel *obj = mapModel.v1;
         AIFoNodeBase *sceneTo = [SMGUtils searchNode:obj.sceneTo];
+        CGFloat spScore = NUMTOOK(mapModel.v3).floatValue;
+        NSInteger pStrong = NUMTOOK(mapModel.v2).integerValue;
         NSDictionary *spDic = [sceneTo getItemOutSPDic:obj.sceneFrom cansetFrom:obj.cansetFrom];
         AIKVPointer *targetAlg = obj.baseOrGroup.baseOrGroup.content_p;//base(HDemand).base(TargetAlgModel);
         
@@ -174,7 +171,7 @@
         NSInteger index = [sort indexOfObject:obj];
         NSString *fltLog1 = obj.isH && [NVHeUtil algIsWuPiGuo:targetAlg] && [NVHeUtil foHavYouPiGuo:obj.cansetFrom] ? FltLog4HDemandOfYouPiGuo(@"3") : @"";
         NSString *fltLog2 = FltLog4DefaultIf(!obj.isH, @"1");
-        if (debugMode && Log4AIRank) NSLog(@"%@%@%@%ld. %@<F%ld %@> %@ %@ %@:(分:%.2f) [CUT:%ld=>TAR:%ld]",fltLog1,fltLog2,obj.isH?@"H":@"R",index,SceneType2Str(obj.baseSceneModel.type),obj.sceneFo.pointerId,ShortDesc4Pit(obj.cansetFrom),CLEANSTR(obj.transferXvModel.sceneToCansetToIndexDic),CLEANSTR(spDic),effStrong.description,effScore,obj.cansetCutIndex,obj.cansetTargetIndex);
+        if (debugMode && Log4AIRank) NSLog(@"%@%@%@%ld. %@<F%ld %@> %@ %@ (分:%.2f P值:%ld) [CUT:%ld=>TAR:%ld]",fltLog1,fltLog2,obj.isH?@"H":@"R",index,SceneType2Str(obj.baseSceneModel.type),obj.sceneFo.pointerId,ShortDesc4Pit(obj.cansetFrom),CLEANSTR(obj.transferXvModel.sceneToCansetToIndexDic),CLEANSTR(spDic),spScore,pStrong,obj.cansetCutIndex,obj.cansetTargetIndex);
         
         //打印详情日志;        
         if (debugMode && Log4AIRankDesc) {

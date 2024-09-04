@@ -159,6 +159,7 @@
 		08B180D327F495340069F11E /* TVTimeLine.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B180D227F495340069F11E /* TVTimeLine.m */; };
 		08B31E7E20648C3700FD96EA /* ThinkingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B31E7D20648C3700FD96EA /* ThinkingUtils.m */; };
 		08B91E902A15B1B700B8AC59 /* AITransferModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B91E8F2A15B1B700B8AC59 /* AITransferModel.m */; };
+		08BB986F2C87E2D800DA4029 /* HEResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 08BB986E2C87E2D800DA4029 /* HEResult.m */; };
 		08C071382A6582B7004D7110 /* AsyncMutableArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C071372A6582B7004D7110 /* AsyncMutableArray.m */; };
 		08C159C02808F47100983717 /* RLTPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C159BF2808F47100983717 /* RLTPanel.m */; };
 		08C159C22808F4CB00983717 /* RLTPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 08C159C12808F4CB00983717 /* RLTPanel.xib */; };
@@ -530,6 +531,8 @@
 		08B4DAEC25E881D200E32DB1 /* XGDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XGDelegate.h; sourceTree = "<group>"; };
 		08B91E8E2A15B1B700B8AC59 /* AITransferModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AITransferModel.h; sourceTree = "<group>"; };
 		08B91E8F2A15B1B700B8AC59 /* AITransferModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AITransferModel.m; sourceTree = "<group>"; };
+		08BB986D2C87E2D800DA4029 /* HEResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HEResult.h; sourceTree = "<group>"; };
+		08BB986E2C87E2D800DA4029 /* HEResult.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HEResult.m; sourceTree = "<group>"; };
 		08C071362A6582B7004D7110 /* AsyncMutableArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AsyncMutableArray.h; sourceTree = "<group>"; };
 		08C071372A6582B7004D7110 /* AsyncMutableArray.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AsyncMutableArray.m; sourceTree = "<group>"; };
 		08C159BE2808F47100983717 /* RLTPanel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RLTPanel.h; sourceTree = "<group>"; };
@@ -707,6 +710,8 @@
 			children = (
 				081002132A6BAC5600BE9D8A /* TCResult.h */,
 				081002142A6BAC5600BE9D8A /* TCResult.m */,
+				08BB986D2C87E2D800DA4029 /* HEResult.h */,
+				08BB986E2C87E2D800DA4029 /* HEResult.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1988,6 +1993,7 @@
 				0819F4F427583AA9007396D0 /* TCFeedback.m in Sources */,
 				086D93371F8CA782002BAF3F /* RuntimeInvoker.m in Sources */,
 				08D471DE1FEB3FFF00C61322 /* AIImvAlgs.m in Sources */,
+				08BB986F2C87E2D800DA4029 /* HEResult.m in Sources */,
 				08A5D5E522AF2B8200E56BB4 /* NVDelegate_He.m in Sources */,
 				087705AB2753744300BA4EFB /* TCRegroup.m in Sources */,
 				08C071382A6582B7004D7110 /* AsyncMutableArray.m in Sources */,

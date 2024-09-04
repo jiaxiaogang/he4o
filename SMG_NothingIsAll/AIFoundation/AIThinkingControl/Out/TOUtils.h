@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIAlgNodeBase,DemandModel,TOFoModel,AIShortMatchModel,TOModelBase,TOAlgModel,AIEffectStrong;
+@class AIAlgNodeBase,DemandModel,TOFoModel,AIShortMatchModel,TOModelBase,TOAlgModel,AIEffectStrong,HEResult;
 @interface TOUtils : NSObject
 
 /**
@@ -163,7 +163,7 @@
  *  @param startSPIndex : 起始index,比如理性时,常为0到fo.count-1之间 (求结果时,需包含startSPIndex);
  */
 +(CGFloat) getStableScore_In:(AIFoNodeBase*)scene startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex;
-+(CGFloat) getStableScore_Out:(TOFoModel*)canset startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex;
++(HEResult*) getStableScore_Out:(TOFoModel*)canset startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex;
 
 /**
  *  MARK:--------------------SP好坏评分--------------------
