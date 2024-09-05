@@ -299,7 +299,7 @@
             } else {
                 //f. 如果无反馈,则设为对baseRDemand有效,整个工作记忆同质解都唤醒一下 (参考31179-TODO2);
                 if (ISOK(solutionModel.baseOrGroup, ReasonDemandModel.class)) {
-                    rootsRewakeNum = [TOUtils rewakeToAllRootsTree_Mv:(ReasonDemandModel*)solutionModel.baseOrGroup];
+                    rootsRewakeNum = [TOUtils rewakeToAllRootsTree_Mv:solutionModel];
                 }
             }
             

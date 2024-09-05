@@ -231,7 +231,7 @@
         //2024.06.26: indexDic有可能指定后还在更新,导致有越界 (参考32014);
         [newRCanset updateIndexDic:matchFo indexDic:[self.indexDic2 copy]];
         
-        //2024.09.04: eff已经弃用了,这里改为把P默认计1 (参考33031-BUG5);
+        //2024.09.04: eff已经弃用了,这里改为把P默认计1 (参考33031-BUG5-TODO1);
         [matchFo updateOutSPStrong:newRCanset.count difStrong:1 type:ATPlus sceneFrom:matchFo.pointer cansetFrom:newRCanset.pointer debugMode:false caller:@"NewRCanset初始化P=1"];
         
         if (self.indexDic2 == 0) {
