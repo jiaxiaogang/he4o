@@ -358,7 +358,7 @@
     BOOL feedbackValid = [self step1_CheckFeedbackTORIsValid:feedbackMatchAlg_ps protoAlg:protoAlg_p];
     if (!feedbackValid) return false;
     
-    //2. 中间帧反馈成功时,直接计outSPDic为SP+1 (参考32012-TODO5);
+    //2. SP计数之三(R正): 中间帧反馈成功时,直接计outSPDic为SP+1 (参考32012-TODO5);
     [self checkAndUpdateOutSPStrong_Reason:1 type:ATPlus debugMode:true caller:@"中间帧反馈"];//3b. 只要反馈成功的,都进行P+1;
     
     //2. 反馈有效: 构建hCanset;

@@ -334,7 +334,7 @@
                     
                     //方法1. 本来就是一个alg (参考31176-TODO2B-方法1);
                     if ([itemFrameAlg.content_p isEqual:frameModel.content_p]) {
-                        rootsInfectedNum += [TOUtils infectToAllRootsTree_Alg:itemFrameAlg.content_p];
+                        rootsInfectedNum += [TOUtils infectToAllRootsTree_Alg:item infectedAlg:itemFrameAlg.content_p];
                         newInfectedNum++;
                         continue;
                     }
@@ -349,7 +349,7 @@
                     NSNumber *itemIndex = [itemDic objectForKey:sceneToIndex];
                     //b. 当有映射,且洽好在等待反馈,则传染;
                     if (itemIndex && item.cansetActIndex == itemIndex.integerValue) {
-                        rootsInfectedNum += [TOUtils infectToAllRootsTree_Alg:itemFrameAlg.content_p];
+                        rootsInfectedNum += [TOUtils infectToAllRootsTree_Alg:item infectedAlg:itemFrameAlg.content_p];
                         newInfectedNum++;
                     }
                 }

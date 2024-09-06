@@ -230,7 +230,7 @@
  *  MARK:--------------------将infectedAlg传染到工作记忆 (参考31178-TODO1)--------------------
  *  @desc 白话: 当frameActYes因canset中间帧无反馈,调用此方法 => 将工作记忆中所有同质中间帧cansetAlg都infect下,标记它已条件不满足;
  */
-+(int) infectToAllRootsTree_Alg:(AIKVPointer*)infectedAlg;
++(int) infectToAllRootsTree_Alg:(TOFoModel*)infectedCanset infectedAlg:(AIKVPointer*)infectedAlg;
 
 /**
  *  MARK:--------------------将被解决的rDemand在工作记忆的同质解都唤醒 (参考31179-TODO2)--------------------

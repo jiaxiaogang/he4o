@@ -363,7 +363,7 @@
                 if (score < 0) {
                     waitModel.status = TOModelStatus_OuterBack;
                     
-                    //8. 末帧反馈负价值的,计SP- (参考32012-TODO7);
+                    //8. SP计数之二(P负):末帧反馈负价值的,计SP- (参考32012-TODO7);
                     [waitModel checkAndUpdateOutSPStrong_Percept:1 type:ATSub debugMode:true caller:@"末帧负mv反馈"];
                     
                     //8. 末帧且反馈到负mv,则被传染 (参考31179-TODO1);

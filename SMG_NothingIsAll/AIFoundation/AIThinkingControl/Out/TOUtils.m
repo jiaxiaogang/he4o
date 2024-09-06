@@ -747,7 +747,11 @@
  *  @desc 白话: 当frameActYes因canset中间帧无反馈,调用此方法 => 将工作记忆中所有同质中间帧cansetAlg都infect下,标记它已条件不满足;
  *  @desc frameActYes反馈失败时: 传染到整个工作记忆树 (所有此处新传染的,都尝试向整树传播) (参考31178-TODO1);
  */
-+(int) infectToAllRootsTree_Alg:(AIKVPointer*)infectedAlg {
++(int) infectToAllRootsTree_Alg:(TOFoModel*)infectedCanset infectedAlg:(AIKVPointer*)infectedAlg {
+    //1. SP计数之四(R负): 当前传染的canset计S+1 (参考33031-BUG5-协作);
+    [infectedCanset checkAndUpdateOutSPStrong_Reason:1 type:ATSub debugMode:true caller:@""];
+    
+    //2. 当前传染的alg,传到整个roots;
     int infectNum = 0;
     NSArray *allCanset = [TOUtils getSubCansets_AllDeep_AllRoots];
     for (TOFoModel *canset in allCanset) {
@@ -757,7 +761,7 @@
             canset.isInfected = true;
             
             //2. 所有传染的都计SP- (参考32012-TODO4);
-            [canset checkAndUpdateOutSPStrong_Reason:1 type:ATSub debugMode:true caller:@"alg传染整树"];
+            //[canset checkAndUpdateOutSPStrong_Reason:1 type:ATSub debugMode:true caller:@"alg传染整树"];
             infectNum++;
         }
     }
@@ -768,38 +772,39 @@
  *  MARK:--------------------将被解决的rDemand在工作记忆的同质解都唤醒 (参考31179-TODO2)--------------------
  *  @desc 白话: 当frameActYes因canset有效而解决了rDemand时,调用此方法 => 将工作记忆中所有同质末帧canset都rewake下,使之可再次尝试它有效;
  *  @rDemand 将frameActYes中被解决的rDemand传进来 (用于到工作记忆中判断同质r任务);
+ *  @version
+ *      2024.09.06: 全唤醒,但只有当前计P+1 (参考33031-BUG5-协作);
  */
 +(int) rewakeToAllRootsTree_Mv:(TOFoModel*)rewakeFromRCanset {
-    ////1. 把所有工作记忆树等mv反馈的全唤醒;
-    //ReasonDemandModel *rewakeByRDemand = (ReasonDemandModel*)rewakeFromRCanset.baseOrGroup;
-    //int rewakeNum = 0;
-    //NSArray *allCanset = [TOUtils getSubCansets_AllDeep_AllRoots];
-    //for (TOFoModel *canset in allCanset) {
-    //    //1. 非RDemand的解不唤醒;
-    //    if (!ISOK(canset.baseOrGroup, ReasonDemandModel.class)) continue;
-    //    //2. 未到末尾不唤醒;
-    //    if (canset.cansetActIndex < canset.transferXvModel.cansetToOrders.count) continue;
-    //    //3. 非同区不唤醒;
-    //    DemandModel *otherDemand = (DemandModel*)canset.baseOrGroup;
-    //    if (![rewakeByRDemand.algsType isEqualToString:otherDemand.algsType]) continue;
-    //    //4. 可以考虑,只唤醒besting的,因为bested的已经过去了;
-    //    //if (canset.cansetStatus != CS_Besting) continue;
-    //
-    //    //4. 末帧超时未反馈负价值的,更新outSPDic (参考32012-TODO6);
-    //    [canset checkAndUpdateOutSPStrong_Percept:1 type:ATPlus debugMode:true caller:@"末帧未发生负mv"];//有效:P+1;
-    //
-    //    //5. 传染的唤醒下;
-    //    if (canset.isInfected) {
-    //        canset.isInfected = false;
-    //        rewakeNum++;
-    //    }
-    //}
-    //NSLog(@"frameActYes触发后,发现:%@ 自然未发生负价值,将已末帧传染的mv同区canset唤醒:%d",rewakeByRDemand.algsType,rewakeNum);
-    //return rewakeNum;//将唤醒数返回;
-    
-    //2. 2024.09.05: 只自己,不唤醒 => 把成功rCanset时,不再唤醒别的rCanset (参考33031-BUG5-TODO2);
+    //1. SP计数之一(P正): 只自己,不唤醒 => 把成功rCanset时,不再唤醒别的rCanset (参考33031-BUG5-TODO2);
     [rewakeFromRCanset checkAndUpdateOutSPStrong_Percept:1 type:ATPlus debugMode:true caller:@"末帧未发生负mv"];//有效:P+1;
-    return 1;
+    
+    //2. 把所有工作记忆树等mv反馈的全唤醒;
+    ReasonDemandModel *rewakeByRDemand = (ReasonDemandModel*)rewakeFromRCanset.baseOrGroup;
+    int rewakeNum = 0;
+    NSArray *allCanset = [TOUtils getSubCansets_AllDeep_AllRoots];
+    for (TOFoModel *canset in allCanset) {
+        //1. 非RDemand的解不唤醒;
+        if (!ISOK(canset.baseOrGroup, ReasonDemandModel.class)) continue;
+        //2. 未到末尾不唤醒;
+        if (canset.cansetActIndex < canset.transferXvModel.cansetToOrders.count) continue;
+        //3. 非同区不唤醒;
+        DemandModel *otherDemand = (DemandModel*)canset.baseOrGroup;
+        if (![rewakeByRDemand.algsType isEqualToString:otherDemand.algsType]) continue;
+        //4. 可以考虑,只唤醒besting的,因为bested的已经过去了;
+        //if (canset.cansetStatus != CS_Besting) continue;
+    
+        //4. 末帧超时未反馈负价值的,更新outSPDic (参考32012-TODO6);
+        //[canset checkAndUpdateOutSPStrong_Percept:1 type:ATPlus debugMode:true caller:@"末帧未发生负mv"];//有效:P+1;
+    
+        //5. 传染的唤醒下;
+        if (canset.isInfected) {
+            canset.isInfected = false;
+            rewakeNum++;
+        }
+    }
+    NSLog(@"frameActYes触发后,发现:%@ 自然未发生负价值,将已末帧传染的mv同区canset唤醒:%d",rewakeByRDemand.algsType,rewakeNum);
+    return rewakeNum;//将唤醒数返回;
 }
 
 /**
@@ -829,7 +834,8 @@
             initToInfectedNum++;
             
             //3. 初始即传染的中间帧也计SP- (参考32012-TODO4);
-            [canset checkAndUpdateOutSPStrong_Reason:1 type:ATSub debugMode:false caller:@"初始化canset中间帧传染"];
+            //2024.09.06: 初始化传染alg时,不计S+1 (参考33031-BUG5-协作);
+            //[canset checkAndUpdateOutSPStrong_Reason:1 type:ATSub debugMode:false caller:@"初始化canset中间帧传染"];
         }
     }
     return initToInfectedNum;
