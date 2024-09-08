@@ -35,7 +35,7 @@
  *      2. 更新需求池
  *      3. 进行dataOut决策行为化;
  */
-+(void) pDemand:(AICMVNode*)cmvNode{
++(void) pDemand:(AICMVNodeBase*)cmvNode{
     //1. 将联想到的cmv更新energy & 更新demandManager & decisionLoop
     [theTC updateOperCount:kFILENAME];
     Debug();

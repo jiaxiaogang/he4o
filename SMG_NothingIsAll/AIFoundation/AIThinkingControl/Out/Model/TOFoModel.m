@@ -601,6 +601,12 @@
     [self checkAndUpdateOutSPStrong:difStrong spIndex:cansetFrom.count type:type debugMode:debugMode caller:caller];
 }
 -(void) checkAndUpdateOutSPStrong:(NSInteger)difStrong spIndex:(NSInteger)spIndex type:(AnalogyType)type debugMode:(BOOL)debugMode caller:(NSString*)caller{
+    //0. log
+    //DemandModel *baseDemand = (DemandModel*)self.baseOrGroup;
+    ReasonDemandModel *root = (ReasonDemandModel*)[TOUtils getRootDemandModelWithSubOutModel:self];
+    NSInteger rootIndex = [theTC.outModelManager.getAllDemand indexOfObject:root];
+    caller = STRFORMAT(@"%@ by:ROOT%ld(F%ld)",caller,rootIndex,Demand2Pit(root).pointerId);
+    
     //1. 取得canstFrom的spStrong;
     AISPStrong *value = [self.outSPRecord getSPStrongIfNullNew:spIndex];
     

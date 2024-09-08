@@ -11,7 +11,7 @@
 @interface TCDemand : NSObject
 
 +(NSArray*) rDemand:(AIShortMatchModel*)model protoFo:(AIFoNodeBase*)protoFo;//R任务
-+(void) pDemand:(AICMVNode*)cmvNode;        //P任务
++(void) pDemand:(AICMVNodeBase*)cmvNode;        //P任务
 +(void) subDemand:(AIShortMatchModel*)model foModel:(TOFoModel*)foModel;   //反思识别形成子任务;
 +(void) hDemand:(TOAlgModel*)algModel;      //H任务 (用来转移某概念的H任务);
 

@@ -20,6 +20,6 @@
 +(void) feedbackTIR:(AIShortMatchModel*)model;
 +(void) feedbackTIP:(AIFoNodeBase*)protoFo cmvNode:(AICMVNode*)cmvNode;
 +(void) feedbackTOR:(AIShortMatchModel*)model;
-+(void) feedbackTOP:(AICMVNode*)cmvNode;
++(void) feedbackTOP:(AICMVNodeBase*)cmvNode;
 
 @end

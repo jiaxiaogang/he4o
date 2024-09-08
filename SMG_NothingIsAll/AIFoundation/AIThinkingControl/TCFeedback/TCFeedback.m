@@ -322,7 +322,7 @@
  *      2022.11.23: 记录feedbackMv (参考27204-2);
  *      2024.05.23: feedbackTOP: 末帧且反馈到负mv,则被传染 (参考31179-TODO1);
  */
-+(void) feedbackTOP:(AICMVNode*)cmvNode{
++(void) feedbackTOP:(AICMVNodeBase*)cmvNode{
     //1. 数据检查
     NSInteger delta = [NUMTOOK([AINetIndex getData:cmvNode.delta_p]) integerValue];
     if (delta == 0) return;
@@ -388,8 +388,13 @@
                 waitModel.feedbackMv = cmvNode.pointer;
                 
                 //23. SP计数之二B(P正):任意帧反馈正价值的,计SP+ (参考33031b-TODO5);
-                if (waitModel.cansetStatus == CS_Besting) {//不在推进中,不响应正mv反馈;
-                    [waitModel checkAndUpdateOutSPStrong_Percept:1 type:ATSub debugMode:true caller:@"besting中提前正mv反馈"];
+                //2024.09.08: 非bested/besting状态的,没在推进中,不接受反馈 (但besting状态随时可能被顶掉,所以bested也算吧,但导致许多actNo和outerBack状态也混进来了,此问题解决如下:);
+                //      方案1: 所以加上waitModel.status == TOModelStatus_Runing (这样的话,如果canset是actNo和outerBack都不会执行);
+                //      方案2: 所以加上cansetCutIndex == alreadyActionActIndex (这样的话,如果canset连中间帧都没处理好,即使提前反馈也不算);
+                //      结果: 目前选用方案2;
+                BOOL tiaoJian2 = waitModel.cansetCutIndex == waitModel.alreadyActionActIndex;
+                if (waitModel.cansetStatus != CS_None && tiaoJian2) {
+                    [waitModel checkAndUpdateOutSPStrong_Percept:1 type:ATPlus debugMode:true caller:@"提前正mv反馈"];
                 }
             }
             dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
