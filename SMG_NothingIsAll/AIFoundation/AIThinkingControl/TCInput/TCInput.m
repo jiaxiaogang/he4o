@@ -102,6 +102,7 @@
 +(void) pInput:(AICMVNodeBase*)mv{
     if ([ThinkingUtils isContinuousWithAT:mv.pointer.algsType] && [AIScore score4MV:mv.pointer ratio:1] > 0) {
         [theTC.outModelManager inputForContinueAndGoodMv:mv];
+        [TCFeedback feedbackTOP:mv];
         return;
     }
     

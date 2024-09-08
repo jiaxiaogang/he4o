@@ -346,48 +346,55 @@
             //5. 非actYes状态不处理 (canset池的none,best状态都可以传染和唤醒 参考31179-TODO1);
             //if (waitModel.status != TOModelStatus_ActYes) continue;
             
-            //6. 未到末尾,不处理;
-            if (waitModel.cansetActIndex < waitModel.transferXvModel.cansetToOrders.count) continue;
-            
             //7. waitFo是为了解决任务,所以要取出原任务的mv标识来比较;
             //7. 判断hope(wait)和real(new)之间是否相符 (当反馈了"同区反向"时,即表明任务失败,为S);
             DemandModel *demand = (DemandModel*)waitModel.baseOrGroup;
             BOOL sameIden = [cmvNode.pointer.algsType isEqualToString:demand.algsType];
-            if (sameIden) {
+            if (!sameIden) continue;
                 
-                //7. 记录feedbackMv (参考27204-2);
+            //8. 同向匹配 (比如撞疼,确定疼了);
+            CGFloat score = [AIScore score4MV:cmvNode.pointer ratio:1.0f];
+            if (score < 0) {
+                
+                //11. 未到末尾,不处理;
+                if (waitModel.cansetActIndex < waitModel.transferXvModel.cansetToOrders.count) continue;
+                
+                //12. 记录feedbackMv (参考27204-2);
                 waitModel.feedbackMv = cmvNode.pointer;
                 
-                //7. 同向匹配 (比如撞疼,确定疼了);
-                CGFloat score = [AIScore score4MV:cmvNode.pointer ratio:1.0f];
-                if (score < 0) {
-                    waitModel.status = TOModelStatus_OuterBack;
-                    
-                    //8. SP计数之二(P负):末帧反馈负价值的,计SP- (参考32012-TODO7);
+                waitModel.status = TOModelStatus_OuterBack;
+                
+                //13. SP计数之二A(P负):末帧反馈负价值的,计SP- (参考32012-TODO7);
+                if (waitModel.cansetStatus != CS_None) {//2024.09.08: 非bested/besting状态的,没在推进中,不接受反馈;
                     [waitModel checkAndUpdateOutSPStrong_Percept:1 type:ATSub debugMode:true caller:@"末帧负mv反馈"];
-                    
-                    //8. 末帧且反馈到负mv,则被传染 (参考31179-TODO1);
-                    waitModel.isInfected = true;
-                    newInfectedNum++;
-                    if (waitModel.cansetStatus == CS_Besting && !waitModel.isH) {
-                        NSLog(@"feedbackTOP 有负mv反馈");
-                    }
-                    
-                    //7. root设回runing;
-                    //demand.status = TOModelStatus_Runing;//后面又设为ActNo了,此处无意义
-                    root.status = TOModelStatus_Runing;
-                    
-                    //8. 明确无效
-                    demand.effectStatus = ES_NoEff;
-                    demand.status = TOModelStatus_ActNo;
-                }else{
-                    //8. solutionFo反馈好时,baseDemand为完成状态;
-                    waitModel.baseOrGroup.status = TOModelStatus_Finish;
                 }
-                dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
-                    [theTV updateFrame];
-                });
+                
+                //14. 末帧且反馈到负mv,则被传染 (参考31179-TODO1);
+                waitModel.isInfected = true;
+                newInfectedNum++;
+                
+                //15. root设回runing;
+                //demand.status = TOModelStatus_Runing;//后面又设为ActNo了,此处无意义
+                root.status = TOModelStatus_Runing;
+                
+                //16. 明确无效
+                demand.effectStatus = ES_NoEff;
+                demand.status = TOModelStatus_ActNo;
+            }else{
+                //21. solutionFo反馈好时,baseDemand为完成状态;
+                waitModel.baseOrGroup.status = TOModelStatus_Finish;
+                
+                //22. 记录feedbackMv (参考27204-2);
+                waitModel.feedbackMv = cmvNode.pointer;
+                
+                //23. SP计数之二B(P正):任意帧反馈正价值的,计SP+ (参考33031b-TODO5);
+                if (waitModel.cansetStatus == CS_Besting) {//不在推进中,不响应正mv反馈;
+                    [waitModel checkAndUpdateOutSPStrong_Percept:1 type:ATSub debugMode:true caller:@"besting中提前正mv反馈"];
+                }
             }
+            dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
+                [theTV updateFrame];
+            });
         }
     }
     NSLog(@"feedbackTOP: 有负mv反馈导致canset末帧无效 传染数:%d",newInfectedNum);
