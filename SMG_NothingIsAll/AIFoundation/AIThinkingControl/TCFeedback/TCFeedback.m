@@ -387,14 +387,7 @@
                 //22. 记录feedbackMv (参考27204-2);
                 waitModel.feedbackMv = cmvNode.pointer;
                 
-                //23. expired4PInput: 把at标识的root全移除掉;
-                //> 2024.07.22: 如果输入为正价值,目前不做太深入操作,直接简单的将DemandManager中一样标识的任务对冲移除掉即可;
-                //> 起因: 因为饥饿最近改成了连续任务,更饿也要继续求解,直至好久后解决后,得有个触发,使之停下吃 (不然它完成后,还一直在尝试求解);
-                //用expired4PInput的原因: 如果直接remove,好像工作记忆停的太快,导致会有一些执行不到? (比如吃的识别是否还没完成,如果识别完成,发现feedback时root已经没了,那就反馈不到了);
-                root.expired4PInput = true;
-                NSLog(@"因持续任务反馈了正mv设expired4PInput=true (F%ld)",Demand2Pit(root).pointerId);
-                
-                //24. SP计数之二B(P正):任意帧反馈正价值的,计SP+ (参考33031b-TODO5);
+                //23. SP计数之二B(P正):任意帧反馈正价值的,计SP+ (参考33031b-TODO5);
                 //2024.09.08: 非bested/besting状态的,没在推进中,不接受反馈 (但besting状态随时可能被顶掉,所以bested也算吧,但导致许多actNo和outerBack状态也混进来了,此问题解决如下:);
                 //      方案1: 所以加上waitModel.status == TOModelStatus_Runing (这样的话,如果canset是actNo和outerBack都不会执行);
                 //      方案2: 所以加上cansetCutIndex == alreadyActionActIndex (这样的话,如果canset连中间帧都没处理好,即使提前反馈也不算);
@@ -410,6 +403,19 @@
         }
     }
     NSLog(@"feedbackTOP: 有负mv反馈导致canset末帧无效 传染数:%d",newInfectedNum);
+    
+    //31. ============== expired4PInput: 把at标识的root全移除掉 ==============
+    //> 2024.07.22: 如果输入为正价值,目前不做太深入操作,直接简单的将DemandManager中一样标识的任务对冲移除掉即可;
+    //> 起因: 因为饥饿最近改成了连续任务,更饿也要继续求解,直至好久后解决后,得有个触发,使之停下吃 (不然它完成后,还一直在尝试求解);
+    //用expired4PInput的原因: 如果直接remove,好像工作记忆停的太快,导致会有一些执行不到? (比如吃的识别是否还没完成,如果识别完成,发现feedback时root已经没了,那就反馈不到了);
+    for (ReasonDemandModel *root in roots) {
+        BOOL sameIden = [cmvNode.pointer.algsType isEqualToString:root.algsType];
+        CGFloat score = [AIScore score4MV:cmvNode.pointer ratio:1.0f];
+        if (sameIden && score > 0) {
+            root.expired4PInput = true;
+            NSLog(@"因持续任务反馈了正mv设expired4PInput=true (F%ld)",Demand2Pit(root).pointerId);
+        }
+    }
     
     //3. p任务;
     DebugE();
