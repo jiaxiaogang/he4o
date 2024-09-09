@@ -37,9 +37,6 @@
     //1. 数据准备
     AIFoNodeBase *curFo = [SMGUtils searchNode:foModel.transferSiModel.canset];
     
-    
-    //TODOTOMORROW20240909: 查下,给feedbackTOP加上expired4PInput后,是不是就能中断: 在提前正mv反馈后,还在跑F10119的下一帧第6帧行为化的问题;
-    
     //2. 因root状态中断检查;
     ReasonDemandModel *root = (ReasonDemandModel*)[TOUtils getRootDemandModelWithSubOutModel:foModel];
     NSLog(@"action执行中断原因: %@ %d",TOStatus2Str(root.status),root.expired4PInput);
