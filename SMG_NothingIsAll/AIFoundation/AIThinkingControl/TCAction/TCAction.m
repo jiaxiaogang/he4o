@@ -37,6 +37,16 @@
     //1. 数据准备
     AIFoNodeBase *curFo = [SMGUtils searchNode:foModel.transferSiModel.canset];
     
+    
+    //TODOTOMORROW20240909: 查下,给feedbackTOP加上expired4PInput后,是不是就能中断: 在提前正mv反馈后,还在跑F10119的下一帧第6帧行为化的问题;
+    
+    //2. 因root状态中断检查;
+    ReasonDemandModel *root = (ReasonDemandModel*)[TOUtils getRootDemandModelWithSubOutModel:foModel];
+    NSLog(@"action执行中断原因: %@ %d",TOStatus2Str(root.status),root.expired4PInput);
+    if (root.status == TOModelStatus_Finish || root.status == TOModelStatus_WithOut || root.expired4PInput) {
+        return [[[TCResult new:false] mkMsg:@"action所在的root已经无效,无需执行"] mkStep:30];
+    }
+    
     //2. 标记cansetActIndex帧已经执行过action();
     foModel.alreadyActionActIndex = foModel.cansetActIndex;
     NSLog(@"set alreadyActionActIndex:%ld from:F%ld.A%ld",foModel.cansetActIndex,foModel.cansetFrom.pointerId,foModel.getCurFrame.content_p.pointerId);

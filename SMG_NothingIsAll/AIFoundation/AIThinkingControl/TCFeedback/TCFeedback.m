@@ -394,6 +394,17 @@
                 //      结果: 目前选用方案2;
                 BOOL tiaoJian2 = waitModel.cansetCutIndex == waitModel.alreadyActionActIndex;
                 if (waitModel.cansetStatus != CS_None && tiaoJian2) {
+                    
+                    
+                    //TODOTOMORROW20240909: 查下,这样加上expired4PInput后,是不是就能中断: 在提前正mv反馈后,还在跑F10119的下一帧第6帧行为化的问题;
+                    //2. expired4PInput: 把at标识的root全移除掉;
+                    //> 2024.07.22: 如果输入为正价值,目前不做太深入操作,直接简单的将DemandManager中一样标识的任务对冲移除掉即可;
+                    //> 起因: 因为饥饿最近改成了连续任务,更饿也要继续求解,直至好久后解决后,得有个触发,使之停下吃 (不然它完成后,还一直在尝试求解);
+                    //用expired4PInput的原因: 如果直接remove,好像工作记忆停的太快,导致会有一些执行不到? (比如吃的识别是否还没完成,如果识别完成,发现feedback时root已经没了,那就反馈不到了);
+                    root.expired4PInput = true;
+                        
+                    
+                    
                     [waitModel checkAndUpdateOutSPStrong_Percept:1 type:ATPlus debugMode:true caller:@"提前正mv反馈"];
                 }
             }
