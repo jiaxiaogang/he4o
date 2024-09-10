@@ -388,12 +388,7 @@
                 waitModel.feedbackMv = cmvNode.pointer;
                 
                 //23. SP计数之二B(P正):任意帧反馈正价值的,计SP+ (参考33031b-TODO5);
-                //2024.09.08: 非bested/besting状态的,没在推进中,不接受反馈 (但besting状态随时可能被顶掉,所以bested也算吧,但导致许多actNo和outerBack状态也混进来了,此问题解决如下:);
-                //      方案1: 所以加上waitModel.status == TOModelStatus_Runing (这样的话,如果canset是actNo和outerBack都不会执行);
-                //      方案2: 所以加上cansetCutIndex == alreadyActionActIndex (这样的话,如果canset连中间帧都没处理好,即使提前反馈也不算);
-                //      结果: 目前选用方案2;
-                BOOL tiaoJian2 = waitModel.cansetCutIndex == waitModel.alreadyActionActIndex;
-                if (waitModel.cansetStatus != CS_None && tiaoJian2) {
+                if (waitModel.cansetStatus != CS_None) {
                     [waitModel checkAndUpdateOutSPStrong_Percept:1 type:ATPlus debugMode:true caller:@"提前正mv反馈"];
                 }
             }
