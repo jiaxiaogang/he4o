@@ -748,7 +748,7 @@
  *  @desc frameActYes反馈失败时: 传染到整个工作记忆树 (所有此处新传染的,都尝试向整树传播) (参考31178-TODO1);
  */
 +(int) infectToAllRootsTree_Alg:(TOFoModel*)infectedCanset infectedAlg:(AIKVPointer*)infectedAlg {
-    //1. SP计数之四(R负): 当前传染的canset计S+1 (参考33031-BUG5-协作);
+    //1. SP计数之四(R负): 当前传染的canset计S+1 (参考33031b-BUG5-协作);
     [infectedCanset checkAndUpdateOutSPStrong_Reason:1 type:ATSub debugMode:true caller:@""];
     
     //2. 当前传染的alg,传到整个roots;
@@ -773,10 +773,10 @@
  *  @desc 白话: 当frameActYes因canset有效而解决了rDemand时,调用此方法 => 将工作记忆中所有同质末帧canset都rewake下,使之可再次尝试它有效;
  *  @rDemand 将frameActYes中被解决的rDemand传进来 (用于到工作记忆中判断同质r任务);
  *  @version
- *      2024.09.06: 全唤醒,但只有当前计P+1 (参考33031-BUG5-协作);
+ *      2024.09.06: 全唤醒,但只有当前计P+1 (参考33031b-BUG5-协作);
  */
 +(int) rewakeToAllRootsTree_Mv:(TOFoModel*)rewakeFromRCanset {
-    //1. SP计数之一(P正): 只自己,不唤醒 => 把成功rCanset时,不再唤醒别的rCanset (参考33031-BUG5-TODO2);
+    //1. SP计数之一(P正): 只自己,不唤醒 => 把成功rCanset时,不再唤醒别的rCanset (参考33031b-BUG5-TODO2);
     [rewakeFromRCanset checkAndUpdateOutSPStrong_Percept:1 type:ATPlus debugMode:true caller:@"末帧未发生负mv"];//有效:P+1;
     
     //2. 把所有工作记忆树等mv反馈的全唤醒;
@@ -834,7 +834,7 @@
             initToInfectedNum++;
             
             //3. 初始即传染的中间帧也计SP- (参考32012-TODO4);
-            //2024.09.06: 初始化传染alg时,不计S+1 (参考33031-BUG5-协作);
+            //2024.09.06: 初始化传染alg时,不计S+1 (参考33031b-BUG5-协作);
             //[canset checkAndUpdateOutSPStrong_Reason:1 type:ATSub debugMode:false caller:@"初始化canset中间帧传染"];
         }
     }
@@ -871,7 +871,7 @@
                 initToInfectedNum++;
                 
                 //2. 初始即传染的末帧也计SP- (参考32012-TODO4);
-                //2024.09.05: 传染就行了,但不应该计S+1 (因为思维要快速响应,但SP不应该一杆子打死) (参考33031-BUG5-TODO3);
+                //2024.09.05: 传染就行了,但不应该计S+1 (因为思维要快速响应,但SP不应该一杆子打死) (参考33031b-BUG5-TODO3);
                 //[newCanset checkAndUpdateOutSPStrong_Percept:1 type:ATSub debugMode:false caller:@"初始化canset末帧传染"];
             }
         }
