@@ -109,6 +109,7 @@
  */
 @property (assign, nonatomic) NSInteger cansetCutIndex;
 - (NSInteger)cansetActIndex;//行为化中截点 = cansetCutIndex+1
+@property (assign, nonatomic) NSInteger initCansetCutIndex;//初始化时的截点
 
 /**
  *  MARK:--------------------执行目标index--------------------

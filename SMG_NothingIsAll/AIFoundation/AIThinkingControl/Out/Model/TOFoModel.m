@@ -35,6 +35,7 @@
     model.basePFoOrTargetFoModel = basePFoOrTargetFoModel;
     model.baseSceneModel = baseSceneModel;//R任务时,即R任务的RSceneModel;
     model.sceneCutIndex = sceneCutIndex;
+    model.initCansetCutIndex = cansetCutIndex;
     model.cansetCutIndex = cansetCutIndex;//R任务时,cansetCutIndex其实是顺着scene找上一帧有映射的 (参考TOUtils.goBackToFindConIndexByAbsIndex());
     model.cansetTargetIndex = cansetTargetIndex;
     model.sceneTargetIndex = sceneFromTargetIndex;//R任务时,其实rScene的目标就是最后一帧 (即目标 = rScene.count);
@@ -59,6 +60,7 @@
     model.sceneFo = scene;
     model.basePFoOrTargetFoModel = basePFoOrTargetFoModel;
     model.baseSceneModel = baseSceneModel;//H任务时,其实是复用了R任务的RSceneModel;
+    model.initCansetCutIndex = cansetCutIndex;
     model.cansetCutIndex = cansetCutIndex;//H任务时,cansetCutIndex其实是顺着scene找上一帧有映射的 (参考TOUtils.goBackToFindConIndexByAbsIndex());
     model.cansetTargetIndex = cansetTargetIndex;
     model.sceneTargetIndex = sceneTargetIndex;//H任务时,其实hScene的目标就是hScene的下一帧 (即目标 = hScene.cutIndex + 1);
@@ -645,6 +647,7 @@
     self = [super initWithCoder:aDecoder];
     if (self) {
         self.subModels = [aDecoder decodeObjectForKey:@"subModels"];
+        self.initCansetCutIndex = [aDecoder decodeIntegerForKey:@"initCansetCutIndex"];
         self.cansetCutIndex = [aDecoder decodeIntegerForKey:@"cansetCutIndex"];
         self.cansetTargetIndex = [aDecoder decodeIntegerForKey:@"cansetTargetIndex"];
         self.subDemands = [aDecoder decodeObjectForKey:@"subDemands"];
@@ -659,6 +662,7 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [super encodeWithCoder:aCoder];
     [aCoder encodeObject:self.subModels forKey:@"subModels"];
+    [aCoder encodeInteger:self.initCansetCutIndex forKey:@"initCansetCutIndex"];
     [aCoder encodeInteger:self.cansetCutIndex forKey:@"cansetCutIndex"];
     [aCoder encodeInteger:self.cansetTargetIndex forKey:@"cansetTargetIndex"];
     [aCoder encodeObject:self.subDemands forKey:@"subDemands"];

@@ -388,7 +388,9 @@
                 waitModel.feedbackMv = cmvNode.pointer;
                 
                 //23. SP计数之二B(P正):任意帧反馈正价值的,计SP+ (参考33031b-TODO5);
-                if (waitModel.cansetStatus != CS_None) {
+                //2024.09.10: 必须有贡献,才计提前mv反馈 (参考33031c-方案3B);
+                BOOL tiaoJian2 = waitModel.cansetCutIndex > waitModel.initCansetCutIndex;
+                if (waitModel.cansetStatus != CS_None && tiaoJian2) {
                     [waitModel checkAndUpdateOutSPStrong_Percept:1 type:ATPlus debugMode:true caller:@"提前正mv反馈"];
                 }
             }
