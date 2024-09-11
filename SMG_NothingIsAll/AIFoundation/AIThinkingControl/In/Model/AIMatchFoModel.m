@@ -216,7 +216,7 @@
 -(void) pushFrameFinish:(NSString*)log {
     //1. =================自然未发生(新方案): 无actYes的S时,归功于自然未发生,则新增protoCanset (参考27206c-R任务)=================
     //a. 数据准备;
-    AIFoNodeBase *matchFo = [SMGUtils searchNode:self.matchFo];
+    AIFoNodeBase *matchFo = [SMGUtils searchNode:self.matchFo];//此处matchFo和pFo都是sceneTo
     NSArray *orders = [self convertOrders4NewCansetV2];
     
     //b. 用realMaskFo & realDeltaTimes生成protoFo (参考27201-1 & 5);
@@ -271,7 +271,7 @@
         //c. 数据准备;
         AIKVPointer *basePFoOrTargetFo_p = [TOUtils convertBaseFoFromBasePFoOrTargetFoModel:solutionModel.basePFoOrTargetFoModel];
         AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.content_p];
-        AIFoNodeBase *pFo = [SMGUtils searchNode:basePFoOrTargetFo_p];
+        AIFoNodeBase *pFo = [SMGUtils searchNode:basePFoOrTargetFo_p];//此处pFo和matchFo都是sceneTo
         
         //2024.07.30: 去掉不必要的过滤器 (参考3211a-AbsR);
         //d. 收集真实发生feedbackAlg (order为0条时,跳过);
@@ -280,9 +280,25 @@
         //f. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
         NSArray *noRepeatArea_ps = [pFo getConCansets:pFo.count];
         AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:newRCanset assFo:solutionFo type:ATDefault noRepeatArea_ps:noRepeatArea_ps];
-        BOOL updateCansetSuccess = [pFo updateConCanset:absCansetFo.pointer targetIndex:pFo.count];
+        BOOL updateCansetSuccess = [pFo updateConCanset:absCansetFo.pointer targetIndex:pFo.count];//此处pFo和matchFo都是sceneTo
         [AITest test101:absCansetFo proto:newRCanset conCanset:solutionFo];
         NSLog(@"%@%@Canset演化> AbsRCanset:%@ from(F%ld:F%ld) toScene:%@",FltLog4CreateRCanset(4),FltLog4YonBanYun(4),Fo2FStr(absCansetFo),newRCanset.pId,solutionFo.pId,ShortDesc4Node(pFo));
+        
+        //TODOTOMORROW20240911:
+        //1. 随后可以看下把solutionFo改成cansetTo;
+        //2. 根据cansetTo与sceneTo的映射 + newRCanset和sceneTo的映射 = 求出综合映射关系;
+        
+        DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:solutionModel.transferXvModel.sceneToCansetToIndexDic];
+        DirectIndexDic *dic2 = [DirectIndexDic newNoToAbs:[self.indexDic2 copy]];
+        NSDictionary *cansetToNewRCansetIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2]];
+        
+        
+        NSLog(@"pFo: %@",Fo2FStr(pFo));
+        NSLog(@"pFo.matchFo: %@",Fo2FStr(matchFo));
+        NSLog(@"sceneTo: %@",Pit2FStr(solutionModel.sceneTo));
+        
+        
+        NSLog(@"cansetTo到newRCanset的indexDic映射: %@",CLEANSTR(cansetToNewRCansetIndexDic));
         
         if (updateCansetSuccess) {
             //2024.04.17: 此处简化了下,把用convertOldIndexDic2NewIndexDic()取映射,改成用zonHeDic来计算;
