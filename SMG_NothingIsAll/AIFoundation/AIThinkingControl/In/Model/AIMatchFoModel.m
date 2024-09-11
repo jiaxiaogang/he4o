@@ -259,6 +259,9 @@
         //2024.04.21: 改成没激活过(没转实)的,不进行类比 (为了触发更多的类比);
         if (solutionModel.cansetStatus == CS_None) continue;
         
+        //2024.09.11: 一帧都未推进的,没资格参与再类比 (它都没推进,即使正mv反馈了,与它也没关系 `现在外类比也不是很泛滥,这个需求不明确,先不做,等后续真需要了,再来做`);
+        //if (solutionModel.initCansetCutIndex == solutionModel.cansetCutIndex) continue;
+        
         //2024.07.30: 去掉不必要的过滤器 (参考3211a-AbsR);
         //if (solutionModel.status != TOModelStatus_ActYes && solutionModel.status != TOModelStatus_Runing && solutionModel.status != TOModelStatus_ActNo) {
         //    NSLog(@"RCanset预想与实际类比未执行,F%ld 状态:%ld",solutionModel.content_p.pointerId,solutionModel.status);
