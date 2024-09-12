@@ -285,20 +285,9 @@
         NSLog(@"%@%@Canset演化> AbsRCanset:%@ from(F%ld:F%ld) toScene:%@",FltLog4CreateRCanset(4),FltLog4YonBanYun(4),Fo2FStr(absCansetFo),newRCanset.pId,solutionFo.pId,ShortDesc4Node(pFo));
         
         //TODOTOMORROW20240911:
-        //1. 随后可以看下把solutionFo改成cansetTo;
-        //2. 根据cansetTo与sceneTo的映射 + newRCanset和sceneTo的映射 = 求出综合映射关系;
+        //不需要求综合映射了,在solutionModel.realCansetToIndexDic存的有;
+        NSLog(@"cansetTo到newRCanset的全段映射: %@",CLEANSTR(solutionModel.realCansetToIndexDic));
         
-        DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:solutionModel.transferXvModel.sceneToCansetToIndexDic];
-        DirectIndexDic *dic2 = [DirectIndexDic newNoToAbs:[self.indexDic2 copy]];
-        NSDictionary *cansetToNewRCansetIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2]];
-        
-        
-        NSLog(@"pFo: %@",Fo2FStr(pFo));
-        NSLog(@"pFo.matchFo: %@",Fo2FStr(matchFo));
-        NSLog(@"sceneTo: %@",Pit2FStr(solutionModel.sceneTo));
-        
-        
-        NSLog(@"cansetTo到newRCanset的indexDic映射: %@",CLEANSTR(cansetToNewRCansetIndexDic));
         
         if (updateCansetSuccess) {
             //2024.04.17: 此处简化了下,把用convertOldIndexDic2NewIndexDic()取映射,改成用zonHeDic来计算;
