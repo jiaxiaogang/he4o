@@ -105,7 +105,7 @@
  *  @status
  *      2021.04.25: 打开后,gl经验全为0条,所以先关掉,后续测试打开后为什么为0条;
  */
--(AINetAbsFoNode*) create_NoRepeat:(NSArray*)content_ps protoFo:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo difStrong:(NSInteger)difStrong type:(AnalogyType)type protoIndexDic:(NSDictionary*)protoIndexDic assIndexDic:(NSDictionary*)assIndexDic outConAbsIsRelate:(BOOL*)outConAbsIsRelate noRepeatArea_ps:(NSArray*)noRepeatArea_ps{
+-(HEResult*) create_NoRepeat:(NSArray*)content_ps protoFo:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo difStrong:(NSInteger)difStrong type:(AnalogyType)type protoIndexDic:(NSDictionary*)protoIndexDic assIndexDic:(NSDictionary*)assIndexDic outConAbsIsRelate:(BOOL*)outConAbsIsRelate noRepeatArea_ps:(NSArray*)noRepeatArea_ps{
     //1. 数据准备
     NSArray *conFos = @[protoFo,assFo];
     NSString *at = DefaultAlgsType; //[AINetUtils getDSFromConNodes:conFos type:type];
@@ -132,12 +132,14 @@
     BOOL conAbsIsRelate = false;
     
     //5. 有则加强关联;
+    BOOL isNew = false;
     if (ISOK(result, AINetAbsFoNode.class)) {
         conAbsIsRelate = [Ports2Pits(assFo.absPorts) containsObject:result.pointer];
         [AINetUtils relateFoAbs:result conNodes:conFos isNew:false];
         [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
     }else{
         //6. 无则新构建;
+        isNew = true;
         result = [self create:content_ps protoFo:protoFo assFo:assFo difStrong:difStrong at:at ds:ds type:type conAbsIsRelate:&conAbsIsRelate];
     }
     
@@ -155,7 +157,7 @@
     
     //10. 将结果outConAbsIsRelate和absFo返回;
     if (outConAbsIsRelate) *outConAbsIsRelate = conAbsIsRelate;
-    return result;
+    return [[[HEResult newSuccess] mk:@"data" v:result] mk:@"isNew" v:@(isNew)];;
 }
 
 @end

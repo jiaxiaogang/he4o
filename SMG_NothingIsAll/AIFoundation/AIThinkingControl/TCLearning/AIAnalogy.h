@@ -33,8 +33,8 @@
 +(AINetAbsFoNode*) analogyOutside:(AIFoNodeBase*)protoFo assFo:(AIFoNodeBase*)assFo type:(AnalogyType)type noRepeatArea_ps:(NSArray*)noRepeatArea_ps;
 
 /**
- *  MARK:--------------------Canset类比 (参考29025-24)--------------------
+ *  MARK:--------------------Canset类比 --------------------
  */
-//+(AINetAbsFoNode*) analogyCansetFo:(NSDictionary*)indexDic newCanset:(AIFoNodeBase*)newCanset oldCanset:(AIFoNodeBase*)oldCanset sceneFo:(AIFoNodeBase*)sceneFo es:(EffectStatus)es;
++(HEResult*) analogyCansetFo:(NSDictionary*)realCansetToIndexDic newCanset:(AIFoNodeBase*)newCanset oldCanset:(AIFoNodeBase*)oldCanset noRepeatArea_ps:(NSArray*)noRepeatArea_ps;
 
 @end

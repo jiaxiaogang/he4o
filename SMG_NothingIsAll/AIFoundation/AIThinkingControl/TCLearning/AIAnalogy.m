@@ -129,7 +129,8 @@
             }
             
             //5. 构建absFoNode (当GL时,传入at&ds);
-            result = [theNet createAbsFo_NoRepeat:orderSames protoFo:protoFo assFo:assFo difStrong:foDifStrong type:type protoIndexDic:protoIndexDic assIndexDic:assIndexDic outConAbsIsRelate:nil noRepeatArea_ps:noRepeatArea_ps];
+            HEResult *heResult = [theNet createAbsFo_NoRepeat:orderSames protoFo:protoFo assFo:assFo difStrong:foDifStrong type:type protoIndexDic:protoIndexDic assIndexDic:assIndexDic outConAbsIsRelate:nil noRepeatArea_ps:noRepeatArea_ps];
+            result = [heResult get:@"data"];
             
             //6. 算出具象总强度,其和已经是累计了此次类比的新关联强度 (参考30087-todo6);
             NSArray *conPorts = [AINetUtils conPorts_All:result];
@@ -223,8 +224,10 @@
 }
 
 /**
- *  MARK:--------------------Canset类比 (参考29025-24 & 29027-方案3)--------------------
+ *  MARK:--------------------Canset类比 --------------------
+ *  @noRepeatArea_ps 防重(一般取sceneTo以前的cansets);
  *  @version
+ *      xxxx.xx.xx: 初版 (参考29025-24 & 29027-方案3);
  *      2023.03.27: 支持得出newCansetFo/oldCansetFo 与 absCansetFo的indexDic映射 (参考29032-todo1.1);
  *      2023.04.07: 关闭Canset类比 (参考29059-改动);
  *      2023.04.10: 场景包含帧的类比用mIsC判断成立后,直接采用absAlg (参考29067-todo1.1);
@@ -233,84 +236,30 @@
  *      2023.09.01: 迁移完成时EFF不变(参数传ES_Default),但newCanset有用时+1,无用时-1 (参考30124-todo2 & todo3);
  *      2023.09.03: 修复dic.keys无序会导致此处生成的absFo序列也错乱的问题;
  *      2023.10.26: 废弃canset类比 (参考3014c-todo2);
+ *      2024.09.13: 启用canset类比: 直接用反馈映射indexDic,来生成Canset类比结果 (参考33052-思路);
  */
-//+(AINetAbsFoNode*) analogyCansetFo:(NSDictionary*)indexDic newCanset:(AIFoNodeBase*)newCanset oldCanset:(AIFoNodeBase*)oldCanset sceneFo:(AIFoNodeBase*)sceneFo es:(EffectStatus)es {
-//    //1. 类比orders的规律
-//    if (!Switch4AnalogyCansetFo) return nil;
-//    AIEffectStrong *newEffStrong = [sceneFo getEffectStrong:sceneFo.count solutionFo:newCanset.pointer];
-//    AIEffectStrong *oldEffStrong = [sceneFo getEffectStrong:sceneFo.count solutionFo:oldCanset.pointer];
-//    if (Log4OutCansetAna) NSLog(@"\n----------- Canset类比 -----------\nnew:%@ SP:%@ EFF:%@ \nold:%@ SP:%@ EFF:%@",
-//                                Fo2FStr(newCanset),CLEANSTR(newCanset.spDic),CLEANSTR(newEffStrong),
-//                                Fo2FStr(oldCanset),CLEANSTR(oldCanset.spDic),CLEANSTR(oldEffStrong));
-//    NSMutableArray *orderSames = [[NSMutableArray alloc] init];
-//
-//    //2. 根据新旧的映射indexDic分别进行概念类比 (参考29025-24a);
-//    NSArray *allKeys = [SMGUtils sortSmall2Big:indexDic.allKeys compareBlock:^double(NSNumber *obj) {
-//        return obj.doubleValue;
-//    }];
-//    for (NSNumber *key in allKeys) {
-//        NSInteger oldIndex = key.integerValue;
-//        NSInteger newIndex = NUMTOOK([indexDic objectForKey:key]).integerValue;
-//        AIKVPointer *oldAlg_p = ARR_INDEX(oldCanset.content_ps, oldIndex);
-//        AIKVPointer *newAlg_p = ARR_INDEX(newCanset.content_ps, newIndex);
-//
-//        //3. mIsC成立时,直接收集oldA (即absAlg) (参考29067-todo1.1);
-//        //AIAlgNodeBase *oldAlg = [SMGUtils searchNode:oldAlg_p];
-//        //AIAlgNodeBase *newAlg = [SMGUtils searchNode:newAlg_p];
-//        //if ([TOUtils mIsC_1:newAlg_p c:oldAlg_p]) {
-//        //    [orderSames addObject:oldAlg_p];
-//        //} else {
-//        //    //4. 直接构建空概念 (参考29027-方案3);
-//        //    //4. 2023.04.11: 后废弃,后又启用 (参考29068-todo1);
-//        //    AIAlgNodeBase *absA = [theNet createEmptyAlg_NoRepeat:@[oldAlg,newAlg]];
-//        //
-//        //    //5. 收集;
-//        //    [orderSames addObject:absA.pointer];
-//        //}
-//        //2023.10.17: 改为只要indexDic的都类比下 (现在的indexDic中必然都是mIsC关系) (参考30148-todo1.2);
-//        AIAlgNodeBase *absA = [AIAnalogy analogyAlg:newAlg_p assA:oldAlg_p];
-//        [orderSames addObject:absA.pointer];
-//    }
-//
-//    //6. 取得newIndexDic和oldIndexDic (参考29032-todo1.1);
-//    NSDictionary *newIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:indexDic.allValues];
-//    NSDictionary *oldIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:indexDic.allKeys];
-//
-//    //7. 外类比构建
-//    BOOL outConAbsIsRelate = true;
-//    AINetAbsFoNode *absFo = [theNet createAbsFo_NoRepeat:orderSames protoFo:newCanset assFo:oldCanset difStrong:1 type:ATDefault protoIndexDic:newIndexDic assIndexDic:oldIndexDic outConAbsIsRelate:&outConAbsIsRelate];
-//
-//    //8. 将抽象Canset挂到sceneFo下;
-//    BOOL updateCansetSuccess = [sceneFo updateConCanset:absFo.pointer targetIndex:sceneFo.count];
-//    if (updateCansetSuccess) {
-//        //9. 根据scene与oldCanset的映射 与 oldCanset与absCanset的映射 得出 absCanset与scene的映射 (参考29076-todo2);
-//        NSDictionary *sceneNewCansetIndexDic = [sceneFo getConIndexDic:newCanset.p];
-//        NSMutableDictionary *sceneAbsCansetIndexDic = [[NSMutableDictionary alloc] init];
-//        for (id sceneIndex in sceneNewCansetIndexDic.allKeys) {
-//            id newCansetIndex = [sceneNewCansetIndexDic objectForKey:sceneIndex];
-//            id absCansetIndex = ARR_INDEX([newIndexDic allKeysForObject:newCansetIndex], 0);
-//            if (absCansetIndex) {
-//                [sceneAbsCansetIndexDic setObject:absCansetIndex forKey:sceneIndex];
-//            }
-//        }
-//        [absFo updateIndexDic:sceneFo indexDic:sceneAbsCansetIndexDic];
-//        [AITest test27:sceneFo oldCanset:oldCanset.p oldIndexDic:oldIndexDic compareIndexDicFromNewCanset:sceneAbsCansetIndexDic];
-//
-//        //10. oldCanset与absCanset新关联时: 取出ass中旧有的effStrong模型继承给absFo (参考29032-todo2.2);
-//        if (!outConAbsIsRelate) {
-//            AIEffectStrong *effStrong = [sceneFo getEffectStrong:sceneFo.count solutionFo:oldCanset.pointer];
-//            [sceneFo updateEffectStrong:effStrong.hStrong solutionFo:absFo.pointer status:ES_HavEff];
-//            [sceneFo updateEffectStrong:effStrong.nStrong solutionFo:absFo.pointer status:ES_NoEff];
-//        }
-//
-//        //11. 抽象fo时: 根据protoCansetFo增强absFo的Eff值+-1 (参考29032-todo2.3);
-//        //2023.09.01: 打开eff+-1 (参考30124-todo2);
-//        AIEffectStrong *endEffStrong = [sceneFo updateEffectStrong:sceneFo.count solutionFo:absFo.pointer status:es];
-//        NSInteger newFoStrong = [AINetUtils getStrong:absFo atConNode:newCanset type:ATDefault];
-//        NSInteger oldFoStrong = [AINetUtils getStrong:absFo atConNode:oldCanset type:ATDefault];
-//        NSLog(@"sceneFo:F%ld 构建absCanset:%@ SP:%@ EFF:%@ 强度:new=%ld old=%ld",sceneFo.pointer.pointerId,Fo2FStr(absFo),CLEANSTR(absFo.spDic),CLEANSTR(endEffStrong),newFoStrong,oldFoStrong);
-//    }
-//    return absFo;
-//}
++(HEResult*) analogyCansetFo:(NSDictionary*)realCansetToIndexDic newCanset:(AIFoNodeBase*)newCanset oldCanset:(AIFoNodeBase*)oldCanset noRepeatArea_ps:(NSArray*)noRepeatArea_ps {
+    //1. 类比orders的规律
+    if (Log4OutCansetAna) NSLog(@"\n----------- Canset类比 -----------\nnew:%@\nold:%@",Fo2FStr(newCanset),Fo2FStr(oldCanset));
+    NSMutableArray *orderSames = [[NSMutableArray alloc] init];
+
+    //2. 根据新旧的映射indexDic分别进行概念类比 (参考29025-24a);
+    for (NSNumber *key in realCansetToIndexDic.allKeys) {
+        NSInteger oldIndex = key.integerValue;
+        AIKVPointer *oldAlg_p = ARR_INDEX(oldCanset.content_ps, oldIndex);
+        [orderSames addObject:oldAlg_p];
+    }
+
+    //6. 取得newIndexDic和oldIndexDic (参考29032-todo1.1);
+    NSDictionary *newIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:realCansetToIndexDic.allValues];
+    NSDictionary *oldIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:realCansetToIndexDic.allKeys];
+
+    //7. 外类比构建
+    BOOL outConAbsIsRelate = true;
+    HEResult *heResult = [theNet createAbsFo_NoRepeat:orderSames protoFo:newCanset assFo:oldCanset difStrong:1 type:ATDefault protoIndexDic:newIndexDic assIndexDic:oldIndexDic outConAbsIsRelate:&outConAbsIsRelate noRepeatArea_ps:noRepeatArea_ps];
+    AIFoNodeBase *absFo = [heResult get:@"data"];
+    NSLog(@"createAbsCanset:%@",Fo2FStr(absFo));
+    return heResult;
+}
 
 @end

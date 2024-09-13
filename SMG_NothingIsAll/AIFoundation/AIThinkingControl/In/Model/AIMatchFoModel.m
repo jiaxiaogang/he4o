@@ -270,7 +270,7 @@
         
         //c. 数据准备;
         AIKVPointer *basePFoOrTargetFo_p = [TOUtils convertBaseFoFromBasePFoOrTargetFoModel:solutionModel.basePFoOrTargetFoModel];
-        AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.content_p];
+        AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.cansetTo];
         AIFoNodeBase *pFo = [SMGUtils searchNode:basePFoOrTargetFo_p];//此处pFo和matchFo都是sceneTo
         
         //2024.07.30: 去掉不必要的过滤器 (参考3211a-AbsR);
@@ -279,13 +279,16 @@
         
         //f. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
         NSArray *noRepeatArea_ps = [pFo getConCansets:pFo.count];
-        AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:newRCanset assFo:solutionFo type:ATDefault noRepeatArea_ps:noRepeatArea_ps];
+        HEResult *heResult = [AIAnalogy analogyCansetFo:solutionModel.realCansetToIndexDic newCanset:newRCanset oldCanset:solutionFo noRepeatArea_ps:noRepeatArea_ps];
+        AIFoNodeBase *absCansetFo = [heResult get:@"data"];
+        BOOL isNew = NUMTOOK([heResult get:@"isNew"]).boolValue;
         BOOL updateCansetSuccess = [pFo updateConCanset:absCansetFo.pointer targetIndex:pFo.count];//此处pFo和matchFo都是sceneTo
         [AITest test101:absCansetFo proto:newRCanset conCanset:solutionFo];
         NSLog(@"%@%@Canset演化> AbsRCanset:%@ from(F%ld:F%ld) toScene:%@",FltLog4CreateRCanset(4),FltLog4YonBanYun(4),Fo2FStr(absCansetFo),newRCanset.pId,solutionFo.pId,ShortDesc4Node(pFo));
         
         //TODOTOMORROW20240911:
         //不需要求综合映射了,在solutionModel.realCansetToIndexDic存的有;
+        //2. 看下下面的更新:indexDic和spDic,是不是避免下重复,总不能每抽象一次,就更新一次;
         NSLog(@"cansetTo到newRCanset的全段映射: %@",CLEANSTR(solutionModel.realCansetToIndexDic));
         
         
