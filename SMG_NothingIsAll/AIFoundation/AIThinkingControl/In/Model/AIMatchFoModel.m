@@ -286,10 +286,10 @@
         [AITest test101:absCansetFo proto:newRCanset conCanset:solutionFo];
         NSLog(@"%@%@Canset演化> AbsRCanset:%@ from(F%ld:F%ld) toScene:%@",FltLog4CreateRCanset(4),FltLog4YonBanYun(4),Fo2FStr(absCansetFo),newRCanset.pId,solutionFo.pId,ShortDesc4Node(pFo));
         
-        //TODOTOMORROW20240911:
-        //不需要求综合映射了,在solutionModel.realCansetToIndexDic存的有;
-        //2. 看下下面的更新:indexDic和spDic,是不是避免下重复,总不能每抽象一次,就更新一次;
-        NSLog(@"cansetTo到newRCanset的全段映射: %@",CLEANSTR(solutionModel.realCansetToIndexDic));
+        //TODOTOMORROW20240913:
+        //1. 看下下面的更新:indexDic和spDic,是不是避免下重复,总不能每抽象一次,就更新一次;
+        //2. HCanset类比,也看启用一下新的Canset类比算法;
+        //3. 回测下,新的类比算法,能不能顺利类比出符合预期的absCanset;
         
         
         if (updateCansetSuccess) {
