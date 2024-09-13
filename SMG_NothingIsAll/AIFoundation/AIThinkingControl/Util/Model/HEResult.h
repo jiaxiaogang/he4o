@@ -18,4 +18,14 @@
 -(HEResult*) mk:(NSString*)k v:(id)v;
 -(id) get:(NSString*)k;
 
+//MARK:===============================================================
+//MARK:                     < 方便方法 >
+//MARK:===============================================================
+
+-(HEResult*) mkIsNew:(BOOL)isNew;
+-(HEResult*) mkData:(id)data;
+-(BOOL) success;
+-(BOOL) isNew;
+-(id) data;
+
 @end

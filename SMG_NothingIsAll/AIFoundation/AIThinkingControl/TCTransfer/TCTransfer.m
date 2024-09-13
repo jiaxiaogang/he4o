@@ -189,15 +189,17 @@
     if (![sceneFrom.transferToPorts containsObject:portTo]) {
         
         //4. 将cansetTo挂到sceneTo下;
-        BOOL updateCansetSuccess = [sceneTo updateConCanset:cansetTo.p targetIndex:xvModel.sceneToTargetIndex];
+        HEResult *updateConCansetResult = [sceneTo updateConCanset:cansetTo.p targetIndex:xvModel.sceneToTargetIndex];
         
-        if (updateCansetSuccess) {
+        if (updateConCansetResult.success) {
             //5. 为迁移后cansetTo加上与sceneTo的indexDic (参考29075-todo4);
             [cansetTo updateIndexDic:sceneTo indexDic:xvModel.sceneToCansetToIndexDic];
             
             //6. SP值也迁移 (参考3101b-todo1 & todo2);
-            [cansetTo updateSPDic:cansetFrom.spDic];
-            [AITest test32:cansetFrom newCanset:cansetTo];
+            if (updateConCansetResult.isNew) {
+                [cansetTo updateSPDic:cansetFrom.spDic];
+                [AITest test32:cansetFrom newCanset:cansetTo];
+            }
             
             //7. 并进行迁移关联 (以实现防重,避免重新累推spDic);
             [AINetUtils relateTransfer:sceneFrom cansetFrom:cansetFrom sceneTo:sceneTo cansetTo:cansetTo];

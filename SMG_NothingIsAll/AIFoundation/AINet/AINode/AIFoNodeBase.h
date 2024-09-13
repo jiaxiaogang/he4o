@@ -13,7 +13,7 @@
  *  @name 前因序列
  *  1. 是frontOrderNode和absNode的基类;
  */
-@class AIEffectStrong;
+@class AIEffectStrong,HEResult;
 @interface AIFoNodeBase : AINodeBase
 
 /**
@@ -196,7 +196,7 @@
 /**
  *  MARK:--------------------更新一条候选--------------------
  */
--(BOOL) updateConCanset:(AIKVPointer*)newConCansetFo targetIndex:(NSInteger)targetIndex;
+-(HEResult*) updateConCanset:(AIKVPointer*)newConCansetFo targetIndex:(NSInteger)targetIndex;
 
 //MARK:===============================================================
 //MARK:                     < transfer组 >

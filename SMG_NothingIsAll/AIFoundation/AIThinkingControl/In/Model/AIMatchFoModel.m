@@ -223,10 +223,10 @@
     AIFoNodeBase *newRCanset = [theNet createConFoForCanset:orders sceneFo:matchFo sceneTargetIndex:matchFo.count];
     
     //c. 将protoFo挂载到matchFo下的conCansets下 (参考27201-2);
-    BOOL updateCansetSuccess = [matchFo updateConCanset:newRCanset.pointer targetIndex:matchFo.count];
+    HEResult *updateConCansetResult = [matchFo updateConCanset:newRCanset.pointer targetIndex:matchFo.count];
     NSLog(@"Canset演化> NewRCanset:%@ toScene:%@ (原因:%@)",Fo2FStr(newRCanset),ShortDesc4Node(matchFo),log);
     
-    if (updateCansetSuccess) {
+    if (updateConCansetResult.success) {
         //d. 将item.indexDic挂载到matchFo的conIndexDDic下 (参考27201-3);
         //2024.06.26: indexDic有可能指定后还在更新,导致有越界 (参考32014);
         [newRCanset updateIndexDic:matchFo indexDic:[self.indexDic2 copy]];
@@ -279,10 +279,10 @@
         
         //f. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
         NSArray *noRepeatArea_ps = [pFo getConCansets:pFo.count];
-        HEResult *heResult = [AIAnalogy analogyCansetFo:solutionModel.realCansetToIndexDic newCanset:newRCanset oldCanset:solutionFo noRepeatArea_ps:noRepeatArea_ps];
-        AIFoNodeBase *absCansetFo = [heResult get:@"data"];
-        BOOL isNew = NUMTOOK([heResult get:@"isNew"]).boolValue;
-        BOOL updateCansetSuccess = [pFo updateConCanset:absCansetFo.pointer targetIndex:pFo.count];//此处pFo和matchFo都是sceneTo
+        HEResult *analoogyResult = [AIAnalogy analogyCansetFo:solutionModel.realCansetToIndexDic newCanset:newRCanset oldCanset:solutionFo noRepeatArea_ps:noRepeatArea_ps];
+        AIFoNodeBase *absCansetFo = analoogyResult.data;
+        BOOL isNew = analoogyResult.isNew;
+        HEResult *updateConCansetResult = [pFo updateConCanset:absCansetFo.pointer targetIndex:pFo.count];//此处pFo和matchFo都是sceneTo
         [AITest test101:absCansetFo proto:newRCanset conCanset:solutionFo];
         NSLog(@"%@%@Canset演化> AbsRCanset:%@ from(F%ld:F%ld) toScene:%@",FltLog4CreateRCanset(4),FltLog4YonBanYun(4),Fo2FStr(absCansetFo),newRCanset.pId,solutionFo.pId,ShortDesc4Node(pFo));
         
@@ -292,7 +292,7 @@
         //3. 回测下,新的类比算法,能不能顺利类比出符合预期的absCanset;
         
         
-        if (updateCansetSuccess) {
+        if (updateConCansetResult.success) {
             //2024.04.17: 此处简化了下,把用convertOldIndexDic2NewIndexDic()取映射,改成用zonHeDic来计算;
             //a. 从sceneTo向下到cansetTo;
             DirectIndexDic *dic1 = [DirectIndexDic newNoToAbs:[pFo getConIndexDic:solutionFo.p]];
@@ -314,7 +314,10 @@
             [AITest test18:absRCansetSceneToIndexDic newCanset:absCansetFo absFo:pFo];
             
             //h. 算出spDic (参考27213-5);
-            [absCansetFo updateSPDic:[solutionModel convertSPDicFromConCanset2AbsCanset]];
+            //2024.09.13: 只有新抽具象关联时,才继承具象的spDic;
+            if (updateConCansetResult.isNew) {
+                [absCansetFo updateSPDic:[solutionModel convertSPDicFromConCanset2AbsCanset]];
+            }
             [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
         }
     }

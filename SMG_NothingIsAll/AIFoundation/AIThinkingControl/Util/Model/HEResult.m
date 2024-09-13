@@ -31,4 +31,26 @@
     return [self.dic objectForKey:k];
 }
 
+//MARK:===============================================================
+//MARK:                     < 方便方法 >
+//MARK:===============================================================
+
+-(HEResult*) mkIsNew:(BOOL)isNew {
+    return [self mk:@"isNew" v:@(isNew)];
+}
+
+-(HEResult*) mkData:(id)data {
+    return [self mk:@"data" v:data];
+}
+
+-(BOOL) success {
+    return NUMTOOK([self get:@"success"]).boolValue;
+}
+-(BOOL) isNew {
+    return NUMTOOK([self get:@"isNew"]).boolValue;
+}
+-(id) data {
+    return [self get:@"data"];
+}
+
 @end

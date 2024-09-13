@@ -130,7 +130,7 @@
             
             //5. 构建absFoNode (当GL时,传入at&ds);
             HEResult *heResult = [theNet createAbsFo_NoRepeat:orderSames protoFo:protoFo assFo:assFo difStrong:foDifStrong type:type protoIndexDic:protoIndexDic assIndexDic:assIndexDic outConAbsIsRelate:nil noRepeatArea_ps:noRepeatArea_ps];
-            result = [heResult get:@"data"];
+            result = heResult.data;
             
             //6. 算出具象总强度,其和已经是累计了此次类比的新关联强度 (参考30087-todo6);
             NSArray *conPorts = [AINetUtils conPorts_All:result];
@@ -257,7 +257,7 @@
     //7. 外类比构建
     BOOL outConAbsIsRelate = true;
     HEResult *heResult = [theNet createAbsFo_NoRepeat:orderSames protoFo:newCanset assFo:oldCanset difStrong:1 type:ATDefault protoIndexDic:newIndexDic assIndexDic:oldIndexDic outConAbsIsRelate:&outConAbsIsRelate noRepeatArea_ps:noRepeatArea_ps];
-    AIFoNodeBase *absFo = [heResult get:@"data"];
+    AIFoNodeBase *absFo = heResult.data;
     NSLog(@"createAbsCanset:%@",Fo2FStr(absFo));
     return heResult;
 }

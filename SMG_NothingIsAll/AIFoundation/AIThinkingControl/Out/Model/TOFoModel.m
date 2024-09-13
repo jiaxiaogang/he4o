@@ -500,12 +500,12 @@
     //14. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
     NSArray *noRepeatArea_ps = [sceneTo getConCansets:targetFoModel.cansetActIndex];
     AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:newHCanset assFo:cansetTo type:ATDefault noRepeatArea_ps:noRepeatArea_ps];
-    BOOL updateCansetSuccess = [sceneTo updateConCanset:absCansetFo.pointer targetIndex:targetFoModel.cansetActIndex];
+    HEResult *updateConCansetResult =  [sceneTo updateConCanset:absCansetFo.pointer targetIndex:targetFoModel.cansetActIndex];
     [AITest test101:absCansetFo proto:newHCanset conCanset:cansetTo];
     NSString *fltLog = FltLog4CreateHCanset(4);
     NSLog(@"%@%@%@%@%@%@Canset演化> AbsHCanset:%@ toScene:%@ 在%ld帧:%@",fltLog,FltLog4AbsHCanset(true, 3),FltLog4XueQuPi(3),FltLog4HDemandOfYouPiGuo(@"5"),FltLog4XueBanYun(3),FltLog4YonBanYun(4),Fo2FStr(absCansetFo),ShortDesc4Node(sceneTo),self.cansetActIndex,Pit2FStr(self.getCurFrame.content_p));
     
-    if (updateCansetSuccess) {
+    if (updateConCansetResult.success) {
         //15. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);
         //2024.04.16: 此处简化了下,把用convertOldIndexDic2NewIndexDic()取映射,改成用zonHeDic来计算;
         //a. 从sceneTo向下到cansetTo;
