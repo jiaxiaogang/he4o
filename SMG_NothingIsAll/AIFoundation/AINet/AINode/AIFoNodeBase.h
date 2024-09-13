@@ -93,6 +93,7 @@
 /**
  *  MARK:--------------------OutSP强度值--------------------
  *  @desc <key:sceneFromPId_cansetFromPId, value:outSPStrong> (参考32012-TODO2);
+ *  @desc outSPDic存在每个sceneTo下,k为sceneFrom_cansetFrom,v为它在这个sceneTo下对应的spDic;
  */
 @property (strong, nonatomic) NSMutableDictionary *outSPDic;
 
