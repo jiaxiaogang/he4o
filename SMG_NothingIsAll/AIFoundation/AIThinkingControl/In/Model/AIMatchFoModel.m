@@ -312,6 +312,10 @@
             //h. 算出spDic (参考27213-5);
             //2024.09.13: 只有新抽具象关联时,才继承具象的spDic;
             if (updateConCansetResult.isNew) {
+                //TODOTOMORROW20240914: 继续修outSPDic初始化的错误;
+                //1. [pFo initItemOutSPDicIfNotInited:pFo.pointer cansetFrom:absCansetFo.pointer];
+                //2. 查下下面的convertSPDicFromConCanset2AbsCanset()方法中,在做什么,有没有可复用的点;
+                
                 [absCansetFo updateSPDic:[solutionModel convertSPDicFromConCanset2AbsCanset]];
             }
             [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
