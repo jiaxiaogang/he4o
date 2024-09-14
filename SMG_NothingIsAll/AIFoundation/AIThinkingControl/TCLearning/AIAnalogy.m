@@ -236,7 +236,7 @@
  *      2023.09.01: 迁移完成时EFF不变(参数传ES_Default),但newCanset有用时+1,无用时-1 (参考30124-todo2 & todo3);
  *      2023.09.03: 修复dic.keys无序会导致此处生成的absFo序列也错乱的问题;
  *      2023.10.26: 废弃canset类比 (参考3014c-todo2);
- *      2024.09.13: 启用canset类比: 直接用反馈映射indexDic,来生成Canset类比结果 (参考33052-思路);
+ *      2024.09.13: 启用canset类比: 直接用反馈映射realCansetToIndexDic,来生成Canset类比结果 (参考33052-TODO1);
  */
 +(HEResult*) analogyCansetFo:(NSDictionary*)realCansetToIndexDic newCanset:(AIFoNodeBase*)newCanset oldCanset:(AIFoNodeBase*)oldCanset noRepeatArea_ps:(NSArray*)noRepeatArea_ps {
     //1. 类比orders的规律

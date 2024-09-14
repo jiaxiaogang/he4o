@@ -279,22 +279,14 @@
         
         //f. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
         NSArray *noRepeatArea_ps = [pFo getConCansets:pFo.count];
+        
+        //2024.09.13: rCanset类比启用新的canset类比算法 (参考33052-TODO2);
         HEResult *analoogyResult = [AIAnalogy analogyCansetFo:solutionModel.realCansetToIndexDic newCanset:newRCanset oldCanset:solutionFo noRepeatArea_ps:noRepeatArea_ps];
         AIFoNodeBase *absCansetFo = analoogyResult.data;
         BOOL isNew = analoogyResult.isNew;
         HEResult *updateConCansetResult = [pFo updateConCanset:absCansetFo.pointer targetIndex:pFo.count];//此处pFo和matchFo都是sceneTo
         [AITest test101:absCansetFo proto:newRCanset conCanset:solutionFo];
         NSLog(@"%@%@Canset演化> AbsRCanset:%@ from(F%ld:F%ld) toScene:%@",FltLog4CreateRCanset(4),FltLog4YonBanYun(4),Fo2FStr(absCansetFo),newRCanset.pId,solutionFo.pId,ShortDesc4Node(pFo));
-        
-        //TODOTOMORROW20240913:
-        //1. 看下下面的更新:indexDic和spDic,是不是避免下重复,总不能每抽象一次,就更新一次;
-        //  a. 现在的outSPDic有问题,以sceneFrom_cansetFrom为k,转实时,又没转变k,导致前后接不上;
-        //  b. 转实前,其实就是为了竞争,那么是不是不需要转存outSPDic,也可以根据sceneFrom和cansetFrom计算出原来的spScore?
-        //  c. 转实后,是不是可以用cansetTo来做k了,此时再初始化outSPDic;
-        //  d. 在类比抽象canset时,也可以直接初始化生成outSPDic,而不是现在的在初始化spDic;
-        //2. HCanset类比,也看启用一下新的Canset类比算法;
-        //3. 回测下,新的类比算法,能不能顺利类比出符合预期的absCanset;
-        
         
         if (updateConCansetResult.success) {
             //2024.04.17: 此处简化了下,把用convertOldIndexDic2NewIndexDic()取映射,改成用zonHeDic来计算;

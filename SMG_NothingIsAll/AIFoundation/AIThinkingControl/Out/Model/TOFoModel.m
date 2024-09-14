@@ -499,11 +499,16 @@
     
     //14. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
     NSArray *noRepeatArea_ps = [sceneTo getConCansets:targetFoModel.cansetActIndex];
-    AIFoNodeBase *absCansetFo = [AIAnalogy analogyOutside:newHCanset assFo:cansetTo type:ATDefault noRepeatArea_ps:noRepeatArea_ps];
+    
+    //2024.09.14: hCanset类比启用新的canset类比算法 (参考33052-TODO2);
+    HEResult *analogyResult = [AIAnalogy analogyCansetFo:self.realCansetToIndexDic newCanset:newHCanset oldCanset:cansetTo noRepeatArea_ps:noRepeatArea_ps];
+    AIFoNodeBase *absCansetFo = analogyResult.data;
     HEResult *updateConCansetResult =  [sceneTo updateConCanset:absCansetFo.pointer targetIndex:targetFoModel.cansetActIndex];
     [AITest test101:absCansetFo proto:newHCanset conCanset:cansetTo];
     NSString *fltLog = FltLog4CreateHCanset(4);
     NSLog(@"%@%@%@%@%@%@Canset演化> AbsHCanset:%@ toScene:%@ 在%ld帧:%@",fltLog,FltLog4AbsHCanset(true, 3),FltLog4XueQuPi(3),FltLog4HDemandOfYouPiGuo(@"5"),FltLog4XueBanYun(3),FltLog4YonBanYun(4),Fo2FStr(absCansetFo),ShortDesc4Node(sceneTo),self.cansetActIndex,Pit2FStr(self.getCurFrame.content_p));
+    
+    ELog(@"此处断点停下时,测下hCanset的类比是否正常!!!!!!!!!!!!!!! (参考33052-待断点测试项)");
     
     if (updateConCansetResult.success) {
         //15. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);
@@ -525,8 +530,10 @@
         [AITest test18:absHCansetSceneToIndexDic newCanset:absCansetFo absFo:sceneTo];
         
         //16. 算出spDic (参考27213-5);
-        [absCansetFo updateSPDic:[self convertSPDicFromConCanset2AbsCanset]];
-        [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
+        if (updateConCansetResult.isNew) {
+            [absCansetFo updateSPDic:[self convertSPDicFromConCanset2AbsCanset]];
+            [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
+        }
     }
 }
 
