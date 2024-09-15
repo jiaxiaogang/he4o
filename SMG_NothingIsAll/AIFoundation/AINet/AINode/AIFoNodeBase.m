@@ -131,7 +131,15 @@
     NSMutableDictionary *initOutSPDic = [AINetUtils getItemOutSPDicIfNullNew:cansetFrom.p scene:sceneFrom];
     
     //3. 移新;
-    [sceneTo updateOutSPDic:initOutSPDic sceneFrom:sceneFrom.p cansetFrom:cansetFrom.p];
+    
+    //TODOTOMORROW20240915: sceneFrom和cansetFrom的映射,需要转成sceneTo和cansetTo的映射再移过去itemOutSPDic;
+    
+    //2. 更新spDic;
+    for (NSNumber *newIndex in initOutSPDic.allKeys) {
+        AISPStrong *newStrong = [initOutSPDic objectForKey:newIndex];
+        [self updateOutSPStrong:newIndex.integerValue difStrong:newStrong.sStrong type:ATSub sceneFrom:sceneFrom cansetFrom:cansetFrom debugMode:false caller:@"初始化S值"];
+        [self updateOutSPStrong:newIndex.integerValue difStrong:newStrong.pStrong type:ATPlus sceneFrom:sceneFrom cansetFrom:cansetFrom debugMode:false caller:@"初始化P值"];
+    }
 }
 
 /**
@@ -151,20 +159,6 @@
         AISPStrong *spTo = [spStrong.spDic objectForKey:@(spIndex)];
         NSString *flt1 = FltLog4DefaultIf(true, @"4");
         NSLog(@"%@updateOutSP:%ld/%ld (%@) %@->%@ sceneTo:%ld sceneFrom:F%ld cansetFrom:%@ caller:%@",flt1,spIndex,cansetFromFo.count,ATType2Str(type),spFrom,spTo,self.pId,sceneFrom.pointerId,Pit2FStr(cansetFrom),caller);
-    }
-}
-
-/**
- *  MARK:--------------------更新整个outSPDic--------------------
- */
--(void) updateOutSPDic:(NSDictionary*)newSPDic sceneFrom:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom {
-    //1. 数据准备;
-    newSPDic = DICTOOK(newSPDic);
-    //2. 更新spDic;
-    for (NSNumber *newIndex in newSPDic.allKeys) {
-        AISPStrong *newStrong = [newSPDic objectForKey:newIndex];
-        [self updateOutSPStrong:newIndex.integerValue difStrong:newStrong.sStrong type:ATSub sceneFrom:sceneFrom cansetFrom:cansetFrom debugMode:false caller:@"初始化S值"];
-        [self updateOutSPStrong:newIndex.integerValue difStrong:newStrong.pStrong type:ATPlus sceneFrom:sceneFrom cansetFrom:cansetFrom debugMode:false caller:@"初始化P值"];
     }
 }
 

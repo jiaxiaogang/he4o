@@ -109,11 +109,6 @@
 -(void) updateOutSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type sceneFrom:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom debugMode:(BOOL)debugMode caller:(NSString*)caller;
 
 /**
- *  MARK:--------------------更新整个outSPDic--------------------
- */
--(void) updateOutSPDic:(NSDictionary*)newSPDic sceneFrom:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom;
-
-/**
  *  MARK:--------------------获取某条outSPDic--------------------
  */
 -(NSDictionary*) getItemOutSPDic:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom;
