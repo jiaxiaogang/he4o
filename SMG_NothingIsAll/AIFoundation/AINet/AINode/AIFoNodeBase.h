@@ -92,15 +92,16 @@
 
 /**
  *  MARK:--------------------OutSP强度值--------------------
- *  @desc <key:sceneFromPId_cansetFromPId, value:outSPStrong> (参考32012-TODO2);
- *  @desc outSPDic存在每个sceneTo下,k为sceneFrom_cansetFrom,v为它在这个sceneTo下对应的spDic;
+ *  @desc <key:cansetToPId, value:<vk:spIndex下标, vv:spStrong>> (参考33062-TODO2);
+ *  @desc outSPDic存在每个sceneTo下,k为cansetTo,v为它在这个sceneTo下对应的itemSPDic;
  */
 @property (strong, nonatomic) NSMutableDictionary *outSPDic;
 
 /**
  *  MARK:--------------------初始化整个outSPDic (参考32012-TODO3)--------------------
+ *  @desc 把cansetFrom的outSPDic迁移继承给cansetTo (注意要防重);
  */
--(void) initItemOutSPDicIfNotInited:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom;
++(void) initItemOutSPDicIfNotInited:(AIFoNodeBase*)sceneTo cansetTo:(AIFoNodeBase*)cansetTo sceneFrom:(AIFoNodeBase*)sceneFrom cansetFrom:(AIFoNodeBase*)cansetFrom;
 
 /**
  *  MARK:--------------------更新OutSPDic强度值--------------------

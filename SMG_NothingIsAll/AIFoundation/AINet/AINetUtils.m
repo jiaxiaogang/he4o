@@ -928,6 +928,28 @@
     }];
 }
 
+/**
+ *  MARK:--------------------根据cansetTo从sceneTo取itemOutSPDic (若空新建)--------------------
+ *  @param scene notnull
+ */
++(NSMutableDictionary*) getItemOutSPDicIfNullNew:(AIKVPointer*)canset scene:(AIFoNodeBase*)scene {
+    NSMutableDictionary *value = [scene.outSPDic objectForKey:@(canset.pointerId)];
+    if (!ISOK(value, NSMutableDictionary.class)) value = [[NSMutableDictionary alloc] initWithDictionary:value];
+    [scene.outSPDic setObject:value forKey:@(canset.pointerId)];
+    return value;
+}
+
+/**
+ *  MARK:--------------------根据spIndex下标取spStrong返回 (若空新建)--------------------
+ *  @param fromSPDic 支持inSPDic和outSPDic notnull
+ */
++(AISPStrong*) getSPStrongIfNullNew:(NSInteger)spIndex fromSPDic:(NSMutableDictionary*)fromSPDic {
+    AISPStrong *value = [fromSPDic objectForKey:@(spIndex)];
+    if (!value) value = [[AISPStrong alloc] init];
+    [fromSPDic setObject:value forKey:@(spIndex)];
+    return value;
+}
+
 @end
 
 //MARK:===============================================================

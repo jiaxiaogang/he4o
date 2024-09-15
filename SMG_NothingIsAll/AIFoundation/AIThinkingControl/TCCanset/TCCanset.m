@@ -50,6 +50,7 @@
  *      2023.04.30: 用迁移后cansetA与protoA来计算前段匹配度值 (参考29075-todo5);
  *      2024.01.19: 为每个CansetModel生成jiCenModel和tuiJuModel (参考31073-TODO1);
  *      2024.05.07: 前中后段,直接改为由indexDic来判断,而不是重计算现判断,性能天差地别 (参考31175-TODO1);
+ *      2024.09.15: 取消初始化canset池时,就迁移继承outSPDic (参考33062-TODO1);
  *  @result 返回cansetFo前段匹配度 & 以及已匹配的cutIndex截点;
  */
 +(TOFoModel*) convert2RCansetModel:(AIKVPointer*)cansetFrom_p sceneFrom:(AIKVPointer*)sceneFrom_p basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel sceneModel:(AISceneModel*)sceneModel demand:(DemandModel*)demand {
@@ -85,10 +86,6 @@
                                     sceneCutIndex:sceneCutIndex cansetCutIndex:cansetCutIndex
                                  cansetTargetIndex:cansetFrom.count sceneFromTargetIndex:sceneFromTargetIndex];
     
-    //7. 初始化outSPDic (参考32012-TODO3);
-    AIFoNodeBase *sceneTo = [SMGUtils searchNode:result.sceneTo];
-    [sceneTo initItemOutSPDicIfNotInited:sceneFrom_p cansetFrom:cansetFrom_p];
-    
     //12. 伪迁移;
     [TCTransfer transferXv:result];
     
@@ -105,6 +102,7 @@
  *  @desc 把rCanset下的hCanset_p转成CansetModel;
  *  @version
  *      2024.02.21: V2-在迭代hSolutionV3时,将H任务转cansetModel单独写个方法,并将此方法中多余代码统统去掉不写;
+ *      2024.09.15: 取消初始化canset池时,就迁移继承outSPDic (参考33062-TODO1);
  */
 +(TOFoModel*) convert2HCansetModel:(AIKVPointer*)hCansetFrom_p hDemand:(HDemandModel*)hDemand rCanset:(TOFoModel*)rCanset {
     //1. 根据hScene和hCanset的映射,取出hCanset的目标帧等数据;
@@ -125,10 +123,6 @@
     
     //3. 伪迁移;
     [TCTransfer transferXv:result];
-    
-    //4. 初始化outSPDic (参考32012-TODO3);
-    AIFoNodeBase *sceneTo = [SMGUtils searchNode:result.sceneTo];
-    [sceneTo initItemOutSPDicIfNotInited:sceneFrom.pointer cansetFrom:hCansetFrom_p];
     
     //4. 初始化result的cansetTo与real的映射;
     [result initRealCansetToDic];

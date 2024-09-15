@@ -121,16 +121,17 @@
 
 /**
  *  MARK:--------------------初始化整个outSPDic (参考32012-TODO3)--------------------
+ *  @desc 把cansetFrom的outSPDic迁移继承给cansetTo (注意要防重);
  */
--(void) initItemOutSPDicIfNotInited:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom {
++(void) initItemOutSPDicIfNotInited:(AIFoNodeBase*)sceneTo cansetTo:(AIFoNodeBase*)cansetTo sceneFrom:(AIFoNodeBase*)sceneFrom cansetFrom:(AIFoNodeBase*)cansetFrom {
     //1. 检查有没初始化过 (只初始一次,用于防重);
-    NSString *key = STRFORMAT(@"%ld_%ld",sceneFrom.pointerId,cansetFrom.pointerId);
-    if ([self.outSPDic objectForKey:key]) return;
+    if ([sceneTo.outSPDic objectForKey:@(cansetTo.pId)]) return;
     
-    //2. 没初始化过,则初始化 (原cansetFrom在sceneFrom下,它自己的outSPDic就存着它自己的canset的outSPDic);
-    AIFoNodeBase *sceneFromNode = [SMGUtils searchNode:sceneFrom];
-    NSDictionary *initOutSPDic = [sceneFromNode getItemOutSPDic:sceneFrom cansetFrom:cansetFrom];
-    [self updateOutSPDic:initOutSPDic sceneFrom:sceneFrom cansetFrom:cansetFrom];
+    //2. 取旧;
+    NSMutableDictionary *initOutSPDic = [AINetUtils getItemOutSPDicIfNullNew:cansetFrom.p scene:sceneFrom];
+    
+    //3. 移新;
+    [sceneTo updateOutSPDic:initOutSPDic sceneFrom:sceneFrom.p cansetFrom:cansetFrom.p];
 }
 
 /**

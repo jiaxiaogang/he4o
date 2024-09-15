@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIAbsAlgNode,AINetAbsFoNode,AIAbsCMVNode;
+@class AIAbsAlgNode,AINetAbsFoNode,AIAbsCMVNode,AISPStrong;
 @interface AINetUtils : NSObject
 
 //MARK:===============================================================
@@ -294,6 +294,18 @@
  *  MARK:--------------------判断时序中有空概念--------------------
  */
 +(BOOL) foHasEmptyAlg:(AIKVPointer*)fo_p;
+
+/**
+ *  MARK:--------------------根据cansetTo从sceneTo取itemOutSPDic (若空新建)--------------------
+ *  @param scene notnull
+ */
++(NSMutableDictionary*) getItemOutSPDicIfNullNew:(AIKVPointer*)canset scene:(AIFoNodeBase*)scene;
+
+/**
+ *  MARK:--------------------根据spIndex下标取spStrong返回 (若空新建)--------------------
+ *  @param fromSPDic 支持inSPDic和outSPDic notnull
+ */
++(AISPStrong*) getSPStrongIfNullNew:(NSInteger)spIndex fromSPDic:(NSMutableDictionary*)fromSPDic;
 
 @end
 

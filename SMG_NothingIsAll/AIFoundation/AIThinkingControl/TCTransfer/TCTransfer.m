@@ -196,10 +196,9 @@
             [cansetTo updateIndexDic:sceneTo indexDic:xvModel.sceneToCansetToIndexDic];
             
             //6. SP值也迁移 (参考3101b-todo1 & todo2);
-            if (updateConCansetResult.isNew) {
-                [cansetTo updateSPDic:cansetFrom.spDic];
-                [AITest test32:cansetFrom newCanset:cansetTo];
-            }
+            //2024.09.15: 转实时,outSPDic也跟着迁移继承过去 (参考33062-TODO3);
+            [AIFoNodeBase initItemOutSPDicIfNotInited:sceneTo cansetTo:cansetTo sceneFrom:sceneFrom cansetFrom:cansetFrom];
+            [AITest test32:cansetFrom newCanset:cansetTo];
             
             //7. 并进行迁移关联 (以实现防重,避免重新累推spDic);
             [AINetUtils relateTransfer:sceneFrom cansetFrom:cansetFrom sceneTo:sceneTo cansetTo:cansetTo];
