@@ -950,7 +950,7 @@
  *  @desc 用于canset类比抽象后: 把conCanset的itemOutSPDic设为新构建的absCanset的初始itemOutSPDic (参考33062-TODO4);
  */
 +(void) initItemOutSPDicForAbsCanset:(AIFoNodeBase*)scene conCanset:(AIFoNodeBase*)conCanset absCanset:(AIFoNodeBase*)absCanset {
-    //1. 检查有没初始化过 (只初始一次,用于防重);
+    //1. 检查有没初始化默认过具象的itemOutSPDic (只初始一次,用于防重) (参考33062-TODO4.1);
     if ([scene.outSPDic objectForKey:@(absCanset.pId)]) return;
     
     //2. 取conCanset的itemOutSPDic;

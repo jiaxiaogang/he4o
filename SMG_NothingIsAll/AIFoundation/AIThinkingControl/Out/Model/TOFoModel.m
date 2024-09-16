@@ -208,39 +208,6 @@
     return order;
 }
 
-/**
- *  MARK:--------------------算出新的spDic--------------------
- *  @desc 用旧spDic和feedbackAlg计算出新的spDic (参考27211-todo1);
- *  @desc 适用范围: 因为此方法只给匹配的几帧,分别指定了下标0,1,2...这样的方式,所以只能适用于构建absRHCanset时使用 (因为只有absRHCanset的下标会在类比时取交,是0,1,2...这样的);
- *  @version
- *      2023.04.01: 修复算出的S可能为负的BUG,改为直接从conSolution继承对应帧的SP值 (参考27214);
- *  @result notnull (建议返回后,检查一下spDic和absCansetFo的长度是否一致,不一致时来查BUG);
- */
--(NSDictionary*) convertSPDicFromConCanset2AbsCanset {
-    //1. 数据准备 (收集除末位外的content为order) (参考27212-步骤1);
-    AIFoNodeBase *solutionFo = [SMGUtils searchNode:self.transferSiModel.canset];
-    NSArray *feedbackIndexArr = [self getIndexArrIfHavFeedback];
-    NSMutableDictionary *newSPDic = [[NSMutableDictionary alloc] init];
-    
-    //2. sulutionIndex都是有反馈的帧,
-    for (NSInteger i = 0; i < feedbackIndexArr.count; i++) {
-        //3. 数据准备: 有反馈的帧,在solution对应的index (参考27212-步骤1);
-        NSNumber *solutionIndex = ARR_INDEX(feedbackIndexArr, i);
-        
-        //4. 取得具象solutionFo的spStrong (参考27213-2&3);
-        AISPStrong *conSPStrong = [solutionFo.spDic objectForKey:@(solutionIndex.integerValue)];
-        
-        //5. 直接继承solutionFo对应帧的SP值 (参考27214-方案);
-        AISPStrong *absSPStrong = conSPStrong ? conSPStrong : [[AISPStrong alloc] init];
-        [AITest test19:absSPStrong];
-        
-        //6. 新的spDic收集一帧: 抽象canset的帧=i (因为比如有3帧有反馈,那么这三帧就是0,1,2) (参考27207-10);
-        NSInteger absCansetIndex = i;
-        [newSPDic setObject:absSPStrong forKey:@(absCansetIndex)];
-    }
-    return newSPDic;
-}
-
 //MARK:===============================================================
 //MARK:                     < privateMthod >
 //MARK:===============================================================
@@ -529,11 +496,9 @@
         [absCansetFo updateIndexDic:sceneTo indexDic:absHCansetSceneToIndexDic];
         [AITest test18:absHCansetSceneToIndexDic newCanset:absCansetFo absFo:sceneTo];
         
-        //16. 算出spDic (参考27213-5);
-        if (updateConCansetResult.isNew) {
-            [absCansetFo updateSPDic:[self convertSPDicFromConCanset2AbsCanset]];
-            [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
-        }
+        //16. 算出absCanset的默认itemOutSPDic (参考33062-TODO4);
+        [AINetUtils initItemOutSPDicForAbsCanset:sceneTo conCanset:cansetTo absCanset:absCansetFo];
+        [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
     }
 }
 

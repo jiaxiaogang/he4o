@@ -309,17 +309,8 @@
             [absCansetFo updateIndexDic:pFo indexDic:absRCansetSceneToIndexDic];
             [AITest test18:absRCansetSceneToIndexDic newCanset:absCansetFo absFo:pFo];
             
-            //h. 算出spDic (参考27213-5);
-            //2024.09.13: 只有新抽具象关联时,才继承具象的itemOutSPDic (参考33062-TODO4.1);
-            if (updateConCansetResult.isNew) {
-                //TODOTOMORROW20240914: 继续修outSPDic初始化的错误;
-                //1. [pFo initItemOutSPDicIfNotInited:pFo.pointer cansetFrom:absCansetFo.pointer];
-                //2. 查下下面的convertSPDicFromConCanset2AbsCanset()方法中,在做什么,有没有可复用的点;
-                //3. 明天继续把absHCanset时,也改下用这个方法;
-                //4. 查下别处,还有没连带着需要改的地方 (主要是调用itemOutSPDic的,还有给outCanset评分spScore的地方);
-                
-                [AINetUtils initItemOutSPDicForAbsCanset:pFo conCanset:solutionFo absCanset:absCansetFo];
-            }
+            //h. 算出absCanset的默认itemOutSPDic (参考33062-TODO4);
+            [AINetUtils initItemOutSPDicForAbsCanset:pFo conCanset:solutionFo absCanset:absCansetFo];
             [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
         }
     }

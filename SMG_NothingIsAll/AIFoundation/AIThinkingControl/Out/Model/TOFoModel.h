@@ -75,11 +75,6 @@
  */
 -(NSArray*) getOrderUseMatchAndFeedbackAlg:(BOOL)fromRegroup;
 
-/**
- *  MARK:--------------------算出新的spDic--------------------
- */
--(NSDictionary*) convertSPDicFromConCanset2AbsCanset;
-
 
 //MARK:===============================================================
 //MARK:                     < CansetModel >
