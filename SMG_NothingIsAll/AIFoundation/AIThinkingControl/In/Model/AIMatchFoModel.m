@@ -232,7 +232,7 @@
         [newRCanset updateIndexDic:matchFo indexDic:[self.indexDic2 copy]];
         
         //2024.09.04: eff已经弃用了,这里改为把P默认计1 (参考33031b-BUG5-TODO1);
-        [matchFo updateOutSPStrong:newRCanset.count difStrong:1 type:ATPlus sceneFrom:matchFo.pointer cansetFrom:newRCanset.pointer debugMode:false caller:@"NewRCanset初始化P=1"];
+        [matchFo updateOutSPStrong:newRCanset.count difStrong:1 type:ATPlus canset:newRCanset debugMode:false caller:@"NewRCanset初始化P=1"];
         
         if (self.indexDic2 == 0) {
             NSLog(@"NewRCanset Dic Is Nil");
@@ -281,9 +281,9 @@
         NSArray *noRepeatArea_ps = [pFo getConCansets:pFo.count];
         
         //2024.09.13: rCanset类比启用新的canset类比算法 (参考33052-TODO2);
-        HEResult *analoogyResult = [AIAnalogy analogyCansetFo:solutionModel.realCansetToIndexDic newCanset:newRCanset oldCanset:solutionFo noRepeatArea_ps:noRepeatArea_ps];
-        AIFoNodeBase *absCansetFo = analoogyResult.data;
-        BOOL isNew = analoogyResult.isNew;
+        HEResult *analogyResult = [AIAnalogy analogyCansetFo:solutionModel.realCansetToIndexDic newCanset:newRCanset oldCanset:solutionFo noRepeatArea_ps:noRepeatArea_ps];
+        AIFoNodeBase *absCansetFo = analogyResult.data;
+        BOOL isNew = analogyResult.isNew;
         HEResult *updateConCansetResult = [pFo updateConCanset:absCansetFo.pointer targetIndex:pFo.count];//此处pFo和matchFo都是sceneTo
         [AITest test101:absCansetFo proto:newRCanset conCanset:solutionFo];
         NSLog(@"%@%@Canset演化> AbsRCanset:%@ from(F%ld:F%ld) toScene:%@",FltLog4CreateRCanset(4),FltLog4YonBanYun(4),Fo2FStr(absCansetFo),newRCanset.pId,solutionFo.pId,ShortDesc4Node(pFo));
@@ -310,13 +310,15 @@
             [AITest test18:absRCansetSceneToIndexDic newCanset:absCansetFo absFo:pFo];
             
             //h. 算出spDic (参考27213-5);
-            //2024.09.13: 只有新抽具象关联时,才继承具象的spDic;
+            //2024.09.13: 只有新抽具象关联时,才继承具象的itemOutSPDic (参考33062-TODO4.1);
             if (updateConCansetResult.isNew) {
                 //TODOTOMORROW20240914: 继续修outSPDic初始化的错误;
                 //1. [pFo initItemOutSPDicIfNotInited:pFo.pointer cansetFrom:absCansetFo.pointer];
                 //2. 查下下面的convertSPDicFromConCanset2AbsCanset()方法中,在做什么,有没有可复用的点;
+                //3. 明天继续把absHCanset时,也改下用这个方法;
+                //4. 查下别处,还有没连带着需要改的地方 (主要是调用itemOutSPDic的,还有给outCanset评分spScore的地方);
                 
-                [absCansetFo updateSPDic:[solutionModel convertSPDicFromConCanset2AbsCanset]];
+                [AINetUtils initItemOutSPDicForAbsCanset:pFo conCanset:solutionFo absCanset:absCansetFo];
             }
             [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
         }

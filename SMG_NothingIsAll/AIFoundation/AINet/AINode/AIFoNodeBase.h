@@ -98,20 +98,9 @@
 @property (strong, nonatomic) NSMutableDictionary *outSPDic;
 
 /**
- *  MARK:--------------------初始化整个outSPDic (参考32012-TODO3)--------------------
- *  @desc 把cansetFrom的outSPDic迁移继承给cansetTo (注意要防重);
- */
-+(void) initItemOutSPDicIfNotInited:(AIFoNodeBase*)sceneTo cansetTo:(AIFoNodeBase*)cansetTo sceneFrom:(AIFoNodeBase*)sceneFrom cansetFrom:(AIFoNodeBase*)cansetFrom;
-
-/**
  *  MARK:--------------------更新OutSPDic强度值--------------------
  */
--(void) updateOutSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type sceneFrom:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom debugMode:(BOOL)debugMode caller:(NSString*)caller;
-
-/**
- *  MARK:--------------------获取某条outSPDic--------------------
- */
--(NSDictionary*) getItemOutSPDic:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom;
+-(void) updateOutSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type canset:(AIFoNodeBase*)canset debugMode:(BOOL)debugMode caller:(NSString*)caller;
 
 //MARK:===============================================================
 //MARK:                     < effectDic组 >

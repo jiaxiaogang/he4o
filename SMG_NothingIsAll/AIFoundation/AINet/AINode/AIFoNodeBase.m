@@ -120,68 +120,27 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------初始化整个outSPDic (参考32012-TODO3)--------------------
- *  @desc 把cansetFrom的outSPDic迁移继承给cansetTo (注意要防重);
- */
-+(void) initItemOutSPDicIfNotInited:(AIFoNodeBase*)sceneTo cansetTo:(AIFoNodeBase*)cansetTo sceneFrom:(AIFoNodeBase*)sceneFrom cansetFrom:(AIFoNodeBase*)cansetFrom {
-    //1. 检查有没初始化过 (只初始一次,用于防重);
-    if ([sceneTo.outSPDic objectForKey:@(cansetTo.pId)]) return;
-    
-    //2. 取旧;
-    NSMutableDictionary *initOutSPDic = [AINetUtils getItemOutSPDicIfNullNew:cansetFrom.p scene:sceneFrom];
-    
-    //3. 移新;
-    
-    //TODOTOMORROW20240915: sceneFrom和cansetFrom的映射,需要转成sceneTo和cansetTo的映射再移过去itemOutSPDic;
-    
-    //2. 更新spDic;
-    for (NSNumber *newIndex in initOutSPDic.allKeys) {
-        AISPStrong *newStrong = [initOutSPDic objectForKey:newIndex];
-        [self updateOutSPStrong:newIndex.integerValue difStrong:newStrong.sStrong type:ATSub sceneFrom:sceneFrom cansetFrom:cansetFrom debugMode:false caller:@"初始化S值"];
-        [self updateOutSPStrong:newIndex.integerValue difStrong:newStrong.pStrong type:ATPlus sceneFrom:sceneFrom cansetFrom:cansetFrom debugMode:false caller:@"初始化P值"];
-    }
-}
-
-/**
  *  MARK:--------------------更新OutSPDic强度值--------------------
+ *  @callers 默认由scene来调用;
  */
--(void) updateOutSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type sceneFrom:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom debugMode:(BOOL)debugMode caller:(NSString*)caller{
+-(void) updateOutSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type canset:(AIFoNodeBase*)canset debugMode:(BOOL)debugMode caller:(NSString*)caller {
     //1. 取得canstFrom的spStrong;
-    AIOutSPStrong *spStrong = [self getOutSPStrongIfNullNew:sceneFrom cansetFrom:cansetFrom];
-    NSString *spFrom = STRFORMAT(@"%@",[spStrong.spDic objectForKey:@(spIndex)]);
+    NSMutableDictionary *itemOutSPDic = [self.outSPDic objectForKey:@(canset.pId)];
     
-    //2. 更新它的spDic值;
-    [self updateSPStrong:spIndex difStrong:difStrong type:type forSPDic:spStrong.spDic];
+    //2. 如果没有,则新建防空;
+    if (!ISOK(itemOutSPDic, NSMutableDictionary.class)) itemOutSPDic = [[NSMutableDictionary alloc] initWithDictionary:itemOutSPDic];
+    [self.outSPDic setObject:itemOutSPDic forKey:@(canset.pId)];
     
-    //3. log
+    //3. 更新它的spDic值;
+    NSString *spFrom = STRFORMAT(@"%@",[itemOutSPDic objectForKey:@(spIndex)]);
+    [self updateSPStrong:spIndex difStrong:difStrong type:type forSPDic:itemOutSPDic];
+    
+    //4. log
     if (Log4OutSPDic && debugMode) {
-        AIFoNodeBase *cansetFromFo = [SMGUtils searchNode:cansetFrom];
-        AISPStrong *spTo = [spStrong.spDic objectForKey:@(spIndex)];
+        AISPStrong *spTo = [itemOutSPDic objectForKey:@(spIndex)];
         NSString *flt1 = FltLog4DefaultIf(true, @"4");
-        NSLog(@"%@updateOutSP:%ld/%ld (%@) %@->%@ sceneTo:%ld sceneFrom:F%ld cansetFrom:%@ caller:%@",flt1,spIndex,cansetFromFo.count,ATType2Str(type),spFrom,spTo,self.pId,sceneFrom.pointerId,Pit2FStr(cansetFrom),caller);
+        NSLog(@"%@updateOutSP:%ld/%ld (%@) %@->%@ sceneTo:%ld cansetTo:%@ caller:%@",flt1,spIndex,canset.count,ATType2Str(type),spFrom,spTo,self.pId,Fo2FStr(canset),caller);
     }
-}
-
-/**
- *  MARK:--------------------获取某条outSPDic--------------------
- */
--(NSDictionary*) getItemOutSPDic:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom {
-    NSString *key = STRFORMAT(@"%ld_%ld",sceneFrom.pointerId,cansetFrom.pointerId);
-    AIOutSPStrong *spStrong = [self.outSPDic objectForKey:key];
-    return spStrong.spDic;
-}
-
--(AIOutSPStrong*) getOutSPStrongIfNullNew:(AIKVPointer*)sceneFrom cansetFrom:(AIKVPointer*)cansetFrom {
-    //1. 优先取旧;
-    NSString *key = STRFORMAT(@"%ld_%ld",sceneFrom.pointerId,cansetFrom.pointerId);
-    AIOutSPStrong *spStrong = [self.outSPDic objectForKey:key];
-    
-    //2. 无则新建;
-    if (!spStrong) {
-        spStrong = [[AIOutSPStrong alloc] init];
-        [self.outSPDic setObject:spStrong forKey:key];
-    }
-    return spStrong;
 }
 
 //MARK:===============================================================

@@ -164,7 +164,7 @@
         AIFoNodeBase *sceneTo = [SMGUtils searchNode:obj.sceneTo];
         CGFloat spScore = NUMTOOK(mapModel.v3).floatValue;
         NSInteger pStrong = NUMTOOK(mapModel.v2).integerValue;
-        NSDictionary *spDic = [sceneTo getItemOutSPDic:obj.sceneFrom cansetFrom:obj.cansetFrom];
+        NSDictionary *spDic = [obj getItemOutSPDic];
         AIKVPointer *targetAlg = obj.baseOrGroup.baseOrGroup.content_p;//base(HDemand).base(TargetAlgModel);
         
         //fltLog1: 如果当前是H任务,且是在找无皮果,且这个解含有有皮果 => 则这个解可能产生:有皮果动机;

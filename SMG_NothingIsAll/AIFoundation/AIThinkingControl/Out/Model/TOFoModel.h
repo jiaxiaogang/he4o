@@ -184,4 +184,9 @@
 -(void) checkAndUpdateOutSPStrong_Reason:(NSInteger)difStrong type:(AnalogyType)type debugMode:(BOOL)debugMode caller:(NSString*)caller;
 -(void) checkAndUpdateOutSPStrong_Percept:(NSInteger)difStrong type:(AnalogyType)type debugMode:(BOOL)debugMode caller:(NSString*)caller;
 
+/**
+ *  MARK:--------------------取outSPDic (转实前取cansetFrom的,转实后取cansetTo的) (参考33062-正据4)--------------------
+ */
+-(NSMutableDictionary*) getItemOutSPDic;
+
 @end

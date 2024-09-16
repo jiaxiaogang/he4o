@@ -465,9 +465,8 @@
 }
 //Out针对Canset稳定性;
 +(HEResult*) getStableScore_Out:(TOFoModel*)canset startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex {
-    AIFoNodeBase *sceneTo = [SMGUtils searchNode:canset.sceneTo];
     AIFoNodeBase *cansetFrom = [SMGUtils searchNode:canset.cansetFrom];//本来应该传cansetTo,不过cansetTo可能未转实,并且cansetFrom效果也一致;
-    NSDictionary *spDic = [sceneTo getItemOutSPDic:canset.sceneFrom cansetFrom:canset.cansetFrom];
+    NSDictionary *spDic = [canset getItemOutSPDic];
     return [TOUtils getStableScore_General:cansetFrom startSPIndex:startSPIndex endSPIndex:endSPIndex spDic:spDic];
 }
 +(HEResult*) getStableScore_General:(AIFoNodeBase*)fo startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex spDic:(NSDictionary*)spDic {

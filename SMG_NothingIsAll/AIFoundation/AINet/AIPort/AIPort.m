@@ -160,39 +160,3 @@
 }
 
 @end
-
-//MARK:===============================================================
-//MARK:                     < OUT有效强度 >
-//MARK:===============================================================
-@implementation AIOutSPStrong
-
--(NSMutableDictionary *)spDic{
-    if (!ISOK(_spDic, NSMutableDictionary.class)) _spDic = [[NSMutableDictionary alloc] initWithDictionary:_spDic];
-    return _spDic;
-}
-
-//根据spIndex下标取spStrong返回 (若空新建);
--(AISPStrong*) getSPStrongIfNullNew:(NSInteger)spIndex {
-    id key = @(spIndex);
-    AISPStrong *value = [self.spDic objectForKey:key];
-    if (!value) value = [[AISPStrong alloc] init];
-    [self.spDic setObject:value forKey:key];
-    return value;
-}
-
-/**
- *  MARK:--------------------NSCoding--------------------
- */
-- (instancetype)initWithCoder:(NSCoder *)coder {
-    self = [super init];
-    if (self) {
-        self.spDic = [coder decodeObjectForKey:@"spDic"];
-    }
-    return self;
-}
-
-- (void)encodeWithCoder:(NSCoder *)coder {
-    [coder encodeObject:self.spDic forKey:@"spDic"];
-}
-
-@end

@@ -17,7 +17,7 @@
  *  MARK:--------------------OutSP强度值反馈记录--------------------
  *  @说明 用于检查:避免重复&避免冲突 (仅放在内存中,不持久化,避免它重复计SP值,或者计了S又计P的冲突);
  */
-@property (strong, nonatomic) AIOutSPStrong *outSPRecord;
+@property (strong, nonatomic) NSMutableDictionary *outSPRecord;
 
 @end
 
@@ -590,8 +590,8 @@
 //MARK:                     < OutSP反馈部分 >
 //MARK:===============================================================
 
--(AIOutSPStrong *)outSPRecord{
-    if (!_outSPRecord) _outSPRecord = [[AIOutSPStrong alloc] init];
+-(NSMutableDictionary *)outSPRecord{
+    if (!_outSPRecord) _outSPRecord = [[NSMutableDictionary alloc] init];
     return _outSPRecord;
 }
 
@@ -617,7 +617,9 @@
     caller = STRFORMAT(@"%@ by:ROOT%ld(F%ld)",caller,rootIndex,Demand2Pit(root).pointerId);
     
     //1. 取得canstFrom的spStrong;
-    AISPStrong *value = [self.outSPRecord getSPStrongIfNullNew:spIndex];
+    AISPStrong *value = [self.outSPRecord objectForKey:@(spIndex)];
+    if (!value) value = [[AISPStrong alloc] init];
+    [self.outSPRecord setObject:value forKey:@(spIndex)];
     
     //2. 避免重复 (执行过的,不再执行);
     if (type == ATPlus && value.pStrong > 0) return;
@@ -627,23 +629,37 @@
     AIKVPointer *cansetFrom = self.cansetFrom;
     AIKVPointer *sceneFrom = self.sceneFrom;
     AIFoNodeBase *sceneTo = [SMGUtils searchNode:self.sceneTo];
+    AIFoNodeBase *cansetTo = [SMGUtils searchNode:self.cansetTo];
     if (type == ATPlus && value.sStrong > 0) {
-        [sceneTo updateOutSPStrong:spIndex difStrong:-value.sStrong type:ATSub sceneFrom:sceneFrom cansetFrom:cansetFrom debugMode:false caller:caller];
+        [sceneTo updateOutSPStrong:spIndex difStrong:-value.sStrong type:ATSub canset:cansetTo debugMode:false caller:caller];
         value.sStrong = 0;
     }
     if (type == ATSub && value.pStrong > 0) {
-        [sceneTo updateOutSPStrong:spIndex difStrong:-value.pStrong type:ATPlus sceneFrom:sceneFrom cansetFrom:cansetFrom debugMode:false caller:caller];
+        [sceneTo updateOutSPStrong:spIndex difStrong:-value.pStrong type:ATPlus canset:cansetTo debugMode:false caller:caller];
         value.pStrong = 0;
     }
     
     //4. 把此次SP更新下;
-    [sceneTo updateOutSPStrong:spIndex difStrong:difStrong type:type sceneFrom:sceneFrom cansetFrom:cansetFrom debugMode:debugMode caller:caller];
+    [sceneTo updateOutSPStrong:spIndex difStrong:difStrong type:type canset:cansetTo debugMode:debugMode caller:caller];
     
     //5. 把此次SP更新值记录到outSPRecord避免下次重复或冲突;
     if (type == ATSub) {
         value.sStrong = difStrong;
     } else {
         value.pStrong = difStrong;
+    }
+}
+
+/**
+ *  MARK:--------------------取outSPDic (转实前取cansetFrom的,转实后取cansetTo的) (参考33062-正据4)--------------------
+ */
+-(NSMutableDictionary*) getItemOutSPDic {
+    if (self.transferSiModel) {
+        AIFoNodeBase *sceneTo = [SMGUtils searchNode:self.sceneTo];
+        return [sceneTo.outSPDic objectForKey:@(self.cansetTo.pointerId)];
+    } else {
+        AIFoNodeBase *sceneFrom = [SMGUtils searchNode:self.sceneFrom];
+        return [sceneFrom.outSPDic objectForKey:@(self.cansetFrom.pointerId)];;
     }
 }
 

@@ -929,25 +929,48 @@
 }
 
 /**
- *  MARK:--------------------根据cansetTo从sceneTo取itemOutSPDic (若空新建)--------------------
- *  @param scene notnull
+ *  MARK:--------------------初始化itemOutSPDic (在转实时,默认以cansetFrom的itemOutSPDic初始化) (参考33062-TODO3)--------------------
+ *  @desc 用于canset转实后: 把cansetFrom的outSPDic迁移继承给cansetTo (注意要防重);
  */
-+(NSMutableDictionary*) getItemOutSPDicIfNullNew:(AIKVPointer*)canset scene:(AIFoNodeBase*)scene {
-    NSMutableDictionary *value = [scene.outSPDic objectForKey:@(canset.pointerId)];
-    if (!ISOK(value, NSMutableDictionary.class)) value = [[NSMutableDictionary alloc] initWithDictionary:value];
-    [scene.outSPDic setObject:value forKey:@(canset.pointerId)];
-    return value;
++(void) initItemOutSPDicForTransferSi:(TOFoModel*)canset {
+    //1. 检查有没初始化过 (只初始一次,用于防重);
+    AIFoNodeBase *sceneTo = [SMGUtils searchNode:canset.sceneTo];
+    if ([sceneTo.outSPDic objectForKey:@(canset.cansetTo.pointerId)]) return;
+    
+    //2. 取旧;
+    AIFoNodeBase *sceneFrom = [SMGUtils searchNode:canset.sceneFrom];
+    NSMutableDictionary *initOutSPDic = [sceneFrom.outSPDic objectForKey:@(canset.cansetFrom.pointerId)];
+    
+    //3. 移新;
+    [sceneTo.outSPDic setObject:initOutSPDic forKey:@(canset.cansetTo.pointerId)];
 }
 
 /**
- *  MARK:--------------------根据spIndex下标取spStrong返回 (若空新建)--------------------
- *  @param fromSPDic 支持inSPDic和outSPDic notnull
+ *  MARK:--------------------初始化itemOutSPDic (在canset类比抽象时) (参考33062-TODO4)--------------------
+ *  @desc 用于canset类比抽象后: 把conCanset的itemOutSPDic设为新构建的absCanset的初始itemOutSPDic (参考33062-TODO4);
  */
-+(AISPStrong*) getSPStrongIfNullNew:(NSInteger)spIndex fromSPDic:(NSMutableDictionary*)fromSPDic {
-    AISPStrong *value = [fromSPDic objectForKey:@(spIndex)];
-    if (!value) value = [[AISPStrong alloc] init];
-    [fromSPDic setObject:value forKey:@(spIndex)];
-    return value;
++(void) initItemOutSPDicForAbsCanset:(AIFoNodeBase*)scene conCanset:(AIFoNodeBase*)conCanset absCanset:(AIFoNodeBase*)absCanset {
+    //1. 检查有没初始化过 (只初始一次,用于防重);
+    if ([scene.outSPDic objectForKey:@(absCanset.pId)]) return;
+    
+    //2. 取conCanset的itemOutSPDic;
+    NSDictionary *fromItemOutSPDic = [scene.outSPDic objectForKey:@(conCanset.pId)];
+    if (!DICISOK(fromItemOutSPDic)) return;
+    
+    //3. 取conCanset和absCanset的映射 (因为有映射的,才继承它的sp值,没映射的不处理);
+    NSDictionary *conAbsCansetIndexDic = [conCanset getAbsIndexDic:absCanset.p];
+    if (!DICISOK(conAbsCansetIndexDic)) return;
+    
+    //4. 有映射的,逐帧继承sp值;
+    for (NSNumber *absIndex in conAbsCansetIndexDic.allKeys) {
+        NSNumber *conIndex = [conAbsCansetIndexDic objectForKey:absIndex];
+        AISPStrong *fromItemSPStrong = [fromItemOutSPDic objectForKey:conIndex];
+        if (!fromItemSPStrong) continue;
+        
+        //4. 把s和p都继承下;
+        [scene updateOutSPStrong:absIndex.integerValue difStrong:fromItemSPStrong.pStrong type:ATPlus canset:absCanset debugMode:false caller:@"AbsRCanset初始化itemOutSPDic"];
+        [scene updateOutSPStrong:absIndex.integerValue difStrong:fromItemSPStrong.sStrong type:ATSub canset:absCanset debugMode:false caller:@"AbsRCanset初始化itemOutSPDic"];
+    }
 }
 
 @end
