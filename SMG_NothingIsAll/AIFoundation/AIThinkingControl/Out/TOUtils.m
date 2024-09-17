@@ -747,14 +747,11 @@
  *  @desc frameActYes反馈失败时: 传染到整个工作记忆树 (所有此处新传染的,都尝试向整树传播) (参考31178-TODO1);
  */
 +(int) infectToAllRootsTree_Alg:(TOFoModel*)infectedCanset infectedAlg:(AIKVPointer*)infectedAlg {
-    
-    
-    //TODOTOMORROW20240916: 继续修outSPDic初始化的错误,查下,还有没连带着需要改的地方;
-    //1. 比如这里infectedCanset checkAndUpdateOutSPStrong_Reason(),传染的canset,不一定转实了;
-    
-    
     //1. SP计数之四(R负): 当前传染的canset计S+1 (参考33031b-BUG5-协作);
-    [infectedCanset checkAndUpdateOutSPStrong_Reason:1 type:ATSub debugMode:true caller:@""];
+    //2024.09.17: 只有转实的,才更新outSP值 (参考33062-TODO6);
+    if (infectedCanset.cansetStatus != CS_None) {
+        [infectedCanset checkAndUpdateOutSPStrong_Reason:1 type:ATSub debugMode:true caller:@""];
+    }
     
     //2. 当前传染的alg,传到整个roots;
     int infectNum = 0;
