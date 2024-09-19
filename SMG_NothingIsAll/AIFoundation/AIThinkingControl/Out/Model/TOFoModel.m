@@ -576,7 +576,7 @@
 }
 -(void) checkAndUpdateOutSPStrong:(NSInteger)difStrong spIndex:(NSInteger)spIndex type:(AnalogyType)type debugMode:(BOOL)debugMode caller:(NSString*)caller{
     //1. 数据检查: 未转实的不执行,它的cansetTo没构建呢 (33031b-协作 & 33062-TODO6);
-    if (self.cansetStatus != CS_None) return;
+    if (self.cansetStatus == CS_None) return;
     
     //0. log
     //DemandModel *baseDemand = (DemandModel*)self.baseOrGroup;
