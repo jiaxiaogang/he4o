@@ -940,6 +940,7 @@
     //2. 取旧;
     AIFoNodeBase *sceneFrom = [SMGUtils searchNode:canset.sceneFrom];
     NSMutableDictionary *initOutSPDic = [sceneFrom.outSPDic objectForKey:@(canset.cansetFrom.pointerId)];
+    if (!DICISOK(initOutSPDic)) return;
     
     //3. 移新;
     [sceneTo.outSPDic setObject:initOutSPDic forKey:@(canset.cansetTo.pointerId)];
