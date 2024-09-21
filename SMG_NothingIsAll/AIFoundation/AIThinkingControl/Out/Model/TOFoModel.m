@@ -576,7 +576,8 @@
 }
 -(void) checkAndUpdateOutSPStrong:(NSInteger)difStrong spIndex:(NSInteger)spIndex type:(AnalogyType)type debugMode:(BOOL)debugMode caller:(NSString*)caller{
     //1. 数据检查: 未转实的不执行,它的cansetTo没构建呢 (33031b-协作 & 33062-TODO6);
-    if (self.cansetStatus == CS_None) return;
+    //2024.09.21: 去掉best过状态要求 (参考33065-TODO3);
+    //if (self.cansetStatus == CS_None) return;
     
     //0. log
     //DemandModel *baseDemand = (DemandModel*)self.baseOrGroup;
@@ -597,18 +598,18 @@
     AIKVPointer *cansetFrom = self.cansetFrom;
     AIKVPointer *sceneFrom = self.sceneFrom;
     AIFoNodeBase *sceneTo = [SMGUtils searchNode:self.sceneTo];
-    AIFoNodeBase *cansetTo = [SMGUtils searchNode:self.cansetTo];
+    NSArray *cansetToContent_ps = Simples2Pits(self.transferXvModel.cansetToOrders);
     if (type == ATPlus && value.sStrong > 0) {
-        [sceneTo updateOutSPStrong:spIndex difStrong:-value.sStrong type:ATSub canset:cansetTo debugMode:false caller:caller];
+        [sceneTo updateOutSPStrong:spIndex difStrong:-value.sStrong type:ATSub canset:cansetToContent_ps debugMode:false caller:caller];
         value.sStrong = 0;
     }
     if (type == ATSub && value.pStrong > 0) {
-        [sceneTo updateOutSPStrong:spIndex difStrong:-value.pStrong type:ATPlus canset:cansetTo debugMode:false caller:caller];
+        [sceneTo updateOutSPStrong:spIndex difStrong:-value.pStrong type:ATPlus canset:cansetToContent_ps debugMode:false caller:caller];
         value.pStrong = 0;
     }
     
     //4. 把此次SP更新下;
-    [sceneTo updateOutSPStrong:spIndex difStrong:difStrong type:type canset:cansetTo debugMode:debugMode caller:caller];
+    [sceneTo updateOutSPStrong:spIndex difStrong:difStrong type:type canset:cansetToContent_ps debugMode:debugMode caller:caller];
     
     //5. 把此次SP更新值记录到outSPRecord避免下次重复或冲突;
     if (type == ATSub) {
@@ -620,15 +621,13 @@
 
 /**
  *  MARK:--------------------取outSPDic (转实前取cansetFrom的,转实后取cansetTo的) (参考33062-正据4&TODO5)--------------------
+ *  @version
+ *      2024.09.21: 改回转实前就初始化outSPDic (参考33065-TODO2);
  */
 -(NSMutableDictionary*) getItemOutSPDic {
-    if (self.transferSiModel) {
-        AIFoNodeBase *sceneTo = [SMGUtils searchNode:self.sceneTo];
-        return [sceneTo.outSPDic objectForKey:@(self.cansetTo.pointerId)];
-    } else {
-        AIFoNodeBase *sceneFrom = [SMGUtils searchNode:self.sceneFrom];
-        return [sceneFrom.outSPDic objectForKey:@(self.cansetFrom.pointerId)];;
-    }
+    AIFoNodeBase *sceneTo = [SMGUtils searchNode:self.sceneTo];
+    NSString *key = [AINetUtils getOutSPKey:Simples2Pits(self.transferXvModel.cansetToOrders)];
+    return [sceneTo.outSPDic objectForKey:key];
 }
 
 /**

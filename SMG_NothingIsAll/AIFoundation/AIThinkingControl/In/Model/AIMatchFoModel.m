@@ -232,7 +232,7 @@
         [newRCanset updateIndexDic:matchFo indexDic:[self.indexDic2 copy]];
         
         //2024.09.04: eff已经弃用了,这里改为把P默认计1 (参考33031b-BUG5-TODO1);
-        [matchFo updateOutSPStrong:newRCanset.count difStrong:1 type:ATPlus canset:newRCanset debugMode:false caller:@"NewRCanset初始化P=1"];
+        [matchFo updateOutSPStrong:newRCanset.count difStrong:1 type:ATPlus canset:newRCanset.content_ps debugMode:false caller:@"NewRCanset初始化P=1"];
         
         if (self.indexDic2 == 0) {
             NSLog(@"NewRCanset Dic Is Nil");

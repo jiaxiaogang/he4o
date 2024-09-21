@@ -92,7 +92,7 @@
 
 /**
  *  MARK:--------------------OutSP强度值--------------------
- *  @desc <key:cansetToPId, value:<vk:spIndex下标, vv:spStrong>> (参考33062-TODO2);
+ *  @desc <key:cansetTo的元素字符串的md5值, value:<vk:spIndex下标, vv:spStrong>> (参考33062-TODO2 & 33065-TODO1);
  *  @desc outSPDic存在每个sceneTo下,k为cansetTo,v为它在这个sceneTo下对应的itemSPDic;
  */
 @property (strong, nonatomic) NSMutableDictionary *outSPDic;
@@ -100,7 +100,7 @@
 /**
  *  MARK:--------------------更新OutSPDic强度值--------------------
  */
--(void) updateOutSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type canset:(AIFoNodeBase*)canset debugMode:(BOOL)debugMode caller:(NSString*)caller;
+-(void) updateOutSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type canset:(NSArray*)cansetContent_ps debugMode:(BOOL)debugMode caller:(NSString*)caller;
 
 //MARK:===============================================================
 //MARK:                     < effectDic组 >

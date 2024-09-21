@@ -151,6 +151,9 @@
 //nodes转pointers
 +(NSMutableArray*) convertPointersFromNodes:(NSArray*)nodes;
 
+//simples转pits;
++(NSMutableArray*) convertPointersFromSimples:(NSArray*)simples;
+
 //将pointers转字符串;
 +(NSString*) convertPointers2String:(NSArray*)pointers;
 

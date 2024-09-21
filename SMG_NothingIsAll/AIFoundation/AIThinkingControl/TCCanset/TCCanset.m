@@ -89,6 +89,9 @@
     //12. 伪迁移;
     [TCTransfer transferXv:result];
     
+    //13. 2024.09.21: 改回生成canset时,初始化outSPDic (参考33065-TODO2);
+    [AINetUtils initItemOutSPDicForTransfered:result];
+    
     //13. 初始化result的cansetTo与real的映射;
     [result initRealCansetToDic];
     
@@ -123,6 +126,9 @@
     
     //3. 伪迁移;
     [TCTransfer transferXv:result];
+    
+    //4. 2024.09.21: 改回生成canset时,初始化outSPDic (参考33065-TODO2);
+    [AINetUtils initItemOutSPDicForTransfered:result];
     
     //4. 初始化result的cansetTo与real的映射;
     [result initRealCansetToDic];

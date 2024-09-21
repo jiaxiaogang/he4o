@@ -299,13 +299,18 @@
  *  MARK:--------------------初始化itemOutSPDic (在转实时,默认以cansetFrom的itemOutSPDic初始化) (参考33062-TODO3)--------------------
  *  @desc 用于canset转实后: 把cansetFrom的outSPDic迁移继承给cansetTo (注意要防重);
  */
-+(void) initItemOutSPDicForTransferSi:(TOFoModel*)canset;
++(void) initItemOutSPDicForTransfered:(TOFoModel*)canset;
 
 /**
  *  MARK:--------------------初始化itemOutSPDic (在canset类比抽象时) (参考33062-TODO4)--------------------
  *  @desc 用于canset类比抽象后: 把conCanset的itemOutSPDic设为新构建的absCanset的初始itemOutSPDic (参考33062-TODO4);
  */
 +(void) initItemOutSPDicForAbsCanset:(AIFoNodeBase*)scene conCanset:(AIFoNodeBase*)conCanset absCanset:(AIFoNodeBase*)absCanset;
+
+/**
+ *  MARK:--------------------取outSPDic的key (参考33065-TODO1)--------------------
+ */
++(NSString*) getOutSPKey:(NSArray*)content_ps;
 
 @end
 

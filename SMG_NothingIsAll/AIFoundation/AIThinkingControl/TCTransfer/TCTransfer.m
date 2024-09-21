@@ -197,7 +197,9 @@
             
             //6. SP值也迁移 (参考3101b-todo1 & todo2);
             //2024.09.15: 转实时,outSPDic也跟着迁移继承过去 (参考33062-TODO3);
-            [AINetUtils initItemOutSPDicForTransferSi:cansetModel];
+            //2024.09.21: 改回生成cansetModel时就初始化 (参考33065-TODO2);
+            //[AINetUtils initItemOutSPDicForTransfered:cansetModel];
+            
             [AITest test32:cansetFrom newCanset:cansetTo];
             
             //7. 并进行迁移关联 (以实现防重,避免重新累推spDic);

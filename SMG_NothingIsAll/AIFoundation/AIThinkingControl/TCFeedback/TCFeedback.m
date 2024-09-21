@@ -365,9 +365,9 @@
                 waitModel.status = TOModelStatus_OuterBack;
                 
                 //13. SP计数之二A(P负):末帧反馈负价值的,计SP- (参考32012-TODO7);
-                if (waitModel.cansetStatus != CS_None) {//2024.09.08: 非bested/besting状态的,没在推进中,不接受反馈;
-                    [waitModel checkAndUpdateOutSPStrong_Percept:1 type:ATSub debugMode:true caller:@"末帧负mv反馈"];
-                }
+                //2024.09.08: 非bested/besting状态的,没在推进中,不接受反馈; if (waitModel.cansetStatus != CS_None) {}
+                //2024.09.21: 去掉best过状态要求 (参考33065-TODO3);
+                [waitModel checkAndUpdateOutSPStrong_Percept:1 type:ATSub debugMode:true caller:@"末帧负mv反馈"];
                 
                 //14. 末帧且反馈到负mv,则被传染 (参考31179-TODO1);
                 waitModel.isInfected = true;
@@ -389,8 +389,9 @@
                 
                 //23. SP计数之二B(P正):任意帧反馈正价值的,计SP+ (参考33031b-TODO5);
                 //2024.09.10: 必须有贡献,才计提前mv反馈 (参考33031c-方案3B);
+                //2024.09.21: 去掉best过状态要求 (参考33065-TODO3);
                 BOOL tiaoJian2 = waitModel.cansetCutIndex > waitModel.initCansetCutIndex;
-                if (waitModel.cansetStatus != CS_None && tiaoJian2) {
+                if (tiaoJian2) {
                     [waitModel checkAndUpdateOutSPStrong_Percept:1 type:ATPlus debugMode:true caller:@"提前正mv反馈"];
                 }
             }

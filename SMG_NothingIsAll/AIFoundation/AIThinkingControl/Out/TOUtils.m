@@ -749,9 +749,8 @@
 +(int) infectToAllRootsTree_Alg:(TOFoModel*)infectedCanset infectedAlg:(AIKVPointer*)infectedAlg {
     //1. SP计数之四(R负): 当前传染的canset计S+1 (参考33031b-BUG5-协作);
     //2024.09.17: 只有转实的,才更新outSP值 (参考33062-TODO6);
-    if (infectedCanset.cansetStatus != CS_None) {
-        [infectedCanset checkAndUpdateOutSPStrong_Reason:1 type:ATSub debugMode:true caller:@""];
-    }
+    //2024.09.21: 去掉best过状态要求 (参考33065-TODO3);
+    [infectedCanset checkAndUpdateOutSPStrong_Reason:1 type:ATSub debugMode:true caller:@""];
     
     //2. 当前传染的alg,传到整个roots;
     int infectNum = 0;

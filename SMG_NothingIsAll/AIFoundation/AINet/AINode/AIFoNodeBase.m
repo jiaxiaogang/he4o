@@ -123,13 +123,14 @@
  *  MARK:--------------------更新OutSPDic强度值--------------------
  *  @callers 默认由scene来调用;
  */
--(void) updateOutSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type canset:(AIFoNodeBase*)canset debugMode:(BOOL)debugMode caller:(NSString*)caller {
+-(void) updateOutSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type canset:(NSArray*)cansetContent_ps debugMode:(BOOL)debugMode caller:(NSString*)caller {
     //1. 取得canstFrom的spStrong;
-    NSMutableDictionary *itemOutSPDic = [self.outSPDic objectForKey:@(canset.pId)];
+    NSString *key = [AINetUtils getOutSPKey:cansetContent_ps];
+    NSMutableDictionary *itemOutSPDic = [self.outSPDic objectForKey:key];
     
     //2. 如果没有,则新建防空;
     if (!ISOK(itemOutSPDic, NSMutableDictionary.class)) itemOutSPDic = [[NSMutableDictionary alloc] initWithDictionary:itemOutSPDic];
-    [self.outSPDic setObject:itemOutSPDic forKey:@(canset.pId)];
+    [self.outSPDic setObject:itemOutSPDic forKey:key];
     
     //3. 更新它的spDic值;
     NSString *spFrom = STRFORMAT(@"%@",[itemOutSPDic objectForKey:@(spIndex)]);
@@ -139,7 +140,7 @@
     if (Log4OutSPDic && debugMode) {
         AISPStrong *spTo = [itemOutSPDic objectForKey:@(spIndex)];
         NSString *flt1 = FltLog4DefaultIf(true, @"4");
-        NSLog(@"%@updateOutSP:%ld/%ld (%@) %@->%@ sceneTo:%ld cansetTo:%@ caller:%@",flt1,spIndex,canset.count,ATType2Str(type),spFrom,spTo,self.pId,Fo2FStr(canset),caller);
+        NSLog(@"%@updateOutSP:%ld/%ld (%@) %@->%@ sceneTo:%ld cansetTo:%@ caller:%@",flt1,spIndex,cansetContent_ps.count,ATType2Str(type),spFrom,spTo,self.pId,Pits2FStr(cansetContent_ps),caller);
     }
 }
 

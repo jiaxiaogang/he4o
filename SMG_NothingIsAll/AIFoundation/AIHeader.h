@@ -243,6 +243,7 @@
 //xxx转指针
 #define Ports2Pits(ports) [SMGUtils convertPointersFromPorts:ports]
 #define Nodes2Pits(nodes) [SMGUtils convertPointersFromNodes:nodes]
+#define Simples2Pits(simples) [SMGUtils convertPointersFromSimples:simples]
 #define TOModels2Pits(toModels) [TOUtils convertPointersFromTOModels:toModels]
 
 //Type转字符串

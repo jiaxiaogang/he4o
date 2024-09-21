@@ -527,6 +527,13 @@
     return result;
 }
 
+//simples转pits;
++(NSMutableArray*) convertPointersFromSimples:(NSArray*)simples{
+    return [SMGUtils convertArr:simples convertBlock:^id(AIShortMatchModel_Simple *obj) {
+        return obj.alg_p;
+    }];
+}
+
 +(NSString*) convertPointers2String:(NSArray*)pointers{
     NSMutableString *mStr = [[NSMutableString alloc] init];
     for (AIPointer *p in ARRTOOK(pointers)) {
