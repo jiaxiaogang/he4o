@@ -67,8 +67,13 @@
     [theTC updateOperCount:kFILENAME];
     Debug();
     NSDictionary *fos4Demand = model.fos4Demand;
+    ReasonDemandModel *root = [TOUtils getRootDemandModelWithSubOutModel:foModel];
     OFTitleLog(@"subDemand",@"\n子任务数:%ld baseFo:%@",fos4Demand.count,Pit2FStr(foModel.content_p));
     for (NSString *atKey in fos4Demand.allKeys) {
+        //2. 不创建自己同标识的派生任务 (参考33069-步骤1);
+        if ([atKey isEqualToString:root.algsType]) continue;
+        
+        //3. 别的非同标识的派生root任务,可以生成root子任务 (参考33069-步骤2);
         NSArray *pFosValue = [fos4Demand objectForKey:atKey];
         [ReasonDemandModel newWithAlgsType:atKey pFos:pFosValue shortModel:model baseFo:foModel protoFo:model.protoFo];
         for (AIMatchFoModel *pFo in pFosValue) {
