@@ -35,12 +35,8 @@
     AIFoNodeBase *cansetFo = [SMGUtils searchNode:checkCanset.cansetFo];
     AIFoNodeBase *sceneFo = [SMGUtils searchNode:checkCanset.sceneFo];
     
-    //4. 算出如果canset无效,会带来的风险;
-    CGFloat nEffScore = 1 - [TOUtils getEffectScore:sceneFo effectIndex:checkCanset.sceneTargetIndex solutionFo:checkCanset.cansetFo];
-    if (debugMode) OFTitleLog(@"TCRefrection反思", @"\n%@ CUT:%ld 无效率:%.2f",ShortDesc4Pit(checkCanset.cansetFo),(long)checkCanset.cansetCutIndex,nEffScore);
-    
-    //5. 算出因canset无效,带来的风险分 = Eff为N的概率 x scene的mv评分;
-    CGFloat canestFenXianScore = [AIScore score4MV:sceneFo.cmvNode_p ratio:nEffScore];
+    //2. 通过反思识别,计算出风险分 (参考33066-风险分);
+    CGFloat fenXianScore = 0;
     
     //7. 算出后段的"懒"评分 (最后一帧静默等待不需要行为化,所以小于cansetTargetIndex即可);
     CGFloat lazyScore = 0;
@@ -48,7 +44,7 @@
         //8. 遍历后半段中的"isOut=true"的行为,各指定"懒"评分;
         AIKVPointer *alg_p = ARR_INDEX(cansetFo.content_ps, i);
         if (alg_p && alg_p.isOut) {
-            lazyScore -= 0.5f;
+            lazyScore += 0.5f;
         }
     }
     
@@ -58,13 +54,20 @@
         return ISOK(item, ReasonDemandModel.class);
     }];
     ReasonDemandModel *baseRDemand = ARR_INDEX_REVERSE(rootDemands, 0);
-    CGFloat demandJianLiScore = -[AIScore score4Demand:baseRDemand];
+    CGFloat demandScore = -[AIScore score4Demand:baseRDemand];
     
-    //11. S评分PK: pk通过 = 任务评分 - 方案评分 - 懒评分 > 0;
+    //11. 算出outSPScore分 (参考33066-奖励分);
+    HEResult *cansetSPResult = [TOUtils getStableScore_Out:checkCanset startSPIndex:checkCanset.cansetActIndex endSPIndex:checkCanset.cansetTargetIndex];
+    CGFloat cansetSPScore = NUMTOOK([cansetSPResult get:@"spScore"]).floatValue;
+    if (debugMode) OFTitleLog(@"TCRefrection反思", @"\n%@ CUT:%ld cansetSPScore:%.2f",ShortDesc4Pit(checkCanset.cansetFo),(long)checkCanset.cansetCutIndex,cansetSPScore);
+    
+    //12. 算出奖励分 = mv分 x sceneSPScore x cansetSPScore (参考33066-奖励分);
+    CGFloat jianLiScore = demandScore * cansetSPScore;
+    
+    //11. S评分PK: pk通过 = 奖励分 > 风险分 + 懒分 (参考33066-新公式);
     //12. 三个评分都是负的,所以公式为以下 (result = 收益(负任务分) + mv的负分 + lazy的负分 > 0);
-    CGFloat sumScore = demandJianLiScore + canestFenXianScore + lazyScore;
-    BOOL result = sumScore > 0;
-    if (debugMode) NSLog(@"反思评价结果:%@通过 (解决任务奖励分%.1f Canset风险:%.2f 懒分:%.1f = %.1f)",result?@"已":@"未",demandJianLiScore,canestFenXianScore,lazyScore,sumScore);
+    BOOL result = jianLiScore > fenXianScore + lazyScore;;
+    if (debugMode) NSLog(@"反思评价结果:%@通过 = 奖励分%.1f > 风险分:%.2f + 懒分:%.1f",result?@"已":@"未",jianLiScore,fenXianScore,lazyScore);
     [AITest test21:result];
     DebugE();
     return result;
