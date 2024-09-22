@@ -195,6 +195,13 @@
 }
 
 /**
+ *  MARK:--------------------新增一条派生root子任务--------------------
+ */
+-(void) updateSubRRoot:(ReasonDemandModel*)subRRoot {
+    [self.loopCache addObject:subRRoot];
+}
+
+/**
  *  MARK:--------------------重排序cmvCache--------------------
  *  1. 懒排序,什么时候assLoop,什么时候排序;
  *  @version

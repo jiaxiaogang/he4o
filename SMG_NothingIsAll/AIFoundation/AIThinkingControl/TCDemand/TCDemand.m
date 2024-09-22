@@ -67,7 +67,7 @@
     [theTC updateOperCount:kFILENAME];
     Debug();
     NSDictionary *fos4Demand = model.fos4Demand;
-    ReasonDemandModel *root = [TOUtils getRootDemandModelWithSubOutModel:foModel];
+    DemandModel *root = [TOUtils getRootDemandModelWithSubOutModel:foModel];
     OFTitleLog(@"subDemand",@"\n子任务数:%ld baseFo:%@",fos4Demand.count,Pit2FStr(foModel.content_p));
     for (NSString *atKey in fos4Demand.allKeys) {
         //2. 不创建自己同标识的派生任务 (参考33069-步骤1);
@@ -75,11 +75,20 @@
         
         //3. 别的非同标识的派生root任务,可以生成root子任务 (参考33069-步骤2);
         NSArray *pFosValue = [fos4Demand objectForKey:atKey];
-        [ReasonDemandModel newWithAlgsType:atKey pFos:pFosValue shortModel:model baseFo:foModel protoFo:model.protoFo];
+        ReasonDemandModel *newSubRRoot = [ReasonDemandModel newWithAlgsType:atKey pFos:pFosValue shortModel:model baseFo:foModel protoFo:model.protoFo];
         for (AIMatchFoModel *pFo in pFosValue) {
             AIFoNodeBase *pFoNode = [SMGUtils searchNode:pFo.matchFo];
             NSLog(@"\t pFo:%@->{%@%.2f}",Pit2FStr(pFo.matchFo),ClassName2Str(pFoNode.cmvNode_p.algsType),[AIScore score4MV_v2FromCache:pFo]);
         }
+        
+        //4. 把生成的派生root任务,加到root池序列中 (参考33069-步骤2);
+        [theTC.outModelManager updateSubRRoot:newSubRRoot];
+        
+        //TODOTOMORROW20240923: 明天参考下代码,看下面哪个做法更合适;
+        //方案1. 这里看下派生任务还是存在subDemands中,只是在TCPlan时,把它拿出来和roots同台竞争下;
+        //  > 因为从直观来看,还是存到subRDemands下面,它更直观简单,内存也不容易野指针,各种重新反思更新时,也更方便直接;
+        //方案2. 当然二者都存时,可能更易用,更直观 (可以判断派生任务的有效性,比如在baseFoModel.subRDemands中包含时,说明还有效,如果不包含了,则无效);
+        //  > 或者在重新反思时,同时把原来派生root任务全从loopCache中移除掉;
     }
     dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
         [theTV updateFrame];
