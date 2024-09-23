@@ -31,11 +31,6 @@
 -(NSArray*) updateCMVCache_RMV:(AIShortMatchModel*)inModel protoFo:(AIFoNodeBase*)protoFo;
 
 /**
- *  MARK:--------------------新增一条派生root子任务--------------------
- */
--(void) updateSubRRoot:(ReasonDemandModel*)subRRoot;
-
-/**
  *  MARK:--------------------获取任务 (决策部分: 可继续决策的部分)--------------------
  */
 -(NSArray*) getCanDecisionDemandV3;

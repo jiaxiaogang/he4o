@@ -110,6 +110,9 @@
         return true;
     }
     
+    //TODOTOMORROW20240923: 这里支持下子R任务,在子R任务太迫切时,这里必须优先解决子R任务;
+    
+    
     //6. 三种情况,分别走三块不同逻辑;
     AIFoNodeBase *bestCansetFo = [SMGUtils searchNode:bestCanset.cansetFrom];
     BOOL actYes4Mv = bestCanset.cansetActIndex >= bestCansetFo.count;

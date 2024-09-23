@@ -12,7 +12,7 @@
 
 @property (strong, nonatomic) NSMutableArray *actionFoModels;
 @property (strong, nonatomic) NSMutableArray *subModels;    //旧版本用于存subValueModel;
-@property (strong, nonatomic) NSMutableArray *subDemands;   //新版用于放hDemand (self是alg时,subDemands中放着一条subHDemand);
+@property (strong, nonatomic) NSMutableArray *subDemands;   //新版用于放hDemand (self是alg时,subDemands中放着一条子H任务subHDemand);
 
 @end
 
