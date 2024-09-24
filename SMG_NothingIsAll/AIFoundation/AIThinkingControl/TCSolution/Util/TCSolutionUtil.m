@@ -249,7 +249,7 @@
     
     //13. 取通过S反思的最佳S;
     for (TOFoModel *item in sortModels) {
-        BOOL score = [TCRefrection refrection:item demand:demand debugMode:debugMode];
+        BOOL score = [TCRefrection firstRefrectionForSelf:item demand:demand debugMode:debugMode];
         if (!score) {
             //13. 不通过时,将状态及时改为ScoreNo (参考31083-TODO5);
             item.status = TOModelStatus_ScoreNo;

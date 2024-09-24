@@ -16,7 +16,7 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------反思--------------------
+ *  MARK:--------------------初筛反思 (用于筛选它自身值得执行) (参考33068)--------------------
  *  @desc 反思评分 (本方法中,根据checkCanset自身的spDic,前段相似度,懒值等,共同算出综合评分);
  *  _param protoCansets : 所在的源候选集 (原始proto候选集);
  *  @param demand   : 所在的源demand;
@@ -28,15 +28,12 @@
  *      2023.05.26: 计算canset稳定性改为有效性(sp改为eff得分),因为canset复现率低,几乎全是0分 (参考2909a-todo2);
  *      2023.05.26: BUG_修复计算cansetFenXianScore时,取cansetFo.cmvNode_p导致怎么都算出来是0分问题;
  */
-+(BOOL) refrection:(TOFoModel*)checkCanset demand:(DemandModel*)demand debugMode:(BOOL)debugMode {
++(BOOL) firstRefrectionForSelf:(TOFoModel*)checkCanset demand:(DemandModel*)demand debugMode:(BOOL)debugMode {
     //1. 数据准备;
     [theTC updateOperCount:kFILENAME];
     Debug();
     AIFoNodeBase *cansetFo = [SMGUtils searchNode:checkCanset.cansetFo];
     AIFoNodeBase *sceneFo = [SMGUtils searchNode:checkCanset.sceneFo];
-    
-    //2. 通过反思识别,计算出风险分 (参考33066-风险分);
-    CGFloat fenXianScore = 0;
     
     //7. 算出后段的"懒"评分 (最后一帧静默等待不需要行为化,所以小于cansetTargetIndex即可);
     CGFloat lazyScore = 0;
@@ -64,24 +61,24 @@
     //12. 算出奖励分 = mv分 x sceneSPScore x cansetSPScore (参考33066-奖励分);
     CGFloat jianLiScore = demandScore * cansetSPScore;
     
-    //11. S评分PK: pk通过 = 奖励分 > 风险分 + 懒分 (参考33066-新公式);
+    //11. S评分PK: pk通过 = 奖励分 > 懒分 (参考33068-新公式改);
     //12. 三个评分都是负的,所以公式为以下 (result = 收益(负任务分) + mv的负分 + lazy的负分 > 0);
-    BOOL result = jianLiScore > fenXianScore + lazyScore;;
-    if (debugMode) NSLog(@"反思评价结果:%@通过 = 奖励分%.1f > 风险分:%.2f + 懒分:%.1f",result?@"已":@"未",jianLiScore,fenXianScore,lazyScore);
+    BOOL result = jianLiScore > lazyScore;;
+    if (debugMode) NSLog(@"反思评价结果:%@通过 = 奖励分%.1f > 懒分:%.1f",result?@"已":@"未",jianLiScore,lazyScore);
     [AITest test21:result];
     DebugE();
     return result;
 }
 
 /**
- *  MARK:--------------------行为化反思--------------------
+ *  MARK:--------------------二筛反思 (用于判断R子任务是否更严重) (参考n33p07)--------------------
  *  @desc 对比当前foModel能解决的任务分 与 子任务带来的最严重负分 => 得出反思结果 (参考30054-todo6);
  *  @version
  *      2023.07.14: 子任务评分降权至60%,以增强连续行为化意愿 (参考3005a-方案1);
  *      2024.06.29: 子任务评分由最严重 改为 平均分 (参考32015-方案2);
  *      2024.07.05: 任务分,改为采用含进度影响的任务总分 (参考32042-方案2);
  */
-+(BOOL) actionRefrection:(TOFoModel*)baseFoModel {
++(BOOL) secondRefrectionForSubR:(TOFoModel*)baseFoModel {
     //1. 根据foModel向上找出rDemand的评分;
     [theTC updateOperCount:kFILENAME];
     Debug();

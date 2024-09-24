@@ -11,7 +11,7 @@
 @class TOFoModel,DemandModel;
 @interface TCRefrection : NSObject
 
-+(BOOL) refrection:(TOFoModel*)checkCanset demand:(DemandModel*)demand debugMode:(BOOL)debugMode;
-+(BOOL) actionRefrection:(TOFoModel*)baseFoModel;
++(BOOL) firstRefrectionForSelf:(TOFoModel*)checkCanset demand:(DemandModel*)demand debugMode:(BOOL)debugMode;
++(BOOL) secondRefrectionForSubR:(TOFoModel*)baseFoModel;
 
 @end

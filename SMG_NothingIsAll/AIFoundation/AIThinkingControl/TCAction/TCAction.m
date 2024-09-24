@@ -50,7 +50,7 @@
     
     //3. 进行反思识别,如果不通过时,回到TCScore可能会尝试先解决子任务,通过时继续行为化 (参考30054-todo7);
     [TCRegroup actionRegroup:foModel];
-    foModel.refrectionNo = ![TCRefrection actionRefrection:foModel];
+    foModel.refrectionNo = ![TCRefrection secondRefrectionForSubR:foModel];
     if (foModel.refrectionNo) {
         [TCPlan planFromIfTCNeed];
         foModel.status = TOModelStatus_ScoreNo;//反思不通过时直接改为ScoreNo (参考31083-TODO5);
