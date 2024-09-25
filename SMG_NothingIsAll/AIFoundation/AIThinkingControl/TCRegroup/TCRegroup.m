@@ -73,7 +73,7 @@
  *      2023.07.09: 修复order的时间错乱的问题 (将前后部分统一为时间戳,以使regroupFo生成deltaTimes正确);
  *      2023.11.16: 修复order的inputTime时间前大后小的BUG (每次循环后更新lastInputTime即可);
  *      2023.11.16: 简化代码: 直接改成isTimestamp=false方式来收集后半部分;
- *      2024.08.30: 上回迭代TCPlanV2时子R任务已经废弃了(现在TCPlanV2没为子R任务做流程处理),但这里忘关掉了,现在关掉,等写派生Root任务时,再来打开改这里建子任务部分代码 (参考32071-问题2-TODO);
+ *      2024.08.30: 上回迭代TCPlanV2时R子任务已经废弃了(现在TCPlanV2没为R子任务做流程处理),但这里忘关掉了,现在关掉,等写派生Root任务时,再来打开改这里建子任务部分代码 (参考32071-问题2-TODO);
  */
 +(void) actionRegroup:(TOFoModel*)actionFoModel {
     //1. 数据准备;

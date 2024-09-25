@@ -72,6 +72,10 @@
         return obj.algsType;
     }];
     OFTitleLog(@"subDemand",@"\n子任务数:%ld baseFo:%@",fos4Demand.count,Pit2FStr(foModel.content_p));
+    
+    //2. 每一帧重新反思时,都把旧的R子任务移除掉 (参考33075-TODO2);
+    [foModel.subDemands removeAllObjects];
+    
     for (NSString *atKey in fos4Demand.allKeys) {
         //2. 不创建自己同标识的R子任务 (参考33071-步骤1);
         if ([baseRAlgsTypes containsObject:atKey]) continue;

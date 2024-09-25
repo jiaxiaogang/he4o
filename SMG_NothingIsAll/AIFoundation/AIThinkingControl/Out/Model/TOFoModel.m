@@ -11,7 +11,7 @@
 @interface TOFoModel()
 
 @property (strong, nonatomic) NSMutableArray *subModels;
-@property (strong, nonatomic) NSMutableArray *subDemands; //(self是fo时,subDemands中放着子R任务subRDemands)
+@property (strong, nonatomic) NSMutableArray *subDemands; //(self是fo时,subDemands中放着R子任务subRDemands)
 
 /**
  *  MARK:--------------------OutSP强度值反馈记录--------------------

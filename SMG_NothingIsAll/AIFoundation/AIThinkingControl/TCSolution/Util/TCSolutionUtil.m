@@ -304,7 +304,7 @@
         //a. 根R任务时 (参考26232-TODO5);
         pFoAleardayCount = pFo.cutIndex + 1;
     }else{
-        //b. 子R任务时 (参考26232-TODO6);
+        //b. R子任务时 (参考26232-TODO6);
         pFoAleardayCount = [SMGUtils filterArr:pFo.indexDic2.allValues checkValid:^BOOL(NSNumber *item) {
             int maskIndex = item.intValue;
             return maskIndex <= demandBaseFo.cansetCutIndex;
