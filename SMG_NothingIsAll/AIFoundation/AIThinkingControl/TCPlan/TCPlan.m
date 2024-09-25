@@ -110,7 +110,21 @@
         return true;
     }
     
-    //TODOTOMORROW20240923: 这里支持下R子任务,在R子任务太迫切时,这里必须优先解决R子任务;
+    //6. 支持下R子任务,有R子任务时,优先推进解决R子任务 (参考33075-TODO1);
+    NSArray *sortSubRDemands = [SMGUtils sortBig2Small:bestCanset.subDemands compareBlock:^double(ReasonDemandModel *obj) {
+        return [AIScore progressScore4Demand_Out:obj];
+    }];
+    for (ReasonDemandModel *subRDemand in sortSubRDemands) {
+        if (subRDemand.status == TOModelStatus_Finish) continue;
+        
+        //7. 把第一个,执行:plan4Cansets(subRDemand);
+        [self plan4Cansets:subRDemand complate:complate prefixNum:prefixNum + 2];
+    }
+    
+    //TODOTOMORROW20240923: 这里
+    //3. R子任务的canset的当前帧,如果与父任务的场景有映射,则啥也不干静等反馈 (加subAlgModel,但不加触发器,但支持反馈);
+    
+    
     
     
     //6. 三种情况,分别走三块不同逻辑;
