@@ -121,17 +121,11 @@
         [self plan4Cansets:subRDemand complate:complate prefixNum:prefixNum + 2];
     }
     
-    //TODOTOMORROW20240923: 这里
-    //1. R子任务的canset的当前帧,如果与父任务的场景有映射,则啥也不干静等反馈 (加subAlgModel,但不加触发器,但支持反馈);
-    //      > 判断下: 当前帧,与R子任务的场景,然后场景有映射 (参考下以前弄巧成拙的代码,挪到此处来执行的好处是避免一轮轮TO去action里去试,不通过的在这里就pass掉了);
-    
-    
-    
-    
     //6. 三种情况,分别走三块不同逻辑;
     AIFoNodeBase *bestCansetFo = [SMGUtils searchNode:bestCanset.cansetFrom];
     BOOL actYes4Mv = bestCanset.cansetActIndex >= bestCansetFo.count;
     TOAlgModel *frameAlg = bestCanset.getCurFrame;
+    BOOL havIndexDic = [bestCanset.transferXvModel.sceneToCansetToIndexDic.allValues containsObject:@(bestCanset.cansetActIndex)];//当前帧在canset与scene有映射;
     if (actYes4Mv) {
         //TODOTOMORROW20240830: 明天继续测下这里:
         //1. 像这种 "flt2 R行为化末帧下标 (4/4)  from时序:F6341[M1{↑饿-16},A51(,果),飞↑,A51(,果)] fromDemand:F9107"
@@ -163,7 +157,18 @@
             //15. 等待结束,避免负mv成功,则该任务完成 => 继续尝试下一root;
             return false;
         }
+    } else if (havIndexDic) {
+        //二. ================================ 中间帧_避免弄巧成拙 (参考33075-TODO3) ================================
+        //21. 避免弄巧成拙: 判断当前帧 与 场景 = 有映射;
+        //  a. 有映射时: 避免行为化转H任务;
+        //  b. 有映射时: 避免行为化输出行为;
+        //  c. 有映射时: 不构建actYes触发器 (不接S反馈,但在feedbackTOR里也会接P反馈);
+        //2024.09.26: 说明: 相当于把过去的弄巧成拙代码,挪到此处来执行,好处是避免一轮轮TO去action里去试,不通过的在这里就过滤掉了;
+        
+        //22. 有映射时-继续静默等待即可 (参考33075-TODO3 & 回顾);
+        return true;
     } else if (frameAlg.content_p.isOut) {
+        
         //二. ================================ 中间帧_Out ================================
         
         //21. actYesed && !feedbackAlg -> 当前行为输出到期也没等到反馈: 把当前bestCanset否掉,重新找出下一个bestCanset,转下一个canset;
