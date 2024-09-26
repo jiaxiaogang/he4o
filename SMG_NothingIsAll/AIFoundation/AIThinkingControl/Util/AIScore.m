@@ -84,6 +84,7 @@
  *      2022.05.28: 判断目标向后一帧 (参考26132-方案2);
  *      2022.05.31: 兼容支持H任务 (参考26161-6);
  *      2022.05.31: 中段为0条时,评价直接通过 (参考26161-7);
+ *      2024.09.26: 兼容R子任务 (参考33075-TODO4);
  *  @result 返回是否时间不急 (默认为true);
  *      true    : 不急,时间够用,这方案可继续act;
  *      false   : 紧急,这方案来不及执行,直接ActNo掉;
@@ -95,17 +96,16 @@
     }
 
     //2. 最近的R任务 (R任务时取自身,H任务时取最近的baseRDemand);
-    ReasonDemandModel *nearRDemand = [SMGUtils filterSingleFromArr:[TOUtils getBaseOutModels_AllDeep:demand] checkValid:^BOOL(id item) {
-        return ISOK(item, ReasonDemandModel.class);
-    }];
-    if (!nearRDemand) return false;
+    //2024.09.26: 从最近的R任务,改为直接取root (参考33075-TODO4);
+    //            > 原因: 因为除root外,它的子H任务和子R任务,都不算实际能给的时间,只有root算是它真正下一帧能给的时间,这么做对"RootR任务/子H任务/子R任务"的解都是兼容的;
+    ReasonDemandModel *root = (ReasonDemandModel*)[TOUtils getRootDemandModelWithSubOutModel:demand];
     
     //3. 取解决方案所需时间;
     AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.cansetFo];
     double needTime = [TOUtils getSumDeltaTime:solutionFo startIndex:solutionModel.cansetCutIndex endIndex:solutionModel.cansetActIndex];
     
     //4. 取父任务能给的时间;
-    AIMatchFoModel *firstPFo = ARR_INDEX(nearRDemand.validPFos, 0);
+    AIMatchFoModel *firstPFo = ARR_INDEX(root.validPFos, 0);
     AIFoNodeBase *pFo = [SMGUtils searchNode:firstPFo.matchFo];
     double giveTime = [TOUtils getSumDeltaTime2Mv:pFo cutIndex:firstPFo.cutIndex];
     
