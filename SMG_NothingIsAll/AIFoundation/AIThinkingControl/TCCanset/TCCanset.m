@@ -95,6 +95,18 @@
     //13. 初始化result的cansetTo与real的映射;
     [result initRealCansetToDic];
     
+    
+    //TODOTOMORROW20240928: 启用并迭代前段条件满足 (参考33075-TODO5);
+    //1. 把cansetTo的actIndex之前循环判断条件是否满足;
+    //2. 在canset的realCansetToIndexDic中, 看下pFo.realMaskFo与cansetTo的映射;
+    //3. 然后没有映射到的: 实测下看还有没sceneTo和cansetTo有映射的 & 或者干脆啥映射也没有的;
+    //4. 在这些间隔间,看有没realMaskAlg mIsC 当前cansetToAlg 成立的 (成立就是条件满足,不成立就是不满足);
+    //另外1. pFo.indexDic2应该是没啥用的? [pFo.indexDic2 setObject:@(maskIndex) forKey:@(matchIndex)];//K: pFo的下标 V:realMaskFo的下标;
+    //另外2. 回顾下[TCCanset getFrontIndexDic:nil]代码,对取前段条件满足是否还适用 (还是老早以前的重新计算映射,应该是没啥用了,随后没用就把getFrontIndexDic()也删掉);
+    //最后. 如果前段条件不满足,这里直接把demand.subActionFos移除掉 (前段是已发生的,不满足也没法袮补了,直接删掉即可);
+    
+    
+    
     //13. 下帧初始化 (可接受反馈);
     [result pushNextFrame];
     return result;

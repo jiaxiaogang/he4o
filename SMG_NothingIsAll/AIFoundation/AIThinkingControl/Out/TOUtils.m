@@ -677,12 +677,6 @@
  *  MARK:--------------------从absIndex向前找,直到找到有conIndex映射的那一条返回--------------------
  */
 +(NSInteger) goBackToFindConIndexByAbsIndex:(NSDictionary*)indexDic absIndex:(NSInteger)absIndex {
-    
-    //TODOTOMORROW20240926: 这里用于取canset的截点;
-    //1. 正好,在这里看判断下前段条件满足;
-    //2. 回顾下[TCCanset getFrontIndexDic:nil]代码,对取前段条件满足是否还适用;
-    
-    
     indexDic = DICTOOK(indexDic);
     //1. 从absIndex向前找,找到有映射的一条;
     for (NSInteger i = absIndex; i >= 0; i--) {
