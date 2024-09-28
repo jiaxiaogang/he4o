@@ -107,6 +107,7 @@
     
     //整个initRealCansetToDic都需要重新调整下 (从realSceneTo传下来的,与sceneToCansetToIndexDic综合求出);
     //  思路1: real与sceneTo无映射,sceneTo与cansetTo无映射,不表示real与cansetTo无映射;
+    //      > 试想下,一层层工作记忆枝叶下来这么多层,其实每多一层,realCansetTo能映射到的越少,但不表示它真的没映射了,只是一层层交错下来,续不上判断不上了而已;
     //  思路2: 其实相当于从canset池中识别realMaskFo,可以看下能否复用时序识别的全含判断算法?
     //updateRealCansetToDic应该不需要,不过要核实下;
     //方案: 最好是在不打乱现有realCansetToIndexDic的基础上,把前段别的条件帧判断下是否满足即可;
