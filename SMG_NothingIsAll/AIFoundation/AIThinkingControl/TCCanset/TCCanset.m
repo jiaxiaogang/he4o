@@ -105,6 +105,12 @@
     //另外2. 回顾下[TCCanset getFrontIndexDic:nil]代码,对取前段条件满足是否还适用 (还是老早以前的重新计算映射,应该是没啥用了,随后没用就把getFrontIndexDic()也删掉);
     //最后. 如果前段条件不满足,这里直接把demand.subActionFos移除掉 (前段是已发生的,不满足也没法袮补了,直接删掉即可);
     
+    //整个initRealCansetToDic都需要重新调整下 (从realSceneTo传下来的,与sceneToCansetToIndexDic综合求出);
+    //  思路1: real与sceneTo无映射,sceneTo与cansetTo无映射,不表示real与cansetTo无映射;
+    //  思路2: 其实相当于从canset池中识别realMaskFo,可以看下能否复用时序识别的全含判断算法?
+    //updateRealCansetToDic应该不需要,不过要核实下;
+    //方案: 最好是在不打乱现有realCansetToIndexDic的基础上,把前段别的条件帧判断下是否满足即可;
+    
     
     
     //13. 下帧初始化 (可接受反馈);
