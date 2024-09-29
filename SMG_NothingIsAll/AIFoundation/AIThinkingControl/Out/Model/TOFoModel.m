@@ -125,6 +125,15 @@
 }
 
 /**
+ *  MARK:--------------------补上因层层传递求综合映射,导致前段错漏的映射 (参考33086-TODO1)--------------------
+ *  @desc 在不打乱realCansetToIndexDic在init后的映射基础上,把前段别的条件帧判断下,有mIsC有映射的补上映射关系;
+ */
+-(void) fixRealCansteToDic {
+    //TODOTOMORROW20240928: 启用并迭代前段条件满足前: 先补下映射错漏 (参考33086-TODO1);
+    
+}
+
+/**
  *  MARK:--------------------Real映射第2步: 逐帧更新 (参考31154-方案2-todo2)--------------------
  *  @desc feedbackTOR反馈匹配时: 为R/HCanset更新self.realCansetToIndexDic(cansetTo匹配上的帧 与 realMask相应匹配的实际发生)的映射 (参考31154-方案2-todo2 && 31155-后注);
  *      另. 在TI中,每一次feedbackTIR反馈后,更新pFo中的indexDic2映射 (这一条在feedbackPushFrame()中实现,不在此方法中);

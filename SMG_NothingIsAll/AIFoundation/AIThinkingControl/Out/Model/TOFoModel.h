@@ -168,6 +168,7 @@
  */
 @property (strong, nonatomic) NSMutableDictionary *realCansetToIndexDic;
 -(void) initRealCansetToDic;    //初始化已发生映射;
+-(void) fixRealCansteToDic;     //补上前段层层传递错漏的映射;
 -(void) updateRealCansetToDic;  //更新反馈匹配映射;
 
 //Action已经执行过了ActIndex (默认为-1);

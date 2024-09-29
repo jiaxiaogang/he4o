@@ -86,35 +86,21 @@
                                     sceneCutIndex:sceneCutIndex cansetCutIndex:cansetCutIndex
                                  cansetTargetIndex:cansetFrom.count sceneFromTargetIndex:sceneFromTargetIndex];
     
-    //12. 伪迁移;
+    //7. 伪迁移;
     [TCTransfer transferXv:result];
     
-    //13. 2024.09.21: 改回生成canset时,初始化outSPDic (参考33065-TODO2);
-    [AINetUtils initItemOutSPDicForTransfered:result];
-    
-    //13. 初始化result的cansetTo与real的映射;
+    //8. 初始化result的cansetTo与real的映射;
     [result initRealCansetToDic];
     
+    //9. 补上层层传递错漏的映射;
+    [result fixRealCansteToDic];
     
-    //TODOTOMORROW20240928: 启用并迭代前段条件满足 (参考33075-TODO5);
-    //1. 把cansetTo的actIndex之前循环判断条件是否满足;
-    //2. 在canset的realCansetToIndexDic中, 看下pFo.realMaskFo与cansetTo的映射;
-    //3. 然后没有映射到的: 实测下看还有没sceneTo和cansetTo有映射的 & 或者干脆啥映射也没有的;
-    //4. 在这些间隔间,看有没realMaskAlg mIsC 当前cansetToAlg 成立的 (成立就是条件满足,不成立就是不满足);
-    //另外1. pFo.indexDic2应该是没啥用的? [pFo.indexDic2 setObject:@(maskIndex) forKey:@(matchIndex)];//K: pFo的下标 V:realMaskFo的下标;
-    //另外2. 回顾下[TCCanset getFrontIndexDic:nil]代码,对取前段条件满足是否还适用 (还是老早以前的重新计算映射,应该是没啥用了,随后没用就把getFrontIndexDic()也删掉);
-    //最后. 如果前段条件不满足,这里直接把demand.subActionFos移除掉 (前段是已发生的,不满足也没法袮补了,直接删掉即可);
+    //10. 前段条件满足判断 (不满足时,直接把result回滚删掉) (参考33086-TODO2);
     
-    //整个initRealCansetToDic都需要重新调整下 (从realSceneTo传下来的,与sceneToCansetToIndexDic综合求出);
-    //  思路1: real与sceneTo无映射,sceneTo与cansetTo无映射,不表示real与cansetTo无映射;
-    //      > 试想下,一层层工作记忆枝叶下来这么多层,其实每多一层,realCansetTo能映射到的越少,但不表示它真的没映射了,只是一层层交错下来,续不上判断不上了而已;
-    //  思路2: 其实相当于从canset池中识别realMaskFo,可以看下能否复用时序识别的全含判断算法?
-    //updateRealCansetToDic应该不需要,不过要核实下;
-    //方案: 最好是在不打乱现有realCansetToIndexDic的基础上,把前段别的条件帧判断下是否满足即可;
+    //11. 2024.09.21: 改回生成canset时,初始化outSPDic (参考33065-TODO2);
+    [AINetUtils initItemOutSPDicForTransfered:result];
     
-    
-    
-    //13. 下帧初始化 (可接受反馈);
+    //12. 下帧初始化 (可接受反馈);
     [result pushNextFrame];
     return result;
 }
@@ -146,13 +132,18 @@
     //3. 伪迁移;
     [TCTransfer transferXv:result];
     
-    //4. 2024.09.21: 改回生成canset时,初始化outSPDic (参考33065-TODO2);
-    [AINetUtils initItemOutSPDicForTransfered:result];
-    
     //4. 初始化result的cansetTo与real的映射;
     [result initRealCansetToDic];
     
-    //4. 下帧初始化 (可接受反馈);
+    //5. 补上层层传递错漏的映射;
+    [result fixRealCansteToDic];
+    
+    //6. 前段条件满足判断 (不满足时,直接把result回滚删掉) (参考33086-TODO2);
+    
+    //7. 2024.09.21: 改回生成canset时,初始化outSPDic (参考33065-TODO2);
+    [AINetUtils initItemOutSPDicForTransfered:result];
+    
+    //8. 下帧初始化 (可接受反馈);
     [result pushNextFrame];
     return result;
 }
