@@ -127,34 +127,47 @@
 /**
  *  MARK:--------------------补上因层层传递求综合映射,导致前段错漏的映射 (参考33086-TODO1)--------------------
  *  @desc 在不打乱realCansetToIndexDic在init后的映射基础上,把前段别的条件帧判断下,有mIsC有映射的补上映射关系;
+ *  @desc 说明: 本方法把前段的canset从前往后,一帧帧从realMaskFo中,找映射 (在已有映射的间隔间,找找有没有mIsC能匹配上的,追加到映射中);
  */
 -(void) fixRealCansteToDic {
-    //TODOTOMORROW20240928: 启用并迭代前段条件满足前: 先补下映射错漏 (参考33086-TODO1);
-    
     //1. 前段逐帧判断有没映射,有映射的跳过,无映射的尝试通过mIsC补充;
-    NSInteger realProgressStart = -1;
-    NSInteger realProgressEnd = self.cansetActIndex;
+    NSInteger realProgress = -1;
+    NSArray *realMaskFo = self.basePFo.realMaskFo;
     for (NSInteger i = 0; i < self.cansetActIndex; i++) {
         
         //2. 优先判断现有映射;
-        BOOL algHavDic = [self.realCansetToIndexDic.allKeys containsObject:@(i)];
-        if (algHavDic) {
-            realProgressStart = NUMTOOK([self.realCansetToIndexDic objectForKey:@(i)]).integerValue;
-            //realProgressEnd = ...//这里看用不用把无映射,提前整出来?不然这种判断方式代码感觉效率不是很好;
+        BOOL cansetToAlgHavDic = [self.realCansetToIndexDic.allKeys containsObject:@(i)];
+        if (cansetToAlgHavDic) {
+            realProgress = NUMTOOK([self.realCansetToIndexDic objectForKey:@(i)]).integerValue;
             continue;
         }
         
         //3. 然后判断mIsC;
         AIShortMatchModel_Simple *item = ARR_INDEX(self.transferXvModel.cansetToOrders, i);
-        AIKVPointer *cansetAlg_p = item.alg_p;
+        AIKVPointer *cansetToAlg_p = item.alg_p;
         
-        for (NSInteger j = realProgressStart; j < realProgressEnd; j++) {
-            //参考feedbackTOR判断,这里应该用[proto.absAlgs contains:cansetToAlg]来表示mIsC成立;
+        for (NSInteger j = realProgress + 1; j < realMaskFo.count; j++) {
+            
+            //4. 如果j有映射,则打断 (因为已经有映射了,不能再追加成别的mIsC映射了);
+            BOOL realAlgHavDic = [self.realCansetToIndexDic.allValues containsObject:@(j)];
+            if (realAlgHavDic) {
+                realProgress = j;
+                break;
+            }
+            
+            //5. 如果j没映射,则可以追加判断mIsC (参考feedbackTOR判断,这里应该用[proto.absAlgs contains:cansetToAlg]来表示mIsC成立);
+            AIKVPointer *realMaskAlg = ARR_INDEX(realMaskFo, j);
+            NSArray *realMaskAlgAbs_ps = Ports2Pits([AINetUtils absPorts_All:[SMGUtils searchNode:realMaskAlg]]);
+            if ([realMaskAlgAbs_ps containsObject:cansetToAlg_p]) {
+                //6. 成功发现新映射;
+                [self.realCansetToIndexDic setObject:@(j) forKey:@(i)];
+                realProgress = j;
+                break;
+            }
+            
+            //7. 最终也没找着映射 (realProgress不变,下一帧继续从它开始找);
         }
-        
-        
     }
-    
 }
 
 /**

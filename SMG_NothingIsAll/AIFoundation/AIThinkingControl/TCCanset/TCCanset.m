@@ -96,6 +96,11 @@
     [result fixRealCansteToDic];
     
     //10. 前段条件满足判断 (不满足时,直接把result回滚删掉) (参考33086-TODO2);
+    if (result.realCansetToIndexDic.count < result.cansetCutIndex + 1) {
+        //2024.10.01: 前段缺一条时为不满足: 回滚result;
+        [demand.actionFoModels removeObject:result];
+        return nil;
+    }
     
     //11. 2024.09.21: 改回生成canset时,初始化outSPDic (参考33065-TODO2);
     [AINetUtils initItemOutSPDicForTransfered:result];
@@ -139,6 +144,11 @@
     [result fixRealCansteToDic];
     
     //6. 前段条件满足判断 (不满足时,直接把result回滚删掉) (参考33086-TODO2);
+    if (result.realCansetToIndexDic.count < result.cansetCutIndex + 1) {
+        //2024.10.01: 前段缺一条时为不满足: 回滚result;
+        [hDemand.actionFoModels removeObject:result];
+        return nil;
+    }
     
     //7. 2024.09.21: 改回生成canset时,初始化outSPDic (参考33065-TODO2);
     [AINetUtils initItemOutSPDicForTransfered:result];
