@@ -149,9 +149,7 @@
         AIKVPointer *cansetAlg_p = item.alg_p;
         
         for (NSInteger j = realProgressStart; j < realProgressEnd; j++) {
-            //取出j的abs,然后判断下i是不是j (其实就是判断二者有没共同抽象);
-            //或者判断一下j是不是i?因为共同抽象太泛了,而过度最具象的i也不应当被执行成功 (最具象的canset它应是不可复现的);
-            //[TOUtils mcIsBro:iÅlg c:jAlg];
+            //参考feedbackTOR判断,这里应该用[proto.absAlgs contains:cansetToAlg]来表示mIsC成立;
         }
         
         
