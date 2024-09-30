@@ -131,6 +131,32 @@
 -(void) fixRealCansteToDic {
     //TODOTOMORROW20240928: 启用并迭代前段条件满足前: 先补下映射错漏 (参考33086-TODO1);
     
+    //1. 前段逐帧判断有没映射,有映射的跳过,无映射的尝试通过mIsC补充;
+    NSInteger realProgressStart = -1;
+    NSInteger realProgressEnd = self.cansetActIndex;
+    for (NSInteger i = 0; i < self.cansetActIndex; i++) {
+        
+        //2. 优先判断现有映射;
+        BOOL algHavDic = [self.realCansetToIndexDic.allKeys containsObject:@(i)];
+        if (algHavDic) {
+            realProgressStart = NUMTOOK([self.realCansetToIndexDic objectForKey:@(i)]).integerValue;
+            //realProgressEnd = ...//这里看用不用把无映射,提前整出来?不然这种判断方式代码感觉效率不是很好;
+            continue;
+        }
+        
+        //3. 然后判断mIsC;
+        AIShortMatchModel_Simple *item = ARR_INDEX(self.transferXvModel.cansetToOrders, i);
+        AIKVPointer *cansetAlg_p = item.alg_p;
+        
+        for (NSInteger j = realProgressStart; j < realProgressEnd; j++) {
+            //取出j的abs,然后判断下i是不是j (其实就是判断二者有没共同抽象);
+            //或者判断一下j是不是i?因为共同抽象太泛了,而过度最具象的i也不应当被执行成功 (最具象的canset它应是不可复现的);
+            //[TOUtils mcIsBro:iÅlg c:jAlg];
+        }
+        
+        
+    }
+    
 }
 
 /**
