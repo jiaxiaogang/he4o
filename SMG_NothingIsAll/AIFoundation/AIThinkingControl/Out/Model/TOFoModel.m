@@ -131,6 +131,7 @@
  */
 -(void) fixRealCansteToDic {
     //1. 前段逐帧判断有没映射,有映射的跳过,无映射的尝试通过mIsC补充;
+    NSArray *oldDic = [self.realCansetToIndexDic copy];
     NSInteger realProgress = -1;
     NSArray *realMaskFo = self.basePFo.realMaskFo;
     for (NSInteger i = 0; i < self.cansetActIndex; i++) {
@@ -167,6 +168,14 @@
             
             //7. 最终也没找着映射 (realProgress不变,下一帧继续从它开始找);
         }
+    }
+    
+    //8. log
+    BOOL logSwitch = true;
+    if (self.realCansetToIndexDic.count > oldDic.count && logSwitch) {
+        BOOL frontDicIsOk = self.realCansetToIndexDic.count >= self.cansetCutIndex + 1;
+        NSLog(@"flt F%ld补映射前:%@ (前段通过:%d)",self.cansetFrom.pointerId,CLEANSTR(oldDic),frontDicIsOk);
+        NSLog(@"flt F%ld补映射后:%@ (前段通过:%d)",self.cansetFrom.pointerId,CLEANSTR(self.realCansetToIndexDic),frontDicIsOk);
     }
 }
 
