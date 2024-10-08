@@ -452,6 +452,13 @@
                 } else {
                     [protoRModels addObject:newMatchFo];
                 }
+                
+                //TODOTOMORROW20241008: 查下这里,为什么有皮无距果,没能识别到时序结果;
+                NSString *algDesc = Alg2FStr(protoAlg);
+                if ([algDesc containsString:@"向"] || ![algDesc containsString:@"距"]) {
+                    NSLog(@"新识别Fo结果: %@ -> %@",Pit2FStr(newMatchFo.matchFo),Pit2FStr(refFo.cmvNode_p));
+                    NSLog(@"");
+                }
             }
         }
     }
