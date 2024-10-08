@@ -421,7 +421,6 @@
             
             //7. 每个refPort做两件事:
             for (AIPort *refPort in refPorts) {
-                
                 //8. 不应期 -> 不可激活 & 收集到不应期同一fo仅处理一次;
                 if ([SMGUtils containsSub_p:refPort.target_p parent_ps:except_ps]) continue;
                 except_ps = [SMGUtils collectArrA:except_ps arrB:@[refPort.target_p]];
@@ -429,6 +428,19 @@
                 //7. 全含判断;
                 AIFoNodeBase *refFo = [SMGUtils searchNode:refPort.target_p];
                 NSDictionary *indexDic = [self recognitionFo_CheckValid:refFo protoOrRegroupFo:protoOrRegroupFo fromRegroup:fromRegroup];
+               
+                //TODOTOMORROW20241008: 查下这里,为什么"有向无距果",没能识别到时序结果;
+                NSString *absDesc = Pit2FStr(absAlg_p);
+                BOOL absAlgIsHavXianWuJv = [absDesc containsString:@"向"] && ![absDesc containsString:@"距"];
+                if (absAlgIsHavXianWuJv) NSLog(@"aaaa. 识别Fo: %@ -> %@ 全含:%@",Fo2FStr(refFo),Pit2FStr(refFo.cmvNode_p),CLEANSTR(indexDic));
+                
+                //调试: 打出如下三种日志,即,习得的有向无距果,都没有全含;
+                //识别Fo: F473[M1{↑饿-16},A472(向264,果),A471(距78,果),A471(距78,果),A471(距78,果),A471(距78,果),A471(距78,果),A471(距78,果),A471(距78,果)] -> M4{↑饿-16} 全含:{}
+                //识别Fo: F1819[A1818(向171,果),A1818(向171,果),A1818(向171,果),A1818(向171,果),A1818(向171,果),A1818(向171,果),A1818(向171,果)] -> M4{↑饿-16} 全含:{}
+                //识别Fo: F1972[M1{↑饿-16},A1971(距70,果),A1818(向171,果),A1818(向171,果),A1818(向171,果),A1818(向171,果),A1818(向171,果),A1818(向171,果),A1818(向171,果)] -> M4{↑饿-16} 全含:{}
+                
+                //疑问: 按道理不应该: 在饿果后,就已经识别到有向无距果概念,而此时protoFo只是[饿,果],它应该是全含的;
+                
                 if (!DICISOK(indexDic)) continue;
                 
                 //7. 取absCutIndex, 说明: cutIndex指已发生到的index,后面则为时序预测; matchValue指匹配度(0-1)
@@ -451,13 +463,6 @@
                     [protoPModels addObject:newMatchFo];
                 } else {
                     [protoRModels addObject:newMatchFo];
-                }
-                
-                //TODOTOMORROW20241008: 查下这里,为什么有皮无距果,没能识别到时序结果;
-                NSString *algDesc = Alg2FStr(protoAlg);
-                if ([algDesc containsString:@"向"] || ![algDesc containsString:@"距"]) {
-                    NSLog(@"新识别Fo结果: %@ -> %@",Pit2FStr(newMatchFo.matchFo),Pit2FStr(refFo.cmvNode_p));
-                    NSLog(@"");
                 }
             }
         }
