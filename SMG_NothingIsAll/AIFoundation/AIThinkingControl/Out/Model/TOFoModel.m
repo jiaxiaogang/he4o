@@ -174,8 +174,9 @@
     BOOL logSwitch = true;
     if (self.realCansetToIndexDic.count > oldDic.count && logSwitch) {
         BOOL frontDicIsOk = self.realCansetToIndexDic.count >= self.cansetCutIndex + 1;
-        NSLog(@"flt F%ld补映射前:%@ (前段通过:%d)",self.cansetFrom.pointerId,CLEANSTR(oldDic),frontDicIsOk);
-        NSLog(@"flt F%ld补映射后:%@ (前段通过:%d)",self.cansetFrom.pointerId,CLEANSTR(self.realCansetToIndexDic),frontDicIsOk);
+        NSLog(@"F%ld补映射前:%@ => 后:%@ (前段通过:%d)",self.cansetFrom.pointerId,CLEANSTR(oldDic),CLEANSTR(self.realCansetToIndexDic),frontDicIsOk);
+        NSLog(@"\t1. 前段cansetTo:%@",Pits2FStr([SMGUtils convertArr:self.transferXvModel.cansetToOrders convertBlock:^id(AIShortMatchModel_Simple *obj) {return obj.alg_p;}]));
+        NSLog(@"\t2. 前段realMaskFo:%@",Pits2FStr([self.basePFo.realMaskFo copy]));
     }
 }
 

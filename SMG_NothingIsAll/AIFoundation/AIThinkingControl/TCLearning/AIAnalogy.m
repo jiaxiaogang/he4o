@@ -244,7 +244,7 @@
 
     //2. 根据新旧的映射indexDic分别进行概念类比 (参考29025-24a);
     //2024.10.07: dic是无序的,所以先给key排下序,避免类比结果乱序 (参考33092);
-    //2024.10.07: 后需求明确时再改: 其实压根不用类比,打开前段条件满足后,orderSames就等于canset的前段 (参考33053);
+    //2024.10.07: 其实压根不用类比,打开前段条件满足后,orderSames就等于canset的前段 (不过先不改,以后前段条件满足万一再关了呢) (参考33053);
     NSArray *sortKeys = [SMGUtils sortSmall2Big:realCansetToIndexDic.allKeys compareBlock:^double(NSNumber *obj) {
         return obj.integerValue;
     }];

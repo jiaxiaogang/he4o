@@ -101,7 +101,7 @@
         [demand.actionFoModels removeObject:result];
         return nil;
     }
-    NSLog(@"fltx demand:F%ld cansetFrom:F%ld (CUT%ld) 前段条件满足通过:%@",Demand2Pit(demand).pointerId,result.cansetFrom.pointerId,result.cansetCutIndex,CLEANSTR(result.realCansetToIndexDic));
+    NSLog(@"前段条件满足通过 => demand:F%ld cansetFrom:F%ld (CUT%ld) %@",Demand2Pit(demand).pointerId,result.cansetFrom.pointerId,result.cansetCutIndex,CLEANSTR(result.realCansetToIndexDic));
     NSLog(@"\t1. 前段cansetTo:%@",Pits2FStr([SMGUtils convertArr:result.transferXvModel.cansetToOrders convertBlock:^id(AIShortMatchModel_Simple *obj) {return obj.alg_p;}]));
     NSLog(@"\t2. 前段realMaskFo:%@",Pits2FStr([result.basePFo.realMaskFo copy]));
     
