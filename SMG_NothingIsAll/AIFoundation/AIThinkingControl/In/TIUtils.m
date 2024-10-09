@@ -419,6 +419,14 @@
                 }
             }];
             
+            NSString *absDesc = Pit2FStr(absAlg_p);
+            BOOL absAlgIsHavXianWuJv = [absDesc containsString:@"向"] && ![absDesc containsString:@"距"];
+            if (protoOrRegroupFo.count == 2 && absAlgIsHavXianWuJv) {//当proto是[饿,果]时,查这些应该有"有向无距果"做为索引时,检索到的fo结果是什么;
+                for (AIPort *refPort in refPorts) {
+                    NSLog(@"flt %@ 索引到: %@",absDesc,Pit2FStr(refPort.target_p));
+                }
+            }
+            
             //7. 每个refPort做两件事:
             for (AIPort *refPort in refPorts) {
                 //8. 不应期 -> 不可激活 & 收集到不应期同一fo仅处理一次;
@@ -442,6 +450,11 @@
                 //疑问: 按道理不应该: 在饿果后,就已经识别到有向无距果概念,而此时protoFo只是[饿,果],它应该是全含的;
                 //经查,在识别时,proto为: protoFo:F7516[飞↙,A7507(距9,向229,果),飞↙,A7514(距13,向180,果)]->
                 //分析1. 查下为什么在最初[饿,果]时,没有索引到这里? (要调试查下);
+                //  经查,有向无距果时,这里索引到refPorts是1条,并且还被防重掉了,如下:
+                //  protoFo:F2068[M1{↑饿-16},A2067(距11,向269,果)]->
+                //  A472(向264,果) 索引到: F473[M1{↑饿-16},A472(向264,果),A471(距78,果),A471(距78,果),A471(距78,果),A471(距78,果),A471(距78,果),A471(距78,果),A471(距78,果)]->M4{↑饿-16}
+                //  分析: 这个ass很长,无法全含?
+                //  线索: 这个应该是可以全含的吧?第一帧,第二帧,都可以找到,前段全含了已经;
                 //分析2. 查下是不是因为学到的少导致的?毕竟"先识别到大致同方向的,再触发pFo类比",这个机率可能比较低? (要实测确定下);
                 
                 if (!DICISOK(indexDic)) continue;
