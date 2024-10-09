@@ -455,6 +455,11 @@
                 //  A472(向264,果) 索引到: F473[M1{↑饿-16},A472(向264,果),A471(距78,果),A471(距78,果),A471(距78,果),A471(距78,果),A471(距78,果),A471(距78,果),A471(距78,果)]->M4{↑饿-16}
                 //  分析: 这个ass很长,无法全含?
                 //  线索: 这个应该是可以全含的吧?第一帧,第二帧,都可以找到,前段全含了已经;
+                if (refFo.pId == 473 && protoOrRegroupFo.count == 2) {
+                    //经查: 因为A2067直接和A471已经判断mIsC成立了,导致F473的前7帧,都需要被全含才行...
+                    NSDictionary *indexDic = [self recognitionFo_CheckValid:refFo protoOrRegroupFo:protoOrRegroupFo fromRegroup:fromRegroup];
+                    NSLog(@"");
+                }
                 //分析2. 查下是不是因为学到的少导致的?毕竟"先识别到大致同方向的,再触发pFo类比",这个机率可能比较低? (要实测确定下);
                 
                 if (!DICISOK(indexDic)) continue;
