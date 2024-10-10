@@ -435,7 +435,7 @@
                 
                 //7. 全含判断;
                 AIFoNodeBase *refFo = [SMGUtils searchNode:refPort.target_p];
-                NSDictionary *indexDic = [self recognitionFo_CheckValid:refFo protoOrRegroupFo:protoOrRegroupFo fromRegroup:fromRegroup];
+                NSDictionary *indexDic = [self recognitionFo_CheckValidV3:refFo protoOrRegroupFo:protoOrRegroupFo fromRegroup:fromRegroup];
                
                 //TODOTOMORROW20241008: 查下这里,为什么"有向无距果",没能识别到时序结果;
                 NSString *absDesc = Pit2FStr(absAlg_p);
@@ -457,7 +457,7 @@
                 //  线索: 这个应该是可以全含的吧?第一帧,第二帧,都可以找到,前段全含了已经;
                 if (refFo.pId == 473 && protoOrRegroupFo.count == 2) {
                     //经查: 因为A2067直接和A471已经判断mIsC成立了,导致F473的前7帧,都需要被全含才行...
-                    NSDictionary *indexDic = [self recognitionFo_CheckValid:refFo protoOrRegroupFo:protoOrRegroupFo fromRegroup:fromRegroup];
+                    NSDictionary *indexDic = [self recognitionFo_CheckValidV3:refFo protoOrRegroupFo:protoOrRegroupFo fromRegroup:fromRegroup];
                     NSLog(@"");
                 }
                 //分析2. 查下是不是因为学到的少导致的?毕竟"先识别到大致同方向的,再触发pFo类比",这个机率可能比较低? (要实测确定下);
@@ -547,21 +547,27 @@
  *      2022.11.11: BUG_indexDic中有重复的Value (一个protoA对应多个assA): 将nextMaxForProtoIndex改为protoIndex-1后ok (参考27175-8);
  *      2022.11.13: 迭代V2: 仅返回indexDic (参考27177);
  *      2023.07.11: 仅普通正向protoFo时序识别时,才要求末帧必含,regroup则不必如此 (参考30057-修复);
+ *      2024.10.10: 迭代V3: 把从后往前,改成从前往后 (参考33093);
  *  @result 判断protoFo是否全含assFo: 成功时返回indexDic / 失败时返回空dic;
  */
-+(NSDictionary*) recognitionFo_CheckValid:(AIFoNodeBase*)assFo protoOrRegroupFo:(AIFoNodeBase*)protoOrRegroupFo fromRegroup:(BOOL)fromRegroup {
++(NSDictionary*) recognitionFo_CheckValidV3:(AIFoNodeBase*)assFo protoOrRegroupFo:(AIFoNodeBase*)protoOrRegroupFo fromRegroup:(BOOL)fromRegroup {
     if (Log4MFo) NSLog(@"------------------------ 时序全含检查 ------------------------\nass:%@->%@",Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
     //1. 数据准备;
     NSMutableDictionary *indexDic = [[NSMutableDictionary alloc] init]; //记录protoIndex和assIndex的映射字典 <K:assIndex, V:protoIndex>;
     
-    //3. 用于找着时:记录下进度,下次循环时,这个进度已处理过的不再处理;
-    NSInteger nextMaxForProtoIndex = protoOrRegroupFo.count - 1;
+    //2. 用于找着时:记录下进度,下次循环时,这个进度已处理过的不再处理;
+    NSInteger nextStartForProtoIndex = 0;
     
-    //4. 从后向前倒着一帧帧,找assFo的元素,要求如下:
-    for (NSInteger assIndex = assFo.count - 1; assIndex >= 0; assIndex--) {
+    //3. 从后向前倒着一帧帧,找assFo的元素,要求如下:
+    
+    //4. V3版本: 从前往后全含匹配代码逻辑说明: 即然proto的末帧是必含的,那么从前往后,匹配到proto的末帧为止;
+    //  4a. 中途assFo有任意一帧在proto中未匹配到,则全含失败;
+    //  4b. 一帧帧全匹配到了,但最终没匹配到proto的末帧,也全含失败;
+    //另外: 这里其实可以改成,不管是不是末帧,或者中间有断帧没匹配上,都不理它,只是把匹配上的依次存上映射即可 (返回映射后,再判断含不含proto末帧,以及前段匹配是否都充足);
+    for (NSInteger assIndex = 0; assIndex < assFo.count; assIndex++) {
         AIKVPointer *assAlg_p = ARR_INDEX(assFo.content_ps, assIndex);
         BOOL itemSuccess = false;
-        for (NSInteger protoIndex = nextMaxForProtoIndex; protoIndex >= 0; protoIndex--) {
+        for (NSInteger protoIndex = nextStartForProtoIndex; protoIndex < protoOrRegroupFo.count; protoIndex++) {
             
             //5. mIsC判断匹配
             //此处proto抽象仅指向刚识别的matchAlgs,所以与contains等效;
@@ -570,30 +576,33 @@
             if (mIsC) {
                 
                 //7. 匹配时_记录下次循环proto时,从哪帧开始倒序循环: nextMaxForProtoIndex进度
-                nextMaxForProtoIndex = protoIndex - 1;
+                nextStartForProtoIndex = protoIndex + 1;
                 
                 //8. 匹配时_记录本条成功标记;
                 itemSuccess = true;
                 
                 //9. 匹配时_记录indexDic映射
                 [indexDic setObject:@(protoIndex) forKey:@(assIndex)];
-                if (Log4MFo)NSLog(@"时序识别: item有效+1");
+                if (Log4MFo) NSLog(@"时序识别全含判断有效+1帧 (assIndex:%ld protoIndex:%ld)",assIndex,protoIndex);
+                
+                //10. 已经到了proto末帧了,则前段完毕 (参考上面4b);
+                //另外: 前段完成时,proto的末帧必须匹配到,此时直接返回indexDic结果,如果匹配不到,会跳到4a当前帧未找到,从而返回new Dic() (参考下面4a代码);
+                if (!fromRegroup && protoIndex == protoOrRegroupFo.count - 1) {
+                    return indexDic;
+                }
                 break;
-            } else {
-                //11. proto的末帧必须找到,所以不匹配时,直接break,继续ass循环找它... (参考: 注释要求1);
-                if (!fromRegroup && protoIndex == protoOrRegroupFo.count - 1) break;
             }
         }
         
-        //12. 非全含 (一个失败,全盘皆输);
+        //11. 非全含 (一个失败,全盘皆输) (参考上面4a);
         if (!itemSuccess) {
-            if (Log4MFo) NSLog(@"末帧时,找不着则联想时就:有BUG === 非末帧时,则ass未在proto中找到:非全含");
+            if (Log4MFo) NSLog(@"只要ass前段有一帧在proto未找到,则非全含");
             return [NSMutableDictionary new];
         }
     }
     
-    //13. 到此全含成功: 返回success
-    return indexDic;
+    //13. 到此虽然全匹配了,但最终没匹配到proto的末帧,也返回failure;
+    return [NSMutableDictionary new];
 }
 
 //MARK:===============================================================
