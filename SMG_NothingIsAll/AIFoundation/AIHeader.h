@@ -376,7 +376,7 @@
 //模糊匹配
 #define Log4FuzzyAlg false
 //识别时序
-#define Log4MFo true
+#define Log4MFo false
 //类比
 #define Log4Ana true
 #define Log4OutCansetAna true
