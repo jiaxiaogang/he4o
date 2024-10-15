@@ -82,8 +82,16 @@
                 } else if (height == 30) {
                     lightStr = STRFORMAT(@"%@,鸟",lightStr);
                 } else if (height == 5) {
-                    if (border > 0) lightStr = STRFORMAT(@"%@,皮果",lightStr);
-                    else lightStr = STRFORMAT(@"%@,果",lightStr);
+                    //返回有向无距,或有距无向,无向无距,方便查看相关日志;
+                    AIKVPointer *xianV = [self getXian:node_p];
+                    AIKVPointer *jvV = [self getJv:node_p];
+                    int xian = NUMTOOK([AINetIndex getData:xianV]).intValue;
+                    int jv = NUMTOOK([AINetIndex getData:jvV]).intValue;
+                    NSString *borderDesc = border > 0 ? @"皮果" : @"果";
+                    if (xianV && !jvV) lightStr = STRFORMAT(@"有向无距%@%d",borderDesc,xian);
+                    else if (!xianV && jvV) lightStr = STRFORMAT(@"有距无向%@%d",borderDesc,jv);
+                    else if (!xianV && !jvV) lightStr = STRFORMAT(@"无向无距%@",borderDesc);
+                    else if (xianV && jvV) lightStr = STRFORMAT(@"%@,%@",lightStr,borderDesc);
                 }
                 
                 //简化日志2: 飞不加header
@@ -270,6 +278,15 @@
     return heightIsOk && borderIsOk;
 }
 
+//取向码
++(AIKVPointer*) getXian:(AIKVPointer*)alg_p {
+    return [self checkValueFromAlg:alg_p valueATIs:@"direction"];
+}
+//取距码
++(AIKVPointer*) getJv:(AIKVPointer*)alg_p {
+    return [self checkValueFromAlg:alg_p valueATIs:@"distance"];
+}
+
 //alg是踢行为
 +(BOOL) algIsKick:(AIKVPointer*)alg_p {
     return [self checkValueFromAlg:alg_p valueATIs:KICK_RDS];
@@ -295,7 +312,7 @@
 }
 
 //判断alg中某区码的稀疏码的at类型是valueATIs (比如: 取概念有踢特征);
-+(BOOL) checkValueFromAlg:(AIKVPointer*)fromAlg_p valueATIs:(NSString*)valueATIs {
++(AIKVPointer*) checkValueFromAlg:(AIKVPointer*)fromAlg_p valueATIs:(NSString*)valueATIs {
     AIAlgNodeBase *fromAlg = [SMGUtils searchNode:fromAlg_p];
     AIKVPointer *findValue_p = [SMGUtils filterSingleFromArr:fromAlg.content_ps checkValid:^BOOL(AIKVPointer *item) {
         return [valueATIs isEqualToString:item.algsType];
