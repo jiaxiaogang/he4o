@@ -280,11 +280,11 @@
 
 //取向码
 +(AIKVPointer*) getXian:(AIKVPointer*)alg_p {
-    return [self checkValueFromAlg:alg_p valueATIs:@"direction"];
+    return [self checkValueFromAlg:alg_p valueDSIs:@"direction"];
 }
 //取距码
 +(AIKVPointer*) getJv:(AIKVPointer*)alg_p {
-    return [self checkValueFromAlg:alg_p valueATIs:@"distance"];
+    return [self checkValueFromAlg:alg_p valueDSIs:@"distance"];
 }
 
 //alg是踢行为
@@ -316,6 +316,13 @@
     AIAlgNodeBase *fromAlg = [SMGUtils searchNode:fromAlg_p];
     AIKVPointer *findValue_p = [SMGUtils filterSingleFromArr:fromAlg.content_ps checkValid:^BOOL(AIKVPointer *item) {
         return [valueATIs isEqualToString:item.algsType];
+    }];
+    return findValue_p;
+}
++(AIKVPointer*) checkValueFromAlg:(AIKVPointer*)fromAlg_p valueDSIs:(NSString*)valueDSIs {
+    AIAlgNodeBase *fromAlg = [SMGUtils searchNode:fromAlg_p];
+    AIKVPointer *findValue_p = [SMGUtils filterSingleFromArr:fromAlg.content_ps checkValid:^BOOL(AIKVPointer *item) {
+        return [valueDSIs isEqualToString:item.dataSource];
     }];
     return findValue_p;
 }
