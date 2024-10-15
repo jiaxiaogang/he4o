@@ -76,7 +76,6 @@
     self.playing = true;
     self.speed = 0;
     self.changeIndex = 0;
-    self.stop = !tomV2Switch;
 }
 
 -(void) initDisplay{
@@ -133,7 +132,7 @@
  */
 -(void) updateFrame{
     //1. 数据检查;
-    if (self.stop || theTC.outModelManager.getAllDemand.count <= 0) {
+    if (!tomV2Switch || theTC.outModelManager.getAllDemand.count <= 0) {
         return;
     }
     
@@ -152,7 +151,7 @@
     [self.models addObject:newFrame];
     
     //3. 仅保留后x00帧;
-    NSInteger limit = self.stop ? 0 : 300;
+    NSInteger limit = !tomV2Switch ? 0 : 300;
     NSArray *subModels = ARR_SUB(self.models, self.models.count - limit, limit);
     [self.models removeAllObjects];
     [self.models addObjectsFromArray:ARRTOOK(subModels)];
