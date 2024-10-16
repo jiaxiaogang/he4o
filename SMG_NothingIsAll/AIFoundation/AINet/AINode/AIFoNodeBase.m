@@ -136,11 +136,17 @@
     NSString *spFrom = STRFORMAT(@"%@",[itemOutSPDic objectForKey:@(spIndex)]);
     [self updateSPStrong:spIndex difStrong:difStrong type:type forSPDic:itemOutSPDic];
     
+    //TODOTOMORROW20241016 查下为什么中间帧,即使没反馈,也没有sp反馈:
+    //flt2 R行为化中间帧下标 (3/4) A4136(向269,距12,果) from时序:F4645[M1{↑饿-16},A105(有向无距果209),A103(有向无距果203),A4136(向269,距12,果)] fromDemand:F4622
+    //> flt2  sceneTo:F4143[M1{↑饿-16},A4142(有向无距果268),A4142(有向无距果268)]
+    
+    
     //4. log
     if (Log4OutSPDic && debugMode) {
         AISPStrong *spTo = [itemOutSPDic objectForKey:@(spIndex)];
         NSString *flt1 = FltLog4DefaultIf(true, @"4");
         NSLog(@"%@updateOutSP:%ld/%ld (%@) %@->%@ sceneTo:%ld cansetTo:%@ caller:%@",flt1,spIndex,cansetContent_ps.count,ATType2Str(type),spFrom,spTo,self.pId,Pits2FStr(cansetContent_ps),caller);
+        NSLog(@"\t%@sceneTo:%@",flt1,Fo2FStr(self));
     }
 }
 

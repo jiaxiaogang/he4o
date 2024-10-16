@@ -66,6 +66,7 @@
     NSString *fltLog4 = FltLog4CreateHCanset(1);
     NSString *fltLog5 = FltLog4DefaultIf(!foModel.isH, @"2");
     OFTitleLog(@"行为化Fo",@"\n%@%@%@%@%@%@行为化%@下标 (%ld/%ld) %@ from时序:%@ fromDemand:F%ld",fltLog1,fltLog2,fltLog3,fltLog4,fltLog5,rhLog,frameLog,foModel.cansetActIndex,foModel.cansetTargetIndex,Pit2FStr([foModel getCurFrame].content_p),Fo2FStr(curFo),Demand2Pit((DemandModel*)foModel.baseOrGroup).pointerId);
+    NSLog(@"\t%@sceneTo:%@",fltLog5,Pit2FStr(foModel.sceneTo));
     [theTC updateOperCount:kFILENAME];
     Debug();
     //4. 跳转下帧 (最后一帧为目标,自然发生即可,此前帧则需要行为化实现);

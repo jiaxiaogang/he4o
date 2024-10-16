@@ -651,8 +651,6 @@
     if (type == ATSub && value.sStrong > 0) return;
     
     //3. 避免冲突 (对立面执行过,回滚);
-    AIKVPointer *cansetFrom = self.cansetFrom;
-    AIKVPointer *sceneFrom = self.sceneFrom;
     AIFoNodeBase *sceneTo = [SMGUtils searchNode:self.sceneTo];
     NSArray *cansetToContent_ps = Simples2Pits(self.transferXvModel.cansetToOrders);
     if (type == ATPlus && value.sStrong > 0) {
