@@ -101,9 +101,9 @@
         [demand.actionFoModels removeObject:result];
         return nil;
     }
-    NSLog(@"前段条件满足通过 => demand:F%ld cansetFrom:F%ld (CUT%ld) %@",Demand2Pit(demand).pointerId,result.cansetFrom.pointerId,result.cansetCutIndex,CLEANSTR(result.realCansetToIndexDic));
-    NSLog(@"\t1. 前段cansetTo:%@",Pits2FStr([SMGUtils convertArr:result.transferXvModel.cansetToOrders convertBlock:^id(AIShortMatchModel_Simple *obj) {return obj.alg_p;}]));
-    NSLog(@"\t2. 前段realMaskFo:%@",Pits2FStr([result.basePFo.realMaskFo copy]));
+    if (Log4SceneIsOk) NSLog(@"前段条件满足通过 => demand:F%ld cansetFrom:F%ld (CUT%ld) %@",Demand2Pit(demand).pointerId,result.cansetFrom.pointerId,result.cansetCutIndex,CLEANSTR(result.realCansetToIndexDic));
+    if (Log4SceneIsOk) NSLog(@"\t1. 前段cansetTo:%@",Pits2FStr([SMGUtils convertArr:result.transferXvModel.cansetToOrders convertBlock:^id(AIShortMatchModel_Simple *obj) {return obj.alg_p;}]));
+    if (Log4SceneIsOk) NSLog(@"\t2. 前段realMaskFo:%@",Pits2FStr([result.basePFo.realMaskFo copy]));
     
     //11. 2024.09.21: 改回生成canset时,初始化outSPDic (参考33065-TODO2);
     [AINetUtils initItemOutSPDicForTransfered:result];
@@ -152,7 +152,7 @@
         [hDemand.actionFoModels removeObject:result];
         return nil;
     }
-    NSLog(@"demand:F%ld cansetFrom:F%ld 前段条件满足通过:%@",Demand2Pit(hDemand).pointerId,result.cansetFrom.pointerId,CLEANSTR(result.realCansetToIndexDic));
+    if (Log4SceneIsOk) NSLog(@"demand:F%ld cansetFrom:F%ld 前段条件满足通过:%@",Demand2Pit(hDemand).pointerId,result.cansetFrom.pointerId,CLEANSTR(result.realCansetToIndexDic));
     
     //7. 2024.09.21: 改回生成canset时,初始化outSPDic (参考33065-TODO2);
     [AINetUtils initItemOutSPDicForTransfered:result];
@@ -181,55 +181,6 @@
     else {
         return basePFoOrTargetFoModel;
     }
-}
-
-/**
- *  MARK:--------------------条件满足时: 获取前段indexDic--------------------
- *  @desc 即从proto中找abs: 判断当前proto场景对abs是条件满足的 (参考28052-2);
- *  @param cansetCutIndex : 其中cansetFo执行到的最大值 (含cansetCutIndex) (是ptAleardayCount-1对应的canset下标);
- *  @version
- *      2023.02.04: 初版,为解决条件满足不完全的问题,此方法将尝试从proto找出canset前段的每帧 (参考28052);
- *      2023.04.28: 条件满足兼容迁移alg的情况 (参考29075-方案3);
- *  @result 在proto中全找到canset的前段则返回frontIndexDic映射模型,未全找到时(条件不满足)返回空数组;
- */
-+(NSArray*) getFrontIndexDic:(AIFoNodeBase*)protoFo cansetFo:(AIFoNodeBase*)cansetFo cansetCutIndex:(NSInteger)cansetCutIndex sceneModel:(AISceneModel*)sceneModel {
-    //1. 数据准备;
-    NSMutableArray *result = [[NSMutableArray alloc] init];
-    if (!protoFo || !cansetFo) return nil;
-    
-    //2. 每帧match都到proto里去找,找到则记录proto的进度,找不到则全部失败;
-    NSInteger protoMin = 0;
-    
-    //2. 说明: 所有已发生帧,都要判断一下条件满足 (cansetCutIndex之前全是前段) (参考28022-todo4);
-    for (NSInteger cansetI = 0; cansetI < cansetCutIndex + 1; cansetI ++) {
-        AIKVPointer *cansetAlg = ARR_INDEX(cansetFo.content_ps, cansetI);
-        BOOL findItem = false;
-        for (NSInteger protoI = protoMin; protoI < protoFo.count; protoI++) {
-            AIKVPointer *protoAlg = ARR_INDEX(protoFo.content_ps, protoI);
-            //3. B源于cansetFo,此处只判断B是1层抽象 (参考27161-调试1&调试2);
-            //3. 单条判断方式: 此处proto抽象仅指向刚识别的matchAlgs,所以与contains等效 (参考28052-3);
-            AIKVPointer *transferAlg = [TCTransfer transferAlg:sceneModel canset:cansetFo cansetIndex:cansetI];
-            BOOL mIsC = [TOUtils mIsC_1:protoAlg c:transferAlg];
-            if (mIsC) {
-                //4. 找到了 & 记录protoI的进度;
-                findItem = true;
-                protoMin = protoI + 1;
-                [result addObject:[FrontIndexDicModel newWithProtoIndex:protoI cansetIndex:cansetI transferAlg:transferAlg]];
-                if (Log4SceneIsOk) NSLog(@"\t第%ld帧,条件满足通过 canset:%@ (fromProto:F%ldA%ld)",cansetI,Pit2FStr(cansetAlg),protoFo.pointer.pointerId,protoAlg.pointerId);
-                break;
-            }
-        }
-        
-        //5. 有一条失败,则全失败;
-        if (!findItem) {
-            if (Log4SceneIsOk) NSLog(@"\t第%ld帧,条件满足未通过 canset:%@ (fromProtoFo:F%ld)",cansetI,Pit2FStr(cansetAlg),protoFo.pointer.pointerId);
-            return nil;
-        }
-    }
-    
-    //6. 全找到,则成功;
-    if (Log4SceneIsOk) NSLog(@"\t前段条件满足通过:%@ (cansetCutIndex:%ld fromProtoFo:%ld)",Fo2FStr(cansetFo),cansetCutIndex,protoFo.pointer.pointerId);
-    return result;
 }
 
 @end

@@ -62,7 +62,6 @@
 #import "AIShortMatchModel_Simple.h"
 #import "ShortMatchManager.h"
 #import "AISceneModel.h"
-#import "FrontIndexDicModel.h"
 #import "AITransferModel.h"
 #import "TCTransferXvModel.h"
 #import "TCResult.h"
