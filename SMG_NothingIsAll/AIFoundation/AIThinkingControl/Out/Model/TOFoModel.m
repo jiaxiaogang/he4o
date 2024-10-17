@@ -639,7 +639,8 @@
     //DemandModel *baseDemand = (DemandModel*)self.baseOrGroup;
     ReasonDemandModel *root = (ReasonDemandModel*)[TOUtils getRootDemandModelWithSubOutModel:self];
     NSInteger rootIndex = [theTC.outModelManager.getAllDemand indexOfObject:root];
-    caller = STRFORMAT(@"%@ by:ROOT%ld(F%ld)",caller,rootIndex,Demand2Pit(root).pointerId);
+    NSString *fromDSC = STRFORMAT(@"FROM<F%ld F%ld F%ld>",Demand2Pit((DemandModel*)self.baseOrGroup).pointerId,self.sceneFrom.pointerId,self.cansetFrom.pointerId);
+    caller = STRFORMAT(@"%@ by:%@ ROOT%ld(F%ld)",caller,fromDSC,rootIndex,Demand2Pit(root).pointerId);
     
     //1. 取得canstFrom的spStrong;
     AISPStrong *value = [self.outSPRecord objectForKey:@(spIndex)];
@@ -654,16 +655,16 @@
     AIFoNodeBase *sceneTo = [SMGUtils searchNode:self.sceneTo];
     NSArray *cansetToContent_ps = Simples2Pits(self.transferXvModel.cansetToOrders);
     if (type == ATPlus && value.sStrong > 0) {
-        [sceneTo updateOutSPStrong:spIndex difStrong:-value.sStrong type:ATSub canset:cansetToContent_ps debugMode:false caller:caller baseCanset:self];
+        [sceneTo updateOutSPStrong:spIndex difStrong:-value.sStrong type:ATSub canset:cansetToContent_ps debugMode:false caller:caller];
         value.sStrong = 0;
     }
     if (type == ATSub && value.pStrong > 0) {
-        [sceneTo updateOutSPStrong:spIndex difStrong:-value.pStrong type:ATPlus canset:cansetToContent_ps debugMode:false caller:caller baseCanset:self];
+        [sceneTo updateOutSPStrong:spIndex difStrong:-value.pStrong type:ATPlus canset:cansetToContent_ps debugMode:false caller:caller];
         value.pStrong = 0;
     }
     
     //4. 把此次SP更新下;
-    [sceneTo updateOutSPStrong:spIndex difStrong:difStrong type:type canset:cansetToContent_ps debugMode:debugMode caller:caller baseCanset:self];
+    [sceneTo updateOutSPStrong:spIndex difStrong:difStrong type:type canset:cansetToContent_ps debugMode:debugMode caller:caller];
     
     //5. 把此次SP更新值记录到outSPRecord避免下次重复或冲突;
     if (type == ATSub) {

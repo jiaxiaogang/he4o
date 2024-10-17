@@ -161,7 +161,6 @@
     //2. debug日志
     for (MapModel *mapModel in ARR_SUB(sortMapArr, 0, 5)) {
         TOFoModel *obj = mapModel.v1;
-        AIFoNodeBase *sceneTo = [SMGUtils searchNode:obj.sceneTo];
         CGFloat spScore = NUMTOOK(mapModel.v3).floatValue;
         NSInteger pStrong = NUMTOOK(mapModel.v2).integerValue;
         NSDictionary *spDic = [obj getItemOutSPDic];
@@ -171,9 +170,10 @@
         NSInteger index = [sort indexOfObject:obj];
         NSString *fltLog1 = obj.isH && [NVHeUtil algIsWuPiGuo:targetAlg] && [NVHeUtil foHavYouPiGuo:obj.cansetFrom] ? FltLog4HDemandOfYouPiGuo(@"3") : @"";
         NSString *fltLog2 = FltLog4DefaultIf(!obj.isH, @"1");
-        if (debugMode && Log4AIRank) NSLog(@"%@%@%@%ld. %@<F%ld %@> %@ %@ (分:%.2f P值:%ld) [CUT:%ld=>TAR:%ld]",fltLog1,fltLog2,obj.isH?@"H":@"R",index,SceneType2Str(obj.baseSceneModel.type),obj.sceneFo.pointerId,ShortDesc4Pit(obj.cansetFrom),CLEANSTR(obj.transferXvModel.sceneToCansetToIndexDic),CLEANSTR(spDic),spScore,pStrong,obj.cansetCutIndex,obj.cansetTargetIndex);
+        NSString *fromDSC = STRFORMAT(@"FROM<F%ld F%ld %@>",Demand2Pit((DemandModel*)obj.baseOrGroup).pointerId,obj.sceneFrom.pointerId,ShortDesc4Pit(obj.cansetFrom));
+        if (debugMode && Log4AIRank) NSLog(@"%@%@%@%ld. %@ by:%@ %@ %@ (分:%.2f P值:%ld) [CUT:%ld=>TAR:%ld]",fltLog1,fltLog2,obj.isH?@"H":@"R",index,SceneType2Str(obj.baseSceneModel.type),fromDSC,CLEANSTR(obj.transferXvModel.sceneToCansetToIndexDic),CLEANSTR(spDic),spScore,pStrong,obj.cansetCutIndex,obj.cansetTargetIndex);
         
-        //打印详情日志;        
+        //打印详情日志;
         if (debugMode && Log4AIRankDesc) {
             AIFoNodeBase *sceneFrom = [SMGUtils searchNode:obj.sceneFrom];
             NSLog(@"\t%@sceneFrom: %@",FltLog4DefaultIf(!obj.isH, @"1.1"),Pit2FStr(obj.sceneFrom));

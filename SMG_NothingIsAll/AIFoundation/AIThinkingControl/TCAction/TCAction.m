@@ -65,7 +65,8 @@
     NSString *fltLog3 = !foModel.isH ? FltLog4CreateRCanset(1) : @"";
     NSString *fltLog4 = FltLog4CreateHCanset(1);
     NSString *fltLog5 = FltLog4DefaultIf(!foModel.isH, @"2");
-    OFTitleLog(@"行为化Fo",@"\n%@%@%@%@%@%@行为化%@下标 (%ld/%ld) %@ from时序:%@ fromDemand:F%ld",fltLog1,fltLog2,fltLog3,fltLog4,fltLog5,rhLog,frameLog,foModel.cansetActIndex,foModel.cansetTargetIndex,Pit2FStr([foModel getCurFrame].content_p),Fo2FStr(curFo),Demand2Pit((DemandModel*)foModel.baseOrGroup).pointerId);
+    NSString *fromDSC = STRFORMAT(@"FROM<F%ld F%ld F%ld>",Demand2Pit((DemandModel*)foModel.baseOrGroup).pointerId,foModel.sceneFrom.pointerId,foModel.cansetFrom.pointerId);
+    OFTitleLog(@"行为化Fo",@"\n%@%@%@%@%@%@行为化%@下标 (%ld/%ld) %@ cansetTo:%@ by:%@",fltLog1,fltLog2,fltLog3,fltLog4,fltLog5,rhLog,frameLog,foModel.cansetActIndex,foModel.cansetTargetIndex,Pit2FStr([foModel getCurFrame].content_p),Fo2FStr(curFo),fromDSC);
     NSLog(@"\t%@sceneTo:%@",fltLog5,Pit2FStr(foModel.sceneTo));
     [theTC updateOperCount:kFILENAME];
     Debug();
