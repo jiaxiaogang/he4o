@@ -13,7 +13,7 @@
  *  @name 前因序列
  *  1. 是frontOrderNode和absNode的基类;
  */
-@class AIEffectStrong,HEResult;
+@class AIEffectStrong,HEResult,TOFoModel;
 @interface AIFoNodeBase : AINodeBase
 
 /**
@@ -100,7 +100,7 @@
 /**
  *  MARK:--------------------更新OutSPDic强度值--------------------
  */
--(void) updateOutSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type canset:(NSArray*)cansetContent_ps debugMode:(BOOL)debugMode caller:(NSString*)caller;
+-(void) updateOutSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type canset:(NSArray*)cansetContent_ps debugMode:(BOOL)debugMode caller:(NSString*)caller baseCanset:(TOFoModel*)baseCanset;
 
 //MARK:===============================================================
 //MARK:                     < effectDic组 >

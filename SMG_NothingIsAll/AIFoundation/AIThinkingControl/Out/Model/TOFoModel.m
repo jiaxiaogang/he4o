@@ -654,16 +654,16 @@
     AIFoNodeBase *sceneTo = [SMGUtils searchNode:self.sceneTo];
     NSArray *cansetToContent_ps = Simples2Pits(self.transferXvModel.cansetToOrders);
     if (type == ATPlus && value.sStrong > 0) {
-        [sceneTo updateOutSPStrong:spIndex difStrong:-value.sStrong type:ATSub canset:cansetToContent_ps debugMode:false caller:caller];
+        [sceneTo updateOutSPStrong:spIndex difStrong:-value.sStrong type:ATSub canset:cansetToContent_ps debugMode:false caller:caller baseCanset:self];
         value.sStrong = 0;
     }
     if (type == ATSub && value.pStrong > 0) {
-        [sceneTo updateOutSPStrong:spIndex difStrong:-value.pStrong type:ATPlus canset:cansetToContent_ps debugMode:false caller:caller];
+        [sceneTo updateOutSPStrong:spIndex difStrong:-value.pStrong type:ATPlus canset:cansetToContent_ps debugMode:false caller:caller baseCanset:self];
         value.pStrong = 0;
     }
     
     //4. 把此次SP更新下;
-    [sceneTo updateOutSPStrong:spIndex difStrong:difStrong type:type canset:cansetToContent_ps debugMode:debugMode caller:caller];
+    [sceneTo updateOutSPStrong:spIndex difStrong:difStrong type:type canset:cansetToContent_ps debugMode:debugMode caller:caller baseCanset:self];
     
     //5. 把此次SP更新值记录到outSPRecord避免下次重复或冲突;
     if (type == ATSub) {

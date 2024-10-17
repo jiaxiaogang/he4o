@@ -123,7 +123,7 @@
  *  MARK:--------------------更新OutSPDic强度值--------------------
  *  @callers 默认由scene来调用;
  */
--(void) updateOutSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type canset:(NSArray*)cansetContent_ps debugMode:(BOOL)debugMode caller:(NSString*)caller {
+-(void) updateOutSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type canset:(NSArray*)cansetContent_ps debugMode:(BOOL)debugMode caller:(NSString*)caller baseCanset:(TOFoModel*)baseCanset {
     //1. 取得canstFrom的spStrong;
     NSString *key = [AINetUtils getOutSPKey:cansetContent_ps];
     NSMutableDictionary *itemOutSPDic = [self.outSPDic objectForKey:key];
@@ -140,13 +140,14 @@
     //flt2 R行为化中间帧下标 (3/4) A4136(向269,距12,果) from时序:F4645[M1{↑饿-16},A105(有向无距果209),A103(有向无距果203),A4136(向269,距12,果)] fromDemand:F4622
     //> flt2  sceneTo:F4143[M1{↑饿-16},A4142(有向无距果268),A4142(有向无距果268)]
     //可以顺着找几条没执行的,查下原因,顺带是对上次这里整理后的测试了;
+    //看起来,只是日志没打sceneFrom和cansetFrom;
     
     
     //4. log
     if (Log4OutSPDic && debugMode) {
         AISPStrong *spTo = [itemOutSPDic objectForKey:@(spIndex)];
         NSString *flt1 = FltLog4DefaultIf(true, @"4");
-        NSLog(@"%@updateOutSP:%ld/%ld (%@) %@->%@ sceneTo:%ld cansetTo:%@ caller:%@",flt1,spIndex,cansetContent_ps.count,ATType2Str(type),spFrom,spTo,self.pId,Pits2FStr(cansetContent_ps),caller);
+        NSLog(@"%@updateOutSP:%ld/%ld (%@) %@->%@ sceneFrom:F%ld cansetFrom:F%ld sceneTo:F%ld cansetTo:%@ caller:%@",flt1,spIndex,cansetContent_ps.count,ATType2Str(type),spFrom,spTo,baseCanset.sceneFrom.pointerId,baseCanset.cansetFrom.pointerId,self.pId,Pits2FStr(cansetContent_ps),caller);
         NSLog(@"\t%@sceneTo:%@",flt1,Fo2FStr(self));
     }
 }
