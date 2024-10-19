@@ -167,65 +167,6 @@
         AIKVPointer *targetAlg = obj.baseOrGroup.baseOrGroup.content_p;//base(HDemand).base(TargetAlgModel);
         
         //fltLog1: 如果当前是H任务,且是在找无皮果,且这个解含有有皮果 => 则这个解可能产生:有皮果动机;
-        
-        AIFoNodeBase *sceneFrom = [SMGUtils searchNode:obj.sceneFrom];
-        AIFoNodeBase *cansetFrom = [SMGUtils searchNode:obj.cansetFrom];
-        
-        NSMutableDictionary *contentCount = [[NSMutableDictionary alloc] init];
-        NSMutableDictionary *pointerIdCount = [[NSMutableDictionary alloc] init];
-        for (NSInteger i = 0; i <= sceneFrom.count; i++) {
-            NSArray *itemArr = ARRTOOK([sceneFrom.conCansetsDic objectForKey:@(i)]);
-            for (AIKVPointer *item in itemArr) {
-                AIFoNodeBase *itemFo = [SMGUtils searchNode:item];
-                NSString *contentStr = Pits2FStr([SMGUtils sortPointers:itemFo.content_ps]);
-                int oldCount = NUMTOOK([contentCount objectForKey:contentStr]).intValue;
-                [contentCount setObject:@(oldCount + 1) forKey:contentStr];
-                
-                oldCount = NUMTOOK([pointerIdCount objectForKey:@(itemFo.pId)]).intValue;
-                [pointerIdCount setObject:@(oldCount + 1) forKey:@(itemFo.pId)];
-            }
-        }
-        
-        NSArray *sortContentKeys = [SMGUtils sortBig2Small:contentCount.allKeys compareBlock:^double(id key) {
-            return NUMTOOK([contentCount objectForKey:key]).intValue;
-        }];
-        NSArray *sortPointerIdKeys = [SMGUtils sortBig2Small:pointerIdCount.allKeys compareBlock:^double(id key) {
-            return NUMTOOK([pointerIdCount objectForKey:key]).intValue;
-        }];
-        
-        for (NSString *key in sortContentKeys) {
-            int value = NUMTOOK([contentCount objectForKey:key]).intValue;
-            if (value > 1) {
-                for (NSInteger i = 0; i <= sceneFrom.count; i++) {
-                    NSArray *itemArr = ARRTOOK([sceneFrom.conCansetsDic objectForKey:@(i)]);
-                    for (AIKVPointer *item in itemArr) {
-                        AIFoNodeBase *itemFo = [SMGUtils searchNode:item];
-                        NSString *contentStr = Pits2FStr([SMGUtils sortPointers:itemFo.content_ps]);
-                        
-                        if ([key isEqualToString:contentStr]) {
-                            NSLog(@"发现内容重复的canset: %@ %ld F%ld",key,i,itemFo.pId);
-                            
-                            //比如:
-                            //发现内容重复的canset: M1{↑饿-16},A107(有距无向果51) 15 F1263
-                            //发现内容重复的canset: M1{↑饿-16},A107(有距无向果51) 15 F4226
-                            //说明: 如上日志,也挂在一个下标下,并且重复了,肯定是哪里代码没防重到位,得继续查...
-                        }
-                    }
-                }
-                NSLog(@"断点");
-            }
-            //NSLog(@"内容为key:%@ 次数:%d",key,value);
-        }
-        for (NSNumber *key in sortPointerIdKeys) {
-            int value = NUMTOOK([pointerIdCount objectForKey:key]).intValue;
-            //NSLog(@"地址为key:%d 次数:%d",key.intValue,value);
-        }
-        
-        
-        
-         
-        
-        
         NSInteger index = [sort indexOfObject:obj];
         NSString *fltLog1 = obj.isH && [NVHeUtil algIsWuPiGuo:targetAlg] && [NVHeUtil foHavYouPiGuo:obj.cansetFrom] ? FltLog4HDemandOfYouPiGuo(@"3") : @"";
         NSString *fltLog2 = FltLog4DefaultIf(!obj.isH, @"1");

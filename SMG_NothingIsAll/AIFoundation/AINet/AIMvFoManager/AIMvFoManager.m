@@ -84,6 +84,17 @@
  */
 +(AIFoNodeBase*) createConFoForCanset:(NSArray*)order sceneFo:(AIFoNodeBase*)sceneFo sceneTargetIndex:(NSInteger)sceneTargetIndex {
     NSArray *oldCansets = [sceneFo getConCansets:sceneTargetIndex];
+    
+    //TODO20241019: 查有没内容重复的,如果有,再往前查下,为什么没防重掉它 (应该问题不在这儿,因为这是targetIndex,我看问题都是末帧);
+    NSString *newDesc = Pits2FStr(Simples2Pits(order));
+    for (AIKVPointer *oldCanset in oldCansets) {
+        AIFoNodeBase *oldFo = [SMGUtils searchNode:oldCanset];
+        NSString *oldDesc = Pits2FStr(oldFo.content_ps);
+        if ([newDesc isEqualToString:oldDesc]) {
+            ELog(@"发现内容重复2: %@ %@",newDesc,Fo2FStr(oldFo));
+        }
+    }
+    
     return [self createConFo_NoRepeat:order noRepeatArea_ps:oldCansets difStrong:1];
 }
 

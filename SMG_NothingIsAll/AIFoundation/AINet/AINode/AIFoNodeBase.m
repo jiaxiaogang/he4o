@@ -293,6 +293,17 @@
     
     //1. 更新一条候选;
     NSMutableArray *conCansets = [[NSMutableArray alloc] initWithArray:[self.conCansetsDic objectForKey:@(targetIndex)]];
+    
+    //TODO20241019: 查有没内容重复的,如果有,再往前查下,为什么没防重掉它;
+    NSString *newDesc = Pits2FStr(newCanset.content_ps);
+    for (AIKVPointer *oldCanset in conCansets) {
+        AIFoNodeBase *oldFo = [SMGUtils searchNode:oldCanset];
+        NSString *oldDesc = Pits2FStr(oldFo.content_ps);
+        if ([newDesc isEqualToString:oldDesc]) {
+            ELog(@"发现内容重复 更新入scene: %@ %@",Fo2FStr(newCanset),Fo2FStr(oldFo));
+        }
+    }
+    
     if (![conCansets containsObject:newConCansetFo]) {
         [conCansets addObject:newConCansetFo];
         [self.conCansetsDic setObject:conCansets forKey:@(targetIndex)];
