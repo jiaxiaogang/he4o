@@ -300,7 +300,8 @@
         AIFoNodeBase *oldFo = [SMGUtils searchNode:oldCanset];
         NSString *oldDesc = Pits2FStr(oldFo.content_ps);
         if (newCanset.pId != oldFo.pId && [newDesc isEqualToString:oldDesc]) {
-            //看起来,应该是有吃到时,触发类比,然后触发rCanset类比到这里;
+            //1. 看起来,应该是有吃到时,触发类比,然后触发rCanset类比到这里 `已修 T`;
+            //2. 然后在有效时,newRCanset也会到这里,明天继续查下;
             ELog(@"发现内容重复 更新入scene: %@ %@",Fo2FStr(newCanset),Fo2FStr(oldFo));
         }
     }

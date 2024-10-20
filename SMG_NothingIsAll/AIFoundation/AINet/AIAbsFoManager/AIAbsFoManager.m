@@ -145,7 +145,7 @@
     }
     
     //7. 继承sp和eff (参考29032-todo2.2);
-    if (!conAbsIsRelate) {
+    if (!conAbsIsRelate && ![assFo isEqual:result]) {
         [AINetUtils extendSPByIndexDic:assIndexDic assFo:assFo absFo:result];
     }
     

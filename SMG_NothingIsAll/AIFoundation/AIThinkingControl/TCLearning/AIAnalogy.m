@@ -258,17 +258,6 @@
     NSDictionary *newIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:realCansetToIndexDic.allValues];
     NSDictionary *oldIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:realCansetToIndexDic.allKeys];
 
-    //TODO20241019: 查有没内容重复的,如果有,再往前查下,为什么没防重掉它 (问题应该在这儿,RCanset类比时的问题,它是末帧);
-    NSString *newDesc = Pits2FStr(orderSames);
-    for (AIKVPointer *oldCanset in noRepeatArea_ps) {
-        AIFoNodeBase *oldFo = [SMGUtils searchNode:oldCanset];
-        NSString *oldDesc = Pits2FStr(oldFo.content_ps);
-        if ([newDesc isEqualToString:oldDesc]) {
-            //看来问题就出在这儿了,因为类比后的absCanset和oldCanset一模一样,而防重时,又把conCanset排除了,导致;
-            ELog(@"发现内容重复1: %@ %@",newDesc,Fo2FStr(oldFo));
-        }
-    }
-    
     //7. 外类比构建
     BOOL outConAbsIsRelate = true;
     HEResult *heResult = [theNet createAbsFo_NoRepeat:orderSames protoFo:newCanset assFo:oldCanset difStrong:1 type:ATDefault protoIndexDic:newIndexDic assIndexDic:oldIndexDic outConAbsIsRelate:&outConAbsIsRelate noRepeatArea_ps:noRepeatArea_ps];
