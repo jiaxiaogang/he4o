@@ -102,6 +102,7 @@
  *      2023.03.28: 将两条具象与absFo的indexDic映射传过来 (用于继承sp和eff) (参考29032-todo1);
  *      2023.03.28: 支持判断ass和abs本来无关联时,继承ass的SPEFF (参考29032-todo2.1 & todo2.2);
  *      2023.03.28: 将outConAbsIsRelate返回 (因为只有Canset类比时才更新EFF,需要返回这个值判断) (参考29032-todo2.4);
+ *      2024.10.20: 修复Canset类比后,抽象和具象内容一致时,重复构建了两个一模一样的cansetFo (参考33107);
  *  @status
  *      2021.04.25: 打开后,gl经验全为0条,所以先关掉,后续测试打开后为什么为0条;
  */
@@ -119,10 +120,10 @@
         for (AIFoNodeBase *conItem in conFos) {
             [validPorts addObjectsFromArray:[AINetUtils absPorts_All:conItem type:type]];
         }
-        result = [AINetIndexUtils getAbsoluteMatching_ValidPorts:validPorts sort_ps:content_ps except_ps:Nodes2Pits(conFos) at:at ds:ds type:type];
+        result = [AINetIndexUtils getAbsoluteMatching_ValidPorts:validPorts sort_ps:content_ps except_ps:nil at:at ds:ds type:type];
     }else{
         //3. 防重_其它类型时,全局绝对匹配;
-        result = [AINetIndexUtils getAbsoluteMatching_ValidPs:content_ps sort_ps:content_ps except_ps:Nodes2Pits(conFos) noRepeatArea_ps:noRepeatArea_ps getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
+        result = [AINetIndexUtils getAbsoluteMatching_ValidPs:content_ps sort_ps:content_ps except_ps:nil noRepeatArea_ps:noRepeatArea_ps getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
             AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
             return [AINetUtils refPorts_All4Alg:itemAlg];
         } at:at ds:ds type:type];
@@ -133,7 +134,7 @@
     
     //5. 有则加强关联;
     BOOL isNew = false;
-    if (ISOK(result, AINetAbsFoNode.class)) {
+    if (ISOK(result, AIFoNodeBase.class)) {
         conAbsIsRelate = [Ports2Pits(assFo.absPorts) containsObject:result.pointer];
         [AINetUtils relateFoAbs:result conNodes:conFos isNew:false];
         [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];

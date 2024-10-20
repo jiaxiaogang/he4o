@@ -264,6 +264,7 @@
         AIFoNodeBase *oldFo = [SMGUtils searchNode:oldCanset];
         NSString *oldDesc = Pits2FStr(oldFo.content_ps);
         if ([newDesc isEqualToString:oldDesc]) {
+            //看来问题就出在这儿了,因为类比后的absCanset和oldCanset一模一样,而防重时,又把conCanset排除了,导致;
             ELog(@"发现内容重复1: %@ %@",newDesc,Fo2FStr(oldFo));
         }
     }

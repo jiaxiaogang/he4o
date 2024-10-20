@@ -299,7 +299,8 @@
     for (AIKVPointer *oldCanset in conCansets) {
         AIFoNodeBase *oldFo = [SMGUtils searchNode:oldCanset];
         NSString *oldDesc = Pits2FStr(oldFo.content_ps);
-        if ([newDesc isEqualToString:oldDesc]) {
+        if (newCanset.pId != oldFo.pId && [newDesc isEqualToString:oldDesc]) {
+            //看起来,应该是有吃到时,触发类比,然后触发rCanset类比到这里;
             ELog(@"发现内容重复 更新入scene: %@ %@",Fo2FStr(newCanset),Fo2FStr(oldFo));
         }
     }
