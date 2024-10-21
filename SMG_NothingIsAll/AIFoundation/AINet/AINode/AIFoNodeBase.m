@@ -293,20 +293,18 @@
     
     //1. 更新一条候选;
     NSMutableArray *conCansets = [[NSMutableArray alloc] initWithArray:[self.conCansetsDic objectForKey:@(targetIndex)]];
-    
-    //TODO20241019: 查有没内容重复的,如果有,再往前查下,为什么没防重掉它;
-    NSString *newDesc = Pits2FStr(newCanset.content_ps);
-    for (AIKVPointer *oldCanset in conCansets) {
-        AIFoNodeBase *oldFo = [SMGUtils searchNode:oldCanset];
-        NSString *oldDesc = Pits2FStr(oldFo.content_ps);
-        if (newCanset.pId != oldFo.pId && [newDesc isEqualToString:oldDesc]) {
-            //1. 看起来,应该是有吃到时,触发类比,然后触发rCanset类比到这里 `已修 T`;
-            //2. 然后在有效时,newRCanset也会到这里,明天继续查下;
-            ELog(@"发现内容重复 更新入scene: %@ %@",Fo2FStr(newCanset),Fo2FStr(oldFo));
-        }
-    }
-    
     if (![conCansets containsObject:newConCansetFo]) {
+        
+        NSString *newDesc = Pits2FStr(newCanset.content_ps);
+        for (AIKVPointer *oldCanset in conCansets) {
+            AIFoNodeBase *oldFo = [SMGUtils searchNode:oldCanset];
+            NSString *oldDesc = Pits2FStr(oldFo.content_ps);
+            if (newCanset.pId != oldFo.pId && [newDesc isEqualToString:oldDesc]) {
+                //此处等FZ1013重跑跑不断点后,说明canset重复的bug彻底好了,到时此日志可删掉 (参考33107);
+                ELog(@"发现内容重复 更新入scene: %@ %@",Fo2FStr(newCanset),Fo2FStr(oldFo));
+            }
+        }
+        
         [conCansets addObject:newConCansetFo];
         [self.conCansetsDic setObject:conCansets forKey:@(targetIndex)];
         [SMGUtils insertNode:self];
