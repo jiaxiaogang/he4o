@@ -83,7 +83,7 @@
  *  @desc 构建canset时不应全局防重,而是只以场景内防重 (不然这些canset的SPEFF值就窜了,比如在北京吃龙虾不行,在家是可以的) (参考3101b-todo5);
  */
 +(AIFoNodeBase*) createConFoForCanset:(NSArray*)order sceneFo:(AIFoNodeBase*)sceneFo sceneTargetIndex:(NSInteger)sceneTargetIndex {
-    NSArray *oldCansets = [sceneFo getConCansets:sceneTargetIndex];    
+    NSArray *oldCansets = [sceneFo getConCansets:sceneTargetIndex];
     return [self createConFo_NoRepeat:order noRepeatArea_ps:oldCansets difStrong:1];
 }
 
@@ -99,6 +99,18 @@
         AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
         return [AINetUtils refPorts_All4Alg:itemAlg];
     } at:DefaultAlgsType ds:DefaultDataSource type:ATDefault];
+    
+    //TODOTOMORROW20241022: 这里也会有重复canset;
+    
+    NSString *newDesc = Pits2FStr(content_ps);
+    for (AIKVPointer *oldCanset in noRepeatArea_ps) {
+        AIFoNodeBase *oldFo = [SMGUtils searchNode:oldCanset];
+        NSString *oldDesc = Pits2FStr(oldFo.content_ps);
+        if (!result && [newDesc isEqualToString:oldDesc]) {
+            //此处等FZ1013重跑跑不断点后,说明canset重复的bug彻底好了,到时此日志可删掉 (参考33107);
+            ELog(@"发现内容重复 更新入scene: %@",Fo2FStr(oldFo));
+        }
+    }
     
     //2. 有则加强关联;
     if (ISOK(result, AIFoNodeBase.class)) {
