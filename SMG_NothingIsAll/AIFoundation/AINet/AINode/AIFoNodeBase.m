@@ -294,16 +294,16 @@
     //1. 更新一条候选;
     NSMutableArray *conCansets = [[NSMutableArray alloc] initWithArray:[self.conCansetsDic objectForKey:@(targetIndex)]];
     if (![conCansets containsObject:newConCansetFo]) {
-        
-        NSString *newDesc = Pits2FStr(newCanset.content_ps);
-        for (AIKVPointer *oldCanset in conCansets) {
-            AIFoNodeBase *oldFo = [SMGUtils searchNode:oldCanset];
-            NSString *oldDesc = Pits2FStr(oldFo.content_ps);
-            if (newCanset.pId != oldFo.pId && [newDesc isEqualToString:oldDesc]) {
-                //此处等FZ1013重跑跑不断点后,说明canset重复的bug彻底好了,到时此日志可删掉 (参考33107);
-                ELog(@"发现内容重复 更新入scene: %@ %@",Fo2FStr(newCanset),Fo2FStr(oldFo));
-            }
-        }
+        //2024.10.22: 此处在33107修复后,仍测到过一次NewHCanset时,有重复的情况,不过后来死活不复现了,如果以后发现HCanset有重复内容的情况,再来打开这个日志,看能不能复现;
+        //NSString *newDesc = Pits2FStr(newCanset.content_ps);
+        //for (AIKVPointer *oldCanset in conCansets) {
+        //    AIFoNodeBase *oldFo = [SMGUtils searchNode:oldCanset];
+        //    NSString *oldDesc = Pits2FStr(oldFo.content_ps);
+        //    if (newCanset.pId != oldFo.pId && [newDesc isEqualToString:oldDesc]) {
+        //        //此处等FZ1013重跑跑不断点后,说明canset重复的bug彻底好了,到时此日志可删掉 (参考33107);
+        //        ELog(@"发现内容重复 更新入scene: %@ %@",Fo2FStr(newCanset),Fo2FStr(oldFo));
+        //    }
+        //}
         
         [conCansets addObject:newConCansetFo];
         [self.conCansetsDic setObject:conCansets forKey:@(targetIndex)];
