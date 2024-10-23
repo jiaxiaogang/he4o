@@ -40,11 +40,19 @@
     sep = STRTOOK(sep);
     
     //2. 拼接返回
+    NSString *lastStr = @"";
     for (AIKVPointer *item_p in node_ps){
         NSString *str = [NVHeUtil getLightStr:item_p simple:simple header:header from:node_ps];
         if (STRISOK(str)) {
-            [result appendFormat:@"%@%@",str,sep];
+            if ([str isEqualToString:lastStr]) {
+                [result appendFormat:@"-%@",sep];
+            } else if ([result containsString:str]) {
+                [result appendFormat:@"%@%ld%@",[self isMv:item_p]?@"M":@"A",item_p.pointerId,sep];
+            } else {
+                [result appendFormat:@"%@%@",str,sep];
+            }
         }
+        lastStr = str;
     }
     return SUBSTR2INDEX(result, result.length - sep.length);
 }
