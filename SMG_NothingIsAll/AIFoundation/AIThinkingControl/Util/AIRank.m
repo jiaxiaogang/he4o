@@ -184,6 +184,16 @@
             NSLog(@"indexDicTo: %@",CLEANSTR(obj.transferXvModel.sceneToCansetToIndexDic));
         }
     }
+    
+    //调试有向无距果场景在试错训练中的竞争变化 (参考33108-调试日志);
+    if (debugMode) {
+        for (TOFoModel *item in sort) {
+            NSString *sceneToDesc = Pit2FStr(item.sceneTo);
+            if ([sceneToDesc containsString:@"有向无距"]) {
+                NSLog(@"fltx5 CansetRankingV4 有向无距果 index: %ld/%ld",[sort indexOfObject:item],sort.count);
+            }
+        }
+    }
     return sort;
 }
 
