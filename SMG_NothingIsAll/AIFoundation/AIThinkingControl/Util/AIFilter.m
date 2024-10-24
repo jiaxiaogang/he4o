@@ -163,6 +163,11 @@
     inModel.matchAlgs_PS = filterMatchAlgs_PS;
     inModel.matchAlgs_PJ = filterMatchAlgs_PJ;
     inModel.matchPFos = filterFos;
+    
+    //TODOTOMORROW20241024: 首先这里卡的有点严了,导致准确度虽然高了,但影响到了广度;
+    //方案1: 卡的松些,看能不能二者兼得 (但因二者矛盾,一般无法二者兼得,准则无广,广则失准);
+    //方案2: 除非二者同存协同工作,比如: 把这里的重要度存下来,做为后面排序的因子 (比如: 在TO竞争时,可以乘上这个重要度);
+    //抉择: 先试方案1,证实不太行后,再转向方案2;
     [inModel log4HavXianWuJv_AlgPJ:@"fltx3 二次"];
     [inModel log4HavXianWuJv_PFos:@"fltx4 二次"];
 }
