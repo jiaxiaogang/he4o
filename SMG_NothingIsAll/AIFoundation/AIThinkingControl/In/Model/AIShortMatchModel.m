@@ -186,4 +186,25 @@
     return ARR_SUB(partMatchs, 0, 10);
 }
 
+-(void) log4HavXianWuJv_AlgPJ:(NSString*)prefix {
+    //调试有向无距果场景在试错训练中的竞争变化 (参考33108-调试日志);
+    for (AIMatchAlgModel *item in self.matchAlgs_PJ) {
+        AIKVPointer *xianV = [NVHeUtil getXian:item.matchAlg];
+        AIKVPointer *jvV = [NVHeUtil getJv:item.matchAlg];
+        if (xianV && !jvV) {
+            NSLog(@"%@概念识别 有向无距果 index: %ld/%ld",prefix,[self.matchAlgs_PJ indexOfObject:item],self.matchAlgs_PJ.count);
+        }
+    }
+}
+
+-(void) log4HavXianWuJv_PFos:(NSString*)prefix {
+    for (AIMatchFoModel *item in self.matchPFos) {
+        NSString *matchFoDesc = Pit2FStr(item.matchFo);
+        //调试有向无距果场景在试错训练中的竞争变化 (参考33108-调试日志);
+        if ([matchFoDesc containsString:@"有向无距"]) {
+            NSLog(@"%@时序识别 有向无距果 index: %ld/%ld",prefix,[self.matchPFos indexOfObject:item],self.matchPFos.count);
+        }
+    }
+}
+
 @end

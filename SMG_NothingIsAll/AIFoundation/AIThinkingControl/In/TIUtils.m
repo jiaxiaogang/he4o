@@ -269,6 +269,7 @@
         NSString *sjDesc = [inModel.matchAlgs_Si containsObject:item] ? @"s" : @"j";
         if (Log4MAlg) NSLog(@"%@%@-->>>(%d) 全含item: %@   \t相近度 => %.2f (count:%d)",prDesc,sjDesc,item.sumRefStrong,Pit2FStr(item.matchAlg),item.matchValue,item.matchCount);
     }
+    [inModel log4HavXianWuJv_AlgPJ:@"fltx1"];
 }
 
 /**
@@ -474,6 +475,7 @@
             NSLog(@"%ld. %@强度:(%ld)\t> %@->{%.2f} (SP:%@) indexDic:%@ 匹配度 => %.2f",[allMatchFos indexOfObject:item],matchFo.cmvNode_p?@"P":@"",item.sumRefStrong,Fo2FStr(matchFo),[AIScore score4MV_v2FromCache:item],CLEANSTR(matchFo.spDic),CLEANSTR(item.indexDic2),item.matchFoValue);
         }
     }
+    [inModel log4HavXianWuJv_PFos:@"fltx2"];
     
     //12. 关联处理,直接protoFo抽象指向matchFo,并持久化indexDic (参考27177-todo6);
     for (AIMatchFoModel *item in allMatchFos) {

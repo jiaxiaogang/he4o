@@ -119,4 +119,7 @@
 //用于预测 (参考:25134-方案2-B预测);
 -(NSDictionary*) fos4Demand;
 
+-(void) log4HavXianWuJv_AlgPJ:(NSString*)prefix;
+-(void) log4HavXianWuJv_PFos:(NSString*)prefix;
+
 @end

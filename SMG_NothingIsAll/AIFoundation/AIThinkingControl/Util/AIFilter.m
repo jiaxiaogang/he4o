@@ -163,6 +163,8 @@
     inModel.matchAlgs_PS = filterMatchAlgs_PS;
     inModel.matchAlgs_PJ = filterMatchAlgs_PJ;
     inModel.matchPFos = filterFos;
+    [inModel log4HavXianWuJv_AlgPJ:@"fltx3 二次"];
+    [inModel log4HavXianWuJv_PFos:@"fltx4 二次"];
 }
 
 /**

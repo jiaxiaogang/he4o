@@ -56,6 +56,12 @@
 //alg是无皮果
 +(BOOL) algIsWuPiGuo:(AIKVPointer*)alg_p;
 
+//取向码
++(AIKVPointer*) getXian:(AIKVPointer*)alg_p;
+
+//取距码
++(AIKVPointer*) getJv:(AIKVPointer*)alg_p;
+
 //alg是踢行为
 +(BOOL) algIsKick:(AIKVPointer*)alg_p;
 
