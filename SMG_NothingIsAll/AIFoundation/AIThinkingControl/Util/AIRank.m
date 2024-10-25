@@ -190,7 +190,8 @@
         for (TOFoModel *item in sort) {
             NSString *sceneToDesc = Pit2FStr(item.sceneTo);
             if ([sceneToDesc containsString:@"有向无距"]) {
-                NSLog(@"fltx5 CansetRankingV4 有向无距果 index: %ld/%ld",[sort indexOfObject:item],sort.count);
+                NSLog(@"fltx5 %lld CansetRankingV4 有向无距果 index: %ld/%ld",theTC.getLoopId,[sort indexOfObject:item],sort.count);
+                break;
             }
         }
     }
