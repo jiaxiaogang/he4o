@@ -168,26 +168,10 @@
     //方案1: 卡的松些,看能不能二者兼得 (但因二者矛盾,一般无法二者兼得,准则无广,广则失准);
     //方案2: 除非二者同存协同工作,比如: 把这里的重要度存下来,做为后面排序的因子 (比如: 在TO竞争时,可以乘上这个重要度);
     //抉择: 先试方案1,证实不太行后,再转向方案2;
-    
-//    50 [08:56:18:748 TI AIShortMatchModel.m 206] fltx2 1 时序识别 有向无距果 index: 10/19
-//   241 [08:56:20:809 TO            AIRank.m 193] fltx5 2 CansetRankingV4 有向无距果 index: 9/525
-    
-//   328 [08:56:21:163 TI AIShortMatchModel.m 195] fltx1 3 概念识别 有向无距果 index: 7/11
-//   476 [08:56:23:300 TI AIShortMatchModel.m 206] fltx2 3 时序识别 有向无距果 index: 8/20
-//   510 [08:56:23:508 TI AIShortMatchModel.m 195] fltx3 二次 3 概念识别 有向无距果 index: 2/3
-//   511 [08:56:23:520 TI AIShortMatchModel.m 206] fltx4 二次 3 时序识别 有向无距果 index: 3/4
-    
-//   591 [08:56:23:635 TI AIShortMatchModel.m 195] fltx1 4 概念识别 有向无距果 index: 7/11
-//   800 [08:56:24:669 TO            AIRank.m 193] fltx5 4 CansetRankingV4 有向无距果 index: 2/178
-    
-//   958 [08:56:26:940 TI AIShortMatchModel.m 195] fltx1 7 概念识别 有向无距果 index: 6/11
-//  1391 [08:56:35:496 TI AIShortMatchModel.m 195] fltx1 9 概念识别 有向无距果 index: 6/11
-//  1581 [08:56:38:604 TI AIShortMatchModel.m 195] fltx1 11 概念识别 有向无距果 index: 7/11
-//  1852 [08:56:44:252 TI AIShortMatchModel.m 195] fltx1 13 概念识别 有向无距果 index: 7/11
-//  2188 [08:56:49:795 TI AIShortMatchModel.m 195] fltx1 16 概念识别 有向无距果 index: 7/11
-//  2359 [08:56:52:711 TI AIShortMatchModel.m 195] fltx1 18 概念识别 有向无距果 index: 7/11
-    //如上图日志: 二次过滤后,许多没有有向无距果的,但sceneTo里却有,查下这些sceneTo哪里来的,我记得sceneTo只有SceneI,而SceneI就是pFo,它哪来的呢?先查后,再来继续修这个二次过滤太严的问题;
-    //解答: 因为第一帧是p输入,pInput是不会调用二次过滤的,所以它有"有向无距果",而后续的rInput有二次过滤,"有向无距果"就全被过滤掉了;
+    //分析:
+    //  1. 关键在于,这里到底是为了识别准确吧,至于后面是否管用,这该是这里负责的;
+    //  2. 而这里的特征重要性,也只是根据strong强度来计算的,与sp无关;
+    //  3. 所以,可以考虑下方案1,把时序识别时,结果多一些,然后二次过滤时,即使留的少,也能留够;
     
     [inModel log4HavXianWuJv_AlgPJ:@"fltx3 二次"];
     [inModel log4HavXianWuJv_PFos:@"fltx4 二次"];
