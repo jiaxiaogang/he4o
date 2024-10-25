@@ -187,6 +187,7 @@
 //  2188 [08:56:49:795 TI AIShortMatchModel.m 195] fltx1 16 概念识别 有向无距果 index: 7/11
 //  2359 [08:56:52:711 TI AIShortMatchModel.m 195] fltx1 18 概念识别 有向无距果 index: 7/11
     //如上图日志: 二次过滤后,许多没有有向无距果的,但sceneTo里却有,查下这些sceneTo哪里来的,我记得sceneTo只有SceneI,而SceneI就是pFo,它哪来的呢?先查后,再来继续修这个二次过滤太严的问题;
+    //解答: 因为第一帧是p输入,pInput是不会调用二次过滤的,所以它有"有向无距果",而后续的rInput有二次过滤,"有向无距果"就全被过滤掉了;
     
     [inModel log4HavXianWuJv_AlgPJ:@"fltx3 二次"];
     [inModel log4HavXianWuJv_PFos:@"fltx4 二次"];
