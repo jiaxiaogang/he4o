@@ -101,7 +101,8 @@
     
     //1. 获取V重要性字典;
     [theTC updateOperCount:kFILENAME];
-    NSInteger foLimit = 4;//MAX(4, inModel.matchPFos.count * 0.2f);
+    //2024.10.26: 二次过滤卡的太严了,改为保留50% (参考33109);
+    NSInteger foLimit = MAX(4, inModel.matchPFos.count * 0.5f);
     if (inModel.matchPFos.count <= foLimit) return;//小于limit条时,不用二次过滤;
     IFTitleLog(@"识别二次过滤",@"\nfrom protoFo:%@",Fo2FStr(inModel.protoFo));
     BOOL debugMode = false;
@@ -163,16 +164,6 @@
     inModel.matchAlgs_PS = filterMatchAlgs_PS;
     inModel.matchAlgs_PJ = filterMatchAlgs_PJ;
     inModel.matchPFos = filterFos;
-    
-    //TODOTOMORROW20241024: 首先这里卡的有点严了,导致准确度虽然高了,但影响到了广度;
-    //方案1: 卡的松些,看能不能二者兼得 (但因二者矛盾,一般无法二者兼得,准则无广,广则失准);
-    //方案2: 除非二者同存协同工作,比如: 把这里的重要度存下来,做为后面排序的因子 (比如: 在TO竞争时,可以乘上这个重要度);
-    //抉择: 先试方案1,证实不太行后,再转向方案2;
-    //分析:
-    //  1. 关键在于,这里到底是为了识别准确吧,至于后面是否管用,这该是这里负责的;
-    //  2. 而这里的特征重要性,也只是根据strong强度来计算的,与sp无关;
-    //  3. 所以,可以考虑下方案1,把时序识别时,结果多一些,然后二次过滤时,即使留的少,也能留够;
-    
     [inModel log4HavXianWuJv_AlgPJ:@"fltx3 二次"];
     [inModel log4HavXianWuJv_PFos:@"fltx4 二次"];
 }
