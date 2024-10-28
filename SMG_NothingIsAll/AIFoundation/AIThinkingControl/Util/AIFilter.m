@@ -101,8 +101,9 @@
     
     //1. 获取V重要性字典;
     [theTC updateOperCount:kFILENAME];
-    //2024.10.26: 二次过滤卡的太严了,改为保留50% (参考33109);
-    NSInteger foLimit = MAX(4, inModel.matchPFos.count * 0.5f);
+    //2024.10.26: 二次过滤卡的太严了,改为保留50% (参考33109-方案1);
+    //2024.10.28: 转向方案3了,所以改回一些,改成30% (参考33109-方案3);
+    NSInteger foLimit = MAX(4, inModel.matchPFos.count * 0.3f);
     if (inModel.matchPFos.count <= foLimit) return;//小于limit条时,不用二次过滤;
     IFTitleLog(@"识别二次过滤",@"\nfrom protoFo:%@",Fo2FStr(inModel.protoFo));
     BOOL debugMode = false;

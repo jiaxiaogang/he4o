@@ -401,11 +401,14 @@
     for (AIKVPointer *proto_p in protoOrRegroupContent_ps) {
         AIAlgNodeBase *protoAlg = [SMGUtils searchNode:proto_p];
         
-        //4. 每个abs_p分别索引;
+        //3. 每个abs_p分别索引;
         NSArray *protoAlgAbs_ps = ISOK(protoAlg, AICMVNodeBase.class) ? @[proto_p] : Ports2Pits([protoAlg.absPorts copy]);
         for (AIKVPointer *absAlg_p in protoAlgAbs_ps) {
-            //6. 第2_取abs_p的refPorts (参考28107-todo2);
+            //4. 仅保留似层: 根据absAlg.count来判断 (参考33111-TODO1);
             AIAlgNodeBase *absAlg = [SMGUtils searchNode:absAlg_p];
+            if (absAlg.count < protoAlg.count) continue;
+            
+            //5. 第2_取abs_p的refPorts (参考28107-todo2);
             NSArray *refPorts = [[AINetUtils refPorts_All4Alg_Normal:absAlg] copy];
             
             //6. RFo的长度>1才有意义 (参考28183-BUG1);
