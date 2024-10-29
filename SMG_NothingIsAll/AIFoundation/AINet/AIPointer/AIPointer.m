@@ -40,6 +40,7 @@
     if (self) {
         self.pointerId = [aDecoder decodeIntegerForKey:@"pointerId"];
         self.params = [aDecoder decodeObjectForKey:@"params"];
+        self.isJiao = [aDecoder decodeBoolForKey:@"isJiao"];
     }
     return self;
 }
@@ -47,6 +48,7 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [aCoder encodeInteger:self.pointerId forKey:@"pointerId"];
     [aCoder encodeObject:self.params forKey:@"params"];
+    [aCoder encodeBool:self.isJiao forKey:@"isJiao"];
 }
 
 -(id) paramForKey:(NSString*)key{
@@ -60,6 +62,7 @@
     AIPointer *copy = [[AIPointer alloc] init];
     copy.pointerId = self.pointerId;
     copy.params = self.params;
+    copy.isJiao = self.isJiao;
     return copy;
 }
 

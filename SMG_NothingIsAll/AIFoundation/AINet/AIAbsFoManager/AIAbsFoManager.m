@@ -53,6 +53,11 @@
         findAbsNode = [[AINetAbsFoNode alloc] init];
         findAbsNode.pointer = [SMGUtils createPointerForFo:kPN_FO_ABS_NODE at:at ds:ds type:type];
         
+        //3. content_ps中有一个是交,则fo是交 (参考33111-TODO1);
+        findAbsNode.pointer.isJiao = [SMGUtils filterSingleFromArr:orderSames checkValid:^BOOL(AIKVPointer *item) {
+            return item.isJiao;
+        }];
+        
         //3. 收集order_ps
         [findAbsNode setContent_ps:orderSames getStrongBlock:^NSInteger(AIKVPointer *item_p) {
             //4. 复用类比orderSames的assFo中的原content强度 (参考2722f-todo12);

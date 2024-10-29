@@ -388,6 +388,7 @@
  *      2023.03.17: 关闭matchRFos (参考28184-原因1&2);
  *      2023.07.11: 行为化反思时,将regroupCutIndex传进来,并根据它计算出absMatchFo的cutIndex,避免因此而计算sp率等不准确;
  *      2023.07.19: TC线程_因为数组多线程导致,导致foreach中闪退问题 (改加上copy);
+ *      2024.10.29: 时序识别似层化 (参考33111-TODO1);
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
 +(void) recognitionFo:(AIFoNodeBase*)protoOrRegroupFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel fromRegroup:(BOOL)fromRegroup matchAlgs:(NSArray*)matchAlgs protoOrRegroupCutIndex:(NSInteger)protoOrRegroupCutIndex debugMode:(BOOL)debugMode{
@@ -404,9 +405,9 @@
         //3. 每个abs_p分别索引;
         NSArray *protoAlgAbs_ps = ISOK(protoAlg, AICMVNodeBase.class) ? @[proto_p] : Ports2Pits([protoAlg.absPorts copy]);
         for (AIKVPointer *absAlg_p in protoAlgAbs_ps) {
-            //4. 仅保留似层: 根据absAlg.count来判断 (参考33111-TODO1);
+            //4. 仅保留似层: 索引absAlg是交层,则直接continue (参考33111-TODO1);
+            if (absAlg_p.isJiao) continue;
             AIAlgNodeBase *absAlg = [SMGUtils searchNode:absAlg_p];
-            if (absAlg.count < protoAlg.count) continue;
             
             //5. 第2_取abs_p的refPorts (参考28107-todo2);
             NSArray *refPorts = [[AINetUtils refPorts_All4Alg_Normal:absAlg] copy];
@@ -425,6 +426,9 @@
             
             //7. 每个refPort做两件事:
             for (AIPort *refPort in refPorts) {
+                //7. 仅保留似层: 联想到的fo是交层,则直接continue (参考33111-TODO1);
+                if (refPort.target_p.isJiao) continue;
+                
                 //8. 不应期 -> 不可激活 & 收集到不应期同一fo仅处理一次;
                 if ([SMGUtils containsSub_p:refPort.target_p parent_ps:except_ps]) continue;
                 except_ps = [SMGUtils collectArrA:except_ps arrB:@[refPort.target_p]];

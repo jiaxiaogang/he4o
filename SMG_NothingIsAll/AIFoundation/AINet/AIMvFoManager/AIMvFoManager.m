@@ -124,10 +124,15 @@
 +(AIFrontOrderNode*) createConFo:(NSArray*)order difStrong:(NSInteger)difStrong{
     //1. foNode
     AIFrontOrderNode *foNode = [[AIFrontOrderNode alloc] init];
-
+    
     //2. pointer (最终生成conFo时,全是ATDefault类型);
     foNode.pointer = [SMGUtils createPointer:kPN_FRONT_ORDER_NODE algsType:DefaultAlgsType dataSource:DefaultDataSource isOut:false type:ATDefault];
 
+    //3. content_ps中有一个是交,则fo是交 (参考33111-TODO1);
+    foNode.pointer.isJiao = [SMGUtils filterSingleFromArr:order checkValid:^BOOL(AIShortMatchModel_Simple *item) {
+        return item.alg_p.isJiao;
+    }];
+    
     //3. content_ps
     NSArray *content_ps = [AINetAbsFoUtils convertOrder2Alg_ps:order];
     
