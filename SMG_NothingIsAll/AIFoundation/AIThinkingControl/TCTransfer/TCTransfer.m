@@ -300,6 +300,29 @@
     
     //6. 计算cansetToOrders
     //说明: 场景包含帧用indexDic映射来迁移替换,场景不包含帧用迁移前的为准 (参考31104);
+    NSMutableArray *orders = [self convertZonHeIndexDic2Orders:cansetFrom sceneTo:sceneTo zonHeIndexDic:zonHeIndexDic];
+    
+    //7. 将canset执行目标转成scene任务目标targetIndex (参考29093-方案);
+    //> ifb三种类型的cansetTargetIndex是一致的,因为它们迁移长度一致;
+    //> 无论是ifb哪个类型,目前推进到了哪一帧,我们最终都是要求达到目标的,所以本方法虽是伪迁移,但也要以最终目标为目的;
+    BOOL isHAndTargetMapValid = cansetModel.isH && [zonHeIndexDic objectForKey:@(cansetModel.cansetTargetIndex)];
+    NSInteger sceneToTargetIndex = isHAndTargetMapValid ? NUMTOOK([zonHeIndexDic objectForKey:@(cansetModel.cansetTargetIndex)]).integerValue : sceneTo.count;
+    
+    //9. 打包数据model返回 (映射需要返过来因为前面cansetFrom在前,现在是cansetTo在后);
+    TCTransferXvModel *result = [[TCTransferXvModel alloc] init];
+    result.cansetToOrders = orders;
+    result.sceneToCansetToIndexDic = [SMGUtils reverseDic:zonHeIndexDic];
+    result.sceneToTargetIndex = sceneToTargetIndex;
+    return result;
+}
+
+/**
+ *  MARK:--------------------计算cansetTo.orders--------------------
+ *  @desc 根据综合indexDic把cansetFrom迁移到sceneTo的cansetTo的orders计算出来 (说白了: 有综合映射的帧从cansetFrom取,没有映射的帧从sceneTo取);
+ */
++(NSMutableArray*) convertZonHeIndexDic2Orders:(AIFoNodeBase*)cansetFrom sceneTo:(AIFoNodeBase*)sceneTo zonHeIndexDic:(NSDictionary*)zonHeIndexDic {
+    //6. 计算cansetToOrders
+    //说明: 场景包含帧用indexDic映射来迁移替换,场景不包含帧用迁移前的为准 (参考31104);
     NSMutableArray *orders = [[NSMutableArray alloc] init];
     for (NSInteger i = 0; i < cansetFrom.count; i++) {
         //a. 判断映射链: (参考29069-todo10.1-步骤2 & 31113-TODO8);
@@ -315,19 +338,50 @@
             [orders addObject:order];
         }
     }
-    
-    //7. 将canset执行目标转成scene任务目标targetIndex (参考29093-方案);
-    //> ifb三种类型的cansetTargetIndex是一致的,因为它们迁移长度一致;
-    //> 无论是ifb哪个类型,目前推进到了哪一帧,我们最终都是要求达到目标的,所以本方法虽是伪迁移,但也要以最终目标为目的;
-    BOOL isHAndTargetMapValid = cansetModel.isH && [zonHeIndexDic objectForKey:@(cansetModel.cansetTargetIndex)];
-    NSInteger sceneToTargetIndex = isHAndTargetMapValid ? NUMTOOK([zonHeIndexDic objectForKey:@(cansetModel.cansetTargetIndex)]).integerValue : sceneTo.count;
-    
-    //9. 打包数据model返回 (映射需要返过来因为前面cansetFrom在前,现在是cansetTo在后);
-    TCTransferXvModel *result = [[TCTransferXvModel alloc] init];
-    result.cansetToOrders = orders;
-    result.sceneToCansetToIndexDic = [SMGUtils reverseDic:zonHeIndexDic];
-    result.sceneToTargetIndex = sceneToTargetIndex;
-    return result;
+    return orders;
+}
+
+//MARK:===============================================================
+//MARK:                     < 推举算法V4 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------在构建rCanset时,推举到抽象场景中 (参考33112)--------------------
+ */
++(void) transferTuiJv_R:(AIFoNodeBase*)sceneFrom cansetFrom:(AIFoNodeBase*)cansetFrom {
+    //1. 将rCanset推举到每一个absFo;
+    NSArray *absPorts = [AINetUtils absPorts_All:sceneFrom];
+    for (AIPort *absPort in absPorts) {
+        AIFoNodeBase *sceneTo = [SMGUtils searchNode:absPort.target_p];
+        //2. mv要求必须同区 (不然rCanset对sceneTo无效);
+        if (![sceneFrom.cmvNode_p.identifier isEqualToString:sceneTo.cmvNode_p.identifier]) continue;
+        
+        //3. BR映射 (参考29069-todo10.1推举算法示图);
+        DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:[cansetFrom getAbsIndexDic:sceneFrom.p]];
+        DirectIndexDic *dic2 = [DirectIndexDic newOkToAbs:[sceneFrom getAbsIndexDic:sceneTo.p]];
+        NSDictionary *zonHeIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2]];
+        
+        //4. 根据综合映射,计算出orders;
+        NSArray *orders = [self convertZonHeIndexDic2Orders:cansetFrom sceneTo:sceneTo zonHeIndexDic:zonHeIndexDic];
+        NSArray *cansetToContent_ps = Simples2Pits(orders);
+        
+        //5. 加SP计数 P默认计1 (参考33031b-BUG5-TODO1);
+        BOOL cansetToInited = [sceneTo containsOutSPStrong:cansetToContent_ps];//有没初始过cansetTo;
+        [sceneTo updateOutSPStrong:orders.count difStrong:1 type:ATPlus canset:cansetToContent_ps debugMode:false caller:@"TuiJvR时P+1"];
+        
+        //10. 如果cansetTo没初始过,才构建cansetTo & 挂载 & 加映射;
+        if (cansetToInited) continue;
+        
+        //11. 构建cansetTo
+        AIFoNodeBase *cansetTo = [theNet createConFoForCanset:orders sceneFo:sceneTo sceneTargetIndex:sceneTo.count];
+        
+        //12. 挂载cansetTo
+        HEResult *updateConCansetResult = [sceneTo updateConCanset:cansetTo.pointer targetIndex:sceneTo.count];
+        if (!updateConCansetResult.success) continue;//挂载成功,才加映射;
+        
+        //13. 加映射 (映射需要返过来因为前面cansetFrom在前,现在是cansetTo在后) (参考27201-3);
+        [cansetTo updateIndexDic:sceneTo indexDic:[SMGUtils reverseDic:zonHeIndexDic]];
+    }
 }
 
 @end

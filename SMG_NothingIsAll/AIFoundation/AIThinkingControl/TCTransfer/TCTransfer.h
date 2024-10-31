@@ -35,4 +35,13 @@
  */
 +(AIKVPointer*) transferAlg:(AISceneModel*)sceneModel canset:(AIFoNodeBase*)canset cansetIndex:(NSInteger)cansetIndex;
 
+//MARK:===============================================================
+//MARK:                     < 推举算法V4 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------在构建rCanset时,推举到抽象场景中 (参考33112)--------------------
+ */
++(void) transferTuiJv_R:(AIFoNodeBase*)sceneFrom cansetFrom:(AIFoNodeBase*)cansetFrom;
+
 @end

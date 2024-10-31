@@ -145,6 +145,11 @@
     }
 }
 
+-(BOOL) containsOutSPStrong:(NSArray*)cansetContent_ps {
+    NSString *key = [AINetUtils getOutSPKey:cansetContent_ps];
+    return [self.outSPDic objectForKey:key];
+}
+
 //MARK:===============================================================
 //MARK:                     < effectDic组 >
 //MARK:===============================================================

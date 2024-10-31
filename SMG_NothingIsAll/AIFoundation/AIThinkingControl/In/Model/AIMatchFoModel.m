@@ -226,50 +226,8 @@
     HEResult *updateConCansetResult = [matchFo updateConCanset:newRCanset.pointer targetIndex:matchFo.count];
     NSLog(@"Canset演化> NewRCanset:%@ toScene:%@ (原因:%@)",Fo2FStr(newRCanset),ShortDesc4Node(matchFo),log);
     
-    //TODOTOMORROW20241030: 在生成canset时,直接推举,看下TCTransfer代码复用;
-    NSArray *absPorts = [AINetUtils absPorts_All:matchFo];
-    for (AIPort *absPort in absPorts) {
-        AIFoNodeBase *fatherScene = [SMGUtils searchNode:absPort.target_p];
-        
-        
-        
-        //3. BR映射 (参考29069-todo10.1推举算法示图);
-        DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:[newRCanset getAbsIndexDic:matchFo.p]];
-        DirectIndexDic *dic2 = [DirectIndexDic newOkToAbs:[matchFo getAbsIndexDic:fatherScene.p]];
-        NSDictionary *zonHeIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2]];
-        
-        
-        //6. 计算cansetToOrders
-        //说明: 场景包含帧用indexDic映射来迁移替换,场景不包含帧用迁移前的为准 (参考31104);
-        NSMutableArray *orders = [[NSMutableArray alloc] init];
-        for (NSInteger i = 0; i < newRCanset.count; i++) {
-            //a. 判断映射链: (参考29069-todo10.1-步骤2 & 31113-TODO8);
-            NSNumber *sceneToIndex = [zonHeIndexDic objectForKey:@(i)];
-            double deltaTime = [NUMTOOK(ARR_INDEX(newRCanset.deltaTimes, i)) doubleValue];
-            if (sceneToIndex) {
-                //b. 通过则收集迁移后scene元素 (参考29069-todo10.1-步骤3);
-                id order = [AIShortMatchModel_Simple newWithAlg_p:ARR_INDEX(fatherScene.content_ps, sceneToIndex.intValue) inputTime:deltaTime isTimestamp:false];
-                [orders addObject:order];
-            } else {
-                //c. 不通过则收集迁移前canset元素 (参考29069-todo10.1-步骤4);
-                id order = [AIShortMatchModel_Simple newWithAlg_p:ARR_INDEX(newRCanset.content_ps, i) inputTime:deltaTime isTimestamp:false];
-                [orders addObject:order];
-            }
-        }
-        
-        //9. 打包数据model返回 (映射需要返过来因为前面cansetFrom在前,现在是cansetTo在后);
-        [theNet createConFoForCanset:orders sceneFo:fatherScene sceneTargetIndex:fatherScene.count];
-        //挂到fatherScene下做canset 并返回success;
-        //indexDic映射 ([SMGUtils reverseDic:zonHeIndexDic]);
-        //sp强度值;
-        
-        //把代码整理好后,在TCTransfer中做下重载,尽可能复用;
-       
-    }
-    
-    
-    
-    
+    //c. 在生成canset时,直接推举 (参考33112);
+    [TCTransfer transferTuiJv_R:matchFo cansetFrom:newRCanset];
     
     if (updateConCansetResult.success) {
         //d. 将item.indexDic挂载到matchFo的conIndexDDic下 (参考27201-3);
