@@ -368,31 +368,13 @@
         
         //5. 加SP计数: 新推举的cansetFrom的spDic都计入cansetTo中 (参考33031b-BUG5-TODO1);
         //2024.11.01: 防重说明: 此方法调用了,说明cansetFrom是新挂载到sceneFrom下的,此时可调用一次推举到absPorts中,并把所有spDic都推举到absPorts上去;
-        for (NSNumber *sceneToKey in sceneToCansetToIndexDic.allKeys) {
-            NSNumber *cansetToValue = [sceneToCansetToIndexDic objectForKey:sceneToKey];
-            
-            
-            //TODOTOMORROW20241101: 明天继续看下,这里的初始spDic怎么从cansetFrom推举到cansetTo下;
-            AIFoNodeBase *sceneTo = [SMGUtils searchNode:self.sceneTo];
-            NSString *key = [AINetUtils getOutSPKey:Simples2Pits(cansetFrom.content_ps)];
-            [sceneFrom.outSPDic objectForKey:key];
-            
-            AISPStrong *fromItemSPStrong = = [sceneFrom.outSPDic objectForKey:nil];
-            
-             [fromItemOutSPDic objectForKey:conIndex];
-            if (!fromItemSPStrong) continue;
-            
-            //4. 把s和p都继承下;
-            [scene updateOutSPStrong:absIndex.integerValue difStrong:fromItemSPStrong.pStrong type:ATPlus canset:absCanset.content_ps debugMode:false caller:@"AbsRCanset初始化itemOutSPDic"];
-            [scene updateOutSPStrong:absIndex.integerValue difStrong:fromItemSPStrong.sStrong type:ATSub canset:absCanset.content_ps debugMode:false caller:@"AbsRCanset初始化itemOutSPDic"];
+        NSMutableDictionary *deltaSPDic = [sceneFrom.outSPDic objectForKey:[AINetUtils getOutSPKey:cansetFrom.content_ps]];
+        for (NSNumber *cansetFromIndex in deltaSPDic.allKeys) {
+            AISPStrong *deltaSPStrong = [deltaSPDic objectForKey:cansetFromIndex];
+            NSInteger cansetToIndex = cansetFromIndex.integerValue;//cansetFrom和cansetTo一样长,并且下标都是一一对应的;
+            [sceneTo updateOutSPStrong:cansetToIndex difStrong:deltaSPStrong.pStrong type:ATPlus canset:cansetToContent_ps debugMode:false caller:@"TuiJvR时P初始化"];
+            [sceneTo updateOutSPStrong:cansetToIndex difStrong:deltaSPStrong.sStrong type:ATSub canset:cansetToContent_ps debugMode:false caller:@"TuiJvR时S初始化"];
         }
-        
-        
-        
-        
-        
-        
-        [sceneTo updateOutSPStrong:orders.count difStrong:1 type:ATPlus canset:cansetToContent_ps debugMode:false caller:@"TuiJvR时P+1"];
         
         //10. 如果cansetTo没初始过,才构建cansetTo & 挂载 & 加映射;
         BOOL cansetToInited = [sceneTo containsOutSPStrong:cansetToContent_ps];//有没初始过cansetTo;
