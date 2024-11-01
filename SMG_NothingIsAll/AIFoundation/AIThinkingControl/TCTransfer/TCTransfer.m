@@ -360,16 +360,42 @@
         DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:[cansetFrom getAbsIndexDic:sceneFrom.p]];
         DirectIndexDic *dic2 = [DirectIndexDic newOkToAbs:[sceneFrom getAbsIndexDic:sceneTo.p]];
         NSDictionary *zonHeIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2]];
+        NSDictionary *sceneToCansetToIndexDic = [SMGUtils reverseDic:zonHeIndexDic];
         
         //4. 根据综合映射,计算出orders;
         NSArray *orders = [self convertZonHeIndexDic2Orders:cansetFrom sceneTo:sceneTo zonHeIndexDic:zonHeIndexDic];
         NSArray *cansetToContent_ps = Simples2Pits(orders);
         
-        //5. 加SP计数 P默认计1 (参考33031b-BUG5-TODO1);
-        BOOL cansetToInited = [sceneTo containsOutSPStrong:cansetToContent_ps];//有没初始过cansetTo;
+        //5. 加SP计数: 新推举的cansetFrom的spDic都计入cansetTo中 (参考33031b-BUG5-TODO1);
+        //2024.11.01: 防重说明: 此方法调用了,说明cansetFrom是新挂载到sceneFrom下的,此时可调用一次推举到absPorts中,并把所有spDic都推举到absPorts上去;
+        for (NSNumber *sceneToKey in sceneToCansetToIndexDic.allKeys) {
+            NSNumber *cansetToValue = [sceneToCansetToIndexDic objectForKey:sceneToKey];
+            
+            
+            //TODOTOMORROW20241101: 明天继续看下,这里的初始spDic怎么从cansetFrom推举到cansetTo下;
+            AIFoNodeBase *sceneTo = [SMGUtils searchNode:self.sceneTo];
+            NSString *key = [AINetUtils getOutSPKey:Simples2Pits(cansetFrom.content_ps)];
+            [sceneFrom.outSPDic objectForKey:key];
+            
+            AISPStrong *fromItemSPStrong = = [sceneFrom.outSPDic objectForKey:nil];
+            
+             [fromItemOutSPDic objectForKey:conIndex];
+            if (!fromItemSPStrong) continue;
+            
+            //4. 把s和p都继承下;
+            [scene updateOutSPStrong:absIndex.integerValue difStrong:fromItemSPStrong.pStrong type:ATPlus canset:absCanset.content_ps debugMode:false caller:@"AbsRCanset初始化itemOutSPDic"];
+            [scene updateOutSPStrong:absIndex.integerValue difStrong:fromItemSPStrong.sStrong type:ATSub canset:absCanset.content_ps debugMode:false caller:@"AbsRCanset初始化itemOutSPDic"];
+        }
+        
+        
+        
+        
+        
+        
         [sceneTo updateOutSPStrong:orders.count difStrong:1 type:ATPlus canset:cansetToContent_ps debugMode:false caller:@"TuiJvR时P+1"];
         
         //10. 如果cansetTo没初始过,才构建cansetTo & 挂载 & 加映射;
+        BOOL cansetToInited = [sceneTo containsOutSPStrong:cansetToContent_ps];//有没初始过cansetTo;
         if (cansetToInited) continue;
         
         //11. 构建cansetTo
@@ -380,7 +406,7 @@
         if (!updateConCansetResult.success) continue;//挂载成功,才加映射;
         
         //13. 加映射 (映射需要返过来因为前面cansetFrom在前,现在是cansetTo在后) (参考27201-3);
-        [cansetTo updateIndexDic:sceneTo indexDic:[SMGUtils reverseDic:zonHeIndexDic]];
+        [cansetTo updateIndexDic:sceneTo indexDic:sceneToCansetToIndexDic];
     }
 }
 

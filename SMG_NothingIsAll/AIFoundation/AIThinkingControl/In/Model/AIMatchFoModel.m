@@ -226,9 +226,6 @@
     HEResult *updateConCansetResult = [matchFo updateConCanset:newRCanset.pointer targetIndex:matchFo.count];
     NSLog(@"Canset演化> NewRCanset:%@ toScene:%@ (原因:%@)",Fo2FStr(newRCanset),ShortDesc4Node(matchFo),log);
     
-    //c. 在生成canset时,直接推举 (参考33112);
-    [TCTransfer transferTuiJv_R:matchFo cansetFrom:newRCanset];
-    
     if (updateConCansetResult.success) {
         //d. 将item.indexDic挂载到matchFo的conIndexDDic下 (参考27201-3);
         //2024.06.26: indexDic有可能指定后还在更新,导致有越界 (参考32014);
@@ -246,6 +243,9 @@
         
         //2023.04.19: 改到TCTransfer迁移后调用canset识别类比 (参考29069-todo12);
         //[TIUtils recognitionCansetFo:cansetFo.pointer sceneFo:matchFo.pointer es:ES_HavEff];
+        
+        //e. 在生成newRCanset时,直接推举 (参考33112);
+        [TCTransfer transferTuiJv_R:matchFo cansetFrom:newRCanset];
     }
     
     //2. =================解决方案执行有效(再类比): 有actYes的时,归功于解决方案,执行canset再类比 (参考27206c-R任务)=================
@@ -315,6 +315,9 @@
             //h. 算出absCanset的默认itemOutSPDic (参考33062-TODO4);
             [AINetUtils initItemOutSPDicForAbsCanset:pFo conCanset:solutionFo absCanset:absCansetFo];
             [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
+            
+            //i. 在生成absRCanset时,直接推举 (参考33112);
+            [TCTransfer transferTuiJv_R:pFo cansetFrom:absCansetFo];
         }
     }
 }
