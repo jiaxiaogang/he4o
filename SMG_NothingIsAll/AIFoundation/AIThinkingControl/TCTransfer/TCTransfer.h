@@ -40,8 +40,9 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------在构建rCanset时,推举到抽象场景中 (参考33112)--------------------
+ *  MARK:--------------------在构建Canset时,推举到抽象场景中 (参考33112)--------------------
  */
 +(void) transferTuiJv_R:(AIFoNodeBase*)sceneFrom cansetFrom:(AIFoNodeBase*)cansetFrom;
++(void) transferTuiJv_H;
 
 @end

@@ -243,8 +243,10 @@
         
         //2023.04.19: 改到TCTransfer迁移后调用canset识别类比 (参考29069-todo12);
         //[TIUtils recognitionCansetFo:cansetFo.pointer sceneFo:matchFo.pointer es:ES_HavEff];
-        
-        //e. 在生成newRCanset时,直接推举 (参考33112);
+    }
+    
+    //2024.11.03: 在挂载新的Canset时,实时推举 & 并防重(只有新挂载的canset,才有资格实时调用推举,并推举spDic都到父场景中) (参考33112);
+    if (updateConCansetResult.isNew) {
         [TCTransfer transferTuiJv_R:matchFo cansetFrom:newRCanset];
     }
     
@@ -315,8 +317,10 @@
             //h. 算出absCanset的默认itemOutSPDic (参考33062-TODO4);
             [AINetUtils initItemOutSPDicForAbsCanset:pFo conCanset:solutionFo absCanset:absCansetFo];
             [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
-            
-            //i. 在生成absRCanset时,直接推举 (参考33112);
+        }
+        
+        //2024.11.03: 在挂载新的Canset时,实时推举 & 并防重(只有新挂载的canset,才有资格实时调用推举,并推举spDic都到父场景中) (参考33112);
+        if (updateConCansetResult.isNew) {
             [TCTransfer transferTuiJv_R:pFo cansetFrom:absCansetFo];
         }
     }

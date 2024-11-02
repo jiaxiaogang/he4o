@@ -461,18 +461,26 @@
         NSArray *order = [basePFo convertOrders4NewCansetV2];
         if (ARRISOK(order)) {
             AIFoNodeBase *newHCanset = [theNet createConFoForCanset:order sceneFo:rCanset sceneTargetIndex:self.cansetActIndex];
-            [rCanset updateConCanset:newHCanset.pointer targetIndex:self.cansetActIndex];
+            HEResult *updateConCansetResult = [rCanset updateConCanset:newHCanset.pointer targetIndex:self.cansetActIndex];
             AIKVPointer *actIndexAlg_p = ARR_INDEX(rCanset.content_ps, self.cansetActIndex);
             
             if (self.realCansetToIndexDic.count == 0) {
                 NSLog(@"NewHCanset Dic Is Nil");
             }
             
-            //5. 综合indexDic计算: 当前cansetTo与real之间的映射;
-            //2024.06.26: indexDic有可能指定后还在更新,导致有越界 (参考32014);
-            [newHCanset updateIndexDic:rCanset indexDic:[self.realCansetToIndexDic copy]];
-            NSString *fltLog = FltLog4CreateHCanset(3);
-            NSLog(@"%@%@%@%@Canset演化> NewHCanset:%@ toScene:%@ 在%ld帧:%@",FltLog4XueQuPi(3),FltLog4HDemandOfYouPiGuo(@"5"),FltLog4XueBanYun(2),fltLog,Fo2FStr(newHCanset),ShortDesc4Node(rCanset),self.cansetActIndex,Pit2FStr(actIndexAlg_p));
+            //2024.11.03: 只有成功时,才建立映射,失败时没必要;
+            if (updateConCansetResult.success) {
+                //5. 综合indexDic计算: 当前cansetTo与real之间的映射;
+                //2024.06.26: indexDic有可能指定后还在更新,导致有越界 (参考32014);
+                [newHCanset updateIndexDic:rCanset indexDic:[self.realCansetToIndexDic copy]];
+                NSString *fltLog = FltLog4CreateHCanset(3);
+                NSLog(@"%@%@%@%@Canset演化> NewHCanset:%@ toScene:%@ 在%ld帧:%@",FltLog4XueQuPi(3),FltLog4HDemandOfYouPiGuo(@"5"),FltLog4XueBanYun(2),fltLog,Fo2FStr(newHCanset),ShortDesc4Node(rCanset),self.cansetActIndex,Pit2FStr(actIndexAlg_p));
+            }
+            
+            //2024.11.03: 在挂载新的Canset时,实时推举 & 并防重(只有新挂载的canset,才有资格实时调用推举,并推举spDic都到父场景中) (参考33112);
+            if (updateConCansetResult.isNew) {
+                [TCTransfer transferTuiJv_H];
+            }
             
             //6. rCanset的actIndex匹配了,就相当于它curAlgModel的HDemand,下的所有的subHCanset的targetAlg全反馈匹配上了 (参考32119-TODO1);
             HDemandModel *curHDemand = ARR_INDEX(curAlgModel.subDemands, 0);
@@ -555,6 +563,11 @@
         //16. 算出absCanset的默认itemOutSPDic (参考33062-TODO4);
         [AINetUtils initItemOutSPDicForAbsCanset:sceneTo conCanset:cansetTo absCanset:absCansetFo];
         [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
+    }
+    
+    //2024.11.03: 在挂载新的Canset时,实时推举 & 并防重(只有新挂载的canset,才有资格实时调用推举,并推举spDic都到父场景中) (参考33112);
+    if (updateConCansetResult.isNew) {
+        [TCTransfer transferTuiJv_H];
     }
 }
 
