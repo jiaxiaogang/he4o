@@ -396,6 +396,9 @@
     //1. 先取出canset时,要判断下有targetIndex的映射,不然不做数;
     //  > a. 从B向F先推举下,推举后,取到key,再从父的outSPDic中取下值,如果取到了,说明在F下有这个canset;
     //      > 如果没有,应该是有bug,一般在子上面有的canset,在父上面都有,因为现在的推举是实时的,没有延迟,用的时候肯定已经有了;
+    //      > 复用下transferTuiJv_R(),取到F下的rCanset (但这么复用的话,性能不太好,毕竟早推举过了,应该能直接复用,思考复用方法如下:);
+    //          > 1. 写个方法,用orders取到本地fo;
+    //          > 2. 或者用transferPorts什么的,(找下AINetUtils中应该有这个relate方法,或者在fo下应该有这个端口),来复用下;
     //  > b. 然后从父上面对应的canset上,判断有没有targetIndex映射;
     //      > 即使有targetIndex映射,对应的hCanset还没判断...明天继续分析下,看要把这里的h也推举到fCanset下做为新的hCanset;
     //  > c. 然后把这个SP值,也初始计上去;
