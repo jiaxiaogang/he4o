@@ -35,4 +35,9 @@
 +(AIFoNodeBase*) createConFo_NoRepeat:(NSArray*)order noRepeatArea_ps:(NSArray*)noRepeatArea_ps difStrong:(NSInteger)difStrong;
 +(AIFoNodeBase*) createConFoForCanset:(NSArray*)order sceneFo:(AIFoNodeBase*)sceneFo sceneTargetIndex:(NSInteger)sceneTargetIndex;
 
+/**
+ *  MARK:--------------------根据order取本地有没创建过canset并返回--------------------
+ */
++(AIFoNodeBase*) getLocalCanset:(NSArray*)order sceneFo:(AIFoNodeBase*)sceneFo sceneTargetIndex:(NSInteger)sceneTargetIndex;
+
 @end

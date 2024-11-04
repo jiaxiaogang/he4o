@@ -88,6 +88,23 @@
 }
 
 /**
+ *  MARK:--------------------根据order取本地有没创建过canset并返回--------------------
+ *  @desc 用于orders取到本地cansetFo (推举方法中要用,H推举时,用来判断R已经推举过,H要借助R完成推举);
+ */
++(AIFoNodeBase*) getLocalCanset:(NSArray*)order sceneFo:(AIFoNodeBase*)sceneFo sceneTargetIndex:(NSInteger)sceneTargetIndex {
+    //1. 数据准备;
+    NSArray *oldCansets = [sceneFo getConCansets:sceneTargetIndex];
+    NSArray *content_ps = [AINetAbsFoUtils convertOrder2Alg_ps:order];
+    
+    //2. 从oldCansets中找本地有没匹配的返回;
+    return [AINetIndexUtils getAbsoluteMatching_ValidPs:content_ps sort_ps:content_ps except_ps:nil noRepeatArea_ps:oldCansets getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
+        AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
+        return [AINetUtils refPorts_All4Alg:itemAlg];
+    } at:DefaultAlgsType ds:DefaultDataSource type:ATDefault];
+}
+
+
+/**
  *  MARK:--------------------通用创建具象fo方法 (支持限定防重范围)--------------------
  *  @param noRepeatArea_ps : 防重范围 (传nil时为全局防重);
  *  @param difStrong : 默认传1,有特别要求时自定传什么值;

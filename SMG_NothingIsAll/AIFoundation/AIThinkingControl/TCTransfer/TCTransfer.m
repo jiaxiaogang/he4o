@@ -357,9 +357,7 @@
         if (![sceneFrom.cmvNode_p.identifier isEqualToString:sceneTo.cmvNode_p.identifier]) continue;
         
         //3. BR映射 (参考29069-todo10.1推举算法示图);
-        DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:[cansetFrom getAbsIndexDic:sceneFrom.p]];
-        DirectIndexDic *dic2 = [DirectIndexDic newOkToAbs:[sceneFrom getAbsIndexDic:sceneTo.p]];
-        NSDictionary *zonHeIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2]];
+        NSDictionary *zonHeIndexDic = [self getBFZonHeIndexDic:cansetFrom broScene:sceneFrom fatScene:sceneTo];
         NSDictionary *sceneToCansetToIndexDic = [SMGUtils reverseDic:zonHeIndexDic];
         
         //4. 根据综合映射,计算出orders;
@@ -392,13 +390,32 @@
     }
 }
 
-+(void) transferTuiJv_H {
++(void) transferTuiJv_H:(AIFoNodeBase*)broScene broCanset:(AIFoNodeBase*)broCanset{
+    //1. 将rCanset推举到每一个absFo;
+    NSArray *absPorts = [AINetUtils absPorts_All:broScene];
+    for (AIPort *absPort in absPorts) {
+        AIFoNodeBase *fatScene = [SMGUtils searchNode:absPort.target_p];
+        
+        //2. mv要求必须同区 (不然rCanset对sceneTo无效);
+        if (![broScene.cmvNode_p.identifier isEqualToString:fatScene.cmvNode_p.identifier]) continue;
+        
+        //3. BR映射 (参考29069-todo10.1推举算法示图);
+        NSDictionary *zonHeIndexDic = [self getBFZonHeIndexDic:broCanset broScene:broScene fatScene:fatScene];
+        NSDictionary *fatSceneCansetIndexDic = [SMGUtils reverseDic:zonHeIndexDic];
+        
+        //4. 根据综合映射,计算出fatherCanset的orders;
+        NSArray *orders = [self convertZonHeIndexDic2Orders:broCanset sceneTo:fatScene zonHeIndexDic:zonHeIndexDic];
+        NSArray *cansetToContent_ps = Simples2Pits(orders);
+        
+        //5. 找到fatherCanset (如果没有,则说明有BUG,因为现在是实时推举,B有的rCanset就必然F也有才对);
+        AIFoNodeBase *fatCanset = [AIMvFoManager getLocalCanset:orders sceneFo:fatScene sceneTargetIndex:fatScene.count];
+        if (!fatCanset) continue;
+        
+        
+        
+    //TODOTOMORROW20241104:
     //1. 先取出canset时,要判断下有targetIndex的映射,不然不做数;
-    //  > a. 从B向F先推举下,推举后,取到key,再从父的outSPDic中取下值,如果取到了,说明在F下有这个canset;
-    //      > 如果没有,应该是有bug,一般在子上面有的canset,在父上面都有,因为现在的推举是实时的,没有延迟,用的时候肯定已经有了;
-    //      > 复用下transferTuiJv_R(),取到F下的rCanset (但这么复用的话,性能不太好,毕竟早推举过了,应该能直接复用,思考复用方法如下:);
-    //          > 1. 写个方法,用orders取到本地fo;
-    //          > 2. 或者用transferPorts什么的,(找下AINetUtils中应该有这个relate方法,或者在fo下应该有这个端口),来复用下;
+    
     //  > b. 然后从父上面对应的canset上,判断有没有targetIndex映射;
     //      > 即使有targetIndex映射,对应的hCanset还没判断...明天继续分析下,看要把这里的h也推举到fCanset下做为新的hCanset;
     //  > c. 然后把这个SP值,也初始计上去;
@@ -416,8 +433,48 @@
     //}
     
     //2. 取下映射 (根据以上xv时方法进行复用);
+        
+        
+        
+        
+        
+        //5. 加SP计数: 新推举的cansetFrom的spDic都计入cansetTo中 (参考33031b-BUG5-TODO1);
+        //2024.11.01: 防重说明: 此方法调用了,说明cansetFrom是新挂载到sceneFrom下的,此时可调用一次推举到absPorts中,并把所有spDic都推举到absPorts上去;
+        NSMutableDictionary *deltaSPDic = [sceneFrom.outSPDic objectForKey:[AINetUtils getOutSPKey:cansetFrom.content_ps]];
+        for (NSNumber *cansetFromIndex in deltaSPDic.allKeys) {
+            AISPStrong *deltaSPStrong = [deltaSPDic objectForKey:cansetFromIndex];
+            NSInteger cansetToIndex = cansetFromIndex.integerValue;//cansetFrom和cansetTo一样长,并且下标都是一一对应的;
+            [sceneTo updateOutSPStrong:cansetToIndex difStrong:deltaSPStrong.pStrong type:ATPlus canset:cansetToContent_ps debugMode:false caller:@"TuiJvR时P初始化"];
+            [sceneTo updateOutSPStrong:cansetToIndex difStrong:deltaSPStrong.sStrong type:ATSub canset:cansetToContent_ps debugMode:false caller:@"TuiJvR时S初始化"];
+        }
+        
+        //10. 如果cansetTo没初始过,才构建cansetTo & 挂载 & 加映射;
+        BOOL cansetToInited = [sceneTo containsOutSPStrong:cansetToContent_ps];//有没初始过cansetTo;
+        if (cansetToInited) continue;
+        
+        //11. 构建cansetTo
+        AIFoNodeBase *cansetTo = [theNet createConFoForCanset:orders sceneFo:sceneTo sceneTargetIndex:sceneTo.count];
+        
+        //12. 挂载cansetTo
+        HEResult *updateConCansetResult = [sceneTo updateConCanset:cansetTo.pointer targetIndex:sceneTo.count];
+        if (!updateConCansetResult.success) continue;//挂载成功,才加映射;
+        
+        //13. 加映射 (映射需要返过来因为前面cansetFrom在前,现在是cansetTo在后) (参考27201-3);
+        [cansetTo updateIndexDic:sceneTo indexDic:sceneToCansetToIndexDic];
+    }
     
     
+    
+}
+
+/**
+ *  MARK:--------------------取brotherCanset推举到fatherScene后的综合映射--------------------
+ *  @desc BR映射 (参考29069-todo10.1推举算法示图);
+ */
++(NSDictionary*) getBFZonHeIndexDic:(AIFoNodeBase*)broCanset broScene:(AIFoNodeBase*)broScene fatScene:(AIFoNodeBase*)fatScene {
+    DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:[broCanset getAbsIndexDic:broScene.p]];
+    DirectIndexDic *dic2 = [DirectIndexDic newOkToAbs:[broScene getAbsIndexDic:fatScene.p]];
+    return [TOUtils zonHeIndexDic:@[dic1,dic2]];
 }
 
 @end
