@@ -55,7 +55,11 @@
     }
     
     //4. 取兄弟级;
+    BOOL brotherSwitch = false;
     for (AISceneModel *fatherModel in fatherModels) {
+        //2024.11.05: BF改为实时推举了,场景树不需要再取它了 (参考33113);
+        if (!brotherSwitch) break;
+        
         AIFoNodeBase *fatherFo = [SMGUtils searchNode:fatherModel.scene];
         NSArray *brotherScene_ps = [AIFilter rSolutionSceneFilter:fatherFo type:fatherModel.type];//1799ms
         
