@@ -933,16 +933,13 @@
  *  @desc 用于canset转实后: 把cansetFrom的outSPDic迁移继承给cansetTo (注意要防重);
  */
 +(void) initItemOutSPDicForTransfered:(TOFoModel*)canset {
+    //0. 先关掉这里 (参考33114-TODO1);
+    BOOL isSwitch = false;
+    if (isSwitch) return;
+    
     //1. 检查有没初始化过 (只初始一次,用于防重);
     AIFoNodeBase *sceneTo = [SMGUtils searchNode:canset.sceneTo];
     NSString *cansetToOutSPKey = [self getOutSPKey:Simples2Pits(canset.transferXvModel.cansetToOrders)];
-    
-    //TODOTOMORROW20241105: 这里改下,有key也不表示直接return即可;
-    //明天分析下,此处是哪推上去的,又有了哪些变化后,再继承下来?
-    //在这整个过程中,需要怎么处理各种情况下,这里是继承spDic,还是累加,还是return?
-    
-    
-    
     if ([sceneTo.outSPDic objectForKey:cansetToOutSPKey]) return;
     
     //2. 取旧;
