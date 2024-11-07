@@ -935,7 +935,7 @@
 +(void) initItemOutSPDicForTransfered:(TOFoModel*)canset {
     //0. 先关掉这里 (参考33114-TODO1);
     BOOL isSwitch = false;
-    if (isSwitch) return;
+    if (!isSwitch) return;
     
     //1. 检查有没初始化过 (只初始一次,用于防重);
     AIFoNodeBase *sceneTo = [SMGUtils searchNode:canset.sceneTo];
