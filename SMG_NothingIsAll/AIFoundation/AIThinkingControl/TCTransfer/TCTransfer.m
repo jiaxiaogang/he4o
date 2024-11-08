@@ -387,6 +387,9 @@
         
         //13. 加映射 (映射需要返过来因为前面cansetFrom在前,现在是cansetTo在后) (参考27201-3);
         [cansetTo updateIndexDic:sceneTo indexDic:sceneToCansetToIndexDic];
+        
+        //14. 挂载成功: 进行迁移关联 (可供复用,避免每一次推举更新sp时,都重新推举) (参考33112-TODO3);
+        [AINetUtils relateTransfer:sceneFrom cansetFrom:cansetFrom sceneTo:sceneTo cansetTo:cansetTo];
     }
 }
 
@@ -459,6 +462,9 @@
         
         //17. 正式从broHCanset向fatHCanset推举之: 加映射 (映射需要返过来因为前面cansetFrom在前,现在是cansetTo在后) (参考27201-3);
         [fatHCanset updateIndexDic:fatRCanset indexDic:fatRCansetBroHCansetDic];
+        
+        //18. 挂载成功: 进行迁移关联 (可供复用,避免每一次推举更新sp时,都重新推举) (参考33112-TODO3);
+        [AINetUtils relateTransfer:broRCanset cansetFrom:broHCanset sceneTo:fatRCanset cansetTo:fatHCanset];
     }
 }
 
