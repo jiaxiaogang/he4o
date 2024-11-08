@@ -248,6 +248,12 @@
     //2024.11.03: 在挂载新的Canset时,实时推举 & 并防重(只有新挂载的canset,才有资格实时调用推举,并推举spDic都到父场景中) (参考33112);
     if (updateConCansetResult.isNew) {
         [TCTransfer transferTuiJv_R:matchFo cansetFrom:newRCanset];
+    } else {
+        
+        //TODOTOMORROW20241108: outSP+1时,F层也+1 (应该得看下是不是复用tctransfer的代码?,或者直接把tctransfer当时执行时的成果记下来,这里复用着去更新即可,这样性能好);
+        //这里即使不是新的,也要给+1一下;
+        
+        
     }
     
     //2. =================解决方案执行有效(再类比): 有actYes的时,归功于解决方案,执行canset再类比 (参考27206c-R任务)=================

@@ -23,10 +23,8 @@
     [matchFo updateSPStrong:cutIndex + 1 type:type];
     if (Log4Rethink) IFTitleLog(@"IR反省", @"\nspIndex:%ld -> (%@) %@->%@ %@",cutIndex + 1,ATType2Str(type),spFrom,[matchFo.spDic objectForKey:@(cutIndex + 1)],Fo2FStr(matchFo));
     
-    //TODOTOMORROW20241107: 子即父 (参考33111-TODO2);
-    
-    
     //2. 抽象也更新 (参考29069-todo11.4);
+    //2024.11.08: 佐证: 子即父 (参考33111-TODO2);
     [TCRethinkUtil spEff4Abs:matchFo curFoIndex:cutIndex + 1 itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {
         [absFo updateSPStrong:absIndex type:type];
     }];
