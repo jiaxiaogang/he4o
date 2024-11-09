@@ -490,7 +490,9 @@
                 //但froms用不用处理?比如现在的canset是从father层继承过来的,它有效,
                 //  > 那么是不是也得推举到所有父F中?
                 //  > 还是只需要将sp+同步给fromFather层即可?
+                //答: 无论是tos还是froms都是father层,只要是有迁移关联的father层,就得子即父的推sp值+1;
                 [newHCanset getTransferedCansetTos:nil];
+                [AINetUtils getTransferPorts_ForFather:iScene];
                 
                 
                 

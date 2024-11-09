@@ -201,6 +201,11 @@
 +(NSArray*) refPorts_All:(AIKVPointer*)node_p;
 
 /**
+ *  MARK:--------------------根据iScene取有迁移关联的father层--------------------
+ */
++(NSArray*) transferPorts_4Father:(AIFoNodeBase*)iScene;
+
+/**
  *  MARK:--------------------对fo.content.refPort标记havMv--------------------
  */
 +(void) maskHavMv_AlgWithFo:(AIFoNodeBase*)foNode;
