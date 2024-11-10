@@ -568,7 +568,7 @@
 /**
  *  MARK:--------------------根据iScene取有迁移关联的father层--------------------
  */
-+(NSArray*) transferPorts_4Father:(AIFoNodeBase*)iScene {
++(NSArray*) transferPorts_4Father:(AIFoNodeBase*)iScene iCanset:(AIFoNodeBase*)iCanset {
     //1. i层的from(继承源)和to(推举目标)都是father;
     return [SMGUtils collectArrA:iScene.transferToPorts arrB:iScene.transferFromPorts];
 }

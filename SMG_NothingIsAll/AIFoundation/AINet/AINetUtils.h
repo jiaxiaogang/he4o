@@ -203,7 +203,7 @@
 /**
  *  MARK:--------------------根据iScene取有迁移关联的father层--------------------
  */
-+(NSArray*) transferPorts_4Father:(AIFoNodeBase*)iScene;
++(NSArray*) transferPorts_4Father:(AIFoNodeBase*)iScene iCanset:(AIFoNodeBase*)iCanset;
 
 /**
  *  MARK:--------------------对fo.content.refPort标记havMv--------------------
