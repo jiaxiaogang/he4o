@@ -55,6 +55,16 @@
     return _transferToPorts;
 }
 
+-(NSMutableArray *)transferIPorts{
+    if (!ISOK(_transferIPorts, NSMutableArray.class)) _transferIPorts = [[NSMutableArray alloc] initWithArray:_transferIPorts];
+    return _transferIPorts;
+}
+
+-(NSMutableArray *)transferFPorts{
+    if (!ISOK(_transferFPorts, NSMutableArray.class)) _transferFPorts = [[NSMutableArray alloc] initWithArray:_transferFPorts];
+    return _transferFPorts;
+}
+
 //MARK:===============================================================
 //MARK:                     < spDic组 >
 //MARK:===============================================================

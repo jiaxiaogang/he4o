@@ -477,6 +477,16 @@
     }
 }
 
+/**
+ *  MARK:--------------------IFCanset迁移关联--------------------
+ */
++(void) relateTransferI:(AIFoNodeBase*)iCanset fCanset:(AIFoNodeBase*)fCanset {
+    [AINetUtils insertPointer_Hd:iCanset.p toPorts:fCanset.transferIPorts ps:iCanset.content_ps difStrong:1];
+    [AINetUtils insertPointer_Hd:fCanset.p toPorts:iCanset.transferFPorts ps:fCanset.content_ps difStrong:1];
+    [SMGUtils insertNode:iCanset];
+    [SMGUtils insertNode:fCanset];
+}
+
 @end
 
 

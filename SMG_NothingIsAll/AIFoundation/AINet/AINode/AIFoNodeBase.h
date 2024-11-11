@@ -29,6 +29,16 @@
 @property (strong, nonatomic) NSMutableArray *transferToPorts;
 
 /**
+ *  MARK:--------------------迁移关联V2 (当前为F继承的I端口) (参考33112-TODO4.4)--------------------
+ */
+@property (strong, nonatomic) NSMutableArray *transferIPorts;
+
+/**
+ *  MARK:--------------------迁移关联V2 (当前为I推举的F端口) (参考33112-TODO4.4)--------------------
+ */
+@property (strong, nonatomic) NSMutableArray *transferFPorts;
+
+/**
  *  MARK:--------------------cmvNode_p结果--------------------
  *  @desc 指向mv基本模型的价值影响节点;
  */

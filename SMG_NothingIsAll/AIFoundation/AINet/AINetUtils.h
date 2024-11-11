@@ -160,6 +160,11 @@
 //MARK:===============================================================
 +(void) relateFo:(AIFoNodeBase*)foNode mv:(AICMVNodeBase*)mvNode;
 
+/**
+ *  MARK:--------------------IFCanset迁移关联--------------------
+ */
++(void) relateTransferI:(AIFoNodeBase*)iCanset fCanset:(AIFoNodeBase*)fCanset;
+
 @end
 
 

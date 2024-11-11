@@ -465,6 +465,9 @@
         
         //18. 挂载成功: 进行迁移关联 (可供复用,避免每一次推举更新sp时,都重新推举) (参考33112-TODO3);
         [AINetUtils relateTransfer:broRCanset cansetFrom:broHCanset sceneTo:fatRCanset cansetTo:fatHCanset];
+        
+        //TODOTOMORROW20241111:
+        [AINetUtils relateTransferI:icanset fCanset:fcanset];
     }
 }
 
