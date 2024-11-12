@@ -496,6 +496,8 @@
                 
                 //这里应该得改下,改成canset和canset之间的迁移关系,然后因为cansetfrom和canstto是等长的,所以只要根据这个关系,from更新时,很容易更新to;
                 
+                NSArray *fatherPorts = [AINetUtils transferPorts_4FatherV2:newHCanset];
+                
                 
                 
                 
