@@ -204,8 +204,10 @@
             
             //7. 并进行迁移关联 (以实现防重,避免重新累推spDic);
             [AINetUtils relateTransfer:sceneFrom cansetFrom:cansetFrom sceneTo:sceneTo cansetTo:cansetTo];
+            
+            //8. 新版迁移关联: 只关联I/F层的Canset (参考33112-TODO4.4);
             if (cansetModel.baseSceneModel.type != SceneTypeBrother) {
-                [AINetUtils relateTransferI:cansetTo fCanset:cansetFrom];//在迁移转实时,一般是指从F迁移过来到I层;
+                [AINetUtils relateTransferICanset:cansetTo fCanset:cansetFrom];//只要是迁移的,并且不能是B层来的
             }
         }
     }
@@ -393,7 +395,9 @@
         
         //14. 挂载成功: 进行迁移关联 (可供复用,避免每一次推举更新sp时,都重新推举) (参考33112-TODO3);
         [AINetUtils relateTransfer:sceneFrom cansetFrom:cansetFrom sceneTo:sceneTo cansetTo:cansetTo];
-        [AINetUtils relateTransferI:cansetFrom fCanset:cansetTo];
+        
+        //15. 新版迁移关联: 只关联I/F层的Canset (参考33112-TODO4.4);
+        [AINetUtils relateTransferICanset:cansetFrom fCanset:cansetTo];
     }
 }
 
@@ -469,7 +473,9 @@
         
         //18. 挂载成功: 进行迁移关联 (可供复用,避免每一次推举更新sp时,都重新推举) (参考33112-TODO3);
         [AINetUtils relateTransfer:broRCanset cansetFrom:broHCanset sceneTo:fatRCanset cansetTo:fatHCanset];
-        [AINetUtils relateTransferI:broHCanset fCanset:fatHCanset];
+        
+        //19. 新版迁移关联: 只关联I/F层的Canset (参考33112-TODO4.4);
+        [AINetUtils relateTransferICanset:broHCanset fCanset:fatHCanset];
     }
 }
 

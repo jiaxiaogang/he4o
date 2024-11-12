@@ -161,9 +161,9 @@
 +(void) relateFo:(AIFoNodeBase*)foNode mv:(AICMVNodeBase*)mvNode;
 
 /**
- *  MARK:--------------------IFCanset迁移关联--------------------
+ *  MARK:--------------------IFCanset迁移关联 (参考33112-TODO4.4)--------------------
  */
-+(void) relateTransferI:(AIFoNodeBase*)iCanset fCanset:(AIFoNodeBase*)fCanset;
++(void) relateTransferICanset:(AIFoNodeBase*)iCanset fCanset:(AIFoNodeBase*)fCanset;
 
 @end
 
