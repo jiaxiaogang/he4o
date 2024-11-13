@@ -45,16 +45,6 @@
     return _conCansetsDic;
 }
 
--(NSMutableArray *)transferFromPorts{
-    if (!ISOK(_transferFromPorts, NSMutableArray.class)) _transferFromPorts = [[NSMutableArray alloc] initWithArray:_transferFromPorts];
-    return _transferFromPorts;
-}
-
--(NSMutableArray *)transferToPorts{
-    if (!ISOK(_transferToPorts, NSMutableArray.class)) _transferToPorts = [[NSMutableArray alloc] initWithArray:_transferToPorts];
-    return _transferToPorts;
-}
-
 -(NSMutableArray *)transferIPorts{
     if (!ISOK(_transferIPorts, NSMutableArray.class)) _transferIPorts = [[NSMutableArray alloc] initWithArray:_transferIPorts];
     return _transferIPorts;
@@ -339,13 +329,13 @@
  *  MARK:--------------------找出从sceneFrom已经迁移过来了哪些cansetFroms (由sceneTo调用)--------------------
  */
 -(NSArray*) getTransferedCansetFroms:(AIKVPointer*)sceneFrom_p {
-    return [self findTransferRecord:sceneFrom_p inTransferPorts:self.transferFromPorts];
+    return [self findTransferRecord:sceneFrom_p inTransferPorts:self.transferFPorts];
 }
 /**
  *  MARK:--------------------找出sceneTo的哪些cansetTos是self迁移过去的 (由sceneFrom调用)--------------------
  */
 -(NSArray*) getTransferedCansetTos:(AIKVPointer*)sceneTo_p {
-    return [self findTransferRecord:sceneTo_p inTransferPorts:self.transferToPorts];
+    return [self findTransferRecord:sceneTo_p inTransferPorts:self.transferIPorts];
 }
 
 /**
@@ -384,8 +374,8 @@
         self.absIndexDDic = [aDecoder decodeObjectForKey:@"absIndexDDic"];
         self.conIndexDDic = [aDecoder decodeObjectForKey:@"conIndexDDic"];
         self.conCansetsDic = [aDecoder decodeObjectForKey:@"conCansetsDic"];
-        self.transferFromPorts = [aDecoder decodeObjectForKey:@"transferFromPorts"];
-        self.transferToPorts = [aDecoder decodeObjectForKey:@"transferToPorts"];
+        self.transferFPorts = [aDecoder decodeObjectForKey:@"transferFPorts"];
+        self.transferIPorts = [aDecoder decodeObjectForKey:@"transferIPorts"];
     }
     return self;
 }
@@ -401,8 +391,8 @@
     [aCoder encodeObject:[self.absIndexDDic copy] forKey:@"absIndexDDic"];
     [aCoder encodeObject:[self.conIndexDDic copy] forKey:@"conIndexDDic"];
     [aCoder encodeObject:[self.conCansetsDic copy] forKey:@"conCansetsDic"];
-    [aCoder encodeObject:[self.transferFromPorts copy] forKey:@"transferFromPorts"];
-    [aCoder encodeObject:[self.transferToPorts copy] forKey:@"transferToPorts"];
+    [aCoder encodeObject:[self.transferFPorts copy] forKey:@"transferFPorts"];
+    [aCoder encodeObject:[self.transferIPorts copy] forKey:@"transferIPorts"];
 }
 
 @end

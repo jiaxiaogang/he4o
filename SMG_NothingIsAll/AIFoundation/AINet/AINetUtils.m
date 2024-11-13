@@ -477,17 +477,6 @@
     }
 }
 
-/**
- *  MARK:--------------------IFCanset迁移关联 (参考33112-TODO4.4)--------------------
- */
-+(void) relateTransferICanset:(AIFoNodeBase*)iCanset fCanset:(AIFoNodeBase*)fCanset {
-    if ([iCanset isEqual:fCanset]) return;
-    [AINetUtils insertPointer_Hd:iCanset.p toPorts:fCanset.transferIPorts ps:iCanset.content_ps difStrong:1];
-    [AINetUtils insertPointer_Hd:fCanset.p toPorts:iCanset.transferFPorts ps:fCanset.content_ps difStrong:1];
-    [SMGUtils insertNode:iCanset];
-    [SMGUtils insertNode:fCanset];
-}
-
 @end
 
 
@@ -581,12 +570,10 @@
  *  @desc i层的from(继承源)和to(推举目标)都是father;
  */
 +(NSArray*) transferPorts_4Father:(AIFoNodeBase*)iScene iCanset:(AIFoNodeBase*)iCanset {
-    return [SMGUtils collectArrA:iScene.transferToPorts arrB:iScene.transferFromPorts];
+    return [SMGUtils filterArr:iScene.transferFPorts checkValid:^BOOL(AITransferPort *item) {
+        return [item.selfCanset isEqual:iCanset];
+    }];
 }
-+(NSArray*) transferPorts_4FatherV2:(AIFoNodeBase*)iCanset {
-    return [SMGUtils collectArrA:iCanset.transferFPorts arrB:iCanset.transferIPorts];
-}
-
 /**
  *  MARK:--------------------对fo.content.refPort标记havMv--------------------
  *  @desc 根据fo标记alg.refPort的havMv (参考26022-2);
@@ -1022,22 +1009,24 @@
 
 /**
  *  MARK:--------------------迁移关联--------------------
+ *  @version
+ *      2024.11.13: V2,把fromto命名成F/I两层,避免F/I层混乱 (参考33112-TODO4.4);
  */
-+(void) relateTransfer:(AIFoNodeBase*)sceneFrom cansetFrom:(AIFoNodeBase*)cansetFrom sceneTo:(AIFoNodeBase*)sceneTo cansetTo:(AIFoNodeBase*)cansetTo {
++(void) relateTransfer:(AIFoNodeBase*)fScene fCanset:(AIFoNodeBase*)fCanset iScene:(AIFoNodeBase*)iScene iCanset:(AIFoNodeBase*)iCanset {
     //1. 数据准备;
-    AITransferPort *portFrom = [AITransferPort newWithScene:sceneFrom.p canset:cansetFrom.p];
-    AITransferPort *portTo = [AITransferPort newWithScene:sceneTo.p canset:cansetTo.p];
+    AITransferPort *fPort = [AITransferPort newWithScene:iCanset.p scene:fScene.p canset:fCanset.p];
+    AITransferPort *iPort = [AITransferPort newWithScene:fCanset.p scene:iScene.p canset:iCanset.p];
     
     //2. 插入传节点的承端口;
-    if (![sceneFrom.transferToPorts containsObject:portTo]) {
-        [sceneFrom.transferToPorts addObject:portTo];
-        [SMGUtils insertNode:sceneFrom];
+    if (![fScene.transferIPorts containsObject:iPort]) {
+        [fScene.transferIPorts addObject:iPort];
+        [SMGUtils insertNode:fScene];
     }
     
     //3. 插入承节点的传端口;
-    if (![sceneTo.transferFromPorts containsObject:portFrom]) {
-        [sceneTo.transferFromPorts addObject:portFrom];
-        [SMGUtils insertNode:sceneTo];
+    if (![iScene.transferFPorts containsObject:fPort]) {
+        [iScene.transferFPorts addObject:fPort];
+        [SMGUtils insertNode:iScene];
     }
 }
 

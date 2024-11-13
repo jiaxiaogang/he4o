@@ -17,24 +17,14 @@
 @interface AIFoNodeBase : AINodeBase
 
 /**
- *  MARK:--------------------迁移关联 (上传) (参考29069-todo10.2)--------------------
- *  @desc 工作在场景fo下,在cansetFo下不工作;
- */
-@property (strong, nonatomic) NSMutableArray *transferFromPorts;
-
-/**
- *  MARK:--------------------迁移关联 (下承) (参考29069-todo10.2)--------------------
- *  @desc 工作在场景fo下,在cansetFo下不工作;
- */
-@property (strong, nonatomic) NSMutableArray *transferToPorts;
-
-/**
- *  MARK:--------------------迁移关联V2 (当前为F继承的I端口) (参考33112-TODO4.4)--------------------
+ *  MARK:--------------------迁移关联V2 (当前为F继承的I端口) (参考29069-todo10.2 & 33112-TODO4.4)--------------------
+ *  @desc 工作在场景fo下,在cansetFo下不工作 (这个数据存在sceneFo中,而不是cansetFo);
  */
 @property (strong, nonatomic) NSMutableArray *transferIPorts;
 
 /**
- *  MARK:--------------------迁移关联V2 (当前为I推举的F端口) (参考33112-TODO4.4)--------------------
+ *  MARK:--------------------迁移关联V2 (当前为I推举的F端口) (参考29069-todo10.2 & 33112-TODO4.4)--------------------
+ *  @desc 工作在场景fo下,在cansetFo下不工作 (这个数据存在sceneFo中,而不是cansetFo);
  */
 @property (strong, nonatomic) NSMutableArray *transferFPorts;
 

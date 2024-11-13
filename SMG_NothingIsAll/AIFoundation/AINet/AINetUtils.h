@@ -160,11 +160,6 @@
 //MARK:===============================================================
 +(void) relateFo:(AIFoNodeBase*)foNode mv:(AICMVNodeBase*)mvNode;
 
-/**
- *  MARK:--------------------IFCanset迁移关联 (参考33112-TODO4.4)--------------------
- */
-+(void) relateTransferICanset:(AIFoNodeBase*)iCanset fCanset:(AIFoNodeBase*)fCanset;
-
 @end
 
 
@@ -209,7 +204,6 @@
  *  MARK:--------------------根据iScene取有迁移关联的father层--------------------
  */
 +(NSArray*) transferPorts_4Father:(AIFoNodeBase*)iScene iCanset:(AIFoNodeBase*)iCanset;
-+(NSArray*) transferPorts_4FatherV2:(AIFoNodeBase*)iCanset;
 
 /**
  *  MARK:--------------------对fo.content.refPort标记havMv--------------------
@@ -333,6 +327,6 @@
 /**
  *  MARK:--------------------新增迁移关联--------------------
  */
-+(void) relateTransfer:(AIFoNodeBase*)sceneFrom cansetFrom:(AIFoNodeBase*)cansetFrom sceneTo:(AIFoNodeBase*)sceneTo cansetTo:(AIFoNodeBase*)cansetTo;
++(void) relateTransfer:(AIFoNodeBase*)fScene fCanset:(AIFoNodeBase*)fCanset iScene:(AIFoNodeBase*)iScene iCanset:(AIFoNodeBase*)iCanset;
 
 @end

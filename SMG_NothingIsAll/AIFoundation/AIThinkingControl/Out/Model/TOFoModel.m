@@ -483,24 +483,16 @@
                 [TCTransfer transferTuiJv_H:sceneTo broRCanset:rCanset broRCansetActIndex:self.cansetActIndex broHCanset:newHCanset];
             } else {
                 
-                //TODOTOMORROW20241108: outSP+1时,F层也+1 (应该得看下是不是复用tctransfer的代码?,或者直接把tctransfer当时执行时的成果记下来,这里复用着去更新即可,这样性能好);
-                //这里即使不是新的,也要给+1一下;
-                
-                //明天想下,tos不必说,循环下,全给sp+1即可;
-                //但froms用不用处理?比如现在的canset是从father层继承过来的,它有效,
-                //  > 那么是不是也得推举到所有父F中?
-                //  > 还是只需要将sp+同步给fromFather层即可?
-                //答: 无论是tos还是froms都是father层,只要是有迁移关联的father层,就得子即父的推sp值+1;
+                //6. 子即父,推举SP值+1: 如果NewHCanset本来就存在,那么需要将它的targetH帧,的SP+1,且推举到F层SP也+1 (参考33112-TODO4.3);
                 AIFoNodeBase *iScene = rCanset;//当前NewHCanset所在的hScene场景就是iScene;
                 NSArray *fatherPorts = [AINetUtils transferPorts_4Father:iScene iCanset:newHCanset];
                 
                 //这里应该得改下,改成canset和canset之间的迁移关系,然后因为cansetfrom和canstto是等长的,所以只要根据这个关系,from更新时,很容易更新to;
-                
-                NSArray *fatherPorts = [AINetUtils transferPorts_4FatherV2:newHCanset];
-                
-                
-                
-                
+                for (AITransferPort *fatherPort in fatherPorts) {
+                    AIFoNodeBase *fatherScene = [SMGUtils searchNode:fatherPort.scene];
+                    AIFoNodeBase *fatherCanset = [SMGUtils searchNode:fatherPort.canset];
+                    [fatherScene updateOutSPStrong:newHCanset.count difStrong:1 type:ATPlus canset:fatherCanset.content_ps debugMode:false caller:@"NewHCanset本就存在时,将当前帧SP+1推举到父层canset中"];
+                }
             }
             
             //6. rCanset的actIndex匹配了,就相当于它curAlgModel的HDemand,下的所有的subHCanset的targetAlg全反馈匹配上了 (参考32119-TODO1);

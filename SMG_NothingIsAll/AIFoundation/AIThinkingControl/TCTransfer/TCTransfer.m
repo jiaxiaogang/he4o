@@ -185,8 +185,9 @@
     cansetModel.transferSiModel = [AITransferModel newWithCansetTo:cansetTo.p];
     
     //3. 迁移时,顺带把spDic也累计了,但要通过transferPorts进行防重,避免重复累推 (其实不可能重复,因为如果重复在override算法中当前cansetModel就已经被过滤了);
-    AITransferPort *portTo = [AITransferPort newWithScene:sceneTo.p canset:cansetTo.p];
-    if (![sceneFrom.transferToPorts containsObject:portTo]) {
+    //2024.11.13: 迁移都是迁移到I层,所以这里判断防重时,用transferIPorts来判断即可;
+    AITransferPort *iPort = [AITransferPort newWithScene:cansetFrom.p scene:sceneTo.p canset:cansetTo.p];
+    if (![sceneFrom.transferIPorts containsObject:iPort]) {
         
         //4. 将cansetTo挂到sceneTo下;
         HEResult *updateConCansetResult = [sceneTo updateConCanset:cansetTo.p targetIndex:xvModel.sceneToTargetIndex];
@@ -199,15 +200,12 @@
             //2024.09.15: 转实时,outSPDic也跟着迁移继承过去 (参考33062-TODO3);
             //2024.09.21: 改回生成cansetModel时就初始化 (参考33065-TODO2);
             //[AINetUtils initItemOutSPDicForTransfered:cansetModel];
-            
             [AITest test32:cansetFrom newCanset:cansetTo];
             
             //7. 并进行迁移关联 (以实现防重,避免重新累推spDic);
-            [AINetUtils relateTransfer:sceneFrom cansetFrom:cansetFrom sceneTo:sceneTo cansetTo:cansetTo];
-            
-            //8. 新版迁移关联: 只关联I/F层的Canset (参考33112-TODO4.4);
-            if (cansetModel.baseSceneModel.type != SceneTypeBrother) {
-                [AINetUtils relateTransferICanset:cansetTo fCanset:cansetFrom];//只要是迁移的,并且不能是B层来的
+            //8. 新版迁移关联: 两个条件: 1.只关联I/F层的Canset(不能是B层来的) 2.未发生迁移时,不执行; (参考33112-TODO4.4);
+            if (cansetModel.baseSceneModel.type != SceneTypeBrother && ![cansetTo isEqual:cansetFrom]) {
+                [AINetUtils relateTransfer:sceneFrom fCanset:cansetFrom iScene:sceneTo iCanset:cansetTo];
             }
         }
     }
@@ -394,10 +392,10 @@
         [cansetTo updateIndexDic:sceneTo indexDic:sceneToCansetToIndexDic];
         
         //14. 挂载成功: 进行迁移关联 (可供复用,避免每一次推举更新sp时,都重新推举) (参考33112-TODO3);
-        [AINetUtils relateTransfer:sceneFrom cansetFrom:cansetFrom sceneTo:sceneTo cansetTo:cansetTo];
-        
-        //15. 新版迁移关联: 只关联I/F层的Canset (参考33112-TODO4.4);
-        [AINetUtils relateTransferICanset:cansetFrom fCanset:cansetTo];
+        //2024.11.13: 新版迁移关联: 推举时=>from是I层,to是F层 (条件: 未发生迁移时,不执行) (参考33112-TODO4.4);
+        if (![cansetTo isEqual:cansetFrom]) {
+            [AINetUtils relateTransfer:sceneTo fCanset:cansetTo iScene:sceneFrom iCanset:cansetFrom];
+        }
     }
 }
 
@@ -472,10 +470,10 @@
         [fatHCanset updateIndexDic:fatRCanset indexDic:fatRCansetBroHCansetDic];
         
         //18. 挂载成功: 进行迁移关联 (可供复用,避免每一次推举更新sp时,都重新推举) (参考33112-TODO3);
-        [AINetUtils relateTransfer:broRCanset cansetFrom:broHCanset sceneTo:fatRCanset cansetTo:fatHCanset];
-        
-        //19. 新版迁移关联: 只关联I/F层的Canset (参考33112-TODO4.4);
-        [AINetUtils relateTransferICanset:broHCanset fCanset:fatHCanset];
+        //2024.11.13: 新版迁移关联: 推举时=>from是I层,to是F层 (条件: 未发生迁移时,不执行) (参考33112-TODO4.4);
+        if (![broHCanset isEqual:fatHCanset]) {
+            [AINetUtils relateTransfer:fatRCanset fCanset:fatHCanset iScene:broRCanset iCanset:broHCanset];
+        }
     }
 }
 
