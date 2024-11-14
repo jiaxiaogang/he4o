@@ -1030,4 +1030,20 @@
     }
 }
 
+/**
+ *  MARK:--------------------outSP子即父--------------------
+ *  @desc 子即父,推举到F层SP也+1: iCanset的outSP更新时,将它的fCanset的outSP也+1 (参考33112-TODO4.3);
+ */
++(void) updateOutSPStrong_4IF:(AIFoNodeBase*)iScene iCanset:(AIFoNodeBase*)iCanset caller:(NSString*)caller {
+    //1. 取f (有迁移复用);
+    NSArray *fatherPorts = [AINetUtils transferPorts_4Father:iScene iCanset:iCanset];
+    for (AITransferPort *fatherPort in fatherPorts) {
+        AIFoNodeBase *fatherScene = [SMGUtils searchNode:fatherPort.scene];
+        AIFoNodeBase *fatherCanset = [SMGUtils searchNode:fatherPort.canset];
+        
+        //2. cansetFrom和cansetTo是等长的,所以直接iCanset的index可以当fCanset的index来用;
+        [fatherScene updateOutSPStrong:iCanset.count difStrong:1 type:ATPlus canset:fatherCanset.content_ps debugMode:false caller:caller];
+    }
+}
+
 @end

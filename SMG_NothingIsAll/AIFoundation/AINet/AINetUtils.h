@@ -329,4 +329,10 @@
  */
 +(void) relateTransfer:(AIFoNodeBase*)fScene fCanset:(AIFoNodeBase*)fCanset iScene:(AIFoNodeBase*)iScene iCanset:(AIFoNodeBase*)iCanset;
 
+/**
+ *  MARK:--------------------outSP子即父--------------------
+ *  @desc 子即父,推举到F层SP也+1: iCanset的outSP更新时,将它的fCanset的outSP也+1 (参考33112-TODO4.3);
+ */
++(void) updateOutSPStrong_4IF:(AIFoNodeBase*)iScene iCanset:(AIFoNodeBase*)iCanset caller:(NSString*)caller;
+
 @end

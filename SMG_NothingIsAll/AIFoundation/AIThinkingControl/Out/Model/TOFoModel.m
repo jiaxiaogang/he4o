@@ -482,17 +482,8 @@
                 AIFoNodeBase *sceneTo = [SMGUtils searchNode:self.sceneTo];
                 [TCTransfer transferTuiJv_H:sceneTo broRCanset:rCanset broRCansetActIndex:self.cansetActIndex broHCanset:newHCanset];
             } else {
-                
-                //6. 子即父,推举SP值+1: 如果NewHCanset本来就存在,那么需要将它的targetH帧的SP+1,且推举到F层SP也+1 (参考33112-TODO4.3);
-                AIFoNodeBase *iScene = rCanset;//当前NewHCanset所在的hScene场景就是iScene;
-                NSArray *fatherPorts = [AINetUtils transferPorts_4Father:iScene iCanset:newHCanset];
-                for (AITransferPort *fatherPort in fatherPorts) {
-                    AIFoNodeBase *fatherScene = [SMGUtils searchNode:fatherPort.scene];
-                    AIFoNodeBase *fatherCanset = [SMGUtils searchNode:fatherPort.canset];
-                    
-                    //7. cansetFrom和cansetTo是等长的,所以直接iCanset的index可以当fCanset的index来用;
-                    [fatherScene updateOutSPStrong:newHCanset.count difStrong:1 type:ATPlus canset:fatherCanset.content_ps debugMode:false caller:@"NewHCanset本就存在时,将当前帧SP+1推举到父层canset中"];
-                }
+                //6. outSP值子即父: 当前NewHCanset所在的hScene场景就是iScene (参考33112-TODO4.3);
+                [AINetUtils updateOutSPStrong_4IF:rCanset iCanset:newHCanset caller:@"NewHCanset本就存在时,将当前帧SP+1推举到父层canset中"];
             }
             
             //6. rCanset的actIndex匹配了,就相当于它curAlgModel的HDemand,下的所有的subHCanset的targetAlg全反馈匹配上了 (参考32119-TODO1);
@@ -682,7 +673,7 @@
     
     
     //TODOTOMORROW20241108: outSP+1时,F层也+1 (应该得看下是不是复用tctransfer的代码?,或者直接把tctransfer当时执行时的成果记下来,这里复用着去更新即可,这样性能好);
-    
+    //明天先查下,这里xv时,有没有迁移映射?
     
     
     

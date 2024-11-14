@@ -249,16 +249,8 @@
     if (updateConCansetResult.isNew) {
         [TCTransfer transferTuiJv_R:matchFo cansetFrom:newRCanset];
     } else {
-        //e. 子即父,推举SP值+1: 如果NewRCanset本来就存在,那么需要将它的target帧的SP+1,且推举到F层SP也+1 (参考33112-TODO4.3);
-        AIFoNodeBase *iScene = matchFo;//当前NewRCanset所在的matchFo场景就是iScene;
-        NSArray *fatherPorts = [AINetUtils transferPorts_4Father:iScene iCanset:newRCanset];
-        for (AITransferPort *fatherPort in fatherPorts) {
-            AIFoNodeBase *fatherScene = [SMGUtils searchNode:fatherPort.scene];
-            AIFoNodeBase *fatherCanset = [SMGUtils searchNode:fatherPort.canset];
-            
-            //f. cansetFrom和cansetTo是等长的,所以直接iCanset的index可以当fCanset的index来用;
-            [fatherScene updateOutSPStrong:newRCanset.count difStrong:1 type:ATPlus canset:fatherCanset.content_ps debugMode:false caller:@"NewRCanset本就存在时,将当前帧SP+1推举到父层canset中"];
-        }
+        //e. outSP值子即父: 当前NewRCanset所在的matchFo场景就是iScene (参考33112-TODO4.3);
+        [AINetUtils updateOutSPStrong_4IF:matchFo iCanset:newRCanset caller:@"NewRCanset本就存在时,将当前帧SP+1推举到父层canset中"];
     }
     
     //2. =================解决方案执行有效(再类比): 有actYes的时,归功于解决方案,执行canset再类比 (参考27206c-R任务)=================
