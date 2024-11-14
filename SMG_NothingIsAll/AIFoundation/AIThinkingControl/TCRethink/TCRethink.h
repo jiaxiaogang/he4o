@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 /**
- *  MARK:--------------------反省--------------------
+ *  MARK:--------------------inSP更新器--------------------
  *  @desc 分裂成理性反省 和 感性反省 (参考n24p02);
  *  @desc 四个feedback分别对应四个rethink反省 (参考25031-12);
  *  @version

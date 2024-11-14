@@ -43,6 +43,8 @@
     for (AIMatchFoModel *prFo in matchPRFos) {
         //3. 已发生: 补上当前进度前面的SP计数P+1 (参考27213-4);
         AIFoNodeBase *matchFo = [SMGUtils searchNode:prFo.matchFo];
+        
+        //TODO: 这里仅仅是给当前I做了SP,但没同步推举到F,随后看是不是把这里改下,也调用TCRethink里的那个推举方法 或 AINetUtils里的那个IF推举方法;
         [matchFo updateSPStrong:0 end:prFo.cutIndex type:ATPlus];
         
         //4. 预测帧: 下帧预测触发器; (参考25031-2) ->feedbackTIR;

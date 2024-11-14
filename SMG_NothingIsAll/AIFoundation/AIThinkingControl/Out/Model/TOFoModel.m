@@ -674,6 +674,10 @@
     
     //TODOTOMORROW20241108: outSP+1时,F层也+1 (应该得看下是不是复用tctransfer的代码?,或者直接把tctransfer当时执行时的成果记下来,这里复用着去更新即可,这样性能好);
     //明天先查下,这里xv时,有没有迁移映射?
+    //经查,这里转实时,才有映射,在转实前,也可以取到sceneFrom和cansetFrom;
+    //即:
+    //  1. 如果当前sceneType是I,那么直接取它的F层去推举SP值即可;
+    //  2. 如果当前sceneType是F,那么只需要推举给sceneFrom下的CansetFrom即可;
     
     
     
