@@ -678,7 +678,14 @@
     //即:
     //  1. 如果当前sceneType是I,那么直接取它的F层去推举SP值即可;
     //  2. 如果当前sceneType是F,那么只需要推举给sceneFrom下的CansetFrom即可;
+    //      > 但F层,也有可能有好多个FScene传过来同一个iCanset,
+    [AINetUtils updateOutSPStrong_4IF:nil iCanset:nil caller:nil];
     
+    //问题: 这里有没转实是个问题,有可能没转实,那么迁移映射就取不到..
+    //方案1. 可以从TOFoModel里,找baseScene数组来实现;
+    //方案2. 可以直接把TransferPort改成加一条ICansetContent_ps;
+    //抉择: 建议优先考虑方案2,因为方案1改动大,且与transferPort的功能重复,按道理说,用一种数据结构能表征的东西,就不要再引入第二种,避免混乱出bug可能更大;
+    //另外: 建议在综合评分时,也采用transferPort来实现,不要用baseScene来实现;
     
     
     
