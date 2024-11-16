@@ -10,17 +10,18 @@
 
 @implementation AITransferPort
 
-+(AITransferPort*) newWithScene:(AIKVPointer*)selfCanset scene:(AIKVPointer*)scene canset:(AIKVPointer*)canset {
++(AITransferPort*) newWithFScene:(AIKVPointer*)fScene fCanset:(AIKVPointer*)fCanset iScene:(AIKVPointer*)iScene iCansetContent_ps:(NSArray*)iCansetContent_ps {
     AITransferPort *result = [[AITransferPort alloc] init];
-    result.selfCanset = selfCanset;
-    result.scene = scene;
-    result.canset = canset;
+    result.fScene = fScene;
+    result.fCanset = fCanset;
+    result.iScene = iScene;
+    result.iCansetContent_ps = iCansetContent_ps;
     return result;
 }
 
 -(BOOL) isEqual:(AITransferPort*)object{
     if (ISOK(object, AITransferPort.class)) {
-        return [self.selfCanset isEqual:object.selfCanset] && [self.scene isEqual:object.scene] && [self.canset isEqual:object.canset];
+        return [self.fScene isEqual:object.fScene] && [self.fCanset isEqual:object.fCanset] && [self.iScene isEqual:object.iScene] && [self.iCansetContent_ps isEqual:object.iCansetContent_ps];
     }
     return false;
 }
@@ -31,17 +32,19 @@
 - (instancetype)initWithCoder:(NSCoder *)coder {
     self = [super init];
     if (self) {
-        self.selfCanset = [coder decodeObjectForKey:@"selfCanset"];
-        self.scene = [coder decodeObjectForKey:@"scene"];
-        self.canset = [coder decodeObjectForKey:@"canset"];
+        self.fScene = [coder decodeObjectForKey:@"fScene"];
+        self.fCanset = [coder decodeObjectForKey:@"fCanset"];
+        self.iScene = [coder decodeObjectForKey:@"iScene"];
+        self.iCansetContent_ps = [coder decodeObjectForKey:@"iCansetContent_ps"];
     }
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)coder {
-    [coder encodeObject:self.selfCanset forKey:@"selfCanset"];
-    [coder encodeObject:self.scene forKey:@"scene"];
-    [coder encodeObject:self.canset forKey:@"canset"];
+    [coder encodeObject:self.fScene forKey:@"fScene"];
+    [coder encodeObject:self.fCanset forKey:@"fCanset"];
+    [coder encodeObject:self.iScene forKey:@"iScene"];
+    [coder encodeObject:self.iCansetContent_ps forKey:@"iCansetContent_ps"];
 }
 
 @end

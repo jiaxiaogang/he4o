@@ -571,7 +571,7 @@
  */
 +(NSArray*) transferPorts_4Father:(AIFoNodeBase*)iScene iCanset:(AIFoNodeBase*)iCanset {
     return [SMGUtils filterArr:iScene.transferFPorts checkValid:^BOOL(AITransferPort *item) {
-        return [item.selfCanset isEqual:iCanset.p];
+        return [item.iCansetContent_ps isEqual:iCanset.content_ps];
     }];
 }
 /**
@@ -1014,18 +1014,17 @@
  */
 +(void) relateTransfer:(AIFoNodeBase*)fScene fCanset:(AIFoNodeBase*)fCanset iScene:(AIFoNodeBase*)iScene iCanset:(AIFoNodeBase*)iCanset {
     //1. 数据准备;
-    AITransferPort *fPort = [AITransferPort newWithScene:iCanset.p scene:fScene.p canset:fCanset.p];
-    AITransferPort *iPort = [AITransferPort newWithScene:fCanset.p scene:iScene.p canset:iCanset.p];
+    AITransferPort *transferPort = [AITransferPort newWithFScene:fScene.p fCanset:fCanset.p iScene:iScene.p iCansetContent_ps:iCanset.content_ps];
     
     //2. 插入传节点的承端口;
-    if (![fScene.transferIPorts containsObject:iPort]) {
-        [fScene.transferIPorts addObject:iPort];
+    if (![fScene.transferIPorts containsObject:transferPort]) {
+        [fScene.transferIPorts addObject:transferPort];
         [SMGUtils insertNode:fScene];
     }
     
     //3. 插入承节点的传端口;
-    if (![iScene.transferFPorts containsObject:fPort]) {
-        [iScene.transferFPorts addObject:fPort];
+    if (![iScene.transferFPorts containsObject:transferPort]) {
+        [iScene.transferFPorts addObject:transferPort];
         [SMGUtils insertNode:iScene];
     }
 }
@@ -1038,8 +1037,8 @@
     //1. 取f (有迁移复用);
     NSArray *fatherPorts = [AINetUtils transferPorts_4Father:iScene iCanset:iCanset];
     for (AITransferPort *fatherPort in fatherPorts) {
-        AIFoNodeBase *fatherScene = [SMGUtils searchNode:fatherPort.scene];
-        AIFoNodeBase *fatherCanset = [SMGUtils searchNode:fatherPort.canset];
+        AIFoNodeBase *fatherScene = [SMGUtils searchNode:fatherPort.fScene];
+        AIFoNodeBase *fatherCanset = [SMGUtils searchNode:fatherPort.fCanset];
         
         //2. cansetFrom和cansetTo是等长的,所以直接iCanset的index可以当fCanset的index来用;
         [fatherScene updateOutSPStrong:iCanset.count difStrong:1 type:ATPlus canset:fatherCanset.content_ps debugMode:false caller:caller];

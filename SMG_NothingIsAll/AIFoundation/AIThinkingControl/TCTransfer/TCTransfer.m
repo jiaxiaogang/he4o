@@ -186,6 +186,8 @@
     
     //3. 迁移时,顺带把spDic也累计了,但要通过transferPorts进行防重,避免重复累推 (其实不可能重复,因为如果重复在override算法中当前cansetModel就已经被过滤了);
     //2024.11.13: 迁移都是迁移到I层,所以这里判断防重时,用transferIPorts来判断即可;
+    
+    //TODOTOMORROW20241117: 明天改下,这里在xv迁移时,就把迁移关联给建了;
     AITransferPort *iPort = [AITransferPort newWithScene:cansetFrom.p scene:sceneTo.p canset:cansetTo.p];
     if (![sceneFrom.transferIPorts containsObject:iPort]) {
         
