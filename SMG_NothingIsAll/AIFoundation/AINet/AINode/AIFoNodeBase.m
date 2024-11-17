@@ -321,34 +321,6 @@
     return [[HEResult newSuccess] mkIsNew:@(false)];
 }
 
-//MARK:===============================================================
-//MARK:                     < transfer组 >
-//MARK:===============================================================
-
-/**
- *  MARK:--------------------找出从sceneFrom已经迁移过来了哪些cansetFroms (由sceneTo调用)--------------------
- */
--(NSArray*) getTransferedCansetFroms:(AIKVPointer*)sceneFrom_p {
-    return [self findTransferRecord:sceneFrom_p inTransferPorts:self.transferFPorts];
-}
-/**
- *  MARK:--------------------找出sceneTo的哪些cansetTos是self迁移过去的 (由sceneFrom调用)--------------------
- */
--(NSArray*) getTransferedCansetTos:(AIKVPointer*)sceneTo_p {
-    return [self findTransferRecord:sceneTo_p inTransferPorts:self.transferIPorts];
-}
-
-/**
- *  MARK:--------------------从fromTransferPorts中筛选出: 场景是scene的并转成cansets格式--------------------
- */
--(NSArray*) findTransferRecord:(AIKVPointer*)findScene inTransferPorts:(NSArray*)inTransferPorts {
-    return [SMGUtils convertArr:[SMGUtils filterArr:inTransferPorts checkValid:^BOOL(AITransferPort *port) {
-        return [port.scene isEqual:findScene];
-    }] convertBlock:^id(AITransferPort *port) {
-        return port.canset;
-    }];
-}
-
 /**
  *  MARK:--------------------将当前fo解析成orders返回--------------------
  */

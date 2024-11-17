@@ -185,20 +185,6 @@
  */
 -(HEResult*) updateConCanset:(AIKVPointer*)newConCansetFo targetIndex:(NSInteger)targetIndex;
 
-//MARK:===============================================================
-//MARK:                     < transfer组 >
-//MARK:===============================================================
-
-/**
- *  MARK:--------------------找出从sceneFrom已经迁移过来了哪些cansetFroms (由sceneTo调用)--------------------
- */
--(NSArray*) getTransferedCansetFroms:(AIKVPointer*)sceneFrom_p;
-
-/**
- *  MARK:--------------------找出sceneTo的哪些cansetTos是self迁移过去的 (由sceneFrom调用)--------------------
- */
--(NSArray*) getTransferedCansetTos:(AIKVPointer*)sceneTo_p;
-
 /**
  *  MARK:--------------------将当前fo解析成orders返回--------------------
  */

@@ -201,11 +201,6 @@
 +(NSArray*) refPorts_All:(AIKVPointer*)node_p;
 
 /**
- *  MARK:--------------------根据iScene取有迁移关联的father层--------------------
- */
-+(NSArray*) transferPorts_4Father:(AIFoNodeBase*)iScene iCanset:(AIFoNodeBase*)iCanset;
-
-/**
  *  MARK:--------------------对fo.content.refPort标记havMv--------------------
  */
 +(void) maskHavMv_AlgWithFo:(AIFoNodeBase*)foNode;
@@ -327,12 +322,21 @@
 /**
  *  MARK:--------------------新增迁移关联--------------------
  */
-+(void) relateTransfer:(AIFoNodeBase*)fScene fCanset:(AIFoNodeBase*)fCanset iScene:(AIFoNodeBase*)iScene iCanset:(AIFoNodeBase*)iCanset;
++(void) relateTransfer:(AIFoNodeBase*)fScene fCanset:(AIFoNodeBase*)fCanset iScene:(AIFoNodeBase*)iScene iCanset:(NSArray*)cansetToContent_ps;
 
 /**
  *  MARK:--------------------outSP子即父--------------------
  *  @desc 子即父,推举到F层SP也+1: iCanset的outSP更新时,将它的fCanset的outSP也+1 (参考33112-TODO4.3);
  */
 +(void) updateOutSPStrong_4IF:(AIFoNodeBase*)iScene iCanset:(AIFoNodeBase*)iCanset caller:(NSString*)caller;
+
+/**
+ *  MARK:--------------------根据iScene取有迁移关联的father层--------------------
+ */
+//取哪些canset迁移成iCanset过;
++(NSArray*) transferPorts_4Father:(AIFoNodeBase*)iScene iCanset:(AIFoNodeBase*)iCanset;
+
+//取从fScene迁移过来iScene哪些canset;
++(NSArray*) transferPorts_4Father:(AIFoNodeBase*)iScene fScene:(AIFoNodeBase*)fScene;
 
 @end

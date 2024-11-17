@@ -21,6 +21,7 @@
 
 -(BOOL) isEqual:(AITransferPort*)object{
     if (ISOK(object, AITransferPort.class)) {
+        //TODOTEST20241117: 测下这里,两个数组pits可以判断equal;
         return [self.fScene isEqual:object.fScene] && [self.fCanset isEqual:object.fCanset] && [self.iScene isEqual:object.iScene] && [self.iCansetContent_ps isEqual:object.iCansetContent_ps];
     }
     return false;

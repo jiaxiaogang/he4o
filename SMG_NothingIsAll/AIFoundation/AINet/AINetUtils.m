@@ -566,15 +566,6 @@
 }
 
 /**
- *  MARK:--------------------根据iScene取有迁移关联的father层--------------------
- *  @desc i层的from(继承源)和to(推举目标)都是father;
- */
-+(NSArray*) transferPorts_4Father:(AIFoNodeBase*)iScene iCanset:(AIFoNodeBase*)iCanset {
-    return [SMGUtils filterArr:iScene.transferFPorts checkValid:^BOOL(AITransferPort *item) {
-        return [item.iCansetContent_ps isEqual:iCanset.content_ps];
-    }];
-}
-/**
  *  MARK:--------------------对fo.content.refPort标记havMv--------------------
  *  @desc 根据fo标记alg.refPort的havMv (参考26022-2);
  */
@@ -1012,9 +1003,9 @@
  *  @version
  *      2024.11.13: V2,把fromto命名成F/I两层,避免F/I层混乱 (参考33112-TODO4.4);
  */
-+(void) relateTransfer:(AIFoNodeBase*)fScene fCanset:(AIFoNodeBase*)fCanset iScene:(AIFoNodeBase*)iScene iCanset:(AIFoNodeBase*)iCanset {
++(void) relateTransfer:(AIFoNodeBase*)fScene fCanset:(AIFoNodeBase*)fCanset iScene:(AIFoNodeBase*)iScene iCanset:(NSArray*)cansetToContent_ps {
     //1. 数据准备;
-    AITransferPort *transferPort = [AITransferPort newWithFScene:fScene.p fCanset:fCanset.p iScene:iScene.p iCansetContent_ps:iCanset.content_ps];
+    AITransferPort *transferPort = [AITransferPort newWithFScene:fScene.p fCanset:fCanset.p iScene:iScene.p iCansetContent_ps:cansetToContent_ps];
     
     //2. 插入传节点的承端口;
     if (![fScene.transferIPorts containsObject:transferPort]) {
@@ -1043,6 +1034,24 @@
         //2. cansetFrom和cansetTo是等长的,所以直接iCanset的index可以当fCanset的index来用;
         [fatherScene updateOutSPStrong:iCanset.count difStrong:1 type:ATPlus canset:fatherCanset.content_ps debugMode:false caller:caller];
     }
+}
+
+/**
+ *  MARK:--------------------根据iScene取有迁移关联的father层--------------------
+ *  @desc i层的from(继承源)和to(推举目标)都是father;
+ */
+//取哪些canset迁移成iCanset过;
++(NSArray*) transferPorts_4Father:(AIFoNodeBase*)iScene iCanset:(AIFoNodeBase*)iCanset {
+    return [SMGUtils filterArr:iScene.transferFPorts checkValid:^BOOL(AITransferPort *item) {
+        return [item.iCansetContent_ps isEqual:iCanset.content_ps];
+    }];
+}
+
+//取从fScene迁移过来iScene哪些canset;
++(NSArray*) transferPorts_4Father:(AIFoNodeBase*)iScene fScene:(AIFoNodeBase*)fScene {
+    return [SMGUtils filterArr:iScene.transferFPorts checkValid:^BOOL(AITransferPort *item) {
+        return [item.fScene isEqual:fScene.p];
+    }];
 }
 
 @end

@@ -66,7 +66,7 @@
         }
         
         //5. Override过滤器: 防重已经迁移过的 (override用来过滤避免重复迁移) (参考29069-todo5.2);
-        NSArray *alreadyTransfered_Cansets = [sceneTo getTransferedCansetFroms:sceneFrom.p];
+        NSArray *alreadyTransfered_Cansets = [AINetUtils transferPorts_4Father:sceneTo fScene:sceneFrom];
         NSArray *cansetFroms2 = [SMGUtils removeSub_ps:alreadyTransfered_Cansets parent_ps:cansetFroms1];
         
         //6. 转为cansetModel格式 (参考31104-第3步);
@@ -153,7 +153,7 @@
         //NSArray *cansetFroms1 = [AIFilter solutionRCansetFilter:sceneFrom targetIndex:sceneFrom.count];//只激活前20% (调用rSolution平均耗时600ms)
         
         //5. Override过滤器: 防重已经迁移过的 (override用来过滤避免重复迁移) (参考29069-todo5.2);
-        NSArray *alreadyTransfered_Cansets = [sceneTo getTransferedCansetFroms:sceneFrom.p];
+        NSArray *alreadyTransfered_Cansets = [AINetUtils transferPorts_4Father:sceneTo fScene:sceneFrom];
         NSArray *cansetFroms2 = [SMGUtils removeSub_ps:alreadyTransfered_Cansets parent_ps:cansetFroms1];
         if (Log4TCCanset && cansetFroms1.count > 0) NSLog(@"RCansetFroms过滤已迁移过: 原%ld - 滤%ld = 留%ld",cansetFroms1.count,alreadyTransfered_Cansets.count,cansetFroms2.count);
         
