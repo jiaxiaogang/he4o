@@ -150,6 +150,14 @@
     return [self.outSPDic objectForKey:key];
 }
 
+/**
+ *  MARK:--------------------由sceneFo调用,返回canset对应的itemOutSPDic--------------------
+ */
+-(NSDictionary*) getItemOutSPDic:(NSArray*)cansetContent_ps {
+    NSString *key = [AINetUtils getOutSPKey:cansetContent_ps];
+    return [self.outSPDic objectForKey:key];
+}
+
 //MARK:===============================================================
 //MARK:                     < effectDic组 >
 //MARK:===============================================================

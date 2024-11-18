@@ -468,6 +468,23 @@
     AIFoNodeBase *cansetFrom = [SMGUtils searchNode:canset.cansetFrom];//本来应该传cansetTo,不过cansetTo可能未转实,并且cansetFrom效果也一致;
     NSDictionary *spDic = [canset getItemOutSPDic];
     return [TOUtils getStableScore_General:cansetFrom startSPIndex:startSPIndex endSPIndex:endSPIndex spDic:spDic];
+    
+    
+    //TODOTOMORROW20241118: OutSP父非子 (参考33114-TODO3);
+    AIFoNodeBase *iScene = [SMGUtils searchNode:canset.sceneTo];
+    NSArray *iCansetContent_ps = Simples2Pits(canset.transferXvModel.cansetToOrders);
+    NSArray *fPorts = [AINetUtils transferPorts_4Father:iScene iCansetContent_ps:iCansetContent_ps];
+    for (AITransferPort *fPort in fPorts) {
+        AIFoNodeBase *fScene = [SMGUtils searchNode:fPort.fScene];
+        AIFoNodeBase *fCanset = [SMGUtils searchNode:fPort.fCanset];
+        NSDictionary *itemOutSPDic = [fScene getItemOutSPDic:fCanset.content_ps];
+        
+        HEResult *fResult = [TOUtils getStableScore_General:fCanset startSPIndex:startSPIndex endSPIndex:endSPIndex spDic:itemOutSPDic];
+        
+        //@desc 子非父公式: 综合得分 = 总SP热度值/fPorts迁移关联数 ==> 即: score = SUM(itemOutStableScore) / fPorts.count();
+        //@desc 分母说明: 除以fPorts.count,是为了避免迁移经历多的占优势,因为这里核心在于:SP得分,一切干扰SP得分准确度的因素,都要避免;
+        //@desc 分子说明: 与iScene的匹配度,做为冷却时长,越抽象热度影响阈值越低,越具象匹配热度影响阈值越高;
+    }
 }
 +(HEResult*) getStableScore_General:(AIFoNodeBase*)fo startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex spDic:(NSDictionary*)spDic {
     //1. 数据检查 & 稳定性默认为1分 & 正负mv的公式是不同的 (参考25122-公式);

@@ -103,6 +103,11 @@
 -(void) updateOutSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type canset:(NSArray*)cansetContent_ps debugMode:(BOOL)debugMode caller:(NSString*)caller;
 -(BOOL) containsOutSPStrong:(NSArray*)cansetContent_ps;
 
+/**
+ *  MARK:--------------------由sceneFo调用,返回canset对应的itemOutSPDic--------------------
+ */
+-(NSDictionary*) getItemOutSPDic:(NSArray*)cansetContent_ps;
+
 //MARK:===============================================================
 //MARK:                     < effectDic组 >
 //MARK:===============================================================

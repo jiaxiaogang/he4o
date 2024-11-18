@@ -334,7 +334,7 @@
  *  MARK:--------------------根据iScene取有迁移关联的father层--------------------
  */
 //取哪些canset迁移成iCanset过;
-+(NSArray*) transferPorts_4Father:(AIFoNodeBase*)iScene iCanset:(AIFoNodeBase*)iCanset;
++(NSArray*) transferPorts_4Father:(AIFoNodeBase*)iScene iCansetContent_ps:(NSArray*)iCansetContent_ps;
 
 //取从fScene迁移过来iScene哪些canset;
 +(NSArray*) transferPorts_4Father:(AIFoNodeBase*)iScene fScene:(AIFoNodeBase*)fScene;
