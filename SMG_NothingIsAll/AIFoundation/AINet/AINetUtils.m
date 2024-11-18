@@ -1023,16 +1023,20 @@
 /**
  *  MARK:--------------------outSP子即父--------------------
  *  @desc 子即父,推举到F层SP也+1: iCanset的outSP更新时,将它的fCanset的outSP也+1 (参考33112-TODO4.3);
+ *  @desc I层即sceneTo,F层则从transferPort迁移关联来取 (参考33112-TODO3);
  */
-+(void) updateOutSPStrong_4IF:(AIFoNodeBase*)iScene iCanset:(AIFoNodeBase*)iCanset caller:(NSString*)caller spIndex:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type {
++(void) updateOutSPStrong_4IF:(AIFoNodeBase*)iScene iCansetContent_ps:(NSArray*)iCansetContent_ps caller:(NSString*)caller spIndex:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type debugMode:(BOOL)debugMode {
+    //0. i层计SP;
+    [iScene updateOutSPStrong:spIndex difStrong:difStrong type:type canset:iCansetContent_ps debugMode:debugMode caller:caller];
+    
     //1. 取f (有迁移复用);
-    NSArray *fatherPorts = [AINetUtils transferPorts_4Father:iScene iCanset:iCanset];
+    NSArray *fatherPorts = [AINetUtils transferPorts_4Father:iScene iCansetContent_ps:iCansetContent_ps];
     for (AITransferPort *fatherPort in fatherPorts) {
         AIFoNodeBase *fatherScene = [SMGUtils searchNode:fatherPort.fScene];
         AIFoNodeBase *fatherCanset = [SMGUtils searchNode:fatherPort.fCanset];
         
         //2. cansetFrom和cansetTo是等长的,所以直接iCanset的index可以当fCanset的index来用;
-        [fatherScene updateOutSPStrong:iCanset.count difStrong:1 type:ATPlus canset:fatherCanset.content_ps debugMode:false caller:caller];
+        [fatherScene updateOutSPStrong:iCansetContent_ps.count difStrong:1 type:ATPlus canset:fatherCanset.content_ps debugMode:false caller:STRFORMAT(@"%@(推举父)",caller)];
     }
 }
 
@@ -1041,9 +1045,10 @@
  *  @desc i层的from(继承源)和to(推举目标)都是father;
  */
 //取哪些canset迁移成iCanset过;
-+(NSArray*) transferPorts_4Father:(AIFoNodeBase*)iScene iCanset:(AIFoNodeBase*)iCanset {
++(NSArray*) transferPorts_4Father:(AIFoNodeBase*)iScene iCansetContent_ps:(NSArray*)iCansetContent_ps {
     return [SMGUtils filterArr:iScene.transferFPorts checkValid:^BOOL(AITransferPort *item) {
-        return [item.iCansetContent_ps isEqual:iCanset.content_ps];
+        //TODOTEST20241118: 测下这里,能不能用isEqual来判断content_ps;
+        return [item.iCansetContent_ps isEqual:iCansetContent_ps];
     }];
 }
 

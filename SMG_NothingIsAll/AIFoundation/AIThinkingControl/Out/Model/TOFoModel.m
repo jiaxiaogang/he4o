@@ -670,39 +670,21 @@
     if (type == ATPlus && value.pStrong > 0) return;
     if (type == ATSub && value.sStrong > 0) return;
     
-    
-    
-    //TODOTOMORROW20241108: outSP+1时,F层也+1 (应该得看下是不是复用tctransfer的代码?,或者直接把tctransfer当时执行时的成果记下来,这里复用着去更新即可,这样性能好);
-    //明天先查下,这里xv时,有没有迁移映射?
-    //经查,这里转实时,才有映射,在转实前,也可以取到sceneFrom和cansetFrom;
-    //即:
-    //  1. 如果当前sceneType是I,那么直接取它的F层去推举SP值即可;
-    //  2. 如果当前sceneType是F,那么只需要推举给sceneFrom下的CansetFrom即可;
-    //      > 但F层,也有可能有好多个FScene传过来同一个iCanset,
-    [AINetUtils updateOutSPStrong_4IF:nil iCanset:nil caller:nil];
-    
-    //问题: 这里有没转实是个问题,有可能没转实,那么迁移映射就取不到..
-    //方案1. 可以从TOFoModel里,找baseScene数组来实现;
-    //方案2. 可以直接把TransferPort改成加一条ICansetContent_ps;
-    //抉择: 建议优先考虑方案2,因为方案1改动大,且与transferPort的功能重复,按道理说,用一种数据结构能表征的东西,就不要再引入第二种,避免混乱出bug可能更大;
-    //另外: 建议在综合评分时,也采用transferPort来实现,不要用baseScene来实现;
-    
-    
-    
     //3. 避免冲突 (对立面执行过,回滚);
     AIFoNodeBase *sceneTo = [SMGUtils searchNode:self.sceneTo];
     NSArray *cansetToContent_ps = Simples2Pits(self.transferXvModel.cansetToOrders);
     if (type == ATPlus && value.sStrong > 0) {
-        [sceneTo updateOutSPStrong:spIndex difStrong:-value.sStrong type:ATSub canset:cansetToContent_ps debugMode:false caller:caller];
+        [AINetUtils updateOutSPStrong_4IF:sceneTo iCansetContent_ps:cansetToContent_ps caller:STRFORMAT(@"%@(撤销S)",caller) spIndex:spIndex difStrong:-value.sStrong type:ATSub debugMode:false];
         value.sStrong = 0;
     }
     if (type == ATSub && value.pStrong > 0) {
-        [sceneTo updateOutSPStrong:spIndex difStrong:-value.pStrong type:ATPlus canset:cansetToContent_ps debugMode:false caller:caller];
+        [AINetUtils updateOutSPStrong_4IF:sceneTo iCansetContent_ps:cansetToContent_ps caller:STRFORMAT(@"%@(撤销P)",caller) spIndex:spIndex difStrong:-value.pStrong type:ATPlus debugMode:false];
         value.pStrong = 0;
     }
     
     //4. 把此次SP更新下;
-    [sceneTo updateOutSPStrong:spIndex difStrong:difStrong type:type canset:cansetToContent_ps debugMode:debugMode caller:caller];
+    //2024.11.18: outSP+1时,F层也+1 (F层从transferPort迁移关联来取) (参考33112-TODO3);
+    [AINetUtils updateOutSPStrong_4IF:sceneTo iCansetContent_ps:cansetToContent_ps caller:caller spIndex:spIndex difStrong:difStrong type:type debugMode:debugMode];
     
     //5. 把此次SP更新值记录到outSPRecord避免下次重复或冲突;
     if (type == ATSub) {
