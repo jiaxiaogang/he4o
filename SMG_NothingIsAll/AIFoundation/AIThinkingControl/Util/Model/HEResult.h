@@ -28,4 +28,9 @@
 -(BOOL) isNew;
 -(id) data;
 
+-(HEResult*) mkSPScore:(CGFloat)spScore;
+-(CGFloat) spScore;
+-(HEResult*) mkPStrong:(NSInteger)value;
+-(NSInteger) pStrong;
+
 @end

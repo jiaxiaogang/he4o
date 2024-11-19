@@ -481,9 +481,9 @@
         
         HEResult *fResult = [TOUtils getStableScore_General:fCanset startSPIndex:startSPIndex endSPIndex:endSPIndex spDic:itemOutSPDic];
         
-        //@desc 子非父公式: 综合得分 = 总SP热度值/fPorts迁移关联数 ==> 即: score = SUM(itemOutStableScore) / fPorts.count();
-        //@desc 分母说明: 除以fPorts.count,是为了避免迁移经历多的占优势,因为这里核心在于:SP得分,一切干扰SP得分准确度的因素,都要避免;
-        //@desc 分子说明: 与iScene的匹配度,做为冷却时长,越抽象热度影响阈值越低,越具象匹配热度影响阈值越高;
+        
+        
+        CGFloat spScore = fResult.spScore;
     }
 }
 +(HEResult*) getStableScore_General:(AIFoNodeBase*)fo startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex spDic:(NSDictionary*)spDic {

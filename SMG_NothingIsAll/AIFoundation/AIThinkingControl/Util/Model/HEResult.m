@@ -53,4 +53,18 @@
     return [self get:@"data"];
 }
 
+-(HEResult*) mkSPScore:(CGFloat)spScore {
+    return [self mk:@"spScore" v:@(spScore)];
+}
+-(CGFloat) spScore {
+    return NUMTOOK([self get:@"spScore"]).floatValue;
+}
+
+-(HEResult*) mkPStrong:(NSInteger)value {
+    return [self mk:@"pStrong" v:@(value)];
+}
+-(NSInteger) pStrong {
+    return NUMTOOK([self get:@"pStrong"]).integerValue;
+}
+
 @end
