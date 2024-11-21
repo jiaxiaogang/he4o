@@ -991,6 +991,28 @@
     return STRTOOK([NSString md5:[SMGUtils convertPointers2String:content_ps]]);
 }
 
+/**
+ *  MARK:--------------------根据每个映射alg的匹配度乘积,得出fo匹配度--------------------
+ */
++(CGFloat) matchValueOfConFo:(AIFoNodeBase*)conFo absFo:(AIFoNodeBase*)absFo {
+    //1. 取出fo映射;
+    CGFloat foMatchValue = 1;
+    NSDictionary *indexDic = [conFo getAbsIndexDic:absFo.p];
+    
+    //2. 每个alg元素的匹配度乘积;
+    for (NSNumber *key in indexDic.allKeys) {
+        NSNumber *value = [indexDic objectForKey:key];
+        AIKVPointer *absAlg_p = ARR_INDEX(absFo.content_ps, key.integerValue);
+        AIKVPointer *conAlg_p = ARR_INDEX(conFo.content_ps, value.integerValue);
+        
+        //3. 为了照顾性能,优先从conAlg取absAlg,因为这里一般是从具象取多个抽象时调用,con的复用性高;
+        AIAlgNodeBase *conAlg = [SMGUtils searchNode:conAlg_p];
+        CGFloat itemMatchValue = [conAlg getAbsMatchValue:absAlg_p];
+        foMatchValue *= itemMatchValue;
+    }
+    return foMatchValue;
+}
+
 @end
 
 //MARK:===============================================================
