@@ -453,19 +453,43 @@
  *      2022.05.23: 初版 (参考26096-BUG1);
  *      2022.06.02: 每一帧的稳定性默认为0.5,而不是1 (参考26191);
  *      2024.06.21: 支持OutSPDic,在Canset竞争时由_Out()来计算 (参考32012-TODO8);
+ *      2024.11.21: 稳定性In和Out都支持下父非子综合评分 (参考
  *  @param fo : In时传sceneFo & Out时传cansetFo;
  *  @result 1. 负价值时序时返回多坏(0-1);
  *          2. 正价值时序时返回多好(0-1);
  *          3. 无价值时序时返回多顺(0-1);
  */
 //In针对Scene稳定性;
-+(CGFloat) getStableScore_In:(AIFoNodeBase*)scene startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex {
++(CGFloat) getStableScore_In:(AIFoNodeBase*)iScene startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex {
+    //1. 取出I层spDic;
+    NSDictionary *iSPDic = iScene.spDic;
     
-    //TODOTOMORROW20241121: InSP父非子;
+    //2. 取出F层 (参考33114-TODO3-用I/F综合起来决定最终spDic及稳定性);
+    NSArray *fPorts = [AINetUtils absPorts_All:iScene];
+    for (AIPort *fPort in fPorts) {
+        
+        //3. 计算I/F两层的场景时序匹配度 (参考33116-方案1-采用时序匹配度做为抽象程度,计算冷却值);
+        AIFoNodeBase *fScene = [SMGUtils searchNode:fPort.target_p];
+        CGFloat foMatchValue = [AINetUtils matchValueOfConFo:iScene absFo:fScene];
+        CGFloat cooledValue = [MathUtils getCooledValue_28:foMatchValue];//算出当前匹配度,应该冷却到什么比例;
+        
+        //4. 把F层的SPDic冷却后,累计到I层 (环境作用于个体) (参考33115-方案2-累计spStrong);
+        NSDictionary *indexDic = [iScene getAbsIndexDic:fScene.p];
+        for (NSInteger i = startSPIndex; i <= endSPIndex; i++) {
+            
+            //5. 注意: 此处iScene和fScene的下标是不同的,要从映射取得;
+            NSNumber *key = ARR_INDEX([indexDic allKeysForObject:@(i)], 0);
+            if (!key) continue;
+            AISPStrong *fSPStrong = [fScene.spDic objectForKey:key];
+            AISPStrong *iSPStrong = [iSPDic objectForKey:@(i)];
+            iSPStrong.sStrong += (fSPStrong.sStrong * cooledValue);
+            iSPStrong.pStrong += (fSPStrong.pStrong * cooledValue);
+        }
+    }
     
-    
-    HEResult *result = [TOUtils getStableScore_General:scene startSPIndex:startSPIndex endSPIndex:endSPIndex spDic:scene.spDic];
-    return NUMTOOK([result get:@"spScore"]).floatValue;
+    //6. 算出最终综合spDic的稳定性;
+    HEResult *result = [TOUtils getStableScore_General:iScene startSPIndex:startSPIndex endSPIndex:endSPIndex spDic:iSPDic];
+    return result.spScore;
 }
 //Out针对Canset稳定性;
 +(HEResult*) getStableScore_Out:(TOFoModel*)canset startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex {
@@ -488,6 +512,8 @@
         AIFoNodeBase *fCanset = [SMGUtils searchNode:fPort.fCanset];
         NSDictionary *fSPDic = [fScene getItemOutSPDic:fCanset.content_ps];
         for (NSInteger i = startSPIndex; i <= endSPIndex; i++) {
+            
+            //5. 注意: 此处iCanset和fCanset是等长的;
             AISPStrong *fSPStrong = [fSPDic objectForKey:@(i)];
             AISPStrong *iSPStrong = [iSPDic objectForKey:@(i)];
             iSPStrong.sStrong += (fSPStrong.sStrong * cooledValue);
@@ -495,7 +521,7 @@
         }
     }
     
-    //5. 算出最终综合spDic的稳定性;
+    //6. 算出最终综合spDic的稳定性;
     return [TOUtils getStableScore_General:cansetFrom startSPIndex:startSPIndex endSPIndex:endSPIndex spDic:iSPDic];
 }
 
