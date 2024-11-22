@@ -250,7 +250,7 @@
         [TCTransfer transferTuiJv_R:matchFo cansetFrom:newRCanset];
     } else {
         //e. outSP值子即父: 当前NewRCanset所在的matchFo场景就是iScene (参考33112-TODO4.3);
-        [AINetUtils updateOutSPStrong_4IF:matchFo iCanset:newRCanset caller:@"NewRCanset本就存在时,将当前帧SP+1推举到父层canset中"];
+        [AINetUtils updateOutSPStrong_4IF:matchFo iCansetContent_ps:newRCanset.content_ps caller:@"NewRCanset本就存在时,将当前帧SP+1推举到父层canset中" spIndex:newRCanset.count difStrong:1 type:ATPlus debugMode:false];
     }
     
     //2. =================解决方案执行有效(再类比): 有actYes的时,归功于解决方案,执行canset再类比 (参考27206c-R任务)=================

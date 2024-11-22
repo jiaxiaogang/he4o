@@ -483,7 +483,7 @@
                 [TCTransfer transferTuiJv_H:sceneTo broRCanset:rCanset broRCansetActIndex:self.cansetActIndex broHCanset:newHCanset];
             } else {
                 //6. outSP值子即父: 当前NewHCanset所在的hScene场景就是iScene (参考33112-TODO4.3);
-                [AINetUtils updateOutSPStrong_4IF:rCanset iCanset:newHCanset caller:@"NewHCanset本就存在时,将当前帧SP+1推举到父层canset中"];
+                [AINetUtils updateOutSPStrong_4IF:rCanset iCansetContent_ps:newHCanset.content_ps caller:@"NewHCanset本就存在时,将当前帧SP+1推举到父层canset中" spIndex:newHCanset.count difStrong:1 type:ATPlus debugMode:false];
             }
             
             //6. rCanset的actIndex匹配了,就相当于它curAlgModel的HDemand,下的所有的subHCanset的targetAlg全反馈匹配上了 (参考32119-TODO1);
