@@ -156,6 +156,9 @@
         NSArray *alreadyTransfered_Cansets = [AINetUtils transferPorts_4Father:sceneTo fScene:sceneFrom];
         NSArray *cansetFroms2 = [SMGUtils removeSub_ps:alreadyTransfered_Cansets parent_ps:cansetFroms1];
         if (Log4TCCanset && cansetFroms1.count > 0) NSLog(@"RCansetFroms过滤已迁移过: 原%ld - 滤%ld = 留%ld",cansetFroms1.count,alreadyTransfered_Cansets.count,cansetFroms2.count);
+        if (sceneModel.type == SceneTypeFather && ARRISOK(alreadyTransfered_Cansets) && ARRISOK(cansetFroms1) && !ARRISOK(cansetFroms2)) {
+            NSLog(@"TODOTOMORROW20241124: 调试下,这里所有cansetFrom1都被rm掉了,导致未迁移到解");
+        }
         
         //6. 转为CansetModel;
         AIMatchFoModel *pFo = [SMGUtils filterSingleFromArr:demand.validPFos checkValid:^BOOL(AIMatchFoModel *item) {
