@@ -385,6 +385,11 @@
             [sceneTo updateOutSPStrong:cansetToIndex difStrong:deltaSPStrong.sStrong type:ATSub canset:cansetToContent_ps debugMode:false caller:@"TuiJvR时S初始化"];
         }
         
+        //TODOTOMORROW20241125: 此处conCansetDic是0条,但outSPDic有31条,明天重新训练下第2步,看能不能复现,为什么会出现这种情况;
+        //复现: 在FZ1022基础上,再跑第2步;
+        //调试: 查下在FZ1021基础上,跑下第2步,查下这个问题是怎么来的;
+        
+        
         //10. 如果cansetTo没初始过,才构建cansetTo & 挂载 & 加映射;
         BOOL cansetToInited = [sceneTo containsOutSPStrong:cansetToContent_ps];//有没初始过cansetTo;
         if (cansetToInited) continue;
