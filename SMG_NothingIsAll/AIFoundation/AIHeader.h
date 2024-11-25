@@ -406,7 +406,6 @@
 #define Log4Solution true
 
 //TCCanset日志开关
-#define Log4TCCanset false
 #define Log4GetCansetResult4R false
 #define Log4GetCansetResult4H true
 

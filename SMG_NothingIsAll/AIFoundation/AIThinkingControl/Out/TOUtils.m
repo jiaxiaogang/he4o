@@ -462,7 +462,8 @@
 //In针对Scene稳定性;
 +(CGFloat) getStableScore_In:(AIFoNodeBase*)iScene startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex {
     //1. 取出I层spDic;
-    NSDictionary *iSPDic = iScene.spDic;
+    NSMutableDictionary *iSPDic = iScene.spDic;
+    NSString *protoSPDicStr = CLEANSTR(iSPDic);
     
     //2. 取出F层 (参考33114-TODO3-用I/F综合起来决定最终spDic及稳定性);
     NSArray *fPorts = [AINetUtils absPorts_All:iScene];
@@ -482,12 +483,20 @@
             if (!key) continue;
             AISPStrong *fSPStrong = [fScene.spDic objectForKey:key];
             AISPStrong *iSPStrong = [iSPDic objectForKey:@(i)];
+            //6. 防空,如果为空,新建上壳子;
+            if (!fSPStrong) continue;
+            if (!iSPStrong) {
+                iSPStrong = [AISPStrong new];
+                [iSPDic setObject:iSPStrong forKey:@(i)];
+            }
             iSPStrong.sStrong += (fSPStrong.sStrong * cooledValue);
             iSPStrong.pStrong += (fSPStrong.pStrong * cooledValue);
         }
     }
     
     //6. 算出最终综合spDic的稳定性;
+    NSString *sumSPDicStr = CLEANSTR(iSPDic);
+    if (![protoSPDicStr isEqualToString:sumSPDicStr]) NSLog(@"In父非子: proto:%@ -> sum:%@",protoSPDicStr,sumSPDicStr);
     HEResult *result = [TOUtils getStableScore_General:iScene startSPIndex:startSPIndex endSPIndex:endSPIndex spDic:iSPDic];
     return result.spScore;
 }
@@ -495,7 +504,8 @@
 +(HEResult*) getStableScore_Out:(TOFoModel*)canset startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex {
     //1. 取出I层spDic;
     AIFoNodeBase *cansetFrom = [SMGUtils searchNode:canset.cansetFrom];//本来应该传cansetTo,不过cansetTo可能未转实,并且cansetFrom效果也一致;
-    NSDictionary *iSPDic = [canset getItemOutSPDic];
+    NSMutableDictionary *iSPDic = [canset getItemOutSPDic];
+    NSString *protoSPDicStr = CLEANSTR(iSPDic);
     
     //2. 取出F层 (参考33114-TODO3-用I/F综合起来决定最终spDic及稳定性);
     AIFoNodeBase *iScene = [SMGUtils searchNode:canset.sceneTo];
@@ -516,12 +526,23 @@
             //5. 注意: 此处iCanset和fCanset是等长的;
             AISPStrong *fSPStrong = [fSPDic objectForKey:@(i)];
             AISPStrong *iSPStrong = [iSPDic objectForKey:@(i)];
+            
+            //6. 防空,如果为空,新建上壳子;
+            if (!fSPStrong) continue;
+            if (!iSPStrong) {
+                iSPStrong = [AISPStrong new];
+                [iSPDic setObject:iSPStrong forKey:@(i)];
+            }
+            
+            //7. 把F层的outSPStrong冷却后的值累计到I层;
             iSPStrong.sStrong += (fSPStrong.sStrong * cooledValue);
             iSPStrong.pStrong += (fSPStrong.pStrong * cooledValue);
         }
     }
     
-    //6. 算出最终综合spDic的稳定性;
+    //8. 算出最终综合spDic的稳定性;
+    NSString *sumSPDicStr = CLEANSTR(iSPDic);
+    if (![protoSPDicStr isEqualToString:sumSPDicStr]) NSLog(@"Out父非子: proto:%@ -> sum:%@",protoSPDicStr,sumSPDicStr);
     return [TOUtils getStableScore_General:cansetFrom startSPIndex:startSPIndex endSPIndex:endSPIndex spDic:iSPDic];
 }
 
