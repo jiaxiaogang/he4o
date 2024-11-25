@@ -374,6 +374,7 @@
         //4. 根据综合映射,计算出orders;
         NSArray *orders = [self convertZonHeIndexDic2Orders:cansetFrom sceneTo:sceneTo zonHeIndexDic:zonHeIndexDic];
         NSArray *cansetToContent_ps = Simples2Pits(orders);
+        BOOL cansetToInited = [sceneTo containsOutSPStrong:cansetToContent_ps];//有没初始过cansetTo;
         
         //5. 加SP计数: 新推举的cansetFrom的spDic都计入cansetTo中 (参考33031b-BUG5-TODO1);
         //2024.11.01: 防重说明: 此方法调用了,说明cansetFrom是新挂载到sceneFrom下的,此时可调用一次推举到absPorts中,并把所有spDic都推举到absPorts上去;
@@ -385,13 +386,7 @@
             [sceneTo updateOutSPStrong:cansetToIndex difStrong:deltaSPStrong.sStrong type:ATSub canset:cansetToContent_ps debugMode:false caller:@"TuiJvR时S初始化"];
         }
         
-        //TODOTOMORROW20241125: 此处conCansetDic是0条,但outSPDic有31条,明天重新训练下第2步,看能不能复现,为什么会出现这种情况;
-        //复现: 在FZ1022基础上,再跑第2步;
-        //调试: 查下在FZ1021基础上,跑下第2步,查下这个问题是怎么来的;
-        
-        
         //10. 如果cansetTo没初始过,才构建cansetTo & 挂载 & 加映射;
-        BOOL cansetToInited = [sceneTo containsOutSPStrong:cansetToContent_ps];//有没初始过cansetTo;
         if (cansetToInited) continue;
         
         //11. 构建cansetTo
@@ -452,6 +447,7 @@
         NSDictionary *fatRCansetBroHCansetDic = [SMGUtils reverseDic:broHCansetFatRCansetDic];
         NSArray *fatHCansetOrders = [self convertZonHeIndexDic2Orders:broHCanset sceneTo:fatRCanset zonHeIndexDic:broHCansetFatRCansetDic];
         NSArray *fatHCansetContent_ps = Simples2Pits(fatHCansetOrders);
+        BOOL cansetToInited = [fatRCanset containsOutSPStrong:fatHCansetContent_ps];//有没初始过cansetTo;
         
         //12. 正式从broHCanset向fatHCanset推举之: 将新构建的broHCanst的deltaSPDic累加到fatRCanset下;
         //2024.11.01: 防重说明: 此方法调用了,说明cansetFrom是新挂载到sceneFrom下的,此时可调用一次推举到absPorts中,并把所有spDic都推举到absPorts上去;
@@ -464,7 +460,6 @@
         }
         
         //13. 正式从broHCanset向fatHCanset推举之: 如果cansetTo没初始过,才构建cansetTo & 挂载 & 加映射;
-        BOOL cansetToInited = [fatRCanset containsOutSPStrong:fatHCansetContent_ps];//有没初始过cansetTo;
         if (cansetToInited) continue;
         
         //14. 正式从broHCanset向fatHCanset推举之: 取出fatHCanset最后一帧,对应fatHScene中哪一帧,即取fatHScene的targetIndex;
