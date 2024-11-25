@@ -154,25 +154,9 @@
         
         //5. Override过滤器: 防重已经迁移过的 (override用来过滤避免重复迁移) (参考29069-todo5.2);
         NSArray *alreadyTransfered_Cansets = [AINetUtils transferPorts_4Father:sceneTo fScene:sceneFrom];
+        alreadyTransfered_Cansets = [SMGUtils convertArr:alreadyTransfered_Cansets convertBlock:^id(AITransferPort *obj) { return obj.fCanset; }];
         NSArray *cansetFroms2 = [SMGUtils removeSub_ps:alreadyTransfered_Cansets parent_ps:cansetFroms1];
-        if (Log4TCCanset && cansetFroms1.count > 0) NSLog(@"RCansetFroms过滤已迁移过: 原%ld - 滤%ld = 留%ld",cansetFroms1.count,alreadyTransfered_Cansets.count,cansetFroms2.count);
-        
-        //TODOTOMORROW20241124: 经调试,此处所有F层,全是0条解,去查下推举算法是不是有问题,还是什么原因?
-        if (sceneModel.type == SceneTypeFather) {
-            NSLog(@"");
-        }
-        if (ARRISOK(alreadyTransfered_Cansets)) {
-            NSLog(@"");
-        }
-        if (ARRISOK(cansetFroms1)) {
-            NSLog(@"");
-        }
-        if (!ARRISOK(cansetFroms2)) {
-            NSLog(@"");
-        }
-        if (sceneModel.type == SceneTypeFather && ARRISOK(alreadyTransfered_Cansets) && ARRISOK(cansetFroms1) && !ARRISOK(cansetFroms2)) {
-            NSLog(@"");
-        }
+        if (Log4TCCanset && cansetFroms1.count > 0) NSLog(@"%@ RCansetFroms过滤已迁移过: 原%ld - 滤%ld = 留%ld",SceneType2Str(sceneModel.type),cansetFroms1.count,alreadyTransfered_Cansets.count,cansetFroms2.count);
         
         //6. 转为CansetModel;
         AIMatchFoModel *pFo = [SMGUtils filterSingleFromArr:demand.validPFos checkValid:^BOOL(AIMatchFoModel *item) {
