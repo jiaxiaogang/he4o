@@ -21,8 +21,8 @@
 
 -(BOOL) isEqual:(AITransferPort*)object{
     if (ISOK(object, AITransferPort.class)) {
-        //TODOTEST20241117: 测下这里,两个数组pits可以判断equal (如果不行就用SMGUtils转成string来对比,或再转成md5对比);
-        return [self.fScene isEqual:object.fScene] && [self.fCanset isEqual:object.fCanset] && [self.iScene isEqual:object.iScene] && [self.iCansetContent_ps isEqual:object.iCansetContent_ps];
+        BOOL contentEqs = [[SMGUtils convertPointers2String:self.iCansetContent_ps] isEqualToString:[SMGUtils convertPointers2String:object.iCansetContent_ps]];
+        return [self.fScene isEqual:object.fScene] && [self.fCanset isEqual:object.fCanset] && [self.iScene isEqual:object.iScene] && contentEqs;
     }
     return false;
 }

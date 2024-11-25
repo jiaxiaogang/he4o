@@ -1069,8 +1069,7 @@
 //取哪些canset迁移成iCanset过;
 +(NSArray*) transferPorts_4Father:(AIFoNodeBase*)iScene iCansetContent_ps:(NSArray*)iCansetContent_ps {
     return [SMGUtils filterArr:iScene.transferFPorts checkValid:^BOOL(AITransferPort *item) {
-        //TODOTEST20241118: 测下这里,能不能用isEqual来判断content_ps (如果不行就用SMGUtils转成string来对比,或再转成md5对比);
-        return [item.iCansetContent_ps isEqual:iCansetContent_ps];
+        return [[SMGUtils convertPointers2String:item.iCansetContent_ps] isEqualToString:[SMGUtils convertPointers2String:iCansetContent_ps]];
     }];
 }
 

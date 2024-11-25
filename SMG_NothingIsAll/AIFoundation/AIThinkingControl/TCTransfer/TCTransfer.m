@@ -52,8 +52,8 @@
     
     //4. 新版迁移关联: 两个条件: 1.只关联I/F层的Canset(不能是B层来的) 2.未发生迁移时,不执行; (参考33112-TODO4.4);
     //2024.11.17: transferXv时,就记录迁移关联 (参考33112-TODO4.5);
-    //TODOTEST20241117: 测下这里,两个数组pits可以判断equal (如果不行就用SMGUtils转成string来对比,或再转成md5对比);
-    if (cansetModel.baseSceneModel.type != SceneTypeBrother && ![cansetFrom.content_ps isEqual:cansetToContent_ps]) {
+    BOOL contentEqs = [[SMGUtils convertPointers2String:cansetFrom.content_ps] isEqualToString:[SMGUtils convertPointers2String:cansetToContent_ps]];
+    if (cansetModel.baseSceneModel.type != SceneTypeBrother && !contentEqs) {
         AITransferPort *transferPort = [AITransferPort newWithFScene:cansetModel.sceneFrom fCanset:cansetModel.cansetFrom iScene:cansetModel.sceneTo iCansetContent_ps:cansetToContent_ps];
         
         //5. 并进行迁移关联 (以实现防重,避免重复性能浪费等);
