@@ -247,6 +247,11 @@
     
     //2024.11.03: 在挂载新的Canset时,实时推举 & 并防重(只有新挂载的canset,才有资格实时调用推举,并推举spDic都到父场景中) (参考33112);
     if (updateConCansetResult.isNew) {
+        
+        //TODOTOMORROW20241126: 无论canset是新是旧,它既然发生了,这里就应该从0到count全计SP+1 (避免许多SP是0,导致稳定性默认就是0.0x很低);
+        //1. New/Abs,R/HCanset都改成这样;
+        //2. 时序识别也改成这样,能识别到,说明都发生了,全SP+1;
+        
         [TCTransfer transferTuiJv_R:matchFo cansetFrom:newRCanset];
     } else {
         //e. outSP值子即父: 当前NewRCanset所在的matchFo场景就是iScene (参考33112-TODO4.3);
