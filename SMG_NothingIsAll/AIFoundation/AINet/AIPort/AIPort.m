@@ -105,6 +105,12 @@
     return STRFORMAT(@"S%.2fP%.2f",self.sStrong,self.pStrong);
 }
 
+//pStrong最小为1,只要它发生了,即默认发生一次;
+-(CGFloat)pStrong {
+    _pStrong = MAX(1, _pStrong);
+    return _pStrong;
+}
+
 /**
  *  MARK:--------------------NSCoding--------------------
  */
