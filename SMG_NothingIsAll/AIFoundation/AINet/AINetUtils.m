@@ -1063,6 +1063,20 @@
 }
 
 /**
+ *  MARK:--------------------inSP子即父--------------------
+ *  @desc 子即父,推举到F层SP也+1: iScene的inSP更新时,将它的fScene的inSP也+1 (参考33111-TODO2 & 33134-FIX2a & TCRethink代码);
+ */
++(void) updateInSPStrong_4IF:(AIFoNodeBase*)conFo conSPIndex:(NSInteger)conSPIndex type:(AnalogyType)type {
+    //1. 具象先更新;
+    [conFo updateSPStrong:conSPIndex type:type];
+    
+    //2. 抽象也更新 (参考29069-todo11.4);
+    [TCRethinkUtil spEff4Abs:conFo curFoIndex:conSPIndex itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {
+        [absFo updateSPStrong:absIndex type:type];
+    }];
+}
+
+/**
  *  MARK:--------------------根据iScene取有迁移关联的father层--------------------
  *  @desc i层的from(继承源)和to(推举目标)都是father;
  */

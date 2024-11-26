@@ -497,6 +497,11 @@
         //6. 对proto直接抽象指向matchAlg,并增强强度值 (为保证抽象多样性,所以相近的也抽具象关联) (参考27153-3);
         [AINetUtils relateFoAbs:matchFo conNodes:@[protoOrRegroupFo] isNew:false];
     }
+    
+    //13. inSP值子即父: 时序识别成功后,protoFo从0到cutIndex全计P+1 (参考33112-TODO4.3 & 33134-FIX2a);
+    for (NSInteger i = 0; i <= protoOrRegroupCutIndex; i++) {
+        [AINetUtils updateInSPStrong_4IF:protoOrRegroupFo conSPIndex:i type:ATPlus];
+    }
 }
 
 /**

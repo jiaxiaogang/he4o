@@ -336,6 +336,11 @@
 +(void) updateOutSPStrong_4IF:(AIFoNodeBase*)iScene iCansetContent_ps:(NSArray*)iCansetContent_ps caller:(NSString*)caller spIndex:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type debugMode:(BOOL)debugMode;
 
 /**
+ *  MARK:--------------------inSP子即父--------------------
+ */
++(void) updateInSPStrong_4IF:(AIFoNodeBase*)conFo conSPIndex:(NSInteger)conSPIndex type:(AnalogyType)type;
+
+/**
  *  MARK:--------------------根据iScene取有迁移关联的father层--------------------
  */
 //取哪些canset迁移成iCanset过;

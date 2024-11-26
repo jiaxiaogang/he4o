@@ -477,13 +477,16 @@
                 NSLog(@"%@%@%@%@Canset演化> NewHCanset:%@ toScene:%@ 在%ld帧:%@",FltLog4XueQuPi(3),FltLog4HDemandOfYouPiGuo(@"5"),FltLog4XueBanYun(2),fltLog,Fo2FStr(newHCanset),ShortDesc4Node(rCanset),self.cansetActIndex,Pit2FStr(actIndexAlg_p));
             }
             
+            //e. outSP值子即父: 当前NewHCanset所在的hScene场景就是iScene (参考33112-TODO4.3);
+            //2024.11.26: 从0到cutIndex全计P+1 (参考33134-FIX2a);
+            for (NSInteger i = 0; i <= newHCanset.count; i++) {
+                [AINetUtils updateOutSPStrong_4IF:rCanset iCansetContent_ps:newHCanset.content_ps caller:@"NewHCanset本就存在时,将当前帧SP+1推举到父层canset中" spIndex:i difStrong:1 type:ATPlus debugMode:false];
+            }
+            
             //2024.11.03: 在挂载新的Canset时,实时推举 & 并防重(只有新挂载的canset,才有资格实时调用推举,并推举spDic都到父场景中) (参考33112);
             if (updateConCansetResult.isNew) {
                 AIFoNodeBase *sceneTo = [SMGUtils searchNode:self.sceneTo];
                 [TCTransfer transferTuiJv_H:sceneTo broRCanset:rCanset broRCansetActIndex:self.cansetActIndex broHCanset:newHCanset];
-            } else {
-                //6. outSP值子即父: 当前NewHCanset所在的hScene场景就是iScene (参考33112-TODO4.3);
-                [AINetUtils updateOutSPStrong_4IF:rCanset iCansetContent_ps:newHCanset.content_ps caller:@"NewHCanset本就存在时,将当前帧SP+1推举到父层canset中" spIndex:newHCanset.count difStrong:1 type:ATPlus debugMode:false];
             }
             
             //6. rCanset的actIndex匹配了,就相当于它curAlgModel的HDemand,下的所有的subHCanset的targetAlg全反馈匹配上了 (参考32119-TODO1);
