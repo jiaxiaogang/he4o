@@ -495,8 +495,8 @@
     }
     
     //6. 算出最终综合spDic的稳定性;
-    NSString *sumSPDicStr = CLEANSTR(iSPDic);
-    if (![protoSPDicStr isEqualToString:sumSPDicStr]) NSLog(@"In父非子: proto:%@ -> sum:%@",protoSPDicStr,sumSPDicStr);
+    //NSString *sumSPDicStr = CLEANSTR(iSPDic);
+    //if (![protoSPDicStr isEqualToString:sumSPDicStr]) NSLog(@"In父非子: proto:%@ -> sum:%@",protoSPDicStr,sumSPDicStr);
     HEResult *result = [TOUtils getStableScore_General:iScene startSPIndex:startSPIndex endSPIndex:endSPIndex spDic:iSPDic];
     return result.spScore;
 }
@@ -541,8 +541,8 @@
     }
     
     //8. 算出最终综合spDic的稳定性;
-    NSString *sumSPDicStr = CLEANSTR(iSPDic);
-    if (![protoSPDicStr isEqualToString:sumSPDicStr]) NSLog(@"Out父非子: proto:%@ -> sum:%@",protoSPDicStr,sumSPDicStr);
+    //NSString *sumSPDicStr = CLEANSTR(iSPDic);
+    //if (![protoSPDicStr isEqualToString:sumSPDicStr]) NSLog(@"Out父非子: proto:%@ -> sum:%@",protoSPDicStr,sumSPDicStr);
     return [TOUtils getStableScore_General:cansetFrom startSPIndex:startSPIndex endSPIndex:endSPIndex spDic:iSPDic];
 }
 

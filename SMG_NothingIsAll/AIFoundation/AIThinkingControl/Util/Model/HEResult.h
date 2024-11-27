@@ -31,6 +31,6 @@
 -(HEResult*) mkSPScore:(CGFloat)spScore;
 -(CGFloat) spScore;
 -(HEResult*) mkPStrong:(NSInteger)value;
--(NSInteger) pStrong;
+-(CGFloat) pStrong;
 
 @end

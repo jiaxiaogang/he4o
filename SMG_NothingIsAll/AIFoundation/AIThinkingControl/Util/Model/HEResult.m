@@ -63,8 +63,8 @@
 -(HEResult*) mkPStrong:(NSInteger)value {
     return [self mk:@"pStrong" v:@(value)];
 }
--(NSInteger) pStrong {
-    return NUMTOOK([self get:@"pStrong"]).integerValue;
+-(CGFloat) pStrong {
+    return NUMTOOK([self get:@"pStrong"]).floatValue;
 }
 
 @end

@@ -174,15 +174,15 @@
         if (debugMode && Log4AIRank) NSLog(@"%@%@%@%ld. %@ by:%@ %@ %@ (分:%.2f P值:%ld) [CUT:%ld=>TAR:%ld]",fltLog1,fltLog2,obj.isH?@"H":@"R",index,SceneType2Str(obj.baseSceneModel.type),fromDSC,CLEANSTR(obj.transferXvModel.sceneToCansetToIndexDic),CLEANSTR(spDic),spScore,pStrong,obj.cansetCutIndex,obj.cansetTargetIndex);
         
         //打印详情日志;
-        if (debugMode && Log4AIRankDesc) {
-            AIFoNodeBase *sceneFrom = [SMGUtils searchNode:obj.sceneFrom];
-            NSLog(@"\t%@sceneFrom: %@",FltLog4DefaultIf(!obj.isH, @"1.1"),Pit2FStr(obj.sceneFrom));
-            NSLog(@"cansetFrom: %@",Pit2FStr(obj.cansetFrom));
-            NSLog(@"\t%@sceneTo: %@",FltLog4DefaultIf(!obj.isH, @"1.2"),Pit2FStr(obj.sceneTo));
-            NSLog(@"cansetTo: %@",Pits2FStr([SMGUtils convertArr:obj.transferXvModel.cansetToOrders convertBlock:^id(AIShortMatchModel_Simple *obj) { return obj.alg_p; }]));
-            NSLog(@"indexDicFrom: %@",CLEANSTR([sceneFrom getConIndexDic:obj.cansetFrom]));
-            NSLog(@"indexDicTo: %@",CLEANSTR(obj.transferXvModel.sceneToCansetToIndexDic));
-        }
+        //if (debugMode) {
+        //    AIFoNodeBase *sceneFrom = [SMGUtils searchNode:obj.sceneFrom];
+        //    NSLog(@"\t%@sceneFrom: %@",FltLog4DefaultIf(!obj.isH, @"1.1"),Pit2FStr(obj.sceneFrom));
+        //    NSLog(@"cansetFrom: %@",Pit2FStr(obj.cansetFrom));
+        //    NSLog(@"\t%@sceneTo: %@",FltLog4DefaultIf(!obj.isH, @"1.2"),Pit2FStr(obj.sceneTo));
+        //    NSLog(@"cansetTo: %@",Pits2FStr([SMGUtils convertArr:obj.transferXvModel.cansetToOrders convertBlock:^id(AIShortMatchModel_Simple *obj) { return obj.alg_p; }]));
+        //    NSLog(@"indexDicFrom: %@",CLEANSTR([sceneFrom getConIndexDic:obj.cansetFrom]));
+        //    NSLog(@"indexDicTo: %@",CLEANSTR(obj.transferXvModel.sceneToCansetToIndexDic));
+        //}
     }
     
     //调试有向无距果场景在试错训练中的竞争变化 (参考33108-调试日志);

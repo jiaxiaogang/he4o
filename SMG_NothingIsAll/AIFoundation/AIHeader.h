@@ -411,7 +411,6 @@
 
 //AIRank日志开关
 #define Log4AIRank true
-#define Log4AIRankDesc true
 #define Log4AIRankDebugMode false //Rank在BUG调试模式时的日志
 
 //MARK:===============================================================
