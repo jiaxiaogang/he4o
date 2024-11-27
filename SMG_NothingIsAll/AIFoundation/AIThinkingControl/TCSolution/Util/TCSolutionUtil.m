@@ -170,6 +170,22 @@
         return itemCansetModels;
     }];
     
+    //TODOTOMORROW20241127: 这里先调试下根据cansetToContent_ps防重后,有多少条 (参考33135);
+    NSArray *rmRepeat = [SMGUtils removeRepeat:cansetModels convertBlock:^id(TOFoModel *obj) {
+        return [SMGUtils convertPointers2String:Simples2Pits(obj.transferXvModel.cansetToOrders)];
+    }];
+    NSArray *rmRepeat2 = [SMGUtils removeRepeat:cansetModels convertBlock:^id(TOFoModel *obj) {
+        return STRFORMAT(@"%@ %ld",[SMGUtils convertPointers2String:Simples2Pits(obj.transferXvModel.cansetToOrders)],obj.cansetCutIndex);
+    }];
+    NSArray *rmRepeat3 = [SMGUtils removeRepeat:cansetModels convertBlock:^id(TOFoModel *obj) {
+        return STRFORMAT(@"%ld %@ %ld",obj.sceneTo.pointerId,[SMGUtils convertPointers2String:Simples2Pits(obj.transferXvModel.cansetToOrders)],obj.cansetCutIndex);
+    }];
+    NSLog(@"fltxaaa %ld -> cansetTo防重:%ld / 进度&cansetTo防重%ld / 进度&sceneTo&cansetTo防重%ld",cansetModels.count,rmRepeat.count,rmRepeat2.count,rmRepeat3.count);
+    //日志: fltxaaa 653 -> cansetTo防重:79 / 进度&cansetTo防重117 / 进度&sceneTo&cansetTo防重536
+    
+    
+    
+    
     //9. 在rSolution/hSolution初始化Canset池时,也继用下传染状态 (参考31178-TODO3);
     int initToInfectedNum = [TOUtils initInfectedForCansetPool_Alg:demand];
     int initToInfectedNum_Mv = [TOUtils initInfectedForCansetPool_Mv:demand];
