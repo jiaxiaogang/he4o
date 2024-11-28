@@ -135,14 +135,20 @@
  */
 +(NSArray*) cansetsRankingV4:(NSArray*)cansets zonHeScoreBlock:(double(^)(TOFoModel *obj))zonHeScoreBlock debugMode:(BOOL)debugMode {
     //0. 将effStrong提前取出来,存到mapModel中;
+    AddDebugCodeBlock_Key(@"c", @"cansetsRanking1");
     NSArray *mapArr = [SMGUtils convertArr:cansets convertBlock:^id(TOFoModel *item) {
         //TODOTOMORROW20240119: 测下这里确定能响应到feedback和cutIndex变化后,看能否对排序评分,带来分值变化 (参考31073-TODO3);
+        AddDebugCodeBlock_Key(@"c", @"cansetsRanking2");
         HEResult *result = [TOUtils getStableScore_Out:item startSPIndex:item.cansetActIndex endSPIndex:item.cansetTargetIndex];//提前算出还未推进的中后段sp稳定性;
+        AddDebugCodeBlock_Key(@"c", @"cansetsRanking3");
         CGFloat spScore = NUMTOOK([result get:@"spScore"]).floatValue;
         NSInteger pStrong = NUMTOOK([result get:@"pStrong"]).integerValue;
         double zonHeScore = zonHeScoreBlock ? zonHeScoreBlock(item) : 0;
+        AddDebugCodeBlock_Key(@"c", @"cansetsRanking4");
         return [MapModel newWithV1:item v2:@(pStrong) v3:@(spScore) v4:@(zonHeScore)];
     }];
+    AddDebugCodeBlock_Key(@"c", @"cansetsRanking5");
+    PrintDebugCodeBlock_Key(@"c");
     
     //1. 根据cutIndex到target之间的稳定性和有效性来排名 (参考29099-todo1 & todo2);
     NSArray *sortMapArr = [SMGUtils sortBig2Small:mapArr compareBlock1:^double(MapModel *item) {
