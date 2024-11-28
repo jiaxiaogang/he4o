@@ -110,7 +110,7 @@
 
 //线程简写名称
 +(NSString*) getQueueStr {
-    NSString *curQueueLab = STRFORMAT(@"%s",dispatch_queue_get_label(dispatch_get_current_queue()));
+    NSString *curQueueLab = theTC.getCurQueueLab;
     if ([tiQueueLab isEqualToString:curQueueLab]) {
         return @"TI";
     } else if ([toQueueLab isEqualToString:curQueueLab]) {

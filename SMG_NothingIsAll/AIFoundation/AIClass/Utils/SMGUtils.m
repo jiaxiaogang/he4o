@@ -386,7 +386,7 @@
             result = [cache objectForKey:fileName];
             fromType = @"Disk";
             DebugR();
-            theTC.tcDebug.lastRCount++;
+            [theTC updateTCDebugLastRCount];
         }
         
         //5. 存到redis (wedis/disk)
@@ -422,7 +422,7 @@
                 PINDiskCache *cache = [[PINDiskCache alloc] initWithName:@"" rootPath:saveRootPath];
                 [cache setObject:saveObj forKey:saveFileName];
                 DebugW();
-                theTC.tcDebug.lastWCount++;
+                [theTC updateTCDebugLastWCount];
             }
             if (dic.count > 0) {
                 NSLog(@">>>>>>>>>WriteDisk,%lu",(unsigned long)dic.count);

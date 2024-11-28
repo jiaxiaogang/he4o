@@ -23,7 +23,7 @@
 @property (strong, nonatomic) DemandManager *demandManager;         //OUT短时记忆 (输出数据管理器);
 @property (strong, nonatomic) ShortMatchManager *shortMatchManager; //IN短时记忆 (输入数据管理器);
 @property (assign, nonatomic) long long operCount;                  //思维操作计数;
-@property (assign, nonatomic) long long loopId;                     //思维循环Id;
+@property (assign, nonatomic) long long tiLoopId;                     //思维循环Id;
 @property (assign, nonatomic) long long toLoopId;                   //TO循环Id;
 
 @property (strong, nonatomic) NSTimer *tiLoopTimer;                 //TI执行检查器;
@@ -75,7 +75,8 @@ static AIThinkingControl *_instance;
     self.shortMatchManager = [[ShortMatchManager alloc] init];
     [theRT regist:kClearTCSEL target:self selector:@selector(clear)];
     [theRT regist:kThinkModeSEL target:self selector:@selector(updateThinkMode:)];
-    self.tcDebug = [[TCDebug alloc] init];
+    self.tiTCDebug = [[TCDebug alloc] init];
+    self.toTCDebug = [[TCDebug alloc] init];
 }
 
 -(void) initDisplay {
@@ -347,7 +348,12 @@ static AIThinkingControl *_instance;
 
 -(void) updateOperCount:(NSString*)operater min:(NSInteger)min{
     self.operCount++;
-    [self.tcDebug updateOperCount:operater min:min];
+    NSString *curQueueLab = [self getCurQueueLab];
+    if ([tiQueueLab isEqualToString:curQueueLab]) {
+        [self.tiTCDebug updateOperCount:operater min:min];
+    } else if ([toQueueLab isEqualToString:curQueueLab]) {
+        [self.toTCDebug updateOperCount:operater min:min];
+    }
 }
 
 -(long long) getOperCount{
@@ -360,12 +366,27 @@ static AIThinkingControl *_instance;
 
 //循环Id (参考26183);
 -(void) updateLoopId{
-    self.loopId++;
+    NSString *curQueueLab = [self getCurQueueLab];
+    if ([tiQueueLab isEqualToString:curQueueLab]) {
+        self.tiLoopId++;
+    } else if ([toQueueLab isEqualToString:curQueueLab]) {
+        self.toLoopId++;
+    }
     [XGConfig.instance responseXGConfig2HE];
-    [self.tcDebug updateLoopId];
+    if ([tiQueueLab isEqualToString:curQueueLab]) {
+        [self.tiTCDebug updateLoopId];
+    } else if ([toQueueLab isEqualToString:curQueueLab]) {
+        [self.toTCDebug updateLoopId];
+    }
 }
 -(long long) getLoopId{
-    return _loopId;
+    NSString *curQueueLab = [self getCurQueueLab];
+    if ([tiQueueLab isEqualToString:curQueueLab]) {
+        return _tiLoopId;
+    } else if ([toQueueLab isEqualToString:curQueueLab]) {
+        return _toLoopId;;
+    }
+    return 0;
 }
 
 //MARK:===============================================================
@@ -388,6 +409,34 @@ static AIThinkingControl *_instance;
         self.thinkMode = value.intValue;
     }
     [theRT invoked:kThinkModeSEL];
+}
+
+//MARK:===============================================================
+//MARK:                     < 更新TCDebug读写次数 >
+//MARK:===============================================================
+-(void) updateTCDebugLastRCount {
+    NSString *curQueueLab = [self getCurQueueLab];
+    if ([tiQueueLab isEqualToString:curQueueLab]) {
+        self.tiTCDebug.lastRCount++;
+    } else if ([toQueueLab isEqualToString:curQueueLab]) {
+        self.toTCDebug.lastRCount++;
+    }
+}
+
+-(void) updateTCDebugLastWCount {
+    NSString *curQueueLab = [self getCurQueueLab];
+    if ([tiQueueLab isEqualToString:curQueueLab]) {
+        self.tiTCDebug.lastWCount++;
+    } else if ([toQueueLab isEqualToString:curQueueLab]) {
+        self.toTCDebug.lastWCount++;
+    }
+}
+
+//MARK:===============================================================
+//MARK:                     < QueueMethod >
+//MARK:===============================================================
+-(NSString*) getCurQueueLab {
+    return STRFORMAT(@"%s",dispatch_queue_get_label(dispatch_get_current_queue()));
 }
 
 @end

@@ -20,7 +20,8 @@
 @interface AIThinkingControl : NSObject
 
 +(AIThinkingControl*) shareInstance;
-@property (strong, nonatomic) TCDebug *tcDebug;
+@property (strong, nonatomic) TCDebug *tiTCDebug;
+@property (strong, nonatomic) TCDebug *toTCDebug;
 @property (strong, nonatomic) dispatch_queue_t tiQueue; //TI异步线程
 @property (strong, nonatomic) dispatch_queue_t toQueue; //TO异步线程
 
@@ -91,5 +92,16 @@
 //MARK:                     < 清思维 >
 //MARK:===============================================================
 -(void) clear;
+
+//MARK:===============================================================
+//MARK:                     < 更新TCDebug读写次数 >
+//MARK:===============================================================
+-(void) updateTCDebugLastRCount;
+-(void) updateTCDebugLastWCount;
+
+//MARK:===============================================================
+//MARK:                     < QueueMethod >
+//MARK:===============================================================
+-(NSString*) getCurQueueLab;
 
 @end
