@@ -502,21 +502,26 @@
 }
 //Out针对Canset稳定性;
 +(HEResult*) getStableScore_Out:(TOFoModel*)canset startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex {
-    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2-3 计数:653 均耗:19.40 = 总耗:12669 读:2129 写:0
     //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking1 计数:1 均耗:0.06 = 总耗:0 读:0 写:0
     //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2 计数:653 均耗:0.02 = 总耗:14 读:0 写:0
-    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2a 计数:653 均耗:0.13 = 总耗:82 读:0 写:0
-    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2b 计数:653 均耗:6.88 = 总耗:4490 读:30 写:0
-    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2c 计数:653 均耗:0.04 = 总耗:26 读:1 写:0
-    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2d 计数:3354 均耗:0.64 = 总耗:2138 读:6 写:0
-    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2e 计数:3354 均耗:1.16 = 总耗:3901 读:2170 写:0
-    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2f 计数:3354 均耗:0.04 = 总耗:142 读:1 写:0
-    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2g 计数:14074 均耗:0.03 = 总耗:388 读:0 写:0
-    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2h 计数:14074 均耗:0.02 = 总耗:331 读:0 写:0
-    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2i 计数:3354 均耗:0.02 = 总耗:77 读:0 写:0
+    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2a 计数:653 均耗:0.12 = 总耗:78 读:0 写:0
+    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2b 计数:653 均耗:0.07 = 总耗:48 读:0 写:0
+    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2b2 计数:653 均耗:0.04 = 总耗:28 读:0 写:0
+    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2b3 计数:653 均耗:6.99 = 总耗:4564 读:26 写:0
+    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2c 计数:653 均耗:0.04 = 总耗:29 读:0 写:0
+    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2d 计数:3354 均耗:0.04 = 总耗:129 读:0 写:0
+    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2d2 计数:3354 均耗:0.66 = 总耗:2199 读:11 写:0
+    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2d3 计数:3354 均耗:0.04 = 总耗:126 读:0 写:0
+    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2e 计数:3354 均耗:1.14 = 总耗:3831 读:2170 写:0
+    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2e2 计数:3354 均耗:0.10 = 总耗:334 读:1 写:0
+    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2f 计数:3354 均耗:0.04 = 总耗:144 读:0 写:0
+    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2g 计数:14074 均耗:0.03 = 总耗:380 读:0 写:0
+    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2h 计数:14074 均耗:0.02 = 总耗:351 读:2 写:0
+    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2i 计数:3354 均耗:0.02 = 总耗:75 读:0 写:0
     //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2j 计数:653 均耗:0.03 = 总耗:21 读:0 写:0
-    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking3 计数:653 均耗:0.02 = 总耗:15 读:0 写:0
-    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking4 计数:653 均耗:0.02 = 总耗:14 读:0 写:0
+    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking3 计数:653 均耗:0.02 = 总耗:16 读:0 写:0
+    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking4 计数:653 均耗:0.02 = 总耗:15 读:0 写:0
+    //DEBUG匹配 => 总计数:57504 均耗:0.22 = 总耗:12381 读:2210 写:0
     
     
     
@@ -529,20 +534,25 @@
     
     //2. 取出F层 (参考33114-TODO3-用I/F综合起来决定最终spDic及稳定性);
     AIFoNodeBase *iScene = [SMGUtils searchNode:canset.sceneTo];
+    AddDebugCodeBlock_Key(@"c", @"cansetsRanking2b2");
     NSArray *iCansetContent_ps = Simples2Pits(canset.transferXvModel.cansetToOrders);
-    NSArray *fPorts = [AINetUtils transferPorts_4Father:iScene iCansetContent_ps:iCansetContent_ps];
+    AddDebugCodeBlock_Key(@"c", @"cansetsRanking2b3");
+    NSArray *fPorts = [AINetUtils transferPorts_4Father:iScene iCansetContent_ps:iCansetContent_ps];//性能:4564ms/653次
     AddDebugCodeBlock_Key(@"c", @"cansetsRanking2c");
     for (AITransferPort *fPort in fPorts) {
         
         AddDebugCodeBlock_Key(@"c", @"cansetsRanking2d");
         //3. 计算I/F两层的场景时序匹配度 (参考33116-方案1-采用时序匹配度做为抽象程度,计算冷却值);
         AIFoNodeBase *fScene = [SMGUtils searchNode:fPort.fScene];
-        CGFloat foMatchValue = [AINetUtils matchValueOfConFo:iScene absFo:fScene];
+        AddDebugCodeBlock_Key(@"c", @"cansetsRanking2d2");
+        CGFloat foMatchValue = [AINetUtils matchValueOfConFo:iScene absFo:fScene];//性能:2199ms/3354次
+        AddDebugCodeBlock_Key(@"c", @"cansetsRanking2d3");
         CGFloat cooledValue = [MathUtils getCooledValue_28:1 - foMatchValue];//算出当前匹配度,应该冷却到什么比例;
         AddDebugCodeBlock_Key(@"c", @"cansetsRanking2e");
         
         //4. 把F层的SPDic冷却后,累计到I层 (环境作用于个体) (参考33115-方案2-累计spStrong);
-        AIFoNodeBase *fCanset = [SMGUtils searchNode:fPort.fCanset];
+        AIFoNodeBase *fCanset = [SMGUtils searchNode:fPort.fCanset];//性能:3831ms/3354次
+        AddDebugCodeBlock_Key(@"c", @"cansetsRanking2e2");
         NSDictionary *fSPDic = [fScene getItemOutSPDic:fCanset.content_ps];
         AddDebugCodeBlock_Key(@"c", @"cansetsRanking2f");
         for (NSInteger i = startSPIndex; i <= endSPIndex; i++) {
