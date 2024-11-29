@@ -348,7 +348,7 @@ static AIThinkingControl *_instance;
 
 -(void) updateOperCount:(NSString*)operater min:(NSInteger)min{
     self.operCount++;
-    NSString *curQueueLab = [self getCurQueueLab];
+    NSString *curQueueLab = [AIThinkingControl getCurQueueLab];
     if ([tiQueueLab isEqualToString:curQueueLab]) {
         [self.tiTCDebug updateOperCount:operater min:min];
     } else if ([toQueueLab isEqualToString:curQueueLab]) {
@@ -366,7 +366,7 @@ static AIThinkingControl *_instance;
 
 //循环Id (参考26183);
 -(void) updateLoopId{
-    NSString *curQueueLab = [self getCurQueueLab];
+    NSString *curQueueLab = [AIThinkingControl getCurQueueLab];
     if ([tiQueueLab isEqualToString:curQueueLab]) {
         self.tiLoopId++;
     } else if ([toQueueLab isEqualToString:curQueueLab]) {
@@ -380,7 +380,7 @@ static AIThinkingControl *_instance;
     }
 }
 -(long long) getLoopId{
-    NSString *curQueueLab = [self getCurQueueLab];
+    NSString *curQueueLab = [AIThinkingControl getCurQueueLab];
     if ([tiQueueLab isEqualToString:curQueueLab]) {
         return _tiLoopId;
     } else if ([toQueueLab isEqualToString:curQueueLab]) {
@@ -415,7 +415,7 @@ static AIThinkingControl *_instance;
 //MARK:                     < 更新TCDebug读写次数 >
 //MARK:===============================================================
 -(void) updateTCDebugLastRCount {
-    NSString *curQueueLab = [self getCurQueueLab];
+    NSString *curQueueLab = [AIThinkingControl getCurQueueLab];
     if ([tiQueueLab isEqualToString:curQueueLab]) {
         self.tiTCDebug.lastRCount++;
     } else if ([toQueueLab isEqualToString:curQueueLab]) {
@@ -424,7 +424,7 @@ static AIThinkingControl *_instance;
 }
 
 -(void) updateTCDebugLastWCount {
-    NSString *curQueueLab = [self getCurQueueLab];
+    NSString *curQueueLab = [AIThinkingControl getCurQueueLab];
     if ([tiQueueLab isEqualToString:curQueueLab]) {
         self.tiTCDebug.lastWCount++;
     } else if ([toQueueLab isEqualToString:curQueueLab]) {
@@ -432,10 +432,7 @@ static AIThinkingControl *_instance;
     }
 }
 
-//MARK:===============================================================
-//MARK:                     < QueueMethod >
-//MARK:===============================================================
--(NSString*) getCurQueueLab {
++(NSString*) getCurQueueLab {
     return STRFORMAT(@"%s",dispatch_queue_get_label(dispatch_get_current_queue()));
 }
 
