@@ -19,6 +19,11 @@
     return result;
 }
 
+-(NSString *)iCansetHeader {
+    if (!STRISOK(_iCansetHeader)) _iCansetHeader = [NSString md5:[SMGUtils convertPointers2String:self.iCansetContent_ps]];
+    return _iCansetHeader;
+}
+
 -(BOOL) isEqual:(AITransferPort*)object{
     if (ISOK(object, AITransferPort.class)) {
         BOOL contentEqs = [[SMGUtils convertPointers2String:self.iCansetContent_ps] isEqualToString:[SMGUtils convertPointers2String:object.iCansetContent_ps]];
@@ -37,6 +42,7 @@
         self.fCanset = [coder decodeObjectForKey:@"fCanset"];
         self.iScene = [coder decodeObjectForKey:@"iScene"];
         self.iCansetContent_ps = [coder decodeObjectForKey:@"iCansetContent_ps"];
+        self.iCansetHeader = [coder decodeObjectForKey:@"iCansetHeader"];
     }
     return self;
 }
@@ -46,6 +52,7 @@
     [coder encodeObject:self.fCanset forKey:@"fCanset"];
     [coder encodeObject:self.iScene forKey:@"iScene"];
     [coder encodeObject:self.iCansetContent_ps forKey:@"iCansetContent_ps"];
+    [coder encodeObject:self.iCansetHeader forKey:@"iCansetHeader"];
 }
 
 @end
