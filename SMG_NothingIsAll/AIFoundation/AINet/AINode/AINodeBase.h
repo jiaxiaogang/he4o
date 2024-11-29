@@ -43,4 +43,22 @@
 -(AIKVPointer*) p;
 -(NSInteger) pId;
 
+//MARK:===============================================================
+//MARK:                     < 匹配度 (支持: 概念,时序) >
+//MARK:===============================================================
+@property (strong, nonatomic) NSMutableDictionary *absMatchDic; //抽象匹配度字典 <K:对方pId, V:相似度> (参考27153-todo2);
+@property (strong, nonatomic) NSMutableDictionary *conMatchDic; //具象匹配度字典 <K:对方pId, V:相似度> (参考27153-todo2);
+
+/**
+ *  MARK:--------------------更新抽具象相似度--------------------
+ *  @param absAlg : 传抽象节点进来,而self为具象节点;
+ */
+-(void) updateMatchValue:(AINodeBase*)absAlg matchValue:(CGFloat)matchValue;
+
+/**
+ *  MARK:--------------------取抽或具象的相近度--------------------
+ */
+-(CGFloat) getConMatchValue:(AIKVPointer*)con_p;
+-(CGFloat) getAbsMatchValue:(AIKVPointer*)abs_p;
+
 @end

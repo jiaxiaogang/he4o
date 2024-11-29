@@ -471,7 +471,7 @@
         
         //3. 计算I/F两层的场景时序匹配度 (参考33116-方案1-采用时序匹配度做为抽象程度,计算冷却值);
         AIFoNodeBase *fScene = [SMGUtils searchNode:fPort.target_p];
-        CGFloat foMatchValue = [AINetUtils matchValueOfConFo:iScene absFo:fScene];
+        CGFloat foMatchValue = [iScene getAbsMatchValue:fScene.pointer];
         CGFloat cooledValue = [MathUtils getCooledValue_28:foMatchValue];//算出当前匹配度,应该冷却到什么比例;
         
         //4. 把F层的SPDic冷却后,累计到I层 (环境作用于个体) (参考33115-方案2-累计spStrong);
@@ -545,7 +545,7 @@
         //3. 计算I/F两层的场景时序匹配度 (参考33116-方案1-采用时序匹配度做为抽象程度,计算冷却值);
         AIFoNodeBase *fScene = [SMGUtils searchNode:fPort.fScene];
         AddDebugCodeBlock_Key(@"c", @"cansetsRanking2d2");
-        CGFloat foMatchValue = [AINetUtils matchValueOfConFo:iScene absFo:fScene];//性能:2199ms/3354次
+        CGFloat foMatchValue = [iScene getAbsMatchValue:fScene.pointer];//性能:2199ms/3354次
         AddDebugCodeBlock_Key(@"c", @"cansetsRanking2d3");
         CGFloat cooledValue = [MathUtils getCooledValue_28:1 - foMatchValue];//算出当前匹配度,应该冷却到什么比例;
         AddDebugCodeBlock_Key(@"c", @"cansetsRanking2e");

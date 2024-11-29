@@ -991,51 +991,6 @@
     return STRTOOK([NSString md5:[SMGUtils convertPointers2String:content_ps]]);
 }
 
-/**
- *  MARK:--------------------根据每个映射alg的匹配度乘积,得出fo匹配度--------------------
- */
-+(CGFloat) matchValueOfConFo:(AIFoNodeBase*)conFo absFo:(AIFoNodeBase*)absFo {
-    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2d2 计数:3230 均耗:0.02 = 总耗:80 读:3 写:0
-    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2d21 计数:3230 均耗:0.03 = 总耗:82 读:0 写:0
-    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2d22 计数:3230 均耗:0.02 = 总耗:76 读:0 写:0
-    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2d23 计数:25424 均耗:0.02 = 总耗:596 读:3 写:0
-    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2d24 计数:25424 均耗:0.03 = 总耗:641 读:25 写:0
-    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2d25 计数:25424 均耗:0.03 = 总耗:740 读:29 写:0
-    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2d26 计数:25424 均耗:0.04 = 总耗:919 读:22 写:0
-    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2d27 计数:25424 均耗:0.02 = 总耗:617 读:7 写:0
-    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2d28 计数:25424 均耗:0.02 = 总耗:594 读:4 写:0
-    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2d29 计数:3230 均耗:0.02 = 总耗:74 读:0 写:0
-    //DEBUG匹配 => 代码块:c 循环圈:0 代码块:cansetsRanking2d3 计数:3230 均耗:0.02 = 总耗:71 读:2 写:0
-    //分析: 此处感觉性能问题就在这个循环计算里;
-    //方案: 可以在时序识别后,把时序相似度存下来,这里直接复用;
-    
-    //1. 取出fo映射;
-    AddDebugCodeBlock_Key(@"c", @"cansetsRanking2d21");
-    CGFloat foMatchValue = 1;
-    NSDictionary *indexDic = [conFo getAbsIndexDic:absFo.p];
-    AddDebugCodeBlock_Key(@"c", @"cansetsRanking2d22");
-    
-    //2. 每个alg元素的匹配度乘积;
-    for (NSNumber *key in indexDic.allKeys) {
-        AddDebugCodeBlock_Key(@"c", @"cansetsRanking2d23");
-        NSNumber *value = [indexDic objectForKey:key];
-        AddDebugCodeBlock_Key(@"c", @"cansetsRanking2d24");
-        AIKVPointer *absAlg_p = ARR_INDEX(absFo.content_ps, key.integerValue);
-        AIKVPointer *conAlg_p = ARR_INDEX(conFo.content_ps, value.integerValue);
-        AddDebugCodeBlock_Key(@"c", @"cansetsRanking2d25");
-        
-        //3. 为了照顾性能,优先从conAlg取absAlg,因为这里一般是从具象取多个抽象时调用,con的复用性高;
-        AIAlgNodeBase *conAlg = [SMGUtils searchNode:conAlg_p];
-        AddDebugCodeBlock_Key(@"c", @"cansetsRanking2d26");
-        CGFloat itemMatchValue = [conAlg getAbsMatchValue:absAlg_p];
-        AddDebugCodeBlock_Key(@"c", @"cansetsRanking2d27");
-        foMatchValue *= itemMatchValue;
-        AddDebugCodeBlock_Key(@"c", @"cansetsRanking2d28");
-    }
-    AddDebugCodeBlock_Key(@"c", @"cansetsRanking2d29");
-    return foMatchValue;
-}
-
 @end
 
 //MARK:===============================================================

@@ -312,11 +312,6 @@
  */
 +(NSString*) getOutSPKey:(NSArray*)content_ps;
 
-/**
- *  MARK:--------------------根据每个映射alg的匹配度乘积,得出fo匹配度--------------------
- */
-+(CGFloat) matchValueOfConFo:(AIFoNodeBase*)conFo absFo:(AIFoNodeBase*)absFo;
-
 @end
 
 //MARK:===============================================================
