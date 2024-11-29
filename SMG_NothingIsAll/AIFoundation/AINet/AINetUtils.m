@@ -1083,26 +1083,9 @@
 //取哪些canset迁移成iCanset过;
 +(NSArray*) transferPorts_4Father:(AIFoNodeBase*)iScene iCansetContent_ps:(NSArray*)iCansetContent_ps {
     NSString *foModelHeader = [NSString md5:[SMGUtils convertPointers2String:iCansetContent_ps]];
-    
     return [SMGUtils filterArr:iScene.transferFPorts checkValid:^BOOL(AITransferPort *item) {
-        
-        //方案3 (性能:160ms,header有缓存后,98ms,此方案更好,转成header后又省空间,性能还更好);
+        //性能说明: 用header相等,可快至45ms/653次 | 原本用content_ps相等,速度为330ms/653次
         return [foModelHeader isEqualToString:item.iCansetHeader];
-
-        //方案2 (性能:160ms,但不够严谨,仅判断pid并不能百分百不同)
-//        if (item.iCansetContent_ps.count == iCansetContent_ps.count) {
-//            for (NSInteger i = 0; i < iCansetContent_ps.count; i++) {
-//                AIKVPointer *itemA = ARR_INDEX(item.iCansetContent_ps, i);
-//                AIKVPointer *itemB = ARR_INDEX(iCansetContent_ps, i);
-//                if (itemA.pointerId != itemB.pointerId) {
-//                    return false;
-//                }
-//            }
-//        }
-//        return true;
-        
-        //方案1 (性能:330ms,感觉还是不够快)
-//        return [item.iCansetContent_ps isEqual:iCansetContent_ps];
     }];
 }
 
