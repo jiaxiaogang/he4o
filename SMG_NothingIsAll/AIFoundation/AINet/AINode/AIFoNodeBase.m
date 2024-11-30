@@ -153,9 +153,8 @@
 /**
  *  MARK:--------------------由sceneFo调用,返回canset对应的itemOutSPDic--------------------
  */
--(NSDictionary*) getItemOutSPDic:(NSArray*)cansetContent_ps {
-    NSString *key = [AINetUtils getOutSPKey:cansetContent_ps];
-    return [self.outSPDic objectForKey:key];
+-(NSDictionary*) getItemOutSPDic:(NSString*)cansetOutSPKey {
+    return [self.outSPDic objectForKey:cansetOutSPKey];
 }
 
 //MARK:===============================================================

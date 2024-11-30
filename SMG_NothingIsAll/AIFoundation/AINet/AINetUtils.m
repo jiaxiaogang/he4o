@@ -1005,7 +1005,7 @@
  */
 +(void) relateTransfer:(AIFoNodeBase*)fScene fCanset:(AIFoNodeBase*)fCanset iScene:(AIFoNodeBase*)iScene iCanset:(NSArray*)cansetToContent_ps {
     //1. 数据准备;
-    AITransferPort *transferPort = [AITransferPort newWithFScene:fScene.p fCanset:fCanset.p iScene:iScene.p iCansetContent_ps:cansetToContent_ps];
+    AITransferPort *transferPort = [AITransferPort newWithFScene:fScene.p fCanset:fCanset iScene:iScene.p iCansetContent_ps:cansetToContent_ps];
     
     //2. 插入传节点的承端口;
     if (![fScene.transferIPorts containsObject:transferPort]) {

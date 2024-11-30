@@ -106,7 +106,7 @@
 /**
  *  MARK:--------------------由sceneFo调用,返回canset对应的itemOutSPDic--------------------
  */
--(NSDictionary*) getItemOutSPDic:(NSArray*)cansetContent_ps;
+-(NSDictionary*) getItemOutSPDic:(NSString*)cansetOutSPKey;
 
 //MARK:===============================================================
 //MARK:                     < effectDic组 >

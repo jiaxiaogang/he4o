@@ -10,7 +10,7 @@
 
 @interface AITransferPort : NSObject <NSCoding>
 
-+(AITransferPort*) newWithFScene:(AIKVPointer*)fScene fCanset:(AIKVPointer*)fCanset iScene:(AIKVPointer*)iScene iCansetContent_ps:(NSArray*)iCansetContent_ps;
++(AITransferPort*) newWithFScene:(AIKVPointer*)fScene fCanset:(AIFoNodeBase*)fCanset iScene:(AIKVPointer*)iScene iCansetContent_ps:(NSArray*)iCansetContent_ps;
 
 //@desc1 因为迁移port是挂在scene下的,所以此处需要把两个canset都存下来;
 //@desc2 scene原本是只需要存targetScene的,但为了方便用,现在先两个scene全写上,随后优化时,再去掉当前scene,即不必要的一个;
@@ -24,7 +24,17 @@
  */
 @property (strong, nonatomic) NSString *iCansetHeader;
 @property (strong, nonatomic) AIKVPointer *iScene;
+
+/**
+ *  MARK:--------------------fCansetHeader--------------------
+ *  @version
+ *      2024.11.xx: 存fCanset;
+ *      2024.11.30: 父非子时,需要根据fCanset的key,取fScene下的itemOutSPDic,这里存上header,避免取fCansetNode性能差;
+ *  @todo
+ *      2024.11.30: 其实fCanset应该可以去掉了,它用来防重,或复用取itemOutSPDic,都可以直接用md5Header来实现,先不删,随后再删吧,一年后它还是没用,再删;
+ */
 @property (strong, nonatomic) AIKVPointer *fCanset;
+@property (strong, nonatomic) NSString *fCansetHeader;
 @property (strong, nonatomic) AIKVPointer *fScene;
 
 @end

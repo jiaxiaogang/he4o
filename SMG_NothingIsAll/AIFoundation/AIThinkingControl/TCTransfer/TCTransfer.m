@@ -54,7 +54,7 @@
     //2024.11.17: transferXv时,就记录迁移关联 (参考33112-TODO4.5);
     BOOL contentEqs = [cansetFrom.content_ps isEqual:cansetToContent_ps];
     if (cansetModel.baseSceneModel.type != SceneTypeBrother && !contentEqs) {
-        AITransferPort *transferPort = [AITransferPort newWithFScene:cansetModel.sceneFrom fCanset:cansetModel.cansetFrom iScene:cansetModel.sceneTo iCansetContent_ps:cansetToContent_ps];
+        AITransferPort *transferPort = [AITransferPort newWithFScene:cansetModel.sceneFrom fCanset:cansetFrom iScene:cansetModel.sceneTo iCansetContent_ps:cansetToContent_ps];
         
         //5. 并进行迁移关联 (以实现防重,避免重复性能浪费等);
         //2024.11.13: 迁移都是迁移到I层,所以这里判断防重时,用transferIPorts来判断即可;

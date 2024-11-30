@@ -550,13 +550,8 @@
         CGFloat cooledValue = [MathUtils getCooledValue_28:1 - foMatchValue];//算出当前匹配度,应该冷却到什么比例;
         AddDebugCodeBlock_Key(@"c", @"cansetsRanking2e");
         
-        //TODOTOMORROW20241129: 此处单次1.1ms,共2000次左右,次数比较多,得看下能不能想办法优化下数据结构;
-        //方案: 此处主要用于取outSPDic,需要用fCanset.content_ps转成的md5值,那么能不能在fPort中,直接缓存上这个key呢?;
-        
         //4. 把F层的SPDic冷却后,累计到I层 (环境作用于个体) (参考33115-方案2-累计spStrong);
-        AIFoNodeBase *fCanset = [SMGUtils searchNode:fPort.fCanset];//性能:3831ms/3354次
-        AddDebugCodeBlock_Key(@"c", @"cansetsRanking2e2");
-        NSDictionary *fSPDic = [fScene getItemOutSPDic:fCanset.content_ps];
+        NSDictionary *fSPDic = [fScene getItemOutSPDic:fPort.fCansetHeader];
         AddDebugCodeBlock_Key(@"c", @"cansetsRanking2f");
         for (NSInteger i = startSPIndex; i <= endSPIndex; i++) {
             
