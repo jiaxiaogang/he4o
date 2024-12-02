@@ -543,12 +543,17 @@
     NSMutableDictionary *indexDic = [[NSMutableDictionary alloc] init]; //记录protoIndex和assIndex的映射字典 <K:assIndex, V:protoIndex>;
     
     //12. 依次mIsC判断匹配: 匹配时_记录indexDic映射 (此处proto抽象仅指向刚识别的matchAlgs,所以与contains等效);
+    NSInteger nextStartForAssIndex = 0;
     for (NSInteger protoIndex = 0; protoIndex < protoOrRegroupFo.count; protoIndex++) {
         AIKVPointer *protoAlg_p = ARR_INDEX(protoOrRegroupFo.content_ps, protoIndex);
-        for (NSInteger assIndex = 0; assIndex < assFo.count; assIndex++) {
+        for (NSInteger assIndex = nextStartForAssIndex; assIndex < assFo.count; assIndex++) {
             AIKVPointer *assAlg_p = ARR_INDEX(assFo.content_ps, assIndex);
             BOOL mIsC = [TOUtils mIsC_1:protoAlg_p c:assAlg_p];
             if (mIsC) {
+                
+                //13. 匹配时_记录下次循环ass时,从哪帧开始倒序循环: nextMaxForAssIndex进度;
+                //2024.12.01: 修复此处有可能输出0->1,1->0的BUG (参考33137-问题1);
+                nextStartForAssIndex = assIndex + 1;
                 [indexDic setObject:@(protoIndex) forKey:@(assIndex)];
                 if (Log4MFo) NSLog(@"时序识别全含判断有效+1帧 (assIndex:%ld protoIndex:%ld)",assIndex,protoIndex);
                 break;
@@ -578,19 +583,6 @@
     
     //23. 至此前段全含条件满足,返回映射结果;
     if (Log4MFo) NSLog(@"全含success:%@",CLEANSTR(indexDic));
-    
-    //TODOTOMORROW20241201: 此处有BUG,有可能输出0->1,1->0 (参考33137-问题1);
-    //分析1: [张,张,张,打,牛] 和 [张,打,牛]算全含吗? 答: 算,但[张,打,牛]是类比得来,暂时只识别似层,不需要识别到它;
-    //  但: 这也没影响全含啊,可以识别到..
-    //分析2: 那这里可以看加上进度,当时不知道为什么把进度去掉了... (在6bacb4906af01a61869eafec0179af3fcae530d8去掉的);
-    //for (NSInteger protoIndex = nextStartForProtoIndex; protoIndex < protoOrRegroupFo.count; protoIndex++) {
-    // if (mIsC) {
-    //      nextStartForProtoIndex = protoIndex + 1;////7. 匹配时_记录下次循环proto时,从哪帧开始倒序循环: nextMaxForProtoIndex进度
-    //}
-    
-    if (indexDic.count > 1) {
-        NSLog(@"修后回测,这里");
-    }
     return indexDic;
 }
 
