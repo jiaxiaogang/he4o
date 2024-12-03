@@ -92,8 +92,16 @@
     //TODOTOMORROW20241203: 查SP值值异常大的问题 (参考33137-问题2):
     //疑点1: 要不就是因为: 这里可能把很大的值推举过来?
     //疑点2: 要不就是SP评分时,改的那个spDic更新到了本地导致?
-    if (difStrong > 12179049) {
+    if (difStrong > 1) {
         NSLog(@"fltxxx F%ld(第%ld帧)(%@) + %ld = %.0f",self.pId,spIndex,ATType2Str(type),difStrong,type == ATSub ? value.sStrong : value.pStrong);
+    }
+    
+    if (self.pId == 358) {
+        NSLog(@"1111111111 经查,就子即父,在perceptInRethink,就能把absFo的sp值推起来,这就尴尬了...");
+    }
+    
+    if (type == ATSub ? value.sStrong : value.pStrong > 10000) {
+//        NSLog(@"什么时候大于1w的,都哪来的?");
     }
     
     //3. 保存fo
