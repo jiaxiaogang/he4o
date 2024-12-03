@@ -89,6 +89,13 @@
     }
     [forSPDic setObject:value forKey:key];
     
+    //TODOTOMORROW20241203: 查SP值值异常大的问题 (参考33137-问题2):
+    //疑点1: 要不就是因为: 这里可能把很大的值推举过来?
+    //疑点2: 要不就是SP评分时,改的那个spDic更新到了本地导致?
+    if (difStrong > 1000) {
+        NSLog(@"fltxxx F%ld(第%ld帧)(%@) + %ld = %.0f",self.pId,spIndex,ATType2Str(type),difStrong,type == ATSub ? value.sStrong : value.pStrong);
+    }
+    
     //3. 保存fo
     [SMGUtils insertNode:self];
 }
