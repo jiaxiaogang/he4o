@@ -185,16 +185,17 @@
         //}
     }
     
-    //调试有向无距果场景在试错训练中的竞争变化 (参考33108-调试日志);
-    if (debugMode) {
-        for (TOFoModel *item in sort) {
-            NSString *sceneToDesc = Pit2FStr(item.sceneTo);
-            if ([sceneToDesc containsString:@"有向无距"]) {
-                NSLog(@"fltx5 %lld CansetRankingV4 有向无距果 index: %ld/%ld",theTC.getLoopId,[sort indexOfObject:item],sort.count);
-                break;
-            }
-        }
-    }
+    //8. 调试有向无距果场景在试错训练中的竞争变化 (参考33108-调试日志);
+    //2024.12.03: 有800多条时,这里也很耗时,先关掉,并且现在都是似层时序识别结果,这里的sceneTo已经不太可能是有向无距场景了,sceneFrom还差不多,这个日志先不删,等三个月后,还没用到再删掉(如果还有有向无距相关的BUG可能还会用到);
+    //if (debugMode) {
+    //    for (TOFoModel *item in sort) {
+    //        NSString *sceneToDesc = Pit2FStr(item.sceneTo);
+    //        if ([sceneToDesc containsString:@"有向无距"]) {
+    //            NSLog(@"fltx5 %lld CansetRankingV4 有向无距果 index: %ld/%ld",theTC.getLoopId,[sort indexOfObject:item],sort.count);
+    //            break;
+    //        }
+    //    }
+    //}
     return sort;
 }
 
