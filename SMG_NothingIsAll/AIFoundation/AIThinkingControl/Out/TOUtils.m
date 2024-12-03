@@ -462,7 +462,8 @@
 //In针对Scene稳定性;
 +(CGFloat) getStableScore_In:(AIFoNodeBase*)iScene startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex {
     //1. 取出I层spDic;
-    NSMutableDictionary *iSPDic = iScene.spDic;
+    //2024.12.03: 避免iSPDic被更新值后,如果node被保存,就被持久化了 (此问题未证实,只是这么猜想,就调用下copy预防一下);
+    NSMutableDictionary *iSPDic = [[NSMutableDictionary alloc] initWithDictionary:iScene.spDic];
     NSString *protoSPDicStr = CLEANSTR(iSPDic);
     
     //2. 取出F层 (参考33114-TODO3-用I/F综合起来决定最终spDic及稳定性);
@@ -504,7 +505,8 @@
 +(HEResult*) getStableScore_Out:(TOFoModel*)canset startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex {
     //1. 取出I层spDic;
     AIFoNodeBase *cansetFrom = [SMGUtils searchNode:canset.cansetFrom];//本来应该传cansetTo,不过cansetTo可能未转实,并且cansetFrom效果也一致;
-    NSMutableDictionary *iSPDic = [canset getItemOutSPDic];
+    //2024.12.03: 避免iSPDic被更新值后,如果node被保存,就被持久化了 (此问题未证实,只是这么猜想,就调用下copy预防一下);
+    NSMutableDictionary *iSPDic = [[NSMutableDictionary alloc] initWithDictionary:[canset getItemOutSPDic]];
     NSString *protoSPDicStr = CLEANSTR(iSPDic);
     
     //2. 取出F层 (参考33114-TODO3-用I/F综合起来决定最终spDic及稳定性);

@@ -150,7 +150,8 @@
     }
     
     //7. 继承sp和eff (参考29032-todo2.2);
-    if (!conAbsIsRelate && ![assFo isEqual:result]) {
+    //2024.12.03: 改为仅未抽象过的似层(即AIFrontOrderNode)时,才初始推assFo的spDic给absFo (参考33137-问题2-方案v4);
+    if (ISOK(assFo, AIFrontOrderNode.class) && !conAbsIsRelate && ![assFo isEqual:result]) {
         [AINetUtils extendSPByIndexDic:assIndexDic assFo:assFo absFo:result];
     }
     
