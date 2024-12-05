@@ -117,6 +117,9 @@
     Debug();
     IFTitleLog(@"feedbackTIP", @"\n输入MV:%@",Mv2FStr(cmvNode));
     
+    //2024.12.05: 每次反馈同F只计一次: 避免F值快速重复累计到很大,sp更新(同场景下的)防重推 (参考33137-方案v5);
+    NSMutableArray *except4SP2F = [[NSMutableArray alloc] init];
+    
     //2. 判断最近一次input是否与等待中pFo感性结果相匹配 (匹配,比如吃,确定自己是否真吃了);
     //2. fbTIP对roots进行反馈判断 (参考27096-方案2);
     NSArray *roots = [theTC.outModelManager.getAllDemand copy];
@@ -152,7 +155,7 @@
                     AnalogyType type = score > 0 ? ATPlus : ATSub;
                     
                     //11. 则进行感性IRT反省;
-                    [TCRethink perceptInRethink:waitModel type:type];
+                    [TCRethink perceptInRethink:waitModel type:type except4SP2F:except4SP2F];
                     NSLog(@"---//IP反省触发器执行:%p F%ld 状态:%@",waitMatchFo,waitMatchFo.pointer.pointerId,TIStatus2Str(TIModelStatus_OutBackSameDelta));
                     
                     //12. 有mv反馈时,做Canset识别 (参考28185-todo5);
@@ -292,9 +295,12 @@
     
     //3. 每个Canset都支持持续反馈: 反馈有效时,构建或类比抽象HCanset,并推进到下一帧;
     NSArray *allCanset = [TOUtils getSubCansets_AllDeep_AllRoots];
+    
+    //2024.12.05: 每次反馈同F只计一次: 避免F值快速重复累计到很大,sp更新(同场景下的)防重推 (参考33137-方案v5);
+    NSMutableArray *except4SP2F = [[NSMutableArray alloc] init];
     int feedbackValidNum = 0, rewakeNum = 0;
     for (TOFoModel *cansetModel in allCanset) {
-        BOOL feedbackValid = [cansetModel commit4FeedbackTOR:recognitionAlgs protoAlg:model.protoAlg.p];
+        BOOL feedbackValid = [cansetModel commit4FeedbackTOR:recognitionAlgs protoAlg:model.protoAlg.p except4SP2F:except4SP2F];
         
         //4. feedbackTOR有反馈有效时,被传染的支持整个工作记忆树唤醒 (参考31178-TODO2);
         feedbackValidNum += feedbackValid ? 1 : 0;
@@ -333,6 +339,9 @@
     //2. ============== 对所有等待中的任务尝试处理 (R-任务); ==============
     int newInfectedNum = 0;
     NSArray *roots = [theTC.outModelManager.getAllDemand copy];
+    
+    //2024.12.05: 每次反馈同F只计一次: 避免F值快速重复累计到很大,sp更新(同场景下的)防重推 (参考33137-方案v5);
+    NSMutableArray *except4SP2F = [[NSMutableArray alloc] init];
     for (ReasonDemandModel *root in roots) {
         NSArray *waitModels = [TOUtils getSubOutModels_AllDeep:root validStatus:nil];
         for (TOFoModel *waitModel in waitModels) {
@@ -367,7 +376,7 @@
                 //13. SP计数之二A(P负):末帧反馈负价值的,计SP- (参考32012-TODO7);
                 //2024.09.08: 非bested/besting状态的,没在推进中,不接受反馈; if (waitModel.cansetStatus != CS_None) {}
                 //2024.09.21: 去掉best过状态要求 (参考33065-TODO3);
-                [waitModel checkAndUpdateOutSPStrong_Percept:1 type:ATSub debugMode:true caller:@"末帧负mv反馈"];
+                [waitModel checkAndUpdateOutSPStrong_Percept:1 type:ATSub debugMode:true caller:@"末帧负mv反馈" except4SP2F:except4SP2F];
                 
                 //14. 末帧且反馈到负mv,则被传染 (参考31179-TODO1);
                 waitModel.isInfected = true;
@@ -392,7 +401,7 @@
                 //2024.09.21: 去掉best过状态要求 (参考33065-TODO3);
                 BOOL tiaoJian2 = waitModel.cansetCutIndex > waitModel.initCansetCutIndex;
                 if (tiaoJian2) {
-                    [waitModel checkAndUpdateOutSPStrong_Percept:1 type:ATPlus debugMode:true caller:@"提前正mv反馈"];
+                    [waitModel checkAndUpdateOutSPStrong_Percept:1 type:ATPlus debugMode:true caller:@"提前正mv反馈" except4SP2F:except4SP2F];
                 }
             }
             dispatch_async(dispatch_get_main_queue(), ^{//30083回同步

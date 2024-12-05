@@ -1025,18 +1025,23 @@
  *  @desc 子即父,推举到F层SP也+1: iCanset的outSP更新时,将它的fCanset的outSP也+1 (参考33112-TODO4.3);
  *  @desc I层即sceneTo,F层则从transferPort迁移关联来取 (参考33112-TODO3);
  */
-+(void) updateOutSPStrong_4IF:(AIFoNodeBase*)iScene iCansetContent_ps:(NSArray*)iCansetContent_ps caller:(NSString*)caller spIndex:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type debugMode:(BOOL)debugMode {
++(void) updateOutSPStrong_4IF:(AIFoNodeBase*)iScene iCansetContent_ps:(NSArray*)iCansetContent_ps caller:(NSString*)caller spIndex:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type debugMode:(BOOL)debugMode except4SP2F:(NSMutableArray*)except4SP2F{
     //0. i层计SP;
     [iScene updateOutSPStrong:spIndex difStrong:difStrong type:type canset:iCansetContent_ps debugMode:debugMode caller:caller];
     
     //1. 取f (有迁移复用);
     NSArray *fatherPorts = [AINetUtils transferPorts_4Father:iScene iCansetContent_ps:iCansetContent_ps];
     for (AITransferPort *fatherPort in fatherPorts) {
+        //2024.12.05: 避免F值快速重复累计到很大,sp更新(同场景下的)防重推 (参考33137-方案v5TODO2);
+        NSString *itemExcept = STRFORMAT(@"%ld_%ld_%ld",fatherPort.fScene.pointerId,fatherPort.fCanset.pointerId,spIndex);
+        if ([except4SP2F containsObject:itemExcept]) continue;
+        [except4SP2F addObject:itemExcept];
+        
         AIFoNodeBase *fatherScene = [SMGUtils searchNode:fatherPort.fScene];
         AIFoNodeBase *fatherCanset = [SMGUtils searchNode:fatherPort.fCanset];
         
         //2. cansetFrom和cansetTo是等长的,所以直接iCanset的index可以当fCanset的index来用;
-        [fatherScene updateOutSPStrong:iCansetContent_ps.count difStrong:1 type:ATPlus canset:fatherCanset.content_ps debugMode:false caller:STRFORMAT(@"%@(推举父)",caller)];
+        [fatherScene updateOutSPStrong:spIndex difStrong:1 type:type canset:fatherCanset.content_ps debugMode:false caller:STRFORMAT(@"%@(推举父)",caller)];
     }
 }
 
@@ -1044,12 +1049,19 @@
  *  MARK:--------------------inSP子即父--------------------
  *  @desc 子即父,推举到F层SP也+1: iScene的inSP更新时,将它的fScene的inSP也+1 (参考33111-TODO2 & 33134-FIX2a & TCRethink代码);
  */
-+(void) updateInSPStrong_4IF:(AIFoNodeBase*)conFo conSPIndex:(NSInteger)conSPIndex type:(AnalogyType)type {
++(void) updateInSPStrong_4IF:(AIFoNodeBase*)conFo conSPIndex:(NSInteger)conSPIndex type:(AnalogyType)type except4SP2F:(NSMutableArray*)except4SP2F {
     //1. 具象先更新;
     [conFo updateSPStrong:conSPIndex type:type];
     
     //2. 抽象也更新 (参考29069-todo11.4);
+    //2024.11.08: 佐证: 子即父 (参考33111-TODO2);
     [TCRethinkUtil spEff4Abs:conFo curFoIndex:conSPIndex itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {
+        
+        //2024.12.05: 避免F值快速重复累计到很大,sp更新(同场景下的)防重推 (参考33137-方案v5TODO1);
+        NSString *itemExcept = STRFORMAT(@"%ld_%ld",absFo.pId,absIndex);
+        if ([except4SP2F containsObject:itemExcept]) return;
+        [except4SP2F addObject:itemExcept];
+        
         [absFo updateSPStrong:absIndex type:type];
     }];
 }

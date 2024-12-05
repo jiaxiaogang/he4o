@@ -501,9 +501,12 @@
         [protoOrRegroupFo updateMatchValue:matchFo matchValue:item.sumNear];
     }
     
+    //2024.12.05: 每次反馈同F只计一次: 避免F值快速重复累计到很大,sp更新(同场景下的)防重推 (参考33137-方案v5);
+    NSMutableArray *except4SP2F = [[NSMutableArray alloc] init];
+    
     //13. inSP值子即父: 时序识别成功后,protoFo从0到cutIndex全计P+1 (参考33112-TODO4.3 & 33134-FIX2a);
     for (NSInteger i = 0; i <= protoOrRegroupCutIndex; i++) {
-        [AINetUtils updateInSPStrong_4IF:protoOrRegroupFo conSPIndex:i type:ATPlus];
+        [AINetUtils updateInSPStrong_4IF:protoOrRegroupFo conSPIndex:i type:ATPlus except4SP2F:except4SP2F];
     }
 }
 

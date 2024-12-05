@@ -286,12 +286,15 @@
         return [root.algsType isEqualToString:mv.pointer.algsType];
     }];
     
+    //2024.12.05: 每次反馈同F只计一次: 避免F值快速重复累计到很大,sp更新(同场景下的)防重推 (参考33137-方案v5);
+    NSMutableArray *except4SP2F = [[NSMutableArray alloc] init];
+    
     //3. 为这些roots构建RCanset;
     for (ReasonDemandModel *root in roots) {
         //2. 对于持续R任务: 比如饥饿R任务现在是连续饥饿状态,所以只能以饥饿状态的减弱为判断 (即正mv输入) (参考32118-TODO1);
         NSLog(@"%@因持续任务反馈了正mv (ROOT:F%ld) (pFos数:%ld) => 触发构建RCanset",FltLog4CreateRCanset(2),Demand2Pit(root).pointerId,root.pFos.count);
         for (AIMatchFoModel *pFo in root.pFos) {
-            [pFo pushFrameFinish:@"持续任务反馈正mv"];
+            [pFo pushFrameFinish:@"持续任务反馈正mv" except4SP2F:except4SP2F];
         }
     }
 }
@@ -327,9 +330,12 @@
         
         //4. 如果阻止pFos负mv全成功: 则记录新的NewAbsRCanset;
         if (success) {
+            
+            //2024.12.05: 避免F值快速重复累计到很大,sp更新(同场景下的)防重推 (参考33137-方案v5TODO2);
+            NSMutableArray *except4SP2F = [[NSMutableArray alloc] init];
             NSLog(@"%@非持续任务未反馈负mv (pFos数:%ld)",FltLog4CreateRCanset(2),root.pFos.count);
             for (AIMatchFoModel *pFo in root.pFos) {
-                [pFo pushFrameFinish:@"非持续任务未反馈负mv"];
+                [pFo pushFrameFinish:@"非持续任务未反馈负mv" except4SP2F:except4SP2F];
             }
         }
     }];

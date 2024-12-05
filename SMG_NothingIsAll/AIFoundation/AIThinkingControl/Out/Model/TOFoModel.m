@@ -378,16 +378,16 @@
 /**
  *  MARK:--------------------feedbackTOR反馈时触发,用于每个cansetFo都可以接受持续反馈推进--------------------
  */
--(BOOL) commit4FeedbackTOR:(NSArray*)feedbackMatchAlg_ps protoAlg:(AIKVPointer*)protoAlg_p {
+-(BOOL) commit4FeedbackTOR:(NSArray*)feedbackMatchAlg_ps protoAlg:(AIKVPointer*)protoAlg_p except4SP2F:(NSMutableArray*)except4SP2F {
     //1. 反馈判断,无反馈直接return (参考31073-TODO2);
     BOOL feedbackValid = [self step1_CheckFeedbackTORIsValid:feedbackMatchAlg_ps protoAlg:protoAlg_p];
     if (!feedbackValid) return false;
     
     //2. SP计数之三(R正): 中间帧反馈成功时,直接计outSPDic为SP+1 (参考32012-TODO5);
-    [self checkAndUpdateOutSPStrong_Reason:1 type:ATPlus debugMode:true caller:@"中间帧反馈"];//3b. 只要反馈成功的,都进行P+1;
+    [self checkAndUpdateOutSPStrong_Reason:1 type:ATPlus debugMode:true caller:@"中间帧反馈" except4SP2F:except4SP2F];//3b. 只要反馈成功的,都进行P+1;
     
     //2. 反馈有效: 构建hCanset;
-    [self step2_FeedbackThenNewHCanset:protoAlg_p];
+    [self step2_FeedbackThenNewHCanset:protoAlg_p except4SP2F:except4SP2F];
     
     //3. 反馈成立,更新已发生;
     self.cansetCutIndex ++;
@@ -435,7 +435,7 @@
  *  @desc 此方法代码是从feedbackTOR搬过来的,原来的代码有点乱,整理了下使之易读些,并搬到了这里 (参考31073-TODO7);
  *  @param protoAlg_p feedbackTOR方法中的protoAlg传过来;
  */
--(void) step2_FeedbackThenNewHCanset:(AIKVPointer*)protoAlg_p {
+-(void) step2_FeedbackThenNewHCanset:(AIKVPointer*)protoAlg_p except4SP2F:(NSMutableArray*)except4SP2F {
     //1. 数据准备;
     TOAlgModel *curAlgModel = [self getCurFrame];
     
@@ -480,7 +480,7 @@
             //e. outSP值子即父: 当前NewHCanset所在的hScene场景就是iScene (参考33112-TODO4.3);
             //2024.11.26: 从0到cutIndex全计P+1 (参考33134-FIX2a);
             for (NSInteger i = 0; i <= newHCanset.count; i++) {
-                [AINetUtils updateOutSPStrong_4IF:rCanset iCansetContent_ps:newHCanset.content_ps caller:@"NewHCanset本就存在时,将当前帧SP+1推举到父层canset中" spIndex:i difStrong:1 type:ATPlus debugMode:false];
+                [AINetUtils updateOutSPStrong_4IF:rCanset iCansetContent_ps:newHCanset.content_ps caller:@"NewHCanset本就存在时,将当前帧SP+1推举到父层canset中" spIndex:i difStrong:1 type:ATPlus debugMode:false except4SP2F:except4SP2F];
             }
             
             //2024.11.03: 在挂载新的Canset时,实时推举 & 并防重(只有新挂载的canset,才有资格实时调用推举,并推举spDic都到父场景中) (参考33112);
@@ -645,14 +645,14 @@
  *      1. 避免重复 (保证最终真正执行的仅1次,比如多次跑S,只记一次);
  *      2. 避免冲突 (比如:先S后P,以最后一条P为准 => 先把S回滚了,再把P执行了);
  */
--(void) checkAndUpdateOutSPStrong_Reason:(NSInteger)difStrong type:(AnalogyType)type debugMode:(BOOL)debugMode caller:(NSString*)caller {
-    [self checkAndUpdateOutSPStrong:difStrong spIndex:self.cansetActIndex type:type debugMode:debugMode caller:caller];
+-(void) checkAndUpdateOutSPStrong_Reason:(NSInteger)difStrong type:(AnalogyType)type debugMode:(BOOL)debugMode caller:(NSString*)caller except4SP2F:(NSMutableArray*)except4SP2F {
+    [self checkAndUpdateOutSPStrong:difStrong spIndex:self.cansetActIndex type:type debugMode:debugMode caller:caller except4SP2F:except4SP2F];
 }
--(void) checkAndUpdateOutSPStrong_Percept:(NSInteger)difStrong type:(AnalogyType)type debugMode:(BOOL)debugMode caller:(NSString*)caller {
+-(void) checkAndUpdateOutSPStrong_Percept:(NSInteger)difStrong type:(AnalogyType)type debugMode:(BOOL)debugMode caller:(NSString*)caller except4SP2F:(NSMutableArray*)except4SP2F {
     AIFoNodeBase *cansetFrom = [SMGUtils searchNode:self.cansetFrom];
-    [self checkAndUpdateOutSPStrong:difStrong spIndex:cansetFrom.count type:type debugMode:debugMode caller:caller];
+    [self checkAndUpdateOutSPStrong:difStrong spIndex:cansetFrom.count type:type debugMode:debugMode caller:caller except4SP2F:except4SP2F];
 }
--(void) checkAndUpdateOutSPStrong:(NSInteger)difStrong spIndex:(NSInteger)spIndex type:(AnalogyType)type debugMode:(BOOL)debugMode caller:(NSString*)caller{
+-(void) checkAndUpdateOutSPStrong:(NSInteger)difStrong spIndex:(NSInteger)spIndex type:(AnalogyType)type debugMode:(BOOL)debugMode caller:(NSString*)caller except4SP2F:(NSMutableArray*)except4SP2F {
     //1. 数据检查: 未转实的不执行,它的cansetTo没构建呢 (33031b-协作 & 33062-TODO6);
     //2024.09.21: 去掉best过状态要求 (参考33065-TODO3);
     //if (self.cansetStatus == CS_None) return;
@@ -677,17 +677,17 @@
     AIFoNodeBase *sceneTo = [SMGUtils searchNode:self.sceneTo];
     NSArray *cansetToContent_ps = Simples2Pits(self.transferXvModel.cansetToOrders);
     if (type == ATPlus && value.sStrong > 0) {
-        [AINetUtils updateOutSPStrong_4IF:sceneTo iCansetContent_ps:cansetToContent_ps caller:STRFORMAT(@"%@(撤销S)",caller) spIndex:spIndex difStrong:-value.sStrong type:ATSub debugMode:false];
+        [AINetUtils updateOutSPStrong_4IF:sceneTo iCansetContent_ps:cansetToContent_ps caller:STRFORMAT(@"%@(撤销S)",caller) spIndex:spIndex difStrong:-value.sStrong type:ATSub debugMode:false except4SP2F:except4SP2F];
         value.sStrong = 0;
     }
     if (type == ATSub && value.pStrong > 0) {
-        [AINetUtils updateOutSPStrong_4IF:sceneTo iCansetContent_ps:cansetToContent_ps caller:STRFORMAT(@"%@(撤销P)",caller) spIndex:spIndex difStrong:-value.pStrong type:ATPlus debugMode:false];
+        [AINetUtils updateOutSPStrong_4IF:sceneTo iCansetContent_ps:cansetToContent_ps caller:STRFORMAT(@"%@(撤销P)",caller) spIndex:spIndex difStrong:-value.pStrong type:ATPlus debugMode:false except4SP2F:except4SP2F];
         value.pStrong = 0;
     }
     
     //4. 把此次SP更新下;
     //2024.11.18: outSP+1时,F层也+1 (F层从transferPort迁移关联来取) (参考33112-TODO3);
-    [AINetUtils updateOutSPStrong_4IF:sceneTo iCansetContent_ps:cansetToContent_ps caller:caller spIndex:spIndex difStrong:difStrong type:type debugMode:debugMode];
+    [AINetUtils updateOutSPStrong_4IF:sceneTo iCansetContent_ps:cansetToContent_ps caller:caller spIndex:spIndex difStrong:difStrong type:type debugMode:debugMode except4SP2F:except4SP2F];
     
     //5. 把此次SP更新值记录到outSPRecord避免下次重复或冲突;
     if (type == ATSub) {

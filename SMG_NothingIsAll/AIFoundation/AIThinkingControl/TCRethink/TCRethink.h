@@ -17,7 +17,7 @@
  */
 @interface TCRethink : NSObject
 
-+(void) reasonInRethink:(AIMatchFoModel*)model cutIndex:(NSInteger)cutIndex type:(AnalogyType)type;
-+(void) perceptInRethink:(AIMatchFoModel*)model type:(AnalogyType)type;
++(void) reasonInRethink:(AIMatchFoModel*)model cutIndex:(NSInteger)cutIndex type:(AnalogyType)type except4SP2F:(NSMutableArray*)except4SP2F;
++(void) perceptInRethink:(AIMatchFoModel*)model type:(AnalogyType)type except4SP2F:(NSMutableArray*)except4SP2F;
 
 @end

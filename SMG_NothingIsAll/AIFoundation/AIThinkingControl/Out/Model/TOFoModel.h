@@ -136,7 +136,7 @@
 /**
  *  MARK:--------------------feedbackTOR反馈时触发,用于每个cansetFo都可以接受持续反馈推进--------------------
  */
--(BOOL) commit4FeedbackTOR:(NSArray*)feedbackMatchAlg_ps protoAlg:(AIKVPointer*)protoAlg_p;
+-(BOOL) commit4FeedbackTOR:(NSArray*)feedbackMatchAlg_ps protoAlg:(AIKVPointer*)protoAlg_p except4SP2F:(NSMutableArray*)except4SP2F;
 
 /**
  *  MARK:--------------------方案状态--------------------
@@ -177,8 +177,8 @@
 /**
  *  MARK:--------------------检查更新OutSPDic强度值--------------------
  */
--(void) checkAndUpdateOutSPStrong_Reason:(NSInteger)difStrong type:(AnalogyType)type debugMode:(BOOL)debugMode caller:(NSString*)caller;
--(void) checkAndUpdateOutSPStrong_Percept:(NSInteger)difStrong type:(AnalogyType)type debugMode:(BOOL)debugMode caller:(NSString*)caller;
+-(void) checkAndUpdateOutSPStrong_Reason:(NSInteger)difStrong type:(AnalogyType)type debugMode:(BOOL)debugMode caller:(NSString*)caller except4SP2F:(NSMutableArray*)except4SP2F;
+-(void) checkAndUpdateOutSPStrong_Percept:(NSInteger)difStrong type:(AnalogyType)type debugMode:(BOOL)debugMode caller:(NSString*)caller except4SP2F:(NSMutableArray*)except4SP2F;
 
 /**
  *  MARK:--------------------取outSPDic (转实前取cansetFrom的,转实后取cansetTo的) (参考33062-正据4&TODO5)--------------------

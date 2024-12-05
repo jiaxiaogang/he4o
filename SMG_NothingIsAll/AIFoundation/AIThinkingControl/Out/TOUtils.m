@@ -827,11 +827,11 @@
  *  @desc 白话: 当frameActYes因canset中间帧无反馈,调用此方法 => 将工作记忆中所有同质中间帧cansetAlg都infect下,标记它已条件不满足;
  *  @desc frameActYes反馈失败时: 传染到整个工作记忆树 (所有此处新传染的,都尝试向整树传播) (参考31178-TODO1);
  */
-+(int) infectToAllRootsTree_Alg:(TOFoModel*)infectedCanset infectedAlg:(AIKVPointer*)infectedAlg {
++(int) infectToAllRootsTree_Alg:(TOFoModel*)infectedCanset infectedAlg:(AIKVPointer*)infectedAlg except4SP2F:(NSMutableArray*)except4SP2F {
     //1. SP计数之四(R负): 当前传染的canset计S+1 (参考33031b-BUG5-协作);
     //2024.09.17: 只有转实的,才更新outSP值 (参考33062-TODO6);
     //2024.09.21: 去掉best过状态要求 (参考33065-TODO3);
-    [infectedCanset checkAndUpdateOutSPStrong_Reason:1 type:ATSub debugMode:true caller:@""];
+    [infectedCanset checkAndUpdateOutSPStrong_Reason:1 type:ATSub debugMode:true caller:@"" except4SP2F:except4SP2F];
     
     //2. 当前传染的alg,传到整个roots;
     int infectNum = 0;
@@ -857,9 +857,9 @@
  *  @version
  *      2024.09.06: 全唤醒,但只有当前计P+1 (参考33031b-BUG5-协作);
  */
-+(int) rewakeToAllRootsTree_Mv:(TOFoModel*)rewakeFromRCanset {
++(int) rewakeToAllRootsTree_Mv:(TOFoModel*)rewakeFromRCanset except4SP2F:(NSMutableArray*)except4SP2F {
     //1. SP计数之一(P正): 只自己,不唤醒 => 把成功rCanset时,不再唤醒别的rCanset (参考33031b-BUG5-TODO2);
-    [rewakeFromRCanset checkAndUpdateOutSPStrong_Percept:1 type:ATPlus debugMode:true caller:@"末帧未发生负mv"];//有效:P+1;
+    [rewakeFromRCanset checkAndUpdateOutSPStrong_Percept:1 type:ATPlus debugMode:true caller:@"末帧未发生负mv" except4SP2F:except4SP2F];//有效:P+1;
     
     //2. 把所有工作记忆树等mv反馈的全唤醒;
     ReasonDemandModel *rewakeByRDemand = (ReasonDemandModel*)rewakeFromRCanset.baseOrGroup;

@@ -282,6 +282,9 @@
         //2024.08.08: 此处即使无解,或者别的原因转向bested状态,也可以统计S和执行传染 (因为下一帧应自然发生,不必找任何借口) (参考32142-TODO3);
         //if (solutionModel.cansetStatus != CS_Besting) return;
         
+        //2024.12.05: 每次反馈同F只计一次: 避免F值快速重复累计到很大,sp更新(同场景下的)防重推 (参考33137-方案v5);
+        NSMutableArray *except4SP2F = [[NSMutableArray alloc] init];
+        
         //4. 末尾为mv感性目标;
         NSArray *actionFoModels = [demand.actionFoModels copy];
         if (actYes4Mv) {
@@ -299,7 +302,7 @@
             } else {
                 //f. 如果无反馈,则设为对baseRDemand有效,整个工作记忆同质解都唤醒一下 (参考31179-TODO2);
                 if (ISOK(solutionModel.baseOrGroup, ReasonDemandModel.class)) {
-                    rootsRewakeNum = [TOUtils rewakeToAllRootsTree_Mv:solutionModel];
+                    rootsRewakeNum = [TOUtils rewakeToAllRootsTree_Mv:solutionModel except4SP2F:except4SP2F];
                 }
             }
             
@@ -334,7 +337,7 @@
                     
                     //方法1. 本来就是一个alg (参考31176-TODO2B-方法1);
                     if ([itemFrameAlg.content_p isEqual:frameModel.content_p]) {
-                        rootsInfectedNum += [TOUtils infectToAllRootsTree_Alg:item infectedAlg:itemFrameAlg.content_p];
+                        rootsInfectedNum += [TOUtils infectToAllRootsTree_Alg:item infectedAlg:itemFrameAlg.content_p except4SP2F:except4SP2F];
                         newInfectedNum++;
                         continue;
                     }
@@ -349,7 +352,7 @@
                     NSNumber *itemIndex = [itemDic objectForKey:sceneToIndex];
                     //b. 当有映射,且洽好在等待反馈,则传染;
                     if (itemIndex && item.cansetActIndex == itemIndex.integerValue) {
-                        rootsInfectedNum += [TOUtils infectToAllRootsTree_Alg:item infectedAlg:itemFrameAlg.content_p];
+                        rootsInfectedNum += [TOUtils infectToAllRootsTree_Alg:item infectedAlg:itemFrameAlg.content_p except4SP2F:except4SP2F];
                         newInfectedNum++;
                     }
                 }

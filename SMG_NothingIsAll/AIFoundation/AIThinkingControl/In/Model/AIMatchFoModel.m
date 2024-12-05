@@ -213,7 +213,7 @@
  *      2023.12.09: 预想与实际类比构建absCanset以场景内防重 (参考3101b-todo6);
  *      2024.07.29: 不再检查OutBackNone状态,调用者在调用此方法时,自行确定好当前发现了新解,不必再此处判断状态;
  */
--(void) pushFrameFinish:(NSString*)log {
+-(void) pushFrameFinish:(NSString*)log except4SP2F:(NSMutableArray*)except4SP2F {
     //1. =================自然未发生(新方案): 无actYes的S时,归功于自然未发生,则新增protoCanset (参考27206c-R任务)=================
     //a. 数据准备;
     AIFoNodeBase *matchFo = [SMGUtils searchNode:self.matchFo];//此处matchFo和pFo都是sceneTo
@@ -248,7 +248,7 @@
     //e. outSP值子即父: 当前NewRCanset所在的matchFo场景就是iScene (参考33112-TODO4.3);
     //2024.11.26: 从0到cutIndex全计P+1 (参考33134-FIX2a);
     for (NSInteger i = 0; i <= newRCanset.count; i++) {
-        [AINetUtils updateOutSPStrong_4IF:matchFo iCansetContent_ps:newRCanset.content_ps caller:@"NewRCanset本就存在时,将当前帧SP+1推举到父层canset中" spIndex:i difStrong:1 type:ATPlus debugMode:false];
+        [AINetUtils updateOutSPStrong_4IF:matchFo iCansetContent_ps:newRCanset.content_ps caller:@"NewRCanset本就存在时,将当前帧SP+1推举到父层canset中" spIndex:i difStrong:1 type:ATPlus debugMode:false except4SP2F:except4SP2F];
     }
     
     //2024.11.03: 在挂载新的Canset时,实时推举 & 并防重(只有新挂载的canset,才有资格实时调用推举,并推举spDic都到父场景中) (参考33112);
