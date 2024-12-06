@@ -1052,6 +1052,7 @@
 +(void) updateInSPStrong_4IF:(AIFoNodeBase*)conFo conSPIndex:(NSInteger)conSPIndex type:(AnalogyType)type except4SP2F:(NSMutableArray*)except4SP2F {
     //1. 具象先更新;
     [conFo updateSPStrong:conSPIndex type:type];
+    if (!except4SP2F) except4SP2F= [[NSMutableArray alloc] init];
     
     //2. 抽象也更新 (参考29069-todo11.4);
     //2024.11.08: 佐证: 子即父 (参考33111-TODO2);

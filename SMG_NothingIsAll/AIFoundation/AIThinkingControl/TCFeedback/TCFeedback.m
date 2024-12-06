@@ -39,6 +39,9 @@
         return o.matchAlg;
     }];
     
+    //2024.12.05: 每次反馈同F只计一次: 避免F值快速重复累计到很大,sp更新(同场景下的)防重推 (参考33137-方案v5);
+    NSMutableArray *except4SP2F = [[NSMutableArray alloc] init];
+    
     //1. fbTIR对roots进行反馈判断 (参考27096-方案2);
     NSArray *roots = [theTC.outModelManager.getAllDemand copy];
     for (ReasonDemandModel *root in roots) {
@@ -74,7 +77,7 @@
             BOOL mIsC = [recognitionAlgs containsObject:waitAlg_p];
             if (mIsC) {
                 //6. 有反馈时,进行P反省: 进行理性IRT反省;
-                [TCRethink reasonInRethink:waitModel cutIndex:waitModel.cutIndex type:ATPlus];
+                [TCRethink reasonInRethink:waitModel cutIndex:waitModel.cutIndex type:ATPlus except4SP2F:except4SP2F];
                 
                 //7. pFo任务顺利: 推进帧;
                 [waitModel feedbackPushFrame:model.protoAlg.pointer];
