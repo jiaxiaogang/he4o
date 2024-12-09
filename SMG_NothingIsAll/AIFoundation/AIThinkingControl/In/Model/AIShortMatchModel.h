@@ -10,6 +10,7 @@
 
 /**
  *  MARK:--------------------瞬时模型 (单帧)--------------------
+ *  @title 即: pFo
  *  说明:
  *      1. AIShortMatchModel是TOR理性思维的model结果;
  *      2. 在瞬时ShortMemory整合到短时ShortMatchModel中来后,短时中的protoAlg即表示原瞬时;

@@ -133,7 +133,6 @@
 		0889258122B0703700A0DBDD /* NVModuleView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0889258022B0703700A0DBDD /* NVModuleView.xib */; };
 		088A147F27E177AC00FA1097 /* TOMVisionDemandView.m in Sources */ = {isa = PBXBuildFile; fileRef = 088A147E27E177AC00FA1097 /* TOMVisionDemandView.m */; };
 		088DD7232201216500E0A786 /* TOFoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 088DD7222201216500E0A786 /* TOFoModel.m */; };
-		0892BAE62776D6920024B43C /* TCRethink.m in Sources */ = {isa = PBXBuildFile; fileRef = 0892BAE52776D6920024B43C /* TCRethink.m */; };
 		0892BAED277808F80024B43C /* TCActYes.m in Sources */ = {isa = PBXBuildFile; fileRef = 0892BAEC277808F80024B43C /* TCActYes.m */; };
 		0895FFE4264A13C500DAD3EA /* TOModelVision.m in Sources */ = {isa = PBXBuildFile; fileRef = 0895FFE3264A13C500DAD3EA /* TOModelVision.m */; };
 		089614A9219A4D5200343FAC /* BirdGrowPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 089614A7219A4D5200343FAC /* BirdGrowPage.m */; };
@@ -480,8 +479,6 @@
 		088A147E27E177AC00FA1097 /* TOMVisionDemandView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOMVisionDemandView.m; sourceTree = "<group>"; };
 		088DD7212201216500E0A786 /* TOFoModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOFoModel.h; sourceTree = "<group>"; };
 		088DD7222201216500E0A786 /* TOFoModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOFoModel.m; sourceTree = "<group>"; };
-		0892BAE42776D6920024B43C /* TCRethink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCRethink.h; sourceTree = "<group>"; };
-		0892BAE52776D6920024B43C /* TCRethink.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCRethink.m; sourceTree = "<group>"; };
 		0892BAEB277808F80024B43C /* TCActYes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCActYes.h; sourceTree = "<group>"; };
 		0892BAEC277808F80024B43C /* TCActYes.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCActYes.m; sourceTree = "<group>"; };
 		0893B80D278BC38A00B5C860 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -1313,8 +1310,6 @@
 		0892BAE32776D6710024B43C /* TCRethink */ = {
 			isa = PBXGroup;
 			children = (
-				0892BAE42776D6920024B43C /* TCRethink.h */,
-				0892BAE52776D6920024B43C /* TCRethink.m */,
 				0800B2BD29F0BF6800CF5E2C /* TCRethinkUtil.h */,
 				0800B2BE29F0BF6800CF5E2C /* TCRethinkUtil.m */,
 			);
@@ -2154,7 +2149,6 @@
 				0843AADC28141711002B9AA9 /* XGDebug.m in Sources */,
 				080A74321F60C6490025DBA3 /* AIPort.m in Sources */,
 				08DB40CB1F11A65E003162C8 /* TestHungryPage.m in Sources */,
-				0892BAE62776D6920024B43C /* TCRethink.m in Sources */,
 				087E7FCB258053D90097E0B9 /* NSFile+Extension.m in Sources */,
 				08250AE0228112C000FC497C /* XGWedis.m in Sources */,
 				88A43F432109589600281348 /* AICMVNode.m in Sources */,

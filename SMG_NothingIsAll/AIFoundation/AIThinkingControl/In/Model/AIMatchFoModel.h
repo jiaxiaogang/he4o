@@ -121,4 +121,10 @@
  */
 -(NSArray*) convertOrders4NewCansetV2;
 
+/**
+ *  MARK:--------------------inSP更新器--------------------
+ */
+-(void) checkAndUpdateReasonInRethink:(NSInteger)cutIndex type:(AnalogyType)type except4SP2F:(NSMutableArray*)except4SP2F;
+-(void) checkAndUpdatePerceptInRethink:(AnalogyType)type except4SP2F:(NSMutableArray*)except4SP2F;
+
 @end

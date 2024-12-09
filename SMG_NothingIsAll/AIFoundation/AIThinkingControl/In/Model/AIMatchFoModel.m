@@ -18,6 +18,7 @@
  *      2. 跳转下帧时,恢复默认值0;
  */
 @property (assign, nonatomic) CGFloat feedbackNear;
+@property (strong, nonatomic) SPMemRecord *spMemRecord;
 
 @end
 
@@ -65,6 +66,11 @@
 
 -(void) setStatus:(TIModelStatus)status forCutIndex:(NSInteger)cutIndex {
     [self.status setObject:@(status) forKey:@(cutIndex)];
+}
+
+-(SPMemRecord *)spMemRecord {
+    if (!_spMemRecord) _spMemRecord = [[SPMemRecord alloc] init];
+    return _spMemRecord;
 }
 
 /**
@@ -338,6 +344,30 @@
  */
 -(CGFloat) strongValue {
     return self.nearCount > 0 ? self.sumRefStrong / self.nearCount : 1;
+}
+
+/**
+ *  MARK:--------------------inSP更新器--------------------
+ *  @desc 分裂成理性反省 和 感性反省 (参考n24p02);
+ *  @desc 四个feedback分别对应四个rethink反省 (参考25031-12);
+ *  @version
+ *      2021.12.25: TCRethink中计统计顺逆数;
+ *      2023.03.04: 修复反省未保留以往帧cutIndex (参考28144-另外);
+ *      2024.08.31: 废弃perceptOutRethink()和reasonOutRethink(),因为这个早被OutSPDic替代了,只是现在才删这些无用的代码);
+ */
+
+-(void) checkAndUpdateReasonInRethink:(NSInteger)cutIndex type:(AnalogyType)type except4SP2F:(NSMutableArray*)except4SP2F {
+    AIFoNodeBase *matchFo = [SMGUtils searchNode:self.matchFo];
+    NSString *spFrom = STRFORMAT(@"%@",[matchFo.spDic objectForKey:@(cutIndex + 1)]);
+    [AINetUtils updateInSPStrong_4IF:matchFo conSPIndex:cutIndex + 1 type:type except4SP2F:except4SP2F];
+    if (Log4Rethink) IFTitleLog(@"IR反省", @"\nspIndex:%ld -> (%@) %@->%@ %@",cutIndex + 1,ATType2Str(type),spFrom,[matchFo.spDic objectForKey:@(cutIndex + 1)],Fo2FStr(matchFo));
+}
+
+-(void) checkAndUpdatePerceptInRethink:(AnalogyType)type except4SP2F:(NSMutableArray*)except4SP2F {
+    AIFoNodeBase *matchFo = [SMGUtils searchNode:self.matchFo];
+    NSString *spFrom = STRFORMAT(@"%@",[matchFo.spDic objectForKey:@(matchFo.count)]);
+    [AINetUtils updateInSPStrong_4IF:matchFo conSPIndex:matchFo.count type:type except4SP2F:except4SP2F];
+    if (Log4Rethink) IFTitleLog(@"IP反省", @"\nspIndex:%ld -> (%@) %@->%@ %@",matchFo.count,ATType2Str(type),spFrom,[matchFo.spDic objectForKey:@(matchFo.count)],Fo2FStr(matchFo));
 }
 
 /**

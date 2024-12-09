@@ -84,7 +84,7 @@
                 if (Log4Forecast) NSLog(@"---//IR反省触发器执行:%p F%ld 状态:%@",matchFo,matchFo.pointer.pointerId,TIStatus2Str(status));
                 
                 //6. 则进行理性IRT反省;
-                [TCRethink reasonInRethink:item cutIndex:curCutIndex type:ATSub except4SP2F:nil];
+                [item checkAndUpdateReasonInRethink:curCutIndex type:ATSub except4SP2F:nil];
                 
                 //7. 失败状态标记;
                 [item setStatus:TIModelStatus_OutBackNone forCutIndex:curCutIndex];
@@ -124,7 +124,7 @@
                     AnalogyType type = score > 0 ? ATSub : ATPlus;
                     
                     //11. 则进行感性IRT反省;
-                    [TCRethink perceptInRethink:item type:type except4SP2F:nil];
+                    [item checkAndUpdatePerceptInRethink:type except4SP2F:nil];
                     if (Log4Forecast) NSLog(@"---//IP反省触发器执行:%p F%ld 状态:%@",matchFo,matchFo.pointer.pointerId,TIStatus2Str(status));
                 }
                 

@@ -77,7 +77,7 @@
             BOOL mIsC = [recognitionAlgs containsObject:waitAlg_p];
             if (mIsC) {
                 //6. 有反馈时,进行P反省: 进行理性IRT反省;
-                [TCRethink reasonInRethink:waitModel cutIndex:waitModel.cutIndex type:ATPlus except4SP2F:except4SP2F];
+                [waitModel checkAndUpdateReasonInRethink:waitModel.cutIndex type:ATPlus except4SP2F:except4SP2F];
                 
                 //7. pFo任务顺利: 推进帧;
                 [waitModel feedbackPushFrame:model.protoAlg.pointer];
@@ -158,7 +158,7 @@
                     AnalogyType type = score > 0 ? ATPlus : ATSub;
                     
                     //11. 则进行感性IRT反省;
-                    [TCRethink perceptInRethink:waitModel type:type except4SP2F:except4SP2F];
+                    [waitModel checkAndUpdatePerceptInRethink:type except4SP2F:except4SP2F];
                     NSLog(@"---//IP反省触发器执行:%p F%ld 状态:%@",waitMatchFo,waitMatchFo.pointer.pointerId,TIStatus2Str(TIModelStatus_OutBackSameDelta));
                     
                     //12. 有mv反馈时,做Canset识别 (参考28185-todo5);
