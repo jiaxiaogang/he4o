@@ -160,3 +160,53 @@
 }
 
 @end
+
+//MARK:===============================================================
+//MARK: < 内存记录sp防重(主要用于TOFoModel.outSPRecord和pFo.inSPRecord) >
+//MARK:===============================================================
+@implementation SPMemRecord
+
+-(NSMutableDictionary *)spRecord{
+    if (!_spRecord) _spRecord = [[NSMutableDictionary alloc] init];
+    return _spRecord;
+}
+
+/**
+ *  MARK:--------------------防重检查和回滚--------------------
+ *  @param spIndex type difStrong : 本次要执行更新sp的几个参数值;
+ *  @param backBlock : 发现重复,调用回滚的block
+ *  @param runBlock : 本次允许,调用执行的block
+ */
+-(void) update:(NSInteger)spIndex type:(AnalogyType)type difStrong:(NSInteger)difStrong backBlock:(void(^)(NSInteger mDifStrong,AnalogyType mType))backBlock runBlock:(void(^)())runBlock {
+    //1. 取得canstFrom的spStrong;
+    AISPStrong *value = [self.spRecord objectForKey:@(spIndex)];
+    if (!value) value = [[AISPStrong alloc] init];
+    [self.spRecord setObject:value forKey:@(spIndex)];
+    
+    //2. 避免重复 (执行过的,不再执行);
+    if (type == ATPlus && value.pStrong > 0) return;
+    if (type == ATSub && value.sStrong > 0) return;
+    
+    //3. 避免冲突 (对立面执行过,回滚);
+    if (type == ATPlus && value.sStrong > 0) {
+        backBlock(-value.sStrong,ATSub);
+        value.sStrong = 0;
+    }
+    if (type == ATSub && value.pStrong > 0) {
+        backBlock(-value.pStrong,ATPlus);
+        value.pStrong = 0;
+    }
+    
+    //4. 把此次SP更新下;
+    //2024.11.18: outSP+1时,F层也+1 (F层从transferPort迁移关联来取) (参考33112-TODO3);
+    runBlock();
+    
+    //5. 把此次SP更新值记录到outSPRecord避免下次重复或冲突;
+    if (type == ATSub) {
+        value.sStrong = difStrong;
+    } else {
+        value.pStrong = difStrong;
+    }
+}
+
+@end

@@ -17,7 +17,7 @@
  *  MARK:--------------------OutSP强度值反馈记录--------------------
  *  @说明 用于检查:避免重复&避免冲突 (仅放在内存中,不持久化,避免它重复计SP值,或者计了S又计P的冲突);
  */
-@property (strong, nonatomic) NSMutableDictionary *outSPRecord;
+@property (strong, nonatomic) SPMemRecord *spMemRecord;
 
 @end
 
@@ -633,9 +633,9 @@
 //MARK:                     < OutSP反馈部分 >
 //MARK:===============================================================
 
--(NSMutableDictionary *)outSPRecord{
-    if (!_outSPRecord) _outSPRecord = [[NSMutableDictionary alloc] init];
-    return _outSPRecord;
+-(SPMemRecord *)spMemRecord {
+    if (!_spMemRecord) _spMemRecord = [[SPMemRecord alloc] init];
+    return _spMemRecord;
 }
 
 /**
@@ -665,36 +665,13 @@
     caller = STRFORMAT(@"%@ by:%@ ROOT%ld(F%ld)",caller,fromDSC,rootIndex,Demand2Pit(root).pointerId);
     
     //1. 取得canstFrom的spStrong;
-    AISPStrong *value = [self.outSPRecord objectForKey:@(spIndex)];
-    if (!value) value = [[AISPStrong alloc] init];
-    [self.outSPRecord setObject:value forKey:@(spIndex)];
-    
-    //2. 避免重复 (执行过的,不再执行);
-    if (type == ATPlus && value.pStrong > 0) return;
-    if (type == ATSub && value.sStrong > 0) return;
-    
-    //3. 避免冲突 (对立面执行过,回滚);
     AIFoNodeBase *sceneTo = [SMGUtils searchNode:self.sceneTo];
     NSArray *cansetToContent_ps = Simples2Pits(self.transferXvModel.cansetToOrders);
-    if (type == ATPlus && value.sStrong > 0) {
-        [AINetUtils updateOutSPStrong_4IF:sceneTo iCansetContent_ps:cansetToContent_ps caller:STRFORMAT(@"%@(撤销S)",caller) spIndex:spIndex difStrong:-value.sStrong type:ATSub debugMode:false except4SP2F:except4SP2F];
-        value.sStrong = 0;
-    }
-    if (type == ATSub && value.pStrong > 0) {
-        [AINetUtils updateOutSPStrong_4IF:sceneTo iCansetContent_ps:cansetToContent_ps caller:STRFORMAT(@"%@(撤销P)",caller) spIndex:spIndex difStrong:-value.pStrong type:ATPlus debugMode:false except4SP2F:except4SP2F];
-        value.pStrong = 0;
-    }
-    
-    //4. 把此次SP更新下;
-    //2024.11.18: outSP+1时,F层也+1 (F层从transferPort迁移关联来取) (参考33112-TODO3);
-    [AINetUtils updateOutSPStrong_4IF:sceneTo iCansetContent_ps:cansetToContent_ps caller:caller spIndex:spIndex difStrong:difStrong type:type debugMode:debugMode except4SP2F:except4SP2F];
-    
-    //5. 把此次SP更新值记录到outSPRecord避免下次重复或冲突;
-    if (type == ATSub) {
-        value.sStrong = difStrong;
-    } else {
-        value.pStrong = difStrong;
-    }
+    [self.spMemRecord update:spIndex type:type difStrong:difStrong backBlock:^(NSInteger mDifStrong, AnalogyType mType) {
+        [AINetUtils updateOutSPStrong_4IF:sceneTo iCansetContent_ps:cansetToContent_ps caller:STRFORMAT(@"%@(撤销S)",caller) spIndex:spIndex difStrong:mDifStrong type:mType debugMode:false except4SP2F:except4SP2F];
+    } runBlock:^{
+        [AINetUtils updateOutSPStrong_4IF:sceneTo iCansetContent_ps:cansetToContent_ps caller:caller spIndex:spIndex difStrong:difStrong type:type debugMode:debugMode except4SP2F:except4SP2F];
+    }];
 }
 
 /**

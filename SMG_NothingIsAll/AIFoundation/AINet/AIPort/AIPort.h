@@ -85,3 +85,24 @@
 @property (assign,nonatomic) NSInteger nStrong; //无效
 
 @end
+
+//MARK:===============================================================
+//MARK: < 内存记录sp防重(主要用于TOFoModel.outSPRecord和pFo.inSPRecord) >
+//MARK:===============================================================
+@interface SPMemRecord : NSObject
+
+/**
+ *  MARK:--------------------In/OutSP强度值反馈记录--------------------
+ *  @说明 用于检查:避免重复&避免冲突 (仅放在内存中,不持久化,避免它重复计SP值,或者计了S又计P的冲突);
+ */
+@property (strong, nonatomic) NSMutableDictionary *spRecord;
+
+/**
+ *  MARK:--------------------防重检查和回滚--------------------
+ *  @param spIndex type difStrong : 本次要执行更新sp的几个参数值;
+ *  @param backBlock : 发现重复,调用回滚的block
+ *  @param runBlock : 本次允许,调用执行的block
+ */
+-(void) update:(NSInteger)spIndex type:(AnalogyType)type difStrong:(NSInteger)difStrong backBlock:(void(^)(NSInteger mDifStrong,AnalogyType mType))backBlock runBlock:(void(^)())runBlock;
+
+@end
