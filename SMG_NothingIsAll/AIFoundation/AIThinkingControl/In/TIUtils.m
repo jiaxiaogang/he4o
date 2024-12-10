@@ -505,9 +505,10 @@
     NSMutableArray *except4SP2F = [[NSMutableArray alloc] init];
     
     //13. inSP值子即父: 时序识别成功后,protoFo从0到cutIndex全计P+1 (参考33112-TODO4.3 & 33134-FIX2a);
-    for (NSInteger i = 0; i <= protoOrRegroupCutIndex; i++) {
-        [AINetUtils updateInSPStrong_4IF:protoOrRegroupFo conSPIndex:i type:ATPlus except4SP2F:except4SP2F];
-    }
+    //2024.12.10: 先关掉这里,因为在forecast_Multi()中,已经给pFo已发生部分计了sp值,这里再推到F层,就重复了 (并且这种做法,只是做了proto层和pFo层,pFo的F层并未照顾到,另外其实也不太建议在识别成功后,把已发生层全计上数,感觉和SP的初衷不太相符);
+    //for (NSInteger i = 0; i <= protoOrRegroupCutIndex; i++) {
+    //    [AINetUtils updateInSPStrong_4IF:protoOrRegroupFo conSPIndex:i difStrong:1 type:ATPlus except4SP2F:except4SP2F];
+    //}
 }
 
 /**

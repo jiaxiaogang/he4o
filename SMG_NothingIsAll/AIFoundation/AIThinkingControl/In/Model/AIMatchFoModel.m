@@ -357,17 +357,28 @@
  */
 
 -(void) checkAndUpdateReasonInRethink:(NSInteger)cutIndex type:(AnalogyType)type except4SP2F:(NSMutableArray*)except4SP2F {
-    AIFoNodeBase *matchFo = [SMGUtils searchNode:self.matchFo];
-    NSString *spFrom = STRFORMAT(@"%@",[matchFo.spDic objectForKey:@(cutIndex + 1)]);
-    [AINetUtils updateInSPStrong_4IF:matchFo conSPIndex:cutIndex + 1 type:type except4SP2F:except4SP2F];
-    if (Log4Rethink) IFTitleLog(@"IR反省", @"\nspIndex:%ld -> (%@) %@->%@ %@",cutIndex + 1,ATType2Str(type),spFrom,[matchFo.spDic objectForKey:@(cutIndex + 1)],Fo2FStr(matchFo));
+    [self checkAndUpdateGeneralInRethink:type spIndex:cutIndex + 1 except4SP2F:except4SP2F];
 }
 
 -(void) checkAndUpdatePerceptInRethink:(AnalogyType)type except4SP2F:(NSMutableArray*)except4SP2F {
     AIFoNodeBase *matchFo = [SMGUtils searchNode:self.matchFo];
-    NSString *spFrom = STRFORMAT(@"%@",[matchFo.spDic objectForKey:@(matchFo.count)]);
-    [AINetUtils updateInSPStrong_4IF:matchFo conSPIndex:matchFo.count type:type except4SP2F:except4SP2F];
-    if (Log4Rethink) IFTitleLog(@"IP反省", @"\nspIndex:%ld -> (%@) %@->%@ %@",matchFo.count,ATType2Str(type),spFrom,[matchFo.spDic objectForKey:@(matchFo.count)],Fo2FStr(matchFo));
+    [self checkAndUpdateGeneralInRethink:type spIndex:matchFo.count except4SP2F:except4SP2F];
+}
+
+-(void) checkAndUpdateGeneralInRethink:(AnalogyType)type spIndex:(NSInteger)spIndex except4SP2F:(NSMutableArray*)except4SP2F {
+    //1. 数据准备;
+    NSInteger difStrong = 1;//默认发生后,都计1;
+    AIFoNodeBase *matchFo = [SMGUtils searchNode:self.matchFo];
+    NSString *prStr = spIndex == matchFo.count ? @"P" : @"R";
+    
+    //2. 判断回滚 和 SP计数;
+    [self.spMemRecord update:spIndex type:type difStrong:difStrong backBlock:^(NSInteger mDifStrong, AnalogyType mType) {
+        [AINetUtils updateInSPStrong_4IF:matchFo conSPIndex:spIndex difStrong:mDifStrong type:mType except4SP2F:except4SP2F];
+    } runBlock:^{
+        NSString *spFrom = STRFORMAT(@"%@",[matchFo.spDic objectForKey:@(spIndex)]);
+        [AINetUtils updateInSPStrong_4IF:matchFo conSPIndex:spIndex difStrong:difStrong type:type except4SP2F:except4SP2F];
+        if (Log4Rethink) NSLog(@"I%@反省 => spIndex:%ld -> (%@) %@->%@ %@",prStr,spIndex,ATType2Str(type),spFrom,[matchFo.spDic objectForKey:@(spIndex)],Fo2FStr(matchFo));
+    }];
 }
 
 /**

@@ -333,7 +333,7 @@
 /**
  *  MARK:--------------------inSP子即父--------------------
  */
-+(void) updateInSPStrong_4IF:(AIFoNodeBase*)conFo conSPIndex:(NSInteger)conSPIndex type:(AnalogyType)type except4SP2F:(NSMutableArray*)except4SP2F;
++(void) updateInSPStrong_4IF:(AIFoNodeBase*)conFo conSPIndex:(NSInteger)conSPIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type except4SP2F:(NSMutableArray*)except4SP2F;
 
 /**
  *  MARK:--------------------根据iScene取有迁移关联的father层--------------------

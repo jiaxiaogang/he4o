@@ -1049,9 +1049,9 @@
  *  MARK:--------------------inSP子即父--------------------
  *  @desc 子即父,推举到F层SP也+1: iScene的inSP更新时,将它的fScene的inSP也+1 (参考33111-TODO2 & 33134-FIX2a & TCRethink代码);
  */
-+(void) updateInSPStrong_4IF:(AIFoNodeBase*)conFo conSPIndex:(NSInteger)conSPIndex type:(AnalogyType)type except4SP2F:(NSMutableArray*)except4SP2F {
++(void) updateInSPStrong_4IF:(AIFoNodeBase*)conFo conSPIndex:(NSInteger)conSPIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type except4SP2F:(NSMutableArray*)except4SP2F {
     //1. 具象先更新;
-    [conFo updateSPStrong:conSPIndex type:type];
+    [conFo updateSPStrong:conSPIndex difStrong:difStrong type:type];
     if (!except4SP2F) except4SP2F= [[NSMutableArray alloc] init];
     
     //2. 抽象也更新 (参考29069-todo11.4);
@@ -1063,7 +1063,7 @@
         if ([except4SP2F containsObject:itemExcept]) return;
         [except4SP2F addObject:itemExcept];
         
-        [absFo updateSPStrong:absIndex type:type];
+        [absFo updateSPStrong:absIndex difStrong:difStrong type:type];
     }];
 }
 
