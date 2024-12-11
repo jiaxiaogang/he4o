@@ -195,4 +195,6 @@
  */
 -(NSArray*) convert2Orders;
 
+@property (strong, nonatomic) NSMutableDictionary *debugLog;
+
 @end

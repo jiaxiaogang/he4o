@@ -55,6 +55,11 @@
     return _transferFPorts;
 }
 
+-(NSMutableDictionary *)debugLog{
+    if (!ISOK(_debugLog, NSMutableDictionary.class)) _debugLog = [[NSMutableDictionary alloc] initWithDictionary:_debugLog];
+    return _debugLog;
+}
+
 //MARK:===============================================================
 //MARK:                     < spDic组 >
 //MARK:===============================================================
@@ -68,8 +73,19 @@
 -(void) updateSPStrong:(NSInteger)spIndex type:(AnalogyType)type {
     [self updateSPStrong:spIndex difStrong:1 type:type];
 }
--(void) updateSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type {
+-(void) updateSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type caller:(NSString*)caller {
     [self updateSPStrong:spIndex difStrong:difStrong type:type forSPDic:self.spDic];
+    
+    //TODOTOMORROW20241211: 调试巨大sp值,都是从哪里来的 (该防重都做了,但SP还是很大);
+    NSString *logKey = STRFORMAT(@"%ld %@ %@",spIndex,caller,ATType2Str(type));
+    NSString *countKey = STRFORMAT(@"次数 %@",logKey);
+    NSString *sumKey = STRFORMAT(@"和数 %@",logKey);
+    
+    long oldCount = NUMTOOK([self.debugLog objectForKey:countKey]).longValue;
+    [self.debugLog setObject:@(oldCount+1) forKey:countKey];
+    
+    long oldSum = NUMTOOK([self.debugLog objectForKey:sumKey]).longValue;
+    [self.debugLog setObject:@(oldSum+difStrong) forKey:sumKey];
 }
 
 /**
@@ -370,6 +386,7 @@
         self.conCansetsDic = [aDecoder decodeObjectForKey:@"conCansetsDic"];
         self.transferFPorts = [aDecoder decodeObjectForKey:@"transferFPorts"];
         self.transferIPorts = [aDecoder decodeObjectForKey:@"transferIPorts"];
+        self.debugLog = [aDecoder decodeObjectForKey:@"debugLog"];
     }
     return self;
 }
@@ -387,6 +404,7 @@
     [aCoder encodeObject:[self.conCansetsDic copy] forKey:@"conCansetsDic"];
     [aCoder encodeObject:[self.transferFPorts copy] forKey:@"transferFPorts"];
     [aCoder encodeObject:[self.transferIPorts copy] forKey:@"transferIPorts"];
+    [aCoder encodeObject:[self.debugLog copy] forKey:@"debugLog"];
 }
 
 @end
