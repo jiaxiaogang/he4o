@@ -72,13 +72,13 @@
  *                    1. 表示责任帧下标,比如为1时,则表示第2帧的责任;
  *                    2. 如果是mv则输入content.count;
  */
--(void) updateSPStrong:(NSInteger)spIndex type:(AnalogyType)type;
--(void) updateSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type;
+-(void) updateSPStrong:(NSInteger)spIndex type:(AnalogyType)type caller:(NSString*)caller;
+-(void) updateSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type caller:(NSString*)caller;
 
 /**
  *  MARK:--------------------从start到end都计一次S或P--------------------
  */
--(void) updateSPStrong:(NSInteger)start end:(NSInteger)end type:(AnalogyType)type;
+-(void) updateSPStrong:(NSInteger)start end:(NSInteger)end type:(AnalogyType)type caller:(NSString*)caller;
 
 /**
  *  MARK:--------------------更新整个spDic--------------------

@@ -70,8 +70,8 @@
  *                    1. 表示责任帧下标,比如为1时,则表示第2帧的责任;
  *                    2. 如果是mv则输入content.count;
  */
--(void) updateSPStrong:(NSInteger)spIndex type:(AnalogyType)type {
-    [self updateSPStrong:spIndex difStrong:1 type:type];
+-(void) updateSPStrong:(NSInteger)spIndex type:(AnalogyType)type caller:(NSString*)caller {
+    [self updateSPStrong:spIndex difStrong:1 type:type caller:caller];
 }
 -(void) updateSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type caller:(NSString*)caller {
     [self updateSPStrong:spIndex difStrong:difStrong type:type forSPDic:self.spDic];
@@ -128,9 +128,9 @@
  *  MARK:--------------------从start到end都计一次P--------------------
  *  @desc 含start 也含end;
  */
--(void) updateSPStrong:(NSInteger)start end:(NSInteger)end type:(AnalogyType)type{
+-(void) updateSPStrong:(NSInteger)start end:(NSInteger)end type:(AnalogyType)type caller:(NSString*)caller {
     for (NSInteger i = start; i <= end; i++) {
-        [self updateSPStrong:i type:type];
+        [self updateSPStrong:i type:type caller:caller];
     }
 }
 
@@ -141,8 +141,8 @@
     newSPDic = DICTOOK(newSPDic);
     for (NSNumber *newIndex in newSPDic.allKeys) {
         AISPStrong *newStrong = [newSPDic objectForKey:newIndex];
-        [self updateSPStrong:newIndex.integerValue difStrong:newStrong.sStrong type:ATSub];
-        [self updateSPStrong:newIndex.integerValue difStrong:newStrong.pStrong type:ATPlus];
+        [self updateSPStrong:newIndex.integerValue difStrong:newStrong.sStrong type:ATSub caller:@"更新整个spDic"];
+        [self updateSPStrong:newIndex.integerValue difStrong:newStrong.pStrong type:ATPlus caller:@"更新整个spDic"];
     }
 }
 

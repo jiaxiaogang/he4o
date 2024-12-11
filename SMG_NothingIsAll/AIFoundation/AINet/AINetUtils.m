@@ -904,8 +904,8 @@
         AISPStrong *spStrong = [assFo.spDic objectForKey:assIndex];
         
         //3. 将spStrong继承给absFo;
-        [absFo updateSPStrong:absIndex.integerValue difStrong:spStrong.sStrong type:ATSub];
-        [absFo updateSPStrong:absIndex.integerValue difStrong:spStrong.pStrong type:ATPlus];
+        [absFo updateSPStrong:absIndex.integerValue difStrong:spStrong.sStrong type:ATSub caller:@"extendSPByIndexDic"];
+        [absFo updateSPStrong:absIndex.integerValue difStrong:spStrong.pStrong type:ATPlus caller:@"extendSPByIndexDic"];
     }
 }
 
@@ -914,7 +914,7 @@
  */
 +(void) updateSPByIndexDic:(NSDictionary*)conIndexDic conFo:(AIFoNodeBase*)conFo absFo:(AIFoNodeBase*)absFo {
     for (NSNumber *absIndex in conIndexDic.allKeys) {
-        [absFo updateSPStrong:absIndex.integerValue difStrong:1 type:ATPlus];
+        [absFo updateSPStrong:absIndex.integerValue difStrong:1 type:ATPlus caller:@"updateSPByIndexDic"];
     }
 }
 
@@ -1051,7 +1051,7 @@
  */
 +(void) updateInSPStrong_4IF:(AIFoNodeBase*)conFo conSPIndex:(NSInteger)conSPIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type except4SP2F:(NSMutableArray*)except4SP2F {
     //1. 具象先更新;
-    [conFo updateSPStrong:conSPIndex difStrong:difStrong type:type];
+    [conFo updateSPStrong:conSPIndex difStrong:difStrong type:type caller:@"updateInSPStrong_4IF-I"];
     if (!except4SP2F) except4SP2F= [[NSMutableArray alloc] init];
     
     //2. 抽象也更新 (参考29069-todo11.4);
@@ -1063,7 +1063,7 @@
         if ([except4SP2F containsObject:itemExcept]) return;
         [except4SP2F addObject:itemExcept];
         
-        [absFo updateSPStrong:absIndex difStrong:difStrong type:type];
+        [absFo updateSPStrong:absIndex difStrong:difStrong type:type caller:@"updateInSPStrong_4IF-F"];
     }];
 }
 

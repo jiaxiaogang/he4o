@@ -45,7 +45,7 @@
         AIFoNodeBase *matchFo = [SMGUtils searchNode:prFo.matchFo];
         
         //TODO: 这里仅仅是给当前I做了SP,但没同步推举到F,随后看是不是把这里改下,也调用TCRethink里的那个推举方法 或 AINetUtils里的那个IF推举方法;
-        [matchFo updateSPStrong:0 end:prFo.cutIndex type:ATPlus];
+        [matchFo updateSPStrong:0 end:prFo.cutIndex type:ATPlus caller:@"pFo的0到Cut已发生"];
         
         //4. 预测帧: 下帧预测触发器; (参考25031-2) ->feedbackTIR;
         [self forecast_Single:prFo];
