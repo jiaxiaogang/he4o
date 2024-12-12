@@ -86,6 +86,28 @@
     
     long oldSum = NUMTOOK([self.debugLog objectForKey:sumKey]).longValue;
     [self.debugLog setObject:@(oldSum+difStrong) forKey:sumKey];
+    
+//    [0 ]    (null)    @"和数 6 extendSPByIndexDic 好" : (long)98805
+//    [17]    (null)    @"次数 6 extendSPByIndexDic 好" : (long)1
+//    [83]    (null)    @"和数 7 extendSPByIndexDic 好" : (long)161480
+//    [18]    (null)    @"次数 7 extendSPByIndexDic 好" : (long)1
+//    [82]    (null)    @"和数 8 extendSPByIndexDic 好" : (long)242305
+//    [14]    (null)    @"次数 8 extendSPByIndexDic 好" : (long)1
+    
+//    和数 4 extendSPByIndexDic 好 = 223739265;
+//    次数 4 extendSPByIndexDic 好 = 1;
+//    和数 7 extendSPByIndexDic 好 = 732059391;
+//    次数 7 extendSPByIndexDic 好 = 1;
+    
+    //从上日志可见,问题就出在这个extendSPByIndexDic上了;
+    for (id key in self.debugLog.allKeys) {
+        NSNumber *value = [self.debugLog objectForKey:key];
+        if (NUMTOOK(value).integerValue > 1000000) {
+            NSLog(@"debugLog: \n%@",self.debugLog);
+            NSLog(@"%@ = %@",key,value);
+            NSLog(@"");
+        }
+    }
 }
 
 /**
