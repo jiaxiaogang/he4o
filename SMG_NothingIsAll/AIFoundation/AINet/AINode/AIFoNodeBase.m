@@ -103,9 +103,9 @@
     for (id key in self.debugLog.allKeys) {
         NSNumber *value = [self.debugLog objectForKey:key];
         if (NUMTOOK(value).integerValue > 1000000) {
-            NSLog(@"debugLog: \n%@",self.debugLog);
-            NSLog(@"%@ = %@",key,value);
-            NSLog(@"");
+//            NSLog(@"debugLog: \n%@",self.debugLog);
+//            NSLog(@"%@ = %@",key,value);
+//            NSLog(@"");
         }
     }
 }

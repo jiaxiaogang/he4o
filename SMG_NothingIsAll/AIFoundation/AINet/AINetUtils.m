@@ -906,6 +906,23 @@
         //3. 将spStrong继承给absFo;
         [absFo updateSPStrong:absIndex.integerValue difStrong:spStrong.sStrong type:ATSub caller:@"extendSPByIndexDic"];
         [absFo updateSPStrong:absIndex.integerValue difStrong:spStrong.pStrong type:ATPlus caller:@"extendSPByIndexDic"];
+        
+        //TODOTOROMORROW20241213: 继续追查SP值巨大的BUG;
+        if (spStrong.pStrong > 100000) {
+            NSLog(@"%@",assFo.debugLog);
+//            192 [09:10:14:739 TI      AIFoNodeBase.m 106]     和数 8 extendSPByIndexDic 坏 = 12305499096498076;
+//            193 [09:10:14:739 TI      AIFoNodeBase.m 106]     和数 8 extendSPByIndexDic 好 = 36806692691624168;
+            
+            //但这里assIndex为14时,断点,pStrong非常巨大,但它的第14帆,并没有累计过多少啊,以下全加起来,也就13+30+6=49而已;
+            //看来,明天得把每一次累计后的值算一下,究竟什么时候开始巨大的,debugLog也没打出来它...奇怪..
+//            674 [09:15:34:546 TI        AINetUtils.m 912]     次数 14 updateInSPStrong_4IF-F 好 = 6;
+//            720 [09:15:34:546 TI        AINetUtils.m 912]     和数 14 pFo的0到Cut已发生 好 = 13;
+//            738 [09:15:34:546 TI        AINetUtils.m 912]     和数 14 updateInSPStrong_4IF-I 好 = 30;
+//            766 [09:15:34:546 TI        AINetUtils.m 912]     次数 14 pFo的0到Cut已发生 好 = 13;
+//            767 [09:15:34:546 TI        AINetUtils.m 912]     次数 14 updateInSPStrong_4IF-I 好 = 30;
+//            791 [09:15:34:546 TI        AINetUtils.m 912]     和数 14 updateInSPStrong_4IF-F 好 = 6;
+            NSLog(@"查下ass这么大值,又是哪来的,因为这里本身就很大,推到absFo一次,就已经是超大值了");
+        }
     }
 }
 
