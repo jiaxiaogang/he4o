@@ -66,8 +66,8 @@
  */
 @interface AISPStrong : NSObject <NSCoding>
 
-@property (assign,nonatomic) CGFloat sStrong;
-@property (assign,nonatomic) CGFloat pStrong;
+@property (assign,nonatomic) NSInteger sStrong;
+@property (assign,nonatomic) NSInteger pStrong;
 
 @end
 
