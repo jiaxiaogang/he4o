@@ -913,7 +913,7 @@
 //            192 [09:10:14:739 TI      AIFoNodeBase.m 106]     和数 8 extendSPByIndexDic 坏 = 12305499096498076;
 //            193 [09:10:14:739 TI      AIFoNodeBase.m 106]     和数 8 extendSPByIndexDic 好 = 36806692691624168;
             
-            //但这里assIndex为14时,断点,pStrong非常巨大,但它的第14帆,并没有累计过多少啊,以下全加起来,也就13+30+6=49而已;
+            //但这里assIndex为14时,断点,pStrong非常巨大,但它的第14帧,并没有累计过多少啊,以下全加起来,也就13+30+6=49而已;
             //看来,明天得把每一次累计后的值算一下,究竟什么时候开始巨大的,debugLog也没打出来它...奇怪..
 //            674 [09:15:34:546 TI        AINetUtils.m 912]     次数 14 updateInSPStrong_4IF-F 好 = 6;
 //            720 [09:15:34:546 TI        AINetUtils.m 912]     和数 14 pFo的0到Cut已发生 好 = 13;

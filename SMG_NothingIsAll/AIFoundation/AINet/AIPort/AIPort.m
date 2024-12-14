@@ -102,7 +102,7 @@
 @implementation AISPStrong
 
 -(NSString *)description{
-    return STRFORMAT(@"S%ldP%ldf",self.sStrong,self.pStrong);
+    return STRFORMAT(@"S%.2fP%.2f",self.sStrong,self.pStrong);
 }
 
 /**
@@ -111,15 +111,15 @@
 - (instancetype)initWithCoder:(NSCoder *)coder {
     self = [super init];
     if (self) {
-        self.sStrong = [coder decodeIntegerForKey:@"sStrong"];
-        self.pStrong = [coder decodeIntegerForKey:@"pStrong"];
+        self.sStrong = [coder decodeFloatForKey:@"sStrong"];
+        self.pStrong = [coder decodeFloatForKey:@"pStrong"];
     }
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)coder {
-    [coder encodeInteger:self.sStrong forKey:@"sStrong"];
-    [coder encodeInteger:self.pStrong forKey:@"pStrong"];
+    [coder encodeFloat:self.sStrong forKey:@"sStrong"];
+    [coder encodeFloat:self.pStrong forKey:@"pStrong"];
 }
 
 @end

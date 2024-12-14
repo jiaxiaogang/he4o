@@ -464,6 +464,9 @@
     //1. 取出I层spDic;
     //2024.12.03: 避免iSPDic被更新值后,如果node被保存,就被持久化了 (此问题未证实,只是这么猜想,就调用下copy预防一下);
     NSMutableDictionary *iSPDic = [[NSMutableDictionary alloc] initWithDictionary:iScene.spDic];
+    
+    //TODOTOMORROW20241214: shit看来bug出在这儿,即使copy了,原来的字典仍然会被改;
+    
     NSString *protoSPDicStr = CLEANSTR(iSPDic);
     
     //2. 取出F层 (参考33114-TODO3-用I/F综合起来决定最终spDic及稳定性);
