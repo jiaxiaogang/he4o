@@ -195,6 +195,6 @@
  */
 -(NSArray*) convert2Orders;
 
-@property (strong, nonatomic) NSMutableDictionary *debugLog;
+//@property (strong, nonatomic) NSMutableDictionary *debugSPMinXiLog;
 
 @end

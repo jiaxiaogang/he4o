@@ -55,10 +55,10 @@
     return _transferFPorts;
 }
 
--(NSMutableDictionary *)debugLog{
-    if (!ISOK(_debugLog, NSMutableDictionary.class)) _debugLog = [[NSMutableDictionary alloc] initWithDictionary:_debugLog];
-    return _debugLog;
-}
+//-(NSMutableDictionary *)debugSPMinXiLog{
+//    if (!ISOK(_debugSPMinXiLog, NSMutableDictionary.class)) _debugSPMinXiLog = [[NSMutableDictionary alloc] initWithDictionary:_debugSPMinXiLog];
+//    return _debugSPMinXiLog;
+//}
 
 //MARK:===============================================================
 //MARK:                     < spDic组 >
@@ -76,38 +76,25 @@
 -(void) updateSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type caller:(NSString*)caller {
     [self updateSPStrong:spIndex difStrong:difStrong type:type forSPDic:self.spDic];
     
-    //TODOTOMORROW20241211: 调试巨大sp值,都是从哪里来的 (该防重都做了,但SP还是很大);
-    NSString *logKey = STRFORMAT(@"%ld %@ %@",spIndex,caller,ATType2Str(type));
-    NSString *countKey = STRFORMAT(@"次数 %@",logKey);
-    NSString *sumKey = STRFORMAT(@"和数 %@",logKey);
-    
-    long oldCount = NUMTOOK([self.debugLog objectForKey:countKey]).longValue;
-    [self.debugLog setObject:@(oldCount+1) forKey:countKey];
-    
-    long oldSum = NUMTOOK([self.debugLog objectForKey:sumKey]).longValue;
-    [self.debugLog setObject:@(oldSum+difStrong) forKey:sumKey];
-    
-//    [0 ]    (null)    @"和数 6 extendSPByIndexDic 好" : (long)98805
-//    [17]    (null)    @"次数 6 extendSPByIndexDic 好" : (long)1
-//    [83]    (null)    @"和数 7 extendSPByIndexDic 好" : (long)161480
-//    [18]    (null)    @"次数 7 extendSPByIndexDic 好" : (long)1
-//    [82]    (null)    @"和数 8 extendSPByIndexDic 好" : (long)242305
-//    [14]    (null)    @"次数 8 extendSPByIndexDic 好" : (long)1
-    
-//    和数 4 extendSPByIndexDic 好 = 223739265;
-//    次数 4 extendSPByIndexDic 好 = 1;
-//    和数 7 extendSPByIndexDic 好 = 732059391;
-//    次数 7 extendSPByIndexDic 好 = 1;
-    
-    //从上日志可见,问题就出在这个extendSPByIndexDic上了;
-    for (id key in self.debugLog.allKeys) {
-        NSNumber *value = [self.debugLog objectForKey:key];
-        if (NUMTOOK(value).integerValue > 1000000) {
-//            NSLog(@"debugLog: \n%@",self.debugLog);
-//            NSLog(@"%@ = %@",key,value);
-//            NSLog(@"");
-        }
-    }
+    //DEBUG: 如果sp值异常,可以打开此处训练,把整个sp累计的过程明细打出来,调试sp值都是从哪里来的 (参考33137-出过SP巨大的BUG);
+    //NSString *logKey = STRFORMAT(@"%ld %@ %@",spIndex,caller,ATType2Str(type));
+    //NSString *countKey = STRFORMAT(@"次数 %@",logKey);
+    //NSString *sumKey = STRFORMAT(@"和数 %@",logKey);
+    //
+    //long oldCount = NUMTOOK([self.debugSPMinXiLog objectForKey:countKey]).longValue;
+    //[self.debugSPMinXiLog setObject:@(oldCount+1) forKey:countKey];
+    //
+    //long oldSum = NUMTOOK([self.debugSPMinXiLog objectForKey:sumKey]).longValue;
+    //[self.debugSPMinXiLog setObject:@(oldSum+difStrong) forKey:sumKey];
+    //
+    //for (id key in self.debugSPMinXiLog.allKeys) {
+    //    NSNumber *value = [self.debugSPMinXiLog objectForKey:key];
+    //    if (NUMTOOK(value).integerValue > 1000000) {
+    //        NSLog(@"debugSPMinXiLog: \n%@",self.debugSPMinXiLog);
+    //        NSLog(@"%@ = %@",key,value);
+    //        NSLog(@"");
+    //    }
+    //}
 }
 
 /**
@@ -126,21 +113,6 @@
         value.pStrong += difStrong;
     }
     [forSPDic setObject:value forKey:key];
-    
-    //TODOTOMORROW20241203: 查SP值值异常大的问题 (参考33137-问题2):
-    //疑点1: 要不就是因为: 这里可能把很大的值推举过来?
-    //疑点2: 要不就是SP评分时,改的那个spDic更新到了本地导致?
-    if (difStrong > 1) {
-        NSLog(@"fltxxx F%ld(第%ld帧)(%@) + %ld = %.0f",self.pId,spIndex,ATType2Str(type),difStrong,type == ATSub ? value.sStrong : value.pStrong);
-    }
-    
-    if (self.pId == 358) {
-        NSLog(@"1111111111 经查,就子即父,在perceptInRethink,就能把absFo的sp值推起来,这就尴尬了...");
-    }
-    
-    if (type == ATSub ? value.sStrong : value.pStrong > 10000) {
-//        NSLog(@"什么时候大于1w的,都哪来的?");
-    }
     
     //3. 保存fo
     [SMGUtils insertNode:self];
@@ -408,7 +380,7 @@
         self.conCansetsDic = [aDecoder decodeObjectForKey:@"conCansetsDic"];
         self.transferFPorts = [aDecoder decodeObjectForKey:@"transferFPorts"];
         self.transferIPorts = [aDecoder decodeObjectForKey:@"transferIPorts"];
-        self.debugLog = [aDecoder decodeObjectForKey:@"debugLog"];
+        //self.debugSPMinXiLog = [aDecoder decodeObjectForKey:@"debugSPMinXiLog"];
     }
     return self;
 }
@@ -426,7 +398,7 @@
     [aCoder encodeObject:[self.conCansetsDic copy] forKey:@"conCansetsDic"];
     [aCoder encodeObject:[self.transferFPorts copy] forKey:@"transferFPorts"];
     [aCoder encodeObject:[self.transferIPorts copy] forKey:@"transferIPorts"];
-    [aCoder encodeObject:[self.debugLog copy] forKey:@"debugLog"];
+    //[aCoder encodeObject:[self.debugSPMinXiLog copy] forKey:@"debugSPMinXiLog"];
 }
 
 @end

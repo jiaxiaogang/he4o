@@ -906,23 +906,6 @@
         //3. 将spStrong继承给absFo;
         [absFo updateSPStrong:absIndex.integerValue difStrong:spStrong.sStrong type:ATSub caller:@"extendSPByIndexDic"];
         [absFo updateSPStrong:absIndex.integerValue difStrong:spStrong.pStrong type:ATPlus caller:@"extendSPByIndexDic"];
-        
-        //TODOTOMORROW20241213: 继续追查SP值巨大的BUG;
-        if (spStrong.pStrong > 100000) {
-            NSLog(@"%@",assFo.debugLog);
-//            192 [09:10:14:739 TI      AIFoNodeBase.m 106]     和数 8 extendSPByIndexDic 坏 = 12305499096498076;
-//            193 [09:10:14:739 TI      AIFoNodeBase.m 106]     和数 8 extendSPByIndexDic 好 = 36806692691624168;
-            
-            //但这里assIndex为14时,断点,pStrong非常巨大,但它的第14帧,并没有累计过多少啊,以下全加起来,也就13+30+6=49而已;
-            //看来,明天得把每一次累计后的值算一下,究竟什么时候开始巨大的,debugLog也没打出来它...奇怪..
-//            674 [09:15:34:546 TI        AINetUtils.m 912]     次数 14 updateInSPStrong_4IF-F 好 = 6;
-//            720 [09:15:34:546 TI        AINetUtils.m 912]     和数 14 pFo的0到Cut已发生 好 = 13;
-//            738 [09:15:34:546 TI        AINetUtils.m 912]     和数 14 updateInSPStrong_4IF-I 好 = 30;
-//            766 [09:15:34:546 TI        AINetUtils.m 912]     次数 14 pFo的0到Cut已发生 好 = 13;
-//            767 [09:15:34:546 TI        AINetUtils.m 912]     次数 14 updateInSPStrong_4IF-I 好 = 30;
-//            791 [09:15:34:546 TI        AINetUtils.m 912]     和数 14 updateInSPStrong_4IF-F 好 = 6;
-            NSLog(@"查下ass这么大值,又是哪来的,因为这里本身就很大,推到absFo一次,就已经是超大值了");
-        }
     }
 }
 
@@ -1050,9 +1033,10 @@
     NSArray *fatherPorts = [AINetUtils transferPorts_4Father:iScene iCansetContent_ps:iCansetContent_ps];
     for (AITransferPort *fatherPort in fatherPorts) {
         //2024.12.05: 避免F值快速重复累计到很大,sp更新(同场景下的)防重推 (参考33137-方案v5TODO2);
-        NSString *itemExcept = STRFORMAT(@"%ld_%ld_%ld",fatherPort.fScene.pointerId,fatherPort.fCanset.pointerId,spIndex);
-        if ([except4SP2F containsObject:itemExcept]) continue;
-        [except4SP2F addObject:itemExcept];
+        //2024.12.15: 把except4SP2F废弃掉,因为spMemRecord已经做了防重和回滚,不需要这个再防重了 (参考33137-问题2-补充);
+        //NSString *itemExcept = STRFORMAT(@"%ld_%ld_%ld",fatherPort.fScene.pointerId,fatherPort.fCanset.pointerId,spIndex);
+        //if ([except4SP2F containsObject:itemExcept]) continue;
+        //[except4SP2F addObject:itemExcept];
         
         AIFoNodeBase *fatherScene = [SMGUtils searchNode:fatherPort.fScene];
         AIFoNodeBase *fatherCanset = [SMGUtils searchNode:fatherPort.fCanset];
@@ -1074,11 +1058,11 @@
     //2. 抽象也更新 (参考29069-todo11.4);
     //2024.11.08: 佐证: 子即父 (参考33111-TODO2);
     [TCRethinkUtil spEff4Abs:conFo curFoIndex:conSPIndex itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {
-        
         //2024.12.05: 避免F值快速重复累计到很大,sp更新(同场景下的)防重推 (参考33137-方案v5TODO1);
-        NSString *itemExcept = STRFORMAT(@"%ld_%ld",absFo.pId,absIndex);
-        if ([except4SP2F containsObject:itemExcept]) return;
-        [except4SP2F addObject:itemExcept];
+        //2024.12.15: 把except4SP2F废弃掉,因为spMemRecord已经做了防重和回滚,不需要这个再防重了 (参考33137-问题2-补充);
+        //NSString *itemExcept = STRFORMAT(@"%ld_%ld",absFo.pId,absIndex);
+        //if ([except4SP2F containsObject:itemExcept]) return;
+        //[except4SP2F addObject:itemExcept];
         
         [absFo updateSPStrong:absIndex difStrong:difStrong type:type caller:@"updateInSPStrong_4IF-F"];
     }];
