@@ -64,7 +64,7 @@
  *  @version
  *      2021.12.25: 初版,用于Fo下记录某元素的SP强度值 (也可用于mv的SP强度值) (参考25031-5);
  */
-@interface AISPStrong : NSObject <NSCoding>
+@interface AISPStrong : NSObject <NSCoding,NSCopying>
 
 @property (assign,nonatomic) CGFloat sStrong;
 @property (assign,nonatomic) CGFloat pStrong;

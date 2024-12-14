@@ -907,7 +907,7 @@
         [absFo updateSPStrong:absIndex.integerValue difStrong:spStrong.sStrong type:ATSub caller:@"extendSPByIndexDic"];
         [absFo updateSPStrong:absIndex.integerValue difStrong:spStrong.pStrong type:ATPlus caller:@"extendSPByIndexDic"];
         
-        //TODOTOROMORROW20241213: 继续追查SP值巨大的BUG;
+        //TODOTOMORROW20241213: 继续追查SP值巨大的BUG;
         if (spStrong.pStrong > 100000) {
             NSLog(@"%@",assFo.debugLog);
 //            192 [09:10:14:739 TI      AIFoNodeBase.m 106]     和数 8 extendSPByIndexDic 坏 = 12305499096498076;

@@ -122,6 +122,16 @@
     [coder encodeFloat:self.pStrong forKey:@"pStrong"];
 }
 
+/**
+ *  MARK:--------------------NSCopying--------------------
+ */
+- (id)copyWithZone:(NSZone __unused *)zone {
+    AISPStrong *copy = [[AISPStrong alloc] init];
+    copy.sStrong = self.sStrong;
+    copy.pStrong = self.pStrong;
+    return copy;
+}
+
 @end
 
 

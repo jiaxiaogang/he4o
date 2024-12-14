@@ -77,4 +77,6 @@
 +(void) runAtMainThread:(Act0)act;
 +(void) runAtThread:(dispatch_queue_t)queue act:(Act0)act;
 
++(NSMutableDictionary*) copySPDic:(NSDictionary*)protoSPDic;
+
 @end

@@ -171,4 +171,14 @@
     });
 }
 
++(NSMutableDictionary*) copySPDic:(NSDictionary*)protoSPDic {
+    protoSPDic = DICTOOK(protoSPDic);
+    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
+    for (id key in protoSPDic.allKeys) {
+        AISPStrong *value = [protoSPDic objectForKey:key];
+        [result setObject:value.copy forKey:key];
+    }
+    return result;
+}
+
 @end
