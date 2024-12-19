@@ -403,7 +403,23 @@
         AIAlgNodeBase *protoAlg = [SMGUtils searchNode:proto_p];
         
         //3. 每个abs_p分别索引;
-        NSArray *protoAlgAbs_ps = ISOK(protoAlg, AICMVNodeBase.class) ? @[proto_p] : Ports2Pits([protoAlg.absPorts copy]);
+        NSArray *protoAlgAbs_ps = nil;
+        if (ISOK(protoAlg, AICMVNodeBase.class)) {
+            protoAlgAbs_ps = @[proto_p];
+        } else if (!fromRegroup) {
+            //识别过来的,直接把matchAlg_PS层当索引即可;
+            protoAlgAbs_ps = [SMGUtils convertArr:inModel.matchAlgs_PS convertBlock:^id(AIMatchAlgModel *obj) {
+                return obj.matchAlg;
+            }];
+        } else {
+            protoAlgAbs_ps = Ports2Pits(protoAlg.absPorts);
+            //4. 仅保留似层: 索引absAlg是交层,则直接continue (参考33111-TODO1);
+            protoAlgAbs_ps = [SMGUtils filterArr:protoAlgAbs_ps checkValid:^BOOL(AIKVPointer *item) {
+                return !item.isJiao;
+            }];
+        }
+        NSLog(@"索引数: %ld -> %ld",protoAlg.absPorts.count,protoAlgAbs_ps.count);
+        
         for (AIKVPointer *absAlg_p in protoAlgAbs_ps) {
             //4. 仅保留似层: 索引absAlg是交层,则直接continue (参考33111-TODO1);
             if (absAlg_p.isJiao) continue;

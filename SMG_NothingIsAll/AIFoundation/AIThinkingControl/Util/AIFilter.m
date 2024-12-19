@@ -31,11 +31,12 @@
  *      2023.03.06: 时序识别过滤器强度为主,匹配度为辅 (参考28152-方案4-todo5);
  *      2023.03.18. 由0.16调整为0.6 (概念已经很准了,时序只要把不准部分切了就行,不需要过滤太多);
  *      2023.06.01: 加上识别二次过滤后,第一次不需要过滤匹配度了,仅排除一下强度太弱的末尾即可 (参考29108-1);
+ *      2024.12.19: 时序识别的: 一次过滤的强度太弱,而二次过滤的匹配度太强,所以增高强度,减弱匹配度 (参考3313a-方案);
  */
 +(NSArray*) recognitionFoFilter:(NSArray*)matchModels {
     return [self filterOnce:matchModels mainBlock:^double(AIMatchFoModel *item) {
         return item.strongValue;
-    } radio:0.8f min:8 max:20];
+    } radio:0.5f min:8 max:20 caller:@"时序识别一次"];
 }
 
 /**
@@ -103,7 +104,8 @@
     [theTC updateOperCount:kFILENAME];
     //2024.10.26: 二次过滤卡的太严了,改为保留50% (参考33109-方案1);
     //2024.10.28: 转向方案3了,所以改回一些,改成30% (参考33109-方案3);
-    NSInteger foLimit = MAX(4, inModel.matchPFos.count * 0.3f);
+    //2024.12.19: 时序识别的: 一次过滤的强度太弱,而二次过滤的匹配度太强,所以增高强度,减弱匹配度 (参考3313a-方案);
+    NSInteger foLimit = MAX(4, inModel.matchPFos.count * 0.7f);
     if (inModel.matchPFos.count <= foLimit) return;//小于limit条时,不用二次过滤;
     IFTitleLog(@"识别二次过滤",@"\nfrom protoFo:%@",Fo2FStr(inModel.protoFo));
     BOOL debugMode = false;
@@ -350,7 +352,7 @@
     return filter2;
 }
 
-+(NSArray*) filterOnce:(NSArray*)protoArr mainBlock:(double(^)(id item))mainBlock radio:(CGFloat)radio min:(NSInteger)min max:(NSInteger)max{
++(NSArray*) filterOnce:(NSArray*)protoArr mainBlock:(double(^)(id item))mainBlock radio:(CGFloat)radio min:(NSInteger)min max:(NSInteger)max caller:(NSString*)caller {
     //0. 数据准备;
     if (!ARRISOK(protoArr)) return protoArr;
     NSInteger resultNum = [self getResultNum:protoArr.count radio:radio min:min max:max];
@@ -358,7 +360,7 @@
     
     //2. 过滤并返回结果;
     NSArray *filter = ARR_SUB([SMGUtils sortBig2Small:protoArr compareBlock:mainBlock], 0, protoArr.count * realRate);
-    NSLog(@"过滤器: 总%ld需%ld 主:%.2f => 剩:%ld",protoArr.count,resultNum,realRate,filter.count);
+    NSLog(@"%@过滤器: 总%ld需%ld 主:%.2f => 剩:%ld",caller,protoArr.count,resultNum,realRate,filter.count);
     return filter;
 }
 

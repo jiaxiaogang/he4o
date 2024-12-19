@@ -159,7 +159,7 @@
     }];
     
     //2. debug日志
-    for (MapModel *mapModel in ARR_SUB(sortMapArr, 0, 50)) {
+    for (MapModel *mapModel in ARR_SUB(sortMapArr, 0, 5)) {
         TOFoModel *obj = mapModel.v1;
         CGFloat spScore = NUMTOOK(mapModel.v3).floatValue;
         NSInteger pStrong = NUMTOOK(mapModel.v2).integerValue;
