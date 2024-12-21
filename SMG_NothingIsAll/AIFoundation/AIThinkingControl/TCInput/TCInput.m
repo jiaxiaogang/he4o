@@ -63,15 +63,18 @@
     [TCRegroup rRegroup:mModel];
     AIFoNodeBase *protoFo = ARRISOK(mModel.matchAlgs) ? mModel.protoFo : mModel.matchAFo;
     
-    //6. 行为不触发识别和学习 (参考28137-修复);
+    //6. 行为不触发识别 (参考28137-修复);
     if (!algNode.pointer.isOut || Switch4IsOutReIn) {
         //7. 时序识别
         [TCRecognition rRecognition:mModel];
-        
-        //8. 识别二次过滤器;
-        [AIFilter secondRecognitionFilter:mModel];
-        
-        //8. 学习;
+    }
+    
+    //8. 二次过滤后,进行概念抽具象关联 (参考3313b-TODO4);
+    [TIUtils recognitionAlgStep2:mModel];
+    
+    //9. 行为不触发学习 (参考28137-修复);
+    if (!algNode.pointer.isOut || Switch4IsOutReIn) {
+        //10. 学习;
         [TCLearning rLearning:mModel protoFo:protoFo];
     }
     
@@ -130,6 +133,9 @@
     
     //5. P不需要时序识别,但可以触发学习 => 提交学习识别;
     [TCRecognition pRecognition:shortModel];
+    
+    //6. 二次过滤后,进行概念抽具象关联 (参考3313b-TODO4);
+    [TIUtils recognitionAlgStep2:shortModel];
     
     //6. 学习
     [TCLearning pLearning:shortModel.protoFo];

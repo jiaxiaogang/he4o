@@ -383,7 +383,7 @@
  *      2024.10.29: 时序识别似层化 (参考33111-TODO1);
  *  @status 废弃,因为countDic排序的方式,不利于找出更确切的抽象结果 (识别不怕丢失细节,就怕不确切,不全含);
  */
-+(void) recognitionFo:(AIFoNodeBase*)protoOrRegroupFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel fromRegroup:(BOOL)fromRegroup matchAlgs:(NSArray*)matchAlgs protoOrRegroupCutIndex:(NSInteger)protoOrRegroupCutIndex debugMode:(BOOL)debugMode{
++(void) recognitionFoStep1:(AIFoNodeBase*)protoOrRegroupFo except_ps:(NSArray*)except_ps decoratorInModel:(AIShortMatchModel*)inModel fromRegroup:(BOOL)fromRegroup matchAlgs:(NSArray*)matchAlgs protoOrRegroupCutIndex:(NSInteger)protoOrRegroupCutIndex debugMode:(BOOL)debugMode{
     //1. 数据准备;
     except_ps = ARRTOOK(except_ps);
     NSMutableArray *protoPModels = [[NSMutableArray alloc] init];
@@ -481,23 +481,6 @@
     }
     [inModel log4HavXianWuJv_PFos:@"fltx2"];
     
-    //12. 关联处理,直接protoFo抽象指向matchFo,并持久化indexDic (参考27177-todo6);
-    for (AIMatchFoModel *item in allMatchFos) {
-        //4. 识别到时,refPorts -> 更新/加强微信息的引用序列
-        AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
-        [AINetUtils updateRefStrongByIndexDic:item.indexDic2 matchFo:item.matchFo];
-        [AINetUtils updateContentStrongByIndexDic:item.indexDic2 matchFo:item.matchFo];
-        
-        //5. 存储matchFo与protoFo之间的indexDic映射 (参考27177-todo5);
-        [protoOrRegroupFo updateIndexDic:matchFo indexDic:item.indexDic2];
-        
-        //6. 对proto直接抽象指向matchAlg,并增强强度值 (为保证抽象多样性,所以相近的也抽具象关联) (参考27153-3);
-        [AINetUtils relateFoAbs:matchFo conNodes:@[protoOrRegroupFo] isNew:false];
-        
-        //7. 存储protoFo与matchFo之间的匹配度度记录 (存每个alg元素的乘积匹配度) (参考27153-todo2);
-        [protoOrRegroupFo updateMatchValue:matchFo matchValue:item.sumNear];
-    }
-    
     //2024.12.05: 每次反馈同F只计一次: 避免F值快速重复累计到很大,sp更新(同场景下的)防重推 (参考33137-方案v5);
     NSMutableArray *except4SP2F = [[NSMutableArray alloc] init];
     
@@ -585,6 +568,30 @@
     //23. 至此前段全含条件满足,返回映射结果;
     if (Log4MFo) NSLog(@"全含success:%@",CLEANSTR(indexDic));
     return indexDic;
+}
+
+/**
+ *  MARK:--------------------时序识别第二步: 抽具象关联--------------------
+ */
++(void) recognitionFoStep2:(AIFoNodeBase*)protoOrRegroupFo inModel:(AIShortMatchModel*)inModel {
+    NSArray *allMatchFos = [[SMGUtils collectArrA:inModel.matchPFos arrB:inModel.matchRFos] copy];
+    
+    //12. 关联处理,直接protoFo抽象指向matchFo,并持久化indexDic (参考27177-todo6);
+    for (AIMatchFoModel *item in allMatchFos) {
+        //4. 识别到时,refPorts -> 更新/加强微信息的引用序列
+        AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
+        [AINetUtils updateRefStrongByIndexDic:item.indexDic2 matchFo:item.matchFo];
+        [AINetUtils updateContentStrongByIndexDic:item.indexDic2 matchFo:item.matchFo];
+        
+        //5. 存储matchFo与protoFo之间的indexDic映射 (参考27177-todo5);
+        [protoOrRegroupFo updateIndexDic:matchFo indexDic:item.indexDic2];
+        
+        //6. 对proto直接抽象指向matchAlg,并增强强度值 (为保证抽象多样性,所以相近的也抽具象关联) (参考27153-3);
+        [AINetUtils relateFoAbs:matchFo conNodes:@[protoOrRegroupFo] isNew:false];
+        
+        //7. 存储protoFo与matchFo之间的匹配度度记录 (存每个alg元素的乘积匹配度) (参考27153-todo2);
+        [protoOrRegroupFo updateMatchValue:matchFo matchValue:item.sumNear];
+    }
 }
 
 //MARK:===============================================================
