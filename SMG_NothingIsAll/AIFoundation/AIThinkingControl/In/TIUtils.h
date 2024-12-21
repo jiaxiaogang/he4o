@@ -13,8 +13,12 @@
 //MARK:===============================================================
 //MARK:                     < 概念识别 >
 //MARK:===============================================================
-+(void) recognitionAlg:(AIKVPointer*)algNode_p except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel;
++(void) recognitionAlgStep1:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel;
 
+/**
+ *  MARK:--------------------概念识别-第二步: 抽具象关联--------------------
+ */
++(void) recognitionAlgStep2:(AIShortMatchModel*)inModel;
 
 //MARK:===============================================================
 //MARK:                     < 时序识别 >

@@ -44,7 +44,7 @@
     mModel.inputTime = [[NSDate date] timeIntervalSince1970];
     
     //2. 识别概念;
-    [TIUtils recognitionAlg:algNode.pointer except_ps:except_ps inModel:mModel];
+    [TIUtils recognitionAlgStep1:except_ps inModel:mModel];
     
     //3. 将mModel保留 (只有先保留后,构建时序时,才会含新帧概念);
     [theTC.inModelManager add:mModel];
@@ -117,7 +117,7 @@
     DebugE();
     
     //2. 识别概念;
-    [TIUtils recognitionAlg:mv.pointer except_ps:nil inModel:shortModel];
+    [TIUtils recognitionAlgStep1:nil inModel:shortModel];
     
     //2. 转regroup生成protoFo;
     [TCRegroup pRegroup:mv shortModel:shortModel];

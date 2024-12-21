@@ -88,36 +88,7 @@
  *  _result
  *      xxxx.xx.xx: completeBlock : 共支持三种返回: 匹配效果从高到低分别为:fuzzyAlg废弃,matchAlg全含,seemAlg局部;
  *      2022.01.16: 改为直接传入inModel模型,识别后赋值到inModel中即可;
- */
-+(void) recognitionAlg:(AIKVPointer*)algNode_p except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel{
-    //1. 数据准备
-    AIAlgNodeBase *protoAlg = [SMGUtils searchNode:algNode_p];
-    if (protoAlg == nil) return;
-    IFTitleLog(@"概念识别",@"\n%@",Alg2FStr(protoAlg));
-    
-    ///3. 局部匹配 -> 内存网络;
-    ///200116注掉,因为识别仅是建立抽象关联,此处会极易匹配到内存中大量的具象alg,导致无法建立关联,而在硬盘网络时,这种几率则低许多;
-    //if (!assAlgNode) assAlgNode = [AINetIndexUtils recognitionAlg_Run:algNode isMem:true except_ps:except_ps];
-    
-    ///4. 局部匹配 (Abs匹配 和 Seem匹配);
-    [self recognitionAlg_Run:protoAlg except_ps:except_ps inModel:inModel];
-    
-    //5. 关联处理 & 外类比 (这样后面TOR理性决策时,才可以直接对当前瞬时实物进行很好的理性评价) (参考21091-蓝线);
-    for (AIMatchAlgModel *matchModel in inModel.matchAlgs_All) {
-        //4. 识别到时,value.refPorts -> 更新/加强微信息的引用序列
-        AIAbsAlgNode *matchAlg = [SMGUtils searchNode:matchModel.matchAlg];
-        [AINetUtils insertRefPorts_AllAlgNode:matchModel.matchAlg content_ps:matchAlg.content_ps difStrong:1];
-        
-        //5. 存储protoAlg与matchAlg之间的相近度记录 (参考27153-todo2);
-        [protoAlg updateMatchValue:matchAlg matchValue:matchModel.matchValue];
-        
-        //6. 对proto直接抽象指向matchAlg,并增强强度值 (为保证抽象多样性,所以相近的也抽具象关联) (参考27153-3);
-        [AINetUtils relateAlgAbs:matchAlg conNodes:@[protoAlg] isNew:false];
-        [AITest test25:matchAlg conAlgs:@[protoAlg]];
-    }
-}
-
-/**
+ *      
  *  MARK:--------------------概念局部匹配--------------------
  *  注: 根据引用找出相似度最高且达到阀值的结果返回; (相似度匹配)
  *  从content_ps的所有value.refPorts找前cPartMatchingCheckRefPortsLimit个, 如:contentCount9*limit5=45个;
@@ -161,10 +132,12 @@
  *      2023.06.02 - 性能优化_复用vInfo (在识别二次过滤器中测得,这个vInfo在循环中时性能影响挺大的);
  *      2023.06.03 - 性能优化_复用cacheDataDic到循环外 & cacheProtoData到循环外 & proto收集防重用dic (参考29109-测得3);
  */
-+(void) recognitionAlg_Run:(AIAlgNodeBase*)protoAlg except_ps:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel{
++(void) recognitionAlgStep1:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel {
     //0. 数据准备;
+    AIAlgNodeBase *protoAlg = inModel.protoAlg;
     if (!ISOK(protoAlg, AIAlgNodeBase.class)) return;
     except_ps = ARRTOOK(except_ps);
+    IFTitleLog(@"概念识别",@"\n%@",Alg2FStr(protoAlg));
     
     //1. 收集prAlgs <K:pid,V:AIMatchAlgModel> (注: 现在alg的atds全是空,用pid就能判断唯一);
     NSMutableDictionary *protoPDic = [NSMutableDictionary new], *protoRDic = [NSMutableDictionary new];
@@ -290,6 +263,25 @@
         //if (itemAlg.count != protoAlgCount) return false;
         return true;
     }];
+}
+
+/**
+ *  MARK:--------------------概念识别-第二步: 抽具象关联--------------------
+ */
++(void) recognitionAlgStep2:(AIShortMatchModel*)inModel {
+    //5. 关联处理 & 外类比 (这样后面TOR理性决策时,才可以直接对当前瞬时实物进行很好的理性评价) (参考21091-蓝线);
+    for (AIMatchAlgModel *matchModel in inModel.matchAlgs_All) {
+        //4. 识别到时,value.refPorts -> 更新/加强微信息的引用序列
+        AIAbsAlgNode *matchAlg = [SMGUtils searchNode:matchModel.matchAlg];
+        [AINetUtils insertRefPorts_AllAlgNode:matchModel.matchAlg content_ps:matchAlg.content_ps difStrong:1];
+        
+        //5. 存储protoAlg与matchAlg之间的相近度记录 (参考27153-todo2);
+        [inModel.protoAlg updateMatchValue:matchAlg matchValue:matchModel.matchValue];
+        
+        //6. 对proto直接抽象指向matchAlg,并增强强度值 (为保证抽象多样性,所以相近的也抽具象关联) (参考27153-3);
+        [AINetUtils relateAlgAbs:matchAlg conNodes:@[inModel.protoAlg] isNew:false];
+        [AITest test25:matchAlg conAlgs:@[inModel.protoAlg]];
+    }
 }
 
 //MARK:===============================================================
