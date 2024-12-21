@@ -391,11 +391,20 @@
     
     //2. 广入: 对每个元素,分别取索引序列 (参考25083-1);
     NSArray *protoOrRegroupContent_ps = [protoOrRegroupFo.content_ps copy];
-    for (AIKVPointer *proto_p in protoOrRegroupContent_ps) {
+    for (NSInteger i = 0; i < protoOrRegroupContent_ps.count; i++) {
+        AIKVPointer *proto_p = ARR_INDEX(protoOrRegroupContent_ps, i);
         AIAlgNodeBase *protoAlg = [SMGUtils searchNode:proto_p];
         
         //3. 每个abs_p分别索引;
-        NSArray *protoAlgAbs_ps = ISOK(protoAlg, AICMVNodeBase.class) ? @[proto_p] : Ports2Pits(protoAlg.absPorts);
+        NSArray *protoAlgAbs_ps = nil;
+        if (ISOK(protoAlg, AICMVNodeBase.class)) {
+            protoAlgAbs_ps = @[proto_p];
+        } else if (i == protoOrRegroupContent_ps.count - 1) {
+            //3b. 末帧时,抽具象概念还没关联,不能从absPorts访问到它,所以直接从inModel.matchAlgs来访问 (参考3313b-TODO2);
+            protoAlgAbs_ps = inModel.matchAlgs_PS;
+        } else {
+            protoAlgAbs_ps = Ports2Pits(protoAlg.absPorts);
+        }
         
         //4. 仅保留似层: 索引absAlg是交层,则直接continue (参考33111-TODO1);
         protoAlgAbs_ps = [SMGUtils filterArr:protoAlgAbs_ps checkValid:^BOOL(AIKVPointer *item) {
