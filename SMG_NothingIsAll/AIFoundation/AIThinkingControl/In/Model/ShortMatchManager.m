@@ -81,8 +81,8 @@
  */
 -(BOOL) isNewOneByRateOfAItem:(AIShortMatchModel*)aItem bItem:(AIShortMatchModel*)bItem {
     //1. 计算交集率;
-    NSArray *aAlgs = [SMGUtils convertArr:aItem.matchAlgs convertBlock:^id (AIMatchAlgModel *obj) { return obj.matchAlg; }];
-    NSArray *bAlgs = [SMGUtils convertArr:bItem.matchAlgs convertBlock:^id (AIMatchAlgModel *obj) { return obj.matchAlg; }];
+    NSArray *aAlgs = [SMGUtils convertArr:aItem.matchAlgs_Si convertBlock:^id (AIMatchAlgModel *obj) { return obj.matchAlg; }];
+    NSArray *bAlgs = [SMGUtils convertArr:bItem.matchAlgs_Si convertBlock:^id (AIMatchAlgModel *obj) { return obj.matchAlg; }];
     NSArray *sameAlgs = [SMGUtils filterArrA:aAlgs arrB:bAlgs];
     NSInteger totalCount = MIN(aAlgs.count, bAlgs.count);
     CGFloat rate = totalCount > 0 ? (float)sameAlgs.count / totalCount : 0;

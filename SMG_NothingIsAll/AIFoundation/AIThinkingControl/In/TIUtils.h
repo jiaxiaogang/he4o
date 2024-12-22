@@ -28,7 +28,7 @@
 /**
  *  MARK:--------------------时序识别第二步: 抽具象关联--------------------
  */
-+(void) recognitionFoStep2:(AIFoNodeBase*)protoOrRegroupFo inModel:(AIShortMatchModel*)inModel;
++(void) recognitionFoStep2:(AIFoNodeBase*)protoOrRegroupFo inModel:(AIShortMatchModel*)inModel debugMode:(BOOL)debugMode;
 
 
 //MARK:===============================================================

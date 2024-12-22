@@ -30,19 +30,19 @@
 +(void) rRecognition:(AIShortMatchModel*)model{
     //1. 数据准备;
     NSArray *except_ps = @[model.protoFo.pointer,model.matchAFo.pointer];
-    AIFoNodeBase *protoFo = ARRISOK(model.matchAlgs) ? model.protoFo : model.matchAFo;
+    AIFoNodeBase *protoFo = ARRISOK(model.matchAlgs_Si) ? model.protoFo : model.matchAFo;
     [theTC updateOperCount:kFILENAME];
     Debug();
     IFTitleLog(@"rInput时序识别", @"\nprotoFo:%@->%@",Fo2FStr(protoFo),Mvp2Str(protoFo.cmvNode_p));
     
     //2. 调用通用时序识别方法 (checkItemValid: 可考虑写个isBasedNode()判断,因protoAlg可里氏替换,目前仅支持后两层)
-    [TIUtils recognitionFoStep1:protoFo except_ps:except_ps decoratorInModel:model fromRegroup:false matchAlgs:model.matchAlgs protoOrRegroupCutIndex:protoFo.count - 1 debugMode:true];
+    [TIUtils recognitionFoStep1:protoFo except_ps:except_ps decoratorInModel:model fromRegroup:false matchAlgs:model.matchAlgs_Si protoOrRegroupCutIndex:protoFo.count - 1 debugMode:true];
     
     //3. 识别二次过滤器;
     [AIFilter secondRecognitionFilter:model];
     
     //4. 二次过滤后,进行时序抽具象关联 (参考3313b-TODO4);
-    [TIUtils recognitionFoStep2:protoFo inModel:model];
+    [TIUtils recognitionFoStep2:protoFo inModel:model debugMode:true];
     DebugE();
 }
 
@@ -55,7 +55,7 @@
     [TIUtils recognitionFoStep1:protoFo except_ps:except_ps decoratorInModel:model fromRegroup:false matchAlgs:nil protoOrRegroupCutIndex:protoFo.count - 1 debugMode:true];
     
     //2. 二次过滤后,进行时序抽具象关联 (参考3313b-TODO4);
-    [TIUtils recognitionFoStep2:protoFo inModel:model];
+    [TIUtils recognitionFoStep2:protoFo inModel:model debugMode:true];
     DebugE();
 }
 
@@ -108,7 +108,7 @@
     //NSLog(@"反思时序: Finish >> %@",Fo2FStr(result.matchFo));
     
     //2. 二次过滤后,进行时序抽具象关联 (参考3313b-TODO4);
-    [TIUtils recognitionFoStep2:regroupFo inModel:result];
+    [TIUtils recognitionFoStep2:regroupFo inModel:result debugMode:false];
     
     //3. 调用更新到短时记忆树 (不用学习和反馈,直接构建子任务);
     DebugE();
@@ -136,7 +136,7 @@
     [AIFilter secondActionRecognitionFilter:result];
     
     //2. 二次过滤后,进行时序抽具象关联 (参考3313b-TODO4);
-    [TIUtils recognitionFoStep2:regroupFo inModel:result];
+    [TIUtils recognitionFoStep2:regroupFo inModel:result debugMode:false];
     
     //3. 调用更新到短时记忆树 (不用学习和反馈,直接构建子任务) (参考30054-todo5);
     DebugE();

@@ -34,7 +34,7 @@
     Debug();
     
     //2024.04.21: 改成取matchAlgs_All判断反馈 (参考31134-交层AbsCanset很难反馈匹配的问题);
-    IFTitleLog(@"feedbackTIR", @"\n输入ProtoA:%@ (识别matchAlgs数:%ld)",Alg2FStr(model.protoAlg),model.matchAlgs.count);
+    IFTitleLog(@"feedbackTIR", @"\n输入ProtoA:%@ (识别matchAlgs数:%ld)",Alg2FStr(model.protoAlg),model.matchAlgs_Si.count);
     NSArray *recognitionAlgs = [SMGUtils convertArr:model.matchAlgs_All convertBlock:^id(AIMatchAlgModel *o) {
         return o.matchAlg;
     }];

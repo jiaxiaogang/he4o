@@ -237,11 +237,6 @@
     
     //16. debugLog
     NSLog(@"\n概念识别结果 (感似:%ld条 理似:%ld条 感交:%ld 理交:%ld) protoAlg:%@",inModel.matchAlgs_PS.count,inModel.matchAlgs_RS.count,inModel.matchAlgs_PJ.count,inModel.matchAlgs_RJ.count,Alg2FStr(protoAlg));
-    for (AIMatchAlgModel *item in inModel.matchAlgs_All) {
-        NSString *prDesc = [inModel.matchAlgs_R containsObject:item] ? @"r" : @"p";
-        NSString *sjDesc = [inModel.matchAlgs_Si containsObject:item] ? @"s" : @"j";
-        if (Log4MAlg) NSLog(@"%@%@-->>>(%d) 全含item: %@   \t相近度 => %.2f (count:%d)",prDesc,sjDesc,item.sumRefStrong,Pit2FStr(item.matchAlg),item.matchValue,item.matchCount);
-    }
     [inModel log4HavXianWuJv_AlgPJ:@"fltx1"];
 }
 
@@ -270,6 +265,7 @@
  */
 +(void) recognitionAlgStep2:(AIShortMatchModel*)inModel {
     //5. 关联处理 & 外类比 (这样后面TOR理性决策时,才可以直接对当前瞬时实物进行很好的理性评价) (参考21091-蓝线);
+    NSLog(@"概念识别关联 (感似:%ld条 理似:%ld条 感交:%ld 理交:%ld) protoAlg:%@",inModel.matchAlgs_PS.count,inModel.matchAlgs_RS.count,inModel.matchAlgs_PJ.count,inModel.matchAlgs_RJ.count,Alg2FStr(inModel.protoAlg));
     for (AIMatchAlgModel *matchModel in inModel.matchAlgs_All) {
         //4. 识别到时,value.refPorts -> 更新/加强微信息的引用序列
         AIAbsAlgNode *matchAlg = [SMGUtils searchNode:matchModel.matchAlg];
@@ -281,6 +277,11 @@
         //6. 对proto直接抽象指向matchAlg,并增强强度值 (为保证抽象多样性,所以相近的也抽具象关联) (参考27153-3);
         [AINetUtils relateAlgAbs:matchAlg conNodes:@[inModel.protoAlg] isNew:false];
         [AITest test25:matchAlg conAlgs:@[inModel.protoAlg]];
+        
+        //7. log
+        NSString *prDesc = [inModel.matchAlgs_R containsObject:matchModel] ? @"r" : @"p";
+        NSString *sjDesc = [inModel.matchAlgs_Si containsObject:matchModel] ? @"s" : @"j";
+        if (Log4MAlg) NSLog(@"%@%@-->>>(%d) 全含item: %@   \t相近度 => %.2f (count:%d)",prDesc,sjDesc,matchModel.sumRefStrong,Pit2FStr(matchModel.matchAlg),matchModel.matchValue,matchModel.matchCount);
     }
 }
 
@@ -401,7 +402,9 @@
             protoAlgAbs_ps = @[proto_p];
         } else if (i == protoOrRegroupContent_ps.count - 1) {
             //3b. 末帧时,抽具象概念还没关联,不能从absPorts访问到它,所以直接从inModel.matchAlgs来访问 (参考3313b-TODO2);
-            protoAlgAbs_ps = inModel.matchAlgs_PS;
+            protoAlgAbs_ps = [SMGUtils convertArr:inModel.matchAlgs_PS convertBlock:^id(AIMatchAlgModel *obj) {
+                return obj.matchAlg;
+            }];
         } else {
             protoAlgAbs_ps = Ports2Pits(protoAlg.absPorts);
         }
@@ -478,16 +481,7 @@
     NSArray *sortRs = [AIRank recognitionFoRank:filterRModels];
     inModel.matchPFos = [[NSMutableArray alloc] initWithArray:sortPs];
     inModel.matchRFos = [[NSMutableArray alloc] initWithArray:sortRs];
-    
-    //11. 调试日志;
-    NSArray *allMatchFos = [[SMGUtils collectArrA:inModel.matchPFos arrB:inModel.matchRFos] copy];
-    if (debugMode && allMatchFos.count > 0) {
-        NSLog(@"\n时序识别结果 P(%ld条) R(%ld条)",inModel.matchPFos.count,inModel.matchRFos.count);
-        for (AIMatchFoModel *item in allMatchFos) {
-            AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
-            NSLog(@"%ld. %@强度:(%ld)\t> %@->{%.2f} (SP:%@) indexDic:%@ 匹配度 => %.2f",[allMatchFos indexOfObject:item],matchFo.cmvNode_p?@"P":@"",item.sumRefStrong,Fo2FStr(matchFo),[AIScore score4MV_v2FromCache:item],CLEANSTR(matchFo.spDic),CLEANSTR(item.indexDic2),item.matchFoValue);
-        }
-    }
+    if (debugMode) NSLog(@"\n时序识别结果 P(%ld条) R(%ld条)",inModel.matchPFos.count,inModel.matchRFos.count);
     [inModel log4HavXianWuJv_PFos:@"fltx2"];
     
     //2024.12.05: 每次反馈同F只计一次: 避免F值快速重复累计到很大,sp更新(同场景下的)防重推 (参考33137-方案v5);
@@ -582,10 +576,12 @@
 /**
  *  MARK:--------------------时序识别第二步: 抽具象关联--------------------
  */
-+(void) recognitionFoStep2:(AIFoNodeBase*)protoOrRegroupFo inModel:(AIShortMatchModel*)inModel {
++(void) recognitionFoStep2:(AIFoNodeBase*)protoOrRegroupFo inModel:(AIShortMatchModel*)inModel debugMode:(BOOL)debugMode {
+    //1. 数据准备;
     NSArray *allMatchFos = [[SMGUtils collectArrA:inModel.matchPFos arrB:inModel.matchRFos] copy];
+    if (debugMode) NSLog(@"\n时序识别关联 P(%ld条) R(%ld条)",inModel.matchPFos.count,inModel.matchRFos.count);
     
-    //12. 关联处理,直接protoFo抽象指向matchFo,并持久化indexDic (参考27177-todo6);
+    //2. 关联处理,直接protoFo抽象指向matchFo,并持久化indexDic (参考27177-todo6);
     for (AIMatchFoModel *item in allMatchFos) {
         //4. 识别到时,refPorts -> 更新/加强微信息的引用序列
         AIFoNodeBase *matchFo = [SMGUtils searchNode:item.matchFo];
@@ -600,6 +596,9 @@
         
         //7. 存储protoFo与matchFo之间的匹配度度记录 (存每个alg元素的乘积匹配度) (参考27153-todo2);
         [protoOrRegroupFo updateMatchValue:matchFo matchValue:item.sumNear];
+        
+        //8. 调试日志;
+        if (debugMode) NSLog(@"%ld. %@强度:(%ld)\t> %@->{%.2f} (SP:%@) indexDic:%@ 匹配度 => %.2f",[allMatchFos indexOfObject:item],matchFo.cmvNode_p?@"P":@"",item.sumRefStrong,Fo2FStr(matchFo),[AIScore score4MV_v2FromCache:item],CLEANSTR(matchFo.spDic),CLEANSTR(item.indexDic2),item.matchFoValue);
     }
 }
 

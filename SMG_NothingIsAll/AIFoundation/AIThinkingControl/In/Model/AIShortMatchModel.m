@@ -11,17 +11,12 @@
 @implementation AIShortMatchModel
 
 -(AIMatchAlgModel *)firstMatchAlg{
-    return ARR_INDEX(self.matchAlgs, 0);
+    return ARR_INDEX(self.matchAlgs_Si, 0);
 }
 
 /**
  *  MARK:--------------------取概念识别结果--------------------
  */
-//默认返回似层 notnull;
--(NSArray*) matchAlgs {
-    return self.matchAlgs_Si;
-}
-
 -(NSArray*) matchAlgs_R {
     return [SMGUtils collectArrA:self.matchAlgs_RJ arrB:self.matchAlgs_RS];
 }
@@ -42,7 +37,7 @@
 }
 //返回全部 notnull;
 -(NSArray*) matchAlgs_All {
-    return [SMGUtils collectArrA:self.matchAlgs arrB:self.matchAlgs_Jiao];
+    return [SMGUtils collectArrA:self.matchAlgs_Si arrB:self.matchAlgs_Jiao];
 }
 
 -(NSMutableArray *)matchPFos{

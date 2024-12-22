@@ -61,7 +61,7 @@
     
     //5. 转regroup生成protoFo;
     [TCRegroup rRegroup:mModel];
-    AIFoNodeBase *protoFo = ARRISOK(mModel.matchAlgs) ? mModel.protoFo : mModel.matchAFo;
+    AIFoNodeBase *protoFo = ARRISOK(mModel.matchAlgs_Si) ? mModel.protoFo : mModel.matchAFo;
     
     //6. 行为不触发识别 (参考28137-修复);
     if (!algNode.pointer.isOut || Switch4IsOutReIn) {
