@@ -392,6 +392,7 @@
     
     //2. 广入: 对每个元素,分别取索引序列 (参考25083-1);
     NSArray *protoOrRegroupContent_ps = [protoOrRegroupFo.content_ps copy];
+    AddDebugCodeBlock_Key(@"时序识别", @"调用");
     for (NSInteger i = 0; i < protoOrRegroupContent_ps.count; i++) {
         AIKVPointer *proto_p = ARR_INDEX(protoOrRegroupContent_ps, i);
         AIAlgNodeBase *protoAlg = [SMGUtils searchNode:proto_p];
@@ -414,6 +415,7 @@
             return !item.isJiao;
         }];
         NSLog(@"索引数: %ld -> %ld",protoAlg.absPorts.count,protoAlgAbs_ps.count);
+        AddDebugCodeBlock_Key(@"时序识别", @"索引");
         
         for (AIKVPointer *absAlg_p in protoAlgAbs_ps) {
             AIAlgNodeBase *absAlg = [SMGUtils searchNode:absAlg_p];
@@ -432,20 +434,33 @@
                     return item.targetHavMv;
                 }
             }];
+            AddDebugCodeBlock_Key(@"时序识别", @"3");
             
             //7. 每个refPort做两件事:
             for (AIPort *refPort in refPorts) {
-                //7. 仅保留似层: 联想到的fo是交层,则直接continue (参考33111-TODO1);
-                if (refPort.target_p.isJiao) continue;
-                
                 //8. 不应期 -> 不可激活 & 收集到不应期同一fo仅处理一次;
-                if ([SMGUtils containsSub_p:refPort.target_p parent_ps:except_ps]) continue;
+                if ([SMGUtils containsSub_p:refPort.target_p parent_ps:except_ps]) {
+                    AddDebugCodeBlock_Key(@"时序识别", @"防重不通过");
+                    continue;
+                }
                 except_ps = [SMGUtils collectArrA:except_ps arrB:@[refPort.target_p]];
+                
+                //7. 仅保留似层: 联想到的fo是交层,则直接continue (参考33111-TODO1);
+                if (refPort.target_p.isJiao) {
+                    AddDebugCodeBlock_Key(@"时序识别", @"交层不通过");
+                    continue;
+                }
                 
                 //7. 全含判断;
                 AIFoNodeBase *refFo = [SMGUtils searchNode:refPort.target_p];
                 NSDictionary *indexDic = [self recognitionFo_CheckValidV3:refFo protoOrRegroupFo:protoOrRegroupFo fromRegroup:fromRegroup];
-                if (!DICISOK(indexDic)) continue;
+                if (!DICISOK(indexDic)) {
+                    NSLog(@"checkFoValidFailure: %@",Fo2FStr(refFo));
+                    //TODOTOMORROW20241223: 追查下为什么,全部全含不通过?
+                    
+                    AddDebugCodeBlock_Key(@"时序识别", @"全含不通过");
+                    continue;
+                }
                 
                 //7. 取absCutIndex, 说明: cutIndex指已发生到的index,后面则为时序预测; matchValue指匹配度(0-1)
                 NSInteger cutIndex = [AINetUtils getCutIndexByIndexDicV2:indexDic protoOrRegroupCutIndex:protoOrRegroupCutIndex];
@@ -464,13 +479,17 @@
                 
                 //9. 收集到pFos/rFos;
                 if (refFo.cmvNode_p) {
+                    AddDebugCodeBlock_Key(@"时序识别", @"收集P结果");
                     [protoPModels addObject:newMatchFo];
                 } else {
+                    AddDebugCodeBlock_Key(@"时序识别", @"收集R结果");
                     [protoRModels addObject:newMatchFo];
                 }
             }
         }
     }
+    AddDebugCodeBlock_Key(@"时序识别", @"9");
+    PrintDebugCodeBlock_Key(@"时序识别");
     
     //10. 过滤强度前20% (参考28111-todo1);
     NSArray *filterPModels = [AIFilter recognitionFoFilter:protoPModels];
