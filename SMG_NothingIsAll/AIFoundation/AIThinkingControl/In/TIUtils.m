@@ -456,8 +456,6 @@
                 NSDictionary *indexDic = [self recognitionFo_CheckValidV3:refFo protoOrRegroupFo:protoOrRegroupFo fromRegroup:fromRegroup];
                 if (!DICISOK(indexDic)) {
                     NSLog(@"checkFoValidFailure: %@",Fo2FStr(refFo));
-                    //TODOTOMORROW20241223: 追查下为什么,全部全含不通过?
-                    
                     AddDebugCodeBlock_Key(@"时序识别", @"全含不通过");
                     continue;
                 }
@@ -554,6 +552,10 @@
         AIKVPointer *protoAlg_p = ARR_INDEX(protoOrRegroupFo.content_ps, protoIndex);
         for (NSInteger assIndex = nextStartForAssIndex; assIndex < assFo.count; assIndex++) {
             AIKVPointer *assAlg_p = ARR_INDEX(assFo.content_ps, assIndex);
+            
+            //TODOTOMORROW20241223: 追查下为什么,全部全含不通过?
+            //线索: 概念识别没有进行关联,所以此处用mIsC是判断不了关联的,末帧时得判断看用inModel.matchAlg_PS.contains()来;
+            
             BOOL mIsC = [TOUtils mIsC_1:protoAlg_p c:assAlg_p];
             if (mIsC) {
                 
