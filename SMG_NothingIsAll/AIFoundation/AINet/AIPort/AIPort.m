@@ -102,7 +102,7 @@
 @implementation AISPStrong
 
 -(NSString *)description{
-    return STRFORMAT(@"S%.2fP%.2f",self.sStrong,self.pStrong);
+    return STRFORMAT(@"S%.0fP%.0f",self.sStrong,self.pStrong);
 }
 
 /**
