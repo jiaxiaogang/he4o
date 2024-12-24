@@ -392,30 +392,20 @@
     
     //2. 广入: 对每个元素,分别取索引序列 (参考25083-1);
     NSArray *protoOrRegroupContent_ps = [protoOrRegroupFo.content_ps copy];
-    AddDebugCodeBlock_Key(@"时序识别", @"调用");
+    //AddDebugCodeBlock_Key(@"时序识别", @"1调用"); //用于调试当时序识别结果条数不正常时,用这个调试下,下面各步骤都执行了多少次,直至查明为何最终条数不正常;
     for (NSInteger i = 0; i < protoOrRegroupContent_ps.count; i++) {
         AIKVPointer *proto_p = ARR_INDEX(protoOrRegroupContent_ps, i);
         AIAlgNodeBase *protoAlg = [SMGUtils searchNode:proto_p];
         
         //3. 每个abs_p分别索引;
-        NSArray *protoAlgAbs_ps = nil;
-        if (ISOK(protoAlg, AICMVNodeBase.class)) {
-            protoAlgAbs_ps = @[proto_p];
-        } else if (i == protoOrRegroupContent_ps.count - 1) {
-            //3b. 末帧时,抽具象概念还没关联,不能从absPorts访问到它,所以直接从inModel.matchAlgs来访问 (参考3313b-TODO2);
-            protoAlgAbs_ps = [SMGUtils convertArr:inModel.matchAlgs_PS convertBlock:^id(AIMatchAlgModel *obj) {
-                return obj.matchAlg;
-            }];
-        } else {
-            protoAlgAbs_ps = Ports2Pits(protoAlg.absPorts);
-        }
+        NSArray *protoAlgAbs_ps = [self getProtoAlgAbsPs:protoOrRegroupFo protoIndex:i inModel:inModel fromRegroup:fromRegroup];
         
         //4. 仅保留似层: 索引absAlg是交层,则直接continue (参考33111-TODO1);
         protoAlgAbs_ps = [SMGUtils filterArr:protoAlgAbs_ps checkValid:^BOOL(AIKVPointer *item) {
             return !item.isJiao;
         }];
         NSLog(@"索引数: %ld -> %ld",protoAlg.absPorts.count,protoAlgAbs_ps.count);
-        AddDebugCodeBlock_Key(@"时序识别", @"索引");
+        //AddDebugCodeBlock_Key(@"时序识别", @"2索引");
         
         for (AIKVPointer *absAlg_p in protoAlgAbs_ps) {
             AIAlgNodeBase *absAlg = [SMGUtils searchNode:absAlg_p];
@@ -434,31 +424,24 @@
                     return item.targetHavMv;
                 }
             }];
-            AddDebugCodeBlock_Key(@"时序识别", @"3");
             
             //7. 每个refPort做两件事:
             for (AIPort *refPort in refPorts) {
+                AddDebugCodeBlock_Key(@"时序识别", @"3联想");
                 //8. 不应期 -> 不可激活 & 收集到不应期同一fo仅处理一次;
-                if ([SMGUtils containsSub_p:refPort.target_p parent_ps:except_ps]) {
-                    AddDebugCodeBlock_Key(@"时序识别", @"防重不通过");
-                    continue;
-                }
+                if ([SMGUtils containsSub_p:refPort.target_p parent_ps:except_ps]) continue;
+                //AddDebugCodeBlock_Key(@"时序识别", @"4防重通过");
                 except_ps = [SMGUtils collectArrA:except_ps arrB:@[refPort.target_p]];
                 
                 //7. 仅保留似层: 联想到的fo是交层,则直接continue (参考33111-TODO1);
-                if (refPort.target_p.isJiao) {
-                    AddDebugCodeBlock_Key(@"时序识别", @"交层不通过");
-                    continue;
-                }
+                if (refPort.target_p.isJiao) continue;
+                //AddDebugCodeBlock_Key(@"时序识别", @"5交层通过");
                 
                 //7. 全含判断;
                 AIFoNodeBase *refFo = [SMGUtils searchNode:refPort.target_p];
-                NSDictionary *indexDic = [self recognitionFo_CheckValidV3:refFo protoOrRegroupFo:protoOrRegroupFo fromRegroup:fromRegroup];
-                if (!DICISOK(indexDic)) {
-                    NSLog(@"checkFoValidFailure: %@",Fo2FStr(refFo));
-                    AddDebugCodeBlock_Key(@"时序识别", @"全含不通过");
-                    continue;
-                }
+                NSDictionary *indexDic = [self recognitionFo_CheckValidV3:refFo protoOrRegroupFo:protoOrRegroupFo fromRegroup:fromRegroup inModel:inModel];
+                if (!DICISOK(indexDic)) continue;
+                //AddDebugCodeBlock_Key(@"时序识别", @"6全含通过");
                 
                 //7. 取absCutIndex, 说明: cutIndex指已发生到的index,后面则为时序预测; matchValue指匹配度(0-1)
                 NSInteger cutIndex = [AINetUtils getCutIndexByIndexDicV2:indexDic protoOrRegroupCutIndex:protoOrRegroupCutIndex];
@@ -477,17 +460,16 @@
                 
                 //9. 收集到pFos/rFos;
                 if (refFo.cmvNode_p) {
-                    AddDebugCodeBlock_Key(@"时序识别", @"收集P结果");
+                    //AddDebugCodeBlock_Key(@"时序识别", @"7收集P结果");
                     [protoPModels addObject:newMatchFo];
                 } else {
-                    AddDebugCodeBlock_Key(@"时序识别", @"收集R结果");
+                    //AddDebugCodeBlock_Key(@"时序识别", @"8收集R结果");
                     [protoRModels addObject:newMatchFo];
                 }
             }
         }
     }
-    AddDebugCodeBlock_Key(@"时序识别", @"9");
-    PrintDebugCodeBlock_Key(@"时序识别");
+    //PrintDebugCodeBlock_Key(@"时序识别");
     
     //10. 过滤强度前20% (参考28111-todo1);
     NSArray *filterPModels = [AIFilter recognitionFoFilter:protoPModels];
@@ -502,8 +484,7 @@
     [inModel log4HavXianWuJv_PFos:@"fltx2"];
     
     //2024.12.05: 每次反馈同F只计一次: 避免F值快速重复累计到很大,sp更新(同场景下的)防重推 (参考33137-方案v5);
-    NSMutableArray *except4SP2F = [[NSMutableArray alloc] init];
-    
+    //NSMutableArray *except4SP2F = [[NSMutableArray alloc] init];
     //13. inSP值子即父: 时序识别成功后,protoFo从0到cutIndex全计P+1 (参考33112-TODO4.3 & 33134-FIX2a);
     //2024.12.10: 先关掉这里,因为在forecast_Multi()中,已经给pFo已发生部分计了sp值,这里再推到F层,就重复了 (并且这种做法,只是做了proto层和pFo层,pFo的F层并未照顾到,另外其实也不太建议在识别成功后,把已发生层全计上数,感觉和SP的初衷不太相符);
     //for (NSInteger i = 0; i <= protoOrRegroupCutIndex; i++) {
@@ -538,7 +519,7 @@
  *      2024.10.10: 把判断映射(mIsC) 与 判断是否全含(条件满足) => 整理成两步 (参考33093-TIPS);
  *  @result 判断protoFo是否全含assFo: 成功时返回indexDic / 失败时返回空dic;
  */
-+(NSDictionary*) recognitionFo_CheckValidV3:(AIFoNodeBase*)assFo protoOrRegroupFo:(AIFoNodeBase*)protoOrRegroupFo fromRegroup:(BOOL)fromRegroup {
++(NSDictionary*) recognitionFo_CheckValidV3:(AIFoNodeBase*)assFo protoOrRegroupFo:(AIFoNodeBase*)protoOrRegroupFo fromRegroup:(BOOL)fromRegroup inModel:(AIShortMatchModel*)inModel {
     if (Log4MFo) NSLog(@"------------------------ 时序全含检查 ------------------------\nass:%@->%@",Fo2FStr(assFo),Mvp2Str(assFo.cmvNode_p));
     
     //==================== STEP1: 从前往后取匹配映射indexDic ====================
@@ -553,10 +534,9 @@
         for (NSInteger assIndex = nextStartForAssIndex; assIndex < assFo.count; assIndex++) {
             AIKVPointer *assAlg_p = ARR_INDEX(assFo.content_ps, assIndex);
             
-            //TODOTOMORROW20241223: 追查下为什么,全部全含不通过?
-            //线索: 概念识别没有进行关联,所以此处用mIsC是判断不了关联的,末帧时得判断看用inModel.matchAlg_PS.contains()来;
-            
-            BOOL mIsC = [TOUtils mIsC_1:protoAlg_p c:assAlg_p];
+            //13. 概念识别没有进行关联,所以此处也调用getProtoAlgAbsPs,替代mIsC,末帧时直接可以用inModel.matchAlg_PS.contains()来 (参考3313b-TODO5);
+            NSArray *protoAlgAbs_ps = [self getProtoAlgAbsPs:protoOrRegroupFo protoIndex:protoIndex inModel:inModel fromRegroup:fromRegroup];
+            BOOL mIsC = [protoAlg_p isEqual:assAlg_p] || [protoAlgAbs_ps containsObject:assAlg_p];
             if (mIsC) {
                 
                 //13. 匹配时_记录下次循环ass时,从哪帧开始倒序循环: nextMaxForAssIndex进度;
@@ -782,5 +762,33 @@
 //    if (Log4SceneIsOk) NSLog(@"条件满足通过:%@ (fromProtoFo:%ld)",Fo2FStr(oldCanset),newCanset.pointer.pointerId);
 //    return indexDic;
 //}
+
+//MARK:===============================================================
+//MARK:                     < privateMethod >
+//MARK:===============================================================
+
+//返回protoAlg的索引 (一般是取它的抽象);
++(NSArray*) getProtoAlgAbsPs:(AIFoNodeBase*)protoOrRegroupFo protoIndex:(NSInteger)protoIndex inModel:(AIShortMatchModel*)inModel fromRegroup:(BOOL)fromRegroup {
+    //1. 数据准备;
+    AIKVPointer *proto_p = ARR_INDEX(protoOrRegroupFo.content_ps, protoIndex);
+    
+    //2. 每个abs_p分别索引;
+    NSArray *protoAlgAbs_ps = nil;
+    if (PitIsMv(proto_p)) {
+        //3. mv时,直接返回自己就行;
+        protoAlgAbs_ps = @[proto_p];
+    } else if (protoIndex == protoOrRegroupFo.count - 1 && !fromRegroup) {
+        //4. 末帧时,抽具象概念还没关联,不能从absPorts访问到它,所以直接从inModel.matchAlgs来访问 (参考3313b-TODO2);
+        protoAlgAbs_ps = [SMGUtils convertArr:inModel.matchAlgs_PS convertBlock:^id(AIMatchAlgModel *obj) {
+            return obj.matchAlg;
+        }];
+    } else {
+        //5. 别的,把抽象关联返回;
+        AIAlgNodeBase *protoAlg = [SMGUtils searchNode:proto_p];
+        protoAlgAbs_ps = Ports2Pits(protoAlg.absPorts);
+    }
+    return protoAlgAbs_ps;
+}
+
 
 @end
