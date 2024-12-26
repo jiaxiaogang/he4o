@@ -527,9 +527,9 @@
         NSDictionary *fSPDic = [fScene getItemOutSPDic:fPort.fCansetHeader];
         
         //debugLog: 调试"有向无距场景"的竞争浮现 (参考33141-观察);
-        if ([NVHeUtil foHavXianWuJv:fScene.p]) {
-            NSLog(@"flt8a 父非子算法: (父F%ld,子F%ld,作用力:%.2f) 打出有向无距果场景的SP字典%@",fScene.pId,iScene.pId,cooledValue,CLEANSTR([SMGUtils filterDic:fSPDic checkValid:^BOOL(NSNumber *key, id value) {
-                return key.integerValue <= startSPIndex && key.integerValue >= endSPIndex;
+        if ([NVHeUtil foHavXianWuJv:fScene.p] && cooledValue > 0 && DICISOK(fSPDic)) {
+            NSLog(@"flt8a 父非子算法: (父F%ld,子F%ld,匹配度:%.2f 作用力:%.8f) 打出有向无距果场景的SP字典%@",fScene.pId,iScene.pId,foMatchValue,cooledValue,CLEANSTR([SMGUtils filterDic:fSPDic checkValid:^BOOL(NSNumber *key, id value) {
+                return key.integerValue >= startSPIndex && key.integerValue <= endSPIndex;
             }]));
         }
         
