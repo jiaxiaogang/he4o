@@ -319,6 +319,19 @@
     return false;
 }
 
+/**
+ *  MARK:--------------------有向无距--------------------
+ */
++(BOOL) foHavXianWuJv:(AIKVPointer*)fo_p {
+    AIFoNodeBase *fo = [SMGUtils searchNode:fo_p];
+    return [SMGUtils filterSingleFromArr:fo.content_ps checkValid:^BOOL(AIKVPointer *item) {
+        return [self algHavXianWuJv:item];
+    }];
+}
++(BOOL) algHavXianWuJv:(AIKVPointer*)alg_p {
+    return [self getXian:alg_p] && ![self getJv:alg_p];
+}
+
 //判断alg中某区码的稀疏码的at类型是valueATIs (比如: 取概念有踢特征);
 +(AIKVPointer*) checkValueFromAlg:(AIKVPointer*)fromAlg_p valueATIs:(NSString*)valueATIs {
     AIAlgNodeBase *fromAlg = [SMGUtils searchNode:fromAlg_p];
