@@ -277,7 +277,9 @@
         //6. 对proto直接抽象指向matchAlg,并增强强度值 (为保证抽象多样性,所以相近的也抽具象关联) (参考27153-3);
         [AINetUtils relateAlgAbs:matchAlg conNodes:@[inModel.protoAlg] isNew:false];
         [AITest test25:matchAlg conAlgs:@[inModel.protoAlg]];
-        
+    }
+    
+    for (AIMatchAlgModel *matchModel in ARR_SUB(inModel.matchAlgs_PS, 0, 5)) {
         //7. log
         NSString *prDesc = [inModel.matchAlgs_R containsObject:matchModel] ? @"r" : @"p";
         NSString *sjDesc = [inModel.matchAlgs_Si containsObject:matchModel] ? @"s" : @"j";
@@ -599,7 +601,7 @@
         [protoOrRegroupFo updateMatchValue:matchFo matchValue:item.sumNear];
         
         //8. 调试日志;
-        if (debugMode) NSLog(@"%ld. %@强度:(%ld)\t> %@->{%.2f} (SP:%@) indexDic:%@ 匹配度 => %.2f",[allMatchFos indexOfObject:item],matchFo.cmvNode_p?@"P":@"",item.sumRefStrong,Fo2FStr(matchFo),[AIScore score4MV_v2FromCache:item],CLEANSTR(matchFo.spDic),CLEANSTR(item.indexDic2),item.matchFoValue);
+        if (debugMode) NSLog(@"%ld. %@强度:(%ld)(%ld/%ld)\t> %@->{%.2f} (SP:%@) indexDic:%@ 匹配度 => %.2f",[allMatchFos indexOfObject:item],matchFo.cmvNode_p?@"P":@"",item.sumRefStrong,item.cutIndex,matchFo.count,Fo2FStr(matchFo),[AIScore score4MV_v2FromCache:item],CLEANSTR(matchFo.spDic),CLEANSTR(item.indexDic2),item.matchFoValue);
     }
 }
 

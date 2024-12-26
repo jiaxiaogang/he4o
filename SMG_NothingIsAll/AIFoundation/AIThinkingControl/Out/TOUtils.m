@@ -525,6 +525,14 @@
         //4. 把F层的SPDic冷却后,累计到I层 (环境作用于个体) (参考33115-方案2-累计spStrong);
         //2024.11.30: 性能优化: 单次已从1.14优化至0.02ms;
         NSDictionary *fSPDic = [fScene getItemOutSPDic:fPort.fCansetHeader];
+        
+        //debugLog: 调试"有向无距场景"的竞争浮现 (参考33141-观察);
+        if ([NVHeUtil foHavXianWuJv:fScene.p]) {
+            NSLog(@"flt8a 父非子算法: (父F%ld,子F%ld,作用力:%.2f) 打出有向无距果场景的SP字典%@",fScene.pId,iScene.pId,cooledValue,CLEANSTR([SMGUtils filterDic:fSPDic checkValid:^BOOL(NSNumber *key, id value) {
+                return key.integerValue <= startSPIndex && key.integerValue >= endSPIndex;
+            }]));
+        }
+        
         for (NSInteger i = startSPIndex; i <= endSPIndex; i++) {
             
             //5. 注意: 此处iCanset和fCanset是等长的;
