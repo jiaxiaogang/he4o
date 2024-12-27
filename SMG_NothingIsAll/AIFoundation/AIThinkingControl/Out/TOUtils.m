@@ -518,6 +518,12 @@
         
         //3. 计算I/F两层的场景时序匹配度 (参考33116-方案1-采用时序匹配度做为抽象程度,计算冷却值);
         AIFoNodeBase *fScene = [SMGUtils searchNode:fPort.fScene];
+        
+        
+        //TODOTOMORROW20241227: 此处完善下细节:
+        //  1. H时,也以RScene场景树,去取匹配度;
+        //  2. 继续查下R时,为什么RScene场景树,的I和F间的匹配度取不到;
+        
         //2024.11.29: 性能优化: 单次已从0.66优化至0.03ms;
         CGFloat foMatchValue = [iScene getAbsMatchValue:fScene.pointer];
         CGFloat cooledValue = [MathUtils getCooledValue_28:1 - foMatchValue];//算出当前匹配度,应该冷却到什么比例;
