@@ -37,9 +37,6 @@
         AIFoNodeBase *iFo = [SMGUtils searchNode:iModel.scene];//84ms
         NSArray *fatherScene_ps = [AIFilter rSolutionSceneFilter:iFo type:iModel.type];
         
-        //TODOTOMORROW20241227: 查下,此处取得的F与I是否有抽具象匹配度字典;
-        
-        
         //a. 过滤器 & 转为CansetModel;
         NSArray *itemFatherModels = [SMGUtils convertArr:fatherScene_ps convertBlock:^id(AIKVPointer *item) {
             //a1. 过滤father不含截点的 (参考29069-todo5.6);

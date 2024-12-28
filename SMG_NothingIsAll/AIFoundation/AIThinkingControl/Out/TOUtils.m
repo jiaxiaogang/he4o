@@ -520,9 +520,10 @@
         AIFoNodeBase *fScene = [SMGUtils searchNode:fPort.fScene];
         
         
-        //TODOTOMORROW20241227: 此处完善下细节:
-        //  1. H时,也以RScene场景树,去取匹配度;
-        //  2. 继续查下R时,为什么RScene场景树,的I和F间的匹配度取不到;
+        //TODOTOMORROW20241227: 此处完善下细节: H时,也以RScene场景树,去取匹配度;
+        if (canset.isH) {
+            NSLog(@"H任务了,实测下下面的foMatchValue能不能取到值,如果不能,看怎么取到R场景树,来取下匹配度");
+        }
         
         //2024.11.29: 性能优化: 单次已从0.66优化至0.03ms;
         CGFloat foMatchValue = [iScene getAbsMatchValue:fScene.pointer];
