@@ -174,6 +174,7 @@
     [aCoder encodeObject:self.pointer forKey:@"pointer"];
     [aCoder encodeObject:[self.conPorts copy] forKey:@"conPorts"];
     [aCoder encodeObject:[self.absPorts copy] forKey:@"absPorts"];
+    [aCoder encodeObject:[self.contentPorts copy] forKey:@"contentPorts"];
     [aCoder encodeObject:[self.conMatchDic copy] forKey:@"conMatchDic"];
     [aCoder encodeObject:[self.absMatchDic copy] forKey:@"absMatchDic"];
 }

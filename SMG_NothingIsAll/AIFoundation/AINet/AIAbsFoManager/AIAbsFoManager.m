@@ -132,10 +132,6 @@
             AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
             return [AINetUtils refPorts_All4Alg:itemAlg];
         } at:at ds:ds type:type];
-        
-        if (result.count == 0 && content_ps.count > 0) {
-            NSLog(@"TODOTOMORROW20241228 查下,为什么这里会找到长度为0的结果?它是哪来的?");
-        }
     }
     
     //4. 在下面的ifelse中,判断下具象和抽象时序是否本来就有关联 (参考29032-todo2.1);
