@@ -236,6 +236,23 @@
         }
         return [AINetUtils getMatchByIndexDic:[protoScene getConIndexDic:item.target_p] absFo:protoScene.pointer conFo:item.target_p callerIsAbs:true];//1436ms 3878次
     } radio:0.2f min:4 max:20 debugMode:false];
+    
+    
+    //TODOTOMORROW20241230: 核实下,这里的F层,与I层,都有抽具象关联,且相似度有取不到的吗? (为什么会取不到);
+    //1. 查下,取不到的节点,是在哪里关联的?关联的时候没存上相似度吗?
+    if (toAbs) {
+        for (AIPort *port in otherScenePorts) {
+            id aa = [protoScene.absMatchDic objectForKey:@(port.target_p.pointerId)];
+            CGFloat matchV = [protoScene getAbsMatchValue:port.target_p];
+            if (matchV == 0 && !aa) {
+                NSLog(@"经查,本来在relateFo时,除了时序识别,别处也没调用updateMatchValue,所以它肯定有缺失取不到匹配度的");
+                //另外: fo不应该搞匹配度,因为本来fo有进度,任何一刻,无法判断它的匹配度,只有发生完全之后,才知道匹配度;
+                //所以: fo的匹配度应该用indexDic和cutIndex来计算,如果这导致父非子的性能有问题,大可以以子为准去取absMatchValue,来优化性能...
+            }
+        }
+    }
+    
+    
     return Ports2Pits(otherScenePorts);
 }
 
