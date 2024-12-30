@@ -688,6 +688,16 @@
         return ARR_INDEX(conFo.content_ps, conIndex);
     } callerIsAbs:callerIsAbs];
 }
+//不传indexDic时,默认从abs和con取全部indexDic复用之;
++(CGFloat) getMatchByIndexDic:(AIKVPointer*)absFo_p conFo:(AIKVPointer*)conFo_p callerIsAbs:(BOOL)callerIsAbs {
+    if (callerIsAbs) {
+        AIFoNodeBase *absF = [SMGUtils searchNode:absFo_p];
+        return NUMTOOK(ARR_INDEX([self getNearDataByIndexDic:[absF getConIndexDic:conFo_p] absFo:absFo_p conFo:conFo_p callerIsAbs:callerIsAbs], 1)).floatValue;
+    }else{
+        AIFoNodeBase *conF = [SMGUtils searchNode:conFo_p];
+        return NUMTOOK(ARR_INDEX([self getNearDataByIndexDic:[conF getAbsIndexDic:absFo_p] absFo:absFo_p conFo:conFo_p callerIsAbs:callerIsAbs], 1)).floatValue;
+    }
+}
 
 /**
  *  MARK:--------------------获取near数据 (回调版)--------------------

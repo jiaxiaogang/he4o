@@ -46,6 +46,8 @@
 //MARK:===============================================================
 //MARK:                     < 匹配度 (支持: 概念,时序) >
 //MARK:===============================================================
+
+//当时序时,匹配度为整个indexDic抽具象映射的综合匹配度,目前不支持根据cutIndex计算一部分的匹配度,如果需要这么计算,可以使用[AINetUtils getMatchFo:indexDic]计算时序一部分映射的匹配度;
 @property (strong, nonatomic) NSMutableDictionary *absMatchDic; //抽象匹配度字典 <K:对方pId, V:相似度> (参考27153-todo2);
 @property (strong, nonatomic) NSMutableDictionary *conMatchDic; //具象匹配度字典 <K:对方pId, V:相似度> (参考27153-todo2);
 

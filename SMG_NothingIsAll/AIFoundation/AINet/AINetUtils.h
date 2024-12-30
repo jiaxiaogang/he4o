@@ -224,6 +224,9 @@
 +(CGFloat) getMatchByIndexDic:(NSDictionary*)indexDic absFo:(AIKVPointer*)absFo_p conFo:(AIKVPointer*)conFo_p callerIsAbs:(BOOL)callerIsAbs;
 +(NSArray*) getNearDataByIndexDic:(NSDictionary*)indexDic absFo:(AIKVPointer*)absFo_p conFo:(AIKVPointer*)conFo_p callerIsAbs:(BOOL)callerIsAbs;
 
+//不传indexDic时,默认从abs和con取全部indexDic复用之;
++(CGFloat) getMatchByIndexDic:(AIKVPointer*)absFo_p conFo:(AIKVPointer*)conFo_p callerIsAbs:(BOOL)callerIsAbs;
+
 /**
  *  MARK:--------------------获取near数据 (回调版)--------------------
  */
