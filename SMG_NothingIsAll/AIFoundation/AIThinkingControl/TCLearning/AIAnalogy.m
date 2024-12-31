@@ -116,6 +116,10 @@
             result = (AINetAbsFoNode*)assFo;
             [AINetUtils relateFoAbs:result conNodes:@[protoFo] isNew:false];
             [AINetUtils insertRefPorts_AllFoNode:result.pointer order_ps:result.content_ps ps:result.content_ps];
+            
+            //3. 存储protoFo与matchFo之间的匹配度 (参考33143-方案1);
+            [protoFo updateMatchValue:result matchValue:1];
+            
             if (result.cmvNode_p) [theNet setMvNodeToDirectionReference:[SMGUtils searchNode:result.cmvNode_p] difStrong:1];
         }else{
             //4. 取foDifStrong

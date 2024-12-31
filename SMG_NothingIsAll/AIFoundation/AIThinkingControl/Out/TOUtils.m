@@ -472,7 +472,8 @@
         
         //3. 计算I/F两层的场景时序匹配度 (参考33116-方案1-采用时序匹配度做为抽象程度,计算冷却值);
         AIFoNodeBase *fScene = [SMGUtils searchNode:fPort.target_p];
-        CGFloat foMatchValue = [AINetUtils getMatchByIndexDic:fScene.p conFo:iScene.p callerIsAbs:false];
+        //2024.11.29: 性能优化: 单次已从0.66优化至0.03ms (性能说明: 用alg实时计算要0.66ms,直接用fo复用取要0.03ms);
+        CGFloat foMatchValue = [iScene getAbsMatchValue:fScene.p];//[AINetUtils getMatchByIndexDic:fScene.p conFo:iScene.p callerIsAbs:false];
         CGFloat cooledValue = [MathUtils getCooledValue_28:foMatchValue];//算出当前匹配度,应该冷却到什么比例;
         
         //4. 把F层的SPDic冷却后,累计到I层 (环境作用于个体) (参考33115-方案2-累计spStrong);
@@ -504,7 +505,6 @@
 //Out针对Canset稳定性;
 +(HEResult*) getStableScore_Out:(TOFoModel*)canset startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex {
     //1. 取出I层spDic;
-    AddDebugCodeBlock_Key(@"temp", @"2");
     AIFoNodeBase *cansetFrom = [SMGUtils searchNode:canset.cansetFrom];//本来应该传cansetTo,不过cansetTo可能未转实,并且cansetFrom效果也一致;
     //2024.12.03: 避免iSPDic被更新值后,如果node被保存,就被持久化了 (此问题未证实,只是这么猜想,就调用下copy预防一下);
     NSMutableDictionary *iSPDic = [ThinkingUtils copySPDic:[canset getItemOutSPDic]];
@@ -515,7 +515,6 @@
     NSArray *iCansetContent_ps = Simples2Pits(canset.transferXvModel.cansetToOrders);
     //2024.11.29: 性能优化: 单次已从6.99优化至0.08ms;
     NSArray *fPorts = [AINetUtils transferPorts_4Father:iScene iCansetContent_ps:iCansetContent_ps];
-    AddDebugCodeBlock_Key(@"temp", @"3");
     for (AITransferPort *fPort in fPorts) {
         
         //3. 计算I/F两层的场景时序匹配度 (参考33116-方案1-采用时序匹配度做为抽象程度,计算冷却值);
@@ -527,12 +526,8 @@
             NSLog(@"H任务了,实测下下面的foMatchValue能不能取到值,如果不能,看怎么取到R场景树,来取下匹配度,现在的代码应该只对R时取的准,对H时因为没有落实到R树上面,导致应该是取不到的...");
         }
         
-        //2024.11.29: 性能优化: 单次已从0.66优化至0.03ms;
-        //2024.12.30: 改为借助alg来计算fo匹配度 (参考33143-方案2);
-        //TODOTOMORROW20241230: 但这里的匹配度性能,又回到0.66了,明天想办法优化下...
-        AddDebugCodeBlock_Key(@"temp", @"4");
-        CGFloat foMatchValue = [AINetUtils getMatchByIndexDic:fScene.p conFo:iScene.p callerIsAbs:false];
-        AddDebugCodeBlock_Key(@"temp", @"5");
+        //2024.11.29: 性能优化: 单次已从0.66优化至0.03ms (性能说明: 用alg实时计算要0.66ms,直接用fo复用取要0.03ms);
+        CGFloat foMatchValue = [iScene getAbsMatchValue:fScene.p];//[AINetUtils getMatchByIndexDic:fScene.p conFo:iScene.p callerIsAbs:false];
         CGFloat cooledValue = [MathUtils getCooledValue_28:1 - foMatchValue];//算出当前匹配度,应该冷却到什么比例;
         
         //4. 把F层的SPDic冷却后,累计到I层 (环境作用于个体) (参考33115-方案2-累计spStrong);
@@ -563,9 +558,7 @@
             iSPStrong.sStrong += (fSPStrong.sStrong * cooledValue);
             iSPStrong.pStrong += (fSPStrong.pStrong * cooledValue);
         }
-        AddDebugCodeBlock_Key(@"temp", @"6");
     }
-    AddDebugCodeBlock_Key(@"temp", @"7");
     
     //8. 算出最终综合spDic的稳定性;
     //NSString *sumSPDicStr = CLEANSTR(iSPDic);

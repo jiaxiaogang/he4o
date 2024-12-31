@@ -597,7 +597,7 @@
         //6. 对proto直接抽象指向matchAlg,并增强强度值 (为保证抽象多样性,所以相近的也抽具象关联) (参考27153-3);
         [AINetUtils relateFoAbs:matchFo conNodes:@[protoOrRegroupFo] isNew:false];
         
-        //7. 存储protoFo与matchFo之间的匹配度度记录 (存每个alg元素的乘积匹配度) (参考27153-todo2);
+        //7. 存储protoFo与matchFo之间的匹配度度记录 (存每个alg元素的乘积匹配度) (参考27153-todo2 & 33143-方案1);
         [protoOrRegroupFo updateMatchValue:matchFo matchValue:item.sumNear];
         
         //8. 调试日志;
