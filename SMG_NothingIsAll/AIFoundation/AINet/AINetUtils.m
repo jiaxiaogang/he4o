@@ -1028,6 +1028,16 @@
         [iScene.transferFPorts addObject:transferPort];
         [SMGUtils insertNode:iScene];
     }
+    
+    //TODOTOMORROW20250101: 继续查下,父非子复用的IF层匹配度是nil问题;
+    if (![iScene.absMatchDic objectForKey:@(fScene.pId)]) {
+        BOOL aaa = [Ports2Pits(iScene.absPorts) containsObject:fScene.pointer];
+        //1. 此处仍会取到nil,排查下"关联transfer时,看空是哪来的;
+        NSLog(@"%d 测下33143,是不是还有匹配度为nil的问题",aaa);
+        //经查,虽然匹配度没有,但抽具象关联却是有的...
+        NSLog(@"");
+        //需要再查下,在抽具象时序关联后,哪里没有存上匹配度...
+    }
 }
 
 /**

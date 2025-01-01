@@ -534,6 +534,11 @@
         //2024.11.30: 性能优化: 单次已从1.14优化至0.02ms;
         NSDictionary *fSPDic = [fScene getItemOutSPDic:fPort.fCansetHeader];
         
+        if (![iScene.absMatchDic objectForKey:@(fScene.pId)] || foMatchValue <= 0) {
+            //1. 此处仍会取到nil,排查下"关联transfer时,看空是哪来的;
+            NSLog(@"测下33143,是不是还有匹配度为nil的问题");
+        }
+        
         //debugLog: 调试"有向无距场景"的竞争浮现 (参考33141-观察);
         //if ([NVHeUtil foHavXianWuJv:fScene.p] && foMatchValue > 0 && DICISOK(fSPDic)) {
         //    NSLog(@"flt8a 父非子算法: (父F%ld,子F%ld,匹配度:%.2f 作用力:%.3f) 打出有向无距果场景的SP字典%@",fScene.pId,iScene.pId,foMatchValue,cooledValue,CLEANSTR([SMGUtils filterDic:fSPDic checkValid:^BOOL(NSNumber *key, id value) {
