@@ -38,7 +38,7 @@
     [super encodeWithCoder:aCoder];
     [aCoder encodeObject:self.urgentTo_p forKey:@"urgentTo_p"];
     [aCoder encodeObject:self.delta_p forKey:@"delta_p"];
-    [aCoder encodeObject:self.foPorts forKey:@"foPorts"];
+    [aCoder encodeObject:[self.foPorts copy] forKey:@"foPorts"];
 }
 
 @end
