@@ -163,8 +163,10 @@
     [assFo updateIndexDic:result indexDic:assIndexDic];
     
     //10. 存储protoFo与matchFo之间的匹配度 (参考33143-方案1);
-    [AINetUtils getMatchByIndexDic:protoIndexDic absFo:result.p conFo:protoFo.p callerIsAbs:false];
-    [AINetUtils getMatchByIndexDic:assIndexDic absFo:result.p conFo:assFo.p callerIsAbs:false];
+    CGFloat protoAbsMatchValue = [AINetUtils getMatchByIndexDic:protoIndexDic absFo:result.p conFo:protoFo.p callerIsAbs:false];
+    CGFloat assAbsMatchValue = [AINetUtils getMatchByIndexDic:assIndexDic absFo:result.p conFo:assFo.p callerIsAbs:false];
+    [protoFo updateMatchValue:result matchValue:protoAbsMatchValue];
+    [assFo updateMatchValue:result matchValue:assAbsMatchValue];
     
     //10. 将结果outConAbsIsRelate和absFo返回;
     if (outConAbsIsRelate) *outConAbsIsRelate = conAbsIsRelate;
