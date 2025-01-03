@@ -384,7 +384,7 @@ static AIThinkingControl *_instance;
     if ([tiQueueLab isEqualToString:curQueueLab]) {
         return _tiLoopId;
     } else if ([toQueueLab isEqualToString:curQueueLab]) {
-        return _toLoopId;;
+        return _toLoopId;
     }
     return 0;
 }

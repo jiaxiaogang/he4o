@@ -278,7 +278,7 @@
 
         //17. 更新其前段alg引用value的强度;
         NSArray *frontCansetToIndexArr = [SMGUtils filterArr:result.transferXvModel.sceneToCansetToIndexDic.allValues checkValid:^BOOL(NSNumber *item) {
-            return item.intValue <= result.cansetCutIndex;;
+            return item.intValue <= result.cansetCutIndex;
         }];
         [AINetUtils updateAlgRefStrongByIndexArr:frontCansetToIndexArr fo:result.transferSiModel.canset];
     }

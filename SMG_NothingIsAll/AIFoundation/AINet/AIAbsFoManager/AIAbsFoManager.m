@@ -170,7 +170,7 @@
     
     //10. 将结果outConAbsIsRelate和absFo返回;
     if (outConAbsIsRelate) *outConAbsIsRelate = conAbsIsRelate;
-    return [[[HEResult newSuccess] mkData:result] mkIsNew:@(isNew)];;
+    return [[[HEResult newSuccess] mkData:result] mkIsNew:@(isNew)];
 }
 
 @end

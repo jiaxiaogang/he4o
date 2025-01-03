@@ -93,7 +93,7 @@
 -(void) displayLinkFrame {
     //1. 动画进度计算
     double now = CACurrentMediaTime();
-    double radio = (now - self.aniBeginTime) / self.aniDeltaTime;;
+    double radio = (now - self.aniBeginTime) / self.aniDeltaTime;
     if (radio < 1.0) {
         //2. 动画中...
         self.x = self.aniBeginX + self.aniDeltaX * radio;

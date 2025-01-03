@@ -63,7 +63,7 @@
     
     //11. S评分PK: pk通过 = 奖励分 > 懒分 (参考33068-新公式改);
     //12. 三个评分都是负的,所以公式为以下 (result = 收益(负任务分) + mv的负分 + lazy的负分 > 0);
-    BOOL result = jianLiScore > lazyScore;;
+    BOOL result = jianLiScore > lazyScore;
     if (debugMode) NSLog(@"反思评价结果:%@通过 = 奖励分%.1f > 懒分:%.1f",result?@"已":@"未",jianLiScore,lazyScore);
     [AITest test21:result];
     DebugE();

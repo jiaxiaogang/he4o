@@ -534,7 +534,7 @@
         //2024.11.30: 性能优化: 单次已从1.14优化至0.02ms;
         NSDictionary *fSPDic = [fScene getItemOutSPDic:fPort.fCansetHeader];
         
-        if (![iScene.absMatchDic objectForKey:@(fScene.pId)] || foMatchValue <= 0) {
+        if (![iScene isEqual:fScene] && (![iScene.absMatchDic objectForKey:@(fScene.pId)] || foMatchValue <= 0)) {
             //1. 此处仍会取到nil,排查下"关联transfer时,看空是哪来的;
             NSLog(@"测下33143,是不是还有匹配度为nil的问题");
         }

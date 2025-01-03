@@ -480,6 +480,9 @@
         //18. 挂载成功: 进行迁移关联 (可供复用,避免每一次推举更新sp时,都重新推举) (参考33112-TODO3);
         //2024.11.13: 新版迁移关联: 推举时=>from是I层,to是F层 (条件: 未发生迁移时,不执行) (参考33112-TODO4.4);
         if (![broHCanset isEqual:fatHCanset]) {
+            //TODOTOMORROW20250103: 此处是有broRScene的,可以看下,要不存到transferPort中?这样在"父非子算法"中复用时,可以方便判断抽具象场景的匹配度;
+            
+            
             [AINetUtils relateTransfer:fatRCanset fCanset:fatHCanset iScene:broRCanset iCanset:broHCanset.content_ps];
         }
     }
