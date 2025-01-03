@@ -1038,6 +1038,34 @@
 }
 
 /**
+ *  MARK:--------------------H任务时,调用此方法 (参考33144-TODO1)--------------------
+ */
++(void) relateTransfer_H:(AIFoNodeBase*)fScene fCanset:(AIFoNodeBase*)fCanset iScene:(AIFoNodeBase*)iScene iCanset:(NSArray*)cansetToContent_ps
+                 fRScene:(AIFoNodeBase*)fRScene iRScene:(AIFoNodeBase*)iRScene {
+    //1. 数据准备;
+    AITransferPort_H *transferPort = [AITransferPort_H newWithFScene_H:fScene.p fCanset:fCanset iScene:iScene.p iCansetContent_ps:cansetToContent_ps fRScene:fRScene iRScene:iRScene];
+    
+    //2. 插入传节点的承端口;
+    if (![fScene.transferIPorts containsObject:transferPort]) {
+        [fScene.transferIPorts addObject:transferPort];
+        [SMGUtils insertNode:fScene];
+    }
+    
+    //3. 插入承节点的传端口;
+    if (![iScene.transferFPorts containsObject:transferPort]) {
+        [iScene.transferFPorts addObject:transferPort];
+        [SMGUtils insertNode:iScene];
+    }
+    
+    //DEBUGLOG: 现在场景树只有IF两层,而IF也必然有抽具象关系,如果没有,查下: 要不就是H任务,要不就是有BUG;
+    if (![iRScene.absMatchDic objectForKey:@(fRScene.pId)] && ![iRScene isEqual:fRScene]) {
+        BOOL aaa = [Ports2Pits(iRScene.absPorts) containsObject:fRScene.pointer];//核实下,到底是不是抽具象关联?
+        BOOL bbb = [TOUtils mIsC_1:iRScene.p c:fRScene.p];
+        NSLog(@"如果是H任务,看下工作记忆结构,在父非子算法中,兼容之... & 如果是BUG,则修下看哪里有问题 %d %d",aaa,bbb);
+    }
+}
+
+/**
  *  MARK:--------------------outSP子即父--------------------
  *  @desc 子即父,推举到F层SP也+1: iCanset的outSP更新时,将它的fCanset的outSP也+1 (参考33112-TODO4.3);
  *  @desc I层即sceneTo,F层则从transferPort迁移关联来取 (参考33112-TODO3);

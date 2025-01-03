@@ -22,7 +22,13 @@
 
 -(BOOL) isEqual:(AITransferPort*)object{
     if (ISOK(object, AITransferPort.class)) {
-        return [self.fScene isEqual:object.fScene] && [self.fCanset isEqual:object.fCanset] && [self.iScene isEqual:object.iScene] && [self.iCansetHeader isEqualToString:object.iCansetHeader];
+        //2. 对比scene层;
+        BOOL equal2 = [self.fScene isEqual:object.fScene] && [self.iScene isEqual:object.iScene];
+        if (!equal2) return false;
+        
+        //3. 对比canset层;
+        BOOL equal3 = [self.fCanset isEqual:object.fCanset] && [self.iCansetHeader isEqualToString:object.iCansetHeader];
+        if (!equal3) return false;
     }
     return false;
 }

@@ -74,6 +74,7 @@
 #import "AINetIndexUtils.h"
 #import "AIPort.h"
 #import "AITransferPort.h"
+#import "AITransferPort_H.h"
 #import "AIAbsAlgNode.h"
 #import "AIAlgNodeBase.h"
 #import "AIFrontOrderNode.h"
