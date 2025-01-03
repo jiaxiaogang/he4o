@@ -670,6 +670,7 @@
 /**
  *  MARK:--------------------获取near数据 (直传fo版)--------------------
  *  @desc 调用说明: 对于有明确的absFo和conFo的,可以调用fo版;
+ *  @desc 简述: 此方法,根据indexDic利用alg元素实时计算出fo匹配度, 另外还有个办法是直接从fo.matchValueDic中取复用,那个性能好,不用实时计算;
  *  @desc 根据indexDic取得nearCount&sumNear (参考27177-todo3);
  *  @version
  *      2023.01.18: 相似度默认值为1,且相似度改为相乘 (参考28035-todo2);
@@ -1016,6 +1017,9 @@
 +(void) relateTransfer:(AIFoNodeBase*)fScene fCanset:(AIFoNodeBase*)fCanset iScene:(AIFoNodeBase*)iScene iCanset:(NSArray*)cansetToContent_ps {
     //1. 数据准备;
     AITransferPort *transferPort = [AITransferPort newWithFScene:fScene.p fCanset:fCanset iScene:iScene.p iCansetContent_ps:cansetToContent_ps];
+    
+    //================ 进行迁移关联 (以实现防重,避免重复性能浪费等) ================
+    //2024.11.13: 迁移都是迁移到I层,所以可以用transferIPorts来判断防重;
     
     //2. 插入传节点的承端口;
     if (![fScene.transferIPorts containsObject:transferPort]) {

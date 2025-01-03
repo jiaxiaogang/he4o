@@ -520,24 +520,32 @@
         //3. 计算I/F两层的场景时序匹配度 (参考33116-方案1-采用时序匹配度做为抽象程度,计算冷却值);
         AIFoNodeBase *fScene = [SMGUtils searchNode:fPort.fScene];
         
-        
-        //TODOTOMORROW20241227: 此处完善下细节: H时,也以RScene场景树,去取匹配度;
-        if (canset.isH) {
-            NSLog(@"H任务了,实测下下面的foMatchValue能不能取到值,如果不能,看怎么取到R场景树,来取下匹配度,现在的代码应该只对R时取的准,对H时因为没有落实到R树上面,导致应该是取不到的...");
-        }
-        
         //2024.11.29: 性能优化: 单次已从0.66优化至0.03ms (性能说明: 用alg实时计算要0.66ms,直接用fo复用取要0.03ms);
-        CGFloat foMatchValue = [iScene getAbsMatchValue:fScene.p];//[AINetUtils getMatchByIndexDic:fScene.p conFo:iScene.p callerIsAbs:false];
+        CGFloat foMatchValue = 0;
+        if (canset.isH) {
+            //3a. H时,以RScene场景树,去取匹配度 (参考33144-TODO2);
+            AITransferPort_H *fPort_H = (AITransferPort_H*)fPort;
+            AIFoNodeBase *iRScene = [SMGUtils searchNode:fPort_H.iRScene];
+            foMatchValue = [iRScene getAbsMatchValue:fPort_H.fRScene];
+            
+            if (![iRScene.p isEqual:fPort_H.fRScene] && (![iRScene.absMatchDic objectForKey:@(fPort_H.fRScene.pointerId)] || foMatchValue <= 0)) {
+                //1. 此处仍会取到nil,排查下"关联transfer时,看空是哪来的;
+                NSLog(@"H测下33143,是不是还有匹配度为nil的问题");
+            }
+        } else {
+            //3b. R时,fScene就是fRScene,直接取匹配度即可;
+            foMatchValue = [iScene getAbsMatchValue:fScene.p];
+            
+            if (![iScene isEqual:fScene] && (![iScene.absMatchDic objectForKey:@(fScene.pId)] || foMatchValue <= 0)) {
+                //1. 此处仍会取到nil,排查下"关联transfer时,看空是哪来的;
+                NSLog(@"R测下33143,是不是还有匹配度为nil的问题");
+            }
+        }
         CGFloat cooledValue = [MathUtils getCooledValue_28:1 - foMatchValue];//算出当前匹配度,应该冷却到什么比例;
         
         //4. 把F层的SPDic冷却后,累计到I层 (环境作用于个体) (参考33115-方案2-累计spStrong);
         //2024.11.30: 性能优化: 单次已从1.14优化至0.02ms;
         NSDictionary *fSPDic = [fScene getItemOutSPDic:fPort.fCansetHeader];
-        
-        if (![iScene isEqual:fScene] && (![iScene.absMatchDic objectForKey:@(fScene.pId)] || foMatchValue <= 0)) {
-            //1. 此处仍会取到nil,排查下"关联transfer时,看空是哪来的;
-            NSLog(@"测下33143,是不是还有匹配度为nil的问题");
-        }
         
         //debugLog: 调试"有向无距场景"的竞争浮现 (参考33141-观察);
         //if ([NVHeUtil foHavXianWuJv:fScene.p] && foMatchValue > 0 && DICISOK(fSPDic)) {

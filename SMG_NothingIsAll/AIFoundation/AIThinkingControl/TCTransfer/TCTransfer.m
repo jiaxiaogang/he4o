@@ -54,15 +54,12 @@
     //2024.11.17: transferXv时,就记录迁移关联 (参考33112-TODO4.5);
     BOOL contentEqs = [cansetFrom.content_ps isEqual:cansetToContent_ps];
     if (cansetModel.baseSceneModel.type != SceneTypeBrother && !contentEqs) {
-        AITransferPort *transferPort = [AITransferPort newWithFScene:cansetModel.sceneFrom fCanset:cansetFrom iScene:cansetModel.sceneTo iCansetContent_ps:cansetToContent_ps];
-        
-        //5. 并进行迁移关联 (以实现防重,避免重复性能浪费等);
-        //2024.11.13: 迁移都是迁移到I层,所以这里判断防重时,用transferIPorts来判断即可;
-        AIFoNodeBase *fScene = [SMGUtils searchNode:cansetModel.sceneFrom];
-        if (![fScene.transferIPorts containsObject:transferPort]) {
-            //TODOTOMORROW20250103: 此处是有broRScene的,可以看下,要不存到transferPort中?这样在"父非子算法"中复用时,可以方便判断抽具象场景的匹配度;
-            //明天看isH时,取到IF的RScene,并调用relateTransfer_H方法;
-            
+        if (cansetModel.isH) {
+            AISceneModel *rSceneModel = cansetModel.baseSceneModel;//无论是R还是H,它的baseSceneModel都是rSceneModel;
+            AIFoNodeBase *iRScene = [SMGUtils searchNode:rSceneModel.getIScene];
+            AIFoNodeBase *fatherRScene = [SMGUtils searchNode:rSceneModel.getFatherScene];//R时为当前fatherSceneModel的scene;
+            [AINetUtils relateTransfer_H:sceneFrom fCanset:cansetFrom iScene:sceneTo iCanset:cansetToContent_ps fRScene:fatherRScene iRScene:iRScene];
+        } else {
             [AINetUtils relateTransfer:sceneFrom fCanset:cansetFrom iScene:sceneTo iCanset:cansetToContent_ps];
         }
     }
