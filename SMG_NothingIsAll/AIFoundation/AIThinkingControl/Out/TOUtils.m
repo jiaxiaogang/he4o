@@ -533,7 +533,8 @@
             foMatchValue = [iScene getAbsMatchValue:fScene.p];
             [AITest test33:iScene fScene:fScene.p];
         }
-        CGFloat cooledValue = [MathUtils getCooledValue_28:1 - foMatchValue];//算出当前匹配度,应该冷却到什么比例;
+        //2025.01.04: 提升环境作用力: 28原则太激烈了,匹配度0.7时就只剩10%的作用力了,增加环境温度为0.01 (当匹配度0.7时作用力为25%);
+        CGFloat cooledValue = [MathUtils getCooledValue:1 - foMatchValue finishValue:0.01f];//算出当前匹配度,应该冷却到什么比例;
         
         //4. 把F层的SPDic冷却后,累计到I层 (环境作用于个体) (参考33115-方案2-累计spStrong);
         //2024.11.30: 性能优化: 单次已从1.14优化至0.02ms;
