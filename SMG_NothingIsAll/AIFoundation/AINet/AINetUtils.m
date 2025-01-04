@@ -1014,7 +1014,7 @@
  *  @version
  *      2024.11.13: V2,把fromto命名成F/I两层,避免F/I层混乱 (参考33112-TODO4.4);
  */
-+(void) relateTransfer:(AIFoNodeBase*)fScene fCanset:(AIFoNodeBase*)fCanset iScene:(AIFoNodeBase*)iScene iCanset:(NSArray*)cansetToContent_ps {
++(void) relateTransfer_R:(AIFoNodeBase*)fScene fCanset:(AIFoNodeBase*)fCanset iScene:(AIFoNodeBase*)iScene iCanset:(NSArray*)cansetToContent_ps {
     //1. 数据准备;
     AITransferPort *transferPort = [AITransferPort newWithFScene:fScene.p fCanset:fCanset iScene:iScene.p iCansetContent_ps:cansetToContent_ps];
     
@@ -1032,13 +1032,7 @@
         [iScene.transferFPorts addObject:transferPort];
         [SMGUtils insertNode:iScene];
     }
-    
-    //DEBUGLOG: 现在场景树只有IF两层,而IF也必然有抽具象关系,如果没有,查下: 要不就是H任务,要不就是有BUG;
-    if (![iScene.absMatchDic objectForKey:@(fScene.pId)] && ![iScene isEqual:fScene]) {
-        BOOL aaa = [Ports2Pits(iScene.absPorts) containsObject:fScene.pointer];//核实下,到底是不是抽具象关联?
-        BOOL bbb = [TOUtils mIsC_1:iScene.p c:fScene.p];
-        NSLog(@"迁移场景之间,没有抽具象关联是BUG: 查下调用者,或者取IF场景树时是不是就有问题,或者认知期就把抽具象关联漏了? (参考33143&33144) %d %d",aaa,bbb);
-    }
+    [AITest test33:iScene fScene:fScene.p];
 }
 
 /**
@@ -1060,13 +1054,7 @@
         [iScene.transferFPorts addObject:transferPort];
         [SMGUtils insertNode:iScene];
     }
-    
-    //DEBUGLOG: 现在场景树只有IF两层,而IF也必然有抽具象关系,如果没有,查下: 要不就是H任务,要不就是有BUG;
-    if (![iRScene.absMatchDic objectForKey:@(fRScene.pId)] && ![iRScene isEqual:fRScene]) {
-        BOOL aaa = [Ports2Pits(iRScene.absPorts) containsObject:fRScene.pointer];//核实下,到底是不是抽具象关联?
-        BOOL bbb = [TOUtils mIsC_1:iRScene.p c:fRScene.p];
-        NSLog(@"迁移场景之间,没有抽具象关联是BUG: 查下调用者,或者取IF场景树时是不是就有问题,或者认知期就把抽具象关联漏了? (参考33143&33144) %d %d",aaa,bbb);
-    }
+    [AITest test33:iRScene fScene:fRScene.p];
 }
 
 /**

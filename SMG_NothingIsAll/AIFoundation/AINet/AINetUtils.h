@@ -325,7 +325,7 @@
 /**
  *  MARK:--------------------新增迁移关联--------------------
  */
-+(void) relateTransfer:(AIFoNodeBase*)fScene fCanset:(AIFoNodeBase*)fCanset iScene:(AIFoNodeBase*)iScene iCanset:(NSArray*)cansetToContent_ps;
++(void) relateTransfer_R:(AIFoNodeBase*)fScene fCanset:(AIFoNodeBase*)fCanset iScene:(AIFoNodeBase*)iScene iCanset:(NSArray*)cansetToContent_ps;
 +(void) relateTransfer_H:(AIFoNodeBase*)fScene fCanset:(AIFoNodeBase*)fCanset iScene:(AIFoNodeBase*)iScene iCanset:(NSArray*)cansetToContent_ps
                  fRScene:(AIFoNodeBase*)fRScene iRScene:(AIFoNodeBase*)iRScene;
 

@@ -60,7 +60,7 @@
             AIFoNodeBase *fatherRScene = [SMGUtils searchNode:rSceneModel.getFatherScene];//R时为当前fatherSceneModel的scene;
             [AINetUtils relateTransfer_H:sceneFrom fCanset:cansetFrom iScene:sceneTo iCanset:cansetToContent_ps fRScene:fatherRScene iRScene:iRScene];
         } else {
-            [AINetUtils relateTransfer:sceneFrom fCanset:cansetFrom iScene:sceneTo iCanset:cansetToContent_ps];
+            [AINetUtils relateTransfer_R:sceneFrom fCanset:cansetFrom iScene:sceneTo iCanset:cansetToContent_ps];
         }
     }
 }
@@ -402,7 +402,7 @@
         //14. 挂载成功: 进行迁移关联 (可供复用,避免每一次推举更新sp时,都重新推举) (参考33112-TODO3);
         //2024.11.13: 新版迁移关联: 推举时=>from是I层,to是F层 (条件: 未发生迁移时,不执行) (参考33112-TODO4.4);
         if (![cansetTo isEqual:cansetFrom]) {
-            [AINetUtils relateTransfer:sceneTo fCanset:cansetTo iScene:sceneFrom iCanset:cansetFrom.content_ps];
+            [AINetUtils relateTransfer_R:sceneTo fCanset:cansetTo iScene:sceneFrom iCanset:cansetFrom.content_ps];
         }
     }
 }
