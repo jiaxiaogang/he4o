@@ -187,6 +187,7 @@
     
     //8. 调试有向无距果场景在试错训练中的竞争变化 (参考33108-调试日志);
     //2024.12.03: 有800多条时,这里也很耗时,先关掉,并且现在都是似层时序识别结果,这里的sceneTo已经不太可能是有向无距场景了,sceneFrom还差不多,这个日志先不删,等三个月后,还没用到再删掉(如果还有有向无距相关的BUG可能还会用到);
+    int logCount = 0;
     for (MapModel *mapModel in sortMapArr) {
         TOFoModel *obj = mapModel.v1;
         if (!debugMode) break;
@@ -199,6 +200,8 @@
         NSInteger index = [sort indexOfObject:obj];
         NSString *fromDSC = STRFORMAT(@"FROM<F%ld F%ld %@>",Demand2Pit((DemandModel*)obj.baseOrGroup).pointerId,obj.sceneFrom.pointerId,ShortDesc4Pit(obj.cansetFrom));
         NSLog(@"flt8b %ld/%ld. %@ by:%@ %@ %@ (分:%.2f P值:%ld) [CUT:%ld=>TAR:%ld]",index,sort.count,SceneType2Str(obj.baseSceneModel.type),fromDSC,CLEANSTR(obj.transferXvModel.sceneToCansetToIndexDic),CLEANSTR(spDic),spScore,pStrong,obj.cansetCutIndex,obj.cansetTargetIndex);
+        logCount++;
+        if (logCount >= 3) break;
     }
     return sort;
 }

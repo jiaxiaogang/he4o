@@ -60,10 +60,12 @@
         
         //log
         if (ARRISOK(cansetFroms1)) {
-            if (Log4GetCansetResult4H) NSLog(@"取HCanset候选集: 从hScene:F%ld(%@) 的在%ld帧开始取,取得HCanset数:%ld/%ld \n\t%@",sceneFrom.pId,SceneType2Str(rCanset.baseSceneModel.type),rCanset.cansetCutIndex + 1,cansetFroms1.count,allHCanset.count,CLEANSTR([SMGUtils convertArr:cansetFroms1 convertBlock:^id(id obj) {
+            if (Log4GetCansetResult4H) NSLog(@"第1步 取HCanset候选集: 从hScene:F%ld(%@) 的在%ld帧开始取,取得HCanset数:%ld/%ld \n\t%@",sceneFrom.pId,SceneType2Str(rCanset.baseSceneModel.type),rCanset.cansetCutIndex + 1,cansetFroms1.count,allHCanset.count,CLEANSTR([SMGUtils convertArr:cansetFroms1 convertBlock:^id(id obj) {
                 return ShortDesc4Pit(obj);
             }]));
         }
+        
+        //TODOTOMORROW20250104: 经测"有向无距场景的竞争浮现没发现什么问题了",查下此处,第1步还有几条解,但到第2步已经是0条,查下H的解那么少么?
         
         //5. Override过滤器: 防重已经迁移过的 (override用来过滤避免重复迁移) (参考29069-todo5.2);
         NSArray *alreadyTransfered_Cansets = [AINetUtils transferPorts_4Father:sceneTo fScene:sceneFrom];
