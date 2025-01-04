@@ -1037,7 +1037,7 @@
     if (![iScene.absMatchDic objectForKey:@(fScene.pId)] && ![iScene isEqual:fScene]) {
         BOOL aaa = [Ports2Pits(iScene.absPorts) containsObject:fScene.pointer];//核实下,到底是不是抽具象关联?
         BOOL bbb = [TOUtils mIsC_1:iScene.p c:fScene.p];
-        NSLog(@"如果是H任务,看下工作记忆结构,在父非子算法中,兼容之... & 如果是BUG,则修下看哪里有问题 %d %d",aaa,bbb);
+        NSLog(@"迁移场景之间,没有抽具象关联是BUG: 查下调用者,或者取IF场景树时是不是就有问题,或者认知期就把抽具象关联漏了? (参考33143&33144) %d %d",aaa,bbb);
     }
 }
 
@@ -1065,7 +1065,7 @@
     if (![iRScene.absMatchDic objectForKey:@(fRScene.pId)] && ![iRScene isEqual:fRScene]) {
         BOOL aaa = [Ports2Pits(iRScene.absPorts) containsObject:fRScene.pointer];//核实下,到底是不是抽具象关联?
         BOOL bbb = [TOUtils mIsC_1:iRScene.p c:fRScene.p];
-        NSLog(@"如果是H任务,看下工作记忆结构,在父非子算法中,兼容之... & 如果是BUG,则修下看哪里有问题 %d %d",aaa,bbb);
+        NSLog(@"迁移场景之间,没有抽具象关联是BUG: 查下调用者,或者取IF场景树时是不是就有问题,或者认知期就把抽具象关联漏了? (参考33143&33144) %d %d",aaa,bbb);
     }
 }
 

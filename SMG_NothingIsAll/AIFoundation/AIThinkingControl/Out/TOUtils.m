@@ -529,16 +529,14 @@
             foMatchValue = [iRScene getAbsMatchValue:fPort_H.fRScene];
             
             if (![iRScene.p isEqual:fPort_H.fRScene] && (![iRScene.absMatchDic objectForKey:@(fPort_H.fRScene.pointerId)] || foMatchValue <= 0)) {
-                //1. 此处仍会取到nil,排查下"关联transfer时,看空是哪来的;
-                NSLog(@"H测下33143,是不是还有匹配度为nil的问题");
+                NSLog(@"H测下33143,是不是还有匹配度为nil的问题,如果有取到nil问题,到relateTransfer中排查下它哪来的 (参考33143&33144)");
             }
         } else {
             //3b. R时,fScene就是fRScene,直接取匹配度即可;
             foMatchValue = [iScene getAbsMatchValue:fScene.p];
             
             if (![iScene isEqual:fScene] && (![iScene.absMatchDic objectForKey:@(fScene.pId)] || foMatchValue <= 0)) {
-                //1. 此处仍会取到nil,排查下"关联transfer时,看空是哪来的;
-                NSLog(@"R测下33143,是不是还有匹配度为nil的问题");
+                NSLog(@"R测下33143,是不是还有匹配度为nil的问题,如果有取到nil问题,到relateTransfer中排查下它哪来的 (参考33143&33144)");
             }
         }
         CGFloat cooledValue = [MathUtils getCooledValue_28:1 - foMatchValue];//算出当前匹配度,应该冷却到什么比例;
