@@ -57,7 +57,8 @@
         if (cansetModel.isH) {
             AISceneModel *rSceneModel = cansetModel.baseSceneModel;//无论是R还是H,它的baseSceneModel都是rSceneModel;
             AIFoNodeBase *iRScene = [SMGUtils searchNode:rSceneModel.getIScene];
-            AIFoNodeBase *fatherRScene = [SMGUtils searchNode:rSceneModel.getFatherScene];//R时为当前fatherSceneModel的scene;
+            //当type为I时,没有F,I和F都传I;
+            AIFoNodeBase *fatherRScene = cansetModel.baseSceneModel.type == SceneTypeI ? iRScene : [SMGUtils searchNode:rSceneModel.getFatherScene];//R时为当前fatherSceneModel的scene;
             [AINetUtils relateTransfer_H:sceneFrom fCanset:cansetFrom iScene:sceneTo iCanset:cansetToContent_ps fRScene:fatherRScene iRScene:iRScene];
         } else {
             [AINetUtils relateTransfer_R:sceneFrom fCanset:cansetFrom iScene:sceneTo iCanset:cansetToContent_ps];
