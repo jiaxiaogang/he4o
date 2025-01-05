@@ -325,10 +325,16 @@
     if (![iScene.p isEqual:fScene] && ![iScene.absMatchDic objectForKey:@(fScene.pointerId)]) {
         BOOL aaa = [Ports2Pits(iScene.absPorts) containsObject:fScene];//核实下,到底是不是抽具象关联?
         BOOL bbb = [TOUtils mIsC_1:iScene.p c:fScene];
-        NSLog(@"自检33: 现在场景树只有IF两层,而IF也必然有抽具象关系,所以迁移场景之间,没有抽具象关联是BUG: 查下relateTransfer中排查下它哪来的 || 或者取IF场景树时是不是就有问题 || 或者认知期就把抽具象关联漏了? (参考33143&33144) %d %d",aaa,bbb);
+        ELog(@"自检33: 现在场景树只有IF两层,而IF也必然有抽具象关系,所以迁移场景之间,没有抽具象关联是BUG: 查下relateTransfer中排查下它哪来的 || 或者取IF场景树时是不是就有问题 || 或者认知期就把抽具象关联漏了? (参考33143&33144) %d %d",aaa,bbb);
     }
 }
 
++(void) test34:(NSDictionary*)indexDic {
+    if ([SMGUtils removeRepeat:indexDic.allKeys].count < indexDic.count || [SMGUtils removeRepeat:indexDic.allValues].count < indexDic.count) {
+        ELog(@"映射有重复BUG %@",indexDic);
+        ELog(@"查下哪来的,为啥有重复的,,,看起来主要是feedbackStep2的realIndexDic来的...");
+    }
+}
 
 //MARK:===============================================================
 //MARK:    < 回测必经点测试 (常关,每个轮回测时打开,触发则关,未触发者为异常) >

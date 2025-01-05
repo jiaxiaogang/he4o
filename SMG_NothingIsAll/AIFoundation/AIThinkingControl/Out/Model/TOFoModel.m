@@ -122,6 +122,8 @@
     DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:sceneToCansetToDic];
     DirectIndexDic *dic2 = [DirectIndexDic newNoToAbs:realSceneToDic];
     [self.realCansetToIndexDic setDictionary:[TOUtils zonHeIndexDic:@[dic1,dic2]]];
+    NSLog(@"flt10 %p %p B1 %@",self.basePFo.realMaskFo,self.realCansetToIndexDic,CLEANSTR(self.realCansetToIndexDic));
+    [AITest test34:self.realCansetToIndexDic];
 }
 
 /**
@@ -162,6 +164,8 @@
             if ([realMaskAlgAbs_ps containsObject:cansetToAlg_p]) {
                 //6. 成功发现新映射;
                 [self.realCansetToIndexDic setObject:@(j) forKey:@(i)];
+                NSLog(@"flt10 %p %p B2 %@ K:%ld V:%ld",self.basePFo.realMaskFo,self.realCansetToIndexDic,CLEANSTR(self.realCansetToIndexDic),i,j);
+                [AITest test34:self.realCansetToIndexDic];
                 realProgress = j;
                 break;
             }
@@ -190,6 +194,8 @@
     //"pFo的最后一帧下标"  与  "现cutIndex下一帧(在等待反馈帧)"  之间因为匹配成功而=>  "追加映射";
     AIMatchFoModel *pFo = self.basePFo;
     [self.realCansetToIndexDic setObject:@(pFo.realMaskFo.count - 1) forKey:@(self.cansetActIndex)];
+    NSLog(@"flt10 %p %p B3 %@ K:%ld V:%ld",self.basePFo.realMaskFo,self.realCansetToIndexDic,CLEANSTR(self.realCansetToIndexDic),self.cansetActIndex,pFo.realMaskFo.count);
+    [AITest test34:self.realCansetToIndexDic];
 }
 
 /**
