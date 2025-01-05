@@ -194,8 +194,16 @@
     //"pFo的最后一帧下标"  与  "现cutIndex下一帧(在等待反馈帧)"  之间因为匹配成功而=>  "追加映射";
     AIMatchFoModel *pFo = self.basePFo;
     [self.realCansetToIndexDic setObject:@(pFo.realMaskFo.count - 1) forKey:@(self.cansetActIndex)];
-    NSLog(@"flt10 %p %p B3 %@ K:%ld V:%ld",self.basePFo.realMaskFo,self.realCansetToIndexDic,CLEANSTR(self.realCansetToIndexDic),self.cansetActIndex,pFo.realMaskFo.count);
+    
+    //TODOTOMORROW20250105: indexDic有重复value的问题,看起来像是这里的问题,在feedbackTOR成功时,把realMaskFo.count传过来?不然它一变,这里就错了?还是什么原因,再调试下flt10日志看...
+    ReasonDemandModel *root = (ReasonDemandModel*)[TOUtils getRootDemandModelWithSubOutModel:self];
+    BOOL rootValid = [theTC.outModelManager.getAllDemand containsObject:root];
+    
+    NSLog(@"flt10 %p %p B3 %@ K:%ld V:%ld (有效:%d %d %d)",self.basePFo.realMaskFo,self.realCansetToIndexDic,CLEANSTR(self.realCansetToIndexDic),self.cansetActIndex,pFo.realMaskFo.count,rootValid,pFo.isExpired,root.isExpired);
     [AITest test34:self.realCansetToIndexDic];
+    
+    
+    
 }
 
 /**
