@@ -285,6 +285,13 @@
         }
     }
     
+    //TODOTOMORROW20250105: 此处=IndexDic有时key为1,2,3,3有重复的3,查下原因...
+    if ([SMGUtils removeRepeat:indexDic.allKeys].count < indexDic.count || [SMGUtils removeRepeat:indexDic.allValues].count < indexDic.count) {
+        NSLog(@"映射有重复BUG %@",indexDic);
+        NSLog(@"查下哪来的,为啥有重复的,,,看起来主要是feedbackStep2的realIndexDic来的...");
+    }
+    
+    
     //2. 保存节点;
     [SMGUtils insertNode:self];
     [SMGUtils insertNode:absFo];
