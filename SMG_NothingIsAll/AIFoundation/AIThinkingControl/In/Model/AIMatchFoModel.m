@@ -30,7 +30,7 @@
     //model.baseFrameModel = baseFrameModel;
     model.matchFo = matchFo;
     [model.realMaskFo addObjectsFromArray:protoOrRegroupFoNode.content_ps];
-    NSLog(@"flt10 %p A1 COUNT:%ld",model.realMaskFo,model.realMaskFo.count);
+    NSLog(@"flt10 %p RealMaskFo更新1 COUNT:%ld",model.realMaskFo,model.realMaskFo.count);
     [model.realDeltaTimes addObjectsFromArray:protoOrRegroupFoNode.deltaTimes];
     model.lastFrameTime = [[NSDate date] timeIntervalSince1970];
     model.sumNear = sumNear;
@@ -138,7 +138,7 @@
     [self setStatus:TIModelStatus_OutBackReason forCutIndex:self.cutIndex];
     self.feedbackNear = [waitAlg getConMatchValue:fbProtoAlg];
     [self.realMaskFo addObject:fbProtoAlg];
-    NSLog(@"flt10 %p A2 COUNT:%ld",self.realMaskFo,self.realMaskFo.count);
+    NSLog(@"flt10 %p RealMaskFo更新2 COUNT:%ld",self.realMaskFo,self.realMaskFo.count);
     
     //2. 更新realDeltaTimes和lastFrameTime;
     NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
@@ -183,7 +183,7 @@
     //----------------仅记录当前帧----------------
     //1. 更新realMaskFo;
     [self.realMaskFo addObject:otherProtoAlg];
-    NSLog(@"flt10 %p A3 COUNT:%ld",self.realMaskFo,self.realMaskFo.count);
+    NSLog(@"flt10 %p RealMaskFo更新3 COUNT:%ld",self.realMaskFo,self.realMaskFo.count);
     
     //2. 更新realDeltaTimes和lastFrameTime;
     NSTimeInterval now = [[NSDate date] timeIntervalSince1970];

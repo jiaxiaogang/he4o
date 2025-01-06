@@ -122,7 +122,24 @@
     DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:sceneToCansetToDic];
     DirectIndexDic *dic2 = [DirectIndexDic newNoToAbs:realSceneToDic];
     [self.realCansetToIndexDic setDictionary:[TOUtils zonHeIndexDic:@[dic1,dic2]]];
-    NSLog(@"flt10 %p %p B1 %@",self.basePFo.realMaskFo,self.realCansetToIndexDic,CLEANSTR(self.realCansetToIndexDic));
+    
+    
+    //如下日志: 可见在RealCansetToIndexDic初始化时就有问题,它既然已经有了末帧的初始映射,那么后续再更新时,就不应该再更新末帧了(导致重复),
+    //分析1: 看来,在initRealCansetToDic()时,cansetTo正在执行中的帧,可能与realMaskFo有映射,说白了,表示它已经实现了;
+    //分析2: initRealCansetToDic后,actIndex应该也得更新下?毕竟正在等待中的可能已经被实现了;
+    //      另外: actIndex更新后,是不是又得重新判断下前段条件满足? //不需要,因为是在Init和fix映射后,才判断的条件满足;
+    //分析3: 再向前追查下: 为什么cansetCutIndex会计算错误?明明已经实现的帧,为什么在计算的cansetCutIndex之后?
+    
+    //1781 [22:55:41:597 TI    AIMatchFoModel.m  33] flt10 0x60000a0af330 RealMaskFo更新1 COUNT:3
+    //2177 [22:55:45:708 TI        TCFeedback.m  57] flt10 0x60000a0af330 feedbackTIR执行1 COUNT:3
+    //2186 [22:55:45:714 TI        TCFeedback.m  60] flt10 0x60000a0af330 feedbackTIR执行2 COUNT:3
+    //2188 [22:55:45:721 TI    AIMatchFoModel.m 141] flt10 0x60000a0af330 RealMaskFo更新2 COUNT:4
+    //2358 [22:55:46:579 TO         TOFoModel.m 125] flt10 0x60000a0af330 0x60000b736520 RealCansetToIndexDic更新1 {0 = 1;1 = 2;2 = 3;}
+    //2690 [22:55:59:186 TI         TOFoModel.m 252] flt10 0x60000a0af330 0x60000b736520 RealCansetToIndexDic更新3 {0 = 1;3 = 3;2 = 3;1 = 2;} K:3 V:3 (有效:1 0 0)
+
+    
+    
+    NSLog(@"flt10 %p %p RealCansetToIndexDic更新1 %@ %@ %@",self.basePFo.realMaskFo,self.realCansetToIndexDic,CLEANSTR(self.realCansetToIndexDic),CLEANSTR(realSceneToDic),CLEANSTR(sceneToCansetToDic));
     [AITest test34:self.realCansetToIndexDic];
 }
 
@@ -164,7 +181,7 @@
             if ([realMaskAlgAbs_ps containsObject:cansetToAlg_p]) {
                 //6. 成功发现新映射;
                 [self.realCansetToIndexDic setObject:@(j) forKey:@(i)];
-                NSLog(@"flt10 %p %p B2 %@ K:%ld V:%ld",self.basePFo.realMaskFo,self.realCansetToIndexDic,CLEANSTR(self.realCansetToIndexDic),i,j);
+                NSLog(@"flt10 %p %p RealCansetToIndexDic更新2 %@ K:%ld V:%ld",self.basePFo.realMaskFo,self.realCansetToIndexDic,CLEANSTR(self.realCansetToIndexDic),i,j);
                 [AITest test34:self.realCansetToIndexDic];
                 realProgress = j;
                 break;
@@ -198,12 +215,8 @@
     //TODOTOMORROW20250105: indexDic有重复value的问题,看起来像是这里的问题,在feedbackTOR成功时,把realMaskFo.count传过来?不然它一变,这里就错了?还是什么原因,再调试下flt10日志看...
     ReasonDemandModel *root = (ReasonDemandModel*)[TOUtils getRootDemandModelWithSubOutModel:self];
     BOOL rootValid = [theTC.outModelManager.getAllDemand containsObject:root];
-    
-    NSLog(@"flt10 %p %p B3 %@ K:%ld V:%ld (有效:%d %d %d)",self.basePFo.realMaskFo,self.realCansetToIndexDic,CLEANSTR(self.realCansetToIndexDic),self.cansetActIndex,pFo.realMaskFo.count,rootValid,pFo.isExpired,root.isExpired);
+    NSLog(@"flt10 %p %p RealCansetToIndexDic更新3 %@ K:%ld V:%ld (有效:%d %d %d)",self.basePFo.realMaskFo,self.realCansetToIndexDic,CLEANSTR(self.realCansetToIndexDic),self.cansetActIndex,pFo.realMaskFo.count-1,rootValid,pFo.isExpired,root.isExpired);
     [AITest test34:self.realCansetToIndexDic];
-    
-    
-    
 }
 
 /**

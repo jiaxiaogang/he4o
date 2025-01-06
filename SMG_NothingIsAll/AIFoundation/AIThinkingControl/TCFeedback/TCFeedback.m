@@ -54,12 +54,17 @@
         
         //3. 对pFos做理性反馈;
         for (AIMatchFoModel *waitModel in root.validPFos) {
+            NSLog(@"flt10 %p feedbackTIR执行1 COUNT:%ld",waitModel.realMaskFo,waitModel.realMaskFo.count);
+        }
+        for (AIMatchFoModel *waitModel in root.pFos) {
+            NSLog(@"flt10 %p feedbackTIR执行2 COUNT:%ld",waitModel.realMaskFo,waitModel.realMaskFo.count);
             
             //4. 取出等待中的_非wait状态的,不处理;
             NSInteger status = [waitModel getStatusForCutIndex:waitModel.cutIndex];
             if (status != TIModelStatus_LastWait) {
                 //调用1: 只要没调用到pushFrame,就调用此方法记录protoA;
                 [waitModel feedbackOtherFrame:model.protoAlg.pointer];
+                NSLog(@"flt10 %p feedbackTIR执行3 COUNT:%ld",waitModel.realMaskFo,waitModel.realMaskFo.count);
                 continue;
             }
             AIFoNodeBase *matchFo = [SMGUtils searchNode:waitModel.matchFo];
@@ -70,6 +75,7 @@
             if (waitModel.cutIndex >= maxCutIndex){
                 //调用2: 只要没调用到pushFrame,就调用此方法记录protoA;
                 [waitModel feedbackOtherFrame:model.protoAlg.pointer];
+                NSLog(@"flt10 %p feedbackTIR执行4 COUNT:%ld",waitModel.realMaskFo,waitModel.realMaskFo.count);
                 continue;
             }
             AIKVPointer *waitAlg_p = ARR_INDEX(matchFo.content_ps, waitModel.cutIndex + 1);
