@@ -216,19 +216,11 @@
     
     
     if ([self.realCansetToIndexDic.allKeys containsObject:@(self.cansetActIndex)] || [self.realCansetToIndexDic.allValues containsObject:@(pFo.realMaskFo.count - 1)]) {
-        NSLog(@"indexDic重复的BUG不复现了，这里加个断点，只要有重复的，立马停，把feedbackTIR的validPFos改成pFos后又可以复现了，并且观察日志，发现在出错复现时，确实有一帧“果“在输入后，未能收集到realMaskFo中。。。");
-        //可是昨天我记得改成pFos也不行呀，看来只能先修了这些，并且加上监听代码，何时再复现问题，何时再继续修了。
-        //经常不复现，不好修，要不先打个logRecord吧，等复现时，再修？
+        NSLog(@"再观察下indexDic重复的BUG还有没有，从这段时间观察日志来看，感觉应该还有问题。");
     }
     
     [self.realCansetToIndexDic setObject:@(pFo.realMaskFo.count - 1) forKey:@(self.cansetActIndex)];
-    
-    
-    
-    //TODOTOMORROW20250105: indexDic有重复value的问题,看起来像是这里的问题,在feedbackTOR成功时,把realMaskFo.count传过来?不然它一变,这里就错了?还是什么原因,再调试下flt10日志看...
-    ReasonDemandModel *root = (ReasonDemandModel*)[TOUtils getRootDemandModelWithSubOutModel:self];
-    BOOL rootValid = [theTC.outModelManager.getAllDemand containsObject:root];
-    NSLog(@"flt10 %p %p RealCansetToIndexDic更新3 %@ K:%ld V:%ld (有效:%d %d %d)",self.basePFo.realMaskFo,self.realCansetToIndexDic,CLEANSTR(self.realCansetToIndexDic),self.cansetActIndex,pFo.realMaskFo.count-1,rootValid,pFo.isExpired,root.isExpired);
+    NSLog(@"flt10 %p %p RealCansetToIndexDic更新3 %@ K:%ld V:%ld (有效:%d)",self.basePFo.realMaskFo,self.realCansetToIndexDic,CLEANSTR(self.realCansetToIndexDic),self.cansetActIndex,pFo.realMaskFo.count-1,pFo.isExpired);
     [AITest test34:self.realCansetToIndexDic];
 }
 

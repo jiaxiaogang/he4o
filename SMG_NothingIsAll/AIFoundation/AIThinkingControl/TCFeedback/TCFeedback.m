@@ -42,9 +42,6 @@
     //2024.12.05: 每次反馈同F只计一次: 避免F值快速重复累计到很大,sp更新(同场景下的)防重推 (参考33137-方案v5);
     NSMutableArray *except4SP2F = [[NSMutableArray alloc] init];
 
-    
-    //TODOTOMORROW20250105: indexDic有重复value的问题,看起来像是这里的问题,这里没收集到,看下这里的validPFos,以及两个continue,是不是可以改下?
-    
     //1. fbTIR对roots进行反馈判断 (参考27096-方案2);
     NSArray *roots = [theTC.outModelManager.getAllDemand copy];
     for (ReasonDemandModel *root in roots) {
@@ -58,7 +55,6 @@
             //4. isExpired状态的,不处理 （但也要记录只要没调用到pushFrame,就调用此方法记录protoA）。
             if (waitModel.isExpired) {
                 [waitModel feedbackOtherFrame:model.protoAlg.pointer];
-                NSLog(@"flt10 %p feedbackTIR执行1 COUNT:%ld",waitModel.realMaskFo,waitModel.realMaskFo.count);
                 continue;
             }
             //4. 取出等待中的_非wait状态的,不处理;
@@ -66,7 +62,6 @@
             if (status != TIModelStatus_LastWait) {
                 //调用1: 只要没调用到pushFrame,就调用此方法记录protoA;
                 [waitModel feedbackOtherFrame:model.protoAlg.pointer];
-                NSLog(@"flt10 %p feedbackTIR执行3 COUNT:%ld",waitModel.realMaskFo,waitModel.realMaskFo.count);
                 continue;
             }
             AIFoNodeBase *matchFo = [SMGUtils searchNode:waitModel.matchFo];
@@ -77,10 +72,8 @@
             if (waitModel.cutIndex >= maxCutIndex){
                 //调用2: 只要没调用到pushFrame,就调用此方法记录protoA;
                 [waitModel feedbackOtherFrame:model.protoAlg.pointer];
-                NSLog(@"flt10 %p feedbackTIR执行4 COUNT:%ld",waitModel.realMaskFo,waitModel.realMaskFo.count);
                 continue;
             }
-            NSLog(@"flt10 %p feedbackTIR执行5 COUNT:%ld",waitModel.realMaskFo,waitModel.realMaskFo.count);
             
             AIKVPointer *waitAlg_p = ARR_INDEX(matchFo.content_ps, waitModel.cutIndex + 1);
             
