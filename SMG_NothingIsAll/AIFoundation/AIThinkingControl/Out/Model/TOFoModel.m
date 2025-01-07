@@ -137,9 +137,11 @@
     //2358 [22:55:46:579 TO         TOFoModel.m 125] flt10 0x60000a0af330 0x60000b736520 RealCansetToIndexDic更新1 {0 = 1;1 = 2;2 = 3;}
     //2690 [22:55:59:186 TI         TOFoModel.m 252] flt10 0x60000a0af330 0x60000b736520 RealCansetToIndexDic更新3 {0 = 1;3 = 3;2 = 3;1 = 2;} K:3 V:3 (有效:1 0 0)
 
+    AIFoNodeBase *sceneFrom = [SMGUtils searchNode:self.sceneFrom];
+    NSDictionary *cansetFromSceneFromIndexDic = [sceneFrom getConIndexDic:self.cansetFrom];//怀疑是sceneFromCansetFrom比sceneToCansetTo的映射更少，导致前者取cutIndex靠前，后者靠后。
+    //或者，sceneFrom也有cutIndex，而这里在initRealCansetToDic时，没考虑这个进度的限制？//但pFo.indexDic2就是real映射，它是必定已经发生了的，那为什么sceneFrom的cutIndex又那么靠前呢？
     
-    
-    NSLog(@"flt10 %p %p RealCansetToIndexDic更新1 %@ %@ %@",self.basePFo.realMaskFo,self.realCansetToIndexDic,CLEANSTR(self.realCansetToIndexDic),CLEANSTR(realSceneToDic),CLEANSTR(sceneToCansetToDic));
+    NSLog(@"flt10 %p %p RealCansetToIndexDic更新1 %@ %@ %@ %@",self.basePFo.realMaskFo,self.realCansetToIndexDic,CLEANSTR(self.realCansetToIndexDic),CLEANSTR(realSceneToDic),CLEANSTR(sceneToCansetToDic),CLEANSTR(cansetFromSceneFromIndexDic));
     [AITest test34:self.realCansetToIndexDic];
 }
 
