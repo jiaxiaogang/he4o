@@ -53,12 +53,14 @@
         if (!ISOK(root, ReasonDemandModel.class)) continue;
         
         //3. 对pFos做理性反馈;
-        for (AIMatchFoModel *waitModel in root.validPFos) {
-//            NSLog(@"flt10 %p feedbackTIR执行1 COUNT:%ld",waitModel.realMaskFo,waitModel.realMaskFo.count);
-//        }
-//        for (AIMatchFoModel *waitModel in root.pFos) {
-            NSLog(@"flt10 %p feedbackTIR执行2 COUNT:%ld",waitModel.realMaskFo,waitModel.realMaskFo.count);
-            
+        //2025.01.07: isExpired状态的，也要记录proto到realMaskFo中，避免少记导致TOR反馈成立时，更新RealCansetToIndexDic映射时取错realMaskFo的index导致映射错误。
+        for (AIMatchFoModel *waitModel in root.pFos) {
+            //4. isExpired状态的,不处理 （但也要记录只要没调用到pushFrame,就调用此方法记录protoA）。
+            if (waitModel.isExpired) {
+                [waitModel feedbackOtherFrame:model.protoAlg.pointer];
+                NSLog(@"flt10 %p feedbackTIR执行1 COUNT:%ld",waitModel.realMaskFo,waitModel.realMaskFo.count);
+                continue;
+            }
             //4. 取出等待中的_非wait状态的,不处理;
             NSInteger status = [waitModel getStatusForCutIndex:waitModel.cutIndex];
             if (status != TIModelStatus_LastWait) {
@@ -78,6 +80,8 @@
                 NSLog(@"flt10 %p feedbackTIR执行4 COUNT:%ld",waitModel.realMaskFo,waitModel.realMaskFo.count);
                 continue;
             }
+            NSLog(@"flt10 %p feedbackTIR执行5 COUNT:%ld",waitModel.realMaskFo,waitModel.realMaskFo.count);
+            
             AIKVPointer *waitAlg_p = ARR_INDEX(matchFo.content_ps, waitModel.cutIndex + 1);
             
             //6. 判断protoAlg与waitAlg之间匹配,成立则OutBackYes;
