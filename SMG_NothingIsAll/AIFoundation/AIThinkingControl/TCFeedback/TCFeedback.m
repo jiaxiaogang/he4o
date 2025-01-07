@@ -54,9 +54,9 @@
         
         //3. 对pFos做理性反馈;
         for (AIMatchFoModel *waitModel in root.validPFos) {
-            NSLog(@"flt10 %p feedbackTIR执行1 COUNT:%ld",waitModel.realMaskFo,waitModel.realMaskFo.count);
-        }
-        for (AIMatchFoModel *waitModel in root.pFos) {
+//            NSLog(@"flt10 %p feedbackTIR执行1 COUNT:%ld",waitModel.realMaskFo,waitModel.realMaskFo.count);
+//        }
+//        for (AIMatchFoModel *waitModel in root.pFos) {
             NSLog(@"flt10 %p feedbackTIR执行2 COUNT:%ld",waitModel.realMaskFo,waitModel.realMaskFo.count);
             
             //4. 取出等待中的_非wait状态的,不处理;

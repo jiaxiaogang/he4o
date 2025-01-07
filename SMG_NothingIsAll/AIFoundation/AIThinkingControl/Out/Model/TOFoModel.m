@@ -137,11 +137,12 @@
     //2358 [22:55:46:579 TO         TOFoModel.m 125] flt10 0x60000a0af330 0x60000b736520 RealCansetToIndexDic更新1 {0 = 1;1 = 2;2 = 3;}
     //2690 [22:55:59:186 TI         TOFoModel.m 252] flt10 0x60000a0af330 0x60000b736520 RealCansetToIndexDic更新3 {0 = 1;3 = 3;2 = 3;1 = 2;} K:3 V:3 (有效:1 0 0)
 
-    AIFoNodeBase *sceneFrom = [SMGUtils searchNode:self.sceneFrom];
-    NSDictionary *cansetFromSceneFromIndexDic = [sceneFrom getConIndexDic:self.cansetFrom];//怀疑是sceneFromCansetFrom比sceneToCansetTo的映射更少，导致前者取cutIndex靠前，后者靠后。
+//    AIFoNodeBase *sceneFrom = [SMGUtils searchNode:self.sceneFrom];
+//    NSDictionary *cansetFromSceneFromIndexDic = [sceneFrom getConIndexDic:self.cansetFrom];//怀疑是sceneFromCansetFrom比sceneToCansetTo的映射更少，导致前者取cutIndex靠前，后者靠后。
     //或者，sceneFrom也有cutIndex，而这里在initRealCansetToDic时，没考虑这个进度的限制？//但pFo.indexDic2就是real映射，它是必定已经发生了的，那为什么sceneFrom的cutIndex又那么靠前呢？
     
-    NSLog(@"flt10 %p %p RealCansetToIndexDic更新1 %@ %@ %@ %@",self.basePFo.realMaskFo,self.realCansetToIndexDic,CLEANSTR(self.realCansetToIndexDic),CLEANSTR(realSceneToDic),CLEANSTR(sceneToCansetToDic),CLEANSTR(cansetFromSceneFromIndexDic));
+//    NSLog(@"flt10 %p %p RealCansetToIndexDic更新1 %@ %@ %@ %@",self.basePFo.realMaskFo,self.realCansetToIndexDic,CLEANSTR(self.realCansetToIndexDic),CLEANSTR(realSceneToDic),CLEANSTR(sceneToCansetToDic),CLEANSTR(cansetFromSceneFromIndexDic));
+    NSLog(@"flt10 %p %p RealCansetToIndexDic更新1 %@",self.basePFo.realMaskFo,self.realCansetToIndexDic,CLEANSTR(self.realCansetToIndexDic));
     [AITest test34:self.realCansetToIndexDic];
 }
 
@@ -212,7 +213,17 @@
 -(void) updateRealCansetToDic {
     //"pFo的最后一帧下标"  与  "现cutIndex下一帧(在等待反馈帧)"  之间因为匹配成功而=>  "追加映射";
     AIMatchFoModel *pFo = self.basePFo;
+    
+    
+    if ([self.realCansetToIndexDic.allKeys containsObject:@(self.cansetActIndex)] || [self.realCansetToIndexDic.allValues containsObject:@(pFo.realMaskFo.count - 1)]) {
+        NSLog(@"indexDic重复的BUG不复现了，这里加个断点，只要有重复的，立马停，把feedbackTIR的validPFos改成pFos后又可以复现了，并且观察日志，发现在出错复现时，确实有一帧“果“在输入后，未能收集到realMaskFo中。。。");
+        //可是昨天我记得改成pFos也不行呀，看来只能先修了这些，并且加上监听代码，何时再复现问题，何时再继续修了。
+        //经常不复现，不好修，要不先打个logRecord吧，等复现时，再修？
+    }
+    
     [self.realCansetToIndexDic setObject:@(pFo.realMaskFo.count - 1) forKey:@(self.cansetActIndex)];
+    
+    
     
     //TODOTOMORROW20250105: indexDic有重复value的问题,看起来像是这里的问题,在feedbackTOR成功时,把realMaskFo.count传过来?不然它一变,这里就错了?还是什么原因,再调试下flt10日志看...
     ReasonDemandModel *root = (ReasonDemandModel*)[TOUtils getRootDemandModelWithSubOutModel:self];
