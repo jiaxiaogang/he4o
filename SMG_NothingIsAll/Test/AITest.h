@@ -47,6 +47,7 @@
 +(void) test32:(AIFoNodeBase*)protoCanset newCanset:(AIFoNodeBase*)newCanset;
 +(void) test33:(AIFoNodeBase*)iScene fScene:(AIKVPointer*)fScene;
 +(void) test34:(NSDictionary*)indexDic;
++(void) test35:(NSDictionary*)oldIndexDic newK:(NSInteger)newK newV:(NSInteger)newV;
 
 //MARK:===============================================================
 //MARK:    < 回测必经点测试 (常关,每个轮回测时打开,触发则关,未触发者为异常) >

@@ -122,27 +122,7 @@
     DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:sceneToCansetToDic];
     DirectIndexDic *dic2 = [DirectIndexDic newNoToAbs:realSceneToDic];
     [self.realCansetToIndexDic setDictionary:[TOUtils zonHeIndexDic:@[dic1,dic2]]];
-    
-    
-    //如下日志: 可见在RealCansetToIndexDic初始化时就有问题,它既然已经有了末帧的初始映射,那么后续再更新时,就不应该再更新末帧了(导致重复),
-    //分析1: 看来,在initRealCansetToDic()时,cansetTo正在执行中的帧,可能与realMaskFo有映射,说白了,表示它已经实现了;
-    //分析2: initRealCansetToDic后,actIndex应该也得更新下?毕竟正在等待中的可能已经被实现了;
-    //      另外: actIndex更新后,是不是又得重新判断下前段条件满足? //不需要,因为是在Init和fix映射后,才判断的条件满足;
-    //分析3: 再向前追查下: 为什么cansetCutIndex会计算错误?明明已经实现的帧,为什么在计算的cansetCutIndex之后?
-    
-    //1781 [22:55:41:597 TI    AIMatchFoModel.m  33] flt10 0x60000a0af330 RealMaskFo更新1 COUNT:3
-    //2177 [22:55:45:708 TI        TCFeedback.m  57] flt10 0x60000a0af330 feedbackTIR执行1 COUNT:3
-    //2186 [22:55:45:714 TI        TCFeedback.m  60] flt10 0x60000a0af330 feedbackTIR执行2 COUNT:3
-    //2188 [22:55:45:721 TI    AIMatchFoModel.m 141] flt10 0x60000a0af330 RealMaskFo更新2 COUNT:4
-    //2358 [22:55:46:579 TO         TOFoModel.m 125] flt10 0x60000a0af330 0x60000b736520 RealCansetToIndexDic更新1 {0 = 1;1 = 2;2 = 3;}
-    //2690 [22:55:59:186 TI         TOFoModel.m 252] flt10 0x60000a0af330 0x60000b736520 RealCansetToIndexDic更新3 {0 = 1;3 = 3;2 = 3;1 = 2;} K:3 V:3 (有效:1 0 0)
-
-//    AIFoNodeBase *sceneFrom = [SMGUtils searchNode:self.sceneFrom];
-//    NSDictionary *cansetFromSceneFromIndexDic = [sceneFrom getConIndexDic:self.cansetFrom];//怀疑是sceneFromCansetFrom比sceneToCansetTo的映射更少，导致前者取cutIndex靠前，后者靠后。
-    //或者，sceneFrom也有cutIndex，而这里在initRealCansetToDic时，没考虑这个进度的限制？//但pFo.indexDic2就是real映射，它是必定已经发生了的，那为什么sceneFrom的cutIndex又那么靠前呢？
-    
-//    NSLog(@"flt10 %p %p RealCansetToIndexDic更新1 %@ %@ %@ %@",self.basePFo.realMaskFo,self.realCansetToIndexDic,CLEANSTR(self.realCansetToIndexDic),CLEANSTR(realSceneToDic),CLEANSTR(sceneToCansetToDic),CLEANSTR(cansetFromSceneFromIndexDic));
-    NSLog(@"flt10 %p %p RealCansetToIndexDic更新1 %@",self.basePFo.realMaskFo,self.realCansetToIndexDic,CLEANSTR(self.realCansetToIndexDic));
+    //NSLog(@"test3435配套日志：此日志用于查RealCansetToIndexDic重复的BUG，如果test34和35再出现问题，那么打开此日志查下原因 %p %p RealCansetToIndexDic更新1 %@",self.basePFo.realMaskFo,self.realCansetToIndexDic,CLEANSTR(self.realCansetToIndexDic));
     [AITest test34:self.realCansetToIndexDic];
 }
 
@@ -184,7 +164,7 @@
             if ([realMaskAlgAbs_ps containsObject:cansetToAlg_p]) {
                 //6. 成功发现新映射;
                 [self.realCansetToIndexDic setObject:@(j) forKey:@(i)];
-                NSLog(@"flt10 %p %p RealCansetToIndexDic更新2 %@ K:%ld V:%ld",self.basePFo.realMaskFo,self.realCansetToIndexDic,CLEANSTR(self.realCansetToIndexDic),i,j);
+                //NSLog(@"test3435配套日志：此日志用于查RealCansetToIndexDic重复的BUG，如果test34和35再出现问题，那么打开此日志查下原因 %p %p RealCansetToIndexDic更新2 %@ K:%ld V:%ld",self.basePFo.realMaskFo,self.realCansetToIndexDic,CLEANSTR(self.realCansetToIndexDic),i,j);
                 [AITest test34:self.realCansetToIndexDic];
                 realProgress = j;
                 break;
@@ -213,14 +193,9 @@
 -(void) updateRealCansetToDic {
     //"pFo的最后一帧下标"  与  "现cutIndex下一帧(在等待反馈帧)"  之间因为匹配成功而=>  "追加映射";
     AIMatchFoModel *pFo = self.basePFo;
-    
-    
-    if ([self.realCansetToIndexDic.allKeys containsObject:@(self.cansetActIndex)] || [self.realCansetToIndexDic.allValues containsObject:@(pFo.realMaskFo.count - 1)]) {
-        NSLog(@"再观察下indexDic重复的BUG还有没有，从这段时间观察日志来看，感觉应该还有问题。");
-    }
-    
+    [AITest test35:self.realCansetToIndexDic newK:self.cansetActIndex newV:pFo.realMaskFo.count - 1];
     [self.realCansetToIndexDic setObject:@(pFo.realMaskFo.count - 1) forKey:@(self.cansetActIndex)];
-    NSLog(@"flt10 %p %p RealCansetToIndexDic更新3 %@ K:%ld V:%ld (有效:%d)",self.basePFo.realMaskFo,self.realCansetToIndexDic,CLEANSTR(self.realCansetToIndexDic),self.cansetActIndex,pFo.realMaskFo.count-1,pFo.isExpired);
+    //NSLog(@"test3435配套日志：此日志用于查RealCansetToIndexDic重复的BUG，如果test34和35再出现问题，那么打开此日志查下原因 %p %p RealCansetToIndexDic更新3 %@ K:%ld V:%ld (有效:%d)",self.basePFo.realMaskFo,self.realCansetToIndexDic,CLEANSTR(self.realCansetToIndexDic),self.cansetActIndex,pFo.realMaskFo.count-1,pFo.isExpired);
     [AITest test34:self.realCansetToIndexDic];
 }
 

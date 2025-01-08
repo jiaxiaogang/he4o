@@ -50,7 +50,7 @@
         if (!ISOK(root, ReasonDemandModel.class)) continue;
         
         //3. 对pFos做理性反馈;
-        //2025.01.07: isExpired状态的，也要记录proto到realMaskFo中，避免少记导致TOR反馈成立时，更新RealCansetToIndexDic映射时取错realMaskFo的index导致映射错误。
+        //2025.01.07: isExpired状态的，也要记录proto到realMaskFo中，避免少记导致TOR反馈成立时，更新RealCansetToIndexDic映射时取错realMaskFo的index导致映射错误 (参考：全局搜索RealCansetToIndexDic重复BUG)。
         for (AIMatchFoModel *waitModel in root.pFos) {
             //4. isExpired状态的,不处理 （但也要记录只要没调用到pushFrame,就调用此方法记录protoA）。
             if (waitModel.isExpired) {
@@ -136,6 +136,11 @@
         
         //2. 仅支持ReasonDemandModel类型的反馈,因为PerceptDemandModel已经发生完毕,不需要反馈;
         if (!ISOK(root, ReasonDemandModel.class)) continue;
+        
+        //2025.01.08. 每条TI输入，必须收集到realMaskFo中，不然TOR反馈成立时，RealCansetToIndexDic就会有重复帧 (参考：全局搜索RealCansetToIndexDic重复BUG)。
+        for (AIMatchFoModel *waitModel in root.pFos) {
+            [waitModel feedbackOtherFrame:cmvNode.pointer];
+        }
         
         //3. 对pFos做理性反馈;
         for (AIMatchFoModel *waitModel in root.validPFos) {

@@ -331,8 +331,25 @@
 
 +(void) test34:(NSDictionary*)indexDic {
     if ([SMGUtils removeRepeat:indexDic.allKeys].count < indexDic.count || [SMGUtils removeRepeat:indexDic.allValues].count < indexDic.count) {
-        ELog(@"映射有重复BUG %@",indexDic);
-        ELog(@"查下哪来的,为啥有重复的,,,看起来主要是feedbackStep2的realIndexDic来的...");
+        ELog(@"映射有重复BUG %@ (看起来主要是realIndexDic来的,查下重复原因)",indexDic);//此BUG如果再出现，打开配套日志分析之（日志搜：test3435配套日志）
+    }
+}
+
++(void) test35:(NSDictionary*)oldIndexDic newK:(NSInteger)newK newV:(NSInteger)newV {
+    if ([oldIndexDic objectForKey:@(newK)] || ARRISOK([oldIndexDic allKeysForObject:@(newV)])) {
+        ELog(@"自检35: indexDic:%@更新的KV(K%ld V%ld)又重复了，但下为何重复的，一般情况下：",CLEANSTR(oldIndexDic),newK,newV);//此BUG如果再出现，打开配套日志分析之（日志搜：test3435配套日志）
+        
+        //===== 1、如果是V重复那就是realMaskFo少收集了（在TIR或TIP中都要收集输入才可以）
+        //这一条的BUG出现过，并且已修已回测ok (参考：全局搜索RealCansetToIndexDic重复BUG)。
+        
+        //===== 2、如果是K重复那就是CansetTo.ActIndex推进重复了，查下会不会是init或fix映射后的映射超过了ActIndex的位置，导致ActIndex又被反馈到后，就重复计了。");
+        //这一条BUG未出现过，但理论上，现代码可能出现这问题，如果出现了，就把init或fix后的CutIndex重新往后靠下，但要观察理顺相关数据，看这BUG是否来源明确，修好也没啥别的影响。
+        //曾疑似出现过此BUG记录：在RealCansetToIndexDic初始化时就有问题,它既然已经有了末帧的初始映射,那么后续再更新时,就不应该再更新末帧了(导致重复),
+        //分析1: 看来,在initRealCansetToDic()时,cansetTo正在执行中的帧,可能与realMaskFo有映射,说白了,表示它已经实现了;
+        //分析2: initRealCansetToDic后,actIndex应该也得更新下?毕竟正在等待中的可能已经被实现了;
+        //分析3: 再向前追查下: 为什么cansetCutIndex会计算错误?明明已经实现的帧,为什么在计算的cansetCutIndex之后?
+        //怀疑: 是sceneFromCansetFrom比sceneToCansetTo的映射更少，导致前者取cutIndex靠前，后者靠后。
+        //或者: sceneFrom也有cutIndex，而这里在initRealCansetToDic时，没考虑这个进度的限制？//但pFo.indexDic2就是real映射，它是必定已经发生了的，那为什么sceneFrom的cutIndex又那么靠前呢？
     }
 }
 

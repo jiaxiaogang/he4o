@@ -284,9 +284,6 @@
             NSLog(@"映射的key越界,已修,复测一段时间,遇过两次,都修了,如果到2024.07.26没断过点,则删除此处");
         }
     }
-    
-    //TODOTOMORROW20250105: 此处=IndexDic有时key为1,2,3,3有重复的3,查下原因...
-    //经查,realMaskFo的长度,并没有增加,查下在feedbackTOR成立时,为什么这个pFo.realMaskFo并没有更新收集元素?
     [AITest test34:indexDic];
     
     //2. 保存节点;
