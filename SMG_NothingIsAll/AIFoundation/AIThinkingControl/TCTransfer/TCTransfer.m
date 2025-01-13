@@ -488,30 +488,21 @@
 
 +(void) transferTuiJv_H_V2:(AIFoNodeBase*)broRScene broRCanset:(AIFoNodeBase*)broRCanset broRCansetActIndex:(NSInteger)broRCansetActIndex broHCanset:(AIFoNodeBase*)broHCanset {
     //1. 将rCanset推举到每一个absFo;
-    NSArray *absPorts = [AINetUtils transferPorts_4Father:broRScene iCansetContent_ps:broRCanset.content_ps];
-    for (AIPort *absPort in absPorts) {
+    //2025.01.14: 改为延着R迁移关联，进行h迁移（参考33152）。
+    NSArray *transferPorts = [AINetUtils transferPorts_4Father:broRScene iCansetContent_ps:broRCanset.content_ps];
+    for (AITransferPort *itemPort in transferPorts) {
         
         //================== R推举部分 (只需要判断下它推举过且对当前新构建的H有效即可) ==================
-        AIFoNodeBase *fatRScene = [SMGUtils searchNode:absPort.target_p];
+        AIFoNodeBase *fatRScene = [SMGUtils searchNode:itemPort.fScene];
         
         //2. mv要求必须同区 (不然rCanset对sceneTo无效);
         if (![broRScene.cmvNode_p.identifier isEqualToString:fatRScene.cmvNode_p.identifier]) continue;
         
-        //3. BR映射 (参考29069-todo10.1推举算法示图);
-        NSDictionary *fatRCansetSceneIndexDic = [self getBFZonHeIndexDic:broRCanset broScene:broRScene fatScene:fatRScene];//数据结构: <K=fatRCanset,V=fatRScene>
-        NSDictionary *fatRSceneCansetIndexDic = [SMGUtils reverseDic:fatRCansetSceneIndexDic];//数据结构: <K=fatRScene,V=fatRCanset>
-        
-        //4. 根据综合映射,计算出fatherCanset的orders;
-        NSArray *fatRCansetOrders = [self convertZonHeIndexDic2Orders:broRCanset sceneTo:fatRScene zonHeIndexDic:fatRCansetSceneIndexDic];
-        NSArray *fatRCansetContent_ps = Simples2Pits(fatRCansetOrders);
-        
         //5. 找到fatherCanset (如果没有,则说明有BUG,因为现在是实时推举,B有的rCanset就必然F也有才对);
-        AIFoNodeBase *fatRCanset = [AIMvFoManager getLocalCanset:fatRCansetOrders sceneFo:fatRScene sceneTargetIndex:fatRScene.count];
-        if (!fatRCanset) continue;
+        AIFoNodeBase *fatRCanset = [SMGUtils searchNode:itemPort.fCanset];
         
-        //6. 父R场景,没有当前正在行为化中的帧,表示新构建的HCanset与这个fatRScene无关,毕竟它都没有这帧的映射 (所以它没法自己不具备的帧,构建HCanset);
-        if (![fatRSceneCansetIndexDic.allValues containsObject:@(broRCansetActIndex)]) continue;
         
+        //TODOTOMORROW20250114: 继续写下面，fatHCanset的内容和映射，
         //================== H推举部分 (把新构建的broHCanset推举成fatHCanset,注意防重和推举deltaSP值) ==================
         //11. 正式从broHCanset向fatHCanset推举之: 计算从broH到fatH间的综合映射;
         DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:[broHCanset getAbsIndexDic:broRCanset.p]];
