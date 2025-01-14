@@ -505,7 +505,27 @@
         //TODOTOMORROW20250114: 继续写下面，fatHCanset的内容和映射，
         //虽然IFScene之间并不是一一对应，但iCanset和fCanset是一一对应（等长），那iHCanset和fHCanset是否可以一一对应呢？(它等长，且它的scene也等长）。
         //iHCanset与iHScene可映射上的部分 与 fHCanset与fHScene可映射上的部分，是否绝对一致呢?
-        //画图分析下 或 实际调试下。
+        //画图分析下 或 示例分析下 或 实际调试下。
+        
+        //示例分析如下：
+        //FScene=“无距果”->更饿，FRCanset=“无距果，吃了”->不饿，FHCanset=“无距带皮果，压，无距无皮果”。
+        //IScene=“有距果”->更饿，IRCanset=“有距果，吃了“->不饿，IHCanset=“有距带皮果，压，有距无皮果”。
+        //模拟演化过程：
+        //  1、IHCanset此处推举后，会变成FHCanset=“有距带皮果，压，目标帧”。
+        //  2、其中目标帧，在R推举时：
+        //      2a、有映射则来自RSceneTo（即：无距果）
+        //      2b、无映射则来自RCansetFrom（即：有距果）
+        //      3c、这个倒是都还好，关键在于当时R的迁移关联，有没有cansetFromTo的映射？
+        //  3、其中第一帧：
+        //      3a、这个看起来麻烦，但它明确没映射，所以肯定是延用IHCanset的第一帧。
+        
+        
+        
+        
+        //另外，抽象HCanset怎么办？它没有迁移关联：
+        //  1、在虚迁移继承时，变的有关联？（这方案可考虑，能把抽象canset带活就行）。
+        //  2、还是在抽象HCanset时，给它补一下迁移关联？（此方案不可行，性能不能这么搞）。
+        
         
         //================== H推举部分 (把新构建的broHCanset推举成fatHCanset,注意防重和推举deltaSP值) ==================
         //11. 正式从broHCanset向fatHCanset推举之: 计算从broH到fatH间的综合映射;
