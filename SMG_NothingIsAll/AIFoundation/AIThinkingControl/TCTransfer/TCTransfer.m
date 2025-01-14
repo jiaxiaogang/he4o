@@ -503,6 +503,10 @@
         
         
         //TODOTOMORROW20250114: 继续写下面，fatHCanset的内容和映射，
+        //虽然IFScene之间并不是一一对应，但iCanset和fCanset是一一对应（等长），那iHCanset和fHCanset是否可以一一对应呢？(它等长，且它的scene也等长）。
+        //iHCanset与iHScene可映射上的部分 与 fHCanset与fHScene可映射上的部分，是否绝对一致呢?
+        //画图分析下 或 实际调试下。
+        
         //================== H推举部分 (把新构建的broHCanset推举成fatHCanset,注意防重和推举deltaSP值) ==================
         //11. 正式从broHCanset向fatHCanset推举之: 计算从broH到fatH间的综合映射;
         DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:[broHCanset getAbsIndexDic:broRCanset.p]];
