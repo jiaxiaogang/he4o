@@ -518,6 +518,10 @@
         //      3c、这个倒是都还好，关键在于当时R的迁移关联，有没有cansetFromTo的映射？
         //  3、其中第一帧：
         //      3a、这个看起来麻烦，但它明确没映射，所以肯定是延用IHCanset的第一帧。
+        //  4、说白了，从A-IHCansetScene到B-FHCansetScene之间的迁移。
+        //      4a、判断A无映射的，从IHCansetFrom取。
+        //      4b、判断A有映射的，原本应该从IHScene取，不过IHScene已经迁移成了FHScene，所以改为从FHScene取更准确（即延着R迁移做H迁移）。
+        //      4c、这样B的映射，其实与A的映射是一模一样的，因为4a和4b的处理，就是依A的映射，来形成BHCansetTo结果，使它的映射一致了。
         
         
         
