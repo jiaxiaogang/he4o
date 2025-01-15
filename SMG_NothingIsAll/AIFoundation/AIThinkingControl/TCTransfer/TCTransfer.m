@@ -331,6 +331,7 @@
 /**
  *  MARK:--------------------计算cansetTo.orders--------------------
  *  @desc 根据综合indexDic把cansetFrom迁移到sceneTo的cansetTo的orders计算出来 (说白了: 有综合映射的帧从cansetFrom取,没有映射的帧从sceneTo取);
+ *  @param zonHeIndexDic : <K=cansetFrom下标，V=sceneTo下标>
  */
 +(NSMutableArray*) convertZonHeIndexDic2Orders:(AIFoNodeBase*)cansetFrom sceneTo:(AIFoNodeBase*)sceneTo zonHeIndexDic:(NSDictionary*)zonHeIndexDic {
     //6. 计算cansetToOrders
@@ -498,32 +499,21 @@
         //2. mv要求必须同区 (不然rCanset对sceneTo无效);
         if (![broRScene.cmvNode_p.identifier isEqualToString:fatRScene.cmvNode_p.identifier]) continue;
         
-        //5. 找到fatherCanset (如果没有,则说明有BUG,因为现在是实时推举,B有的rCanset就必然F也有才对);
+        //3. 找到fatherCanset (如果没有,则说明有BUG,因为现在是实时推举,B有的rCanset就必然F也有才对);
         AIFoNodeBase *fatRCanset = [SMGUtils searchNode:itemPort.fCanset];
         
+        //================== H推举部分 (把新构建的broHCanset推举成fatHCanset,注意防重和推举deltaSP值) ==================
+        //11. 正式从broHCanset向fatHCanset推举之: 计算从broH到fatH间的综合映射;
+        //12. HCansetTo和HSceneTo的映射（参考33153-TODO1）。
+        NSDictionary *broHCansetRCansetDic = [broHCanset getAbsIndexDic:broRCanset.p];
+        NSDictionary *broHCansetFatRCansetDic = [SMGUtils reverseDic:broHCansetRCansetDic];//因为broRCanset和fatRCanset等长，且一一对应，不用综合计算，这两个映射一样，直接取过来用，反一下把KV搞对应上就行。
+        NSDictionary *fatHCansetSceneIndexDic = broHCansetRCansetDic;//二者一样（参考33153-TODO1）。
         
-        //TODOTOMORROW20250114: 继续写下面，fatHCanset的内容和映射，
-        //虽然IFScene之间并不是一一对应，但iCanset和fCanset是一一对应（等长），那iHCanset和fHCanset是否可以一一对应呢？(它等长，且它的scene也等长）。
-        //iHCanset与iHScene可映射上的部分 与 fHCanset与fHScene可映射上的部分，是否绝对一致呢?
-        //画图分析下 或 示例分析下 或 实际调试下。
+        //13. 生成orders，有映射的：取F层hSceneTo对应的帧，无映射的：取I层hCansetFrom对应的帧（参考33153-TODO2）。
+        NSArray *fatHCansetOrders = [self convertZonHeIndexDic2Orders:broHCanset sceneTo:fatRCanset zonHeIndexDic:broHCansetFatRCansetDic];
+        NSArray *fatHCansetContent_ps = Simples2Pits(fatHCansetOrders);
         
-        //示例分析如下：
-        //FScene=“无距果”->更饿，FRCanset=“无距果，吃了”->不饿，FHCanset=“无距带皮果，压，无距无皮果”。
-        //IScene=“有距果”->更饿，IRCanset=“有距果，吃了“->不饿，IHCanset=“有距带皮果，压，有距无皮果”。
-        //模拟演化过程：
-        //  1、IHCanset此处推举后，会变成FHCanset=“有距带皮果，压，目标帧”。
-        //  2、其中目标帧，在R推举时：
-        //      2a、有映射则来自RSceneTo（即：无距果）
-        //      2b、无映射则来自RCansetFrom（即：有距果）
-        //      3c、这个倒是都还好，关键在于当时R的迁移关联，有没有cansetFromTo的映射？
-        //  3、其中第一帧：
-        //      3a、这个看起来麻烦，但它明确没映射，所以肯定是延用IHCanset的第一帧。
-        //  4、说白了，从A-IHCansetScene到B-FHCansetScene之间的迁移。
-        //      4a、判断A无映射的，从IHCansetFrom取。
-        //      4b、判断A有映射的，原本应该从IHScene取，不过IHScene已经迁移成了FHScene，所以改为从FHScene取更准确（即延着R迁移做H迁移）。
-        //      4c、这样B的映射，其实与A的映射是一模一样的，因为4a和4b的处理，就是依A的映射，来形成BHCansetTo结果，使它的映射一致了。
-        
-        
+        //TODOTOMORROW20250115: 继续推举H迭代V2;
         
         
         //另外，抽象HCanset怎么办？它没有迁移关联：
@@ -531,16 +521,7 @@
         //  2、还是在抽象HCanset时，给它补一下迁移关联？（此方案不可行，性能不能这么搞）。
         
         
-        //================== H推举部分 (把新构建的broHCanset推举成fatHCanset,注意防重和推举deltaSP值) ==================
-        //11. 正式从broHCanset向fatHCanset推举之: 计算从broH到fatH间的综合映射;
-        DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:[broHCanset getAbsIndexDic:broRCanset.p]];
-        DirectIndexDic *dic2 = [DirectIndexDic newOkToAbs:[broRCanset getAbsIndexDic:broRScene.p]];
-        DirectIndexDic *dic3 = [DirectIndexDic newOkToAbs:[broRScene getAbsIndexDic:fatRScene.p]];
-        DirectIndexDic *dic4 = [DirectIndexDic newNoToAbs:[fatRScene getConIndexDic:fatRCanset.p]];
-        NSDictionary *broHCansetFatRCansetDic = [TOUtils zonHeIndexDic:@[dic1,dic2,dic3,dic4]];
-        NSDictionary *fatRCansetBroHCansetDic = [SMGUtils reverseDic:broHCansetFatRCansetDic];
-        NSArray *fatHCansetOrders = [self convertZonHeIndexDic2Orders:broHCanset sceneTo:fatRCanset zonHeIndexDic:broHCansetFatRCansetDic];
-        NSArray *fatHCansetContent_ps = Simples2Pits(fatHCansetOrders);
+        
         BOOL cansetToInited = [fatRCanset containsOutSPStrong:fatHCansetContent_ps];//有没初始过cansetTo;
         
         //12. 正式从broHCanset向fatHCanset推举之: 将新构建的broHCanst的deltaSPDic累加到fatRCanset下;
