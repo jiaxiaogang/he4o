@@ -412,81 +412,9 @@
 /**
  *  MARK:--------------------在构建HCanset时,推举到抽象场景中 (参考33112)--------------------
  *  @param broRCansetActIndex 即broCanset正在行为化的帧 (它是新构建的hCanset的场景);
+ *  @version
+ *      2025.01.16: 迭代V2，H推举延着R的迁移关联进行（参考33152）。
  */
-+(void) transferTuiJv_H:(AIFoNodeBase*)broRScene broRCanset:(AIFoNodeBase*)broRCanset broRCansetActIndex:(NSInteger)broRCansetActIndex broHCanset:(AIFoNodeBase*)broHCanset {
-    //1. 将rCanset推举到每一个absFo;
-    NSArray *absPorts = [AINetUtils absPorts_All:broRScene];
-    for (AIPort *absPort in absPorts) {
-        
-        //================== R推举部分 (只需要判断下它推举过且对当前新构建的H有效即可) ==================
-        AIFoNodeBase *fatRScene = [SMGUtils searchNode:absPort.target_p];
-        
-        //2. mv要求必须同区 (不然rCanset对sceneTo无效);
-        if (![broRScene.cmvNode_p.identifier isEqualToString:fatRScene.cmvNode_p.identifier]) continue;
-        
-        //3. BR映射 (参考29069-todo10.1推举算法示图);
-        NSDictionary *fatRCansetSceneIndexDic = [self getBFZonHeIndexDic:broRCanset broScene:broRScene fatScene:fatRScene];//数据结构: <K=fatRCanset,V=fatRScene>
-        NSDictionary *fatRSceneCansetIndexDic = [SMGUtils reverseDic:fatRCansetSceneIndexDic];//数据结构: <K=fatRScene,V=fatRCanset>
-        
-        //4. 根据综合映射,计算出fatherCanset的orders;
-        NSArray *fatRCansetOrders = [self convertZonHeIndexDic2Orders:broRCanset sceneTo:fatRScene zonHeIndexDic:fatRCansetSceneIndexDic];
-        NSArray *fatRCansetContent_ps = Simples2Pits(fatRCansetOrders);
-        
-        //5. 找到fatherCanset (如果没有,则说明有BUG,因为现在是实时推举,B有的rCanset就必然F也有才对);
-        AIFoNodeBase *fatRCanset = [AIMvFoManager getLocalCanset:fatRCansetOrders sceneFo:fatRScene sceneTargetIndex:fatRScene.count];
-        if (!fatRCanset) continue;
-        
-        //6. 父R场景,没有当前正在行为化中的帧,表示新构建的HCanset与这个fatRScene无关,毕竟它都没有这帧的映射 (所以它没法自己不具备的帧,构建HCanset);
-        if (![fatRSceneCansetIndexDic.allValues containsObject:@(broRCansetActIndex)]) continue;
-        
-        //================== H推举部分 (把新构建的broHCanset推举成fatHCanset,注意防重和推举deltaSP值) ==================
-        //11. 正式从broHCanset向fatHCanset推举之: 计算从broH到fatH间的综合映射;
-        DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:[broHCanset getAbsIndexDic:broRCanset.p]];
-        DirectIndexDic *dic2 = [DirectIndexDic newOkToAbs:[broRCanset getAbsIndexDic:broRScene.p]];
-        DirectIndexDic *dic3 = [DirectIndexDic newOkToAbs:[broRScene getAbsIndexDic:fatRScene.p]];
-        DirectIndexDic *dic4 = [DirectIndexDic newNoToAbs:[fatRScene getConIndexDic:fatRCanset.p]];
-        NSDictionary *broHCansetFatRCansetDic = [TOUtils zonHeIndexDic:@[dic1,dic2,dic3,dic4]];
-        NSDictionary *fatRCansetBroHCansetDic = [SMGUtils reverseDic:broHCansetFatRCansetDic];
-        NSArray *fatHCansetOrders = [self convertZonHeIndexDic2Orders:broHCanset sceneTo:fatRCanset zonHeIndexDic:broHCansetFatRCansetDic];
-        NSArray *fatHCansetContent_ps = Simples2Pits(fatHCansetOrders);
-        BOOL cansetToInited = [fatRCanset containsOutSPStrong:fatHCansetContent_ps];//有没初始过cansetTo;
-        
-        //12. 正式从broHCanset向fatHCanset推举之: 将新构建的broHCanst的deltaSPDic累加到fatRCanset下;
-        //2024.11.01: 防重说明: 此方法调用了,说明cansetFrom是新挂载到sceneFrom下的,此时可调用一次推举到absPorts中,并把所有spDic都推举到absPorts上去;
-        NSMutableDictionary *deltaSPDic = [broRCanset.outSPDic objectForKey:[AINetUtils getOutSPKey:broHCanset.content_ps]];
-        for (NSNumber *cansetFromIndex in deltaSPDic.allKeys) {
-            AISPStrong *deltaSPStrong = [deltaSPDic objectForKey:cansetFromIndex];
-            NSInteger cansetToIndex = cansetFromIndex.integerValue;//cansetFrom和cansetTo一样长,并且下标都是一一对应的;
-            [fatRCanset updateOutSPStrong:cansetToIndex difStrong:deltaSPStrong.pStrong type:ATPlus canset:fatHCansetContent_ps debugMode:false caller:@"TuiJvH时P初始化"];
-            [fatRCanset updateOutSPStrong:cansetToIndex difStrong:deltaSPStrong.sStrong type:ATSub canset:fatHCansetContent_ps debugMode:false caller:@"TuiJvH时S初始化"];
-        }
-        
-        //13. 正式从broHCanset向fatHCanset推举之: 如果cansetTo没初始过,才构建cansetTo & 挂载 & 加映射;
-        if (cansetToInited) continue;
-        
-        //14. 正式从broHCanset向fatHCanset推举之: 取出fatHCanset最后一帧,对应fatHScene中哪一帧,即取fatHScene的targetIndex;
-        NSNumber *fatRCansetActIndexNumber = [broHCansetFatRCansetDic objectForKey:@(fatHCansetOrders.count - 1)];
-        if (!NUMISOK(fatRCansetActIndexNumber)) continue;
-        NSInteger fatRCansetActIndex = fatRCansetActIndexNumber.intValue;
-        
-        //15. 正式从broHCanset向fatHCanset推举之: 构建fatHCanset;
-        AIFoNodeBase *fatHCanset = [theNet createConFoForCanset:fatHCansetOrders sceneFo:fatRCanset sceneTargetIndex:fatRCanset.count];
-        
-        //16. 正式从broHCanset向fatHCanset推举之: 挂载cansetTo
-        HEResult *updateConCansetResult = [fatRCanset updateConCanset:fatHCanset.p targetIndex:fatRCansetActIndex];
-        if (!updateConCansetResult.success) continue;//挂载成功,才加映射;
-        
-        //17. 正式从broHCanset向fatHCanset推举之: 加映射 (映射需要返过来因为前面cansetFrom在前,现在是cansetTo在后) (参考27201-3);
-        [fatHCanset updateIndexDic:fatRCanset indexDic:fatRCansetBroHCansetDic];
-        
-        //18. 挂载成功: 进行迁移关联 (可供复用,避免每一次推举更新sp时,都重新推举) (参考33112-TODO3);
-        //2024.11.13: 新版迁移关联: 推举时=>from是I层,to是F层 (条件: 未发生迁移时,不执行) (参考33112-TODO4.4);
-        if (![broHCanset isEqual:fatHCanset]) {
-            [AINetUtils relateTransfer_H:fatRCanset fCanset:fatHCanset iScene:broRCanset iCanset:broHCanset.content_ps fRScene:fatRScene iRScene:broRScene];
-        }
-    }
-}
-
 +(void) transferTuiJv_H_V2:(AIFoNodeBase*)broRScene broRCanset:(AIFoNodeBase*)broRCanset broRCansetActIndex:(NSInteger)broRCansetActIndex broHCanset:(AIFoNodeBase*)broHCanset {
     //1. 将rCanset推举到每一个absFo;
     //2025.01.14: 改为延着R迁移关联，进行h迁移（参考33152）。
@@ -505,23 +433,13 @@
         //================== H推举部分 (把新构建的broHCanset推举成fatHCanset,注意防重和推举deltaSP值) ==================
         //11. 正式从broHCanset向fatHCanset推举之: 计算从broH到fatH间的综合映射;
         //12. HCansetTo和HSceneTo的映射（参考33153-TODO1）。
-        NSDictionary *broHCansetRCansetDic = [broHCanset getAbsIndexDic:broRCanset.p];
-        NSDictionary *broHCansetFatRCansetDic = [SMGUtils reverseDic:broHCansetRCansetDic];//因为broRCanset和fatRCanset等长，且一一对应，不用综合计算，这两个映射一样，直接取过来用，反一下把KV搞对应上就行。
-        NSDictionary *fatHCansetSceneIndexDic = broHCansetRCansetDic;//二者一样（参考33153-TODO1）。
+        NSDictionary *broRCansetBroHCansetDic = [broHCanset getAbsIndexDic:broRCanset.p];
+        NSDictionary *broHCansetFatRCansetDic = [SMGUtils reverseDic:broRCansetBroHCansetDic];//因为broRCanset和fatRCanset等长，且一一对应，不用综合计算，这两个映射一样，直接取过来用，反一下把KV搞对应上就行。
+        NSDictionary *fatRCansetFatHCansetDic = broRCansetBroHCansetDic;//二者一样（参考33153-TODO1）。
         
         //13. 生成orders，有映射的：取F层hSceneTo对应的帧，无映射的：取I层hCansetFrom对应的帧（参考33153-TODO2）。
         NSArray *fatHCansetOrders = [self convertZonHeIndexDic2Orders:broHCanset sceneTo:fatRCanset zonHeIndexDic:broHCansetFatRCansetDic];
         NSArray *fatHCansetContent_ps = Simples2Pits(fatHCansetOrders);
-        
-        //TODOTOMORROW20250115: 继续推举H迭代V2;
-        
-        
-        //另外，抽象HCanset怎么办？它没有迁移关联：
-        //  1、在虚迁移继承时，变的有关联？（这方案可考虑，能把抽象canset带活就行）。
-        //  2、还是在抽象HCanset时，给它补一下迁移关联？（此方案不可行，性能不能这么搞）。
-        
-        
-        
         BOOL cansetToInited = [fatRCanset containsOutSPStrong:fatHCansetContent_ps];//有没初始过cansetTo;
         
         //12. 正式从broHCanset向fatHCanset推举之: 将新构建的broHCanst的deltaSPDic累加到fatRCanset下;
@@ -550,7 +468,7 @@
         if (!updateConCansetResult.success) continue;//挂载成功,才加映射;
         
         //17. 正式从broHCanset向fatHCanset推举之: 加映射 (映射需要返过来因为前面cansetFrom在前,现在是cansetTo在后) (参考27201-3);
-        [fatHCanset updateIndexDic:fatRCanset indexDic:fatRCansetBroHCansetDic];
+        [fatHCanset updateIndexDic:fatRCanset indexDic:fatRCansetFatHCansetDic];
         
         //18. 挂载成功: 进行迁移关联 (可供复用,避免每一次推举更新sp时,都重新推举) (参考33112-TODO3);
         //2024.11.13: 新版迁移关联: 推举时=>from是I层,to是F层 (条件: 未发生迁移时,不执行) (参考33112-TODO4.4);

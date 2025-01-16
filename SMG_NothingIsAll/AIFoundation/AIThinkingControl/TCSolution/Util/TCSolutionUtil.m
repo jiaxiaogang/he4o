@@ -125,6 +125,111 @@
     return [self realTimeRankCansets:hDemand zonHeScoreBlock:nil debugMode:true];//400ms
 }
 
++(TOFoModel*) hSolutionV4:(HDemandModel *)hDemand {
+    //0. 初始化一次,后面只执行generalSolution部分;
+    if (hDemand.alreadyInitCansetModels) {
+        ELog(@"solution()应该只执行一次,别的全从TCPlan来分发和实时竞争,此处如果重复执行,查下原因");
+        return nil;
+    }
+    hDemand.alreadyInitCansetModels = true;
+    
+    //1. 数据准备;
+    TOAlgModel *targetAlgM = (TOAlgModel*)hDemand.baseOrGroup;
+    AIAlgNodeBase *targetAlg = [SMGUtils searchNode:targetAlgM.content_p];
+    TOFoModel *targetFoM = (TOFoModel*)targetAlgM.baseOrGroup;
+    ReasonDemandModel *baseRDemand = (ReasonDemandModel*)targetFoM.baseOrGroup;//取出rDemand
+    AIKVPointer *targetPFo = targetFoM.baseSceneModel.getIScene;
+    
+    //2. targetFoM转实后的canset就是真正R在推进行为化中的RCanset(也即HScene);
+    //结构说明: 其中IScene是RScene,这个sceneTo是挂在IScene下的;
+    AIFoNodeBase *sceneTo = [SMGUtils searchNode:targetFoM.transferSiModel.canset];
+    
+    
+    //TODOTOMORROW20250116: 写hSolutionV4：延着R迁移关联，来取h解。
+    
+    //2. 取出rCansets (仅取当前pFo树下的) (参考31113-TODO4);
+    NSArray *rCansets = [SMGUtils filterArr:baseRDemand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
+        return [targetPFo isEqual:item.baseSceneModel.getIScene];
+    }];
+    
+    //3. 依次从rCanset下取hCansets (参考31102);
+    for (TOFoModel *rCanset in rCansets) {
+        AIFoNodeBase *sceneFrom = [SMGUtils searchNode:rCanset.cansetFo];
+        
+        //4. 取hCansets(用override取cansets): 从cutIndex到sceneFo.count之间的hCansets (参考31102-第1步);
+        //取: 从rCanset.cutIndex + 1到count末尾,之间所有的canset都是来的及尝试执行的;
+        NSArray *cansetFroms1 = [sceneFrom getConCansets:rCanset.cansetCutIndex + 1];
+        NSArray *allHCanset = [SMGUtils convertArr:sceneFrom.conCansetsDic.allValues convertItemArrBlock:^NSArray *(id obj) {
+            return obj;
+        }];
+        
+        //log
+        if (ARRISOK(cansetFroms1)) {
+            if (Log4GetCansetResult4H) NSLog(@"第1步 取HCanset候选集: 从hScene:F%ld(%@) 的在%ld帧开始取,取得HCanset数:%ld/%ld \n\t%@",sceneFrom.pId,SceneType2Str(rCanset.baseSceneModel.type),rCanset.cansetCutIndex + 1,cansetFroms1.count,allHCanset.count,CLEANSTR([SMGUtils convertArr:cansetFroms1 convertBlock:^id(id obj) {
+                return ShortDesc4Pit(obj);
+            }]));
+        }
+        
+        //5. Override过滤器: 防重已经迁移过的 (override用来过滤避免重复迁移) (参考29069-todo5.2);
+        NSArray *alreadyTransfered_Cansets = [AINetUtils transferPorts_4Father:sceneTo fScene:sceneFrom];
+        NSArray *cansetFroms2 = [SMGUtils removeSub_ps:alreadyTransfered_Cansets parent_ps:cansetFroms1];
+        
+        //6. 转为cansetModel格式 (参考31104-第3步);
+        NSArray *cansetFroms3 = [SMGUtils convertArr:cansetFroms2 convertBlock:^id(AIKVPointer *cansetFrom) {
+            return [TCCanset convert2HCansetModel:cansetFrom hDemand:hDemand rCanset:rCanset];
+        }];
+        
+        //7. 求出匹配度,转为评分模型 (把每个cansetFrom的综合匹配度算出来,用于后面过滤) (参考31121-TODO3 & TODO4);
+        NSArray *cansetFrom4 = [SMGUtils convertArr:cansetFroms3 convertBlock:^id(TOFoModel *obj) {
+            //a. 取出当前cansetTo的目标帧;
+            AIShortMatchModel_Simple *cansetToOrder = ARR_INDEX(obj.transferXvModel.cansetToOrders, obj.cansetTargetIndex);
+            AIAlgNodeBase *cansetToAlg = [SMGUtils searchNode:cansetToOrder.alg_p];
+            
+            //b. 如果是mcIsBro关系,先取出共同的sameAbs;
+            
+            //2024.04.29: 已经修了IH迁移xvModel返回nil的问题 (随后再观察下这里不报错,则删;
+            if (!targetAlgM || !targetAlgM.content_p) {
+                NSLog(@"这里闪退过,因为这个m或c是空,如果2024.07之前没见过这个错,这里可删");
+            }
+            if (!cansetToAlg || !cansetToAlg.p) {
+                //2024.06.02: 复现一次,因cansetTargetIndex=4而cansetToOrder一共才4条,导致越界,取到nil;
+                NSLog(@"这里闪退过,因为这个c或m是空,如果2024.07之前没见过这个错,这里可删");
+            }
+            NSArray *sameAbses = [TOUtils dataOfMcIsBro:targetAlgM.content_p c:cansetToAlg.p];
+            
+            //TODOTOMORROW20250104: 经测"有向无距场景的竞争浮现没发现什么问题了",查下此处,第1步还有几条解,但到第2步已经是0条,查下H的解那么少么?
+            //此处取得A8650和A2642的共同抽象是0条，所以计算最佳得分也是0分，
+            //回顾下31121的代码，看下这里的算法，应该是过时了，因为现在的迁移早就不一样了。。。
+            
+            //c. 然后再依次判断下和mc二者的匹配度,相乘,取最大值为其综合匹配度,找出综合匹配度最好的值: 即最匹配的 (参考31121-TODO3);
+            CGFloat bestScore = [SMGUtils filterBestScore:sameAbses scoreBlock:^CGFloat(AIKVPointer *item) {
+                return [targetAlg getAbsMatchValue:item] * [cansetToAlg getAbsMatchValue:item];
+            }];
+            return [MapModel newWithV1:obj v2:@(bestScore)];
+        }];
+        
+        //8. 过滤掉匹配度为0的 (只要不为0,肯定是有mcIsBro关系的) (参考31103-第2步 & 31121-TODO4);
+        NSArray *cansetFrom5 = [SMGUtils filterArr:cansetFrom4 checkValid:^BOOL(MapModel *item) { return NUMTOOK(item.v2).floatValue > 0; }];
+        
+        //9. 把末尾20%过滤掉 (末尾淘汰制) (参考31121-TODO2);
+        NSArray *cansetFrom6 = [SMGUtils sortBig2Small:cansetFrom5 compareBlock:^double(MapModel *obj) { return NUMTOOK(obj.v2).floatValue; }];
+        cansetFrom6 = ARR_SUB(cansetFrom6, 0, cansetFrom6.count * 0.8f);
+        
+        //10. 更新到actionFoModels;
+        NSArray *cansetFromFinish = [SMGUtils convertArr:cansetFrom6 convertBlock:^id(MapModel *obj) { return obj.v1; }];
+        [hDemand.actionFoModels addObjectsFromArray:cansetFromFinish];
+        if (Log4GetCansetResult4H && cansetFroms3.count > 0) NSLog(@"\t item场景(%@):%@ 取得候选数:%ld",SceneType2Str(rCanset.baseSceneModel.type),Pit2FStr(rCanset.baseSceneModel.scene),cansetFromFinish.count);
+    }
+    
+    //11. 在rSolution/hSolution初始化Canset池时,也继用下传染状态 (参考31178-TODO3);
+    int initToInfectedNum = [TOUtils initInfectedForCansetPool_Alg:hDemand];
+    //NSLog(@"fltx1 此H的sub到root结构: %@",[TOModelVision cur2Root:hDemand]);
+    NSLog(@"第2步 H转为候选集:%ld - 中间帧被初始传染:%d = 有效数:%ld",hDemand.actionFoModels.count,initToInfectedNum,hDemand.actionFoModels.count - initToInfectedNum);
+    
+    //12. 竞争求解: 对hCansets进行实时竞争 (参考31122);
+    return [self realTimeRankCansets:hDemand zonHeScoreBlock:nil debugMode:true];//400ms
+}
+
 /**
  *  MARK:--------------------R求解--------------------
  *  @version

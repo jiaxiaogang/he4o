@@ -48,6 +48,6 @@
  *  MARK:--------------------在构建HCanset时,推举到抽象场景中 (参考33112)--------------------
  *  @param broRCansetActIndex 即broCanset正在行为化的帧 (它是新构建的hCanset的场景);
  */
-+(void) transferTuiJv_H:(AIFoNodeBase*)broRScene broRCanset:(AIFoNodeBase*)broRCanset broRCansetActIndex:(NSInteger)broRCansetActIndex broHCanset:(AIFoNodeBase*)broHCanset;
++(void) transferTuiJv_H_V2:(AIFoNodeBase*)broRScene broRCanset:(AIFoNodeBase*)broRCanset broRCansetActIndex:(NSInteger)broRCansetActIndex broHCanset:(AIFoNodeBase*)broHCanset;
 
 @end

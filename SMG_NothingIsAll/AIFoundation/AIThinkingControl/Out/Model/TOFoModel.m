@@ -493,7 +493,7 @@
             //2024.11.03: 在挂载新的Canset时,实时推举 & 并防重(只有新挂载的canset,才有资格实时调用推举,并推举spDic都到父场景中) (参考33112);
             if (updateConCansetResult.isNew) {
                 AIFoNodeBase *sceneTo = [SMGUtils searchNode:self.sceneTo];
-                [TCTransfer transferTuiJv_H:sceneTo broRCanset:rCanset broRCansetActIndex:self.cansetActIndex broHCanset:newHCanset];
+                [TCTransfer transferTuiJv_H_V2:sceneTo broRCanset:rCanset broRCansetActIndex:self.cansetActIndex broHCanset:newHCanset];
             }
             
             //6. rCanset的actIndex匹配了,就相当于它curAlgModel的HDemand,下的所有的subHCanset的targetAlg全反馈匹配上了 (参考32119-TODO1);
@@ -593,7 +593,7 @@
     //2024.11.05: 当targetFoModel是R任务时,才推举,以后这里需要支持下,不断向base找到R为止,因为H可能有多层,而推举是必须找到并借助R来实现的 (参考n33p12);
     if (updateConCansetResult.isNew && !targetFoModel.isH) {
         AIFoNodeBase *broRScene = [SMGUtils searchNode:targetFoModel.sceneTo];
-        [TCTransfer transferTuiJv_H:broRScene broRCanset:sceneTo broRCansetActIndex:targetFoModel.cansetActIndex broHCanset:absCansetFo];
+        [TCTransfer transferTuiJv_H_V2:broRScene broRCanset:sceneTo broRCansetActIndex:targetFoModel.cansetActIndex broHCanset:absCansetFo];
     }
 }
 
