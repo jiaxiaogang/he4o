@@ -142,10 +142,14 @@
     
     //2. targetFoM转实后的canset就是真正R在推进行为化中的RCanset(也即HScene);
     //结构说明: 其中IScene是RScene,这个sceneTo是挂在IScene下的;
-    AIFoNodeBase *sceneTo = [SMGUtils searchNode:targetFoM.transferSiModel.canset];
+    AIFoNodeBase *rCansetTo = [SMGUtils searchNode:targetFoM.transferSiModel.canset];
     
     
     //TODOTOMORROW20250116: 写hSolutionV4：延着R迁移关联，来取h解。
+    //此处，是不是写个方法，能根据rCansetTo的index来取？还是怎样从f层取到H解？参考下RSolution算法，忘了。。。
+    [AINetUtils transferPorts_4Father:rCansetTo iCansetContent_ps:nil];
+    
+    
     
     //2. 取出rCansets (仅取当前pFo树下的) (参考31113-TODO4);
     NSArray *rCansets = [SMGUtils filterArr:baseRDemand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
@@ -171,7 +175,7 @@
         }
         
         //5. Override过滤器: 防重已经迁移过的 (override用来过滤避免重复迁移) (参考29069-todo5.2);
-        NSArray *alreadyTransfered_Cansets = [AINetUtils transferPorts_4Father:sceneTo fScene:sceneFrom];
+        NSArray *alreadyTransfered_Cansets = [AINetUtils transferPorts_4Father:rCansetTo fScene:sceneFrom];
         NSArray *cansetFroms2 = [SMGUtils removeSub_ps:alreadyTransfered_Cansets parent_ps:cansetFroms1];
         
         //6. 转为cansetModel格式 (参考31104-第3步);
