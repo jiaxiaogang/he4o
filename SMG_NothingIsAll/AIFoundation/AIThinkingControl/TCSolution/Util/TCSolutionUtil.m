@@ -100,6 +100,10 @@
             //TODOTOMORROW20250116: 写hSolutionV4：延着R迁移关联，来取h解。
             //看起来，目前本来就是延着r迁移关联来取h迁移的，只是这些的共同抽象匹配度得分过滤有问题。
             
+            
+            //TODOTOMORROW20250118: 此处不要过滤只保留I，FatherRScene也可以迁移过来，不过不同的rCanset之间，它们的hCanset也可以互相迁移吗？
+            //现在延着R迁移关联，严谨的来找H解，不需要求匹配度，肯定是匹配的，就是一级级映射过来的。。。
+            
             //c. 然后再依次判断下和mc二者的匹配度,相乘,取最大值为其综合匹配度,找出综合匹配度最好的值: 即最匹配的 (参考31121-TODO3);
             CGFloat bestScore = [SMGUtils filterBestScore:sameAbses scoreBlock:^CGFloat(AIKVPointer *item) {
                 return [targetAlg getAbsMatchValue:item] * [cansetToAlg getAbsMatchValue:item];
