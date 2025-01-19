@@ -16,6 +16,7 @@
 
 /**
  *  MARK:--------------------H求解--------------------
+ *  @desc 用于当前rCanset的下一帧求解，但当前rCanset及其F迁移关联上，H解都很少，所以需要从别的同样在激活中的rCanset池上取H解（但别的rCanset池没有绝对H映射，需要单独判断下mIsC映射符合当前targetAlg）。
  *  @version
  *      2023.09.10: 升级v2,支持TCScene和TCCanset (参考30127);
  *      2023.10.04: 测得总是输出无计可施,发现H迁移路径和R是不同的,H经验迁移不过来,所以最终解决如下升级下v3;
@@ -54,7 +55,8 @@
         
         //4. 取hCansets(用override取cansets): 从cutIndex到sceneFo.count之间的hCansets (参考31102-第1步);
         //取: 从rCanset.cutIndex + 1到count末尾,之间所有的canset都是来的及尝试执行的;
-        NSArray *cansetFroms1 = [rCansetFrom getConCansets:rCanset.cansetCutIndex + 1];
+        //2025.01.19: 不必包含targetIndex，因为当前targetAlg在别的rCanset池是没有明确映射的，应该全取出来，不判断下一帧映射，后面在第7代码块再判断mIsC映射。
+        NSArray *cansetFroms1 = [rCansetFrom getConCansetsWithStartIndex:rCanset.cansetCutIndex + 1];
         
         //log
         if (ARRISOK(cansetFroms1)) {
@@ -103,6 +105,8 @@
             
             //TODOTOMORROW20250118: 此处不要过滤只保留I，FatherRScene也可以迁移过来，不过不同的rCanset之间，它们的hCanset也可以互相迁移吗？
             //现在延着R迁移关联，严谨的来找H解，不需要求匹配度，肯定是匹配的，就是一级级映射过来的。。。
+            
+            //这里判断到映射后，要把hCanset的targetIndex更新一下。。。
             
             //c. 然后再依次判断下和mc二者的匹配度,相乘,取最大值为其综合匹配度,找出综合匹配度最好的值: 即最匹配的 (参考31121-TODO3);
             CGFloat bestScore = [SMGUtils filterBestScore:sameAbses scoreBlock:^CGFloat(AIKVPointer *item) {

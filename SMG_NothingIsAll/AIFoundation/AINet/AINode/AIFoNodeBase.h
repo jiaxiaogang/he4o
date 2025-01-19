@@ -186,6 +186,11 @@
 -(NSArray*) getConCansets:(NSInteger)targetIndex;
 
 /**
+ *  MARK:--------------------从startIndex（含）开始取所有cansets--------------------
+ */
+-(NSArray*) getConCansetsWithStartIndex:(NSInteger)startIndex;
+
+/**
  *  MARK:--------------------更新一条候选--------------------
  */
 -(HEResult*) updateConCanset:(AIKVPointer*)newConCansetFo targetIndex:(NSInteger)targetIndex;

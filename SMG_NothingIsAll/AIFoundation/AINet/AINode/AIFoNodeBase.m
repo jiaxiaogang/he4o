@@ -303,16 +303,25 @@
  *  @result notnull
  */
 -(NSArray*) getConCansets:(NSInteger)targetIndex {
-    NSMutableArray *result = [[NSMutableArray alloc] init];
+    NSArray *result = [self getConCansets:targetIndex];
     BOOL forH = targetIndex < self.count;
-    for (NSInteger i = targetIndex; i <= self.count; i++) {
+    if (forH) { //H任务时,要求canset中必须包含targetIndex映射帧;
+        result = [SMGUtils filterArr:result checkValid:^BOOL(AIKVPointer *item) {
+            NSDictionary *indexDic = [self getConIndexDic:item];
+            return [indexDic objectForKey:@(targetIndex)];
+        }];
+    }
+    return result;
+}
+
+/**
+ *  MARK:--------------------从startIndex（含）开始取所有cansets--------------------
+ *  @desc 与上方法的区别在于，它不必包含targetIndex。
+ */
+-(NSArray*) getConCansetsWithStartIndex:(NSInteger)startIndex {
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    for (NSInteger i = startIndex; i <= self.count; i++) {
         NSArray *itemArr = ARRTOOK([self.conCansetsDic objectForKey:@(i)]);
-        if (forH) { //H任务时,要求canset中必须包含targetIndex映射帧;
-            itemArr = [SMGUtils filterArr:itemArr checkValid:^BOOL(AIKVPointer *item) {
-                NSDictionary *indexDic = [self getConIndexDic:item];
-                return [indexDic objectForKey:@(targetIndex)];
-            }];
-        }
         [result addObjectsFromArray:itemArr];
     }
     return [SMGUtils removeRepeat:result];
