@@ -84,7 +84,9 @@
             for (NSInteger i = hCansetCutIndex + 1; i < obj.transferXvModel.cansetToOrders.count; i++) {
                 //TODOTOMORROW20250120：这里是要在convert2HCansetModel()之前就模拟xv迁移，得到hCansetToOrders...
                 
-                
+
+                //原来的transverXv_FH看起来是从fatherHFrom->fatherHSceneFrom->fatherRSceneFrom->iRSceneTo->iHSceneTo->iHCansetTo
+                //但，现在的H迁移只从这些可以吗？现在的H迁移关联似乎没这么多吧？还是画下图理顺些先。。。
                 
             }
             return [TCCanset convert2HCansetModel:hCansetFrom hDemand:hDemand rCanset:rCansetFromModel];
