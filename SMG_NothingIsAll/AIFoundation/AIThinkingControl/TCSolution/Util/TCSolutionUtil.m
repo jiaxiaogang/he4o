@@ -84,10 +84,24 @@
             for (NSInteger i = hCansetCutIndex + 1; i < obj.transferXvModel.cansetToOrders.count; i++) {
                 //TODOTOMORROW20250120：这里是要在convert2HCansetModel()之前就模拟xv迁移，得到hCansetToOrders...
                 
-
+                
                 //原来的transverXv_FH看起来是从fatherHFrom->fatherHSceneFrom->fatherRSceneFrom->iRSceneTo->iHSceneTo->iHCansetTo
                 //但，现在的H迁移只从这些可以吗？现在的H迁移关联似乎没这么多吧？还是画下图理顺些先。。。
                 
+                //即使R迁移过了，也可能H解from挂在迁移前？并且各有各的rSceneTo。
+                //所以H迁移，不仅仅是迁移到hSceneTo上面就行了，当前激活中的rCanset大几率并不是这个迁移到的hSceneTo。
+                //所以问题在于：
+                //1、这里是在各个rCanset之间取H解。
+                //2、而TCTransfer却只在当前rCanset上面虚迁移。
+                //并且：
+                //1、只在当前rCanset迁移就很可能无解。
+                //3、跳到整个rScene树上面迁移，H就会脱离场景（而R不会脱离场景）。
+                //所以：这里H无计可施的问题没那么简单，
+                //1、首先肯定得从整个rScene场景树取H解，不然迁移源太窄。
+                //迁移步骤：
+                //1、首先RCanset池那些前段条件满足的。
+                //2、然后它的后段与targetAlg有mIsC匹配的。
+                //3、再然后需要迁移到当前激活的rCanset下做H解（这个映射也需要分析好怎么计算综合映射）。
             }
             return [TCCanset convert2HCansetModel:hCansetFrom hDemand:hDemand rCanset:rCansetFromModel];
         }];
