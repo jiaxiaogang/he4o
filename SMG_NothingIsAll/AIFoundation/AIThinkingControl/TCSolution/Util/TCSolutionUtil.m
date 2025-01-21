@@ -102,6 +102,11 @@
                 //1、首先RCanset池那些前段条件满足的。
                 //2、然后它的后段与targetAlg有mIsC匹配的。
                 //3、再然后需要迁移到当前激活的rCanset下做H解（这个映射也需要分析好怎么计算综合映射）。
+                //  3.1、从一个IF树，迁移H解，到另一个IF树上面，除非从protoFo上能找着点映射，不然是绝无映射的（缺点：即使找着映射了，隔着rCanset和hCanset两层场景不包含帧，也会缺失映射）。
+                //  3.2、当然还有个办法就是调用fixIndexDic了，用于补足缺失映射。
+                
+                
+                
             }
             return [TCCanset convert2HCansetModel:hCansetFrom hDemand:hDemand rCanset:rCansetFromModel];
         }];
