@@ -17,6 +17,16 @@
 /**
  *  MARK:--------------------H求解--------------------
  *  @desc 用于当前rCanset的下一帧求解，但当前rCanset及其F迁移关联上，H解都很少，所以需要从别的同样在激活中的rCanset池上取H解（但别的rCanset池没有绝对H映射，需要单独判断下mIsC映射符合当前targetAlg）。
+ *  @progress 求解是通过左突右进的方式来推进的，流程说明如下：
+ *      1. IF树“习得H解”从无到有的流程：
+ *          第1步、当前IF树H无解后。
+ *          第2步、另一个IF树激活，并且找到H解。
+ *          第3步、另一个IF树输出H解并行为化有效后。
+ *          第4步、当前IF树也会因此被feedbackTOR反馈有效，学到H解。
+ *      2、IF树“使用H解”从无到有的流程：
+ *          步骤1、整个工作记忆树该传染就传染，传染后自然能激活别的未传染掉的rCanset（注：这里是指整个工作记忆树的actIndex帧只要匹配就传染掉 参考8.TODO2）。
+ *          步骤2、等未传染掉的rCanset推进有效，并且最终实现了当初的h目标时，当时已传染的rCanset们又会被唤醒。
+ *          步骤3、这些被唤醒的因此习得新的newHCanset解，从此后它们也从无h解到有h解了。
  *  @version
  *      2023.09.10: 升级v2,支持TCScene和TCCanset (参考30127);
  *      2023.10.04: 测得总是输出无计可施,发现H迁移路径和R是不同的,H经验迁移不过来,所以最终解决如下升级下v3;
@@ -44,6 +54,7 @@
     AIFoNodeBase *rCansetTo = [SMGUtils searchNode:targetFoM.transferSiModel.canset];
     
     //2. 取出rCansets (仅取当前pFo树下的) (参考31113-TODO4);
+    //2025.01.28: 追回注释：仅在当前IF树内取解（因为别的树没映射迁移不过来，场景不同也不允许迁移，因为不是同场景下的解效果是不同的，参考33157-6.1）。
     NSArray *rCansets = [SMGUtils filterArr:baseRDemand.actionFoModels checkValid:^BOOL(TOFoModel *item) {
         return [targetPFo isEqual:item.baseSceneModel.getIScene];
     }];
@@ -83,7 +94,9 @@
             //模拟xv迁移，看下hCansetToOrders中，后段部分，有没有和当前H任务要求的targetAlg有抽具象关系（哪帧有抽具象关系，则设为targetIndex，都没抽具象关系，则不为targetAlg的解，此hCansetFrom无法迁移过来用）。
             for (NSInteger i = hCansetCutIndex + 1; i < obj.transferXvModel.cansetToOrders.count; i++) {
                 //TODOTOMORROW20250120：这里是要在convert2HCansetModel()之前就模拟xv迁移，得到hCansetToOrders...
-                
+                //1、这里hCansetTargetIndex应该就是准确的（当然要先核实下h虚迁移代码，看是否准确）。
+                //2、然后看下后面的匹配度过滤器，用不用改成判断hTargetIndex>0即可。
+                //3、然后查下，hTargetIndex与hSceneActIndex的映射是否有匹配度，如果没有，查下原因（因为有映射就应该有匹配度）。
                 
             }
             return [TCCanset convert2HCansetModel:hCansetFrom hDemand:hDemand rCanset:rCansetFromModel];
