@@ -130,6 +130,9 @@
     NSInteger hSceneTargetIndex = hSceneCutIndex + 1;//H任务的目标其实就是下一帧;
     NSInteger hCansetTargetIndex = NUMTOOK([indexDic objectForKey:@(hSceneTargetIndex)]).integerValue;
     NSInteger hCansetCutIndex = [TOUtils goBackToFindConIndexByAbsIndex:indexDic absIndex:hSceneCutIndex];
+
+    //2. hCansetTo的目标无映射时，判为无效（判断hTargetIndex>0即可）。
+    if (hCansetTargetIndex <= 0) return nil;
     
     //2. 转为TOFoModel;
     TOFoModel *result = [TOFoModel newForHCansetFo:hCansetFrom_p sceneFo:sceneFrom.p base:hDemand

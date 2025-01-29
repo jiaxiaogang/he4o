@@ -128,6 +128,8 @@
     AISceneModel *rSceneModel = cansetModel.baseSceneModel;//无论是R还是H,它的baseSceneModel都是rSceneModel;
     
     //2. 数据准备: 取知识网络结构;
+    //TODOTOMORROW20250129: 介入示例，分析下这里rCansetFrom和rCansetTo是否具一致性，如果一致，可不必取rScene即可计算综合映射。
+    
     AIFoNodeBase *cansetFrom = [SMGUtils searchNode:cansetModel.cansetFo];//cansetFrom (R时为rCanset,H时为hCanset);
     AIFoNodeBase *fatherHScene = [SMGUtils searchNode:cansetModel.sceneFo];//HScene=RCanset (R时为rCanset, H时为当前迁移源from的hScene);
     AIFoNodeBase *fatherRScene = [SMGUtils searchNode:rSceneModel.getFatherScene];//R时为当前fatherSceneModel的scene;

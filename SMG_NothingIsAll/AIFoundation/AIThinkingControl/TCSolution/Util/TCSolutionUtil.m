@@ -84,21 +84,7 @@
         
         //6. 转为cansetModel格式 (参考31104-第3步);
         NSArray *cansetFroms3 = [SMGUtils convertArr:cansetFroms2 convertBlock:^id(AIKVPointer *hCansetFrom) {
-            
             AIFoNodeBase *hSceneFrom = [SMGUtils searchNode:rCansetFromModel.cansetFo];
-            
-            //根据rCansetFrom.CutIndex找出hCansetFrom.cutIndex;
-            NSDictionary *indexDic = [hSceneFrom getConIndexDic:hCansetFrom];
-            NSInteger hCansetCutIndex = [TOUtils goBackToFindConIndexByAbsIndex:indexDic absIndex:rCansetFromModel.cansetCutIndex];
-            
-            //模拟xv迁移，看下hCansetToOrders中，后段部分，有没有和当前H任务要求的targetAlg有抽具象关系（哪帧有抽具象关系，则设为targetIndex，都没抽具象关系，则不为targetAlg的解，此hCansetFrom无法迁移过来用）。
-            for (NSInteger i = hCansetCutIndex + 1; i < obj.transferXvModel.cansetToOrders.count; i++) {
-                //TODOTOMORROW20250120：这里是要在convert2HCansetModel()之前就模拟xv迁移，得到hCansetToOrders...
-                //1、这里hCansetTargetIndex应该就是准确的（当然要先核实下h虚迁移代码，看是否准确）。
-                //2、然后看下后面的匹配度过滤器，用不用改成判断hTargetIndex>0即可。
-                //3、然后查下，hTargetIndex与hSceneActIndex的映射是否有匹配度，如果没有，查下原因（因为有映射就应该有匹配度）。
-                
-            }
             return [TCCanset convert2HCansetModel:hCansetFrom hDemand:hDemand rCanset:rCansetFromModel];
         }];
         
@@ -118,6 +104,8 @@
                 //2024.06.02: 复现一次,因cansetTargetIndex=4而cansetToOrder一共才4条,导致越界,取到nil;
                 NSLog(@"这里闪退过,因为这个c或m是空,如果2024.07之前没见过这个错,这里可删");
             }
+            
+            //3、然后查下，hTargetIndex与hSceneActIndex的映射是否有匹配度，如果没有，查下原因（因为有映射就应该有匹配度）。
             NSArray *sameAbses = [TOUtils dataOfMcIsBro:targetAlgM.content_p c:cansetToAlg.p];
             
             //TODOTOMORROW20250104: 经测"有向无距场景的竞争浮现没发现什么问题了",查下此处,第1步还有几条解,但到第2步已经是0条,查下H的解那么少么?
