@@ -106,6 +106,10 @@
             }
             
             //3、然后查下，hTargetIndex与hSceneActIndex的映射是否有匹配度，如果没有，查下原因（因为有映射就应该有匹配度）。
+            //hSceneTo就是targetAlg，看下如果不是查下原因。
+            
+            
+            
             NSArray *sameAbses = [TOUtils dataOfMcIsBro:targetAlgM.content_p c:cansetToAlg.p];
             
             //TODOTOMORROW20250104: 经测"有向无距场景的竞争浮现没发现什么问题了",查下此处,第1步还有几条解,但到第2步已经是0条,查下H的解那么少么?

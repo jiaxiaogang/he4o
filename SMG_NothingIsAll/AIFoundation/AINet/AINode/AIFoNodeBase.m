@@ -303,7 +303,7 @@
  *  @result notnull
  */
 -(NSArray*) getConCansets:(NSInteger)targetIndex {
-    NSArray *result = [self getConCansets:targetIndex];
+    NSArray *result = [self getConCansetsWithStartIndex:targetIndex];
     BOOL forH = targetIndex < self.count;
     if (forH) { //H任务时,要求canset中必须包含targetIndex映射帧;
         result = [SMGUtils filterArr:result checkValid:^BOOL(AIKVPointer *item) {
