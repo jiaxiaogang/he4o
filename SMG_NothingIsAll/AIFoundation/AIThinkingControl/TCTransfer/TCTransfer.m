@@ -86,7 +86,7 @@
     //2. 数据准备: 取知识网络结构;
     AIFoNodeBase *cansetFrom = [SMGUtils searchNode:cansetModel.cansetFo];
     AIFoNodeBase *sceneFrom = [SMGUtils searchNode:cansetModel.sceneFo];
-    AIFoNodeBase *iRScene = [SMGUtils searchNode:rSceneModel.getIScene];
+    //AIFoNodeBase *iRScene = [SMGUtils searchNode:rSceneModel.getIScene];
     AIFoNodeBase *sceneTo = [SMGUtils searchNode:cansetModel.sceneTo];
     
     //3. sceneFrom和sceneTo是同一个时,不需要迁移 (此时: sceneFrom=sceneTo,cansetFrom=cansetTo) (但也封装一下xvModel以便后面使用);
@@ -100,7 +100,7 @@
     }
     
     //3. IH映射: indexDic综合计算 (参考31115-TODO1-4);
-    //2025.01.30: hSceneFrom和hSceneTo是等长的，与hCansetFrom的映射也是一模一样的（参考33157-总结2）。
+    //2025.01.30: hSceneFrom和hSceneTo是等长的，与hCansetFrom的映射也是一模一样的（参考33157-总结2 & 33156-TODO）。
     NSDictionary *zonHeIndexDic = [SMGUtils reverseDic:[cansetFrom getAbsIndexDic:sceneFrom.p]];
     return [self convertZonHeIndexDic2XvModel:cansetModel zonHeIndexDic:zonHeIndexDic];
 }
@@ -128,12 +128,12 @@
     //2. 数据准备: 取知识网络结构;
     AIFoNodeBase *cansetFrom = [SMGUtils searchNode:cansetModel.cansetFo];//cansetFrom (R时为rCanset,H时为hCanset);
     AIFoNodeBase *fatherHScene = [SMGUtils searchNode:cansetModel.sceneFo];//HScene=RCanset (R时为rCanset, H时为当前迁移源from的hScene);
-    AIFoNodeBase *fatherRScene = [SMGUtils searchNode:rSceneModel.getFatherScene];//R时为当前fatherSceneModel的scene;
-    AIFoNodeBase *iRScene = [SMGUtils searchNode:rSceneModel.getIScene];
-    AIFoNodeBase *sceneTo = [SMGUtils searchNode:cansetModel.sceneTo];
+    //AIFoNodeBase *fatherRScene = [SMGUtils searchNode:rSceneModel.getFatherScene];//R时为当前fatherSceneModel的scene;
+    //AIFoNodeBase *iRScene = [SMGUtils searchNode:rSceneModel.getIScene];
+    //AIFoNodeBase *sceneTo = [SMGUtils searchNode:cansetModel.sceneTo];
     
     //3. FH映射: indexDic综合计算 (参考31115-TODO1-4);
-    //2025.01.30: hSceneFrom和hSceneTo是等长的，与hCansetFrom的映射也是一模一样的（参考33157-总结2）。
+    //2025.01.30: hSceneFrom和hSceneTo是等长的，与hCansetFrom的映射也是一模一样的（参考33157-总结2 & 33156-TODO）。
     NSDictionary *zonHeIndexDic = [SMGUtils reverseDic:[cansetFrom getAbsIndexDic:fatherHScene.p]];
     return [self convertZonHeIndexDic2XvModel:cansetModel zonHeIndexDic:zonHeIndexDic];
 }
@@ -192,7 +192,7 @@
     //1. 数据准备;
     if (!cansetModel.transferXvModel) return;
     TCTransferXvModel *xvModel = cansetModel.transferXvModel;
-    AIFoNodeBase *sceneFrom = [SMGUtils searchNode:cansetModel.sceneFo];
+    //AIFoNodeBase *sceneFrom = [SMGUtils searchNode:cansetModel.sceneFo];
     AIFoNodeBase *cansetFrom = [SMGUtils searchNode:cansetModel.cansetFo];
     
     //2. 由虚转实: 构建cansetTo和siModel (支持:场景内防重);
