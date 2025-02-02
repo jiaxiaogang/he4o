@@ -84,53 +84,37 @@
         
         //6. 转为cansetModel格式 (参考31104-第3步);
         NSArray *cansetFroms3 = [SMGUtils convertArr:cansetFroms2 convertBlock:^id(AIKVPointer *hCansetFrom) {
-            AIFoNodeBase *hSceneFrom = [SMGUtils searchNode:rCansetFromModel.cansetFo];
             return [TCCanset convert2HCansetModel:hCansetFrom hDemand:hDemand rCanset:rCansetFromModel];
         }];
         
         //7. 求出匹配度,转为评分模型 (把每个cansetFrom的综合匹配度算出来,用于后面过滤) (参考31121-TODO3 & TODO4);
-        NSArray *cansetFrom4 = [SMGUtils convertArr:cansetFroms3 convertBlock:^id(TOFoModel *obj) {
+        for (TOFoModel *obj in cansetFroms3) {
             //a. 取出当前cansetTo的目标帧;
             AIShortMatchModel_Simple *cansetToOrder = ARR_INDEX(obj.transferXvModel.cansetToOrders, obj.cansetTargetIndex);
             AIAlgNodeBase *cansetToAlg = [SMGUtils searchNode:cansetToOrder.alg_p];
             
-            //b. 如果是mcIsBro关系,先取出共同的sameAbs;
-            
-            //2024.04.29: 已经修了IH迁移xvModel返回nil的问题 (随后再观察下这里不报错,则删;
-            if (!targetAlgM || !targetAlgM.content_p) {
-                NSLog(@"这里闪退过,因为这个m或c是空,如果2024.07之前没见过这个错,这里可删");
-            }
-            if (!cansetToAlg || !cansetToAlg.p) {
-                //2024.06.02: 复现一次,因cansetTargetIndex=4而cansetToOrder一共才4条,导致越界,取到nil;
-                NSLog(@"这里闪退过,因为这个c或m是空,如果2024.07之前没见过这个错,这里可删");
-            }
             
             //3、然后查下，hTargetIndex与hSceneActIndex的映射是否有匹配度，如果没有，查下原因（因为有映射就应该有匹配度）。
             //hSceneTo就是targetAlg，看下如果不是查下原因。
             
             
+            //TODOTOMORROW20250104: 查下此处,第1步还有几条解,但到第2步已经是0条,查下H的解那么少么?
             
-            NSArray *sameAbses = [TOUtils dataOfMcIsBro:targetAlgM.content_p c:cansetToAlg.p];
-            
-            //TODOTOMORROW20250104: 经测"有向无距场景的竞争浮现没发现什么问题了",查下此处,第1步还有几条解,但到第2步已经是0条,查下H的解那么少么?
-            //此处取得A8650和A2642的共同抽象是0条，所以计算最佳得分也是0分，
-            //回顾下31121的代码，看下这里的算法，应该是过时了，因为现在的迁移早就不一样了。。。
-            
-            
-            //TODOTOMORROW20250116: 写hSolutionV4：延着R迁移关联，来取h解。
-            //看起来，目前本来就是延着r迁移关联来取h迁移的，只是这些的共同抽象匹配度得分过滤有问题。
+            //1、从targetFo就是rCansetTo，而targetAlg就是它的帧。
+            //2、当hCansetFrom从rCansetFrom迁移过来后，它的targetIndex也必然有映射，所以hCansetTo的帧肯定也是从rCansetTo中来的。
+            //3、targetFo就是rCansetTo，所以hCansetTo的targetIndex帧也是从targetFo来的，它应该和targetAlg是同一帧。
+            //4、所以mIsC肯定成立，而匹配度肯定是1。
             
             
-            //TODOTOMORROW20250118: 此处不要过滤只保留I，FatherRScene也可以迁移过来，不过不同的rCanset之间，它们的hCanset也可以互相迁移吗？
-            //现在延着R迁移关联，严谨的来找H解，不需要求匹配度，肯定是匹配的，就是一级级映射过来的。。。
-            
-            //这里判断到映射后，要把hCanset的targetIndex更新一下。。。
-            
-            //c. 然后再依次判断下和mc二者的匹配度,相乘,取最大值为其综合匹配度,找出综合匹配度最好的值: 即最匹配的 (参考31121-TODO3);
-            CGFloat bestScore = [SMGUtils filterBestScore:sameAbses scoreBlock:^CGFloat(AIKVPointer *item) {
-                return [targetAlg getAbsMatchValue:item] * [cansetToAlg getAbsMatchValue:item];
-            }];
-            return [MapModel newWithV1:obj v2:@(bestScore)];
+            BOOL mIsC = [TOUtils mIsC_1:cansetToAlg.p c:targetAlg.p];
+            NSLog(@"调试一下，此处只从F迁移了，应该直接可以取到匹配度才对，不能取到null：%d",mIsC);
+        }
+        NSArray *cansetFrom4 = [SMGUtils convertArr:cansetFroms3 convertBlock:^id(TOFoModel *obj) {
+            //a. 取出当前cansetTo的目标帧;
+            //2025.02.02: 原来允许从bro迁移过来，所以用isBro来取匹配度，把BF和FI两步迁移分开后，这里只需要从F迁移了，所以直接取抽具象匹配度即可（参考33158）。
+            AIShortMatchModel_Simple *cansetToOrder = ARR_INDEX(obj.transferXvModel.cansetToOrders, obj.cansetTargetIndex);
+            CGFloat matchValue = [targetAlg getConMatchValue:cansetToOrder.alg_p];
+            return [MapModel newWithV1:obj v2:@(matchValue)];
         }];
         
         //8. 过滤掉匹配度为0的 (只要不为0,肯定是有mcIsBro关系的) (参考31103-第2步 & 31121-TODO4);
