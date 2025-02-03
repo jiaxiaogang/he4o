@@ -107,7 +107,10 @@
             
             
             BOOL mIsC = [TOUtils mIsC_1:cansetToAlg.p c:targetAlg.p];
-            NSLog(@"调试一下，此处只从F迁移了，应该直接可以取到匹配度才对，不能取到null：%d",mIsC);
+            CGFloat matchValue = [targetAlg getConMatchValue:cansetToOrder.alg_p];
+            if (!mIsC || matchValue == 0) {
+                NSLog(@"调试一下，此处只从F迁移了，应该直接可以取到匹配度才对，不能取到null：%d %.2f",mIsC,matchValue);
+            }
         }
         NSArray *cansetFrom4 = [SMGUtils convertArr:cansetFroms3 convertBlock:^id(TOFoModel *obj) {
             //a. 取出当前cansetTo的目标帧;
