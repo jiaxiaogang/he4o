@@ -88,28 +88,27 @@
         }];
         
         //7. 求出匹配度,转为评分模型 (把每个cansetFrom的综合匹配度算出来,用于后面过滤) (参考31121-TODO3 & TODO4);
+        //2025.02.04: 修复用共同抽象取匹配度，取得null（0）的问题，经查原因是本来targetAlg和cansetTo的targetIndex就是同一个节点，它们没有共同抽象，本来就是同一个，匹配度为1才对（参考33158）。
         for (TOFoModel *obj in cansetFroms3) {
-            //a. 取出当前cansetTo的目标帧;
-            AIShortMatchModel_Simple *cansetToOrder = ARR_INDEX(obj.transferXvModel.cansetToOrders, obj.cansetTargetIndex);
-            AIAlgNodeBase *cansetToAlg = [SMGUtils searchNode:cansetToOrder.alg_p];
+            AIShortMatchModel_Simple *cansetToTargetOrder = ARR_INDEX(obj.transferXvModel.cansetToOrders, obj.cansetTargetIndex);
+            AIAlgNodeBase *cansetToTargetAlg = [SMGUtils searchNode:cansetToTargetOrder.alg_p];
             
             
             //3、然后查下，hTargetIndex与hSceneActIndex的映射是否有匹配度，如果没有，查下原因（因为有映射就应该有匹配度）。
-            //hSceneTo就是targetAlg，看下如果不是查下原因。
-            
-            
             //TODOTOMORROW20250104: 查下此处,第1步还有几条解,但到第2步已经是0条,查下H的解那么少么?
+         
+            //经回测
+            //复现多次、此处取到匹配度为1，target和cansetToOrder是同一个节点。
+            //复现5次、第1步有效数1条5次。
+            //复现2次、第2步有效数1条2次。
             
-            //1、从targetFo就是rCansetTo，而targetAlg就是它的帧。
-            //2、当hCansetFrom从rCansetFrom迁移过来后，它的targetIndex也必然有映射，所以hCansetTo的帧肯定也是从rCansetTo中来的。
-            //3、targetFo就是rCansetTo，所以hCansetTo的targetIndex帧也是从targetFo来的，它应该和targetAlg是同一帧。
-            //4、所以mIsC肯定成立，而匹配度肯定是1。
             
-            
-            BOOL mIsC = [TOUtils mIsC_1:cansetToAlg.p c:targetAlg.p];
-            CGFloat matchValue = [targetAlg getConMatchValue:cansetToOrder.alg_p];
+            BOOL mIsC = [TOUtils mIsC_1:cansetToTargetAlg.p c:targetAlg.p];
+            CGFloat matchValue = [targetAlg getConMatchValue:cansetToTargetAlg.p];
             if (!mIsC || matchValue == 0) {
-                NSLog(@"调试一下，此处只从F迁移了，应该直接可以取到匹配度才对，不能取到null：%d %.2f",mIsC,matchValue);
+                //如果断点，查下这里匹配度为0的原因，查下cansetToTargetAlg和targetAlg不是同一帧的原因。
+                //如果2025.03前不复现，可删此调试断点日志。
+                ELog(@"调试一下，此处只从F迁移了，应该直接可以取到匹配度才对，不能取到null：%d %.2f 测下是不是都是同一个节点:%d",mIsC,matchValue,[cansetToTargetAlg.p isEqual:targetAlg.p]);
             }
         }
         NSArray *cansetFrom4 = [SMGUtils convertArr:cansetFroms3 convertBlock:^id(TOFoModel *obj) {
