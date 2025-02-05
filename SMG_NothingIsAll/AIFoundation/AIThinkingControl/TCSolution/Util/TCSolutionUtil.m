@@ -106,12 +106,23 @@
             //复现2次、第2步有效数1条2次。
             
             
-            BOOL mIsC = [TOUtils mIsC_1:cansetToTargetAlg.p c:targetAlg.p];
-            CGFloat matchValue = [targetAlg getConMatchValue:cansetToTargetAlg.p];
-            if (!mIsC || matchValue == 0) {
+            BOOL mIsC1 = [TOUtils mIsC_1:cansetToTargetAlg.p c:targetAlg.p];
+            BOOL mIsC2 = [TOUtils mIsC_1:targetAlg.p c:cansetToTargetAlg.p];
+            CGFloat matchValue1 = [targetAlg getConMatchValue:cansetToTargetAlg.p];
+            CGFloat matchValue2 = [cansetToTargetAlg getConMatchValue:targetAlg.p];
+            if (!mIsC1 && !mIsC2) {
                 //如果断点，查下这里匹配度为0的原因，查下cansetToTargetAlg和targetAlg不是同一帧的原因。
                 //如果2025.03前不复现，可删此调试断点日志。
-                ELog(@"调试一下，此处只从F迁移了，应该直接可以取到匹配度才对，不能取到null：%d %.2f 测下是不是都是同一个节点:%d",mIsC,matchValue,[cansetToTargetAlg.p isEqual:targetAlg.p]);
+                ELog(@"A调试一下，此处只从F迁移了，应该直接可以取到匹配度才对，不能取到null：%d %d %.2f %.2f 测下是不是都是同一个节点:%d",mIsC1,mIsC2,matchValue1,matchValue2,[cansetToTargetAlg.p isEqual:targetAlg.p]);
+                NSLog(@"");
+            }
+            if (matchValue1 == 0 && matchValue2 == 0) {
+                ELog(@"B调试一下，此处只从F迁移了，应该直接可以取到匹配度才对，不能取到null：%d %d %.2f %.2f 测下是不是都是同一个节点:%d",mIsC1,mIsC2,matchValue1,matchValue2,[cansetToTargetAlg.p isEqual:targetAlg.p]);
+                NSLog(@"");
+            }
+            if (![cansetToTargetAlg.p isEqual:targetAlg.p]) {
+                ELog(@"C调试一下，此处只从F迁移了，应该直接可以取到匹配度才对，不能取到null：%d %d %.2f %.2f 测下是不是都是同一个节点:%d",mIsC1,mIsC2,matchValue1,matchValue2,[cansetToTargetAlg.p isEqual:targetAlg.p]);
+                NSLog(@"");
             }
         }
         NSArray *cansetFrom4 = [SMGUtils convertArr:cansetFroms3 convertBlock:^id(TOFoModel *obj) {
