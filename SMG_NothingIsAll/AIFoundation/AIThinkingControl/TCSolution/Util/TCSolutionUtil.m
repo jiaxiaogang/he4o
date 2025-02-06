@@ -89,30 +89,16 @@
         
         //7. 求出匹配度,转为评分模型 (把每个cansetFrom的综合匹配度算出来,用于后面过滤) (参考31121-TODO3 & TODO4);
         //2025.02.04: 修复用共同抽象取匹配度，取得null（0）的问题，经查原因是本来targetAlg和cansetTo的targetIndex就是同一个节点，它们没有共同抽象，本来就是同一个，匹配度为1才对（参考33158）。
+        //TODOTEST: 此处为测试代码，如果2025.03前不复现，可删此调试断点日志。
         for (TOFoModel *obj in cansetFroms3) {
             AIShortMatchModel_Simple *cansetToTargetOrder = ARR_INDEX(obj.transferXvModel.cansetToOrders, obj.cansetTargetIndex);
             AIAlgNodeBase *cansetToTargetAlg = [SMGUtils searchNode:cansetToTargetOrder.alg_p];
-            
-            
-            //3、然后查下，hTargetIndex与hSceneActIndex的映射是否有匹配度，如果没有，查下原因（因为有映射就应该有匹配度）。
-            //TODOTOMORROW20250104: 查下此处,第1步还有几条解,但到第2步已经是0条,查下H的解那么少么?
-         
-            //经回测
-            //复现x次、此处取到匹配度为1，target和cansetToOrder是同一个节点。
-            //复现1次、此处取到匹配度为0，target和cansetToOrder不是同一节点 ==> 其中一个A7246(距9,向44,果)，一个A7236(向203,距24,果)。
-            //      分析：查下哪来的？
-            //      猜想：会不会和前段时间修的代码有关，如果重训练一下，就消失了？
-            //复现5次、第1步有效数1条5次。
-            //复现2次、第2步有效数1条2次。
-            
-            
             BOOL mIsC1 = [TOUtils mIsC_1:cansetToTargetAlg.p c:targetAlg.p];
             BOOL mIsC2 = [TOUtils mIsC_1:targetAlg.p c:cansetToTargetAlg.p];
             CGFloat matchValue1 = [targetAlg getConMatchValue:cansetToTargetAlg.p];
             CGFloat matchValue2 = [cansetToTargetAlg getConMatchValue:targetAlg.p];
+            //如果断点，查下这里匹配度为0的原因，查下cansetToTargetAlg和targetAlg不是同一帧的原因。
             if (!mIsC1 && !mIsC2) {
-                //如果断点，查下这里匹配度为0的原因，查下cansetToTargetAlg和targetAlg不是同一帧的原因。
-                //如果2025.03前不复现，可删此调试断点日志。
                 ELog(@"A调试一下，此处只从F迁移了，应该直接可以取到匹配度才对，不能取到null：%d %d %.2f %.2f 测下是不是都是同一个节点:%d",mIsC1,mIsC2,matchValue1,matchValue2,[cansetToTargetAlg.p isEqual:targetAlg.p]);
                 NSLog(@"");
             }
@@ -264,6 +250,7 @@
     cansetModels = [SMGUtils filterArr:cansetModels checkValid:^BOOL(TOFoModel *item) {
         return ![baseHAlgs containsObject:item.getCurFrame.content_p];
     }];
+    if (debugMode) NSLog(@"第9步 %@避免hDemand纵向重复:%ld",rhLog,cansetModels.count);//测时xx条
 
     //10. 计算衰后stableScore并筛掉为0的 (参考26128-2-1 & 26161-5);
     //NSArray *outOfFos = [SMGUtils convertArr:cansetModels convertBlock:^id(TOFoModel *obj) {
@@ -302,7 +289,7 @@
     //14. 只在初次best时执行一次由虚转实,以及因激活更新强度等 (避免每次实时竞争导致重复跑这些);
     if (result && result.cansetStatus == CS_None) {
         AIFoNodeBase *resultFo = [SMGUtils searchNode:result.cansetFo];
-        if (debugMode) NSLog(@"第9步 %@求解最佳结果:F%ld %@",rhLog,result.cansetFo.pointerId,CLEANSTR(resultFo.spDic));
+        if (debugMode) NSLog(@"第10步 %@求解最佳结果:F%ld %@",rhLog,result.cansetFo.pointerId,CLEANSTR(resultFo.spDic));
         
         //15. bestResult由虚转实迁移;
         [TCTransfer transferSi:result];
