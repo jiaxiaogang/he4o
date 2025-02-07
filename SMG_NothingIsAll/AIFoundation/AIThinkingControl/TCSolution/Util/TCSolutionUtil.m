@@ -98,6 +98,18 @@
             CGFloat matchValue1 = [targetAlg getConMatchValue:cansetToTargetAlg.p];
             CGFloat matchValue2 = [cansetToTargetAlg getConMatchValue:targetAlg.p];
             //如果断点，查下这里匹配度为0的原因，查下cansetToTargetAlg和targetAlg不是同一帧的原因。
+            
+            
+            //TODOTOMORROW20250208: 这里把cansetFrom，sceneFrom，sceneTo，cansetTo这一套全打出来看下，看能不能找着线索。
+            //targetFo: F9507[M1{↑饿-16},A542(向272,距83,果),A544(向237,距90,果),M1,A544,M1,A544,M1,A544,飞↓,A544] //其中cutIndex=2
+            //测到一次：cansetToTargetAlg=A544(向237,距90,果)，targetAlg=M1{↑饿-16}。
+            //这就明显的问题了，问题就在convertHCansetModel中，它的cansetTargetIndex取到了3。（因为这个3是果，而targetAlg是M1饥饿）。
+            //此处rCansetFromModel=sceneFrom=F2187 hCansetFrom=F8671 rCansetFromModel.cansetCutIndex=hSceneCutIndex=1
+            //NSDictionary *indexDic = [F2187 getConIndexDic:F8671];
+            //NSInteger hSceneTargetIndex = hSceneCutIndex + 1;//H任务的目标其实就是下一帧;
+            //NSInteger hCansetTargetIndex = NUMTOOK([indexDic objectForKey:@(hSceneTargetIndex)]).integerValue;
+            //明天把F2187和F8671的映射取出来，看下为什么会映射到这个hCansetTargetIndex=3。
+            
             if (!mIsC1 && !mIsC2) {
                 ELog(@"A调试一下，此处只从F迁移了，应该直接可以取到匹配度才对，不能取到null：%d %d %.2f %.2f 测下是不是都是同一个节点:%d",mIsC1,mIsC2,matchValue1,matchValue2,[cansetToTargetAlg.p isEqual:targetAlg.p]);
                 NSLog(@"");
