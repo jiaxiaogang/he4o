@@ -137,6 +137,16 @@
     
     //9. 初始化XGConfig
     [XGConfig.instance initConfig];
+    
+    AIFoNodeBase *F2187 = [AppDelegate searchFoByPointerId:2187];
+    AIFoNodeBase *F8671 = [AppDelegate searchFoByPointerId:8671];
+    if (F2187 && F8671) {
+        NSLog(@"%@",Fo2FStr(F2187));
+        NSLog(@"%@",Fo2FStr(F8671));
+        NSDictionary *indexDic = [F2187 getConIndexDic:F8671.p];
+        NSLog(@"IndexDic: %@",CLEANSTR(indexDic));
+        NSLog(@"");
+    }
     return YES;
 }
 

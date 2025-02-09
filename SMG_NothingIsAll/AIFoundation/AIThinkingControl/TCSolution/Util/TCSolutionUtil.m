@@ -110,6 +110,15 @@
             //NSInteger hCansetTargetIndex = NUMTOOK([indexDic objectForKey:@(hSceneTargetIndex)]).integerValue;
             //明天把F2187和F8671的映射取出来，看下为什么会映射到这个hCansetTargetIndex=3。
             
+            //F2187[M1{↑饿-16},A542(向272,距83,果),A544(向237,距90,果),飞↘,A544]
+            //F8671[M1{↑饿-16},A542(向272,距83,果),M1,A544(向237,距90,果)]
+            //IndexDic: {0 = 0;1 = 1;2 = 3;}
+            //如上日志，看起来二者的映射没什么问题。
+            
+            //分析：当前rCanset F2187确实cutIndex是1，下一帧是A544果。
+            //所以从它下面取到H解后，转成h解模型时，取得的映射目标就是F8671的第3帧，A544果。这没问题。
+            //线索：问题出在，targetAlg是M1饿，而另一个解rCanset F2187人家下一帧并不是M1饿。
+            
             if (!mIsC1 && !mIsC2) {
                 ELog(@"A调试一下，此处只从F迁移了，应该直接可以取到匹配度才对，不能取到null：%d %d %.2f %.2f 测下是不是都是同一个节点:%d",mIsC1,mIsC2,matchValue1,matchValue2,[cansetToTargetAlg.p isEqual:targetAlg.p]);
                 NSLog(@"");
