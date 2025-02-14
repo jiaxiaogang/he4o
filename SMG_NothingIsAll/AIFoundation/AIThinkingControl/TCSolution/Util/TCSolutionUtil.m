@@ -189,8 +189,9 @@
     
     //========== 第3-6代码块：延着从每一个rCansetFrom（actionFoModels）上找h解，但如果已经迁移过的要避免重复。没迁移过的，则补充迁移过来（先调用xv迁移）。==========
     //3. 依次从rCanset下取hCansets (参考31102);
-    for (TOFoModel *rCansetFromModel in rCansets) {
-        AIFoNodeBase *rCansetFrom = [SMGUtils searchNode:rCansetFromModel.cansetFo];
+    for (TOFoModel *curRCansetFromModel in rCansets) {
+        AIFoNodeBase *rCansetFrom = [SMGUtils searchNode:curRCansetFromModel.cansetFo];
+        AIFoNodeBase *rSceneFrom = [SMGUtils searchNode:curRCansetFromModel.sceneFrom];
         
         //4. 取hCansets(用override取cansets): 从cutIndex到sceneFo.count之间的hCansets (参考31102-第1步);
         //取: 从rCanset.cutIndex + 1到count末尾,之间所有的canset都是来的及尝试执行的;
@@ -198,10 +199,25 @@
         //2025.02.12: 改为从actIndex+1开始取（参考33159-思路1）。
         
         //TODOTOMORROW20250212: 同时从F和I层取H解。
-        if (rCansetFromModel.baseSceneModel.type == SceneTypeI) {
+        if (curRCansetFromModel.baseSceneModel.type == SceneTypeI) {
             //2A、当前是typeI时：从I下面直接取H解（参考33159-TODO2A）。
+            AIFoNodeBase *iRCanset = rCansetFrom;
+            AIFoNodeBase *iRScene = rSceneFrom;
+            NSInteger rCansetActIndex = curRCansetFromModel.cansetActIndex;
+            NSArray *cansetFroms1 = [iRCanset getConCansetsWithStartIndex:rCansetActIndex + 1];
             
             //2B、当前是typeI时：从I迁移关联的F下面取H解（参考33159-TODO2B）。
+            NSArray *transferPorts = ARRTOOK([AINetUtils transferPorts_4Father:iRScene iCansetContent_ps:iRCanset.content_ps]);
+            for (AITransferPort *port in transferPorts) {
+                AIFoNodeBase *fRCanset = [SMGUtils searchNode:port.fCanset];
+                NSArray *cansetFroms2 = [fRCanset getConCansetsWithStartIndex:rCansetActIndex + 1];
+                //迁移到curRCanset的迁移路径为：hCansetFrom（F） -> rCansetFrom（F） -> rSceneFrom（F） -> rSceneTo（I） -> rCansetTo（I） -> hCansetTo（I）。
+                //因为rCansetTo和rCansetFrom的映射一一对应，所以可简化为：hCansetFrom（F） -> rCansetFromTo（F/I） -> hCansetTo（I）。
+                
+                //迁移到targetFo的迁移路径为：hCansetFrom（F） -> rCansetFrom（F） -> rSceneFrom（F） -> rSceneTo（I） -> targetFo（I） -> hCansetTo（I）。
+                //此处rCansetFrom和targetFo并非一一对应，必须通过rSceneFo->rSceneTo->targetFo的路径来综合计算一下。
+                
+            }
         }
         
         if (rCansetFromModel.baseSceneModel.type == SceneTypeFather) {
@@ -209,7 +225,7 @@
             
         }
         
-        NSArray *cansetFroms1 = [rCansetFrom getConCansetsWithStartIndex:rCansetFromModel.cansetActIndex + 1];
+        
         
         //log
         if (ARRISOK(cansetFroms1)) {
