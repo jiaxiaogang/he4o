@@ -190,8 +190,9 @@
     //========== 第3-6代码块：延着从每一个rCansetFrom（actionFoModels）上找h解，但如果已经迁移过的要避免重复。没迁移过的，则补充迁移过来（先调用xv迁移）。==========
     //3. 依次从rCanset下取hCansets (参考31102);
     for (TOFoModel *curRCansetFromModel in rCansets) {
-        AIFoNodeBase *rCansetFrom = [SMGUtils searchNode:curRCansetFromModel.cansetFo];
+        AIFoNodeBase *rCansetFrom = [SMGUtils searchNode:curRCansetFromModel.cansetFrom];
         AIFoNodeBase *rSceneFrom = [SMGUtils searchNode:curRCansetFromModel.sceneFrom];
+        NSInteger rCansetActIndex = curRCansetFromModel.cansetActIndex;
         
         //4. 取hCansets(用override取cansets): 从cutIndex到sceneFo.count之间的hCansets (参考31102-第1步);
         //取: 从rCanset.cutIndex + 1到count末尾,之间所有的canset都是来的及尝试执行的;
@@ -203,7 +204,6 @@
             //2A、当前是typeI时：从I下面直接取H解（参考33159-TODO2A）。
             AIFoNodeBase *iRCanset = rCansetFrom;
             AIFoNodeBase *iRScene = rSceneFrom;
-            NSInteger rCansetActIndex = curRCansetFromModel.cansetActIndex;
             NSArray *cansetFroms1 = [iRCanset getConCansetsWithStartIndex:rCansetActIndex + 1];
             
             //2B、当前是typeI时：从I迁移关联的F下面取H解（参考33159-TODO2B）。
@@ -220,17 +220,24 @@
             }
         }
         
-        if (rCansetFromModel.baseSceneModel.type == SceneTypeFather) {
+        if (curRCansetFromModel.baseSceneModel.type == SceneTypeFather) {
             //2C、当前是typeF时：只需要从F下取就行。（参考33159-TODO2C）。
+            AIFoNodeBase *fRCanset = rCansetFrom;
+            NSArray *cansetFroms3 = [fRCanset getConCansetsWithStartIndex:rCansetActIndex + 1];
+            
+            //迁移到targetFo的迁移路径为：hCansetFrom（F） -> rCansetFrom（F） -> rSceneFrom（F） -> rSceneTo（I） -> targetFo（I） -> hCansetTo（I）。
+            //此处rCansetFrom和targetFo并非一一对应，必须通过rSceneFo->rSceneTo->targetFo的路径来综合计算一下。
             
         }
+        
+        //5. 转模型 并 迁移后，修正下targetIndex的位置（判断与targetAlg有抽具象关联）。
         
         
         
         //log
         if (ARRISOK(cansetFroms1)) {
             NSArray *allHCanset = [SMGUtils convertArr:rCansetFrom.conCansetsDic.allValues convertItemArrBlock:^NSArray *(id obj) { return obj; }];
-            if (Log4GetCansetResult4H) NSLog(@"第1步 取HCanset候选集: 从hScene:F%ld(%@) 的在%ld帧开始取,取得HCanset数:%ld/%ld \n\t%@",rCansetFrom.pId,SceneType2Str(rCansetFromModel.baseSceneModel.type),rCansetFromModel.cansetCutIndex + 1,cansetFroms1.count,allHCanset.count,CLEANSTR([SMGUtils convertArr:cansetFroms1 convertBlock:^id(id obj) {
+            if (Log4GetCansetResult4H) NSLog(@"第1步 取HCanset候选集: 从hScene:F%ld(%@) 的在%ld帧开始取,取得HCanset数:%ld/%ld \n\t%@",rCansetFrom.pId,SceneType2Str(rCansetFromModel.baseSceneModel.type),curRCansetFromModel.cansetCutIndex + 1,cansetFroms1.count,allHCanset.count,CLEANSTR([SMGUtils convertArr:cansetFroms1 convertBlock:^id(id obj) {
                 return ShortDesc4Pit(obj);
             }]));
         }
@@ -242,7 +249,7 @@
         
         //6. 转为cansetModel格式 (参考31104-第3步);
         NSArray *cansetFroms3 = [SMGUtils convertArr:cansetFroms2 convertBlock:^id(AIKVPointer *hCansetFrom) {
-            return [TCCanset convert2HCansetModel:hCansetFrom hDemand:hDemand rCanset:rCansetFromModel];
+            return [TCCanset convert2HCansetModel:hCansetFrom hDemand:hDemand rCanset:curRCansetFromModel];
         }];
         
         //7. 求出匹配度,转为评分模型 (把每个cansetFrom的综合匹配度算出来,用于后面过滤) (参考31121-TODO3 & TODO4);
@@ -308,7 +315,7 @@
         //10. 更新到actionFoModels;
         NSArray *cansetFromFinish = [SMGUtils convertArr:cansetFrom6 convertBlock:^id(MapModel *obj) { return obj.v1; }];
         [hDemand.actionFoModels addObjectsFromArray:cansetFromFinish];
-        if (Log4GetCansetResult4H && cansetFroms3.count > 0) NSLog(@"\t item场景(%@):%@ 取得候选数:%ld",SceneType2Str(rCansetFromModel.baseSceneModel.type),Pit2FStr(rCansetFromModel.baseSceneModel.scene),cansetFromFinish.count);
+        if (Log4GetCansetResult4H && cansetFroms3.count > 0) NSLog(@"\t item场景(%@):%@ 取得候选数:%ld",SceneType2Str(curRCansetFromModel.baseSceneModel.type),Pit2FStr(curRCansetFromModel.baseSceneModel.scene),cansetFromFinish.count);
     }
     
     //11. 在rSolution/hSolution初始化Canset池时,也继用下传染状态 (参考31178-TODO3);
