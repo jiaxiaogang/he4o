@@ -206,7 +206,6 @@
             AIFoNodeBase *iRScene = rSceneFrom;
             NSArray *cansetFroms1 = [iRCanset getConCansetsWithStartIndex:rCansetActIndex + 1];
             //迁移到targetFo的迁移路径为：hCansetFrom（I） -> rCansetFrom（I） -> rSceneFromTo（I） -> targetFo（I） -> hCansetTo（I）。
-            //此处typeI时，rSceneFrom=rSceneTo，不过rCansetFrom和targetFo并非一一对应，必须通过rSceneFromTo->targetFo的路径来综合计算一下。
             
             //2B、当前是typeI时：从I迁移关联的F下面取H解（参考33159-TODO2B）。
             NSArray *transferPorts = ARRTOOK([AINetUtils transferPorts_4Father:iRScene iCansetContent_ps:iRCanset.content_ps]);
@@ -214,7 +213,6 @@
                 AIFoNodeBase *fRCanset = [SMGUtils searchNode:port.fCanset];
                 NSArray *cansetFroms2 = [fRCanset getConCansetsWithStartIndex:rCansetActIndex + 1];
                 //迁移到targetFo的迁移路径为：hCansetFrom（F） -> rCansetFrom（F） -> rSceneFrom（F） -> rSceneTo（I） -> targetFo（I） -> hCansetTo（I）。
-                //此处rCansetFrom和targetFo并非一一对应，必须通过rSceneFrom->rSceneTo->targetFo的路径来综合计算一下。
                 
             }
         }
@@ -225,11 +223,11 @@
             NSArray *cansetFroms3 = [fRCanset getConCansetsWithStartIndex:rCansetActIndex + 1];
             
             //迁移到targetFo的迁移路径为：hCansetFrom（F） -> rCansetFrom（F） -> rSceneFrom（F） -> rSceneTo（I） -> targetFo（I） -> hCansetTo（I）。
-            //此处rCansetFrom和targetFo并非一一对应，必须通过rSceneFrom->rSceneTo->targetFo的路径来综合计算一下。
             
         }
         
         //5. 转模型 并 迁移后，修正下targetIndex的位置（判断与targetAlg有抽具象关联）。
+        //可以直接从targetAlg及其conAlgs中，找找与迁移后的hCansetToOrder的后段判断下，有没有交集，来取修正后的targetIndex位置。
         
         
         
