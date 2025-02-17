@@ -187,6 +187,13 @@
         return [targetPFo isEqual:item.baseSceneModel.getIScene];
     }];
     
+    //4. 根据targetAlg及其具象的被引用，取出所有包含targetAlg的时序（后面用于提前判断下hCanset有效性，避免性能问题）（参考33159-TODO4）。
+    NSMutableArray *targetAlgs = [[NSMutableArray alloc] initWithArray:Ports2Pits([AINetUtils conPorts_All:targetAlg])];
+    [targetAlgs addObject:targetAlg.p];
+    NSArray *allFo4HasTargetAlg_ps = [SMGUtils convertArr:targetAlgs convertItemArrBlock:^NSArray *(id obj) {
+        return Ports2Pits([AINetUtils refPorts_All:obj]);
+    }];
+    
     //========== 第3-6代码块：延着从每一个rCansetFrom（actionFoModels）上找h解，但如果已经迁移过的要避免重复。没迁移过的，则补充迁移过来（先调用xv迁移）。==========
     //3. 依次从rCanset下取hCansets (参考31102);
     for (TOFoModel *curRCansetFromModel in rCansets) {
