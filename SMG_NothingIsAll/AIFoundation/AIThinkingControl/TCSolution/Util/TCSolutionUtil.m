@@ -214,6 +214,56 @@
             NSArray *cansetFroms1 = [iRCanset getConCansetsWithStartIndex:rCansetActIndex + 1];
             //迁移到targetFo的迁移路径为：hCansetFrom（I） -> rCansetFrom（I） -> rSceneFromTo（I） -> targetFo（I） -> hCansetTo（I）。
             
+            
+            //////////start ===============================================================
+            for (AIKVPointer *hCansetFrom in cansetFroms1) {
+                //1. 数据准备;
+                AISceneModel *rSceneModel = cansetModel.baseSceneModel;//无论是R还是H,它的baseSceneModel都是rSceneModel;
+                
+                //2. 数据准备: 取知识网络结构;
+                AIFoNodeBase *cansetFrom = [SMGUtils searchNode:cansetModel.cansetFo];
+                AIFoNodeBase *sceneFrom = [SMGUtils searchNode:cansetModel.sceneFo];
+                //AIFoNodeBase *iRScene = [SMGUtils searchNode:rSceneModel.getIScene];
+                AIFoNodeBase *sceneTo = [SMGUtils searchNode:cansetModel.sceneTo];
+                
+                //3. sceneFrom和sceneTo是同一个时,不需要迁移 (此时: sceneFrom=sceneTo,cansetFrom=cansetTo) (但也封装一下xvModel以便后面使用);
+                if ([sceneFrom isEqual:sceneTo]) {
+                    //2024.04.29: BUG: 修IH无需迁移时xvModel返回nil,导致后期使用xvModel报空指针问题;
+                    TCTransferXvModel *result = [[TCTransferXvModel alloc] init];
+                    result.cansetToOrders = [cansetFrom convert2Orders];//cansetFrom的orders就是cansetTo的orders;
+                    result.sceneToCansetToIndexDic = [sceneFrom getConIndexDic:cansetFrom.p];
+                    result.sceneToTargetIndex = cansetModel.sceneTargetIndex;
+                    return result;
+                }
+                
+                //3. IH映射: indexDic综合计算 (参考31115-TODO1-4);
+                //2025.01.30: hSceneFrom和hSceneTo是等长的，与hCansetFrom的映射也是一模一样的（参考33157-总结2 & 33156-TODO）。
+                NSDictionary *zonHeIndexDic = [SMGUtils reverseDic:[cansetFrom getAbsIndexDic:sceneFrom.p]];
+                return [self convertZonHeIndexDic2XvModel:cansetModel zonHeIndexDic:zonHeIndexDic];
+                
+                
+                
+                //1. 根据hScene和hCanset的映射,取出hCanset的目标帧等数据;
+                TOFoModel *targetFoModel = (TOFoModel*)hDemand.baseOrGroup.baseOrGroup;//targetFo就是当前h任务的base(targetAlg).base(targetFo);
+                NSInteger hSceneCutIndex = curRCansetFromModel.cansetCutIndex;//hScene的推进进度;
+                AISceneModel *rSceneModel = rCanset.baseSceneModel;//复用R的SceneModel,因为H任务没有独立的R场景树,它本来就是复用的R任务的场景树等;
+                AIFoNodeBase *sceneFrom = [SMGUtils searchNode:rCanset.cansetFo];
+                NSDictionary *indexDic = [sceneFrom getConIndexDic:hCansetFrom_p];
+                NSInteger hSceneTargetIndex = hSceneCutIndex + 1;//H任务的目标其实就是下一帧;
+                NSInteger hCansetTargetIndex = NUMTOOK([indexDic objectForKey:@(hSceneTargetIndex)]).integerValue;
+                NSInteger hCansetCutIndex = [TOUtils goBackToFindConIndexByAbsIndex:indexDic absIndex:hSceneCutIndex];
+
+                //2. hCansetTo的目标无映射时，判为无效（判断hTargetIndex>0即可）。
+                if (hCansetTargetIndex <= 0) return nil;
+                
+                //2. 转为TOFoModel;
+                TOFoModel *result = [TOFoModel newForHCansetFo:hCansetFrom_p sceneFo:sceneFrom.p base:hDemand
+                                   cansetCutIndex:hCansetCutIndex sceneCutIndex:targetFoM.sceneCutIndex
+                                cansetTargetIndex:hCansetTargetIndex sceneTargetIndex:targetFoM.cansetActIndex + 1
+                           basePFoOrTargetFoModel:targetFoModel baseSceneModel:rSceneModel];
+            }
+            //////////end ===============================================================
+            
             //2B、当前是typeI时：从I迁移关联的F下面取H解（参考33159-TODO2B）。
             NSArray *transferPorts = ARRTOOK([AINetUtils transferPorts_4Father:iRScene iCansetContent_ps:iRCanset.content_ps]);
             for (AITransferPort *port in transferPorts) {
