@@ -217,28 +217,26 @@
             
             //////////start ===============================================================
             for (AIKVPointer *hCansetFrom in cansetFroms1) {
-                //1. 数据准备;
-                AISceneModel *rSceneModel = cansetModel.baseSceneModel;//无论是R还是H,它的baseSceneModel都是rSceneModel;
-                
-                //2. 数据准备: 取知识网络结构;
-                AIFoNodeBase *cansetFrom = [SMGUtils searchNode:cansetModel.cansetFo];
-                AIFoNodeBase *sceneFrom = [SMGUtils searchNode:cansetModel.sceneFo];
-                //AIFoNodeBase *iRScene = [SMGUtils searchNode:rSceneModel.getIScene];
-                AIFoNodeBase *sceneTo = [SMGUtils searchNode:cansetModel.sceneTo];
-                
                 //3. sceneFrom和sceneTo是同一个时,不需要迁移 (此时: sceneFrom=sceneTo,cansetFrom=cansetTo) (但也封装一下xvModel以便后面使用);
-                if ([sceneFrom isEqual:sceneTo]) {
+                //如果下面在收集path时判断条件，那个有用，这里就不需要了，到时先测下确定这里没用再删掉。
+                if ([rCansetFrom isEqual:rCansetTo]) {
                     //2024.04.29: BUG: 修IH无需迁移时xvModel返回nil,导致后期使用xvModel报空指针问题;
                     TCTransferXvModel *result = [[TCTransferXvModel alloc] init];
                     result.cansetToOrders = [cansetFrom convert2Orders];//cansetFrom的orders就是cansetTo的orders;
-                    result.sceneToCansetToIndexDic = [sceneFrom getConIndexDic:cansetFrom.p];
-                    result.sceneToTargetIndex = cansetModel.sceneTargetIndex;
+                    result.sceneToCansetToIndexDic = [rCansetFrom getConIndexDic:hCansetFrom];
+                    result.sceneToTargetIndex = targetFoM.sceneCutIndex + 1;
                     return result;
                 }
                 
                 //3. IH映射: indexDic综合计算 (参考31115-TODO1-4);
                 //2025.01.30: hSceneFrom和hSceneTo是等长的，与hCansetFrom的映射也是一模一样的（参考33157-总结2 & 33156-TODO）。
-                NSDictionary *zonHeIndexDic = [SMGUtils reverseDic:[cansetFrom getAbsIndexDic:sceneFrom.p]];
+                NSMutableArray *path = [NSMutableArray new];
+                [path addObject:[DirectIndexDic newOkToAbs:[rCansetFrom getConIndexDic:hCansetFrom]]];
+                if (![rCansetFrom isEqual:rCansetTo]) {//当hSceneFrom和To不同时，才从上面走。
+                    [path addObject:[DirectIndexDic newOkToAbs:[rSceneFrom getConIndexDic:rCansetFrom.p]]];
+                    [path addObject:[DirectIndexDic newNoToAbs:[rSceneFrom getConIndexDic:rCansetTo.p]]];
+                }
+                NSDictionary *zonHeIndexDic = [SMGUtils reverseDic:[TOUtils zonHeIndexDic:path]];
                 return [self convertZonHeIndexDic2XvModel:cansetModel zonHeIndexDic:zonHeIndexDic];
                 
                 
@@ -259,7 +257,7 @@
                 //2. 转为TOFoModel;
                 TOFoModel *result = [TOFoModel newForHCansetFo:hCansetFrom_p sceneFo:sceneFrom.p base:hDemand
                                    cansetCutIndex:hCansetCutIndex sceneCutIndex:targetFoM.sceneCutIndex
-                                cansetTargetIndex:hCansetTargetIndex sceneTargetIndex:targetFoM.cansetActIndex + 1
+                                cansetTargetIndex:hCansetTargetIndex sceneTargetIndex:targetFoM.sceneCutIndex + 1
                            basePFoOrTargetFoModel:targetFoModel baseSceneModel:rSceneModel];
             }
             //////////end ===============================================================
