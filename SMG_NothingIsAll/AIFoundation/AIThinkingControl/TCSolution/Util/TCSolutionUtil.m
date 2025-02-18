@@ -197,6 +197,18 @@
     //========== 第3-6代码块：延着从每一个rCansetFrom（actionFoModels）上找h解，但如果已经迁移过的要避免重复。没迁移过的，则补充迁移过来（先调用xv迁移）。==========
     //3. 依次从rCanset下取hCansets (参考31102);
     for (TOFoModel *curRCansetFromModel in rCansets) {
+        
+        //TODOTOMORROW20240218: 看下这里，是否封装成方法，自动取推举的代换order，或推举后再继承的order，直至综合映射链条的中断。
+        //一是要保证取到的h解有效，二是要保证性能没问题。
+        
+        // 假如rSceneTo：与rCansetTo的下一帧有映射 && 与rCansetFrom有映射，则直接取H解即可（它迁移后肯定可用）。
+        // 假如rSceneTo：与rCansetTo的下一帧有映射 && 与rCansetFrom没映射，则判断I的目标，是否被allFo4HasTargetAlg_ps包含（包含时即有解）。
+        
+        // 假如rSceneTo：与rCansetTo的下一帧没映射 && 与rCanseetFrom有映射，则判断F的目标，是否被allFo4HasTargetAlg_ps包含（包含时即有解）。
+        // 假如rSceneTo：与rCansetTo的下一帧没映射 && 与rCansetFrom没映射，则判断I的目标，是否被allFo4HasTargetAlg_ps包含（包含时即有解）。
+//        if ([allFo4HasTargetAlg_ps containsObject:hCansetFrom]) {}
+        
+        
         AIFoNodeBase *rCansetFrom = [SMGUtils searchNode:curRCansetFromModel.cansetFrom];
         AIFoNodeBase *rSceneFrom = [SMGUtils searchNode:curRCansetFromModel.sceneFrom];
         NSInteger rCansetActIndex = curRCansetFromModel.cansetActIndex;
@@ -219,14 +231,14 @@
             for (AIKVPointer *hCansetFrom in cansetFroms1) {
                 //3. sceneFrom和sceneTo是同一个时,不需要迁移 (此时: sceneFrom=sceneTo,cansetFrom=cansetTo) (但也封装一下xvModel以便后面使用);
                 //如果下面在收集path时判断条件，那个有用，这里就不需要了，到时先测下确定这里没用再删掉。
-                if ([rCansetFrom isEqual:rCansetTo]) {
-                    //2024.04.29: BUG: 修IH无需迁移时xvModel返回nil,导致后期使用xvModel报空指针问题;
-                    TCTransferXvModel *result = [[TCTransferXvModel alloc] init];
-                    result.cansetToOrders = [cansetFrom convert2Orders];//cansetFrom的orders就是cansetTo的orders;
-                    result.sceneToCansetToIndexDic = [rCansetFrom getConIndexDic:hCansetFrom];
-                    result.sceneToTargetIndex = targetFoM.sceneCutIndex + 1;
-                    return result;
-                }
+//                if ([rCansetFrom isEqual:rCansetTo]) {
+//                    //2024.04.29: BUG: 修IH无需迁移时xvModel返回nil,导致后期使用xvModel报空指针问题;
+//                    TCTransferXvModel *result = [[TCTransferXvModel alloc] init];
+//                    result.cansetToOrders = [cansetFrom convert2Orders];//cansetFrom的orders就是cansetTo的orders;
+//                    result.sceneToCansetToIndexDic = [rCansetFrom getConIndexDic:hCansetFrom];
+//                    result.sceneToTargetIndex = targetFoM.sceneCutIndex + 1;
+//                    return result;
+//                }
                 
                 //3. IH映射: indexDic综合计算 (参考31115-TODO1-4);
                 //2025.01.30: hSceneFrom和hSceneTo是等长的，与hCansetFrom的映射也是一模一样的（参考33157-总结2 & 33156-TODO）。
@@ -237,8 +249,16 @@
                     [path addObject:[DirectIndexDic newNoToAbs:[rSceneFrom getConIndexDic:rCansetTo.p]]];
                 }
                 NSDictionary *zonHeIndexDic = [SMGUtils reverseDic:[TOUtils zonHeIndexDic:path]];
-                return [self convertZonHeIndexDic2XvModel:cansetModel zonHeIndexDic:zonHeIndexDic];
                 
+                //6. 计算cansetToOrders
+                //说明: 场景包含帧用indexDic映射来迁移替换,场景不包含帧用迁移前的为准 (参考31104);
+                NSMutableArray *orders = [TCTransfer convertZonHeIndexDic2Orders:hCansetFrom sceneTo:rCansetTo zonHeIndexDic:zonHeIndexDic];
+                
+                //9. 打包数据model返回 (映射需要返过来因为前面cansetFrom在前,现在是cansetTo在后);
+                TCTransferXvModel *result = [[TCTransferXvModel alloc] init];
+                result.cansetToOrders = orders;
+                result.sceneToCansetToIndexDic = [SMGUtils reverseDic:zonHeIndexDic];
+                result.sceneToTargetIndex = rCansetActIndex;
                 
                 
                 //1. 根据hScene和hCanset的映射,取出hCanset的目标帧等数据;
