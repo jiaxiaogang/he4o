@@ -198,7 +198,7 @@
     //3. 依次从rCanset下取hCansets (参考31102);
     for (TOFoModel *curRCansetFromModel in rCansets) {
         
-        //TODOTOMORROW20240218: 看下这里，是否封装成方法，自动取推举的代换order，或推举后再继承的order，直至综合映射链条的中断。
+        //TODOTOMORROW20250218: 看下这里，是否封装成方法，自动取推举的代换order，或推举后再继承的order，直至综合映射链条的中断。
         //一是要保证取到的h解有效，二是要保证性能没问题。
         
         // 假如rSceneTo：与rCansetTo的下一帧有映射 && 与rCansetFrom有映射，则直接取H解即可（它迁移后肯定可用）。
@@ -208,7 +208,10 @@
         // 假如rSceneTo：与rCansetTo的下一帧没映射 && 与rCansetFrom没映射，则判断I的目标，是否被allFo4HasTargetAlg_ps包含（包含时即有解）。
         
         
+        //TODOTOMORROW20250219: 此处针对推举不及时的问题：即R迁移时（明天查下R推举和R继承的代码，再回顾下现代码的流程），并不会把其下的H也带过去，导致H的继承。。。随时习得后。。。
         //H迁移同步：此处又推举，又继承好几层，看来是躲不过，先写该推举推举，该继承继承，随后再优化性能吧。既然已经限定在IF树内了，对其整个IF树做一下H迁移同步也无不可。
+        //1、不迁移就不知道hCansetFrom是否包含targetAlg的解（迁移后才能知道，或者需要根据以上四条规律，加个预迁移判断下，但这也不好写，因为还有推举）。
+        //2、或者先同步一下推举，只要完成了同步推举，再进行虚继承什么的，都是现代码就支持的，此时判断是否包含targetAlg的解就容易了。
         
 //        if ([allFo4HasTargetAlg_ps containsObject:hCansetFrom]) {}
         
