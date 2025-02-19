@@ -206,6 +206,10 @@
         
         // 假如rSceneTo：与rCansetTo的下一帧没映射 && 与rCanseetFrom有映射，则判断F的目标，是否被allFo4HasTargetAlg_ps包含（包含时即有解）。
         // 假如rSceneTo：与rCansetTo的下一帧没映射 && 与rCansetFrom没映射，则判断I的目标，是否被allFo4HasTargetAlg_ps包含（包含时即有解）。
+        
+        
+        //H迁移同步：此处又推举，又继承好几层，看来是躲不过，先写该推举推举，该继承继承，随后再优化性能吧。既然已经限定在IF树内了，对其整个IF树做一下H迁移同步也无不可。
+        
 //        if ([allFo4HasTargetAlg_ps containsObject:hCansetFrom]) {}
         
         
