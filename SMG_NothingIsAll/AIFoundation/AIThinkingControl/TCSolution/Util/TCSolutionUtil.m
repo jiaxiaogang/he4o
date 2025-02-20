@@ -188,9 +188,9 @@
     }];
     
     //4. 根据targetAlg及其具象的被引用，取出所有包含targetAlg的时序（后面用于提前判断下hCanset有效性，避免性能问题）（参考33159-TODO4）。
-    NSMutableArray *targetAlgs = [[NSMutableArray alloc] initWithArray:Ports2Pits([AINetUtils conPorts_All:targetAlg])];
-    [targetAlgs addObject:targetAlg.p];
-    NSArray *allFo4HasTargetAlg_ps = [SMGUtils convertArr:targetAlgs convertItemArrBlock:^NSArray *(id obj) {
+    NSMutableArray *targetAlg_ps = [[NSMutableArray alloc] initWithArray:Ports2Pits([AINetUtils conPorts_All:targetAlg])];
+    [targetAlg_ps addObject:targetAlg.p];
+    NSArray *allFo4HasTargetAlg_ps = [SMGUtils convertArr:targetAlg_ps convertItemArrBlock:^NSArray *(id obj) {
         return Ports2Pits([AINetUtils refPorts_All:obj]);
     }];
     
@@ -199,22 +199,6 @@
     for (TOFoModel *curRCansetFromModel in rCansets) {
         
         //TODOTOMORROW20250218: 看下这里，是否封装成方法，自动取推举的代换order，或推举后再继承的order，直至综合映射链条的中断。
-        //一是要保证取到的h解有效，二是要保证性能没问题。
-        
-        // 假如rSceneTo：与rCansetTo的下一帧有映射 && 与rCansetFrom有映射，则直接取H解即可（它迁移后肯定可用）。
-        // 假如rSceneTo：与rCansetTo的下一帧有映射 && 与rCansetFrom没映射，则判断I的目标，是否被allFo4HasTargetAlg_ps包含（包含时即有解）。
-        
-        // 假如rSceneTo：与rCansetTo的下一帧没映射 && 与rCanseetFrom有映射，则判断F的目标，是否被allFo4HasTargetAlg_ps包含（包含时即有解）。
-        // 假如rSceneTo：与rCansetTo的下一帧没映射 && 与rCansetFrom没映射，则判断I的目标，是否被allFo4HasTargetAlg_ps包含（包含时即有解）。
-        
-        
-        //TODOTOMORROW20250219: 此处针对推举不及时的问题：即R迁移时（明天查下R推举和R继承的代码，再回顾下现代码的流程），并不会把其下的H也带过去，导致H的继承。。。随时习得后。。。
-        //H迁移同步：此处又推举，又继承好几层，看来是躲不过，先写该推举推举，该继承继承，随后再优化性能吧。既然已经限定在IF树内了，对其整个IF树做一下H迁移同步也无不可。
-        //1、不迁移就不知道hCansetFrom是否包含targetAlg的解（迁移后才能知道，或者需要根据以上四条规律，加个预迁移判断下，但这也不好写，因为还有推举）。
-        //2、或者先同步一下推举，只要完成了同步推举，再进行虚继承什么的，都是现代码就支持的，此时判断是否包含targetAlg的解就容易了。
-        
-//        if ([allFo4HasTargetAlg_ps containsObject:hCansetFrom]) {}
-        
         
         AIFoNodeBase *rCansetFrom = [SMGUtils searchNode:curRCansetFromModel.cansetFrom];
         AIFoNodeBase *rSceneFrom = [SMGUtils searchNode:curRCansetFromModel.sceneFrom];
@@ -236,6 +220,10 @@
             
             //////////start ===============================================================
             for (AIKVPointer *hCansetFrom in cansetFroms1) {
+                //迁移前过滤器A：先判断下hCansetFrom在迁移后，有没有可能包涵taretAlg的解，有才进行迁移，否则直接跳过，以节约性能（因为有映射取sceneTo，没映射取cansetFrom，所以二者有一个包含，就有可能该H解对targetAlg有效）。
+                //另外：但这里无法保证hCansetFrom绝对有效，也许迁移后，才发现orders其实不行，无法解H，所以到迁移后，取到targetIndex后，再加个判断是否有效的过滤器。
+                if (![allFo4HasTargetAlg_ps containsObject:rCansetTo.p] && ![allFo4HasTargetAlg_ps containsObject:hCansetFrom]) continue;
+                
                 //3. sceneFrom和sceneTo是同一个时,不需要迁移 (此时: sceneFrom=sceneTo,cansetFrom=cansetTo) (但也封装一下xvModel以便后面使用);
                 //如果下面在收集path时判断条件，那个有用，这里就不需要了，到时先测下确定这里没用再删掉。
 //                if ([rCansetFrom isEqual:rCansetTo]) {
@@ -260,6 +248,21 @@
                 //6. 计算cansetToOrders
                 //说明: 场景包含帧用indexDic映射来迁移替换,场景不包含帧用迁移前的为准 (参考31104);
                 NSMutableArray *orders = [TCTransfer convertZonHeIndexDic2Orders:hCansetFrom sceneTo:rCansetTo zonHeIndexDic:zonHeIndexDic];
+                
+                //TODOTOMORROW20250220: 从综合映射中，查下此处的orders的截点（以前有方法可以复用：有映射取映射(取sceneTo.TargetIndex映射到的cansetTo.TargetIndex) || 没映射则从Orders未发生部分找(取sceneTo.cutIndex之前在cansetTo中的last映射)）。
+                //7. 判断orders未发生部分，是否确实对targetAlg有解：得到hCansetTo.TargetIndex。
+                BOOL hCansetToTargetIndex = -1;
+                for (NSInteger i = orders.cutIndex; i < orders.count; i++) {
+                    AIShortMatchModel_Simple *order = ARR_INDEX(orders, i);
+                    if ([targetAlg_ps containsObject:order.alg_p]) {
+                        hCansetToTargetIndex = i;
+                        break;
+                    }
+                }
+                
+                //迁移后过滤器B：并加上迁移后无效的过滤器。
+                if (hCansetToTargetIndex == -1) continue;
+                
                 
                 //9. 打包数据model返回 (映射需要返过来因为前面cansetFrom在前,现在是cansetTo在后);
                 TCTransferXvModel *result = [[TCTransferXvModel alloc] init];
