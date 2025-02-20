@@ -793,6 +793,20 @@
     return -1;
 }
 
++(NSInteger) goBackToFindConIndexByConIndex:(NSDictionary*)indexDic conIndex:(NSInteger)conIndex {
+    indexDic = DICTOOK(indexDic);
+    //1. 从absIndex向前找,找到有映射的一条;
+    for (NSInteger i = conIndex; i >= 0; i--) {
+        NSNumber *absIndex = ARR_INDEX([indexDic allKeysForObject:@(i)], 0);
+        if (absIndex) {
+            //2. 如果找到一条有映射的,就直接返回;
+            return absIndex.integerValue;
+        }
+    }
+    //3. 如果直至第一条,最终也没找到,就返回-1;
+    return -1;
+}
+
 /**
  *  MARK:--------------------indexDic综合计算--------------------
  *  @result 返回结果中,默认首个dic的边缘端口为key,最后一个dic的边缘端口为value;

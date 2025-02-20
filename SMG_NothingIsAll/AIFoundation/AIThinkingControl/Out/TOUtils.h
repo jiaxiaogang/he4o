@@ -215,6 +215,7 @@
  *  MARK:--------------------从absIndex向前找,直到找到有conIndex映射的那一条返回--------------------
  */
 +(NSInteger) goBackToFindConIndexByAbsIndex:(NSDictionary*)indexDic absIndex:(NSInteger)absIndex;
++(NSInteger) goBackToFindConIndexByConIndex:(NSDictionary*)indexDic conIndex:(NSInteger)conIndex;
 
 /**
  *  MARK:--------------------indexDic综合计算--------------------
