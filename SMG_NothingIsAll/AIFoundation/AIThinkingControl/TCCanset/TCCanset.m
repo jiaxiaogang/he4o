@@ -165,6 +165,22 @@
     return result;
 }
 
++(TOFoModel*) convert2HCansetModelV2:(AIKVPointer *)hCanset_p hDemand:(HDemandModel *)hDemand rCanset:(TOFoModel *)rCanset {
+    
+    //2. 转为TOFoModel;
+    TOFoModel *hResult = [TOFoModel newForHCansetFo:hCansetFrom_p sceneFo:rCansetFrom.p base:hDemand
+                       cansetCutIndex:hCansetCutIndex sceneCutIndex:targetFoM.cansetCutIndex
+                    cansetTargetIndex:hCansetToTargetIndex sceneTargetIndex:targetFoM.cansetActIndex
+               basePFoOrTargetFoModel:targetFoM baseSceneModel:iRSceneModel];
+    
+    //TODOTOMORROW20250220: 查下xv迁移和fix映射等逻辑，在此次改动中，是否兼容。
+    //  1、可以先把上面的迁移 和 生成hModel封装一下。
+    //  2、或者先继续写下面的，等写后再根据可复用部分，进行封装。
+    
+    
+    
+}
+
 //MARK:===============================================================
 //MARK:                     < privateMethod >
 //MARK:===============================================================

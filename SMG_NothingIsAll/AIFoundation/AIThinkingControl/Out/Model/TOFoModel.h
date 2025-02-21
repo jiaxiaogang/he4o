@@ -114,8 +114,8 @@
  *      3. 注: 其中要执行的不包括cansetTargetIndex,比如为1时,则目标为1,只执行到0(第1帧),为content.count时,则目标为mv;
  */
 @property (assign, nonatomic) NSInteger cansetTargetIndex;    //cansetFo执行目标index (R时为fo.count,H时为目标帧下标);
-@property (assign, nonatomic) NSInteger sceneCutIndex;  //sceneFo已发生截点 (含cutIndex也已发生);
-@property (assign, nonatomic) NSInteger sceneTargetIndex;//sceneFo任务目标index (R时为fo.count,H时为目标帧下标);
+@property (assign, nonatomic) NSInteger sceneCutIndex;  //sceneFo已发生截点 (含cutIndex也已发生)（应该是sceneToCutIndex）;
+@property (assign, nonatomic) NSInteger sceneTargetIndex;//sceneFo任务目标index (R时为fo.count,H时为目标帧下标)（应该是sceneToTargetIndex）;
 
 /**
  *  MARK:--------------------虚实v2模型--------------------
