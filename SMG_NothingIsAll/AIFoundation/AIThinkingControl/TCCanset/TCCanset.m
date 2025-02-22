@@ -165,20 +165,36 @@
     return result;
 }
 
-+(TOFoModel*) convert2HCansetModelV2:(AIKVPointer *)hCanset_p hDemand:(HDemandModel *)hDemand rCanset:(TOFoModel *)rCanset {
-    
-    //2. 转为TOFoModel;
-    TOFoModel *hResult = [TOFoModel newForHCansetFo:hCansetFrom_p sceneFo:rCansetFrom.p base:hDemand
++(TOFoModel*) convert2HCansetModelV2:(AIKVPointer *)hCansetFrom_p rCansetFrom:(AIFoNodeBase*)rCansetFrom hDemand:(HDemandModel *)hDemand hCansetCutIndex:(NSInteger)hCansetCutIndex targetFoM:(TOFoModel*)targetFoM hCansetToTargetIndex:(NSInteger)hCansetToTargetIndex iRSceneModel:(AISceneModel*)iRSceneModel xvModel:(TCTransferXvModel*)xvModel {
+    //1. 转为TOFoModel;
+    TOFoModel *result = [TOFoModel newForHCansetFo:hCansetFrom_p sceneFo:rCansetFrom.p base:hDemand
                        cansetCutIndex:hCansetCutIndex sceneCutIndex:targetFoM.cansetCutIndex
                     cansetTargetIndex:hCansetToTargetIndex sceneTargetIndex:targetFoM.cansetActIndex
                basePFoOrTargetFoModel:targetFoM baseSceneModel:iRSceneModel];
     
-    //TODOTOMORROW20250220: 查下xv迁移和fix映射等逻辑，在此次改动中，是否兼容。
-    //  1、可以先把上面的迁移 和 生成hModel封装一下。
-    //  2、或者先继续写下面的，等写后再根据可复用部分，进行封装。
+    //3. 虚迁移
+    result.transferXvModel = xvModel;
     
+    //4. 初始化result的cansetTo与real的映射;
+    [result initRealCansetToDic];
     
+    //5. 补上层层传递错漏的映射;
+    [result fixRealCansteToDic];
     
+    //6. 前段条件满足判断 (不满足时,直接把result回滚删掉) (参考33086-TODO2);
+    if (result.realCansetToIndexDic.count < result.cansetCutIndex + 1) {
+        //2024.10.01: 前段缺一条时为不满足: 回滚result;
+        [hDemand.actionFoModels removeObject:result];
+        return nil;
+    }
+    if (Log4SceneIsOk) NSLog(@"demand:F%ld cansetFrom:F%ld 前段条件满足通过:%@",Demand2Pit(hDemand).pointerId,result.cansetFrom.pointerId,CLEANSTR(result.realCansetToIndexDic));
+    
+    //7. 2024.09.21: 改回生成canset时,初始化outSPDic (参考33065-TODO2);
+    [AINetUtils initItemOutSPDicForTransfered:result];
+    
+    //8. 下帧初始化 (可接受反馈);
+    [result pushNextFrame];
+    return result;
 }
 
 //MARK:===============================================================

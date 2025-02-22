@@ -70,7 +70,7 @@
  *  MARK:--------------------H虚迁移v2--------------------
  *  @desc 说明：在共同的rSceneFrom下，把rCansetFrom下的hCansetFrom迁移到rCansetTo下。
  */
-+(TCTransferXvModel*) transferXv_H_V2:(AIKVPointer*)hCansetFrom_p rCansetFrom:(AIFoNodeBase*)rCansetFrom rCansetTo:(AIFoNodeBase*)rCansetTo rSceneFrom:(AIFoNodeBase*)rSceneFrom rCansetToActIndex:(NSInteger)rCansetToActIndex {
++(TCTransferXvModel*) transferXv_H_V2:(AIKVPointer*)hCansetFrom_p rCansetFrom:(AIFoNodeBase*)rCansetFrom rCansetTo:(AIFoNodeBase*)rCansetTo rSceneFrom:(AIFoNodeBase*)rSceneFrom rSceneTo:(AIFoNodeBase*)rSceneTo rCansetToActIndex:(NSInteger)rCansetToActIndex {
     
     AIFoNodeBase *hCansetFrom = [SMGUtils searchNode:hCansetFrom_p];
     
@@ -91,7 +91,13 @@
     [path addObject:[DirectIndexDic newOkToAbs:[rCansetFrom getConIndexDic:hCansetFrom.p]]];
     if (![rCansetFrom isEqual:rCansetTo]) {//当hSceneFrom和To不同时，才从上面走。
         [path addObject:[DirectIndexDic newOkToAbs:[rSceneFrom getConIndexDic:rCansetFrom.p]]];
-        [path addObject:[DirectIndexDic newNoToAbs:[rSceneFrom getConIndexDic:rCansetTo.p]]];
+        
+        if (![rSceneFrom isEqual:rSceneTo]) {//当rSceneFrom和To不同时，才走这一步。
+            //一般是继承，所以from肯定是F层，而to肯定是I层。
+            [path addObject:[DirectIndexDic newNoToAbs:[rSceneFrom getConIndexDic:rSceneTo.p]]];
+        }
+        
+        [path addObject:[DirectIndexDic newNoToAbs:[rSceneTo getConIndexDic:rCansetTo.p]]];
     }
     NSDictionary *zonHeIndexDic = [SMGUtils reverseDic:[TOUtils zonHeIndexDic:path]];
     
