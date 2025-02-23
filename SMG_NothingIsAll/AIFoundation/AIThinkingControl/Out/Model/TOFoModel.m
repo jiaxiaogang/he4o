@@ -63,6 +63,7 @@
     model.initCansetCutIndex = cansetCutIndex;
     model.cansetCutIndex = cansetCutIndex;//H任务时,cansetCutIndex其实是顺着scene找上一帧有映射的 (参考TOUtils.goBackToFindConIndexByAbsIndex());
     model.cansetTargetIndex = cansetTargetIndex;
+    model.sceneCutIndex = sceneCutIndex;
     model.sceneTargetIndex = sceneTargetIndex;//H任务时,其实hScene的目标就是hScene的下一帧 (即目标 = hScene.cutIndex + 1);
     model.alreadyActionActIndex = -1;
     
