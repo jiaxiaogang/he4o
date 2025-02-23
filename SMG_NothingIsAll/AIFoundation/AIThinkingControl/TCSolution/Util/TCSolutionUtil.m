@@ -235,7 +235,7 @@
                 //15. 后过滤器
                 if ([self filter2ForCheckHCansetToTargetIndexIsInvalid:hCansetToTargetIndex hCansetCutIndex:hCansetCutIndex]) continue;
                 //16. 转为TOFoModel;
-                TOFoModel *hResult = [TCCanset convert2HCansetModelV2:hCansetFrom_p rCansetFrom:rCansetFrom hDemand:hDemand hCansetCutIndex:hCansetCutIndex targetFoM:targetFoM hCansetToTargetIndex:hCansetToTargetIndex IF_RSceneModel:IF_RSceneModel xvModel:xvModel];
+                TOFoModel *hResult = [TCCanset convert2HCansetModelV2:hCansetFrom_p rCansetFrom:rCansetFrom hDemand:hDemand hCansetCutIndex:hCansetCutIndex targetFoM:targetFoM hCansetToTargetIndex:hCansetToTargetIndex IF_RSceneModel:iRSceneModel xvModel:xvModel];
             }
             
             //2B、当前是typeI时：从I迁移关联的F下面取H解（参考33159-TODO2B）。
@@ -275,15 +275,30 @@
         
         if (curRCansetFromModel.baseSceneModel.type == SceneTypeFather) {
             //2C、当前是typeF时：只需要从F下取就行。（参考33159-TODO2C）。
-            AIFoNodeBase *fRCanset = rCansetFrom;
-            NSArray *cansetFroms3 = [fRCanset getConCansetsWithStartIndex:rCansetFromActIndex];
+            AIFoNodeBase *fRCansetFrom = rCansetFrom;
+            NSArray *cansetFroms3 = [fRCansetFrom getConCansetsWithStartIndex:rCansetFromActIndex];
+            AIFoNodeBase *fRSceneFrom = rSceneFrom;
+            AISceneModel *fRSceneModel = curRCansetFromModel.baseSceneModel;//复用R的SceneModel,因为H任务没有独立的R场景树,它本来就是复用的R任务的场景树等;
             
             // ================================= （三）、F层取F =================================
             //迁移到targetFo的迁移路径为：hCansetFrom（F） -> rCansetFrom（F） -> rSceneFrom（F） -> rSceneTo（I） -> targetFo（I） -> hCansetTo（I）。
-            
-            
-            
-            //TODOTOMORROW20250221：明天继续。。。检查下这里复用的代码，有没什么问题。。。
+            for (AIKVPointer *hCansetFrom_p in cansetFroms3) {
+                //11. 前过滤器
+                if ([self filter1ForCheckHCansetFromIsInvalid:allFo4HasTargetAlg_ps rCansetTo:rCansetTo hCansetFrom_p:hCansetFrom_p]) continue;
+                //12. 虚迁移
+                
+                //TODOTOMORROW20250221：明天继续。。。检查下这里复用的代码，有没什么问题。。。
+                
+                TCTransferXvModel *xvModel = [TCTransfer transferXv_H_V2:hCansetFrom_p rCansetFrom:fRCansetFrom rCansetTo:rCansetTo rSceneFrom:fRSceneFrom rSceneTo:rSceneTo rCansetToActIndex:rCansetToActIndex];
+                //13. 取hCansetCutIndex
+                NSInteger hCansetCutIndex = [self getHCansetCutIndex:fRCansetFrom hCansetFrom_p:hCansetFrom_p rCansetCutIndex:rCansetCutIndex];
+                //14. 取hCansetToTargetIndex
+                NSInteger hCansetToTargetIndex = [self getHCansetToTargetIndex:xvModel hCansetCutIndex:hCansetCutIndex targetAlg_ps:targetAlg_ps];
+                //15. 后过滤器
+                if ([self filter2ForCheckHCansetToTargetIndexIsInvalid:hCansetToTargetIndex hCansetCutIndex:hCansetCutIndex]) continue;
+                //16. 转为TOFoModel;
+                TOFoModel *hResult = [TCCanset convert2HCansetModelV2:hCansetFrom_p rCansetFrom:fRCansetFrom hDemand:hDemand hCansetCutIndex:hCansetCutIndex targetFoM:targetFoM hCansetToTargetIndex:hCansetToTargetIndex IF_RSceneModel:fRSceneModel xvModel:xvModel];
+            }
             
             
             
@@ -386,6 +401,14 @@
     
     //12. 竞争求解: 对hCansets进行实时竞争 (参考31122);
     return [self realTimeRankCansets:hDemand zonHeScoreBlock:nil debugMode:true];//400ms
+}
+
+
++(TOFoModel*) hSolutionV4_SingleType:(NSArray*)targetAlg_ps rCansetTo:(AIFoNodeBase*)rCansetTo hCansetFrom_p:(AIKVPointer*)hCansetFrom_p rCansetFrom:(AIFoNodeBase*)rCansetFrom rSceneFrom:(AIFoNodeBase*)rSceneFrom rCansetToActIndex:(NSInteger)rCansetToActIndex hSceneFromCutIndex:(NSInteger)hSceneFromCutIndex {
+   
+    
+    
+    
 }
 
 +(BOOL) filter1ForCheckHCansetFromIsInvalid:(NSArray*)allFo4HasTargetAlg_ps rCansetTo:(AIFoNodeBase*)rCansetTo hCansetFrom_p:(AIKVPointer*)hCansetFrom_p {
