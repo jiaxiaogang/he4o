@@ -198,22 +198,17 @@
     //========== 第3-6代码块：延着从每一个rCansetFrom（actionFoModels）上找h解，但如果已经迁移过的要避免重复。没迁移过的，则补充迁移过来（先调用xv迁移）。==========
     //3. 依次从rCanset下取hCansets (参考31102);
     for (TOFoModel *curRCansetFromModel in rCansets) {
-        
-        //TODOTOMORROW20250218: 看下这里，是否封装成方法，自动取推举的代换order，或推举后再继承的order，直至综合映射链条的中断。
-        
         AIFoNodeBase *rCansetFrom = [SMGUtils searchNode:curRCansetFromModel.cansetFrom];
         AIFoNodeBase *rSceneFrom = [SMGUtils searchNode:curRCansetFromModel.sceneFrom];
         NSInteger rCansetFromActIndex = curRCansetFromModel.cansetActIndex;
         NSInteger rCansetToActIndex = targetFoM.cansetActIndex;
-        
-        //无论是I层F层 的 rCansetFrom还是rCansetTo都是等长一一对应的，所以cutIndex也可以直接延用。
-        NSInteger rCansetCutIndex = curRCansetFromModel.cansetCutIndex;//hScene的推进进度;
+        NSInteger rCansetFromCutIndex = curRCansetFromModel.cansetCutIndex;//rCansetFrom.cutIndex（hSceneFrom的推进进度）;
         
         //4. 取hCansets(用override取cansets): 从cutIndex到sceneFo.count之间的hCansets (参考31102-第1步);
         //取: 从rCanset.cutIndex + 1到count末尾,之间所有的canset都是来的及尝试执行的;
         //2025.01.19: 不必包含targetIndex，因为当前targetAlg在别的rCanset池是没有明确映射的，应该全取出来，不判断下一帧映射，后面在第7代码块再判断mIsC映射。
         
-        //TODOTOMORROW20250212: 同时从F和I层取H解。
+        //10. 从F或I层取H解。
         if (curRCansetFromModel.baseSceneModel.type == SceneTypeI) {
             //2A、当前是typeI时：从I下面直接取H解（参考33159-TODO2A）。
             AIFoNodeBase *iRCanset = rCansetFrom;
@@ -223,13 +218,14 @@
             
             // ================================= （一）、I层取I =================================
             //迁移到targetFo的迁移路径为：hCansetFrom（I） -> rCansetFrom（I） -> rSceneFromTo（I） -> targetFo（I） -> hCansetTo（I）。
+            [self convertHCansetFroms2HCansetModels:cansetFroms1 rCansetFrom:rCansetFrom rSceneFrom:rSceneFrom rSceneTo:rSceneTo rCansetTo:rCansetTo rCansetFromCutIndex:rCansetFromCutIndex rCansetToActIndex:rCansetToActIndex hDemand:hDemand IF_RSceneModel:iRSceneModel targetFoM:targetFoM targetAlg_ps:targetAlg_ps allFo4HasTargetAlg_ps:allFo4HasTargetAlg_ps];
             for (AIKVPointer *hCansetFrom_p in cansetFroms1) {
                 //11. 前过滤器
                 if ([self filter1ForCheckHCansetFromIsInvalid:allFo4HasTargetAlg_ps rCansetTo:rCansetTo hCansetFrom_p:hCansetFrom_p]) continue;
                 //12. 虚迁移
                 TCTransferXvModel *xvModel = [TCTransfer transferXv_H_V2:hCansetFrom_p rCansetFrom:rCansetFrom rCansetTo:rCansetTo rSceneFrom:rSceneFrom rSceneTo:rSceneTo rCansetToActIndex:rCansetToActIndex];
                 //13. 取hCansetCutIndex
-                NSInteger hCansetCutIndex = [self getHCansetCutIndex:rCansetFrom hCansetFrom_p:hCansetFrom_p rCansetCutIndex:rCansetCutIndex];
+                NSInteger hCansetCutIndex = [self getHCansetCutIndex:rCansetFrom hCansetFrom_p:hCansetFrom_p rCansetFromCutIndex:rCansetFromCutIndex];
                 //14. 取hCansetToTargetIndex
                 NSInteger hCansetToTargetIndex = [self getHCansetToTargetIndex:xvModel hCansetCutIndex:hCansetCutIndex targetAlg_ps:targetAlg_ps];
                 //15. 后过滤器
@@ -254,13 +250,14 @@
                 
                 // ================================= （二）、I层取F =================================
                 //迁移到targetFo的迁移路径为：hCansetFrom（F） -> rCansetFrom（F） -> rSceneFrom（F） -> rSceneTo（I） -> targetFo（I） -> hCansetTo（I）。
+                [self convertHCansetFroms2HCansetModels:cansetFroms2 rCansetFrom:fRCansetFrom rSceneFrom:fRSceneFrom rSceneTo:rSceneTo rCansetTo:rCansetTo rCansetFromCutIndex:rCansetFromCutIndex rCansetToActIndex:rCansetToActIndex hDemand:hDemand IF_RSceneModel:fRSceneModel targetFoM:targetFoM targetAlg_ps:targetAlg_ps allFo4HasTargetAlg_ps:allFo4HasTargetAlg_ps];
                 for (AIKVPointer *hCansetFrom_p in cansetFroms2) {
                     //11. 前过滤器
                     if ([self filter1ForCheckHCansetFromIsInvalid:allFo4HasTargetAlg_ps rCansetTo:rCansetTo hCansetFrom_p:hCansetFrom_p]) continue;
                     //12. 虚迁移
                     TCTransferXvModel *xvModel = [TCTransfer transferXv_H_V2:hCansetFrom_p rCansetFrom:fRCansetFrom rCansetTo:rCansetTo rSceneFrom:fRSceneFrom rSceneTo:rSceneTo rCansetToActIndex:rCansetToActIndex];
                     //13. 取hCansetCutIndex
-                    NSInteger hCansetCutIndex = [self getHCansetCutIndex:fRCansetFrom hCansetFrom_p:hCansetFrom_p rCansetCutIndex:rCansetCutIndex];
+                    NSInteger hCansetCutIndex = [self getHCansetCutIndex:fRCansetFrom hCansetFrom_p:hCansetFrom_p rCansetFromCutIndex:rCansetFromCutIndex];
                     //14. 取hCansetToTargetIndex
                     NSInteger hCansetToTargetIndex = [self getHCansetToTargetIndex:xvModel hCansetCutIndex:hCansetCutIndex targetAlg_ps:targetAlg_ps];
                     //15. 后过滤器
@@ -268,8 +265,6 @@
                     //16. 转为TOFoModel;
                     TOFoModel *hResult = [TCCanset convert2HCansetModelV2:hCansetFrom_p rCansetFrom:fRCansetFrom hDemand:hDemand hCansetCutIndex:hCansetCutIndex targetFoM:targetFoM hCansetToTargetIndex:hCansetToTargetIndex IF_RSceneModel:fRSceneModel xvModel:xvModel];
                 }
-                
-                
             }
         }
         
@@ -282,16 +277,14 @@
             
             // ================================= （三）、F层取F =================================
             //迁移到targetFo的迁移路径为：hCansetFrom（F） -> rCansetFrom（F） -> rSceneFrom（F） -> rSceneTo（I） -> targetFo（I） -> hCansetTo（I）。
+            [self convertHCansetFroms2HCansetModels:cansetFroms3 rCansetFrom:fRCansetFrom rSceneFrom:fRSceneFrom rSceneTo:rSceneTo rCansetTo:rCansetTo rCansetFromCutIndex:rCansetFromCutIndex rCansetToActIndex:rCansetToActIndex hDemand:hDemand IF_RSceneModel:fRSceneModel targetFoM:targetFoM targetAlg_ps:targetAlg_ps allFo4HasTargetAlg_ps:allFo4HasTargetAlg_ps];
             for (AIKVPointer *hCansetFrom_p in cansetFroms3) {
                 //11. 前过滤器
                 if ([self filter1ForCheckHCansetFromIsInvalid:allFo4HasTargetAlg_ps rCansetTo:rCansetTo hCansetFrom_p:hCansetFrom_p]) continue;
                 //12. 虚迁移
-                
-                //TODOTOMORROW20250221：明天继续。。。检查下这里复用的代码，有没什么问题。。。
-                
                 TCTransferXvModel *xvModel = [TCTransfer transferXv_H_V2:hCansetFrom_p rCansetFrom:fRCansetFrom rCansetTo:rCansetTo rSceneFrom:fRSceneFrom rSceneTo:rSceneTo rCansetToActIndex:rCansetToActIndex];
                 //13. 取hCansetCutIndex
-                NSInteger hCansetCutIndex = [self getHCansetCutIndex:fRCansetFrom hCansetFrom_p:hCansetFrom_p rCansetCutIndex:rCansetCutIndex];
+                NSInteger hCansetCutIndex = [self getHCansetCutIndex:fRCansetFrom hCansetFrom_p:hCansetFrom_p rCansetFromCutIndex:rCansetFromCutIndex];
                 //14. 取hCansetToTargetIndex
                 NSInteger hCansetToTargetIndex = [self getHCansetToTargetIndex:xvModel hCansetCutIndex:hCansetCutIndex targetAlg_ps:targetAlg_ps];
                 //15. 后过滤器
@@ -299,16 +292,7 @@
                 //16. 转为TOFoModel;
                 TOFoModel *hResult = [TCCanset convert2HCansetModelV2:hCansetFrom_p rCansetFrom:fRCansetFrom hDemand:hDemand hCansetCutIndex:hCansetCutIndex targetFoM:targetFoM hCansetToTargetIndex:hCansetToTargetIndex IF_RSceneModel:fRSceneModel xvModel:xvModel];
             }
-            
-            
-            
-            
         }
-        
-        //5. 转模型 并 迁移后，修正下targetIndex的位置（判断与targetAlg有抽具象关联）。
-        //可以直接从targetAlg及其conAlgs中，找找与迁移后的hCansetToOrder的后段判断下，有没有交集，来取修正后的targetIndex位置。
-        
-        
         
         //log
         if (ARRISOK(cansetFroms1)) {
@@ -403,29 +387,21 @@
     return [self realTimeRankCansets:hDemand zonHeScoreBlock:nil debugMode:true];//400ms
 }
 
-
-+(TOFoModel*) hSolutionV4_SingleType:(NSArray*)targetAlg_ps rCansetTo:(AIFoNodeBase*)rCansetTo hCansetFrom_p:(AIKVPointer*)hCansetFrom_p rCansetFrom:(AIFoNodeBase*)rCansetFrom rSceneFrom:(AIFoNodeBase*)rSceneFrom rCansetToActIndex:(NSInteger)rCansetToActIndex hSceneFromCutIndex:(NSInteger)hSceneFromCutIndex {
-   
-    
-    
-    
-}
-
 +(BOOL) filter1ForCheckHCansetFromIsInvalid:(NSArray*)allFo4HasTargetAlg_ps rCansetTo:(AIFoNodeBase*)rCansetTo hCansetFrom_p:(AIKVPointer*)hCansetFrom_p {
     //11. 迁移前过滤器A：先判断下hCansetFrom在迁移后，有没有可能包涵taretAlg的解，有才进行迁移，否则直接跳过，以节约性能（因为有映射取sceneTo，没映射取cansetFrom，所以二者有一个包含，就有可能该H解对targetAlg有效）。
     //另外：但这里无法保证hCansetFrom绝对有效，也许迁移后，才发现orders其实不行，无法解H，所以到迁移后，取到targetIndex后，再加个判断是否有效的过滤器。
     return ![allFo4HasTargetAlg_ps containsObject:rCansetTo.p] && ![allFo4HasTargetAlg_ps containsObject:hCansetFrom_p];
 }
 
-+(NSInteger) getHCansetCutIndex:(AIFoNodeBase*)rCansetFrom hCansetFrom_p:(AIKVPointer*)hCansetFrom_p rCansetCutIndex:(NSInteger)rCansetCutIndex {
++(NSInteger) getHCansetCutIndex:(AIFoNodeBase*)rCansetFrom hCansetFrom_p:(AIKVPointer*)hCansetFrom_p rCansetFromCutIndex:(NSInteger)rCansetFromCutIndex {
     //13. 判断orders已发生截点，根据hSceneFrom和hCansetFrom的映射来取。
     NSDictionary *hSceneFromCansetFromIndexDic = [rCansetFrom getConIndexDic:hCansetFrom_p];
-    NSInteger hCansetCutIndex = [TOUtils goBackToFindConIndexByAbsIndex:hSceneFromCansetFromIndexDic absIndex:rCansetCutIndex];
+    NSInteger hCansetCutIndex = [TOUtils goBackToFindConIndexByAbsIndex:hSceneFromCansetFromIndexDic absIndex:rCansetFromCutIndex];
     return hCansetCutIndex;
 }
 
 +(NSInteger) getHCansetToTargetIndex:(TCTransferXvModel*)xvModel hCansetCutIndex:(NSInteger)hCansetCutIndex targetAlg_ps:(NSArray*)targetAlg_ps {
-    //14. 判断orders未发生部分，是否确实对targetAlg有解：得到hCansetTo.TargetIndex。
+    //14. 判断orders未发生部分，是否确实对targetAlg有解：得到hCansetTo.TargetIndex（参考33159-TODO4）。
     NSInteger hCansetToTargetIndex = -1;
     for (NSInteger i = hCansetCutIndex; i < xvModel.cansetToOrders.count; i++) {
         AIShortMatchModel_Simple *order = ARR_INDEX(xvModel.cansetToOrders, i);
@@ -443,10 +419,26 @@
     return hCansetToTargetIndex == -1 || hCansetToTargetIndex - hCansetCutIndex < 2;
 }
 
-+(TOFoModel*) hSolutionV4_Single:(NSArray*)targetAlg_ps rCansetTo:(AIFoNodeBase*)rCansetTo hCansetFrom_p:(AIKVPointer*)hCansetFrom_p rCansetFrom:(AIFoNodeBase*)rCansetFrom rSceneFrom:(AIFoNodeBase*)rSceneFrom rCansetToActIndex:(NSInteger)rCansetToActIndex hSceneFromCutIndex:(NSInteger)hSceneFromCutIndex {
-   
-    
-    
++(NSArray*) convertHCansetFroms2HCansetModels:(NSArray*)hCansetFrom_ps rCansetFrom:(AIFoNodeBase*)rCansetFrom rSceneFrom:(AIFoNodeBase*)rSceneFrom rSceneTo:(AIFoNodeBase*)rSceneTo rCansetTo:(AIFoNodeBase*)rCansetTo//从hCansetFrom->rCansetFrom->rSceneFrom->rSceneTo->rCansetTo
+                          rCansetFromCutIndex:(NSInteger)rCansetFromCutIndex rCansetToActIndex:(NSInteger)rCansetToActIndex//from截点和to目标
+                                      hDemand:(HDemandModel*)hDemand IF_RSceneModel:(AISceneModel*)IF_RSceneModel targetFoM:(TOFoModel*)targetFoM targetAlg_ps:(NSArray*)targetAlg_ps allFo4HasTargetAlg_ps:(NSArray*)allFo4HasTargetAlg_ps {//从hDemand->scene树->行为化中canset->targetAlg相关
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    for (AIKVPointer *hCansetFrom_p in hCansetFrom_ps) {
+        //11. 前过滤器
+        if ([self filter1ForCheckHCansetFromIsInvalid:allFo4HasTargetAlg_ps rCansetTo:rCansetTo hCansetFrom_p:hCansetFrom_p]) continue;
+        //12. 虚迁移
+        TCTransferXvModel *xvModel = [TCTransfer transferXv_H_V2:hCansetFrom_p rCansetFrom:rCansetFrom rCansetTo:rCansetTo rSceneFrom:rSceneFrom rSceneTo:rSceneTo rCansetToActIndex:rCansetToActIndex];
+        //13. 取hCansetCutIndex
+        NSInteger hCansetCutIndex = [self getHCansetCutIndex:rCansetFrom hCansetFrom_p:hCansetFrom_p rCansetFromCutIndex:rCansetFromCutIndex];
+        //14. 取hCansetToTargetIndex
+        NSInteger hCansetToTargetIndex = [self getHCansetToTargetIndex:xvModel hCansetCutIndex:hCansetCutIndex targetAlg_ps:targetAlg_ps];
+        //15. 后过滤器
+        if ([self filter2ForCheckHCansetToTargetIndexIsInvalid:hCansetToTargetIndex hCansetCutIndex:hCansetCutIndex]) continue;
+        //16. 转为TOFoModel;
+        TOFoModel *hModel = [TCCanset convert2HCansetModelV2:hCansetFrom_p rCansetFrom:rCansetFrom hDemand:hDemand hCansetCutIndex:hCansetCutIndex targetFoM:targetFoM hCansetToTargetIndex:hCansetToTargetIndex IF_RSceneModel:IF_RSceneModel xvModel:xvModel];
+        [result addObject:hModel];
+    }
+    return result;
 }
 
 /**

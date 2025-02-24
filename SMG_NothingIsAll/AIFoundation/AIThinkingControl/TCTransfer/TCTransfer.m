@@ -86,13 +86,13 @@
 //                }
     
     //3. IH映射: indexDic综合计算 (参考31115-TODO1-4);
-    //2025.01.30: hSceneFrom和hSceneTo是等长的，与hCansetFrom的映射也是一模一样的（参考33157-总结2 & 33156-TODO）。
+    //2025.02.24: 迁移路径都是：hCansetFrom（I/F） -> rCansetFrom（I/F） -> rSceneFrom（I/F） -> rSceneTo（I） -> targetFo（I） -> hCansetTo（I）（参考33159-TODO3A）。
     NSMutableArray *path = [NSMutableArray new];
     [path addObject:[DirectIndexDic newOkToAbs:[rCansetFrom getConIndexDic:hCansetFrom.p]]];
-    if (![rCansetFrom isEqual:rCansetTo]) {//当hSceneFrom和To不同时，才从上面走。
+    if (![rCansetFrom isEqual:rCansetTo]) {//当hSceneFrom和To不同时，才从上面走（参考33159-TODO3C）。
         [path addObject:[DirectIndexDic newOkToAbs:[rSceneFrom getConIndexDic:rCansetFrom.p]]];
         
-        if (![rSceneFrom isEqual:rSceneTo]) {//当rSceneFrom和To不同时，才走这一步。
+        if (![rSceneFrom isEqual:rSceneTo]) {//当rSceneFrom和To不同时，才走这一步（参考33159-TODO3B）。
             //一般是继承，所以from肯定是F层，而to肯定是I层。
             [path addObject:[DirectIndexDic newNoToAbs:[rSceneFrom getConIndexDic:rSceneTo.p]]];
         }
@@ -103,6 +103,7 @@
     
     //6. 计算cansetToOrders
     //说明: 场景包含帧用indexDic映射来迁移替换,场景不包含帧用迁移前的为准 (参考31104);
+    //2025.02.24: H继承时，取order方式与以往一致（参考3315b）。
     NSMutableArray *hCansetToOrders = [TCTransfer convertZonHeIndexDic2Orders:hCansetFrom sceneTo:rCansetTo zonHeIndexDic:zonHeIndexDic];
     
     //9. 打包数据model返回 (映射需要返过来因为前面cansetFrom在前,现在是cansetTo在后);
