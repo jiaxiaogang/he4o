@@ -115,7 +115,7 @@
 
 /**
  *  MARK:--------------------HSolution转CansetModel--------------------
- *  @desc 把rCanset下的hCanset_p转成CansetModel;
+ *  @desc 把rCanset下的hCanset_p转成CansetModel (参考31104-第3步);
  *  @version
  *      2024.02.21: V2-在迭代hSolutionV3时,将H任务转cansetModel单独写个方法,并将此方法中多余代码统统去掉不写;
  *      2024.09.15: 取消初始化canset池时,就迁移继承outSPDic (参考33062-TODO1);
