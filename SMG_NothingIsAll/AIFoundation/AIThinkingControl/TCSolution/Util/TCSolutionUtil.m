@@ -195,6 +195,14 @@
         return Ports2Pits([AINetUtils refPorts_All:obj]);
     }];
     
+    if (targetAlg_ps.count == 1) {
+        NSLog(@"具象只有0条");
+    }
+    
+    if (allFo4HasTargetAlg_ps.count == 0) {
+        NSLog(@"target被引用只有0条");
+    }
+    
     //========== 第3-6代码块：延着从每一个rCansetFrom（actionFoModels）上找h解，但如果已经迁移过的要避免重复。没迁移过的，则补充迁移过来（先调用xv迁移）。==========
     //3. 依次从rCanset下取hCansets (参考31102);
     for (TOFoModel *curRCansetFromModel in rCansets) {
