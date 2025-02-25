@@ -397,6 +397,22 @@
     return result;
 }
 
+//根据pid找时序（方法不严谨，不可在内核中使用，只可用于临时调试等用途）。
+//比如：AIFoNodeBase *F2187 = [AppDelegate searchFoByPointerId:2187];
++(AIFoNodeBase*) searchFoByPointerId:(NSInteger)pointerId {
+    //依次从这些属性下找节点，找着则返回。
+    for (NSNumber *isOut in @[@(true),@(false)]) {
+        for (NSString *fn in @[kPN_FO_ABS_NODE,kPN_FRONT_ORDER_NODE]) {
+            for (NSString *at in @[DefaultAlgsType]) {
+                AIKVPointer *node_p = [AIKVPointer newWithPointerId:pointerId folderName:fn algsType:at dataSource:DefaultDataSource isOut:isOut.boolValue type:ATDefault];
+                AIFoNodeBase *fo = [SMGUtils searchNode:node_p];//读node类型
+                if (fo) return fo;
+            }
+        }
+    }
+    return nil;
+}
+
 //+(void) insertObject:(NSObject*)obj rootPath:(NSString*)rootPath fileName:(NSString*)fileName{
 //    [self insertObject:obj rootPath:rootPath fileName:fileName time:0 saveDB:true];
 //}

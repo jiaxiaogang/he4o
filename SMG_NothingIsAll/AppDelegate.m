@@ -137,32 +137,7 @@
     
     //9. 初始化XGConfig
     [XGConfig.instance initConfig];
-    
-    AIFoNodeBase *F2187 = [AppDelegate searchFoByPointerId:2187];
-    AIFoNodeBase *F8671 = [AppDelegate searchFoByPointerId:8671];
-    if (F2187 && F8671) {
-        NSLog(@"%@",Fo2FStr(F2187));
-        NSLog(@"%@",Fo2FStr(F8671));
-        NSDictionary *indexDic = [F2187 getConIndexDic:F8671.p];
-        NSLog(@"IndexDic: %@",CLEANSTR(indexDic));
-        NSLog(@"");
-    }
     return YES;
-}
-
-//根据pid找时序（方法不严谨，不可在内核中使用，只可用于临时调试等用途）。
-+(AIFoNodeBase*) searchFoByPointerId:(NSInteger)pointerId {
-    //依次从这些属性下找节点，找着则返回。
-    for (NSNumber *isOut in @[@(true),@(false)]) {
-        for (NSString *fn in @[kPN_FO_ABS_NODE,kPN_FRONT_ORDER_NODE]) {
-            for (NSString *at in @[DefaultAlgsType]) {
-                AIKVPointer *node_p = [AIKVPointer newWithPointerId:pointerId folderName:fn algsType:at dataSource:DefaultDataSource isOut:isOut.boolValue type:ATDefault];
-                AIFoNodeBase *fo = [SMGUtils searchNode:node_p];//读node类型
-                if (fo) return fo;
-            }
-        }
-    }
-    return nil;
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {}

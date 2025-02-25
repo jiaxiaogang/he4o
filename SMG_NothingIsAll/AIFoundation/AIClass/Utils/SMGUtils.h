@@ -104,6 +104,7 @@
 +(id) searchObjectForPointer:(AIPointer*)pointer fileName:(NSString*)fileName;
 +(id) searchObjectForPointer:(AIPointer*)pointer fileName:(NSString*)fileName time:(double)time;//找到后,缓存到redis,time秒;
 +(id) searchObjectForFilePath:(NSString*)filePath fileName:(NSString*)fileName time:(double)time;
++(id) searchFoByPointerId:(NSInteger)pointerId;
 
 
 /**
