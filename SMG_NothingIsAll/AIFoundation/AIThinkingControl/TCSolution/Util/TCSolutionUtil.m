@@ -231,6 +231,9 @@
             NSArray *itemHCansetModels = [self convertHCansetFroms2HCansetModels:cansetFroms1 rCansetFrom:iRCansetFrom rSceneFrom:rSceneFrom rSceneTo:rSceneTo rCansetTo:rCansetTo rCansetFromCutIndex:rCansetFromCutIndex rCansetToActIndex:rCansetToActIndex hDemand:hDemand IF_RSceneModel:iRSceneModel targetFoM:targetFoM targetAlg_ps:targetAlg_ps allFo4HasTargetAlg_ps:allFo4HasTargetAlg_ps];
             [allHCansetModels addObjectsFromArray:itemHCansetModels];
             logII = itemHCansetModels.count;
+            if (cansetFroms1.count > 0) {
+                NSLog(@"");
+            }
             
             //2B、当前是typeI时：从I迁移关联的F下面取H解（参考33159-TODO2B）。
             NSArray *transferPorts = ARRTOOK([AINetUtils transferPorts_4Father:iRScene iCansetContent_ps:iRCansetFrom.content_ps]);
@@ -251,6 +254,9 @@
                 NSArray *itemHCansetModels = [self convertHCansetFroms2HCansetModels:cansetFroms2 rCansetFrom:fRCansetFrom rSceneFrom:fRSceneFrom rSceneTo:rSceneTo rCansetTo:rCansetTo rCansetFromCutIndex:rCansetFromCutIndex rCansetToActIndex:rCansetToActIndex hDemand:hDemand IF_RSceneModel:fRSceneModel targetFoM:targetFoM targetAlg_ps:targetAlg_ps allFo4HasTargetAlg_ps:allFo4HasTargetAlg_ps];
                 [allHCansetModels addObjectsFromArray:itemHCansetModels];
                 logIF += itemHCansetModels.count;
+                if (cansetFroms2.count > 0) {
+                    NSLog(@"");
+                }
             }
         }
         
@@ -266,6 +272,9 @@
             NSArray *itemHCansetModels = [self convertHCansetFroms2HCansetModels:cansetFroms3 rCansetFrom:fRCansetFrom rSceneFrom:fRSceneFrom rSceneTo:rSceneTo rCansetTo:rCansetTo rCansetFromCutIndex:rCansetFromCutIndex rCansetToActIndex:rCansetToActIndex hDemand:hDemand IF_RSceneModel:fRSceneModel targetFoM:targetFoM targetAlg_ps:targetAlg_ps allFo4HasTargetAlg_ps:allFo4HasTargetAlg_ps];
             [allHCansetModels addObjectsFromArray:itemHCansetModels];
             logFF = itemHCansetModels.count;
+            if (cansetFroms3.count > 0) {
+                NSLog(@"");
+            }
         }
         
         //log
