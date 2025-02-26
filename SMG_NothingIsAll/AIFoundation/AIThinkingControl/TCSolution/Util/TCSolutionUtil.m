@@ -420,7 +420,7 @@
         if ([self filter2ForCheckHCansetToTargetIndexIsInvalid:hCansetToTargetIndex hCansetCutIndex:hCansetCutIndex]) continue;
         //16. 转为TOFoModel;
         TOFoModel *hModel = [TCCanset convert2HCansetModelV2:hCansetFrom_p rCansetFrom:rCansetFrom hDemand:hDemand hCansetCutIndex:hCansetCutIndex targetFoM:targetFoM hCansetToTargetIndex:hCansetToTargetIndex IF_RSceneModel:IF_RSceneModel xvModel:xvModel];
-        [result addObject:hModel];
+        if (hModel) [result addObject:hModel];
     }
     return result;
 }
