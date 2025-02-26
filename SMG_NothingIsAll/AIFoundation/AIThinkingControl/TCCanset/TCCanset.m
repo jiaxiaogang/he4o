@@ -184,6 +184,7 @@
     //6. 前段条件满足判断 (不满足时,直接把result回滚删掉) (参考33086-TODO2);
     if (result.realCansetToIndexDic.count < result.cansetCutIndex + 1) {
         //2024.10.01: 前段缺一条时为不满足: 回滚result;
+        //TODOTOMORROW20250226: 查下，H解时，此处是不是可以去掉，不需要这么严格？毕竟场景就是前提，而不一定是realMask才能做前提（当然二者也不冲突，按道理来说，能迁移过来的，前段应该是已经条件满足的）。
         [hDemand.actionFoModels removeObject:result];
         return nil;
     }
