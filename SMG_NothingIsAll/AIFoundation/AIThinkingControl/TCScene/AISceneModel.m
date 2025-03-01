@@ -25,6 +25,7 @@
     return _subs;
 }
 
+//必然返回scene树的I，因为现在R和H任务都是基于同一个场景树，所以此处返回的必然就是I层的RScene，也就是当前场景树的pFo。
 -(AISceneModel*) getRoot {
     if (self.type == SceneTypeI) {
         return self;
