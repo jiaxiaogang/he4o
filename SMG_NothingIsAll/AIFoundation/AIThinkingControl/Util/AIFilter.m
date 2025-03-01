@@ -245,35 +245,15 @@
  *  _param protoTargetIndex : H任务时的targetIndex不是fo.count,所以传入其对应的值 (后发现,其实就是protoScene.cutIndex+1);
  *  @version
  *      2023.09.09: 初版,hDemand支持TCScene (参考30127);
+ *      2025.03.01: v2-不要求必须包含下一帧映射（因为取hCanset未必是要它的下一帧，可能是下后段第五帧，都有可能。
+ *      2025.03.01: v2-只根据强度和前段匹配度，排除掉后20%，留下80%都可以做为求H解的场景源。
  */
-+(NSArray*) hSolutionSceneFilter:(AISceneModel*)protoScene {
++(NSArray*) hSolutionSceneFilterV2:(AISceneModel*)protoScene {
     //1. 数据准备: 向着isAbs方向取得抽具关联场景;
     NSInteger protoTargetIndex = protoScene.cutIndex + 1;
     BOOL toAbs = protoScene.type != SceneTypeFather;
     AIFoNodeBase *sceneFo = [SMGUtils searchNode:protoScene.scene];
     NSArray *otherScenePorts = toAbs ? [AINetUtils absPorts_All:sceneFo] : [AINetUtils conPorts_All:sceneFo];
-    
-    //2. 根据是否有conCanset过滤 (目前仅支持R任务,所以直接用fo.count做targetIndex) (参考29089-解答1-补充 & 2908a-todo5);
-    otherScenePorts = [SMGUtils filterArr:otherScenePorts checkValid:^BOOL(AIPort *item) {
-        //a. 取联想到的assScene对应的targetIndex;
-        NSDictionary *indexDic = toAbs ? [sceneFo getAbsIndexDic:item.target_p] : [sceneFo getConIndexDic:item.target_p];
-        NSNumber *assSceneTargetIndex = nil;
-        if (toAbs) {
-            assSceneTargetIndex = ARR_INDEX([indexDic allKeysForObject:@(protoTargetIndex)], 0);
-        } else {
-            assSceneTargetIndex = [indexDic objectForKey:@(protoTargetIndex)];
-        }
-        
-        //b. 要求必须有联想到的scene必须包含对应protoTargetIndex的帧;
-        if (!assSceneTargetIndex) {
-            return false;
-        }
-        
-        //c. 要求联想到的scene必须有cansets;
-        AIFoNodeBase *assScene = [SMGUtils searchNode:item.target_p];//500ms R90 3455次
-        BOOL havCansetsOK = protoScene.type != SceneTypeBrother || ARRISOK([assScene getConCansets:assSceneTargetIndex.integerValue]);//非brother时要求必须有cansets; //43ms 3455次
-        return havCansetsOK; //43ms 3455次
-    }];
     
     //3. 根据强度为主,匹配度为辅进行过滤: 取20% & 至少尝试取3条 (参考29094-BUG3-方案2);
     otherScenePorts = [self filterTwice:otherScenePorts mainBlock:^double(AIPort *item) {
@@ -291,7 +271,7 @@
             return [AINetUtils getMatchByIndexDic:indexDic absFo:item.target_p conFo:sceneFo.p callerIsAbs:false];//113ms 4038次
         }
         return [AINetUtils getMatchByIndexDic:indexDic absFo:sceneFo.p conFo:item.target_p callerIsAbs:true];//1436ms 3878次
-    } radio:0.2f min:4 max:20 debugMode:false];
+    } radio:0.8f min:4 max:100 debugMode:false];
     return Ports2Pits(otherScenePorts);
 }
 
