@@ -246,6 +246,13 @@
     ReasonDemandModel *baseRDemand = (ReasonDemandModel*)targetFoM.baseOrGroup;//取出rDemand
     AIKVPointer *targetPFo = targetFoM.baseSceneModel.getIScene;
     
+    //2. 场景树：H场景树其实也是取R场景树，因为二者已经合并了（参考33171-TODO3）。
+    NSArray *hSceneTree = [TCScene hGetSceneTree:hDemand];
+    
+    //TODOTOMORROW20250301: 继续写这里，从hSceneTree求H解。
+    
+    
+    
     //2. targetFoM转实后的canset就是真正R在推进行为化中的RCanset(也即HScene);
     //结构说明: 其中IScene是RScene,这个sceneTo是挂在IScene下的;
     AIFoNodeBase *rCansetTo = [SMGUtils searchNode:targetFoM.transferSiModel.canset];

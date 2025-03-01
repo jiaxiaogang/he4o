@@ -126,38 +126,50 @@
  */
 +(NSArray*) hGetSceneTree:(HDemandModel*)demand {
     //1. 数据准备;
-    NSMutableArray *iModels = [[NSMutableArray alloc] init];
     NSMutableArray *fatherModels = [[NSMutableArray alloc] init];
     TOFoModel *targetFoM = (TOFoModel*)demand.baseOrGroup.baseOrGroup;
     
-    //TODOTOMORROW20250301: 改为用curPFo来做I层，而不是用curRCanset（targetFo）。
+    //2. 数据准备：找出basePFo和baseRDemand。
+    AIKVPointer *targetPFo = targetFoM.baseSceneModel.getIScene;
+    ReasonDemandModel *baseRDemand = ARR_INDEX([TOUtils getBaseRDemands_AllDeep:targetFoM], 0);
+    AIMatchFoModel *basePFo = [SMGUtils filterSingleFromArr:baseRDemand.validPFos checkValid:^BOOL(AIMatchFoModel *pFo) {
+        return [pFo.matchFo isEqual:targetPFo];
+    }];
     
-    //2. 取自己级;
-    AISceneModel *iModel = [AISceneModel newWithBase:nil type:SceneTypeI scene:targetFoM.content_p cutIndex:targetFoM.cansetCutIndex];
-    [iModels addObject:iModel];
+    //2B. 另一种取basePFo和baseRDemand的方法（暂不需要）。
+    //NSArray *baseOutModels = [TOUtils getBaseOutModels_AllDeep:targetFoM];
+    //for (TOModelBase *baseOutModel in baseOutModels) {
+    //    if (ISOK(baseOutModel.baseOrGroup, ReasonDemandModel.class)) {
+    //        baseRDemand = (ReasonDemandModel*)baseOutModel.baseOrGroup;
+    //        targetPFo = (TOFoModel*)baseOutModel;
+    //        break;
+    //    }
+    //}
     
-    //3. 取父类级;
-    for (AISceneModel *iModel in iModels) {
-        AIFoNodeBase *iFo = [SMGUtils searchNode:iModel.scene];//84ms
-        NSArray *fatherScene_ps = [AIFilter hSolutionSceneFilterV2:iModel];
+    //3. 取自己级;
+    NSInteger aleardayCount = [TCSolutionUtil getRAleardayCount:baseRDemand pFo:basePFo];
+    AISceneModel *iModel = [AISceneModel newWithBase:nil type:SceneTypeI scene:basePFo.matchFo cutIndex:aleardayCount - 1];
+    
+    //4. 取父类级;
+    AIFoNodeBase *iFo = [SMGUtils searchNode:iModel.scene];//84ms
+    NSArray *fatherScene_ps = [AIFilter hSolutionSceneFilterV2:iModel];
+    
+    //5. 过滤器 & 转为CansetModel;
+    NSArray *itemFatherModels = [SMGUtils convertArr:fatherScene_ps convertBlock:^id(AIKVPointer *item) {
+        //a1. 过滤father不含截点的 (参考29069-todo5.6);
+        NSDictionary *indexDic = [iFo getAbsIndexDic:item];
+        NSInteger fatherCutIndex = [TOUtils goBackToFindConIndexByConIndex:indexDic conIndex:iModel.cutIndex];
         
-        //a. 过滤器 & 转为CansetModel;
-        NSArray *itemFatherModels = [SMGUtils convertArr:fatherScene_ps convertBlock:^id(AIKVPointer *item) {
-            //a1. 过滤father不含截点的 (参考29069-todo5.6);
-            NSDictionary *indexDic = [iFo getAbsIndexDic:item];
-            NSInteger fatherCutIndex = [TOUtils goBackToFindConIndexByConIndex:indexDic conIndex:iModel.cutIndex];
-            
-            //a3. 将father生成模型;
-            return [AISceneModel newWithBase:iModel type:SceneTypeFather scene:item cutIndex:fatherCutIndex];
-        }];
-        [fatherModels addObjectsFromArray:itemFatherModels];
-    }
+        //a3. 将father生成模型;
+        return [AISceneModel newWithBase:iModel type:SceneTypeFather scene:item cutIndex:fatherCutIndex];
+    }];
+    [fatherModels addObjectsFromArray:itemFatherModels];
     
-    //5. 将三级全收集返回;
+    //6. 将三级全收集返回;
     NSMutableArray *result = [[NSMutableArray alloc] init];
-    [result addObjectsFromArray:iModels];
+    [result addObject:iModel];
     [result addObjectsFromArray:fatherModels];
-    NSLog(@"第1步 H场景树枝点数 I:%ld + Father:%ld = 总:%ld",iModels.count,fatherModels.count,result.count);
+    NSLog(@"第1步 H场景树枝点数 I:1条 + Father:%ld条 = 总:%ld",fatherModels.count,result.count);
     return result;
 }
 

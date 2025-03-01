@@ -15,6 +15,6 @@
 @interface TCScene : NSObject
 
 +(NSArray*) rGetSceneTree:(ReasonDemandModel*)demand;
-//+(NSArray*) hGetSceneTree:(HDemandModel*)demand;
++(NSArray*) hGetSceneTree:(HDemandModel*)demand;
 
 @end
