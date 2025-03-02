@@ -481,10 +481,7 @@
             if (updateConCansetResult.success) {
                 //5. 综合indexDic计算: 当前cansetTo与real之间的映射;
                 //2024.06.26: indexDic有可能指定后还在更新,导致有越界 (参考32014);
-                [newHCanset updateIndexDic:rCanset indexDic:[self.realCansetToIndexDic copy]];
-                
-                //TODOTOMORROW20250302: 此处应该记录与pFo的映射（应该不是self.realCanseetToIndexDic了，而是pFo.realMask的映射）。
-                [newHCanset updateIndexDic:pFo indexDic:[self.realCansetToIndexDic copy]];
+                [newHCanset updateIndexDic:pFo indexDic:[basePFo.indexDic2 copy]];
                 
                 AIKVPointer *actIndexAlg_p = ARR_INDEX(rCanset.content_ps, self.cansetActIndex);
                 NSString *fltLog = FltLog4CreateHCanset(3);
@@ -494,13 +491,12 @@
             //e. outSP值子即父: 当前NewHCanset所在的hScene场景就是iScene (参考33112-TODO4.3);
             //2024.11.26: 从0到cutIndex全计P+1 (参考33134-FIX2a);
             for (NSInteger i = 0; i <= newHCanset.count; i++) {
-                [AINetUtils updateOutSPStrong_4IF:rCanset iCansetContent_ps:newHCanset.content_ps caller:@"NewHCanset本就存在时,将当前帧SP+1推举到父层canset中" spIndex:i difStrong:1 type:ATPlus debugMode:false except4SP2F:except4SP2F];
+                [AINetUtils updateOutSPStrong_4IF:pFo iCansetContent_ps:newHCanset.content_ps caller:@"NewHCanset本就存在时,将当前帧SP+1推举到父层canset中" spIndex:i difStrong:1 type:ATPlus debugMode:false except4SP2F:except4SP2F];
             }
             
             //2024.11.03: 在挂载新的Canset时,实时推举 & 并防重(只有新挂载的canset,才有资格实时调用推举,并推举spDic都到父场景中) (参考33112);
             if (updateConCansetResult.isNew) {
-                AIFoNodeBase *sceneTo = [SMGUtils searchNode:self.sceneTo];
-                [TCTransfer transferTuiJv_H_V2:sceneTo broRCanset:rCanset broRCansetActIndex:self.cansetActIndex broHCanset:newHCanset];
+                [TCTransfer transferTuiJv_RH_V3:pFo cansetFrom:newHCanset isH:true sceneFromCutIndex:basePFo.cutIndex];
             }
             
             //6. rCanset的actIndex匹配了,就相当于它curAlgModel的HDemand,下的所有的subHCanset的targetAlg全反馈匹配上了 (参考32119-TODO1);
@@ -548,6 +544,9 @@
     //13. 数据准备 (当前sceneTo就是targetFoModel.cansetTo);
     AIFoNodeBase *cansetTo = [SMGUtils searchNode:self.transferSiModel.canset];
     AIFoNodeBase *sceneTo = [SMGUtils searchNode:self.sceneTo];
+    
+    //TODOTOMORROW20250302: 此处从pFo取防重，然后canset类比也是在pFo下。。。明天继续写。。。
+    
     
     //14. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
     NSArray *noRepeatArea_ps = [sceneTo getConCansets:targetFoModel.cansetActIndex];

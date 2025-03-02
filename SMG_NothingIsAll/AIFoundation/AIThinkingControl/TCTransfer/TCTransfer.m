@@ -70,6 +70,7 @@
  *  MARK:--------------------H虚迁移v2--------------------
  *  @desc 说明：在共同的rSceneFrom下，把rCansetFrom下的hCansetFrom迁移到rCansetTo下。
  */
+//此方法为H嵌套在RCanset下时，继承H的迁移算法，用于hSolutionV4。
 +(TCTransferXvModel*) transferJiCen_H_V2:(AIKVPointer*)hCansetFrom_p rCansetFrom:(AIFoNodeBase*)rCansetFrom rCansetTo:(AIFoNodeBase*)rCansetTo rSceneFrom:(AIFoNodeBase*)rSceneFrom rSceneTo:(AIFoNodeBase*)rSceneTo rCansetToActIndex:(NSInteger)rCansetToActIndex {
     
     AIFoNodeBase *hCansetFrom = [SMGUtils searchNode:hCansetFrom_p];
@@ -114,6 +115,7 @@
     return result;
 }
 
+//此方法为简化H嵌套后，继承H的迁移算法，用于hSolutionV5。
 +(TCTransferXvModel*) transferJiCen_H_V3:(AIKVPointer*)hCansetFrom_p sceneFrom:(AIFoNodeBase*)sceneFrom sceneTo:(AIFoNodeBase*)sceneTo sceneToActIndex:(NSInteger)sceneToActIndex {
     AIFoNodeBase *hCansetFrom = [SMGUtils searchNode:hCansetFrom_p];
     
@@ -429,18 +431,25 @@
 
 /**
  *  MARK:--------------------在构建RCanset时,推举到抽象场景中 (参考33112)--------------------
+ *  @version
+ *      2025.03.02: 简化H嵌套后，R和H都是挂在rScene下，所以复用此推举算法（参考33171-TODO2）。
  */
-+(void) transferTuiJv_R:(AIFoNodeBase*)sceneFrom cansetFrom:(AIFoNodeBase*)cansetFrom {
++(void) transferTuiJv_RH_V3:(AIFoNodeBase*)sceneFrom cansetFrom:(AIFoNodeBase*)cansetFrom isH:(BOOL)isH sceneFromCutIndex:(NSInteger)sceneFromCutIndex {
     //1. 将rCanset推举到每一个absFo;
     NSArray *absPorts = [AINetUtils absPorts_All:sceneFrom];
     for (AIPort *absPort in absPorts) {
         AIFoNodeBase *sceneTo = [SMGUtils searchNode:absPort.target_p];
         //2. mv要求必须同区 (不然rCanset对sceneTo无效);
-        if (![sceneFrom.cmvNode_p.identifier isEqualToString:sceneTo.cmvNode_p.identifier]) continue;
+        if (!isH && ![sceneFrom.cmvNode_p.identifier isEqualToString:sceneTo.cmvNode_p.identifier]) continue;
         
         //3. BR映射 (参考29069-todo10.1推举算法示图);
         NSDictionary *zonHeIndexDic = [self getBFZonHeIndexDic:cansetFrom broScene:sceneFrom fatScene:sceneTo];
         NSDictionary *sceneToCansetToIndexDic = [SMGUtils reverseDic:zonHeIndexDic];
+        
+        //4. 取sceneToTargetIndex;
+        NSDictionary *sceneFromSceneToIndexDic = [sceneFrom getAbsIndexDic:sceneTo.p];
+        NSInteger sceneToTargetIndex = sceneTo.count;
+        if (isH) sceneToTargetIndex = [TOUtils goBackToFindConIndexByConIndex:sceneFromSceneToIndexDic conIndex:sceneFromCutIndex] + 1;
         
         //4. 根据综合映射,计算出orders;
         NSArray *orders = [self convertZonHeIndexDic2Orders:cansetFrom sceneTo:sceneTo zonHeIndexDic:zonHeIndexDic];
@@ -453,18 +462,18 @@
         for (NSNumber *cansetFromIndex in deltaSPDic.allKeys) {
             AISPStrong *deltaSPStrong = [deltaSPDic objectForKey:cansetFromIndex];
             NSInteger cansetToIndex = cansetFromIndex.integerValue;//cansetFrom和cansetTo一样长,并且下标都是一一对应的;
-            [sceneTo updateOutSPStrong:cansetToIndex difStrong:deltaSPStrong.pStrong type:ATPlus canset:cansetToContent_ps debugMode:false caller:@"TuiJvR时P初始化"];
-            [sceneTo updateOutSPStrong:cansetToIndex difStrong:deltaSPStrong.sStrong type:ATSub canset:cansetToContent_ps debugMode:false caller:@"TuiJvR时S初始化"];
+            [sceneTo updateOutSPStrong:cansetToIndex difStrong:deltaSPStrong.pStrong type:ATPlus canset:cansetToContent_ps debugMode:false caller:STRFORMAT(@"TuiJv%@时P初始化",isH?@"H":@"R")];
+            [sceneTo updateOutSPStrong:cansetToIndex difStrong:deltaSPStrong.sStrong type:ATSub canset:cansetToContent_ps debugMode:false caller:STRFORMAT(@"TuiJv%@时S初始化",isH?@"H":@"R")];
         }
         
         //10. 如果cansetTo没初始过,才构建cansetTo & 挂载 & 加映射;
         if (cansetToInited) continue;
         
         //11. 构建cansetTo
-        AIFoNodeBase *cansetTo = [theNet createConFoForCanset:orders sceneFo:sceneTo sceneTargetIndex:sceneTo.count];
+        AIFoNodeBase *cansetTo = [theNet createConFoForCanset:orders sceneFo:sceneTo sceneTargetIndex:sceneToTargetIndex];
         
         //12. 挂载cansetTo
-        HEResult *updateConCansetResult = [sceneTo updateConCanset:cansetTo.pointer targetIndex:sceneTo.count];
+        HEResult *updateConCansetResult = [sceneTo updateConCanset:cansetTo.pointer targetIndex:sceneToTargetIndex];
         if (!updateConCansetResult.success) continue;//挂载成功,才加映射;
         
         //13. 加映射 (映射需要返过来因为前面cansetFrom在前,现在是cansetTo在后) (参考27201-3);

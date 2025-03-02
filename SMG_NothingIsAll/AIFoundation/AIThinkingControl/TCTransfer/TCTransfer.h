@@ -50,7 +50,7 @@
 /**
  *  MARK:--------------------在构建RCanset时,推举到抽象场景中 (参考33112)--------------------
  */
-+(void) transferTuiJv_R:(AIFoNodeBase*)sceneFrom cansetFrom:(AIFoNodeBase*)cansetFrom;
++(void) transferTuiJv_RH_V3:(AIFoNodeBase*)sceneFrom cansetFrom:(AIFoNodeBase*)cansetFrom isH:(BOOL)isH sceneFromCutIndex:(NSInteger)sceneFromCutIndex;
 
 /**
  *  MARK:--------------------在构建HCanset时,推举到抽象场景中 (参考33112)--------------------

@@ -262,7 +262,7 @@
     
     //2024.11.03: 在挂载新的Canset时,实时推举 & 并防重(只有新挂载的canset,才有资格实时调用推举,并推举spDic都到父场景中) (参考33112);
     if (updateConCansetResult.isNew) {
-        [TCTransfer transferTuiJv_R:matchFo cansetFrom:newRCanset];
+        [TCTransfer transferTuiJv_RH_V3:matchFo cansetFrom:newRCanset isH:false sceneFromCutIndex:matchFo.count-1];
     }
     
     //2. =================解决方案执行有效(再类比): 有actYes的时,归功于解决方案,执行canset再类比 (参考27206c-R任务)=================
@@ -336,7 +336,7 @@
         
         //2024.11.03: 在挂载新的Canset时,实时推举 & 并防重(只有新挂载的canset,才有资格实时调用推举,并推举spDic都到父场景中) (参考33112);
         if (updateConCansetResult.isNew) {
-            [TCTransfer transferTuiJv_R:pFo cansetFrom:absCansetFo];
+            [TCTransfer transferTuiJv_RH_V3:pFo cansetFrom:absCansetFo isH:false sceneFromCutIndex:pFo.count-1];
         }
     }
 }
