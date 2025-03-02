@@ -165,9 +165,9 @@
     return result;
 }
 
-+(TOFoModel*) convert2HCansetModelV2:(AIKVPointer *)hCansetFrom_p rCansetFrom:(AIFoNodeBase*)rCansetFrom hDemand:(HDemandModel *)hDemand hCansetCutIndex:(NSInteger)hCansetCutIndex targetFoM:(TOFoModel*)targetFoM hCansetToTargetIndex:(NSInteger)hCansetToTargetIndex IF_RSceneModel:(AISceneModel*)IF_RSceneModel xvModel:(TCTransferXvModel*)xvModel {
++(TOFoModel*) convert2HCansetModelV2:(AIKVPointer *)hCansetFrom_p hSceneFrom:(AIFoNodeBase*)hSceneFrom hDemand:(HDemandModel *)hDemand hCansetCutIndex:(NSInteger)hCansetCutIndex targetFoM:(TOFoModel*)targetFoM hCansetToTargetIndex:(NSInteger)hCansetToTargetIndex IF_RSceneModel:(AISceneModel*)IF_RSceneModel xvModel:(TCTransferXvModel*)xvModel {
     //1. 转为TOFoModel;
-    TOFoModel *result = [TOFoModel newForHCansetFo:hCansetFrom_p sceneFo:rCansetFrom.p base:hDemand
+    TOFoModel *result = [TOFoModel newForHCansetFo:hCansetFrom_p sceneFo:hSceneFrom.p base:hDemand
                        cansetCutIndex:hCansetCutIndex sceneCutIndex:targetFoM.cansetCutIndex
                     cansetTargetIndex:hCansetToTargetIndex sceneTargetIndex:targetFoM.cansetActIndex
                basePFoOrTargetFoModel:targetFoM baseSceneModel:IF_RSceneModel];
