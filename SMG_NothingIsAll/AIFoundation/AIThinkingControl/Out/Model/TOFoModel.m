@@ -467,10 +467,11 @@
         AIFoNodeBase *rCanset = [SMGUtils searchNode:self.transferSiModel.canset];
         AIMatchFoModel *basePFo = (AIMatchFoModel*)self.basePFoOrTargetFoModel;
         NSArray *order = [basePFo convertOrders4NewCansetV2];
+        AIFoNodeBase *pFo = [SMGUtils searchNode:basePFo.matchFo];
         if (ARRISOK(order)) {
-            AIFoNodeBase *newHCanset = [theNet createConFoForCanset:order sceneFo:rCanset sceneTargetIndex:self.cansetActIndex];
-            HEResult *updateConCansetResult = [rCanset updateConCanset:newHCanset.pointer targetIndex:self.cansetActIndex];
-            AIKVPointer *actIndexAlg_p = ARR_INDEX(rCanset.content_ps, self.cansetActIndex);
+            //2025.03.02: 挂在rCanset下，改成挂在rScene（pFo）下（参考33171-TODO1）。
+            AIFoNodeBase *newHCanset = [theNet createConFoForCanset:order sceneFo:pFo sceneTargetIndex:basePFo.cutIndex + 1];
+            HEResult *updateConCansetResult = [pFo updateConCanset:newHCanset.pointer targetIndex:basePFo.cutIndex + 1];
             
             if (self.realCansetToIndexDic.count == 0) {
                 NSLog(@"NewHCanset Dic Is Nil");
@@ -481,8 +482,13 @@
                 //5. 综合indexDic计算: 当前cansetTo与real之间的映射;
                 //2024.06.26: indexDic有可能指定后还在更新,导致有越界 (参考32014);
                 [newHCanset updateIndexDic:rCanset indexDic:[self.realCansetToIndexDic copy]];
+                
+                //TODOTOMORROW20250302: 此处应该记录与pFo的映射（应该不是self.realCanseetToIndexDic了，而是pFo.realMask的映射）。
+                [newHCanset updateIndexDic:pFo indexDic:[self.realCansetToIndexDic copy]];
+                
+                AIKVPointer *actIndexAlg_p = ARR_INDEX(rCanset.content_ps, self.cansetActIndex);
                 NSString *fltLog = FltLog4CreateHCanset(3);
-                NSLog(@"%@%@%@%@Canset演化> NewHCanset:%@ toScene:%@ 在%ld帧:%@",FltLog4XueQuPi(3),FltLog4HDemandOfYouPiGuo(@"5"),FltLog4XueBanYun(2),fltLog,Fo2FStr(newHCanset),ShortDesc4Node(rCanset),self.cansetActIndex,Pit2FStr(actIndexAlg_p));
+                NSLog(@"%@%@%@%@Canset演化> NewHCanset:%@ 反馈到rCanset:%@ 的%ld帧:%@",FltLog4XueQuPi(3),FltLog4HDemandOfYouPiGuo(@"5"),FltLog4XueBanYun(2),fltLog,Fo2FStr(newHCanset),ShortDesc4Node(rCanset),self.cansetActIndex,Pit2FStr(actIndexAlg_p));
             }
             
             //e. outSP值子即父: 当前NewHCanset所在的hScene场景就是iScene (参考33112-TODO4.3);
