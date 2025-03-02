@@ -70,7 +70,7 @@
  *  MARK:--------------------H虚迁移v2--------------------
  *  @desc 说明：在共同的rSceneFrom下，把rCansetFrom下的hCansetFrom迁移到rCansetTo下。
  */
-+(TCTransferXvModel*) transferXv_H_V2:(AIKVPointer*)hCansetFrom_p rCansetFrom:(AIFoNodeBase*)rCansetFrom rCansetTo:(AIFoNodeBase*)rCansetTo rSceneFrom:(AIFoNodeBase*)rSceneFrom rSceneTo:(AIFoNodeBase*)rSceneTo rCansetToActIndex:(NSInteger)rCansetToActIndex {
++(TCTransferXvModel*) transferJiCen_H_V2:(AIKVPointer*)hCansetFrom_p rCansetFrom:(AIFoNodeBase*)rCansetFrom rCansetTo:(AIFoNodeBase*)rCansetTo rSceneFrom:(AIFoNodeBase*)rSceneFrom rSceneTo:(AIFoNodeBase*)rSceneTo rCansetToActIndex:(NSInteger)rCansetToActIndex {
     
     AIFoNodeBase *hCansetFrom = [SMGUtils searchNode:hCansetFrom_p];
     
@@ -111,6 +111,32 @@
     result.cansetToOrders = hCansetToOrders;
     result.sceneToCansetToIndexDic = [SMGUtils reverseDic:zonHeIndexDic];
     result.sceneToTargetIndex = rCansetToActIndex;
+    return result;
+}
+
++(TCTransferXvModel*) transferJiCen_H_V3:(AIKVPointer*)hCansetFrom_p sceneFrom:(AIFoNodeBase*)sceneFrom sceneTo:(AIFoNodeBase*)sceneTo sceneToActIndex:(NSInteger)sceneToActIndex {
+    AIFoNodeBase *hCansetFrom = [SMGUtils searchNode:hCansetFrom_p];
+    
+    //3. IH映射: indexDic综合计算 (参考31115-TODO1-4);
+    //2025.02.24: 迁移路径都是：hCansetFrom（I/F） -> rCansetFrom（I/F） -> rSceneFrom（I/F） -> rSceneTo（I） -> targetFo（I） -> hCansetTo（I）（参考33159-TODO3A）。
+    NSMutableArray *path = [NSMutableArray new];
+    [path addObject:[DirectIndexDic newOkToAbs:[sceneFrom getConIndexDic:hCansetFrom.p]]];
+    if (![sceneFrom isEqual:sceneTo]) {//当hSceneFrom和To不同时，才从上面走（参考33159-TODO3B&TODO3C）。
+        //一般是继承，所以from肯定是F层，而to肯定是I层。
+        [path addObject:[DirectIndexDic newNoToAbs:[sceneFrom getConIndexDic:sceneTo.p]]];
+    }
+    NSDictionary *zonHeIndexDic = [SMGUtils reverseDic:[TOUtils zonHeIndexDic:path]];
+    
+    //6. 计算cansetToOrders
+    //说明: 场景包含帧用indexDic映射来迁移替换,场景不包含帧用迁移前的为准 (参考31104);
+    //2025.02.24: H继承时，取order方式与以往一致（参考3315b）。
+    NSMutableArray *hCansetToOrders = [TCTransfer convertZonHeIndexDic2Orders:hCansetFrom sceneTo:sceneTo zonHeIndexDic:zonHeIndexDic];
+    
+    //9. 打包数据model返回 (映射需要返过来因为前面cansetFrom在前,现在是cansetTo在后);
+    TCTransferXvModel *result = [[TCTransferXvModel alloc] init];
+    result.cansetToOrders = hCansetToOrders;
+    result.sceneToCansetToIndexDic = [SMGUtils reverseDic:zonHeIndexDic];
+    result.sceneToTargetIndex = sceneToActIndex;
     return result;
 }
 
