@@ -496,6 +496,7 @@
             
             //2024.11.03: 在挂载新的Canset时,实时推举 & 并防重(只有新挂载的canset,才有资格实时调用推举,并推举spDic都到父场景中) (参考33112);
             if (updateConCansetResult.isNew) {
+                //推举是从I推举到F（而pFo就是I层，所以sceneFrom就是pFo）。
                 [TCTransfer transferTuiJv_RH_V3:pFo cansetFrom:newHCanset isH:true sceneFromCutIndex:basePFo.cutIndex];
             }
             
@@ -600,20 +601,8 @@
     //2024.11.03: 在挂载新的Canset时,实时推举 & 并防重(只有新挂载的canset,才有资格实时调用推举,并推举spDic都到父场景中) (参考33112);
     //2024.11.05: 当targetFoModel是R任务时,才推举,以后这里需要支持下,不断向base找到R为止,因为H可能有多层,而推举是必须找到并借助R来实现的 (参考n33p12);
     if (updateConCansetResult.isNew && !targetFoModel.isH) {
-        
-        
-        
-        //TODOTOMORROW20250302: canset类比也是在pFo下。。。明天继续写。。。
-        
-        
-        
-        
-        AIFoNodeBase *iScene = pFo;
-        AIFoNodeBase *fScene = [SMGUtils searchNode:targetFoModel.sceneFrom];
-        
-        //推举是从I推举到F;
-        [TCTransfer transferTuiJv_RH_V3:iScene cansetFrom:absCansetFo isH:true sceneFromCutIndex:basePFo.cutIndex + 1];
-        //[TCTransfer transferTuiJv_H_V2:iScene broRCanset:sceneTo broRCansetActIndex:targetFoModel.cansetActIndex broHCanset:absCansetFo];
+        //推举是从I推举到F（而pFo就是I层，所以sceneFrom就是pFo）。
+        [TCTransfer transferTuiJv_RH_V3:pFo cansetFrom:absCansetFo isH:true sceneFromCutIndex:basePFo.cutIndex + 1];
     }
 }
 
