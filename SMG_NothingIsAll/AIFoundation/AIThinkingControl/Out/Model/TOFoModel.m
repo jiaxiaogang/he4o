@@ -100,7 +100,7 @@
     if (!self.isH) {
         //第1步. 在basePFo中取到indexDic2 (matchFo与real的映射,也即当前sceneTo与real的映射) (参考31155-第1步);
         //结构说明: matchFo(pFo)是当前的sceneTo;
-        AIMatchFoModel *pFo = (AIMatchFoModel*)self.basePFoOrTargetFoModel;
+        AIMatchFoModel *pFo = self.basePFo;
         realSceneToDic = [SMGUtils filterDic:pFo.indexDic2 checkValid:^BOOL(NSNumber *key, id value) {
             //a. 并过滤已发生部分 (参考31155-第1b步);
             return key.integerValue <= pFo.cutIndex;
@@ -465,7 +465,7 @@
         //4. 收集真实发生realMaskFo,收集成hCanset (参考30131-todo1 & 30132-方案);
         //2023.12.29: mcIsBro=true时,生成新hCanset (做31026-第2步时临时起意改的);
         AIFoNodeBase *rCanset = [SMGUtils searchNode:self.transferSiModel.canset];
-        AIMatchFoModel *basePFo = (AIMatchFoModel*)self.basePFoOrTargetFoModel;
+        AIMatchFoModel *basePFo = self.basePFo;
         NSArray *order = [basePFo convertOrders4NewCansetV2];
         AIFoNodeBase *pFo = [SMGUtils searchNode:basePFo.matchFo];
         if (ARRISOK(order)) {
@@ -538,6 +538,12 @@
     targetFoModel.status = TOModelStatus_Runing;
     self.cansetCutIndex = self.cansetTargetIndex;//当前hTargetAlg提前反馈了,直接把cutIndex改成targetIndex;
     
+    //2. 数据准备：找出basePFo和baseRDemand。
+    AIKVPointer *targetPFo = targetFoModel.baseSceneModel.getIScene;
+    AIMatchFoModel *basePFo = targetFoModel.basePFo;
+    AIFoNodeBase *pFo = [SMGUtils searchNode:basePFo.matchFo];
+    ReasonDemandModel *baseRDemand = basePFo.baseRDemand;
+    
     //10. H反馈末帧时: 做触发H"预想与实际"类比的准备;
     //11. 用realMaskFo & realDeltaTimes生成protoFo (参考30154-todo2);
     //12. H任务完成时,H当前正执行的S提前完成,并进行外类比 (参考27206c-H任务);
@@ -545,16 +551,13 @@
     AIFoNodeBase *cansetTo = [SMGUtils searchNode:self.transferSiModel.canset];
     AIFoNodeBase *sceneTo = [SMGUtils searchNode:self.sceneTo];
     
-    //TODOTOMORROW20250302: 此处从pFo取防重，然后canset类比也是在pFo下。。。明天继续写。。。
-    
-    
     //14. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
-    NSArray *noRepeatArea_ps = [sceneTo getConCansets:targetFoModel.cansetActIndex];
+    NSArray *noRepeatArea_ps = [pFo getConCansets:basePFo.cutIndex + 1];
     
     //2024.09.14: hCanset类比启用新的canset类比算法 (参考33052-TODO2);
-    HEResult *analogyResult = [AIAnalogy analogyCansetFo:self.realCansetToIndexDic newCanset:newHCanset oldCanset:cansetTo noRepeatArea_ps:noRepeatArea_ps];
+    HEResult *analogyResult = [AIAnalogy analogyCansetFo:basePFo.indexDic2 newCanset:newHCanset oldCanset:cansetTo noRepeatArea_ps:noRepeatArea_ps];
     AIFoNodeBase *absCansetFo = analogyResult.data;
-    HEResult *updateConCansetResult =  [sceneTo updateConCanset:absCansetFo.pointer targetIndex:targetFoModel.cansetActIndex];
+    HEResult *updateConCansetResult =  [pFo updateConCanset:absCansetFo.pointer targetIndex:basePFo.cutIndex + 1];
     [AITest test101:absCansetFo proto:newHCanset conCanset:cansetTo];
     NSString *fltLog = FltLog4CreateHCanset(4);
     NSLog(@"%@%@%@%@%@%@Canset演化> AbsHCanset:%@ toScene:%@ 在%ld帧:%@",fltLog,FltLog4AbsHCanset(true, 3),FltLog4XueQuPi(3),FltLog4HDemandOfYouPiGuo(@"5"),FltLog4XueBanYun(3),FltLog4YonBanYun(4),Fo2FStr(absCansetFo),ShortDesc4Node(sceneTo),self.cansetActIndex,Pit2FStr(self.getCurFrame.content_p));
@@ -570,12 +573,11 @@
     //abs:F5643[M1{↑饿-16},A61(距47,向217,果),-]
     //Canset演化> AbsHCanset:F5643[M1{↑饿-16},A61(距47,向217,果),-] toScene:F5566[↑饿-16,4果,4果,4果,4果,4果,4果,飞↓,4果] 在3帧:
     
-    
     if (updateConCansetResult.success) {
         //15. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);
         //2024.04.16: 此处简化了下,把用convertOldIndexDic2NewIndexDic()取映射,改成用zonHeDic来计算;
         //a. 从sceneTo向下到cansetTo;
-        DirectIndexDic *dic1 = [DirectIndexDic newNoToAbs:[sceneTo getConIndexDic:cansetTo.p]];
+        DirectIndexDic *dic1 = [DirectIndexDic newNoToAbs:[pFo getConIndexDic:cansetTo.p]];
         
         //b. 从cansetTo向上到absCansetTo;
         DirectIndexDic *dic2 = [DirectIndexDic newOkToAbs:[cansetTo getAbsIndexDic:absCansetFo.p]];
@@ -587,19 +589,31 @@
                 NSLog(@"AbsHCanset Dic Is Nil");
             }
         }
-        [absCansetFo updateIndexDic:sceneTo indexDic:absHCansetSceneToIndexDic];
-        [AITest test18:absHCansetSceneToIndexDic newCanset:absCansetFo absFo:sceneTo];
+        [absCansetFo updateIndexDic:pFo indexDic:absHCansetSceneToIndexDic];
+        [AITest test18:absHCansetSceneToIndexDic newCanset:absCansetFo absFo:pFo];
         
         //16. 算出absCanset的默认itemOutSPDic (参考33062-TODO4);
-        [AINetUtils initItemOutSPDicForAbsCanset:sceneTo conCanset:cansetTo absCanset:absCansetFo];
+        [AINetUtils initItemOutSPDicForAbsCanset:pFo conCanset:cansetTo absCanset:absCansetFo];
         [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
     }
     
     //2024.11.03: 在挂载新的Canset时,实时推举 & 并防重(只有新挂载的canset,才有资格实时调用推举,并推举spDic都到父场景中) (参考33112);
     //2024.11.05: 当targetFoModel是R任务时,才推举,以后这里需要支持下,不断向base找到R为止,因为H可能有多层,而推举是必须找到并借助R来实现的 (参考n33p12);
     if (updateConCansetResult.isNew && !targetFoModel.isH) {
-        AIFoNodeBase *broRScene = [SMGUtils searchNode:targetFoModel.sceneTo];
-        [TCTransfer transferTuiJv_H_V2:broRScene broRCanset:sceneTo broRCansetActIndex:targetFoModel.cansetActIndex broHCanset:absCansetFo];
+        
+        
+        
+        //TODOTOMORROW20250302: canset类比也是在pFo下。。。明天继续写。。。
+        
+        
+        
+        
+        AIFoNodeBase *iScene = pFo;
+        AIFoNodeBase *fScene = [SMGUtils searchNode:targetFoModel.sceneFrom];
+        
+        //推举是从I推举到F;
+        [TCTransfer transferTuiJv_RH_V3:iScene cansetFrom:absCansetFo isH:true sceneFromCutIndex:basePFo.cutIndex + 1];
+        //[TCTransfer transferTuiJv_H_V2:iScene broRCanset:sceneTo broRCansetActIndex:targetFoModel.cansetActIndex broHCanset:absCansetFo];
     }
 }
 

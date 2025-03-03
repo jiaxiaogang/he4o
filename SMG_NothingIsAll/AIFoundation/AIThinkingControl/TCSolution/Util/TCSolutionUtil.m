@@ -244,10 +244,9 @@
     AIAlgNodeBase *targetAlg = [SMGUtils searchNode:targetAlgM.content_p];
     TOFoModel *targetFoM = (TOFoModel*)targetAlgM.baseOrGroup;
     AIKVPointer *targetPFo = targetFoM.baseSceneModel.getIScene;
-    ReasonDemandModel *baseRDemand = ARR_INDEX([TOUtils getBaseRDemands_AllDeep:targetFoM], 0);
-    AIMatchFoModel *basePFo = [SMGUtils filterSingleFromArr:baseRDemand.validPFos checkValid:^BOOL(AIMatchFoModel *pFo) {
-        return [pFo.matchFo isEqual:targetPFo];
-    }];
+    
+    AIMatchFoModel *basePFo = targetFoM.basePFo;
+    ReasonDemandModel *baseRDemand = basePFo.baseRDemand;
     
     //2. 数据准备：根据targetAlg及其具象的被引用，取出所有包含targetAlg的时序（后面用于提前判断下hCanset有效性，避免性能问题）（参考33159-TODO4）。
     NSMutableArray *targetAlg_ps = [[NSMutableArray alloc] initWithArray:Ports2Pits([AINetUtils conPorts_All:targetAlg])];

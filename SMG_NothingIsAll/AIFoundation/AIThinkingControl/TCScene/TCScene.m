@@ -132,7 +132,7 @@
     //2. 数据准备：找出basePFo和baseRDemand。
     AIKVPointer *targetPFo = targetFoM.baseSceneModel.getIScene;
     ReasonDemandModel *baseRDemand = ARR_INDEX([TOUtils getBaseRDemands_AllDeep:targetFoM], 0);
-    AIMatchFoModel *basePFo = [SMGUtils filterSingleFromArr:baseRDemand.validPFos checkValid:^BOOL(AIMatchFoModel *pFo) {
+    AIMatchFoModel *basePFo = [SMGUtils filterSingleFromArr:baseRDemand.pFos checkValid:^BOOL(AIMatchFoModel *pFo) {
         return [pFo.matchFo isEqual:targetPFo];
     }];
     
