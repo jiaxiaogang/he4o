@@ -556,7 +556,7 @@
     NSArray *noRepeatArea_ps = [pFo getConCansets:basePFo.cutIndex + 1];
     
     //2024.09.14: hCanset类比启用新的canset类比算法 (参考33052-TODO2);
-    HEResult *analogyResult = [AIAnalogy analogyCansetFo:basePFo.indexDic2 newCanset:newHCanset oldCanset:cansetTo noRepeatArea_ps:noRepeatArea_ps];
+    HEResult *analogyResult = [AIAnalogy analogyCansetFo:self.realCansetToIndexDic newCanset:newHCanset oldCanset:cansetTo noRepeatArea_ps:noRepeatArea_ps];
     AIFoNodeBase *absCansetFo = analogyResult.data;
     HEResult *updateConCansetResult =  [pFo updateConCanset:absCansetFo.pointer targetIndex:basePFo.cutIndex + 1];
     [AITest test101:absCansetFo proto:newHCanset conCanset:cansetTo];
@@ -602,7 +602,7 @@
     //2024.11.05: 当targetFoModel是R任务时,才推举,以后这里需要支持下,不断向base找到R为止,因为H可能有多层,而推举是必须找到并借助R来实现的 (参考n33p12);
     if (updateConCansetResult.isNew && !targetFoModel.isH) {
         //推举是从I推举到F（而pFo就是I层，所以sceneFrom就是pFo）。
-        [TCTransfer transferTuiJv_RH_V3:pFo cansetFrom:absCansetFo isH:true sceneFromCutIndex:basePFo.cutIndex + 1];
+        [TCTransfer transferTuiJv_RH_V3:pFo cansetFrom:absCansetFo isH:true sceneFromCutIndex:basePFo.cutIndex];
     }
 }
 

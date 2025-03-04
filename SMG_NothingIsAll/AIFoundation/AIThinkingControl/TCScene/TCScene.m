@@ -130,13 +130,17 @@
     TOFoModel *targetFoM = (TOFoModel*)demand.baseOrGroup.baseOrGroup;
     
     //2. 数据准备：找出basePFo和baseRDemand。
-    AIKVPointer *targetPFo = targetFoM.baseSceneModel.getIScene;
-    ReasonDemandModel *baseRDemand = ARR_INDEX([TOUtils getBaseRDemands_AllDeep:targetFoM], 0);
-    AIMatchFoModel *basePFo = [SMGUtils filterSingleFromArr:baseRDemand.pFos checkValid:^BOOL(AIMatchFoModel *pFo) {
-        return [pFo.matchFo isEqual:targetPFo];
-    }];
+    AIMatchFoModel *basePFo = targetFoM.basePFo;
+    ReasonDemandModel *baseRDemand = basePFo.baseRDemand;
     
-    //2B. 另一种取basePFo和baseRDemand的方法（暂不需要）。
+    //2B. 另两种取basePFo和baseRDemand的方法之一。
+    //AIKVPointer *targetPFo = targetFoM.baseSceneModel.getIScene;
+    //ReasonDemandModel *baseRDemand = ARR_INDEX([TOUtils getBaseRDemands_AllDeep:targetFoM], 0);
+    //AIMatchFoModel *basePFo = [SMGUtils filterSingleFromArr:baseRDemand.pFos checkValid:^BOOL(AIMatchFoModel *pFo) {
+    //    return [pFo.matchFo isEqual:targetPFo];
+    //}];
+    
+    //2C. 另两种取basePFo和baseRDemand的方法之二。
     //NSArray *baseOutModels = [TOUtils getBaseOutModels_AllDeep:targetFoM];
     //for (TOModelBase *baseOutModel in baseOutModels) {
     //    if (ISOK(baseOutModel.baseOrGroup, ReasonDemandModel.class)) {
