@@ -1069,7 +1069,7 @@
         AIFoNodeBase *fatherCanset = [SMGUtils searchNode:fatherPort.fCanset];
         
         //2. cansetFrom和cansetTo是等长的,所以直接iCanset的index可以当fCanset的index来用;
-        [fatherScene updateOutSPStrong:spIndex difStrong:1 type:type canset:fatherCanset.content_ps debugMode:false caller:STRFORMAT(@"%@(推举父)",caller)];
+        [fatherScene updateOutSPStrong:spIndex difStrong:difStrong type:type canset:fatherCanset.content_ps debugMode:false caller:STRFORMAT(@"%@(推举父)",caller)];
     }
 }
 

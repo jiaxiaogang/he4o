@@ -690,6 +690,9 @@
     NSString *fromDSC = STRFORMAT(@"FROM<F%ld F%ld F%ld>",Demand2Pit((DemandModel*)self.baseOrGroup).pointerId,self.sceneFrom.pointerId,self.cansetFrom.pointerId);
     caller = STRFORMAT(@"%@ by:%@ ROOT%ld(F%ld)",caller,fromDSC,rootIndex,Demand2Pit(root).pointerId);
     
+    //TODOTOMORROW20250304: 明日：核实下HCanset.OutSPDic存在哪，无论是初始化，更新，还是评价取用时（可以参照RCanset.OutSPDic）。
+    //1. 此处，sceneTo是pFo，那么如果要存到其baseCanset下，应该单独存一份？
+    
     //1. 取得canstFrom的spStrong;
     AIFoNodeBase *sceneTo = [SMGUtils searchNode:self.sceneTo];
     NSArray *cansetToContent_ps = Simples2Pits(self.transferXvModel.cansetToOrders);
