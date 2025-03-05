@@ -34,6 +34,8 @@
  *                  1. HCansetFrom的取值从从pFo下的sceneTree下的rCanset下找 (参考hSolutionV3中筛选出targetPFo,并以此筛选出hSceneFrom);
  *                  2. H与R的迁移路径不同的处理 (H比R的首尾各多一层,参考TCTransferV3);
  */
+
+//TODO废弃
 +(TOFoModel*) hSolutionV4:(HDemandModel *)hDemand {
     //0. 初始化一次,后面只执行generalSolution部分;
     if (hDemand.alreadyInitCansetModels) {
@@ -406,6 +408,7 @@
 
 /**
  *  MARK:--------------------转hCansetFroms为候选模型--------------------
+ *  @TODO废弃
  */
 +(NSArray*) convertHCansetFroms2HCansetModelsV4:(NSArray*)hCansetFrom_ps rCansetFrom:(AIFoNodeBase*)rCansetFrom rSceneFrom:(AIFoNodeBase*)rSceneFrom rSceneTo:(AIFoNodeBase*)rSceneTo rCansetTo:(AIFoNodeBase*)rCansetTo//从hCansetFrom->rCansetFrom->rSceneFrom->rSceneTo->rCansetTo
                           rCansetFromCutIndex:(NSInteger)rCansetFromCutIndex rCansetToActIndex:(NSInteger)rCansetToActIndex//from截点和to目标

@@ -155,6 +155,7 @@
     return result;
 }
 
+//TODO废弃
 +(TCTransferXvModel*) transferXv_IH:(TOFoModel*)cansetModel {
     //1. 数据准备;
     AISceneModel *rSceneModel = cansetModel.baseSceneModel;//无论是R还是H,它的baseSceneModel都是rSceneModel;
@@ -197,6 +198,7 @@
     return [self convertZonHeIndexDic2XvModel:cansetModel zonHeIndexDic:zonHeIndexDic];
 }
 
+//TODO废弃
 +(TCTransferXvModel*) transferXv_FH:(TOFoModel*)cansetModel {
     //1. 数据准备;
     AISceneModel *rSceneModel = cansetModel.baseSceneModel;//无论是R还是H,它的baseSceneModel都是rSceneModel;
@@ -214,6 +216,7 @@
     return [self convertZonHeIndexDic2XvModel:cansetModel zonHeIndexDic:zonHeIndexDic];
 }
 
+//TODO废弃
 +(TCTransferXvModel*) transferXv_BR:(TOFoModel*)cansetModel {
     //1. 数据准备;
     AISceneModel *rSceneModel = cansetModel.baseSceneModel;//无论是R还是H,它的baseSceneModel都是rSceneModel;
@@ -232,6 +235,7 @@
     return [self convertZonHeIndexDic2XvModel:cansetModel zonHeIndexDic:zonHeIndexDic];
 }
 
+//TODO废弃
 +(TCTransferXvModel*) transferXv_BH:(TOFoModel*)cansetModel {
     //1. 数据准备;
     AISceneModel *rSceneModel = cansetModel.baseSceneModel;//无论是R还是H,它的baseSceneModel都是rSceneModel;
