@@ -1051,8 +1051,14 @@
  *  MARK:--------------------outSP子即父--------------------
  *  @desc 子即父,推举到F层SP也+1: iCanset的outSP更新时,将它的fCanset的outSP也+1 (参考33112-TODO4.3);
  *  @desc I层即sceneTo,F层则从transferPort迁移关联来取 (参考33112-TODO3);
+ *  @param iScene 即I层pFo。
  */
 +(void) updateOutSPStrong_4IF:(AIFoNodeBase*)iScene iCansetContent_ps:(NSArray*)iCansetContent_ps caller:(NSString*)caller spIndex:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type debugMode:(BOOL)debugMode except4SP2F:(NSMutableArray*)except4SP2F{
+    
+    //TODOTOMORROW20250305: 写HCanset.OutSPDic存在subCanset下，无论是初始化，更新，还是评价取用时。
+    
+    
+    
     //0. i层计SP;
     [iScene updateOutSPStrong:spIndex difStrong:difStrong type:type canset:iCansetContent_ps debugMode:debugMode caller:caller];
     
