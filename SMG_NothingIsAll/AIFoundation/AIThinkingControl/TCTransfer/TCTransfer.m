@@ -139,6 +139,11 @@
     result.cansetToOrders = hCansetToOrders;
     result.sceneToCansetToIndexDic = [SMGUtils reverseDic:zonHeIndexDic];
     result.sceneToTargetIndex = sceneToActIndex;
+    
+    //10. 继承时，进行迁移关联（可用于父非子评分时使用）（参考33171-TODO4）。
+    if (![sceneTo isEqual:sceneFrom]) {
+        [AINetUtils relateTransfer_R:sceneFrom fCanset:hCansetFrom iScene:sceneTo iCanset:Simples2Pits(hCansetToOrders)];
+    }
     return result;
 }
 
