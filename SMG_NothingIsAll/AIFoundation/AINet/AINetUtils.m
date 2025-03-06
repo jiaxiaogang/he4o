@@ -1052,8 +1052,31 @@
  *  @desc 子即父,推举到F层SP也+1: iCanset的outSP更新时,将它的fCanset的outSP也+1 (参考33112-TODO4.3);
  *  @desc I层即sceneTo,F层则从transferPort迁移关联来取 (参考33112-TODO3);
  *  @param iScene 即I层pFo。
+ *  @version
+ *      2025.03.06: v2-把OutSPDic存到F层canset下，其中baseSceneToOrders为key（参考33172-方案3）。
  */
 +(void) updateOutSPStrong_4IF:(AIFoNodeBase*)iScene iCansetContent_ps:(NSArray*)iCansetContent_ps caller:(NSString*)caller spIndex:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type debugMode:(BOOL)debugMode except4SP2F:(NSMutableArray*)except4SP2F{
+    //0. i层计SP;
+    [iScene updateOutSPStrong:spIndex difStrong:difStrong type:type canset:iCansetContent_ps debugMode:debugMode caller:caller];
+    
+    //1. 取f (有迁移复用);
+    NSArray *fatherPorts = [AINetUtils transferPorts_4Father:iScene iCansetContent_ps:iCansetContent_ps];
+    for (AITransferPort *fatherPort in fatherPorts) {
+        //2024.12.05: 避免F值快速重复累计到很大,sp更新(同场景下的)防重推 (参考33137-方案v5TODO2);
+        //2024.12.15: 把except4SP2F废弃掉,因为spMemRecord已经做了防重和回滚,不需要这个再防重了 (参考33137-问题2-补充);
+        //NSString *itemExcept = STRFORMAT(@"%ld_%ld_%ld",fatherPort.fScene.pointerId,fatherPort.fCanset.pointerId,spIndex);
+        //if ([except4SP2F containsObject:itemExcept]) continue;
+        //[except4SP2F addObject:itemExcept];
+        
+        AIFoNodeBase *fatherScene = [SMGUtils searchNode:fatherPort.fScene];
+        AIFoNodeBase *fatherCanset = [SMGUtils searchNode:fatherPort.fCanset];
+        
+        //2. cansetFrom和cansetTo是等长的,所以直接iCanset的index可以当fCanset的index来用;
+        [fatherScene updateOutSPStrong:spIndex difStrong:difStrong type:type canset:fatherCanset.content_ps debugMode:false caller:STRFORMAT(@"%@(推举父)",caller)];
+    }
+}
+
++(void) updateOutSPStrong_4IF_V2:(AIFoNodeBase*)fCanset baseSceneToContent_ps:(NSArray*)baseSceneToContent_ps caller:(NSString*)caller spIndex:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type debugMode:(BOOL)debugMode except4SP2F:(NSMutableArray*)except4SP2F{
     
     //TODOTOMORROW20250305: 写HCanset.OutSPDic存在subCanset下，无论是初始化，更新，还是评价取用时。
     
