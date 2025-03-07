@@ -1051,42 +1051,30 @@
  *  MARK:--------------------outSP子即父--------------------
  *  @desc 子即父,推举到F层SP也+1: iCanset的outSP更新时,将它的fCanset的outSP也+1 (参考33112-TODO4.3);
  *  @desc I层即sceneTo,F层则从transferPort迁移关联来取 (参考33112-TODO3);
- *  @param iScene 即I层pFo。
+ *  @desc 参数说明：fCanset迁移成了“iScene下的baseSceneTo的解”，迁移结果为：cansetToContent_ps。
+ *  @param iScene I层场景
+ *  @param baseSceneToContent_ps 当前canset是作用于哪个工作记忆中的base（base肯定是I层，但可能是I场景，也可能是I场景下的某个iCanset）。
+ *  @param fCanset 即F层canset。
+ *  @param cansetToContent_ps F层canset现在迁移到base下成了什么内容。
  *  @version
- *      2025.03.06: v2-把OutSPDic存到F层canset下，其中baseSceneToOrders为key（参考33172-方案3）。
+ *      2025.03.06: 把OutSPDic存到F层canset下，其中baseSceneToOrders为key（参考33172-方案3）。
  */
-+(void) updateOutSPStrong_4IF:(AIFoNodeBase*)iScene iCansetContent_ps:(NSArray*)iCansetContent_ps caller:(NSString*)caller spIndex:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type debugMode:(BOOL)debugMode except4SP2F:(NSMutableArray*)except4SP2F{
-    //0. i层计SP;
-    [iScene updateOutSPStrong:spIndex difStrong:difStrong type:type canset:iCansetContent_ps debugMode:debugMode caller:caller];
-    
-    //1. 取f (有迁移复用);
-    NSArray *fatherPorts = [AINetUtils transferPorts_4Father:iScene iCansetContent_ps:iCansetContent_ps];
-    for (AITransferPort *fatherPort in fatherPorts) {
-        //2024.12.05: 避免F值快速重复累计到很大,sp更新(同场景下的)防重推 (参考33137-方案v5TODO2);
-        //2024.12.15: 把except4SP2F废弃掉,因为spMemRecord已经做了防重和回滚,不需要这个再防重了 (参考33137-问题2-补充);
-        //NSString *itemExcept = STRFORMAT(@"%ld_%ld_%ld",fatherPort.fScene.pointerId,fatherPort.fCanset.pointerId,spIndex);
-        //if ([except4SP2F containsObject:itemExcept]) continue;
-        //[except4SP2F addObject:itemExcept];
-        
-        AIFoNodeBase *fatherScene = [SMGUtils searchNode:fatherPort.fScene];
-        AIFoNodeBase *fatherCanset = [SMGUtils searchNode:fatherPort.fCanset];
-        
-        //2. cansetFrom和cansetTo是等长的,所以直接iCanset的index可以当fCanset的index来用;
-        [fatherScene updateOutSPStrong:spIndex difStrong:difStrong type:type canset:fatherCanset.content_ps debugMode:false caller:STRFORMAT(@"%@(推举父)",caller)];
-    }
-}
-
-+(void) updateOutSPStrong_4IF_V2:(AIFoNodeBase*)fCanset baseSceneToContent_ps:(NSArray*)baseSceneToContent_ps caller:(NSString*)caller spIndex:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type debugMode:(BOOL)debugMode except4SP2F:(NSMutableArray*)except4SP2F{
++(void) updateOutSPStrong_4IF:(AIFoNodeBase*)fCanset iScene:(AIFoNodeBase*)iScene baseSceneToContent_ps:(NSArray*)baseSceneToContent_ps cansetToContent_ps:(NSArray*)cansetToContent_ps caller:(NSString*)caller spIndex:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type debugMode:(BOOL)debugMode except4SP2F:(NSMutableArray*)except4SP2F {
     
     //TODOTOMORROW20250305: 写HCanset.OutSPDic存在subCanset下，无论是初始化，更新，还是评价取用时。
     
     
     
     //0. i层计SP;
-    [iScene updateOutSPStrong:spIndex difStrong:difStrong type:type canset:iCansetContent_ps debugMode:debugMode caller:caller];
+    [fCanset updateOutSPStrong:spIndex difStrong:difStrong type:type baseSceneToContent_ps:baseSceneToContent_ps debugMode:debugMode caller:caller];
+    
+    
+    //TODOTOMORROW20250307: 分析一下这里，fCanset只有一个fScene，fCanset已经迁移成了iCansetToOrders
+    //那么：会不会有多个fCanset都能迁移成iCansetToOrders？
+    //那么：只要fCanset迁移到IScene下，且迁移成了cansetToContent_ps，其迁移时的F层都可以做为子即父的父。
     
     //1. 取f (有迁移复用);
-    NSArray *fatherPorts = [AINetUtils transferPorts_4Father:iScene iCansetContent_ps:iCansetContent_ps];
+    NSArray *fatherPorts = [AINetUtils transferPorts_4Father:iScene iCansetContent_ps:cansetToContent_ps];
     for (AITransferPort *fatherPort in fatherPorts) {
         //2024.12.05: 避免F值快速重复累计到很大,sp更新(同场景下的)防重推 (参考33137-方案v5TODO2);
         //2024.12.15: 把except4SP2F废弃掉,因为spMemRecord已经做了防重和回滚,不需要这个再防重了 (参考33137-问题2-补充);
@@ -1141,6 +1129,13 @@
 +(NSArray*) transferPorts_4Father:(AIFoNodeBase*)iScene fScene:(AIFoNodeBase*)fScene {
     return [SMGUtils filterArr:iScene.transferFPorts checkValid:^BOOL(AITransferPort *item) {
         return [item.fScene isEqual:fScene.p];
+    }];
+}
+
+//取从fScene迁移过来iScene哪些canset;
++(NSArray*) transferPorts_4Father:(AIFoNodeBase*)fScene fCanset:(AIKVPointer*)fCanset_p {
+    return [SMGUtils filterArr:fScene.transferIPorts checkValid:^BOOL(AITransferPort *item) {
+        return [item.fCanset isEqual:fCanset_p];
     }];
 }
 

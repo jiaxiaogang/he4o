@@ -100,7 +100,7 @@
 /**
  *  MARK:--------------------更新OutSPDic强度值--------------------
  */
--(void) updateOutSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type canset:(NSArray*)cansetContent_ps debugMode:(BOOL)debugMode caller:(NSString*)caller;
+-(void) updateOutSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type baseSceneToContent_ps:(NSArray*)baseSceneToContent_ps debugMode:(BOOL)debugMode caller:(NSString*)caller;
 -(BOOL) containsOutSPStrong:(NSArray*)cansetContent_ps;
 
 /**

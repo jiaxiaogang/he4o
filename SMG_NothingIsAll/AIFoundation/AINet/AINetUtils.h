@@ -333,7 +333,7 @@
  *  MARK:--------------------outSP子即父--------------------
  *  @desc 子即父,推举到F层SP也+1: iCanset的outSP更新时,将它的fCanset的outSP也+1 (参考33112-TODO4.3);
  */
-+(void) updateOutSPStrong_4IF:(AIFoNodeBase*)iScene iCansetContent_ps:(NSArray*)iCansetContent_ps caller:(NSString*)caller spIndex:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type debugMode:(BOOL)debugMode except4SP2F:(NSMutableArray*)except4SP2F;
++(void) updateOutSPStrong_4IF:(AIFoNodeBase*)fScene fCanset:(AIFoNodeBase*)fCanset baseSceneToContent_ps:(NSArray*)baseSceneToContent_ps caller:(NSString*)caller spIndex:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type debugMode:(BOOL)debugMode except4SP2F:(NSMutableArray*)except4SP2F;
 
 /**
  *  MARK:--------------------inSP子即父--------------------
