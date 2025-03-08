@@ -978,6 +978,11 @@
         AISPStrong *fromItemSPStrong = [fromItemOutSPDic objectForKey:conIndex];
         if (!fromItemSPStrong) continue;
         
+        
+        //TODOTOMORROW20250308: 继续写OutSPDic存在F.Canset下，改初始化。
+        //1、找到baseSceneToOrders，然后从cansetFrom下取其本身评分。
+        
+        
         //4. 把s和p都继承下;
         [scene updateOutSPStrong:absIndex.integerValue difStrong:fromItemSPStrong.pStrong type:ATPlus canset:absCanset.content_ps debugMode:false caller:@"AbsRCanset初始化itemOutSPDic"];
         [scene updateOutSPStrong:absIndex.integerValue difStrong:fromItemSPStrong.sStrong type:ATSub canset:absCanset.content_ps debugMode:false caller:@"AbsRCanset初始化itemOutSPDic"];

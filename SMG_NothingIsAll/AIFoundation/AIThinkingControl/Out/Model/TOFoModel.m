@@ -491,6 +491,17 @@
             //e. outSP值子即父: 当前NewHCanset所在的hScene场景就是iScene (参考33112-TODO4.3);
             //2024.11.26: 从0到cutIndex全计P+1 (参考33134-FIX2a);
             for (NSInteger i = 0; i <= newHCanset.count; i++) {
+                
+                
+                
+                
+                
+                
+                
+                //TODOTOMORROW20250308: 继续写OutSPDic存在F.Canset下，改初始化。
+                //1、找到baseSceneToOrders，然后从cansetFrom下取其本身评分。
+
+
                 [AINetUtils updateOutSPStrong_4IF:pFo iCansetContent_ps:newHCanset.content_ps caller:@"NewHCanset本就存在时,将当前帧SP+1推举到父层canset中" spIndex:i difStrong:1 type:ATPlus debugMode:false except4SP2F:except4SP2F];
             }
             
@@ -692,14 +703,6 @@
     //2024.09.21: 去掉best过状态要求 (参考33065-TODO3);
     //if (self.cansetStatus == CS_None) return;
     
-    
-    
-    
-    //TODOTOMORROW20250308: 继续写OutSPDic存在F.Canset下，改初始化，更新，及评价取用。
-    //1、找到baseSceneToOrders，然后从cansetFrom下取其本身评分。
-    
-    
-    
     //0. log
     //DemandModel *baseDemand = (DemandModel*)self.baseOrGroup;
     ReasonDemandModel *root = (ReasonDemandModel*)[TOUtils getRootDemandModelWithSubOutModel:self];
@@ -708,12 +711,14 @@
     caller = STRFORMAT(@"%@ by:%@ ROOT%ld(F%ld)",caller,fromDSC,rootIndex,Demand2Pit(root).pointerId);
     
     //1. 取得canstFrom的spStrong;
-    AIFoNodeBase *iRScene = [SMGUtils searchNode:self.sceneTo];
+    AIFoNodeBase *fCanset = [SMGUtils searchNode:self.fCanset];
+    AIFoNodeBase *iScene = [SMGUtils searchNode:self.sceneTo];
+    NSArray *baseSceneToContent_ps = Simples2Pits([self getBaseSceneToOrders]);
     NSArray *cansetToContent_ps = Simples2Pits(self.transferXvModel.cansetToOrders);
     [self.spMemRecord update:spIndex type:type difStrong:difStrong backBlock:^(NSInteger mDifStrong, AnalogyType mType) {
-        [AINetUtils updateOutSPStrong_4IF:iRScene iCansetContent_ps:cansetToContent_ps caller:STRFORMAT(@"%@(撤销S)",caller) spIndex:spIndex difStrong:mDifStrong type:mType debugMode:false except4SP2F:except4SP2F];
+        [AINetUtils updateOutSPStrong_4IF:fCanset iScene:iScene baseSceneToContent_ps:baseSceneToContent_ps cansetToContent_ps:cansetToContent_ps caller:STRFORMAT(@"%@(撤销S)",caller) spIndex:spIndex difStrong:mDifStrong type:mType debugMode:false except4SP2F:except4SP2F];
     } runBlock:^{
-        [AINetUtils updateOutSPStrong_4IF:iRScene iCansetContent_ps:cansetToContent_ps caller:caller spIndex:spIndex difStrong:difStrong type:type debugMode:debugMode except4SP2F:except4SP2F];
+        [AINetUtils updateOutSPStrong_4IF:fCanset iScene:iScene baseSceneToContent_ps:baseSceneToContent_ps cansetToContent_ps:cansetToContent_ps caller:caller spIndex:spIndex difStrong:difStrong type:type debugMode:debugMode except4SP2F:except4SP2F];
     }];
 }
 
@@ -725,8 +730,14 @@
  */
 -(NSDictionary*) getItemOutSPDic {
     AIFoNodeBase *fCanset = [SMGUtils searchNode:self.fCanset];
+    NSArray *baseSceneOrders = [self getBaseSceneToOrders];
+    NSString *key = [AINetUtils getOutSPKey:Simples2Pits(baseSceneOrders)];
+    return [fCanset getItemOutSPDic:key];
+}
+
+//取self是直接最近作用于哪个base任务的（可能是H子任务，也可能是R任务）(参考33172-方案3）。
+-(NSArray*) getBaseSceneToOrders {
     NSArray *baseSceneOrders = nil;
-    
     if (ISOK(self.basePFoOrTargetFoModel, AIMatchFoModel.class)) {
         AIMatchFoModel *pFo = (AIMatchFoModel*)self.basePFoOrTargetFoModel;
         AIFoNodeBase *baseScene = [SMGUtils searchNode:pFo.matchFo];
@@ -735,9 +746,7 @@
         TOFoModel *baseScene = (TOFoModel*)self.basePFoOrTargetFoModel;
         baseSceneOrders = baseScene.transferXvModel.cansetToOrders;
     }
-    
-    NSString *key = [AINetUtils getOutSPKey:Simples2Pits(baseSceneOrders)];
-    return [fCanset getItemOutSPDic:key];
+    return baseSceneOrders;
 }
 
 /**

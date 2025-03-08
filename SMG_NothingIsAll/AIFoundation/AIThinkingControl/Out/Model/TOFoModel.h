@@ -187,5 +187,6 @@
  *  MARK:--------------------取outSPDic (转实前取cansetFrom的,转实后取cansetTo的) (参考33062-正据4&TODO5)--------------------
  */
 -(NSDictionary*) getItemOutSPDic;
+-(NSArray*) getBaseSceneToOrders;
 
 @end

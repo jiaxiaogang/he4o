@@ -471,6 +471,10 @@
         for (NSNumber *cansetFromIndex in deltaSPDic.allKeys) {
             AISPStrong *deltaSPStrong = [deltaSPDic objectForKey:cansetFromIndex];
             NSInteger cansetToIndex = cansetFromIndex.integerValue;//cansetFrom和cansetTo一样长,并且下标都是一一对应的;
+            
+            //TODOTOMORROW20250308: 继续写OutSPDic存在F.Canset下，改初始化。
+            //1、找到baseSceneToOrders，然后从cansetFrom下取其本身评分。
+            
             [sceneTo updateOutSPStrong:cansetToIndex difStrong:deltaSPStrong.pStrong type:ATPlus canset:cansetToContent_ps debugMode:false caller:STRFORMAT(@"TuiJv%@时P初始化",isH?@"H":@"R")];
             [sceneTo updateOutSPStrong:cansetToIndex difStrong:deltaSPStrong.sStrong type:ATSub canset:cansetToContent_ps debugMode:false caller:STRFORMAT(@"TuiJv%@时S初始化",isH?@"H":@"R")];
         }
@@ -535,6 +539,10 @@
         for (NSNumber *cansetFromIndex in deltaSPDic.allKeys) {
             AISPStrong *deltaSPStrong = [deltaSPDic objectForKey:cansetFromIndex];
             NSInteger cansetToIndex = cansetFromIndex.integerValue;//cansetFrom和cansetTo一样长,并且下标都是一一对应的;
+            
+            //TODOTOMORROW20250308: 继续写OutSPDic存在F.Canset下，改初始化。
+            //1、找到baseSceneToOrders，然后从cansetFrom下取其本身评分。
+            
             [fatRCanset updateOutSPStrong:cansetToIndex difStrong:deltaSPStrong.pStrong type:ATPlus canset:fatHCansetContent_ps debugMode:false caller:@"TuiJvH时P初始化"];
             [fatRCanset updateOutSPStrong:cansetToIndex difStrong:deltaSPStrong.sStrong type:ATSub canset:fatHCansetContent_ps debugMode:false caller:@"TuiJvH时S初始化"];
         }

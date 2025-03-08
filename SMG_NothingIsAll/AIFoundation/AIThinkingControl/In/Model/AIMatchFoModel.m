@@ -241,6 +241,10 @@
         [newRCanset updateIndexDic:matchFo indexDic:[self.indexDic2 copy]];
         
         //2024.09.04: eff已经弃用了,这里改为把P默认计1 (参考33031b-BUG5-TODO1);
+        
+        //TODOTOMORROW20250308: 继续写OutSPDic存在F.Canset下，改初始化。
+        //1、找到baseSceneToOrders，然后从cansetFrom下取其本身评分。
+        
         [matchFo updateOutSPStrong:newRCanset.count difStrong:1 type:ATPlus canset:newRCanset.content_ps debugMode:false caller:@"NewRCanset初始化P=1"];
         
         if (self.indexDic2 == 0) {
@@ -257,6 +261,13 @@
     //e. outSP值子即父: 当前NewRCanset所在的matchFo场景就是iScene (参考33112-TODO4.3);
     //2024.11.26: 从0到cutIndex全计P+1 (参考33134-FIX2a);
     for (NSInteger i = 0; i <= newRCanset.count; i++) {
+        
+        
+        
+        //TODOTOMORROW20250308: 继续写OutSPDic存在F.Canset下，改初始化。
+        //1、找到baseSceneToOrders，然后从cansetFrom下取其本身评分。
+
+        
         [AINetUtils updateOutSPStrong_4IF:matchFo iCansetContent_ps:newRCanset.content_ps caller:@"NewRCanset本就存在时,将当前帧SP+1推举到父层canset中" spIndex:i difStrong:1 type:ATPlus debugMode:false except4SP2F:except4SP2F];
     }
     
