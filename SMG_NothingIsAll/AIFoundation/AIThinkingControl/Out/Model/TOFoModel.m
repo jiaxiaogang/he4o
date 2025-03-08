@@ -627,6 +627,15 @@
     return self.cansetFo;
 }
 
+//取当前cansetFrom对应的F层canset。
+-(AIKVPointer*) fCanset {
+    //0. 如果solution可能从I层求解，那此处需要判断typeI还是F，分别处理取fCanset的方法。
+    if (self.baseSceneModel.type == SceneTypeI) {
+        ELog(@"现在只支持从F层求解的情况。如果不废弃I层求解，此处要做兼容。即根据迁移关联从F层取来FCanset（参考33172-TODO4）。")
+    }
+    return self.cansetFrom;
+}
+
 /**
  *  MARK:--------------------取此方案迁移目标--------------------
  *  @desc 无论是否转实,都可以取得sceneTo;
@@ -683,6 +692,14 @@
     //2024.09.21: 去掉best过状态要求 (参考33065-TODO3);
     //if (self.cansetStatus == CS_None) return;
     
+    
+    
+    
+    //TODOTOMORROW20250308: 继续写OutSPDic存在F.Canset下，改初始化，更新，及评价取用。
+    //1、找到baseSceneToOrders，然后从cansetFrom下取其本身评分。
+    
+    
+    
     //0. log
     //DemandModel *baseDemand = (DemandModel*)self.baseOrGroup;
     ReasonDemandModel *root = (ReasonDemandModel*)[TOUtils getRootDemandModelWithSubOutModel:self];
@@ -707,13 +724,7 @@
  *      2025.03.08: 改成从FCanset取baseSceneOutSPKey下的sp字典（参考33172-方案3）。
  */
 -(NSDictionary*) getItemOutSPDic {
-    
-    //0. 如果solution可能从I层求解，那此处需要判断typeI还是F，分别处理取fCanset的方法。
-    if (self.baseSceneModel.type == SceneTypeI) {
-        ELog(@"现在只支持从F层求解的情况。如果不废弃I层求解，此处要做兼容。即根据迁移关联从F层取来FCanset（参考33172-TODO4）。")
-    }
-    
-    AIFoNodeBase *fCanset = [SMGUtils searchNode:self.cansetFrom];
+    AIFoNodeBase *fCanset = [SMGUtils searchNode:self.fCanset];
     NSArray *baseSceneOrders = nil;
     
     if (ISOK(self.basePFoOrTargetFoModel, AIMatchFoModel.class)) {

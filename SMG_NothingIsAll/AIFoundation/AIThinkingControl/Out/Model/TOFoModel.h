@@ -155,6 +155,9 @@
 -(AIKVPointer*) sceneFrom;
 -(AIKVPointer*) cansetFrom;
 
+//取当前cansetFrom对应的F层canset。
+-(AIKVPointer*) fCanset;
+
 /**
  *  MARK:--------------------取此方案迁移目标--------------------
  */

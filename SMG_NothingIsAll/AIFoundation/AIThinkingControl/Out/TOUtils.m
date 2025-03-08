@@ -502,22 +502,18 @@
     HEResult *result = [TOUtils getStableScore_General:iScene startSPIndex:startSPIndex endSPIndex:endSPIndex spDic:iSPDic];
     return result.spScore;
 }
-//Out针对Canset稳定性;
+
+/**
+ *  MARK:--------------------Out针对Canset稳定性--------------------
+ *  @version
+ *      2025.03.08: 兼容从fCanset取其在各个baseSceneToOrders的sp稳定性（参考33173-TODO2）。
+ */
 +(HEResult*) getStableScore_Out:(TOFoModel*)canset startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex {
-    
-    
-    
-    //TODOTOMORROW20250308: 继续写OutSPDic存在F.Canset下，改初始化，更新，及评价取用。
-    //fCanset只有一个fScene，fCanset已经迁移成了iCansetToOrders
-    //1、找到baseCanset，然后从cansetFrom下取其本身评分。
-    //2、再然后找F层的迁移源，计算机环境影响力。
-    
-    
     //1. 取出I层spDic;
-    AIFoNodeBase *cansetFrom = [SMGUtils searchNode:canset.cansetFrom];//本来应该传cansetTo,不过cansetTo可能未转实,并且cansetFrom效果也一致;
+    AIFoNodeBase *fCanset = [SMGUtils searchNode:canset.fCanset];//本来应该传cansetTo,不过cansetTo可能未转实,并且cansetFrom效果也一致;
     //2024.12.03: 避免iSPDic被更新值后,如果node被保存,就被持久化了 (此问题未证实,只是这么猜想,就调用下copy预防一下);
     NSMutableDictionary *iSPDic = [ThinkingUtils copySPDic:[canset getItemOutSPDic]];
-    NSString *protoSPDicStr = CLEANSTR(iSPDic);
+    //NSString *protoSPDicStr = CLEANSTR(iSPDic);
     
     //2. 取出F层 (参考33114-TODO3-用I/F综合起来决定最终spDic及稳定性);
     AIFoNodeBase *iScene = [SMGUtils searchNode:canset.sceneTo];
@@ -530,24 +526,17 @@
         AIFoNodeBase *fScene = [SMGUtils searchNode:fPort.fScene];
         
         //2024.11.29: 性能优化: 单次已从0.66优化至0.03ms (性能说明: 用alg实时计算要0.66ms,直接用fo复用取要0.03ms);
-        CGFloat foMatchValue = 0;
-        if (canset.isH) {
-            //3a. H时,以RScene场景树,去取匹配度 (参考33144-TODO2);
-            AITransferPort_H *fPort_H = (AITransferPort_H*)fPort;
-            AIFoNodeBase *iRScene = [SMGUtils searchNode:fPort_H.iRScene];
-            foMatchValue = [iRScene getAbsMatchValue:fPort_H.fRScene];
-            [AITest test33:iRScene fScene:fPort_H.fRScene];
-        } else {
-            //3b. R时,fScene就是fRScene,直接取匹配度即可;
-            foMatchValue = [iScene getAbsMatchValue:fScene.p];
-            [AITest test33:iScene fScene:fScene.p];
-        }
+        //3b. R时,fScene就是fRScene,直接取匹配度即可;
+        CGFloat foMatchValue = [iScene getAbsMatchValue:fScene.p];
+        [AITest test33:iScene fScene:fScene.p];
+        
         //2025.01.04: 提升环境作用力: 28原则太激烈了,匹配度0.7时就只剩10%的作用力了,增加环境温度为0.01 (当匹配度0.7时作用力为25%);
         CGFloat cooledValue = [MathUtils getCooledValue:1 - foMatchValue finishValue:0.01f];//算出当前匹配度,应该冷却到什么比例;
         
         //4. 把F层的SPDic冷却后,累计到I层 (环境作用于个体) (参考33115-方案2-累计spStrong);
         //2024.11.30: 性能优化: 单次已从1.14优化至0.02ms;
-        NSDictionary *fSPDic = [fScene getItemOutSPDic:fPort.fCansetHeader];
+        //2025.03.08: 此处改成从fCanset取对应sceneToOrders的sp字典（如果后面测得有性能问题，可以把sceneToOrders转成header存到AITransferPort下）。
+        NSDictionary *fSPDic = [fCanset getItemOutSPDic:[AINetUtils getOutSPKey:fScene.content_ps]];
         
         //debugLog: 调试"有向无距场景"的竞争浮现 (参考33141-观察);
         //if ([NVHeUtil foHavXianWuJv:fScene.p] && foMatchValue > 0 && DICISOK(fSPDic)) {
@@ -578,7 +567,7 @@
     //8. 算出最终综合spDic的稳定性;
     //NSString *sumSPDicStr = CLEANSTR(iSPDic);
     //if (![protoSPDicStr isEqualToString:sumSPDicStr]) NSLog(@"Out父非子: proto:%@ -> sum:%@",protoSPDicStr,sumSPDicStr);
-    return [TOUtils getStableScore_General:cansetFrom startSPIndex:startSPIndex endSPIndex:endSPIndex spDic:iSPDic];
+    return [TOUtils getStableScore_General:fCanset startSPIndex:startSPIndex endSPIndex:endSPIndex spDic:iSPDic];
 }
 
 +(HEResult*) getStableScore_General:(AIFoNodeBase*)fo startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex spDic:(NSDictionary*)spDic {
