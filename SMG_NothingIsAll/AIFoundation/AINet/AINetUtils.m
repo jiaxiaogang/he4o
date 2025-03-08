@@ -1060,20 +1060,12 @@
  *      2025.03.06: 把OutSPDic存到F层canset下，其中baseSceneToOrders为key（参考33172-方案3）。
  */
 +(void) updateOutSPStrong_4IF:(AIFoNodeBase*)fCanset iScene:(AIFoNodeBase*)iScene baseSceneToContent_ps:(NSArray*)baseSceneToContent_ps cansetToContent_ps:(NSArray*)cansetToContent_ps caller:(NSString*)caller spIndex:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type debugMode:(BOOL)debugMode except4SP2F:(NSMutableArray*)except4SP2F {
-    
-    //TODOTOMORROW20250305: 写HCanset.OutSPDic存在subCanset下，无论是初始化，更新，还是评价取用时。
-    
-    
-    
     //0. i层计SP;
     [fCanset updateOutSPStrong:spIndex difStrong:difStrong type:type baseSceneToContent_ps:baseSceneToContent_ps debugMode:debugMode caller:caller];
     
-    
-    //TODOTOMORROW20250307: 分析一下这里，fCanset只有一个fScene，fCanset已经迁移成了iCansetToOrders
-    //那么：会不会有多个fCanset都能迁移成iCansetToOrders？
-    //那么：只要fCanset迁移到IScene下，且迁移成了cansetToContent_ps，其迁移时的F层都可以做为子即父的父。
-    
     //1. 取f (有迁移复用);
+    //说明1：F层canset必然会继承给下面多个I层用，而任何一个I层计SP时，都推举到F层。
+    //说明2：此处fatherPorts大几率只有一条，但仍可能是多条所以用数组（即可能有多个fCanset都能迁移成同样内容的同一个iCansetToOrders）。
     NSArray *fatherPorts = [AINetUtils transferPorts_4Father:iScene iCansetContent_ps:cansetToContent_ps];
     for (AITransferPort *fatherPort in fatherPorts) {
         //2024.12.05: 避免F值快速重复累计到很大,sp更新(同场景下的)防重推 (参考33137-方案v5TODO2);
@@ -1085,8 +1077,11 @@
         AIFoNodeBase *fatherScene = [SMGUtils searchNode:fatherPort.fScene];
         AIFoNodeBase *fatherCanset = [SMGUtils searchNode:fatherPort.fCanset];
         
+        //TODOTOMORROW20250308: 继续写OutSPDic存在F.Canset下，改初始化，更新，及评价取用。
+        //fCanset只有一个fScene，fCanset已经迁移成了iCansetToOrders
+        
         //2. cansetFrom和cansetTo是等长的,所以直接iCanset的index可以当fCanset的index来用;
-        [fatherScene updateOutSPStrong:spIndex difStrong:difStrong type:type canset:fatherCanset.content_ps debugMode:false caller:STRFORMAT(@"%@(推举父)",caller)];
+        [fatherCanset updateOutSPStrong:spIndex difStrong:difStrong type:type baseSceneToContent_ps:fatherScene.content_ps debugMode:false caller:STRFORMAT(@"%@(推举父)",caller)];
     }
 }
 

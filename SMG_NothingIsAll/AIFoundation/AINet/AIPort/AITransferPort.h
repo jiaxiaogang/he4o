@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ *  MARK:--------------------迁移关联端口--------------------
+ */
 @interface AITransferPort : NSObject <NSCoding>
 
 +(AITransferPort*) newWithFScene:(AIKVPointer*)fScene fCanset:(AIFoNodeBase*)fCanset iScene:(AIKVPointer*)iScene iCansetContent_ps:(NSArray*)iCansetContent_ps;

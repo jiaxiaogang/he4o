@@ -25,6 +25,7 @@
 /**
  *  MARK:--------------------迁移关联V2 (当前为I推举的F端口) (参考29069-todo10.2 & 33112-TODO4.4)--------------------
  *  @desc 工作在场景fo下,在cansetFo下不工作 (这个数据存在sceneFo中,而不是cansetFo);
+ *  @desc 因为现在I层Canset都废弃了，所以这个必须保持存在IFScene下，不要想着移到canset下来。
  */
 @property (strong, nonatomic) NSMutableArray *transferFPorts;
 
@@ -94,6 +95,8 @@
  *  MARK:--------------------OutSP强度值--------------------
  *  @desc <key:cansetTo的元素字符串的md5值, value:<vk:spIndex下标, vv:spStrong>> (参考33062-TODO2 & 33065-TODO1);
  *  @desc outSPDic存在每个sceneTo下,k为cansetTo,v为它在这个sceneTo下对应的itemSPDic;
+ *  @version
+ *      2025.03.08: 从存在Scene下，改为存到F层Canset下（参考33172-方案3）。
  */
 @property (strong, nonatomic) NSMutableDictionary *outSPDic;
 
