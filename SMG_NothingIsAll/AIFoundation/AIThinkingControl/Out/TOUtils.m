@@ -504,6 +504,15 @@
 }
 //Out针对Canset稳定性;
 +(HEResult*) getStableScore_Out:(TOFoModel*)canset startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex {
+    
+    
+    
+    //TODOTOMORROW20250308: 继续写OutSPDic存在F.Canset下，改初始化，更新，及评价取用。
+    //fCanset只有一个fScene，fCanset已经迁移成了iCansetToOrders
+    //1、找到baseCanset，然后从cansetFrom下取其本身评分。
+    //2、再然后找F层的迁移源，计算机环境影响力。
+    
+    
     //1. 取出I层spDic;
     AIFoNodeBase *cansetFrom = [SMGUtils searchNode:canset.cansetFrom];//本来应该传cansetTo,不过cansetTo可能未转实,并且cansetFrom效果也一致;
     //2024.12.03: 避免iSPDic被更新值后,如果node被保存,就被持久化了 (此问题未证实,只是这么猜想,就调用下copy预防一下);

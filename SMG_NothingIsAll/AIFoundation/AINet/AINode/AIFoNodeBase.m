@@ -178,8 +178,8 @@
 /**
  *  MARK:--------------------由sceneFo调用,返回canset对应的itemOutSPDic--------------------
  */
--(NSDictionary*) getItemOutSPDic:(NSString*)cansetOutSPKey {
-    return [self.outSPDic objectForKey:cansetOutSPKey];
+-(NSDictionary*) getItemOutSPDic:(NSString*)baseSceneOutSPKey {
+    return [self.outSPDic objectForKey:baseSceneOutSPKey];
 }
 
 //MARK:===============================================================

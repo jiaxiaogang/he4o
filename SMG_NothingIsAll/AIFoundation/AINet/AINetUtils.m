@@ -1077,9 +1077,6 @@
         AIFoNodeBase *fatherScene = [SMGUtils searchNode:fatherPort.fScene];
         AIFoNodeBase *fatherCanset = [SMGUtils searchNode:fatherPort.fCanset];
         
-        //TODOTOMORROW20250308: 继续写OutSPDic存在F.Canset下，改初始化，更新，及评价取用。
-        //fCanset只有一个fScene，fCanset已经迁移成了iCansetToOrders
-        
         //2. cansetFrom和cansetTo是等长的,所以直接iCanset的index可以当fCanset的index来用;
         [fatherCanset updateOutSPStrong:spIndex difStrong:difStrong type:type baseSceneToContent_ps:fatherScene.content_ps debugMode:false caller:STRFORMAT(@"%@(推举父)",caller)];
     }

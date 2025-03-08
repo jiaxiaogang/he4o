@@ -109,7 +109,7 @@
 /**
  *  MARK:--------------------由sceneFo调用,返回canset对应的itemOutSPDic--------------------
  */
--(NSDictionary*) getItemOutSPDic:(NSString*)cansetOutSPKey;
+-(NSDictionary*) getItemOutSPDic:(NSString*)baseSceneOutSPKey;
 
 //MARK:===============================================================
 //MARK:                     < effectDic组 >

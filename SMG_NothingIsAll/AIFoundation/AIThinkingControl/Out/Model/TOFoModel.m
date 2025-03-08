@@ -704,11 +704,29 @@
  *  MARK:--------------------取outSPDic (转实前取cansetFrom的,转实后取cansetTo的) (参考33062-正据4&TODO5)--------------------
  *  @version
  *      2024.09.21: 改回转实前就初始化outSPDic (参考33065-TODO2);
+ *      2025.03.08: 改成从FCanset取baseSceneOutSPKey下的sp字典（参考33172-方案3）。
  */
--(NSMutableDictionary*) getItemOutSPDic {
-    AIFoNodeBase *sceneTo = [SMGUtils searchNode:self.sceneTo];
-    NSString *key = [AINetUtils getOutSPKey:Simples2Pits(self.transferXvModel.cansetToOrders)];
-    return [sceneTo.outSPDic objectForKey:key];
+-(NSDictionary*) getItemOutSPDic {
+    
+    //0. 如果solution可能从I层求解，那此处需要判断typeI还是F，分别处理取fCanset的方法。
+    if (self.baseSceneModel.type == SceneTypeI) {
+        ELog(@"现在只支持从F层求解的情况。如果不废弃I层求解，此处要做兼容。即根据迁移关联从F层取来FCanset（参考33172-TODO4）。")
+    }
+    
+    AIFoNodeBase *fCanset = [SMGUtils searchNode:self.cansetFrom];
+    NSArray *baseSceneOrders = nil;
+    
+    if (ISOK(self.basePFoOrTargetFoModel, AIMatchFoModel.class)) {
+        AIMatchFoModel *pFo = (AIMatchFoModel*)self.basePFoOrTargetFoModel;
+        AIFoNodeBase *baseScene = [SMGUtils searchNode:pFo.matchFo];
+        baseSceneOrders = baseScene.convert2Orders;
+    } else {
+        TOFoModel *baseScene = (TOFoModel*)self.basePFoOrTargetFoModel;
+        baseSceneOrders = baseScene.transferXvModel.cansetToOrders;
+    }
+    
+    NSString *key = [AINetUtils getOutSPKey:Simples2Pits(baseSceneOrders)];
+    return [fCanset getItemOutSPDic:key];
 }
 
 /**
