@@ -199,25 +199,4 @@
     return result;
 }
 
-//MARK:===============================================================
-//MARK:                     < privateMethod >
-//MARK:===============================================================
-
-/**
- *  MARK:--------------------递归找出pFo (参考28025-todo8)--------------------
- *  @desc 适用范围: 即可用于R任务,也可用于H任务;
- *  @desc 执行说明: H任务会自动递归,直到找到R为止   /   R任务不会递归,直接返回R的pFo;
- */
-+(AIMatchFoModel*) getPFo:(AIKVPointer*)cansetFo_p basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel {
-    //1. 本次非R时: 继续递归;
-    if (ISOK(basePFoOrTargetFoModel, TOFoModel.class)) {
-        TOFoModel *baseTargetFo = (TOFoModel*)basePFoOrTargetFoModel;
-        return [self getPFo:baseTargetFo.content_p basePFoOrTargetFoModel:baseTargetFo.basePFoOrTargetFoModel];
-    }
-    //2. 本次是R时: 返回最终找到的pFo;
-    else {
-        return basePFoOrTargetFoModel;
-    }
-}
-
 @end

@@ -14,7 +14,7 @@
 //MARK:===============================================================
 //MARK:                     < 求解 >
 //MARK:===============================================================
-+(TOFoModel*) hSolutionV4:(HDemandModel *)demand;
++(TOFoModel*) hSolutionV5:(HDemandModel *)demand;
 +(TOFoModel*) rSolution:(ReasonDemandModel *)demand;
 
 /**

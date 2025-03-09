@@ -283,9 +283,8 @@
         //}
         
         //c. 数据准备;
-        AIKVPointer *basePFoOrTargetFo_p = [TOUtils convertBaseFoFromBasePFoOrTargetFoModel:solutionModel.basePFoOrTargetFoModel];
         AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.cansetTo];
-        AIFoNodeBase *pFo = [SMGUtils searchNode:basePFoOrTargetFo_p];//此处pFo和matchFo都是sceneTo
+        AIFoNodeBase *pFo = [SMGUtils searchNode:solutionModel.basePFo.matchFo];//此处pFo和matchFo都是sceneTo
         
         //2024.07.30: 去掉不必要的过滤器 (参考3211a-AbsR);
         //d. 收集真实发生feedbackAlg (order为0条时,跳过);

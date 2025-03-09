@@ -812,17 +812,17 @@
  *  MARK:--------------------根据indexDic更新conPort和absPort强度值--------------------
  *  @desc canset方案最终激活时,将其conPorts和absPorts的强度+1 (参考28086-todo2);
  */
-+(void) updateConAndAbsStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p cansetFo:(AIKVPointer*)cansetFo_p{
++(void) updateConAndAbsStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p cansetFo:(NSArray*)cansetToOrders {
     //1. 数据准备;
     AIFoNodeBase *matchFo = [SMGUtils searchNode:matchFo_p];
-    AIFoNodeBase *cansetFo = [SMGUtils searchNode:cansetFo_p];
+    NSArray *cansetToContent_ps = Simples2Pits(cansetToOrders);
     
     //2. 将已发生部分增强refStrong;
     for (NSNumber *key in indexDic.allKeys) {
         NSInteger absIndex = key.integerValue;
         NSInteger conIndex = NUMTOOK([indexDic objectForKey:key]).integerValue;
         AIAlgNodeBase *absAlg = [SMGUtils searchNode:ARR_INDEX(matchFo.content_ps, absIndex)];
-        AIAlgNodeBase *conAlg = [SMGUtils searchNode:ARR_INDEX(cansetFo.content_ps, conIndex)];
+        AIAlgNodeBase *conAlg = [SMGUtils searchNode:ARR_INDEX(cansetToContent_ps, conIndex)];
         [AINetUtils relateAlgAbs:absAlg conNodes:@[conAlg] isNew:false];
     }
 }
@@ -834,10 +834,9 @@
 /**
  *  MARK:--------------------根据indexDic更新refPort强度值 (参考28103-3)--------------------
  */
-+(void) updateAlgRefStrongByIndexArr:(NSArray*)indexArr fo:(AIKVPointer*)fo_p {
++(void) updateAlgRefStrongByIndexArr:(NSArray*)indexArr foContent_ps:(NSArray*)foContent_ps {
     //1. 根据indexDic取出已发生部分content_ps;
-    AIFoNodeBase *fo = [SMGUtils searchNode:fo_p];
-    NSArray *frontContent_ps = [self filterContentAlgPsByIndexArr:indexArr fo:fo];
+    NSArray *frontContent_ps = [self filterContentAlgPsByIndexArr:indexArr foContent_ps:foContent_ps];
     
     //2. 将已发生部分Alg增强refStrong;
     for (AIKVPointer *item in frontContent_ps) {
@@ -854,10 +853,10 @@
  *  MARK:--------------------根据indexDic筛选fo的content--------------------
  */
 +(NSArray*) filterContentAlgPsByIndexDic:(NSDictionary*)indexDic matchFo:(AIFoNodeBase*)matchFo {
-    return [self filterContentAlgPsByIndexArr:indexDic.allKeys fo:matchFo];
+    return [self filterContentAlgPsByIndexArr:indexDic.allKeys foContent_ps:matchFo.content_ps];
 }
 
-+(NSArray*) filterContentAlgPsByIndexArr:(NSArray*)indexArr fo:(AIFoNodeBase*)fo {
++(NSArray*) filterContentAlgPsByIndexArr:(NSArray*)indexArr foContent_ps:(NSArray*)foContent_ps {
     //1. 把下标从小到大排序;
     indexArr = [SMGUtils sortSmall2Big:indexArr compareBlock:^double(NSNumber *obj) {
         return obj.integerValue;
@@ -865,7 +864,7 @@
     
     //2. 根据下标indexArr取出已发生部分content_ps;
     return [SMGUtils convertArr:indexArr convertBlock:^id(NSNumber *index) {
-        return ARR_INDEX(fo.content_ps, index.integerValue);
+        return ARR_INDEX(foContent_ps, index.integerValue);
     }];
 }
 

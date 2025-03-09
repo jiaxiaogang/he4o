@@ -121,7 +121,6 @@
  *  MARK:--------------------虚实v2模型--------------------
  */
 @property (strong, nonatomic) TCTransferXvModel *transferXvModel;
-@property (strong, nonatomic) AITransferModel *transferSiModel;
 
 /**
  *  MARK:--------------------下帧初始化 (可接受反馈) (参考31073-TODO2g)--------------------

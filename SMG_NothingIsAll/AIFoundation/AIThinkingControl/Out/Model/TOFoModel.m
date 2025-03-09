@@ -329,8 +329,7 @@
  *  MARK:--------------------有iCanset直接返回进行行为化等 (参考29069-todo9 & todo10.1b)--------------------
  */
 -(AIKVPointer *)content_p {
-    if (_transferSiModel) return _transferSiModel.canset;
-    return super.content_p;
+    return self.cansetFrom;
 }
 
 - (NSInteger)cansetActIndex {
@@ -459,12 +458,12 @@
         }];
         //注: 此处非CS_None状态的cansetModel,subHDemand一般为nil;
         if (subHDemand) subHDemand.status = TOModelStatus_Finish;
-        if (Log4OPushM) NSLog(@"RCansetA有效:M(A%ld) C(A%ld) CAtFo:%@",protoAlg_p.pointerId,curAlgModel.content_p.pointerId,Pit2FStr(self.content_p));
+        if (Log4OPushM) NSLog(@"RCansetA有效:M(A%ld) C(A%ld) CAtFo:%@",protoAlg_p.pointerId,curAlgModel.content_p.pointerId,Pits2FStr(Simples2Pits(self.transferXvModel.cansetToOrders)));
         self.status = TOModelStatus_Runing;
         
         //4. 收集真实发生realMaskFo,收集成hCanset (参考30131-todo1 & 30132-方案);
         //2023.12.29: mcIsBro=true时,生成新hCanset (做31026-第2步时临时起意改的);
-        AIFoNodeBase *rCanset = [SMGUtils searchNode:self.transferSiModel.canset];
+        NSArray *cansetToContent_ps = Simples2Pits(self.transferXvModel.cansetToOrders);
         AIMatchFoModel *basePFo = self.basePFo;
         NSArray *order = [basePFo convertOrders4NewCansetV2];
         AIFoNodeBase *pFo = [SMGUtils searchNode:basePFo.matchFo];
@@ -483,9 +482,9 @@
                 //2024.06.26: indexDic有可能指定后还在更新,导致有越界 (参考32014);
                 [newHCanset updateIndexDic:pFo indexDic:[basePFo.indexDic2 copy]];
                 
-                AIKVPointer *actIndexAlg_p = ARR_INDEX(rCanset.content_ps, self.cansetActIndex);
+                AIKVPointer *actIndexAlg_p = ARR_INDEX(cansetToContent_ps, self.cansetActIndex);
                 NSString *fltLog = FltLog4CreateHCanset(3);
-                NSLog(@"%@%@%@%@Canset演化> NewHCanset:%@ 反馈到rCanset:%@ 的%ld帧:%@",FltLog4XueQuPi(3),FltLog4HDemandOfYouPiGuo(@"5"),FltLog4XueBanYun(2),fltLog,Fo2FStr(newHCanset),ShortDesc4Node(rCanset),self.cansetActIndex,Pit2FStr(actIndexAlg_p));
+                NSLog(@"%@%@%@%@Canset演化> NewHCanset:%@ 反馈到rCanset:%@ 的%ld帧:%@",FltLog4XueQuPi(3),FltLog4HDemandOfYouPiGuo(@"5"),FltLog4XueBanYun(2),fltLog,Fo2FStr(newHCanset),Pits2FStr(cansetToContent_ps),self.cansetActIndex,Pit2FStr(actIndexAlg_p));
             }
             
             //2024.11.03: 在挂载新的Canset时,实时推举 & 并防重(只有新挂载的canset,才有资格实时调用推举,并推举spDic都到父场景中) (参考33112);
@@ -755,7 +754,6 @@
         self.subDemands = [aDecoder decodeObjectForKey:@"subDemands"];
         self.feedbackMv = [aDecoder decodeObjectForKey:@"feedbackMv"];
         self.transferXvModel = [aDecoder decodeObjectForKey:@"transferXvModel"];
-        self.transferSiModel = [aDecoder decodeObjectForKey:@"transferSiModel"];
         self.refrectionNo = [aDecoder decodeBoolForKey:@"refrectionNo"];
     }
     return self;
@@ -770,7 +768,6 @@
     [aCoder encodeObject:self.subDemands forKey:@"subDemands"];
     [aCoder encodeObject:self.feedbackMv forKey:@"feedbackMv"];
     [aCoder encodeObject:self.transferXvModel forKey:@"transferXvModel"];
-    [aCoder encodeObject:self.transferSiModel forKey:@"transferSiModel"];
     [aCoder encodeBool:self.refrectionNo forKey:@"refrectionNo"];
 }
 

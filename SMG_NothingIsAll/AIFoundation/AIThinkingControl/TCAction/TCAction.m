@@ -35,7 +35,7 @@
  */
 +(TCResult*) action:(TOFoModel*)foModel{
     //1. 数据准备
-    AIFoNodeBase *curFo = [SMGUtils searchNode:foModel.transferSiModel.canset];
+    NSArray *cansetToContent_ps = Simples2Pits(foModel.transferXvModel.cansetToOrders);
     
     //2. 因root状态中断检查;
     ReasonDemandModel *root = (ReasonDemandModel*)[TOUtils getRootDemandModelWithSubOutModel:foModel];
@@ -66,7 +66,7 @@
     NSString *fltLog4 = FltLog4CreateHCanset(1);
     NSString *fltLog5 = FltLog4DefaultIf(!foModel.isH, @"2");
     NSString *fromDSC = STRFORMAT(@"FROM<F%ld F%ld F%ld>",Demand2Pit((DemandModel*)foModel.baseOrGroup).pointerId,foModel.sceneFrom.pointerId,foModel.cansetFrom.pointerId);
-    OFTitleLog(@"行为化Fo",@"\n%@%@%@%@%@%@行为化%@下标 (%ld/%ld) %@ cansetTo:%@ by:%@",fltLog1,fltLog2,fltLog3,fltLog4,fltLog5,rhLog,frameLog,foModel.cansetActIndex,foModel.cansetTargetIndex,Pit2FStr([foModel getCurFrame].content_p),Fo2FStr(curFo),fromDSC);
+    OFTitleLog(@"行为化Fo",@"\n%@%@%@%@%@%@行为化%@下标 (%ld/%ld) %@ cansetTo:%@ by:%@",fltLog1,fltLog2,fltLog3,fltLog4,fltLog5,rhLog,frameLog,foModel.cansetActIndex,foModel.cansetTargetIndex,Pit2FStr([foModel getCurFrame].content_p),Pits2FStr(cansetToContent_ps),fromDSC);
     NSLog(@"\t%@sceneTo:%@",fltLog5,Pit2FStr(foModel.sceneTo));
     [theTC updateOperCount:kFILENAME];
     Debug();

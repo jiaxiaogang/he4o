@@ -340,29 +340,6 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------将TOModels转为Pointers--------------------
- *  @result notnull
- */
-+(NSMutableArray*) convertPointersFromTOModels:(NSArray*)toModels{
-    //1. 收集返回 (不收集content_p为空的部分,如:TOValueModel的目标pValue有时为空);
-    return [SMGUtils convertArr:toModels convertBlock:^id(TOModelBase *obj) {
-        return obj.content_p;
-    }];
-}
-
-//R时返回pFo.matchFo,H时返回targetFo;
-+(AIKVPointer*) convertBaseFoFromBasePFoOrTargetFoModel:(id)basePFoOrTargetFoModel {
-    if (ISOK(basePFoOrTargetFoModel, AIMatchFoModel.class)) {
-        AIMatchFoModel *pFo = (AIMatchFoModel*)basePFoOrTargetFoModel;
-        return pFo.matchFo;
-    } else if(ISOK(basePFoOrTargetFoModel, TOFoModel.class)){
-        TOFoModel *targetFo = (TOFoModel*)basePFoOrTargetFoModel;
-        return targetFo.content_p;
-    }
-    return nil;
-}
-
-/**
  *  MARK:--------------------是否HNGL节点--------------------
  *  @version
  *      2020.12.16: 增加toAlgModel判断的重载 (因为21115的改动,hngl并不直接由alg判断,而是由fo来判断);
@@ -425,10 +402,6 @@
         }
     }
     return result;
-}
-
-+(NSString*) toModel2Key:(TOModelBase*)toModel{
-    return STRFORMAT(@"%p_%@",toModel,Pit2FStr(toModel.content_p));
 }
 
 /**

@@ -86,10 +86,11 @@
     [order addObjectsFromArray:[theTC.inModelManager shortCache:false]];
     
     //3. 收集cansetFo"即将行为化的部分"做为后半部分 (参考30054-todo2);
-    AIFoNodeBase *actionFo = [SMGUtils searchNode:actionFoModel.content_p];
-    for (NSInteger i = actionFoModel.cansetCutIndex + 1; i <= MIN(actionFoModel.cansetTargetIndex, actionFo.count - 1); i++) {
-        AIKVPointer *item_p = ARR_INDEX(actionFo.content_ps, i);
-        NSTimeInterval deltaTime = [NUMTOOK(ARR_INDEX(actionFo.deltaTimes, i)) doubleValue];
+    NSArray *cansetToOrders = actionFoModel.transferXvModel.cansetToOrders;
+    for (NSInteger i = actionFoModel.cansetCutIndex + 1; i <= MIN(actionFoModel.cansetTargetIndex, cansetToOrders.count - 1); i++) {
+        AIShortMatchModel_Simple *itemOrder = ARR_INDEX(cansetToOrders, i);
+        AIKVPointer *item_p = itemOrder.alg_p;
+        NSTimeInterval deltaTime = itemOrder.inputTime;
         [order addObject:[AIShortMatchModel_Simple newWithAlg_p:item_p inputTime:deltaTime isTimestamp:false]];
     }
     

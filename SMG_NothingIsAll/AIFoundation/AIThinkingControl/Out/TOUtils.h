@@ -110,15 +110,6 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------将TOModels转为Pointers--------------------
- *  @result notnull
- */
-+(NSMutableArray*) convertPointersFromTOModels:(NSArray*)toModels;
-
-//R时返回pFo.matchFo,H时返回targetFo;
-+(AIKVPointer*) convertBaseFoFromBasePFoOrTargetFoModel:(id)basePFoOrTargetFoModel;
-
-/**
  *  MARK:--------------------是否HNGL节点--------------------
  *  @desc 其中isHNGL主要支持fo,alg都是hnglConAlg (参考21115);
  *  @todo
@@ -144,13 +135,6 @@
  *  _param endIndex     : 下标(含);
  */
 +(double) getSumDeltaTime:(AIFoNodeBase*)fo startIndex:(NSInteger)startIndex endIndex:(NSInteger)endIndex;
-
-/**
- *  MARK:--------------------toModel转key--------------------
- *  @desc 用于字典数据的key,可以避免因pointer防重失效 (比如scoreDic) (参考25056);
- *  @param toModel : notnull
- */
-+(NSString*) toModel2Key:(TOModelBase*)toModel;
 
 /**
  *  MARK:--------------------稳定性评分--------------------

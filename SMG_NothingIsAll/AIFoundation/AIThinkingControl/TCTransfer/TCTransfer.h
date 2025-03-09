@@ -29,10 +29,7 @@
  *  MARK:--------------------H虚迁移v2--------------------
  *  @desc 说明：在共同的rSceneFrom下，把rCansetFrom下的hCansetFrom迁移到rCansetTo下。
  */
-+(TCTransferXvModel*) transferJiCen_H_V2:(AIKVPointer*)hCansetFrom_p rCansetFrom:(AIFoNodeBase*)rCansetFrom rCansetTo:(AIFoNodeBase*)rCansetTo rSceneFrom:(AIFoNodeBase*)rSceneFrom rSceneTo:(AIFoNodeBase*)rSceneTo rCansetToActIndex:(NSInteger)rCansetToActIndex;
 +(TCTransferXvModel*) transferJiCen_H_V3:(AIKVPointer*)hCansetFrom_p sceneFrom:(AIFoNodeBase*)sceneFrom sceneTo:(AIFoNodeBase*)sceneTo sceneToActIndex:(NSInteger)sceneToActIndex;
-
-+(void) transferSi:(TOFoModel*)cansetModel;
 
 //MARK:===============================================================
 //MARK:                     < 概念迁移算法 >

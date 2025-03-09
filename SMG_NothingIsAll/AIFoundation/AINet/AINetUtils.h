@@ -263,7 +263,7 @@
 /**
  *  MARK:--------------------根据indexDic更新conPort和absPort强度值 (参考28086)--------------------
  */
-+(void) updateConAndAbsStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p cansetFo:(AIKVPointer*)cansetFo_p;
++(void) updateConAndAbsStrongByIndexDic:(NSDictionary*)indexDic matchFo:(AIKVPointer*)matchFo_p cansetFo:(NSArray*)cansetToOrders;
 
 //MARK:===============================================================
 //MARK:                     < Alg引用强度RefStrong更新 >
@@ -272,7 +272,7 @@
 /**
  *  MARK:--------------------根据indexDic更新refPort强度值 (参考28103-3)--------------------
  */
-+(void) updateAlgRefStrongByIndexArr:(NSArray*)indexArr fo:(AIKVPointer*)fo_p;
++(void) updateAlgRefStrongByIndexArr:(NSArray*)indexArr foContent_ps:(NSArray*)foContent_ps;
 
 /**
  *  MARK:--------------------类比出absFo时,此处取得具象fo与absFo的indexDic映射--------------------

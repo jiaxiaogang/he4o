@@ -234,7 +234,7 @@
     Debug();
     
     //4. 快思考无果或后2条,再做求解;
-    TOFoModel *bestResult = [TCSolutionUtil hSolutionV4:hDemand];
+    TOFoModel *bestResult = [TCSolutionUtil hSolutionV5:hDemand];
     
     
     //TODOTOMORROW20240707:

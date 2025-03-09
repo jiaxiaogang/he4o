@@ -255,7 +255,7 @@
     Debug();
     //0. 数据准备 (从上到下,取demand,solutionFo,frameAlg);
     DemandModel *demand = (DemandModel*)solutionModel.baseOrGroup;
-    AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.transferSiModel.canset];
+    NSArray *cansetToOrders = solutionModel.transferXvModel.cansetToOrders;
     TOAlgModel *frameModel = [solutionModel getCurFrame];
     
     //1. 设为actYes
@@ -265,13 +265,13 @@
     
     //2. solutionFo已执行完成,直接取mvDeltaTime做触发器时间;
     double deltaTime = 0;
-    BOOL actYes4Mv = solutionModel.cansetActIndex >= solutionFo.count;
+    BOOL actYes4Mv = solutionModel.cansetActIndex >= cansetToOrders.count;
     if (actYes4Mv) {
-        AIKVPointer *basePFoOrTargetFo_p = [TOUtils convertBaseFoFromBasePFoOrTargetFoModel:solutionModel.basePFoOrTargetFoModel];
-        AIFoNodeBase *basePFoOrTargetFo = [SMGUtils searchNode:basePFoOrTargetFo_p];
-        deltaTime = basePFoOrTargetFo.mvDeltaTime;
+        AIFoNodeBase *basePFo = [SMGUtils searchNode:solutionModel.basePFo.matchFo];//baseTargetFo是没有mvDeltaTime的，所以只能取pFo的。
+        deltaTime = basePFo.mvDeltaTime;
     }else{
-        deltaTime = [NUMTOOK(ARR_INDEX(solutionFo.deltaTimes, solutionModel.cansetActIndex)) doubleValue];
+        AIShortMatchModel_Simple *actOrder = ARR_INDEX(cansetToOrders, solutionModel.cansetActIndex);
+        deltaTime = actOrder.inputTime;
     }
     
     //3. 触发器;

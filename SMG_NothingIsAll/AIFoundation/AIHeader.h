@@ -243,7 +243,6 @@
 #define Ports2Pits(ports) [SMGUtils convertPointersFromPorts:ports]
 #define Nodes2Pits(nodes) [SMGUtils convertPointersFromNodes:nodes]
 #define Simples2Pits(simples) [SMGUtils convertPointersFromSimples:simples]
-#define TOModels2Pits(toModels) [TOUtils convertPointersFromTOModels:toModels]
 
 //Type转字符串
 #define ATType2Str(type) [NSLog_Extension convertATType2Desc:type]
@@ -265,7 +264,6 @@
 //短时记忆转字符串
 #define TOModel2Root2Str(sub) [TOModelVision cur2Root:sub]
 #define TOModel2Sub2Str(cur) [TOModelVision cur2Sub:cur]
-#define TOModel2Key(model) [TOUtils toModel2Key:model]
 
 //强训工具
 #define Queue(name) [RTQueueModel newWithName:name arg0:nil]
