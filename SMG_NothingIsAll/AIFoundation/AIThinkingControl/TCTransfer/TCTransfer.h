@@ -53,12 +53,6 @@
 +(void) transferTuiJv_RH_V3:(AIFoNodeBase*)sceneFrom cansetFrom:(AIFoNodeBase*)cansetFrom isH:(BOOL)isH sceneFromCutIndex:(NSInteger)sceneFromCutIndex;
 
 /**
- *  MARK:--------------------在构建HCanset时,推举到抽象场景中 (参考33112)--------------------
- *  @param broRCansetActIndex 即broCanset正在行为化的帧 (它是新构建的hCanset的场景);
- */
-+(void) transferTuiJv_H_V2:(AIFoNodeBase*)broRScene broRCanset:(AIFoNodeBase*)broRCanset broRCansetActIndex:(NSInteger)broRCansetActIndex broHCanset:(AIFoNodeBase*)broHCanset;
-
-/**
  *  MARK:--------------------计算cansetTo.orders--------------------
  *  @desc 根据综合indexDic把cansetFrom迁移到sceneTo的cansetTo的orders计算出来 (说白了: 有综合映射的帧从cansetFrom取,没有映射的帧从sceneTo取);
  *  @param zonHeIndexDic : <K=cansetFrom下标，V=sceneTo下标>

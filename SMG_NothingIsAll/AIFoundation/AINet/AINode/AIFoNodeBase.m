@@ -170,8 +170,8 @@
     }
 }
 
--(BOOL) containsOutSPStrong:(NSArray*)cansetContent_ps {
-    NSString *key = [AINetUtils getOutSPKey:cansetContent_ps];
+-(BOOL) containsOutSPStrong:(NSArray*)baseSceneContent_ps {
+    NSString *key = [AINetUtils getOutSPKey:baseSceneContent_ps];
     return [self.outSPDic objectForKey:key];
 }
 

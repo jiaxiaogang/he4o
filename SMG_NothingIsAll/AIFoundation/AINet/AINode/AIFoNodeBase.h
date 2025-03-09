@@ -104,7 +104,7 @@
  *  MARK:--------------------更新OutSPDic强度值--------------------
  */
 -(void) updateOutSPStrong:(NSInteger)spIndex difStrong:(NSInteger)difStrong type:(AnalogyType)type baseSceneToContent_ps:(NSArray*)baseSceneToContent_ps debugMode:(BOOL)debugMode caller:(NSString*)caller;
--(BOOL) containsOutSPStrong:(NSArray*)cansetContent_ps;
+-(BOOL) containsOutSPStrong:(NSArray*)baseSceneContent_ps;
 
 /**
  *  MARK:--------------------由sceneFo调用,返回canset对应的itemOutSPDic--------------------
