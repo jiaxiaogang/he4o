@@ -448,9 +448,17 @@
 +(void) transferTuiJv_RH_V3:(AIFoNodeBase*)sceneFrom cansetFrom:(AIFoNodeBase*)cansetFrom isH:(BOOL)isH sceneFromCutIndex:(NSInteger)sceneFromCutIndex {
     //1. 将rCanset推举到每一个absFo;
     NSArray *absPorts = [AINetUtils absPorts_All:sceneFrom];
+    
+    //2. 已推举过的记录（用于防重）。
+    NSArray *alreadayTuiJuFScenes = [SMGUtils convertArr:[AINetUtils transferPorts_4Father:sceneFrom iCansetContent_ps:cansetFrom.content_ps] convertBlock:^id(AITransferPort *obj) {
+        return obj.fScene;
+    }];
     for (AIPort *absPort in absPorts) {
+        //11. 判断是否推举过此absPort，如果推过，则不重复推举。
+        if ([alreadayTuiJuFScenes containsObject:absPort.target_p]) continue;
+        
+        //12. mv要求必须同区 (不然rCanset对sceneTo无效);
         AIFoNodeBase *sceneTo = [SMGUtils searchNode:absPort.target_p];
-        //2. mv要求必须同区 (不然rCanset对sceneTo无效);
         if (!isH && ![sceneFrom.cmvNode_p.identifier isEqualToString:sceneTo.cmvNode_p.identifier]) continue;
         
         //3. BR映射 (参考29069-todo10.1推举算法示图);
@@ -468,20 +476,16 @@
         
         //11. 构建cansetTo
         AIFoNodeBase *cansetTo = [theNet createConFoForCanset:orders sceneFo:sceneTo sceneTargetIndex:sceneToTargetIndex];
-        BOOL cansetToInited = [cansetTo containsOutSPStrong:sceneTo.content_ps];//有没初始过cansetTo;
         
         //5. 加SP计数: 新推举的cansetFrom的spDic都计入cansetTo中 (参考33031b-BUG5-TODO1);
         //2024.11.01: 防重说明: 此方法调用了,说明cansetFrom是新挂载到sceneFrom下的,此时可调用一次推举到absPorts中,并把所有spDic都推举到absPorts上去;
-        NSMutableDictionary *deltaSPDic = [cansetTo.outSPDic objectForKey:[AINetUtils getOutSPKey:sceneTo.content_ps]];
+        NSMutableDictionary *deltaSPDic = [cansetTo.outSPDic objectForKey:[AINetUtils getOutSPKey:sceneFrom.content_ps]];
         for (NSNumber *cansetFromIndex in deltaSPDic.allKeys) {
             AISPStrong *deltaSPStrong = [deltaSPDic objectForKey:cansetFromIndex];
             NSInteger cansetToIndex = cansetFromIndex.integerValue;//cansetFrom和cansetTo一样长,并且下标都是一一对应的;
             [cansetTo updateOutSPStrong:cansetToIndex difStrong:deltaSPStrong.pStrong type:ATPlus baseSceneToContent_ps:sceneTo.content_ps debugMode:false caller:STRFORMAT(@"TuiJv%@时P初始化",isH?@"H":@"R")];
             [cansetTo updateOutSPStrong:cansetToIndex difStrong:deltaSPStrong.sStrong type:ATSub baseSceneToContent_ps:sceneTo.content_ps debugMode:false caller:STRFORMAT(@"TuiJv%@时S初始化",isH?@"H":@"R")];
         }
-        
-        //10. 如果cansetTo没初始过才: 挂载 & 加映射;
-        if (cansetToInited) continue;
         
         //12. 挂载cansetTo
         HEResult *updateConCansetResult = [sceneTo updateConCanset:cansetTo.pointer targetIndex:sceneToTargetIndex];

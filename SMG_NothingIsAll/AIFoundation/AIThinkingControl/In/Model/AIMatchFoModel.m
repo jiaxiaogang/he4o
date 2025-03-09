@@ -241,12 +241,6 @@
         [newRCanset updateIndexDic:matchFo indexDic:[self.indexDic2 copy]];
         
         //2024.09.04: eff已经弃用了,这里改为把P默认计1 (参考33031b-BUG5-TODO1);
-        
-        //TODOTOMORROW20250308: 继续写OutSPDic存在F.Canset下，改初始化。
-        //1、找到baseSceneToOrders，然后从cansetFrom下取其本身评分。
-        
-        [matchFo updateOutSPStrong:newRCanset.count difStrong:1 type:ATPlus canset:newRCanset.content_ps debugMode:false caller:@"NewRCanset初始化P=1"];
-        
         if (self.indexDic2 == 0) {
             NSLog(@"NewRCanset Dic Is Nil");
         }
@@ -258,22 +252,21 @@
         //[TIUtils recognitionCansetFo:cansetFo.pointer sceneFo:matchFo.pointer es:ES_HavEff];
     }
     
-    //e. outSP值子即父: 当前NewRCanset所在的matchFo场景就是iScene (参考33112-TODO4.3);
-    //2024.11.26: 从0到cutIndex全计P+1 (参考33134-FIX2a);
-    for (NSInteger i = 0; i <= newRCanset.count; i++) {
-        
-        
-        
-        //TODOTOMORROW20250308: 继续写OutSPDic存在F.Canset下，改初始化。
-        //1、找到baseSceneToOrders，然后从cansetFrom下取其本身评分。
-
-        
-        [AINetUtils updateOutSPStrong_4IF:matchFo iCansetContent_ps:newRCanset.content_ps caller:@"NewRCanset本就存在时,将当前帧SP+1推举到父层canset中" spIndex:i difStrong:1 type:ATPlus debugMode:false except4SP2F:except4SP2F];
-    }
-    
     //2024.11.03: 在挂载新的Canset时,实时推举 & 并防重(只有新挂载的canset,才有资格实时调用推举,并推举spDic都到父场景中) (参考33112);
     if (updateConCansetResult.isNew) {
         [TCTransfer transferTuiJv_RH_V3:matchFo cansetFrom:newRCanset isH:false sceneFromCutIndex:matchFo.count-1];
+    }
+    
+    //e. outSP值子即父: 当前NewRCanset所在的matchFo场景就是iScene (参考33112-TODO4.3);
+    //2024.11.26: 从0到cutIndex全计P+1 (参考33134-FIX2a);
+    NSArray *transferPorts = [AINetUtils transferPorts_4Father:matchFo iCansetContent_ps:newRCanset.content_ps];
+    for (AITransferPort *item in transferPorts) {
+        AIFoNodeBase *fCanset = [SMGUtils searchNode:item.fCanset];
+        AIFoNodeBase *fScene = [SMGUtils searchNode:item.fScene];
+        for (NSInteger i = 0; i <= newRCanset.count; i++) {
+            [fCanset updateOutSPStrong:i difStrong:1 type:ATPlus baseSceneToContent_ps:matchFo.content_ps debugMode:false caller:@"NewRCanset初始化P=1"];
+            [fCanset updateOutSPStrong:i difStrong:1 type:ATPlus baseSceneToContent_ps:fScene.content_ps debugMode:false caller:@"NewRCanset初始化P+1推举到F层"];
+        }
     }
     
     //2. =================解决方案执行有效(再类比): 有actYes的时,归功于解决方案,执行canset再类比 (参考27206c-R任务)=================
