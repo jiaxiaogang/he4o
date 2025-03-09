@@ -199,7 +199,6 @@
 		08F738051F7C714F005EAD56 /* AIKVPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F737FF1F7C714F005EAD56 /* AIKVPointer.m */; };
 		08F738061F7C714F005EAD56 /* AIPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F738011F7C714F005EAD56 /* AIPointer.m */; };
 		08F738071F7C714F005EAD56 /* AISqlPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F738031F7C714F005EAD56 /* AISqlPointer.m */; };
-		08F9DAAE2839EBCA00AB012B /* TCEffect.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F9DAAD2839EBCA00AB012B /* TCEffect.m */; };
 		08FBE10E22D56F360088EF1A /* NVModuleUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FBE10D22D56F360088EF1A /* NVModuleUtil.m */; };
 		2753D7CF7BAEDFEACAF9264A /* libPods-SMG_NothingIsAll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */; };
 		4591E02A247F11B600484B51 /* TOAlgModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 4591E029247F11B600484B51 /* TOAlgModel.m */; };
@@ -609,8 +608,6 @@
 		08F738011F7C714F005EAD56 /* AIPointer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIPointer.m; sourceTree = "<group>"; };
 		08F738021F7C714F005EAD56 /* AISqlPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AISqlPointer.h; sourceTree = "<group>"; };
 		08F738031F7C714F005EAD56 /* AISqlPointer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AISqlPointer.m; sourceTree = "<group>"; };
-		08F9DAAC2839EBCA00AB012B /* TCEffect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCEffect.h; sourceTree = "<group>"; };
-		08F9DAAD2839EBCA00AB012B /* TCEffect.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCEffect.m; sourceTree = "<group>"; };
 		08FAEC95215EED48004DCEAD /* NVHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVHeader.h; sourceTree = "<group>"; };
 		08FBE10C22D56F360088EF1A /* NVModuleUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVModuleUtil.h; sourceTree = "<group>"; };
 		08FBE10D22D56F360088EF1A /* NVModuleUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NVModuleUtil.m; sourceTree = "<group>"; };
@@ -969,7 +966,6 @@
 				087705A3275373FA00BA4EFB /* TCSolution */,
 				0873E11028B45CB300FBC09E /* TCRefrection */,
 				08F27D7729ED987C0063E71B /* TCRealact */,
-				08F9DAAB2839E97200AB012B /* TCEffect */,
 				08F27D6B29ED8F980063E71B /* TCTransfer */,
 				087705A42753740600BA4EFB /* TCAction */,
 				0892BAEA277808E30024B43C /* TCActYes */,
@@ -1737,15 +1733,6 @@
 			path = AIPointer;
 			sourceTree = "<group>";
 		};
-		08F9DAAB2839E97200AB012B /* TCEffect */ = {
-			isa = PBXGroup;
-			children = (
-				08F9DAAC2839EBCA00AB012B /* TCEffect.h */,
-				08F9DAAD2839EBCA00AB012B /* TCEffect.m */,
-			);
-			path = TCEffect;
-			sourceTree = "<group>";
-		};
 		08FAEC91215EEC98004DCEAD /* SMGNetVision */ = {
 			isa = PBXGroup;
 			children = (
@@ -2027,7 +2014,6 @@
 				08A232E5243557110090D4B5 /* TOUtils.m in Sources */,
 				084F132226FF6E1200E9D455 /* AITest.m in Sources */,
 				08366B9327E00232004EBBB9 /* TOMVisionFoView.m in Sources */,
-				08F9DAAE2839EBCA00AB012B /* TCEffect.m in Sources */,
 				0895FFE4264A13C500DAD3EA /* TOModelVision.m in Sources */,
 				084219ED1FD8CF81009DA6BC /* AIThinkingControl.m in Sources */,
 				083ADA722A67AB4F00319561 /* AsyncMutableDictionary.m in Sources */,

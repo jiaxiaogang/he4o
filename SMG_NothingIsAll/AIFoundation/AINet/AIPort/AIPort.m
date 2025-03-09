@@ -142,43 +142,6 @@
 
 @end
 
-
-//MARK:===============================================================
-//MARK:                     < 有效强度模型 >
-//MARK:===============================================================
-@implementation AIEffectStrong
-
-+(AIEffectStrong*) newWithSolutionFo:(AIKVPointer*)solutionFo{
-    AIEffectStrong *result = [[AIEffectStrong alloc] init];
-    result.solutionFo = solutionFo;
-    return result;
-}
-
--(NSString *)description{
-    return STRFORMAT(@"H%ldN%ld",(long)self.hStrong,(long)self.nStrong);
-}
-
-/**
- *  MARK:--------------------NSCoding--------------------
- */
-- (instancetype)initWithCoder:(NSCoder *)coder {
-    self = [super init];
-    if (self) {
-        self.solutionFo = [coder decodeObjectForKey:@"solutionFo"];
-        self.hStrong = [coder decodeIntegerForKey:@"hStrong"];
-        self.nStrong = [coder decodeIntegerForKey:@"nStrong"];
-    }
-    return self;
-}
-
-- (void)encodeWithCoder:(NSCoder *)coder {
-    [coder encodeObject:self.solutionFo forKey:@"solutionFo"];
-    [coder encodeInteger:self.hStrong forKey:@"hStrong"];
-    [coder encodeInteger:self.nStrong forKey:@"nStrong"];
-}
-
-@end
-
 //MARK:===============================================================
 //MARK: < 内存记录sp防重(主要用于TOFoModel.outSPRecord和pFo.inSPRecord) >
 //MARK:===============================================================

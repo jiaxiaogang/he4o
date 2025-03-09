@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIAlgNodeBase,DemandModel,TOFoModel,AIShortMatchModel,TOModelBase,TOAlgModel,AIEffectStrong,HEResult;
+@class AIAlgNodeBase,DemandModel,TOFoModel,AIShortMatchModel,TOModelBase,TOAlgModel,HEResult;
 @interface TOUtils : NSObject
 
 /**
@@ -153,11 +153,6 @@
 +(NSString*) toModel2Key:(TOModelBase*)toModel;
 
 /**
- *  MARK:--------------------effectDic的HN求和--------------------
- */
-+(NSRange) getSumEffectHN:(NSDictionary*)effectDic;
-
-/**
  *  MARK:--------------------稳定性评分--------------------
  *  @param endSPIndex   : 目标index,比如感性mv时,则为fo.count (求结果时,需包含endSPIndex);
  *  @param startSPIndex : 起始index,比如理性时,常为0到fo.count-1之间 (求结果时,需包含startSPIndex);
@@ -171,18 +166,6 @@
  *  @param startSPIndex : 起始index,比如理性时,常为0到fo.count-1之间 (求结果时,需包含startSPIndex);
  */
 +(CGFloat) getSPScore:(AIFoNodeBase*)fo startSPIndex:(NSInteger)startSPIndex endSPIndex:(NSInteger)endSPIndex;
-
-/**
- *  MARK:--------------------有效率评分--------------------
- *  @param demandFo     : R任务时传pFo即可, H任务时传hDemand.base.baseFo;
- *  @param effectIndex  : R任务时传demandFo.count, H任务时传hDemand.base.baseFo.actionIndex;
- *  @param solutionFo   : 用于检查有效率的solutionFo;
- */
-+(CGFloat) getEffectScore:(AIFoNodeBase*)demandFo effectIndex:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo;
-+(CGFloat) getEffectScore:(AIEffectStrong*)strong;
-+(AIEffectStrong*) getEffectStrong:(AIFoNodeBase*)demandFo effectIndex:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo;
-+(NSString*) getEffectDesc:(AIFoNodeBase*)demandFo effectIndex:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo;
-
 
 /**
  *  MARK:--------------------获取fo衰减后的值--------------------
@@ -205,11 +188,6 @@
  *  MARK:--------------------检查某toModel的末枝有没有ActYes状态--------------------
  */
 +(BOOL) endHavActYes:(TOModelBase*)curModel;
-
-/**
- *  MARK:--------------------将cansets中同fo的strong合并--------------------
- */
-+(NSArray*) mergeCansets:(NSArray*)protoCansets;
 
 /**
  *  MARK:--------------------从absIndex向前找,直到找到有conIndex映射的那一条返回--------------------

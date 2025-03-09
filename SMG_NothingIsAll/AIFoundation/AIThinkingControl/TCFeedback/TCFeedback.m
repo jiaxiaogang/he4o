@@ -401,7 +401,6 @@
                 root.status = TOModelStatus_Runing;
                 
                 //16. 明确无效
-                demand.effectStatus = ES_NoEff;
                 demand.status = TOModelStatus_ActNo;
             }else{
                 //21. solutionFo反馈好时,baseDemand为完成状态;

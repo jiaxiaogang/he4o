@@ -109,7 +109,6 @@
 #import "TCCanset.h"
 #import "TCSolution.h"
 #import "TCRefrection.h"
-#import "TCEffect.h"
 #import "TCTransfer.h"
 #import "TCRealact.h"
 #import "TCAction.h"
@@ -250,7 +249,6 @@
 #define ATType2Str(type) [NSLog_Extension convertATType2Desc:type]
 #define TOStatus2Str(status) [NSLog_Extension convertTOStatus2Desc:status]
 #define TIStatus2Str(status) [NSLog_Extension convertTIStatus2Desc:status]
-#define EffectStatus2Str(status) [NSLog_Extension convertEffectStatus2Desc:status]
 #define CansetStatus2Str(status) [NSLog_Extension convertCansetStatus2Desc:status]
 #define Class2Str(c) [NSLog_Extension convertClass2Desc:c]
 #define ClassName2Str(c) [NSLog_Extension convertClassName2Desc:c]

@@ -57,15 +57,6 @@
     return @"Default";
 }
 
-+(NSString*) convertEffectStatus2Desc:(EffectStatus)status{
-    if(status == ES_NoEff){
-        return @"无效";
-    }else if(status == ES_HavEff){
-        return @"有效";
-    }
-    return @"Default";
-}
-
 +(NSString*) convertCansetStatus2Desc:(CansetStatus)status{
     if(status == CS_None){
         return @"CS_None";

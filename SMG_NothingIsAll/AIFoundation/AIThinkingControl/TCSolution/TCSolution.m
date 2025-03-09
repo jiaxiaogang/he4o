@@ -91,13 +91,10 @@
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
         //c) 调试;
         AIFoNodeBase *sceneFo = [SMGUtils searchNode:bestResult.sceneFo];
-        AIEffectStrong *effStrong = [TOUtils getEffectStrong:sceneFo effectIndex:sceneFo.count solutionFo:bestResult.cansetFo];
-        NSString *effDesc = effStrong ? effStrong.description : @"";
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:bestResult.cansetFo];
-        NSLog(@"> newS 第%ld例: eff:%@ sp:%@ %@ scene:F%ld canset:F%ld",demand.actionFoModels.count,effDesc,CLEANSTR(cansetFo.spDic),SceneType2Str(bestResult.baseSceneModel.type),sceneFo.pId,cansetFo.pId);
+        NSLog(@"> newS 第%ld例: sp:%@ %@ scene:F%ld canset:F%ld",demand.actionFoModels.count,CLEANSTR(cansetFo.spDic),SceneType2Str(bestResult.baseSceneModel.type),sceneFo.pId,cansetFo.pId);
         
         //a) 有效率
-        [TCEffect rEffect:bestResult];
         dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
             [theTV updateFrame];
         });
@@ -279,13 +276,9 @@
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
         //c) 调试;
         AIFoNodeBase *sceneFo = [SMGUtils searchNode:bestResult.sceneFo];
-        AIEffectStrong *effStrong = [TOUtils getEffectStrong:sceneFo effectIndex:sceneFo.count solutionFo:bestResult.cansetFo];
-        NSString *effDesc = effStrong ? effStrong.description : @"";
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:bestResult.cansetFo];
-        NSLog(@"> newH 第%ld例: eff:%@ sp:%@ %@ scene:F%ld canset:F%ld (cutIndex:%ld=>targetIndex:%ld)",hDemand.actionFoModels.count,effDesc,CLEANSTR(cansetFo.spDic),SceneType2Str(bestResult.baseSceneModel.type),sceneFo.pId,cansetFo.pId,bestResult.cansetCutIndex,bestResult.cansetTargetIndex);
+        NSLog(@"> newH 第%ld例: sp:%@ %@ scene:F%ld canset:F%ld (cutIndex:%ld=>targetIndex:%ld)",hDemand.actionFoModels.count,CLEANSTR(cansetFo.spDic),SceneType2Str(bestResult.baseSceneModel.type),sceneFo.pId,cansetFo.pId,bestResult.cansetCutIndex,bestResult.cansetTargetIndex);
         
-        //a) 有效率
-        [TCEffect hEffect:bestResult];
         dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
             [theTV updateFrame];
         });

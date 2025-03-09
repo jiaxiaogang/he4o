@@ -269,13 +269,12 @@
     for (TOFoModel *obj in result) {
         id key = itemKeyBlock(obj);
         AIFoNodeBase *sceneFo = [SMGUtils searchNode:obj.sceneFo];
-        AIEffectStrong *effStrong = [TOUtils getEffectStrong:sceneFo effectIndex:sceneFo.count solutionFo:obj.cansetFo];
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:obj.cansetFo];
         float coolScore1 = NUMTOOK([cooledDic1 objectForKey:key]).floatValue,coolScore2 = NUMTOOK([cooledDic2 objectForKey:key]).floatValue;
-        CGFloat spScore = itemScoreBlock1(obj), effScore = itemScoreBlock2(obj);
+        CGFloat spScore = itemScoreBlock1(obj);
         if (ISOK(obj, TOFoModel.class)) {
-            if (Log4AIRank) NSLog(@"%ld. %@:(分:%.2f) %@:(分:%.2f) %@<F%ld %@>",[result indexOfObject:obj],
-                                  CLEANSTR(cansetFo.spDic),spScore,effStrong.description,effScore,
+            if (Log4AIRank) NSLog(@"%ld. %@:(分:%.2f) %@<F%ld %@>",[result indexOfObject:obj],
+                                  CLEANSTR(cansetFo.spDic),spScore,
                                   SceneType2Str(obj.baseSceneModel.type),obj.sceneFo.pointerId,Fo2FStr(cansetFo));
             if (Log4AIRankDebugMode) NSLog(@"\t> %@ sp排名:%.5f eff排名:%.5f => 综合排名:%.5f",key,coolScore1,coolScore2,coolScore1 * coolScore2);
         }

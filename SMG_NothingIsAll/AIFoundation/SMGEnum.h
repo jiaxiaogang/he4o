@@ -131,12 +131,6 @@ typedef NS_ENUM(NSInteger, CansetStatus) {
     CS_Bested               = 2,//行为化过
 };
 
-typedef NS_ENUM(NSInteger, EffectStatus) {
-    ES_Default  = 0,//默认
-    ES_HavEff   = 1,//有效反馈 (明确有效了)
-    ES_NoEff    = 2,//无效反馈 (明确无效了)
-};
-
 /**
  *  MARK:--------------------TIModelStatus--------------------
  *  @title 输入模型状态

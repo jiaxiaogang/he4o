@@ -13,7 +13,7 @@
  *  @name 前因序列
  *  1. 是frontOrderNode和absNode的基类;
  */
-@class AIEffectStrong,HEResult,TOFoModel;
+@class HEResult,TOFoModel;
 @interface AIFoNodeBase : AINodeBase
 
 /**
@@ -110,39 +110,6 @@
  *  MARK:--------------------由sceneFo调用,返回canset对应的itemOutSPDic--------------------
  */
 -(NSDictionary*) getItemOutSPDic:(NSString*)baseSceneOutSPKey;
-
-//MARK:===============================================================
-//MARK:                     < effectDic组 >
-//MARK:===============================================================
-
-/**
- *  MARK:--------------------有效率--------------------
- *  @desc <key:effectIndex, value:effectStrong> (其中mv的key为content.count) (参考26094);
- *  @status 用的较少,以下在使用:
- *          1. TCRefrection.refrection()
- *          2. AIRank.cansetsRankingV4()
- *  @todo
- *      2022.11.23: 待废除 (参考27205);
- *          补充正据: 不建议废除,从定义上来看,eff主外,sp主内,sp并不能表达eff对场景的明确指向,所以二者看似一样,但并不一样 (但在当前的设计中,canset只服务一个scene,所以它不明确也是明确);
- *          补充反据: 可考虑废除,因为现在每个场景下的cansets是隔离的,它的防重范围也是scene下,所以即使一模一样的canset在不同的scene下,也会各生成各的,各统计各的SPEFF,这会导致EFF没意义,用SP乘积完全可以替代;
- */
-@property (strong, nonatomic) NSMutableDictionary *effectDic;
-
-/**
- *  MARK:--------------------更新有效率值--------------------
- */
--(AIEffectStrong*) updateEffectStrong:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo status:(EffectStatus)status;
-
-/**
- *  MARK:--------------------获取canset的effStrong--------------------
- */
--(AIEffectStrong*) getEffectStrong:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo;
-
-/**
- *  MARK:--------------------取effIndex下有效的Effs--------------------
- */
--(NSArray*) getValidEffs:(NSInteger)effIndex;
-
 
 //MARK:===============================================================
 //MARK:                     < indexDic组 >

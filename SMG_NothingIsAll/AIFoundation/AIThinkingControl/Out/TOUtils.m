@@ -432,20 +432,6 @@
 }
 
 /**
- *  MARK:--------------------effectDic的HN求和--------------------
- */
-+(NSRange) getSumEffectHN:(NSDictionary*)effectDic{
-    int sumH = 0,sumN = 0;
-    for (NSArray *value in effectDic.allValues) {
-        for (AIEffectStrong *strong in value) {
-            sumH += strong.hStrong;
-            sumN += strong.nStrong;
-        }
-    }
-    return NSMakeRange(sumH, sumN);
-}
-
-/**
  *  MARK:--------------------稳定性评分--------------------
  *  @desc 根据SP计算"稳定性"分 (稳定性指顺,就是能顺利发生的率);
  *  @desc 含startSPIndex & 也含endSPIndex;
@@ -636,37 +622,6 @@
     return stableScore;
 }
 
-/**
- *  MARK:--------------------有效率评分--------------------
- *  @desc 计算有效率性评分 (参考26095-8);
- *  @param demandFo     : R任务时传pFo即可, H任务时传hDemand.base.baseFo;
- *  @param effectIndex  : R任务时传demandFo.count, H任务时传hDemand.base.baseFo.actionIndex;
- *  @param solutionFo   : 用于检查有效率的solutionFo;
- *  @version
- *      2022.05.22: 初版,可返回解决方案的有效率 (参考26095-8);
- */
-+(CGFloat) getEffectScore:(AIFoNodeBase*)demandFo effectIndex:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo{
-    AIEffectStrong *strong = [self getEffectStrong:demandFo effectIndex:effectIndex solutionFo:solutionFo];
-    return [self getEffectScore:strong];
-}
-+(CGFloat) getEffectScore:(AIEffectStrong*)strong{
-    if (strong) {
-        if (strong.hStrong + strong.nStrong > 0) {
-            return (float)strong.hStrong / (strong.hStrong + strong.nStrong);
-        }else{
-            return 0.0f;
-        }
-    }
-    return 0;
-}
-+(AIEffectStrong*) getEffectStrong:(AIFoNodeBase*)demandFo effectIndex:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo{
-    return [demandFo getEffectStrong:effectIndex solutionFo:solutionFo];
-}
-+(NSString*) getEffectDesc:(AIFoNodeBase*)demandFo effectIndex:(NSInteger)effectIndex solutionFo:(AIKVPointer*)solutionFo{
-    AIEffectStrong *strong = [self getEffectStrong:demandFo effectIndex:effectIndex solutionFo:solutionFo];
-    return STRFORMAT(@"%ld/%ld",strong.hStrong,strong.hStrong + strong.nStrong);
-}
-
 //MARK:===============================================================
 //MARK:                     < 衰减曲线 >
 //MARK:===============================================================
@@ -753,25 +708,6 @@
         return false;
     }];
     return endHavActYes;
-}
-
-/**
- *  MARK:--------------------将cansets中同fo的strong合并--------------------
- */
-+(NSArray*) mergeCansets:(NSArray*)protoCansets{
-    NSMutableDictionary *cansetsDic = [[NSMutableDictionary alloc] init];
-    for (AIEffectStrong *item in protoCansets) {
-        //a. 取旧;
-        id key = @(item.solutionFo.pointerId);
-        AIEffectStrong *old = [cansetsDic objectForKey:key];
-        if (!old) old = [AIEffectStrong newWithSolutionFo:item.solutionFo];
-        
-        //b. 更新;
-        old.hStrong += item.hStrong;
-        old.nStrong += item.nStrong;
-        [cansetsDic setObject:old forKey:key];
-    }
-    return cansetsDic.allValues;
 }
 
 /**

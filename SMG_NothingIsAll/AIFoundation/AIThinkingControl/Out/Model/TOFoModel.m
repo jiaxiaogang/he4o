@@ -531,7 +531,6 @@
     //9. H反馈中段: 标记OuterBack,solutionFo继续;
     self.status = TOModelStatus_Finish;
     hDemand.status = TOModelStatus_Finish;
-    hDemand.effectStatus = ES_HavEff;
     targetAlgModel.status = TOModelStatus_OuterBack;
     targetFoModel.status = TOModelStatus_Runing;
     self.cansetCutIndex = self.cansetTargetIndex;//当前hTargetAlg提前反馈了,直接把cutIndex改成targetIndex;
