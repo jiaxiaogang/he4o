@@ -957,20 +957,21 @@
 /**
  *  MARK:--------------------初始化itemOutSPDic (在canset类比抽象时) (参考33062-TODO4)--------------------
  *  @desc 用于canset类比抽象后: 把conCanset的itemOutSPDic设为新构建的absCanset的初始itemOutSPDic (参考33062-TODO4);
+ *  @version
+ *      2025.03.09: 原本的初始化OutSPDic是fCanset对baseScene的，现在在fCanset -> 继承成cansetTo -> 又新类比到AbsCanset。
+ *  @result 返回absCanset的初始OutSPDic。
  */
-+(void) initItemOutSPDicForAbsCanset:(AIFoNodeBase*)scene conCanset:(AIFoNodeBase*)conCanset absCanset:(AIFoNodeBase*)absCanset {
-    //1. 检查有没初始化默认过具象的itemOutSPDic (只初始一次,用于防重) (参考33062-TODO4.1);
-    NSString *absCansetOutSPKey = [self getOutSPKey:absCanset.content_ps];
-    if ([scene.outSPDic objectForKey:absCansetOutSPKey]) return;
++(NSDictionary*) getInitOutSPDicForAbsCanset:(AIFoNodeBase*)fCanset baseSceneContent_ps:(NSArray*)baseSceneContent_ps conCanset:(AIFoNodeBase*)conCanset absCanset:(AIFoNodeBase*)absCanset {
+    //1. 数据准备。
+    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
     
     //2. 取conCanset的itemOutSPDic;
-    NSString *conCansetOutSPKey = [self getOutSPKey:conCanset.content_ps];
-    NSDictionary *fromItemOutSPDic = [scene.outSPDic objectForKey:conCansetOutSPKey];
-    if (!DICISOK(fromItemOutSPDic)) return;
+    NSDictionary *fromItemOutSPDic = [fCanset.outSPDic objectForKey:[self getOutSPKey:baseSceneContent_ps]];
+    if (!DICISOK(fromItemOutSPDic)) return result;
     
     //3. 取conCanset和absCanset的映射 (因为有映射的,才继承它的sp值,没映射的不处理);
     NSDictionary *conAbsCansetIndexDic = [conCanset getAbsIndexDic:absCanset.p];
-    if (!DICISOK(conAbsCansetIndexDic)) return;
+    if (!DICISOK(conAbsCansetIndexDic)) return result;
     
     //4. 有映射的,逐帧继承sp值;
     for (NSNumber *absIndex in conAbsCansetIndexDic.allKeys) {
@@ -978,15 +979,10 @@
         AISPStrong *fromItemSPStrong = [fromItemOutSPDic objectForKey:conIndex];
         if (!fromItemSPStrong) continue;
         
-        
-        //TODOTOMORROW20250308: 继续写OutSPDic存在F.Canset下，改初始化。
-        //1、找到baseSceneToOrders，然后从cansetFrom下取其本身评分。
-        
-        
         //4. 把s和p都继承下;
-        [scene updateOutSPStrong:absIndex.integerValue difStrong:fromItemSPStrong.pStrong type:ATPlus canset:absCanset.content_ps debugMode:false caller:@"AbsRCanset初始化itemOutSPDic"];
-        [scene updateOutSPStrong:absIndex.integerValue difStrong:fromItemSPStrong.sStrong type:ATSub canset:absCanset.content_ps debugMode:false caller:@"AbsRCanset初始化itemOutSPDic"];
+        [result setObject:fromItemSPStrong forKey:absIndex];
     }
+    return result;
 }
 
 /**

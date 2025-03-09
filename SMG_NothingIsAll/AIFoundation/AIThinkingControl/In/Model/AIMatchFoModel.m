@@ -254,19 +254,9 @@
     
     //2024.11.03: 在挂载新的Canset时,实时推举 & 并防重(只有新挂载的canset,才有资格实时调用推举,并推举spDic都到父场景中) (参考33112);
     if (updateConCansetResult.isNew) {
-        [TCTransfer transferTuiJv_RH_V3:matchFo cansetFrom:newRCanset isH:false sceneFromCutIndex:matchFo.count-1];
-    }
-    
-    //e. outSP值子即父: 当前NewRCanset所在的matchFo场景就是iScene (参考33112-TODO4.3);
-    //2024.11.26: 从0到cutIndex全计P+1 (参考33134-FIX2a);
-    NSArray *transferPorts = [AINetUtils transferPorts_4Father:matchFo iCansetContent_ps:newRCanset.content_ps];
-    for (AITransferPort *item in transferPorts) {
-        AIFoNodeBase *fCanset = [SMGUtils searchNode:item.fCanset];
-        AIFoNodeBase *fScene = [SMGUtils searchNode:item.fScene];
-        for (NSInteger i = 0; i <= newRCanset.count; i++) {
-            [fCanset updateOutSPStrong:i difStrong:1 type:ATPlus baseSceneToContent_ps:matchFo.content_ps debugMode:false caller:@"NewRCanset初始化P=1"];
-            [fCanset updateOutSPStrong:i difStrong:1 type:ATPlus baseSceneToContent_ps:fScene.content_ps debugMode:false caller:@"NewRCanset初始化P+1推举到F层"];
-        }
+        NSMutableDictionary *initOutSPDic = [[NSMutableDictionary alloc] init];
+        for (NSInteger i = 0; i < newRCanset.count; i++) [initOutSPDic setObject:[AISPStrong newWithS:0 P:1] forKey:@(i)];
+        [TCTransfer transferTuiJv_RH_V3:matchFo cansetFrom:newRCanset isH:false sceneFromCutIndex:matchFo.count-1 initOutSPDic:initOutSPDic baseSceneContent_ps:matchFo.content_ps];
     }
     
     //2. =================解决方案执行有效(再类比): 有actYes的时,归功于解决方案,执行canset再类比 (参考27206c-R任务)=================
@@ -332,16 +322,19 @@
             }
             [absCansetFo updateIndexDic:pFo indexDic:absRCansetSceneToIndexDic];
             [AITest test18:absRCansetSceneToIndexDic newCanset:absCansetFo absFo:pFo];
-            
-            //h. 算出absCanset的默认itemOutSPDic (参考33062-TODO4);
-            [AINetUtils initItemOutSPDicForAbsCanset:pFo conCanset:solutionFo absCanset:absCansetFo];
-            [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
         }
         
         //2024.11.03: 在挂载新的Canset时,实时推举 & 并防重(只有新挂载的canset,才有资格实时调用推举,并推举spDic都到父场景中) (参考33112);
-        if (updateConCansetResult.isNew) {
-            [TCTransfer transferTuiJv_RH_V3:pFo cansetFrom:absCansetFo isH:false sceneFromCutIndex:pFo.count-1];
-        }
+        //2024.11.05: 当targetFoModel是R任务时,才推举,以后这里需要支持下,不断向base找到R为止,因为H可能有多层,而推举是必须找到并借助R来实现的 (参考n33p12);
+        //推举是从I推举到F（而pFo就是I层，所以sceneFrom就是pFo）。
+        //16. 算出absCanset的默认itemOutSPDic (参考33062-TODO4);
+        AIFoNodeBase *basePFo = [SMGUtils searchNode:solutionModel.basePFo.matchFo];
+        AIFoNodeBase *fCanset = [SMGUtils searchNode:solutionModel.fCanset];
+        NSArray *baseSceneContent_ps = Simples2Pits([solutionModel getBaseSceneToOrders]);
+        //初始OutSPDic从fCanset对baseScene取（其实取的就是cansetTo的OutSPDic）。
+        NSDictionary *initOutSPDic = [AINetUtils getInitOutSPDicForAbsCanset:fCanset baseSceneContent_ps:baseSceneContent_ps conCanset:solutionFo absCanset:absCansetFo];
+        [TCTransfer transferTuiJv_RH_V3:basePFo cansetFrom:absCansetFo isH:true sceneFromCutIndex:basePFo.count-1 initOutSPDic:initOutSPDic baseSceneContent_ps:baseSceneContent_ps];
+        [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
     }
 }
 

@@ -491,25 +491,10 @@
             //2024.11.03: 在挂载新的Canset时,实时推举 & 并防重(只有新挂载的canset,才有资格实时调用推举,并推举spDic都到父场景中) (参考33112);
             if (updateConCansetResult.isNew) {
                 //推举是从I推举到F（而pFo就是I层，所以sceneFrom就是pFo）。
-                [TCTransfer transferTuiJv_RH_V3:pFo cansetFrom:newHCanset isH:true sceneFromCutIndex:basePFo.cutIndex];
-            }
-            
-            //e. outSP值子即父: 当前NewHCanset所在的hScene场景就是iScene (参考33112-TODO4.3);
-            //2024.11.26: 从0到cutIndex全计P+1 (参考33134-FIX2a);
-            AIFoNodeBase *iScene = [SMGUtils searchNode:self.iScene];
-            NSArray *baseSceneToContent_ps = Simples2Pits([self getBaseSceneToOrders]);
-            
-            //取newHCanset推举到F层的fCanset。
-            NSArray *newHTuiJvTrasferPorts = [AINetUtils transferPorts_4Father:iScene iCansetContent_ps:Simples2Pits(order)];
-            AITransferPort *newHTuiJvPortForCurF = [SMGUtils filterSingleFromArr:newHTuiJvTrasferPorts checkValid:^BOOL(AITransferPort *port) {
-                return [port.fScene isEqual:self.fScene];
-            }];
-            AIFoNodeBase *newHTuiJvFCanset = [SMGUtils searchNode:newHTuiJvPortForCurF.fCanset];
-            
-            if (newHTuiJvFCanset) {
-                for (NSInteger i = 0; i <= newHCanset.count; i++) {
-                    [AINetUtils updateOutSPStrong_4IF:newHTuiJvFCanset iScene:iScene baseSceneToContent_ps:baseSceneToContent_ps cansetToContent_ps:Simples2Pits(order) caller:@"NewHCanset本就存在时,将当前帧SP+1推举到父层canset中" spIndex:i difStrong:1 type:ATPlus debugMode:false except4SP2F:except4SP2F];
-                }
+                NSArray *baseSceneContent_ps = Simples2Pits([self getBaseSceneToOrders]);
+                NSMutableDictionary *initOutSPDic = [[NSMutableDictionary alloc] init];
+                for (NSInteger i = 0; i < newHCanset.count; i++) [initOutSPDic setObject:[AISPStrong newWithS:0 P:1] forKey:@(i)];
+                [TCTransfer transferTuiJv_RH_V3:pFo cansetFrom:newHCanset isH:true sceneFromCutIndex:basePFo.cutIndex initOutSPDic:initOutSPDic baseSceneContent_ps:baseSceneContent_ps];
             }
             
             //6. rCanset的actIndex匹配了,就相当于它curAlgModel的HDemand,下的所有的subHCanset的targetAlg全反馈匹配上了 (参考32119-TODO1);
@@ -604,18 +589,18 @@
         }
         [absCansetFo updateIndexDic:pFo indexDic:absHCansetSceneToIndexDic];
         [AITest test18:absHCansetSceneToIndexDic newCanset:absCansetFo absFo:pFo];
-        
-        //16. 算出absCanset的默认itemOutSPDic (参考33062-TODO4);
-        [AINetUtils initItemOutSPDicForAbsCanset:pFo conCanset:cansetTo absCanset:absCansetFo];
-        [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
     }
     
     //2024.11.03: 在挂载新的Canset时,实时推举 & 并防重(只有新挂载的canset,才有资格实时调用推举,并推举spDic都到父场景中) (参考33112);
     //2024.11.05: 当targetFoModel是R任务时,才推举,以后这里需要支持下,不断向base找到R为止,因为H可能有多层,而推举是必须找到并借助R来实现的 (参考n33p12);
-    if (updateConCansetResult.isNew && !targetFoModel.isH) {
-        //推举是从I推举到F（而pFo就是I层，所以sceneFrom就是pFo）。
-        [TCTransfer transferTuiJv_RH_V3:pFo cansetFrom:absCansetFo isH:true sceneFromCutIndex:basePFo.cutIndex];
-    }
+    //推举是从I推举到F（而pFo就是I层，所以sceneFrom就是pFo）。
+    //16. 算出absCanset的默认itemOutSPDic (参考33062-TODO4);
+    AIFoNodeBase *fCanset = [SMGUtils searchNode:self.fCanset];
+    NSArray *baseSceneContent_ps = Simples2Pits([self getBaseSceneToOrders]);
+    //初始OutSPDic从fCanset对baseScene取（其实取的就是cansetTo的OutSPDic）。
+    NSDictionary *initOutSPDic = [AINetUtils getInitOutSPDicForAbsCanset:fCanset baseSceneContent_ps:baseSceneContent_ps conCanset:cansetTo absCanset:absCansetFo];
+    [TCTransfer transferTuiJv_RH_V3:pFo cansetFrom:absCansetFo isH:true sceneFromCutIndex:basePFo.cutIndex initOutSPDic:initOutSPDic baseSceneContent_ps:baseSceneContent_ps];
+    [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
 }
 
 /**

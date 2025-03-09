@@ -101,6 +101,14 @@
 //MARK:===============================================================
 @implementation AISPStrong
 
+
++(id) newWithS:(CGFloat)sStrong P:(CGFloat)pStrong {
+    AISPStrong *result = [[AISPStrong alloc] init];
+    result.sStrong = sStrong;
+    result.pStrong = pStrong;
+    return result;
+}
+
 -(NSString *)description{
     return STRFORMAT(@"S%.0fP%.0f",self.sStrong,self.pStrong);
 }

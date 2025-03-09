@@ -66,6 +66,7 @@
  */
 @interface AISPStrong : NSObject <NSCoding,NSCopying>
 
++(id) newWithS:(CGFloat)sStrong P:(CGFloat)pStrong;
 @property (assign,nonatomic) CGFloat sStrong;
 @property (assign,nonatomic) CGFloat pStrong;
 

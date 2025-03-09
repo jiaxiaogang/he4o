@@ -306,9 +306,8 @@
 
 /**
  *  MARK:--------------------初始化itemOutSPDic (在canset类比抽象时) (参考33062-TODO4)--------------------
- *  @desc 用于canset类比抽象后: 把conCanset的itemOutSPDic设为新构建的absCanset的初始itemOutSPDic (参考33062-TODO4);
  */
-+(void) initItemOutSPDicForAbsCanset:(AIFoNodeBase*)scene conCanset:(AIFoNodeBase*)conCanset absCanset:(AIFoNodeBase*)absCanset;
++(NSDictionary*) getInitOutSPDicForAbsCanset:(AIFoNodeBase*)fCanset baseSceneContent_ps:(NSArray*)baseSceneContent_ps conCanset:(AIFoNodeBase*)conCanset absCanset:(AIFoNodeBase*)absCanset;
 
 /**
  *  MARK:--------------------取outSPDic的key (参考33065-TODO1)--------------------

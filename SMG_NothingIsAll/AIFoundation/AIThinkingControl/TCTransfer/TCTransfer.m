@@ -441,11 +441,13 @@
 /**
  *  MARK:--------------------在构建HCanset / RCanset时,推举到抽象场景中 (参考33112)--------------------
  *  @param sceneFromCutIndex 即broCanset正在行为化的帧 (它是新构建的hCanset的场景);
+ *  @param initOutSPDic 表示调用此方法的canset的初始OutSPDic，比如NewRHCanset时一般是每index都是P=1，再比如AbsRHCanset时为当前激活推进中的fCanset对baseSceneToOrders的现有SP记录。
+ *  @param baseSceneContent_ps 生成新canset所在的baseSceneOrders（用于推举后，为其初始化OutSP值）。
  *  @version
  *      2025.01.16: 迭代V2，H推举延着R的迁移关联进行（参考33152）。
  *      2025.03.02: 简化H嵌套后，R和H都是挂在rScene下，所以复用此推举算法（参考33171-TODO2）。
  */
-+(void) transferTuiJv_RH_V3:(AIFoNodeBase*)sceneFrom cansetFrom:(AIFoNodeBase*)cansetFrom isH:(BOOL)isH sceneFromCutIndex:(NSInteger)sceneFromCutIndex {
++(void) transferTuiJv_RH_V3:(AIFoNodeBase*)sceneFrom cansetFrom:(AIFoNodeBase*)cansetFrom isH:(BOOL)isH sceneFromCutIndex:(NSInteger)sceneFromCutIndex initOutSPDic:(NSDictionary*)initOutSPDic baseSceneContent_ps:(NSArray*)baseSceneContent_ps {
     //1. 将rCanset推举到每一个absFo;
     NSArray *absPorts = [AINetUtils absPorts_All:sceneFrom];
     
@@ -479,12 +481,16 @@
         
         //5. 加SP计数: 新推举的cansetFrom的spDic都计入cansetTo中 (参考33031b-BUG5-TODO1);
         //2024.11.01: 防重说明: 此方法调用了,说明cansetFrom是新挂载到sceneFrom下的,此时可调用一次推举到absPorts中,并把所有spDic都推举到absPorts上去;
+        //21. outSP值子即父: 当前NewRCanset所在的matchFo场景就是iScene (参考33112-TODO4.3);
+        //2024.11.26: 从0到cutIndex全计P+1 (参考33134-FIX2a);
         NSMutableDictionary *deltaSPDic = [cansetTo.outSPDic objectForKey:[AINetUtils getOutSPKey:sceneFrom.content_ps]];
         for (NSNumber *cansetFromIndex in deltaSPDic.allKeys) {
             AISPStrong *deltaSPStrong = [deltaSPDic objectForKey:cansetFromIndex];
             NSInteger cansetToIndex = cansetFromIndex.integerValue;//cansetFrom和cansetTo一样长,并且下标都是一一对应的;
-            [cansetTo updateOutSPStrong:cansetToIndex difStrong:deltaSPStrong.pStrong type:ATPlus baseSceneToContent_ps:sceneTo.content_ps debugMode:false caller:STRFORMAT(@"TuiJv%@时P初始化",isH?@"H":@"R")];
-            [cansetTo updateOutSPStrong:cansetToIndex difStrong:deltaSPStrong.sStrong type:ATSub baseSceneToContent_ps:sceneTo.content_ps debugMode:false caller:STRFORMAT(@"TuiJv%@时S初始化",isH?@"H":@"R")];
+            [cansetTo updateOutSPStrong:cansetToIndex difStrong:deltaSPStrong.pStrong type:ATPlus baseSceneToContent_ps:sceneTo.content_ps debugMode:false caller:STRFORMAT(@"TuiJv%@时F层P初始化",isH?@"H":@"R")];
+            [cansetTo updateOutSPStrong:cansetToIndex difStrong:deltaSPStrong.sStrong type:ATSub baseSceneToContent_ps:sceneTo.content_ps debugMode:false caller:STRFORMAT(@"TuiJv%@时F层S初始化",isH?@"H":@"R")];
+            [cansetTo updateOutSPStrong:cansetToIndex difStrong:deltaSPStrong.pStrong type:ATPlus baseSceneToContent_ps:baseSceneContent_ps debugMode:false caller:STRFORMAT(@"TuiJv%@时I层P初始化",isH?@"H":@"R")];
+            [cansetTo updateOutSPStrong:cansetToIndex difStrong:deltaSPStrong.sStrong type:ATSub baseSceneToContent_ps:baseSceneContent_ps debugMode:false caller:STRFORMAT(@"TuiJv%@时I层S初始化",isH?@"H":@"R")];
         }
         
         //12. 挂载cansetTo
@@ -496,9 +502,7 @@
         
         //14. 挂载成功: 进行迁移关联 (可供复用,避免每一次推举更新sp时,都重新推举) (参考33112-TODO3);
         //2024.11.13: 新版迁移关联: 推举时=>from是I层,to是F层 (条件: 未发生迁移时,不执行) (参考33112-TODO4.4);
-        if (![cansetTo isEqual:cansetFrom]) {
-            [AINetUtils relateTransfer_R:sceneTo fCanset:cansetTo iScene:sceneFrom iCanset:cansetFrom.content_ps];
-        }
+        [AINetUtils relateTransfer_R:sceneTo fCanset:cansetTo iScene:sceneFrom iCanset:cansetFrom.content_ps];
     }
 }
 
