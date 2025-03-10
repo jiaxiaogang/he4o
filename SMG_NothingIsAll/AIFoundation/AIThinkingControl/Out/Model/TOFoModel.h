@@ -155,7 +155,6 @@
 -(AIKVPointer*) fCanset;
 -(AIKVPointer*) fScene;
 -(AIKVPointer*) iScene;
--(AIKVPointer*) cansetTo;
 
 /**
  *  MARK:--------------------实际与场景之间的映射--------------------

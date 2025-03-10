@@ -106,7 +106,7 @@
     NSString *fltLog1 = FltLog4HDemandOfWuPiGuo(2);
     NSString *fltLog2 = FltLog4XueQuPi(1);
     TOFoModel *targetFo = (TOFoModel*)algModel.baseOrGroup;
-    OFTitleLog(@"hDemand",@"\n%@%@%@%@%@%@ from%@:%@ %d",fltLog1,fltLog2,FltLog4HDemandOfYouPiGuo(@"1"),FltLog4XueBanYun(1),FltLog4YonBanYun(1),Pit2FStr(algModel.content_p),targetFo.isH?@"H":@"R",Pit2FStr(targetFo.cansetTo),targetFo.isInfected);
+    OFTitleLog(@"hDemand",@"\n%@%@%@%@%@%@ from%@:%@ %d",fltLog1,fltLog2,FltLog4HDemandOfYouPiGuo(@"1"),FltLog4XueBanYun(1),FltLog4YonBanYun(1),Pit2FStr(algModel.content_p),targetFo.isH?@"H":@"R",Pits2FStr(Simples2Pits(targetFo.transferXvModel.cansetToOrders)),targetFo.isInfected);
     [HDemandModel newWithAlgModel:algModel];
     dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
         [theTV updateFrame];

@@ -270,4 +270,26 @@
     return heResult;
 }
 
++(AIFoNodeBase*) analogyCansetFoV2:(NSDictionary*)realCansetToIndexDic oldCansetOrders:(NSArray*)oldCansetOrders {
+    //1. 类比orders的规律
+    NSMutableArray *absOrders = [[NSMutableArray alloc] init];
+
+    //2. 根据新旧的映射indexDic分别进行概念类比 (参考29025-24a);
+    //2024.10.07: dic是无序的,所以先给key排下序,避免类比结果乱序 (参考33092);
+    //2024.10.07: 其实压根不用类比,打开前段条件满足后,orderSames就等于canset的前段 (不过先不改,以后前段条件满足万一再关了呢) (参考33053);
+    NSArray *sortKeys = [SMGUtils sortSmall2Big:realCansetToIndexDic.allKeys compareBlock:^double(NSNumber *obj) {
+        return obj.integerValue;
+    }];
+    for (NSNumber *key in sortKeys) {
+        NSInteger oldIndex = key.integerValue;
+        AIShortMatchModel_Simple *oldAlg_p = ARR_INDEX(oldCansetOrders, oldIndex);
+        [absOrders addObject:oldAlg_p];
+    }
+
+    //7. 外类比构建
+    AIFoNodeBase *result = [theNet createConFo_NoRepeat:absOrders];
+    if (Log4OutCansetAna) NSLog(@"\n----------- Canset类比 -----------\nold:%@\nbyIndexDic:%@\nabs:%@",Pits2FStr(Simples2Pits(oldCansetOrders)),CLEANSTR(realCansetToIndexDic),Fo2FStr(result));
+    return result;
+}
+
 @end

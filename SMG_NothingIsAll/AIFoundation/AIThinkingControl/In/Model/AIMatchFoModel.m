@@ -283,7 +283,7 @@
         //}
         
         //c. 数据准备;
-        AIFoNodeBase *solutionFo = [SMGUtils searchNode:solutionModel.cansetTo];
+        NSArray *solutionOrders = solutionModel.transferXvModel.cansetToOrders;
         AIFoNodeBase *pFo = [SMGUtils searchNode:solutionModel.basePFo.matchFo];//此处pFo和matchFo都是sceneTo
         
         //2024.07.30: 去掉不必要的过滤器 (参考3211a-AbsR);
@@ -294,27 +294,25 @@
         NSArray *noRepeatArea_ps = [pFo getConCansets:pFo.count];
         
         //2024.09.13: rCanset类比启用新的canset类比算法 (参考33052-TODO2);
-        HEResult *analogyResult = [AIAnalogy analogyCansetFo:solutionModel.realCansetToIndexDic newCanset:newRCanset oldCanset:solutionFo noRepeatArea_ps:noRepeatArea_ps];
-        AIFoNodeBase *absCansetFo = analogyResult.data;
-        BOOL isNew = analogyResult.isNew;
+        AIFoNodeBase *absCansetFo = [AIAnalogy analogyCansetFoV2:solutionModel.realCansetToIndexDic oldCansetOrders:solutionOrders];
         HEResult *updateConCansetResult = [pFo updateConCanset:absCansetFo.pointer targetIndex:pFo.count];//此处pFo和matchFo都是sceneTo
-        [AITest test101:absCansetFo proto:newRCanset conCanset:solutionFo];
-        NSLog(@"%@%@Canset演化> AbsRCanset:%@ from(F%ld:F%ld) toScene:%@",FltLog4CreateRCanset(4),FltLog4YonBanYun(4),Fo2FStr(absCansetFo),newRCanset.pId,solutionFo.pId,ShortDesc4Node(pFo));
+        [AITest test101:absCansetFo proto:newRCanset oldCansetOrder:solutionOrders];
+        NSLog(@"%@%@Canset演化> AbsRCanset:%@ from(F%ld) toScene:%@",FltLog4CreateRCanset(4),FltLog4YonBanYun(4),Fo2FStr(absCansetFo),newRCanset.pId,ShortDesc4Node(pFo));
         
         if (updateConCansetResult.success) {
             //2024.04.17: 此处简化了下,把用convertOldIndexDic2NewIndexDic()取映射,改成用zonHeDic来计算;
             //a. 从sceneTo向下到cansetTo;
-            DirectIndexDic *dic1 = [DirectIndexDic newNoToAbs:[pFo getConIndexDic:solutionFo.p]];
+            DirectIndexDic *dic1 = [DirectIndexDic newNoToAbs:solutionModel.transferXvModel.sceneToCansetToIndexDic];
             
             //b. 从cansetTo向上到absCansetTo;
-            DirectIndexDic *dic2 = [DirectIndexDic newOkToAbs:[solutionFo getAbsIndexDic:absCansetFo.p]];
+            DirectIndexDic *dic2 = [DirectIndexDic newOkToAbs:solutionModel.realCansetToIndexDic];
             
             //c. 综合求出absHCanset与场景的映射;
             NSDictionary *absRCansetSceneToIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2]];
             if ([Fo2FStr(absCansetFo) containsString:@"饿"] && [Fo2FStr(pFo) containsString:@"饿"]) {
-                if (absRCansetSceneToIndexDic.count == 0 && !ISOK(solutionFo, AINetAbsFoNode.class) && DICISOK(dic1.indexDic)) {
+                if (absRCansetSceneToIndexDic.count == 0 && DICISOK(dic1.indexDic)) {
                     //2024.06.13: 特殊情况说明: 当solution中有两个饿时,此处dic is nil也是正常的,因为solution和abs之间映射了第一个饿,而综合求dic的pFo与solution可能是映射第二个 (这个有可能是因为时序识别 和 类比时的,从后向前匹配啥的有关,但不算什么大问题,可以暂不处理)即: 当assFo有两条饿时,映射不到是可能的 (不算bug);
-                    if ([NSString countOfSubStr:@"饿" fromStr:Fo2FStr(solutionFo)] <= 1) {
+                    if ([NSString countOfSubStr:@"饿" fromStr:Pits2FStr(Simples2Pits(solutionOrders))] <= 1) {
                         NSLog(@"AbsRCanset Dic Is Nil");
                     }
                 }
@@ -331,7 +329,8 @@
         AIFoNodeBase *fCanset = [SMGUtils searchNode:solutionModel.fCanset];
         NSArray *baseSceneContent_ps = Simples2Pits([solutionModel getBaseSceneToOrders]);
         //初始OutSPDic从fCanset对baseScene取（其实取的就是cansetTo的OutSPDic）。
-        NSDictionary *initOutSPDic = [AINetUtils getInitOutSPDicForAbsCanset:fCanset baseSceneContent_ps:baseSceneContent_ps conCanset:solutionFo absCanset:absCansetFo];
+        NSDictionary *oldSolutionAbsCansetIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:solutionModel.realCansetToIndexDic.allKeys];
+        NSDictionary *initOutSPDic = [AINetUtils getInitOutSPDicForAbsCanset:fCanset baseSceneContent_ps:baseSceneContent_ps oldSolutionAbsCansetIndexDic:oldSolutionAbsCansetIndexDic absCanset:absCansetFo];
         [TCTransfer transferTuiJv_RH_V3:basePFo cansetFrom:absCansetFo isH:true sceneFromCutIndex:basePFo.count-1 initOutSPDic:initOutSPDic baseSceneContent_ps:baseSceneContent_ps];
         [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
     }

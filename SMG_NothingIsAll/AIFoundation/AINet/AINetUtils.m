@@ -931,11 +931,12 @@
 /**
  *  MARK:--------------------初始化itemOutSPDic (在canset类比抽象时) (参考33062-TODO4)--------------------
  *  @desc 用于canset类比抽象后: 把conCanset的itemOutSPDic设为新构建的absCanset的初始itemOutSPDic (参考33062-TODO4);
+ *  @param oldSolutionAbsCansetIndexDic 传抽象前的oldCanset（cansetTo）与 absCanset之间映射（因为有映射的,才继承它的sp值,没映射的不处理）。
  *  @version
  *      2025.03.09: 原本的初始化OutSPDic是fCanset对baseScene的，现在在fCanset -> 继承成cansetTo -> 又新类比到AbsCanset。
  *  @result 返回absCanset的初始OutSPDic。
  */
-+(NSDictionary*) getInitOutSPDicForAbsCanset:(AIFoNodeBase*)fCanset baseSceneContent_ps:(NSArray*)baseSceneContent_ps conCanset:(AIFoNodeBase*)conCanset absCanset:(AIFoNodeBase*)absCanset {
++(NSDictionary*) getInitOutSPDicForAbsCanset:(AIFoNodeBase*)fCanset baseSceneContent_ps:(NSArray*)baseSceneContent_ps oldSolutionAbsCansetIndexDic:(NSDictionary*)oldSolutionAbsCansetIndexDic absCanset:(AIFoNodeBase*)absCanset {
     //1. 数据准备。
     NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
     
@@ -943,13 +944,9 @@
     NSDictionary *fromItemOutSPDic = [fCanset.outSPDic objectForKey:[self getOutSPKey:baseSceneContent_ps]];
     if (!DICISOK(fromItemOutSPDic)) return result;
     
-    //3. 取conCanset和absCanset的映射 (因为有映射的,才继承它的sp值,没映射的不处理);
-    NSDictionary *conAbsCansetIndexDic = [conCanset getAbsIndexDic:absCanset.p];
-    if (!DICISOK(conAbsCansetIndexDic)) return result;
-    
     //4. 有映射的,逐帧继承sp值;
-    for (NSNumber *absIndex in conAbsCansetIndexDic.allKeys) {
-        NSNumber *conIndex = [conAbsCansetIndexDic objectForKey:absIndex];
+    for (NSNumber *absIndex in oldSolutionAbsCansetIndexDic.allKeys) {
+        NSNumber *conIndex = [oldSolutionAbsCansetIndexDic objectForKey:absIndex];
         AISPStrong *fromItemSPStrong = [fromItemOutSPDic objectForKey:conIndex];
         if (!fromItemSPStrong) continue;
         

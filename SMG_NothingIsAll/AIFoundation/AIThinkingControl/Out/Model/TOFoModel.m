@@ -328,7 +328,7 @@
 /**
  *  MARK:--------------------有iCanset直接返回进行行为化等 (参考29069-todo9 & todo10.1b)--------------------
  */
-//TODOTOMORROW20250310: 继续查下废弃调用：2、cansetTo 3、cansetFo改成fCanset 4、sceneFo(改成fScene) 5、siModel全废弃（含再类比）。
+//TODOTOMORROW20250310: 继续查下废弃调用：3、cansetFo改成fCanset 4、sceneFo(改成fScene) 5、siModel全废弃（含再类比）。
 -(AIKVPointer *)content_p {
     return self.fCanset;
 }
@@ -639,13 +639,6 @@
 +(AIKVPointer*) rSceneTo:(AISceneModel*)rSceneModel {
     if (!rSceneModel) return nil;
     return rSceneModel.getIScene;
-}
-
--(AIKVPointer*) cansetTo {
-    if (self.transferSiModel) {
-        return self.transferSiModel.canset;
-    }
-    return nil;
 }
 
 //MARK:===============================================================
