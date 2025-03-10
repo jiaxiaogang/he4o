@@ -475,7 +475,7 @@
     //NSString *protoSPDicStr = CLEANSTR(iSPDic);
     
     //2. 取出F层 (参考33114-TODO3-用I/F综合起来决定最终spDic及稳定性);
-    AIFoNodeBase *iScene = [SMGUtils searchNode:canset.sceneTo];
+    AIFoNodeBase *iScene = [SMGUtils searchNode:canset.iScene];
     NSArray *iCansetContent_ps = Simples2Pits(canset.transferXvModel.cansetToOrders);
     //2024.11.29: 性能优化: 单次已从6.99优化至0.08ms;
     NSArray *fPorts = [AINetUtils transferPorts_4Father:iScene iCansetContent_ps:iCansetContent_ps];

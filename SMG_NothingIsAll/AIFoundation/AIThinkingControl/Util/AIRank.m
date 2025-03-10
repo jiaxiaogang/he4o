@@ -177,10 +177,10 @@
         if (debugMode) {
             AIFoNodeBase *fScene = [SMGUtils searchNode:obj.fScene];
             NSLog(@"\t%@sceneFrom: %@",FltLog4DefaultIf(!obj.isH, @"1.1"),Pit2FStr(obj.fScene));
-            NSLog(@"cansetFrom: %@",Pit2FStr(obj.cansetFrom));
-            NSLog(@"\t%@sceneTo: %@",FltLog4DefaultIf(!obj.isH, @"1.2"),Pit2FStr(obj.sceneTo));
+            NSLog(@"cansetFrom: %@",Pit2FStr(obj.fCanset));
+            NSLog(@"\t%@sceneTo: %@",FltLog4DefaultIf(!obj.isH, @"1.2"),Pit2FStr(obj.iScene));
             NSLog(@"cansetTo: %@",Pits2FStr([SMGUtils convertArr:obj.transferXvModel.cansetToOrders convertBlock:^id(AIShortMatchModel_Simple *obj) { return obj.alg_p; }]));
-            NSLog(@"indexDicFrom: %@",CLEANSTR([fScene getConIndexDic:obj.cansetFrom]));
+            NSLog(@"indexDicFrom: %@",CLEANSTR([fScene getConIndexDic:obj.fCanset]));
             NSLog(@"indexDicTo: %@",CLEANSTR(obj.transferXvModel.sceneToCansetToIndexDic));
         }
     }

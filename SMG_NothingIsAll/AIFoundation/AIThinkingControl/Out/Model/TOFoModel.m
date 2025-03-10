@@ -328,7 +328,7 @@
 /**
  *  MARK:--------------------有iCanset直接返回进行行为化等 (参考29069-todo9 & todo10.1b)--------------------
  */
-//TODOTOMORROW20250310: 继续查下废弃调用：1、sceneTo 2、cansetTo 3、cansetFo改成fCanset 4、sceneFo(改成fScene) 5、siModel全废弃（含再类比）。
+//TODOTOMORROW20250310: 继续查下废弃调用：2、cansetTo 3、cansetFo改成fCanset 4、sceneFo(改成fScene) 5、siModel全废弃（含再类比）。
 -(AIKVPointer *)content_p {
     return self.fCanset;
 }
@@ -546,7 +546,7 @@
     //12. H任务完成时,H当前正执行的S提前完成,并进行外类比 (参考27206c-H任务);
     //13. 数据准备 (当前sceneTo就是targetFoModel.cansetTo);
     AIFoNodeBase *cansetTo = [SMGUtils searchNode:self.transferSiModel.canset];
-    AIFoNodeBase *sceneTo = [SMGUtils searchNode:self.sceneTo];
+    AIFoNodeBase *iScene = [SMGUtils searchNode:self.iScene];
     
     //14. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
     NSArray *noRepeatArea_ps = [pFo getConCansets:basePFo.cutIndex + 1];
@@ -557,7 +557,7 @@
     HEResult *updateConCansetResult =  [pFo updateConCanset:absCansetFo.pointer targetIndex:basePFo.cutIndex + 1];
     [AITest test101:absCansetFo proto:newHCanset conCanset:cansetTo];
     NSString *fltLog = FltLog4CreateHCanset(4);
-    NSLog(@"%@%@%@%@%@%@Canset演化> AbsHCanset:%@ toScene:%@ 在%ld帧:%@",fltLog,FltLog4AbsHCanset(true, 3),FltLog4XueQuPi(3),FltLog4HDemandOfYouPiGuo(@"5"),FltLog4XueBanYun(3),FltLog4YonBanYun(4),Fo2FStr(absCansetFo),ShortDesc4Node(sceneTo),self.cansetActIndex,Pit2FStr(self.getCurFrame.content_p));
+    NSLog(@"%@%@%@%@%@%@Canset演化> AbsHCanset:%@ toScene:%@ 在%ld帧:%@",fltLog,FltLog4AbsHCanset(true, 3),FltLog4XueQuPi(3),FltLog4HDemandOfYouPiGuo(@"5"),FltLog4XueBanYun(3),FltLog4YonBanYun(4),Fo2FStr(absCansetFo),ShortDesc4Node(iScene),self.cansetActIndex,Pit2FStr(self.getCurFrame.content_p));
     
     ELog(@"此处断点停下时,测下hCanset的类比是否正常!!!!!!!!!!!!!!! (参考33052-待断点测试项)");
     
@@ -581,7 +581,7 @@
         
         //c. 综合求出absHCanset与场景的映射;
         NSDictionary *absHCansetSceneToIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2]];
-        if ([Fo2FStr(absCansetFo) containsString:@"饿"] && [Fo2FStr(sceneTo) containsString:@"饿"]) {
+        if ([Fo2FStr(absCansetFo) containsString:@"饿"] && [Fo2FStr(iScene) containsString:@"饿"]) {
             if (absHCansetSceneToIndexDic.count == 0) {
                 NSLog(@"AbsHCanset Dic Is Nil");
             }
@@ -632,18 +632,6 @@
     return self.baseSceneModel.getIScene;
 }
 
-/**
- *  MARK:--------------------取此方案迁移目标--------------------
- *  @desc 无论是否转实,都可以取得sceneTo;
- */
--(AIKVPointer*) sceneTo {
-    if (self.isH) {
-        TOFoModel *targetFoM = (TOFoModel*)self.basePFoOrTargetFoModel;//当前如果是H,这表示正在推进中targetFoM;
-        return [TOFoModel hSceneTo:targetFoM];
-    } else {
-        return [TOFoModel rSceneTo:self.baseSceneModel];//无论是R还是H,self.baseSceneModel都表示rSceneModel;
-    }
-}
 +(AIKVPointer*) hSceneTo:(TOFoModel*)baseTargetFo {
     if (!baseTargetFo) return nil;
     return baseTargetFo.transferSiModel.canset;

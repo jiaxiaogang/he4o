@@ -396,7 +396,7 @@
         if (debugMode) NSLog(@"第10步 %@求解最佳结果:F%ld %@",rhLog,result.cansetFo.pointerId,CLEANSTR(resultFo.spDic));
         
         //16. 更新前中后段con和abs的抽具象强度 (参考28086-todo2 & 28092-todo4);
-        [AINetUtils updateConAndAbsStrongByIndexDic:result.transferXvModel.sceneToCansetToIndexDic matchFo:result.sceneTo cansetFo:result.transferXvModel.cansetToOrders];
+        [AINetUtils updateConAndAbsStrongByIndexDic:result.transferXvModel.sceneToCansetToIndexDic matchFo:result.iScene cansetFo:result.transferXvModel.cansetToOrders];
 
         //17. 更新其前段alg引用value的强度;
         NSArray *frontCansetToIndexArr = [SMGUtils filterArr:result.transferXvModel.sceneToCansetToIndexDic.allValues checkValid:^BOOL(NSNumber *item) {

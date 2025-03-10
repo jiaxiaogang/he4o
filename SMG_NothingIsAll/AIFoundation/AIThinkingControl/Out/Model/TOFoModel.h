@@ -155,11 +155,6 @@
 -(AIKVPointer*) fCanset;
 -(AIKVPointer*) fScene;
 -(AIKVPointer*) iScene;
-
-/**
- *  MARK:--------------------取此方案迁移目标--------------------
- */
--(AIKVPointer*) sceneTo;
 -(AIKVPointer*) cansetTo;
 
 /**
