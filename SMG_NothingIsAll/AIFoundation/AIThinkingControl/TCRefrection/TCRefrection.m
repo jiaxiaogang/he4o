@@ -33,7 +33,6 @@
     [theTC updateOperCount:kFILENAME];
     Debug();
     AIFoNodeBase *cansetFo = [SMGUtils searchNode:checkCanset.cansetFo];
-    AIFoNodeBase *sceneFo = [SMGUtils searchNode:checkCanset.sceneFo];
     
     //7. 算出后段的"懒"评分 (最后一帧静默等待不需要行为化,所以小于cansetTargetIndex即可);
     CGFloat lazyScore = 0;
@@ -101,7 +100,7 @@
     
     //3. 对比二者,得出反思是否通过 (最严重也不比当前重要时,反思通过) (参考30054-todo6);
     BOOL result = averageScore > demandScore;
-    NSLog(@"> F%ld行为化前 的 子任务分:%.2f > 当前任务分(%@):%.2f =====> %@通过",baseFoModel.cansetFrom.pointerId,averageScore,ClassName2Str(baseRDemand.algsType),demandScore,result?@"已":@"未");
+    NSLog(@"> F%ld行为化前 的 子任务分:%.2f > 当前任务分(%@):%.2f =====> %@通过",baseFoModel.fCanset.pointerId,averageScore,ClassName2Str(baseRDemand.algsType),demandScore,result?@"已":@"未");
     DebugE();
     return result;
 }

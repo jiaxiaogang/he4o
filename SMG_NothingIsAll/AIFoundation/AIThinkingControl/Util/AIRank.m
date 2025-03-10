@@ -168,19 +168,19 @@
         
         //fltLog1: 如果当前是H任务,且是在找无皮果,且这个解含有有皮果 => 则这个解可能产生:有皮果动机;
         NSInteger index = [sort indexOfObject:obj];
-        NSString *fltLog1 = obj.isH && [NVHeUtil algIsWuPiGuo:targetAlg] && [NVHeUtil foHavYouPiGuo:obj.cansetFrom] ? FltLog4HDemandOfYouPiGuo(@"3") : @"";
+        NSString *fltLog1 = obj.isH && [NVHeUtil algIsWuPiGuo:targetAlg] && [NVHeUtil foHavYouPiGuo:obj.fCanset] ? FltLog4HDemandOfYouPiGuo(@"3") : @"";
         NSString *fltLog2 = FltLog4DefaultIf(!obj.isH, @"1");
-        NSString *fromDSC = STRFORMAT(@"FROM<F%ld F%ld %@>",Demand2Pit((DemandModel*)obj.baseOrGroup).pointerId,obj.sceneFrom.pointerId,ShortDesc4Pit(obj.cansetFrom));
+        NSString *fromDSC = STRFORMAT(@"FROM<F%ld F%ld %@>",Demand2Pit((DemandModel*)obj.baseOrGroup).pointerId,obj.fScene.pointerId,ShortDesc4Pit(obj.cansetFrom));
         if (debugMode && Log4AIRank) NSLog(@"%@%@%@%ld. %@ by:%@ %@ %@ (分:%.2f P值:%ld) [CUT:%ld=>TAR:%ld]",fltLog1,fltLog2,obj.isH?@"H":@"R",index,SceneType2Str(obj.baseSceneModel.type),fromDSC,CLEANSTR(obj.transferXvModel.sceneToCansetToIndexDic),CLEANSTR(spDic),spScore,pStrong,obj.cansetCutIndex,obj.cansetTargetIndex);
         
         //打印详情日志;
         if (debugMode) {
-            AIFoNodeBase *sceneFrom = [SMGUtils searchNode:obj.sceneFrom];
-            NSLog(@"\t%@sceneFrom: %@",FltLog4DefaultIf(!obj.isH, @"1.1"),Pit2FStr(obj.sceneFrom));
+            AIFoNodeBase *fScene = [SMGUtils searchNode:obj.fScene];
+            NSLog(@"\t%@sceneFrom: %@",FltLog4DefaultIf(!obj.isH, @"1.1"),Pit2FStr(obj.fScene));
             NSLog(@"cansetFrom: %@",Pit2FStr(obj.cansetFrom));
             NSLog(@"\t%@sceneTo: %@",FltLog4DefaultIf(!obj.isH, @"1.2"),Pit2FStr(obj.sceneTo));
             NSLog(@"cansetTo: %@",Pits2FStr([SMGUtils convertArr:obj.transferXvModel.cansetToOrders convertBlock:^id(AIShortMatchModel_Simple *obj) { return obj.alg_p; }]));
-            NSLog(@"indexDicFrom: %@",CLEANSTR([sceneFrom getConIndexDic:obj.cansetFrom]));
+            NSLog(@"indexDicFrom: %@",CLEANSTR([fScene getConIndexDic:obj.cansetFrom]));
             NSLog(@"indexDicTo: %@",CLEANSTR(obj.transferXvModel.sceneToCansetToIndexDic));
         }
     }
@@ -191,14 +191,14 @@
     for (MapModel *mapModel in sortMapArr) {
         TOFoModel *obj = mapModel.v1;
         if (!debugMode) break;
-        BOOL sceneFromHavXianWuJv = [NVHeUtil foHavXianWuJv:obj.sceneFrom];
+        BOOL sceneFromHavXianWuJv = [NVHeUtil foHavXianWuJv:obj.fScene];
         if (!sceneFromHavXianWuJv) continue;
         
         CGFloat spScore = NUMTOOK(mapModel.v3).floatValue;
         NSInteger pStrong = NUMTOOK(mapModel.v2).integerValue;
         NSDictionary *spDic = [obj getItemOutSPDic];
         NSInteger index = [sort indexOfObject:obj];
-        NSString *fromDSC = STRFORMAT(@"FROM<F%ld F%ld %@>",Demand2Pit((DemandModel*)obj.baseOrGroup).pointerId,obj.sceneFrom.pointerId,ShortDesc4Pit(obj.cansetFrom));
+        NSString *fromDSC = STRFORMAT(@"FROM<F%ld F%ld %@>",Demand2Pit((DemandModel*)obj.baseOrGroup).pointerId,obj.fScene.pointerId,ShortDesc4Pit(obj.cansetFrom));
         NSLog(@"flt8b %ld/%ld. %@ by:%@ %@ %@ (分:%.2f P值:%ld) [CUT:%ld=>TAR:%ld]",index,sort.count,SceneType2Str(obj.baseSceneModel.type),fromDSC,CLEANSTR(obj.transferXvModel.sceneToCansetToIndexDic),CLEANSTR(spDic),spScore,pStrong,obj.cansetCutIndex,obj.cansetTargetIndex);
         logCount++;
         if (logCount >= 3) break;
@@ -268,7 +268,6 @@
     //3. debug日志
     for (TOFoModel *obj in result) {
         id key = itemKeyBlock(obj);
-        AIFoNodeBase *sceneFo = [SMGUtils searchNode:obj.sceneFo];
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:obj.cansetFo];
         float coolScore1 = NUMTOOK([cooledDic1 objectForKey:key]).floatValue,coolScore2 = NUMTOOK([cooledDic2 objectForKey:key]).floatValue;
         CGFloat spScore = itemScoreBlock1(obj);

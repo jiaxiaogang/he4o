@@ -80,7 +80,7 @@
 //MARK:                     < CansetModel >
 //MARK:===============================================================
 @property (strong, nonatomic) AIKVPointer *cansetFo;    //迁移前候选集fo;
-@property (strong, nonatomic) AIKVPointer *sceneFo;     //迁移前候选集所在的scene
+@property (strong, nonatomic) AIKVPointer *fScene;     //迁移前候选集所在的scene
 
 /**
  *  MARK:--------------------此解决方案基于哪个pFo/targetFo--------------------
@@ -151,9 +151,6 @@
 /**
  *  MARK:--------------------迁移源--------------------
  */
--(AIKVPointer*) sceneFrom;
--(AIKVPointer*) cansetFrom;
-
 //取当前cansetFrom对应的F层canset。
 -(AIKVPointer*) fCanset;
 -(AIKVPointer*) fScene;

@@ -100,7 +100,7 @@
         [demand.actionFoModels removeObject:result];
         return nil;
     }
-    if (Log4SceneIsOk) NSLog(@"前段条件满足通过 => demand:F%ld cansetFrom:F%ld (CUT%ld) %@",Demand2Pit(demand).pointerId,result.cansetFrom.pointerId,result.cansetCutIndex,CLEANSTR(result.realCansetToIndexDic));
+    if (Log4SceneIsOk) NSLog(@"前段条件满足通过 => demand:F%ld cansetFrom:F%ld (CUT%ld) %@",Demand2Pit(demand).pointerId,result.fCanset.pointerId,result.cansetCutIndex,CLEANSTR(result.realCansetToIndexDic));
     if (Log4SceneIsOk) NSLog(@"\t1. 前段cansetTo:%@",Pits2FStr([SMGUtils convertArr:result.transferXvModel.cansetToOrders convertBlock:^id(AIShortMatchModel_Simple *obj) {return obj.alg_p;}]));
     if (Log4SceneIsOk) NSLog(@"\t2. 前段realMaskFo:%@",Pits2FStr([result.basePFo.realMaskFo copy]));
     
@@ -140,7 +140,7 @@
         [hDemand.actionFoModels removeObject:result];
         return nil;
     }
-    if (Log4SceneIsOk) NSLog(@"demand:F%ld cansetFrom:F%ld 前段条件满足通过:%@",Demand2Pit(hDemand).pointerId,result.cansetFrom.pointerId,CLEANSTR(result.realCansetToIndexDic));
+    if (Log4SceneIsOk) NSLog(@"demand:F%ld cansetFrom:F%ld 前段条件满足通过:%@",Demand2Pit(hDemand).pointerId,result.fCanset.pointerId,CLEANSTR(result.realCansetToIndexDic));
     
     //8. 下帧初始化 (可接受反馈);
     [result pushNextFrame];

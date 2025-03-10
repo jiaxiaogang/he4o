@@ -90,7 +90,7 @@
     //说明: 现在Cansets在实时竞争后,转实,以及反思,可行性检查,等都封装在实时竞争算法中了 (所以这里不是for循环的写法,当逐条尝试不通过时,重新调用下实时竞争算法吧);
     //1. ========== 先实时竞争 ==========
     TOFoModel *bestCanset = [TCSolutionUtil realTimeRankCansets:baseDemand zonHeScoreBlock:nil debugMode:false];
-    if (Log4Plan) NSLog(@"%@item评分cansets竞争 -> 胜者:%@",[HeLogUtil getPrefixStr:prefixNum],Pit2FStr(bestCanset.cansetFrom));
+    if (Log4Plan) NSLog(@"%@item评分cansets竞争 -> 胜者:%@",[HeLogUtil getPrefixStr:prefixNum],Pit2FStr(bestCanset.fCanset));
     
     //2. ========== 依次对canset向下尝试或淘汰 ==========
     //3. 驳回: 上一层 -> 发现无解,所有Cansts全失败了,退回上一层,重新实时竞争,继续尝试下一条;
@@ -244,7 +244,7 @@
     //把每一次TCPlan完成后的: root->sub打印出来 (参考32114-方案3);
     NSArray *subToRoot = [SMGUtils convertArr:[TOUtils getBaseOutModels_AllDeep:endBranch] convertBlock:^id(TOModelBase *obj) {
         if (ISOK(obj, TOFoModel.class)) {
-            return STRFORMAT(@"F%ld",((TOFoModel*)obj).cansetFrom.pointerId);
+            return STRFORMAT(@"F%ld",((TOFoModel*)obj).fCanset.pointerId);
         } else if (ISOK(obj, TOAlgModel.class)) {
             return STRFORMAT(@"A%ld",((TOAlgModel*)obj).content_p.pointerId);
         } else if (ISOK(obj, ReasonDemandModel.class)) {

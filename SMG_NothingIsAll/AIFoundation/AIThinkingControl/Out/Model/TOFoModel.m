@@ -31,7 +31,7 @@
     
     //1. 原CansetModel相关赋值;
     model.cansetFo = cansetFrom_p;
-    model.sceneFo = fScene_p;
+    model.fScene = fScene_p;
     model.basePFoOrTargetFoModel = basePFoOrTargetFoModel;
     model.baseSceneModel = baseSceneModel;//R任务时,即R任务的RSceneModel;
     model.sceneCutIndex = sceneCutIndex;
@@ -57,7 +57,7 @@
     
     //1. 原CansetModel相关赋值;
     model.cansetFo = canset;
-    model.sceneFo = fScene_p;
+    model.fScene = fScene_p;
     model.basePFoOrTargetFoModel = basePFoOrTargetFoModel;
     model.baseSceneModel = baseSceneModel;//H任务时,其实是复用了R任务的RSceneModel;
     model.initCansetCutIndex = cansetCutIndex;
@@ -179,7 +179,7 @@
     BOOL logSwitch = true;
     if (self.realCansetToIndexDic.count > oldDic.count && logSwitch) {
         BOOL frontDicIsOk = self.realCansetToIndexDic.count >= self.cansetCutIndex + 1;
-        NSLog(@"F%ld补映射前:%@ => 后:%@ (前段通过:%d)",self.cansetFrom.pointerId,CLEANSTR(oldDic),CLEANSTR(self.realCansetToIndexDic),frontDicIsOk);
+        NSLog(@"F%ld补映射前:%@ => 后:%@ (前段通过:%d)",self.fCanset.pointerId,CLEANSTR(oldDic),CLEANSTR(self.realCansetToIndexDic),frontDicIsOk);
         NSLog(@"\t1. 前段cansetTo:%@",Pits2FStr([SMGUtils convertArr:self.transferXvModel.cansetToOrders convertBlock:^id(AIShortMatchModel_Simple *obj) {return obj.alg_p;}]));
         NSLog(@"\t2. 前段realMaskFo:%@",Pits2FStr([self.basePFo.realMaskFo copy]));
     }
@@ -328,9 +328,9 @@
 /**
  *  MARK:--------------------有iCanset直接返回进行行为化等 (参考29069-todo9 & todo10.1b)--------------------
  */
-//TODOTOMORROW20250310: 继续查下废弃调用：1、content_p（改成fCanset) 2、sceneFo(改成fScene) 3、siModel全废弃（含再类比）。
+//TODOTOMORROW20250310: 继续查下废弃调用：1、sceneTo 2、cansetTo 3、cansetFo改成fCanset 4、sceneFo(改成fScene) 5、siModel全废弃（含再类比）。
 -(AIKVPointer *)content_p {
-    return self.cansetFrom;
+    return self.fCanset;
 }
 
 - (NSInteger)cansetActIndex {
@@ -425,7 +425,7 @@
     NSString *fltLog2 = [Pit2FStr(protoAlg_p) containsString:@"皮果"] ? FltLog4HDemandOfYouPiGuo(@"4") : @"";
     NSString *fltLog3 = self.cansetStatus != CS_None ? FltLog4YonBanYun(2) : @"";
     NSString *fltLog4 = FltLog4CreateHCanset(2);
-    if (Switch4FeedbackTOR) NSLog(@"%@%@%@%@%@%@ feedbackTOR反馈成立:%@ 匹配:%d baseCansetFrom:%@ 状态:%@",FltLog4AbsHCanset(self.isH, 2),fltLog,fltLog2,fltLog3,fltLog4,self.isH?@"H":@"R",Pit2FStr(cansetToSimple.alg_p),mIsC,Pit2FStr(self.cansetFrom),CansetStatus2Str(self.cansetStatus));
+    if (Switch4FeedbackTOR) NSLog(@"%@%@%@%@%@%@ feedbackTOR反馈成立:%@ 匹配:%d baseCansetFrom:%@ 状态:%@",FltLog4AbsHCanset(self.isH, 2),fltLog,fltLog2,fltLog3,fltLog4,self.isH?@"H":@"R",Pit2FStr(cansetToSimple.alg_p),mIsC,Pit2FStr(self.fCanset),CansetStatus2Str(self.cansetStatus));
     
     //3. 有效时: 记录feedbackAlg;
     TOAlgModel *curAlgModel = [self getCurFrame];
@@ -615,21 +615,13 @@
 /**
  *  MARK:--------------------迁移源--------------------
  */
--(AIKVPointer*) sceneFrom {
-    return self.sceneFo;
-}
-
--(AIKVPointer*) cansetFrom {
-    return self.cansetFo;
-}
-
 //取当前cansetFrom对应的F层canset。
 -(AIKVPointer*) fCanset {
     //0. 如果solution可能从I层求解，那此处需要判断typeI还是F，分别处理取fCanset的方法。
     if (self.baseSceneModel.type == SceneTypeI) {
         ELog(@"现在只支持从F层求解的情况。如果不废弃I层求解，此处要做兼容。即根据迁移关联从F层取来FCanset（参考33172-TODO4）。")
     }
-    return self.cansetFrom;
+    return self.cansetFo;
 }
 
 -(AIKVPointer*) fScene {
@@ -688,8 +680,8 @@
     [self checkAndUpdateOutSPStrong:difStrong spIndex:self.cansetActIndex type:type debugMode:debugMode caller:caller except4SP2F:except4SP2F];
 }
 -(void) checkAndUpdateOutSPStrong_Percept:(NSInteger)difStrong type:(AnalogyType)type debugMode:(BOOL)debugMode caller:(NSString*)caller except4SP2F:(NSMutableArray*)except4SP2F {
-    AIFoNodeBase *cansetFrom = [SMGUtils searchNode:self.cansetFrom];
-    [self checkAndUpdateOutSPStrong:difStrong spIndex:cansetFrom.count type:type debugMode:debugMode caller:caller except4SP2F:except4SP2F];
+    AIFoNodeBase *fCanset = [SMGUtils searchNode:self.fCanset];
+    [self checkAndUpdateOutSPStrong:difStrong spIndex:fCanset.count type:type debugMode:debugMode caller:caller except4SP2F:except4SP2F];
 }
 -(void) checkAndUpdateOutSPStrong:(NSInteger)difStrong spIndex:(NSInteger)spIndex type:(AnalogyType)type debugMode:(BOOL)debugMode caller:(NSString*)caller except4SP2F:(NSMutableArray*)except4SP2F {
     //1. 数据检查: 未转实的不执行,它的cansetTo没构建呢 (33031b-协作 & 33062-TODO6);
@@ -700,7 +692,7 @@
     //DemandModel *baseDemand = (DemandModel*)self.baseOrGroup;
     ReasonDemandModel *root = (ReasonDemandModel*)[TOUtils getRootDemandModelWithSubOutModel:self];
     NSInteger rootIndex = [theTC.outModelManager.getAllDemand indexOfObject:root];
-    NSString *fromDSC = STRFORMAT(@"FROM<F%ld F%ld F%ld>",Demand2Pit((DemandModel*)self.baseOrGroup).pointerId,self.sceneFrom.pointerId,self.cansetFrom.pointerId);
+    NSString *fromDSC = STRFORMAT(@"FROM<F%ld F%ld F%ld>",Demand2Pit((DemandModel*)self.baseOrGroup).pointerId,self.fScene.pointerId,self.fCanset.pointerId);
     caller = STRFORMAT(@"%@ by:%@ ROOT%ld(F%ld)",caller,fromDSC,rootIndex,Demand2Pit(root).pointerId);
     
     //1. 取得canstFrom的spStrong;

@@ -86,7 +86,7 @@
         content_p = rData.protoOrRegroupFo;
     } else if(ISOK(model, TOFoModel.class)){
         TOFoModel *foModel = (TOFoModel*)model;
-        content_p = foModel.cansetFrom;
+        content_p = foModel.fCanset;
         isInfectedDesc = foModel.isInfected ? @" 传染" : @" 唤醒";
     } else if(ISOK(model, TOModelBase.class)){
         content_p = model.content_p;

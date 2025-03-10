@@ -46,7 +46,7 @@
     
     //2. 标记cansetActIndex帧已经执行过action();
     foModel.alreadyActionActIndex = foModel.cansetActIndex;
-    NSLog(@"set alreadyActionActIndex:%ld from:F%ld.A%ld",foModel.cansetActIndex,foModel.cansetFrom.pointerId,foModel.getCurFrame.content_p.pointerId);
+    NSLog(@"set alreadyActionActIndex:%ld from:F%ld.A%ld",foModel.cansetActIndex,foModel.fCanset.pointerId,foModel.getCurFrame.content_p.pointerId);
     
     //3. 进行反思识别,如果不通过时,回到TCScore可能会尝试先解决子任务,通过时继续行为化 (参考30054-todo7);
     [TCRegroup actionRegroup:foModel];
@@ -65,7 +65,7 @@
     NSString *fltLog3 = !foModel.isH ? FltLog4CreateRCanset(1) : @"";
     NSString *fltLog4 = FltLog4CreateHCanset(1);
     NSString *fltLog5 = FltLog4DefaultIf(!foModel.isH, @"2");
-    NSString *fromDSC = STRFORMAT(@"FROM<F%ld F%ld F%ld>",Demand2Pit((DemandModel*)foModel.baseOrGroup).pointerId,foModel.sceneFrom.pointerId,foModel.cansetFrom.pointerId);
+    NSString *fromDSC = STRFORMAT(@"FROM<F%ld F%ld F%ld>",Demand2Pit((DemandModel*)foModel.baseOrGroup).pointerId,foModel.fScene.pointerId,foModel.cansetFrom.pointerId);
     OFTitleLog(@"行为化Fo",@"\n%@%@%@%@%@%@行为化%@下标 (%ld/%ld) %@ cansetTo:%@ by:%@",fltLog1,fltLog2,fltLog3,fltLog4,fltLog5,rhLog,frameLog,foModel.cansetActIndex,foModel.cansetTargetIndex,Pit2FStr([foModel getCurFrame].content_p),Pits2FStr(cansetToContent_ps),fromDSC);
     NSLog(@"\t%@sceneTo:%@",fltLog5,Pit2FStr(foModel.sceneTo));
     [theTC updateOperCount:kFILENAME];

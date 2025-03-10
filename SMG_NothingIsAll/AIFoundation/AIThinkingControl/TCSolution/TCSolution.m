@@ -90,9 +90,8 @@
         
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
         //c) 调试;
-        AIFoNodeBase *sceneFo = [SMGUtils searchNode:bestResult.sceneFo];
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:bestResult.cansetFo];
-        NSLog(@"> newS 第%ld例: sp:%@ %@ scene:F%ld canset:F%ld",demand.actionFoModels.count,CLEANSTR(cansetFo.spDic),SceneType2Str(bestResult.baseSceneModel.type),sceneFo.pId,cansetFo.pId);
+        NSLog(@"> newS 第%ld例: sp:%@ %@ scene:F%ld canset:F%ld",demand.actionFoModels.count,CLEANSTR(cansetFo.spDic),SceneType2Str(bestResult.baseSceneModel.type),bestResult.fScene.pointerId,cansetFo.pId);
         
         //a) 有效率
         dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
@@ -275,9 +274,8 @@
         
         //a) 下一方案成功时,并直接先尝试Action行为化,下轮循环中再反思综合评价等 (参考24203-2a);
         //c) 调试;
-        AIFoNodeBase *sceneFo = [SMGUtils searchNode:bestResult.sceneFo];
         AIFoNodeBase *cansetFo = [SMGUtils searchNode:bestResult.cansetFo];
-        NSLog(@"> newH 第%ld例: sp:%@ %@ scene:F%ld canset:F%ld (cutIndex:%ld=>targetIndex:%ld)",hDemand.actionFoModels.count,CLEANSTR(cansetFo.spDic),SceneType2Str(bestResult.baseSceneModel.type),sceneFo.pId,cansetFo.pId,bestResult.cansetCutIndex,bestResult.cansetTargetIndex);
+        NSLog(@"> newH 第%ld例: sp:%@ %@ scene:F%ld canset:F%ld (cutIndex:%ld=>targetIndex:%ld)",hDemand.actionFoModels.count,CLEANSTR(cansetFo.spDic),SceneType2Str(bestResult.baseSceneModel.type),bestResult.fScene.pointerId,cansetFo.pId,bestResult.cansetCutIndex,bestResult.cansetTargetIndex);
         
         dispatch_async(dispatch_get_main_queue(), ^{//30083回同步
             [theTV updateFrame];
