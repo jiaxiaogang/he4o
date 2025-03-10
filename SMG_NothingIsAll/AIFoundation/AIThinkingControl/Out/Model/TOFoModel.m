@@ -23,15 +23,14 @@
 
 @implementation TOFoModel
 
-+(TOFoModel*) newForRCansetFo:(AIKVPointer*)cansetFrom_p fScene:(AIKVPointer*)fScene_p
++(TOFoModel*) newForRCansetFo:(AIKVPointer*)fCanset
                          base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel
                 sceneCutIndex:(NSInteger)sceneCutIndex cansetCutIndex:(NSInteger)cansetCutIndex
             cansetTargetIndex:(NSInteger)cansetTargetIndex sceneFromTargetIndex:(NSInteger)sceneFromTargetIndex {
     TOFoModel *model = [[TOFoModel alloc] init];
     
     //1. 原CansetModel相关赋值;
-    model.cansetFo = cansetFrom_p;
-    model.fScene = fScene_p;
+    model.fCanset = fCanset;
     model.basePFoOrTargetFoModel = basePFoOrTargetFoModel;
     model.baseSceneModel = baseSceneModel;//R任务时,即R任务的RSceneModel;
     model.sceneCutIndex = sceneCutIndex;
@@ -42,22 +41,21 @@
     model.alreadyActionActIndex = -1;
     
     //2. TOFoModel相关赋值;
-    model.content_p = cansetFrom_p;
+    model.content_p = fCanset;
     model.status = TOModelStatus_Runing;
     if (base) [base.actionFoModels addObject:model];
     model.baseOrGroup = base;
     return model;
 }
 
-+(TOFoModel*) newForHCansetFo:(AIKVPointer*)canset fScene:(AIKVPointer*)fScene_p base:(TOModelBase<ITryActionFoDelegate>*)base
++(TOFoModel*) newForHCansetFo:(AIKVPointer*)fCanset base:(TOModelBase<ITryActionFoDelegate>*)base
                cansetCutIndex:(NSInteger)cansetCutIndex sceneCutIndex:(NSInteger)sceneCutIndex
             cansetTargetIndex:(NSInteger)cansetTargetIndex sceneTargetIndex:(NSInteger)sceneTargetIndex
        basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel {
     TOFoModel *model = [[TOFoModel alloc] init];
     
     //1. 原CansetModel相关赋值;
-    model.cansetFo = canset;
-    model.fScene = fScene_p;
+    model.fCanset = fCanset;
     model.basePFoOrTargetFoModel = basePFoOrTargetFoModel;
     model.baseSceneModel = baseSceneModel;//H任务时,其实是复用了R任务的RSceneModel;
     model.initCansetCutIndex = cansetCutIndex;
@@ -68,7 +66,7 @@
     model.alreadyActionActIndex = -1;
     
     //2. TOFoModel相关赋值;
-    model.content_p = canset;
+    model.content_p = fCanset;
     model.status = TOModelStatus_Runing;
     if (base) [base.actionFoModels addObject:model];
     model.baseOrGroup = base;
@@ -328,7 +326,7 @@
 /**
  *  MARK:--------------------有iCanset直接返回进行行为化等 (参考29069-todo9 & todo10.1b)--------------------
  */
-//TODOTOMORROW20250310: 继续查下废弃调用：3、cansetFo改成fCanset 4、sceneFo(改成fScene) 5、siModel全废弃（含再类比）。
+//TODOTOMORROW20250310: 继续查下废弃调用：4、sceneFo(改成fScene) 5、siModel全废弃（含再类比）。
 -(AIKVPointer *)content_p {
     return self.fCanset;
 }
@@ -615,30 +613,12 @@
 /**
  *  MARK:--------------------迁移源--------------------
  */
-//取当前cansetFrom对应的F层canset。
--(AIKVPointer*) fCanset {
-    //0. 如果solution可能从I层求解，那此处需要判断typeI还是F，分别处理取fCanset的方法。
-    if (self.baseSceneModel.type == SceneTypeI) {
-        ELog(@"现在只支持从F层求解的情况。如果不废弃I层求解，此处要做兼容。即根据迁移关联从F层取来FCanset（参考33172-TODO4）。")
-    }
-    return self.cansetFo;
-}
-
 -(AIKVPointer*) fScene {
     return self.baseSceneModel.getFatherScene;
 }
 
 -(AIKVPointer*) iScene {
     return self.baseSceneModel.getIScene;
-}
-
-+(AIKVPointer*) hSceneTo:(TOFoModel*)baseTargetFo {
-    if (!baseTargetFo) return nil;
-    return baseTargetFo.transferSiModel.canset;
-}
-+(AIKVPointer*) rSceneTo:(AISceneModel*)rSceneModel {
-    if (!rSceneModel) return nil;
-    return rSceneModel.getIScene;
 }
 
 //MARK:===============================================================

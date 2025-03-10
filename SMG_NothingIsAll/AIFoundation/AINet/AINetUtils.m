@@ -919,16 +919,6 @@
 }
 
 /**
- *  MARK:--------------------判断时序中有空概念--------------------
- */
-+(BOOL) foHasEmptyAlg:(AIKVPointer*)fo_p {
-    AIFoNodeBase *fo = [SMGUtils searchNode:fo_p];
-    return [SMGUtils filterSingleFromArr:fo.contentPorts checkValid:^BOOL(AIPort *item) {
-        return [item.header isEqualToString:[NSString md5:@""]];
-    }];
-}
-
-/**
  *  MARK:--------------------初始化itemOutSPDic (在canset类比抽象时) (参考33062-TODO4)--------------------
  *  @desc 用于canset类比抽象后: 把conCanset的itemOutSPDic设为新构建的absCanset的初始itemOutSPDic (参考33062-TODO4);
  *  @param oldSolutionAbsCansetIndexDic 传抽象前的oldCanset（cansetTo）与 absCanset之间映射（因为有映射的,才继承它的sp值,没映射的不处理）。
@@ -1065,7 +1055,7 @@
     
     //2. 抽象也更新 (参考29069-todo11.4);
     //2024.11.08: 佐证: 子即父 (参考33111-TODO2);
-    [TCRethinkUtil spEff4Abs:conFo curFoIndex:conSPIndex itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {
+    [self spEff4Abs:conFo curFoIndex:conSPIndex itemRunBlock:^(AIFoNodeBase *absFo, NSInteger absIndex) {
         //2024.12.05: 避免F值快速重复累计到很大,sp更新(同场景下的)防重推 (参考33137-方案v5TODO1);
         //2024.12.15: 把except4SP2F废弃掉,因为spMemRecord已经做了防重和回滚,不需要这个再防重了 (参考33137-问题2-补充);
         //NSString *itemExcept = STRFORMAT(@"%ld_%ld",absFo.pId,absIndex);
@@ -1074,6 +1064,33 @@
         
         [absFo updateSPStrong:absIndex difStrong:difStrong type:type caller:@"updateInSPStrong_4IF-F"];
     }];
+}
+
+/**
+ *  MARK:--------------------抽象也更新SPEFF (参考29069-todo11.4 & todo11.5)--------------------
+ *  @param curFo : 当前正在SPEFF的fo (本方法就是取它的抽象);
+ *  @param curFoIndex : 当前正在对fo的此下标下的帧执行更新SPEFF;
+ */
++(void) spEff4Abs:(AIFoNodeBase*)curFo curFoIndex:(NSInteger)curFoIndex itemRunBlock:(void(^)(AIFoNodeBase *absFo,NSInteger absIndex))itemRunBlock {
+    //1. 数据准备;
+    NSArray *absPorts = [AINetUtils absPorts_All:curFo];
+    for (AIPort *absPort in absPorts) {
+        //2. P: mv是目标帧的: 直接执行;
+        if (curFoIndex == curFo.count) {
+            AIFoNodeBase *absFo = [SMGUtils searchNode:absPort.target_p];
+            itemRunBlock(absFo,absFo.count);
+        }
+        //3. R: 理性目标帧时: 判断indexDic映射到目标帧再执行;
+        else {
+            NSDictionary *indexDic = [curFo getAbsIndexDic:absPort.target_p];
+            NSNumber *absIndex = ARR_INDEX([indexDic allKeysForObject:@(curFoIndex)], 0);
+            if (absIndex) {
+                //4. 目标帧映射有效 => 执行;
+                AIFoNodeBase *absFo = [SMGUtils searchNode:absPort.target_p];
+                itemRunBlock(absFo,absIndex.integerValue);
+            }
+        }
+    }
 }
 
 /**

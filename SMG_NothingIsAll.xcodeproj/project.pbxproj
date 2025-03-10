@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0800B2BF29F0BF6800CF5E2C /* TCRethinkUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 0800B2BE29F0BF6800CF5E2C /* TCRethinkUtil.m */; };
 		080228E1227282F80087FE69 /* TOModelBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 080228E0227282F80087FE69 /* TOModelBase.m */; };
 		080250752D284BB500947C40 /* AITransferPort_H.m in Sources */ = {isa = PBXBuildFile; fileRef = 080250742D284BB500947C40 /* AITransferPort_H.m */; };
 		0802962727E4D77D0050C767 /* TVPanelView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0802962627E4D77D0050C767 /* TVPanelView.m */; };
@@ -191,7 +190,6 @@
 		08F27D6E29ED8FC60063E71B /* TCTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F27D6D29ED8FC60063E71B /* TCTransfer.m */; };
 		08F27D7229ED92660063E71B /* TCScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F27D7129ED92660063E71B /* TCScene.m */; };
 		08F27D7629ED958B0063E71B /* TCCanset.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F27D7529ED958B0063E71B /* TCCanset.m */; };
-		08F27D7A29ED98C50063E71B /* TCRealact.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F27D7929ED98C50063E71B /* TCRealact.m */; };
 		08F3E9312241B6E800545795 /* AIAnalogy.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F3E9302241B6E800545795 /* AIAnalogy.m */; };
 		08F4C98E1EA7A03900F3EDA8 /* SMGUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F4C98D1EA7A03900F3EDA8 /* SMGUtils.m */; };
 		08F506242B90CF3800ECE977 /* DirectIndexDic.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F506232B90CF3800ECE977 /* DirectIndexDic.m */; };
@@ -222,8 +220,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0800B2BD29F0BF6800CF5E2C /* TCRethinkUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCRethinkUtil.h; sourceTree = "<group>"; };
-		0800B2BE29F0BF6800CF5E2C /* TCRethinkUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCRethinkUtil.m; sourceTree = "<group>"; };
 		080228DF227282F80087FE69 /* TOModelBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOModelBase.h; sourceTree = "<group>"; };
 		080228E0227282F80087FE69 /* TOModelBase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOModelBase.m; sourceTree = "<group>"; };
 		080250732D284BB500947C40 /* AITransferPort_H.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AITransferPort_H.h; sourceTree = "<group>"; };
@@ -592,8 +588,6 @@
 		08F27D7129ED92660063E71B /* TCScene.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCScene.m; sourceTree = "<group>"; };
 		08F27D7429ED958B0063E71B /* TCCanset.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCCanset.h; sourceTree = "<group>"; };
 		08F27D7529ED958B0063E71B /* TCCanset.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCCanset.m; sourceTree = "<group>"; };
-		08F27D7829ED98C50063E71B /* TCRealact.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCRealact.h; sourceTree = "<group>"; };
-		08F27D7929ED98C50063E71B /* TCRealact.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCRealact.m; sourceTree = "<group>"; };
 		08F3E92F2241B6E800545795 /* AIAnalogy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIAnalogy.h; sourceTree = "<group>"; };
 		08F3E9302241B6E800545795 /* AIAnalogy.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIAnalogy.m; sourceTree = "<group>"; };
 		08F4C98C1EA7A03900F3EDA8 /* SMGUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMGUtils.h; sourceTree = "<group>"; };
@@ -959,13 +953,11 @@
 				08CFBDCC27584B2600B1F070 /* TCFeedback */,
 				087705A2275373E100BA4EFB /* TCDemand */,
 				087705A1275373D200BA4EFB /* TCForecast */,
-				0892BAE32776D6710024B43C /* TCRethink */,
 				08AFC5ED276979A2000BAB26 /* TCPlan */,
 				08F27D6F29ED924F0063E71B /* TCScene */,
 				08F27D7329ED957B0063E71B /* TCCanset */,
 				087705A3275373FA00BA4EFB /* TCSolution */,
 				0873E11028B45CB300FBC09E /* TCRefrection */,
-				08F27D7729ED987C0063E71B /* TCRealact */,
 				08F27D6B29ED8F980063E71B /* TCTransfer */,
 				087705A42753740600BA4EFB /* TCAction */,
 				0892BAEA277808E30024B43C /* TCActYes */,
@@ -1308,15 +1300,6 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
-		0892BAE32776D6710024B43C /* TCRethink */ = {
-			isa = PBXGroup;
-			children = (
-				0800B2BD29F0BF6800CF5E2C /* TCRethinkUtil.h */,
-				0800B2BE29F0BF6800CF5E2C /* TCRethinkUtil.m */,
-			);
-			path = TCRethink;
-			sourceTree = "<group>";
-		};
 		0892BAEA277808E30024B43C /* TCActYes */ = {
 			isa = PBXGroup;
 			children = (
@@ -1650,15 +1633,6 @@
 				08F27D7529ED958B0063E71B /* TCCanset.m */,
 			);
 			path = TCCanset;
-			sourceTree = "<group>";
-		};
-		08F27D7729ED987C0063E71B /* TCRealact */ = {
-			isa = PBXGroup;
-			children = (
-				08F27D7829ED98C50063E71B /* TCRealact.h */,
-				08F27D7929ED98C50063E71B /* TCRealact.m */,
-			);
-			path = TCRealact;
 			sourceTree = "<group>";
 		};
 		08F38D62272C39C1001CD764 /* Util */ = {
@@ -2019,7 +1993,6 @@
 				083ADA722A67AB4F00319561 /* AsyncMutableDictionary.m in Sources */,
 				089614A9219A4D5200343FAC /* BirdGrowPage.m in Sources */,
 				082709D229EC1A5E0045EE22 /* AITransferPort.m in Sources */,
-				08F27D7A29ED98C50063E71B /* TCRealact.m in Sources */,
 				083F61381F048329000330E1 /* AILine.m in Sources */,
 				08F5334027DE3A8F0038812E /* TOMVision2.m in Sources */,
 				089991C02A1A432200A44050 /* HitItemModel.m in Sources */,
@@ -2102,7 +2075,6 @@
 				88C20B8220C7696A0076BB52 /* AINetAbsFoUtils.m in Sources */,
 				08586DE527E80C8B008D2F8C /* TVLineView.m in Sources */,
 				0858C5D22194F8B000951BA5 /* NSLayoutConstraint+MASDebugAdditions.m in Sources */,
-				0800B2BF29F0BF6800CF5E2C /* TCRethinkUtil.m in Sources */,
 				8822852020F58BDA009884DC /* AINetDirectionReference.m in Sources */,
 				081BD08825B94F1B003C3038 /* ReasonDemandModel.m in Sources */,
 				08F738071F7C714F005EAD56 /* AISqlPointer.m in Sources */,

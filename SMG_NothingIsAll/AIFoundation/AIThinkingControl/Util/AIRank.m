@@ -170,7 +170,7 @@
         NSInteger index = [sort indexOfObject:obj];
         NSString *fltLog1 = obj.isH && [NVHeUtil algIsWuPiGuo:targetAlg] && [NVHeUtil foHavYouPiGuo:obj.fCanset] ? FltLog4HDemandOfYouPiGuo(@"3") : @"";
         NSString *fltLog2 = FltLog4DefaultIf(!obj.isH, @"1");
-        NSString *fromDSC = STRFORMAT(@"FROM<F%ld F%ld %@>",Demand2Pit((DemandModel*)obj.baseOrGroup).pointerId,obj.fScene.pointerId,ShortDesc4Pit(obj.cansetFrom));
+        NSString *fromDSC = STRFORMAT(@"FROM<F%ld F%ld %@>",Demand2Pit((DemandModel*)obj.baseOrGroup).pointerId,obj.fScene.pointerId,ShortDesc4Pit(obj.fCanset));
         if (debugMode && Log4AIRank) NSLog(@"%@%@%@%ld. %@ by:%@ %@ %@ (分:%.2f P值:%ld) [CUT:%ld=>TAR:%ld]",fltLog1,fltLog2,obj.isH?@"H":@"R",index,SceneType2Str(obj.baseSceneModel.type),fromDSC,CLEANSTR(obj.transferXvModel.sceneToCansetToIndexDic),CLEANSTR(spDic),spScore,pStrong,obj.cansetCutIndex,obj.cansetTargetIndex);
         
         //打印详情日志;
@@ -198,7 +198,7 @@
         NSInteger pStrong = NUMTOOK(mapModel.v2).integerValue;
         NSDictionary *spDic = [obj getItemOutSPDic];
         NSInteger index = [sort indexOfObject:obj];
-        NSString *fromDSC = STRFORMAT(@"FROM<F%ld F%ld %@>",Demand2Pit((DemandModel*)obj.baseOrGroup).pointerId,obj.fScene.pointerId,ShortDesc4Pit(obj.cansetFrom));
+        NSString *fromDSC = STRFORMAT(@"FROM<F%ld F%ld %@>",Demand2Pit((DemandModel*)obj.baseOrGroup).pointerId,obj.fScene.pointerId,ShortDesc4Pit(obj.fCanset));
         NSLog(@"flt8b %ld/%ld. %@ by:%@ %@ %@ (分:%.2f P值:%ld) [CUT:%ld=>TAR:%ld]",index,sort.count,SceneType2Str(obj.baseSceneModel.type),fromDSC,CLEANSTR(obj.transferXvModel.sceneToCansetToIndexDic),CLEANSTR(spDic),spScore,pStrong,obj.cansetCutIndex,obj.cansetTargetIndex);
         logCount++;
         if (logCount >= 3) break;
@@ -268,13 +268,13 @@
     //3. debug日志
     for (TOFoModel *obj in result) {
         id key = itemKeyBlock(obj);
-        AIFoNodeBase *cansetFo = [SMGUtils searchNode:obj.cansetFo];
+        AIFoNodeBase *fCanset = [SMGUtils searchNode:obj.fCanset];
         float coolScore1 = NUMTOOK([cooledDic1 objectForKey:key]).floatValue,coolScore2 = NUMTOOK([cooledDic2 objectForKey:key]).floatValue;
         CGFloat spScore = itemScoreBlock1(obj);
         if (ISOK(obj, TOFoModel.class)) {
             if (Log4AIRank) NSLog(@"%ld. %@:(分:%.2f) %@<F%ld %@>",[result indexOfObject:obj],
-                                  CLEANSTR(cansetFo.spDic),spScore,
-                                  SceneType2Str(obj.baseSceneModel.type),obj.sceneFo.pointerId,Fo2FStr(cansetFo));
+                                  CLEANSTR(fCanset.spDic),spScore,
+                                  SceneType2Str(obj.baseSceneModel.type),obj.fScene.pointerId,Fo2FStr(fCanset));
             if (Log4AIRankDebugMode) NSLog(@"\t> %@ sp排名:%.5f eff排名:%.5f => 综合排名:%.5f",key,coolScore1,coolScore2,coolScore1 * coolScore2);
         }
     }

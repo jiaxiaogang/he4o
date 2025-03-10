@@ -387,13 +387,10 @@
         break;
     }
     
-    //13. 输出前: 可行性检查;
-    result = [TCRealact checkRealactAndReplaceIfNeed:result fromCansets:sortModels];
-    
     //14. 只在初次best时执行一次由虚转实,以及因激活更新强度等 (避免每次实时竞争导致重复跑这些);
     if (result && result.cansetStatus == CS_None) {
-        AIFoNodeBase *resultFo = [SMGUtils searchNode:result.cansetFo];
-        if (debugMode) NSLog(@"第10步 %@求解最佳结果:F%ld %@",rhLog,result.cansetFo.pointerId,CLEANSTR(resultFo.spDic));
+        AIFoNodeBase *fCanset = [SMGUtils searchNode:result.fCanset];
+        if (debugMode) NSLog(@"第10步 %@求解最佳结果:F%ld %@",rhLog,result.fCanset.pointerId,CLEANSTR(fCanset.spDic));
         
         //16. 更新前中后段con和abs的抽具象强度 (参考28086-todo2 & 28092-todo4);
         [AINetUtils updateConAndAbsStrongByIndexDic:result.transferXvModel.sceneToCansetToIndexDic matchFo:result.iScene cansetFo:result.transferXvModel.cansetToOrders];

@@ -81,7 +81,7 @@
     //if (cansetFo.count <= cansetCutIndex + 1) return nil;
     
     //6. 生成result (其中cansetTargetIndex: R时全推进完);
-    TOFoModel *result = [TOFoModel newForRCansetFo:cansetFrom_p fScene:fScene.p base:demand basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel
+    TOFoModel *result = [TOFoModel newForRCansetFo:cansetFrom_p base:demand basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel
                                     sceneCutIndex:sceneCutIndex cansetCutIndex:cansetCutIndex
                                  cansetTargetIndex:cansetFrom.count sceneFromTargetIndex:sceneFromTargetIndex];
     
@@ -119,7 +119,7 @@
  */
 +(TOFoModel*) convert2HCansetModelV2:(AIKVPointer *)hCansetFrom_p fScene:(AIFoNodeBase*)fScene hDemand:(HDemandModel *)hDemand hCansetCutIndex:(NSInteger)hCansetCutIndex targetFoM:(TOFoModel*)targetFoM hCansetToTargetIndex:(NSInteger)hCansetToTargetIndex IF_RSceneModel:(AISceneModel*)IF_RSceneModel xvModel:(TCTransferXvModel*)xvModel {
     //1. 转为TOFoModel;
-    TOFoModel *result = [TOFoModel newForHCansetFo:hCansetFrom_p fScene:fScene.p base:hDemand
+    TOFoModel *result = [TOFoModel newForHCansetFo:hCansetFrom_p base:hDemand
                        cansetCutIndex:hCansetCutIndex sceneCutIndex:targetFoM.cansetCutIndex
                     cansetTargetIndex:hCansetToTargetIndex sceneTargetIndex:targetFoM.cansetActIndex
                basePFoOrTargetFoModel:targetFoM baseSceneModel:IF_RSceneModel];

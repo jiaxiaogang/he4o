@@ -27,12 +27,12 @@
 @class AISceneModel,AITransferModel,TCTransferXvModel;
 @interface TOFoModel : TOModelBase <ISubModelsDelegate,ISubDemandDelegate,NSCoding>
 
-+(TOFoModel*) newForRCansetFo:(AIKVPointer*)cansetFrom_p fScene:(AIKVPointer*)fScene_p
++(TOFoModel*) newForRCansetFo:(AIKVPointer*)fCanset
                          base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel
                 sceneCutIndex:(NSInteger)sceneCutIndex cansetCutIndex:(NSInteger)cansetCutIndex
             cansetTargetIndex:(NSInteger)cansetTargetIndex sceneFromTargetIndex:(NSInteger)sceneFromTargetIndex;
 
-+(TOFoModel*) newForHCansetFo:(AIKVPointer*)canset fScene:(AIKVPointer*)fScene_p base:(TOModelBase<ITryActionFoDelegate>*)base
++(TOFoModel*) newForHCansetFo:(AIKVPointer*)fCanset base:(TOModelBase<ITryActionFoDelegate>*)base
                cansetCutIndex:(NSInteger)cutIndex sceneCutIndex:(NSInteger)sceneCutIndex
             cansetTargetIndex:(NSInteger)cansetTargetIndex sceneTargetIndex:(NSInteger)sceneTargetIndex
        basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel;
@@ -79,8 +79,7 @@
 //MARK:===============================================================
 //MARK:                     < CansetModel >
 //MARK:===============================================================
-@property (strong, nonatomic) AIKVPointer *cansetFo;    //迁移前候选集fo;
-@property (strong, nonatomic) AIKVPointer *fScene;     //迁移前候选集所在的scene
+@property (strong, nonatomic) AIKVPointer *fCanset;    //迁移前候选集fo;
 
 /**
  *  MARK:--------------------此解决方案基于哪个pFo/targetFo--------------------
@@ -152,7 +151,6 @@
  *  MARK:--------------------迁移源--------------------
  */
 //取当前cansetFrom对应的F层canset。
--(AIKVPointer*) fCanset;
 -(AIKVPointer*) fScene;
 -(AIKVPointer*) iScene;
 

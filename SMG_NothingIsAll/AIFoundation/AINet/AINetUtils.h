@@ -294,11 +294,6 @@
 +(void) updateSPByIndexDic:(NSDictionary*)conIndexDic conFo:(AIFoNodeBase*)conFo absFo:(AIFoNodeBase*)absFo;
 
 /**
- *  MARK:--------------------判断时序中有空概念--------------------
- */
-+(BOOL) foHasEmptyAlg:(AIKVPointer*)fo_p;
-
-/**
  *  MARK:--------------------初始化itemOutSPDic (在canset类比抽象时) (参考33062-TODO4)--------------------
  */
 +(NSDictionary*) getInitOutSPDicForAbsCanset:(AIFoNodeBase*)fCanset baseSceneContent_ps:(NSArray*)baseSceneContent_ps oldSolutionAbsCansetIndexDic:(NSDictionary*)oldSolutionAbsCansetIndexDic absCanset:(AIFoNodeBase*)absCanset;

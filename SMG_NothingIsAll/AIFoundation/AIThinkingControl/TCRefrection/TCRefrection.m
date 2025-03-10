@@ -32,13 +32,13 @@
     //1. 数据准备;
     [theTC updateOperCount:kFILENAME];
     Debug();
-    AIFoNodeBase *cansetFo = [SMGUtils searchNode:checkCanset.cansetFo];
+    NSArray *iCansetContent_ps = Simples2Pits(checkCanset.transferXvModel.cansetToOrders);
     
     //7. 算出后段的"懒"评分 (最后一帧静默等待不需要行为化,所以小于cansetTargetIndex即可);
     CGFloat lazyScore = 0;
     for (NSInteger i = checkCanset.cansetActIndex; i < checkCanset.cansetTargetIndex; i++) {
         //8. 遍历后半段中的"isOut=true"的行为,各指定"懒"评分;
-        AIKVPointer *alg_p = ARR_INDEX(cansetFo.content_ps, i);
+        AIKVPointer *alg_p = ARR_INDEX(iCansetContent_ps, i);
         if (alg_p && alg_p.isOut) {
             lazyScore += 0.5f;
         }
@@ -55,7 +55,7 @@
     //11. 算出outSPScore分 (参考33066-奖励分);
     HEResult *cansetSPResult = [TOUtils getStableScore_Out:checkCanset startSPIndex:checkCanset.cansetActIndex endSPIndex:checkCanset.cansetTargetIndex];
     CGFloat cansetSPScore = NUMTOOK([cansetSPResult get:@"spScore"]).floatValue;
-    if (debugMode) OFTitleLog(@"TCRefrection反思", @"\n%@ CUT:%ld cansetSPScore:%.2f",ShortDesc4Pit(checkCanset.cansetFo),(long)checkCanset.cansetCutIndex,cansetSPScore);
+    if (debugMode) OFTitleLog(@"TCRefrection反思", @"\n%@ CUT:%ld cansetSPScore:%.2f",ShortDesc4Pit(checkCanset.fCanset),(long)checkCanset.cansetCutIndex,cansetSPScore);
     
     //12. 算出奖励分 = mv分 x sceneSPScore x cansetSPScore (参考33066-奖励分);
     CGFloat jianLiScore = demandScore * cansetSPScore;
