@@ -23,7 +23,7 @@
 
 @implementation TOFoModel
 
-+(TOFoModel*) newForRCansetFo:(AIKVPointer*)cansetFrom_p sceneFrom:(AIKVPointer*)sceneFrom_p
++(TOFoModel*) newForRCansetFo:(AIKVPointer*)cansetFrom_p fScene:(AIKVPointer*)fScene_p
                          base:(TOModelBase<ITryActionFoDelegate>*)base basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel
                 sceneCutIndex:(NSInteger)sceneCutIndex cansetCutIndex:(NSInteger)cansetCutIndex
             cansetTargetIndex:(NSInteger)cansetTargetIndex sceneFromTargetIndex:(NSInteger)sceneFromTargetIndex {
@@ -31,7 +31,7 @@
     
     //1. 原CansetModel相关赋值;
     model.cansetFo = cansetFrom_p;
-    model.sceneFo = sceneFrom_p;
+    model.sceneFo = fScene_p;
     model.basePFoOrTargetFoModel = basePFoOrTargetFoModel;
     model.baseSceneModel = baseSceneModel;//R任务时,即R任务的RSceneModel;
     model.sceneCutIndex = sceneCutIndex;
@@ -49,7 +49,7 @@
     return model;
 }
 
-+(TOFoModel*) newForHCansetFo:(AIKVPointer*)canset sceneFo:(AIKVPointer*)scene base:(TOModelBase<ITryActionFoDelegate>*)base
++(TOFoModel*) newForHCansetFo:(AIKVPointer*)canset fScene:(AIKVPointer*)fScene_p base:(TOModelBase<ITryActionFoDelegate>*)base
                cansetCutIndex:(NSInteger)cansetCutIndex sceneCutIndex:(NSInteger)sceneCutIndex
             cansetTargetIndex:(NSInteger)cansetTargetIndex sceneTargetIndex:(NSInteger)sceneTargetIndex
        basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel baseSceneModel:(AISceneModel*)baseSceneModel {
@@ -57,7 +57,7 @@
     
     //1. 原CansetModel相关赋值;
     model.cansetFo = canset;
-    model.sceneFo = scene;
+    model.sceneFo = fScene_p;
     model.basePFoOrTargetFoModel = basePFoOrTargetFoModel;
     model.baseSceneModel = baseSceneModel;//H任务时,其实是复用了R任务的RSceneModel;
     model.initCansetCutIndex = cansetCutIndex;
@@ -328,6 +328,7 @@
 /**
  *  MARK:--------------------有iCanset直接返回进行行为化等 (参考29069-todo9 & todo10.1b)--------------------
  */
+//TODOTOMORROW20250310: 继续查下废弃调用：1、content_p（改成fCanset) 2、sceneFo(改成fScene) 3、siModel全废弃（含再类比）。
 -(AIKVPointer *)content_p {
     return self.cansetFrom;
 }

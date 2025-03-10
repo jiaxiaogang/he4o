@@ -929,31 +929,6 @@
 }
 
 /**
- *  MARK:--------------------初始化itemOutSPDic (在转实时,默认以cansetFrom的itemOutSPDic初始化) (参考33062-TODO3)--------------------
- *  @desc 用于canset转实后: 把cansetFrom的outSPDic迁移继承给cansetTo (注意要防重);
- */
-+(void) initItemOutSPDicForTransfered:(TOFoModel*)canset {
-    //0. 先关掉这里 (参考33114-TODO1);
-    BOOL isSwitch = false;
-    if (!isSwitch) return;
-    
-    //1. 检查有没初始化过 (只初始一次,用于防重);
-    AIFoNodeBase *sceneTo = [SMGUtils searchNode:canset.sceneTo];
-    NSString *cansetToOutSPKey = [self getOutSPKey:Simples2Pits(canset.transferXvModel.cansetToOrders)];
-    if ([sceneTo.outSPDic objectForKey:cansetToOutSPKey]) return;
-    
-    //2. 取旧;
-    AIFoNodeBase *sceneFrom = [SMGUtils searchNode:canset.sceneFrom];
-    AIFoNodeBase *cansetFrom = [SMGUtils searchNode:canset.cansetFrom];
-    NSString *cansetFromOutSPKey = [self getOutSPKey:cansetFrom.content_ps];
-    NSMutableDictionary *initOutSPDic = [sceneFrom.outSPDic objectForKey:cansetFromOutSPKey];
-    if (!DICISOK(initOutSPDic)) return;
-    
-    //3. 移新;
-    [sceneTo.outSPDic setObject:initOutSPDic forKey:cansetToOutSPKey];
-}
-
-/**
  *  MARK:--------------------初始化itemOutSPDic (在canset类比抽象时) (参考33062-TODO4)--------------------
  *  @desc 用于canset类比抽象后: 把conCanset的itemOutSPDic设为新构建的absCanset的初始itemOutSPDic (参考33062-TODO4);
  *  @version

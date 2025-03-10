@@ -53,16 +53,15 @@
  *      2024.09.15: 取消初始化canset池时,就迁移继承outSPDic (参考33062-TODO1);
  *  @result 返回cansetFo前段匹配度 & 以及已匹配的cutIndex截点;
  */
-+(TOFoModel*) convert2RCansetModel:(AIKVPointer*)cansetFrom_p sceneFrom:(AIKVPointer*)sceneFrom_p basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel sceneModel:(AISceneModel*)sceneModel demand:(DemandModel*)demand {
++(TOFoModel*) convert2RCansetModel:(AIKVPointer*)cansetFrom_p fScene:(AIFoNodeBase*)fScene iScene:(AIFoNodeBase*)iScene basePFoOrTargetFoModel:(id)basePFoOrTargetFoModel sceneModel:(AISceneModel*)sceneModel demand:(DemandModel*)demand {
     //1. 数据准备 & 复用indexDic & 取出pFoOrTargetFo;
     [AITest test102:cansetFrom_p];
-    AIFoNodeBase *sceneFrom = [SMGUtils searchNode:sceneFrom_p];
     AIFoNodeBase *cansetFrom = [SMGUtils searchNode:cansetFrom_p];
-    NSInteger sceneFromTargetIndex = sceneFrom.count;
-    NSInteger sceneCutIndex = sceneModel.cutIndex;
+    NSInteger sceneFromTargetIndex = fScene.count;
+    NSInteger sceneCutIndex = sceneModel.getISceneModel.cutIndex;
     
     //2. 根据sceneFo取得与canset的indexDic映射;
-    NSDictionary *cansetFromSceneFromIndexDic = [sceneFrom getConIndexDic:cansetFrom_p];
+    NSDictionary *cansetFromSceneFromIndexDic = [fScene getConIndexDic:cansetFrom_p];
     
     //3. 计算出canset的cutIndex做为中段截点 (canset的cutIndex,也已在proto中发生) (参考26128-1-1);
     NSInteger cansetCutIndex = [TOUtils goBackToFindConIndexByAbsIndex:cansetFromSceneFromIndexDic absIndex:sceneCutIndex];
@@ -82,12 +81,12 @@
     //if (cansetFo.count <= cansetCutIndex + 1) return nil;
     
     //6. 生成result (其中cansetTargetIndex: R时全推进完);
-    TOFoModel *result = [TOFoModel newForRCansetFo:cansetFrom_p sceneFrom:sceneFrom_p base:demand basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel
+    TOFoModel *result = [TOFoModel newForRCansetFo:cansetFrom_p fScene:fScene.p base:demand basePFoOrTargetFoModel:basePFoOrTargetFoModel baseSceneModel:sceneModel
                                     sceneCutIndex:sceneCutIndex cansetCutIndex:cansetCutIndex
                                  cansetTargetIndex:cansetFrom.count sceneFromTargetIndex:sceneFromTargetIndex];
     
     //7. 伪迁移;
-    [TCTransfer transferXv:result];
+    [TCTransfer transferJiCen_RH_V3:cansetFrom_p fScene:fScene iScene:iScene sceneToActIndex:sceneCutIndex+1];
     
     //8. 初始化result的cansetTo与real的映射;
     [result initRealCansetToDic];
@@ -105,9 +104,6 @@
     if (Log4SceneIsOk) NSLog(@"\t1. 前段cansetTo:%@",Pits2FStr([SMGUtils convertArr:result.transferXvModel.cansetToOrders convertBlock:^id(AIShortMatchModel_Simple *obj) {return obj.alg_p;}]));
     if (Log4SceneIsOk) NSLog(@"\t2. 前段realMaskFo:%@",Pits2FStr([result.basePFo.realMaskFo copy]));
     
-    //11. 2024.09.21: 改回生成canset时,初始化outSPDic (参考33065-TODO2);
-    [AINetUtils initItemOutSPDicForTransfered:result];
-    
     //12. 下帧初始化 (可接受反馈);
     [result pushNextFrame];
     return result;
@@ -121,54 +117,9 @@
  *      2024.02.21: V2-在迭代hSolutionV3时,将H任务转cansetModel单独写个方法,并将此方法中多余代码统统去掉不写;
  *      2024.09.15: 取消初始化canset池时,就迁移继承outSPDic (参考33062-TODO1);
  */
-+(TOFoModel*) convert2HCansetModel:(AIKVPointer*)hCansetFrom_p hDemand:(HDemandModel*)hDemand rCanset:(TOFoModel*)rCanset {
-    //1. 根据hScene和hCanset的映射,取出hCanset的目标帧等数据;
-    TOFoModel *targetFoModel = (TOFoModel*)hDemand.baseOrGroup.baseOrGroup;//targetFo就是当前h任务的base(targetAlg).base(targetFo);
-    NSInteger hSceneCutIndex = rCanset.cansetCutIndex;//hScene的推进进度;
-    AISceneModel *rSceneModel = rCanset.baseSceneModel;//复用R的SceneModel,因为H任务没有独立的R场景树,它本来就是复用的R任务的场景树等;
-    AIFoNodeBase *sceneFrom = [SMGUtils searchNode:rCanset.cansetFo];
-    NSDictionary *indexDic = [sceneFrom getConIndexDic:hCansetFrom_p];
-    NSInteger hSceneTargetIndex = hSceneCutIndex + 1;//H任务的目标其实就是下一帧;
-    NSInteger hCansetTargetIndex = NUMTOOK([indexDic objectForKey:@(hSceneTargetIndex)]).integerValue;
-    NSInteger hCansetCutIndex = [TOUtils goBackToFindConIndexByAbsIndex:indexDic absIndex:hSceneCutIndex];
-
-    //2. hCansetTo的目标无映射时，判为无效（判断hTargetIndex>0即可）。
-    if (hCansetTargetIndex <= 0) return nil;
-    
-    //2. 转为TOFoModel;
-    TOFoModel *result = [TOFoModel newForHCansetFo:hCansetFrom_p sceneFo:sceneFrom.p base:hDemand
-                       cansetCutIndex:hCansetCutIndex sceneCutIndex:hSceneCutIndex
-                    cansetTargetIndex:hCansetTargetIndex sceneTargetIndex:hSceneCutIndex + 1
-               basePFoOrTargetFoModel:targetFoModel baseSceneModel:rSceneModel];
-    
-    //3. 伪迁移;
-    [TCTransfer transferXv:result];
-    
-    //4. 初始化result的cansetTo与real的映射;
-    [result initRealCansetToDic];
-    
-    //5. 补上层层传递错漏的映射;
-    [result fixRealCansteToDic];
-    
-    //6. 前段条件满足判断 (不满足时,直接把result回滚删掉) (参考33086-TODO2);
-    if (result.realCansetToIndexDic.count < result.cansetCutIndex + 1) {
-        //2024.10.01: 前段缺一条时为不满足: 回滚result;
-        [hDemand.actionFoModels removeObject:result];
-        return nil;
-    }
-    if (Log4SceneIsOk) NSLog(@"demand:F%ld cansetFrom:F%ld 前段条件满足通过:%@",Demand2Pit(hDemand).pointerId,result.cansetFrom.pointerId,CLEANSTR(result.realCansetToIndexDic));
-    
-    //7. 2024.09.21: 改回生成canset时,初始化outSPDic (参考33065-TODO2);
-    [AINetUtils initItemOutSPDicForTransfered:result];
-    
-    //8. 下帧初始化 (可接受反馈);
-    [result pushNextFrame];
-    return result;
-}
-
-+(TOFoModel*) convert2HCansetModelV2:(AIKVPointer *)hCansetFrom_p hSceneFrom:(AIFoNodeBase*)hSceneFrom hDemand:(HDemandModel *)hDemand hCansetCutIndex:(NSInteger)hCansetCutIndex targetFoM:(TOFoModel*)targetFoM hCansetToTargetIndex:(NSInteger)hCansetToTargetIndex IF_RSceneModel:(AISceneModel*)IF_RSceneModel xvModel:(TCTransferXvModel*)xvModel {
++(TOFoModel*) convert2HCansetModelV2:(AIKVPointer *)hCansetFrom_p fScene:(AIFoNodeBase*)fScene hDemand:(HDemandModel *)hDemand hCansetCutIndex:(NSInteger)hCansetCutIndex targetFoM:(TOFoModel*)targetFoM hCansetToTargetIndex:(NSInteger)hCansetToTargetIndex IF_RSceneModel:(AISceneModel*)IF_RSceneModel xvModel:(TCTransferXvModel*)xvModel {
     //1. 转为TOFoModel;
-    TOFoModel *result = [TOFoModel newForHCansetFo:hCansetFrom_p sceneFo:hSceneFrom.p base:hDemand
+    TOFoModel *result = [TOFoModel newForHCansetFo:hCansetFrom_p fScene:fScene.p base:hDemand
                        cansetCutIndex:hCansetCutIndex sceneCutIndex:targetFoM.cansetCutIndex
                     cansetTargetIndex:hCansetToTargetIndex sceneTargetIndex:targetFoM.cansetActIndex
                basePFoOrTargetFoModel:targetFoM baseSceneModel:IF_RSceneModel];
@@ -190,9 +141,6 @@
         return nil;
     }
     if (Log4SceneIsOk) NSLog(@"demand:F%ld cansetFrom:F%ld 前段条件满足通过:%@",Demand2Pit(hDemand).pointerId,result.cansetFrom.pointerId,CLEANSTR(result.realCansetToIndexDic));
-    
-    //7. 2024.09.21: 改回生成canset时,初始化outSPDic (参考33065-TODO2);
-    [AINetUtils initItemOutSPDicForTransfered:result];
     
     //8. 下帧初始化 (可接受反馈);
     [result pushNextFrame];

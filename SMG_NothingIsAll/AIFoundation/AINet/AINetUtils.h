@@ -299,12 +299,6 @@
 +(BOOL) foHasEmptyAlg:(AIKVPointer*)fo_p;
 
 /**
- *  MARK:--------------------初始化itemOutSPDic (在转实时,默认以cansetFrom的itemOutSPDic初始化) (参考33062-TODO3)--------------------
- *  @desc 用于canset转实后: 把cansetFrom的outSPDic迁移继承给cansetTo (注意要防重);
- */
-+(void) initItemOutSPDicForTransfered:(TOFoModel*)canset;
-
-/**
  *  MARK:--------------------初始化itemOutSPDic (在canset类比抽象时) (参考33062-TODO4)--------------------
  */
 +(NSDictionary*) getInitOutSPDicForAbsCanset:(AIFoNodeBase*)fCanset baseSceneContent_ps:(NSArray*)baseSceneContent_ps conCanset:(AIFoNodeBase*)conCanset absCanset:(AIFoNodeBase*)absCanset;

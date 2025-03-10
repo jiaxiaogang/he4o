@@ -24,7 +24,6 @@
     //1. 数据准备;
     NSArray *iModels = nil;
     NSMutableArray *fatherModels = [[NSMutableArray alloc] init];
-    NSMutableArray *brotherModels = [[NSMutableArray alloc] init];
     
     //2. 取自己级;
     iModels = [SMGUtils convertArr:demand.validPFos convertBlock:^id(AIMatchFoModel *pFo) {
@@ -54,32 +53,6 @@
         [fatherModels addObjectsFromArray:itemFatherModels];
     }
     
-    //4. 取兄弟级;
-    BOOL brotherSwitch = false;
-    for (AISceneModel *fatherModel in fatherModels) {
-        //2024.11.05: BF改为实时推举了,场景树不需要再取它了 (参考33113);
-        if (!brotherSwitch) break;
-        
-        AIFoNodeBase *fatherFo = [SMGUtils searchNode:fatherModel.scene];
-        NSArray *brotherScene_ps = [AIFilter rSolutionSceneFilter:fatherFo type:fatherModel.type];//1799ms
-        
-        //a. 过滤器 & 转为CansetModel;
-        NSArray *itemBrotherModels = [SMGUtils convertArr:brotherScene_ps convertBlock:^id(AIKVPointer *item) {
-            //a1. 过滤brother不含截点的 (参考29069-todo5.6);
-            NSDictionary *indexDic = [fatherFo getConIndexDic:item];
-            NSNumber *brotherCutIndex = [indexDic objectForKey:@(fatherModel.cutIndex)];
-            if (!brotherCutIndex) return nil;
-            
-            //a2. 过滤无同区mv指向的 (参考29069-todo4);
-            AIFoNodeBase *fo = [SMGUtils searchNode:item];//68ms
-            if (![fatherFo.cmvNode_p.identifier isEqualToString:fo.cmvNode_p.identifier]) return nil;
-            
-            //a3. 将brother生成模型;
-            return [AISceneModel newWithBase:fatherModel type:SceneTypeBrother scene:item cutIndex:brotherCutIndex.integerValue];
-        }];
-        [brotherModels addObjectsFromArray:itemBrotherModels];
-    }
-    
     //5. 去重1: 数据准备;
     NSArray *iSceneArr = [SMGUtils convertArr:iModels convertBlock:^id(AISceneModel *obj) {
         return obj.scene;
@@ -89,27 +62,21 @@
     }];
     
     //6. 去重2: 优先级I>F>B: 即I有的F和B不能再有,F有的B不能再有;
-    fatherModels = [SMGUtils filterArr:fatherModels checkValid:^BOOL(AISceneModel *item) {
-        return ![iSceneArr containsObject:item.scene];
-    }];
-    brotherModels = [SMGUtils filterArr:brotherModels checkValid:^BOOL(AISceneModel *item) {
-        return ![iSceneArr containsObject:item.scene] && ![fatherSceneArr containsObject:item.scene];
-    }];
+    //fatherModels = [SMGUtils filterArr:fatherModels checkValid:^BOOL(AISceneModel *item) {
+    //    return ![iSceneArr containsObject:item.scene];
+    //}];
     
     //7. 去重3: 本层防重: 即F内不能重复,B内不能重复;
     fatherModels = [SMGUtils removeRepeat:fatherModels convertBlock:^id(AISceneModel *obj) {
         return obj.scene;
     }];
-    brotherModels = [SMGUtils removeRepeat:brotherModels convertBlock:^id(AISceneModel *obj) {
-        return obj.scene;
-    }];
     
     //8. 将三级全收集返回;
+    //2025.03.10: 取消I层，因为I层已经不存canset了（参考33172-TODO4）。
     NSMutableArray *result = [[NSMutableArray alloc] init];
-    [result addObjectsFromArray:iModels];
+    //[result addObjectsFromArray:iModels];
     [result addObjectsFromArray:fatherModels];
-    [result addObjectsFromArray:brotherModels];
-    NSLog(@"第1步 R场景树枝点数 I:%ld + Father:%ld + Brother:%ld = 总:%ld",iModels.count,fatherModels.count,brotherModels.count,result.count);
+    NSLog(@"第1步 R场景树枝点数 I:%ld + Father:%ld = 总:%ld",iModels.count,fatherModels.count,result.count);
     for (AISceneModel *item in result) {
         AIFoNodeBase *sceneFo = [SMGUtils searchNode:item.scene];
         NSArray *itemCansets = [sceneFo getConCansets:sceneFo.count];
@@ -170,8 +137,9 @@
     [fatherModels addObjectsFromArray:itemFatherModels];
     
     //6. 将三级全收集返回;
+    //2025.03.10: 取消I层，因为I层已经不存canset了（参考33172-TODO4）。
     NSMutableArray *result = [[NSMutableArray alloc] init];
-    [result addObject:iModel];
+    //[result addObject:iModel];
     [result addObjectsFromArray:fatherModels];
     NSLog(@"第1步 H场景树枝点数 I:1条 + Father:%ld条 = 总:%ld",fatherModels.count,result.count);
     return result;
