@@ -463,46 +463,31 @@
         //2023.12.29: mcIsBro=true时,生成新hCanset (做31026-第2步时临时起意改的);
         NSArray *cansetToContent_ps = Simples2Pits(self.transferXvModel.cansetToOrders);
         AIMatchFoModel *basePFo = self.basePFo;
-        NSArray *order = [basePFo convertOrders4NewCansetV2];
+        NSArray *newHCansetOrders = [basePFo convertOrders4NewCansetV2];
         AIFoNodeBase *pFo = [SMGUtils searchNode:basePFo.matchFo];
-        if (ARRISOK(order)) {
-            //2025.03.02: 挂在rCanset下，改成挂在rScene（pFo）下（参考33171-TODO1）。
-            AIFoNodeBase *newHCanset = [theNet createConFoForCanset:order sceneFo:pFo sceneTargetIndex:basePFo.cutIndex + 1];
-            HEResult *updateConCansetResult = [pFo updateConCanset:newHCanset.pointer targetIndex:basePFo.cutIndex + 1];
+        
+        //5. 调试和日志。
+        //2025.03.02: 挂在rCanset下，改成挂在rScene（pFo）下（参考33171-TODO1）。
+        if (self.realCansetToIndexDic.count == 0) {
+            NSLog(@"NewHCanset Dic Is Nil");
+        }
+        AIKVPointer *actIndexAlg_p = ARR_INDEX(cansetToContent_ps, self.cansetActIndex);
+        NSString *fltLog = FltLog4CreateHCanset(3);
+        NSLog(@"%@%@%@%@Canset演化> NewHCanset:%@ 反馈到rCanset:%@ 的%ld帧:%@",FltLog4XueQuPi(3),FltLog4HDemandOfYouPiGuo(@"5"),FltLog4XueBanYun(2),fltLog,Pits2FStr(Simples2Pits(newHCansetOrders)),Pits2FStr(cansetToContent_ps),self.cansetActIndex,Pit2FStr(actIndexAlg_p));
+        
+        //2024.11.03: 在挂载新的Canset时,实时推举 & 并防重(只有新挂载的canset,才有资格实时调用推举,并推举spDic都到父场景中) (参考33112);
+        //6. 推举是从I推举到F（而pFo就是I层，所以sceneFrom就是pFo）。
+        NSDictionary *iNewCansetISceneIndexDic = [basePFo.indexDic2 copy];
+        NSArray *baseSceneContent_ps = Simples2Pits([self getBaseSceneToOrders]);
+        NSMutableDictionary *initOutSPDic = [[NSMutableDictionary alloc] init];
+        for (NSInteger i = 0; i < newHCansetOrders.count; i++) [initOutSPDic setObject:[AISPStrong newWithS:0 P:1] forKey:@(i)];
+        [TCTransfer transferTuiJv_RH_V3:pFo iCansetOrders:newHCansetOrders iCansetISceneIndexDic:iNewCansetISceneIndexDic isH:true sceneFromCutIndex:basePFo.cutIndex initOutSPDic:initOutSPDic baseSceneContent_ps:baseSceneContent_ps];
             
-            if (self.realCansetToIndexDic.count == 0) {
-                NSLog(@"NewHCanset Dic Is Nil");
-            }
-            
-            //2024.11.03: 只有成功时,才建立映射,失败时没必要;
-            if (updateConCansetResult.success) {
-                //5. 综合indexDic计算: 当前cansetTo与real之间的映射;
-                //2024.06.26: indexDic有可能指定后还在更新,导致有越界 (参考32014);
-                [newHCanset updateIndexDic:pFo indexDic:[basePFo.indexDic2 copy]];
-                
-                AIKVPointer *actIndexAlg_p = ARR_INDEX(cansetToContent_ps, self.cansetActIndex);
-                NSString *fltLog = FltLog4CreateHCanset(3);
-                NSLog(@"%@%@%@%@Canset演化> NewHCanset:%@ 反馈到rCanset:%@ 的%ld帧:%@",FltLog4XueQuPi(3),FltLog4HDemandOfYouPiGuo(@"5"),FltLog4XueBanYun(2),fltLog,Fo2FStr(newHCanset),Pits2FStr(cansetToContent_ps),self.cansetActIndex,Pit2FStr(actIndexAlg_p));
-            }
-            
-            //2024.11.03: 在挂载新的Canset时,实时推举 & 并防重(只有新挂载的canset,才有资格实时调用推举,并推举spDic都到父场景中) (参考33112);
-            if (updateConCansetResult.isNew) {
-                //推举是从I推举到F（而pFo就是I层，所以sceneFrom就是pFo）。
-                NSDictionary *iNewCansetISceneIndexDic = [basePFo.indexDic2 copy];
-                NSArray *baseSceneContent_ps = Simples2Pits([self getBaseSceneToOrders]);
-                NSMutableDictionary *initOutSPDic = [[NSMutableDictionary alloc] init];
-                for (NSInteger i = 0; i < newHCanset.count; i++) [initOutSPDic setObject:[AISPStrong newWithS:0 P:1] forKey:@(i)];
-                [TCTransfer transferTuiJv_RH_V3:pFo iCansetOrders:newHCanset.convert2Orders iCansetISceneIndexDic:iNewCansetISceneIndexDic isH:true sceneFromCutIndex:basePFo.cutIndex initOutSPDic:initOutSPDic baseSceneContent_ps:baseSceneContent_ps];
-            }
-            
-            //6. rCanset的actIndex匹配了,就相当于它curAlgModel的HDemand,下的所有的subHCanset的targetAlg全反馈匹配上了 (参考32119-TODO1);
-            HDemandModel *curHDemand = ARR_INDEX(curAlgModel.subDemands, 0);
-            if (!curHDemand) return;
-            for (TOFoModel *hCanset in curHDemand.actionFoModels) {
-                [hCanset step3_FeedbackThenAbsHCanset:newHCanset];
-            }
-        } else {
-            NSLog(@"New&AbsHCanset都未执行,F%ld 状态:%ld %ld 实际的帧数:%ld",self.content_p.pointerId,self.status,self.cansetStatus,order.count);
+        //7. rCanset的actIndex匹配了,就相当于它curAlgModel的HDemand,下的所有的subHCanset的targetAlg全反馈匹配上了 (参考32119-TODO1);
+        HDemandModel *curHDemand = ARR_INDEX(curAlgModel.subDemands, 0);
+        if (!curHDemand) return;
+        for (TOFoModel *hCanset in curHDemand.actionFoModels) {
+            [hCanset step3_FeedbackThenAbsHCanset:newHCansetOrders];
         }
     }
 }
@@ -510,15 +495,15 @@
 /**
  *  MARK:--------------------反馈上后: 触发类比抽象出AbsHCanset--------------------
  *  @desc 反馈匹配到targetAlg时,会触发AbsHCanset类比抽象 (可能一帧帧过来,也可能提前直接反馈target) (参考32119-TODO1);
- *  @param newHCanset 2024.07.29: 复用NewHCanset的生成在此处 (不必再单独生成NewHCanset);
+ *  @param newHCansetOrders 2024.07.29: 复用NewHCanset的生成在此处 (不必再单独生成NewHCanset);
  */
--(void) step3_FeedbackThenAbsHCanset:(AIFoNodeBase*)newHCanset {
+-(void) step3_FeedbackThenAbsHCanset:(NSArray*)newHCansetOrders {
     //========== 第2部分: 当H任务推进到最终target时,触发预想与实际类比absHCanset ==========
     //5. H返回的有效判断
     //2024.04.21: 激活过(转实)的就能类比 (原则是: 有si即有预期,在此基础上尽可能多的触发预期与实际的类比);
     //2024.07.29: 此时,可以直接调用所有best过的hCanset来进行H类比抽象 (并且不需要isEndFrame);
     if (!self.isH || self.cansetStatus == CS_None) return;
-    if (!newHCanset) return;
+    if (!ARRISOK(newHCansetOrders)) return;
         
     //6. HDemand即使waitModel不是actYes状态也处理反馈;
     HDemandModel *hDemand = (HDemandModel*)self.baseOrGroup;//h需求模型
@@ -551,7 +536,7 @@
     
     //2024.09.14: hCanset类比启用新的canset类比算法 (参考33052-TODO2);
     AIFoNodeBase *absCansetFo = [AIAnalogy analogyCansetFoV2:self.realCansetToIndexDic oldCansetOrders:cansetToOrders];
-    [AITest test101:absCansetFo proto:newHCanset oldCansetOrder:cansetToOrders];
+    [AITest test101:absCansetFo newCansetOrders:newHCansetOrders oldCansetOrder:cansetToOrders];
     NSString *fltLog = FltLog4CreateHCanset(4);
     NSLog(@"%@%@%@%@%@%@Canset演化> AbsHCanset:%@ toScene:%@ 在%ld帧:%@",fltLog,FltLog4AbsHCanset(true, 3),FltLog4XueQuPi(3),FltLog4HDemandOfYouPiGuo(@"5"),FltLog4XueBanYun(3),FltLog4YonBanYun(4),Fo2FStr(absCansetFo),ShortDesc4Node(iScene),self.cansetActIndex,Pit2FStr(self.getCurFrame.content_p));
     
