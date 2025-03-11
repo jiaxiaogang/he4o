@@ -488,10 +488,11 @@
             //2024.11.03: 在挂载新的Canset时,实时推举 & 并防重(只有新挂载的canset,才有资格实时调用推举,并推举spDic都到父场景中) (参考33112);
             if (updateConCansetResult.isNew) {
                 //推举是从I推举到F（而pFo就是I层，所以sceneFrom就是pFo）。
+                NSDictionary *iNewCansetISceneIndexDic = [basePFo.indexDic2 copy];
                 NSArray *baseSceneContent_ps = Simples2Pits([self getBaseSceneToOrders]);
                 NSMutableDictionary *initOutSPDic = [[NSMutableDictionary alloc] init];
                 for (NSInteger i = 0; i < newHCanset.count; i++) [initOutSPDic setObject:[AISPStrong newWithS:0 P:1] forKey:@(i)];
-                [TCTransfer transferTuiJv_RH_V3:pFo cansetFrom:newHCanset isH:true sceneFromCutIndex:basePFo.cutIndex initOutSPDic:initOutSPDic baseSceneContent_ps:baseSceneContent_ps];
+                [TCTransfer transferTuiJv_RH_V3:pFo iCansetOrders:newHCanset.convert2Orders iCansetISceneIndexDic:iNewCansetISceneIndexDic isH:true sceneFromCutIndex:basePFo.cutIndex initOutSPDic:initOutSPDic baseSceneContent_ps:baseSceneContent_ps];
             }
             
             //6. rCanset的actIndex匹配了,就相当于它curAlgModel的HDemand,下的所有的subHCanset的targetAlg全反馈匹配上了 (参考32119-TODO1);
@@ -557,9 +558,6 @@
     ELog(@"此处断点停下时,测下hCanset的类比是否正常!!!!!!!!!!!!!!! (参考33052-待断点测试项)");
     NSDictionary *oldSolutionAbsCansetIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:self.realCansetToIndexDic.allKeys];//样例如：<1=1,2=2,3=3>。
     
-    
-    //TODOTOMORROW20250311: 继续废除I层canset：1、先把四处调用transferTuiJv_RH_V3的地方，都求出iAbsCansetISceneIndexDic传过去，2、再把tuijv算法的cansetFrom改成orders格式，3、再把四个构建新canset时，直接只构建orders。
-    
     //15. 计算出absCansetFo的和iScene之间的indexDic (参考27207-7至11);
     //2024.04.16: 此处简化了下,把用convertOldIndexDic2NewIndexDic()取映射,改成用zonHeDic来计算;
     //a. 从iScene -> iCanset -> iAbsCanset
@@ -575,7 +573,7 @@
     NSArray *baseSceneContent_ps = Simples2Pits([self getBaseSceneToOrders]);
     //初始OutSPDic从fCanset对baseScene取（其实取的就是cansetTo的OutSPDic）。
     NSDictionary *initOutSPDic = [AINetUtils getInitOutSPDicForAbsCanset:fCanset baseSceneContent_ps:baseSceneContent_ps oldSolutionAbsCansetIndexDic:oldSolutionAbsCansetIndexDic absCanset:absCansetFo];
-    [TCTransfer transferTuiJv_RH_V3:pFo cansetFrom:absCansetFo cansetFromISceneIndexDic:iAbsCansetISceneIndexDic isH:true sceneFromCutIndex:basePFo.cutIndex initOutSPDic:initOutSPDic baseSceneContent_ps:baseSceneContent_ps];
+    [TCTransfer transferTuiJv_RH_V3:pFo iCansetOrders:absCansetFo.convert2Orders iCansetISceneIndexDic:iAbsCansetISceneIndexDic isH:true sceneFromCutIndex:basePFo.cutIndex initOutSPDic:initOutSPDic baseSceneContent_ps:baseSceneContent_ps];
     [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
 }
 

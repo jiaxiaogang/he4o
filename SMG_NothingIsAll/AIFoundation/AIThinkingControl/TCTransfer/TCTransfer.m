@@ -168,17 +168,18 @@
  *  @param sceneFromCutIndex 即broCanset正在行为化的帧 (它是新构建的hCanset的场景);
  *  @param initOutSPDic 表示调用此方法的canset的初始OutSPDic，比如NewRHCanset时一般是每index都是P=1，再比如AbsRHCanset时为当前激活推进中的fCanset对baseSceneToOrders的现有SP记录。
  *  @param baseSceneContent_ps 生成新canset所在的baseSceneOrders（用于推举后，为其初始化OutSP值）。
- *  @param cansetFromISceneIndexDic 传要新推举的cansetFrom和iScene之间的映射（因为cansetFrom一般都是在iScene下生成的，它自然有映射，传过来用于求出新fCanset和fScene的映射）。
+ *  @param iCansetISceneIndexDic 传要新推举的cansetFrom和iScene之间的映射（因为cansetFrom一般都是在iScene下生成的，它自然有映射，传过来用于求出新fCanset和fScene的映射）。
  *  @version
  *      2025.01.16: 迭代V2，H推举延着R的迁移关联进行（参考33152）。
  *      2025.03.02: 简化H嵌套后，R和H都是挂在rScene下，所以复用此推举算法（参考33171-TODO2）。
  */
-+(void) transferTuiJv_RH_V3:(AIFoNodeBase*)sceneFrom cansetFrom:(AIFoNodeBase*)cansetFrom cansetFromISceneIndexDic:(NSDictionary*)cansetFromISceneIndexDic isH:(BOOL)isH sceneFromCutIndex:(NSInteger)sceneFromCutIndex initOutSPDic:(NSDictionary*)initOutSPDic baseSceneContent_ps:(NSArray*)baseSceneContent_ps {
++(void) transferTuiJv_RH_V3:(AIFoNodeBase*)sceneFrom iCansetOrders:(NSArray*)iCansetOrders iCansetISceneIndexDic:(NSDictionary*)iCansetISceneIndexDic isH:(BOOL)isH sceneFromCutIndex:(NSInteger)sceneFromCutIndex initOutSPDic:(NSDictionary*)initOutSPDic baseSceneContent_ps:(NSArray*)baseSceneContent_ps {
     //1. 将rCanset推举到每一个absFo;
     NSArray *absPorts = [AINetUtils absPorts_All:sceneFrom];
+    NSArray *iCansetContent_ps = Simples2Pits(iCansetOrders);
     
     //2. 已推举过的记录（用于防重）。
-    NSArray *alreadayTuiJuFScenes = [SMGUtils convertArr:[AINetUtils transferPorts_4Father:sceneFrom iCansetContent_ps:cansetFrom.content_ps] convertBlock:^id(AITransferPort *obj) {
+    NSArray *alreadayTuiJuFScenes = [SMGUtils convertArr:[AINetUtils transferPorts_4Father:sceneFrom iCansetContent_ps:iCansetContent_ps] convertBlock:^id(AITransferPort *obj) {
         return obj.fScene;
     }];
     for (AIPort *absPort in absPorts) {
@@ -190,7 +191,7 @@
         if (!isH && ![sceneFrom.cmvNode_p.identifier isEqualToString:sceneTo.cmvNode_p.identifier]) continue;
         
         //3. 取brotherCanset推举到fatherScene后的综合映射：BR映射 (参考29069-todo10.1推举算法示图);
-        DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:cansetFromISceneIndexDic];
+        DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:iCansetISceneIndexDic];
         DirectIndexDic *dic2 = [DirectIndexDic newOkToAbs:[sceneFrom getAbsIndexDic:sceneTo.p]];
         NSDictionary *zonHeIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2]];
         NSDictionary *sceneToCansetToIndexDic = [SMGUtils reverseDic:zonHeIndexDic];
@@ -201,7 +202,7 @@
         if (isH) sceneToTargetIndex = [TOUtils goBackToFindConIndexByConIndex:sceneFromSceneToIndexDic conIndex:sceneFromCutIndex] + 1;
         
         //4. 根据综合映射,计算出orders;
-        NSArray *orders = [self convertZonHeIndexDic2Orders:cansetFrom.convert2Orders sceneTo:sceneTo zonHeIndexDic:zonHeIndexDic];
+        NSArray *orders = [self convertZonHeIndexDic2Orders:iCansetOrders sceneTo:sceneTo zonHeIndexDic:zonHeIndexDic];
         NSArray *cansetToContent_ps = Simples2Pits(orders);
         
         //11. 构建cansetTo
@@ -230,7 +231,7 @@
         
         //14. 挂载成功: 进行迁移关联 (可供复用,避免每一次推举更新sp时,都重新推举) (参考33112-TODO3);
         //2024.11.13: 新版迁移关联: 推举时=>from是I层,to是F层 (条件: 未发生迁移时,不执行) (参考33112-TODO4.4);
-        [AINetUtils relateTransfer_R:sceneTo fCanset:cansetTo iScene:sceneFrom iCanset:cansetFrom.content_ps];
+        [AINetUtils relateTransfer_R:sceneTo fCanset:cansetTo iScene:sceneFrom iCanset:iCansetContent_ps];
     }
 }
 
