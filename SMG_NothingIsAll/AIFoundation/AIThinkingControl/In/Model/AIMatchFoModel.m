@@ -225,20 +225,20 @@
 -(void) pushFrameFinish:(NSString*)log except4SP2F:(NSMutableArray*)except4SP2F {
     //1. =================自然未发生(新方案): 无actYes的S时,归功于自然未发生,则新增protoCanset (参考27206c-R任务)=================
     //a. 数据准备;
-    AIFoNodeBase *matchFo = [SMGUtils searchNode:self.matchFo];//此处matchFo和pFo都是sceneTo
+    AIFoNodeBase *pFo = [SMGUtils searchNode:self.matchFo];//此处matchFo和pFo都是sceneTo
     NSArray *orders = [self convertOrders4NewCansetV2];
     
     //b. 用realMaskFo & realDeltaTimes生成protoFo (参考27201-1 & 5);
-    AIFoNodeBase *newRCanset = [theNet createConFoForCanset:orders sceneFo:matchFo sceneTargetIndex:matchFo.count];
+    AIFoNodeBase *newRCanset = [theNet createConFoForCanset:orders sceneFo:pFo sceneTargetIndex:pFo.count];
     
     //c. 将protoFo挂载到matchFo下的conCansets下 (参考27201-2);
-    HEResult *updateConCansetResult = [matchFo updateConCanset:newRCanset.pointer targetIndex:matchFo.count];
-    NSLog(@"Canset演化> NewRCanset:%@ toScene:%@ (原因:%@)",Fo2FStr(newRCanset),ShortDesc4Node(matchFo),log);
+    HEResult *updateConCansetResult = [pFo updateConCanset:newRCanset.pointer targetIndex:pFo.count];
+    NSLog(@"Canset演化> NewRCanset:%@ toScene:%@ (原因:%@)",Fo2FStr(newRCanset),ShortDesc4Node(pFo),log);
     
     if (updateConCansetResult.success) {
         //d. 将item.indexDic挂载到matchFo的conIndexDDic下 (参考27201-3);
         //2024.06.26: indexDic有可能指定后还在更新,导致有越界 (参考32014);
-        [newRCanset updateIndexDic:matchFo indexDic:[self.indexDic2 copy]];
+        [newRCanset updateIndexDic:pFo indexDic:[self.indexDic2 copy]];
         
         //2024.09.04: eff已经弃用了,这里改为把P默认计1 (参考33031b-BUG5-TODO1);
         if (self.indexDic2 == 0) {
@@ -256,7 +256,7 @@
     if (updateConCansetResult.isNew) {
         NSMutableDictionary *initOutSPDic = [[NSMutableDictionary alloc] init];
         for (NSInteger i = 0; i < newRCanset.count; i++) [initOutSPDic setObject:[AISPStrong newWithS:0 P:1] forKey:@(i)];
-        [TCTransfer transferTuiJv_RH_V3:matchFo cansetFrom:newRCanset isH:false sceneFromCutIndex:matchFo.count-1 initOutSPDic:initOutSPDic baseSceneContent_ps:matchFo.content_ps];
+        [TCTransfer transferTuiJv_RH_V3:pFo cansetFrom:newRCanset isH:false sceneFromCutIndex:pFo.count-1 initOutSPDic:initOutSPDic baseSceneContent_ps:pFo.content_ps];
     }
     
     //2. =================解决方案执行有效(再类比): 有actYes的时,归功于解决方案,执行canset再类比 (参考27206c-R任务)=================
@@ -299,28 +299,6 @@
         [AITest test101:absCansetFo proto:newRCanset oldCansetOrder:solutionOrders];
         NSLog(@"%@%@Canset演化> AbsRCanset:%@ from(F%ld) toScene:%@",FltLog4CreateRCanset(4),FltLog4YonBanYun(4),Fo2FStr(absCansetFo),newRCanset.pId,ShortDesc4Node(pFo));
         
-        if (updateConCansetResult.success) {
-            //2024.04.17: 此处简化了下,把用convertOldIndexDic2NewIndexDic()取映射,改成用zonHeDic来计算;
-            //a. 从sceneTo向下到cansetTo;
-            DirectIndexDic *dic1 = [DirectIndexDic newNoToAbs:solutionModel.transferXvModel.sceneToCansetToIndexDic];
-            
-            //b. 从cansetTo向上到absCansetTo;
-            DirectIndexDic *dic2 = [DirectIndexDic newOkToAbs:solutionModel.realCansetToIndexDic];
-            
-            //c. 综合求出absHCanset与场景的映射;
-            NSDictionary *absRCansetSceneToIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2]];
-            if ([Fo2FStr(absCansetFo) containsString:@"饿"] && [Fo2FStr(pFo) containsString:@"饿"]) {
-                if (absRCansetSceneToIndexDic.count == 0 && DICISOK(dic1.indexDic)) {
-                    //2024.06.13: 特殊情况说明: 当solution中有两个饿时,此处dic is nil也是正常的,因为solution和abs之间映射了第一个饿,而综合求dic的pFo与solution可能是映射第二个 (这个有可能是因为时序识别 和 类比时的,从后向前匹配啥的有关,但不算什么大问题,可以暂不处理)即: 当assFo有两条饿时,映射不到是可能的 (不算bug);
-                    if ([NSString countOfSubStr:@"饿" fromStr:Pits2FStr(Simples2Pits(solutionOrders))] <= 1) {
-                        NSLog(@"AbsRCanset Dic Is Nil");
-                    }
-                }
-            }
-            [absCansetFo updateIndexDic:pFo indexDic:absRCansetSceneToIndexDic];
-            [AITest test18:absRCansetSceneToIndexDic newCanset:absCansetFo absFo:pFo];
-        }
-        
         //2024.11.03: 在挂载新的Canset时,实时推举 & 并防重(只有新挂载的canset,才有资格实时调用推举,并推举spDic都到父场景中) (参考33112);
         //2024.11.05: 当targetFoModel是R任务时,才推举,以后这里需要支持下,不断向base找到R为止,因为H可能有多层,而推举是必须找到并借助R来实现的 (参考n33p12);
         //推举是从I推举到F（而pFo就是I层，所以sceneFrom就是pFo）。
@@ -329,7 +307,7 @@
         AIFoNodeBase *fCanset = [SMGUtils searchNode:solutionModel.fCanset];
         NSArray *baseSceneContent_ps = Simples2Pits([solutionModel getBaseSceneToOrders]);
         //初始OutSPDic从fCanset对baseScene取（其实取的就是cansetTo的OutSPDic）。
-        NSDictionary *oldSolutionAbsCansetIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:solutionModel.realCansetToIndexDic.allKeys];
+        NSDictionary *oldSolutionAbsCansetIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:solutionModel.realCansetToIndexDic.allKeys];//样例如：<1=1,2=2,3=3>。
         NSDictionary *initOutSPDic = [AINetUtils getInitOutSPDicForAbsCanset:fCanset baseSceneContent_ps:baseSceneContent_ps oldSolutionAbsCansetIndexDic:oldSolutionAbsCansetIndexDic absCanset:absCansetFo];
         [TCTransfer transferTuiJv_RH_V3:basePFo cansetFrom:absCansetFo isH:true sceneFromCutIndex:basePFo.count-1 initOutSPDic:initOutSPDic baseSceneContent_ps:baseSceneContent_ps];
         [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];

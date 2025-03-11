@@ -103,7 +103,7 @@
     //5. 成功: 当前条 -> 当前Canset战胜了,不过还没行为化过,所以直接调用行为化action();
     if (bestCanset.alreadyActionActIndex < bestCanset.cansetActIndex) {
         //> 这里bestCanset的actIndex还没行为化过,所以不可能有subHDemand,此时可以先调用下[TCAction action:];
-        if (Log4Plan) NSLog(@"planV2 success2 执行bestCanset的求解:%@ %ld %ld",ShortDesc4Pit(bestCanset.cansetFrom),bestCanset.alreadyActionActIndex,bestCanset.cansetActIndex);
+        if (Log4Plan) NSLog(@"planV2 success2 执行bestCanset的求解:%@ %ld %ld",ShortDesc4Pit(bestCanset.fCanset),bestCanset.alreadyActionActIndex,bestCanset.cansetActIndex);
         [self printFinishLog:bestCanset];
         TCResult *re = [TCSolution solutionV2:bestCanset];
         complate(re);
@@ -122,7 +122,7 @@
     }
     
     //6. 三种情况,分别走三块不同逻辑;
-    AIFoNodeBase *bestCansetFo = [SMGUtils searchNode:bestCanset.cansetFrom];
+    AIFoNodeBase *bestCansetFo = [SMGUtils searchNode:bestCanset.fCanset];
     BOOL actYes4Mv = bestCanset.cansetActIndex >= bestCansetFo.count;
     TOAlgModel *frameAlg = bestCanset.getCurFrame;
     BOOL havIndexDic = [bestCanset.transferXvModel.sceneToCansetToIndexDic.allValues containsObject:@(bestCanset.cansetActIndex)];//当前帧在canset与scene有映射;
@@ -225,7 +225,7 @@
         
         //36. 如果subH求解全失败了,则咱不解了,咱等着即可,看它能不能自行反馈到,则继续等 -> 如果bestCanset枝叶全失败了,还是静默等等状态,直接返回成功,啥也不用干 (比如: 等饭熟,有苹果也会先吃一个垫垫);
         if (!success && !frameAlg.actYesed) {
-            if (Log4Plan) NSLog(@"planV2 success4 继续bestCanset的静默等待:%@",ShortDesc4Pit(bestCanset.cansetFrom));
+            if (Log4Plan) NSLog(@"planV2 success4 继续bestCanset的静默等待:%@",ShortDesc4Pit(bestCanset.fCanset));
             [self printFinishLog:bestCanset];
             complate([[[TCResult new:true] mkMsg:@"TCPlan规划: 静默等待状态,继续等即可"] mkStep:11]);
             return true;

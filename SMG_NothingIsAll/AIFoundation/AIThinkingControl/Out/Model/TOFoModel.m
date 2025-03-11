@@ -326,7 +326,6 @@
 /**
  *  MARK:--------------------有iCanset直接返回进行行为化等 (参考29069-todo9 & todo10.1b)--------------------
  */
-//TODOTOMORROW20250310: 继续查下废弃调用：4、sceneFo(改成fScene) 5、siModel全废弃（含再类比）。
 -(AIKVPointer *)content_p {
     return self.fCanset;
 }
@@ -543,50 +542,19 @@
     //11. 用realMaskFo & realDeltaTimes生成protoFo (参考30154-todo2);
     //12. H任务完成时,H当前正执行的S提前完成,并进行外类比 (参考27206c-H任务);
     //13. 数据准备 (当前sceneTo就是targetFoModel.cansetTo);
-    AIFoNodeBase *cansetTo = [SMGUtils searchNode:self.transferSiModel.canset];
+    NSArray *cansetToOrders = self.transferXvModel.cansetToOrders;
     AIFoNodeBase *iScene = [SMGUtils searchNode:self.iScene];
     
     //14. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
     NSArray *noRepeatArea_ps = [pFo getConCansets:basePFo.cutIndex + 1];
     
     //2024.09.14: hCanset类比启用新的canset类比算法 (参考33052-TODO2);
-    HEResult *analogyResult = [AIAnalogy analogyCansetFo:self.realCansetToIndexDic newCanset:newHCanset oldCanset:cansetTo noRepeatArea_ps:noRepeatArea_ps];
-    AIFoNodeBase *absCansetFo = analogyResult.data;
-    HEResult *updateConCansetResult =  [pFo updateConCanset:absCansetFo.pointer targetIndex:basePFo.cutIndex + 1];
-    [AITest test101:absCansetFo proto:newHCanset conCanset:cansetTo];
+    AIFoNodeBase *absCansetFo = [AIAnalogy analogyCansetFoV2:self.realCansetToIndexDic oldCansetOrders:cansetToOrders];
+    [AITest test101:absCansetFo proto:newHCanset oldCansetOrder:cansetToOrders];
     NSString *fltLog = FltLog4CreateHCanset(4);
     NSLog(@"%@%@%@%@%@%@Canset演化> AbsHCanset:%@ toScene:%@ 在%ld帧:%@",fltLog,FltLog4AbsHCanset(true, 3),FltLog4XueQuPi(3),FltLog4HDemandOfYouPiGuo(@"5"),FltLog4XueBanYun(3),FltLog4YonBanYun(4),Fo2FStr(absCansetFo),ShortDesc4Node(iScene),self.cansetActIndex,Pit2FStr(self.getCurFrame.content_p));
     
     ELog(@"此处断点停下时,测下hCanset的类比是否正常!!!!!!!!!!!!!!! (参考33052-待断点测试项)");
-    
-    //TODOTOMORROW202412. 随后查吧,这个:
-    //如下日志,此处hCanset类比显然有bug,这个realCansetToIndexDic首先就有问题,怎么可能1和2都对应7呢,并且0帧是饥饿,也不会对应第6帧;
-    //----------- Canset类比 -----------
-    //new:F5642[M1{↑饿-16},A61(距47,向217,果),-,-,-,-,-,-,A5578(距10,向270,果),-,-,-,飞↓,A5640(距0,向272,果)]
-    //old:F5624[M1{↑饿-16},A61(距47,向217,果),-]
-    //byIndexDic:{0 = 6;1 = 7;2 = 7;}
-    //abs:F5643[M1{↑饿-16},A61(距47,向217,果),-]
-    //Canset演化> AbsHCanset:F5643[M1{↑饿-16},A61(距47,向217,果),-] toScene:F5566[↑饿-16,4果,4果,4果,4果,4果,4果,飞↓,4果] 在3帧:
-    
-    if (updateConCansetResult.success) {
-        //15. 计算出absCansetFo的indexDic & 并将结果持久化 (参考27207-7至11);
-        //2024.04.16: 此处简化了下,把用convertOldIndexDic2NewIndexDic()取映射,改成用zonHeDic来计算;
-        //a. 从sceneTo向下到cansetTo;
-        DirectIndexDic *dic1 = [DirectIndexDic newNoToAbs:[pFo getConIndexDic:cansetTo.p]];
-        
-        //b. 从cansetTo向上到absCansetTo;
-        DirectIndexDic *dic2 = [DirectIndexDic newOkToAbs:[cansetTo getAbsIndexDic:absCansetFo.p]];
-        
-        //c. 综合求出absHCanset与场景的映射;
-        NSDictionary *absHCansetSceneToIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2]];
-        if ([Fo2FStr(absCansetFo) containsString:@"饿"] && [Fo2FStr(iScene) containsString:@"饿"]) {
-            if (absHCansetSceneToIndexDic.count == 0) {
-                NSLog(@"AbsHCanset Dic Is Nil");
-            }
-        }
-        [absCansetFo updateIndexDic:pFo indexDic:absHCansetSceneToIndexDic];
-        [AITest test18:absHCansetSceneToIndexDic newCanset:absCansetFo absFo:pFo];
-    }
     
     //2024.11.03: 在挂载新的Canset时,实时推举 & 并防重(只有新挂载的canset,才有资格实时调用推举,并推举spDic都到父场景中) (参考33112);
     //2024.11.05: 当targetFoModel是R任务时,才推举,以后这里需要支持下,不断向base找到R为止,因为H可能有多层,而推举是必须找到并借助R来实现的 (参考n33p12);
@@ -595,7 +563,8 @@
     AIFoNodeBase *fCanset = [SMGUtils searchNode:self.fCanset];
     NSArray *baseSceneContent_ps = Simples2Pits([self getBaseSceneToOrders]);
     //初始OutSPDic从fCanset对baseScene取（其实取的就是cansetTo的OutSPDic）。
-    NSDictionary *initOutSPDic = [AINetUtils getInitOutSPDicForAbsCanset:fCanset baseSceneContent_ps:baseSceneContent_ps conCanset:cansetTo absCanset:absCansetFo];
+    NSDictionary *oldSolutionAbsCansetIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:self.realCansetToIndexDic.allKeys];//样例如：<1=1,2=2,3=3>。
+    NSDictionary *initOutSPDic = [AINetUtils getInitOutSPDicForAbsCanset:fCanset baseSceneContent_ps:baseSceneContent_ps oldSolutionAbsCansetIndexDic:oldSolutionAbsCansetIndexDic absCanset:absCansetFo];
     [TCTransfer transferTuiJv_RH_V3:pFo cansetFrom:absCansetFo isH:true sceneFromCutIndex:basePFo.cutIndex initOutSPDic:initOutSPDic baseSceneContent_ps:baseSceneContent_ps];
     [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
 }

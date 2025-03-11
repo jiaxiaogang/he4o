@@ -271,6 +271,7 @@
 }
 
 +(AIFoNodeBase*) analogyCansetFoV2:(NSDictionary*)realCansetToIndexDic oldCansetOrders:(NSArray*)oldCansetOrders {
+    //TODO: 2025.03.11：随后可以考虑，把realCansetToIndexDic改成realMask的IndexDic2，因为realCansetToIndexDic是从前到后，不会超过cutIndex的，而realMask.IndexDic2中，可能已经收到了当前cansetTo后段的帧，只是因为不是cansetTo.actIndex，所以我们没有收集到realCansetToIndexDic中。作用：这样有助于更好的发现absCanset。
     //1. 类比orders的规律
     NSMutableArray *absOrders = [[NSMutableArray alloc] init];
 

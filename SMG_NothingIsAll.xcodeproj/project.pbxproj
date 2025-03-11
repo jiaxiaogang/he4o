@@ -156,7 +156,6 @@
 		08AFC5F0276979D8000BAB26 /* TCPlan.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AFC5EF276979D8000BAB26 /* TCPlan.m */; };
 		08B180D327F495340069F11E /* TVTimeLine.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B180D227F495340069F11E /* TVTimeLine.m */; };
 		08B31E7E20648C3700FD96EA /* ThinkingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B31E7D20648C3700FD96EA /* ThinkingUtils.m */; };
-		08B91E902A15B1B700B8AC59 /* AITransferModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B91E8F2A15B1B700B8AC59 /* AITransferModel.m */; };
 		08BB986F2C87E2D800DA4029 /* HEResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 08BB986E2C87E2D800DA4029 /* HEResult.m */; };
 		08C071382A6582B7004D7110 /* AsyncMutableArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C071372A6582B7004D7110 /* AsyncMutableArray.m */; };
 		08C159C02808F47100983717 /* RLTPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08C159BF2808F47100983717 /* RLTPanel.m */; };
@@ -521,8 +520,6 @@
 		08B31E7C20648C3700FD96EA /* ThinkingUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ThinkingUtils.h; sourceTree = "<group>"; };
 		08B31E7D20648C3700FD96EA /* ThinkingUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ThinkingUtils.m; sourceTree = "<group>"; };
 		08B4DAEC25E881D200E32DB1 /* XGDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XGDelegate.h; sourceTree = "<group>"; };
-		08B91E8E2A15B1B700B8AC59 /* AITransferModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AITransferModel.h; sourceTree = "<group>"; };
-		08B91E8F2A15B1B700B8AC59 /* AITransferModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AITransferModel.m; sourceTree = "<group>"; };
 		08BB986D2C87E2D800DA4029 /* HEResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HEResult.h; sourceTree = "<group>"; };
 		08BB986E2C87E2D800DA4029 /* HEResult.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HEResult.m; sourceTree = "<group>"; };
 		08C071362A6582B7004D7110 /* AsyncMutableArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AsyncMutableArray.h; sourceTree = "<group>"; };
@@ -1605,8 +1602,6 @@
 			children = (
 				08F27D6C29ED8FC60063E71B /* TCTransfer.h */,
 				08F27D6D29ED8FC60063E71B /* TCTransfer.m */,
-				08B91E8E2A15B1B700B8AC59 /* AITransferModel.h */,
-				08B91E8F2A15B1B700B8AC59 /* AITransferModel.m */,
 				080EA7392B94D0BF00764BBF /* TCTransferXvModel.h */,
 				080EA73A2B94D0BF00764BBF /* TCTransferXvModel.m */,
 				08F506222B90CF3800ECE977 /* DirectIndexDic.h */,
@@ -2011,7 +2006,6 @@
 				0858C5CF2194F8B000951BA5 /* MASViewAttribute.m in Sources */,
 				086BFF382BC043F600CB77B0 /* TVUtil_Short.m in Sources */,
 				88BC09D720B4EB920006ABEF /* XGRedis.m in Sources */,
-				08B91E902A15B1B700B8AC59 /* AITransferModel.m in Sources */,
 				084219E11FD8CEFD009DA6BC /* AIReactorControl.m in Sources */,
 				0827DC0229BEA60E0070EB67 /* CortexAlgorithmsUtil.m in Sources */,
 				088A147F27E177AC00FA1097 /* TOMVisionDemandView.m in Sources */,

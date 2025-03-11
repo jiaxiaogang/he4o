@@ -37,7 +37,7 @@
     //6. 计算cansetToOrders
     //说明: 场景包含帧用indexDic映射来迁移替换,场景不包含帧用迁移前的为准 (参考31104);
     //2025.02.24: H继承时，取order方式与以往一致（参考3315b）。
-    NSMutableArray *iCansetToOrders = [TCTransfer convertZonHeIndexDic2Orders:cansetFrom sceneTo:iScene zonHeIndexDic:zonHeIndexDic];
+    NSMutableArray *iCansetToOrders = [TCTransfer convertZonHeIndexDic2Orders:cansetFrom.convert2Orders sceneTo:iScene zonHeIndexDic:zonHeIndexDic];
     
     //9. 打包数据model返回 (映射需要返过来因为前面cansetFrom在前,现在是cansetTo在后);
     TCTransferXvModel *result = [[TCTransferXvModel alloc] init];
@@ -138,21 +138,21 @@
  *  @desc 根据综合indexDic把cansetFrom迁移到sceneTo的cansetTo的orders计算出来 (说白了: 有综合映射的帧从cansetFrom取,没有映射的帧从sceneTo取);
  *  @param zonHeIndexDic : <K=cansetFrom下标，V=sceneTo下标>
  */
-+(NSMutableArray*) convertZonHeIndexDic2Orders:(AIFoNodeBase*)cansetFrom sceneTo:(AIFoNodeBase*)sceneTo zonHeIndexDic:(NSDictionary*)zonHeIndexDic {
++(NSMutableArray*) convertZonHeIndexDic2Orders:(NSArray*)cansetFromOrders sceneTo:(AIFoNodeBase*)sceneTo zonHeIndexDic:(NSDictionary*)zonHeIndexDic {
     //6. 计算cansetToOrders
     //说明: 场景包含帧用indexDic映射来迁移替换,场景不包含帧用迁移前的为准 (参考31104);
     NSMutableArray *orders = [[NSMutableArray alloc] init];
-    for (NSInteger i = 0; i < cansetFrom.count; i++) {
+    for (NSInteger i = 0; i < cansetFromOrders.count; i++) {
         //a. 判断映射链: (参考29069-todo10.1-步骤2 & 31113-TODO8);
         NSNumber *sceneToIndex = [zonHeIndexDic objectForKey:@(i)];
-        double deltaTime = [NUMTOOK(ARR_INDEX(cansetFrom.deltaTimes, i)) doubleValue];
+        AIShortMatchModel_Simple *cansetFromOrder = ARR_INDEX(cansetFromOrders, i);
         if (sceneToIndex) {
             //b. 通过则收集迁移后scene元素 (参考29069-todo10.1-步骤3);
-            id order = [AIShortMatchModel_Simple newWithAlg_p:ARR_INDEX(sceneTo.content_ps, sceneToIndex.intValue) inputTime:deltaTime isTimestamp:false];
+            id order = [AIShortMatchModel_Simple newWithAlg_p:ARR_INDEX(sceneTo.content_ps, sceneToIndex.intValue) inputTime:cansetFromOrder.inputTime isTimestamp:false];
             [orders addObject:order];
         } else {
             //c. 不通过则收集迁移前canset元素 (参考29069-todo10.1-步骤4);
-            id order = [AIShortMatchModel_Simple newWithAlg_p:ARR_INDEX(cansetFrom.content_ps, i) inputTime:deltaTime isTimestamp:false];
+            id order = [AIShortMatchModel_Simple newWithAlg_p:cansetFromOrder.alg_p inputTime:cansetFromOrder.inputTime isTimestamp:false];
             [orders addObject:order];
         }
     }
@@ -198,7 +198,7 @@
         if (isH) sceneToTargetIndex = [TOUtils goBackToFindConIndexByConIndex:sceneFromSceneToIndexDic conIndex:sceneFromCutIndex] + 1;
         
         //4. 根据综合映射,计算出orders;
-        NSArray *orders = [self convertZonHeIndexDic2Orders:cansetFrom sceneTo:sceneTo zonHeIndexDic:zonHeIndexDic];
+        NSArray *orders = [self convertZonHeIndexDic2Orders:cansetFrom.convert2Orders sceneTo:sceneTo zonHeIndexDic:zonHeIndexDic];
         NSArray *cansetToContent_ps = Simples2Pits(orders);
         
         //11. 构建cansetTo

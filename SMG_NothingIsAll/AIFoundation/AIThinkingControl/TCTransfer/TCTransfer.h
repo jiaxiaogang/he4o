@@ -54,6 +54,6 @@
  *  @desc 根据综合indexDic把cansetFrom迁移到sceneTo的cansetTo的orders计算出来 (说白了: 有综合映射的帧从cansetFrom取,没有映射的帧从sceneTo取);
  *  @param zonHeIndexDic : <K=cansetFrom下标，V=sceneTo下标>
  */
-+(NSMutableArray*) convertZonHeIndexDic2Orders:(AIFoNodeBase*)cansetFrom sceneTo:(AIFoNodeBase*)sceneTo zonHeIndexDic:(NSDictionary*)zonHeIndexDic;
++(NSMutableArray*) convertZonHeIndexDic2Orders:(NSArray*)cansetFromOrders sceneTo:(AIFoNodeBase*)sceneTo zonHeIndexDic:(NSDictionary*)zonHeIndexDic;
 
 @end
