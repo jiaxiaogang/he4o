@@ -47,7 +47,7 @@
 /**
  *  MARK:--------------------在构建RCanset时,推举到抽象场景中 (参考33112)--------------------
  */
-+(void) transferTuiJv_RH_V3:(AIFoNodeBase*)sceneFrom cansetFrom:(AIFoNodeBase*)cansetFrom isH:(BOOL)isH sceneFromCutIndex:(NSInteger)sceneFromCutIndex initOutSPDic:(NSDictionary*)initOutSPDic baseSceneContent_ps:(NSArray*)baseSceneContent_ps;
++(void) transferTuiJv_RH_V3:(AIFoNodeBase*)sceneFrom cansetFrom:(AIFoNodeBase*)cansetFrom cansetFromISceneIndexDic:(NSDictionary*)cansetFromISceneIndexDic isH:(BOOL)isH sceneFromCutIndex:(NSInteger)sceneFromCutIndex initOutSPDic:(NSDictionary*)initOutSPDic baseSceneContent_ps:(NSArray*)baseSceneContent_ps;
 
 /**
  *  MARK:--------------------计算cansetTo.orders--------------------

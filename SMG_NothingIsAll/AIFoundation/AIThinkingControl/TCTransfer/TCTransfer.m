@@ -168,11 +168,12 @@
  *  @param sceneFromCutIndex 即broCanset正在行为化的帧 (它是新构建的hCanset的场景);
  *  @param initOutSPDic 表示调用此方法的canset的初始OutSPDic，比如NewRHCanset时一般是每index都是P=1，再比如AbsRHCanset时为当前激活推进中的fCanset对baseSceneToOrders的现有SP记录。
  *  @param baseSceneContent_ps 生成新canset所在的baseSceneOrders（用于推举后，为其初始化OutSP值）。
+ *  @param cansetFromISceneIndexDic 传要新推举的cansetFrom和iScene之间的映射（因为cansetFrom一般都是在iScene下生成的，它自然有映射，传过来用于求出新fCanset和fScene的映射）。
  *  @version
  *      2025.01.16: 迭代V2，H推举延着R的迁移关联进行（参考33152）。
  *      2025.03.02: 简化H嵌套后，R和H都是挂在rScene下，所以复用此推举算法（参考33171-TODO2）。
  */
-+(void) transferTuiJv_RH_V3:(AIFoNodeBase*)sceneFrom cansetFrom:(AIFoNodeBase*)cansetFrom isH:(BOOL)isH sceneFromCutIndex:(NSInteger)sceneFromCutIndex initOutSPDic:(NSDictionary*)initOutSPDic baseSceneContent_ps:(NSArray*)baseSceneContent_ps {
++(void) transferTuiJv_RH_V3:(AIFoNodeBase*)sceneFrom cansetFrom:(AIFoNodeBase*)cansetFrom cansetFromISceneIndexDic:(NSDictionary*)cansetFromISceneIndexDic isH:(BOOL)isH sceneFromCutIndex:(NSInteger)sceneFromCutIndex initOutSPDic:(NSDictionary*)initOutSPDic baseSceneContent_ps:(NSArray*)baseSceneContent_ps {
     //1. 将rCanset推举到每一个absFo;
     NSArray *absPorts = [AINetUtils absPorts_All:sceneFrom];
     
@@ -188,8 +189,10 @@
         AIFoNodeBase *sceneTo = [SMGUtils searchNode:absPort.target_p];
         if (!isH && ![sceneFrom.cmvNode_p.identifier isEqualToString:sceneTo.cmvNode_p.identifier]) continue;
         
-        //3. BR映射 (参考29069-todo10.1推举算法示图);
-        NSDictionary *zonHeIndexDic = [self getBFZonHeIndexDic:cansetFrom broScene:sceneFrom fatScene:sceneTo];
+        //3. 取brotherCanset推举到fatherScene后的综合映射：BR映射 (参考29069-todo10.1推举算法示图);
+        DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:cansetFromISceneIndexDic];
+        DirectIndexDic *dic2 = [DirectIndexDic newOkToAbs:[sceneFrom getAbsIndexDic:sceneTo.p]];
+        NSDictionary *zonHeIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2]];
         NSDictionary *sceneToCansetToIndexDic = [SMGUtils reverseDic:zonHeIndexDic];
         
         //4. 取sceneToTargetIndex;
@@ -229,16 +232,6 @@
         //2024.11.13: 新版迁移关联: 推举时=>from是I层,to是F层 (条件: 未发生迁移时,不执行) (参考33112-TODO4.4);
         [AINetUtils relateTransfer_R:sceneTo fCanset:cansetTo iScene:sceneFrom iCanset:cansetFrom.content_ps];
     }
-}
-
-/**
- *  MARK:--------------------取brotherCanset推举到fatherScene后的综合映射--------------------
- *  @desc BR映射 (参考29069-todo10.1推举算法示图);
- */
-+(NSDictionary*) getBFZonHeIndexDic:(AIFoNodeBase*)broCanset broScene:(AIFoNodeBase*)broScene fatScene:(AIFoNodeBase*)fatScene {
-    DirectIndexDic *dic1 = [DirectIndexDic newOkToAbs:[broCanset getAbsIndexDic:broScene.p]];
-    DirectIndexDic *dic2 = [DirectIndexDic newOkToAbs:[broScene getAbsIndexDic:fatScene.p]];
-    return [TOUtils zonHeIndexDic:@[dic1,dic2]];
 }
 
 @end

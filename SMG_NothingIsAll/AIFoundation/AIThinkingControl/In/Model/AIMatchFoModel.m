@@ -235,28 +235,12 @@
     HEResult *updateConCansetResult = [pFo updateConCanset:newRCanset.pointer targetIndex:pFo.count];
     NSLog(@"Canset演化> NewRCanset:%@ toScene:%@ (原因:%@)",Fo2FStr(newRCanset),ShortDesc4Node(pFo),log);
     
-    if (updateConCansetResult.success) {
-        //d. 将item.indexDic挂载到matchFo的conIndexDDic下 (参考27201-3);
-        //2024.06.26: indexDic有可能指定后还在更新,导致有越界 (参考32014);
-        [newRCanset updateIndexDic:pFo indexDic:[self.indexDic2 copy]];
-        
-        //2024.09.04: eff已经弃用了,这里改为把P默认计1 (参考33031b-BUG5-TODO1);
-        if (self.indexDic2 == 0) {
-            NSLog(@"NewRCanset Dic Is Nil");
-        }
-        
-        //3. =================生成新方案后 IN有效率+1 (参考28182-todo6)=================
-        //[TCEffect rInEffect:matchFo matchRFos:self.baseFrameModel.matchRFos es:ES_HavEff];
-        
-        //2023.04.19: 改到TCTransfer迁移后调用canset识别类比 (参考29069-todo12);
-        //[TIUtils recognitionCansetFo:cansetFo.pointer sceneFo:matchFo.pointer es:ES_HavEff];
-    }
-    
     //2024.11.03: 在挂载新的Canset时,实时推举 & 并防重(只有新挂载的canset,才有资格实时调用推举,并推举spDic都到父场景中) (参考33112);
     if (updateConCansetResult.isNew) {
+        NSDictionary *iNewRCansetISceneIndexDic = [self.indexDic2 copy];
         NSMutableDictionary *initOutSPDic = [[NSMutableDictionary alloc] init];
         for (NSInteger i = 0; i < newRCanset.count; i++) [initOutSPDic setObject:[AISPStrong newWithS:0 P:1] forKey:@(i)];
-        [TCTransfer transferTuiJv_RH_V3:pFo cansetFrom:newRCanset isH:false sceneFromCutIndex:pFo.count-1 initOutSPDic:initOutSPDic baseSceneContent_ps:pFo.content_ps];
+        [TCTransfer transferTuiJv_RH_V3:pFo cansetFrom:newRCanset cansetFromISceneIndexDic:iNewRCansetISceneIndexDic isH:false sceneFromCutIndex:pFo.count-1 initOutSPDic:initOutSPDic baseSceneContent_ps:pFo.content_ps];
     }
     
     //2. =================解决方案执行有效(再类比): 有actYes的时,归功于解决方案,执行canset再类比 (参考27206c-R任务)=================
