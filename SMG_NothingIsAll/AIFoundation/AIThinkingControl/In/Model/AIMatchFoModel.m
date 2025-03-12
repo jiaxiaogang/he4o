@@ -251,45 +251,17 @@
         //2024.04.21: 改成没激活过(没转实)的,不进行类比 (为了触发更多的类比);
         if (solutionModel.cansetStatus == CS_None) continue;
         
-        //2024.09.11: 一帧都未推进的,没资格参与再类比 (它都没推进,即使正mv反馈了,与它也没关系 `现在外类比也不是很泛滥,这个需求不明确,先不做,等后续真需要了,再来做`);
-        //if (solutionModel.initCansetCutIndex == solutionModel.cansetCutIndex) continue;
-        
-        //2024.07.30: 去掉不必要的过滤器 (参考3211a-AbsR);
-        //if (solutionModel.status != TOModelStatus_ActYes && solutionModel.status != TOModelStatus_Runing && solutionModel.status != TOModelStatus_ActNo) {
-        //    NSLog(@"RCanset预想与实际类比未执行,F%ld 状态:%ld",solutionModel.content_p.pointerId,solutionModel.status);
-        //    continue;
-        //}
-        
         //c. 数据准备;
         NSArray *solutionOrders = solutionModel.transferXvModel.cansetToOrders;
         AIFoNodeBase *pFo = [SMGUtils searchNode:solutionModel.basePFo.matchFo];//此处pFo和matchFo都是sceneTo
         
-        //2024.07.30: 去掉不必要的过滤器 (参考3211a-AbsR);
-        //d. 收集真实发生feedbackAlg (order为0条时,跳过);
-        //if (newRCanset.count <= 1) continue;
-        
-        //f. 外类比 & 并将结果持久化 (挂到当前目标帧下标targetFoModel.actionIndex下) (参考27204-4&8);
-        NSArray *noRepeatArea_ps = [pFo getConCansets:pFo.count];
-        
         //2024.09.13: rCanset类比启用新的canset类比算法 (参考33052-TODO2);
-        AIFoNodeBase *absCansetFo = [AIAnalogy analogyCansetFoV2:solutionModel.realCansetToIndexDic oldCansetOrders:solutionOrders];
-        HEResult *updateConCansetResult = [pFo updateConCanset:absCansetFo.pointer targetIndex:pFo.count];//此处pFo和matchFo都是sceneTo
-        [AITest test101:absCansetFo newCansetOrders:newRCansetOrders oldCansetOrder:solutionOrders];
-        NSLog(@"%@%@Canset演化> AbsRCanset:%@ fromNewRCanset:[%@] toScene:%@",FltLog4CreateRCanset(4),FltLog4YonBanYun(4),Fo2FStr(absCansetFo),Pits2FStr(Simples2Pits(newRCansetOrders)),ShortDesc4Node(pFo));
-        NSDictionary *oldSolutionAbsCansetIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:solutionModel.realCansetToIndexDic.allKeys];//样例如：<1=1,2=2,3=3>。
-        
-        
-        
-        
-        
-        //TODOTOMORROW20250311: 继续废除I层canset：把两个构建absCanset时，直接只构建orders。
-        
-        //15. 计算出absCansetFo的和iScene之间的indexDic (参考27207-7至11);
-        //2024.04.16: 此处简化了下,把用convertOldIndexDic2NewIndexDic()取映射,改成用zonHeDic来计算;
-        //a. 从iScene -> iCanset -> iAbsCanset
-        DirectIndexDic *dic1 = [DirectIndexDic newNoToAbs:solutionModel.transferXvModel.sceneToCansetToIndexDic];
-        DirectIndexDic *dic2 = [DirectIndexDic newOkToAbs:oldSolutionAbsCansetIndexDic];
-        NSDictionary *iAbsCansetISceneIndexDic = [TOUtils zonHeIndexDic:@[dic1,dic2]];
+        HEResult *analogyResult = [AIAnalogy analogyCansetFoV3:newRCansetOrders oldCansetOrders:solutionOrders oldCansetISceneIndexDic:solutionModel.transferXvModel.sceneToCansetToIndexDic];
+        NSArray *absCansetOrders = analogyResult.data;
+        NSDictionary *iAbsCansetISceneIndexDic = [analogyResult get:@"absISceneDic"];
+        NSDictionary *absCansetOldCansetIndexDic = [analogyResult get:@"absOldDic"];
+        [AITest test101:absCansetOrders newCansetOrders:newRCansetOrders oldCansetOrder:solutionOrders];
+        NSLog(@"%@%@Canset演化> AbsRCanset:%@ fromNewRCanset:[%@] toScene:%@",FltLog4CreateRCanset(4),FltLog4YonBanYun(4),Pits2FStr(Simples2Pits(absCansetOrders)),Pits2FStr(Simples2Pits(newRCansetOrders)),ShortDesc4Node(pFo));
         
         //2024.11.03: 在挂载新的Canset时,实时推举 & 并防重(只有新挂载的canset,才有资格实时调用推举,并推举spDic都到父场景中) (参考33112);
         //2024.11.05: 当targetFoModel是R任务时,才推举,以后这里需要支持下,不断向base找到R为止,因为H可能有多层,而推举是必须找到并借助R来实现的 (参考n33p12);
@@ -299,9 +271,8 @@
         AIFoNodeBase *fCanset = [SMGUtils searchNode:solutionModel.fCanset];
         NSArray *baseSceneContent_ps = Simples2Pits([solutionModel getBaseSceneToOrders]);
         //初始OutSPDic从fCanset对baseScene取（其实取的就是cansetTo的OutSPDic）。
-        NSDictionary *initOutSPDic = [AINetUtils getInitOutSPDicForAbsCanset:fCanset baseSceneContent_ps:baseSceneContent_ps oldSolutionAbsCansetIndexDic:oldSolutionAbsCansetIndexDic absCanset:absCansetFo];
-        [TCTransfer transferTuiJv_RH_V3:basePFo iCansetOrders:absCansetFo.convert2Orders iCansetISceneIndexDic:iAbsCansetISceneIndexDic isH:true sceneFromCutIndex:basePFo.count-1 initOutSPDic:initOutSPDic baseSceneContent_ps:baseSceneContent_ps];
-        [AITest test20:absCansetFo newSPDic:absCansetFo.spDic];
+        NSDictionary *initOutSPDic = [AINetUtils getInitOutSPDicForAbsCanset:fCanset baseSceneContent_ps:baseSceneContent_ps oldSolutionAbsCansetIndexDic:absCansetOldCansetIndexDic];
+        [TCTransfer transferTuiJv_RH_V3:basePFo iCansetOrders:absCansetOrders iCansetISceneIndexDic:iAbsCansetISceneIndexDic isH:true sceneFromCutIndex:basePFo.count-1 initOutSPDic:initOutSPDic baseSceneContent_ps:baseSceneContent_ps];
     }
 }
 

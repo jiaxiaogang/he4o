@@ -35,7 +35,6 @@
 /**
  *  MARK:--------------------Canset类比 --------------------
  */
-+(HEResult*) analogyCansetFo:(NSDictionary*)realCansetToIndexDic newCanset:(AIFoNodeBase*)newCanset oldCanset:(AIFoNodeBase*)oldCanset noRepeatArea_ps:(NSArray*)noRepeatArea_ps;
-+(AIFoNodeBase*) analogyCansetFoV2:(NSDictionary*)realCansetToIndexDic oldCansetOrders:(NSArray*)oldCansetOrders;
++(HEResult*) analogyCansetFoV3:(NSArray*)newCansetOrders oldCansetOrders:(NSArray*)oldCansetOrders oldCansetISceneIndexDic:(NSDictionary*)oldCansetISceneIndexDic;
 
 @end

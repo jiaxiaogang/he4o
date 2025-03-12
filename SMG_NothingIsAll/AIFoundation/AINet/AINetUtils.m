@@ -926,7 +926,7 @@
  *      2025.03.09: 原本的初始化OutSPDic是fCanset对baseScene的，现在在fCanset -> 继承成cansetTo -> 又新类比到AbsCanset。
  *  @result 返回absCanset的初始OutSPDic。
  */
-+(NSDictionary*) getInitOutSPDicForAbsCanset:(AIFoNodeBase*)fCanset baseSceneContent_ps:(NSArray*)baseSceneContent_ps oldSolutionAbsCansetIndexDic:(NSDictionary*)oldSolutionAbsCansetIndexDic absCanset:(AIFoNodeBase*)absCanset {
++(NSDictionary*) getInitOutSPDicForAbsCanset:(AIFoNodeBase*)fCanset baseSceneContent_ps:(NSArray*)baseSceneContent_ps oldSolutionAbsCansetIndexDic:(NSDictionary*)oldSolutionAbsCansetIndexDic {
     //1. 数据准备。
     NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
     

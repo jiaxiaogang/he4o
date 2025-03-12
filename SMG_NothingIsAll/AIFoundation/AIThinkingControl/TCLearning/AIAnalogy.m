@@ -241,56 +241,39 @@
  *      2023.09.03: 修复dic.keys无序会导致此处生成的absFo序列也错乱的问题;
  *      2023.10.26: 废弃canset类比 (参考3014c-todo2);
  *      2024.09.13: 启用canset类比: 直接用反馈映射realCansetToIndexDic,来生成Canset类比结果 (参考33052-TODO1);
+ *      2025.03.13: 迭代V3：用new和old两个orders得出absOrders（参考33174-TODO1）。
  */
-+(HEResult*) analogyCansetFo:(NSDictionary*)realCansetToIndexDic newCanset:(AIFoNodeBase*)newCanset oldCanset:(AIFoNodeBase*)oldCanset noRepeatArea_ps:(NSArray*)noRepeatArea_ps {
++(HEResult*) analogyCansetFoV3:(NSArray*)newCansetOrders oldCansetOrders:(NSArray*)oldCansetOrders oldCansetISceneIndexDic:(NSDictionary*)oldCansetISceneIndexDic {
     //1. 类比orders的规律
-    NSMutableArray *orderSames = [[NSMutableArray alloc] init];
+    NSMutableArray *absCansetOrders = [[NSMutableArray alloc] init];
+    NSMutableDictionary *absCansetOldCansetIndexDic = [NSMutableDictionary new];//收集abs和old的映射;
 
-    //2. 根据新旧的映射indexDic分别进行概念类比 (参考29025-24a);
-    //2024.10.07: dic是无序的,所以先给key排下序,避免类比结果乱序 (参考33092);
-    //2024.10.07: 其实压根不用类比,打开前段条件满足后,orderSames就等于canset的前段 (不过先不改,以后前段条件满足万一再关了呢) (参考33053);
-    NSArray *sortKeys = [SMGUtils sortSmall2Big:realCansetToIndexDic.allKeys compareBlock:^double(NSNumber *obj) {
-        return obj.integerValue;
-    }];
-    for (NSNumber *key in sortKeys) {
-        NSInteger oldIndex = key.integerValue;
-        AIKVPointer *oldAlg_p = ARR_INDEX(oldCanset.content_ps, oldIndex);
-        [orderSames addObject:oldAlg_p];
+    //2. 外类比有序进行 (记录jMax & 反序)
+    NSInteger jStart = 0;
+    for (NSInteger i = 0; i < newCansetOrders.count; i++) {
+        for (NSInteger j = jStart; j < oldCansetOrders.count; j++) {
+            AIShortMatchModel_Simple *newItem = ARR_INDEX(newCansetOrders, i);
+            AIShortMatchModel_Simple *oldItem = ARR_INDEX(oldCansetOrders, j);
+            
+            //3. B源于matchFo,此处只判断B是1层抽象 (参考27161-调试1&调试2);
+            //此处proto抽象仅指向刚识别的matchAlgs,所以与contains等效;
+            BOOL mIsC = [TOUtils mIsC_1:newItem.alg_p c:oldItem.alg_p];
+            if (mIsC) {
+                //4. 收集并更新j进度;
+                [absCansetOrders addObject:oldItem];
+                [absCansetOldCansetIndexDic setObject:@(j) forKey:@(absCansetOrders.count - 1)];
+                jStart = j + 1;
+                break;
+            }
+        }
     }
-
-    //6. 取得newIndexDic和oldIndexDic (参考29032-todo1.1);
-    NSDictionary *newIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:realCansetToIndexDic.allValues];
-    NSDictionary *oldIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:realCansetToIndexDic.allKeys];
-
-    //7. 外类比构建
-    BOOL outConAbsIsRelate = true;
-    HEResult *heResult = [theNet createAbsFo_NoRepeat:orderSames protoFo:newCanset assFo:oldCanset difStrong:1 type:ATDefault protoIndexDic:newIndexDic assIndexDic:oldIndexDic outConAbsIsRelate:&outConAbsIsRelate noRepeatArea_ps:noRepeatArea_ps];
-    AIFoNodeBase *absFo = heResult.data;
-    if (Log4OutCansetAna) NSLog(@"\n----------- Canset类比 -----------\nnew:%@\nold:%@\nbyIndexDic:%@\nabs:%@",Fo2FStr(newCanset),Fo2FStr(oldCanset),CLEANSTR(realCansetToIndexDic),Fo2FStr(absFo));
-    return heResult;
-}
-
-+(AIFoNodeBase*) analogyCansetFoV2:(NSDictionary*)realCansetToIndexDic oldCansetOrders:(NSArray*)oldCansetOrders {
-    //TODO: 2025.03.11：随后可以考虑，把realCansetToIndexDic改成realMask的IndexDic2，因为realCansetToIndexDic是从前到后，不会超过cutIndex的，而realMask.IndexDic2中，可能已经收到了当前cansetTo后段的帧，只是因为不是cansetTo.actIndex，所以我们没有收集到realCansetToIndexDic中。作用：这样有助于更好的发现absCanset。
-    //1. 类比orders的规律
-    NSMutableArray *absOrders = [[NSMutableArray alloc] init];
-
-    //2. 根据新旧的映射indexDic分别进行概念类比 (参考29025-24a);
-    //2024.10.07: dic是无序的,所以先给key排下序,避免类比结果乱序 (参考33092);
-    //2024.10.07: 其实压根不用类比,打开前段条件满足后,orderSames就等于canset的前段 (不过先不改,以后前段条件满足万一再关了呢) (参考33053);
-    NSArray *sortKeys = [SMGUtils sortSmall2Big:realCansetToIndexDic.allKeys compareBlock:^double(NSNumber *obj) {
-        return obj.integerValue;
-    }];
-    for (NSNumber *key in sortKeys) {
-        NSInteger oldIndex = key.integerValue;
-        AIShortMatchModel_Simple *oldAlg_p = ARR_INDEX(oldCansetOrders, oldIndex);
-        [absOrders addObject:oldAlg_p];
-    }
-
-    //7. 外类比构建
-    AIFoNodeBase *result = [theNet createConFo_NoRepeat:absOrders];
-    if (Log4OutCansetAna) NSLog(@"\n----------- Canset类比 -----------\nold:%@\nbyIndexDic:%@\nabs:%@",Pits2FStr(Simples2Pits(oldCansetOrders)),CLEANSTR(realCansetToIndexDic),Fo2FStr(result));
-    return result;
+    
+    //5. 计算出absCansetFo的和iScene之间的indexDic (参考27207-7至11 & 33174-TODO2);
+    //2024.04.16: 此处简化了下,把用convertOldIndexDic2NewIndexDic()取映射,改成用zonHeDic来计算;
+    //2025.03.xx: 从iScene -> iCanset -> iAbsCanset
+    NSDictionary *iAbsCansetISceneIndexDic = [TOUtils zonHeIndexDic:@[[DirectIndexDic newNoToAbs:oldCansetISceneIndexDic],[DirectIndexDic newOkToAbs:absCansetOldCansetIndexDic]]];
+    if (Log4OutCansetAna) NSLog(@"\n----------- Canset类比 -----------\nold:%@\nnew:%@ absOldIndexDic:%@\nabs:%@",Pits2FStr(Simples2Pits(oldCansetOrders)),Pits2FStr(Simples2Pits(newCansetOrders)),CLEANSTR(iAbsCansetISceneIndexDic),Pits2FStr(Simples2Pits(absCansetOrders)));
+    return [[[[HEResult newSuccess] mkData:absCansetOrders] mk:@"absISceneDic" v:iAbsCansetISceneIndexDic] mk:@"absOldDic" v:absCansetOldCansetIndexDic];
 }
 
 @end

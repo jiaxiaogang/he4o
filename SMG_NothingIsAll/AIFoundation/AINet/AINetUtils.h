@@ -296,7 +296,7 @@
 /**
  *  MARK:--------------------初始化itemOutSPDic (在canset类比抽象时) (参考33062-TODO4)--------------------
  */
-+(NSDictionary*) getInitOutSPDicForAbsCanset:(AIFoNodeBase*)fCanset baseSceneContent_ps:(NSArray*)baseSceneContent_ps oldSolutionAbsCansetIndexDic:(NSDictionary*)oldSolutionAbsCansetIndexDic absCanset:(AIFoNodeBase*)absCanset;
++(NSDictionary*) getInitOutSPDicForAbsCanset:(AIFoNodeBase*)fCanset baseSceneContent_ps:(NSArray*)baseSceneContent_ps oldSolutionAbsCansetIndexDic:(NSDictionary*)oldSolutionAbsCansetIndexDic;
 
 /**
  *  MARK:--------------------取outSPDic的key (参考33065-TODO1)--------------------

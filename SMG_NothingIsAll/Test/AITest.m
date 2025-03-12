@@ -356,9 +356,9 @@
 //MARK:===============================================================
 //MARK:    < 回测必经点测试 (常关,每个轮回测时打开,触发则关,未触发者为异常) >
 //MARK:===============================================================
-+(void) test101:(AIFoNodeBase*)absCansetFo newCansetOrders:(NSArray*)newCansetOrders oldCansetOrder:(NSArray*)oldCansetOrder {
++(void) test101:(NSArray*)absCansetOrders newCansetOrders:(NSArray*)newCansetOrders oldCansetOrder:(NSArray*)oldCansetOrder {
     if (!Switch4AITest) return;
-    WLog(@"必经点测试: 触发canset再抽象执行到;\n\tabsCanset %@ from:\n\tproto:%@\n\tconConset:%@",Fo2FStr(absCansetFo),Pits2FStr(Simples2Pits(newCansetOrders)),Pits2FStr(Simples2Pits(oldCansetOrder)));
+    WLog(@"必经点测试: 触发canset再抽象执行到;\n\tabsCanset %@ from:\n\tproto:%@\n\tconConset:%@",Pits2FStr(Simples2Pits(absCansetOrders)),Pits2FStr(Simples2Pits(newCansetOrders)),Pits2FStr(Simples2Pits(oldCansetOrder)));
 }
 
 +(void) test102:(AIKVPointer*)cansetFrom_p {
