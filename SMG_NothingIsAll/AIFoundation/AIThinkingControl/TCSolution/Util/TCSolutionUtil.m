@@ -221,6 +221,7 @@
     //2. 数据检查：如果是F层，要避免重复继承至I层（Override过滤器: 避免重复继承）（参考29069-todo5.2）。
     if (IF_RSceneModel.type == SceneTypeFather) {
         //6. Override过滤器: 防重已经迁移过的 (override用来过滤避免重复迁移) (参考29069-todo5.2);
+        //TODOTOMORROW20250314: 应该不压根防重了，因为现在只从F层取值，迁移关联也不必防重。
         NSArray *alreadyTransfered_Cansets = [AINetUtils transferPorts_4Father:iScene fScene:fScene];
         alreadyTransfered_Cansets = [SMGUtils convertArr:alreadyTransfered_Cansets convertBlock:^id(AITransferPort *obj) { return obj.fCanset; }];
         hCansetFrom_ps = [SMGUtils removeSub_ps:alreadyTransfered_Cansets parent_ps:hCansetFrom_ps];
@@ -277,6 +278,7 @@
         //NSArray *cansetFroms1 = [AIFilter solutionRCansetFilter:sceneFrom targetIndex:sceneFrom.count];//只激活前20% (调用rSolution平均耗时600ms)
         
         //5. Override过滤器: 防重已经迁移过的 (override用来过滤避免重复迁移) (参考29069-todo5.2);
+        //TODOTOMORROW20250314: 应该不压根防重了，因为现在只从F层取值，迁移关联也不必防重。
         NSArray *alreadyTransfered_Cansets = [AINetUtils transferPorts_4Father:iScene fScene:fScene];
         alreadyTransfered_Cansets = [SMGUtils convertArr:alreadyTransfered_Cansets convertBlock:^id(AITransferPort *obj) { return obj.fCanset; }];
         NSArray *cansetFroms2 = [SMGUtils removeSub_ps:alreadyTransfered_Cansets parent_ps:cansetFroms1];

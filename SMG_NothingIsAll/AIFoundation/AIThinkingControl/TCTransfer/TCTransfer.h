@@ -23,8 +23,6 @@
 //MARK:                     < 经验迁移-虚实V3 >
 //MARK:===============================================================
 
-+(void) transferXv:(TOFoModel*)cansetModel;
-
 /**
  *  MARK:--------------------H虚迁移v2--------------------
  *  @desc 说明：在共同的rSceneFrom下，把rCansetFrom下的hCansetFrom迁移到rCansetTo下。

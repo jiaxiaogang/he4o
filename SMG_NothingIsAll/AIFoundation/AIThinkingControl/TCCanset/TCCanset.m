@@ -86,7 +86,7 @@
                                  cansetTargetIndex:cansetFrom.count sceneFromTargetIndex:sceneFromTargetIndex];
     
     //7. 伪迁移;
-    [TCTransfer transferJiCen_RH_V3:cansetFrom_p fScene:fScene iScene:iScene sceneToActIndex:sceneCutIndex+1];
+    result.transferXvModel = [TCTransfer transferJiCen_RH_V3:cansetFrom_p fScene:fScene iScene:iScene sceneToActIndex:sceneCutIndex+1];
     
     //8. 初始化result的cansetTo与real的映射;
     [result initRealCansetToDic];

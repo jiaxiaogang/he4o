@@ -171,7 +171,7 @@
         NSString *fltLog1 = obj.isH && [NVHeUtil algIsWuPiGuo:targetAlg] && [NVHeUtil foHavYouPiGuo:obj.fCanset] ? FltLog4HDemandOfYouPiGuo(@"3") : @"";
         NSString *fltLog2 = FltLog4DefaultIf(!obj.isH, @"1");
         NSString *fromDSC = STRFORMAT(@"FROM<F%ld F%ld %@>",Demand2Pit((DemandModel*)obj.baseOrGroup).pointerId,obj.fScene.pointerId,ShortDesc4Pit(obj.fCanset));
-        if (debugMode && Log4AIRank) NSLog(@"%@%@%@%ld. %@ by:%@ %@ %@ (分:%.2f P值:%ld) [CUT:%ld=>TAR:%ld]",fltLog1,fltLog2,obj.isH?@"H":@"R",index,SceneType2Str(obj.baseSceneModel.type),fromDSC,CLEANSTR(obj.transferXvModel.sceneToCansetToIndexDic),CLEANSTR(spDic),spScore,pStrong,obj.cansetCutIndex,obj.cansetTargetIndex);
+        if (debugMode && Log4AIRank) NSLog(@"%@%@%@%ld. %@ %@ by:%@ %@ %@ (分:%.2f P值:%ld) [CUT:%ld=>TAR:%ld]",fltLog1,fltLog2,obj.isH?@"H":@"R",index,Pits2FStr(Simples2Pits(obj.transferXvModel.cansetToOrders)),SceneType2Str(obj.baseSceneModel.type),fromDSC,CLEANSTR(obj.transferXvModel.sceneToCansetToIndexDic),CLEANSTR(spDic),spScore,pStrong,obj.cansetCutIndex,obj.cansetTargetIndex);
         
         //打印详情日志;
         if (debugMode) {
