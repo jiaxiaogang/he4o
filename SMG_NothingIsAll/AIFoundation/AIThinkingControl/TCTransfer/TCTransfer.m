@@ -47,7 +47,17 @@
     
     //10. 继承时，进行迁移关联（可用于父非子评分时使用）（参考33171-TODO4）。
     if (![iScene isEqual:fScene]) {
+        NSLog(@"aaaa1");
+        NSLog(@"aaaax: %ld %ld %ld %@",fScene.pId,iScene.pId,cansetFrom.pId,[NSString md5:[SMGUtils convertPointers2String:Simples2Pits(iCansetToOrders)]]);
         [AINetUtils relateTransfer_R:fScene fCanset:cansetFrom iScene:iScene iCanset:Simples2Pits(iCansetToOrders)];
+    }
+    
+    NSArray *alreadyTransfered_Cansets = [AINetUtils transferPorts_4Father:iScene fScene:fScene];
+    for (AITransferPort *item in alreadyTransfered_Cansets) {
+        if ([item.fCanset isEqual:cansetFrom.p]) {
+            NSLog(@"aaaay: %ld %ld %ld %@",item.fScene.pointerId,item.iScene.pointerId,item.fCanset.pointerId,item.iCansetHeader);
+            NSLog(@"TODOTOMORROW20230515: 此处有BUG，明明有迁移关联了，为什么还可以再次创建关联？");
+        }
     }
     return result;
 }
