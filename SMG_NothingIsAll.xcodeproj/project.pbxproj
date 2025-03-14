@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		080228E1227282F80087FE69 /* TOModelBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 080228E0227282F80087FE69 /* TOModelBase.m */; };
-		080250752D284BB500947C40 /* AITransferPort_H.m in Sources */ = {isa = PBXBuildFile; fileRef = 080250742D284BB500947C40 /* AITransferPort_H.m */; };
 		0802962727E4D77D0050C767 /* TVPanelView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0802962627E4D77D0050C767 /* TVPanelView.m */; };
 		0802962927E4D7920050C767 /* TVPanelView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0802962827E4D7920050C767 /* TVPanelView.xib */; };
 		08057B342355574600E9B6F1 /* AIShortMatchModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08057B332355574600E9B6F1 /* AIShortMatchModel.m */; };
@@ -221,8 +220,6 @@
 /* Begin PBXFileReference section */
 		080228DF227282F80087FE69 /* TOModelBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOModelBase.h; sourceTree = "<group>"; };
 		080228E0227282F80087FE69 /* TOModelBase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOModelBase.m; sourceTree = "<group>"; };
-		080250732D284BB500947C40 /* AITransferPort_H.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AITransferPort_H.h; sourceTree = "<group>"; };
-		080250742D284BB500947C40 /* AITransferPort_H.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AITransferPort_H.m; sourceTree = "<group>"; };
 		0802962527E4D77D0050C767 /* TVPanelView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TVPanelView.h; sourceTree = "<group>"; };
 		0802962627E4D77D0050C767 /* TVPanelView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TVPanelView.m; sourceTree = "<group>"; };
 		0802962827E4D7920050C767 /* TVPanelView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TVPanelView.xib; sourceTree = "<group>"; };
@@ -767,8 +764,6 @@
 				080A74311F60C6490025DBA3 /* AIPort.m */,
 				082709D029EC1A5E0045EE22 /* AITransferPort.h */,
 				082709D129EC1A5E0045EE22 /* AITransferPort.m */,
-				080250732D284BB500947C40 /* AITransferPort_H.h */,
-				080250742D284BB500947C40 /* AITransferPort_H.m */,
 			);
 			path = AIPort;
 			sourceTree = "<group>";
@@ -2105,7 +2100,6 @@
 				88E87A6721016EAA0071513F /* OutputUtils.m in Sources */,
 				0843AADC28141711002B9AA9 /* XGDebug.m in Sources */,
 				080A74321F60C6490025DBA3 /* AIPort.m in Sources */,
-				080250752D284BB500947C40 /* AITransferPort_H.m in Sources */,
 				08DB40CB1F11A65E003162C8 /* TestHungryPage.m in Sources */,
 				087E7FCB258053D90097E0B9 /* NSFile+Extension.m in Sources */,
 				08250AE0228112C000FC497C /* XGWedis.m in Sources */,

@@ -988,28 +988,6 @@
 }
 
 /**
- *  MARK:--------------------H任务时,调用此方法 (参考33144-TODO1)--------------------
- */
-+(void) relateTransfer_H:(AIFoNodeBase*)fScene fCanset:(AIFoNodeBase*)fCanset iScene:(AIFoNodeBase*)iScene iCanset:(NSArray*)cansetToContent_ps
-                 fRScene:(AIFoNodeBase*)fRScene iRScene:(AIFoNodeBase*)iRScene {
-    //1. 数据准备;
-    AITransferPort_H *transferPort = [AITransferPort_H newWithFScene_H:fScene.p fCanset:fCanset iScene:iScene.p iCansetContent_ps:cansetToContent_ps fRScene:fRScene iRScene:iRScene];
-    
-    //2. 插入传节点的承端口;
-    if (![fScene.transferIPorts containsObject:transferPort]) {
-        [fScene.transferIPorts addObject:transferPort];
-        [SMGUtils insertNode:fScene];
-    }
-    
-    //3. 插入承节点的传端口;
-    if (![iScene.transferFPorts containsObject:transferPort]) {
-        [iScene.transferFPorts addObject:transferPort];
-        [SMGUtils insertNode:iScene];
-    }
-    [AITest test33:iRScene fScene:fRScene.p];
-}
-
-/**
  *  MARK:--------------------outSP子即父--------------------
  *  @desc 子即父,推举到F层SP也+1: iCanset的outSP更新时,将它的fCanset的outSP也+1 (参考33112-TODO4.3);
  *  @desc I层即sceneTo,F层则从transferPort迁移关联来取 (参考33112-TODO3);

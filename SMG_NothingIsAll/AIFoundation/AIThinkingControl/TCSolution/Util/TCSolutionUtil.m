@@ -218,16 +218,6 @@
     //1. 数据准备
     NSMutableArray *result = [[NSMutableArray alloc] init];
     
-    //2. 数据检查：如果是F层，要避免重复继承至I层（Override过滤器: 避免重复继承）（参考29069-todo5.2）。
-    if (IF_RSceneModel.type == SceneTypeFather) {
-        //6. Override过滤器: 防重已经迁移过的 (override用来过滤避免重复迁移) (参考29069-todo5.2);
-        //TODOTOMORROW20250314: 应该不压根防重了，因为现在只从F层取值，迁移关联也不必防重。
-        NSArray *alreadyTransfered_Cansets = [AINetUtils transferPorts_4Father:iScene fScene:fScene];
-        alreadyTransfered_Cansets = [SMGUtils convertArr:alreadyTransfered_Cansets convertBlock:^id(AITransferPort *obj) { return obj.fCanset; }];
-        hCansetFrom_ps = [SMGUtils removeSub_ps:alreadyTransfered_Cansets parent_ps:hCansetFrom_ps];
-        //if (cansetFroms1.count > 0) NSLog(@"%@ RCansetFroms过滤已迁移过: 原%ld - 滤%ld = 留%ld",SceneType2Str(sceneModel.type),cansetFroms1.count,alreadyTransfered_Cansets.count,cansetFroms2.count);
-    }
-    
     for (AIKVPointer *hCansetFrom_p in hCansetFrom_ps) {
         //11. 前过滤器
         if ([self filter1ForCheckHCansetFromIsInvalid:allFo4HasTargetAlg_ps iScene:iScene hCansetFrom_p:hCansetFrom_p]) continue;
@@ -277,22 +267,15 @@
         NSArray *cansetFroms1 = [fScene getConCansets:fScene.count];//全激活 (调用rSolution平均耗时700ms)
         //NSArray *cansetFroms1 = [AIFilter solutionRCansetFilter:sceneFrom targetIndex:sceneFrom.count];//只激活前20% (调用rSolution平均耗时600ms)
         
-        //5. Override过滤器: 防重已经迁移过的 (override用来过滤避免重复迁移) (参考29069-todo5.2);
-        //TODOTOMORROW20250314: 应该不压根防重了，因为现在只从F层取值，迁移关联也不必防重。
-        NSArray *alreadyTransfered_Cansets = [AINetUtils transferPorts_4Father:iScene fScene:fScene];
-        alreadyTransfered_Cansets = [SMGUtils convertArr:alreadyTransfered_Cansets convertBlock:^id(AITransferPort *obj) { return obj.fCanset; }];
-        NSArray *cansetFroms2 = [SMGUtils removeSub_ps:alreadyTransfered_Cansets parent_ps:cansetFroms1];
-        //if (cansetFroms1.count > 0) NSLog(@"%@ RCansetFroms过滤已迁移过: 原%ld - 滤%ld = 留%ld",SceneType2Str(sceneModel.type),cansetFroms1.count,alreadyTransfered_Cansets.count,cansetFroms2.count);
-        
         //6. 转为CansetModel;
         AIMatchFoModel *pFo = [SMGUtils filterSingleFromArr:demand.validPFos checkValid:^BOOL(AIMatchFoModel *item) {
             return [item.matchFo isEqual:sceneModel.getRoot.scene];
         }];
-        NSArray *itemCansetModels = [SMGUtils convertArr:cansetFroms2 convertBlock:^id(AIKVPointer *fCanset) {
+        NSArray *itemCansetModels = [SMGUtils convertArr:cansetFroms1 convertBlock:^id(AIKVPointer *fCanset) {
             //4. 过滤器 & 转cansetModels候选集 (参考26128-第1步 & 26161-1&2&3);
             return [TCCanset convert2RCansetModel:fCanset fScene:fScene iScene:iScene basePFoOrTargetFoModel:pFo sceneModel:sceneModel demand:demand];//1200ms/600次执行
         }];
-        if (Log4GetCansetResult4R && cansetFroms2.count > 0) NSLog(@"\t item场景(%@):%@ 取得候选数:%ld 转成候选模型数:%ld",SceneType2Str(sceneModel.type),Pit2FStr(sceneModel.scene),cansetFroms2.count,itemCansetModels.count);
+        if (Log4GetCansetResult4R && cansetFroms1.count > 0) NSLog(@"\t item场景(%@):%@ 取得候选数:%ld 转成候选模型数:%ld",SceneType2Str(sceneModel.type),Pit2FStr(sceneModel.scene),cansetFroms1.count,itemCansetModels.count);
         return itemCansetModels;
     }];
     
