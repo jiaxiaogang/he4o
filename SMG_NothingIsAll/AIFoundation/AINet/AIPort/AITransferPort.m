@@ -21,16 +21,14 @@
 }
 
 -(BOOL) isEqual:(AITransferPort*)object{
-    if (ISOK(object, AITransferPort.class)) {
-        //2. 对比scene层;
-        BOOL equal2 = [self.fScene isEqual:object.fScene] && [self.iScene isEqual:object.iScene];
-        if (!equal2) return false;
+    //1. 类型不对，直接返false;
+    if (!ISOK(object, AITransferPort.class)) return false;
         
-        //3. 对比canset层;
-        BOOL equal3 = [self.fCanset isEqual:object.fCanset] && [self.iCansetHeader isEqualToString:object.iCansetHeader];
-        if (!equal3) return false;
-    }
-    return false;
+    //2. 对比四个值有一个不一样，则返false不一样;
+    return ![self.fScene isEqual:object.fScene] || ![self.iScene isEqual:object.iScene] || ![self.fCanset isEqual:object.fCanset] || ![self.iCansetHeader isEqualToString:object.iCansetHeader];
+    
+    //4. 全通过，则二者一致。
+    return true;
 }
 
 /**

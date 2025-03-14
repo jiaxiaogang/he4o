@@ -976,17 +976,14 @@
     //2. 插入传节点的承端口;
     if (![fScene.transferIPorts containsObject:transferPort]) {
         [fScene.transferIPorts addObject:transferPort];
-        NSLog(@"aaaa2a");
         [SMGUtils insertNode:fScene];
     }
     
     //3. 插入承节点的传端口;
     if (![iScene.transferFPorts containsObject:transferPort]) {
         [iScene.transferFPorts addObject:transferPort];
-        NSLog(@"aaaa2b");
         [SMGUtils insertNode:iScene];
     }
-    NSLog(@"aaaa3");
     [AITest test33:iScene fScene:fScene.p];
 }
 
