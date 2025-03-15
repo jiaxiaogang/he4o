@@ -1,0 +1,38 @@
+//
+//  InputDotModel.h
+//  SMG_NothingIsAll
+//
+//  Created by jia on 2025/3/15.
+//  Copyright © 2025 XiaoGang. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+/**
+ *  MARK:--------------------单像素模型，用于表征xy轴中某像素点值的感官信息（如视觉图像，的色值，亮度）--------------------
+ *  @比如，表示色值时，可以用H色相0-360度表示。
+ */
+@interface InputDotModel : NSObject
+
+//TODO 转由粒度xy来表示
+
+/**
+ *  MARK:--------------------位置：不一定是平面，也可以是曲面中的xy点位置，比如人体表面--------------------
+ *  @desc 建议以中心点为0，有助于更全的视角。
+ */
+@property (assign, nonatomic) int x;//x位置
+@property (assign, nonatomic) int y;//y位置
+
+/**
+ *  MARK:--------------------值：表示色相，饱和度，亮度，压力等--------------------
+ */
+@property (assign, nonatomic) int v;//值
+
+/**
+ *  MARK:--------------------是否循环值：循环值的首尾相接（如色相0到360）。--------------------
+ */
+-(BOOL) isLoop;//是否循环值
+@property (assign, nonatomic) int roopMin;//循环中的最小值
+@property (assign, nonatomic) int roopMax;//循环中的最大值
+
+@end

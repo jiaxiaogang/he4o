@@ -53,7 +53,7 @@
 //Hex & HexA
 #define UIColorWithRGBHex(RGB_Hex) UIColorWithRGB((float)((RGB_Hex&0xFF0000)>>16), (float)((RGB_Hex&0xFF00)>>8), (float)(RGB_Hex&0xFF))
 #define UIColorWithRGBHexA(RGB_Hex,A) UIColorWithRGBA((float)((RGB_Hex&0xFF0000)>>16), (float)((RGB_Hex&0xFF00)>>8), (float)(RGB_Hex&0xFF),A)
-//HSB (色相,饱合度,亮度)
+//HSB (色相,饱和度,亮度)
 #define UIColorWithHSB(H, S, B) [UIColor colorWithHue:(H)/255.0 saturation:(S)/255.0 brightness:(B)/255.0 alpha:1]
 
 /**
