@@ -92,6 +92,9 @@
 #import "AINoRepeatRun.h"
 #import "AIRank.h"
 #import "AIFilter.h"
+#import "InputDotModel.h"
+#import "AIVisionAlgsModelV2.h"
+#import "AIVisionAlgsV2.h"
 
 //2021新TC架构
 #import "TCInput.h"

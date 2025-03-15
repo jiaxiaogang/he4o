@@ -18,13 +18,6 @@
 @property (strong, nonatomic) NSDictionary *subInputDotModels;//递归结构，单父多子，多粒度层嵌套。
 
 /**
- *  MARK:--------------------位置：不一定是平面，也可以是曲面中的xy点位置，比如人体表面--------------------
- *  @desc 建议以中心点为0，有助于更全的视角。
- */
-@property (assign, nonatomic) int x;//x位置
-@property (assign, nonatomic) int y;//y位置
-
-/**
  *  MARK:--------------------值：表示色相，饱和度，亮度，压力等--------------------
  */
 @property (assign, nonatomic) int v;//值

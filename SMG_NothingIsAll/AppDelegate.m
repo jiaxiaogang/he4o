@@ -137,6 +137,7 @@
     
     //9. 初始化XGConfig
     [XGConfig.instance initConfig];
+    [AIVisionAlgsV2 testVisionAlgs];
     return YES;
 }
 
