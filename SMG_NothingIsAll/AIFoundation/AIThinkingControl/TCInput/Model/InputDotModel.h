@@ -14,7 +14,8 @@
  */
 @interface InputDotModel : NSObject
 
-//TODO 转由粒度xy来表示
+@property (assign, nonatomic) int level;//粒度级别（越大越细，越小越粗）
+@property (strong, nonatomic) NSDictionary *subInputDotModels;//递归结构，单父多子，多粒度层嵌套。
 
 /**
  *  MARK:--------------------位置：不一定是平面，也可以是曲面中的xy点位置，比如人体表面--------------------
