@@ -106,6 +106,20 @@
     }
 }
 
+/**
+ *  MARK:--------------------把HSB字典，转成粒度字典（粒度字典是每层级横纵各三格，最粗粒度共9格，细粒度下再拆分嵌套各9格，以此类推）--------------------
+ */
++(void) convertHSBDic2SplitDic:(NSDictionary*)hsbDic size:(int)size {
+    //先搞最细粒度。KEY=level_row_column
+    
+    // 计算81是3的几次方 (log3(81) = 4)
+    double levelNum = log(size) / log(3);
+    for (NSInteger level = 0; level < levelNum; level++) {
+        
+    }
+    NSLog(@"3的%.0f次方等于81", levelNum);
+}
+
 #pragma mark - Test Methods
 
 + (void)testVisionAlgs {
