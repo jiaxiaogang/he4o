@@ -23,29 +23,30 @@
     NSInteger dotNum = [self convert2DotNum:MAX(width, height)];
     CGFloat dotW = width / dotNum;
     CGFloat dotH = height / dotNum;
+    CGFloat dotWidth = dotNum,dotHeight = dotNum;
     
     // 3. 创建颜色空间
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     
     // 4. 创建原始数据
-    unsigned char *rawData = (unsigned char *)calloc(height * width * 4, sizeof(unsigned char));
+    unsigned char *rawData = (unsigned char *)calloc(dotHeight * dotWidth * 4, sizeof(unsigned char));
     NSUInteger bytesPerPixel = 4;
-    NSUInteger bytesPerRow = bytesPerPixel * width;
+    NSUInteger bytesPerRow = bytesPerPixel * dotWidth;
     NSUInteger bitsPerComponent = 8;
     
     // 5. 创建上下文
-    CGContextRef context = CGBitmapContextCreate(rawData, width, height,
+    CGContextRef context = CGBitmapContextCreate(rawData, dotWidth, dotHeight,
                                                bitsPerComponent, bytesPerRow, colorSpace,
                                                kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
     
     // 6. 绘制图片
-    CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef);
+    CGContextDrawImage(context, CGRectMake(0, 0, dotWidth, dotHeight), imageRef);
     
     // 7. 遍历像素
     for(NSUInteger y = 0; y < dotNum; y++) {
-        NSInteger pixelY = [self convertDot2PixelIndex:y dotSize:dotH];//求出像素Y值
+        NSInteger pixelY = y;// [self convertDot2PixelIndex:y dotSize:dotH];//求出像素Y值
         for(NSUInteger x = 0; x < dotNum; x++) {
-            NSInteger pixelX = [self convertDot2PixelIndex:x dotSize:dotW];//求出像素X值
+            NSInteger pixelX = x;//[self convertDot2PixelIndex:x dotSize:dotW];//求出像素X值
             
             //8. 取出像素pixelX,pixelY的RGB值。
             NSUInteger byteIndex = (bytesPerRow * pixelY) + pixelX * bytesPerPixel;
@@ -56,6 +57,13 @@
             //9. 保存结果
             NSString *key = [NSString stringWithFormat:@"%ld_%ld", x, y];
             result[key] = @{@"r": @(red),@"g": @(green),@"b": @(blue)};
+            
+            if (x > 39 && x < 45) {
+                if (y > 39 && y < 45) {
+                    NSLog(@"%ld %ld %.1f %.1f %.1f",x,y,red,green,blue);
+                    NSLog(@"");
+                }
+            }
         }
     }
     
