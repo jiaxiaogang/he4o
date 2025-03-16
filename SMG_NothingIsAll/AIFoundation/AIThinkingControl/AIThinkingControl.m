@@ -173,6 +173,8 @@ static AIThinkingControl *_instance;
     algsModel = [theNet algModelConvert2PointersV2:algsModel];
     
     //TODOTOMORROW20250316: 这里先做特征识别，识别后再形成protoAlg呢？
+    //写粒度树。
+    //写具象特征（直接打包组）。
     //a. 从粗粒度开始识别特征。
     
     //b. 然后用粗粒度向细的粒度关联，和粗粒度下的细粒度的ref关联。
