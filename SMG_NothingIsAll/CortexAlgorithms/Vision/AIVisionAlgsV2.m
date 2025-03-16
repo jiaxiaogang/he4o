@@ -111,11 +111,21 @@
  */
 +(void) convertHSBDic2SplitDic:(NSDictionary*)hsbDic size:(int)size {
     //先搞最细粒度。KEY=level_row_column
-    
+    NSMutableDictionary *result = [NSMutableDictionary dictionary];
     // 计算81是3的几次方 (log3(81) = 4)
     double levelNum = log(size) / log(3);
     for (NSInteger level = 0; level < levelNum; level++) {
         
+        //第1个粒度（最粗），有1*9=9格
+        //第2个粒度，有9*9=81格
+        //第3个粒度，有81*9=729格
+        //...
+        for (NSInteger row = 0; row < 3; row++) {
+            for (NSInteger column = 0; column < 3; column++) {
+                NSString *key = [NSString stringWithFormat:@"%ld_%ld_%ld", level, row, column];
+                //result[key] = hsbDic[key];
+            }
+        }
     }
     NSLog(@"3的%.0f次方等于81", levelNum);
 }
