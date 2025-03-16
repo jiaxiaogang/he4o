@@ -14,7 +14,7 @@
  *  @关联强度
  *      1. 方向索引: setMvNodeToDirectionReference:difStrong:
  */
-@class AIImvAlgsModel,AIPointer,AIKVPointer,AIPort,AINetAbsFoNode,AIAbsCMVNode,AIAlgNode,AIAbsAlgNode,AIAlgNodeBase,AICMVNode;
+@class AIImvAlgsModel,AIPointer,AIKVPointer,AIPort,AINetAbsFoNode,AIAbsCMVNode,AIAlgNode,AIAbsAlgNode,AIAlgNodeBase,AICMVNode,AIVisionAlgsModelV2;
 @interface AINet : NSObject
 
 +(AINet*) sharedInstance;
@@ -29,6 +29,8 @@
  *  @result notnull
  */
 -(NSMutableArray*) algModelConvert2Pointers:(NSDictionary*)modelDic algsType:(NSString*)algsType;
+-(AIVisionAlgsModelV2*) algModelConvert2PointersV2:(AIVisionAlgsModelV2*)model;
+
 -(AIKVPointer*) getNetDataPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut;//单data装箱
 
 

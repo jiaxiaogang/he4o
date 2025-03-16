@@ -85,6 +85,27 @@ static AINet *_instance;
     return algsArr;
 }
 
+-(AIVisionAlgsModelV2*) algModelConvert2PointersV2:(AIVisionAlgsModelV2*)model {
+    //1. 数据准备
+    NSString *algsType = NSStringFromClass(model.class);
+
+    //2. 循环装箱
+    //TODO: 这里随后转成NSDictionary后，只要判断dataSource对应的value是dic类型，也可以这么处理（到时候，改V2支持model转Dic类型输入时，自然就知道这里怎么改了）。
+    model.hColors = [SMGUtils convertDic:model.hColors kvBlock:^NSArray *(id protoK, NSNumber *protoV) {
+        AIPointer *pointer = [AINetIndex getDataPointerWithData:protoV algsType:algsType dataSource:@"hColors" isOut:false];//K不需要装箱，V装箱即可。
+        return @[protoK,pointer];
+    }];
+    model.sColors = [SMGUtils convertDic:model.sColors kvBlock:^NSArray *(id protoK, NSNumber *protoV) {
+        AIPointer *pointer = [AINetIndex getDataPointerWithData:protoV algsType:algsType dataSource:@"sColors" isOut:false];//K不需要装箱，V装箱即可。
+        return @[protoK,pointer];
+    }];
+    model.bColors = [SMGUtils convertDic:model.bColors kvBlock:^NSArray *(id protoK, NSNumber *protoV) {
+        AIPointer *pointer = [AINetIndex getDataPointerWithData:protoV algsType:algsType dataSource:@"bColors" isOut:false];//K不需要装箱，V装箱即可。
+        return @[protoK,pointer];
+    }];
+    return model;
+}
+
 //单data装箱
 -(AIKVPointer*) getNetDataPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut{
     return [AINetIndex getDataPointerWithData:data algsType:algsType dataSource:dataSource isOut:isOut];

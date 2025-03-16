@@ -154,6 +154,40 @@ static AIThinkingControl *_instance;
 }
 
 /**
+ *  MARK:--------------------v2现用于输入二维概念，如视觉图像，目前用于测支持多码特征--------------------
+ *  @desc 为了方便开发，开发阶段不将Object转成Dictionary输入，后开发完成后下版本再转。
+ */
+-(void) commitInputAsyncV2:(AIVisionAlgsModelV2*)algsModel {
+    __block AIVisionAlgsModelV2 *weakAlgsModel = algsModel;
+    dispatch_async(self.tiQueue, ^{//30083去异步
+        self.tiRuning1 = true;
+        [self commitInputV2:weakAlgsModel];
+        self.tiRuning1 = false;
+    });
+}
+-(void) commitInputV2:(AIVisionAlgsModelV2*)algsModel{
+    //1. 植物模式阻断感知;
+    if (self.thinkMode == 2) return;
+    
+    //2. 装箱(除mv有两个元素外一般仅有一个元素)
+    algsModel = [theNet algModelConvert2PointersV2:algsModel];
+    
+    //TODOTOMORROW20250316: 这里先做特征识别，识别后再形成protoAlg呢？
+    //a. 从粗粒度开始识别特征。
+    
+    //b. 然后用粗粒度向细的粒度关联，和粗粒度下的细粒度的ref关联。
+    
+    //c. 计算乘积相似度 -> 进行竞争 -> 取交 等。
+    
+    
+    //3. 打包成algTypeNode;
+    //AIAlgNodeBase *algNode = [theNet createAbsAlg_NoRepeat:algsArr conAlgs:nil isOut:false at:nil ds:nil type:ATDefault];
+    
+    //4. 加入瞬时记忆 & 识别等;
+    //[TCInput rInput:algNode except_ps:nil];
+}
+
+/**
  *  MARK:--------------------数据输入--------------------
  *  @param dics : 多model (models仅含普通算法model -> 目前没有imv和普通信息掺杂在models中的情况;)
  *  步骤说明:

@@ -21,8 +21,6 @@
     
     //3. 求出共分多少点，以及每点的尺寸。
     NSInteger dotNum = [self convert2DotNum:MAX(width, height)];
-    CGFloat dotW = width / dotNum;
-    CGFloat dotH = height / dotNum;
     CGFloat dotWidth = dotNum,dotHeight = dotNum;
     
     // 3. 创建颜色空间
@@ -44,12 +42,10 @@
     
     // 7. 遍历像素
     for(NSUInteger y = 0; y < dotNum; y++) {
-        NSInteger pixelY = y;// [self convertDot2PixelIndex:y dotSize:dotH];//求出像素Y值
         for(NSUInteger x = 0; x < dotNum; x++) {
-            NSInteger pixelX = x;//[self convertDot2PixelIndex:x dotSize:dotW];//求出像素X值
             
             //8. 取出像素pixelX,pixelY的RGB值。
-            NSUInteger byteIndex = (bytesPerRow * pixelY) + pixelX * bytesPerPixel;
+            NSUInteger byteIndex = (bytesPerRow * y) + x * bytesPerPixel;
             CGFloat red   = (CGFloat)rawData[byteIndex] / 255.0f;
             CGFloat green = (CGFloat)rawData[byteIndex + 1] / 255.0f;
             CGFloat blue  = (CGFloat)rawData[byteIndex + 2] / 255.0f;
@@ -57,13 +53,6 @@
             //9. 保存结果
             NSString *key = [NSString stringWithFormat:@"%ld_%ld", x, y];
             result[key] = @{@"r": @(red),@"g": @(green),@"b": @(blue)};
-            
-            if (x > 39 && x < 45) {
-                if (y > 39 && y < 45) {
-                    NSLog(@"%ld %ld %.1f %.1f %.1f",x,y,red,green,blue);
-                    NSLog(@"");
-                }
-            }
         }
     }
     
@@ -84,21 +73,6 @@
         dotNum *= 3;
     }
     return dotNum;
-}
-
-/**
- *  MARK:--------------------把点下标转成像素下标--------------------
- */
-+(NSInteger) convertDot2PixelIndex:(NSInteger)dotIndex dotSize:(CGFloat)dotSize {
-    CGFloat pixelStart = dotIndex * dotSize;
-    CGFloat pixelEnd = pixelStart + dotSize;
-    if (dotSize > 1) {//中间有空像素时，直接取中间像素。
-        return (NSInteger)pixelStart + 1;
-    } else if (fmodf(pixelStart, 1) > fmodf(pixelEnd, 1)) {//如果start向下到整数更远，则start向上到整数更近，则返回pixelEnd（因为它占更大像素空间）。
-        return (NSInteger)pixelEnd;
-    } else {
-        return (NSInteger)pixelStart;//否则相反。
-    }
 }
 
 /**
@@ -177,44 +151,40 @@
 
 #pragma mark - Test Methods
 
-+ (void)testVisionAlgs {
-    // 1. 创建测试图片
-    UIImage *testImage = [self createTestImage];
++ (void) commitImageForTest {
+    //1. 创建测试图片
+    CGFloat size = 100;
+    UIImage *testImage = [self createTestImage:size];
+    
+    //2. 取rgb矩阵<K=x_y,V=RGB>
     NSDictionary *protoColorDic = [self getRGBValuesFromImage:testImage];
+    
+    //3. 将rgb矩阵按粒度分层<K=level_x_y,V=RGB>
     NSDictionary *splitDic = [self convertProtoColorDic2SplitDic:protoColorDic];
     
-    for (NSString *key in splitDic) {
-        NSString *begin = [key substringToIndex:2];
-        NSDictionary *value = [splitDic objectForKey:key];
-        if ([begin isEqualToString:@"1_"]) {
-            NSLog(@"第1层位置：%@ 颜色：%@",[key substringFromIndex:2],CLEANSTR(value));
-        }
-    }
-    /*
-     第1层位置：0_0 颜色：{r = 1;g = 0;b = 0;}
-     第1层位置：0_1 颜色：{r = 0.3703704;g = 0;b = 0.6296296;}
-     第1层位置：0_2 颜色：{r = 0;g = 0;b = 0.5185185;}
-     第1层位置：1_0 颜色：{r = 0.3703704;g = 0.6296296;b = 0;}
-     第1层位置：1_1 颜色：{r = 1;g = 0.6296296;b = 0;}
-     第1层位置：1_2 颜色：{r = 0.1481482;g = 0.1481482;b = 0.3703704;}
-     第1层位置：2_0 颜色：{r = 0;g = 0.5185185;b = 0;}
-     第1层位置：2_1 颜色：{r = 0.1481482;g = 0.5185185;b = 0;}
-     第1层位置：2_2 颜色：{r = 0.5185185;g = 0.5185185;b = 0;}
-     这个颜色不对，比如0_1应该是R和B各0.5才对。。。
-     //TODOTOMORROW20250316: 得把3和4层的，边缘中间位置的点打出来看下。第1层时，已经离最细层太远了，调试不直观。。。
-     */
-    NSLog(@"");
+    //4. RGB矩阵转为HSB矩阵。
+    splitDic = [SMGUtils convertDic:splitDic kvBlock:^NSArray *(id protoK, NSDictionary *protoV) {
+        return @[protoK,[UIColor convertRGB2HSB:protoV]];
+    }];
     
-    // 2. 测试getHSBValuesInNineGrids方法
-//    AIVisionAlgsModelV2 *result = [self getHSBGridsFromImage:testImage];
-//    NSLog(@"hColors count: %lu", (unsigned long)result.hColors.count);
-//    NSLog(@"sColors count: %lu", (unsigned long)result.sColors.count);
-//    NSLog(@"bColors count: %lu", (unsigned long)result.bColors.count);
+    //5. 转成AIVisionAlgsModelV2模型（分别存HSB为三个特征）。
+    AIVisionAlgsModelV2 *model = [[AIVisionAlgsModelV2 alloc] init];
+    model.hColors = [SMGUtils convertDic:splitDic kvBlock:^NSArray *(NSString *protoK, NSDictionary *protoV) {
+        return @[protoK,[protoV objectForKey:@"h"]];
+    }];
+    model.sColors = [SMGUtils convertDic:splitDic kvBlock:^NSArray *(NSString *protoK, NSDictionary *protoV) {
+        return @[protoK,[protoV objectForKey:@"s"]];
+    }];
+    model.bColors = [SMGUtils convertDic:splitDic kvBlock:^NSArray *(NSString *protoK, NSDictionary *protoV) {
+        return @[protoK,[protoV objectForKey:@"b"]];
+    }];
+    
+    //6. 提交给思维控制器。
+    [theTC commitInputAsyncV2:model];
 }
 
 // 创建测试用的100x100像素图片
-+ (UIImage *)createTestImage {
-    CGFloat size = 100;
++ (UIImage *)createTestImage:(CGFloat)size {
     CGFloat half = size / 2;
     UIGraphicsBeginImageContext(CGSizeMake(size, size));
     CGContextRef context = UIGraphicsGetCurrentContext();

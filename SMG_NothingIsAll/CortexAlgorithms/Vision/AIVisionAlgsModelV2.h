@@ -18,8 +18,8 @@
  *  @desc K=x_y 用于表示位置：不一定是平面，也可以是曲面中的xy点位置，比如人体表面。
  *  @desc 建议以中心点为0，有助于更全的视角。
  */
-@property (strong,nonatomic) NSMutableDictionary *hColors;//色相
-@property (strong,nonatomic) NSMutableDictionary *sColors;//饱和度
-@property (strong,nonatomic) NSMutableDictionary *bColors;//亮度
+@property (strong,nonatomic) NSDictionary *hColors;//色相
+@property (strong,nonatomic) NSDictionary *sColors;//饱和度
+@property (strong,nonatomic) NSDictionary *bColors;//亮度
 
 @end

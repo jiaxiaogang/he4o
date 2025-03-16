@@ -11,6 +11,6 @@
 
 @interface AIVisionAlgsV2 : NSObject
 
-+ (void)testVisionAlgs;
++ (void) commitImageForTest;
 
 @end
