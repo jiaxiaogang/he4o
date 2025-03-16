@@ -117,7 +117,8 @@
                     [result setObject:[protoColorDic objectForKey:STRFORMAT(@"%ld_%ld",curRow,curColumn)] forKey:curKey];
                 } else {
                     //4.2 别的粗粒度，都从result的细一级粒度取值（把lastLevel取到的9个值取平均值=做为当前Level的HSB值）。
-                    [result setObject:[self getCurAverageColorFromNextLevel:curLevel curRow:curRow curColumn:curColumn nextLevelSplitDic:result] forKey:curKey];
+                    NSDictionary *subDotDics = [self getSubDotDics:curLevel curRow:curRow curColumn:curColumn nextLevelSplitDic:result];//取出子层9格色值。
+                    [result setObject:[self getAverageColorFromSubDotDics:subDotDics] forKey:curKey];//取平均值并存到result。
                 }
             }
         }
@@ -129,34 +130,41 @@
  *  MARK:--------------------从更细粒度一层（下一层）取当前层curRow,curColumn的平均色值--------------------
  *  @nextLevelSplitDic 要求下一层的splitDic已经初始化，存在这个字典里（这样才能取到值）。
  */
-+(NSDictionary*) getCurAverageColorFromNextLevel:(NSInteger)curLevel curRow:(NSInteger)curRow curColumn:(NSInteger)curColumn nextLevelSplitDic:(NSDictionary*)nextLevelSplitDic {
++(NSDictionary*) getSubDotDics:(NSInteger)curLevel curRow:(NSInteger)curRow curColumn:(NSInteger)curColumn nextLevelSplitDic:(NSDictionary*)nextLevelSplitDic {
     //1. 别的粗粒度，都从result的细一级粒度取值（把lastLevel取到的9个值取平均值=做为当前Level的HSB值）。
     NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
     
     //2. 找到下层，的9个row,column格。
     NSInteger nextLevel = curLevel + 1;
     for (NSInteger i = 0; i < 3; i++) {
-        NSInteger nextRow = curRow * 3 + 1 + i;
+        NSInteger nextRow = curRow * 3 + i;
         for (NSInteger j = 0; j < 3; j++) {
-            NSInteger nextColumn = curColumn * 3 + 1 + i;
+            NSInteger nextColumn = curColumn * 3 + j;
             
             //3. 把这九个格的色值分别取出来，求平均值收集。
             NSString *nextKey = STRFORMAT(@"%ld_%ld_%ld",nextLevel,nextRow,nextColumn);
             NSDictionary *nextItemColorDic = [nextLevelSplitDic objectForKey:nextKey];
-            float oldR = NUMTOOK([result objectForKey:@"r"]).floatValue;
-            float oldG = NUMTOOK([result objectForKey:@"g"]).floatValue;
-            float oldB = NUMTOOK([result objectForKey:@"b"]).floatValue;
-            
-            float newR = NUMTOOK([nextItemColorDic objectForKey:@"r"]).floatValue;
-            float newG = NUMTOOK([nextItemColorDic objectForKey:@"g"]).floatValue;
-            float newB = NUMTOOK([nextItemColorDic objectForKey:@"b"]).floatValue;
-            
-            [result setObject:@(oldR + newR / 9) forKey:@"r"];
-            [result setObject:@(oldG + newG / 9) forKey:@"g"];
-            [result setObject:@(oldB + newB / 9) forKey:@"b"];
+            [result setObject:nextItemColorDic forKey:nextKey];
         }
     }
     return result;
+}
+
+/**
+ *  MARK:--------------------根据子粒度层的9格色值，计算出平均色值--------------------
+ */
++(NSDictionary*) getAverageColorFromSubDotDics:(NSDictionary*)subDotDics {
+    //1. 别的粗粒度，都从result的细一级粒度取值（把lastLevel取到的9个值取平均值=做为当前Level的HSB值）。
+    CGFloat sumR = 0,sumG = 0,sumB = 0;
+    for (NSString *subDotKey in subDotDics) {
+        NSDictionary *subDotDic = [subDotDics objectForKey:subDotKey];
+        
+        //3. 把这九个格的色值分别取出来，求平均值收集。
+        sumR += NUMTOOK([subDotDic objectForKey:@"r"]).floatValue;
+        sumG += NUMTOOK([subDotDic objectForKey:@"g"]).floatValue;
+        sumB += NUMTOOK([subDotDic objectForKey:@"b"]).floatValue;
+    }
+    return @{@"r": @(sumR / 9),@"g": @(sumG / 9),@"b": @(sumB / 9)};
 }
 
 #pragma mark - Test Methods
@@ -185,6 +193,7 @@
      第1层位置：2_1 颜色：{r = 0.1481482;g = 0.5185185;b = 0;}
      第1层位置：2_2 颜色：{r = 0.5185185;g = 0.5185185;b = 0;}
      这个颜色不对，比如0_1应该是R和B各0.5才对。。。
+     //TODOTOMORROW20250316: 得把3和4层的，边缘中间位置的点打出来看下。第1层时，已经离最细层太远了，调试不直观。。。
      */
     NSLog(@"");
     
@@ -197,25 +206,26 @@
 
 // 创建测试用的100x100像素图片
 + (UIImage *)createTestImage {
-    CGSize size = CGSizeMake(100, 100);
-    UIGraphicsBeginImageContext(size);
+    CGFloat size = 100;
+    CGFloat half = size / 2;
+    UIGraphicsBeginImageContext(CGSizeMake(size, size));
     CGContextRef context = UIGraphicsGetCurrentContext();
     
     // 左上角像素 - 红色
     CGContextSetRGBFillColor(context, 1.0, 0.0, 0.0, 1.0);
-    CGContextFillRect(context, CGRectMake(0, 0, 50, 50));
+    CGContextFillRect(context, CGRectMake(0, 0, half, half));
     
     // 右上角像素 - 绿色
     CGContextSetRGBFillColor(context, 0.0, 1.0, 0.0, 1.0);
-    CGContextFillRect(context, CGRectMake(50, 0, 50, 50));
+    CGContextFillRect(context, CGRectMake(half, 0, half, half));
 
     // 左下角像素 - 蓝色
     CGContextSetRGBFillColor(context, 0.0, 0.0, 1.0, 1.0);
-    CGContextFillRect(context, CGRectMake(0, 50, 50, 50));
+    CGContextFillRect(context, CGRectMake(0, half, half, half));
 
     // 右下角像素 - 黄色
     CGContextSetRGBFillColor(context, 1.0, 1.0, 0.0, 1.0);
-    CGContextFillRect(context, CGRectMake(50, 50, 50, 50));
+    CGContextFillRect(context, CGRectMake(half, half, half, half));
 
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
