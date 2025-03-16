@@ -10,7 +10,7 @@
 
 @implementation AIVisionAlgsV2
 
-+ (NSDictionary*)getHSBValuesFromImage:(UIImage *)image {
++ (NSDictionary*)getRGBValuesFromImage:(UIImage *)image {
     // 1. 创建返回字典
     NSMutableDictionary *result = [NSMutableDictionary dictionary];
     
@@ -53,22 +53,9 @@
             CGFloat green = (CGFloat)rawData[byteIndex + 1] / 255.0f;
             CGFloat blue  = (CGFloat)rawData[byteIndex + 2] / 255.0f;
             
-            // 8. 转换RGB到HSB
-            CGFloat hue, saturation, brightness;
-            [[UIColor colorWithRed:red green:green blue:blue alpha:1.0] getHue:&hue saturation:&saturation brightness:&brightness alpha:NULL];
-            
-            //TODOTOMORROW20250316: 此处要把每个点，转成InputDotModel，或者分析下，用while来实现，dotNum/3向特征处理一次，再/3再一次，再/3再一次，直到达到拆完的最后。
-            
-            
-            // 9. 保存结果，将坐标系原点移到中心
-            NSInteger centerX = x - (width / 2);
-            NSInteger centerY = y - (height / 2);
-            NSString *key = [NSString stringWithFormat:@"%ld_%ld", (long)centerX, (long)centerY];
-            result[key] = @{
-                @"h": @(hue),
-                @"s": @(saturation), 
-                @"b": @(brightness)
-            };
+            //9. 保存结果
+            NSString *key = [NSString stringWithFormat:@"%ld_%ld", x, y];
+            result[key] = @{@"r": @(red),@"g": @(green),@"b": @(blue)};
         }
     }
     
@@ -109,25 +96,67 @@
 /**
  *  MARK:--------------------把HSB字典，转成粒度字典（粒度字典是每层级横纵各三格，最粗粒度共9格，细粒度下再拆分嵌套各9格，以此类推）--------------------
  */
-+(void) convertHSBDic2SplitDic:(NSDictionary*)hsbDic size:(int)size {
-    //先搞最细粒度。KEY=level_row_column
++(NSDictionary*) convertProtoColorDic2SplitDic:(NSDictionary*)protoColorDic {
+    //1. 先搞最细粒度，然后一级级向粗粒度层做，其中：KEY=level_row_column value=色值。
     NSMutableDictionary *result = [NSMutableDictionary dictionary];
-    // 计算81是3的几次方 (log3(81) = 4)
-    double levelNum = log(size) / log(3);
-    for (NSInteger level = 0; level < levelNum; level++) {
+    int protoDotSize = sqrtf(protoColorDic.count);//通过总点数求平方根获取边长（因为横纵点数是一致的）。
+    
+    //2. 计算81是3的几次方 (log3(81) = 4) (level的取值范围是1234...从1开始，其中1表示最粗粒度层）。
+    double levelNum = log(protoDotSize) / log(3);
+    for (NSInteger curLevel = levelNum; curLevel > 0; curLevel--) {
         
-        //第1个粒度（最粗），有1*9=9格
-        //第2个粒度，有9*9=81格
-        //第3个粒度，有81*9=729格
-        //...
-        for (NSInteger row = 0; row < 3; row++) {
-            for (NSInteger column = 0; column < 3; column++) {
-                NSString *key = [NSString stringWithFormat:@"%ld_%ld_%ld", level, row, column];
-                //result[key] = hsbDic[key];
+        //3. 每个粒度层都要把每格处理下：第1粒度宽3。第2粒度宽9。第3粒度宽27。第4粒度宽81。（row和column的取值范围是0123...从0开始，它表示每一个粒度层的行列下标）。
+        int curLevelSize = powf(3, curLevel);
+        for (NSInteger curRow = 0; curRow < curLevelSize; curRow++) {
+            for (NSInteger curColumn = 0; curColumn < curLevelSize; curColumn++) {
+                
+                //4. 每一格平均色处理（最细粒度从原始数据取，别的粗粒度层都从细一级9格累求其平均算）。
+                NSString *curKey = [NSString stringWithFormat:@"%ld_%ld_%ld", curLevel, curRow, curColumn];
+                if (curLevel == levelNum) {
+                    //4.1 当前为最细粒度时，直接从hsbDic取值。
+                    [result setObject:[protoColorDic objectForKey:STRFORMAT(@"%ld_%ld",curRow,curColumn)] forKey:curKey];
+                } else {
+                    //4.2 别的粗粒度，都从result的细一级粒度取值（把lastLevel取到的9个值取平均值=做为当前Level的HSB值）。
+                    [result setObject:[self getCurAverageColorFromNextLevel:curLevel curRow:curRow curColumn:curColumn nextLevelSplitDic:result] forKey:curKey];
+                }
             }
         }
     }
-    NSLog(@"3的%.0f次方等于81", levelNum);
+    return result;
+}
+
+/**
+ *  MARK:--------------------从更细粒度一层（下一层）取当前层curRow,curColumn的平均色值--------------------
+ *  @nextLevelSplitDic 要求下一层的splitDic已经初始化，存在这个字典里（这样才能取到值）。
+ */
++(NSDictionary*) getCurAverageColorFromNextLevel:(NSInteger)curLevel curRow:(NSInteger)curRow curColumn:(NSInteger)curColumn nextLevelSplitDic:(NSDictionary*)nextLevelSplitDic {
+    //1. 别的粗粒度，都从result的细一级粒度取值（把lastLevel取到的9个值取平均值=做为当前Level的HSB值）。
+    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
+    
+    //2. 找到下层，的9个row,column格。
+    NSInteger nextLevel = curLevel + 1;
+    for (NSInteger i = 0; i < 3; i++) {
+        NSInteger nextRow = curRow * 3 + 1 + i;
+        for (NSInteger j = 0; j < 3; j++) {
+            NSInteger nextColumn = curColumn * 3 + 1 + i;
+            
+            //3. 把这九个格的色值分别取出来，求平均值收集。
+            NSString *nextKey = STRFORMAT(@"%ld_%ld_%ld",nextLevel,nextRow,nextColumn);
+            NSDictionary *nextItemColorDic = [nextLevelSplitDic objectForKey:nextKey];
+            float oldR = NUMTOOK([result objectForKey:@"r"]).floatValue;
+            float oldG = NUMTOOK([result objectForKey:@"g"]).floatValue;
+            float oldB = NUMTOOK([result objectForKey:@"b"]).floatValue;
+            
+            float newR = NUMTOOK([nextItemColorDic objectForKey:@"r"]).floatValue;
+            float newG = NUMTOOK([nextItemColorDic objectForKey:@"g"]).floatValue;
+            float newB = NUMTOOK([nextItemColorDic objectForKey:@"b"]).floatValue;
+            
+            [result setObject:@(oldR + newR / 9) forKey:@"r"];
+            [result setObject:@(oldG + newG / 9) forKey:@"g"];
+            [result setObject:@(oldB + newB / 9) forKey:@"b"];
+        }
+    }
+    return result;
 }
 
 #pragma mark - Test Methods
@@ -135,6 +164,29 @@
 + (void)testVisionAlgs {
     // 1. 创建测试图片
     UIImage *testImage = [self createTestImage];
+    NSDictionary *protoColorDic = [self getRGBValuesFromImage:testImage];
+    NSDictionary *splitDic = [self convertProtoColorDic2SplitDic:protoColorDic];
+    
+    for (NSString *key in splitDic) {
+        NSString *begin = [key substringToIndex:2];
+        NSDictionary *value = [splitDic objectForKey:key];
+        if ([begin isEqualToString:@"1_"]) {
+            NSLog(@"第1层位置：%@ 颜色：%@",[key substringFromIndex:2],CLEANSTR(value));
+        }
+    }
+    /*
+     第1层位置：0_0 颜色：{r = 1;g = 0;b = 0;}
+     第1层位置：0_1 颜色：{r = 0.3703704;g = 0;b = 0.6296296;}
+     第1层位置：0_2 颜色：{r = 0;g = 0;b = 0.5185185;}
+     第1层位置：1_0 颜色：{r = 0.3703704;g = 0.6296296;b = 0;}
+     第1层位置：1_1 颜色：{r = 1;g = 0.6296296;b = 0;}
+     第1层位置：1_2 颜色：{r = 0.1481482;g = 0.1481482;b = 0.3703704;}
+     第1层位置：2_0 颜色：{r = 0;g = 0.5185185;b = 0;}
+     第1层位置：2_1 颜色：{r = 0.1481482;g = 0.5185185;b = 0;}
+     第1层位置：2_2 颜色：{r = 0.5185185;g = 0.5185185;b = 0;}
+     这个颜色不对，比如0_1应该是R和B各0.5才对。。。
+     */
+    NSLog(@"");
     
     // 2. 测试getHSBValuesInNineGrids方法
 //    AIVisionAlgsModelV2 *result = [self getHSBGridsFromImage:testImage];

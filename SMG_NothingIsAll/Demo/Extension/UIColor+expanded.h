@@ -53,6 +53,8 @@
 + (UIColor *)colorWithHexString:(NSString *)color ;
 + (UIColor *)colorWithName:(NSString *)cssColorName;
 
++(NSDictionary*) convertRGB2HSB:(NSDictionary*)rgbDic;
+
 @end
 
 #if SUPPORTS_UNDOCUMENTED_API

@@ -417,6 +417,20 @@ static NSMutableDictionary *colorNameCache = nil;
 	colorNameCache = [[NSMutableDictionary alloc] init];
 }
 
++(NSDictionary*) convertRGB2HSB:(NSDictionary*)rgbDic {
+    //1. 数据准备
+    CGFloat red   = NUMTOOK([rgbDic objectForKey:@"r"]).floatValue;
+    CGFloat green = NUMTOOK([rgbDic objectForKey:@"g"]).floatValue;
+    CGFloat blue  = NUMTOOK([rgbDic objectForKey:@"b"]).floatValue;
+    
+    //2. 转换RGB到HSB
+    CGFloat hue, saturation, brightness;
+    [[UIColor colorWithRed:red green:green blue:blue alpha:1.0] getHue:&hue saturation:&saturation brightness:&brightness alpha:NULL];
+    
+    //3. 返回结果
+    return @{@"h": @(hue),@"s": @(saturation),@"b": @(brightness)};
+}
+
 @end
 
 #pragma mark -
