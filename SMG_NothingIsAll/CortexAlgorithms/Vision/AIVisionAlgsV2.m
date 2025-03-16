@@ -19,6 +19,11 @@
     NSUInteger width = CGImageGetWidth(imageRef);
     NSUInteger height = CGImageGetHeight(imageRef);
     
+    //3. 求出共分多少点，以及每点的尺寸。
+    NSInteger dotNum = [self convert2DotNum:MAX(width, height)];
+    CGFloat dotW = width / dotNum;
+    CGFloat dotH = height / dotNum;
+    
     // 3. 创建颜色空间
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     
@@ -37,20 +42,23 @@
     CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef);
     
     // 7. 遍历像素
-    for(NSUInteger y = 0; y < height; y++) {
-        for(NSUInteger x = 0; x < width; x++) {
-            NSUInteger byteIndex = (bytesPerRow * y) + x * bytesPerPixel;
+    for(NSUInteger y = 0; y < dotNum; y++) {
+        NSInteger pixelY = [self convertDot2PixelIndex:y dotSize:dotH];//求出像素Y值
+        for(NSUInteger x = 0; x < dotNum; x++) {
+            NSInteger pixelX = [self convertDot2PixelIndex:x dotSize:dotW];//求出像素X值
             
+            //8. 取出像素pixelX,pixelY的RGB值。
+            NSUInteger byteIndex = (bytesPerRow * pixelY) + pixelX * bytesPerPixel;
             CGFloat red   = (CGFloat)rawData[byteIndex] / 255.0f;
             CGFloat green = (CGFloat)rawData[byteIndex + 1] / 255.0f;
             CGFloat blue  = (CGFloat)rawData[byteIndex + 2] / 255.0f;
             
             // 8. 转换RGB到HSB
             CGFloat hue, saturation, brightness;
-            [[UIColor colorWithRed:red green:green blue:blue alpha:1.0] getHue:&hue
-                                                                  saturation:&saturation 
-                                                                  brightness:&brightness 
-                                                                     alpha:NULL];
+            [[UIColor colorWithRed:red green:green blue:blue alpha:1.0] getHue:&hue saturation:&saturation brightness:&brightness alpha:NULL];
+            
+            //TODOTOMORROW20250316: 此处要把每个点，转成InputDotModel，或者分析下，用while来实现，dotNum/3向特征处理一次，再/3再一次，再/3再一次，直到达到拆完的最后。
+            
             
             // 9. 保存结果，将坐标系原点移到中心
             NSInteger centerX = x - (width / 2);
@@ -75,12 +83,27 @@
 /**
  *  MARK:--------------------获取当前图片能拆分成多少个点（比如100像素的图，按/3分隔，最后拆分成81点，每点=1.23457像素)--------------------
  */
-+(CGFloat) convert2DotNum:(CGFloat)imageWHNum {
-    CGFloat dotNum = 1;
-    while (imageWHNum / dotNum > 3) {
++(NSInteger) convert2DotNum:(CGFloat)imageWHNum {
+    NSInteger dotNum = 1;
+    while (imageWHNum / dotNum > 1.5f) {
         dotNum *= 3;
     }
     return dotNum;
+}
+
+/**
+ *  MARK:--------------------把点下标转成像素下标--------------------
+ */
++(NSInteger) convertDot2PixelIndex:(NSInteger)dotIndex dotSize:(CGFloat)dotSize {
+    CGFloat pixelStart = dotIndex * dotSize;
+    CGFloat pixelEnd = pixelStart + dotSize;
+    if (dotSize > 1) {//中间有空像素时，直接取中间像素。
+        return (NSInteger)pixelStart + 1;
+    } else if (fmodf(pixelStart, 1) > fmodf(pixelEnd, 1)) {//如果start向下到整数更远，则start向上到整数更近，则返回pixelEnd（因为它占更大像素空间）。
+        return (NSInteger)pixelEnd;
+    } else {
+        return (NSInteger)pixelStart;//否则相反。
+    }
 }
 
 #pragma mark - Test Methods
@@ -104,20 +127,20 @@
     
     // 左上角像素 - 红色
     CGContextSetRGBFillColor(context, 1.0, 0.0, 0.0, 1.0);
-    CGContextFillRect(context, CGRectMake(0, 0, 100, 100));
+    CGContextFillRect(context, CGRectMake(0, 0, 50, 50));
     
     // 右上角像素 - 绿色
     CGContextSetRGBFillColor(context, 0.0, 1.0, 0.0, 1.0);
-    CGContextFillRect(context, CGRectMake(1, 0, 100, 100));
-    
+    CGContextFillRect(context, CGRectMake(50, 0, 50, 50));
+
     // 左下角像素 - 蓝色
     CGContextSetRGBFillColor(context, 0.0, 0.0, 1.0, 1.0);
-    CGContextFillRect(context, CGRectMake(0, 1, 100, 100));
-    
+    CGContextFillRect(context, CGRectMake(0, 50, 50, 50));
+
     // 右下角像素 - 黄色
     CGContextSetRGBFillColor(context, 1.0, 1.0, 0.0, 1.0);
-    CGContextFillRect(context, CGRectMake(1, 1, 100, 100));
-    
+    CGContextFillRect(context, CGRectMake(50, 50, 50, 50));
+
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     

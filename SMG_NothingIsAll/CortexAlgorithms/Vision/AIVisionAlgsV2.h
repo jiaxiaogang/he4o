@@ -19,5 +19,4 @@
 + (NSDictionary*)getHSBValuesFromImage:(UIImage *)image;
 + (void)testVisionAlgs;
 
-+(CGFloat) convert2DotNum:(CGFloat)imageWHNum;
 @end
