@@ -72,6 +72,17 @@
     return result;
 }
 
+/**
+ *  MARK:--------------------获取当前图片能拆分成多少个点（比如100像素的图，按/3分隔，最后拆分成81点，每点=1.23457像素)--------------------
+ */
++(CGFloat) convert2DotNum:(CGFloat)imageWHNum {
+    CGFloat dotNum = 1;
+    while (imageWHNum / dotNum > 3) {
+        dotNum *= 3;
+    }
+    return dotNum;
+}
+
 #pragma mark - Test Methods
 
 + (void)testVisionAlgs {

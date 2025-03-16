@@ -137,7 +137,9 @@
     
     //9. 初始化XGConfig
     [XGConfig.instance initConfig];
-    [AIVisionAlgsV2 testVisionAlgs];
+    NSLog(@"%.5f",[AIVisionAlgsV2 convert2DotNum:100]);
+    NSLog(@"%.5f",[AIVisionAlgsV2 convert2DotNum:200]);
+    NSLog(@"%.5f",[AIVisionAlgsV2 convert2DotNum:99]);
     return YES;
 }
 
