@@ -143,22 +143,23 @@
         return @[protoK,[UIColor convertRGB2HSB:protoV]];
     }];
     
-    //5. 转成AIVisionAlgsModelV2模型（分别存HSB为三个特征）。
+    //5. 转成AIVisionAlgsModelV2模型。
     AIVisionAlgsModelV2 *model = [[AIVisionAlgsModelV2 alloc] init];
     CGFloat protoColorWH = sqrtf(protoColorDic.count);
     model.levelNum = log(protoColorWH) / log(3);
     
+    //6. 取HSB三个特征（及感官层做精度处理：要保证整个稀疏码可能的值，其总量在不影响感知的前提下越少越好）。
     model.hColors = [SMGUtils convertDic:splitDic kvBlock:^NSArray *(NSString *protoK, NSDictionary *protoV) {
-        return @[protoK,[protoV objectForKey:@"h"]];
+        return @[protoK,@(roundf(NUMTOOK([protoV objectForKey:@"h"]).floatValue * 100) / 100)];
     }];
     model.sColors = [SMGUtils convertDic:splitDic kvBlock:^NSArray *(NSString *protoK, NSDictionary *protoV) {
-        return @[protoK,[protoV objectForKey:@"s"]];
+        return @[protoK,@(roundf(NUMTOOK([protoV objectForKey:@"s"]).floatValue * 100) / 100)];
     }];
     model.bColors = [SMGUtils convertDic:splitDic kvBlock:^NSArray *(NSString *protoK, NSDictionary *protoV) {
-        return @[protoK,[protoV objectForKey:@"b"]];
+        return @[protoK,@(roundf(NUMTOOK([protoV objectForKey:@"b"]).floatValue * 100) / 100)];
     }];
     
-    //6. 提交给思维控制器。
+    //7. 提交给思维控制器。
     [theTC commitInputWithSplitAsync:model algsType:NSStringFromClass(self)];
 }
 

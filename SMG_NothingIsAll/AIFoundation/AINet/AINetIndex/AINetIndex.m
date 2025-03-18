@@ -21,6 +21,12 @@
         return nil;
     }
     
+    //2. 2025.03.18: 性能优化：最大精度为小数点后3位（如果不限精度，一个稀疏码索引可能有上万条，稀疏码太碎会导致性能问题，尤其是支持面向现实世界的视觉后）。
+    //注意：此处只是总体限制，是放的比较宽的，随后要么把最大最小值报进来，内核中自动处理精度，要么就在感官算法层就把精度自己控制好再传进来。
+    //原则：感官层做精度处理：要保证整个稀疏码可能的值，其总量在不影响感知的前提下越少越好，比如：人类的声音频率范围和感知最小差。
+    //TODO: 随后把每个ds的稀疏码值的span值域传进来，然后自动计算精度（一般保留1/1000的精度就够用了）。
+    data = @(roundf(data.floatValue * 10000) / 10000);
+    
     //2. 取索引序列 和 稀疏码值字典;
     AINetIndexModel *model = [AINetIndexUtils searchIndexModel:algsType ds:dataSource isOut:isOut];
     NSMutableDictionary *dataDic = [[NSMutableDictionary alloc] initWithDictionary:[AINetIndexUtils searchDataDic:algsType ds:dataSource isOut:isOut]];
