@@ -157,7 +157,7 @@
     }];
     
     //6. 提交给思维控制器。
-    [theTC commitInputAsyncV2:model];
+    [theTC commitInputWithSplitAsync:model algsType:NSStringFromClass(self)];
 }
 
 // 创建测试用的100x100像素图片

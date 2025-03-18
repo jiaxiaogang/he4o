@@ -29,7 +29,7 @@
  *  @result notnull
  */
 -(NSMutableArray*) algModelConvert2Pointers:(NSDictionary*)modelDic algsType:(NSString*)algsType;
--(AIVisionAlgsModelV2*) algModelConvert2PointersV2:(AIVisionAlgsModelV2*)model;
+-(AIVisionAlgsModelV2*) algModelConvert2PointersV2:(AIVisionAlgsModelV2*)model algsType:(NSString*)algsType;
 
 -(AIKVPointer*) getNetDataPointerWithData:(NSNumber*)data algsType:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut;//单data装箱
 

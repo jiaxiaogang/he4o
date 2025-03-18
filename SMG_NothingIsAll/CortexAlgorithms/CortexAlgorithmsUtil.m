@@ -25,6 +25,8 @@
         return 360;
     } else if ([@"FLY_RDS" isEqualToString:at]) {
         return 1;
+    } else if ([@"AIVisionAlgsV2" isEqualToString:at] && [@"hColors" isEqualToString:ds]) {
+        return 1;//HSB色值中的色相，是循环值。
     }
     return 0;
 }

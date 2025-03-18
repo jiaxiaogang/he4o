@@ -42,13 +42,8 @@
  *  MARK:--------------------流入input--------------------
  */
 -(void) commitInputAsync:(NSObject*)algsModel;
+-(void) commitInputWithSplitAsync:(AIVisionAlgsModelV2*)algsModel algsType:(NSString*)algsType;//输入多粒度
 -(void) commitInputWithModelsAsync:(NSArray*)dics algsType:(NSString*)algsType;
-
-/**
- *  MARK:--------------------v2现用于输入二维概念，如视觉图像，目前用于测支持多码特征--------------------
- *  @desc 为了方便开发，开发阶段不将Object转成Dictionary输入，后开发完成后下版本再转。
- */
--(void) commitInputAsyncV2:(AIVisionAlgsModelV2*)algsModel;
 
 /**
  *  MARK:--------------------输出的日志入网(输入小脑)--------------------

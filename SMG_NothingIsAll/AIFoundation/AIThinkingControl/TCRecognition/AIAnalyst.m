@@ -27,10 +27,14 @@
  *      2023.03.13: 支持循环码时的相近度计算 (参考28174-todo2);
  *      2023.03.16: 修复首尾差值算错的BUG (因为测得360左右度和180左右度相近度是0.9以上);
  */
-+(CGFloat) compareCansetValue:(AIKVPointer*)cansetV_p protoValue:(AIKVPointer*)protoV_p vInfo:(AIValueInfo*)vInfo{
++(CGFloat) compareCansetValue:(AIKVPointer*)cansetV_p protoValue:(AIKVPointer*)protoV_p vInfo:(AIValueInfo*)vInfo {
+    return [self compareCansetValue:cansetV_p protoValue:protoV_p vInfo:vInfo fromDataDic:nil];
+}
+
++(CGFloat) compareCansetValue:(AIKVPointer*)cansetV_p protoValue:(AIKVPointer*)protoV_p vInfo:(AIValueInfo*)vInfo fromDataDic:(NSDictionary*)dataDic {
     //1. 取稀疏码值;
-    double cansetData = [NUMTOOK([AINetIndex getData:cansetV_p]) doubleValue];
-    double protoData = [NUMTOOK([AINetIndex getData:protoV_p]) doubleValue];
+    double cansetData = [NUMTOOK([AINetIndex getData:cansetV_p fromDataDic:dataDic]) doubleValue];
+    double protoData = [NUMTOOK([AINetIndex getData:protoV_p fromDataDic:dataDic]) doubleValue];
     
     //2. 计算相近度返回;
     return [self compareCansetValue:cansetData protoV:protoData at:cansetV_p.algsType ds:cansetV_p.dataSource isOut:protoV_p.isOut vInfo:vInfo];

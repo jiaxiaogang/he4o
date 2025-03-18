@@ -154,23 +154,23 @@ static AIThinkingControl *_instance;
 }
 
 /**
- *  MARK:--------------------v2现用于输入二维概念，如视觉图像，目前用于测支持多码特征--------------------
+ *  MARK:--------------------现用于输入（多粒度）二维概念，如视觉图像，目前用于测支持多码特征--------------------
  *  @desc 为了方便开发，开发阶段不将Object转成Dictionary输入，后开发完成后下版本再转。
  */
--(void) commitInputAsyncV2:(AIVisionAlgsModelV2*)algsModel {
+-(void) commitInputWithSplitAsync:(AIVisionAlgsModelV2*)algsModel algsType:(NSString*)algsType {
     __block AIVisionAlgsModelV2 *weakAlgsModel = algsModel;
     dispatch_async(self.tiQueue, ^{//30083去异步
         self.tiRuning1 = true;
-        [self commitInputV2:weakAlgsModel];
+        [self commitInputWithSplit:weakAlgsModel algsType:algsType];
         self.tiRuning1 = false;
     });
 }
--(void) commitInputV2:(AIVisionAlgsModelV2*)algsModel{
+-(void) commitInputWithSplit:(AIVisionAlgsModelV2*)algsModel algsType:(NSString*)algsType {
     //1. 植物模式阻断感知;
     if (self.thinkMode == 2) return;
     
     //2. 装箱(除mv有两个元素外一般仅有一个元素)
-    algsModel = [theNet algModelConvert2PointersV2:algsModel];
+    algsModel = [theNet algModelConvert2PointersV2:algsModel algsType:algsType];
     
     //TODOTOMORROW20250316: 这里先做特征识别，识别后再形成protoAlg呢？
     //写粒度树。

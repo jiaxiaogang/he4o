@@ -88,10 +88,7 @@ static AINet *_instance;
 /**
  *  MARK:--------------------视觉V2模型特征处理--------------------
  */
--(AIVisionAlgsModelV2*) algModelConvert2PointersV2:(AIVisionAlgsModelV2*)model {
-    //1. 数据准备
-    NSString *algsType = NSStringFromClass(model.class);
-
+-(AIVisionAlgsModelV2*) algModelConvert2PointersV2:(AIVisionAlgsModelV2*)model algsType:(NSString*)algsType {
     //2. 循环装箱
     //TODO: 这里随后转成NSDictionary后，只要判断dataSource对应的value是dic类型，也可以这么处理（到时候，改V2支持model转Dic类型输入时，自然就知道这里怎么改了）。
     model.hColors = [self algModelConvert2PointersV2_Step1_ConvertV:algsType ds:@"hColors" splitDic:model.hColors];
@@ -99,9 +96,9 @@ static AINet *_instance;
     model.bColors = [self algModelConvert2PointersV2_Step1_ConvertV:algsType ds:@"bColors" splitDic:model.bColors];
     
     //3. 压缩粒度树 & 生成组码。
-    [self algModelConvert2PointersV2_Step2_RMRepeat:model.hColors levelCount:model.levelNum];
-    [self algModelConvert2PointersV2_Step2_RMRepeat:model.sColors levelCount:model.levelNum];
-    [self algModelConvert2PointersV2_Step2_RMRepeat:model.bColors levelCount:model.levelNum];
+    [self algModelConvert2PointersV2_Step2_RMRepeat:algsType ds:@"hColors" splitDic:model.hColors levelCount:model.levelNum];
+    [self algModelConvert2PointersV2_Step2_RMRepeat:algsType ds:@"sColors" splitDic:model.sColors levelCount:model.levelNum];
+    [self algModelConvert2PointersV2_Step2_RMRepeat:algsType ds:@"bColors" splitDic:model.bColors levelCount:model.levelNum];
     return model;
 }
 
@@ -120,7 +117,10 @@ static AINet *_instance;
  *  MARK:--------------------第二步：压缩粒度树--------------------
  *  @desc 把粒度树里，细一级九宫相似，则移除掉，只保留父级一格即可（参考34042-分析3）。
  */
--(void) algModelConvert2PointersV2_Step2_RMRepeat:(NSDictionary*)splitDic levelCount:(NSInteger)levelCount {
+-(void) algModelConvert2PointersV2_Step2_RMRepeat:(NSString*)at ds:(NSString*)ds splitDic:(NSDictionary*)splitDic levelCount:(NSInteger)levelCount {
+    //0. 数据准备：（把当前at&ds稀疏码的data值字典取出）（用于取值性能优化）。
+    NSDictionary *cacheDataDic = [AINetIndexUtils searchDataDic:at ds:ds isOut:false];
+    
     //1. level为1-4层时，组应该用0-3，因为下层9格都是以上层为组（比如：0层就是1层的9格为组）。
     for (NSInteger groupLevel = 0; groupLevel < levelCount; groupLevel++) {
         
@@ -132,12 +132,20 @@ static AINet *_instance;
                 //3. 根据组，向子一层取子9格。
                 NSDictionary *subDotDics = [CortexAlgorithmsUtil getSub9DotFromSplitDic:groupLevel curRow:groupRow curColumn:groupColumn splitDic:splitDic];//取出子层9格色值。
                 
-                //4. 判断九格的相似度：
+                //4. 判断九格的相似度：以最大最小值来判断即可。
+                AIKVPointer *max_p = [SMGUtils filterBestObj:subDotDics.allValues scoreBlock:^CGFloat(AIKVPointer *item) {
+                    return [NUMTOOK([AINetIndex getData:item fromDataDic:cacheDataDic]) doubleValue];
+                }];
+                AIKVPointer *min_p = [SMGUtils filterBestObj:subDotDics.allValues scoreBlock:^CGFloat(AIKVPointer *item) {
+                    return -[NUMTOOK([AINetIndex getData:item fromDataDic:cacheDataDic]) doubleValue];
+                }];
+                CGFloat vMatchValue = [AIAnalyst compareCansetValue:max_p protoValue:min_p vInfo:nil fromDataDic:cacheDataDic];
                 
                 //5. 如果很相似，防重掉(压缩)。
+                if (vMatchValue > 0.9) continue;
                 
                 //6. 如果不相似，打包成组特征。
-                
+                [self algModelConvert2PointersV2_Step3_CreateGroupV:subDotDics];
             }
         }
     }
@@ -147,7 +155,7 @@ static AINet *_instance;
  *  MARK:--------------------第三步：生成组码--------------------
  *  @desc 每九宫装成一组，生成组码，组码可全局防重（参考34041-问题2-思路）。
  */
--(void) algModelConvert2PointersV2_Step3_CreateGroupV {
+-(void) algModelConvert2PointersV2_Step3_CreateGroupV:(NSDictionary*)subDotDics {
     
 }
 
