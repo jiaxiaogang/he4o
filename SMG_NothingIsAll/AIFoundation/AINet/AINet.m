@@ -132,17 +132,23 @@ static AINet *_instance;
                 //3. 根据组，向子一层取子9格。
                 NSDictionary *subDotDics = [CortexAlgorithmsUtil getSub9DotFromSplitDic:groupLevel curRow:groupRow curColumn:groupColumn splitDic:splitDic];//取出子层9格色值。
                 
-                //4. 判断九格的相似度：以最大最小值来判断即可。
-                AIKVPointer *max_p = [SMGUtils filterBestObj:subDotDics.allValues scoreBlock:^CGFloat(AIKVPointer *item) {
-                    return [NUMTOOK([AINetIndex getData:item fromDataDic:cacheDataDic]) doubleValue];
-                }];
-                AIKVPointer *min_p = [SMGUtils filterBestObj:subDotDics.allValues scoreBlock:^CGFloat(AIKVPointer *item) {
-                    return -[NUMTOOK([AINetIndex getData:item fromDataDic:cacheDataDic]) doubleValue];
-                }];
-                CGFloat vMatchValue = [AIAnalyst compareCansetValue:max_p protoValue:min_p vInfo:nil fromDataDic:cacheDataDic];
-                
+                //4. 判断九格的相似度：两两对比，找出最不相似的。
+                //2025.03.18：BUG-循环值时对比最大最小是不对的，应该找最不相似的。
+                CGFloat minMatchValue = 1;
+                for (NSInteger i = 0; i < subDotDics.count; i++) {
+                    AIKVPointer *i_p = ARR_INDEX(subDotDics.allValues, i);
+                    for (NSInteger j = i + 1; j < subDotDics.count; j++) {
+                        AIKVPointer *j_p = ARR_INDEX(subDotDics.allValues, j);
+                        CGFloat itemMatchValue = [AIAnalyst compareCansetValue:i_p protoValue:j_p vInfo:nil fromDataDic:cacheDataDic];
+                        if (itemMatchValue < minMatchValue) {
+                            minMatchValue = itemMatchValue;
+                        }
+                    }
+                }
+                NSLog(@"%ld_%ld_%ld %.2f",groupLevel,groupRow,groupColumn,minMatchValue);
+
                 //5. 如果很相似，防重掉(压缩)。
-                if (vMatchValue > 0.9) continue;
+                if (minMatchValue > 0.9) continue;
                 
                 //6. 如果不相似，打包成组特征。
                 [self algModelConvert2PointersV2_Step3_CreateGroupV:subDotDics];

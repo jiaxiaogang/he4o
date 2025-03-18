@@ -145,7 +145,9 @@
     
     //5. 转成AIVisionAlgsModelV2模型（分别存HSB为三个特征）。
     AIVisionAlgsModelV2 *model = [[AIVisionAlgsModelV2 alloc] init];
-    model.levelNum = sqrtf(protoColorDic.count);
+    CGFloat protoColorWH = sqrtf(protoColorDic.count);
+    model.levelNum = log(protoColorWH) / log(3);
+    
     model.hColors = [SMGUtils convertDic:splitDic kvBlock:^NSArray *(NSString *protoK, NSDictionary *protoV) {
         return @[protoK,[protoV objectForKey:@"h"]];
     }];
