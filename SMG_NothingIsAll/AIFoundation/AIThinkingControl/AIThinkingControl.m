@@ -169,20 +169,23 @@ static AIThinkingControl *_instance;
     //1. 植物模式阻断感知;
     if (self.thinkMode == 2) return;
     
-    //2. 装箱(除mv有两个元素外一般仅有一个元素)
-    algsModel = [theNet algModelConvert2PointersV2:algsModel algsType:algsType];
+    //2. 装箱（稀疏码的：单码层 和 组码层）。
+    //TODO: 这里随后转成NSDictionary后，只要判断dataSource对应的value是dic类型，也可以这么处理（到时候，改V2支持model转Dic类型输入时，自然就知道这里怎么改了）。
+    NSDictionary *hGroupDic_ps = [theNet algModelConvert2PointersV2:algsModel.hColors at:algsType ds:@"hColors" levelNum:algsModel.levelNum];
+    NSDictionary *sGroupDic_ps = [theNet algModelConvert2PointersV2:algsModel.sColors at:algsType ds:@"sColors" levelNum:algsModel.levelNum];
+    NSDictionary *bGroupDic_ps = [theNet algModelConvert2PointersV2:algsModel.bColors at:algsType ds:@"bColors" levelNum:algsModel.levelNum];
     
-    //TODOTOMORROW20250316: 这里先做特征识别，识别后再形成protoAlg呢？
-    //写粒度树。
-    //写具象特征（直接打包组）。
+    //TODOTOMORROW20250318:
+    //1、构建具象特征。
+    
+    //2、识别具象特征。
     //a. 从粗粒度开始识别特征。
     
     //b. 然后用粗粒度向细的粒度关联，和粗粒度下的细粒度的ref关联。
     
     //c. 计算乘积相似度 -> 进行竞争 -> 取交 等。
     
-    
-    //3. 打包成algTypeNode;
+    //3、构建具象概念。
     //AIAlgNodeBase *algNode = [theNet createAbsAlg_NoRepeat:algsArr conAlgs:nil isOut:false at:nil ds:nil type:ATDefault];
     
     //4. 加入瞬时记忆 & 识别等;

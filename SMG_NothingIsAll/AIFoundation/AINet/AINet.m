@@ -87,24 +87,18 @@ static AINet *_instance;
 
 /**
  *  MARK:--------------------视觉V2模型特征处理--------------------
+ *  @param splitDic 粒度字典 <K=level_x_y V=Number类型（比如H或S或B色值）>
  */
--(AIVisionAlgsModelV2*) algModelConvert2PointersV2:(AIVisionAlgsModelV2*)model algsType:(NSString*)algsType {
+-(NSDictionary*) algModelConvert2PointersV2:(NSDictionary*)splitDic at:(NSString*)at ds:(NSString*)ds levelNum:(NSInteger)levelNum {
     //1. 单码装箱
-    //TODO: 这里随后转成NSDictionary后，只要判断dataSource对应的value是dic类型，也可以这么处理（到时候，改V2支持model转Dic类型输入时，自然就知道这里怎么改了）。
-    model.hColors = [self algModelConvert2PointersV2_Step1_ConvertV:algsType ds:@"hColors" splitDic:model.hColors];
-    model.sColors = [self algModelConvert2PointersV2_Step1_ConvertV:algsType ds:@"sColors" splitDic:model.sColors];
-    model.bColors = [self algModelConvert2PointersV2_Step1_ConvertV:algsType ds:@"bColors" splitDic:model.bColors];
+    NSDictionary *splitDic_Value_ps = [self algModelConvert2PointersV2_Step1_ConvertV:at ds:ds splitDic:splitDic];
     
     //2. 压缩组码
-    NSDictionary *hGroups = [self algModelConvert2PointersV2_Step2_Zip2GroupValue:algsType ds:@"hColors" splitDic:model.hColors levelCount:model.levelNum];
-    NSDictionary *sGroups = [self algModelConvert2PointersV2_Step2_Zip2GroupValue:algsType ds:@"sColors" splitDic:model.sColors levelCount:model.levelNum];
-    NSDictionary *bGroups = [self algModelConvert2PointersV2_Step2_Zip2GroupValue:algsType ds:@"bColors" splitDic:model.bColors levelCount:model.levelNum];
+    NSDictionary *groupDic_SubDot_ps = [self algModelConvert2PointersV2_Step2_Zip2GroupValue:at ds:ds splitDic:splitDic_Value_ps levelCount:levelNum];
     
     //3. 组码装箱
-    NSDictionary *hGroup_ps = [self algModelConvert2PointersV2_Step3_CreateGroupV:algsType ds:@"hColors" groupDic:hGroups];
-    NSDictionary *sGroup_ps = [self algModelConvert2PointersV2_Step3_CreateGroupV:algsType ds:@"sColors" groupDic:sGroups];
-    NSDictionary *bGroup_ps = [self algModelConvert2PointersV2_Step3_CreateGroupV:algsType ds:@"bColors" groupDic:bGroups];
-    return model;
+    NSDictionary *groupDic_ps = [self algModelConvert2PointersV2_Step3_CreateGroupV:at ds:ds groupDic:groupDic_SubDot_ps];
+    return groupDic_ps;
 }
 
 /**
@@ -121,6 +115,8 @@ static AINet *_instance;
 /**
  *  MARK:--------------------第二步：压缩成组码--------------------
  *  @desc 把粒度树里，细一级九宫相似，则移除掉，只保留父级一格（并打包成组）返回（参考34042-分析3）。
+ *  @param splitDic <K=level_x_y V=value_p指针>
+ *  @result <K=groupLevel_groupX_groupY, V=subDos_ps>
  */
 -(NSDictionary*) algModelConvert2PointersV2_Step2_Zip2GroupValue:(NSString*)at ds:(NSString*)ds splitDic:(NSDictionary*)splitDic levelCount:(NSInteger)levelCount {
     //0. 数据准备：（把当前at&ds稀疏码的data值字典取出）（用于取值性能优化）。
