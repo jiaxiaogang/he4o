@@ -38,26 +38,21 @@
  *  @参数说明：根据当前层的curLevel,curRow,curColumn来取。
  *  @splitDic 要求下一层的splitDic已经初始化，存在这个字典里（这样才能取到值）。
  */
-
-/**
- *  MARK:--------------------从更细粒度一层（下一层）取当前层curRow,curColumn的平均色值--------------------
- *  @nextLevelSplitDic 要求下一层的splitDic已经初始化，存在这个字典里（这样才能取到值）。
- */
-+(NSDictionary*) getSub9DotFromSplitDic:(NSInteger)curLevel curRow:(NSInteger)curRow curColumn:(NSInteger)curColumn splitDic:(NSDictionary*)splitDic {
++(NSArray*) getSub9DotFromSplitDic:(NSInteger)curLevel curRow:(NSInteger)curRow curColumn:(NSInteger)curColumn splitDic:(NSDictionary*)splitDic {
     //1. 别的粗粒度，都从result的细一级粒度取值（把lastLevel取到的9个值取平均值=做为当前Level的HSB值）。
-    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
+    NSMutableArray *result = [[NSMutableArray alloc] init];
     
-    //2. 找到下层，的9个row,column格。
+    //2. 找到下层，的9个row,column格（顺序为从行内左到右，多行从上到下，依次收集9格）。
     NSInteger nextLevel = curLevel + 1;
-    for (NSInteger i = 0; i < 3; i++) {
-        NSInteger nextRow = curRow * 3 + i;
-        for (NSInteger j = 0; j < 3; j++) {
-            NSInteger nextColumn = curColumn * 3 + j;
+    for (NSInteger j = 0; j < 3; j++) {
+        NSInteger nextColumn = curColumn * 3 + j;
+        for (NSInteger i = 0; i < 3; i++) {
+            NSInteger nextRow = curRow * 3 + i;
             
             //3. 把这九个格的色值分别取出来，求平均值收集。
             NSString *nextKey = STRFORMAT(@"%ld_%ld_%ld",nextLevel,nextRow,nextColumn);
             id nextItemColor = [splitDic objectForKey:nextKey];
-            [result setObject:nextItemColor forKey:nextKey];
+            [result addObject:nextItemColor];
         }
     }
     return result;

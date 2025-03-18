@@ -24,6 +24,9 @@
 		080EA73B2B94D0BF00764BBF /* TCTransferXvModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 080EA73A2B94D0BF00764BBF /* TCTransferXvModel.m */; };
 		081002152A6BAC5600BE9D8A /* TCResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 081002142A6BAC5600BE9D8A /* TCResult.m */; };
 		0810E50F236A637500B33226 /* AINetIndexUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 0810E50E236A637500B33226 /* AINetIndexUtils.m */; };
+		081321832D89A5A9005B9F4B /* AIGroupValueNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 081321822D89A5A9005B9F4B /* AIGroupValueNode.m */; };
+		081321892D89AC16005B9F4B /* AIFeatureNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 081321882D89AC16005B9F4B /* AIFeatureNode.m */; };
+		0813218D2D89AD11005B9F4B /* AIValueManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 0813218C2D89AD11005B9F4B /* AIValueManager.m */; };
 		0817D6AB219E3CC7000E45AB /* UIColor+expanded.m in Sources */ = {isa = PBXBuildFile; fileRef = 0817D6A9219E3CC6000E45AB /* UIColor+expanded.m */; };
 		0819F4F427583AA9007396D0 /* TCFeedback.m in Sources */ = {isa = PBXBuildFile; fileRef = 0819F4F327583AA9007396D0 /* TCFeedback.m */; };
 		0819F4F727583B27007396D0 /* TCLearning.m in Sources */ = {isa = PBXBuildFile; fileRef = 0819F4F627583B27007396D0 /* TCLearning.m */; };
@@ -254,6 +257,12 @@
 		0810E50D236A637500B33226 /* AINetIndexUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetIndexUtils.h; sourceTree = "<group>"; };
 		0810E50E236A637500B33226 /* AINetIndexUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetIndexUtils.m; sourceTree = "<group>"; };
 		0812679523022ADB003A85DE /* NVConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVConfig.h; sourceTree = "<group>"; };
+		081321812D89A5A9005B9F4B /* AIGroupValueNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIGroupValueNode.h; sourceTree = "<group>"; };
+		081321822D89A5A9005B9F4B /* AIGroupValueNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIGroupValueNode.m; sourceTree = "<group>"; };
+		081321872D89AC16005B9F4B /* AIFeatureNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIFeatureNode.h; sourceTree = "<group>"; };
+		081321882D89AC16005B9F4B /* AIFeatureNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIFeatureNode.m; sourceTree = "<group>"; };
+		0813218B2D89AD11005B9F4B /* AIValueManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIValueManager.h; sourceTree = "<group>"; };
+		0813218C2D89AD11005B9F4B /* AIValueManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIValueManager.m; sourceTree = "<group>"; };
 		0817D6A9219E3CC6000E45AB /* UIColor+expanded.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+expanded.m"; sourceTree = "<group>"; };
 		0817D6AA219E3CC6000E45AB /* UIColor+expanded.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+expanded.h"; sourceTree = "<group>"; };
 		0819F4F227583AA9007396D0 /* TCFeedback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCFeedback.h; sourceTree = "<group>"; };
@@ -704,6 +713,15 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
+		0813218A2D89ACE8005B9F4B /* AIValueManager */ = {
+			isa = PBXGroup;
+			children = (
+				0813218B2D89AD11005B9F4B /* AIValueManager.h */,
+				0813218C2D89AD11005B9F4B /* AIValueManager.m */,
+			);
+			path = AIValueManager;
+			sourceTree = "<group>";
+		};
 		08196B80200073FF007B72C5 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
@@ -905,6 +923,7 @@
 			isa = PBXGroup;
 			children = (
 				082709CF29EC1A410045EE22 /* AIPort */,
+				0813218A2D89ACE8005B9F4B /* AIValueManager */,
 				08497A9021C3228E009E7D69 /* AIAlgNodeManager */,
 				08412CA0216C322100483B6B /* AICerebel */,
 				8868F6E8210A9457000EAC9B /* AIAbsCMVManager */,
@@ -1678,6 +1697,10 @@
 		08F737EE1F7C7131005EAD56 /* AINode */ = {
 			isa = PBXGroup;
 			children = (
+				081321812D89A5A9005B9F4B /* AIGroupValueNode.h */,
+				081321822D89A5A9005B9F4B /* AIGroupValueNode.m */,
+				081321872D89AC16005B9F4B /* AIFeatureNode.h */,
+				081321882D89AC16005B9F4B /* AIFeatureNode.m */,
 				88A43F3B2109576D00281348 /* AIFrontOrderNode.h */,
 				88A43F3C2109576D00281348 /* AIFrontOrderNode.m */,
 				88A43F3E210957C300281348 /* AINetAbsFoNode.h */,
@@ -2023,6 +2046,7 @@
 				088A147F27E177AC00FA1097 /* TOMVisionDemandView.m in Sources */,
 				086733AC2D851BD00073DCD5 /* InputDotModel.m in Sources */,
 				0843AAE5281436EF002B9AA9 /* XGLabCell.m in Sources */,
+				081321832D89A5A9005B9F4B /* AIGroupValueNode.m in Sources */,
 				08355577266C6A1000ECFC51 /* MemManager.m in Sources */,
 				087705BA2753747E00BA4EFB /* TCAction.m in Sources */,
 				0808D34022B6F73D00D383BA /* NVLineView.m in Sources */,
@@ -2094,9 +2118,11 @@
 				88988524208979E6001D1ADC /* AINetIndex.m in Sources */,
 				08AFC5F0276979D8000BAB26 /* TCPlan.m in Sources */,
 				081BD08B25B94F24003C3038 /* PerceptDemandModel.m in Sources */,
+				081321892D89AC16005B9F4B /* AIFeatureNode.m in Sources */,
 				8868F6EB210A946A000EAC9B /* AIAbsCMVManager.m in Sources */,
 				082B910A27E414FB00EE4DF2 /* TOMVisionAlgView.m in Sources */,
 				0858C5D12194F8B000951BA5 /* NSArray+MASAdditions.m in Sources */,
+				0813218D2D89AD11005B9F4B /* AIValueManager.m in Sources */,
 				087705B72753747300BA4EFB /* TCSolution.m in Sources */,
 				0850859B2A25B26F00ED63F2 /* TCRecognitionUtil.m in Sources */,
 				0858C5CC2194F8B000951BA5 /* MASConstraint.m in Sources */,

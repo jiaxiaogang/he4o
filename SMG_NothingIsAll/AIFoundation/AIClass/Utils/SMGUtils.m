@@ -87,6 +87,16 @@
     return [AIKVPointer newWithPointerId:pointerId folderName:kPN_DATA algsType:algsType dataSource:dataSource isOut:isOut type:ATDefault];
 }
 
++(AIKVPointer*) createPointerForGroupValue:(NSString*)at dataSource:(NSString*)dataSource isOut:(BOOL)isOut {
+    NSInteger pointerId = [SMGUtils createPointerId:DefaultAlgsType dataSource:dataSource];
+    return [AIKVPointer newWithPointerId:pointerId folderName:kPN_GROUPVALUE_NODE algsType:at dataSource:dataSource isOut:isOut type:ATDefault];
+}
+
++(AIKVPointer*) createPointerForFeature:(NSString*)at dataSource:(NSString*)dataSource isOut:(BOOL)isOut {
+    NSInteger pointerId = [SMGUtils createPointerId:DefaultAlgsType dataSource:dataSource];
+    return [AIKVPointer newWithPointerId:pointerId folderName:kPN_FEATURE_NODE algsType:at dataSource:dataSource isOut:isOut type:ATDefault];
+}
+
 /**
  *  MARK:--------------------生成alg指针--------------------
  *  @version

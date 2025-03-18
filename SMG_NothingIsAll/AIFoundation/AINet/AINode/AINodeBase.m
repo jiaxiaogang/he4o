@@ -21,6 +21,13 @@
     return _absPorts;
 }
 
+-(NSMutableArray *)refPorts{
+    if (!ISOK(_refPorts, NSMutableArray.class)) {
+        _refPorts = [[NSMutableArray alloc] initWithArray:_refPorts];
+    }
+    return _refPorts;
+}
+
 -(NSMutableArray *)contentPorts{
     if (_contentPorts == nil) _contentPorts = [[NSMutableArray alloc] init];
     return _contentPorts;
@@ -157,6 +164,7 @@
         self.pointer = [aDecoder decodeObjectForKey:@"pointer"];
         self.conPorts = [aDecoder decodeObjectForKey:@"conPorts"];
         self.absPorts = [aDecoder decodeObjectForKey:@"absPorts"];
+        self.refPorts = [aDecoder decodeObjectForKey:@"refPorts"];
         self.contentPorts = [aDecoder decodeObjectForKey:@"contentPorts"];
         self.conMatchDic = [aDecoder decodeObjectForKey:@"conMatchDic"];
         self.absMatchDic = [aDecoder decodeObjectForKey:@"absMatchDic"];
@@ -174,6 +182,7 @@
     [aCoder encodeObject:self.pointer forKey:@"pointer"];
     [aCoder encodeObject:[self.conPorts copy] forKey:@"conPorts"];
     [aCoder encodeObject:[self.absPorts copy] forKey:@"absPorts"];
+    [aCoder encodeObject:[self.refPorts copy] forKey:@"refPorts"];
     [aCoder encodeObject:[self.contentPorts copy] forKey:@"contentPorts"];
     [aCoder encodeObject:[self.conMatchDic copy] forKey:@"conMatchDic"];
     [aCoder encodeObject:[self.absMatchDic copy] forKey:@"absMatchDic"];

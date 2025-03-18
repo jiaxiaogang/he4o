@@ -30,6 +30,8 @@
 //MARK:                     < 节点类型判断 >
 //MARK:===============================================================
 +(BOOL) isValue:(AIKVPointer*)node_p;
++(BOOL) isGroupValue:(AIKVPointer*)node_p;
++(BOOL) isFeature:(AIKVPointer*)node_p;
 +(BOOL) isAlg:(AIKVPointer*)node_p;
 +(BOOL) isFo:(AIKVPointer*)node_p;
 +(BOOL) isMv:(AIKVPointer*)node_p;

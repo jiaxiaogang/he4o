@@ -99,8 +99,8 @@
                     [result setObject:[protoColorDic objectForKey:STRFORMAT(@"%ld_%ld",curRow,curColumn)] forKey:curKey];
                 } else {
                     //4.2 别的粗粒度，都从result的细一级粒度取值（把lastLevel取到的9个值取平均值=做为当前Level的HSB值）。
-                    NSDictionary *subDotDics = [CortexAlgorithmsUtil getSub9DotFromSplitDic:curLevel curRow:curRow curColumn:curColumn splitDic:result];//取出子层9格色值。
-                    [result setObject:[self getAverageColorFromSubDotDics:subDotDics] forKey:curKey];//取平均值并存到result。
+                    NSArray *subDots = [CortexAlgorithmsUtil getSub9DotFromSplitDic:curLevel curRow:curRow curColumn:curColumn splitDic:result];//取出子层9格色值。
+                    [result setObject:[self getAverageColorFromSubDotDics:subDots] forKey:curKey];//取平均值并存到result。
                 }
             }
         }
@@ -111,11 +111,10 @@
 /**
  *  MARK:--------------------根据子粒度层的9格色值，计算出平均色值--------------------
  */
-+(NSDictionary*) getAverageColorFromSubDotDics:(NSDictionary*)subDotDics {
++(NSDictionary*) getAverageColorFromSubDotDics:(NSArray*)subDots {
     //1. 别的粗粒度，都从result的细一级粒度取值（把lastLevel取到的9个值取平均值=做为当前Level的HSB值）。
     CGFloat sumR = 0,sumG = 0,sumB = 0;
-    for (NSString *subDotKey in subDotDics) {
-        NSDictionary *subDotDic = [subDotDics objectForKey:subDotKey];
+    for (NSDictionary *subDotDic in subDots) {
         
         //3. 把这九个格的色值分别取出来，求平均值收集。
         sumR += NUMTOOK([subDotDic objectForKey:@"r"]).floatValue;

@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIAbsAlgNode,AINetAbsFoNode,AIAbsCMVNode,AISPStrong;
+@class AIAbsAlgNode,AINetAbsFoNode,AIAbsCMVNode,AISPStrong,AIGroupValueNode,AIFeatureNode;
 @interface AINetUtils : NSObject
 
 //MARK:===============================================================
@@ -87,6 +87,11 @@
 //MARK:===============================================================
 
 /**
+ *  MARK:--------------------通用ref插线方法--------------------
+ */
++(void) insertRefPorts_General:(AIKVPointer*)node_p content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong needSort:(BOOL)needSort;
+
+/**
  *  MARK:--------------------概念_引用_微信息--------------------
  *  @desc               : 将algNode插线到value_ps的refPorts
  *  @param algNode_p    : 引用微信息的algNode
@@ -144,11 +149,13 @@
  *  @param conNodes : 具象概念们
  *  注: 抽具象的difStrong默认都为1;
  */
++(void) relateFeatureAbs:(AIFeatureNode*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew;
 +(void) relateAlgAbs:(AIAlgNodeBase*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew;
 +(void) relateFoAbs:(AIFoNodeBase*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew;
 +(void) relateMvAbs:(AIAbsCMVNode*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew;
 
 +(void) relateFoAbs:(AINetAbsFoNode*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew strongPorts:(NSArray*)strongPorts;
++(void) relateGeneralAbs:(AINodeBase*)absNode absConPorts:(NSMutableArray*)absConPorts conNodes:(NSArray*)conNodes isNew:(BOOL)isNew difStrong:(NSInteger)difStrong;
 
 /**
  *  MARK:--------------------关联抽象通用方法 (参考29031-todo3)--------------------

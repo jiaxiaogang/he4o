@@ -16,6 +16,6 @@
  *  MARK:--------------------取子粒度层9格--------------------
  *  @desc 即更细粒度下层。 参数说明：根据当前层的curLevel,curRow,curColumn来取。
  */
-+(NSDictionary*) getSub9DotFromSplitDic:(NSInteger)curLevel curRow:(NSInteger)curRow curColumn:(NSInteger)curColumn splitDic:(NSDictionary*)splitDic;
++(NSArray*) getSub9DotFromSplitDic:(NSInteger)curLevel curRow:(NSInteger)curRow curColumn:(NSInteger)curColumn splitDic:(NSDictionary*)splitDic;
 
 @end

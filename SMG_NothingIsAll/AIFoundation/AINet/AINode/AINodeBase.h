@@ -22,6 +22,7 @@
 @property (strong, nonatomic) AIKVPointer *pointer;     //自身存储地址
 @property (strong, nonatomic) NSMutableArray *conPorts; //具象关联端口
 @property (strong, nonatomic) NSMutableArray *absPorts; //抽象方向的端口;
+@property (strong, nonatomic) NSMutableArray *refPorts; //引用序列
 
 /**
  *  MARK:--------------------组端口--------------------

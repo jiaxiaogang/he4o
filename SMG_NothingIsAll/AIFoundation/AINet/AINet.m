@@ -89,16 +89,21 @@ static AINet *_instance;
  *  MARK:--------------------视觉V2模型特征处理--------------------
  */
 -(AIVisionAlgsModelV2*) algModelConvert2PointersV2:(AIVisionAlgsModelV2*)model algsType:(NSString*)algsType {
-    //2. 循环装箱
+    //1. 单码装箱
     //TODO: 这里随后转成NSDictionary后，只要判断dataSource对应的value是dic类型，也可以这么处理（到时候，改V2支持model转Dic类型输入时，自然就知道这里怎么改了）。
     model.hColors = [self algModelConvert2PointersV2_Step1_ConvertV:algsType ds:@"hColors" splitDic:model.hColors];
     model.sColors = [self algModelConvert2PointersV2_Step1_ConvertV:algsType ds:@"sColors" splitDic:model.sColors];
     model.bColors = [self algModelConvert2PointersV2_Step1_ConvertV:algsType ds:@"bColors" splitDic:model.bColors];
     
-    //3. 压缩粒度树 & 生成组码。
-    [self algModelConvert2PointersV2_Step2_RMRepeat:algsType ds:@"hColors" splitDic:model.hColors levelCount:model.levelNum];
-    [self algModelConvert2PointersV2_Step2_RMRepeat:algsType ds:@"sColors" splitDic:model.sColors levelCount:model.levelNum];
-    [self algModelConvert2PointersV2_Step2_RMRepeat:algsType ds:@"bColors" splitDic:model.bColors levelCount:model.levelNum];
+    //2. 压缩组码
+    NSDictionary *hGroups = [self algModelConvert2PointersV2_Step2_Zip2GroupValue:algsType ds:@"hColors" splitDic:model.hColors levelCount:model.levelNum];
+    NSDictionary *sGroups = [self algModelConvert2PointersV2_Step2_Zip2GroupValue:algsType ds:@"sColors" splitDic:model.sColors levelCount:model.levelNum];
+    NSDictionary *bGroups = [self algModelConvert2PointersV2_Step2_Zip2GroupValue:algsType ds:@"bColors" splitDic:model.bColors levelCount:model.levelNum];
+    
+    //3. 组码装箱
+    NSDictionary *hGroup_ps = [self algModelConvert2PointersV2_Step3_CreateGroupV:algsType ds:@"hColors" groupDic:hGroups];
+    NSDictionary *sGroup_ps = [self algModelConvert2PointersV2_Step3_CreateGroupV:algsType ds:@"sColors" groupDic:sGroups];
+    NSDictionary *bGroup_ps = [self algModelConvert2PointersV2_Step3_CreateGroupV:algsType ds:@"bColors" groupDic:bGroups];
     return model;
 }
 
@@ -114,12 +119,13 @@ static AINet *_instance;
 }
 
 /**
- *  MARK:--------------------第二步：压缩粒度树--------------------
- *  @desc 把粒度树里，细一级九宫相似，则移除掉，只保留父级一格即可（参考34042-分析3）。
+ *  MARK:--------------------第二步：压缩成组码--------------------
+ *  @desc 把粒度树里，细一级九宫相似，则移除掉，只保留父级一格（并打包成组）返回（参考34042-分析3）。
  */
--(void) algModelConvert2PointersV2_Step2_RMRepeat:(NSString*)at ds:(NSString*)ds splitDic:(NSDictionary*)splitDic levelCount:(NSInteger)levelCount {
+-(NSDictionary*) algModelConvert2PointersV2_Step2_Zip2GroupValue:(NSString*)at ds:(NSString*)ds splitDic:(NSDictionary*)splitDic levelCount:(NSInteger)levelCount {
     //0. 数据准备：（把当前at&ds稀疏码的data值字典取出）（用于取值性能优化）。
     NSDictionary *cacheDataDic = [AINetIndexUtils searchDataDic:at ds:ds isOut:false];
+    NSMutableDictionary *groupDic = [NSMutableDictionary new];
     
     //1. level为1-4层时，组应该用0-3，因为下层9格都是以上层为组（比如：0层就是1层的9格为组）。
     for (NSInteger groupLevel = 0; groupLevel < levelCount; groupLevel++) {
@@ -130,15 +136,15 @@ static AINet *_instance;
             for (NSInteger groupColumn = 0; groupColumn < groupSize; groupColumn++) {
                 
                 //3. 根据组，向子一层取子9格。
-                NSDictionary *subDotDics = [CortexAlgorithmsUtil getSub9DotFromSplitDic:groupLevel curRow:groupRow curColumn:groupColumn splitDic:splitDic];//取出子层9格色值。
+                NSArray *subDots = [CortexAlgorithmsUtil getSub9DotFromSplitDic:groupLevel curRow:groupRow curColumn:groupColumn splitDic:splitDic];//取出子层9格色值。
                 
                 //4. 判断九格的相似度：两两对比，找出最不相似的。
                 //2025.03.18：BUG-循环值时对比最大最小是不对的，应该找最不相似的。
                 CGFloat minMatchValue = 1;
-                for (NSInteger i = 0; i < subDotDics.count; i++) {
-                    AIKVPointer *i_p = ARR_INDEX(subDotDics.allValues, i);
-                    for (NSInteger j = i + 1; j < subDotDics.count; j++) {
-                        AIKVPointer *j_p = ARR_INDEX(subDotDics.allValues, j);
+                for (NSInteger i = 0; i < subDots.count; i++) {
+                    AIKVPointer *i_p = ARR_INDEX(subDots, i);
+                    for (NSInteger j = i + 1; j < subDots.count; j++) {
+                        AIKVPointer *j_p = ARR_INDEX(subDots, j);
                         CGFloat itemMatchValue = [AIAnalyst compareCansetValue:i_p protoValue:j_p vInfo:nil fromDataDic:cacheDataDic];
                         if (itemMatchValue < minMatchValue) {
                             minMatchValue = itemMatchValue;
@@ -151,18 +157,27 @@ static AINet *_instance;
                 if (minMatchValue > 0.9) continue;
                 
                 //6. 如果不相似，打包成组特征。
-                [self algModelConvert2PointersV2_Step3_CreateGroupV:subDotDics];
+                [groupDic setObject:subDots forKey:STRFORMAT(@"%ld_%ld_%ld",groupLevel,groupRow,groupColumn)];
             }
         }
     }
+    return groupDic;
 }
 
 /**
- *  MARK:--------------------第三步：生成组码--------------------
+ *  MARK:--------------------第三步：组码装箱--------------------
  *  @desc 每九宫装成一组，生成组码，组码可全局防重（参考34041-问题2-思路）。
+ *  @param groupDic K=groupLevel_groupX_groupY V=Array<九宫值>
+ *  @result K=groupLevel_groupX_groupY V=groupValue.pointer
  */
--(void) algModelConvert2PointersV2_Step3_CreateGroupV:(NSDictionary*)subDotDics {
-    
+-(NSDictionary*) algModelConvert2PointersV2_Step3_CreateGroupV:(NSString*)at ds:(NSString*)ds groupDic:(NSDictionary*)groupDic {
+    NSMutableDictionary *result = [NSMutableDictionary new];
+    for (NSString *key in groupDic.allKeys) {
+        NSArray *subDot_ps = [groupDic objectForKey:key];
+        AIGroupValueNode *groupNode = [AIValueManager createGroupValueNode:subDot_ps conNodes:nil at:at ds:ds isOut:false];
+        [result setObject:groupNode.pointer forKey:key];
+    }
+    return result;
 }
 
 //单data装箱

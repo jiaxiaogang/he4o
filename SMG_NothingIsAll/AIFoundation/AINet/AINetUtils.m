@@ -227,20 +227,36 @@
 //MARK:===============================================================
 
 /**
+ *  MARK:--------------------通用ref插线方法--------------------
+ *  @param needSort 是否需要重新排序来生成header（像alg这种无序的可以重排序，防止内容一样，因为顺序不一样导致header变了）。
+ */
++(void) insertRefPorts_General:(AIKVPointer*)node_p content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong needSort:(BOOL)needSort {
+    content_ps = [SMGUtils removeRepeat:content_ps];
+    if (node_p && ARRISOK(content_ps)) {
+        NSArray *ps = needSort ? [SMGUtils sortPointers:content_ps] : content_ps;
+        //1. 遍历value_p微信息,添加引用;
+        for (AIKVPointer *item_p in content_ps) {
+            if (PitIsValue(item_p)) {
+                //2. 为稀疏码时：硬盘网络时,取出refPorts -> 并二分法强度序列插入 -> 存XGWedis;
+                [self insertRefPorts_HdNode:node_p passiveRefValue_p:item_p ps:ps difStrong:difStrong];
+            } else {
+                //3. 为其它节点时：
+                //2025.03.18: 支持多码特征后，概念由特征组成，而不是单码。
+                AINodeBase *item = [SMGUtils searchNode:item_p];
+                [AINetUtils insertPointer_Hd:node_p toPorts:item.refPorts ps:ps difStrong:difStrong];
+                [SMGUtils insertNode:item];
+            }
+        }
+    }
+}
+
+/**
  *  MARK:--------------------概念_引用_微信息--------------------
  *  @version
  *      2020.08.05: content_ps添加去重功能,避免同一个"分"信息,被多次报引用强度叠加;
  */
 +(void) insertRefPorts_AllAlgNode:(AIKVPointer*)algNode_p content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong{
-    content_ps = [SMGUtils removeRepeat:content_ps];
-    if (algNode_p && ARRISOK(content_ps)) {
-        NSArray *sort_ps = [SMGUtils sortPointers:content_ps];
-        //1. 遍历value_p微信息,添加引用;
-        for (AIPointer *value_p in content_ps) {
-            //2. 硬盘网络时,取出refPorts -> 并二分法强度序列插入 -> 存XGWedis;
-            [self insertRefPorts_HdNode:algNode_p passiveRefValue_p:value_p ps:sort_ps difStrong:difStrong];
-        }
-    }
+    [self insertRefPorts_General:algNode_p content_ps:content_ps difStrong:difStrong needSort:true];
 }
 
 /**
@@ -370,6 +386,9 @@
 //MARK:===============================================================
 //MARK:                     < 抽具象关联 Relate (外界调用,支持alg/fo) >
 //MARK:===============================================================
++(void) relateFeatureAbs:(AIFeatureNode*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew {
+    [self relateGeneralAbs:absNode absConPorts:absNode.conPorts conNodes:conNodes isNew:isNew difStrong:1];
+}
 +(void) relateAlgAbs:(AIAlgNodeBase*)absNode conNodes:(NSArray*)conNodes isNew:(BOOL)isNew{
     if (isNew) {
         BOOL absIsJiE = [NVHeUtil algIsJiE:absNode.pointer];
@@ -546,6 +565,9 @@
         return [self refPorts_All4Value:node_p];
     }else if(PitIsAlg(node_p)){
         return [self refPorts_All4Alg:[SMGUtils searchNode:node_p]];
+    } else {
+        AINodeBase *node = [SMGUtils searchNode:node_p];
+        return node.refPorts;
     }
     return nil;
 }

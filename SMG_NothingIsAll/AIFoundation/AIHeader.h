@@ -72,6 +72,8 @@
 #import "AINetIndexUtils.h"
 #import "AIPort.h"
 #import "AITransferPort.h"
+#import "AIGroupValueNode.h"
+#import "AIFeatureNode.h"
 #import "AIAbsAlgNode.h"
 #import "AIAlgNodeBase.h"
 #import "AIFrontOrderNode.h"
@@ -80,6 +82,7 @@
 #import "AICMVNode.h"
 #import "AIAbsCMVNode.h"
 #import "AIMvFoManager.h"
+#import "AIValueManager.h"
 
 //其它: 类比器,评价器,触发器,防重器,输入,输出
 #import "AIImvAlgs.h"
@@ -123,6 +126,9 @@
  */
 
 #define kCachePath [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0]
+
+#define kPN_GROUPVALUE_NODE       @"PN_GROUPVALUE_NODE"
+#define kPN_FEATURE_NODE       @"PN_FEATURE_NODE"
 
 //algNode
 #define kPN_ALG_NODE           @"PN_ALG_NODE"          //Alg节点根目录;(白质)
@@ -199,6 +205,8 @@
 //AIPointer
 #define POINTERISOK(p) [SMGUtils pointerIsOk:p]                         //指针强检查
 #define PitIsValue(p) [NVHeUtil isValue:p]                              //是否稀疏码
+#define PitIsGroupValue(p) [NVHeUtil isGroupValue:p]
+#define PitIsFeature(p) [NVHeUtil isFeature:p]
 #define PitIsAlg(p) [NVHeUtil isAlg:p]                                  //是否概念
 #define PitIsFo(p) [NVHeUtil isFo:p]                                    //是否时序
 #define PitIsMv(p) [NVHeUtil isMv:p]                                    //是否价值
