@@ -33,6 +33,8 @@
     NSArray *index_ps = [AINetIndex getIndex_ps:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut];
     double maskData = [NUMTOOK([AINetIndex getData:protoV_p]) doubleValue];
     double max = [CortexAlgorithmsUtil maxOfLoopValue:protoV_p.algsType ds:protoV_p.dataSource];
+    AIValueInfo *vInfo = [AINetIndex getValueInfo:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut];
+    double cacheProtoData = [NUMTOOK([AINetIndex getData:protoV_p fromDataDic:cacheDataDic]) doubleValue];
     
     //2. 按照相近度排序;
     NSArray *near_ps = [SMGUtils sortSmall2Big:index_ps compareBlock:^double(AIKVPointer *obj) {
@@ -46,7 +48,23 @@
     
     //3. 窄出,仅返回前NarrowLimit条 (最多narrowLimit条,最少1条);
     NSInteger limit = MAX(near_ps.count * 0.8f, 20);
-    return ARR_SUB(near_ps, 0, limit);
+    near_ps = ARR_SUB(near_ps, 0, limit);
+    
+    //4. 转matchModel模型并返回，取上相近度。
+    return [SMGUtils convertArr:near_ps convertBlock:^id(AIKVPointer *near_p) {
+        
+        //5. 第1_计算出nearV (参考25082-公式1) (性能:400次计算,耗100ms很正常);
+        //2024.04.27: BUG_这里有nearV为0的,导致后面可能激活一些完全不准确的结果 (修复: 加上末尾淘汰: 相似度为0的就不收集了先,看下应该也不影响别的什么);
+        double nearData = [NUMTOOK([AINetIndex getData:near_p fromDataDic:cacheDataDic]) doubleValue];
+        CGFloat matchValue = [AIAnalyst compareCansetValue:nearData protoV:cacheProtoData at:near_p.algsType ds:near_p.dataSource isOut:near_p.isOut vInfo:vInfo];
+        if (matchValue == 0) return nil;//把相近度为0的过滤掉。
+        
+        //6. 构建model
+        AIMatchModel *model = [[AIMatchModel alloc] init];
+        model.match_p = near_p;
+        model.matchValue = matchValue;
+        return model;
+    }];
 }
 
 //MARK:===============================================================
@@ -56,14 +74,58 @@
 /**
  *  MARK:--------------------组码识别--------------------
  */
-+(void) recognitionGroupValue:(AIKVPointer*)groupValue_p {
-    //TODOTOMORROW20250319:
-    //a. 从粗粒度开始识别特征。
-    //3. 取相近度序列 (按相近程度排序);
++(NSArray*) recognitionGroupValue:(AIKVPointer*)groupValue_p {
+    //1. 数据准备
+    NSMutableDictionary *gMatchDic = [[NSMutableDictionary alloc] init];
+    AIGroupValueNode *protoGroupValue = [SMGUtils searchNode:groupValue_p];
     
-    //b. 然后用粗粒度向细的粒度关联，和粗粒度下的细粒度的ref关联。
+    //2. 循环分别识别：组码里的单码。
+    for (AIKVPointer *value_p in protoGroupValue.content_ps) {
+        
+        //3. 取相近度序列 (按相近程度排序);
+        NSArray *vMatchModels = [self recognitionValue:value_p];
+        
+        //4. 每个near_p向ref找相似的assGroupValue。
+        for (AIMatchModel *vModel in vMatchModels) {
+            NSArray *refPorts = [AINetUtils refPorts_All4Value:vModel.match_p];
+            
+            //5. 每个refPort转为model并计匹配度和匹配数;
+            for (AIPort *refPort in refPorts) {
+                //6. 找model (无则新建) (性能: 此处在循环中,所以防重耗60ms正常,收集耗100ms正常);
+                AIMatchModel *gModel = [gMatchDic objectForKey:@(refPort.target_p.pointerId)];
+                if (!gModel) {
+                    gModel = [[AIMatchModel alloc] init];
+                    [gMatchDic setObject:gModel forKey:@(refPort.target_p.pointerId)];
+                }
+                gModel.match_p = refPort.target_p;
+                gModel.matchCount++;
+                gModel.matchValue *= vModel.matchValue;
+                gModel.sumRefStrong += (int)refPort.strong.value;
+            }
+        }
+    }
     
-    //c. 计算乘积相似度 -> 进行竞争 -> 取交 等。
+    //11. 全含判断: 从大到小,依次取到对应的node和matchingCount (注: 支持相近后,应该全是全含了,参考25084-1);
+    NSArray *gMatchModels = [SMGUtils filterArr:gMatchDic.allValues checkValid:^BOOL(AIMatchModel *item) {
+        AIGroupValueNode *gItem = [SMGUtils searchNode:item.match_p];
+        if (gItem.count != item.matchCount) return false;
+        return true;
+    }];
+    
+    //12. 似层交层分开进行竞争 (分开竞争是以前就一向如此的,因为同质竞争才公平) (为什么要保留交层: 参考31134-TODO1);
+    NSArray *gMatchModels_Si = [SMGUtils filterArr:gMatchModels checkValid:^BOOL(AIMatchModel *model) {
+        AIGroupValueNode *item = [SMGUtils searchNode:model.match_p];
+        return item.count == protoGroupValue.count;
+    }];
+    NSArray *gMatchModels_Jiao = [SMGUtils filterArr:gMatchModels checkValid:^BOOL(AIMatchModel *model) {
+        AIAlgNodeBase *item = [SMGUtils searchNode:model.match_p];
+        return item.count != protoGroupValue.count;
+    }];
+    
+    //13. 识别过滤器 (参考28109-todo2);
+    gMatchModels_Si = [AIFilter recognitionMatchModelsFilter:gMatchModels_Si radio:0.26f];
+    gMatchModels_Jiao = [AIFilter recognitionMatchModelsFilter:gMatchModels_Jiao radio:0.5f];
+    return [SMGUtils collectArrA:gMatchModels_Si arrB:gMatchModels_Jiao];
 }
 
 
@@ -72,14 +134,59 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------识别具象特征--------------------
+ *  MARK:--------------------特征识别--------------------
  */
 +(NSArray*) recognitionFeature:(AIKVPointer*)feature_p {
-    AIFeatureNode *feature = [SMGUtils searchNode:feature_p];
-    for (AIKVPointer *groupValue_p in feature.content_ps) {
-        [self recognitionGroupValue:groupValue_p];
+    //1. 数据准备
+    NSMutableDictionary *tMatchDic = [[NSMutableDictionary alloc] init];
+    AIFeatureNode *protoFeature = [SMGUtils searchNode:feature_p];
+    
+    //2. 循环分别识别：特征里的组码。
+    for (AIKVPointer *groupValue_p in protoFeature.content_ps) {
+        NSArray *gMatchModels = [self recognitionGroupValue:groupValue_p];
+        
+        for (AIMatchModel *gModel in gMatchModels) {
+            NSArray *refPorts = [AINetUtils refPorts_All:gModel.match_p];
+            
+            //5. 每个refPort转为model并计匹配度和匹配数;
+            for (AIPort *refPort in refPorts) {
+                //6. 找model (无则新建) (性能: 此处在循环中,所以防重耗60ms正常,收集耗100ms正常);
+                AIMatchModel *tModel = [tMatchDic objectForKey:@(refPort.target_p.pointerId)];
+                if (!tModel) {
+                    tModel = [[AIMatchModel alloc] init];
+                    [tMatchDic setObject:tModel forKey:@(refPort.target_p.pointerId)];
+                }
+                tModel.match_p = refPort.target_p;
+                tModel.matchCount++;
+                tModel.matchValue *= gModel.matchValue;
+                tModel.sumRefStrong += (int)refPort.strong.value;
+            }
+        }
     }
-    return nil;
+    
+    //11. 转为tMatchModels。
+    NSArray *tMatchModels = tMatchDic.allValues;
+    
+    //11. 全含判断: 特征应该不需要全含，因为很难看到局部都相似的两个图像。
+    //NSArray *tMatchModels = [SMGUtils filterArr:tMatchDic.allValues checkValid:^BOOL(AIMatchModel *item) {
+    //    AIGroupValueNode *tItem = [SMGUtils searchNode:item.match_p];
+    //    if (tItem.count != item.matchCount) return false;
+    //    return true;
+    //}];
+    
+    //12. 写level,x,y过滤器（level是相对的，如果每个组码都差同样的层，是正常的，只是大小不同，不影响识别匹配）。
+    
+    //TODOTOMORROW20250319: 查level,x,y要起到过滤作用，至少应用到计算相似度里。
+    
+    //a. 从粗粒度开始识别特征。
+    //3. 取相近度序列 (按相近程度排序);
+    
+    //b. 然后用粗粒度向细的粒度关联，和粗粒度下的细粒度的ref关联（转成组码后，就没有粒度纵向关联了，只有level而已 `废弃 T`）。
+    
+    
+    //13. 识别过滤器 (参考28109-todo2);
+    tMatchModels = [AIFilter recognitionMatchModelsFilter:tMatchModels radio:0.4f];
+    return tMatchModels;
 }
 
 //MARK:===============================================================

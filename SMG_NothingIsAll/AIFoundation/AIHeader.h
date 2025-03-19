@@ -53,6 +53,7 @@
 #import "AIMatchFoModel.h"
 #import "AIMatchAlgModel.h"
 #import "AIMatchCansetModel.h"
+#import "AIMatchModel.h"
 
 //短时记忆
 #import "TOAlgModel.h"

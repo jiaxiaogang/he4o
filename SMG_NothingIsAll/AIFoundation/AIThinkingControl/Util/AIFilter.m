@@ -11,6 +11,17 @@
 @implementation AIFilter
 
 /**
+ *  MARK:--------------------AIMatchModel过滤器--------------------
+ */
++(NSArray*) recognitionMatchModelsFilter:(NSArray*)matchAlgModels radio:(CGFloat)radio {
+    return [self filterTwice:matchAlgModels mainBlock:^double(AIMatchModel *item) {
+        return item.matchValue;
+    } subBlock:^double(AIMatchModel *item) {
+        return item.strongValue;
+    } radio:radio min:10 max:100 debugMode:true];
+}
+
+/**
  *  MARK:--------------------概念识别过滤器--------------------
  *  @version
  *      2023.03.06: 概念识别过滤器匹配度为主,强度为辅 (参考28152-方案4-todo4);
