@@ -147,6 +147,12 @@
     return 0;
 }
 
+//内容的md5值，默认以content_ps转字符串再转md5生成。
+-(NSString*) getHeaderNotNull {
+    if (!STRISOK(self.header)) self.header = [NSString md5:[SMGUtils convertPointers2String:self.content_ps]];
+    return self.header;
+}
+
 //MARK:===============================================================
 //MARK:                     < privateMethod >
 //MARK:===============================================================
@@ -168,6 +174,7 @@
         self.contentPorts = [aDecoder decodeObjectForKey:@"contentPorts"];
         self.conMatchDic = [aDecoder decodeObjectForKey:@"conMatchDic"];
         self.absMatchDic = [aDecoder decodeObjectForKey:@"absMatchDic"];
+        self.header = [aDecoder decodeObjectForKey:@"header"];
     }
     return self;
 }
@@ -186,6 +193,7 @@
     [aCoder encodeObject:[self.contentPorts copy] forKey:@"contentPorts"];
     [aCoder encodeObject:[self.conMatchDic copy] forKey:@"conMatchDic"];
     [aCoder encodeObject:[self.absMatchDic copy] forKey:@"absMatchDic"];
+    [aCoder encodeObject:self.header forKey:@"header"];
 }
 
 @end

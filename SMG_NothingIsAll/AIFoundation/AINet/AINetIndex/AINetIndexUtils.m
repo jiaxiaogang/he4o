@@ -27,15 +27,22 @@
     return [self getAbsoluteMatching_ValidPs:content_ps sort_ps:sort_ps except_ps:except_ps noRepeatArea_ps:nil getRefPortsBlock:getRefPortsBlock at:at ds:ds type:type];
 }
 
+//该方法，默认用sort_ps来生成header。
++(id) getAbsoluteMatching_ValidPs:(NSArray*)content_ps sort_ps:(NSArray*)sort_ps except_ps:(NSArray*)except_ps noRepeatArea_ps:(NSArray*)noRepeatArea_ps getRefPortsBlock:(NSArray*(^)(AIKVPointer *item_p))getRefPortsBlock at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type {
+    NSString *md5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:sort_ps]]);
+    return [self getAbsoluteMatching_ValidPs:content_ps findHeader:md5 except_ps:except_ps noRepeatArea_ps:noRepeatArea_ps getRefPortsBlock:getRefPortsBlock at:at ds:ds type:type];
+}
+
 /**
  *  MARK:--------------------绝对匹配 + 限定范围--------------------
  *  @param noRepeatArea_ps 限定范围: 结果必须从valid_ps中找 (限定范围时不得传nil,不限定时直接传nil即可);
+ *  @version
+ *      2025.03.19: 支持直接header生成好传过来（性能更好，并且照顾各种类型节点生成header的个性化）。
  */
-+(id) getAbsoluteMatching_ValidPs:(NSArray*)content_ps sort_ps:(NSArray*)sort_ps except_ps:(NSArray*)except_ps noRepeatArea_ps:(NSArray*)noRepeatArea_ps getRefPortsBlock:(NSArray*(^)(AIKVPointer *item_p))getRefPortsBlock at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type{
++(id) getAbsoluteMatching_ValidPs:(NSArray*)content_ps findHeader:(NSString*)findHeader except_ps:(NSArray*)except_ps noRepeatArea_ps:(NSArray*)noRepeatArea_ps getRefPortsBlock:(NSArray*(^)(AIKVPointer *item_p))getRefPortsBlock at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type {
     //1. 数据检查
     if (!getRefPortsBlock) return nil;
     content_ps = ARRTOOK(content_ps);
-    NSString *md5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:sort_ps]]);
     except_ps = ARRTOOK(except_ps);
     
     //2. 依次找content_ps的被引用序列,并判断header匹配;
@@ -51,7 +58,7 @@
             BOOL typeSeem = type == refPort.target_p.type;
             
             //6. ds同区 & 将md5匹配header & 不在except_ps的找到并返回;
-            if (atSeem && dsSeem && typeSeem && ![except_ps containsObject:refPort.target_p] && [md5 isEqualToString:refPort.header]) {
+            if (atSeem && dsSeem && typeSeem && ![except_ps containsObject:refPort.target_p] && [findHeader isEqualToString:refPort.header]) {
                 
                 //7. 当valid_ps不为空时,要求必须包含在valid_ps中;
                 if (noRepeatArea_ps) {

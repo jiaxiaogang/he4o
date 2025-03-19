@@ -76,9 +76,10 @@
     ds = STRTOOK(ds);
     NSArray *content_ps = @[urgentTo_p, delta_p];
     NSArray *sort_ps = [SMGUtils sortPointers:content_ps];
+    NSString *md5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:sort_ps]]);
     
     //2. 全局防重;
-    AIAbsCMVNode *result = [AINetIndexUtils getAbsoluteMatching_General:content_ps sort_ps:sort_ps except_ps:nil getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
+    AIAbsCMVNode *result = [AINetIndexUtils getAbsoluteMatching_ValidPs:content_ps findHeader:md5 except_ps:nil noRepeatArea_ps:nil getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
         return [SMGUtils filterArr:[AINetUtils refPorts_All4Value:item_p] checkValid:^BOOL(AIPort *item) {
             return [kPN_ABS_CMV_NODE isEqualToString:item.target_p.folderName];
         }];
@@ -87,6 +88,7 @@
     //3. 无则新构建;
     if (!ISOK(result, AICMVNodeBase.class)) {
         result = [[AIAbsCMVNode alloc] init];
+        result.header = md5;//存header到node
         result.pointer = [SMGUtils createPointer:kPN_ABS_CMV_NODE algsType:at dataSource:ds isOut:false type:ATDefault];
         result.urgentTo_p = urgentTo_p;
         result.delta_p = delta_p;

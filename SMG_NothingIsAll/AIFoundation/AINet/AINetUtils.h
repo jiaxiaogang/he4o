@@ -89,7 +89,7 @@
 /**
  *  MARK:--------------------通用ref插线方法--------------------
  */
-+(void) insertRefPorts_General:(AIKVPointer*)node_p content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong needSort:(BOOL)needSort;
++(void) insertRefPorts_General:(AIKVPointer*)node_p content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong header:(NSString*)header;
 
 /**
  *  MARK:--------------------概念_引用_微信息--------------------
@@ -119,20 +119,6 @@
  *  注:目前在使用NetRefrence,所以此处不用;
  */
 +(void) insertRefPorts_AllMvNode:(AICMVNodeBase*)mvNode value_p:(AIPointer*)value_p difStrong:(NSInteger)difStrong;
-
-
-//MARK:===============================================================
-//MARK:                     < 通用 仅插线到ports >
-//MARK:===============================================================
-
-/**
- *  MARK:--------------------硬盘插线到强度ports序列--------------------
- *  @param pointer  : 把这个插到ports
- *  @param ports    : 把pointer插到这儿;
- *  @param ps       : pointer是alg时,传alg.content_ps | pointer是fo时,传fo.orders; (用来计算md5.header)
- */
-+(void) insertPointer_Hd:(AIKVPointer*)pointer toPorts:(NSMutableArray*)ports ps:(NSArray*)ps;
-
 
 //MARK:===============================================================
 //MARK:                     < 找出port >
@@ -341,5 +327,10 @@
 
 //取从fScene迁移过来iScene哪些canset;
 +(NSArray*) transferPorts_4Father:(AIFoNodeBase*)iScene fScene:(AIFoNodeBase*)fScene;
+
+/**
+ *  MARK:--------------------各类型节点的header生成规则--------------------
+ */
++(NSString*) getFeatureNodeHeader:(NSArray*)content_ps levels:(NSArray*)levels xs:(NSArray*)xs ys:(NSArray*)ys;
 
 @end

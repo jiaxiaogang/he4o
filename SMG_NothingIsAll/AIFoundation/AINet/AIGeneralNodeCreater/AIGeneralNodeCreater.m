@@ -21,7 +21,7 @@
         AIGroupValueNode *newNode = [[AIGroupValueNode alloc] init];
         newNode.pointer = [SMGUtils createPointerForGroupValue:at dataSource:ds isOut:isOut];
         return newNode;
-    }];
+    } header:nil];
 }
 
 /**
@@ -31,28 +31,44 @@
  *  @result notnull
  */
 +(AIFeatureNode*) createFeatureNode:(NSArray*)groupModels conNodes:(NSArray*)conNodes at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut {
-    
-    //TODOTOMORROW20250319:
     //1. 数据准备：排序-把value按一级level,二级x,三级y排好序再生成content_ps。
-    
+    groupModels = [SMGUtils sortBig2Small:groupModels compareBlock1:^double(InputGroupValueModel *obj) {
+        return -obj.level;
+    } compareBlock2:^double(InputGroupValueModel *obj) {
+        return -obj.x;
+    } compareBlock3:^double(InputGroupValueModel *obj) {
+        return -obj.y;
+    }];
     
     //2. 数据准备：转content_ps。
     NSArray *content_ps = [SMGUtils convertArr:groupModels convertBlock:^id(InputGroupValueModel *obj) {
         return obj.groupValue.p;
     }];
+    NSArray *levels = [SMGUtils convertArr:groupModels convertBlock:^id(InputGroupValueModel *obj) {
+        return @(obj.level);
+    }];
+    NSArray *xs = [SMGUtils convertArr:groupModels convertBlock:^id(InputGroupValueModel *obj) {
+        return @(obj.x);
+    }];
+    NSArray *ys = [SMGUtils convertArr:groupModels convertBlock:^id(InputGroupValueModel *obj) {
+        return @(obj.y);
+    }];
     
     //3. 生成node
+    //注意：即使content_ps一模一样，level,x,y不一样时，一样不可以复用（所以要把level,x,y生成一个字符串也用于生成header）。
+    NSString *header = [AINetUtils getFeatureNodeHeader:content_ps levels:levels xs:xs ys:ys];
+    
+    //4. 构建节点
     AIFeatureNode *result = [AIGeneralNodeCreater createNode:content_ps conNodes:conNodes at:at ds:ds isOut:isOut newBlock:^id{
         AIFeatureNode *newNode = [[AIFeatureNode alloc] init];
         newNode.pointer = [SMGUtils createPointerForFeature:at dataSource:ds isOut:isOut];
-        return newNode;
-    }];
-    
-    //4. 单独存level,x,y值。
-    for (InputGroupValueModel *model in groupModels) {
         
-    }
-    
+        //5. 单独存level,x,y值。
+        newNode.levels = levels;
+        newNode.xs = xs;
+        newNode.ys = ys;
+        return newNode;
+    } header:header];
     return result;
 }
 
@@ -63,17 +79,17 @@
  *  @param ds           : 为nil时,默认为DefaultDataSource;
  *  @result notnull
  */
-+(id) createNode:(NSArray*)content_ps conNodes:(NSArray*)conNodes at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut newBlock:(id(^)())newBlock {
++(id) createNode:(NSArray*)content_ps conNodes:(NSArray*)conNodes at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut newBlock:(id(^)())newBlock header:(NSString*)header {
     //1. 数据检查
     content_ps = ARRTOOK(content_ps);
     if (!at) at = DefaultAlgsType;
     if (!ds) ds = DefaultDataSource;
-    NSString *samesMd5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:content_ps]]);
+    if (!STRISOK(header)) header = [NSString md5:[SMGUtils convertPointers2String:content_ps]];
     NSMutableArray *validConAlgs = [[NSMutableArray alloc] initWithArray:conNodes];
     AINodeBase *result = nil;
     
     //2. 去重找本地 (仅抽象);
-    AINodeBase *localResult = [AINetIndexUtils getAbsoluteMatching_General:content_ps sort_ps:content_ps except_ps:nil getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
+    AINodeBase *localResult = [AINetIndexUtils getAbsoluteMatching_ValidPs:content_ps findHeader:header except_ps:nil noRepeatArea_ps:nil getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
         return [AINetUtils refPorts_All:item_p];
     } at:at ds:ds type:ATDefault];
     
@@ -86,8 +102,7 @@
     //4. 判断具象节点中,已有一个抽象sames节点,则不需要再构建新的;
     for (AINodeBase *checkNode in conNodes) {
         //b. 并且md5与orderSames相同时,即发现checkNode本身就是抽象节点;
-        NSString *checkMd5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:checkNode.content_ps]]);
-        if ([samesMd5 isEqualToString:checkMd5] && [checkNode.pointer.algsType isEqualToString:at] && [checkNode.pointer.dataSource isEqualToString:ds]) {
+        if ([checkNode.pointer.algsType isEqualToString:at] && [checkNode.pointer.dataSource isEqualToString:ds] && [header isEqualToString:checkNode.getHeaderNotNull]) {
             
             //c. 则把conAlgs去掉checkNode;
             [validConAlgs removeObject:checkNode];
@@ -103,7 +118,7 @@
             NSArray *absPorts_All = [AINetUtils absPorts_All:conNode];
             for (AIPort *absPort in absPorts_All) {
                 //1> 遍历找抽象是否已存在;
-                if ([samesMd5 isEqualToString:absPort.header] && [absPort.target_p.algsType isEqualToString:at] && [absPort.target_p.dataSource isEqualToString:ds]) {
+                if ([header isEqualToString:absPort.header] && [absPort.target_p.algsType isEqualToString:at] && [absPort.target_p.dataSource isEqualToString:ds]) {
                     //3> findAbsNode成功;
                     result = [SMGUtils searchNode:absPort.target_p];
                     break;
@@ -118,6 +133,9 @@
         absIsNew = true;
         result = newBlock();
         
+        //7. 存header到node
+        result.header = header;
+        
         //4. 概念是否交层,可以使用长度来判断 (有一条conAlg为交层 或 当前sames长度小于具象特征数 => 则当前为交层) (参考33111-TODO1);
         result.pointer.isJiao = [SMGUtils filterSingleFromArr:conNodes checkValid:^BOOL(AIAlgNodeBase *item) {
             return item.pointer.isJiao || content_ps.count < item.count;
@@ -130,7 +148,7 @@
     }
     
     //4. value.refPorts (更新/加强微信息的引用序列)
-    [AINetUtils insertRefPorts_General:result.pointer content_ps:result.content_ps difStrong:1 needSort:false];
+    [AINetUtils insertRefPorts_General:result.pointer content_ps:result.content_ps difStrong:1 header:header];
     
     //5. 关联 & 存储
     [AINetUtils relateGeneralAbs:result absConPorts:result.conPorts conNodes:validConAlgs isNew:absIsNew difStrong:1];

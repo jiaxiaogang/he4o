@@ -13,4 +13,8 @@
  */
 @interface AIFeatureNode : AINodeBase
 
+@property (strong, nonatomic) NSArray *levels;
+@property (strong, nonatomic) NSArray *xs;
+@property (strong, nonatomic) NSArray *ys;
+
 @end

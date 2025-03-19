@@ -51,6 +51,7 @@
     if (!findAbsNode) {
         isNew = true;
         findAbsNode = [[AINetAbsFoNode alloc] init];
+        findAbsNode.header = samesMd5;//存header到node
         findAbsNode.pointer = [SMGUtils createPointerForFo:kPN_FO_ABS_NODE at:at ds:ds type:type];
         
         //3. content_ps中有一个是交,则fo是交 (参考33111-TODO1);

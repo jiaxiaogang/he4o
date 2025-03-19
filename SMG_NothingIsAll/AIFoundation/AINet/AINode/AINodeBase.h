@@ -64,4 +64,8 @@
 -(CGFloat) getConMatchValue:(AIKVPointer*)con_p;
 -(CGFloat) getAbsMatchValue:(AIKVPointer*)abs_p;
 
+//内容的md5值，默认以content_ps转字符串再转md5生成。
+@property (strong, nonatomic) NSString *header;//禁止直接调用此header,应该调用下面的getHeaderNotNull方法，为空时自动生成下
+-(NSString*) getHeaderNotNull;
+
 @end

@@ -228,22 +228,21 @@
 
 /**
  *  MARK:--------------------通用ref插线方法--------------------
- *  @param needSort 是否需要重新排序来生成header（像alg这种无序的可以重排序，防止内容一样，因为顺序不一样导致header变了）。
+ *  @param header 直接把header生成好传过来。
  */
-+(void) insertRefPorts_General:(AIKVPointer*)node_p content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong needSort:(BOOL)needSort {
++(void) insertRefPorts_General:(AIKVPointer*)node_p content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong header:(NSString*)header {
     content_ps = [SMGUtils removeRepeat:content_ps];
     if (node_p && ARRISOK(content_ps)) {
-        NSArray *ps = needSort ? [SMGUtils sortPointers:content_ps] : content_ps;
         //1. 遍历value_p微信息,添加引用;
         for (AIKVPointer *item_p in content_ps) {
             if (PitIsValue(item_p)) {
                 //2. 为稀疏码时：硬盘网络时,取出refPorts -> 并二分法强度序列插入 -> 存XGWedis;
-                [self insertRefPorts_HdNode:node_p passiveRefValue_p:item_p ps:ps difStrong:difStrong];
+                [self insertRefPorts_HdNode:node_p passiveRefValue_p:item_p header:header difStrong:difStrong];
             } else {
                 //3. 为其它节点时：
                 //2025.03.18: 支持多码特征后，概念由特征组成，而不是单码。
                 AINodeBase *item = [SMGUtils searchNode:item_p];
-                [AINetUtils insertPointer_Hd:node_p toPorts:item.refPorts ps:ps difStrong:difStrong];
+                [AINetUtils insertPointer_Hd:node_p toPorts:item.refPorts findHeader:header difStrong:difStrong];
                 [SMGUtils insertNode:item];
             }
         }
@@ -256,7 +255,9 @@
  *      2020.08.05: content_ps添加去重功能,避免同一个"分"信息,被多次报引用强度叠加;
  */
 +(void) insertRefPorts_AllAlgNode:(AIKVPointer*)algNode_p content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong{
-    [self insertRefPorts_General:algNode_p content_ps:content_ps difStrong:difStrong needSort:true];
+    NSArray *ps = [SMGUtils sortPointers:content_ps];
+    NSString *header = [NSString md5:[SMGUtils convertPointers2String:ps]];
+    [self insertRefPorts_General:algNode_p content_ps:content_ps difStrong:difStrong header:header];
 }
 
 /**
@@ -293,19 +294,20 @@
     if (mvNode && value_p) {
         //0. mv的ps也不为nil,传delta和urgent生成 (本来这俩就是它的内容,只是现在单独存着两个字段而已);
         NSArray *sort_ps = [SMGUtils sortPointers:mvNode.content_ps];
+        NSString *header = [NSString md5:[SMGUtils convertPointers2String:sort_ps]];
         //1. 硬盘网络时,取出refPorts -> 并二分法强度序列插入 -> 存XGWedis;
-        [self insertRefPorts_HdNode:mvNode.pointer passiveRefValue_p:value_p ps:sort_ps difStrong:difStrong];
+        [self insertRefPorts_HdNode:mvNode.pointer passiveRefValue_p:value_p header:header difStrong:difStrong];
     }
 }
 
 /**
  *  MARK:--------------------硬盘节点_引用_微信息_插线 通用方法--------------------
  */
-+(void) insertRefPorts_HdNode:(AIKVPointer*)hdNode_p passiveRefValue_p:(AIPointer*)passiveRefValue_p ps:(NSArray*)ps difStrong:(NSInteger)difStrong{
++(void) insertRefPorts_HdNode:(AIKVPointer*)hdNode_p passiveRefValue_p:(AIPointer*)passiveRefValue_p header:(NSString*)header difStrong:(NSInteger)difStrong{
     if (ISOK(hdNode_p, AIKVPointer.class) && ISOK(passiveRefValue_p, AIKVPointer.class)) {
         NSArray *fnRefPorts = ARRTOOK([SMGUtils searchObjectForFilePath:passiveRefValue_p.filePath fileName:kFNRefPorts time:cRTReference]);
         NSMutableArray *refPorts = [[NSMutableArray alloc] initWithArray:fnRefPorts];
-        [AINetUtils insertPointer_Hd:hdNode_p toPorts:refPorts ps:ps difStrong:difStrong];
+        [AINetUtils insertPointer_Hd:hdNode_p toPorts:refPorts findHeader:header difStrong:difStrong];
         [SMGUtils insertObject:refPorts rootPath:passiveRefValue_p.filePath fileName:kFNRefPorts time:cRTReference saveDB:true];
     }
 }
@@ -314,13 +316,21 @@
 //MARK:===============================================================
 //MARK:                     < 通用 仅插线到ports >
 //MARK:===============================================================
-+(void) insertPointer_Hd:(AIKVPointer*)pointer toPorts:(NSMutableArray*)ports ps:(NSArray*)ps{
-    [self insertPointer_Hd:pointer toPorts:ports ps:ps difStrong:1];
+
+/**
+ *  MARK:--------------------硬盘插线到强度ports序列--------------------
+ *  @param pointer  : 把这个插到ports
+ *  @param ports    : 把pointer插到这儿;
+ *  @param ps       : pointer是alg时,传alg.content_ps | pointer是fo时,传fo.orders; (用来计算md5.header)
+ */
++(void) insertPointer_Hd:(AIKVPointer*)pointer toPorts:(NSMutableArray*)ports ps:(NSArray*)ps difStrong:(NSInteger)difStrong {
+    NSString *findHeader = [NSString md5:[SMGUtils convertPointers2String:ps]];
+    [self insertPointer_Hd:pointer toPorts:ports findHeader:findHeader difStrong:difStrong];
 }
-+(void) insertPointer_Hd:(AIKVPointer*)pointer toPorts:(NSMutableArray*)ports ps:(NSArray*)ps difStrong:(NSInteger)difStrong{
++(void) insertPointer_Hd:(AIKVPointer*)pointer toPorts:(NSMutableArray*)ports findHeader:(NSString*)findHeader difStrong:(NSInteger)difStrong{
     if (ISOK(pointer, AIPointer.class) && ISOK(ports, NSMutableArray.class)) {
         //1. 找到/新建port
-        AIPort *findPort = [self findPort:pointer fromPorts:ports ps:ps];
+        AIPort *findPort = [self findPort:pointer fromPorts:ports findHeader:findHeader];
         if (!findPort) {
             return;
         }
@@ -354,7 +364,7 @@
 //MARK:===============================================================
 
 //找出port (并从ports中移除 & 无则新建);
-+(AIPort*) findPort:(AIKVPointer*)pointer fromPorts:(NSMutableArray*)fromPorts ps:(NSArray*)ps{
++(AIPort*) findPort:(AIKVPointer*)pointer fromPorts:(NSMutableArray*)fromPorts findHeader:(NSString*)findHeader{
     if (ISOK(pointer, AIPointer.class) && ISOK(fromPorts, NSMutableArray.class)) {
         //1. 找出旧有;
         AIPort *findPort = [self findPort:pointer fromPorts:fromPorts];
@@ -364,7 +374,7 @@
         if (!findPort) {
             findPort = [[AIPort alloc] init];
             findPort.target_p = pointer;
-            findPort.header = [NSString md5:[SMGUtils convertPointers2String:ps]];
+            findPort.header = findHeader;
         }
         return findPort;
     }
@@ -429,8 +439,6 @@
         for (AINodeBase *conNode in conNodes) {
             //1. con与abs必须不同;
             if ([absNode isEqual:conNode]) continue;
-            NSArray *absContent_ps = absNode.content_ps;
-            NSArray *conContent_ps = conNode.content_ps;
             
             //2. 计算disStrong (默认为1 & 当新节点且不是SP时从具象取maxStrong);
             AnalogyType type = absNode.pointer.type;//DS2ATType(absNode.pit.ds);
@@ -439,9 +447,9 @@
             }
             
             //2. hd_具象节点插"抽象端口";
-            [AINetUtils insertPointer_Hd:absNode.pointer toPorts:conNode.absPorts ps:absContent_ps difStrong:difStrong];
+            [AINetUtils insertPointer_Hd:absNode.pointer toPorts:conNode.absPorts findHeader:absNode.getHeaderNotNull difStrong:difStrong];
             //3. hd_抽象节点插"具象端口";
-            [AINetUtils insertPointer_Hd:conNode.pointer toPorts:absConPorts ps:conContent_ps difStrong:difStrong];
+            [AINetUtils insertPointer_Hd:conNode.pointer toPorts:absConPorts findHeader:conNode.getHeaderNotNull difStrong:difStrong];
             //4. hd_存储
             [SMGUtils insertObject:conNode pointer:conNode.pointer fileName:kFNNode time:cRTNode(conNode.pointer)];
         }
@@ -1118,6 +1126,13 @@
     return [SMGUtils filterArr:fScene.transferIPorts checkValid:^BOOL(AITransferPort *item) {
         return [item.fCanset isEqual:fCanset_p];
     }];
+}
+
+/**
+ *  MARK:--------------------各类型节点的header生成规则--------------------
+ */
++(NSString*) getFeatureNodeHeader:(NSArray*)content_ps levels:(NSArray*)levels xs:(NSArray*)xs ys:(NSArray*)ys {
+    return [NSString md5:STRFORMAT(@"%@%@%@%@",[SMGUtils convertPointers2String:content_ps],CLEANSTR(levels),CLEANSTR(xs),CLEANSTR(ys))];
 }
 
 @end

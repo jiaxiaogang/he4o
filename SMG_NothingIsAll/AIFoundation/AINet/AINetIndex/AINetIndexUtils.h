@@ -31,6 +31,7 @@
  *  MARK:--------------------绝对匹配 + 限定范围--------------------
  */
 +(id) getAbsoluteMatching_ValidPs:(NSArray*)content_ps sort_ps:(NSArray*)sort_ps except_ps:(NSArray*)except_ps noRepeatArea_ps:(NSArray*)noRepeatArea_ps getRefPortsBlock:(NSArray*(^)(AIKVPointer *item_p))getRefPortsBlock at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type;
++(id) getAbsoluteMatching_ValidPs:(NSArray*)content_ps findHeader:(NSString*)findHeader except_ps:(NSArray*)except_ps noRepeatArea_ps:(NSArray*)noRepeatArea_ps getRefPortsBlock:(NSArray*(^)(AIKVPointer *item_p))getRefPortsBlock at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type;
 
 /**
  *  MARK:--------------------从指定范围中获取绝对匹配--------------------

@@ -87,6 +87,9 @@
         result = [[AIAbsAlgNode alloc] init];
         result.pointer = [SMGUtils createPointerForAlg:kPN_ALG_ABS_NODE at:at dataSource:ds isOut:isOut type:type];
         
+        //7. 存header到node
+        result.header = samesMd5;
+        
         //4. 概念是否交层,可以使用长度来判断 (有一条conAlg为交层 或 当前sames长度小于具象特征数 => 则当前为交层) (参考33111-TODO1);
         result.pointer.isJiao = [SMGUtils filterSingleFromArr:conAlgs checkValid:^BOOL(AIAlgNodeBase *item) {
             return item.pointer.isJiao || sortSames.count < item.count;
