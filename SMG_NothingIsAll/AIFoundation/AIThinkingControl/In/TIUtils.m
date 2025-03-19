@@ -142,14 +142,35 @@
     AIFeatureNode *protoFeature = [SMGUtils searchNode:feature_p];
     
     //2. 循环分别识别：特征里的组码。
-    for (AIKVPointer *groupValue_p in protoFeature.content_ps) {
-        NSArray *gMatchModels = [self recognitionGroupValue:groupValue_p];
+    for (NSInteger i = 0; i < protoFeature.count; i++) {
+        AIKVPointer *protoGroupValue_p = ARR_INDEX(protoFeature.content_ps, i);
+        NSInteger protoLevel = NUMTOOK(ARR_INDEX(protoFeature.levels, i)).integerValue;
+        NSInteger protoX = NUMTOOK(ARR_INDEX(protoFeature.xs, i)).integerValue;
+        NSInteger protoY = NUMTOOK(ARR_INDEX(protoFeature.ys, i)).integerValue;
+        NSArray *gMatchModels = [self recognitionGroupValue:protoGroupValue_p];
         
         for (AIMatchModel *gModel in gMatchModels) {
             NSArray *refPorts = [AINetUtils refPorts_All:gModel.match_p];
             
             //5. 每个refPort转为model并计匹配度和匹配数;
             for (AIPort *refPort in refPorts) {
+                
+                AIFeatureNode *assFeature = [SMGUtils searchNode:refPort.target_p];
+                
+                //TODOTOMORROW20250319: 查level,x,y要起到过滤作用，至少应用到计算相似度里。
+                //12. 写level,x,y过滤器（level是相对的，如果每个组码都差同样的层，是正常的，只是大小不同，不影响识别匹配）。
+               
+                //把assFeature和protoFeature的组码level,x,y做对比，评估一下只把有效的计上，无效的过滤掉。
+                //或者把差一层的计一个tModel到dic里，差两层的计一个，同层计一个，相当于把差几层level也计到：dic的Key里。
+                //或者为了性能，看要不要：
+                //  方案1、把level,x,y计到refPort里。（缺点：废空间）
+                //  方案2、先不管层级，把tModel收集一遍，然后把一次识别的匹配度过滤出40%来，再对这40%，重新进行一次识别，此时只保留这40%，并判断。。（缺点：识别两遍麻烦）
+                //  方案3、把groupValue的识别结果存下来，用于过滤时，可以知道哪个groupV映射哪个groupV。（优点：相当于把用于过滤level,x,y的信息单独抽了出来）。
+                
+                
+                
+                
+                
                 //6. 找model (无则新建) (性能: 此处在循环中,所以防重耗60ms正常,收集耗100ms正常);
                 AIMatchModel *tModel = [tMatchDic objectForKey:@(refPort.target_p.pointerId)];
                 if (!tModel) {
@@ -164,28 +185,16 @@
         }
     }
     
-    //11. 转为tMatchModels。
-    NSArray *tMatchModels = tMatchDic.allValues;
-    
     //11. 全含判断: 特征应该不需要全含，因为很难看到局部都相似的两个图像。
-    //NSArray *tMatchModels = [SMGUtils filterArr:tMatchDic.allValues checkValid:^BOOL(AIMatchModel *item) {
-    //    AIGroupValueNode *tItem = [SMGUtils searchNode:item.match_p];
-    //    if (tItem.count != item.matchCount) return false;
-    //    return true;
-    //}];
+    NSArray *tMatchModels = [SMGUtils filterArr:tMatchDic.allValues checkValid:^BOOL(AIMatchModel *item) {
+        AIFeatureNode *tNode = [SMGUtils searchNode:item.match_p];
+        if (tNode.count * 0.7 > item.matchCount) return false;//匹配数必须达到70%才有效。
+        return true;
+    }];
     
-    //12. 写level,x,y过滤器（level是相对的，如果每个组码都差同样的层，是正常的，只是大小不同，不影响识别匹配）。
-    
-    //TODOTOMORROW20250319: 查level,x,y要起到过滤作用，至少应用到计算相似度里。
-    
-    //a. 从粗粒度开始识别特征。
-    //3. 取相近度序列 (按相近程度排序);
-    
-    //b. 然后用粗粒度向细的粒度关联，和粗粒度下的细粒度的ref关联（转成组码后，就没有粒度纵向关联了，只有level而已 `废弃 T`）。
-    
-    
-    //13. 识别过滤器 (参考28109-todo2);
+    //12. 识别过滤器 (参考28109-todo2)。
     tMatchModels = [AIFilter recognitionMatchModelsFilter:tMatchModels radio:0.4f];
+    
     return tMatchModels;
 }
 
