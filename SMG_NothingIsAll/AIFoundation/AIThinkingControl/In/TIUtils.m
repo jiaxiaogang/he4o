@@ -27,7 +27,7 @@
  *      2023.06.03: 性能优化_复用cacheDataDic到循环外 (参考29109-测得3);
  *  @result 返回当前码识别的相近序列;
  */
-+(NSArray*) TIR_Value:(AIKVPointer*)protoV_p{
++(NSArray*) recognitionValue:(AIKVPointer*)protoV_p{
     //1. 取索引序列 & 当前稀疏码值;
     NSDictionary *cacheDataDic = [AINetIndexUtils searchDataDic:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut];
     NSArray *index_ps = [AINetIndex getIndex_ps:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut];
@@ -49,6 +49,38 @@
     return ARR_SUB(near_ps, 0, limit);
 }
 
+//MARK:===============================================================
+//MARK:                     < 组码识别 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------组码识别--------------------
+ */
++(void) recognitionGroupValue:(AIKVPointer*)groupValue_p {
+    //TODOTOMORROW20250319:
+    //a. 从粗粒度开始识别特征。
+    //3. 取相近度序列 (按相近程度排序);
+    
+    //b. 然后用粗粒度向细的粒度关联，和粗粒度下的细粒度的ref关联。
+    
+    //c. 计算乘积相似度 -> 进行竞争 -> 取交 等。
+}
+
+
+//MARK:===============================================================
+//MARK:                     < 特征识别 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------识别具象特征--------------------
+ */
++(NSArray*) recognitionFeature:(AIKVPointer*)feature_p {
+    AIFeatureNode *feature = [SMGUtils searchNode:feature_p];
+    for (AIKVPointer *groupValue_p in feature.content_ps) {
+        [self recognitionGroupValue:groupValue_p];
+    }
+    return nil;
+}
 
 //MARK:===============================================================
 //MARK:                     < 概念识别 >
@@ -151,7 +183,12 @@
         double cacheProtoData = [NUMTOOK([AINetIndex getData:item_p fromDataDic:cacheDataDic]) doubleValue];
         
         //3. 取相近度序列 (按相近程度排序);
-        NSArray *near_ps = [self TIR_Value:item_p];
+        NSArray *near_ps = nil;
+        if (PitIsFeature(item_p)) {
+            near_ps = [self recognitionFeature:item_p];
+        } else {
+            near_ps = [self recognitionValue:item_p];
+        }
         
         //4. 每个near_p做两件事:
         for (AIKVPointer *near_p in near_ps) {

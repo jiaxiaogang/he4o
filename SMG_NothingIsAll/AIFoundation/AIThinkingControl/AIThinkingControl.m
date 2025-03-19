@@ -180,20 +180,11 @@ static AIThinkingControl *_instance;
     AIFeatureNode *sFeature = [AIGeneralNodeCreater createFeatureNode:sGroupModels conNodes:nil at:algsType ds:@"sColors" isOut:false];
     AIFeatureNode *bFeature = [AIGeneralNodeCreater createFeatureNode:bGroupModels conNodes:nil at:algsType ds:@"bColors" isOut:false];
     
+    //4、构建具象概念。
+    AIAlgNodeBase *algNode = [theNet createAbsAlg_NoRepeat:@[hFeature.pointer,sFeature.pointer,hFeature.pointer] conAlgs:nil isOut:false at:nil ds:nil type:ATDefault];
     
-    //TODOTOMORROW20250319:
-    //2、识别具象特征。
-    //a. 从粗粒度开始识别特征。
-    
-    //b. 然后用粗粒度向细的粒度关联，和粗粒度下的细粒度的ref关联。
-    
-    //c. 计算乘积相似度 -> 进行竞争 -> 取交 等。
-    
-    //3、构建具象概念。
-    //AIAlgNodeBase *algNode = [theNet createAbsAlg_NoRepeat:algsArr conAlgs:nil isOut:false at:nil ds:nil type:ATDefault];
-    
-    //4. 加入瞬时记忆 & 识别等;
-    //[TCInput rInput:algNode except_ps:nil];
+    //5、装箱打包完毕，输入到rInput：进瞬时序列和识别等。
+    [TCInput rInput:algNode except_ps:nil];
 }
 
 /**

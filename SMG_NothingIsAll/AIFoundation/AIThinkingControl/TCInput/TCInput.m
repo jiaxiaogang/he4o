@@ -43,6 +43,9 @@
     mModel.protoAlg = algNode;
     mModel.inputTime = [[NSDate date] timeIntervalSince1970];
     
+    //2. 特征识别
+    [TIUtils recognitionFeature:mModel];
+    
     //2. 识别概念;
     [TIUtils recognitionAlgStep1:except_ps inModel:mModel];
     

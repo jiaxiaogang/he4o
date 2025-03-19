@@ -11,6 +11,16 @@
 @interface TIUtils : NSObject
 
 //MARK:===============================================================
+//MARK:                     < 组码识别 >
+//MARK:===============================================================
++(void) recognitionGroupValue:(AIKVPointer*)groupValue_p;
+
+//MARK:===============================================================
+//MARK:                     < 特征识别 >
+//MARK:===============================================================
++(NSArray*) recognitionFeature:(AIKVPointer*)feature_p;
+
+//MARK:===============================================================
 //MARK:                     < 概念识别 >
 //MARK:===============================================================
 +(void) recognitionAlgStep1:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel;
