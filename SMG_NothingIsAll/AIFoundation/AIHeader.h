@@ -82,7 +82,7 @@
 #import "AICMVNode.h"
 #import "AIAbsCMVNode.h"
 #import "AIMvFoManager.h"
-#import "AIValueManager.h"
+#import "AIGeneralNodeCreater.h"
 
 //其它: 类比器,评价器,触发器,防重器,输入,输出
 #import "AIImvAlgs.h"

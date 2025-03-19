@@ -1,0 +1,22 @@
+//
+//  AIGeneralNodeCreater.h
+//  SMG_NothingIsAll
+//
+//  Created by jia on 2025/3/19.
+//  Copyright © 2025 XiaoGang. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface AIGeneralNodeCreater : NSObject
+
+
++(AIGroupValueNode*) createGroupValueNode:(NSArray*)content_ps conNodes:(NSArray*)conNodes at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut;
++(AIFeatureNode*) createFeatureNode:(NSDictionary*)groupDic_ps conNodes:(NSArray*)conNodes at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut;
+
+/**
+ *  MARK:--------------------通用节点构建器--------------------
+ */
++(id) createNode:(NSArray*)content_ps conNodes:(NSArray*)conNodes at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut newBlock:(id(^)())newBlock;
+
+@end

@@ -175,9 +175,13 @@ static AIThinkingControl *_instance;
     NSDictionary *sGroupDic_ps = [theNet algModelConvert2PointersV2:algsModel.sColors at:algsType ds:@"sColors" levelNum:algsModel.levelNum];
     NSDictionary *bGroupDic_ps = [theNet algModelConvert2PointersV2:algsModel.bColors at:algsType ds:@"bColors" levelNum:algsModel.levelNum];
     
-    //TODOTOMORROW20250318:
-    //1、构建具象特征。
+    //3、构建具象特征。
+    AIFeatureNode *hFeature = [AIGeneralNodeCreater createFeatureNode:hGroupDic_ps conNodes:nil at:algsType ds:@"hColors" isOut:false];
+    AIFeatureNode *sFeature = [AIGeneralNodeCreater createFeatureNode:sGroupDic_ps conNodes:nil at:algsType ds:@"sColors" isOut:false];
+    AIFeatureNode *bFeature = [AIGeneralNodeCreater createFeatureNode:bGroupDic_ps conNodes:nil at:algsType ds:@"bColors" isOut:false];
     
+    
+    //TODOTOMORROW20250319:
     //2、识别具象特征。
     //a. 从粗粒度开始识别特征。
     

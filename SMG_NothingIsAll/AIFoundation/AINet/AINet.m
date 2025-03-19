@@ -170,7 +170,7 @@ static AINet *_instance;
     NSMutableDictionary *result = [NSMutableDictionary new];
     for (NSString *key in groupDic.allKeys) {
         NSArray *subDot_ps = [groupDic objectForKey:key];
-        AIGroupValueNode *groupNode = [AIValueManager createGroupValueNode:subDot_ps conNodes:nil at:at ds:ds isOut:false];
+        AIGroupValueNode *groupNode = [AIGeneralNodeCreater createGroupValueNode:subDot_ps conNodes:nil at:at ds:ds isOut:false];
         [result setObject:groupNode.pointer forKey:key];
     }
     return result;
