@@ -12,7 +12,7 @@
 
 
 +(AIGroupValueNode*) createGroupValueNode:(NSArray*)content_ps conNodes:(NSArray*)conNodes at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut;
-+(AIFeatureNode*) createFeatureNode:(NSDictionary*)groupDic_ps conNodes:(NSArray*)conNodes at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut;
++(AIFeatureNode*) createFeatureNode:(NSArray*)groupModels conNodes:(NSArray*)conNodes at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut;
 
 /**
  *  MARK:--------------------通用节点构建器--------------------

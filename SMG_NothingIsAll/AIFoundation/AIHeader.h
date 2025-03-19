@@ -95,7 +95,7 @@
 #import "AINoRepeatRun.h"
 #import "AIRank.h"
 #import "AIFilter.h"
-#import "InputDotModel.h"
+#import "InputGroupValueModel.h"
 #import "AIVisionAlgsModelV2.h"
 #import "AIVisionAlgsV2.h"
 

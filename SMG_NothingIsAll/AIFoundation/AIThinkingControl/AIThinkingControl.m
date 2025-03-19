@@ -171,14 +171,14 @@ static AIThinkingControl *_instance;
     
     //2. 装箱（稀疏码的：单码层 和 组码层）。
     //TODO: 这里随后转成NSDictionary后，只要判断dataSource对应的value是dic类型，也可以这么处理（到时候，改V2支持model转Dic类型输入时，自然就知道这里怎么改了）。
-    NSDictionary *hGroupDic_ps = [theNet algModelConvert2PointersV2:algsModel.hColors at:algsType ds:@"hColors" levelNum:algsModel.levelNum];
-    NSDictionary *sGroupDic_ps = [theNet algModelConvert2PointersV2:algsModel.sColors at:algsType ds:@"sColors" levelNum:algsModel.levelNum];
-    NSDictionary *bGroupDic_ps = [theNet algModelConvert2PointersV2:algsModel.bColors at:algsType ds:@"bColors" levelNum:algsModel.levelNum];
+    NSArray *hGroupModels = [theNet algModelConvert2PointersV2:algsModel.hColors at:algsType ds:@"hColors" levelNum:algsModel.levelNum];
+    NSArray *sGroupModels = [theNet algModelConvert2PointersV2:algsModel.sColors at:algsType ds:@"sColors" levelNum:algsModel.levelNum];
+    NSArray *bGroupModels = [theNet algModelConvert2PointersV2:algsModel.bColors at:algsType ds:@"bColors" levelNum:algsModel.levelNum];
     
     //3、构建具象特征。
-    AIFeatureNode *hFeature = [AIGeneralNodeCreater createFeatureNode:hGroupDic_ps conNodes:nil at:algsType ds:@"hColors" isOut:false];
-    AIFeatureNode *sFeature = [AIGeneralNodeCreater createFeatureNode:sGroupDic_ps conNodes:nil at:algsType ds:@"sColors" isOut:false];
-    AIFeatureNode *bFeature = [AIGeneralNodeCreater createFeatureNode:bGroupDic_ps conNodes:nil at:algsType ds:@"bColors" isOut:false];
+    AIFeatureNode *hFeature = [AIGeneralNodeCreater createFeatureNode:hGroupModels conNodes:nil at:algsType ds:@"hColors" isOut:false];
+    AIFeatureNode *sFeature = [AIGeneralNodeCreater createFeatureNode:sGroupModels conNodes:nil at:algsType ds:@"sColors" isOut:false];
+    AIFeatureNode *bFeature = [AIGeneralNodeCreater createFeatureNode:bGroupModels conNodes:nil at:algsType ds:@"bColors" isOut:false];
     
     
     //TODOTOMORROW20250319:

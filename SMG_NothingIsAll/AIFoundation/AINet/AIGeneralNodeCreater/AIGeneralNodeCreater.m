@@ -30,22 +30,30 @@
  *      2025.03.19: 支持构建特征，由多个稀疏码（单码或组码）组成。
  *  @result notnull
  */
-+(AIFeatureNode*) createFeatureNode:(NSDictionary*)groupDic_ps conNodes:(NSArray*)conNodes at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut {
++(AIFeatureNode*) createFeatureNode:(NSArray*)groupModels conNodes:(NSArray*)conNodes at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut {
     
     //TODOTOMORROW20250319:
-    //1. 此处把key单独解析存为level,x,y值。
-    for (NSString *key in groupDic_ps.allKeys) {
-        
-    }
-    //2. 把value按一级level,二级x,三级y排好序再生成content_ps。
+    //1. 数据准备：排序-把value按一级level,二级x,三级y排好序再生成content_ps。
     
-    NSArray *content_ps = nil;
     
-    return [AIGeneralNodeCreater createNode:content_ps conNodes:conNodes at:at ds:ds isOut:isOut newBlock:^id{
+    //2. 数据准备：转content_ps。
+    NSArray *content_ps = [SMGUtils convertArr:groupModels convertBlock:^id(InputGroupValueModel *obj) {
+        return obj.groupValue.p;
+    }];
+    
+    //3. 生成node
+    AIFeatureNode *result = [AIGeneralNodeCreater createNode:content_ps conNodes:conNodes at:at ds:ds isOut:isOut newBlock:^id{
         AIFeatureNode *newNode = [[AIFeatureNode alloc] init];
         newNode.pointer = [SMGUtils createPointerForFeature:at dataSource:ds isOut:isOut];
         return newNode;
     }];
+    
+    //4. 单独存level,x,y值。
+    for (InputGroupValueModel *model in groupModels) {
+        
+    }
+    
+    return result;
 }
 
 /**
