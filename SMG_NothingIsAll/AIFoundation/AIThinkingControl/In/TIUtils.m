@@ -107,6 +107,7 @@
     
     //11. 全含判断: 从大到小,依次取到对应的node和matchingCount (注: 支持相近后,应该全是全含了,参考25084-1);
     NSArray *gMatchModels = [SMGUtils filterArr:gMatchDic.allValues checkValid:^BOOL(AIMatchModel *item) {
+        //TODOTOMORROW20250320: 此处gItem.contentPorts有为空的情况。。
         AIGroupValueNode *gItem = [SMGUtils searchNode:item.match_p];
         if (gItem.count != item.matchCount) return false;
         return true;
@@ -196,8 +197,8 @@
         
         //13. ass也按xy坐标从小到大排序。
         MapModel *assSortResult = [self sortIByXYWithILXYArr:assILXYArr];
-        NSArray *assSortByX = protoSortResult.v1;
-        NSArray *assSortByY = protoSortResult.v2;
+        NSArray *assSortByX = assSortResult.v1;
+        NSArray *assSortByY = assSortResult.v2;
          
         //14. 对比（protoSortByX和assSortByX）（protoSortByX和assSortByX）序列的相似度。
         CGFloat simOfX = [SMGUtils similarityOfArr1:protoSortByX a2:assSortByX];

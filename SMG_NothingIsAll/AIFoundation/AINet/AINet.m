@@ -147,7 +147,7 @@ static AINet *_instance;
                         }
                     }
                 }
-                NSLog(@"%ld_%ld_%ld %.2f",groupLevel,groupRow,groupColumn,minMatchValue);
+                //NSLog(@"%ld_%ld_%ld %.2f",groupLevel,groupRow,groupColumn,minMatchValue);
                 
                 //5. 如果很相似，防重掉(压缩)。
                 if (minMatchValue > 0.9) continue;

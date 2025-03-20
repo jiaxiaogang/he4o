@@ -136,7 +136,7 @@
         //7. 存header到node
         result.header = header;
         
-        //4. 概念是否交层,可以使用长度来判断 (有一条conAlg为交层 或 当前sames长度小于具象特征数 => 则当前为交层) (参考33111-TODO1);
+        //8. 概念是否交层,可以使用长度来判断 (有一条conAlg为交层 或 当前sames长度小于具象特征数 => 则当前为交层) (参考33111-TODO1);
         result.pointer.isJiao = [SMGUtils filterSingleFromArr:conNodes checkValid:^BOOL(AIAlgNodeBase *item) {
             return item.pointer.isJiao || content_ps.count < item.count;
         }];
@@ -147,12 +147,12 @@
         }]));
     }
     
-    //4. value.refPorts (更新/加强微信息的引用序列)
-    [AINetUtils insertRefPorts_General:result.pointer content_ps:result.content_ps difStrong:1 header:header];
-    
-    //5. 关联 & 存储
+    //11. 关联 & 存储
     [AINetUtils relateGeneralAbs:result absConPorts:result.conPorts conNodes:validConAlgs isNew:absIsNew difStrong:1];
     [SMGUtils insertNode:result];
+    
+    //12. value.refPorts (更新/加强微信息的引用序列)
+    [AINetUtils insertRefPorts_General:result.pointer content_ps:result.content_ps difStrong:1 header:header];
     return result;
 }
 
