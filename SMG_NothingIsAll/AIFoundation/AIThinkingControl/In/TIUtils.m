@@ -138,59 +138,96 @@
  */
 +(NSArray*) recognitionFeature:(AIKVPointer*)feature_p {
     //1. 数据准备
-    NSMutableDictionary *tMatchDic = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *resultDic = [[NSMutableDictionary alloc] init];
     AIFeatureNode *protoFeature = [SMGUtils searchNode:feature_p];
+    NSMutableDictionary *gMatchDic = [[NSMutableDictionary alloc] init]; // <K=protoFeatore.index, V=识别到的组码matchModels>
     
     //2. 循环分别识别：特征里的组码。
     for (NSInteger i = 0; i < protoFeature.count; i++) {
         AIKVPointer *protoGroupValue_p = ARR_INDEX(protoFeature.content_ps, i);
-        NSInteger protoLevel = NUMTOOK(ARR_INDEX(protoFeature.levels, i)).integerValue;
-        NSInteger protoX = NUMTOOK(ARR_INDEX(protoFeature.xs, i)).integerValue;
-        NSInteger protoY = NUMTOOK(ARR_INDEX(protoFeature.ys, i)).integerValue;
+        
+        //3. 组码识别。
         NSArray *gMatchModels = [self recognitionGroupValue:protoGroupValue_p];
+        
+        //4. 把组码的识别结果存下来，后面退出循环后还有用：（用于level,x,y做判断和过滤时，可以知道哪个groupV映射哪个groupV）。
+        [gMatchDic setObject:gMatchModels forKey:@(i)];
         
         for (AIMatchModel *gModel in gMatchModels) {
             NSArray *refPorts = [AINetUtils refPorts_All:gModel.match_p];
             
             //5. 每个refPort转为model并计匹配度和匹配数;
             for (AIPort *refPort in refPorts) {
-                
                 AIFeatureNode *assFeature = [SMGUtils searchNode:refPort.target_p];
                 
-                //TODOTOMORROW20250319: 查level,x,y要起到过滤作用，至少应用到计算相似度里。
-                //12. 写level,x,y过滤器（level是相对的，如果每个组码都差同样的层，是正常的，只是大小不同，不影响识别匹配）。
-               
-                //把assFeature和protoFeature的组码level,x,y做对比，评估一下只把有效的计上，无效的过滤掉。
-                //或者把差一层的计一个tModel到dic里，差两层的计一个，同层计一个，相当于把差几层level也计到：dic的Key里。
-                //或者为了性能，看要不要：
-                //  方案1、把level,x,y计到refPort里。（缺点：废空间）
-                //  方案2、先不管层级，把tModel收集一遍，然后把一次识别的匹配度过滤出40%来，再对这40%，重新进行一次识别，此时只保留这40%，并判断。。（缺点：识别两遍麻烦）
-                //  方案3、把groupValue的识别结果存下来，用于过滤时，可以知道哪个groupV映射哪个groupV。（优点：相当于把用于过滤level,x,y的信息单独抽了出来）。
-                
-                
-                
-                
-                
                 //6. 找model (无则新建) (性能: 此处在循环中,所以防重耗60ms正常,收集耗100ms正常);
-                AIMatchModel *tModel = [tMatchDic objectForKey:@(refPort.target_p.pointerId)];
-                if (!tModel) {
-                    tModel = [[AIMatchModel alloc] init];
-                    [tMatchDic setObject:tModel forKey:@(refPort.target_p.pointerId)];
-                }
+                AIMatchModel *tModel = [resultDic objectForKey:@(refPort.target_p.pointerId)];
+                if (!tModel) tModel = [[AIMatchModel alloc] init];
                 tModel.match_p = refPort.target_p;
                 tModel.matchCount++;
                 tModel.matchValue *= gModel.matchValue;
                 tModel.sumRefStrong += (int)refPort.strong.value;
+                [resultDic setObject:tModel forKey:@(refPort.target_p.pointerId)];
             }
         }
     }
     
     //11. 全含判断: 特征应该不需要全含，因为很难看到局部都相似的两个图像。
-    NSArray *tMatchModels = [SMGUtils filterArr:tMatchDic.allValues checkValid:^BOOL(AIMatchModel *item) {
+    NSArray *tMatchModels = [SMGUtils filterArr:resultDic.allValues checkValid:^BOOL(AIMatchModel *item) {
         AIFeatureNode *tNode = [SMGUtils searchNode:item.match_p];
         if (tNode.count * 0.7 > item.matchCount) return false;//匹配数必须达到70%才有效。
         return true;
     }];
+    
+    //12. levelxy过滤器。
+    NSMutableDictionary *resultDicV2 = [[NSMutableDictionary alloc] init];
+    NSArray *matchFeatureMapModels = [SMGUtils convertArr:tMatchModels convertBlock:^id(AIMatchModel *obj) {
+        return [MapModel newWithV1:obj v2:[SMGUtils searchNode:obj.match_p]];
+    }];
+    for (NSNumber *key in gMatchDic.allKeys) {
+        //a. 把
+        NSInteger protoIndex = key.integerValue;
+        NSInteger protoLevel = NUMTOOK(ARR_INDEX(protoFeature.levels, protoIndex)).integerValue;
+        NSInteger protoX = NUMTOOK(ARR_INDEX(protoFeature.xs, protoIndex)).integerValue;
+        NSInteger protoY = NUMTOOK(ARR_INDEX(protoFeature.ys, protoIndex)).integerValue;
+        
+        //b. 把proto中组码识别的结果取出来。
+        NSArray *gMatchModels = [gMatchDic objectForKey:key];
+        //NSArray *gMatch_ps = [SMGUtils convertArr:gMatchModels convertBlock:^id(AIMatchModel *obj) {
+        //    return obj.match_p;
+        //}];
+        
+        for (MapModel *item in matchFeatureMapModels) {
+            AIFeatureNode *matchFeature = item.v2;
+            MapModel *find = [self findSmallRefAtBigIndex:gMatchModels bigNode:matchFeature];
+            if (!find) continue;//这一条特征识别结果，与protoIndex帧无映射。
+            NSInteger matchIndex = NUMTOOK(find.v1).integerValue;
+            AIMatchModel *gMatchModel = find.v2;
+            NSInteger matchLevel = NUMTOOK(ARR_INDEX(matchFeature.levels, matchIndex)).integerValue;
+            NSInteger matchX = NUMTOOK(ARR_INDEX(matchFeature.xs, matchIndex)).integerValue;
+            NSInteger matchY = NUMTOOK(ARR_INDEX(matchFeature.ys, matchIndex)).integerValue;
+            
+            //c. 根据level分别记录不同deltaLevel结果（把deltaLevel做为key的一部分，记录到识别结果字典里）。
+            NSString *keyV2 = STRFORMAT(@"%ld_%ld",protoLevel - matchLevel,matchFeature.pId);
+            AIMatchModel *tModel = [resultDicV2 objectForKey:keyV2];
+            if (!tModel) tModel = [[AIMatchModel alloc] init];
+            tModel.match_p = matchFeature.p;
+            tModel.matchCount++;
+            tModel.matchValue *= gMatchModel.matchValue;
+            tModel.sumRefStrong += gMatchModel.strongValue;
+            
+            [resultDicV2 setObject:tModel forKey:keyV2];
+            //
+            
+        }
+        
+    }
+    
+    //TODOTOMORROW20250319: 查level,x,y要起到过滤作用，至少应用到计算相似度里。
+    //12. 写level,x,y过滤器（level是相对的，如果每个组码都差同样的层，是正常的，只是大小不同，不影响识别匹配）。
+   
+    //把assFeature和protoFeature的组码level,x,y做对比，评估一下只把有效的计上，无效的过滤掉。
+    
+    
     
     //12. 识别过滤器 (参考28109-todo2)。
     tMatchModels = [AIFilter recognitionMatchModelsFilter:tMatchModels radio:0.4f];
@@ -945,5 +982,17 @@
     return protoAlgAbs_ps;
 }
 
+/**
+ *  MARK:--------------------获取微观一层在宏观一层content_ps中的下标--------------------
+ */
++(MapModel*) findSmallRefAtBigIndex:(NSArray*)smallMatchModels bigNode:(AINodeBase*)bigNode {
+    for (AIMatchModel *smallMatchModel in smallMatchModels) {
+        NSInteger findIndex = [bigNode.content_ps indexOfObject:smallMatchModel.match_p];
+        if (findIndex > -1) {
+            return [MapModel newWithV1:@(findIndex) v2:smallMatchModel];//找到直接返回。
+        }
+    }
+    return nil;
+}
 
 @end
