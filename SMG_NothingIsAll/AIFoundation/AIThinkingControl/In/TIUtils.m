@@ -87,25 +87,6 @@
         NSArray *vMatchModels = [self recognitionValue:protoValue_p];
         NSMutableArray *except_ps = [[NSMutableArray alloc] init];
         
-        
-        //TODOTOMORROW20250320: 明天查下这里，为什么只索引到3条，难道一模一样的图，也不能识别到自己吗？
-        BOOL findSuccess = false;
-        for (AIMatchModel *vModel in vMatchModels) {
-            NSArray *refPorts = [AINetUtils refPorts_All4Value:vModel.match_p];
-            
-            //经查注掉这里就有了，难道是params.i记录的不对？
-            refPorts = [SMGUtils filterArr:refPorts checkValid:^BOOL(AIPort *item) {
-                NSNumber *refParamsI = [item.params objectForKey:@"i"];
-                return (refParamsI ? refParamsI.integerValue : -999) == i;
-            }];
-            if ([[SMGUtils convertArr:refPorts convertBlock:^id(AIPort *obj) {
-                return obj.target_p;
-            }] containsObject:groupValue_p]) {
-                findSuccess = true;
-            }
-        }
-        NSLog(@"从第 %ld 找到proto了：%d",i,findSuccess);
-        
         //4. 每个near_p向ref找相似的assGroupValue。
         for (AIMatchModel *vModel in vMatchModels) {
             NSArray *refPorts = [AINetUtils refPorts_All4Value:vModel.match_p];
@@ -141,8 +122,8 @@
     //11. 全含判断: 从大到小,依次取到对应的node和matchingCount (注: 支持相近后,应该全是全含了,参考25084-1);
     NSArray *gMatchModels = [SMGUtils filterArr:gMatchDic.allValues checkValid:^BOOL(AIMatchModel *item) {
         AIGroupValueNode *gItem = [SMGUtils searchNode:item.match_p];
-        if (gItem.count == 0) {
-            ELog(@"查下为什么为0条，如果2025.04.20之前还没有复现，则去掉此断点，说明bug是开发中的脏数据导致的");
+        if (gItem.count != 9) {
+            ELog(@"BUG-查下为什么为0条，如果2025.04.20之前还没有复现，则去掉此断点，说明bug是开发中的脏数据导致的");
         }
         if (gItem.count != item.matchCount) return false;
         return true;
@@ -188,6 +169,7 @@
         [protoILXYArr addObject:[MapModel newWithV1:@(i) v2:@(protoLevel) v3:NUMTOOK(ARR_INDEX(protoFeature.xs, i)) v4:NUMTOOK(ARR_INDEX(protoFeature.ys, i))]];
         
         //4. 组码识别。
+        NSMutableArray *except_ps = [[NSMutableArray alloc] init];
         NSArray *gMatchModels = [self recognitionGroupValue:protoGroupValue_p];
         for (AIMatchModel *gModel in gMatchModels) {
             NSArray *refPorts = [AINetUtils refPorts_All:gModel.match_p];
@@ -201,15 +183,21 @@
                 NSInteger assX = NUMTOOK([refPort.params objectForKey:@"x"]).integerValue;
                 NSInteger assY = NUMTOOK([refPort.params objectForKey:@"y"]).integerValue;
                 
-                //6b. 把protoIndex,assLevel,assX,assY都存下来（后面用于判断xy相似度要用）（参考34052-TODO4）。
-                NSMutableArray *oldILXYValue = [[NSMutableArray alloc] initWithArray:[resultILXYDic objectForKey:@(refPort.target_p.pointerId)]];
-                [oldILXYValue addObject:[MapModel newWithV1:@(i) v2:@(assLevel) v3:@(assX) v4:@(assY)]];
-                [resultILXYDic setObject:oldILXYValue forKey:@(refPort.target_p.pointerId)];
-                
                 //7. 根据level分别记录不同deltaLevel结果（把deltaLevel做为key的一部分，记录到识别结果字典里）。
                 NSString *assKey = STRFORMAT(@"%ld_%ld",protoLevel - assLevel,refPort.target_p.pointerId);
                 
-                //8. 找model (无则新建) (性能: 此处在循环中,所以防重耗60ms正常,收集耗100ms正常);
+                //8. 防重
+                if ([except_ps containsObject:assKey]) continue;
+                
+                //TODOTOMORROW20250320: 此处特征里有76个组码，但oldILXYDic却能收集上千个，显然有问题。
+                //经查：matchModel.count也有上千个，，，
+                
+                //9. 把protoIndex,assLevel,assX,assY都存下来（后面用于判断xy相似度要用）（参考34052-TODO4）。
+                NSMutableArray *oldILXYValue = [[NSMutableArray alloc] initWithArray:[resultILXYDic objectForKey:assKey]];
+                [oldILXYValue addObject:[MapModel newWithV1:@(i) v2:@(assLevel) v3:@(assX) v4:@(assY)]];
+                [resultILXYDic setObject:oldILXYValue forKey:assKey];
+                
+                //10. 找model (无则新建) (性能: 此处在循环中,所以防重耗60ms正常,收集耗100ms正常);
                 AIMatchModel *tModel = [resultDic objectForKey:assKey];
                 if (!tModel) tModel = [[AIMatchModel alloc] init];
                 tModel.match_p = refPort.target_p;

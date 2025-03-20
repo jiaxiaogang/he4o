@@ -317,7 +317,15 @@
     }else if(pA.strong.value < pB.strong.value){
         return NSOrderedAscending;
     }else{
-        return [SMGUtils comparePointerA:pA.target_p pointerB:pB.target_p];
+        //3. 然后对比目标地址。
+        NSComparisonResult comparisonByTargetP = [SMGUtils comparePointerA:pA.target_p pointerB:pB.target_p];
+        if (comparisonByTargetP != NSOrderedSame) return comparisonByTargetP;
+        
+        //4. 再然后对比params的hash值。
+        if (pA.params && pB.params) {
+            return [SMGUtils compareIntA:CLEANSTR(pA.params).hash intB:CLEANSTR(pB.params).hash];
+        }
+        return NSOrderedSame;
     }
 }
 

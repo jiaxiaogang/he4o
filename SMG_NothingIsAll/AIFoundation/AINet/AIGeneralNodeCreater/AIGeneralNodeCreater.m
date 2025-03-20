@@ -142,9 +142,9 @@
         }];
         
         [result setContent_ps:content_ps];
-        NSLog(@"构建新码:%@%ld fromConAlgs:%@",NSStringFromClass(result.class),result.pointer.pointerId,CLEANSTR([SMGUtils convertArr:conNodes convertBlock:^id(AINodeBase *obj) {
-            return STRFORMAT(@"%@%ld",NSStringFromClass(obj.class),obj.pId);
-        }]));
+        //NSLog(@"构建新码:%@%ld fromConAlgs:%@",NSStringFromClass(result.class),result.pointer.pointerId,CLEANSTR([SMGUtils convertArr:conNodes convertBlock:^id(AINodeBase *obj) {
+        //    return STRFORMAT(@"%@%ld",NSStringFromClass(obj.class),obj.pId);
+        //}]));
     }
     
     //11. 关联 & 存储
