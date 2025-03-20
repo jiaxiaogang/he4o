@@ -83,7 +83,7 @@
 +(NSInteger) getStrong:(AINodeBase*)absNode atConNode:(AINodeBase*)conNode type:(AnalogyType)type{
     if (absNode && conNode) {
         NSArray *absPorts = [AINetUtils absPorts_All:conNode type:type];
-        AIPort *absPort = [AINetUtils findPort:absNode.pointer fromPorts:absPorts];
+        AIPort *absPort = [self findPort:absNode.pointer fromPorts:absPorts findParams:nil];//抽具象不需要params
         if (absPort) return absPort.strong.value;
     }
     return 0;
@@ -234,7 +234,8 @@
     content_ps = [SMGUtils removeRepeat:content_ps];
     if (node_p && ARRISOK(content_ps)) {
         //1. 遍历value_p微信息,添加引用;
-        for (AIKVPointer *item_p in content_ps) {
+        for (NSInteger i = 0; i < content_ps.count; i++) {
+            AIKVPointer *item_p = ARR_INDEX(content_ps, i);
             if (PitIsValue(item_p)) {
                 //2. 为稀疏码时：硬盘网络时,取出refPorts -> 并二分法强度序列插入 -> 存XGWedis;
                 [self insertRefPorts_HdNode:node_p passiveRefValue_p:item_p header:header difStrong:difStrong];
@@ -242,7 +243,14 @@
                 //3. 为其它节点时：
                 //2025.03.18: 支持多码特征后，概念由特征组成，而不是单码。
                 AINodeBase *item = [SMGUtils searchNode:item_p];
-                [AINetUtils insertPointer_Hd:node_p toPorts:item.refPorts findHeader:header difStrong:difStrong];
+                
+                //4. 如果是特征时，记录上level,x,y值到refPort中。
+                NSDictionary *findParams = nil;
+                if (PitIsFeature(node_p)) {
+                    AIFeatureNode *feature = [SMGUtils searchNode:node_p];
+                    findParams = @{@"l":ARR_INDEX(feature.levels, i), @"x":ARR_INDEX(feature.xs, i), @"y":ARR_INDEX(feature.ys, i)};
+                }
+                [AINetUtils insertPointer_Hd:node_p toPorts:item.refPorts findHeader:header difStrong:difStrong findParams:findParams];
                 [SMGUtils insertNode:item];
             }
         }
@@ -280,7 +288,7 @@
 +(void) insertRefPorts_AllFoNode:(AIKVPointer*)foNode_p order_p:(AIKVPointer*)order_p ps:(NSArray*)ps difStrong:(NSInteger)difStrong{
     AIAlgNodeBase *algNode = [SMGUtils searchObjectForPointer:order_p fileName:kFNNode time:cRTNode(order_p)];
     if (ISOK(algNode, AIAlgNodeBase.class)) {
-        [AINetUtils insertPointer_Hd:foNode_p toPorts:algNode.refPorts ps:ps difStrong:difStrong];
+        [AINetUtils insertPointer_Hd:foNode_p toPorts:algNode.refPorts ps:ps difStrong:difStrong findParams:nil];//时序没有附加params
         [SMGUtils insertObject:algNode pointer:algNode.pointer fileName:kFNNode time:cRTNode(algNode.pointer)];
     }
 }
@@ -307,7 +315,7 @@
     if (ISOK(hdNode_p, AIKVPointer.class) && ISOK(passiveRefValue_p, AIKVPointer.class)) {
         NSArray *fnRefPorts = ARRTOOK([SMGUtils searchObjectForFilePath:passiveRefValue_p.filePath fileName:kFNRefPorts time:cRTReference]);
         NSMutableArray *refPorts = [[NSMutableArray alloc] initWithArray:fnRefPorts];
-        [AINetUtils insertPointer_Hd:hdNode_p toPorts:refPorts findHeader:header difStrong:difStrong];
+        [AINetUtils insertPointer_Hd:hdNode_p toPorts:refPorts findHeader:header difStrong:difStrong findParams:nil];//稀疏码单码没有附加params
         [SMGUtils insertObject:refPorts rootPath:passiveRefValue_p.filePath fileName:kFNRefPorts time:cRTReference saveDB:true];
     }
 }
@@ -323,14 +331,14 @@
  *  @param ports    : 把pointer插到这儿;
  *  @param ps       : pointer是alg时,传alg.content_ps | pointer是fo时,传fo.orders; (用来计算md5.header)
  */
-+(void) insertPointer_Hd:(AIKVPointer*)pointer toPorts:(NSMutableArray*)ports ps:(NSArray*)ps difStrong:(NSInteger)difStrong {
++(void) insertPointer_Hd:(AIKVPointer*)pointer toPorts:(NSMutableArray*)ports ps:(NSArray*)ps difStrong:(NSInteger)difStrong findParams:(NSDictionary*)findParams {
     NSString *findHeader = [NSString md5:[SMGUtils convertPointers2String:ps]];
-    [self insertPointer_Hd:pointer toPorts:ports findHeader:findHeader difStrong:difStrong];
+    [self insertPointer_Hd:pointer toPorts:ports findHeader:findHeader difStrong:difStrong findParams:findParams];
 }
-+(void) insertPointer_Hd:(AIKVPointer*)pointer toPorts:(NSMutableArray*)ports findHeader:(NSString*)findHeader difStrong:(NSInteger)difStrong{
++(void) insertPointer_Hd:(AIKVPointer*)pointer toPorts:(NSMutableArray*)ports findHeader:(NSString*)findHeader difStrong:(NSInteger)difStrong findParams:(NSDictionary*)findParams {
     if (ISOK(pointer, AIPointer.class) && ISOK(ports, NSMutableArray.class)) {
         //1. 找到/新建port
-        AIPort *findPort = [self findPort:pointer fromPorts:ports findHeader:findHeader];
+        AIPort *findPort = [self findPort:pointer fromPorts:ports findHeader:findHeader findParams:findParams];
         if (!findPort) {
             return;
         }
@@ -364,10 +372,10 @@
 //MARK:===============================================================
 
 //找出port (并从ports中移除 & 无则新建);
-+(AIPort*) findPort:(AIKVPointer*)pointer fromPorts:(NSMutableArray*)fromPorts findHeader:(NSString*)findHeader{
++(AIPort*) findPort:(AIKVPointer*)pointer fromPorts:(NSMutableArray*)fromPorts findHeader:(NSString*)findHeader findParams:(NSDictionary*)findParams {
     if (ISOK(pointer, AIPointer.class) && ISOK(fromPorts, NSMutableArray.class)) {
         //1. 找出旧有;
-        AIPort *findPort = [self findPort:pointer fromPorts:fromPorts];
+        AIPort *findPort = [self findPort:pointer fromPorts:fromPorts findParams:findParams];
         if (findPort) [fromPorts removeObject:findPort];
         
         //2. 无则新建port;
@@ -375,17 +383,18 @@
             findPort = [[AIPort alloc] init];
             findPort.target_p = pointer;
             findPort.header = findHeader;
+            findPort.params = findParams;
         }
         return findPort;
     }
     return nil;
 }
 //找出port
-+(AIPort*) findPort:(AIKVPointer*)pointer fromPorts:(NSArray*)fromPorts{
++(AIPort*) findPort:(AIKVPointer*)pointer fromPorts:(NSArray*)fromPorts findParams:(NSDictionary*)findParams {
     fromPorts = ARRTOOK(fromPorts);
     NSArray *cp = [fromPorts copy];
     for (AIPort *port in cp) {
-        if ([port.target_p isEqual:pointer]) {
+        if ([port.target_p isEqual:pointer] && [DICTOOK(port.params) isEqual:findParams]) {
             return port;
         }
     }
@@ -447,9 +456,9 @@
             }
             
             //2. hd_具象节点插"抽象端口";
-            [AINetUtils insertPointer_Hd:absNode.pointer toPorts:conNode.absPorts findHeader:absNode.getHeaderNotNull difStrong:difStrong];
+            [AINetUtils insertPointer_Hd:absNode.pointer toPorts:conNode.absPorts findHeader:absNode.getHeaderNotNull difStrong:difStrong findParams:nil];//抽具象不需要params
             //3. hd_抽象节点插"具象端口";
-            [AINetUtils insertPointer_Hd:conNode.pointer toPorts:absConPorts findHeader:conNode.getHeaderNotNull difStrong:difStrong];
+            [AINetUtils insertPointer_Hd:conNode.pointer toPorts:absConPorts findHeader:conNode.getHeaderNotNull difStrong:difStrong findParams:nil];//抽具象不需要params
             //4. hd_存储
             [SMGUtils insertObject:conNode pointer:conNode.pointer fileName:kFNNode time:cRTNode(conNode.pointer)];
         }
@@ -474,9 +483,9 @@
         if ([conNode isEqual:absNode]) continue;
         
         //2. hd_具象节点插"抽象端口";
-        [AINetUtils insertPointer_Hd:absNode.pointer toPorts:conNode.absPorts ps:absNode.content_ps difStrong:1];
+        [AINetUtils insertPointer_Hd:absNode.pointer toPorts:conNode.absPorts ps:absNode.content_ps difStrong:1 findParams:nil];//抽具象不需要params
         //3. hd_抽象节点插"具象端口";
-        [AINetUtils insertPointer_Hd:conNode.pointer toPorts:absNode.conPorts ps:conNode.content_ps difStrong:1];
+        [AINetUtils insertPointer_Hd:conNode.pointer toPorts:absNode.conPorts ps:conNode.content_ps difStrong:1 findParams:nil];//抽具象不需要params
         //4. hd_存储
         [SMGUtils insertNode:absNode];
         [SMGUtils insertNode:conNode];
@@ -492,7 +501,7 @@
 +(void) relateFo:(AIFoNodeBase*)foNode mv:(AICMVNodeBase*)mvNode{
     if (foNode && mvNode) {
         //1. 互指向
-        [AINetUtils insertPointer_Hd:foNode.pointer toPorts:mvNode.foPorts ps:foNode.content_ps difStrong:1];
+        [AINetUtils insertPointer_Hd:foNode.pointer toPorts:mvNode.foPorts ps:foNode.content_ps difStrong:1 findParams:nil];//mv基本模型不需要params
         foNode.cmvNode_p = mvNode.pointer;
         
         //2. 对content.refPort标记mv;
@@ -832,7 +841,7 @@
         NSInteger conIndex = NUMTOOK([indexDic objectForKey:key]).integerValue;
         AIAlgNodeBase *absAlg = [SMGUtils searchNode:ARR_INDEX(matchFo.content_ps, absIndex)];
         AIKVPointer *conAlg = ARR_INDEX(cansetFo.content_ps, conIndex);
-        AIPort *findPort = [AINetUtils findPort:conAlg fromPorts:absAlg.conPorts];
+        AIPort *findPort = [AINetUtils findPort:conAlg fromPorts:absAlg.conPorts findParams:nil];//抽具象没有params
         sumStrong += findPort.strong.value;
     }
     return sumStrong;

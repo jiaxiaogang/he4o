@@ -158,15 +158,13 @@
             
             //5. 每个refPort转为model并计匹配度和匹配数;
             for (AIPort *refPort in refPorts) {
-                //TODO: 此处应该有性能问题，随后得想想怎么优化（感觉还是可考虑存到refPort里是个好办法）。
                 AIFeatureNode *assFeature = [SMGUtils searchNode:refPort.target_p];
                 
                 //6. 在ass结果中，找出其对应的level,x,y数据。
-                NSInteger assIndex = [assFeature.content_ps indexOfObject:gModel.match_p];
-                if (assIndex <= -1) continue;//引用不成立，跳过（应该是有BUG，它应该必须成立）。
-                NSInteger assLevel = NUMTOOK(ARR_INDEX(assFeature.levels, assIndex)).integerValue;
-                NSInteger assX = NUMTOOK(ARR_INDEX(assFeature.xs, assIndex)).integerValue;
-                NSInteger assY = NUMTOOK(ARR_INDEX(assFeature.ys, assIndex)).integerValue;
+                //性能说明：此处level,x,y存在refPort中，性能是没问题的。
+                NSInteger assLevel = NUMTOOK([refPort.params objectForKey:@"l"]).integerValue;
+                NSInteger assX = NUMTOOK([refPort.params objectForKey:@"x"]).integerValue;
+                NSInteger assY = NUMTOOK([refPort.params objectForKey:@"y"]).integerValue;
                 
                 //7. 根据level分别记录不同deltaLevel结果（把deltaLevel做为key的一部分，记录到识别结果字典里）。
                 NSString *assKey = STRFORMAT(@"%ld_%ld",protoLevel - assLevel,refPort.target_p.pointerId);
@@ -176,6 +174,11 @@
                 if (!tModel) tModel = [[AIMatchModel alloc] init];
                 tModel.match_p = refPort.target_p;
                 tModel.matchCount++;
+                
+                //TODOTOMORROW20250320: 这里把x和y都转换到大level层，然后对比下相似度，把xy相似度也计入其内。
+                
+                
+                
                 tModel.matchValue *= gModel.matchValue;
                 tModel.sumRefStrong += (int)refPort.strong.value;
                 [resultDic setObject:tModel forKey:assKey];

@@ -181,7 +181,7 @@ static AIThinkingControl *_instance;
     AIFeatureNode *bFeature = [AIGeneralNodeCreater createFeatureNode:bGroupModels conNodes:nil at:algsType ds:@"bColors" isOut:false];
     
     //4、构建具象概念。
-    AIAlgNodeBase *algNode = [theNet createAbsAlg_NoRepeat:@[hFeature.pointer,sFeature.pointer,hFeature.pointer] conAlgs:nil isOut:false at:nil ds:nil type:ATDefault];
+    AIAlgNodeBase *algNode = [theNet createAbsAlg_NoRepeat:@[hFeature.pointer,sFeature.pointer,bFeature.pointer] conAlgs:nil isOut:false at:nil ds:nil type:ATDefault];
     
     //5、装箱打包完毕，输入到rInput：进瞬时序列和识别等。
     [TCInput rInput:algNode except_ps:nil];

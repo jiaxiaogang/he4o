@@ -123,7 +123,7 @@
 //MARK:===============================================================
 //MARK:                     < 找出port >
 //MARK:===============================================================
-+(AIPort*) findPort:(AIKVPointer*)pointer fromPorts:(NSArray*)fromPorts;
++(AIPort*) findPort:(AIKVPointer*)pointer fromPorts:(NSArray*)fromPorts findParams:(NSDictionary*)findParams;
 
 //MARK:===============================================================
 //MARK:                     < 抽具象关联 Relate (外界调用,支持alg/fo) >

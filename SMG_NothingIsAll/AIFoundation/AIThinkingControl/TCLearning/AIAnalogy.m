@@ -228,6 +228,20 @@
 }
 
 /**
+ *  MARK:--------------------特征类比--------------------
+ */
++(AIFeatureNode*) analogyFeature:(AIKVPointer*)proto_p ass:(AIKVPointer*)ass_p {
+    return nil;
+}
+
+/**
+ *  MARK:--------------------组码类比--------------------
+ */
++(AIGroupValueNode*) analogyGroupValue:(AIKVPointer*)proto_p ass:(AIKVPointer*)ass_p {
+    return nil;
+}
+
+/**
  *  MARK:--------------------Canset类比 --------------------
  *  @noRepeatArea_ps 防重(一般取sceneTo以前的cansets);
  *  @version
