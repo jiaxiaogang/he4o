@@ -138,35 +138,47 @@
  */
 +(NSArray*) recognitionFeature:(AIKVPointer*)feature_p {
     //1. 数据准备
-    NSMutableDictionary *resultDic = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *resultDic = [[NSMutableDictionary alloc] init];// <K=deltaLevel_assPId, V=识别的特征AIMatchModel>
     AIFeatureNode *protoFeature = [SMGUtils searchNode:feature_p];
-    NSMutableDictionary *gMatchDic = [[NSMutableDictionary alloc] init]; // <K=protoFeatore.index, V=识别到的组码matchModels>
     
     //2. 循环分别识别：特征里的组码。
     for (NSInteger i = 0; i < protoFeature.count; i++) {
         AIKVPointer *protoGroupValue_p = ARR_INDEX(protoFeature.content_ps, i);
         
-        //3. 组码识别。
+        //3. proto的level,x,y数据准备。
+        NSInteger protoIndex = i;
+        NSInteger protoLevel = NUMTOOK(ARR_INDEX(protoFeature.levels, protoIndex)).integerValue;
+        NSInteger protoX = NUMTOOK(ARR_INDEX(protoFeature.xs, protoIndex)).integerValue;
+        NSInteger protoY = NUMTOOK(ARR_INDEX(protoFeature.ys, protoIndex)).integerValue;
+        
+        //4. 组码识别。
         NSArray *gMatchModels = [self recognitionGroupValue:protoGroupValue_p];
-        
-        //4. 把组码的识别结果存下来，后面退出循环后还有用：（用于level,x,y做判断和过滤时，可以知道哪个groupV映射哪个groupV）。
-        [gMatchDic setObject:gMatchModels forKey:@(i)];
-        
         for (AIMatchModel *gModel in gMatchModels) {
             NSArray *refPorts = [AINetUtils refPorts_All:gModel.match_p];
             
             //5. 每个refPort转为model并计匹配度和匹配数;
             for (AIPort *refPort in refPorts) {
+                //TODO: 此处应该有性能问题，随后得想想怎么优化。
                 AIFeatureNode *assFeature = [SMGUtils searchNode:refPort.target_p];
                 
-                //6. 找model (无则新建) (性能: 此处在循环中,所以防重耗60ms正常,收集耗100ms正常);
-                AIMatchModel *tModel = [resultDic objectForKey:@(refPort.target_p.pointerId)];
+                //6. 在ass结果中，找出其对应的level,x,y数据。
+                NSInteger assIndex = [assFeature.content_ps indexOfObject:gModel.match_p];
+                if (assIndex <= -1) continue;//引用不成立，跳过（应该是有BUG，它应该必须成立）。
+                NSInteger assLevel = NUMTOOK(ARR_INDEX(assFeature.levels, assIndex)).integerValue;
+                NSInteger assX = NUMTOOK(ARR_INDEX(assFeature.xs, assIndex)).integerValue;
+                NSInteger assY = NUMTOOK(ARR_INDEX(assFeature.ys, assIndex)).integerValue;
+                
+                //7. 根据level分别记录不同deltaLevel结果（把deltaLevel做为key的一部分，记录到识别结果字典里）。
+                NSString *assKey = STRFORMAT(@"%ld_%ld",protoLevel - assLevel,refPort.target_p.pointerId);
+                
+                //8. 找model (无则新建) (性能: 此处在循环中,所以防重耗60ms正常,收集耗100ms正常);
+                AIMatchModel *tModel = [resultDic objectForKey:assKey];
                 if (!tModel) tModel = [[AIMatchModel alloc] init];
                 tModel.match_p = refPort.target_p;
                 tModel.matchCount++;
                 tModel.matchValue *= gModel.matchValue;
                 tModel.sumRefStrong += (int)refPort.strong.value;
-                [resultDic setObject:tModel forKey:@(refPort.target_p.pointerId)];
+                [resultDic setObject:tModel forKey:assKey];
             }
         }
     }
@@ -178,60 +190,8 @@
         return true;
     }];
     
-    //12. levelxy过滤器。
-    NSMutableDictionary *resultDicV2 = [[NSMutableDictionary alloc] init];
-    NSArray *matchFeatureMapModels = [SMGUtils convertArr:tMatchModels convertBlock:^id(AIMatchModel *obj) {
-        return [MapModel newWithV1:obj v2:[SMGUtils searchNode:obj.match_p]];
-    }];
-    for (NSNumber *key in gMatchDic.allKeys) {
-        //a. 把
-        NSInteger protoIndex = key.integerValue;
-        NSInteger protoLevel = NUMTOOK(ARR_INDEX(protoFeature.levels, protoIndex)).integerValue;
-        NSInteger protoX = NUMTOOK(ARR_INDEX(protoFeature.xs, protoIndex)).integerValue;
-        NSInteger protoY = NUMTOOK(ARR_INDEX(protoFeature.ys, protoIndex)).integerValue;
-        
-        //b. 把proto中组码识别的结果取出来。
-        NSArray *gMatchModels = [gMatchDic objectForKey:key];
-        //NSArray *gMatch_ps = [SMGUtils convertArr:gMatchModels convertBlock:^id(AIMatchModel *obj) {
-        //    return obj.match_p;
-        //}];
-        
-        for (MapModel *item in matchFeatureMapModels) {
-            AIFeatureNode *matchFeature = item.v2;
-            MapModel *find = [self findSmallRefAtBigIndex:gMatchModels bigNode:matchFeature];
-            if (!find) continue;//这一条特征识别结果，与protoIndex帧无映射。
-            NSInteger matchIndex = NUMTOOK(find.v1).integerValue;
-            AIMatchModel *gMatchModel = find.v2;
-            NSInteger matchLevel = NUMTOOK(ARR_INDEX(matchFeature.levels, matchIndex)).integerValue;
-            NSInteger matchX = NUMTOOK(ARR_INDEX(matchFeature.xs, matchIndex)).integerValue;
-            NSInteger matchY = NUMTOOK(ARR_INDEX(matchFeature.ys, matchIndex)).integerValue;
-            
-            //c. 根据level分别记录不同deltaLevel结果（把deltaLevel做为key的一部分，记录到识别结果字典里）。
-            NSString *keyV2 = STRFORMAT(@"%ld_%ld",protoLevel - matchLevel,matchFeature.pId);
-            AIMatchModel *tModel = [resultDicV2 objectForKey:keyV2];
-            if (!tModel) tModel = [[AIMatchModel alloc] init];
-            tModel.match_p = matchFeature.p;
-            tModel.matchCount++;
-            tModel.matchValue *= gMatchModel.matchValue;
-            tModel.sumRefStrong += gMatchModel.strongValue;
-            
-            [resultDicV2 setObject:tModel forKey:keyV2];
-            //
-            
-        }
-        
-    }
-    
-    //TODOTOMORROW20250319: 查level,x,y要起到过滤作用，至少应用到计算相似度里。
-    //12. 写level,x,y过滤器（level是相对的，如果每个组码都差同样的层，是正常的，只是大小不同，不影响识别匹配）。
-   
-    //把assFeature和protoFeature的组码level,x,y做对比，评估一下只把有效的计上，无效的过滤掉。
-    
-    
-    
     //12. 识别过滤器 (参考28109-todo2)。
     tMatchModels = [AIFilter recognitionMatchModelsFilter:tMatchModels radio:0.4f];
-    
     return tMatchModels;
 }
 
