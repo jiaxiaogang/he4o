@@ -1167,8 +1167,9 @@
     }
 
     //2. 计算相似度 = 2 * LCS长度 / (序列1长度 + 序列2长度)
-    CGFloat similarity = 2.0 * [dp[len1][len2] intValue] / (len1 + len2);
-    NSLog(@"两个序列的相似度为: %.2f", similarity);
+    //2025.03.21: 把2x去掉，把len1+len2改为MIN(len1,len2)，以便更贴近交集有有序的相似度（即：计算相似度 = LCS长度 / MIN(序列1长度,序列2长度)。
+    CGFloat similarity = [dp[len1][len2] intValue] / MIN(len1, len2);
+    NSLog(@"两个序列的相似度 = %ld:%ld = %.2f",len1,len2,similarity);
     return similarity;
 }
 

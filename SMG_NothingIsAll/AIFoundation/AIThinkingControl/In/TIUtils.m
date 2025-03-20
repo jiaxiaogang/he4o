@@ -224,6 +224,8 @@
         NSArray *assSortByY = assSortResult.v2;
          
         //14. 对比（protoSortByX和assSortByX）（protoSortByX和assSortByX）序列的相似度。
+        assSortByX = [SMGUtils removeRepeat:assSortByX];//在这里测下防重试下，应该是更早的代码在重复，这里只是临时调试下（结果此处对num的防重还不生效。。。）。
+        assSortByY = [SMGUtils removeRepeat:assSortByY];
         CGFloat simOfX = [SMGUtils similarityOfArr1:protoSortByX a2:assSortByX];
         CGFloat simOfY = [SMGUtils similarityOfArr1:protoSortByY a2:assSortByY];
         
@@ -1021,7 +1023,7 @@
     //2. 把level,x,y都换算到maxLevel层，因为同层的位置才是等价的。
     for (MapModel *item in assILXYArr) {
         NSInteger itemLevel = NUMTOOK(item.v2).integerValue;
-        CGFloat radio = powf(3, maxLevel - itemLevel);//差几层，就乘3的几次方。
+        NSInteger radio = powf(3, maxLevel - itemLevel);//差几层，就乘3的几次方。
         item.v2 = @(maxLevel);
         item.v3 = @(NUMTOOK(item.v3).integerValue * radio);
         item.v4 = @(NUMTOOK(item.v4).integerValue * radio);
