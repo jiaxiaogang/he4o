@@ -230,21 +230,20 @@
  *  MARK:--------------------通用ref插线方法--------------------
  *  @param header 直接把header生成好传过来。
  */
-+(void) insertRefPorts_General:(AIKVPointer*)node_p content_ps:(NSArray*)content_ps difStrong:(NSInteger)difStrong header:(NSString*)header {
-    content_ps = [SMGUtils removeRepeat:content_ps];
-    if (node_p && ARRISOK(content_ps)) {
++(void) insertRefPorts_General:(AIKVPointer*)biger_p content_ps:(NSArray*)bigerContent_ps difStrong:(NSInteger)difStrong header:(NSString*)header {
+    if (biger_p && ARRISOK(bigerContent_ps)) {
         //1. 遍历value_p微信息,添加引用;
-        for (NSInteger i = 0; i < content_ps.count; i++) {
-            AIKVPointer *item_p = ARR_INDEX(content_ps, i);
+        for (NSInteger i = 0; i < bigerContent_ps.count; i++) {
+            AIKVPointer *item_p = ARR_INDEX(bigerContent_ps, i);
             if (PitIsValue(item_p)) {
                 //1a. 如果是组码时，记录上index值到refPort中。
                 NSDictionary *findParams = nil;
-                if (PitIsGroupValue(node_p)) {
+                if (PitIsGroupValue(biger_p)) {
                     findParams = @{@"i":@(i)};
                 }
                 
                 //2. 为稀疏码时：硬盘网络时,取出refPorts -> 并二分法强度序列插入 -> 存XGWedis;
-                [self insertRefPorts_HdNode:node_p passiveRefValue_p:item_p header:header difStrong:difStrong findParams:findParams];
+                [self insertRefPorts_HdNode:biger_p passiveRefValue_p:item_p header:header difStrong:difStrong findParams:findParams];
             } else {
                 //3. 为其它节点时：
                 //2025.03.18: 支持多码特征后，概念由特征组成，而不是单码。
@@ -252,11 +251,11 @@
                 
                 //4. 如果是特征时，记录上level,x,y值到refPort中。
                 NSDictionary *findParams = nil;
-                if (PitIsFeature(node_p)) {
-                    AIFeatureNode *feature = [SMGUtils searchNode:node_p];
+                if (PitIsFeature(biger_p)) {
+                    AIFeatureNode *feature = [SMGUtils searchNode:biger_p];
                     findParams = @{@"l":ARR_INDEX(feature.levels, i), @"x":ARR_INDEX(feature.xs, i), @"y":ARR_INDEX(feature.ys, i)};
                 }
-                [AINetUtils insertPointer_Hd:node_p toPorts:item.refPorts findHeader:header difStrong:difStrong findParams:findParams];
+                [AINetUtils insertPointer_Hd:biger_p toPorts:item.refPorts findHeader:header difStrong:difStrong findParams:findParams];
                 [SMGUtils insertNode:item];
             }
         }

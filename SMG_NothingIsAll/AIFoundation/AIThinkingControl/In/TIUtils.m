@@ -81,11 +81,30 @@
     
     //2. 循环分别识别：组码里的单码。
     for (NSInteger i = 0; i < protoGroupValue.count; i++) {
-        AIKVPointer *value_p = ARR_INDEX(protoGroupValue.content_ps, i);
+        AIKVPointer *protoValue_p = ARR_INDEX(protoGroupValue.content_ps, i);
         
         //3. 取相近度序列 (按相近程度排序);
-        NSArray *vMatchModels = [self recognitionValue:value_p];
+        NSArray *vMatchModels = [self recognitionValue:protoValue_p];
         NSMutableArray *except_ps = [[NSMutableArray alloc] init];
+        
+        
+        //TODOTOMORROW20250320: 明天查下这里，为什么只索引到3条，难道一模一样的图，也不能识别到自己吗？
+        BOOL findSuccess = false;
+        for (AIMatchModel *vModel in vMatchModels) {
+            NSArray *refPorts = [AINetUtils refPorts_All4Value:vModel.match_p];
+            
+            //经查注掉这里就有了，难道是params.i记录的不对？
+            refPorts = [SMGUtils filterArr:refPorts checkValid:^BOOL(AIPort *item) {
+                NSNumber *refParamsI = [item.params objectForKey:@"i"];
+                return (refParamsI ? refParamsI.integerValue : -999) == i;
+            }];
+            if ([[SMGUtils convertArr:refPorts convertBlock:^id(AIPort *obj) {
+                return obj.target_p;
+            }] containsObject:groupValue_p]) {
+                findSuccess = true;
+            }
+        }
+        NSLog(@"从第 %ld 找到proto了：%d",i,findSuccess);
         
         //4. 每个near_p向ref找相似的assGroupValue。
         for (AIMatchModel *vModel in vMatchModels) {
@@ -125,7 +144,6 @@
         if (gItem.count == 0) {
             ELog(@"查下为什么为0条，如果2025.04.20之前还没有复现，则去掉此断点，说明bug是开发中的脏数据导致的");
         }
-        //TODOTOMORROW20250320: 明天查下这里，为什么只索引到3条，难道一模一样的图，也不能识别到自己吗？
         if (gItem.count != item.matchCount) return false;
         return true;
     }];
