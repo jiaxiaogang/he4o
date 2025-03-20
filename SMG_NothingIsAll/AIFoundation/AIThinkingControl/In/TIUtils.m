@@ -158,7 +158,7 @@
             
             //5. 每个refPort转为model并计匹配度和匹配数;
             for (AIPort *refPort in refPorts) {
-                //TODO: 此处应该有性能问题，随后得想想怎么优化。
+                //TODO: 此处应该有性能问题，随后得想想怎么优化（感觉还是可考虑存到refPort里是个好办法）。
                 AIFeatureNode *assFeature = [SMGUtils searchNode:refPort.target_p];
                 
                 //6. 在ass结果中，找出其对应的level,x,y数据。
@@ -184,15 +184,15 @@
     }
     
     //11. 全含判断: 特征应该不需要全含，因为很难看到局部都相似的两个图像。
-    NSArray *tMatchModels = [SMGUtils filterArr:resultDic.allValues checkValid:^BOOL(AIMatchModel *item) {
+    NSArray *resultModels = [SMGUtils filterArr:resultDic.allValues checkValid:^BOOL(AIMatchModel *item) {
         AIFeatureNode *tNode = [SMGUtils searchNode:item.match_p];
         if (tNode.count * 0.7 > item.matchCount) return false;//匹配数必须达到70%才有效。
         return true;
     }];
     
     //12. 识别过滤器 (参考28109-todo2)。
-    tMatchModels = [AIFilter recognitionMatchModelsFilter:tMatchModels radio:0.4f];
-    return tMatchModels;
+    resultModels = [AIFilter recognitionMatchModelsFilter:resultModels radio:0.4f];
+    return resultModels;
 }
 
 //MARK:===============================================================
@@ -276,6 +276,7 @@
  *      2023.06.01 - 将识别结果拆分成pAlgs和rAlgs两个部分 (参考29108-2.1);
  *      2023.06.02 - 性能优化_复用vInfo (在识别二次过滤器中测得,这个vInfo在循环中时性能影响挺大的);
  *      2023.06.03 - 性能优化_复用cacheDataDic到循环外 & cacheProtoData到循环外 & proto收集防重用dic (参考29109-测得3);
+ *      2025.03.20 - 兼容多码特征（参考n34p04）。
  */
 +(void) recognitionAlgStep1:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel {
     //0. 数据准备;
@@ -290,31 +291,22 @@
     //2. 广入: 对每个元素,分别取索引序列 (参考25083-1);
     for (AIKVPointer *item_p in protoAlg.content_ps) {
         
-        //3. 性能优化: 加载循环外缓存数据;
-        NSDictionary *cacheDataDic = [AINetIndexUtils searchDataDic:item_p.algsType ds:item_p.dataSource isOut:item_p.isOut];
-        AIValueInfo *vInfo = [AINetIndex getValueInfo:item_p.algsType ds:item_p.dataSource isOut:item_p.isOut];
-        double cacheProtoData = [NUMTOOK([AINetIndex getData:item_p fromDataDic:cacheDataDic]) doubleValue];
-        
         //3. 取相近度序列 (按相近程度排序);
-        NSArray *near_ps = nil;
-        if (PitIsFeature(item_p)) {
-            near_ps = [self recognitionFeature:item_p];
+        NSArray *subMatchModels = nil;
+        if (PitIsValue(item_p)) {
+            subMatchModels = [self recognitionValue:item_p];//v1单码特征
         } else {
-            near_ps = [self recognitionValue:item_p];
+            subMatchModels = [self recognitionFeature:item_p];//v2多码特征
         }
         
         //4. 每个near_p做两件事:
-        for (AIKVPointer *near_p in near_ps) {
-            
-            //5. 第1_计算出nearV (参考25082-公式1) (性能:400次计算,耗100ms很正常);
-            double nearData = [NUMTOOK([AINetIndex getData:near_p fromDataDic:cacheDataDic]) doubleValue];
-            double nearV = [AIAnalyst compareCansetValue:nearData protoV:cacheProtoData at:item_p.algsType ds:item_p.dataSource isOut:item_p.isOut vInfo:vInfo];
+        for (AIMatchModel *subMatchModel in subMatchModels) {
             
             //2024.04.27: BUG_这里有nearV为0的,导致后面可能激活一些完全不准确的结果 (修复: 加上末尾淘汰: 相似度为0的就不收集了先,看下应该也不影响别的什么);
-            if (nearV == 0) continue;
+            if (subMatchModel.matchValue == 0) continue;
             
             //6. 第2_取near_p的refPorts (参考25083-1) (性能: 无缓存时读266耗240,有缓存时很快);
-            NSArray *refPorts = [AINetUtils refPorts_All4Value:near_p];
+            NSArray *refPorts = [AINetUtils refPorts_All:subMatchModel.match_p];
             
             //2024.04.27: BUG_把此处强度淘汰取消掉,不然淘汰70%也太多了,新的概念即使再准也没机会 (比如: 向90跑10左右的有皮果,因为是后期特定训练步骤里才经历的,在这里老是识别不到);
             //refPorts = ARR_SUB(refPorts, 0, cPartMatchingCheckRefPortsLimit_Alg(refPorts.count));
@@ -343,7 +335,7 @@
                 //10. 统计匹配度matchCount & 相近度<1个数nearCount & 相近度sumNear & 引用强度sumStrong
                 model.matchCount++;
                 model.nearCount++;
-                model.sumNear *= nearV;
+                model.sumNear *= subMatchModel.matchValue;
                 model.sumRefStrong += (int)refPort.strong.value;
             }
         }
