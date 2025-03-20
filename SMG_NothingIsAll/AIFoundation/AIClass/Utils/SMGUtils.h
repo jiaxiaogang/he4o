@@ -349,4 +349,9 @@
  */
 +(void) fori:(NSArray *)arr min:(NSInteger)min max:(NSInteger)max run:(BOOL(^)(id item,NSInteger i))run forward:(BOOL)forward;
 
+/**
+ *  MARK:--------------------计算数组相似度--------------------
+ */
++(CGFloat) similarityOfArr1:(NSArray*)a1 a2:(NSArray*)a2;
+
 @end

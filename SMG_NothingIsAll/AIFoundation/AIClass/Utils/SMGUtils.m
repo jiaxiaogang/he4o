@@ -1132,4 +1132,36 @@
     }
 }
 
+/**
+ *  MARK:--------------------计算数组相似度（网络代码，随后有时间时，可以自写一个取有序交集的代码，来计算相似度）--------------------
+ */
++(CGFloat) similarityOfArr1:(NSArray*)a1 a2:(NSArray*)a2 {
+    //1. 计算两个序列的最长公共子序列(LCS)长度
+    NSInteger len1 = a1.count;
+    NSInteger len2 = a2.count;
+    NSMutableArray *dp = [NSMutableArray arrayWithCapacity:len1 + 1];
+    for (int i = 0; i <= len1; i++) {
+        NSMutableArray *row = [NSMutableArray arrayWithCapacity:len2 + 1];
+        for (int j = 0; j <= len2; j++) {
+            [row addObject:@(0)];
+        }
+        [dp addObject:row];
+    }
+
+    for (int i = 1; i <= len1; i++) {
+        for (int j = 1; j <= len2; j++) {
+            if ([a1[i-1] isEqual:a2[j-1]]) {
+                dp[i][j] = @([dp[i-1][j-1] intValue] + 1);
+            } else {
+                dp[i][j] = @(MAX([dp[i-1][j] intValue], [dp[i][j-1] intValue]));
+            }
+        }
+    }
+
+    //2. 计算相似度 = 2 * LCS长度 / (序列1长度 + 序列2长度)
+    CGFloat similarity = 2.0 * [dp[len1][len2] intValue] / (len1 + len2);
+    NSLog(@"两个序列的相似度为: %.2f", similarity);
+    return similarity;
+}
+
 @end

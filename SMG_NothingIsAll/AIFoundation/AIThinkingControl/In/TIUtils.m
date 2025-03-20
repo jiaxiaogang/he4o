@@ -140,16 +140,16 @@
     //1. 数据准备
     NSMutableDictionary *resultDic = [[NSMutableDictionary alloc] init];// <K=deltaLevel_assPId, V=识别的特征AIMatchModel>
     AIFeatureNode *protoFeature = [SMGUtils searchNode:feature_p];
+    NSMutableDictionary *resultILXYDic = [[NSMutableDictionary alloc] init];// <K=proto/assPId, V=数组[ass和proto的映射下标(可用protoIndex来代替)_level_x_y]>
+    NSMutableArray *protoILXYArr = [[NSMutableArray alloc] init];//proto的ILXY数组单独存，不要放到resultILXYDic中，后面它要分别与resultILXYDic的每一个ass进行对比xy相似度。
     
     //2. 循环分别识别：特征里的组码。
     for (NSInteger i = 0; i < protoFeature.count; i++) {
         AIKVPointer *protoGroupValue_p = ARR_INDEX(protoFeature.content_ps, i);
         
-        //3. proto的level,x,y数据准备。
-        NSInteger protoIndex = i;
-        NSInteger protoLevel = NUMTOOK(ARR_INDEX(protoFeature.levels, protoIndex)).integerValue;
-        NSInteger protoX = NUMTOOK(ARR_INDEX(protoFeature.xs, protoIndex)).integerValue;
-        NSInteger protoY = NUMTOOK(ARR_INDEX(protoFeature.ys, protoIndex)).integerValue;
+        //3. proto的level,x,y数据准备：把protoIndex,protoLevel,protoX,protoY都存下来（后面用于判断xy相似度要用）（参考34052-TODO4）。
+        NSInteger protoLevel = NUMTOOK(ARR_INDEX(protoFeature.levels, i)).integerValue;
+        [protoILXYArr addObject:[MapModel newWithV1:@(i) v2:@(protoLevel) v3:NUMTOOK(ARR_INDEX(protoFeature.xs, i)) v4:NUMTOOK(ARR_INDEX(protoFeature.ys, i))]];
         
         //4. 组码识别。
         NSArray *gMatchModels = [self recognitionGroupValue:protoGroupValue_p];
@@ -158,13 +158,17 @@
             
             //5. 每个refPort转为model并计匹配度和匹配数;
             for (AIPort *refPort in refPorts) {
-                AIFeatureNode *assFeature = [SMGUtils searchNode:refPort.target_p];
                 
                 //6. 在ass结果中，找出其对应的level,x,y数据。
                 //性能说明：此处level,x,y存在refPort中，性能是没问题的。
                 NSInteger assLevel = NUMTOOK([refPort.params objectForKey:@"l"]).integerValue;
                 NSInteger assX = NUMTOOK([refPort.params objectForKey:@"x"]).integerValue;
                 NSInteger assY = NUMTOOK([refPort.params objectForKey:@"y"]).integerValue;
+                
+                //6b. 把protoIndex,assLevel,assX,assY都存下来（后面用于判断xy相似度要用）（参考34052-TODO4）。
+                NSMutableArray *oldILXYValue = [[NSMutableArray alloc] initWithArray:[resultILXYDic objectForKey:@(refPort.target_p.pointerId)]];
+                [oldILXYValue addObject:[MapModel newWithV1:@(i) v2:@(assLevel) v3:@(assX) v4:@(assY)]];
+                [resultILXYDic setObject:oldILXYValue forKey:@(refPort.target_p.pointerId)];
                 
                 //7. 根据level分别记录不同deltaLevel结果（把deltaLevel做为key的一部分，记录到识别结果字典里）。
                 NSString *assKey = STRFORMAT(@"%ld_%ld",protoLevel - assLevel,refPort.target_p.pointerId);
@@ -174,11 +178,6 @@
                 if (!tModel) tModel = [[AIMatchModel alloc] init];
                 tModel.match_p = refPort.target_p;
                 tModel.matchCount++;
-                
-                //TODOTOMORROW20250320: 这里把x和y都转换到大level层，然后对比下相似度，把xy相似度也计入其内。
-                
-                
-                
                 tModel.matchValue *= gModel.matchValue;
                 tModel.sumRefStrong += (int)refPort.strong.value;
                 [resultDic setObject:tModel forKey:assKey];
@@ -186,15 +185,46 @@
         }
     }
     
-    //11. 全含判断: 特征应该不需要全含，因为很难看到局部都相似的两个图像。
+    //11. 根据resultILXYDic，分别按x和y排序（参考34052-TODO4）。
+    //12. proto先按xy坐标从小到大排序。
+    MapModel *protoSortResult = [self sortIByXYWithILXYArr:protoILXYArr];
+    NSArray *protoSortByX = protoSortResult.v1;
+    NSArray *protoSortByY = protoSortResult.v2;
+    for (NSNumber *key in resultILXYDic.allKeys) {
+        NSInteger assPId = key.integerValue;
+        NSArray *assILXYArr = [resultILXYDic objectForKey:key];
+        
+        //13. ass也按xy坐标从小到大排序。
+        MapModel *assSortResult = [self sortIByXYWithILXYArr:assILXYArr];
+        NSArray *assSortByX = protoSortResult.v1;
+        NSArray *assSortByY = protoSortResult.v2;
+         
+        //14. 对比（protoSortByX和assSortByX）（protoSortByX和assSortByX）序列的相似度。
+        CGFloat simOfX = [SMGUtils similarityOfArr1:protoSortByX a2:assSortByX];
+        CGFloat simOfY = [SMGUtils similarityOfArr1:protoSortByY a2:assSortByY];
+        
+        //15. 找出对应的MatchModel，把匹配度乘上xy的匹配度。
+        AIMatchModel *assMatchModel = [SMGUtils filterSingleFromArr:resultDic.allValues checkValid:^BOOL(AIMatchModel *item) {
+            return item.match_p.pointerId == assPId;
+        }];
+        assMatchModel.matchValue *= (simOfX * simOfY);
+    }
+    
+    //21. 把matchValue=0的排除掉。
     NSArray *resultModels = [SMGUtils filterArr:resultDic.allValues checkValid:^BOOL(AIMatchModel *item) {
+        return item.matchValue > 0;
+    }];
+    
+    //22. 识别过滤器 (参考28109-todo2)。
+    resultModels = [AIFilter recognitionMatchModelsFilter:resultModels radio:0.4f];
+    
+    
+    //23. 全含判断: 特征应该不需要全含，因为很难看到局部都相似的两个图像。
+    resultModels = [SMGUtils filterArr:resultModels checkValid:^BOOL(AIMatchModel *item) {
         AIFeatureNode *tNode = [SMGUtils searchNode:item.match_p];
         if (tNode.count * 0.7 > item.matchCount) return false;//匹配数必须达到70%才有效。
         return true;
     }];
-    
-    //12. 识别过滤器 (参考28109-todo2)。
-    resultModels = [AIFilter recognitionMatchModelsFilter:resultModels radio:0.4f];
     return resultModels;
 }
 
@@ -948,6 +978,43 @@
         }
     }
     return nil;
+}
+
+/**
+ *  MARK:--------------------将下标I按XY分别排序（其中XY需要先换算到同一个level下）--------------------
+ *  @param assILXYArr 其内容为：v1=与proto对应的Index v2=assLevel v3=assX v4=assY
+ *  @desc   步骤1、先将xy换算到同一个level下（取最大level，这样好换算）。
+ *          步骤2、把protoIndex分别按x和y排序，并转为排好的protoIndex数组返回。
+ *  @result v1=按x从小到大排好的protoIndex数组 v2=按y从小到大排好的protoIndex数组
+ */
++(MapModel*) sortIByXYWithILXYArr:(NSArray*)assILXYArr {
+    //1. 找出当前ass中的最大level（后面它所有的xy都以转到这个level的坐标为准）。
+    MapModel *maxLevelMapModel = [SMGUtils filterBestObj:assILXYArr scoreBlock:^CGFloat(MapModel *item) {
+        return NUMTOOK(item.v2).integerValue;
+    }];
+    NSInteger maxLevel = NUMTOOK(maxLevelMapModel.v2).integerValue;
+    
+    //2. 把level,x,y都换算到maxLevel层，因为同层的位置才是等价的。
+    for (MapModel *item in assILXYArr) {
+        NSInteger itemLevel = NUMTOOK(item.v2).integerValue;
+        CGFloat radio = powf(3, maxLevel - itemLevel);//差几层，就乘3的几次方。
+        item.v2 = @(maxLevel);
+        item.v3 = @(NUMTOOK(item.v3).integerValue * radio);
+        item.v4 = @(NUMTOOK(item.v4).integerValue * radio);
+    }
+    
+    //3. 分别按x/y排序，然后转成排好的index数组返回。
+    NSArray *sortIndexByX = [SMGUtils convertArr:[SMGUtils sortSmall2Big:assILXYArr compareBlock:^double(MapModel *obj) {
+        return NUMTOOK(obj.v3).integerValue;
+    }] convertBlock:^id(MapModel *obj) {
+        return obj.v1;
+    }];
+    NSArray *sortIndexByY = [SMGUtils convertArr:[SMGUtils sortSmall2Big:assILXYArr compareBlock:^double(MapModel *obj) {
+        return NUMTOOK(obj.v4).integerValue;
+    }] convertBlock:^id(MapModel *obj) {
+        return obj.v1;
+    }];
+    return [MapModel newWithV1:sortIndexByX v2:sortIndexByY];
 }
 
 @end
