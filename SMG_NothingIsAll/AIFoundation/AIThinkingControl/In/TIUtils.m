@@ -80,17 +80,31 @@
     AIGroupValueNode *protoGroupValue = [SMGUtils searchNode:groupValue_p];
     
     //2. 循环分别识别：组码里的单码。
-    for (AIKVPointer *value_p in protoGroupValue.content_ps) {
+    for (NSInteger i = 0; i < protoGroupValue.count; i++) {
+        AIKVPointer *value_p = ARR_INDEX(protoGroupValue.content_ps, i);
         
         //3. 取相近度序列 (按相近程度排序);
         NSArray *vMatchModels = [self recognitionValue:value_p];
+        NSMutableArray *except_ps = [[NSMutableArray alloc] init];
         
         //4. 每个near_p向ref找相似的assGroupValue。
         for (AIMatchModel *vModel in vMatchModels) {
             NSArray *refPorts = [AINetUtils refPorts_All4Value:vModel.match_p];
             
+            //2025.03.20: 组码识别时，需要九宫位置一一对应（因为从单码到组码，的9个位置，是有位置要求的，首和尾匹配上，并不能表示二者相似）。
+            //> BUG-此处ds应该做个判别，不然可能9宫全是同一个单码ref过去的。所以如下按i对等来修复下：
+            //> FIX-所以：直接类似特征的params.xy位置类似方法，组码这里按refPort.params中的i来要求一下对等。
+            refPorts = [SMGUtils filterArr:refPorts checkValid:^BOOL(AIPort *item) {
+                NSNumber *refParamsI = [item.params objectForKey:@"i"];
+                return (refParamsI ? refParamsI.integerValue : -999) == i;
+            }];
+            
             //5. 每个refPort转为model并计匹配度和匹配数;
             for (AIPort *refPort in refPorts) {
+                //2025.03.20：BUG-防重（每条value_p只允许ref同一个ass一次）。
+                if ([except_ps containsObject:refPort.target_p]) continue;
+                [except_ps addObject:refPort.target_p];
+                
                 //6. 找model (无则新建) (性能: 此处在循环中,所以防重耗60ms正常,收集耗100ms正常);
                 AIMatchModel *gModel = [gMatchDic objectForKey:@(refPort.target_p.pointerId)];
                 if (!gModel) {
@@ -107,8 +121,11 @@
     
     //11. 全含判断: 从大到小,依次取到对应的node和matchingCount (注: 支持相近后,应该全是全含了,参考25084-1);
     NSArray *gMatchModels = [SMGUtils filterArr:gMatchDic.allValues checkValid:^BOOL(AIMatchModel *item) {
-        //TODOTOMORROW20250320: 此处gItem.contentPorts有为空的情况。。
         AIGroupValueNode *gItem = [SMGUtils searchNode:item.match_p];
+        if (gItem.count == 0) {
+            ELog(@"查下为什么为0条，如果2025.04.20之前还没有复现，则去掉此断点，说明bug是开发中的脏数据导致的");
+        }
+        //TODOTOMORROW20250320: 明天查下这里，为什么只索引到3条，难道一模一样的图，也不能识别到自己吗？
         if (gItem.count != item.matchCount) return false;
         return true;
     }];

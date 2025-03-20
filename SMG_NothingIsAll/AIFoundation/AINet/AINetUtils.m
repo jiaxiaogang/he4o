@@ -237,8 +237,14 @@
         for (NSInteger i = 0; i < content_ps.count; i++) {
             AIKVPointer *item_p = ARR_INDEX(content_ps, i);
             if (PitIsValue(item_p)) {
+                //1a. 如果是组码时，记录上index值到refPort中。
+                NSDictionary *findParams = nil;
+                if (PitIsGroupValue(node_p)) {
+                    findParams = @{@"i":@(i)};
+                }
+                
                 //2. 为稀疏码时：硬盘网络时,取出refPorts -> 并二分法强度序列插入 -> 存XGWedis;
-                [self insertRefPorts_HdNode:node_p passiveRefValue_p:item_p header:header difStrong:difStrong];
+                [self insertRefPorts_HdNode:node_p passiveRefValue_p:item_p header:header difStrong:difStrong findParams:findParams];
             } else {
                 //3. 为其它节点时：
                 //2025.03.18: 支持多码特征后，概念由特征组成，而不是单码。
@@ -304,18 +310,18 @@
         NSArray *sort_ps = [SMGUtils sortPointers:mvNode.content_ps];
         NSString *header = [NSString md5:[SMGUtils convertPointers2String:sort_ps]];
         //1. 硬盘网络时,取出refPorts -> 并二分法强度序列插入 -> 存XGWedis;
-        [self insertRefPorts_HdNode:mvNode.pointer passiveRefValue_p:value_p header:header difStrong:difStrong];
+        [self insertRefPorts_HdNode:mvNode.pointer passiveRefValue_p:value_p header:header difStrong:difStrong findParams:nil];
     }
 }
 
 /**
  *  MARK:--------------------硬盘节点_引用_微信息_插线 通用方法--------------------
  */
-+(void) insertRefPorts_HdNode:(AIKVPointer*)hdNode_p passiveRefValue_p:(AIPointer*)passiveRefValue_p header:(NSString*)header difStrong:(NSInteger)difStrong{
++(void) insertRefPorts_HdNode:(AIKVPointer*)hdNode_p passiveRefValue_p:(AIPointer*)passiveRefValue_p header:(NSString*)header difStrong:(NSInteger)difStrong findParams:(NSDictionary*)findParams {
     if (ISOK(hdNode_p, AIKVPointer.class) && ISOK(passiveRefValue_p, AIKVPointer.class)) {
         NSArray *fnRefPorts = ARRTOOK([SMGUtils searchObjectForFilePath:passiveRefValue_p.filePath fileName:kFNRefPorts time:cRTReference]);
         NSMutableArray *refPorts = [[NSMutableArray alloc] initWithArray:fnRefPorts];
-        [AINetUtils insertPointer_Hd:hdNode_p toPorts:refPorts findHeader:header difStrong:difStrong findParams:nil];//稀疏码单码没有附加params
+        [AINetUtils insertPointer_Hd:hdNode_p toPorts:refPorts findHeader:header difStrong:difStrong findParams:findParams];//稀疏码单码没有附加params
         [SMGUtils insertObject:refPorts rootPath:passiveRefValue_p.filePath fileName:kFNRefPorts time:cRTReference saveDB:true];
     }
 }
