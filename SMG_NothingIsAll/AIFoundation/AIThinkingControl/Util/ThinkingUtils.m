@@ -181,4 +181,20 @@
     return result;
 }
 
+/**
+ *  MARK:--------------------按绝对xy坐标对InputGroupValueModels进行排序--------------------
+ */
++(NSArray*) sortInputGroupValueModels:(NSArray*)models levelNum:(NSInteger)levelNum {
+    //1. 分别按x/y排序，然后转成排好的index数组返回。
+    return [SMGUtils sortSmall2Big:models compareBlock1:^double(InputGroupValueModel *obj) {
+        NSInteger radio = powf(3, levelNum - obj.level);//差几层，就乘3的几次方。
+        return obj.y * radio;//把x,y都换算到maxLevel层，因为同层的位置才是等价的。
+    } compareBlock2:^double(InputGroupValueModel *obj) {
+        NSInteger radio = powf(3, levelNum - obj.level);//差几层，就乘3的几次方。
+        return obj.x * radio;//把x,y都换算到maxLevel层，因为同层的位置才是等价的。
+    } compareBlock3:^double(InputGroupValueModel *obj) {
+        return obj.level;
+    }];
+}
+
 @end

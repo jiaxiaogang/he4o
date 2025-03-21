@@ -159,6 +159,11 @@ static AINet *_instance;
             }
         }
     }
+    
+    //TODOTOMORROW20250321: 对groupModels进行排序。。。//考虑下，此处levelCount是否要存到特征里？还是写个静态方法，用at,ds来取。。
+    [ThinkingUtils sortInputGroupValueModels:groupModels levelNum:levelCount];
+    
+    
     return groupModels;
 }
 

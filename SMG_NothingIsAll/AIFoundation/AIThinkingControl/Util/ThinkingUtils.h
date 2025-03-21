@@ -79,4 +79,9 @@
 
 +(NSMutableDictionary*) copySPDic:(NSDictionary*)protoSPDic;
 
+/**
+ *  MARK:--------------------按绝对xy坐标对InputGroupValueModels进行排序--------------------
+ */
++(NSArray*) sortInputGroupValueModels:(NSArray*)models levelNum:(NSInteger)levelNum;
+
 @end

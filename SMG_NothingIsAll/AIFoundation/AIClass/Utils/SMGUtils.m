@@ -746,9 +746,24 @@
     }];
 }
 //从小到大,就是大到小的值取负 (反过来);
-+(NSArray*) sortSmall2Big:(NSArray*)arr compareBlock:(double(^)(id obj))compareBlock{
-    return [SMGUtils sortBig2Small:arr compareBlock:^double(id obj) {
-        return -compareBlock(obj);
++(NSArray*) sortSmall2Big:(NSArray*)arr compareBlock:(double(^)(id obj))compareBlock {
+    return [SMGUtils sortSmall2Big:arr compareBlock1:compareBlock compareBlock2:nil];
+}
++(NSArray*) sortSmall2Big:(NSArray*)arr compareBlock1:(double(^)(id obj))compareBlock1 compareBlock2:(double(^)(id obj))compareBlock2 {
+    return [SMGUtils sortSmall2Big:arr compareBlock1:compareBlock1 compareBlock2:compareBlock2 compareBlock3:nil];
+}
++(NSArray*) sortSmall2Big:(NSArray*)arr compareBlock1:(double(^)(id obj))compareBlock1 compareBlock2:(double(^)(id obj))compareBlock2 compareBlock3:(double(^)(id obj))compareBlock3 {
+    return [SMGUtils sortSmall2Big:arr compareBlock1:compareBlock1 compareBlock2:compareBlock2 compareBlock3:compareBlock3 compareBlock4:nil];
+}
++(NSArray*) sortSmall2Big:(NSArray*)arr compareBlock1:(double(^)(id obj))compareBlock1 compareBlock2:(double(^)(id obj))compareBlock2 compareBlock3:(double(^)(id obj))compareBlock3 compareBlock4:(double(^)(id obj))compareBlock4 {
+    return [SMGUtils sortBig2Small:arr compareBlock1:^double(id obj) {
+        return compareBlock1 ? -compareBlock1(obj) : 0;
+    } compareBlock2:^double(id obj) {
+        return compareBlock2 ? -compareBlock2(obj) : 0;
+    } compareBlock3:^double(id obj) {
+        return compareBlock3 ? -compareBlock3(obj) : 0;
+    } compareBlock4:^double(id obj) {
+        return compareBlock4 ? -compareBlock4(obj) : 0;
     }];
 }
 
