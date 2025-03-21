@@ -200,4 +200,33 @@
     }];
 }
 
+/**
+ *  MARK:--------------------计算assTo是否在其该出现的位置（返回符合度）--------------------
+ *  @desc 公式：推测下一组码的xy位置 : 与真实assTo的xy位置比较 = 得出位置符合预期程度（参考34053-新方案）。
+ *  @result 为保证精度准确，结果以最大粒度层的绝对坐标进行返回。
+ */
++(CGRect) getAssToRect:(CGPoint)protoFrom protoTo:(CGPoint)protoTo protoLevel:(NSInteger)protoLevel assFrom:(CGPoint)assFrom assTo:(CGPoint)assTo assLevel:(NSInteger)assLevel {
+    //1. 求出proto在最大粒度层的xy差值。
+    NSInteger protoRadio = powf(3, VisionMaxLevel - protoLevel);
+    CGFloat deltaX = (protoTo.x - protoFrom.x) * protoRadio;
+    CGFloat deltaY = (protoTo.y - protoFrom.y) * protoRadio;
+    
+    //2. 根据assFrom的坐标，和上面求出的差值，推测assTo应该出现的位置范围。
+    NSInteger assRadio = powf(3, VisionMaxLevel - assLevel);
+    CGFloat assFromX = assFrom.x * assRadio;
+    CGFloat assFromY = assFrom.y * assRadio;
+    
+    //3. 求出assTo应该出现的合理范围（移一倍deltaXY相当于从assFrom到精准推测的assTo中心点，再延伸了一倍deltaXY距离，相当于围绕精准推测位置，画一个deltaXY的范围矩形）。
+    //> 所以真实的assTo出现在这个范围矩形的：中心准确=100%，边缘为0%）。
+    CGRect targetRect = CGRectMake(assFromX, assFromY, deltaX * 2, deltaY * 2);
+    
+    //4. 真实assTo的位置。
+    CGFloat assToX = assTo.x * assRadio;
+    CGFloat assToY = assTo.y * assRadio;
+    CGPoint assToPoint = CGPointMake(assToX, assToY);
+    
+    //5. 判断下是否在合理范围内，并算出符合度。
+    
+}
+
 @end
