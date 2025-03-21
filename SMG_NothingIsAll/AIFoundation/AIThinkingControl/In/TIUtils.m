@@ -122,27 +122,27 @@
     //11. 全含判断: 从大到小,依次取到对应的node和matchingCount (注: 支持相近后,应该全是全含了,参考25084-1);
     NSArray *gMatchModels = [SMGUtils filterArr:gMatchDic.allValues checkValid:^BOOL(AIMatchModel *item) {
         AIGroupValueNode *gItem = [SMGUtils searchNode:item.match_p];
-        if (gItem.count != 9) {
-            ELog(@"BUG-查下为什么为0条，如果2025.04.20之前还没有复现，则去掉此断点，说明bug是开发中的脏数据导致的");
-        }
         if (gItem.count != item.matchCount) return false;
         return true;
     }];
     
-    //12. 似层交层分开进行竞争 (分开竞争是以前就一向如此的,因为同质竞争才公平) (为什么要保留交层: 参考31134-TODO1);
-    NSArray *gMatchModels_Si = [SMGUtils filterArr:gMatchModels checkValid:^BOOL(AIMatchModel *model) {
-        AIGroupValueNode *item = [SMGUtils searchNode:model.match_p];
-        return item.count == protoGroupValue.count;
-    }];
-    NSArray *gMatchModels_Jiao = [SMGUtils filterArr:gMatchModels checkValid:^BOOL(AIMatchModel *model) {
-        AIAlgNodeBase *item = [SMGUtils searchNode:model.match_p];
-        return item.count != protoGroupValue.count;
-    }];
+    //2025.03.21: 提升索引范围，因为组码可复用性还是挺强的，先全保留跑跑看。
+    return gMatchModels;
+    
+    ////12. 似层交层分开进行竞争 (分开竞争是以前就一向如此的,因为同质竞争才公平) (为什么要保留交层: 参考31134-TODO1);
+    //NSArray *gMatchModels_Si = [SMGUtils filterArr:gMatchModels checkValid:^BOOL(AIMatchModel *model) {
+    //    AIGroupValueNode *item = [SMGUtils searchNode:model.match_p];
+    //    return item.count == protoGroupValue.count;
+    //}];
+    //NSArray *gMatchModels_Jiao = [SMGUtils filterArr:gMatchModels checkValid:^BOOL(AIMatchModel *model) {
+    //    AIAlgNodeBase *item = [SMGUtils searchNode:model.match_p];
+    //    return item.count != protoGroupValue.count;
+    //}];
     
     //13. 识别过滤器 (参考28109-todo2);
-    gMatchModels_Si = [AIFilter recognitionMatchModelsFilter:gMatchModels_Si radio:0.26f];
-    gMatchModels_Jiao = [AIFilter recognitionMatchModelsFilter:gMatchModels_Jiao radio:0.5f];
-    return [SMGUtils collectArrA:gMatchModels_Si arrB:gMatchModels_Jiao];
+    //gMatchModels_Si = [AIFilter recognitionMatchModelsFilter:gMatchModels_Si radio:0.26f];
+    //gMatchModels_Jiao = [AIFilter recognitionMatchModelsFilter:gMatchModels_Jiao radio:0.5f];
+    //return [SMGUtils collectArrA:gMatchModels_Si arrB:gMatchModels_Jiao];
 }
 
 
@@ -159,6 +159,7 @@
     AIFeatureNode *protoFeature = [SMGUtils searchNode:feature_p];
     NSMutableDictionary *resultILXYDic = [[NSMutableDictionary alloc] init];// <K=proto/assPId, V=数组[ass和proto的映射下标(可用protoIndex来代替)_level_x_y]>
     NSMutableArray *protoILXYArr = [[NSMutableArray alloc] init];//proto的ILXY数组单独存，不要放到resultILXYDic中，后面它要分别与resultILXYDic的每一个ass进行对比xy相似度。
+    NSMutableArray *except_ps = [[NSMutableArray alloc] init];//每个ass内的level,x,y只能索引一次，避免重复，或者以后改成，每个只保留取最相似的一次。
     
     //2. 循环分别识别：特征里的组码。
     for (NSInteger i = 0; i < protoFeature.count; i++) {
@@ -169,7 +170,6 @@
         [protoILXYArr addObject:[MapModel newWithV1:@(i) v2:@(protoLevel) v3:NUMTOOK(ARR_INDEX(protoFeature.xs, i)) v4:NUMTOOK(ARR_INDEX(protoFeature.ys, i))]];
         
         //4. 组码识别。
-        NSMutableArray *except_ps = [[NSMutableArray alloc] init];
         NSArray *gMatchModels = [self recognitionGroupValue:protoGroupValue_p];
         for (AIMatchModel *gModel in gMatchModels) {
             NSArray *refPorts = [AINetUtils refPorts_All:gModel.match_p];
@@ -187,10 +187,14 @@
                 NSString *assKey = STRFORMAT(@"%ld_%ld",protoLevel - assLevel,refPort.target_p.pointerId);
                 
                 //8. 防重
-                if ([except_ps containsObject:assKey]) continue;
+                NSString *except_Key = STRFORMAT(@"%ld_%ld_%ld_%ld",refPort.target_p.pointerId,assLevel,assX,assY);
+                if ([except_ps containsObject:except_Key]) continue;
+                [except_ps addObject:except_Key];
                 
                 //TODOTOMORROW20250320: 此处特征里有76个组码，但oldILXYDic却能收集上千个，显然有问题。
                 //经查：matchModel.count也有上千个，，，
+                //随后再测吧，此处except_ps全局一卡，就少的可怜，甚至自己识别自己，也只有匹配度1/76，而一把except哪怕是放到最外层循环内来，立马就成了上千matchCount
+                //分析：感觉如果是识别自己，那i=0就应该能识别到组码自己，i=1...依次仍如此，那组码自己的ref肯定也有protoFeature自己，，到时候再调试吧。。。
                 
                 //9. 把protoIndex,assLevel,assX,assY都存下来（后面用于判断xy相似度要用）（参考34052-TODO4）。
                 NSMutableArray *oldILXYValue = [[NSMutableArray alloc] initWithArray:[resultILXYDic objectForKey:assKey]];
@@ -202,6 +206,9 @@
                 if (!tModel) tModel = [[AIMatchModel alloc] init];
                 tModel.match_p = refPort.target_p;
                 tModel.matchCount++;
+                if (tModel.matchCount > 78) {
+                    NSLog(@"");
+                }
                 tModel.matchValue *= gModel.matchValue;
                 tModel.sumRefStrong += (int)refPort.strong.value;
                 [resultDic setObject:tModel forKey:assKey];
@@ -224,8 +231,6 @@
         NSArray *assSortByY = assSortResult.v2;
          
         //14. 对比（protoSortByX和assSortByX）（protoSortByX和assSortByX）序列的相似度。
-        assSortByX = [SMGUtils removeRepeat:assSortByX];//在这里测下防重试下，应该是更早的代码在重复，这里只是临时调试下（结果此处对num的防重还不生效。。。）。
-        assSortByY = [SMGUtils removeRepeat:assSortByY];
         CGFloat simOfX = [SMGUtils similarityOfArr1:protoSortByX a2:assSortByX];
         CGFloat simOfY = [SMGUtils similarityOfArr1:protoSortByY a2:assSortByY];
         
@@ -233,6 +238,7 @@
         AIMatchModel *assMatchModel = [SMGUtils filterSingleFromArr:resultDic.allValues checkValid:^BOOL(AIMatchModel *item) {
             return item.match_p.pointerId == assPId;
         }];
+        NSLog(@"两个序列的相似度 >>> X=%ld:%ld=%.2f Y=%ld:%ld=%.2f",protoSortByX.count,assSortByX.count,simOfX,protoSortByY.count,assSortByY.count,simOfY);
         assMatchModel.matchValue *= (simOfX * simOfY);
     }
     
