@@ -68,4 +68,26 @@
 @property (strong, nonatomic) NSString *header;//禁止直接调用此header,应该调用下面的getHeaderNotNull方法，为空时自动生成下
 -(NSString*) getHeaderNotNull;
 
+//MARK:===============================================================
+//MARK:                     < indexDic组 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------指向抽/具象indexDic的持久化--------------------
+ *  @desc <K:指向的PId, V:与指向fo的indexDic映射> (其中indexDic为<K:absIndex,V:conIndex>);
+ */
+@property (strong, nonatomic) NSMutableDictionary *absIndexDDic;
+@property (strong, nonatomic) NSMutableDictionary *conIndexDDic;
+
+/**
+ *  MARK:--------------------返回self的抽/具象的indexDic--------------------
+ */
+-(NSDictionary*) getAbsIndexDic:(AIKVPointer*)abs_p;
+-(NSDictionary*) getConIndexDic:(AIKVPointer*)con_p;
+
+/**
+ *  MARK:--------------------更新抽具象indexDic存储--------------------
+ */
+-(void) updateIndexDic:(AINodeBase*)absFo indexDic:(NSDictionary*)indexDic;
+
 @end

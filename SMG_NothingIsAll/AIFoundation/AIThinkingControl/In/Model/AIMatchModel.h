@@ -19,4 +19,6 @@
 @property (assign, nonatomic) NSInteger sumRefStrong;
 -(CGFloat) strongValue;
 
+@property (strong, nonatomic) NSDictionary *indexDic; //匹配到的映射 (k为assIndex,v为protoIndex)
+
 @end

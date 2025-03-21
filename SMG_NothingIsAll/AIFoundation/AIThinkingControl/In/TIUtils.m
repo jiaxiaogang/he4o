@@ -130,12 +130,8 @@
         return true;
     }];
     
-    //TODO: 构建proto和ass的抽具象关联。
-    
     //2025.03.21: 提升索引范围，因为组码可复用性还是挺强的，先全保留跑跑看。
-    return gMatchModels;
-    
-    ////12. 似层交层分开进行竞争 (分开竞争是以前就一向如此的,因为同质竞争才公平) (为什么要保留交层: 参考31134-TODO1);
+    //12. 似层交层分开进行竞争 (分开竞争是以前就一向如此的,因为同质竞争才公平) (为什么要保留交层: 参考31134-TODO1);
     //NSArray *gMatchModels_Si = [SMGUtils filterArr:gMatchModels checkValid:^BOOL(AIMatchModel *model) {
     //    AIGroupValueNode *item = [SMGUtils searchNode:model.match_p];
     //    return item.count == protoGroupValue.count;
@@ -144,11 +140,20 @@
     //    AIAlgNodeBase *item = [SMGUtils searchNode:model.match_p];
     //    return item.count != protoGroupValue.count;
     //}];
-    
+    //
     //13. 识别过滤器 (参考28109-todo2);
     //gMatchModels_Si = [AIFilter recognitionMatchModelsFilter:gMatchModels_Si radio:0.26f];
     //gMatchModels_Jiao = [AIFilter recognitionMatchModelsFilter:gMatchModels_Jiao radio:0.5f];
     //return [SMGUtils collectArrA:gMatchModels_Si arrB:gMatchModels_Jiao];
+    
+    //21. 更新: ref强度 & 相似度 & 抽具象;
+    for (AIMatchModel *matchModel in gMatchModels) {
+        AIGroupValueNode *assNode = [SMGUtils searchNode:matchModel.match_p];
+        [AINetUtils insertRefPorts_General:assNode.p content_ps:assNode.content_ps difStrong:1 header:assNode.header];
+        [protoGroupValue updateMatchValue:assNode matchValue:matchModel.matchValue];
+        [AINetUtils relateGeneralAbs:assNode absConPorts:assNode.conPorts conNodes:@[protoGroupValue] isNew:false difStrong:1];
+    }
+    return gMatchModels;
 }
 
 
@@ -218,6 +223,21 @@
         }
     }
     
+    //11. 生成proto和ass的映射 (现在protoIndex存在assGVModels中);
+    for (NSString *assKey in resultDic.allKeys) {
+        //a. 从assGVModels中收集indexDic;
+        NSArray *assGVModels = ARRTOOK([assGVModelDic objectForKey:assKey]);
+        NSMutableDictionary *indexDic = [[NSMutableDictionary alloc] init];
+        for (NSInteger assIndex = 0; assIndex < assGVModels.count; assIndex++) {
+            InputGroupValueModel *assModel = ARR_INDEX(assGVModels, assIndex);
+            [indexDic setObject:@(assModel.matchOfProtoIndex) forKey:@(assIndex)];
+        }
+        
+        //b. 把indexDic存下来;
+        AIMatchModel *matchModel = [resultDic objectForKey:assKey];
+        matchModel.indexDic = indexDic;
+    }
+    
     //21. 把matchValue=0的排除掉。
     NSArray *resultModels = [SMGUtils filterArr:resultDic.allValues checkValid:^BOOL(AIMatchModel *item) {
         return item.matchValue > 0;
@@ -233,8 +253,14 @@
         return true;
     }];
     
-    //TODO: 构建proto和ass的抽具象关联。
-    
+    //24. 更新: ref强度 & 相似度 & 抽具象 & 映射;
+    for (AIMatchModel *matchModel in resultModels) {
+        AIFeatureNode *assFeature = [SMGUtils searchNode:matchModel.match_p];
+        [AINetUtils insertRefPorts_General:assFeature.p content_ps:assFeature.content_ps difStrong:1 header:assFeature.header];
+        [protoFeature updateMatchValue:assFeature matchValue:matchModel.matchValue];
+        [AINetUtils relateGeneralAbs:assFeature absConPorts:assFeature.conPorts conNodes:@[protoFeature] isNew:false difStrong:1];
+        [protoFeature updateIndexDic:assFeature indexDic:matchModel.indexDic];
+    }
     return resultModels;
 }
 

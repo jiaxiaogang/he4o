@@ -33,6 +33,16 @@
     return _contentPorts;
 }
 
+-(NSMutableDictionary *)absIndexDDic{
+    if (!ISOK(_absIndexDDic, NSMutableDictionary.class)) _absIndexDDic = [[NSMutableDictionary alloc] initWithDictionary:_absIndexDDic];
+    return _absIndexDDic;
+}
+
+-(NSMutableDictionary *)conIndexDDic{
+    if (!ISOK(_conIndexDDic, NSMutableDictionary.class)) _conIndexDDic = [[NSMutableDictionary alloc] initWithDictionary:_conIndexDDic];
+    return _conIndexDDic;
+}
+
 //MARK:===============================================================
 //MARK:                     < publicMethod >
 //MARK:===============================================================
@@ -153,6 +163,50 @@
     return self.header;
 }
 
+
+//MARK:===============================================================
+//MARK:                     < indexDic组 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------返回self的抽/具象的indexDic--------------------
+ *  @result indexDic<K:absIndex,V:conIndex>;
+ */
+-(NSDictionary*) getAbsIndexDic:(AIKVPointer*)abs_p {
+    return DICTOOK([self.absIndexDDic objectForKey:@(abs_p.pointerId)]);
+}
+
+-(NSDictionary*) getConIndexDic:(AIKVPointer*)con_p {
+    return DICTOOK([self.conIndexDDic objectForKey:@(con_p.pointerId)]);
+}
+
+/**
+ *  MARK:--------------------更新抽具象indexDic存储--------------------
+ *  @param absFo : 传抽象节点进来,而self为具象节点;
+ *  @version
+ *      2022.11.15: 将抽具象关系也存上匹配映射 (参考27177-todo5);
+ */
+-(void) updateIndexDic:(AINodeBase*)absFo indexDic:(NSDictionary*)indexDic {
+    //1. 更新抽具象两个indexDDic;
+    [self.absIndexDDic setObject:indexDic forKey:@(absFo.pointer.pointerId)];
+    [absFo.conIndexDDic setObject:indexDic forKey:@(self.pointer.pointerId)];
+    
+    //TODOTOMORROW20240626: 看下有没indexDic越界了;
+    for (NSNumber *key in indexDic.allKeys) {
+        NSNumber *value = [indexDic objectForKey:key];
+        if (value.integerValue >= self.count) {
+            NSLog(@"映射的value越界,已修,复测一段时间,遇过两次,都修了,如果到2024.07.26没断过点,则删除此处");
+        } else if (key.integerValue >= absFo.count) {
+            NSLog(@"映射的key越界,已修,复测一段时间,遇过两次,都修了,如果到2024.07.26没断过点,则删除此处");
+        }
+    }
+    [AITest test34:indexDic];
+    
+    //2. 保存节点;
+    [SMGUtils insertNode:self];
+    [SMGUtils insertNode:absFo];
+}
+
 //MARK:===============================================================
 //MARK:                     < privateMethod >
 //MARK:===============================================================
@@ -175,6 +229,8 @@
         self.conMatchDic = [aDecoder decodeObjectForKey:@"conMatchDic"];
         self.absMatchDic = [aDecoder decodeObjectForKey:@"absMatchDic"];
         self.header = [aDecoder decodeObjectForKey:@"header"];
+        self.absIndexDDic = [aDecoder decodeObjectForKey:@"absIndexDDic"];
+        self.conIndexDDic = [aDecoder decodeObjectForKey:@"conIndexDDic"];
     }
     return self;
 }
@@ -194,6 +250,8 @@
     [aCoder encodeObject:[self.conMatchDic copy] forKey:@"conMatchDic"];
     [aCoder encodeObject:[self.absMatchDic copy] forKey:@"absMatchDic"];
     [aCoder encodeObject:self.header forKey:@"header"];
+    [aCoder encodeObject:[self.absIndexDDic copy] forKey:@"absIndexDDic"];
+    [aCoder encodeObject:[self.conIndexDDic copy] forKey:@"conIndexDDic"];
 }
 
 @end

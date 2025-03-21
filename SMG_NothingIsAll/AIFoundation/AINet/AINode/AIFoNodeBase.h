@@ -111,28 +111,6 @@
  */
 -(NSDictionary*) getItemOutSPDic:(NSString*)baseSceneOutSPKey;
 
-//MARK:===============================================================
-//MARK:                     < indexDic组 >
-//MARK:===============================================================
-
-/**
- *  MARK:--------------------指向抽/具象indexDic的持久化--------------------
- *  @desc <K:指向的PId, V:与指向fo的indexDic映射> (其中indexDic为<K:absIndex,V:conIndex>);
- */
-@property (strong, nonatomic) NSMutableDictionary *absIndexDDic;
-@property (strong, nonatomic) NSMutableDictionary *conIndexDDic;
-
-/**
- *  MARK:--------------------返回self的抽/具象的indexDic--------------------
- */
--(NSDictionary*) getAbsIndexDic:(AIKVPointer*)abs_p;
--(NSDictionary*) getConIndexDic:(AIKVPointer*)con_p;
-
-/**
- *  MARK:--------------------更新抽具象indexDic存储--------------------
- */
--(void) updateIndexDic:(AIFoNodeBase*)absFo indexDic:(NSDictionary*)indexDic;
-
 
 //MARK:===============================================================
 //MARK:                     < conCansets组 >
