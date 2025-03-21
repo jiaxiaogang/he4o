@@ -230,8 +230,48 @@
 /**
  *  MARK:--------------------特征类比--------------------
  */
-+(AIFeatureNode*) analogyFeature:(AIKVPointer*)proto_p ass:(AIKVPointer*)ass_p {
-    return nil;
++(AIFeatureNode*) analogyFeature:(AIKVPointer*)protoT_p ass:(AIKVPointer*)assT_p {
+    //1. 类比orders的规律
+    NSMutableArray *absGVModels = [[NSMutableArray alloc] init];
+    NSMutableDictionary *protoAssIndexDic = [NSMutableDictionary new];//收集proto和ass的映射;
+    AIFeatureNode *protoFeature = [SMGUtils searchNode:protoT_p];
+    AIFeatureNode *assFeature = [SMGUtils searchNode:assT_p];
+        
+    //2. 外类比有序进行 (记录jMax & 正序)
+    NSInteger jStart = 0;
+    for (NSInteger i = 0; i < protoFeature.count; i++) {
+        AIKVPointer *protoG_p = ARR_INDEX(protoFeature.content_ps, i);
+        for (NSInteger j = jStart; j < assFeature.count; j++) {
+            AIKVPointer *assG_p = ARR_INDEX(assFeature.content_ps, j);
+            
+            //3. B源于matchFo,此处只判断B是1层抽象 (参考27161-调试1&调试2);
+            //此处proto抽象仅指向刚识别的matchAlgs,所以与contains等效;
+            BOOL mIsC = [TOUtils mIsC_1:protoG_p c:assG_p];
+            if (Log4Ana) NSLog(@"proto的第%ld: G%ld 类比 ass的第%ld: G%ld (%@)",i,protoG_p.pointerId,j,assG_p.pointerId,mIsC?@"成功":@"失败");
+            if (mIsC) {
+                
+                //4. 即使mIsC匹配,也要进行共同点抽象 (参考29025-11);
+                AIGroupValueNode *absG = [self analogyGroupValue:protoG_p assG:assG_p];
+                
+                //5. 收集并更新jMax;
+                
+                //TODOTOMORROW20250321: 此处应该不止要支持mIsC,还得支持位置判断,因为mIsC对于GV来说,太容易了,但加上位置判断就不那么容易了...
+                
+                [protoAssIndexDic setObject:@(i) forKey:@(j)];
+                [absGVModels addObject:[InputGroupValueModel new:nil groupValue:absG.p level:0 x:0 y:0]];
+                jStart = j + 1;
+                break;
+            }
+        }
+    }
+    
+    //备忘: 如果以后特征要支持indexDic,这里可以打开并存上映射支持下 (但短时间内应该不需要,连alg也没支持映射);
+    ////6. 生成protoIndexDic 和 assIndexDic  (参考29032-todo1.2);
+    //NSDictionary *assAbsIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:protoAssIndexDic.allKeys];
+    //NSDictionary *protoAbsIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:protoAssIndexDic.allValues];
+    
+    //7. 外类比构建
+    return [AIGeneralNodeCreater createFeatureNode:absGVModels conNodes:@[protoFeature,assFeature] at:protoT_p.algsType ds:protoT_p.dataSource isOut:protoT_p.isOut];
 }
 
 /**
@@ -300,6 +340,7 @@
     [protoG updateMatchValue:absG matchValue:protoAbsModel4MatchValue.matchValue];
     [assG updateMatchValue:absG matchValue:1];
     [AITest test25:absG conNodes:@[protoG,assG]];
+    if (Log4Ana) NSLog(@"G类比 ===> %@ : %@ = %@",Pit2FStr(protoG_p),Pit2FStr(assG_p),Pit2FStr(absG.p));
     return absG;
 }
 

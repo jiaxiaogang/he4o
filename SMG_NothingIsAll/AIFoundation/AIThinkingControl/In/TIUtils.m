@@ -218,16 +218,6 @@
         }
     }
     
-    //11. 将protoFeature转为groupValueModels格式 （proto的level,x,y数据准备：把protoIndex,protoLevel,protoX,protoY都存下来，用于判断xy相似度（参考34052-TODO4）。
-    NSMutableArray *protoGVModels = [[NSMutableArray alloc] init];
-    for (NSInteger i = 0; i < protoFeature.count; i++) {
-        AIKVPointer *protoGroupValue_p = ARR_INDEX(protoFeature.content_ps, i);
-        NSInteger protoLevel = NUMTOOK(ARR_INDEX(protoFeature.levels, i)).integerValue;
-        NSInteger protoX = NUMTOOK(ARR_INDEX(protoFeature.xs, i)).integerValue;
-        NSInteger protoY = NUMTOOK(ARR_INDEX(protoFeature.ys, i)).integerValue;
-        [protoGVModels addObject:[InputGroupValueModel new:nil groupValue:protoGroupValue_p level:protoLevel x:protoX y:protoY]];
-    }
-    
     //21. 把matchValue=0的排除掉。
     NSArray *resultModels = [SMGUtils filterArr:resultDic.allValues checkValid:^BOOL(AIMatchModel *item) {
         return item.matchValue > 0;
