@@ -205,21 +205,26 @@
  *  @desc 公式：推测下一组码的xy位置 : 与真实assTo的xy位置比较 = 得出位置符合预期程度（参考34053-新方案）。
  *  @result 为保证精度准确，结果以最大粒度层的绝对坐标进行返回。
  */
-+(CGFloat) checkAssToMatchDegree:(AIFeatureNode*)protoFeature protoIndex:(NSInteger)protoIndex assGVModels:(NSArray*)assGVModels assPort:(AIPort*)assPort {
-    //1. 第一帧：不判断直接返回符合。
-    if (protoIndex == 0) return 1;
++(CGFloat) checkAssToMatchDegree:(AIFeatureNode*)protoFeature protoIndex:(NSInteger)protoIndex assGVModels:(NSArray*)assGVModels checkRefPort:(AIPort*)checkRefPort {
+    //1. 取出上个ass匹配帧;
+    InputGroupValueModel *lastAssModel = ARR_INDEX_REVERSE(assGVModels, 0);
+    if (!lastAssModel) return 1;//第一帧：不判断直接返回符合。
+    CGPoint assFrom = CGPointMake(lastAssModel.x, lastAssModel.y);
+    NSInteger assToLevel = NUMTOOK([checkRefPort.params objectForKey:@"l"]).integerValue;
+    NSInteger assToX = NUMTOOK([checkRefPort.params objectForKey:@"x"]).integerValue;
+    NSInteger assToY = NUMTOOK([checkRefPort.params objectForKey:@"y"]).integerValue;
     
-    //
-    CGPoint protoFrom = CGPointMake(NUMTOOK(ARR_INDEX(protoFeature.xs, protoIndex - 1)).integerValue, NUMTOOK(ARR_INDEX(protoFeature.ys, protoIndex - 1)).integerValue);
+    //2. 取出lastProto;
+    NSInteger lastProtoIndex = lastAssModel.matchOfProtoIndex;
+    CGPoint protoFrom = CGPointMake(NUMTOOK(ARR_INDEX(protoFeature.xs, lastProtoIndex)).integerValue, NUMTOOK(ARR_INDEX(protoFeature.ys, lastProtoIndex)).integerValue);
     CGPoint protoTo = CGPointMake(NUMTOOK(ARR_INDEX(protoFeature.xs, protoIndex)).integerValue, NUMTOOK(ARR_INDEX(protoFeature.ys, protoIndex)).integerValue);
-    NSInteger protoFromLevel = NUMTOOK(ARR_INDEX(protoFeature.levels, protoIndex - 1)).integerValue;
+    NSInteger protoFromLevel = NUMTOOK(ARR_INDEX(protoFeature.levels, lastProtoIndex)).integerValue;
     NSInteger protoToLevel = NUMTOOK(ARR_INDEX(protoFeature.levels, protoIndex)).integerValue;
     
-    //assGVModels中有assLevel,assX,assY,但没存对应第几帧index;//可以先加上，因为它在这里要用。
-    
-    //[self checkAssToMatchDegree:
-    return 0;
+    //3. 计算checkRefPort对于当前assGVModels来说,是否符合位置;
+    return [self checkAssToMatchDegree:protoFrom protoFromLevel:protoFromLevel protoTo:protoTo protoToLevel:protoToLevel assFrom:assFrom assFromLevel:lastAssModel.level assTo:CGPointMake(assToX, assToY) assToLevel:assToLevel];
 }
+
 +(CGFloat) checkAssToMatchDegree:(CGPoint)protoFrom protoFromLevel:(NSInteger)protoFromLevel
                          protoTo:(CGPoint)protoTo protoToLevel:(NSInteger)protoToLevel
                          assFrom:(CGPoint)assFrom assFromLevel:(NSInteger)assFromLevel

@@ -170,9 +170,6 @@
     for (NSInteger i = 0; i < protoFeature.count; i++) {
         AIKVPointer *protoGroupValue_p = ARR_INDEX(protoFeature.content_ps, i);
         NSInteger protoLevel = NUMTOOK(ARR_INDEX(protoFeature.levels, i)).integerValue;
-        NSInteger protoX = NUMTOOK(ARR_INDEX(protoFeature.xs, i)).integerValue;
-        NSInteger protoY = NUMTOOK(ARR_INDEX(protoFeature.ys, i)).integerValue;
-        
         
         //4. 组码识别。
         NSArray *gMatchModels = [self recognitionGroupValue:protoGroupValue_p];
@@ -191,6 +188,11 @@
                 //7. 根据level分别记录不同deltaLevel结果（把deltaLevel做为key的一部分，记录到识别结果字典里）。
                 NSString *assKey = STRFORMAT(@"%ld_%ld",protoLevel - assLevel,refPort.target_p.pointerId);
                 
+                //8. 取出已经收集到的assGVModels,判断下一个refPort收集进去的话,是否符合位置;
+                NSMutableArray *assGVModels = [[NSMutableArray alloc] initWithArray:[assGVModelDic objectForKey:assKey]];
+                CGFloat matchDegree = [ThinkingUtils checkAssToMatchDegree:protoFeature protoIndex:i assGVModels:assGVModels checkRefPort:refPort];
+                if (matchDegree < 0.7) continue;
+                
                 //8. 防重
                 //说明1、proto的76个每个组码，才可能相似到同在proto中的别的10个左右的组码，而这些组码都ref着proto，如果不加以防重，很容易重复成76*10=760个。所以不仅要针对pid防重，还要针对level,x,y都防重。
                 //说明2、ass2的组码，也可能在ass1的时候就被收到ass1的deltaLeverl里，导致被防重掉，循环到ass2的时候反而无法再判给ass2了，所以，我们应该加上限制，针对每个delta的ass，我们都要单独进行防重。
@@ -199,8 +201,9 @@
                 [except_ps addObject:except_Key];
                 
                 //9. 把protoIndex,assLevel,assX,assY都存下来（后面用于判断xy相似度要用）（参考34052-TODO4）。
-                NSMutableArray *assGVModels = [[NSMutableArray alloc] initWithArray:[assGVModelDic objectForKey:assKey]];
-                [assGVModels addObject:[InputGroupValueModel new:nil groupValue:refPort.target_p level:assLevel x:assX y:assY]];
+                InputGroupValueModel * newModel = [InputGroupValueModel new:nil groupValue:refPort.target_p level:assLevel x:assX y:assY];
+                newModel.matchOfProtoIndex = i;
+                [assGVModels addObject:newModel];
                 [assGVModelDic setObject:assGVModels forKey:assKey];
                 
                 //10. 找model (无则新建) (性能: 此处在循环中,所以防重耗60ms正常,收集耗100ms正常);
@@ -224,25 +227,6 @@
         NSInteger protoY = NUMTOOK(ARR_INDEX(protoFeature.ys, i)).integerValue;
         [protoGVModels addObject:[InputGroupValueModel new:nil groupValue:protoGroupValue_p level:protoLevel x:protoX y:protoY]];
     }
-    
-    ////12. 根据assGVModelDic，分别按绝对xylevel排序（参考34052-TODO4）。
-    ////protoGVModels = [ThinkingUtils sortInputGroupValueModels:protoGVModels levelNum:-1];//proto先按xy坐标从小到大排序 (应该不用排了，在构建前就排好了）。
-    //for (NSNumber *assGVModelKey in assGVModelDic.allKeys) {
-    //    NSArray *assGVModels = [assGVModelDic objectForKey:assGVModelKey];
-    //    [ThinkingUtils sortInputGroupValueModels:assGVModels levelNum:-1];
-    //
-    //    //13. ass也按xy坐标从小到大排序。
-    ////        MapModel *assSortResult = [self sortIByXYWithILXYArr:assILXYArr];
-    ////        NSArray *assSortByX = assSortResult.v1;
-    //
-    //    //14. 对比（protoSortByX和assSortByX）（protoSortByX和assSortByX）序列的相似度。
-    //    CGFloat simOfXY = [SMGUtils similarityOfArr1:protoSortByX a2:assSortByX];
-    //
-    //    //15. 找出对应的MatchModel，把匹配度乘上xy的匹配度。
-    //    AIMatchModel *resultMatchModel = [resultDic objectForKey:assGVModelKey];
-    //    NSLog(@"两个序列的相似度 >>> X=%ld:%ld=%.2f Y=%ld:%ld=%.2f",protoSortByX.count,assSortByX.count,simOfX,protoSortByY.count,assSortByY.count,simOfY);
-    //    resultMatchModel.matchValue *= (simOfXY);
-    //}
     
     //21. 把matchValue=0的排除掉。
     NSArray *resultModels = [SMGUtils filterArr:resultDic.allValues checkValid:^BOOL(AIMatchModel *item) {
@@ -1014,43 +998,6 @@
         }
     }
     return nil;
-}
-
-/**
- *  MARK:--------------------将下标I按XY分别排序（其中XY需要先换算到同一个level下）--------------------
- *  @param assILXYArr 其内容为：v1=与proto对应的Index v2=assLevel v3=assX v4=assY
- *  @desc   步骤1、先将xy换算到同一个level下（取最大level，这样好换算）。
- *          步骤2、把protoIndex分别按x和y排序，并转为排好的protoIndex数组返回。
- *  @result v1=按x从小到大排好的protoIndex数组 v2=按y从小到大排好的protoIndex数组
- */
-+(MapModel*) sortIByXYWithILXYArr:(NSArray*)assILXYArr {
-    //1. 找出当前ass中的最大level（后面它所有的xy都以转到这个level的坐标为准）。
-    MapModel *maxLevelMapModel = [SMGUtils filterBestObj:assILXYArr scoreBlock:^CGFloat(MapModel *item) {
-        return NUMTOOK(item.v2).integerValue;
-    }];
-    NSInteger maxLevel = NUMTOOK(maxLevelMapModel.v2).integerValue;
-    
-    //2. 把level,x,y都换算到maxLevel层，因为同层的位置才是等价的。
-    for (MapModel *item in assILXYArr) {
-        NSInteger itemLevel = NUMTOOK(item.v2).integerValue;
-        NSInteger radio = powf(3, maxLevel - itemLevel);//差几层，就乘3的几次方。
-        item.v2 = @(maxLevel);
-        item.v3 = @(NUMTOOK(item.v3).integerValue * radio);
-        item.v4 = @(NUMTOOK(item.v4).integerValue * radio);
-    }
-    
-    //3. 分别按x/y排序，然后转成排好的index数组返回。
-    NSArray *sortIndexByX = [SMGUtils convertArr:[SMGUtils sortSmall2Big:assILXYArr compareBlock:^double(MapModel *obj) {
-        return NUMTOOK(obj.v3).integerValue;
-    }] convertBlock:^id(MapModel *obj) {
-        return obj.v1;
-    }];
-    NSArray *sortIndexByY = [SMGUtils convertArr:[SMGUtils sortSmall2Big:assILXYArr compareBlock:^double(MapModel *obj) {
-        return NUMTOOK(obj.v4).integerValue;
-    }] convertBlock:^id(MapModel *obj) {
-        return obj.v1;
-    }];
-    return [MapModel newWithV1:sortIndexByX v2:sortIndexByY];
 }
 
 @end

@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIFrontOrderNode,AIAlgNodeBase,AIShortMatchModel,TOAlgModel;
+@class AIFrontOrderNode,AIAlgNodeBase,AIShortMatchModel,TOAlgModel,AIFeatureNode;
 @interface ThinkingUtils : NSObject
 
 @end
@@ -87,6 +87,6 @@
 /**
  *  MARK:--------------------计算assTo是否在其该出现的位置（返回符合度）--------------------
  */
-+(CGFloat) checkAssToMatchDegree:(CGPoint)protoFrom protoTo:(CGPoint)protoTo protoLevel:(NSInteger)protoLevel assFrom:(CGPoint)assFrom assTo:(CGPoint)assTo assLevel:(NSInteger)assLevel;
++(CGFloat) checkAssToMatchDegree:(AIFeatureNode*)protoFeature protoIndex:(NSInteger)protoIndex assGVModels:(NSArray*)assGVModels checkRefPort:(AIPort*)checkRefPort;
 
 @end

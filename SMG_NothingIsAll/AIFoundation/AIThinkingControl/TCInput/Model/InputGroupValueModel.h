@@ -21,5 +21,6 @@
 @property (strong, nonatomic) NSArray *subDots;//子点稀疏码 (结果为：MapModel v1=单码指针 v2=自身x位置(取值范围0-2) v3=自身y位置(取值范围0-2)>
 
 @property (strong, nonatomic) AIKVPointer *groupValue_p;//用subDot_ps构建的组码。
+@property (assign, nonatomic) NSInteger matchOfProtoIndex;//与protoFeature的哪一帧匹配上的
 
 @end
