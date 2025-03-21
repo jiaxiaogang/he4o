@@ -82,6 +82,8 @@
     //2. 循环分别识别：组码里的单码。
     for (NSInteger i = 0; i < protoGroupValue.count; i++) {
         AIKVPointer *protoValue_p = ARR_INDEX(protoGroupValue.content_ps, i);
+        NSInteger protoX = NUMTOOK(ARR_INDEX(protoGroupValue.xs, i)).integerValue;
+        NSInteger protoY = NUMTOOK(ARR_INDEX(protoGroupValue.ys, i)).integerValue;
         
         //3. 取相近度序列 (按相近程度排序);
         NSArray *vMatchModels = [self recognitionValue:protoValue_p];
@@ -95,8 +97,10 @@
             //> BUG-此处ds应该做个判别，不然可能9宫全是同一个单码ref过去的。所以如下按i对等来修复下：
             //> FIX-所以：直接类似特征的params.xy位置类似方法，组码这里按refPort.params中的i来要求一下对等。
             refPorts = [SMGUtils filterArr:refPorts checkValid:^BOOL(AIPort *item) {
-                NSNumber *refParamsI = [item.params objectForKey:@"i"];
-                return (refParamsI ? refParamsI.integerValue : -999) == i;
+                if (!item.params || ![item.params objectForKey:@"x"]) return nil;
+                NSInteger assX = NUMTOOK([item.params objectForKey:@"x"]).integerValue;
+                NSInteger assY = NUMTOOK([item.params objectForKey:@"y"]).integerValue;
+                return assX == protoX && assY == protoY;
             }];
             
             //5. 每个refPort转为model并计匹配度和匹配数;
@@ -125,6 +129,8 @@
         if (gItem.count != item.matchCount) return false;
         return true;
     }];
+    
+    //TODO: 构建proto和ass的抽具象关联。
     
     //2025.03.21: 提升索引范围，因为组码可复用性还是挺强的，先全保留跑跑看。
     return gMatchModels;
@@ -159,7 +165,7 @@
     AIFeatureNode *protoFeature = [SMGUtils searchNode:feature_p];
     NSMutableDictionary *resultILXYDic = [[NSMutableDictionary alloc] init];// <K=proto/assPId, V=数组[ass和proto的映射下标(可用protoIndex来代替)_level_x_y]>
     NSMutableArray *protoILXYArr = [[NSMutableArray alloc] init];//proto的ILXY数组单独存，不要放到resultILXYDic中，后面它要分别与resultILXYDic的每一个ass进行对比xy相似度。
-    NSMutableArray *except_ps = [[NSMutableArray alloc] init];//每个ass内的level,x,y只能索引一次，避免重复，或者以后改成，每个只保留取最相似的一次。
+    NSMutableArray *except_ps = [[NSMutableArray alloc] init];//每个ass内的level,x,y只能索引一次，避免重复，或者 TODO: 以后改成，每个只保留取最相似的一次。
     
     //2. 循环分别识别：特征里的组码。
     for (NSInteger i = 0; i < protoFeature.count; i++) {
@@ -250,13 +256,15 @@
     //22. 识别过滤器 (参考28109-todo2)。
     resultModels = [AIFilter recognitionMatchModelsFilter:resultModels radio:0.4f];
     
-    
     //23. 全含判断: 特征应该不需要全含，因为很难看到局部都相似的两个图像。
     resultModels = [SMGUtils filterArr:resultModels checkValid:^BOOL(AIMatchModel *item) {
         AIFeatureNode *tNode = [SMGUtils searchNode:item.match_p];
         if (tNode.count * 0.7 > item.matchCount) return false;//匹配数必须达到70%才有效。
         return true;
     }];
+    
+    //TODO: 构建proto和ass的抽具象关联。
+    
     return resultModels;
 }
 
@@ -483,7 +491,7 @@
         
         //6. 对proto直接抽象指向matchAlg,并增强强度值 (为保证抽象多样性,所以相近的也抽具象关联) (参考27153-3);
         [AINetUtils relateAlgAbs:matchAlg conNodes:@[inModel.protoAlg] isNew:false];
-        [AITest test25:matchAlg conAlgs:@[inModel.protoAlg]];
+        [AITest test25:matchAlg conNodes:@[inModel.protoAlg]];
     }
     
     for (AIMatchAlgModel *matchModel in ARR_SUB(inModel.matchAlgs_PS, 0, 5)) {

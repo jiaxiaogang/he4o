@@ -237,12 +237,12 @@
 }
 
 //2024.08.1: 在类比后,构建absAlg后,这里会立马构建关联,此时还没设置抽具象概念的matchValue值,所以改为设置相似度值后,再调用此方法检查;
-+(void) test25:(AIAlgNodeBase*)absAlg conAlgs:(NSArray*)conAlgs {
-    NSArray *copyConAlgs = [conAlgs copy];
++(void) test25:(AINodeBase*)absNode conNodes:(NSArray*)conNodes {
+    NSArray *copyConAlgs = [conNodes copy];
     for (AINodeBase *con in copyConAlgs) {
-        if (absAlg.pId != con.pId && ![absAlg.conMatchDic objectForKey:@(con.pId)]) {
+        if (absNode.pId != con.pId && ![absNode.conMatchDic objectForKey:@(con.pId)]) {
             //这个错报也没啥事,因为有时卡了,还没存上,就执行了这儿,如果这里的错一直报了,可以查下test26,只要26不报,说明取用时没问题,这个存自然也就没问题;
-            ELog(@"自检25: 存概念匹配度: alg抽具象关联后: 二者的匹配度未保存,查下为什么匹配度没写存上 abs:%ld con:%ld",absAlg.pId,con.pId);
+            ELog(@"自检25: 存抽具象节点匹配度: 抽具象关联后: 二者的匹配度未保存,查下为什么匹配度没写存上 abs:%ld con:%ld",absNode.pId,con.pId);
         }
     }
 }

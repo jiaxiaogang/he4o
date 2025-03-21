@@ -223,7 +223,7 @@
     //8. 将抽象概念与具象的匹配度存下来 (参考29091BUG);
     [protoA updateMatchValue:absA matchValue:protoAbsModel4MatchValue.matchValue];
     [assA updateMatchValue:absA matchValue:1];
-    [AITest test25:absA conAlgs:@[protoA,assA]];
+    [AITest test25:absA conNodes:@[protoA,assA]];
     return absA;
 }
 
@@ -237,8 +237,70 @@
 /**
  *  MARK:--------------------组码类比--------------------
  */
-+(AIGroupValueNode*) analogyGroupValue:(AIKVPointer*)proto_p ass:(AIKVPointer*)ass_p {
-    return nil;
++(AIGroupValueNode*) analogyGroupValue:(AIKVPointer*)protoG_p assG:(AIKVPointer*)assG_p {
+    //1. 如果本就一致;
+    if ([protoG_p isEqual:assG_p]) return [SMGUtils searchNode:protoG_p];
+    
+    //2. 数据准备;
+    AIGroupValueNode *protoG = [SMGUtils searchNode:protoG_p];
+    AIGroupValueNode *assG = [SMGUtils searchNode:assG_p];
+    NSMutableArray *sameSubDots = [[NSMutableArray alloc] init];
+    AIMatchAlgModel *protoAbsModel4MatchValue = [[AIMatchAlgModel alloc] init];//此模型仅用于收集proto和abs的相近度,用于计算matchValue;
+    
+    //3. 分别对protoA和assA的稀疏码进行对比;
+    for (NSInteger i = 0; i < protoG.count; i++) {
+        
+        //11. 找出proto子单码的数据
+        NSInteger protoX = NUMTOOK(ARR_INDEX(protoG.xs, i)).integerValue;
+        NSInteger protoY = NUMTOOK(ARR_INDEX(protoG.ys, i)).integerValue;
+        AIKVPointer *protoV_p = ARR_INDEX(protoG.content_ps, i);
+        
+        //12. 根据protoX,protoY到ass里，找对应的ass子单码的数据。
+        AIKVPointer *assV_p = nil;
+        for (NSInteger j = 0; j < assG.count; j++) {
+            NSInteger assX = NUMTOOK(ARR_INDEX(assG.xs, j)).integerValue;
+            NSInteger assY = NUMTOOK(ARR_INDEX(assG.ys, j)).integerValue;
+            if (assX == protoX && assY == protoY) {
+                assV_p = ARR_INDEX(assG.content_ps, j);
+                break;
+            }
+        }
+        
+        //21. 过滤器1、如果未找到对应的assV，则直接跳过不类比这一条（这一条以前已被ass抽象掉了）。
+        if (!assV_p) continue;
+        
+        //22. 过滤器2、二者非同区，也直接跳过（它本就不该有抽具象关联，查下当时识别后构建抽具象关联时就有问题）。
+        if (![protoV_p.dataSource isEqualToString:assV_p.dataSource] || ![protoV_p.algsType isEqualToString:assV_p.algsType]) continue;
+            
+        //31. 二者相似度较高时 (计算当前码的责任比例: 比如:1*0.8*0.7时,当前码=0.7时,它的责任比例=(1-0.7)/(1-0.8 + 1-0.7)=60%) (参考29025-13);
+        CGFloat gMatchValue = [protoG getAbsMatchValue:assG_p];
+        CGFloat valueMatchValue = [AIAnalyst compareCansetValue:protoV_p protoValue:assV_p vInfo:nil];
+        CGFloat otherValueMatchValue = valueMatchValue > 0 ? gMatchValue / valueMatchValue : 1;   //别的码相乘是0.xx;
+        CGFloat otherQueKou = 1 - otherValueMatchValue;                                             //别的码缺口;
+        CGFloat curQueKou = 1 - valueMatchValue;                                                    //当前码缺口;
+        CGFloat sumQueKou = otherQueKou + curQueKou;                                                //总缺口;
+        CGFloat curRate = sumQueKou > 0 ? curQueKou / sumQueKou : 0;                                //算出当前码责任比例;
+        
+        //32. 当前码责任<50%时 (次要责任时,免责);
+        if (curRate < 0.5) {
+            [sameSubDots addObject:[MapModel newWithV1:assV_p v2:@(protoX) v3:@(protoY)]];
+            
+            //6. 相近度个数nearCount & 相近度sumNear
+            protoAbsModel4MatchValue.nearCount++;
+            protoAbsModel4MatchValue.sumNear *= valueMatchValue;
+        } else {
+            if (Log4Ana) NSLog(@"> 当前A%ld<%@>比A%ld<%@>的缺口:%.2f / 总缺口%.2f = 当前责任%.2f",(long)protoG_p.pointerId,Pit2FStr(protoV_p),(long)assG_p.pointerId,Pit2FStr(assV_p),curQueKou,sumQueKou,curRate);
+        }
+    }
+    
+    //7. 将相近度善可的构建成抽象返回;
+    AIGroupValueNode *absG = [AIGeneralNodeCreater createGroupValueNode:sameSubDots conNodes:@[protoG,assG] at:protoG_p.algsType ds:protoG_p.dataSource isOut:protoG_p.isOut];
+    
+    //8. 将抽象概念与具象的匹配度存下来 (参考29091BUG);
+    [protoG updateMatchValue:absG matchValue:protoAbsModel4MatchValue.matchValue];
+    [assG updateMatchValue:absG matchValue:1];
+    [AITest test25:absG conNodes:@[protoG,assG]];
+    return absG;
 }
 
 /**

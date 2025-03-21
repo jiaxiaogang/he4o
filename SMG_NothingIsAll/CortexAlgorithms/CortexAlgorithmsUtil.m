@@ -52,7 +52,7 @@
             //3. 把这九个格的色值分别取出来，求平均值收集。
             NSString *nextKey = STRFORMAT(@"%ld_%ld_%ld",nextLevel,nextRow,nextColumn);
             id nextItemColor = [splitDic objectForKey:nextKey];
-            [result addObject:nextItemColor];
+            [result addObject:[MapModel newWithV1:nextItemColor v2:@(i) v3:@(j)]];//其中ij表示子点它自身的xy位置，范围为0-2，共九格。
         }
     }
     return result;

@@ -138,9 +138,11 @@ static AINet *_instance;
                 //2025.03.18：BUG-循环值时对比最大最小是不对的，应该找最不相似的。
                 CGFloat minMatchValue = 1;
                 for (NSInteger i = 0; i < subDots.count; i++) {
-                    AIKVPointer *i_p = ARR_INDEX(subDots, i);
+                    MapModel *iDot = ARR_INDEX(subDots, i);
+                    AIKVPointer *i_p = iDot.v1;
                     for (NSInteger j = i + 1; j < subDots.count; j++) {
-                        AIKVPointer *j_p = ARR_INDEX(subDots, j);
+                        MapModel *jDot = ARR_INDEX(subDots, j);
+                        AIKVPointer *j_p = jDot.v1;
                         CGFloat itemMatchValue = [AIAnalyst compareCansetValue:i_p protoValue:j_p vInfo:nil fromDataDic:cacheDataDic];
                         if (itemMatchValue < minMatchValue) {
                             minMatchValue = itemMatchValue;
@@ -168,7 +170,7 @@ static AINet *_instance;
  */
 -(NSArray*) algModelConvert2PointersV2_Step3_CreateGroupV:(NSString*)at ds:(NSString*)ds groupModels:(NSArray*)groupModels {
     for (InputGroupValueModel *model in groupModels) {
-        model.groupValue = [AIGeneralNodeCreater createGroupValueNode:model.subDot_ps conNodes:nil at:at ds:ds isOut:false];
+        model.groupValue = [AIGeneralNodeCreater createGroupValueNode:model.subDots conNodes:nil at:at ds:ds isOut:false];
     }
     return groupModels;
 }

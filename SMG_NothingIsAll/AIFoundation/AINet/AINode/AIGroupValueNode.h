@@ -13,4 +13,7 @@
  */
 @interface AIGroupValueNode : AINodeBase
 
+@property (strong, nonatomic) NSArray *xs;
+@property (strong, nonatomic) NSArray *ys;
+
 @end

@@ -114,7 +114,8 @@
 +(NSDictionary*) getAverageColorFromSubDotDics:(NSArray*)subDots {
     //1. 别的粗粒度，都从result的细一级粒度取值（把lastLevel取到的9个值取平均值=做为当前Level的HSB值）。
     CGFloat sumR = 0,sumG = 0,sumB = 0;
-    for (NSDictionary *subDotDic in subDots) {
+    for (MapModel *model in subDots) {
+        NSDictionary *subDotDic = model.v1;
         
         //3. 把这九个格的色值分别取出来，求平均值收集。
         sumR += NUMTOOK([subDotDic objectForKey:@"r"]).floatValue;

@@ -239,7 +239,8 @@
                 //1a. 如果是组码时，记录上index值到refPort中。
                 NSDictionary *findParams = nil;
                 if (PitIsGroupValue(biger_p)) {
-                    findParams = @{@"i":@(i)};
+                    AIGroupValueNode *groupValue = [SMGUtils searchNode:biger_p];
+                    findParams = @{@"x":ARR_INDEX(groupValue.xs, i), @"y":ARR_INDEX(groupValue.ys, i)};
                 }
                 
                 //2. 为稀疏码时：硬盘网络时,取出refPorts -> 并二分法强度序列插入 -> 存XGWedis;
@@ -1145,6 +1146,9 @@
 /**
  *  MARK:--------------------各类型节点的header生成规则--------------------
  */
++(NSString*) getGroupValueNodeHeader:(NSArray*)content_ps xs:(NSArray*)xs ys:(NSArray*)ys {
+    return [NSString md5:STRFORMAT(@"%@%@%@",[SMGUtils convertPointers2String:content_ps],CLEANSTR(xs),CLEANSTR(ys))];
+}
 +(NSString*) getFeatureNodeHeader:(NSArray*)content_ps levels:(NSArray*)levels xs:(NSArray*)xs ys:(NSArray*)ys {
     return [NSString md5:STRFORMAT(@"%@%@%@%@",[SMGUtils convertPointers2String:content_ps],CLEANSTR(levels),CLEANSTR(xs),CLEANSTR(ys))];
 }

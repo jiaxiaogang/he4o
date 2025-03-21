@@ -37,7 +37,7 @@
 +(void) test22;
 +(void) test23:(NSDictionary*)pmDic cmDic:(NSDictionary*)cmDic matchIndex:(NSInteger)matchIndex;
 +(void) test24:(NSArray*)absArrForEmptyAlgOfAbsCountCheck;
-+(void) test25:(AIAlgNodeBase*)absAlg conAlgs:(NSArray*)conAlgs;
++(void) test25:(AINodeBase*)absNode conNodes:(NSArray*)conNodes;
 +(void) test26:(NSDictionary*)matchDic checkA:(AIKVPointer*)checkA;
 +(void) test27:(AIFoNodeBase*)sceneFo oldCanset:(AIKVPointer*)oldCanset_p oldIndexDic:(NSDictionary*)oldIndexDic compareIndexDicFromNewCanset:(NSDictionary*)compareIndexDicFromNewCanset;
 +(void) test28:(AIShortMatchModel*)inModel;
