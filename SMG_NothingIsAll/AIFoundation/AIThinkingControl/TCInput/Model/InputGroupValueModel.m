@@ -10,12 +10,13 @@
 
 @implementation InputGroupValueModel
 
-+(id) new:(NSArray*)subDots level:(NSInteger)level x:(NSInteger)x y:(NSInteger)y {
++(id) new:(NSArray*)subDots groupValue:(AIKVPointer*)groupValue_p level:(NSInteger)level x:(NSInteger)x y:(NSInteger)y {
     InputGroupValueModel *result = [[InputGroupValueModel alloc] init];
     result.subDots = subDots;
     result.level = level;
     result.x = x;
     result.y = y;
+    result.groupValue_p = groupValue_p;
     return result;
 }
 

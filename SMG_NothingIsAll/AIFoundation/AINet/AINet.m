@@ -93,16 +93,13 @@ static AINet *_instance;
     //1. 单码装箱
     NSDictionary *splitDic_Value_ps = [self algModelConvert2PointersV2_Step1_ConvertV:at ds:ds splitDic:splitDic];
     
-    //2. 压缩组码
-    NSArray *groupModels = [self algModelConvert2PointersV2_Step2_Zip2GroupValue:at ds:ds splitDic:splitDic_Value_ps levelCount:levelNum];
-    
-    //3. 组码装箱
-    groupModels = [self algModelConvert2PointersV2_Step3_CreateGroupV:at ds:ds groupModels:groupModels];
+    //2. 组码装箱
+    NSArray *groupModels = [self algModelConvert2PointersV2_Step2_Zip2GroupValue:at ds:ds splitDic:splitDic_Value_ps levelNum:levelNum];
     return groupModels;
 }
 
 /**
- *  MARK:--------------------第一步：装箱--------------------
+ *  MARK:--------------------第一步：单码装箱--------------------
  */
 -(NSDictionary*) algModelConvert2PointersV2_Step1_ConvertV:(NSString*)at ds:(NSString*)ds splitDic:(NSDictionary*)splitDic {
     //1. 循环装箱
@@ -113,18 +110,21 @@ static AINet *_instance;
 }
 
 /**
- *  MARK:--------------------第二步：压缩成组码--------------------
- *  @desc 把粒度树里，细一级九宫相似，则移除掉，只保留父级一格（并打包成组）返回（参考34042-分析3）。
+ *  MARK:--------------------第二步：组码装箱--------------------
+ *  @desc
+ *          1、压缩说明：把粒度树里，细一级九宫相似，则移除掉，只保留父级一格（并打包成组）（参考34042-分析3）。
+ *          2、组码装箱：直接把未压缩掉的，有特异性的组，打包成组码节点。
+ *          3、对组码进行x,y,level的排序。
  *  @param splitDic <K=level_x_y V=value_p指针>
- *  @result <K=groupLevel_groupX_groupY, V=subDos_ps>
+ *  @result <InputGroupValueModels>
  */
--(NSArray*) algModelConvert2PointersV2_Step2_Zip2GroupValue:(NSString*)at ds:(NSString*)ds splitDic:(NSDictionary*)splitDic levelCount:(NSInteger)levelCount {
+-(NSArray*) algModelConvert2PointersV2_Step2_Zip2GroupValue:(NSString*)at ds:(NSString*)ds splitDic:(NSDictionary*)splitDic levelNum:(NSInteger)levelNum {
     //0. 数据准备：（把当前at&ds稀疏码的data值字典取出）（用于取值性能优化）。
     NSDictionary *cacheDataDic = [AINetIndexUtils searchDataDic:at ds:ds isOut:false];
     NSMutableArray *groupModels = [NSMutableArray new];
     
     //1. level为1-4层时，组应该用0-3，因为下层9格都是以上层为组（比如：0层就是1层的9格为组）。
-    for (NSInteger groupLevel = 0; groupLevel < levelCount; groupLevel++) {
+    for (NSInteger groupLevel = 0; groupLevel < levelNum; groupLevel++) {
         
         //2. 每层的组边长（0层1组边长1，1层9组边长3，2层81组边长9，3层27x27组边长27）。
         int groupSize = powf(3, groupLevel);
@@ -132,6 +132,7 @@ static AINet *_instance;
             for (NSInteger groupColumn = 0; groupColumn < groupSize; groupColumn++) {
                 
                 //3. 根据组，向子一层取子9格。
+                //每九宫装成一组，生成组码，组码可全局防重（参考34041-问题2-思路）。
                 NSArray *subDots = [CortexAlgorithmsUtil getSub9DotFromSplitDic:groupLevel curRow:groupRow curColumn:groupColumn splitDic:splitDic];//取出子层9格色值。
                 
                 //4. 判断九格的相似度：两两对比，找出最不相似的。
@@ -152,31 +153,17 @@ static AINet *_instance;
                 //NSLog(@"%ld_%ld_%ld %.2f",groupLevel,groupRow,groupColumn,minMatchValue);
                 
                 //5. 如果很相似，防重掉(压缩)。
-                if (minMatchValue > 0.9) continue;
+                if (minMatchValue > 0.9 || !ARRISOK(subDots)) continue;
                 
-                //6. 如果不相似，打包成组特征。
-                [groupModels addObject:[InputGroupValueModel new:subDots level:groupLevel x:groupRow y:groupColumn]];
+                //6. 如果不相似，打包成组码。
+                AIGroupValueNode *groupValue = [AIGeneralNodeCreater createGroupValueNode:subDots conNodes:nil at:at ds:ds isOut:false];
+                [groupModels addObject:[InputGroupValueModel new:subDots groupValue:groupValue.p level:groupLevel x:groupRow y:groupColumn]];
             }
         }
     }
     
-    //TODOTOMORROW20250321: 对groupModels进行排序。。。//考虑下，此处levelCount是否要存到特征里？还是写个静态方法，用at,ds来取。。
-    [ThinkingUtils sortInputGroupValueModels:groupModels levelNum:levelCount];
-    
-    
-    return groupModels;
-}
-
-/**
- *  MARK:--------------------第三步：组码装箱--------------------
- *  @desc 每九宫装成一组，生成组码，组码可全局防重（参考34041-问题2-思路）。
- *  @param groupModels <InputGroupValueModels>
- *  @result K=groupLevel_groupX_groupY V=groupValue.pointer
- */
--(NSArray*) algModelConvert2PointersV2_Step3_CreateGroupV:(NSString*)at ds:(NSString*)ds groupModels:(NSArray*)groupModels {
-    for (InputGroupValueModel *model in groupModels) {
-        model.groupValue = [AIGeneralNodeCreater createGroupValueNode:model.subDots conNodes:nil at:at ds:ds isOut:false];
-    }
+    //11. 为增加特征content_ps的有序性：对groupModels进行排序。
+    [ThinkingUtils sortInputGroupValueModels:groupModels levelNum:levelNum];
     return groupModels;
 }
 

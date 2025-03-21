@@ -72,7 +72,7 @@
     while (imageWHNum / dotNum > 1.5f) {
         dotNum *= 3;
     }
-    return dotNum;
+    return MIN(dotNum, powf(3, VisionMaxLevel));//限制最大图片层级宽度
 }
 
 /**

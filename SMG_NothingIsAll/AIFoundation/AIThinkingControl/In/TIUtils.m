@@ -163,17 +163,13 @@
     //1. 数据准备
     NSMutableDictionary *resultDic = [[NSMutableDictionary alloc] init];// <K=deltaLevel_assPId, V=识别的特征AIMatchModel>
     AIFeatureNode *protoFeature = [SMGUtils searchNode:feature_p];
-    NSMutableDictionary *resultILXYDic = [[NSMutableDictionary alloc] init];// <K=proto/assPId, V=数组[ass和proto的映射下标(可用protoIndex来代替)_level_x_y]>
-    NSMutableArray *protoILXYArr = [[NSMutableArray alloc] init];//proto的ILXY数组单独存，不要放到resultILXYDic中，后面它要分别与resultILXYDic的每一个ass进行对比xy相似度。
-    NSMutableArray *except_ps = [[NSMutableArray alloc] init];//每个ass内的level,x,y只能索引一次，避免重复，或者 TODO: 以后改成，每个只保留取最相似的一次。
+    NSMutableDictionary *assGVModelDic = [[NSMutableDictionary alloc] init];// <K=deltaLevel_ass.pId, V=InputGroupValueModel数组]>
+    NSMutableArray *except_ps = [[NSMutableArray alloc] init];//每个针对每个deltaLevel_ass的level,x,y只能索引一次，避免重复。
     
     //2. 循环分别识别：特征里的组码。
     for (NSInteger i = 0; i < protoFeature.count; i++) {
         AIKVPointer *protoGroupValue_p = ARR_INDEX(protoFeature.content_ps, i);
-        
-        //3. proto的level,x,y数据准备：把protoIndex,protoLevel,protoX,protoY都存下来（后面用于判断xy相似度要用）（参考34052-TODO4）。
         NSInteger protoLevel = NUMTOOK(ARR_INDEX(protoFeature.levels, i)).integerValue;
-        [protoILXYArr addObject:[MapModel newWithV1:@(i) v2:@(protoLevel) v3:NUMTOOK(ARR_INDEX(protoFeature.xs, i)) v4:NUMTOOK(ARR_INDEX(protoFeature.ys, i))]];
         
         //4. 组码识别。
         NSArray *gMatchModels = [self recognitionGroupValue:protoGroupValue_p];
@@ -193,28 +189,22 @@
                 NSString *assKey = STRFORMAT(@"%ld_%ld",protoLevel - assLevel,refPort.target_p.pointerId);
                 
                 //8. 防重
-                NSString *except_Key = STRFORMAT(@"%ld_%ld_%ld_%ld",refPort.target_p.pointerId,assLevel,assX,assY);
+                //说明1、proto的76个每个组码，才可能相似到同在proto中的别的10个左右的组码，而这些组码都ref着proto，如果不加以防重，很容易重复成76*10=760个。所以不仅要针对pid防重，还要针对level,x,y都防重。
+                //说明2、ass2的组码，也可能在ass1的时候就被收到ass1的deltaLeverl里，导致被防重掉，循环到ass2的时候反而无法再判给ass2了，所以，我们应该加上限制，针对每个delta的ass，我们都要单独进行防重。
+                NSString *except_Key = STRFORMAT(@"%ld_%ld_%ld_%ld_%ld",assLevel - protoLevel,refPort.target_p.pointerId,assLevel,assX,assY);
                 if ([except_ps containsObject:except_Key]) continue;
                 [except_ps addObject:except_Key];
                 
-                //TODOTOMORROW20250320: 此处特征里有76个组码，但oldILXYDic却能收集上千个，显然有问题。
-                //经查：matchModel.count也有上千个，，，
-                //随后再测吧，此处except_ps全局一卡，就少的可怜，甚至自己识别自己，也只有匹配度1/76，而一把except哪怕是放到最外层循环内来，立马就成了上千matchCount
-                //分析：感觉如果是识别自己，那i=0就应该能识别到组码自己，i=1...依次仍如此，那组码自己的ref肯定也有protoFeature自己，，到时候再调试吧。。。
-                
                 //9. 把protoIndex,assLevel,assX,assY都存下来（后面用于判断xy相似度要用）（参考34052-TODO4）。
-                NSMutableArray *oldILXYValue = [[NSMutableArray alloc] initWithArray:[resultILXYDic objectForKey:assKey]];
-                [oldILXYValue addObject:[MapModel newWithV1:@(i) v2:@(assLevel) v3:@(assX) v4:@(assY)]];
-                [resultILXYDic setObject:oldILXYValue forKey:assKey];
+                NSMutableArray *assGVModels = [[NSMutableArray alloc] initWithArray:[assGVModelDic objectForKey:assKey]];
+                [assGVModels addObject:[InputGroupValueModel new:nil groupValue:refPort.target_p level:assLevel x:assX y:assY]];
+                [assGVModelDic setObject:assGVModels forKey:assKey];
                 
                 //10. 找model (无则新建) (性能: 此处在循环中,所以防重耗60ms正常,收集耗100ms正常);
                 AIMatchModel *tModel = [resultDic objectForKey:assKey];
                 if (!tModel) tModel = [[AIMatchModel alloc] init];
                 tModel.match_p = refPort.target_p;
                 tModel.matchCount++;
-                if (tModel.matchCount > 78) {
-                    NSLog(@"");
-                }
                 tModel.matchValue *= gModel.matchValue;
                 tModel.sumRefStrong += (int)refPort.strong.value;
                 [resultDic setObject:tModel forKey:assKey];
@@ -222,30 +212,35 @@
         }
     }
     
-    //11. 根据resultILXYDic，分别按x和y排序（参考34052-TODO4）。
-    //12. proto先按xy坐标从小到大排序。
-    MapModel *protoSortResult = [self sortIByXYWithILXYArr:protoILXYArr];
-    NSArray *protoSortByX = protoSortResult.v1;
-    NSArray *protoSortByY = protoSortResult.v2;
-    for (NSNumber *key in resultILXYDic.allKeys) {
-        NSInteger assPId = key.integerValue;
-        NSArray *assILXYArr = [resultILXYDic objectForKey:key];
+    //11. 将protoFeature转为groupValueModels格式 （proto的level,x,y数据准备：把protoIndex,protoLevel,protoX,protoY都存下来，用于判断xy相似度（参考34052-TODO4）。
+    NSMutableArray *protoGVModels = [[NSMutableArray alloc] init];
+    for (NSInteger i = 0; i < protoFeature.count; i++) {
+        AIKVPointer *protoGroupValue_p = ARR_INDEX(protoFeature.content_ps, i);
+        NSInteger protoLevel = NUMTOOK(ARR_INDEX(protoFeature.levels, i)).integerValue;
+        NSInteger protoX = NUMTOOK(ARR_INDEX(protoFeature.xs, i)).integerValue;
+        NSInteger protoY = NUMTOOK(ARR_INDEX(protoFeature.ys, i)).integerValue;
+        [protoGVModels addObject:[InputGroupValueModel new:nil groupValue:protoGroupValue_p level:protoLevel x:protoX y:protoY]];
+    }
+    
+    //12. 根据assGVModelDic，分别按绝对xylevel排序（参考34052-TODO4）。
+    //protoGVModels = [ThinkingUtils sortInputGroupValueModels:protoGVModels levelNum:-1];//proto先按xy坐标从小到大排序 (应该不用排了，在构建前就排好了）。
+    for (NSNumber *assGVModelKey in assGVModelDic.allKeys) {
+        NSArray *assGVModels = [assGVModelDic objectForKey:assGVModelKey];
+        [ThinkingUtils sortInputGroupValueModels:assGVModels levelNum:-1];
+        
+        //TODOTOMORROW20250321：此处只是排下序，然后用什么来对比相似度？是mIsC映射关系吗？还是双循环正向类比下？
         
         //13. ass也按xy坐标从小到大排序。
-        MapModel *assSortResult = [self sortIByXYWithILXYArr:assILXYArr];
-        NSArray *assSortByX = assSortResult.v1;
-        NSArray *assSortByY = assSortResult.v2;
+//        MapModel *assSortResult = [self sortIByXYWithILXYArr:assILXYArr];
+//        NSArray *assSortByX = assSortResult.v1;
          
         //14. 对比（protoSortByX和assSortByX）（protoSortByX和assSortByX）序列的相似度。
-        CGFloat simOfX = [SMGUtils similarityOfArr1:protoSortByX a2:assSortByX];
-        CGFloat simOfY = [SMGUtils similarityOfArr1:protoSortByY a2:assSortByY];
+        CGFloat simOfXY = [SMGUtils similarityOfArr1:protoSortByX a2:assSortByX];
         
         //15. 找出对应的MatchModel，把匹配度乘上xy的匹配度。
-        AIMatchModel *assMatchModel = [SMGUtils filterSingleFromArr:resultDic.allValues checkValid:^BOOL(AIMatchModel *item) {
-            return item.match_p.pointerId == assPId;
-        }];
+        AIMatchModel *resultMatchModel = [resultDic objectForKey:assGVModelKey];
         NSLog(@"两个序列的相似度 >>> X=%ld:%ld=%.2f Y=%ld:%ld=%.2f",protoSortByX.count,assSortByX.count,simOfX,protoSortByY.count,assSortByY.count,simOfY);
-        assMatchModel.matchValue *= (simOfX * simOfY);
+        resultMatchModel.matchValue *= (simOfXY);
     }
     
     //21. 把matchValue=0的排除掉。

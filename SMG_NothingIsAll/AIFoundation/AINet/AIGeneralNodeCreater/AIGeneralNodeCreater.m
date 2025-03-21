@@ -42,18 +42,9 @@
  *  @result notnull
  */
 +(AIFeatureNode*) createFeatureNode:(NSArray*)groupModels conNodes:(NSArray*)conNodes at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut {
-    //1. 数据准备：排序-把value按一级level,二级x,三级y排好序再生成content_ps。
-    groupModels = [SMGUtils sortBig2Small:groupModels compareBlock1:^double(InputGroupValueModel *obj) {
-        return -obj.level;
-    } compareBlock2:^double(InputGroupValueModel *obj) {
-        return -obj.x;
-    } compareBlock3:^double(InputGroupValueModel *obj) {
-        return -obj.y;
-    }];
-    
     //2. 数据准备：转content_ps。
     NSArray *content_ps = [SMGUtils convertArr:groupModels convertBlock:^id(InputGroupValueModel *obj) {
-        return obj.groupValue.p;
+        return obj.groupValue_p;
     }];
     NSArray *levels = [SMGUtils convertArr:groupModels convertBlock:^id(InputGroupValueModel *obj) {
         return @(obj.level);
