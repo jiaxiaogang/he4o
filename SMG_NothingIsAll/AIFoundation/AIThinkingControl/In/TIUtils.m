@@ -170,6 +170,9 @@
     for (NSInteger i = 0; i < protoFeature.count; i++) {
         AIKVPointer *protoGroupValue_p = ARR_INDEX(protoFeature.content_ps, i);
         NSInteger protoLevel = NUMTOOK(ARR_INDEX(protoFeature.levels, i)).integerValue;
+        NSInteger protoX = NUMTOOK(ARR_INDEX(protoFeature.xs, i)).integerValue;
+        NSInteger protoY = NUMTOOK(ARR_INDEX(protoFeature.ys, i)).integerValue;
+        
         
         //4. 组码识别。
         NSArray *gMatchModels = [self recognitionGroupValue:protoGroupValue_p];
@@ -222,26 +225,24 @@
         [protoGVModels addObject:[InputGroupValueModel new:nil groupValue:protoGroupValue_p level:protoLevel x:protoX y:protoY]];
     }
     
-    //12. 根据assGVModelDic，分别按绝对xylevel排序（参考34052-TODO4）。
-    //protoGVModels = [ThinkingUtils sortInputGroupValueModels:protoGVModels levelNum:-1];//proto先按xy坐标从小到大排序 (应该不用排了，在构建前就排好了）。
-    for (NSNumber *assGVModelKey in assGVModelDic.allKeys) {
-        NSArray *assGVModels = [assGVModelDic objectForKey:assGVModelKey];
-        [ThinkingUtils sortInputGroupValueModels:assGVModels levelNum:-1];
-        
-        //TODOTOMORROW20250321：此处只是排下序，然后用什么来对比相似度？是mIsC映射关系吗？还是双循环正向类比下？
-        
-        //13. ass也按xy坐标从小到大排序。
-//        MapModel *assSortResult = [self sortIByXYWithILXYArr:assILXYArr];
-//        NSArray *assSortByX = assSortResult.v1;
-         
-        //14. 对比（protoSortByX和assSortByX）（protoSortByX和assSortByX）序列的相似度。
-        CGFloat simOfXY = [SMGUtils similarityOfArr1:protoSortByX a2:assSortByX];
-        
-        //15. 找出对应的MatchModel，把匹配度乘上xy的匹配度。
-        AIMatchModel *resultMatchModel = [resultDic objectForKey:assGVModelKey];
-        NSLog(@"两个序列的相似度 >>> X=%ld:%ld=%.2f Y=%ld:%ld=%.2f",protoSortByX.count,assSortByX.count,simOfX,protoSortByY.count,assSortByY.count,simOfY);
-        resultMatchModel.matchValue *= (simOfXY);
-    }
+    ////12. 根据assGVModelDic，分别按绝对xylevel排序（参考34052-TODO4）。
+    ////protoGVModels = [ThinkingUtils sortInputGroupValueModels:protoGVModels levelNum:-1];//proto先按xy坐标从小到大排序 (应该不用排了，在构建前就排好了）。
+    //for (NSNumber *assGVModelKey in assGVModelDic.allKeys) {
+    //    NSArray *assGVModels = [assGVModelDic objectForKey:assGVModelKey];
+    //    [ThinkingUtils sortInputGroupValueModels:assGVModels levelNum:-1];
+    //
+    //    //13. ass也按xy坐标从小到大排序。
+    ////        MapModel *assSortResult = [self sortIByXYWithILXYArr:assILXYArr];
+    ////        NSArray *assSortByX = assSortResult.v1;
+    //
+    //    //14. 对比（protoSortByX和assSortByX）（protoSortByX和assSortByX）序列的相似度。
+    //    CGFloat simOfXY = [SMGUtils similarityOfArr1:protoSortByX a2:assSortByX];
+    //
+    //    //15. 找出对应的MatchModel，把匹配度乘上xy的匹配度。
+    //    AIMatchModel *resultMatchModel = [resultDic objectForKey:assGVModelKey];
+    //    NSLog(@"两个序列的相似度 >>> X=%ld:%ld=%.2f Y=%ld:%ld=%.2f",protoSortByX.count,assSortByX.count,simOfX,protoSortByY.count,assSortByY.count,simOfY);
+    //    resultMatchModel.matchValue *= (simOfXY);
+    //}
     
     //21. 把matchValue=0的排除掉。
     NSArray *resultModels = [SMGUtils filterArr:resultDic.allValues checkValid:^BOOL(AIMatchModel *item) {

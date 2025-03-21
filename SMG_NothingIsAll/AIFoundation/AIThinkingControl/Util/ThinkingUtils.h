@@ -84,4 +84,9 @@
  */
 +(NSArray*) sortInputGroupValueModels:(NSArray*)models levelNum:(NSInteger)levelNum;
 
+/**
+ *  MARK:--------------------计算assTo是否在其该出现的位置（返回符合度）--------------------
+ */
++(CGFloat) checkAssToMatchDegree:(CGPoint)protoFrom protoTo:(CGPoint)protoTo protoLevel:(NSInteger)protoLevel assFrom:(CGPoint)assFrom assTo:(CGPoint)assTo assLevel:(NSInteger)assLevel;
+
 @end
