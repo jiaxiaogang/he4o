@@ -190,24 +190,34 @@
             //3. 二者同区时;
             if ([protoV_p.dataSource isEqualToString:assV_p.dataSource] && [protoV_p.algsType isEqualToString:assV_p.algsType]) {
                 
+                //4. ======== 兼容新版组码特征 ========
+                if (PitIsFeature(protoV_p) || PitIsFeature(assV_p)) {
+                    AIFeatureNode *absT = [self analogyFeature:protoV_p ass:assV_p];
+                    CGFloat valueMatchValue = [absT getConMatchValue:protoA_p];
+                    [sameValue_ps addObject:absT.p];
+                    
+                    //6. 相近度个数nearCount & 相近度sumNear
+                    protoAbsModel4MatchValue.nearCount++;
+                    protoAbsModel4MatchValue.sumNear *= valueMatchValue;
+                    continue;
+                }
+                
+                //4. ======== 保留旧版单码特征 ========
                 //4. 二者相似度较高时 (计算当前码的责任比例: 比如:1*0.8*0.7时,当前码=0.7时,它的责任比例=(1-0.7)/(1-0.8 + 1-0.7)=60%) (参考29025-13);
                 CGFloat algMatchValue = [protoA getAbsMatchValue:assA_p];
-                CGFloat valueMatchValue = [AIAnalyst compareCansetValue:protoV_p protoValue:assV_p vInfo:nil];
-                CGFloat otherValueMatchValue = valueMatchValue > 0 ? algMatchValue / valueMatchValue : 1;   //别的码相乘是0.xx;
-                CGFloat otherQueKou = 1 - otherValueMatchValue;                                             //别的码缺口;
-                CGFloat curQueKou = 1 - valueMatchValue;                                                    //当前码缺口;
-                CGFloat sumQueKou = otherQueKou + curQueKou;                                                //总缺口;
-                CGFloat curRate = sumQueKou > 0 ? curQueKou / sumQueKou : 0;                                //算出当前码责任比例;
+                MapModel *analogyValueResult = [self analogyValue:protoV_p assV:assV_p gMatchValue:algMatchValue];
                 
                 //5. 当前码责任<50%时 (次要责任时,免责);
-                if (curRate < 0.5) {
-                    [sameValue_ps addObject:assV_p];
+                if (analogyValueResult) {
+                    AIKVPointer *absV_p = analogyValueResult.v1;
+                    CGFloat valueMatchValue = NUMTOOK(analogyValueResult.v2).floatValue;
+                    [sameValue_ps addObject:absV_p];
                     
                     //6. 相近度个数nearCount & 相近度sumNear
                     protoAbsModel4MatchValue.nearCount++;
                     protoAbsModel4MatchValue.sumNear *= valueMatchValue;
                 } else {
-                    if (Log4Ana) NSLog(@"> 当前A%ld<%@>比A%ld<%@>的缺口:%.2f / 总缺口%.2f = 当前责任%.2f",(long)protoA_p.pointerId,Pit2FStr(protoV_p),(long)assA_p.pointerId,Pit2FStr(assV_p),curQueKou,sumQueKou,curRate);
+                    if (Log4Ana) NSLog(@"> 当前A%ld<%@>比A%ld<%@>",(long)protoA_p.pointerId,Pit2FStr(protoV_p),(long)assA_p.pointerId,Pit2FStr(assV_p));
                 }
                 
                 //6. break继续判断proto的下个V码;
@@ -236,6 +246,7 @@
     NSMutableDictionary *protoAssIndexDic = [NSMutableDictionary new];//收集proto和ass的映射;
     AIFeatureNode *protoFeature = [SMGUtils searchNode:protoT_p];
     AIFeatureNode *assFeature = [SMGUtils searchNode:assT_p];
+    CGFloat featureMatchValue = 1;
         
     //2. 外类比有序进行 (记录jMax & 正序)
     NSInteger jStart = 0;
@@ -252,6 +263,7 @@
                 
                 //4. 即使mIsC匹配,也要进行共同点抽象 (参考29025-11);
                 AIGroupValueNode *absG = [self analogyGroupValue:protoG_p assG:assG_p];
+                featureMatchValue *= [absG getConMatchValue:protoG_p];
                 
                 //5. 收集并更新jMax;
                 
@@ -271,7 +283,10 @@
     //NSDictionary *protoAbsIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:protoAssIndexDic.allValues];
     
     //7. 外类比构建
-    return [AIGeneralNodeCreater createFeatureNode:absGVModels conNodes:@[protoFeature,assFeature] at:protoT_p.algsType ds:protoT_p.dataSource isOut:protoT_p.isOut];
+    AIFeatureNode *absT = [AIGeneralNodeCreater createFeatureNode:absGVModels conNodes:@[protoFeature,assFeature] at:protoT_p.algsType ds:protoT_p.dataSource isOut:protoT_p.isOut];
+    [protoFeature updateMatchValue:absT matchValue:featureMatchValue];
+    [assFeature updateMatchValue:absT matchValue:1];
+    return absT;
 }
 
 /**
@@ -314,22 +329,19 @@
             
         //31. 二者相似度较高时 (计算当前码的责任比例: 比如:1*0.8*0.7时,当前码=0.7时,它的责任比例=(1-0.7)/(1-0.8 + 1-0.7)=60%) (参考29025-13);
         CGFloat gMatchValue = [protoG getAbsMatchValue:assG_p];
-        CGFloat valueMatchValue = [AIAnalyst compareCansetValue:protoV_p protoValue:assV_p vInfo:nil];
-        CGFloat otherValueMatchValue = valueMatchValue > 0 ? gMatchValue / valueMatchValue : 1;   //别的码相乘是0.xx;
-        CGFloat otherQueKou = 1 - otherValueMatchValue;                                             //别的码缺口;
-        CGFloat curQueKou = 1 - valueMatchValue;                                                    //当前码缺口;
-        CGFloat sumQueKou = otherQueKou + curQueKou;                                                //总缺口;
-        CGFloat curRate = sumQueKou > 0 ? curQueKou / sumQueKou : 0;                                //算出当前码责任比例;
+        MapModel *analogyValueResult = [self analogyValue:protoV_p assV:assV_p gMatchValue:gMatchValue];
         
         //32. 当前码责任<50%时 (次要责任时,免责);
-        if (curRate < 0.5) {
-            [sameSubDots addObject:[MapModel newWithV1:assV_p v2:@(protoX) v3:@(protoY)]];
+        if (analogyValueResult) {
+            AIKVPointer *absV_p = analogyValueResult.v1;
+            CGFloat valueMatchValue = NUMTOOK(analogyValueResult.v2).floatValue;
+            [sameSubDots addObject:[MapModel newWithV1:absV_p v2:@(protoX) v3:@(protoY)]];
             
             //6. 相近度个数nearCount & 相近度sumNear
             protoAbsModel4MatchValue.nearCount++;
             protoAbsModel4MatchValue.sumNear *= valueMatchValue;
         } else {
-            if (Log4Ana) NSLog(@"> 当前A%ld<%@>比A%ld<%@>的缺口:%.2f / 总缺口%.2f = 当前责任%.2f",(long)protoG_p.pointerId,Pit2FStr(protoV_p),(long)assG_p.pointerId,Pit2FStr(assV_p),curQueKou,sumQueKou,curRate);
+            if (Log4Ana) NSLog(@"> 当前A%ld<%@>比A%ld<%@>",(long)protoG_p.pointerId,Pit2FStr(protoV_p),(long)assG_p.pointerId,Pit2FStr(assV_p));
         }
     }
     
@@ -342,6 +354,27 @@
     [AITest test25:absG conNodes:@[protoG,assG]];
     if (Log4Ana) NSLog(@"G类比 ===> %@ : %@ = %@",Pit2FStr(protoG_p),Pit2FStr(assG_p),Pit2FStr(absG.p));
     return absG;
+}
+
+/**
+ *  MARK:--------------------单码类比--------------------
+ */
++(MapModel*) analogyValue:(AIKVPointer*)protoV_p assV:(AIKVPointer*)assV_p gMatchValue:(CGFloat)gMatchValue {
+    //31. 二者相似度较高时 (计算当前码的责任比例: 比如:1*0.8*0.7时,当前码=0.7时,它的责任比例=(1-0.7)/(1-0.8 + 1-0.7)=60%) (参考29025-13);
+    CGFloat valueMatchValue = [AIAnalyst compareCansetValue:protoV_p protoValue:assV_p vInfo:nil];
+    CGFloat otherValueMatchValue = valueMatchValue > 0 ? gMatchValue / valueMatchValue : 1;   //别的码相乘是0.xx;
+    CGFloat otherQueKou = 1 - otherValueMatchValue;                                             //别的码缺口;
+    CGFloat curQueKou = 1 - valueMatchValue;                                                    //当前码缺口;
+    CGFloat sumQueKou = otherQueKou + curQueKou;                                                //总缺口;
+    CGFloat curRate = sumQueKou > 0 ? curQueKou / sumQueKou : 0;                                //算出当前码责任比例;
+    
+    //32. 当前码责任<50%时 (次要责任时,免责);
+    if (curRate < 0.5) {
+        return [MapModel newWithV1:assV_p v2:@(valueMatchValue)];
+    } else {
+        if (Log4Ana) NSLog(@"> 当前<%@>比<%@>的缺口:%.2f / 总缺口%.2f = 当前责任%.2f",Pit2FStr(protoV_p),Pit2FStr(assV_p),curQueKou,sumQueKou,curRate);
+    }
+    return nil;
 }
 
 /**
