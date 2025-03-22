@@ -193,9 +193,23 @@
                 //7. 根据level分别记录不同deltaLevel结果（把deltaLevel做为key的一部分，记录到识别结果字典里）。
                 NSString *assKey = STRFORMAT(@"%ld_%ld",protoLevel - assLevel,refPort.target_p.pointerId);
                 
+                
+                
+                //debug匹配条数：-1_889 10/76
+                //debug匹配条数：-3_889 1/76
+                //debug匹配条数：1_889 11/76
+                //debug匹配条数：-2_889 4/76
+                //debug匹配条数：3_889 1/76
+                //debug匹配条数：0_889 26/76
+                //debug匹配条数：2_889 5/76
+                //过滤器: 总7需7 主:1.00 => 剩:7 辅:1.00 => 剩:7
+                //明天看怎么打日志来分析下：第二个特征：共76条，为什么只匹配到26条？
+                //会不会是因为饱和度和亮度，这两个特征没什么特异性？导致很难识别到？不知是否有相关，还是得细入数据打日志来分析，不然很难弄明白原因。
+                
+                
                 //8. 取出已经收集到的assGVModels,判断下一个refPort收集进去的话,是否符合位置;
                 NSMutableArray *assGVModels = [[NSMutableArray alloc] initWithArray:[assGVModelDic objectForKey:assKey]];
-                BOOL debugMode = false;//[gModel.match_p isEqual:protoGroupValue_p];//debug: 此处经常输出相似度0，把完全匹配的打出来，确定是否返回1。
+                BOOL debugMode = [gModel.match_p isEqual:protoGroupValue_p];//debug: 此处经常输出相似度0，把完全匹配的打出来，确定是否返回1。
                 CGFloat matchDegree = [ThinkingUtils checkAssToMatchDegree:protoFeature protoIndex:i assGVModels:assGVModels checkRefPort:refPort debugMode:debugMode];
                 if (matchDegree < 0.9) continue;
                 
