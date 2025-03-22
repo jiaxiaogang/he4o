@@ -105,6 +105,9 @@
     //3. 持久化
     [self createNavBtn:7 title:@"2DB" action:@selector(wedisSaveBtnOnClick:) bg:0];
     
+    //3. 临时
+    [self createNavBtn:8 title:@"临时" action:@selector(tempBtnOnClick:) bg:0];
+    
     //4. 神经网络可视化
     self.nvView = [[NVView alloc] initWithDelegate:[NVDelegate_He new]];
     [self.nvView setAlpha:0.9f];
@@ -137,7 +140,6 @@
     
     //9. 初始化XGConfig
     [XGConfig.instance initConfig];
-    [AIVisionAlgsV2 commitImageForTest];
     return YES;
 }
 
@@ -216,6 +218,10 @@
         self.waitReset = 1;
         [btn setTitle:@"等待" forState:UIControlStateNormal];
     }
+}
+
+-(void) tempBtnOnClick:(UIButton*)btn {
+    [AIVisionAlgsV2 commitImageForTest];
 }
 
 -(void) startRefreshDotAnimation{

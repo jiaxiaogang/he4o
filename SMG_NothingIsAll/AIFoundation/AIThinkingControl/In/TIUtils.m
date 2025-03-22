@@ -195,15 +195,9 @@
                 
                 //8. 取出已经收集到的assGVModels,判断下一个refPort收集进去的话,是否符合位置;
                 NSMutableArray *assGVModels = [[NSMutableArray alloc] initWithArray:[assGVModelDic objectForKey:assKey]];
-                
-                
-                //TODOTOMORROW20250322: 查下此处经常输出相似度0，看能不能把完全匹配的打出来，看都完全匹配了为什么还是0。
-                if ([gModel.match_p isEqual:protoGroupValue_p]) {
-                    NSLog(@"a1");
-                }
-                NSLog(@"a2");
-                CGFloat matchDegree = [ThinkingUtils checkAssToMatchDegree:protoFeature protoIndex:i assGVModels:assGVModels checkRefPort:refPort];
-                if (matchDegree < 1.0) continue;
+                BOOL debugMode = false;//[gModel.match_p isEqual:protoGroupValue_p];//debug: 此处经常输出相似度0，把完全匹配的打出来，确定是否返回1。
+                CGFloat matchDegree = [ThinkingUtils checkAssToMatchDegree:protoFeature protoIndex:i assGVModels:assGVModels checkRefPort:refPort debugMode:debugMode];
+                if (matchDegree < 0.9) continue;
                 
                 //8. 防重
                 //说明1、proto的76个每个组码，才可能相似到同在proto中的别的10个左右的组码，而这些组码都ref着proto，如果不加以防重，很容易重复成76*10=760个。所以不仅要针对pid防重，还要针对level,x,y都防重。
