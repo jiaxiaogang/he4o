@@ -11,6 +11,17 @@
 
 @interface AIVisionAlgsV2 : NSObject
 
-+ (void) commitImageForTest;
+/**
+ *  MARK:--------------------commitInput--------------------
+ */
++ (void) commitInput:(UIImage*)image;
+
+#pragma mark - Test Methods
+
+// 创建测试用的100x100像素图片
++ (UIImage *) createTest4ColorImage;
+
+// 创建手写数字测试图片 (0-9)
++ (UIImage *) createHandwrittenDigitImage:(NSInteger)digit;
 
 @end

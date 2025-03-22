@@ -8,6 +8,8 @@
 
 #import "AIVisionAlgsV2.h"
 
+#define DefaultSize 100
+
 @implementation AIVisionAlgsV2
 
 + (NSDictionary*)getRGBValuesFromImage:(UIImage *)image {
@@ -125,15 +127,15 @@
     return @{@"r": @(sumR / 9),@"g": @(sumG / 9),@"b": @(sumB / 9)};
 }
 
-#pragma mark - Test Methods
-
-+ (void) commitImageForTest {
-    //1. 创建测试图片
-    CGFloat size = 100;
-    UIImage *testImage = [self createTestImage:size];
+/**
+ *  MARK:--------------------commitInput--------------------
+ */
++ (void) commitInput:(UIImage*)image {
+    //1. 数据检查。
+    if (!image) return;
     
     //2. 取rgb矩阵<K=x_y,V=RGB>
-    NSDictionary *protoColorDic = [self getRGBValuesFromImage:testImage];
+    NSDictionary *protoColorDic = [self getRGBValuesFromImage:image];
     
     //3. 将rgb矩阵按粒度分层<K=level_x_y,V=RGB>
     NSDictionary *splitDic = [self convertProtoColorDic2SplitDic:protoColorDic];
@@ -163,8 +165,11 @@
     [theTC commitInputWithSplitAsync:model algsType:NSStringFromClass(self)];
 }
 
+#pragma mark - Test Methods
+
 // 创建测试用的100x100像素图片
-+ (UIImage *)createTestImage:(CGFloat)size {
++ (UIImage *) createTest4ColorImage {
+    CGFloat size = DefaultSize;
     CGFloat half = size / 2;
     UIGraphicsBeginImageContext(CGSizeMake(size, size));
     CGContextRef context = UIGraphicsGetCurrentContext();
@@ -193,7 +198,8 @@
 
 //这个有BUG,有时生成不了。
 // 创建手写数字测试图片 (0-9)
-+ (UIImage *)createHandwrittenDigitImage:(NSInteger)digit size:(CGFloat)size {
++ (UIImage *) createHandwrittenDigitImage:(NSInteger)digit {
+    CGFloat size = DefaultSize;
     if (digit < 0 || digit > 9) return nil;
     
     UIGraphicsBeginImageContext(CGSizeMake(size, size));

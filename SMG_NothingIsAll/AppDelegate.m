@@ -221,7 +221,8 @@
 }
 
 -(void) tempBtnOnClick:(UIButton*)btn {
-    [AIVisionAlgsV2 commitImageForTest];
+    [AIVisionAlgsV2 commitInput:[AIVisionAlgsV2 createHandwrittenDigitImage:1]];
+//    [AIVisionAlgsV2 commitInput:[AIVisionAlgsV2 createTest4ColorImage]];
 }
 
 -(void) startRefreshDotAnimation{
