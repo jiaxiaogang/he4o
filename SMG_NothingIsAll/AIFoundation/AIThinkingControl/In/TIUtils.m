@@ -198,8 +198,12 @@
                 
                 
                 //TODOTOMORROW20250322: 查下此处经常输出相似度0，看能不能把完全匹配的打出来，看都完全匹配了为什么还是0。
+                if ([gModel.match_p isEqual:protoGroupValue_p]) {
+                    NSLog(@"a1");
+                }
+                NSLog(@"a2");
                 CGFloat matchDegree = [ThinkingUtils checkAssToMatchDegree:protoFeature protoIndex:i assGVModels:assGVModels checkRefPort:refPort];
-                if (matchDegree < 0.2) continue;
+                if (matchDegree < 1.0) continue;
                 
                 //8. 防重
                 //说明1、proto的76个每个组码，才可能相似到同在proto中的别的10个左右的组码，而这些组码都ref着proto，如果不加以防重，很容易重复成76*10=760个。所以不仅要针对pid防重，还要针对level,x,y都防重。
