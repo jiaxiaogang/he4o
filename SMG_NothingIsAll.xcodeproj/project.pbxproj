@@ -154,6 +154,7 @@
 		08A5D5E522AF2B8200E56BB4 /* NVDelegate_He.m in Sources */ = {isa = PBXBuildFile; fileRef = 08A5D5E422AF2B8200E56BB4 /* NVDelegate_He.m */; };
 		08A7E06A24EE07C40042C7A9 /* AIShortMatchModel_Simple.m in Sources */ = {isa = PBXBuildFile; fileRef = 08A7E06924EE07C40042C7A9 /* AIShortMatchModel_Simple.m */; };
 		08AA10E822CAD8520077DE36 /* NVHeUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AA10E722CAD8520077DE36 /* NVHeUtil.m */; };
+		08ABC5682D8F00FF00E67D5B /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 08ABC5672D8F00FF00E67D5B /* assets */; };
 		08AF454A1E97D0B500377887 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF45491E97D0B500377887 /* main.m */; };
 		08AF454D1E97D0B500377887 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF454C1E97D0B500377887 /* AppDelegate.m */; };
 		08AF45551E97D0B500377887 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45541E97D0B500377887 /* Assets.xcassets */; };
@@ -521,6 +522,7 @@
 		08A7E06924EE07C40042C7A9 /* AIShortMatchModel_Simple.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIShortMatchModel_Simple.m; sourceTree = "<group>"; };
 		08AA10E622CAD8520077DE36 /* NVHeUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVHeUtil.h; sourceTree = "<group>"; };
 		08AA10E722CAD8520077DE36 /* NVHeUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NVHeUtil.m; sourceTree = "<group>"; };
+		08ABC5672D8F00FF00E67D5B /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = "<group>"; };
 		08AF45451E97D0B500377887 /* SMG_NothingIsAll.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SMG_NothingIsAll.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		08AF45491E97D0B500377887 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		08AF454B1E97D0B500377887 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -1392,6 +1394,7 @@
 				08AF45461E97D0B500377887 /* Products */,
 				C2C394C172413FE5FD49262C /* Pods */,
 				207E0C8ABC4501E50CC5D363 /* Frameworks */,
+				08ABC5672D8F00FF00E67D5B /* assets */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1919,6 +1922,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				08ABC5682D8F00FF00E67D5B /* assets in Resources */,
 				0858C5DD2194FB4600951BA5 /* LightView.xib in Resources */,
 				0887FE2A27DFEE60005EE691 /* TOMVision2.xib in Resources */,
 				0835557C266C6B8400ECFC51 /* MemManagerWindow.xib in Resources */,

@@ -291,7 +291,6 @@
     //12. 返回结果矩形,使用符合度作为宽高
     if (debugMode) NSLog(@"范围符合度 %.2f",matchDegree);
     return matchDegree;
-    
 }
 
 @end

@@ -20,6 +20,7 @@
 #import "AIKVPointer.h"
 #import "AIThinkingControl.h"
 #import "NSString+Extension.h"
+#import "NSFile+Extension.h"
 #import "AsyncMutableArray.h"
 #import "AsyncMutableDictionary.h"
 #import "AIScore.h"

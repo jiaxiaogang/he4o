@@ -196,110 +196,17 @@
     return image;
 }
 
-//这个有BUG,有时生成不了。
-// 创建手写数字测试图片 (0-9)
-+ (UIImage *) createHandwrittenDigitImage:(NSInteger)digit {
-    CGFloat size = DefaultSize;
-    if (digit < 0 || digit > 9) return nil;
+// 从ProtoMnistImage取图
++ (UIImage *) createImageFromProtoMnistImage:(NSInteger)imgIndex {
+    //1. 读图片路径。
+    NSString *folder = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"assets/ProtoMnistImages"];
+    NSArray *paths = [NSFile_Extension subFiles:folder];
+    //NSString *path2 = [[NSBundle mainBundle] pathForResource:@"assets/ProtoMnistImages/0_7" ofType:@"png"];//单张图路径，此处暂只用读出整个文件夹里所有文件路径。
     
-    UIGraphicsBeginImageContext(CGSizeMake(size, size));
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    
-    // 设置白色背景
-    CGContextSetRGBFillColor(context, 1.0, 1.0, 1.0, 1.0);
-    CGContextFillRect(context, CGRectMake(0, 0, size, size));
-    
-    // 设置黑色笔画
-    CGContextSetLineWidth(context, size/10);
-    CGContextSetRGBStrokeColor(context, 0.0, 0.0, 0.0, 1.0);
-    
-    //模拟手写
-    float random = (arc4random() % 200 - 100) * 0.002f + 1;//随机+-10% (即random=0.9-1.1)
-    CGFloat m0 = size * 0.0 * random,m1 = size * 0.1 * random,m2 = size * 0.2 * random,m3 = size * 0.3 * random,m4 = size * 0.4 * random;
-    CGFloat m5 = size * 0.5 * random,m6 = size * 0.6 * random,m7 = size * 0.7 * random,m8 = size * 0.8 * random,m9 = size * 0.9 * random,m10 = size * 1.0 * random;
-    
-    // 根据数字绘制不同的路径
-    switch (digit) {
-        case 0: {
-            CGContextAddEllipseInRect(context, CGRectMake(m2, m2, size - 2*m2, size - 2*m2));
-            break;
-        }
-        case 1: {
-            CGContextMoveToPoint(context, m5, m2);
-            CGContextAddLineToPoint(context, m5, m8);
-            break;
-        }
-        case 2: {
-            CGContextMoveToPoint(context, m2, m3);
-            CGContextAddCurveToPoint(context, m2, m2, m8, m2, m8, m4);
-            CGContextAddCurveToPoint(context, m8, m6, m2, m8, m2, m8);
-            CGContextAddLineToPoint(context, m8, m8);
-            break;
-        }
-        case 3: {
-            CGContextMoveToPoint(context, m2, m3);
-            CGContextAddCurveToPoint(context, m8, m3, m8, m5, m4, m5);
-            CGContextMoveToPoint(context, m4, m5);
-            CGContextAddCurveToPoint(context, m8, m5, m8, m7, m2, m7);
-            break;
-        }
-        case 4: {
-            
-            
-            // Draw vertical line
-            CGContextMoveToPoint(context, m7, m2);
-            CGContextAddLineToPoint(context, m7, m8);
-            
-            // Draw diagonal line
-            CGContextMoveToPoint(context, m7, m2);
-            CGContextAddLineToPoint(context, m2, m5);
-            
-            // Draw horizontal line
-            CGContextMoveToPoint(context, m2, m5);
-            CGContextAddLineToPoint(context, m8, m5);
-            break;
-        }
-        case 5: {
-            CGContextMoveToPoint(context, m7, m2);
-            CGContextAddLineToPoint(context, m3, m2);
-            CGContextAddLineToPoint(context, m3, m5);
-            CGContextAddCurveToPoint(context, m7, m5, m7, m8, m3, m8);
-            break;
-        }
-        case 6: {
-            CGContextMoveToPoint(context, m7, m2);
-            CGContextAddCurveToPoint(context, m3, m2, m3, m8, m3, m8);
-            CGContextAddCurveToPoint(context, m3, m6, m7, m6, m7, m8);
-            CGContextAddCurveToPoint(context, m7, m10, m3, m10, m3, m8);
-            break;
-        }
-        case 7: {
-            CGContextMoveToPoint(context, m2, m2);
-            CGContextAddLineToPoint(context, m8, m2);
-            CGContextAddLineToPoint(context, m4, m8);
-            break;
-        }
-        case 8: {
-            CGFloat radius = m2;
-            CGContextAddEllipseInRect(context, CGRectMake(m3, m2, radius, radius));
-            CGContextAddEllipseInRect(context, CGRectMake(m3, m5, radius, radius));
-            break;
-        }
-        case 9: {
-            CGContextMoveToPoint(context, m7, m8);
-            CGContextAddCurveToPoint(context, m7, m2, m7, m2, m7, m2);
-            CGContextAddCurveToPoint(context, m7, m4, m3, m4, m3, m2);
-            CGContextAddCurveToPoint(context, m3, m0, m7, m0, m7, m2);
-            break;
-        }
-    }
-    
-    CGContextStrokePath(context);
-    
-    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    
-    return image;
+    //2. 读出第imgIndex张图。
+    NSString *path = ARR_INDEX(paths, imgIndex);
+    UIImage *img = [UIImage imageWithContentsOfFile:path];
+    return img;
 }
 
 @end
