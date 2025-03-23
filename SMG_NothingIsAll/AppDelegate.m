@@ -221,10 +221,7 @@
 }
 
 -(void) tempBtnOnClick:(UIButton*)btn {
-    //TODOTOMORROW20250322:
-    //测到问题1、输入数字后，组码识别到0条结果。
-    //待测2、测下四色图，第二次输入时，把proto防重掉，还能不能识别到自己？
-    NSString *imgName = @"0_2";
+    NSString *imgName = @"0_6";
     [AIVisionAlgsV2 commitInput:[AIVisionAlgsV2 createImageFromProtoMnistImageWithName:imgName] logDesc:imgName];
 //    [AIVisionAlgsV2 commitInput:[AIVisionAlgsV2 createTest4ColorImage]];
 }

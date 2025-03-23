@@ -166,6 +166,7 @@
  */
 +(NSArray*) recognitionFeature:(AIKVPointer*)feature_p {
     //1. 数据准备
+    NSLog(@"\n=========== 特征识别ProtoT%ld ===========",feature_p.pointerId);
     NSMutableDictionary *resultDic = [[NSMutableDictionary alloc] init];// <K=deltaLevel_assPId, V=识别的特征AIMatchModel>
     AIFeatureNode *protoFeature = [SMGUtils searchNode:feature_p];
     NSMutableDictionary *assGVModelDic = [[NSMutableDictionary alloc] init];// <K=deltaLevel_ass.pId, V=InputGroupValueModel数组]>
@@ -222,10 +223,18 @@
             if (!tModel) tModel = [[AIMatchModel alloc] init];
             tModel.match_p = refPort.target_p;
             tModel.matchCount++;
-            tModel.matchValue *= item.gMatchValue;
+            tModel.sumMatchValue += item.gMatchValue;
             tModel.sumRefStrong += (int)refPort.strong.value;
             [resultDic setObject:tModel forKey:assKey];
         }
+    }
+    
+    //25. 最后所有组码识别完后，综合求出平均matchValue（因为特征有太多组码，乘积匹配度不合理）。
+    for (NSString *assKey in resultDic.allKeys) {
+        AIMatchModel *model = [resultDic objectForKey:assKey];
+        NSArray *assGVModels = ARRTOOK([assGVModelDic objectForKey:assKey]);
+        model.matchValue = model.matchCount > 0 ? model.sumMatchValue / model.matchCount : 0;
+        NSLog(@"%@\t匹配条数 %ld/%ld \t特征识别综合匹配度计算:T%ld \t匹配度:%.2f / %ld \t= %.2f",assKey,assGVModels.count,protoFeature.count,model.match_p.pointerId,model.sumMatchValue,model.matchCount,model.matchValue);
     }
     
     //31. 生成proto和ass的映射 (现在protoIndex存在assGVModels中);
@@ -241,12 +250,6 @@
         //b. 把indexDic存下来;
         AIMatchModel *matchModel = [resultDic objectForKey:assKey];
         matchModel.indexDic = indexDic;
-    }
-    
-    //32. debug;
-    for (NSString *assKey in resultDic.allKeys) {
-        NSArray *assGVModels = ARRTOOK([assGVModelDic objectForKey:assKey]);
-        NSLog(@"debug匹配条数：%@ %ld/%ld",assKey,assGVModels.count,protoFeature.count);
     }
     
     //41. 过滤器1、matchValue=0排除掉。
@@ -360,10 +363,6 @@
     NSMutableDictionary *protoPDic = [NSMutableDictionary new], *protoRDic = [NSMutableDictionary new];
     
     //2. 广入: 对每个元素,分别取索引序列 (参考25083-1);
-    
-    //TODOTOMORROW20250323: 查下为什么0_1和0_2的匹配度是0。
-    //> 概念识别到：A3 匹配度：0.00 input:0_2 result:0_1
-    
     for (AIKVPointer *item_p in protoAlg.content_ps) {
         
         //3. 取相近度序列 (按相近程度排序);
@@ -455,6 +454,11 @@
     //16. debugLog
     NSLog(@"\n概念识别结果 (感似:%ld条 理似:%ld条 感交:%ld 理交:%ld) protoAlg:%@",inModel.matchAlgs_PS.count,inModel.matchAlgs_RS.count,inModel.matchAlgs_PJ.count,inModel.matchAlgs_RJ.count,Alg2FStr(protoAlg));
     [inModel log4HavXianWuJv_AlgPJ:@"fltx1"];
+    
+    //17. debugLog2
+    inModel.matchAlgs_RS = [SMGUtils sortBig2Small:inModel.matchAlgs_RS compareBlock:^double(AIMatchAlgModel *obj) {
+        return obj.matchValue;
+    }];
     for (AIMatchAlgModel *model in inModel.matchAlgs_RS) {
         AIAlgNodeBase *alg = [SMGUtils searchNode:model.matchAlg];
         NSLog(@"概念识别到：A%ld 匹配度：%.2f input:%@ result:%@",alg.pId,model.matchValue,protoAlg.logDesc,alg.logDesc);

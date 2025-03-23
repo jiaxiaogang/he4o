@@ -18,6 +18,7 @@
 @property (strong, nonatomic) AIKVPointer *match_p; //匹配概念
 @property (assign, nonatomic) CGFloat matchValue;   //相似度（乘积，默认为1）
 @property (assign, nonatomic) NSInteger matchCount; //相似条数
+@property (assign, nonatomic) CGFloat sumMatchValue;//总相似度（求平均相似度时，才会用到，乘积相似度用不着这个）
 @property (assign, nonatomic) NSInteger sumRefStrong;
 -(CGFloat) strongValue;
 

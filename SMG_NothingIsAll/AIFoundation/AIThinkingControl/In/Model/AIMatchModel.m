@@ -22,6 +22,7 @@
 -(id) initWithMatch_p:(AIKVPointer*)match_p {
     self = [super init];
     if (self) {
+        self.matchValue = 1;
         self.match_p = match_p;
     }
     return self;
