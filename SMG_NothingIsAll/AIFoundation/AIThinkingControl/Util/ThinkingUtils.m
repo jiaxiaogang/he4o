@@ -284,7 +284,7 @@
     
     //10. 计算x和y方向上的符合度(0-1之间)
     CGFloat matchX = 1.0f - (maxDistanceX == 0 ? 0 : (distanceX / maxDistanceX));
-    CGFloat matchY = 1.0f - (maxDistanceX == 0 ? 0 : (distanceY / maxDistanceY));
+    CGFloat matchY = 1.0f - (maxDistanceY == 0 ? 0 : (distanceY / maxDistanceY));
     
     //11. 取x,y方向符合度的平均值作为总体符合度
     CGFloat matchDegree = (matchX + matchY) / 2.0f;

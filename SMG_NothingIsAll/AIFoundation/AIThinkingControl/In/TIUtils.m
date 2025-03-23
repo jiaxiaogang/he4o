@@ -96,6 +96,13 @@
             //2025.03.20: 组码识别时，需要九宫位置一一对应（因为从单码到组码，的9个位置，是有位置要求的，首和尾匹配上，并不能表示二者相似）。
             //> BUG-此处ds应该做个判别，不然可能9宫全是同一个单码ref过去的。所以如下按i对等来修复下：
             //> FIX-所以：直接类似特征的params.xy位置类似方法，组码这里按refPort.params中的i来要求一下对等。
+            
+            //BUG: 查此处识别到的params可能是nil... （清空记忆后不复现，应该是脏数据导致）
+            for (AIPort *refPort in refPorts) {
+                if (!refPort.params) {
+                    NSLog(@"%@",groupValue_p.dataSource);
+                }
+            }
             refPorts = [SMGUtils filterArr:refPorts checkValid:^BOOL(AIPort *item) {
                 if (!item.params || ![item.params objectForKey:@"x"]) return nil;
                 NSInteger assX = NUMTOOK([item.params objectForKey:@"x"]).integerValue;
@@ -181,6 +188,34 @@
         
         //4. 组码识别。
         NSArray *gMatchModels = [self recognitionGroupValue:protoGroupValue_p];
+        
+        //========================== 调试GV是否可以识别到自身 begin
+        BOOL find = false;
+        for (AIMatchModel *gModel in gMatchModels) {
+            NSArray *refPorts = [AINetUtils refPorts_All:gModel.match_p];
+            
+            for (AIPort *refPort in refPorts) {
+                
+                NSInteger assLevel = NUMTOOK([refPort.params objectForKey:@"l"]).integerValue;
+                NSInteger assX = NUMTOOK([refPort.params objectForKey:@"x"]).integerValue;
+                NSInteger assY = NUMTOOK([refPort.params objectForKey:@"y"]).integerValue;
+                
+                if (assLevel == protoLevel &&
+                    protoX == assX &&
+                    protoY == assY &&
+                    [gModel.match_p isEqual:protoGroupValue_p] &&
+                    [refPort.target_p isEqual:protoFeature.p] &&
+                    [feature_p.dataSource isEqual:@"hColors"]) {
+                    
+                    NSLog(@"识别到自身 success %d assLevel:%ld assX:%ld assY:%ld",find,assLevel,assX,assY);
+                    find = true;
+                    break;
+                }
+            }
+            if (find) break;
+        }
+        //========================== end
+        
         for (AIMatchModel *gModel in gMatchModels) {
             NSArray *refPorts = [AINetUtils refPorts_All:gModel.match_p];
             
