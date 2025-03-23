@@ -195,6 +195,14 @@
                 
                 
                 
+                //TODOTOMORROW20230323: 特征识别不全BUG。
+                //只保留最小部分，来测下先，排除法这里的bug来源。
+                if (protoLevel != assLevel) continue;
+                if (![gModel.match_p isEqual:protoGroupValue_p]) continue;
+                if (![feature_p.dataSource isEqual:@"hColors"]) continue;
+                if (![refPort.target_p isEqual:protoFeature.p]) continue;
+                
+                
                 //debug匹配条数：-1_889 10/76
                 //debug匹配条数：-3_889 1/76
                 //debug匹配条数：1_889 11/76
@@ -211,7 +219,9 @@
                 NSMutableArray *assGVModels = [[NSMutableArray alloc] initWithArray:[assGVModelDic objectForKey:assKey]];
                 BOOL debugMode = [feature_p.dataSource isEqual:@"hColors"] && [refPort.target_p isEqual:protoFeature.p] && assLevel == protoLevel && [gModel.match_p isEqual:protoGroupValue_p];//debug: 此处经常输出相似度0，把完全匹配的打出来，确定是否返回1。
                 CGFloat matchDegree = [ThinkingUtils checkAssToMatchDegree:protoFeature protoIndex:i assGVModels:assGVModels checkRefPort:refPort debugMode:debugMode];
-                if (matchDegree < 0.9) continue;
+                if (matchDegree < 1) {
+                    continue;
+                }
                 
                 //8. 防重
                 //说明1、proto的76个每个组码，才可能相似到同在proto中的别的10个左右的组码，而这些组码都ref着proto，如果不加以防重，很容易重复成76*10=760个。所以不仅要针对pid防重，还要针对level,x,y都防重。

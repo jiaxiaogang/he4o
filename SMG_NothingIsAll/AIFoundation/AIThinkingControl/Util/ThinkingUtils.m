@@ -208,7 +208,10 @@
 +(CGFloat) checkAssToMatchDegree:(AIFeatureNode*)protoFeature protoIndex:(NSInteger)protoIndex assGVModels:(NSArray*)assGVModels checkRefPort:(AIPort*)checkRefPort debugMode:(BOOL)debugMode {
     //1. 取出上个ass匹配帧;
     InputGroupValueModel *lastAssModel = ARR_INDEX_REVERSE(assGVModels, 0);
-    if (!lastAssModel) return 1;//第一帧：不判断直接返回符合。
+    if (!lastAssModel) {
+        NSLog(@"第一帧：不判断直接返回符合。");
+        return 1;
+    }
     CGPoint assFrom = CGPointMake(lastAssModel.x, lastAssModel.y);
     NSInteger assToLevel = NUMTOOK([checkRefPort.params objectForKey:@"l"]).integerValue;
     NSInteger assToX = NUMTOOK([checkRefPort.params objectForKey:@"x"]).integerValue;
@@ -274,10 +277,8 @@
     CGFloat maxDistanceY = targetRect.size.height / 2.0f;
     
     //9. 如果点在矩形外,返回空矩形
-    if (debugMode) NSLog(@"protoFrom:%.0f,%.0f -> to:%.0f,%.0f",protoFrom.x,protoFrom.y,protoTo.x,protoTo.y);
-    if (debugMode) NSLog(@"assFrom:%.0f,%.0f -> to:%.0f,%.0f",assFrom.x,assFrom.y,assTo.x,assTo.y);
     if (distanceX > maxDistanceX || distanceY > maxDistanceY) {
-        if (debugMode) NSLog(@"因出界返0");
+        //if (debugMode) NSLog(@"因出界返0");
         return 0;
     }
     
@@ -297,7 +298,11 @@
         }
     }
     
-    if (debugMode) NSLog(@"范围符合度 %.2f",matchDegree);
+    if (matchDegree == 1) {
+        if (debugMode) NSLog(@"符合1：protoFrom:%.0f,%.0f -> to:%.0f,%.0f \t assFrom:%.0f,%.0f -> to:%.0f,%.0f",protoFrom.x,protoFrom.y,protoTo.x,protoTo.y,assFrom.x,assFrom.y,assTo.x,assTo.y);
+    }
+    
+    //if (debugMode) NSLog(@"范围符合度 %.2f",matchDegree);
     return matchDegree;
 }
 
