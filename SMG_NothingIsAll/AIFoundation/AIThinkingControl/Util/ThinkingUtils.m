@@ -208,10 +208,7 @@
 +(CGFloat) checkAssToMatchDegree:(AIFeatureNode*)protoFeature protoIndex:(NSInteger)protoIndex assGVModels:(NSArray*)assGVModels checkRefPort:(AIPort*)checkRefPort debugMode:(BOOL)debugMode {
     //1. 取出上个ass匹配帧;
     InputGroupValueModel *lastAssModel = ARR_INDEX_REVERSE(assGVModels, 0);
-    if (!lastAssModel) {
-        NSLog(@"第一帧：不判断直接返回符合。");
-        return 1;
-    }
+    if (!lastAssModel) return 1;
     CGPoint assFrom = CGPointMake(lastAssModel.x, lastAssModel.y);
     NSInteger assToLevel = NUMTOOK([checkRefPort.params objectForKey:@"l"]).integerValue;
     NSInteger assToX = NUMTOOK([checkRefPort.params objectForKey:@"x"]).integerValue;
@@ -290,14 +287,6 @@
     CGFloat matchDegree = (matchX + matchY) / 2.0f;
     
     //12. 返回结果矩形,使用符合度作为宽高
-    if (debugMode) {
-        if (protoFrom.x == 0 && protoFrom.y == 1 && protoTo.x == 1 && protoTo.y == 1) {
-            if (assFrom.x == 0 && assFrom.y == 1 && assTo.x == 1 && assTo.y == 1) {
-                NSLog(@"");
-            }
-        }
-    }
-    
     if (debugMode) NSLog(@"符合度%.2f：protoFrom:%.0f,%.0f -> to:%.0f,%.0f \t assFrom:%.0f,%.0f -> to:%.0f,%.0f",matchDegree,protoFrom.x,protoFrom.y,protoTo.x,protoTo.y,assFrom.x,assFrom.y,assTo.x,assTo.y);
     return matchDegree;
 }

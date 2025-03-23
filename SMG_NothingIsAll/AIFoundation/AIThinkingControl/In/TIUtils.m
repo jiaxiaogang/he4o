@@ -96,13 +96,6 @@
             //2025.03.20: 组码识别时，需要九宫位置一一对应（因为从单码到组码，的9个位置，是有位置要求的，首和尾匹配上，并不能表示二者相似）。
             //> BUG-此处ds应该做个判别，不然可能9宫全是同一个单码ref过去的。所以如下按i对等来修复下：
             //> FIX-所以：直接类似特征的params.xy位置类似方法，组码这里按refPort.params中的i来要求一下对等。
-            
-            //BUG: 查此处识别到的params可能是nil... （清空记忆后不复现，应该是脏数据导致）
-            for (AIPort *refPort in refPorts) {
-                if (!refPort.params) {
-                    NSLog(@"%@",groupValue_p.dataSource);
-                }
-            }
             refPorts = [SMGUtils filterArr:refPorts checkValid:^BOOL(AIPort *item) {
                 if (!item.params || ![item.params objectForKey:@"x"]) return nil;
                 NSInteger assX = NUMTOOK([item.params objectForKey:@"x"]).integerValue;
@@ -184,37 +177,13 @@
         NSInteger protoX = NUMTOOK(ARR_INDEX(protoFeature.xs, i)).integerValue;
         NSInteger protoY = NUMTOOK(ARR_INDEX(protoFeature.ys, i)).integerValue;
         NSMutableArray *except_ps = [[NSMutableArray alloc] init];//每个针对每个deltaLevel_ass的level,x,y只能索引一次，避免重复。
-        NSLog(@"------------> find%ld",i);
         
         //4. 组码识别。
         NSArray *gMatchModels = [self recognitionGroupValue:protoGroupValue_p];
         
-        //========================== 调试GV是否可以识别到自身 begin
-        BOOL find = false;
-        for (AIMatchModel *gModel in gMatchModels) {
-            NSArray *refPorts = [AINetUtils refPorts_All:gModel.match_p];
-            
-            for (AIPort *refPort in refPorts) {
-                
-                NSInteger assLevel = NUMTOOK([refPort.params objectForKey:@"l"]).integerValue;
-                NSInteger assX = NUMTOOK([refPort.params objectForKey:@"x"]).integerValue;
-                NSInteger assY = NUMTOOK([refPort.params objectForKey:@"y"]).integerValue;
-                
-                if (assLevel == protoLevel &&
-                    protoX == assX &&
-                    protoY == assY &&
-                    [gModel.match_p isEqual:protoGroupValue_p] &&
-                    [refPort.target_p isEqual:protoFeature.p] &&
-                    [feature_p.dataSource isEqual:@"hColors"]) {
-                    
-                    NSLog(@"识别到自身 success %d assLevel:%ld assX:%ld assY:%ld",find,assLevel,assX,assY);
-                    find = true;
-                    break;
-                }
-            }
-            if (find) break;
-        }
-        //========================== end
+        //5. 对每一个assKey做matchDegree的收集竞争。
+        //TODO: 这里应该改成竞争，对所有refPort进行符合度竞争，把最符合的留下，别的不要。而不是单纯的<1。
+        
         
         for (AIMatchModel *gModel in gMatchModels) {
             NSArray *refPorts = [AINetUtils refPorts_All:gModel.match_p];
@@ -231,52 +200,12 @@
                 //7. 根据level分别记录不同deltaLevel结果（把deltaLevel做为key的一部分，记录到识别结果字典里）。
                 NSString *assKey = STRFORMAT(@"%ld_%ld",protoLevel - assLevel,refPort.target_p.pointerId);
                 
-                
-                
-                //TODOTOMORROW20230323: 特征识别不全BUG。
-                //只保留最小部分，来测下先，排除法这里的bug来源。
-                if (protoLevel != assLevel) continue;
-                if (![gModel.match_p isEqual:protoGroupValue_p]) continue;
-                if (![feature_p.dataSource isEqual:@"hColors"]) continue;
-                if (![refPort.target_p isEqual:protoFeature.p]) continue;
-                
-                //线索1、x和y必须一致就是76/76条了，看来问题就是出现在这两个。可以顺着分析下，如果xy不一样的时候都发生了什么？
-                //线索2、即使except不工作，它一样是26/76条，所以此BUG与except应该是没关系了。
-                //分析、这里refPort对上一点位置无效，不表示对该特征永远无效，所以我们不参直接except掉，如果一会...
-                //分析2、或者这里应该改成竞争，对所有refPort进行符合度竞争，把最符合的留下，别的不要。而不是单纯的<1。
-                //分析3、难道是不判断xy时，把错误的收集上了？导致一错百错？可以实测试下：
-//                if (protoX != assX) continue;
-                if (protoY != assY) continue;
-                
-                //如下日志：有许多protoIndex时，组码压根没识别到它protoGV，所以当然不会匹配上，看来此BUG，要去组码识别中查下。
-                //------------> find16
-                //出界返0：protoFrom:3,4 -> to:4,6      assFrom:0,4 -> to:4,6
-                //------------> find17
-                //出界返0：protoFrom:3,4 -> to:4,7      assFrom:0,4 -> to:4,7
-                //------------> find18
-                //出界返0：protoFrom:3,4 -> to:4,8      assFrom:0,4 -> to:4,8
-                //------------> find19
-                //出界返0：protoFrom:3,4 -> to:5,4      assFrom:0,4 -> to:5,4
-                //出界返0：protoFrom:3,4 -> to:5,4      assFrom:0,4 -> to:6,4
-                //出界返0：protoFrom:3,4 -> to:5,4      assFrom:0,4 -> to:7,4
-                //出界返0：protoFrom:3,4 -> to:5,4      assFrom:0,4 -> to:8,4
-                
-                //debug匹配条数：-1_889 10/76
-                //debug匹配条数：-3_889 1/76
-                //debug匹配条数：1_889 11/76
-                //debug匹配条数：-2_889 4/76
-                //debug匹配条数：3_889 1/76
-                //debug匹配条数：0_889 26/76
-                //debug匹配条数：2_889 5/76
-                //过滤器: 总7需7 主:1.00 => 剩:7 辅:1.00 => 剩:7
-                //明天看怎么打日志来分析下：第二个特征：共76条，为什么只匹配到26条？
-                //会不会是因为饱和度和亮度，这两个特征没什么特异性？导致很难识别到？不知是否有相关，还是得细入数据打日志来分析，不然很难弄明白原因。
-                
-                
                 //8. 取出已经收集到的assGVModels,判断下一个refPort收集进去的话,是否符合位置;
                 NSMutableArray *assGVModels = [[NSMutableArray alloc] initWithArray:[assGVModelDic objectForKey:assKey]];
-                BOOL debugMode = [feature_p.dataSource isEqual:@"hColors"] && [refPort.target_p isEqual:protoFeature.p] && assLevel == protoLevel && [gModel.match_p isEqual:protoGroupValue_p];//debug: 此处经常输出相似度0，把完全匹配的打出来，确定是否返回1。
+                BOOL debugMode = false;//[feature_p.dataSource isEqual:@"hColors"] && [refPort.target_p isEqual:protoFeature.p] && assLevel == protoLevel && [gModel.match_p isEqual:protoGroupValue_p];//debug: 此处经常输出相似度0，把完全匹配的打出来，确定是否返回1。
                 CGFloat matchDegree = [ThinkingUtils checkAssToMatchDegree:protoFeature protoIndex:i assGVModels:assGVModels checkRefPort:refPort debugMode:debugMode];
+                
+                //8. 这里阈值为1，后期会改成竞争。
                 if (matchDegree < 1) {
                     continue;
                 }
@@ -293,7 +222,6 @@
                 newModel.matchOfProtoIndex = i;
                 [assGVModels addObject:newModel];
                 [assGVModelDic setObject:assGVModels forKey:assKey];
-                NSLog(@"success item:%ld",i);
                 
                 //10. 找model (无则新建) (性能: 此处在循环中,所以防重耗60ms正常,收集耗100ms正常);
                 AIMatchModel *tModel = [resultDic objectForKey:assKey];
@@ -303,7 +231,6 @@
                 tModel.matchValue *= gModel.matchValue;
                 tModel.sumRefStrong += (int)refPort.strong.value;
                 [resultDic setObject:tModel forKey:assKey];
-                //当前assKey已经找到第i帧了，
             }
         }
     }
