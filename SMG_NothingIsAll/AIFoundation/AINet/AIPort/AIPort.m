@@ -48,6 +48,18 @@
     self.strong.value ++;
 }
 
+-(NSInteger) level {
+    return NUMTOOK([DICTOOK(self.params) objectForKey:@"l"]).integerValue;
+}
+
+-(NSInteger) x {
+    return NUMTOOK([DICTOOK(self.params) objectForKey:@"x"]).integerValue;
+}
+
+-(NSInteger) y {
+    return NUMTOOK([DICTOOK(self.params) objectForKey:@"y"]).integerValue;
+}
+
 -(BOOL) isEqual:(AIPort*)object{
     if (ISOK(object, AIPort.class)) {
         if (self.target_p) {

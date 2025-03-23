@@ -34,6 +34,9 @@
 @property (strong, nonatomic) NSDictionary *params;//允许port带一些参数，用于判断除header之外的不同等（比如level,x,y）。
 
 -(void) strongPlus;
+-(NSInteger) level;
+-(NSInteger) x;
+-(NSInteger) y;
 
 @end
 

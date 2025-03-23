@@ -155,6 +155,8 @@
 		08A7E06A24EE07C40042C7A9 /* AIShortMatchModel_Simple.m in Sources */ = {isa = PBXBuildFile; fileRef = 08A7E06924EE07C40042C7A9 /* AIShortMatchModel_Simple.m */; };
 		08AA10E822CAD8520077DE36 /* NVHeUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AA10E722CAD8520077DE36 /* NVHeUtil.m */; };
 		08ABC5682D8F00FF00E67D5B /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 08ABC5672D8F00FF00E67D5B /* assets */; };
+		08ABC56B2D90080300E67D5B /* AIFeatureNextGVRankModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08ABC56A2D90080300E67D5B /* AIFeatureNextGVRankModel.m */; };
+		08ABC56F2D9010AB00E67D5B /* AIFeatureNextGVRankItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 08ABC56E2D9010AB00E67D5B /* AIFeatureNextGVRankItem.m */; };
 		08AF454A1E97D0B500377887 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF45491E97D0B500377887 /* main.m */; };
 		08AF454D1E97D0B500377887 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 08AF454C1E97D0B500377887 /* AppDelegate.m */; };
 		08AF45551E97D0B500377887 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 08AF45541E97D0B500377887 /* Assets.xcassets */; };
@@ -523,6 +525,10 @@
 		08AA10E622CAD8520077DE36 /* NVHeUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVHeUtil.h; sourceTree = "<group>"; };
 		08AA10E722CAD8520077DE36 /* NVHeUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NVHeUtil.m; sourceTree = "<group>"; };
 		08ABC5672D8F00FF00E67D5B /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = "<group>"; };
+		08ABC5692D90080300E67D5B /* AIFeatureNextGVRankModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIFeatureNextGVRankModel.h; sourceTree = "<group>"; };
+		08ABC56A2D90080300E67D5B /* AIFeatureNextGVRankModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIFeatureNextGVRankModel.m; sourceTree = "<group>"; };
+		08ABC56D2D9010AB00E67D5B /* AIFeatureNextGVRankItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIFeatureNextGVRankItem.h; sourceTree = "<group>"; };
+		08ABC56E2D9010AB00E67D5B /* AIFeatureNextGVRankItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIFeatureNextGVRankItem.m; sourceTree = "<group>"; };
 		08AF45451E97D0B500377887 /* SMG_NothingIsAll.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SMG_NothingIsAll.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		08AF45491E97D0B500377887 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		08AF454B1E97D0B500377887 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -1241,6 +1247,7 @@
 		087705A0275373C000BA4EFB /* TCRecognition */ = {
 			isa = PBXGroup;
 			children = (
+				08ABC56C2D90107400E67D5B /* Model */,
 				087705AC2753745100BA4EFB /* TCRecognition.h */,
 				087705AD2753745100BA4EFB /* TCRecognition.m */,
 				085085992A25B26F00ED63F2 /* TCRecognitionUtil.h */,
@@ -1384,6 +1391,17 @@
 				0808D34722B6FDD100D383BA /* NVViewUtil.m */,
 			);
 			path = Core;
+			sourceTree = "<group>";
+		};
+		08ABC56C2D90107400E67D5B /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				08ABC5692D90080300E67D5B /* AIFeatureNextGVRankModel.h */,
+				08ABC56A2D90080300E67D5B /* AIFeatureNextGVRankModel.m */,
+				08ABC56D2D9010AB00E67D5B /* AIFeatureNextGVRankItem.h */,
+				08ABC56E2D9010AB00E67D5B /* AIFeatureNextGVRankItem.m */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		08AF453C1E97D0B500377887 = {
@@ -2100,6 +2118,7 @@
 				0808D34822B6FDD100D383BA /* NVViewUtil.m in Sources */,
 				88A43F3A2109571300281348 /* AIAbsCMVNode.m in Sources */,
 				08D4EC512160501000DA646B /* AINetUtils.m in Sources */,
+				08ABC56F2D9010AB00E67D5B /* AIFeatureNextGVRankItem.m in Sources */,
 				08D322A91EBA28B0009D734A /* Foundation+Log.m in Sources */,
 				08D1926E29E5A98400032AD8 /* AISceneModel.m in Sources */,
 				08C159C02808F47100983717 /* RLTPanel.m in Sources */,
@@ -2152,6 +2171,7 @@
 				087705B42753746800BA4EFB /* TCDemand.m in Sources */,
 				089E66B121B9F5D100ECA28A /* AIAbsAlgNode.m in Sources */,
 				082A905327F5E447003D15BE /* RTModel.m in Sources */,
+				08ABC56B2D90080300E67D5B /* AIFeatureNextGVRankModel.m in Sources */,
 				88E87A6721016EAA0071513F /* OutputUtils.m in Sources */,
 				0843AADC28141711002B9AA9 /* XGDebug.m in Sources */,
 				080A74321F60C6490025DBA3 /* AIPort.m in Sources */,

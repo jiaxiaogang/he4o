@@ -174,68 +174,60 @@
     for (NSInteger i = 0; i < protoFeature.count; i++) {
         AIKVPointer *protoGroupValue_p = ARR_INDEX(protoFeature.content_ps, i);
         NSInteger protoLevel = NUMTOOK(ARR_INDEX(protoFeature.levels, i)).integerValue;
-        NSInteger protoX = NUMTOOK(ARR_INDEX(protoFeature.xs, i)).integerValue;
-        NSInteger protoY = NUMTOOK(ARR_INDEX(protoFeature.ys, i)).integerValue;
-        NSMutableArray *except_ps = [[NSMutableArray alloc] init];//每个针对每个deltaLevel_ass的level,x,y只能索引一次，避免重复。
         
         //4. 组码识别。
         NSArray *gMatchModels = [self recognitionGroupValue:protoGroupValue_p];
         
-        //5. 对每一个assKey做matchDegree的收集竞争。
-        //TODO: 这里应该改成竞争，对所有refPort进行符合度竞争，把最符合的留下，别的不要。而不是单纯的<1。
+        //5. 对每一个assKey做matchDegree的收集竞争（对所有refPort进行匹配度matchValue和符合度matchDegree竞争，把最符合的留下，别的不要。而不是单纯的用阈值>0.9判断）。
+        AIFeatureNextGVRankModel *gvRankModel = [[AIFeatureNextGVRankModel alloc] init];
         
-        
+        //6. 对所有gv识别结果的，所有refPorts，依次判断位置符合度。
         for (AIMatchModel *gModel in gMatchModels) {
             NSArray *refPorts = [AINetUtils refPorts_All:gModel.match_p];
             
-            //5. 每个refPort转为model并计匹配度和匹配数;
+            //11. 每个refPort转为model并计匹配度和匹配数;
             for (AIPort *refPort in refPorts) {
                 
-                //6. 在ass结果中，找出其对应的level,x,y数据。
-                //性能说明：此处level,x,y存在refPort中，性能是没问题的。
-                NSInteger assLevel = NUMTOOK([refPort.params objectForKey:@"l"]).integerValue;
-                NSInteger assX = NUMTOOK([refPort.params objectForKey:@"x"]).integerValue;
-                NSInteger assY = NUMTOOK([refPort.params objectForKey:@"y"]).integerValue;
+                //12. 根据level分别记录不同deltaLevel结果（把deltaLevel做为key的一部分，记录到识别结果字典里）。
+                NSString *assKey = STRFORMAT(@"%ld_%ld",protoLevel - refPort.level,refPort.target_p.pointerId);
                 
-                //7. 根据level分别记录不同deltaLevel结果（把deltaLevel做为key的一部分，记录到识别结果字典里）。
-                NSString *assKey = STRFORMAT(@"%ld_%ld",protoLevel - assLevel,refPort.target_p.pointerId);
-                
-                //8. 取出已经收集到的assGVModels,判断下一个refPort收集进去的话,是否符合位置;
+                //13. 取出已经收集到的assGVModels,判断下一个refPort收集进去的话,是否符合位置;
                 NSMutableArray *assGVModels = [[NSMutableArray alloc] initWithArray:[assGVModelDic objectForKey:assKey]];
-                BOOL debugMode = false;//[feature_p.dataSource isEqual:@"hColors"] && [refPort.target_p isEqual:protoFeature.p] && assLevel == protoLevel && [gModel.match_p isEqual:protoGroupValue_p];//debug: 此处经常输出相似度0，把完全匹配的打出来，确定是否返回1。
+                BOOL debugMode = false;//[feature_p.dataSource isEqual:@"hColors"] && [refPort.target_p isEqual:protoFeature.p] && assLevel == protoLevel && [gModel.match_p isEqual:protoGroupValue_p];
                 CGFloat matchDegree = [ThinkingUtils checkAssToMatchDegree:protoFeature protoIndex:i assGVModels:assGVModels checkRefPort:refPort debugMode:debugMode];
                 
-                //8. 这里阈值为1，后期会改成竞争。
-                if (matchDegree < 1) {
-                    continue;
-                }
-                
-                //8. 防重
-                //说明1、proto的76个每个组码，才可能相似到同在proto中的别的10个左右的组码，而这些组码都ref着proto，如果不加以防重，很容易重复成76*10=760个。所以不仅要针对pid防重，还要针对level,x,y都防重。
-                //说明2、ass2的组码，也可能在ass1的时候就被收到ass1的deltaLeverl里，导致被防重掉，循环到ass2的时候反而无法再判给ass2了，所以，我们应该加上限制，针对每个delta的ass，我们都要单独进行防重。
-                NSString *except_Key = STRFORMAT(@"%ld_%ld_%ld_%ld_%ld",assLevel - protoLevel,refPort.target_p.pointerId,assLevel,assX,assY);
-                if ([except_ps containsObject:except_Key]) continue;
-                [except_ps addObject:except_Key];
-                
-                //9. 把protoIndex,assLevel,assX,assY都存下来（后面用于判断xy相似度要用）（参考34052-TODO4）。
-                InputGroupValueModel * newModel = [InputGroupValueModel new:nil groupValue:refPort.target_p level:assLevel x:assX y:assY];
-                newModel.matchOfProtoIndex = i;
-                [assGVModels addObject:newModel];
-                [assGVModelDic setObject:assGVModels forKey:assKey];
-                
-                //10. 找model (无则新建) (性能: 此处在循环中,所以防重耗60ms正常,收集耗100ms正常);
-                AIMatchModel *tModel = [resultDic objectForKey:assKey];
-                if (!tModel) tModel = [[AIMatchModel alloc] init];
-                tModel.match_p = refPort.target_p;
-                tModel.matchCount++;
-                tModel.matchValue *= gModel.matchValue;
-                tModel.sumRefStrong += (int)refPort.strong.value;
-                [resultDic setObject:tModel forKey:assKey];
+                //14. 把每条refPort可能，存下来，后面竞争下再决定用哪个（存refPort，assKey，gModel.matchValue，matchDegree）。
+                [gvRankModel update:assKey refPort:refPort gMatchValue:gModel.matchValue gMatchDegree:matchDegree];
             }
+        }
+        
+        //21. 竞争下
+        [gvRankModel invokeRank];
+        
+        //22. 将best结果存下来
+        for (NSString *assKey in gvRankModel.rankDic.allKeys) {
+            AIFeatureNextGVRankItem *item = [gvRankModel.rankDic objectForKey:assKey];
+            AIPort *refPort = item.refPort;
+            NSMutableArray *assGVModels = [[NSMutableArray alloc] initWithArray:[assGVModelDic objectForKey:assKey]];
+            
+            //23. 把protoIndex,assLevel,assX,assY都存下来（后面用于判断xy相似度要用）（参考34052-TODO4）。
+            InputGroupValueModel * newModel = [InputGroupValueModel new:nil groupValue:refPort.target_p level:refPort.level x:refPort.x y:refPort.y];
+            newModel.matchOfProtoIndex = i;
+            [assGVModels addObject:newModel];
+            [assGVModelDic setObject:assGVModels forKey:assKey];
+            
+            //24. 找model (无则新建) (性能: 此处在循环中,所以防重耗60ms正常,收集耗100ms正常);
+            AIMatchModel *tModel = [resultDic objectForKey:assKey];
+            if (!tModel) tModel = [[AIMatchModel alloc] init];
+            tModel.match_p = refPort.target_p;
+            tModel.matchCount++;
+            tModel.matchValue *= item.gMatchValue;
+            tModel.sumRefStrong += (int)refPort.strong.value;
+            [resultDic setObject:tModel forKey:assKey];
         }
     }
     
-    //11. 生成proto和ass的映射 (现在protoIndex存在assGVModels中);
+    //31. 生成proto和ass的映射 (现在protoIndex存在assGVModels中);
     for (NSString *assKey in resultDic.allKeys) {
         //a. 从assGVModels中收集indexDic;
         NSArray *assGVModels = ARRTOOK([assGVModelDic objectForKey:assKey]);
@@ -250,28 +242,35 @@
         matchModel.indexDic = indexDic;
     }
     
-    //debug;
+    //32. debug;
     for (NSString *assKey in resultDic.allKeys) {
         NSArray *assGVModels = ARRTOOK([assGVModelDic objectForKey:assKey]);
         NSLog(@"debug匹配条数：%@ %ld/%ld",assKey,assGVModels.count,protoFeature.count);
     }
     
-    //21. 把matchValue=0的排除掉。
+    //41. 过滤器1、matchValue=0排除掉。
     NSArray *resultModels = [SMGUtils filterArr:resultDic.allValues checkValid:^BOOL(AIMatchModel *item) {
         return item.matchValue > 0;
     }];
     
-    //22. 识别过滤器 (参考28109-todo2)。
+    //42. 过滤器2、此处每个特征的不同层级，可能识别到同一个特征，可以按匹配度防下重。
+    resultModels = [SMGUtils removeRepeat:[SMGUtils sortBig2Small:resultModels compareBlock:^double(AIMatchModel *obj) {
+        return obj.matchCount;
+    }] convertBlock:^id(AIMatchModel *obj) {
+        return obj.match_p;
+    }];
+    
+    //43. 过滤器3、匹配度强度过滤器 (参考28109-todo2)。
     resultModels = [AIFilter recognitionMatchModelsFilter:resultModels radio:0.4f];
     
-    //23. 全含判断: 特征应该不需要全含，因为很难看到局部都相似的两个图像。
+    //44. 过滤器4、全含判断: 特征应该不需要全含，因为很难看到局部都相似的两个图像。
     resultModels = [SMGUtils filterArr:resultModels checkValid:^BOOL(AIMatchModel *item) {
         AIFeatureNode *tNode = [SMGUtils searchNode:item.match_p];
         if (tNode.count * 0.7 > item.matchCount) return false;//匹配数必须达到70%才有效。
         return true;
     }];
     
-    //24. 更新: ref强度 & 相似度 & 抽具象 & 映射;
+    //51. 更新: ref强度 & 相似度 & 抽具象 & 映射;
     for (AIMatchModel *matchModel in resultModels) {
         AIFeatureNode *assFeature = [SMGUtils searchNode:matchModel.match_p];
         [AINetUtils insertRefPorts_General:assFeature.p content_ps:assFeature.content_ps difStrong:1 header:assFeature.header];
@@ -287,8 +286,8 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------识别是什么(这是西瓜)--------------------
- *
+ *  MARK:--------------------概念识别--------------------
+ *  @param except_ps : 排除_ps; (如:同一批次输入的概念组,不可用来识别自己)
  *  注: 无条件 & 目前无能量消耗 (以后有基础思维活力值后可energy-1)
  *  注: 局部匹配_后面通过调整参数,来达到99%以上的识别率;
  *
@@ -297,11 +296,6 @@
  *
  *  Q2: 概念的嵌套,有可能会导致识别上的一些问题; (我们需要支持结构化识别,而不仅是绝对识别和模糊识别)
  *  A2: 190910概念嵌套已取消,正在做结构化识别,此次改动是为了完善ThinkReason细节;
- *
- *  @todo
- *      1. 看到西瓜会开心 : 对自身状态的判断, (比如,看到西瓜,想吃,那么当前状态是否饿)
- *          > 已解决,将useNode去掉,并且由mModel替代后,会提交给demandManager进行这些处理;
- *
  *  @version 迭代记录:
  *      20190910: 识别"概念与时序",并构建纵向关联; (190910概念识别,添加了抽象关联)
  *      20191223: 局部匹配支持全含: 对assAlg和protoAlg直接做抽象关联,而不是新构建抽象;
@@ -316,18 +310,7 @@
  *      20220528: 把概念外类比关掉 (参考26129-方案2-1);
  *      20221018: 对proto直接抽象指向matchAlg (参考27153-todo3);
  *      20221024: 将抽具象相似度存至algNode中 (参考27153-todo2);
- *
- *  _result
- *      xxxx.xx.xx: completeBlock : 共支持三种返回: 匹配效果从高到低分别为:fuzzyAlg废弃,matchAlg全含,seemAlg局部;
  *      2022.01.16: 改为直接传入inModel模型,识别后赋值到inModel中即可;
- *      
- *  MARK:--------------------概念局部匹配--------------------
- *  注: 根据引用找出相似度最高且达到阀值的结果返回; (相似度匹配)
- *  从content_ps的所有value.refPorts找前cPartMatchingCheckRefPortsLimit个, 如:contentCount9*limit5=45个;
- *
- *  @param except_ps : 排除_ps; (如:同一批次输入的概念组,不可用来识别自己)
- *
- *  @version:
  *      2021.09.27: 仅识别ATDefault类型 (参考24022-BUG4);
  *      2019.12.23 - 迭代支持全含,参考17215 (代码中由判断相似度,改为判断全含)
  *      2020.04.13 - 将结果通过complete返回,支持全含 或 仅相似 (因为正向反馈类比的死循环切入问题,参考:n19p6);

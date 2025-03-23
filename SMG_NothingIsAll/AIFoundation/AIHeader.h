@@ -55,6 +55,8 @@
 #import "AIMatchAlgModel.h"
 #import "AIMatchCansetModel.h"
 #import "AIMatchModel.h"
+#import "AIFeatureNextGVRankModel.h"
+#import "AIFeatureNextGVRankItem.h"
 
 //短时记忆
 #import "TOAlgModel.h"
