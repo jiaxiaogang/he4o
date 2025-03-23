@@ -169,12 +169,12 @@
     NSMutableDictionary *resultDic = [[NSMutableDictionary alloc] init];// <K=deltaLevel_assPId, V=识别的特征AIMatchModel>
     AIFeatureNode *protoFeature = [SMGUtils searchNode:feature_p];
     NSMutableDictionary *assGVModelDic = [[NSMutableDictionary alloc] init];// <K=deltaLevel_ass.pId, V=InputGroupValueModel数组]>
-    NSMutableArray *except_ps = [[NSMutableArray alloc] init];//每个针对每个deltaLevel_ass的level,x,y只能索引一次，避免重复。
     
     //2. 循环分别识别：特征里的组码。
     for (NSInteger i = 0; i < protoFeature.count; i++) {
         AIKVPointer *protoGroupValue_p = ARR_INDEX(protoFeature.content_ps, i);
         NSInteger protoLevel = NUMTOOK(ARR_INDEX(protoFeature.levels, i)).integerValue;
+        NSMutableArray *except_ps = [[NSMutableArray alloc] init];//每个针对每个deltaLevel_ass的level,x,y只能索引一次，避免重复。
         
         //4. 组码识别。
         NSArray *gMatchModels = [self recognitionGroupValue:protoGroupValue_p];
@@ -209,7 +209,7 @@
                 
                 //8. 取出已经收集到的assGVModels,判断下一个refPort收集进去的话,是否符合位置;
                 NSMutableArray *assGVModels = [[NSMutableArray alloc] initWithArray:[assGVModelDic objectForKey:assKey]];
-                BOOL debugMode = [gModel.match_p isEqual:protoGroupValue_p];//debug: 此处经常输出相似度0，把完全匹配的打出来，确定是否返回1。
+                BOOL debugMode = [feature_p.dataSource isEqual:@"hColors"] && [refPort.target_p isEqual:protoFeature.p] && assLevel == protoLevel && [gModel.match_p isEqual:protoGroupValue_p];//debug: 此处经常输出相似度0，把完全匹配的打出来，确定是否返回1。
                 CGFloat matchDegree = [ThinkingUtils checkAssToMatchDegree:protoFeature protoIndex:i assGVModels:assGVModels checkRefPort:refPort debugMode:debugMode];
                 if (matchDegree < 0.9) continue;
                 
@@ -234,6 +234,7 @@
                 tModel.matchValue *= gModel.matchValue;
                 tModel.sumRefStrong += (int)refPort.strong.value;
                 [resultDic setObject:tModel forKey:assKey];
+                //当前assKey已经找到第i帧了，
             }
         }
     }

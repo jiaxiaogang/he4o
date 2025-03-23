@@ -193,6 +193,7 @@
                 //4. ======== 兼容新版组码特征 ========
                 if (PitIsFeature(protoV_p) || PitIsFeature(assV_p)) {
                     AIFeatureNode *absT = [self analogyFeature:protoV_p ass:assV_p];
+                    if (!absT) continue;
                     CGFloat valueMatchValue = [absT getConMatchValue:protoA_p];
                     [sameValue_ps addObject:absT.p];
                     
@@ -262,7 +263,7 @@
         //3. B源于matchFo,此处只判断B是1层抽象 (参考27161-调试1&调试2);
         //此处proto抽象仅指向刚识别的matchAlgs,所以与contains等效;
         if (Log4Ana) NSLog(@"proto的第%ld: G%ld 类比 ass的第%ld: G%ld",protoIndex,protoG_p.pointerId,assIndex,assG_p.pointerId);
-            
+        
         //4. 即使mIsC匹配,也要进行共同点抽象 (参考29025-11);
         AIGroupValueNode *absG = [self analogyGroupValue:protoG_p assG:assG_p];
         featureMatchValue *= [absG getConMatchValue:protoG_p];
@@ -279,6 +280,12 @@
         NSInteger absY = assLevel < protoLevel ? assY : protoY;
         [absGVModels addObject:[InputGroupValueModel new:nil groupValue:absG.p level:absLevel x:absX y:absY]];
     }
+    
+    
+    
+    //TODO: 考虑支持：次要责任免责（可以把责任占比封装成方法）。
+    //对每个protoG和absG元素判断责任占比，把免责的保留下来，构建成absT。
+    
     
     //备忘: 如果以后特征要支持indexDic,这里可以打开并存上映射支持下 (但短时间内应该不需要,连alg也没支持映射);
     //6. 生成protoIndexDic 和 assIndexDic  (参考29032-todo1.2);

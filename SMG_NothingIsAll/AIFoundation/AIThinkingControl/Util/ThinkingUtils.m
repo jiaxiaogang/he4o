@@ -289,6 +289,14 @@
     CGFloat matchDegree = (matchX + matchY) / 2.0f;
     
     //12. 返回结果矩形,使用符合度作为宽高
+    if (debugMode) {
+        if (protoFrom.x == 0 && protoFrom.y == 1 && protoTo.x == 1 && protoTo.y == 1) {
+            if (assFrom.x == 0 && assFrom.y == 1 && assTo.x == 1 && assTo.y == 1) {
+                NSLog(@"");
+            }
+        }
+    }
+    
     if (debugMode) NSLog(@"范围符合度 %.2f",matchDegree);
     return matchDegree;
 }
