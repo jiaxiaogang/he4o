@@ -42,7 +42,7 @@
  *  MARK:--------------------流入input--------------------
  */
 -(void) commitInputAsync:(NSObject*)algsModel;
--(void) commitInputWithSplitAsync:(AIVisionAlgsModelV2*)algsModel algsType:(NSString*)algsType;//输入多粒度
+-(void) commitInputWithSplitAsync:(AIVisionAlgsModelV2*)algsModel algsType:(NSString*)algsType logDesc:(NSString*)logDesc;//输入多粒度
 -(void) commitInputWithModelsAsync:(NSArray*)dics algsType:(NSString*)algsType;
 
 /**

@@ -231,6 +231,7 @@
         self.header = [aDecoder decodeObjectForKey:@"header"];
         self.absIndexDDic = [aDecoder decodeObjectForKey:@"absIndexDDic"];
         self.conIndexDDic = [aDecoder decodeObjectForKey:@"conIndexDDic"];
+        self.logDesc = [aDecoder decodeObjectForKey:@"logDesc"];
     }
     return self;
 }
@@ -252,6 +253,7 @@
     [aCoder encodeObject:self.header forKey:@"header"];
     [aCoder encodeObject:[self.absIndexDDic copy] forKey:@"absIndexDDic"];
     [aCoder encodeObject:[self.conIndexDDic copy] forKey:@"conIndexDDic"];
+    [aCoder encodeObject:self.logDesc forKey:@"logDesc"];
 }
 
 @end

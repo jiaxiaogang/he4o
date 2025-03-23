@@ -130,7 +130,7 @@
 /**
  *  MARK:--------------------commitInput--------------------
  */
-+ (void) commitInput:(UIImage*)image {
++ (void) commitInput:(UIImage*)image logDesc:(NSString*)logDesc {
     //1. 数据检查。
     if (!image) return;
     
@@ -162,7 +162,7 @@
     }];
     
     //7. 提交给思维控制器。
-    [theTC commitInputWithSplitAsync:model algsType:NSStringFromClass(self)];
+    [theTC commitInputWithSplitAsync:model algsType:NSStringFromClass(self) logDesc:logDesc];
 }
 
 #pragma mark - Test Methods

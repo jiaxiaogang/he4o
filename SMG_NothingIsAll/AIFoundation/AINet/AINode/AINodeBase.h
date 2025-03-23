@@ -90,4 +90,7 @@
  */
 -(void) updateIndexDic:(AINodeBase*)absFo indexDic:(NSDictionary*)indexDic;
 
+//logDesc仅存用于打日志。
+@property (strong, nonatomic) NSString *logDesc;
+
 @end

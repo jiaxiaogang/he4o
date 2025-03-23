@@ -360,6 +360,10 @@
     NSMutableDictionary *protoPDic = [NSMutableDictionary new], *protoRDic = [NSMutableDictionary new];
     
     //2. 广入: 对每个元素,分别取索引序列 (参考25083-1);
+    
+    //TODOTOMORROW20250323: 查下为什么0_1和0_2的匹配度是0。
+    //> 概念识别到：A3 匹配度：0.00 input:0_2 result:0_1
+    
     for (AIKVPointer *item_p in protoAlg.content_ps) {
         
         //3. 取相近度序列 (按相近程度排序);
@@ -451,6 +455,10 @@
     //16. debugLog
     NSLog(@"\n概念识别结果 (感似:%ld条 理似:%ld条 感交:%ld 理交:%ld) protoAlg:%@",inModel.matchAlgs_PS.count,inModel.matchAlgs_RS.count,inModel.matchAlgs_PJ.count,inModel.matchAlgs_RJ.count,Alg2FStr(protoAlg));
     [inModel log4HavXianWuJv_AlgPJ:@"fltx1"];
+    for (AIMatchAlgModel *model in inModel.matchAlgs_RS) {
+        AIAlgNodeBase *alg = [SMGUtils searchNode:model.matchAlg];
+        NSLog(@"概念识别到：A%ld 匹配度：%.2f input:%@ result:%@",alg.pId,model.matchValue,protoAlg.logDesc,alg.logDesc);
+    }
 }
 
 /**

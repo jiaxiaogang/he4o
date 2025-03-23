@@ -157,15 +157,15 @@ static AIThinkingControl *_instance;
  *  MARK:--------------------现用于输入（多粒度）二维概念，如视觉图像，目前用于测支持多码特征--------------------
  *  @desc 为了方便开发，开发阶段不将Object转成Dictionary输入，后开发完成后下版本再转。
  */
--(void) commitInputWithSplitAsync:(AIVisionAlgsModelV2*)algsModel algsType:(NSString*)algsType {
+-(void) commitInputWithSplitAsync:(AIVisionAlgsModelV2*)algsModel algsType:(NSString*)algsType logDesc:(NSString*)logDesc {
     __block AIVisionAlgsModelV2 *weakAlgsModel = algsModel;
     dispatch_async(self.tiQueue, ^{//30083去异步
         self.tiRuning1 = true;
-        [self commitInputWithSplit:weakAlgsModel algsType:algsType];
+        [self commitInputWithSplit:weakAlgsModel algsType:algsType logDesc:logDesc];
         self.tiRuning1 = false;
     });
 }
--(void) commitInputWithSplit:(AIVisionAlgsModelV2*)algsModel algsType:(NSString*)algsType {
+-(void) commitInputWithSplit:(AIVisionAlgsModelV2*)algsModel algsType:(NSString*)algsType logDesc:(NSString*)logDesc {
     //1. 植物模式阻断感知;
     if (self.thinkMode == 2) return;
     
@@ -182,6 +182,7 @@ static AIThinkingControl *_instance;
     
     //4、构建具象概念。
     AIAlgNodeBase *algNode = [theNet createAbsAlg_NoRepeat:@[hFeature.pointer,sFeature.pointer,bFeature.pointer] conAlgs:nil isOut:false at:nil ds:nil type:ATDefault];
+    algNode.logDesc = logDesc;
     
     //5、装箱打包完毕，输入到rInput：进瞬时序列和识别等。
     [TCInput rInput:algNode except_ps:nil];
