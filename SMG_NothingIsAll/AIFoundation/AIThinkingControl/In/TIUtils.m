@@ -210,8 +210,21 @@
                 //分析、这里refPort对上一点位置无效，不表示对该特征永远无效，所以我们不参直接except掉，如果一会...
                 //分析2、或者这里应该改成竞争，对所有refPort进行符合度竞争，把最符合的留下，别的不要。而不是单纯的<1。
                 //分析3、难道是不判断xy时，把错误的收集上了？导致一错百错？可以实测试下：
-                if (protoX != assX) continue;
+//                if (protoX != assX) continue;
                 if (protoY != assY) continue;
+                
+                //如下日志：有许多protoIndex时，组码压根没识别到它protoGV，所以当然不会匹配上，看来此BUG，要去组码识别中查下。
+                //------------> find16
+                //出界返0：protoFrom:3,4 -> to:4,6      assFrom:0,4 -> to:4,6
+                //------------> find17
+                //出界返0：protoFrom:3,4 -> to:4,7      assFrom:0,4 -> to:4,7
+                //------------> find18
+                //出界返0：protoFrom:3,4 -> to:4,8      assFrom:0,4 -> to:4,8
+                //------------> find19
+                //出界返0：protoFrom:3,4 -> to:5,4      assFrom:0,4 -> to:5,4
+                //出界返0：protoFrom:3,4 -> to:5,4      assFrom:0,4 -> to:6,4
+                //出界返0：protoFrom:3,4 -> to:5,4      assFrom:0,4 -> to:7,4
+                //出界返0：protoFrom:3,4 -> to:5,4      assFrom:0,4 -> to:8,4
                 
                 //debug匹配条数：-1_889 10/76
                 //debug匹配条数：-3_889 1/76
