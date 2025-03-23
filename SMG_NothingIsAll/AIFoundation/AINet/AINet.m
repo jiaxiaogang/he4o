@@ -103,6 +103,7 @@ static AINet *_instance;
  */
 -(NSDictionary*) algModelConvert2PointersV2_Step1_ConvertV:(NSString*)at ds:(NSString*)ds splitDic:(NSDictionary*)splitDic {
     //1. 循环装箱
+    //TODO: 这里把已经装箱部分根据值防重记复用下，可以省性能，不过得先测下这确实性能慢，再做这个。
     return [SMGUtils convertDic:splitDic kvBlock:^NSArray *(id protoK, NSNumber *protoV) {
         AIPointer *pointer = [AINetIndex getDataPointerWithData:protoV algsType:at dataSource:ds isOut:false];//K不需要装箱，V装箱即可。
         return @[protoK,pointer];
@@ -152,8 +153,8 @@ static AINet *_instance;
                 }
                 //NSLog(@"%ld_%ld_%ld %.2f",groupLevel,groupRow,groupColumn,minMatchValue);
                 
-                //5. 如果很相似，防重掉(压缩)。
-                if (minMatchValue > 0.9 || !ARRISOK(subDots)) continue;
+                //5. 如果不是第一层，且9格很相似，防重掉(压缩)。
+                if (groupLevel > 0 && (minMatchValue > 0.9 || !ARRISOK(subDots))) continue;
                 
                 //6. 如果不相似，打包成组码。
                 AIGroupValueNode *groupValue = [AIGeneralNodeCreater createGroupValueNode:subDots conNodes:nil at:at ds:ds isOut:false];

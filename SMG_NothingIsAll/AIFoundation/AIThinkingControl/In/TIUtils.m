@@ -169,6 +169,7 @@
     NSMutableDictionary *resultDic = [[NSMutableDictionary alloc] init];// <K=deltaLevel_assPId, V=识别的特征AIMatchModel>
     AIFeatureNode *protoFeature = [SMGUtils searchNode:feature_p];
     NSMutableDictionary *assGVModelDic = [[NSMutableDictionary alloc] init];// <K=deltaLevel_ass.pId, V=InputGroupValueModel数组]>
+    if (protoFeature.count == 0) return @[[[AIMatchModel alloc] initWithMatch_p:feature_p]];
     
     //2. 循环分别识别：特征里的组码。
     for (NSInteger i = 0; i < protoFeature.count; i++) {

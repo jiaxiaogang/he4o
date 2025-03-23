@@ -19,6 +19,15 @@
 }
 
 
+-(id) initWithMatch_p:(AIKVPointer*)match_p {
+    self = [super init];
+    if (self) {
+        self.match_p = match_p;
+    }
+    return self;
+}
+
+
 /**
  *  MARK:--------------------获取强度--------------------
  *  @desc 获取概念引用强度,求出平均值 (参考2722d-todo4);

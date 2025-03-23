@@ -21,6 +21,7 @@
 // 创建测试用的100x100像素图片
 + (UIImage *) createTest4ColorImage;
 // 从ProtoMnistImage取图
-+ (UIImage *) createImageFromProtoMnistImage:(NSInteger)imgIndex;
++ (UIImage *) createImageFromProtoMnistImageWithIndex:(NSInteger)imgIndex;
++ (UIImage *) createImageFromProtoMnistImageWithName:(NSString*)imgName;
 
 @end

@@ -224,8 +224,8 @@
     //TODOTOMORROW20250322:
     //测到问题1、输入数字后，组码识别到0条结果。
     //待测2、测下四色图，第二次输入时，把proto防重掉，还能不能识别到自己？
-//    [AIVisionAlgsV2 commitInput:[AIVisionAlgsV2 createImageFromProtoMnistImage:100]];
-    [AIVisionAlgsV2 commitInput:[AIVisionAlgsV2 createTest4ColorImage]];
+    [AIVisionAlgsV2 commitInput:[AIVisionAlgsV2 createImageFromProtoMnistImageWithName:@"0_1"]];
+//    [AIVisionAlgsV2 commitInput:[AIVisionAlgsV2 createTest4ColorImage]];
 }
 
 -(void) startRefreshDotAnimation{

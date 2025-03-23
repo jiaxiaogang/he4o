@@ -13,6 +13,8 @@
  */
 @interface AIMatchModel : NSObject
 
+-(id) initWithMatch_p:(AIKVPointer*)match_p;
+
 @property (strong, nonatomic) AIKVPointer *match_p; //匹配概念
 @property (assign, nonatomic) CGFloat matchValue;   //相似度（乘积，默认为1）
 @property (assign, nonatomic) NSInteger matchCount; //相似条数

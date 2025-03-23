@@ -197,14 +197,22 @@
 }
 
 // 从ProtoMnistImage取图
-+ (UIImage *) createImageFromProtoMnistImage:(NSInteger)imgIndex {
++ (UIImage *) createImageFromProtoMnistImageWithIndex:(NSInteger)imgIndex {
     //1. 读图片路径。
     NSString *folder = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"assets/ProtoMnistImages"];
     NSArray *paths = [NSFile_Extension subFiles:folder];
-    //NSString *path2 = [[NSBundle mainBundle] pathForResource:@"assets/ProtoMnistImages/0_7" ofType:@"png"];//单张图路径，此处暂只用读出整个文件夹里所有文件路径。
     
     //2. 读出第imgIndex张图。
     NSString *path = ARR_INDEX(paths, imgIndex);
+    UIImage *img = [UIImage imageWithContentsOfFile:path];
+    return img;
+}
+
++ (UIImage *) createImageFromProtoMnistImageWithName:(NSString*)imgName {
+    //1. 读图片路径。
+    NSString *path = [[NSBundle mainBundle] pathForResource:STRFORMAT(@"assets/ProtoMnistImages/%@",imgName) ofType:@"png"];
+    
+    //2. 读出第imgIndex张图。
     UIImage *img = [UIImage imageWithContentsOfFile:path];
     return img;
 }
