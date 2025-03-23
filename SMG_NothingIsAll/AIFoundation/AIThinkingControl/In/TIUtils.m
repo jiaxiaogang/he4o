@@ -174,7 +174,10 @@
     for (NSInteger i = 0; i < protoFeature.count; i++) {
         AIKVPointer *protoGroupValue_p = ARR_INDEX(protoFeature.content_ps, i);
         NSInteger protoLevel = NUMTOOK(ARR_INDEX(protoFeature.levels, i)).integerValue;
+        NSInteger protoX = NUMTOOK(ARR_INDEX(protoFeature.xs, i)).integerValue;
+        NSInteger protoY = NUMTOOK(ARR_INDEX(protoFeature.ys, i)).integerValue;
         NSMutableArray *except_ps = [[NSMutableArray alloc] init];//每个针对每个deltaLevel_ass的level,x,y只能索引一次，避免重复。
+        NSLog(@"------------> find%ld",i);
         
         //4. 组码识别。
         NSArray *gMatchModels = [self recognitionGroupValue:protoGroupValue_p];
@@ -202,6 +205,13 @@
                 if (![feature_p.dataSource isEqual:@"hColors"]) continue;
                 if (![refPort.target_p isEqual:protoFeature.p]) continue;
                 
+                //线索1、x和y必须一致就是76/76条了，看来问题就是出现在这两个。可以顺着分析下，如果xy不一样的时候都发生了什么？
+                //线索2、即使except不工作，它一样是26/76条，所以此BUG与except应该是没关系了。
+                //分析、这里refPort对上一点位置无效，不表示对该特征永远无效，所以我们不参直接except掉，如果一会...
+                //分析2、或者这里应该改成竞争，对所有refPort进行符合度竞争，把最符合的留下，别的不要。而不是单纯的<1。
+                //分析3、难道是不判断xy时，把错误的收集上了？导致一错百错？可以实测试下：
+                if (protoX != assX) continue;
+                if (protoY != assY) continue;
                 
                 //debug匹配条数：-1_889 10/76
                 //debug匹配条数：-3_889 1/76
@@ -235,6 +245,7 @@
                 newModel.matchOfProtoIndex = i;
                 [assGVModels addObject:newModel];
                 [assGVModelDic setObject:assGVModels forKey:assKey];
+                NSLog(@"success item:%ld",i);
                 
                 //10. 找model (无则新建) (性能: 此处在循环中,所以防重耗60ms正常,收集耗100ms正常);
                 AIMatchModel *tModel = [resultDic objectForKey:assKey];

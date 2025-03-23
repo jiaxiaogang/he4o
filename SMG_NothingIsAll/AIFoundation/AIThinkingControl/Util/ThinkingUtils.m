@@ -278,7 +278,7 @@
     
     //9. 如果点在矩形外,返回空矩形
     if (distanceX > maxDistanceX || distanceY > maxDistanceY) {
-        //if (debugMode) NSLog(@"因出界返0");
+        if (debugMode) NSLog(@"出界返0：protoFrom:%.0f,%.0f -> to:%.0f,%.0f \t assFrom:%.0f,%.0f -> to:%.0f,%.0f",protoFrom.x,protoFrom.y,protoTo.x,protoTo.y,assFrom.x,assFrom.y,assTo.x,assTo.y);
         return 0;
     }
     
@@ -298,11 +298,7 @@
         }
     }
     
-    if (matchDegree == 1) {
-        if (debugMode) NSLog(@"符合1：protoFrom:%.0f,%.0f -> to:%.0f,%.0f \t assFrom:%.0f,%.0f -> to:%.0f,%.0f",protoFrom.x,protoFrom.y,protoTo.x,protoTo.y,assFrom.x,assFrom.y,assTo.x,assTo.y);
-    }
-    
-    //if (debugMode) NSLog(@"范围符合度 %.2f",matchDegree);
+    if (debugMode) NSLog(@"符合度%.2f：protoFrom:%.0f,%.0f -> to:%.0f,%.0f \t assFrom:%.0f,%.0f -> to:%.0f,%.0f",matchDegree,protoFrom.x,protoFrom.y,protoTo.x,protoTo.y,assFrom.x,assFrom.y,assTo.x,assTo.y);
     return matchDegree;
 }
 
