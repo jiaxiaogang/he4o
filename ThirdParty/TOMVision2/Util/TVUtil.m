@@ -187,6 +187,10 @@
     if (ISOK(node_p, AIKVPointer.class)) {
         if (PitIsValue(node_p)) {
             lightStr = [self getLightStr_ValueP:node_p];
+        }else if (PitIsGroupValue(node_p)) {
+            lightStr = [self getGroupValueDesc:node_p];
+        }else if (PitIsFeature(node_p)) {
+            lightStr = [self getFeatureDesc:node_p];
         }else if (PitIsAlg(node_p)) {
             AIAlgNodeBase *algNode = [SMGUtils searchNode:node_p];
             if (algNode) {
@@ -269,6 +273,16 @@
     BOOL inX = point.x >= CGRectGetMinX(rect) && point.x <= CGRectGetMaxX(rect);
     BOOL inY = point.y >= CGRectGetMinY(rect) && point.y <= CGRectGetMaxY(rect);
     return inX && inY;
+}
+
++(NSString*) getFeatureDesc:(AIKVPointer*)node_p {
+    AIFeatureNode *tNode = [SMGUtils searchNode:node_p];
+    return @"";
+}
+
++(NSString*) getGroupValueDesc:(AIKVPointer*)node_p {
+    AIGroupValueNode *gNode = [SMGUtils searchNode:node_p];
+    return @"";
 }
 
 @end
