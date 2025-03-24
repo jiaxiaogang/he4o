@@ -41,7 +41,7 @@
  *      2025.03.19: 支持构建特征，由多个稀疏码（单码或组码）组成。
  *  @result notnull
  */
-+(AIFeatureNode*) createFeatureNode:(NSArray*)groupModels conNodes:(NSArray*)conNodes at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut {
++(AIFeatureNode*) createFeatureNode:(NSArray*)groupModels conNodes:(NSArray*)conNodes at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut logDesc:(NSString*)logDesc {
     //2. 数据准备：转content_ps。
     NSArray *content_ps = [SMGUtils convertArr:groupModels convertBlock:^id(InputGroupValueModel *obj) {
         return obj.groupValue_p;
@@ -69,9 +69,10 @@
         newNode.levels = levels;
         newNode.xs = xs;
         newNode.ys = ys;
+        newNode.logDesc = logDesc;
         return newNode;
     } header:header];
-    NSLog(@"Create Feature Node:\n%@",FeatureDesc(result.p));
+    NSLog(@"Create Feature Node:(%@)\n%@",result.logDesc,FeatureDesc(result.p));
     return result;
 }
 

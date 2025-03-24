@@ -297,7 +297,7 @@
     NSDictionary *protoAbsIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:indexDic.allValues];
     
     //7. 外类比构建
-    AIFeatureNode *absT = [AIGeneralNodeCreater createFeatureNode:absGVModels conNodes:@[protoFeature,assFeature] at:protoT_p.algsType ds:protoT_p.dataSource isOut:protoT_p.isOut];
+    AIFeatureNode *absT = [AIGeneralNodeCreater createFeatureNode:absGVModels conNodes:@[protoFeature,assFeature] at:protoT_p.algsType ds:protoT_p.dataSource isOut:protoT_p.isOut logDesc:STRFORMAT(@"(%@:%@)",protoFeature.logDesc,assFeature.logDesc)];
     
     //8. 更新匹配度 & 映射;
     [protoFeature updateMatchValue:absT matchValue:featureMatchValue];

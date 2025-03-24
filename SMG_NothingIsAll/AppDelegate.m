@@ -221,7 +221,7 @@
 }
 
 -(void) tempBtnOnClick:(UIButton*)btn {
-    NSString *imgName = @"0_7";
+    NSString *imgName = STRFORMAT(@"0_%d",(arc4random() % 17) + 1);
     [AIVisionAlgsV2 commitInput:[AIVisionAlgsV2 createImageFromProtoMnistImageWithName:imgName] logDesc:imgName];
 //    [AIVisionAlgsV2 commitInput:[AIVisionAlgsV2 createTest4ColorImage]];
 }

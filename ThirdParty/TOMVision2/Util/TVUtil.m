@@ -311,9 +311,19 @@
         NSInteger groupLevel = NUMTOOK(ARR_INDEX(tNode.levels, i)).integerValue;
         NSInteger groupX = NUMTOOK(ARR_INDEX(tNode.xs, i)).integerValue;
         NSInteger groupY = NUMTOOK(ARR_INDEX(tNode.ys, i)).integerValue;
-        NSString *obj = @"  ";
-        if (groupLevel > 0) {
-            obj = STRFORMAT(@"%ld ",groupLevel + 1);
+        NSString *obj = nil;
+        if (groupLevel == 0) {
+            obj = @"  ";
+        } else if (groupLevel == 1) {
+            obj = @"- ";
+        } else if (groupLevel == 2) {
+            obj = @"* ";
+        } else if (groupLevel == 3) {
+            obj = @"o ";
+        } else if (groupLevel == 4) {
+            obj = @"/ ";
+        } else {
+            obj = @"M ";
         }
         NSInteger groupWidth = powf(3, maxLevel - groupLevel);
         NSInteger startGroupX = groupX * groupWidth;
