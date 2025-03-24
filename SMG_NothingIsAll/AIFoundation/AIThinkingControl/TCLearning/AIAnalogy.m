@@ -313,6 +313,7 @@
     //2. 数据准备;
     AIGroupValueNode *protoG = [SMGUtils searchNode:protoG_p];
     AIGroupValueNode *assG = [SMGUtils searchNode:assG_p];
+    if (!protoG || !assG) return nil;
     NSMutableArray *sameSubDots = [[NSMutableArray alloc] init];
     AIMatchAlgModel *protoAbsModel4MatchValue = [[AIMatchAlgModel alloc] init];//此模型仅用于收集proto和abs的相近度,用于计算matchValue;
     

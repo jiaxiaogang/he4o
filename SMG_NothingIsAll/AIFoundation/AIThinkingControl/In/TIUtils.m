@@ -245,6 +245,17 @@
         for (NSInteger assIndex = 0; assIndex < assGVModels.count; assIndex++) {
             InputGroupValueModel *assModel = ARR_INDEX(assGVModels, assIndex);
             [indexDic setObject:@(assModel.matchOfProtoIndex) forKey:@(assIndex)];
+            
+            
+            //TODOTOMORROW20250324: indexDic.key越界BUG。
+            //线索：这里的assGVModels的下标，并不是assIndex，所以导致越界。
+            AIFeatureNode *assT = [SMGUtils searchNode:assModel.groupValue_p];
+            if (assGVModels.count > assT.count) {
+                //1. 这里只是知道 根据i识别 并ref映射到target了。
+                //2. 我们知道的是：target与i有映射，但不知道i与target的哪个元素有映射。
+                //3. 应该根据refPort中的levelxy到target里去找对应下标，这样才能找着映射
+                //4. 这里还要根据level,x,y做下防重，把匹配度，符合度，matchOfProtoIndex也得做防重或竞争下哪个更好。。。
+            }
         }
         
         //b. 把indexDic存下来;
