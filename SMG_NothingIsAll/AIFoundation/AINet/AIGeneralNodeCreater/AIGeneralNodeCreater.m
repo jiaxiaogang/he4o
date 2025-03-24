@@ -72,7 +72,6 @@
         newNode.logDesc = logDesc;
         return newNode;
     } header:header];
-    NSLog(@"Create Feature Node:(%@)\n%@",result.logDesc,FeatureDesc(result.p));
     return result;
 }
 
