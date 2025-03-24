@@ -17,4 +17,7 @@
 @property (strong, nonatomic) NSArray *xs;
 @property (strong, nonatomic) NSArray *ys;
 
+//根据level,x,y找下标，找不到时返-1。
+-(NSInteger) indexOfLevel:(NSInteger)level x:(NSInteger)x y:(NSInteger)y;
+
 @end

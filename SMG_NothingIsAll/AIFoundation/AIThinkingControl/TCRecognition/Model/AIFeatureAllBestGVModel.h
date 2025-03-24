@@ -15,7 +15,10 @@
 
 @property (strong, nonatomic) NSMutableDictionary *bestDic;//竞争前收集Items：<K=assKey，V=Arr[AIFeatureNextGVRankItem]>
 
--(void) update:(AIFeatureNextGVRankItem*)item forKey:(NSString*)assKey;
+/**
+ *  MARK:--------------------更新时，直接查下有没重复，有重复的就只保留更优的一条--------------------
+ */
+-(void) update:(AIFeatureNextGVRankItem*)newItem forKey:(NSString*)assKey;
 -(NSArray*) getAssGVModelsForKey:(NSString*)assKey;
 
 @end

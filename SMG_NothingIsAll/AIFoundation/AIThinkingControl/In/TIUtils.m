@@ -194,9 +194,9 @@
                 NSString *assKey = STRFORMAT(@"%ld_%ld",protoLevel - refPort.level,refPort.target_p.pointerId);
                 
                 //13. 取出已经收集到的assGVModels,判断下一个refPort收集进去的话,是否符合位置;
-                NSArray *assGVModels = [gvBestModel getAssGVModelsForKey:assKey];
+                NSArray *assGVItems = [gvBestModel getAssGVModelsForKey:assKey];
                 BOOL debugMode = false;//[feature_p.dataSource isEqual:@"hColors"] && [refPort.target_p isEqual:protoFeature.p] && assLevel == protoLevel && [gModel.match_p isEqual:protoGroupValue_p];
-                CGFloat matchDegree = [ThinkingUtils checkAssToMatchDegree:protoFeature protoIndex:i assGVModels:assGVModels checkRefPort:refPort debugMode:debugMode];
+                CGFloat matchDegree = [ThinkingUtils checkAssToMatchDegree:protoFeature protoIndex:i assGVModels:assGVItems checkRefPort:refPort debugMode:debugMode];
                 
                 //14. 把每条refPort可能，存下来，后面竞争下再决定用哪个（存refPort，assKey，gModel.matchValue，matchDegree）。
                 [gvRankModel update:assKey refPort:refPort gMatchValue:gModel.matchValue gMatchDegree:matchDegree matchOfProtoIndex:i];
@@ -228,39 +228,28 @@
     //25. 最后所有组码识别完后，综合求出平均matchValue（因为特征有太多组码，乘积匹配度不合理）。
     for (NSString *assKey in resultDic.allKeys) {
         AIMatchModel *model = [resultDic objectForKey:assKey];
-        NSArray *assGVModels = [gvBestModel getAssGVModelsForKey:assKey];
+        NSArray *assGVItems = [gvBestModel getAssGVModelsForKey:assKey];
         model.matchValue = model.matchCount > 0 ? model.sumMatchValue / model.matchCount : 0;
-        NSLog(@"%@\t匹配条数 %ld/%ld \t特征识别综合匹配度计算:T%ld \t匹配度:%.2f / %ld \t= %.2f",assKey,assGVModels.count,protoFeature.count,model.match_p.pointerId,model.sumMatchValue,model.matchCount,model.matchValue);
+        NSLog(@"%@\t匹配条数 %ld/%ld \t特征识别综合匹配度计算:T%ld \t匹配度:%.2f / %ld \t= %.2f",assKey,assGVItems.count,protoFeature.count,model.match_p.pointerId,model.sumMatchValue,model.matchCount,model.matchValue);
     }
     
     //31. 生成proto和ass的映射 (现在protoIndex存在assGVModels中);
     for (NSString *assKey in resultDic.allKeys) {
         //a. 从assGVModels中收集indexDic;
-        NSArray *assGVModels = [gvBestModel getAssGVModelsForKey:assKey];
+        NSArray *assGVItems = [gvBestModel getAssGVModelsForKey:assKey];
         NSMutableDictionary *indexDic = [[NSMutableDictionary alloc] init];
         
-        //b. assGVModels先根据其asslevel,x,y分组竞争下。
-        
-        for (NSInteger assIndex = 0; assIndex < assGVModels.count; assIndex++) {
-            AIFeatureNextGVRankItem *assModel = ARR_INDEX(assGVModels, assIndex);
-            [indexDic setObject:@(assModel.matchOfProtoIndex) forKey:@(assIndex)];
+        //b. 每个assKey的识别assT结果，都要从其assGVItems的每一帧item结果中收集indexDic映射。
+        for (AIFeatureNextGVRankItem *item in assGVItems) {
+            AIFeatureNode *assT = [SMGUtils searchNode:item.refPort.target_p];
             
-            
-            //TODOTOMORROW20250324: indexDic.key越界BUG。
-            //线索：这里的assGVModels的下标，并不是assIndex，所以导致越界。
-            AIFeatureNode *assT = [SMGUtils searchNode:assModel.refPort.target_p];
-            if (assGVModels.count > assT.count) {
-                //1. 这里只是知道 根据i识别 并ref映射到target了。
-                //2. 我们知道的是：target与i有映射，但不知道i与target的哪个元素有映射。
-                //3. 应该根据refPort中的levelxy到target里去找对应下标，这样才能找着映射
-                //4. 这里还要根据level,x,y做下防重，把匹配度，符合度，matchOfProtoIndex也得做防重或竞争下哪个更好。。。
-                
-                //不用竞争了，直接放到gvBestModel的update方法里去做就行，更新时，直接查下有没重复，有重复的就只保留更优的一条。
-                //然后此处，只需要根据rankItem取其assIndex下标即可。
-            }
+            //c. 收集其中一帧映射（根据refPort的level,x,y找其在assT中对应哪个assIndex。
+            NSInteger assIndex= [assT indexOfLevel:item.refPort.level x:item.refPort.x y:item.refPort.y];
+            if (assIndex == -1) continue;
+            [indexDic setObject:@(item.matchOfProtoIndex) forKey:@(assIndex)];
         }
-        
-        //b. 把indexDic存下来;
+         
+        //d. 把indexDic存下来;
         AIMatchModel *matchModel = [resultDic objectForKey:assKey];
         matchModel.indexDic = indexDic;
     }

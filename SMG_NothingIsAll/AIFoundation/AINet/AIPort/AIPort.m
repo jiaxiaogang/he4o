@@ -63,7 +63,7 @@
 -(BOOL) isEqual:(AIPort*)object{
     if (ISOK(object, AIPort.class)) {
         if (self.target_p) {
-            return [self.target_p isEqual:object.target_p];
+            return [self.target_p isEqual:object.target_p] && [DICTOOK(self.params) isEqual:DICTOOK(object.params)];
         }
     }
     return false;
