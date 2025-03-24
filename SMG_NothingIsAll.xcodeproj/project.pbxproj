@@ -145,6 +145,7 @@
 		089991C02A1A432200A44050 /* HitItemModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 089991BF2A1A432200A44050 /* HitItemModel.m */; };
 		089E66B121B9F5D100ECA28A /* AIAbsAlgNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 089E66B021B9F5D100ECA28A /* AIAbsAlgNode.m */; };
 		089E66B421B9F84500ECA28A /* AIAlgNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 089E66B321B9F84500ECA28A /* AIAlgNode.m */; };
+		089F986D2D90E55400908D0C /* AIFeatureAllBestGVModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 089F986C2D90E55400908D0C /* AIFeatureAllBestGVModel.m */; };
 		08A1E57C2193BAFA0046C4AC /* UIView+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 08A1E57B2193BAFA0046C4AC /* UIView+Extension.m */; };
 		08A232E5243557110090D4B5 /* TOUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08A232E4243557110090D4B5 /* TOUtils.m */; };
 		08A5D5D822AF1E3400E56BB4 /* NVView.m in Sources */ = {isa = PBXBuildFile; fileRef = 08A5D5D722AF1E3400E56BB4 /* NVView.m */; };
@@ -508,6 +509,8 @@
 		089E66B021B9F5D100ECA28A /* AIAbsAlgNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIAbsAlgNode.m; sourceTree = "<group>"; };
 		089E66B221B9F84500ECA28A /* AIAlgNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIAlgNode.h; sourceTree = "<group>"; };
 		089E66B321B9F84500ECA28A /* AIAlgNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIAlgNode.m; sourceTree = "<group>"; };
+		089F986B2D90E55400908D0C /* AIFeatureAllBestGVModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIFeatureAllBestGVModel.h; sourceTree = "<group>"; };
+		089F986C2D90E55400908D0C /* AIFeatureAllBestGVModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIFeatureAllBestGVModel.m; sourceTree = "<group>"; };
 		08A1E57A2193BAFA0046C4AC /* UIView+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+Extension.h"; sourceTree = "<group>"; };
 		08A1E57B2193BAFA0046C4AC /* UIView+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+Extension.m"; sourceTree = "<group>"; };
 		08A232E3243557110090D4B5 /* TOUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOUtils.h; sourceTree = "<group>"; };
@@ -1400,6 +1403,8 @@
 				08ABC56A2D90080300E67D5B /* AIFeatureNextGVRankModel.m */,
 				08ABC56D2D9010AB00E67D5B /* AIFeatureNextGVRankItem.h */,
 				08ABC56E2D9010AB00E67D5B /* AIFeatureNextGVRankItem.m */,
+				089F986B2D90E55400908D0C /* AIFeatureAllBestGVModel.h */,
+				089F986C2D90E55400908D0C /* AIFeatureAllBestGVModel.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -2187,6 +2192,7 @@
 				08F738061F7C714F005EAD56 /* AIPointer.m in Sources */,
 				0835557A266C6B5700ECFC51 /* MemManagerWindow.m in Sources */,
 				085F8E1D27EEC46A00836F21 /* TVUtil.m in Sources */,
+				089F986D2D90E55400908D0C /* AIFeatureAllBestGVModel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

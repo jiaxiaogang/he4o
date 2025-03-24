@@ -13,7 +13,7 @@
 /**
  *  MARK:--------------------更新一条--------------------
  */
--(void) update:(NSString*)assKey refPort:(AIPort*)refPort gMatchValue:(CGFloat)gMatchValue gMatchDegree:(CGFloat)gMatchDegree {
+-(void) update:(NSString*)assKey refPort:(AIPort*)refPort gMatchValue:(CGFloat)gMatchValue gMatchDegree:(CGFloat)gMatchDegree matchOfProtoIndex:(NSInteger)matchOfProtoIndex {
     //1. 数据检查
     if (!self.protoDic) self.protoDic = [[NSMutableDictionary alloc] init];
     
@@ -22,6 +22,7 @@
     item.refPort = refPort;
     item.gMatchValue = gMatchValue;
     item.gMatchDegree = gMatchDegree;
+    item.matchOfProtoIndex = matchOfProtoIndex;
     
     //3. add to items then add to dic;
     NSMutableArray *items = [[NSMutableArray alloc] initWithArray:[self.protoDic objectForKey:assKey]];

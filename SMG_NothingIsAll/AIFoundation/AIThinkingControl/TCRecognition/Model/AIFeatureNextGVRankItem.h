@@ -16,5 +16,6 @@
 @property (strong, nonatomic) AIPort *refPort;
 @property (assign, nonatomic) CGFloat gMatchValue;
 @property (assign, nonatomic) CGFloat gMatchDegree;
+@property (assign, nonatomic) NSInteger matchOfProtoIndex;//与protoFeature的哪一帧匹配上的
 
 @end

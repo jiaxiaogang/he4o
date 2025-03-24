@@ -20,7 +20,7 @@
 /**
  *  MARK:--------------------更新一条--------------------
  */
--(void) update:(NSString*)assKey refPort:(AIPort*)refPort gMatchValue:(CGFloat)gMatchValue gMatchDegree:(CGFloat)gMatchDegree;
+-(void) update:(NSString*)assKey refPort:(AIPort*)refPort gMatchValue:(CGFloat)gMatchValue gMatchDegree:(CGFloat)gMatchDegree matchOfProtoIndex:(NSInteger)matchOfProtoIndex;
 
 /**
  *  MARK:--------------------竞争只保留最好一条--------------------
