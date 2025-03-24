@@ -183,6 +183,10 @@
     NSMutableArray *sameValue_ps = [[NSMutableArray alloc] init];
     AIMatchAlgModel *protoAbsModel4MatchValue = [[AIMatchAlgModel alloc] init];//此模型仅用于收集proto和abs的相近度,用于计算matchValue;
     
+    //2. 数据检查（当前有主责，直接剔除）（时序全含，概念以mIsC来剔除，不做责任计算）。
+    CGFloat curMatchValue = [protoA getAbsMatchValue:assA_p];
+    //if (![TCLearningUtil noZeRenForCenJi:curMatchValue bigerMatchValue:1]) return nil;//识别时序全含，此处默认匹配度为1。
+    
     //2. 分别对protoA和assA的稀疏码进行对比;
     for (AIKVPointer *protoV_p in protoA.content_ps) {
         for (AIKVPointer *assV_p in assA.content_ps) {
@@ -192,7 +196,7 @@
                 
                 //4. ======== 兼容新版组码特征 ========
                 if (PitIsFeature(protoV_p) || PitIsFeature(assV_p)) {
-                    AIFeatureNode *absT = [self analogyFeature:protoV_p ass:assV_p];
+                    AIFeatureNode *absT = [self analogyFeature:protoV_p ass:assV_p bigerMatchValue:curMatchValue];
                     if (!absT) continue;
                     CGFloat valueMatchValue = [absT getConMatchValue:protoA_p];
                     [sameValue_ps addObject:absT.p];
@@ -205,8 +209,7 @@
                 
                 //4. ======== 保留旧版单码特征 ========
                 //4. 二者相似度较高时 (计算当前码的责任比例: 比如:1*0.8*0.7时,当前码=0.7时,它的责任比例=(1-0.7)/(1-0.8 + 1-0.7)=60%) (参考29025-13);
-                CGFloat algMatchValue = [protoA getAbsMatchValue:assA_p];
-                MapModel *analogyValueResult = [self analogyValue:protoV_p assV:assV_p gMatchValue:algMatchValue];
+                MapModel *analogyValueResult = [self analogyValue:protoV_p assV:assV_p bigerMatchValue:curMatchValue];
                 
                 //5. 当前码责任<50%时 (次要责任时,免责);
                 if (analogyValueResult) {
@@ -244,12 +247,17 @@
  *      2025.03.21: 使用mIsC正序双循环来实现特征类比 (参考34062-方案1);
  *      2025.03.21: 改用indexDic映射来实现特征类比 (参考34062-方案2);
  */
-+(AIFeatureNode*) analogyFeature:(AIKVPointer*)protoT_p ass:(AIKVPointer*)assT_p {
++(AIFeatureNode*) analogyFeature:(AIKVPointer*)protoT_p ass:(AIKVPointer*)assT_p bigerMatchValue:(CGFloat)bigerMatchValue {
     //1. 类比orders的规律
     NSMutableArray *absGVModels = [[NSMutableArray alloc] init];
     AIFeatureNode *protoFeature = [SMGUtils searchNode:protoT_p];
     AIFeatureNode *assFeature = [SMGUtils searchNode:assT_p];
     CGFloat featureMatchValue = 1;
+    
+    //2. 数据检查（当前有主责，直接剔除）。
+    CGFloat curMatchValue = [protoFeature getAbsMatchValue:assT_p];
+    BOOL noZeRen = [TCLearningUtil noZeRenForCenJi:curMatchValue bigerMatchValue:bigerMatchValue];
+    if (!noZeRen) return nil;
         
     //2. 外类比有序进行 (记录jMax & 正序)
     NSDictionary *indexDic = [protoFeature getAbsIndexDic:assT_p];
@@ -257,15 +265,15 @@
         NSNumber *value = [indexDic objectForKey:key];
         NSInteger assIndex = key.integerValue;
         NSInteger protoIndex = value.integerValue;
-        AIKVPointer *protoG_p = ARR_INDEX(protoFeature.content_ps, assIndex);
-        AIKVPointer *assG_p = ARR_INDEX(assFeature.content_ps, protoIndex);
+        AIKVPointer *protoG_p = ARR_INDEX(protoFeature.content_ps, protoIndex);
+        AIKVPointer *assG_p = ARR_INDEX(assFeature.content_ps, assIndex);
         
         //3. B源于matchFo,此处只判断B是1层抽象 (参考27161-调试1&调试2);
         //此处proto抽象仅指向刚识别的matchAlgs,所以与contains等效;
         if (Log4Ana) NSLog(@"proto的第%ld: G%ld 类比 ass的第%ld: G%ld",protoIndex,protoG_p.pointerId,assIndex,assG_p.pointerId);
         
         //4. 即使mIsC匹配,也要进行共同点抽象 (参考29025-11);
-        AIGroupValueNode *absG = [self analogyGroupValue:protoG_p assG:assG_p];
+        AIGroupValueNode *absG = [self analogyGroupValue:protoG_p assG:assG_p bigerMatchValue:curMatchValue];
         featureMatchValue *= [absG getConMatchValue:protoG_p];
         
         //5. 类比后,尽量保留大图,即以level小的主准存level,x,y;
@@ -281,12 +289,6 @@
         [absGVModels addObject:[InputGroupValueModel new:nil groupValue:absG.p level:absLevel x:absX y:absY]];
     }
     
-    
-    
-    //TODO: 考虑支持：次要责任免责（可以把责任占比封装成方法）。
-    //对每个protoG和absG元素判断责任占比，把免责的保留下来，构建成absT。
-    
-    
     //备忘: 如果以后特征要支持indexDic,这里可以打开并存上映射支持下 (但短时间内应该不需要,连alg也没支持映射);
     //6. 生成protoIndexDic 和 assIndexDic  (参考29032-todo1.2);
     NSDictionary *assAbsIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:indexDic.allKeys];
@@ -300,13 +302,15 @@
     [assFeature updateMatchValue:absT matchValue:1];
     [protoFeature updateIndexDic:absT indexDic:protoAbsIndexDic];
     [assFeature updateIndexDic:absT indexDic:assAbsIndexDic];
+    //TODOTOMORROW20250324: 先把类比双方和结果打出来，看特征类比效果怎么样。
+    
     return absT;
 }
 
 /**
  *  MARK:--------------------组码类比--------------------
  */
-+(AIGroupValueNode*) analogyGroupValue:(AIKVPointer*)protoG_p assG:(AIKVPointer*)assG_p {
++(AIGroupValueNode*) analogyGroupValue:(AIKVPointer*)protoG_p assG:(AIKVPointer*)assG_p bigerMatchValue:(CGFloat)bigerMatchValue {
     //1. 如果本就一致;
     if ([protoG_p isEqual:assG_p]) return [SMGUtils searchNode:protoG_p];
     
@@ -316,6 +320,11 @@
     if (!protoG || !assG) return nil;
     NSMutableArray *sameSubDots = [[NSMutableArray alloc] init];
     AIMatchAlgModel *protoAbsModel4MatchValue = [[AIMatchAlgModel alloc] init];//此模型仅用于收集proto和abs的相近度,用于计算matchValue;
+    
+    //3. 数据检查（当前有主责，直接剔除）。
+    CGFloat curMatchValue = [protoG getAbsMatchValue:assG_p];
+    BOOL noZeRen = [TCLearningUtil noZeRenForPingJun:curMatchValue bigerMatchValue:bigerMatchValue];
+    if (!noZeRen) return nil;
     
     //3. 分别对protoA和assA的稀疏码进行对比;
     for (NSInteger i = 0; i < protoG.count; i++) {
@@ -343,8 +352,7 @@
         if (![protoV_p.dataSource isEqualToString:assV_p.dataSource] || ![protoV_p.algsType isEqualToString:assV_p.algsType]) continue;
             
         //31. 二者相似度较高时 (计算当前码的责任比例: 比如:1*0.8*0.7时,当前码=0.7时,它的责任比例=(1-0.7)/(1-0.8 + 1-0.7)=60%) (参考29025-13);
-        CGFloat gMatchValue = [protoG getAbsMatchValue:assG_p];
-        MapModel *analogyValueResult = [self analogyValue:protoV_p assV:assV_p gMatchValue:gMatchValue];
+        MapModel *analogyValueResult = [self analogyValue:protoV_p assV:assV_p bigerMatchValue:curMatchValue];
         
         //32. 当前码责任<50%时 (次要责任时,免责);
         if (analogyValueResult) {
@@ -374,20 +382,14 @@
 /**
  *  MARK:--------------------单码类比--------------------
  */
-+(MapModel*) analogyValue:(AIKVPointer*)protoV_p assV:(AIKVPointer*)assV_p gMatchValue:(CGFloat)gMatchValue {
++(MapModel*) analogyValue:(AIKVPointer*)protoV_p assV:(AIKVPointer*)assV_p bigerMatchValue:(CGFloat)bigerMatchValue {
     //31. 二者相似度较高时 (计算当前码的责任比例: 比如:1*0.8*0.7时,当前码=0.7时,它的责任比例=(1-0.7)/(1-0.8 + 1-0.7)=60%) (参考29025-13);
     CGFloat valueMatchValue = [AIAnalyst compareCansetValue:protoV_p protoValue:assV_p vInfo:nil];
-    CGFloat otherValueMatchValue = valueMatchValue > 0 ? gMatchValue / valueMatchValue : 1;   //别的码相乘是0.xx;
-    CGFloat otherQueKou = 1 - otherValueMatchValue;                                             //别的码缺口;
-    CGFloat curQueKou = 1 - valueMatchValue;                                                    //当前码缺口;
-    CGFloat sumQueKou = otherQueKou + curQueKou;                                                //总缺口;
-    CGFloat curRate = sumQueKou > 0 ? curQueKou / sumQueKou : 0;                                //算出当前码责任比例;
+    BOOL noZeRen = [TCLearningUtil noZeRenForCenJi:valueMatchValue bigerMatchValue:bigerMatchValue];
     
     //32. 当前码责任<50%时 (次要责任时,免责);
-    if (curRate < 0.5) {
+    if (noZeRen) {
         return [MapModel newWithV1:assV_p v2:@(valueMatchValue)];
-    } else {
-        if (Log4Ana) NSLog(@"> 当前<%@>比<%@>的缺口:%.2f / 总缺口%.2f = 当前责任%.2f",Pit2FStr(protoV_p),Pit2FStr(assV_p),curQueKou,sumQueKou,curRate);
     }
     return nil;
 }

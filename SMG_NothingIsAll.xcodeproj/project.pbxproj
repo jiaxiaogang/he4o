@@ -146,6 +146,7 @@
 		089E66B121B9F5D100ECA28A /* AIAbsAlgNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 089E66B021B9F5D100ECA28A /* AIAbsAlgNode.m */; };
 		089E66B421B9F84500ECA28A /* AIAlgNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 089E66B321B9F84500ECA28A /* AIAlgNode.m */; };
 		089F986D2D90E55400908D0C /* AIFeatureAllBestGVModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 089F986C2D90E55400908D0C /* AIFeatureAllBestGVModel.m */; };
+		089F98702D9112D100908D0C /* TCLearningUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 089F986F2D9112D000908D0C /* TCLearningUtil.m */; };
 		08A1E57C2193BAFA0046C4AC /* UIView+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 08A1E57B2193BAFA0046C4AC /* UIView+Extension.m */; };
 		08A232E5243557110090D4B5 /* TOUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08A232E4243557110090D4B5 /* TOUtils.m */; };
 		08A5D5D822AF1E3400E56BB4 /* NVView.m in Sources */ = {isa = PBXBuildFile; fileRef = 08A5D5D722AF1E3400E56BB4 /* NVView.m */; };
@@ -511,6 +512,8 @@
 		089E66B321B9F84500ECA28A /* AIAlgNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIAlgNode.m; sourceTree = "<group>"; };
 		089F986B2D90E55400908D0C /* AIFeatureAllBestGVModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIFeatureAllBestGVModel.h; sourceTree = "<group>"; };
 		089F986C2D90E55400908D0C /* AIFeatureAllBestGVModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIFeatureAllBestGVModel.m; sourceTree = "<group>"; };
+		089F986E2D9112D000908D0C /* TCLearningUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCLearningUtil.h; sourceTree = "<group>"; };
+		089F986F2D9112D000908D0C /* TCLearningUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCLearningUtil.m; sourceTree = "<group>"; };
 		08A1E57A2193BAFA0046C4AC /* UIView+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+Extension.h"; sourceTree = "<group>"; };
 		08A1E57B2193BAFA0046C4AC /* UIView+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+Extension.m"; sourceTree = "<group>"; };
 		08A232E3243557110090D4B5 /* TOUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOUtils.h; sourceTree = "<group>"; };
@@ -1541,6 +1544,8 @@
 				0819F4F627583B27007396D0 /* TCLearning.m */,
 				08F3E92F2241B6E800545795 /* AIAnalogy.h */,
 				08F3E9302241B6E800545795 /* AIAnalogy.m */,
+				089F986E2D9112D000908D0C /* TCLearningUtil.h */,
+				089F986F2D9112D000908D0C /* TCLearningUtil.m */,
 			);
 			path = TCLearning;
 			sourceTree = "<group>";
@@ -2013,6 +2018,7 @@
 				086D93371F8CA782002BAF3F /* RuntimeInvoker.m in Sources */,
 				08D471DE1FEB3FFF00C61322 /* AIImvAlgs.m in Sources */,
 				08BB986F2C87E2D800DA4029 /* HEResult.m in Sources */,
+				089F98702D9112D100908D0C /* TCLearningUtil.m in Sources */,
 				08A5D5E522AF2B8200E56BB4 /* NVDelegate_He.m in Sources */,
 				087705AB2753744300BA4EFB /* TCRegroup.m in Sources */,
 				08C071382A6582B7004D7110 /* AsyncMutableArray.m in Sources */,
