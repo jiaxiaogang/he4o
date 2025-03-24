@@ -302,8 +302,7 @@
     [assFeature updateMatchValue:absT matchValue:1];
     [protoFeature updateIndexDic:absT indexDic:protoAbsIndexDic];
     [assFeature updateIndexDic:absT indexDic:assAbsIndexDic];
-    //TODOTOMORROW20250324: 先把类比双方和结果打出来，看特征类比效果怎么样。
-    
+    NSLog(@"特征类比结果：\n%@\n%@\n%@",FeatureDesc(protoFeature.p),FeatureDesc(assFeature.p),FeatureDesc(absT.p));
     return absT;
 }
 

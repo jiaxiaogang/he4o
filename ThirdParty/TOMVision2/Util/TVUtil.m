@@ -188,9 +188,9 @@
         if (PitIsValue(node_p)) {
             lightStr = [self getLightStr_ValueP:node_p];
         }else if (PitIsGroupValue(node_p)) {
-            lightStr = [self getGroupValueDesc:node_p];
+            lightStr = @"";
         }else if (PitIsFeature(node_p)) {
-            lightStr = [self getFeatureDesc:node_p];
+            lightStr = @"";
         }else if (PitIsAlg(node_p)) {
             AIAlgNodeBase *algNode = [SMGUtils searchNode:node_p];
             if (algNode) {
@@ -275,14 +275,78 @@
     return inX && inY;
 }
 
+/**
+ *  MARK:--------------------特征日志--------------------
+ */
 +(NSString*) getFeatureDesc:(AIKVPointer*)node_p {
-    AIFeatureNode *tNode = [SMGUtils searchNode:node_p];
-    return @"";
+    if ([node_p.dataSource isEqualToString:@"hColors"] || [node_p.dataSource isEqualToString:@"sColors"]) return @"";
+    NSMutableDictionary *needLog = [self getFeatureNeedLog:node_p];
+    NSMutableString *result = [[NSMutableString alloc] init];
+    NSInteger width = powf(3, 4);
+    for (NSInteger y = 0; y < width; y++) {
+        for (NSInteger x = 0; x < width; x++) {
+            NSString *dot = [needLog objectForKey:STRFORMAT(@"%ld_%ld",x,y)];
+            [result appendString:dot?dot:@" "];
+        }
+        [result appendString:@"\n"];
+    }
+    return result;
 }
 
-+(NSString*) getGroupValueDesc:(AIKVPointer*)node_p {
++(NSMutableDictionary*) getFeatureNeedLog:(AIKVPointer*)node_p {
+    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
+    AIFeatureNode *tNode = [SMGUtils searchNode:node_p];
+    for (NSInteger i = 0; i < tNode.count; i++) {
+        //1. 取group的level,x,y
+        NSInteger groupLevel = NUMTOOK(ARR_INDEX(tNode.levels, i)).integerValue;
+        NSInteger groupX = NUMTOOK(ARR_INDEX(tNode.xs, i)).integerValue;
+        NSInteger groupY = NUMTOOK(ARR_INDEX(tNode.ys, i)).integerValue;
+        NSString *obj = @"  ";
+        if (groupLevel > 0) {
+            obj = STRFORMAT(@"%ld ",groupLevel + 1);
+        }
+        NSInteger groupWidth = powf(3, 4 - groupLevel);
+        NSInteger startGroupX = groupX * groupWidth;
+        NSInteger startGroupY = groupY * groupWidth;
+        
+        //2. 九宫有几格需要打印，需要的打印。
+        NSArray *subDots = [self getGroupValueNeedLog:ARR_INDEX(tNode.content_ps, i)];
+        for (MapModel *subDot in subDots) {
+            
+            //3. 取subDot数据。
+            NSInteger subDotWidth = groupWidth / 3;
+            NSInteger subX = NUMTOOK(subDot.v1).integerValue;
+            NSInteger subY = NUMTOOK(subDot.v2).integerValue;
+            NSInteger startSubX = subX * subDotWidth;
+            NSInteger startSubY = subY * subDotWidth;
+            
+            //4. 每个subDot宽高，每像素，都收集打印。
+            for (NSInteger subI = 0; subI < subDotWidth; subI++) {
+                for (NSInteger subJ = 0; subJ < subDotWidth; subJ++) {
+                    NSInteger curX = startGroupX + startSubX + subI;
+                    NSInteger curY = startGroupY + startSubY + subJ;
+                    [result setObject:obj forKey:STRFORMAT(@"%ld_%ld",curX,curY)];
+                }
+            }
+        }
+    }
+    return result;
+}
+
+/**
+ *  MARK:--------------------把黑色xy数组返回--------------------
+ */
++(NSArray*) getGroupValueNeedLog:(AIKVPointer*)node_p {
+    NSMutableArray *result = [[NSMutableArray alloc] init];
     AIGroupValueNode *gNode = [SMGUtils searchNode:node_p];
-    return @"";
+    for (NSInteger i = 0; i < gNode.count; i++) {
+        NSInteger x = NUMTOOK(ARR_INDEX(gNode.xs, i)).integerValue;
+        NSInteger y = NUMTOOK(ARR_INDEX(gNode.ys, i)).integerValue;
+        AIKVPointer *value_p = ARR_INDEX(gNode.content_ps, i);
+        double value = [NUMTOOK([AINetIndex getData:value_p]) doubleValue];
+        if (value > 0.5) [result addObject:[MapModel newWithV1:@(x) v2:@(y)]];
+    }
+    return result;
 }
 
 @end

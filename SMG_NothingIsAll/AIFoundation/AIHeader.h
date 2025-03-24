@@ -43,6 +43,7 @@
 #import "XGDebug.h"
 #import "TCDebug.h"
 #import "TVUtil_Short.h"
+#import "TVUtil.h"
 #import "HeLogUtil.h"
 #import "TOModelVisionUtil.h"
 #import "TCLearningUtil.h"
@@ -244,6 +245,8 @@
 #define AlgP2FStr(a_p) [NVHeUtil getLightStr:a_p simple:false header:true]
 #define FoP2FStr(f_p) [NVHeUtil getLightStr:f_p simple:false header:true]
 #define Mvp2Str(m_p) [NVHeUtil getLightStr:m_p simple:false header:true]
+
+#define FeatureDesc(t_p) [TVUtil getFeatureDesc:t_p]
 
 //节点转字符串 (短)
 #define ShortDesc4Node(n) [TVUtil_Short desc4Node:n]

@@ -71,6 +71,7 @@
         newNode.ys = ys;
         return newNode;
     } header:header];
+    NSLog(@"Create Feature Node:\n%@",FeatureDesc(result.p));
     return result;
 }
 

@@ -64,4 +64,9 @@
  */
 +(BOOL) inRect:(CGRect)rect point:(CGPoint)point;
 
+/**
+ *  MARK:--------------------特征日志--------------------
+ */
++(NSString*) getFeatureDesc:(AIKVPointer*)node_p;
+
 @end
