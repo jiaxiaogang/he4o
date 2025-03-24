@@ -255,9 +255,11 @@
     CGFloat featureMatchValue = 1;
     
     //2. 数据检查（当前有主责，直接剔除）。
+    //BUG-2025.03.24: 先关掉，不然信息量大的特征，因为能者多错（像HSB里，HS全是躺赢狗，只有B信息量大，同时差异性也大，这里会判B全责）。
+    //思路-除非引入信息量，即HSB不同信息量时，各自责任占比也不同，不然很难判准，先注掉吧，后续确实需要修此BUG时再来搞。
     CGFloat curMatchValue = [protoFeature getAbsMatchValue:assT_p];
-    BOOL noZeRen = [TCLearningUtil noZeRenForCenJi:curMatchValue bigerMatchValue:bigerMatchValue];
-    if (!noZeRen) return nil;
+    //BOOL noZeRen = [TCLearningUtil noZeRenForCenJi:curMatchValue bigerMatchValue:bigerMatchValue];
+    //if (!noZeRen) return nil;
         
     //2. 外类比有序进行 (记录jMax & 正序)
     NSDictionary *indexDic = [protoFeature getAbsIndexDic:assT_p];
@@ -302,7 +304,7 @@
     [assFeature updateMatchValue:absT matchValue:1];
     [protoFeature updateIndexDic:absT indexDic:protoAbsIndexDic];
     [assFeature updateIndexDic:absT indexDic:assAbsIndexDic];
-    NSLog(@"特征类比结果：\n%@\n%@\n%@",FeatureDesc(protoFeature.p),FeatureDesc(assFeature.p),FeatureDesc(absT.p));
+    NSLog(@"特征类比结果 => Proto特征：(%@)\n%@Ass特征：(%@)\n%@抽象特征：(%@)\n%@",protoFeature.logDesc,FeatureDesc(protoFeature.p),assFeature.logDesc,FeatureDesc(assFeature.p),absT.logDesc,FeatureDesc(absT.p));
     return absT;
 }
 

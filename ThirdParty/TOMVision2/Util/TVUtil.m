@@ -279,10 +279,21 @@
  *  MARK:--------------------特征日志--------------------
  */
 +(NSString*) getFeatureDesc:(AIKVPointer*)node_p {
+    //1. 只打BColors特征。
     if ([node_p.dataSource isEqualToString:@"hColors"] || [node_p.dataSource isEqualToString:@"sColors"]) return @"";
-    NSMutableDictionary *needLog = [self getFeatureNeedLog:node_p];
+    AIFeatureNode *tNode = [SMGUtils searchNode:node_p];
+    
+    //2. 找出最大level，避免打印的比原图像素过多或过少。
+    NSInteger maxLevel = [SMGUtils filterBestScore:tNode.levels scoreBlock:^CGFloat(NSNumber *item) {
+        return item.integerValue;
+    }] + 1;//groupLevel+1才是真正的level
+    
+    //3. 需要打印的点字典。
+    NSMutableDictionary *needLog = [self getFeatureNeedLog:tNode maxLevel:maxLevel];
+    
+    //4. 把需要打印的点字典转成多行多列图。
     NSMutableString *result = [[NSMutableString alloc] init];
-    NSInteger width = powf(3, 4);
+    NSInteger width = powf(3, maxLevel);
     for (NSInteger y = 0; y < width; y++) {
         for (NSInteger x = 0; x < width; x++) {
             NSString *dot = [needLog objectForKey:STRFORMAT(@"%ld_%ld",x,y)];
@@ -293,9 +304,8 @@
     return result;
 }
 
-+(NSMutableDictionary*) getFeatureNeedLog:(AIKVPointer*)node_p {
++(NSMutableDictionary*) getFeatureNeedLog:(AIFeatureNode*)tNode maxLevel:(NSInteger)maxLevel {
     NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
-    AIFeatureNode *tNode = [SMGUtils searchNode:node_p];
     for (NSInteger i = 0; i < tNode.count; i++) {
         //1. 取group的level,x,y
         NSInteger groupLevel = NUMTOOK(ARR_INDEX(tNode.levels, i)).integerValue;
@@ -305,7 +315,7 @@
         if (groupLevel > 0) {
             obj = STRFORMAT(@"%ld ",groupLevel + 1);
         }
-        NSInteger groupWidth = powf(3, 4 - groupLevel);
+        NSInteger groupWidth = powf(3, maxLevel - groupLevel);
         NSInteger startGroupX = groupX * groupWidth;
         NSInteger startGroupY = groupY * groupWidth;
         

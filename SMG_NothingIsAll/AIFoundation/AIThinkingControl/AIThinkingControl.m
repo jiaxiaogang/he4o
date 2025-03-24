@@ -182,6 +182,11 @@ static AIThinkingControl *_instance;
     
     //4、构建具象概念。
     AIAlgNodeBase *algNode = [theNet createAbsAlg_NoRepeat:@[hFeature.pointer,sFeature.pointer,bFeature.pointer] conAlgs:nil isOut:false at:nil ds:nil type:ATDefault];
+    
+    //debug
+    hFeature.logDesc = logDesc;
+    sFeature.logDesc = logDesc;
+    bFeature.logDesc = logDesc;
     algNode.logDesc = logDesc;
     
     //5、装箱打包完毕，输入到rInput：进瞬时序列和识别等。
