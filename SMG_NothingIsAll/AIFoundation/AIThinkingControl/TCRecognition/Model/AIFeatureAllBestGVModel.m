@@ -37,7 +37,7 @@
     
     //2. 找出重复的oldItem（这里相当于指向同一个assIndex的只保留一条）。
     AIFeatureNextGVRankItem *oldItem = [SMGUtils filterSingleFromArr:oldItems checkValid:^BOOL(AIFeatureNextGVRankItem *oldItem) {
-        return [oldItem.refPort isEqual:newItem.refPort];
+        return [oldItem.refPort isEqual:newItem.refPort] || newItem.matchOfProtoIndex == oldItem.matchOfProtoIndex;
     }];
     
     //3. 重复的没新的好，则去掉重复的留下新的。
