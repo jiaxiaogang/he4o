@@ -45,4 +45,46 @@
     return ARRTOOK([self.bestDic objectForKey:assKey]);
 }
 
+/**
+ *  MARK:--------------------把bestModel生成为AIMatchModel格式--------------------
+ */
+-(NSDictionary*) convert2AIMatchModels {
+    NSMutableDictionary *resultDic = [[NSMutableDictionary alloc] init];
+    for (NSString *assKey in self.bestDic.allKeys) {
+        
+        //1. 建空总账：resultDic用于统计匹配数，匹配度，总强度。
+        AIMatchModel *tModel = [resultDic objectForKey:assKey];
+        if (!tModel) tModel = [[AIMatchModel alloc] init];
+        [resultDic setObject:tModel forKey:assKey];
+        
+        //2. 查出明细：取出每一条防重后的最优匹配结果。
+        NSArray *assGVItems = [self getAssGVModelsForKey:assKey];
+        
+        //3. 循环把明细记录到总账 或 收集总数据。
+        NSMutableDictionary *indexDic = [[NSMutableDictionary alloc] init];
+        NSMutableDictionary *matchDegreeIndexDic = [[NSMutableDictionary alloc] init];
+        for (AIFeatureNextGVRankItem *item in assGVItems) {
+            AIFeatureNode *assT = [SMGUtils searchNode:item.refPort.target_p];
+            
+            //4. 收集总数据部分：每个assKey的识别assT结果，都要从其assGVItems的每一帧item结果中收集indexDic映射（根据refPort的level,x,y找其在assT中对应哪个assIndex）。
+            NSInteger assIndex= [assT indexOfLevel:item.refPort.level x:item.refPort.x y:item.refPort.y];
+            if (assIndex == -1) continue;
+            [indexDic setObject:@(item.matchOfProtoIndex) forKey:@(assIndex)];
+            //[matchDegreeIndexDic setObject:nil forKey:nil];待完成。
+            
+            //5. 直接到总账部分：resultDic用于统计匹配数，匹配度，总强度。
+            tModel.match_p = assT.p;
+            tModel.matchCount++;
+            tModel.sumMatchValue += item.gMatchValue;
+            tModel.sumMatchDegree += item.gMatchDegree;
+            tModel.sumRefStrong += (int)item.refPort.strong.value;
+        }
+        
+        //6. 把收集总数据计到总账：indexDic & 综合匹配度 & 符合度映射。
+        tModel.matchValue = tModel.matchCount > 0 ? tModel.sumMatchValue / tModel.matchCount : 0;//综合求出平均matchValue（因为特征有太多组码，乘积匹配度不合理）。
+        tModel.indexDic = indexDic;
+    }
+    return resultDic;
+}
+
 @end

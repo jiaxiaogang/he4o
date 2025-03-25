@@ -15,10 +15,19 @@
 
 @property (strong, nonatomic) NSMutableDictionary *bestDic;//竞争前收集Items：<K=assKey，V=Arr[AIFeatureNextGVRankItem]>
 
+
+//============== STEP3. 把STEP2的最匹配的，再在所有protoIndex下，做防重 ==============
 /**
  *  MARK:--------------------更新时，直接查下有没重复，有重复的就只保留更优的一条--------------------
  */
 -(void) update:(AIFeatureNextGVRankItem*)newItem forKey:(NSString*)assKey;
 -(NSArray*) getAssGVModelsForKey:(NSString*)assKey;
+
+
+//============== STEP4. 把STEP3得到的proto和ass一一对应的结果，转成识别算法需要的AIMatchModels格式 ==============
+/**
+ *  MARK:--------------------把bestModel生成为AIMatchModel格式--------------------
+ */
+-(NSDictionary*) convert2AIMatchModels;
 
 @end

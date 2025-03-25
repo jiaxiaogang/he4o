@@ -167,7 +167,6 @@
 +(NSArray*) recognitionFeature:(AIKVPointer*)feature_p {
     //1. 数据准备
     NSLog(@"\n=========== 特征识别ProtoT%ld ===========",feature_p.pointerId);
-    NSMutableDictionary *resultDic = [[NSMutableDictionary alloc] init];// <K=deltaLevel_assPId, V=识别的特征AIMatchModel>
     AIFeatureNode *protoFeature = [SMGUtils searchNode:feature_p];
     AIFeatureAllBestGVModel *gvBestModel = [[AIFeatureAllBestGVModel alloc] init];
     if (protoFeature.count == 0) return @[[[AIMatchModel alloc] initWithMatch_p:feature_p]];
@@ -203,55 +202,27 @@
             }
         }
         
-        //21. 竞争下
+        //TODO: Step2和Step3应该是可以合并为一步的（把第二步去掉）。
+        //21. STEP2：每个protoIndex内防重，竞争只保留protoIndex下最好一条。
         [gvRankModel invokeRank];
         
-        //22. 将best结果存下来
+        //22. STEP3：跨protoIndex防重，将best结果存下来
         for (NSString *assKey in gvRankModel.rankDic.allKeys) {
             AIFeatureNextGVRankItem *item = [gvRankModel.rankDic objectForKey:assKey];
-            AIPort *refPort = item.refPort;
             
+            //23. 明细：bestModel保证最匹配度&符合度，的每一条（且不会重复）。
             //23. bestItem进阶成功，转存到最终gvBestModel中（后面用于判断xy相似度要用）（参考34052-TODO4）。
             [gvBestModel update:item forKey:assKey];
-            
-            //24. 找model (无则新建) (性能: 此处在循环中,所以防重耗60ms正常,收集耗100ms正常);
-            AIMatchModel *tModel = [resultDic objectForKey:assKey];
-            if (!tModel) tModel = [[AIMatchModel alloc] init];
-            tModel.match_p = refPort.target_p;
-            tModel.matchCount++;
-            tModel.sumMatchValue += item.gMatchValue;
-            tModel.sumRefStrong += (int)refPort.strong.value;
-            [resultDic setObject:tModel forKey:assKey];
         }
     }
     
-    //25. 最后所有组码识别完后，综合求出平均matchValue（因为特征有太多组码，乘积匹配度不合理）。
+    //31. 用明细生成总账（bestModel -> resultDic）。
+    NSDictionary *resultDic = [gvBestModel convert2AIMatchModels];// <K=deltaLevel_assPId, V=识别的特征AIMatchModel>
+    
+    //32. debug
     for (NSString *assKey in resultDic.allKeys) {
         AIMatchModel *model = [resultDic objectForKey:assKey];
-        NSArray *assGVItems = [gvBestModel getAssGVModelsForKey:assKey];
-        model.matchValue = model.matchCount > 0 ? model.sumMatchValue / model.matchCount : 0;
-        NSLog(@"%@\t匹配条数 %ld/%ld \t特征识别综合匹配度计算:T%ld \t匹配度:%.2f / %ld \t= %.2f",assKey,assGVItems.count,protoFeature.count,model.match_p.pointerId,model.sumMatchValue,model.matchCount,model.matchValue);
-    }
-    
-    //31. 生成proto和ass的映射 (现在protoIndex存在assGVModels中);
-    for (NSString *assKey in resultDic.allKeys) {
-        //a. 从assGVModels中收集indexDic;
-        NSArray *assGVItems = [gvBestModel getAssGVModelsForKey:assKey];
-        NSMutableDictionary *indexDic = [[NSMutableDictionary alloc] init];
-        
-        //b. 每个assKey的识别assT结果，都要从其assGVItems的每一帧item结果中收集indexDic映射。
-        for (AIFeatureNextGVRankItem *item in assGVItems) {
-            AIFeatureNode *assT = [SMGUtils searchNode:item.refPort.target_p];
-            
-            //c. 收集其中一帧映射（根据refPort的level,x,y找其在assT中对应哪个assIndex。
-            NSInteger assIndex= [assT indexOfLevel:item.refPort.level x:item.refPort.x y:item.refPort.y];
-            if (assIndex == -1) continue;
-            [indexDic setObject:@(item.matchOfProtoIndex) forKey:@(assIndex)];
-        }
-         
-        //d. 把indexDic存下来;
-        AIMatchModel *matchModel = [resultDic objectForKey:assKey];
-        matchModel.indexDic = indexDic;
+        NSLog(@"%@\t匹配条数 %ld/%ld \t特征识别综合匹配度计算:T%ld \t匹配度:%.2f / %ld \t= %.2f",assKey,model.matchCount,protoFeature.count,model.match_p.pointerId,model.sumMatchValue,model.matchCount,model.matchValue);
     }
     
     //41. 过滤器1、matchValue=0排除掉。

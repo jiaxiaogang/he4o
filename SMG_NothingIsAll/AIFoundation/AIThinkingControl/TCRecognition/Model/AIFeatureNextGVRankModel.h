@@ -17,11 +17,13 @@
 @property (strong, nonatomic) NSMutableDictionary *protoDic;//竞争前收集Items：<K=assKey，V=Arr[AIFeatureNextGVRankItem]>
 @property (strong, nonatomic) NSMutableDictionary *rankDic; //竞争后最好Item：<K=assKey，V=best AIFeatureNextGVRankItem>
 
+//============== STEP1. 在特征识别的protoIndex下，收集所有可能的下一点匹配 ==============
 /**
  *  MARK:--------------------更新一条--------------------
  */
 -(void) update:(NSString*)assKey refPort:(AIPort*)refPort gMatchValue:(CGFloat)gMatchValue gMatchDegree:(CGFloat)gMatchDegree matchOfProtoIndex:(NSInteger)matchOfProtoIndex;
 
+//============== STEP2. 把STEP1收集到的，在当前protoIndex下，竞争只保留一条 ==============
 /**
  *  MARK:--------------------竞争只保留最好一条--------------------
  */

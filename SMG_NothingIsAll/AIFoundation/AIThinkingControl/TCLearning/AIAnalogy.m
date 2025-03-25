@@ -276,6 +276,7 @@
         
         //4. 即使mIsC匹配,也要进行共同点抽象 (参考29025-11);
         AIGroupValueNode *absG = [self analogyGroupValue:protoG_p assG:assG_p bigerMatchValue:curMatchValue];
+        if (!absG) continue;
         featureMatchValue *= [absG getConMatchValue:protoG_p];
         
         //5. 类比后,尽量保留大图,即以level小的主准存level,x,y;
