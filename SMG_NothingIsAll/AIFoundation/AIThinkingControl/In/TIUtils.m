@@ -84,10 +84,8 @@
     NSMutableDictionary *recognitionValueCache = [[NSMutableDictionary alloc] init];
     NSMutableDictionary *valueRefPortsCache = [[NSMutableDictionary alloc] init];
     
-    //TODOTOMORROW20250325: 这里的性能问题主要是：码50条 x 组码各9条码 x 识别后单码匹配80条 x Ref索引10条 = xxxxxx。
-    //可以用取交来试下。
-    
     //2. 循环分别识别：组码里的单码。
+    NSArray *lastValidG_PIds = [[NSArray alloc] init];//把每个i下的交集存下来。
     if (debugMode) AddDebugCodeBlock_Key(@"a", @"4");
     for (NSInteger i = 0; i < protoGroupValue.count; i++) {
         if (debugMode) AddDebugCodeBlock_Key(@"a", @"4b");
@@ -95,15 +93,19 @@
         NSInteger protoX = NUMTOOK(ARR_INDEX(protoGroupValue.xs, i)).integerValue;
         NSInteger protoY = NUMTOOK(ARR_INDEX(protoGroupValue.ys, i)).integerValue;
         
+        //============= 把单码识别结果缓存下来 =============
         if (debugMode) AddDebugCodeBlock_Key(@"a", @"5");
         //3. 取相近度序列 (按相近程度排序);
         NSArray *vMatchModels = [recognitionValueCache objectForKey:protoValue_p];
         if (!vMatchModels) {
-            vMatchModels = ARRTOOK([self recognitionValue:protoValue_p rate:0.1]);
+            vMatchModels = ARRTOOK([self recognitionValue:protoValue_p rate:0.8]);
             [recognitionValueCache setObject:vMatchModels forKey:protoValue_p];
         }
         NSMutableDictionary *except_ps = [[NSMutableDictionary alloc] init];
         if (debugMode) AddDebugCodeBlock_Key(@"a", @"6");
+        
+        //============= 把当前单码识别结果的refPorts，有效部分全缓存下来 =============
+        NSMutableArray *curValidG_PIds = [[NSMutableArray alloc] init];
         
         //4. 每个near_p向ref找相似的assGroupValue。
         if (debugMode) AddDebugCodeBlock_Key(@"a", @"6b");
@@ -114,14 +116,15 @@
                 refPorts = ARRTOOK([AINetUtils refPorts_All4Value:vModel.match_p]);
                 [valueRefPortsCache setObject:refPorts forKey:vModel.match_p];
             }
-            
-
             if (debugMode) AddDebugCodeBlock_Key(@"a", @"7");
 
             //5. 每个refPort转为model并计匹配度和匹配数;
             for (AIPort *refPort in refPorts) {
                 
                 if (debugMode) AddDebugCodeBlock_Key(@"a", @"8");//3w次 2.6s
+                
+                //6. 取交过滤器（参考34072-性能4）。
+                if (![lastValidG_PIds containsObject:@(refPort.target_p.pointerId)]) continue;
 
                 //2025.03.20: 组码识别时，需要九宫位置一一对应（因为从单码到组码，的9个位置，是有位置要求的，首和尾匹配上，并不能表示二者相似）。
                 //> BUG-此处ds应该做个判别，不然可能9宫全是同一个单码ref过去的。所以如下按i对等来修复下：
@@ -147,9 +150,15 @@
                 gModel.matchValue *= vModel.matchValue;
                 gModel.sumRefStrong += (int)refPort.strong.value;
                 if (debugMode) AddDebugCodeBlock_Key(@"a", @"11");
+                
+                //7. 把当前i下所有有效的记录下来。
+                [curValidG_PIds addObject:@(refPort.target_p.pointerId)];
             }
             if (debugMode) AddDebugCodeBlock_Key(@"a", @"11b");
         }
+        
+        //8. 把当前循环所有有效的，记录下来，下轮循环还得靠它来限制交集呢（参考34072-性能4A）。
+        lastValidG_PIds = curValidG_PIds;
         if (debugMode) AddDebugCodeBlock_Key(@"a", @"11c");
     }
     if (debugMode) AddDebugCodeBlock_Key(@"a", @"12");
