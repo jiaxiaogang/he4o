@@ -231,20 +231,30 @@
  *  @param header 直接把header生成好传过来。
  */
 +(void) insertRefPorts_General:(AIKVPointer*)biger_p content_ps:(NSArray*)bigerContent_ps difStrong:(NSInteger)difStrong header:(NSString*)header {
+    BOOL debugMode = [biger_p.dataSource isEqualToString:@"bColors"];
+    if (debugMode) AddDebugCodeBlock_Key(@"a", @"15b");
     if (biger_p && ARRISOK(bigerContent_ps)) {
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"15c");
         //1. 遍历value_p微信息,添加引用;
         for (NSInteger i = 0; i < bigerContent_ps.count; i++) {
+            if (debugMode) AddDebugCodeBlock_Key(@"a", @"15d");
             AIKVPointer *item_p = ARR_INDEX(bigerContent_ps, i);
+            if (debugMode) AddDebugCodeBlock_Key(@"a", @"15e");
             if (PitIsValue(item_p)) {
+                if (debugMode) AddDebugCodeBlock_Key(@"a", @"15f");
                 //1a. 如果是组码时，记录上index值到refPort中。
                 NSDictionary *findParams = nil;
                 if (PitIsGroupValue(biger_p)) {
+                    if (debugMode) AddDebugCodeBlock_Key(@"a", @"15g");
                     AIGroupValueNode *groupValue = [SMGUtils searchNode:biger_p];
                     findParams = @{@"x":ARR_INDEX(groupValue.xs, i), @"y":ARR_INDEX(groupValue.ys, i)};
+                    if (debugMode) AddDebugCodeBlock_Key(@"a", @"15h");
                 }
+                if (debugMode) AddDebugCodeBlock_Key(@"a", @"15i");
                 
                 //2. 为稀疏码时：硬盘网络时,取出refPorts -> 并二分法强度序列插入 -> 存XGWedis;
                 [self insertRefPorts_HdNode:biger_p passiveRefValue_p:item_p header:header difStrong:difStrong findParams:findParams];
+                if (debugMode) AddDebugCodeBlock_Key(@"a", @"15p");
             } else {
                 //3. 为其它节点时：
                 //2025.03.18: 支持多码特征后，概念由特征组成，而不是单码。
@@ -259,8 +269,11 @@
                 [AINetUtils insertPointer_Hd:biger_p toPorts:item.refPorts findHeader:header difStrong:difStrong findParams:findParams];
                 [SMGUtils insertNode:item];
             }
+            if (debugMode) AddDebugCodeBlock_Key(@"a", @"15x");
         }
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"15y");
     }
+    if (debugMode) AddDebugCodeBlock_Key(@"a", @"15z");
 }
 
 /**
@@ -318,12 +331,19 @@
  *  MARK:--------------------硬盘节点_引用_微信息_插线 通用方法--------------------
  */
 +(void) insertRefPorts_HdNode:(AIKVPointer*)hdNode_p passiveRefValue_p:(AIPointer*)passiveRefValue_p header:(NSString*)header difStrong:(NSInteger)difStrong findParams:(NSDictionary*)findParams {
+    BOOL debugMode = [hdNode_p.dataSource isEqualToString:@"bColors"];
+    if (debugMode) AddDebugCodeBlock_Key(@"a", @"15j");
     if (ISOK(hdNode_p, AIKVPointer.class) && ISOK(passiveRefValue_p, AIKVPointer.class)) {
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"15k");
         NSArray *fnRefPorts = ARRTOOK([SMGUtils searchObjectForFilePath:passiveRefValue_p.filePath fileName:kFNRefPorts time:cRTReference]);
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"15l");
         NSMutableArray *refPorts = [[NSMutableArray alloc] initWithArray:fnRefPorts];
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"15m");
         [AINetUtils insertPointer_Hd:hdNode_p toPorts:refPorts findHeader:header difStrong:difStrong findParams:findParams];//稀疏码单码没有附加params
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"15n");
         [SMGUtils insertObject:refPorts rootPath:passiveRefValue_p.filePath fileName:kFNRefPorts time:cRTReference saveDB:true];
     }
+    if (debugMode) AddDebugCodeBlock_Key(@"a", @"15o");
 }
 
 
@@ -342,9 +362,15 @@
     [self insertPointer_Hd:pointer toPorts:ports findHeader:findHeader difStrong:difStrong findParams:findParams];
 }
 +(void) insertPointer_Hd:(AIKVPointer*)pointer toPorts:(NSMutableArray*)ports findHeader:(NSString*)findHeader difStrong:(NSInteger)difStrong findParams:(NSDictionary*)findParams {
+    BOOL debugMode = [pointer.dataSource isEqualToString:@"bColors"];
+    if (debugMode) AddDebugCodeBlock_Key(@"a", @"15m1");
     if (ISOK(pointer, AIPointer.class) && ISOK(ports, NSMutableArray.class)) {
+        
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"15m1b");
         //1. 找到/新建port
         AIPort *findPort = [self findPort:pointer fromPorts:ports findHeader:findHeader findParams:findParams];
+        
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"15m10");
         if (!findPort) {
             return;
         }
@@ -357,6 +383,7 @@
         //2. 强度更新
         findPort.strong.value += difStrong;
         
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"15m11");
         //3. 二分插入
         [XGRedisUtil searchIndexWithCompare:^NSComparisonResult(NSInteger checkIndex) {
             AIPort *checkPort = ARR_INDEX(ports, checkIndex);
@@ -370,6 +397,8 @@
                 [ports addObject:findPort];
             }
         }];
+        
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"15m12");
     }
 }
 
@@ -379,20 +408,31 @@
 
 //找出port (并从ports中移除 & 无则新建);
 +(AIPort*) findPort:(AIKVPointer*)pointer fromPorts:(NSMutableArray*)fromPorts findHeader:(NSString*)findHeader findParams:(NSDictionary*)findParams {
+    
+    BOOL debugMode = [pointer.dataSource isEqualToString:@"bColors"];
+    if (debugMode) AddDebugCodeBlock_Key(@"a", @"15m2");
     if (ISOK(pointer, AIPointer.class) && ISOK(fromPorts, NSMutableArray.class)) {
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"15m3");
         //1. 找出旧有;
         AIPort *findPort = [self findPort:pointer fromPorts:fromPorts findParams:findParams];
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"15m4");
         if (findPort) [fromPorts removeObject:findPort];
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"15m5");
         
         //2. 无则新建port;
         if (!findPort) {
             findPort = [[AIPort alloc] init];
+            if (debugMode) AddDebugCodeBlock_Key(@"a", @"15m6");
             findPort.target_p = pointer;
             findPort.header = findHeader;
             findPort.params = findParams;
+            if (debugMode) AddDebugCodeBlock_Key(@"a", @"15m7");
         }
+        
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"15m8");
         return findPort;
     }
+    if (debugMode) AddDebugCodeBlock_Key(@"a", @"15m9");
     return nil;
 }
 //找出port

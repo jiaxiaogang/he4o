@@ -76,38 +76,63 @@
  */
 +(NSArray*) recognitionGroupValue:(AIKVPointer*)groupValue_p {
     //1. 数据准备
+    BOOL debugMode = [groupValue_p.dataSource isEqual:@"bColors"];
+    if (debugMode) AddDebugCodeBlock_Key(@"a", @"3");
     NSMutableDictionary *gMatchDic = [[NSMutableDictionary alloc] init];
     AIGroupValueNode *protoGroupValue = [SMGUtils searchNode:groupValue_p];
+    NSMutableDictionary *recognitionValueCache = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *valueRefPortsCache = [[NSMutableDictionary alloc] init];
+    
+    //TODOTOMORROW20250325: 这里的性能问题主要是：码50条 x 组码各9条码 x 识别后单码匹配80条 x Ref索引10条 = xxxxxx。
+    //可以用取交来试下。
     
     //2. 循环分别识别：组码里的单码。
+    if (debugMode) AddDebugCodeBlock_Key(@"a", @"4");
     for (NSInteger i = 0; i < protoGroupValue.count; i++) {
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"4b");
         AIKVPointer *protoValue_p = ARR_INDEX(protoGroupValue.content_ps, i);
         NSInteger protoX = NUMTOOK(ARR_INDEX(protoGroupValue.xs, i)).integerValue;
         NSInteger protoY = NUMTOOK(ARR_INDEX(protoGroupValue.ys, i)).integerValue;
         
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"5");
         //3. 取相近度序列 (按相近程度排序);
-        NSArray *vMatchModels = [self recognitionValue:protoValue_p];
-        NSMutableArray *except_ps = [[NSMutableArray alloc] init];
+        NSArray *vMatchModels = [recognitionValueCache objectForKey:protoValue_p];
+        if (!vMatchModels) {
+            vMatchModels = ARRTOOK([self recognitionValue:protoValue_p]);
+            [recognitionValueCache setObject:vMatchModels forKey:protoValue_p];
+        }
+        NSMutableDictionary *except_ps = [[NSMutableDictionary alloc] init];
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"6");
         
         //4. 每个near_p向ref找相似的assGroupValue。
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"6b");
         for (AIMatchModel *vModel in vMatchModels) {
-            NSArray *refPorts = [AINetUtils refPorts_All4Value:vModel.match_p];
             
-            //2025.03.20: 组码识别时，需要九宫位置一一对应（因为从单码到组码，的9个位置，是有位置要求的，首和尾匹配上，并不能表示二者相似）。
-            //> BUG-此处ds应该做个判别，不然可能9宫全是同一个单码ref过去的。所以如下按i对等来修复下：
-            //> FIX-所以：直接类似特征的params.xy位置类似方法，组码这里按refPort.params中的i来要求一下对等。
-            refPorts = [SMGUtils filterArr:refPorts checkValid:^BOOL(AIPort *item) {
-                if (!item.params || ![item.params objectForKey:@"x"]) return nil;
-                NSInteger assX = NUMTOOK([item.params objectForKey:@"x"]).integerValue;
-                NSInteger assY = NUMTOOK([item.params objectForKey:@"y"]).integerValue;
-                return assX == protoX && assY == protoY;
-            }];
+            NSArray *refPorts = [valueRefPortsCache objectForKey:vModel.match_p];
+            if (!refPorts) {
+                refPorts = ARRTOOK([AINetUtils refPorts_All4Value:vModel.match_p]);
+                [valueRefPortsCache setObject:refPorts forKey:vModel.match_p];
+            }
             
+
+            if (debugMode) AddDebugCodeBlock_Key(@"a", @"7");
+
             //5. 每个refPort转为model并计匹配度和匹配数;
             for (AIPort *refPort in refPorts) {
+                
+                if (debugMode) AddDebugCodeBlock_Key(@"a", @"8");//3w次 2.6s
+
+                //2025.03.20: 组码识别时，需要九宫位置一一对应（因为从单码到组码，的9个位置，是有位置要求的，首和尾匹配上，并不能表示二者相似）。
+                //> BUG-此处ds应该做个判别，不然可能9宫全是同一个单码ref过去的。所以如下按i对等来修复下：
+                //> FIX-所以：直接类似特征的params.xy位置类似方法，组码这里按refPort.params中的i来要求一下对等。
+                if (refPort.x != protoX) continue;
+                if (refPort.y != protoY) continue;
+                
+                if (debugMode) AddDebugCodeBlock_Key(@"a", @"9a");
                 //2025.03.20：BUG-防重（每条value_p只允许ref同一个ass一次）。
-                if ([except_ps containsObject:refPort.target_p]) continue;
-                [except_ps addObject:refPort.target_p];
+                if ([except_ps objectForKey:refPort.target_p]) continue;
+                [except_ps setObject:@"" forKey:refPort.target_p];
+                if (debugMode) AddDebugCodeBlock_Key(@"a", @"9b");
                 
                 //6. 找model (无则新建) (性能: 此处在循环中,所以防重耗60ms正常,收集耗100ms正常);
                 AIMatchModel *gModel = [gMatchDic objectForKey:@(refPort.target_p.pointerId)];
@@ -115,13 +140,18 @@
                     gModel = [[AIMatchModel alloc] init];
                     [gMatchDic setObject:gModel forKey:@(refPort.target_p.pointerId)];
                 }
+                if (debugMode) AddDebugCodeBlock_Key(@"a", @"10");
                 gModel.match_p = refPort.target_p;
                 gModel.matchCount++;
                 gModel.matchValue *= vModel.matchValue;
                 gModel.sumRefStrong += (int)refPort.strong.value;
+                if (debugMode) AddDebugCodeBlock_Key(@"a", @"11");
             }
+            if (debugMode) AddDebugCodeBlock_Key(@"a", @"11b");
         }
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"11c");
     }
+    if (debugMode) AddDebugCodeBlock_Key(@"a", @"12");
     
     //11. 全含判断: 从大到小,依次取到对应的node和matchingCount (注: 支持相近后,应该全是全含了,参考25084-1);
     NSArray *gMatchModels = [SMGUtils filterArr:gMatchDic.allValues checkValid:^BOOL(AIMatchModel *item) {
@@ -129,6 +159,7 @@
         if (gItem.count != item.matchCount) return false;
         return true;
     }];
+    if (debugMode) AddDebugCodeBlock_Key(@"a", @"13");//43次 4.5s
     
     //2025.03.21: 提升索引范围，因为组码可复用性还是挺强的，先全保留跑跑看。
     //12. 似层交层分开进行竞争 (分开竞争是以前就一向如此的,因为同质竞争才公平) (为什么要保留交层: 参考31134-TODO1);
@@ -148,11 +179,17 @@
     
     //21. 更新: ref强度 & 相似度 & 抽具象;
     for (AIMatchModel *matchModel in gMatchModels) {
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"14");
         AIGroupValueNode *assNode = [SMGUtils searchNode:matchModel.match_p];
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"15");
         [AINetUtils insertRefPorts_General:assNode.p content_ps:assNode.content_ps difStrong:1 header:assNode.header];
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"16");
         [protoGroupValue updateMatchValue:assNode matchValue:matchModel.matchValue];
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"17");
         [AINetUtils relateGeneralAbs:assNode absConPorts:assNode.conPorts conNodes:@[protoGroupValue] isNew:false difStrong:1];
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"18");
     }
+    if (debugMode) AddDebugCodeBlock_Key(@"a", @"19");
     return gMatchModels;
 }
 
@@ -167,6 +204,8 @@
 +(NSArray*) recognitionFeature:(AIKVPointer*)feature_p {
     //1. 数据准备
     NSLog(@"\n=========== 特征识别ProtoT%ld ===========",feature_p.pointerId);
+    BOOL debugMode = [feature_p.dataSource isEqual:@"bColors"];
+    if (debugMode) AddDebugCodeBlock_Key(@"a", @"1");
     AIFeatureNode *protoFeature = [SMGUtils searchNode:feature_p];
     AIFeatureAllBestGVModel *gvBestModel = [[AIFeatureAllBestGVModel alloc] init];
     if (protoFeature.count == 0) return @[[[AIMatchModel alloc] initWithMatch_p:feature_p]];
@@ -195,13 +234,20 @@
                 CGFloat matchDegree = [ThinkingUtils checkAssToMatchDegree:protoFeature protoIndex:i assGVModels:assGVItems checkRefPort:refPort debugMode:debugMode];
                 
                 //14. 判断新一条refPort是否更好，更好的话存下来（存refPort，assKey，gModel.matchValue，matchDegree）。
-                [gvBestModel update:assKey refPort:refPort gMatchValue:gModel.matchValue gMatchDegree:matchDegree matchOfProtoIndex:i];
+                [gvBestModel updateStep1:assKey refPort:refPort gMatchValue:gModel.matchValue gMatchDegree:matchDegree matchOfProtoIndex:i];
             }
         }
+        
+        //21. STEP2：每个protoIndex内防重，竞争只保留protoIndex下最好一条。
+        [gvBestModel invokeRankStep2];
+        
+        //22. STEP3：跨protoIndex防重，将best结果存下来
+        [gvBestModel updateStep3];
     }
-    
     //31. 用明细生成总账（bestModel -> resultDic）。
-    NSDictionary *resultDic = [gvBestModel convert2AIMatchModels];// <K=deltaLevel_assPId, V=识别的特征AIMatchModel>
+    NSDictionary *resultDic = [gvBestModel convert2AIMatchModelsStep4];// <K=deltaLevel_assPId, V=识别的特征AIMatchModel>
+    if (debugMode) AddDebugCodeBlock_Key(@"a", @"100");
+    if (debugMode) PrintDebugCodeBlock_Key(@"a");
     
     //32. debug
     for (NSString *assKey in resultDic.allKeys) {

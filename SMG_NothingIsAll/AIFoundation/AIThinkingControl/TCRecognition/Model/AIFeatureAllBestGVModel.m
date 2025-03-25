@@ -16,11 +16,69 @@
 }
 
 /**
+ *  MARK:--------------------更新一条--------------------
+ *  @desc STEP1. 在特征识别的protoIndex下，收集所有可能的下一点匹配。
+ */
+-(void) updateStep1:(NSString*)assKey refPort:(AIPort*)refPort gMatchValue:(CGFloat)gMatchValue gMatchDegree:(CGFloat)gMatchDegree matchOfProtoIndex:(NSInteger)matchOfProtoIndex {
+    //1. 数据检查
+    if (!self.protoDic) self.protoDic = [[NSMutableDictionary alloc] init];
+    
+    //2. newItem
+    AIFeatureNextGVRankItem *item = [[AIFeatureNextGVRankItem alloc] init];
+    item.refPort = refPort;
+    item.gMatchValue = gMatchValue;
+    item.gMatchDegree = gMatchDegree;
+    item.matchOfProtoIndex = matchOfProtoIndex;
+    
+    //3. add to items then add to dic;
+    NSMutableArray *items = [[NSMutableArray alloc] initWithArray:[self.protoDic objectForKey:assKey]];
+    [items addObject:item];
+    [self.protoDic setObject:items forKey:assKey];
+}
+
+/**
+ *  MARK:--------------------竞争只保留最好一条--------------------
+ *  @desc STEP2. 把STEP1收集到的，在当前protoIndex下，竞争只保留一条。
+ */
+-(void) invokeRankStep2 {
+    //1. 数据准备
+    self.rankDic = [[NSMutableDictionary alloc] init];
+    
+    //2. 每个items都竞争下best一条。
+    for (NSString *assKey in self.protoDic.allKeys) {
+        NSArray *items = ARRTOOK([self.protoDic objectForKey:assKey]);
+        items = [SMGUtils sortBig2Small:items compareBlock1:^double(AIFeatureNextGVRankItem *obj) {
+            return obj.gMatchDegree;
+        } compareBlock2:^double(AIFeatureNextGVRankItem *obj) {
+            return obj.gMatchValue;
+        }];
+        
+        //3. 每个items只保留最best一条。
+        [self.rankDic setObject:ARR_INDEX(items, 0) forKey:assKey];
+    }
+    
+    //4. 清空protoDic;
+    [self.protoDic removeAllObjects];
+}
+
+/**
  *  MARK:--------------------更新时，直接查下有没重复，有重复的就只保留更优的一条--------------------
  *  @desc STEP1. 新一条，判断是否更好，支持在所有protoIndex下，只保留一条。
  *  @desc 写该方法起因：一般是在特征识别时：多个protoIndex都ref到同一个target的同一帧（如果不去重，会导致特征映射不是一对一）。
  */
--(void) update:(NSString*)assKey refPort:(AIPort*)refPort gMatchValue:(CGFloat)gMatchValue gMatchDegree:(CGFloat)gMatchDegree matchOfProtoIndex:(NSInteger)matchOfProtoIndex {
+-(void) updateStep3 {
+    //1. 跨protoIndex防重，将best结果存下来
+    for (NSString *assKey in self.rankDic.allKeys) {
+        AIFeatureNextGVRankItem *item = [self.rankDic objectForKey:assKey];
+        
+        //2. 明细：bestModel保证最匹配度&符合度，的每一条（且不会重复）。bestItem进阶成功，转存到最终gvBestModel中（后面用于判断xy相似度要用）（参考34052-TODO4）。
+        [self updateStep3:item forKey:assKey];
+    }
+    
+    //3. 清空rankDic;
+    [self.rankDic removeAllObjects];
+}
+-(void) updateStep3:(NSString*)assKey refPort:(AIPort*)refPort gMatchValue:(CGFloat)gMatchValue gMatchDegree:(CGFloat)gMatchDegree matchOfProtoIndex:(NSInteger)matchOfProtoIndex {
 
     //2. newItem
     AIFeatureNextGVRankItem *item = [[AIFeatureNextGVRankItem alloc] init];
@@ -28,16 +86,16 @@
     item.gMatchValue = gMatchValue;
     item.gMatchDegree = gMatchDegree;
     item.matchOfProtoIndex = matchOfProtoIndex;
-    [self update:item forKey:assKey];
+    [self updateStep3:item forKey:assKey];
 }
 
--(void) update:(AIFeatureNextGVRankItem*)newItem forKey:(NSString*)assKey {
+-(void) updateStep3:(AIFeatureNextGVRankItem*)newItem forKey:(NSString*)assKey {
     //1. 找出已收集到的items。
     NSMutableArray *oldItems = [[NSMutableArray alloc] initWithArray:[self.bestDic objectForKey:assKey]];
     
     //2. 找出重复的oldItem（这里相当于指向同一个assIndex的只保留一条）。
     AIFeatureNextGVRankItem *oldItem = [SMGUtils filterSingleFromArr:oldItems checkValid:^BOOL(AIFeatureNextGVRankItem *oldItem) {
-        return [oldItem.refPort isEqual:newItem.refPort] || newItem.matchOfProtoIndex == oldItem.matchOfProtoIndex;
+        return [oldItem.refPort isEqual:newItem.refPort];// || newItem.matchOfProtoIndex == oldItem.matchOfProtoIndex;（如果把proto和rank两步去掉，则可能protoIndex重复收集，此处打开这个protoIndex判断可以用来防重）
     }];
     
     //3. 重复的没新的好，则去掉重复的留下新的。
@@ -61,7 +119,7 @@
  *  MARK:--------------------把bestModel生成为AIMatchModel格式--------------------
  *  @desc STEP2. 把STEP1得到的proto和ass一一对应的结果，转成识别算法需要的AIMatchModels格式。
  */
--(NSDictionary*) convert2AIMatchModels {
+-(NSDictionary*) convert2AIMatchModelsStep4 {
     NSMutableDictionary *resultDic = [[NSMutableDictionary alloc] init];
     for (NSString *assKey in self.bestDic.allKeys) {
         
@@ -76,7 +134,7 @@
         //3. 循环把明细记录到总账 或 收集总数据。
         NSMutableDictionary *indexDic = [[NSMutableDictionary alloc] init];
         
-        //TODOTOMORROW20250325: 把这个符合度存在哪合适？
+        //TODOTOMORROW20250325: 把这个符合度存在哪合适？可以考虑存在refPort里。或者像indexDic一样存也行。不需要存硬盘，只存内存就够用。
         
         NSMutableDictionary *matchDegreeIndexDic = [[NSMutableDictionary alloc] init];
         for (AIFeatureNextGVRankItem *item in assGVItems) {
