@@ -17,13 +17,25 @@
 
 /**
  *  MARK:--------------------更新时，直接查下有没重复，有重复的就只保留更优的一条--------------------
+ *  @desc STEP1. 新一条，判断是否更好，支持在所有protoIndex下，只保留一条。
  *  @desc 写该方法起因：一般是在特征识别时：多个protoIndex都ref到同一个target的同一帧（如果不去重，会导致特征映射不是一对一）。
  */
+-(void) update:(NSString*)assKey refPort:(AIPort*)refPort gMatchValue:(CGFloat)gMatchValue gMatchDegree:(CGFloat)gMatchDegree matchOfProtoIndex:(NSInteger)matchOfProtoIndex {
+
+    //2. newItem
+    AIFeatureNextGVRankItem *item = [[AIFeatureNextGVRankItem alloc] init];
+    item.refPort = refPort;
+    item.gMatchValue = gMatchValue;
+    item.gMatchDegree = gMatchDegree;
+    item.matchOfProtoIndex = matchOfProtoIndex;
+    [self update:item forKey:assKey];
+}
+
 -(void) update:(AIFeatureNextGVRankItem*)newItem forKey:(NSString*)assKey {
     //1. 找出已收集到的items。
     NSMutableArray *oldItems = [[NSMutableArray alloc] initWithArray:[self.bestDic objectForKey:assKey]];
     
-    //2. 找出重复的oldItem。
+    //2. 找出重复的oldItem（这里相当于指向同一个assIndex的只保留一条）。
     AIFeatureNextGVRankItem *oldItem = [SMGUtils filterSingleFromArr:oldItems checkValid:^BOOL(AIFeatureNextGVRankItem *oldItem) {
         return [oldItem.refPort isEqual:newItem.refPort];
     }];
@@ -47,6 +59,7 @@
 
 /**
  *  MARK:--------------------把bestModel生成为AIMatchModel格式--------------------
+ *  @desc STEP2. 把STEP1得到的proto和ass一一对应的结果，转成识别算法需要的AIMatchModels格式。
  */
 -(NSDictionary*) convert2AIMatchModels {
     NSMutableDictionary *resultDic = [[NSMutableDictionary alloc] init];
@@ -62,6 +75,9 @@
         
         //3. 循环把明细记录到总账 或 收集总数据。
         NSMutableDictionary *indexDic = [[NSMutableDictionary alloc] init];
+        
+        //TODOTOMORROW20250325: 把这个符合度存在哪合适？
+        
         NSMutableDictionary *matchDegreeIndexDic = [[NSMutableDictionary alloc] init];
         for (AIFeatureNextGVRankItem *item in assGVItems) {
             AIFeatureNode *assT = [SMGUtils searchNode:item.refPort.target_p];

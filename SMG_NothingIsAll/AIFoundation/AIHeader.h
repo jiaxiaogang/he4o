@@ -57,7 +57,6 @@
 #import "AIMatchAlgModel.h"
 #import "AIMatchCansetModel.h"
 #import "AIMatchModel.h"
-#import "AIFeatureNextGVRankModel.h"
 #import "AIFeatureNextGVRankItem.h"
 #import "AIFeatureAllBestGVModel.h"
 

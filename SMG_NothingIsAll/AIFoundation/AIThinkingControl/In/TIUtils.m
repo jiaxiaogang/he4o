@@ -179,9 +179,6 @@
         //4. 组码识别。
         NSArray *gMatchModels = [self recognitionGroupValue:protoGroupValue_p];
         
-        //5. 对每一个assKey做matchDegree的收集竞争（对所有refPort进行匹配度matchValue和符合度matchDegree竞争，把最符合的留下，别的不要。而不是单纯的用阈值>0.9判断）。
-        AIFeatureNextGVRankModel *gvRankModel = [[AIFeatureNextGVRankModel alloc] init];
-        
         //6. 对所有gv识别结果的，所有refPorts，依次判断位置符合度。
         for (AIMatchModel *gModel in gMatchModels) {
             NSArray *refPorts = [AINetUtils refPorts_All:gModel.match_p];
@@ -197,22 +194,9 @@
                 BOOL debugMode = false;//[feature_p.dataSource isEqual:@"hColors"] && [refPort.target_p isEqual:protoFeature.p] && assLevel == protoLevel && [gModel.match_p isEqual:protoGroupValue_p];
                 CGFloat matchDegree = [ThinkingUtils checkAssToMatchDegree:protoFeature protoIndex:i assGVModels:assGVItems checkRefPort:refPort debugMode:debugMode];
                 
-                //14. 把每条refPort可能，存下来，后面竞争下再决定用哪个（存refPort，assKey，gModel.matchValue，matchDegree）。
-                [gvRankModel update:assKey refPort:refPort gMatchValue:gModel.matchValue gMatchDegree:matchDegree matchOfProtoIndex:i];
+                //14. 判断新一条refPort是否更好，更好的话存下来（存refPort，assKey，gModel.matchValue，matchDegree）。
+                [gvBestModel update:assKey refPort:refPort gMatchValue:gModel.matchValue gMatchDegree:matchDegree matchOfProtoIndex:i];
             }
-        }
-        
-        //TODO: Step2和Step3应该是可以合并为一步的（把第二步去掉）。
-        //21. STEP2：每个protoIndex内防重，竞争只保留protoIndex下最好一条。
-        [gvRankModel invokeRank];
-        
-        //22. STEP3：跨protoIndex防重，将best结果存下来
-        for (NSString *assKey in gvRankModel.rankDic.allKeys) {
-            AIFeatureNextGVRankItem *item = [gvRankModel.rankDic objectForKey:assKey];
-            
-            //23. 明细：bestModel保证最匹配度&符合度，的每一条（且不会重复）。
-            //23. bestItem进阶成功，转存到最终gvBestModel中（后面用于判断xy相似度要用）（参考34052-TODO4）。
-            [gvBestModel update:item forKey:assKey];
         }
     }
     
