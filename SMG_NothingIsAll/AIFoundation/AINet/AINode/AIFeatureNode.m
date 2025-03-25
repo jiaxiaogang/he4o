@@ -45,6 +45,20 @@
     return -1;
 }
 
+//MARK:===============================================================
+//MARK:                     < degree组 >
+//MARK:===============================================================
+-(NSMutableDictionary *)degreeDDic{
+    if (!ISOK(_degreeDDic, NSMutableDictionary.class)) _degreeDDic = [[NSMutableDictionary alloc] initWithDictionary:_degreeDDic];
+    return _degreeDDic;
+}
+-(void) updateDegreeDic:(NSInteger)assPId degreeDic:(NSDictionary*)degreeDic {
+    [self.degreeDDic setObject:degreeDic forKey:@(assPId)];
+}
+-(NSDictionary*) getDegreeDic:(NSInteger)assPId {
+    return [self.degreeDDic objectForKey:@(assPId)];
+}
+
 /**
  *  MARK:--------------------NSCoding--------------------
  */

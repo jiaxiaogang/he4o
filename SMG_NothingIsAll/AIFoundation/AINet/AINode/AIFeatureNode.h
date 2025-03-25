@@ -20,4 +20,11 @@
 //根据level,x,y找下标，找不到时返-1。
 -(NSInteger) indexOfLevel:(NSInteger)level x:(NSInteger)x y:(NSInteger)y;
 
+//MARK:===============================================================
+//MARK:                     < degree组 >
+//MARK:===============================================================
+@property (strong, nonatomic) NSMutableDictionary *degreeDDic; // <K=assT.pId, V=<K=assIndex, V=与之映射的位置符合度matchDegree>>
+-(void) updateDegreeDic:(NSInteger)assPId degreeDic:(NSDictionary*)degreeDic;
+-(NSDictionary*) getDegreeDic:(NSInteger)assPId;
+
 @end

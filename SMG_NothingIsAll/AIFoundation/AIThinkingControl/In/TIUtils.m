@@ -25,9 +25,10 @@
  *      2023.03.16: 支持首尾循环的情况 (参考28174-todo4);
  *      2023.03.16: 修复首尾差值算错的BUG (因为测得360左右度和180左右度相近度是0.9以上);
  *      2023.06.03: 性能优化_复用cacheDataDic到循环外 (参考29109-测得3);
+ *      2025.03.25: 新版组码识别时激活10% & 旧有单码特征仍保持80%（因为组码太宽导致性能不好，还影响识别准确性）。
  *  @result 返回当前码识别的相近序列;
  */
-+(NSArray*) recognitionValue:(AIKVPointer*)protoV_p{
++(NSArray*) recognitionValue:(AIKVPointer*)protoV_p rate:(CGFloat)rate {
     //1. 取索引序列 & 当前稀疏码值;
     NSDictionary *cacheDataDic = [AINetIndexUtils searchDataDic:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut];
     NSArray *index_ps = [AINetIndex getIndex_ps:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut];
@@ -47,7 +48,7 @@
     }];
     
     //3. 窄出,仅返回前NarrowLimit条 (最多narrowLimit条,最少1条);
-    NSInteger limit = MAX(near_ps.count * 0.8f, 20);
+    NSInteger limit = MAX(near_ps.count * rate, 20);
     near_ps = ARR_SUB(near_ps, 0, limit);
     
     //4. 转matchModel模型并返回，取上相近度。
@@ -98,7 +99,7 @@
         //3. 取相近度序列 (按相近程度排序);
         NSArray *vMatchModels = [recognitionValueCache objectForKey:protoValue_p];
         if (!vMatchModels) {
-            vMatchModels = ARRTOOK([self recognitionValue:protoValue_p]);
+            vMatchModels = ARRTOOK([self recognitionValue:protoValue_p rate:0.1]);
             [recognitionValueCache setObject:vMatchModels forKey:protoValue_p];
         }
         NSMutableDictionary *except_ps = [[NSMutableDictionary alloc] init];
@@ -284,6 +285,7 @@
         [protoFeature updateMatchValue:assFeature matchValue:matchModel.matchValue];
         [AINetUtils relateGeneralAbs:assFeature absConPorts:assFeature.conPorts conNodes:@[protoFeature] isNew:false difStrong:1];
         [protoFeature updateIndexDic:assFeature indexDic:matchModel.indexDic];
+        [protoFeature updateDegreeDic:assFeature.pId degreeDic:matchModel.degreeDic];
     }
     return resultModels;
 }
@@ -371,7 +373,7 @@
         //3. 取相近度序列 (按相近程度排序);
         NSArray *subMatchModels = nil;
         if (PitIsValue(item_p)) {
-            subMatchModels = [self recognitionValue:item_p];//v1单码特征
+            subMatchModels = [self recognitionValue:item_p rate:0.8];//v1单码特征
         } else {
             subMatchModels = [self recognitionFeature:item_p];//v2多码特征
         }

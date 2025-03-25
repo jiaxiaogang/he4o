@@ -260,6 +260,7 @@
     CGFloat curMatchValue = [protoFeature getAbsMatchValue:assT_p];
     //BOOL noZeRen = [TCLearningUtil noZeRenForCenJi:curMatchValue bigerMatchValue:bigerMatchValue];
     //if (!noZeRen) return nil;
+    NSDictionary *degreeDic = DICTOOK([protoFeature getDegreeDic:assT_p.pointerId]);
         
     //2. 外类比有序进行 (记录jMax & 正序)
     NSDictionary *indexDic = [protoFeature getAbsIndexDic:assT_p];
@@ -269,13 +270,17 @@
         NSInteger protoIndex = value.integerValue;
         AIKVPointer *protoG_p = ARR_INDEX(protoFeature.content_ps, protoIndex);
         AIKVPointer *assG_p = ARR_INDEX(assFeature.content_ps, assIndex);
+        if (![degreeDic objectForKey:@(assIndex)]) {
+            ELog(@"查下为什么没存上符合度，没符合度会导致protoG和assG的匹配度算成0。");
+        }
+        CGFloat curDegree = NUMTOOK([degreeDic objectForKey:@(assIndex)]).floatValue;
         
         //3. B源于matchFo,此处只判断B是1层抽象 (参考27161-调试1&调试2);
         //此处proto抽象仅指向刚识别的matchAlgs,所以与contains等效;
         if (Log4Ana) NSLog(@"proto的第%ld: G%ld 类比 ass的第%ld: G%ld",protoIndex,protoG_p.pointerId,assIndex,assG_p.pointerId);
         
         //4. 即使mIsC匹配,也要进行共同点抽象 (参考29025-11);
-        AIGroupValueNode *absG = [self analogyGroupValue:protoG_p assG:assG_p bigerMatchValue:curMatchValue];
+        AIGroupValueNode *absG = [self analogyGroupValue:protoG_p assG:assG_p curDegree:curDegree bigerMatchValue:curMatchValue];
         if (!absG) continue;
         featureMatchValue *= [absG getConMatchValue:protoG_p];
         
@@ -312,7 +317,7 @@
 /**
  *  MARK:--------------------组码类比--------------------
  */
-+(AIGroupValueNode*) analogyGroupValue:(AIKVPointer*)protoG_p assG:(AIKVPointer*)assG_p bigerMatchValue:(CGFloat)bigerMatchValue {
++(AIGroupValueNode*) analogyGroupValue:(AIKVPointer*)protoG_p assG:(AIKVPointer*)assG_p curDegree:(CGFloat)curDegree bigerMatchValue:(CGFloat)bigerMatchValue {
     //1. 如果本就一致;
     if ([protoG_p isEqual:assG_p]) return [SMGUtils searchNode:protoG_p];
     
@@ -324,7 +329,7 @@
     AIMatchAlgModel *protoAbsModel4MatchValue = [[AIMatchAlgModel alloc] init];//此模型仅用于收集proto和abs的相近度,用于计算matchValue;
     
     //3. 数据检查（当前有主责，直接剔除）。
-    CGFloat curMatchValue = [protoG getAbsMatchValue:assG_p];
+    CGFloat curMatchValue = [protoG getAbsMatchValue:assG_p] * curDegree;
     BOOL noZeRen = [TCLearningUtil noZeRenForPingJun:curMatchValue bigerMatchValue:bigerMatchValue];
     if (!noZeRen) return nil;
     

@@ -23,6 +23,7 @@
 -(CGFloat) strongValue;
 
 @property (strong, nonatomic) NSDictionary *indexDic; //匹配到的映射 (k为assIndex,v为protoIndex)
+@property (strong, nonatomic) NSDictionary *degreeDic;// <K=assIndex,V=matchDegree值>
 @property (assign, nonatomic) CGFloat sumMatchDegree;//总符合度
 
 @end

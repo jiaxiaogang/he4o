@@ -133,10 +133,7 @@
         
         //3. 循环把明细记录到总账 或 收集总数据。
         NSMutableDictionary *indexDic = [[NSMutableDictionary alloc] init];
-        
-        //TODOTOMORROW20250325: 把这个符合度存在哪合适？可以考虑存在refPort里。或者像indexDic一样存也行。不需要存硬盘，只存内存就够用。
-        
-        NSMutableDictionary *matchDegreeIndexDic = [[NSMutableDictionary alloc] init];
+        NSMutableDictionary *degreeDic = [[NSMutableDictionary alloc] init];
         for (AIFeatureNextGVRankItem *item in assGVItems) {
             AIFeatureNode *assT = [SMGUtils searchNode:item.refPort.target_p];
             
@@ -144,7 +141,9 @@
             NSInteger assIndex= [assT indexOfLevel:item.refPort.level x:item.refPort.x y:item.refPort.y];
             if (assIndex == -1) continue;
             [indexDic setObject:@(item.matchOfProtoIndex) forKey:@(assIndex)];
-            //[matchDegreeIndexDic setObject:nil forKey:nil];待完成。
+            
+            //5. 把这个符合度像indexDic一样存，不需要存硬盘，只存内存就够用（在类比时复用一下）（参考34072-优化1）。
+            [degreeDic setObject:@(item.gMatchDegree) forKey:@(assIndex)];
             
             //5. 直接到总账部分：resultDic用于统计匹配数，匹配度，总强度。
             tModel.match_p = assT.p;
@@ -155,8 +154,9 @@
         }
         
         //6. 把收集总数据计到总账：indexDic & 综合匹配度 & 符合度映射。
-        tModel.matchValue = tModel.matchCount > 0 ? tModel.sumMatchValue / tModel.matchCount : 0;//综合求出平均matchValue（因为特征有太多组码，乘积匹配度不合理）。
+        tModel.matchValue = tModel.matchCount > 0 ? (tModel.sumMatchValue / tModel.matchCount) * (tModel.sumMatchDegree / tModel.matchCount) : 0;//综合求出平均matchValue（因为特征有太多组码，乘积匹配度不合理）。
         tModel.indexDic = indexDic;
+        tModel.degreeDic = degreeDic;
     }
     return resultDic;
 }
