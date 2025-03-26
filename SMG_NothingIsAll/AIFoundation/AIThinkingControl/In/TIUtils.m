@@ -129,6 +129,9 @@
                 
                 if (debugMode) AddDebugCodeBlock_Key(@"a", @"8");//34w次 7s -> 13w 3.5s
                 
+                
+                //TODOTOMORROW20250326: 看能不能把xy做为key，refPorts做value，这样来减少每个v码的refPorts数，减少判断，减少循环。
+                
                 //6. 取交过滤器（参考34072-性能4）。
 //                if (i > 0) if (![lastValidG_PIds containsObject:@(refPort.target_p.pointerId)]) continue;
 
@@ -174,6 +177,8 @@
         
         if (debugMode) AddDebugCodeBlock_Key(@"a", @"11b2");
         //NSLog(@"2. 第%ld帧 -> 识别到条数：%ld",i,curValidG_ps.count);
+        
+        //TODOTOMORROW20250326: 第二次时，不需要重复处理，只需要取交即可。
         [nextVModel reloadEveryXYValidValue_ps:curValidG_ps];
         if (debugMode) AddDebugCodeBlock_Key(@"a", @"11c");
     }
