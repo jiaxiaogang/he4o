@@ -91,7 +91,7 @@
         //============= 把单码识别结果缓存下来 =============
         if (debugMode) AddDebugCodeBlock_Key(@"a", @"识别");
         //3. 取相近度序列 (按相近程度排序);
-        NSArray *vMatchModels = [cache getCache:protoValue_p cacheBlock:^id{
+        NSArray *vMatchModels = [AIRecognitionCache getCache:protoValue_p cacheBlock:^id{
             return ARRTOOK([self recognitionValue:protoValue_p rate:0.4 minLimit:3]);
         }];
         if (debugMode) AddDebugCodeBlock_Key(@"a", @"交集过滤");
@@ -211,7 +211,7 @@
         NSInteger protoLevel = NUMTOOK(ARR_INDEX(protoFeature.levels, i)).integerValue;
         
         //4. 组码识别。
-        NSArray *gMatchModels = [cache getCache:protoGroupValue_p cacheBlock:^id{
+        NSArray *gMatchModels = [AIRecognitionCache getCache:protoGroupValue_p cacheBlock:^id{
             return ARRTOOK([self recognitionGroupValue:protoGroupValue_p cache:cache]);
         }];
         
@@ -369,11 +369,11 @@
         //3. 取相近度序列 (按相近程度排序);
         NSArray *subMatchModels = nil;
         if (PitIsValue(item_p)) {
-            subMatchModels = [cache getCache:item_p cacheBlock:^id{
+            subMatchModels = [AIRecognitionCache getCache:item_p cacheBlock:^id{
                 return [self recognitionValue:item_p rate:0.8 minLimit:20];//v1单码特征
             }];
         } else {
-            subMatchModels = [cache getCache:item_p cacheBlock:^id{
+            subMatchModels = [AIRecognitionCache getCache:item_p cacheBlock:^id{
                 return ARRTOOK([self recognitionFeature:item_p cache:cache]);//v2多码特征;
             }];
         }
@@ -468,7 +468,7 @@
         AIAlgNodeBase *alg = [SMGUtils searchNode:model.matchAlg];
         NSLog(@"概念识别到：A%ld 匹配度：%.2f input:%@ result:%@",alg.pId,model.matchValue,protoAlg.logDesc,alg.logDesc);
     }
-    NSLog(@"缓存hit:%ld miss:%ld",cache.hitNum,cache.missNum);
+    [AIRecognitionCache printLog:true];
     NSLog(@"");
 }
 

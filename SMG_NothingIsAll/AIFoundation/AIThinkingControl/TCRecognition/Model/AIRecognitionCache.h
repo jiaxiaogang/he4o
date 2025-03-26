@@ -15,16 +15,12 @@
  */
 @interface AIRecognitionCache : NSObject
 
-@property (assign, nonatomic) NSInteger hitNum;
-@property (assign, nonatomic) NSInteger missNum;
-
-@property (strong, nonatomic) NSMutableDictionary *cacheDic;
-
 /**
  *  MARK:--------------------取缓存，如果无缓存，则调用加载后返回--------------------
  *  @param key 可以传要识别的AIKVPointer过来当key。
  *  @result 返回的一般是AIMatchModel为元素的数组。
  */
--(id) getCache:(id)key cacheBlock:(id(^)())cacheBlock;
++(id) getCache:(id)key cacheBlock:(id(^)())cacheBlock;
++(void) printLog:(BOOL)andReset;
 
 @end

@@ -50,6 +50,11 @@
     return _matchRFos;
 }
 
+- (NSMutableDictionary *)shortRecognitionCache {
+    if (!_shortRecognitionCache) _shortRecognitionCache = [[NSMutableDictionary alloc] init];
+    return _shortRecognitionCache;
+}
+
 //-(AIFoNodeBase *)matchFo{
 //    AIMatchFoModel *mFo = [self mustUrgentMFo];
 //    return mFo ? mFo.matchFo : nil;

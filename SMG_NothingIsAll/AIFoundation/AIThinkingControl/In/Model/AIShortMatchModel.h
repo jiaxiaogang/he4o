@@ -96,6 +96,9 @@
 @property (strong, nonatomic) NSMutableArray *matchPFos; //有mv指向匹配时序 (元素为AIMatchFoModel);
 @property (strong, nonatomic) NSMutableArray *matchRFos; //无mv指向匹配时序 (元素为AIMatchFoModel);
 
+//识别缓存
+@property (strong, nonatomic) NSMutableDictionary *shortRecognitionCache;
+
 /**
  *  MARK:--------------------含mv且迫切度最高的一条mFo--------------------
  */
