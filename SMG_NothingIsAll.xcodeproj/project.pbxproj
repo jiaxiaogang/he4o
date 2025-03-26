@@ -185,6 +185,7 @@
 		08E084AB28B129000070B7F7 /* TCDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E084AA28B129000070B7F7 /* TCDebug.m */; };
 		08E44D372B3A58D1005456A1 /* MapModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E44D362B3A58D1005456A1 /* MapModel.m */; };
 		08E6885B22FA562600653545 /* BorderLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E6885A22FA562600653545 /* BorderLabel.m */; };
+		08E74B342D9380F80052D8C2 /* AIGroupValueNextVModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E74B332D9380F80052D8C2 /* AIGroupValueNextVModel.m */; };
 		08E8CF5525B2880600AA18DB /* WoodView.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E8CF5425B2880600AA18DB /* WoodView.m */; };
 		08E8CF5825B2F07100AA18DB /* ImvAlgsHurtModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E8CF5725B2F07100AA18DB /* ImvAlgsHurtModel.m */; };
 		08E8CF5B25B2F64000AA18DB /* ImvGoodModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E8CF5A25B2F64000AA18DB /* ImvGoodModel.m */; };
@@ -585,6 +586,8 @@
 		08E44D362B3A58D1005456A1 /* MapModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MapModel.m; sourceTree = "<group>"; };
 		08E6885922FA562600653545 /* BorderLabel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BorderLabel.h; sourceTree = "<group>"; };
 		08E6885A22FA562600653545 /* BorderLabel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BorderLabel.m; sourceTree = "<group>"; };
+		08E74B322D9380F80052D8C2 /* AIGroupValueNextVModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIGroupValueNextVModel.h; sourceTree = "<group>"; };
+		08E74B332D9380F80052D8C2 /* AIGroupValueNextVModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIGroupValueNextVModel.m; sourceTree = "<group>"; };
 		08E8CF5325B2880600AA18DB /* WoodView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WoodView.h; sourceTree = "<group>"; };
 		08E8CF5425B2880600AA18DB /* WoodView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WoodView.m; sourceTree = "<group>"; };
 		08E8CF5625B2F07100AA18DB /* ImvAlgsHurtModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImvAlgsHurtModel.h; sourceTree = "<group>"; };
@@ -1403,6 +1406,8 @@
 				08ABC56E2D9010AB00E67D5B /* AIFeatureNextGVRankItem.m */,
 				089F986B2D90E55400908D0C /* AIFeatureAllBestGVModel.h */,
 				089F986C2D90E55400908D0C /* AIFeatureAllBestGVModel.m */,
+				08E74B322D9380F80052D8C2 /* AIGroupValueNextVModel.h */,
+				08E74B332D9380F80052D8C2 /* AIGroupValueNextVModel.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -2183,6 +2188,7 @@
 				0867338F2D850B650073DCD5 /* AIVisionAlgsV2.m in Sources */,
 				08DB40CB1F11A65E003162C8 /* TestHungryPage.m in Sources */,
 				087E7FCB258053D90097E0B9 /* NSFile+Extension.m in Sources */,
+				08E74B342D9380F80052D8C2 /* AIGroupValueNextVModel.m in Sources */,
 				08250AE0228112C000FC497C /* XGWedis.m in Sources */,
 				88A43F432109589600281348 /* AICMVNode.m in Sources */,
 				0871C27626685D4800CB3889 /* TOModelVisionUtil.m in Sources */,
