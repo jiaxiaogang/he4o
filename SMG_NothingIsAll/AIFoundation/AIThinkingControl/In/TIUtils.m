@@ -97,7 +97,7 @@
         if (debugMode) AddDebugCodeBlock_Key(@"a", @"交集过滤");
         
         //4. 过滤器：v识别结果有效判断。
-        if (i > 0) {
+        if (i > 0 && Switch4NextVModel) {
             //NSInteger log1 = vMatchModels.count;
             NSArray *validValue_ps = [nextVModel getValidValue_ps:protoX y:protoY];
             vMatchModels = [SMGUtils filterArr:vMatchModels checkValid:^BOOL(AIMatchModel *item) {
@@ -111,6 +111,9 @@
         NSMutableDictionary *curValidG_ps = [[NSMutableDictionary alloc] init];
         //4. 每个near_p向ref找相似的assGroupValue。
         for (AIMatchModel *vModel in vMatchModels) {
+            
+            //TODOTOMORROW20250326: 还是得从G索引下手来优化，九个单码取的太泛，导致G识别性能好不了。
+            //分析: 除非，把G做整个索引设计，即G内部9码的相对，也是可以做成索引的。
             
             //11. 2025.03.20: 此处取refPorts已经按xy九宫位置一一对应了（因为从单码到组码，的9个位置，是有位置要求的，首和尾匹配上，并不能表示二者相似）。
             NSArray *refPorts = ARRTOOK([AINetUtils refPorts_All4Value4G:vModel.match_p x:protoX y:protoY]);

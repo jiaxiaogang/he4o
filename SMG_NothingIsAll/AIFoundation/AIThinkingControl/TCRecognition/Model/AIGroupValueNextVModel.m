@@ -11,6 +11,8 @@
 @implementation AIGroupValueNextVModel
 
 -(NSDictionary*) reloadEveryXYValidValue_ps:(NSArray*)firstGV_ps {
+    if (!Switch4NextVModel) return nil;
+    
     //1. 第0帧，取得的解，后面别的帧也都需要满足，才是有效的。
     NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
     for (AIKVPointer *firstGV_p in firstGV_ps) {
