@@ -78,114 +78,81 @@
 +(NSArray*) recognitionGroupValue:(AIKVPointer*)groupValue_p cache:(AIRecognitionCache*)cache {
     //1. 数据准备
     BOOL debugMode = [TIUtils debugMode:groupValue_p.dataSource];
-    if (debugMode) AddDebugCodeBlock_Key(@"a", @"3");
     NSMutableDictionary *gMatchDic = [[NSMutableDictionary alloc] init];
     AIGroupValueNode *protoGroupValue = [SMGUtils searchNode:groupValue_p];
     AIGroupValueNextVModel *nextVModel = [[AIGroupValueNextVModel alloc] init];
     
     //2. 循环分别识别：组码里的单码。
-    NSArray *lastValidG_PIds = [[NSArray alloc] init];//把每个i下的交集存下来。
-    if (debugMode) AddDebugCodeBlock_Key(@"a", @"4");
-    
     for (NSInteger i = 0; i < protoGroupValue.count; i++) {
-        if (debugMode) AddDebugCodeBlock_Key(@"a", @"4b");
         AIKVPointer *protoValue_p = ARR_INDEX(protoGroupValue.content_ps, i);
         NSInteger protoX = NUMTOOK(ARR_INDEX(protoGroupValue.xs, i)).integerValue;
         NSInteger protoY = NUMTOOK(ARR_INDEX(protoGroupValue.ys, i)).integerValue;
         
         //============= 把单码识别结果缓存下来 =============
-        if (debugMode) AddDebugCodeBlock_Key(@"a", @"5");
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"识别");
         //3. 取相近度序列 (按相近程度排序);
         NSArray *vMatchModels = [cache getCache:protoValue_p cacheBlock:^id{
             return ARRTOOK([self recognitionValue:protoValue_p rate:0.4 minLimit:3]);
         }];
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"交集过滤");
         
         //4. 过滤器：v识别结果有效判断。
         if (i > 0) {
-            NSInteger log1 = vMatchModels.count;
+            //NSInteger log1 = vMatchModels.count;
             NSArray *validValue_ps = [nextVModel getValidValue_ps:protoX y:protoY];
             vMatchModels = [SMGUtils filterArr:vMatchModels checkValid:^BOOL(AIMatchModel *item) {
                 return [validValue_ps containsObject:item.match_p];
             }];
             //NSLog(@"1. 第%ld帧V识别到结果数：%ld -> 过滤后：%ld",i,log1,vMatchModels.count);
         }
-        
-        NSMutableDictionary *except_ps = [[NSMutableDictionary alloc] init];
-        if (debugMode) AddDebugCodeBlock_Key(@"a", @"6");
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"5");
         
         //============= 把当前单码识别结果的refPorts，有效部分全缓存下来 =============
-        NSMutableArray *curValidG_ps = [[NSMutableArray alloc] init];
-        NSMutableArray *curValidG_PIds = [[NSMutableArray alloc] init];
-        
+        NSMutableDictionary *curValidG_ps = [[NSMutableDictionary alloc] init];
         //4. 每个near_p向ref找相似的assGroupValue。
-        if (debugMode) AddDebugCodeBlock_Key(@"a", @"6b");
         for (AIMatchModel *vModel in vMatchModels) {
             
+            //11. 2025.03.20: 此处取refPorts已经按xy九宫位置一一对应了（因为从单码到组码，的9个位置，是有位置要求的，首和尾匹配上，并不能表示二者相似）。
             NSArray *refPorts = ARRTOOK([AINetUtils refPorts_All4Value4G:vModel.match_p x:protoX y:protoY]);
-            if (debugMode) AddDebugCodeBlock_Key(@"a", @"7");
 
-            //5. 每个refPort转为model并计匹配度和匹配数;
+            //12. 每个refPort转为model并计匹配度和匹配数;
             for (AIPort *refPort in refPorts) {
-                
-                if (debugMode) AddDebugCodeBlock_Key(@"a", @"8");//34w次 7s -> 13w 3.5s
-                
-                //6. 取交过滤器（参考34072-性能4）。
-//                if (i > 0) if (![lastValidG_PIds containsObject:@(refPort.target_p.pointerId)]) continue;
-
-                //2025.03.20: 组码识别时，需要九宫位置一一对应（因为从单码到组码，的9个位置，是有位置要求的，首和尾匹配上，并不能表示二者相似）。
-                //> BUG-此处ds应该做个判别，不然可能9宫全是同一个单码ref过去的。所以如下按i对等来修复下：
-                //> FIX-所以：直接类似特征的params.xy位置类似方法，组码这里按refPort.params中的i来要求一下对等。
-                if (refPort.x != protoX) continue;
-                if (refPort.y != protoY) continue;
-                
                 if (debugMode) AddDebugCodeBlock_Key(@"a", @"9a");
-                //2025.03.20：BUG-防重（每条value_p只允许ref同一个ass一次）。
-                if ([except_ps objectForKey:refPort.target_p]) continue;
-                [except_ps setObject:@"" forKey:refPort.target_p];
+                
+                //13. 2025.03.20：BUG-防重（每条value_p只允许ref同一个ass一次）。
+                if ([curValidG_ps objectForKey:@(refPort.target_p.pointerId)]) continue;
                 if (debugMode) AddDebugCodeBlock_Key(@"a", @"9b");
                 
-                //6. 找model (无则新建) (性能: 此处在循环中,所以防重耗60ms正常,收集耗100ms正常);
+                //14. 把当前i下所有有效的记录下来 (无则新建) (性能: 此处在循环中,所以防重耗60ms正常,收集耗100ms正常);
                 AIMatchModel *gModel = [gMatchDic objectForKey:@(refPort.target_p.pointerId)];
                 if (!gModel) {
                     gModel = [[AIMatchModel alloc] init];
                     [gMatchDic setObject:gModel forKey:@(refPort.target_p.pointerId)];
                 }
-                
-                //7. 过滤器、非全含，直接提前否掉。
-                if (gModel.matchCount < i) continue;
-                
                 if (debugMode) AddDebugCodeBlock_Key(@"a", @"10");
                 gModel.match_p = refPort.target_p;
                 gModel.matchCount++;
                 gModel.matchValue *= vModel.matchValue;
                 gModel.sumRefStrong += (int)refPort.strong.value;
-                if (debugMode) AddDebugCodeBlock_Key(@"a", @"11");
                 
-                //7. 把当前i下所有有效的记录下来。
-                [curValidG_ps addObject:refPort.target_p];
-                [curValidG_PIds addObject:@(refPort.target_p.pointerId)];
+                //15. 记上防重。
+                [curValidG_ps setObject:refPort.target_p forKey:@(refPort.target_p.pointerId)];
+                if (debugMode) AddDebugCodeBlock_Key(@"a", @"11");
             }
             if (debugMode) AddDebugCodeBlock_Key(@"a", @"11b");
         }
-        
         if (debugMode) AddDebugCodeBlock_Key(@"a", @"11b1");
-        //8. 把当前循环所有有效的，记录下来，下轮循环还得靠它来限制交集呢（参考34072-性能4A）。
-        lastValidG_PIds = curValidG_PIds;
         
-        if (debugMode) AddDebugCodeBlock_Key(@"a", @"11b2");
-        //NSLog(@"2. 第%ld帧 -> 识别到条数：%ld",i,curValidG_ps.count);
-        
-        //TODOTOMORROW20250326: 第二次时，不需要重复处理，只需要取交即可。
-        [nextVModel reloadEveryXYValidValue_ps:curValidG_ps];
+        //16. nextVModel已经是取交过滤器的作用了，不需要收集上帧targets来做过滤了（参考34072-性能4A）。
+        [nextVModel reloadEveryXYValidValue_ps:curValidG_ps.allValues];
         if (debugMode) AddDebugCodeBlock_Key(@"a", @"11c");
     }
     if (debugMode) AddDebugCodeBlock_Key(@"a", @"12");
     
-    //11. 全含判断: 从大到小,依次取到对应的node和matchingCount (注: 支持相近后,应该全是全含了,参考25084-1);
+    //17. 全含判断: 从大到小,依次取到对应的node和matchingCount (注: 支持相近后,应该全是全含了,参考25084-1);
     NSArray *gMatchModels = [SMGUtils filterArr:gMatchDic.allValues checkValid:^BOOL(AIMatchModel *item) {
         AIGroupValueNode *gItem = [SMGUtils searchNode:item.match_p];
-        if (gItem.count != item.matchCount) return false;
-        return true;
+        return gItem.count == item.matchCount;//仅保留全含的。
     }];
     if (debugMode) AddDebugCodeBlock_Key(@"a", @"13");//43次 4.5s
     
