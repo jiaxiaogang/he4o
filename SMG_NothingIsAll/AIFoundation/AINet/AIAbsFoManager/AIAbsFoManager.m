@@ -129,7 +129,7 @@
         result = [AINetIndexUtils getAbsoluteMatching_ValidPorts:validPorts sort_ps:content_ps except_ps:nil at:at ds:ds type:type];
     }else{
         //3. 防重_其它类型时,全局绝对匹配;
-        result = [AINetIndexUtils getAbsoluteMatching_ValidPs:content_ps sort_ps:content_ps except_ps:nil noRepeatArea_ps:noRepeatArea_ps getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
+        result = [AINetIndexUtils getAbsoluteMatching_ValidPs:content_ps sort_ps:content_ps except_ps:nil noRepeatArea_ps:noRepeatArea_ps getRefPortsBlock:^NSArray *(AIKVPointer *item_p,NSInteger contentIndex) {
             AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
             return [AINetUtils refPorts_All4Alg:itemAlg];
         } at:at ds:ds type:type];

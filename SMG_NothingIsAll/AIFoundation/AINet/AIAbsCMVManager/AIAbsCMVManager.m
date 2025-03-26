@@ -79,7 +79,7 @@
     NSString *md5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:sort_ps]]);
     
     //2. 全局防重;
-    AIAbsCMVNode *result = [AINetIndexUtils getAbsoluteMatching_ValidPs:content_ps findHeader:md5 except_ps:nil noRepeatArea_ps:nil getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
+    AIAbsCMVNode *result = [AINetIndexUtils getAbsoluteMatching_ValidPs:content_ps findHeader:md5 except_ps:nil noRepeatArea_ps:nil getRefPortsBlock:^NSArray *(AIKVPointer *item_p,NSInteger contentIndex) {
         return [SMGUtils filterArr:[AINetUtils refPorts_All4Value:item_p] checkValid:^BOOL(AIPort *item) {
             return [kPN_ABS_CMV_NODE isEqualToString:item.target_p.folderName];
         }];

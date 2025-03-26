@@ -128,7 +128,7 @@
     if (!ds) ds = DefaultDataSource;
     
     //2. 去重找本地 (仅抽象);
-    AIAbsAlgNode *localAlg = [AINetIndexUtils getAbsoluteMatching_General:value_ps sort_ps:sort_ps except_ps:nil getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
+    AIAbsAlgNode *localAlg = [AINetIndexUtils getAbsoluteMatching_General:value_ps sort_ps:sort_ps except_ps:nil getRefPortsBlock:^NSArray *(AIKVPointer *item_p,NSInteger contentIndex) {
         NSArray *refPorts = [AINetUtils refPorts_All4Value:item_p];
         NSMutableArray *result = [[NSMutableArray alloc] init];
         for (AIPort *refPort in refPorts) {

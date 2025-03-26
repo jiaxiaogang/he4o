@@ -191,6 +191,7 @@
 +(NSArray*) refPorts_All4Alg:(AIAlgNodeBase*)node;
 +(NSArray*) refPorts_All4Alg_Normal:(AIAlgNodeBase*)node;
 +(NSArray*) refPorts_All4Value:(AIKVPointer*)value_p;
++(NSArray*) refPorts_All4Value4G:(AIKVPointer*)value_p x:(NSInteger)x y:(NSInteger)y;
 +(NSArray*) refPorts_All:(AIKVPointer*)node_p;
 
 /**

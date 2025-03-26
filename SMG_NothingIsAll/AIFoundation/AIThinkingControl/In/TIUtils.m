@@ -121,16 +121,13 @@
         if (debugMode) AddDebugCodeBlock_Key(@"a", @"6b");
         for (AIMatchModel *vModel in vMatchModels) {
             
-            NSArray *refPorts = ARRTOOK([AINetUtils refPorts_All4Value:vModel.match_p]);
+            NSArray *refPorts = ARRTOOK([AINetUtils refPorts_All4Value4G:vModel.match_p x:protoX y:protoY]);
             if (debugMode) AddDebugCodeBlock_Key(@"a", @"7");
 
             //5. 每个refPort转为model并计匹配度和匹配数;
             for (AIPort *refPort in refPorts) {
                 
                 if (debugMode) AddDebugCodeBlock_Key(@"a", @"8");//34w次 7s -> 13w 3.5s
-                
-                
-                //TODOTOMORROW20250326: 看能不能把xy做为key，refPorts做value，这样来减少每个v码的refPorts数，减少判断，减少循环。
                 
                 //6. 取交过滤器（参考34072-性能4）。
 //                if (i > 0) if (![lastValidG_PIds containsObject:@(refPort.target_p.pointerId)]) continue;
@@ -1074,7 +1071,7 @@
 }
 
 +(BOOL) debugMode:(NSString*)ds {
-    return false;//[@"bColors" isEqual:ds];
+    return [@"bColors" isEqual:ds];
 }
 
 @end

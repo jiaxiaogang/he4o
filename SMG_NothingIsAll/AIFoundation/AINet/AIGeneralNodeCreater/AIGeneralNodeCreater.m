@@ -32,7 +32,11 @@
         newNode.xs = xs;
         newNode.ys = ys;
         return newNode;
-    } header:nil];
+    } header:nil getRefPortsBlock:^NSArray *(AIKVPointer *item_p, NSInteger contentIndex) {
+        NSInteger x = NUMTOOK(ARR_INDEX(xs, contentIndex)).integerValue;
+        NSInteger y = NUMTOOK(ARR_INDEX(ys, contentIndex)).integerValue;
+        return [AINetUtils refPorts_All4Value4G:item_p x:x y:y];
+    }];
 }
 
 /**
@@ -71,7 +75,9 @@
         newNode.ys = ys;
         newNode.logDesc = logDesc;
         return newNode;
-    } header:header];
+    } header:header getRefPortsBlock:^NSArray *(AIKVPointer *item_p, NSInteger contentIndex) {
+        return [AINetUtils refPorts_All:item_p];
+    }];
     return result;
 }
 
@@ -82,7 +88,7 @@
  *  @param ds           : 为nil时,默认为DefaultDataSource;
  *  @result notnull
  */
-+(id) createNode:(NSArray*)content_ps conNodes:(NSArray*)conNodes at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut newBlock:(id(^)())newBlock header:(NSString*)header {
++(id) createNode:(NSArray*)content_ps conNodes:(NSArray*)conNodes at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut newBlock:(id(^)())newBlock header:(NSString*)header getRefPortsBlock:(NSArray*(^)(AIKVPointer *item_p,NSInteger contentIndex))getRefPortsBlock {
     //1. 数据检查
     content_ps = ARRTOOK(content_ps);
     if (!at) at = DefaultAlgsType;
@@ -92,9 +98,7 @@
     AINodeBase *result = nil;
     
     //2. 去重找本地 (仅抽象);
-    AINodeBase *localResult = [AINetIndexUtils getAbsoluteMatching_ValidPs:content_ps findHeader:header except_ps:nil noRepeatArea_ps:nil getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
-        return [AINetUtils refPorts_All:item_p];
-    } at:at ds:ds type:ATDefault];
+    AINodeBase *localResult = [AINetIndexUtils getAbsoluteMatching_ValidPs:content_ps findHeader:header except_ps:nil noRepeatArea_ps:nil getRefPortsBlock:getRefPortsBlock at:at ds:ds type:ATDefault];
     
     //3. 有则加强 并 返回;
     if (localResult) {

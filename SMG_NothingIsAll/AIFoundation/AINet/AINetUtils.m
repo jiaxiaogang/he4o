@@ -241,19 +241,10 @@
             AIKVPointer *item_p = ARR_INDEX(bigerContent_ps, i);
             if (debugMode) AddDebugCodeBlock_Key(@"a", @"15e");
             if (PitIsValue(item_p)) {
-                if (debugMode) AddDebugCodeBlock_Key(@"a", @"15f");
-                //1a. 如果是组码时，记录上index值到refPort中。
-                NSDictionary *findParams = nil;
-                if (PitIsGroupValue(biger_p)) {
-                    if (debugMode) AddDebugCodeBlock_Key(@"a", @"15g");
-                    AIGroupValueNode *groupValue = [SMGUtils searchNode:biger_p];
-                    findParams = @{@"x":ARR_INDEX(groupValue.xs, i), @"y":ARR_INDEX(groupValue.ys, i)};
-                    if (debugMode) AddDebugCodeBlock_Key(@"a", @"15h");
-                }
-                if (debugMode) AddDebugCodeBlock_Key(@"a", @"15i");
                 
+                if (debugMode) AddDebugCodeBlock_Key(@"a", @"15f");
                 //2. 为稀疏码时：硬盘网络时,取出refPorts -> 并二分法强度序列插入 -> 存XGWedis;
-                [self insertRefPorts_HdNode:biger_p passiveRefValue_p:item_p header:header difStrong:difStrong findParams:findParams];
+                [self insertRefPorts_Value4G:biger_p subIndex:i header:header difStrong:difStrong];
                 if (debugMode) AddDebugCodeBlock_Key(@"a", @"15p");
             } else {
                 //3. 为其它节点时：
@@ -323,27 +314,45 @@
         NSArray *sort_ps = [SMGUtils sortPointers:mvNode.content_ps];
         NSString *header = [NSString md5:[SMGUtils convertPointers2String:sort_ps]];
         //1. 硬盘网络时,取出refPorts -> 并二分法强度序列插入 -> 存XGWedis;
-        [self insertRefPorts_HdNode:mvNode.pointer passiveRefValue_p:value_p header:header difStrong:difStrong findParams:nil];
+        [self insertRefPorts_Value:mvNode.pointer passiveRefValue_p:value_p header:header difStrong:difStrong];
     }
 }
 
 /**
  *  MARK:--------------------硬盘节点_引用_微信息_插线 通用方法--------------------
  */
-+(void) insertRefPorts_HdNode:(AIKVPointer*)hdNode_p passiveRefValue_p:(AIPointer*)passiveRefValue_p header:(NSString*)header difStrong:(NSInteger)difStrong findParams:(NSDictionary*)findParams {
-    BOOL debugMode = [TIUtils debugMode:hdNode_p.dataSource];
++(void) insertRefPorts_Value:(AIKVPointer*)biger_p passiveRefValue_p:(AIPointer*)passiveRefValue_p header:(NSString*)header difStrong:(NSInteger)difStrong {
+    BOOL debugMode = [TIUtils debugMode:biger_p.dataSource];
     if (debugMode) AddDebugCodeBlock_Key(@"a", @"15j");
-    if (ISOK(hdNode_p, AIKVPointer.class) && ISOK(passiveRefValue_p, AIKVPointer.class)) {
+    if (ISOK(biger_p, AIKVPointer.class) && ISOK(passiveRefValue_p, AIKVPointer.class)) {
         if (debugMode) AddDebugCodeBlock_Key(@"a", @"15k");
         NSArray *fnRefPorts = ARRTOOK([SMGUtils searchObjectForFilePath:passiveRefValue_p.filePath fileName:kFNRefPorts time:cRTReference]);
         if (debugMode) AddDebugCodeBlock_Key(@"a", @"15l");
         NSMutableArray *refPorts = [[NSMutableArray alloc] initWithArray:fnRefPorts];
         if (debugMode) AddDebugCodeBlock_Key(@"a", @"15m");
-        [AINetUtils insertPointer_Hd:hdNode_p toPorts:refPorts findHeader:header difStrong:difStrong findParams:findParams];//稀疏码单码没有附加params
+        [AINetUtils insertPointer_Hd:biger_p toPorts:refPorts findHeader:header difStrong:difStrong findParams:nil];//稀疏码单码没有附加params
         if (debugMode) AddDebugCodeBlock_Key(@"a", @"15n");
         [SMGUtils insertObject:refPorts rootPath:passiveRefValue_p.filePath fileName:kFNRefPorts time:cRTReference saveDB:true];
     }
     if (debugMode) AddDebugCodeBlock_Key(@"a", @"15o");
+}
+
++(void) insertRefPorts_Value4G:(AIKVPointer*)biger_p subIndex:(NSInteger)subIndex header:(NSString*)header difStrong:(NSInteger)difStrong {
+    if (PitIsGroupValue(biger_p)) {
+        AIGroupValueNode *gNode = [SMGUtils searchNode:biger_p];
+        AIKVPointer *item_p = ARR_INDEX(gNode.content_ps, subIndex);
+        NSInteger x = NUMTOOK(ARR_INDEX(gNode.xs, subIndex)).integerValue;
+        NSInteger y = NUMTOOK(ARR_INDEX(gNode.ys, subIndex)).integerValue;
+        
+        NSArray *fnRefPorts = ARRTOOK([SMGUtils searchObjectForFilePath:item_p.filePath fileName:kFNRefPorts4G(x, y) time:cRTReference]);
+        NSMutableArray *refPorts = [[NSMutableArray alloc] initWithArray:fnRefPorts];
+        [AINetUtils insertPointer_Hd:biger_p toPorts:refPorts findHeader:header difStrong:difStrong findParams:@{@"x":@(x), @"y":@(y)}];//稀疏码单码没有附加params
+        [SMGUtils insertObject:refPorts rootPath:item_p.filePath fileName:kFNRefPorts4G(x, y) time:cRTReference saveDB:true];
+    } else {
+        AIAlgNodeBase *aNode = [SMGUtils searchNode:biger_p];
+        AIKVPointer *item_p = ARR_INDEX(aNode.content_ps, subIndex);
+        [self insertRefPorts_Value:biger_p passiveRefValue_p:item_p header:header difStrong:difStrong];
+    }
 }
 
 
@@ -637,6 +646,11 @@
 +(NSArray*) refPorts_All4Value:(AIKVPointer*)value_p {
     if (!value_p) return nil;
     return [SMGUtils searchObjectForFilePath:value_p.filePath fileName:kFNRefPorts time:cRTReference];
+}
+
++(NSArray*) refPorts_All4Value4G:(AIKVPointer*)value_p x:(NSInteger)x y:(NSInteger)y {
+    if (!value_p) return nil;
+    return [SMGUtils searchObjectForFilePath:value_p.filePath fileName:kFNRefPorts4G(x, y) time:cRTReference];
 }
 
 /**

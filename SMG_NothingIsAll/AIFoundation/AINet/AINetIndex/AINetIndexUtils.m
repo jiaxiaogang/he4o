@@ -23,12 +23,12 @@
  *      2021.04.27: 修复因ds为空时默认dsSeem为true逻辑错误,导致alg防重失败,永远返回nil的BUG;
  *      2021.09.22: 支持type防重;
  */
-+(id) getAbsoluteMatching_General:(NSArray*)content_ps sort_ps:(NSArray*)sort_ps except_ps:(NSArray*)except_ps getRefPortsBlock:(NSArray*(^)(AIKVPointer *item_p))getRefPortsBlock at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type{
++(id) getAbsoluteMatching_General:(NSArray*)content_ps sort_ps:(NSArray*)sort_ps except_ps:(NSArray*)except_ps getRefPortsBlock:(NSArray*(^)(AIKVPointer *item_p,NSInteger contentIndex))getRefPortsBlock at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type{
     return [self getAbsoluteMatching_ValidPs:content_ps sort_ps:sort_ps except_ps:except_ps noRepeatArea_ps:nil getRefPortsBlock:getRefPortsBlock at:at ds:ds type:type];
 }
 
 //该方法，默认用sort_ps来生成header。
-+(id) getAbsoluteMatching_ValidPs:(NSArray*)content_ps sort_ps:(NSArray*)sort_ps except_ps:(NSArray*)except_ps noRepeatArea_ps:(NSArray*)noRepeatArea_ps getRefPortsBlock:(NSArray*(^)(AIKVPointer *item_p))getRefPortsBlock at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type {
++(id) getAbsoluteMatching_ValidPs:(NSArray*)content_ps sort_ps:(NSArray*)sort_ps except_ps:(NSArray*)except_ps noRepeatArea_ps:(NSArray*)noRepeatArea_ps getRefPortsBlock:(NSArray*(^)(AIKVPointer *item_p,NSInteger contentIndex))getRefPortsBlock at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type {
     NSString *md5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:sort_ps]]);
     return [self getAbsoluteMatching_ValidPs:content_ps findHeader:md5 except_ps:except_ps noRepeatArea_ps:noRepeatArea_ps getRefPortsBlock:getRefPortsBlock at:at ds:ds type:type];
 }
@@ -39,16 +39,17 @@
  *  @version
  *      2025.03.19: 支持直接header生成好传过来（性能更好，并且照顾各种类型节点生成header的个性化）。
  */
-+(id) getAbsoluteMatching_ValidPs:(NSArray*)content_ps findHeader:(NSString*)findHeader except_ps:(NSArray*)except_ps noRepeatArea_ps:(NSArray*)noRepeatArea_ps getRefPortsBlock:(NSArray*(^)(AIKVPointer *item_p))getRefPortsBlock at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type {
++(id) getAbsoluteMatching_ValidPs:(NSArray*)content_ps findHeader:(NSString*)findHeader except_ps:(NSArray*)except_ps noRepeatArea_ps:(NSArray*)noRepeatArea_ps getRefPortsBlock:(NSArray*(^)(AIKVPointer *item_p,NSInteger contentIndex))getRefPortsBlock at:(NSString*)at ds:(NSString*)ds type:(AnalogyType)type {
     //1. 数据检查
     if (!getRefPortsBlock) return nil;
     content_ps = ARRTOOK(content_ps);
     except_ps = ARRTOOK(except_ps);
     
     //2. 依次找content_ps的被引用序列,并判断header匹配;
-    for (AIKVPointer *item_p in content_ps) {
+    for (NSInteger i = 0; i < content_ps.count; i++) {
+        AIKVPointer *item_p = ARR_INDEX(content_ps, i);
         //3. 取refPorts;
-        NSArray *refPorts = ARRTOOK(getRefPortsBlock(item_p));
+        NSArray *refPorts = ARRTOOK(getRefPortsBlock(item_p,i));
         
         //4. 判定refPort.header是否一致;
         for (AIPort *refPort in refPorts) {

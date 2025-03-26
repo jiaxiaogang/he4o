@@ -57,7 +57,7 @@
     NSString *md5 = STRTOOK([NSString md5:[SMGUtils convertPointers2String:sort_ps]]);
     
     //2. 全局防重;
-    AICMVNodeBase *result = [AINetIndexUtils getAbsoluteMatching_ValidPs:content_ps findHeader:md5 except_ps:nil noRepeatArea_ps:nil getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
+    AICMVNodeBase *result = [AINetIndexUtils getAbsoluteMatching_ValidPs:content_ps findHeader:md5 except_ps:nil noRepeatArea_ps:nil getRefPortsBlock:^NSArray *(AIKVPointer *item_p,NSInteger contentIndex) {
         return [AINetUtils refPorts_All4Value:item_p];
     } at:at ds:DefaultDataSource type:ATDefault];
     
@@ -99,7 +99,7 @@
     NSArray *content_ps = [AINetAbsFoUtils convertOrder2Alg_ps:order];
     
     //2. 从oldCansets中找本地有没匹配的返回;
-    return [AINetIndexUtils getAbsoluteMatching_ValidPs:content_ps sort_ps:content_ps except_ps:nil noRepeatArea_ps:oldCansets getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
+    return [AINetIndexUtils getAbsoluteMatching_ValidPs:content_ps sort_ps:content_ps except_ps:nil noRepeatArea_ps:oldCansets getRefPortsBlock:^NSArray *(AIKVPointer *item_p,NSInteger contentIndex) {
         AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
         return [AINetUtils refPorts_All4Alg:itemAlg];
     } at:DefaultAlgsType ds:DefaultDataSource type:ATDefault];
@@ -114,7 +114,7 @@
 +(AIFoNodeBase*) createConFo_NoRepeat:(NSArray*)order noRepeatArea_ps:(NSArray*)noRepeatArea_ps difStrong:(NSInteger)difStrong{
     //1. 防重_取本地全局绝对匹配;
     NSArray *content_ps = [AINetAbsFoUtils convertOrder2Alg_ps:order];
-    AIFoNodeBase *result = [AINetIndexUtils getAbsoluteMatching_ValidPs:content_ps sort_ps:content_ps except_ps:nil noRepeatArea_ps:noRepeatArea_ps getRefPortsBlock:^NSArray *(AIKVPointer *item_p) {
+    AIFoNodeBase *result = [AINetIndexUtils getAbsoluteMatching_ValidPs:content_ps sort_ps:content_ps except_ps:nil noRepeatArea_ps:noRepeatArea_ps getRefPortsBlock:^NSArray *(AIKVPointer *item_p,NSInteger contentIndex) {
         AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item_p];
         return [AINetUtils refPorts_All4Alg:itemAlg];
     } at:DefaultAlgsType ds:DefaultDataSource type:ATDefault];
