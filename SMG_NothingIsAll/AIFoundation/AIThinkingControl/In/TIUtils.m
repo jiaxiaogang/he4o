@@ -75,21 +75,17 @@
 /**
  *  MARK:--------------------组码识别--------------------
  */
-+(NSArray*) recognitionGroupValue:(AIKVPointer*)groupValue_p {
++(NSArray*) recognitionGroupValue:(AIKVPointer*)groupValue_p cache:(AIRecognitionCache*)cache {
     //1. 数据准备
-    BOOL debugMode = [groupValue_p.dataSource isEqual:@"bColors"];
+    BOOL debugMode = [TIUtils debugMode:groupValue_p.dataSource];
     if (debugMode) AddDebugCodeBlock_Key(@"a", @"3");
     NSMutableDictionary *gMatchDic = [[NSMutableDictionary alloc] init];
     AIGroupValueNode *protoGroupValue = [SMGUtils searchNode:groupValue_p];
-    NSMutableDictionary *recognitionValueCache = [[NSMutableDictionary alloc] init];
-    NSMutableDictionary *valueRefPortsCache = [[NSMutableDictionary alloc] init];
     AIGroupValueNextVModel *nextVModel = [[AIGroupValueNextVModel alloc] init];
     
     //2. 循环分别识别：组码里的单码。
     NSArray *lastValidG_PIds = [[NSArray alloc] init];//把每个i下的交集存下来。
     if (debugMode) AddDebugCodeBlock_Key(@"a", @"4");
-    
-    //TODOTOMORROW20250326: 这里应该能优化，40个组码，每码9次，就是360次。把v识别结果缓存到更外围。
     
     for (NSInteger i = 0; i < protoGroupValue.count; i++) {
         if (debugMode) AddDebugCodeBlock_Key(@"a", @"4b");
@@ -100,11 +96,9 @@
         //============= 把单码识别结果缓存下来 =============
         if (debugMode) AddDebugCodeBlock_Key(@"a", @"5");
         //3. 取相近度序列 (按相近程度排序);
-        NSArray *vMatchModels = [recognitionValueCache objectForKey:protoValue_p];
-        if (!vMatchModels) {
-            vMatchModels = ARRTOOK([self recognitionValue:protoValue_p rate:0.02 minLimit:3]);
-            [recognitionValueCache setObject:vMatchModels forKey:protoValue_p];
-        }
+        NSArray *vMatchModels = [cache getCache:protoValue_p cacheBlock:^id{
+            return ARRTOOK([self recognitionValue:protoValue_p rate:0.4 minLimit:3]);
+        }];
         
         //4. 过滤器：v识别结果有效判断。
         if (i > 0) {
@@ -113,7 +107,7 @@
             vMatchModels = [SMGUtils filterArr:vMatchModels checkValid:^BOOL(AIMatchModel *item) {
                 return [validValue_ps containsObject:item.match_p];
             }];
-            NSLog(@"1. 第%ld帧V识别到结果数：%ld -> 过滤后：%ld",i,log1,vMatchModels.count);
+            //NSLog(@"1. 第%ld帧V识别到结果数：%ld -> 过滤后：%ld",i,log1,vMatchModels.count);
         }
         
         NSMutableDictionary *except_ps = [[NSMutableDictionary alloc] init];
@@ -127,11 +121,7 @@
         if (debugMode) AddDebugCodeBlock_Key(@"a", @"6b");
         for (AIMatchModel *vModel in vMatchModels) {
             
-            NSArray *refPorts = [valueRefPortsCache objectForKey:vModel.match_p];
-            if (!refPorts) {
-                refPorts = ARRTOOK([AINetUtils refPorts_All4Value:vModel.match_p]);
-                [valueRefPortsCache setObject:refPorts forKey:vModel.match_p];
-            }
+            NSArray *refPorts = ARRTOOK([AINetUtils refPorts_All4Value:vModel.match_p]);
             if (debugMode) AddDebugCodeBlock_Key(@"a", @"7");
 
             //5. 每个refPort转为model并计匹配度和匹配数;
@@ -237,10 +227,10 @@
 /**
  *  MARK:--------------------特征识别--------------------
  */
-+(NSArray*) recognitionFeature:(AIKVPointer*)feature_p {
++(NSArray*) recognitionFeature:(AIKVPointer*)feature_p cache:(AIRecognitionCache*)cache {
     //1. 数据准备
     NSLog(@"\n=========== 特征识别ProtoT%ld ===========",feature_p.pointerId);
-    BOOL debugMode = [feature_p.dataSource isEqual:@"bColors"];
+    BOOL debugMode = [TIUtils debugMode:feature_p.dataSource];
     if (debugMode) AddDebugCodeBlock_Key(@"a", @"1");
     AIFeatureNode *protoFeature = [SMGUtils searchNode:feature_p];
     AIFeatureAllBestGVModel *gvBestModel = [[AIFeatureAllBestGVModel alloc] init];
@@ -252,7 +242,9 @@
         NSInteger protoLevel = NUMTOOK(ARR_INDEX(protoFeature.levels, i)).integerValue;
         
         //4. 组码识别。
-        NSArray *gMatchModels = [self recognitionGroupValue:protoGroupValue_p];
+        NSArray *gMatchModels = [cache getCache:protoGroupValue_p cacheBlock:^id{
+            return ARRTOOK([self recognitionGroupValue:protoGroupValue_p cache:cache]);
+        }];
         
         //6. 对所有gv识别结果的，所有refPorts，依次判断位置符合度。
         for (AIMatchModel *gModel in gMatchModels) {
@@ -266,8 +258,8 @@
                 
                 //13. 取出已经收集到的assGVModels,判断下一个refPort收集进去的话,是否符合位置;
                 NSArray *assGVItems = [gvBestModel getAssGVModelsForKey:assKey];
-                BOOL debugMode = false;//[feature_p.dataSource isEqual:@"hColors"] && [refPort.target_p isEqual:protoFeature.p] && assLevel == protoLevel && [gModel.match_p isEqual:protoGroupValue_p];
-                CGFloat matchDegree = [ThinkingUtils checkAssToMatchDegree:protoFeature protoIndex:i assGVModels:assGVItems checkRefPort:refPort debugMode:debugMode];
+                //BOOL debugMode = [feature_p.dataSource isEqual:@"hColors"] && [refPort.target_p isEqual:protoFeature.p] && assLevel == protoLevel && [gModel.match_p isEqual:protoGroupValue_p];
+                CGFloat matchDegree = [ThinkingUtils checkAssToMatchDegree:protoFeature protoIndex:i assGVModels:assGVItems checkRefPort:refPort debugMode:false];
                 
                 //14. 判断新一条refPort是否更好，更好的话存下来（存refPort，assKey，gModel.matchValue，matchDegree）。
                 [gvBestModel updateStep1:assKey refPort:refPort gMatchValue:gModel.matchValue gMatchDegree:matchDegree matchOfProtoIndex:i];
@@ -309,8 +301,7 @@
     //44. 过滤器4、全含判断: 特征应该不需要全含，因为很难看到局部都相似的两个图像。
     resultModels = [SMGUtils filterArr:resultModels checkValid:^BOOL(AIMatchModel *item) {
         AIFeatureNode *tNode = [SMGUtils searchNode:item.match_p];
-        if (tNode.count * 0.7 > item.matchCount) return false;//匹配数必须达到70%才有效。
-        return true;
+        return item.matchCount > tNode.count * 0.2;//匹配数必须达到70%才有效。
     }];
     
     //51. 更新: ref强度 & 相似度 & 抽具象 & 映射;
@@ -394,6 +385,7 @@
  */
 +(void) recognitionAlgStep1:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel {
     //0. 数据准备;
+    AIRecognitionCache *cache = [[AIRecognitionCache alloc] init];
     AIAlgNodeBase *protoAlg = inModel.protoAlg;
     if (!ISOK(protoAlg, AIAlgNodeBase.class)) return;
     except_ps = ARRTOOK(except_ps);
@@ -408,9 +400,13 @@
         //3. 取相近度序列 (按相近程度排序);
         NSArray *subMatchModels = nil;
         if (PitIsValue(item_p)) {
-            subMatchModels = [self recognitionValue:item_p rate:0.8 minLimit:20];//v1单码特征
+            subMatchModels = [cache getCache:item_p cacheBlock:^id{
+                return [self recognitionValue:item_p rate:0.8 minLimit:20];//v1单码特征
+            }];
         } else {
-            subMatchModels = [self recognitionFeature:item_p];//v2多码特征
+            subMatchModels = [cache getCache:item_p cacheBlock:^id{
+                return ARRTOOK([self recognitionFeature:item_p cache:cache]);//v2多码特征;
+            }];
         }
         
         //4. 每个near_p做两件事:
@@ -503,6 +499,8 @@
         AIAlgNodeBase *alg = [SMGUtils searchNode:model.matchAlg];
         NSLog(@"概念识别到：A%ld 匹配度：%.2f input:%@ result:%@",alg.pId,model.matchValue,protoAlg.logDesc,alg.logDesc);
     }
+    NSLog(@"缓存hit:%ld miss:%ld",cache.hitNum,cache.missNum);
+    NSLog(@"");
 }
 
 /**
@@ -1068,6 +1066,10 @@
         }
     }
     return nil;
+}
+
++(BOOL) debugMode:(NSString*)ds {
+    return false;//[@"bColors" isEqual:ds];
 }
 
 @end

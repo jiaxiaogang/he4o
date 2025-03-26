@@ -47,14 +47,13 @@
     //2. 每个items都竞争下best一条。
     for (NSString *assKey in self.protoDic.allKeys) {
         NSArray *items = ARRTOOK([self.protoDic objectForKey:assKey]);
-        items = [SMGUtils sortBig2Small:items compareBlock1:^double(AIFeatureNextGVRankItem *obj) {
-            return obj.gMatchDegree;
-        } compareBlock2:^double(AIFeatureNextGVRankItem *obj) {
-            return obj.gMatchValue;
+        AIFeatureNextGVRankItem *bestItem =[SMGUtils filterBestObj:items scoreBlock:^CGFloat(AIFeatureNextGVRankItem *item) {
+            return item.gMatchDegree * item.gMatchValue;
         }];
+        if (!bestItem) continue;
         
         //3. 每个items只保留最best一条。
-        [self.rankDic setObject:ARR_INDEX(items, 0) forKey:assKey];
+        [self.rankDic setObject:bestItem forKey:assKey];
     }
     
     //4. 清空protoDic;

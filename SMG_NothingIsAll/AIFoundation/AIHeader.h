@@ -60,6 +60,7 @@
 #import "AIFeatureNextGVRankItem.h"
 #import "AIFeatureAllBestGVModel.h"
 #import "AIGroupValueNextVModel.h"
+#import "AIRecognitionCache.h"
 
 //短时记忆
 #import "TOAlgModel.h"

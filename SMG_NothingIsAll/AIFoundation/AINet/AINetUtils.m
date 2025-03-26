@@ -231,7 +231,7 @@
  *  @param header 直接把header生成好传过来。
  */
 +(void) insertRefPorts_General:(AIKVPointer*)biger_p content_ps:(NSArray*)bigerContent_ps difStrong:(NSInteger)difStrong header:(NSString*)header {
-    BOOL debugMode = [biger_p.dataSource isEqualToString:@"bColors"];
+    BOOL debugMode = [TIUtils debugMode:biger_p.dataSource];
     if (debugMode) AddDebugCodeBlock_Key(@"a", @"15b");
     if (biger_p && ARRISOK(bigerContent_ps)) {
         if (debugMode) AddDebugCodeBlock_Key(@"a", @"15c");
@@ -331,7 +331,7 @@
  *  MARK:--------------------硬盘节点_引用_微信息_插线 通用方法--------------------
  */
 +(void) insertRefPorts_HdNode:(AIKVPointer*)hdNode_p passiveRefValue_p:(AIPointer*)passiveRefValue_p header:(NSString*)header difStrong:(NSInteger)difStrong findParams:(NSDictionary*)findParams {
-    BOOL debugMode = [hdNode_p.dataSource isEqualToString:@"bColors"];
+    BOOL debugMode = [TIUtils debugMode:hdNode_p.dataSource];
     if (debugMode) AddDebugCodeBlock_Key(@"a", @"15j");
     if (ISOK(hdNode_p, AIKVPointer.class) && ISOK(passiveRefValue_p, AIKVPointer.class)) {
         if (debugMode) AddDebugCodeBlock_Key(@"a", @"15k");
@@ -362,7 +362,7 @@
     [self insertPointer_Hd:pointer toPorts:ports findHeader:findHeader difStrong:difStrong findParams:findParams];
 }
 +(void) insertPointer_Hd:(AIKVPointer*)pointer toPorts:(NSMutableArray*)ports findHeader:(NSString*)findHeader difStrong:(NSInteger)difStrong findParams:(NSDictionary*)findParams {
-    BOOL debugMode = [pointer.dataSource isEqualToString:@"bColors"];
+    BOOL debugMode = [TIUtils debugMode:pointer.dataSource];
     if (debugMode) AddDebugCodeBlock_Key(@"a", @"15m1");
     if (ISOK(pointer, AIPointer.class) && ISOK(ports, NSMutableArray.class)) {
         
@@ -408,8 +408,7 @@
 
 //找出port (并从ports中移除 & 无则新建);
 +(AIPort*) findPort:(AIKVPointer*)pointer fromPorts:(NSMutableArray*)fromPorts findHeader:(NSString*)findHeader findParams:(NSDictionary*)findParams {
-    
-    BOOL debugMode = [pointer.dataSource isEqualToString:@"bColors"];
+    BOOL debugMode = [TIUtils debugMode:pointer.dataSource];
     if (debugMode) AddDebugCodeBlock_Key(@"a", @"15m2");
     if (ISOK(pointer, AIPointer.class) && ISOK(fromPorts, NSMutableArray.class)) {
         if (debugMode) AddDebugCodeBlock_Key(@"a", @"15m3");
