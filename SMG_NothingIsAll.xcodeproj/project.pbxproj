@@ -208,6 +208,7 @@
 		08F738061F7C714F005EAD56 /* AIPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F738011F7C714F005EAD56 /* AIPointer.m */; };
 		08F738071F7C714F005EAD56 /* AISqlPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 08F738031F7C714F005EAD56 /* AISqlPointer.m */; };
 		08FBE10E22D56F360088EF1A /* NVModuleUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FBE10D22D56F360088EF1A /* NVModuleUtil.m */; };
+		08FBE73B2D94DA5900296487 /* AINetGroupValueIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FBE73A2D94DA5900296487 /* AINetGroupValueIndex.m */; };
 		2753D7CF7BAEDFEACAF9264A /* libPods-SMG_NothingIsAll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */; };
 		4591E02A247F11B600484B51 /* TOAlgModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 4591E029247F11B600484B51 /* TOAlgModel.m */; };
 		8822852020F58BDA009884DC /* AINetDirectionReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 8822851F20F58BDA009884DC /* AINetDirectionReference.m */; };
@@ -634,6 +635,8 @@
 		08FAEC95215EED48004DCEAD /* NVHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVHeader.h; sourceTree = "<group>"; };
 		08FBE10C22D56F360088EF1A /* NVModuleUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVModuleUtil.h; sourceTree = "<group>"; };
 		08FBE10D22D56F360088EF1A /* NVModuleUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NVModuleUtil.m; sourceTree = "<group>"; };
+		08FBE7392D94DA5900296487 /* AINetGroupValueIndex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AINetGroupValueIndex.h; sourceTree = "<group>"; };
+		08FBE73A2D94DA5900296487 /* AINetGroupValueIndex.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AINetGroupValueIndex.m; sourceTree = "<group>"; };
 		4591E028247F11B600484B51 /* TOAlgModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TOAlgModel.h; sourceTree = "<group>"; };
 		4591E029247F11B600484B51 /* TOAlgModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TOAlgModel.m; sourceTree = "<group>"; };
 		4591E02E247F1E1A00484B51 /* ISubModelsDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ISubModelsDelegate.h; sourceTree = "<group>"; };
@@ -1834,6 +1837,8 @@
 			isa = PBXGroup;
 			children = (
 				88988522208979E6001D1ADC /* AINetIndex.h */,
+				08FBE7392D94DA5900296487 /* AINetGroupValueIndex.h */,
+				08FBE73A2D94DA5900296487 /* AINetGroupValueIndex.m */,
 				88988523208979E6001D1ADC /* AINetIndex.m */,
 				8822851E20F58BDA009884DC /* AINetDirectionReference.h */,
 				8822851F20F58BDA009884DC /* AINetDirectionReference.m */,
@@ -2171,6 +2176,7 @@
 				0858C5D12194F8B000951BA5 /* NSArray+MASAdditions.m in Sources */,
 				087705B72753747300BA4EFB /* TCSolution.m in Sources */,
 				0850859B2A25B26F00ED63F2 /* TCRecognitionUtil.m in Sources */,
+				08FBE73B2D94DA5900296487 /* AINetGroupValueIndex.m in Sources */,
 				0858C5CC2194F8B000951BA5 /* MASConstraint.m in Sources */,
 				0889257F22B0702A00A0DBDD /* NVModuleView.m in Sources */,
 				0858C5CE2194F8B000951BA5 /* MASLayoutConstraint.m in Sources */,

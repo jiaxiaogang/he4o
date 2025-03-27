@@ -77,6 +77,7 @@
 //网络
 #import "AINetUtils.h"
 #import "AINetIndex.h"
+#import "AINetGroupValueIndex.h"
 #import "AINetIndexUtils.h"
 #import "AIPort.h"
 #import "AITransferPort.h"
