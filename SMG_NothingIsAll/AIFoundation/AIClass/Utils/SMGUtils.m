@@ -1155,4 +1155,14 @@
     }
 }
 
++(double) sumOfArr:(NSArray *)arr convertBlock:(double(^)(id obj))convertBlock{
+    //1. 数据准备;
+    arr = ARRTOOK(arr);
+    double sumResult = 0;
+    
+    //2. 转换
+    for (id obj in arr) sumResult += convertBlock(obj);
+    return sumResult;
+}
+
 @end
