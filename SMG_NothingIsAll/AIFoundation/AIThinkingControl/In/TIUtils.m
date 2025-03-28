@@ -191,6 +191,43 @@
     return gMatchModels;
 }
 
+/**
+ *  MARK:--------------------组码识别--------------------
+ */
++(NSArray*) recognitionGroupValueV2:(AIKVPointer*)groupValue_p {
+    //1. 数据准备
+    BOOL debugMode = [TIUtils debugMode:groupValue_p.dataSource];
+    AIGroupValueNode *protoGroupValue = [SMGUtils searchNode:groupValue_p];
+    if (debugMode) AddDebugCodeBlock_Key(@"a", @"2");
+    
+    //TODOTOMORROW20250328: 组码索引序列改成根据平均值有序，然后把它的平均值存在一个单独的data字典中，用来计算相近度。
+    NSArray *gv_ps = [AINetGroupValueIndex getGVIndex:protoGroupValue];
+    if (debugMode) AddDebugCodeBlock_Key(@"a", @"3");
+    
+    NSArray *gMatchModels = [SMGUtils convertArr:gv_ps convertBlock:^id(AIKVPointer *obj) {
+        AIMatchModel *gModel = [[AIMatchModel alloc] init];
+        gModel.match_p = obj;
+        //gModel.matchValue *= vModel.matchValue;//取平均值 与 protoG的相近度。
+        return gModel;
+    }];
+    if (debugMode) AddDebugCodeBlock_Key(@"a", @"4");
+    
+    //21. 更新: ref强度 & 相似度 & 抽具象;
+    for (AIMatchModel *matchModel in gMatchModels) {
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"14");
+        AIGroupValueNode *assNode = [SMGUtils searchNode:matchModel.match_p];
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"15");
+        [AINetUtils insertRefPorts_General:assNode.p content_ps:assNode.content_ps difStrong:1 header:assNode.header];
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"16");
+        [protoGroupValue updateMatchValue:assNode matchValue:matchModel.matchValue];
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"17");
+        [AINetUtils relateGeneralAbs:assNode absConPorts:assNode.conPorts conNodes:@[protoGroupValue] isNew:false difStrong:1];
+        if (debugMode) AddDebugCodeBlock_Key(@"a", @"18");
+    }
+    if (debugMode) AddDebugCodeBlock_Key(@"a", @"19");
+    return gMatchModels;
+}
+
 
 //MARK:===============================================================
 //MARK:                     < 特征识别 >
@@ -215,7 +252,7 @@
         
         //4. 组码识别。
         NSArray *gMatchModels = [AIRecognitionCache getCache:protoGroupValue_p cacheBlock:^id{
-            return ARRTOOK([self recognitionGroupValue:protoGroupValue_p cache:cache]);
+            return ARRTOOK([self recognitionGroupValueV2:protoGroupValue_p]);
         }];
         
         //6. 对所有gv识别结果的，所有refPorts，依次判断位置符合度。

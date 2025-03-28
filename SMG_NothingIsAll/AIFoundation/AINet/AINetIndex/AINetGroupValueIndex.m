@@ -35,8 +35,16 @@
  *  MARK:--------------------根据gNode取索引序列--------------------
  */
 +(NSArray*) getGVIndex:(AIGroupValueNode*)gNode {
+    //1. 生成gv索引指针地址。
     AIKVPointer *gvIndex_p = [self createGVIndex_p:gNode];
-    return ARRTOOK([SMGUtils searchGVIndexForPointer:gvIndex_p]);
+    
+    //2. 从索引目录下取出索引序列。
+    NSArray *pIds = ARRTOOK([SMGUtils searchGVIndexForPointer:gvIndex_p]);
+    
+    //3. 转成组码地址数组返回。
+    return [SMGUtils convertArr:pIds convertBlock:^id(NSNumber *obj) {
+        return [SMGUtils createPointerForGroupValue:obj.integerValue at:gNode.p.algsType dataSource:gNode.p.dataSource isOut:gNode.p.isOut];
+    }];
 }
 
 //MARK:===============================================================
