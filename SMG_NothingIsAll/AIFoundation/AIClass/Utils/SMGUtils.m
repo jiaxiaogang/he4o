@@ -81,6 +81,9 @@
     NSInteger pointerId = 0;
     return [AIKVPointer newWithPointerId:pointerId folderName:kPN_INDEX algsType:DefaultAlgsType dataSource:DefaultDataSource isOut:false type:ATDefault];
 }
++(AIKVPointer*) createPointerForGroupValueIndex:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut {
+    return [AIKVPointer newWithPointerId:0 folderName:kPN_GV_INDEX algsType:at dataSource:ds isOut:isOut type:ATDefault];
+}
 
 +(AIKVPointer*) createPointerForData:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut{
     NSInteger pointerId = 0;
@@ -89,7 +92,11 @@
 
 +(AIKVPointer*) createPointerForGroupValue:(NSString*)at dataSource:(NSString*)dataSource isOut:(BOOL)isOut {
     NSInteger pointerId = [SMGUtils createPointerId:DefaultAlgsType dataSource:dataSource];
-    return [AIKVPointer newWithPointerId:pointerId folderName:kPN_GROUPVALUE_NODE algsType:at dataSource:dataSource isOut:isOut type:ATDefault];
+    return [self createPointerForGroupValue:pointerId at:at dataSource:dataSource isOut:isOut];
+}
+
++(AIKVPointer*) createPointerForGroupValue:(NSInteger)pId at:(NSString*)at dataSource:(NSString*)dataSource isOut:(BOOL)isOut {
+    return [AIKVPointer newWithPointerId:pId folderName:kPN_GROUPVALUE_NODE algsType:at dataSource:dataSource isOut:isOut type:ATDefault];
 }
 
 +(AIKVPointer*) createPointerForFeature:(NSString*)at dataSource:(NSString*)dataSource isOut:(BOOL)isOut {
@@ -373,10 +380,6 @@
 //    return nil;
 //}
 
-+(id) searchObjectForPointer:(AIPointer*)pointer fileName:(NSString*)fileName{
-    return [self searchObjectForPointer:pointer fileName:fileName time:0];
-}
-
 +(id) searchObjectForPointer:(AIPointer*)pointer fileName:(NSString*)fileName time:(double)time{
     if (ISOK(pointer, AIPointer.class)) {
         return [self searchObjectForFilePath:pointer.filePath fileName:fileName time:time];
@@ -497,6 +500,17 @@
     if (ISOK(node, AINodeBase.class)) {
         [self insertObject:node pointer:node.pointer fileName:kFNNode time:cRTNode(node.pointer)];
     }
+}
+
+/**
+ *  MARK:--------------------组码索引序列--------------------
+ */
++(id) searchGVIndexForPointer:(AIPointer*)gvIndex_p {
+    return [SMGUtils searchObjectForPointer:gvIndex_p fileName:kFN_GV_Index time:cRT_GV_Index];
+}
+
++(void) insertGVIndex:(NSArray*)gvIndexObj gvIndex_p:(AIPointer*)gvIndex_p {
+    [self insertObject:gvIndexObj pointer:gvIndex_p fileName:kFN_GV_Index time:cRT_GV_Index];
 }
 
 @end

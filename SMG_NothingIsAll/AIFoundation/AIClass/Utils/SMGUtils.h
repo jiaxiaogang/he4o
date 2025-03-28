@@ -39,12 +39,13 @@
 
 //索引指针
 +(AIKVPointer*) createPointerForIndex;
++(AIKVPointer*) createPointerForGroupValueIndex:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut;
 
 //微信息值指针
 +(AIKVPointer*) createPointerForData:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut;
 
-
 +(AIKVPointer*) createPointerForGroupValue:(NSString*)at dataSource:(NSString*)dataSource isOut:(BOOL)isOut;
++(AIKVPointer*) createPointerForGroupValue:(NSInteger)pId at:(NSString*)at dataSource:(NSString*)dataSource isOut:(BOOL)isOut;
 +(AIKVPointer*) createPointerForFeature:(NSString*)at dataSource:(NSString*)dataSource isOut:(BOOL)isOut;
 /**
  *  MARK:--------------------概念节点指针--------------------
@@ -104,7 +105,6 @@
 /**
  *  MARK:--------------------searchObj--------------------
  */
-+(id) searchObjectForPointer:(AIPointer*)pointer fileName:(NSString*)fileName;
 +(id) searchObjectForPointer:(AIPointer*)pointer fileName:(NSString*)fileName time:(double)time;//找到后,缓存到redis,time秒;
 +(id) searchObjectForFilePath:(NSString*)filePath fileName:(NSString*)fileName time:(double)time;
 +(id) searchFoByPointerId:(NSInteger)pointerId;
@@ -124,6 +124,12 @@
 +(id) searchNode:(AIKVPointer*)pointer;
 +(NSArray*) searchNodes:(NSArray*)ps;
 +(void) insertNode:(AINodeBase*)node;
+
+/**
+ *  MARK:--------------------组码索引序列--------------------
+ */
++(id) searchGVIndexForPointer:(AIPointer*)gvIndex_p;
++(void) insertGVIndex:(NSArray*)gvIndexObj gvIndex_p:(AIPointer*)gvIndex_p;
 
 @end
 

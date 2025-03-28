@@ -1837,9 +1837,9 @@
 			isa = PBXGroup;
 			children = (
 				88988522208979E6001D1ADC /* AINetIndex.h */,
+				88988523208979E6001D1ADC /* AINetIndex.m */,
 				08FBE7392D94DA5900296487 /* AINetGroupValueIndex.h */,
 				08FBE73A2D94DA5900296487 /* AINetGroupValueIndex.m */,
-				88988523208979E6001D1ADC /* AINetIndex.m */,
 				8822851E20F58BDA009884DC /* AINetDirectionReference.h */,
 				8822851F20F58BDA009884DC /* AINetDirectionReference.m */,
 				0810E50D236A637500B33226 /* AINetIndexUtils.h */,

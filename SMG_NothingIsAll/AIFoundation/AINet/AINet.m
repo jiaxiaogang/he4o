@@ -161,7 +161,7 @@ static AINet *_instance;
                 [groupModels addObject:[InputGroupValueModel new:subDots groupValue:groupValue.p level:groupLevel x:groupRow y:groupColumn]];
                 
                 //7. 建组码索引。
-                [AINetGroupValueIndex createGVIndex:groupValue];
+                [AINetGroupValueIndex updateGVIndex:groupValue];
             }
         }
     }

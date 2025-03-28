@@ -10,12 +10,44 @@
 
 @implementation AINetGroupValueIndex
 
+//MARK:===============================================================
+//MARK:                     < 主方法：存取 >
+//MARK:===============================================================
+
 /**
- *  MARK:--------------------为组节点建索引（参考34081-方案1）--------------------
+ *  MARK:--------------------更新一条gNode到索引序列--------------------
  */
-+(void) createGVIndex:(AIGroupValueNode*)gNode {
++(void) updateGVIndex:(AIGroupValueNode*)gNode {
+    //1. 生成gv索引指针地址。
+    AIKVPointer *gvIndex_p = [self createGVIndex_p:gNode];
+    
+    //2. 从索引目录下取出索引序列。
+    NSMutableArray *oldIndexs = [[NSMutableArray alloc] initWithArray:[SMGUtils searchGVIndexForPointer:gvIndex_p]];
+    
+    //3. 将新的gNode.p加入其中。
+    if (![oldIndexs containsObject:@(gNode.pId)]) {
+        [oldIndexs addObject:@(gNode.pId)];
+        [SMGUtils insertGVIndex:oldIndexs gvIndex_p:gvIndex_p];
+    }
+}
+
+/**
+ *  MARK:--------------------根据gNode取索引序列--------------------
+ */
++(NSArray*) getGVIndex:(AIGroupValueNode*)gNode {
+    AIKVPointer *gvIndex_p = [self createGVIndex_p:gNode];
+    return ARRTOOK([SMGUtils searchGVIndexForPointer:gvIndex_p]);
+}
+
+//MARK:===============================================================
+//MARK:                     < PrivateMethod >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------为组节点建索引 并 返回索引指针（参考34081-方案1）--------------------
+ */
++(AIKVPointer*) createGVIndex_p:(AIGroupValueNode*)gNode {
     //1. 单码取值。
-    if (gNode.count == 0) return;
     NSArray *contentNums = [SMGUtils convertArr:gNode.content_ps convertBlock:^id(AIKVPointer *obj) {
         return [AINetIndex getData:obj];
     }];
@@ -45,7 +77,7 @@
             float nextRankNum = NUMTOOK(ARR_INDEX(contentNums, nextRankIndex)).floatValue;
             
             //14. 把精度处理成0-9。
-            [sortIndexs2 addObject:@(nextRankNum - curRankNum)];
+            [sortIndexs2 addObject:@([self convertZeroOneToZeroNine:nextRankNum - curRankNum])];
         }
     }
     
@@ -53,26 +85,21 @@
     float sumNum = [SMGUtils sumOfArr:contentNums convertBlock:^double(NSNumber *obj) {
         return obj.floatValue;
     }];
-    float pinjunNum = sumNum / contentNums.count;
+    float pinJunNum = contentNums.count == 0 ? 0 : sumNum / contentNums.count;
  
     //22. 把精度处理成0-9。
-    [sortIndexs2 addObject:@(pinjunNum)];
+    [sortIndexs2 addObject:@([self convertZeroOneToZeroNine:pinJunNum])];
     
-    
-    //TODOTOMORROW20250327: 参考step1在AINetIndex的单码建索引，这里对组码也要建下索引。
-    
-    //31. 从索引目录下取出索引序列。
-    
-    //32. 将新的gNode.p加入其中。
-    
+    //23. 把sortIndexs2转成以/分隔的路径字符串，并生成为gvIndex指针地址。
+    NSString *sortIndexsStr = ARRTOSTR(sortIndexs2, @"/", @"");
+    NSString *at = STRFORMAT(@"%@%@",gNode.p.algsType,sortIndexsStr);
+    AIKVPointer *gvIndex_p = [SMGUtils createPointerForGroupValueIndex:at ds:gNode.p.dataSource isOut:gNode.p.isOut];
+    return gvIndex_p;
 }
 
-/**
- *  MARK:--------------------根据gNode取索引序列--------------------
- */
--(NSArray*) getGVIndex:(AIGroupValueNode*)gNode {
-    //1. 根据
-    return nil;
+//把0-1转成0-9
++(int) convertZeroOneToZeroNine:(CGFloat)zeroOne {
+    return zeroOne == 1 ? 9 : (int)(zeroOne * 10);
 }
 
 @end

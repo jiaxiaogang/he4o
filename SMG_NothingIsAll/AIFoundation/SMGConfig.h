@@ -18,6 +18,7 @@
  *      2022.10.09: 废弃isMem内存缓存时间的配置 (因为XGRedis早就把它的功能替了,参考27124-todo2);
  */
 #define cRTIndex 315360000  //常驻内存(十年)
+#define cRT_GV_Index 315360000  //常驻内存(十年)
 #define cRTData 315360000   //常驻内存(十年)
 #define cRTReference 9999   //微信息索引序列时间;
 #define cRTNode(pointer) PitIsAlg(pointer) ? cRTAlgNode : cRTOtherNode //节点缓存时间
