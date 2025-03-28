@@ -36,13 +36,15 @@
     if (aleardayHav) return;
     
     //4. 将新的gNode.p加入其中（顺序为平均值从小到大排序）。
+    id newObj = @[@(gNode.pId),@(pinJunNum)];
     for (NSInteger i = 0; i < oldIndexs.count; i++) {
         NSArray *itemGVIndex = ARR_INDEX(oldIndexs, i);
         CGFloat oldPinJunNum = NUMTOOK(itemGVIndex[1]).floatValue;
         if (oldPinJunNum > pinJunNum) {
-            [oldIndexs insertObject:@[@(gNode.pId),@(pinJunNum)] atIndex:i];
+            [oldIndexs insertObject:newObj atIndex:i];
         }
     }
+    if (oldIndexs.count == 0) [oldIndexs addObject:newObj];
     [SMGUtils insertGVIndex:oldIndexs gvIndex_p:gvIndex_p];
 }
 
@@ -53,7 +55,6 @@
     //1. 生成gv索引指针地址。
     MapModel *gvIndex = [self createGVIndex_p:gNode];
     AIKVPointer *gvIndex_p = gvIndex.v1;
-    CGFloat pinJunNum = NUMTOOK(gvIndex.v2).floatValue;
     
     //2. 从索引目录下取出索引序列。
     NSArray *allGVIndex = ARRTOOK([SMGUtils searchGVIndexForPointer:gvIndex_p]);

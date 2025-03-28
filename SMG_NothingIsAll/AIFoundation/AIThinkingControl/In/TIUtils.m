@@ -242,6 +242,7 @@
         AIMatchModel *gModel = [[AIMatchModel alloc] init];
         gModel.match_p = itemGVIndex.v1;
         gModel.matchValue = matchValue;
+        gModel.sumMatchValue += matchValue;
         return gModel;
     }];
     if (debugMode) AddDebugCodeBlock_Key(@"a", @"4");
