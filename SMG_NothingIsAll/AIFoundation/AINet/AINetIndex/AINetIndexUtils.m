@@ -163,7 +163,7 @@
  *  MARK:--------------------取两个V差值--------------------
  *  @param vInfo notnull 为性能好,提前取好valueInfo传过来复用;
  */
-+(CGFloat) deltaWithValueA:(double)valueA valueB:(double)valueB at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut vInfo:(AIValueInfo*)vInfo {
++(CGFloat) deltaWithValueA:(double)valueA valueB:(double)valueB at:(NSString*)at ds:(NSString*)ds vInfo:(AIValueInfo*)vInfo {
     //1. 计算两个V差值;
     double delta = fabs(valueA - valueB);
     

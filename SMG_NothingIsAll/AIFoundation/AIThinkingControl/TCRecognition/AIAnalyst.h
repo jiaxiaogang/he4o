@@ -31,4 +31,9 @@
 +(CGFloat) compareCansetValue:(AIKVPointer*)cansetV_p protoValue:(AIKVPointer*)protoV_p vInfo:(AIValueInfo*)vInfo fromDataDic:(NSDictionary*)dataDic;
 +(CGFloat) compareCansetValue:(double)cansetV protoV:(double)protoV at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut vInfo:(AIValueInfo*)vInfo;
 
+/**
+ *  MARK:--------------------比对组码相近度--------------------
+ */
++(CGFloat) compareGV:(double)assV protoV:(double)protoV at:(NSString*)at ds:(NSString*)ds minData:(float)minData maxData:(float)maxData;
+
 @end

@@ -57,6 +57,6 @@
 /**
  *  MARK:--------------------取两个V差值--------------------
  */
-+(CGFloat) deltaWithValueA:(double)valueA valueB:(double)valueB at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut vInfo:(AIValueInfo*)vInfo;
++(CGFloat) deltaWithValueA:(double)valueA valueB:(double)valueB at:(NSString*)at ds:(NSString*)ds vInfo:(AIValueInfo*)vInfo;
 
 @end

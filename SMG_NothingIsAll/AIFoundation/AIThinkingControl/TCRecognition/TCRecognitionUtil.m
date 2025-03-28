@@ -222,7 +222,7 @@
         NSInteger y = NUMTOOK([xyDic objectForKey:key]).integerValue;
         
         //2. 已冷却时长;
-        double delta = [AINetIndexUtils deltaWithValueA:templateX valueB:checkX at:at ds:ds isOut:isOut vInfo:vInfo];
+        double delta = [AINetIndexUtils deltaWithValueA:templateX valueB:checkX at:at ds:ds vInfo:vInfo];
         
         //3. span的50%时冷却完成,环境温度30% (参考29106-解曲线);
         CGFloat cooledValue = [MathUtils getCooledValue:vInfo.span / 4 pastTime:delta finishValue:0.005f];

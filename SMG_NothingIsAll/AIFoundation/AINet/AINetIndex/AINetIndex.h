@@ -54,6 +54,7 @@
  *  @result notnull;
  */
 +(AIValueInfo*) getValueInfo:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut;
++(AIValueInfo*) getGVValueInfo:(NSString*)at ds:(NSString*)ds minData:(float)minData maxData:(float)maxData;
 
 @end
 

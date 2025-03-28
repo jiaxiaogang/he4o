@@ -194,20 +194,54 @@
 /**
  *  MARK:--------------------组码识别--------------------
  */
-+(NSArray*) recognitionGroupValueV2:(AIKVPointer*)groupValue_p {
++(NSArray*) recognitionGroupValueV2:(AIKVPointer*)groupValue_p rate:(CGFloat)rate minLimit:(NSInteger)minLimit {
     //1. 数据准备
     BOOL debugMode = [TIUtils debugMode:groupValue_p.dataSource];
     AIGroupValueNode *protoGroupValue = [SMGUtils searchNode:groupValue_p];
     if (debugMode) AddDebugCodeBlock_Key(@"a", @"2");
+    double max = [CortexAlgorithmsUtil maxOfLoopValue:groupValue_p.algsType ds:groupValue_p.dataSource];
     
-    //TODOTOMORROW20250328: 组码索引序列改成根据平均值有序，然后把它的平均值存在一个单独的data字典中，用来计算相近度。
-    NSArray *gv_ps = [AINetGroupValueIndex getGVIndex:protoGroupValue];
+    //2. 取所有当前组码的索引序列。
+    NSArray *allGVIndex = [AINetGroupValueIndex getGVIndex:protoGroupValue];
+    
+    //3. 取出最大最小组码值。
+    MapModel *minGVIndex = ARR_INDEX(allGVIndex, 0);
+    MapModel *maxGVIndex = ARR_INDEX_REVERSE(allGVIndex, 0);
+    float minPinJunNum = minGVIndex ? NUMTOOK(minGVIndex.v2).floatValue : 0;
+    float maxPinJunNum = maxGVIndex ? NUMTOOK(maxGVIndex.v2).floatValue : 0;
     if (debugMode) AddDebugCodeBlock_Key(@"a", @"3");
     
-    NSArray *gMatchModels = [SMGUtils convertArr:gv_ps convertBlock:^id(AIKVPointer *obj) {
+    //4. 找出proto对应的item索引。
+    MapModel *protoGVIndex = [SMGUtils filterSingleFromArr:allGVIndex checkValid:^BOOL(MapModel *item) {
+        return [groupValue_p isEqual:item.v1];
+    }];
+    CGFloat protoPinJunNum = NUMTOOK(protoGVIndex.v2).floatValue;
+    
+    //11. 按照相近度排序;
+    NSArray *near_ps = [SMGUtils sortSmall2Big:allGVIndex compareBlock:^double(MapModel *itemGVIndex) {
+        CGFloat itemPinJunNum = NUMTOOK(itemGVIndex.v2).floatValue;
+        double nearDelta = fabs(itemPinJunNum - protoPinJunNum);
+        
+        //12. 循环时: 计算nearV相近度算法 (参考28174-todo4);
+        if (max > 0 && nearDelta > (max / 2)) nearDelta = max - nearDelta;
+        return nearDelta;
+    }];
+    
+    //13. 窄出：指定相近度范围内的组码 & 仅返回前NarrowLimit条 (最多narrowLimit条,最少1条);
+    NSInteger limit = MAX(near_ps.count * rate, minLimit);
+    near_ps = ARR_SUB(near_ps, 0, limit);
+    
+    //14. 转nears为AIMatchModels。
+    NSArray *gMatchModels = [SMGUtils convertArr:near_ps convertBlock:^id(MapModel *itemGVIndex) {
+        
+        //15. 计算相近度（取item与proto的相近度）。
+        CGFloat itemPinJunNum = NUMTOOK(itemGVIndex.v2).floatValue;
+        CGFloat matchValue = [AIAnalyst compareGV:itemPinJunNum protoV:protoPinJunNum at:groupValue_p.algsType ds:groupValue_p.dataSource minData:minPinJunNum maxData:maxPinJunNum];
+        
+        //16. 转AIMatchModel。
         AIMatchModel *gModel = [[AIMatchModel alloc] init];
-        gModel.match_p = obj;
-        //gModel.matchValue *= vModel.matchValue;//取平均值 与 protoG的相近度。
+        gModel.match_p = itemGVIndex.v1;
+        gModel.matchValue = matchValue;
         return gModel;
     }];
     if (debugMode) AddDebugCodeBlock_Key(@"a", @"4");
@@ -252,7 +286,7 @@
         
         //4. 组码识别。
         NSArray *gMatchModels = [AIRecognitionCache getCache:protoGroupValue_p cacheBlock:^id{
-            return ARRTOOK([self recognitionGroupValueV2:protoGroupValue_p]);
+            return ARRTOOK([self recognitionGroupValueV2:protoGroupValue_p rate:0.4 minLimit:3]);
         }];
         
         //6. 对所有gv识别结果的，所有refPorts，依次判断位置符合度。
@@ -1078,7 +1112,7 @@
 }
 
 +(BOOL) debugMode:(NSString*)ds {
-    return [@"bColors" isEqual:ds];
+    return false;//[@"bColors" isEqual:ds];
 }
 
 @end

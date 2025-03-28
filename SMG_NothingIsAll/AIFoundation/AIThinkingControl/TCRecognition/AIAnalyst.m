@@ -44,7 +44,25 @@
     //1. 数据准备;
     if (!vInfo) vInfo = [AINetIndex getValueInfo:at ds:ds isOut:isOut];
     if (vInfo.span == 0) return 1;
-    double delta = [AINetIndexUtils deltaWithValueA:cansetV valueB:protoV at:at ds:ds isOut:isOut vInfo:vInfo];
+    double delta = [AINetIndexUtils deltaWithValueA:cansetV valueB:protoV at:at ds:ds vInfo:vInfo];
+    
+    //2. 循环时: 计算出nearV相近度 (参考28174-todo2);
+    if (vInfo.loop) {
+        return 1 - delta / (vInfo.span / 2);
+    }
+    
+    //3. 线性时: 计算出nearV相近度 (参考25082-公式1);
+    return 1 - delta / vInfo.span;
+}
+
+/**
+ *  MARK:--------------------比对组码相近度--------------------
+ */
++(CGFloat) compareGV:(double)assV protoV:(double)protoV at:(NSString*)at ds:(NSString*)ds minData:(float)minData maxData:(float)maxData {
+    //1. 数据准备;
+    AIValueInfo *vInfo = [AINetIndex getGVValueInfo:at ds:ds minData:minData maxData:maxData];
+    if (vInfo.span == 0) return 1;
+    double delta = [AINetIndexUtils deltaWithValueA:assV valueB:protoV at:at ds:ds vInfo:vInfo];
     
     //2. 循环时: 计算出nearV相近度 (参考28174-todo2);
     if (vInfo.loop) {
