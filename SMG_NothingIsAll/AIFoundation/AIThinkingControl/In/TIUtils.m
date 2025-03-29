@@ -226,6 +226,7 @@
         if (max > 0 && nearDelta > (max / 2)) nearDelta = max - nearDelta;
         return nearDelta;
     }];
+    NSLog(@"GV取得索引：%@ %ld",groupValue_p.dataSource,near_ps.count);
     
     //13. 窄出：指定相近度范围内的组码 & 仅返回前NarrowLimit条 (最多narrowLimit条,最少1条);
     NSInteger limit = MAX(near_ps.count * rate, minLimit);

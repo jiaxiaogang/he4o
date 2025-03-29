@@ -80,6 +80,12 @@
         return [AINetIndex getData:obj];
     }];
     
+    //21. 收集平均值（参考34081-解决2）。
+    float sumNum = [SMGUtils sumOfArr:contentNums convertBlock:^double(NSNumber *obj) {
+        return obj.floatValue;
+    }];
+    float pinJunNum = contentNums.count == 0 ? 0 : sumNum / contentNums.count;
+    
     //2. 下标数组。
     NSMutableArray *protoIndexs = [NSMutableArray new];
     for (NSInteger i = 0; i < contentNums.count; i++) [protoIndexs addObject:@(i)];
@@ -115,11 +121,6 @@
         }
     }
     
-    //21. 收集平均值（参考34081-解决2）。
-    float sumNum = [SMGUtils sumOfArr:contentNums convertBlock:^double(NSNumber *obj) {
-        return obj.floatValue;
-    }];
-    float pinJunNum = contentNums.count == 0 ? 0 : sumNum / contentNums.count;
     
     //22. 把sortIndexs2转成以/分隔的路径字符串，并生成为gvIndex指针地址。
     NSString *sortIndexsStr = ARRTOSTR(sortIndexs2, @"/", @"");
