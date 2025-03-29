@@ -81,14 +81,9 @@
     NSInteger pointerId = 0;
     return [AIKVPointer newWithPointerId:pointerId folderName:kPN_INDEX algsType:DefaultAlgsType dataSource:DefaultDataSource isOut:false type:ATDefault];
 }
-+(AIKVPointer*) createPointerForGVIndex1:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut {
-    return [AIKVPointer newWithPointerId:0 folderName:kPN_GV_INDEX1 algsType:at dataSource:ds isOut:isOut type:ATDefault];
-}
-+(AIKVPointer*) createPointerForGVIndex2:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut {
-    return [AIKVPointer newWithPointerId:0 folderName:kPN_GV_INDEX2 algsType:at dataSource:ds isOut:isOut type:ATDefault];
-}
-+(AIKVPointer*) createPointerForGVIndex3:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut {
-    return [AIKVPointer newWithPointerId:0 folderName:kPN_GV_INDEX3 algsType:at dataSource:ds isOut:isOut type:ATDefault];
+
++(AIKVPointer*) createPointerForGVIndex:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut {
+    return [AIKVPointer newWithPointerId:0 folderName:kPN_GV_INDEX algsType:at dataSource:ds isOut:isOut type:ATDefault];
 }
 
 +(AIKVPointer*) createPointerForData:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut{
@@ -511,12 +506,12 @@
 /**
  *  MARK:--------------------组码索引序列--------------------
  */
-+(id) searchGVIndexForPointer:(AIPointer*)gvIndex_p {
-    return [SMGUtils searchObjectForPointer:gvIndex_p fileName:kFN_GV_Index time:cRT_GV_Index];
++(id) searchGVIndexForPointer:(AIPointer*)gvIndex_p itemIndex:(NSInteger)itemIndex {
+    return [SMGUtils searchObjectForPointer:gvIndex_p fileName:kFN_GV_Index(itemIndex) time:cRT_GV_Index];
 }
 
-+(void) insertGVIndex:(NSArray*)gvIndexObj gvIndex_p:(AIPointer*)gvIndex_p {
-    [self insertObject:gvIndexObj pointer:gvIndex_p fileName:kFN_GV_Index time:cRT_GV_Index];
++(void) insertGVIndex:(NSArray*)gvIndexObj gvIndex_p:(AIPointer*)gvIndex_p itemIndex:(NSInteger)itemIndex {
+    [self insertObject:gvIndexObj pointer:gvIndex_p fileName:kFN_GV_Index(itemIndex) time:cRT_GV_Index];
 }
 
 @end

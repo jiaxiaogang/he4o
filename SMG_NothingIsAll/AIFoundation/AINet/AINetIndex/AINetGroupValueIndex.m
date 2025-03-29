@@ -21,47 +21,46 @@
  */
 +(void) updateGVIndex:(AIGroupValueNode*)gNode {
     //1. 生成gv索引指针地址。
-    MapModel *gvIndex = [self convertGVIndexData:gNode];
-    AIKVPointer *gvIndex_p = gvIndex.v1;
-    CGFloat pinJunNum = NUMTOOK(gvIndex.v2).floatValue;
+    NSArray *gvIndexData = [self convertGVIndexData:gNode];
+    AIKVPointer *gvIndex_p = [SMGUtils createPointerForGVIndex:gNode.p.algsType ds:gNode.p.dataSource isOut:gNode.p.isOut];
     
-    //2. 从索引目录下取出索引序列。
-    NSMutableArray *oldIndexs = [[NSMutableArray alloc] initWithArray:[SMGUtils searchGVIndexForPointer:gvIndex_p]];
-    
-    //3. 找找是否此pId已入过索引。
-    BOOL aleardayHav = [SMGUtils filterSingleFromArr:oldIndexs checkValid:^BOOL(NSArray *itemGVIndex) {
-        NSInteger oldPId = NUMTOOK(itemGVIndex[0]).integerValue;
-        return oldPId == gNode.pId;
-    }];
-    if (aleardayHav) return;
-    
-    //4. 将新的gNode.p加入其中（顺序为平均值从小到大排序）。
-    id newObj = @[@(gNode.pId),@(pinJunNum)];
-    for (NSInteger i = 0; i < oldIndexs.count; i++) {
-        NSArray *itemGVIndex = ARR_INDEX(oldIndexs, i);
-        CGFloat oldPinJunNum = NUMTOOK(itemGVIndex[1]).floatValue;
-        if (oldPinJunNum > pinJunNum) {
-            [oldIndexs insertObject:newObj atIndex:i];
+    //2. 取出三项索引值。
+    for (NSInteger itemIndex = 0; itemIndex < gvIndexData.count; itemIndex++) {
+        NSNumber *newNum = ARR_INDEX(gvIndexData, itemIndex);
+        
+        //3. 从索引目录下取出索引序列。
+        NSMutableArray *oldIndexs = [[NSMutableArray alloc] initWithArray:[SMGUtils searchGVIndexForPointer:gvIndex_p itemIndex:itemIndex]];
+        
+        //4. 找找是否此pId已入过索引。
+        BOOL aleardayHav = [SMGUtils filterSingleFromArr:oldIndexs checkValid:^BOOL(NSArray *itemGVIndex) {
+            NSInteger oldPId = NUMTOOK(itemGVIndex[0]).integerValue;
+            return oldPId == gNode.pId;
+        }];
+        if (aleardayHav) continue;
+        
+        //5. 将新的gNode.p加入其中（顺序为平均值从小到大排序）。
+        id newObj = @[@(gNode.pId),newNum];
+        for (NSInteger i = 0; i < oldIndexs.count; i++) {
+            NSArray *itemGVIndex = ARR_INDEX(oldIndexs, i);
+            CGFloat oldNum = NUMTOOK(itemGVIndex[1]).floatValue;
+            if (oldNum > newNum.floatValue) {
+                [oldIndexs insertObject:newObj atIndex:i];
+            }
         }
+        if (oldIndexs.count == 0) [oldIndexs addObject:newObj];
+        [SMGUtils insertGVIndex:oldIndexs gvIndex_p:gvIndex_p itemIndex:itemIndex];
     }
-    if (oldIndexs.count == 0) [oldIndexs addObject:newObj];
-    [SMGUtils insertGVIndex:oldIndexs gvIndex_p:gvIndex_p];
 }
 
 /**
  *  MARK:--------------------根据gNode取索引序列--------------------
  */
-+(NSArray*) getGVIndex:(AIGroupValueNode*)gNode {
-    //1. 生成gv索引指针地址。
-    MapModel *gvIndex = [self convertGVIndexData:gNode];
-    AIKVPointer *gvIndex1_p = [SMGUtils createPointerForGVIndex1:gNode.p.algsType ds:gNode.p.dataSource isOut:gNode.p.isOut];
-    AIKVPointer *gvIndex2_p = [SMGUtils createPointerForGVIndex2:gNode.p.algsType ds:gNode.p.dataSource isOut:gNode.p.isOut];
-    AIKVPointer *gvIndex3_p = [SMGUtils createPointerForGVIndex3:gNode.p.algsType ds:gNode.p.dataSource isOut:gNode.p.isOut];
-    
-    AIKVPointer *gvIndex_p = gvIndex.v1;
++(NSArray*) getGVIndex:(AIGroupValueNode*)gNode itemIndex:(NSInteger)itemIndex {
+    //1. 索引目录的指针地址。
+    AIKVPointer *gvIndex_p = [SMGUtils createPointerForGVIndex:gNode.p.algsType ds:gNode.p.dataSource isOut:gNode.p.isOut];
     
     //2. 从索引目录下取出索引序列。
-    NSArray *allGVIndex = ARRTOOK([SMGUtils searchGVIndexForPointer:gvIndex_p]);
+    NSArray *allGVIndex = ARRTOOK([SMGUtils searchGVIndexForPointer:gvIndex_p itemIndex:itemIndex]);
     
     //3. 转成组码地址数组返回。
     return [SMGUtils convertArr:allGVIndex convertBlock:^id(NSArray *itemGVIndex) {
@@ -71,14 +70,10 @@
     }];
 }
 
-//MARK:===============================================================
-//MARK:                     < PrivateMethod >
-//MARK:===============================================================
-
 /**
  *  MARK:--------------------根据组节点取 三个索引的数据（参考34082-方案2）--------------------
  */
-+(MapModel*) convertGVIndexData:(AIGroupValueNode*)gNode {
++(NSArray*) convertGVIndexData:(AIGroupValueNode*)gNode {
     //1. 单码取值。
     NSArray *contentNums = [SMGUtils convertArr:gNode.content_ps convertBlock:^id(AIKVPointer *obj) {
         return [AINetIndex getData:obj];
@@ -135,7 +130,7 @@
     float direction = roundf(protoParam * 100) / 100;
     
     //7. 创建三个索引的指针地址：均值、差值、方向。
-    return [MapModel newWithV1:@(direction) v2:@(diffPinJunNum) v3:@(pinJunNum)];
+    return @[@(direction), @(diffPinJunNum), @(pinJunNum)];
 }
 
 //把0-1转成0-9

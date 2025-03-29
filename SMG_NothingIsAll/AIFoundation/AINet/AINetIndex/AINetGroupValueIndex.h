@@ -22,6 +22,11 @@
 /**
  *  MARK:--------------------根据gNode取索引序列--------------------
  */
-+(NSArray*) getGVIndex:(AIGroupValueNode*)gNode;
++(NSArray*) getGVIndex:(AIGroupValueNode*)gNode itemIndex:(NSInteger)itemIndex;
+
+/**
+ *  MARK:--------------------根据组节点取 三个索引的数据（参考34082-方案2）--------------------
+ */
++(NSArray*) convertGVIndexData:(AIGroupValueNode*)gNode;
 
 @end

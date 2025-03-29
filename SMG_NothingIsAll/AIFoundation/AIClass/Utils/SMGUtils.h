@@ -39,9 +39,7 @@
 
 //索引指针
 +(AIKVPointer*) createPointerForIndex;
-+(AIKVPointer*) createPointerForGVIndex1:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut;
-+(AIKVPointer*) createPointerForGVIndex2:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut;
-+(AIKVPointer*) createPointerForGVIndex3:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut;
++(AIKVPointer*) createPointerForGVIndex:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut;
 
 //微信息值指针
 +(AIKVPointer*) createPointerForData:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut;
@@ -130,8 +128,8 @@
 /**
  *  MARK:--------------------组码索引序列--------------------
  */
-+(id) searchGVIndexForPointer:(AIPointer*)gvIndex_p;
-+(void) insertGVIndex:(NSArray*)gvIndexObj gvIndex_p:(AIPointer*)gvIndex_p;
++(id) searchGVIndexForPointer:(AIPointer*)gvIndex_p itemIndex:(NSInteger)itemIndex;
++(void) insertGVIndex:(NSArray*)gvIndexObj gvIndex_p:(AIPointer*)gvIndex_p itemIndex:(NSInteger)itemIndex;
 
 @end
 

@@ -202,7 +202,7 @@
     double max = [CortexAlgorithmsUtil maxOfLoopValue:groupValue_p.algsType ds:groupValue_p.dataSource];
     
     //2. 取所有当前组码的索引序列。
-    NSArray *allGVIndex = [AINetGroupValueIndex getGVIndex:protoGroupValue];
+    NSArray *allGVIndex = [AINetGroupValueIndex getGVIndex:protoGroupValue itemIndex:0];
     
     //3. 取出最大最小组码值。
     MapModel *minGVIndex = ARR_INDEX(allGVIndex, 0);
