@@ -15,20 +15,38 @@
  *  @desc 值说明 (参考28174-todo2):
  *          1. 首尾相连的稀疏码最小值一般都为0;
  *          2. 因为最大值等于最小值,所以此处将最大值返回,以方便计算差值;
+ *  @param itemIndex 每种组码可能有多个索引，而这几个索引有些是循环，有些不是，要在这里判断下。
  *  @version
  *      2023.03.14: 飞行方向也是首尾循环码 (参考28174-todo2-另外);
  *  @result 首尾循环的返回最大值,如果不循环的值则返回0;
  */
-+(double) maxOfLoopValue:(NSString*)at ds:(NSString*)ds {
++(double) maxOfLoopValue:(NSString*)at ds:(NSString*)ds itemIndex:(NSInteger)itemIndex {
     //1. 视觉方向有360个值;
     if ([@"AIVisionAlgs" isEqualToString:at] && [@"direction" isEqualToString:ds]) {
         return 360;
     } else if ([@"FLY_RDS" isEqualToString:at]) {
         return 1;
-    } else if ([@"AIVisionAlgsV2" isEqualToString:at] && [@"hColors" isEqualToString:ds]) {
-        return 1;//HSB色值中的色相，是循环值。
+    } else if ([@"AIVisionAlgsV2" isEqualToString:at]) {
+        BOOL dsIsLoop = [@"hColors" isEqualToString:ds];//HSB色值中的色相，是循环值。
+        if (itemIndex == GVIndexTypeOfDirection) {
+            return 1;//方向是循环
+        } else if (itemIndex == GVIndexTypeOfDiffNum) {
+            return 0;//差值不是循环
+        } else if (itemIndex == GVIndexTypeOfPinJunNum) {
+            return dsIsLoop;
+        } else {
+            return dsIsLoop;
+        }
     }
     return 0;
+}
+
+//稀疏码的相近度（返回两个值的差值）
++(double) nearDeltaOfValue:(CGFloat)protoNum assNum:(CGFloat)assNum max:(CGFloat)max {
+    //1. 循环时: 计算nearV相近度算法 (参考28174-todo4);
+    double nearDelta = fabs(assNum - protoNum);
+    if (max > 0 && nearDelta > (max / 2)) nearDelta = max - nearDelta;
+    return nearDelta;
 }
 
 

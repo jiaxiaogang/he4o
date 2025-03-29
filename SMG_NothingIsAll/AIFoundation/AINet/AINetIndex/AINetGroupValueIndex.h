@@ -8,6 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
+#define GVIndexTypeOfDataSource -1
+#define GVIndexTypeOfDirection 0
+#define GVIndexTypeOfDiffNum 1
+#define GVIndexTypeOfPinJunNum 2
+
 @interface AINetGroupValueIndex : NSObject
 
 //MARK:===============================================================

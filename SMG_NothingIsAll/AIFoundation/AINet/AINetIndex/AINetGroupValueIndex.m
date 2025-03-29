@@ -108,7 +108,10 @@
         return NUMTOOK(ARR_INDEX(contentNums, index)).floatValue;
     }];
     float smallPinJunNum =  smallIndexs.count > 0 ? smallSumNum / smallIndexs.count : 0;
-    float diffPinJunNum = bigerPinJunNum - smallPinJunNum;
+    
+    //5. 差值：计算出差值（如果是循环的，则用循环的算法）。
+    double max = [CortexAlgorithmsUtil maxOfLoopValue:gNode.p.algsType ds:gNode.p.dataSource itemIndex:GVIndexTypeOfDataSource];
+    float diffPinJunNum = [CortexAlgorithmsUtil nearDeltaOfValue:bigerPinJunNum assNum:smallPinJunNum max:max];
     
     //5. 方向：根据大小区中心点，算出方向（参考34082-TODO1）（按左上角为0,0点算，所以要加0.5表示xy坐标的中心点位置）。
     CGFloat bigerPinJunX = [SMGUtils sumOfArr:bigerIndexs convertBlock:^double(NSNumber *index) {

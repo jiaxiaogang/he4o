@@ -34,6 +34,6 @@
 /**
  *  MARK:--------------------比对组码相近度--------------------
  */
-+(CGFloat) compareGV:(double)assV protoV:(double)protoV at:(NSString*)at ds:(NSString*)ds minData:(float)minData maxData:(float)maxData;
++(CGFloat) compareGV:(double)assV protoV:(double)protoV at:(NSString*)at ds:(NSString*)ds minData:(float)minData maxData:(float)maxData itemIndex:(NSInteger)itemIndex;
 
 @end

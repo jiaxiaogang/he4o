@@ -116,7 +116,7 @@
  */
 +(AIValueInfo*) getValueInfo:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut {
     //0. 如果是循环码时,直接返回指定数;
-    double maxLoopValue = [CortexAlgorithmsUtil maxOfLoopValue:at ds:ds];
+    double maxLoopValue = [CortexAlgorithmsUtil maxOfLoopValue:at ds:ds itemIndex:GVIndexTypeOfDataSource];
     if (maxLoopValue > 0) {
         return [AIValueInfo newWithMin:0 max:maxLoopValue loop:true];
     }
@@ -138,9 +138,9 @@
     return [AIValueInfo newWithMin:minData.doubleValue max:maxData.doubleValue loop:false];
 }
 
-+(AIValueInfo*) getGVValueInfo:(NSString*)at ds:(NSString*)ds minData:(float)minData maxData:(float)maxData {
++(AIValueInfo*) getGVValueInfo:(NSString*)at ds:(NSString*)ds minData:(float)minData maxData:(float)maxData itemIndex:(NSInteger)itemIndex {
     //0. 如果是循环码时,直接返回指定数;
-    double maxLoopValue = [CortexAlgorithmsUtil maxOfLoopValue:at ds:ds];
+    double maxLoopValue = [CortexAlgorithmsUtil maxOfLoopValue:at ds:ds itemIndex:itemIndex];
     if (maxLoopValue > 0) {
         return [AIValueInfo newWithMin:0 max:maxLoopValue loop:true];
     } else {

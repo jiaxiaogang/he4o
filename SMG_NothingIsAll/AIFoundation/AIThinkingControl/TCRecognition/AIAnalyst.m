@@ -58,9 +58,9 @@
 /**
  *  MARK:--------------------比对组码相近度--------------------
  */
-+(CGFloat) compareGV:(double)assV protoV:(double)protoV at:(NSString*)at ds:(NSString*)ds minData:(float)minData maxData:(float)maxData {
++(CGFloat) compareGV:(double)assV protoV:(double)protoV at:(NSString*)at ds:(NSString*)ds minData:(float)minData maxData:(float)maxData itemIndex:(NSInteger)itemIndex {
     //1. 数据准备;
-    AIValueInfo *vInfo = [AINetIndex getGVValueInfo:at ds:ds minData:minData maxData:maxData];
+    AIValueInfo *vInfo = [AINetIndex getGVValueInfo:at ds:ds minData:minData maxData:maxData itemIndex:itemIndex];
     if (vInfo.span == 0) return 1;
     double delta = [AINetIndexUtils deltaWithValueA:assV valueB:protoV at:at ds:ds vInfo:vInfo];
     

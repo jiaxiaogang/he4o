@@ -10,7 +10,10 @@
 
 @interface CortexAlgorithmsUtil : NSObject
 
-+(double) maxOfLoopValue:(NSString*)at ds:(NSString*)ds;
++(double) maxOfLoopValue:(NSString*)at ds:(NSString*)ds itemIndex:(NSInteger)itemIndex;
+
+//稀疏码的相近度（返回两个值的差值）
++(double) nearDeltaOfValue:(CGFloat)protoNum assNum:(CGFloat)assNum max:(CGFloat)max;
 
 /**
  *  MARK:--------------------取子粒度层9格--------------------
