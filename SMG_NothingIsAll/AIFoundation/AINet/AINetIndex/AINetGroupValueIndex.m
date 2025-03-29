@@ -80,47 +80,56 @@
         return [AINetIndex getData:obj];
     }];
     
-    //21. 收集平均值（参考34081-解决2）。
+    //2. 求平均值（参考34082-TODO3）。
     float sumNum = [SMGUtils sumOfArr:contentNums convertBlock:^double(NSNumber *obj) {
         return obj.floatValue;
     }];
     float pinJunNum = contentNums.count == 0 ? 0 : sumNum / contentNums.count;
     
-    //2. 下标数组。
-    NSMutableArray *protoIndexs = [NSMutableArray new];
-    for (NSInteger i = 0; i < contentNums.count; i++) [protoIndexs addObject:@(i)];
-    
-    //3. 下标按单码从小到大排序（参考34081-说明1）。
-    NSArray *sortIndexs = [SMGUtils sortSmall2Big:protoIndexs compareBlock1:^double(NSNumber *obj) {
-        NSInteger index = obj.integerValue;
-        return NUMTOOK(ARR_INDEX(contentNums, index)).floatValue;
-    } compareBlock2:^double(NSNumber *obj) {
-        NSInteger index = obj.integerValue;
-        return NUMTOOK(ARR_INDEX(gNode.ys, index)).integerValue;
-    } compareBlock3:^double(NSNumber *obj) {
-        NSInteger index = obj.integerValue;
-        return NUMTOOK(ARR_INDEX(gNode.xs, index)).integerValue;
-    }];
-
-    //11. 收集排序下标 和 差值（参考34081-解决1）。
-    NSMutableArray *sortIndexs2 = [[NSMutableArray alloc] init];
-    for (NSInteger i = 0; i < sortIndexs.count; i++) {
-        
-        //12. 先收集排序下标。
-        NSInteger curRankIndex = NUMTOOK(ARR_INDEX(sortIndexs, i)).integerValue;
-        [sortIndexs2 addObject:@(curRankIndex)];
-        
-        //13. 再收集差值。
-        if (i < sortIndexs.count - 1) {
-            NSInteger nextRankIndex = NUMTOOK(ARR_INDEX(sortIndexs, i+1)).integerValue;
-            float curRankNum = NUMTOOK(ARR_INDEX(contentNums, curRankIndex)).floatValue;
-            float nextRankNum = NUMTOOK(ARR_INDEX(contentNums, nextRankIndex)).floatValue;
-            
-            //14. 把精度处理成0-9。
-            [sortIndexs2 addObject:@([self convertZeroOneToZeroNine:nextRankNum - curRankNum])];
+    //3. >均值 和 <均值 的下标数组。
+    NSMutableArray *smallIndexs = [NSMutableArray new];
+    NSMutableArray *bigerIndexs = [NSMutableArray new];
+    for (NSInteger i = 0; i < contentNums.count; i++) {
+        float curContentValue = NUMTOOK(ARR_INDEX(contentNums, i)).floatValue;
+        if (curContentValue < pinJunNum) {
+            [smallIndexs addObject:@(i)];
+        } else {
+            [bigerIndexs addObject:@(i)];
         }
     }
     
+    //4. 差值：求出大小区各自的均值（参考34082-TODO2）。
+    float bigerSumNum = [SMGUtils sumOfArr:bigerIndexs convertBlock:^double(NSNumber *obj) {
+        NSInteger index = obj.integerValue;
+        return NUMTOOK(ARR_INDEX(contentNums, index)).floatValue;
+    }];
+    float bigerPinJunNum =  bigerIndexs.count > 0 ? bigerSumNum / bigerIndexs.count : 0;
+    float smallSumNum = [SMGUtils sumOfArr:contentNums convertBlock:^double(NSNumber *obj) {
+        NSInteger index = obj.integerValue;
+        return NUMTOOK(ARR_INDEX(contentNums, index)).floatValue;
+    }];
+    float smallPinJunNum =  smallIndexs.count > 0 ? smallSumNum / smallIndexs.count : 0;
+    
+    //5. 方向：根据大小区中心点，算出方向（参考34082-TODO1）（按左上角为0,0点算，所以要加0.5表示xy坐标的中心点位置）。
+    CGFloat bigerPinJunX = [SMGUtils sumOfArr:bigerIndexs convertBlock:^double(NSNumber *index) {
+        return NUMTOOK(ARR_INDEX(gNode.xs, index.integerValue)).integerValue + 0.5;
+    }];
+    CGFloat bigerPinJunY = [SMGUtils sumOfArr:bigerIndexs convertBlock:^double(NSNumber *index) {
+        return NUMTOOK(ARR_INDEX(gNode.ys, index.integerValue)).integerValue + 0.5;
+    }];
+    CGFloat smallPinJunX = [SMGUtils sumOfArr:smallIndexs convertBlock:^double(NSNumber *index) {
+        return NUMTOOK(ARR_INDEX(gNode.xs, index.integerValue)).integerValue + 0.5;
+    }];
+    CGFloat smallPinJunY = [SMGUtils sumOfArr:smallIndexs convertBlock:^double(NSNumber *index) {
+        return NUMTOOK(ARR_INDEX(gNode.ys, index.integerValue)).integerValue + 0.5;
+    }];
+    
+    //6. 方向：将距离转成角度-PI -> PI (从右至左,上面为-0 -> -3.14 / 从右至左,下面为0 -> 3.14)，然后归1化，再然后保留1%精度。
+    CGFloat rads = atan2f(bigerPinJunY - smallPinJunY,bigerPinJunX - smallPinJunX);
+    float protoParam = (rads / M_PI + 1) / 2;
+    float direction = roundf(protoParam * 100) / 100;
+    
+    //7. 创建三个索引的指针地址：均值、差值、方向。
     
     //22. 把sortIndexs2转成以/分隔的路径字符串，并生成为gvIndex指针地址。
     NSString *sortIndexsStr = ARRTOSTR(sortIndexs2, @"/", @"");
