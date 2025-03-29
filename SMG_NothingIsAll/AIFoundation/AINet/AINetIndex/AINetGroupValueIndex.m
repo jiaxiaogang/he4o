@@ -45,6 +45,7 @@
             CGFloat oldNum = NUMTOOK(itemGVIndex[1]).floatValue;
             if (oldNum > newNum.floatValue) {
                 [oldIndexs insertObject:newObj atIndex:i];
+                break;
             }
         }
         if (oldIndexs.count == 0) [oldIndexs addObject:newObj];
