@@ -157,7 +157,9 @@
 #define kPN_CEREBEL_CANOUT     @"PN_CEREBEL_CANOUT"    //小脑可输出标识序列
 
 #define kPN_INDEX              @"PN_INDEX"             //索引序列
-#define kPN_GV_INDEX           @"PN_GV_INDEX"          //索引序列
+#define kPN_GV_INDEX1           @"PN_GV_INDEX1"        //索引序列
+#define kPN_GV_INDEX2           @"PN_GV_INDEX2"        //索引序列
+#define kPN_GV_INDEX3           @"PN_GV_INDEX3"        //索引序列
 #define kPN_DATA               @"PN_DATA"              //微信息值字典
 #define kPN_VALUE              @"PN_VALUE"             //微信息单条值
 
@@ -180,7 +182,7 @@
 #define kFNDefault @" "                               //默认文件名; (例如:小脑canout序列)
 
 //所有文件夹数组
-#define kFN_ALL @[/*mvNode*/kPN_CMV_NODE,kPN_ABS_CMV_NODE,/*mv索引*/kPN_DIRECTION(MVDirection_None),kPN_DIRECTION(MVDirection_Negative),kPN_DIRECTION(MVDirection_Positive),/*foNode*/kPN_FRONT_ORDER_NODE,kPN_FO_ABS_NODE,/*algNode*/kPN_ALG_NODE,kPN_ALG_ABS_NODE,/*小脑*/kPN_CEREBEL_CANOUT,/*稀疏码索引*/kPN_INDEX,kPN_GV_INDEX,kPN_DATA,kPN_VALUE]
+#define kFN_ALL @[/*mvNode*/kPN_CMV_NODE,kPN_ABS_CMV_NODE,/*mv索引*/kPN_DIRECTION(MVDirection_None),kPN_DIRECTION(MVDirection_Negative),kPN_DIRECTION(MVDirection_Positive),/*foNode*/kPN_FRONT_ORDER_NODE,kPN_FO_ABS_NODE,/*algNode*/kPN_ALG_NODE,kPN_ALG_ABS_NODE,/*小脑*/kPN_CEREBEL_CANOUT,/*稀疏码索引*/kPN_INDEX,kPN_GV_INDEX1,kPN_GV_INDEX2,kPN_GV_INDEX3,kPN_DATA,kPN_VALUE]
 
 #define cNOW [[NSDate date] timeIntervalSince1970] * 1000
 

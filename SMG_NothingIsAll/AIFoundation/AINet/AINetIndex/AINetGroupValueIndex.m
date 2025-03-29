@@ -21,7 +21,7 @@
  */
 +(void) updateGVIndex:(AIGroupValueNode*)gNode {
     //1. 生成gv索引指针地址。
-    MapModel *gvIndex = [self createGVIndex_p:gNode];
+    MapModel *gvIndex = [self convertGVIndexData:gNode];
     AIKVPointer *gvIndex_p = gvIndex.v1;
     CGFloat pinJunNum = NUMTOOK(gvIndex.v2).floatValue;
     
@@ -53,7 +53,11 @@
  */
 +(NSArray*) getGVIndex:(AIGroupValueNode*)gNode {
     //1. 生成gv索引指针地址。
-    MapModel *gvIndex = [self createGVIndex_p:gNode];
+    MapModel *gvIndex = [self convertGVIndexData:gNode];
+    AIKVPointer *gvIndex1_p = [SMGUtils createPointerForGVIndex1:gNode.p.algsType ds:gNode.p.dataSource isOut:gNode.p.isOut];
+    AIKVPointer *gvIndex2_p = [SMGUtils createPointerForGVIndex2:gNode.p.algsType ds:gNode.p.dataSource isOut:gNode.p.isOut];
+    AIKVPointer *gvIndex3_p = [SMGUtils createPointerForGVIndex3:gNode.p.algsType ds:gNode.p.dataSource isOut:gNode.p.isOut];
+    
     AIKVPointer *gvIndex_p = gvIndex.v1;
     
     //2. 从索引目录下取出索引序列。
@@ -72,9 +76,9 @@
 //MARK:===============================================================
 
 /**
- *  MARK:--------------------为组节点建索引 并 返回索引指针（参考34081-方案1）--------------------
+ *  MARK:--------------------根据组节点取 三个索引的数据（参考34082-方案2）--------------------
  */
-+(MapModel*) createGVIndex_p:(AIGroupValueNode*)gNode {
++(MapModel*) convertGVIndexData:(AIGroupValueNode*)gNode {
     //1. 单码取值。
     NSArray *contentNums = [SMGUtils convertArr:gNode.content_ps convertBlock:^id(AIKVPointer *obj) {
         return [AINetIndex getData:obj];
@@ -109,6 +113,7 @@
         return NUMTOOK(ARR_INDEX(contentNums, index)).floatValue;
     }];
     float smallPinJunNum =  smallIndexs.count > 0 ? smallSumNum / smallIndexs.count : 0;
+    float diffPinJunNum = bigerPinJunNum - smallPinJunNum;
     
     //5. 方向：根据大小区中心点，算出方向（参考34082-TODO1）（按左上角为0,0点算，所以要加0.5表示xy坐标的中心点位置）。
     CGFloat bigerPinJunX = [SMGUtils sumOfArr:bigerIndexs convertBlock:^double(NSNumber *index) {
@@ -130,14 +135,7 @@
     float direction = roundf(protoParam * 100) / 100;
     
     //7. 创建三个索引的指针地址：均值、差值、方向。
-    
-    //22. 把sortIndexs2转成以/分隔的路径字符串，并生成为gvIndex指针地址。
-    NSString *sortIndexsStr = ARRTOSTR(sortIndexs2, @"/", @"");
-    NSString *at = STRFORMAT(@"%@%@",gNode.p.algsType,sortIndexsStr);
-    AIKVPointer *gvIndex_p = [SMGUtils createPointerForGroupValueIndex:at ds:gNode.p.dataSource isOut:gNode.p.isOut];
-    
-    //23. 把平均值改成返回值，用于索引序列里，按平均值排序（后面要用平均值计算相近度）。
-    return [MapModel newWithV1:gvIndex_p v2:@(pinJunNum)];
+    return [MapModel newWithV1:@(direction) v2:@(diffPinJunNum) v3:@(pinJunNum)];
 }
 
 //把0-1转成0-9

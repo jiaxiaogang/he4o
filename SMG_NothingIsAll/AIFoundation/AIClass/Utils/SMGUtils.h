@@ -39,7 +39,9 @@
 
 //索引指针
 +(AIKVPointer*) createPointerForIndex;
-+(AIKVPointer*) createPointerForGroupValueIndex:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut;
++(AIKVPointer*) createPointerForGVIndex1:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut;
++(AIKVPointer*) createPointerForGVIndex2:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut;
++(AIKVPointer*) createPointerForGVIndex3:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut;
 
 //微信息值指针
 +(AIKVPointer*) createPointerForData:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut;

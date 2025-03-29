@@ -81,8 +81,14 @@
     NSInteger pointerId = 0;
     return [AIKVPointer newWithPointerId:pointerId folderName:kPN_INDEX algsType:DefaultAlgsType dataSource:DefaultDataSource isOut:false type:ATDefault];
 }
-+(AIKVPointer*) createPointerForGroupValueIndex:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut {
-    return [AIKVPointer newWithPointerId:0 folderName:kPN_GV_INDEX algsType:at dataSource:ds isOut:isOut type:ATDefault];
++(AIKVPointer*) createPointerForGVIndex1:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut {
+    return [AIKVPointer newWithPointerId:0 folderName:kPN_GV_INDEX1 algsType:at dataSource:ds isOut:isOut type:ATDefault];
+}
++(AIKVPointer*) createPointerForGVIndex2:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut {
+    return [AIKVPointer newWithPointerId:0 folderName:kPN_GV_INDEX2 algsType:at dataSource:ds isOut:isOut type:ATDefault];
+}
++(AIKVPointer*) createPointerForGVIndex3:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut {
+    return [AIKVPointer newWithPointerId:0 folderName:kPN_GV_INDEX3 algsType:at dataSource:ds isOut:isOut type:ATDefault];
 }
 
 +(AIKVPointer*) createPointerForData:(NSString*)algsType dataSource:(NSString*)dataSource isOut:(BOOL)isOut{
