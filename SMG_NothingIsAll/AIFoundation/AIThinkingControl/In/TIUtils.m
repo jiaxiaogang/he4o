@@ -218,7 +218,7 @@
             CGFloat itemNum = NUMTOOK(itemGVIndex.v2).floatValue;
             return [CortexAlgorithmsUtil nearDeltaOfValue:protoNum assNum:itemNum max:max];
         }];
-        NSLog(@"GV取得索引：%@ %ld",groupValue_p.dataSource,sortGVIndex2.count);
+        //NSLog(@"GV取得索引：%@ %ld",groupValue_p.dataSource,sortGVIndex2.count);
         
         //6. 窄出：指定相近度范围内的组码 & 仅返回前NarrowLimit条 (最多narrowLimit条,最少1条);
         NSInteger limit = MAX(sortGVIndex2.count * rate, minLimit);
@@ -291,7 +291,7 @@
         
         //4. 组码识别。
         NSArray *gMatchModels = [AIRecognitionCache getCache:protoGroupValue_p cacheBlock:^id{
-            return ARRTOOK([self recognitionGroupValueV2:protoGroupValue_p rate:0.4 minLimit:3]);
+            return ARRTOOK([self recognitionGroupValueV2:protoGroupValue_p rate:0.8 minLimit:3]);
         }];
         
         //6. 对所有gv识别结果的，所有refPorts，依次判断位置符合度。
@@ -324,6 +324,8 @@
     NSDictionary *resultDic = [gvBestModel convert2AIMatchModelsStep4];// <K=deltaLevel_assPId, V=识别的特征AIMatchModel>
     if (debugMode) AddDebugCodeBlock_Key(@"a", @"100");
     if (debugMode) PrintDebugCodeBlock_Key(@"a");
+    
+    //TODOTOMORROW20250329: 测修下此处最终概念识别结果是0条。
     
     //32. debug
     for (NSString *assKey in resultDic.allKeys) {
