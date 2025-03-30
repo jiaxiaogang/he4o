@@ -292,8 +292,15 @@
         
         //4. 组码识别。
         NSArray *gMatchModels = [AIRecognitionCache getCache:protoGroupValue_p cacheBlock:^id{
-            return ARRTOOK([self recognitionGroupValueV2:protoGroupValue_p rate:0.8 minLimit:3]);
+            return ARRTOOK([self recognitionGroupValueV2:protoGroupValue_p rate:1.0 minLimit:3]);
         }];
+        
+        AIMatchModel *find = [SMGUtils filterSingleFromArr:gMatchModels checkValid:^BOOL(AIMatchModel *item) {
+            return [item.match_p isEqual:protoGroupValue_p];
+        }];
+        if (find) {
+            NSLog(@"第%ld帧GV，找着protoGV了（匹配度：%.2f）",i,find.matchValue);
+        }
         
         //6. 对所有gv识别结果的，所有refPorts，依次判断位置符合度。
         for (AIMatchModel *gModel in gMatchModels) {
@@ -310,16 +317,26 @@
                 //BOOL debugMode = [feature_p.dataSource isEqual:@"hColors"] && [refPort.target_p isEqual:protoFeature.p] && assLevel == protoLevel && [gModel.match_p isEqual:protoGroupValue_p];
                 CGFloat matchDegree = [ThinkingUtils checkAssToMatchDegree:protoFeature protoIndex:i assGVModels:assGVItems checkRefPort:refPort debugMode:false];
                 
+                BOOL find = [@"bColors" isEqualToString:protoGroupValue_p.dataSource] && [gModel.match_p isEqual:protoGroupValue_p] && [refPort.target_p isEqual:feature_p];
+                if (find) {
+                    NSLog(@"\t从第%ld帧GV，找着protoT了（位置符合度：%.2f）",i,matchDegree);
+                }
+                
                 //14. 判断新一条refPort是否更好，更好的话存下来（存refPort，assKey，gModel.matchValue，matchDegree）。
                 [gvBestModel updateStep1:assKey refPort:refPort gMatchValue:gModel.matchValue gMatchDegree:matchDegree matchOfProtoIndex:i];
             }
         }
+        NSLog(@"%ld 取得1：%ld",i,gvBestModel.protoDic.count);
         
         //21. STEP2：每个protoIndex内防重，竞争只保留protoIndex下最好一条。
         [gvBestModel invokeRankStep2];
         
+        NSLog(@"%ld 取得2：%ld",i,gvBestModel.rankDic.count);
+        
         //22. STEP3：跨protoIndex防重，将best结果存下来
         [gvBestModel updateStep3];
+        NSLog(@"%ld 取得3：%ld",i,gvBestModel.bestDic.count);
+        NSLog(@"");
     }
     //31. 用明细生成总账（bestModel -> resultDic）。
     NSDictionary *resultDic = [gvBestModel convert2AIMatchModelsStep4];// <K=deltaLevel_assPId, V=识别的特征AIMatchModel>
