@@ -233,12 +233,12 @@
             CGFloat matchValue = [AIAnalyst compareGV:assNum protoV:protoNum at:groupValue_p.algsType ds:groupValue_p.dataSource minData:minNum maxData:maxNum itemIndex:itemIndex];
             
             //13. 首轮循环新建，其后必须复用（复用不到，说明非全含，直接滤掉。
-            AIMatchModel *gModel = [resultDic objectForKey:ass_p];
+            AIMatchModel *gModel = [resultDic objectForKey:@(ass_p.pointerId)];
             if (!gModel) gModel = [[AIMatchModel alloc] initWithMatch_p:ass_p];
             gModel.matchValue *= matchValue;
             gModel.sumMatchValue += matchValue;
             gModel.matchCount++;
-            [resultDic setObject:gModel forKey:ass_p];
+            [resultDic setObject:gModel forKey:@(ass_p.pointerId)];
         }
     }
     
