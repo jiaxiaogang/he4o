@@ -222,12 +222,17 @@
         NSArray *validGVIndex3 = ARR_SUB(sortGVIndex2, 0, limit);
         
         //11. 转nears为AIMatchModels。
+        BOOL find = false;
         for (MapModel *itemGVIndex in validGVIndex3) {
             AIKVPointer *ass_p = itemGVIndex.v1;
             CGFloat assNum = NUMTOOK(itemGVIndex.v2).floatValue;
             
             //12. 计算相近度（取item与proto的相近度）。
             CGFloat matchValue = [AIAnalyst compareGV:assNum protoV:protoNum at:groupValue_p.algsType ds:groupValue_p.dataSource minData:minNum maxData:maxNum itemIndex:itemIndex];
+            
+            if ([ass_p isEqual:groupValue_p]) {
+                find = true;
+            }
             
             //13. 首轮循环新建，其后必须复用（复用不到，说明非全含，直接滤掉。
             AIMatchModel *gModel = [resultDic objectForKey:@(ass_p.pointerId)];
@@ -237,6 +242,14 @@
             gModel.matchCount++;
             [resultDic setObject:gModel forKey:@(ass_p.pointerId)];
         }
+        
+        
+        if (find) {
+            NSLog(@"GV第%ld索引，找着protoGV了",itemIndex);
+        } else {
+            NSLog(@"TODOTOMORROW20250330：查下，为什么会有匹配不到自己的情况");
+        }
+        
     }
     
     //21. 转为gMatchModels数组。
