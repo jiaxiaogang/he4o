@@ -108,9 +108,6 @@
         //4. 每个near_p向ref找相似的assGroupValue。
         for (AIMatchModel *vModel in vMatchModels) {
             
-            //TODOTOMORROW20250326: 还是得从G索引下手来优化，九个单码取的太泛，导致G识别性能好不了。
-            //分析: 除非，把G做整个索引设计，即G内部9码的相对，也是可以做成索引的。
-            
             //11. 2025.03.20: 此处取refPorts已经按xy九宫位置一一对应了（因为从单码到组码，的9个位置，是有位置要求的，首和尾匹配上，并不能表示二者相似）。
             NSArray *refPorts = ARRTOOK([AINetUtils refPorts_All4Value4G:vModel.match_p x:protoX y:protoY]);
 
@@ -251,17 +248,21 @@
     }];
     if (debugMode) AddDebugCodeBlock_Key(@"a", @"4");
     
-    //23. 更新: ref强度 & 相似度 & 抽具象;
+    //23. 按匹配度排序。
+    gMatchModels = [SMGUtils sortBig2Small:gMatchModels compareBlock:^double(AIMatchModel *obj) {
+        return obj.matchValue;
+    }];
+    
+    //24. 过滤不准确的结果。
+    gMatchModels = ARR_SUB(gMatchModels, 0, MAX(5, gMatchModels.count * 0.5));
+    
+    //25. 更新: ref强度 & 相似度 & 抽具象;
+    //2025.03.30: 这儿性能不太好，经查现在组码索引，也不需要单码到组码的引用强度了。
     for (AIMatchModel *matchModel in gMatchModels) {
-        if (debugMode) AddDebugCodeBlock_Key(@"a", @"14");
         AIGroupValueNode *assNode = [SMGUtils searchNode:matchModel.match_p];
-        if (debugMode) AddDebugCodeBlock_Key(@"a", @"15");
-        [AINetUtils insertRefPorts_General:assNode.p content_ps:assNode.content_ps difStrong:1 header:assNode.header];
-        if (debugMode) AddDebugCodeBlock_Key(@"a", @"16");
+        //[AINetUtils insertRefPorts_General:assNode.p content_ps:assNode.content_ps difStrong:1 header:assNode.header];
         [protoGroupValue updateMatchValue:assNode matchValue:matchModel.matchValue];
-        if (debugMode) AddDebugCodeBlock_Key(@"a", @"17");
         [AINetUtils relateGeneralAbs:assNode absConPorts:assNode.conPorts conNodes:@[protoGroupValue] isNew:false difStrong:1];
-        if (debugMode) AddDebugCodeBlock_Key(@"a", @"18");
     }
     if (debugMode) AddDebugCodeBlock_Key(@"a", @"19");
     return gMatchModels;
@@ -325,11 +326,12 @@
     if (debugMode) AddDebugCodeBlock_Key(@"a", @"100");
     if (debugMode) PrintDebugCodeBlock_Key(@"a");
     
-    //TODOTOMORROW20250329: 测修下此处最终概念识别结果是0条。
-    
     //32. debug
     for (NSString *assKey in resultDic.allKeys) {
         AIMatchModel *model = [resultDic objectForKey:assKey];
+        //TODOTOMORROW20250330: 查下，为什么识别特征自己，也只有0.3相似度。
+        //0_629    匹配条数 8/45     特征识别综合匹配度计算:T629     匹配度:3.70 / 8     = 0.30
+        
         NSLog(@"%@\t匹配条数 %ld/%ld \t特征识别综合匹配度计算:T%ld \t匹配度:%.2f / %ld \t= %.2f",assKey,model.matchCount,protoFeature.count,model.match_p.pointerId,model.sumMatchValue,model.matchCount,model.matchValue);
     }
     
