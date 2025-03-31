@@ -261,13 +261,16 @@
     //BOOL noZeRen = [TCLearningUtil noZeRenForCenJi:curMatchValue bigerMatchValue:bigerMatchValue];
     //if (!noZeRen) return nil;
     NSDictionary *degreeDic = DICTOOK([protoFeature getDegreeDic:assT_p.pointerId]);
-        
+    
+    //3. 生成protoIndexDic 和 assIndexDic  (参考29032-todo1.2);
+    //备忘: 如果以后特征要支持indexDic,这里可以打开并存上映射支持下 (但短时间内应该不需要,连alg也没支持映射);
+    NSMutableDictionary *assAbsIndexDic = [NSMutableDictionary new];
+    NSMutableDictionary *protoAbsIndexDic = [NSMutableDictionary new];
     
     //TODOTOMORROW20250331：
-    //1. 组码类比是不是不再需要了？
     //2. 特征类比应该也跟着新组码索引，迭代下？
     
-    //2. 外类比有序进行 (记录jMax & 正序)
+    //11. 外类比有序进行 (记录jMax & 正序)
     NSDictionary *indexDic = [protoFeature getAbsIndexDic:assT_p];
     for (NSNumber *key in indexDic) {
         NSNumber *value = [indexDic objectForKey:key];
@@ -280,37 +283,45 @@
         }
         CGFloat curDegree = NUMTOOK([degreeDic objectForKey:@(assIndex)]).floatValue;
         
-        //3. B源于matchFo,此处只判断B是1层抽象 (参考27161-调试1&调试2);
+        //12. B源于matchFo,此处只判断B是1层抽象 (参考27161-调试1&调试2);
         //此处proto抽象仅指向刚识别的matchAlgs,所以与contains等效;
         if (Log4Ana) NSLog(@"proto的第%ld: G%ld 类比 ass的第%ld: G%ld",protoIndex,protoG_p.pointerId,assIndex,assG_p.pointerId);
         
-        //4. 即使mIsC匹配,也要进行共同点抽象 (参考29025-11);
-        AIGroupValueNode *absG = [self analogyGroupValue:protoG_p assG:assG_p curDegree:curDegree bigerMatchValue:curMatchValue];
-        if (!absG) continue;
-        featureMatchValue *= [absG getConMatchValue:protoG_p];
+        //================= GV类比V1 =================
+        //13. 调用GV类比V1: 即使mIsC匹配,也要进行共同点抽象 (参考29025-11);
+        //AIGroupValueNode *absG = [self analogyGroupValue:protoG_p assG:assG_p curDegree:curDegree bigerMatchValue:curMatchValue];
+        //if (!absG) continue;
+        //featureMatchValue *= [absG getConMatchValue:protoG_p];
+        //14. 类比后,尽量保留大图,即以level小的主准存level,x,y;
+        //NSInteger absLevel = assLevel < protoLevel ? assLevel : protoLevel;
+        //NSInteger absX = assLevel < protoLevel ? assX : protoX;
+        //NSInteger absY = assLevel < protoLevel ? assY : protoY;
+        //[absGVModels addObject:[InputGroupValueModel new:nil groupValue:absG.p level:absLevel x:absX y:absY]];
         
-        //5. 类比后,尽量保留大图,即以level小的主准存level,x,y;
+        //================= GV类比V2 =================
+        //15. 调用GV类比V2: 即使mIsC匹配,也要进行共同点抽象 (参考29025-11);
+        MapModel *analogyGVResult = [self analogyGroupValueV2:protoG_p assG:assG_p curDegree:curDegree bigerMatchValue:curMatchValue];
+        if (!analogyGVResult) continue;
+        featureMatchValue *= NUMTOOK(analogyGVResult.v2).floatValue;
+        
+        //16. 类比后,以ass为主,存level,x,y;
         NSInteger assLevel = NUMTOOK(ARR_INDEX(assFeature.levels, assIndex)).integerValue;
         NSInteger assX = NUMTOOK(ARR_INDEX(assFeature.xs, assIndex)).integerValue;
         NSInteger assY = NUMTOOK(ARR_INDEX(assFeature.ys, assIndex)).integerValue;
         NSInteger protoLevel = NUMTOOK(ARR_INDEX(protoFeature.levels, protoIndex)).integerValue;
         NSInteger protoX = NUMTOOK(ARR_INDEX(protoFeature.xs, protoIndex)).integerValue;
         NSInteger protoY = NUMTOOK(ARR_INDEX(protoFeature.ys, protoIndex)).integerValue;
-        NSInteger absLevel = assLevel < protoLevel ? assLevel : protoLevel;
-        NSInteger absX = assLevel < protoLevel ? assX : protoX;
-        NSInteger absY = assLevel < protoLevel ? assY : protoY;
-        [absGVModels addObject:[InputGroupValueModel new:nil groupValue:absG.p level:absLevel x:absX y:absY]];
+        [absGVModels addObject:[InputGroupValueModel new:nil groupValue:analogyGVResult.v1 level:assLevel x:assX y:assY]];
+        
+        //17. 把ass和proto分别与 abs的映射记下来。
+        [assAbsIndexDic setObject:@(assIndex) forKey:@(assAbsIndexDic.count)];
+        [protoAbsIndexDic setObject:@(protoIndex) forKey:@(protoAbsIndexDic.count)];
     }
     
-    //备忘: 如果以后特征要支持indexDic,这里可以打开并存上映射支持下 (但短时间内应该不需要,连alg也没支持映射);
-    //6. 生成protoIndexDic 和 assIndexDic  (参考29032-todo1.2);
-    NSDictionary *assAbsIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:indexDic.allKeys];
-    NSDictionary *protoAbsIndexDic = [AINetUtils getIndexDic4AnalogyAbsFo:indexDic.allValues];
-    
-    //7. 外类比构建
+    //21. 外类比构建
     AIFeatureNode *absT = [AIGeneralNodeCreater createFeatureNode:absGVModels conNodes:@[protoFeature,assFeature] at:protoT_p.algsType ds:protoT_p.dataSource isOut:protoT_p.isOut logDesc:STRFORMAT(@"(%@:%@)",protoFeature.logDesc,assFeature.logDesc)];
     
-    //8. 更新匹配度 & 映射;
+    //22. 更新匹配度 & 映射;
     [protoFeature updateMatchValue:absT matchValue:featureMatchValue];
     [assFeature updateMatchValue:absT matchValue:1];
     [protoFeature updateIndexDic:absT indexDic:protoAbsIndexDic];
@@ -389,6 +400,28 @@
     [AITest test25:absG conNodes:@[protoG,assG]];
     if (Log4Ana) NSLog(@"G类比 ===> %@ : %@ = %@",Pit2FStr(protoG_p),Pit2FStr(assG_p),Pit2FStr(absG.p));
     return absG;
+}
+
+/**
+ *  MARK:--------------------组码类比V2--------------------
+ *  @version
+ *      2025.03.31: v2-因组码索引迭代为三个索引后，这里也改下，不再向单码探进了，直接参考单码类比，在组码类比这儿把assG返回就行了。
+ */
++(MapModel*) analogyGroupValueV2:(AIKVPointer*)protoG_p assG:(AIKVPointer*)assG_p curDegree:(CGFloat)curDegree bigerMatchValue:(CGFloat)bigerMatchValue {
+    //1. 如果本就一致;
+    if ([protoG_p isEqual:assG_p]) return [SMGUtils searchNode:protoG_p];
+    
+    //2. 数据准备;
+    AIGroupValueNode *protoG = [SMGUtils searchNode:protoG_p];
+    if (!protoG || !assG_p) return nil;
+    
+    //3. 数据检查（当前有主责，直接剔除）。
+    CGFloat curMatchValue = [protoG getAbsMatchValue:assG_p];
+    BOOL noZeRen = [TCLearningUtil noZeRenForPingJun:curMatchValue * curDegree bigerMatchValue:bigerMatchValue];
+    if (!noZeRen) return nil;
+    
+    //32. 当前码责任<50%时 (次要责任时,免责);
+    return [MapModel newWithV1:assG_p v2:@(curMatchValue) v3:@(curDegree)];
 }
 
 /**
