@@ -38,17 +38,24 @@
         }];
         if (aleardayHav) continue;
         
-        //5. 将新的gNode.p加入其中（顺序为平均值从小到大排序）。
-        id newObj = @[@(gNode.pId),newNum];
+        //5. 找出newNum应该插入的位置（顺序为平均值从小到大排序）。
+        NSInteger findIndex = -1;
         for (NSInteger i = 0; i < oldIndexs.count; i++) {
             NSArray *itemGVIndex = ARR_INDEX(oldIndexs, i);
             CGFloat oldNum = NUMTOOK(itemGVIndex[1]).floatValue;
             if (oldNum > newNum.floatValue) {
-                [oldIndexs insertObject:newObj atIndex:i];
+                findIndex = i;
                 break;
             }
         }
-        if (oldIndexs.count == 0) [oldIndexs addObject:newObj];
+        
+        //6. 将新的gNode.p加入其中。
+        id newObj = @[@(gNode.pId),newNum];
+        if (findIndex == -1) {
+            [oldIndexs addObject:newObj];//没找到，说明没比newNum大的，直接加到最后即可。
+        } else {
+            [oldIndexs insertObject:newObj atIndex:findIndex];
+        }
         [SMGUtils insertGVIndex:oldIndexs gvIndex_p:gvIndex_p itemIndex:itemIndex];
     }
 }

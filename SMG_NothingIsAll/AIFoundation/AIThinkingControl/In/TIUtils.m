@@ -222,17 +222,12 @@
         NSArray *validGVIndex3 = ARR_SUB(sortGVIndex2, 0, limit);
         
         //11. 转nears为AIMatchModels。
-        BOOL find = false;
         for (MapModel *itemGVIndex in validGVIndex3) {
             AIKVPointer *ass_p = itemGVIndex.v1;
             CGFloat assNum = NUMTOOK(itemGVIndex.v2).floatValue;
             
             //12. 计算相近度（取item与proto的相近度）。
             CGFloat matchValue = [AIAnalyst compareGV:assNum protoV:protoNum at:groupValue_p.algsType ds:groupValue_p.dataSource minData:minNum maxData:maxNum itemIndex:itemIndex];
-            
-            if ([ass_p isEqual:groupValue_p]) {
-                find = true;
-            }
             
             //13. 首轮循环新建，其后必须复用（复用不到，说明非全含，直接滤掉。
             AIMatchModel *gModel = [resultDic objectForKey:@(ass_p.pointerId)];
@@ -242,14 +237,6 @@
             gModel.matchCount++;
             [resultDic setObject:gModel forKey:@(ass_p.pointerId)];
         }
-        
-        
-        if (find) {
-            NSLog(@"GV第%ld索引，找着protoGV了",itemIndex);
-        } else {
-            NSLog(@"TODOTOMORROW20250330：查下，为什么会有匹配不到自己的情况");
-        }
-        
     }
     
     //21. 转为gMatchModels数组。
@@ -305,15 +292,8 @@
         
         //4. 组码识别。
         NSArray *gMatchModels = [AIRecognitionCache getCache:protoGroupValue_p cacheBlock:^id{
-            return ARRTOOK([self recognitionGroupValueV2:protoGroupValue_p rate:1.0 minLimit:3]);
+            return ARRTOOK([self recognitionGroupValueV2:protoGroupValue_p rate:0.3 minLimit:3]);
         }];
-        
-        AIMatchModel *find = [SMGUtils filterSingleFromArr:gMatchModels checkValid:^BOOL(AIMatchModel *item) {
-            return [item.match_p isEqual:protoGroupValue_p];
-        }];
-        if (find) {
-            NSLog(@"第%ld帧GV，找着protoGV了（匹配度：%.2f）",i,find.matchValue);
-        }
         
         //6. 对所有gv识别结果的，所有refPorts，依次判断位置符合度。
         for (AIMatchModel *gModel in gMatchModels) {
@@ -330,26 +310,16 @@
                 //BOOL debugMode = [feature_p.dataSource isEqual:@"hColors"] && [refPort.target_p isEqual:protoFeature.p] && assLevel == protoLevel && [gModel.match_p isEqual:protoGroupValue_p];
                 CGFloat matchDegree = [ThinkingUtils checkAssToMatchDegree:protoFeature protoIndex:i assGVModels:assGVItems checkRefPort:refPort debugMode:false];
                 
-                BOOL find = [@"bColors" isEqualToString:protoGroupValue_p.dataSource] && [gModel.match_p isEqual:protoGroupValue_p] && [refPort.target_p isEqual:feature_p];
-                if (find) {
-                    NSLog(@"\t从第%ld帧GV，找着protoT了（位置符合度：%.2f）",i,matchDegree);
-                }
-                
                 //14. 判断新一条refPort是否更好，更好的话存下来（存refPort，assKey，gModel.matchValue，matchDegree）。
                 [gvBestModel updateStep1:assKey refPort:refPort gMatchValue:gModel.matchValue gMatchDegree:matchDegree matchOfProtoIndex:i];
             }
         }
-        NSLog(@"%ld 取得1：%ld",i,gvBestModel.protoDic.count);
         
         //21. STEP2：每个protoIndex内防重，竞争只保留protoIndex下最好一条。
         [gvBestModel invokeRankStep2];
         
-        NSLog(@"%ld 取得2：%ld",i,gvBestModel.rankDic.count);
-        
         //22. STEP3：跨protoIndex防重，将best结果存下来
         [gvBestModel updateStep3];
-        NSLog(@"%ld 取得3：%ld",i,gvBestModel.bestDic.count);
-        NSLog(@"");
     }
     //31. 用明细生成总账（bestModel -> resultDic）。
     NSDictionary *resultDic = [gvBestModel convert2AIMatchModelsStep4];// <K=deltaLevel_assPId, V=识别的特征AIMatchModel>
@@ -359,9 +329,6 @@
     //32. debug
     for (NSString *assKey in resultDic.allKeys) {
         AIMatchModel *model = [resultDic objectForKey:assKey];
-        //TODOTOMORROW20250330: 查下，为什么识别特征自己，也只有0.3相似度。
-        //0_629    匹配条数 8/45     特征识别综合匹配度计算:T629     匹配度:3.70 / 8     = 0.30
-        
         NSLog(@"%@\t匹配条数 %ld/%ld \t特征识别综合匹配度计算:T%ld \t匹配度:%.2f / %ld \t= %.2f",assKey,model.matchCount,protoFeature.count,model.match_p.pointerId,model.sumMatchValue,model.matchCount,model.matchValue);
     }
     
