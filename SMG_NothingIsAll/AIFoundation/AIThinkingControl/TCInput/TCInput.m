@@ -46,11 +46,6 @@
     //2. 识别概念;
     [TIUtils recognitionAlgStep1:except_ps inModel:mModel];
     
-    //TODOTOMORROW20250330：后续看下，每多识别概念后，就触发下类比，以尽快抽象特征。
-    //1. 组码类比是不是不再需要了？
-    //2. 特征类比应该也跟着新组码索引，迭代下？
-    
-    
     //3. 将mModel保留 (只有先保留后,构建时序时,才会含新帧概念);
     [theTC.inModelManager add:mModel];
     DebugE();

@@ -262,6 +262,11 @@
     //if (!noZeRen) return nil;
     NSDictionary *degreeDic = DICTOOK([protoFeature getDegreeDic:assT_p.pointerId]);
         
+    
+    //TODOTOMORROW20250331：
+    //1. 组码类比是不是不再需要了？
+    //2. 特征类比应该也跟着新组码索引，迭代下？
+    
     //2. 外类比有序进行 (记录jMax & 正序)
     NSDictionary *indexDic = [protoFeature getAbsIndexDic:assT_p];
     for (NSNumber *key in indexDic) {

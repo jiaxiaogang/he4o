@@ -441,7 +441,7 @@
 //P任务开关 (20230301早没用P任务了,关掉)
 #define Switch4PDemand false
 //行为再输入开关 (参考28133-1 & 28137-修复)
-#define Switch4IsOutReIn false
+#define Switch4IsOutReIn true
 //识别排名器开关 (参考28152-方案5)
 #define Switch4RecognitionRank false
 //matchRFos识别开关 (参考28185-todo1)

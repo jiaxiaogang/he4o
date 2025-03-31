@@ -69,6 +69,11 @@
     //    AIFoNodeBase *itemMFo = [SMGUtils searchNode:item.matchFo];
     //    [AIAnalogy analogyOutside:protoFo assFo:itemMFo type:ATDefault];
     //}
+    
+    //1. 学习 for matchAlgs：加强特征等的抽象：每多识别概念后，就触发下类比，以尽快抽象特征（34091-1触发抽象）。
+    for (AIMatchAlgModel *matchModel in model.matchAlgs_All) {
+        [AIAnalogy analogyAlg:model.protoAlg.p assA:matchModel.matchAlg];
+    }
     DebugE();
 }
 
