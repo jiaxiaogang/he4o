@@ -33,7 +33,7 @@
 +(BOOL) noZeRenForPingJun:(CGFloat)curMatchValue bigerMatchValue:(CGFloat)bigerMatchValue {
     CGFloat bigerZeRen = 1 - bigerMatchValue;//整体的责任
     CGFloat subZeRen = 1 - curMatchValue;//个体的责任。
-    return subZeRen < bigerZeRen * 2;
+    return subZeRen == 0 || subZeRen < bigerZeRen * 2;
 }
 
 @end

@@ -408,19 +408,16 @@
  *      2025.03.31: v2-因组码索引迭代为三个索引后，这里也改下，不再向单码探进了，直接参考单码类比，在组码类比这儿把assG返回就行了。
  */
 +(MapModel*) analogyGroupValueV2:(AIKVPointer*)protoG_p assG:(AIKVPointer*)assG_p curDegree:(CGFloat)curDegree bigerMatchValue:(CGFloat)bigerMatchValue {
-    //1. 如果本就一致;
-    if ([protoG_p isEqual:assG_p]) return [SMGUtils searchNode:protoG_p];
-    
-    //2. 数据准备;
+    //1. 数据准备;
     AIGroupValueNode *protoG = [SMGUtils searchNode:protoG_p];
     if (!protoG || !assG_p) return nil;
     
-    //3. 数据检查（当前有主责，直接剔除）。
+    //2. 数据检查（当前有主责，直接剔除）。
     CGFloat curMatchValue = [protoG getAbsMatchValue:assG_p];
     BOOL noZeRen = [TCLearningUtil noZeRenForPingJun:curMatchValue * curDegree bigerMatchValue:bigerMatchValue];
     if (!noZeRen) return nil;
     
-    //32. 当前码责任<50%时 (次要责任时,免责);
+    //3. 当前码责任<50%时 (次要责任时,免责);
     return [MapModel newWithV1:assG_p v2:@(curMatchValue) v3:@(curDegree)];
 }
 
