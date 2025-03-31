@@ -246,6 +246,7 @@
  *  @version
  *      2025.03.21: 使用mIsC正序双循环来实现特征类比 (参考34062-方案1);
  *      2025.03.21: 改用indexDic映射来实现特征类比 (参考34062-方案2);
+ *      2025.03.31: 改为调用组码类比v2。
  */
 +(AIFeatureNode*) analogyFeature:(AIKVPointer*)protoT_p ass:(AIKVPointer*)assT_p bigerMatchValue:(CGFloat)bigerMatchValue {
     //1. 类比orders的规律
@@ -266,9 +267,6 @@
     //备忘: 如果以后特征要支持indexDic,这里可以打开并存上映射支持下 (但短时间内应该不需要,连alg也没支持映射);
     NSMutableDictionary *assAbsIndexDic = [NSMutableDictionary new];
     NSMutableDictionary *protoAbsIndexDic = [NSMutableDictionary new];
-    
-    //TODOTOMORROW20250331：
-    //2. 特征类比应该也跟着新组码索引，迭代下？
     
     //11. 外类比有序进行 (记录jMax & 正序)
     NSDictionary *indexDic = [protoFeature getAbsIndexDic:assT_p];
@@ -293,6 +291,9 @@
         //if (!absG) continue;
         //featureMatchValue *= [absG getConMatchValue:protoG_p];
         //14. 类比后,尽量保留大图,即以level小的主准存level,x,y;
+        //NSInteger protoLevel = NUMTOOK(ARR_INDEX(protoFeature.levels, protoIndex)).integerValue;
+        //NSInteger protoX = NUMTOOK(ARR_INDEX(protoFeature.xs, protoIndex)).integerValue;
+        //NSInteger protoY = NUMTOOK(ARR_INDEX(protoFeature.ys, protoIndex)).integerValue;
         //NSInteger absLevel = assLevel < protoLevel ? assLevel : protoLevel;
         //NSInteger absX = assLevel < protoLevel ? assX : protoX;
         //NSInteger absY = assLevel < protoLevel ? assY : protoY;
@@ -308,9 +309,6 @@
         NSInteger assLevel = NUMTOOK(ARR_INDEX(assFeature.levels, assIndex)).integerValue;
         NSInteger assX = NUMTOOK(ARR_INDEX(assFeature.xs, assIndex)).integerValue;
         NSInteger assY = NUMTOOK(ARR_INDEX(assFeature.ys, assIndex)).integerValue;
-        NSInteger protoLevel = NUMTOOK(ARR_INDEX(protoFeature.levels, protoIndex)).integerValue;
-        NSInteger protoX = NUMTOOK(ARR_INDEX(protoFeature.xs, protoIndex)).integerValue;
-        NSInteger protoY = NUMTOOK(ARR_INDEX(protoFeature.ys, protoIndex)).integerValue;
         [absGVModels addObject:[InputGroupValueModel new:nil groupValue:analogyGVResult.v1 level:assLevel x:assX y:assY]];
         
         //17. 把ass和proto分别与 abs的映射记下来。
@@ -326,6 +324,8 @@
     [assFeature updateMatchValue:absT matchValue:1];
     [protoFeature updateIndexDic:absT indexDic:protoAbsIndexDic];
     [assFeature updateIndexDic:absT indexDic:assAbsIndexDic];
+    
+    //TODOTOMORROW20250331: 然后测下能不能把局部特征抽象出来，比如0的转弯部分。
     NSLog(@"特征类比结果 => Proto特征：(%@)\n%@Ass特征：(%@)\n%@抽象特征：(%@)\n%@",protoFeature.logDesc,FeatureDesc(protoFeature.p),assFeature.logDesc,FeatureDesc(assFeature.p),absT.logDesc,FeatureDesc(absT.p));
     return absT;
 }
