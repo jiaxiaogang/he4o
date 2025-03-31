@@ -71,127 +71,9 @@
 /**
  *  MARK:--------------------组码识别--------------------
  */
-+(NSArray*) recognitionGroupValue:(AIKVPointer*)groupValue_p cache:(AIRecognitionCache*)cache {
-    //1. 数据准备
-    BOOL debugMode = [TIUtils debugMode:groupValue_p.dataSource];
-    NSMutableDictionary *gMatchDic = [[NSMutableDictionary alloc] init];
-    AIGroupValueNode *protoGroupValue = [SMGUtils searchNode:groupValue_p];
-    AIGroupValueNextVModel *nextVModel = [[AIGroupValueNextVModel alloc] init];
-    
-    //2. 循环分别识别：组码里的单码。
-    for (NSInteger i = 0; i < protoGroupValue.count; i++) {
-        AIKVPointer *protoValue_p = ARR_INDEX(protoGroupValue.content_ps, i);
-        NSInteger protoX = NUMTOOK(ARR_INDEX(protoGroupValue.xs, i)).integerValue;
-        NSInteger protoY = NUMTOOK(ARR_INDEX(protoGroupValue.ys, i)).integerValue;
-        
-        //============= 把单码识别结果缓存下来 =============
-        if (debugMode) AddDebugCodeBlock_Key(@"a", @"识别");
-        //3. 取相近度序列 (按相近程度排序);
-        NSArray *vMatchModels = [AIRecognitionCache getCache:protoValue_p cacheBlock:^id{
-            return ARRTOOK([self recognitionValue:protoValue_p rate:0.4 minLimit:3]);
-        }];
-        if (debugMode) AddDebugCodeBlock_Key(@"a", @"交集过滤");
-        
-        //4. 过滤器：v识别结果有效判断。
-        if (i > 0 && Switch4NextVModel) {
-            //NSInteger log1 = vMatchModels.count;
-            NSArray *validValue_ps = [nextVModel getValidValue_ps:protoX y:protoY];
-            vMatchModels = [SMGUtils filterArr:vMatchModels checkValid:^BOOL(AIMatchModel *item) {
-                return [validValue_ps containsObject:item.match_p];
-            }];
-            //NSLog(@"1. 第%ld帧V识别到结果数：%ld -> 过滤后：%ld",i,log1,vMatchModels.count);
-        }
-        if (debugMode) AddDebugCodeBlock_Key(@"a", @"5");
-        
-        //============= 把当前单码识别结果的refPorts，有效部分全缓存下来 =============
-        NSMutableDictionary *curValidG_ps = [[NSMutableDictionary alloc] init];
-        //4. 每个near_p向ref找相似的assGroupValue。
-        for (AIMatchModel *vModel in vMatchModels) {
-            
-            //11. 2025.03.20: 此处取refPorts已经按xy九宫位置一一对应了（因为从单码到组码，的9个位置，是有位置要求的，首和尾匹配上，并不能表示二者相似）。
-            NSArray *refPorts = ARRTOOK([AINetUtils refPorts_All4Value4G:vModel.match_p x:protoX y:protoY]);
-
-            //12. 每个refPort转为model并计匹配度和匹配数;
-            for (AIPort *refPort in refPorts) {
-                if (debugMode) AddDebugCodeBlock_Key(@"a", @"9a");
-                
-                //13. 2025.03.20：BUG-防重（每条value_p只允许ref同一个ass一次）。
-                if ([curValidG_ps objectForKey:@(refPort.target_p.pointerId)]) continue;
-                if (debugMode) AddDebugCodeBlock_Key(@"a", @"9b");
-                
-                //14. 把当前i下所有有效的记录下来 (无则新建) (性能: 此处在循环中,所以防重耗60ms正常,收集耗100ms正常);
-                AIMatchModel *gModel = [gMatchDic objectForKey:@(refPort.target_p.pointerId)];
-                if (!gModel) {
-                    gModel = [[AIMatchModel alloc] init];
-                    [gMatchDic setObject:gModel forKey:@(refPort.target_p.pointerId)];
-                }
-                if (debugMode) AddDebugCodeBlock_Key(@"a", @"10");
-                gModel.match_p = refPort.target_p;
-                gModel.matchCount++;
-                gModel.matchValue *= vModel.matchValue;
-                gModel.sumRefStrong += (int)refPort.strong.value;
-                
-                //15. 记上防重。
-                [curValidG_ps setObject:refPort.target_p forKey:@(refPort.target_p.pointerId)];
-                if (debugMode) AddDebugCodeBlock_Key(@"a", @"11");
-            }
-            if (debugMode) AddDebugCodeBlock_Key(@"a", @"11b");
-        }
-        if (debugMode) AddDebugCodeBlock_Key(@"a", @"11b1");
-        
-        //16. nextVModel已经是取交过滤器的作用了，不需要收集上帧targets来做过滤了（参考34072-性能4A）。
-        [nextVModel reloadEveryXYValidValue_ps:curValidG_ps.allValues];
-        if (debugMode) AddDebugCodeBlock_Key(@"a", @"11c");
-    }
-    if (debugMode) AddDebugCodeBlock_Key(@"a", @"12");
-    
-    //17. 全含判断: 从大到小,依次取到对应的node和matchingCount (注: 支持相近后,应该全是全含了,参考25084-1);
-    NSArray *gMatchModels = [SMGUtils filterArr:gMatchDic.allValues checkValid:^BOOL(AIMatchModel *item) {
-        AIGroupValueNode *gItem = [SMGUtils searchNode:item.match_p];
-        return gItem.count == item.matchCount;//仅保留全含的。
-    }];
-    if (debugMode) AddDebugCodeBlock_Key(@"a", @"13");//43次 4.5s
-    
-    //2025.03.21: 提升索引范围，因为组码可复用性还是挺强的，先全保留跑跑看。
-    //12. 似层交层分开进行竞争 (分开竞争是以前就一向如此的,因为同质竞争才公平) (为什么要保留交层: 参考31134-TODO1);
-    //NSArray *gMatchModels_Si = [SMGUtils filterArr:gMatchModels checkValid:^BOOL(AIMatchModel *model) {
-    //    AIGroupValueNode *item = [SMGUtils searchNode:model.match_p];
-    //    return item.count == protoGroupValue.count;
-    //}];
-    //NSArray *gMatchModels_Jiao = [SMGUtils filterArr:gMatchModels checkValid:^BOOL(AIMatchModel *model) {
-    //    AIAlgNodeBase *item = [SMGUtils searchNode:model.match_p];
-    //    return item.count != protoGroupValue.count;
-    //}];
-    //
-    //13. 识别过滤器 (参考28109-todo2);
-    //gMatchModels_Si = [AIFilter recognitionMatchModelsFilter:gMatchModels_Si radio:0.26f];
-    //gMatchModels_Jiao = [AIFilter recognitionMatchModelsFilter:gMatchModels_Jiao radio:0.5f];
-    //return [SMGUtils collectArrA:gMatchModels_Si arrB:gMatchModels_Jiao];
-    
-    //21. 更新: ref强度 & 相似度 & 抽具象;
-    for (AIMatchModel *matchModel in gMatchModels) {
-        if (debugMode) AddDebugCodeBlock_Key(@"a", @"14");
-        AIGroupValueNode *assNode = [SMGUtils searchNode:matchModel.match_p];
-        if (debugMode) AddDebugCodeBlock_Key(@"a", @"15");
-        [AINetUtils insertRefPorts_General:assNode.p content_ps:assNode.content_ps difStrong:1 header:assNode.header];
-        if (debugMode) AddDebugCodeBlock_Key(@"a", @"16");
-        [protoGroupValue updateMatchValue:assNode matchValue:matchModel.matchValue];
-        if (debugMode) AddDebugCodeBlock_Key(@"a", @"17");
-        [AINetUtils relateGeneralAbs:assNode absConPorts:assNode.conPorts conNodes:@[protoGroupValue] isNew:false difStrong:1];
-        if (debugMode) AddDebugCodeBlock_Key(@"a", @"18");
-    }
-    if (debugMode) AddDebugCodeBlock_Key(@"a", @"19");
-    return gMatchModels;
-}
-
-/**
- *  MARK:--------------------组码识别--------------------
- */
 +(NSArray*) recognitionGroupValueV2:(AIKVPointer*)groupValue_p rate:(CGFloat)rate minLimit:(NSInteger)minLimit {
     //1. 数据准备
-    BOOL debugMode = [TIUtils debugMode:groupValue_p.dataSource];
     AIGroupValueNode *protoGroupValue = [SMGUtils searchNode:groupValue_p];
-    if (debugMode) AddDebugCodeBlock_Key(@"a", @"2");
     NSMutableDictionary *resultDic = [[NSMutableDictionary alloc] init];
     
     //2. 先把protoGV解读成索引值。
@@ -208,7 +90,6 @@
         MapModel *maxGVIndex = ARR_INDEX_REVERSE(allGVIndex, 0);
         float minNum = minGVIndex ? NUMTOOK(minGVIndex.v2).floatValue : 0;
         float maxNum = maxGVIndex ? NUMTOOK(maxGVIndex.v2).floatValue : 0;
-        if (debugMode) AddDebugCodeBlock_Key(@"a", @"3");
         
         //5. 按照相近度排序;
         NSArray *sortGVIndex2 = [SMGUtils sortSmall2Big:allGVIndex compareBlock:^double(MapModel *itemGVIndex) {
@@ -246,7 +127,6 @@
     gMatchModels = [SMGUtils filterArr:gMatchModels checkValid:^BOOL(AIMatchModel *item) {
         return item.matchCount >= protoGVIndexs.count;
     }];
-    if (debugMode) AddDebugCodeBlock_Key(@"a", @"4");
     
     //23. 按匹配度排序。
     gMatchModels = [SMGUtils sortBig2Small:gMatchModels compareBlock:^double(AIMatchModel *obj) {
@@ -264,10 +144,8 @@
         [protoGroupValue updateMatchValue:assNode matchValue:matchModel.matchValue];
         [AINetUtils relateGeneralAbs:assNode absConPorts:assNode.conPorts conNodes:@[protoGroupValue] isNew:false difStrong:1];
     }
-    if (debugMode) AddDebugCodeBlock_Key(@"a", @"19");
     return gMatchModels;
 }
-
 
 //MARK:===============================================================
 //MARK:                     < 特征识别 >
@@ -279,8 +157,6 @@
 +(NSArray*) recognitionFeature:(AIKVPointer*)feature_p cache:(AIRecognitionCache*)cache {
     //1. 数据准备
     NSLog(@"\n=========== 特征识别ProtoT%ld ===========",feature_p.pointerId);
-    BOOL debugMode = [TIUtils debugMode:feature_p.dataSource];
-    if (debugMode) AddDebugCodeBlock_Key(@"a", @"1");
     AIFeatureNode *protoFeature = [SMGUtils searchNode:feature_p];
     AIFeatureAllBestGVModel *gvBestModel = [[AIFeatureAllBestGVModel alloc] init];
     if (protoFeature.count == 0) return @[[[AIMatchModel alloc] initWithMatch_p:feature_p]];
@@ -323,8 +199,6 @@
     }
     //31. 用明细生成总账（bestModel -> resultDic）。
     NSDictionary *resultDic = [gvBestModel convert2AIMatchModelsStep4];// <K=deltaLevel_assPId, V=识别的特征AIMatchModel>
-    if (debugMode) AddDebugCodeBlock_Key(@"a", @"100");
-    if (debugMode) PrintDebugCodeBlock_Key(@"a");
     
     //32. debug
     for (NSString *assKey in resultDic.allKeys) {
@@ -1115,10 +989,6 @@
         }
     }
     return nil;
-}
-
-+(BOOL) debugMode:(NSString*)ds {
-    return false;//[@"bColors" isEqual:ds];
 }
 
 @end
