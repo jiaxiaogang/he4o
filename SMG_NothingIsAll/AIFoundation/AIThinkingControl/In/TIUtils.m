@@ -218,6 +218,8 @@
         return obj.match_p;
     }];
     
+    //TODOTOMORROW20250401: 这里看下匹配度和匹配数，做下综合竞争，而不是直接限定必须达到70%才有效，或者只根据匹配度来排序（参考34091-5提升准确）。
+    
     //43. 过滤器3、匹配度强度过滤器 (参考28109-todo2)。
     resultModels = [AIFilter recognitionMatchModelsFilter:resultModels radio:0.4f];
     
@@ -615,7 +617,7 @@
             
             //7. 每个refPort做两件事:
             for (AIPort *refPort in refPorts) {
-                AddDebugCodeBlock_Key(@"时序识别", @"3联想");
+                //AddDebugCodeBlock_Key(@"时序识别", @"3联想");
                 //8. 不应期 -> 不可激活 & 收集到不应期同一fo仅处理一次;
                 if ([SMGUtils containsSub_p:refPort.target_p parent_ps:except_ps]) continue;
                 //AddDebugCodeBlock_Key(@"时序识别", @"4防重通过");
