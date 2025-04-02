@@ -296,9 +296,11 @@
     NSInteger width = powf(3, maxLevel);
     for (NSInteger y = 0; y < width; y++) {
         for (NSInteger x = 0; x < width; x++) {
+            if (x % 3 != 0 || y % 3 != 0) continue;//日志打小点，太大太占地方。
             NSString *dot = [needLog objectForKey:STRFORMAT(@"%ld_%ld",x,y)];
             [result appendString:dot?dot:@" "];
         }
+        if (y % 3 != 0) continue;//日志打小点，太大太占地方。
         [result appendString:@"\n"];
     }
     return result;

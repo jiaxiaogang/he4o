@@ -233,6 +233,7 @@
     //7. 将相近度善可的构建成抽象概念返回;
     [AITest test29:protoA assA:assA];
     AIAbsAlgNode *absA = [theNet createAbsAlg_NoRepeat:sameValue_ps conAlgs:@[protoA,assA]];
+    absA.logDesc = STRFORMAT(@"(%@:%@)",protoA.logDesc,assA.logDesc);
     
     //8. 将抽象概念与具象的匹配度存下来 (参考29091BUG);
     [protoA updateMatchValue:absA matchValue:protoAbsModel4MatchValue.matchValue];
@@ -325,8 +326,9 @@
     [protoFeature updateIndexDic:absT indexDic:protoAbsIndexDic];
     [assFeature updateIndexDic:absT indexDic:assAbsIndexDic];
     
-    //TODOTOMORROW20250331: 然后测下能不能把局部特征抽象出来，比如0的转弯部分。
-    NSLog(@"特征类比结果 => Proto特征：(%@)\n%@Ass特征：(%@)\n%@抽象特征：(%@)\n%@",protoFeature.logDesc,FeatureDesc(protoFeature.p),assFeature.logDesc,FeatureDesc(assFeature.p),absT.logDesc,FeatureDesc(absT.p));
+    //TODOTOMORROW20250402: 查下自己和自己类比完后，和自己不一样，应该是责任剔除的问题，查一下明确下是不是BUG。
+    
+    NSLog(@"特征类比结果 => Proto特征%ld：(%@)\n%@Ass特征T%ld：(%@)\n%@抽象特征T%ld：(%@)\n%@",protoFeature.pId,protoFeature.logDesc,FeatureDesc(protoFeature.p),assFeature.pId,assFeature.logDesc,FeatureDesc(assFeature.p),absT.pId,absT.logDesc,FeatureDesc(absT.p));
     return absT;
 }
 
