@@ -90,7 +90,7 @@
         //5. 飞完动画时,要调用下碰撞检测 (因为UIView动画后,不会立马执行frame更新);
         [self.delegate birdView_FlyAnimationFinish];
         //5. 飞后与坚果碰撞检测 (参考28172-todo2.2 & 30041-记录3);
-        self.hitFoods = [self.delegate birdView_GetFoodOnHit:birdStart birdEnd:self.frame status:FoodStatus_Eat];
+        self.hitFoods = [self.delegate birdView_GetFoodOnHit:birdStart birdEnd:self.frame caller:@"eat"];
         if (ARRISOK(self.hitFoods)) {
             
             //6. 如果飞到坚果上,则触发吃掉 (参考28172-todo2.1);
@@ -183,11 +183,11 @@
  */
 -(void) eatAction:(CGFloat)value{
     //1. 吃动作
-    [UIView animateWithDuration:0.1f animations:^{
+    [UIView animateWithDuration:0.3f animations:^{
         [self.containerView.layer setTransform:CATransform3DMakeRotation(M_PI_4 * 0.5f, 0, 0, 1)];
     }completion:^(BOOL finished) {
         //2. 吃完动作
-        [UIView animateWithDuration:0.1f animations:^{
+        [UIView animateWithDuration:0.3f animations:^{
             [self.containerView.layer setTransform:CATransform3DIdentity];
         }completion:^(BOOL finished) {
             [theRT invoked:kEatSEL];
@@ -203,7 +203,7 @@
     //2. 吃掉UI (计时器触发,更饿时,发现没坚果吃,并不能解决饥饿问题,参考:18084_todo1);
     for (FoodView *foodView in self.hitFoods) {
         //3. 吃掉 (让he以吸吮反射的方式,去主动吃;并将out入网,以抽象出"吃"的节点;参考n15p6-QT1)
-        if(foodView.status == FoodStatus_Eat){
+        if(foodView.canEat) {
             eated = true;
             [foodView removeFromSuperview];
         }else if(foodView.status == FoodStatus_Border){
@@ -260,7 +260,7 @@
     }];
     
     //7. 坚果踢出距离;
-    self.hitFoods = [self.delegate birdView_GetFoodOnHit:birdStart birdEnd:self.frame status:FoodStatus_Border];
+    self.hitFoods = [self.delegate birdView_GetFoodOnHit:birdStart birdEnd:self.frame caller:@"kick"];
     if (ARRISOK(self.hitFoods)) {
         [UIView animateWithDuration:duration animations:^{
             for (UIView *foodView in self.hitFoods) {

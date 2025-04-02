@@ -18,6 +18,7 @@
 #import "UIColor+expanded.h"
 #import "AIHeader.h"
 #import "HEView.h"
+#import "FoodView.h"
 #import "NSLog+Extension.h"
 #import "AITest.h"
 #import "RLTrainer.h"

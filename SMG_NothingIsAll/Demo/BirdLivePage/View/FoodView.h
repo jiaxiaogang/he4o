@@ -26,7 +26,11 @@ typedef NS_ENUM(NSInteger, FoodStatus) {
 
 @property (assign,nonatomic) FoodStatus status;
 
+@property (strong, nonatomic) NSString *imgName;
+@property (strong, nonatomic) UIImageView *imgView;//当前坚果是几号（用于测视觉）。
+
 //被撞击
 -(void) hit;
+-(BOOL) canEat;
 
 @end

@@ -11,7 +11,7 @@
 
 @protocol BirdViewDelegate <NSObject>
 
--(NSArray *)birdView_GetFoodOnHit:(CGRect)birdStart birdEnd:(CGRect)birdEnd status:(FoodStatus)status;
+-(NSArray *)birdView_GetFoodOnHit:(CGRect)birdStart birdEnd:(CGRect)birdEnd caller:(NSString*)caller;
 -(UIView*) birdView_GetPageView;
 -(CGRect) birdView_GetSeeRect;//视觉范围 (仅能看到范围内的view)
 -(void) birdView_SetFramed;

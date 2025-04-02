@@ -40,6 +40,14 @@
     for (HEView *curView in views) {
         BOOL curViewIsShow = curView.alpha > 0 && !curView.hidden;
         if (curView.tag == visibleTag && curViewIsShow) {
+            
+            //3. 当坚果时，改由多码视觉V2输入之（参考34111-测试点3）。
+            if (ISOK(curView, FoodView.class)) {
+                FoodView *food = (FoodView*)curView;
+                [AIVisionAlgsV2 commitInput:food.imgView.image logDesc:food.imgName];
+                return;
+            }
+            
             AIVisionAlgsModel *model = [[AIVisionAlgsModel alloc] init];
             //model.sizeWidth = [self sizeWidth:curView];
             model.sizeHeight = [self sizeHeight:curView];

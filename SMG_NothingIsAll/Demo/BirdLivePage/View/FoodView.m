@@ -22,8 +22,6 @@
     [super initView];
     //self
     [self setFrame:CGRectMake(0, 50, 5, 5)];
-    [self.layer setCornerRadius:2.5f];
-    [self.layer setMasksToBounds:true];
     [self.layer setBorderColor:[UIColor grayColor].CGColor];
     [self setBackgroundColor:[UIColor greenColor]];
     
@@ -36,11 +34,20 @@
         make.top.mas_equalTo(self);
         make.bottom.mas_equalTo(self);
     }];
+    
+    //imgView
+    self.imgView = [[UIImageView alloc] initWithFrame:CGRectMake(-5.5f, -35, 15, 15)];
+    [self addSubview:self.imgView];
+    [self.imgView setAlpha:0.3f];
+    [self sendSubviewToBack:self.imgView];
 }
 
 -(void) initData{
     [super initData];
     self.status = FoodStatus_Border;
+    int num = arc4random() % 2;//给吃0到1号坚果
+    int subNum = (arc4random() % 17) + 1;
+    self.imgName = STRFORMAT(@"%d_%d",num,subNum);
 }
 
 -(void) initDisplay{
@@ -59,6 +66,8 @@
     }else if(self.status == FoodStatus_Remove){
         [self removeFromSuperview];
     }
+    
+    [self.imgView setImage:[AIVisionAlgsV2 createImageFromProtoMnistImageWithName:self.imgName]];
 }
 
 -(void) hit{
@@ -69,6 +78,17 @@
 -(void)setStatus:(FoodStatus)status {
     _status = status;
     [self refreshDisplay];
+}
+
+/**
+ *  MARK:--------------------可吃--------------------
+ *  @version
+ *      2025.04.02: 只有x号坚果可吃（参考34111-测试点3）。
+ */
+-(BOOL) canEat {
+    BOOL canEat4Num = [@"0" isEqualToString:[self.imgName substringToIndex:1]];
+    BOOL canEat4Status = self.status == FoodStatus_Eat;
+    return canEat4Status && canEat4Num;
 }
 
 @end

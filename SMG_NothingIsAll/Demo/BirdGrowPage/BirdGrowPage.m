@@ -123,7 +123,7 @@
         [foodView setCenter:targetPoint];
     }completion:^(BOOL finished) {
         //0. 扔后判断能吃到哪些坚果;
-        self.birdView.hitFoods = [self birdView_GetFoodOnHit:self.birdView.frame birdEnd:self.birdView.frame status:FoodStatus_Eat];
+        self.birdView.hitFoods = [self birdView_GetFoodOnHit:self.birdView.frame birdEnd:self.birdView.frame caller:@"eat"];
         //1. 吃前视觉
         [self.birdView see:self.view fromObserver:false];
         //2. 触碰到鸟嘴;
@@ -552,8 +552,8 @@
 /**
  *  MARK:--------------------BirdViewDelegate--------------------
  */
--(NSArray *)birdView_GetFoodOnHit:(CGRect)birdStart birdEnd:(CGRect)birdEnd status:(FoodStatus)status{
-    return [self runCheckHit4BirdFood:birdStart birdEnd:birdEnd status:status];
+-(NSArray *)birdView_GetFoodOnHit:(CGRect)birdStart birdEnd:(CGRect)birdEnd caller:(NSString*)caller {
+    return [self runCheckHit4BirdFood:birdStart birdEnd:birdEnd caller:caller];
 }
 
 -(UIView*) birdView_GetPageView{
@@ -748,7 +748,7 @@
  *  @version
  *      2023.06.23: 初版,解决飞的太快,导致飞过却没吃到的BUG (参考30041-记录3);
  */
--(NSArray*) runCheckHit4BirdFood:(CGRect)birdStart birdEnd:(CGRect)birdEnd status:(FoodStatus)status{
+-(NSArray*) runCheckHit4BirdFood:(CGRect)birdStart birdEnd:(CGRect)birdEnd caller:(NSString*)caller {
     //1. 数据准备;
     NSMutableArray *result = [[NSMutableArray alloc] init];
     NSArray *foods = ARRTOOK([self.view subViews_AllDeepWithClass:FoodView.class]);
@@ -759,8 +759,16 @@
         CGFloat brRadio = distance == 0 ? 0 : i / distance;
         CGRect birdIFrame = [MathUtils radioRect:birdStart endRect:birdEnd radio:brRadio];
         for (FoodView *food in foods) {
-            if (food.status == status && ![result containsObject:food] && CGRectIntersectsRect(birdIFrame, food.frame)) {
-                [result addObject:food];
+            if (![result containsObject:food] && CGRectIntersectsRect(birdIFrame, food.frame)) {
+                
+                //2025.04.02: 支持只有xx号坚果才能吃（参考34111-测试点3）。
+                BOOL foodIsOk = false;
+                if ([@"eat" isEqualToString:caller]) {
+                    foodIsOk = food.canEat;
+                } else if ([@"kick" isEqualToString:caller]) {
+                    foodIsOk = food.status == FoodStatus_Border;
+                }
+                if (foodIsOk) [result addObject:food];
             }
         }
     }
@@ -782,7 +790,7 @@
         [self.birdView see:self.view fromObserver:false];
         
         //2. 投食碰撞检测 (参考28172-todo2.2);
-        self.birdView.hitFoods = [self birdView_GetFoodOnHit:self.birdView.frame birdEnd:self.birdView.frame status:FoodStatus_Eat];
+        self.birdView.hitFoods = [self birdView_GetFoodOnHit:self.birdView.frame birdEnd:self.birdView.frame caller:@"eat"];
         if (ARRISOK(self.birdView.hitFoods)) {
             
             //3. 如果扔到鸟身上,则触发吃掉 (参考28172-todo2.1);
