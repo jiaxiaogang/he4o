@@ -125,7 +125,6 @@
         //1. 建空总账：resultDic用于统计匹配数，匹配度，总强度。
         AIMatchModel *tModel = [resultDic objectForKey:assKey];
         if (!tModel) tModel = [[AIMatchModel alloc] init];
-        [resultDic setObject:tModel forKey:assKey];
         
         //2. 查出明细：取出每一条防重后的最优匹配结果。
         NSArray *assGVItems = [self getAssGVModelsForKey:assKey];
@@ -135,9 +134,10 @@
         NSMutableDictionary *degreeDic = [[NSMutableDictionary alloc] init];
         for (AIFeatureNextGVRankItem *item in assGVItems) {
             AIFeatureNode *assT = [SMGUtils searchNode:item.refPort.target_p];
+            if (!assT) continue;
             
             //4. 收集总数据部分：每个assKey的识别assT结果，都要从其assGVItems的每一帧item结果中收集indexDic映射（根据refPort的level,x,y找其在assT中对应哪个assIndex）。
-            NSInteger assIndex= [assT indexOfLevel:item.refPort.level x:item.refPort.x y:item.refPort.y];
+            NSInteger assIndex = [assT indexOfLevel:item.refPort.level x:item.refPort.x y:item.refPort.y];
             if (assIndex == -1) continue;
             [indexDic setObject:@(item.matchOfProtoIndex) forKey:@(assIndex)];
             
@@ -156,6 +156,9 @@
         tModel.matchValue = tModel.matchCount > 0 ? (tModel.sumMatchValue / tModel.matchCount) * (tModel.sumMatchDegree / tModel.matchCount) : 0;//综合求出平均matchValue（因为特征有太多组码，乘积匹配度不合理）。
         tModel.indexDic = indexDic;
         tModel.degreeDic = degreeDic;
+        
+        //7. 此处resultModels的item有为Nil闪退的情况，判断下只有不为nil时才收集。
+        if (tModel.match_p) [resultDic setObject:tModel forKey:assKey];
     }
     return resultDic;
 }
