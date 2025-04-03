@@ -25,6 +25,7 @@
 #define kHungerSEL @"Hunger"                    //马上饿
 #define kFoodRdmSEL @"FoodRdm"                  //随机地点_投食物
 #define kFoodRdmNearSEL @"FoodRdmNear"          //随机在鸟附近_投食物
+#define kFoodDirectlySEL @"kFoodDirectly"       //直投食物
 
 #define kThinkModeSEL @"ThinkMode"              //认知模式 (可传int参数: 思维模式值)
 

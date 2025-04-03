@@ -92,6 +92,7 @@
     [theRT regist:kHungerSEL target:self selector:@selector(rtHungerBlock)];
     [theRT regist:kFoodRdmSEL target:self selector:@selector(randomThrowFood4Screen:)];
     [theRT regist:kFoodRdmNearSEL target:self selector:@selector(randomThrowFood4Near)];
+    [theRT regist:kFoodDirectlySEL target:self selector:@selector(throwFood4Directly)];
 }
 
 -(void)viewWillDisappear:(BOOL)animated {
@@ -161,6 +162,17 @@
     
     //2. 随机方向扔食物
     [self food2Pos:[self convertDirection2FoodPos:random] caller4RL:kFoodRdmNearSEL status:FoodStatus_Eat];
+}
+
+/**
+ *  MARK:--------------------直投坚果--------------------
+ */
+-(void) throwFood4Directly {
+    CGFloat targetX = self.birdView.center.x + (arc4random() % 20 - 10);
+    CGFloat targetY = self.birdView.center.y + (arc4random() % 20 - 10);
+    CGPoint targetPoint = CGPointMake(targetX, targetY);
+    //2. 随机方向扔食物
+    [self food2Pos:targetPoint caller4RL:kFoodDirectlySEL status:FoodStatus_Eat];
 }
 
 /**

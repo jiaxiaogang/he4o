@@ -496,6 +496,27 @@
 }
 
 /**
+ *  MARK:--------------------第2步直投学吃--------------------
+ *  @desc 参考34111-第2步;
+ */
+- (IBAction)eat2BtnClickV2:(id)sender {
+    //1. 随机出生;
+    [theRT queue1:Queue(kBirthPosRdmSEL)];
+    for (NSInteger i = 0; i < 100; i++) {
+        //2. 进入训练页 & 饥饿 & 直投坚果 & 退回主页 & 模拟重启;
+        NSMutableArray *queues = [[NSMutableArray alloc] init];
+        [queues addObject:Queue(kGrowPageSEL)];
+        [queues addObject:Queue(kHungerSEL)];
+        [queues addObject:Queue(kFoodDirectlySEL)];
+        [queues addObject:Queue(kMainPageSEL)];
+        [queues addObject:Queue(kClearTCSEL)];
+        
+        //5. 训练names;
+        [theRT queueN:queues count:1];
+    }
+}
+
+/**
  *  MARK:--------------------第3步试错--------------------
  */
 - (IBAction)eat3BtnClick:(id)sender {
