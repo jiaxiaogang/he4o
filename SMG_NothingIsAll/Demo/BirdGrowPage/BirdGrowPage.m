@@ -168,8 +168,8 @@
  *  MARK:--------------------直投坚果--------------------
  */
 -(void) throwFood4Directly {
-    CGFloat targetX = self.birdView.center.x + (arc4random() % 20 - 10);
-    CGFloat targetY = self.birdView.center.y + (arc4random() % 20 - 10);
+    CGFloat targetX = self.birdView.center.x + (arc4random() % 20) - 10;
+    CGFloat targetY = self.birdView.center.y + (arc4random() % 20) - 10;
     CGPoint targetPoint = CGPointMake(targetX, targetY);
     //2. 随机方向扔食物
     [self food2Pos:targetPoint caller4RL:kFoodDirectlySEL status:FoodStatus_Eat];
