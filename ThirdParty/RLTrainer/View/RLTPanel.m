@@ -185,12 +185,14 @@
         return @"随机投食";
     }else if ([kFoodRdmNearSEL isEqualToString:queue.name]) {
         return @"附近投食";
+    }else if ([kFoodDirectlySEL isEqualToString:queue.name]) {
+        return @"直投";
     }else if ([kThinkModeSEL isEqualToString:queue.name]) {
         if (NUMTOOK(queue.arg0).intValue == 0) {
             return @"动物模式";
         }else if (NUMTOOK(queue.arg0).intValue == 1) {
             return @"认知模式";
-        }else if (NUMTOOK(queue.arg0).intValue == 1) {
+        }else if (NUMTOOK(queue.arg0).intValue == 2) {
             return @"植物模式";
         }
     }
@@ -460,6 +462,9 @@
  *      2023.06.27: 将昨天的改动回滚 (参考30042-todo3-回滚 & 30043-方案);
  */
 - (IBAction)eat1BtnClick:(id)sender {
+    //0. 认知模式
+    [theRT queue1:Queue0(kThinkModeSEL, @(1))];
+    
     //1. 随机出生;
     [theRT queue1:Queue(kBirthPosRdmSEL)];
     
@@ -472,6 +477,8 @@
  *  @desc 参考28172-第2步;
  */
 - (IBAction)eat2BtnClick:(id)sender {
+    //0. 认知模式
+    [theRT queue1:Queue0(kThinkModeSEL, @(1))];
     //1. 随机出生;
     [theRT queue1:Queue(kBirthPosRdmSEL)];
     for (NSInteger i = 0; i < 100; i++) {
@@ -500,6 +507,8 @@
  *  @desc 参考34111-第2步;
  */
 - (IBAction)eat2BtnClickV2:(id)sender {
+    //0. 认知模式
+    [theRT queue1:Queue0(kThinkModeSEL, @(1))];
     //1. 随机出生;
     [theRT queue1:Queue(kBirthPosRdmSEL)];
     for (NSInteger i = 0; i < 100; i++) {
