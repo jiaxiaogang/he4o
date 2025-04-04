@@ -440,7 +440,7 @@
     }];
     for (AIMatchAlgModel *model in inModel.matchAlgs_RS) {
         AIAlgNodeBase *alg = [SMGUtils searchNode:model.matchAlg];
-        NSLog(@"概念识别到：A%ld 匹配度：%.2f input:%@ result:%@",alg.pId,model.matchValue,protoAlg.logDesc,alg.logDesc);
+        NSLog(@"概念识别到：A%ld 匹配度：%.2f input:%@ result:%@",alg.pId,model.matchValue,CLEANSTR(protoAlg.logDesc),CLEANSTR(alg.logDesc));
     }
     [AIRecognitionCache printLog:true];
     NSLog(@"");

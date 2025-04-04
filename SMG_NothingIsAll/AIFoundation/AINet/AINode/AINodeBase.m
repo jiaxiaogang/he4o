@@ -222,14 +222,14 @@
 
 -(void) updateLogDescItem:(NSString*)newItem {
     NSInteger count = NUMTOOK([self.logDesc objectForKey:newItem]).integerValue;
-    [self.logDesc setObject:newItem forKey:@(count+1)];
+    [self.logDesc setObject:@(count + 1) forKey:newItem];
 }
 
 -(void) updateLogDescDic:(NSDictionary*)newDic {
     for (NSString *newItem in newDic) {
         NSInteger newCount = NUMTOOK([newDic objectForKey:newItem]).integerValue;
         NSInteger oldCount = NUMTOOK([self.logDesc objectForKey:newItem]).integerValue;
-        [self.logDesc setObject:newItem forKey:@(oldCount + newCount)];
+        [self.logDesc setObject:@(oldCount + newCount) forKey:newItem];
     }
 }
 
