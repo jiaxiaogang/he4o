@@ -330,7 +330,7 @@
     AIAlgNodeBase *protoAlg = inModel.protoAlg;
     if (!ISOK(protoAlg, AIAlgNodeBase.class)) return;
     except_ps = ARRTOOK(except_ps);
-    IFTitleLog(@"概念识别",@"\n%@ (%@)",Alg2FStr(protoAlg),protoAlg.logDesc);
+    IFTitleLog(@"概念识别",@"\n%@ (%@)",Alg2FStr(protoAlg),CLEANSTR(protoAlg.logDesc));
     
     //1. 收集prAlgs <K:pid,V:AIMatchAlgModel> (注: 现在alg的atds全是空,用pid就能判断唯一);
     NSMutableDictionary *protoPDic = [NSMutableDictionary new], *protoRDic = [NSMutableDictionary new];

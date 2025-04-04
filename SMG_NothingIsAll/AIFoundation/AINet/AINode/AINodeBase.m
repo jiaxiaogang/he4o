@@ -215,6 +215,24 @@
     return [self.pointer isEqual:object.pointer];
 }
 
+-(NSMutableDictionary *)logDesc {
+    if (!ISOK(_logDesc, NSMutableDictionary.class)) _logDesc = [[NSMutableDictionary alloc] initWithDictionary:_logDesc];
+    return _logDesc;
+}
+
+-(void) updateLogDescItem:(NSString*)newItem {
+    NSInteger count = NUMTOOK([self.logDesc objectForKey:newItem]).integerValue;
+    [self.logDesc setObject:newItem forKey:@(count+1)];
+}
+
+-(void) updateLogDescDic:(NSDictionary*)newDic {
+    for (NSString *newItem in newDic) {
+        NSInteger newCount = NUMTOOK([newDic objectForKey:newItem]).integerValue;
+        NSInteger oldCount = NUMTOOK([self.logDesc objectForKey:newItem]).integerValue;
+        [self.logDesc setObject:newItem forKey:@(oldCount + newCount)];
+    }
+}
+
 /**
  *  MARK:--------------------NSCoding--------------------
  */
