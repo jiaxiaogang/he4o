@@ -203,31 +203,43 @@
     //32. debug
     for (NSString *assKey in resultDic.allKeys) {
         AIMatchModel *model = [resultDic objectForKey:assKey];
-        NSLog(@"%@\t匹配条数 %ld/%ld \t特征识别综合匹配度计算:T%ld \t匹配度:%.2f / %ld \t= %.2f",assKey,model.matchCount,protoFeature.count,model.match_p.pointerId,model.sumMatchValue,model.matchCount,model.matchValue);
+        if (Log4RecogDesc) NSLog(@"%@\t匹配条数 %ld/%ld \t特征识别综合匹配度计算:T%ld \t匹配度:%.2f / %ld \t= %.2f 总强度：%ld 均强度：%.1f",assKey,model.matchCount,protoFeature.count,model.match_p.pointerId,model.sumMatchValue,model.matchCount,model.matchValue,model.sumRefStrong,model.strongValue);
     }
     
-    //41. 过滤器1、matchValue=0排除掉。
+    //41. 无效过滤器1、matchValue=0排除掉。
     NSArray *resultModels = [SMGUtils filterArr:resultDic.allValues checkValid:^BOOL(AIMatchModel *item) {
         return item.matchValue > 0;
     }];
     
-    //42. 过滤器2、此处每个特征的不同层级，可能识别到同一个特征，可以按匹配度防下重。
+    //42. 防重过滤器2、此处每个特征的不同层级，可能识别到同一个特征，可以按匹配度防下重。
     resultModels = [SMGUtils removeRepeat:[SMGUtils sortBig2Small:resultModels compareBlock:^double(AIMatchModel *obj) {
         return obj.matchCount;
     }] convertBlock:^id(AIMatchModel *obj) {
         return obj.match_p;
     }];
     
-    //TODOTOMORROW20250401: 这里看下匹配度和匹配数，做下综合竞争，而不是直接限定必须达到70%才有效，或者只根据匹配度来排序（参考34091-5提升准确）。
+    //43. 末尾淘汰20%被引用强度最低的。
+    resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIMatchModel *obj) {
+        return obj.strongValue;
+    }], 0, MAX(resultModels.count * 0.8f, 10));
     
-    //43. 过滤器3、匹配度强度过滤器 (参考28109-todo2)。
-    resultModels = [AIFilter recognitionMatchModelsFilter:resultModels radio:0.4f];
-    
-    //44. 过滤器4、全含判断: 特征应该不需要全含，因为很难看到局部都相似的两个图像。
+    //44. 末尾淘汰仅保留匹配数大于xx%的：全含判断=>特征应该不需要全含，因为很难看到局部都相似的两个图像。
     resultModels = [SMGUtils filterArr:resultModels checkValid:^BOOL(AIMatchModel *item) {
         AIFeatureNode *tNode = [SMGUtils searchNode:item.match_p];
-        return item.matchCount > tNode.count * 0.2;//匹配数必须达到70%才有效。
+        return item.matchCount > tNode.count * 0.3;
     }];
+    
+    //45. 末尾淘汰匹配数小于3条的、组码太少，形不成什么显著的特征。
+    if (protoFeature.count > 5) {//组码数达到5条才执行，不然一共没几条，还加最小要求就太苛刻了。
+        resultModels = [SMGUtils filterArr:resultModels checkValid:^BOOL(AIMatchModel *item) {
+            return item.matchCount >= 3;
+        }];
+    }
+    
+    //46. 末尾淘汰xx%匹配度低的、匹配度强度过滤器 (参考28109-todo2 & 34091-5提升准确)。
+    resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIMatchModel *obj) {
+        return obj.matchValue * obj.matchDegree;
+    }], 0, MIN(MAX(resultModels.count * 0.7f, 10), 20));
     
     //51. 更新: ref强度 & 相似度 & 抽具象 & 映射;
     for (AIMatchModel *matchModel in resultModels) {
@@ -237,6 +249,10 @@
         [AINetUtils relateGeneralAbs:assFeature absConPorts:assFeature.conPorts conNodes:@[protoFeature] isNew:false difStrong:1];
         [protoFeature updateIndexDic:assFeature indexDic:matchModel.indexDic];
         [protoFeature updateDegreeDic:assFeature.pId degreeDic:matchModel.degreeDic];
+        
+        //debug
+        if (Log4RecogDesc || true) NSLog(@"特征识别结果:T%ld\t 匹配条数:%ld\t匹配度:%.2f\t强度:%.1f\t符合度:%.1f",
+                                         matchModel.match_p.pointerId,matchModel.matchCount,matchModel.matchValue,matchModel.strongValue,matchModel.matchDegree);
     }
     return resultModels;
 }
@@ -354,6 +370,8 @@
             
             //7. 每个refPort做两件事: (性能: 以下for循环耗150ms很正常);
             for (AIPort *refPort in refPorts) {
+                if ([refPort.target_p isEqual:protoAlg.p]) continue;
+                
                 //8. 不应期 -> 不可激活;
                 if ([SMGUtils containsSub_p:refPort.target_p parent_ps:except_ps]) continue;
                 

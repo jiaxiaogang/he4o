@@ -390,6 +390,8 @@
 #define Log4ShortLimit false
 //识别概念
 #define Log4MAlg true
+//识别细节
+#define Log4RecogDesc false
 //模糊匹配
 #define Log4FuzzyAlg false
 //识别时序

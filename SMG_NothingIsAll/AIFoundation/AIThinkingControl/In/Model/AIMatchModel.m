@@ -37,4 +37,8 @@
     return self.matchCount > 0 ? self.sumRefStrong / self.matchCount : 1;
 }
 
+-(CGFloat) matchDegree {
+    return self.matchCount > 0 ? self.sumMatchDegree / self.matchCount : 1;
+}
+
 @end
