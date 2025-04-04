@@ -226,10 +226,9 @@
 }
 
 -(void) updateLogDescDic:(NSDictionary*)newDic {
-    for (NSString *newItem in newDic) {
-        NSInteger newCount = NUMTOOK([newDic objectForKey:newItem]).integerValue;
+    for (NSString *newItem in newDic.allKeys) {
         NSInteger oldCount = NUMTOOK([self.logDesc objectForKey:newItem]).integerValue;
-        [self.logDesc setObject:@(oldCount + newCount) forKey:newItem];
+        [self.logDesc setObject:@(oldCount + 1) forKey:newItem];//计数只+1，因为如果加全部，相当于一直累加，一会就超int最大值了。
     }
 }
 
