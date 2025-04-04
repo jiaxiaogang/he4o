@@ -503,10 +503,36 @@
 }
 
 /**
+ *  MARK:--------------------第3步试错--------------------
+ */
+- (IBAction)eat3BtnClick:(id)sender {
+    
+}
+
+//MARK:===============================================================
+//MARK:                     < 直投训练 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------第1步直接学饿--------------------
+ *  @desc 参考34111-第1步;
+ */
+- (IBAction) directlyEat1BtnClick:(id)sender {
+    //0. 认知模式
+    [theRT queue1:Queue0(kThinkModeSEL, @(1))];
+    
+    //1. 随机出生;
+    [theRT queue1:Queue(kBirthPosRdmSEL)];
+    
+    //2. 饥饿,随机扔个坚果 x 200次;
+    [theRT queueN:@[Queue(kGrowPageSEL),Queue(kHungerSEL),Queue(kMainPageSEL),Queue(kClearTCSEL)] count:50];
+}
+
+/**
  *  MARK:--------------------第2步直投学吃--------------------
  *  @desc 参考34111-第2步;
  */
-- (IBAction)eat2BtnClickV2:(id)sender {
+- (IBAction)directlyEat2BtnClick:(id)sender {
     //0. 认知模式
     [theRT queue1:Queue0(kThinkModeSEL, @(1))];
     //1. 随机出生;
@@ -523,13 +549,6 @@
         //5. 训练names;
         [theRT queueN:queues count:1];
     }
-}
-
-/**
- *  MARK:--------------------第3步试错--------------------
- */
-- (IBAction)eat3BtnClick:(id)sender {
-    
 }
 
 //MARK:===============================================================
