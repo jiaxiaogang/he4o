@@ -42,11 +42,13 @@
     [self sendSubviewToBack:self.imgView];
 }
 
+static int cSUBNUM = 0;
+
 -(void) initData{
     [super initData];
     self.status = FoodStatus_Border;
-    int num = arc4random() % 2;//给吃0到1号坚果
-    int subNum = (arc4random() % 17) + 1;
+    int num = 0;//arc4random() % 2;//给吃0到1号坚果
+    int subNum = (++cSUBNUM % 17) + 1;//(arc4random() % 17) + 1;
     self.imgName = STRFORMAT(@"%d_%d",num,subNum);
 }
 

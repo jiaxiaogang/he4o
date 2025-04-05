@@ -11,12 +11,8 @@
 @implementation HEView
 
 -(id) init {
-    self = [super init];
-    if(self != nil){
-        [self initView];
-        [self initData];
-        [self initDisplay];
-    }
+    //现在新版UIView的super.init也会调用initWithFrame:zero，所以干脆改成调用它算了，直白些。
+    self = [self initWithFrame:CGRectZero];
     return self;
 }
 
@@ -27,7 +23,9 @@
 -(id) initWithCoder:(NSCoder *)coder {
     self = [super initWithCoder:coder];
     if (self != nil) {
+        [self initView];
         [self initData];
+        [self initDisplay];
     }
     return self;
 }
@@ -35,7 +33,9 @@
 -(id) initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self != nil) {
+        [self initView];
         [self initData];
+        [self initDisplay];
     }
     return self;
 }
