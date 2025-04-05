@@ -68,6 +68,11 @@
     if (ISOK(node_p, AIKVPointer.class)) {
         if ([self isValue:node_p]) {
             lightStr = [self getLightStr_ValueP:node_p from:from];
+        }else if (PitIsGroupValue(node_p)) {
+            lightStr = @"";
+        }else if (PitIsFeature(node_p)) {
+            AIFeatureNode *tNode = [SMGUtils searchNode:node_p];
+            lightStr = STRFORMAT(@"T%ld%@",tNode.pId,CLEANSTR(tNode.logDesc.allKeys));
         }else if ([self isAlg:node_p]) {
             AIAlgNodeBase *algNode = [SMGUtils searchNode:node_p];
             if (algNode) {

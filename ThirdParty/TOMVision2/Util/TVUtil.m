@@ -190,7 +190,8 @@
         }else if (PitIsGroupValue(node_p)) {
             lightStr = @"";
         }else if (PitIsFeature(node_p)) {
-            lightStr = @"";
+            AIFeatureNode *tNode = [SMGUtils searchNode:node_p];
+            lightStr = STRFORMAT(@"T%ld%@",tNode.pId,CLEANSTR(tNode.logDesc.allKeys));
         }else if (PitIsAlg(node_p)) {
             AIAlgNodeBase *algNode = [SMGUtils searchNode:node_p];
             if (algNode) {
@@ -296,11 +297,11 @@
     NSInteger width = powf(3, maxLevel);
     for (NSInteger y = 0; y < width; y++) {
         for (NSInteger x = 0; x < width; x++) {
-            if (x % 3 != 0 || y % 3 != 0) continue;//日志打小点，太大太占地方。
+            if (x % 2 != 0 || y % 2 != 0) continue;//日志打小点，太大太占地方。
             NSString *dot = [needLog objectForKey:STRFORMAT(@"%ld_%ld",x,y)];
             [result appendString:dot?dot:@" "];
         }
-        if (y % 3 != 0) continue;//日志打小点，太大太占地方。
+        if (y % 2 != 0) continue;//日志打小点，太大太占地方。
         [result appendString:@"\n"];
     }
     return result;

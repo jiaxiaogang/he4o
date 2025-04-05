@@ -47,8 +47,10 @@ static int cSUBNUM = 0;
 -(void) initData{
     [super initData];
     self.status = FoodStatus_Border;
+    
+    //2025.04.05: 依次直投从0_1到0_17号坚果，然后在此过程中观察特征识别类比抽象及累计SP过程（参考34112）。
     int num = 0;//arc4random() % 2;//给吃0到1号坚果
-    int subNum = (++cSUBNUM % 17) + 1;//(arc4random() % 17) + 1;
+    int subNum = (cSUBNUM++ % 17) + 1;//(arc4random() % 17) + 1;
     self.imgName = STRFORMAT(@"%d_%d",num,subNum);
 }
 
