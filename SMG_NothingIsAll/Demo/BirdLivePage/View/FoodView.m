@@ -67,7 +67,7 @@
         [self removeFromSuperview];
     }
     
-    [self.imgView setImage:[AIVisionAlgsV2 createImageFromProtoMnistImageWithName:self.imgName]];
+    [self.imgView setImage:[AIVisionAlgsV2 createImageFromProtoMnistImageWithName:self.imgName forTest:false]];
 }
 
 -(void) hit{

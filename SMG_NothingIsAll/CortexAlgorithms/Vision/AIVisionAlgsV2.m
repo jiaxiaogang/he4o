@@ -208,9 +208,10 @@
     return img;
 }
 
-+ (UIImage *) createImageFromProtoMnistImageWithName:(NSString*)imgName {
++ (UIImage *) createImageFromProtoMnistImageWithName:(NSString*)imgName forTest:(BOOL)forTest {
     //1. 读图片路径。
-    NSString *path = [[NSBundle mainBundle] pathForResource:STRFORMAT(@"assets/ProtoMnistImages/%@",imgName) ofType:@"png"];
+    NSString *folder = forTest ? @"TestMnistImages" : @"ProtoMnistImages";
+    NSString *path = [[NSBundle mainBundle] pathForResource:STRFORMAT(@"assets/%@/%@",folder,imgName) ofType:@"png"];
     
     //2. 读出第imgIndex张图。
     UIImage *img = [UIImage imageWithContentsOfFile:path];

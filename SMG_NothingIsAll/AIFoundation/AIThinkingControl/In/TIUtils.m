@@ -250,6 +250,8 @@
         [protoFeature updateIndexDic:assFeature indexDic:matchModel.indexDic];
         [protoFeature updateDegreeDic:assFeature.pId degreeDic:matchModel.degreeDic];
         
+        //TODOTOMORROW20250405: 这里53条，最高的只匹配到6条，调试下，这里匹配到6条的是什么抽象特征（查下logDesc）？然后查下为什么没有更高匹配数的抽象特征？是没抽到？还是因为匹配不到而咋样了？
+        
         //debug
         if (Log4RecogDesc || true) NSLog(@"特征识别结果:T%ld\t 匹配条数:%ld\t匹配度:%.2f\t强度:%.1f\t符合度:%.1f",
                                          matchModel.match_p.pointerId,matchModel.matchCount,matchModel.matchValue,matchModel.strongValue,matchModel.matchDegree);
@@ -394,9 +396,30 @@
         }
     }
     
+    //11. 多码特征的识别用竞争方式（测试与训练的mnist，其H通道不同，所以没法全含，这里用竞争方式）。
+    NSArray *validPAlgs = nil; NSArray *validRAlgs = nil;
+    if ([SMGUtils filterSingleFromArr:protoAlg.content_ps checkValid:^BOOL(AIKVPointer *item) {
+        return PitIsFeature(item);
+    }]) {
+        NSInteger pinJunMatchCount_R = [SMGUtils sumOfArr:protoRDic.allValues convertBlock:^double(AIMatchAlgModel *obj) {
+            return obj.matchCount;
+        }] / (float)protoRDic.count;
+        validRAlgs = [SMGUtils filterArr:protoRDic.allValues checkValid:^BOOL(AIMatchAlgModel *item) {
+            return item.matchCount > pinJunMatchCount_R;
+        }];
+        NSInteger pinJunMatchCount_P = [SMGUtils sumOfArr:protoPDic.allValues convertBlock:^double(AIMatchAlgModel *obj) {
+            return obj.matchCount;
+        }] / (float)protoPDic.count;
+        validPAlgs = [SMGUtils filterArr:protoPDic.allValues checkValid:^BOOL(AIMatchAlgModel *item) {
+            return item.matchCount > pinJunMatchCount_P;
+        }];
+    }
+    
     //12. 全含判断: 从大到小,依次取到对应的node和matchingCount (注: 支持相近后,应该全是全含了,参考25084-1) (性能:无缓存时读400耗400ms,有缓存时30ms);
-    NSArray *validPAlgs = [self recognitionAlg_CheckValid:protoPDic.allValues protoAlgCount:protoAlg.count];
-    NSArray *validRAlgs = [self recognitionAlg_CheckValid:protoRDic.allValues protoAlgCount:protoAlg.count];
+    else {
+        validPAlgs = [self recognitionAlg_CheckValid:protoPDic.allValues protoAlgCount:protoAlg.count];
+        validRAlgs = [self recognitionAlg_CheckValid:protoRDic.allValues protoAlgCount:protoAlg.count];
+    }
     
     //13. 似层交层分开进行竞争 (分开竞争是以前就一向如此的,因为同质竞争才公平) (为什么要保留交层: 参考31134-TODO1);
     NSArray *validPSAlgs = [SMGUtils filterArr:validPAlgs checkValid:^BOOL(AIMatchAlgModel *item) {
@@ -443,7 +466,6 @@
         NSLog(@"概念识别到：A%ld 匹配度：%.2f input:%@ result:%@",alg.pId,model.matchValue,CLEANSTR(protoAlg.logDesc),CLEANSTR(alg.logDesc));
     }
     [AIRecognitionCache printLog:true];
-    NSLog(@"");
 }
 
 /**

@@ -329,8 +329,7 @@
     [protoFeature updateIndexDic:absT indexDic:protoAbsIndexDic];
     [assFeature updateIndexDic:absT indexDic:assAbsIndexDic];
     
-    //TODOTOMORROW20250402: 查下自己和自己类比完后，和自己不一样，应该是责任剔除的问题，查一下明确下是不是BUG。
-    
+    //TODO: 20250402-查下自己和自己类比完后，和自己不一样，应该是责任剔除的问题，有时间查一下明确下是不是BUG。
     NSLog(@"特征类比结果 => Proto特征%ld：%@\n%@Ass特征T%ld：%@\n%@抽象特征T%ld：%@\n%@",protoFeature.pId,CLEANSTR(protoFeature.logDesc),FeatureDesc(protoFeature.p),assFeature.pId,CLEANSTR(assFeature.logDesc),FeatureDesc(assFeature.p),absT.pId,CLEANSTR(absT.logDesc),FeatureDesc(absT.p));
     return absT;
 }

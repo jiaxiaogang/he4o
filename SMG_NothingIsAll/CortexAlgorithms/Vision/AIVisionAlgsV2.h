@@ -22,6 +22,6 @@
 + (UIImage *) createTest4ColorImage;
 // 从ProtoMnistImage取图
 + (UIImage *) createImageFromProtoMnistImageWithIndex:(NSInteger)imgIndex;
-+ (UIImage *) createImageFromProtoMnistImageWithName:(NSString*)imgName;
++ (UIImage *) createImageFromProtoMnistImageWithName:(NSString*)imgName forTest:(BOOL)forTest;
 
 @end
