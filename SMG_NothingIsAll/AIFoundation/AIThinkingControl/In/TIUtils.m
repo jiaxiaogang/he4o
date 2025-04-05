@@ -251,6 +251,7 @@
         [protoFeature updateDegreeDic:assFeature.pId degreeDic:matchModel.degreeDic];
         
         //TODOTOMORROW20250405: 这里53条，最高的只匹配到6条，调试下，这里匹配到6条的是什么抽象特征（查下logDesc）？然后查下为什么没有更高匹配数的抽象特征？是没抽到？还是因为匹配不到而咋样了？
+        //1. 根据手动直投慢速训练，此BUG不复现，可以再多跑跑多观察下。。。
         
         //debug
         if (Log4RecogDesc || true) NSLog(@"特征识别结果:T%ld\t 匹配条数:%ld\t匹配度:%.2f\t强度:%.1f\t符合度:%.1f",
