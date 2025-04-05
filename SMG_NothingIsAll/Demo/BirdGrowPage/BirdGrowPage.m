@@ -112,24 +112,8 @@
  */
 - (IBAction)nearFeedingBtnOnClick:(id)sender {
     [theApp.heLogView addDemoLog:@"直投"];
-    DemoLog(@"直投")
-    FoodView *foodView = [[FoodView alloc] init];
-    [foodView hit];
-    [foodView setOrigin:CGPointMake(ScreenWidth * 0.375f, ScreenHeight - 66)];
-    [self.view addSubview:foodView];
-    CGFloat targetX = self.birdView.center.x + (arc4random() % 20 - 10);
-    CGFloat targetY = self.birdView.center.y + (arc4random() % 20 - 10);
-    CGPoint targetPoint = CGPointMake(targetX, targetY);
-    [UIView animateWithDuration:0.3f animations:^{
-        [foodView setCenter:targetPoint];
-    }completion:^(BOOL finished) {
-        //0. 扔后判断能吃到哪些坚果;
-        self.birdView.hitFoods = [self birdView_GetFoodOnHit:self.birdView.frame birdEnd:self.birdView.frame caller:@"eat"];
-        //1. 吃前视觉
-        [self.birdView see:self.view fromObserver:false];
-        //2. 触碰到鸟嘴;
-        [self.birdView touchMouth];
-    }];
+    DemoLog(@"直投");
+    [self throwFood4Directly];
 }
 
 
