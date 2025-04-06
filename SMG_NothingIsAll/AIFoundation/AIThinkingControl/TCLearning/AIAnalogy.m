@@ -252,6 +252,7 @@
  */
 +(AIFeatureNode*) analogyFeature:(AIKVPointer*)protoT_p ass:(AIKVPointer*)assT_p bigerMatchValue:(CGFloat)bigerMatchValue {
     //1. 类比orders的规律
+    if ([protoT_p isEqual:assT_p]) return [SMGUtils searchNode:assT_p];
     NSMutableArray *absGVModels = [[NSMutableArray alloc] init];
     AIFeatureNode *protoFeature = [SMGUtils searchNode:protoT_p];
     AIFeatureNode *assFeature = [SMGUtils searchNode:assT_p];
@@ -279,6 +280,7 @@
         AIKVPointer *protoG_p = ARR_INDEX(protoFeature.content_ps, protoIndex);
         AIKVPointer *assG_p = ARR_INDEX(assFeature.content_ps, assIndex);
         if (![degreeDic objectForKey:@(assIndex)]) {
+            //TODOTOMORROW20250406: 此处手动直投几下，会复现，查下原因。
             ELog(@"查下为什么没存上符合度，没符合度会导致protoG和assG的匹配度算成0。");
         }
         CGFloat curDegree = NUMTOOK([degreeDic objectForKey:@(assIndex)]).floatValue;
