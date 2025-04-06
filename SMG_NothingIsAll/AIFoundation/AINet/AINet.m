@@ -167,8 +167,8 @@ static AINet *_instance;
     }
     
     //11. 为增加特征content_ps的有序性：对groupModels进行排序。
-    [ThinkingUtils sortInputGroupValueModels:groupModels levelNum:levelNum];
-    return groupModels;
+    NSArray *sortGroupModels = [ThinkingUtils sortInputGroupValueModels:groupModels levelNum:levelNum];
+    return sortGroupModels;
 }
 
 //单data装箱

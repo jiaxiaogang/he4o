@@ -312,25 +312,35 @@
         NSInteger assX = NUMTOOK(ARR_INDEX(assFeature.xs, assIndex)).integerValue;
         NSInteger assY = NUMTOOK(ARR_INDEX(assFeature.ys, assIndex)).integerValue;
         [absGVModels addObject:[InputGroupValueModel new:nil groupValue:analogyGVResult.v1 level:assLevel x:assX y:assY]];
-        
-        //17. 把ass和proto分别与 abs的映射记下来。
-        [assAbsIndexDic setObject:@(assIndex) forKey:@(assAbsIndexDic.count)];
-        [protoAbsIndexDic setObject:@(protoIndex) forKey:@(protoAbsIndexDic.count)];
     }
     
-    //21. 外类比构建
-    AIFeatureNode *absT = [AIGeneralNodeCreater createFeatureNode:absGVModels conNodes:@[protoFeature,assFeature] at:protoT_p.algsType ds:protoT_p.dataSource isOut:protoT_p.isOut];
+    //21. 为增加特征content_ps的有序性：对groupModels进行排序（特征的content是有序的，所以要先排下序）。
+    NSArray *sortGroupModels = [ThinkingUtils sortInputGroupValueModels:absGVModels levelNum:VisionMaxLevel];
+    
+    //22. 生成assAbsIndexDic和protoAbsIndexDic（排序后再根据新顺序来生成映射）。
+    for (NSInteger i = 0; i < sortGroupModels.count; i++) {
+        InputGroupValueModel *model = ARR_INDEX(sortGroupModels, i);
+        
+        //23. 本来abs.sames中存的就是ass的level,x,y，所以可以用来取assIndex。
+        NSInteger assIndex = [assFeature indexOfLevel:model.level x:model.x y:model.y];
+        NSInteger protoIndex = NUMTOOK([indexDic objectForKey:@(assIndex)]).integerValue;
+        
+        //24. 把ass和proto分别与 abs的映射记下来。
+        [assAbsIndexDic setObject:@(assIndex) forKey:@(i)];
+        [protoAbsIndexDic setObject:@(protoIndex) forKey:@(i)];
+    }
+    
+    //31. 外类比构建
+    AIFeatureNode *absT = [AIGeneralNodeCreater createFeatureNode:sortGroupModels conNodes:@[protoFeature,assFeature] at:protoT_p.algsType ds:protoT_p.dataSource isOut:protoT_p.isOut];
     [absT updateLogDescDic:protoFeature.logDesc];
     [absT updateLogDescDic:assFeature.logDesc];
     
-    //22. 更新匹配度 & 映射;
+    //32. 更新匹配度 & 映射;
     [protoFeature updateMatchValue:absT matchValue:featureMatchValue];
     [assFeature updateMatchValue:absT matchValue:1];
     [protoFeature updateIndexDic:absT indexDic:protoAbsIndexDic];
     [assFeature updateIndexDic:absT indexDic:assAbsIndexDic];
-    
-    //TODO: 20250402-查下自己和自己类比完后，和自己不一样，应该是责任剔除的问题，有时间查一下明确下是不是BUG。
-    NSLog(@"特征类比结果 => Proto特征%ld：%@\n%@Ass特征T%ld：%@\n%@抽象特征T%ld：%@\n%@",protoFeature.pId,CLEANSTR(protoFeature.logDesc),FeatureDesc(protoFeature.p),assFeature.pId,CLEANSTR(assFeature.logDesc),FeatureDesc(assFeature.p),absT.pId,CLEANSTR(absT.logDesc),FeatureDesc(absT.p));
+    NSLog(@"特征类比结果 => Proto特征T%ld：%@\n%@Ass特征T%ld：%@\n%@抽象特征T%ld：%@\n%@",protoFeature.pId,CLEANSTR(protoFeature.logDesc),FeatureDesc(protoFeature.p),assFeature.pId,CLEANSTR(assFeature.logDesc),FeatureDesc(assFeature.p),absT.pId,CLEANSTR(absT.logDesc),FeatureDesc(absT.p));
     return absT;
 }
 
