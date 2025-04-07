@@ -63,6 +63,10 @@
     [theTC updateOperCount:kFILENAME];
     Debug();
     IFTitleLog(@"rLearning",@"\nprotoAlg: %@",Alg2FStr(model.protoAlg));
+    //NSLog(@"rLearning %@",Pits2FStr_MultiLine([SMGUtils convertArr:model.matchAlgs_All convertBlock:^id(AIMatchAlgModel *obj) {
+    //    return obj.matchAlg;
+    //}]));
+    
     //1. 学习 for prFos: 加强pFos的抽具象关联;
     //NSLog(@"\npFo外类比 =>");
     //for (AIMatchFoModel *item in model.fos4RLearning) {
@@ -71,11 +75,6 @@
     //}
     
     //1. 学习 for matchAlgs：加强特征等的抽象：每多识别概念后，就触发下类比，以尽快抽象特征（34091-1触发抽象）。
-    
-    NSLog(@"rLearning %@",Pits2FStr([SMGUtils convertArr:model.matchAlgs_All convertBlock:^id(AIMatchAlgModel *obj) {
-        return obj.matchAlg;
-    }]));
-    
     for (AIMatchAlgModel *matchModel in model.matchAlgs_All) {
         [AIAnalogy analogyAlg:model.protoAlg.p assA:matchModel.matchAlg];
     }

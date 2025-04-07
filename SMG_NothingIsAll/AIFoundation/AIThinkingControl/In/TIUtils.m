@@ -156,7 +156,7 @@
  */
 +(NSArray*) recognitionFeature:(AIKVPointer*)feature_p cache:(AIRecognitionCache*)cache {
     //1. 数据准备
-    NSLog(@"\n=========== 特征识别ProtoT%ld ===========",feature_p.pointerId);
+    NSLog(@"\n=========== 特征识别 protoT%ld（%@） ===========",feature_p.pointerId,feature_p.dataSource);
     AIFeatureNode *protoFeature = [SMGUtils searchNode:feature_p];
     AIFeatureAllBestGVModel *gvBestModel = [[AIFeatureAllBestGVModel alloc] init];
     if (protoFeature.count == 0) return @[[[AIMatchModel alloc] initWithMatch_p:feature_p]];
@@ -249,7 +249,6 @@
         [AINetUtils relateGeneralAbs:assFeature absConPorts:assFeature.conPorts conNodes:@[protoFeature] isNew:false difStrong:1];
         [protoFeature updateIndexDic:assFeature indexDic:matchModel.indexDic];
         [protoFeature updateDegreeDic:assFeature.pId degreeDic:matchModel.degreeDic];
-        NSLog(@"updateDegreeDic %ld %ld %@",protoFeature.pId,assFeature.pId,CLEANSTR(matchModel.degreeDic));
         
         //52. debug
         if (Log4RecogDesc || true) NSLog(@"特征识别结果:T%ld\t 匹配条数:%ld/(proto%ld ass%ld)\t匹配度:%.2f\t强度:%.1f\t符合度:%.1f",
@@ -398,6 +397,7 @@
     }
     
     //11. 多码特征的识别用竞争方式（测试与训练的mnist，其H通道不同，所以没法全含，这里用竞争方式）。
+    //> 既然无法全含，就得把indexDic存下来，到类比时用，因为未匹配到的特征在类比时是无法取得位置符合度字典的（参考上面的model.indexDic收集）。
     NSArray *validPAlgs = nil; NSArray *validRAlgs = nil;
     if ([SMGUtils filterSingleFromArr:protoAlg.content_ps checkValid:^BOOL(AIKVPointer *item) {
         return PitIsFeature(item);
@@ -459,6 +459,7 @@
     [inModel log4HavXianWuJv_AlgPJ:@"fltx1"];
     
     //17. debugLog2
+    //TODOTOMORROW20250407：此处保留下来的，都是匹配数=2的，这显然不行，因为这两条加起来，也远没有hColors通道作用大。
     NSArray *logModels = [SMGUtils sortBig2Small:inModel.matchAlgs_All compareBlock:^double(AIMatchAlgModel *obj) {
         return obj.matchValue;
     }];
