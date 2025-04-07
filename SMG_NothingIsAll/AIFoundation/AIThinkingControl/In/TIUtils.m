@@ -249,7 +249,7 @@
         [AINetUtils relateGeneralAbs:assFeature absConPorts:assFeature.conPorts conNodes:@[protoFeature] isNew:false difStrong:1];
         [protoFeature updateIndexDic:assFeature indexDic:matchModel.indexDic];
         [protoFeature updateDegreeDic:assFeature.pId degreeDic:matchModel.degreeDic];
-        NSLog(@"updateDegreeDic %ld %@",assFeature.pId,CLEANSTR(matchModel.degreeDic));
+        NSLog(@"updateDegreeDic %ld %ld %@",protoFeature.pId,assFeature.pId,CLEANSTR(matchModel.degreeDic));
         
         //52. debug
         if (Log4RecogDesc || true) NSLog(@"特征识别结果:T%ld\t 匹配条数:%ld/(proto%ld ass%ld)\t匹配度:%.2f\t强度:%.1f\t符合度:%.1f",
@@ -459,12 +459,12 @@
     [inModel log4HavXianWuJv_AlgPJ:@"fltx1"];
     
     //17. debugLog2
-    inModel.matchAlgs_RS = [SMGUtils sortBig2Small:inModel.matchAlgs_RS compareBlock:^double(AIMatchAlgModel *obj) {
+    NSArray *logModels = [SMGUtils sortBig2Small:inModel.matchAlgs_All compareBlock:^double(AIMatchAlgModel *obj) {
         return obj.matchValue;
     }];
-    for (AIMatchAlgModel *model in inModel.matchAlgs_RS) {
+    for (AIMatchAlgModel *model in logModels) {
         AIAlgNodeBase *alg = [SMGUtils searchNode:model.matchAlg];
-        NSLog(@"概念识别到：A%ld 匹配度：%.2f input:%@ result:%@",alg.pId,model.matchValue,CLEANSTR(protoAlg.logDesc),CLEANSTR(alg.logDesc));
+        NSLog(@"概念识别到：A%ld 匹配数：%d 度：%.2f input:%@ result:%@",alg.pId,model.matchCount,model.matchValue,CLEANSTR(protoAlg.logDesc),CLEANSTR(alg.logDesc));
     }
     [AIRecognitionCache printLog:true];
 }
