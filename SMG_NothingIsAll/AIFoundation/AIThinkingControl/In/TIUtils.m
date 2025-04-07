@@ -389,6 +389,7 @@
                 //10. 统计匹配度matchCount & 相近度<1个数nearCount & 相近度sumNear & 引用强度sumStrong
                 [model.indexDic setObject:@(model.matchCount) forKey:@(i)];
                 model.matchCount++;
+                model.groupValueMatchCount += subMatchModel.matchCount;
                 model.nearCount++;
                 model.sumNear *= subMatchModel.matchValue;
                 model.sumRefStrong += (int)refPort.strong.value;
@@ -402,17 +403,18 @@
     if ([SMGUtils filterSingleFromArr:protoAlg.content_ps checkValid:^BOOL(AIKVPointer *item) {
         return PitIsFeature(item);
     }]) {
+        //2025.04.07：BUG-修复最后都是匹配数=2的，因为BS这两个通道加起来，也远没有hColors通道作用大，改成以gvMatchCount的和来判断匹配数。
         NSInteger pinJunMatchCount_R = [SMGUtils sumOfArr:protoRDic.allValues convertBlock:^double(AIMatchAlgModel *obj) {
-            return obj.matchCount;
+            return obj.groupValueMatchCount;
         }] / (float)protoRDic.count;
         validRAlgs = [SMGUtils filterArr:protoRDic.allValues checkValid:^BOOL(AIMatchAlgModel *item) {
-            return item.matchCount >= pinJunMatchCount_R;
+            return item.groupValueMatchCount >= pinJunMatchCount_R;
         }];
         NSInteger pinJunMatchCount_P = [SMGUtils sumOfArr:protoPDic.allValues convertBlock:^double(AIMatchAlgModel *obj) {
-            return obj.matchCount;
+            return obj.groupValueMatchCount;
         }] / (float)protoPDic.count;
         validPAlgs = [SMGUtils filterArr:protoPDic.allValues checkValid:^BOOL(AIMatchAlgModel *item) {
-            return item.matchCount > pinJunMatchCount_P;
+            return item.groupValueMatchCount > pinJunMatchCount_P;
         }];
     }
     
@@ -459,7 +461,6 @@
     [inModel log4HavXianWuJv_AlgPJ:@"fltx1"];
     
     //17. debugLog2
-    //TODOTOMORROW20250407：此处保留下来的，都是匹配数=2的，这显然不行，因为这两条加起来，也远没有hColors通道作用大。
     NSArray *logModels = [SMGUtils sortBig2Small:inModel.matchAlgs_All compareBlock:^double(AIMatchAlgModel *obj) {
         return obj.matchValue;
     }];
