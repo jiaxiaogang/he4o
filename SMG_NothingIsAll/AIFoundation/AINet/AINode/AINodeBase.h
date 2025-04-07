@@ -95,4 +95,7 @@
 -(void) updateLogDescItem:(NSString*)newItem;
 -(void) updateLogDescDic:(NSDictionary*)newDic;
 
+//简：<0=8,1=9> 全：<0_1=8,1_9=3,0_17=3>
+-(NSDictionary*) getLogDesc:(BOOL)simple;
+
 @end

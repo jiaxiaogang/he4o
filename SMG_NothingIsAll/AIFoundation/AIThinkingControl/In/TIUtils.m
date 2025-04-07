@@ -230,11 +230,15 @@
     }];
     
     //45. 末尾淘汰匹配数小于3条的、组码太少，形不成什么显著的特征。
-    if (protoFeature.count > 5) {//组码数达到5条才执行，不然一共没几条，还加最小要求就太苛刻了。
-        resultModels = [SMGUtils filterArr:resultModels checkValid:^BOOL(AIMatchModel *item) {
-            return item.matchCount >= 3;
-        }];
-    }
+    //if (protoFeature.count > 5) {//组码数达到5条才执行，不然一共没几条，还加最小要求就太苛刻了。
+    //    resultModels = [SMGUtils filterArr:resultModels checkValid:^BOOL(AIMatchModel *item) {
+    //        return item.matchCount >= 3;
+    //    }];
+    //}
+    //2025.04.07: 匹配数低的占比偏多，所以改成按匹配数排序尾部淘汰。
+    resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIMatchModel *obj) {
+        return obj.matchCount;
+    }], 0, MIN(MAX(resultModels.count * 0.7f, 10), 20));
     
     //46. 末尾淘汰xx%匹配度低的、匹配度强度过滤器 (参考28109-todo2 & 34091-5提升准确)。
     resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIMatchModel *obj) {
@@ -251,8 +255,8 @@
         [protoFeature updateDegreeDic:assFeature.pId degreeDic:matchModel.degreeDic];
         
         //52. debug
-        if (Log4RecogDesc || true) NSLog(@"特征识别结果:T%ld\t 匹配条数:%ld/(proto%ld ass%ld)\t匹配度:%.2f\t强度:%.1f\t符合度:%.1f",
-                                         matchModel.match_p.pointerId,matchModel.matchCount,protoFeature.count,assFeature.count,matchModel.matchValue,matchModel.strongValue,matchModel.matchDegree);
+        if (Log4RecogDesc || true) NSLog(@"特征识别结果:T%ld%@\t 匹配条数:%ld/(proto%ld ass%ld)\t匹配度:%.2f\t强度:%.1f\t符合度:%.1f",
+                                         matchModel.match_p.pointerId,CLEANSTR([assFeature getLogDesc:true]),matchModel.matchCount,protoFeature.count,assFeature.count,matchModel.matchValue,matchModel.strongValue,matchModel.matchDegree);
     }
     return resultModels;
 }
@@ -466,7 +470,9 @@
     }];
     for (AIMatchAlgModel *model in logModels) {
         AIAlgNodeBase *alg = [SMGUtils searchNode:model.matchAlg];
-        NSLog(@"概念识别到：A%ld 匹配数：%d 度：%.2f input:%@ result:%@",alg.pId,model.matchCount,model.matchValue,CLEANSTR(protoAlg.logDesc),CLEANSTR(alg.logDesc));
+        NSLog(@"概念识别到：A%ld%@ \t匹配（T数：%d GV数：%ld 度：%.2f）input:%@ result:%@",alg.pId,CLEANSTR([SMGUtils convertArr:alg.content_ps convertBlock:^id(AIKVPointer *obj) {
+            return STRFORMAT(@"T%ld",obj.pointerId);
+        }]),model.matchCount,model.groupValueMatchCount,model.matchValue,CLEANSTR(protoAlg.logDesc),CLEANSTR(alg.logDesc));
     }
     [AIRecognitionCache printLog:true];
 }
