@@ -46,6 +46,11 @@
     return self.nearCount > 0 ? self.sumRefStrong / self.nearCount : 1;
 }
 
+-(NSMutableDictionary *)indexDic {
+    if (!_indexDic) _indexDic = [[NSMutableDictionary alloc] init];
+    return _indexDic;
+}
+
 /**
  *  MARK:--------------------NSCoding--------------------
  */

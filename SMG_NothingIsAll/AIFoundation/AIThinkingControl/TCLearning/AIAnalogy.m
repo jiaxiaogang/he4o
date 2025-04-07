@@ -187,56 +187,56 @@
     CGFloat curMatchValue = [protoA getAbsMatchValue:assA_p];
     //if (![TCLearningUtil noZeRenForCenJi:curMatchValue bigerMatchValue:1]) return nil;//识别时序全含，此处默认匹配度为1。
     
-    //2. 分别对protoA和assA的稀疏码进行对比;
-    for (AIKVPointer *protoV_p in protoA.content_ps) {
-        for (AIKVPointer *assV_p in assA.content_ps) {
+    //11. 分别对protoA和assA的稀疏码进行对比;
+    NSDictionary *indexDic = [protoA getAbsIndexDic:assA_p];
+    for (NSNumber *key in indexDic.allKeys) {
+        NSInteger assIndex = key.integerValue;
+        NSInteger protoIndex = NUMTOOK([indexDic objectForKey:key]).integerValue;
+        AIKVPointer *protoV_p = ARR_INDEX(protoA.content_ps, protoIndex);
+        AIKVPointer *assV_p = ARR_INDEX(assA.content_ps, assIndex);
             
-            //3. 二者同区时;
-            if ([protoV_p.dataSource isEqualToString:assV_p.dataSource] && [protoV_p.algsType isEqualToString:assV_p.algsType]) {
-                
-                //4. ======== 兼容新版组码特征 ========
-                if (PitIsFeature(protoV_p) || PitIsFeature(assV_p)) {
-                    AIFeatureNode *absT = [self analogyFeature:protoV_p ass:assV_p bigerMatchValue:curMatchValue];
-                    if (!absT) continue;
-                    CGFloat valueMatchValue = [absT getConMatchValue:protoA_p];
-                    [sameValue_ps addObject:absT.p];
-                    
-                    //6. 相近度个数nearCount & 相近度sumNear
-                    protoAbsModel4MatchValue.nearCount++;
-                    protoAbsModel4MatchValue.sumNear *= valueMatchValue;
-                    continue;
-                }
-                
-                //4. ======== 保留旧版单码特征 ========
-                //4. 二者相似度较高时 (计算当前码的责任比例: 比如:1*0.8*0.7时,当前码=0.7时,它的责任比例=(1-0.7)/(1-0.8 + 1-0.7)=60%) (参考29025-13);
-                MapModel *analogyValueResult = [self analogyValue:protoV_p assV:assV_p bigerMatchValue:curMatchValue];
-                
-                //5. 当前码责任<50%时 (次要责任时,免责);
-                if (analogyValueResult) {
-                    AIKVPointer *absV_p = analogyValueResult.v1;
-                    CGFloat valueMatchValue = NUMTOOK(analogyValueResult.v2).floatValue;
-                    [sameValue_ps addObject:absV_p];
-                    
-                    //6. 相近度个数nearCount & 相近度sumNear
-                    protoAbsModel4MatchValue.nearCount++;
-                    protoAbsModel4MatchValue.sumNear *= valueMatchValue;
-                } else {
-                    if (Log4Ana) NSLog(@"> 当前A%ld<%@>比A%ld<%@>",(long)protoA_p.pointerId,Pit2FStr(protoV_p),(long)assA_p.pointerId,Pit2FStr(assV_p));
-                }
-                
-                //6. break继续判断proto的下个V码;
-                break;
-            }
+        //12. 非同区过滤;
+        if (![protoV_p.dataSource isEqualToString:assV_p.dataSource] || ![protoV_p.algsType isEqualToString:assV_p.algsType]) continue;
+        
+        //21. ======== 兼容新版组码特征 ========
+        if (PitIsFeature(protoV_p) || PitIsFeature(assV_p)) {
+            AIFeatureNode *absT = [self analogyFeature:protoV_p ass:assV_p bigerMatchValue:curMatchValue];
+            if (!absT) continue;
+            CGFloat valueMatchValue = [absT getConMatchValue:protoA_p];
+            [sameValue_ps addObject:absT.p];
+            
+            //22. 相近度个数nearCount & 相近度sumNear
+            protoAbsModel4MatchValue.nearCount++;
+            protoAbsModel4MatchValue.sumNear *= valueMatchValue;
+            continue;
         }
+        
+        //31. ======== 保留旧版单码特征 ========
+        //32. 二者相似度较高时 (计算当前码的责任比例: 比如:1*0.8*0.7时,当前码=0.7时,它的责任比例=(1-0.7)/(1-0.8 + 1-0.7)=60%) (参考29025-13);
+        MapModel *analogyValueResult = [self analogyValue:protoV_p assV:assV_p bigerMatchValue:curMatchValue];
+        
+        //33. 当前码责任<50%时 (次要责任时,免责);
+        if (analogyValueResult) {
+            AIKVPointer *absV_p = analogyValueResult.v1;
+            CGFloat valueMatchValue = NUMTOOK(analogyValueResult.v2).floatValue;
+            [sameValue_ps addObject:absV_p];
+            
+            //34. 相近度个数nearCount & 相近度sumNear
+            protoAbsModel4MatchValue.nearCount++;
+            protoAbsModel4MatchValue.sumNear *= valueMatchValue;
+        } else {
+            if (Log4Ana) NSLog(@"> 当前A%ld<%@>比A%ld<%@>",(long)protoA_p.pointerId,Pit2FStr(protoV_p),(long)assA_p.pointerId,Pit2FStr(assV_p));
+        }
+        //35. 继续判断proto的下个V码;
     }
     
-    //7. 将相近度善可的构建成抽象概念返回;
+    //41. 将相近度善可的构建成抽象概念返回;
     [AITest test29:protoA assA:assA];
     AIAbsAlgNode *absA = [theNet createAbsAlg_NoRepeat:sameValue_ps conAlgs:@[protoA,assA]];
     [absA updateLogDescDic:protoA.logDesc];
     [absA updateLogDescDic:assA.logDesc];
     
-    //8. 将抽象概念与具象的匹配度存下来 (参考29091BUG);
+    //42. 将抽象概念与具象的匹配度存下来 (参考29091BUG);
     [protoA updateMatchValue:absA matchValue:protoAbsModel4MatchValue.matchValue];
     [assA updateMatchValue:absA matchValue:1];
     [AITest test25:absA conNodes:@[protoA,assA]];
@@ -281,7 +281,8 @@
         AIKVPointer *assG_p = ARR_INDEX(assFeature.content_ps, assIndex);
         if (![degreeDic objectForKey:@(assIndex)]) {
             //TODOTOMORROW20250406: 此处手动直投几下，会复现，查下原因。
-            ELog(@"查下为什么没存上符合度，没符合度会导致protoG和assG的匹配度算成0。");
+            ELog(@"查下为什么没存上符合度，没符合度会导致protoG和assG的匹配度算成0。 getDegreeDic %ld %@",assT_p.pointerId,CLEANSTR(degreeDic));
+            NSLog(@"");
         }
         CGFloat curDegree = NUMTOOK([degreeDic objectForKey:@(assIndex)]).floatValue;
         

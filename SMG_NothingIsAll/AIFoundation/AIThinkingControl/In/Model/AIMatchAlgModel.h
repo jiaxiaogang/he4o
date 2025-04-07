@@ -30,4 +30,6 @@
  */
 -(CGFloat) strongValue;
 
+@property (strong, nonatomic) NSMutableDictionary *indexDic;//把protoAlg和assAlg的映射存下来，用于类比。
+
 @end

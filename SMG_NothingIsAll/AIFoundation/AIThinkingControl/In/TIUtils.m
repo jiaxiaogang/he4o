@@ -249,6 +249,7 @@
         [AINetUtils relateGeneralAbs:assFeature absConPorts:assFeature.conPorts conNodes:@[protoFeature] isNew:false difStrong:1];
         [protoFeature updateIndexDic:assFeature indexDic:matchModel.indexDic];
         [protoFeature updateDegreeDic:assFeature.pId degreeDic:matchModel.degreeDic];
+        NSLog(@"updateDegreeDic %ld %@",assFeature.pId,CLEANSTR(matchModel.degreeDic));
         
         //52. debug
         if (Log4RecogDesc || true) NSLog(@"特征识别结果:T%ld\t 匹配条数:%ld/(proto%ld ass%ld)\t匹配度:%.2f\t强度:%.1f\t符合度:%.1f",
@@ -336,7 +337,8 @@
     NSMutableDictionary *protoPDic = [NSMutableDictionary new], *protoRDic = [NSMutableDictionary new];
     
     //2. 广入: 对每个元素,分别取索引序列 (参考25083-1);
-    for (AIKVPointer *item_p in protoAlg.content_ps) {
+    for (NSInteger i = 0; i < protoAlg.count; i++) {
+        AIKVPointer *item_p = ARR_INDEX(protoAlg.content_ps, i);
         
         //3. 取相近度序列 (按相近程度排序);
         NSArray *subMatchModels = nil;
@@ -386,6 +388,7 @@
                 model.matchAlg = refPort.target_p;
                 
                 //10. 统计匹配度matchCount & 相近度<1个数nearCount & 相近度sumNear & 引用强度sumStrong
+                [model.indexDic setObject:@(model.matchCount) forKey:@(i)];
                 model.matchCount++;
                 model.nearCount++;
                 model.sumNear *= subMatchModel.matchValue;
@@ -503,6 +506,9 @@
         //6. 对proto直接抽象指向matchAlg,并增强强度值 (为保证抽象多样性,所以相近的也抽具象关联) (参考27153-3);
         [AINetUtils relateAlgAbs:matchAlg conNodes:@[inModel.protoAlg] isNew:false];
         [AITest test25:matchAlg conNodes:@[inModel.protoAlg]];
+        
+        //7. 存映射。
+        [inModel.protoAlg updateIndexDic:matchAlg indexDic:matchModel.indexDic];
     }
     
     for (AIMatchAlgModel *matchModel in ARR_SUB(inModel.matchAlgs_PS, 0, 5)) {
