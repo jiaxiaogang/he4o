@@ -289,7 +289,7 @@
 //强训工具
 #define Queue(name) [RTQueueModel newWithName:name arg0:nil]
 #define Queue0(name,a0) [RTQueueModel newWithName:name arg0:a0]
-
+#define Queue1(name,a0,a1) [RTQueueModel newWithName:name arg0:a0 arg1:a1]
 
 /**
  *  MARK:--------------------快捷建对象--------------------

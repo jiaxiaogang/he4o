@@ -472,7 +472,7 @@
         AIAlgNodeBase *assAlg = [SMGUtils searchNode:model.matchAlg];
         NSLog(@"概念识别结果：A%ld%@ \t匹配（T数：%d GV数：%ld 度：%.2f）proto:%@ ass:%@",assAlg.pId,CLEANSTR([SMGUtils convertArr:assAlg.content_ps convertBlock:^id(AIKVPointer *obj) {
             return STRFORMAT(@"T%ld",obj.pointerId);
-        }]),model.matchCount,model.groupValueMatchCount,model.matchValue,CLEANSTR([protoAlg getLogDesc:false].allKeys),CLEANSTR([assAlg getLogDesc:false]));
+        }]),model.matchCount,model.groupValueMatchCount,model.matchValue,CLEANSTR([protoAlg getLogDesc:true].allKeys),CLEANSTR([assAlg getLogDesc:true]));
     }
     [AIRecognitionCache printLog:true];
 }

@@ -17,7 +17,7 @@
 #define cTestImageFolder @"TestMnistImages"
 
 //图库图片数，比如后辍1-17。
-#define cProtoImageCount 17
+#define cProtoImageCount 100
 
 /**
  *  MARK:--------------------FoodStatus--------------------
@@ -39,7 +39,7 @@ typedef NS_ENUM(NSInteger, FoodStatus) {
 @property (strong, nonatomic) NSString *imgName;
 @property (strong, nonatomic) UIImageView *imgView;//当前坚果是几号（用于测视觉）。
 
--(void) setData:(NSString*)mainNum;
+-(void) setData:(NSString*)mainNum subNum:(NSInteger)subNum;
 
 //被撞击
 -(void) hit;

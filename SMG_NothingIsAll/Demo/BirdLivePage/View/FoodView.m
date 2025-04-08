@@ -42,8 +42,6 @@
     [self sendSubviewToBack:self.imgView];
 }
 
-static int cSUBNUM = 0;
-
 -(void) initData{
     [super initData];
     self.status = FoodStatus_Border;
@@ -54,11 +52,10 @@ static int cSUBNUM = 0;
     [self refreshDisplay];
 }
 
--(void) setData:(NSString*)mainNum {
+-(void) setData:(NSString*)mainNum subNum:(NSInteger)subNum {
     //2025.04.05: 依次直投从0_1到0_17号坚果，然后在此过程中观察特征识别类比抽象及累计SP过程（参考34112）。
     //mainNum = arc4random() % 2;//给吃0到1号坚果
-    int subNum = (cSUBNUM++ % cProtoImageCount) + 1;//(arc4random() % 17) + 1;
-    self.imgName = STRFORMAT(@"%@_%d",mainNum,subNum);
+    self.imgName = STRFORMAT(@"%@_%ld",mainNum,subNum);
     [self refreshDisplay];
 }
 

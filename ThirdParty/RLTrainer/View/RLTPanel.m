@@ -551,6 +551,28 @@
     }
 }
 
+//直投不可吃的：1-9号坚果训练。
+- (IBAction)directlyEat3BtnClick:(id)sender {
+    //0. 认知模式
+    [theRT queue1:Queue0(kThinkModeSEL, @(1))];
+    //1. 随机出生;
+    [theRT queue1:Queue(kBirthPosRdmSEL)];
+    for (NSInteger subNum = 1; subNum <= 20; subNum++) {
+        for (NSInteger mainNum = 1; mainNum <= 9; mainNum++) {
+            //2. 进入训练页 & 饥饿 & 直投坚果 & 退回主页 & 模拟重启;
+            NSMutableArray *queues = [[NSMutableArray alloc] init];
+            [queues addObject:Queue(kGrowPageSEL)];
+            [queues addObject:Queue(kHungerSEL)];
+            [queues addObject:Queue1(kFoodDirectlySEL, STRFORMAT(@"%ld",mainNum),@(subNum))];
+            [queues addObject:Queue(kMainPageSEL)];
+            [queues addObject:Queue(kClearTCSEL)];
+            
+            //5. 训练names;
+            [theRT queueN:queues count:1];
+        }
+    }
+}
+
 //MARK:===============================================================
 //MARK:                     < 搬运训练 >
 //MARK:===============================================================

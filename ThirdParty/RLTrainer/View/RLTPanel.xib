@@ -350,17 +350,31 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RAC-u6-ftf">
-                            <rect key="frame" x="32" y="48" width="30" height="14"/>
+                            <rect key="frame" x="32" y="48" width="41" height="14"/>
                             <color key="backgroundColor" systemColor="systemMintColor"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="14" id="dvO-eS-rrB"/>
                             </constraints>
                             <fontDescription key="fontDescription" type="system" pointSize="11"/>
-                            <state key="normal" title="2直吃">
+                            <state key="normal" title="2直可吃">
                                 <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </state>
                             <connections>
                                 <action selector="directlyEat2BtnClick:" destination="-1" eventType="touchUpInside" id="nj8-qv-4fo"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Wmh-09-Bxb">
+                            <rect key="frame" x="75" y="48" width="52" height="14"/>
+                            <color key="backgroundColor" systemColor="systemMintColor"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="14" id="J1v-jX-y2y"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                            <state key="normal" title="3直不可吃">
+                                <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </state>
+                            <connections>
+                                <action selector="directlyEat3BtnClick:" destination="-1" eventType="touchUpInside" id="1yP-nP-zHC"/>
                             </connections>
                         </button>
                     </subviews>
@@ -374,6 +388,7 @@
                         <constraint firstItem="Ri6-2G-wtv" firstAttribute="top" secondItem="CFs-nM-9Si" secondAttribute="top" id="7OJ-Ye-KxT"/>
                         <constraint firstItem="RAC-u6-ftf" firstAttribute="leading" secondItem="ucU-fP-Rvf" secondAttribute="trailing" constant="2" id="Ajk-bo-ptC"/>
                         <constraint firstItem="ICH-ND-rzQ" firstAttribute="width" secondItem="cqF-WY-6dd" secondAttribute="width" id="C7X-9A-x2b"/>
+                        <constraint firstItem="Wmh-09-Bxb" firstAttribute="leading" secondItem="RAC-u6-ftf" secondAttribute="trailing" constant="2" id="DcH-u5-hcX"/>
                         <constraint firstItem="rbB-wB-210" firstAttribute="leading" secondItem="SrX-EH-KMZ" secondAttribute="trailing" constant="2" id="Dhp-So-hX6"/>
                         <constraint firstItem="SrX-EH-KMZ" firstAttribute="leading" secondItem="EYb-aV-ZDY" secondAttribute="trailing" constant="2" id="F9a-kR-VSh"/>
                         <constraint firstItem="BrY-Ix-nhI" firstAttribute="top" secondItem="4RE-dO-qp4" secondAttribute="bottom" constant="2" id="FEw-rm-b4p"/>
@@ -389,6 +404,7 @@
                         <constraint firstItem="cqF-WY-6dd" firstAttribute="leading" secondItem="CFs-nM-9Si" secondAttribute="leading" id="TzU-SS-GqN"/>
                         <constraint firstAttribute="height" constant="65" id="V9Z-AJ-cBZ"/>
                         <constraint firstItem="wLW-ye-sqm" firstAttribute="top" secondItem="ICH-ND-rzQ" secondAttribute="bottom" constant="2" id="aBq-q5-2jf"/>
+                        <constraint firstAttribute="bottom" secondItem="Wmh-09-Bxb" secondAttribute="bottom" constant="3" id="bLN-Is-TlV"/>
                         <constraint firstItem="EYb-aV-ZDY" firstAttribute="top" secondItem="cqF-WY-6dd" secondAttribute="bottom" constant="2" id="bn8-d7-Jra"/>
                         <constraint firstItem="rbB-wB-210" firstAttribute="width" secondItem="SrX-EH-KMZ" secondAttribute="width" id="duK-RE-z3Q"/>
                         <constraint firstItem="ucU-fP-Rvf" firstAttribute="leading" secondItem="CFs-nM-9Si" secondAttribute="leading" id="eap-sS-H6k"/>
@@ -399,6 +415,7 @@
                         <constraint firstItem="wLW-ye-sqm" firstAttribute="width" secondItem="SrX-EH-KMZ" secondAttribute="width" id="kqP-1N-v2g"/>
                         <constraint firstAttribute="trailing" secondItem="ICH-ND-rzQ" secondAttribute="trailing" id="mtT-cO-7Az"/>
                         <constraint firstItem="4RE-dO-qp4" firstAttribute="top" secondItem="CFs-nM-9Si" secondAttribute="top" id="pAQ-0V-c08"/>
+                        <constraint firstItem="Wmh-09-Bxb" firstAttribute="top" secondItem="SrX-EH-KMZ" secondAttribute="bottom" constant="2" id="pOe-ro-eGR"/>
                         <constraint firstItem="liB-rw-YPc" firstAttribute="firstBaseline" secondItem="4RE-dO-qp4" secondAttribute="baseline" id="qGj-6n-Zt7"/>
                         <constraint firstItem="ICH-ND-rzQ" firstAttribute="leading" secondItem="BrY-Ix-nhI" secondAttribute="trailing" constant="4" id="r85-aC-0dk"/>
                         <constraint firstItem="4RE-dO-qp4" firstAttribute="leading" secondItem="Ri6-2G-wtv" secondAttribute="trailing" constant="4" id="wDt-U8-o8V"/>

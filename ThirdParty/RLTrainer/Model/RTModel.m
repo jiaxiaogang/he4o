@@ -134,6 +134,10 @@
         id arg0 = queue.arg0;
         [invc setArgument:&arg0 atIndex:2];
     }
+    if (queue.arg1) {
+        id arg1 = queue.arg1;
+        [invc setArgument:&arg1 atIndex:3];
+    }
     @try {
         [invc invoke];
     }@catch (NSException *exception) {
