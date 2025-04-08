@@ -230,21 +230,14 @@
     }];
     
     //45. 末尾淘汰匹配数小于3条的、组码太少，形不成什么显著的特征。
-    //if (protoFeature.count > 5) {//组码数达到5条才执行，不然一共没几条，还加最小要求就太苛刻了。
-    //    resultModels = [SMGUtils filterArr:resultModels checkValid:^BOOL(AIMatchModel *item) {
-    //        return item.matchCount >= 3;
-    //    }];
-    //}
-    
-    //TODOTOMORROW20250408: 直投1时，除9,16,17外，别的都只匹配到GV数=2，查下原因。。。
-    //1. 因为0的strong太强，导致1新来的没机会激活？查下。。。
-    //2. 直接打断点查下全保留的是GV数=2的原因，别的被哪过滤掉了？还是？
-    
-    
-    //2025.04.07: 匹配数低的占比偏多，所以改成按匹配数排序尾部淘汰。
-    resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIMatchModel *obj) {
+    //2025.04.07: 由绝对3条淘汰改成末尾淘汰：匹配数低的占比偏多，所以改成按匹配数排序尾部淘汰。
+    //2025.04.08: 由末尾淘汰改成平均匹配数淘汰：BUG-修复最后很多1号坚果都是GV匹配数=2的，但H通道很重要，改成以matchCount的和来判断匹配数（经实测已OK)。
+    NSInteger pinJunMatchCount = [SMGUtils sumOfArr:resultModels convertBlock:^double(AIMatchModel *obj) {
         return obj.matchCount;
-    }], 0, MIN(MAX(resultModels.count * 0.7f, 10), 20));
+    }] / (float)resultModels.count;
+    resultModels = [SMGUtils filterArr:resultModels checkValid:^BOOL(AIMatchModel *item) {
+        return item.matchCount >= pinJunMatchCount;
+    }];
     
     //46. 末尾淘汰xx%匹配度低的、匹配度强度过滤器 (参考28109-todo2 & 34091-5提升准确)。
     resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIMatchModel *obj) {
