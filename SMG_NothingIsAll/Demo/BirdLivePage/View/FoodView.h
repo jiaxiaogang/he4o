@@ -8,8 +8,16 @@
 
 #import <UIKit/UIKit.h>
 
-#define cCanEatMainNum @"s"
+//图库图片的前辍
+#define cCanEatMainNum @"0"
 #define cCantEatMainNum @"1"
+
+//图库文件夹名称 @“ProtoMnistImages”=Mnist数字库 @"ProtoSImages"=自己拍的鼠标照片，只有12张。
+#define cProtoImageFolder @"ProtoMnistImages"
+#define cTestImageFolder @"TestMnistImages"
+
+//图库图片数，比如后辍1-17。
+#define cProtoImageCount 17
 
 /**
  *  MARK:--------------------FoodStatus--------------------

@@ -210,8 +210,7 @@
 
 + (UIImage *) createImageFromProtoMnistImageWithName:(NSString*)imgName forTest:(BOOL)forTest {
     //1. 读图片路径。
-    //NSString *folder = forTest ? @"TestMnistImages" : @"ProtoMnistImages";
-    NSString *folder = @"ProtoSImages";//自己拍的鼠标照片，只有12张。
+    NSString *folder = forTest ? cTestImageFolder : cProtoImageFolder;
     NSString *path = [[NSBundle mainBundle] pathForResource:STRFORMAT(@"assets/%@/%@",folder,imgName) ofType:@"png"];
     
     //2. 读出第imgIndex张图。
