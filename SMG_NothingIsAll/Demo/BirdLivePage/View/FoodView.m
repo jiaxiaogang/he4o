@@ -47,11 +47,6 @@ static int cSUBNUM = 0;
 -(void) initData{
     [super initData];
     self.status = FoodStatus_Border;
-    
-    //2025.04.05: 依次直投从0_1到0_17号坚果，然后在此过程中观察特征识别类比抽象及累计SP过程（参考34112）。
-    int num = 1;//arc4random() % 2;//给吃0到1号坚果
-    int subNum = (cSUBNUM++ % 17) + 1;//(arc4random() % 17) + 1;
-    self.imgName = STRFORMAT(@"%d_%d",num,subNum);
 }
 
 -(void) initDisplay{
@@ -59,10 +54,19 @@ static int cSUBNUM = 0;
     [self refreshDisplay];
 }
 
+-(void) setData:(NSInteger)mainNum {
+    //2025.04.05: 依次直投从0_1到0_17号坚果，然后在此过程中观察特征识别类比抽象及累计SP过程（参考34112）。
+    //mainNum = arc4random() % 2;//给吃0到1号坚果
+    int subNum = (cSUBNUM++ % 17) + 1;//(arc4random() % 17) + 1;
+    self.imgName = STRFORMAT(@"%ld_%d",mainNum,subNum);
+    [self refreshDisplay];
+}
+
 //MARK:===============================================================
 //MARK:                     < method >
 //MARK:===============================================================
 -(void) refreshDisplay{
+    //1. 带皮状态。
     if (self.status == FoodStatus_Border) {
         [self.layer setBorderWidth:1];
     }else if(self.status == FoodStatus_Eat){
@@ -71,7 +75,10 @@ static int cSUBNUM = 0;
         [self removeFromSuperview];
     }
     
-    [self.imgView setImage:[AIVisionAlgsV2 createImageFromProtoMnistImageWithName:self.imgName forTest:false]];
+    //2. 几号坚果。
+    if (self.imgName) {
+        [self.imgView setImage:[AIVisionAlgsV2 createImageFromProtoMnistImageWithName:self.imgName forTest:false]];
+    }
 }
 
 -(void) hit{
