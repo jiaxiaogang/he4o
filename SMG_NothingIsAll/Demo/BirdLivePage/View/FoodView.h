@@ -28,7 +28,6 @@ typedef NS_ENUM(NSInteger, FoodStatus) {
     FoodStatus_Remove = 2,    //压烂
 };
 
-
 /**
  *  MARK:--------------------坚果类--------------------
  *  1. 汽车压一次消皮,压两次报废;

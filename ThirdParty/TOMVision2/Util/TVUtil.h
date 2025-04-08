@@ -67,6 +67,6 @@
 /**
  *  MARK:--------------------特征日志--------------------
  */
-+(NSString*) getFeatureDesc:(AIKVPointer*)node_p;
++(NSString*) getFeatureDesc:(AIKVPointer*)node_p sizeFenMu:(NSInteger)sizeFenMu;
 
 @end

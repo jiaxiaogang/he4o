@@ -251,7 +251,7 @@
 #define FoP2FStr(f_p) [NVHeUtil getLightStr:f_p simple:false header:true]
 #define Mvp2Str(m_p) [NVHeUtil getLightStr:m_p simple:false header:true]
 
-#define FeatureDesc(t_p) [TVUtil getFeatureDesc:t_p]
+#define FeatureDesc(t_p,s) [TVUtil getFeatureDesc:t_p sizeFenMu:s]
 
 //节点转字符串 (短)
 #define ShortDesc4Node(n) [TVUtil_Short desc4Node:n]

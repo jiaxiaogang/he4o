@@ -278,10 +278,11 @@
 
 /**
  *  MARK:--------------------特征日志--------------------
+ *  @param sizeFenMu 尺寸分母，传1打印100%全尺寸，传2打印50%中尺寸，传3打印33%小尺寸。
  */
-+(NSString*) getFeatureDesc:(AIKVPointer*)node_p {
++(NSString*) getFeatureDesc:(AIKVPointer*)node_p sizeFenMu:(NSInteger)sizeFenMu {
     //1. 只打BColors特征。
-    if ([node_p.dataSource isEqualToString:@"hColors"] || [node_p.dataSource isEqualToString:@"sColors"]) return @"";
+    //if ([node_p.dataSource isEqualToString:@"hColors"] || [node_p.dataSource isEqualToString:@"sColors"]) return @"";
     AIFeatureNode *tNode = [SMGUtils searchNode:node_p];
     
     //2. 找出最大level，避免打印的比原图像素过多或过少。
@@ -297,11 +298,11 @@
     NSInteger width = powf(3, maxLevel);
     for (NSInteger y = 0; y < width; y++) {
         for (NSInteger x = 0; x < width; x++) {
-            if (x % 2 != 0 || y % 2 != 0) continue;//日志打小点，太大太占地方。
+            if (x % sizeFenMu != 0 || y % sizeFenMu != 0) continue;//日志打小点，太大太占地方。
             NSString *dot = [needLog objectForKey:STRFORMAT(@"%ld_%ld",x,y)];
             [result appendString:dot?dot:@" "];
         }
-        if (y % 2 != 0) continue;//日志打小点，太大太占地方。
+        if (y % sizeFenMu != 0) continue;//日志打小点，太大太占地方。
         [result appendString:@"\n"];
     }
     return result;
