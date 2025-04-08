@@ -72,7 +72,7 @@
             lightStr = @"";
         }else if (PitIsFeature(node_p)) {
             AIFeatureNode *tNode = [SMGUtils searchNode:node_p];
-            lightStr = STRFORMAT(@"T%ld%@",tNode.pId,CLEANSTR(tNode.logDesc.allKeys));
+            lightStr = STRFORMAT(@"T%ld%@",tNode.pId,CLEANSTR([tNode getLogDesc:true]));
         }else if ([self isAlg:node_p]) {
             AIAlgNodeBase *algNode = [SMGUtils searchNode:node_p];
             if (algNode) {

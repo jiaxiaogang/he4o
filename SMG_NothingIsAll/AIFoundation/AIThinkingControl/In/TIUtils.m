@@ -156,8 +156,8 @@
  */
 +(NSArray*) recognitionFeature:(AIKVPointer*)feature_p cache:(AIRecognitionCache*)cache {
     //1. 数据准备
-    NSLog(@"\n=========== 特征识别 protoT%ld（%@） ===========",feature_p.pointerId,feature_p.dataSource);
     AIFeatureNode *protoFeature = [SMGUtils searchNode:feature_p];
+    NSLog(@"\n=========== 特征识别 protoT%ld（%@）===========",feature_p.pointerId,feature_p.dataSource);
     AIFeatureAllBestGVModel *gvBestModel = [[AIFeatureAllBestGVModel alloc] init];
     if (protoFeature.count == 0) return @[[[AIMatchModel alloc] initWithMatch_p:feature_p]];
     
@@ -235,6 +235,12 @@
     //        return item.matchCount >= 3;
     //    }];
     //}
+    
+    //TODOTOMORROW20250408: 直投1时，除9,16,17外，别的都只匹配到GV数=2，查下原因。。。
+    //1. 因为0的strong太强，导致1新来的没机会激活？查下。。。
+    //2. 直接打断点查下全保留的是GV数=2的原因，别的被哪过滤掉了？还是？
+    
+    
     //2025.04.07: 匹配数低的占比偏多，所以改成按匹配数排序尾部淘汰。
     resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIMatchModel *obj) {
         return obj.matchCount;
@@ -334,7 +340,7 @@
     AIAlgNodeBase *protoAlg = inModel.protoAlg;
     if (!ISOK(protoAlg, AIAlgNodeBase.class)) return;
     except_ps = ARRTOOK(except_ps);
-    IFTitleLog(@"概念识别",@"\n%@\tlogDesc:%@",Alg2FStr(protoAlg),CLEANSTR(protoAlg.logDesc));
+    IFTitleLog(@"概念识别",@"\n%@\tlogDesc:%@",Alg2FStr(protoAlg),CLEANSTR([protoAlg getLogDesc:false].allKeys));
     
     //1. 收集prAlgs <K:pid,V:AIMatchAlgModel> (注: 现在alg的atds全是空,用pid就能判断唯一);
     NSMutableDictionary *protoPDic = [NSMutableDictionary new], *protoRDic = [NSMutableDictionary new];
@@ -469,10 +475,10 @@
         return obj.matchValue;
     }];
     for (AIMatchAlgModel *model in logModels) {
-        AIAlgNodeBase *alg = [SMGUtils searchNode:model.matchAlg];
-        NSLog(@"概念识别到：A%ld%@ \t匹配（T数：%d GV数：%ld 度：%.2f）input:%@ result:%@",alg.pId,CLEANSTR([SMGUtils convertArr:alg.content_ps convertBlock:^id(AIKVPointer *obj) {
+        AIAlgNodeBase *assAlg = [SMGUtils searchNode:model.matchAlg];
+        NSLog(@"概念识别结果：A%ld%@ \t匹配（T数：%d GV数：%ld 度：%.2f）proto:%@ ass:%@",assAlg.pId,CLEANSTR([SMGUtils convertArr:assAlg.content_ps convertBlock:^id(AIKVPointer *obj) {
             return STRFORMAT(@"T%ld",obj.pointerId);
-        }]),model.matchCount,model.groupValueMatchCount,model.matchValue,CLEANSTR(protoAlg.logDesc),CLEANSTR(alg.logDesc));
+        }]),model.matchCount,model.groupValueMatchCount,model.matchValue,CLEANSTR([protoAlg getLogDesc:false].allKeys),CLEANSTR([assAlg getLogDesc:true]));
     }
     [AIRecognitionCache printLog:true];
 }
