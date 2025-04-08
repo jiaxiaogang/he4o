@@ -542,7 +542,7 @@
         NSMutableArray *queues = [[NSMutableArray alloc] init];
         [queues addObject:Queue(kGrowPageSEL)];
         [queues addObject:Queue(kHungerSEL)];
-        [queues addObject:Queue0(kFoodDirectlySEL, @(0))];
+        [queues addObject:Queue0(kFoodDirectlySEL, cCanEatMainNum)];
         [queues addObject:Queue(kMainPageSEL)];
         [queues addObject:Queue(kClearTCSEL)];
         

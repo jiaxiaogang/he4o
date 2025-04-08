@@ -113,12 +113,12 @@
 - (IBAction)nearFeedingBtn0OnClick:(id)sender {
     [theApp.heLogView addDemoLog:@"直投"];
     DemoLog(@"直投0");
-    [self throwFood4Directly:@(0)];
+    [self throwFood4Directly:cCanEatMainNum];
 }
 - (IBAction)nearFeedingBtn1OnClick:(id)sender {
     [theApp.heLogView addDemoLog:@"直投"];
     DemoLog(@"直投1");
-    [self throwFood4Directly:@(1)];
+    [self throwFood4Directly:cCantEatMainNum];
 }
 
 
@@ -136,7 +136,7 @@
     FoodStatus status = NUMTOOK(statusNum).intValue;
     
     //2. 投食物
-    [self food2Pos:CGPointMake(randomX, randomY) caller4RL:kFoodRdmSEL status:status mainNum:-1];
+    [self food2Pos:CGPointMake(randomX, randomY) caller4RL:kFoodRdmSEL status:status mainNum:nil];
 }
 
 /**
@@ -150,18 +150,18 @@
     int random = arc4random() % 8;
     
     //2. 随机方向扔食物
-    [self food2Pos:[self convertDirection2FoodPos:random] caller4RL:kFoodRdmNearSEL status:FoodStatus_Eat mainNum:-1];
+    [self food2Pos:[self convertDirection2FoodPos:random] caller4RL:kFoodRdmNearSEL status:FoodStatus_Eat mainNum:nil];
 }
 
 /**
  *  MARK:--------------------直投坚果--------------------
  */
--(void) throwFood4Directly:(NSNumber*)mainNum {
+-(void) throwFood4Directly:(NSString*)mainNum {
     CGFloat targetX = self.birdView.center.x + (arc4random() % 20) - 10;
     CGFloat targetY = self.birdView.center.y + (arc4random() % 20) - 10;
     CGPoint targetPoint = CGPointMake(targetX, targetY);
     //2. 随机方向扔食物
-    [self food2Pos:targetPoint caller4RL:kFoodDirectlySEL status:FoodStatus_Eat mainNum:mainNum.integerValue];
+    [self food2Pos:targetPoint caller4RL:kFoodDirectlySEL status:FoodStatus_Eat mainNum:mainNum];
 }
 
 /**
@@ -218,7 +218,7 @@
     if (targetPoint.x != 0 && targetPoint.y != 0) {
         DemoLog(@"远投 (X:%.2f Y:%.2f)",targetPoint.x,targetPoint.y);
         [theApp.heLogView addDemoLog:STRFORMAT(@"远投 (X:%.2f Y:%.2f)",targetPoint.x,targetPoint.y)];
-        [self food2Pos:targetPoint caller4RL:nil status:status mainNum:-1];
+        [self food2Pos:targetPoint caller4RL:nil status:status mainNum:nil];
     }
 }
 
@@ -245,42 +245,42 @@
 - (IBAction)foodLeftOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-左");
-    [self food2Pos:[self convertDirection2FoodPos:0] caller4RL:nil status:FoodStatus_Eat mainNum:-1];
+    [self food2Pos:[self convertDirection2FoodPos:0] caller4RL:nil status:FoodStatus_Eat mainNum:nil];
 }
 - (IBAction)foodLeftUpOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-左上");
-    [self food2Pos:[self convertDirection2FoodPos:1] caller4RL:nil status:FoodStatus_Eat mainNum:-1];
+    [self food2Pos:[self convertDirection2FoodPos:1] caller4RL:nil status:FoodStatus_Eat mainNum:nil];
 }
 - (IBAction)foodUpOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-上");
-    [self food2Pos:[self convertDirection2FoodPos:2] caller4RL:nil status:FoodStatus_Eat mainNum:-1];
+    [self food2Pos:[self convertDirection2FoodPos:2] caller4RL:nil status:FoodStatus_Eat mainNum:nil];
 }
 - (IBAction)foodRightUpOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-右上");
-    [self food2Pos:[self convertDirection2FoodPos:3] caller4RL:nil status:FoodStatus_Eat mainNum:-1];
+    [self food2Pos:[self convertDirection2FoodPos:3] caller4RL:nil status:FoodStatus_Eat mainNum:nil];
 }
 - (IBAction)foodRightOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-右");
-    [self food2Pos:[self convertDirection2FoodPos:4] caller4RL:nil status:FoodStatus_Eat mainNum:-1];
+    [self food2Pos:[self convertDirection2FoodPos:4] caller4RL:nil status:FoodStatus_Eat mainNum:nil];
 }
 - (IBAction)foodRightDownOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-右下");
-    [self food2Pos:[self convertDirection2FoodPos:5] caller4RL:nil status:FoodStatus_Eat mainNum:-1];
+    [self food2Pos:[self convertDirection2FoodPos:5] caller4RL:nil status:FoodStatus_Eat mainNum:nil];
 }
 - (IBAction)foodDownOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-下");
-    [self food2Pos:[self convertDirection2FoodPos:6] caller4RL:nil status:FoodStatus_Eat mainNum:-1];
+    [self food2Pos:[self convertDirection2FoodPos:6] caller4RL:nil status:FoodStatus_Eat mainNum:nil];
 }
 - (IBAction)foodLeftDownOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-左下");
-    [self food2Pos:[self convertDirection2FoodPos:7] caller4RL:nil status:FoodStatus_Eat mainNum:-1];
+    [self food2Pos:[self convertDirection2FoodPos:7] caller4RL:nil status:FoodStatus_Eat mainNum:nil];
 }
 
 /**
@@ -779,12 +779,12 @@
     return result;
 }
 
-- (void) food2Pos:(CGPoint)targetPoint caller4RL:(NSString*)caller4RL status:(FoodStatus)status mainNum:(NSInteger)mainNum {
+- (void) food2Pos:(CGPoint)targetPoint caller4RL:(NSString*)caller4RL status:(FoodStatus)status mainNum:(NSString*)mainNum {
     FoodView *foodView = [[FoodView alloc] init];
     foodView.status = status;
     
     //投几号坚果。
-    if (mainNum == -1) mainNum = status == FoodStatus_Eat ? 0 : 1;
+    if (!STRISOK(mainNum)) mainNum = status == FoodStatus_Eat ? cCanEatMainNum : cCantEatMainNum;
     [foodView setData:mainNum];
     
     [foodView setOrigin:CGPointMake(ScreenWidth * 0.375f, ScreenHeight - 66)];

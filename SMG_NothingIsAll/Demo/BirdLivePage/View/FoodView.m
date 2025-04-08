@@ -54,11 +54,11 @@ static int cSUBNUM = 0;
     [self refreshDisplay];
 }
 
--(void) setData:(NSInteger)mainNum {
+-(void) setData:(NSString*)mainNum {
     //2025.04.05: 依次直投从0_1到0_17号坚果，然后在此过程中观察特征识别类比抽象及累计SP过程（参考34112）。
     //mainNum = arc4random() % 2;//给吃0到1号坚果
-    int subNum = (cSUBNUM++ % 17) + 1;//(arc4random() % 17) + 1;
-    self.imgName = STRFORMAT(@"%ld_%d",mainNum,subNum);
+    int subNum = (cSUBNUM++ % 12) + 1;//(arc4random() % 17) + 1;
+    self.imgName = STRFORMAT(@"%@_%d",mainNum,subNum);
     [self refreshDisplay];
 }
 
@@ -97,7 +97,7 @@ static int cSUBNUM = 0;
  *      2025.04.02: 只有x号坚果可吃（参考34111-测试点3）。
  */
 -(BOOL) canEat {
-    BOOL canEat4Num = [@"0" isEqualToString:[self.imgName substringToIndex:1]];
+    BOOL canEat4Num = [cCanEatMainNum isEqualToString:[self.imgName substringToIndex:1]];
     BOOL canEat4Status = self.status == FoodStatus_Eat;
     return canEat4Status && canEat4Num;
 }
