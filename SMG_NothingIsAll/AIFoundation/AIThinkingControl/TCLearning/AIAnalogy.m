@@ -342,7 +342,7 @@
     [assFeature updateMatchValue:absT matchValue:1];
     [protoFeature updateIndexDic:absT indexDic:protoAbsIndexDic];
     [assFeature updateIndexDic:absT indexDic:assAbsIndexDic];
-    NSLog(@"%@特征类比结果 => Proto特征T%ld：%@\n%@Ass特征T%ld：%@\n%@抽象特征T%ld：%@\n%@",protoFeature.p.dataSource,protoFeature.pId,CLEANSTR(protoFeature.logDesc),FeatureDesc(protoFeature.p,5),assFeature.pId,CLEANSTR(assFeature.logDesc),FeatureDesc(assFeature.p,5),absT.pId,CLEANSTR(absT.logDesc),FeatureDesc(absT.p,3));
+    if (Log4Ana) NSLog(@"%@特征类比结果 => Proto特征T%ld：%@\n%@Ass特征T%ld：%@\n%@抽象特征T%ld：%@\n%@",protoFeature.p.dataSource,protoFeature.pId,CLEANSTR(protoFeature.logDesc),FeatureDesc(protoFeature.p,2),assFeature.pId,CLEANSTR(assFeature.logDesc),FeatureDesc(assFeature.p,2),absT.pId,CLEANSTR(absT.logDesc),FeatureDesc(absT.p,2));
     return absT;
 }
 

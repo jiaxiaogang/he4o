@@ -407,18 +407,19 @@
         return PitIsFeature(item);
     }]) {
         //2025.04.07：BUG-修复最后都是匹配数=2的，因为BS这两个通道加起来，也远没有hColors通道作用大，改成以gvMatchCount的和来判断匹配数。
-        NSInteger pinJunMatchCount_R = [SMGUtils sumOfArr:protoRDic.allValues convertBlock:^double(AIMatchAlgModel *obj) {
+        CGFloat pinJunMatchCount_R = protoRDic.count == 0 ? 0 : [SMGUtils sumOfArr:protoRDic.allValues convertBlock:^double(AIMatchAlgModel *obj) {
             return obj.groupValueMatchCount;
         }] / (float)protoRDic.count;
         validRAlgs = [SMGUtils filterArr:protoRDic.allValues checkValid:^BOOL(AIMatchAlgModel *item) {
             return item.groupValueMatchCount >= pinJunMatchCount_R;
         }];
-        NSInteger pinJunMatchCount_P = [SMGUtils sumOfArr:protoPDic.allValues convertBlock:^double(AIMatchAlgModel *obj) {
+        CGFloat pinJunMatchCount_P = protoPDic.count == 0 ? 0 : [SMGUtils sumOfArr:protoPDic.allValues convertBlock:^double(AIMatchAlgModel *obj) {
             return obj.groupValueMatchCount;
         }] / (float)protoPDic.count;
         validPAlgs = [SMGUtils filterArr:protoPDic.allValues checkValid:^BOOL(AIMatchAlgModel *item) {
             return item.groupValueMatchCount > pinJunMatchCount_P;
         }];
+        //NSLog(@"平均GV匹配数：%.2f %.2f",pinJunMatchCount_R,pinJunMatchCount_P);
     }
     
     //12. 全含判断: 从大到小,依次取到对应的node和matchingCount (注: 支持相近后,应该全是全含了,参考25084-1) (性能:无缓存时读400耗400ms,有缓存时30ms);
@@ -471,7 +472,7 @@
         AIAlgNodeBase *assAlg = [SMGUtils searchNode:model.matchAlg];
         NSLog(@"概念识别结果：A%ld%@ \t匹配（T数：%d GV数：%ld 度：%.2f）proto:%@ ass:%@",assAlg.pId,CLEANSTR([SMGUtils convertArr:assAlg.content_ps convertBlock:^id(AIKVPointer *obj) {
             return STRFORMAT(@"T%ld",obj.pointerId);
-        }]),model.matchCount,model.groupValueMatchCount,model.matchValue,CLEANSTR([protoAlg getLogDesc:false].allKeys),CLEANSTR([assAlg getLogDesc:true]));
+        }]),model.matchCount,model.groupValueMatchCount,model.matchValue,CLEANSTR([protoAlg getLogDesc:false].allKeys),CLEANSTR([assAlg getLogDesc:false]));
     }
     [AIRecognitionCache printLog:true];
 }
