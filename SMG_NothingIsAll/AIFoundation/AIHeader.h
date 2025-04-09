@@ -287,9 +287,10 @@
 #define TOModel2Sub2Str(cur) [TOModelVision cur2Sub:cur]
 
 //强训工具
-#define Queue(name) [RTQueueModel newWithName:name arg0:nil]
-#define Queue0(name,a0) [RTQueueModel newWithName:name arg0:a0]
-#define Queue1(name,a0,a1) [RTQueueModel newWithName:name arg0:a0 arg1:a1]
+#define Queue(name) [RTQueueModel newWithName:name arg0:nil arg1:nil arg2:nil]
+#define Queue0(name,a0) [RTQueueModel newWithName:name arg0:a0 arg1:nil arg2:nil]
+#define Queue1(name,a0,a1) [RTQueueModel newWithName:name arg0:a0 arg1:a1 arg2:nil]
+#define Queue2(name,a0,a1,a2) [RTQueueModel newWithName:name arg0:a0 arg1:a1 arg2:a2]
 
 /**
  *  MARK:--------------------快捷建对象--------------------

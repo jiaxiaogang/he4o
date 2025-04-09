@@ -94,7 +94,7 @@ static int cSUBNUM = 0;
     [theRT regist:kHungerSEL target:self selector:@selector(rtHungerBlock)];
     [theRT regist:kFoodRdmSEL target:self selector:@selector(randomThrowFood4Screen:)];
     [theRT regist:kFoodRdmNearSEL target:self selector:@selector(randomThrowFood4Near)];
-    [theRT regist:kFoodDirectlySEL target:self selector:@selector(throwFood4Directly:subNum:)];
+    [theRT regist:kFoodDirectlySEL target:self selector:@selector(throwFood4Directly:subNum:forTest:)];
 }
 
 -(void)viewWillDisappear:(BOOL)animated {
@@ -115,12 +115,12 @@ static int cSUBNUM = 0;
 - (IBAction)nearFeedingBtn0OnClick:(id)sender {
     [theApp.heLogView addDemoLog:@"直投"];
     DemoLog(@"直投0");
-    [self throwFood4Directly:cCanEatMainNum subNum:@(-1)];
+    [self throwFood4Directly:cCanEatMainNum subNum:@(-1) forTest:@(true)];
 }
-- (IBAction)nearFeedingBtn1OnClick:(id)sender {
+- (IBAction)nearFeedingBtn1OnClick:(UIButton*)sender {
     [theApp.heLogView addDemoLog:@"直投"];
     DemoLog(@"直投1");
-    [self throwFood4Directly:cCantEatMainNum subNum:@(-1)];
+    [self throwFood4Directly:sender.titleLabel.text subNum:@(-1) forTest:@(true)];
 }
 
 
@@ -138,7 +138,7 @@ static int cSUBNUM = 0;
     FoodStatus status = NUMTOOK(statusNum).intValue;
     
     //2. 投食物
-    [self food2Pos:CGPointMake(randomX, randomY) caller4RL:kFoodRdmSEL status:status mainNum:nil subNum:-1];
+    [self food2Pos:CGPointMake(randomX, randomY) caller4RL:kFoodRdmSEL status:status mainNum:nil subNum:-1 forTest:false];
 }
 
 /**
@@ -152,18 +152,18 @@ static int cSUBNUM = 0;
     int random = arc4random() % 8;
     
     //2. 随机方向扔食物
-    [self food2Pos:[self convertDirection2FoodPos:random] caller4RL:kFoodRdmNearSEL status:FoodStatus_Eat mainNum:nil subNum:-1];
+    [self food2Pos:[self convertDirection2FoodPos:random] caller4RL:kFoodRdmNearSEL status:FoodStatus_Eat mainNum:nil subNum:-1 forTest:false];
 }
 
 /**
  *  MARK:--------------------直投坚果--------------------
  */
--(void) throwFood4Directly:(NSString*)mainNum subNum:(NSNumber*)subNum {
+-(void) throwFood4Directly:(NSString*)mainNum subNum:(NSNumber*)subNum forTest:(NSNumber*)forTest {
     CGFloat targetX = self.birdView.center.x + (arc4random() % 20) - 10;
     CGFloat targetY = self.birdView.center.y + (arc4random() % 20) - 10;
     CGPoint targetPoint = CGPointMake(targetX, targetY);
     //2. 随机方向扔食物
-    [self food2Pos:targetPoint caller4RL:kFoodDirectlySEL status:FoodStatus_Eat mainNum:mainNum subNum:subNum.integerValue];
+    [self food2Pos:targetPoint caller4RL:kFoodDirectlySEL status:FoodStatus_Eat mainNum:mainNum subNum:subNum.integerValue forTest:forTest.boolValue];
 }
 
 /**
@@ -220,7 +220,7 @@ static int cSUBNUM = 0;
     if (targetPoint.x != 0 && targetPoint.y != 0) {
         DemoLog(@"远投 (X:%.2f Y:%.2f)",targetPoint.x,targetPoint.y);
         [theApp.heLogView addDemoLog:STRFORMAT(@"远投 (X:%.2f Y:%.2f)",targetPoint.x,targetPoint.y)];
-        [self food2Pos:targetPoint caller4RL:nil status:status mainNum:nil subNum:-1];
+        [self food2Pos:targetPoint caller4RL:nil status:status mainNum:nil subNum:-1 forTest:false];
     }
 }
 
@@ -247,42 +247,42 @@ static int cSUBNUM = 0;
 - (IBAction)foodLeftOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-左");
-    [self food2Pos:[self convertDirection2FoodPos:0] caller4RL:nil status:FoodStatus_Eat mainNum:nil subNum:-1];
+    [self food2Pos:[self convertDirection2FoodPos:0] caller4RL:nil status:FoodStatus_Eat mainNum:nil subNum:-1 forTest:false];
 }
 - (IBAction)foodLeftUpOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-左上");
-    [self food2Pos:[self convertDirection2FoodPos:1] caller4RL:nil status:FoodStatus_Eat mainNum:nil subNum:-1];
+    [self food2Pos:[self convertDirection2FoodPos:1] caller4RL:nil status:FoodStatus_Eat mainNum:nil subNum:-1 forTest:false];
 }
 - (IBAction)foodUpOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-上");
-    [self food2Pos:[self convertDirection2FoodPos:2] caller4RL:nil status:FoodStatus_Eat mainNum:nil subNum:-1];
+    [self food2Pos:[self convertDirection2FoodPos:2] caller4RL:nil status:FoodStatus_Eat mainNum:nil subNum:-1 forTest:false];
 }
 - (IBAction)foodRightUpOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-右上");
-    [self food2Pos:[self convertDirection2FoodPos:3] caller4RL:nil status:FoodStatus_Eat mainNum:nil subNum:-1];
+    [self food2Pos:[self convertDirection2FoodPos:3] caller4RL:nil status:FoodStatus_Eat mainNum:nil subNum:-1 forTest:false];
 }
 - (IBAction)foodRightOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-右");
-    [self food2Pos:[self convertDirection2FoodPos:4] caller4RL:nil status:FoodStatus_Eat mainNum:nil subNum:-1];
+    [self food2Pos:[self convertDirection2FoodPos:4] caller4RL:nil status:FoodStatus_Eat mainNum:nil subNum:-1 forTest:false];
 }
 - (IBAction)foodRightDownOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-右下");
-    [self food2Pos:[self convertDirection2FoodPos:5] caller4RL:nil status:FoodStatus_Eat mainNum:nil subNum:-1];
+    [self food2Pos:[self convertDirection2FoodPos:5] caller4RL:nil status:FoodStatus_Eat mainNum:nil subNum:-1 forTest:false];
 }
 - (IBAction)foodDownOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-下");
-    [self food2Pos:[self convertDirection2FoodPos:6] caller4RL:nil status:FoodStatus_Eat mainNum:nil subNum:-1];
+    [self food2Pos:[self convertDirection2FoodPos:6] caller4RL:nil status:FoodStatus_Eat mainNum:nil subNum:-1 forTest:false];
 }
 - (IBAction)foodLeftDownOnClick:(id)sender {
     [self animationFlash:sender];
     DemoLog(@"远投-左下");
-    [self food2Pos:[self convertDirection2FoodPos:7] caller4RL:nil status:FoodStatus_Eat mainNum:nil subNum:-1];
+    [self food2Pos:[self convertDirection2FoodPos:7] caller4RL:nil status:FoodStatus_Eat mainNum:nil subNum:-1 forTest:false];
 }
 
 /**
@@ -781,17 +781,33 @@ static int cSUBNUM = 0;
     return result;
 }
 
-- (void) food2Pos:(CGPoint)targetPoint caller4RL:(NSString*)caller4RL status:(FoodStatus)status mainNum:(NSString*)mainNum subNum:(NSInteger)subNum {
+- (void) food2Pos:(CGPoint)targetPoint caller4RL:(NSString*)caller4RL status:(FoodStatus)status mainNum:(NSString*)mainNum subNum:(NSInteger)subNum forTest:(BOOL)forTest {
     FoodView *foodView = [[FoodView alloc] init];
     foodView.status = status;
     
     //投哪个号图。
-    if (subNum == -1) subNum = (cSUBNUM++ % cProtoImageCount) + 1;//(arc4random() % 17) + 1;
+    if (subNum == -1) {
+        if (forTest) {
+            int randomIndex = arc4random() % cTestImageCount;
+            subNum = randomIndex + 1;
+        } else {
+            subNum = (cSUBNUM++ % cProtoImageCount) + 1;//(arc4random() % 17) + 1;
+        }
+    }
     
     //投几号坚果。
-    if (!STRISOK(mainNum)) mainNum = status == FoodStatus_Eat ? cCanEatMainNum : cCantEatMainNum;
-    [foodView setData:mainNum subNum:subNum];
+    if (!STRISOK(mainNum)) {
+        if (status == FoodStatus_Eat) {
+            mainNum = cCanEatMainNum;
+        } else {
+            NSArray *cantEatMainNumArr = cCantEatMainNum;
+            int randomIndex = arc4random() % cantEatMainNumArr.count;
+            mainNum = ARR_INDEX(cantEatMainNumArr, randomIndex);
+        }
+    }
     
+    //设置坚果数据
+    [foodView setData:mainNum subNum:subNum forTest:forTest];
     [foodView setOrigin:CGPointMake(ScreenWidth * 0.375f, ScreenHeight - 66)];
     [self.view addSubview:foodView];
     [UIView animateWithDuration:0.3f animations:^{

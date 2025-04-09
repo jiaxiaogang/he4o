@@ -130,14 +130,10 @@
 //MARK:===============================================================
 -(void) invoke:(RTQueueModel*)queue {
     NSInvocation *invc = [self.dic objectForKey:queue.name];
-    if (queue.arg0) {
-        id arg0 = queue.arg0;
-        [invc setArgument:&arg0 atIndex:2];
-    }
-    if (queue.arg1) {
-        id arg1 = queue.arg1;
-        [invc setArgument:&arg1 atIndex:3];
-    }
+    id arg0 = queue.arg0, arg1 = queue.arg1, arg2 = queue.arg2;
+    if (arg0) [invc setArgument:&arg0 atIndex:2];
+    if (arg1) [invc setArgument:&arg1 atIndex:3];
+    if (arg2) [invc setArgument:&arg2 atIndex:4];
     @try {
         [invc invoke];
     }@catch (NSException *exception) {

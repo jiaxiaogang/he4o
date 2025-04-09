@@ -10,7 +10,7 @@
 
 //图库图片的前辍
 #define cCanEatMainNum @"0"
-#define cCantEatMainNum @"1"
+#define cCantEatMainNum @[@"1",@"2",@"3",@"4",@"5",@"6",@"7",@"8",@"9"]
 
 //图库文件夹名称 @“ProtoMnistImages”=Mnist数字库 @"ProtoSImages"=自己拍的鼠标照片，只有12张。
 #define cProtoImageFolder @"ProtoMnistImages"
@@ -18,6 +18,7 @@
 
 //图库图片数，比如后辍1-17。
 #define cProtoImageCount 100
+#define cTestImageCount 10
 
 /**
  *  MARK:--------------------FoodStatus--------------------
@@ -39,7 +40,7 @@ typedef NS_ENUM(NSInteger, FoodStatus) {
 @property (strong, nonatomic) NSString *imgName;
 @property (strong, nonatomic) UIImageView *imgView;//当前坚果是几号（用于测视觉）。
 
--(void) setData:(NSString*)mainNum subNum:(NSInteger)subNum;
+-(void) setData:(NSString*)mainNum subNum:(NSInteger)subNum forTest:(BOOL)forTest;
 
 //被撞击
 -(void) hit;

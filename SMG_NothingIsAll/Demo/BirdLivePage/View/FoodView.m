@@ -14,6 +14,8 @@
 
 @property (strong,nonatomic) IBOutlet UIView *containerView;
 
+@property (assign, nonatomic) BOOL forTest;
+
 @end
 
 @implementation FoodView
@@ -52,10 +54,11 @@
     [self refreshDisplay];
 }
 
--(void) setData:(NSString*)mainNum subNum:(NSInteger)subNum {
+-(void) setData:(NSString*)mainNum subNum:(NSInteger)subNum forTest:(BOOL)forTest {
     //2025.04.05: 依次直投从0_1到0_17号坚果，然后在此过程中观察特征识别类比抽象及累计SP过程（参考34112）。
     //mainNum = arc4random() % 2;//给吃0到1号坚果
     self.imgName = STRFORMAT(@"%@_%ld",mainNum,subNum);
+    self.forTest = forTest;
     [self refreshDisplay];
 }
 
@@ -74,7 +77,7 @@
     
     //2. 几号坚果。
     if (self.imgName) {
-        [self.imgView setImage:[AIVisionAlgsV2 createImageFromProtoMnistImageWithName:self.imgName forTest:false]];
+        [self.imgView setImage:[AIVisionAlgsV2 createImageFromProtoMnistImageWithName:self.imgName forTest:self.forTest]];
     }
 }
 
