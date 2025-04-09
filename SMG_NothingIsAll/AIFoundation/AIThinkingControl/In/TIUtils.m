@@ -472,8 +472,31 @@
         AIAlgNodeBase *assAlg = [SMGUtils searchNode:model.matchAlg];
         NSLog(@"概念识别结果：A%ld%@ \t匹配（T数：%d GV数：%ld 度：%.2f）proto:%@ ass:%@",assAlg.pId,CLEANSTR([SMGUtils convertArr:assAlg.content_ps convertBlock:^id(AIKVPointer *obj) {
             return STRFORMAT(@"T%ld",obj.pointerId);
-        }]),model.matchCount,model.groupValueMatchCount,model.matchValue,CLEANSTR([protoAlg getLogDesc:true].allKeys),CLEANSTR([assAlg getLogDesc:false]));
+        }]),model.matchCount,model.groupValueMatchCount,model.matchValue,CLEANSTR([protoAlg getLogDesc:true].allKeys),CLEANSTR([assAlg getLogDesc:true]));
     }
+    
+    //18. debugLog3
+    NSMutableDictionary *allLogDic = [NSMutableDictionary new];
+    for (AIMatchAlgModel *model in logModels) {
+        AIAlgNodeBase *assAlg = [SMGUtils searchNode:model.matchAlg];
+        NSDictionary *itemLogDic = [assAlg getLogDesc:true];
+        for (NSString *key in itemLogDic.allKeys) {
+            NSInteger oldCount = NUMTOOK([allLogDic objectForKey:key]).integerValue;
+            NSInteger newCount = NUMTOOK([itemLogDic objectForKey:key]).integerValue;
+            [allLogDic setObject:@(oldCount + newCount) forKey:key];
+        }
+    }
+    NSInteger sum = [SMGUtils sumOfArr:allLogDic.allValues convertBlock:^double(NSNumber *obj) {
+        return obj.integerValue;
+    }];
+    NSArray *allLogKeys = [SMGUtils sortBig2Small:allLogDic.allKeys compareBlock:^double(NSString *key) {
+        NSInteger itemCount = NUMTOOK([allLogDic objectForKey:key]).integerValue;
+        return itemCount / (float)sum;
+    }];
+    NSLog(@"概念识别结果总结：%@",CLEANSTR([SMGUtils convertArr:allLogKeys convertBlock:^id(NSString *key) {
+        NSInteger itemCount = NUMTOOK([allLogDic objectForKey:key]).integerValue;
+        return STRFORMAT(@"%@=%.2f | ",key,itemCount / (float)sum);
+    }]));
     [AIRecognitionCache printLog:true];
 }
 
