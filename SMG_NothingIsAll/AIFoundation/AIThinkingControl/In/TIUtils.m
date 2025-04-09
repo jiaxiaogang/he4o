@@ -352,6 +352,11 @@
             subMatchModels = [AIRecognitionCache getCache:item_p cacheBlock:^id{
                 return ARRTOOK([self recognitionFeature:item_p cache:cache]);//v2多码特征;
             }];
+            
+            
+            //TODOTOMORROW20250409: 先试下方案3特征嵌套（参考34132）。
+            
+            
         }
         
         //4. 每个near_p做两件事:
