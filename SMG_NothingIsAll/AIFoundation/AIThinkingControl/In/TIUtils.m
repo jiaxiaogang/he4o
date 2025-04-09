@@ -154,17 +154,29 @@
 /**
  *  MARK:--------------------特征识别--------------------
  */
-+(NSArray*) recognitionFeature:(AIKVPointer*)feature_p cache:(AIRecognitionCache*)cache {
++(NSArray*) recognitionFeature:(AIKVPointer*)protoFeature_p {
     //1. 数据准备
-    AIFeatureNode *protoFeature = [SMGUtils searchNode:feature_p];
-    NSLog(@"\n=========== 特征识别 protoT%ld（%@）===========",feature_p.pointerId,feature_p.dataSource);
+    AIFeatureNode *protoFeature = [SMGUtils searchNode:protoFeature_p];
+    NSLog(@"\n=========== 特征识别 protoT%ld（%@）===========",protoFeature_p.pointerId,protoFeature_p.dataSource);
     AIFeatureAllBestGVModel *gvBestModel = [[AIFeatureAllBestGVModel alloc] init];
-    if (protoFeature.count == 0) return @[[[AIMatchModel alloc] initWithMatch_p:feature_p]];
+    if (protoFeature.count == 0) return @[[[AIMatchModel alloc] initWithMatch_p:protoFeature_p]];
     
     //2. 循环分别识别：特征里的组码。
     for (NSInteger i = 0; i < protoFeature.count; i++) {
         AIKVPointer *protoGroupValue_p = ARR_INDEX(protoFeature.content_ps, i);
         NSInteger protoLevel = NUMTOOK(ARR_INDEX(protoFeature.levels, i)).integerValue;
+        
+        //TODOTOMORROW20250410: 如果识别的是组特征，则
+        if (PitIsFeature(protoGroupValue_p)) {
+            
+            //TODOTOMORROW20250409: 从上一轮递归的识别结果assTs中的：各个absT各自再取refPort，对生成的组特征进行识别（参考34132-特征嵌套）。
+            if (PitIsFeature(refPort.target_p)) {
+                //宏观一层仍是特征：判断位置符合度，收集至结果（看复用下面的第6代码段）。
+                
+                continue;
+            }
+            
+        }
         
         //4. 组码识别。
         NSArray *gMatchModels = [AIRecognitionCache getCache:protoGroupValue_p cacheBlock:^id{
@@ -188,6 +200,10 @@
                 
                 //14. 判断新一条refPort是否更好，更好的话存下来（存refPort，assKey，gModel.matchValue，matchDegree）。
                 [gvBestModel updateStep1:assKey refPort:refPort gMatchValue:gModel.matchValue gMatchDegree:matchDegree matchOfProtoIndex:i];
+                
+                
+                
+                //TODOTOMORROW20250410: 把识别到的refPort在protoFeature中的位置生成rect。
             }
         }
         
@@ -257,6 +273,13 @@
         if (Log4RecogDesc || true) NSLog(@"特征识别结果:T%ld%@\t 匹配条数:%ld/(proto%ld ass%ld)\t匹配度:%.2f\t强度:%.1f\t符合度:%.1f",
                                          matchModel.match_p.pointerId,CLEANSTR([assFeature getLogDesc:true]),matchModel.matchCount,protoFeature.count,assFeature.count,matchModel.matchValue,matchModel.strongValue,matchModel.matchDegree);
     }
+    
+    //TODOTOMORROW20250410: 把同时识别到的assTs中，位置符合的，打包成一组特征，然后递归至宏观一层继续特征识别。
+    AIFeatureNode *gtNode = nil;
+    [self recognitionFeature:gtNode];
+    
+    
+    
     return resultModels;
 }
 
@@ -329,7 +352,6 @@
  */
 +(void) recognitionAlgStep1:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel {
     //0. 数据准备;
-    AIRecognitionCache *cache = [[AIRecognitionCache alloc] init];
     AIAlgNodeBase *protoAlg = inModel.protoAlg;
     if (!ISOK(protoAlg, AIAlgNodeBase.class)) return;
     except_ps = ARRTOOK(except_ps);
@@ -350,13 +372,8 @@
             }];
         } else {
             subMatchModels = [AIRecognitionCache getCache:item_p cacheBlock:^id{
-                return ARRTOOK([self recognitionFeature:item_p cache:cache]);//v2多码特征;
+                return ARRTOOK([self recognitionFeature:item_p]);//v2多码特征;
             }];
-            
-            
-            //TODOTOMORROW20250409: 先试下方案3特征嵌套（参考34132）。
-            
-            
         }
         
         //4. 每个near_p做两件事:
