@@ -31,7 +31,7 @@
  *  替代方案: 也可以用value_ps的值序列来作有序,然后二分法匹配;
  */
 @property (strong,nonatomic) NSString *header;
-@property (strong, nonatomic) NSDictionary *params;//允许port带一些参数，用于判断除header之外的不同等（比如level,x,y）。
+@property (strong, nonatomic) NSMutableDictionary *params;//允许port带一些参数，用于判断除header之外的不同等（比如level,x,y）。
 
 -(void) strongPlus;
 -(NSInteger) level;

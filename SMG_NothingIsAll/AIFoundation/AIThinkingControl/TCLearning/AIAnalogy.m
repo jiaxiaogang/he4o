@@ -343,6 +343,13 @@
     [assFeature updateMatchValue:absT matchValue:1];
     [protoFeature updateIndexDic:absT indexDic:protoAbsIndexDic];
     [assFeature updateIndexDic:absT indexDic:assAbsIndexDic];
+    
+    //33. 存conPorts的rect（参考34135-TODO1）。
+    CGRect absAtProtoRect = [AINetUtils convertPartOfFeatureContent2Rect:protoFeature contentIndexes:protoAbsIndexDic.allValues];
+    CGRect absAtAssRect = [AINetUtils convertPartOfFeatureContent2Rect:assFeature contentIndexes:assAbsIndexDic.allValues];
+    [AINetUtils updateConPortRect:absT conT:protoT_p rect:absAtProtoRect];
+    [AINetUtils updateConPortRect:absT conT:assT_p rect:absAtAssRect];
+    
     if (Log4Ana) NSLog(@"%@特征类比结果 => Proto特征T%ld：%@\n%@Ass特征T%ld：%@\n%@抽象特征T%ld：%@\n%@",protoFeature.p.dataSource,protoFeature.pId,CLEANSTR(protoFeature.logDesc),FeatureDesc(protoFeature.p,2),assFeature.pId,CLEANSTR(assFeature.logDesc),FeatureDesc(assFeature.p,2),absT.pId,CLEANSTR(absT.logDesc),FeatureDesc(absT.p,2));
     return absT;
 }

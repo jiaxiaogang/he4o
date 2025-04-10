@@ -345,4 +345,9 @@
  */
 +(CGRect) convertGVLevelXY2Rect:(NSInteger)level x:(NSInteger)x y:(NSInteger)y;
 
+/**
+ *  MARK:--------------------补上特征的conPort存rect--------------------
+ */
++(void) updateConPortRect:(AIFeatureNode*)absT conT:(AIKVPointer*)conT rect:(CGRect)rect;
+
 @end

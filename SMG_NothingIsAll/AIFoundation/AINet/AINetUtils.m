@@ -401,7 +401,7 @@
             findPort = [[AIPort alloc] init];
             findPort.target_p = pointer;
             findPort.header = findHeader;
-            findPort.params = findParams;
+            findPort.params = [[NSMutableDictionary alloc] initWithDictionary:findParams];
         }
         return findPort;
     }
@@ -412,7 +412,7 @@
     fromPorts = ARRTOOK(fromPorts);
     NSArray *cp = [fromPorts copy];
     for (AIPort *port in cp) {
-        if ([port.target_p isEqual:pointer] && [DICTOOK(port.params) isEqual:DICTOOK(findParams)]) {
+        if ([port.target_p isEqual:pointer] && [port.params isEqual:findParams]) {
             return port;
         }
     }
@@ -1172,6 +1172,7 @@
 
 /**
  *  MARK:--------------------把特征的一部分content转成rect（参考34133-TODO1）--------------------
+ *  @param contentIndexes 将每个absT转成protoT的rect（根据indexDic可以取得protoIndexes，然后根据这个下标组来取并集区域范围）。
  */
 +(CGRect) convertPartOfFeatureContent2Rect:(AIFeatureNode*)tNode contentIndexes:(NSArray*)contentIndexes {
     //1. 数据准备。
@@ -1215,7 +1216,19 @@
 +(CGRect) convertGVLevelXY2Rect:(NSInteger)level x:(NSInteger)x y:(NSInteger)y {
     NSInteger radio = powf(3, VisionMaxLevel - level);
     int size = powf(3, level);
-    return CGRectMake(x, y, size, size);
+    return CGRectMake(x * radio, y * radio, size, size);
+}
+
+/**
+ *  MARK:--------------------补上特征的conPort存rect--------------------
+ *  @desc 一般构建特征时，还没有存indexDic映射，所以在：1、构建后 2、并且设置indexDic映射后 3、再补上conPort.rect。
+ */
++(void) updateConPortRect:(AIFeatureNode*)absT conT:(AIKVPointer*)conT rect:(CGRect)rect {
+    NSArray *conPorts = [AINetUtils conPorts_All:absT];
+    for (AIPort *conPort in conPorts) {
+        if ([conPort.target_p isEqual:conT]) [conPort.params setObject:@(rect) forKey:@"r"];
+    }
+    [SMGUtils insertNode:absT];
 }
 
 @end

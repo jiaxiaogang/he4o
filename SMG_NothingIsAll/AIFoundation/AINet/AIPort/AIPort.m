@@ -44,30 +44,35 @@
     return _strong;
 }
 
+-(NSMutableDictionary *)params {
+    if (!ISOK(_params, NSMutableDictionary.class)) _params = [[NSMutableDictionary alloc] initWithDictionary:_params];
+    return _params;
+}
+
 -(void) strongPlus{
     self.strong.value ++;
 }
 
 -(NSInteger) level {
-    return NUMTOOK([DICTOOK(self.params) objectForKey:@"l"]).integerValue;
+    return NUMTOOK([self.params objectForKey:@"l"]).integerValue;
 }
 
 -(NSInteger) x {
-    return NUMTOOK([DICTOOK(self.params) objectForKey:@"x"]).integerValue;
+    return NUMTOOK([self.params objectForKey:@"x"]).integerValue;
 }
 
 -(NSInteger) y {
-    return NUMTOOK([DICTOOK(self.params) objectForKey:@"y"]).integerValue;
+    return NUMTOOK([self.params objectForKey:@"y"]).integerValue;
 }
 
 -(CGRect) rect {
-    return NUMTOOK([DICTOOK(self.params) objectForKey:@"r"]).CGRectValue;
+    return NUMTOOK([self.params objectForKey:@"r"]).CGRectValue;
 }
 
 -(BOOL) isEqual:(AIPort*)object{
     if (ISOK(object, AIPort.class)) {
         if (self.target_p) {
-            return [self.target_p isEqual:object.target_p] && [DICTOOK(self.params) isEqual:DICTOOK(object.params)];
+            return [self.target_p isEqual:object.target_p] && [self.params isEqual:object.params];
         }
     }
     return false;

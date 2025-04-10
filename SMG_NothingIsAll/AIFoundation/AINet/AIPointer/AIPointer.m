@@ -52,7 +52,7 @@
 }
 
 -(id) paramForKey:(NSString*)key{
-    return [DICTOOK(self.params) objectForKey:STRTOOK(key)];
+    return [self.params objectForKey:STRTOOK(key)];
 }
 
 /**
