@@ -313,7 +313,8 @@
         NSInteger assLevel = NUMTOOK(ARR_INDEX(assFeature.levels, assIndex)).integerValue;
         NSInteger assX = NUMTOOK(ARR_INDEX(assFeature.xs, assIndex)).integerValue;
         NSInteger assY = NUMTOOK(ARR_INDEX(assFeature.ys, assIndex)).integerValue;
-        [absGVModels addObject:[InputGroupValueModel new:nil groupValue:analogyGVResult.v1 level:assLevel x:assX y:assY]];
+        CGRect assRect = NUMTOOK(ARR_INDEX(assFeature.rects, assIndex)).CGRectValue;
+        [absGVModels addObject:[InputGroupValueModel new:nil groupValue:analogyGVResult.v1 level:assLevel x:assX y:assY rect:assRect]];
     }
     
     //21. 为增加特征content_ps的有序性：对groupModels进行排序（特征的content是有序的，所以要先排下序）。

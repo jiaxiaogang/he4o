@@ -340,4 +340,9 @@
  */
 +(CGRect) convertPartOfFeatureContent2Rect:(AIFeatureNode*)tNode contentIndexes:(NSArray*)contentIndexes;
 
+/**
+ *  MARK:--------------------把组码在protoT中level,x,y转成最小粒度层的范围（参考34133-TODO1.2）--------------------
+ */
++(CGRect) convertGVLevelXY2Rect:(NSInteger)level x:(NSInteger)x y:(NSInteger)y;
+
 @end

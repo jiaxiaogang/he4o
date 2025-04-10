@@ -59,6 +59,9 @@
     NSArray *ys = [SMGUtils convertArr:groupModels convertBlock:^id(InputGroupValueModel *obj) {
         return @(obj.y);
     }];
+    NSArray *rects = [SMGUtils convertArr:groupModels convertBlock:^id(InputGroupValueModel *obj) {
+        return @(obj.rect);
+    }];
     
     //3. 生成node
     //注意：即使content_ps一模一样，level,x,y不一样时，一样不可以复用（所以要把level,x,y生成一个字符串也用于生成header）。
@@ -73,6 +76,7 @@
         newNode.levels = levels;
         newNode.xs = xs;
         newNode.ys = ys;
+        newNode.rects = rects;
         return newNode;
     } header:header getRefPortsBlock:^NSArray *(AIKVPointer *item_p, NSInteger contentIndex) {
         return [AINetUtils refPorts_All:item_p];
