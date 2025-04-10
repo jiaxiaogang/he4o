@@ -270,7 +270,7 @@
 +(NSArray*) recognitionFeatureStep2:(AIKVPointer*)protoFeature_p matchModels:(NSArray*)matchModels {
     //1. 数据准备
     AIFeatureNode *protoFeature = [SMGUtils searchNode:protoFeature_p];
-    AIFeatureAllBestGVModel *gvBestModel = [[AIFeatureAllBestGVModel alloc] init];
+    NSMutableDictionary *allAssDic = [[NSMutableDictionary alloc] init];//<K=assPId, V=<K2=absT.pId,V2=conPort.rect>>
     
     //2. 每个absT分别向整体取conPorts。
     for (AIMatchModel *matchModel in matchModels) {
@@ -290,32 +290,24 @@
             //13. 取出该absT在assT的位置。
             CGRect absAtAssRect = conPort4Ass.rect;
             
+            
             //14. 对比下这两个rect。
             
-            //12. 根据level分别记录不同deltaLevel结果（把deltaLevel做为key的一部分，记录到识别结果字典里）。
-            NSString *assKey = STRFORMAT(@"%ld_%ld",protoLevel - refPort.level,refPort.target_p.pointerId);
+            //TODOTOMORROW20250410: 此处AIMatchModel模型设计：
+            //记录absT => 多个assT、各一个absAtAssRect。
+            //每个absT都指向protoT，但未必指向的有几个assT，即：一个assT对应多个absT。
+            //可以把每个conPort同指向target_p的，计为一组，把conPort直接收集给target_p。
             
-            [ThinkingUtils checkAssToMatchDegreeV2:protoFeature protoIndex:<#(NSInteger)#> assGVModels:<#(NSArray *)#> checkRefPort:<#(AIPort *)#> debugMode:<#(BOOL)#>]
+            id itemKey = @(conPort4Ass.target_p.pointerId);
+            NSMutableDictionary *itemAssDic = [allAssDic objectForKey:itemKey];
+            [itemAssDic setObject:@(conPort4Ass.rect) forKey:@(absT.pId)];
+            [allAssDic setObject:itemAssDic forKey:itemKey];
             
-            //13. 取出已经收集到的assGVModels,判断下一个refPort收集进去的话,是否符合位置;
-            NSArray *assGVItems = [gvBestModel getAssGVModelsForKey:assKey];
-            //BOOL debugMode = [feature_p.dataSource isEqual:@"hColors"] && [refPort.target_p isEqual:protoFeature.p] && assLevel == protoLevel && [gModel.match_p isEqual:protoGroupValue_p];
-            CGFloat matchDegree = [ThinkingUtils checkAssToMatchDegree:protoFeature protoIndex:i assGVModels:assGVItems checkRefPort:refPort debugMode:false];
-            
-            //14. 判断新一条refPort是否更好，更好的话存下来（存refPort，assKey，gModel.matchValue，matchDegree）。
-            [gvBestModel updateStep1:assKey refPort:refPort gMatchValue:gModel.matchValue gMatchDegree:matchDegree matchOfProtoIndex:i];
-            
-            //AIFeatureNode *assT = [SMGUtils searchNode:conPort4Ass.target_p];
         }
         
-        //21. STEP2：每个protoIndex内防重，竞争只保留protoIndex下最好一条。
-        [gvBestModel invokeRankStep2];
-
-        //22. STEP3：跨protoIndex防重，将best结果存下来
-        [gvBestModel updateStep3];
     }
-    //31. 用明细生成总账（bestModel -> resultDic）。
-    NSDictionary *resultDic = [gvBestModel convert2AIMatchModelsStep4];// <K=deltaLevel_assPId, V=识别的特征AIMatchModel>
+    //31. 计算位置相符度。
+    NSDictionary *resultDic = [ThinkingUtils checkConFeatureMatchDegree:CGRectZero absAtAssRect:CGRectZero];
     
     //32. debug
     for (NSString *assKey in resultDic.allKeys) {

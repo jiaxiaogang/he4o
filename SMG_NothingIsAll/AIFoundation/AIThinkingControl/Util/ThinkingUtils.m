@@ -362,4 +362,23 @@
     return matchDegree;
 }
 
+/**
+ *  MARK:--------------------用于对比absT在protoT的rect 和 absT在assT的rect = 两个rect的位置符合度--------------------
+ *  @desc 说明：采取比例+偏移方案来对比位置符合度，即：
+ *          1、比例：先将两个rect都缩放成absAtProtoRect的大小。
+ *          2、偏移：再求出deltaX和deltaY（因为先缩放成一样大小了，所以所有偏移都是平行的）。
+ *          3、把差别最大的20%的比例和偏移排除淘汰掉。
+ *          4、然后把剩下的：平均比例 和 平均偏移 求出来。
+ *          5、再分别根据每个absAtAss的比例和偏移，计算其位置符合度。
+ */
++(void) checkConFeatureMatchDegree:(CGRect)absAtProtoRect absAtAssRect:(CGRect)absAtAssRect {
+    //1. 求出比例。
+    
+    //2. 把两个rect缩放一致（归一化），将absAtAssRect缩放成absAtProtoRect。
+    
+    //3. 求出偏移。
+    
+    
+}
+
 @end
