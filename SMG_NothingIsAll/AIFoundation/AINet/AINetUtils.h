@@ -335,4 +335,9 @@
 +(NSString*) getGroupValueNodeHeader:(NSArray*)content_ps xs:(NSArray*)xs ys:(NSArray*)ys;
 +(NSString*) getFeatureNodeHeader:(NSArray*)content_ps levels:(NSArray*)levels xs:(NSArray*)xs ys:(NSArray*)ys;
 
+/**
+ *  MARK:--------------------把特征的一部分content转成rect（参考34133-TODO1）--------------------
+ */
++(CGRect) convertPartOfFeatureContent2Rect:(AIFeatureNode*)tNode contentIndexes:(NSArray*)contentIndexes;
+
 @end

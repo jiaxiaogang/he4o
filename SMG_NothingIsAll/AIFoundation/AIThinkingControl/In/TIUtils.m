@@ -274,8 +274,26 @@
                                          matchModel.match_p.pointerId,CLEANSTR([assFeature getLogDesc:true]),matchModel.matchCount,protoFeature.count,assFeature.count,matchModel.matchValue,matchModel.strongValue,matchModel.matchDegree);
     }
     
+    
     //TODOTOMORROW20250410: 把同时识别到的assTs中，位置符合的，打包成一组特征，然后递归至宏观一层继续特征识别。
-    AIFeatureNode *gtNode = nil;
+    
+    //61. 将每个matchModel转成rect（根据matchModel的indexDic可以取得protoIndexes，然后根据这个下标组来取并集区域范围）。
+    NSArray *rects = [SMGUtils convertArr:resultModels convertBlock:^id(AIMatchModel *model) {
+        CGRect modelRect = [AINetUtils convertPartOfFeatureContent2Rect:protoFeature contentIndexes:model.indexDic.allValues];
+        return @(modelRect);
+    }];
+    
+    //62. 将matchModels转成组特征的content_ps。
+    NSArray *gtContent_ps = [SMGUtils convertArr:resultModels convertBlock:^id(AIMatchModel *obj) {
+        return obj.match_p;
+    }];
+    
+    //63. 构建组特征。
+    AIFeatureNode *gtNode = [AIGeneralNodeCreater createFeatureNode:gtContent_ps conNodes:nil at:protoFeature.p.algsType ds:protoFeature.p.dataSource isOut:protoFeature.p.isOut];
+    
+    //64. 识别组特征。
+    //递归？还是新写一个吧：毕竟现在的level,x,y和组特征的位置相符度肯定不同。
+    
     [self recognitionFeature:gtNode];
     
     

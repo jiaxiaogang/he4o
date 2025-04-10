@@ -22,6 +22,10 @@
     if (!_ys) _ys = [NSArray new];
     return _ys;
 }
+-(NSArray *)rects {
+    if (!_rects) _rects = [NSArray new];
+    return _rects;
+}
 
 //内容的md5值，特征以content_ps和level,x,y共同生成。
 -(NSString*) getHeaderNotNull {
@@ -68,6 +72,7 @@
         self.levels = [aDecoder decodeObjectForKey:@"levels"];
         self.xs = [aDecoder decodeObjectForKey:@"xs"];
         self.ys = [aDecoder decodeObjectForKey:@"ys"];
+        self.rects = [aDecoder decodeObjectForKey:@"rects"];
     }
     return self;
 }
@@ -77,6 +82,7 @@
     [aCoder encodeObject:self.levels forKey:@"levels"];
     [aCoder encodeObject:self.xs forKey:@"xs"];
     [aCoder encodeObject:self.ys forKey:@"ys"];
+    [aCoder encodeObject:self.rects forKey:@"rects"];
 }
 
 @end

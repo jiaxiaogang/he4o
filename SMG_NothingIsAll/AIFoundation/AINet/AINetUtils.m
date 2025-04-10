@@ -1170,4 +1170,43 @@
     return [NSString md5:STRFORMAT(@"%@%@%@%@",[SMGUtils convertPointers2String:content_ps],CLEANSTR(levels),CLEANSTR(xs),CLEANSTR(ys))];
 }
 
+/**
+ *  MARK:--------------------把特征的一部分content转成rect（参考34133-TODO1）--------------------
+ */
++(CGRect) convertPartOfFeatureContent2Rect:(AIFeatureNode*)tNode contentIndexes:(NSArray*)contentIndexes {
+    //1. 数据准备。
+    CGRect resultRect = CGRectZero;
+    
+    //2. 把contentIndexes对应的每个组码取出来。
+    for (NSNumber *contentIndex in contentIndexes) {
+        NSInteger index = contentIndex.integerValue;
+        AIKVPointer *content_p = ARR_INDEX(tNode.content_ps, index);
+        
+        //11. 如果是组码。
+        if (PitIsGroupValue(content_p)) {
+            //12. 求出当前层与最细粒度层的比例。
+            NSInteger level = NUMTOOK(ARR_INDEX(tNode.levels, index)).integerValue;
+            NSInteger radio = powf(3, VisionMaxLevel - level);
+            
+            //13. 求出当前层转到最细粒度层时的xy坐标 和 size。
+            NSInteger x = NUMTOOK(ARR_INDEX(tNode.xs, index)).integerValue * radio;
+            NSInteger y = NUMTOOK(ARR_INDEX(tNode.ys, index)).integerValue * radio;
+            int size = powf(3, level);
+            
+            //14. itemRect累加到result的范围中。
+            CGRect itemRect = CGRectMake(x, y, size, size);
+            resultRect = CGRectUnion(resultRect, itemRect);
+        }
+        //21. 如果是特征。
+        else if (PitIsFeature(content_p)) {
+            //22. itemRect累加到result的范围中。
+            CGRect itemRect = NUMTOOK(ARR_INDEX(tNode.rects, index)).CGRectValue;
+            resultRect = CGRectUnion(resultRect, itemRect);
+        }
+    }
+    
+    //31. 将求得的范围并集返回。
+    return resultRect;
+}
+
 @end
