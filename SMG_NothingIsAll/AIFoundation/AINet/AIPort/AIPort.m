@@ -60,6 +60,10 @@
     return NUMTOOK([DICTOOK(self.params) objectForKey:@"y"]).integerValue;
 }
 
+-(CGRect) rect {
+    return NUMTOOK([DICTOOK(self.params) objectForKey:@"r"]).CGRectValue;
+}
+
 -(BOOL) isEqual:(AIPort*)object{
     if (ISOK(object, AIPort.class)) {
         if (self.target_p) {

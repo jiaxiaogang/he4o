@@ -203,6 +203,8 @@
 /**
  *  MARK:--------------------计算assTo是否在其该出现的位置（返回符合度）--------------------
  *  @desc 公式：推测下一组码的xy位置 : 与真实assTo的xy位置比较 = 得出位置符合预期程度（参考34053-新方案）。
+ *  @version
+ *      2025.04.10: v2-改为用rect来计算位置符合度（参考34133）。
  *  @result 为保证精度准确，结果以最大粒度层的绝对坐标进行返回。
  */
 +(CGFloat) checkAssToMatchDegree:(AIFeatureNode*)protoFeature protoIndex:(NSInteger)protoIndex assGVModels:(NSArray*)assGVModels checkRefPort:(AIPort*)checkRefPort debugMode:(BOOL)debugMode {
@@ -210,9 +212,9 @@
     AIFeatureNextGVRankItem *lastAssModel = ARR_INDEX_REVERSE(assGVModels, 0);
     if (!lastAssModel) return 1;
     CGPoint assFrom = CGPointMake(lastAssModel.refPort.x, lastAssModel.refPort.y);
-    NSInteger assToLevel = NUMTOOK([checkRefPort.params objectForKey:@"l"]).integerValue;
-    NSInteger assToX = NUMTOOK([checkRefPort.params objectForKey:@"x"]).integerValue;
-    NSInteger assToY = NUMTOOK([checkRefPort.params objectForKey:@"y"]).integerValue;
+    NSInteger assToLevel = checkRefPort.level;
+    NSInteger assToX = checkRefPort.x;
+    NSInteger assToY = checkRefPort.y;
     
     //2. 取出lastProto;
     NSInteger lastProtoIndex = lastAssModel.matchOfProtoIndex;
@@ -288,6 +290,75 @@
     
     //12. 返回结果矩形,使用符合度作为宽高
     if (debugMode) NSLog(@"符合度%.2f：protoFrom:%.0f,%.0f -> to:%.0f,%.0f \t assFrom:%.0f,%.0f -> to:%.0f,%.0f",matchDegree,protoFrom.x,protoFrom.y,protoTo.x,protoTo.y,assFrom.x,assFrom.y,assTo.x,assTo.y);
+    return matchDegree;
+}
+
++(CGFloat) checkAssToMatchDegreeV2:(AIFeatureNode*)protoFeature protoIndex:(NSInteger)protoIndex assGVModels:(NSArray*)assGVModels checkRefPort:(AIPort*)checkRefPort debugMode:(BOOL)debugMode {
+    //1. 取出上个ass匹配帧 & 取出lastProtoIndex;
+    AIFeatureNextGVRankItem *lastAssModel = ARR_INDEX_REVERSE(assGVModels, 0);
+    if (!lastAssModel) return 1;
+    NSInteger lastProtoIndex = lastAssModel.matchOfProtoIndex;
+    
+    //2. 取出protoFromToRect & assFromToRect。
+    CGRect assFromRect = lastAssModel.refPort.rect;
+    CGRect assToRect = checkRefPort.rect;
+    CGRect protoFromRect = NUMTOOK(ARR_INDEX(protoFeature.rects, lastProtoIndex)).CGRectValue;
+    CGRect protoToRect = NUMTOOK(ARR_INDEX(protoFeature.rects, protoIndex)).CGRectValue;
+    
+    //10. 计算checkRefPort对于当前assGVModels来说,是否符合位置;
+    //11. 求出proto在最小粒度层的xy差值。
+    CGFloat deltaX = protoToRect.origin.x - protoFromRect.origin.x;
+    CGFloat deltaY = protoToRect.origin.y - protoFromRect.origin.y;
+    
+    //12. 根据assFrom的坐标，和上面求出的差值，推测assTo应该出现的位置范围。
+    CGFloat assFromX = assFromRect.origin.x;
+    CGFloat assFromY = assFromRect.origin.y;
+    
+    //21. 2025.03.22: BUG：为避免：像x81,y162,w54,h-54这种wh有为负的情况，当h为负时，转为绝对值，然后把y减掉这个宽高（w为负亦然）。
+    CGFloat w = deltaX * 2, h = deltaY * 2;
+    if (w < 0) {
+        w = -w;
+        assFromX -= w;
+    }
+    if (h < 0) {
+        h = -h;
+        assFromY -= h;
+    }
+    
+    //22. 求出assTo应该出现的合理范围（移一倍deltaXY相当于从assFrom到精准推测的assTo中心点，再延伸了一倍deltaXY距离，相当于围绕精准推测位置，画一个deltaXY的范围矩形）。
+    //> 所以真实的assTo出现在这个范围矩形的：中心准确=100%，边缘为0%）。
+    CGRect targetRect = CGRectMake(assFromX, assFromY, w, h);
+    
+    //23. 真实assTo的位置。
+    CGPoint assToPoint = assToRect.origin;
+    
+    //24. 判断下是否在合理范围内，并算出符合度。
+    //24. 计算targetRect的中心点
+    CGPoint centerPoint = CGPointMake(CGRectGetMidX(targetRect), CGRectGetMidY(targetRect));
+    
+    //31. 计算assToPoint到中心点的距离
+    CGFloat distanceX = fabs(assToPoint.x - centerPoint.x);
+    CGFloat distanceY = fabs(assToPoint.y - centerPoint.y);
+    
+    //32. 计算从中心到边缘的最大距离
+    CGFloat maxDistanceX = targetRect.size.width / 2.0f;
+    CGFloat maxDistanceY = targetRect.size.height / 2.0f;
+    
+    //33. 如果点在矩形外,返回空矩形
+    if (distanceX > maxDistanceX || distanceY > maxDistanceY) {
+        if (debugMode) NSLog(@"出界返0：protoFrom:%.0f,%.0f -> to:%.0f,%.0f \t assFrom:%.0f,%.0f -> to:%.0f,%.0f",protoFromRect.origin.x,protoFromRect.origin.y,protoToRect.origin.x,protoToRect.origin.y,assFromRect.origin.x,assFromRect.origin.y,assToRect.origin.x,assToRect.origin.y);
+        return 0;
+    }
+    
+    //41. 计算x和y方向上的符合度(0-1之间)
+    CGFloat matchX = 1.0f - (maxDistanceX == 0 ? 0 : (distanceX / maxDistanceX));
+    CGFloat matchY = 1.0f - (maxDistanceY == 0 ? 0 : (distanceY / maxDistanceY));
+    
+    //42. 取x,y方向符合度的平均值作为总体符合度
+    CGFloat matchDegree = (matchX + matchY) / 2.0f;
+    
+    //43. 返回结果矩形,使用符合度作为宽高
+    if (debugMode) NSLog(@"符合度%.2f：protoFrom:%.0f,%.0f -> to:%.0f,%.0f \t assFrom:%.0f,%.0f -> to:%.0f,%.0f",matchDegree,protoFromRect.origin.x,protoFromRect.origin.y,protoToRect.origin.x,protoToRect.origin.y,assFromRect.origin.x,assFromRect.origin.y,assToRect.origin.x,assToRect.origin.y);
     return matchDegree;
 }
 

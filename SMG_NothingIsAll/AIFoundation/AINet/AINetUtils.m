@@ -247,7 +247,7 @@
                 NSDictionary *findParams = nil;
                 if (PitIsFeature(biger_p)) {
                     AIFeatureNode *feature = [SMGUtils searchNode:biger_p];
-                    findParams = @{@"l":ARR_INDEX(feature.levels, i), @"x":ARR_INDEX(feature.xs, i), @"y":ARR_INDEX(feature.ys, i)};
+                    findParams = @{@"l":ARR_INDEX(feature.levels, i), @"x":ARR_INDEX(feature.xs, i), @"y":ARR_INDEX(feature.ys, i), @"r":ARR_INDEX(feature.rects, i)};
                 }
                 [AINetUtils insertPointer_Hd:biger_p toPorts:item.refPorts findHeader:header difStrong:difStrong findParams:findParams];
                 [SMGUtils insertNode:item];

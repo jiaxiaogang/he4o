@@ -37,6 +37,7 @@
 -(NSInteger) level;
 -(NSInteger) x;
 -(NSInteger) y;
+-(CGRect) rect;
 
 @end
 
