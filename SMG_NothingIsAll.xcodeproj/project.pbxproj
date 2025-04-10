@@ -36,7 +36,6 @@
 		081B3ADB1F6E2CCD008A7F36 /* AINet.m in Sources */ = {isa = PBXBuildFile; fileRef = 081B3ADA1F6E2CCD008A7F36 /* AINet.m */; };
 		081BD08825B94F1B003C3038 /* ReasonDemandModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 081BD08725B94F1B003C3038 /* ReasonDemandModel.m */; };
 		081BD08B25B94F24003C3038 /* PerceptDemandModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 081BD08A25B94F24003C3038 /* PerceptDemandModel.m */; };
-		081D1CFD2DA6BA2800828AEA /* AIGroupFeatureNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 081D1CFC2DA6BA2800828AEA /* AIGroupFeatureNode.m */; };
 		082075F627EDFFE70005D7A8 /* TVideoWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 082075F427EDFFE70005D7A8 /* TVideoWindow.xib */; };
 		082075F727EDFFE70005D7A8 /* TVideoWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 082075F527EDFFE70005D7A8 /* TVideoWindow.m */; };
 		08236CEC21A23439008D8761 /* AIVisionAlgsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08236CEB21A23439008D8761 /* AIVisionAlgsModel.m */; };
@@ -290,8 +289,6 @@
 		081BD08725B94F1B003C3038 /* ReasonDemandModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReasonDemandModel.m; sourceTree = "<group>"; };
 		081BD08925B94F24003C3038 /* PerceptDemandModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PerceptDemandModel.h; sourceTree = "<group>"; };
 		081BD08A25B94F24003C3038 /* PerceptDemandModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PerceptDemandModel.m; sourceTree = "<group>"; };
-		081D1CFB2DA6BA2800828AEA /* AIGroupFeatureNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIGroupFeatureNode.h; sourceTree = "<group>"; };
-		081D1CFC2DA6BA2800828AEA /* AIGroupFeatureNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIGroupFeatureNode.m; sourceTree = "<group>"; };
 		082075F327EDFFE60005D7A8 /* TVideoWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TVideoWindow.h; sourceTree = "<group>"; };
 		082075F427EDFFE70005D7A8 /* TVideoWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TVideoWindow.xib; sourceTree = "<group>"; };
 		082075F527EDFFE70005D7A8 /* TVideoWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TVideoWindow.m; sourceTree = "<group>"; };
@@ -1748,8 +1745,6 @@
 				081321822D89A5A9005B9F4B /* AIGroupValueNode.m */,
 				081321872D89AC16005B9F4B /* AIFeatureNode.h */,
 				081321882D89AC16005B9F4B /* AIFeatureNode.m */,
-				081D1CFB2DA6BA2800828AEA /* AIGroupFeatureNode.h */,
-				081D1CFC2DA6BA2800828AEA /* AIGroupFeatureNode.m */,
 				88A43F3B2109576D00281348 /* AIFrontOrderNode.h */,
 				88A43F3C2109576D00281348 /* AIFrontOrderNode.m */,
 				88A43F3E210957C300281348 /* AINetAbsFoNode.h */,
@@ -2109,7 +2104,6 @@
 				08EA48CE202932B80038B982 /* CustomAlgsChargeModel.m in Sources */,
 				084C3A6B21926D5700DAA08A /* BirdView.m in Sources */,
 				08E8CF5B25B2F64000AA18DB /* ImvGoodModel.m in Sources */,
-				081D1CFD2DA6BA2800828AEA /* AIGroupFeatureNode.m in Sources */,
 				088DD7232201216500E0A786 /* TOFoModel.m in Sources */,
 				084B4B0824433AA900FB3670 /* ShortMatchManager.m in Sources */,
 				08CEAFAD22B317A800CD1D91 /* NodeCompareModel.m in Sources */,

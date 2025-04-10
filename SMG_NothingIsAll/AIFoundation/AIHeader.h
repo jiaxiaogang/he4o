@@ -83,7 +83,6 @@
 #import "AITransferPort.h"
 #import "AIGroupValueNode.h"
 #import "AIFeatureNode.h"
-#import "AIGroupFeatureNode.h"
 #import "AIAbsAlgNode.h"
 #import "AIAlgNodeBase.h"
 #import "AIFrontOrderNode.h"

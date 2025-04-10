@@ -264,64 +264,53 @@
 }
 
 /**
- *  MARK:--------------------组特征识别--------------------
+ *  MARK:--------------------特征识别--------------------
+ *  @desc Step2 尽可能照顾特征的整体性（参考34135-TODO2）。
  */
-+(NSArray*) recognitionGroupFeature:(AIKVPointer*)protoFeature_p {
++(NSArray*) recognitionFeatureStep2:(AIKVPointer*)protoFeature_p matchModels:(NSArray*)matchModels {
     //1. 数据准备
     AIFeatureNode *protoFeature = [SMGUtils searchNode:protoFeature_p];
-    NSLog(@"\n=========== 特征识别 protoT%ld（%@）===========",protoFeature_p.pointerId,protoFeature_p.dataSource);
     AIFeatureAllBestGVModel *gvBestModel = [[AIFeatureAllBestGVModel alloc] init];
-    if (protoFeature.count == 0) return @[[[AIMatchModel alloc] initWithMatch_p:protoFeature_p]];
     
-    //2. 循环分别识别：特征里的组码。
-    for (NSInteger i = 0; i < protoFeature.count; i++) {
-        AIKVPointer *protoGroupValue_p = ARR_INDEX(protoFeature.content_ps, i);
-        NSInteger protoLevel = NUMTOOK(ARR_INDEX(protoFeature.levels, i)).integerValue;
+    //2. 每个absT分别向整体取conPorts。
+    for (AIMatchModel *matchModel in matchModels) {
+        AIFeatureNode *absT = [SMGUtils searchNode:matchModel.match_p];
+        NSArray *conPorts = [AINetUtils conPorts_All:absT];
         
-        //TODOTOMORROW20250410: 如果识别的是组特征，则
-        if (PitIsFeature(protoGroupValue_p)) {
-            
-            //TODOTOMORROW20250409: 从上一轮递归的识别结果assTs中的：各个absT各自再取refPort，对生成的组特征进行识别（参考34132-特征嵌套）。
-            if (PitIsFeature(refPort.target_p)) {
-                //宏观一层仍是特征：判断位置符合度，收集至结果（看复用下面的第6代码段）。
-                
-                continue;
-            }
-            
-        }
-        
-        //4. 组码识别。
-        NSArray *gMatchModels = [AIRecognitionCache getCache:protoGroupValue_p cacheBlock:^id{
-            return ARRTOOK([self recognitionGroupValueV2:protoGroupValue_p rate:0.3 minLimit:3]);
+        //11. 取出该absT在protoT的位置。
+        AIPort *conPort4Proto = [SMGUtils filterSingleFromArr:conPorts checkValid:^BOOL(AIPort *item) {
+            return [item.target_p isEqual:protoFeature_p];
         }];
+        CGRect absAtProtoRect = conPort4Proto.rect;
         
-        //6. 对所有gv识别结果的，所有refPorts，依次判断位置符合度。
-        for (AIMatchModel *gModel in gMatchModels) {
-            NSArray *refPorts = [AINetUtils refPorts_All:gModel.match_p];
+        //12. 每个conPort都累计计算位置相符度等（此处assT为整体特征）。
+        for (AIPort *conPort4Ass in conPorts) {
+            if ([conPort4Ass.target_p isEqual:protoFeature_p]) continue;
             
-            //11. 每个refPort转为model并计匹配度和匹配数;
-            for (AIPort *refPort in refPorts) {
-                
-                //12. 根据level分别记录不同deltaLevel结果（把deltaLevel做为key的一部分，记录到识别结果字典里）。
-                NSString *assKey = STRFORMAT(@"%ld_%ld",protoLevel - refPort.level,refPort.target_p.pointerId);
-                
-                //13. 取出已经收集到的assGVModels,判断下一个refPort收集进去的话,是否符合位置;
-                NSArray *assGVItems = [gvBestModel getAssGVModelsForKey:assKey];
-                //BOOL debugMode = [feature_p.dataSource isEqual:@"hColors"] && [refPort.target_p isEqual:protoFeature.p] && assLevel == protoLevel && [gModel.match_p isEqual:protoGroupValue_p];
-                CGFloat matchDegree = [ThinkingUtils checkAssToMatchDegree:protoFeature protoIndex:i assGVModels:assGVItems checkRefPort:refPort debugMode:false];
-                
-                //14. 判断新一条refPort是否更好，更好的话存下来（存refPort，assKey，gModel.matchValue，matchDegree）。
-                [gvBestModel updateStep1:assKey refPort:refPort gMatchValue:gModel.matchValue gMatchDegree:matchDegree matchOfProtoIndex:i];
-                
-                
-                
-                //TODOTOMORROW20250410: 把识别到的refPort在protoFeature中的位置生成rect。
-            }
+            //13. 取出该absT在assT的位置。
+            CGRect absAtAssRect = conPort4Ass.rect;
+            
+            //14. 对比下这两个rect。
+            
+            //12. 根据level分别记录不同deltaLevel结果（把deltaLevel做为key的一部分，记录到识别结果字典里）。
+            NSString *assKey = STRFORMAT(@"%ld_%ld",protoLevel - refPort.level,refPort.target_p.pointerId);
+            
+            [ThinkingUtils checkAssToMatchDegreeV2:protoFeature protoIndex:<#(NSInteger)#> assGVModels:<#(NSArray *)#> checkRefPort:<#(AIPort *)#> debugMode:<#(BOOL)#>]
+            
+            //13. 取出已经收集到的assGVModels,判断下一个refPort收集进去的话,是否符合位置;
+            NSArray *assGVItems = [gvBestModel getAssGVModelsForKey:assKey];
+            //BOOL debugMode = [feature_p.dataSource isEqual:@"hColors"] && [refPort.target_p isEqual:protoFeature.p] && assLevel == protoLevel && [gModel.match_p isEqual:protoGroupValue_p];
+            CGFloat matchDegree = [ThinkingUtils checkAssToMatchDegree:protoFeature protoIndex:i assGVModels:assGVItems checkRefPort:refPort debugMode:false];
+            
+            //14. 判断新一条refPort是否更好，更好的话存下来（存refPort，assKey，gModel.matchValue，matchDegree）。
+            [gvBestModel updateStep1:assKey refPort:refPort gMatchValue:gModel.matchValue gMatchDegree:matchDegree matchOfProtoIndex:i];
+            
+            //AIFeatureNode *assT = [SMGUtils searchNode:conPort4Ass.target_p];
         }
         
         //21. STEP2：每个protoIndex内防重，竞争只保留protoIndex下最好一条。
         [gvBestModel invokeRankStep2];
-        
+
         //22. STEP3：跨protoIndex防重，将best结果存下来
         [gvBestModel updateStep3];
     }
@@ -385,31 +374,6 @@
         if (Log4RecogDesc || true) NSLog(@"特征识别结果:T%ld%@\t 匹配条数:%ld/(proto%ld ass%ld)\t匹配度:%.2f\t强度:%.1f\t符合度:%.1f",
                                          matchModel.match_p.pointerId,CLEANSTR([assFeature getLogDesc:true]),matchModel.matchCount,protoFeature.count,assFeature.count,matchModel.matchValue,matchModel.strongValue,matchModel.matchDegree);
     }
-    
-    
-    //TODOTOMORROW20250410: 把同时识别到的assTs中，位置符合的，打包成一组特征，然后递归至宏观一层继续特征识别。
-    
-    //61. 将每个matchModel转成rect（根据matchModel的indexDic可以取得protoIndexes，然后根据这个下标组来取并集区域范围）。
-    NSArray *rects = [SMGUtils convertArr:resultModels convertBlock:^id(AIMatchModel *model) {
-        CGRect modelRect = [AINetUtils convertPartOfFeatureContent2Rect:protoFeature contentIndexes:model.indexDic.allValues];
-        return @(modelRect);
-    }];
-    
-    //62. 将matchModels转成组特征的content_ps。
-    NSArray *gtContent_ps = [SMGUtils convertArr:resultModels convertBlock:^id(AIMatchModel *obj) {
-        return obj.match_p;
-    }];
-    
-    //63. 构建组特征。
-    AIFeatureNode *gtNode = [AIGeneralNodeCreater createFeatureNode:gtContent_ps conNodes:nil at:protoFeature.p.algsType ds:protoFeature.p.dataSource isOut:protoFeature.p.isOut];
-    
-    //64. 识别组特征。
-    //递归？还是新写一个吧：毕竟现在的level,x,y和组特征的位置相符度肯定不同。
-    
-    [self recognitionGroupFeature:gtNode];
-    
-    
-    
     return resultModels;
 }
 
