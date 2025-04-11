@@ -118,8 +118,9 @@
 		0872E1682779EF7C0067C97D /* TIUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 0872E1672779EF7C0067C97D /* TIUtils.m */; };
 		0873E11328B45D0600FBC09E /* TCRefrection.m in Sources */ = {isa = PBXBuildFile; fileRef = 0873E11228B45D0600FBC09E /* TCRefrection.m */; };
 		087418D22DA893D80019908C /* AIFeatureStep2Model.m in Sources */ = {isa = PBXBuildFile; fileRef = 087418D12DA893D80019908C /* AIFeatureStep2Model.m */; };
-		087418D52DA8953C0019908C /* AIFeatureStep2Item.m in Sources */ = {isa = PBXBuildFile; fileRef = 087418D42DA8953C0019908C /* AIFeatureStep2Item.m */; };
 		087418D82DA898810019908C /* AIFeatureStep2Models.m in Sources */ = {isa = PBXBuildFile; fileRef = 087418D72DA898810019908C /* AIFeatureStep2Models.m */; };
+		087418DB2DA8A2C40019908C /* AIFeatureStep2Item_ScalaDelta.m in Sources */ = {isa = PBXBuildFile; fileRef = 087418DA2DA8A2C40019908C /* AIFeatureStep2Item_ScalaDelta.m */; };
+		087418DE2DA8A42D0019908C /* AIFeatureStep2Item_Rect.m in Sources */ = {isa = PBXBuildFile; fileRef = 087418DC2DA8A42D0019908C /* AIFeatureStep2Item_Rect.m */; };
 		087705A82753743500BA4EFB /* TCInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 087705A72753743500BA4EFB /* TCInput.m */; };
 		087705AB2753744300BA4EFB /* TCRegroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 087705AA2753744300BA4EFB /* TCRegroup.m */; };
 		087705AE2753745100BA4EFB /* TCRecognition.m in Sources */ = {isa = PBXBuildFile; fileRef = 087705AD2753745100BA4EFB /* TCRecognition.m */; };
@@ -455,10 +456,12 @@
 		0873E11228B45D0600FBC09E /* TCRefrection.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCRefrection.m; sourceTree = "<group>"; };
 		087418D02DA893D80019908C /* AIFeatureStep2Model.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIFeatureStep2Model.h; sourceTree = "<group>"; };
 		087418D12DA893D80019908C /* AIFeatureStep2Model.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIFeatureStep2Model.m; sourceTree = "<group>"; };
-		087418D32DA8953C0019908C /* AIFeatureStep2Item.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIFeatureStep2Item.h; sourceTree = "<group>"; };
-		087418D42DA8953C0019908C /* AIFeatureStep2Item.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIFeatureStep2Item.m; sourceTree = "<group>"; };
 		087418D62DA898810019908C /* AIFeatureStep2Models.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIFeatureStep2Models.h; sourceTree = "<group>"; };
 		087418D72DA898810019908C /* AIFeatureStep2Models.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIFeatureStep2Models.m; sourceTree = "<group>"; };
+		087418D92DA8A2C40019908C /* AIFeatureStep2Item_ScalaDelta.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIFeatureStep2Item_ScalaDelta.h; sourceTree = "<group>"; };
+		087418DA2DA8A2C40019908C /* AIFeatureStep2Item_ScalaDelta.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIFeatureStep2Item_ScalaDelta.m; sourceTree = "<group>"; };
+		087418DC2DA8A42D0019908C /* AIFeatureStep2Item_Rect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIFeatureStep2Item_Rect.m; sourceTree = "<group>"; };
+		087418DD2DA8A42D0019908C /* AIFeatureStep2Item_Rect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIFeatureStep2Item_Rect.h; sourceTree = "<group>"; };
 		087705A62753743500BA4EFB /* TCInput.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCInput.h; sourceTree = "<group>"; };
 		087705A72753743500BA4EFB /* TCInput.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCInput.m; sourceTree = "<group>"; };
 		087705A92753744300BA4EFB /* TCRegroup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCRegroup.h; sourceTree = "<group>"; };
@@ -1429,8 +1432,10 @@
 				087418D72DA898810019908C /* AIFeatureStep2Models.m */,
 				087418D02DA893D80019908C /* AIFeatureStep2Model.h */,
 				087418D12DA893D80019908C /* AIFeatureStep2Model.m */,
-				087418D32DA8953C0019908C /* AIFeatureStep2Item.h */,
-				087418D42DA8953C0019908C /* AIFeatureStep2Item.m */,
+				087418DD2DA8A42D0019908C /* AIFeatureStep2Item_Rect.h */,
+				087418DC2DA8A42D0019908C /* AIFeatureStep2Item_Rect.m */,
+				087418D92DA8A2C40019908C /* AIFeatureStep2Item_ScalaDelta.h */,
+				087418DA2DA8A2C40019908C /* AIFeatureStep2Item_ScalaDelta.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -2087,6 +2092,7 @@
 				0895FFE4264A13C500DAD3EA /* TOModelVision.m in Sources */,
 				084219ED1FD8CF81009DA6BC /* AIThinkingControl.m in Sources */,
 				083ADA722A67AB4F00319561 /* AsyncMutableDictionary.m in Sources */,
+				087418DB2DA8A2C40019908C /* AIFeatureStep2Item_ScalaDelta.m in Sources */,
 				089614A9219A4D5200343FAC /* BirdGrowPage.m in Sources */,
 				082709D229EC1A5E0045EE22 /* AITransferPort.m in Sources */,
 				08F5334027DE3A8F0038812E /* TOMVision2.m in Sources */,
@@ -2111,7 +2117,6 @@
 				0827DC0229BEA60E0070EB67 /* CortexAlgorithmsUtil.m in Sources */,
 				088A147F27E177AC00FA1097 /* TOMVisionDemandView.m in Sources */,
 				0843AAE5281436EF002B9AA9 /* XGLabCell.m in Sources */,
-				087418D52DA8953C0019908C /* AIFeatureStep2Item.m in Sources */,
 				081321832D89A5A9005B9F4B /* AIGroupValueNode.m in Sources */,
 				08355577266C6A1000ECFC51 /* MemManager.m in Sources */,
 				087705BA2753747E00BA4EFB /* TCAction.m in Sources */,
@@ -2154,6 +2159,7 @@
 				0832AD4325BC5AEF001B4DB1 /* AIMatchFoModel.m in Sources */,
 				08EA48D1202932E70038B982 /* AICustomAlgs.m in Sources */,
 				08F506242B90CF3800ECE977 /* DirectIndexDic.m in Sources */,
+				087418DE2DA8A42D0019908C /* AIFeatureStep2Item_Rect.m in Sources */,
 				0808D34822B6FDD100D383BA /* NVViewUtil.m in Sources */,
 				88A43F3A2109571300281348 /* AIAbsCMVNode.m in Sources */,
 				08D4EC512160501000DA646B /* AINetUtils.m in Sources */,

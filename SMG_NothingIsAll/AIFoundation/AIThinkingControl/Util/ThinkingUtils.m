@@ -385,6 +385,17 @@
     AIFeatureStep2Model *protoModel = [step2Model getModelIfNullCreate:protoT.pointerId];
     
     //2. 把两个rect缩放一致（归一化），将absAtAssRect缩放成absAtProtoRect。
+    for (AIFeatureStep2Model *assModel in step2Model.models) {
+        if (assModel.conPId == protoT.pointerId) continue;
+        
+        //3. 生成assModel的缩放偏移数据。
+        [assModel convertRectItems2ScalaDeltaItems:protoModel];
+        
+        //4. TODOTOMORROW20250411: 分组？求平均？
+        
+        
+        
+    }
     
     //3. 求出偏移。
     

@@ -20,12 +20,23 @@
 +(AIFeatureStep2Model*) new:(NSInteger)conPId;
 
 //每个assT/protoT 各有一到多个absT（表示每个assT/protoT所包含的所有absT）。
-@property (strong, nonatomic) NSMutableArray *items;
+@property (strong, nonatomic) NSMutableArray *rectItems;
+
+//转成缩放和位移后的items。
+@property (strong, nonatomic) NSMutableArray *scalaDeltaItems;
 
 //记录assT/protoT的地址。
 @property (assign, nonatomic) NSInteger conPId;
 
--(void) updateItem:(NSInteger)absPId absAtConRect:(CGRect)absAtConRect;
--(CGRect) getItemRect:(NSInteger)absPId;
+//MARK:===============================================================
+//MARK:                     < RectItem组 >
+//MARK:===============================================================
+-(void) updateRectItem:(NSInteger)absPId absAtConRect:(CGRect)absAtConRect;
+-(CGRect) getRectItem:(NSInteger)absPId;
+
+//MARK:===============================================================
+//MARK:                     < ScalaDeltaItem组 >
+//MARK:===============================================================
+-(void) convertRectItems2ScalaDeltaItems:(AIFeatureStep2Model*)protoModel;
 
 @end

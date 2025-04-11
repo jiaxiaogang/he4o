@@ -61,7 +61,8 @@
 #import "AIFeatureAllBestGVModel.h"
 #import "AIGroupValueNextVModel.h"
 #import "AIRecognitionCache.h"
-#import "AIFeatureStep2Item.h"
+#import "AIFeatureStep2Item_Rect.h"
+#import "AIFeatureStep2Item_ScalaDelta.h"
 #import "AIFeatureStep2Model.h"
 #import "AIFeatureStep2Models.h"
 

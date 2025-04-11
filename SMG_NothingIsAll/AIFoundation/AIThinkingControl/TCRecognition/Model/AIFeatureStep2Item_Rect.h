@@ -11,9 +11,9 @@
 /**
  *  MARK:-------------------- 记录每一条abs在当前 assT/protoT 下的rect--------------------
  */
-@interface AIFeatureStep2Item : NSObject
+@interface AIFeatureStep2Item_Rect : NSObject
 
-+(AIFeatureStep2Item*) new:(NSInteger)absPId absAtConRect:(CGRect)absAtConRect;
++(AIFeatureStep2Item_Rect*) new:(NSInteger)absPId absAtConRect:(CGRect)absAtConRect;
 
 //absT.pId
 @property (assign, nonatomic) NSInteger absPId;
