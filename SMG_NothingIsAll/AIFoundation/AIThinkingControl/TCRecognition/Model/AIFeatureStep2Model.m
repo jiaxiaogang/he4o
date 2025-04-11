@@ -10,9 +10,9 @@
 
 @implementation AIFeatureStep2Model
 
-+(AIFeatureStep2Model*) new:(NSInteger)conPId {
++(AIFeatureStep2Model*) new:(AIKVPointer*)conT {
     AIFeatureStep2Model *result = [[AIFeatureStep2Model alloc] init];
-    result.conPId = conPId;
+    result.conT = conT;
     result.rectItems = [NSMutableArray new];
     return result;
 }
@@ -20,13 +20,13 @@
 //MARK:===============================================================
 //MARK:                     < 收集数据组 >
 //MARK:===============================================================
--(void) updateRectItem:(NSInteger)absPId absAtConRect:(CGRect)absAtConRect {
-    [self.rectItems addObject:[AIFeatureStep2Item_Rect new:absPId absAtConRect:absAtConRect]];
+-(void) updateRectItem:(AIKVPointer*)absT absAtConRect:(CGRect)absAtConRect {
+    [self.rectItems addObject:[AIFeatureStep2Item_Rect new:absT absAtConRect:absAtConRect]];
 }
 
--(CGRect) getRectItem:(NSInteger)absPId {
+-(CGRect) getRectItem:(AIKVPointer*)absT {
     for (AIFeatureStep2Item_Rect *item in self.rectItems) {
-        if (item.absPId == absPId) return item.rect;
+        if ([item.absT isEqual:absT]) return item.rect;
     }
     return CGRectNull;
 }
@@ -133,6 +133,22 @@
     }] / self.rectItems.count;
 }
 
+-(void) run4MatchValue:(AIKVPointer*)protoT {
+    //1. self就是protoT时，直接设为匹配度1。
+    if ([self.conT isEqual:protoT]) {
+        self.modelMatchValue = 1;
+        return;
+    }
+    
+    //2. 别的assT则计算综合平均匹配度。
+    self.modelMatchValue = self.rectItems.count == 0 ? 0 : [SMGUtils sumOfArr:self.rectItems convertBlock:^double(AIFeatureStep2Item_Rect *obj) {
+        AIFeatureNode *absT = [SMGUtils searchNode:obj.absT];
+        
+        //3. assT与absT的匹配度 * assT与protoT的匹配度 = assT与protoT的匹配度。
+        return [absT getConMatchValue:self.conT] * [absT getConMatchValue:protoT];
+    }] / self.rectItems.count;
+}
+
 //MARK:===============================================================
 //MARK:                     < PrivateMethod >
 //MARK:===============================================================
@@ -140,7 +156,7 @@
 //返回 rectItem 在 conAssT 与 protoT 的缩放比例。
 -(CGFloat) scale4RectItemAtProto:(AIFeatureStep2Model*)protoModel rectItem:(AIFeatureStep2Item_Rect*)rectItem {
     //1. 取出abs在proto和ass中的范围。
-    CGRect protoRect = [protoModel getRectItem:rectItem.absPId];
+    CGRect protoRect = [protoModel getRectItem:rectItem.absT];
     CGRect conAssRect = rectItem.rect;
     
     //2. 计算缩放scale。
@@ -150,7 +166,7 @@
 //返回 rectItem 在 conAssT 与 protoT 的deltaX偏移量。
 -(CGFloat) deltaX4RectItemAtProto:(AIFeatureStep2Model*)protoModel rectItem:(AIFeatureStep2Item_Rect*)rectItem {
     //1. 取出abs在proto和ass中的范围。
-    CGRect protoRect = [protoModel getRectItem:rectItem.absPId];
+    CGRect protoRect = [protoModel getRectItem:rectItem.absT];
     
     //2. 计算result。
     return rectItem.rect.origin.x - protoRect.origin.x;
@@ -159,7 +175,7 @@
 //返回 rectItem 在 conAssT 与 protoT 的deltaY偏移量。
 -(CGFloat) deltaY4RectItemAtProto:(AIFeatureStep2Model*)protoModel rectItem:(AIFeatureStep2Item_Rect*)rectItem {
     //1. 取出abs在proto和ass中的范围。
-    CGRect protoRect = [protoModel getRectItem:rectItem.absPId];
+    CGRect protoRect = [protoModel getRectItem:rectItem.absT];
     
     //2. 计算result。
     return rectItem.rect.origin.y - protoRect.origin.y;

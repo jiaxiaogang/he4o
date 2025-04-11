@@ -17,19 +17,19 @@
  */
 @interface AIFeatureStep2Model : NSObject
 
-+(AIFeatureStep2Model*) new:(NSInteger)conPId;
++(AIFeatureStep2Model*) new:(AIKVPointer*)conT;
 
 //每个assT/protoT 各有一到多个absT（表示每个assT/protoT所包含的所有absT）。
 @property (strong, nonatomic) NSMutableArray *rectItems;
 
 //记录assT/protoT的地址。
-@property (assign, nonatomic) NSInteger conPId;
+@property (strong, nonatomic) AIKVPointer *conT;
 
 //MARK:===============================================================
 //MARK:                     < 收集数据组 >
 //MARK:===============================================================
--(void) updateRectItem:(NSInteger)absPId absAtConRect:(CGRect)absAtConRect;
--(CGRect) getRectItem:(NSInteger)absPId;
+-(void) updateRectItem:(AIKVPointer*)absT absAtConRect:(CGRect)absAtConRect;
+-(CGRect) getRectItem:(AIKVPointer*)absT;
 
 //MARK:===============================================================
 //MARK:                     < 计算位置符合度组 >
@@ -40,5 +40,11 @@
  *  MARK:--------------------assTModel的位置匹配度 = 所有absTItem的位置符合度的平均值（参考34136-TODO6）--------------------
  */
 @property (assign, nonatomic) CGFloat modelMatchDegree;
+
+//MARK:===============================================================
+//MARK:                     < 计算所有absT与assT的综合匹配度 >
+//MARK:===============================================================
+-(void) run4MatchValue:(AIKVPointer*)protoT;
+@property (assign, nonatomic) CGFloat modelMatchValue;
 
 @end

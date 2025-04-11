@@ -279,26 +279,29 @@
         
         //12. 将每个conPort先收集到step2Model。
         for (AIPort *conPort in conPorts) {
-            [step2Model updateItem:conPort.target_p.pointerId absPId:absT.pId absAtConRect:conPort.rect];
+            [step2Model updateItem:conPort.target_p absT:absT.p absAtConRect:conPort.rect];
         }
     }
     
     //21. 计算：位置符合度: 根据每个整体特征与局部特征的rect来计算。
     [step2Model run4MatchDegree:protoFeature_p];
     
+    //22. 计算：每个assT和protoT的综合匹配度。
+    [step2Model run4MatchValue:protoFeature_p];
+    
     //31. 无效过滤器1、位置符合度=0排除掉。
     NSArray *resultModels = [SMGUtils filterArr:step2Model.models checkValid:^BOOL(AIFeatureStep2Model *item) {
-        return item.modelMatchDegree > 0;
+        return item.modelMatchDegree > 0 && item.modelMatchValue > 0;
     }];
     
     //32. 末尾淘汰过滤器：根据位置符合度末尾淘汰（参考34135-TODO4）。
     resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIFeatureStep2Model *obj) {
-        return obj.modelMatchDegree;
-    }], 0, resultModels.count * 0.6);
+        return obj.modelMatchDegree * obj.modelMatchValue;
+    }], 0, resultModels.count * 0.7);
     
     //33. 防重过滤器2、此处每个特征的不同层级，可能识别到同一个特征，可以按匹配度防下重。
     resultModels = [SMGUtils removeRepeat:resultModels convertBlock:^id(AIFeatureStep2Model *obj) {
-        return @(obj.conPId);
+        return obj.conT;
     }];
     
     //34. 末尾淘汰20%被引用强度最低的。
@@ -308,16 +311,20 @@
     
     //41. 更新: ref强度 & 相似度 & 抽具象 & 映射;
     for (AIFeatureStep2Model *matchModel in resultModels) {
-        AIFeatureNode *assFeature = [SMGUtils searchNode:matchModel.match_p];
+        AIFeatureNode *assFeature = [SMGUtils searchNode:matchModel.conT];
         [AINetUtils insertRefPorts_General:assFeature.p content_ps:assFeature.content_ps difStrong:1 header:assFeature.header];
-        [protoFeature updateMatchValue:assFeature matchValue:matchModel.matchValue];
+        [protoFeature updateMatchValue:assFeature matchValue:matchModel.modelMatchDegree * matchModel.modelMatchValue];
         [AINetUtils relateGeneralAbs:assFeature absConPorts:assFeature.conPorts conNodes:@[protoFeature] isNew:false difStrong:1];
+        
+        //TODOTOMORROW20250411: 此处怎么取indexDic?
+        //1. 难道要把protoT封装成组特征？
+        //2. 或者每个absT都分别与：protoT & assT 有映射，那么就用absT的向下映射来复用呗？
         [protoFeature updateIndexDic:assFeature indexDic:matchModel.indexDic];
         [protoFeature updateDegreeDic:assFeature.pId degreeDic:matchModel.degreeDic];
         
-        //52. debug
-        if (Log4RecogDesc || true) NSLog(@"似层特征识别结果:T%ld%@\t 匹配条数:%ld/(proto%ld ass%ld)\t匹配度:%.2f\t强度:%.1f\t符合度:%.1f",
-                                         matchModel.match_p.pointerId,CLEANSTR([assFeature getLogDesc:true]),matchModel.matchCount,protoFeature.count,assFeature.count,matchModel.matchValue,matchModel.strongValue,matchModel.matchDegree);
+        //42. debug
+        if (Log4RecogDesc || true) NSLog(@"似层特征识别结果:T%ld%@\t 匹配条数:%ld/(proto%ld ass%ld)\t匹配度:%.2f\t符合度:%.1f",
+                                         matchModel.conT.pointerId,CLEANSTR([assFeature getLogDesc:true]),matchModel.rectItems.count,protoFeature.count,assFeature.count,matchModel.modelMatchValue,matchModel.modelMatchDegree);
     }
     return resultModels;
 }

@@ -15,12 +15,17 @@
 
 @property (strong, nonatomic) NSMutableArray *models;
 
--(AIFeatureStep2Model*) getModelIfNullCreate:(NSInteger)conPId;
--(void) updateItem:(NSInteger)conPId absPId:(NSInteger)absPId absAtConRect:(CGRect)absAtConRect;
+-(AIFeatureStep2Model*) getModelIfNullCreate:(AIKVPointer*)conT;
+-(void) updateItem:(AIKVPointer*)conT absT:(AIKVPointer*)absT absAtConRect:(CGRect)absAtConRect;
 
 /**
  *  MARK:--------------------跑出位置符合度--------------------
  */
 -(void) run4MatchDegree:(AIKVPointer*)protoT;
+
+/**
+ *  MARK:--------------------跑出综合匹配度--------------------
+ */
+-(void) run4MatchValue:(AIKVPointer*)protoT;
 
 @end

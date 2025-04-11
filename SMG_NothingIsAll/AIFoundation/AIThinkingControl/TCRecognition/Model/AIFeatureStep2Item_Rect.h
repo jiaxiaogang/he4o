@@ -13,10 +13,10 @@
  */
 @interface AIFeatureStep2Item_Rect : NSObject
 
-+(AIFeatureStep2Item_Rect*) new:(NSInteger)absPId absAtConRect:(CGRect)absAtConRect;
++(AIFeatureStep2Item_Rect*) new:(AIKVPointer*)absT absAtConRect:(CGRect)absAtConRect;
 
 //absT.pId
-@property (assign, nonatomic) NSInteger absPId;
+@property (strong, nonatomic) AIKVPointer *absT;
 
 //conPort.rect（表示absT在assT/protoT中的位置）
 //输入时=absAtConRect
