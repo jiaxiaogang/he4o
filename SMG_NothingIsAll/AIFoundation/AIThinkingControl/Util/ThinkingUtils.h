@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIFrontOrderNode,AIAlgNodeBase,AIShortMatchModel,TOAlgModel,AIFeatureNode;
+@class AIFrontOrderNode,AIAlgNodeBase,AIShortMatchModel,TOAlgModel,AIFeatureNode,AIFeatureStep2Models;
 @interface ThinkingUtils : NSObject
 
 @end
@@ -94,6 +94,6 @@
 /**
  *  MARK:--------------------用于对比absT在protoT的rect 和 absT在assT的rect = 两个rect的位置符合度--------------------
  */
-+(void) checkConFeatureMatchDegree:(CGRect)absAtProtoRect absAtAssRect:(CGRect)absAtAssRect;
++(void) checkConFeatureMatchDegree:(AIFeatureStep2Models*)step2Model protoT:(AIKVPointer*)protoT;
 
 @end

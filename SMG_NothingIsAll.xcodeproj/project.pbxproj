@@ -117,6 +117,9 @@
 		087268E0219CF3B500B5490F /* AIVisionAlgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 087268DF219CF3B500B5490F /* AIVisionAlgs.m */; };
 		0872E1682779EF7C0067C97D /* TIUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 0872E1672779EF7C0067C97D /* TIUtils.m */; };
 		0873E11328B45D0600FBC09E /* TCRefrection.m in Sources */ = {isa = PBXBuildFile; fileRef = 0873E11228B45D0600FBC09E /* TCRefrection.m */; };
+		087418D22DA893D80019908C /* AIFeatureStep2Model.m in Sources */ = {isa = PBXBuildFile; fileRef = 087418D12DA893D80019908C /* AIFeatureStep2Model.m */; };
+		087418D52DA8953C0019908C /* AIFeatureStep2Item.m in Sources */ = {isa = PBXBuildFile; fileRef = 087418D42DA8953C0019908C /* AIFeatureStep2Item.m */; };
+		087418D82DA898810019908C /* AIFeatureStep2Models.m in Sources */ = {isa = PBXBuildFile; fileRef = 087418D72DA898810019908C /* AIFeatureStep2Models.m */; };
 		087705A82753743500BA4EFB /* TCInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 087705A72753743500BA4EFB /* TCInput.m */; };
 		087705AB2753744300BA4EFB /* TCRegroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 087705AA2753744300BA4EFB /* TCRegroup.m */; };
 		087705AE2753745100BA4EFB /* TCRecognition.m in Sources */ = {isa = PBXBuildFile; fileRef = 087705AD2753745100BA4EFB /* TCRecognition.m */; };
@@ -450,6 +453,12 @@
 		0872E1672779EF7C0067C97D /* TIUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TIUtils.m; sourceTree = "<group>"; };
 		0873E11128B45D0600FBC09E /* TCRefrection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCRefrection.h; sourceTree = "<group>"; };
 		0873E11228B45D0600FBC09E /* TCRefrection.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCRefrection.m; sourceTree = "<group>"; };
+		087418D02DA893D80019908C /* AIFeatureStep2Model.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIFeatureStep2Model.h; sourceTree = "<group>"; };
+		087418D12DA893D80019908C /* AIFeatureStep2Model.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIFeatureStep2Model.m; sourceTree = "<group>"; };
+		087418D32DA8953C0019908C /* AIFeatureStep2Item.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIFeatureStep2Item.h; sourceTree = "<group>"; };
+		087418D42DA8953C0019908C /* AIFeatureStep2Item.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIFeatureStep2Item.m; sourceTree = "<group>"; };
+		087418D62DA898810019908C /* AIFeatureStep2Models.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIFeatureStep2Models.h; sourceTree = "<group>"; };
+		087418D72DA898810019908C /* AIFeatureStep2Models.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIFeatureStep2Models.m; sourceTree = "<group>"; };
 		087705A62753743500BA4EFB /* TCInput.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCInput.h; sourceTree = "<group>"; };
 		087705A72753743500BA4EFB /* TCInput.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCInput.m; sourceTree = "<group>"; };
 		087705A92753744300BA4EFB /* TCRegroup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCRegroup.h; sourceTree = "<group>"; };
@@ -1416,6 +1425,12 @@
 				08E74B332D9380F80052D8C2 /* AIGroupValueNextVModel.m */,
 				08E74B352D9393100052D8C2 /* AIRecognitionCache.h */,
 				08E74B362D9393100052D8C2 /* AIRecognitionCache.m */,
+				087418D62DA898810019908C /* AIFeatureStep2Models.h */,
+				087418D72DA898810019908C /* AIFeatureStep2Models.m */,
+				087418D02DA893D80019908C /* AIFeatureStep2Model.h */,
+				087418D12DA893D80019908C /* AIFeatureStep2Model.m */,
+				087418D32DA8953C0019908C /* AIFeatureStep2Item.h */,
+				087418D42DA8953C0019908C /* AIFeatureStep2Item.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -2096,6 +2111,7 @@
 				0827DC0229BEA60E0070EB67 /* CortexAlgorithmsUtil.m in Sources */,
 				088A147F27E177AC00FA1097 /* TOMVisionDemandView.m in Sources */,
 				0843AAE5281436EF002B9AA9 /* XGLabCell.m in Sources */,
+				087418D52DA8953C0019908C /* AIFeatureStep2Item.m in Sources */,
 				081321832D89A5A9005B9F4B /* AIGroupValueNode.m in Sources */,
 				08355577266C6A1000ECFC51 /* MemManager.m in Sources */,
 				087705BA2753747E00BA4EFB /* TCAction.m in Sources */,
@@ -2106,6 +2122,7 @@
 				08E8CF5B25B2F64000AA18DB /* ImvGoodModel.m in Sources */,
 				088DD7232201216500E0A786 /* TOFoModel.m in Sources */,
 				084B4B0824433AA900FB3670 /* ShortMatchManager.m in Sources */,
+				087418D82DA898810019908C /* AIFeatureStep2Models.m in Sources */,
 				08CEAFAD22B317A800CD1D91 /* NodeCompareModel.m in Sources */,
 				0858C5DB2194FB3F00951BA5 /* LightView.m in Sources */,
 				089041742D8AF2E100545CD7 /* AIMatchModel.m in Sources */,
@@ -2201,6 +2218,7 @@
 				08DB40CB1F11A65E003162C8 /* TestHungryPage.m in Sources */,
 				087E7FCB258053D90097E0B9 /* NSFile+Extension.m in Sources */,
 				08E74B342D9380F80052D8C2 /* AIGroupValueNextVModel.m in Sources */,
+				087418D22DA893D80019908C /* AIFeatureStep2Model.m in Sources */,
 				08250AE0228112C000FC497C /* XGWedis.m in Sources */,
 				88A43F432109589600281348 /* AICMVNode.m in Sources */,
 				0871C27626685D4800CB3889 /* TOModelVisionUtil.m in Sources */,

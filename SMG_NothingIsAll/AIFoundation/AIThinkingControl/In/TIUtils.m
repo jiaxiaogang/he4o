@@ -270,44 +270,21 @@
 +(NSArray*) recognitionFeatureStep2:(AIKVPointer*)protoFeature_p matchModels:(NSArray*)matchModels {
     //1. 数据准备
     AIFeatureNode *protoFeature = [SMGUtils searchNode:protoFeature_p];
-    NSMutableDictionary *allAssDic = [[NSMutableDictionary alloc] init];//<K=assPId, V=<K2=absT.pId,V2=conPort.rect>>
+    AIFeatureStep2Models *step2Model = [AIFeatureStep2Models new];
     
-    //2. 每个absT分别向整体取conPorts。
+    //11. 每个absT分别向整体取conPorts。
     for (AIMatchModel *matchModel in matchModels) {
         AIFeatureNode *absT = [SMGUtils searchNode:matchModel.match_p];
         NSArray *conPorts = [AINetUtils conPorts_All:absT];
         
-        //11. 取出该absT在protoT的位置。
-        AIPort *conPort4Proto = [SMGUtils filterSingleFromArr:conPorts checkValid:^BOOL(AIPort *item) {
-            return [item.target_p isEqual:protoFeature_p];
-        }];
-        CGRect absAtProtoRect = conPort4Proto.rect;
-        
-        //12. 每个conPort都累计计算位置相符度等（此处assT为整体特征）。
-        for (AIPort *conPort4Ass in conPorts) {
-            if ([conPort4Ass.target_p isEqual:protoFeature_p]) continue;
-            
-            //13. 取出该absT在assT的位置。
-            CGRect absAtAssRect = conPort4Ass.rect;
-            
-            
-            //14. 对比下这两个rect。
-            
-            //TODOTOMORROW20250410: 此处AIMatchModel模型设计：
-            //记录absT => 多个assT、各一个absAtAssRect。
-            //每个absT都指向protoT，但未必指向的有几个assT，即：一个assT对应多个absT。
-            //可以把每个conPort同指向target_p的，计为一组，把conPort直接收集给target_p。
-            
-            id itemKey = @(conPort4Ass.target_p.pointerId);
-            NSMutableDictionary *itemAssDic = [allAssDic objectForKey:itemKey];
-            [itemAssDic setObject:@(conPort4Ass.rect) forKey:@(absT.pId)];
-            [allAssDic setObject:itemAssDic forKey:itemKey];
-            
+        //12. 将每个conPort先收集到step2Model。
+        for (AIPort *conPort in conPorts) {
+            [step2Model updateItem:conPort.target_p.pointerId absPId:absT.pId absAtConRect:conPort.rect];
         }
-        
     }
-    //31. 计算位置相符度。
-    NSDictionary *resultDic = [ThinkingUtils checkConFeatureMatchDegree:CGRectZero absAtAssRect:CGRectZero];
+    
+    //21. 计算位置相符度: 根据每个整体特征与局部特征的rect来计算。
+    [ThinkingUtils checkConFeatureMatchDegree:step2Model protoT:protoFeature_p];
     
     //32. debug
     for (NSString *assKey in resultDic.allKeys) {

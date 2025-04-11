@@ -380,8 +380,9 @@
  *          说明：如果一张图上有多个不同的手写0，此时识别可能是多个，而非一个，此方案可处理这个，不过需要先把rect用于conPorts防重，特征识别step2时，也需要按每个assT指向的conPort防重收集成数组，本方案对噪点也能更好的应对。
  *          总结：此方案比较复杂，当前应该做个简单的v1版本就行，不必搞这么复杂。
  */
-+(void) checkConFeatureMatchDegree:(CGRect)absAtProtoRect absAtAssRect:(CGRect)absAtAssRect {
++(void) checkConFeatureMatchDegree:(AIFeatureStep2Models*)step2Model protoT:(AIKVPointer*)protoT {
     //1. 求出比例。
+    AIFeatureStep2Model *protoModel = [step2Model getModelIfNullCreate:protoT.pointerId];
     
     //2. 把两个rect缩放一致（归一化），将absAtAssRect缩放成absAtProtoRect。
     
