@@ -22,6 +22,7 @@
 //每个assT/protoT 各有一到多个absT（表示每个assT/protoT所包含的所有absT）。
 @property (strong, nonatomic) NSMutableArray *rectItems;
 
+//TODO: 应该不需要了 相应的那个item模型也可以废弃掉。
 //转成缩放和位移后的items。
 @property (strong, nonatomic) NSMutableArray *scaleDeltaItems;
 

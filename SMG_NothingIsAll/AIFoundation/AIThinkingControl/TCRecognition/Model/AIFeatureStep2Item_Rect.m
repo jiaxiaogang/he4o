@@ -13,7 +13,7 @@
 +(AIFeatureStep2Item_Rect*) new:(NSInteger)absPId absAtConRect:(CGRect)absAtConRect {
     AIFeatureStep2Item_Rect *result = [[AIFeatureStep2Item_Rect alloc] init];
     result.absPId = absPId;
-    result.absAtConRect = absAtConRect;
+    result.rect = absAtConRect;
     return result;
 }
 

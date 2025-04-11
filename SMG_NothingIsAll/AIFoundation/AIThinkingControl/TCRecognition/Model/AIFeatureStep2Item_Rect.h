@@ -19,6 +19,9 @@
 @property (assign, nonatomic) NSInteger absPId;
 
 //conPort.rect（表示absT在assT/protoT中的位置）
-@property (assign, nonatomic) CGRect absAtConRect;
+//输入时=absAtConRect
+//缩放对齐后=(x/pinJunScale, y/pinJunScale, w/pinJunScale, h/pinJunScale)
+//Delta对齐后=(x - deltaX, y - deltaY, w, h)
+@property (assign, nonatomic) CGRect rect;
 
 @end
