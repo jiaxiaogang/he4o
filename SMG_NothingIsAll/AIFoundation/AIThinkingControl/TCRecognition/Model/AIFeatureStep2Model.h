@@ -23,7 +23,7 @@
 @property (strong, nonatomic) NSMutableArray *rectItems;
 
 //转成缩放和位移后的items。
-@property (strong, nonatomic) NSMutableArray *scalaDeltaItems;
+@property (strong, nonatomic) NSMutableArray *scaleDeltaItems;
 
 //记录assT/protoT的地址。
 @property (assign, nonatomic) NSInteger conPId;
@@ -35,8 +35,8 @@
 -(CGRect) getRectItem:(NSInteger)absPId;
 
 //MARK:===============================================================
-//MARK:                     < ScalaDeltaItem组 >
+//MARK:                     < ScaleDeltaItem组 >
 //MARK:===============================================================
--(void) convertRectItems2ScalaDeltaItems:(AIFeatureStep2Model*)protoModel;
+-(void) convertRectItems2ScaleDeltaItems:(AIFeatureStep2Model*)protoModel;
 
 @end

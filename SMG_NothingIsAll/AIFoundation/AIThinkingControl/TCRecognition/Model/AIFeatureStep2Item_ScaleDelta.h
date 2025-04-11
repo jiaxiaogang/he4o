@@ -1,5 +1,5 @@
 //
-//  AIFeatureStep2Item_ScalaDelta.h
+//  AIFeatureStep2Item_ScaleDelta.h
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2025/4/11.
@@ -8,12 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
-@interface AIFeatureStep2Item_ScalaDelta : NSObject
+@interface AIFeatureStep2Item_ScaleDelta : NSObject
 
-+(AIFeatureStep2Item_ScalaDelta*) new:(NSInteger)absPId scala:(CGFloat)scala delta:(CGPoint)delta;
++(AIFeatureStep2Item_ScaleDelta*) new:(NSInteger)absPId scale:(CGFloat)scale delta:(CGPoint)delta;
 
 @property (assign, nonatomic) NSInteger absPId;
-@property (assign, nonatomic) CGFloat scala;
+@property (assign, nonatomic) CGFloat scale;
 @property (assign, nonatomic) CGPoint delta;
 
 @end
