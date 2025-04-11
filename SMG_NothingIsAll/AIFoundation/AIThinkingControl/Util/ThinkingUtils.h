@@ -90,10 +90,4 @@
 +(CGFloat) checkAssToMatchDegree:(AIFeatureNode*)protoFeature protoIndex:(NSInteger)protoIndex assGVModels:(NSArray*)assGVModels checkRefPort:(AIPort*)checkRefPort debugMode:(BOOL)debugMode;
 +(CGFloat) checkAssToMatchDegreeV2:(AIFeatureNode*)protoFeature protoIndex:(NSInteger)protoIndex assGVModels:(NSArray*)assGVModels checkRefPort:(AIPort*)checkRefPort debugMode:(BOOL)debugMode;
 
-
-/**
- *  MARK:--------------------用于对比absT在protoT的rect 和 absT在assT的rect = 两个rect的位置符合度--------------------
- */
-+(void) checkConFeatureMatchDegree:(AIFeatureStep2Models*)step2Model protoT:(AIKVPointer*)protoT;
-
 @end

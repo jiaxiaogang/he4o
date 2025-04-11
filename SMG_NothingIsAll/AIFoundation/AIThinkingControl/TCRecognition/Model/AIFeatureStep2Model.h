@@ -22,22 +22,23 @@
 //每个assT/protoT 各有一到多个absT（表示每个assT/protoT所包含的所有absT）。
 @property (strong, nonatomic) NSMutableArray *rectItems;
 
-//TODO: 应该不需要了 相应的那个item模型也可以废弃掉。
-//转成缩放和位移后的items。
-@property (strong, nonatomic) NSMutableArray *scaleDeltaItems;
-
 //记录assT/protoT的地址。
 @property (assign, nonatomic) NSInteger conPId;
 
 //MARK:===============================================================
-//MARK:                     < RectItem组 >
+//MARK:                     < 收集数据组 >
 //MARK:===============================================================
 -(void) updateRectItem:(NSInteger)absPId absAtConRect:(CGRect)absAtConRect;
 -(CGRect) getRectItem:(NSInteger)absPId;
 
 //MARK:===============================================================
-//MARK:                     < ScaleDeltaItem组 >
+//MARK:                     < 计算位置符合度组 >
 //MARK:===============================================================
--(void) convertRectItems2ScaleDeltaItems:(AIFeatureStep2Model*)protoModel;
+-(void) run4MatchDegree:(AIFeatureStep2Model*)protoModel;
+
+/**
+ *  MARK:--------------------assTModel的位置匹配度 = 所有absTItem的位置符合度的平均值（参考34136-TODO6）--------------------
+ */
+@property (assign, nonatomic) CGFloat modelMatchDegree;
 
 @end

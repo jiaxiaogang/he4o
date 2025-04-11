@@ -18,7 +18,7 @@
 }
 
 //MARK:===============================================================
-//MARK:                     < RectItem组 >
+//MARK:                     < 收集数据组 >
 //MARK:===============================================================
 -(void) updateRectItem:(NSInteger)absPId absAtConRect:(CGRect)absAtConRect {
     [self.rectItems addObject:[AIFeatureStep2Item_Rect new:absPId absAtConRect:absAtConRect]];
@@ -26,16 +26,16 @@
 
 -(CGRect) getRectItem:(NSInteger)absPId {
     for (AIFeatureStep2Item_Rect *item in self.rectItems) {
-        if (item.absPId == absPId) return item.absAtConRect;
+        if (item.absPId == absPId) return item.rect;
     }
     return CGRectNull;
 }
 
 //MARK:===============================================================
-//MARK:                     < ScaleDeltaItem组 >
+//MARK:                     < 计算位置符合度组 >
 //MARK:===============================================================
--(void) convertRectItems2ScaleDeltaItems:(AIFeatureStep2Model*)protoModel {
-    //=============== step1: 缩放对齐 ===============
+-(void) run4MatchDegree:(AIFeatureStep2Model*)protoModel {
+    //=============== step1: 缩放对齐（参考34136-TODO1）===============
     //1. 比例排序。
     NSArray *scaleSort = [SMGUtils sortSmall2Big:self.rectItems compareBlock:^double(AIFeatureStep2Item_Rect *obj) {
         return [self scale4RectItemAtProto:protoModel rectItem:obj];
@@ -54,7 +54,7 @@
         item.rect = CGRectMake(item.rect.origin.x / pinJunScale,item.rect.origin.y / pinJunScale,item.rect.size.width / pinJunScale, item.rect.size.height / pinJunScale);
     }
     
-    //=============== step2: DeltaX对齐 ===============
+    //=============== step2: DeltaX对齐（参考34136-TODO2）===============
     //11. 缩放对齐后，然后根据deltaX排序。
     NSArray *deltaXSort = [SMGUtils sortSmall2Big:self.rectItems compareBlock:^double(AIFeatureStep2Item_Rect *obj) {
         return [self deltaX4RectItemAtProto:protoModel rectItem:obj];
@@ -73,7 +73,7 @@
         item.rect = CGRectMake(item.rect.origin.x - pinJunDelteX, item.rect.origin.y,item.rect.size.width, item.rect.size.height);
     }
     
-    //=============== step3: DeltaY对齐 ===============
+    //=============== step3: DeltaY对齐（参考34136-TODO3）===============
     //21. 缩放对齐后，然后根据deltaX排序。
     NSArray *deltaYSort = [SMGUtils sortSmall2Big:self.rectItems compareBlock:^double(AIFeatureStep2Item_Rect *obj) {
         return [self deltaY4RectItemAtProto:protoModel rectItem:obj];
@@ -92,15 +92,45 @@
         item.rect = CGRectMake(item.rect.origin.x, item.rect.origin.y - pinJunDelteY,item.rect.size.width, item.rect.size.height);
     }
     
-    //=============== step4: 求三个相近度 ===============
+    //=============== step4: 求三个相近度（参考34136-TODO4）===============
     //31. 找出与proto最大的差距(span)值。
+    CGFloat scaleMin = CGFLOAT_MAX,scaleMax = CGFLOAT_MIN;
+    CGFloat deltaXMin = CGFLOAT_MAX,deltaXMax = CGFLOAT_MIN;
+    CGFloat deltaYMin = CGFLOAT_MAX,deltaYMax = CGFLOAT_MIN;
+    for (AIFeatureStep2Item_Rect *item in self.rectItems) {
+        CGFloat itemScale = [self scale4RectItemAtProto:protoModel rectItem:item];
+        CGFloat itemDeltaX = [self deltaX4RectItemAtProto:protoModel rectItem:item];
+        CGFloat itemDeltaY = [self deltaY4RectItemAtProto:protoModel rectItem:item];
+        if (scaleMin > itemScale) scaleMin = itemScale;
+        if (scaleMax < itemScale) scaleMax = itemScale;
+        if (deltaXMin > itemDeltaX) deltaXMin = itemDeltaX;
+        if (deltaXMax < itemDeltaX) deltaXMax = itemDeltaX;
+        if (deltaYMin > itemDeltaY) deltaYMin = itemDeltaY;
+        if (deltaYMax < itemDeltaY) deltaYMax = itemDeltaY;
+    }
+    CGFloat scaleSpan = scaleMax - scaleMin;
+    CGFloat deltaXSpan = deltaXMax - deltaXMin;
+    CGFloat deltaYSpan = deltaYMax - deltaYMin;
     
     //32. 根据item与proto的差距 / 最大差距 = 得出相近度。
+    for (AIFeatureStep2Item_Rect *item in self.rectItems) {
+        CGFloat itemScale = [self scale4RectItemAtProto:protoModel rectItem:item];
+        CGFloat itemDeltaX = [self deltaX4RectItemAtProto:protoModel rectItem:item];
+        CGFloat itemDeltaY = [self deltaY4RectItemAtProto:protoModel rectItem:item];
+        item.scaleMatchValue = 1 - (scaleSpan == 0 ? 0 : fabs(itemScale - 1) / scaleSpan);
+        item.deltaXMatchValue = 1 - (deltaXSpan == 0 ? 0 : fabs(itemDeltaX) / deltaXSpan);
+        item.deltaYMatchValue = 1 - (deltaYSpan == 0 ? 0 : fabs(itemDeltaY) / deltaYSpan);
+    }
     
-}
-
--(void) rankScanaDeltaItems {
+    //=============== step5: 该assT与protoT的这一块局部特征的“位置符合度” = 三个要素乘积（参考34136-TODO5）===============
+    for (AIFeatureStep2Item_Rect *item in self.rectItems) {
+        item.itemMatchDegree = item.scaleMatchValue * item.deltaXMatchValue * item.deltaYMatchValue;
+    }
     
+    //=============== step6: 求当前assModel的综合位置符合度（参考34136-TODO6）===============
+    self.modelMatchDegree = self.rectItems.count == 0 ? 0 : [SMGUtils sumOfArr:self.rectItems convertBlock:^double(AIFeatureStep2Item_Rect *obj) {
+        return obj.itemMatchDegree;
+    }] / self.rectItems.count;
 }
 
 //MARK:===============================================================

@@ -18,4 +18,9 @@
 -(AIFeatureStep2Model*) getModelIfNullCreate:(NSInteger)conPId;
 -(void) updateItem:(NSInteger)conPId absPId:(NSInteger)absPId absAtConRect:(CGRect)absAtConRect;
 
+/**
+ *  MARK:--------------------跑出位置符合度--------------------
+ */
+-(void) run4MatchDegree:(AIKVPointer*)protoT;
+
 @end

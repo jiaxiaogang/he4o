@@ -257,7 +257,7 @@
         [AINetUtils updateConPortRect:assFeature conT:protoFeature_p rect:rect];
         
         //52. debug
-        if (Log4RecogDesc || true) NSLog(@"特征识别结果:T%ld%@\t 匹配条数:%ld/(proto%ld ass%ld)\t匹配度:%.2f\t强度:%.1f\t符合度:%.1f",
+        if (Log4RecogDesc || true) NSLog(@"交层特征识别结果:T%ld%@\t 匹配条数:%ld/(proto%ld ass%ld)\t匹配度:%.2f\t强度:%.1f\t符合度:%.1f",
                                          matchModel.match_p.pointerId,CLEANSTR([assFeature getLogDesc:true]),matchModel.matchCount,protoFeature.count,assFeature.count,matchModel.matchValue,matchModel.strongValue,matchModel.matchDegree);
     }
     return resultModels;
@@ -272,7 +272,7 @@
     AIFeatureNode *protoFeature = [SMGUtils searchNode:protoFeature_p];
     AIFeatureStep2Models *step2Model = [AIFeatureStep2Models new];
     
-    //11. 每个absT分别向整体取conPorts。
+    //11. 收集：每个absT分别向整体取conPorts。
     for (AIMatchModel *matchModel in matchModels) {
         AIFeatureNode *absT = [SMGUtils searchNode:matchModel.match_p];
         NSArray *conPorts = [AINetUtils conPorts_All:absT];
@@ -283,55 +283,31 @@
         }
     }
     
-    //21. 计算位置相符度: 根据每个整体特征与局部特征的rect来计算。
-    [ThinkingUtils checkConFeatureMatchDegree:step2Model protoT:protoFeature_p];
+    //21. 计算：位置符合度: 根据每个整体特征与局部特征的rect来计算。
+    [step2Model run4MatchDegree:protoFeature_p];
     
-    //32. debug
-    for (NSString *assKey in resultDic.allKeys) {
-        AIMatchModel *model = [resultDic objectForKey:assKey];
-        if (Log4RecogDesc) NSLog(@"%@\t匹配条数 %ld/%ld \t特征识别综合匹配度计算:T%ld \t匹配度:%.2f / %ld \t= %.2f 总强度：%ld 均强度：%.1f",assKey,model.matchCount,protoFeature.count,model.match_p.pointerId,model.sumMatchValue,model.matchCount,model.matchValue,model.sumRefStrong,model.strongValue);
-    }
-    
-    //41. 无效过滤器1、matchValue=0排除掉。
-    NSArray *resultModels = [SMGUtils filterArr:resultDic.allValues checkValid:^BOOL(AIMatchModel *item) {
-        return item.matchValue > 0;
+    //31. 无效过滤器1、位置符合度=0排除掉。
+    NSArray *resultModels = [SMGUtils filterArr:step2Model.models checkValid:^BOOL(AIFeatureStep2Model *item) {
+        return item.modelMatchDegree > 0;
     }];
     
-    //42. 防重过滤器2、此处每个特征的不同层级，可能识别到同一个特征，可以按匹配度防下重。
-    resultModels = [SMGUtils removeRepeat:[SMGUtils sortBig2Small:resultModels compareBlock:^double(AIMatchModel *obj) {
-        return obj.matchCount;
-    }] convertBlock:^id(AIMatchModel *obj) {
-        return obj.match_p;
+    //32. 末尾淘汰过滤器：根据位置符合度末尾淘汰（参考34135-TODO4）。
+    resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIFeatureStep2Model *obj) {
+        return obj.modelMatchDegree;
+    }], 0, resultModels.count * 0.6);
+    
+    //33. 防重过滤器2、此处每个特征的不同层级，可能识别到同一个特征，可以按匹配度防下重。
+    resultModels = [SMGUtils removeRepeat:resultModels convertBlock:^id(AIFeatureStep2Model *obj) {
+        return @(obj.conPId);
     }];
     
-    //43. 末尾淘汰20%被引用强度最低的。
-    resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIMatchModel *obj) {
-        return obj.strongValue;
+    //34. 末尾淘汰20%被引用强度最低的。
+    resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIFeatureStep2Model *obj) {
+        return obj.rectItems.count;
     }], 0, MAX(resultModels.count * 0.8f, 10));
     
-    //44. 末尾淘汰仅保留匹配数大于xx%的：全含判断=>特征应该不需要全含，因为很难看到局部都相似的两个图像。
-    resultModels = [SMGUtils filterArr:resultModels checkValid:^BOOL(AIMatchModel *item) {
-        AIFeatureNode *tNode = [SMGUtils searchNode:item.match_p];
-        return item.matchCount > tNode.count * 0.3;
-    }];
-    
-    //45. 末尾淘汰匹配数小于3条的、组码太少，形不成什么显著的特征。
-    //2025.04.07: 由绝对3条淘汰改成末尾淘汰：匹配数低的占比偏多，所以改成按匹配数排序尾部淘汰。
-    //2025.04.08: 由末尾淘汰改成平均匹配数淘汰：BUG-修复最后很多1号坚果都是GV匹配数=2的，但H通道很重要，改成以matchCount的和来判断匹配数（经实测已OK)。
-    NSInteger pinJunMatchCount = [SMGUtils sumOfArr:resultModels convertBlock:^double(AIMatchModel *obj) {
-        return obj.matchCount;
-    }] / (float)resultModels.count;
-    resultModels = [SMGUtils filterArr:resultModels checkValid:^BOOL(AIMatchModel *item) {
-        return item.matchCount >= pinJunMatchCount;
-    }];
-    
-    //46. 末尾淘汰xx%匹配度低的、匹配度强度过滤器 (参考28109-todo2 & 34091-5提升准确)。
-    resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIMatchModel *obj) {
-        return obj.matchValue * obj.matchDegree;
-    }], 0, MIN(MAX(resultModels.count * 0.7f, 10), 20));
-    
-    //51. 更新: ref强度 & 相似度 & 抽具象 & 映射;
-    for (AIMatchModel *matchModel in resultModels) {
+    //41. 更新: ref强度 & 相似度 & 抽具象 & 映射;
+    for (AIFeatureStep2Model *matchModel in resultModels) {
         AIFeatureNode *assFeature = [SMGUtils searchNode:matchModel.match_p];
         [AINetUtils insertRefPorts_General:assFeature.p content_ps:assFeature.content_ps difStrong:1 header:assFeature.header];
         [protoFeature updateMatchValue:assFeature matchValue:matchModel.matchValue];
@@ -340,7 +316,7 @@
         [protoFeature updateDegreeDic:assFeature.pId degreeDic:matchModel.degreeDic];
         
         //52. debug
-        if (Log4RecogDesc || true) NSLog(@"特征识别结果:T%ld%@\t 匹配条数:%ld/(proto%ld ass%ld)\t匹配度:%.2f\t强度:%.1f\t符合度:%.1f",
+        if (Log4RecogDesc || true) NSLog(@"似层特征识别结果:T%ld%@\t 匹配条数:%ld/(proto%ld ass%ld)\t匹配度:%.2f\t强度:%.1f\t符合度:%.1f",
                                          matchModel.match_p.pointerId,CLEANSTR([assFeature getLogDesc:true]),matchModel.matchCount,protoFeature.count,assFeature.count,matchModel.matchValue,matchModel.strongValue,matchModel.matchDegree);
     }
     return resultModels;

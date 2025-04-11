@@ -24,4 +24,16 @@
 //Delta对齐后=(x - deltaX, y - deltaY, w, h)
 @property (assign, nonatomic) CGRect rect;
 
+/**
+ *  MARK:--------------------三个要素与proto的相近度（参考34136-TODO4）--------------------
+ */
+@property (assign, nonatomic) CGFloat scaleMatchValue;
+@property (assign, nonatomic) CGFloat deltaXMatchValue;
+@property (assign, nonatomic) CGFloat deltaYMatchValue;
+
+/**
+ *  MARK:--------------------该assT与protoT的这一块局部特征的“位置符合度” = 三个要素乘积（参考34136-TODO5）--------------------
+ */
+@property (assign, nonatomic) CGFloat itemMatchDegree;
+
 @end

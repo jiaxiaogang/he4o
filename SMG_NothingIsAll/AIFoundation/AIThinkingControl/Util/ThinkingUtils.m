@@ -362,44 +362,4 @@
     return matchDegree;
 }
 
-/**
- *  MARK:--------------------用于对比absT在protoT的rect 和 absT在assT的rect = 两个rect的位置符合度--------------------
- *  @desc 方案V1说明：采取比例+偏移方案来对比位置符合度，即：
- *          1、比例：先将两个rect都缩放成absAtProtoRect的大小。
- *          2、偏移：再求出deltaX和deltaY（因为先缩放成一样大小了，所以所有偏移都是平行的）。
- *          3、把差别最大的20%的比例和偏移排除淘汰掉。
- *          4、然后把剩下的：平均比例 和 平均偏移 求出来。
- *          5、再分别根据每个absAtAss的比例和偏移，计算其位置符合度。
- * @desc 方案V2说明：采取比例+偏移方案来对比位置符合度，即：
- *          1、比例：先将两个rect都缩放成absAtProtoRect的大小。
- *          2、偏移：再求出deltaX和deltaY（因为先缩放成一样大小了，所以所有偏移都是平行的）。
- *          3、然后分别按“偏移 和 比例”进行分组（比如按proto的总尺寸，按1%精度分组）。
- *          4、用采样器，从排序左到右，进行采样，看哪一块儿最能采到更集中（比如1,6,13,27,29,33,55,89,1333里面27-33最集中）。
- *          5、可能采到多个集中点：然后各个集中点分别求位置符合度。
- *          6、然后会得到多个：各种符合度的结果。
- *          说明：如果一张图上有多个不同的手写0，此时识别可能是多个，而非一个，此方案可处理这个，不过需要先把rect用于conPorts防重，特征识别step2时，也需要按每个assT指向的conPort防重收集成数组，本方案对噪点也能更好的应对。
- *          总结：此方案比较复杂，当前应该做个简单的v1版本就行，不必搞这么复杂。
- */
-+(void) checkConFeatureMatchDegree:(AIFeatureStep2Models*)step2Model protoT:(AIKVPointer*)protoT {
-    //1. 求出比例。
-    AIFeatureStep2Model *protoModel = [step2Model getModelIfNullCreate:protoT.pointerId];
-    
-    //2. 把两个rect缩放一致（归一化），将absAtAssRect缩放成absAtProtoRect。
-    for (AIFeatureStep2Model *assModel in step2Model.models) {
-        if (assModel.conPId == protoT.pointerId) continue;
-        
-        //3. 生成assModel的缩放偏移数据。
-        [assModel convertRectItems2ScalaDeltaItems:protoModel];
-        
-        //4. TODOTOMORROW20250411: 分组？求平均？
-        
-        
-        
-    }
-    
-    //3. 求出偏移。
-    
-    
-}
-
 @end
