@@ -28,9 +28,4 @@
  */
 -(void) run4MatchValue:(AIKVPointer*)protoT;
 
-/**
- *  MARK:--------------------跑出assT和protoT的indexDic--------------------
- */
--(void) run4IndexDic:(AIKVPointer*)protoT;
-
 @end

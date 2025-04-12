@@ -32,6 +32,9 @@
     [model updateRectItem:absT absAtConRect:absAtConRect];
 }
 
+/**
+ *  MARK:--------------------跑出位置符合度--------------------
+ */
 -(void) run4MatchDegree:(AIKVPointer*)protoT {
     //1. 求出比例。
     AIFeatureStep2Model *protoModel = [self getModelIfNullCreate:protoT];
@@ -51,15 +54,6 @@
 -(void) run4MatchValue:(AIKVPointer*)protoT {
     for (AIFeatureStep2Model *conModel in self.models) {
         [conModel run4MatchValue:protoT];
-    }
-}
-
-/**
- *  MARK:--------------------跑出assT和protoT的indexDic--------------------
- */
--(void) run4IndexDic:(AIKVPointer*)protoT {
-    for (AIFeatureStep2Model *conModel in self.models) {
-        [conModel run4IndexDic:protoT];
     }
 }
 

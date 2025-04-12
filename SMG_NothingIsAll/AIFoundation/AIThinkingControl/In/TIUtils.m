@@ -322,21 +322,21 @@
         [protoFeature updateMatchValue:assFeature matchValue:matchModel.modelMatchDegree * matchModel.modelMatchValue];
         [AINetUtils relateGeneralAbs:assFeature absConPorts:assFeature.conPorts conNodes:@[protoFeature] isNew:false difStrong:1];
         
-        //TODOTOMORROW20250411: 此处怎么取indexDic?
-        //1. 难道要把protoT封装成组特征？
-        //2. 或者每个absT都分别与：protoT & assT 有映射，那么就用absT的向下映射来复用呗？
-        [protoFeature updateIndexDic:assFeature indexDic:matchModel.indexDic];
-        [protoFeature updateDegreeDic:assFeature.pId degreeDic:matchModel.degreeDic];
+        //42. 存下来step2Model用于类比时用一下（参考34139-TODO3）。
+        assFeature.step2Model = matchModel;
         
-        //42. debug
+        //43. debug
         if (Log4RecogDesc || true) NSLog(@"似层特征识别结果:T%ld%@\t 匹配条数:%ld/(proto%ld ass%ld)\t匹配度:%.2f\t符合度:%.1f",
                                          matchModel.conT.pointerId,CLEANSTR([assFeature getLogDesc:true]),matchModel.rectItems.count,protoFeature.count,assFeature.count,matchModel.modelMatchValue,matchModel.modelMatchDegree);
     }
     
-    //51. 转成AIMatchModel格式返回。
-    
-    
-    return resultModels;
+    //51. 转成AIMatchModel格式返回（识别后就用match_p,matchCount,matchValue这三个值）。
+    return [SMGUtils convertArr:resultModels convertBlock:^id(AIFeatureStep2Model *obj) {
+        AIMatchModel *model = [[AIMatchModel alloc] initWithMatch_p:obj.conT];
+        model.matchCount = obj.rectItems.count;
+        model.matchValue = obj.modelMatchValue;
+        return model;
+    }];
 }
 
 //MARK:===============================================================

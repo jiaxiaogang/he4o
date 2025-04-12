@@ -22,10 +22,15 @@
 -(NSInteger) indexOfLevel:(NSInteger)level x:(NSInteger)x y:(NSInteger)y;
 
 //MARK:===============================================================
-//MARK:                     < degree组 >
+//MARK:       < degree组（不进行持久化，仅用于step1识别结果的类比中） >
 //MARK:===============================================================
 @property (strong, nonatomic) NSMutableDictionary *degreeDDic; // <K=assT.pId, V=<K=assIndex, V=与之映射的位置符合度matchDegree>>
 -(void) updateDegreeDic:(NSInteger)assPId degreeDic:(NSDictionary*)degreeDic;
 -(NSDictionary*) getDegreeDic:(NSInteger)assPId;
+
+//MARK:===============================================================
+//MARK:       < step2Model（不进行持久化，仅用于step2识别结果的类比中 >
+//MARK:===============================================================
+@property (strong, nonatomic) AIFeatureStep2Model *step2Model;
 
 @end

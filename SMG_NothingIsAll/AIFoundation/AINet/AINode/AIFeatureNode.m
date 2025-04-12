@@ -50,7 +50,7 @@
 }
 
 //MARK:===============================================================
-//MARK:                     < degree组 >
+//MARK:       < degree组（不进行持久化，仅用于step1识别结果的类比中） >
 //MARK:===============================================================
 -(NSMutableDictionary *)degreeDDic{
     if (!ISOK(_degreeDDic, NSMutableDictionary.class)) _degreeDDic = [[NSMutableDictionary alloc] initWithDictionary:_degreeDDic];

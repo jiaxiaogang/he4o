@@ -252,20 +252,47 @@
  *      2025.03.31: 改为调用组码类比v2。
  */
 +(AIFeatureNode*) analogyFeature:(AIKVPointer*)protoT_p ass:(AIKVPointer*)assT_p bigerMatchValue:(CGFloat)bigerMatchValue {
-    //1. 类比orders的规律
+    //1. 数据准备。
     if ([protoT_p isEqual:assT_p]) return [SMGUtils searchNode:assT_p];
-    NSMutableArray *absGVModels = [[NSMutableArray alloc] init];
     AIFeatureNode *protoFeature = [SMGUtils searchNode:protoT_p];
     AIFeatureNode *assFeature = [SMGUtils searchNode:assT_p];
+    
+    //2. 局部冷启 或 整体识别：类比依据不同（参考34139-TODO1）。
+    NSArray *protoAbsT_ps = Ports2Pits([AINetUtils absPorts_All:protoFeature]);
+    NSArray *assAbsT_ps = [AINetUtils absPorts_All:assFeature];
+    
+    //11. 取共同absT，借助absT进行类比（参考34139-TODO1）。
+    NSArray *absT_ps = [SMGUtils filterArrA:protoAbsT_ps arrB:assAbsT_ps];
+    if (ARRISOK(absT_ps)) {
+        //12. 借助absT来类比时，复用step2的识别结果model数据，并且用完就清空，防止循环野指针（参考34139-TODO3）。
+        AIFeatureStep2Model *step2Model = protoFeature.step2Model;
+        protoFeature.step2Model = nil;
+        return [self analogyFeature4Step2:protoFeature ass:assFeature bigerMatchValue:bigerMatchValue absT_ps:absT_ps step2Model:step2Model];
+    }
+    //21. 特征识别step1识别到的结果，复用indexDic进行类比。
+    else {
+        NSDictionary *indexDic = [protoFeature getAbsIndexDic:assT_p];
+        if (DICISOK(indexDic)) {
+            //22. 用于类比的数据用完就删，避免太占空间（参考34137-TODO2）。
+            [protoFeature.absIndexDDic removeObjectForKey:@(assT_p.pointerId)];
+            return [self analogyFeatureStep1:protoFeature ass:assFeature bigerMatchValue:bigerMatchValue indexDic:indexDic];
+        }
+    }
+    return nil;
+}
+
++(AIFeatureNode*) analogyFeatureStep1:(AIFeatureNode*)protoFeature ass:(AIFeatureNode*)assFeature bigerMatchValue:(CGFloat)bigerMatchValue indexDic:(NSDictionary*)indexDic {
+    //1. 类比orders的规律
+    NSMutableArray *absGVModels = [[NSMutableArray alloc] init];
     CGFloat featureMatchValue = 1;
     
     //2. 数据检查（当前有主责，直接剔除）。
     //BUG-2025.03.24: 先关掉，不然信息量大的特征，因为能者多错（像HSB里，HS全是躺赢狗，只有B信息量大，同时差异性也大，这里会判B全责）。
     //思路-除非引入信息量，即HSB不同信息量时，各自责任占比也不同，不然很难判准，先注掉吧，后续确实需要修此BUG时再来搞。
-    CGFloat curMatchValue = [protoFeature getAbsMatchValue:assT_p];
+    CGFloat curMatchValue = [protoFeature getAbsMatchValue:assFeature.p];
     //BOOL noZeRen = [TCLearningUtil noZeRenForCenJi:curMatchValue bigerMatchValue:bigerMatchValue];
     //if (!noZeRen) return nil;
-    NSDictionary *degreeDic = DICTOOK([protoFeature getDegreeDic:assT_p.pointerId]);
+    NSDictionary *degreeDic = DICTOOK([protoFeature getDegreeDic:assFeature.pId]);
     
     //3. 生成protoIndexDic 和 assIndexDic  (参考29032-todo1.2);
     //备忘: 如果以后特征要支持indexDic,这里可以打开并存上映射支持下 (但短时间内应该不需要,连alg也没支持映射);
@@ -273,7 +300,6 @@
     NSMutableDictionary *protoAbsIndexDic = [NSMutableDictionary new];
     
     //11. 外类比有序进行 (记录jMax & 正序)
-    NSDictionary *indexDic = [protoFeature getAbsIndexDic:assT_p];
     for (NSNumber *key in indexDic) {
         NSNumber *value = [indexDic objectForKey:key];
         NSInteger assIndex = key.integerValue;
@@ -281,7 +307,7 @@
         AIKVPointer *protoG_p = ARR_INDEX(protoFeature.content_ps, protoIndex);
         AIKVPointer *assG_p = ARR_INDEX(assFeature.content_ps, assIndex);
         if (![degreeDic objectForKey:@(assIndex)]) {
-            ELog(@"查下为什么没存上符合度，没符合度会导致protoG和assG的匹配度算成0 getDegreeDic %ld %ld %@",protoT_p.pointerId,assT_p.pointerId,CLEANSTR(degreeDic));
+            ELog(@"查下为什么没存上符合度，没符合度会导致protoG和assG的匹配度算成0 getDegreeDic %ld %ld %@",protoFeature.p.pointerId,assFeature.p.pointerId,CLEANSTR(degreeDic));
         }
         CGFloat curDegree = NUMTOOK([degreeDic objectForKey:@(assIndex)]).floatValue;
         
@@ -334,96 +360,58 @@
     }
     
     //31. 外类比构建
-    AIFeatureNode *absT = [AIGeneralNodeCreater createFeatureNode:sortGroupModels conNodes:@[protoFeature,assFeature] at:protoT_p.algsType ds:protoT_p.dataSource isOut:protoT_p.isOut isJiao:true];
+    AIFeatureNode *absT = [AIGeneralNodeCreater createFeatureNode:sortGroupModels conNodes:@[protoFeature,assFeature] at:protoFeature.p.algsType ds:protoFeature.p.dataSource isOut:protoFeature.p.isOut isJiao:true];
     [absT updateLogDescDic:protoFeature.logDesc];
     [absT updateLogDescDic:assFeature.logDesc];
     
     //32. 更新匹配度 & 映射;
+    //2025.04.12: 先不存特征的indexDic映射了，太占空间（参考34137-TODO2）。
     [protoFeature updateMatchValue:absT matchValue:featureMatchValue];
     [assFeature updateMatchValue:absT matchValue:1];
-    [protoFeature updateIndexDic:absT indexDic:protoAbsIndexDic];
-    [assFeature updateIndexDic:absT indexDic:assAbsIndexDic];
+    //[protoFeature updateIndexDic:absT indexDic:protoAbsIndexDic];
+    //[assFeature updateIndexDic:absT indexDic:assAbsIndexDic];
     
     //33. 存conPorts的rect（参考34135-TODO1）。
     CGRect absAtProtoRect = [AINetUtils convertPartOfFeatureContent2Rect:protoFeature contentIndexes:protoAbsIndexDic.allValues];
     CGRect absAtAssRect = [AINetUtils convertPartOfFeatureContent2Rect:assFeature contentIndexes:assAbsIndexDic.allValues];
-    [AINetUtils updateConPortRect:absT conT:protoT_p rect:absAtProtoRect];
-    [AINetUtils updateConPortRect:absT conT:assT_p rect:absAtAssRect];
+    [AINetUtils updateConPortRect:absT conT:protoFeature.p rect:absAtProtoRect];
+    [AINetUtils updateConPortRect:absT conT:assFeature.p rect:absAtAssRect];
     
     if (Log4Ana) NSLog(@"%@特征类比结果 => Proto特征T%ld：%@\n%@Ass特征T%ld：%@\n%@抽象特征T%ld：%@\n%@",protoFeature.p.dataSource,protoFeature.pId,CLEANSTR(protoFeature.logDesc),FeatureDesc(protoFeature.p,2),assFeature.pId,CLEANSTR(assFeature.logDesc),FeatureDesc(assFeature.p,2),absT.pId,CLEANSTR(absT.logDesc),FeatureDesc(absT.p,2));
     return absT;
 }
 
-/**
- *  MARK:--------------------组码类比--------------------
- */
-+(AIGroupValueNode*) analogyGroupValue:(AIKVPointer*)protoG_p assG:(AIKVPointer*)assG_p curDegree:(CGFloat)curDegree bigerMatchValue:(CGFloat)bigerMatchValue {
-    //1. 如果本就一致;
-    if ([protoG_p isEqual:assG_p]) return [SMGUtils searchNode:protoG_p];
++(AIFeatureNode*) analogyFeature4Step2:(AIFeatureNode*)protoT ass:(AIFeatureNode*)assT bigerMatchValue:(CGFloat)bigerMatchValue absT_ps:(NSArray*)absT_ps step2Model:(AIFeatureStep2Model*)step2Model {
+    //1. 类比orders的规律
+    NSMutableArray *absGVModels = [[NSMutableArray alloc] init];
+    CGFloat featureMatchValue = 1;
     
-    //2. 数据准备;
-    AIGroupValueNode *protoG = [SMGUtils searchNode:protoG_p];
-    AIGroupValueNode *assG = [SMGUtils searchNode:assG_p];
-    if (!protoG || !assG) return nil;
-    NSMutableArray *sameSubDots = [[NSMutableArray alloc] init];
-    AIMatchAlgModel *protoAbsModel4MatchValue = [[AIMatchAlgModel alloc] init];//此模型仅用于收集proto和abs的相近度,用于计算matchValue;
+    //2. 数据检查（当前有主责，直接剔除）。
+    CGFloat curMatchValue = [protoT getAbsMatchValue:assT.p];
     
-    //3. 数据检查（当前有主责，直接剔除）。
-    CGFloat curMatchValue = [protoG getAbsMatchValue:assG_p] * curDegree;
-    BOOL noZeRen = [TCLearningUtil noZeRenForPingJun:curMatchValue bigerMatchValue:bigerMatchValue];
-    if (!noZeRen) return nil;
+    //类比rectItems，把责任超过50%的去掉，别的保留。
+    //step2Model.rectItems
     
-    //3. 分别对protoA和assA的稀疏码进行对比;
-    for (NSInteger i = 0; i < protoG.count; i++) {
+    //1. 分别从每个absT收集综合映射（参考34137-TODO1）。
+    NSArray *reverseRectItems = [SMGUtils reverseArr:self.rectItems];
+    NSMutableDictionary *modelIndexDic = [NSMutableDictionary new];
+    for (AIFeatureStep2Item_Rect *obj in reverseRectItems) {
+        AIFeatureNode *absT = [SMGUtils searchNode:obj.absT];
         
-        //11. 找出proto子单码的数据
-        NSInteger protoX = NUMTOOK(ARR_INDEX(protoG.xs, i)).integerValue;
-        NSInteger protoY = NUMTOOK(ARR_INDEX(protoG.ys, i)).integerValue;
-        AIKVPointer *protoV_p = ARR_INDEX(protoG.content_ps, i);
+        //2. 当前item.absT综合出assProto的映射。
+        DirectIndexDic *ass2AbsDic = [DirectIndexDic newOkToAbs:[absT getConIndexDic:self.conT]];
+        DirectIndexDic *abs2ProtoDic = [DirectIndexDic newNoToAbs:[absT getConIndexDic:protoT]];
+        NSDictionary *assProtoIndexDic = [TOUtils zonHeIndexDic:@[ass2AbsDic,abs2ProtoDic]];
         
-        //12. 根据protoX,protoY到ass里，找对应的ass子单码的数据。
-        AIKVPointer *assV_p = nil;
-        for (NSInteger j = 0; j < assG.count; j++) {
-            NSInteger assX = NUMTOOK(ARR_INDEX(assG.xs, j)).integerValue;
-            NSInteger assY = NUMTOOK(ARR_INDEX(assG.ys, j)).integerValue;
-            if (assX == protoX && assY == protoY) {
-                assV_p = ARR_INDEX(assG.content_ps, j);
-                break;
-            }
-        }
-        
-        //21. 过滤器1、如果未找到对应的assV，则直接跳过不类比这一条（这一条以前已被ass抽象掉了）。
-        if (!assV_p) continue;
-        
-        //22. 过滤器2、二者非同区，也直接跳过（它本就不该有抽具象关联，查下当时识别后构建抽具象关联时就有问题）。
-        if (![protoV_p.dataSource isEqualToString:assV_p.dataSource] || ![protoV_p.algsType isEqualToString:assV_p.algsType]) continue;
-            
-        //31. 二者相似度较高时 (计算当前码的责任比例: 比如:1*0.8*0.7时,当前码=0.7时,它的责任比例=(1-0.7)/(1-0.8 + 1-0.7)=60%) (参考29025-13);
-        MapModel *analogyValueResult = [self analogyValue:protoV_p assV:assV_p bigerMatchValue:curMatchValue];
-        
-        //32. 当前码责任<50%时 (次要责任时,免责);
-        if (analogyValueResult) {
-            AIKVPointer *absV_p = analogyValueResult.v1;
-            CGFloat valueMatchValue = NUMTOOK(analogyValueResult.v2).floatValue;
-            [sameSubDots addObject:[MapModel newWithV1:absV_p v2:@(protoX) v3:@(protoY)]];
-            
-            //6. 相近度个数nearCount & 相近度sumNear
-            protoAbsModel4MatchValue.nearCount++;
-            protoAbsModel4MatchValue.sumNear *= valueMatchValue;
-        } else {
-            if (Log4Ana) NSLog(@"> 当前A%ld<%@>比A%ld<%@>",(long)protoG_p.pointerId,Pit2FStr(protoV_p),(long)assG_p.pointerId,Pit2FStr(assV_p));
-        }
+        //3. 收集到所有assProtoIndexDic中。
+        [modelIndexDic setDictionary:assProtoIndexDic];
     }
     
-    //7. 将相近度善可的构建成抽象返回;
-    AIGroupValueNode *absG = [AIGeneralNodeCreater createGroupValueNode:sameSubDots conNodes:@[protoG,assG] at:protoG_p.algsType ds:protoG_p.dataSource isOut:protoG_p.isOut];
+    //保留下来的的生成为absT。
     
-    //8. 将抽象概念与具象的匹配度存下来 (参考29091BUG);
-    [protoG updateMatchValue:absG matchValue:protoAbsModel4MatchValue.matchValue];
-    [assG updateMatchValue:absG matchValue:1];
-    [AITest test25:absG conNodes:@[protoG,assG]];
-    if (Log4Ana) NSLog(@"G类比 ===> %@ : %@ = %@",Pit2FStr(protoG_p),Pit2FStr(assG_p),Pit2FStr(absG.p));
-    return absG;
+    //建议关联等。
+    
+    return nil;
 }
 
 /**
