@@ -153,8 +153,9 @@
 
 /**
  *  MARK:--------------------特征识别--------------------
+ *  @desc 识别抽象的局部特征：通过组码向refPorts找特征结果（起初似层结果较多，但后期随着抽象，会慢慢变成结果中几乎都是交层）。
  */
-+(NSArray*) recognitionFeature:(AIKVPointer*)protoFeature_p {
++(NSArray*) recognitionFeature_Step1:(AIKVPointer*)protoFeature_p {
     //1. 数据准备
     AIFeatureNode *protoFeature = [SMGUtils searchNode:protoFeature_p];
     NSLog(@"\n=========== 特征识别 protoT%ld（%@）===========",protoFeature_p.pointerId,protoFeature_p.dataSource);
@@ -265,9 +266,9 @@
 
 /**
  *  MARK:--------------------特征识别--------------------
- *  @desc Step2 尽可能照顾特征的整体性（参考34135-TODO2）。
+ *  @desc Step2 尽可能照顾特征的整体性，通过交层向下找似层结果（参考34135-TODO2）。
  */
-+(NSArray*) recognitionFeatureStep2:(AIKVPointer*)protoFeature_p matchModels:(NSArray*)matchModels {
++(NSArray*) recognitionFeature_Step2:(AIKVPointer*)protoFeature_p matchModels:(NSArray*)matchModels {
     //1. 数据准备
     AIFeatureNode *protoFeature = [SMGUtils searchNode:protoFeature_p];
     AIFeatureStep2Models *step2Model = [AIFeatureStep2Models new];
@@ -279,6 +280,11 @@
         
         //12. 将每个conPort先收集到step2Model。
         for (AIPort *conPort in conPorts) {
+            
+            //13. 只要似层结果（参考34135-TODO6）。
+            if (conPort.target_p.isJiao) continue;
+            
+            //14. 收集原始item数据（参考34136）。
             [step2Model updateItem:conPort.target_p absT:absT.p absAtConRect:conPort.rect];
         }
     }
@@ -326,6 +332,10 @@
         if (Log4RecogDesc || true) NSLog(@"似层特征识别结果:T%ld%@\t 匹配条数:%ld/(proto%ld ass%ld)\t匹配度:%.2f\t符合度:%.1f",
                                          matchModel.conT.pointerId,CLEANSTR([assFeature getLogDesc:true]),matchModel.rectItems.count,protoFeature.count,assFeature.count,matchModel.modelMatchValue,matchModel.modelMatchDegree);
     }
+    
+    //51. 转成AIMatchModel格式返回。
+    
+    
     return resultModels;
 }
 
@@ -418,7 +428,17 @@
             }];
         } else {
             subMatchModels = [AIRecognitionCache getCache:item_p cacheBlock:^id{
-                return ARRTOOK([self recognitionFeature:item_p]);//v2多码特征;
+                //A. step1识别。
+                NSArray *step1Result = ARRTOOK([self recognitionFeature_Step1:item_p]);//v2多码特征;
+                
+                //B. 把step1中似层筛选出来（参考34135-TODO5）。
+                NSArray *step1Si = [SMGUtils filterArr:step1Result checkValid:^BOOL(AIMatchModel *item) {
+                    return !item.match_p.isJiao;
+                }];
+                
+                //C. 把step1的结果传给step2继续向似层识别（参考34135-TODO5）。
+                NSArray *step2Result = [self recognitionFeature_Step2:item_p matchModels:step1Result];
+                return [SMGUtils collectArrA:step1Si arrB:step2Result];
             }];
         }
         

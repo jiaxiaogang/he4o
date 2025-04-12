@@ -45,7 +45,7 @@
  *      2025.03.19: 支持构建特征，由多个稀疏码（单码或组码）组成。
  *  @result notnull
  */
-+(AIFeatureNode*) createFeatureNode:(NSArray*)groupModels conNodes:(NSArray*)conNodes at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut {
++(AIFeatureNode*) createFeatureNode:(NSArray*)groupModels conNodes:(NSArray*)conNodes at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut isJiao:(BOOL)isJiao {
     //2. 数据准备：转content_ps。
     NSArray *content_ps = [SMGUtils convertArr:groupModels convertBlock:^id(InputGroupValueModel *obj) {
         return obj.groupValue_p;
@@ -77,6 +77,10 @@
         newNode.xs = xs;
         newNode.ys = ys;
         newNode.rects = rects;
+        
+        //6. 是否交层,特征无法用长度来判断（类比时为交层，别的识别和proto构建全是似层）。
+        newNode.pointer.isJiao = isJiao;
+        
         return newNode;
     } header:header getRefPortsBlock:^NSArray *(AIKVPointer *item_p, NSInteger contentIndex) {
         return [AINetUtils refPorts_All:item_p];
@@ -145,11 +149,6 @@
         
         //7. 存header到node
         result.header = header;
-        
-        //8. 概念是否交层,可以使用长度来判断 (有一条conAlg为交层 或 当前sames长度小于具象特征数 => 则当前为交层) (参考33111-TODO1);
-        result.pointer.isJiao = [SMGUtils filterSingleFromArr:conNodes checkValid:^BOOL(AIAlgNodeBase *item) {
-            return item.pointer.isJiao || content_ps.count < item.count;
-        }];
         
         [result setContent_ps:content_ps];
         //NSLog(@"构建新码:%@%ld fromConAlgs:%@",NSStringFromClass(result.class),result.pointer.pointerId,CLEANSTR([SMGUtils convertArr:conNodes convertBlock:^id(AINodeBase *obj) {
