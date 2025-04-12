@@ -35,5 +35,6 @@
  *  MARK:--------------------该assT与protoT的这一块局部特征的“位置符合度” = 三个要素乘积（参考34136-TODO5）--------------------
  */
 @property (assign, nonatomic) CGFloat itemMatchDegree;
+@property (assign, nonatomic) CGFloat itemMatchValue;
 
 @end

@@ -390,24 +390,24 @@
     CGFloat curMatchValue = [protoT getAbsMatchValue:assT.p];
     
     //类比rectItems，把责任超过50%的去掉，别的保留。
-    //step2Model.rectItems
+    NSArray *sameItems = [SMGUtils filterArr:step2Model.rectItems checkValid:^BOOL(AIFeatureStep2Item_Rect *obj) {
+        return [TCLearningUtil noZeRenForPingJun:obj.itemMatchValue * obj.itemMatchDegree bigerMatchValue:step2Model.modelMatchValue * step2Model.modelMatchDegree];
+    }];
     
-    //1. 分别从每个absT收集综合映射（参考34137-TODO1）。
-    NSArray *reverseRectItems = [SMGUtils reverseArr:self.rectItems];
-    NSMutableDictionary *modelIndexDic = [NSMutableDictionary new];
-    for (AIFeatureStep2Item_Rect *obj in reverseRectItems) {
-        AIFeatureNode *absT = [SMGUtils searchNode:obj.absT];
-        
-        //2. 当前item.absT综合出assProto的映射。
-        DirectIndexDic *ass2AbsDic = [DirectIndexDic newOkToAbs:[absT getConIndexDic:self.conT]];
-        DirectIndexDic *abs2ProtoDic = [DirectIndexDic newNoToAbs:[absT getConIndexDic:protoT]];
-        NSDictionary *assProtoIndexDic = [TOUtils zonHeIndexDic:@[ass2AbsDic,abs2ProtoDic]];
-        
-        //3. 收集到所有assProtoIndexDic中。
-        [modelIndexDic setDictionary:assProtoIndexDic];
-    }
+    //将rectItems格式转为@[InputGroupValueModel]格式。
+    //TODOTOMORROW20250412: 此处没有indexDic的话，怎么用absT的元素，定位到conT的assIndex位置呢？
+    //明天分析下。。。
+    
+    //16. 类比后,以ass为主,存level,x,y;
+    NSInteger assLevel = NUMTOOK(ARR_INDEX(assFeature.levels, assIndex)).integerValue;
+    NSInteger assX = NUMTOOK(ARR_INDEX(assFeature.xs, assIndex)).integerValue;
+    NSInteger assY = NUMTOOK(ARR_INDEX(assFeature.ys, assIndex)).integerValue;
+    CGRect assRect = NUMTOOK(ARR_INDEX(assFeature.rects, assIndex)).CGRectValue;
+    [absGVModels addObject:[InputGroupValueModel new:nil groupValue:analogyGVResult.v1 level:assLevel x:assX y:assY rect:assRect]];
+    
     
     //保留下来的的生成为absT。
+    AIFeatureNode *absT = [AIGeneralNodeCreater createFeatureNode:sameItems conNodes:@[protoT,assT] at:protoT.p.algsType ds:protoT.p.dataSource isOut:protoT.p.isOut isJiao:true];
     
     //建议关联等。
     

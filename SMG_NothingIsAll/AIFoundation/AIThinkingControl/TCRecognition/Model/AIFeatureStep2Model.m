@@ -141,11 +141,16 @@
     }
     
     //2. 别的assT则计算综合平均匹配度。
-    self.modelMatchValue = self.rectItems.count == 0 ? 0 : [SMGUtils sumOfArr:self.rectItems convertBlock:^double(AIFeatureStep2Item_Rect *obj) {
-        AIFeatureNode *absT = [SMGUtils searchNode:obj.absT];
+    for (AIFeatureStep2Item_Rect *item in self.rectItems) {
+        AIFeatureNode *absT = [SMGUtils searchNode:item.absT];
         
         //3. assT与absT的匹配度 * assT与protoT的匹配度 = assT与protoT的匹配度。
-        return [absT getConMatchValue:self.conT] * [absT getConMatchValue:protoT];
+        item.itemMatchValue = [absT getConMatchValue:self.conT] * [absT getConMatchValue:protoT];
+    }
+    
+    //4. 求出整体特征：assT 与 protoT 的综合匹配度。
+    self.modelMatchValue = self.rectItems.count == 0 ? 0 : [SMGUtils sumOfArr:self.rectItems convertBlock:^double(AIFeatureStep2Item_Rect *obj) {
+        return obj.itemMatchValue;
     }] / self.rectItems.count;
 }
 

@@ -22,6 +22,15 @@
 -(NSInteger) indexOfLevel:(NSInteger)level x:(NSInteger)x y:(NSInteger)y;
 
 //MARK:===============================================================
+//MARK:                     < 特征位置符合度 >
+//MARK:===============================================================
+@property (strong, nonatomic) NSMutableDictionary *absMatchDegreeDic;
+@property (strong, nonatomic) NSMutableDictionary *conMatchDegreeDic;
+-(void) updateMatchDegree:(AINodeBase*)absNode matchDegree:(CGFloat)matchDegree;
+-(CGFloat) getConMatchDegree:(AIKVPointer*)con_p;
+-(CGFloat) getAbsMatchDegree:(AIKVPointer*)abs_p;
+
+//MARK:===============================================================
 //MARK:       < degree组（不进行持久化，仅用于step1识别结果的类比中） >
 //MARK:===============================================================
 @property (strong, nonatomic) NSMutableDictionary *degreeDDic; // <K=assT.pId, V=<K=assIndex, V=与之映射的位置符合度matchDegree>>

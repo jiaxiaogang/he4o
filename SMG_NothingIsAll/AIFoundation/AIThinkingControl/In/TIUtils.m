@@ -250,6 +250,7 @@
         AIFeatureNode *assFeature = [SMGUtils searchNode:matchModel.match_p];
         [AINetUtils insertRefPorts_General:assFeature.p content_ps:assFeature.content_ps difStrong:1 header:assFeature.header];
         [protoFeature updateMatchValue:assFeature matchValue:matchModel.matchValue];
+        [protoFeature updateMatchDegree:assFeature matchDegree:matchModel.matchDegree];
         [AINetUtils relateGeneralAbs:assFeature absConPorts:assFeature.conPorts conNodes:@[protoFeature] isNew:false difStrong:1];
         [protoFeature updateIndexDic:assFeature indexDic:matchModel.indexDic];
         [protoFeature updateDegreeDic:assFeature.pId degreeDic:matchModel.degreeDic];
@@ -319,7 +320,8 @@
     for (AIFeatureStep2Model *matchModel in resultModels) {
         AIFeatureNode *assFeature = [SMGUtils searchNode:matchModel.conT];
         [AINetUtils insertRefPorts_General:assFeature.p content_ps:assFeature.content_ps difStrong:1 header:assFeature.header];
-        [protoFeature updateMatchValue:assFeature matchValue:matchModel.modelMatchDegree * matchModel.modelMatchValue];
+        [protoFeature updateMatchValue:assFeature matchValue:matchModel.modelMatchValue];
+        [protoFeature updateMatchDegree:assFeature matchDegree:matchModel.modelMatchDegree];
         [AINetUtils relateGeneralAbs:assFeature absConPorts:assFeature.conPorts conNodes:@[protoFeature] isNew:false difStrong:1];
         
         //42. 存下来step2Model用于类比时用一下（参考34139-TODO3）。
