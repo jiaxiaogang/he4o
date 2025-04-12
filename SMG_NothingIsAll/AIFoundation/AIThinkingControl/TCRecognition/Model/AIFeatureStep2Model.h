@@ -47,4 +47,10 @@
 -(void) run4MatchValue:(AIKVPointer*)protoT;
 @property (assign, nonatomic) CGFloat modelMatchValue;
 
+//MARK:===============================================================
+//MARK:                     < 计算indexDic映射 >
+//MARK:===============================================================
+-(void) run4IndexDic:(AIKVPointer*)protoT;
+@property (strong, nonatomic) NSDictionary *modelIndexDic;//处理出assTProtoTIndexDic映射
+
 @end

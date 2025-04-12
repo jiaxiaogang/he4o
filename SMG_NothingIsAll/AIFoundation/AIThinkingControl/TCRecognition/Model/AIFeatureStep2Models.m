@@ -54,4 +54,13 @@
     }
 }
 
+/**
+ *  MARK:--------------------跑出assT和protoT的indexDic--------------------
+ */
+-(void) run4IndexDic:(AIKVPointer*)protoT {
+    for (AIFeatureStep2Model *conModel in self.models) {
+        [conModel run4IndexDic:protoT];
+    }
+}
+
 @end

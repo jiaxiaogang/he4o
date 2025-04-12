@@ -149,6 +149,24 @@
     }] / self.rectItems.count;
 }
 
+-(void) run4IndexDic:(AIKVPointer*)protoT {
+    //1. 分别从每个absT收集综合映射（参考34137-TODO1）。
+    NSArray *reverseRectItems = [SMGUtils reverseArr:self.rectItems];
+    NSMutableDictionary *modelIndexDic = [NSMutableDictionary new];
+    for (AIFeatureStep2Item_Rect *obj in reverseRectItems) {
+        AIFeatureNode *absT = [SMGUtils searchNode:obj.absT];
+        
+        //2. 当前item.absT综合出assProto的映射。
+        DirectIndexDic *ass2AbsDic = [DirectIndexDic newOkToAbs:[absT getConIndexDic:self.conT]];
+        DirectIndexDic *abs2ProtoDic = [DirectIndexDic newNoToAbs:[absT getConIndexDic:protoT]];
+        NSDictionary *assProtoIndexDic = [TOUtils zonHeIndexDic:@[ass2AbsDic,abs2ProtoDic]];
+        
+        //3. 收集到所有assProtoIndexDic中。
+        [modelIndexDic setDictionary:assProtoIndexDic];
+    }
+    self.modelIndexDic = modelIndexDic;
+}
+
 //MARK:===============================================================
 //MARK:                     < PrivateMethod >
 //MARK:===============================================================
