@@ -159,7 +159,7 @@ static AINet *_instance;
                 //6. 如果不相似，打包成组码。
                 AIGroupValueNode *groupValue = [AIGeneralNodeCreater createGroupValueNode:subDots conNodes:nil at:at ds:ds isOut:false];
                 CGRect groupRect = [AINetUtils convertGVLevelXY2Rect:groupLevel x:groupRow y:groupColumn];//求出各个GV在T中的rect。
-                [groupModels addObject:[InputGroupValueModel new:subDots groupValue:groupValue.p level:groupLevel x:groupRow y:groupColumn rect:groupRect]];
+                [groupModels addObject:[InputGroupValueModel new:subDots groupValue:groupValue.p rect:groupRect]];
                 
                 //7. 建组码索引。
                 [AINetGroupValueIndex updateGVIndex:groupValue];
@@ -168,7 +168,7 @@ static AINet *_instance;
     }
     
     //11. 为增加特征content_ps的有序性：对groupModels进行排序。
-    NSArray *sortGroupModels = [ThinkingUtils sortInputGroupValueModels:groupModels levelNum:levelNum];
+    NSArray *sortGroupModels = [ThinkingUtils sortInputGroupValueModels:groupModels];
     return sortGroupModels;
 }
 

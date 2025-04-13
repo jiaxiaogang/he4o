@@ -18,6 +18,9 @@
 //absT.pId
 @property (strong, nonatomic) AIKVPointer *absT;
 
+//一直存absAtConRect不变。
+@property (assign, nonatomic) CGRect absAtConRect;
+
 //conPort.rect（表示absT在assT/protoT中的位置）
 //输入时=absAtConRect
 //缩放对齐后=(x/pinJunScale, y/pinJunScale, w/pinJunScale, h/pinJunScale)

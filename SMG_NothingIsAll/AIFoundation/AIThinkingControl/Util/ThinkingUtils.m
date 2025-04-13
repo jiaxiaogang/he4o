@@ -184,19 +184,15 @@
 /**
  *  MARK:--------------------按绝对xy坐标对InputGroupValueModels进行排序--------------------
  */
-+(NSArray*) sortInputGroupValueModels:(NSArray*)models levelNum:(NSInteger)levelNum {
-    //1. 数据检查：当levelNum未知时，传-1，此时默认为最大层级。
-    if (levelNum < 0) levelNum = VisionMaxLevel;
++(NSArray*) sortInputGroupValueModels:(NSArray*)models {
     
     //2. 分别按x/y排序，然后转成排好的index数组返回。
     return [SMGUtils sortSmall2Big:models compareBlock1:^double(InputGroupValueModel *obj) {
-        NSInteger radio = powf(3, levelNum - obj.level);//差几层，就乘3的几次方。
-        return obj.y * radio;//把x,y都换算到maxLevel层，因为同层的位置才是等价的。
+        return obj.rect.origin.y;//把x,y都换算到maxLevel层，因为同层的位置才是等价的。
     } compareBlock2:^double(InputGroupValueModel *obj) {
-        NSInteger radio = powf(3, levelNum - obj.level);//差几层，就乘3的几次方。
-        return obj.x * radio;//把x,y都换算到maxLevel层，因为同层的位置才是等价的。
+        return obj.rect.origin.x;//把x,y都换算到maxLevel层，因为同层的位置才是等价的。
     } compareBlock3:^double(InputGroupValueModel *obj) {
-        return obj.level;
+        return -obj.rect.size.width;
     }];
 }
 
@@ -218,24 +214,19 @@
     
     //2. 取出lastProto;
     NSInteger lastProtoIndex = lastAssModel.matchOfProtoIndex;
-    CGPoint protoFrom = CGPointMake(NUMTOOK(ARR_INDEX(protoFeature.xs, lastProtoIndex)).integerValue, NUMTOOK(ARR_INDEX(protoFeature.ys, lastProtoIndex)).integerValue);
-    CGPoint protoTo = CGPointMake(NUMTOOK(ARR_INDEX(protoFeature.xs, protoIndex)).integerValue, NUMTOOK(ARR_INDEX(protoFeature.ys, protoIndex)).integerValue);
-    NSInteger protoFromLevel = NUMTOOK(ARR_INDEX(protoFeature.levels, lastProtoIndex)).integerValue;
-    NSInteger protoToLevel = NUMTOOK(ARR_INDEX(protoFeature.levels, protoIndex)).integerValue;
+    CGPoint protoFrom = NUMTOOK(ARR_INDEX(protoFeature.rects, lastProtoIndex)).CGRectValue.origin;
+    CGPoint protoTo = NUMTOOK(ARR_INDEX(protoFeature.rects, protoIndex)).CGRectValue.origin;
     
     //3. 计算checkRefPort对于当前assGVModels来说,是否符合位置;
-    return [self checkAssToMatchDegree:protoFrom protoFromLevel:protoFromLevel protoTo:protoTo protoToLevel:protoToLevel assFrom:assFrom assFromLevel:lastAssModel.refPort.level assTo:CGPointMake(assToX, assToY) assToLevel:assToLevel debugMode:debugMode];
+    return [self checkAssToMatchDegree:protoFrom protoTo:protoTo assFrom:assFrom assFromLevel:lastAssModel.refPort.level assTo:CGPointMake(assToX, assToY) assToLevel:assToLevel debugMode:debugMode];
 }
 
-+(CGFloat) checkAssToMatchDegree:(CGPoint)protoFrom protoFromLevel:(NSInteger)protoFromLevel
-                         protoTo:(CGPoint)protoTo protoToLevel:(NSInteger)protoToLevel
++(CGFloat) checkAssToMatchDegree:(CGPoint)protoFrom protoTo:(CGPoint)protoTo
                          assFrom:(CGPoint)assFrom assFromLevel:(NSInteger)assFromLevel
                            assTo:(CGPoint)assTo assToLevel:(NSInteger)assToLevel debugMode:(BOOL)debugMode {
     //1. 求出proto在最大粒度层的xy差值。
-    NSInteger protoFromRadio = powf(3, VisionMaxLevel - protoFromLevel);
-    NSInteger protoToRadio = powf(3, VisionMaxLevel - protoToLevel);
-    CGFloat deltaX = protoTo.x * protoToRadio - protoFrom.x * protoFromRadio;
-    CGFloat deltaY = protoTo.y * protoToRadio - protoFrom.y * protoFromRadio;
+    CGFloat deltaX = protoTo.x - protoFrom.x;
+    CGFloat deltaY = protoTo.y - protoFrom.y;
     
     //2. 根据assFrom的坐标，和上面求出的差值，推测assTo应该出现的位置范围。
     NSInteger assFromRadio = powf(3, VisionMaxLevel - assFromLevel);

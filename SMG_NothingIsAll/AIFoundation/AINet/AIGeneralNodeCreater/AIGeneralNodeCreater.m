@@ -50,22 +50,13 @@
     NSArray *content_ps = [SMGUtils convertArr:groupModels convertBlock:^id(InputGroupValueModel *obj) {
         return obj.groupValue_p;
     }];
-    NSArray *levels = [SMGUtils convertArr:groupModels convertBlock:^id(InputGroupValueModel *obj) {
-        return @(obj.level);
-    }];
-    NSArray *xs = [SMGUtils convertArr:groupModels convertBlock:^id(InputGroupValueModel *obj) {
-        return @(obj.x);
-    }];
-    NSArray *ys = [SMGUtils convertArr:groupModels convertBlock:^id(InputGroupValueModel *obj) {
-        return @(obj.y);
-    }];
     NSArray *rects = [SMGUtils convertArr:groupModels convertBlock:^id(InputGroupValueModel *obj) {
         return @(obj.rect);
     }];
     
     //3. 生成node
     //注意：即使content_ps一模一样，level,x,y不一样时，一样不可以复用（所以要把level,x,y生成一个字符串也用于生成header）。
-    NSString *header = [AINetUtils getFeatureNodeHeader:content_ps levels:levels xs:xs ys:ys];
+    NSString *header = [AINetUtils getFeatureNodeHeader:content_ps rects:rects];
     
     //4. 构建节点
     AIFeatureNode *result = [AIGeneralNodeCreater createNode:content_ps conNodes:conNodes at:at ds:ds isOut:isOut newBlock:^id{
@@ -73,9 +64,6 @@
         newNode.pointer = [SMGUtils createPointerForFeature:at dataSource:ds isOut:isOut];
         
         //5. 单独存level,x,y值。
-        newNode.levels = levels;
-        newNode.xs = xs;
-        newNode.ys = ys;
         newNode.rects = rects;
         
         //6. 是否交层,特征无法用长度来判断（类比时为交层，别的识别和proto构建全是似层）。

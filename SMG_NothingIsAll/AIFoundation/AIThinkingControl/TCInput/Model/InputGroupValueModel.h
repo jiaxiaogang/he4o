@@ -13,11 +13,8 @@
  */
 @interface InputGroupValueModel : NSObject
 
-+(id) new:(NSArray*)subDots groupValue:(AIKVPointer*)groupValue_p level:(NSInteger)level x:(NSInteger)x y:(NSInteger)y rect:(CGRect)rect;
++(id) new:(NSArray*)subDots groupValue:(AIKVPointer*)groupValue_p rect:(CGRect)rect;
 
-@property (assign, nonatomic) NSInteger level;//粒度级别（越大越细，越小越粗）
-@property (assign, nonatomic) NSInteger x;//粒度级别（越大越细，越小越粗）
-@property (assign, nonatomic) NSInteger y;//粒度级别（越大越细，越小越粗）
 @property (assign, nonatomic) CGRect rect;//转为最小粒度层的范围
 @property (strong, nonatomic) NSArray *subDots;//子点稀疏码 (结果为：MapModel v1=单码指针 v2=自身x位置(取值范围0-2) v3=自身y位置(取值范围0-2)>
 

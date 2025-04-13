@@ -13,6 +13,7 @@
 +(AIFeatureStep2Item_Rect*) new:(AIKVPointer*)absT absAtConRect:(CGRect)absAtConRect {
     AIFeatureStep2Item_Rect *result = [[AIFeatureStep2Item_Rect alloc] init];
     result.absT = absT;
+    result.absAtConRect = absAtConRect;
     result.rect = absAtConRect;
     return result;
 }

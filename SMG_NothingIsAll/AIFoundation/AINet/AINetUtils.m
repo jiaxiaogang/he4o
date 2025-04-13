@@ -247,7 +247,7 @@
                 NSDictionary *findParams = nil;
                 if (PitIsFeature(biger_p)) {
                     AIFeatureNode *feature = [SMGUtils searchNode:biger_p];
-                    findParams = @{@"l":ARR_INDEX(feature.levels, i), @"x":ARR_INDEX(feature.xs, i), @"y":ARR_INDEX(feature.ys, i), @"r":ARR_INDEX(feature.rects, i)};
+                    findParams = @{@"r":ARR_INDEX(feature.rects, i)};
                 }
                 [AINetUtils insertPointer_Hd:biger_p toPorts:item.refPorts findHeader:header difStrong:difStrong findParams:findParams];
                 [SMGUtils insertNode:item];
@@ -1166,8 +1166,8 @@
 +(NSString*) getGroupValueNodeHeader:(NSArray*)content_ps xs:(NSArray*)xs ys:(NSArray*)ys {
     return [NSString md5:STRFORMAT(@"%@%@%@",[SMGUtils convertPointers2String:content_ps],CLEANSTR(xs),CLEANSTR(ys))];
 }
-+(NSString*) getFeatureNodeHeader:(NSArray*)content_ps levels:(NSArray*)levels xs:(NSArray*)xs ys:(NSArray*)ys {
-    return [NSString md5:STRFORMAT(@"%@%@%@%@",[SMGUtils convertPointers2String:content_ps],CLEANSTR(levels),CLEANSTR(xs),CLEANSTR(ys))];
++(NSString*) getFeatureNodeHeader:(NSArray*)content_ps rects:(NSArray*)rects {
+    return [NSString md5:STRFORMAT(@"%@%@%@%@",[SMGUtils convertPointers2String:content_ps],CLEANSTR(rects))];
 }
 
 /**
@@ -1186,24 +1186,16 @@
         //11. 如果是组码。
         if (PitIsGroupValue(content_p)) {
             //12. 求出当前层与最细粒度层的比例。
-            NSInteger level = NUMTOOK(ARR_INDEX(tNode.levels, index)).integerValue;
-            NSInteger radio = powf(3, VisionMaxLevel - level);
-            
-            //13. 求出当前层转到最细粒度层时的xy坐标 和 size。
-            NSInteger x = NUMTOOK(ARR_INDEX(tNode.xs, index)).integerValue * radio;
-            NSInteger y = NUMTOOK(ARR_INDEX(tNode.ys, index)).integerValue * radio;
-            int size = powf(3, level);
-            
-            //14. itemRect累加到result的范围中。
-            CGRect itemRect = CGRectMake(x, y, size, size);
-            resultRect = CGRectUnion(resultRect, itemRect);
-        }
-        //21. 如果是特征。
-        else if (PitIsFeature(content_p)) {
-            //22. itemRect累加到result的范围中。
             CGRect itemRect = NUMTOOK(ARR_INDEX(tNode.rects, index)).CGRectValue;
             resultRect = CGRectUnion(resultRect, itemRect);
         }
+        //2025.04.13: 特征没有嵌套关系，所以元素必然是GV。
+        ////21. 如果是特征。
+        //else if (PitIsFeature(content_p)) {
+        //    //22. itemRect累加到result的范围中。
+        //    CGRect itemRect = NUMTOOK(ARR_INDEX(tNode.rects, index)).CGRectValue;
+        //    resultRect = CGRectUnion(resultRect, itemRect);
+        //}
     }
     
     //31. 将求得的范围并集返回。

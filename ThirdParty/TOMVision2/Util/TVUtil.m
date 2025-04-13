@@ -286,8 +286,9 @@
     AIFeatureNode *tNode = [SMGUtils searchNode:node_p];
     
     //2. 找出最大level，避免打印的比原图像素过多或过少。
-    NSInteger maxLevel = [SMGUtils filterBestScore:tNode.levels scoreBlock:^CGFloat(NSNumber *item) {
-        return item.integerValue;
+    NSInteger maxLevel = [SMGUtils filterBestScore:tNode.rects scoreBlock:^CGFloat(NSNumber *item) {
+        NSInteger groupLevel = VisionMaxLevel - log(item.CGRectValue.size.width) / log(3);
+        return groupLevel;
     }] + 1;//groupLevel+1才是真正的level
     
     //3. 需要打印的点字典。
@@ -312,9 +313,8 @@
     NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
     for (NSInteger i = 0; i < tNode.count; i++) {
         //1. 取group的level,x,y
-        NSInteger groupLevel = NUMTOOK(ARR_INDEX(tNode.levels, i)).integerValue;
-        NSInteger groupX = NUMTOOK(ARR_INDEX(tNode.xs, i)).integerValue;
-        NSInteger groupY = NUMTOOK(ARR_INDEX(tNode.ys, i)).integerValue;
+        CGRect groupRect = NUMTOOK(ARR_INDEX(tNode.rects, i)).CGRectValue;
+        NSInteger groupLevel = VisionMaxLevel - log(groupRect.size.width) / log(3);
         NSString *obj = nil;
         if (groupLevel == 0) {
             obj = @"  ";
@@ -330,8 +330,9 @@
             obj = @"M ";
         }
         NSInteger groupWidth = powf(3, maxLevel - groupLevel);
-        NSInteger startGroupX = groupX * groupWidth;
-        NSInteger startGroupY = groupY * groupWidth;
+        NSInteger maxLevel2GVMaxLevelRadio = powf(3, VisionMaxLevel - maxLevel);
+        NSInteger startGroupX = groupRect.origin.x / maxLevel2GVMaxLevelRadio;
+        NSInteger startGroupY = groupRect.origin.y / maxLevel2GVMaxLevelRadio;
         
         //2. 九宫有几格需要打印，需要的打印。
         NSArray *subDots = [self getGroupValueNeedLog:ARR_INDEX(tNode.content_ps, i)];

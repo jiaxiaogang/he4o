@@ -165,7 +165,8 @@
     //2. 循环分别识别：特征里的组码。
     for (NSInteger i = 0; i < protoFeature.count; i++) {
         AIKVPointer *protoGroupValue_p = ARR_INDEX(protoFeature.content_ps, i);
-        NSInteger protoLevel = NUMTOOK(ARR_INDEX(protoFeature.levels, i)).integerValue;
+        CGRect protoRect = NUMTOOK(ARR_INDEX(protoFeature.rects, i)).CGRectValue;
+        NSInteger protoLevel = log(protoRect.size.width) / log(3);
         
         //4. 组码识别。
         NSArray *gMatchModels = [AIRecognitionCache getCache:protoGroupValue_p cacheBlock:^id{

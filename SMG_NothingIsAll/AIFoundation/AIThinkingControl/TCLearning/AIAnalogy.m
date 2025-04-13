@@ -335,23 +335,20 @@
         if (!analogyGVResult) continue;
         featureMatchValue *= NUMTOOK(analogyGVResult.v2).floatValue;
         
-        //16. 类比后,以ass为主,存level,x,y;
-        NSInteger assLevel = NUMTOOK(ARR_INDEX(assFeature.levels, assIndex)).integerValue;
-        NSInteger assX = NUMTOOK(ARR_INDEX(assFeature.xs, assIndex)).integerValue;
-        NSInteger assY = NUMTOOK(ARR_INDEX(assFeature.ys, assIndex)).integerValue;
+        //16. 类比后,以ass为主,存rect;
         CGRect assRect = NUMTOOK(ARR_INDEX(assFeature.rects, assIndex)).CGRectValue;
-        [absGVModels addObject:[InputGroupValueModel new:nil groupValue:analogyGVResult.v1 level:assLevel x:assX y:assY rect:assRect]];
+        [absGVModels addObject:[InputGroupValueModel new:nil groupValue:analogyGVResult.v1 rect:assRect]];
     }
     
     //21. 为增加特征content_ps的有序性：对groupModels进行排序（特征的content是有序的，所以要先排下序）。
-    NSArray *sortGroupModels = [ThinkingUtils sortInputGroupValueModels:absGVModels levelNum:VisionMaxLevel];
+    NSArray *sortGroupModels = [ThinkingUtils sortInputGroupValueModels:absGVModels];
     
     //22. 生成assAbsIndexDic和protoAbsIndexDic（排序后再根据新顺序来生成映射）。
     for (NSInteger i = 0; i < sortGroupModels.count; i++) {
         InputGroupValueModel *model = ARR_INDEX(sortGroupModels, i);
         
         //23. 本来abs.sames中存的就是ass的level,x,y，所以可以用来取assIndex。
-        NSInteger assIndex = [assFeature indexOfLevel:model.level x:model.x y:model.y];
+        NSInteger assIndex = [assFeature indexOfRect:model.rect];
         NSInteger protoIndex = NUMTOOK([indexDic objectForKey:@(assIndex)]).integerValue;
         
         //24. 把ass和proto分别与 abs的映射记下来。
@@ -397,13 +394,17 @@
     //将rectItems格式转为@[InputGroupValueModel]格式。
     //TODOTOMORROW20250412: 此处没有indexDic的话，怎么用absT的元素，定位到conT的assIndex位置呢？
     //明天分析下。。。
+//    for (AIFeatureStep2Item_Rect *item in sameItems) {
+//        item.absAtConRect;
+//    }
     
-    //16. 类比后,以ass为主,存level,x,y;
-    NSInteger assLevel = NUMTOOK(ARR_INDEX(assFeature.levels, assIndex)).integerValue;
-    NSInteger assX = NUMTOOK(ARR_INDEX(assFeature.xs, assIndex)).integerValue;
-    NSInteger assY = NUMTOOK(ARR_INDEX(assFeature.ys, assIndex)).integerValue;
-    CGRect assRect = NUMTOOK(ARR_INDEX(assFeature.rects, assIndex)).CGRectValue;
-    [absGVModels addObject:[InputGroupValueModel new:nil groupValue:analogyGVResult.v1 level:assLevel x:assX y:assY rect:assRect]];
+    
+//    //16. 类比后,以ass为主,存level,x,y;
+//    NSInteger assLevel = NUMTOOK(ARR_INDEX(assFeature.levels, assIndex)).integerValue;
+//    NSInteger assX = NUMTOOK(ARR_INDEX(assFeature.xs, assIndex)).integerValue;
+//    NSInteger assY = NUMTOOK(ARR_INDEX(assFeature.ys, assIndex)).integerValue;
+//    CGRect assRect = NUMTOOK(ARR_INDEX(assFeature.rects, assIndex)).CGRectValue;
+//    [absGVModels addObject:[InputGroupValueModel new:nil groupValue:analogyGVResult.v1 level:assLevel x:assX y:assY rect:assRect]];
     
     
     //保留下来的的生成为absT。

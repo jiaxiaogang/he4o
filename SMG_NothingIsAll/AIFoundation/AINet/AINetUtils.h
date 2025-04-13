@@ -333,7 +333,7 @@
  *  MARK:--------------------各类型节点的header生成规则--------------------
  */
 +(NSString*) getGroupValueNodeHeader:(NSArray*)content_ps xs:(NSArray*)xs ys:(NSArray*)ys;
-+(NSString*) getFeatureNodeHeader:(NSArray*)content_ps levels:(NSArray*)levels xs:(NSArray*)xs ys:(NSArray*)ys;
++(NSString*) getFeatureNodeHeader:(NSArray*)content_ps rects:(NSArray*)rects;
 
 /**
  *  MARK:--------------------把特征的一部分content转成rect（参考34133-TODO1）--------------------

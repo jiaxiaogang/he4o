@@ -137,7 +137,7 @@
             if (!assT) continue;
             
             //4. 收集总数据部分：每个assKey的识别assT结果，都要从其assGVItems的每一帧item结果中收集indexDic映射（根据refPort的level,x,y找其在assT中对应哪个assIndex）。
-            NSInteger assIndex = [assT indexOfLevel:item.refPort.level x:item.refPort.x y:item.refPort.y];
+            NSInteger assIndex = [assT indexOfRect:item.refPort.rect];
             if (assIndex == -1) continue;
             [indexDic setObject:@(item.matchOfProtoIndex) forKey:@(assIndex)];
             

@@ -13,13 +13,10 @@
  */
 @interface AIFeatureNode : AINodeBase
 
-@property (strong, nonatomic) NSArray *levels;
-@property (strong, nonatomic) NSArray *xs;
-@property (strong, nonatomic) NSArray *ys;
 @property (strong, nonatomic) NSArray *rects;
 
-//根据level,x,y找下标，找不到时返-1。
--(NSInteger) indexOfLevel:(NSInteger)level x:(NSInteger)x y:(NSInteger)y;
+//根据rect找下标，找不到时返-1。
+-(NSInteger) indexOfRect:(CGRect)rect;
 
 //MARK:===============================================================
 //MARK:                     < 特征位置符合度 >
