@@ -396,6 +396,8 @@
     
     //21. 取出每个itemAbsT中的gv，转换成newAbsT的元素：@[InputGroupValueModel]格式（参考3413a-示图1）。
     NSMutableArray *absGVModels = [[NSMutableArray alloc] init];
+    CGFloat absAssTSumMatchValue = 0, absProtoTSumMatchValue = 0;
+    CGFloat absAssTSumMatchDegree = 0, absProtoTSumMatchDegree = 0;
     for (AIFeatureStep2Item_Rect *item in sameItems) {
         
         //22. 根据：每个abs在具象整体特征中的rect - 新的整体特征的minXY = 得出左间距leftSpace 和 顶间距topSpace。
@@ -419,6 +421,14 @@
                 [absGVModels addObject:[InputGroupValueModel new:nil groupValue:gv_p rect:gvRect]];
             }
         }
+        
+        //26. 收集抽具象的sum匹配度。
+        absAssTSumMatchValue += [itemAbsT getConMatchValue:assT.p];
+        absProtoTSumMatchValue += [itemAbsT getConMatchValue:protoT.p];
+        
+        //27. 收集抽具象的sum符合度。
+        absAssTSumMatchDegree += [itemAbsT getConMatchDegree:assT.p];
+        absProtoTSumMatchDegree += [itemAbsT getConMatchDegree:protoT.p];
     }
     
     //33. 保留下来的生成为absT。
@@ -429,10 +439,14 @@
     [absT updateLogDescDic:assT.logDesc];
     
     //42. 记录匹配度：根据每个匹配itemAbsT，来计算平均匹配度。
-    [protoT updateMatchValue:absT matchValue:1];
-    [assT updateMatchValue:absT matchValue:1];
+    [protoT updateMatchValue:absT matchValue:sameItems.count == 0 ? 0 : absProtoTSumMatchValue / sameItems.count];
+    [assT updateMatchValue:absT matchValue:sameItems.count == 0 ? 0 : absAssTSumMatchValue / sameItems.count];
     
-    //43. 记录整体absT.conPort到protoT和assT的rect。
+    //43. 记录符合度：根据每个符合itemAbsT，来计算平均符合度。
+    [protoT updateMatchDegree:absT matchDegree:sameItems.count == 0 ? 0 : absProtoTSumMatchDegree / sameItems.count];
+    [assT updateMatchDegree:absT matchDegree:sameItems.count == 0 ? 0 : absAssTSumMatchDegree / sameItems.count];
+    
+    //44. 记录整体absT.conPort到protoT和assT的rect。
     [AINetUtils updateConPortRect:absT conT:protoT.p rect:absAtProtoRect];
     [AINetUtils updateConPortRect:absT conT:assT.p rect:absAtAssRect];
     return nil;
