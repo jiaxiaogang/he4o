@@ -286,7 +286,7 @@
     AIFeatureNode *tNode = [SMGUtils searchNode:node_p];
     
     //2. 找出最大level，避免打印的比原图像素过多或过少。
-    NSInteger maxLevel = [SMGUtils filterBestScore:tNode.rects scoreBlock:^CGFloat(NSNumber *item) {
+    NSInteger maxLevel = [SMGUtils filterBestScore:tNode.rects scoreBlock:^CGFloat(NSValue *item) {
         NSInteger groupLevel = VisionMaxLevel - log(item.CGRectValue.size.width) / log(3);
         return groupLevel;
     }] + 1;//groupLevel+1才是真正的level
@@ -312,8 +312,8 @@
 +(NSMutableDictionary*) getFeatureNeedLog:(AIFeatureNode*)tNode maxLevel:(NSInteger)maxLevel {
     NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
     for (NSInteger i = 0; i < tNode.count; i++) {
-        //1. 取group的level,x,y
-        CGRect groupRect = NUMTOOK(ARR_INDEX(tNode.rects, i)).CGRectValue;
+        //1. 取group的rect
+        CGRect groupRect = VALTOOK(ARR_INDEX(tNode.rects, i)).CGRectValue;
         NSInteger groupLevel = VisionMaxLevel - log(groupRect.size.width) / log(3);
         NSString *obj = nil;
         if (groupLevel == 0) {

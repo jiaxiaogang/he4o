@@ -45,6 +45,7 @@ static NSString *lastTCName = @""; //记录当前在打日志的TC模块名字;
 +(BOOL) numIsOk:(NSNumber*)n;
 +(NSNumber*) numToOk:(NSNumber*)n;
 +(NSNumber*) numToOk:(NSNumber*)n defaultValue:(double)defaultValue;
++(NSValue*) valToOk:(NSValue*)n;
 
 //dictionary
 +(BOOL) dicIsOk:(NSDictionary*)d;

@@ -165,8 +165,8 @@
     //2. 循环分别识别：特征里的组码。
     for (NSInteger i = 0; i < protoFeature.count; i++) {
         AIKVPointer *protoGroupValue_p = ARR_INDEX(protoFeature.content_ps, i);
-        CGRect protoRect = NUMTOOK(ARR_INDEX(protoFeature.rects, i)).CGRectValue;
-        NSInteger protoLevel = log(protoRect.size.width) / log(3);
+        CGRect protoRect = VALTOOK(ARR_INDEX(protoFeature.rects, i)).CGRectValue;
+        NSInteger protoLevel = VisionMaxLevel - log(protoRect.size.width) / log(3);
         
         //4. 组码识别。
         NSArray *gMatchModels = [AIRecognitionCache getCache:protoGroupValue_p cacheBlock:^id{
@@ -181,7 +181,8 @@
             for (AIPort *refPort in refPorts) {
                 
                 //12. 根据level分别记录不同deltaLevel结果（把deltaLevel做为key的一部分，记录到识别结果字典里）。
-                NSString *assKey = STRFORMAT(@"%ld_%ld",protoLevel - refPort.level,refPort.target_p.pointerId);
+                NSInteger refLevel = VisionMaxLevel - log(refPort.rect.size.width) / log(3);
+                NSString *assKey = STRFORMAT(@"%ld_%ld",protoLevel - refLevel,refPort.target_p.pointerId);
                 
                 //13. 取出已经收集到的assGVModels,判断下一个refPort收集进去的话,是否符合位置;
                 NSArray *assGVItems = [gvBestModel getAssGVModelsForKey:assKey];

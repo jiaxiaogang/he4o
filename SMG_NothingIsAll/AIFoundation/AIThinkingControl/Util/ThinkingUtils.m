@@ -207,31 +207,27 @@
     //1. 取出上个ass匹配帧;
     AIFeatureNextGVRankItem *lastAssModel = ARR_INDEX_REVERSE(assGVModels, 0);
     if (!lastAssModel) return 1;
-    CGPoint assFrom = CGPointMake(lastAssModel.refPort.x, lastAssModel.refPort.y);
-    NSInteger assToLevel = checkRefPort.level;
-    NSInteger assToX = checkRefPort.x;
-    NSInteger assToY = checkRefPort.y;
+    CGRect assFrom = lastAssModel.refPort.rect;
+    CGRect assTo = checkRefPort.rect;
     
     //2. 取出lastProto;
     NSInteger lastProtoIndex = lastAssModel.matchOfProtoIndex;
-    CGPoint protoFrom = NUMTOOK(ARR_INDEX(protoFeature.rects, lastProtoIndex)).CGRectValue.origin;
-    CGPoint protoTo = NUMTOOK(ARR_INDEX(protoFeature.rects, protoIndex)).CGRectValue.origin;
+    CGRect protoFrom = VALTOOK(ARR_INDEX(protoFeature.rects, lastProtoIndex)).CGRectValue;
+    CGRect protoTo = VALTOOK(ARR_INDEX(protoFeature.rects, protoIndex)).CGRectValue;
     
     //3. 计算checkRefPort对于当前assGVModels来说,是否符合位置;
-    return [self checkAssToMatchDegree:protoFrom protoTo:protoTo assFrom:assFrom assFromLevel:lastAssModel.refPort.level assTo:CGPointMake(assToX, assToY) assToLevel:assToLevel debugMode:debugMode];
+    return [self checkAssToMatchDegree:protoFrom.origin protoTo:protoTo.origin assFrom:assFrom.origin assTo:assTo.origin debugMode:debugMode];
 }
 
 +(CGFloat) checkAssToMatchDegree:(CGPoint)protoFrom protoTo:(CGPoint)protoTo
-                         assFrom:(CGPoint)assFrom assFromLevel:(NSInteger)assFromLevel
-                           assTo:(CGPoint)assTo assToLevel:(NSInteger)assToLevel debugMode:(BOOL)debugMode {
+                         assFrom:(CGPoint)assFrom assTo:(CGPoint)assTo debugMode:(BOOL)debugMode {
     //1. 求出proto在最大粒度层的xy差值。
     CGFloat deltaX = protoTo.x - protoFrom.x;
     CGFloat deltaY = protoTo.y - protoFrom.y;
     
     //2. 根据assFrom的坐标，和上面求出的差值，推测assTo应该出现的位置范围。
-    NSInteger assFromRadio = powf(3, VisionMaxLevel - assFromLevel);
-    CGFloat assFromX = assFrom.x * assFromRadio;
-    CGFloat assFromY = assFrom.y * assFromRadio;
+    CGFloat assFromX = assFrom.x;
+    CGFloat assFromY = assFrom.y;
     
     //2025.03.22: BUG：为避免：像x81,y162,w54,h-54这种wh有为负的情况，当h为负时，转为绝对值，然后把y减掉这个宽高（w为负亦然）。
     CGFloat w = deltaX * 2, h = deltaY * 2;
@@ -248,19 +244,13 @@
     //> 所以真实的assTo出现在这个范围矩形的：中心准确=100%，边缘为0%）。
     CGRect targetRect = CGRectMake(assFromX, assFromY, w, h);
     
-    //4. 真实assTo的位置。
-    NSInteger assToRadio = powf(3, VisionMaxLevel - assToLevel);
-    CGFloat assToX = assTo.x * assToRadio;
-    CGFloat assToY = assTo.y * assToRadio;
-    CGPoint assToPoint = CGPointMake(assToX, assToY);
-    
     //5. 判断下是否在合理范围内，并算出符合度。
     //6. 计算targetRect的中心点
     CGPoint centerPoint = CGPointMake(CGRectGetMidX(targetRect), CGRectGetMidY(targetRect));
     
     //7. 计算assToPoint到中心点的距离
-    CGFloat distanceX = fabs(assToPoint.x - centerPoint.x);
-    CGFloat distanceY = fabs(assToPoint.y - centerPoint.y);
+    CGFloat distanceX = fabs(assTo.x - centerPoint.x);
+    CGFloat distanceY = fabs(assTo.y - centerPoint.y);
     
     //8. 计算从中心到边缘的最大距离
     CGFloat maxDistanceX = targetRect.size.width / 2.0f;
@@ -293,8 +283,8 @@
     //2. 取出protoFromToRect & assFromToRect。
     CGRect assFromRect = lastAssModel.refPort.rect;
     CGRect assToRect = checkRefPort.rect;
-    CGRect protoFromRect = NUMTOOK(ARR_INDEX(protoFeature.rects, lastProtoIndex)).CGRectValue;
-    CGRect protoToRect = NUMTOOK(ARR_INDEX(protoFeature.rects, protoIndex)).CGRectValue;
+    CGRect protoFromRect = VALTOOK(ARR_INDEX(protoFeature.rects, lastProtoIndex)).CGRectValue;
+    CGRect protoToRect = VALTOOK(ARR_INDEX(protoFeature.rects, protoIndex)).CGRectValue;
     
     //10. 计算checkRefPort对于当前assGVModels来说,是否符合位置;
     //11. 求出proto在最小粒度层的xy差值。

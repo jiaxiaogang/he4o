@@ -28,7 +28,7 @@
     //2. 我们知道的是：target与i有映射，但不知道i与target的哪个元素有映射。
     //3. 应该根据refPort中的levelxy到target里去找对应下标，这样才能找着映射。
     for (NSInteger i = 0; i < self.count; i++) {
-        if (CGRectEqualToRect(NUMTOOK(ARR_INDEX(self.rects, i)).CGRectValue, rect)) {
+        if (CGRectEqualToRect(VALTOOK(ARR_INDEX(self.rects, i)).CGRectValue, rect)) {
             return i;
         }
     }

@@ -334,7 +334,7 @@
         featureMatchValue *= NUMTOOK(analogyGVResult.v2).floatValue;
         
         //16. 类比后,以ass为主,存rect;
-        CGRect assRect = NUMTOOK(ARR_INDEX(assFeature.rects, assIndex)).CGRectValue;
+        CGRect assRect = VALTOOK(ARR_INDEX(assFeature.rects, assIndex)).CGRectValue;
         [absGVModels addObject:[InputGroupValueModel new:nil groupValue:analogyGVResult.v1 rect:assRect]];
     }
     
@@ -411,7 +411,7 @@
             AIKVPointer *gv_p = ARR_INDEX(itemAbsT.content_ps, i);
             
             //23. 当前gvRect放到整体newAbsT中后，需要计上左和顶间距。
-            CGRect gvRect = NUMTOOK(ARR_INDEX(itemAbsT.rects, i)).CGRectValue;
+            CGRect gvRect = VALTOOK(ARR_INDEX(itemAbsT.rects, i)).CGRectValue;
             gvRect.origin.x += itemLeftSpace;
             gvRect.origin.y += itemTopSpace;
             

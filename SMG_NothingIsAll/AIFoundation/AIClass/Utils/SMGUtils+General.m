@@ -199,6 +199,9 @@
 +(NSNumber*) numToOk:(NSNumber*)n defaultValue:(double)defaultValue{
     return (n && [n isKindOfClass:[NSNumber class]]) ? n : @(defaultValue);
 }
++(NSValue*) valToOk:(NSValue*)n {
+    return (n && [n isKindOfClass:[NSValue class]]) ? n : [NSValue new];
+}
 
 //dictionary
 +(BOOL) dicIsOk:(NSDictionary*)d{

@@ -1167,7 +1167,7 @@
     return [NSString md5:STRFORMAT(@"%@%@%@",[SMGUtils convertPointers2String:content_ps],CLEANSTR(xs),CLEANSTR(ys))];
 }
 +(NSString*) getFeatureNodeHeader:(NSArray*)content_ps rects:(NSArray*)rects {
-    return [NSString md5:STRFORMAT(@"%@%@%@%@",[SMGUtils convertPointers2String:content_ps],CLEANSTR(rects))];
+    return [NSString md5:STRFORMAT(@"%@%@",[SMGUtils convertPointers2String:content_ps],CLEANSTR(rects))];
 }
 
 /**
@@ -1186,14 +1186,14 @@
         //11. 如果是组码。
         if (PitIsGroupValue(content_p)) {
             //12. 求出当前层与最细粒度层的比例。
-            CGRect itemRect = NUMTOOK(ARR_INDEX(tNode.rects, index)).CGRectValue;
+            CGRect itemRect = VALTOOK(ARR_INDEX(tNode.rects, index)).CGRectValue;
             resultRect = CGRectUnion(resultRect, itemRect);
         }
         //2025.04.13: 特征没有嵌套关系，所以元素必然是GV。
         ////21. 如果是特征。
         //else if (PitIsFeature(content_p)) {
         //    //22. itemRect累加到result的范围中。
-        //    CGRect itemRect = NUMTOOK(ARR_INDEX(tNode.rects, index)).CGRectValue;
+        //    CGRect itemRect = VALTOOK(ARR_INDEX(tNode.rects, index)).CGRectValue;
         //    resultRect = CGRectUnion(resultRect, itemRect);
         //}
     }

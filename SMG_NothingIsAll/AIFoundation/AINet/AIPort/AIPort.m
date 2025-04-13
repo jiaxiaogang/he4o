@@ -53,20 +53,8 @@
     self.strong.value ++;
 }
 
--(NSInteger) level {
-    return NUMTOOK([self.params objectForKey:@"l"]).integerValue;
-}
-
--(NSInteger) x {
-    return NUMTOOK([self.params objectForKey:@"x"]).integerValue;
-}
-
--(NSInteger) y {
-    return NUMTOOK([self.params objectForKey:@"y"]).integerValue;
-}
-
 -(CGRect) rect {
-    return NUMTOOK([self.params objectForKey:@"r"]).CGRectValue;
+    return VALTOOK([self.params objectForKey:@"r"]).CGRectValue;
 }
 
 -(BOOL) isEqual:(AIPort*)object{
