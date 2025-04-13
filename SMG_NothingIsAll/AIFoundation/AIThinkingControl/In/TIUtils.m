@@ -208,6 +208,8 @@
         if (Log4RecogDesc) NSLog(@"%@\t匹配条数 %ld/%ld \t特征识别综合匹配度计算:T%ld \t匹配度:%.2f / %ld \t= %.2f 总强度：%ld 均强度：%.1f",assKey,model.matchCount,protoFeature.count,model.match_p.pointerId,model.sumMatchValue,model.matchCount,model.matchValue,model.sumRefStrong,model.strongValue);
     }
     
+    //TODOTOMORROW20250413: 查下这里，是不是把结果分成两组，一组为似层（用于冷启动），一组为交层（用于过度到step2）。
+    
     //41. 无效过滤器1、matchValue=0排除掉。
     NSArray *resultModels = [SMGUtils filterArr:resultDic.allValues checkValid:^BOOL(AIMatchModel *item) {
         return item.matchValue > 0;
@@ -260,7 +262,7 @@
         [AINetUtils updateConPortRect:assFeature conT:protoFeature_p rect:rect];
         
         //52. debug
-        if (Log4RecogDesc || true) NSLog(@"交层特征识别结果:T%ld%@\t 匹配条数:%ld/(proto%ld ass%ld)\t匹配度:%.2f\t强度:%.1f\t符合度:%.1f",
+        if (Log4RecogDesc || true) NSLog(@"似层特征识别结果:T%ld%@\t 匹配条数:%ld/(proto%ld ass%ld)\t匹配度:%.2f\t强度:%.1f\t符合度:%.1f",
                                          matchModel.match_p.pointerId,CLEANSTR([assFeature getLogDesc:true]),matchModel.matchCount,protoFeature.count,assFeature.count,matchModel.matchValue,matchModel.strongValue,matchModel.matchDegree);
     }
     return resultModels;

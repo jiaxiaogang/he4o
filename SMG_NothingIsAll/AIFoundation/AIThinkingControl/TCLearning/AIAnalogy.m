@@ -246,6 +246,8 @@
 
 /**
  *  MARK:--------------------特征类比--------------------
+ *  @desc 冷启无共同交层时，调用step1。
+ *  @desc 然后有共同交层后，调用step2。
  *  @version
  *      2025.03.21: 使用mIsC正序双循环来实现特征类比 (参考34062-方案1);
  *      2025.03.21: 改用indexDic映射来实现特征类比 (参考34062-方案2);
@@ -258,16 +260,12 @@
     AIFeatureNode *assFeature = [SMGUtils searchNode:assT_p];
     
     //2. 局部冷启 或 整体识别：类比依据不同（参考34139-TODO1）。
-    NSArray *protoAbsT_ps = Ports2Pits([AINetUtils absPorts_All:protoFeature]);
-    NSArray *assAbsT_ps = [AINetUtils absPorts_All:assFeature];
-    
     //11. 取共同absT，借助absT进行类比（参考34139-TODO1）。
-    NSArray *absT_ps = [SMGUtils filterArrA:protoAbsT_ps arrB:assAbsT_ps];
-    if (ARRISOK(absT_ps)) {
+    if (protoFeature.step2Model) {
         //12. 借助absT来类比时，复用step2的识别结果model数据，并且用完就清空，防止循环野指针（参考34139-TODO3）。
         AIFeatureStep2Model *step2Model = protoFeature.step2Model;
         protoFeature.step2Model = nil;
-        return [self analogyFeature4Step2:protoFeature ass:assFeature bigerMatchValue:bigerMatchValue absT_ps:absT_ps step2Model:step2Model];
+        return [self analogyFeature4Step2:protoFeature ass:assFeature bigerMatchValue:bigerMatchValue step2Model:step2Model];
     }
     //21. 特征识别step1识别到的结果，复用indexDic进行类比。
     else {
@@ -374,24 +372,29 @@
     [AINetUtils updateConPortRect:absT conT:protoFeature.p rect:absAtProtoRect];
     [AINetUtils updateConPortRect:absT conT:assFeature.p rect:absAtAssRect];
     
-    if (Log4Ana) NSLog(@"%@特征类比结果 => Proto特征T%ld：%@\n%@Ass特征T%ld：%@\n%@抽象特征T%ld：%@\n%@",protoFeature.p.dataSource,protoFeature.pId,CLEANSTR(protoFeature.logDesc),FeatureDesc(protoFeature.p,2),assFeature.pId,CLEANSTR(assFeature.logDesc),FeatureDesc(assFeature.p,2),absT.pId,CLEANSTR(absT.logDesc),FeatureDesc(absT.p,2));
+    if (Log4Ana) NSLog(@"冷启动特征%@类比结果 => Proto特征T%ld：%@\n%@Ass特征T%ld：%@\n%@抽象特征T%ld：%@\n%@",protoFeature.p.dataSource,protoFeature.pId,CLEANSTR(protoFeature.logDesc),FeatureDesc(protoFeature.p,2),assFeature.pId,CLEANSTR(assFeature.logDesc),FeatureDesc(assFeature.p,2),absT.pId,CLEANSTR(absT.logDesc),FeatureDesc(absT.p,2));
     return absT;
 }
 
-+(AIFeatureNode*) analogyFeature4Step2:(AIFeatureNode*)protoT ass:(AIFeatureNode*)assT bigerMatchValue:(CGFloat)bigerMatchValue absT_ps:(NSArray*)absT_ps step2Model:(AIFeatureStep2Model*)step2Model {
++(AIFeatureNode*) analogyFeature4Step2:(AIFeatureNode*)protoT ass:(AIFeatureNode*)assT bigerMatchValue:(CGFloat)bigerMatchValue step2Model:(AIFeatureStep2Model*)step2Model {
     //1. 借助每个absT来实现整体T的类比：类比orders的规律: 类比rectItems，把责任超过50%的去掉，别的保留（参考34139）。
     NSArray *sameItems = [SMGUtils filterArr:step2Model.rectItems checkValid:^BOOL(AIFeatureStep2Item_Rect *obj) {
         return [TCLearningUtil noZeRenForPingJun:obj.itemMatchValue * obj.itemMatchDegree bigerMatchValue:step2Model.modelMatchValue * step2Model.modelMatchDegree];
     }];
     
     //11. 将每个absT指向具象整体特征的rect求并集，得出加一块儿的绝对rect范围（参考3413a-示图2）。
-    CGRect resultRect = CGRectNull;
+    CGRect newAbsAtAssRect = CGRectNull, newAbsAtProtoRect = CGRectNull;
     for (AIFeatureStep2Item_Rect *item in sameItems) {
-        if (CGRectEqualToRect(resultRect, CGRectNull)) {
-            resultRect = item.absAtConRect;
-        } else {
-            resultRect = CGRectUnion(resultRect, item.absAtConRect);
-        }
+        //12. 取并每个itemAbsT在assT的范围。
+        newAbsAtAssRect = CGRectUnion(newAbsAtAssRect, item.absAtConRect);
+        
+        //13. 取并每个itemAbsT在protoT的范围。
+        AIFeatureNode *itemAbsT = [SMGUtils searchNode:item.absT];
+        NSArray *itemConPorts = [AINetUtils conPorts_All:itemAbsT];
+        AIPort *itemConPort4ProtoT = [SMGUtils filterSingleFromArr:itemConPorts checkValid:^BOOL(AIPort *item) {
+            return [item.target_p isEqual:protoT.p];
+        }];
+        newAbsAtProtoRect = CGRectUnion(newAbsAtProtoRect, itemConPort4ProtoT.rect);
     }
     
     //21. 取出每个itemAbsT中的gv，转换成newAbsT的元素：@[InputGroupValueModel]格式（参考3413a-示图1）。
@@ -401,8 +404,8 @@
     for (AIFeatureStep2Item_Rect *item in sameItems) {
         
         //22. 根据：每个abs在具象整体特征中的rect - 新的整体特征的minXY = 得出左间距leftSpace 和 顶间距topSpace。
-        CGFloat itemLeftSpace = item.absAtConRect.origin.x - resultRect.origin.x;
-        CGFloat itemTopSpace = item.absAtConRect.origin.y - resultRect.origin.y;
+        CGFloat itemLeftSpace = item.absAtConRect.origin.x - newAbsAtAssRect.origin.x;
+        CGFloat itemTopSpace = item.absAtConRect.origin.y - newAbsAtAssRect.origin.y;
         AIFeatureNode *itemAbsT = [SMGUtils searchNode:item.absT];
         for (NSInteger i = 0; i < itemAbsT.count; i++) {
             AIKVPointer *gv_p = ARR_INDEX(itemAbsT.content_ps, i);
@@ -447,9 +450,12 @@
     [assT updateMatchDegree:absT matchDegree:sameItems.count == 0 ? 0 : absAssTSumMatchDegree / sameItems.count];
     
     //44. 记录整体absT.conPort到protoT和assT的rect。
-    [AINetUtils updateConPortRect:absT conT:protoT.p rect:absAtProtoRect];
-    [AINetUtils updateConPortRect:absT conT:assT.p rect:absAtAssRect];
-    return nil;
+    [AINetUtils updateConPortRect:absT conT:protoT.p rect:newAbsAtProtoRect];
+    [AINetUtils updateConPortRect:absT conT:assT.p rect:newAbsAtAssRect];
+    
+    //51. debug
+    if (Log4Ana) NSLog(@"共同抽象特征%@类比结果 => Proto特征T%ld：%@\n%@Ass特征T%ld：%@\n%@抽象特征T%ld：%@\n%@",protoT.p.dataSource,protoT.pId,CLEANSTR(protoT.logDesc),FeatureDesc(protoT.p,2),assT.pId,CLEANSTR(assT.logDesc),FeatureDesc(assT.p,2),absT.pId,CLEANSTR(absT.logDesc),FeatureDesc(absT.p,2));
+    return absT;
 }
 
 /**
