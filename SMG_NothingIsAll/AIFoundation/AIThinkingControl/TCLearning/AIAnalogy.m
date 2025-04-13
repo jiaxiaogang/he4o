@@ -379,39 +379,62 @@
 }
 
 +(AIFeatureNode*) analogyFeature4Step2:(AIFeatureNode*)protoT ass:(AIFeatureNode*)assT bigerMatchValue:(CGFloat)bigerMatchValue absT_ps:(NSArray*)absT_ps step2Model:(AIFeatureStep2Model*)step2Model {
-    //1. 类比orders的规律
-    NSMutableArray *absGVModels = [[NSMutableArray alloc] init];
-    CGFloat featureMatchValue = 1;
-    
-    //2. 数据检查（当前有主责，直接剔除）。
-    CGFloat curMatchValue = [protoT getAbsMatchValue:assT.p];
-    
-    //类比rectItems，把责任超过50%的去掉，别的保留。
+    //1. 借助每个absT来实现整体T的类比：类比orders的规律: 类比rectItems，把责任超过50%的去掉，别的保留（参考34139）。
     NSArray *sameItems = [SMGUtils filterArr:step2Model.rectItems checkValid:^BOOL(AIFeatureStep2Item_Rect *obj) {
         return [TCLearningUtil noZeRenForPingJun:obj.itemMatchValue * obj.itemMatchDegree bigerMatchValue:step2Model.modelMatchValue * step2Model.modelMatchDegree];
     }];
     
-    //将rectItems格式转为@[InputGroupValueModel]格式。
-    //TODOTOMORROW20250412: 此处没有indexDic的话，怎么用absT的元素，定位到conT的assIndex位置呢？
-    //明天分析下。。。
-//    for (AIFeatureStep2Item_Rect *item in sameItems) {
-//        item.absAtConRect;
-//    }
+    //11. 将每个absT指向具象整体特征的rect求并集，得出加一块儿的绝对rect范围（参考3413a-示图2）。
+    CGRect resultRect = CGRectNull;
+    for (AIFeatureStep2Item_Rect *item in sameItems) {
+        if (CGRectEqualToRect(resultRect, CGRectNull)) {
+            resultRect = item.absAtConRect;
+        } else {
+            resultRect = CGRectUnion(resultRect, item.absAtConRect);
+        }
+    }
     
+    //21. 取出每个itemAbsT中的gv，转换成newAbsT的元素：@[InputGroupValueModel]格式（参考3413a-示图1）。
+    NSMutableArray *absGVModels = [[NSMutableArray alloc] init];
+    for (AIFeatureStep2Item_Rect *item in sameItems) {
+        
+        //22. 根据：每个abs在具象整体特征中的rect - 新的整体特征的minXY = 得出左间距leftSpace 和 顶间距topSpace。
+        CGFloat itemLeftSpace = item.absAtConRect.origin.x - resultRect.origin.x;
+        CGFloat itemTopSpace = item.absAtConRect.origin.y - resultRect.origin.y;
+        AIFeatureNode *itemAbsT = [SMGUtils searchNode:item.absT];
+        for (NSInteger i = 0; i < itemAbsT.count; i++) {
+            AIKVPointer *gv_p = ARR_INDEX(itemAbsT.content_ps, i);
+            
+            //23. 当前gvRect放到整体newAbsT中后，需要计上左和顶间距。
+            CGRect gvRect = NUMTOOK(ARR_INDEX(itemAbsT.rects, i)).CGRectValue;
+            gvRect.origin.x += itemLeftSpace;
+            gvRect.origin.y += itemTopSpace;
+            
+            //24. 找旧的，防重。
+            if (![SMGUtils filterSingleFromArr:absGVModels checkValid:^BOOL(InputGroupValueModel *item) {
+                return [item.groupValue_p isEqual:gv_p] && CGRectEqualToRect(item.rect, gvRect);
+            }]) {
+                
+                //25. 未重复时，收集之。
+                [absGVModels addObject:[InputGroupValueModel new:nil groupValue:gv_p rect:gvRect]];
+            }
+        }
+    }
     
-//    //16. 类比后,以ass为主,存level,x,y;
-//    NSInteger assLevel = NUMTOOK(ARR_INDEX(assFeature.levels, assIndex)).integerValue;
-//    NSInteger assX = NUMTOOK(ARR_INDEX(assFeature.xs, assIndex)).integerValue;
-//    NSInteger assY = NUMTOOK(ARR_INDEX(assFeature.ys, assIndex)).integerValue;
-//    CGRect assRect = NUMTOOK(ARR_INDEX(assFeature.rects, assIndex)).CGRectValue;
-//    [absGVModels addObject:[InputGroupValueModel new:nil groupValue:analogyGVResult.v1 level:assLevel x:assX y:assY rect:assRect]];
+    //33. 保留下来的生成为absT。
+    AIFeatureNode *absT = [AIGeneralNodeCreater createFeatureNode:absGVModels conNodes:@[protoT,assT] at:protoT.p.algsType ds:protoT.p.dataSource isOut:protoT.p.isOut isJiao:true];
     
+    //41. 更新logDesc。
+    [absT updateLogDescDic:protoT.logDesc];
+    [absT updateLogDescDic:assT.logDesc];
     
-    //保留下来的的生成为absT。
-    AIFeatureNode *absT = [AIGeneralNodeCreater createFeatureNode:sameItems conNodes:@[protoT,assT] at:protoT.p.algsType ds:protoT.p.dataSource isOut:protoT.p.isOut isJiao:true];
+    //42. 记录匹配度：根据每个匹配itemAbsT，来计算平均匹配度。
+    [protoT updateMatchValue:absT matchValue:1];
+    [assT updateMatchValue:absT matchValue:1];
     
-    //建议关联等。
-    
+    //43. 记录整体absT.conPort到protoT和assT的rect。
+    [AINetUtils updateConPortRect:absT conT:protoT.p rect:absAtProtoRect];
+    [AINetUtils updateConPortRect:absT conT:assT.p rect:absAtAssRect];
     return nil;
 }
 
