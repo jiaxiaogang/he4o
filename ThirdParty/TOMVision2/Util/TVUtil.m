@@ -282,12 +282,12 @@
  */
 +(NSString*) getFeatureDesc:(AIKVPointer*)node_p sizeFenMu:(NSInteger)sizeFenMu {
     //1. 只打BColors特征。
-    //if ([node_p.dataSource isEqualToString:@"hColors"] || [node_p.dataSource isEqualToString:@"sColors"]) return @"";
+    if ([node_p.dataSource isEqualToString:@"hColors"] || [node_p.dataSource isEqualToString:@"sColors"]) return @"";
     AIFeatureNode *tNode = [SMGUtils searchNode:node_p];
     
     //2. 找出最大level，避免打印的比原图像素过多或过少。
     NSInteger maxLevel = [SMGUtils filterBestScore:tNode.rects scoreBlock:^CGFloat(NSValue *item) {
-        NSInteger groupLevel = VisionMaxLevel - log(item.CGRectValue.size.width) / log(3);
+        NSInteger groupLevel = log(item.CGRectValue.size.width) / log(3);
         return groupLevel;
     }] + 1;//groupLevel+1才是真正的level
     
@@ -301,7 +301,7 @@
         for (NSInteger x = 0; x < width; x++) {
             if (x % sizeFenMu != 0 || y % sizeFenMu != 0) continue;//日志打小点，太大太占地方。
             NSString *dot = [needLog objectForKey:STRFORMAT(@"%ld_%ld",x,y)];
-            [result appendString:dot?dot:@" "];
+            [result appendString:dot?dot:@"  "];
         }
         if (y % sizeFenMu != 0) continue;//日志打小点，太大太占地方。
         [result appendString:@"\n"];
@@ -314,22 +314,21 @@
     for (NSInteger i = 0; i < tNode.count; i++) {
         //1. 取group的rect
         CGRect groupRect = VALTOOK(ARR_INDEX(tNode.rects, i)).CGRectValue;
-        NSInteger groupLevel = VisionMaxLevel - log(groupRect.size.width) / log(3);
+        NSInteger groupLevel = log(groupRect.size.width) / log(3);
         NSString *obj = nil;
         if (groupLevel == 0) {
-            obj = @"  ";
+            obj = @"* ";
         } else if (groupLevel == 1) {
             obj = @"- ";
         } else if (groupLevel == 2) {
-            obj = @"* ";
-        } else if (groupLevel == 3) {
             obj = @"o ";
+        } else if (groupLevel == 3) {
+            obj = @"+ ";
         } else if (groupLevel == 4) {
             obj = @"/ ";
         } else {
             obj = @"M ";
         }
-        NSInteger groupWidth = powf(3, maxLevel - groupLevel);
         NSInteger maxLevel2GVMaxLevelRadio = powf(3, VisionMaxLevel - maxLevel);
         NSInteger startGroupX = groupRect.origin.x / maxLevel2GVMaxLevelRadio;
         NSInteger startGroupY = groupRect.origin.y / maxLevel2GVMaxLevelRadio;
@@ -338,8 +337,9 @@
         NSArray *subDots = [self getGroupValueNeedLog:ARR_INDEX(tNode.content_ps, i)];
         for (MapModel *subDot in subDots) {
             
+            //TODOTOMORROW20250414: 继续查下这里打印出来的都变形。。。目前线索是groupWidth=1时，在第2层。。。
             //3. 取subDot数据。
-            NSInteger subDotWidth = groupWidth / 3;
+            NSInteger subDotWidth = groupRect.size.width / 3;
             NSInteger subX = NUMTOOK(subDot.v1).integerValue;
             NSInteger subY = NUMTOOK(subDot.v2).integerValue;
             NSInteger startSubX = subX * subDotWidth;
@@ -367,9 +367,10 @@
     for (NSInteger i = 0; i < gNode.count; i++) {
         NSInteger x = NUMTOOK(ARR_INDEX(gNode.xs, i)).integerValue;
         NSInteger y = NUMTOOK(ARR_INDEX(gNode.ys, i)).integerValue;
-        AIKVPointer *value_p = ARR_INDEX(gNode.content_ps, i);
-        double value = [NUMTOOK([AINetIndex getData:value_p]) doubleValue];
-        if (value > 0.5) [result addObject:[MapModel newWithV1:@(x) v2:@(y)]];
+        //AIKVPointer *value_p = ARR_INDEX(gNode.content_ps, i);
+        //double value = [NUMTOOK([AINetIndex getData:value_p]) doubleValue];
+        //if (value > 0.5)
+        [result addObject:[MapModel newWithV1:@(x) v2:@(y)]];
     }
     return result;
 }

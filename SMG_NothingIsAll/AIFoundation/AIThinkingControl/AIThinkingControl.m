@@ -184,7 +184,7 @@ static AIThinkingControl *_instance;
     [bFeature updateLogDescItem:logDesc];
     NSLog(@"%@ H ====================================\n%@",logDesc,FeatureDesc(hFeature.p,3));
     NSLog(@"%@ S ====================================\n%@",logDesc,FeatureDesc(sFeature.p,3));
-    NSLog(@"%@ B ====================================\n%@",logDesc,FeatureDesc(bFeature.p,2));
+    NSLog(@"%@ B ====================================\n%@",logDesc,FeatureDesc(bFeature.p,1));
     
     //4、构建具象概念。
     AIAlgNodeBase *algNode = [theNet createAbsAlg_NoRepeat:@[hFeature.pointer,sFeature.pointer,bFeature.pointer] conAlgs:nil isOut:false at:nil ds:nil type:ATDefault];
