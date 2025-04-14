@@ -437,14 +437,16 @@
                 //A. step1识别。
                 NSArray *step1Result = ARRTOOK([self recognitionFeature_Step1:item_p]);//v2多码特征;
                 
-                //B. 把step1中似层筛选出来（参考34135-TODO5）。
-                NSArray *step1Si = [SMGUtils filterArr:step1Result checkValid:^BOOL(AIMatchModel *item) {
-                    return !item.match_p.isJiao;
-                }];
-                
-                //C. 把step1的结果传给step2继续向似层识别（参考34135-TODO5）。
+                //B. 把step1的结果传给step2继续向似层识别（参考34135-TODO5）。
                 NSArray *step2Result = [self recognitionFeature_Step2:item_p matchModels:step1Result];
-                return [SMGUtils collectArrA:step1Si arrB:step2Result];
+                
+                //C. 把似层存下（参考34135-TODO5）。
+                //NSArray *step1Si = [SMGUtils filterArr:step1Result checkValid:^BOOL(AIMatchModel *item) {
+                //    return !item.match_p.isJiao;
+                //}];
+                
+                //D. 输出用于概念识别。
+                return [SMGUtils collectArrA:step1Result arrB:step2Result];
             }];
         }
         
