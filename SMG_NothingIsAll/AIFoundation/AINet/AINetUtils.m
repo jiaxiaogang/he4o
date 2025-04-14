@@ -412,7 +412,7 @@
     fromPorts = ARRTOOK(fromPorts);
     NSArray *cp = [fromPorts copy];
     for (AIPort *port in cp) {
-        if ([port.target_p isEqual:pointer] && [port.params isEqual:findParams]) {
+        if ([port.target_p isEqual:pointer] && [port.params isEqual:DICTOOK(findParams)]) {
             return port;
         }
     }
