@@ -311,10 +311,13 @@
 }
 
 +(NSMutableDictionary*) getFeatureNeedLogV2:(AIFeatureNode*)tNode maxLevel:(NSInteger)maxLevel {
+    //1. 数据准备。
     NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
     for (NSInteger i = 0; i < tNode.count; i++) {
-        //1. 取group的rect
+        //2. 取group的rect。
         CGRect groupRect = VALTOOK(ARR_INDEX(tNode.rects, i)).CGRectValue;
+        
+        //3. 根据level取表示这层的字符。
         NSInteger groupLevel = VisionMaxLevel - log(groupRect.size.width) / log(3);
         NSString *obj = nil;
         if (groupLevel == 0) {
@@ -322,27 +325,67 @@
         } else if (groupLevel == 1) {
             obj = @"- ";
         } else if (groupLevel == 2) {
-            obj = @"o ";
+            obj = @"  ";
         } else if (groupLevel == 3) {
-            obj = @"+ ";
+            obj = @"o ";
         } else if (groupLevel == 4) {
-            obj = @"/ ";
+            obj = @"+ ";
         } else {
             obj = @"M ";
         }
-        NSInteger maxLevel2GVMaxLevelRadio = powf(3, VisionMaxLevel - maxLevel);
         
-        //3. 取subDot数据。
+        //4. 多余层不打印处理（一张图的像素分辨率未必 > VisionMaxLevel层）。
+        //============= 不展开打组码细节 =============
+        //NSInteger maxLevel2GVMaxLevelRadio = powf(3, VisionMaxLevel - maxLevel);
+        //NSInteger logWidth = groupRect.size.width / maxLevel2GVMaxLevelRadio;
+        //NSInteger logMinX = groupRect.origin.x / maxLevel2GVMaxLevelRadio;
+        //NSInteger logMinY = groupRect.origin.y / maxLevel2GVMaxLevelRadio;
+        ////5. 需要打印的每个dot宽高每像素，都收集打印。
+        //for (NSInteger x = logMinX; x < logWidth + logMinX; x++) {
+        //    for (NSInteger y = logMinY; y < logWidth + logMinY; y++) {
+        //        [result setObject:obj forKey:STRFORMAT(@"%ld_%ld",x,y)];
+        //    }
+        //}
+        
+        //============= 展开打组码细节 =============
+        //5. 因为组码要展开打印，所以+1减少一层循环（用subDots的xy来加上）（不要组码时可去掉）。
+        NSInteger maxLevel2GVMaxLevelRadio = powf(3, VisionMaxLevel - maxLevel + 1);
         NSInteger logWidth = groupRect.size.width / maxLevel2GVMaxLevelRadio;
         NSInteger logMinX = groupRect.origin.x / maxLevel2GVMaxLevelRadio;
         NSInteger logMinY = groupRect.origin.y / maxLevel2GVMaxLevelRadio;
         
-        //4. 每个subDot宽高，每像素，都收集打印。
-        for (NSInteger x = logMinX; x < logWidth + logMinX; x++) {
-            for (NSInteger y = logMinY; y < logWidth + logMinY; y++) {
-                [result setObject:obj forKey:STRFORMAT(@"%ld_%ld",x,y)];
+        //6. 每个组码，都要再拆分成九格来打印（以提高精度）。
+        NSArray *subDots = [self getGroupValueNeedLog:ARR_INDEX(tNode.content_ps, i)];
+        for (MapModel *subDotModel in subDots) {
+            NSInteger subDotX = NUMTOOK(subDotModel.v1).integerValue;
+            NSInteger subDotY = NUMTOOK(subDotModel.v2).integerValue;
+            
+            //7. 需要打印的每个dot宽高每像素，都收集打印。
+            for (NSInteger x = logMinX; x < logWidth + logMinX; x++) {
+                for (NSInteger y = logMinY; y < logWidth + logMinY; y++) {
+                    
+                    //8. 因为组码要展开打印，所以每点打三格，每格以实际+subDots.xy坐标来打印。
+                    [result setObject:obj forKey:STRFORMAT(@"%ld_%ld",x * 3 + subDotX,y * 3 + subDotY)];
+                }
             }
         }
+    }
+    return result;
+}
+
+/**
+ *  MARK:--------------------把黑色xy数组返回--------------------
+ */
++(NSArray*) getGroupValueNeedLog:(AIKVPointer*)node_p {
+    //不要组码时此处可直接返回@[x0y0]一条元素即可。
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    AIGroupValueNode *gNode = [SMGUtils searchNode:node_p];
+    for (NSInteger i = 0; i < gNode.count; i++) {
+        NSInteger x = NUMTOOK(ARR_INDEX(gNode.xs, i)).integerValue;
+        NSInteger y = NUMTOOK(ARR_INDEX(gNode.ys, i)).integerValue;
+        AIKVPointer *value_p = ARR_INDEX(gNode.content_ps, i);
+        double value = [NUMTOOK([AINetIndex getData:value_p]) doubleValue];
+        if (value > 0.0) [result addObject:[MapModel newWithV1:@(x) v2:@(y)]];
     }
     return result;
 }
