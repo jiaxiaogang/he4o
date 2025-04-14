@@ -120,7 +120,7 @@ static int cSUBNUM = 0;
 - (IBAction)nearFeedingBtn1OnClick:(UIButton*)sender {
     [theApp.heLogView addDemoLog:@"直投"];
     DemoLog(@"直投1");
-    [self throwFood4Directly:sender.titleLabel.text subNum:@(-1) forTest:@(true)];
+    [self throwFood4Directly:sender.titleLabel.text subNum:@(-1) forTest:@(false)];
 }
 
 

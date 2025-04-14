@@ -263,7 +263,7 @@
         [AINetUtils updateConPortRect:assFeature conT:protoFeature_p rect:rect];
         
         //52. debug
-        if (Log4RecogDesc || true) NSLog(@"似层特征识别结果:T%ld%@\t 匹配条数:%ld/(proto%ld ass%ld)\t匹配度:%.2f\t强度:%.1f\t符合度:%.1f",
+        if (Log4RecogDesc || resultModels.count > 0) NSLog(@"局部特征识别结果:T%ld%@\t 匹配条数:%ld/(proto%ld ass%ld)\t匹配度:%.2f\t强度:%.1f\t符合度:%.1f",
                                          matchModel.match_p.pointerId,CLEANSTR([assFeature getLogDesc:true]),matchModel.matchCount,protoFeature.count,assFeature.count,matchModel.matchValue,matchModel.strongValue,matchModel.matchDegree);
     }
     return resultModels;
@@ -332,7 +332,7 @@
         assFeature.step2Model = matchModel;
         
         //43. debug
-        if (Log4RecogDesc || true) NSLog(@"似层特征识别结果:T%ld%@\t 匹配条数:%ld/(proto%ld ass%ld)\t匹配度:%.2f\t符合度:%.1f",
+        if (Log4RecogDesc || resultModels.count > 0) NSLog(@"整体特征识别结果:T%ld%@\t 匹配条数:%ld/(proto%ld ass%ld)\t匹配度:%.2f\t符合度:%.1f",
                                          matchModel.conT.pointerId,CLEANSTR([assFeature getLogDesc:true]),matchModel.rectItems.count,protoFeature.count,assFeature.count,matchModel.modelMatchValue,matchModel.modelMatchDegree);
     }
     
