@@ -1207,8 +1207,7 @@
  */
 +(CGRect) convertGVLevelXY2Rect:(NSInteger)level x:(NSInteger)x y:(NSInteger)y {
     NSInteger radio = powf(3, VisionMaxLevel - level);
-    int size = powf(3, level);
-    return CGRectMake(x * radio, y * radio, size, size);
+    return CGRectMake(x * radio, y * radio, radio, radio);
 }
 
 /**

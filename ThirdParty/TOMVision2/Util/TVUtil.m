@@ -279,6 +279,8 @@
 /**
  *  MARK:--------------------特征日志--------------------
  *  @param sizeFenMu 尺寸分母，传1打印100%全尺寸，传2打印50%中尺寸，传3打印33%小尺寸。
+ *  @version
+ *      2025.04.14: 迭代v2-简化代码逻辑，直接针对rect来打印，不计算原来那套了，也不取GV了，直接rect在哪层，就打哪个字符。
  */
 +(NSString*) getFeatureDesc:(AIKVPointer*)node_p sizeFenMu:(NSInteger)sizeFenMu {
     //1. 只打BColors特征。
@@ -287,12 +289,11 @@
     
     //2. 找出最大level，避免打印的比原图像素过多或过少。
     NSInteger maxLevel = [SMGUtils filterBestScore:tNode.rects scoreBlock:^CGFloat(NSValue *item) {
-        NSInteger groupLevel = log(item.CGRectValue.size.width) / log(3);
-        return groupLevel;
+        return VisionMaxLevel - log(item.CGRectValue.size.width) / log(3);
     }] + 1;//groupLevel+1才是真正的level
     
     //3. 需要打印的点字典。
-    NSMutableDictionary *needLog = [self getFeatureNeedLog:tNode maxLevel:maxLevel];
+    NSMutableDictionary *needLog = [self getFeatureNeedLogV2:tNode maxLevel:maxLevel];
     
     //4. 把需要打印的点字典转成多行多列图。
     NSMutableString *result = [[NSMutableString alloc] init];
@@ -309,12 +310,12 @@
     return result;
 }
 
-+(NSMutableDictionary*) getFeatureNeedLog:(AIFeatureNode*)tNode maxLevel:(NSInteger)maxLevel {
++(NSMutableDictionary*) getFeatureNeedLogV2:(AIFeatureNode*)tNode maxLevel:(NSInteger)maxLevel {
     NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
     for (NSInteger i = 0; i < tNode.count; i++) {
         //1. 取group的rect
         CGRect groupRect = VALTOOK(ARR_INDEX(tNode.rects, i)).CGRectValue;
-        NSInteger groupLevel = log(groupRect.size.width) / log(3);
+        NSInteger groupLevel = VisionMaxLevel - log(groupRect.size.width) / log(3);
         NSString *obj = nil;
         if (groupLevel == 0) {
             obj = @"* ";
@@ -330,47 +331,18 @@
             obj = @"M ";
         }
         NSInteger maxLevel2GVMaxLevelRadio = powf(3, VisionMaxLevel - maxLevel);
-        NSInteger startGroupX = groupRect.origin.x / maxLevel2GVMaxLevelRadio;
-        NSInteger startGroupY = groupRect.origin.y / maxLevel2GVMaxLevelRadio;
         
-        //2. 九宫有几格需要打印，需要的打印。
-        NSArray *subDots = [self getGroupValueNeedLog:ARR_INDEX(tNode.content_ps, i)];
-        for (MapModel *subDot in subDots) {
-            
-            //TODOTOMORROW20250414: 继续查下这里打印出来的都变形。。。目前线索是groupWidth=1时，在第2层。。。
-            //3. 取subDot数据。
-            NSInteger subDotWidth = groupRect.size.width / 3;
-            NSInteger subX = NUMTOOK(subDot.v1).integerValue;
-            NSInteger subY = NUMTOOK(subDot.v2).integerValue;
-            NSInteger startSubX = subX * subDotWidth;
-            NSInteger startSubY = subY * subDotWidth;
-            
-            //4. 每个subDot宽高，每像素，都收集打印。
-            for (NSInteger subI = 0; subI < subDotWidth; subI++) {
-                for (NSInteger subJ = 0; subJ < subDotWidth; subJ++) {
-                    NSInteger curX = startGroupX + startSubX + subI;
-                    NSInteger curY = startGroupY + startSubY + subJ;
-                    [result setObject:obj forKey:STRFORMAT(@"%ld_%ld",curX,curY)];
-                }
+        //3. 取subDot数据。
+        NSInteger logWidth = groupRect.size.width / maxLevel2GVMaxLevelRadio;
+        NSInteger logMinX = groupRect.origin.x / maxLevel2GVMaxLevelRadio;
+        NSInteger logMinY = groupRect.origin.y / maxLevel2GVMaxLevelRadio;
+        
+        //4. 每个subDot宽高，每像素，都收集打印。
+        for (NSInteger x = logMinX; x < logWidth + logMinX; x++) {
+            for (NSInteger y = logMinY; y < logWidth + logMinY; y++) {
+                [result setObject:obj forKey:STRFORMAT(@"%ld_%ld",x,y)];
             }
         }
-    }
-    return result;
-}
-
-/**
- *  MARK:--------------------把黑色xy数组返回--------------------
- */
-+(NSArray*) getGroupValueNeedLog:(AIKVPointer*)node_p {
-    NSMutableArray *result = [[NSMutableArray alloc] init];
-    AIGroupValueNode *gNode = [SMGUtils searchNode:node_p];
-    for (NSInteger i = 0; i < gNode.count; i++) {
-        NSInteger x = NUMTOOK(ARR_INDEX(gNode.xs, i)).integerValue;
-        NSInteger y = NUMTOOK(ARR_INDEX(gNode.ys, i)).integerValue;
-        //AIKVPointer *value_p = ARR_INDEX(gNode.content_ps, i);
-        //double value = [NUMTOOK([AINetIndex getData:value_p]) doubleValue];
-        //if (value > 0.5)
-        [result addObject:[MapModel newWithV1:@(x) v2:@(y)]];
     }
     return result;
 }
