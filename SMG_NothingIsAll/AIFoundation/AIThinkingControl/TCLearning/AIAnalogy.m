@@ -182,7 +182,8 @@
     AIAlgNodeBase *assA = [SMGUtils searchNode:assA_p];
     NSMutableArray *sameValue_ps = [[NSMutableArray alloc] init];
     AIMatchAlgModel *protoAbsModel4MatchValue = [[AIMatchAlgModel alloc] init];//此模型仅用于收集proto和abs的相近度,用于计算matchValue;
-
+    if (!assA) return nil;
+    
     //2. 数据检查（当前有主责，直接剔除）（时序全含，概念以mIsC来剔除，不做责任计算）。
     CGFloat curMatchValue = [protoA getAbsMatchValue:assA_p];
     //if (![TCLearningUtil noZeRenForCenJi:curMatchValue bigerMatchValue:1]) return nil;//识别时序全含，此处默认匹配度为1。
@@ -372,7 +373,7 @@
     [AINetUtils updateConPortRect:absT conT:protoFeature.p rect:absAtProtoRect];
     [AINetUtils updateConPortRect:absT conT:assFeature.p rect:absAtAssRect];
     
-    if (Log4Ana || true) NSLog(@"局部特征类比结果(%@) => Proto特征T%ld：%@\n%@Ass特征T%ld：%@\n%@抽象特征T%ld：%@\n%@",protoFeature.p.dataSource,protoFeature.pId,CLEANSTR([protoFeature getLogDesc:false]),FeatureDesc(protoFeature.p,2),assFeature.pId,CLEANSTR([assFeature getLogDesc:false]),FeatureDesc(assFeature.p,2),absT.pId,CLEANSTR([absT getLogDesc:false]),FeatureDesc(absT.p,2));
+    if (Log4Ana || true) NSLog(@"局部特征类比结果(%@) => \nProto特征T%ld：%@\n%@Ass特征T%ld：%@\n%@局部Abs特征T%ld（GV数:%ld）：%@\n%@",protoFeature.p.dataSource,protoFeature.pId,CLEANSTR([protoFeature getLogDesc:false]),FeatureDesc(protoFeature.p,2),assFeature.pId,CLEANSTR([assFeature getLogDesc:false]),FeatureDesc(assFeature.p,2),absT.pId,sortGroupModels.count,CLEANSTR([absT getLogDesc:false]),FeatureDesc(absT.p,2));
     return absT;
 }
 
@@ -454,7 +455,7 @@
     [AINetUtils updateConPortRect:absT conT:assT.p rect:newAbsAtAssRect];
     
     //51. debug
-    if (Log4Ana || true) NSLog(@"整体特征类比结果(%@) => Proto特征T%ld：%@\n%@Ass特征T%ld：%@\n%@抽象特征T%ld：%@\n%@",protoT.p.dataSource,protoT.pId,CLEANSTR([protoT getLogDesc:false]),FeatureDesc(protoT.p,2),assT.pId,CLEANSTR([assT getLogDesc:false]),FeatureDesc(assT.p,2),absT.pId,CLEANSTR([absT getLogDesc:false]),FeatureDesc(absT.p,2));
+    if (Log4Ana || true) NSLog(@"整体特征类比结果(%@) => \nProto特征T%ld：%@\n%@Ass特征T%ld：%@\n%@整体Abs特征T%ld（局部特征数:%ld GV数:%ld）：%@\n%@",protoT.p.dataSource,protoT.pId,CLEANSTR([protoT getLogDesc:false]),FeatureDesc(protoT.p,2),assT.pId,CLEANSTR([assT getLogDesc:false]),FeatureDesc(assT.p,2),absT.pId,sameItems.count,absGVModels.count,CLEANSTR([absT getLogDesc:false]),FeatureDesc(absT.p,2));
     return absT;
 }
 

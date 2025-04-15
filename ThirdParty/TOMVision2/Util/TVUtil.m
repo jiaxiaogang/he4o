@@ -321,11 +321,11 @@
         NSInteger groupLevel = VisionMaxLevel - log(groupRect.size.width) / log(3);
         NSString *obj = nil;
         if (groupLevel == 0) {
-            obj = @"* ";
+            obj = @"  ";
         } else if (groupLevel == 1) {
             obj = @"- ";
         } else if (groupLevel == 2) {
-            obj = @"  ";
+            obj = @"* ";
         } else if (groupLevel == 3) {
             obj = @"o ";
         } else if (groupLevel == 4) {
