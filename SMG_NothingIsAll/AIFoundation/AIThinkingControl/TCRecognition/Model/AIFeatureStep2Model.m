@@ -42,7 +42,7 @@
     }];
     
     //2. 掐头去尾。
-    NSArray *scaleValid = ARR_SUB(scaleSort, scaleSort.count * 0.1, scaleSort.count * 0.8);
+    NSArray *scaleValid = scaleSort.count > 3 ? ARR_SUB(scaleSort, scaleSort.count * 0.1, scaleSort.count * 0.8) : scaleSort;
     
     //3. 求平均scale。
     CGFloat pinJunScale = scaleValid.count == 0 ? 0 : [SMGUtils sumOfArr:scaleValid convertBlock:^double(AIFeatureStep2Item_Rect *obj) {
@@ -61,7 +61,7 @@
     }];
     
     //12. 掐头去尾。
-    NSArray *deltaXValid = ARR_SUB(deltaXSort, deltaXSort.count * 0.1, deltaXSort.count * 0.8);
+    NSArray *deltaXValid = deltaXSort.count > 3 ? ARR_SUB(deltaXSort, deltaXSort.count * 0.1, deltaXSort.count * 0.8) : deltaXSort;
     
     //13. 求平均deltaX。
     CGFloat pinJunDelteX = deltaXValid.count == 0 ? 0 : [SMGUtils sumOfArr:deltaXValid convertBlock:^double(AIFeatureStep2Item_Rect *obj) {
@@ -80,7 +80,7 @@
     }];
     
     //22. 掐头去尾。
-    NSArray *deltaYValid = ARR_SUB(deltaYSort, deltaYSort.count * 0.1, deltaYSort.count * 0.8);
+    NSArray *deltaYValid = deltaYSort.count > 3 ? ARR_SUB(deltaYSort, deltaYSort.count * 0.1, deltaYSort.count * 0.8) : deltaYSort;
     
     //23. 求平均deltaY。
     CGFloat pinJunDelteY = deltaYValid.count == 0 ? 0 : [SMGUtils sumOfArr:deltaYValid convertBlock:^double(AIFeatureStep2Item_Rect *obj) {
@@ -94,9 +94,9 @@
     
     //=============== step4: 求三个相近度（参考34136-TODO4）===============
     //31. 找出与proto最大的差距(span)值。
-    CGFloat scaleMin = CGFLOAT_MAX,scaleMax = CGFLOAT_MIN;
-    CGFloat deltaXMin = CGFLOAT_MAX,deltaXMax = CGFLOAT_MIN;
-    CGFloat deltaYMin = CGFLOAT_MAX,deltaYMax = CGFLOAT_MIN;
+    CGFloat scaleMin = 99999999,scaleMax = -99999999;
+    CGFloat deltaXMin = 99999999,deltaXMax = -99999999;
+    CGFloat deltaYMin = 99999999,deltaYMax = -99999999;
     for (AIFeatureStep2Item_Rect *item in self.rectItems) {
         CGFloat itemScale = [self scale4RectItemAtProto:protoModel rectItem:item];
         CGFloat itemDeltaX = [self deltaX4RectItemAtProto:protoModel rectItem:item];
@@ -165,7 +165,7 @@
     CGRect conAssRect = rectItem.rect;
     
     //2. 计算缩放scale。
-    return conAssRect.size.width / (float)protoRect.size.width;
+    return protoRect.size.width == 0 ? : conAssRect.size.width / (float)protoRect.size.width;
 }
 
 //返回 rectItem 在 conAssT 与 protoT 的deltaX偏移量。

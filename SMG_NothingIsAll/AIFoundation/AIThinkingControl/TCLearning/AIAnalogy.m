@@ -372,13 +372,7 @@
     [AINetUtils updateConPortRect:absT conT:protoFeature.p rect:absAtProtoRect];
     [AINetUtils updateConPortRect:absT conT:assFeature.p rect:absAtAssRect];
     
-    
-    //TODOTOMORROW20250415: 调试查下此处一是可能缺失conPort.rect的问题，二是许多rect全是很满的没什么局部的。
-    if (absAtProtoRect.origin.x > 0 && absAtProtoRect.size.width < 243) {
-        NSLog(@"");
-    }
-    
-    if (Log4Ana || true) NSLog(@"局部特征类比结果(%@) => Proto特征T%ld：%@\n%@Ass特征T%ld：%@\n%@抽象特征T%ld：%@\n%@",protoFeature.p.dataSource,protoFeature.pId,CLEANSTR([protoFeature getLogDesc:false]),FeatureDesc(protoFeature.p,2),assFeature.pId,CLEANSTR([assFeature getLogDesc:false]),FeatureDesc(assFeature.p,2),absT.pId,CLEANSTR([absT getLogDesc:false]),FeatureDesc(absT.p,1));
+    if (Log4Ana || true) NSLog(@"局部特征类比结果(%@) => Proto特征T%ld：%@\n%@Ass特征T%ld：%@\n%@抽象特征T%ld：%@\n%@",protoFeature.p.dataSource,protoFeature.pId,CLEANSTR([protoFeature getLogDesc:false]),FeatureDesc(protoFeature.p,2),assFeature.pId,CLEANSTR([assFeature getLogDesc:false]),FeatureDesc(assFeature.p,2),absT.pId,CLEANSTR([absT getLogDesc:false]),FeatureDesc(absT.p,2));
     return absT;
 }
 
@@ -460,7 +454,7 @@
     [AINetUtils updateConPortRect:absT conT:assT.p rect:newAbsAtAssRect];
     
     //51. debug
-    if (Log4Ana || true) NSLog(@"整体特征类比结果(%@) => Proto特征T%ld：%@\n%@Ass特征T%ld：%@\n%@抽象特征T%ld：%@\n%@",protoT.p.dataSource,protoT.pId,CLEANSTR([protoT getLogDesc:false]),FeatureDesc(protoT.p,2),assT.pId,CLEANSTR([assT getLogDesc:false]),FeatureDesc(assT.p,2),absT.pId,CLEANSTR([absT getLogDesc:false]),FeatureDesc(absT.p,1));
+    if (Log4Ana || true) NSLog(@"整体特征类比结果(%@) => Proto特征T%ld：%@\n%@Ass特征T%ld：%@\n%@抽象特征T%ld：%@\n%@",protoT.p.dataSource,protoT.pId,CLEANSTR([protoT getLogDesc:false]),FeatureDesc(protoT.p,2),assT.pId,CLEANSTR([assT getLogDesc:false]),FeatureDesc(assT.p,2),absT.pId,CLEANSTR([absT getLogDesc:false]),FeatureDesc(absT.p,2));
     return absT;
 }
 
