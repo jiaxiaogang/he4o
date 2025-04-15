@@ -372,6 +372,12 @@
     [AINetUtils updateConPortRect:absT conT:protoFeature.p rect:absAtProtoRect];
     [AINetUtils updateConPortRect:absT conT:assFeature.p rect:absAtAssRect];
     
+    
+    //TODOTOMORROW20250415: 调试查下此处一是可能缺失conPort.rect的问题，二是许多rect全是很满的没什么局部的。
+    if (absAtProtoRect.origin.x > 0 && absAtProtoRect.size.width < 243) {
+        NSLog(@"");
+    }
+    
     if (Log4Ana || true) NSLog(@"局部特征类比结果(%@) => Proto特征T%ld：%@\n%@Ass特征T%ld：%@\n%@抽象特征T%ld：%@\n%@",protoFeature.p.dataSource,protoFeature.pId,CLEANSTR([protoFeature getLogDesc:false]),FeatureDesc(protoFeature.p,2),assFeature.pId,CLEANSTR([assFeature getLogDesc:false]),FeatureDesc(assFeature.p,2),absT.pId,CLEANSTR([absT getLogDesc:false]),FeatureDesc(absT.p,1));
     return absT;
 }

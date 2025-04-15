@@ -1178,7 +1178,7 @@
  */
 +(CGRect) convertPartOfFeatureContent2Rect:(AIFeatureNode*)tNode contentIndexes:(NSArray*)contentIndexes {
     //1. 数据准备。
-    CGRect resultRect = CGRectZero;
+    CGRect resultRect = CGRectNull;
     
     //2. 把contentIndexes对应的每个组码取出来。
     for (NSNumber *contentIndex in contentIndexes) {
