@@ -565,6 +565,8 @@
         [allPorts addObjectsFromArray:((AIAbsAlgNode*)node).conPorts];
     }else if (ISOK(node, AINetAbsFoNode.class)) {
         [allPorts addObjectsFromArray:((AINetAbsFoNode*)node).conPorts];
+    }else if (ISOK(node, AINodeBase.class)) {
+        [allPorts addObjectsFromArray:node.conPorts];
     }
     return allPorts;
 }
