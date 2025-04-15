@@ -15,6 +15,9 @@
     result.subDots = subDots;
     result.rect = rect;
     result.groupValue_p = groupValue_p;
+    if (rect.size.width == 0 || rect.size.height == 0) {
+        NSLog(@"TODOTOMORROW20250415: 看这里rect尺寸为0有没复现 1111");
+    }
     return result;
 }
 

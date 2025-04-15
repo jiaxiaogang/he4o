@@ -261,10 +261,10 @@
     
     //2. 局部冷启 或 整体识别：类比依据不同（参考34139-TODO1）。
     //11. 取共同absT，借助absT进行类比（参考34139-TODO1）。
-    if (protoFeature.step2Model) {
+    if (assFeature.step2Model) {
         //12. 借助absT来类比时，复用step2的识别结果model数据，并且用完就清空，防止循环野指针（参考34139-TODO3）。
-        AIFeatureStep2Model *step2Model = protoFeature.step2Model;
-        protoFeature.step2Model = nil;
+        AIFeatureStep2Model *step2Model = assFeature.step2Model;
+        assFeature.step2Model = nil;
         return [self analogyFeature4Step2:protoFeature ass:assFeature bigerMatchValue:bigerMatchValue step2Model:step2Model];
     }
     //21. 特征识别step1识别到的结果，复用indexDic进行类比。

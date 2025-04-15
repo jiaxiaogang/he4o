@@ -92,6 +92,7 @@
         return obj.floatValue;
     }];
     float pinJunNum = contentNums.count == 0 ? 0 : sumNum / contentNums.count;
+    pinJunNum = roundf(pinJunNum * 100) / 100;
     
     //3. >均值 和 <均值 的下标数组。
     NSMutableArray *smallIndexs = [NSMutableArray new];
@@ -120,6 +121,7 @@
     //5. 差值：计算出差值（如果是循环的，则用循环的算法）。
     double max = [CortexAlgorithmsUtil maxOfLoopValue:gNode.p.algsType ds:gNode.p.dataSource itemIndex:GVIndexTypeOfDataSource];
     float diffPinJunNum = [CortexAlgorithmsUtil nearDeltaOfValue:bigerPinJunNum assNum:smallPinJunNum max:max];
+    diffPinJunNum = roundf(diffPinJunNum * 100) / 100;
     
     //5. 方向：根据大小区中心点，算出方向（参考34082-TODO1）（按左上角为0,0点算，所以要加0.5表示xy坐标的中心点位置）。
     CGFloat bigerPinJunX = [SMGUtils sumOfArr:bigerIndexs convertBlock:^double(NSNumber *index) {

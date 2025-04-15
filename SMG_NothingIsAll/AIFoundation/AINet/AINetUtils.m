@@ -1220,6 +1220,9 @@
     NSArray *conPorts = [AINetUtils conPorts_All:absT];
     for (AIPort *conPort in conPorts) {
         if ([conPort.target_p isEqual:conT]) [conPort.params setObject:@(rect) forKey:@"r"];
+        if (rect.size.width == 0 || rect.size.height == 0) {
+            NSLog(@"TODOTOMORROW20250415: 看这里rect尺寸为0有没复现 2222");
+        }
     }
     [SMGUtils insertNode:absT];
 }
