@@ -349,24 +349,31 @@
         
         //============= 展开打组码细节 =============
         //5. 因为组码要展开打印，所以+1减少一层循环（用subDots的xy来加上）（不要组码时可去掉）。
-        NSInteger maxLevel2GVMaxLevelRadio = powf(3, VisionMaxLevel - maxLevel + 1);
-        NSInteger logWidth = groupRect.size.width / maxLevel2GVMaxLevelRadio;
-        NSInteger logMinX = groupRect.origin.x / maxLevel2GVMaxLevelRadio;
-        NSInteger logMinY = groupRect.origin.y / maxLevel2GVMaxLevelRadio;
+        NSInteger maxLevel2GVMaxLevelRadio = powf(3, VisionMaxLevel - maxLevel);
+        NSInteger size = groupRect.size.width / maxLevel2GVMaxLevelRadio;//像素宽（比如Mnist图为27）
+        NSInteger marginX = groupRect.origin.x / maxLevel2GVMaxLevelRadio;//marginX
+        NSInteger marginY = groupRect.origin.y / maxLevel2GVMaxLevelRadio;//marginY
         
         //6. 每个组码，都要再拆分成九格来打印（以提高精度）。
-        NSArray *subDots = [self getGroupValueNeedLog:ARR_INDEX(tNode.content_ps, i)];
-        for (MapModel *subDotModel in subDots) {
-            NSInteger subDotX = NUMTOOK(subDotModel.v1).integerValue;
-            NSInteger subDotY = NUMTOOK(subDotModel.v2).integerValue;
-            
-            //7. 需要打印的每个dot宽高每像素，都收集打印。
-            for (NSInteger x = logMinX; x < logWidth + logMinX; x++) {
-                for (NSInteger y = logMinY; y < logWidth + logMinY; y++) {
-                    
-                    //8. 因为组码要展开打印，所以每点打三格，每格以实际+subDots.xy坐标来打印。
-                    [result setObject:obj forKey:STRFORMAT(@"%ld_%ld",x * 3 + subDotX,y * 3 + subDotY)];
-                }
+        NSMutableDictionary *subDots = [self getGroupValueNeedLog:ARR_INDEX(tNode.content_ps, i)];
+        
+        //7. 每个像素都循环到。
+        for (NSInteger x = 0; x < size; x++) {
+            for (NSInteger y = 0; y < size; y++) {
+                
+                //8. 将当前GV内的xy值，转成在整个特征中的realXY值。
+                NSInteger realX = marginX + x;
+                NSInteger realY = marginY + y;
+                
+                //9. 取当前xy在gv中的区间 (将27转成0-8=0,9-17=1,18-26=2。
+                NSInteger xQuJian = x / (size / 3);
+                NSInteger yQuJian = y / (size / 3);
+                
+                //10. 当前区间可显示，则显示，不可显示则continue。
+                if (![subDots objectForKey:STRFORMAT(@"%ld_%ld",xQuJian,yQuJian)]) continue;
+                
+                //10. 因为组码要展开打印，所以每点打三格，每格以实际+subDots.xy坐标来打印。
+                [result setObject:obj forKey:STRFORMAT(@"%ld_%ld",realX,realY)];
             }
         }
     }
@@ -376,16 +383,16 @@
 /**
  *  MARK:--------------------把黑色xy数组返回--------------------
  */
-+(NSArray*) getGroupValueNeedLog:(AIKVPointer*)node_p {
++(NSMutableDictionary*) getGroupValueNeedLog:(AIKVPointer*)node_p {
     //不要组码时此处可直接返回@[x0y0]一条元素即可。
-    NSMutableArray *result = [[NSMutableArray alloc] init];
+    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
     AIGroupValueNode *gNode = [SMGUtils searchNode:node_p];
     for (NSInteger i = 0; i < gNode.count; i++) {
         NSInteger x = NUMTOOK(ARR_INDEX(gNode.xs, i)).integerValue;
         NSInteger y = NUMTOOK(ARR_INDEX(gNode.ys, i)).integerValue;
         AIKVPointer *value_p = ARR_INDEX(gNode.content_ps, i);
         double value = [NUMTOOK([AINetIndex getData:value_p]) doubleValue];
-        if (value > 0.5) [result addObject:[MapModel newWithV1:@(x) v2:@(y)]];
+        if (value > 0.3) [result setObject:@"" forKey:STRFORMAT(@"%ld_%ld",x,y)];
     }
     return result;
 }
