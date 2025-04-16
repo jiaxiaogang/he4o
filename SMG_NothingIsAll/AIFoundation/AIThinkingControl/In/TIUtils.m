@@ -209,8 +209,6 @@
         if (Log4RecogDesc) NSLog(@"%@\t匹配条数 %ld/%ld \t特征识别综合匹配度计算:T%ld \t匹配度:%.2f / %ld \t= %.2f 总强度：%ld 均强度：%.1f",assKey,model.matchCount,protoFeature.count,model.match_p.pointerId,model.sumMatchValue,model.matchCount,model.matchValue,model.sumRefStrong,model.strongValue);
     }
     
-    //TODOTOMORROW20250413: 查下这里，是不是把结果分成两组，一组为似层（用于冷启动），一组为交层（用于过度到step2）。
-    
     //41. 无效过滤器1、matchValue=0排除掉。
     NSArray *resultModels = [SMGUtils filterArr:resultDic.allValues checkValid:^BOOL(AIMatchModel *item) {
         return item.matchValue > 0;
@@ -234,7 +232,7 @@
     //44. 末尾淘汰仅保留匹配数大于xx%的：全含判断=>特征应该不需要全含，因为很难看到局部都相似的两个图像。
     resultModels = [SMGUtils filterArr:resultModels checkValid:^BOOL(AIMatchModel *item) {
         AIFeatureNode *tNode = [SMGUtils searchNode:item.match_p];
-        return item.matchCount > tNode.count * 0.3;
+        return item.matchCount > tNode.count * 0.1;
     }];
     
     //45. 末尾淘汰匹配数小于3条的、组码太少，形不成什么显著的特征。
@@ -244,7 +242,7 @@
         return obj.matchCount;
     }] / (float)resultModels.count;
     resultModels = [SMGUtils filterArr:resultModels checkValid:^BOOL(AIMatchModel *item) {
-        return item.matchCount >= pinJunMatchCount;
+        return item.matchCount >= pinJunMatchCount * 0.3f;
     }];
     
     //46. 末尾淘汰xx%匹配度低的、匹配度强度过滤器 (参考28109-todo2 & 34091-5提升准确)。
@@ -314,6 +312,8 @@
     NSArray *resultModels = [SMGUtils filterArr:step2Model.models checkValid:^BOOL(AIFeatureStep2Model *item) {
         return item.modelMatchDegree > 0 && item.modelMatchValue > 0;
     }];
+    
+    //TODOTOMORROW20250416: 查下此处，有十几条，>0过滤后成0条了。
     
     //32. 末尾淘汰过滤器：根据位置符合度末尾淘汰（参考34135-TODO4）。
     resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIFeatureStep2Model *obj) {
