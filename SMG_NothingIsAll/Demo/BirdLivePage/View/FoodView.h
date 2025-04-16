@@ -9,15 +9,15 @@
 #import <UIKit/UIKit.h>
 
 //图库图片的前辍
-#define cCanEatMainNum @"0"
+#define cCanEatMainNum @"s"
 #define cCantEatMainNum @[@"1",@"2",@"3",@"4",@"5",@"6",@"7",@"8",@"9"]
 
-//图库文件夹名称 @“ProtoMnistImages”=Mnist数字库 @"ProtoSImages"=自己拍的鼠标照片，只有12张。
-#define cProtoImageFolder @"ProtoMnistImages"
-#define cTestImageFolder @"TestMnistImages"
+//图库文件夹名称 num_x数字库 s_x自己拍的鼠标照片，只有12张。
+#define cProtoImageFolder @"ProtoImages"
+#define cTestImageFolder @"TestImages"
 
 //图库图片数，比如后辍1-17。
-#define cProtoImageCount 100
+#define cProtoImageCount 12
 #define cTestImageCount 10
 
 /**

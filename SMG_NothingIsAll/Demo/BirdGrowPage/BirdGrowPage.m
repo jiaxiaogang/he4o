@@ -112,11 +112,6 @@ static int cSUBNUM = 0;
  *  @version
  *      2021.01.24: 使直投到乌鸦身上的坚果位置更随机些 (参考视觉DisY算法中20210124注释);
  */
-- (IBAction)nearFeedingBtn0OnClick:(id)sender {
-    [theApp.heLogView addDemoLog:@"直投"];
-    DemoLog(@"直投0");
-    [self throwFood4Directly:cCanEatMainNum subNum:@(-1) forTest:@(true)];
-}
 - (IBAction)nearFeedingBtn1OnClick:(UIButton*)sender {
     [theApp.heLogView addDemoLog:@"直投"];
     DemoLog(@"直投1");
