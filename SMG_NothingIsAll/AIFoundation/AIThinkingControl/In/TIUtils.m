@@ -223,6 +223,9 @@
         return obj.match_p;
     }];
     
+    //43. 在各种过滤前，就先去做整体识别，把step1的结果传给step2继续向似层识别（参考34135-TODO5）。
+    NSArray *step2Result = [self recognitionFeature_Step2:protoFeature_p matchModels:resultModels];
+    
     //43. 末尾淘汰20%被引用强度最低的。
     resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIMatchModel *obj) {
         return obj.strongValue;
@@ -266,7 +269,14 @@
         if (Log4RecogDesc || resultModels.count > 0) NSLog(@"局部特征识别结果:T%ld%@\t 匹配条数:%ld/(proto%ld ass%ld)\t匹配度:%.2f\t强度:%.1f\t符合度:%.1f",
                                          matchModel.match_p.pointerId,CLEANSTR([assFeature getLogDesc:true]),matchModel.matchCount,protoFeature.count,assFeature.count,matchModel.matchValue,matchModel.strongValue,matchModel.matchDegree);
     }
-    return resultModels;
+    
+    //53. step1Result仅保留似层（参考34135-TODO5）。
+    //2025.04.16: 为了有更为抽象的特征，先似交层都保留。
+    //NSArray *step1Si = [SMGUtils filterArr:step1Result checkValid:^BOOL(AIMatchModel *item) {
+    //    return !item.match_p.isJiao;
+    //}];
+    
+    return [SMGUtils collectArrA:resultModels arrB:step2Result];
 }
 
 /**
@@ -434,19 +444,7 @@
             }];
         } else {
             subMatchModels = [AIRecognitionCache getCache:item_p cacheBlock:^id{
-                //A. step1识别。
-                NSArray *step1Result = ARRTOOK([self recognitionFeature_Step1:item_p]);//v2多码特征;
-                
-                //B. 把step1的结果传给step2继续向似层识别（参考34135-TODO5）。
-                NSArray *step2Result = [self recognitionFeature_Step2:item_p matchModels:step1Result];
-                
-                //C. 把似层存下（参考34135-TODO5）。
-                //NSArray *step1Si = [SMGUtils filterArr:step1Result checkValid:^BOOL(AIMatchModel *item) {
-                //    return !item.match_p.isJiao;
-                //}];
-                
-                //D. 输出用于概念识别。
-                return [SMGUtils collectArrA:step1Result arrB:step2Result];
+                return ARRTOOK([self recognitionFeature_Step1:item_p]);//v2多码特征;
             }];
         }
         
