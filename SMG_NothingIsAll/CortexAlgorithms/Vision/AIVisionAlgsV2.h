@@ -18,10 +18,7 @@
 
 #pragma mark - Test Methods
 
-// 创建测试用的100x100像素图片
 + (UIImage *) createTest4ColorImage;
-// 从ProtoMnistImage取图
-+ (UIImage *) createImageFromProtoMnistImageWithIndex:(NSInteger)imgIndex;
 + (UIImage *) createImageFromProtoMnistImageWithName:(NSString*)imgName forTest:(BOOL)forTest;
 
 @end

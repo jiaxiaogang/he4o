@@ -221,9 +221,8 @@
 }
 
 -(void) tempBtnOnClick:(UIButton*)btn {
-    NSString *imgName = @"0_1000";// STRFORMAT(@"0_%d",(arc4random() % 17) + 1);
-    [AIVisionAlgsV2 commitInput:[AIVisionAlgsV2 createImageFromProtoMnistImageWithName:imgName forTest:true] logDesc:imgName];
-//    [AIVisionAlgsV2 commitInput:[AIVisionAlgsV2 createTest4ColorImage]];
+//    [AIVisionAlgsV2 commitInput:[AIVisionAlgsV2 createImageFromProtoMnistImageWithName:@"s_9" forTest:false] logDesc:imgName];//STRFORMAT(@"0_%d",(arc4random() % 17) + 1);
+    [AIVisionAlgsV2 commitInput:[AIVisionAlgsV2 createTest4ColorImage] logDesc:@"fourColor"];
 }
 
 -(void) startRefreshDotAnimation{

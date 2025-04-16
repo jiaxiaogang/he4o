@@ -8,8 +8,6 @@
 
 #import "AIVisionAlgsV2.h"
 
-#define DefaultSize 100
-
 @implementation AIVisionAlgsV2
 
 + (NSDictionary*)getRGBValuesFromImage:(UIImage *)image {
@@ -169,7 +167,7 @@
 
 // 创建测试用的100x100像素图片
 + (UIImage *) createTest4ColorImage {
-    CGFloat size = DefaultSize;
+    CGFloat size = 20;
     CGFloat half = size / 2;
     UIGraphicsBeginImageContext(CGSizeMake(size, size));
     CGContextRef context = UIGraphicsGetCurrentContext();
@@ -194,18 +192,6 @@
     UIGraphicsEndImageContext();
     
     return image;
-}
-
-// 从ProtoMnistImage取图
-+ (UIImage *) createImageFromProtoMnistImageWithIndex:(NSInteger)imgIndex {
-    //1. 读图片路径。
-    NSString *folder = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"assets/ProtoMnistImages"];
-    NSArray *paths = [NSFile_Extension subFiles:folder];
-    
-    //2. 读出第imgIndex张图。
-    NSString *path = ARR_INDEX(paths, imgIndex);
-    UIImage *img = [UIImage imageWithContentsOfFile:path];
-    return img;
 }
 
 + (UIImage *) createImageFromProtoMnistImageWithName:(NSString*)imgName forTest:(BOOL)forTest {

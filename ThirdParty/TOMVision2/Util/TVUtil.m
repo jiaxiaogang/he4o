@@ -284,7 +284,7 @@
  */
 +(NSString*) getFeatureDesc:(AIKVPointer*)node_p sizeFenMu:(NSInteger)sizeFenMu {
     //1. 只打BColors特征。
-    if ([node_p.dataSource isEqualToString:@"hColors"] || [node_p.dataSource isEqualToString:@"sColors"]) return @"";
+    //if ([node_p.dataSource isEqualToString:@"hColors"] || [node_p.dataSource isEqualToString:@"sColors"]) return @"";
     AIFeatureNode *tNode = [SMGUtils searchNode:node_p];
     
     //2. 找出最大level，避免打印的比原图像素过多或过少。
@@ -385,7 +385,7 @@
         NSInteger y = NUMTOOK(ARR_INDEX(gNode.ys, i)).integerValue;
         AIKVPointer *value_p = ARR_INDEX(gNode.content_ps, i);
         double value = [NUMTOOK([AINetIndex getData:value_p]) doubleValue];
-        if (value > 0.0) [result addObject:[MapModel newWithV1:@(x) v2:@(y)]];
+        if (value > 0.5) [result addObject:[MapModel newWithV1:@(x) v2:@(y)]];
     }
     return result;
 }
