@@ -339,6 +339,26 @@
         [absGVModels addObject:[InputGroupValueModel new:nil groupValue:analogyGVResult.v1 rect:assRect]];
     }
     
+    //TODOTOMORROW20250417: 测得有时特征以GV类比后，结果只有0条，难道全是有责？，查下此处明明有映射，但收集到0条，导致最后rect全是null。
+    if (absGVModels.count == 0) {
+        for (NSNumber *key in indexDic) {
+            NSNumber *value = [indexDic objectForKey:key];
+            NSInteger assIndex = key.integerValue;
+            NSInteger protoIndex = value.integerValue;
+            AIKVPointer *protoG_p = ARR_INDEX(protoFeature.content_ps, protoIndex);
+            AIKVPointer *assG_p = ARR_INDEX(assFeature.content_ps, assIndex);
+            CGFloat curDegree = NUMTOOK([degreeDic objectForKey:@(assIndex)]).floatValue;
+            MapModel *analogyGVResult = [self analogyGroupValueV2:protoG_p assG:assG_p curDegree:curDegree bigerMatchValue:curMatchValue];
+            if (!analogyGVResult) {
+                NSLog(@"没收集");
+            } else {
+                featureMatchValue *= NUMTOOK(analogyGVResult.v2).floatValue;
+                CGRect assRect = VALTOOK(ARR_INDEX(assFeature.rects, assIndex)).CGRectValue;
+                NSLog(@"有收集");
+            }
+        }
+    }
+    
     //21. 为增加特征content_ps的有序性：对groupModels进行排序（特征的content是有序的，所以要先排下序）。
     NSArray *sortGroupModels = [ThinkingUtils sortInputGroupValueModels:absGVModels];
     
