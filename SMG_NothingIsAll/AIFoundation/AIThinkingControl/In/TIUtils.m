@@ -222,6 +222,12 @@
     }];
     
     //43. 在各种过滤前，就先去做整体识别，把step1的结果传给step2继续向似层识别（参考34135-TODO5）。
+    
+    //查到ass指向proto的rect需要提前算好，要step2中要用。
+    CGRect rect = [AINetUtils convertPartOfFeatureContent2Rect:protoFeature contentIndexes:matchModel.indexDic.allValues];
+    [AINetUtils updateConPortRect:assFeature conT:protoFeature_p rect:rect];
+    
+    
     NSArray *step2Result = [self recognitionFeature_Step2:protoFeature_p matchModels:resultModels];
     
     //43. 末尾淘汰20%被引用强度最低的。
