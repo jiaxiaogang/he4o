@@ -575,9 +575,31 @@
     for (AIMatchAlgModel *model in logModels) {
         AIAlgNodeBase *assAlg = [SMGUtils searchNode:model.matchAlg];
         NSLog(@"概念识别结果：A%ld%@ \t匹配（T数：%d GV数：%ld 度：%.2f）proto:%@ ass:%@",assAlg.pId,CLEANSTR([SMGUtils convertArr:assAlg.content_ps convertBlock:^id(AIKVPointer *obj) {
-            return STRFORMAT(@"T%ld",obj.pointerId);
+            AIFeatureNode *itemT = [SMGUtils searchNode:obj];
+            return STRFORMAT(@"T%ld 交层=%d 整体=%d",obj.pointerId,obj.isJiao,itemT.step2Model != nil);
         }]),model.matchCount,model.groupValueMatchCount,model.matchValue,CLEANSTR([protoAlg getLogDesc:true].allKeys),CLEANSTR([assAlg getLogDesc:true]));
     }
+    
+    
+    //TODOTOMORROW20250417: 看来特征类比不到的原因，就是indexDic有问题。
+    
+    for (AIMatchAlgModel *model in logModels) {
+        AIAlgNodeBase *assA = [SMGUtils searchNode:model.matchAlg];
+        for (NSNumber *key in model.indexDic.allKeys) {
+            NSNumber *value = [model.indexDic objectForKey:key];
+            AIKVPointer *assT = ARR_INDEX(assA.content_ps, key.integerValue);
+            AIKVPointer *protoT = ARR_INDEX(protoAlg.content_ps, value.integerValue);
+            
+            if (![protoT.dataSource isEqualToString:assT.dataSource] || ![protoT.algsType isEqualToString:assT.algsType]) {
+                NSLog(@"");
+            } else {
+                
+            }
+
+        }
+        
+    }
+    
     
     //18. debugLog3
     NSMutableDictionary *allLogDic = [NSMutableDictionary new];

@@ -175,6 +175,7 @@
  */
 +(AIAlgNodeBase*) analogyAlg:(AIKVPointer*)protoA_p assA:(AIKVPointer*)assA_p {
     //0. 如果本就一致;
+    NSLog(@"==============> 概念类比：protoA%ld assA%ld",protoA_p.pointerId,assA_p.pointerId);
     if ([protoA_p isEqual:assA_p]) return [SMGUtils searchNode:protoA_p];
 
     //1. 数据准备;
@@ -256,6 +257,7 @@
  */
 +(AIFeatureNode*) analogyFeature:(AIKVPointer*)protoT_p ass:(AIKVPointer*)assT_p bigerMatchValue:(CGFloat)bigerMatchValue {
     //1. 数据准备。
+    NSLog(@"==============> 特征类比：protoT%ld assT%ld",protoT_p.pointerId,assT_p.pointerId);
     if ([protoT_p isEqual:assT_p]) return [SMGUtils searchNode:assT_p];
     AIFeatureNode *protoFeature = [SMGUtils searchNode:protoT_p];
     AIFeatureNode *assFeature = [SMGUtils searchNode:assT_p];
@@ -281,6 +283,7 @@
 }
 
 +(AIFeatureNode*) analogyFeatureStep1:(AIFeatureNode*)protoFeature ass:(AIFeatureNode*)assFeature bigerMatchValue:(CGFloat)bigerMatchValue indexDic:(NSDictionary*)indexDic {
+    NSLog(@"==============> 特征类比Step1：protoT%ld assT%ld",protoFeature.pId,assFeature.pId);
     //1. 类比orders的规律
     NSMutableArray *absGVModels = [[NSMutableArray alloc] init];
     CGFloat featureMatchValue = 1;
@@ -398,6 +401,7 @@
 }
 
 +(AIFeatureNode*) analogyFeature4Step2:(AIFeatureNode*)protoT ass:(AIFeatureNode*)assT bigerMatchValue:(CGFloat)bigerMatchValue step2Model:(AIFeatureStep2Model*)step2Model {
+    NSLog(@"==============> 特征类比Step2：protoT%ld assT%ld",protoT.pId,assT.pId);
     //1. 借助每个absT来实现整体T的类比：类比orders的规律: 类比rectItems，把责任超过50%的去掉，别的保留（参考34139）。
     NSArray *sameItems = [SMGUtils filterArr:step2Model.rectItems checkValid:^BOOL(AIFeatureStep2Item_Rect *obj) {
         return [TCLearningUtil noZeRenForPingJun:obj.itemMatchValue * obj.itemMatchDegree bigerMatchValue:step2Model.modelMatchValue * step2Model.modelMatchDegree];
