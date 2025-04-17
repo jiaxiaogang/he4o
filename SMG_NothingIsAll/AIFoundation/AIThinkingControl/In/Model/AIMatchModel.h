@@ -28,4 +28,6 @@
 @property (strong, nonatomic) NSDictionary *degreeDic;// <K=assIndex,V=matchDegree值>
 @property (assign, nonatomic) CGFloat sumMatchDegree;//总符合度
 
+@property (assign, nonatomic) CGRect rect;//存当前ass_p在proto_p中的rect。
+
 @end
