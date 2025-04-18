@@ -179,6 +179,7 @@
             
             //11. 每个refPort转为model并计匹配度和匹配数;
             for (AIPort *refPort in refPorts) {
+                if ([refPort.target_p isEqual:protoFeature_p]) continue;
                 
                 //12. 根据level分别记录不同deltaLevel结果（把deltaLevel做为key的一部分，记录到识别结果字典里）。
                 NSInteger refLevel = VisionMaxLevel - log(refPort.rect.size.width) / log(3);
@@ -225,6 +226,21 @@
     }] convertBlock:^id(AIMatchModel *obj) {
         return obj.match_p;
     }];
+    
+    for (AIMatchModel *model in resultModels) {
+        AIFeatureNode *absT = [SMGUtils searchNode:model.match_p];
+        NSArray *itemConPorts_ps = Ports2Pits([AINetUtils conPorts_All:absT]);
+        if (![itemConPorts_ps containsObject:protoFeature_p]) {
+            NSLog(@"");
+            //1. itemAbsT.conPorts有重复（尚未修复）。
+            //2. item.absT有=protoT的情况（已修复）。
+            //3. 继续查为什么itemAbsT没具象指向protoT：因为此时还没构建关联，所以取不到。。。
+        }
+    }
+    
+        
+    
+    
     
     //43. 在各种过滤前，就先去做整体识别，把step1的结果传给step2继续向似层识别（参考34135-TODO5）。
     NSArray *step2Result = [self recognitionFeature_Step2:protoFeature_p matchModels:resultModels];
