@@ -341,10 +341,6 @@
         [AINetUtils insertRefPorts_General:assFeature.p content_ps:assFeature.content_ps difStrong:1 header:assFeature.header];
         [protoFeature updateMatchValue:assFeature matchValue:matchModel.modelMatchValue];
         [protoFeature updateMatchDegree:assFeature matchDegree:matchModel.modelMatchDegree];
-        [AINetUtils relateGeneralAbs:assFeature absConPorts:assFeature.conPorts conNodes:@[protoFeature] isNew:false difStrong:1];
-        
-        //TODOTOMORROW20250418: 综合求rect。
-        //[AINetUtils updateConPortRect:assFeature conT:protoFeature_p rect:matchModel.rectItems];
         
         //42. 存下来step2Model用于类比时用一下（参考34139-TODO3）。
         assFeature.step2Model = matchModel;
@@ -354,6 +350,11 @@
                                                            matchModel.conT.pointerId,CLEANSTR([assFeature getLogDesc:true]),
                                                            matchModel.rectItems.count,assFeature.count,protoFeature.count,
                                                            matchModel.modelMatchValue,matchModel.modelMatchDegree);
+        
+        //44. 综合求rect: 方案1-通过absT找出综合indexDic然后精确计算出rect，方案2-通过rectItems的每个rect来估算，方案3-这种整体对整体特征没必要存rect，也没必要存抽具象关联。
+        //> 抉择：暂选定方案3，因为看了下代码，确实也用不着，像类比analogyFeatureStep2()算法，都是通过step2Model来的。
+        //[AINetUtils relateGeneralAbs:assFeature absConPorts:assFeature.conPorts conNodes:@[protoFeature] isNew:false difStrong:1];
+        //[AINetUtils updateConPortRect:assFeature conT:protoFeature_p rect:matchModel.rectItems];
     }
     
     //51. 转成AIMatchModel格式返回（识别后就用match_p,matchCount,matchValue这三个值）。
