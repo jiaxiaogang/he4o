@@ -286,7 +286,8 @@
     NSLog(@"==============> 特征类比Step1：protoT%ld assT%ld",protoFeature.pId,assFeature.pId);
     //1. 类比orders的规律
     NSMutableArray *absGVModels = [[NSMutableArray alloc] init];
-    CGFloat featureMatchValue = 1;
+    CGFloat sumProtoMatchValue = 0;
+    CGFloat sumProtoMatchDegree = 0;
     
     //2. 数据检查（当前有主责，直接剔除）。
     //BUG-2025.03.24: 先关掉，不然信息量大的特征，因为能者多错（像HSB里，HS全是躺赢狗，只有B信息量大，同时差异性也大，这里会判B全责）。
@@ -302,7 +303,7 @@
     NSMutableDictionary *protoAbsIndexDic = [NSMutableDictionary new];
     
     //11. 外类比有序进行 (记录jMax & 正序)
-    for (NSNumber *key in indexDic) {
+    for (NSNumber *key in indexDic.allKeys) {
         NSNumber *value = [indexDic objectForKey:key];
         NSInteger assIndex = key.integerValue;
         NSInteger protoIndex = value.integerValue;
@@ -335,32 +336,34 @@
         //15. 调用GV类比V2: 即使mIsC匹配,也要进行共同点抽象 (参考29025-11);
         MapModel *analogyGVResult = [self analogyGroupValueV2:protoG_p assG:assG_p curDegree:curDegree bigerMatchValue:curMatchValue];
         if (!analogyGVResult) continue;
-        featureMatchValue *= NUMTOOK(analogyGVResult.v2).floatValue;
+        sumProtoMatchValue += NUMTOOK(analogyGVResult.v2).floatValue;
+        sumProtoMatchDegree += curDegree;
         
         //16. 类比后,以ass为主,存rect;
         CGRect assRect = VALTOOK(ARR_INDEX(assFeature.rects, assIndex)).CGRectValue;
         [absGVModels addObject:[InputGroupValueModel new:nil groupValue:analogyGVResult.v1 rect:assRect]];
     }
-    
     //TODOTOMORROW20250417: 测得有时特征以GV类比后，结果只有0条，难道全是有责？，查下此处明明有映射，但收集到0条，导致最后rect全是null。
     if (absGVModels.count == 0) {
-        for (NSNumber *key in indexDic) {
+        for (NSNumber *key in indexDic.allKeys) {
             NSNumber *value = [indexDic objectForKey:key];
             NSInteger assIndex = key.integerValue;
             NSInteger protoIndex = value.integerValue;
             AIKVPointer *protoG_p = ARR_INDEX(protoFeature.content_ps, protoIndex);
             AIKVPointer *assG_p = ARR_INDEX(assFeature.content_ps, assIndex);
             CGFloat curDegree = NUMTOOK([degreeDic objectForKey:@(assIndex)]).floatValue;
+            
+            //线索：因为这里取得curMatchValue=1，所以每一个都责任巨大了（存取degreeValue时，有可能存错，修了，再回测下此处bug好了没）。
             MapModel *analogyGVResult = [self analogyGroupValueV2:protoG_p assG:assG_p curDegree:curDegree bigerMatchValue:curMatchValue];
             if (!analogyGVResult) {
                 NSLog(@"没收集");
             } else {
-                featureMatchValue *= NUMTOOK(analogyGVResult.v2).floatValue;
                 CGRect assRect = VALTOOK(ARR_INDEX(assFeature.rects, assIndex)).CGRectValue;
                 NSLog(@"有收集");
             }
         }
     }
+    if (!ARRISOK(absGVModels)) return nil;
     
     //21. 为增加特征content_ps的有序性：对groupModels进行排序（特征的content是有序的，所以要先排下序）。
     NSArray *sortGroupModels = [ThinkingUtils sortInputGroupValueModels:absGVModels];
@@ -385,7 +388,7 @@
     
     //32. 更新匹配度 & 映射;
     //2025.04.12: 先不存特征的indexDic映射了，太占空间（参考34137-TODO2）。
-    [protoFeature updateMatchValue:absT matchValue:featureMatchValue];
+    [protoFeature updateMatchValue:absT matchValue:sumProtoMatchValue / absT.count];
     [assFeature updateMatchValue:absT matchValue:1];
     //[protoFeature updateIndexDic:absT indexDic:protoAbsIndexDic];
     //[assFeature updateIndexDic:absT indexDic:assAbsIndexDic];
@@ -395,6 +398,10 @@
     CGRect absAtAssRect = [AINetUtils convertPartOfFeatureContent2Rect:assFeature contentIndexes:assAbsIndexDic.allValues];
     [AINetUtils updateConPortRect:absT conT:protoFeature.p rect:absAtProtoRect];
     [AINetUtils updateConPortRect:absT conT:assFeature.p rect:absAtAssRect];
+    
+    //34. 记录符合度：根据每个符合itemAbsT，来计算平均符合度。
+    [protoFeature updateMatchDegree:absT matchDegree:sumProtoMatchDegree / absT.count];
+    [assFeature updateMatchDegree:absT matchDegree:1];
     
     if (Log4Ana || true) NSLog(@"局部特征类比结果(%@) => \nProto特征T%ld：%@\n%@Ass特征T%ld：%@\n%@局部Abs特征T%ld（GV数:%ld）：%@\n%@",protoFeature.p.dataSource,protoFeature.pId,CLEANSTR([protoFeature getLogDesc:false]),FeatureDesc(protoFeature.p,2),assFeature.pId,CLEANSTR([assFeature getLogDesc:false]),FeatureDesc(assFeature.p,2),absT.pId,sortGroupModels.count,CLEANSTR([absT getLogDesc:false]),FeatureDesc(absT.p,2));
     return absT;

@@ -48,12 +48,12 @@
     return _conMatchDegreeDic;
 }
 
--(void) updateMatchDegree:(AINodeBase*)absNode matchDegree:(CGFloat)matchDegree {
+-(void) updateMatchDegree:(AIFeatureNode*)absNode matchDegree:(CGFloat)matchDegree {
    //1. 更新抽象相似度;
-   [self.absMatchDic setObject:@(matchDegree) forKey:@(absNode.pId)];
+   [self.absMatchDegreeDic setObject:@(matchDegree) forKey:@(absNode.pId)];
    
    //2. 更新具象相似度;
-   [absNode.conMatchDic setObject:@(matchDegree) forKey:@(self.pointer.pointerId)];
+   [absNode.conMatchDegreeDic setObject:@(matchDegree) forKey:@(self.pointer.pointerId)];
    
    //3. 保存节点;
    [SMGUtils insertNode:self];

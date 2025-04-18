@@ -23,7 +23,7 @@
 //MARK:===============================================================
 @property (strong, nonatomic) NSMutableDictionary *absMatchDegreeDic;
 @property (strong, nonatomic) NSMutableDictionary *conMatchDegreeDic;
--(void) updateMatchDegree:(AINodeBase*)absNode matchDegree:(CGFloat)matchDegree;
+-(void) updateMatchDegree:(AIFeatureNode*)absNode matchDegree:(CGFloat)matchDegree;
 -(CGFloat) getConMatchDegree:(AIKVPointer*)con_p;
 -(CGFloat) getAbsMatchDegree:(AIKVPointer*)abs_p;
 
