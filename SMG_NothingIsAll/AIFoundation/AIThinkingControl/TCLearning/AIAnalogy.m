@@ -421,6 +421,24 @@
         }];
         newAbsAtProtoRect = CGRectUnion(newAbsAtProtoRect, itemConPort4ProtoT.rect);
     }
+    if (newAbsAtAssRect.size.width == 0 || newAbsAtAssRect.size.height == 0 || newAbsAtProtoRect.size.width == 0 || newAbsAtProtoRect.size.height == 0) {
+        NSLog(@"TODOTOMORROW20250415: 看这里rect尺寸为0有没复现 2222");
+        
+        CGRect newAbsAtAssRect = CGRectNull, newAbsAtProtoRect = CGRectNull;
+        for (AIFeatureStep2Item_Rect *item in sameItems) {
+            //12. 取并每个itemAbsT在assT的范围。
+            newAbsAtAssRect = CGRectUnion(newAbsAtAssRect, item.absAtConRect);
+            
+            //13. 取并每个itemAbsT在protoT的范围。
+            AIFeatureNode *itemAbsT = [SMGUtils searchNode:item.absT];
+            NSArray *itemConPorts = [AINetUtils conPorts_All:itemAbsT];
+            AIPort *itemConPort4ProtoT = [SMGUtils filterSingleFromArr:itemConPorts checkValid:^BOOL(AIPort *item) {
+                return [item.target_p isEqual:protoT.p];
+            }];
+            //经查，此处itemConPorts中，没有protoT，导致。。。
+            newAbsAtProtoRect = CGRectUnion(newAbsAtProtoRect, itemConPort4ProtoT.rect);
+        }
+    }
     
     //21. 取出每个itemAbsT中的gv，转换成newAbsT的元素：@[InputGroupValueModel]格式（参考3413a-示图1）。
     NSMutableArray *absGVModels = [[NSMutableArray alloc] init];
