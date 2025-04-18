@@ -227,14 +227,6 @@
         return obj.match_p;
     }];
     
-    for (AIMatchModel *model in resultModels) {
-        AIFeatureNode *absT = [SMGUtils searchNode:model.match_p];
-        NSArray *itemConPorts_ps = Ports2Pits([AINetUtils conPorts_All:absT]);
-        if ([SMGUtils removeRepeat:itemConPorts_ps].count < itemConPorts_ps.count) {
-            NSLog(@"itemAbsT.conPorts有重复");
-        }
-    }
-    
     //43. 末尾淘汰20%被引用强度最低的。
     //resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIMatchModel *obj) {
     //    return obj.strongValue;
@@ -350,6 +342,9 @@
         [protoFeature updateMatchValue:assFeature matchValue:matchModel.modelMatchValue];
         [protoFeature updateMatchDegree:assFeature matchDegree:matchModel.modelMatchDegree];
         [AINetUtils relateGeneralAbs:assFeature absConPorts:assFeature.conPorts conNodes:@[protoFeature] isNew:false difStrong:1];
+        
+        //TODOTOMORROW20250418: 综合求rect。
+        //[AINetUtils updateConPortRect:assFeature conT:protoFeature_p rect:matchModel.rectItems];
         
         //42. 存下来step2Model用于类比时用一下（参考34139-TODO3）。
         assFeature.step2Model = matchModel;

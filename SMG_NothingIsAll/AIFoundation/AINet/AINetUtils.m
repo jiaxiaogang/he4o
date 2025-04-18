@@ -412,8 +412,11 @@
     fromPorts = ARRTOOK(fromPorts);
     NSArray *cp = [fromPorts copy];
     for (AIPort *port in cp) {
-        if ([port.target_p isEqual:pointer] && [port.params isEqual:DICTOOK(findParams)]) {
-            return port;
+        if ([port.target_p isEqual:pointer]) {
+            //T不判断params，同一个抽象T在同一个具象T之中的Rect是一样的。
+            if (PitIsFeature(pointer) || [port.params isEqual:DICTOOK(findParams)]) {
+                return port;
+            }
         }
     }
     return nil;
