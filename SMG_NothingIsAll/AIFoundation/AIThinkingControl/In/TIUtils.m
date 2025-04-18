@@ -493,8 +493,13 @@
                 }
                 model.matchAlg = refPort.target_p;
                 
+                //9. 映射（i表示protoIndex，从ref中找assT找到即为assIndex）（此处必须先读出assA才能找着对应的assIndex，如果有性能问题，随后可以把assIndex存到refPort.params中）。
+                AIAlgNodeBase *assA = [SMGUtils searchNode:refPort.target_p];
+                NSInteger assIndex = [assA.content_ps indexOfObject:subMatchModel.match_p];
+                if (assIndex == -1) continue;
+                [model.indexDic setObject:@(i) forKey:@(assIndex)];
+                
                 //10. 统计匹配度matchCount & 相近度<1个数nearCount & 相近度sumNear & 引用强度sumStrong
-                [model.indexDic setObject:@(model.matchCount) forKey:@(i)];
                 model.matchCount++;
                 model.groupValueMatchCount += subMatchModel.matchCount;
                 model.nearCount++;
@@ -581,24 +586,7 @@
     }
     
     
-    //TODOTOMORROW20250417: 看来特征类比不到的原因，就是indexDic有问题。
-    
-    for (AIMatchAlgModel *model in logModels) {
-        AIAlgNodeBase *assA = [SMGUtils searchNode:model.matchAlg];
-        for (NSNumber *key in model.indexDic.allKeys) {
-            NSNumber *value = [model.indexDic objectForKey:key];
-            AIKVPointer *assT = ARR_INDEX(assA.content_ps, key.integerValue);
-            AIKVPointer *protoT = ARR_INDEX(protoAlg.content_ps, value.integerValue);
-            
-            if (![protoT.dataSource isEqualToString:assT.dataSource] || ![protoT.algsType isEqualToString:assT.algsType]) {
-                NSLog(@"");
-            } else {
-                
-            }
 
-        }
-        
-    }
     
     
     //18. debugLog3
