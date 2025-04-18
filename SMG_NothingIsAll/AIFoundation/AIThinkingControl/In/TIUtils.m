@@ -230,31 +230,21 @@
     for (AIMatchModel *model in resultModels) {
         AIFeatureNode *absT = [SMGUtils searchNode:model.match_p];
         NSArray *itemConPorts_ps = Ports2Pits([AINetUtils conPorts_All:absT]);
-        if (![itemConPorts_ps containsObject:protoFeature_p]) {
-            NSLog(@"");
-            //1. itemAbsT.conPorts有重复（尚未修复）。
-            //2. item.absT有=protoT的情况（已修复）。
-            //3. 继续查为什么itemAbsT没具象指向protoT：因为此时还没构建关联，所以取不到。。。
+        if ([SMGUtils removeRepeat:itemConPorts_ps].count < itemConPorts_ps.count) {
+            NSLog(@"itemAbsT.conPorts有重复");
         }
     }
     
-        
-    
-    
-    
-    //43. 在各种过滤前，就先去做整体识别，把step1的结果传给step2继续向似层识别（参考34135-TODO5）。
-    NSArray *step2Result = [self recognitionFeature_Step2:protoFeature_p matchModels:resultModels];
-    
     //43. 末尾淘汰20%被引用强度最低的。
-    resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIMatchModel *obj) {
-        return obj.strongValue;
-    }], 0, MAX(resultModels.count * 0.8f, 10));
+    //resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIMatchModel *obj) {
+    //    return obj.strongValue;
+    //}], 0, MAX(resultModels.count * 0.9f, 10));
     
     //44. 末尾淘汰仅保留匹配数大于xx%的：全含判断=>特征应该不需要全含，因为很难看到局部都相似的两个图像。
-    resultModels = [SMGUtils filterArr:resultModels checkValid:^BOOL(AIMatchModel *item) {
-        AIFeatureNode *tNode = [SMGUtils searchNode:item.match_p];
-        return item.matchCount > tNode.count * 0.1;
-    }];
+    //resultModels = [SMGUtils filterArr:resultModels checkValid:^BOOL(AIMatchModel *item) {
+    //    AIFeatureNode *tNode = [SMGUtils searchNode:item.match_p];
+    //    return item.matchCount > tNode.count * 0.05;
+    //}];
     
     //45. 末尾淘汰匹配数小于3条的、组码太少，形不成什么显著的特征。
     //2025.04.07: 由绝对3条淘汰改成末尾淘汰：匹配数低的占比偏多，所以改成按匹配数排序尾部淘汰。
@@ -269,7 +259,7 @@
     //46. 末尾淘汰xx%匹配度低的、匹配度强度过滤器 (参考28109-todo2 & 34091-5提升准确)。
     resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIMatchModel *obj) {
         return obj.matchValue * obj.matchDegree;
-    }], 0, MIN(MAX(resultModels.count * 0.7f, 10), 20));
+    }], 0, MIN(MAX(resultModels.count * 0.8f, 10), 20));
     
     //51. 更新: ref强度 & 相似度 & 抽具象 & 映射 & conPort.rect;
     for (AIMatchModel *matchModel in resultModels) {
@@ -292,8 +282,7 @@
     //NSArray *step1Si = [SMGUtils filterArr:step1Result checkValid:^BOOL(AIMatchModel *item) {
     //    return !item.match_p.isJiao;
     //}];
-    
-    return [SMGUtils collectArrA:resultModels arrB:step2Result];
+    return resultModels;
 }
 
 /**
@@ -470,7 +459,11 @@
             }];
         } else {
             subMatchModels = [AIRecognitionCache getCache:item_p cacheBlock:^id{
-                return ARRTOOK([self recognitionFeature_Step1:item_p]);//v2多码特征;
+                //a. 通过组码做局部特征识别。
+                NSArray *step1Result = ARRTOOK([self recognitionFeature_Step1:item_p]);
+                //b. 通过抽象特征做整体特征识别，把step1的结果传给step2继续向似层识别（参考34135-TODO5）。
+                NSArray *step2Result = [self recognitionFeature_Step2:item_p matchModels:step1Result];
+                return [SMGUtils collectArrA:step1Result arrB:step2Result];
             }];
         }
         
