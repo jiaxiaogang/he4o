@@ -115,7 +115,7 @@ static int cSUBNUM = 0;
 - (IBAction)nearFeedingBtn1OnClick:(UIButton*)sender {
     [theApp.heLogView addDemoLog:@"直投"];
     DemoLog(@"直投1");
-    [self throwFood4Directly:sender.titleLabel.text subNum:@(-1) forTest:@(false)];
+    [self throwFood4Directly:sender.titleLabel.text subNum:@(-1) forTest:@(true)];
 }
 
 
@@ -783,7 +783,7 @@ static int cSUBNUM = 0;
     //投哪个号图。
     if (subNum == -1) {
         if (forTest) {
-            int randomIndex = arc4random() % cTestImageCount;
+            int randomIndex = cSUBNUM++ % cTestImageCount;//随机换用:arc4random() % cTestImageCount
             subNum = randomIndex + 1;
         } else {
             subNum = (cSUBNUM++ % cProtoImageCount) + 1;//(arc4random() % 17) + 1;
@@ -793,7 +793,7 @@ static int cSUBNUM = 0;
     //投几号坚果。
     if (!STRISOK(mainNum)) {
         if (status == FoodStatus_Eat) {
-            mainNum = cCanEatMainNum;
+            mainNum = ARR_INDEX(cCanEatMainNum, 0);
         } else {
             NSArray *cantEatMainNumArr = cCantEatMainNum;
             int randomIndex = arc4random() % cantEatMainNumArr.count;
