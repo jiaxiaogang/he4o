@@ -36,7 +36,7 @@
 }
 
 //MARK:===============================================================
-//MARK:                     < 特征位置符合度 >
+//MARK:             < 特征位置符合度（类似匹配度，持久化）>
 //MARK:===============================================================
 -(NSMutableDictionary *)absMatchDegreeDic{
     if (!ISOK(_absMatchDegreeDic, NSMutableDictionary.class)) _absMatchDegreeDic = [[NSMutableDictionary alloc] initWithDictionary:_absMatchDegreeDic];

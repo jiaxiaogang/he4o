@@ -343,25 +343,8 @@
         CGRect assRect = VALTOOK(ARR_INDEX(assFeature.rects, assIndex)).CGRectValue;
         [absGVModels addObject:[InputGroupValueModel new:nil groupValue:analogyGVResult.v1 rect:assRect]];
     }
-    //TODOTOMORROW20250417: 测得有时特征以GV类比后，结果只有0条，难道全是有责？，查下此处明明有映射，但收集到0条，导致最后rect全是null。
-    if (absGVModels.count == 0) {
-        for (NSNumber *key in indexDic.allKeys) {
-            NSNumber *value = [indexDic objectForKey:key];
-            NSInteger assIndex = key.integerValue;
-            NSInteger protoIndex = value.integerValue;
-            AIKVPointer *protoG_p = ARR_INDEX(protoFeature.content_ps, protoIndex);
-            AIKVPointer *assG_p = ARR_INDEX(assFeature.content_ps, assIndex);
-            CGFloat curDegree = NUMTOOK([degreeDic objectForKey:@(assIndex)]).floatValue;
-            
-            //线索：因为这里取得curMatchValue=1，所以每一个都责任巨大了（存取degreeValue时，有可能存错，修了，再回测下此处bug好了没）。
-            MapModel *analogyGVResult = [self analogyGroupValueV2:protoG_p assG:assG_p curDegree:curDegree bigerMatchValue:curMatchValue];
-            if (!analogyGVResult) {
-                NSLog(@"没收集");
-            } else {
-                CGRect assRect = VALTOOK(ARR_INDEX(assFeature.rects, assIndex)).CGRectValue;
-                NSLog(@"有收集");
-            }
-        }
+    if (curMatchValue == 1 || absGVModels.count == 0) {
+        NSLog(@"如果匹配度为1，会导致所有indexDic的GV全有责，导致最后absGVModels为0条，如果停此处时，查下来源，这个匹配度1是哪来的");
     }
     if (!ARRISOK(absGVModels)) return nil;
     
@@ -426,6 +409,12 @@
         AIPort *itemConPort4ProtoT = [SMGUtils filterSingleFromArr:itemConPorts checkValid:^BOOL(AIPort *item) {
             return [item.target_p isEqual:protoT.p];
         }];
+        if (itemConPort4ProtoT.rect.size.width == 0 ||
+            itemConPort4ProtoT.rect.size.width == 0 ||
+            item.absAtConRect.size.width == 0 ||
+            item.absAtConRect.size.width == 0) {
+            NSLog(@"TODOTOMORROW20250419: 查下为什么有为0的。");
+        }
         newAbsAtProtoRect = CGRectUnion(newAbsAtProtoRect, itemConPort4ProtoT.rect);
     }
     

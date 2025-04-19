@@ -19,7 +19,7 @@
 -(NSInteger) indexOfRect:(CGRect)rect;
 
 //MARK:===============================================================
-//MARK:                     < 特征位置符合度 >
+//MARK:             < 特征位置符合度（类似匹配度，持久化）>
 //MARK:===============================================================
 @property (strong, nonatomic) NSMutableDictionary *absMatchDegreeDic;
 @property (strong, nonatomic) NSMutableDictionary *conMatchDegreeDic;
