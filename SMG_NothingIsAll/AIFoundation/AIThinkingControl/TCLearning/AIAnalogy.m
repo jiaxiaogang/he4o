@@ -345,7 +345,7 @@
         [absGVModels addObject:[InputGroupValueModel new:nil groupValue:analogyGVResult.v1 rect:assRect]];
     }
     if (curMatchValue == 1 || absGVModels.count == 0) {
-        NSLog(@"如果匹配度为1，会导致所有indexDic的GV全有责，导致最后absGVModels为0条，如果停此处时，查下来源，这个匹配度1是哪来的");
+        ELog(@"如果匹配度为1，会导致所有indexDic的GV全有责，导致最后absGVModels为0条，如果停此处时，查下来源，这个匹配度1是哪来的");
     }
     if (!ARRISOK(absGVModels)) return nil;
     

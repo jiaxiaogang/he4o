@@ -92,7 +92,9 @@
         
         //4. 概念是否交层,可以使用长度来判断 (有一条conAlg为交层 或 当前sames长度小于具象特征数 => 则当前为交层) (参考33111-TODO1);
         result.pointer.isJiao = [SMGUtils filterSingleFromArr:conAlgs checkValid:^BOOL(AIAlgNodeBase *item) {
-            return item.pointer.isJiao || sortSames.count < item.count;
+            return item.pointer.isJiao || sortSames.count < item.count || [SMGUtils filterSingleFromArr:sortSames checkValid:^BOOL(AIKVPointer *item) {
+                return item.isJiao;
+            }];
         }];
         
         [result setContent_ps:sortSames];

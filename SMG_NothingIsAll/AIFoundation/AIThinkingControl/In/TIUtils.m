@@ -543,34 +543,25 @@
     }
     
     //13. 似层交层分开进行竞争 (分开竞争是以前就一向如此的,因为同质竞争才公平) (为什么要保留交层: 参考31134-TODO1);
-    
-    //TODOTOMORROW20250419: 这里应该得改下，当feature类型时，应该得判断元素T是否交层，而不是直接用alg是否全含，来判断它是否交层。
-    //或item.matchAlg.isJiao查下alg的isJiao是哪里生成的，是否根据元素T来的，是否准确。
-    
-    
-    
+    //2025.04.19: 改为用isJiao来判断交似层，避免很交层特征的却归到似层里，而原本整体特征却因为竞争力不如这些假的，反被顶掉。
     NSArray *validPSAlgs = [SMGUtils filterArr:validPAlgs checkValid:^BOOL(AIMatchAlgModel *item) {
-        AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item.matchAlg];
-        return itemAlg.count == protoAlg.count;
+        return !item.matchAlg.isJiao;
     }];
     NSArray *validPJAlgs = [SMGUtils filterArr:validPAlgs checkValid:^BOOL(AIMatchAlgModel *item) {
-        AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item.matchAlg];
-        return itemAlg.count != protoAlg.count;
+        return item.matchAlg.isJiao;
     }];
     NSArray *validRSAlgs = [SMGUtils filterArr:validRAlgs checkValid:^BOOL(AIMatchAlgModel *item) {
-        AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item.matchAlg];
-        return itemAlg.count == protoAlg.count;
+        return !item.matchAlg.isJiao;
     }];
     NSArray *validRJAlgs = [SMGUtils filterArr:validRAlgs checkValid:^BOOL(AIMatchAlgModel *item) {
-        AIAlgNodeBase *itemAlg = [SMGUtils searchNode:item.matchAlg];
-        return itemAlg.count != protoAlg.count;
+        return item.matchAlg.isJiao;
     }];
     
     //13. 识别过滤器 (参考28109-todo2);
     NSArray *filterPSAlgs = [AIFilter recognitionAlgFilter:validPSAlgs radio:0.5f];
     NSArray *filterPJAlgs = [AIFilter recognitionAlgFilter:validPJAlgs radio:0.5f];
-    NSArray *filterRSAlgs = [AIFilter recognitionAlgFilter:validRSAlgs radio:0.16f];
-    NSArray *filterRJAlgs = [AIFilter recognitionAlgFilter:validRJAlgs radio:0.16f];
+    NSArray *filterRSAlgs = [AIFilter recognitionAlgFilter:validRSAlgs radio:0.36f];
+    NSArray *filterRJAlgs = [AIFilter recognitionAlgFilter:validRJAlgs radio:0.36f];
     
     //14. 识别竞争机制 (参考2722d-方案2);
     //14. 按nearA排序 (参考25083-2&公式2 & 25084-1);
