@@ -35,6 +35,9 @@
 //MARK:                     < 计算位置符合度组 >
 //MARK:===============================================================
 -(void) run4MatchDegree:(AIFeatureStep2Model*)protoModel {
+    //0. 存下protoT来，类比时要用下。
+    self.protoT = protoModel.conT;
+    
     //=============== step1: 缩放对齐（参考34136-TODO1）===============
     //1. 比例排序。
     NSArray *scaleSort = [SMGUtils sortSmall2Big:self.rectItems compareBlock:^double(AIFeatureStep2Item_Rect *obj) {
@@ -134,6 +137,9 @@
 }
 
 -(void) run4MatchValue:(AIKVPointer*)protoT {
+    //0. 存下protoT来，类比时要用下。
+    self.protoT = protoT;
+    
     //1. self就是protoT时，直接设为匹配度1。
     if ([self.conT isEqual:protoT]) {
         self.modelMatchValue = 1;

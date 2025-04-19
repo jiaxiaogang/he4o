@@ -264,7 +264,8 @@
     
     //2. 局部冷启 或 整体识别：类比依据不同（参考34139-TODO1）。
     //11. 取共同absT，借助absT进行类比（参考34139-TODO1）。
-    if (assFeature.step2Model) {
+    //2025.04.19: 必须是当前protoT识别时的step2Model才行，如果是往期step2Model不能用，会导致类比找protoT对应不上，导致取rect为Null的BUG。
+    if (assFeature.step2Model && [assFeature.step2Model.protoT isEqual:protoT_p]) {
         //12. 借助absT来类比时，复用step2的识别结果model数据，并且用完就清空，防止循环野指针（参考34139-TODO3）。
         AIFeatureStep2Model *step2Model = assFeature.step2Model;
         assFeature.step2Model = nil;
@@ -409,11 +410,9 @@
         AIPort *itemConPort4ProtoT = [SMGUtils filterSingleFromArr:itemConPorts checkValid:^BOOL(AIPort *item) {
             return [item.target_p isEqual:protoT.p];
         }];
-        if (itemConPort4ProtoT.rect.size.width == 0 ||
-            itemConPort4ProtoT.rect.size.width == 0 ||
-            item.absAtConRect.size.width == 0 ||
-            item.absAtConRect.size.width == 0) {
-            NSLog(@"TODOTOMORROW20250419: 查下为什么有为0的。");
+        if (!itemConPort4ProtoT) {
+            ELog(@"异常，itemAbsT本来就是以protoT识别的，但从其具象却找不着protoT，查下原因，在特征识别step2中，已经把protoT记录到step2Model中了，查下为什么从具象找不到protoT");
+            return nil;
         }
         newAbsAtProtoRect = CGRectUnion(newAbsAtProtoRect, itemConPort4ProtoT.rect);
     }

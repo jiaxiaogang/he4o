@@ -25,6 +25,9 @@
 //记录assT/protoT的地址。
 @property (strong, nonatomic) AIKVPointer *conT;
 
+//记录当时识别时的protoT（类比时要用下）。
+@property (strong, nonatomic) AIKVPointer *protoT;
+
 //MARK:===============================================================
 //MARK:                     < 收集数据组 >
 //MARK:===============================================================

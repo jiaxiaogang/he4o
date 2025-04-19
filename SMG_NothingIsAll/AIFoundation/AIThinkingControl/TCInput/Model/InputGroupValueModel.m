@@ -16,7 +16,7 @@
     result.rect = rect;
     result.groupValue_p = groupValue_p;
     if (rect.size.width == 0 || rect.size.height == 0) {
-        NSLog(@"TODOTOMORROW20250415: 看这里rect尺寸为0有没复现 1111");
+        ELog(@"查下这里rect尺寸为0复现时，这个尺寸为0哪来的1");
     }
     return result;
 }
