@@ -14,6 +14,7 @@
 #import "NVViewUtil.h"
 #import "WoodView.h"
 #import "HitItemModel.h"
+//#import <AVFoundation/AVFoundation.h>
 
 static int cSUBNUM = 0;
 
@@ -32,6 +33,10 @@ static int cSUBNUM = 0;
 @property (assign, nonatomic) BOOL isHited; //检测撞到了;
 @property (strong, nonatomic) HitItemModel *lastHitModel;
 @property (assign, nonatomic) CGRect lastWoodFrame;//用于木棒食物碰撞检测
+
+//@property (strong, nonatomic) AVCaptureSession *captureSession;
+//@property (strong, nonatomic) AVCaptureVideoPreviewLayer *previewLayer;
+//@property (strong, nonatomic) UIView *cameraView;
 
 @end
 
@@ -84,6 +89,16 @@ static int cSUBNUM = 0;
     self.woodView = [[WoodView alloc] init];
     self.woodView.delegate = self;
     [self.view addSubview:self.woodView];
+
+    //7. 摄像头预览视图
+    //self.captureSession = [[AVCaptureSession alloc] init];
+    //self.cameraView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)];
+    //self.previewLayer = [AVCaptureVideoPreviewLayer layerWithSession:self.captureSession];
+    //self.previewLayer.frame = CGRectMake(0, 0, 200, 200);
+    //self.previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
+    //[self.cameraView.layer addSublayer:self.previewLayer];
+    //[self.view addSubview:self.cameraView];
+    //[self.view bringSubviewToFront:self.cameraView];
 }
 
 -(void) initData{

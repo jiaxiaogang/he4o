@@ -102,6 +102,7 @@
 		0858C5E421950BC700951BA5 /* TreeView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0858C5E321950BC700951BA5 /* TreeView.xib */; };
 		0858C5E721950CA300951BA5 /* FoodView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0858C5E621950CA300951BA5 /* FoodView.m */; };
 		0858C5E921950CAA00951BA5 /* FoodView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0858C5E821950CAA00951BA5 /* FoodView.xib */; };
+		0859C5BA2DB483150049F4CD /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0859C5B52DB481B00049F4CD /* AVFoundation.framework */; };
 		085BA9F4241C421500829450 /* HeLogUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 085BA9F3241C421500829450 /* HeLogUtil.m */; };
 		085F8E1D27EEC46A00836F21 /* TVUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 085F8E1C27EEC46A00836F21 /* TVUtil.m */; };
 		0860A3BB22C9851800A48682 /* CustomAddNodeWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 0860A3BA22C9851800A48682 /* CustomAddNodeWindow.m */; };
@@ -424,6 +425,7 @@
 		0858C5E521950CA300951BA5 /* FoodView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FoodView.h; sourceTree = "<group>"; };
 		0858C5E621950CA300951BA5 /* FoodView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FoodView.m; sourceTree = "<group>"; };
 		0858C5E821950CAA00951BA5 /* FoodView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FoodView.xib; sourceTree = "<group>"; };
+		0859C5B52DB481B00049F4CD /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		085BA9F2241C421500829450 /* HeLogUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HeLogUtil.h; sourceTree = "<group>"; };
 		085BA9F3241C421500829450 /* HeLogUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HeLogUtil.m; sourceTree = "<group>"; };
 		085F8E1B27EEC46A00836F21 /* TVUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TVUtil.h; sourceTree = "<group>"; };
@@ -695,6 +697,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0859C5BA2DB483150049F4CD /* AVFoundation.framework in Frameworks */,
 				2753D7CF7BAEDFEACAF9264A /* libPods-SMG_NothingIsAll.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1821,6 +1824,7 @@
 		207E0C8ABC4501E50CC5D363 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0859C5B52DB481B00049F4CD /* AVFoundation.framework */,
 				DFBD58BA1D49147BC1DBA697 /* libPods-SMG_NothingIsAll.a */,
 			);
 			name = Frameworks;

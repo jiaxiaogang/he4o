@@ -34,5 +34,7 @@
 	<array>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 	</array>
+	<key> NSCameraUsageDescription </key>
+	<string> 上帝说要有光 </string>
 </dict>
 </plist>
