@@ -581,9 +581,10 @@
     }];
     for (AIMatchAlgModel *model in logModels) {
         AIAlgNodeBase *assAlg = [SMGUtils searchNode:model.matchAlg];
-        NSLog(@"概念识别结果：A%ld%@ \t匹配（T数：%d GV数：%ld 度：%.2f）proto:%@ ass:%@",assAlg.pId,CLEANSTR([SMGUtils convertArr:assAlg.content_ps convertBlock:^id(AIKVPointer *obj) {
-            AIFeatureNode *itemT = [SMGUtils searchNode:obj];
-            return STRFORMAT(@"T%ld 交层=%d 整体=%d",obj.pointerId,obj.isJiao,itemT.step2Model != nil);
+        NSLog(@"%@概念识别结果：A%ld%@ \t匹配（T数：%d GV数：%ld 度：%.2f）proto:%@ ass:%@",assAlg.p.isJiao?@"局部":@"整体",assAlg.pId,CLEANSTR([SMGUtils convertArr:assAlg.content_ps convertBlock:^id(AIKVPointer *obj) {
+            return STRFORMAT(@"T%ld",obj.pointerId);
+            //AIFeatureNode *itemT = [SMGUtils searchNode:obj];
+            //return STRFORMAT(@"T%ld 交层=%d 整体=%d",obj.pointerId,obj.isJiao,itemT.step2Model != nil);
         }]),model.matchCount,model.groupValueMatchCount,model.matchValue,CLEANSTR([protoAlg getLogDesc:true].allKeys),CLEANSTR([assAlg getLogDesc:true]));
     }
     
