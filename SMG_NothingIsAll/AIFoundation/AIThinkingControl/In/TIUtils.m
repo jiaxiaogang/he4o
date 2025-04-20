@@ -73,29 +73,36 @@
  */
 +(NSArray*) recognitionGroupValueV2:(AIKVPointer*)groupValue_p rate:(CGFloat)rate minLimit:(NSInteger)minLimit {
     //1. 数据准备
+    AddDebugCodeBlock_Key(@"rfs1", @"31");
     AIGroupValueNode *protoGroupValue = [SMGUtils searchNode:groupValue_p];
     NSMutableDictionary *resultDic = [[NSMutableDictionary alloc] init];
+    AddDebugCodeBlock_Key(@"rfs1", @"32");
     
     //2. 先把protoGV解读成索引值。
     NSArray *protoGVIndexs = [AINetGroupValueIndex convertGVIndexData:protoGroupValue];
+    AddDebugCodeBlock_Key(@"rfs1", @"33");
     for (NSInteger itemIndex = 0; itemIndex < protoGVIndexs.count; itemIndex++) {
         
         //3. 取所有当前组码的itemIndex下的索引序列 & 当前码的索引值 & 当前码的最大值。
+        AddDebugCodeBlock_Key(@"rfs1", @"34");
         NSArray *allGVIndex =[AINetGroupValueIndex getGVIndex:protoGroupValue itemIndex:itemIndex];
         CGFloat protoNum = NUMTOOK(ARR_INDEX(protoGVIndexs, itemIndex)).floatValue;
         double max = [CortexAlgorithmsUtil maxOfLoopValue:groupValue_p.algsType ds:groupValue_p.dataSource itemIndex:itemIndex];
+        AddDebugCodeBlock_Key(@"rfs1", @"35");
         
         //4. 取出最大最小组码值。
         MapModel *minGVIndex = ARR_INDEX(allGVIndex, 0);
         MapModel *maxGVIndex = ARR_INDEX_REVERSE(allGVIndex, 0);
         float minNum = minGVIndex ? NUMTOOK(minGVIndex.v2).floatValue : 0;
         float maxNum = maxGVIndex ? NUMTOOK(maxGVIndex.v2).floatValue : 0;
+        AddDebugCodeBlock_Key(@"rfs1", @"36");//循环圈:1 代码块:36 计数:153 均耗:5.06 = 总耗:775 读:0 写:0
         
         //5. 按照相近度排序;
         NSArray *sortGVIndex2 = [SMGUtils sortSmall2Big:allGVIndex compareBlock:^double(MapModel *itemGVIndex) {
             CGFloat itemNum = NUMTOOK(itemGVIndex.v2).floatValue;
             return [CortexAlgorithmsUtil nearDeltaOfValue:protoNum assNum:itemNum max:max];
         }];
+        AddDebugCodeBlock_Key(@"rfs1", @"37");
         //NSLog(@"GV取得索引：%@ %ld",groupValue_p.dataSource,sortGVIndex2.count);
         
         //6. 窄出：指定相近度范围内的组码 & 仅返回前NarrowLimit条 (最多narrowLimit条,最少1条);
@@ -103,12 +110,15 @@
         NSArray *validGVIndex3 = ARR_SUB(sortGVIndex2, 0, limit);
         
         //11. 转nears为AIMatchModels。
+        AddDebugCodeBlock_Key(@"rfs1", @"38");
         for (MapModel *itemGVIndex in validGVIndex3) {
+            AddDebugCodeBlock_Key(@"rfs1", @"39");//循环圈:1 代码块:39 计数:49419 均耗:0.01 = 总耗:722 读:0 写:0
             AIKVPointer *ass_p = itemGVIndex.v1;
             CGFloat assNum = NUMTOOK(itemGVIndex.v2).floatValue;
             
             //12. 计算相近度（取item与proto的相近度）。
             CGFloat matchValue = [AIAnalyst compareGV:assNum protoV:protoNum at:groupValue_p.algsType ds:groupValue_p.dataSource minData:minNum maxData:maxNum itemIndex:itemIndex];
+            AddDebugCodeBlock_Key(@"rfs1", @"3a");//循环圈:1 代码块:3a 计数:49419 均耗:0.01 = 总耗:716 读:0 写:0
             
             //13. 首轮循环新建，其后必须复用（复用不到，说明非全含，直接滤掉。
             AIMatchModel *gModel = [resultDic objectForKey:@(ass_p.pointerId)];
@@ -117,8 +127,11 @@
             gModel.sumMatchValue += matchValue;
             gModel.matchCount++;
             [resultDic setObject:gModel forKey:@(ass_p.pointerId)];
+            AddDebugCodeBlock_Key(@"rfs1", @"3b");//循环圈:1 代码块:3b 计数:49419 均耗:0.01 = 总耗:697 读:0 写:0
         }
+        AddDebugCodeBlock_Key(@"rfs1", @"3c");
     }
+    AddDebugCodeBlock_Key(@"rfs1", @"3d");
     
     //21. 转为gMatchModels数组。
     NSArray *gMatchModels = resultDic.allValues;
@@ -132,6 +145,7 @@
     gMatchModels = [SMGUtils sortBig2Small:gMatchModels compareBlock:^double(AIMatchModel *obj) {
         return obj.matchValue;
     }];
+    AddDebugCodeBlock_Key(@"rfs1", @"3e");//循环圈:1 代码块:3e 计数:51 均耗:27.96 = 总耗:1426 读:481 写:0
     
     //24. 过滤不准确的结果。
     gMatchModels = ARR_SUB(gMatchModels, 0, MAX(5, gMatchModels.count * 0.5));
@@ -144,6 +158,7 @@
         [protoGroupValue updateMatchValue:assNode matchValue:matchModel.matchValue];
         [AINetUtils relateGeneralAbs:assNode absConPorts:assNode.conPorts conNodes:@[protoGroupValue] isNew:false difStrong:1];
     }
+    AddDebugCodeBlock_Key(@"rfs1", @"3f");
     return gMatchModels;
 }
 
@@ -157,28 +172,35 @@
  */
 +(NSArray*) recognitionFeature_Step1:(AIKVPointer*)protoFeature_p {
     //1. 数据准备
+    AddDebugCodeBlock_Key(@"rfs1", @"1");
     AIFeatureNode *protoFeature = [SMGUtils searchNode:protoFeature_p];
     NSLog(@"\n=========== 特征识别 protoT%ld（%@）===========",protoFeature_p.pointerId,protoFeature_p.dataSource);
     AIFeatureAllBestGVModel *gvBestModel = [[AIFeatureAllBestGVModel alloc] init];
     if (protoFeature.count == 0) return @[[[AIMatchModel alloc] initWithMatch_p:protoFeature_p]];
+    AddDebugCodeBlock_Key(@"rfs1", @"2");
     
     //2. 循环分别识别：特征里的组码。
     for (NSInteger i = 0; i < protoFeature.count; i++) {
         AIKVPointer *protoGroupValue_p = ARR_INDEX(protoFeature.content_ps, i);
         CGRect protoRect = VALTOOK(ARR_INDEX(protoFeature.rects, i)).CGRectValue;
         NSInteger protoLevel = VisionMaxLevel - log(protoRect.size.width) / log(3);
+        AddDebugCodeBlock_Key(@"rfs1", @"3");
         
         //4. 组码识别。
         NSArray *gMatchModels = [AIRecognitionCache getCache:protoGroupValue_p cacheBlock:^id{
             return ARRTOOK([self recognitionGroupValueV2:protoGroupValue_p rate:0.3 minLimit:3]);
         }];
+        AddDebugCodeBlock_Key(@"rfs1", @"4");
         
         //6. 对所有gv识别结果的，所有refPorts，依次判断位置符合度。
         for (AIMatchModel *gModel in gMatchModels) {
+            AddDebugCodeBlock_Key(@"rfs1", @"5");
             NSArray *refPorts = [AINetUtils refPorts_All:gModel.match_p];
+            AddDebugCodeBlock_Key(@"rfs1", @"6");
             
             //11. 每个refPort转为model并计匹配度和匹配数;
             for (AIPort *refPort in refPorts) {
+                AddDebugCodeBlock_Key(@"rfs1", @"7");
                 if ([refPort.target_p isEqual:protoFeature_p]) continue;
                 
                 //12. 根据level分别记录不同deltaLevel结果（把deltaLevel做为key的一部分，记录到识别结果字典里）。
@@ -187,38 +209,49 @@
                 
                 //13. 取出已经收集到的assGVModels,判断下一个refPort收集进去的话,是否符合位置;
                 NSArray *assGVItems = [gvBestModel getAssGVModelsForKey:assKey];
+                AddDebugCodeBlock_Key(@"rfs1", @"8");
                 //BOOL debugMode = [feature_p.dataSource isEqual:@"hColors"] && [refPort.target_p isEqual:protoFeature.p] && assLevel == protoLevel && [gModel.match_p isEqual:protoGroupValue_p];
                 CGFloat matchDegree = [ThinkingUtils checkAssToMatchDegree:protoFeature protoIndex:i assGVModels:assGVItems checkRefPort:refPort debugMode:false];
+                AddDebugCodeBlock_Key(@"rfs1", @"9");
                 
                 //14. 判断新一条refPort是否更好，更好的话存下来（存refPort，assKey，gModel.matchValue，matchDegree）。
                 [gvBestModel updateStep1:assKey refPort:refPort gMatchValue:gModel.matchValue gMatchDegree:matchDegree matchOfProtoIndex:i];
+                AddDebugCodeBlock_Key(@"rfs1", @"10");
             }
+            AddDebugCodeBlock_Key(@"rfs1", @"11");
         }
+        AddDebugCodeBlock_Key(@"rfs1", @"12");
         
         //21. STEP2：每个protoIndex内防重，竞争只保留protoIndex下最好一条。
         [gvBestModel invokeRankStep2];
+        AddDebugCodeBlock_Key(@"rfs1", @"13");
         
         //22. STEP3：跨protoIndex防重，将best结果存下来
         [gvBestModel updateStep3];
+        AddDebugCodeBlock_Key(@"rfs1", @"14");
     }
     //31. 用明细生成总账（bestModel -> resultDic）。
     NSDictionary *resultDic = [gvBestModel convert2AIMatchModelsStep4];// <K=deltaLevel_assPId, V=识别的特征AIMatchModel>
+    AddDebugCodeBlock_Key(@"rfs1", @"15");
     
     //32. debug
     for (NSString *assKey in resultDic.allKeys) {
         AIMatchModel *model = [resultDic objectForKey:assKey];
         if (Log4RecogDesc) NSLog(@"%@\t匹配条数 %ld/%ld \t特征识别综合匹配度计算:T%ld \t匹配度:%.2f / %ld \t= %.2f 总强度：%ld 均强度：%.1f",assKey,model.matchCount,protoFeature.count,model.match_p.pointerId,model.sumMatchValue,model.matchCount,model.matchValue,model.sumRefStrong,model.strongValue);
     }
+    AddDebugCodeBlock_Key(@"rfs1", @"16");
     
     //33. 生成ass_T在proto_T中的rect。
     for (AIMatchModel *matchModel in resultDic.allValues) {
         matchModel.rect = [AINetUtils convertPartOfFeatureContent2Rect:protoFeature contentIndexes:matchModel.indexDic.allValues];
     }
+    AddDebugCodeBlock_Key(@"rfs1", @"17");
     
     //41. 无效过滤器1、matchValue=0排除掉。
     NSArray *resultModels = [SMGUtils filterArr:resultDic.allValues checkValid:^BOOL(AIMatchModel *item) {
         return item.matchValue > 0;
     }];
+    AddDebugCodeBlock_Key(@"rfs1", @"18");
     
     //42. 防重过滤器2、此处每个特征的不同层级，可能识别到同一个特征，可以按匹配度防下重。
     resultModels = [SMGUtils removeRepeat:[SMGUtils sortBig2Small:resultModels compareBlock:^double(AIMatchModel *obj) {
@@ -226,6 +259,7 @@
     }] convertBlock:^id(AIMatchModel *obj) {
         return obj.match_p;
     }];
+    AddDebugCodeBlock_Key(@"rfs1", @"19");
     
     //43. 末尾淘汰20%被引用强度最低的。
     //resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIMatchModel *obj) {
@@ -247,6 +281,7 @@
     resultModels = [SMGUtils filterArr:resultModels checkValid:^BOOL(AIMatchModel *item) {
         return item.matchCount >= pinJunMatchCount * 0.3f;
     }];
+    AddDebugCodeBlock_Key(@"rfs1", @"20");
     
     //46. 末尾淘汰xx%匹配度低的、匹配度强度过滤器 (参考28109-todo2 & 34091-5提升准确)。
     resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIMatchModel *obj) {
@@ -254,7 +289,9 @@
     }], 0, MIN(MAX(resultModels.count * 0.8f, 10), 20));
     
     //51. 更新: ref强度 & 相似度 & 抽具象 & 映射 & conPort.rect;
+    AddDebugCodeBlock_Key(@"rfs1", @"21");
     for (AIMatchModel *matchModel in resultModels) {
+        AddDebugCodeBlock_Key(@"rfs1", @"22");
         AIFeatureNode *assFeature = [SMGUtils searchNode:matchModel.match_p];
         [AINetUtils insertRefPorts_General:assFeature.p content_ps:assFeature.content_ps difStrong:1 header:assFeature.header];
         [protoFeature updateMatchValue:assFeature matchValue:matchModel.matchValue];
@@ -263,11 +300,14 @@
         [protoFeature updateIndexDic:assFeature indexDic:matchModel.indexDic];
         [protoFeature updateDegreeDic:assFeature.pId degreeDic:matchModel.degreeDic];
         [AINetUtils updateConPortRect:assFeature conT:protoFeature_p rect:matchModel.rect];
+        AddDebugCodeBlock_Key(@"rfs1", @"23");
         
         //52. debug
         if (Log4RecogDesc || resultModels.count > 0) NSLog(@"局部特征识别结果:T%ld%@\t 匹配条数:%ld/(proto%ld ass%ld)\t匹配度:%.2f\t强度:%.1f\t符合度:%.1f",
                                          matchModel.match_p.pointerId,CLEANSTR([assFeature getLogDesc:true]),matchModel.matchCount,protoFeature.count,assFeature.count,matchModel.matchValue,matchModel.strongValue,matchModel.matchDegree);
     }
+    AddDebugCodeBlock_Key(@"rfs1", @"24");
+    PrintDebugCodeBlock_Key(@"rfs1");
     
     //53. step1Result仅保留似层（参考34135-TODO5）。
     //2025.04.16: 为了有更为抽象的特征，先似交层都保留。
