@@ -762,7 +762,7 @@
                                 <constraint firstAttribute="height" constant="15" id="dgI-VO-mdu"/>
                             </constraints>
                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                            <state key="normal" title="s">
+                            <state key="normal" title="鼠">
                                 <color key="titleColor" red="0.37254901959999998" green="0.37254901959999998" blue="0.37254901959999998" alpha="1" colorSpace="calibratedRGB"/>
                             </state>
                             <connections>
