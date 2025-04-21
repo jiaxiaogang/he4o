@@ -21,4 +21,11 @@
  */
 +(NSArray*) getSub9DotFromSplitDic:(NSInteger)curLevel curRow:(NSInteger)curRow curColumn:(NSInteger)curColumn splitDic:(NSDictionary*)splitDic;
 
+//MARK:===============================================================
+//MARK:                     < V2新版本方法组 >
+//MARK:===============================================================
++(CGFloat) deltaOfCustomV1:(double)v1 v2:(double)v2 max:(CGFloat)max min:(CGFloat)min loop:(BOOL)loop;
++(CGFloat) matchValueOfCustomV1:(double)v1 v2:(double)v2 max:(CGFloat)max min:(CGFloat)min loop:(BOOL)loop;
++(BOOL) dsIsLoop:(NSString*)ds;
+
 @end

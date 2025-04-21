@@ -172,7 +172,6 @@
 #define kFNNode @"node"               //节点
 //#define kFNValue @"value"             //微信息
 #define kFNRefPorts @"refPorts"       //微信息的reference序列文件名;
-#define kFNRefPorts4G(x,y) STRFORMAT(@"refPortsX%ldY%ld",x,y)       //微信息的reference序列文件名;
 #define kFNIndex(isOut) STRFORMAT(@"index_%d",isOut) //in微信息索引(数组) / out小脑微信息(数组)
 #define kFN_GV_Index(itemIndex) STRFORMAT(@"GVIndex_%ld",itemIndex)
 #define kFNData(isOut) STRFORMAT(@"data_%d",isOut) //in微信息值 / out小脑微信息值 (dic)

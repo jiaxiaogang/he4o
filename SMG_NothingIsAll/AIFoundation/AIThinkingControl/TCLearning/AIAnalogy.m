@@ -342,7 +342,7 @@
         
         //16. 类比后,以ass为主,存rect;
         CGRect assRect = VALTOOK(ARR_INDEX(assFeature.rects, assIndex)).CGRectValue;
-        [absGVModels addObject:[InputGroupValueModel new:nil groupValue:analogyGVResult.v1 rect:assRect]];
+        [absGVModels addObject:[InputGroupValueModel new:analogyGVResult.v1 rect:assRect]];
     }
     if (curMatchValue == 1 && absGVModels.count == 0) {
         ELog(@"如果匹配度为1，会导致所有indexDic的GV全有责，导致最后absGVModels为0条，如果停此处时，查下来源，这个匹配度1是哪来的");
@@ -441,7 +441,7 @@
             }]) {
                 
                 //25. 未重复时，收集之。
-                [absGVModels addObject:[InputGroupValueModel new:nil groupValue:gv_p rect:gvRect]];
+                [absGVModels addObject:[InputGroupValueModel new:gv_p rect:gvRect]];
             }
         }
         

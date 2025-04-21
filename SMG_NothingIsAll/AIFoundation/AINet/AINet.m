@@ -88,38 +88,15 @@ static AINet *_instance;
 /**
  *  MARK:--------------------视觉V2模型特征处理--------------------
  *  @param splitDic 粒度字典 <K=level_x_y V=Number类型（比如H或S或B色值）>
- */
--(NSArray*) algModelConvert2PointersV2:(NSDictionary*)splitDic at:(NSString*)at ds:(NSString*)ds levelNum:(NSInteger)levelNum {
-    //1. 单码装箱
-    NSDictionary *splitDic_Value_ps = [self algModelConvert2PointersV2_Step1_ConvertV:at ds:ds splitDic:splitDic];
-    
-    //2. 组码装箱
-    NSArray *groupModels = [self algModelConvert2PointersV2_Step2_Zip2GroupValue:at ds:ds splitDic:splitDic_Value_ps levelNum:levelNum];
-    return groupModels;
-}
-
-/**
- *  MARK:--------------------第一步：单码装箱--------------------
- */
--(NSDictionary*) algModelConvert2PointersV2_Step1_ConvertV:(NSString*)at ds:(NSString*)ds splitDic:(NSDictionary*)splitDic {
-    //1. 循环装箱
-    //TODO: 这里把已经装箱部分根据值防重记复用下，可以省性能，不过得先测下这确实性能慢，再做这个。
-    return [SMGUtils convertDic:splitDic kvBlock:^NSArray *(id protoK, NSNumber *protoV) {
-        AIPointer *pointer = [AINetIndex getDataPointerWithData:protoV algsType:at dataSource:ds isOut:false];//K不需要装箱，V装箱即可。
-        return @[protoK,pointer];
-    }];
-}
-
-/**
- *  MARK:--------------------第二步：组码装箱--------------------
  *  @desc
  *          1、压缩说明：把粒度树里，细一级九宫相似，则移除掉，只保留父级一格（并打包成组）（参考34042-分析3）。
  *          2、组码装箱：直接把未压缩掉的，有特异性的组，打包成组码节点。
  *          3、对组码进行x,y,level的排序。
- *  @param splitDic <K=level_x_y V=value_p指针>
+ *  _param splitDic <K=level_x_y V=HSB值>
  *  @result <InputGroupValueModels>
  */
--(NSArray*) algModelConvert2PointersV2_Step2_Zip2GroupValue:(NSString*)at ds:(NSString*)ds splitDic:(NSDictionary*)splitDic levelNum:(NSInteger)levelNum {
+
+-(NSArray*) algModelConvert2PointersV2:(NSDictionary*)splitDic at:(NSString*)at ds:(NSString*)ds levelNum:(NSInteger)levelNum {
     //0. 数据准备：（把当前at&ds稀疏码的data值字典取出）（用于取值性能优化）。
     NSDictionary *cacheDataDic = [AINetIndexUtils searchDataDic:at ds:ds isOut:false];
     NSMutableArray *groupModels = [NSMutableArray new];
@@ -141,11 +118,12 @@ static AINet *_instance;
                 CGFloat minMatchValue = 1;
                 for (NSInteger i = 0; i < subDots.count; i++) {
                     MapModel *iDot = ARR_INDEX(subDots, i);
-                    AIKVPointer *i_p = iDot.v1;
+                    NSNumber *iNumber = iDot.v1;
                     for (NSInteger j = i + 1; j < subDots.count; j++) {
                         MapModel *jDot = ARR_INDEX(subDots, j);
-                        AIKVPointer *j_p = jDot.v1;
-                        CGFloat itemMatchValue = [AIAnalyst compareCansetValue:i_p protoValue:j_p vInfo:nil fromDataDic:cacheDataDic];
+                        NSNumber *jNumber = jDot.v1;
+                        BOOL loop = [CortexAlgorithmsUtil dsIsLoop:ds];
+                        CGFloat itemMatchValue = [CortexAlgorithmsUtil matchValueOfCustomV1:iNumber.floatValue v2:jNumber.floatValue max:1 min:0 loop:loop];
                         if (itemMatchValue < minMatchValue) {
                             minMatchValue = itemMatchValue;
                         }
@@ -156,12 +134,23 @@ static AINet *_instance;
                 //5. 如果不是第一层，且9格很相似，防重掉(压缩)。
                 if (groupLevel > 0 && (minMatchValue > 0.9 || !ARRISOK(subDots))) continue;
                 
-                //6. 如果不相似，打包成组码。
-                AIGroupValueNode *groupValue = [AIGeneralNodeCreater createGroupValueNode:subDots conNodes:nil at:at ds:ds isOut:false];
-                CGRect groupRect = [AINetUtils convertGVLevelXY2Rect:groupLevel x:groupRow y:groupColumn];//求出各个GV在T中的rect。
-                [groupModels addObject:[InputGroupValueModel new:subDots groupValue:groupValue.p rect:groupRect]];
+                //6. 先转成三个索引值。
+                NSDictionary *protoGVIndexs = [AINetGroupValueIndex convertGVIndexData:subDots ds:ds];
                 
-                //7. 建组码索引。
+                //11. 单码装箱
+                NSArray *item_ps = [self algModelConvert2Pointers:protoGVIndexs algsType:at];
+                
+                //12. 打包成组码。
+                AIGroupValueNode *groupValue = [AIGeneralNodeCreater createGroupValueNode:item_ps conNodes:nil at:at ds:ds isOut:false];
+                CGRect groupRect = [AINetUtils convertGVLevelXY2Rect:groupLevel x:groupRow y:groupColumn];//求出各个GV在T中的rect。
+                [groupModels addObject:[InputGroupValueModel new:groupValue.p rect:groupRect]];
+                
+                
+                
+                //TODOTOMORROW20250421: 明天继续写这儿。。。
+                
+                
+                //13. 建组码索引。
                 [AINetGroupValueIndex updateGVIndex:groupValue];
             }
         }

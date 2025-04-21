@@ -16,26 +16,13 @@
  *      2025.03.18: 支持构建组码（多个稀疏码组成）。
  *  @result notnull
  */
-+(AIGroupValueNode*) createGroupValueNode:(NSArray*)subDots conNodes:(NSArray*)conNodes at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut {
-    NSArray *content_ps = [SMGUtils convertArr:subDots convertBlock:^id(MapModel *obj) {
-        return obj.v1;
-    }];
-    NSArray *xs = [SMGUtils convertArr:subDots convertBlock:^id(MapModel *obj) {
-        return obj.v2;
-    }];
-    NSArray *ys = [SMGUtils convertArr:subDots convertBlock:^id(MapModel *obj) {
-        return obj.v3;
-    }];
-    return [AIGeneralNodeCreater createNode:content_ps conNodes:conNodes at:at ds:ds isOut:isOut newBlock:^id{
++(AIGroupValueNode*) createGroupValueNode:(NSArray*)item_ps conNodes:(NSArray*)conNodes at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut {
+    return [AIGeneralNodeCreater createNode:item_ps conNodes:conNodes at:at ds:ds isOut:isOut newBlock:^id{
         AIGroupValueNode *newNode = [[AIGroupValueNode alloc] init];
         newNode.pointer = [SMGUtils createPointerForGroupValue:at dataSource:ds isOut:isOut];
-        newNode.xs = xs;
-        newNode.ys = ys;
         return newNode;
     } header:nil getRefPortsBlock:^NSArray *(AIKVPointer *item_p, NSInteger contentIndex) {
-        NSInteger x = NUMTOOK(ARR_INDEX(xs, contentIndex)).integerValue;
-        NSInteger y = NUMTOOK(ARR_INDEX(ys, contentIndex)).integerValue;
-        return [AINetUtils refPorts_All4Value4G:item_p x:x y:y];
+        return [AINetUtils refPorts_All4Value:item_p];
     }];
 }
 

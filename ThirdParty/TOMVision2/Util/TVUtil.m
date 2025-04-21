@@ -370,7 +370,7 @@
                 NSInteger yQuJian = y / (size / 3);
                 
                 //10. 当前区间可显示，则显示，不可显示则continue。
-                if (![subDots objectForKey:STRFORMAT(@"%ld_%ld",xQuJian,yQuJian)]) continue;
+                if (![subDots objectForKey:@"temp"]) continue;
                 
                 //10. 因为组码要展开打印，所以每点打三格，每格以实际+subDots.xy坐标来打印。
                 [result setObject:obj forKey:STRFORMAT(@"%ld_%ld",realX,realY)];
@@ -388,11 +388,9 @@
     NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
     AIGroupValueNode *gNode = [SMGUtils searchNode:node_p];
     for (NSInteger i = 0; i < gNode.count; i++) {
-        NSInteger x = NUMTOOK(ARR_INDEX(gNode.xs, i)).integerValue;
-        NSInteger y = NUMTOOK(ARR_INDEX(gNode.ys, i)).integerValue;
         AIKVPointer *value_p = ARR_INDEX(gNode.content_ps, i);
         double value = [NUMTOOK([AINetIndex getData:value_p]) doubleValue];
-        if (value > 0.3) [result setObject:@"" forKey:STRFORMAT(@"%ld_%ld",x,y)];
+        if (value > 0.3) [result setObject:@"" forKey:@"temp"];
     }
     return result;
 }

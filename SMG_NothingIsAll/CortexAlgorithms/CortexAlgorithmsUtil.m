@@ -76,4 +76,41 @@
     return result;
 }
 
+//MARK:===============================================================
+//MARK:                     < V2新版本方法组 >
+//MARK:===============================================================
++(CGFloat) deltaOfCustomV1:(double)v1 v2:(double)v2 max:(CGFloat)max min:(CGFloat)min loop:(BOOL)loop {
+    //1. 数据准备;
+    CGFloat span = max - min;
+    if (span == 0) return 1;
+    CGFloat delta = fabs(v1 - v2);
+    
+    //2. 如果是循环V时,正反取小（比如Delta=0.8，计算后变成0.2）;
+    if (loop && delta > (span / 2)) {
+        delta = max - delta;
+    }
+    return delta;
+}
+
++(CGFloat) matchValueOfCustomV1:(double)v1 v2:(double)v2 max:(CGFloat)max min:(CGFloat)min loop:(BOOL)loop {
+    //1. 数据准备;
+    CGFloat span = max - min;
+    if (span == 0) return 1;
+    CGFloat delta = [self deltaOfCustomV1:v1 v2:v2 max:max min:min loop:loop];
+    
+    //3. 循环时: 计算出nearV相近度 (参考28174-todo2);
+    if (loop) {
+        return 1 - delta / (span / 2);
+    }
+    
+    //4. 线性时: 计算出nearV相近度 (参考25082-公式1);
+    return 1 - delta / span;
+}
+
++(BOOL) dsIsLoop:(NSString*)ds {
+    return [@"hColors" isEqualToString:ds] || //HSB色值中的色相，是循环值;
+    [@"direction" isEqual:ds] ||//方向是循环值。
+    [@"hColors_diff" isEqual:ds];
+}
+
 @end

@@ -32,6 +32,6 @@
 /**
  *  MARK:--------------------根据组节点取 三个索引的数据（参考34082-方案2）--------------------
  */
-+(NSArray*) convertGVIndexData:(AIGroupValueNode*)gNode;
++(NSDictionary*) convertGVIndexData:(NSArray*)subDots ds:(NSString*)ds;
 
 @end

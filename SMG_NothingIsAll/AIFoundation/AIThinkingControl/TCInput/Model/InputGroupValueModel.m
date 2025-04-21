@@ -10,9 +10,8 @@
 
 @implementation InputGroupValueModel
 
-+(id) new:(NSArray*)subDots groupValue:(AIKVPointer*)groupValue_p rect:(CGRect)rect {
++(id) new:(AIKVPointer*)groupValue_p rect:(CGRect)rect {
     InputGroupValueModel *result = [[InputGroupValueModel alloc] init];
-    result.subDots = subDots;
     result.rect = rect;
     result.groupValue_p = groupValue_p;
     if (rect.size.width == 0 || rect.size.height == 0) {

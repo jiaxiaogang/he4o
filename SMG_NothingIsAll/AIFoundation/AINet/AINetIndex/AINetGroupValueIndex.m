@@ -28,7 +28,7 @@
     for (NSInteger itemIndex = 0; itemIndex < gvIndexData.count; itemIndex++) {
         NSNumber *newNum = ARR_INDEX(gvIndexData, itemIndex);
         
-        //TODOTOMORROW20250421: 修GV索引的性能问题（参考34143）。
+        //TODOTOMORROW20250421: 修GV索引的性能问题（参考34161）。
         
         //3. 从索引目录下取出索引序列。
         NSMutableArray *oldIndexs = [[NSMutableArray alloc] initWithArray:[SMGUtils searchGVIndexForPointer:gvIndex_p itemIndex:itemIndex]];
@@ -82,11 +82,18 @@
 
 /**
  *  MARK:--------------------根据组节点取 三个索引的数据（参考34082-方案2）--------------------
+ *  @param subDots MapModel类型: v1=colorValue v2=x(0-2) v3-y(0-2)
  */
-+(NSArray*) convertGVIndexData:(AIGroupValueNode*)gNode {
++(NSDictionary*) convertGVIndexData:(NSArray*)subDots ds:(NSString*)ds {
     //1. 单码取值。
-    NSArray *contentNums = [SMGUtils convertArr:gNode.content_ps convertBlock:^id(AIKVPointer *obj) {
-        return [AINetIndex getData:obj];
+    NSArray *contentNums = [SMGUtils convertArr:subDots convertBlock:^id(MapModel *obj) {
+        return obj.v1;
+    }];
+    NSArray *xs = [SMGUtils convertArr:subDots convertBlock:^id(MapModel *obj) {
+        return obj.v2;
+    }];
+    NSArray *ys = [SMGUtils convertArr:subDots convertBlock:^id(MapModel *obj) {
+        return obj.v3;
     }];
     
     //2. 求平均值（参考34082-TODO3）。
@@ -121,22 +128,21 @@
     float smallPinJunNum =  smallIndexs.count > 0 ? smallSumNum / smallIndexs.count : 0;
     
     //5. 差值：计算出差值（如果是循环的，则用循环的算法）。
-    double max = [CortexAlgorithmsUtil maxOfLoopValue:gNode.p.algsType ds:gNode.p.dataSource itemIndex:GVIndexTypeOfDataSource];
-    float diffPinJunNum = [CortexAlgorithmsUtil nearDeltaOfValue:bigerPinJunNum assNum:smallPinJunNum max:max];
+    float diffPinJunNum = [CortexAlgorithmsUtil deltaOfCustomV1:bigerPinJunNum v2:smallPinJunNum max:1 min:0 loop:[CortexAlgorithmsUtil dsIsLoop:ds]];
     diffPinJunNum = roundf(diffPinJunNum * 100) / 100;
     
     //5. 方向：根据大小区中心点，算出方向（参考34082-TODO1）（按左上角为0,0点算，所以要加0.5表示xy坐标的中心点位置）。
     CGFloat bigerPinJunX = [SMGUtils sumOfArr:bigerIndexs convertBlock:^double(NSNumber *index) {
-        return NUMTOOK(ARR_INDEX(gNode.xs, index.integerValue)).integerValue + 0.5;
+        return NUMTOOK(ARR_INDEX(xs, index.integerValue)).integerValue + 0.5;
     }];
     CGFloat bigerPinJunY = [SMGUtils sumOfArr:bigerIndexs convertBlock:^double(NSNumber *index) {
-        return NUMTOOK(ARR_INDEX(gNode.ys, index.integerValue)).integerValue + 0.5;
+        return NUMTOOK(ARR_INDEX(ys, index.integerValue)).integerValue + 0.5;
     }];
     CGFloat smallPinJunX = [SMGUtils sumOfArr:smallIndexs convertBlock:^double(NSNumber *index) {
-        return NUMTOOK(ARR_INDEX(gNode.xs, index.integerValue)).integerValue + 0.5;
+        return NUMTOOK(ARR_INDEX(xs, index.integerValue)).integerValue + 0.5;
     }];
     CGFloat smallPinJunY = [SMGUtils sumOfArr:smallIndexs convertBlock:^double(NSNumber *index) {
-        return NUMTOOK(ARR_INDEX(gNode.ys, index.integerValue)).integerValue + 0.5;
+        return NUMTOOK(ARR_INDEX(ys, index.integerValue)).integerValue + 0.5;
     }];
     
     //6. 方向：将距离转成角度-PI -> PI (从右至左,上面为-0 -> -3.14 / 从右至左,下面为0 -> 3.14)，然后归1化，再然后保留1%精度。
@@ -145,7 +151,9 @@
     float direction = roundf(protoParam * 100) / 100;
     
     //7. 创建三个索引的指针地址：均值、差值、方向。
-    return @[@(direction), @(diffPinJunNum), @(pinJunNum)];
+    return @{STRFORMAT(@"%@_direction",ds): @(direction),
+             STRFORMAT(@"%@_diff",ds): @(diffPinJunNum),
+             STRFORMAT(@"%@_jun",ds): @(pinJunNum)};
 }
 
 //把0-1转成0-9

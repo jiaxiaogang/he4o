@@ -323,13 +323,11 @@
     if (PitIsGroupValue(biger_p)) {
         AIGroupValueNode *gNode = [SMGUtils searchNode:biger_p];
         AIKVPointer *item_p = ARR_INDEX(gNode.content_ps, subIndex);
-        NSInteger x = NUMTOOK(ARR_INDEX(gNode.xs, subIndex)).integerValue;
-        NSInteger y = NUMTOOK(ARR_INDEX(gNode.ys, subIndex)).integerValue;
         
-        NSArray *fnRefPorts = ARRTOOK([SMGUtils searchObjectForFilePath:item_p.filePath fileName:kFNRefPorts4G(x, y) time:cRTReference]);
+        NSArray *fnRefPorts = ARRTOOK([SMGUtils searchObjectForFilePath:item_p.filePath fileName:kFNRefPorts time:cRTReference]);
         NSMutableArray *refPorts = [[NSMutableArray alloc] initWithArray:fnRefPorts];
-        [AINetUtils insertPointer_Hd:biger_p toPorts:refPorts findHeader:header difStrong:difStrong findParams:@{@"x":@(x), @"y":@(y)}];//稀疏码单码没有附加params
-        [SMGUtils insertObject:refPorts rootPath:item_p.filePath fileName:kFNRefPorts4G(x, y) time:cRTReference saveDB:true];
+        [AINetUtils insertPointer_Hd:biger_p toPorts:refPorts findHeader:header difStrong:difStrong findParams:nil];//稀疏码单码没有附加params
+        [SMGUtils insertObject:refPorts rootPath:item_p.filePath fileName:kFNRefPorts time:cRTReference saveDB:true];
     } else {
         AIAlgNodeBase *aNode = [SMGUtils searchNode:biger_p];
         AIKVPointer *item_p = ARR_INDEX(aNode.content_ps, subIndex);
@@ -615,11 +613,6 @@
 +(NSArray*) refPorts_All4Value:(AIKVPointer*)value_p {
     if (!value_p) return nil;
     return [SMGUtils searchObjectForFilePath:value_p.filePath fileName:kFNRefPorts time:cRTReference];
-}
-
-+(NSArray*) refPorts_All4Value4G:(AIKVPointer*)value_p x:(NSInteger)x y:(NSInteger)y {
-    if (!value_p) return nil;
-    return [SMGUtils searchObjectForFilePath:value_p.filePath fileName:kFNRefPorts4G(x, y) time:cRTReference];
 }
 
 /**
@@ -1168,8 +1161,8 @@
 /**
  *  MARK:--------------------各类型节点的header生成规则--------------------
  */
-+(NSString*) getGroupValueNodeHeader:(NSArray*)content_ps xs:(NSArray*)xs ys:(NSArray*)ys {
-    return [NSString md5:STRFORMAT(@"%@%@%@",[SMGUtils convertPointers2String:content_ps],CLEANSTR(xs),CLEANSTR(ys))];
++(NSString*) getGroupValueNodeHeader:(NSArray*)content_ps {
+    return [NSString md5:STRFORMAT(@"%@",[SMGUtils convertPointers2String:content_ps])];
 }
 +(NSString*) getFeatureNodeHeader:(NSArray*)content_ps rects:(NSArray*)rects {
     return [NSString md5:STRFORMAT(@"%@%@",[SMGUtils convertPointers2String:content_ps],CLEANSTR(rects))];
