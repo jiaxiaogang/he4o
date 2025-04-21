@@ -8,7 +8,7 @@
 
 #import "TIUtils.h"
 
-#define cDebugMode false
+#define cDebugMode true
 
 @implementation TIUtils
 
@@ -92,28 +92,30 @@
         }];
         if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"37");
         
-        //TODOTOMORROW20250421: 把这里model取refPorts的结果，写成step2方法，加上缓存。
+        //4. 统一把refPorts全取出来：取near_p的refPorts (参考25083-1) (性能: 无缓存时读266耗240,有缓存时很快);
+        NSArray *refPorts = [SMGUtils convertArr:itemMatchArr convertItemArrBlock:^NSArray *(AIMatchModel *obj) {
+            return [AINetUtils refPorts_All:obj.match_p];
+        }];
         
-        for (AIMatchModel *model in itemMatchArr) {
-            //6. 第2_取near_p的refPorts (参考25083-1) (性能: 无缓存时读266耗240,有缓存时很快);
-            NSArray *refPorts = [AINetUtils refPorts_All:model.match_p];
-            if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"39");
-            
-            //7. 每个refPort做两件事: (性能: 以下for循环耗150ms很正常);
-            for (AIPort *refPort in refPorts) {
-                if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"3a");
-                
-                //9. 找model (无则新建) (性能: 此处在循环中,所以防重耗60ms正常,收集耗100ms正常);
-                AIMatchModel *model = itemIndex == 0 ? [AIMatchModel new] : [resultDic objectForKey:@(refPort.target_p.pointerId)];
-                if (!model || model.matchCount < itemIndex) continue;
-                [resultDic setObject:model forKey:@(refPort.target_p.pointerId)];
-                if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"3b");
-                model.match_p = refPort.target_p;
-                model.matchCount++;
-                model.matchValue *= model.matchValue;
-                model.sumRefStrong += (int)refPort.strong.value;
-                if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"3c");
-            }
+        //TODOTOMORROW20250421: 把这里每个refPort.target结果，对应的ds + direction/diff/jun 的码值加上缓存（其实itemMatchArr已经有匹配度了，这里在resultDic里记录一下）。
+        //单独把GV的索引缓存出来，记录每个GV的每个item_p的值，或者在这里Cache中，直接。
+        //不过似乎用resultDic直接取model的匹配度，性能就ok。
+//        [AIRecognitionCache getCache:STRFORMAT(@"V%ld_V%@_GV%ld",obj.match_p.pointerId,obj.match_p.dataSource,) cacheBlock:nil]
+        
+        
+        
+        if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"3a");
+        //7. 每个refPort做两件事: (性能: 以下for循环耗150ms很正常);
+        for (AIPort *refPort in refPorts) {
+            //注意：此循环内执行一次识别可能在数万次，所以这里不可再添加别的逻辑，如果要加过滤，到最后识别完后再在此循环外进行补充过滤。
+            //9. 找model (无则新建) (性能: 此处在循环中,所以防重耗60ms正常,收集耗100ms正常);
+            AIMatchModel *model = itemIndex == 0 ? [AIMatchModel new] : [resultDic objectForKey:@(refPort.target_p.pointerId)];
+            if (!model || model.matchCount < itemIndex) continue;
+            [resultDic setObject:model forKey:@(refPort.target_p.pointerId)];
+            model.match_p = refPort.target_p;
+            model.matchCount++;
+            model.matchValue *= model.matchValue;
+            model.sumRefStrong += (int)refPort.strong.value;
         }
         if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"3d");
     }
@@ -183,8 +185,6 @@
             
             //11. 每个refPort转为model并计匹配度和匹配数;
             for (AIPort *refPort in refPorts) {
-                if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"7");
-                if ([refPort.target_p isEqual:protoFeature_p]) continue;
                 
                 //12. 根据level分别记录不同deltaLevel结果（把deltaLevel做为key的一部分，记录到识别结果字典里）。
                 NSInteger refLevel = VisionMaxLevel - log(refPort.rect.size.width) / log(3);
@@ -192,14 +192,11 @@
                 
                 //13. 取出已经收集到的assGVModels,判断下一个refPort收集进去的话,是否符合位置;
                 NSArray *assGVItems = [gvBestModel getAssGVModelsForKey:assKey];
-                if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"8");
                 //BOOL debugMode = [feature_p.dataSource isEqual:@"hColors"] && [refPort.target_p isEqual:protoFeature.p] && assLevel == protoLevel && [gModel.match_p isEqual:protoGroupValue_p];
                 CGFloat matchDegree = [ThinkingUtils checkAssToMatchDegree:protoFeature protoIndex:i assGVModels:assGVItems checkRefPort:refPort debugMode:false];
-                if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"9");
                 
                 //14. 判断新一条refPort是否更好，更好的话存下来（存refPort，assKey，gModel.matchValue，matchDegree）。
                 [gvBestModel updateStep1:assKey refPort:refPort gMatchValue:gModel.matchValue gMatchDegree:matchDegree matchOfProtoIndex:i];
-                if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"10");
             }
             if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"11");
         }
@@ -230,9 +227,9 @@
     }
     if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"17");
     
-    //41. 无效过滤器1、matchValue=0排除掉。
+    //41. 无效过滤器1、matchValue=0排除掉 & 是protoT自身过滤掉。
     NSArray *resultModels = [SMGUtils filterArr:resultDic.allValues checkValid:^BOOL(AIMatchModel *item) {
-        return item.matchValue > 0;
+        return item.matchValue > 0 || [item.match_p isEqual:protoFeature_p];
     }];
     if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"18");
     
@@ -276,12 +273,21 @@
     for (AIMatchModel *matchModel in resultModels) {
         if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"22");
         AIFeatureNode *assFeature = [SMGUtils searchNode:matchModel.match_p];
+        if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"22b");
+        //TODOTOMORROW20250421: 此处性能不佳，明日优化。
+        
         [AINetUtils insertRefPorts_General:assFeature.p content_ps:assFeature.content_ps difStrong:1 header:assFeature.header];
+        if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"22c");
         [protoFeature updateMatchValue:assFeature matchValue:matchModel.matchValue];
+        if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"22d");
         [protoFeature updateMatchDegree:assFeature matchDegree:matchModel.matchDegree];
+        if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"22e");
         [AINetUtils relateGeneralAbs:assFeature absConPorts:assFeature.conPorts conNodes:@[protoFeature] isNew:false difStrong:1];
+        if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"22f");
         [protoFeature updateIndexDic:assFeature indexDic:matchModel.indexDic];
+        if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"22g");
         [protoFeature updateDegreeDic:assFeature.pId degreeDic:matchModel.degreeDic];
+        if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"22h");
         [AINetUtils updateConPortRect:assFeature conT:protoFeature_p rect:matchModel.rect];
         if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"23");
         
