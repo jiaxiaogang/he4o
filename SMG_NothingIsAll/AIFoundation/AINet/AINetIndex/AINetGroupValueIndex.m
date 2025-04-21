@@ -31,7 +31,7 @@
         return obj.floatValue;
     }];
     float pinJunNum = contentNums.count == 0 ? 0 : sumNum / contentNums.count;
-    pinJunNum = roundf(pinJunNum * 100) / 100;
+    pinJunNum = roundf(pinJunNum * 25) / 25;
     
     //3. >均值 和 <均值 的下标数组。
     NSMutableArray *smallIndexs = [NSMutableArray new];
@@ -59,7 +59,7 @@
     
     //5. 差值：计算出差值（如果是循环的，则用循环的算法）。
     float diffPinJunNum = [CortexAlgorithmsUtil deltaOfCustomV1:bigerPinJunNum v2:smallPinJunNum max:1 min:0 loop:[CortexAlgorithmsUtil dsIsLoop:ds]];
-    diffPinJunNum = roundf(diffPinJunNum * 100) / 100;
+    diffPinJunNum = roundf(diffPinJunNum * 25) / 25;
     
     //5. 方向：根据大小区中心点，算出方向（参考34082-TODO1）（按左上角为0,0点算，所以要加0.5表示xy坐标的中心点位置）。
     CGFloat bigerPinJunX = [SMGUtils sumOfArr:bigerIndexs convertBlock:^double(NSNumber *index) {
@@ -78,7 +78,7 @@
     //6. 方向：将距离转成角度-PI -> PI (从右至左,上面为-0 -> -3.14 / 从右至左,下面为0 -> 3.14)，然后归1化，再然后保留1%精度。
     CGFloat rads = atan2f(bigerPinJunY - smallPinJunY,bigerPinJunX - smallPinJunX);
     float protoParam = (rads / M_PI + 1) / 2;
-    float direction = roundf(protoParam * 100) / 100;
+    float direction = roundf(protoParam * 36) / 36;
     
     //7. 创建三个索引的指针地址：均值、差值、方向。
     return @{STRFORMAT(@"%@_direction",ds): @(direction),

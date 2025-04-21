@@ -95,44 +95,65 @@
         }];
         AddDebugCodeBlock_Key(@"rfs1", @"38");
         
-        //4. 有性能问题，改成取交 & 改成模型收集（参考34161-TODO4）。
-        NSInteger oldLogCount = itemMatchDic ? itemMatchDic.count : 0;
-        if (itemIndex == 0) {
-            [resultDic setDictionary:itemMatchDic];
-        } else {
-            resultDic = [[NSMutableDictionary alloc] initWithDictionary:[SMGUtils convertDic:resultDic kvBlock:^NSArray *(id protoK, NSNumber *protoV) {
-                NSNumber *newMatchValue = [itemMatchDic objectForKey:protoK];
-                if (newMatchValue) {
-                    //5. 把交集到的最终有效value_ps计算综合乘积匹配度。
-                    return @[protoK,@(newMatchValue.floatValue * protoV.floatValue)];
+        for (AIMatchModel *model in itemMatchArr) {
+            //6. 第2_取near_p的refPorts (参考25083-1) (性能: 无缓存时读266耗240,有缓存时很快);
+            NSArray *refPorts = [AINetUtils refPorts_All:model.match_p];
+            AddDebugCodeBlock_Key(@"rfs1", @"39");
+            
+            //7. 每个refPort做两件事: (性能: 以下for循环耗150ms很正常);
+            for (AIPort *refPort in refPorts) {
+                if ([refPort.target_p isEqual:groupValue_p]) continue;
+                AddDebugCodeBlock_Key(@"rfs1", @"3a");
+                
+                //9. 找model (无则新建) (性能: 此处在循环中,所以防重耗60ms正常,收集耗100ms正常);
+                AIMatchModel *model = [resultDic objectForKey:@(refPort.target_p.pointerId)];
+                if (!model) {
+                    model = [[AIMatchModel alloc] init];
+                    [resultDic setObject:model forKey:@(refPort.target_p.pointerId)];
                 }
-                return nil;
-            }]];
+                AddDebugCodeBlock_Key(@"rfs1", @"3b");
+                model.match_p = refPort.target_p;
+                model.matchCount++;
+                model.matchValue *= model.matchValue;
+                model.sumRefStrong += (int)refPort.strong.value;
+                AddDebugCodeBlock_Key(@"rfs1", @"3c");
+            }
         }
-        NSLog(@"从%ld + %ld = %ld",oldLogCount,itemMatchDic.count,resultDic.count);
-        AddDebugCodeBlock_Key(@"rfs1", @"3c");
+        
+        ////4. 有性能问题，改成取交 & 改成模型收集（参考34161-TODO4）。
+        //NSInteger oldLogCount = itemMatchDic ? itemMatchDic.count : 0;
+        //if (itemIndex == 0) {
+        //    resultDic = [[NSMutableDictionary alloc] initWithDictionary:itemMatchDic];
+        //} else {
+        //    resultDic = [[NSMutableDictionary alloc] initWithDictionary:[SMGUtils convertDic:resultDic kvBlock:^NSArray *(id protoK, NSNumber *protoV) {
+        //        NSNumber *newMatchValue = [itemMatchDic objectForKey:protoK];
+        //        if (newMatchValue) {
+        //            //5. 把交集到的最终有效value_ps计算综合乘积匹配度。
+        //            return @[protoK,@(newMatchValue.floatValue * protoV.floatValue)];
+        //        }
+        //        return nil;
+        //    }]];
+        //}
+        //NSLog(@"从%ld + %ld = %ld",oldLogCount,itemMatchDic.count,resultDic.count);
+        AddDebugCodeBlock_Key(@"rfs1", @"3d");
     }
-    AddDebugCodeBlock_Key(@"rfs1", @"3d");
+    AddDebugCodeBlock_Key(@"rfs1", @"3e");
     
     //11. 过滤掉匹配度为0的。
-    resultDic = [SMGUtils filterDic:resultDic checkValid:^BOOL(id key, NSNumber *value) {
-        return value.floatValue > 0;
+    NSArray *gMatchModels = [SMGUtils filterArr:resultDic.allValues checkValid:^BOOL(AIMatchModel *item) {
+        return item.matchValue > 0;
     }];
     
-    //12. 转为AIMatchModel格式。
-    NSArray *gMatchModels = [SMGUtils convertArr:resultDic.allKeys convertBlock:^id(AIKVPointer *obj) {
-        AIMatchModel *model = [[AIMatchModel alloc] init];
-        model.match_p = obj;
-        model.matchValue = NUMTOOK([resultDic objectForKey:obj]).floatValue;
-        model.matchCount = protoGroupValue.count;
-        return model;
+    //12. 全含判断。
+    gMatchModels = [SMGUtils filterArr:resultDic.allValues checkValid:^BOOL(AIMatchModel *item) {
+        return item.matchCount == protoGroupValue.count;
     }];
     
     //21. 按匹配度排序。
     gMatchModels = [SMGUtils sortBig2Small:gMatchModels compareBlock:^double(AIMatchModel *obj) {
         return obj.matchValue;
     }];
-    AddDebugCodeBlock_Key(@"rfs1", @"3e");//循环圈:1 代码块:3e 计数:51 均耗:27.96 = 总耗:1426 读:481 写:0
+    AddDebugCodeBlock_Key(@"rfs1", @"3f");//循环圈:1 代码块:3e 计数:51 均耗:27.96 = 总耗:1426 读:481 写:0
     
     //24. 过滤不准确的结果。
     gMatchModels = ARR_SUB(gMatchModels, 0, MAX(5, gMatchModels.count * 0.5));
@@ -145,7 +166,7 @@
         [protoGroupValue updateMatchValue:assNode matchValue:matchModel.matchValue];
         [AINetUtils relateGeneralAbs:assNode absConPorts:assNode.conPorts conNodes:@[protoGroupValue] isNew:false difStrong:1];
     }
-    AddDebugCodeBlock_Key(@"rfs1", @"3f");
+    AddDebugCodeBlock_Key(@"rfs1", @"3g");
     return gMatchModels;
 }
 
