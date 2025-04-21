@@ -37,6 +37,16 @@
         } else {
             return dsIsLoop;
         }
+    } else if ([@"hColors_direction" isEqualToString:at]) {
+        return 1;
+    } else if ([@"hColors_diff" isEqualToString:at]) {
+        return 1;
+    } else if ([@"hColors_jun" isEqualToString:at]) {
+        return 1;
+    } else if ([@"sColors_direction" isEqualToString:at]) {
+        return 1;
+    } else if ([@"bColors_direction" isEqualToString:at]) {
+        return 1;
     }
     return 0;
 }

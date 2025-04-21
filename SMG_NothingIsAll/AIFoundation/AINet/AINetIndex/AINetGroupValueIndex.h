@@ -15,20 +15,6 @@
 
 @interface AINetGroupValueIndex : NSObject
 
-//MARK:===============================================================
-//MARK:                     < 主方法：存取 >
-//MARK:===============================================================
-
-/**
- *  MARK:--------------------更新一条gNode到索引序列--------------------
- */
-+(void) updateGVIndex:(AIGroupValueNode*)gNode;
-
-/**
- *  MARK:--------------------根据gNode取索引序列--------------------
- */
-+(NSArray*) getGVIndex:(AIGroupValueNode*)gNode itemIndex:(NSInteger)itemIndex;
-
 /**
  *  MARK:--------------------根据组节点取 三个索引的数据（参考34082-方案2）--------------------
  */

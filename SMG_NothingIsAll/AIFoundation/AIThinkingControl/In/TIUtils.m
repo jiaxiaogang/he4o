@@ -71,7 +71,7 @@
 /**
  *  MARK:--------------------组码识别--------------------
  */
-+(NSArray*) recognitionGroupValueV2:(AIKVPointer*)groupValue_p rate:(CGFloat)rate minLimit:(NSInteger)minLimit {
++(NSArray*) recognitionGroupValueV3:(AIKVPointer*)groupValue_p rate:(CGFloat)rate minLimit:(NSInteger)minLimit {
     //1. 数据准备
     AddDebugCodeBlock_Key(@"rfs1", @"31");
     AIGroupValueNode *protoGroupValue = [SMGUtils searchNode:groupValue_p];
@@ -79,80 +79,56 @@
     AddDebugCodeBlock_Key(@"rfs1", @"32");
     
     //2. 先把protoGV解读成索引值。
-    NSArray *realValidGVIndex = nil;
-    NSArray *protoGVIndexs = [AINetGroupValueIndex convertGVIndexData:protoGroupValue];
     AddDebugCodeBlock_Key(@"rfs1", @"33");
-    for (NSInteger itemIndex = 0; itemIndex < protoGVIndexs.count; itemIndex++) {
+    for (NSInteger itemIndex = 0; itemIndex < protoGroupValue.count; itemIndex++) {
         
         //3. 取所有当前组码的itemIndex下的索引序列 & 当前码的索引值 & 当前码的最大值。
         AddDebugCodeBlock_Key(@"rfs1", @"34");
-        NSArray *allGVIndex =[AINetGroupValueIndex getGVIndex:protoGroupValue itemIndex:itemIndex];
-        CGFloat protoNum = NUMTOOK(ARR_INDEX(protoGVIndexs, itemIndex)).floatValue;
-        double max = [CortexAlgorithmsUtil maxOfLoopValue:groupValue_p.algsType ds:groupValue_p.dataSource itemIndex:itemIndex];
-        AddDebugCodeBlock_Key(@"rfs1", @"35");
-        
-        //4. 取出最大最小组码值。
-        MapModel *minGVIndex = ARR_INDEX(allGVIndex, 0);
-        MapModel *maxGVIndex = ARR_INDEX_REVERSE(allGVIndex, 0);
-        float minNum = minGVIndex ? NUMTOOK(minGVIndex.v2).floatValue : 0;
-        float maxNum = maxGVIndex ? NUMTOOK(maxGVIndex.v2).floatValue : 0;
-        AddDebugCodeBlock_Key(@"rfs1", @"36");//循环圈:1 代码块:36 计数:153 均耗:5.06 = 总耗:775 读:0 写:0
-        
-        //5. 按照相近度排序;
-        NSArray *sortGVIndex2 = [SMGUtils sortSmall2Big:allGVIndex compareBlock:^double(MapModel *itemGVIndex) {
-            CGFloat itemNum = NUMTOOK(itemGVIndex.v2).floatValue;
-            return [CortexAlgorithmsUtil nearDeltaOfValue:protoNum assNum:itemNum max:max];
+        AIKVPointer *item_p = ARR_INDEX(protoGroupValue.content_ps, itemIndex);
+        NSArray *itemMatchArr = [AIRecognitionCache getCache:item_p cacheBlock:^id{
+            return [self recognitionValue:item_p rate:0.2 minLimit:10];//v1单码特征
         }];
         AddDebugCodeBlock_Key(@"rfs1", @"37");
         //NSLog(@"GV取得索引：%@ %ld",groupValue_p.dataSource,sortGVIndex2.count);
+        NSDictionary *itemMatchDic = [SMGUtils convertArr2Dic:itemMatchArr kvBlock:^NSArray *(AIMatchModel *obj) {
+            return @[obj.match_p,@(obj.matchValue)];
+        }];
+        AddDebugCodeBlock_Key(@"rfs1", @"38");
         
-        //6. 窄出：指定相近度范围内的组码 & 仅返回前NarrowLimit条 (最多narrowLimit条,最少1条);
-        NSInteger limit = MAX(sortGVIndex2.count * rate, minLimit);
-        NSArray *validGVIndex3 = ARR_SUB(sortGVIndex2, 0, limit);
-        NSInteger oldLogCount = realValidGVIndex ? realValidGVIndex.count : 0;
-        
-        //TODOTOMORROW20250421: 有性能问题，改成取交 & 改成模型收集（参考34161-TODO4）。
-        if (!realValidGVIndex) {
-            realValidGVIndex = validGVIndex3;
+        //4. 有性能问题，改成取交 & 改成模型收集（参考34161-TODO4）。
+        NSInteger oldLogCount = itemMatchDic ? itemMatchDic.count : 0;
+        if (itemIndex == 0) {
+            [resultDic setDictionary:itemMatchDic];
         } else {
-            realValidGVIndex = [SMGUtils filterArrA:realValidGVIndex arrB:validGVIndex3];
+            resultDic = [[NSMutableDictionary alloc] initWithDictionary:[SMGUtils convertDic:resultDic kvBlock:^NSArray *(id protoK, NSNumber *protoV) {
+                NSNumber *newMatchValue = [itemMatchDic objectForKey:protoK];
+                if (newMatchValue) {
+                    //5. 把交集到的最终有效value_ps计算综合乘积匹配度。
+                    return @[protoK,@(newMatchValue.floatValue * protoV.floatValue)];
+                }
+                return nil;
+            }]];
         }
-        
-        NSLog(@"从%ld + %ld = %ld",oldLogCount,validGVIndex3.count,realValidGVIndex.count);
-        
-        //11. 转nears为AIMatchModels。
-//        AddDebugCodeBlock_Key(@"rfs1", @"38");
-//        for (MapModel *itemGVIndex in validGVIndex3) {
-//            AddDebugCodeBlock_Key(@"rfs1", @"39");//循环圈:1 代码块:39 计数:49419 均耗:0.01 = 总耗:722 读:0 写:0
-//            AIKVPointer *ass_p = itemGVIndex.v1;
-//            CGFloat assNum = NUMTOOK(itemGVIndex.v2).floatValue;
-//
-//            //12. 计算相近度（取item与proto的相近度）。
-//            CGFloat matchValue = [AIAnalyst compareGV:assNum protoV:protoNum at:groupValue_p.algsType ds:groupValue_p.dataSource minData:minNum maxData:maxNum itemIndex:itemIndex];
-//            AddDebugCodeBlock_Key(@"rfs1", @"3a");//循环圈:1 代码块:3a 计数:49419 均耗:0.01 = 总耗:716 读:0 写:0
-//
-//            //13. 首轮循环新建，其后必须复用（复用不到，说明非全含，直接滤掉。
-//            AIMatchModel *gModel = [resultDic objectForKey:@(ass_p.pointerId)];
-//            if (!gModel) gModel = [[AIMatchModel alloc] initWithMatch_p:ass_p];
-//            gModel.matchValue *= matchValue;
-//            gModel.sumMatchValue += matchValue;
-//            gModel.matchCount++;
-//            [resultDic setObject:gModel forKey:@(ass_p.pointerId)];
-//            AddDebugCodeBlock_Key(@"rfs1", @"3b");//循环圈:1 代码块:3b 计数:49419 均耗:0.01 = 总耗:697 读:0 写:0
-//        }
+        NSLog(@"从%ld + %ld = %ld",oldLogCount,itemMatchDic.count,resultDic.count);
         AddDebugCodeBlock_Key(@"rfs1", @"3c");
     }
     AddDebugCodeBlock_Key(@"rfs1", @"3d");
     
-    //21. 转为gMatchModels数组。
-    NSArray *gMatchModels = resultDic.allValues;
-    
-    //22. 过滤掉非全含。
-    gMatchModels = [SMGUtils filterArr:gMatchModels checkValid:^BOOL(AIMatchModel *item) {
-        return item.matchCount >= protoGVIndexs.count;
+    //11. 过滤掉匹配度为0的。
+    resultDic = [SMGUtils filterDic:resultDic checkValid:^BOOL(id key, NSNumber *value) {
+        return value.floatValue > 0;
     }];
     
-    //23. 按匹配度排序。
+    //12. 转为AIMatchModel格式。
+    NSArray *gMatchModels = [SMGUtils convertArr:resultDic.allKeys convertBlock:^id(AIKVPointer *obj) {
+        AIMatchModel *model = [[AIMatchModel alloc] init];
+        model.match_p = obj;
+        model.matchValue = NUMTOOK([resultDic objectForKey:obj]).floatValue;
+        model.matchCount = protoGroupValue.count;
+        return model;
+    }];
+    
+    //21. 按匹配度排序。
     gMatchModels = [SMGUtils sortBig2Small:gMatchModels compareBlock:^double(AIMatchModel *obj) {
         return obj.matchValue;
     }];
@@ -199,7 +175,7 @@
         
         //4. 组码识别。
         NSArray *gMatchModels = [AIRecognitionCache getCache:protoGroupValue_p cacheBlock:^id{
-            return ARRTOOK([self recognitionGroupValueV2:protoGroupValue_p rate:0.3 minLimit:3]);
+            return ARRTOOK([self recognitionGroupValueV3:protoGroupValue_p rate:0.3 minLimit:3]);
         }];
         AddDebugCodeBlock_Key(@"rfs1", @"4");
         
