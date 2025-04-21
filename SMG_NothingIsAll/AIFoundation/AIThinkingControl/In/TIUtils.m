@@ -79,6 +79,7 @@
     AddDebugCodeBlock_Key(@"rfs1", @"32");
     
     //2. 先把protoGV解读成索引值。
+    NSArray *realValidGVIndex = nil;
     NSArray *protoGVIndexs = [AINetGroupValueIndex convertGVIndexData:protoGroupValue];
     AddDebugCodeBlock_Key(@"rfs1", @"33");
     for (NSInteger itemIndex = 0; itemIndex < protoGVIndexs.count; itemIndex++) {
@@ -108,27 +109,37 @@
         //6. 窄出：指定相近度范围内的组码 & 仅返回前NarrowLimit条 (最多narrowLimit条,最少1条);
         NSInteger limit = MAX(sortGVIndex2.count * rate, minLimit);
         NSArray *validGVIndex3 = ARR_SUB(sortGVIndex2, 0, limit);
+        NSInteger oldLogCount = realValidGVIndex ? realValidGVIndex.count : 0;
+        
+        //TODOTOMORROW20250421: 有性能问题，改成取交 & 改成模型收集（参考34143-TODO4）。
+        if (!realValidGVIndex) {
+            realValidGVIndex = validGVIndex3;
+        } else {
+            realValidGVIndex = [SMGUtils filterArrA:realValidGVIndex arrB:validGVIndex3];
+        }
+        
+        NSLog(@"从%ld + %ld = %ld",oldLogCount,validGVIndex3.count,realValidGVIndex.count);
         
         //11. 转nears为AIMatchModels。
-        AddDebugCodeBlock_Key(@"rfs1", @"38");
-        for (MapModel *itemGVIndex in validGVIndex3) {
-            AddDebugCodeBlock_Key(@"rfs1", @"39");//循环圈:1 代码块:39 计数:49419 均耗:0.01 = 总耗:722 读:0 写:0
-            AIKVPointer *ass_p = itemGVIndex.v1;
-            CGFloat assNum = NUMTOOK(itemGVIndex.v2).floatValue;
-            
-            //12. 计算相近度（取item与proto的相近度）。
-            CGFloat matchValue = [AIAnalyst compareGV:assNum protoV:protoNum at:groupValue_p.algsType ds:groupValue_p.dataSource minData:minNum maxData:maxNum itemIndex:itemIndex];
-            AddDebugCodeBlock_Key(@"rfs1", @"3a");//循环圈:1 代码块:3a 计数:49419 均耗:0.01 = 总耗:716 读:0 写:0
-            
-            //13. 首轮循环新建，其后必须复用（复用不到，说明非全含，直接滤掉。
-            AIMatchModel *gModel = [resultDic objectForKey:@(ass_p.pointerId)];
-            if (!gModel) gModel = [[AIMatchModel alloc] initWithMatch_p:ass_p];
-            gModel.matchValue *= matchValue;
-            gModel.sumMatchValue += matchValue;
-            gModel.matchCount++;
-            [resultDic setObject:gModel forKey:@(ass_p.pointerId)];
-            AddDebugCodeBlock_Key(@"rfs1", @"3b");//循环圈:1 代码块:3b 计数:49419 均耗:0.01 = 总耗:697 读:0 写:0
-        }
+//        AddDebugCodeBlock_Key(@"rfs1", @"38");
+//        for (MapModel *itemGVIndex in validGVIndex3) {
+//            AddDebugCodeBlock_Key(@"rfs1", @"39");//循环圈:1 代码块:39 计数:49419 均耗:0.01 = 总耗:722 读:0 写:0
+//            AIKVPointer *ass_p = itemGVIndex.v1;
+//            CGFloat assNum = NUMTOOK(itemGVIndex.v2).floatValue;
+//
+//            //12. 计算相近度（取item与proto的相近度）。
+//            CGFloat matchValue = [AIAnalyst compareGV:assNum protoV:protoNum at:groupValue_p.algsType ds:groupValue_p.dataSource minData:minNum maxData:maxNum itemIndex:itemIndex];
+//            AddDebugCodeBlock_Key(@"rfs1", @"3a");//循环圈:1 代码块:3a 计数:49419 均耗:0.01 = 总耗:716 读:0 写:0
+//
+//            //13. 首轮循环新建，其后必须复用（复用不到，说明非全含，直接滤掉。
+//            AIMatchModel *gModel = [resultDic objectForKey:@(ass_p.pointerId)];
+//            if (!gModel) gModel = [[AIMatchModel alloc] initWithMatch_p:ass_p];
+//            gModel.matchValue *= matchValue;
+//            gModel.sumMatchValue += matchValue;
+//            gModel.matchCount++;
+//            [resultDic setObject:gModel forKey:@(ass_p.pointerId)];
+//            AddDebugCodeBlock_Key(@"rfs1", @"3b");//循环圈:1 代码块:3b 计数:49419 均耗:0.01 = 总耗:697 读:0 写:0
+//        }
         AddDebugCodeBlock_Key(@"rfs1", @"3c");
     }
     AddDebugCodeBlock_Key(@"rfs1", @"3d");

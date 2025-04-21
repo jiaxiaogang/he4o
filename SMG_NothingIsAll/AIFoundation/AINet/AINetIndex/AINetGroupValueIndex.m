@@ -28,6 +28,8 @@
     for (NSInteger itemIndex = 0; itemIndex < gvIndexData.count; itemIndex++) {
         NSNumber *newNum = ARR_INDEX(gvIndexData, itemIndex);
         
+        //TODOTOMORROW20250421: 修GV索引的性能问题（参考34143）。
+        
         //3. 从索引目录下取出索引序列。
         NSMutableArray *oldIndexs = [[NSMutableArray alloc] initWithArray:[SMGUtils searchGVIndexForPointer:gvIndex_p itemIndex:itemIndex]];
         
