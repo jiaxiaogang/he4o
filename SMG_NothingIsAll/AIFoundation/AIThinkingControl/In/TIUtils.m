@@ -87,35 +87,28 @@
         //3. 取所有当前组码的itemIndex下的索引序列 & 当前码的索引值 & 当前码的最大值。
         if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"34");
         AIKVPointer *item_p = ARR_INDEX(protoGroupValue.content_ps, itemIndex);
-        NSArray *itemMatchArr = [AIRecognitionCache getCache:item_p cacheBlock:^id{
+        NSArray *vMatchModels = [AIRecognitionCache getCache:item_p cacheBlock:^id{
             return [self recognitionValue:item_p rate:0.2 minLimit:10];//v1单码特征
         }];
         if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"37");
         
-        //4. 统一把refPorts全取出来：取near_p的refPorts (参考25083-1) (性能: 无缓存时读266耗240,有缓存时很快);
-        NSArray *refPorts = [SMGUtils convertArr:itemMatchArr convertItemArrBlock:^NSArray *(AIMatchModel *obj) {
-            return [AINetUtils refPorts_All:obj.match_p];
-        }];
-        
-        //TODOTOMORROW20250421: 把这里每个refPort.target结果，对应的ds + direction/diff/jun 的码值加上缓存（其实itemMatchArr已经有匹配度了，这里在resultDic里记录一下）。
-        //单独把GV的索引缓存出来，记录每个GV的每个item_p的值，或者在这里Cache中，直接。
-        //不过似乎用resultDic直接取model的匹配度，性能就ok。
-//        [AIRecognitionCache getCache:STRFORMAT(@"V%ld_V%@_GV%ld",obj.match_p.pointerId,obj.match_p.dataSource,) cacheBlock:nil]
-        
-        
-        
-        if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"3a");
-        //7. 每个refPort做两件事: (性能: 以下for循环耗150ms很正常);
-        for (AIPort *refPort in refPorts) {
-            //注意：此循环内执行一次识别可能在数万次，所以这里不可再添加别的逻辑，如果要加过滤，到最后识别完后再在此循环外进行补充过滤。
-            //9. 找model (无则新建) (性能: 此处在循环中,所以防重耗60ms正常,收集耗100ms正常);
-            AIMatchModel *model = itemIndex == 0 ? [AIMatchModel new] : [resultDic objectForKey:@(refPort.target_p.pointerId)];
-            if (!model || model.matchCount < itemIndex) continue;
-            [resultDic setObject:model forKey:@(refPort.target_p.pointerId)];
-            model.match_p = refPort.target_p;
-            model.matchCount++;
-            model.matchValue *= model.matchValue;
-            model.sumRefStrong += (int)refPort.strong.value;
+        //4. 每一个vMatchModel都向refPorts找结果。
+        //重复性说明：此处每个vMatchModel都不同，所以它refPort.target也各不同，不会重复。
+        for (AIMatchModel *vMatchModel in vMatchModels) {
+            NSArray *refPorts = [AINetUtils refPorts_All:vMatchModel.match_p];
+            //7. 每个refPort做两件事: (性能: 以下for循环耗150ms很正常);
+            for (AIPort *refPort in refPorts) {
+                //2025.04.22: 性能注意!!! 此处尽量别加任何复杂代码，除了加减乘除和objectForKey外，最好contains和AddDebugCodeBlock_Key也别加，不然几万次循环足以卡慢。
+                //注意：此循环内执行一次识别可能在数万次，所以这里不可再添加别的逻辑，如果要加过滤，到最后识别完后再在此循环外进行补充过滤。
+                //9. 找model (无则新建) (性能: 此处在循环中,所以防重耗60ms正常,收集耗100ms正常);
+                AIMatchModel *model = itemIndex == 0 ? [AIMatchModel new] : [resultDic objectForKey:@(refPort.target_p.pointerId)];
+                if (!model || model.matchCount < itemIndex) continue;
+                [resultDic setObject:model forKey:@(refPort.target_p.pointerId)];
+                model.match_p = refPort.target_p;
+                model.matchCount++;
+                model.matchValue *= vMatchModel.matchValue;
+                model.sumRefStrong += (int)refPort.strong.value;
+            }
         }
         if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"3d");
     }
@@ -133,17 +126,23 @@
     if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"3f");//循环圈:1 代码块:3e 计数:51 均耗:27.96 = 总耗:1426 读:481 写:0
     
     //24. 过滤不准确的结果。
-    gMatchModels = ARR_SUB(gMatchModels, 0, MAX(5, gMatchModels.count * 0.5));
+    gMatchModels = ARR_SUB(gMatchModels, 0, MIN(30, MAX(5, gMatchModels.count * 0.2)));
     
     //25. 更新: ref强度 & 相似度 & 抽具象;
     //2025.03.30: 这儿性能不太好，经查现在组码索引，也不需要单码到组码的引用强度了。
+    if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"3g1");
     for (AIMatchModel *matchModel in gMatchModels) {
-        AIGroupValueNode *assNode = [SMGUtils searchNode:matchModel.match_p];
+        if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"3g2");
+        AIGroupValueNode *assNode = [SMGUtils searchNode:matchModel.match_p];//性能：起初需要IO时1ms/条，后面有缓存后均耗0.05ms 总22ms。
+        if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"3g3");
         //[AINetUtils insertRefPorts_General:assNode.p content_ps:assNode.content_ps difStrong:1 header:assNode.header];
-        [protoGroupValue updateMatchValue:assNode matchValue:matchModel.matchValue];
-        [AINetUtils relateGeneralAbs:assNode absConPorts:assNode.conPorts conNodes:@[protoGroupValue] isNew:false difStrong:1];
+        [protoGroupValue updateMatchValue:assNode matchValue:matchModel.matchValue];//性能均耗0.15ms 总65ms
+        if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"3g4");
+        [AINetUtils relateGeneralAbs:assNode absConPorts:assNode.conPorts conNodes:@[protoGroupValue] isNew:false difStrong:1];//性能均耗0.25ms 总97ms
+        if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"3g5");
+        //NSLog(@"组码识别结果(%ld/%ld) GV%ld 匹配数:%ld 匹配度:%.2f",[gMatchModels indexOfObject:matchModel],gMatchModels.count,matchModel.match_p.pointerId,matchModel.matchCount,matchModel.matchValue);
     }
-    if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"3g");
+    if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"3g6");
     return gMatchModels;
 }
 
@@ -211,6 +210,7 @@
         if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"14");
     }
     //31. 用明细生成总账（bestModel -> resultDic）。
+    if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"14B");//均耗:546ms 优化至40ms
     NSDictionary *resultDic = [gvBestModel convert2AIMatchModelsStep4];// <K=deltaLevel_assPId, V=识别的特征AIMatchModel>
     if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"15");
     
@@ -273,7 +273,7 @@
     for (AIMatchModel *matchModel in resultModels) {
         if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"22");
         AIFeatureNode *assFeature = [SMGUtils searchNode:matchModel.match_p];
-        if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"22b");
+        if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"22b");//循环圈:10 代码块:22b 计数:20 均耗:17.13 = 总耗:343 读:0 写:0
         //TODOTOMORROW20250421: 此处性能不佳，明日优化。
         
         [AINetUtils insertRefPorts_General:assFeature.p content_ps:assFeature.content_ps difStrong:1 header:assFeature.header];

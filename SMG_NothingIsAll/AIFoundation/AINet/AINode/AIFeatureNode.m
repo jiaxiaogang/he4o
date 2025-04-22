@@ -27,9 +27,10 @@
     //1. 在特征识别时，只是知道 根据protoIndex识别 并ref映射到target了。
     //2. 我们知道的是：target与i有映射，但不知道i与target的哪个元素有映射。
     //3. 应该根据refPort中的levelxy到target里去找对应下标，这样才能找着映射。
-    for (NSInteger i = 0; i < self.count; i++) {
-        if (CGRectEqualToRect(VALTOOK(ARR_INDEX(self.rects, i)).CGRectValue, rect)) {
-            return i;
+    //2025.04.22: 性能优化，从VALTOOK+ARRINDEX 改成 foreach直接读NSValue，性能达到均耗0.02-0.04ms（fori加rects[i]来读也能达到0.03-0.06ms）。
+    for (NSValue *rectValue in self.rects) {
+        if (CGRectEqualToRect(rectValue.CGRectValue, rect)) {
+            return [self.rects indexOfObject:rectValue];
         }
     }
     return -1;
