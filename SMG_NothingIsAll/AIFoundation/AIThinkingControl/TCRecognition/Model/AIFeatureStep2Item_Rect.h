@@ -18,7 +18,7 @@
 //absT.pId
 @property (strong, nonatomic) AIKVPointer *absT;
 
-//一直存absAtConRect不变。
+//一直存absAtConRect不变（表示当前itemAbsT在assT中的rect）。
 @property (assign, nonatomic) CGRect absAtConRect;
 
 //conPort.rect（表示absT在assT/protoT中的位置）

@@ -272,13 +272,10 @@
         return [self analogyFeature4Step2:protoFeature ass:assFeature bigerMatchValue:bigerMatchValue step2Model:step2Model];
     }
     //21. 特征识别step1识别到的结果，复用indexDic进行类比。
-    else {
-        NSDictionary *indexDic = [protoFeature getAbsIndexDic:assT_p];
-        if (DICISOK(indexDic)) {
-            //22. 用于类比的数据用完就删，避免太占空间（参考34137-TODO2）。
-            [protoFeature.absIndexDDic removeObjectForKey:@(assT_p.pointerId)];
-            return [self analogyFeatureStep1:protoFeature ass:assFeature bigerMatchValue:bigerMatchValue indexDic:indexDic];
-        }
+    else if(assFeature.step1Model && [protoT_p isEqual:assFeature.step1Model.v2] ) {
+        //22. 用于类比的数据用完就删，避免太占空间（参考34137-TODO2）。
+        NSDictionary *indexDic = assFeature.step1Model.v1;
+        return [self analogyFeatureStep1:protoFeature ass:assFeature bigerMatchValue:bigerMatchValue indexDic:indexDic];
     }
     return nil;
 }
@@ -445,6 +442,19 @@
                 
                 //25. 未重复时，收集之。
                 [absGVModels addObject:[InputGroupValueModel new:gv_p rect:gvRect]];
+                
+                
+                
+                //TODOTOMORROW20250422: 这里absGVModels数竟然有达到1000的情况。。。查下怎么防重？
+                //方案1、是通过复用indexDic来防重吗？可是现在只有proto和itemAbsT的映射，没有assT的（那么此处收集protoT下的gv？）。
+                //方案2、通过rect重复来计算，但重复后用哪个itemAbsT下的gv呢？这也是个问题。
+                
+                if (absGVModels.count > protoT.count) {
+                    NSLog(@"%@",CLEANSTR([SMGUtils convertArr:absGVModels convertBlock:^id(InputGroupValueModel *obj) {
+                        return STRFORMAT(@"GV%ld %@",obj.groupValue_p.pointerId,@(obj.rect));
+                    }]));
+                    NSLog(@"");
+                }
             }
         }
         
@@ -475,8 +485,6 @@
     //44. 记录整体absT.conPort到protoT和assT的rect。
     [AINetUtils updateConPortRect:absT conT:protoT.p rect:newAbsAtProtoRect];
     [AINetUtils updateConPortRect:absT conT:assT.p rect:newAbsAtAssRect];
-    
-    //TODOTOMORROW20250422: 这里absGVModels数竟然有达到1000的情况。。。查下原因
     
     //51. debug
     if (Log4Ana || true) NSLog(@"整体特征类比结果(%@) => \nProto特征T%ld（GV数:%ld）%@\n%@Ass特征T%ld（GV数:%ld）%@\n%@整体Abs特征T%ld（局部特征数:%ld GV数:%ld）：%@\n%@",protoT.p.dataSource,

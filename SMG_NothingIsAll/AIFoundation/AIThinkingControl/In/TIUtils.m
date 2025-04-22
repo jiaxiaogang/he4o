@@ -283,7 +283,8 @@
         if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"22e");
         [AINetUtils relateGeneralAbs:assFeature absConPorts:assFeature.conPorts conNodes:@[protoFeature] isNew:false difStrong:1];
         if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"22f");
-        [protoFeature updateIndexDic:assFeature indexDic:matchModel.indexDic];
+        assFeature.step1Model = [MapModel newWithV1:matchModel.indexDic v2:protoFeature_p];
+        //[protoFeature updateIndexDic:assFeature indexDic:matchModel.indexDic];
         if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"22g");
         [protoFeature updateDegreeDic:assFeature.pId degreeDic:matchModel.degreeDic];
         if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"22h");
