@@ -387,7 +387,10 @@
     [protoFeature updateMatchDegree:absT matchDegree:sumProtoMatchDegree / absT.count];
     [assFeature updateMatchDegree:absT matchDegree:1];
     
-    if (Log4Ana || true) NSLog(@"局部特征类比结果(%@) => \nProto特征T%ld：%@\n%@Ass特征T%ld：%@\n%@局部Abs特征T%ld（GV数:%ld）：%@\n%@",protoFeature.p.dataSource,protoFeature.pId,CLEANSTR([protoFeature getLogDesc:false]),FeatureDesc(protoFeature.p,1),assFeature.pId,CLEANSTR([assFeature getLogDesc:false]),FeatureDesc(assFeature.p,1),absT.pId,sortGroupModels.count,CLEANSTR([absT getLogDesc:false]),FeatureDesc(absT.p,1));
+    if (Log4Ana || true) NSLog(@"局部特征类比结果(%@) => \nProto特征T%ld（GV数:%ld）%@\n%@Ass特征T%ld（GV数:%ld）%@\n%@局部Abs特征T%ld（GV数:%ld）：%@\n%@",protoFeature.p.dataSource,
+                               protoFeature.pId,protoFeature.count,CLEANSTR([protoFeature getLogDesc:false]),FeatureDesc(protoFeature.p,1),
+                               assFeature.pId,assFeature.count,CLEANSTR([assFeature getLogDesc:false]),FeatureDesc(assFeature.p,1),
+                               absT.pId,sortGroupModels.count,CLEANSTR([absT getLogDesc:false]),FeatureDesc(absT.p,1));
     return absT;
 }
 
@@ -473,8 +476,13 @@
     [AINetUtils updateConPortRect:absT conT:protoT.p rect:newAbsAtProtoRect];
     [AINetUtils updateConPortRect:absT conT:assT.p rect:newAbsAtAssRect];
     
+    //TODOTOMORROW20250422: 这里absGVModels数竟然有达到1000的情况。。。查下原因
+    
     //51. debug
-    if (Log4Ana || true) NSLog(@"整体特征类比结果(%@) => \nProto特征T%ld：%@\n%@Ass特征T%ld：%@\n%@整体Abs特征T%ld（局部特征数:%ld GV数:%ld）：%@\n%@",protoT.p.dataSource,protoT.pId,CLEANSTR([protoT getLogDesc:false]),FeatureDesc(protoT.p,1),assT.pId,CLEANSTR([assT getLogDesc:false]),FeatureDesc(assT.p,1),absT.pId,sameItems.count,absGVModels.count,CLEANSTR([absT getLogDesc:false]),FeatureDesc(absT.p,1));
+    if (Log4Ana || true) NSLog(@"整体特征类比结果(%@) => \nProto特征T%ld（GV数:%ld）%@\n%@Ass特征T%ld（GV数:%ld）%@\n%@整体Abs特征T%ld（局部特征数:%ld GV数:%ld）：%@\n%@",protoT.p.dataSource,
+                               protoT.pId,protoT.count,CLEANSTR([protoT getLogDesc:false]),FeatureDesc(protoT.p,1),
+                               assT.pId,assT.count,CLEANSTR([assT getLogDesc:false]),FeatureDesc(assT.p,1),
+                               absT.pId,sameItems.count,absGVModels.count,CLEANSTR([absT getLogDesc:false]),FeatureDesc(absT.p,1));
     return absT;
 }
 

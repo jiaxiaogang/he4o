@@ -635,9 +635,9 @@
         NSInteger itemCount = NUMTOOK([allLogDic objectForKey:key]).integerValue;
         return itemCount / (float)sum;
     }];
-    NSLog(@"概念识别结果总结：%@",CLEANSTR([SMGUtils convertArr:allLogKeys convertBlock:^id(NSString *key) {
+    NSLog(@"%@概念识别结果总结：%@",CLEANSTR([protoAlg getLogDesc:false].allKeys),CLEANSTR([SMGUtils convertArr:allLogKeys convertBlock:^id(NSString *key) {
         NSInteger itemCount = NUMTOOK([allLogDic objectForKey:key]).integerValue;
-        return STRFORMAT(@"%@=%.2f | ",key,itemCount / (float)sum);
+        return STRFORMAT(@"%@=%.2f ",key,itemCount / (float)sum);
     }]));
     [AIRecognitionCache printLog:true];
 }
