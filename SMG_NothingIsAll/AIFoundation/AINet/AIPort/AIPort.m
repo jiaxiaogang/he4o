@@ -54,7 +54,8 @@
 }
 
 -(CGRect) rect {
-    return VALTOOK([self.params objectForKey:@"r"]).CGRectValue;
+    NSValue *rectValue = [self.params objectForKey:@"r"];
+    return rectValue ? rectValue.CGRectValue : CGRectNull;
 }
 
 -(BOOL) isEqual:(AIPort*)object{

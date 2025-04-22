@@ -8,7 +8,7 @@
 
 #import "TIUtils.h"
 
-#define cDebugMode true
+#define cDebugMode false
 
 @implementation TIUtils
 
@@ -129,12 +129,12 @@
     gMatchModels = ARR_SUB(gMatchModels, 0, MIN(30, MAX(5, gMatchModels.count * 0.2)));
     
     //25. 更新: ref强度 & 相似度 & 抽具象;
-    //2025.03.30: 这儿性能不太好，经查现在组码索引，也不需要单码到组码的引用强度了。
     if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"3g1");
     for (AIMatchModel *matchModel in gMatchModels) {
         if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"3g2");
         AIGroupValueNode *assNode = [SMGUtils searchNode:matchModel.match_p];//性能：起初需要IO时1ms/条，后面有缓存后均耗0.05ms 总22ms。
         if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"3g3");
+        //2025.03.30: 这儿性能不太好，经查现在组码识别不需要单码索引强度做竞争，先关掉。
         //[AINetUtils insertRefPorts_General:assNode.p content_ps:assNode.content_ps difStrong:1 header:assNode.header];
         [protoGroupValue updateMatchValue:assNode matchValue:matchModel.matchValue];//性能均耗0.15ms 总65ms
         if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"3g4");
@@ -274,9 +274,8 @@
         if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"22");
         AIFeatureNode *assFeature = [SMGUtils searchNode:matchModel.match_p];
         if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"22b");//循环圈:10 代码块:22b 计数:20 均耗:17.13 = 总耗:343 读:0 写:0
-        //TODOTOMORROW20250421: 此处性能不佳，明日优化。
-        
-        [AINetUtils insertRefPorts_General:assFeature.p content_ps:assFeature.content_ps difStrong:1 header:assFeature.header];
+        //2025.04.22: 这儿性能不太好，经查现在特征识别不需要组码索引强度做竞争，先关掉。
+        //[AINetUtils insertRefPorts_General:assFeature.p content_ps:assFeature.content_ps difStrong:1 header:assFeature.header];
         if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"22c");
         [protoFeature updateMatchValue:assFeature matchValue:matchModel.matchValue];
         if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"22d");
@@ -367,7 +366,8 @@
     //41. 更新: ref强度 & 相似度 & 抽具象 & 映射;
     for (AIFeatureStep2Model *matchModel in resultModels) {
         AIFeatureNode *assFeature = [SMGUtils searchNode:matchModel.conT];
-        [AINetUtils insertRefPorts_General:assFeature.p content_ps:assFeature.content_ps difStrong:1 header:assFeature.header];
+        //2025.04.22: 这儿性能不太好，经查现在特征识别不需要组码索引强度做竞争，先关掉。
+        //[AINetUtils insertRefPorts_General:assFeature.p content_ps:assFeature.content_ps difStrong:1 header:assFeature.header];
         [protoFeature updateMatchValue:assFeature matchValue:matchModel.modelMatchValue];
         [protoFeature updateMatchDegree:assFeature matchDegree:matchModel.modelMatchDegree];
         
