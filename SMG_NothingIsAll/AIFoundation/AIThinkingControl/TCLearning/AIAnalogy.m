@@ -283,7 +283,6 @@
 +(AIFeatureNode*) analogyFeatureStep1:(AIFeatureNode*)protoFeature ass:(AIFeatureNode*)assFeature bigerMatchValue:(CGFloat)bigerMatchValue indexDic:(NSDictionary*)indexDic {
     NSLog(@"==============> 特征类比Step1：protoT%ld assT%ld",protoFeature.pId,assFeature.pId);
     //1. 类比orders的规律
-    NSMutableArray *absGVModels = [[NSMutableArray alloc] init];
     CGFloat sumProtoMatchValue = 0;
     CGFloat sumProtoMatchDegree = 0;
     
@@ -295,10 +294,8 @@
     //if (!noZeRen) return nil;
     NSDictionary *degreeDic = DICTOOK([protoFeature getDegreeDic:assFeature.pId]);
     
-    //3. 生成protoIndexDic 和 assIndexDic  (参考29032-todo1.2);
-    //备忘: 如果以后特征要支持indexDic,这里可以打开并存上映射支持下 (但短时间内应该不需要,连alg也没支持映射);
-    NSMutableDictionary *assAbsIndexDic = [NSMutableDictionary new];
-    NSMutableDictionary *protoAbsIndexDic = [NSMutableDictionary new];
+    //3. 收集有效的映射：用于后面计算rect用。
+    NSMutableDictionary *validIndexDic = [[NSMutableDictionary alloc] init];
     
     //11. 外类比有序进行 (记录jMax & 正序)
     for (NSNumber *key in indexDic.allKeys) {
@@ -311,39 +308,33 @@
             ELog(@"查下为什么没存上符合度，没符合度会导致protoG和assG的匹配度算成0 getDegreeDic %ld %ld %@",protoFeature.p.pointerId,assFeature.p.pointerId,CLEANSTR(degreeDic));
         }
         CGFloat curDegree = NUMTOOK([degreeDic objectForKey:@(assIndex)]).floatValue;
-        
-        //12. B源于matchFo,此处只判断B是1层抽象 (参考27161-调试1&调试2);
-        //此处proto抽象仅指向刚识别的matchAlgs,所以与contains等效;
         if (Log4Ana) NSLog(@"proto的第%ld: G%ld 类比 ass的第%ld: G%ld",protoIndex,protoG_p.pointerId,assIndex,assG_p.pointerId);
         
-        //================= GV类比V1 =================
-        //13. 调用GV类比V1: 即使mIsC匹配,也要进行共同点抽象 (参考29025-11);
-        //AIGroupValueNode *absG = [self analogyGroupValue:protoG_p assG:assG_p curDegree:curDegree bigerMatchValue:curMatchValue];
-        //if (!absG) continue;
-        //featureMatchValue *= [absG getConMatchValue:protoG_p];
-        //14. 类比后,尽量保留大图,即以level小的主准存level,x,y;
-        //NSInteger protoLevel = NUMTOOK(ARR_INDEX(protoFeature.levels, protoIndex)).integerValue;
-        //NSInteger protoX = NUMTOOK(ARR_INDEX(protoFeature.xs, protoIndex)).integerValue;
-        //NSInteger protoY = NUMTOOK(ARR_INDEX(protoFeature.ys, protoIndex)).integerValue;
-        //NSInteger absLevel = assLevel < protoLevel ? assLevel : protoLevel;
-        //NSInteger absX = assLevel < protoLevel ? assX : protoX;
-        //NSInteger absY = assLevel < protoLevel ? assY : protoY;
-        //[absGVModels addObject:[InputGroupValueModel new:nil groupValue:absG.p level:absLevel x:absX y:absY]];
-        
-        //================= GV类比V2 =================
-        //15. 调用GV类比V2: 即使mIsC匹配,也要进行共同点抽象 (参考29025-11);
+        //12. 调用GV类比V2: 即使mIsC匹配,也要进行共同点抽象 (参考29025-11);
         MapModel *analogyGVResult = [self analogyGroupValueV2:protoG_p assG:assG_p curDegree:curDegree bigerMatchValue:curMatchValue];
         if (!analogyGVResult) continue;
         sumProtoMatchValue += NUMTOOK(analogyGVResult.v2).floatValue;
         sumProtoMatchDegree += curDegree;
         
-        //16. 类比后,以ass为主,存rect;
-        CGRect assRect = VALTOOK(ARR_INDEX(assFeature.rects, assIndex)).CGRectValue;
-        
-        //TODOTOMORROW20250423: 这里assRect应该有bug，因为收集到的结果，应该是有marginTop和marginLeft的。
-        
-        [absGVModels addObject:[InputGroupValueModel new:analogyGVResult.v1 rect:assRect]];
+        //13. 收集有效的映射：用于后面计算rect用。
+        [validIndexDic setObject:value forKey:key];
     }
+    
+    //14. 根据validIndexDic求出newAbsT在protoT和assT中的rect。
+    CGRect absAtProtoRect = [AINetUtils convertPartOfFeatureContent2Rect:protoFeature contentIndexes:validIndexDic.allValues];
+    CGRect absAtAssRect = [AINetUtils convertPartOfFeatureContent2Rect:assFeature contentIndexes:validIndexDic.allKeys];
+    
+    //15. 转为List<InputGroupValueModel>模型。
+    NSMutableArray *absGVModels = [SMGUtils convertArr:validIndexDic.allKeys convertBlock:^id(NSNumber *key) {
+        NSInteger assIndex = key.integerValue;
+        AIKVPointer *assGV_p = ARR_INDEX(assFeature.content_ps, assIndex);
+        
+        //16. 将gvRect在assT的范围，转成在newAbsT中的位置。
+        CGRect assRect = VALTOOK(ARR_INDEX(assFeature.rects, assIndex)).CGRectValue;
+        assRect.origin.x -= absAtAssRect.origin.x;
+        assRect.origin.y -= absAtAssRect.origin.y;
+        return [InputGroupValueModel new:assGV_p rect:assRect];
+    }];
     if (curMatchValue == 1 && absGVModels.count == 0) {
         ELog(@"如果匹配度为1，会导致所有indexDic的GV全有责，导致最后absGVModels为0条，如果停此处时，查下来源，这个匹配度1是哪来的");
     }
@@ -351,19 +342,6 @@
     
     //21. 为增加特征content_ps的有序性：对groupModels进行排序（特征的content是有序的，所以要先排下序）。
     NSArray *sortGroupModels = [ThinkingUtils sortInputGroupValueModels:absGVModels];
-    
-    //22. 生成assAbsIndexDic和protoAbsIndexDic（排序后再根据新顺序来生成映射）。
-    for (NSInteger i = 0; i < sortGroupModels.count; i++) {
-        InputGroupValueModel *model = ARR_INDEX(sortGroupModels, i);
-        
-        //23. 本来abs.sames中存的就是ass的level,x,y，所以可以用来取assIndex。
-        NSInteger assIndex = [assFeature indexOfRect:model.rect];
-        NSInteger protoIndex = NUMTOOK([indexDic objectForKey:@(assIndex)]).integerValue;
-        
-        //24. 把ass和proto分别与 abs的映射记下来。
-        [assAbsIndexDic setObject:@(assIndex) forKey:@(i)];
-        [protoAbsIndexDic setObject:@(protoIndex) forKey:@(i)];
-    }
     
     //31. 外类比构建
     AIFeatureNode *absT = [AIGeneralNodeCreater createFeatureNode:sortGroupModels conNodes:@[protoFeature,assFeature] at:protoFeature.p.algsType ds:protoFeature.p.dataSource isOut:protoFeature.p.isOut isJiao:true];
@@ -378,8 +356,6 @@
     //[assFeature updateIndexDic:absT indexDic:assAbsIndexDic];
     
     //33. 存conPorts的rect（参考34135-TODO1）。
-    CGRect absAtProtoRect = [AINetUtils convertPartOfFeatureContent2Rect:protoFeature contentIndexes:protoAbsIndexDic.allValues];
-    CGRect absAtAssRect = [AINetUtils convertPartOfFeatureContent2Rect:assFeature contentIndexes:assAbsIndexDic.allValues];
     [AINetUtils updateConPortRect:absT conT:protoFeature.p rect:absAtProtoRect];
     [AINetUtils updateConPortRect:absT conT:assFeature.p rect:absAtAssRect];
     
