@@ -37,6 +37,6 @@
 /**
  *  MARK:--------------------把bestModel生成为AIMatchModel格式--------------------
  */
--(NSDictionary*) convert2AIMatchModelsStep4;
+-(NSDictionary*) convert2AIMatchModelsStep4:(AIFeatureNode*)protoT;
 
 @end

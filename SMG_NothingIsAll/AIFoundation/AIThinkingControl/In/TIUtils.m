@@ -211,7 +211,7 @@
     }
     //31. 用明细生成总账（bestModel -> resultDic）。
     if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"14B");//均耗:546ms 优化至40ms
-    NSDictionary *resultDic = [gvBestModel convert2AIMatchModelsStep4];// <K=deltaLevel_assPId, V=识别的特征AIMatchModel>
+    NSDictionary *resultDic = [gvBestModel convert2AIMatchModelsStep4:protoFeature];// <K=deltaLevel_assPId, V=识别的特征AIMatchModel>
     if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"15");
     
     //32. debug
@@ -265,7 +265,7 @@
     
     //46. 末尾淘汰xx%匹配度低的、匹配度强度过滤器 (参考28109-todo2 & 34091-5提升准确)。
     resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIMatchModel *obj) {
-        return obj.matchValue * obj.matchDegree;
+        return obj.matchValue * obj.matchDegree * obj.matchAssProtoRatio;
     }], 0, MIN(MAX(resultModels.count * 0.8f, 10), 20));
     
     //51. 更新: ref强度 & 相似度 & 抽具象 & 映射 & conPort.rect;
@@ -617,7 +617,7 @@
             return STRFORMAT(@"T%ld",obj.pointerId);
             //AIFeatureNode *itemT = [SMGUtils searchNode:obj];
             //return STRFORMAT(@"T%ld 交层=%d 整体=%d",obj.pointerId,obj.isJiao,itemT.step2Model != nil);
-        }]),model.matchCount,model.groupValueMatchCount,model.matchValue,CLEANSTR([protoAlg getLogDesc:true].allKeys),CLEANSTR([assAlg getLogDesc:true]));
+        }]),model.matchCount,model.groupValueMatchCount,model.matchValue,CLEANSTR([protoAlg getLogDesc:true].allKeys),CLEANSTR([assAlg getLogDesc:false]));
     }
     
     //18. debugLog3

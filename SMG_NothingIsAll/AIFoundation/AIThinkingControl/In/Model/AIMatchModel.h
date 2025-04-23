@@ -27,6 +27,8 @@
 @property (assign, nonatomic) CGFloat sumMatchDegree;//总符合度
 
 @property (assign, nonatomic) CGRect rect;//存当前ass_p在proto_p中的rect。
-@property (assign, nonatomic) NSInteger matchAllCount;//match_p的总长度。
+@property (assign, nonatomic) NSInteger assCount;//match_p的总长度。
+@property (assign, nonatomic) NSInteger protoCount;//proto_p的总长度。
+@property (assign, nonatomic) CGFloat matchAssProtoRatio; //assCount/protoCount（因为特征识别结果往往GV太少，加这一要素）。
 
 @end

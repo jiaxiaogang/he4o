@@ -118,7 +118,7 @@
  *  MARK:--------------------把bestModel生成为AIMatchModel格式--------------------
  *  @desc STEP2. 把STEP1得到的proto和ass一一对应的结果，转成识别算法需要的AIMatchModels格式。
  */
--(NSDictionary*) convert2AIMatchModelsStep4 {
+-(NSDictionary*) convert2AIMatchModelsStep4:(AIFeatureNode*)protoT {
     NSMutableDictionary *resultDic = [[NSMutableDictionary alloc] init];
     for (NSString *assKey in self.bestDic.allKeys) {
         
@@ -150,12 +150,14 @@
             tModel.sumMatchValue += item.gMatchValue;
             tModel.sumMatchDegree += item.gMatchDegree;
             tModel.sumRefStrong += (int)item.refPort.strong.value;
-            tModel.matchAllCount = assT.count;
+            tModel.assCount = assT.count;
         }
         
         //6. 把收集总数据计到总账：indexDic & 综合匹配度 & 符合度映射。
-        tModel.matchValue = tModel.matchAllCount > 0 ? (tModel.sumMatchValue / tModel.matchAllCount) : 0;//综合求出平均matchValue（因为特征有太多组码，乘积匹配度不合理）。
-        tModel.matchDegree = tModel.matchAllCount > 0 ? (tModel.sumMatchDegree / tModel.matchAllCount) : 0;
+        tModel.protoCount = protoT.count;
+        tModel.matchAssProtoRatio = protoT.count > 0 ? tModel.assCount / (float)protoT.count : 0;
+        tModel.matchValue = tModel.assCount > 0 ? (tModel.sumMatchValue / tModel.assCount) : 0;//综合求出平均matchValue（因为特征有太多组码，乘积匹配度不合理）。
+        tModel.matchDegree = tModel.assCount > 0 ? (tModel.sumMatchDegree / tModel.assCount) : 0;
         tModel.indexDic = indexDic;
         tModel.degreeDic = degreeDic;
         
