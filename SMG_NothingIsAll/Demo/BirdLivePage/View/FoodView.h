@@ -17,7 +17,7 @@
 #define cTestImageFolder @"TestImages"
 
 //图库图片数，比如后辍1-17。
-#define cProtoImageCount 5
+#define cProtoImageCount 100
 #define cTestImageCount 1
 
 /**

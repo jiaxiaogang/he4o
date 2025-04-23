@@ -217,7 +217,7 @@
     //32. debug
     for (NSString *assKey in resultDic.allKeys) {
         AIMatchModel *model = [resultDic objectForKey:assKey];
-        if (Log4RecogDesc) NSLog(@"%@\t匹配条数 %ld/%ld \t特征识别综合匹配度计算:T%ld \t匹配度:%.2f / %ld \t= %.2f 总强度：%ld 均强度：%.1f",assKey,model.matchCount,protoFeature.count,model.match_p.pointerId,model.sumMatchValue,model.matchCount,model.matchValue,model.sumRefStrong,model.strongValue);
+        if (Log4RecogDesc) NSLog(@"%@\t匹配条数 %ld/%ld \t特征识别综合匹配度计算:T%ld \t匹配度:%.2f / %ld \t= %.2f 总强度：%ld",assKey,model.matchCount,protoFeature.count,model.match_p.pointerId,model.sumMatchValue,model.matchCount,model.matchValue,model.sumRefStrong);
     }
     if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"16");
     
@@ -292,8 +292,8 @@
         if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"23");
         
         //52. debug
-        if (Log4RecogDesc || resultModels.count > 0) NSLog(@"局部特征识别结果:T%ld%@\t 匹配条数:%ld/(proto%ld ass%ld)\t匹配度:%.2f\t强度:%.1f\t符合度:%.1f",
-                                         matchModel.match_p.pointerId,CLEANSTR([assFeature getLogDesc:true]),matchModel.matchCount,protoFeature.count,assFeature.count,matchModel.matchValue,matchModel.strongValue,matchModel.matchDegree);
+        if (Log4RecogDesc || resultModels.count > 0) NSLog(@"局部特征识别结果:T%ld%@\t 匹配条数:%ld/(proto%ld ass%ld)\t匹配度:%.2f\t符合度:%.1f",
+                                         matchModel.match_p.pointerId,CLEANSTR([assFeature getLogDesc:true]),matchModel.matchCount,protoFeature.count,assFeature.count,matchModel.matchValue,matchModel.matchDegree);
     }
     if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"24");
     PrintDebugCodeBlock_Key(@"rfs1");
@@ -606,7 +606,9 @@
     [inModel log4HavXianWuJv_AlgPJ:@"fltx1"];
     
     //17. debugLog2
-    NSArray *logModels = [SMGUtils sortBig2Small:inModel.matchAlgs_All compareBlock:^double(AIMatchAlgModel *obj) {
+    NSArray *logModels = [SMGUtils sortBig2Small:inModel.matchAlgs_All compareBlock1:^double(AIMatchAlgModel *obj) {
+        return obj.matchAlg.isJiao;
+    } compareBlock2:^double(AIMatchAlgModel *obj) {
         return obj.matchValue;
     }];
     for (AIMatchAlgModel *model in logModels) {

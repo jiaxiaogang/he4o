@@ -14,11 +14,6 @@
 @interface AIFilter : NSObject
 
 /**
- *  MARK:--------------------AIMatchModel过滤器--------------------
- */
-+(NSArray*) recognitionMatchModelsFilter:(NSArray*)matchAlgModels radio:(CGFloat)radio;
-
-/**
  *  MARK:--------------------概念识别过滤器 (参考28109-todo2)--------------------
  */
 +(NSArray*) recognitionAlgFilter:(NSArray*)matchAlgModels radio:(CGFloat)radio;

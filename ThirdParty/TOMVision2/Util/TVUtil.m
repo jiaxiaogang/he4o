@@ -321,7 +321,7 @@
         NSInteger groupLevel = VisionMaxLevel - log(groupRect.size.width) / log(3);
         NSString *obj = nil;
         if (groupLevel == 0) {
-            obj = @"  ";
+            obj = @"x ";
         } else if (groupLevel == 1) {
             obj = @"- ";
         } else if (groupLevel == 2) {
@@ -331,7 +331,7 @@
         } else if (groupLevel == 4) {
             obj = @"+ ";
         } else {
-            obj = @"M ";
+            obj = @"c ";
         }
         
         //4. 多余层不打印处理（一张图的像素分辨率未必 > VisionMaxLevel层）。

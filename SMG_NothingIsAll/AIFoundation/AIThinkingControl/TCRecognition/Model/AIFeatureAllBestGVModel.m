@@ -77,16 +77,16 @@
     //3. 清空rankDic;
     [self.rankDic removeAllObjects];
 }
--(void) updateStep3:(NSString*)assKey refPort:(AIPort*)refPort gMatchValue:(CGFloat)gMatchValue gMatchDegree:(CGFloat)gMatchDegree matchOfProtoIndex:(NSInteger)matchOfProtoIndex {
-
-    //2. newItem
-    AIFeatureNextGVRankItem *item = [[AIFeatureNextGVRankItem alloc] init];
-    item.refPort = refPort;
-    item.gMatchValue = gMatchValue;
-    item.gMatchDegree = gMatchDegree;
-    item.matchOfProtoIndex = matchOfProtoIndex;
-    [self updateStep3:item forKey:assKey];
-}
+//-(void) updateStep3:(NSString*)assKey refPort:(AIPort*)refPort gMatchValue:(CGFloat)gMatchValue gMatchDegree:(CGFloat)gMatchDegree matchOfProtoIndex:(NSInteger)matchOfProtoIndex {
+//
+//    //2. newItem
+//    AIFeatureNextGVRankItem *item = [[AIFeatureNextGVRankItem alloc] init];
+//    item.refPort = refPort;
+//    item.gMatchValue = gMatchValue;
+//    item.gMatchDegree = gMatchDegree;
+//    item.matchOfProtoIndex = matchOfProtoIndex;
+//    [self updateStep3:item forKey:assKey];
+//}
 
 -(void) updateStep3:(AIFeatureNextGVRankItem*)newItem forKey:(NSString*)assKey {
     //1. 找出已收集到的items。
@@ -150,10 +150,12 @@
             tModel.sumMatchValue += item.gMatchValue;
             tModel.sumMatchDegree += item.gMatchDegree;
             tModel.sumRefStrong += (int)item.refPort.strong.value;
+            tModel.matchAllCount = assT.count;
         }
         
         //6. 把收集总数据计到总账：indexDic & 综合匹配度 & 符合度映射。
-        tModel.matchValue = tModel.matchCount > 0 ? (tModel.sumMatchValue / tModel.matchCount) * (tModel.sumMatchDegree / tModel.matchCount) : 0;//综合求出平均matchValue（因为特征有太多组码，乘积匹配度不合理）。
+        tModel.matchValue = tModel.matchAllCount > 0 ? (tModel.sumMatchValue / tModel.matchAllCount) : 0;//综合求出平均matchValue（因为特征有太多组码，乘积匹配度不合理）。
+        tModel.matchDegree = tModel.matchAllCount > 0 ? (tModel.sumMatchDegree / tModel.matchAllCount) : 0;
         tModel.indexDic = indexDic;
         tModel.degreeDic = degreeDic;
         

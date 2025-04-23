@@ -31,7 +31,6 @@
  *  MARK:--------------------更新时，直接查下有没重复，有重复的就只保留更优的一条--------------------
  */
 -(void) updateStep3;
--(void) updateStep3:(NSString*)assKey refPort:(AIPort*)refPort gMatchValue:(CGFloat)gMatchValue gMatchDegree:(CGFloat)gMatchDegree matchOfProtoIndex:(NSInteger)matchOfProtoIndex;
 -(void) updateStep3:(AIFeatureNextGVRankItem*)newItem forKey:(NSString*)assKey;
 -(NSArray*) getAssGVModelsForKey:(NSString*)assKey;
 
