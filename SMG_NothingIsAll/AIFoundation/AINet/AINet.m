@@ -98,7 +98,6 @@ static AINet *_instance;
 
 -(NSArray*) algModelConvert2PointersV2:(NSDictionary*)splitDic at:(NSString*)at ds:(NSString*)ds levelNum:(NSInteger)levelNum {
     //0. 数据准备：（把当前at&ds稀疏码的data值字典取出）（用于取值性能优化）。
-    NSDictionary *cacheDataDic = [AINetIndexUtils searchDataDic:at ds:ds isOut:false];
     NSMutableArray *groupModels = [NSMutableArray new];
     
     //1. level为1-4层时，组应该用0-3，因为下层9格都是以上层为组（比如：0层就是1层的9格为组）。

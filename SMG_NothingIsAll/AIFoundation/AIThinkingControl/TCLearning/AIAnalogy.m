@@ -417,16 +417,42 @@
         newAbsAtProtoRect = CGRectUnion(newAbsAtProtoRect, itemConPort4ProtoT.rect);
     }
     
+    //20. 根据protoT和itemAbsT的映射来实现类比抽象（参考34164-方案2）。
+    //2025.04.23: 修复收集到的absGVModels数竟然有达到1000的情况，改为通过protoT和itemAbsT的映射，收集protoT的gv元素做抽象。
+    NSMutableArray *protoIndexes = [SMGUtils convertArr:sameItems convertItemArrBlock:^NSArray *(AIFeatureStep2Item_Rect *item) {
+        AIFeatureNode *itemAbsT = [SMGUtils searchNode:item.absT];
+        MapModel *step1Model = itemAbsT.step1Model;
+        if (!step1Model || ![protoT.p isEqual:step1Model.v2]) {
+            ELog(@"Step2借助Step1Model来找映射，找类比抽象gv元素，这里的step1Model都不为空才对，因为itemAbsT都是由局部特征识别来的，如果为空查下原因。");
+            return nil;
+        }
+        NSDictionary *protoItemAbsTIndexDic = step1Model.v1;
+        return protoItemAbsTIndexDic.allValues;
+    }];
+    
     //21. 取出每个itemAbsT中的gv，转换成newAbsT的元素：@[InputGroupValueModel]格式（参考3413a-示图1）。
     NSMutableArray *absGVModels = [[NSMutableArray alloc] init];
     CGFloat absAssTSumMatchValue = 0, absProtoTSumMatchValue = 0;
     CGFloat absAssTSumMatchDegree = 0, absProtoTSumMatchDegree = 0;
+    
+    [SMGUtils convertArr:protoIndexes convertBlock:^id(NSNumber *protoIndex) {
+        AIKVPointer *protoGV_p = ARR_INDEX(protoT.content_ps, protoIndex.integerValue);
+        CGRect protoGVRect = VALTOOK(ARR_INDEX(protoT.rects, protoIndex.integerValue)).CGRectValue;
+        //这里要转成在结果中的rect（可以参考下局部特征识别时，是怎么收集的）。
+        
+        [absGVModels addObject:[InputGroupValueModel new:protoGV_p rect:gvRect]];
+    }];
+    
+    
     for (AIFeatureStep2Item_Rect *item in sameItems) {
         
         //22. 根据：每个abs在具象整体特征中的rect - 新的整体特征的minXY = 得出左间距leftSpace 和 顶间距topSpace。
         CGFloat itemLeftSpace = item.absAtConRect.origin.x - newAbsAtAssRect.origin.x;
         CGFloat itemTopSpace = item.absAtConRect.origin.y - newAbsAtAssRect.origin.y;
         AIFeatureNode *itemAbsT = [SMGUtils searchNode:item.absT];
+        
+        
+        
         for (NSInteger i = 0; i < itemAbsT.count; i++) {
             AIKVPointer *gv_p = ARR_INDEX(itemAbsT.content_ps, i);
             
@@ -442,12 +468,6 @@
                 
                 //25. 未重复时，收集之。
                 [absGVModels addObject:[InputGroupValueModel new:gv_p rect:gvRect]];
-                
-                
-                
-                //TODOTOMORROW20250422: 这里absGVModels数竟然有达到1000的情况。。。查下怎么防重？
-                //方案1、是通过复用indexDic来防重吗？可是现在只有proto和itemAbsT的映射，没有assT的（那么此处收集protoT下的gv？）。
-                //方案2、通过rect重复来计算，但重复后用哪个itemAbsT下的gv呢？这也是个问题。
                 
                 if (absGVModels.count > protoT.count) {
                     NSLog(@"%@",CLEANSTR([SMGUtils convertArr:absGVModels convertBlock:^id(InputGroupValueModel *obj) {
@@ -466,6 +486,9 @@
         absAssTSumMatchDegree += [itemAbsT getConMatchDegree:assT.p];
         absProtoTSumMatchDegree += [itemAbsT getConMatchDegree:protoT.p];
     }
+    
+    //21. 为增加特征content_ps的有序性：对groupModels进行排序（特征的content是有序的，所以要先排下序）。
+    NSArray *sortGroupModels = [ThinkingUtils sortInputGroupValueModels:absGVModels];
     
     //33. 保留下来的生成为absT。
     AIFeatureNode *absT = [AIGeneralNodeCreater createFeatureNode:absGVModels conNodes:@[protoT,assT] at:protoT.p.algsType ds:protoT.p.dataSource isOut:protoT.p.isOut isJiao:true];
