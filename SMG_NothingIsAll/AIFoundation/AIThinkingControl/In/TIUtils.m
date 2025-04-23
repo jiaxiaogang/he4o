@@ -264,6 +264,7 @@
     if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"20");
     
     //46. 末尾淘汰xx%匹配度低的、匹配度强度过滤器 (参考28109-todo2 & 34091-5提升准确)。
+    //2025.04.23: 加上obj.matchAssProtoRatio（参考34165-修复）。
     resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIMatchModel *obj) {
         return obj.matchValue * obj.matchDegree * obj.matchAssProtoRatio;
     }], 0, MIN(MAX(resultModels.count * 0.8f, 10), 20));
@@ -617,7 +618,7 @@
             return STRFORMAT(@"T%ld",obj.pointerId);
             //AIFeatureNode *itemT = [SMGUtils searchNode:obj];
             //return STRFORMAT(@"T%ld 交层=%d 整体=%d",obj.pointerId,obj.isJiao,itemT.step2Model != nil);
-        }]),model.matchCount,model.groupValueMatchCount,model.matchValue,CLEANSTR([protoAlg getLogDesc:true].allKeys),CLEANSTR([assAlg getLogDesc:false]));
+        }]),model.matchCount,model.groupValueMatchCount,model.matchValue,CLEANSTR([protoAlg getLogDesc:true].allKeys),CLEANSTR([assAlg getLogDesc:assAlg.p.isJiao]));
     }
     
     //18. debugLog3
