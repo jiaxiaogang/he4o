@@ -175,7 +175,7 @@
  */
 +(AIAlgNodeBase*) analogyAlg:(AIKVPointer*)protoA_p assA:(AIKVPointer*)assA_p {
     //0. 如果本就一致;
-    NSLog(@"==============> 概念类比：protoA%ld assA%ld",protoA_p.pointerId,assA_p.pointerId);
+    //NSLog(@"==============> 概念类比：protoA%ld assA%ld",protoA_p.pointerId,assA_p.pointerId);
     if ([protoA_p isEqual:assA_p]) return [SMGUtils searchNode:protoA_p];
 
     //1. 数据准备;
@@ -257,7 +257,7 @@
  */
 +(AIFeatureNode*) analogyFeature:(AIKVPointer*)protoT_p ass:(AIKVPointer*)assT_p bigerMatchValue:(CGFloat)bigerMatchValue {
     //1. 数据准备。
-    NSLog(@"==============> 特征类比：protoT%ld assT%ld",protoT_p.pointerId,assT_p.pointerId);
+    //NSLog(@"==============> 特征类比：protoT%ld assT%ld",protoT_p.pointerId,assT_p.pointerId);
     if ([protoT_p isEqual:assT_p]) return [SMGUtils searchNode:assT_p];
     AIFeatureNode *protoFeature = [SMGUtils searchNode:protoT_p];
     AIFeatureNode *assFeature = [SMGUtils searchNode:assT_p];
@@ -269,7 +269,7 @@
         //12. 借助absT来类比时，复用step2的识别结果model数据，并且用完就清空，防止循环野指针（参考34139-TODO3）。
         AIFeatureStep2Model *step2Model = assFeature.step2Model;
         assFeature.step2Model = nil;
-        return [self analogyFeature4Step2:protoFeature ass:assFeature bigerMatchValue:bigerMatchValue step2Model:step2Model];
+        return [self analogyFeatureStep2:protoFeature ass:assFeature bigerMatchValue:bigerMatchValue step2Model:step2Model];
     }
     //21. 特征识别step1识别到的结果，复用indexDic进行类比。
     else if(assFeature.step1Model && [protoT_p isEqual:assFeature.step1Model.v2] ) {
@@ -281,7 +281,7 @@
 }
 
 +(AIFeatureNode*) analogyFeatureStep1:(AIFeatureNode*)protoFeature ass:(AIFeatureNode*)assFeature bigerMatchValue:(CGFloat)bigerMatchValue indexDic:(NSDictionary*)indexDic {
-    NSLog(@"==============> 特征类比Step1：protoT%ld assT%ld",protoFeature.pId,assFeature.pId);
+    //NSLog(@"==============> 特征类比Step1：protoT%ld assT%ld",protoFeature.pId,assFeature.pId);
     //1. 类比orders的规律
     CGFloat sumProtoMatchValue = 0;
     CGFloat sumProtoMatchDegree = 0;
@@ -363,15 +363,15 @@
     [protoFeature updateMatchDegree:absT matchDegree:sumProtoMatchDegree / absT.count];
     [assFeature updateMatchDegree:absT matchDegree:1];
     
-    if (Log4Ana || true) NSLog(@"局部特征类比结果(%@) => \nProto特征T%ld（GV数:%ld）%@\n%@Ass特征T%ld（GV数:%ld）%@\n%@局部Abs特征T%ld（GV数:%ld）：%@\n%@",protoFeature.p.dataSource,
+    if (Log4Ana || true) NSLog(@"\n局部特征类比结果(%@) ======================> \n局部Proto特征T%ld（GV数:%ld）%@\n%@局部Ass特征T%ld（GV数:%ld）%@\n%@局部Abs特征T%ld（GV数:%ld）：%@\n%@",protoFeature.p.dataSource,
                                protoFeature.pId,protoFeature.count,CLEANSTR([protoFeature getLogDesc:false]),FeatureDesc(protoFeature.p,1),
                                assFeature.pId,assFeature.count,CLEANSTR([assFeature getLogDesc:false]),FeatureDesc(assFeature.p,1),
                                absT.pId,sortGroupModels.count,CLEANSTR([absT getLogDesc:false]),FeatureDesc(absT.p,1));
     return absT;
 }
 
-+(AIFeatureNode*) analogyFeature4Step2:(AIFeatureNode*)protoT ass:(AIFeatureNode*)assT bigerMatchValue:(CGFloat)bigerMatchValue step2Model:(AIFeatureStep2Model*)step2Model {
-    NSLog(@"==============> 特征类比Step2：protoT%ld assT%ld",protoT.pId,assT.pId);
++(AIFeatureNode*) analogyFeatureStep2:(AIFeatureNode*)protoT ass:(AIFeatureNode*)assT bigerMatchValue:(CGFloat)bigerMatchValue step2Model:(AIFeatureStep2Model*)step2Model {
+    //NSLog(@"==============> 特征类比Step2：protoT%ld assT%ld",protoT.pId,assT.pId);
     //1. 借助每个absT来实现整体T的类比：类比orders的规律: 类比rectItems，把责任超过50%的去掉，别的保留（参考34139）。
     NSArray *sameItems = [SMGUtils filterArr:step2Model.rectItems checkValid:^BOOL(AIFeatureStep2Item_Rect *obj) {
         return [TCLearningUtil noZeRenForPingJun:obj.itemMatchValue * obj.itemMatchDegree bigerMatchValue:step2Model.modelMatchValue * step2Model.modelMatchDegree];
@@ -438,9 +438,9 @@
     [AINetUtils updateConPortRect:absT conT:assT.p rect:newAbsAtAssRect];
     
     //51. debug
-    if (Log4Ana || true) NSLog(@"整体特征类比结果(%@) => \nProto特征T%ld（GV数:%ld）%@\n%@Ass特征T%ld（GV数:%ld）%@\n%@整体Abs特征T%ld（局部特征数:%ld GV数:%ld）：%@\n%@",protoT.p.dataSource,
-                               protoT.pId,protoT.count,CLEANSTR([protoT getLogDesc:false]),FeatureDesc(protoT.p,1),
-                               assT.pId,assT.count,CLEANSTR([assT getLogDesc:false]),FeatureDesc(assT.p,1),
+    if (Log4Ana || true) NSLog(@"\n整体特征类比结果(%@) ======================> \n整体Proto特征T%ld（局部特征数:%ld GV数:%ld）%@\n%@整体Ass特征T%ld（局部特征数:%ld GV数:%ld）%@\n%@整体Abs特征T%ld（局部特征数:%ld GV数:%ld）：%@\n%@",protoT.p.dataSource,
+                               protoT.pId,sameItems.count,protoT.count,CLEANSTR([protoT getLogDesc:false]),FeatureDesc(protoT.p,1),
+                               assT.pId,sameItems.count,assT.count,CLEANSTR([assT getLogDesc:false]),FeatureDesc(assT.p,1),
                                absT.pId,sameItems.count,absGVModels.count,CLEANSTR([absT getLogDesc:false]),FeatureDesc(absT.p,1));
     return absT;
 }
