@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 //图库图片的前辍
-#define cCanEatMainNum @[@"鼠",@"0",@"杯",@"柄",@"球",@"饮"]
+#define cCanEatMainNum @[@"鼠",@"0",@"杯",@"柄",@"球",@"饮",@"签"]
 #define cCantEatMainNum @[@"1",@"2",@"3",@"4",@"5",@"6",@"7",@"8",@"9"]
 
 //图库文件夹名称 num_x数字库 s_x自己拍的鼠标照片，只有12张。
