@@ -289,7 +289,7 @@
     
     //2. 找出最大level，避免打印的比原图像素过多或过少。
     NSInteger maxLevel = [SMGUtils filterBestScore:tNode.rects scoreBlock:^CGFloat(NSValue *item) {
-        return VisionMaxLevel - log(item.CGRectValue.size.width) / log(3);
+        return VisionMaxLevel - [SMGUtils convertDotSize2Level:item.CGRectValue.size.width];
     }] + 1;//groupLevel+1才是真正的level
     
     //3. 需要打印的点字典。
@@ -318,7 +318,7 @@
         CGRect groupRect = VALTOOK(ARR_INDEX(tNode.rects, i)).CGRectValue;
         
         //3. 根据level取表示这层的字符。
-        NSInteger groupLevel = VisionMaxLevel - log(groupRect.size.width) / log(3);
+        NSInteger groupLevel = VisionMaxLevel - [SMGUtils convertDotSize2Level:groupRect.size.width];
         NSString *obj = nil;
         if (groupLevel == 0) {
             obj = @"* ";

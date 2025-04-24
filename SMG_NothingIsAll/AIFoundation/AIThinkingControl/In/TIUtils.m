@@ -167,7 +167,7 @@
     for (NSInteger i = 0; i < protoFeature.count; i++) {
         AIKVPointer *protoGroupValue_p = ARR_INDEX(protoFeature.content_ps, i);
         CGRect protoRect = VALTOOK(ARR_INDEX(protoFeature.rects, i)).CGRectValue;
-        NSInteger protoLevel = VisionMaxLevel - log(protoRect.size.width) / log(3);
+        NSInteger protoLevel = VisionMaxLevel - [SMGUtils convertDotSize2Level:protoRect.size.width];
         if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"3");
         
         //4. 组码识别。
@@ -186,7 +186,7 @@
             for (AIPort *refPort in refPorts) {
                 
                 //12. 根据level分别记录不同deltaLevel结果（把deltaLevel做为key的一部分，记录到识别结果字典里）。
-                NSInteger refLevel = VisionMaxLevel - log(refPort.rect.size.width) / log(3);
+                NSInteger refLevel = VisionMaxLevel - [SMGUtils convertDotSize2Level:refPort.rect.size.width];
                 NSString *assKey = STRFORMAT(@"%ld_%ld",protoLevel - refLevel,refPort.target_p.pointerId);
                 
                 //13. 取出已经收集到的assGVModels,判断下一个refPort收集进去的话,是否符合位置;

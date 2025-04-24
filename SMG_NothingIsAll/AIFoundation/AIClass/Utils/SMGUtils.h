@@ -360,4 +360,7 @@
 
 +(double) sumOfArr:(NSArray *)arr convertBlock:(double(^)(id obj))convertBlock;
 
+//返回点数的层级（比如81返回4）
++(int) convertDotSize2Level:(CGFloat)dotSize;
+
 @end

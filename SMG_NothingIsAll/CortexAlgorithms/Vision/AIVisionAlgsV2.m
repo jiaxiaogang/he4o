@@ -84,7 +84,7 @@
     int protoDotSize = sqrtf(protoColorDic.count);//通过总点数求平方根获取边长（因为横纵点数是一致的）。
     
     //2. 计算81是3的几次方 (log3(81) = 4) (level的取值范围是1234...从1开始，其中1表示最粗粒度层）。
-    double levelNum = log(protoDotSize) / log(3);
+    int levelNum = [SMGUtils convertDotSize2Level:protoDotSize];
     for (NSInteger curLevel = levelNum; curLevel > 0; curLevel--) {
         
         //3. 每个粒度层都要把每格处理下：第1粒度宽3。第2粒度宽9。第3粒度宽27。第4粒度宽81。（row和column的取值范围是0123...从0开始，它表示每一个粒度层的行列下标）。
@@ -146,7 +146,7 @@
     //5. 转成AIVisionAlgsModelV2模型。
     AIVisionAlgsModelV2 *model = [[AIVisionAlgsModelV2 alloc] init];
     CGFloat protoColorWH = sqrtf(protoColorDic.count);
-    model.levelNum = log(protoColorWH) / log(3);
+    model.levelNum = [SMGUtils convertDotSize2Level:protoColorWH];
     
     //6. 取HSB三个特征（及感官层做精度处理：要保证整个稀疏码可能的值，其总量在不影响感知的前提下越少越好）。
     model.hColors = [SMGUtils convertDic:splitDic kvBlock:^NSArray *(NSString *protoK, NSDictionary *protoV) {
