@@ -242,8 +242,8 @@
 -(NSDictionary*) getLogDesc:(BOOL)simple {
     return [SMGUtils filterDic:self.logDesc checkValid:^BOOL(NSString *key, id value) {
         NSRange tabRange = [key rangeOfString:@"_"];
-        BOOL keySsSimple = tabRange.location == NSNotFound;
-        return keySsSimple == simple;
+        BOOL keyIsSimple = tabRange.location == NSNotFound;
+        return keyIsSimple == simple;
     }];
 }
 

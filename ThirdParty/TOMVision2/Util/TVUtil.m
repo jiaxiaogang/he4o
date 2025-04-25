@@ -283,6 +283,9 @@
  *      2025.04.14: 迭代v2-简化代码逻辑，直接针对rect来打印，不计算原来那套了，也不取GV了，直接rect在哪层，就打哪个字符。
  */
 +(NSString*) getFeatureDesc:(AIKVPointer*)node_p sizeFenMu:(NSInteger)sizeFenMu {
+    BOOL cSwitch = false;
+    if (!cSwitch) return @"";
+    
     //1. 只打BColors特征。
     //if ([node_p.dataSource isEqualToString:@"hColors"] || [node_p.dataSource isEqualToString:@"sColors"]) return @"";
     AIFeatureNode *tNode = [SMGUtils searchNode:node_p];
