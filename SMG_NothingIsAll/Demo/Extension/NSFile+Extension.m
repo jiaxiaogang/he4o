@@ -21,6 +21,7 @@
     }];
 }
 
+//注：这里用[[NSFileManager defaultManager] subpathsOfDirectoryAtPath:folderPath]是不是直接就全收集到了？
 + (NSArray*)subFiles_AllDeep:(NSString*)path{
     //1. 数据准备
     NSMutableArray *array = [[NSMutableArray alloc] init];

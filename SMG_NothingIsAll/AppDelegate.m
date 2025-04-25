@@ -107,10 +107,10 @@
     [self createNavBtn:7 title:@"2DB" action:@selector(wedisSaveBtnOnClick:) bg:0];
     
     //3. 临时
-    [self createNavBtn:8 title:@"临时" action:@selector(tempBtnOnClick:) bg:0];
+    [self createNavBtn:8 title:@"库图" action:@selector(imageNetTrainerBtnOnClick:) bg:0];
     
     //3. 视觉训练工具
-    [self createNavBtn:9 title:@"视训" action:@selector(imgTrainerBtnOnClick:) bg:0];
+    [self createNavBtn:9 title:@"自图" action:@selector(customImagesTrainerBtnOnClick:) bg:0];
     
     //4. 神经网络可视化
     self.nvView = [[NVView alloc] initWithDelegate:[NVDelegate_He new]];
@@ -228,13 +228,13 @@
     }
 }
 
--(void) tempBtnOnClick:(UIButton*)btn {
-    [AIVisionAlgsV2 commitInput:[AIVisionAlgsV2 createImageFromCustomImageWithName:@"鼠_1"] logDesc:@"0_1"];//STRFORMAT(@"0_%d",(arc4random() % 17) + 1);
-//    [AIVisionAlgsV2 commitInput:[AIVisionAlgsV2 createTest4ColorImage] logDesc:@"fourColor"];
+-(void) imageNetTrainerBtnOnClick:(UIButton*)btn {
+    [self.imgTrainerView setData:2];
+    [self.imgTrainerView open];
 }
 
-
--(void) imgTrainerBtnOnClick:(UIButton*)btn {
+-(void) customImagesTrainerBtnOnClick:(UIButton*)btn {
+    [self.imgTrainerView setData:1];
     [self.imgTrainerView open];
 }
 

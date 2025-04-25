@@ -10,8 +10,9 @@
 
 @implementation ImgTrainerItemModel
 
-+(ImgTrainerItemModel*) new:(NSString*)imgId imgName:(NSString*)imgName {
++(ImgTrainerItemModel*) new:(NSString*)folderPath imgId:(NSString*)imgId imgName:(NSString*)imgName {
     ImgTrainerItemModel *result = [ImgTrainerItemModel new];
+    result.folderPath = folderPath;
     result.imgId = imgId;
     result.imgName = imgName;
     return result;

@@ -64,7 +64,54 @@
     [self.tv setContentInset:UIEdgeInsetsMake(0, -10, 0, -10)];
 }
 
--(void) initData{
+-(void) initData{}
+
+-(void) initDisplay {
+    [self close];
+}
+
+/**
+ *  MARK:--------------------setData--------------------
+ *  @param mode 1custom模式 2imageNet模式 3Mnist模式（暂不需要，但也用过人家图库，挂个名）。
+ */
+-(void) setData:(int)mode {
+    if (mode == 1) {
+        [self loadDataForCustom];
+    } else if (mode == 2) {
+        [self loadDataForImageNet];
+    }
+    [self refreshDisplay];
+}
+
+-(void) loadDataForCustom {
+    //1. 先清掉
+    self.tvDatas = [NSMutableArray new];
+
+    //2. 取所有物品文件夹
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"assets/TrainImages" ofType:nil];
+    NSArray *subPaths = [NSFile_Extension subFolders:path];
+    
+    //3. 把文件夹名称取拼音字典。
+    NSMutableArray *folderNames = [SMGUtils convertArr:subPaths convertBlock:^id(NSString *obj) {
+        return [obj lastPathComponent];
+    }];
+    NSDictionary *dic = [self convertStrs2PinYinDic:folderNames];
+    
+    //4. 绝对目录按拼音排序
+    subPaths = [subPaths sortedArrayUsingComparator:^NSComparisonResult(NSString *path1, NSString *path2) {
+        NSString *name1 = [dic objectForKey:[path1 lastPathComponent]];
+        NSString *name2 = [dic objectForKey:[path2 lastPathComponent]];
+        return [name1 compare:name2 options:NSNumericSearch];
+    }];
+    
+    //5. 转为models
+    for (NSString *subPath in subPaths) {
+        NSString *folderName = [subPath lastPathComponent];
+        [self.tvDatas addObject:[ImgTrainerItemModel new:subPath imgId:folderName imgName:folderName]];
+    }
+}
+
+-(void) loadDataForImageNet {
     self.tvDatas = [NSMutableArray new];
 
     // Read words.txt file
@@ -102,16 +149,13 @@
     for (NSString *imgId in imgIds) {
         NSString *imgName = [wordsDic objectForKey:imgId];
         if (!imgId || !imgName) continue;
-        [self.tvDatas addObject:[ImgTrainerItemModel new:imgId imgName:imgName]];
+        NSString *folderPath = STRFORMAT(@"%@/assets/TinyImageNetImages/train/%@/images",cachePath,imgId);
+        [self.tvDatas addObject:[ImgTrainerItemModel new:folderPath imgId:imgId imgName:imgName]];
     }
     //NSLog(@"读到物品类别数%ld条",self.tvDatas.count);
 }
 
--(void) initDisplay{
-    [self close];
-}
-
--(void) refreshDisplay{
+-(void) refreshDisplay {
     //5. 重显示;
     [self.tv reloadData];
     if (self.curSelectRow < self.tvDatas.count) {
@@ -134,6 +178,30 @@
     [self setHidden:true];
 }
 
+//取汉字的拼音
+- (NSDictionary *) convertStrs2PinYinDic:(NSMutableArray *)strArr {
+    NSMutableDictionary *result = [NSMutableDictionary new];
+    for (NSString *stringdict in strArr) {
+        NSString *string = stringdict;
+        if ([string length]) {
+            NSMutableString *mutableStr = [[NSMutableString alloc] initWithString:string];
+        
+            //2. 转成拼音
+            CFStringTransform((__bridge CFMutableStringRef)mutableStr, 0, kCFStringTransformMandarinLatin, NO);
+            
+            //3. 去掉声调
+            if (CFStringTransform((__bridge CFMutableStringRef)mutableStr, 0, kCFStringTransformStripDiacritics, NO)) {
+                
+                //4. 转成大写
+                NSString *str = [NSString stringWithString:mutableStr];
+                str = [str uppercaseString];
+                [result setObject:str forKey:string];
+            }
+        }
+    }
+    return result;
+}
+
 //MARK:===============================================================
 //MARK:                     < onclick >
 //MARK:===============================================================
@@ -142,11 +210,15 @@
     ImgTrainerItemModel *model = ARR_INDEX(self.tvDatas, self.curSelectRow);
     if (model) {
         //1. 取图
-        NSString *cachePath = kCachePath;
-        NSString *readPath = STRFORMAT(@"%@/assets/TinyImageNetImages/train/%@/images",cachePath,model.imgId);
-        NSString *fileName = STRFORMAT(@"%@_%ld.JPEG",model.imgId,model.imgIndex);
-        NSString *fullPath = [readPath stringByAppendingPathComponent:fileName];
-        UIImage *img = [UIImage imageWithContentsOfFile:fullPath];
+        NSArray *tryExts = @[@"JPEG",@"png",@"jpg"];
+        UIImage *img = nil;
+        for (NSString *ext in tryExts) {
+            NSString *fileName = STRFORMAT(@"%@_%ld.%@",model.imgId,model.imgIndex,ext);
+            NSString *fullPath = [model.folderPath stringByAppendingPathComponent:fileName];
+            img = [UIImage imageWithContentsOfFile:fullPath];
+            if (img) break;
+        }
+        if (!img) return;
         
         //2. 提交视觉
         [AIVisionAlgsV2 commitInput:img logDesc:STRFORMAT(@"%@_%ld",model.imgName,model.imgIndex)];
@@ -175,7 +247,8 @@
     UITableViewCell *cell = [[UITableViewCell alloc] init];
     ImgTrainerItemModel *model = ARR_INDEX(self.tvDatas, indexPath.row);
     NSString *curIndexing = (model.imgIndex==0) ? @"" : STRFORMAT(@"%ld",model.imgIndex - 1);//当前正在处理中的图
-    [cell.textLabel setText:STRFORMAT(@"%ld. %@ %@ %@",indexPath.row+1,model.imgId,model.imgName,curIndexing)];
+    NSString *imgNameDesc = [model.imgName isEqualToString:model.imgId] ? @"" : model.imgName;
+    [cell.textLabel setText:STRFORMAT(@"%ld. %@ %@ %@",indexPath.row+1,model.imgId,imgNameDesc,curIndexing)];
     [cell.textLabel setFont:[UIFont systemFontOfSize:12]];
     return cell;
 }
