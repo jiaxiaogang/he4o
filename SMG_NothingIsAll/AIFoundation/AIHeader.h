@@ -31,6 +31,7 @@
 #import "XGWedis.h"
 #import "CortexAlgorithmsUtil.h"
 #import "MapModel.h"
+#import "ImgTrainerView.h"
 
 //Util
 #import "ThinkingUtils.h"

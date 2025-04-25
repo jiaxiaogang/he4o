@@ -23,6 +23,7 @@
 @property (strong, nonatomic) UILabel *tipLogLab;
 @property (strong, nonatomic) UIView *refreshDot;//因为模拟器下的UI动画老不刷新,所以写个闪动点,来推动UI被动刷新;
 @property (strong, nonatomic) MemManagerWindow *memManagerWindow;
+@property (strong, nonatomic) ImgTrainerView *imgTrainerView;
 @property (assign, nonatomic) int waitReset;//0默认或成功 1等待重启 (2,3..N)fps<3连续n次
 
 //思维状态
@@ -108,6 +109,9 @@
     //3. 临时
     [self createNavBtn:8 title:@"临时" action:@selector(tempBtnOnClick:) bg:0];
     
+    //3. 视觉训练工具
+    [self createNavBtn:9 title:@"视训" action:@selector(imgTrainerBtnOnClick:) bg:0];
+    
     //4. 神经网络可视化
     self.nvView = [[NVView alloc] initWithDelegate:[NVDelegate_He new]];
     [self.nvView setAlpha:0.9f];
@@ -140,6 +144,10 @@
     
     //9. 初始化XGConfig
     [XGConfig.instance initConfig];
+    
+    //10. 视觉训练工具
+    self.imgTrainerView = [[ImgTrainerView alloc] init];
+    [self.window addSubview:self.imgTrainerView];
     return YES;
 }
 
@@ -223,6 +231,11 @@
 -(void) tempBtnOnClick:(UIButton*)btn {
     [AIVisionAlgsV2 commitInput:[AIVisionAlgsV2 createImageFromCustomImageWithName:@"鼠_1"] logDesc:@"0_1"];//STRFORMAT(@"0_%d",(arc4random() % 17) + 1);
 //    [AIVisionAlgsV2 commitInput:[AIVisionAlgsV2 createTest4ColorImage] logDesc:@"fourColor"];
+}
+
+
+-(void) imgTrainerBtnOnClick:(UIButton*)btn {
+    [self.imgTrainerView open];
 }
 
 -(void) startRefreshDotAnimation{

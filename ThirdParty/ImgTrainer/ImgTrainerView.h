@@ -10,4 +10,6 @@
 
 @interface ImgTrainerView : UIView
 
+-(void) open;
+
 @end
