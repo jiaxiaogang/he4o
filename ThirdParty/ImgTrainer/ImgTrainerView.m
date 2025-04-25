@@ -174,8 +174,8 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     UITableViewCell *cell = [[UITableViewCell alloc] init];
     ImgTrainerItemModel *model = ARR_INDEX(self.tvDatas, indexPath.row);
-    NSString *modelIndex = (model.imgIndex==0) ? @"" : STRFORMAT(@"%ld",model.imgIndex);
-    [cell.textLabel setText:STRFORMAT(@"%ld. %@ %@ %@",indexPath.row+1,model.imgId,model.imgName,modelIndex)];
+    NSString *curIndexing = (model.imgIndex==0) ? @"" : STRFORMAT(@"%ld",model.imgIndex - 1);//当前正在处理中的图
+    [cell.textLabel setText:STRFORMAT(@"%ld. %@ %@ %@",indexPath.row+1,model.imgId,model.imgName,curIndexing)];
     [cell.textLabel setFont:[UIFont systemFontOfSize:12]];
     return cell;
 }
