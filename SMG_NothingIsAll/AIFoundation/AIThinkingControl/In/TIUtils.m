@@ -255,6 +255,7 @@
     //45. 末尾淘汰匹配数小于3条的、组码太少，形不成什么显著的特征。
     //2025.04.07: 由绝对3条淘汰改成末尾淘汰：匹配数低的占比偏多，所以改成按匹配数排序尾部淘汰。
     //2025.04.08: 由末尾淘汰改成平均匹配数淘汰：BUG-修复最后很多1号坚果都是GV匹配数=2的，但H通道很重要，改成以matchCount的和来判断匹配数（经实测已OK)。
+    //TODO: 这个应该没啥用了，匹配数已经用到竞争里了，这个再末尾淘汰30%有点画蛇添足（随后明确测下此处意义不大，去掉也没啥影响的话，就去掉）。
     NSInteger pinJunMatchCount = [SMGUtils sumOfArr:resultModels convertBlock:^double(AIMatchModel *obj) {
         return obj.matchCount;
     }] / (float)resultModels.count;
@@ -264,9 +265,10 @@
     if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"20");
     
     //46. 末尾淘汰xx%匹配度低的、匹配度强度过滤器 (参考28109-todo2 & 34091-5提升准确)。
-    //2025.04.23: 加上obj.matchAssProtoRatio（参考34165-修复）。
+    //2025.04.23: 加上健全度：matchAssProtoRatio（参考34165-方案）。
+    //2025.04.26: 加上显著度：matchConStrongRatio（参考34174-细节-方案）。
     resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIMatchModel *obj) {
-        return obj.matchValue * obj.matchDegree * obj.matchAssProtoRatio;
+        return obj.matchValue * obj.matchDegree * obj.matchAssProtoRatio * obj.matchConStrongRatio;
     }], 0, MIN(MAX(resultModels.count * 0.8f, 10), 20));
     
     //51. 更新: ref强度 & 相似度 & 抽具象 & 映射 & conPort.rect;

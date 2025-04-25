@@ -146,6 +146,7 @@
             
             //5. 直接到总账部分：resultDic用于统计匹配数，匹配度，总强度。
             tModel.match_p = assT.p;
+            tModel.matchNode = assT;
             tModel.matchCount++;
             tModel.sumMatchValue += item.gMatchValue;
             tModel.sumMatchDegree += item.gMatchDegree;
@@ -160,9 +161,20 @@
         tModel.matchDegree = tModel.assCount > 0 ? (tModel.sumMatchDegree / tModel.assCount) : 0;
         tModel.indexDic = indexDic;
         tModel.degreeDic = degreeDic;
+        tModel.sumConStrong = tModel.matchNode ? [SMGUtils sumOfArr:tModel.matchNode.conPorts convertBlock:^double(AIPort *obj) {
+            return obj.strong.value;
+        }] : 0;
         
         //7. 此处resultModels的item有为Nil闪退的情况，判断下只有不为nil时才收集。
         if (tModel.match_p) [resultDic setObject:tModel forKey:assKey];
+    }
+    
+    //8. 求显著度。
+    NSInteger maxConStrong = [SMGUtils filterBestScore:resultDic.allValues scoreBlock:^CGFloat(AIMatchModel *item) {
+        return item.sumConStrong;
+    }];
+    for (AIMatchModel *item in resultDic.allValues) {
+        item.matchConStrongRatio = item.sumConStrong / (float)maxConStrong;
     }
     return resultDic;
 }
