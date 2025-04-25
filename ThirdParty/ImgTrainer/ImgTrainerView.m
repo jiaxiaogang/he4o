@@ -19,7 +19,7 @@
 @property (strong, nonatomic) IBOutlet UIView *containerView;
 @property (weak, nonatomic) IBOutlet UITableView *tv;
 @property (weak, nonatomic) IBOutlet UIButton *playBtn;
-@property (strong, nonatomic) NSArray *tvDatas;
+@property (strong, nonatomic) NSMutableArray *tvDatas;
 //@property (assign, nonatomic) NSInteger tvIndex;//如果reloadData后，selectedRow高亮不会消失，则这个用不着。
 
 @end
@@ -63,9 +63,45 @@
 }
 
 -(void) initData{
-    //TODO: 从txt文档读出200张图的imgId和imgName
-    self.tvDatas = nil;
-    self.tvIndex = 0;
+    self.tvDatas = [NSMutableArray new];
+
+    // Read words.txt file
+    NSString *wordsPath = [[NSBundle mainBundle] pathForResource:@"words" ofType:@"txt" inDirectory:@"assets/TinyImageNetImages"];
+    NSString *wordsContent = [NSString stringWithContentsOfFile:wordsPath encoding:NSUTF8StringEncoding error:nil];
+    
+    // Split into lines and get first line
+    NSArray *wordsLines = [wordsContent componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
+    
+    NSMutableDictionary *wordsDic = [NSMutableDictionary new];
+    for (NSString *line in wordsLines) {
+        
+        // Find first tab position in line
+        NSRange tabRange = [line rangeOfString:@"\t"];
+        if (tabRange.location == NSNotFound) {
+            continue;
+        }
+
+        // Extract key and value from line using tab position
+        NSString *key = [line substringToIndex:tabRange.location];
+        NSString *value = [line substringFromIndex:tabRange.location + 1];
+        wordsDic[key] = value;
+    }
+    NSLog(@"读到物品名字典%ld条",wordsDic.count);
+    
+    // Read wnids.txt file
+    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"wnids" ofType:@"txt" inDirectory:@"assets/TinyImageNetImages"];
+    NSString *fileContent = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
+    
+    // Split into lines and create array
+    NSArray *imgIds = [fileContent componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
+    
+    // Collect for every one
+    for (NSString *imgId in imgIds) {
+        NSString *imgName = [wordsDic objectForKey:imgId];
+        if (!imgId || !imgName) continue;
+        [self.tvDatas addObject:[ImgTrainerItemModel new:imgId imgName:imgName]];
+    }
+    NSLog(@"读到物品类别数%ld条",self.tvDatas.count);
 }
 
 -(void) initDisplay{

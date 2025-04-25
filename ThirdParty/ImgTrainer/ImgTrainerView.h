@@ -10,7 +10,4 @@
 
 @interface ImgTrainerView : UIView
 
-@property (strong, nonatomic) NSMutableArray *queues;       //训练队列
-@property (assign, nonatomic) NSInteger tvIndex;         //训练进度
-
 @end
