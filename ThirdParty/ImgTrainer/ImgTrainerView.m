@@ -19,8 +19,9 @@
 @property (strong, nonatomic) IBOutlet UIView *containerView;
 @property (weak, nonatomic) IBOutlet UITableView *tv;
 @property (weak, nonatomic) IBOutlet UIButton *playBtn;
+@property (weak, nonatomic) IBOutlet UIImageView *curImgView;
 @property (strong, nonatomic) NSMutableArray *tvDatas;
-//@property (assign, nonatomic) NSInteger tvIndex;//如果reloadData后，selectedRow高亮不会消失，则这个用不着。
+@property (assign, nonatomic) NSInteger curSelectRow;
 
 @end
 
@@ -39,7 +40,7 @@
 -(void) initView{
     //self
     [self setAlpha:0.7f];
-    CGFloat width = 350;//ScreenWidth * 0.667f;
+    CGFloat width = 550;//ScreenWidth * 0.667f;
     [self setFrame:CGRectMake(ScreenWidth - width - 20, 64, width, ScreenHeight - 128)];
     
     //containerView
@@ -60,13 +61,15 @@
     self.tv.dataSource = self;
     [self.tv.layer setBorderWidth:1.0f];
     [self.tv.layer setBorderColor:UIColorWithRGBHex(0x0000FF).CGColor];
+    [self.tv setContentInset:UIEdgeInsetsMake(0, -10, 0, -10)];
 }
 
 -(void) initData{
     self.tvDatas = [NSMutableArray new];
 
     // Read words.txt file
-    NSString *wordsPath = [[NSBundle mainBundle] pathForResource:@"words" ofType:@"txt" inDirectory:@"assets/TinyImageNetImages"];
+    NSString *cachePath = kCachePath;
+    NSString *wordsPath = STRFORMAT(@"%@/assets/TinyImageNetImages/words.txt", cachePath);
     NSString *wordsContent = [NSString stringWithContentsOfFile:wordsPath encoding:NSUTF8StringEncoding error:nil];
     
     // Split into lines and get first line
@@ -86,10 +89,10 @@
         NSString *value = [line substringFromIndex:tabRange.location + 1];
         wordsDic[key] = value;
     }
-    NSLog(@"读到物品名字典%ld条",wordsDic.count);
+    //NSLog(@"读到物品名字典%ld条",wordsDic.count);
     
     // Read wnids.txt file
-    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"wnids" ofType:@"txt" inDirectory:@"assets/TinyImageNetImages"];
+    NSString *filePath = STRFORMAT(@"%@/assets/TinyImageNetImages/wnids.txt", cachePath);
     NSString *fileContent = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
     
     // Split into lines and create array
@@ -101,7 +104,7 @@
         if (!imgId || !imgName) continue;
         [self.tvDatas addObject:[ImgTrainerItemModel new:imgId imgName:imgName]];
     }
-    NSLog(@"读到物品类别数%ld条",self.tvDatas.count);
+    //NSLog(@"读到物品类别数%ld条",self.tvDatas.count);
 }
 
 -(void) initDisplay{
@@ -111,14 +114,11 @@
 -(void) refreshDisplay{
     //5. 重显示;
     [self.tv reloadData];
-    
-    ////2. tv
-    //[self.tv reloadData];
-    //if (self.tvIndex < self.tvDatas.count) {
-    //    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-    //        [self.tv scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.tvIndex inSection:1] atScrollPosition:UITableViewScrollPositionMiddle animated:true];
-    //    });
-    //}
+    if (self.curSelectRow < self.tvDatas.count) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.tv selectRowAtIndexPath:[NSIndexPath indexPathForRow:self.curSelectRow inSection:0] animated:false scrollPosition:UITableViewScrollPositionNone];
+        });
+    }
 }
 
 //MARK:===============================================================
@@ -138,11 +138,24 @@
 //MARK:                     < onclick >
 //MARK:===============================================================
 - (IBAction)playBtnOnClick:(id)sender {
-    NSIndexPath *selected = [self.tv indexPathForSelectedRow];
-    ImgTrainerItemModel *model = ARR_INDEX(self.tvDatas, selected.row);
+    //NSIndexPath *selected = [self.tv indexPathForSelectedRow];
+    ImgTrainerItemModel *model = ARR_INDEX(self.tvDatas, self.curSelectRow);
     if (model) {
+        //1. 取图
+        NSString *cachePath = kCachePath;
+        NSString *readPath = STRFORMAT(@"%@/assets/TinyImageNetImages/train/%@/images",cachePath,model.imgId);
+        NSString *fileName = STRFORMAT(@"%@_%ld.JPEG",model.imgId,model.imgIndex);
+        NSString *fullPath = [readPath stringByAppendingPathComponent:fileName];
+        UIImage *img = [UIImage imageWithContentsOfFile:fullPath];
+        
+        //2. 提交视觉
+        [AIVisionAlgsV2 commitInput:img logDesc:STRFORMAT(@"%@_%ld",model.imgName,model.imgIndex)];
+        
+        //3. 预览图
+        [self.curImgView setImage:img];
+        
+        //4. 下一张
         model.imgIndex++;
-        NSLog(@"喂下一张图:%@ %@ %ld",model.imgId,model.imgName,model.imgIndex);
         [self refreshDisplay];
     }
 }
@@ -161,11 +174,16 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     UITableViewCell *cell = [[UITableViewCell alloc] init];
     ImgTrainerItemModel *model = ARR_INDEX(self.tvDatas, indexPath.row);
-    [cell.textLabel setText:STRFORMAT(@"%@ %@ %ld",model.imgId,model.imgName,model.imgIndex)];
+    NSString *modelIndex = (model.imgIndex==0) ? @"" : STRFORMAT(@"%ld",model.imgIndex);
+    [cell.textLabel setText:STRFORMAT(@"%ld. %@ %@ %@",indexPath.row+1,model.imgId,model.imgName,modelIndex)];
+    [cell.textLabel setFont:[UIFont systemFontOfSize:12]];
     return cell;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    return 30;
+    return 20;
+}
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    self.curSelectRow = indexPath.row;
 }
 
 @end

@@ -224,7 +224,10 @@
     NSInteger count = NUMTOOK([self.logDesc objectForKey:newItem]).integerValue;
     [self.logDesc setObject:@(count + 1) forKey:newItem];
     
-    NSString *newItemV2 = SUBSTR2INDEX(newItem, 1);
+    NSRange tabRange = [newItem rangeOfString:@"_"];
+    if (tabRange.location == NSNotFound) return;
+    
+    NSString *newItemV2 = [newItem substringToIndex:tabRange.location];
     NSInteger countV2 = NUMTOOK([self.logDesc objectForKey:newItemV2]).integerValue;
     [self.logDesc setObject:@(countV2 + 1) forKey:newItemV2];
 }
@@ -238,7 +241,9 @@
 
 -(NSDictionary*) getLogDesc:(BOOL)simple {
     return [SMGUtils filterDic:self.logDesc checkValid:^BOOL(NSString *key, id value) {
-        return (key.length == 1) == simple;
+        NSRange tabRange = [key rangeOfString:@"_"];
+        BOOL keySsSimple = tabRange.location == NSNotFound;
+        return keySsSimple == simple;
     }];
 }
 

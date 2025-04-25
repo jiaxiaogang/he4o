@@ -213,14 +213,4 @@
     return img;
 }
 
-static const NSMutableDictionary *mImageNetDic;
-+ (UIImage *) createImageFromImageNetWithName:(NSString*)imgName {
-    //1. 读图片路径。
-    NSString *path = [[NSBundle mainBundle] pathForResource:STRFORMAT(@"assets/TinyImageNet200Images/%@",imgName) ofType:@"png"];
-    
-    //2. 读出第imgIndex张图。
-    UIImage *img = [UIImage imageWithContentsOfFile:path];
-    return img;
-}
-
 @end
