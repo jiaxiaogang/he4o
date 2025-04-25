@@ -21,6 +21,9 @@
 		080A126D29D4813B0042870B /* AIMatchCansetModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 080A126C29D4813B0042870B /* AIMatchCansetModel.m */; };
 		080A74321F60C6490025DBA3 /* AIPort.m in Sources */ = {isa = PBXBuildFile; fileRef = 080A74311F60C6490025DBA3 /* AIPort.m */; };
 		080BFAAF2304D06A00046D22 /* HEViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 080BFAAE2304D06A00046D22 /* HEViewController.m */; };
+		080DF69C2DBB0CAA000EC837 /* ImgTrainerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 080DF69B2DBB0CAA000EC837 /* ImgTrainerView.xib */; };
+		080DF69F2DBB0CE1000EC837 /* ImgTrainerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 080DF69E2DBB0CE1000EC837 /* ImgTrainerView.m */; };
+		080DF6A22DBB1273000EC837 /* ImgTrainerItemModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 080DF6A12DBB1273000EC837 /* ImgTrainerItemModel.m */; };
 		080EA73B2B94D0BF00764BBF /* TCTransferXvModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 080EA73A2B94D0BF00764BBF /* TCTransferXvModel.m */; };
 		081002152A6BAC5600BE9D8A /* TCResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 081002142A6BAC5600BE9D8A /* TCResult.m */; };
 		0810E50F236A637500B33226 /* AINetIndexUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 0810E50E236A637500B33226 /* AINetIndexUtils.m */; };
@@ -262,6 +265,11 @@
 		080A74311F60C6490025DBA3 /* AIPort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIPort.m; sourceTree = "<group>"; };
 		080BFAAD2304D06A00046D22 /* HEViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HEViewController.h; sourceTree = "<group>"; };
 		080BFAAE2304D06A00046D22 /* HEViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HEViewController.m; sourceTree = "<group>"; };
+		080DF69B2DBB0CAA000EC837 /* ImgTrainerView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ImgTrainerView.xib; sourceTree = "<group>"; };
+		080DF69D2DBB0CE1000EC837 /* ImgTrainerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImgTrainerView.h; sourceTree = "<group>"; };
+		080DF69E2DBB0CE1000EC837 /* ImgTrainerView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImgTrainerView.m; sourceTree = "<group>"; };
+		080DF6A02DBB1273000EC837 /* ImgTrainerItemModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImgTrainerItemModel.h; sourceTree = "<group>"; };
+		080DF6A12DBB1273000EC837 /* ImgTrainerItemModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImgTrainerItemModel.m; sourceTree = "<group>"; };
 		080EA7392B94D0BF00764BBF /* TCTransferXvModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCTransferXvModel.h; sourceTree = "<group>"; };
 		080EA73A2B94D0BF00764BBF /* TCTransferXvModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCTransferXvModel.m; sourceTree = "<group>"; };
 		081002132A6BAC5600BE9D8A /* TCResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCResult.h; sourceTree = "<group>"; };
@@ -735,6 +743,18 @@
 				08D01CA328F702B0003688ED /* TVSettingWindow.xib */,
 			);
 			path = Panel;
+			sourceTree = "<group>";
+		};
+		080DF69A2DBB0C51000EC837 /* ImgTrainer */ = {
+			isa = PBXGroup;
+			children = (
+				080DF69D2DBB0CE1000EC837 /* ImgTrainerView.h */,
+				080DF69E2DBB0CE1000EC837 /* ImgTrainerView.m */,
+				080DF69B2DBB0CAA000EC837 /* ImgTrainerView.xib */,
+				080DF6A02DBB1273000EC837 /* ImgTrainerItemModel.h */,
+				080DF6A12DBB1273000EC837 /* ImgTrainerItemModel.m */,
+			);
+			path = ImgTrainer;
 			sourceTree = "<group>";
 		};
 		081002162A6BAE3900BE9D8A /* Model */ = {
@@ -1870,6 +1890,7 @@
 		88BC09D320B4EAA70006ABEF /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
+				080DF69A2DBB0C51000EC837 /* ImgTrainer */,
 				0881DC1828B794B000408986 /* XGConfig */,
 				08E084A828B128900070B7F7 /* TCDebug */,
 				0843AAD9281416D9002B9AA9 /* XGDebug */,
@@ -1983,6 +2004,7 @@
 				0858C5DD2194FB4600951BA5 /* LightView.xib in Resources */,
 				0887FE2A27DFEE60005EE691 /* TOMVision2.xib in Resources */,
 				0835557C266C6B8400ECFC51 /* MemManagerWindow.xib in Resources */,
+				080DF69C2DBB0CAA000EC837 /* ImgTrainerView.xib in Resources */,
 				083352F621800AB1003931E5 /* MainPage.xib in Resources */,
 				0805EB3126C54A00005F6341 /* LongTipWindow.xib in Resources */,
 				0858C5E421950BC700951BA5 /* TreeView.xib in Resources */,
@@ -2039,11 +2061,13 @@
 				0858C5D62194FABA00951BA5 /* RoadView.m in Sources */,
 				087705B12753745D00BA4EFB /* TCForecast.m in Sources */,
 				0860A3BB22C9851800A48682 /* CustomAddNodeWindow.m in Sources */,
+				080DF69F2DBB0CE1000EC837 /* ImgTrainerView.m in Sources */,
 				0825AFF31F748F67003B86C7 /* NSObject+Extension.m in Sources */,
 				08616986284CF2D300A39473 /* TCSolutionUtil.m in Sources */,
 				88E1F851211591E50036B616 /* DemandModel.m in Sources */,
 				0881965F21800F2B00D5DB36 /* BirdLivePage.m in Sources */,
 				0819F4F427583AA9007396D0 /* TCFeedback.m in Sources */,
+				080DF6A22DBB1273000EC837 /* ImgTrainerItemModel.m in Sources */,
 				086D93371F8CA782002BAF3F /* RuntimeInvoker.m in Sources */,
 				08D471DE1FEB3FFF00C61322 /* AIImvAlgs.m in Sources */,
 				08BB986F2C87E2D800DA4029 /* HEResult.m in Sources */,

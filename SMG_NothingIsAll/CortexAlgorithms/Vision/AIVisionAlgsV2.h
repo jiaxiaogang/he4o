@@ -19,6 +19,7 @@
 #pragma mark - Test Methods
 
 + (UIImage *) createTest4ColorImage;
-+ (UIImage *) createImageFromProtoMnistImageWithName:(NSString*)imgName forTest:(BOOL)forTest;
++ (UIImage *) createImageFromMnistImageWithName:(NSString*)imgName forTest:(BOOL)forTest;
++ (UIImage *) createImageFromCustomImageWithName:(NSString*)imgName;
 
 @end

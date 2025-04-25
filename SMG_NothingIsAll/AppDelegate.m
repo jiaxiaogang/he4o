@@ -221,7 +221,7 @@
 }
 
 -(void) tempBtnOnClick:(UIButton*)btn {
-    [AIVisionAlgsV2 commitInput:[AIVisionAlgsV2 createImageFromProtoMnistImageWithName:@"s_1" forTest:false] logDesc:@"0_1"];//STRFORMAT(@"0_%d",(arc4random() % 17) + 1);
+    [AIVisionAlgsV2 commitInput:[AIVisionAlgsV2 createImageFromCustomImageWithName:@"鼠_1"] logDesc:@"0_1"];//STRFORMAT(@"0_%d",(arc4random() % 17) + 1);
 //    [AIVisionAlgsV2 commitInput:[AIVisionAlgsV2 createTest4ColorImage] logDesc:@"fourColor"];
 }
 

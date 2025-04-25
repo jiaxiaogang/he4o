@@ -194,10 +194,29 @@
     return image;
 }
 
-+ (UIImage *) createImageFromProtoMnistImageWithName:(NSString*)imgName forTest:(BOOL)forTest {
++ (UIImage *) createImageFromMnistImageWithName:(NSString*)imgName forTest:(BOOL)forTest {
     //1. 读图片路径。
-    NSString *folder = forTest ? cTestImageFolder : cProtoImageFolder;
+    NSString *folder = forTest ? @"MnistImages/test" : @"MnistImages/train";
     NSString *path = [[NSBundle mainBundle] pathForResource:STRFORMAT(@"assets/%@/%@",folder,imgName) ofType:@"png"];
+    
+    //2. 读出第imgIndex张图。
+    UIImage *img = [UIImage imageWithContentsOfFile:path];
+    return img;
+}
+
++ (UIImage *) createImageFromCustomImageWithName:(NSString*)imgName {
+    //1. 读图片路径。
+    NSString *path = [[NSBundle mainBundle] pathForResource:STRFORMAT(@"assets/CustomImages/%@",imgName) ofType:@"png"];
+    
+    //2. 读出第imgIndex张图。
+    UIImage *img = [UIImage imageWithContentsOfFile:path];
+    return img;
+}
+
+static const NSMutableDictionary *mImageNetDic;
++ (UIImage *) createImageFromImageNetWithName:(NSString*)imgName {
+    //1. 读图片路径。
+    NSString *path = [[NSBundle mainBundle] pathForResource:STRFORMAT(@"assets/TinyImageNet200Images/%@",imgName) ofType:@"png"];
     
     //2. 读出第imgIndex张图。
     UIImage *img = [UIImage imageWithContentsOfFile:path];

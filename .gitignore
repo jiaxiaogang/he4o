@@ -10,5 +10,6 @@ SMG_NothingIsAll.xcodeproj/xcuserdata/air.xcuserdatad/xcschemes/xcschememanageme
 SMG_NothingIsAll.xcworkspace/xcuserdata/air.xcuserdatad/UserInterfaceState.xcuserstate
 
 SMG_NothingIsAll.xcworkspace/xcuserdata/air.xcuserdatad/xcdebugger/Breakpoints_v2.xcbkptlist
-/assets/ProtoImages
-/assets/TestImages
+/assets/CustomImages
+/assets/MnistImages
+/assets/TinyImageNetImages

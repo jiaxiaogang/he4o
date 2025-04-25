@@ -77,7 +77,7 @@
     
     //2. 几号坚果。
     if (self.imgName) {
-        [self.imgView setImage:[AIVisionAlgsV2 createImageFromProtoMnistImageWithName:self.imgName forTest:self.forTest]];
+        [self.imgView setImage:[AIVisionAlgsV2 createImageFromMnistImageWithName:self.imgName forTest:self.forTest]];
     }
 }
 
