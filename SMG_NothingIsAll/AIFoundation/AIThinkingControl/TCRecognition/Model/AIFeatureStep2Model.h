@@ -50,4 +50,9 @@
 -(void) run4MatchValue:(AIKVPointer*)protoT;
 @property (assign, nonatomic) CGFloat modelMatchValue;
 
+//MARK:===============================================================
+//MARK:                     < 计算assT的显著度 >
+//MARK:===============================================================
+@property (assign, nonatomic) CGFloat modelMatchConStrongRatio;  //显著度：被抽象强度程度（越高越好，因为它是更显著的特征）(参考34175-公式3）。
+
 @end
