@@ -22,6 +22,7 @@
 @property (weak, nonatomic) IBOutlet UIImageView *curImgView;
 @property (strong, nonatomic) NSMutableArray *tvDatas;
 @property (assign, nonatomic) NSInteger curSelectRow;
+@property (strong, nonatomic) NSMutableDictionary *lightDic;
 
 @end
 
@@ -64,7 +65,9 @@
     [self.tv setContentInset:UIEdgeInsetsMake(0, -10, 0, -10)];
 }
 
--(void) initData{}
+-(void) initData{
+    self.lightDic = [NSMutableDictionary new];
+}
 
 -(void) initDisplay {
     [self close];
@@ -173,15 +176,20 @@
  *  MARK:--------------------局部特征识别结果可视化（参考34176）--------------------
  */
 -(void) setDataForStep1Models:(NSArray*)step1Models protoT:(AIFeatureNode*)protoT {
-    //1. 每年itemAbsT分别可视化。
-    for (AIMatchModel *model in step1Models) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        //1. 把已显示的去掉。
+        [self removeLightDic];
         
-        //2. 每个在protoT中的映射区域，分别进行可视化。
-        for (NSNumber *protoIndex in model.indexDic.allValues) {
-            CGRect itemRect = VALTOOK(ARR_INDEX(protoT.rects, protoIndex.integerValue)).CGRectValue;
-            NSLog(@"可视化：%@",@(itemRect));
+        //2. 每年itemAbsT分别可视化。
+        for (AIMatchModel *model in step1Models) {
+            
+            //3. 每个在protoT中的映射区域，分别进行可视化。
+            for (NSNumber *protoIndex in model.indexDic.allValues) {
+                CGRect itemRect = VALTOOK(ARR_INDEX(protoT.rects, protoIndex.integerValue)).CGRectValue;
+                [self createItemLight:itemRect];
+            }
         }
-    }
+    });
 }
 
 //MARK:===============================================================
@@ -221,6 +229,58 @@
     return result;
 }
 
+-(void) createItemLight:(CGRect)rect {
+    //1. 全屏显示的就不显示了，起不到高亮的意义。
+    if (rect.size.width == 27 && rect.size.height == 27) return;
+    
+    //2. xy最大值为27，但每个都是组码，所以要转为9x9。
+    rect = CGRectMake(rect.origin.x / 3, rect.origin.y / 3, rect.size.width / 3, rect.size.height / 3);
+    
+    //3. 高亮颜色。
+    UIColor *color = UIColor.greenColor;
+    if (rect.size.width == 1) {
+        color = UIColor.redColor;
+    } else if (rect.size.width == 3) {
+        color = UIColor.yellowColor;
+    } else if (rect.size.width == 9) {
+        color = UIColor.blueColor;
+    }
+    
+    //4. 每点高亮显示。
+    for (NSInteger i = 0; i < rect.size.width; i++) {
+        for (NSInteger j = 0; j < rect.size.height; j++) {
+            CGFloat x = rect.origin.x + i;
+            CGFloat y = rect.origin.y + j;
+            [self createItemLight:x y:y color:color];
+        }
+    }
+}
+
+-(void) createItemLight:(CGFloat)x y:(CGFloat)y color:(UIColor*)color {
+    //xy最大值为27，但每个都是组码，所以要转为9x9。
+    CGFloat dotSize = powf(3, VisionMaxLevel - 1);
+    
+    //当前图片分为9格。
+    CGFloat dotW = self.curImgView.width / dotSize;
+    CGFloat dotH = self.curImgView.height / dotSize;
+    UIView *lightView = [self.lightDic objectForKey:STRFORMAT(@"%.0f_%.0f",x,y)];
+    if (!lightView) {
+        lightView = [[UIView alloc] initWithFrame:CGRectMake(x * dotW, y * dotH, dotW, dotH)];
+        [lightView setBackgroundColor:color];
+        [lightView setAlpha:0.4f];
+        [self.curImgView addSubview:lightView];
+        [self.lightDic setObject:lightView forKey:STRFORMAT(@"%.0f_%.0f",x,y)];
+    }
+}
+
+-(void) removeLightDic {
+    //1. 去掉可视化lightDic。
+    for (UIView *itemLight in self.lightDic.allValues) {
+        [itemLight removeFromSuperview];
+    }
+    [self.lightDic removeAllObjects];
+}
+
 //MARK:===============================================================
 //MARK:                     < onclick >
 //MARK:===============================================================
@@ -248,6 +308,9 @@
         //4. 下一张
         model.imgIndex++;
         [self refreshDisplay];
+        
+        //5. 去掉可视化lightDic。
+        [self removeLightDic];
     }
 }
 
