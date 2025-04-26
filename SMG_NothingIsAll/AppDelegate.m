@@ -23,7 +23,6 @@
 @property (strong, nonatomic) UILabel *tipLogLab;
 @property (strong, nonatomic) UIView *refreshDot;//因为模拟器下的UI动画老不刷新,所以写个闪动点,来推动UI被动刷新;
 @property (strong, nonatomic) MemManagerWindow *memManagerWindow;
-@property (strong, nonatomic) ImgTrainerView *imgTrainerView;
 @property (assign, nonatomic) int waitReset;//0默认或成功 1等待重启 (2,3..N)fps<3连续n次
 
 //思维状态

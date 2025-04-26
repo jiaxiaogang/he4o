@@ -166,6 +166,25 @@
 }
 
 //MARK:===============================================================
+//MARK:                     < Step1Models可视化 >
+//MARK:===============================================================
+
+/**
+ *  MARK:--------------------局部特征识别结果可视化（参考34176）--------------------
+ */
+-(void) setDataForStep1Models:(NSArray*)step1Models protoT:(AIFeatureNode*)protoT {
+    //1. 每年itemAbsT分别可视化。
+    for (AIMatchModel *model in step1Models) {
+        
+        //2. 每个在protoT中的映射区域，分别进行可视化。
+        for (NSNumber *protoIndex in model.indexDic.allValues) {
+            CGRect itemRect = VALTOOK(ARR_INDEX(protoT.rects, protoIndex.integerValue)).CGRectValue;
+            NSLog(@"可视化：%@",@(itemRect));
+        }
+    }
+}
+
+//MARK:===============================================================
 //MARK:                     < publicMethod >
 //MARK:===============================================================
 -(void) reloadData{

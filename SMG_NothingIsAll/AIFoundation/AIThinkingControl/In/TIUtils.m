@@ -300,6 +300,9 @@
     if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"24");
     PrintDebugCodeBlock_Key(@"rfs1");
     
+    //53. 局部特征可视化（参考34176）。
+    [theApp.imgTrainerView setDataForStep1Models:resultModels protoT:protoFeature];
+    
     //53. step1Result仅保留似层（参考34135-TODO5）。
     //2025.04.16: 为了有更为抽象的特征，先似交层都保留。
     //NSArray *step1Si = [SMGUtils filterArr:step1Result checkValid:^BOOL(AIMatchModel *item) {
