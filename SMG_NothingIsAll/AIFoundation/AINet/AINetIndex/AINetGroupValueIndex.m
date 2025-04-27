@@ -13,8 +13,19 @@
 /**
  *  MARK:--------------------根据组节点取 三个索引的数据（参考34082-方案2）--------------------
  *  @param subDots MapModel类型: v1=colorValue v2=x(0-2) v3-y(0-2)
+ *  @version
+ *      2025.04.27: 降低精度，以尝试优化性能。
  */
 +(NSDictionary*) convertGVIndexData:(NSArray*)subDots ds:(NSString*)ds {
+    int jinDu = 6;
+    if ([ds isEqual:@"hColors"]) {
+        jinDu = 20;//色相辨识度
+    } else if ([ds isEqual:@"sColors"]) {
+        jinDu = 8;//饱和度辨识度
+    } else if ([ds isEqual:@"bColors"]) {
+        jinDu = 6;//亮度辨识度
+    }
+    
     //1. 单码取值。
     NSArray *contentNums = [SMGUtils convertArr:subDots convertBlock:^id(MapModel *obj) {
         return obj.v1;
@@ -31,7 +42,7 @@
         return obj.floatValue;
     }];
     float pinJunNum = contentNums.count == 0 ? 0 : sumNum / contentNums.count;
-    pinJunNum = roundf(pinJunNum * 25) / 25;
+    pinJunNum = roundf(pinJunNum * jinDu) / jinDu;
     
     //3. >均值 和 <均值 的下标数组。
     NSMutableArray *smallIndexs = [NSMutableArray new];
@@ -59,7 +70,7 @@
     
     //5. 差值：计算出差值（如果是循环的，则用循环的算法）。
     float diffPinJunNum = [CortexAlgorithmsUtil deltaOfCustomV1:bigerPinJunNum v2:smallPinJunNum max:1 min:0 loop:[CortexAlgorithmsUtil dsIsLoop:ds]];
-    diffPinJunNum = roundf(diffPinJunNum * 25) / 25;
+    diffPinJunNum = roundf(diffPinJunNum * jinDu) / jinDu;
     
     //5. 方向：根据大小区中心点，算出方向（参考34082-TODO1）（按左上角为0,0点算，所以要加0.5表示xy坐标的中心点位置）。
     CGFloat bigerPinJunX = [SMGUtils sumOfArr:bigerIndexs convertBlock:^double(NSNumber *index) {
