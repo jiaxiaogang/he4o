@@ -183,11 +183,6 @@
     }];
     collectProtoIndexs = [SMGUtils removeRepeat:collectProtoIndexs];
     
-    //3. 转为rects
-    NSArray *rects = [SMGUtils convertArr:collectProtoIndexs convertBlock:^id(NSNumber *protoIndex) {
-        return ARR_INDEX(protoT.rects, protoIndex.integerValue);
-    }];
-    
     //4. 取preview 并更新显示;
     ImgTrainerPreview *preview = [self.previewDic objectForKey:@(protoT.pId)];
     if (!preview) {
@@ -197,7 +192,7 @@
         preview.y = self.previewDic.count / 5 * 120;
         [self.previewDic setObject:preview forKey:@(protoT.pId)];
     }
-    [preview setData:rects logDesc:CLEANSTR([protoT getLogDesc:false])];
+    [preview setData:protoT contentIndexes:collectProtoIndexs logDesc:CLEANSTR([protoT getLogDesc:false])];
 }
 
 //MARK:===============================================================
