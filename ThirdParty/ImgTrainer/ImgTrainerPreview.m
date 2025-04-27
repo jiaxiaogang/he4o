@@ -121,61 +121,46 @@
             CGFloat dotW = rect.size.width / 3.0f;
             CGFloat dotH = rect.size.height / 3.0f;
             CGFloat centerX = row * dotW + dotW * 0.5f;
-            CGFloat centerY = row * dotH + dotH * 0.5f;
+            CGFloat centerY = column * dotH + dotH * 0.5f;
             double bx = centerX;//B点坐标为格子中心点
             double by = centerY;//B点坐标为格子中心点
             double abx = bx - ax;//计算向量AB
             double aby = by - ay;//计算向量AB
             // 5. 叉乘判断
             double cross = dx * aby - dy * abx;
+            UIColor *color = UIColor.redColor;
             if (cross > 0.01) {
                 NSLog(@"B点在方向线左侧");
+                color = UIColor.whiteColor;
             } else if (cross < -0.01) {
                 NSLog(@"B点在方向线右侧");
+                color = UIColor.blackColor;
             } else {
                 NSLog(@"B点在方向线上");
+                color = UIColor.grayColor;
             }
-        }
-    }
-   
-    
-    
-    
-    //1. 全屏显示的就不显示了，起不到高亮的意义（但很多子级是压缩掉的，所以父级必须要）。
-    if (rect.size.width == 27 && rect.size.height == 27) return;
-    
-    //2025.04.27: BUG-可能色值信息不符的情况（当父级六格白，三格黑，子级如果认为纯白纯黑都不存，那么就都都会继承灰色）。
-    //TODO: 色值推断：子级由父级三索引计算得来，而不根据父级平均值来显示（这样的话，此处就不用改，只需要改显示时实时计算出来即可）。
-    //TODOTOMORROW20250427: 即此处要把GV解析出来显示，不能9格合一只显示一个色块了（颜色也不能再只显示单调的几色了）。
-    //1、从父级GV开始推断9宫色值。
-    //2、再子级GV推断色值，如果子级有新色值，则覆盖掉父级的。
-    
-    //2. xy最大值为27，但每个都是组码，所以要转为9x9。
-    rect = CGRectMake(rect.origin.x / 3, rect.origin.y / 3, rect.size.width / 3, rect.size.height / 3);
-    
-    //3. 高亮颜色。
-    UIColor *color = UIColor.greenColor;
-    if (rect.size.width == 1) {
-        color = UIColor.redColor;
-    } else if (rect.size.width == 3) {
-        color = UIColor.yellowColor;
-    } else if (rect.size.width == 9) {
-        color = UIColor.blueColor;
-    }
-    
-    //4. 每点高亮显示。
-    for (NSInteger i = 0; i < rect.size.width; i++) {
-        for (NSInteger j = 0; j < rect.size.height; j++) {
-            CGFloat x = rect.origin.x + i;
-            CGFloat y = rect.origin.y + j;
-            [self createItemLight:x y:y color:color];
+            
+            
+            //2025.04.27: BUG-可能色值信息不符的情况（当父级六格白，三格黑，子级如果认为纯白纯黑都不存，那么就都都会继承灰色）。
+            //TODO: 色值推断：子级由父级三索引计算得来，而不根据父级平均值来显示（这样的话，此处就不用改，只需要改显示时实时计算出来即可）。
+            //每次只显示一个通道，可以把通道累计下来，还原最终显示颜色。
+            //TODOTOMORROW20250427: 这里改下，row和column已经表示每格了，这里不用再做9宫循环了。
+            
+            //6. 每点高亮显示。
+            for (NSInteger i = 0; i < dotW; i++) {
+                for (NSInteger j = 0; j < dotH; j++) {
+                    CGFloat x = row * dotW + i;
+                    CGFloat y = column * dotH + j;
+                    [self createItemLight:x y:y color:color];
+                }
+            }
         }
     }
 }
 
 -(void) createItemLight:(CGFloat)x y:(CGFloat)y color:(UIColor*)color {
     //xy最大值为27，但每个都是组码，所以要转为9x9。
-    CGFloat dotSize = powf(3, VisionMaxLevel - 1);
+    CGFloat dotSize = powf(3, VisionMaxLevel);
     
     //当前图片分为9格。
     CGFloat dotWH = self.width / dotSize;
@@ -183,7 +168,7 @@
     if (!lightView) {
         lightView = [[UIView alloc] initWithFrame:CGRectMake(x * dotWH, y * dotWH, dotWH, dotWH)];
         [lightView setBackgroundColor:color];
-        [lightView setAlpha:0.4f];
+        [lightView setAlpha:1.0f];
         [self addSubview:lightView];
         [self.lightDic setObject:lightView forKey:STRFORMAT(@"%.0f_%.0f",x,y)];
     }
