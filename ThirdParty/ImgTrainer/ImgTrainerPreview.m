@@ -79,7 +79,7 @@
 }
 
 -(void) createItemLight:(CGRect)rect directionData:(double)directionData diffData:(double)diffData junData:(double)junData {
-    //1. 先上下各阔一半值，然后各分布一半格子。
+    //1. ========== 先上下各阔一半值，然后各分布一半格子 ==========
     //A、如果不越界，直接输出结果（如差值为4，均值为7，则Max=9，Min=5 各4.5格）。
     //B、如果上越界，下移，重新计算二元方程（如差值为8，均值为7，因7+4>9取Max=9，Min=1：然后Max*A+Min*B=63 A+B=9 得出：A=6.75格 B=2.25格）。
     //C、如果下越界，上移，重新计算二元方程（如差值为8，均值为3，因3-4<0取Min=0，Max=8：然后Max*A+Min*B=63 A+B=9 得出：A=3.375格 B=5.625格）。
@@ -94,7 +94,7 @@
     }
     double sumData = junData * 9;
 
-    //2. 设min有A格，max有B格，解二元一次方程组:
+    //2. ==========设min有A格，max有B格，解二元一次方程组 ==========
     // min * A + max * B = sumData
     // A + B = 9格
     // 解得: B = 9 - A
@@ -105,42 +105,32 @@
     double minNumA = (sumData - 9 * max) / (min - max);
     double maxNumB = 9 - minNumA;
     
-    //3. 九宫按方向分界线：求出每一个宫格的中心点在哪一边。
+    //3. ========== 根据方向索引 和 线经过A点 => 计算分界线 ==========
     //D、根据分界线两边占比 & 和两边的色值 = 计算平均值。
-    
-    //TODOTOMORROW20250427: 用三索引值和rect，生成每宫的色值。
-    
-    
-    // 已知方向directionData（角度，单位度），A点(ax, ay)，B点(bx, by)
     // 计算B点在A点的哪一侧（方向线的左侧还是右侧）
     // 1. 先将directionData转为弧度
-    double rad = directionData * M_PI / 180.0;
-    // 2. 方向向量
-    double dx = cos(rad);
-    double dy = sin(rad);
-    // 3. AB向量
-    // 假设A点(ax, ay)，B点(bx, by)
-    // 这里以rect中心为A点，B点为九宫格内的某点
-    double ax = rect.origin.x + rect.size.width / 2.0;
-    double ay = rect.origin.y + rect.size.height / 2.0;
-    // 例如，B点为(bx, by)
+    double rad = (directionData * 2 - 1) * M_PI;//转成左上右为：-3.14到0，右下左为：0-3.14。
+    double dx = cos(rad);//方向向量
+    double dy = sin(rad);//方向向量
+    double ax = rect.origin.x + rect.size.width / 2.0;//A点坐标为九宫中心点（先写成中心点，随后根据minNumA和maxNumB来计算一个比例）
+    double ay = rect.origin.y + rect.size.height / 2.0;//A点坐标为九宫中心点
+    
+    //4. ========== 按方向分界线：判断九宫每格在左还是右 ==========
     for (NSInteger row = 0; row < 3; row++) {
         for (NSInteger column = 0; column < 3; column++) {
             CGFloat dotW = rect.size.width / 3.0f;
             CGFloat dotH = rect.size.height / 3.0f;
             CGFloat centerX = row * dotW + dotW * 0.5f;
             CGFloat centerY = row * dotH + dotH * 0.5f;
-            
-            double bx = centerX;
-            double by = centerY;
-            // 4. 计算向量AB
-            double abx = bx - ax;
-            double aby = by - ay;
+            double bx = centerX;//B点坐标为格子中心点
+            double by = centerY;//B点坐标为格子中心点
+            double abx = bx - ax;//计算向量AB
+            double aby = by - ay;//计算向量AB
             // 5. 叉乘判断
             double cross = dx * aby - dy * abx;
-            if (cross > 0) {
+            if (cross > 0.01) {
                 NSLog(@"B点在方向线左侧");
-            } else if (cross < 0) {
+            } else if (cross < -0.01) {
                 NSLog(@"B点在方向线右侧");
             } else {
                 NSLog(@"B点在方向线上");
