@@ -363,4 +363,6 @@
 //返回点数的层级（比如81返回4）
 +(int) convertDotSize2Level:(CGFloat)dotSize;
 
++(void) runByMainQueue:(dispatch_block_t)block;
+
 @end

@@ -1185,4 +1185,8 @@
     return (int)(log(dotSize) / log(3) + 0.1999f);//因为高层级时，它有精度问题，导致4.9999998 强转Int后变成4，所以另外加上0.1999。
 }
 
++(void) runByMainQueue:(dispatch_block_t)block {
+    dispatch_async(dispatch_get_main_queue(), block);
+}
+
 @end
