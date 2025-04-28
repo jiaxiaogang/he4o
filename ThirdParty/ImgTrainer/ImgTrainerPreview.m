@@ -196,11 +196,11 @@
     UIView *lightView = [self.lightDic objectForKey:key];
     if (!lightView) {
         lightView = [[UIView alloc] initWithFrame:CGRectMake(x * dotWH, y * dotWH, dotWH, dotWH)];
-        [lightView setBackgroundColor:color.getColor];
         [lightView setAlpha:1.0f];
         [self addSubview:lightView];
         [self.lightDic setObject:lightView forKey:key];
     }
+    [lightView setBackgroundColor:color.getColor];
 }
 
 -(void) removeLightDic {
