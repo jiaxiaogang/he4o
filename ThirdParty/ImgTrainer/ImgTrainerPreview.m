@@ -76,6 +76,12 @@
         double diffData = [NUMTOOK([AINetIndex getData:diffV_p fromDataDic:diffDataDic]) doubleValue];
         double junData = [NUMTOOK([AINetIndex getData:junV_p fromDataDic:junDataDic]) doubleValue];
         
+        
+        if ([tNode.p.dataSource isEqual:@"bColors"]) {
+            NSLog(@"aaaa2 GV%ld 方向%.3f 差值%.3f 均值%.3f",gvNode.pId,directionData,diffData,junData);
+            NSLog(@"");
+        }
+        
         //13. 用这三个索引值，生成当前特征通道的九宫每像素色值。
         [self createItemLight:rect.CGRectValue directionData:directionData diffData:diffData junData:junData];
     }
@@ -122,21 +128,17 @@
     double maxNumB = 9 - minNumA;
     
     //3. ========== 根据方向索引 和 线经过A点 => 计算分界线 ==========
-    //D、根据分界线两边占比 & 和两边的色值 = 计算平均值。
-    // 计算B点在A点的哪一侧（方向线的左侧还是右侧）
-    // 1. 先将directionData转为弧度
     double rad = (directionData * 2 - 1) * M_PI;//将距离转成角度-PI -> PI (从左逆时针一圈为-3.14到3.14)。
     rad += M_PI_2;//分界线为逆时针转90度（分界线的右侧为明，左侧为暗）。
     if (rad > M_PI) rad -= M_PI * 2;//循环值处理（避免越界）。
     double dx = cos(rad);//方向向量
     double dy = sin(rad);//方向向量
     
+    //4. ========== 按分界线方向 及 Max区Min区大小比例 => 把分界线画到九宫格上 ==========
+    double ax = rect.size.width * maxNumB / 9;//A点坐标为在方向上，找出Max和Min的比例，用分界线划出分区（根据minNumA和maxNumB来计算一个比例）。
+    double ay = [self convertIosYToMathY:rect.size.height * maxNumB / 9 height:rect.size.height];
     
-    //TODOTOMORROW20250428: 调整中心点到，为AB比例处。
-    double ax = rect.size.width / 2.0;//A点坐标为九宫中心点（先写成中心点，随后根据minNumA和maxNumB来计算一个比例）
-    double ay = [self convertIosYToMathY:rect.size.height / 2.0 height:rect.size.height];//A点坐标为九宫中心点
-    
-    //4. ========== 按方向分界线：判断九宫每格在左还是右 ==========
+    //5. ========== 按方向分界线：判断九宫每格在左还是右 ==========
     for (NSInteger row = 0; row < 3; row++) {
         for (NSInteger column = 0; column < 3; column++) {
             CGFloat dotW = rect.size.width / 3.0f;
@@ -147,7 +149,7 @@
             double by = [self convertIosYToMathY:centerY height:rect.size.height];//B点坐标为格子中心点
             double abx = bx - ax;//计算向量AB
             double aby = by - ay;//计算向量AB
-            // 5. 叉乘判断
+            //51. 叉乘判断（计算B点在A点的哪一侧（分界线的左侧还是右侧）
             double cross = dx * aby - dy * abx;
             UIColor *color = UIColor.redColor;
             if (cross > 0.01) {
@@ -158,16 +160,13 @@
                 color = UIColor.blackColor;
             } else {
                 NSLog(@"B点在方向线上");
+                //D、根据分界线两边占比 & 和两边的色值 = 计算平均值。
                 color = UIColor.grayColor;
             }
             
+            //TODOTOMORROW20250428: 每次只显示一个通道，可以把通道累计下来，还原最终显示颜色。
             
-            //2025.04.27: BUG-可能色值信息不符的情况（当父级六格白，三格黑，子级如果认为纯白纯黑都不存，那么就都都会继承灰色）。
-            //TODO: 色值推断：子级由父级三索引计算得来，而不根据父级平均值来显示（这样的话，此处就不用改，只需要改显示时实时计算出来即可）。
-            //每次只显示一个通道，可以把通道累计下来，还原最终显示颜色。
-            //TODOTOMORROW20250427: 这里改下，row和column已经表示每格了，这里不用再做9宫循环了。
-            
-            //6. 对九宫每格中的每个像素分别高亮显示。
+            //52. 对九宫每格中的每个像素分别高亮显示。
             for (NSInteger i = 0; i < dotW; i++) {
                 for (NSInteger j = 0; j < dotH; j++) {
                     CGFloat x = row * dotW + i;

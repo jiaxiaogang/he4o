@@ -145,6 +145,10 @@ static AINet *_instance;
                 AIGroupValueNode *groupValue = [AIGeneralNodeCreater createGroupValueNode:item_ps conNodes:nil at:at ds:ds isOut:false];
                 CGRect groupRect = [AINetUtils convertGVLevelXY2Rect:groupLevel x:groupRow y:groupColumn];//求出各个GV在T中的rect。
                 [groupModels addObject:[InputGroupValueModel new:groupValue.p rect:groupRect]];
+                
+                if ([ds isEqual:@"bColors"]) {
+                    NSLog(@"aaaa1 GV%ld %@",groupValue.pId,CLEANSTR(protoGVIndexs));
+                }
             }
         }
     }
