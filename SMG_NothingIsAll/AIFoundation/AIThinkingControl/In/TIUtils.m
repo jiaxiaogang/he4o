@@ -496,10 +496,6 @@
     if (!ISOK(protoAlg, AIAlgNodeBase.class)) return;
     except_ps = ARRTOOK(except_ps);
     IFTitleLog(@"概念识别",@"\n%@\tlogDesc:%@",Alg2FStr(protoAlg),CLEANSTR([protoAlg getLogDesc:false].allKeys));
-    //53. 局部特征可视化（参考34176）。
-    [SMGUtils runByMainQueue:^{
-        [theApp.imgTrainerView setDataForAlg:protoAlg];
-    }];
     
     //1. 收集prAlgs <K:pid,V:AIMatchAlgModel> (注: 现在alg的atds全是空,用pid就能判断唯一);
     NSMutableDictionary *protoPDic = [NSMutableDictionary new], *protoRDic = [NSMutableDictionary new];
@@ -673,6 +669,10 @@
         NSInteger itemCount = NUMTOOK([allLogDic objectForKey:key]).integerValue;
         return STRFORMAT(@"%@=%.2f ",key,itemCount / (float)sum);
     }]));
+    //19. 识别结果可视化（参考34176）。
+    [SMGUtils runByMainQueue:^{
+        [theApp.imgTrainerView setDataForAlgs:logModels];
+    }];
     [AIRecognitionCache printLog:true];
 }
 

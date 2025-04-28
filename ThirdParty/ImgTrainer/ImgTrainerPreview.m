@@ -29,8 +29,10 @@
 
     //lab
     self.lab = [[UILabel alloc] initWithFrame:CGRectMake(0, 100, 100, 15)];
-    [self.lab setFont:[UIFont systemFontOfSize:8]];
-    [self.lab setBackgroundColor:UIColor.grayColor];
+    [self.lab setFont:[UIFont boldSystemFontOfSize:10]];
+    [self.lab setBackgroundColor:UIColor.blueColor];
+    [self.lab setTextColor:UIColor.whiteColor];
+    [self.lab setTextAlignment:NSTextAlignmentCenter];
     [self addSubview:self.lab];
 }
 
@@ -75,12 +77,6 @@
         double directionData = [NUMTOOK([AINetIndex getData:directionV_p fromDataDic:directionDataDic]) doubleValue];
         double diffData = [NUMTOOK([AINetIndex getData:diffV_p fromDataDic:diffDataDic]) doubleValue];
         double junData = [NUMTOOK([AINetIndex getData:junV_p fromDataDic:junDataDic]) doubleValue];
-        
-        
-        if ([tNode.p.dataSource isEqual:@"bColors"]) {
-            NSLog(@"aaaa2 GV%ld 方向%.3f 差值%.3f 均值%.3f",gvNode.pId,directionData,diffData,junData);
-            NSLog(@"");
-        }
         
         //13. 用这三个索引值，生成当前特征通道的九宫每像素色值。
         [self createItemLight:rect.CGRectValue directionData:directionData diffData:diffData junData:junData ds:tNode.p.dataSource];

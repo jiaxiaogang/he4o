@@ -19,6 +19,7 @@
 
 @property (strong, nonatomic) IBOutlet UIView *containerView;
 @property (weak, nonatomic) IBOutlet UITableView *tv;
+@property (weak, nonatomic) IBOutlet UITableView *previewTableView;
 @property (weak, nonatomic) IBOutlet UIButton *playBtn;
 @property (weak, nonatomic) IBOutlet UIImageView *curImgView;
 @property (strong, nonatomic) NSMutableArray *tvDatas;
@@ -42,7 +43,7 @@
 -(void) initView{
     //self
     [self setAlpha:0.7f];
-    CGFloat width = 550;//ScreenWidth * 0.667f;
+    CGFloat width = 670;
     [self setFrame:CGRectMake(ScreenWidth - width - 20, 64, width, ScreenHeight - 128)];
     
     //containerView
@@ -64,6 +65,12 @@
     [self.tv.layer setBorderWidth:1.0f];
     [self.tv.layer setBorderColor:UIColorWithRGBHex(0x0000FF).CGColor];
     [self.tv setContentInset:UIEdgeInsetsMake(0, -10, 0, -10)];
+    
+    //previewTableView
+    self.previewTableView.delegate = self;
+    self.previewTableView.dataSource = self;
+    [self.previewTableView.layer setBorderWidth:1.0f];
+    [self.previewTableView.layer setBorderColor:UIColorWithRGBHex(0x0000FF).CGColor];
 }
 
 -(void) initData{
@@ -199,14 +206,23 @@
     [preview setData:protoT contentIndexes:collectProtoIndexs lab:protoT.p.dataSource];
 }
 
+
+-(void) setDataForAlgs:(NSArray*)models {
+    for (AIMatchAlgModel *model in models) {
+        AIAlgNodeBase *assAlg = [SMGUtils searchNode:model.matchAlg];
+        [self setDataForAlg:assAlg];
+    }
+    [self.previewTableView reloadData];
+}
+
 -(void) setDataForAlg:(AINodeBase*)algNode {
     //1. 取preview 并更新显示;
     ImgTrainerPreview *preview = [self.previewDic objectForKey:@(algNode.pId)];
     if (!preview) {
         preview = [[ImgTrainerPreview alloc] init];
-        [self.containerView addSubview:preview];
-        preview.x = fmodf(self.previewDic.count, 5) * 105;
-        preview.y = self.previewDic.count / 5 * 120;
+        //[self.containerView addSubview:preview];
+        //preview.x = fmodf(self.previewDic.count, 5) * 105;
+        //preview.y = self.previewDic.count / 5 * 120;
         [self.previewDic setObject:preview forKey:@(algNode.pId)];
     }
     
@@ -262,6 +278,9 @@
         [itemLight removeFromSuperview];
     }
     [self.previewDic removeAllObjects];
+    
+    //2. 重显示preview表。
+    [self.previewTableView reloadData];
 }
 
 //MARK:===============================================================
@@ -306,9 +325,20 @@
 //MARK:       < UITableViewDataSource &  UITableViewDelegate>
 //MARK:===============================================================
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    if ([tableView isEqual:self.previewTableView]) {
+        return self.previewDic.count;
+    }
     return self.tvDatas.count;
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+    if ([tableView isEqual:self.previewTableView]) {
+        UITableViewCell *cell = [[UITableViewCell alloc] init];
+        ImgTrainerPreview *subPreview = ARR_INDEX(self.previewDic.allValues, indexPath.row);
+        [cell addSubview:subPreview];
+        return cell;
+    }
+    
     UITableViewCell *cell = [[UITableViewCell alloc] init];
     ImgTrainerItemModel *model = ARR_INDEX(self.tvDatas, indexPath.row);
     NSString *curIndexing = (model.imgIndex==0) ? @"" : STRFORMAT(@"%ld",model.imgIndex - 1);//当前正在处理中的图
@@ -318,9 +348,15 @@
     return cell;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    if ([tableView isEqual:self.previewTableView]) {
+        return 115;
+    }
     return 20;
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([tableView isEqual:self.previewTableView]) {
+        return;
+    }
     self.curSelectRow = indexPath.row;
 }
 
