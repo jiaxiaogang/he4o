@@ -119,11 +119,11 @@
     double dx = cos(rad);//方向向量
     double dy = sin(rad);//方向向量
     double ax = rect.size.width / 2.0;//A点坐标为九宫中心点（先写成中心点，随后根据minNumA和maxNumB来计算一个比例）
-    double ay = rect.size.height / 2.0;//A点坐标为九宫中心点
+    double ay = [self convertIosYToMathY:rect.size.height / 2.0 height:rect.size.height];//A点坐标为九宫中心点
     
     //TODOTOMORROW20250428:
     //BUG1. 右上角为黑的测试图，为什么差值和均值是0？
-    //BUG2. 方向的坐标是左下角为0，而ios坐标是左上角为0，要先转换下，再参与叉乘判断。
+    //BUG2. 把方向转分成界线。
     
     //4. ========== 按方向分界线：判断九宫每格在左还是右 ==========
     for (NSInteger row = 0; row < 3; row++) {
@@ -133,7 +133,7 @@
             CGFloat centerX = row * dotW + dotW * 0.5f;
             CGFloat centerY = column * dotH + dotH * 0.5f;
             double bx = centerX;//B点坐标为格子中心点
-            double by = centerY;//B点坐标为格子中心点
+            double by = [self convertIosYToMathY:centerY height:rect.size.height];//B点坐标为格子中心点
             double abx = bx - ax;//计算向量AB
             double aby = by - ay;//计算向量AB
             // 5. 叉乘判断
@@ -190,6 +190,12 @@
         [itemLight removeFromSuperview];
     }
     [self.lightDic removeAllObjects];
+}
+
+//方向的坐标是左下角为0，而ios坐标是左上角为0，要先转换下，再参与叉乘判断等。
+//把ios的左上角为y=0 改成 数学方向判断里的左下角y=0。
+-(CGFloat) convertIosYToMathY:(CGFloat)iosY height:(CGFloat)height {
+    return height - iosY;//用总高减iosY即可。
 }
 
 @end
