@@ -43,9 +43,7 @@
     
 }
 
--(void) setData:(AIFeatureNode*)tNode contentIndexes:(NSArray*)contentIndexes logDesc:(NSString*)logDesc {
-    //1. 把已显示的去掉。
-    [self removeLightDic];
+-(void) setData:(AIFeatureNode*)tNode contentIndexes:(NSArray*)contentIndexes lab:(NSString*)lab {
     
     //2. 三个单码索引序列。
     NSDictionary *directionDataDic = [AINetIndexUtils searchDataDic:tNode.p.algsType ds:STRFORMAT(@"%@_direction",tNode.p.dataSource) isOut:false];
@@ -89,7 +87,7 @@
     }
     
     //21. lab
-    [self.lab setText:tNode.p.dataSource];
+    [self.lab setText:lab];
 }
 
 -(void) createItemLight:(CGRect)rect directionData:(double)directionData diffData:(double)diffData junData:(double)junData ds:(NSString*)ds {
@@ -168,8 +166,8 @@
             //61. 对九宫每格中的每个像素分别高亮显示。
             for (NSInteger i = 0; i < dotW; i++) {
                 for (NSInteger j = 0; j < dotH; j++) {
-                    CGFloat x = row * dotW + i;
-                    CGFloat y = column * dotH + j;
+                    CGFloat x = rect.origin.x + row * dotW + i;
+                    CGFloat y = rect.origin.y + column * dotH + j;
                     
                     //62. 每次收集一个通道，三次识别后可以把全部通道累计下来，还原最终显示颜色。
                     [self createItemLight:x y:y ds:ds hsbValue:hsbValue];
@@ -179,6 +177,7 @@
     }
 }
 
+// x,y传绝对坐标。
 -(void) createItemLight:(CGFloat)x y:(CGFloat)y ds:(NSString*)ds hsbValue:(CGFloat)hsbValue {
     //xy最大值为27，但每个都是组码，所以要转为9x9。
     CGFloat dotSize = powf(3, VisionMaxLevel);

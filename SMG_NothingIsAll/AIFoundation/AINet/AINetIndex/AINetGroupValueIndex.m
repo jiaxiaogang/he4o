@@ -61,12 +61,13 @@
         NSInteger index = obj.integerValue;
         return NUMTOOK(ARR_INDEX(contentNums, index)).floatValue;
     }];
-    float bigerPinJunNum =  bigerIndexs.count > 0 ? bigerSumNum / bigerIndexs.count : 0;
+    float bigerPinJunNum = bigerIndexs.count > 0 ? bigerSumNum / bigerIndexs.count : 0;
     float smallSumNum = [SMGUtils sumOfArr:smallIndexs convertBlock:^double(NSNumber *obj) {
         NSInteger index = obj.integerValue;
         return NUMTOOK(ARR_INDEX(contentNums, index)).floatValue;
     }];
-    float smallPinJunNum =  smallIndexs.count > 0 ? smallSumNum / smallIndexs.count : 0;
+    float smallPinJunNum = smallIndexs.count > 0 ? smallSumNum / smallIndexs.count : bigerPinJunNum;//small为0条时 = bigerPinJunNum。
+    if (bigerIndexs.count == 0) bigerPinJunNum = smallPinJunNum;//同理biger为0条时 = smallPinJunNum。
     
     //5. 差值：计算出差值（如果是循环的，则用循环的算法）。
     float diffPinJunNum = [CortexAlgorithmsUtil deltaOfCustomV1:bigerPinJunNum v2:smallPinJunNum max:1 min:0 loop:[CortexAlgorithmsUtil dsIsLoop:ds]];

@@ -196,8 +196,7 @@
         preview.y = self.previewDic.count / 5 * 120;
         [self.previewDic setObject:preview forKey:@(protoT.pId)];
     }
-
-    [preview setData:protoT contentIndexes:collectProtoIndexs logDesc:CLEANSTR([protoT getLogDesc:false])];
+    [preview setData:protoT contentIndexes:collectProtoIndexs lab:protoT.p.dataSource];
 }
 
 -(void) setDataForAlg:(AINodeBase*)algNode {
@@ -216,7 +215,7 @@
         //2. 直接显示protoT（调试用）。
         NSMutableArray *collectProtoIndexs = [NSMutableArray new];
         for (NSInteger i = 0; i < itemT.count; i++) [collectProtoIndexs addObject:@(i)];
-        [preview setData:itemT contentIndexes:collectProtoIndexs logDesc:CLEANSTR([algNode getLogDesc:false])];
+        [preview setData:itemT contentIndexes:collectProtoIndexs lab:CLEANSTR([algNode getLogDesc:false].allKeys)];
     }
 }
 

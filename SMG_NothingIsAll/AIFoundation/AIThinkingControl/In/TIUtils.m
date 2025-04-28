@@ -301,9 +301,9 @@
     PrintDebugCodeBlock_Key(@"rfs1");
     
     //53. 局部特征可视化（参考34176）。
-    [SMGUtils runByMainQueue:^{
-        [theApp.imgTrainerView setDataForStep1Models:resultModels protoT:protoFeature];
-    }];
+    //[SMGUtils runByMainQueue:^{
+    //    [theApp.imgTrainerView setDataForStep1Models:resultModels protoT:protoFeature];
+    //}];
     
     //53. step1Result仅保留似层（参考34135-TODO5）。
     //2025.04.16: 为了有更为抽象的特征，先似交层都保留。
