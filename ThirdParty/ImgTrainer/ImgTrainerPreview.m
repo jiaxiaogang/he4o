@@ -63,9 +63,15 @@
         
         //12. 三个索引的指针地址：均值、差值、方向。
         AIGroupValueNode *gvNode = [SMGUtils searchNode:gv_p];
-        AIKVPointer *directionV_p = ARR_INDEX(gvNode.content_ps, 0);
-        AIKVPointer *diffV_p = ARR_INDEX(gvNode.content_ps, 1);
-        AIKVPointer *junV_p = ARR_INDEX(gvNode.content_ps, 2);
+        AIKVPointer *directionV_p = [SMGUtils filterSingleFromArr:gvNode.content_ps checkValid:^BOOL(AIKVPointer *item) {
+            return [item.dataSource isEqualToString:STRFORMAT(@"%@_direction",tNode.p.dataSource)];
+        }];
+        AIKVPointer *diffV_p = [SMGUtils filterSingleFromArr:gvNode.content_ps checkValid:^BOOL(AIKVPointer *item) {
+            return [item.dataSource isEqualToString:STRFORMAT(@"%@_diff",tNode.p.dataSource)];
+        }];
+        AIKVPointer *junV_p = [SMGUtils filterSingleFromArr:gvNode.content_ps checkValid:^BOOL(AIKVPointer *item) {
+            return [item.dataSource isEqualToString:STRFORMAT(@"%@_jun",tNode.p.dataSource)];
+        }];
         double directionData = [NUMTOOK([AINetIndex getData:directionV_p fromDataDic:directionDataDic]) doubleValue];
         double diffData = [NUMTOOK([AINetIndex getData:diffV_p fromDataDic:diffDataDic]) doubleValue];
         double junData = [NUMTOOK([AINetIndex getData:junV_p fromDataDic:junDataDic]) doubleValue];

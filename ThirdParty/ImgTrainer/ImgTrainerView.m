@@ -177,12 +177,16 @@
  *  MARK:--------------------局部特征识别结果可视化（参考34176）--------------------
  */
 -(void) setDataForStep1Models:(NSArray*)step1Models protoT:(AIFeatureNode*)protoT {
-    //2. 每年itemAbsT分别可视化。
-    NSArray *collectProtoIndexs = [SMGUtils convertArr:step1Models convertItemArrBlock:^NSArray *(AIMatchModel *obj) {
-        return obj.indexDic.allValues;
-    }];
-    collectProtoIndexs = [SMGUtils removeRepeat:collectProtoIndexs];
+    //1. 每条itemAbsT分别可视化。
+    //NSArray *collectProtoIndexs = [SMGUtils convertArr:step1Models convertItemArrBlock:^NSArray *(AIMatchModel *obj) {
+    //    return obj.indexDic.allValues;
+    //}];
+    //collectProtoIndexs = [SMGUtils removeRepeat:collectProtoIndexs];
     
+    //2. 直接显示protoT（调试用）。
+    NSMutableArray *collectProtoIndexs = [NSMutableArray new];
+    for (NSInteger i = 0; i < protoT.count; i++) [collectProtoIndexs addObject:@(i)];
+
     //4. 取preview 并更新显示;
     ImgTrainerPreview *preview = [self.previewDic objectForKey:@(protoT.pId)];
     if (!preview) {
@@ -192,6 +196,7 @@
         preview.y = self.previewDic.count / 5 * 120;
         [self.previewDic setObject:preview forKey:@(protoT.pId)];
     }
+
     [preview setData:protoT contentIndexes:collectProtoIndexs logDesc:CLEANSTR([protoT getLogDesc:false])];
 }
 
