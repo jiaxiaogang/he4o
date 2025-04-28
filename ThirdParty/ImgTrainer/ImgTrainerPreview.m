@@ -102,14 +102,14 @@
     //      min * A + 9 * max - max * A = sumData
     //      (min - max) * A = sumData - 9 * max
     //      A = (sumData - 9 * max) / (min - max)
-    double minNumA = (sumData - 9 * max) / (min - max);
+    double minNumA = (min - max) > 0 ? (sumData - 9 * max) / (min - max) : 0;
     double maxNumB = 9 - minNumA;
     
     //3. ========== 根据方向索引 和 线经过A点 => 计算分界线 ==========
     //D、根据分界线两边占比 & 和两边的色值 = 计算平均值。
     // 计算B点在A点的哪一侧（方向线的左侧还是右侧）
     // 1. 先将directionData转为弧度
-    double rad = (directionData * 2 - 1) * M_PI;//转成左上右为：-3.14到0，右下左为：0-3.14。
+    double rad = (directionData * 2 - 1) * M_PI;//将距离转成角度-PI -> PI (从左逆时针一圈为-3.14到3.14)。
     double dx = cos(rad);//方向向量
     double dy = sin(rad);//方向向量
     double ax = rect.origin.x + rect.size.width / 2.0;//A点坐标为九宫中心点（先写成中心点，随后根据minNumA和maxNumB来计算一个比例）
@@ -146,7 +146,7 @@
             //每次只显示一个通道，可以把通道累计下来，还原最终显示颜色。
             //TODOTOMORROW20250427: 这里改下，row和column已经表示每格了，这里不用再做9宫循环了。
             
-            //6. 每点高亮显示。
+            //6. 对九宫每格中的每个像素分别高亮显示。
             for (NSInteger i = 0; i < dotW; i++) {
                 for (NSInteger j = 0; j < dotH; j++) {
                     CGFloat x = row * dotW + i;

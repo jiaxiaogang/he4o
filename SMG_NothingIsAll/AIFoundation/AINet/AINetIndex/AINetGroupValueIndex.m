@@ -86,10 +86,10 @@
         return NUMTOOK(ARR_INDEX(ys, index.integerValue)).integerValue + 0.5;
     }];
     
-    //6. 方向：将距离转成角度-PI -> PI (从右至左,上面为-0 -> -3.14 / 从右至左,下面为0 -> 3.14)，然后归1化，再然后保留1%精度。
+    //6. 方向：将距离转成角度-PI -> PI (从左逆时针一圈为-3.14到3.14)
     CGFloat rads = atan2f(bigerPinJunY - smallPinJunY,bigerPinJunX - smallPinJunX);
-    float protoParam = (rads / M_PI + 1) / 2;
-    float direction = roundf(protoParam * 36) / 36;
+    float protoParam = (rads / M_PI + 1) / 2;//然后归1化
+    float direction = roundf(protoParam * 360) / 360;//再然后保留10度精度
     
     //7. 创建三个索引的指针地址：均值、差值、方向。
     return @{STRFORMAT(@"%@_direction",ds): @(direction),
