@@ -200,6 +200,26 @@
     [preview setData:protoT contentIndexes:collectProtoIndexs logDesc:CLEANSTR([protoT getLogDesc:false])];
 }
 
+-(void) setDataForAlg:(AINodeBase*)algNode {
+    //1. 取preview 并更新显示;
+    ImgTrainerPreview *preview = [self.previewDic objectForKey:@(algNode.pId)];
+    if (!preview) {
+        preview = [[ImgTrainerPreview alloc] init];
+        [self.containerView addSubview:preview];
+        preview.x = fmodf(self.previewDic.count, 5) * 105;
+        preview.y = self.previewDic.count / 5 * 120;
+        [self.previewDic setObject:preview forKey:@(algNode.pId)];
+    }
+    
+    for (AIKVPointer *itemT_p in algNode.content_ps) {
+        AIFeatureNode *itemT = [SMGUtils searchNode:itemT_p];
+        //2. 直接显示protoT（调试用）。
+        NSMutableArray *collectProtoIndexs = [NSMutableArray new];
+        for (NSInteger i = 0; i < itemT.count; i++) [collectProtoIndexs addObject:@(i)];
+        [preview setData:itemT contentIndexes:collectProtoIndexs logDesc:CLEANSTR([algNode getLogDesc:false])];
+    }
+}
+
 //MARK:===============================================================
 //MARK:                     < publicMethod >
 //MARK:===============================================================

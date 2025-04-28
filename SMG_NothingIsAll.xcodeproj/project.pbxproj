@@ -190,6 +190,7 @@
 		08D4EC512160501000DA646B /* AINetUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D4EC502160501000DA646B /* AINetUtils.m */; };
 		08DB40CB1F11A65E003162C8 /* TestHungryPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 08DB40C91F11A65E003162C8 /* TestHungryPage.m */; };
 		08DB40CC1F11A65E003162C8 /* TestHungryPage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 08DB40CA1F11A65E003162C8 /* TestHungryPage.xib */; };
+		08DC4C232DBF94F700563D3E /* HSBColor.m in Sources */ = {isa = PBXBuildFile; fileRef = 08DC4C222DBF94F700563D3E /* HSBColor.m */; };
 		08E084AB28B129000070B7F7 /* TCDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E084AA28B129000070B7F7 /* TCDebug.m */; };
 		08E44D372B3A58D1005456A1 /* MapModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E44D362B3A58D1005456A1 /* MapModel.m */; };
 		08E6885B22FA562600653545 /* BorderLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E6885A22FA562600653545 /* BorderLabel.m */; };
@@ -604,6 +605,8 @@
 		08DB40C81F11A65E003162C8 /* TestHungryPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestHungryPage.h; sourceTree = "<group>"; };
 		08DB40C91F11A65E003162C8 /* TestHungryPage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestHungryPage.m; sourceTree = "<group>"; };
 		08DB40CA1F11A65E003162C8 /* TestHungryPage.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TestHungryPage.xib; sourceTree = "<group>"; };
+		08DC4C212DBF94F700563D3E /* HSBColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HSBColor.h; sourceTree = "<group>"; };
+		08DC4C222DBF94F700563D3E /* HSBColor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HSBColor.m; sourceTree = "<group>"; };
 		08E084A928B129000070B7F7 /* TCDebug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCDebug.h; sourceTree = "<group>"; };
 		08E084AA28B129000070B7F7 /* TCDebug.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCDebug.m; sourceTree = "<group>"; };
 		08E44D352B3A58D1005456A1 /* MapModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MapModel.h; sourceTree = "<group>"; };
@@ -758,6 +761,8 @@
 				080DF6A12DBB1273000EC837 /* ImgTrainerItemModel.m */,
 				082104102DBDAD8800FE0794 /* ImgTrainerPreview.h */,
 				082104112DBDAD8800FE0794 /* ImgTrainerPreview.m */,
+				08DC4C212DBF94F700563D3E /* HSBColor.h */,
+				08DC4C222DBF94F700563D3E /* HSBColor.m */,
 			);
 			path = ImgTrainer;
 			sourceTree = "<group>";
@@ -2227,6 +2232,7 @@
 				0858C5D12194F8B000951BA5 /* NSArray+MASAdditions.m in Sources */,
 				087705B72753747300BA4EFB /* TCSolution.m in Sources */,
 				0850859B2A25B26F00ED63F2 /* TCRecognitionUtil.m in Sources */,
+				08DC4C232DBF94F700563D3E /* HSBColor.m in Sources */,
 				08FBE73B2D94DA5900296487 /* AINetGroupValueIndex.m in Sources */,
 				0858C5CC2194F8B000951BA5 /* MASConstraint.m in Sources */,
 				0889257F22B0702A00A0DBDD /* NVModuleView.m in Sources */,

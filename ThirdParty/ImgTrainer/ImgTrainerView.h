@@ -23,5 +23,6 @@
  *  MARK:--------------------局部特征识别结果可视化（参考34176）--------------------
  */
 -(void) setDataForStep1Models:(NSArray*)step1Models protoT:(AIFeatureNode*)protoT;
+-(void) setDataForAlg:(AINodeBase*)algNode;
 
 @end

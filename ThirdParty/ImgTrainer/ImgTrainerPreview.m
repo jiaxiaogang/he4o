@@ -7,6 +7,7 @@
 //
 
 #import "ImgTrainerPreview.h"
+#import "HSBColor.h"
 
 @implementation ImgTrainerPreview
 
@@ -35,6 +36,7 @@
 
 -(void) initData {
     self.lightDic = [NSMutableDictionary new];
+    self.hsbDic = [NSMutableDictionary new];
 }
 
 -(void) initDisplay {
@@ -83,19 +85,19 @@
         }
         
         //13. 用这三个索引值，生成当前特征通道的九宫每像素色值。
-        [self createItemLight:rect.CGRectValue directionData:directionData diffData:diffData junData:junData];
+        [self createItemLight:rect.CGRectValue directionData:directionData diffData:diffData junData:junData ds:tNode.p.dataSource];
     }
     
     //21. lab
     [self.lab setText:tNode.p.dataSource];
 }
 
--(void) createItemLight:(CGRect)rect directionData:(double)directionData diffData:(double)diffData junData:(double)junData {
+-(void) createItemLight:(CGRect)rect directionData:(double)directionData diffData:(double)diffData junData:(double)junData ds:(NSString*)ds {
     //0. 数据检查（无差别时，直接全显示均值）。
     if (diffData == 0) {
         for (NSInteger i = 0; i < rect.size.width; i++) {
             for (NSInteger j = 0; j < rect.size.height; j++) {
-                [self createItemLight:i y:j color:UIColor.redColor];
+                [self createItemLight:i y:j ds:ds hsbValue:junData];
             }
         }
         return;
@@ -151,46 +153,54 @@
             double aby = by - ay;//计算向量AB
             //51. 叉乘判断（计算B点在A点的哪一侧（分界线的左侧还是右侧）
             double cross = dx * aby - dy * abx;
-            UIColor *color = UIColor.redColor;
+            CGFloat hsbValue = 0;
             if (cross > 0.01) {
-                NSLog(@"B点在方向线左侧");
-                color = UIColor.whiteColor;
+                //52. B点在方向线左侧;
+                hsbValue = min;
             } else if (cross < -0.01) {
-                NSLog(@"B点在方向线右侧");
-                color = UIColor.blackColor;
+                //53. B点在方向线右侧;
+                hsbValue = max;
             } else {
-                NSLog(@"B点在方向线上");
-                //D、根据分界线两边占比 & 和两边的色值 = 计算平均值。
-                color = UIColor.grayColor;
+                //54、B点在方向线上: 根据分界线两边占比 & 和两边的色值 = 计算平均值。
+                hsbValue = (max + min) / 2;
             }
             
-            //TODOTOMORROW20250428: 每次只显示一个通道，可以把通道累计下来，还原最终显示颜色。
-            
-            //52. 对九宫每格中的每个像素分别高亮显示。
+            //61. 对九宫每格中的每个像素分别高亮显示。
             for (NSInteger i = 0; i < dotW; i++) {
                 for (NSInteger j = 0; j < dotH; j++) {
                     CGFloat x = row * dotW + i;
                     CGFloat y = column * dotH + j;
-                    [self createItemLight:x y:y color:color];
+                    
+                    //62. 每次收集一个通道，三次识别后可以把全部通道累计下来，还原最终显示颜色。
+                    [self createItemLight:x y:y ds:ds hsbValue:hsbValue];
                 }
             }
         }
     }
 }
 
--(void) createItemLight:(CGFloat)x y:(CGFloat)y color:(UIColor*)color {
+-(void) createItemLight:(CGFloat)x y:(CGFloat)y ds:(NSString*)ds hsbValue:(CGFloat)hsbValue {
     //xy最大值为27，但每个都是组码，所以要转为9x9。
     CGFloat dotSize = powf(3, VisionMaxLevel);
+    NSString *key = STRFORMAT(@"%.0f_%.0f",x,y);
+    
+    //收集HSB颜色
+    HSBColor *color =  [self.hsbDic objectForKey:key];
+    if (!color) {
+        color = [HSBColor new];
+        [self.hsbDic setObject:color forKey:key];
+    }
+    [color setData:ds value:hsbValue];
     
     //当前图片分为9格。
     CGFloat dotWH = self.width / dotSize;
-    UIView *lightView = [self.lightDic objectForKey:STRFORMAT(@"%.0f_%.0f",x,y)];
+    UIView *lightView = [self.lightDic objectForKey:key];
     if (!lightView) {
         lightView = [[UIView alloc] initWithFrame:CGRectMake(x * dotWH, y * dotWH, dotWH, dotWH)];
-        [lightView setBackgroundColor:color];
+        [lightView setBackgroundColor:color.getColor];
         [lightView setAlpha:1.0f];
         [self addSubview:lightView];
-        [self.lightDic setObject:lightView forKey:STRFORMAT(@"%.0f_%.0f",x,y)];
+        [self.lightDic setObject:lightView forKey:key];
     }
 }
 
@@ -200,6 +210,7 @@
         [itemLight removeFromSuperview];
     }
     [self.lightDic removeAllObjects];
+    [self.hsbDic removeAllObjects];
 }
 
 //方向的坐标是左下角为0，而ios坐标是左上角为0，要先转换下，再参与叉乘判断等。

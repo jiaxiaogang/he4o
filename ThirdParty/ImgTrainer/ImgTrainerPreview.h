@@ -12,6 +12,7 @@
 
 @property (strong, nonatomic) UILabel *lab;
 @property (strong, nonatomic) NSMutableDictionary *lightDic;
+@property (strong, nonatomic) NSMutableDictionary *hsbDic;
 
 -(void) setData:(AIFeatureNode*)tNode contentIndexes:(NSArray*)contentIndexes logDesc:(NSString*)logDesc;
 
