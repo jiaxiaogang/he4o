@@ -28,7 +28,7 @@
 
     //lab
     self.lab = [[UILabel alloc] initWithFrame:CGRectMake(0, 100, 100, 15)];
-    [self.lab setFont:[UIFont systemFontOfSize:6]];
+    [self.lab setFont:[UIFont systemFontOfSize:8]];
     [self.lab setBackgroundColor:UIColor.grayColor];
     [self addSubview:self.lab];
 }
@@ -81,19 +81,29 @@
     }
     
     //21. lab
-    [self.lab setText:logDesc];
+    [self.lab setText:tNode.p.dataSource];
 }
 
 -(void) createItemLight:(CGRect)rect directionData:(double)directionData diffData:(double)diffData junData:(double)junData {
+    //0. 数据检查（无差别时，直接全显示均值）。
+    if (diffData == 0) {
+        for (NSInteger i = 0; i < rect.size.width; i++) {
+            for (NSInteger j = 0; j < rect.size.height; j++) {
+                [self createItemLight:i y:j color:UIColor.redColor];
+            }
+        }
+        return;
+    }
+    
     //1. ========== 先上下各阔一半值，然后各分布一半格子 ==========
     //A、如果不越界，直接输出结果（如差值为4，均值为7，则Max=9，Min=5 各4.5格）。
     //B、如果上越界，下移，重新计算二元方程（如差值为8，均值为7，因7+4>9取Max=9，Min=1：然后Max*A+Min*B=63 A+B=9 得出：A=6.75格 B=2.25格）。
     //C、如果下越界，上移，重新计算二元方程（如差值为8，均值为3，因3-4<0取Min=0，Max=8：然后Max*A+Min*B=63 A+B=9 得出：A=3.375格 B=5.625格）。
     double max = junData + diffData * 0.5f;
     double min = junData - diffData * 0.5f;
-    if (max > 9) {
-        min -= max - 9;
-        max = 9;
+    if (max > 1) {
+        min -= max - 1;
+        max = 1;
     } else if (min < 0) {
         max += 0 - min;
         min = 0;
@@ -108,7 +118,7 @@
     //      min * A + 9 * max - max * A = sumData
     //      (min - max) * A = sumData - 9 * max
     //      A = (sumData - 9 * max) / (min - max)
-    double minNumA = (min - max) > 0 ? (sumData - 9 * max) / (min - max) : 0;
+    double minNumA = (sumData - 9 * max) / (min - max);
     double maxNumB = 9 - minNumA;
     
     //3. ========== 根据方向索引 和 线经过A点 => 计算分界线 ==========
@@ -116,14 +126,15 @@
     // 计算B点在A点的哪一侧（方向线的左侧还是右侧）
     // 1. 先将directionData转为弧度
     double rad = (directionData * 2 - 1) * M_PI;//将距离转成角度-PI -> PI (从左逆时针一圈为-3.14到3.14)。
+    rad += M_PI_2;//分界线为逆时针转90度（分界线的右侧为明，左侧为暗）。
+    if (rad > M_PI) rad -= M_PI * 2;//循环值处理（避免越界）。
     double dx = cos(rad);//方向向量
     double dy = sin(rad);//方向向量
+    
+    
+    //TODOTOMORROW20250428: 调整中心点到，为AB比例处。
     double ax = rect.size.width / 2.0;//A点坐标为九宫中心点（先写成中心点，随后根据minNumA和maxNumB来计算一个比例）
     double ay = [self convertIosYToMathY:rect.size.height / 2.0 height:rect.size.height];//A点坐标为九宫中心点
-    
-    //TODOTOMORROW20250428:
-    //BUG1. 右上角为黑的测试图，为什么差值和均值是0？
-    //BUG2. 把方向转分成界线。
     
     //4. ========== 按方向分界线：判断九宫每格在左还是右 ==========
     for (NSInteger row = 0; row < 3; row++) {

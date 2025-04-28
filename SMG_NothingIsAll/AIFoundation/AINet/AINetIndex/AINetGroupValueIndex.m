@@ -62,7 +62,7 @@
         return NUMTOOK(ARR_INDEX(contentNums, index)).floatValue;
     }];
     float bigerPinJunNum =  bigerIndexs.count > 0 ? bigerSumNum / bigerIndexs.count : 0;
-    float smallSumNum = [SMGUtils sumOfArr:contentNums convertBlock:^double(NSNumber *obj) {
+    float smallSumNum = [SMGUtils sumOfArr:smallIndexs convertBlock:^double(NSNumber *obj) {
         NSInteger index = obj.integerValue;
         return NUMTOOK(ARR_INDEX(contentNums, index)).floatValue;
     }];
