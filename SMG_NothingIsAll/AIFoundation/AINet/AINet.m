@@ -140,6 +140,8 @@ static AINet *_instance;
                 NSArray *item_ps = [self algModelConvert2Pointers:protoGVIndexs algsType:at];
                 
                 //12. 打包成组码。
+                //2025.04.28: 加上有序，避免以后各种映射交叉之类的问题，虽然现在GV没映射，用不着，但先有序存，备不时之需。
+                item_ps = [SMGUtils sortPointers:item_ps];
                 AIGroupValueNode *groupValue = [AIGeneralNodeCreater createGroupValueNode:item_ps conNodes:nil at:at ds:ds isOut:false];
                 CGRect groupRect = [AINetUtils convertGVLevelXY2Rect:groupLevel x:groupRow y:groupColumn];//求出各个GV在T中的rect。
                 [groupModels addObject:[InputGroupValueModel new:groupValue.p rect:groupRect]];
