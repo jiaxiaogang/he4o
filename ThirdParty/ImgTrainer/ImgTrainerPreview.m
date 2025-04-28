@@ -118,8 +118,12 @@
     double rad = (directionData * 2 - 1) * M_PI;//将距离转成角度-PI -> PI (从左逆时针一圈为-3.14到3.14)。
     double dx = cos(rad);//方向向量
     double dy = sin(rad);//方向向量
-    double ax = rect.origin.x + rect.size.width / 2.0;//A点坐标为九宫中心点（先写成中心点，随后根据minNumA和maxNumB来计算一个比例）
-    double ay = rect.origin.y + rect.size.height / 2.0;//A点坐标为九宫中心点
+    double ax = rect.size.width / 2.0;//A点坐标为九宫中心点（先写成中心点，随后根据minNumA和maxNumB来计算一个比例）
+    double ay = rect.size.height / 2.0;//A点坐标为九宫中心点
+    
+    //TODOTOMORROW20250428:
+    //BUG1. 右上角为黑的测试图，为什么差值和均值是0？
+    //BUG2. 方向的坐标是左下角为0，而ios坐标是左上角为0，要先转换下，再参与叉乘判断。
     
     //4. ========== 按方向分界线：判断九宫每格在左还是右 ==========
     for (NSInteger row = 0; row < 3; row++) {
