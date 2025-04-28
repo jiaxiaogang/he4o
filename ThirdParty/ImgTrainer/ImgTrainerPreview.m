@@ -51,7 +51,7 @@
     NSDictionary *junDataDic = [AINetIndexUtils searchDataDic:tNode.p.algsType ds:STRFORMAT(@"%@_jun",tNode.p.dataSource) isOut:false];
     
     //3. 按level从粗到细排序（因为细粒度优先级更高：粗粒度先显示，细粒度再复写它）（参考34176-TODO2.1）。
-    contentIndexes = [SMGUtils sortSmall2Big:contentIndexes compareBlock:^double(NSNumber *contentIndex) {
+    contentIndexes = [SMGUtils sortBig2Small:contentIndexes compareBlock:^double(NSNumber *contentIndex) {
         NSValue *rect = ARR_INDEX(tNode.rects,contentIndex.integerValue);
         return rect.CGRectValue.size.width;
     }];
