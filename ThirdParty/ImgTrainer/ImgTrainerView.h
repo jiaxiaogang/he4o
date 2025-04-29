@@ -24,5 +24,6 @@
  */
 -(void) setDataForStep1Models:(NSArray*)step1Models protoT:(AIFeatureNode*)protoT;
 -(void) setDataForAlgs:(NSArray*)models;
+-(void) setDataForAlg:(AINodeBase*)algNode;
 
 @end

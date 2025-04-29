@@ -176,7 +176,7 @@
     //1. 取距离
     CGPoint distanceP = [UIView distancePoint:selfView target:target];
     
-    //2. 将距离转成角度-PI -> PI (从左逆时针一圈为-3.14到3.14)
+    //2. 将距离转成角度-PI -> PI (从左顺时针一圈为-3.14到3.14)。
     CGFloat rads = atan2f(distanceP.y,distanceP.x);
     
     //3. 将(-PI到PI) 转换成 (0到1)

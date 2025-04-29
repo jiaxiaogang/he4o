@@ -671,7 +671,8 @@
     }]));
     //19. 识别结果可视化（参考34176）。
     [SMGUtils runByMainQueue:^{
-        [theApp.imgTrainerView setDataForAlgs:logModels];
+        //[theApp.imgTrainerView setDataForAlgs:logModels];
+        [theApp.imgTrainerView setDataForAlg:protoAlg];
     }];
     [AIRecognitionCache printLog:true];
 }

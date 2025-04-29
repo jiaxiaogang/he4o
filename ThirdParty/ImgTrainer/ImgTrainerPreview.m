@@ -57,6 +57,7 @@
         NSValue *rect = ARR_INDEX(tNode.rects,contentIndex.integerValue);
         return rect.CGRectValue.size.width;
     }];
+    contentIndexes = ARR_SUB(contentIndexes, 0, 1);
     
     //11. 每个rect分别可视化。
     for (NSNumber *contentIndex in contentIndexes) {
@@ -97,6 +98,13 @@
         return;
     }
     
+    
+    if (rect.size.width > 26) {
+        NSLog(@"aaaa2 %@ %.3f %.3f %.3f",ds,diffData,junData,directionData);
+        NSLog(@"");
+    }
+    
+    
     //1. ========== 先上下各阔一半值，然后各分布一半格子 ==========
     //A、如果不越界，直接输出结果（如差值为4，均值为7，则Max=9，Min=5 各4.5格）。
     //B、如果上越界，下移，重新计算二元方程（如差值为8，均值为7，因7+4>9取Max=9，Min=1：然后Max*A+Min*B=63 A+B=9 得出：A=6.75格 B=2.25格）。
@@ -124,13 +132,18 @@
     double maxNumB = 9 - minNumA;
     
     //3. ========== 根据方向索引 和 线经过A点 => 计算分界线 ==========
-    double rad = (directionData * 2 - 1) * M_PI;//将距离转成角度-PI -> PI (从左逆时针一圈为-3.14到3.14)。
-    rad += M_PI_2;//分界线为逆时针转90度（分界线的右侧为明，左侧为暗）。
+    double rad = (directionData * 2 - 1) * M_PI;//将距离转成角度-PI -> PI (从左顺时针一圈为-3.14到3.14)。
+    rad += M_PI_2;//分界线为逆时针转90度（分界线的右侧为min，左侧为max）。
     if (rad > M_PI) rad -= M_PI * 2;//循环值处理（避免越界）。
     double dx = cos(rad);//方向向量
     double dy = sin(rad);//方向向量
     
     //4. ========== 按分界线方向 及 Max区Min区大小比例 => 把分界线画到九宫格上 ==========
+    //TODOTOMORROW20250429：此处要根据方向来算，不能单纯的等比去算。
+    //经分析：何必这么麻烦：直接用分界线与9点的距离来排序，按数量给色值就行，数量左右0.5的给中间值，左>0.5数量的给max值，右>0.5数量的给min值。
+    
+    
+    
     double ax = rect.size.width * maxNumB / 9;//A点坐标为在方向上，找出Max和Min的比例，用分界线划出分区（根据minNumA和maxNumB来计算一个比例）。
     double ay = [self convertIosYToMathY:rect.size.height * maxNumB / 9 height:rect.size.height];
     
@@ -144,7 +157,7 @@
             double bx = centerX;//B点坐标为格子中心点
             double by = [self convertIosYToMathY:centerY height:rect.size.height];//B点坐标为格子中心点
             double abx = bx - ax;//计算向量AB
-            double aby = by - ay;//计算向量AB
+            double aby = ay - by;//计算向量AB（因为y坐标系相反，所以正就是反，反就是正）
             //51. 叉乘判断（计算B点在A点的哪一侧（分界线的左侧还是右侧）
             double cross = dx * aby - dy * abx;
             CGFloat hsbValue = 0;

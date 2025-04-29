@@ -185,15 +185,11 @@
  */
 -(void) setDataForStep1Models:(NSArray*)step1Models protoT:(AIFeatureNode*)protoT {
     //1. 每条itemAbsT分别可视化。
-    //NSArray *collectProtoIndexs = [SMGUtils convertArr:step1Models convertItemArrBlock:^NSArray *(AIMatchModel *obj) {
-    //    return obj.indexDic.allValues;
-    //}];
-    //collectProtoIndexs = [SMGUtils removeRepeat:collectProtoIndexs];
+    NSArray *collectProtoIndexs = [SMGUtils convertArr:step1Models convertItemArrBlock:^NSArray *(AIMatchModel *obj) {
+        return obj.indexDic.allValues;
+    }];
+    collectProtoIndexs = [SMGUtils removeRepeat:collectProtoIndexs];
     
-    //2. 直接显示protoT（调试用）。
-    NSMutableArray *collectProtoIndexs = [NSMutableArray new];
-    for (NSInteger i = 0; i < protoT.count; i++) [collectProtoIndexs addObject:@(i)];
-
     //4. 取preview 并更新显示;
     ImgTrainerPreview *preview = [self.previewDic objectForKey:@(protoT.pId)];
     if (!preview) {
@@ -210,25 +206,26 @@
 -(void) setDataForAlgs:(NSArray*)models {
     for (AIMatchAlgModel *model in models) {
         AIAlgNodeBase *assAlg = [SMGUtils searchNode:model.matchAlg];
-        [self setDataForAlg:assAlg];
+        [self addAlgToPreview:assAlg];
     }
     [self.previewTableView reloadData];
 }
 
 -(void) setDataForAlg:(AINodeBase*)algNode {
+    [self addAlgToPreview:algNode];
+    [self.previewTableView reloadData];
+}
+
+-(void) addAlgToPreview:(AINodeBase*)algNode {
     //1. 取preview 并更新显示;
     ImgTrainerPreview *preview = [self.previewDic objectForKey:@(algNode.pId)];
     if (!preview) {
         preview = [[ImgTrainerPreview alloc] init];
-        //[self.containerView addSubview:preview];
-        //preview.x = fmodf(self.previewDic.count, 5) * 105;
-        //preview.y = self.previewDic.count / 5 * 120;
         [self.previewDic setObject:preview forKey:@(algNode.pId)];
     }
     
     for (AIKVPointer *itemT_p in algNode.content_ps) {
         AIFeatureNode *itemT = [SMGUtils searchNode:itemT_p];
-        //2. 直接显示protoT（调试用）。
         NSMutableArray *collectProtoIndexs = [NSMutableArray new];
         for (NSInteger i = 0; i < itemT.count; i++) [collectProtoIndexs addObject:@(i)];
         [preview setData:itemT contentIndexes:collectProtoIndexs lab:CLEANSTR([algNode getLogDesc:false].allKeys)];

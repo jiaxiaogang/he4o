@@ -136,6 +136,10 @@ static AINet *_instance;
                 //6. 先转成三个索引值。
                 NSDictionary *protoGVIndexs = [AINetGroupValueIndex convertGVIndexData:subDots ds:ds];
                 
+                if (groupLevel == 0) {
+                    NSLog(@"aaaa1 %@ %.3f %@",ds,minMatchValue,CLEANSTR(protoGVIndexs));
+                }
+                
                 //11. 单码装箱
                 NSArray *item_ps = [self algModelConvert2Pointers:protoGVIndexs algsType:at];
                 
