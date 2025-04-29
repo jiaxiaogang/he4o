@@ -57,7 +57,6 @@
         NSValue *rect = ARR_INDEX(tNode.rects,contentIndex.integerValue);
         return rect.CGRectValue.size.width;
     }];
-    contentIndexes = ARR_SUB(contentIndexes, 0, 1);
     
     //11. 每个rect分别可视化。
     for (NSNumber *contentIndex in contentIndexes) {
@@ -92,18 +91,11 @@
     if (diffData == 0) {
         for (NSInteger i = 0; i < rect.size.width; i++) {
             for (NSInteger j = 0; j < rect.size.height; j++) {
-                [self createItemLight:i y:j ds:ds hsbValue:junData];
+                [self createItemLight:rect.origin.x + i y:rect.origin.y + j ds:ds hsbValue:junData];
             }
         }
         return;
     }
-    
-    
-    if (rect.size.width > 26) {
-        NSLog(@"aaaa2 %@ %.3f %.3f %.3f",ds,diffData,junData,directionData);
-        NSLog(@"");
-    }
-    
     
     //1. ========== 先上下各阔一半值，然后各分布一半格子 ==========
     //A、如果不越界，直接输出结果（如差值为4，均值为7，则Max=9，Min=5 各4.5格）。
@@ -138,39 +130,54 @@
     double dx = cos(rad);//方向向量
     double dy = sin(rad);//方向向量
     
-    //4. ========== 按分界线方向 及 Max区Min区大小比例 => 把分界线画到九宫格上 ==========
-    //TODOTOMORROW20250429：此处要根据方向来算，不能单纯的等比去算。
-    //经分析：何必这么麻烦：直接用分界线与9点的距离来排序，按数量给色值就行，数量左右0.5的给中间值，左>0.5数量的给max值，右>0.5数量的给min值。
-    
-    
-    
-    double ax = rect.size.width * maxNumB / 9;//A点坐标为在方向上，找出Max和Min的比例，用分界线划出分区（根据minNumA和maxNumB来计算一个比例）。
-    double ay = [self convertIosYToMathY:rect.size.height * maxNumB / 9 height:rect.size.height];
-    
-    //5. ========== 按方向分界线：判断九宫每格在左还是右 ==========
+    //4. ========== 按方向分界线：判断九宫每格距离分界线的距离 ==========
+    //说明：直接用分界线与9点的距离来排序，按数量给色值就行，数量左右0.5的给中间值，左>0.5数量的给max值，右>0.5数量的给min值。
+    NSMutableDictionary *distanceFenJieLineDic = [NSMutableDictionary new];
     for (NSInteger row = 0; row < 3; row++) {
         for (NSInteger column = 0; column < 3; column++) {
             CGFloat dotW = rect.size.width / 3.0f;
             CGFloat dotH = rect.size.height / 3.0f;
             CGFloat centerX = row * dotW + dotW * 0.5f;
             CGFloat centerY = column * dotH + dotH * 0.5f;
-            double bx = centerX;//B点坐标为格子中心点
-            double by = [self convertIosYToMathY:centerY height:rect.size.height];//B点坐标为格子中心点
-            double abx = bx - ax;//计算向量AB
-            double aby = ay - by;//计算向量AB（因为y坐标系相反，所以正就是反，反就是正）
-            //51. 叉乘判断（计算B点在A点的哪一侧（分界线的左侧还是右侧）
-            double cross = dx * aby - dy * abx;
-            CGFloat hsbValue = 0;
-            if (cross > 0.01) {
-                //52. B点在方向线左侧;
-                hsbValue = min;
-            } else if (cross < -0.01) {
-                //53. B点在方向线右侧;
-                hsbValue = max;
-            } else {
-                //54、B点在方向线上: 根据分界线两边占比 & 和两边的色值 = 计算平均值。
-                hsbValue = (max + min) / 2;
+            
+            // 求checkPoint 与 方向向量(dx,dy)经过0的线 垂直距离
+            // 点到直线距离公式: (dx, dy) × (checkPoint.x, checkPoint.y) / sqrt(dx^2 + dy^2)
+            double crossProd = dx * centerY - dy * centerX;
+            double dirLen = sqrt(dx * dx + dy * dy);
+            double perpDist = crossProd / dirLen;
+            //NSLog(@"aPoint到方向rad的垂直距离: %.3f", perpDist);
+            [distanceFenJieLineDic setObject:@(perpDist) forKey:STRFORMAT(@"%ld_%ld",row,column)];
+        }
+    }
+    
+    //5. ========== 按距离来判断其色值 ==========
+    NSArray *sortKeysByDistances = [SMGUtils sortBig2Small:distanceFenJieLineDic.allKeys compareBlock:^double(id obj) {
+        return NUMTOOK([distanceFenJieLineDic objectForKey:obj]).floatValue;
+    }];
+    NSArray *sortValuesByDistance = [SMGUtils sortBig2Small:distanceFenJieLineDic.allValues compareBlock:^double(NSNumber *obj) {
+        return obj.floatValue;
+    }];
+    for (NSInteger row = 0; row < 3; row++) {
+        for (NSInteger column = 0; column < 3; column++) {
+            CGFloat dotW = rect.size.width / 3.0f;
+            CGFloat dotH = rect.size.height / 3.0f;
+            NSString *dotKey = STRFORMAT(@"%ld_%ld",row,column);
+            
+            //51. 显示max/min两种颜色
+            NSInteger indexOfCurDot = [sortKeysByDistances indexOfObject:dotKey];
+            CGFloat curDistance = NUMTOOK(ARR_INDEX(sortValuesByDistance, indexOfCurDot)).floatValue;
+            
+            //52. 把相似距离的格子收集起来。
+            NSMutableArray *nearDotIndexes = [NSMutableArray new];
+            for (NSInteger i = 0; i < 9; i++) {
+                CGFloat checkDistance = NUMTOOK(ARR_INDEX(sortValuesByDistance, i)).floatValue;
+                if (fabs(checkDistance - curDistance) / dotW < 0.5f) [nearDotIndexes addObject:@(i)];
             }
+            
+            //53. 距离类似的采取灰度显示: 对距离相邻宫格进行判断，如果色值不同，距离又很接近，就对几格的颜色进行平均。
+            CGFloat hsbValue = [SMGUtils sumOfArr:nearDotIndexes convertBlock:^double(NSNumber *index) {
+                return index.integerValue < maxNumB - 0.2f ? max : min;
+            }] / nearDotIndexes.count;
             
             //61. 对九宫每格中的每个像素分别高亮显示。
             for (NSInteger i = 0; i < dotW; i++) {
