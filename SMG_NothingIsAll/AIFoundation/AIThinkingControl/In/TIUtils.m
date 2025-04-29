@@ -516,6 +516,15 @@
                 NSArray *step1Result = ARRTOOK([self recognitionFeature_Step1:item_p]);
                 //b. 通过抽象特征做整体特征识别，把step1的结果传给step2继续向似层识别（参考34135-TODO5）。
                 NSArray *step2Result = [self recognitionFeature_Step2:item_p matchModels:step1Result];
+                
+                //TODOTOMORROW20250429: 做找一些有规律的简图先继续调试一下显著特征，比如图中都有一个三角形。
+                
+                
+                //c. 识别结果可视化（参考34176）。
+                [SMGUtils runByMainQueue:^{
+                    [theApp.imgTrainerView setDataForStep1Models:step1Result protoT:[SMGUtils searchNode:item_p]];
+                }];
+                
                 return [SMGUtils collectArrA:step1Result arrB:step2Result];
             }];
         }
@@ -670,10 +679,10 @@
         return STRFORMAT(@"%@=%.2f ",key,itemCount / (float)sum);
     }]));
     //19. 识别结果可视化（参考34176）。
-    [SMGUtils runByMainQueue:^{
-        //[theApp.imgTrainerView setDataForAlgs:logModels];
-        [theApp.imgTrainerView setDataForAlg:protoAlg];
-    }];
+    //[SMGUtils runByMainQueue:^{
+    //    //[theApp.imgTrainerView setDataForAlgs:logModels];
+    //    [theApp.imgTrainerView setDataForAlg:protoAlg];
+    //}];
     [AIRecognitionCache printLog:true];
 }
 

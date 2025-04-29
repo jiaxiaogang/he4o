@@ -184,22 +184,20 @@
  *  MARK:--------------------局部特征识别结果可视化（参考34176）--------------------
  */
 -(void) setDataForStep1Models:(NSArray*)step1Models protoT:(AIFeatureNode*)protoT {
-    //1. 每条itemAbsT分别可视化。
-    NSArray *collectProtoIndexs = [SMGUtils convertArr:step1Models convertItemArrBlock:^NSArray *(AIMatchModel *obj) {
-        return obj.indexDic.allValues;
-    }];
-    collectProtoIndexs = [SMGUtils removeRepeat:collectProtoIndexs];
-    
-    //4. 取preview 并更新显示;
-    ImgTrainerPreview *preview = [self.previewDic objectForKey:@(protoT.pId)];
-    if (!preview) {
-        preview = [[ImgTrainerPreview alloc] init];
-        [self.containerView addSubview:preview];
-        preview.x = fmodf(self.previewDic.count, 5) * 105;
-        preview.y = self.previewDic.count / 5 * 120;
-        [self.previewDic setObject:preview forKey:@(protoT.pId)];
+    for (AIMatchModel *model in step1Models) {
+        //1. 每条itemAbsT分别可视化。
+        NSArray *collectProtoIndexs = model.indexDic.allValues;
+        NSString *previewKey = STRFORMAT(@"T%ld",model.match_p.pointerId);
+        
+        //2. 取preview 并更新显示;
+        ImgTrainerPreview *preview = [self.previewDic objectForKey:previewKey];
+        if (!preview) {
+            preview = [[ImgTrainerPreview alloc] init];
+            [self.previewDic setObject:preview forKey:previewKey];
+        }
+        [preview setData:protoT contentIndexes:collectProtoIndexs lab:protoT.p.dataSource];
     }
-    [preview setData:protoT contentIndexes:collectProtoIndexs lab:protoT.p.dataSource];
+    [self.previewTableView reloadData];
 }
 
 
@@ -218,10 +216,11 @@
 
 -(void) addAlgToPreview:(AINodeBase*)algNode {
     //1. 取preview 并更新显示;
-    ImgTrainerPreview *preview = [self.previewDic objectForKey:@(algNode.pId)];
+    NSString *previewKey = STRFORMAT(@"A%ld",algNode.pId);
+    ImgTrainerPreview *preview = [self.previewDic objectForKey:previewKey];
     if (!preview) {
         preview = [[ImgTrainerPreview alloc] init];
-        [self.previewDic setObject:preview forKey:@(algNode.pId)];
+        [self.previewDic setObject:preview forKey:previewKey];
     }
     
     for (AIKVPointer *itemT_p in algNode.content_ps) {
