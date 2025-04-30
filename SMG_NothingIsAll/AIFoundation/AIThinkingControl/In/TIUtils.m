@@ -678,6 +678,10 @@
     [SMGUtils runByMainQueue:^{
         //[theApp.imgTrainerView setDataForAlgs:logModels];
         [theApp.imgTrainerView setDataForAlg:protoAlg lab:STRFORMAT(@"ProtoA%ld",protoAlg.pId)];
+        for (AIMatchAlgModel *model in logModels) {
+            AIAlgNodeBase *assAlg = [SMGUtils searchNode:model.matchAlg];
+            [theApp.imgTrainerView setDataForAlg:assAlg lab:STRFORMAT(@"%@assA%ld",assAlg.p.isJiao?@"局部":@"整体",assAlg.pId)];
+        }
     }];
     [AIRecognitionCache printLog:true];
 }
