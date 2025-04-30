@@ -70,6 +70,18 @@
     return self.pointer.pointerId;
 }
 
+-(NSString*) ds {
+    return self.p.dataSource;
+}
+
+-(NSString*) at {
+    return self.p.algsType;
+}
+
+-(BOOL) isOut {
+    return self.p.isOut;
+}
+
 /**
  *  MARK:--------------------设置引用--------------------
  *  @version

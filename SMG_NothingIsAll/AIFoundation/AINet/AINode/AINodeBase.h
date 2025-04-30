@@ -43,6 +43,9 @@
 -(NSInteger) count;
 -(AIKVPointer*) p;
 -(NSInteger) pId;
+-(NSString*) ds;
+-(NSString*) at;
+-(BOOL) isOut;
 
 //MARK:===============================================================
 //MARK:                     < 匹配度 (支持: 概念,时序) >

@@ -184,22 +184,13 @@
  *  MARK:--------------------局部特征识别结果可视化（参考34176）--------------------
  */
 -(void) setDataForStep1Models:(NSArray*)step1Models protoT:(AIFeatureNode*)protoT {
+    [self addFeatureToPreview:protoT lab:STRFORMAT(@"protoT:%@",protoT.ds)];
     for (AIMatchModel *model in step1Models) {
-        //1. 每条itemAbsT分别可视化。
-        NSArray *collectProtoIndexs = model.indexDic.allValues;
-        NSString *previewKey = STRFORMAT(@"T%ld",model.match_p.pointerId);
-        
-        //2. 取preview 并更新显示;
-        ImgTrainerPreview *preview = [self.previewDic objectForKey:previewKey];
-        if (!preview) {
-            preview = [[ImgTrainerPreview alloc] init];
-            [self.previewDic setObject:preview forKey:previewKey];
-        }
-        [preview setData:protoT contentIndexes:collectProtoIndexs lab:protoT.p.dataSource];
+        //NSArray *collectProtoIndexs = model.indexDic.allValues;
+        [self addFeatureToPreview:(AIFeatureNode*)model.matchNode lab:STRFORMAT(@"assT:%@",model.matchNode.ds)];
     }
     [self.previewTableView reloadData];
 }
-
 
 -(void) setDataForAlgs:(NSArray*)models {
     for (AIMatchAlgModel *model in models) {
@@ -212,6 +203,25 @@
 -(void) setDataForAlg:(AINodeBase*)algNode {
     [self addAlgToPreview:algNode];
     [self.previewTableView reloadData];
+}
+
+//MARK:===============================================================
+//MARK:                     < privateMethod >
+//MARK:===============================================================
+
+-(void) addFeatureToPreview:(AIFeatureNode*)tNode lab:(NSString*)lab {
+    //1. 每条itemAbsT分别可视化。
+    NSString *previewKey = STRFORMAT(@"T%ld",tNode.pId);
+    ImgTrainerPreview *preview = [self.previewDic objectForKey:previewKey];
+    if (!preview) {
+        preview = [[ImgTrainerPreview alloc] init];
+        [self.previewDic setObject:preview forKey:previewKey];
+    }
+    
+    //2. 并更新显示;
+    NSMutableArray *collectProtoIndexs = [NSMutableArray new];
+    for (NSInteger i = 0; i < tNode.count; i++) [collectProtoIndexs addObject:@(i)];
+    [preview setData:tNode contentIndexes:collectProtoIndexs lab:lab];
 }
 
 -(void) addAlgToPreview:(AINodeBase*)algNode {
