@@ -10,6 +10,16 @@
 
 @implementation HSBColor
 
+-(id) init {
+    self = [super init];
+    if (self) {
+        self.h = 0.1f;//默认色相
+        self.s = 0.5f;//默认饱和
+        self.b = 0.8f;//默认亮度
+    }
+    return self;
+}
+
 -(void) setData:(NSString*)ds value:(CGFloat)value {
     if ([@"hColors" isEqualToString:ds]) {
         self.h = value;

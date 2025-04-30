@@ -24,7 +24,7 @@
 @property (weak, nonatomic) IBOutlet UIImageView *curImgView;
 @property (strong, nonatomic) NSMutableArray *tvDatas;
 @property (assign, nonatomic) NSInteger curSelectRow;
-@property (strong, nonatomic) NSMutableDictionary *previewDic;
+@property (strong, nonatomic) NSMutableArray *previewDatas;
 
 @end
 
@@ -74,7 +74,7 @@
 }
 
 -(void) initData{
-    self.previewDic = [NSMutableDictionary new];
+    self.previewDatas = [NSMutableArray new];
 }
 
 -(void) initDisplay {
@@ -184,10 +184,11 @@
  *  MARK:--------------------局部特征识别结果可视化（参考34176）--------------------
  */
 -(void) setDataForStep1Models:(NSArray*)step1Models protoT:(AIFeatureNode*)protoT {
-    [self addFeatureToPreview:protoT lab:STRFORMAT(@"protoT:%@",protoT.ds)];
+    [self addFeatureToPreview:protoT lab:STRFORMAT(@"protoT%ld:%@",protoT.pId,protoT.ds)];
     for (AIMatchModel *model in step1Models) {
+        //TODOTOMORROW20250430：继续调试分析此处识别结果，右上角三解形测试图，看有没有显著的类比出的结果。
         //NSArray *collectProtoIndexs = model.indexDic.allValues;
-        [self addFeatureToPreview:(AIFeatureNode*)model.matchNode lab:STRFORMAT(@"assT:%@",model.matchNode.ds)];
+        [self addFeatureToPreview:(AIFeatureNode*)model.matchNode lab:STRFORMAT(@"assT%ld:%@",model.matchNode.pId,model.matchNode.ds)];
     }
     [self.previewTableView reloadData];
 }
@@ -211,11 +212,13 @@
 
 -(void) addFeatureToPreview:(AIFeatureNode*)tNode lab:(NSString*)lab {
     //1. 每条itemAbsT分别可视化。
-    NSString *previewKey = STRFORMAT(@"T%ld",tNode.pId);
-    ImgTrainerPreview *preview = [self.previewDic objectForKey:previewKey];
+    MapModel *old = [SMGUtils filterSingleFromArr:self.previewDatas checkValid:^BOOL(MapModel *item) {
+        return [lab isEqualToString:item.v1];
+    }];
+    ImgTrainerPreview *preview = old ? old.v2 : nil;
     if (!preview) {
         preview = [[ImgTrainerPreview alloc] init];
-        [self.previewDic setObject:preview forKey:previewKey];
+        [self.previewDatas addObject:[MapModel newWithV1:lab v2:preview]];
     }
     
     //2. 并更新显示;
@@ -226,18 +229,21 @@
 
 -(void) addAlgToPreview:(AINodeBase*)algNode {
     //1. 取preview 并更新显示;
-    NSString *previewKey = STRFORMAT(@"A%ld",algNode.pId);
-    ImgTrainerPreview *preview = [self.previewDic objectForKey:previewKey];
+    NSString *lab = STRFORMAT(@"A%ld:%@",algNode.pId,CLEANSTR([algNode getLogDesc:false].allKeys));
+    MapModel *old = [SMGUtils filterSingleFromArr:self.previewDatas checkValid:^BOOL(MapModel *item) {
+        return [item.v1 isEqual:lab];
+    }];
+    ImgTrainerPreview *preview = old ? old.v2 : nil;
     if (!preview) {
         preview = [[ImgTrainerPreview alloc] init];
-        [self.previewDic setObject:preview forKey:previewKey];
+        [self.previewDatas addObject:[MapModel newWithV1:lab v2:preview]];
     }
     
     for (AIKVPointer *itemT_p in algNode.content_ps) {
         AIFeatureNode *itemT = [SMGUtils searchNode:itemT_p];
         NSMutableArray *collectProtoIndexs = [NSMutableArray new];
         for (NSInteger i = 0; i < itemT.count; i++) [collectProtoIndexs addObject:@(i)];
-        [preview setData:itemT contentIndexes:collectProtoIndexs lab:CLEANSTR([algNode getLogDesc:false].allKeys)];
+        [preview setData:itemT contentIndexes:collectProtoIndexs lab:lab];
     }
 }
 
@@ -278,12 +284,13 @@
     return result;
 }
 
--(void) removePreviewDic {
+-(void) removePreviewDatas {
     //1. 去掉可视化lightDic。
-    for (UIView *itemLight in self.previewDic.allValues) {
-        [itemLight removeFromSuperview];
+    for (MapModel *item in self.previewDatas) {
+        ImgTrainerPreview *preview = item.v2;
+        [preview removeFromSuperview];
     }
-    [self.previewDic removeAllObjects];
+    [self.previewDatas removeAllObjects];
     
     //2. 重显示preview表。
     [self.previewTableView reloadData];
@@ -318,7 +325,7 @@
         [self refreshDisplay];
         
         //5. 去掉可视化lightDic。
-        [self removePreviewDic];
+        [self removePreviewDatas];
     }
 }
 
@@ -332,7 +339,7 @@
 //MARK:===============================================================
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     if ([tableView isEqual:self.previewTableView]) {
-        return self.previewDic.count;
+        return self.previewDatas.count;
     }
     return self.tvDatas.count;
 }
@@ -340,7 +347,8 @@
     
     if ([tableView isEqual:self.previewTableView]) {
         UITableViewCell *cell = [[UITableViewCell alloc] init];
-        ImgTrainerPreview *subPreview = ARR_INDEX(self.previewDic.allValues, indexPath.row);
+        MapModel *model = ARR_INDEX(self.previewDatas, indexPath.row);
+        ImgTrainerPreview *subPreview = model.v2;
         [cell addSubview:subPreview];
         return cell;
     }
