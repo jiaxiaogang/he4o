@@ -34,6 +34,17 @@
     [self.lab setTextColor:UIColor.whiteColor];
     [self.lab setTextAlignment:NSTextAlignmentCenter];
     [self addSubview:self.lab];
+    
+    //透明图层
+    for (NSInteger i = 0; i < 20; i++) {
+        for (NSInteger j = 0; j < 20; j++) {
+            if (i % 2 == j % 2) {
+                UIView *block = [[UIView alloc] initWithFrame:CGRectMake(i * 5, j * 5, 5, 5)];
+                [block setBackgroundColor:UIColorWithRGBHex(0xDDDDDD)];
+                [self addSubview:block];
+            }
+        }
+    }
 }
 
 -(void) initData {

@@ -42,7 +42,6 @@
 
 -(void) initView{
     //self
-    [self setAlpha:0.7f];
     CGFloat width = 670;
     [self setFrame:CGRectMake(ScreenWidth - width - 20, 64, width, ScreenHeight - 128)];
     
@@ -186,23 +185,28 @@
 -(void) setDataForStep1Models:(NSArray*)step1Models protoT:(AIFeatureNode*)protoT {
     [self addFeatureToPreview:protoT lab:STRFORMAT(@"protoT%ld:%@",protoT.pId,protoT.ds)];
     for (AIMatchModel *model in step1Models) {
-        //TODOTOMORROW20250430：继续调试分析此处识别结果，右上角三解形测试图，看有没有显著的类比出的结果。
         //NSArray *collectProtoIndexs = model.indexDic.allValues;
         [self addFeatureToPreview:(AIFeatureNode*)model.matchNode lab:STRFORMAT(@"assT%ld:%@",model.matchNode.pId,model.matchNode.ds)];
     }
     [self.previewTableView reloadData];
 }
 
+-(void) setDataForFeature:(AIFeatureNode*)tNode lab:(NSString*)lab {
+    [self addFeatureToPreview:tNode lab:lab];
+    [self.previewTableView reloadData];
+}
+
 -(void) setDataForAlgs:(NSArray*)models {
     for (AIMatchAlgModel *model in models) {
         AIAlgNodeBase *assAlg = [SMGUtils searchNode:model.matchAlg];
-        [self addAlgToPreview:assAlg];
+        NSString *lab = STRFORMAT(@"A%ld:%@",assAlg.pId,CLEANSTR([assAlg getLogDesc:false].allKeys));
+        [self addAlgToPreview:assAlg lab:lab];
     }
     [self.previewTableView reloadData];
 }
 
--(void) setDataForAlg:(AINodeBase*)algNode {
-    [self addAlgToPreview:algNode];
+-(void) setDataForAlg:(AINodeBase*)algNode lab:(NSString*)lab {
+    [self addAlgToPreview:algNode lab:lab];
     [self.previewTableView reloadData];
 }
 
@@ -227,9 +231,8 @@
     [preview setData:tNode contentIndexes:collectProtoIndexs lab:lab];
 }
 
--(void) addAlgToPreview:(AINodeBase*)algNode {
+-(void) addAlgToPreview:(AINodeBase*)algNode lab:(NSString*)lab{
     //1. 取preview 并更新显示;
-    NSString *lab = STRFORMAT(@"A%ld:%@",algNode.pId,CLEANSTR([algNode getLogDesc:false].allKeys));
     MapModel *old = [SMGUtils filterSingleFromArr:self.previewDatas checkValid:^BOOL(MapModel *item) {
         return [item.v1 isEqual:lab];
     }];

@@ -300,7 +300,7 @@
     if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"24");
     PrintDebugCodeBlock_Key(@"rfs1");
     
-    //53. 局部特征可视化（参考34176）。
+    //53. 局部特征识别结果可视化（参考34176）。
     //[SMGUtils runByMainQueue:^{
     //    [theApp.imgTrainerView setDataForStep1Models:resultModels protoT:protoFeature];
     //}];
@@ -412,6 +412,11 @@
         //> 抉择：暂选定方案3，因为看了下代码，确实也用不着，像类比analogyFeatureStep2()算法，都是通过step2Model来的。
         //[AINetUtils relateGeneralAbs:assFeature absConPorts:assFeature.conPorts conNodes:@[protoFeature] isNew:false difStrong:1];
         //[AINetUtils updateConPortRect:assFeature conT:protoFeature_p rect:matchModel.rectItems];
+        
+        //45. 整体特征识别结果可视化（参考34176）。
+        //[SMGUtils runByMainQueue:^{
+        //    [theApp.imgTrainerView setDataForFeature:assFeature lab:STRFORMAT(@"整体特征识别T%ld",assFeature.pId)];
+        //}];
     }
     
     //51. 转成AIMatchModel格式返回（识别后就用match_p,matchCount,matchValue这三个值）。
@@ -516,15 +521,6 @@
                 NSArray *step1Result = ARRTOOK([self recognitionFeature_Step1:item_p]);
                 //b. 通过抽象特征做整体特征识别，把step1的结果传给step2继续向似层识别（参考34135-TODO5）。
                 NSArray *step2Result = [self recognitionFeature_Step2:item_p matchModels:step1Result];
-                
-                //TODOTOMORROW20250429: 做找一些有规律的简图先继续调试一下显著特征，比如图中都有一个三角形。
-                
-                
-                //c. 识别结果可视化（参考34176）。
-                [SMGUtils runByMainQueue:^{
-                    [theApp.imgTrainerView setDataForStep1Models:step1Result protoT:[SMGUtils searchNode:item_p]];
-                }];
-                
                 return [SMGUtils collectArrA:step1Result arrB:step2Result];
             }];
         }
@@ -678,11 +674,11 @@
         NSInteger itemCount = NUMTOOK([allLogDic objectForKey:key]).integerValue;
         return STRFORMAT(@"%@=%.2f ",key,itemCount / (float)sum);
     }]));
-    //19. 识别结果可视化（参考34176）。
-    //[SMGUtils runByMainQueue:^{
-    //    //[theApp.imgTrainerView setDataForAlgs:logModels];
-    //    [theApp.imgTrainerView setDataForAlg:protoAlg];
-    //}];
+    //19. 概念识别结果可视化（参考34176）。
+    [SMGUtils runByMainQueue:^{
+        //[theApp.imgTrainerView setDataForAlgs:logModels];
+        [theApp.imgTrainerView setDataForAlg:protoAlg lab:STRFORMAT(@"ProtoA%ld",protoAlg.pId)];
+    }];
     [AIRecognitionCache printLog:true];
 }
 

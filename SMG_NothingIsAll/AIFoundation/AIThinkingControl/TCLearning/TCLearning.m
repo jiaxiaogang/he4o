@@ -76,7 +76,12 @@
     
     //1. 学习 for matchAlgs：加强特征等的抽象：每多识别概念后，就触发下类比，以尽快抽象特征（34091-1触发抽象）。
     for (AIMatchAlgModel *matchModel in model.matchAlgs_All) {
-        [AIAnalogy analogyAlg:model.protoAlg.p assA:matchModel.matchAlg];
+        AIAlgNodeBase *absA = [AIAnalogy analogyAlg:model.protoAlg.p assA:matchModel.matchAlg];
+        
+        //35. 结果可视化。
+        [SMGUtils runByMainQueue:^{
+            [theApp.imgTrainerView setDataForAlg:absA lab:STRFORMAT(@"类比A%ld:A%ld=A%ld",model.protoAlg.pId,matchModel.matchAlg.pointerId,absA.pId)];
+        }];
     }
     DebugE();
 }
