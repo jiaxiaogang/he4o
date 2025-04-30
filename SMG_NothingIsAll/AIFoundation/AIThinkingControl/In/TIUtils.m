@@ -268,7 +268,7 @@
     //2025.04.23: 加上健全度：matchAssProtoRatio（参考34165-方案）。
     resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIMatchModel *obj) {
         return obj.matchValue * obj.matchDegree * obj.matchAssProtoRatio;
-    }], 0, MIN(MAX(resultModels.count * 0.8f, 10), 20));
+    }], 0, MIN(MAX(resultModels.count * 0.5f, 10), 20));
     
     //51. 更新: ref强度 & 相似度 & 抽具象 & 映射 & conPort.rect;
     if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"21");
@@ -378,7 +378,7 @@
     //2025.04.26: 加上显著度：matchConStrongRatio（参考34175-方案3）。
     resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIFeatureStep2Model *obj) {
         return obj.modelMatchDegree * obj.modelMatchValue * obj.modelMatchConStrongRatio;
-    }], 0, resultModels.count * 0.9);
+    }], 0, resultModels.count * 0.5);
     
     //33. 防重过滤器2、此处每个特征的不同层级，可能识别到同一个特征，可以按匹配度防下重。
     resultModels = [SMGUtils removeRepeat:resultModels convertBlock:^id(AIFeatureStep2Model *obj) {
