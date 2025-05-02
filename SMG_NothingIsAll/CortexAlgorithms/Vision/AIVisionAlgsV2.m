@@ -163,6 +163,38 @@
     [theTC commitInputWithSplitAsync:model algsType:NSStringFromClass(self) logDesc:logDesc];
 }
 
++ (void) commitInputV2:(UIImage*)image logDesc:(NSString*)logDesc {
+    //1. 数据检查。
+    if (!image) return;
+    
+    //2. 取rgb矩阵<K=x_y,V=RGB>
+    NSDictionary *rgbDic = [self getRGBValuesFromImage:image];
+
+    //3. RGB矩阵转为HSB矩阵。
+    NSDictionary *hsbDic = [SMGUtils convertDic:rgbDic kvBlock:^NSArray *(id protoK, NSDictionary *protoV) {
+        return @[protoK,[UIColor convertRGB2HSB:protoV]];
+    }];
+    
+    //5. 转成AIVisionAlgsModelV2模型。
+    AIVisionAlgsModelV2 *model = [[AIVisionAlgsModelV2 alloc] init];
+    CGFloat protoColorWH = sqrtf(rgbDic.count);
+    model.levelNum = [SMGUtils convertDotSize2Level:protoColorWH];
+    
+    //6. 取HSB三个特征（及感官层做精度处理：要保证整个稀疏码可能的值，其总量在不影响感知的前提下越少越好）。
+    model.hColors = [SMGUtils convertDic:hsbDic kvBlock:^NSArray *(NSString *protoK, NSDictionary *protoV) {
+        return @[protoK,@(roundf(NUMTOOK([protoV objectForKey:@"h"]).floatValue * 100) / 100)];
+    }];
+    model.sColors = [SMGUtils convertDic:hsbDic kvBlock:^NSArray *(NSString *protoK, NSDictionary *protoV) {
+        return @[protoK,@(roundf(NUMTOOK([protoV objectForKey:@"s"]).floatValue * 100) / 100)];
+    }];
+    model.bColors = [SMGUtils convertDic:hsbDic kvBlock:^NSArray *(NSString *protoK, NSDictionary *protoV) {
+        return @[protoK,@(roundf(NUMTOOK([protoV objectForKey:@"b"]).floatValue * 100) / 100)];
+    }];
+    
+    //7. 提交给思维控制器。
+    [theTC commitInputWithSplitAsyncV2:model algsType:NSStringFromClass(self) logDesc:logDesc];
+}
+
 #pragma mark - Test Methods
 
 // 创建测试用的100x100像素图片

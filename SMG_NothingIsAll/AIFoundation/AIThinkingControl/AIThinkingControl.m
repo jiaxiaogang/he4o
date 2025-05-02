@@ -195,6 +195,33 @@ static AIThinkingControl *_instance;
 }
 
 /**
+ *  MARK:--------------------V2自适应粒度--------------------
+ */
+-(void) commitInputWithSplitAsyncV2:(AIVisionAlgsModelV2*)algsModel algsType:(NSString*)algsType logDesc:(NSString*)logDesc {
+    __block AIVisionAlgsModelV2 *weakAlgsModel = algsModel;
+    dispatch_async(self.tiQueue, ^{//30083去异步
+        self.tiRuning1 = true;
+        [self commitInputWithSplit:weakAlgsModel algsType:algsType logDesc:logDesc];
+        self.tiRuning1 = false;
+    });
+}
+-(void) commitInputWithSplitV2:(AIVisionAlgsModelV2*)algsModel algsType:(NSString*)algsType logDesc:(NSString*)logDesc {
+    //1. 植物模式阻断感知;
+    if (self.thinkMode == 2) return;
+    
+    //2. 对未切粒度的color字典进行自适应粒度并识别。
+    
+    //TODOTOMORROW20250502:
+    
+    //11. 最粗粒度为size/3切，下一个为size/3/1.3...
+    //12. 从0-2开始，下一个是1-3...分别偏移切gv（嵌套两个for循环，row和column都这么切）。
+    //13. 把识别结果中已识别到的gv.rect收集起来，如果已包含，则在双for循环中直接continue防重掉。
+    
+    
+    
+}
+
+/**
  *  MARK:--------------------数据输入--------------------
  *  @param dics : 多model (models仅含普通算法model -> 目前没有imv和普通信息掺杂在models中的情况;)
  *  步骤说明:
