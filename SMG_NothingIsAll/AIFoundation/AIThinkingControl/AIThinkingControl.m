@@ -201,7 +201,7 @@ static AIThinkingControl *_instance;
     __block AIVisionAlgsModelV2 *weakAlgsModel = algsModel;
     dispatch_async(self.tiQueue, ^{//30083去异步
         self.tiRuning1 = true;
-        [self commitInputWithSplit:weakAlgsModel algsType:algsType logDesc:logDesc];
+        [self commitInputWithSplitV2:weakAlgsModel algsType:algsType logDesc:logDesc];
         self.tiRuning1 = false;
     });
 }
@@ -210,12 +210,39 @@ static AIThinkingControl *_instance;
     if (self.thinkMode == 2) return;
     
     //2. 对未切粒度的color字典进行自适应粒度并识别。
+    NSMutableArray *aleardayRects = [NSMutableArray new];
     
-    //TODOTOMORROW20250502:
-    
-    //11. 最粗粒度为size/3切，下一个为size/3/1.3...
-    //12. 从0-2开始，下一个是1-3...分别偏移切gv（嵌套两个for循环，row和column都这么切）。
-    //13. 把识别结果中已识别到的gv.rect收集起来，如果已包含，则在双for循环中直接continue防重掉。
+    //11. 最粗粒度为size/3切，下一个为size/1.3切（参考35026-1）。
+    CGFloat dotSize = algsModel.whSize / 3.0f;
+    while (dotSize > 1) {
+        //12. 从0-2开始，下一个是1-3...分别偏移切gv（嵌套两个for循环，row和column都这么切）。
+        int length = (int)(algsModel.whSize / dotSize) - 2;//最后两格时，向右不足取3格了，所以去掉-2。
+        for (NSInteger startX = 0; startX < length; startX++) {
+            for (NSInteger startY = 0; startY < length; startY++) {
+                //13. 把前面循环已识别过的：结果中已识别到的gv.rect收集起来，如果已包含，则在双for循环中直接continue防重掉（参考35026-防重)。
+                CGRect curRect = CGRectMake(startX * dotSize, startY * dotSize, dotSize * 3, dotSize * 3);
+                //if (rects.contains(curRect)) continue;
+                
+                //14. 切出当前gv：九宫。
+                for (NSInteger deltaX = 0; deltaX < 3; deltaX++) {
+                    for (NSInteger deltaY = 0; deltaY < 3; deltaY++) {
+                        
+                        //15. 切出当前gv：色值。
+                        for (startX + deltaX) * dotSize
+                            for (startY + deltaY) * dotSize
+                                //把每格里所有像素的色值求平均值。
+                        
+                        [MapModel newWithV1:pinJunValue v2:@(dotX) v3:@(dotY)];
+                    }
+                }
+                [AINetGroupValueIndex convertGVIndexData:nil ds:@"hColors"];
+                
+                //识别特征。
+                [TIUtils recognitionAlgStep1:except_ps inModel:mModel];
+            }
+        }
+        dotSize /= 1.3f;
+    }
     
     
     

@@ -14,6 +14,7 @@
 @interface AIVisionAlgsModelV2 : NSObject
 
 @property (assign, nonatomic) NSInteger levelNum;//粒度层数
+@property (assign, nonatomic) NSInteger whSize;//宽高点数
 
 /**
  *  MARK:--------------------色值组（K=x_y位置，元素为InputDotModel）。--------------------

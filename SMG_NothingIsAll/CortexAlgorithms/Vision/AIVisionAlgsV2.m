@@ -51,6 +51,7 @@
             CGFloat blue  = (CGFloat)rawData[byteIndex + 2] / 255.0f;
             
             //9. 保存结果
+            //TODO: 随后改成二维字典，或二维数组，不然大量取时，拼字符串也耗性能。
             NSString *key = [NSString stringWithFormat:@"%ld_%ld", x, y];
             result[key] = @{@"r": @(red),@"g": @(green),@"b": @(blue)};
         }
@@ -178,6 +179,7 @@
     //5. 转成AIVisionAlgsModelV2模型。
     AIVisionAlgsModelV2 *model = [[AIVisionAlgsModelV2 alloc] init];
     CGFloat protoColorWH = sqrtf(rgbDic.count);
+    model.whSize = protoColorWH;
     model.levelNum = [SMGUtils convertDotSize2Level:protoColorWH];
     
     //6. 取HSB三个特征（及感官层做精度处理：要保证整个稀疏码可能的值，其总量在不影响感知的前提下越少越好）。
