@@ -332,19 +332,27 @@
 }
 
 +(NSArray*) recognitionFeature_Step1_V2:(NSDictionary*)gvIndex at:(NSString*)at isOut:(BOOL)isOut {
-    //4. 组码识别。
-    for (NSString *ds in gvIndex.allKeys) {
-        NSNumber *value = [gvIndex objectForKey:ds];
-        NSArray *vMatchModels = [AIRecognitionCache getCache:STRFORMAT(@"%@_%.2f",ds,value.floatValue) cacheBlock:^id{
-            return ARRTOOK([self recognitionValue:0.2 minLimit:1 at:at ds:ds isOut:isOut protoData:value.floatValue]);
-        }];
-        
-        
-        
-    }
-    NSArray *gMatchModels = [AIRecognitionCache getCache:protoGroupValue_p cacheBlock:^id{
-        return ARRTOOK([self recognitionGroupValueV3:protoGroupValue_p rate:0.3 minLimit:3]);
+    //1. 单码排序。
+    NSArray *sortDS = [gvIndex.allKeys sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+        return [XGRedisUtil compareStrA:obj1 strB:obj2];
     }];
+    //2. 并将单码转为MapModels格式。
+    NSArray *vModels = [SMGUtils convertArr:sortDS convertBlock:^id(NSString *ds) {
+        return [MapModel newWithV1:ds v2:[gvIndex objectForKey:ds]];
+    }];
+    //3. 组码cacheKey。
+    NSString *gvKey = CLEANSTR([SMGUtils convertArr:vModels convertBlock:^id(MapModel *obj) {
+        CGFloat value = NUMTOOK(obj.v2).floatValue;
+        return STRFORMAT(@"%@_%.2f",obj.v1,value);
+    }]);
+    //4. 组码识别
+    NSArray *gMatchModels = [AIRecognitionCache getCache:gvKey cacheBlock:^id{
+        return [self recognitionGroupValueV4:vModels at:at isOut:isOut rate:0.3 minLimit:3 forProtoGV:nil];
+    }];
+    
+    //TODOTOMORROW20250503：继续写
+    
+    
     
     //6. 对所有gv识别结果的，所有refPorts，依次判断位置符合度。
     for (AIMatchModel *gModel in gMatchModels) {
