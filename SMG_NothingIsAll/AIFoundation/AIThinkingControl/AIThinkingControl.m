@@ -247,7 +247,7 @@ static AIThinkingControl *_instance;
                 NSDictionary *gvIndex = [AINetGroupValueIndex convertGVIndexData:subDots ds:@"bColors"];
                 
                 //识别特征。
-                [TIUtils recognitionFeature_Step1_V2:gvIndex];
+                [TIUtils recognitionFeature_Step1_V2:gvIndex at:at isOut:false];
             }
         }
         dotSize /= 1.3f;

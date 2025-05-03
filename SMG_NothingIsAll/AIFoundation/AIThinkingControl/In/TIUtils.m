@@ -30,19 +30,23 @@
  *      2025.03.25: 新版组码识别时激活10% & 旧有单码特征仍保持80%（因为组码太宽导致性能不好，还影响识别准确性）。
  *  @result 返回当前码识别的相近序列;
  */
-+(NSArray*) recognitionValue:(AIKVPointer*)protoV_p rate:(CGFloat)rate minLimit:(NSInteger)minLimit{
++(NSArray*) recognitionValue:(AIKVPointer*)protoV_p rate:(CGFloat)rate minLimit:(NSInteger)minLimit {
+    //1. 取当前稀疏码值;
+    double protoData = [NUMTOOK([AINetIndex getData:protoV_p]) doubleValue];
+    return [self recognitionValue:rate minLimit:minLimit at:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut protoData:protoData];
+}
+
++(NSArray*) recognitionValue:(CGFloat)rate minLimit:(NSInteger)minLimit at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut protoData:(NSInteger)protoData {
     //1. 取索引序列 & 当前稀疏码值;
-    NSDictionary *cacheDataDic = [AINetIndexUtils searchDataDic:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut];
-    NSArray *index_ps = [AINetIndex getIndex_ps:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut];
-    double maskData = [NUMTOOK([AINetIndex getData:protoV_p]) doubleValue];
-    double max = [CortexAlgorithmsUtil maxOfLoopValue:protoV_p.algsType ds:protoV_p.dataSource itemIndex:GVIndexTypeOfDataSource];
-    AIValueInfo *vInfo = [AINetIndex getValueInfo:protoV_p.algsType ds:protoV_p.dataSource isOut:protoV_p.isOut];
-    double cacheProtoData = [NUMTOOK([AINetIndex getData:protoV_p fromDataDic:cacheDataDic]) doubleValue];
+    NSDictionary *cacheDataDic = [AINetIndexUtils searchDataDic:at ds:ds isOut:isOut];
+    NSArray *index_ps = [AINetIndex getIndex_ps:at ds:ds isOut:isOut];
+    double max = [CortexAlgorithmsUtil maxOfLoopValue:at ds:ds itemIndex:GVIndexTypeOfDataSource];
+    AIValueInfo *vInfo = [AINetIndex getValueInfo:at ds:ds isOut:isOut];
     
     //2. 按照相近度排序;
     NSArray *near_ps = [SMGUtils sortSmall2Big:index_ps compareBlock:^double(AIKVPointer *obj) {
         double objData = [NUMTOOK([AINetIndex getData:obj fromDataDic:cacheDataDic]) doubleValue];
-        return [CortexAlgorithmsUtil nearDeltaOfValue:maskData assNum:objData max:max];
+        return [CortexAlgorithmsUtil nearDeltaOfValue:protoData assNum:objData max:max];
     }];
     
     //3. 窄出,仅返回前NarrowLimit条 (最多narrowLimit条,最少1条);
@@ -55,7 +59,7 @@
         //5. 第1_计算出nearV (参考25082-公式1) (性能:400次计算,耗100ms很正常);
         //2024.04.27: BUG_这里有nearV为0的,导致后面可能激活一些完全不准确的结果 (修复: 加上末尾淘汰: 相似度为0的就不收集了先,看下应该也不影响别的什么);
         double nearData = [NUMTOOK([AINetIndex getData:near_p fromDataDic:cacheDataDic]) doubleValue];
-        CGFloat matchValue = [AIAnalyst compareCansetValue:nearData protoV:cacheProtoData at:near_p.algsType ds:near_p.dataSource isOut:near_p.isOut vInfo:vInfo];
+        CGFloat matchValue = [AIAnalyst compareCansetValue:nearData protoV:protoData at:near_p.algsType ds:near_p.dataSource isOut:near_p.isOut vInfo:vInfo];
         if (matchValue == 0) return nil;//把相近度为0的过滤掉。
         
         //6. 构建model
@@ -74,21 +78,32 @@
  *  MARK:--------------------组码识别--------------------
  */
 +(NSArray*) recognitionGroupValueV3:(AIKVPointer*)groupValue_p rate:(CGFloat)rate minLimit:(NSInteger)minLimit {
+    AIGroupValueNode *protoGroupValue = [SMGUtils searchNode:groupValue_p];
+    NSArray *vModels = [SMGUtils convertArr:protoGroupValue.content_ps convertBlock:^id(AIKVPointer *item_p) {
+        double protoData = [NUMTOOK([AINetIndex getData:item_p]) doubleValue];
+        return [MapModel newWithV1:item_p.dataSource v2:@(protoData)];
+    }];
+    
+    //gv的at和isOut和v的一样，直接复用，ds不一样，用vModels传过去。
+    return [self recognitionGroupValueV4:vModels at:groupValue_p.algsType isOut:groupValue_p.isOut rate:rate minLimit:minLimit forProtoGV:groupValue_p];
+}
++(NSArray*) recognitionGroupValueV4:(NSArray*)vModels at:(NSString*)at isOut:(BOOL)isOut rate:(CGFloat)rate minLimit:(NSInteger)minLimit forProtoGV:(AIKVPointer*)forProtoGV {
     //1. 数据准备
     if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"31");
-    AIGroupValueNode *protoGroupValue = [SMGUtils searchNode:groupValue_p];
     NSMutableDictionary *resultDic = [[NSMutableDictionary alloc] init];
     if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"32");
     
     //2. 先把protoGV解读成索引值。
     if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"33");
-    for (NSInteger itemIndex = 0; itemIndex < protoGroupValue.count; itemIndex++) {
+    for (NSInteger itemIndex = 0; itemIndex < vModels.count; itemIndex++) {
         
         //3. 取所有当前组码的itemIndex下的索引序列 & 当前码的索引值 & 当前码的最大值。
         if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"34");
-        AIKVPointer *item_p = ARR_INDEX(protoGroupValue.content_ps, itemIndex);
-        NSArray *vMatchModels = [AIRecognitionCache getCache:item_p cacheBlock:^id{
-            return [self recognitionValue:item_p rate:0.2 minLimit:10];//v1单码特征
+        MapModel *item = ARR_INDEX(vModels, itemIndex);
+        NSString *ds = item.v1;
+        CGFloat itemData = NUMTOOK(item.v2).floatValue;
+        NSArray *vMatchModels = [AIRecognitionCache getCache:STRFORMAT(@"%@_%.2f",item.v1,itemData) cacheBlock:^id{
+            return [self recognitionValue:0.2 minLimit:10 at:at ds:ds isOut:isOut protoData:itemData];//v1单码特征
         }];
         if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"37");
         
@@ -116,7 +131,7 @@
     
     //11. 过滤掉匹配度为0的 & 非全含的 & 不识别protoG自己。
     NSArray *gMatchModels = [SMGUtils filterArr:resultDic.allValues checkValid:^BOOL(AIMatchModel *item) {
-        return item.matchValue > 0 && item.matchCount == protoGroupValue.count && ![item.match_p isEqual:groupValue_p];
+        return item.matchValue > 0 && item.matchCount == vModels.count && (!forProtoGV || ![item.match_p isEqual:forProtoGV]);
     }];
     
     //21. 按匹配度排序。
@@ -136,9 +151,12 @@
         if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"3g3");
         //2025.03.30: 这儿性能不太好，经查现在组码识别不需要单码索引强度做竞争，先关掉。
         //[AINetUtils insertRefPorts_General:assNode.p content_ps:assNode.content_ps difStrong:1 header:assNode.header];
-        [protoGroupValue updateMatchValue:assNode matchValue:matchModel.matchValue];//性能均耗0.15ms 总65ms
-        if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"3g4");
-        [AINetUtils relateGeneralAbs:assNode absConPorts:assNode.conPorts conNodes:@[protoGroupValue] isNew:false difStrong:1];//性能均耗0.25ms 总97ms
+        if (forProtoGV) {
+            AIGroupValueNode *protoGroupValue = [SMGUtils searchNode:forProtoGV];
+            [protoGroupValue updateMatchValue:assNode matchValue:matchModel.matchValue];//性能均耗0.15ms 总65ms
+            if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"3g4");
+            [AINetUtils relateGeneralAbs:assNode absConPorts:assNode.conPorts conNodes:@[protoGroupValue] isNew:false difStrong:1];//性能均耗0.25ms 总97ms
+        }
         if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"3g5");
         //NSLog(@"组码识别结果(%ld/%ld) GV%ld 匹配数:%ld 匹配度:%.2f",[gMatchModels indexOfObject:matchModel],gMatchModels.count,matchModel.match_p.pointerId,matchModel.matchCount,matchModel.matchValue);
     }
@@ -313,8 +331,17 @@
     return resultModels;
 }
 
-+(NSArray*) recognitionFeature_Step1_V2:(NSDictionary*)gvIndex {
++(NSArray*) recognitionFeature_Step1_V2:(NSDictionary*)gvIndex at:(NSString*)at isOut:(BOOL)isOut {
     //4. 组码识别。
+    for (NSString *ds in gvIndex.allKeys) {
+        NSNumber *value = [gvIndex objectForKey:ds];
+        NSArray *vMatchModels = [AIRecognitionCache getCache:STRFORMAT(@"%@_%.2f",ds,value.floatValue) cacheBlock:^id{
+            return ARRTOOK([self recognitionValue:0.2 minLimit:1 at:at ds:ds isOut:isOut protoData:value.floatValue]);
+        }];
+        
+        
+        
+    }
     NSArray *gMatchModels = [AIRecognitionCache getCache:protoGroupValue_p cacheBlock:^id{
         return ARRTOOK([self recognitionGroupValueV3:protoGroupValue_p rate:0.3 minLimit:3]);
     }];
