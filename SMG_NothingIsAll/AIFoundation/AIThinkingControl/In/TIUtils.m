@@ -313,6 +313,71 @@
     return resultModels;
 }
 
++(NSArray*) recognitionFeature_Step1_V2:(NSDictionary*)gvIndex {
+    //4. 组码识别。
+    NSArray *gMatchModels = [AIRecognitionCache getCache:protoGroupValue_p cacheBlock:^id{
+        return ARRTOOK([self recognitionGroupValueV3:protoGroupValue_p rate:0.3 minLimit:3]);
+    }];
+    
+    //6. 对所有gv识别结果的，所有refPorts，依次判断位置符合度。
+    for (AIMatchModel *gModel in gMatchModels) {
+        NSArray *refPorts = [AINetUtils refPorts_All:gModel.match_p];
+        
+        //11. 每个refPort转为model并计匹配度和匹配数;
+        for (AIPort *refPort in refPorts) {
+            //13. 取出已经收集到的assGVModels,判断下一个refPort收集进去的话,是否符合位置;
+            NSArray *assGVItems = [gvBestModel getAssGVModelsForKey:assKey];
+            CGFloat matchDegree = [ThinkingUtils checkAssToMatchDegree:protoFeature protoIndex:i assGVModels:assGVItems checkRefPort:refPort debugMode:false];
+            
+            //14. 判断新一条refPort是否更好，更好的话存下来（存refPort，assKey，gModel.matchValue，matchDegree）。
+            [gvBestModel updateStep1:assKey refPort:refPort gMatchValue:gModel.matchValue gMatchDegree:matchDegree matchOfProtoIndex:i];
+        }
+        
+        //21. STEP2：每个protoIndex内防重，竞争只保留protoIndex下最好一条。
+        [gvBestModel invokeRankStep2];
+        
+        //22. STEP3：跨protoIndex防重，将best结果存下来
+        [gvBestModel updateStep3];
+    }
+    //31. 用明细生成总账（bestModel -> resultDic）。
+    NSDictionary *resultDic = [gvBestModel convert2AIMatchModelsStep4:protoFeature];// <K=deltaLevel_assPId, V=识别的特征AIMatchModel>
+    
+    //33. 生成ass_T在proto_T中的rect。
+    for (AIMatchModel *matchModel in resultDic.allValues) {
+        matchModel.rect = [AINetUtils convertPartOfFeatureContent2Rect:protoFeature contentIndexes:matchModel.indexDic.allValues];
+    }
+    
+    //41. 无效过滤器1、matchValue=0排除掉 & 是protoT自身过滤掉。
+    NSArray *resultModels = [SMGUtils filterArr:resultDic.allValues checkValid:^BOOL(AIMatchModel *item) {
+        return item.matchValue > 0 || [item.match_p isEqual:protoFeature_p];
+    }];
+    
+    //46. 末尾淘汰xx%匹配度低的、匹配度强度过滤器 (参考28109-todo2 & 34091-5提升准确)。
+    //2025.04.23: 加上健全度：matchAssProtoRatio（参考34165-方案）。
+    resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIMatchModel *obj) {
+        return obj.matchValue * obj.matchDegree * obj.matchAssProtoRatio;
+    }], 0, MIN(MAX(resultModels.count * 0.5f, 10), 20));
+    
+    //51. 更新: ref强度 & 相似度 & 抽具象 & 映射 & conPort.rect;
+    for (AIMatchModel *matchModel in resultModels) {
+        AIFeatureNode *assFeature = [SMGUtils searchNode:matchModel.match_p];
+        //2025.04.22: 这儿性能不太好，经查现在特征识别不需要组码索引强度做竞争，先关掉。
+        //[AINetUtils insertRefPorts_General:assFeature.p content_ps:assFeature.content_ps difStrong:1 header:assFeature.header];
+        [protoFeature updateMatchValue:assFeature matchValue:matchModel.matchValue];
+        [protoFeature updateMatchDegree:assFeature matchDegree:matchModel.matchDegree];
+        [AINetUtils relateGeneralAbs:assFeature absConPorts:assFeature.conPorts conNodes:@[protoFeature] isNew:false difStrong:1];
+        assFeature.step1Model = [MapModel newWithV1:matchModel.indexDic v2:protoFeature_p];
+        //[protoFeature updateIndexDic:assFeature indexDic:matchModel.indexDic];
+        [protoFeature updateDegreeDic:assFeature.pId degreeDic:matchModel.degreeDic];
+        [AINetUtils updateConPortRect:assFeature conT:protoFeature_p rect:matchModel.rect];
+        
+        //52. debug
+        if (Log4RecogDesc || resultModels.count > 0) NSLog(@"局部特征识别结果:T%ld%@\t 匹配条数:%ld/(proto%ld ass%ld)\t匹配度:%.2f\t符合度:%.1f",
+                                         matchModel.match_p.pointerId,CLEANSTR([assFeature getLogDesc:true]),matchModel.matchCount,protoFeature.count,assFeature.count,matchModel.matchValue,matchModel.matchDegree);
+    }
+    return resultModels;
+}
+
 /**
  *  MARK:--------------------特征识别--------------------
  *  @desc Step2 尽可能照顾特征的整体性，通过交层向下找似层结果（参考34135-TODO2）。

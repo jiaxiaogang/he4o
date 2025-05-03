@@ -234,7 +234,7 @@ static AIThinkingControl *_instance;
                             for (NSInteger pixY = 0; pixY < dotSize; pixY++) {
                                 NSInteger x = (startX + deltaX) * dotSize + pixX;
                                 NSInteger y = (startY + deltaY) * dotSize + pixY;
-                                NSNumber *pixValue = [algsModel.sColors objectForKey:STRFORMAT(@"%ld_%ld",x,y)];
+                                NSNumber *pixValue = [algsModel.bColors objectForKey:STRFORMAT(@"%ld_%ld",x,y)];
                                 sumPixValue += pixValue.floatValue;
                             }
                         }
@@ -244,17 +244,14 @@ static AIThinkingControl *_instance;
                         [subDots addObject:[MapModel newWithV1:@(pinJunValue) v2:@(deltaX) v3:@(deltaY)]];
                     }
                 }
-                [AINetGroupValueIndex convertGVIndexData:subDots ds:@"hColors"];
+                NSDictionary *gvIndex = [AINetGroupValueIndex convertGVIndexData:subDots ds:@"bColors"];
                 
                 //识别特征。
-                [TIUtils recognitionAlgStep1:except_ps inModel:mModel];
+                [TIUtils recognitionFeature_Step1_V2:gvIndex];
             }
         }
         dotSize /= 1.3f;
     }
-    
-    
-    
 }
 
 /**

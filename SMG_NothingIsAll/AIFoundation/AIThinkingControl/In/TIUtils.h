@@ -11,6 +11,11 @@
 @interface TIUtils : NSObject
 
 //MARK:===============================================================
+//MARK:                     < 特征识别 >
+//MARK:===============================================================
++(NSArray*) recognitionFeature_Step1_V2:(NSDictionary*)gvIndex;
+
+//MARK:===============================================================
 //MARK:                     < 概念识别 >
 //MARK:===============================================================
 +(void) recognitionAlgStep1:(NSArray*)except_ps inModel:(AIShortMatchModel*)inModel;
