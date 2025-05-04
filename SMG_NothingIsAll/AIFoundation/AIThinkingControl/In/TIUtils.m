@@ -374,15 +374,25 @@
                                                  curAtAssRect.size.width * lastProtoRect.size.width / lastAtAssRect.size.width,
                                                  curAtAssRect.size.height * lastProtoRect.size.height / lastAtAssRect.size.height);
                 
-                //15. 找出描点。
-                CGFloat maoX = (CGRectGetMidX(lastProtoRect) + CGRectGetMidX(curProtoRect)) / 2;
-                CGFloat maoY = (CGRectGetMidY(lastProtoRect) + CGRectGetMidY(curProtoRect)) / 2;
+                //15. 找出锚点。
+                CGFloat anchorX = (CGRectGetMidX(lastProtoRect) + CGRectGetMidX(curProtoRect)) / 2;
+                CGFloat anchorY = (CGRectGetMidY(lastProtoRect) + CGRectGetMidY(curProtoRect)) / 2;
                 
-                //16. 根据估算，到proto色值字典中，找匹配度最高的新切gv粒度比例。
+                //16. 根据估算，到proto色值字典中，找匹配度最高的新切gv粒度比例（从缩小2倍，到增大2倍，中间每层1.3倍，一个个尝试，哪个最相近）。
+                NSArray *scales = @[@(1),@(1.2),@(0.8),@(1.56),@(0.62),@(2.0),@(0.5)];
+                for (NSNumber *item in scales) {
+                    CGFloat scale = item.floatValue;
+                    //17. 锚点不变，求出各比例下的protoRect（缩放时，锚点与中心点的xy偏移量与之正相关）。
+                    //x = anchorX + (CGRectGetMidX(curProtoRect) - anchorX) * scale - curProtoRect.size.width * scale * 0.5;
+                    CGRect checkCurProtoRect = CGRectMake((1 - scale) * anchorX + curProtoRect.origin.x * scale,
+                                                          (1 - scale) * anchorY + curProtoRect.origin.y * scale,
+                                                          curProtoRect.size.width * scale,
+                                                          curProtoRect.size.height * scale);
+                    
+                    //TODOTOMORROW20250503：先测下锚点缩放对不对，再继续写。
+                    
+                }
                 
-                
-                //TODOTOMORROW20250503：继续写
-                //1. 从缩小2倍，到增大2倍，中间每层1.3倍，一个个尝试，哪个最相近。
                 
                 
             }
