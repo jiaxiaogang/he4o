@@ -360,6 +360,7 @@
             NSInteger indexOf = [assT.content_ps indexOfObject:gModel.match_p];
             NSValue *lastAtAssRectValue = ARR_INDEX(assT.rects, indexOf);
             CGRect lastAtAssRect = lastAtAssRectValue.CGRectValue;
+            CGRect lastProtoRect = protoRect;
             
             //13. 自举：每个assT一条条自举自身的gv。
             for (NSInteger i = 1; i < assT.count; i++) {
@@ -368,16 +369,20 @@
                 CGRect curAtAssRect = curAtAssRectValue.CGRectValue;
                 
                 //14. 根据比例估算下一条protoGV的取值范围。
-                curAtAssRect.origin.x *= protoRect.origin.x / lastAtAssRect.origin.x;
-                curAtAssRect.origin.y *= protoRect.origin.y / lastAtAssRect.origin.y;
-                curAtAssRect.size.width *= protoRect.size.width / lastAtAssRect.size.width;
-                curAtAssRect.size.height *= protoRect.size.height / lastAtAssRect.size.height;
+                CGRect curProtoRect = CGRectMake(curAtAssRect.origin.x * lastProtoRect.origin.x / lastAtAssRect.origin.x,
+                                                 curAtAssRect.origin.y * lastProtoRect.origin.y / lastAtAssRect.origin.y,
+                                                 curAtAssRect.size.width * lastProtoRect.size.width / lastAtAssRect.size.width,
+                                                 curAtAssRect.size.height * lastProtoRect.size.height / lastAtAssRect.size.height);
                 
-                //15. 根据估算，到proto色值字典中，找匹配度最高的新切gv粒度比例。
+                //15. 找出描点。
+                CGFloat maoX = (CGRectGetMidX(lastProtoRect) + CGRectGetMidX(curProtoRect)) / 2;
+                CGFloat maoY = (CGRectGetMidY(lastProtoRect) + CGRectGetMidY(curProtoRect)) / 2;
+                
+                //16. 根据估算，到proto色值字典中，找匹配度最高的新切gv粒度比例。
                 
                 
                 //TODOTOMORROW20250503：继续写
-                
+                //1. 从缩小2倍，到增大2倍，中间每层1.3倍，一个个尝试，哪个最相近。
                 
                 
             }
