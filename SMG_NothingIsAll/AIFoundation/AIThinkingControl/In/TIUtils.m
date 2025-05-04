@@ -331,7 +331,7 @@
     return resultModels;
 }
 
-+(NSArray*) recognitionFeature_Step1_V2:(NSDictionary*)gvIndex at:(NSString*)at isOut:(BOOL)isOut {
++(NSArray*) recognitionFeature_Step1_V2:(NSDictionary*)gvIndex at:(NSString*)at isOut:(BOOL)isOut protoRect:(CGRect)protoRect protoColorDic:(NSDictionary*)protoColorDic {
     //1. 单码排序。
     NSArray *sortDS = [gvIndex.allKeys sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
         return [XGRedisUtil compareStrA:obj1 strB:obj2];
@@ -350,10 +350,6 @@
         return [self recognitionGroupValueV4:vModels at:at isOut:isOut rate:0.3 minLimit:3 forProtoGV:nil];
     }];
     
-    //TODOTOMORROW20250503：继续写
-    
-    
-    
     //11. 对所有gv识别结果的，所有refPorts，依次判断位置符合度。
     for (AIMatchModel *gModel in gMatchModels) {
         NSArray *refPorts = [AINetUtils refPorts_All:gModel.match_p];
@@ -362,14 +358,27 @@
         for (AIPort *refPort in refPorts) {
             AIFeatureNode *assT = [SMGUtils searchNode:refPort.target_p];
             NSInteger indexOf = [assT.content_ps indexOfObject:gModel.match_p];
-            NSValue *lastAtAssRect = ARR_INDEX(assT.rects, indexOf);
+            NSValue *lastAtAssRectValue = ARR_INDEX(assT.rects, indexOf);
+            CGRect lastAtAssRect = lastAtAssRectValue.CGRectValue;
             
             //13. 自举：每个assT一条条自举自身的gv。
             for (NSInteger i = 1; i < assT.count; i++) {
                 NSInteger curIndex = (indexOf + i) % assT.count;
-                NSValue *curAtAssRect = ARR_INDEX(assT.rects, curIndex);
+                NSValue *curAtAssRectValue = ARR_INDEX(assT.rects, curIndex);
+                CGRect curAtAssRect = curAtAssRectValue.CGRectValue;
                 
                 //14. 根据比例估算下一条protoGV的取值范围。
+                curAtAssRect.origin.x *= protoRect.origin.x / lastAtAssRect.origin.x;
+                curAtAssRect.origin.y *= protoRect.origin.y / lastAtAssRect.origin.y;
+                curAtAssRect.size.width *= protoRect.size.width / lastAtAssRect.size.width;
+                curAtAssRect.size.height *= protoRect.size.height / lastAtAssRect.size.height;
+                
+                //15. 根据估算，到proto色值字典中，找匹配度最高的新切gv粒度比例。
+                
+                
+                //TODOTOMORROW20250503：继续写
+                
+                
                 
             }
             
