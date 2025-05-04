@@ -88,6 +88,8 @@
  *  MARK:--------------------计算assTo是否在其该出现的位置（返回符合度）--------------------
  */
 +(CGFloat) checkAssToMatchDegree:(AIFeatureNode*)protoFeature protoIndex:(NSInteger)protoIndex assGVModels:(NSArray*)assGVModels checkRefPort:(AIPort*)checkRefPort debugMode:(BOOL)debugMode;
++(CGFloat) checkAssToMatchDegree:(CGPoint)protoFrom protoTo:(CGPoint)protoTo
+                         assFrom:(CGPoint)assFrom assTo:(CGPoint)assTo debugMode:(BOOL)debugMode;
 +(CGFloat) checkAssToMatchDegreeV2:(AIFeatureNode*)protoFeature protoIndex:(NSInteger)protoIndex assGVModels:(NSArray*)assGVModels checkRefPort:(AIPort*)checkRefPort debugMode:(BOOL)debugMode;
 
 @end

@@ -354,12 +354,25 @@
     
     
     
-    //6. 对所有gv识别结果的，所有refPorts，依次判断位置符合度。
+    //11. 对所有gv识别结果的，所有refPorts，依次判断位置符合度。
     for (AIMatchModel *gModel in gMatchModels) {
         NSArray *refPorts = [AINetUtils refPorts_All:gModel.match_p];
         
-        //11. 每个refPort转为model并计匹配度和匹配数;
+        //12. 每个refPort自举，到proto对应下相关区域的匹配度符合度等;
         for (AIPort *refPort in refPorts) {
+            AIFeatureNode *assT = [SMGUtils searchNode:refPort.target_p];
+            NSInteger indexOf = [assT.content_ps indexOfObject:gModel.match_p];
+            NSValue *lastAtAssRect = ARR_INDEX(assT.rects, indexOf);
+            
+            //13. 自举：每个assT一条条自举自身的gv。
+            for (NSInteger i = 1; i < assT.count; i++) {
+                NSInteger curIndex = (indexOf + i) % assT.count;
+                NSValue *curAtAssRect = ARR_INDEX(assT.rects, curIndex);
+                
+                //14. 根据比例估算下一条protoGV的取值范围。
+                
+            }
+            
             //13. 取出已经收集到的assGVModels,判断下一个refPort收集进去的话,是否符合位置;
             NSArray *assGVItems = [gvBestModel getAssGVModelsForKey:assKey];
             CGFloat matchDegree = [ThinkingUtils checkAssToMatchDegree:protoFeature protoIndex:i assGVModels:assGVItems checkRefPort:refPort debugMode:false];
