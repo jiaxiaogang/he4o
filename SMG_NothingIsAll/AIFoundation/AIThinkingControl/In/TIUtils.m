@@ -365,6 +365,8 @@
             //13. 自举：每个assT一条条自举自身的gv。
             for (NSInteger i = 1; i < assT.count; i++) {
                 NSInteger curIndex = (indexOf + i) % assT.count;
+                AIKVPointer *curAssGV_p = ARR_INDEX(assT.content_ps, curIndex);
+                AIGroupValueNode *curAssGV = [SMGUtils searchNode:curAssGV_p];
                 NSValue *curAtAssRectValue = ARR_INDEX(assT.rects, curIndex);
                 CGRect curAtAssRect = curAtAssRectValue.CGRectValue;
                 
@@ -393,7 +395,19 @@
                     
                     //18. 切出当前gv：九宫。
                     NSArray *subDots = [ThinkingUtils getSubDots:protoColorDic gvRect:checkCurProtoRect];
-                    NSDictionary *gvIndex = [AINetGroupValueIndex convertGVIndexData:subDots ds:ds];
+                    NSDictionary *protoGVIndex = [AINetGroupValueIndex convertGVIndexData:subDots ds:ds];
+                    
+                    //19. 求切出的curProtoGV九宫与curAssGV的匹配度。
+                    for (NSString *key in protoGVIndex) {
+                        CGFloat protoData = NUMTOOK([gvIndex objectForKey:key]).floatValue;
+                        AIKVPointer *assV = [SMGUtils filterSingleFromArr:curAssGV.content_ps checkValid:^BOOL(AIKVPointer *item) {
+                            return [item.dataSource isEqual:key];
+                        }];
+                        double assData = [NUMTOOK([AINetIndex getData:assV]) doubleValue];
+                        CGFloat matchValue = [AIAnalyst compareCansetValue:assData protoV:protoData at:assV.algsType ds:assV.dataSource isOut:assV.isOut vInfo:nil];
+                        
+                        
+                    }
                     
                     
                 }
