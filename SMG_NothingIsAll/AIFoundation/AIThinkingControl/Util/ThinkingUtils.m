@@ -343,4 +343,34 @@
     return matchDegree;
 }
 
+/**
+ *  MARK:--------------------从色值xy字典中获取9宫数据--------------------
+ *  @param gvRect 表示gv区域的绝对坐标
+ */
++(NSArray*) getSubDots:(NSDictionary*)colorDic gvRect:(CGRect)gvRect {
+    //14. 切出当前gv：九宫。
+    CGFloat dotSize = gvRect.size.width / 3;
+    NSMutableArray *subDots = [NSMutableArray new];
+    for (NSInteger deltaX = 0; deltaX < 3; deltaX++) {
+        for (NSInteger deltaY = 0; deltaY < 3; deltaY++) {
+            
+            //15. 切出当前gv：色值。
+            CGFloat sumPixValue = 0;
+            for (NSInteger pixX = 0; pixX < dotSize; pixX++) {
+                for (NSInteger pixY = 0; pixY < dotSize; pixY++) {
+                    NSInteger x = gvRect.origin.x + deltaX * dotSize + pixX;
+                    NSInteger y = gvRect.origin.y + deltaY * dotSize + pixY;
+                    NSNumber *pixValue = [colorDic objectForKey:STRFORMAT(@"%ld_%ld",x,y)];
+                    sumPixValue += pixValue.floatValue;
+                }
+            }
+            
+            //16. 把每格里所有像素的色值求平均值。
+            CGFloat pinJunValue = sumPixValue / (dotSize * dotSize);
+            [subDots addObject:[MapModel newWithV1:@(pinJunValue) v2:@(deltaX) v3:@(deltaY)]];
+        }
+    }
+    return subDots;
+}
+
 @end

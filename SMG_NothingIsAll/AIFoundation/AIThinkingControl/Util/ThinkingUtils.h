@@ -92,4 +92,10 @@
                          assFrom:(CGPoint)assFrom assTo:(CGPoint)assTo debugMode:(BOOL)debugMode;
 +(CGFloat) checkAssToMatchDegreeV2:(AIFeatureNode*)protoFeature protoIndex:(NSInteger)protoIndex assGVModels:(NSArray*)assGVModels checkRefPort:(AIPort*)checkRefPort debugMode:(BOOL)debugMode;
 
+/**
+ *  MARK:--------------------从色值xy字典中获取9宫数据--------------------
+ *  @param gvRect 表示gv区域的绝对坐标
+ */
++(NSArray*) getSubDots:(NSDictionary*)colorDic gvRect:(CGRect)gvRect;
+
 @end

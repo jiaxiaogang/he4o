@@ -331,7 +331,7 @@
     return resultModels;
 }
 
-+(NSArray*) recognitionFeature_Step1_V2:(NSDictionary*)gvIndex at:(NSString*)at isOut:(BOOL)isOut protoRect:(CGRect)protoRect protoColorDic:(NSDictionary*)protoColorDic {
++(NSArray*) recognitionFeature_Step1_V2:(NSDictionary*)gvIndex at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut protoRect:(CGRect)protoRect protoColorDic:(NSDictionary*)protoColorDic {
     //1. 单码排序。
     NSArray *sortDS = [gvIndex.allKeys sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
         return [XGRedisUtil compareStrA:obj1 strB:obj2];
@@ -390,6 +390,11 @@
                                                           curProtoRect.size.height * scale);
                     
                     //TODOTOMORROW20250503：先测下锚点缩放对不对，再继续写。
+                    
+                    //18. 切出当前gv：九宫。
+                    NSArray *subDots = [ThinkingUtils getSubDots:protoColorDic gvRect:checkCurProtoRect];
+                    NSDictionary *gvIndex = [AINetGroupValueIndex convertGVIndexData:subDots ds:ds];
+                    
                     
                 }
                 

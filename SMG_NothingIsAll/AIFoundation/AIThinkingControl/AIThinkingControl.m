@@ -224,30 +224,11 @@ static AIThinkingControl *_instance;
                 //if (rects.contains(curRect)) continue;
                 
                 //14. 切出当前gv：九宫。
-                NSMutableArray *subDots = [NSMutableArray new];
-                for (NSInteger deltaX = 0; deltaX < 3; deltaX++) {
-                    for (NSInteger deltaY = 0; deltaY < 3; deltaY++) {
-                        
-                        //15. 切出当前gv：色值。
-                        CGFloat sumPixValue = 0;
-                        for (NSInteger pixX = 0; pixX < dotSize; pixX++) {
-                            for (NSInteger pixY = 0; pixY < dotSize; pixY++) {
-                                NSInteger x = (startX + deltaX) * dotSize + pixX;
-                                NSInteger y = (startY + deltaY) * dotSize + pixY;
-                                NSNumber *pixValue = [algsModel.bColors objectForKey:STRFORMAT(@"%ld_%ld",x,y)];
-                                sumPixValue += pixValue.floatValue;
-                            }
-                        }
-                        
-                        //16. 把每格里所有像素的色值求平均值。
-                        CGFloat pinJunValue = sumPixValue / (dotSize * dotSize);
-                        [subDots addObject:[MapModel newWithV1:@(pinJunValue) v2:@(deltaX) v3:@(deltaY)]];
-                    }
-                }
+                NSArray *subDots = [ThinkingUtils getSubDots:algsModel.bColors gvRect:CGRectMake(startX * dotSize, startY * dotSize, dotSize * 3, dotSize * 3)];
                 NSDictionary *gvIndex = [AINetGroupValueIndex convertGVIndexData:subDots ds:@"bColors"];
                 
                 //识别特征。
-                [TIUtils recognitionFeature_Step1_V2:gvIndex at:algsType isOut:false protoRect:curRect protoColorDic:algsModel.bColors];
+                [TIUtils recognitionFeature_Step1_V2:gvIndex at:algsType ds:@"bColors" isOut:false protoRect:curRect protoColorDic:algsModel.bColors];
             }
         }
         dotSize /= 1.3f;
