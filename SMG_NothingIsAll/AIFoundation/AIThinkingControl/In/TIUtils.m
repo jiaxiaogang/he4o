@@ -364,11 +364,15 @@
             CGRect lastAtAssRect = lastAtAssRectValue.CGRectValue;
             CGRect lastProtoRect = protoRect;
             
-            //13. 自举：每个assT一条条自举自身的gv。
+            //13. 把tMatchModel收集起来。
             AIMatchModel *tMatchModel = [[AIMatchModel alloc] initWithMatch_p:refPort.target_p];
             tMatchModel.matchCount = 1;
             tMatchModel.sumMatchValue += gModel.matchValue;
             tMatchModel.sumMatchDegree = 1;
+            tMatchModel.assCount = assT.count;
+            [resultDic setObject:tMatchModel forKey:refPort.target_p];
+            
+            //21. 自举：每个assT一条条自举自身的gv。
             for (NSInteger i = 1; i < assT.count; i++) {
                 NSInteger curIndex = (indexOf + i) % assT.count;
                 AIKVPointer *curAssGV_p = ARR_INDEX(assT.content_ps, curIndex);
@@ -376,22 +380,22 @@
                 NSValue *curAtAssRectValue = ARR_INDEX(assT.rects, curIndex);
                 CGRect curAtAssRect = curAtAssRectValue.CGRectValue;
                 
-                //14. 根据比例估算下一条protoGV的取值范围。
+                //22. 根据比例估算下一条protoGV的取值范围。
                 CGRect defaultCurProtoRect = CGRectMake(curAtAssRect.origin.x * lastProtoRect.origin.x / lastAtAssRect.origin.x,
                                                  curAtAssRect.origin.y * lastProtoRect.origin.y / lastAtAssRect.origin.y,
                                                  curAtAssRect.size.width * lastProtoRect.size.width / lastAtAssRect.size.width,
                                                  curAtAssRect.size.height * lastProtoRect.size.height / lastAtAssRect.size.height);
                 
-                //15. 找出锚点。
+                //23. 找出锚点。
                 CGFloat anchorX = (CGRectGetMidX(lastProtoRect) + CGRectGetMidX(defaultCurProtoRect)) / 2;
                 CGFloat anchorY = (CGRectGetMidY(lastProtoRect) + CGRectGetMidY(defaultCurProtoRect)) / 2;
                 
-                //16. 根据估算，到proto色值字典中，找匹配度最高的新切gv粒度比例（从缩小2倍，到增大2倍，中间每层1.3倍，一个个尝试，哪个最相近）。
+                //31. 根据估算，到proto色值字典中，找匹配度最高的新切gv粒度比例（从缩小2倍，到增大2倍，中间每层1.3倍，一个个尝试，哪个最相近）。
                 NSArray *scales = @[@(1),@(1.2),@(0.8),@(1.56),@(0.62),@(2.0),@(0.5)];
                 MapModel *best = nil;
                 for (NSNumber *item in scales) {
                     CGFloat scale = item.floatValue;
-                    //17. 锚点不变，求出各比例下的protoRect（缩放时，锚点与中心点的xy偏移量与之正相关）。
+                    //32. 锚点不变，求出各比例下的protoRect（缩放时，锚点与中心点的xy偏移量与之正相关）。
                     //x = anchorX + (CGRectGetMidX(curProtoRect) - anchorX) * scale - curProtoRect.size.width * scale * 0.5;
                     CGRect checkCurProtoRect = CGRectMake((1 - scale) * anchorX + defaultCurProtoRect.origin.x * scale,
                                                           (1 - scale) * anchorY + defaultCurProtoRect.origin.y * scale,
@@ -399,11 +403,11 @@
                                                           defaultCurProtoRect.size.height * scale);
                     //TODO: 测下锚点缩放对不对。
                     
-                    //18. 切出当前gv：九宫。
+                    //33. 切出当前gv：九宫。
                     NSArray *subDots = [ThinkingUtils getSubDots:protoColorDic gvRect:checkCurProtoRect];
                     NSDictionary *protoGVIndex = [AINetGroupValueIndex convertGVIndexData:subDots ds:ds];
                     
-                    //19. 求切出的curProtoGV九宫与curAssGV的匹配度。
+                    //34. 求切出的curProtoGV九宫与curAssGV的匹配度。
                     CGFloat curGMatchValue = 1;
                     for (NSString *key in protoGVIndex) {
                         CGFloat protoData = NUMTOOK([gvIndex objectForKey:key]).floatValue;
@@ -415,26 +419,31 @@
                         curGMatchValue *= vMatchValue;
                     }
                     
-                    //20. 保留最匹配的一条。
+                    //35. 保留最匹配的一条。
                     if (!best || NUMTOOK(best.v1).floatValue < curGMatchValue) {
                         best = [MapModel newWithV1:@(curGMatchValue) v2:@(checkCurProtoRect) v3:@(scale)];
                     }
                 }
+                //41. 有中断匹配不上的gv，直接计为自举审核失败。
+                if (best || NUMTOOK(best.v1).floatValue < 0.1f) break;
                 
-                //31. 把best的情况记下来，继续下一个gv。
+                //42. 把best的情况记下来，继续下一个gv。
                 lastProtoRect = VALTOOK(best.v2).CGRectValue;
                 lastAtAssRect = curAtAssRect;
                 tMatchModel.matchCount++;
                 tMatchModel.sumMatchValue += NUMTOOK(best.v1).floatValue;
                 tMatchModel.sumMatchDegree += NUMTOOK(best.v3).floatValue;
             }
-            
-            //32. 把tMatchModel收集起来。
-            [resultDic setObject:tMatchModel forKey:refPort.target_p];
         }
     }
     
-    //33. 生成ass_T在proto_T中的rect。
+    //51. 过滤非全含
+    NSArray *resultModels = [SMGUtils filterArr:resultDic.allValues checkValid:^BOOL(AIMatchModel *item) {
+        return item.matchCount < item.assCount;
+    }];
+    
+    //todotomorrow20250506：此处还是否要构建protot？压根没用3分粒度来识别，也没这样的映射，但类比时怎么办？要提前看下。
+    //33. 生成ass_T在proto_T中的rect（用于存抽具象rectDic）。
     for (AIMatchModel *matchModel in resultDic.allValues) {
         matchModel.rect = [AINetUtils convertPartOfFeatureContent2Rect:protoFeature contentIndexes:matchModel.indexDic.allValues];
     }
