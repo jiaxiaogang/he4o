@@ -425,6 +425,10 @@
                     }
                 }
                 //41. 有中断匹配不上的gv，直接计为自举审核失败。
+                //TODO: 这里要注意冷启
+                //1. 即输入和谁都不完全相似时
+                //2. 或现在还没抽象特征时，从具象中竞争出匹配度高的。
+                //3. 卡的太严这里就断了，看下是否改成（全跑完再竞争匹配度，或一条条ref.target跑下一条gv，边跑边竞争末尾淘汰）。
                 if (best || NUMTOOK(best.v1).floatValue < 0.1f) break;
                 
                 //42. 把best的情况记下来，继续下一个gv。
@@ -437,12 +441,14 @@
         }
     }
     
-    //51. 过滤非全含
+    //51. 过滤非全含（冷启时，可能全部不全含）。
     NSArray *resultModels = [SMGUtils filterArr:resultDic.allValues checkValid:^BOOL(AIMatchModel *item) {
-        return item.matchCount < item.assCount;
+        return item.matchCount >= item.assCount;
     }];
     
     //todotomorrow20250506：此处还是否要构建protot？压根没用3分粒度来识别，也没这样的映射，但类比时怎么办？要提前看下。
+    //1. 这里虽然没映射，但每一条bestGV都可以把rect存下来。
+    //2. 需要把resultDic改成model存items把每一个gv的情况全存下来，到step1类比时要用。
     //33. 生成ass_T在proto_T中的rect（用于存抽具象rectDic）。
     for (AIMatchModel *matchModel in resultDic.allValues) {
         matchModel.rect = [AINetUtils convertPartOfFeatureContent2Rect:protoFeature contentIndexes:matchModel.indexDic.allValues];
