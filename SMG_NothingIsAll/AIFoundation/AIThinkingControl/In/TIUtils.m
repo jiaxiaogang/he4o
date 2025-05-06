@@ -441,7 +441,15 @@
         }
     }
     
-    //51. 过滤非全含（冷启时，可能全部不全含）。
+    //43. 处理匹配度，符合度
+    for (AIMatchModel *model in resultDic.allValues) {
+        model.matchValue = model.matchCount > 0 ? model.sumMatchValue / model.matchCount : 0;
+        model.matchDegree = model.matchCount > 0 ? model.sumMatchDegree / model.matchCount : 0;
+        model.matchAssProtoRatio = model.assCount;//此处没有protoT.count，所以健全度直接用assCount也是不影响竞争的。
+    }
+    
+    //51. 过滤非全含。
+    //TODO: 冷启时，可能全部不全。
     NSArray *resultModels = [SMGUtils filterArr:resultDic.allValues checkValid:^BOOL(AIMatchModel *item) {
         return item.matchCount >= item.assCount;
     }];
@@ -449,38 +457,34 @@
     //todotomorrow20250506：此处还是否要构建protot？压根没用3分粒度来识别，也没这样的映射，但类比时怎么办？要提前看下。
     //1. 这里虽然没映射，但每一条bestGV都可以把rect存下来。
     //2. 需要把resultDic改成model存items把每一个gv的情况全存下来，到step1类比时要用。
-    //33. 生成ass_T在proto_T中的rect（用于存抽具象rectDic）。
-    for (AIMatchModel *matchModel in resultDic.allValues) {
-        matchModel.rect = [AINetUtils convertPartOfFeatureContent2Rect:protoFeature contentIndexes:matchModel.indexDic.allValues];
-    }
     
-    //41. 无效过滤器1、matchValue=0排除掉 & 是protoT自身过滤掉。
-    NSArray *resultModels = [SMGUtils filterArr:resultDic.allValues checkValid:^BOOL(AIMatchModel *item) {
-        return item.matchValue > 0 || [item.match_p isEqual:protoFeature_p];
+    //52. 无效过滤器1、matchValue=0排除掉。
+    resultModels = [SMGUtils filterArr:resultModels checkValid:^BOOL(AIMatchModel *item) {
+        return item.matchValue > 0;
     }];
     
-    //46. 末尾淘汰xx%匹配度低的、匹配度强度过滤器 (参考28109-todo2 & 34091-5提升准确)。
+    //53. 末尾淘汰xx%匹配度低的、匹配度强度过滤器 (参考28109-todo2 & 34091-5提升准确)。
     //2025.04.23: 加上健全度：matchAssProtoRatio（参考34165-方案）。
     resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIMatchModel *obj) {
         return obj.matchValue * obj.matchDegree * obj.matchAssProtoRatio;
     }], 0, MIN(MAX(resultModels.count * 0.5f, 10), 20));
     
-    //51. 更新: ref强度 & 相似度 & 抽具象 & 映射 & conPort.rect;
+    //61. 更新: ref强度 & 相似度 & 抽具象 & 映射 & conPort.rect;
     for (AIMatchModel *matchModel in resultModels) {
         AIFeatureNode *assFeature = [SMGUtils searchNode:matchModel.match_p];
         //2025.04.22: 这儿性能不太好，经查现在特征识别不需要组码索引强度做竞争，先关掉。
         //[AINetUtils insertRefPorts_General:assFeature.p content_ps:assFeature.content_ps difStrong:1 header:assFeature.header];
-        [protoFeature updateMatchValue:assFeature matchValue:matchModel.matchValue];
-        [protoFeature updateMatchDegree:assFeature matchDegree:matchModel.matchDegree];
-        [AINetUtils relateGeneralAbs:assFeature absConPorts:assFeature.conPorts conNodes:@[protoFeature] isNew:false difStrong:1];
-        assFeature.step1Model = [MapModel newWithV1:matchModel.indexDic v2:protoFeature_p];
+        //[protoFeature updateMatchValue:assFeature matchValue:matchModel.matchValue];
+        //[protoFeature updateMatchDegree:assFeature matchDegree:matchModel.matchDegree];
+        //[AINetUtils relateGeneralAbs:assFeature absConPorts:assFeature.conPorts conNodes:@[protoFeature] isNew:false difStrong:1];
+        //assFeature.step1Model = [MapModel newWithV1:matchModel.indexDic v2:protoFeature_p];
         //[protoFeature updateIndexDic:assFeature indexDic:matchModel.indexDic];
-        [protoFeature updateDegreeDic:assFeature.pId degreeDic:matchModel.degreeDic];
-        [AINetUtils updateConPortRect:assFeature conT:protoFeature_p rect:matchModel.rect];
+        //[protoFeature updateDegreeDic:assFeature.pId degreeDic:matchModel.degreeDic];
+        //[AINetUtils updateConPortRect:assFeature conT:protoFeature_p rect:matchModel.rect];
         
         //52. debug
-        if (Log4RecogDesc || resultModels.count > 0) NSLog(@"局部特征识别结果:T%ld%@\t 匹配条数:%ld/(proto%ld ass%ld)\t匹配度:%.2f\t符合度:%.1f",
-                                         matchModel.match_p.pointerId,CLEANSTR([assFeature getLogDesc:true]),matchModel.matchCount,protoFeature.count,assFeature.count,matchModel.matchValue,matchModel.matchDegree);
+        if (Log4RecogDesc || resultModels.count > 0) NSLog(@"局部特征识别结果:T%ld%@\t 匹配条数:%ld/ass%ld\t匹配度:%.2f\t符合度:%.1f",
+                                         matchModel.match_p.pointerId,CLEANSTR([assFeature getLogDesc:true]),matchModel.matchCount,assFeature.count,matchModel.matchValue,matchModel.matchDegree);
     }
     return resultModels;
 }
