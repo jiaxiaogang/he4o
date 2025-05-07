@@ -454,10 +454,6 @@
         return item.matchCount >= item.assCount;
     }];
     
-    //todotomorrow20250506：此处还是否要构建protot？压根没用3分粒度来识别，也没这样的映射，但类比时怎么办？要提前看下。
-    //1. 这里虽然没映射，但每一条bestGV都可以把rect存下来。
-    //2. 需要把resultDic改成model存items把每一个gv的情况全存下来，到step1类比时要用。
-    
     //52. 无效过滤器1、matchValue=0排除掉。
     resultModels = [SMGUtils filterArr:resultModels checkValid:^BOOL(AIMatchModel *item) {
         return item.matchValue > 0;

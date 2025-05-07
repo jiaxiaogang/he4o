@@ -219,6 +219,8 @@ static AIThinkingControl *_instance;
         int length = (int)(algsModel.whSize / dotSize) - 2;//最后两格时，向右不足取3格了，所以去掉-2。
         for (NSInteger startX = 0; startX < length; startX++) {
             for (NSInteger startY = 0; startY < length; startY++) {
+                //TODOTOMORROW20250507: 这里支持下防重。
+                
                 //13. 把前面循环已识别过的：结果中已识别到的gv.rect收集起来，如果已包含，则在双for循环中直接continue防重掉（参考35026-防重)。
                 CGRect curRect = CGRectMake(startX * dotSize, startY * dotSize, dotSize * 3, dotSize * 3);
                 //if (rects.contains(curRect)) continue;
@@ -233,6 +235,8 @@ static AIThinkingControl *_instance;
         }
         dotSize /= 1.3f;
     }
+    
+    //TODOTOMORROW20250507: 这里可以异步构建一下三分粒度的protoT，不过不用于识别，只用于以后被识别。
 }
 
 /**

@@ -184,6 +184,9 @@
 		08CEAFAD22B317A800CD1D91 /* NodeCompareModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08CEAFAC22B317A800CD1D91 /* NodeCompareModel.m */; };
 		08D01CA228F70296003688ED /* TVSettingWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D01CA128F70296003688ED /* TVSettingWindow.m */; };
 		08D01CA428F702B0003688ED /* TVSettingWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 08D01CA328F702B0003688ED /* TVSettingWindow.xib */; };
+		08D05C2E2DCAE47B00A967D0 /* AIFeatureStep1Model.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D05C2D2DCAE47B00A967D0 /* AIFeatureStep1Model.m */; };
+		08D05C312DCAEA3900A967D0 /* AIFeatureStep1Item.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D05C302DCAEA3900A967D0 /* AIFeatureStep1Item.m */; };
+		08D05C342DCAEB2D00A967D0 /* AIFeatureStep1Models.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D05C332DCAEB2D00A967D0 /* AIFeatureStep1Models.m */; };
 		08D1926E29E5A98400032AD8 /* AISceneModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D1926D29E5A98400032AD8 /* AISceneModel.m */; };
 		08D322A91EBA28B0009D734A /* Foundation+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D322A81EBA28B0009D734A /* Foundation+Log.m */; };
 		08D471DE1FEB3FFF00C61322 /* AIImvAlgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D471DD1FEB3FFF00C61322 /* AIImvAlgs.m */; };
@@ -593,6 +596,12 @@
 		08D01CA028F70296003688ED /* TVSettingWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TVSettingWindow.h; sourceTree = "<group>"; };
 		08D01CA128F70296003688ED /* TVSettingWindow.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TVSettingWindow.m; sourceTree = "<group>"; };
 		08D01CA328F702B0003688ED /* TVSettingWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TVSettingWindow.xib; sourceTree = "<group>"; };
+		08D05C2C2DCAE47B00A967D0 /* AIFeatureStep1Model.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIFeatureStep1Model.h; sourceTree = "<group>"; };
+		08D05C2D2DCAE47B00A967D0 /* AIFeatureStep1Model.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIFeatureStep1Model.m; sourceTree = "<group>"; };
+		08D05C2F2DCAEA3900A967D0 /* AIFeatureStep1Item.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIFeatureStep1Item.h; sourceTree = "<group>"; };
+		08D05C302DCAEA3900A967D0 /* AIFeatureStep1Item.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIFeatureStep1Item.m; sourceTree = "<group>"; };
+		08D05C322DCAEB2D00A967D0 /* AIFeatureStep1Models.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIFeatureStep1Models.h; sourceTree = "<group>"; };
+		08D05C332DCAEB2D00A967D0 /* AIFeatureStep1Models.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIFeatureStep1Models.m; sourceTree = "<group>"; };
 		08D1926C29E5A98400032AD8 /* AISceneModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AISceneModel.h; sourceTree = "<group>"; };
 		08D1926D29E5A98400032AD8 /* AISceneModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AISceneModel.m; sourceTree = "<group>"; };
 		08D322A71EBA2783009D734A /* SMGPrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SMGPrefixHeader.pch; sourceTree = "<group>"; };
@@ -1464,6 +1473,12 @@
 				087418D12DA893D80019908C /* AIFeatureStep2Model.m */,
 				087418DD2DA8A42D0019908C /* AIFeatureStep2Item_Rect.h */,
 				087418DC2DA8A42D0019908C /* AIFeatureStep2Item_Rect.m */,
+				08D05C322DCAEB2D00A967D0 /* AIFeatureStep1Models.h */,
+				08D05C332DCAEB2D00A967D0 /* AIFeatureStep1Models.m */,
+				08D05C2C2DCAE47B00A967D0 /* AIFeatureStep1Model.h */,
+				08D05C2D2DCAE47B00A967D0 /* AIFeatureStep1Model.m */,
+				08D05C2F2DCAEA3900A967D0 /* AIFeatureStep1Item.h */,
+				08D05C302DCAEA3900A967D0 /* AIFeatureStep1Item.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -2104,6 +2119,7 @@
 				88B23BE620BE20BC00BE8AF6 /* AIAbsFoManager.m in Sources */,
 				08FBE10E22D56F360088EF1A /* NVModuleUtil.m in Sources */,
 				083981F92A19E9D400F61263 /* MathUtils.m in Sources */,
+				08D05C342DCAEB2D00A967D0 /* AIFeatureStep1Models.m in Sources */,
 				0827DAD324198EAC00A025D4 /* HeLogModel.m in Sources */,
 				081002152A6BAC5600BE9D8A /* TCResult.m in Sources */,
 				08A5D5D822AF1E3400E56BB4 /* NVView.m in Sources */,
@@ -2172,6 +2188,7 @@
 				087C818A2792DD400046DF9E /* AIMatchAlgModel.m in Sources */,
 				08F3E9312241B6E800545795 /* AIAnalogy.m in Sources */,
 				087268E0219CF3B500B5490F /* AIVisionAlgs.m in Sources */,
+				08D05C312DCAEA3900A967D0 /* AIFeatureStep1Item.m in Sources */,
 				08F27D7229ED92660063E71B /* TCScene.m in Sources */,
 				08F738051F7C714F005EAD56 /* AIKVPointer.m in Sources */,
 				082A904E27F5E04D003D15BE /* RLTrainer.m in Sources */,
@@ -2221,6 +2238,7 @@
 				0886889E26479A7F00B7C75D /* AINoRepeatRun.m in Sources */,
 				08AF454A1E97D0B500377887 /* main.m in Sources */,
 				08B180D327F495340069F11E /* TVTimeLine.m in Sources */,
+				08D05C2E2DCAE47B00A967D0 /* AIFeatureStep1Model.m in Sources */,
 				0872E1682779EF7C0067C97D /* TIUtils.m in Sources */,
 				085BA9F4241C421500829450 /* HeLogUtil.m in Sources */,
 				88988524208979E6001D1ADC /* AINetIndex.m in Sources */,
