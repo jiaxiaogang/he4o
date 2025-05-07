@@ -331,7 +331,8 @@
     return resultModels;
 }
 
-+(AIFeatureStep1Models*) recognitionFeature_Step1_V2:(NSDictionary*)gvIndex at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut protoRect:(CGRect)protoRect protoColorDic:(NSDictionary*)protoColorDic {
++(void) recognitionFeature_Step1_V2:(NSDictionary*)gvIndex at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut protoRect:(CGRect)protoRect protoColorDic:(NSDictionary*)protoColorDic decoratorStep1Model:(AIFeatureStep1Models*)decoratorStep1Model {
+    AIFeatureStep1Models *resultModel = decoratorStep1Model;
     //1. 单码排序。
     NSArray *sortDS = [gvIndex.allKeys sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
         return [XGRedisUtil compareStrA:obj1 strB:obj2];
@@ -351,7 +352,6 @@
     }];
     
     //11. 对所有gv识别结果的，所有refPorts，依次判断位置符合度。
-    AIFeatureStep1Models *resultModel = [AIFeatureStep1Models new:protoColorDic.hash];
     for (AIMatchModel *gModel in gMatchModels) {
         NSArray *refPorts = [AINetUtils refPorts_All:gModel.match_p];
         

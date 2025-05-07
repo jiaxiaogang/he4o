@@ -211,6 +211,7 @@ static AIThinkingControl *_instance;
     
     //2. 对未切粒度的color字典进行自适应粒度并识别。
     NSMutableArray *aleardayRects = [NSMutableArray new];
+    AIFeatureStep1Models *step1Model = [AIFeatureStep1Models new:algsModel.bColors.hash];
     
     //11. 最粗粒度为size/3切，下一个为size/1.3切（参考35026-1）。
     CGFloat dotSize = algsModel.whSize / 3.0f;
@@ -219,9 +220,8 @@ static AIThinkingControl *_instance;
         int length = (int)(algsModel.whSize / dotSize) - 2;//最后两格时，向右不足取3格了，所以去掉-2。
         for (NSInteger startX = 0; startX < length; startX++) {
             for (NSInteger startY = 0; startY < length; startY++) {
-                //TODOTOMORROW20250507: 这里支持下防重。
-                
                 //13. 把前面循环已识别过的：结果中已识别到的gv.rect收集起来，如果已包含，则在双for循环中直接continue防重掉（参考35026-防重)。
+                //2025.05.07: 此处先仅根据assT防重，以后再考虑根据已收集的rect来防重（目前是通过step1Model在局部特征识别算法中实现防重的）。
                 CGRect curRect = CGRectMake(startX * dotSize, startY * dotSize, dotSize * 3, dotSize * 3);
                 //if (rects.contains(curRect)) continue;
                 
@@ -229,12 +229,19 @@ static AIThinkingControl *_instance;
                 NSArray *subDots = [ThinkingUtils getSubDots:algsModel.bColors gvRect:CGRectMake(startX * dotSize, startY * dotSize, dotSize * 3, dotSize * 3)];
                 NSDictionary *gvIndex = [AINetGroupValueIndex convertGVIndexData:subDots ds:@"bColors"];
                 
-                //识别特征。
-                [TIUtils recognitionFeature_Step1_V2:gvIndex at:algsType ds:@"bColors" isOut:false protoRect:curRect protoColorDic:algsModel.bColors];
+                //21. 局部识别特征：通过组码识别。
+                [TIUtils recognitionFeature_Step1_V2:gvIndex at:algsType ds:@"bColors" isOut:false protoRect:curRect protoColorDic:algsModel.bColors decoratorStep1Model:step1Model];
             }
         }
         dotSize /= 1.3f;
     }
+    
+    //31. 整体识别特征：通过抽象局部特征做整体特征识别，把step1的结果传给step2继续向似层识别（参考34135-TODO5）。
+    NSArray *step2Model = [TIUtils recognitionFeature_Step2_V2:step1Model];
+    
+    //TODOTOMORROW20250507: 这里先直接调用下类比，先测试下识别结果的类比。
+    
+    
     
     //TODOTOMORROW20250507: 这里可以异步构建一下三分粒度的protoT，不过不用于识别，只用于以后被识别。
 }
