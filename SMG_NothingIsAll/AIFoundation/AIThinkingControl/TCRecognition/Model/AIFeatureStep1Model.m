@@ -33,4 +33,11 @@
     self.matchAssProtoRatio = self.assT.count;
 }
 
+-(void) run4AssTAtProtoTRect {
+    self.assTAtProtoTRect = CGRectNull;
+    for (AIFeatureStep1Item *item in self.bestGVs) {
+        self.assTAtProtoTRect = CGRectUnion(self.assTAtProtoTRect, item.bestGVAtProtoTRect);
+    }
+}
+
 @end

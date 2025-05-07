@@ -468,7 +468,7 @@
         //[protoFeature updateMatchValue:assFeature matchValue:matchModel.matchValue];
         //[protoFeature updateMatchDegree:assFeature matchDegree:matchModel.matchDegree];
         //[AINetUtils relateGeneralAbs:assFeature absConPorts:assFeature.conPorts conNodes:@[protoFeature] isNew:false difStrong:1];
-        //assFeature.step1Model = [MapModel newWithV1:matchModel.indexDic v2:protoFeature_p];
+        model.assT.step1ModelV2 = model;
         //[protoFeature updateIndexDic:assFeature indexDic:matchModel.indexDic];
         //[protoFeature updateDegreeDic:assFeature.pId degreeDic:matchModel.degreeDic];
         //[AINetUtils updateConPortRect:assFeature conT:protoFeature_p rect:matchModel.rect];
@@ -565,6 +565,119 @@
         //[AINetUtils insertRefPorts_General:assFeature.p content_ps:assFeature.content_ps difStrong:1 header:assFeature.header];
         [protoFeature updateMatchValue:assFeature matchValue:matchModel.modelMatchValue];
         [protoFeature updateMatchDegree:assFeature matchDegree:matchModel.modelMatchDegree];
+        
+        //42. 存下来step2Model用于类比时用一下（参考34139-TODO3）。
+        assFeature.step2Model = matchModel;
+        
+        //43. debug
+        if (Log4RecogDesc || resultModels.count > 0) NSLog(@"整体特征识别结果:T%ld%@\t（局部特征数:%ld assGV数:%ld protoGV数:%ld）\t匹配度:%.2f\t符合度:%.1f\t显著度:%.2f",
+                                                           matchModel.conT.pointerId,CLEANSTR([assFeature getLogDesc:true]),
+                                                           matchModel.rectItems.count,assFeature.count,protoFeature.count,
+                                                           matchModel.modelMatchValue,matchModel.modelMatchDegree,matchModel.modelMatchConStrongRatio);
+        
+        //44. 综合求rect: 方案1-通过absT找出综合indexDic然后精确计算出rect，方案2-通过rectItems的每个rect来估算，方案3-这种整体对整体特征没必要存rect，也没必要存抽具象关联。
+        //> 抉择：暂选定方案3，因为看了下代码，确实也用不着，像类比analogyFeatureStep2()算法，都是通过step2Model来的。
+        //[AINetUtils relateGeneralAbs:assFeature absConPorts:assFeature.conPorts conNodes:@[protoFeature] isNew:false difStrong:1];
+        //[AINetUtils updateConPortRect:assFeature conT:protoFeature_p rect:matchModel.rectItems];
+        
+        //45. 整体特征识别结果可视化（参考34176）。
+        //[SMGUtils runByMainQueue:^{
+        //    [theApp.imgTrainerView setDataForFeature:assFeature lab:STRFORMAT(@"整体特征识别T%ld",assFeature.pId)];
+        //}];
+    }
+    
+    //51. 转成AIMatchModel格式返回（识别后就用match_p,matchCount,matchValue这三个值）。
+    return [SMGUtils convertArr:resultModels convertBlock:^id(AIFeatureStep2Model *obj) {
+        AIMatchModel *model = [[AIMatchModel alloc] initWithMatch_p:obj.conT];
+        model.matchCount = obj.rectItems.count;
+        model.matchValue = obj.modelMatchValue;
+        return model;
+    }];
+}
+
+/**
+ *  MARK:--------------------特征识别--------------------
+ *  @desc Step2 尽可能照顾特征的整体性，通过交层向下找似层结果（参考34135-TODO2）。
+ *  @version
+ *      2025.05.07: v2-支持自适应粒度。
+ */
++(NSArray*) recognitionFeature_Step2_V2:(AIFeatureStep1Models*)step1Model {
+    //1. 数据准备
+    AIFeatureStep2Models *step2Model = [AIFeatureStep2Models new];
+    AIKVPointer *protoFeature_p = [SMGUtils createPointerForFeature:@"tempAT" dataSource:@"tempDS" isOut:false];
+    
+    //11. 收集：每个absT分别向整体取conPorts。
+    for (AIFeatureStep1Model *model in step1Model.models) {
+        AIFeatureNode *absT = model.assT;
+        NSArray *conPorts = [AINetUtils conPorts_All:absT];
+        
+        //12. 将每个conPort先收集到step2Model。
+        for (AIPort *conPort in conPorts) {
+            
+            //13. 只要似层结果（参考34135-TODO6）。
+            if (conPort.target_p.isJiao) continue;
+            
+            //14. 收集原始item数据（参考34136）。
+            [step2Model updateItem:conPort.target_p absT:absT.p absAtConRect:conPort.rect];
+        }
+        
+        //16. protoFeature单独收集（step1结束时才会存rectDic中，此时还在matchModel.rect中）。
+        [step2Model updateItem:protoFeature_p absT:absT.p absAtConRect:model.assTAtProtoTRect];
+    }
+    
+    //21. 计算：位置符合度: 根据每个整体特征与局部特征的rect来计算。
+    [step2Model run4MatchDegree:protoFeature_p];
+    
+    //22. 计算：每个assT和protoT的综合匹配度。
+    [step2Model run4MatchValue:protoFeature_p];
+    
+    //23. 计算：每个model的显著度。
+    for (AIFeatureStep2Model *model in step2Model.models) {
+        AIFeatureNode *assT = [SMGUtils searchNode:model.conT];
+        NSArray *absPorts = [AINetUtils absPorts_All:assT];
+        NSInteger allStrong = 0, validStrong = 0;
+        
+        //24. 显著度公式（参考34175-公式3）。
+        for (AIPort *absPort in absPorts) {
+            allStrong += absPort.strong.value;
+            if ([SMGUtils filterSingleFromArr:step1Model.models checkValid:^BOOL(AIFeatureStep1Model *itemAbsT) {
+                return [itemAbsT.assT.p isEqual:absPort.target_p];
+            }]) {
+                validStrong += absPort.strong.value;
+            }
+        }
+        model.modelMatchConStrongRatio = allStrong > 0 ? validStrong / (float)allStrong : 0;
+    }
+    
+    //31. 无效过滤器1、位置符合度=0排除掉。
+    NSArray *resultModels = [SMGUtils filterArr:step2Model.models checkValid:^BOOL(AIFeatureStep2Model *item) {
+        return item.modelMatchDegree > 0 && item.modelMatchValue > 0;
+    }];
+    
+    //32. 末尾淘汰过滤器：根据位置符合度末尾淘汰（参考34135-TODO4）。
+    //2025.04.26: 加上显著度：matchConStrongRatio（参考34175-方案3）。
+    resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIFeatureStep2Model *obj) {
+        return obj.modelMatchDegree * obj.modelMatchValue * obj.modelMatchConStrongRatio;
+    }], 0, resultModels.count * 0.5);
+    
+    //33. 防重过滤器2、此处每个特征的不同层级，可能识别到同一个特征，可以按匹配度防下重。
+    resultModels = [SMGUtils removeRepeat:resultModels convertBlock:^id(AIFeatureStep2Model *obj) {
+        return obj.conT;
+    }];
+    
+    //34. 末尾淘汰20%被引用强度最低的。
+    //TODO: 应该可以去掉了，因为显著度已经做为竞争因子了，此处不再有什么意义（随后测下明确没用就删掉）。
+    resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIFeatureStep2Model *obj) {
+        return obj.rectItems.count;
+    }], 0, MAX(resultModels.count * 0.9f, 10));
+    
+    //41. 更新: ref强度 & 相似度 & 抽具象 & 映射;
+    for (AIFeatureStep2Model *matchModel in resultModels) {
+        AIFeatureNode *assFeature = [SMGUtils searchNode:matchModel.conT];
+        //2025.04.22: 这儿性能不太好，经查现在特征识别不需要组码索引强度做竞争，先关掉。
+        //[AINetUtils insertRefPorts_General:assFeature.p content_ps:assFeature.content_ps difStrong:1 header:assFeature.header];
+        //[protoFeature updateMatchValue:assFeature matchValue:matchModel.modelMatchValue];
+        //[protoFeature updateMatchDegree:assFeature matchDegree:matchModel.modelMatchDegree];
         
         //42. 存下来step2Model用于类比时用一下（参考34139-TODO3）。
         assFeature.step2Model = matchModel;

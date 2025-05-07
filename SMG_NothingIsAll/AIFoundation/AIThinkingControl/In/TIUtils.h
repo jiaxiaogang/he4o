@@ -15,6 +15,7 @@
 //MARK:                     < 特征识别 >
 //MARK:===============================================================
 +(AIFeatureStep1Models*) recognitionFeature_Step1_V2:(NSDictionary*)gvIndex at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut protoRect:(CGRect)protoRect protoColorDic:(NSDictionary*)protoColorDic;
++(NSArray*) recognitionFeature_Step2_V2:(AIFeatureStep1Models*)step1Model;
 
 //MARK:===============================================================
 //MARK:                     < 概念识别 >
