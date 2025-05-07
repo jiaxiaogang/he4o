@@ -8,12 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
+@class AIFeatureStep1Models;
 @interface TIUtils : NSObject
 
 //MARK:===============================================================
 //MARK:                     < 特征识别 >
 //MARK:===============================================================
-+(NSArray*) recognitionFeature_Step1_V2:(NSDictionary*)gvIndex at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut protoRect:(CGRect)protoRect protoColorDic:(NSDictionary*)protoColorDic;
++(AIFeatureStep1Models*) recognitionFeature_Step1_V2:(NSDictionary*)gvIndex at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut protoRect:(CGRect)protoRect protoColorDic:(NSDictionary*)protoColorDic;
 
 //MARK:===============================================================
 //MARK:                     < 概念识别 >

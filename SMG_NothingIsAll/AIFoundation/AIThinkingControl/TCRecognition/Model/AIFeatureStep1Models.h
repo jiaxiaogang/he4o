@@ -17,6 +17,8 @@
  */
 @interface AIFeatureStep1Models : NSObject
 
++(id) new:(NSInteger)hash;
+
 //protoT.protoImgColorDic的hash编号
 @property (assign, nonatomic) NSInteger protoTHash;
 

@@ -10,9 +10,9 @@
 
 @implementation AIFeatureStep1Item
 
-+(id) new:(CGRect)assTAtProtoTRect matchValue:(CGFloat)matchValue matchDegree:(CGFloat)matchDegree {
++(id) new:(CGRect)bestGVAtProtoTRect matchValue:(CGFloat)matchValue matchDegree:(CGFloat)matchDegree {
     AIFeatureStep1Item *result = [AIFeatureStep1Item new];
-    result.assTAtProtoTRect = assTAtProtoTRect;
+    result.bestGVAtProtoTRect = bestGVAtProtoTRect;
     result.matchValue = matchValue;
     result.matchDegree = matchDegree;
     return result;

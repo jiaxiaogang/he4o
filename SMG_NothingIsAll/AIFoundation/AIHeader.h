@@ -66,6 +66,9 @@
 #import "AIFeatureStep2Item_Rect.h"
 #import "AIFeatureStep2Model.h"
 #import "AIFeatureStep2Models.h"
+#import "AIFeatureStep1Item.h"
+#import "AIFeatureStep1Model.h"
+#import "AIFeatureStep1Models.h"
 
 //短时记忆
 #import "TOAlgModel.h"

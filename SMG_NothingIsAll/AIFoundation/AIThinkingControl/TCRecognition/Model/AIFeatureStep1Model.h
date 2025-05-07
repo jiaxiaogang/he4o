@@ -13,11 +13,22 @@
  */
 @interface AIFeatureStep1Model : NSObject
 
++(id) new:(AIFeatureNode*)assT;
+
 //refPort.target。
-@property (strong, nonatomic) AIKVPointer *assT_p;
+@property (strong, nonatomic) AIFeatureNode *assT;
 //每个assT在proto中的rect（用于整体特征识别）。
 @property (assign, nonatomic) CGRect assTAtProtoTRect;
 //每条最佳gv的数据：List<AIFeatureStep1Item>
 @property (strong, nonatomic) NSMutableArray *bestGVs;
+
+//用bestGVs每一条gv求平均得出匹配度。
+@property (assign, nonatomic) CGFloat matchValue;
+//用bestGVs每一条gv求平均得出符合度。
+@property (assign, nonatomic) CGFloat matchDegree;
+//用bestGVs每一条gv求平均得出健全度。
+@property (assign, nonatomic) CGFloat matchAssProtoRatio;
+
+-(void) run4MatchValueAndMatchDegreeAndMatchAssProtoRatio;
 
 @end

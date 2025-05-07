@@ -10,4 +10,15 @@
 
 @implementation AIFeatureStep1Models
 
++(id) new:(NSInteger)hash {
+    AIFeatureStep1Models *result = [AIFeatureStep1Models new];
+    result.protoTHash = hash;
+    return result;
+}
+
+-(NSMutableArray *)models {
+    if (!_models) _models = [NSMutableArray new];
+    return _models;
+}
+
 @end

@@ -331,7 +331,7 @@
     return resultModels;
 }
 
-+(NSArray*) recognitionFeature_Step1_V2:(NSDictionary*)gvIndex at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut protoRect:(CGRect)protoRect protoColorDic:(NSDictionary*)protoColorDic {
++(AIFeatureStep1Models*) recognitionFeature_Step1_V2:(NSDictionary*)gvIndex at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut protoRect:(CGRect)protoRect protoColorDic:(NSDictionary*)protoColorDic {
     //1. 单码排序。
     NSArray *sortDS = [gvIndex.allKeys sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
         return [XGRedisUtil compareStrA:obj1 strB:obj2];
@@ -351,13 +351,15 @@
     }];
     
     //11. 对所有gv识别结果的，所有refPorts，依次判断位置符合度。
-    NSMutableDictionary *resultDic = [NSMutableDictionary new];
+    AIFeatureStep1Models *resultModel = [AIFeatureStep1Models new:protoColorDic.hash];
     for (AIMatchModel *gModel in gMatchModels) {
         NSArray *refPorts = [AINetUtils refPorts_All:gModel.match_p];
         
         //12. 每个refPort自举，到proto对应下相关区域的匹配度符合度等;
         for (AIPort *refPort in refPorts) {
-            if ([resultDic objectForKey:refPort.target_p]) continue;
+            if ([SMGUtils filterSingleFromArr:resultModel.models checkValid:^BOOL(AIFeatureStep1Model *item) {
+                return [item.assT.p isEqual:refPort.target_p];
+            }]) continue;
             AIFeatureNode *assT = [SMGUtils searchNode:refPort.target_p];
             NSInteger indexOf = [assT.content_ps indexOfObject:gModel.match_p];
             NSValue *lastAtAssRectValue = ARR_INDEX(assT.rects, indexOf);
@@ -365,12 +367,9 @@
             CGRect lastProtoRect = protoRect;
             
             //13. 把tMatchModel收集起来。
-            AIMatchModel *tMatchModel = [[AIMatchModel alloc] initWithMatch_p:refPort.target_p];
-            tMatchModel.matchCount = 1;
-            tMatchModel.sumMatchValue += gModel.matchValue;
-            tMatchModel.sumMatchDegree = 1;
-            tMatchModel.assCount = assT.count;
-            [resultDic setObject:tMatchModel forKey:refPort.target_p];
+            AIFeatureStep1Model *model = [AIFeatureStep1Model new:assT];
+            [model.bestGVs addObject:[AIFeatureStep1Item new:protoRect matchValue:gModel.matchValue matchDegree:1]];
+            [resultModel.models addObject:model];
             
             //21. 自举：每个assT一条条自举自身的gv。
             for (NSInteger i = 1; i < assT.count; i++) {
@@ -434,40 +433,36 @@
                 //42. 把best的情况记下来，继续下一个gv。
                 lastProtoRect = VALTOOK(best.v2).CGRectValue;
                 lastAtAssRect = curAtAssRect;
-                tMatchModel.matchCount++;
-                tMatchModel.sumMatchValue += NUMTOOK(best.v1).floatValue;
-                tMatchModel.sumMatchDegree += NUMTOOK(best.v3).floatValue;
+                //TODO: 此处看下，用不用把收集bestGVs的顺序调整成与assT的顺序一致？或输出映射？
+                [model.bestGVs addObject:[AIFeatureStep1Item new:lastProtoRect matchValue:NUMTOOK(best.v1).floatValue matchDegree:NUMTOOK(best.v3).floatValue]];
             }
         }
     }
     
     //43. 处理匹配度，符合度
-    for (AIMatchModel *model in resultDic.allValues) {
-        model.matchValue = model.matchCount > 0 ? model.sumMatchValue / model.matchCount : 0;
-        model.matchDegree = model.matchCount > 0 ? model.sumMatchDegree / model.matchCount : 0;
-        model.matchAssProtoRatio = model.assCount;//此处没有protoT.count，所以健全度直接用assCount也是不影响竞争的。
+    for (AIFeatureStep1Model *model in resultModel.models) {
+        [model run4MatchValueAndMatchDegreeAndMatchAssProtoRatio];
     }
     
     //51. 过滤非全含。
     //TODO: 冷启时，可能全部不全。
-    NSArray *resultModels = [SMGUtils filterArr:resultDic.allValues checkValid:^BOOL(AIMatchModel *item) {
-        return item.matchCount >= item.assCount;
+    resultModel.models = [SMGUtils filterArr:resultModel.models checkValid:^BOOL(AIFeatureStep1Model *model) {
+        return model.bestGVs.count >= model.assT.count;
     }];
     
     //52. 无效过滤器1、matchValue=0排除掉。
-    resultModels = [SMGUtils filterArr:resultModels checkValid:^BOOL(AIMatchModel *item) {
-        return item.matchValue > 0;
+    resultModel.models = [SMGUtils filterArr:resultModel.models checkValid:^BOOL(AIFeatureStep1Model *model) {
+        return model.matchValue > 0;
     }];
     
     //53. 末尾淘汰xx%匹配度低的、匹配度强度过滤器 (参考28109-todo2 & 34091-5提升准确)。
     //2025.04.23: 加上健全度：matchAssProtoRatio（参考34165-方案）。
-    resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIMatchModel *obj) {
+    resultModel.models = [[NSMutableArray alloc] initWithArray:ARR_SUB([SMGUtils sortBig2Small:resultModel.models compareBlock:^double(AIFeatureStep1Model *obj) {
         return obj.matchValue * obj.matchDegree * obj.matchAssProtoRatio;
-    }], 0, MIN(MAX(resultModels.count * 0.5f, 10), 20));
+    }], 0, MIN(MAX(resultModel.models.count * 0.5f, 10), 20))];
     
     //61. 更新: ref强度 & 相似度 & 抽具象 & 映射 & conPort.rect;
-    for (AIMatchModel *matchModel in resultModels) {
-        AIFeatureNode *assFeature = [SMGUtils searchNode:matchModel.match_p];
+    for (AIFeatureStep1Model *model in resultModel.models) {
         //2025.04.22: 这儿性能不太好，经查现在特征识别不需要组码索引强度做竞争，先关掉。
         //[AINetUtils insertRefPorts_General:assFeature.p content_ps:assFeature.content_ps difStrong:1 header:assFeature.header];
         //[protoFeature updateMatchValue:assFeature matchValue:matchModel.matchValue];
@@ -479,10 +474,10 @@
         //[AINetUtils updateConPortRect:assFeature conT:protoFeature_p rect:matchModel.rect];
         
         //52. debug
-        if (Log4RecogDesc || resultModels.count > 0) NSLog(@"局部特征识别结果:T%ld%@\t 匹配条数:%ld/ass%ld\t匹配度:%.2f\t符合度:%.1f",
-                                         matchModel.match_p.pointerId,CLEANSTR([assFeature getLogDesc:true]),matchModel.matchCount,assFeature.count,matchModel.matchValue,matchModel.matchDegree);
+        if (Log4RecogDesc || resultModel.models.count > 0) NSLog(@"局部特征识别结果:T%ld%@\t 匹配条数:%ld/ass%ld\t匹配度:%.2f\t符合度:%.1f",
+                                         model.assT.pId,CLEANSTR([model.assT getLogDesc:true]),model.bestGVs.count,model.assT.count,model.matchValue,model.matchDegree);
     }
-    return resultModels;
+    return resultModel;
 }
 
 /**
