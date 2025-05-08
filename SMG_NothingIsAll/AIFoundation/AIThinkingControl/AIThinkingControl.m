@@ -229,21 +229,25 @@ static AIThinkingControl *_instance;
                 NSDictionary *gvIndex = [AINetGroupValueIndex convertGVIndexData:subDots ds:ds];
                 
                 //21. 局部识别特征：通过组码识别。
-                [TIUtils recognitionFeature_Step1_V2:gvIndex at:at ds:ds isOut:false protoRect:curRect protoColorDic:colorDic decoratorStep1Model:step1Model];
+                [TIUtils recognitionFeature_JvBu_V2_Step1:gvIndex at:at ds:ds isOut:false protoRect:curRect protoColorDic:colorDic decoratorStep1Model:step1Model];
             }
         }
+        //22. 下一层粒度（再/1.3倍）。
         dotSize /= 1.3f;
     }
     
+    //23. 局部特征过滤和竞争部分。
+    [TIUtils recognitionFeature_JvBu_V2_Step2:step1Model];
+    
     //31. 整体识别特征：通过抽象局部特征做整体特征识别，把step1的结果传给step2继续向似层识别（参考34135-TODO5）。
-    NSArray *step2Model = [TIUtils recognitionFeature_Step2_V2:step1Model];
+    NSArray *step2Model = [TIUtils recognitionFeature_ZenTi_V2:step1Model];
     
     //40. 这里先直接调用下类比，先测试下识别结果的类比。
     //TODO: 2025.04.19: 必须是当前protoT识别时的step2Model才行，如果是往期step2Model不能用，会导致类比找protoT对应不上，导致取rect为Null的BUG（现在把step1Model和step2Model直接传过去的话，这个对应不上的问题应该不存在）。
     //41. 局部冷启 或 整体识别：分别进行类比（依据不同）（参考34139-TODO1）。
     //42. 特征识别step1识别到的结果，复用step1Model进行类比。
     for (AIFeatureStep1Model *model in step1Model.models) {
-        [AIAnalogy analogyFeatureStep1_V2:model];
+        [AIAnalogy analogyFeature_JvBu_V2:model];
         //用于类比的数据用完就删，避免太占空间（参考34137-TODO2）。
         model.assT.step1ModelV2 = nil;
     }
@@ -251,7 +255,7 @@ static AIThinkingControl *_instance;
     //43. 取共同absT，借助absT进行类比（参考34139-TODO1）。
     for (AIMatchModel *model in step2Model) {
         AIFeatureNode *assT = (AIFeatureNode*)model.matchNode;
-        [AIAnalogy analogyFeatureStep2_V2:assT step2Model:assT.step2Model];
+        [AIAnalogy analogyFeature_ZenTi_V2:assT step2Model:assT.step2Model];
         //借助absT来类比时，复用step2的识别结果model数据，并且用完就清空，防止循环野指针（参考34139-TODO3）。
         assT.step2Model = nil;
     }

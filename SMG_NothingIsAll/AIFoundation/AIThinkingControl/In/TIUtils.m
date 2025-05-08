@@ -172,7 +172,7 @@
  *  MARK:--------------------特征识别--------------------
  *  @desc 识别抽象的局部特征：通过组码向refPorts找特征结果（起初似层结果较多，但后期随着抽象，会慢慢变成结果中几乎都是交层）。
  */
-+(NSArray*) recognitionFeature_Step1:(AIKVPointer*)protoFeature_p {
++(NSArray*) recognitionFeature_JvBu:(AIKVPointer*)protoFeature_p {
     //1. 数据准备
     if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"1");
     AIFeatureNode *protoFeature = [SMGUtils searchNode:protoFeature_p];
@@ -331,7 +331,7 @@
     return resultModels;
 }
 
-+(void) recognitionFeature_Step1_V2:(NSDictionary*)gvIndex at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut protoRect:(CGRect)protoRect protoColorDic:(NSDictionary*)protoColorDic decoratorStep1Model:(AIFeatureStep1Models*)decoratorStep1Model {
++(void) recognitionFeature_JvBu_V2_Step1:(NSDictionary*)gvIndex at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut protoRect:(CGRect)protoRect protoColorDic:(NSDictionary*)protoColorDic decoratorStep1Model:(AIFeatureStep1Models*)decoratorStep1Model {
     AIFeatureStep1Models *resultModel = decoratorStep1Model;
     //1. 单码排序。
     NSArray *sortDS = [gvIndex.allKeys sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
@@ -381,9 +381,9 @@
                 
                 //22. 根据比例估算下一条protoGV的取值范围。
                 CGRect defaultCurProtoRect = CGRectMake(curAtAssRect.origin.x * lastProtoRect.origin.x / lastAtAssRect.origin.x,
-                                                 curAtAssRect.origin.y * lastProtoRect.origin.y / lastAtAssRect.origin.y,
-                                                 curAtAssRect.size.width * lastProtoRect.size.width / lastAtAssRect.size.width,
-                                                 curAtAssRect.size.height * lastProtoRect.size.height / lastAtAssRect.size.height);
+                                                        curAtAssRect.origin.y * lastProtoRect.origin.y / lastAtAssRect.origin.y,
+                                                        curAtAssRect.size.width * lastProtoRect.size.width / lastAtAssRect.size.width,
+                                                        curAtAssRect.size.height * lastProtoRect.size.height / lastAtAssRect.size.height);
                 
                 //23. 找出锚点。
                 CGFloat anchorX = (CGRectGetMidX(lastProtoRect) + CGRectGetMidX(defaultCurProtoRect)) / 2;
@@ -439,7 +439,9 @@
             }
         }
     }
-    
+}
+
++(void) recognitionFeature_JvBu_V2_Step2:(AIFeatureStep1Models*)resultModel {
     //43. 处理匹配度，符合度
     for (AIFeatureStep1Model *model in resultModel.models) {
         [model run4MatchValueAndMatchDegreeAndMatchAssProtoRatio];
@@ -477,6 +479,9 @@
         //52. debug
         if (Log4RecogDesc || resultModel.models.count > 0) NSLog(@"局部特征识别结果:T%ld%@\t 匹配条数:%ld/ass%ld\t匹配度:%.2f\t符合度:%.1f",
                                          model.assT.pId,CLEANSTR([model.assT getLogDesc:true]),model.bestGVs.count,model.assT.count,model.matchValue,model.matchDegree);
+        [SMGUtils runByMainQueue:^{
+            [theApp.imgTrainerView setDataForFeature:model.assT lab:STRFORMAT(@"局部T%ld",model.assT.pId)];
+        }];
     }
 }
 
@@ -484,7 +489,7 @@
  *  MARK:--------------------特征识别--------------------
  *  @desc Step2 尽可能照顾特征的整体性，通过交层向下找似层结果（参考34135-TODO2）。
  */
-+(NSArray*) recognitionFeature_Step2:(AIKVPointer*)protoFeature_p matchModels:(NSArray*)matchModels {
++(NSArray*) recognitionFeature_ZenTi:(AIKVPointer*)protoFeature_p matchModels:(NSArray*)matchModels {
     //1. 数据准备
     AIFeatureNode *protoFeature = [SMGUtils searchNode:protoFeature_p];
     AIFeatureStep2Models *step2Model = [AIFeatureStep2Models new];
@@ -576,7 +581,7 @@
                                                            matchModel.modelMatchValue,matchModel.modelMatchDegree,matchModel.modelMatchConStrongRatio);
         
         //44. 综合求rect: 方案1-通过absT找出综合indexDic然后精确计算出rect，方案2-通过rectItems的每个rect来估算，方案3-这种整体对整体特征没必要存rect，也没必要存抽具象关联。
-        //> 抉择：暂选定方案3，因为看了下代码，确实也用不着，像类比analogyFeatureStep2()算法，都是通过step2Model来的。
+        //> 抉择：暂选定方案3，因为看了下代码，确实也用不着，像类比analogyFeature_ZenTi()算法，都是通过step2Model来的。
         //[AINetUtils relateGeneralAbs:assFeature absConPorts:assFeature.conPorts conNodes:@[protoFeature] isNew:false difStrong:1];
         //[AINetUtils updateConPortRect:assFeature conT:protoFeature_p rect:matchModel.rectItems];
         
@@ -601,7 +606,7 @@
  *  @version
  *      2025.05.07: v2-支持自适应粒度。
  */
-+(NSArray*) recognitionFeature_Step2_V2:(AIFeatureStep1Models*)step1Model {
++(NSArray*) recognitionFeature_ZenTi_V2:(AIFeatureStep1Models*)step1Model {
     //1. 数据准备
     AIFeatureStep2Models *step2Model = [AIFeatureStep2Models new];
     AIKVPointer *protoFeature_p = [SMGUtils createPointerForFeature:@"tempAT" dataSource:@"tempDS" isOut:false];
@@ -689,7 +694,7 @@
                                                            matchModel.modelMatchValue,matchModel.modelMatchDegree,matchModel.modelMatchConStrongRatio);
         
         //44. 综合求rect: 方案1-通过absT找出综合indexDic然后精确计算出rect，方案2-通过rectItems的每个rect来估算，方案3-这种整体对整体特征没必要存rect，也没必要存抽具象关联。
-        //> 抉择：暂选定方案3，因为看了下代码，确实也用不着，像类比analogyFeatureStep2()算法，都是通过step2Model来的。
+        //> 抉择：暂选定方案3，因为看了下代码，确实也用不着，像类比analogyFeature_ZenTi()算法，都是通过step2Model来的。
         //[AINetUtils relateGeneralAbs:assFeature absConPorts:assFeature.conPorts conNodes:@[protoFeature] isNew:false difStrong:1];
         //[AINetUtils updateConPortRect:assFeature conT:protoFeature_p rect:matchModel.rectItems];
         
@@ -798,9 +803,9 @@
         } else {
             subMatchModels = [AIRecognitionCache getCache:item_p cacheBlock:^id{
                 //a. 通过组码做局部特征识别。
-                NSArray *step1Result = ARRTOOK([self recognitionFeature_Step1:item_p]);
+                NSArray *step1Result = ARRTOOK([self recognitionFeature_JvBu:item_p]);
                 //b. 通过抽象特征做整体特征识别，把step1的结果传给step2继续向似层识别（参考34135-TODO5）。
-                NSArray *step2Result = [self recognitionFeature_Step2:item_p matchModels:step1Result];
+                NSArray *step2Result = [self recognitionFeature_ZenTi:item_p matchModels:step1Result];
                 return [SMGUtils collectArrA:step1Result arrB:step2Result];
             }];
         }

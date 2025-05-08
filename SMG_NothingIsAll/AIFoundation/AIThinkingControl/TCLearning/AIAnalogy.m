@@ -269,18 +269,18 @@
         //12. 借助absT来类比时，复用step2的识别结果model数据，并且用完就清空，防止循环野指针（参考34139-TODO3）。
         AIFeatureStep2Model *step2Model = assFeature.step2Model;
         assFeature.step2Model = nil;
-        return [self analogyFeatureStep2:protoFeature ass:assFeature bigerMatchValue:bigerMatchValue step2Model:step2Model];
+        return [self analogyFeature_ZenTi:protoFeature ass:assFeature bigerMatchValue:bigerMatchValue step2Model:step2Model];
     }
     //21. 特征识别step1识别到的结果，复用indexDic进行类比。
     else if(assFeature.step1Model && [protoT_p isEqual:assFeature.step1Model.v2] ) {
         //22. 用于类比的数据用完就删，避免太占空间（参考34137-TODO2）。
         NSDictionary *indexDic = assFeature.step1Model.v1;
-        return [self analogyFeatureStep1:protoFeature ass:assFeature bigerMatchValue:bigerMatchValue indexDic:indexDic];
+        return [self analogyFeature_JvBu:protoFeature ass:assFeature bigerMatchValue:bigerMatchValue indexDic:indexDic];
     }
     return nil;
 }
 
-+(AIFeatureNode*) analogyFeatureStep1:(AIFeatureNode*)protoFeature ass:(AIFeatureNode*)assFeature bigerMatchValue:(CGFloat)bigerMatchValue indexDic:(NSDictionary*)indexDic {
++(AIFeatureNode*) analogyFeature_JvBu:(AIFeatureNode*)protoFeature ass:(AIFeatureNode*)assFeature bigerMatchValue:(CGFloat)bigerMatchValue indexDic:(NSDictionary*)indexDic {
     //NSLog(@"==============> 特征类比Step1：protoT%ld assT%ld",protoFeature.pId,assFeature.pId);
     //1. 类比orders的规律
     CGFloat sumProtoMatchValue = 0;
@@ -370,7 +370,7 @@
     return absT;
 }
 
-+(AIFeatureNode*) analogyFeatureStep1_V2:(AIFeatureStep1Model*)step1Model {
++(AIFeatureNode*) analogyFeature_JvBu_V2:(AIFeatureStep1Model*)step1Model {
     //NSLog(@"==============> 特征类比Step1：protoT%ld assT%ld",protoFeature.pId,assFeature.pId);
     //3. 收集有效的映射：用于后面计算rect用。
     NSMutableArray *validItems = [[NSMutableArray alloc] init];
@@ -440,7 +440,7 @@
     return absT;
 }
 
-+(AIFeatureNode*) analogyFeatureStep2:(AIFeatureNode*)protoT ass:(AIFeatureNode*)assT bigerMatchValue:(CGFloat)bigerMatchValue step2Model:(AIFeatureStep2Model*)step2Model {
++(AIFeatureNode*) analogyFeature_ZenTi:(AIFeatureNode*)protoT ass:(AIFeatureNode*)assT bigerMatchValue:(CGFloat)bigerMatchValue step2Model:(AIFeatureStep2Model*)step2Model {
     //NSLog(@"==============> 特征类比Step2：protoT%ld assT%ld",protoT.pId,assT.pId);
     //1. 借助每个absT来实现整体T的类比：类比orders的规律: 类比rectItems，把责任超过50%的去掉，别的保留（参考34139）。
     NSArray *sameItems = [SMGUtils filterArr:step2Model.rectItems checkValid:^BOOL(AIFeatureStep2Item_Rect *obj) {
@@ -515,7 +515,7 @@
     return absT;
 }
 
-+(AIFeatureNode*) analogyFeatureStep2_V2:(AIFeatureNode*)assT step2Model:(AIFeatureStep2Model*)step2Model {
++(AIFeatureNode*) analogyFeature_ZenTi_V2:(AIFeatureNode*)assT step2Model:(AIFeatureStep2Model*)step2Model {
     //NSLog(@"==============> 特征类比Step2：protoT%ld assT%ld",protoT.pId,assT.pId);
     //1. 借助每个absT来实现整体T的类比：类比orders的规律: 类比rectItems，把责任超过50%的去掉，别的保留（参考34139）。
     NSArray *sameItems = [SMGUtils filterArr:step2Model.rectItems checkValid:^BOOL(AIFeatureStep2Item_Rect *obj) {
