@@ -15,6 +15,7 @@
  *  MARK:--------------------commitInput--------------------
  */
 + (void) commitInput:(UIImage*)image logDesc:(NSString*)logDesc;
++ (void) commitInputV2:(UIImage*)image logDesc:(NSString*)logDesc;
 
 #pragma mark - Test Methods
 

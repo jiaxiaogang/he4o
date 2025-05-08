@@ -169,22 +169,11 @@ static AIThinkingControl *_instance;
     //1. 植物模式阻断感知;
     if (self.thinkMode == 2) return;
     
-    //2. 装箱（稀疏码的：单码层 和 组码层）。
-    //TODO: 这里随后转成NSDictionary后，只要判断dataSource对应的value是dic类型，也可以这么处理（到时候，改V2支持model转Dic类型输入时，自然就知道这里怎么改了）。
-    NSArray *hGroupModels = [theNet algModelConvert2PointersV2:algsModel.hColors at:algsType ds:@"hColors" levelNum:algsModel.levelNum];
-    NSArray *sGroupModels = [theNet algModelConvert2PointersV2:algsModel.sColors at:algsType ds:@"sColors" levelNum:algsModel.levelNum];
-    NSArray *bGroupModels = [theNet algModelConvert2PointersV2:algsModel.bColors at:algsType ds:@"bColors" levelNum:algsModel.levelNum];
-    
-    //3、构建具象特征。
-    AIFeatureNode *hFeature = [AIGeneralNodeCreater createFeatureNode:hGroupModels conNodes:nil at:algsType ds:@"hColors" isOut:false isJiao:false];
-    AIFeatureNode *sFeature = [AIGeneralNodeCreater createFeatureNode:sGroupModels conNodes:nil at:algsType ds:@"sColors" isOut:false isJiao:false];
-    AIFeatureNode *bFeature = [AIGeneralNodeCreater createFeatureNode:bGroupModels conNodes:nil at:algsType ds:@"bColors" isOut:false isJiao:false];
-    [hFeature updateLogDescItem:logDesc];
-    [sFeature updateLogDescItem:logDesc];
-    [bFeature updateLogDescItem:logDesc];
-    NSLog(@"%@ H ====================================\n%@",logDesc,FeatureDesc(hFeature.p,1));
-    NSLog(@"%@ S ====================================\n%@",logDesc,FeatureDesc(sFeature.p,1));
-    NSLog(@"%@ B ====================================\n%@",logDesc,FeatureDesc(bFeature.p,1));
+    //2. 装箱（稀疏码的：单码层 和 组码层 和 构建具象特征）。
+    MapModel *createResult = [self createSplitFor9Block:algsModel algsType:algsType logDesc:logDesc];
+    AIFeatureNode *hFeature = createResult.v1;
+    AIFeatureNode *sFeature = createResult.v2;
+    AIFeatureNode *bFeature = createResult.v3;
     
     //4、构建具象概念。
     AIAlgNodeBase *algNode = [theNet createAbsAlg_NoRepeat:@[hFeature.pointer,sFeature.pointer,bFeature.pointer] conAlgs:nil isOut:false at:nil ds:nil type:ATDefault];
@@ -239,11 +228,27 @@ static AIThinkingControl *_instance;
     //31. 整体识别特征：通过抽象局部特征做整体特征识别，把step1的结果传给step2继续向似层识别（参考34135-TODO5）。
     NSArray *step2Model = [TIUtils recognitionFeature_Step2_V2:step1Model];
     
-    //TODOTOMORROW20250507: 这里先直接调用下类比，先测试下识别结果的类比。
+    //40. 这里先直接调用下类比，先测试下识别结果的类比。
+    //TODO: 2025.04.19: 必须是当前protoT识别时的step2Model才行，如果是往期step2Model不能用，会导致类比找protoT对应不上，导致取rect为Null的BUG（现在把step1Model和step2Model直接传过去的话，这个对应不上的问题应该不存在）。
+    //41. 局部冷启 或 整体识别：分别进行类比（依据不同）（参考34139-TODO1）。
+    //42. 特征识别step1识别到的结果，复用step1Model进行类比。
+    for (AIFeatureStep1Model *model in step1Model.models) {
+        [AIAnalogy analogyFeatureStep1_V2:model];
+        //用于类比的数据用完就删，避免太占空间（参考34137-TODO2）。
+        model.assT.step1ModelV2 = nil;
+    }
     
+    //43. 取共同absT，借助absT进行类比（参考34139-TODO1）。
+    for (AIMatchModel *model in step2Model) {
+        AIFeatureNode *assT = (AIFeatureNode*)model.matchNode;
+        [AIAnalogy analogyFeatureStep2_V2:assT step2Model:assT.step2Model];
+        //借助absT来类比时，复用step2的识别结果model数据，并且用完就清空，防止循环野指针（参考34139-TODO3）。
+        assT.step2Model = nil;
+    }
     
-    
-    //TODOTOMORROW20250507: 这里可以异步构建一下三分粒度的protoT，不过不用于识别，只用于以后被识别。
+    //51. 异步构建一下默认三分粒度的protoT，不过不用于识别，只用于以后被识别。
+    //TODO: 可以加上遗忘机制，冷却一段时间后，还没被识别到，就遗忘清理掉（如无性能问题，只保持现做法：在竞争中不激活也行）。
+    [self createSplitFor9Block:algsModel algsType:algsType logDesc:logDesc];
 }
 
 /**
@@ -527,6 +532,30 @@ static AIThinkingControl *_instance;
 
 +(NSString*) getCurQueueLab {
     return STRFORMAT(@"%s",dispatch_queue_get_label(dispatch_get_current_queue()));
+}
+
+//构建默认九宫特征。
+-(MapModel*) createSplitFor9Block:(AIVisionAlgsModelV2*)algsModel algsType:(NSString*)algsType logDesc:(NSString*)logDesc {
+    //1. 植物模式阻断感知;
+    if (self.thinkMode == 2) return nil;
+    
+    //2. 装箱（稀疏码的：单码层 和 组码层）。
+    //TODO: 这里随后转成NSDictionary后，只要判断dataSource对应的value是dic类型，也可以这么处理（到时候，改V2支持model转Dic类型输入时，自然就知道这里怎么改了）。
+    NSArray *hGroupModels = [theNet algModelConvert2PointersV2:algsModel.hColors at:algsType ds:@"hColors" levelNum:algsModel.levelNum];
+    NSArray *sGroupModels = [theNet algModelConvert2PointersV2:algsModel.sColors at:algsType ds:@"sColors" levelNum:algsModel.levelNum];
+    NSArray *bGroupModels = [theNet algModelConvert2PointersV2:algsModel.bColors at:algsType ds:@"bColors" levelNum:algsModel.levelNum];
+    
+    //3、构建具象特征。
+    AIFeatureNode *hFeature = [AIGeneralNodeCreater createFeatureNode:hGroupModels conNodes:nil at:algsType ds:@"hColors" isOut:false isJiao:false];
+    AIFeatureNode *sFeature = [AIGeneralNodeCreater createFeatureNode:sGroupModels conNodes:nil at:algsType ds:@"sColors" isOut:false isJiao:false];
+    AIFeatureNode *bFeature = [AIGeneralNodeCreater createFeatureNode:bGroupModels conNodes:nil at:algsType ds:@"bColors" isOut:false isJiao:false];
+    [hFeature updateLogDescItem:logDesc];
+    [sFeature updateLogDescItem:logDesc];
+    [bFeature updateLogDescItem:logDesc];
+    NSLog(@"%@ H ====================================\n%@",logDesc,FeatureDesc(hFeature.p,1));
+    NSLog(@"%@ S ====================================\n%@",logDesc,FeatureDesc(sFeature.p,1));
+    NSLog(@"%@ B ====================================\n%@",logDesc,FeatureDesc(bFeature.p,1));
+    return [MapModel newWithV1:hFeature v2:sFeature v3:bFeature];
 }
 
 @end
