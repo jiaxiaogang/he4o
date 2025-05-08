@@ -38,6 +38,11 @@
 +(AIAlgNodeBase*) analogyAlg:(AIKVPointer*)protoA_p assA:(AIKVPointer*)assA_p;
 
 /**
+ *  MARK:--------------------特征类比--------------------
+ */
++(AIFeatureNode*) analogyFeatureStep1_V2:(AIFeatureStep1Model*)step1Model;
+
+/**
  *  MARK:--------------------Canset类比 --------------------
  */
 +(HEResult*) analogyCansetFoV3:(NSArray*)newCansetOrders oldCansetOrders:(NSArray*)oldCansetOrders oldCansetISceneIndexDic:(NSDictionary*)oldCansetISceneIndexDic;

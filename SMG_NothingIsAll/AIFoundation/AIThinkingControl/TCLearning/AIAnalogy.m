@@ -370,6 +370,75 @@
     return absT;
 }
 
++(AIFeatureNode*) analogyFeatureStep1_V2:(AIFeatureStep1Model*)step1Model {
+    //NSLog(@"==============> 特征类比Step1：protoT%ld assT%ld",protoFeature.pId,assFeature.pId);
+    //3. 收集有效的映射：用于后面计算rect用。
+    NSMutableArray *validItems = [[NSMutableArray alloc] init];
+    
+    //11. 外类比有序进行 (记录jMax & 正序)
+    for (AIFeatureStep1Item *item in step1Model.bestGVs) {
+        //12. 当前有主责，直接剔除: GV类比: 进行共同点抽象 (参考29025-11);
+        CGFloat curDegree = item.matchDegree;
+        CGFloat curMatchValue = item.matchValue;
+        BOOL noZeRen = [TCLearningUtil noZeRenForPingJun:curMatchValue * curDegree bigerMatchValue:step1Model.matchValue * step1Model.matchDegree];
+        if (!noZeRen) return nil;
+        
+        //13. 当前码责任<50%时 (次要责任时,免责): 收集有效的映射：用于后面计算rect用。
+        [validItems addObject:item];
+    }
+    
+    //14. 根据validIndexDic求出newAbsT在protoT和assT中的rect。
+    NSArray *sortValidItems = [SMGUtils sortSmall2Big:validItems compareBlock:^double(AIFeatureStep1Item *obj) {
+        return obj.assIndex;
+    }];
+    NSArray *assContentIndexes = [SMGUtils convertArr:sortValidItems convertBlock:^id(AIFeatureStep1Item *obj) {
+        return @(obj.assIndex);
+    }];
+    CGRect absAtAssRect = [AINetUtils convertPartOfFeatureContent2Rect:step1Model.assT contentIndexes:assContentIndexes];
+    
+    //15. 转为List<InputGroupValueModel>模型。
+    NSMutableArray *absGVModels = [SMGUtils convertArr:sortValidItems convertBlock:^id(AIFeatureStep1Item *obj) {
+        AIKVPointer *assGV_p = ARR_INDEX(step1Model.assT.content_ps, obj.assIndex);
+        
+        //16. 将gvRect在assT的范围，转成在newAbsT中的位置。
+        CGRect assRect = VALTOOK(ARR_INDEX(step1Model.assT.rects, obj.assIndex)).CGRectValue;
+        assRect.origin.x -= absAtAssRect.origin.x;
+        assRect.origin.y -= absAtAssRect.origin.y;
+        return [InputGroupValueModel new:assGV_p rect:assRect];
+    }];
+    if (step1Model.matchValue == 1 && absGVModels.count == 0) {
+        ELog(@"如果匹配度为1，会导致所有indexDic的GV全有责，导致最后absGVModels为0条，如果停此处时，查下来源，这个匹配度1是哪来的");
+    }
+    if (!ARRISOK(absGVModels)) return nil;
+    
+    //21. 为增加特征content_ps的有序性：对groupModels进行排序（特征的content是有序的，所以要先排下序）。
+    NSArray *sortGroupModels = [ThinkingUtils sortInputGroupValueModels:absGVModels];
+    
+    //31. 外类比构建
+    AIFeatureNode *absT = [AIGeneralNodeCreater createFeatureNode:sortGroupModels conNodes:@[step1Model.assT] at:step1Model.assT.at ds:step1Model.assT.ds isOut:step1Model.assT.isOut isJiao:true];
+    [absT updateLogDescDic:step1Model.assT.logDesc];
+    
+    //32. 更新匹配度 & 映射;
+    CGFloat absMatchValue = validItems.count == 0 ? 0 : [SMGUtils sumOfArr:validItems convertBlock:^double(AIFeatureStep1Item *obj) {
+        return obj.matchValue;
+    }] / validItems.count;
+    [step1Model.assT updateMatchValue:absT matchValue:absMatchValue];
+    
+    //33. 存conPorts的rect（参考34135-TODO1）。
+    [AINetUtils updateConPortRect:absT conT:step1Model.assT.p rect:absAtAssRect];
+    
+    //34. 记录符合度：根据每个符合itemAbsT，来计算平均符合度。
+    CGFloat absMatchDegree = validItems.count == 0 ? 0 : [SMGUtils sumOfArr:validItems convertBlock:^double(AIFeatureStep1Item *obj) {
+        return obj.matchDegree;
+    }] / validItems.count;
+    [step1Model.assT updateMatchDegree:absT matchDegree:absMatchDegree];
+    
+    if (Log4Ana || true) NSLog(@"\n局部特征类比结果(%@) ======================> \n局部Ass特征T%ld（GV数:%ld）%@\n%@局部Abs特征T%ld（GV数:%ld）：%@\n%@",step1Model.assT.ds,
+                               step1Model.assT.pId,step1Model.assT.count,CLEANSTR([step1Model.assT getLogDesc:false]),FeatureDesc(step1Model.assT.p,1),
+                               absT.pId,sortGroupModels.count,CLEANSTR([absT getLogDesc:false]),FeatureDesc(absT.p,1));
+    return absT;
+}
+
 +(AIFeatureNode*) analogyFeatureStep2:(AIFeatureNode*)protoT ass:(AIFeatureNode*)assT bigerMatchValue:(CGFloat)bigerMatchValue step2Model:(AIFeatureStep2Model*)step2Model {
     //NSLog(@"==============> 特征类比Step2：protoT%ld assT%ld",protoT.pId,assT.pId);
     //1. 借助每个absT来实现整体T的类比：类比orders的规律: 类比rectItems，把责任超过50%的去掉，别的保留（参考34139）。

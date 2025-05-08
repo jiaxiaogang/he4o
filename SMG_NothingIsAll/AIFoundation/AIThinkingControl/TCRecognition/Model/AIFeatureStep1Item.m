@@ -10,7 +10,7 @@
 
 @implementation AIFeatureStep1Item
 
-+(id) new:(CGRect)bestGVAtProtoTRect matchValue:(CGFloat)matchValue matchDegree:(CGFloat)matchDegree {
++(id) new:(CGRect)bestGVAtProtoTRect matchValue:(CGFloat)matchValue matchDegree:(CGFloat)matchDegree assIndex:(NSInteger)assIndex {
     AIFeatureStep1Item *result = [AIFeatureStep1Item new];
     result.bestGVAtProtoTRect = bestGVAtProtoTRect;
     result.matchValue = matchValue;

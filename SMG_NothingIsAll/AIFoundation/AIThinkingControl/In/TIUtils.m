@@ -368,7 +368,7 @@
             
             //13. 把tMatchModel收集起来。
             AIFeatureStep1Model *model = [AIFeatureStep1Model new:assT];
-            [model.bestGVs addObject:[AIFeatureStep1Item new:protoRect matchValue:gModel.matchValue matchDegree:1]];
+            [model.bestGVs addObject:[AIFeatureStep1Item new:protoRect matchValue:gModel.matchValue matchDegree:1 assIndex:indexOf]];
             [resultModel.models addObject:model];
             
             //21. 自举：每个assT一条条自举自身的gv。
@@ -433,8 +433,9 @@
                 //42. 把best的情况记下来，继续下一个gv。
                 lastProtoRect = VALTOOK(best.v2).CGRectValue;
                 lastAtAssRect = curAtAssRect;
-                //TODO: 此处看下，用不用把收集bestGVs的顺序调整成与assT的顺序一致？或输出映射？
-                [model.bestGVs addObject:[AIFeatureStep1Item new:lastProtoRect matchValue:NUMTOOK(best.v1).floatValue matchDegree:NUMTOOK(best.v3).floatValue]];
+                
+                //43. 记录curIndex，以使bestGVs知道与assT哪帧映射且用于排序等。
+                [model.bestGVs addObject:[AIFeatureStep1Item new:lastProtoRect matchValue:NUMTOOK(best.v1).floatValue matchDegree:NUMTOOK(best.v3).floatValue assIndex:curIndex]];
             }
         }
     }
