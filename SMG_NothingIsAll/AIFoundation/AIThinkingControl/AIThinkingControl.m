@@ -199,14 +199,24 @@ static AIThinkingControl *_instance;
     if (self.thinkMode == 2) return;
     
     //2. 对未切粒度的color字典进行自适应粒度并识别。
-    NSMutableArray *aleardayRects = [NSMutableArray new];
-    AIFeatureStep1Models *step1Model = [AIFeatureStep1Models new:algsModel.bColors.hash];
+    [self commitInputWithSplitV2_Single:algsModel.hColors whSize:algsModel.whSize at:algsType ds:@"hColors" logDesc:logDesc];
+    [self commitInputWithSplitV2_Single:algsModel.sColors whSize:algsModel.whSize at:algsType ds:@"sColors" logDesc:logDesc];
+    [self commitInputWithSplitV2_Single:algsModel.bColors whSize:algsModel.whSize at:algsType ds:@"bColors" logDesc:logDesc];
+    
+    //3. 异步构建一下默认三分粒度的protoT，不过不用于识别，只用于以后被识别。
+    //TODO: 可以加上遗忘机制，冷却一段时间后，还没被识别到，就遗忘清理掉（如无性能问题，只保持现做法：在竞争中不激活也行）。
+    [self createSplitFor9Block:algsModel algsType:algsType logDesc:logDesc];
+}
+
+-(void) commitInputWithSplitV2_Single:(NSDictionary*)colorDic whSize:(CGFloat)whSize at:(NSString*)at ds:(NSString*)ds logDesc:(NSString*)logDesc {
+    //1. 对未切粒度的color字典进行自适应粒度并识别。
+    AIFeatureStep1Models *step1Model = [AIFeatureStep1Models new:colorDic.hash];
     
     //11. 最粗粒度为size/3切，下一个为size/1.3切（参考35026-1）。
-    CGFloat dotSize = algsModel.whSize / 3.0f;
+    CGFloat dotSize = whSize / 3.0f;
     while (dotSize > 1) {
         //12. 从0-2开始，下一个是1-3...分别偏移切gv（嵌套两个for循环，row和column都这么切）。
-        int length = (int)(algsModel.whSize / dotSize) - 2;//最后两格时，向右不足取3格了，所以去掉-2。
+        int length = (int)(whSize / dotSize) - 2;//最后两格时，向右不足取3格了，所以去掉-2。
         for (NSInteger startX = 0; startX < length; startX++) {
             for (NSInteger startY = 0; startY < length; startY++) {
                 //13. 把前面循环已识别过的：结果中已识别到的gv.rect收集起来，如果已包含，则在双for循环中直接continue防重掉（参考35026-防重)。
@@ -215,11 +225,11 @@ static AIThinkingControl *_instance;
                 //if (rects.contains(curRect)) continue;
                 
                 //14. 切出当前gv：九宫。
-                NSArray *subDots = [ThinkingUtils getSubDots:algsModel.bColors gvRect:CGRectMake(startX * dotSize, startY * dotSize, dotSize * 3, dotSize * 3)];
-                NSDictionary *gvIndex = [AINetGroupValueIndex convertGVIndexData:subDots ds:@"bColors"];
+                NSArray *subDots = [ThinkingUtils getSubDots:colorDic gvRect:CGRectMake(startX * dotSize, startY * dotSize, dotSize * 3, dotSize * 3)];
+                NSDictionary *gvIndex = [AINetGroupValueIndex convertGVIndexData:subDots ds:ds];
                 
                 //21. 局部识别特征：通过组码识别。
-                [TIUtils recognitionFeature_Step1_V2:gvIndex at:algsType ds:@"bColors" isOut:false protoRect:curRect protoColorDic:algsModel.bColors decoratorStep1Model:step1Model];
+                [TIUtils recognitionFeature_Step1_V2:gvIndex at:at ds:ds isOut:false protoRect:curRect protoColorDic:colorDic decoratorStep1Model:step1Model];
             }
         }
         dotSize /= 1.3f;
@@ -245,10 +255,6 @@ static AIThinkingControl *_instance;
         //借助absT来类比时，复用step2的识别结果model数据，并且用完就清空，防止循环野指针（参考34139-TODO3）。
         assT.step2Model = nil;
     }
-    
-    //51. 异步构建一下默认三分粒度的protoT，不过不用于识别，只用于以后被识别。
-    //TODO: 可以加上遗忘机制，冷却一段时间后，还没被识别到，就遗忘清理掉（如无性能问题，只保持现做法：在竞争中不激活也行）。
-    [self createSplitFor9Block:algsModel algsType:algsType logDesc:logDesc];
 }
 
 /**

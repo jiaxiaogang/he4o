@@ -42,7 +42,6 @@
         return obj.floatValue;
     }];
     float pinJunNum = contentNums.count == 0 ? 0 : sumNum / contentNums.count;
-    pinJunNum = roundf(pinJunNum * jinDu) / jinDu;
     
     //3. >均值 和 <均值 的下标数组。
     NSMutableArray *smallIndexs = [NSMutableArray new];
@@ -55,6 +54,10 @@
             [bigerIndexs addObject:@(i)];
         }
     }
+    
+    //3. 平均值精度。
+    pinJunNum = roundf(pinJunNum * jinDu) / jinDu;
+    
     //3. 如果纯色，直接返回三个索引：均值、差值=0、方向=0。
     if (smallIndexs.count == 0 || bigerIndexs.count == 0) {
         return @{STRFORMAT(@"%@_direction",ds): @(0),

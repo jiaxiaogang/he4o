@@ -318,7 +318,7 @@
         if (!img) return;
         
         //2. 提交视觉
-        [AIVisionAlgsV2 commitInput:img logDesc:STRFORMAT(@"%@_%ld",model.imgName,model.imgIndex)];
+        [AIVisionAlgsV2 commitInputV2:img logDesc:STRFORMAT(@"%@_%ld",model.imgName,model.imgIndex)];
         
         //3. 预览图
         [self.curImgView setImage:img];
