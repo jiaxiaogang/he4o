@@ -418,7 +418,8 @@
     AIFeatureNode *absT = [AIGeneralNodeCreater createFeatureNode:sortGroupModels conNodes:@[step1Model.assT] at:step1Model.assT.at ds:step1Model.assT.ds isOut:step1Model.assT.isOut isJiao:true];
     [absT updateLogDescDic:step1Model.assT.logDesc];
     
-    //32. 更新匹配度 & 映射;
+    //32. 更新匹配度;
+    //TODO: 考虑下，此处abs是从ass抽象来的，那这里的匹配度，符合度，是不是应该直接=1。
     CGFloat absMatchValue = validItems.count == 0 ? 0 : [SMGUtils sumOfArr:validItems convertBlock:^double(AIFeatureStep1Item *obj) {
         return obj.matchValue;
     }] / validItems.count;
@@ -509,6 +510,95 @@
     //51. debug
     if (Log4Ana || true) NSLog(@"\n整体特征类比结果(%@) ======================> \n整体Proto特征T%ld（局部特征数:%ld GV数:%ld）%@\n%@整体Ass特征T%ld（局部特征数:%ld GV数:%ld）%@\n%@整体Abs特征T%ld（局部特征数:%ld GV数:%ld）：%@\n%@",protoT.p.dataSource,
                                protoT.pId,sameItems.count,protoT.count,CLEANSTR([protoT getLogDesc:false]),FeatureDesc(protoT.p,1),
+                               assT.pId,sameItems.count,assT.count,CLEANSTR([assT getLogDesc:false]),FeatureDesc(assT.p,1),
+                               absT.pId,sameItems.count,absGVModels.count,CLEANSTR([absT getLogDesc:false]),FeatureDesc(absT.p,1));
+    return absT;
+}
+
++(AIFeatureNode*) analogyFeatureStep2_V2:(AIFeatureNode*)assT step2Model:(AIFeatureStep2Model*)step2Model {
+    //NSLog(@"==============> 特征类比Step2：protoT%ld assT%ld",protoT.pId,assT.pId);
+    //1. 借助每个absT来实现整体T的类比：类比orders的规律: 类比rectItems，把责任超过50%的去掉，别的保留（参考34139）。
+    NSArray *sameItems = [SMGUtils filterArr:step2Model.rectItems checkValid:^BOOL(AIFeatureStep2Item_Rect *obj) {
+        return [TCLearningUtil noZeRenForPingJun:obj.itemMatchValue * obj.itemMatchDegree bigerMatchValue:step2Model.modelMatchValue * step2Model.modelMatchDegree];
+    }];
+    
+    //2. 数据检查
+    if ([SMGUtils filterSingleFromArr:sameItems checkValid:^BOOL(AIFeatureStep2Item_Rect *item) {
+        AIFeatureNode *itemAbsT = [SMGUtils searchNode:item.absT];
+        return !itemAbsT.step1ModelV2;
+    }]) {
+        ELog(@"Step2借助Step1Model来找映射，找类比抽象gv元素，这里的step1Model都不为空才对，因为itemAbsT都是由局部特征识别来的，如果为空查下原因。");
+        return nil;
+    }
+    
+    //11. 将每个absT指向具象整体特征的rect求并集，得出加一块儿的绝对rect范围（参考3413a-示图2）。
+    CGRect newAbsAtAssRect = CGRectNull;
+    for (AIFeatureStep2Item_Rect *item in sameItems) {
+        //取并每个itemAbsT在assT的范围。
+        newAbsAtAssRect = CGRectUnion(newAbsAtAssRect, item.absAtConRect);
+    }
+    
+    //12. 取newAbs在protoT的rect，可以用局部特征识别结果中的itemAbsTAtProtoRect来求并集（目前不需要，因为没有protoT，也用不着这个AtProtoTRect）。
+    //CGRect newAbsAtProtoRect = CGRectNull;
+    //for (AIFeatureStep2Item_Rect *item in sameItems) {
+    //    //取并每个itemAbsT在proto的范围。
+    //    AIFeatureNode *itemAbsT = [SMGUtils searchNode:item.absT];
+    //    newAbsAtProtoRect = CGRectUnion(newAbsAtProtoRect, itemAbsT.step1ModelV2.assTAtProtoTRect);
+    //}
+    
+    //20. 根据protoT和itemAbsT的映射来实现类比抽象（参考34164-方案2）。
+    //2025.05.08: 注意-我们无法从protoT来抽象gvs了，也没法从整体特征assT来抽象gvs（因为它与itemAbsT没有映射，我们无法对应到该取哪个下标）。
+    //2025.05.08: 说明-所以我们只能从itemAbsT中取gvs，那么这里就有一个要求：itemAbsT中的元素必须来自自身具象，不允许抽象t时，gv有变化，不然每个itemAbsT中的对应gv不同，会重复收集。
+    //2025.05.08: 举例-说白了：从乔峰抽象的胳膊腿特征必须是乔峰的，不能是别人的。
+    //21. 取出每个itemAbsT中的gv，转换成newAbsT的元素：@[InputGroupValueModel]格式（参考3413a-示图1）。
+    NSMutableArray *absGVModels = [SMGUtils convertArr:sameItems convertItemArrBlock:^id(AIFeatureStep2Item_Rect *step2Item) {
+        AIFeatureNode *itemAbsT = [SMGUtils searchNode:step2Item.absT];
+        CGRect itemAbsTAtAssRect = step2Item.absAtConRect;
+        return [SMGUtils convertArr:itemAbsT.step1ModelV2.bestGVs convertBlock:^id(AIFeatureStep1Item *obj) {
+            //22. 从itemAbsT中收集元素（参考34164-方案2）。
+            AIKVPointer *itemAbsGV_p = ARR_INDEX(itemAbsT.content_ps, obj.assIndex);
+            
+            //23. 将itemGV在itemAbsT的范围，转成在assT中的位置。
+            CGRect itemAbsGVAtAssRect = VALTOOK(ARR_INDEX(itemAbsT.rects, obj.assIndex)).CGRectValue;
+            itemAbsGVAtAssRect.origin.x += itemAbsTAtAssRect.origin.x;
+            itemAbsGVAtAssRect.origin.y += itemAbsTAtAssRect.origin.y;
+            return [InputGroupValueModel new:itemAbsGV_p rect:itemAbsGVAtAssRect];
+        }];
+    }];
+    
+    //31. 防重
+    absGVModels = [SMGUtils removeRepeat:absGVModels convertBlock:^id(InputGroupValueModel *obj) {
+        return obj.groupValue_p;
+    }];
+    
+    //32. 有序：为增加特征content_ps的有序性：对groupModels进行排序（特征的content是有序的，所以要先排下序）。
+    NSArray *sortGroupModels = [ThinkingUtils sortInputGroupValueModels:absGVModels];
+    
+    //33. 构建：保留下来的生成为absT。
+    AIFeatureNode *absT = [AIGeneralNodeCreater createFeatureNode:sortGroupModels conNodes:@[assT] at:assT.at ds:assT.ds isOut:assT.isOut isJiao:true];
+    
+    //41. 更新logDesc。
+    [absT updateLogDescDic:assT.logDesc];
+    
+    //2025.04.23: 改为由protoT来收集absGVModels了，所以与protoT的匹配度符合度全是1，与assT的匹配度符合度直接重用step2Model的。
+    //42. 记录匹配度：根据每个匹配itemAbsT，来计算平均匹配度。
+    //TODO: 考虑下，此处abs是从ass抽象来的，那这里的匹配度，符合度，是不是应该直接=1。
+    CGFloat absMatchValue = sameItems.count == 0 ? 0 : [SMGUtils sumOfArr:sameItems convertBlock:^double(AIFeatureStep2Item_Rect *obj) {
+        return obj.itemMatchValue;
+    }] / sameItems.count;
+    [assT updateMatchValue:absT matchValue:absMatchValue];
+    
+    //43. 记录符合度：根据每个符合itemAbsT，来计算平均符合度。
+    CGFloat absMatchDegree = sameItems.count == 0 ? 0 : [SMGUtils sumOfArr:sameItems convertBlock:^double(AIFeatureStep2Item_Rect *obj) {
+        return obj.itemMatchDegree;
+    }] / sameItems.count;
+    [assT updateMatchDegree:absT matchDegree:absMatchDegree];
+    
+    //44. 记录整体absT.conPort到protoT和assT的rect。
+    [AINetUtils updateConPortRect:absT conT:assT.p rect:newAbsAtAssRect];
+    
+    //51. debug
+    if (Log4Ana || true) NSLog(@"\n整体特征类比结果(%@) ======================> \n整体Ass特征T%ld（局部特征数:%ld GV数:%ld）%@\n%@整体Abs特征T%ld（局部特征数:%ld GV数:%ld）：%@\n%@",assT.ds,
                                assT.pId,sameItems.count,assT.count,CLEANSTR([assT getLogDesc:false]),FeatureDesc(assT.p,1),
                                absT.pId,sameItems.count,absGVModels.count,CLEANSTR([absT getLogDesc:false]),FeatureDesc(absT.p,1));
     return absT;

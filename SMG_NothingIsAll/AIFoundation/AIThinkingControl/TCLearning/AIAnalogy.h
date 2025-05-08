@@ -41,6 +41,7 @@
  *  MARK:--------------------特征类比--------------------
  */
 +(AIFeatureNode*) analogyFeatureStep1_V2:(AIFeatureStep1Model*)step1Model;
++(AIFeatureNode*) analogyFeatureStep2_V2:(AIFeatureNode*)assT step2Model:(AIFeatureStep2Model*)step2Model;
 
 /**
  *  MARK:--------------------Canset类比 --------------------
