@@ -356,20 +356,19 @@
             
             //15. 切出当前gv：色值。
             CGFloat sumPixValue = 0;
+            int sumPixCount = 0;
             for (NSInteger pixX = 0; pixX < dotSize; pixX++) {
                 for (NSInteger pixY = 0; pixY < dotSize; pixY++) {
                     NSInteger x = gvRect.origin.x + deltaX * dotSize + pixX;
                     NSInteger y = gvRect.origin.y + deltaY * dotSize + pixY;
                     NSNumber *pixValue = [colorDic objectForKey:STRFORMAT(@"%ld_%ld",x,y)];
                     sumPixValue += pixValue.floatValue;
+                    sumPixCount++;
                 }
             }
             
             //16. 把每格里所有像素的色值求平均值。
-            CGFloat pinJunValue = sumPixValue / (dotSize * dotSize);
-            if (pinJunValue > 1) {
-                NSLog(@"TODOTOMORROW20250509: 查下原因，为什么>1");
-            }
+            CGFloat pinJunValue = sumPixValue / sumPixCount;
             [subDots addObject:[MapModel newWithV1:@(pinJunValue) v2:@(deltaX) v3:@(deltaY)]];
         }
     }
