@@ -416,11 +416,8 @@
                     
                     //34. 求切出的curProtoGV九宫与curAssGV的匹配度。
                     CGFloat curGMatchValue = 1;
-                    for (NSString *key in protoGVIndex) {
-                        CGFloat protoData = NUMTOOK([gvIndex objectForKey:key]).floatValue;
-                        AIKVPointer *assV = [SMGUtils filterSingleFromArr:curAssGV.content_ps checkValid:^BOOL(AIKVPointer *item) {
-                            return [item.dataSource isEqual:key];
-                        }];
+                    for (AIKVPointer *assV in curAssGV.content_ps) {
+                        CGFloat protoData = NUMTOOK([protoGVIndex objectForKey:assV.dataSource]).floatValue;
                         double assData = [NUMTOOK([AINetIndex getData:assV]) doubleValue];
                         CGFloat vMatchValue = [AIAnalyst compareCansetValue:assData protoV:protoData at:assV.algsType ds:assV.dataSource isOut:assV.isOut vInfo:nil];
                         curGMatchValue *= vMatchValue;

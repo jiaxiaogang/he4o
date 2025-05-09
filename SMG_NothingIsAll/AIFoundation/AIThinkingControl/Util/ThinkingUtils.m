@@ -367,6 +367,9 @@
             
             //16. 把每格里所有像素的色值求平均值。
             CGFloat pinJunValue = sumPixValue / (dotSize * dotSize);
+            if (pinJunValue > 1) {
+                NSLog(@"TODOTOMORROW20250509: 查下原因，为什么>1");
+            }
             [subDots addObject:[MapModel newWithV1:@(pinJunValue) v2:@(deltaX) v3:@(deltaY)]];
         }
     }
