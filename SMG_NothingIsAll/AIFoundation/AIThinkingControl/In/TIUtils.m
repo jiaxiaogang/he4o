@@ -379,16 +379,16 @@
                 CGRect curAtAssRect = curAtAssRectValue.CGRectValue;
                 
                 //22. 根据比例估算下一条protoGV的取值范围。
-                //2025.05.09: bugfix-x和y也按正比计算，再分别加marginLeft和Top得出。
-                CGFloat wRate = lastProtoRect.size.width / lastAtAssRect.size.width;
-                CGFloat hRate = lastProtoRect.size.height / lastAtAssRect.size.height;
-                CGFloat assDeltaX = curAtAssRect.origin.x - lastAtAssRect.origin.x;
-                CGFloat assDeltaY = curAtAssRect.origin.y - lastAtAssRect.origin.y;
-                CGFloat marginX = lastProtoRect.origin.x;
-                CGFloat marginY = lastProtoRect.origin.y;//这个还得改下，是有个比例，不是单纯这样。
-                CGRect defaultCurProtoRect = CGRectMake(marginX + assDeltaX * wRate,
-                                                        marginY + assDeltaY * hRate,
-                                                        curAtAssRect.size.width * wRate,
+                //2025.05.09: bugfix-原来计算错误有NaN的情况，改为明确按缩放+平移来完成（ass和proto缩放量一致，平移量成正例）。
+                CGFloat wRate = lastProtoRect.size.width / lastAtAssRect.size.width;            //ass&proto缩放量（如lastP宽6，lastA宽9，则比例为2/3）
+                CGFloat hRate = lastProtoRect.size.height / lastAtAssRect.size.height;          //ass&proto缩放量
+                CGFloat assDeltaX = curAtAssRect.origin.x - lastAtAssRect.origin.x;             //ass平移量（如lastA.x=9，curA.x=0，则平移为-9）
+                CGFloat assDeltaY = curAtAssRect.origin.y - lastAtAssRect.origin.y;             //ass平移量
+                CGFloat protoDeltaX = assDeltaX * wRate;                                        //proto平移量（如ass平移=-9，则proto平移=-9*2/3=-6）
+                CGFloat protoDeltaY = assDeltaY * hRate;                                        //proto平移量
+                CGRect defaultCurProtoRect = CGRectMake(lastProtoRect.origin.x + protoDeltaX,   //如lastP.x=0，平移-6后，得curP.x=-6。
+                                                        lastProtoRect.origin.y + protoDeltaY,
+                                                        curAtAssRect.size.width * wRate,        //如curA宽27，比例为2/3，得curP宽18。
                                                         curAtAssRect.size.height * hRate);
                 
                 //23. 找出锚点。
