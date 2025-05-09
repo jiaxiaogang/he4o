@@ -1,5 +1,5 @@
 //
-//  AIFeatureStep1Models.h
+//  AIFeatureJvBuModels.h
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2025/5/7.
@@ -15,14 +15,14 @@
  *  @desc 二级：refPort.target、及每个targetAssT的最佳匹配到的gv数据bestGVs、存每个assT在proto中的rect（用于整体特征识别）。
  *  @desc 三级：存每一个匹配上的assIndex对应的：匹配度、符合度（用于类比）。
  */
-@interface AIFeatureStep1Models : NSObject
+@interface AIFeatureJvBuModels : NSObject
 
 +(id) new:(NSInteger)hash;
 
 //protoT.protoImgColorDic的hash编号
 @property (assign, nonatomic) NSInteger protoTHash;
 
-//存识别结果：List<AIFeatureStep1Model>
+//存识别结果：List<AIFeatureJvBuModel>
 @property (strong, nonatomic) NSMutableArray *models;
 
 @end

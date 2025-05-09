@@ -1,5 +1,5 @@
 //
-//  AIFeatureStep1Item.h
+//  AIFeatureJvBuItem.h
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2025/5/7.
@@ -11,7 +11,7 @@
 /**
  *  MARK:--------------------局部特征识别V2算法模型：三级--------------------
  */
-@interface AIFeatureStep1Item : NSObject
+@interface AIFeatureJvBuItem : NSObject
 
 +(id) new:(CGRect)bestGVAtProtoTRect matchValue:(CGFloat)matchValue matchDegree:(CGFloat)matchDegree assIndex:(NSInteger)assIndex;
 

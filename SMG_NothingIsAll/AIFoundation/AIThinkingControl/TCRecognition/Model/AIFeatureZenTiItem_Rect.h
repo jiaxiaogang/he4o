@@ -1,5 +1,5 @@
 //
-//  AIFeatureStep2Item.h
+//  AIFeatureZenTiItem.h
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2025/4/11.
@@ -11,9 +11,9 @@
 /**
  *  MARK:-------------------- 记录每一条abs在当前 assT/protoT 下的rect--------------------
  */
-@interface AIFeatureStep2Item_Rect : NSObject
+@interface AIFeatureZenTiItem_Rect : NSObject
 
-+(AIFeatureStep2Item_Rect*) new:(AIKVPointer*)absT absAtConRect:(CGRect)absAtConRect;
++(AIFeatureZenTiItem_Rect*) new:(AIKVPointer*)absT absAtConRect:(CGRect)absAtConRect;
 
 //absT.pId
 @property (strong, nonatomic) AIKVPointer *absT;

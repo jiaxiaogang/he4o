@@ -1,5 +1,5 @@
 //
-//  AIFeatureStep1Model.h
+//  AIFeatureJvBuModel.h
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2025/5/7.
@@ -11,7 +11,7 @@
 /**
  *  MARK:--------------------局部特征识别V2算法模型：二级--------------------
  */
-@interface AIFeatureStep1Model : NSObject
+@interface AIFeatureJvBuModel : NSObject
 
 +(id) new:(AIFeatureNode*)assT;
 
@@ -19,7 +19,7 @@
 @property (weak, nonatomic) AIFeatureNode *assT;
 //每个assT在proto中的rect（用于整体特征识别）。
 @property (assign, nonatomic) CGRect assTAtProtoTRect;
-//每条最佳gv的数据：List<AIFeatureStep1Item>
+//每条最佳gv的数据：List<AIFeatureJvBuItem>
 @property (strong, nonatomic) NSMutableArray *bestGVs;
 
 //用bestGVs每一条gv求平均得出匹配度。

@@ -63,12 +63,12 @@
 #import "AIFeatureAllBestGVModel.h"
 #import "AIGroupValueNextVModel.h"
 #import "AIRecognitionCache.h"
-#import "AIFeatureStep2Item_Rect.h"
-#import "AIFeatureStep2Model.h"
-#import "AIFeatureStep2Models.h"
-#import "AIFeatureStep1Item.h"
-#import "AIFeatureStep1Model.h"
-#import "AIFeatureStep1Models.h"
+#import "AIFeatureZenTiItem_Rect.h"
+#import "AIFeatureZenTiModel.h"
+#import "AIFeatureZenTiModels.h"
+#import "AIFeatureJvBuItem.h"
+#import "AIFeatureJvBuModel.h"
+#import "AIFeatureJvBuModels.h"
 
 //短时记忆
 #import "TOAlgModel.h"

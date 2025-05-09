@@ -248,8 +248,8 @@
 
 /**
  *  MARK:--------------------特征类比--------------------
- *  @desc 冷启无共同交层时，调用step1。
- *  @desc 然后有共同交层后，调用step2。
+ *  @desc 冷启无共同交层时，调用JvBu。
+ *  @desc 然后有共同交层后，调用ZenTi。
  *  @version
  *      2025.03.21: 使用mIsC正序双循环来实现特征类比 (参考34062-方案1);
  *      2025.03.21: 改用indexDic映射来实现特征类比 (参考34062-方案2);
@@ -264,17 +264,17 @@
     
     //2. 局部冷启 或 整体识别：类比依据不同（参考34139-TODO1）。
     //11. 取共同absT，借助absT进行类比（参考34139-TODO1）。
-    //2025.04.19: 必须是当前protoT识别时的step2Model才行，如果是往期step2Model不能用，会导致类比找protoT对应不上，导致取rect为Null的BUG。
-    if (assFeature.step2Model && [assFeature.step2Model.protoT isEqual:protoT_p]) {
-        //12. 借助absT来类比时，复用step2的识别结果model数据，并且用完就清空，防止循环野指针（参考34139-TODO3）。
-        AIFeatureStep2Model *step2Model = assFeature.step2Model;
-        assFeature.step2Model = nil;
-        return [self analogyFeature_ZenTi:protoFeature ass:assFeature bigerMatchValue:bigerMatchValue step2Model:step2Model];
+    //2025.04.19: 必须是当前protoT识别时的zenTiModel才行，如果是往期zenTiModel不能用，会导致类比找protoT对应不上，导致取rect为Null的BUG。
+    if (assFeature.zenTiModel && [assFeature.zenTiModel.protoT isEqual:protoT_p]) {
+        //12. 借助absT来类比时，复用ZenTi的识别结果model数据，并且用完就清空，防止循环野指针（参考34139-TODO3）。
+        AIFeatureZenTiModel *zenTiModel = assFeature.zenTiModel;
+        assFeature.zenTiModel = nil;
+        return [self analogyFeature_ZenTi:protoFeature ass:assFeature bigerMatchValue:bigerMatchValue zenTiModel:zenTiModel];
     }
     //21. 特征识别step1识别到的结果，复用indexDic进行类比。
-    else if(assFeature.step1Model && [protoT_p isEqual:assFeature.step1Model.v2] ) {
+    else if(assFeature.jvBuModel && [protoT_p isEqual:assFeature.jvBuModel.v2] ) {
         //22. 用于类比的数据用完就删，避免太占空间（参考34137-TODO2）。
-        NSDictionary *indexDic = assFeature.step1Model.v1;
+        NSDictionary *indexDic = assFeature.jvBuModel.v1;
         return [self analogyFeature_JvBu:protoFeature ass:assFeature bigerMatchValue:bigerMatchValue indexDic:indexDic];
     }
     return nil;
@@ -370,17 +370,17 @@
     return absT;
 }
 
-+(AIFeatureNode*) analogyFeature_JvBu_V2:(AIFeatureStep1Model*)step1Model {
++(AIFeatureNode*) analogyFeature_JvBu_V2:(AIFeatureJvBuModel*)jvBuModel {
     //NSLog(@"==============> 特征类比Step1：protoT%ld assT%ld",protoFeature.pId,assFeature.pId);
     //3. 收集有效的映射：用于后面计算rect用。
     NSMutableArray *validItems = [[NSMutableArray alloc] init];
     
     //11. 外类比有序进行 (记录jMax & 正序)
-    for (AIFeatureStep1Item *item in step1Model.bestGVs) {
+    for (AIFeatureJvBuItem *item in jvBuModel.bestGVs) {
         //12. 当前有主责，直接剔除: GV类比: 进行共同点抽象 (参考29025-11);
         CGFloat curDegree = item.matchDegree;
         CGFloat curMatchValue = item.matchValue;
-        BOOL noZeRen = [TCLearningUtil noZeRenForPingJun:curMatchValue * curDegree bigerMatchValue:step1Model.matchValue * step1Model.matchDegree];
+        BOOL noZeRen = [TCLearningUtil noZeRenForPingJun:curMatchValue * curDegree bigerMatchValue:jvBuModel.matchValue * jvBuModel.matchDegree];
         if (!noZeRen) return nil;
         
         //13. 当前码责任<50%时 (次要责任时,免责): 收集有效的映射：用于后面计算rect用。
@@ -388,25 +388,25 @@
     }
     
     //14. 根据validIndexDic求出newAbsT在protoT和assT中的rect。
-    NSArray *sortValidItems = [SMGUtils sortSmall2Big:validItems compareBlock:^double(AIFeatureStep1Item *obj) {
+    NSArray *sortValidItems = [SMGUtils sortSmall2Big:validItems compareBlock:^double(AIFeatureJvBuItem *obj) {
         return obj.assIndex;
     }];
-    NSArray *assContentIndexes = [SMGUtils convertArr:sortValidItems convertBlock:^id(AIFeatureStep1Item *obj) {
+    NSArray *assContentIndexes = [SMGUtils convertArr:sortValidItems convertBlock:^id(AIFeatureJvBuItem *obj) {
         return @(obj.assIndex);
     }];
-    CGRect absAtAssRect = [AINetUtils convertPartOfFeatureContent2Rect:step1Model.assT contentIndexes:assContentIndexes];
+    CGRect absAtAssRect = [AINetUtils convertPartOfFeatureContent2Rect:jvBuModel.assT contentIndexes:assContentIndexes];
     
     //15. 转为List<InputGroupValueModel>模型。
-    NSMutableArray *absGVModels = [SMGUtils convertArr:sortValidItems convertBlock:^id(AIFeatureStep1Item *obj) {
-        AIKVPointer *assGV_p = ARR_INDEX(step1Model.assT.content_ps, obj.assIndex);
+    NSMutableArray *absGVModels = [SMGUtils convertArr:sortValidItems convertBlock:^id(AIFeatureJvBuItem *obj) {
+        AIKVPointer *assGV_p = ARR_INDEX(jvBuModel.assT.content_ps, obj.assIndex);
         
         //16. 将gvRect在assT的范围，转成在newAbsT中的位置。
-        CGRect assRect = VALTOOK(ARR_INDEX(step1Model.assT.rects, obj.assIndex)).CGRectValue;
+        CGRect assRect = VALTOOK(ARR_INDEX(jvBuModel.assT.rects, obj.assIndex)).CGRectValue;
         assRect.origin.x -= absAtAssRect.origin.x;
         assRect.origin.y -= absAtAssRect.origin.y;
         return [InputGroupValueModel new:assGV_p rect:assRect];
     }];
-    if (step1Model.matchValue == 1 && absGVModels.count == 0) {
+    if (jvBuModel.matchValue == 1 && absGVModels.count == 0) {
         ELog(@"如果匹配度为1，会导致所有indexDic的GV全有责，导致最后absGVModels为0条，如果停此处时，查下来源，这个匹配度1是哪来的");
     }
     if (!ARRISOK(absGVModels)) return nil;
@@ -415,55 +415,55 @@
     NSArray *sortGroupModels = [ThinkingUtils sortInputGroupValueModels:absGVModels];
     
     //31. 外类比构建
-    AIFeatureNode *absT = [AIGeneralNodeCreater createFeatureNode:sortGroupModels conNodes:@[step1Model.assT] at:step1Model.assT.at ds:step1Model.assT.ds isOut:step1Model.assT.isOut isJiao:true];
-    [absT updateLogDescDic:step1Model.assT.logDesc];
+    AIFeatureNode *absT = [AIGeneralNodeCreater createFeatureNode:sortGroupModels conNodes:@[jvBuModel.assT] at:jvBuModel.assT.at ds:jvBuModel.assT.ds isOut:jvBuModel.assT.isOut isJiao:true];
+    [absT updateLogDescDic:jvBuModel.assT.logDesc];
     
     //32. 更新匹配度;
     //TODO: 考虑下，此处abs是从ass抽象来的，那这里的匹配度，符合度，是不是应该直接=1。
-    CGFloat absMatchValue = validItems.count == 0 ? 0 : [SMGUtils sumOfArr:validItems convertBlock:^double(AIFeatureStep1Item *obj) {
+    CGFloat absMatchValue = validItems.count == 0 ? 0 : [SMGUtils sumOfArr:validItems convertBlock:^double(AIFeatureJvBuItem *obj) {
         return obj.matchValue;
     }] / validItems.count;
-    [step1Model.assT updateMatchValue:absT matchValue:absMatchValue];
+    [jvBuModel.assT updateMatchValue:absT matchValue:absMatchValue];
     
     //33. 存conPorts的rect（参考34135-TODO1）。
-    [AINetUtils updateConPortRect:absT conT:step1Model.assT.p rect:absAtAssRect];
+    [AINetUtils updateConPortRect:absT conT:jvBuModel.assT.p rect:absAtAssRect];
     
     //34. 记录符合度：根据每个符合itemAbsT，来计算平均符合度。
-    CGFloat absMatchDegree = validItems.count == 0 ? 0 : [SMGUtils sumOfArr:validItems convertBlock:^double(AIFeatureStep1Item *obj) {
+    CGFloat absMatchDegree = validItems.count == 0 ? 0 : [SMGUtils sumOfArr:validItems convertBlock:^double(AIFeatureJvBuItem *obj) {
         return obj.matchDegree;
     }] / validItems.count;
-    [step1Model.assT updateMatchDegree:absT matchDegree:absMatchDegree];
+    [jvBuModel.assT updateMatchDegree:absT matchDegree:absMatchDegree];
     
-    if (Log4Ana || true) NSLog(@"\n局部特征类比结果(%@) ======================> \n局部Ass特征T%ld（GV数:%ld）%@\n%@局部Abs特征T%ld（GV数:%ld）：%@\n%@",step1Model.assT.ds,
-                               step1Model.assT.pId,step1Model.assT.count,CLEANSTR([step1Model.assT getLogDesc:false]),FeatureDesc(step1Model.assT.p,1),
+    if (Log4Ana || true) NSLog(@"\n局部特征类比结果(%@) ======================> \n局部Ass特征T%ld（GV数:%ld）%@\n%@局部Abs特征T%ld（GV数:%ld）：%@\n%@",jvBuModel.assT.ds,
+                               jvBuModel.assT.pId,jvBuModel.assT.count,CLEANSTR([jvBuModel.assT getLogDesc:false]),FeatureDesc(jvBuModel.assT.p,1),
                                absT.pId,sortGroupModels.count,CLEANSTR([absT getLogDesc:false]),FeatureDesc(absT.p,1));
     return absT;
 }
 
-+(AIFeatureNode*) analogyFeature_ZenTi:(AIFeatureNode*)protoT ass:(AIFeatureNode*)assT bigerMatchValue:(CGFloat)bigerMatchValue step2Model:(AIFeatureStep2Model*)step2Model {
++(AIFeatureNode*) analogyFeature_ZenTi:(AIFeatureNode*)protoT ass:(AIFeatureNode*)assT bigerMatchValue:(CGFloat)bigerMatchValue zenTiModel:(AIFeatureZenTiModel*)zenTiModel {
     //NSLog(@"==============> 特征类比Step2：protoT%ld assT%ld",protoT.pId,assT.pId);
     //1. 借助每个absT来实现整体T的类比：类比orders的规律: 类比rectItems，把责任超过50%的去掉，别的保留（参考34139）。
-    NSArray *sameItems = [SMGUtils filterArr:step2Model.rectItems checkValid:^BOOL(AIFeatureStep2Item_Rect *obj) {
-        return [TCLearningUtil noZeRenForPingJun:obj.itemMatchValue * obj.itemMatchDegree bigerMatchValue:step2Model.modelMatchValue * step2Model.modelMatchDegree];
+    NSArray *sameItems = [SMGUtils filterArr:zenTiModel.rectItems checkValid:^BOOL(AIFeatureZenTiItem_Rect *obj) {
+        return [TCLearningUtil noZeRenForPingJun:obj.itemMatchValue * obj.itemMatchDegree bigerMatchValue:zenTiModel.modelMatchValue * zenTiModel.modelMatchDegree];
     }];
     
     //11. 将每个absT指向具象整体特征的rect求并集，得出加一块儿的绝对rect范围（参考3413a-示图2）。
     CGRect newAbsAtAssRect = CGRectNull;
-    for (AIFeatureStep2Item_Rect *item in sameItems) {
+    for (AIFeatureZenTiItem_Rect *item in sameItems) {
         //12. 取并每个itemAbsT在assT的范围。
         newAbsAtAssRect = CGRectUnion(newAbsAtAssRect, item.absAtConRect);
     }
     
     //20. 根据protoT和itemAbsT的映射来实现类比抽象（参考34164-方案2）。
     //2025.04.23: 修复收集到的absGVModels数竟然有达到1000的情况，改为通过protoT和itemAbsT的映射，收集protoT的gv元素做抽象。
-    NSMutableArray *protoIndexes = [SMGUtils convertArr:sameItems convertItemArrBlock:^NSArray *(AIFeatureStep2Item_Rect *item) {
+    NSMutableArray *protoIndexes = [SMGUtils convertArr:sameItems convertItemArrBlock:^NSArray *(AIFeatureZenTiItem_Rect *item) {
         AIFeatureNode *itemAbsT = [SMGUtils searchNode:item.absT];
-        MapModel *step1Model = itemAbsT.step1Model;
-        if (!step1Model || ![protoT.p isEqual:step1Model.v2]) {
-            ELog(@"Step2借助Step1Model来找映射，找类比抽象gv元素，这里的step1Model都不为空才对，因为itemAbsT都是由局部特征识别来的，如果为空查下原因。");
+        MapModel *jvBuModel = itemAbsT.jvBuModel;
+        if (!jvBuModel || ![protoT.p isEqual:jvBuModel.v2]) {
+            ELog(@"Step2借助JvBuModel来找映射，找类比抽象gv元素，这里的jvBuModel都不为空才对，因为itemAbsT都是由局部特征识别来的，如果为空查下原因。");
             return nil;
         }
-        NSDictionary *protoItemAbsTIndexDic = step1Model.v1;
+        NSDictionary *protoItemAbsTIndexDic = jvBuModel.v1;
         return protoItemAbsTIndexDic.allValues;
     }];
     protoIndexes = [SMGUtils removeRepeat:protoIndexes];
@@ -494,14 +494,14 @@
     [absT updateLogDescDic:protoT.logDesc];
     [absT updateLogDescDic:assT.logDesc];
     
-    //2025.04.23: 改为由protoT来收集absGVModels了，所以与protoT的匹配度符合度全是1，与assT的匹配度符合度直接重用step2Model的。
+    //2025.04.23: 改为由protoT来收集absGVModels了，所以与protoT的匹配度符合度全是1，与assT的匹配度符合度直接重用zenTiModel的。
     //42. 记录匹配度：根据每个匹配itemAbsT，来计算平均匹配度。
     [protoT updateMatchValue:absT matchValue:1];
-    [assT updateMatchValue:absT matchValue:step2Model.modelMatchValue];
+    [assT updateMatchValue:absT matchValue:zenTiModel.modelMatchValue];
     
     //43. 记录符合度：根据每个符合itemAbsT，来计算平均符合度。
     [protoT updateMatchDegree:absT matchDegree:1];
-    [assT updateMatchDegree:absT matchDegree:step2Model.modelMatchDegree];
+    [assT updateMatchDegree:absT matchDegree:zenTiModel.modelMatchDegree];
     
     //44. 记录整体absT.conPort到protoT和assT的rect。
     [AINetUtils updateConPortRect:absT conT:protoT.p rect:newAbsAtProtoRect];
@@ -515,35 +515,35 @@
     return absT;
 }
 
-+(AIFeatureNode*) analogyFeature_ZenTi_V2:(AIFeatureNode*)assT step2Model:(AIFeatureStep2Model*)step2Model {
++(AIFeatureNode*) analogyFeature_ZenTi_V2:(AIFeatureNode*)assT zenTiModel:(AIFeatureZenTiModel*)zenTiModel {
     //NSLog(@"==============> 特征类比Step2：protoT%ld assT%ld",protoT.pId,assT.pId);
     //1. 借助每个absT来实现整体T的类比：类比orders的规律: 类比rectItems，把责任超过50%的去掉，别的保留（参考34139）。
-    NSArray *sameItems = [SMGUtils filterArr:step2Model.rectItems checkValid:^BOOL(AIFeatureStep2Item_Rect *obj) {
-        return [TCLearningUtil noZeRenForPingJun:obj.itemMatchValue * obj.itemMatchDegree bigerMatchValue:step2Model.modelMatchValue * step2Model.modelMatchDegree];
+    NSArray *sameItems = [SMGUtils filterArr:zenTiModel.rectItems checkValid:^BOOL(AIFeatureZenTiItem_Rect *obj) {
+        return [TCLearningUtil noZeRenForPingJun:obj.itemMatchValue * obj.itemMatchDegree bigerMatchValue:zenTiModel.modelMatchValue * zenTiModel.modelMatchDegree];
     }];
     
     //2. 数据检查
-    if ([SMGUtils filterSingleFromArr:sameItems checkValid:^BOOL(AIFeatureStep2Item_Rect *item) {
+    if ([SMGUtils filterSingleFromArr:sameItems checkValid:^BOOL(AIFeatureZenTiItem_Rect *item) {
         AIFeatureNode *itemAbsT = [SMGUtils searchNode:item.absT];
-        return !itemAbsT.step1ModelV2;
+        return !itemAbsT.jvBuModelV2;
     }]) {
-        ELog(@"Step2借助Step1Model来找映射，找类比抽象gv元素，这里的step1Model都不为空才对，因为itemAbsT都是由局部特征识别来的，如果为空查下原因。");
+        ELog(@"Step2借助JvBuModel来找映射，找类比抽象gv元素，这里的jvBuModel都不为空才对，因为itemAbsT都是由局部特征识别来的，如果为空查下原因。");
         return nil;
     }
     
     //11. 将每个absT指向具象整体特征的rect求并集，得出加一块儿的绝对rect范围（参考3413a-示图2）。
     CGRect newAbsAtAssRect = CGRectNull;
-    for (AIFeatureStep2Item_Rect *item in sameItems) {
+    for (AIFeatureZenTiItem_Rect *item in sameItems) {
         //取并每个itemAbsT在assT的范围。
         newAbsAtAssRect = CGRectUnion(newAbsAtAssRect, item.absAtConRect);
     }
     
     //12. 取newAbs在protoT的rect，可以用局部特征识别结果中的itemAbsTAtProtoRect来求并集（目前不需要，因为没有protoT，也用不着这个AtProtoTRect）。
     //CGRect newAbsAtProtoRect = CGRectNull;
-    //for (AIFeatureStep2Item_Rect *item in sameItems) {
+    //for (AIFeatureZenTiItem_Rect *item in sameItems) {
     //    //取并每个itemAbsT在proto的范围。
     //    AIFeatureNode *itemAbsT = [SMGUtils searchNode:item.absT];
-    //    newAbsAtProtoRect = CGRectUnion(newAbsAtProtoRect, itemAbsT.step1ModelV2.assTAtProtoTRect);
+    //    newAbsAtProtoRect = CGRectUnion(newAbsAtProtoRect, itemAbsT.jvBuModelV2.assTAtProtoTRect);
     //}
     
     //20. 根据protoT和itemAbsT的映射来实现类比抽象（参考34164-方案2）。
@@ -551,10 +551,10 @@
     //2025.05.08: 说明-所以我们只能从itemAbsT中取gvs，那么这里就有一个要求：itemAbsT中的元素必须来自自身具象，不允许抽象t时，gv有变化，不然每个itemAbsT中的对应gv不同，会重复收集。
     //2025.05.08: 举例-说白了：从乔峰抽象的胳膊腿特征必须是乔峰的，不能是别人的。
     //21. 取出每个itemAbsT中的gv，转换成newAbsT的元素：@[InputGroupValueModel]格式（参考3413a-示图1）。
-    NSMutableArray *absGVModels = [SMGUtils convertArr:sameItems convertItemArrBlock:^id(AIFeatureStep2Item_Rect *step2Item) {
-        AIFeatureNode *itemAbsT = [SMGUtils searchNode:step2Item.absT];
-        CGRect itemAbsTAtAssRect = step2Item.absAtConRect;
-        return [SMGUtils convertArr:itemAbsT.step1ModelV2.bestGVs convertBlock:^id(AIFeatureStep1Item *obj) {
+    NSMutableArray *absGVModels = [SMGUtils convertArr:sameItems convertItemArrBlock:^id(AIFeatureZenTiItem_Rect *zenTiItem) {
+        AIFeatureNode *itemAbsT = [SMGUtils searchNode:zenTiItem.absT];
+        CGRect itemAbsTAtAssRect = zenTiItem.absAtConRect;
+        return [SMGUtils convertArr:itemAbsT.jvBuModelV2.bestGVs convertBlock:^id(AIFeatureJvBuItem *obj) {
             //22. 从itemAbsT中收集元素（参考34164-方案2）。
             AIKVPointer *itemAbsGV_p = ARR_INDEX(itemAbsT.content_ps, obj.assIndex);
             
@@ -580,16 +580,16 @@
     //41. 更新logDesc。
     [absT updateLogDescDic:assT.logDesc];
     
-    //2025.04.23: 改为由protoT来收集absGVModels了，所以与protoT的匹配度符合度全是1，与assT的匹配度符合度直接重用step2Model的。
+    //2025.04.23: 改为由protoT来收集absGVModels了，所以与protoT的匹配度符合度全是1，与assT的匹配度符合度直接重用zenTiModel的。
     //42. 记录匹配度：根据每个匹配itemAbsT，来计算平均匹配度。
     //TODO: 考虑下，此处abs是从ass抽象来的，那这里的匹配度，符合度，是不是应该直接=1。
-    CGFloat absMatchValue = sameItems.count == 0 ? 0 : [SMGUtils sumOfArr:sameItems convertBlock:^double(AIFeatureStep2Item_Rect *obj) {
+    CGFloat absMatchValue = sameItems.count == 0 ? 0 : [SMGUtils sumOfArr:sameItems convertBlock:^double(AIFeatureZenTiItem_Rect *obj) {
         return obj.itemMatchValue;
     }] / sameItems.count;
     [assT updateMatchValue:absT matchValue:absMatchValue];
     
     //43. 记录符合度：根据每个符合itemAbsT，来计算平均符合度。
-    CGFloat absMatchDegree = sameItems.count == 0 ? 0 : [SMGUtils sumOfArr:sameItems convertBlock:^double(AIFeatureStep2Item_Rect *obj) {
+    CGFloat absMatchDegree = sameItems.count == 0 ? 0 : [SMGUtils sumOfArr:sameItems convertBlock:^double(AIFeatureZenTiItem_Rect *obj) {
         return obj.itemMatchDegree;
     }] / sameItems.count;
     [assT updateMatchDegree:absT matchDegree:absMatchDegree];

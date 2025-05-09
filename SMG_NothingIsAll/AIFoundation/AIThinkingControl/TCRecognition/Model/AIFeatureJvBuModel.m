@@ -1,17 +1,17 @@
 //
-//  AIFeatureStep1Model.m
+//  AIFeatureJvBuModel.m
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2025/5/7.
 //  Copyright © 2025 XiaoGang. All rights reserved.
 //
 
-#import "AIFeatureStep1Model.h"
+#import "AIFeatureJvBuModel.h"
 
-@implementation AIFeatureStep1Model
+@implementation AIFeatureJvBuModel
 
 +(id) new:(AIFeatureNode*)assT {
-    AIFeatureStep1Model *result = [AIFeatureStep1Model new];
+    AIFeatureJvBuModel *result = [AIFeatureJvBuModel new];
     result.assT = assT;
     return result;
 }
@@ -22,10 +22,10 @@
 }
 
 -(void) run4MatchValueAndMatchDegreeAndMatchAssProtoRatio {
-    self.matchValue = self.bestGVs.count == 0 ? 0 : [SMGUtils sumOfArr:self.bestGVs convertBlock:^double(AIFeatureStep1Item *obj) {
+    self.matchValue = self.bestGVs.count == 0 ? 0 : [SMGUtils sumOfArr:self.bestGVs convertBlock:^double(AIFeatureJvBuItem *obj) {
         return obj.matchValue;
     }] / self.bestGVs.count;
-    self.matchDegree = self.bestGVs.count == 0 ? 0 : [SMGUtils sumOfArr:self.bestGVs convertBlock:^double(AIFeatureStep1Item *obj) {
+    self.matchDegree = self.bestGVs.count == 0 ? 0 : [SMGUtils sumOfArr:self.bestGVs convertBlock:^double(AIFeatureJvBuItem *obj) {
         return obj.matchDegree;
     }] / self.bestGVs.count;
     
@@ -35,7 +35,7 @@
 
 -(void) run4AssTAtProtoTRect {
     self.assTAtProtoTRect = CGRectNull;
-    for (AIFeatureStep1Item *item in self.bestGVs) {
+    for (AIFeatureJvBuItem *item in self.bestGVs) {
         self.assTAtProtoTRect = CGRectUnion(self.assTAtProtoTRect, item.bestGVAtProtoTRect);
     }
 }

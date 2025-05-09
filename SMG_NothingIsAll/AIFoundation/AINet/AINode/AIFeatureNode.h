@@ -35,10 +35,10 @@
 -(NSDictionary*) getDegreeDic:(NSInteger)assPId;
 
 //MARK:===============================================================
-//MARK:       < step2Model（不进行持久化，仅用于step2识别结果的类比中 >
+//MARK:       < zenTiModel（不进行持久化，仅用于ZenTi识别结果的类比中 >
 //MARK:===============================================================
-@property (strong, nonatomic) MapModel *step1Model;//v1=indexDic v2=protoT
-@property (strong, nonatomic) AIFeatureStep1Model *step1ModelV2;
-@property (strong, nonatomic) AIFeatureStep2Model *step2Model;
+@property (strong, nonatomic) MapModel *jvBuModel;//v1=indexDic v2=protoT
+@property (strong, nonatomic) AIFeatureJvBuModel *jvBuModelV2;
+@property (strong, nonatomic) AIFeatureZenTiModel *zenTiModel;
 
 @end

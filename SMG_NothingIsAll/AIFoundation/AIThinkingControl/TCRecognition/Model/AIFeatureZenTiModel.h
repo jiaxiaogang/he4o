@@ -1,5 +1,5 @@
 //
-//  AIFeatureStep2Model.h
+//  AIFeatureZenTiModel.h
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2025/4/11.
@@ -15,9 +15,9 @@
  *          2、把每个assT / protoT 计为一组（本模型表示其中一组）。
  *
  */
-@interface AIFeatureStep2Model : NSObject
+@interface AIFeatureZenTiModel : NSObject
 
-+(AIFeatureStep2Model*) new:(AIKVPointer*)conT;
++(AIFeatureZenTiModel*) new:(AIKVPointer*)conT;
 
 //每个assT/protoT 各有一到多个absT（表示每个assT/protoT所包含的所有absT）。
 @property (strong, nonatomic) NSMutableArray *rectItems;
@@ -37,7 +37,7 @@
 //MARK:===============================================================
 //MARK:                     < 计算位置符合度组 >
 //MARK:===============================================================
--(void) run4MatchDegree:(AIFeatureStep2Model*)protoModel;
+-(void) run4MatchDegree:(AIFeatureZenTiModel*)protoModel;
 
 /**
  *  MARK:--------------------assTModel的位置匹配度 = 所有absTItem的位置符合度的平均值（参考34136-TODO6）--------------------

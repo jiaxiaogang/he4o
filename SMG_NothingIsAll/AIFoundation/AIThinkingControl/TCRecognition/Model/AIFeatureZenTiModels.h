@@ -1,5 +1,5 @@
 //
-//  AIFeatureStep2Models.h
+//  AIFeatureZenTiModels.h
 //  SMG_NothingIsAll
 //
 //  Created by jia on 2025/4/11.
@@ -9,13 +9,13 @@
 #import <Foundation/Foundation.h>
 
 /**
- *  MARK:--------------------用于记录特征识别step2中，所有的整体特征--------------------
+ *  MARK:--------------------用于记录整体特征识别中，所有的整体特征--------------------
  */
-@interface AIFeatureStep2Models : NSObject
+@interface AIFeatureZenTiModels : NSObject
 
 @property (strong, nonatomic) NSMutableArray *models;
 
--(AIFeatureStep2Model*) getModelIfNullCreate:(AIKVPointer*)conT;
+-(AIFeatureZenTiModel*) getModelIfNullCreate:(AIKVPointer*)conT;
 -(void) updateItem:(AIKVPointer*)conT absT:(AIKVPointer*)absT absAtConRect:(CGRect)absAtConRect;
 
 /**

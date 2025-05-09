@@ -40,8 +40,8 @@
 /**
  *  MARK:--------------------特征类比--------------------
  */
-+(AIFeatureNode*) analogyFeature_JvBu_V2:(AIFeatureStep1Model*)step1Model;
-+(AIFeatureNode*) analogyFeature_ZenTi_V2:(AIFeatureNode*)assT step2Model:(AIFeatureStep2Model*)step2Model;
++(AIFeatureNode*) analogyFeature_JvBu_V2:(AIFeatureJvBuModel*)jvBuModel;
++(AIFeatureNode*) analogyFeature_ZenTi_V2:(AIFeatureNode*)assT zenTiModel:(AIFeatureZenTiModel*)zenTiModel;
 
 /**
  *  MARK:--------------------Canset类比 --------------------

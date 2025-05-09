@@ -122,9 +122,9 @@
 		087268E0219CF3B500B5490F /* AIVisionAlgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 087268DF219CF3B500B5490F /* AIVisionAlgs.m */; };
 		0872E1682779EF7C0067C97D /* TIUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 0872E1672779EF7C0067C97D /* TIUtils.m */; };
 		0873E11328B45D0600FBC09E /* TCRefrection.m in Sources */ = {isa = PBXBuildFile; fileRef = 0873E11228B45D0600FBC09E /* TCRefrection.m */; };
-		087418D22DA893D80019908C /* AIFeatureStep2Model.m in Sources */ = {isa = PBXBuildFile; fileRef = 087418D12DA893D80019908C /* AIFeatureStep2Model.m */; };
-		087418D82DA898810019908C /* AIFeatureStep2Models.m in Sources */ = {isa = PBXBuildFile; fileRef = 087418D72DA898810019908C /* AIFeatureStep2Models.m */; };
-		087418DE2DA8A42D0019908C /* AIFeatureStep2Item_Rect.m in Sources */ = {isa = PBXBuildFile; fileRef = 087418DC2DA8A42D0019908C /* AIFeatureStep2Item_Rect.m */; };
+		087418D22DA893D80019908C /* AIFeatureZenTiModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 087418D12DA893D80019908C /* AIFeatureZenTiModel.m */; };
+		087418D82DA898810019908C /* AIFeatureZenTiModels.m in Sources */ = {isa = PBXBuildFile; fileRef = 087418D72DA898810019908C /* AIFeatureZenTiModels.m */; };
+		087418DE2DA8A42D0019908C /* AIFeatureZenTiItem_Rect.m in Sources */ = {isa = PBXBuildFile; fileRef = 087418DC2DA8A42D0019908C /* AIFeatureZenTiItem_Rect.m */; };
 		087705A82753743500BA4EFB /* TCInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 087705A72753743500BA4EFB /* TCInput.m */; };
 		087705AB2753744300BA4EFB /* TCRegroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 087705AA2753744300BA4EFB /* TCRegroup.m */; };
 		087705AE2753745100BA4EFB /* TCRecognition.m in Sources */ = {isa = PBXBuildFile; fileRef = 087705AD2753745100BA4EFB /* TCRecognition.m */; };
@@ -184,9 +184,9 @@
 		08CEAFAD22B317A800CD1D91 /* NodeCompareModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08CEAFAC22B317A800CD1D91 /* NodeCompareModel.m */; };
 		08D01CA228F70296003688ED /* TVSettingWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D01CA128F70296003688ED /* TVSettingWindow.m */; };
 		08D01CA428F702B0003688ED /* TVSettingWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 08D01CA328F702B0003688ED /* TVSettingWindow.xib */; };
-		08D05C2E2DCAE47B00A967D0 /* AIFeatureStep1Model.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D05C2D2DCAE47B00A967D0 /* AIFeatureStep1Model.m */; };
-		08D05C312DCAEA3900A967D0 /* AIFeatureStep1Item.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D05C302DCAEA3900A967D0 /* AIFeatureStep1Item.m */; };
-		08D05C342DCAEB2D00A967D0 /* AIFeatureStep1Models.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D05C332DCAEB2D00A967D0 /* AIFeatureStep1Models.m */; };
+		08D05C2E2DCAE47B00A967D0 /* AIFeatureJvBuModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D05C2D2DCAE47B00A967D0 /* AIFeatureJvBuModel.m */; };
+		08D05C312DCAEA3900A967D0 /* AIFeatureJvBuItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D05C302DCAEA3900A967D0 /* AIFeatureJvBuItem.m */; };
+		08D05C342DCAEB2D00A967D0 /* AIFeatureJvBuModels.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D05C332DCAEB2D00A967D0 /* AIFeatureJvBuModels.m */; };
 		08D1926E29E5A98400032AD8 /* AISceneModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D1926D29E5A98400032AD8 /* AISceneModel.m */; };
 		08D322A91EBA28B0009D734A /* Foundation+Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D322A81EBA28B0009D734A /* Foundation+Log.m */; };
 		08D471DE1FEB3FFF00C61322 /* AIImvAlgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D471DD1FEB3FFF00C61322 /* AIImvAlgs.m */; };
@@ -470,12 +470,12 @@
 		0872E1672779EF7C0067C97D /* TIUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TIUtils.m; sourceTree = "<group>"; };
 		0873E11128B45D0600FBC09E /* TCRefrection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCRefrection.h; sourceTree = "<group>"; };
 		0873E11228B45D0600FBC09E /* TCRefrection.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCRefrection.m; sourceTree = "<group>"; };
-		087418D02DA893D80019908C /* AIFeatureStep2Model.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIFeatureStep2Model.h; sourceTree = "<group>"; };
-		087418D12DA893D80019908C /* AIFeatureStep2Model.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIFeatureStep2Model.m; sourceTree = "<group>"; };
-		087418D62DA898810019908C /* AIFeatureStep2Models.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIFeatureStep2Models.h; sourceTree = "<group>"; };
-		087418D72DA898810019908C /* AIFeatureStep2Models.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIFeatureStep2Models.m; sourceTree = "<group>"; };
-		087418DC2DA8A42D0019908C /* AIFeatureStep2Item_Rect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIFeatureStep2Item_Rect.m; sourceTree = "<group>"; };
-		087418DD2DA8A42D0019908C /* AIFeatureStep2Item_Rect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIFeatureStep2Item_Rect.h; sourceTree = "<group>"; };
+		087418D02DA893D80019908C /* AIFeatureZenTiModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIFeatureZenTiModel.h; sourceTree = "<group>"; };
+		087418D12DA893D80019908C /* AIFeatureZenTiModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIFeatureZenTiModel.m; sourceTree = "<group>"; };
+		087418D62DA898810019908C /* AIFeatureZenTiModels.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIFeatureZenTiModels.h; sourceTree = "<group>"; };
+		087418D72DA898810019908C /* AIFeatureZenTiModels.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIFeatureZenTiModels.m; sourceTree = "<group>"; };
+		087418DC2DA8A42D0019908C /* AIFeatureZenTiItem_Rect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIFeatureZenTiItem_Rect.m; sourceTree = "<group>"; };
+		087418DD2DA8A42D0019908C /* AIFeatureZenTiItem_Rect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIFeatureZenTiItem_Rect.h; sourceTree = "<group>"; };
 		087705A62753743500BA4EFB /* TCInput.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCInput.h; sourceTree = "<group>"; };
 		087705A72753743500BA4EFB /* TCInput.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCInput.m; sourceTree = "<group>"; };
 		087705A92753744300BA4EFB /* TCRegroup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCRegroup.h; sourceTree = "<group>"; };
@@ -596,12 +596,12 @@
 		08D01CA028F70296003688ED /* TVSettingWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TVSettingWindow.h; sourceTree = "<group>"; };
 		08D01CA128F70296003688ED /* TVSettingWindow.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TVSettingWindow.m; sourceTree = "<group>"; };
 		08D01CA328F702B0003688ED /* TVSettingWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TVSettingWindow.xib; sourceTree = "<group>"; };
-		08D05C2C2DCAE47B00A967D0 /* AIFeatureStep1Model.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIFeatureStep1Model.h; sourceTree = "<group>"; };
-		08D05C2D2DCAE47B00A967D0 /* AIFeatureStep1Model.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIFeatureStep1Model.m; sourceTree = "<group>"; };
-		08D05C2F2DCAEA3900A967D0 /* AIFeatureStep1Item.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIFeatureStep1Item.h; sourceTree = "<group>"; };
-		08D05C302DCAEA3900A967D0 /* AIFeatureStep1Item.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIFeatureStep1Item.m; sourceTree = "<group>"; };
-		08D05C322DCAEB2D00A967D0 /* AIFeatureStep1Models.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIFeatureStep1Models.h; sourceTree = "<group>"; };
-		08D05C332DCAEB2D00A967D0 /* AIFeatureStep1Models.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIFeatureStep1Models.m; sourceTree = "<group>"; };
+		08D05C2C2DCAE47B00A967D0 /* AIFeatureJvBuModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIFeatureJvBuModel.h; sourceTree = "<group>"; };
+		08D05C2D2DCAE47B00A967D0 /* AIFeatureJvBuModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIFeatureJvBuModel.m; sourceTree = "<group>"; };
+		08D05C2F2DCAEA3900A967D0 /* AIFeatureJvBuItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIFeatureJvBuItem.h; sourceTree = "<group>"; };
+		08D05C302DCAEA3900A967D0 /* AIFeatureJvBuItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIFeatureJvBuItem.m; sourceTree = "<group>"; };
+		08D05C322DCAEB2D00A967D0 /* AIFeatureJvBuModels.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIFeatureJvBuModels.h; sourceTree = "<group>"; };
+		08D05C332DCAEB2D00A967D0 /* AIFeatureJvBuModels.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AIFeatureJvBuModels.m; sourceTree = "<group>"; };
 		08D1926C29E5A98400032AD8 /* AISceneModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AISceneModel.h; sourceTree = "<group>"; };
 		08D1926D29E5A98400032AD8 /* AISceneModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AISceneModel.m; sourceTree = "<group>"; };
 		08D322A71EBA2783009D734A /* SMGPrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SMGPrefixHeader.pch; sourceTree = "<group>"; };
@@ -1467,18 +1467,18 @@
 				08E74B332D9380F80052D8C2 /* AIGroupValueNextVModel.m */,
 				08E74B352D9393100052D8C2 /* AIRecognitionCache.h */,
 				08E74B362D9393100052D8C2 /* AIRecognitionCache.m */,
-				087418D62DA898810019908C /* AIFeatureStep2Models.h */,
-				087418D72DA898810019908C /* AIFeatureStep2Models.m */,
-				087418D02DA893D80019908C /* AIFeatureStep2Model.h */,
-				087418D12DA893D80019908C /* AIFeatureStep2Model.m */,
-				087418DD2DA8A42D0019908C /* AIFeatureStep2Item_Rect.h */,
-				087418DC2DA8A42D0019908C /* AIFeatureStep2Item_Rect.m */,
-				08D05C322DCAEB2D00A967D0 /* AIFeatureStep1Models.h */,
-				08D05C332DCAEB2D00A967D0 /* AIFeatureStep1Models.m */,
-				08D05C2C2DCAE47B00A967D0 /* AIFeatureStep1Model.h */,
-				08D05C2D2DCAE47B00A967D0 /* AIFeatureStep1Model.m */,
-				08D05C2F2DCAEA3900A967D0 /* AIFeatureStep1Item.h */,
-				08D05C302DCAEA3900A967D0 /* AIFeatureStep1Item.m */,
+				087418D62DA898810019908C /* AIFeatureZenTiModels.h */,
+				087418D72DA898810019908C /* AIFeatureZenTiModels.m */,
+				087418D02DA893D80019908C /* AIFeatureZenTiModel.h */,
+				087418D12DA893D80019908C /* AIFeatureZenTiModel.m */,
+				087418DD2DA8A42D0019908C /* AIFeatureZenTiItem_Rect.h */,
+				087418DC2DA8A42D0019908C /* AIFeatureZenTiItem_Rect.m */,
+				08D05C322DCAEB2D00A967D0 /* AIFeatureJvBuModels.h */,
+				08D05C332DCAEB2D00A967D0 /* AIFeatureJvBuModels.m */,
+				08D05C2C2DCAE47B00A967D0 /* AIFeatureJvBuModel.h */,
+				08D05C2D2DCAE47B00A967D0 /* AIFeatureJvBuModel.m */,
+				08D05C2F2DCAEA3900A967D0 /* AIFeatureJvBuItem.h */,
+				08D05C302DCAEA3900A967D0 /* AIFeatureJvBuItem.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -2119,7 +2119,7 @@
 				88B23BE620BE20BC00BE8AF6 /* AIAbsFoManager.m in Sources */,
 				08FBE10E22D56F360088EF1A /* NVModuleUtil.m in Sources */,
 				083981F92A19E9D400F61263 /* MathUtils.m in Sources */,
-				08D05C342DCAEB2D00A967D0 /* AIFeatureStep1Models.m in Sources */,
+				08D05C342DCAEB2D00A967D0 /* AIFeatureJvBuModels.m in Sources */,
 				0827DAD324198EAC00A025D4 /* HeLogModel.m in Sources */,
 				081002152A6BAC5600BE9D8A /* TCResult.m in Sources */,
 				08A5D5D822AF1E3400E56BB4 /* NVView.m in Sources */,
@@ -2175,7 +2175,7 @@
 				08E8CF5B25B2F64000AA18DB /* ImvGoodModel.m in Sources */,
 				088DD7232201216500E0A786 /* TOFoModel.m in Sources */,
 				084B4B0824433AA900FB3670 /* ShortMatchManager.m in Sources */,
-				087418D82DA898810019908C /* AIFeatureStep2Models.m in Sources */,
+				087418D82DA898810019908C /* AIFeatureZenTiModels.m in Sources */,
 				08CEAFAD22B317A800CD1D91 /* NodeCompareModel.m in Sources */,
 				0858C5DB2194FB3F00951BA5 /* LightView.m in Sources */,
 				089041742D8AF2E100545CD7 /* AIMatchModel.m in Sources */,
@@ -2188,7 +2188,7 @@
 				087C818A2792DD400046DF9E /* AIMatchAlgModel.m in Sources */,
 				08F3E9312241B6E800545795 /* AIAnalogy.m in Sources */,
 				087268E0219CF3B500B5490F /* AIVisionAlgs.m in Sources */,
-				08D05C312DCAEA3900A967D0 /* AIFeatureStep1Item.m in Sources */,
+				08D05C312DCAEA3900A967D0 /* AIFeatureJvBuItem.m in Sources */,
 				08F27D7229ED92660063E71B /* TCScene.m in Sources */,
 				08F738051F7C714F005EAD56 /* AIKVPointer.m in Sources */,
 				082A904E27F5E04D003D15BE /* RLTrainer.m in Sources */,
@@ -2209,7 +2209,7 @@
 				0832AD4325BC5AEF001B4DB1 /* AIMatchFoModel.m in Sources */,
 				08EA48D1202932E70038B982 /* AICustomAlgs.m in Sources */,
 				08F506242B90CF3800ECE977 /* DirectIndexDic.m in Sources */,
-				087418DE2DA8A42D0019908C /* AIFeatureStep2Item_Rect.m in Sources */,
+				087418DE2DA8A42D0019908C /* AIFeatureZenTiItem_Rect.m in Sources */,
 				0808D34822B6FDD100D383BA /* NVViewUtil.m in Sources */,
 				88A43F3A2109571300281348 /* AIAbsCMVNode.m in Sources */,
 				08D4EC512160501000DA646B /* AINetUtils.m in Sources */,
@@ -2238,7 +2238,7 @@
 				0886889E26479A7F00B7C75D /* AINoRepeatRun.m in Sources */,
 				08AF454A1E97D0B500377887 /* main.m in Sources */,
 				08B180D327F495340069F11E /* TVTimeLine.m in Sources */,
-				08D05C2E2DCAE47B00A967D0 /* AIFeatureStep1Model.m in Sources */,
+				08D05C2E2DCAE47B00A967D0 /* AIFeatureJvBuModel.m in Sources */,
 				0872E1682779EF7C0067C97D /* TIUtils.m in Sources */,
 				085BA9F4241C421500829450 /* HeLogUtil.m in Sources */,
 				88988524208979E6001D1ADC /* AINetIndex.m in Sources */,
@@ -2276,7 +2276,7 @@
 				08DB40CB1F11A65E003162C8 /* TestHungryPage.m in Sources */,
 				087E7FCB258053D90097E0B9 /* NSFile+Extension.m in Sources */,
 				08E74B342D9380F80052D8C2 /* AIGroupValueNextVModel.m in Sources */,
-				087418D22DA893D80019908C /* AIFeatureStep2Model.m in Sources */,
+				087418D22DA893D80019908C /* AIFeatureZenTiModel.m in Sources */,
 				08250AE0228112C000FC497C /* XGWedis.m in Sources */,
 				88A43F432109589600281348 /* AICMVNode.m in Sources */,
 				0871C27626685D4800CB3889 /* TOModelVisionUtil.m in Sources */,

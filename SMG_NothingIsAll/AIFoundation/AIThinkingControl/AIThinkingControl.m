@@ -211,7 +211,7 @@ static AIThinkingControl *_instance;
 
 -(void) commitInputWithSplitV2_Single:(NSDictionary*)colorDic whSize:(CGFloat)whSize at:(NSString*)at ds:(NSString*)ds logDesc:(NSString*)logDesc {
     //1. 对未切粒度的color字典进行自适应粒度并识别。
-    AIFeatureStep1Models *step1Model = [AIFeatureStep1Models new:colorDic.hash];
+    AIFeatureJvBuModels *jvBuModel = [AIFeatureJvBuModels new:colorDic.hash];
     
     //11. 最粗粒度为size/3切，下一个为size/1.3切（参考35026-1）。
     CGFloat dotSize = whSize / 3.0f;
@@ -221,7 +221,7 @@ static AIThinkingControl *_instance;
         for (NSInteger startX = 0; startX < length; startX++) {
             for (NSInteger startY = 0; startY < length; startY++) {
                 //13. 把前面循环已识别过的：结果中已识别到的gv.rect收集起来，如果已包含，则在双for循环中直接continue防重掉（参考35026-防重)。
-                //2025.05.07: 此处先仅根据assT防重，以后再考虑根据已收集的rect来防重（目前是通过step1Model在局部特征识别算法中实现防重的）。
+                //2025.05.07: 此处先仅根据assT防重，以后再考虑根据已收集的rect来防重（目前是通过jvBuModel在局部特征识别算法中实现防重的）。
                 CGRect curRect = CGRectMake(startX * dotSize, startY * dotSize, dotSize * 3, dotSize * 3);
                 //if (rects.contains(curRect)) continue;
                 
@@ -230,7 +230,7 @@ static AIThinkingControl *_instance;
                 NSDictionary *gvIndex = [AINetGroupValueIndex convertGVIndexData:subDots ds:ds];
                 
                 //21. 局部识别特征：通过组码识别。
-                [TIUtils recognitionFeature_JvBu_V2_Step1:gvIndex at:at ds:ds isOut:false protoRect:curRect protoColorDic:colorDic decoratorStep1Model:step1Model];
+                [TIUtils recognitionFeature_JvBu_V2_Step1:gvIndex at:at ds:ds isOut:false protoRect:curRect protoColorDic:colorDic decoratorJvBuModel:jvBuModel];
             }
         }
         //22. 下一层粒度（再/1.3倍）。
@@ -238,27 +238,27 @@ static AIThinkingControl *_instance;
     }
     
     //23. 局部特征过滤和竞争部分。
-    [TIUtils recognitionFeature_JvBu_V2_Step2:step1Model];
+    [TIUtils recognitionFeature_JvBu_V2_Step2:jvBuModel];
     
-    //31. 整体识别特征：通过抽象局部特征做整体特征识别，把step1的结果传给step2继续向似层识别（参考34135-TODO5）。
-    NSArray *step2Model = [TIUtils recognitionFeature_ZenTi_V2:step1Model];
+    //31. 整体识别特征：通过抽象局部特征做整体特征识别，把JvBu的结果传给ZenTi继续向似层识别（参考34135-TODO5）。
+    NSArray *zenTiModel = [TIUtils recognitionFeature_ZenTi_V2:jvBuModel];
     
     //40. 这里先直接调用下类比，先测试下识别结果的类比。
-    //TODO: 2025.04.19: 必须是当前protoT识别时的step2Model才行，如果是往期step2Model不能用，会导致类比找protoT对应不上，导致取rect为Null的BUG（现在把step1Model和step2Model直接传过去的话，这个对应不上的问题应该不存在）。
+    //TODO: 2025.04.19: 必须是当前protoT识别时的zenTiModel才行，如果是往期zenTiModel不能用，会导致类比找protoT对应不上，导致取rect为Null的BUG（现在把jvBuModel和zenTiModel直接传过去的话，这个对应不上的问题应该不存在）。
     //41. 局部冷启 或 整体识别：分别进行类比（依据不同）（参考34139-TODO1）。
-    //42. 特征识别step1识别到的结果，复用step1Model进行类比。
-    for (AIFeatureStep1Model *model in step1Model.models) {
+    //42. 特征识别step1识别到的结果，复用jvBuModel进行类比。
+    for (AIFeatureJvBuModel *model in jvBuModel.models) {
         [AIAnalogy analogyFeature_JvBu_V2:model];
         //用于类比的数据用完就删，避免太占空间（参考34137-TODO2）。
-        model.assT.step1ModelV2 = nil;
+        model.assT.jvBuModelV2 = nil;
     }
     
     //43. 取共同absT，借助absT进行类比（参考34139-TODO1）。
-    for (AIMatchModel *model in step2Model) {
+    for (AIMatchModel *model in zenTiModel) {
         AIFeatureNode *assT = (AIFeatureNode*)model.matchNode;
-        [AIAnalogy analogyFeature_ZenTi_V2:assT step2Model:assT.step2Model];
-        //借助absT来类比时，复用step2的识别结果model数据，并且用完就清空，防止循环野指针（参考34139-TODO3）。
-        assT.step2Model = nil;
+        [AIAnalogy analogyFeature_ZenTi_V2:assT zenTiModel:assT.zenTiModel];
+        //借助absT来类比时，复用ZenTi的识别结果model数据，并且用完就清空，防止循环野指针（参考34139-TODO3）。
+        assT.zenTiModel = nil;
     }
 }
 

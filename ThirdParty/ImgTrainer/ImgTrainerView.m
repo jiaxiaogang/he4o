@@ -176,15 +176,15 @@
 }
 
 //MARK:===============================================================
-//MARK:                     < Step1Models可视化 >
+//MARK:                     < jvBuModels可视化 >
 //MARK:===============================================================
 
 /**
  *  MARK:--------------------局部特征识别结果可视化（参考34176）--------------------
  */
--(void) setDataForStep1Models:(NSArray*)step1Models protoT:(AIFeatureNode*)protoT {
+-(void) setDataForJvBuModels:(NSArray*)jvBuModels protoT:(AIFeatureNode*)protoT {
     [self addFeatureToPreview:protoT lab:STRFORMAT(@"protoT%ld:%@",protoT.pId,protoT.ds)];
-    for (AIMatchModel *model in step1Models) {
+    for (AIMatchModel *model in jvBuModels) {
         //NSArray *collectProtoIndexs = model.indexDic.allValues;
         [self addFeatureToPreview:(AIFeatureNode*)model.matchNode lab:STRFORMAT(@"assT%ld:%@",model.matchNode.pId,model.matchNode.ds)];
     }

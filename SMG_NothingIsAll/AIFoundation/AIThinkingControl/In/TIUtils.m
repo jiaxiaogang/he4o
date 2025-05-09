@@ -303,7 +303,7 @@
         if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"22e");
         [AINetUtils relateGeneralAbs:assFeature absConPorts:assFeature.conPorts conNodes:@[protoFeature] isNew:false difStrong:1];
         if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"22f");
-        assFeature.step1Model = [MapModel newWithV1:matchModel.indexDic v2:protoFeature_p];
+        assFeature.jvBuModel = [MapModel newWithV1:matchModel.indexDic v2:protoFeature_p];
         //[protoFeature updateIndexDic:assFeature indexDic:matchModel.indexDic];
         if (cDebugMode) AddDebugCodeBlock_Key(@"rfs1", @"22g");
         [protoFeature updateDegreeDic:assFeature.pId degreeDic:matchModel.degreeDic];
@@ -320,7 +320,7 @@
     
     //53. 局部特征识别结果可视化（参考34176）。
     //[SMGUtils runByMainQueue:^{
-    //    [theApp.imgTrainerView setDataForStep1Models:resultModels protoT:protoFeature];
+    //    [theApp.imgTrainerView setDataForJvBuModels:resultModels protoT:protoFeature];
     //}];
     
     //53. step1Result仅保留似层（参考34135-TODO5）。
@@ -331,8 +331,8 @@
     return resultModels;
 }
 
-+(void) recognitionFeature_JvBu_V2_Step1:(NSDictionary*)gvIndex at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut protoRect:(CGRect)protoRect protoColorDic:(NSDictionary*)protoColorDic decoratorStep1Model:(AIFeatureStep1Models*)decoratorStep1Model {
-    AIFeatureStep1Models *resultModel = decoratorStep1Model;
++(void) recognitionFeature_JvBu_V2_Step1:(NSDictionary*)gvIndex at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut protoRect:(CGRect)protoRect protoColorDic:(NSDictionary*)protoColorDic decoratorJvBuModel:(AIFeatureJvBuModels*)decoratorJvBuModel {
+    AIFeatureJvBuModels *resultModel = decoratorJvBuModel;
     //1. 单码排序。
     NSArray *sortDS = [gvIndex.allKeys sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
         return [XGRedisUtil compareStrA:obj1 strB:obj2];
@@ -357,7 +357,7 @@
         
         //12. 每个refPort自举，到proto对应下相关区域的匹配度符合度等;
         for (AIPort *refPort in refPorts) {
-            if ([SMGUtils filterSingleFromArr:resultModel.models checkValid:^BOOL(AIFeatureStep1Model *item) {
+            if ([SMGUtils filterSingleFromArr:resultModel.models checkValid:^BOOL(AIFeatureJvBuModel *item) {
                 return [item.assT.p isEqual:refPort.target_p];
             }]) continue;
             AIFeatureNode *assT = [SMGUtils searchNode:refPort.target_p];
@@ -367,8 +367,8 @@
             CGRect lastProtoRect = protoRect;
             
             //13. 把tMatchModel收集起来。
-            AIFeatureStep1Model *model = [AIFeatureStep1Model new:assT];
-            [model.bestGVs addObject:[AIFeatureStep1Item new:protoRect matchValue:gModel.matchValue matchDegree:1 assIndex:indexOf]];
+            AIFeatureJvBuModel *model = [AIFeatureJvBuModel new:assT];
+            [model.bestGVs addObject:[AIFeatureJvBuItem new:protoRect matchValue:gModel.matchValue matchDegree:1 assIndex:indexOf]];
             
             //21. 自举：每个assT一条条自举自身的gv。
             for (NSInteger i = 1; i < assT.count; i++) {
@@ -379,6 +379,7 @@
                 CGRect curAtAssRect = curAtAssRectValue.CGRectValue;
                 
                 //22. 根据比例估算下一条protoGV的取值范围。
+                //TODOTOMORROW20250509: 此处有bug，当前ass为9,0,9,9时，lastProto为0,0,21,21时，lastAss为0,0,27,27时，此公司无法算出新x为7，算成了NaN。
                 CGRect defaultCurProtoRect = CGRectMake(curAtAssRect.origin.x * lastProtoRect.origin.x / lastAtAssRect.origin.x,
                                                         curAtAssRect.origin.y * lastProtoRect.origin.y / lastAtAssRect.origin.y,
                                                         curAtAssRect.size.width * lastProtoRect.size.width / lastAtAssRect.size.width,
@@ -434,7 +435,7 @@
                 lastAtAssRect = curAtAssRect;
                 
                 //43. 记录curIndex，以使bestGVs知道与assT哪帧映射且用于排序等。
-                [model.bestGVs addObject:[AIFeatureStep1Item new:lastProtoRect matchValue:NUMTOOK(best.v1).floatValue matchDegree:NUMTOOK(best.v3).floatValue assIndex:curIndex]];
+                [model.bestGVs addObject:[AIFeatureJvBuItem new:lastProtoRect matchValue:NUMTOOK(best.v1).floatValue matchDegree:NUMTOOK(best.v3).floatValue assIndex:curIndex]];
             }
             
             //51. 全通过了，才收集它（因为同一个assT可能因入protoRect位置不同，导致有时能识别成功有时不能，因为gv是可以重复的，只是位置不同罢了，比如：8有四处下划线，除了第1处下滑切入可以自举全匹配到，别的都不行）。
@@ -443,37 +444,37 @@
     }
 }
 
-+(void) recognitionFeature_JvBu_V2_Step2:(AIFeatureStep1Models*)resultModel {
++(void) recognitionFeature_JvBu_V2_Step2:(AIFeatureJvBuModels*)resultModel {
     //43. 处理匹配度，符合度
-    for (AIFeatureStep1Model *model in resultModel.models) {
+    for (AIFeatureJvBuModel *model in resultModel.models) {
         [model run4MatchValueAndMatchDegreeAndMatchAssProtoRatio];
     }
     
     //51. 过滤非全含。
     //TODO: 冷启时，可能全部不全。
-    resultModel.models = [SMGUtils filterArr:resultModel.models checkValid:^BOOL(AIFeatureStep1Model *model) {
+    resultModel.models = [SMGUtils filterArr:resultModel.models checkValid:^BOOL(AIFeatureJvBuModel *model) {
         return model.bestGVs.count >= model.assT.count;
     }];
     
     //52. 无效过滤器1、matchValue=0排除掉。
-    resultModel.models = [SMGUtils filterArr:resultModel.models checkValid:^BOOL(AIFeatureStep1Model *model) {
+    resultModel.models = [SMGUtils filterArr:resultModel.models checkValid:^BOOL(AIFeatureJvBuModel *model) {
         return model.matchValue > 0;
     }];
     
     //53. 末尾淘汰xx%匹配度低的、匹配度强度过滤器 (参考28109-todo2 & 34091-5提升准确)。
     //2025.04.23: 加上健全度：matchAssProtoRatio（参考34165-方案）。
-    resultModel.models = [[NSMutableArray alloc] initWithArray:ARR_SUB([SMGUtils sortBig2Small:resultModel.models compareBlock:^double(AIFeatureStep1Model *obj) {
+    resultModel.models = [[NSMutableArray alloc] initWithArray:ARR_SUB([SMGUtils sortBig2Small:resultModel.models compareBlock:^double(AIFeatureJvBuModel *obj) {
         return obj.matchValue * obj.matchDegree * obj.matchAssProtoRatio;
     }], 0, MIN(MAX(resultModel.models.count * 0.5f, 10), 20))];
     
     //61. 更新: ref强度 & 相似度 & 抽具象 & 映射 & conPort.rect;
-    for (AIFeatureStep1Model *model in resultModel.models) {
+    for (AIFeatureJvBuModel *model in resultModel.models) {
         //2025.04.22: 这儿性能不太好，经查现在特征识别不需要组码索引强度做竞争，先关掉。
         //[AINetUtils insertRefPorts_General:assFeature.p content_ps:assFeature.content_ps difStrong:1 header:assFeature.header];
         //[protoFeature updateMatchValue:assFeature matchValue:matchModel.matchValue];
         //[protoFeature updateMatchDegree:assFeature matchDegree:matchModel.matchDegree];
         //[AINetUtils relateGeneralAbs:assFeature absConPorts:assFeature.conPorts conNodes:@[protoFeature] isNew:false difStrong:1];
-        model.assT.step1ModelV2 = model;
+        model.assT.jvBuModelV2 = model;
         //[protoFeature updateIndexDic:assFeature indexDic:matchModel.indexDic];
         //[protoFeature updateDegreeDic:assFeature.pId degreeDic:matchModel.degreeDic];
         //[AINetUtils updateConPortRect:assFeature conT:protoFeature_p rect:matchModel.rect];
@@ -494,14 +495,14 @@
 +(NSArray*) recognitionFeature_ZenTi:(AIKVPointer*)protoFeature_p matchModels:(NSArray*)matchModels {
     //1. 数据准备
     AIFeatureNode *protoFeature = [SMGUtils searchNode:protoFeature_p];
-    AIFeatureStep2Models *step2Model = [AIFeatureStep2Models new];
+    AIFeatureZenTiModels *zenTiModel = [AIFeatureZenTiModels new];
     
     //11. 收集：每个absT分别向整体取conPorts。
     for (AIMatchModel *matchModel in matchModels) {
         AIFeatureNode *absT = [SMGUtils searchNode:matchModel.match_p];
         NSArray *conPorts = [AINetUtils conPorts_All:absT];
         
-        //12. 将每个conPort先收集到step2Model。
+        //12. 将每个conPort先收集到zenTiModel。
         for (AIPort *conPort in conPorts) {
             
             //13. protoFeature单独收集。
@@ -511,22 +512,22 @@
             if (conPort.target_p.isJiao) continue;
             
             //14. 收集原始item数据（参考34136）。
-            [step2Model updateItem:conPort.target_p absT:absT.p absAtConRect:conPort.rect];
+            [zenTiModel updateItem:conPort.target_p absT:absT.p absAtConRect:conPort.rect];
         }
         
         //16. protoFeature单独收集（step1结束时才会存rectDic中，此时还在matchModel.rect中）。
         CGRect rect = [AINetUtils convertPartOfFeatureContent2Rect:protoFeature contentIndexes:matchModel.indexDic.allValues];
-        [step2Model updateItem:protoFeature_p absT:absT.p absAtConRect:rect];
+        [zenTiModel updateItem:protoFeature_p absT:absT.p absAtConRect:rect];
     }
     
     //21. 计算：位置符合度: 根据每个整体特征与局部特征的rect来计算。
-    [step2Model run4MatchDegree:protoFeature_p];
+    [zenTiModel run4MatchDegree:protoFeature_p];
     
     //22. 计算：每个assT和protoT的综合匹配度。
-    [step2Model run4MatchValue:protoFeature_p];
+    [zenTiModel run4MatchValue:protoFeature_p];
     
     //23. 计算：每个model的显著度。
-    for (AIFeatureStep2Model *model in step2Model.models) {
+    for (AIFeatureZenTiModel *model in zenTiModel.models) {
         AIFeatureNode *assT = [SMGUtils searchNode:model.conT];
         NSArray *absPorts = [AINetUtils absPorts_All:assT];
         NSInteger allStrong = 0, validStrong = 0;
@@ -544,37 +545,37 @@
     }
     
     //31. 无效过滤器1、位置符合度=0排除掉。
-    NSArray *resultModels = [SMGUtils filterArr:step2Model.models checkValid:^BOOL(AIFeatureStep2Model *item) {
+    NSArray *resultModels = [SMGUtils filterArr:zenTiModel.models checkValid:^BOOL(AIFeatureZenTiModel *item) {
         return item.modelMatchDegree > 0 && item.modelMatchValue > 0;
     }];
     
     //32. 末尾淘汰过滤器：根据位置符合度末尾淘汰（参考34135-TODO4）。
     //2025.04.26: 加上显著度：matchConStrongRatio（参考34175-方案3）。
-    resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIFeatureStep2Model *obj) {
+    resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIFeatureZenTiModel *obj) {
         return obj.modelMatchDegree * obj.modelMatchValue * obj.modelMatchConStrongRatio;
     }], 0, resultModels.count * 0.5);
     
     //33. 防重过滤器2、此处每个特征的不同层级，可能识别到同一个特征，可以按匹配度防下重。
-    resultModels = [SMGUtils removeRepeat:resultModels convertBlock:^id(AIFeatureStep2Model *obj) {
+    resultModels = [SMGUtils removeRepeat:resultModels convertBlock:^id(AIFeatureZenTiModel *obj) {
         return obj.conT;
     }];
     
     //34. 末尾淘汰20%被引用强度最低的。
     //TODO: 应该可以去掉了，因为显著度已经做为竞争因子了，此处不再有什么意义（随后测下明确没用就删掉）。
-    resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIFeatureStep2Model *obj) {
+    resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIFeatureZenTiModel *obj) {
         return obj.rectItems.count;
     }], 0, MAX(resultModels.count * 0.9f, 10));
     
     //41. 更新: ref强度 & 相似度 & 抽具象 & 映射;
-    for (AIFeatureStep2Model *matchModel in resultModels) {
+    for (AIFeatureZenTiModel *matchModel in resultModels) {
         AIFeatureNode *assFeature = [SMGUtils searchNode:matchModel.conT];
         //2025.04.22: 这儿性能不太好，经查现在特征识别不需要组码索引强度做竞争，先关掉。
         //[AINetUtils insertRefPorts_General:assFeature.p content_ps:assFeature.content_ps difStrong:1 header:assFeature.header];
         [protoFeature updateMatchValue:assFeature matchValue:matchModel.modelMatchValue];
         [protoFeature updateMatchDegree:assFeature matchDegree:matchModel.modelMatchDegree];
         
-        //42. 存下来step2Model用于类比时用一下（参考34139-TODO3）。
-        assFeature.step2Model = matchModel;
+        //42. 存下来zenTiModel用于类比时用一下（参考34139-TODO3）。
+        assFeature.zenTiModel = matchModel;
         
         //43. debug
         if (Log4RecogDesc || resultModels.count > 0) NSLog(@"整体特征识别结果:T%ld%@\t（局部特征数:%ld assGV数:%ld protoGV数:%ld）\t匹配度:%.2f\t符合度:%.1f\t显著度:%.2f",
@@ -583,7 +584,7 @@
                                                            matchModel.modelMatchValue,matchModel.modelMatchDegree,matchModel.modelMatchConStrongRatio);
         
         //44. 综合求rect: 方案1-通过absT找出综合indexDic然后精确计算出rect，方案2-通过rectItems的每个rect来估算，方案3-这种整体对整体特征没必要存rect，也没必要存抽具象关联。
-        //> 抉择：暂选定方案3，因为看了下代码，确实也用不着，像类比analogyFeature_ZenTi()算法，都是通过step2Model来的。
+        //> 抉择：暂选定方案3，因为看了下代码，确实也用不着，像类比analogyFeature_ZenTi()算法，都是通过zenTiModel来的。
         //[AINetUtils relateGeneralAbs:assFeature absConPorts:assFeature.conPorts conNodes:@[protoFeature] isNew:false difStrong:1];
         //[AINetUtils updateConPortRect:assFeature conT:protoFeature_p rect:matchModel.rectItems];
         
@@ -594,7 +595,7 @@
     }
     
     //51. 转成AIMatchModel格式返回（识别后就用match_p,matchCount,matchValue这三个值）。
-    return [SMGUtils convertArr:resultModels convertBlock:^id(AIFeatureStep2Model *obj) {
+    return [SMGUtils convertArr:resultModels convertBlock:^id(AIFeatureZenTiModel *obj) {
         AIMatchModel *model = [[AIMatchModel alloc] initWithMatch_p:obj.conT];
         model.matchCount = obj.rectItems.count;
         model.matchValue = obj.modelMatchValue;
@@ -608,38 +609,38 @@
  *  @version
  *      2025.05.07: v2-支持自适应粒度。
  */
-+(NSArray*) recognitionFeature_ZenTi_V2:(AIFeatureStep1Models*)step1Model {
++(NSArray*) recognitionFeature_ZenTi_V2:(AIFeatureJvBuModels*)jvBuModel {
     //1. 数据准备
-    AIFeatureStep2Models *step2Model = [AIFeatureStep2Models new];
+    AIFeatureZenTiModels *zenTiModel = [AIFeatureZenTiModels new];
     AIKVPointer *protoFeature_p = [SMGUtils createPointerForFeature:@"tempAT" dataSource:@"tempDS" isOut:false];
     
     //11. 收集：每个absT分别向整体取conPorts。
-    for (AIFeatureStep1Model *model in step1Model.models) {
+    for (AIFeatureJvBuModel *model in jvBuModel.models) {
         AIFeatureNode *absT = model.assT;
         NSArray *conPorts = [AINetUtils conPorts_All:absT];
         
-        //12. 将每个conPort先收集到step2Model。
+        //12. 将每个conPort先收集到zenTiModel。
         for (AIPort *conPort in conPorts) {
             
             //13. 只要似层结果（参考34135-TODO6）。
             if (conPort.target_p.isJiao) continue;
             
             //14. 收集原始item数据（参考34136）。
-            [step2Model updateItem:conPort.target_p absT:absT.p absAtConRect:conPort.rect];
+            [zenTiModel updateItem:conPort.target_p absT:absT.p absAtConRect:conPort.rect];
         }
         
         //16. protoFeature单独收集（step1结束时才会存rectDic中，此时还在matchModel.rect中）。
-        [step2Model updateItem:protoFeature_p absT:absT.p absAtConRect:model.assTAtProtoTRect];
+        [zenTiModel updateItem:protoFeature_p absT:absT.p absAtConRect:model.assTAtProtoTRect];
     }
     
     //21. 计算：位置符合度: 根据每个整体特征与局部特征的rect来计算。
-    [step2Model run4MatchDegree:protoFeature_p];
+    [zenTiModel run4MatchDegree:protoFeature_p];
     
     //22. 计算：每个assT和protoT的综合匹配度。
-    [step2Model run4MatchValue:protoFeature_p];
+    [zenTiModel run4MatchValue:protoFeature_p];
     
     //23. 计算：每个model的显著度。
-    for (AIFeatureStep2Model *model in step2Model.models) {
+    for (AIFeatureZenTiModel *model in zenTiModel.models) {
         AIFeatureNode *assT = [SMGUtils searchNode:model.conT];
         NSArray *absPorts = [AINetUtils absPorts_All:assT];
         NSInteger allStrong = 0, validStrong = 0;
@@ -647,7 +648,7 @@
         //24. 显著度公式（参考34175-公式3）。
         for (AIPort *absPort in absPorts) {
             allStrong += absPort.strong.value;
-            if ([SMGUtils filterSingleFromArr:step1Model.models checkValid:^BOOL(AIFeatureStep1Model *itemAbsT) {
+            if ([SMGUtils filterSingleFromArr:jvBuModel.models checkValid:^BOOL(AIFeatureJvBuModel *itemAbsT) {
                 return [itemAbsT.assT.p isEqual:absPort.target_p];
             }]) {
                 validStrong += absPort.strong.value;
@@ -657,37 +658,37 @@
     }
     
     //31. 无效过滤器1、位置符合度=0排除掉。
-    NSArray *resultModels = [SMGUtils filterArr:step2Model.models checkValid:^BOOL(AIFeatureStep2Model *item) {
+    NSArray *resultModels = [SMGUtils filterArr:zenTiModel.models checkValid:^BOOL(AIFeatureZenTiModel *item) {
         return item.modelMatchDegree > 0 && item.modelMatchValue > 0;
     }];
     
     //32. 末尾淘汰过滤器：根据位置符合度末尾淘汰（参考34135-TODO4）。
     //2025.04.26: 加上显著度：matchConStrongRatio（参考34175-方案3）。
-    resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIFeatureStep2Model *obj) {
+    resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIFeatureZenTiModel *obj) {
         return obj.modelMatchDegree * obj.modelMatchValue * obj.modelMatchConStrongRatio;
     }], 0, resultModels.count * 0.5);
     
     //33. 防重过滤器2、此处每个特征的不同层级，可能识别到同一个特征，可以按匹配度防下重。
-    resultModels = [SMGUtils removeRepeat:resultModels convertBlock:^id(AIFeatureStep2Model *obj) {
+    resultModels = [SMGUtils removeRepeat:resultModels convertBlock:^id(AIFeatureZenTiModel *obj) {
         return obj.conT;
     }];
     
     //34. 末尾淘汰20%被引用强度最低的。
     //TODO: 应该可以去掉了，因为显著度已经做为竞争因子了，此处不再有什么意义（随后测下明确没用就删掉）。
-    resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIFeatureStep2Model *obj) {
+    resultModels = ARR_SUB([SMGUtils sortBig2Small:resultModels compareBlock:^double(AIFeatureZenTiModel *obj) {
         return obj.rectItems.count;
     }], 0, MAX(resultModels.count * 0.9f, 10));
     
     //41. 更新: ref强度 & 相似度 & 抽具象 & 映射;
-    for (AIFeatureStep2Model *matchModel in resultModels) {
+    for (AIFeatureZenTiModel *matchModel in resultModels) {
         AIFeatureNode *assFeature = [SMGUtils searchNode:matchModel.conT];
         //2025.04.22: 这儿性能不太好，经查现在特征识别不需要组码索引强度做竞争，先关掉。
         //[AINetUtils insertRefPorts_General:assFeature.p content_ps:assFeature.content_ps difStrong:1 header:assFeature.header];
         //[protoFeature updateMatchValue:assFeature matchValue:matchModel.modelMatchValue];
         //[protoFeature updateMatchDegree:assFeature matchDegree:matchModel.modelMatchDegree];
         
-        //42. 存下来step2Model用于类比时用一下（参考34139-TODO3）。
-        assFeature.step2Model = matchModel;
+        //42. 存下来zenTiModel用于类比时用一下（参考34139-TODO3）。
+        assFeature.zenTiModel = matchModel;
         
         //43. debug
         if (Log4RecogDesc || resultModels.count > 0) NSLog(@"整体特征识别结果:T%ld%@\t（局部特征数:%ld assGV数:%ld）\t匹配度:%.2f\t符合度:%.1f\t显著度:%.2f",
@@ -696,7 +697,7 @@
                                                            matchModel.modelMatchValue,matchModel.modelMatchDegree,matchModel.modelMatchConStrongRatio);
         
         //44. 综合求rect: 方案1-通过absT找出综合indexDic然后精确计算出rect，方案2-通过rectItems的每个rect来估算，方案3-这种整体对整体特征没必要存rect，也没必要存抽具象关联。
-        //> 抉择：暂选定方案3，因为看了下代码，确实也用不着，像类比analogyFeature_ZenTi()算法，都是通过step2Model来的。
+        //> 抉择：暂选定方案3，因为看了下代码，确实也用不着，像类比analogyFeature_ZenTi()算法，都是通过zenTiModel来的。
         //[AINetUtils relateGeneralAbs:assFeature absConPorts:assFeature.conPorts conNodes:@[protoFeature] isNew:false difStrong:1];
         //[AINetUtils updateConPortRect:assFeature conT:protoFeature_p rect:matchModel.rectItems];
         
@@ -707,7 +708,7 @@
     }
     
     //51. 转成AIMatchModel格式返回（识别后就用match_p,matchCount,matchValue这三个值）。
-    return [SMGUtils convertArr:resultModels convertBlock:^id(AIFeatureStep2Model *obj) {
+    return [SMGUtils convertArr:resultModels convertBlock:^id(AIFeatureZenTiModel *obj) {
         AIMatchModel *model = [[AIMatchModel alloc] initWithMatch_p:obj.conT];
         model.matchCount = obj.rectItems.count;
         model.matchValue = obj.modelMatchValue;
@@ -805,10 +806,10 @@
         } else {
             subMatchModels = [AIRecognitionCache getCache:item_p cacheBlock:^id{
                 //a. 通过组码做局部特征识别。
-                NSArray *step1Result = ARRTOOK([self recognitionFeature_JvBu:item_p]);
-                //b. 通过抽象特征做整体特征识别，把step1的结果传给step2继续向似层识别（参考34135-TODO5）。
-                NSArray *step2Result = [self recognitionFeature_ZenTi:item_p matchModels:step1Result];
-                return [SMGUtils collectArrA:step1Result arrB:step2Result];
+                NSArray *jvBuResult = ARRTOOK([self recognitionFeature_JvBu:item_p]);
+                //b. 通过抽象特征做整体特征识别，把JvBu的结果传给ZenTi继续向似层识别（参考34135-TODO5）。
+                NSArray *zenTiResult = [self recognitionFeature_ZenTi:item_p matchModels:jvBuResult];
+                return [SMGUtils collectArrA:jvBuResult arrB:zenTiResult];
             }];
         }
         
@@ -935,7 +936,7 @@
         NSLog(@"%@概念识别结果：A%ld%@ \t匹配（T数：%d GV数：%ld 度：%.2f）proto:%@ ass:%@",assAlg.p.isJiao?@"局部":@"整体",assAlg.pId,CLEANSTR([SMGUtils convertArr:assAlg.content_ps convertBlock:^id(AIKVPointer *obj) {
             return STRFORMAT(@"T%ld",obj.pointerId);
             //AIFeatureNode *itemT = [SMGUtils searchNode:obj];
-            //return STRFORMAT(@"T%ld 交层=%d 整体=%d",obj.pointerId,obj.isJiao,itemT.step2Model != nil);
+            //return STRFORMAT(@"T%ld 交层=%d 整体=%d",obj.pointerId,obj.isJiao,itemT.zenTiModel != nil);
         }]),model.matchCount,model.groupValueMatchCount,model.matchValue,CLEANSTR([protoAlg getLogDesc:true].allKeys),CLEANSTR([assAlg getLogDesc:assAlg.p.isJiao]));
     }
     

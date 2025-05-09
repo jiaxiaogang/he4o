@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIFrontOrderNode,AIAlgNodeBase,AIShortMatchModel,TOAlgModel,AIFeatureNode,AIFeatureStep2Models;
+@class AIFrontOrderNode,AIAlgNodeBase,AIShortMatchModel,TOAlgModel,AIFeatureNode,AIFeatureZenTiModels;
 @interface ThinkingUtils : NSObject
 
 @end
