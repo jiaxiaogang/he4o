@@ -199,8 +199,9 @@ static AIThinkingControl *_instance;
     if (self.thinkMode == 2) return;
     
     //2. 对未切粒度的color字典进行自适应粒度并识别。
-    [self commitInputWithSplitV2_Single:algsModel.hColors whSize:algsModel.whSize at:algsType ds:@"hColors" logDesc:logDesc];
-    [self commitInputWithSplitV2_Single:algsModel.sColors whSize:algsModel.whSize at:algsType ds:@"sColors" logDesc:logDesc];
+    //方便测试，只开放b试下。
+    //[self commitInputWithSplitV2_Single:algsModel.hColors whSize:algsModel.whSize at:algsType ds:@"hColors" logDesc:logDesc];
+    //[self commitInputWithSplitV2_Single:algsModel.sColors whSize:algsModel.whSize at:algsType ds:@"sColors" logDesc:logDesc];
     [self commitInputWithSplitV2_Single:algsModel.bColors whSize:algsModel.whSize at:algsType ds:@"bColors" logDesc:logDesc];
     
     //3. 异步构建一下默认三分粒度的protoT，不过不用于识别，只用于以后被识别。
@@ -551,9 +552,9 @@ static AIThinkingControl *_instance;
     
     //2. 装箱（稀疏码的：单码层 和 组码层）。
     //TODO: 这里随后转成NSDictionary后，只要判断dataSource对应的value是dic类型，也可以这么处理（到时候，改V2支持model转Dic类型输入时，自然就知道这里怎么改了）。
-    NSArray *hGroupModels = [theNet algModelConvert2PointersV2:algsModel.hColors at:algsType ds:@"hColors" levelNum:algsModel.levelNum];
-    NSArray *sGroupModels = [theNet algModelConvert2PointersV2:algsModel.sColors at:algsType ds:@"sColors" levelNum:algsModel.levelNum];
-    NSArray *bGroupModels = [theNet algModelConvert2PointersV2:algsModel.bColors at:algsType ds:@"bColors" levelNum:algsModel.levelNum];
+    NSArray *hGroupModels = [theNet algModelConvert2PointersV2:algsModel.splitHColors at:algsType ds:@"hColors" levelNum:algsModel.levelNum];
+    NSArray *sGroupModels = [theNet algModelConvert2PointersV2:algsModel.splitSColors at:algsType ds:@"sColors" levelNum:algsModel.levelNum];
+    NSArray *bGroupModels = [theNet algModelConvert2PointersV2:algsModel.splitBColors at:algsType ds:@"bColors" levelNum:algsModel.levelNum];
     
     //3、构建具象特征。
     AIFeatureNode *hFeature = [AIGeneralNodeCreater createFeatureNode:hGroupModels conNodes:nil at:algsType ds:@"hColors" isOut:false isJiao:false];
@@ -565,6 +566,11 @@ static AIThinkingControl *_instance;
     NSLog(@"%@ H ====================================\n%@",logDesc,FeatureDesc(hFeature.p,1));
     NSLog(@"%@ S ====================================\n%@",logDesc,FeatureDesc(sFeature.p,1));
     NSLog(@"%@ B ====================================\n%@",logDesc,FeatureDesc(bFeature.p,1));
+    [SMGUtils runByMainQueue:^{
+        [theApp.imgTrainerView setDataForFeature:hFeature lab:STRFORMAT(@"入%@T%ld",hFeature.ds,hFeature.pId)];
+        [theApp.imgTrainerView setDataForFeature:sFeature lab:STRFORMAT(@"入%@T%ld",sFeature.ds,sFeature.pId)];
+        [theApp.imgTrainerView setDataForFeature:bFeature lab:STRFORMAT(@"入%@T%ld",bFeature.ds,bFeature.pId)];
+    }];
     return [MapModel newWithV1:hFeature v2:sFeature v3:bFeature];
 }
 

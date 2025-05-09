@@ -26,6 +26,10 @@
 @property (strong,nonatomic) NSDictionary *sColors;//饱和度
 @property (strong,nonatomic) NSDictionary *bColors;//亮度
 
+@property (strong,nonatomic) NSDictionary *splitHColors;//色相
+@property (strong,nonatomic) NSDictionary *splitSColors;//饱和度
+@property (strong,nonatomic) NSDictionary *splitBColors;//亮度
+
 //TODO: 此处随后支持一下，把值域传到内核中，在稀疏码装箱时，自动处理精度（一般留1/1000的精度足够用）。
 //@property (assign, nonatomic) CGFloat hColorsSpan;//色相取值范围大小（传1.0，用于内核处理稀疏码精度）。
 //@property (assign, nonatomic) CGFloat sColorsSpan;//饱和度取值范围大小（传1.0，用于内核处理稀疏码精度）。

@@ -171,8 +171,14 @@
     //2. 取rgb矩阵<K=x_y,V=RGB>
     NSDictionary *rgbDic = [self getRGBValuesFromImage:image];
 
+    //3. 将rgb矩阵按粒度分层<K=level_x_y,V=RGB>（只有rgb求平均值比较方便，不必考虑loop值，直接求平均即可，所以在转hsb之前，就得把9宫粒度分层字典处理好）。
+    NSDictionary *splitRGBDic = [self convertProtoColorDic2SplitDic:rgbDic];
+    
     //3. RGB矩阵转为HSB矩阵。
     NSDictionary *hsbDic = [SMGUtils convertDic:rgbDic kvBlock:^NSArray *(id protoK, NSDictionary *protoV) {
+        return @[protoK,[UIColor convertRGB2HSB:protoV]];
+    }];
+    NSDictionary *splitHSBDic = [SMGUtils convertDic:splitRGBDic kvBlock:^NSArray *(id protoK, NSDictionary *protoV) {
         return @[protoK,[UIColor convertRGB2HSB:protoV]];
     }];
     
@@ -190,6 +196,15 @@
         return @[protoK,@(roundf(NUMTOOK([protoV objectForKey:@"s"]).floatValue * 100) / 100)];
     }];
     model.bColors = [SMGUtils convertDic:hsbDic kvBlock:^NSArray *(NSString *protoK, NSDictionary *protoV) {
+        return @[protoK,@(roundf(NUMTOOK([protoV objectForKey:@"b"]).floatValue * 100) / 100)];
+    }];
+    model.splitHColors = [SMGUtils convertDic:splitHSBDic kvBlock:^NSArray *(NSString *protoK, NSDictionary *protoV) {
+        return @[protoK,@(roundf(NUMTOOK([protoV objectForKey:@"h"]).floatValue * 100) / 100)];
+    }];
+    model.splitSColors = [SMGUtils convertDic:splitHSBDic kvBlock:^NSArray *(NSString *protoK, NSDictionary *protoV) {
+        return @[protoK,@(roundf(NUMTOOK([protoV objectForKey:@"s"]).floatValue * 100) / 100)];
+    }];
+    model.splitBColors = [SMGUtils convertDic:splitHSBDic kvBlock:^NSArray *(NSString *protoK, NSDictionary *protoV) {
         return @[protoK,@(roundf(NUMTOOK([protoV objectForKey:@"b"]).floatValue * 100) / 100)];
     }];
     

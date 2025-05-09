@@ -369,7 +369,6 @@
             //13. 把tMatchModel收集起来。
             AIFeatureStep1Model *model = [AIFeatureStep1Model new:assT];
             [model.bestGVs addObject:[AIFeatureStep1Item new:protoRect matchValue:gModel.matchValue matchDegree:1 assIndex:indexOf]];
-            [resultModel.models addObject:model];
             
             //21. 自举：每个assT一条条自举自身的gv。
             for (NSInteger i = 1; i < assT.count; i++) {
@@ -437,6 +436,9 @@
                 //43. 记录curIndex，以使bestGVs知道与assT哪帧映射且用于排序等。
                 [model.bestGVs addObject:[AIFeatureStep1Item new:lastProtoRect matchValue:NUMTOOK(best.v1).floatValue matchDegree:NUMTOOK(best.v3).floatValue assIndex:curIndex]];
             }
+            
+            //51. 全通过了，才收集它（因为同一个assT可能因入protoRect位置不同，导致有时能识别成功有时不能，因为gv是可以重复的，只是位置不同罢了，比如：8有四处下划线，除了第1处下滑切入可以自举全匹配到，别的都不行）。
+            [resultModel.models addObject:model];
         }
     }
 }
@@ -480,7 +482,7 @@
         if (Log4RecogDesc || resultModel.models.count > 0) NSLog(@"局部特征识别结果:T%ld%@\t 匹配条数:%ld/ass%ld\t匹配度:%.2f\t符合度:%.1f",
                                          model.assT.pId,CLEANSTR([model.assT getLogDesc:true]),model.bestGVs.count,model.assT.count,model.matchValue,model.matchDegree);
         [SMGUtils runByMainQueue:^{
-            [theApp.imgTrainerView setDataForFeature:model.assT lab:STRFORMAT(@"局部T%ld",model.assT.pId)];
+            [theApp.imgTrainerView setDataForFeature:model.assT lab:STRFORMAT(@"局部%@T%ld",model.assT.ds,model.assT.pId)];
         }];
     }
 }
