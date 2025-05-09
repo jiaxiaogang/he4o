@@ -379,11 +379,17 @@
                 CGRect curAtAssRect = curAtAssRectValue.CGRectValue;
                 
                 //22. 根据比例估算下一条protoGV的取值范围。
-                //TODOTOMORROW20250509: 此处有bug，当前ass为9,0,9,9时，lastProto为0,0,21,21时，lastAss为0,0,27,27时，此公司无法算出新x为7，算成了NaN。
-                CGRect defaultCurProtoRect = CGRectMake(curAtAssRect.origin.x * lastProtoRect.origin.x / lastAtAssRect.origin.x,
-                                                        curAtAssRect.origin.y * lastProtoRect.origin.y / lastAtAssRect.origin.y,
-                                                        curAtAssRect.size.width * lastProtoRect.size.width / lastAtAssRect.size.width,
-                                                        curAtAssRect.size.height * lastProtoRect.size.height / lastAtAssRect.size.height);
+                //2025.05.09: bugfix-x和y也按正比计算，再分别加marginLeft和Top得出。
+                CGFloat wRate = lastProtoRect.size.width / lastAtAssRect.size.width;
+                CGFloat hRate = lastProtoRect.size.height / lastAtAssRect.size.height;
+                CGFloat assDeltaX = curAtAssRect.origin.x - lastAtAssRect.origin.x;
+                CGFloat assDeltaY = curAtAssRect.origin.y - lastAtAssRect.origin.y;
+                CGFloat marginX = lastProtoRect.origin.x;
+                CGFloat marginY = lastProtoRect.origin.y;//这个还得改下，是有个比例，不是单纯这样。
+                CGRect defaultCurProtoRect = CGRectMake(marginX + assDeltaX * wRate,
+                                                        marginY + assDeltaY * hRate,
+                                                        curAtAssRect.size.width * wRate,
+                                                        curAtAssRect.size.height * hRate);
                 
                 //23. 找出锚点。
                 CGFloat anchorX = (CGRectGetMidX(lastProtoRect) + CGRectGetMidX(defaultCurProtoRect)) / 2;
@@ -401,6 +407,8 @@
                                                           defaultCurProtoRect.size.width * scale,
                                                           defaultCurProtoRect.size.height * scale);
                     //TODO: 测下锚点缩放对不对。
+                    
+                    //TODOTOMORROW20250509: 如果checkCurProtoRect出界到视角之外呢？比如<0或者>max，此时要用assT的解析来填充，不然就没对局部显示的进行识别了。
                     
                     //33. 切出当前gv：九宫。
                     NSArray *subDots = [ThinkingUtils getSubDots:protoColorDic gvRect:checkCurProtoRect];
