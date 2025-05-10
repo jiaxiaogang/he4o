@@ -362,6 +362,9 @@
                     NSInteger x = gvRect.origin.x + deltaX * dotSize + pixX;
                     NSInteger y = gvRect.origin.y + deltaY * dotSize + pixY;
                     NSNumber *pixValue = [colorDic objectForKey:STRFORMAT(@"%ld_%ld",x,y)];
+                    
+                    //2025.05.10: 出界时，直接返回nil，避免错误数据带来别的影响。
+                    if (!pixValue) return nil;
                     sumPixValue += pixValue.floatValue;
                     sumPixCount++;
                 }

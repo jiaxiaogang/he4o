@@ -228,6 +228,7 @@ static AIThinkingControl *_instance;
                 
                 //14. 切出当前gv：九宫。
                 NSArray *subDots = [ThinkingUtils getSubDots:colorDic gvRect:CGRectMake(startX * dotSize, startY * dotSize, dotSize * 3, dotSize * 3)];
+                if (!ARRISOK(subDots)) continue;
                 NSDictionary *gvIndex = [AINetGroupValueIndex convertGVIndexData:subDots ds:ds];
                 
                 //21. 局部识别特征：通过组码识别。

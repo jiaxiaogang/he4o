@@ -354,8 +354,8 @@
     //11. 对所有gv识别结果的，所有refPorts，依次判断位置符合度。
     for (AIMatchModel *gModel in gMatchModels) {
         
-//        //12. 切入点相近度太低，直接pass掉。
-//        if (gModel.matchValue < 0.7) continue;
+        //12. 切入点相近度太低（比如横线对竖线完全没有必要切入识别），直接pass掉。
+        if (gModel.matchValue < 0.6) continue;
         NSArray *refPorts = [AINetUtils refPorts_All:gModel.match_p];
         
         //12. 每个refPort自举，到proto对应下相关区域的匹配度符合度等;
@@ -412,11 +412,12 @@
                                                           defaultCurProtoRect.size.height * scale);
                     //TODO: 测下锚点缩放对不对。
                     
-                    //TODOTOMORROW20250509: 如果checkCurProtoRect出界到视角之外呢？比如<0或者>max，此时要用assT的解析来填充，不然就没对局部显示的进行识别了。
-                    // > 这里可以简单些，比如：出界的不做判断了，最后计算匹配度时是要除掉bestGVs.count，所以不做判断并不会影响匹配度。
-                    
                     //33. 切出当前gv：九宫。
+                    //2025.05.10: 出界处理：如checkCurProtoRect出界到视角之外，比如<0或者>max（采用方案2，直接continue）。
+                    //  方案1、用assT的解析来填充，不然就没对局部显示的进行识别了。
+                    //  方案2、可以出界的不做判断，最后计算匹配度时是要除掉bestGVs.count，所以不做判断并不会影响匹配度。
                     NSArray *subDots = [ThinkingUtils getSubDots:protoColorDic gvRect:checkCurProtoRect];
+                    if (!ARRISOK(subDots)) continue;
                     NSDictionary *protoGVIndex = [AINetGroupValueIndex convertGVIndexData:subDots ds:ds];
                     
                     //34. 求切出的curProtoGV九宫与curAssGV的匹配度。
@@ -435,17 +436,20 @@
                 }
                 //41. 有中断匹配不上的gv，直接计为自举审核失败。
                 //2025.05.10: 这里要注意冷启，如果有条中断立马就停，那像虚线画的图就没法识别到了，还是先去掉>0.1的判断。
+                //2025.05.10: gv太多了，如果中断还继续，性能极大浪费，也会导致真正后来者准确时，却失去自举的机会（虚线画的图也是在宏观一级层面识别它，而非虚线层面）。
                 //1. 即输入和谁都不完全相似时
                 //2. 或现在还没抽象特征时，从具象中竞争出匹配度高的。
                 //3. 卡的太严这里就断了，看下是否改成（全跑完再竞争匹配度，或一条条ref.target跑下一条gv，边跑边竞争末尾淘汰）。
-                //if (best || NUMTOOK(best.v1).floatValue < 0.1f) break;
+                if (!best) break;
+                CGFloat gMatchValue = NUMTOOK(best.v1).floatValue;
+                if (gMatchValue < 0.1f) break;
                 
                 //42. 把best的情况记下来，继续下一个gv。
                 lastProtoRect = VALTOOK(best.v2).CGRectValue;
                 lastAtAssRect = curAtAssRect;
                 
                 //43. 记录curIndex，以使bestGVs知道与assT哪帧映射且用于排序等。
-                [model.bestGVs addObject:[AIFeatureJvBuItem new:lastProtoRect matchValue:NUMTOOK(best.v1).floatValue matchDegree:NUMTOOK(best.v3).floatValue assIndex:curIndex]];
+                [model.bestGVs addObject:[AIFeatureJvBuItem new:lastProtoRect matchValue:gMatchValue matchDegree:NUMTOOK(best.v3).floatValue assIndex:curIndex]];
             }
             
             //51. 全通过了，才收集它（因为同一个assT可能因入protoRect位置不同，导致有时能识别成功有时不能，因为gv是可以重复的，只是位置不同罢了，比如：8有四处下划线，除了第1处下滑切入可以自举全匹配到，别的都不行）。
