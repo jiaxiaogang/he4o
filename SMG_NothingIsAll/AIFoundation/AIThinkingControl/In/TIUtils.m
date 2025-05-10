@@ -357,6 +357,7 @@
         
         //12. 每个refPort自举，到proto对应下相关区域的匹配度符合度等;
         for (AIPort *refPort in refPorts) {
+            //TODO: 如果切入点错误呢？可能切入点错误时，这里会错，但换个切入点，又能识别到了。比如“8有四处下划线”的例子，此处可以考虑不过滤ref.target让它允许多次多切入点分别自举。
             if ([SMGUtils filterSingleFromArr:resultModel.models checkValid:^BOOL(AIFeatureJvBuModel *item) {
                 return [item.assT.p isEqual:refPort.target_p];
             }]) continue;
@@ -409,6 +410,7 @@
                     //TODO: 测下锚点缩放对不对。
                     
                     //TODOTOMORROW20250509: 如果checkCurProtoRect出界到视角之外呢？比如<0或者>max，此时要用assT的解析来填充，不然就没对局部显示的进行识别了。
+                    // > 这里可以简单些，比如：出界的不做判断了，最后计算匹配度时是要除掉bestGVs.count，所以不做判断并不会影响匹配度。
                     
                     //33. 切出当前gv：九宫。
                     NSArray *subDots = [ThinkingUtils getSubDots:protoColorDic gvRect:checkCurProtoRect];
@@ -429,11 +431,11 @@
                     }
                 }
                 //41. 有中断匹配不上的gv，直接计为自举审核失败。
-                //TODO: 这里要注意冷启
+                //2025.05.10: 这里要注意冷启，如果有条中断立马就停，那像虚线画的图就没法识别到了，还是先去掉>0.1的判断。
                 //1. 即输入和谁都不完全相似时
                 //2. 或现在还没抽象特征时，从具象中竞争出匹配度高的。
                 //3. 卡的太严这里就断了，看下是否改成（全跑完再竞争匹配度，或一条条ref.target跑下一条gv，边跑边竞争末尾淘汰）。
-                if (best || NUMTOOK(best.v1).floatValue < 0.1f) break;
+                //if (best || NUMTOOK(best.v1).floatValue < 0.1f) break;
                 
                 //42. 把best的情况记下来，继续下一个gv。
                 lastProtoRect = VALTOOK(best.v2).CGRectValue;
@@ -456,10 +458,10 @@
     }
     
     //51. 过滤非全含。
-    //TODO: 冷启时，可能全部不全。
-    resultModel.models = [SMGUtils filterArr:resultModel.models checkValid:^BOOL(AIFeatureJvBuModel *model) {
-        return model.bestGVs.count >= model.assT.count;
-    }];
+    //2025.05.10: 冷启时，可能全部不全，并且下面已经有健全度竞争了，此处全含过滤器先去掉。
+    //resultModel.models = [SMGUtils filterArr:resultModel.models checkValid:^BOOL(AIFeatureJvBuModel *model) {
+    //    return model.bestGVs.count >= model.assT.count;
+    //}];
     
     //52. 无效过滤器1、matchValue=0排除掉。
     resultModel.models = [SMGUtils filterArr:resultModel.models checkValid:^BOOL(AIFeatureJvBuModel *model) {
