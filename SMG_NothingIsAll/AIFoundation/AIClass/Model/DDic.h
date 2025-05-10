@@ -13,10 +13,13 @@
  */
 @interface DDic : NSObject
 
-@property (strong, nonatomic) NSMutableDictionary *v1;
+@property (strong, nonatomic) NSMutableDictionary *data;
 
--(id) objectForKey1:(id)k1 k2:(id)k2;
-
--(void) setObject:(id)v2 forKey1:(id)k1 k2:(id)k2;
+-(id) objectForKey:(id)key;
+-(id) objectV2ForKey1:(id)k1 k2:(id)k2;
+-(id) objectV3ForKey1:(id)k1 k2:(id)k2 k3:(id)k3;
+-(void) setObject:(id)value forKey:(id)key;
+-(void) setObjectV2:(id)v2 k1:(id)k1 k2:(id)k2;
+-(void) setObjectV3:(id)v3 k1:(id)k1 k2:(id)k2 k3:(id)k3;
 
 @end

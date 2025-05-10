@@ -367,8 +367,8 @@
             CGRect lastProtoRect = protoRect;
             
             //13. 防重（同一个assT也可能有多个assIndex切入点，比如“8有四处下划线”的例子，可以让它多切入点分别自举）。
-            if ([excepts objectForKey1:refPort.target_p k2:gModel.match_p]) continue;
-            [excepts setObject:@"" forKey1:refPort.target_p k2:gModel.match_p];
+            if ([excepts objectV2ForKey1:refPort.target_p k2:gModel.match_p]) continue;
+            [excepts setObjectV2:@"" k1:refPort.target_p k2:gModel.match_p];
             
             //13. 把tMatchModel收集起来。
             AIFeatureJvBuModel *model = [AIFeatureJvBuModel new:assT];
