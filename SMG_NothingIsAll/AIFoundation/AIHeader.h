@@ -33,6 +33,7 @@
 #import "MapModel.h"
 #import "ImgTrainerView.h"
 #import "XGRedisUtil.h"
+#import "DDic.h"
 
 //Util
 #import "ThinkingUtils.h"

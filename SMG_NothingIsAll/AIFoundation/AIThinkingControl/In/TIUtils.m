@@ -331,7 +331,7 @@
     return resultModels;
 }
 
-+(void) recognitionFeature_JvBu_V2_Step1:(NSDictionary*)gvIndex at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut protoRect:(CGRect)protoRect protoColorDic:(NSDictionary*)protoColorDic decoratorJvBuModel:(AIFeatureJvBuModels*)decoratorJvBuModel {
++(void) recognitionFeature_JvBu_V2_Step1:(NSDictionary*)gvIndex at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut protoRect:(CGRect)protoRect protoColorDic:(NSDictionary*)protoColorDic decoratorJvBuModel:(AIFeatureJvBuModels*)decoratorJvBuModel excepts:(DDic*)excepts {
     AIFeatureJvBuModels *resultModel = decoratorJvBuModel;
     //1. 单码排序。
     NSArray *sortDS = [gvIndex.allKeys sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
@@ -353,19 +353,22 @@
     
     //11. 对所有gv识别结果的，所有refPorts，依次判断位置符合度。
     for (AIMatchModel *gModel in gMatchModels) {
+        
+//        //12. 切入点相近度太低，直接pass掉。
+//        if (gModel.matchValue < 0.7) continue;
         NSArray *refPorts = [AINetUtils refPorts_All:gModel.match_p];
         
         //12. 每个refPort自举，到proto对应下相关区域的匹配度符合度等;
         for (AIPort *refPort in refPorts) {
-            //TODO: 如果切入点错误呢？可能切入点错误时，这里会错，但换个切入点，又能识别到了。比如“8有四处下划线”的例子，此处可以考虑不过滤ref.target让它允许多次多切入点分别自举。
-            if ([SMGUtils filterSingleFromArr:resultModel.models checkValid:^BOOL(AIFeatureJvBuModel *item) {
-                return [item.assT.p isEqual:refPort.target_p];
-            }]) continue;
             AIFeatureNode *assT = [SMGUtils searchNode:refPort.target_p];
             NSInteger indexOf = [assT.content_ps indexOfObject:gModel.match_p];
             NSValue *lastAtAssRectValue = ARR_INDEX(assT.rects, indexOf);
             CGRect lastAtAssRect = lastAtAssRectValue.CGRectValue;
             CGRect lastProtoRect = protoRect;
+            
+            //13. 防重（同一个assT也可能有多个assIndex切入点，比如“8有四处下划线”的例子，可以让它多切入点分别自举）。
+            if ([excepts objectForKey1:refPort.target_p k2:gModel.match_p]) continue;
+            [excepts setObject:@"" forKey1:refPort.target_p k2:gModel.match_p];
             
             //13. 把tMatchModel收集起来。
             AIFeatureJvBuModel *model = [AIFeatureJvBuModel new:assT];

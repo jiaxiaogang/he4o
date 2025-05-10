@@ -8,13 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
-@class AIFeatureJvBuModels;
+@class AIFeatureJvBuModels,DDic;
 @interface TIUtils : NSObject
 
 //MARK:===============================================================
 //MARK:                     < 特征识别 >
 //MARK:===============================================================
-+(void) recognitionFeature_JvBu_V2_Step1:(NSDictionary*)gvIndex at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut protoRect:(CGRect)protoRect protoColorDic:(NSDictionary*)protoColorDic decoratorJvBuModel:(AIFeatureJvBuModels*)decoratorJvBuModel;
++(void) recognitionFeature_JvBu_V2_Step1:(NSDictionary*)gvIndex at:(NSString*)at ds:(NSString*)ds isOut:(BOOL)isOut protoRect:(CGRect)protoRect protoColorDic:(NSDictionary*)protoColorDic decoratorJvBuModel:(AIFeatureJvBuModels*)decoratorJvBuModel excepts:(DDic*)excepts;
 +(void) recognitionFeature_JvBu_V2_Step2:(AIFeatureJvBuModels*)resultModel;
 +(NSArray*) recognitionFeature_ZenTi_V2:(AIFeatureJvBuModels*)jvBuModel;
 

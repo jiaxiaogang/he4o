@@ -83,6 +83,7 @@
 		084B4B0824433AA900FB3670 /* ShortMatchManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 084B4B0724433AA900FB3670 /* ShortMatchManager.m */; };
 		084C3A6B21926D5700DAA08A /* BirdView.m in Sources */ = {isa = PBXBuildFile; fileRef = 084C3A6A21926D5700DAA08A /* BirdView.m */; };
 		084C3A6D21926D7800DAA08A /* BirdView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 084C3A6C21926D7800DAA08A /* BirdView.xib */; };
+		084DF15A2DCF2271001FC42B /* DDic.m in Sources */ = {isa = PBXBuildFile; fileRef = 084DF1592DCF2271001FC42B /* DDic.m */; };
 		084F132226FF6E1200E9D455 /* AITest.m in Sources */ = {isa = PBXBuildFile; fileRef = 084F132126FF6E1200E9D455 /* AITest.m */; };
 		0850859B2A25B26F00ED63F2 /* TCRecognitionUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 0850859A2A25B26F00ED63F2 /* TCRecognitionUtil.m */; };
 		0851F78D2999362900977B98 /* RTQueueModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0851F78C2999362900977B98 /* RTQueueModel.m */; };
@@ -394,6 +395,8 @@
 		084C3A6921926D5700DAA08A /* BirdView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BirdView.h; sourceTree = "<group>"; };
 		084C3A6A21926D5700DAA08A /* BirdView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BirdView.m; sourceTree = "<group>"; };
 		084C3A6C21926D7800DAA08A /* BirdView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BirdView.xib; sourceTree = "<group>"; };
+		084DF1582DCF2271001FC42B /* DDic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DDic.h; sourceTree = "<group>"; };
+		084DF1592DCF2271001FC42B /* DDic.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DDic.m; sourceTree = "<group>"; };
 		084F132026FF6E1200E9D455 /* AITest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AITest.h; sourceTree = "<group>"; };
 		084F132126FF6E1200E9D455 /* AITest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AITest.m; sourceTree = "<group>"; };
 		085085992A25B26F00ED63F2 /* TCRecognitionUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCRecognitionUtil.h; sourceTree = "<group>"; };
@@ -1663,6 +1666,8 @@
 			children = (
 				08E44D352B3A58D1005456A1 /* MapModel.h */,
 				08E44D362B3A58D1005456A1 /* MapModel.m */,
+				084DF1582DCF2271001FC42B /* DDic.h */,
+				084DF1592DCF2271001FC42B /* DDic.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -2233,6 +2238,7 @@
 				08586DE527E80C8B008D2F8C /* TVLineView.m in Sources */,
 				0858C5D22194F8B000951BA5 /* NSLayoutConstraint+MASDebugAdditions.m in Sources */,
 				8822852020F58BDA009884DC /* AINetDirectionReference.m in Sources */,
+				084DF15A2DCF2271001FC42B /* DDic.m in Sources */,
 				081BD08825B94F1B003C3038 /* ReasonDemandModel.m in Sources */,
 				08F738071F7C714F005EAD56 /* AISqlPointer.m in Sources */,
 				0886889E26479A7F00B7C75D /* AINoRepeatRun.m in Sources */,
