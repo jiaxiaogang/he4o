@@ -82,6 +82,10 @@
     return self.p.isOut;
 }
 
+-(BOOL) isJiao {
+    return self.p.isJiao;
+}
+
 /**
  *  MARK:--------------------设置引用--------------------
  *  @version

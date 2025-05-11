@@ -637,6 +637,17 @@
         AIFeatureNode *absT = model.assT;
         NSArray *conPorts = [AINetUtils conPorts_All:absT];
         
+        //TODOTOMORROW20250511: 查下整体识别v2一直输出0条。
+        //9451 [23:24:31:572 TI           TIUtils.m 641] 局部特征assT交层 GV数:10 conPorts数:1
+        //9452 [23:24:31:572 TI           TIUtils.m 641] 局部特征assT交层 GV数:10 conPorts数:1
+        //9453 [23:24:31:573 TI           TIUtils.m 641] 局部特征assT交层 GV数:8 conPorts数:1
+        //9454 [23:24:31:573 TI           TIUtils.m 641] 局部特征assT交层 GV数:11 conPorts数:1
+        //9455 [23:24:31:573 TI           TIUtils.m 641] 局部特征assT交层 GV数:8 conPorts数:2
+        //分析：查下，这里absT都只有一条conPort，现在的局部特征类比算法不和protoT类比，所以absT的gvs都来自conT中。
+        //思路：如果要识别整体特征，就必须有多个conPorts，一对多的抽具象关联才行。
+        //问题：那一对多抽具象关联应改成怎么做才行？明天继续分析下：
+        NSLog(@"局部特征assT%@层 GV数:%ld conPorts数:%ld",model.assT.isJiao?@"交":@"似",model.assT.count,conPorts.count);
+        
         //12. 将每个conPort先收集到zenTiModel。
         for (AIPort *conPort in conPorts) {
             
@@ -724,8 +735,6 @@
         //    [theApp.imgTrainerView setDataForFeature:assFeature lab:STRFORMAT(@"整体特征识别T%ld",assFeature.pId)];
         //}];
     }
-    
-    //TODOTOMORROW20250511: 查下整体识别v2一直输出0条。
     
     //46. debugLog
     [TIUtils printLogDescRate:[SMGUtils convertArr:resultModels convertBlock:^id(AIFeatureZenTiModel *obj) {
