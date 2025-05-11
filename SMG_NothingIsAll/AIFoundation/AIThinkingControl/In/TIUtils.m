@@ -725,6 +725,13 @@
         //}];
     }
     
+    //TODOTOMORROW20250511: 查下整体识别v2一直输出0条。
+    
+    //46. debugLog
+    [TIUtils printLogDescRate:[SMGUtils convertArr:resultModels convertBlock:^id(AIFeatureZenTiModel *obj) {
+        return obj.conT;
+    }] protoLogDesc:nil prefix:@"整体特征"];
+    
     //51. 转成AIMatchModel格式返回（识别后就用match_p,matchCount,matchValue这三个值）。
     return [SMGUtils convertArr:resultModels convertBlock:^id(AIFeatureZenTiModel *obj) {
         AIMatchModel *model = [[AIMatchModel alloc] initWithMatch_p:obj.conT];
