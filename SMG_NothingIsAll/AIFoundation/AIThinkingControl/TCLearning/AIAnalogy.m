@@ -381,7 +381,7 @@
         CGFloat curDegree = item.matchDegree;
         CGFloat curMatchValue = item.matchValue;
         BOOL noZeRen = [TCLearningUtil noZeRenForPingJun:curMatchValue * curDegree bigerMatchValue:jvBuModel.matchValue * jvBuModel.matchDegree];
-        if (!noZeRen) return nil;
+        if (!noZeRen) continue;
         
         //13. 当前码责任<50%时 (次要责任时,免责): 收集有效的映射：用于后面计算rect用。
         [validItems addObject:item];
@@ -434,6 +434,11 @@
     }] / validItems.count;
     [jvBuModel.assT updateMatchDegree:absT matchDegree:absMatchDegree];
     
+    //TODOTOMORROW20250511：查下此处类比结果的gv总是有多个gv但只显示出一个？应该是有gv重复？
+    NSLog(@"局部识别类比结果absT长度：%ld",absT.count);
+    [SMGUtils runByMainQueue:^{
+        [theApp.imgTrainerView setDataForFeature:absT lab:STRFORMAT(@"局部特征类比absT%ld",absT.pId)];
+    }];
     if (Log4Ana || true) NSLog(@"\n局部特征类比结果(%@) ======================> \n局部Ass特征T%ld（GV数:%ld）%@\n%@局部Abs特征T%ld（GV数:%ld）：%@\n%@",jvBuModel.assT.ds,
                                jvBuModel.assT.pId,jvBuModel.assT.count,CLEANSTR([jvBuModel.assT getLogDesc:false]),FeatureDesc(jvBuModel.assT.p,1),
                                absT.pId,sortGroupModels.count,CLEANSTR([absT getLogDesc:false]),FeatureDesc(absT.p,1));
