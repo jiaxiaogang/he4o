@@ -15,6 +15,7 @@
     result.bestGVAtProtoTRect = bestGVAtProtoTRect;
     result.matchValue = matchValue;
     result.matchDegree = matchDegree;
+    result.assIndex = assIndex;
     return result;
 }
 
