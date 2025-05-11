@@ -410,7 +410,6 @@
                                                           (1 - scale) * anchorY + defaultCurProtoRect.origin.y * scale,
                                                           defaultCurProtoRect.size.width * scale,
                                                           defaultCurProtoRect.size.height * scale);
-                    //TODO: 测下锚点缩放对不对。
                     
                     //33. 切出当前gv：九宫。
                     //2025.05.10: 出界处理：如checkCurProtoRect出界到视角之外，比如<0或者>max（采用方案2，直接continue）。
@@ -500,6 +499,11 @@
             [theApp.imgTrainerView setDataForFeature:model.assT lab:STRFORMAT(@"局部%@T%ld",model.assT.ds,model.assT.pId)];
         }];
     }
+    
+    //61. debugLog
+    [TIUtils printLogDescRate:[SMGUtils convertArr:resultModel.models convertBlock:^id(AIFeatureJvBuModel *obj) {
+        return obj.assT.p;
+    }] protoLogDesc:nil prefix:@"局部特征"];
 }
 
 /**
@@ -955,27 +959,10 @@
     }
     
     //18. debugLog3
-    NSMutableDictionary *allLogDic = [NSMutableDictionary new];
-    for (AIMatchAlgModel *model in logModels) {
-        AIAlgNodeBase *assAlg = [SMGUtils searchNode:model.matchAlg];
-        NSDictionary *itemLogDic = [assAlg getLogDesc:true];
-        for (NSString *key in itemLogDic.allKeys) {
-            NSInteger oldCount = NUMTOOK([allLogDic objectForKey:key]).integerValue;
-            NSInteger newCount = NUMTOOK([itemLogDic objectForKey:key]).integerValue;
-            [allLogDic setObject:@(oldCount + newCount) forKey:key];
-        }
-    }
-    NSInteger sum = [SMGUtils sumOfArr:allLogDic.allValues convertBlock:^double(NSNumber *obj) {
-        return obj.integerValue;
-    }];
-    NSArray *allLogKeys = [SMGUtils sortBig2Small:allLogDic.allKeys compareBlock:^double(NSString *key) {
-        NSInteger itemCount = NUMTOOK([allLogDic objectForKey:key]).integerValue;
-        return itemCount / (float)sum;
-    }];
-    NSLog(@"%@概念识别结果总结：%@",CLEANSTR([protoAlg getLogDesc:false].allKeys),CLEANSTR([SMGUtils convertArr:allLogKeys convertBlock:^id(NSString *key) {
-        NSInteger itemCount = NUMTOOK([allLogDic objectForKey:key]).integerValue;
-        return STRFORMAT(@"%@=%.2f ",key,itemCount / (float)sum);
-    }]));
+    [TIUtils printLogDescRate:[SMGUtils convertArr:logModels convertBlock:^id(AIMatchAlgModel *obj) {
+        return obj.matchAlg;
+    }] protoLogDesc:CLEANSTR([protoAlg getLogDesc:false].allKeys) prefix:@"概念"];
+    
     //19. 概念识别结果可视化（参考34176）。
     [SMGUtils runByMainQueue:^{
         //[theApp.imgTrainerView setDataForAlgs:logModels];
@@ -1545,6 +1532,31 @@
         }
     }
     return nil;
+}
+
++(void) printLogDescRate:(NSArray*)ass_ps protoLogDesc:(NSString*)protoLogDesc prefix:(NSString*)prefix {
+    //18. debugLog3
+    NSMutableDictionary *allLogDic = [NSMutableDictionary new];
+    for (AIKVPointer *ass_p in ass_ps) {
+        AINodeBase *assNode = [SMGUtils searchNode:ass_p];
+        NSDictionary *itemLogDic = [assNode getLogDesc:true];
+        for (NSString *key in itemLogDic.allKeys) {
+            NSInteger oldCount = NUMTOOK([allLogDic objectForKey:key]).integerValue;
+            NSInteger newCount = NUMTOOK([itemLogDic objectForKey:key]).integerValue;
+            [allLogDic setObject:@(oldCount + newCount) forKey:key];
+        }
+    }
+    NSInteger sum = [SMGUtils sumOfArr:allLogDic.allValues convertBlock:^double(NSNumber *obj) {
+        return obj.integerValue;
+    }];
+    NSArray *allLogKeys = [SMGUtils sortBig2Small:allLogDic.allKeys compareBlock:^double(NSString *key) {
+        NSInteger itemCount = NUMTOOK([allLogDic objectForKey:key]).integerValue;
+        return itemCount / (float)sum;
+    }];
+    NSLog(@"%@%@识别结果总结：%@",protoLogDesc,prefix,CLEANSTR([SMGUtils convertArr:allLogKeys convertBlock:^id(NSString *key) {
+        NSInteger itemCount = NUMTOOK([allLogDic objectForKey:key]).integerValue;
+        return STRFORMAT(@"%@=%.2f ",key,itemCount / (float)sum);
+    }]));
 }
 
 @end
