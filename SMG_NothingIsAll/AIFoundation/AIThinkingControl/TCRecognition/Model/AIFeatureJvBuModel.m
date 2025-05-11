@@ -22,15 +22,19 @@
 }
 
 -(void) run4MatchValueAndMatchDegreeAndMatchAssProtoRatio {
+    //1. 匹配度。
     self.matchValue = self.bestGVs.count == 0 ? 0 : [SMGUtils sumOfArr:self.bestGVs convertBlock:^double(AIFeatureJvBuItem *obj) {
         return obj.matchValue;
     }] / self.bestGVs.count;
+    
+    //2. 符合度。
     self.matchDegree = self.bestGVs.count == 0 ? 0 : [SMGUtils sumOfArr:self.bestGVs convertBlock:^double(AIFeatureJvBuItem *obj) {
         return obj.matchDegree;
     }] / self.bestGVs.count;
     
-    //此处没有protoT.count，所以健全度直接用assCount也是不影响竞争的。
-    self.matchAssProtoRatio = self.assT.count;
+    //3. 此处没有protoT.count，所以健全度直接用assCount也是不影响竞争的。
+    //2025.05.11: 修复健全度低问题，由总assT.count改成bestGVs.count，因为并不判断全含，所以由总数改成匹配到的数。
+    self.matchAssProtoRatio = self.bestGVs.count;
 }
 
 -(void) run4AssTAtProtoTRect {

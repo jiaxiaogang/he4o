@@ -434,7 +434,7 @@
     }] / validItems.count;
     [jvBuModel.assT updateMatchDegree:absT matchDegree:absMatchDegree];
     
-    //TODOTOMORROW20250511：查下此处类比结果的gv总是有多个gv但只显示出一个？应该是有gv重复？
+    //41. debugLog
     NSLog(@"局部识别类比结果absT长度：%ld",absT.count);
     [SMGUtils runByMainQueue:^{
         [theApp.imgTrainerView setDataForFeature:absT lab:STRFORMAT(@"局部特征类比absT%ld",absT.pId)];
